@@ -243,19 +243,12 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         let commentNode = event.target.enclosingNodeOrSelfWithClass("html-comment");
         let pseudoElement = event.target.enclosingNodeOrSelfWithClass("html-pseudo-element");
 
-        if (tag && treeElement._populateTagContextMenu) {
-            contextMenu.appendSeparator();
-
+        if (tag && treeElement._populateTagContextMenu)
             treeElement._populateTagContextMenu(contextMenu, event);
-        } else if (textNode && treeElement._populateTextContextMenu) {
-            contextMenu.appendSeparator();
-
+        else if (textNode && treeElement._populateTextContextMenu)
             treeElement._populateTextContextMenu(contextMenu, textNode);
-        } else if ((commentNode || pseudoElement) && treeElement._populateNodeContextMenu) {
-            contextMenu.appendSeparator();
-
+        else if ((commentNode || pseudoElement) && treeElement._populateNodeContextMenu)
             treeElement._populateNodeContextMenu(contextMenu);
-        }
 
         const options = {excludeRevealElement: this._excludeRevealElementContextMenu};
         WebInspector.appendContextMenuItemsForDOMNode(contextMenu, treeElement.representedObject, options);

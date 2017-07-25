@@ -11,9 +11,7 @@ PASS: constrain of a value below min becomes min
 PASS: constrain of a value above max becomes max
 PASS: constrain of a value above max becomes max
 PASS: constrain of a value above max becomes max
-FAIL: constrain of NaN becomes min
-    Expected: truthy
-    Actual: false
+PASS: constrain of NaN becomes min
 
 -- Running test case: Number.secondsToString
 PASS: normal resolution of 0ms should be ms with no decimals
@@ -52,4 +50,16 @@ PASS: high resolution of greater than 10mb should be megabytes
 
 -- Running test case: Number.percentageString
 PASS: precision should default to 1 if unspecified
+
+-- Running test case: Number.zeroPad
+PASS: padding of 0 should add no zeros
+PASS: padding of 1 with one digit should add no zeros
+PASS: padding of 2 with one digit should add one zero
+PASS: padding of 1 with two digits should add no zeros
+PASS: padding of 2 with two digits should add no zeros
+PASS: padding of 3 with two digits should add one zero
+PASS: padding of 4 with two digits should add two zeros
+PASS: padding of 2 with one decimal should add no zeros
+PASS: padding of 3 with one decimal should add no zeros
+PASS: padding of 4 with one decimal should add one zero
 

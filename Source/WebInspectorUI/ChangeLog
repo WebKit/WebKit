@@ -1,3 +1,39 @@
+2017-07-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add context menu item for taking a screenshot of a node
+        https://bugs.webkit.org/show_bug.cgi?id=174754
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WebInspector.appendContextMenuItemsForDOMNode):
+        Add "Capture Element Screenshot " context menu item that opens a save dialog with a picture of the node.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.saveDataToFile):
+        Allow the saveData to specify whether the contained content is base64Encoded, instead of
+        having to go through a Blob to save base64 data.
+
+        * UserInterface/Base/Utilities.js:
+        Add Number.pad to add leading zeros up to a certain width.
+
+        Drive-by: fix failing test for Number.constrain.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode.prototype.scrollIntoView.resolvedNode.scrollIntoView): Added.
+        (WebInspector.DOMNode.prototype.scrollIntoView.resolvedNode): Added.
+        (WebInspector.DOMNode.prototype.scrollIntoView): Added.
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._populateNodeContextMenu):
+        (WebInspector.DOMTreeElement.prototype._scrollIntoView.resolvedNode.scrollIntoView): Deleted.
+        (WebInspector.DOMTreeElement.prototype._scrollIntoView.resolvedNode): Deleted.
+        (WebInspector.DOMTreeElement.prototype._scrollIntoView): Deleted.
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype.populateContextMenu):
+        Drive-by: move "Scroll Into View" context menu command to WebInspector.appendContextMenuItemsForDOMNode
+        so that it can be triggered from more places than just the DOM tree.
+
 2017-07-24  Nikita Vasilyev  <me@elv1s.ru>
 
         Web Inspector: Settings: Some controls overlay settings header

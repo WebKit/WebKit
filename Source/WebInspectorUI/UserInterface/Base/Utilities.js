@@ -997,7 +997,7 @@ Object.defineProperty(Number, "constrain",
 {
     value: function(num, min, max)
     {
-        if (max < min)
+        if (isNaN(num) || max < min)
             return min;
 
         if (num < min)
@@ -1117,6 +1117,15 @@ Object.defineProperty(Number, "abbreviate",
 
         return WebInspector.UIString("%.1fB").format(Math.round(num / 100000000) / 10);
     }
+});
+
+Object.defineProperty(Number, "zeroPad",
+{
+    value(num, length)
+    {
+        let string = num.toLocaleString();
+        return string.padStart(length, "0");
+    },
 });
 
 Object.defineProperty(Number.prototype, "maxDecimals",

@@ -110,6 +110,11 @@ WebInspector.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, o
         return;
 
     let isElement = domNode.nodeType() === Node.ELEMENT_NODE;
+    if (isElement) {
+        contextMenu.appendItem(WebInspector.UIString("Scroll Into View"), () => {
+            domNode.scrollIntoView();
+        });
+    }
 
     contextMenu.appendSeparator();
 
@@ -191,6 +196,39 @@ WebInspector.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, o
                 let text = isElement ? WebInspector.UIString("Selected Element") : WebInspector.UIString("Selected Node");
                 const addSpecialUserLogClass = true;
                 WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+            });
+        });
+    }
+
+    if (window.PageAgent) {
+        contextMenu.appendItem(WebInspector.UIString("Capture Element Screenshot"), () => {
+            PageAgent.snapshotNode(domNode.id, (error, dataURL) => {
+                if (error) {
+                    const target = WebInspector.mainTarget;
+                    const source = WebInspector.ConsoleMessage.MessageSource.Other;
+                    const level = WebInspector.ConsoleMessage.MessageLevel.Error;
+                    let consoleMessage = new WebInspector.ConsoleMessage(target, source, level, error);
+                    consoleMessage.shouldRevealConsole = true;
+
+                    WebInspector.consoleLogViewController.appendConsoleMessage(consoleMessage);
+                    return;
+                }
+
+                let date = new Date;
+                let values = [
+                    date.getFullYear(),
+                    Number.zeroPad(date.getMonth() + 1, 2),
+                    Number.zeroPad(date.getDate(), 2),
+                    Number.zeroPad(date.getHours(), 2),
+                    Number.zeroPad(date.getMinutes(), 2),
+                    Number.zeroPad(date.getSeconds(), 2),
+                ];
+                let filename = WebInspector.UIString("Screen Shot %s-%s-%s at %s.%s.%s").format(...values);
+                WebInspector.saveDataToFile({
+                    url: encodeURI(`web-inspector:///${filename}.png`),
+                    content: parseDataURL(dataURL).data,
+                    base64Encoded: true,
+                });
             });
         });
     }

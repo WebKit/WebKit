@@ -458,6 +458,25 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
         WebInspector.RemoteObject.resolveNode(this, "", resolvedNode);
     }
 
+    scrollIntoView()
+    {
+        function resolvedNode(object)
+        {
+            if (!object)
+                return;
+
+            function inspectedPage_node_scrollIntoView()
+            {
+                this.scrollIntoViewIfNeeded(true);
+            }
+
+            object.callFunction(inspectedPage_node_scrollIntoView);
+            object.release();
+        }
+
+        WebInspector.RemoteObject.resolveNode(this, "", resolvedNode);
+    }
+
     getChildNodes(callback)
     {
         if (this.children) {

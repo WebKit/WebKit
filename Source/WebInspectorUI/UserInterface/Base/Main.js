@@ -885,7 +885,7 @@ WebInspector.saveDataToFile = function(saveData, forceSaveAs)
     }
 
     if (typeof saveData.content === "string") {
-        const base64Encoded = false;
+        const base64Encoded = saveData.base64Encoded || false;
         InspectorFrontendHost.save(suggestedName, saveData.content, base64Encoded, forceSaveAs || saveData.forceSaveAs);
         return;
     }
