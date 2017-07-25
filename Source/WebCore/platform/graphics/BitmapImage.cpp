@@ -193,7 +193,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scaleFactorForDrawing = (%.4f, %.4f)]", __FUNCTION__, this, sourceURL().string().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), scaleFactorForDrawing.width(), scaleFactorForDrawing.height());
 
     NativeImagePtr image;
-    if (decodingMode == DecodingMode::Asynchronous && !canAnimate()) {
+    if (decodingMode == DecodingMode::Asynchronous) {
         ASSERT(!canAnimate());
         ASSERT(!m_currentFrame || m_animationFinished);
 
@@ -218,7 +218,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         }
 
         image = frameImageAtIndex(m_currentFrame);
-        LOG(Images, "BitmapImage::%s - %p - url: %s [a decoded image frame is available for drawing]", __FUNCTION__, this, sourceURL().string().utf8().data());
+        LOG(Images, "BitmapImage::%s - %p - url: %s [a decoded frame will be used for asynchronous drawing]", __FUNCTION__, this, sourceURL().string().utf8().data());
     } else {
         StartAnimationStatus status = internalStartAnimation();
         ASSERT_IMPLIES(status == StartAnimationStatus::DecodingActive, (!m_currentFrame && !m_repetitionsComplete) || frameHasFullSizeNativeImageAtIndex(m_currentFrame, m_currentSubsamplingLevel));
@@ -227,17 +227,30 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
             fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
             return result;
         }
-
-        if (frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingMode::Asynchronous)) {
+        
+        // If the decodingMode changes from asynchronous to synchronous and new data is received,
+        // the current incomplete decoded frame has to be destroyed.
+        if (m_currentFrameDecodingStatus == DecodingStatus::Invalid)
+            m_source.destroyIncompleteDecodedData();
+        
+        bool frameIsCompatible = frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(sizeForDrawing));
+        bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingMode::Asynchronous);
+        
+        if (frameIsCompatible) {
+            image = frameImageAtIndex(m_currentFrame);
+            LOG(Images, "BitmapImage::%s - %p - url: %s [a decoded frame will reused for synchronous drawing]", __FUNCTION__, this, sourceURL().string().utf8().data());
+        } else if (frameIsBeingDecoded) {
             // FIXME: instead of showing the yellow rectangle and returning we need to wait for this frame to finish decoding.
             if (m_showDebugBackground) {
                 fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
                 LOG(Images, "BitmapImage::%s - %p - url: %s [waiting for async decoding to finish]", __FUNCTION__, this, sourceURL().string().utf8().data());
             }
             return ImageDrawResult::DidRequestDecoding;
+        } else {
+            image = frameImageAtIndexCacheIfNeeded(m_currentFrame, m_currentSubsamplingLevel, &context);
+            LOG(Images, "BitmapImage::%s - %p - url: %s [an image frame will be decoded synchronously]", __FUNCTION__, this, sourceURL().string().utf8().data());
         }
-
-        image = frameImageAtIndexCacheIfNeeded(m_currentFrame, m_currentSubsamplingLevel, &context);
+        
         if (!image) // If it's too early we won't have an image yet.
             return ImageDrawResult::DidNothing;
 

@@ -129,7 +129,7 @@ void ServicesOverlayController::Highlight::notifyFlushRequired(const GraphicsLay
     page->chrome().client().scheduleCompositingLayerFlush();
 }
 
-void ServicesOverlayController::Highlight::paintContents(const GraphicsLayer*, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect&, GraphicsLayerPaintFlags)
+void ServicesOverlayController::Highlight::paintContents(const GraphicsLayer*, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect&, GraphicsLayerPaintBehavior)
 {
     if (!DataDetectorsLibrary())
         return;

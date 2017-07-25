@@ -324,11 +324,20 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     if (IOSApplication::isIBooksStorytime())
         return DecodingMode::Synchronous;
 #endif
+    if (bitmapImage.isLargeImageAsyncDecodingEnabledForTesting())
+        return DecodingMode::Asynchronous;
+    if (document().isImageDocument())
+        return DecodingMode::Synchronous;
+    if (paintInfo.paintBehavior & PaintBehaviorSnapshotting)
+        return DecodingMode::Synchronous;
     if (!settings().largeImageAsyncDecodingEnabled())
         return DecodingMode::Synchronous;
     if (!bitmapImage.canUseAsyncDecodingForLargeImages())
         return DecodingMode::Synchronous;
-    if (paintInfo.paintBehavior & PaintBehaviorAllowAsyncImageDecoding)
+    if (paintInfo.paintBehavior & PaintBehaviorTileFirstPaint)
+        return DecodingMode::Asynchronous;
+    // FIXME: isVisibleInViewport() is not cheap. Find a way to make this condition faster.
+    if (!isVisibleInViewport())
         return DecodingMode::Asynchronous;
     return DecodingMode::Synchronous;
 }

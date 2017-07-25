@@ -1,3 +1,17 @@
+2017-07-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Async image decoding for large images should be disabled after the first time a tile is painted
+        https://bugs.webkit.org/show_bug.cgi?id=174451
+        <rdar://problem/31246421>
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _paintBehaviorForDestinationContext:]):
+        (-[WebFrame _drawRect:contentsOnly:]):
+        * WebView/WebHTMLView.mm:
+        (imageFromRect):
+
 2017-07-23  Darin Adler  <darin@apple.com>
 
         More NeverDestroyed and related cleanup
