@@ -1,5 +1,14 @@
 2017-07-25  Matt Lewis  <jlewis3@apple.com>
 
+        Rebaselinged the test http/tests/quicklook/top-navigation-blocked.html
+        https://bugs.webkit.org/show_bug.cgi?id=174755
+
+        Unreviewed test gardening.
+
+        * http/tests/quicklook/top-navigation-blocked-expected.txt:
+
+2017-07-25  Matt Lewis  <jlewis3@apple.com>
+
         Rebaselined missed test.
         https://bugs.webkit.org/show_bug.cgi?id=174734
 
