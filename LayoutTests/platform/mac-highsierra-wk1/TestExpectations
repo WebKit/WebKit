@@ -9,3 +9,10 @@ fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
 
 # <rdar://problem/31895192> DumpRenderTree crashed in com.apple.ImageIO.framework: IIODictionary::getBoolForKey + 0
 http/tests/misc/slow-loading-animated-image.html [ Skip ]
+
+# <rdar://problem/33522420> Crash: Multiple Layout test in fast/events and fast/forms and fast/text are crashing
+fast/events/keyboardevent-code.html [ Crash ]
+fast/events/keyboardevent-key.html [ Crash ]
+fast/events/keydown-leftright-keys.html [ Crash ]
+fast/forms/textarea-maxlength.html [ Crash ]
+fast/text/system-font-fallback-emoji.html [ Crash ]
