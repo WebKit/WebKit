@@ -2694,8 +2694,6 @@ webkit.org/b/108973 fast/css/negative-text-indent-in-inline-block.html [ ImageOn
 
 webkit.org/b/109469 fast/css/cursor-parsing-image-set.html [ Failure ]
 
-webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
-
 webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
 
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
