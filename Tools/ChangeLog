@@ -1,3 +1,17 @@
+2017-07-25  Matthew Stewart  <matthew_r_stewart@apple.com>
+
+        Fix autoinstaller failing on autoinstall_everything
+        https://bugs.webkit.org/show_bug.cgi?id=174830
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook.install_chromedriver):
+        (AutoinstallImportHook.install_geckodriver):
+        (AutoinstallImportHook._install_chromedriver): Deleted.
+        (AutoinstallImportHook._install_geckodriver): Deleted.
+
 2017-07-25  Jonathan Bedard  <jbedard@apple.com>
 
         Replace --runtime with something for both ios-simulator and ios-device

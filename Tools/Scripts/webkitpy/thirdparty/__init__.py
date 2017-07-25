@@ -103,9 +103,9 @@ class AutoinstallImportHook(object):
         elif '.selenium' in fullname:
             self._install_selenium()
         elif '.chromedriver' in fullname:
-            self._install_chromedriver()
+            self.install_chromedriver()
         elif '.geckodriver' in fullname:
-            self._install_geckodriver()
+            self.install_geckodriver()
 
     def _install_mechanize(self):
         self._install("http://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
@@ -171,14 +171,14 @@ class AutoinstallImportHook(object):
         url, url_subpath = self.get_latest_pypi_url('selenium')
         self._install(url=url, url_subpath=url_subpath)
 
-    def _install_chromedriver(self):
+    def install_chromedriver(self):
         filename_postfix = get_driver_filename().chrome
         if filename_postfix != "unsupported":
             version = urllib2.urlopen(CHROME_DRIVER_URL + 'LATEST_RELEASE').read().strip()
             full_chrome_url = "{base_url}{version}/chromedriver_{os}.zip".format(base_url=CHROME_DRIVER_URL, version=version, os=filename_postfix)
             self.install_binary(full_chrome_url, 'chromedriver')
 
-    def _install_geckodriver(self):
+    def install_geckodriver(self):
         filename_postfix = get_driver_filename().firefox
         if filename_postfix != "unsupported":
             firefox_releases_blob = urllib2.urlopen(FIREFOX_RELEASES_URL)
