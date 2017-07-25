@@ -1,3 +1,42 @@
+2017-07-25  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Refactoring: extract async stack trace logic from InspectorInstrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=174738
+
+        Reviewed by Brian Burg.
+
+        Relocate AsyncCallType from InspectorInstrumentation to the debugger
+        agent. Plumbing for `requestAnimationFrame` notifications has been added
+        to PageDebuggerAgent, which is responsible for managing async stack traces. 
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::registerCallback):
+        (WebCore::ScriptedAnimationController::cancelCallback):
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations):
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didInstallTimerImpl):
+        (WebCore::InspectorInstrumentation::didRemoveTimerImpl):
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameImpl):
+        (): Deleted.
+        (WebCore::didScheduleAsyncCall): Deleted.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrame):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrame):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrame):
+        Replaced Frame and Document pointers with references and moved
+        pointer validation upstream.
+
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::didRequestAnimationFrame):
+        (WebCore::PageDebuggerAgent::willFireAnimationFrame):
+        (WebCore::PageDebuggerAgent::didCancelAnimationFrame):
+        * inspector/PageDebuggerAgent.h:
+
 2017-07-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Async image decoding for large images should be disabled after the first time a tile is painted

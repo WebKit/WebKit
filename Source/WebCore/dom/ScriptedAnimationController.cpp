@@ -174,7 +174,8 @@ ScriptedAnimationController::CallbackId ScriptedAnimationController::registerCal
     callback->m_id = id;
     m_callbacks.append(WTFMove(callback));
 
-    InspectorInstrumentation::didRequestAnimationFrame(m_document, id);
+    if (m_document)
+        InspectorInstrumentation::didRequestAnimationFrame(*m_document, id);
 
     if (!m_suspendCount)
         scheduleAnimation();
@@ -186,7 +187,7 @@ void ScriptedAnimationController::cancelCallback(CallbackId id)
     for (size_t i = 0; i < m_callbacks.size(); ++i) {
         if (m_callbacks[i]->m_id == id) {
             m_callbacks[i]->m_firedOrCancelled = true;
-            InspectorInstrumentation::didCancelAnimationFrame(m_document, id);
+            InspectorInstrumentation::didCancelAnimationFrame(*m_document, id);
             m_callbacks.remove(i);
             return;
         }
@@ -214,7 +215,7 @@ void ScriptedAnimationController::serviceScriptedAnimations(double timestamp)
     for (auto& callback : callbacks) {
         if (!callback->m_firedOrCancelled) {
             callback->m_firedOrCancelled = true;
-            InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrame(m_document, callback->m_id);
+            InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrame(*m_document, callback->m_id);
             if (callback->m_useLegacyTimeBase)
                 callback->handleEvent(legacyHighResNowMs);
             else

@@ -33,6 +33,7 @@
 #include "PageDebuggerAgent.h"
 
 #include "CachedResource.h"
+#include "Document.h"
 #include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
@@ -148,6 +149,28 @@ void PageDebuggerAgent::mainFrameStoppedLoading()
 void PageDebuggerAgent::mainFrameNavigated()
 {
     setSuppressAllPauses(false);
+}
+
+void PageDebuggerAgent::didRequestAnimationFrame(int callbackId, Document& document)
+{
+    if (!breakpointsActive())
+        return;
+
+    JSC::ExecState* scriptState = document.execState();
+    if (!scriptState)
+        return;
+
+    didScheduleAsyncCall(scriptState, InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId, true);
+}
+
+void PageDebuggerAgent::willFireAnimationFrame(int callbackId)
+{
+    willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
+}
+
+void PageDebuggerAgent::didCancelAnimationFrame(int callbackId)
+{
+    didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
 }
 
 } // namespace WebCore

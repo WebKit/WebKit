@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class Document;
 class InspectorOverlay;
 class InspectorPageAgent;
 class Page;
@@ -51,6 +52,10 @@ public:
     void mainFrameStartedLoading();
     void mainFrameStoppedLoading();
     void mainFrameNavigated();
+
+    void didRequestAnimationFrame(int callbackId, Document&);
+    void willFireAnimationFrame(int callbackId);
+    void didCancelAnimationFrame(int callbackId);
 
 protected:
     void enable() override;
