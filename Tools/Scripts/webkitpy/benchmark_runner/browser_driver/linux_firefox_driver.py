@@ -27,8 +27,6 @@
 import os
 
 from linux_browser_driver import LinuxBrowserDriver
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
 
 
 class LinuxFirefoxDriver(LinuxBrowserDriver):
@@ -43,11 +41,13 @@ class LinuxFirefoxDriver(LinuxBrowserDriver):
         super(LinuxFirefoxDriver, self).launch_url(url, options, browser_build_path)
 
     def launch_driver(self, url, options, browser_build_path):
+        from webkitpy.thirdparty.autoinstalled.selenium.webdriver.firefox.options import Options
         options = Options()
         if browser_build_path:
             binary_path = os.path.join(browser_build_path, 'firefox-bin')
             options.binary_location = binary_path
         driver_executable = self.webdriver_binary_path
+        from webkitpy.thirdparty.autoinstalled.selenium import webdriver
         driver = webdriver.Firefox(firefox_options=options, executable_path=driver_executable)
         super(LinuxFirefoxDriver, self).launch_webdriver(url, driver)
         return driver

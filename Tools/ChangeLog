@@ -1,3 +1,26 @@
+2017-07-24  Matthew Stewart  <matthew_r_stewart@apple.com>
+
+        Fix BenchmarkRunner to only import selenium when needed
+        https://bugs.webkit.org/show_bug.cgi?id=174808
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_chrome_driver.py:
+        (LinuxChromeDriver.launch_driver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_firefox_driver.py:
+        (LinuxFirefoxDriver.launch_driver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeDriver.launch_driver):
+        (OSXChromeCanaryDriver.launch_driver):
+        (create_chrome_options):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py:
+        (OSXFirefoxDriver.launch_driver):
+        (OSXFirefoxNightlyDriver.launch_driver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_driver):
+        * Scripts/webkitpy/benchmark_runner/webdriver_benchmark_runner.py:
+        (WebDriverBenchmarkRunner._run_one_test):
+
 2017-07-23  Darin Adler  <darin@apple.com>
 
         More NeverDestroyed and related cleanup

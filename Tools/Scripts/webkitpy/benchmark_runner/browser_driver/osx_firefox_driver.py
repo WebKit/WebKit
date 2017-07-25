@@ -4,14 +4,11 @@ import logging
 import os
 
 from osx_browser_driver import OSXBrowserDriver
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
 
 
 _log = logging.getLogger(__name__)
 
 args = ['--args', '-width', str(int(OSXBrowserDriver._screen_size().width)), '-height', str(int(OSXBrowserDriver._screen_size().height))]
-firefox_options = Options()
 
 
 class OSXFirefoxDriver(OSXBrowserDriver):
@@ -24,11 +21,14 @@ class OSXFirefoxDriver(OSXBrowserDriver):
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
     def launch_driver(self, url, options, browser_build_path):
+        from webkitpy.thirdparty.autoinstalled.selenium.webdriver.firefox.options import Options
+        firefox_options = Options()
         if browser_build_path:
             app_path = os.path.join(browser_build_path, self.app_name)
             binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
             firefox_options.binary_location = binary_path
         driver_executable = self.webdriver_binary_path
+        from webkitpy.thirdparty.autoinstalled.selenium import webdriver
         driver = webdriver.Firefox(firefox_options=firefox_options, executable_path=driver_executable)
         self._launch_webdriver(url=url, driver=driver)
         return driver
@@ -44,12 +44,15 @@ class OSXFirefoxNightlyDriver(OSXBrowserDriver):
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
     def launch_driver(self, url, options, browser_build_path):
+        from webkitpy.thirdparty.autoinstalled.selenium.webdriver.firefox.options import Options
+        firefox_options = Options()
         if not browser_build_path:
             browser_build_path = '/Applications/'
         app_path = os.path.join(browser_build_path, self.app_name)
         binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
         firefox_options.binary_location = binary_path
         driver_executable = self.webdriver_binary_path
+        from webkitpy.thirdparty.autoinstalled.selenium import webdriver
         driver = webdriver.Firefox(firefox_options=firefox_options, executable_path=driver_executable)
         self._launch_webdriver(url=url, driver=driver)
         return driver
