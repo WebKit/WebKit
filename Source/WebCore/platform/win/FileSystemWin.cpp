@@ -42,7 +42,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 
-
 namespace WebCore {
 
 static const ULONGLONG kSecondsFromFileTimeToTimet = 11644473600;
@@ -257,20 +256,20 @@ String directoryName(const String& path)
 
 static String bundleName()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, name, (ASCIILiteral("WebKit")));
+    static const NeverDestroyed<String> name = [] {
+        String name { ASCIILiteral { "WebKit" } };
 
 #if USE(CF)
-    static bool initialized;
-
-    if (!initialized) {
-        initialized = true;
-
-        if (CFBundleRef bundle = CFBundleGetMainBundle())
-            if (CFTypeRef bundleExecutable = CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleExecutableKey))
+        if (CFBundleRef bundle = CFBundleGetMainBundle()) {
+            if (CFTypeRef bundleExecutable = CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleExecutableKey)) {
                 if (CFGetTypeID(bundleExecutable) == CFStringGetTypeID())
                     name = reinterpret_cast<CFStringRef>(bundleExecutable);
-    }
+            }
+        }
 #endif
+
+        return name;
+    }();
 
     return name;
 }
@@ -283,8 +282,7 @@ static String storageDirectory(DWORD pathIdentifier)
     buffer.resize(wcslen(buffer.data()));
     String directory = String::adopt(WTFMove(buffer));
 
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, companyNameDirectory, (ASCIILiteral("Apple Computer\\")));
-    directory = pathByAppendingComponent(directory, companyNameDirectory + bundleName());
+    directory = pathByAppendingComponent(directory, "Apple Computer\\" + bundleName());
     if (!makeAllDirectories(directory))
         return String();
 

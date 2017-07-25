@@ -183,7 +183,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     const AtomicString& attributeValue = element.attributeWithoutSynchronization(HTMLNames::autocompleteAttr);
 
     // 1. If the element has no autocomplete attribute, then jump to the step labeled default.
-    if (attributeValue == nullAtom())
+    if (attributeValue.isNull())
         return defaultLabel();
 
     // 2. Let tokens be the result of splitting the attribute's value on spaces.

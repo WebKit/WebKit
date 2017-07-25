@@ -34,6 +34,7 @@
 #include "FontPlatformData.h"
 #include <hb-ot.h>
 #include <hb.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -74,8 +75,8 @@ typedef HashMap<uint64_t, RefPtr<FaceCacheEntry>, WTF::IntHash<uint64_t>, WTF::U
 
 static HarfBuzzFaceCache* harfBuzzFaceCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HarfBuzzFaceCache, s_harfBuzzFaceCache, ());
-    return &s_harfBuzzFaceCache;
+    static NeverDestroyed<HarfBuzzFaceCache> s_harfBuzzFaceCache;
+    return &s_harfBuzzFaceCache.get();
 }
 
 HarfBuzzFace::HarfBuzzFace(FontPlatformData* platformData, uint64_t uniqueID)

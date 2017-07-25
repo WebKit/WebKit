@@ -23,20 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPlatformStrategies_h
-#define WebPlatformStrategies_h
+#pragma once
 
 #include <WebCore/CookiesStrategy.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/PlatformStrategies.h>
+#include <wtf/Forward.h>
 
 class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy {
 public:
     static void initialize();
     
 private:
+    friend NeverDestroyed<WebPlatformStrategies>;
     WebPlatformStrategies();
-    
+
     // WebCore::PlatformStrategies
     virtual WebCore::CookiesStrategy* createCookiesStrategy();
     virtual WebCore::LoaderStrategy* createLoaderStrategy();
@@ -52,5 +53,3 @@ private:
     virtual bool getRawCookies(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&);
     virtual void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::URL&, const String&);
 };
-
-#endif // WebPlatformStrategies_h

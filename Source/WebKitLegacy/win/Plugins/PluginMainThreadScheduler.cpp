@@ -26,12 +26,13 @@
 #include "config.h"
 #include "PluginMainThreadScheduler.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 PluginMainThreadScheduler& PluginMainThreadScheduler::scheduler()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(PluginMainThreadScheduler, scheduler, ());
-
+    static NeverDestroyed<PluginMainThreadScheduler> scheduler;
     return scheduler;
 }
 

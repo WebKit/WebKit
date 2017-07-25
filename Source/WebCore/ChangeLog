@@ -1,3 +1,193 @@
+2017-07-23  Darin Adler  <darin@apple.com>
+
+        More NeverDestroyed and related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=174745
+
+        Reviewed by Alex Christensen.
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::constructElementWithFallback):
+        Use isNull() rather than comparing against nullAtom() since it's
+        slightly more efficient.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersReducedMotionEvaluate): Use a switch statement for the
+        three states of forcedPrefersReducedMotionAccessibilityValue. Also update
+        to use Theme::singleton() instead of platformTheme().
+
+        * dom/QualifiedName.h: Removed some unneeded includes, minor style tweaks,
+        and use isNull() rather than comparing against nullAtom() since it's
+        slightly more efficient.
+
+        * html/Autofill.cpp:
+        (WebCore::AutofillData::createFromHTMLFormControlElement): Use isNull()
+        rather than comparing against nullAtom() since it's slightly more efficient.
+
+        * html/HTMLDocument.cpp:
+        (WebCore::addLocalNameToSet): Deleted.
+        (WebCore::createHtmlCaseInsensitiveAttributesSet): Deleted.
+        (WebCore::HTMLDocument::isCaseSensitiveAttribute): Moved the case-sensitive
+        attribute set in here and made it use makeNeverDestroyed.
+
+        * html/HTMLNameCollection.cpp:
+        (WebCore::WindowNameCollection::elementMatchesIfNameAttributeMatch):
+        Formatted vertically and sorted so it's easier to see what it does.
+        (WebCore::WindowNameCollection::elementMatches): Use boolean logic instead
+        of multiple return statements to make this a little more straightforward.
+        (WebCore::isObjectElementForDocumentNameCollection): Added. Calls the new
+        isExposed function. The old code called this isDocNamedItem.
+        (WebCore::DocumentNameCollection::elementMatchesIfIdAttributeMatch):
+        Use isObjectElementForDocumentNameCollection to clean up logic. Also
+        sorted classes.
+        (WebCore::DocumentNameCollection::elementMatchesIfNameAttributeMatch):
+        Use isObjectElementForDocumentNameCollection to clean up logic. Also
+        sorted classes and formatted vertically.
+        (WebCore::DocumentNameCollection::elementMatches): Write in terms of
+        above functions for clarity. Efficiency is roughly the same.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement): Initialize data members
+        in class definition instead of here.
+        (WebCore::HTMLObjectElement::childrenChanged): Update for name change;
+        function is now called updateExposedState rather than updateDocNamedItem.
+        Also use m_useFallbackContent directly instead of through a function.
+        (WebCore::HTMLObjectElement::renderFallbackContent): Ditto.
+        (WebCore::preventsParentObjectFromExposure): Added. Replaces the old
+        isRecognizedTagName function, and does almost the same thing, but the
+        argument type is different and the param tag is now one of the tags
+        exempted here. Also broke up into two overloads so we can handle the
+        Element, Text, and other Node cases.
+        (WebCore::shouldBeExposed): Added. Helper for the updateExposedState
+        function that handles the logic of when the element should be exposed,
+        separating it from what to do when the state changes.
+        (WebCore::HTMLObjectElement::updateExposedState): Renamed from
+        updateDocNamedItem.
+
+        * html/HTMLObjectElement.h: Renamed isDocNamedItem -> isExposed,
+        m_docNamedItem -> m_isExposed, updateDocNamedItem -> updateExposedState,
+        stopped using bit fields for the two boolean data members, and
+        initialized those data members here in the class definition.
+
+        * platform/Theme.cpp:
+        (WebCore::Theme::baselinePositionAdjustment): Moved here from header.
+        (WebCore::Theme::controlFont): Ditto.
+        (WebCore::Theme::controlSize): Ditto.
+        (WebCore::Theme::minimumControlSize): Ditto.
+        (WebCore::Theme::controlRequiresPreWhiteSpace): Ditto.
+        (WebCore::Theme::paint): Ditto.
+        (WebCore::Theme::inflateControlPaintRect): Ditto.
+        (WebCore::Theme::userPrefersReducedMotion): Ditto.
+        (WebCore::Theme::controlBorder): Fixed switch statement indentation.
+        (WebCore::Theme::controlPadding): Ditto.
+
+        * platform/Theme.h: Removed the many unnecessary includes. The one
+        I was really after here was FontCascade.h. Replaced the platformTheme
+        function with a singleton function, following our normal style. Also
+        changed the return type to a reference rather than a pointer.
+        Removed many unused function and data members.
+
+        * platform/cocoa/ThemeCocoa.h: Tightened up implementation, removing
+        unnecessary members and making overrides private.
+        * platform/cocoa/ThemeCocoa.mm: Moved include in here.
+
+        * platform/gamepad/glib/GamepadsGlib.cpp:
+        (WebCore::sampleGamepads): Use NeverDestroyed instead of
+        DEPRECATED_DEFINE_STATIC_LOCAL.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::useBackslashAsYenSignForFamily): Build the set in a cleaner
+        way and use a NeverDestroyed set instead of a heap-allocated one.
+        (WebCore::FontCascade::FontCascade): Moved initialization of data members
+        to the class definition.
+
+        * platform/graphics/FontCascade.h: Initialize GlyphOverflow and
+        FonstCascade data members in the class definition. Remove the constructor
+        for GlyphOverflow entirely. Added FIXME about the peculiar != operator we
+        defined for GlyphOverflow.
+
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::draw): Use Theme::singleton() instead
+        of platformTheme().
+        (WebCore::NamedImageGeneratedImage::drawPattern): Ditto.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::CMTimeRangeStartKey): Use CFSTR directly instead of using
+        DEPRECATED_DEFINE_STATIC_LOCAL.
+        (WebCore::CMTimeRangeDurationKey): Ditto.
+        (WebCore::CACFContextNeedsFlushNotification): Ditto.
+
+        * platform/graphics/ca/win/LayerChangesFlusher.cpp:
+        (WebCore::LayerChangesFlusher::singleton): Use NeverDestroyed instead of
+        DEPRECATED_DEFINE_STATIC_LOCAL.
+        * platform/graphics/ca/win/LayerChangesFlusher.h: Ditto.
+
+        * platform/graphics/cg/ImageSourceCGWin.cpp:
+        (WebCore::preferredExtensionForImageSourceType): Use HashMap constructor
+        instead of writing out a lot of add calls.
+
+        * platform/graphics/harfbuzz/HarfBuzzFace.cpp:
+        (WebCore::harfBuzzFaceCache): Use NeverDestroyed instead of
+        DEPRECATED_DEFINE_STATIC_LOCAL.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::lastResortFallbackFont): Ditto.
+
+        * platform/ios/ThemeIOS.h: Tightened up implementation, removing
+        unnecessary members and making overrides private.
+        * platform/ios/ThemeIOS.mm:
+        (WebCore::Theme::singleton): Renamed from platformTheme.
+
+        * platform/mac/ThemeMac.h: Tightened up implementation, removing
+        unnecessary members and making overrides private. Removed unneeded
+        WTF_MAKE_FAST_ALLOCATED since this is never allocated on the heap.
+        Removed unused -[NSFont webCoreFamilyName] method.
+        * platform/mac/ThemeMac.mm:
+        (-[NSFont webCoreFamilyName]): Deleted.
+        (WebCore::Theme::singleton): Renamed from platformTheme.
+
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+        Removed unneeded include of FontCascade.h.
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        Ditto.
+        * platform/mock/MockRealtimeAudioSource.h: Ditto.
+
+        * platform/network/win/DownloadBundleWin.cpp:
+        (WebCore::DownloadBundle::fileExtension): Use NeverDestroyed
+        instead of DEPRECATED_DEFINE_STATIC_LOCAL.
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::replaceNewlinesWithWindowsStyleNewlines): Use
+        appendLiteral instead of DEPRECATED_DEFINE_STATIC_LOCAL.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::bundleName): Use NeverDestroyed instead of
+        DEPRECATED_DEFINE_STATIC_LOCAL, and used a lambda to initialize
+        rather than a boolean to control one-time code.
+        (WebCore::storageDirectory): Removed unneeded use of
+        DEPRECATED_DEFINE_STATIC_LOCAL for a prefix we are appending to
+        a String. The + operator can handle a literal just as efficiently
+        without first storing it in a String.
+
+        * platform/wpe/ThemeWPE.cpp:
+        (WebCore::Theme::singleton): Renamed from platformTheme.
+        * platform/wpe/ThemeWPE.h: Tightened up implementation, removing
+        unnecessary members and making overrides private.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::RenderTheme): No need to initialize m_theme.
+        (WebCore::RenderTheme::adjustStyle): Use Theme::singleton() instead
+        of accessing it through m_theme.
+        (WebCore::RenderTheme::paint): Ditto.
+        (WebCore::RenderTheme::baselinePosition): Ditto.
+        (WebCore::RenderTheme::adjustRepaintRect): Ditto.
+        (WebCore::RenderTheme::setCustomFocusRingColor): Ditto.
+        (WebCore::RenderTheme::platformTapHighlightColor): Ditto.
+
+        * rendering/RenderTheme.h: Removed unneded m_theme and unneeded
+        inclusion of Theme.h.
+
+        * rendering/line/LineBreaker.h: Removed unneeded include of
+        FontCascade.h.
+
 2017-07-24  Chris Dumez  <cdumez@apple.com>
 
         ExceptionCode enumeration should use modern exception names

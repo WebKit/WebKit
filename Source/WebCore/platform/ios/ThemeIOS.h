@@ -23,21 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ThemeIOS_h
-#define ThemeIOS_h
+#pragma once
 
 #include "ThemeCocoa.h"
 
 namespace WebCore {
 
-class ThemeIOS : public ThemeCocoa {
-public:
-    ThemeIOS() { }
-    virtual ~ThemeIOS() { }
-
-    bool userPrefersReducedMotion() const override;
+class ThemeIOS final : public ThemeCocoa {
+private:
+    bool userPrefersReducedMotion() const final;
 };
 
 } // namespace WebCore
-
-#endif // ThemeIOS_h

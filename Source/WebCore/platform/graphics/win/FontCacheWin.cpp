@@ -340,8 +340,9 @@ RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fon
 
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, fallbackFontName, ());
-    if (!fallbackFontName.isEmpty())
+    static NeverDestroyed<AtomicString> fallbackFontName;
+
+    if (!fallbackFontName.get().isEmpty())
         return *fontForFamily(fontDescription, fallbackFontName);
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
@@ -360,7 +361,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     RefPtr<Font> simpleFont;
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(fallbackFonts); ++i) {
         if (simpleFont = fontForFamily(fontDescription, fallbackFonts[i])) {
-            fallbackFontName = fallbackFonts[i];
+            fallbackFontName.get() = fallbackFonts[i];
             return *simpleFont;
         }
     }

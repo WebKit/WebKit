@@ -24,12 +24,7 @@
 #include "PaintInfo.h"
 #include "PopupMenuStyle.h"
 #include "ScrollTypes.h"
-
-#if USE(NEW_THEME)
-#include "Theme.h"
-#else
 #include "ThemeTypes.h"
-#endif
 
 namespace WebCore {
 
@@ -404,10 +399,6 @@ private:
     mutable Color m_inactiveListBoxSelectionBackgroundColor;
     mutable Color m_activeListBoxSelectionForegroundColor;
     mutable Color m_inactiveListBoxSelectionForegroundColor;
-
-#if USE(NEW_THEME)
-    Theme* m_theme; // The platform-specific theme.
-#endif
 };
 
 } // namespace WebCore

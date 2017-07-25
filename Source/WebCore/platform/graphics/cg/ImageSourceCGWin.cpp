@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,39 +46,37 @@ String MIMETypeForImageSourceType(const String& type)
 
 String preferredExtensionForImageSourceType(const String& type)
 {
-    if (type.isEmpty())
+    if (type.isNull())
         return String();
 
-    typedef HashMap<String, String> StringMap;
-    DEPRECATED_DEFINE_STATIC_LOCAL(StringMap, UTIMap, ());
-    if (UTIMap.isEmpty()) {
-        UTIMap.add("public.html", "html");
-        UTIMap.add("public.jpeg", "jpeg");
-        UTIMap.add("public.jpeg-2000", "jp2");
-        UTIMap.add("public.plain-text", "txt");
-        UTIMap.add("public.png", "png");
-        UTIMap.add("public.tiff", "tiff");
-        UTIMap.add("public.xbitmap-image", "xbm");
-        UTIMap.add("public.xml", "xml");
-        UTIMap.add("com.adobe.illustrator.ai-image", "ai");
-        UTIMap.add("com.adobe.pdf", "pdf");
-        UTIMap.add("com.adobe.photoshop-image", "psd");
-        UTIMap.add("com.adobe.postscript", "ps");
-        UTIMap.add("com.apple.icns", "icns");
-        UTIMap.add("com.apple.macpaint-image", "pntg");
-        UTIMap.add("com.apple.pict", "pict");
-        UTIMap.add("com.apple.quicktime-image", "qtif");
-        UTIMap.add("com.apple.webarchive", "webarchive");
-        UTIMap.add("com.compuserve.gif", "gif");        
-        UTIMap.add("com.ilm.openexr-image", "exr");
-        UTIMap.add("com.kodak.flashpix-image", "fpx");
-        UTIMap.add("com.microsoft.bmp", "bmp");
-        UTIMap.add("com.microsoft.ico", "ico");
-        UTIMap.add("com.netscape.javascript-source", "js");
-        UTIMap.add("com.sgi.sgi-image", "sgi");
-        UTIMap.add("com.truevision.tga-image", "tga");
-    }
-    return UTIMap.get(type);
+    static const auto map = makeNeverDestroyed(HashMap<String, String, ASCIICaseInsensitiveHash> {
+        { "public.html", "html" },
+        { "public.jpeg", "jpeg" },
+        { "public.jpeg-2000", "jp2" },
+        { "public.plain-text", "txt" },
+        { "public.png", "png" },
+        { "public.tiff", "tiff" },
+        { "public.xbitmap-image", "xbm" },
+        { "public.xml", "xml" },
+        { "com.adobe.illustrator.ai-image", "ai" },
+        { "com.adobe.pdf", "pdf" },
+        { "com.adobe.photoshop-image", "psd" },
+        { "com.adobe.postscript", "ps" },
+        { "com.apple.icns", "icns" },
+        { "com.apple.macpaint-image", "pntg" },
+        { "com.apple.pict", "pict" },
+        { "com.apple.quicktime-image", "qtif" },
+        { "com.apple.webarchive", "webarchive" },
+        { "com.compuserve.gif", "gif" },
+        { "com.ilm.openexr-image", "exr" },
+        { "com.kodak.flashpix-image", "fpx" },
+        { "com.microsoft.bmp", "bmp" },
+        { "com.microsoft.ico", "ico" },
+        { "com.netscape.javascript-source", "js" },
+        { "com.sgi.sgi-image", "sgi" },
+        { "com.truevision.tga-image", "tga" },
+    });
+    return map.get().get(type);
 }
 
 } // namespace WebCore

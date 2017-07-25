@@ -30,26 +30,29 @@
 #include "Frame.h"
 #include "URL.h"
 #include "PluginPackage.h"
+#include <stdlib.h>
+#include <wtf/text/CString.h>
+
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
 #include "FileSystem.h"
 #endif
-#include <stdlib.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
 typedef HashMap<String, RefPtr<PluginPackage> > PluginPackageByNameMap;
 
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
+
 static const size_t maximumPersistentPluginMetadataCacheSize = 32768;
 
 static bool gPersistentPluginMetadataCacheIsEnabled;
 
 String& persistentPluginMetadataCachePath()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, cachePath, ());
+    static NeverDestroyed<String> cachePath;
     return cachePath;
 }
+
 #endif
 
 PluginDatabase::PluginDatabase()

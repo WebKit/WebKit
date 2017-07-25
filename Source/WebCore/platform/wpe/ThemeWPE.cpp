@@ -27,16 +27,18 @@
 #include "ThemeWPE.h"
 
 #include "Color.h"
+#include "ControlStates.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
+#include "LengthSize.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-Theme* platformTheme()
+Theme& Theme::singleton()
 {
     static NeverDestroyed<ThemeWPE> theme;
-    return &theme.get();
+    return theme;
 }
 
 LengthSize ThemeWPE::controlSize(ControlPart part, const FontCascade& fontCascade, const LengthSize& zoomedSize, float zoomFactor) const

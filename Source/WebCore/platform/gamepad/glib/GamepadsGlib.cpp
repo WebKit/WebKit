@@ -210,8 +210,8 @@ gboolean GamepadsGlib::isGamepadDevice(GUdevDevice* device)
 
 void sampleGamepads(GamepadList* into)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(GamepadsGlib, gamepadsGlib, (into->length()));
-    gamepadsGlib.updateGamepadList(into);
+    static NeverDestroyed<GamepadsGlib> gamepadsGlib(into->length();
+    gamepadsGlib.get().updateGamepadList(into);
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,33 +27,73 @@
 #include "Theme.h"
 
 #include "GraphicsContext.h"
+#include "LengthBox.h"
+#include "LengthSize.h"
 
 namespace WebCore {
+
+int Theme::baselinePositionAdjustment(ControlPart) const
+{
+    return 0;
+}
+
+std::optional<FontCascadeDescription> Theme::controlFont(ControlPart, const FontCascade&, float) const
+{
+    return std::nullopt;
+}
+
+LengthSize Theme::controlSize(ControlPart, const FontCascade&, const LengthSize& zoomedSize, float) const
+{
+    return zoomedSize;
+}
+
+LengthSize Theme::minimumControlSize(ControlPart, const FontCascade&, float) const
+{
+    return { { 0, Fixed }, { 0, Fixed } };
+}
+
+bool Theme::controlRequiresPreWhiteSpace(ControlPart) const
+{
+    return false;
+}
+
+void Theme::paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float)
+{
+}
+
+void Theme::inflateControlPaintRect(ControlPart, const ControlStates&, FloatRect&, float) const
+{
+}
+
+bool Theme::userPrefersReducedMotion() const
+{
+    return false;
+}
 
 LengthBox Theme::controlBorder(ControlPart part, const FontCascade&, const LengthBox& zoomedBox, float) const
 {
     switch (part) {
-        case PushButtonPart:
-        case MenulistPart:
-        case SearchFieldPart:
-        case CheckboxPart:
-        case RadioPart:
-            return LengthBox(0);
-        default:
-            return zoomedBox;
+    case PushButtonPart:
+    case MenulistPart:
+    case SearchFieldPart:
+    case CheckboxPart:
+    case RadioPart:
+        return LengthBox(0);
+    default:
+        return zoomedBox;
     }
 }
 
 LengthBox Theme::controlPadding(ControlPart part, const FontCascade&, const LengthBox& zoomedBox, float) const
 {
     switch (part) {
-        case MenulistPart:
-        case MenulistButtonPart:
-        case CheckboxPart:
-        case RadioPart:
-            return LengthBox(0);
-        default:
-            return zoomedBox;
+    case MenulistPart:
+    case MenulistButtonPart:
+    case CheckboxPart:
+    case RadioPart:
+        return LengthBox(0);
+    default:
+        return zoomedBox;
     }
 }
 

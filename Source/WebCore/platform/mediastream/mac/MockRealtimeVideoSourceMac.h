@@ -32,7 +32,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "FontCascade.h"
 #include "MockRealtimeVideoSource.h"
 #include "OrientationNotifier.h"
 

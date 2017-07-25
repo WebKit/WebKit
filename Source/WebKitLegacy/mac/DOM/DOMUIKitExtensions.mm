@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,27 +64,17 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/VisiblePosition.h>
 #import <WebCore/VisibleUnits.h>
-
 #import <WebCore/WAKAppKitStubs.h>
 
 using namespace WebCore;
 
-using WebCore::FloatPoint;
-using WebCore::FontCascade;
-using WebCore::HTMLAreaElement;
-using WebCore::HTMLImageElement;
-using WebCore::HTMLSelectElement;
-using WebCore::InlineBox;
-using WebCore::IntRect;
 using WebCore::Node;
 using WebCore::Position;
 using WebCore::Range;
 using WebCore::RenderBlock;
 using WebCore::RenderBox;
 using WebCore::RenderObject;
-using WebCore::RenderStyle;
 using WebCore::RenderText;
-using WebCore::RootInlineBox;
 using WebCore::VisiblePosition;
 
 @implementation DOMRange (UIKitExtensions)
@@ -161,7 +151,7 @@ using WebCore::VisiblePosition;
     }
 
     if (![rects count])
-        rects = [NSArray arrayWithObject:[NSValue valueWithRect:bounds]];
+        rects = @[[NSValue valueWithRect:bounds]];
 
     return rects;
 }
@@ -182,7 +172,7 @@ using WebCore::VisiblePosition;
 
     if (![quads count]) {
         WKQuadObject* quadObject = [[WKQuadObject alloc] initWithQuad:[self absoluteQuad]];
-        quads = [NSArray arrayWithObject:quadObject];
+        quads = @[quadObject];
         [quadObject release];
     }
 
@@ -250,12 +240,11 @@ using WebCore::VisiblePosition;
 
 - (DOMNode *)findExplodedTextNodeAtPoint:(CGPoint)point
 {
-    RenderObject* renderer = core(self)->renderer();
+    auto* renderer = core(self)->renderer();
     if (!is<RenderBlockFlow>(renderer))
         return nil;
 
-    RenderBlockFlow* block = downcast<RenderBlockFlow>(renderer);
-    RenderText* renderText = block->findClosestTextAtAbsolutePoint(point);
+    auto* renderText = downcast<RenderBlockFlow>(*renderer).findClosestTextAtAbsolutePoint(point);
     if (renderText && renderText->textNode())
         return kit(renderText->textNode());
 
@@ -266,10 +255,8 @@ using WebCore::VisiblePosition;
 
 //-----------------
 
-@implementation DOMElement (DOMUIKitComplexityExtensions) 
-
+@implementation DOMElement (DOMUIKitComplexityExtensions)
 - (int)structuralComplexityContribution { return 0; }
-
 @end
 
 @implementation DOMHTMLElement (DOMUIKitComplexityExtensions) 
@@ -308,7 +295,6 @@ using WebCore::VisiblePosition;
 - (int)structuralComplexityContribution { return 0; }
 @end
 
-
 // Maximally complex elements
 
 @implementation DOMHTMLFormElement (DOMUIKitComplexityExtensions)
@@ -343,23 +329,20 @@ using WebCore::VisiblePosition;
 - (int)structuralComplexityContribution { return INT_MAX; }
 @end
 
-
 //-----------------
         
 @implementation DOMHTMLAreaElement (DOMUIKitExtensions)
 
-- (CGRect)boundingBoxWithOwner:(DOMNode *)anOwner
+- (CGRect)boundingBoxWithOwner:(DOMNode *)owner
 {
     // ignores transforms
-    return anOwner ? snappedIntRect(core(self)->computeRect(core(anOwner)->renderer())) : CGRectZero;
+    return owner ? snappedIntRect(core(self)->computeRect(core(owner)->renderer())) : CGRectZero;
 }
 
-- (WKQuad)absoluteQuadWithOwner:(DOMNode *)anOwner
+- (WKQuad)absoluteQuadWithOwner:(DOMNode *)owner
 {
-    if (anOwner) {
-        // FIXME: ECLAIR
-        //WebCore::FloatQuad theQuad = core(self)->getAbsoluteQuad(core(anOwner)->renderer());
-        WebCore::IntRect rect = snappedIntRect(core(self)->computeRect(core(anOwner)->renderer()));
+    if (owner) {
+        WebCore::IntRect rect = snappedIntRect(core(self)->computeRect(core(owner)->renderer()));
         WKQuad quad;
         quad.p1 = CGPointMake(rect.x(), rect.y());
         quad.p2 = CGPointMake(rect.maxX(), rect.y());
@@ -372,15 +355,15 @@ using WebCore::VisiblePosition;
     return zeroQuad;
 }
 
-- (NSArray *)boundingBoxesWithOwner:(DOMNode *)anOwner
+- (NSArray *)boundingBoxesWithOwner:(DOMNode *)owner
 {
-    return [NSArray arrayWithObject:[NSValue valueWithRect:[self boundingBoxWithOwner:anOwner]]];
+    return @[[NSValue valueWithRect:[self boundingBoxWithOwner:owner]]];
 }
 
-- (NSArray *)absoluteQuadsWithOwner:(DOMNode *)anOwner
+- (NSArray *)absoluteQuadsWithOwner:(DOMNode *)owner
 {
-    WKQuadObject* quadObject = [[WKQuadObject alloc] initWithQuad:[self absoluteQuadWithOwner:anOwner]];
-    NSArray*    quadArray = [NSArray arrayWithObject:quadObject];
+    WKQuadObject *quadObject = [[WKQuadObject alloc] initWithQuad:[self absoluteQuadWithOwner:owner]];
+    NSArray *quadArray = @[quadObject];
     [quadObject release];
     return quadArray;
 }
@@ -405,13 +388,13 @@ using WebCore::VisiblePosition;
 
 - (NSData *)dataRepresentation:(BOOL)rawImageData
 {
-    WebCore::CachedImage* cachedImage = core(self)->cachedImage();
+    auto* cachedImage = core(self)->cachedImage();
     if (!cachedImage)
         return nil;
-    WebCore::Image* image = cachedImage->image();
+    auto* image = cachedImage->image();
     if (!image)
         return nil;
-    WebCore::SharedBuffer* data = rawImageData ? cachedImage->resourceBuffer() : image->data();
+    auto* data = rawImageData ? cachedImage->resourceBuffer() : image->data();
     if (!data)
         return nil;
     return data->createNSData().autorelease();
@@ -419,10 +402,9 @@ using WebCore::VisiblePosition;
 
 - (NSString *)mimeType
 {
-    WebCore::CachedImage *cachedImage = core(self)->cachedImage();
+    auto* cachedImage = core(self)->cachedImage();
     if (!cachedImage || !cachedImage->image())
         return nil;
-    
     return cachedImage->response().mimeType();
 }
 

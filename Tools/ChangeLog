@@ -1,3 +1,15 @@
+2017-07-23  Darin Adler  <darin@apple.com>
+
+        More NeverDestroyed and related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=174745
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/JavaScriptThreading.cpp:
+        (javaScriptThreadsMutex): Use NeverDestroyed instead of
+        DEPRECATED_DEFINE_STATIC_LOCAL.
+        (javaScriptThreads): Ditto.
+
 2017-07-24  Matthew Stewart  <matthew_r_stewart@apple.com>
 
         Subclass Benchmark Runner script for WebDriver support

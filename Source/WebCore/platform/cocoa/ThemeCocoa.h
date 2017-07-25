@@ -23,21 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThemeCocoa_h
-#define ThemeCocoa_h
+#pragma once
 
 #include "Theme.h"
 
 namespace WebCore {
 
 class ThemeCocoa : public Theme {
-public:
-    ThemeCocoa() { }
-    virtual ~ThemeCocoa() { }
-
-    void drawNamedImage(const String&, GraphicsContext&, const FloatRect&) const override;
+protected:
+    ThemeCocoa() = default;
+private:
+    void drawNamedImage(const String&, GraphicsContext&, const FloatRect&) const final;
 };
 
 } // namespace WebCore
-
-#endif // ThemeCocoa_h

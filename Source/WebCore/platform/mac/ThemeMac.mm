@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010, 2011, 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -13,7 +13,7 @@
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -27,8 +27,10 @@
 #import "ThemeMac.h"
 
 #import "AXObjectCache.h"
+#import "ControlStates.h"
 #import "GraphicsContext.h"
 #import "ImageBuffer.h"
+#import "LengthSize.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "NSButtonCellSPI.h"
 #import "ScrollView.h"
@@ -44,6 +46,9 @@ static BOOL themeWindowHasKeyAppearance;
 @interface WebCoreThemeWindow : NSWindow
 @end
 
+@interface WebCoreThemeView : NSControl
+@end
+
 @implementation WebCoreThemeWindow
 
 - (BOOL)hasKeyAppearance
@@ -56,9 +61,6 @@ static BOOL themeWindowHasKeyAppearance;
     return themeWindowHasKeyAppearance;
 }
 
-@end
-
-@interface WebCoreThemeView : NSControl
 @end
 
 @implementation WebCoreThemeView
@@ -99,23 +101,11 @@ static BOOL themeWindowHasKeyAppearance;
     return self;
 }
 
-- (void)addSubview:(NSView*)subview
+- (void)addSubview:(NSView *)subview
 {
     // By doing nothing in this method we forbid controls from adding subviews.
-    // This tells AppKit to not use Layer-backed animation for control rendering.
+    // This tells AppKit to not use layer-backed animation for control rendering.
     UNUSED_PARAM(subview);
-}
-
-@end
-
-@implementation NSFont (WebCoreTheme)
-
-- (NSString*)webCoreFamilyName
-{
-    if ([[self familyName] hasPrefix:@"."])
-        return [self fontName];
-
-    return [self familyName];
 }
 
 @end
@@ -131,10 +121,10 @@ enum {
     leftMargin
 };
 
-Theme* platformTheme()
+Theme& Theme::singleton()
 {
     static NeverDestroyed<ThemeMac> themeMac;
-    return &themeMac.get();
+    return themeMac;
 }
 
 // Helper functions used by a bunch of different control parts.
@@ -241,8 +231,8 @@ static ThemeDrawState convertControlStatesToThemeDrawState(ThemeButtonKind kind,
 
 static FloatRect inflateRect(const FloatRect& zoomedRect, const IntSize& zoomedSize, const int* margins, float zoomFactor)
 {
-    // Only do the inflation if the available width/height are too small.  Otherwise try to
-    // fit the glow/check space into the available box's width/height.
+    // Only do the inflation if the available width/height are too small.
+    // Otherwise try to fit the glow/check space into the available box's width/height.
     int widthDelta = zoomedRect.width() - (zoomedSize.width() + margins[leftMargin] * zoomFactor + margins[rightMargin] * zoomFactor);
     int heightDelta = zoomedRect.height() - (zoomedSize.height() + margins[topMargin] * zoomFactor + margins[bottomMargin] * zoomFactor);
     FloatRect result(zoomedRect);
@@ -689,37 +679,37 @@ int ThemeMac::baselinePositionAdjustment(ControlPart part) const
 std::optional<FontCascadeDescription> ThemeMac::controlFont(ControlPart part, const FontCascade& font, float zoomFactor) const
 {
     switch (part) {
-        case PushButtonPart: {
-            FontCascadeDescription fontDescription;
-            fontDescription.setIsAbsoluteSize(true);
+    case PushButtonPart: {
+        FontCascadeDescription fontDescription;
+        fontDescription.setIsAbsoluteSize(true);
 
-            NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];
-            fontDescription.setOneFamily(AtomicString("-apple-system", AtomicString::ConstructFromLiteral));
-            fontDescription.setComputedSize([nsFont pointSize] * zoomFactor);
-            fontDescription.setSpecifiedSize([nsFont pointSize] * zoomFactor);
-            return fontDescription;
-        }
-        default:
-            return Theme::controlFont(part, font, zoomFactor);
+        NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];
+        fontDescription.setOneFamily(AtomicString("-apple-system", AtomicString::ConstructFromLiteral));
+        fontDescription.setComputedSize([nsFont pointSize] * zoomFactor);
+        fontDescription.setSpecifiedSize([nsFont pointSize] * zoomFactor);
+        return fontDescription;
+    }
+    default:
+        return std::nullopt;
     }
 }
 
 LengthSize ThemeMac::controlSize(ControlPart part, const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor) const
 {
     switch (part) {
-        case CheckboxPart:
-            return checkboxSize(font, zoomedSize, zoomFactor);
-        case RadioPart:
-            return radioSize(font, zoomedSize, zoomFactor);
-        case PushButtonPart:
-            // Height is reset to auto so that specified heights can be ignored.
-            return sizeFromFont(font, { zoomedSize.width, { } }, zoomFactor, buttonSizes());
-        case InnerSpinButtonPart:
-            if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
-                return zoomedSize;
-            return sizeFromNSControlSize(stepperControlSizeForFont(font), zoomedSize, zoomFactor, stepperSizes());
-        default:
+    case CheckboxPart:
+        return checkboxSize(font, zoomedSize, zoomFactor);
+    case RadioPart:
+        return radioSize(font, zoomedSize, zoomFactor);
+    case PushButtonPart:
+        // Height is reset to auto so that specified heights can be ignored.
+        return sizeFromFont(font, { zoomedSize.width, { } }, zoomFactor, buttonSizes());
+    case InnerSpinButtonPart:
+        if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
             return zoomedSize;
+        return sizeFromNSControlSize(stepperControlSizeForFont(font), zoomedSize, zoomFactor, stepperSizes());
+    default:
+        return zoomedSize;
     }
 }
 
@@ -743,29 +733,29 @@ LengthSize ThemeMac::minimumControlSize(ControlPart part, const FontCascade& fon
 LengthBox ThemeMac::controlBorder(ControlPart part, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor) const
 {
     switch (part) {
-        case SquareButtonPart:
-        case DefaultButtonPart:
-        case ButtonPart:
-            return LengthBox(0, zoomedBox.right().value(), 0, zoomedBox.left().value());
-        default:
-            return Theme::controlBorder(part, font, zoomedBox, zoomFactor);
+    case SquareButtonPart:
+    case DefaultButtonPart:
+    case ButtonPart:
+        return LengthBox(0, zoomedBox.right().value(), 0, zoomedBox.left().value());
+    default:
+        return Theme::controlBorder(part, font, zoomedBox, zoomFactor);
     }
 }
 
 LengthBox ThemeMac::controlPadding(ControlPart part, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor) const
 {
     switch (part) {
-        case PushButtonPart: {
-            // Just use 8px.  AppKit wants to use 11px for mini buttons, but that padding is just too large
-            // for real-world Web sites (creating a huge necessary minimum width for buttons whose space is
-            // by definition constrained, since we select mini only for small cramped environments.
-            // This also guarantees the HTML <button> will match our rendering by default, since we're using a consistent
-            // padding.
-            const int padding = 8 * zoomFactor;
-            return LengthBox(2, padding, 3, padding);
-        }
-        default:
-            return Theme::controlPadding(part, font, zoomedBox, zoomFactor);
+    case PushButtonPart: {
+        // Just use 8px. AppKit wants to use 11px for mini buttons, but that padding is just too large
+        // for real-world Web sites (creating a huge necessary minimum width for buttons whose space is
+        // by definition constrained, since we select mini only for small cramped environments).
+        // This also guarantees the HTML <button> will match our rendering by default, since we're using
+        // a consistent padding.
+        int padding = 8 * zoomFactor;
+        return LengthBox(2, padding, 3, padding);
+    }
+    default:
+        return Theme::controlPadding(part, font, zoomedBox, zoomFactor);
     }
 }
 
@@ -776,7 +766,7 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, const ControlStates& st
     switch (part) {
         case CheckboxPart: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
-            // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
+            // shadow" and the check. We don't consider this part of the bounds of the control in WebKit.
             NSCell *cell = sharedCheckboxCell(states, zoomRectSize, zoomFactor);
             NSControlSize controlSize = [cell controlSize];
             IntSize zoomedSize = checkboxSizes()[controlSize];
@@ -787,7 +777,7 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, const ControlStates& st
         }
         case RadioPart: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the radio button
-            // shadow".  We don't consider this part of the bounds of the control in WebKit.
+            // shadow". We don't consider this part of the bounds of the control in WebKit.
             NSCell *cell = sharedRadioCell(states, zoomRectSize, zoomFactor);
             NSControlSize controlSize = [cell controlSize];
             IntSize zoomedSize = radioSizes()[controlSize];

@@ -63,8 +63,6 @@ using namespace HTMLNames;
 inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
     : HTMLPlugInImageElement(tagName, document, createdByParser)
     , FormAssociatedElement(form)
-    , m_docNamedItem(true)
-    , m_useFallbackContent(false)
 {
     ASSERT(hasTagName(objectTag));
 }
@@ -337,8 +335,8 @@ void HTMLObjectElement::removedFrom(ContainerNode& insertionPoint)
 
 void HTMLObjectElement::childrenChanged(const ChildChange& change)
 {
-    updateDocNamedItem();
-    if (isConnected() && !useFallbackContent()) {
+    updateExposedState();
+    if (isConnected() && !m_useFallbackContent) {
         setNeedsWidgetUpdate(true);
         invalidateStyleForSubtree();
     }
@@ -357,7 +355,7 @@ const AtomicString& HTMLObjectElement::imageSourceURL() const
 
 void HTMLObjectElement::renderFallbackContent()
 {
-    if (useFallbackContent())
+    if (m_useFallbackContent)
         return;
     
     if (!isConnected())
@@ -385,73 +383,81 @@ void HTMLObjectElement::renderFallbackContent()
     document().updateStyleIfNeeded();
 }
 
-// FIXME: This should be removed, all callers are almost certainly wrong.
-static bool isRecognizedTagName(const QualifiedName& tagName)
+static inline bool preventsParentObjectFromExposure(const Element& child)
 {
-    static const auto tagList = makeNeverDestroyed([] {
-        HashSet<AtomicStringImpl*> map;
+    static const auto mostKnownTags = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
         auto* tags = HTMLNames::getHTMLTags();
         for (size_t i = 0; i < HTMLNames::HTMLTagsCount; i++) {
-            if (*tags[i] == bgsoundTag
-                || *tags[i] == commandTag
-                || *tags[i] == detailsTag
-                || *tags[i] == figcaptionTag
-                || *tags[i] == figureTag
-                || *tags[i] == summaryTag
-                || *tags[i] == trackTag) {
-                // Even though we have atoms for these tags, we don't want to
-                // treat them as "recognized tags" for the purpose of parsing
-                // because that changes how we parse documents.
+            auto& tag = *tags[i];
+            // Only the param element was explicitly mentioned in the HTML specification rule
+            // we were trying to implement, but these are other known HTML elements that we
+            // have decided, over the years, to treat as children that do not prevent object
+            // names from being exposed.
+            if (tag == bgsoundTag
+                || tag == commandTag
+                || tag == detailsTag
+                || tag == figcaptionTag
+                || tag == figureTag
+                || tag == paramTag
+                || tag == summaryTag
+                || tag == trackTag)
                 continue;
-            }
-            map.add(tags[i]->localName().impl());
+            set.add(tag);
         }
-        return map;
+        return set;
     }());
-    return tagList.get().contains(tagName.localName().impl());
+    return mostKnownTags.get().contains(child.tagQName());
 }
 
-void HTMLObjectElement::updateDocNamedItem()
+static inline bool preventsParentObjectFromExposure(const Node& child)
 {
-    // The rule is "<object> elements with no children other than
-    // <param> elements, unknown elements and whitespace can be
-    // found by name in a document, and other <object> elements cannot."
-    bool wasNamedItem = m_docNamedItem;
-    bool isNamedItem = true;
-    Node* child = firstChild();
-    while (child && isNamedItem) {
-        if (is<Element>(*child)) {
-            Element& element = downcast<Element>(*child);
-            // FIXME: Use of isRecognizedTagName is almost certainly wrong here.
-            if (isRecognizedTagName(element.tagQName()) && !element.hasTagName(paramTag))
-                isNamedItem = false;
-        } else if (is<Text>(*child)) {
-            if (!downcast<Text>(*child).containsOnlyWhitespace())
-                isNamedItem = false;
-        } else
-            isNamedItem = false;
-        child = child->nextSibling();
-    }
-    if (isNamedItem != wasNamedItem && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
-        HTMLDocument& document = downcast<HTMLDocument>(this->document());
+    if (is<Element>(child))
+        return preventsParentObjectFromExposure(downcast<Element>(child));
+    if (is<Text>(child))
+        return !downcast<Text>(child).containsOnlyWhitespace();
+    return true;
+}
 
-        const AtomicString& id = getIdAttribute();
+static inline bool shouldBeExposed(const HTMLObjectElement& element)
+{
+    // FIXME: This should be redone to use the concept of an exposed object element,
+    // as documented in the HTML specification section describing DOM tree accessors.
+
+    // The rule we try to implement here, from older HTML specifications, is "object elements
+    // with no children other than param elements, unknown elements and whitespace can be found
+    // by name in a document, and other object elements cannot".
+
+    for (auto* child = element.firstChild(); child; child = child->nextSibling()) {
+        if (preventsParentObjectFromExposure(*child))
+            return false;
+    }
+    return true;
+}
+
+void HTMLObjectElement::updateExposedState()
+{
+    bool wasExposed = std::exchange(m_isExposed, shouldBeExposed(*this));
+
+    if (m_isExposed != wasExposed && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
+        auto& document = downcast<HTMLDocument>(this->document());
+
+        auto& id = getIdAttribute();
         if (!id.isEmpty()) {
-            if (isNamedItem)
+            if (m_isExposed)
                 document.addDocumentNamedItem(*id.impl(), *this);
             else
                 document.removeDocumentNamedItem(*id.impl(), *this);
         }
 
-        const AtomicString& name = getNameAttribute();
+        auto& name = getNameAttribute();
         if (!name.isEmpty() && id != name) {
-            if (isNamedItem)
+            if (m_isExposed)
                 document.addDocumentNamedItem(*name.impl(), *this);
             else
                 document.removeDocumentNamedItem(*name.impl(), *this);
         }
     }
-    m_docNamedItem = isNamedItem;
 }
 
 bool HTMLObjectElement::containsJavaApplet() const

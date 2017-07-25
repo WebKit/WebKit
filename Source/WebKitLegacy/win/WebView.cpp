@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2006-2017 Apple, Inc. All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -226,24 +226,24 @@ using namespace WebCore;
 using namespace std;
 using JSC::JSLock;
 
+static String webKitVersionString();
+
+static const CFStringRef WebKitLocalCacheDefaultsKey = CFSTR("WebKitLocalCache");
 static HMODULE accessibilityLib;
+
 static HashSet<WebView*>& pendingDeleteBackingStoreSet()
 {
     static NeverDestroyed<HashSet<WebView*>> pendingDeleteBackingStoreSet;
     return pendingDeleteBackingStoreSet;
 }
 
-static CFStringRef WebKitLocalCacheDefaultsKey = CFSTR("WebKitLocalCache");
-
-static String webKitVersionString();
-
 WebView* kit(Page* page)
 {
     if (!page)
-        return 0;
+        return nullptr;
     
     if (page->chrome().client().isEmptyChromeClient())
-        return 0;
+        return nullptr;
     
     return static_cast<WebChromeClient&>(page->chrome().client()).webView();
 }
@@ -1555,10 +1555,8 @@ bool WebView::canHandleRequest(const WebCore::ResourceRequest& request)
 
 String WebView::standardUserAgentWithApplicationName(const String& applicationName)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, osVersion, (windowsVersionForUAString()));
-    DEPRECATED_DEFINE_STATIC_LOCAL(String, webKitVersion, (webKitVersionString()));
-
-    return makeString("Mozilla/5.0 (", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)", applicationName.isEmpty() ? "" : " ", applicationName);
+    static const NeverDestroyed<String> prefix = makeString("Mozilla/5.0 (", windowsVersionForUAString(), ") AppleWebKit/", webKitVersionString(), " (KHTML, like Gecko)");
+    return makeString(prefix.get(), applicationName.isEmpty() ? "" : " ", applicationName);
 }
 
 Page* WebView::page()

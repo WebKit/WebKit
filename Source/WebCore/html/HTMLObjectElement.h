@@ -34,7 +34,7 @@ public:
     static Ref<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLObjectElement();
 
-    bool isDocNamedItem() const { return m_docNamedItem; }
+    bool isExposed() const { return m_isExposed; }
     bool containsJavaApplet() const;
 
     bool hasFallbackContent() const;
@@ -79,7 +79,7 @@ private:
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     void updateWidget(CreatePlugins) final;
-    void updateDocNamedItem();
+    void updateExposedState();
 
     // FIXME: This function should not deal with url or serviceType
     // so that we can better share code between <object> and <embed>.
@@ -103,8 +103,8 @@ private:
 
     bool canContainRangeEndPoint() const final;
 
-    bool m_docNamedItem : 1;
-    bool m_useFallbackContent : 1;
+    bool m_isExposed { true };
+    bool m_useFallbackContent { false };
 };
 
 } // namespace WebCore

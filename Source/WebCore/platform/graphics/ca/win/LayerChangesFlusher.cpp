@@ -30,6 +30,7 @@
 
 #include "AbstractCACFLayerTreeHost.h"
 #include "StructuredExceptionHandlerSuppressor.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -37,7 +38,7 @@ namespace WebCore {
 
 LayerChangesFlusher& LayerChangesFlusher::singleton()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(LayerChangesFlusher, flusher, ());
+    static NeverDestroyed<LayerChangesFlusher> flusher;
     return flusher;
 }
 

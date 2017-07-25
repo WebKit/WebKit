@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2007 Eric Seidel <eric@webkit.org>
  *           (C) 2012 Patrick Ganstere <paroga@paroga.com>
@@ -37,6 +37,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
@@ -47,14 +48,14 @@ static JSContextGroupRef javaScriptThreadsGroup;
 
 static Lock& javaScriptThreadsMutex()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, staticMutex, ());
+    static NeverDestroyed<Lock> staticMutex;
     return staticMutex;
 }
 
 typedef HashSet<RefPtr<Thread>> ThreadSet;
 static ThreadSet& javaScriptThreads()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(ThreadSet, staticJavaScriptThreads, ());
+    static NeverDestroyed<ThreadSet> staticJavaScriptThreads;
     ASSERT(!javaScriptThreadsMutex().tryLock());
     return staticJavaScriptThreads;
 }

@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerChangesFlusher_h
-#define LayerChangesFlusher_h
+#pragma once
 
 #include <windows.h>
+#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 
@@ -43,6 +43,7 @@ public:
     void cancelPendingFlush(AbstractCACFLayerTreeHost*);
 
 private:
+    friend NeverDestroyed<LayerChangesFlusher>;
     LayerChangesFlusher();
     ~LayerChangesFlusher();
 
@@ -57,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // LayerChangesFlusher_h

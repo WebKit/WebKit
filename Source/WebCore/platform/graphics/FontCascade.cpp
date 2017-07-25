@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,50 +34,41 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
-#if USE(CAIRO)
-#include <cairo.h>
-#endif
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
+#if USE(CAIRO)
+#include <cairo.h>
+#endif
+
 using namespace WTF;
 using namespace Unicode;
 
 namespace WebCore {
 
-static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription&, RefPtr<FontSelector>&&);
-
 static bool useBackslashAsYenSignForFamily(const AtomicString& family)
 {
     if (family.isEmpty())
         return false;
-    static HashSet<AtomicString>* set;
-    if (!set) {
-        set = new HashSet<AtomicString>;
-        set->add("MS PGothic");
-        UChar unicodeNameMSPGothic[] = {0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x30B4, 0x30B7, 0x30C3, 0x30AF};
-        set->add(AtomicString(unicodeNameMSPGothic, WTF_ARRAY_LENGTH(unicodeNameMSPGothic)));
-
-        set->add("MS PMincho");
-        UChar unicodeNameMSPMincho[] = {0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x660E, 0x671D};
-        set->add(AtomicString(unicodeNameMSPMincho, WTF_ARRAY_LENGTH(unicodeNameMSPMincho)));
-
-        set->add("MS Gothic");
-        UChar unicodeNameMSGothic[] = {0xFF2D, 0xFF33, 0x0020, 0x30B4, 0x30B7, 0x30C3, 0x30AF};
-        set->add(AtomicString(unicodeNameMSGothic, WTF_ARRAY_LENGTH(unicodeNameMSGothic)));
-
-        set->add("MS Mincho");
-        UChar unicodeNameMSMincho[] = {0xFF2D, 0xFF33, 0x0020, 0x660E, 0x671D};
-        set->add(AtomicString(unicodeNameMSMincho, WTF_ARRAY_LENGTH(unicodeNameMSMincho)));
-
-        set->add("Meiryo");
-        UChar unicodeNameMeiryo[] = {0x30E1, 0x30A4, 0x30EA, 0x30AA};
-        set->add(AtomicString(unicodeNameMeiryo, WTF_ARRAY_LENGTH(unicodeNameMeiryo)));
-    }
-    return set->contains(family);
+    static const auto set = makeNeverDestroyed([] {
+        HashSet<AtomicString> set;
+        auto add = [&set] (const char* name, std::initializer_list<UChar> unicodeName) {
+            unsigned nameLength = strlen(name);
+            set.add(AtomicString { name, nameLength, AtomicString::ConstructFromLiteral });
+            unsigned unicodeNameLength = unicodeName.size();
+            set.add(AtomicString { unicodeName.begin(), unicodeNameLength });
+        };
+        add("MS PGothic", { 0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x30B4, 0x30B7, 0x30C3, 0x30AF });
+        add("MS PMincho", { 0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x660E, 0x671D });
+        add("MS Gothic", { 0xFF2D, 0xFF33, 0x0020, 0x30B4, 0x30B7, 0x30C3, 0x30AF });
+        add("MS Mincho", { 0xFF2D, 0xFF33, 0x0020, 0x660E, 0x671D });
+        add("Meiryo", { 0x30E1, 0x30A4, 0x30EA, 0x30AA });
+        return set;
+    }());
+    return set.get().contains(family);
 }
 
 FontCascade::CodePath FontCascade::s_codePath = Auto;
@@ -88,11 +79,6 @@ FontCascade::CodePath FontCascade::s_codePath = Auto;
 
 FontCascade::FontCascade()
     : m_weakPtrFactory(this)
-    , m_letterSpacing(0)
-    , m_wordSpacing(0)
-    , m_useBackslashAsYenSymbol(false)
-    , m_enableKerning(false)
-    , m_requiresShaping(false)
 {
 }
 
@@ -111,9 +97,6 @@ FontCascade::FontCascade(const FontCascadeDescription& fd, float letterSpacing, 
 FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fontSmoothingMode)
     : m_fonts(FontCascadeFonts::createForPlatformFont(fontData))
     , m_weakPtrFactory(this)
-    , m_letterSpacing(0)
-    , m_wordSpacing(0)
-    , m_useBackslashAsYenSymbol(false)
     , m_enableKerning(computeEnableKerning())
     , m_requiresShaping(computeRequiresShaping())
 {

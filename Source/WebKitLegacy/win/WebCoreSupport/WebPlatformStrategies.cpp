@@ -33,6 +33,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PlatformCookieJar.h>
+
 #if USE(CFURLCONNECTION)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
@@ -41,7 +42,7 @@ using namespace WebCore;
 
 void WebPlatformStrategies::initialize()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(WebPlatformStrategies, platformStrategies, ());
+    static NeverDestroyed<WebPlatformStrategies> platformStrategies;
 }
 
 WebPlatformStrategies::WebPlatformStrategies()

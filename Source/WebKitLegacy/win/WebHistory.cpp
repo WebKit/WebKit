@@ -236,9 +236,9 @@ ULONG WebHistory::Release()
 
 // IWebHistory ----------------------------------------------------------------
 
-static inline COMPtr<WebHistory>& sharedHistoryStorage()
+static COMPtr<WebHistory>& sharedHistoryStorage()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(COMPtr<WebHistory>, sharedHistory, ());
+    static NeverDestroyed<COMPtr<WebHistory>> sharedHistory;
     return sharedHistory;
 }
 

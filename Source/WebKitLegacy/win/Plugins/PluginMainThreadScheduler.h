@@ -23,14 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PluginMainThreadScheduler_h
-#define PluginMainThreadScheduler_h
+#pragma once
 
 #include <wtf/Deque.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
-#include <wtf/Threading.h>
 
 typedef struct _NPP NPP_t;
 typedef NPP_t* NPP;
@@ -50,6 +49,7 @@ public:
     WEBCORE_EXPORT void unregisterPlugin(NPP);
 
 private:
+    friend NeverDestroyed<PluginMainThreadScheduler>;
     PluginMainThreadScheduler();
     void dispatchCalls();
 
@@ -82,5 +82,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // PluginMainThreadScheduler_h

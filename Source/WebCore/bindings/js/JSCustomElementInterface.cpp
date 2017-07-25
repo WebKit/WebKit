@@ -75,7 +75,7 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
 Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const QualifiedName& name)
 {
     if (auto element = tryToConstructCustomElement(document, name.localName())) {
-        if (name.prefix() != nullAtom())
+        if (!name.prefix().isNull())
             element->setPrefix(name.prefix());
         return element.releaseNonNull();
     }

@@ -1,3 +1,24 @@
+2017-07-23  Darin Adler  <darin@apple.com>
+
+        More NeverDestroyed and related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=174745
+
+        Reviewed by Alex Christensen.
+
+        * DOM/DOMUIKitExtensions.mm: Removed a lot of unneeded "using"
+        for names that aren't even used in this file.
+        (-[DOMNode boundingBoxes]): Use @[] syntax instead of
+        -[NSArray arrayWithObject:].
+        (-[DOMNode absoluteQuads]): Ditto.
+        (-[DOMNode findExplodedTextNodeAtPoint:]): Use auto* instead
+        of writing out various types.
+        (-[DOMHTMLAreaElement boundingBoxesWithOwner:]): Use @[]
+        syntax instea of -[NSArray arrayWithObject:].
+        (-[DOMHTMLAreaElement absoluteQuadsWithOwner:]): Ditto.
+        (-[DOMHTMLImageElement dataRepresentation:]): Use auto* instead
+        of writing out various types.
+        (-[DOMHTMLImageElement mimeType]): Ditto.
+
 2017-07-24  Chris Dumez  <cdumez@apple.com>
 
         ExceptionCode enumeration should use modern exception names
