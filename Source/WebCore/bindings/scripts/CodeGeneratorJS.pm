@@ -5385,6 +5385,7 @@ sub GenerateCallWith
         push(@callWithArgs, "document");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "IncumbentDocument")) {
+        AddToImplIncludes("DOMWindow.h");
         AddToImplIncludes("JSDOMWindowBase.h");
         push(@$outputArray, $indent . "auto* incumbentDocument = incumbentDOMWindow($stateReference).document();\n");
         push(@$outputArray, $indent . "if (!incumbentDocument)\n");
@@ -5392,18 +5393,22 @@ sub GenerateCallWith
         push(@callWithArgs, "*incumbentDocument");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ResponsibleDocument")) {
+        AddToImplIncludes("DOMWindow.h");
         AddToImplIncludes("JSDOMWindowBase.h");
         push(@callWithArgs, "responsibleDocument($stateReference)");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ActiveWindow")) {
+        AddToImplIncludes("DOMWindow.h");
         AddToImplIncludes("JSDOMWindowBase.h");
         push(@callWithArgs, "activeDOMWindow($stateReference)");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "FirstWindow")) {
+        AddToImplIncludes("DOMWindow.h");
         AddToImplIncludes("JSDOMWindowBase.h");
         push(@callWithArgs, "firstDOMWindow($stateReference)");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "IncumbentWindow")) {
+        AddToImplIncludes("DOMWindow.h");
         AddToImplIncludes("JSDOMWindowBase.h");
         push(@callWithArgs, "incumbentDOMWindow($stateReference)");
     }

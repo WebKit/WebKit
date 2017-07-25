@@ -31,6 +31,7 @@
 #include "CachedScript.h"
 #include "CommonVM.h"
 #include "DOMTimer.h"
+#include "DOMWindow.h"
 #include "DatabaseContext.h"
 #include "Document.h"
 #include "ErrorEvent.h"

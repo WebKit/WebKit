@@ -34,6 +34,7 @@
 
 #include "CommandLineAPIHost.h"
 #include "CommonVM.h"
+#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "GraphicsContext.h"
 #include "InspectorApplicationCacheAgent.h"

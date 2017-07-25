@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestObj.h"
 
+#include "DOMWindow.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"

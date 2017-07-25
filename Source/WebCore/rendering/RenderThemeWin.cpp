@@ -24,6 +24,7 @@
 
 #include "CSSValueKeywords.h"
 #include "Element.h"
+#include "FileSystem.h"
 #include "FontMetrics.h"
 #include "Frame.h"
 #include "FrameSelection.h"

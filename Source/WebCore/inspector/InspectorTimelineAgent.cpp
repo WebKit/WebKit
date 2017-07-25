@@ -33,6 +33,7 @@
 #include "config.h"
 #include "InspectorTimelineAgent.h"
 
+#include "DOMWindow.h"
 #include "Event.h"
 #include "Frame.h"
 #include "InspectorMemoryAgent.h"

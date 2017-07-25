@@ -147,6 +147,8 @@ list(APPEND WebCore_SOURCES
     platform/win/WheelEventWin.cpp
     platform/win/WidgetWin.cpp
     platform/win/WindowMessageBroadcaster.cpp
+
+    rendering/RenderThemeWin.cpp
 )
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS

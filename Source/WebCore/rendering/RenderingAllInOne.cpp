@@ -129,9 +129,6 @@
 #include "RenderTextFragment.cpp"
 #include "RenderTextLineBoxes.cpp"
 #include "RenderTheme.cpp"
-#if PLATFORM(WIN)
-#include "RenderThemeWin.cpp"
-#endif
 #include "RenderTreeAsText.cpp"
 #include "RenderVTTCue.cpp"
 #include "RenderVideo.cpp"

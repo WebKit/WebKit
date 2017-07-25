@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSDOMWrapper.h"
 
+#include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "JSDOMWindow.h"
 #include "WebCoreJSClientData.h"

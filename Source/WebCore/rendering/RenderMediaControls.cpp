@@ -29,6 +29,7 @@
 
 #include "RenderMediaControls.h"
 
+#include "DOMWindow.h"
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"

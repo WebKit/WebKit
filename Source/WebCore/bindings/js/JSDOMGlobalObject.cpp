@@ -27,6 +27,7 @@
 #include "config.h"
 #include "JSDOMGlobalObject.h"
 
+#include "DOMWindow.h"
 #include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindow.h"

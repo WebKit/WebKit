@@ -30,6 +30,7 @@
 #include "JSDOMWrapperCache.h"
 #include <heap/HeapInlines.h>
 #include <runtime/IdentifierInlines.h>
+#include <runtime/JSObjectInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
