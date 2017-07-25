@@ -124,4 +124,5 @@ WebInspector.settings = {
 
     // Experimental
     experimentalShowCanvasContextsInResources: new WebInspector.Setting("experimental-show-canvas-contexts-in-resources", false),
+    experimentalSpreadsheetStyleEditor: new WebInspector.Setting("experimental-spreadsheet-style-editor", false),
 };

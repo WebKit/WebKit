@@ -59,6 +59,19 @@
     font-size: 13px;
 }
 
+.content-view.settings > .settings-view > .container.hidden {
+    display: none;
+}
+
+.content-view.settings > .settings-view > .container-centered {
+    display: block;
+    text-align: center;
+}
+
+.content-view.settings > .settings-view > .container button {
+    font-size: inherit;
+}
+
 .content-view.settings > .settings-view > .container > .title {
     margin-top: 2px;
     width: 50%;

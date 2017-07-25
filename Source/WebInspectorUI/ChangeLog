@@ -1,3 +1,34 @@
+2017-07-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: Add a switch for Spreadsheet model style editor to experimental settings
+        https://bugs.webkit.org/show_bug.cgi?id=174741
+        <rdar://problem/33467954>
+
+        Reviewed by Brian Burg.
+
+        Show a blank panel when Spreadsheet Style Editor is enabled.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.computedStyleDetailsPanelShowProperty):
+        * UserInterface/Views/RulesStyleSpreadsheetDetailsPanel.js: Added.
+        (WebInspector.RulesStyleSpreadsheetDetailsPanel):
+        (WebInspector.RulesStyleSpreadsheetDetailsPanel.prototype.filterDidChange):
+        (WebInspector.RulesStyleSpreadsheetDetailsPanel.prototype.scrollToSectionAndHighlightProperty):
+
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.settings > .settings-view > .container.hidden):
+        (.content-view.settings > .settings-view > .container-centered):
+        (.content-view.settings > .settings-view > .container button):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView.prototype._createDebugSettingsView):
+        * UserInterface/Views/SettingsView.js:
+        (WebInspector.SettingsView.prototype.addCenteredContainer):
+        (WebInspector.SettingsView):
+        Show "Reload Web Inspector" button when Spreadsheet Style Editor setting is modified.
+
 2017-07-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add context menu item for taking a screenshot of a node

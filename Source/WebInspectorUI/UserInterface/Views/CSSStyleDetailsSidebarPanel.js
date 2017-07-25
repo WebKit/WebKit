@@ -35,13 +35,18 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         this._rulesStyleDetailsPanel = new WebInspector.RulesStyleDetailsPanel(this);
         this._visualStyleDetailsPanel = new WebInspector.VisualStyleDetailsPanel(this);
 
-        this._panels = [this._computedStyleDetailsPanel, this._rulesStyleDetailsPanel, this._visualStyleDetailsPanel];
-        this._panelNavigationInfo = [this._computedStyleDetailsPanel.navigationInfo, this._rulesStyleDetailsPanel.navigationInfo, this._visualStyleDetailsPanel.navigationInfo];
+        if (WebInspector.settings.experimentalSpreadsheetStyleEditor.value)
+            this._activeRulesStyleDetailsPanel = new WebInspector.RulesStyleSpreadsheetDetailsPanel(this);
+        else
+            this._activeRulesStyleDetailsPanel = this._rulesStyleDetailsPanel;
 
-        this._lastSelectedPanelSetting = new WebInspector.Setting("last-selected-style-details-panel", this._rulesStyleDetailsPanel.navigationInfo.identifier);
+        this._panels = [this._computedStyleDetailsPanel, this._activeRulesStyleDetailsPanel, this._visualStyleDetailsPanel];
+        this._panelNavigationInfo = [this._computedStyleDetailsPanel.navigationInfo, this._activeRulesStyleDetailsPanel.navigationInfo, this._visualStyleDetailsPanel.navigationInfo];
+
+        this._lastSelectedPanelSetting = new WebInspector.Setting("last-selected-style-details-panel", this._activeRulesStyleDetailsPanel.navigationInfo.identifier);
         this._classListContainerToggledSetting = new WebInspector.Setting("class-list-container-toggled", false);
 
-        this._initiallySelectedPanel = this._panelMatchingIdentifier(this._lastSelectedPanelSetting.value) || this._rulesStyleDetailsPanel;
+        this._initiallySelectedPanel = this._panelMatchingIdentifier(this._lastSelectedPanelSetting.value) || this._activeRulesStyleDetailsPanel;
 
         this._navigationItem = new WebInspector.ScopeRadioButtonNavigationItem(this.identifier, this.displayName, this._panelNavigationInfo, this._initiallySelectedPanel.navigationInfo);
         this._navigationItem.addEventListener(WebInspector.ScopeRadioButtonNavigationItem.Event.SelectedItemChanged, this._handleSelectedItemChanged, this);
@@ -76,8 +81,8 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
     computedStyleDetailsPanelShowProperty(property)
     {
-        this._rulesStyleDetailsPanel.scrollToSectionAndHighlightProperty(property);
-        this._switchPanels(this._rulesStyleDetailsPanel);
+        this._activeRulesStyleDetailsPanel.scrollToSectionAndHighlightProperty(property);
+        this._switchPanels(this._activeRulesStyleDetailsPanel);
 
         this._navigationItem.selectedItemIdentifier = this._lastSelectedPanelSetting.value;
     }

@@ -68,6 +68,16 @@ WebInspector.SettingsView = class SettingsView extends WebInspector.View
         let separatorElement = this.element.appendChild(document.createElement("div"));
         separatorElement.classList.add("separator");
     }
+
+    addCenteredContainer(...nodes)
+    {
+        let containerElement = document.createElement("div");
+        containerElement.append(...nodes);
+        containerElement.classList.add("container", "container-centered");
+        this.element.append(containerElement);
+
+        return containerElement;
+    }
 };
 
 WebInspector.SettingsView.EditorType = {
