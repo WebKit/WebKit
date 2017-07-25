@@ -1,5 +1,25 @@
 2017-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] ASSERTION FAILED: client in WebKit::IconDatabase::setClient
+        https://bugs.webkit.org/show_bug.cgi?id=174788
+
+        Reviewed by Carlos Garcia Campos.
+
+        IconDatabase ensures that setClient is never called with nullptr, but WebKitFaviconDatabase
+        does exactly that. First, ensure it's safe to unset the client. Next, we can either remove
+        the assertions from setClient or else automatically unset the client in IconDatabase::close.
+        I opted to do both.
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::close):
+        (WebKit::IconDatabase::setIconDataForIconURL):
+        (WebKit::IconDatabase::setIconURLForPageURL):
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        (_WebKitFaviconDatabasePrivate::~_WebKitFaviconDatabasePrivate): Deleted.
+        (webkitFaviconDatabaseDispose): Deleted.
+
+2017-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK][WPE] Remove useless conditional in IconDatabase::setIconDataForIconURL
         https://bugs.webkit.org/show_bug.cgi?id=174792
 

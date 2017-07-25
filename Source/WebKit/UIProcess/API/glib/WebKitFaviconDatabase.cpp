@@ -70,11 +70,6 @@ typedef Vector<GRefPtr<GTask> > PendingIconRequestVector;
 typedef HashMap<String, PendingIconRequestVector*> PendingIconRequestMap;
 
 struct _WebKitFaviconDatabasePrivate {
-    ~_WebKitFaviconDatabasePrivate()
-    {
-        iconDatabase->setClient(nullptr);
-    }
-
     std::unique_ptr<IconDatabase> iconDatabase;
     Vector<std::pair<String, Function<void(bool)>>> pendingLoadDecisions;
     PendingIconRequestMap pendingIconRequests;

@@ -191,10 +191,8 @@ IconDatabase::PageURLSnapshot IconDatabase::PageURLRecord::snapshot(bool forDele
 
 void IconDatabase::setClient(std::unique_ptr<IconDatabaseClient>&& client)
 {
-    // We don't allow a null client, because we never null check it anywhere in this code
-    // Also don't allow a client change after the thread has already began
+    // Don't allow a client change after the thread has already began
     // (setting the client should occur before the database is opened)
-    ASSERT(client);
     ASSERT(!m_syncThreadRunning);
     if (!client || m_syncThreadRunning)
         return;
@@ -257,6 +255,8 @@ void IconDatabase::close()
     // But if it is closed, notify the client now.
     if (!isOpen() && m_client)
         m_client->didClose();
+
+    m_client = nullptr;
 }
 
 void IconDatabase::removeAllIcons()
@@ -586,7 +586,8 @@ void IconDatabase::setIconDataForIconURL(RefPtr<SharedBuffer>&& data, const Stri
 
     for (auto& pageURL : pageURLs) {
         LOG(IconDatabase, "Dispatching notification that retaining pageURL %s has a new icon", urlForLogging(pageURL).ascii().data());
-        m_client->didChangeIconForPageURL(pageURL);
+        if (m_client)
+            m_client->didChangeIconForPageURL(pageURL);
     }
 }
 
@@ -653,7 +654,8 @@ void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const Str
         scheduleOrDeferSyncTimer();
 
         LOG(IconDatabase, "Dispatching notification that we changed an icon mapping for url %s", urlForLogging(pageURL).ascii().data());
-        m_client->didChangeIconForPageURL(pageURL);
+        if (m_client)
+            m_client->didChangeIconForPageURL(pageURL);
     }
 }
 
