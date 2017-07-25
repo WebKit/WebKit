@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from abc import ABCMeta, abstractmethod
+from webkitpy.benchmark_runner.utils import get_driver_binary_path
 
 
 class BrowserDriver(object):
@@ -32,3 +33,7 @@ class BrowserDriver(object):
     @abstractmethod
     def restore_env(self):
         pass
+
+    @property
+    def webdriver_binary_path(self):
+        return get_driver_binary_path(self.browser_name)

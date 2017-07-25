@@ -2,8 +2,6 @@
 
 import logging
 import os
-import subprocess
-import time
 
 from osx_browser_driver import OSXBrowserDriver
 from selenium import webdriver
@@ -34,7 +32,8 @@ class OSXChromeDriver(OSXBrowserDriver):
             app_path = os.path.join(browser_build_path, self.app_name)
             binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
             chrome_options.binary_location = binary_path
-        driver = webdriver.Chrome(chrome_options=chrome_options)
+        driver_executable = self.webdriver_binary_path
+        driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_executable)
         self._launch_webdriver(url=url, driver=driver)
         return driver
 
@@ -54,6 +53,7 @@ class OSXChromeCanaryDriver(OSXBrowserDriver):
         app_path = os.path.join(browser_build_path, self.app_name)
         binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
         chrome_options.binary_location = binary_path
-        driver = webdriver.Chrome(chrome_options=chrome_options)
+        driver_executable = self.webdriver_binary_path
+        driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_executable)
         self._launch_webdriver(url=url, driver=driver)
         return driver

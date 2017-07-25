@@ -275,7 +275,7 @@ class AutoInstaller(object):
             raise Exception(message)
 
         try:
-            self._extract_all(zip_file, scratch_dir)
+            self._extract_all(zip_file, target_path)
         finally:
             zip_file.close()
 
