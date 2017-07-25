@@ -3836,12 +3836,14 @@ void WebPage::didCancelForOpenPanel()
 }
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-void WebPage::extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle& handle)
+void WebPage::extendSandboxForFilesFromOpenPanel(SandboxExtension::HandleArray&& handles)
 {
-    bool result = SandboxExtension::consumePermanently(handle);
-    if (!result) {
-        // We have reports of cases where this fails for some unknown reason, <rdar://problem/10156710>.
-        WTFLogAlways("WebPage::extendSandboxForFileFromOpenPanel(): Could not consume a sandbox extension");
+    for (size_t i = 0; i < handles.size(); ++i) {
+        bool result = SandboxExtension::consumePermanently(handles[i]);
+        if (!result) {
+            // We have reports of cases where this fails for some unknown reason, <rdar://problem/10156710>.
+            WTFLogAlways("WebPage::extendSandboxForFileFromOpenPanel(): Could not consume a sandbox extension");
+        }
     }
 }
 #endif

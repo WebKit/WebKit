@@ -4689,12 +4689,11 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
         return;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    // FIXME: The sandbox extensions should be sent with the DidChooseFilesForOpenPanel message. This
-    // is gated on a way of passing SandboxExtension::Handles in a Vector.
     for (size_t i = 0; i < fileURLs.size(); ++i) {
-        SandboxExtension::Handle sandboxExtensionHandle;
-        SandboxExtension::createHandle(fileURLs[i], SandboxExtension::ReadOnly, sandboxExtensionHandle);
-        m_process->send(Messages::WebPage::ExtendSandboxForFileFromOpenPanel(sandboxExtensionHandle), m_pageID);
+        SandboxExtension::HandleArray sandboxExtensionHandles;
+        sandboxExtensionHandles.allocate(fileURLs.size());
+        SandboxExtension::createHandle(fileURLs[i], SandboxExtension::ReadOnly, sandboxExtensionHandles[i]);
+        m_process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(sandboxExtensionHandles), m_pageID);
     }
 #endif
 
@@ -4711,18 +4710,17 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
         return;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    // FIXME: The sandbox extensions should be sent with the DidChooseFilesForOpenPanel message. This
-    // is gated on a way of passing SandboxExtension::Handles in a Vector.
     for (size_t i = 0; i < fileURLs.size(); ++i) {
-        SandboxExtension::Handle sandboxExtensionHandle;
-        bool createdExtension = SandboxExtension::createHandle(fileURLs[i], SandboxExtension::ReadOnly, sandboxExtensionHandle);
+        SandboxExtension::HandleArray sandboxExtensionHandles;
+        sandboxExtensionHandles.allocate(fileURLs.size());
+        bool createdExtension = SandboxExtension::createHandle(fileURLs[i], SandboxExtension::ReadOnly, sandboxExtensionHandles[i]);
         if (!createdExtension) {
             // This can legitimately fail if a directory containing the file is deleted after the file was chosen.
             // We also have reports of cases where this likely fails for some unknown reason, <rdar://problem/10156710>.
             WTFLogAlways("WebPageProxy::didChooseFilesForOpenPanel: could not create a sandbox extension for '%s'\n", fileURLs[i].utf8().data());
             continue;
         }
-        m_process->send(Messages::WebPage::ExtendSandboxForFileFromOpenPanel(sandboxExtensionHandle), m_pageID);
+        m_process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(sandboxExtensionHandles), m_pageID);
     }
 #endif
 

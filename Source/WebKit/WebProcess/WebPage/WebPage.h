@@ -1178,7 +1178,7 @@ private:
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 #if ENABLE(SANDBOX_EXTENSIONS)
-    void extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle&);
+    void extendSandboxForFilesFromOpenPanel(SandboxExtension::HandleArray&&);
 #endif
 
     void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed);

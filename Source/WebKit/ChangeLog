@@ -1,3 +1,22 @@
+2017-07-25  Brian Burg  <bburg@apple.com>
+
+        Use SandboxExtension::HandleArray when sending extensions for file uploads to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=174828
+
+        Reviewed by Tim Horton.
+
+        Send all of the sandbox extension handles in a single message, rather than
+        one message per extension. Update message name and parameter types to match.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanel):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::extendSandboxForFilesFromOpenPanel):
+        (WebKit::WebPage::extendSandboxForFileFromOpenPanel): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-07-25  Alex Christensen  <achristensen@webkit.org>
 
         Fix API tests after r219871.
