@@ -1,5 +1,14 @@
 2017-07-25  Matt Lewis  <jlewis3@apple.com>
 
+        Marked imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html as failing.
+        <rdar://problem/33251388>
+
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra/TestExpectations:
+
+2017-07-25  Matt Lewis  <jlewis3@apple.com>
+
         Rebaselinged the test http/tests/quicklook/top-navigation-blocked.html
         https://bugs.webkit.org/show_bug.cgi?id=174755
 
