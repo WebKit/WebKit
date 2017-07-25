@@ -2,7 +2,8 @@
     "timeout": 1800,
     "count": 1,
     "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/MotionMark/@r210459",
-    "benchmark_patch": "data/patches/MotionMark.patch",
+    "webserver_benchmark_patch": "data/patches/webserver/MotionMark.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/MotionMark.patch",
     "entry_point": "index.html",
     "config": {
         "orientation": "landscape"

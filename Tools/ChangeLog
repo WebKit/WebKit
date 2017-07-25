@@ -1,5 +1,48 @@
 2017-07-24  Matthew Stewart  <matthew_r_stewart@apple.com>
 
+        Add BenchmarkRunner patches with WebDriver support for each testing plan
+        https://bugs.webkit.org/show_bug.cgi?id=174443
+
+        Reviewed by Dewei Zhu, Stephanie Lewis.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder.py:
+        (BenchmarkBuilder.__enter__):
+        * Scripts/webkitpy/benchmark_runner/data/patches/webdriver/ARES-6.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webdriver/ContentAnimation.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webdriver/Dromaeo.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webdriver/JSBench.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webdriver/JetStream.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webdriver/Kraken.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webdriver/MotionMark.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webdriver/Octane.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webdriver/Speedometer.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webdriver/SunSpider.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/ARES-6.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/Animometer.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/ContentAnimation.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/Dromaeo.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/JSBench.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/JetStream.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/Kraken.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/MotionMark.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/Octane.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/Speedometer.patch:
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/SunSpider.patch:
+        * Scripts/webkitpy/benchmark_runner/data/plans/ares6.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/content-animation.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/dromaeo-cssquery.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/dromaeo-dom.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/dromaeo-jslib.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/jsbench.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/kraken.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/motionmark.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/octane.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/speedometer.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/sunspider.plan:
+
+2017-07-24  Matthew Stewart  <matthew_r_stewart@apple.com>
+
         Add functions to autoinstaller needed for Benchmark Runner script
         https://bugs.webkit.org/show_bug.cgi?id=174331
 

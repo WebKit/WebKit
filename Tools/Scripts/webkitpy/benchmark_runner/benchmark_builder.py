@@ -36,8 +36,9 @@ class BenchmarkBuilder(object):
         try:
             if 'create_script' in self._plan:
                 self._run_create_script(self._plan['create_script'])
-            if 'benchmark_patch' in self._plan:
-                self._apply_patch(self._plan['benchmark_patch'])
+            patch_file_key = "{driver}_benchmark_patch".format(driver=self._driver)
+            if patch_file_key in self._plan:
+                self._apply_patch(self._plan[patch_file_key])
             return self._web_root
         except Exception:
             self._clean()
