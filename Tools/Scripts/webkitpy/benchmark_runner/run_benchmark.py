@@ -7,11 +7,16 @@ import platform
 import os
 import sys
 
-from benchmark_runner import BenchmarkRunner
 from browser_driver.browser_driver_factory import BrowserDriverFactory
+from webdriver_benchmark_runner import WebDriverBenchmarkRunner
+from webserver_benchmark_runner import WebServerBenchmarkRunner
 
 
 _log = logging.getLogger(__name__)
+benchmark_runner_subclasses = {
+    WebDriverBenchmarkRunner.name: WebDriverBenchmarkRunner,
+    WebServerBenchmarkRunner.name: WebServerBenchmarkRunner,
+}
 
 
 def default_platform():
@@ -36,6 +41,7 @@ def parse_args():
     parser.add_argument('--local-copy', dest='localCopy', help='Path to a local copy of the benchmark. e.g. PerformanceTests/SunSpider/')
     parser.add_argument('--count', dest='countOverride', type=int, help='Number of times to run the benchmark. e.g. 5')
     parser.add_argument('--device-id', dest='device_id', default=None)
+    parser.add_argument('--driver', dest='driver', default=WebServerBenchmarkRunner.name, choices=benchmark_runner_subclasses.keys())
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false')
     mutual_group = parser.add_mutually_exclusive_group(required=True)
     mutual_group.add_argument('--read-results-json', dest='json_file', help='Specify file you want to format')
@@ -88,7 +94,8 @@ def start(args):
         if failed:
             _log.error('The following benchmark plans have failed: %s' % failed)
         return len(failed)
-    runner = BenchmarkRunner(args.plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser, args.scale_unit, args.device_id)
+    benchmark_runner_class = benchmark_runner_subclasses[args.driver]
+    runner = benchmark_runner_class(args.plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser, args.scale_unit, args.device_id)
     runner.execute()
 
 

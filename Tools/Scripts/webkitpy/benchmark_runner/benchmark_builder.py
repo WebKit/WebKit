@@ -8,17 +8,18 @@ import shutil
 import subprocess
 import tarfile
 
-from zipfile import ZipFile
 from webkitpy.benchmark_runner.utils import get_path_from_project_root, force_remove
+from zipfile import ZipFile
 
 
 _log = logging.getLogger(__name__)
 
 
 class BenchmarkBuilder(object):
-    def __init__(self, name, plan):
+    def __init__(self, name, plan, driver):
         self._name = name
         self._plan = plan
+        self._driver = driver
 
     def __enter__(self):
         self._web_root = tempfile.mkdtemp()
