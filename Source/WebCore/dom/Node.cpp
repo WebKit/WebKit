@@ -408,28 +408,28 @@ Element* Node::nextElementSibling() const
 ExceptionOr<void> Node::insertBefore(Node& newChild, Node* refChild)
 {
     if (!is<ContainerNode>(*this))
-        return Exception { HIERARCHY_REQUEST_ERR };
+        return Exception { HierarchyRequestError };
     return downcast<ContainerNode>(*this).insertBefore(newChild, refChild);
 }
 
 ExceptionOr<void> Node::replaceChild(Node& newChild, Node& oldChild)
 {
     if (!is<ContainerNode>(*this))
-        return Exception { HIERARCHY_REQUEST_ERR };
+        return Exception { HierarchyRequestError };
     return downcast<ContainerNode>(*this).replaceChild(newChild, oldChild);
 }
 
 ExceptionOr<void> Node::removeChild(Node& oldChild)
 {
     if (!is<ContainerNode>(*this))
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
     return downcast<ContainerNode>(*this).removeChild(oldChild);
 }
 
 ExceptionOr<void> Node::appendChild(Node& newChild)
 {
     if (!is<ContainerNode>(*this))
-        return Exception { HIERARCHY_REQUEST_ERR };
+        return Exception { HierarchyRequestError };
     return downcast<ContainerNode>(*this).appendChild(newChild);
 }
 
@@ -621,7 +621,7 @@ void Node::normalize()
 ExceptionOr<Ref<Node>> Node::cloneNodeForBindings(bool deep)
 {
     if (UNLIKELY(isShadowRoot()))
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
     return cloneNode(deep);
 }
 
@@ -635,8 +635,8 @@ ExceptionOr<void> Node::setPrefix(const AtomicString&)
 {
     // The spec says that for nodes other than elements and attributes, prefix is always null.
     // It does not say what to do when the user tries to set the prefix on another type of
-    // node, however Mozilla throws a NAMESPACE_ERR exception.
-    return Exception { NAMESPACE_ERR };
+    // node, however Mozilla throws a NamespaceError exception.
+    return Exception { NamespaceError };
 }
 
 const AtomicString& Node::localName() const
@@ -923,15 +923,15 @@ ExceptionOr<void> Node::checkSetPrefix(const AtomicString& prefix)
     // Element::setPrefix() and Attr::setPrefix()
 
     if (!prefix.isEmpty() && !Document::isValidName(prefix))
-        return Exception { INVALID_CHARACTER_ERR };
+        return Exception { InvalidCharacterError };
 
-    // FIXME: Raise NAMESPACE_ERR if prefix is malformed per the Namespaces in XML specification.
+    // FIXME: Raise NamespaceError if prefix is malformed per the Namespaces in XML specification.
 
     auto& namespaceURI = this->namespaceURI();
     if (namespaceURI.isEmpty() && !prefix.isEmpty())
-        return Exception { NAMESPACE_ERR };
+        return Exception { NamespaceError };
     if (prefix == xmlAtom() && namespaceURI != XMLNames::xmlNamespaceURI)
-        return Exception { NAMESPACE_ERR };
+        return Exception { NamespaceError };
 
     // Attribute-specific checks are in Attr::setPrefix().
 

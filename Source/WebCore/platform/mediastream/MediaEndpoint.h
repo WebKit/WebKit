@@ -90,7 +90,7 @@ public:
 
     virtual void emulatePlatformEvent(const String&) { };
 
-    virtual void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&& promise) { promise.reject(NOT_SUPPORTED_ERR); }
+    virtual void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&& promise) { promise.reject(NotSupportedError); }
 };
 
 class MediaEndpointClient {

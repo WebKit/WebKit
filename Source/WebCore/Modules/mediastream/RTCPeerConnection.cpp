@@ -96,10 +96,10 @@ RTCPeerConnection::~RTCPeerConnection()
 ExceptionOr<void> RTCPeerConnection::initializeWith(Document& document, RTCConfiguration&& configuration)
 {
     if (!document.frame())
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     if (!m_backend)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     return initializeConfiguration(WTFMove(configuration));
 }
@@ -107,11 +107,11 @@ ExceptionOr<void> RTCPeerConnection::initializeWith(Document& document, RTCConfi
 ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const Vector<std::reference_wrapper<MediaStream>>& streams)
 {
     if (isClosed())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     for (RTCRtpSender& sender : m_transceiverSet->senders()) {
         if (sender.trackId() == track->id())
-            return Exception { INVALID_ACCESS_ERR };
+            return Exception { InvalidAccessError };
     }
 
     Vector<String> mediaStreamIds;
@@ -161,7 +161,7 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
 ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
 {
     if (isClosed())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     bool shouldAbort = true;
     for (RTCRtpSender& senderInSet : m_transceiverSet->senders()) {
@@ -220,7 +220,7 @@ void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDesc
 {
     RELEASE_LOG(WebRTC, "Creating offer\n");
     if (isClosed()) {
-        promise.reject(INVALID_STATE_ERR);
+        promise.reject(InvalidStateError);
         return;
     }
 
@@ -231,7 +231,7 @@ void RTCPeerConnection::queuedCreateAnswer(RTCAnswerOptions&& options, SessionDe
 {
     RELEASE_LOG(WebRTC, "Creating answer\n");
     if (isClosed()) {
-        promise.reject(INVALID_STATE_ERR);
+        promise.reject(InvalidStateError);
         return;
     }
 
@@ -242,7 +242,7 @@ void RTCPeerConnection::queuedSetLocalDescription(RTCSessionDescription& descrip
 {
     RELEASE_LOG(WebRTC, "Setting local description:\n%{public}s\n", description.sdp().utf8().data());
     if (isClosed()) {
-        promise.reject(INVALID_STATE_ERR);
+        promise.reject(InvalidStateError);
         return;
     }
 
@@ -269,7 +269,7 @@ void RTCPeerConnection::queuedSetRemoteDescription(RTCSessionDescription& descri
     RELEASE_LOG(WebRTC, "Setting remote description:\n%{public}s\n", description.sdp().utf8().data());
 
     if (isClosed()) {
-        promise.reject(INVALID_STATE_ERR);
+        promise.reject(InvalidStateError);
         return;
     }
     m_backend->setRemoteDescription(description, WTFMove(promise));
@@ -295,7 +295,7 @@ void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate* rtcCandidate, DOM
     RELEASE_LOG(WebRTC, "Received ice candidate:\n%{public}s\n", rtcCandidate ? rtcCandidate->candidate().utf8().data() : "null");
 
     if (isClosed()) {
-        promise.reject(INVALID_STATE_ERR);
+        promise.reject(InvalidStateError);
         return;
     }
 
@@ -331,7 +331,7 @@ ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& 
 {
     auto servers = iceServersFromConfiguration(configuration);
     if (!servers)
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=173938
     // Also decide whether to report an exception or output a message in the console log if setting configuration fails.
@@ -344,11 +344,11 @@ ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& 
 ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configuration)
 {
     if (isClosed())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     auto servers = iceServersFromConfiguration(configuration);
     if (!servers)
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=173938
     // Also decide whether to report an exception or output a message in the console log if setting configuration fails.
@@ -365,7 +365,7 @@ void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise
 ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(ScriptExecutionContext& context, String&& label, RTCDataChannelInit&& options)
 {
     if (isClosed())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (options.negotiated && !options.negotiated.value() && (label.length() > 65535 || options.protocol.length() > 65535))
         return Exception { TypeError };
@@ -378,7 +378,7 @@ ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(ScriptExec
     
     auto channelHandler = m_backend->createDataChannelHandler(label, options);
     if (!channelHandler)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     return RTCDataChannel::create(context, WTFMove(channelHandler), WTFMove(label), WTFMove(options));
 }

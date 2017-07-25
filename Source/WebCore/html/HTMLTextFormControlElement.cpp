@@ -222,7 +222,7 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
 ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode)
 {
     if (start > end)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     String text = innerTextValue();
     unsigned textLength = text.length();
@@ -777,7 +777,7 @@ String HTMLTextFormControlElement::directionForFormData() const
 ExceptionOr<void> HTMLTextFormControlElement::setMaxLength(int maxLength)
 {
     if (maxLength < 0 || (m_minLength >= 0 && maxLength < m_minLength))
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     setIntegralAttribute(maxlengthAttr, maxLength);
     return { };
 }
@@ -785,7 +785,7 @@ ExceptionOr<void> HTMLTextFormControlElement::setMaxLength(int maxLength)
 ExceptionOr<void> HTMLTextFormControlElement::setMinLength(int minLength)
 {
     if (minLength < 0 || (m_maxLength >= 0 && minLength > m_maxLength))
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     setIntegralAttribute(minlengthAttr, minLength);
     return { };
 }

@@ -44,7 +44,7 @@ inline DelayNode::DelayNode(AudioContext& context, float sampleRate, double maxD
 ExceptionOr<Ref<DelayNode>> DelayNode::create(AudioContext& context, float sampleRate, double maxDelayTime)
 {
     if (maxDelayTime <= 0 || maxDelayTime >= maximumAllowedDelayTime)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
     return adoptRef(*new DelayNode(context, sampleRate, maxDelayTime));
 }
 

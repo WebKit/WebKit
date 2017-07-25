@@ -49,7 +49,7 @@ Ref<XPathNSResolver> XPathEvaluator::createNSResolver(Node* nodeResolver)
 ExceptionOr<Ref<XPathResult>> XPathEvaluator::evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&& resolver, unsigned short type, XPathResult* result)
 {
     if (!isValidContextNode(contextNode))
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     auto createResult = createExpression(expression, WTFMove(resolver));
     if (createResult.hasException())

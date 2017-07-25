@@ -114,7 +114,7 @@ void MediaKeySession::generateRequest(const AtomicString& initDataType, const Bu
     // 1. If this object is closed, return a promise rejected with an InvalidStateError.
     // 2. If this object's uninitialized value is false, return a promise rejected with an InvalidStateError.
     if (m_closed || !m_uninitialized) {
-        promise->reject(INVALID_STATE_ERR);
+        promise->reject(InvalidStateError);
         return;
     }
 
@@ -132,7 +132,7 @@ void MediaKeySession::generateRequest(const AtomicString& initDataType, const Bu
     //    initDataType as an Initialization Data Type, return a promise rejected with a NotSupportedError. String
     //    comparison is case-sensitive.
     if (!m_implementation->supportsInitDataType(initDataType)) {
-        promise->reject(NOT_SUPPORTED_ERR);
+        promise->reject(NotSupportedError);
         return;
     }
 
@@ -153,7 +153,7 @@ void MediaKeySession::generateRequest(const AtomicString& initDataType, const Bu
 
         // 10.4. If sanitized init data is empty, reject promise with a NotSupportedError.
         if (sanitizedInitData->isEmpty()) {
-            promise->reject(NOT_SUPPORTED_ERR);
+            promise->reject(NotSupportedError);
             return;
         }
 
@@ -164,7 +164,7 @@ void MediaKeySession::generateRequest(const AtomicString& initDataType, const Bu
         // 10.9. Use the cdm to execute the following steps:
         // 10.9.1. If the sanitized init data is not supported by the cdm, reject promise with a NotSupportedError.
         if (!m_implementation->supportsInitData(initDataType, *sanitizedInitData)) {
-            promise->reject(NOT_SUPPORTED_ERR);
+            promise->reject(NotSupportedError);
             return;
         }
 
@@ -211,7 +211,7 @@ void MediaKeySession::generateRequest(const AtomicString& initDataType, const Bu
             m_taskQueue.enqueueTask([this, promise = WTFMove(promise), message = WTFMove(message), messageType, sessionId, succeeded] () mutable {
                 // 10.10.1. If any of the preceding steps failed, reject promise with a new DOMException whose name is the appropriate error name.
                 if (succeeded == CDMInstance::SuccessValue::Failed) {
-                    promise->reject(NOT_SUPPORTED_ERR);
+                    promise->reject(NotSupportedError);
                     return;
                 }
                 // 10.10.2. Set the sessionId attribute to session id.
@@ -240,7 +240,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
     // 1. If this object is closed, return a promise rejected with an InvalidStateError.
     // 2. If this object's uninitialized value is false, return a promise rejected with an InvalidStateError.
     if (m_closed || !m_uninitialized) {
-        promise->reject(INVALID_STATE_ERR);
+        promise->reject(InvalidStateError);
         return;
     }
 
@@ -301,7 +301,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
                     promise->reject(TypeError);
                     return;
                 case CDMInstance::SessionLoadFailure::QuotaExceeded:
-                    promise->reject(QUOTA_EXCEEDED_ERR);
+                    promise->reject(QuotaExceededError);
                     return;
                 case CDMInstance::SessionLoadFailure::None:
                 case CDMInstance::SessionLoadFailure::Other:
@@ -314,7 +314,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
             m_taskQueue.enqueueTask([this, knownKeys = WTFMove(knownKeys), expiration = WTFMove(expiration), message = WTFMove(message), sanitizedSessionId, succeeded, promise = WTFMove(promise)] () mutable {
                 // 8.9.1. If any of the preceding steps failed, reject promise with a the appropriate error name.
                 if (succeeded == CDMInstance::SuccessValue::Failed) {
-                    promise->reject(NOT_SUPPORTED_ERR);
+                    promise->reject(NotSupportedError);
                     return;
                 }
 
@@ -353,7 +353,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
     // 1. If this object is closed, return a promise rejected with an InvalidStateError.
     // 2. If this object's callable value is false, return a promise rejected with an InvalidStateError.
     if (m_closed || !m_callable) {
-        promise->reject(INVALID_STATE_ERR);
+        promise->reject(InvalidStateError);
         return;
     }
 
@@ -484,7 +484,7 @@ void MediaKeySession::close(Ref<DeferredPromise>&& promise)
 
     // 3. If session's callable value is false, return a promise rejected with an InvalidStateError.
     if (!m_callable) {
-        promise->reject(INVALID_STATE_ERR);
+        promise->reject(InvalidStateError);
         return;
     }
 
@@ -519,7 +519,7 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
     // 1. If this object is closed, return a promise rejected with an InvalidStateError.
     // 2. If this object's callable value is false, return a promise rejected with an InvalidStateError.
     if (m_closed || !m_callable) {
-        promise->reject(INVALID_STATE_ERR);
+        promise->reject(InvalidStateError);
         return;
     }
 
@@ -559,7 +559,7 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
 
                 // 4.5.3. If any of the preceding steps failed, reject promise with a new DOMException whose name is the appropriate error name.
                 if (succeeded == CDMInstance::SuccessValue::Failed) {
-                    promise->reject(NOT_SUPPORTED_ERR);
+                    promise->reject(NotSupportedError);
                     return;
                 }
 

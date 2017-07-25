@@ -56,10 +56,10 @@ RefPtr<Attr> NamedNodeMap::getNamedItemNS(const AtomicString& namespaceURI, cons
 ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItem(const AtomicString& name)
 {
     if (!m_element.hasAttributes())
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
     auto index = m_element.findAttributeIndexByName(name, shouldIgnoreAttributeCase(m_element));
     if (index == ElementData::attributeNotFound)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
     return m_element.detachAttribute(index);
 }
 
@@ -81,10 +81,10 @@ Vector<String> NamedNodeMap::supportedPropertyNames() const
 ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
     if (!m_element.hasAttributes())
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
     auto index = m_element.findAttributeIndexByName(QualifiedName { nullAtom(), localName, namespaceURI });
     if (index == ElementData::attributeNotFound)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
     return m_element.detachAttribute(index);
 }
 

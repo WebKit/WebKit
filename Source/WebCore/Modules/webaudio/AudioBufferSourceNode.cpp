@@ -455,16 +455,16 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(BufferPlaybackMode playbac
     context().nodeWillBeginPlayback();
 
     if (m_playbackState != UNSCHEDULED_STATE)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (!std::isfinite(when) || (when < 0))
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (!std::isfinite(grainOffset) || (grainOffset < 0))
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (!std::isfinite(grainDuration) || (grainDuration < 0))
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (!buffer())
         return { };

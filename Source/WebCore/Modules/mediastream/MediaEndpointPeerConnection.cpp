@@ -231,7 +231,7 @@ void MediaEndpointPeerConnection::createAnswerTask(const RTCAnswerOptions&)
     ASSERT(!m_dtlsFingerprint.isEmpty());
 
     if (!internalRemoteDescription()) {
-        createAnswerFailed(Exception { INVALID_STATE_ERR, "No remote description set" });
+        createAnswerFailed(Exception { InvalidStateError, "No remote description set" });
         return;
     }
 
@@ -618,7 +618,7 @@ void MediaEndpointPeerConnection::doAddIceCandidate(RTCIceCandidate& rtcCandidat
 void MediaEndpointPeerConnection::addIceCandidateTask(RTCIceCandidate& rtcCandidate)
 {
     if (!internalRemoteDescription()) {
-        addIceCandidateFailed(Exception { INVALID_STATE_ERR, "No remote description set" });
+        addIceCandidateFailed(Exception { InvalidStateError, "No remote description set" });
         return;
     }
 

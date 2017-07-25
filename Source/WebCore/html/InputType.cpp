@@ -225,7 +225,7 @@ double InputType::valueAsDate() const
 
 ExceptionOr<void> InputType::setValueAsDate(double) const
 {
-    return Exception { INVALID_STATE_ERR };
+    return Exception { InvalidStateError };
 }
 
 double InputType::valueAsDouble() const
@@ -240,7 +240,7 @@ ExceptionOr<void> InputType::setValueAsDouble(double doubleValue, TextFieldEvent
 
 ExceptionOr<void> InputType::setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const
 {
-    return Exception { INVALID_STATE_ERR };
+    return Exception { InvalidStateError };
 }
 
 bool InputType::supportsValidation() const
@@ -983,18 +983,18 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
 {
     StepRange stepRange(createStepRange(anyStepHandling));
     if (!stepRange.hasStep())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     const Decimal current = parseToNumberOrNaN(element().value());
     if (!current.isFinite())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
     Decimal newValue = current + stepRange.step() * count;
     if (!newValue.isFinite())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     const Decimal acceptableErrorValue = stepRange.acceptableError();
     if (newValue - stepRange.minimum() < -acceptableErrorValue)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
     if (newValue < stepRange.minimum())
         newValue = stepRange.minimum();
 
@@ -1002,7 +1002,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
         newValue = stepRange.alignValueForStep(current, newValue);
 
     if (newValue - stepRange.maximum() > acceptableErrorValue)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
     if (newValue > stepRange.maximum())
         newValue = stepRange.maximum();
 
@@ -1032,7 +1032,7 @@ StepRange InputType::createStepRange(AnyStepHandling) const
 ExceptionOr<void> InputType::stepUp(int n)
 {
     if (!isSteppable())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
     return applyStep(n, RejectAny, DispatchNoEvent);
 }
 

@@ -90,7 +90,7 @@ static void clearPerformanceEntries(PerformanceEntryMap& map, const String& name
 ExceptionOr<Ref<PerformanceMark>> UserTiming::mark(const String& markName)
 {
     if (is<Document>(m_performance.scriptExecutionContext()) && restrictedMarkFunction(markName))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     auto& performanceEntryList = m_marksMap.ensure(markName, [] { return Vector<RefPtr<PerformanceEntry>>(); }).iterator->value;
     auto entry = PerformanceMark::create(markName, m_performance.now());
@@ -111,16 +111,16 @@ ExceptionOr<double> UserTiming::findExistingMarkStartTime(const String& markName
 
     auto* timing = m_performance.timing();
     if (!timing)
-        return Exception { SYNTAX_ERR, makeString("No mark named '", markName, "' exists") };
+        return Exception { SyntaxError, makeString("No mark named '", markName, "' exists") };
 
     if (auto function = restrictedMarkFunction(markName)) {
         double value = ((*timing).*(function))();
         if (!value)
-            return Exception { INVALID_ACCESS_ERR };
+            return Exception { InvalidAccessError };
         return value - timing->navigationStart();
     }
 
-    return Exception { SYNTAX_ERR };
+    return Exception { SyntaxError };
 }
 
 ExceptionOr<Ref<PerformanceMeasure>> UserTiming::measure(const String& measureName, const String& startMark, const String& endMark)

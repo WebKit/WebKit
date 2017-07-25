@@ -78,29 +78,29 @@ static ExceptionCode errorCodeToExceptionCode(FileError::ErrorCode errorCode)
     case FileError::OK:
         return NoException;
     case FileError::NOT_FOUND_ERR:
-        return NOT_FOUND_ERR;
+        return NotFoundError;
     case FileError::SECURITY_ERR:
-        return SECURITY_ERR;
+        return SecurityError;
     case FileError::ABORT_ERR:
-        return ABORT_ERR;
+        return AbortError;
     case FileError::NOT_READABLE_ERR:
         return NotReadableError;
     case FileError::ENCODING_ERR:
         return EncodingError;
     case FileError::NO_MODIFICATION_ALLOWED_ERR:
-        return NO_MODIFICATION_ALLOWED_ERR;
+        return NoModificationAllowedError;
     case FileError::INVALID_STATE_ERR:
-        return INVALID_STATE_ERR;
+        return InvalidStateError;
     case FileError::SYNTAX_ERR:
-        return SYNTAX_ERR;
+        return SyntaxError;
     case FileError::INVALID_MODIFICATION_ERR:
-        return INVALID_MODIFICATION_ERR;
+        return InvalidModificationError;
     case FileError::QUOTA_EXCEEDED_ERR:
-        return QUOTA_EXCEEDED_ERR;
+        return QuotaExceededError;
     case FileError::TYPE_MISMATCH_ERR:
-        return TYPE_MISMATCH_ERR;
+        return TypeMismatchError;
     case FileError::PATH_EXISTS_ERR:
-        return NO_MODIFICATION_ALLOWED_ERR;
+        return NoModificationAllowedError;
     }
     return UnknownError;
 }

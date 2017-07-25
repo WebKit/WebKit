@@ -41,13 +41,13 @@ ExceptionOr<RefPtr<Database>> DOMWindowWebDatabase::openDatabase(DOMWindow& wind
         return RefPtr<Database> { nullptr };
     auto& manager = DatabaseManager::singleton();
     if (!manager.isAvailable())
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
     auto* document = window.document();
     if (!document)
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
     auto& securityOrigin = document->securityOrigin();
     if (!securityOrigin.canAccessDatabase(document->topOrigin()))
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
     auto result = manager.openDatabase(*window.document(), name, version, displayName, estimatedSize, WTFMove(creationCallback));
     if (result.hasException()) {
         // FIXME: To preserve our past behavior, this discards the error string in the exception.

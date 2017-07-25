@@ -67,7 +67,7 @@ void CharacterData::setData(const String& data)
 ExceptionOr<String> CharacterData::substringData(unsigned offset, unsigned count)
 {
     if (offset > length())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     return m_data.substring(offset, count);
 }
@@ -121,7 +121,7 @@ void CharacterData::appendData(const String& data)
 ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)
 {
     if (offset > length())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     String newStr = m_data;
     newStr.insert(data, offset);
@@ -136,7 +136,7 @@ ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)
 ExceptionOr<void> CharacterData::deleteData(unsigned offset, unsigned count)
 {
     if (offset > length())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     count = std::min(count, length() - offset);
 
@@ -153,7 +153,7 @@ ExceptionOr<void> CharacterData::deleteData(unsigned offset, unsigned count)
 ExceptionOr<void> CharacterData::replaceData(unsigned offset, unsigned count, const String& data)
 {
     if (offset > length())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     count = std::min(count, length() - offset);
 

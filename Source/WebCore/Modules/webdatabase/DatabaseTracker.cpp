@@ -144,10 +144,10 @@ ExceptionOr<void> DatabaseTracker::hasAdequateQuotaForOrigin(const SecurityOrigi
     auto requirement = usage + std::max<unsigned long long>(1, estimatedSize);
     if (requirement < usage) {
         // The estimated size is so big it causes an overflow; don't allow creation.
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
     }
     if (requirement > quotaNoLock(origin))
-        return Exception { QUOTA_EXCEEDED_ERR };
+        return Exception { QuotaExceededError };
     return { };
 }
 
@@ -159,7 +159,7 @@ ExceptionOr<void> DatabaseTracker::canEstablishDatabase(DatabaseContext& context
     auto origin = context.securityOrigin();
 
     if (isDeletingDatabaseOrOriginFor(origin, name))
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
 
     recordCreatingDatabase(origin, name);
 
@@ -185,7 +185,7 @@ ExceptionOr<void> DatabaseTracker::canEstablishDatabase(DatabaseContext& context
     // again. Hence, we don't call doneCreatingDatabase() yet in that case.
 
     auto exception = result.releaseException();
-    if (exception.code() != QUOTA_EXCEEDED_ERR)
+    if (exception.code() != QuotaExceededError)
         doneCreatingDatabase(origin, name);
 
     return WTFMove(exception);
@@ -216,7 +216,7 @@ ExceptionOr<void> DatabaseTracker::retryCanEstablishDatabase(DatabaseContext& co
         return { };
 
     auto exception = result.releaseException();
-    ASSERT(exception.code() == QUOTA_EXCEEDED_ERR);
+    ASSERT(exception.code() == QuotaExceededError);
     doneCreatingDatabase(origin, name);
 
     return WTFMove(exception);

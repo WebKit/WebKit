@@ -402,7 +402,7 @@ ExceptionOr<Ref<AudioBuffer>> AudioContext::createBuffer(unsigned numberOfChanne
 {
     auto audioBuffer = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
     if (!audioBuffer)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
     return audioBuffer.releaseNonNull();
 }
 
@@ -410,7 +410,7 @@ ExceptionOr<Ref<AudioBuffer>> AudioContext::createBuffer(ArrayBuffer& arrayBuffe
 {
     auto audioBuffer = AudioBuffer::createFromAudioFileData(arrayBuffer.data(), arrayBuffer.byteLength(), mixToMono, sampleRate());
     if (!audioBuffer)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     return audioBuffer.releaseNonNull();
 }
 
@@ -440,7 +440,7 @@ ExceptionOr<Ref<MediaElementAudioSourceNode>> AudioContext::createMediaElementSo
     lazyInitialize();
     
     if (mediaElement.audioSourceNode())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     auto node = MediaElementAudioSourceNode::create(*this, mediaElement);
 
@@ -460,7 +460,7 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> AudioContext::createMediaStreamSour
 
     auto audioTracks = mediaStream.getAudioTracks();
     if (audioTracks.isEmpty())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     MediaStreamTrack* providerTrack = nullptr;
     for (auto& track : audioTracks) {
@@ -470,7 +470,7 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> AudioContext::createMediaStreamSour
         }
     }
     if (!providerTrack)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     lazyInitialize();
 
@@ -520,7 +520,7 @@ ExceptionOr<Ref<ScriptProcessorNode>> AudioContext::createScriptProcessor(size_t
     case 16384:
         break;
     default:
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     }
 
     // An IndexSizeError exception must be thrown if bufferSize or numberOfInputChannels or numberOfOutputChannels
@@ -528,19 +528,19 @@ ExceptionOr<Ref<ScriptProcessorNode>> AudioContext::createScriptProcessor(size_t
     // In this case an IndexSizeError must be thrown.
 
     if (!numberOfInputChannels && !numberOfOutputChannels)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     // This parameter [numberOfInputChannels] determines the number of channels for this node's input. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
     if (numberOfInputChannels > maxNumberOfChannels())
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     // This parameter [numberOfOutputChannels] determines the number of channels for this node's output. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
     if (numberOfOutputChannels > maxNumberOfChannels())
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     auto node = ScriptProcessorNode::create(*this, m_destinationNode->sampleRate(), bufferSize, numberOfInputChannels, numberOfOutputChannels);
 
@@ -610,7 +610,7 @@ ExceptionOr<Ref<ChannelSplitterNode>> AudioContext::createChannelSplitter(size_t
     lazyInitialize();
     auto node = ChannelSplitterNode::create(*this, m_destinationNode->sampleRate(), numberOfOutputs);
     if (!node)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     return node.releaseNonNull();
 }
 
@@ -620,7 +620,7 @@ ExceptionOr<Ref<ChannelMergerNode>> AudioContext::createChannelMerger(size_t num
     lazyInitialize();
     auto node = ChannelMergerNode::create(*this, m_destinationNode->sampleRate(), numberOfInputs);
     if (!node)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     return node.releaseNonNull();
 }
 
@@ -642,7 +642,7 @@ ExceptionOr<Ref<PeriodicWave>> AudioContext::createPeriodicWave(Float32Array& re
 {
     ASSERT(isMainThread());
     if (real.length() != imaginary.length() || (real.length() > MaxPeriodicWaveLength) || !real.length())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     lazyInitialize();
     return PeriodicWave::create(sampleRate(), real, imaginary);
 }
@@ -1099,7 +1099,7 @@ void AudioContext::decrementActiveSourceCount()
 void AudioContext::suspend(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext()) {
-        promise.reject(INVALID_STATE_ERR);
+        promise.reject(InvalidStateError);
         return;
     }
 
@@ -1128,7 +1128,7 @@ void AudioContext::suspend(DOMPromiseDeferred<void>&& promise)
 void AudioContext::resume(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext()) {
-        promise.reject(INVALID_STATE_ERR);
+        promise.reject(InvalidStateError);
         return;
     }
 
@@ -1157,7 +1157,7 @@ void AudioContext::resume(DOMPromiseDeferred<void>&& promise)
 void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext()) {
-        promise.reject(INVALID_STATE_ERR);
+        promise.reject(InvalidStateError);
         return;
     }
 

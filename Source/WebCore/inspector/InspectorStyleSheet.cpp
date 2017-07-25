@@ -572,7 +572,7 @@ ExceptionOr<String> InspectorStyle::text() const
     // Precondition: m_parentStyleSheet->ensureParsedDataReady() has been called successfully.
     auto sourceData = extractSourceData();
     if (!sourceData)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     auto result = m_parentStyleSheet->text();
     if (result.hasException())
@@ -858,7 +858,7 @@ void InspectorStyleSheet::reparseStyleSheet(const String& text)
 ExceptionOr<void> InspectorStyleSheet::setText(const String& text)
 {
     if (!m_pageStyleSheet)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     m_parsedStyleSheet->setText(text);
     m_flatRules.clear();
@@ -870,7 +870,7 @@ ExceptionOr<String> InspectorStyleSheet::ruleSelector(const InspectorCSSId& id)
 {
     CSSStyleRule* rule = ruleForId(id);
     if (!rule)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
     return rule->selectorText();
 }
 
@@ -885,19 +885,19 @@ static bool isValidSelectorListString(const String& selector, Document* document
 ExceptionOr<void> InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String& selector)
 {
     if (!m_pageStyleSheet)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     // If the selector is invalid, do not proceed any further.
     if (!isValidSelectorListString(selector, m_pageStyleSheet->ownerDocument()))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     CSSStyleRule* rule = ruleForId(id);
     if (!rule)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     CSSStyleSheet* styleSheet = rule->parentStyleSheet();
     if (!styleSheet || !ensureParsedDataReady())
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     // If the stylesheet is already mutated at this point, that must mean that our data has been modified
     // elsewhere. This should never happen as ensureParsedDataReady would return false in that case.
@@ -906,7 +906,7 @@ ExceptionOr<void> InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id,
     rule->setSelectorText(selector);
     auto sourceData = ruleSourceDataFor(&rule->style());
     if (!sourceData)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     String sheetText = m_parsedStyleSheet->text();
     sheetText.replace(sourceData->ruleHeaderRange.start, sourceData->ruleHeaderRange.length(), selector);
@@ -919,10 +919,10 @@ ExceptionOr<void> InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id,
 ExceptionOr<CSSStyleRule*> InspectorStyleSheet::addRule(const String& selector)
 {
     if (!m_pageStyleSheet)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     if (!isValidSelectorListString(selector, m_pageStyleSheet->ownerDocument()))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     auto text = this->text();
     if (text.hasException())
@@ -960,7 +960,7 @@ ExceptionOr<CSSStyleRule*> InspectorStyleSheet::addRule(const String& selector)
         // What we just added has to be a CSSStyleRule - we cannot handle other types of rules yet.
         // If it is not a style rule, pretend we never touched the stylesheet.
         m_pageStyleSheet->deleteRule(lastRuleIndex);
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     }
 
     return styleRule;
@@ -969,18 +969,18 @@ ExceptionOr<CSSStyleRule*> InspectorStyleSheet::addRule(const String& selector)
 ExceptionOr<void> InspectorStyleSheet::deleteRule(const InspectorCSSId& id)
 {
     if (!m_pageStyleSheet)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     RefPtr<CSSStyleRule> rule = ruleForId(id);
     if (!rule)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
     CSSStyleSheet* styleSheet = rule->parentStyleSheet();
     if (!styleSheet || !ensureParsedDataReady())
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     auto sourceData = ruleSourceDataFor(&rule->style());
     if (!sourceData)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     auto deleteRuleResult = styleSheet->deleteRule(id.ordinal());
     if (deleteRuleResult.hasException())
@@ -1218,7 +1218,7 @@ ExceptionOr<void> InspectorStyleSheet::setStyleText(const InspectorCSSId& id, co
 {
     auto inspectorStyle = inspectorStyleForId(id);
     if (!inspectorStyle)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     if (oldText) {
         auto result = inspectorStyle->text();
@@ -1236,7 +1236,7 @@ ExceptionOr<void> InspectorStyleSheet::setStyleText(const InspectorCSSId& id, co
 ExceptionOr<String> InspectorStyleSheet::text() const
 {
     if (!ensureText())
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
     return String { m_parsedStyleSheet->text() };
 }
 
@@ -1357,18 +1357,18 @@ void InspectorStyleSheet::ensureFlatRules() const
 ExceptionOr<void> InspectorStyleSheet::setStyleText(CSSStyleDeclaration* style, const String& text)
 {
     if (!m_pageStyleSheet)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
     if (!ensureParsedDataReady())
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     String patchedStyleSheetText;
     bool success = styleSheetTextWithChangedStyle(style, text, &patchedStyleSheetText);
     if (!success)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     InspectorCSSId id = ruleOrStyleId(style);
     if (id.isEmpty())
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     auto setCssTextResult = style->setCssText(text);
     if (setCssTextResult.hasException())

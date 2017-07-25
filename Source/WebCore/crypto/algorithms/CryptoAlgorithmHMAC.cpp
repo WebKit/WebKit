@@ -84,7 +84,7 @@ void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameter
     const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(parameters);
 
     if (usagesAreInvalidForCryptoAlgorithmHMAC(usages)) {
-        exceptionCallback(SYNTAX_ERR);
+        exceptionCallback(SyntaxError);
         return;
     }
 
@@ -108,7 +108,7 @@ void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
     const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(*parameters);
 
     if (usagesAreInvalidForCryptoAlgorithmHMAC(usages)) {
-        exceptionCallback(SYNTAX_ERR);
+        exceptionCallback(SyntaxError);
         return;
     }
 
@@ -139,7 +139,7 @@ void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
         break;
     }
     default:
-        exceptionCallback(NOT_SUPPORTED_ERR);
+        exceptionCallback(NotSupportedError);
         return;
     }
     if (!result) {
@@ -189,7 +189,7 @@ void CryptoAlgorithmHMAC::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKe
         break;
     }
     default:
-        exceptionCallback(NOT_SUPPORTED_ERR);
+        exceptionCallback(NotSupportedError);
         return;
     }
 
@@ -205,7 +205,7 @@ ExceptionOr<void> CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParametersDepre
 {
     auto& hmacParameters = downcast<CryptoAlgorithmHmacParamsDeprecated>(parameters);
     if (!keyAlgorithmMatches(hmacParameters, key))
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
     return platformSign(hmacParameters, downcast<CryptoKeyHMAC>(key), data, WTFMove(callback), WTFMove(failureCallback));
 }
 
@@ -213,7 +213,7 @@ ExceptionOr<void> CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParametersDep
 {
     auto& hmacParameters = downcast<CryptoAlgorithmHmacParamsDeprecated>(parameters);
     if (!keyAlgorithmMatches(hmacParameters, key))
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
     return platformVerify(hmacParameters, downcast<CryptoKeyHMAC>(key), expectedSignature, data, WTFMove(callback), WTFMove(failureCallback));
 }
 
@@ -232,7 +232,7 @@ ExceptionOr<void> CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParamete
 ExceptionOr<void> CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsageBitmap usage, KeyCallback&& callback, VoidCallback&&)
 {
     if (!is<CryptoKeyDataOctetSequence>(keyData))
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
     callback(CryptoKeyHMAC::create(downcast<CryptoKeyDataOctetSequence>(keyData).octetSequence(), downcast<CryptoAlgorithmHmacParamsDeprecated>(parameters).hash, extractable, usage));
     return { };
 }

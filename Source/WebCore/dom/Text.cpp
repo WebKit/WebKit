@@ -58,7 +58,7 @@ Text::~Text()
 ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
 {
     if (offset > length())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     EventQueueScope scope;
     auto oldData = data();

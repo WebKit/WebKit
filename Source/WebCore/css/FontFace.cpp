@@ -66,7 +66,7 @@ ExceptionOr<Ref<FontFace>> FontFace::create(Document& document, const String& fa
         [&] (String& string) -> ExceptionOr<void> {
             auto value = FontFace::parseString(string, CSSPropertySrc);
             if (!is<CSSValueList>(value.get()))
-                return Exception { SYNTAX_ERR };
+                return Exception { SyntaxError };
             CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &document, false);
             return { };
         },
@@ -152,74 +152,74 @@ RefPtr<CSSValue> FontFace::parseString(const String& string, CSSPropertyID prope
 ExceptionOr<void> FontFace::setFamily(const String& family)
 {
     if (family.isEmpty())
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     bool success = false;
     if (auto value = parseString(family, CSSPropertyFontFamily))
         success = m_backing->setFamilies(*value);
     if (!success)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     return { };
 }
 
 ExceptionOr<void> FontFace::setStyle(const String& style)
 {
     if (style.isEmpty())
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     if (auto value = parseString(style, CSSPropertyFontStyle)) {
         m_backing->setStyle(*value);
         return { };
     }
-    return Exception { SYNTAX_ERR };
+    return Exception { SyntaxError };
 }
 
 ExceptionOr<void> FontFace::setWeight(const String& weight)
 {
     if (weight.isEmpty())
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     if (auto value = parseString(weight, CSSPropertyFontWeight)) {
         m_backing->setWeight(*value);
         return { };
     }
-    return Exception { SYNTAX_ERR };
+    return Exception { SyntaxError };
 }
 
 ExceptionOr<void> FontFace::setStretch(const String& stretch)
 {
     if (stretch.isEmpty())
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     if (auto value = parseString(stretch, CSSPropertyFontStretch)) {
         m_backing->setStretch(*value);
         return { };
     }
-    return Exception { SYNTAX_ERR };
+    return Exception { SyntaxError };
 }
 
 ExceptionOr<void> FontFace::setUnicodeRange(const String& unicodeRange)
 {
     if (unicodeRange.isEmpty())
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     bool success = false;
     if (auto value = parseString(unicodeRange, CSSPropertyUnicodeRange))
         success = m_backing->setUnicodeRange(*value);
     if (!success)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     return { };
 }
 
 ExceptionOr<void> FontFace::setVariant(const String& variant)
 {
     if (variant.isEmpty())
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     auto style = MutableStyleProperties::create();
     auto result = CSSParser::parseValue(style, CSSPropertyFontVariant, variant, true, HTMLStandardMode);
     if (result == CSSParser::ParseResult::Error)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     // FIXME: Would be much better to stage the new settings and set them all at once
     // instead of this dance where we make a backup and revert to it if something fails.
@@ -260,7 +260,7 @@ ExceptionOr<void> FontFace::setVariant(const String& variant)
 
     if (!success) {
         m_backing->setVariantSettings(backup);
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     }
 
     return { };
@@ -269,11 +269,11 @@ ExceptionOr<void> FontFace::setVariant(const String& variant)
 ExceptionOr<void> FontFace::setFeatureSettings(const String& featureSettings)
 {
     if (featureSettings.isEmpty())
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     auto value = parseString(featureSettings, CSSPropertyFontFeatureSettings);
     if (!value)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     m_backing->setFeatureSettings(*value);
     return { };
 }
@@ -427,7 +427,7 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
         return;
     case CSSFontFace::Status::Failure:
         if (m_promise)
-            std::exchange(m_promise, std::nullopt)->reject(NETWORK_ERR);
+            std::exchange(m_promise, std::nullopt)->reject(NetworkError);
         deref();
         return;
     case CSSFontFace::Status::Pending:
@@ -449,7 +449,7 @@ void FontFace::registerLoaded(Promise&& promise)
         return;
     case CSSFontFace::Status::TimedOut:
     case CSSFontFace::Status::Failure:
-        promise.reject(NETWORK_ERR);
+        promise.reject(NetworkError);
         return;
     }
 }

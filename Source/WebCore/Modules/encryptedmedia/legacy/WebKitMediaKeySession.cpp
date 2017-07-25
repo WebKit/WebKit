@@ -134,10 +134,10 @@ ExceptionOr<void> WebKitMediaKeySession::update(Ref<Uint8Array>&& key)
 {
     // From <http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#dom-addkey>:
     // The addKey(key) method must run the following steps:
-    // 1. If the first or second argument [sic] is an empty array, throw an INVALID_ACCESS_ERR.
+    // 1. If the first or second argument [sic] is an empty array, throw an InvalidAccessError.
     // NOTE: the reference to a "second argument" is a spec bug.
     if (!key->length())
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     // 2. Schedule a task to handle the call, providing key.
     m_pendingKeys.append(WTFMove(key));

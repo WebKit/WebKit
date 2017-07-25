@@ -49,7 +49,7 @@ void CryptoAlgorithmECDH::generateKey(const CryptoAlgorithmParameters& parameter
     const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(parameters);
 
     if (usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey)) {
-        exceptionCallback(SYNTAX_ERR);
+        exceptionCallback(SyntaxError);
         return;
     }
 
@@ -77,22 +77,22 @@ void CryptoAlgorithmECDH::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&
     auto& ecParameters = downcast<CryptoAlgorithmEcdhKeyDeriveParams>(*parameters);
 
     if (baseKey->type() != CryptoKey::Type::Private) {
-        exceptionCallback(INVALID_ACCESS_ERR);
+        exceptionCallback(InvalidAccessError);
         return;
     }
     ASSERT(ecParameters.publicKey);
     if (ecParameters.publicKey->type() != CryptoKey::Type::Public) {
-        exceptionCallback(INVALID_ACCESS_ERR);
+        exceptionCallback(InvalidAccessError);
         return;
     }
     if (baseKey->algorithmIdentifier() != ecParameters.publicKey->algorithmIdentifier()) {
-        exceptionCallback(INVALID_ACCESS_ERR);
+        exceptionCallback(InvalidAccessError);
         return;
     }
     auto& ecBaseKey = downcast<CryptoKeyEC>(baseKey.get());
     auto& ecPublicKey = downcast<CryptoKeyEC>(*(ecParameters.publicKey.get()));
     if (ecBaseKey.namedCurve() != ecPublicKey.namedCurve()) {
-        exceptionCallback(INVALID_ACCESS_ERR);
+        exceptionCallback(InvalidAccessError);
         return;
     }
 
@@ -133,7 +133,7 @@ void CryptoAlgorithmECDH::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
         }
         isUsagesAllowed = isUsagesAllowed || !usages;
         if (!isUsagesAllowed) {
-            exceptionCallback(SYNTAX_ERR);
+            exceptionCallback(SyntaxError);
             return;
         }
 
@@ -147,21 +147,21 @@ void CryptoAlgorithmECDH::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
     }
     case SubtleCrypto::KeyFormat::Raw:
         if (usages) {
-            exceptionCallback(SYNTAX_ERR);
+            exceptionCallback(SyntaxError);
             return;
         }
         result = CryptoKeyEC::importRaw(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case SubtleCrypto::KeyFormat::Spki:
         if (usages) {
-            exceptionCallback(SYNTAX_ERR);
+            exceptionCallback(SyntaxError);
             return;
         }
         result = CryptoKeyEC::importSpki(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case SubtleCrypto::KeyFormat::Pkcs8:
         if (usages && (usages ^ CryptoKeyUsageDeriveKey) && (usages ^ CryptoKeyUsageDeriveBits) && (usages ^ (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits))) {
-            exceptionCallback(SYNTAX_ERR);
+            exceptionCallback(SyntaxError);
             return;
         }
         result = CryptoKeyEC::importPkcs8(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);

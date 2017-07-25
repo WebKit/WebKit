@@ -102,7 +102,7 @@ ExceptionOr<void> OscillatorNode::setType(Type type)
         break;
     case Type::Custom:
         if (m_type != Type::Custom)
-            return Exception { INVALID_STATE_ERR };
+            return Exception { InvalidStateError };
         return { };
     }
 

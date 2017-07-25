@@ -164,7 +164,7 @@ ExceptionOr<Node*> XPathResult::iterateNext()
         return Exception { TypeError };
 
     if (invalidIteratorState())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (m_nodeSetPosition >= m_nodeSet.size())
         return nullptr;

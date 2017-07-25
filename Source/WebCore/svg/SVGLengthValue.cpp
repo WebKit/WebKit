@@ -219,11 +219,11 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(const String& string)
     const UChar* end = ptr + string.length();
 
     if (!parseNumber(ptr, end, convertedNumber, false))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     auto type = parseLengthType(ptr, end);
     if (type == LengthTypeUnknown)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     m_unit = storeUnit(extractMode(m_unit), type);
     m_valueInSpecifiedUnits = convertedNumber;
@@ -238,7 +238,7 @@ String SVGLengthValue::valueAsString() const
 ExceptionOr<void> SVGLengthValue::newValueSpecifiedUnits(unsigned short type, float value)
 {
     if (type == LengthTypeUnknown || type > LengthTypePC)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     m_unit = storeUnit(extractMode(m_unit), static_cast<SVGLengthType>(type));
     m_valueInSpecifiedUnits = value;
@@ -248,7 +248,7 @@ ExceptionOr<void> SVGLengthValue::newValueSpecifiedUnits(unsigned short type, fl
 ExceptionOr<void> SVGLengthValue::convertToSpecifiedUnits(unsigned short type, const SVGLengthContext& context)
 {
     if (type == LengthTypeUnknown || type > LengthTypePC)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     auto valueInUserUnits = valueForBindings(context);
     if (valueInUserUnits.hasException())

@@ -112,11 +112,11 @@ ExceptionOr<void> SVGAngleValue::setValueAsString(const String& value)
 
     float valueInSpecifiedUnits = 0;
     if (!parseNumber(ptr, end, valueInSpecifiedUnits, false))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     auto unitType = parseAngleType(ptr, end);
     if (unitType == SVG_ANGLETYPE_UNKNOWN)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     m_unitType = unitType;
     m_valueInSpecifiedUnits = valueInSpecifiedUnits;
@@ -126,7 +126,7 @@ ExceptionOr<void> SVGAngleValue::setValueAsString(const String& value)
 ExceptionOr<void> SVGAngleValue::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
 {
     if (unitType == SVG_ANGLETYPE_UNKNOWN || unitType > SVG_ANGLETYPE_GRAD)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     m_unitType = static_cast<Type>(unitType);
     m_valueInSpecifiedUnits = valueInSpecifiedUnits;
@@ -136,7 +136,7 @@ ExceptionOr<void> SVGAngleValue::newValueSpecifiedUnits(unsigned short unitType,
 ExceptionOr<void> SVGAngleValue::convertToSpecifiedUnits(unsigned short unitType)
 {
     if (unitType == SVG_ANGLETYPE_UNKNOWN || m_unitType == SVG_ANGLETYPE_UNKNOWN || unitType > SVG_ANGLETYPE_GRAD)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     if (unitType == m_unitType)
         return { };

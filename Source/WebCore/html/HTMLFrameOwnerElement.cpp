@@ -117,7 +117,7 @@ ExceptionOr<Document&> HTMLFrameOwnerElement::getSVGDocument() const
     if (is<SVGDocument>(document))
         return *document;
     // Spec: http://www.w3.org/TR/SVG/struct.html#InterfaceGetSVGDocument
-    return Exception { NOT_SUPPORTED_ERR };
+    return Exception { NotSupportedError };
 }
 
 void HTMLFrameOwnerElement::scheduleinvalidateStyleAndLayerComposition()

@@ -146,7 +146,7 @@ ExceptionOr<bool> EventTarget::dispatchEventForBindings(Event& event)
     event.setUntrusted();
 
     if (!event.isInitialized() || event.isBeingDispatched())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (!scriptExecutionContext())
         return false;

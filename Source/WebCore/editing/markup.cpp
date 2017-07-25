@@ -890,7 +890,7 @@ ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element& cont
 
     bool wasValid = fragment->parseXML(markup, &contextElement, parserContentPolicy);
     if (!wasValid)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     return WTFMove(fragment);
 }
 

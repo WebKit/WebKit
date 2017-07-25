@@ -1,3 +1,13 @@
+2017-07-24  Chris Dumez  <cdumez@apple.com>
+
+        ExceptionCode enumeration should use modern exception names
+        https://bugs.webkit.org/show_bug.cgi?id=174794
+
+        Reviewed by Geoffrey Garen.
+
+        ExceptionCode enumeration should use modern exception names consistently.
+        This makes the code nicer and closer to the text of the specification.
+
 2017-07-24  Andy Estes  <aestes@apple.com>
 
         Consider implementing W3C Payment Request API

@@ -74,14 +74,14 @@ void AnalyserNode::reset()
 ExceptionOr<void> AnalyserNode::setFftSize(unsigned size)
 {
     if (!m_analyser.setFftSize(size))
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     return { };
 }
 
 ExceptionOr<void> AnalyserNode::setMinDecibels(double k)
 {
     if (k > maxDecibels())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     m_analyser.setMinDecibels(k);
     return { };
@@ -90,7 +90,7 @@ ExceptionOr<void> AnalyserNode::setMinDecibels(double k)
 ExceptionOr<void> AnalyserNode::setMaxDecibels(double k)
 {
     if (k < minDecibels())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     m_analyser.setMaxDecibels(k);
     return { };
@@ -99,7 +99,7 @@ ExceptionOr<void> AnalyserNode::setMaxDecibels(double k)
 ExceptionOr<void> AnalyserNode::setSmoothingTimeConstant(double k)
 {
     if (k < 0 || k > 1)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     m_analyser.setSmoothingTimeConstant(k);
     return { };

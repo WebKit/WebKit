@@ -38,13 +38,13 @@ ExceptionOr<Ref<WebKitMediaKeys>> WebKitMediaKeys::create(const String& keySyste
     // From <http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#dom-media-keys-constructor>:
     // The MediaKeys(keySystem) constructor must run the following steps:
 
-    // 1. If keySystem is null or an empty string, throw an INVALID_ACCESS_ERR exception and abort these steps.
+    // 1. If keySystem is null or an empty string, throw an InvalidAccessError exception and abort these steps.
     if (keySystem.isEmpty())
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
-    // 2. If keySystem is not one of the user agent's supported Key Systems, throw a NOT_SUPPORTED_ERR and abort these steps.
+    // 2. If keySystem is not one of the user agent's supported Key Systems, throw a NotSupportedError and abort these steps.
     if (!CDM::supportsKeySystem(keySystem))
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     // 3. Let cdm be the content decryption module corresponding to keySystem.
     // 4. Load cdm if necessary.
@@ -79,18 +79,18 @@ ExceptionOr<Ref<WebKitMediaKeySession>> WebKitMediaKeys::createSession(ScriptExe
     // The createSession(type, initData) method must run the following steps:
     // Note: The contents of initData are container-specific Initialization Data.
 
-    // 1. If contentType is null or an empty string, throw an INVALID_ACCESS_ERR exception and abort these steps.
+    // 1. If contentType is null or an empty string, throw an InvalidAccessError exception and abort these steps.
     if (type.isEmpty())
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
-    // 2. If initData is an empty array, throw an INVALID_ACCESS_ERR exception and abort these steps.
+    // 2. If initData is an empty array, throw an InvalidAccessError exception and abort these steps.
     if (!initData->length())
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     // 3. If type contains a MIME type that is not supported or is not supported by the keySystem, throw
-    // a NOT_SUPPORTED_ERR exception and abort these steps.
+    // a NotSupportedError exception and abort these steps.
     if (!m_cdm->supportsMIMEType(type))
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     // 4. Create a new MediaKeySession object.
     // 4.1 Let the keySystem attribute be keySystem.

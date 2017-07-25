@@ -163,7 +163,7 @@ ExceptionOr<void> Location::setProtocol(DOMWindow& activeWindow, DOMWindow& firs
         return { };
     URL url = m_frame->document()->url();
     if (!url.setProtocol(protocol))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     return setLocation(activeWindow, firstWindow, url.string());
 }
 
@@ -283,7 +283,7 @@ ExceptionOr<void> Location::setLocation(DOMWindow& activeWindow, DOMWindow& firs
 {
     ASSERT(m_frame);
     if (!activeWindow.document()->canNavigate(m_frame))
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
     ASSERT(m_frame->document());
     ASSERT(m_frame->document()->domWindow());
     m_frame->document()->domWindow()->setLocation(activeWindow, firstWindow, url);

@@ -5391,7 +5391,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLImageElement(const char
         return false;
     }
     if (wouldTaintOrigin(image))
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
     return true;
 }
 
@@ -5402,7 +5402,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLCanvasElement(const cha
         return false;
     }
     if (wouldTaintOrigin(canvas))
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
     return true;
 }
 
@@ -5415,7 +5415,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLVideoElement(const char
         return false;
     }
     if (wouldTaintOrigin(video))
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
     return true;
 }
 

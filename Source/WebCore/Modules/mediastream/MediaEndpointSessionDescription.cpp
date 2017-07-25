@@ -62,9 +62,9 @@ ExceptionOr<Ref<MediaEndpointSessionDescription>> MediaEndpointSessionDescriptio
     auto result = sdpProcessor.parse(rtcDescription->sdp(), configuration);
     if (result != SDPProcessor::Result::Success) {
         if (result == SDPProcessor::Result::ParseError)
-            return Exception { INVALID_ACCESS_ERR, ASCIILiteral("SDP content is invalid") };
+            return Exception { InvalidAccessError, ASCIILiteral("SDP content is invalid") };
         LOG_ERROR("SDPProcessor internal error");
-        return Exception { ABORT_ERR, ASCIILiteral("Internal error") };
+        return Exception { AbortError, ASCIILiteral("Internal error") };
     }
     return adoptRef(*new MediaEndpointSessionDescription(rtcDescription->type(), WTFMove(configuration), WTFMove(rtcDescription)));
 }

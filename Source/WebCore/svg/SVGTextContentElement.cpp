@@ -117,7 +117,7 @@ ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, u
 {
     unsigned numberOfChars = getNumberOfChars();
     if (charnum >= numberOfChars)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     nchars = std::min(nchars, numberOfChars - charnum);
     return SVGTextQuery(renderer()).subStringLength(charnum, nchars);
@@ -126,7 +126,7 @@ ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, u
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigned charnum)
 {
     if (charnum > getNumberOfChars())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     return SVGPoint::create(SVGTextQuery(renderer()).startPositionOfCharacter(charnum));
 }
@@ -134,7 +134,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigne
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned charnum)
 {
     if (charnum > getNumberOfChars())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     return SVGPoint::create(SVGTextQuery(renderer()).endPositionOfCharacter(charnum));
 }
@@ -142,7 +142,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned 
 ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnum)
 {
     if (charnum > getNumberOfChars())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     return SVGRect::create(SVGTextQuery(renderer()).extentOfCharacter(charnum));
 }
@@ -150,7 +150,7 @@ ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnu
 ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
 {
     if (charnum > getNumberOfChars())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     return SVGTextQuery(renderer()).rotationOfCharacter(charnum);
 }
@@ -165,7 +165,7 @@ ExceptionOr<void> SVGTextContentElement::selectSubString(unsigned charnum, unsig
 {
     unsigned numberOfChars = getNumberOfChars();
     if (charnum >= numberOfChars)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     nchars = std::min(nchars, numberOfChars - charnum);
 

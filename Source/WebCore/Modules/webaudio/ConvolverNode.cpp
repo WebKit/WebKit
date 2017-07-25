@@ -121,7 +121,7 @@ ExceptionOr<void> ConvolverNode::setBuffer(AudioBuffer* buffer)
         return { };
 
     if (buffer->sampleRate() != context().sampleRate())
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     unsigned numberOfChannels = buffer->numberOfChannels();
     size_t bufferLength = buffer->length();
@@ -131,7 +131,7 @@ ExceptionOr<void> ConvolverNode::setBuffer(AudioBuffer* buffer)
     bool isChannelCountGood = (numberOfChannels == 1 || numberOfChannels == 2 || numberOfChannels == 4) && bufferLength;
 
     if (!isChannelCountGood)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     // Wrap the AudioBuffer by an AudioBus. It's an efficient pointer set and not a memcpy().
     // This memory is simply used in the Reverb constructor and no reference to it is kept for later use in that class.

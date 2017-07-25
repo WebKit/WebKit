@@ -541,7 +541,7 @@ ExceptionOr<void> HTMLElement::setOuterText(const String& text)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)
-        return Exception { NO_MODIFICATION_ALLOWED_ERR };
+        return Exception { NoModificationAllowedError };
 
     RefPtr<Node> prev = previousSibling();
     RefPtr<Node> next = nextSibling();
@@ -554,7 +554,7 @@ ExceptionOr<void> HTMLElement::setOuterText(const String& text)
         newChild = Text::create(document(), text);
 
     if (!parentNode())
-        return Exception { HIERARCHY_REQUEST_ERR };
+        return Exception { HierarchyRequestError };
 
     auto replaceResult = parent->replaceChild(*newChild, *this);
     if (replaceResult.hasException())
@@ -645,7 +645,7 @@ ExceptionOr<void> HTMLElement::setContentEditable(const String& enabled)
     else if (equalLettersIgnoringASCIICase(enabled, "inherit"))
         removeAttribute(contenteditableAttr);
     else
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     return { };
 }
 

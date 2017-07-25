@@ -65,7 +65,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::ExecState& state, JSC::JSValue m
     if (!ports.isEmpty()) {
         for (auto& dataPort : ports) {
             if (dataPort == this || m_entangledChannel->isConnectedTo(dataPort.get()))
-                return Exception { DATA_CLONE_ERR };
+                return Exception { DataCloneError };
         }
         auto disentangleResult = MessagePort::disentanglePorts(WTFMove(ports));
         if (disentangleResult.hasException())
@@ -186,7 +186,7 @@ ExceptionOr<std::unique_ptr<MessagePortChannelArray>> MessagePort::disentanglePo
     HashSet<MessagePort*> portSet;
     for (auto& port : ports) {
         if (!port || port->isNeutered() || !portSet.add(port.get()).isNewEntry)
-            return Exception { DATA_CLONE_ERR };
+            return Exception { DataCloneError };
     }
 
     // Passed-in ports passed validity checks, so we can disentangle them.

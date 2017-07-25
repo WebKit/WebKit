@@ -60,16 +60,16 @@ inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url,
 ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& context, const String& url, const Init& eventSourceInit)
 {
     if (url.isEmpty())
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     URL fullURL = context.completeURL(url);
     if (!fullURL.isValid())
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is resolved.
     if (!context.shouldBypassMainWorldContentSecurityPolicy() && !context.contentSecurityPolicy()->allowConnectToSource(fullURL)) {
         // FIXME: Should this be throwing an exception?
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
     }
 
     auto source = adoptRef(*new EventSource(context, fullURL, eventSourceInit));

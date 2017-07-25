@@ -39,9 +39,9 @@ SQLResultSet::SQLResultSet()
 ExceptionOr<int64_t> SQLResultSet::insertId() const
 {
     // 4.11.4 - Return the id of the last row inserted as a result of the query
-    // If the query didn't result in any rows being added, raise an INVALID_ACCESS_ERR exception
+    // If the query didn't result in any rows being added, raise an InvalidAccessError exception
     if (!m_insertId)
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
     return m_insertId.value();
 }
 

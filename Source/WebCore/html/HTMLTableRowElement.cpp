@@ -111,11 +111,11 @@ int HTMLTableRowElement::sectionRowIndex() const
 ExceptionOr<Ref<HTMLTableCellElement>> HTMLTableRowElement::insertCell(int index)
 {
     if (index < -1)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     auto children = cells();
     int numCells = children->length();
     if (index > numCells)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     auto cell = HTMLTableCellElement::create(tdTag, document());
     ExceptionOr<void> result;
     if (index < 0 || index >= numCells)
@@ -137,7 +137,7 @@ ExceptionOr<void> HTMLTableRowElement::deleteCell(int index)
         index = numCells - 1;
     }
     if (index < 0 || index >= numCells)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     return removeChild(*children->item(index));
 }
 

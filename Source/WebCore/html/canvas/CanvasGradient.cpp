@@ -44,7 +44,7 @@ CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint&
 ExceptionOr<void> CanvasGradient::addColorStop(float value, const String& colorString)
 {
     if (!(value >= 0 && value <= 1))
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     // FIXME: Passing null for canvas means this won't work for current color. Is that OK?
     Color color = parseColorOrCurrentColor(colorString, nullptr /*canvas*/);
@@ -53,7 +53,7 @@ ExceptionOr<void> CanvasGradient::addColorStop(float value, const String& colorS
         if (m_dashboardCompatibilityMode)
             return { };
 #endif
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     }
 
     m_gradient->addColorStop(value, color);

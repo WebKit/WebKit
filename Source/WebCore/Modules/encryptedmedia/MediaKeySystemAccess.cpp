@@ -75,7 +75,7 @@ void MediaKeySystemAccess::createMediaKeys(Ref<DeferredPromise>&& promise)
         // 2.5. Let instance be a new instance of the Key System implementation represented by this object's cdm implementation value.
         auto instance = m_implementation->createInstance();
         if (!instance) {
-            promise->reject(INVALID_STATE_ERR);
+            promise->reject(InvalidStateError);
             return;
         }
 

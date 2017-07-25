@@ -145,7 +145,7 @@ ExceptionOr<void> DefaultAudioDestinationNode::setChannelCount(unsigned channelC
     ASSERT(isMainThread());
 
     if (!maxChannelCount() || channelCount > maxChannelCount())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     auto oldChannelCount = this->channelCount();
     auto result = AudioNode::setChannelCount(channelCount);

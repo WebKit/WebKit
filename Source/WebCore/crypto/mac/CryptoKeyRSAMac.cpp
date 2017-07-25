@@ -316,7 +316,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifi
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
 {
     if (type() != CryptoKeyType::Public)
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     // The current SecLibrary cannot output a valid SPKI format binary. Hence, we need the following hack.
     // This hack can be removed when <rdar://problem/29523286> is resolved.
@@ -373,7 +373,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identif
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 {
     if (type() != CryptoKeyType::Private)
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     // The current SecLibrary cannot output a valid PKCS8 format binary. Hence, we need the following hack.
     // This hack can be removed when <rdar://problem/29523286> is resolved.

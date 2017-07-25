@@ -138,7 +138,7 @@ ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacPar
 {
     auto algorithm = commonCryptoHMACAlgorithm(parameters.hash);
     if (!algorithm)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
     callback(calculateSignature(*algorithm, key.key(), data.first, data.second));
     return { };
 }
@@ -147,7 +147,7 @@ ExceptionOr<void> CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacP
 {
     auto algorithm = commonCryptoHMACAlgorithm(parameters.hash);
     if (!algorithm)
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     auto signature = calculateSignature(*algorithm, key.key(), data.first, data.second);
 

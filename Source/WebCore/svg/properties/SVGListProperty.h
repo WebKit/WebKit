@@ -49,7 +49,7 @@ public:
     ExceptionOr<bool> canAlterList() const
     {
         if (m_role == AnimValRole)
-            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+            return Exception { NoModificationAllowedError };
 
         return true;
     }
@@ -172,7 +172,7 @@ public:
     ExceptionOr<bool> canGetItem(unsigned index)
     {
         if (index >= m_values->size())
-            return Exception { INDEX_SIZE_ERR };
+            return Exception { IndexSizeError };
 
         return true;
     }
@@ -279,7 +279,7 @@ public:
         ASSERT(result.releaseReturnValue());
 
         if (index >= m_values->size())
-            return Exception { INDEX_SIZE_ERR };
+            return Exception { IndexSizeError };
 
         return true;
     }
@@ -300,7 +300,7 @@ public:
 
         if (m_values->isEmpty()) {
             // 'newItem' already lived in our list, we removed it, and now we're empty, which means there's nothing to replace.
-            return Exception { INDEX_SIZE_ERR };
+            return Exception { IndexSizeError };
         }
 
         // Update the value at the desired position 'index'. 
@@ -331,7 +331,7 @@ public:
         if (m_values->isEmpty()) {
             ASSERT(m_wrappers->isEmpty());
             // 'newItem' already lived in our list, we removed it, and now we're empty, which means there's nothing to replace.
-            return Exception { INDEX_SIZE_ERR };
+            return Exception { IndexSizeError };
         }
 
         // Detach the existing wrapper.
@@ -356,7 +356,7 @@ public:
         ASSERT(result.releaseReturnValue());
 
         if (index >= m_values->size())
-            return Exception { INDEX_SIZE_ERR };
+            return Exception { IndexSizeError };
 
         return true;
     }

@@ -171,7 +171,7 @@ ExceptionOr<void> DOMMatrixReadOnly::setMatrixValue(const String& string)
 
     auto styleDeclaration = MutableStyleProperties::create();
     if (CSSParser::parseValue(styleDeclaration, CSSPropertyTransform, string, true, HTMLStandardMode) == CSSParser::ParseResult::Error)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     // Convert to TransformOperations. This can fail if a property requires style (i.e., param uses 'ems' or 'exs')
     auto value = styleDeclaration->getPropertyCSSValue(CSSPropertyTransform);
@@ -182,14 +182,14 @@ ExceptionOr<void> DOMMatrixReadOnly::setMatrixValue(const String& string)
 
     TransformOperations operations;
     if (!transformsForValue(*value, CSSToLengthConversionData(), operations))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     m_is2D = true;
     // Convert transform operations to a TransformationMatrix. This can fail if a parameter has a percentage ('%').
     TransformationMatrix matrix;
     for (auto& operation : operations.operations()) {
         if (operation->apply(matrix, IntSize(0, 0)))
-            return Exception { SYNTAX_ERR };
+            return Exception { SyntaxError };
         if (operation->is3DOperation())
             m_is2D = false;
     }
@@ -355,7 +355,7 @@ ExceptionOr<Ref<Float64Array>> DOMMatrixReadOnly::toFloat64Array() const
 ExceptionOr<String> DOMMatrixReadOnly::toString() const
 {
     if (!m_matrix.containsOnlyFiniteValues())
-        return Exception { INVALID_STATE_ERR, ASCIILiteral("Matrix contains non-finite values") };
+        return Exception { InvalidStateError, ASCIILiteral("Matrix contains non-finite values") };
 
     StringBuilder builder;
     if (is2D()) {

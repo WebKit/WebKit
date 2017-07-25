@@ -38,7 +38,7 @@ namespace WebCore {
 ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh)
 {
     if (!sw || !sh)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     Checked<int, RecordOverflow> dataSize = 4;
     dataSize *= sw;
@@ -81,18 +81,18 @@ ExceptionOr<RefPtr<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteAr
 {
     unsigned length = byteArray->length();
     if (!length || length % 4 != 0)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (!sw)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     length /= 4;
     if (length % sw != 0)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     unsigned height = length / sw;
     if (sh && sh != height)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     return create(IntSize(sw, height), WTFMove(byteArray));
 }

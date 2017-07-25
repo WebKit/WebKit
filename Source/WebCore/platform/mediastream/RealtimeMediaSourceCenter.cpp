@@ -248,7 +248,7 @@ ExceptionOr<void> RealtimeMediaSourceCenter::setDeviceEnabled(const String& id, 
         }
     }
 
-    return Exception { NOT_FOUND_ERR };
+    return Exception { NotFoundError };
 }
 
 RealtimeMediaSourceCenter::DevicesChangedObserverToken RealtimeMediaSourceCenter::addDevicesChangedObserver(std::function<void()>&& observer)

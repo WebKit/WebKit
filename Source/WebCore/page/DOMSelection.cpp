@@ -179,7 +179,7 @@ ExceptionOr<void> DOMSelection::collapseToEnd()
         return { };
     auto& selection = m_frame->selection();
     if (selection.isNone())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     Ref<Frame> protector(*m_frame);
     selection.moveTo(selection.selection().end(), DOWNSTREAM);
@@ -192,7 +192,7 @@ ExceptionOr<void> DOMSelection::collapseToStart()
         return { };
     auto& selection = m_frame->selection();
     if (selection.isNone())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     Ref<Frame> protector(*m_frame);
     selection.moveTo(selection.selection().start(), DOWNSTREAM);
@@ -280,7 +280,7 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
     if (!m_frame)
         return { };
     if (offset > (node.offsetInCharacters() ? caretMaxOffset(node) : node.countChildNodes()))
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     if (!isValidForPosition(&node))
         return { };
 
@@ -292,7 +292,7 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
 ExceptionOr<Ref<Range>> DOMSelection::getRangeAt(unsigned index)
 {
     if (index >= rangeCount())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     // If you're hitting this, you've added broken multi-range selection support.
     ASSERT(rangeCount() == 1);
@@ -306,7 +306,7 @@ ExceptionOr<Ref<Range>> DOMSelection::getRangeAt(unsigned index)
     auto firstRange = m_frame->selection().selection().firstRange();
     ASSERT(firstRange);
     if (!firstRange)
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
     return firstRange.releaseNonNull();
 }
 

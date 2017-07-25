@@ -2950,7 +2950,7 @@ void HTMLMediaElement::setCurrentTime(const MediaTime& time)
 ExceptionOr<void> HTMLMediaElement::setCurrentTimeForBindings(double time)
 {
     if (m_mediaController)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
     seek(MediaTime::createWithDouble(time));
     return { };
 }
@@ -3154,7 +3154,7 @@ void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
     }
 
     if (m_error && m_error->code() == MediaError::MEDIA_ERR_SRC_NOT_SUPPORTED) {
-        promise.reject(NOT_SUPPORTED_ERR, "The operation is not supported.");
+        promise.reject(NotSupportedError, "The operation is not supported.");
         return;
     }
 
@@ -3363,7 +3363,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     LOG(Media, "HTMLMediaElement::setVolume(%p) - %f", this, volume);
 
     if (!(volume >= 0 && volume <= 1))
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
 #if !PLATFORM(IOS)
     if (m_volume == volume)

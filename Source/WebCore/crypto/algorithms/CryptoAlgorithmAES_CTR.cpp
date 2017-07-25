@@ -90,7 +90,7 @@ void CryptoAlgorithmAES_CTR::generateKey(const CryptoAlgorithmParameters& parame
     const auto& aesParameters = downcast<CryptoAlgorithmAesKeyParams>(parameters);
 
     if (usagesAreInvalidForCryptoAlgorithmAES_CTR(usages)) {
-        exceptionCallback(SYNTAX_ERR);
+        exceptionCallback(SyntaxError);
         return;
     }
 
@@ -107,7 +107,7 @@ void CryptoAlgorithmAES_CTR::importKey(SubtleCrypto::KeyFormat format, KeyData&&
 {
     ASSERT(parameters);
     if (usagesAreInvalidForCryptoAlgorithmAES_CTR(usages)) {
-        exceptionCallback(SYNTAX_ERR);
+        exceptionCallback(SyntaxError);
         return;
     }
 
@@ -132,7 +132,7 @@ void CryptoAlgorithmAES_CTR::importKey(SubtleCrypto::KeyFormat format, KeyData&&
         break;
     }
     default:
-        exceptionCallback(NOT_SUPPORTED_ERR);
+        exceptionCallback(NotSupportedError);
         return;
     }
     if (!result) {
@@ -176,7 +176,7 @@ void CryptoAlgorithmAES_CTR::exportKey(SubtleCrypto::KeyFormat format, Ref<Crypt
         break;
     }
     default:
-        exceptionCallback(NOT_SUPPORTED_ERR);
+        exceptionCallback(NotSupportedError);
         return;
     }
 

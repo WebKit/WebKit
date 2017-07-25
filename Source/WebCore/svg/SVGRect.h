@@ -56,7 +56,7 @@ public:
     ExceptionOr<void> setX(float xValue)
     {
         if (isReadOnly())
-            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+            return Exception { NoModificationAllowedError };
 
         propertyReference().setX(xValue);
         commitChange();
@@ -72,7 +72,7 @@ public:
     ExceptionOr<void> setY(float xValue)
     {
         if (isReadOnly())
-            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+            return Exception { NoModificationAllowedError };
 
         propertyReference().setY(xValue);
         commitChange();
@@ -88,7 +88,7 @@ public:
     ExceptionOr<void> setWidth(float widthValue)
     {
         if (isReadOnly())
-            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+            return Exception { NoModificationAllowedError };
 
         propertyReference().setWidth(widthValue);
         commitChange();
@@ -104,7 +104,7 @@ public:
     ExceptionOr<void> setHeight(float heightValue)
     {
         if (isReadOnly())
-            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+            return Exception { NoModificationAllowedError };
 
         propertyReference().setHeight(heightValue);
         commitChange();

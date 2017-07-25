@@ -138,7 +138,7 @@ void PeerConnectionBackend::setLocalDescription(RTCSessionDescription& sessionDe
     ASSERT(!m_peerConnection.isClosed());
 
     if (!isLocalDescriptionTypeValidForState(sessionDescription.type(), m_peerConnection.signalingState())) {
-        promise.reject(INVALID_STATE_ERR, "Description type incompatible with current signaling state");
+        promise.reject(InvalidStateError, "Description type incompatible with current signaling state");
         return;
     }
 
@@ -198,7 +198,7 @@ void PeerConnectionBackend::setRemoteDescription(RTCSessionDescription& sessionD
     ASSERT(!m_peerConnection.isClosed());
 
     if (!isRemoteDescriptionTypeValidForState(sessionDescription.type(), m_peerConnection.signalingState())) {
-        promise.reject(INVALID_STATE_ERR, "Description type incompatible with current signaling state");
+        promise.reject(InvalidStateError, "Description type incompatible with current signaling state");
         return;
     }
 

@@ -215,7 +215,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     Element* wrappedElement = JSElement::toWrapped(vm, returnedElement);
     if (!wrappedElement || wrappedElement != &element) {
         element.setIsFailedCustomElement(*this);
-        reportException(state, createDOMException(state, INVALID_STATE_ERR, "Custom element constructor failed to upgrade an element"));
+        reportException(state, createDOMException(state, InvalidStateError, "Custom element constructor failed to upgrade an element"));
         return;
     }
     element.setIsDefinedCustomElement(*this);

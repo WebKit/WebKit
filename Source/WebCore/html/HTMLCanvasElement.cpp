@@ -554,7 +554,7 @@ static std::optional<double> qualityFromJSValue(JSC::JSValue qualityValue)
 ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType, JSC::JSValue qualityValue)
 {
     if (!m_originClean)
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
 
     if (m_size.isEmpty() || !buffer())
         return UncachedString { ASCIILiteral { "data:," } };
@@ -581,7 +581,7 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType)
 ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref<BlobCallback>&& callback, const String& mimeType, JSC::JSValue qualityValue)
 {
     if (!m_originClean)
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
 
     if (m_size.isEmpty() || !buffer()) {
         callback->scheduleCallback(context, nullptr);
@@ -645,10 +645,10 @@ RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
 ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(ScriptExecutionContext& context, std::optional<double>&& frameRequestRate)
 {
     if (!originClean())
-        return Exception(SECURITY_ERR, ASCIILiteral("Canvas is tainted"));
+        return Exception(SecurityError, ASCIILiteral("Canvas is tainted"));
 
     if (frameRequestRate && frameRequestRate.value() < 0)
-        return Exception(NOT_SUPPORTED_ERR, ASCIILiteral("frameRequestRate is negative"));
+        return Exception(NotSupportedError, ASCIILiteral("frameRequestRate is negative"));
 
     auto track = CanvasCaptureMediaStreamTrack::create(context, *this, WTFMove(frameRequestRate));
     auto stream =  MediaStream::create(context);

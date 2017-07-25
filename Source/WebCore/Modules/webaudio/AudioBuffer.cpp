@@ -113,7 +113,7 @@ void AudioBuffer::releaseMemory()
 ExceptionOr<Ref<Float32Array>> AudioBuffer::getChannelData(unsigned channelIndex)
 {
     if (channelIndex >= m_channels.size())
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     auto& channelData = *m_channels[channelIndex];
     auto array = Float32Array::create(channelData.unsharedBuffer(), channelData.byteOffset(), channelData.length());
     RELEASE_ASSERT(array);

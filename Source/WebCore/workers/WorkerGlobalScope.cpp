@@ -251,7 +251,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
     for (auto& entry : urls) {
         URL url = completeURL(entry);
         if (!url.isValid())
-            return Exception { SYNTAX_ERR };
+            return Exception { SyntaxError };
         completedURLs.uncheckedAppend(WTFMove(url));
     }
 
@@ -259,14 +259,14 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
         // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
         bool shouldBypassMainWorldContentSecurityPolicy = this->shouldBypassMainWorldContentSecurityPolicy();
         if (!shouldBypassMainWorldContentSecurityPolicy && !contentSecurityPolicy()->allowScriptFromSource(url))
-            return Exception { NETWORK_ERR };
+            return Exception { NetworkError };
 
         auto scriptLoader = WorkerScriptLoader::create();
         scriptLoader->loadSynchronously(this, url, FetchOptions::Mode::NoCors, shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective, resourceRequestIdentifier());
 
-        // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.
+        // If the fetching attempt failed, throw a NetworkError exception and abort all these steps.
         if (scriptLoader->failed())
-            return Exception { NETWORK_ERR };
+            return Exception { NetworkError };
 
         InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script());
 

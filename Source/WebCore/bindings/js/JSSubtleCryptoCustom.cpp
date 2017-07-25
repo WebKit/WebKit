@@ -412,16 +412,16 @@ static CryptoKeyUsageBitmap cryptoKeyUsageBitmapFromJSValue(ExecState& state, JS
 static void rejectWithException(Ref<DeferredPromise>&& passedPromise, ExceptionCode ec)
 {
     switch (ec) {
-    case NOT_SUPPORTED_ERR:
+    case NotSupportedError:
         passedPromise->reject(ec, ASCIILiteral("The algorithm is not supported"));
         return;
-    case SYNTAX_ERR:
+    case SyntaxError:
         passedPromise->reject(ec, ASCIILiteral("A required parameter was missing or out-of-range"));
         return;
-    case INVALID_STATE_ERR:
+    case InvalidStateError:
         passedPromise->reject(ec, ASCIILiteral("The requested operation is not valid for the current state of the provided key"));
         return;
-    case INVALID_ACCESS_ERR:
+    case InvalidAccessError:
         passedPromise->reject(ec, ASCIILiteral("The requested operation is not valid for the provided key"));
         return;
     case UnknownError:
@@ -540,12 +540,12 @@ static void jsSubtleCryptoFunctionEncryptPromise(ExecState& state, Ref<DeferredP
     RETURN_IF_EXCEPTION(scope, void());
 
     if (params->identifier != key->algorithmIdentifier()) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
         return;
     }
 
     if (!key->allows(CryptoKeyUsageEncrypt)) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't support encryption"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't support encryption"));
         return;
     }
 
@@ -587,12 +587,12 @@ static void jsSubtleCryptoFunctionDecryptPromise(ExecState& state, Ref<DeferredP
     RETURN_IF_EXCEPTION(scope, void());
 
     if (params->identifier != key->algorithmIdentifier()) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
         return;
     }
 
     if (!key->allows(CryptoKeyUsageDecrypt)) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't support decryption"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't support decryption"));
         return;
     }
 
@@ -634,12 +634,12 @@ static void jsSubtleCryptoFunctionSignPromise(ExecState& state, Ref<DeferredProm
     RETURN_IF_EXCEPTION(scope, void());
 
     if (params->identifier != key->algorithmIdentifier()) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
         return;
     }
 
     if (!key->allows(CryptoKeyUsageSign)) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't support signing"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't support signing"));
         return;
     }
 
@@ -684,12 +684,12 @@ static void jsSubtleCryptoFunctionVerifyPromise(ExecState& state, Ref<DeferredPr
     RETURN_IF_EXCEPTION(scope, void());
 
     if (params->identifier != key->algorithmIdentifier()) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
         return;
     }
 
     if (!key->allows(CryptoKeyUsageVerify)) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't support verification"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't support verification"));
         return;
     }
 
@@ -774,14 +774,14 @@ static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<Defer
         WTF::switchOn(keyOrKeyPair,
             [&capturedPromise] (RefPtr<CryptoKey>& key) {
                 if ((key->type() == CryptoKeyType::Private || key->type() == CryptoKeyType::Secret) && !key->usagesBitmap()) {
-                    rejectWithException(WTFMove(capturedPromise), SYNTAX_ERR);
+                    rejectWithException(WTFMove(capturedPromise), SyntaxError);
                     return;
                 }
                 capturedPromise->resolve<IDLInterface<CryptoKey>>(*key);
             },
             [&capturedPromise] (CryptoKeyPair& keyPair) {
                 if (!keyPair.privateKey->usagesBitmap()) {
-                    rejectWithException(WTFMove(capturedPromise), SYNTAX_ERR);
+                    rejectWithException(WTFMove(capturedPromise), SyntaxError);
                     return;
                 }
                 capturedPromise->resolve<IDLDictionary<CryptoKeyPair>>(keyPair);
@@ -827,12 +827,12 @@ static void jsSubtleCryptoFunctionDeriveKeyPromise(ExecState& state, Ref<Deferre
     RETURN_IF_EXCEPTION(scope, void());
 
     if (params->identifier != baseKey->algorithmIdentifier()) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
         return;
     }
 
     if (!baseKey->allows(CryptoKeyUsageDeriveKey)) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't support CryptoKey derivation"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't support CryptoKey derivation"));
         return;
     }
 
@@ -865,7 +865,7 @@ static void jsSubtleCryptoFunctionDeriveKeyPromise(ExecState& state, Ref<Deferre
         KeyData data = derivedKey;
         auto callback = [capturedPromise = promise.copyRef()](CryptoKey& key) mutable {
             if ((key.type() == CryptoKeyType::Private || key.type() == CryptoKeyType::Secret) && !key.usagesBitmap()) {
-                rejectWithException(WTFMove(capturedPromise), SYNTAX_ERR);
+                rejectWithException(WTFMove(capturedPromise), SyntaxError);
                 return;
             }
             capturedPromise->resolve<IDLInterface<CryptoKey>>(key);
@@ -905,12 +905,12 @@ static void jsSubtleCryptoFunctionDeriveBitsPromise(ExecState& state, Ref<Deferr
     RETURN_IF_EXCEPTION(scope, void());
 
     if (params->identifier != baseKey->algorithmIdentifier()) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't match AlgorithmIdentifier"));
         return;
     }
 
     if (!baseKey->allows(CryptoKeyUsageDeriveBits)) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("CryptoKey doesn't support bits derivation"));
+        promise->reject(InvalidAccessError, ASCIILiteral("CryptoKey doesn't support bits derivation"));
         return;
     }
 
@@ -965,7 +965,7 @@ static void jsSubtleCryptoFunctionImportKeyPromise(ExecState& state, Ref<Deferre
 
     auto callback = [capturedPromise = promise.copyRef()](CryptoKey& key) mutable {
         if ((key.type() == CryptoKeyType::Private || key.type() == CryptoKeyType::Secret) && !key.usagesBitmap()) {
-            rejectWithException(WTFMove(capturedPromise), SYNTAX_ERR);
+            rejectWithException(WTFMove(capturedPromise), SyntaxError);
             return;
         }
         capturedPromise->resolve<IDLInterface<CryptoKey>>(key);
@@ -1000,7 +1000,7 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
     RETURN_IF_EXCEPTION(scope, void());
 
     if (!key->extractable()) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("The CryptoKey is nonextractable"));
+        promise->reject(InvalidAccessError, ASCIILiteral("The CryptoKey is nonextractable"));
         return;
     }
 
@@ -1065,12 +1065,12 @@ static void jsSubtleCryptoFunctionWrapKeyPromise(ExecState& state, Ref<DeferredP
     }
 
     if (wrapParams->identifier != wrappingKey->algorithmIdentifier()) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("Wrapping CryptoKey doesn't match AlgorithmIdentifier"));
+        promise->reject(InvalidAccessError, ASCIILiteral("Wrapping CryptoKey doesn't match AlgorithmIdentifier"));
         return;
     }
 
     if (!wrappingKey->allows(CryptoKeyUsageWrapKey)) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("Wrapping CryptoKey doesn't support wrapKey operation"));
+        promise->reject(InvalidAccessError, ASCIILiteral("Wrapping CryptoKey doesn't support wrapKey operation"));
         return;
     }
 
@@ -1078,7 +1078,7 @@ static void jsSubtleCryptoFunctionWrapKeyPromise(ExecState& state, Ref<DeferredP
     RETURN_IF_EXCEPTION(scope, void());
 
     if (!key->extractable()) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("The CryptoKey is nonextractable"));
+        promise->reject(InvalidAccessError, ASCIILiteral("The CryptoKey is nonextractable"));
         return;
     }
 
@@ -1181,12 +1181,12 @@ static void jsSubtleCryptoFunctionUnwrapKeyPromise(ExecState& state, Ref<Deferre
     RETURN_IF_EXCEPTION(scope, void());
 
     if (unwrapParams->identifier != unwrappingKey->algorithmIdentifier()) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("Unwrapping CryptoKey doesn't match unwrap AlgorithmIdentifier"));
+        promise->reject(InvalidAccessError, ASCIILiteral("Unwrapping CryptoKey doesn't match unwrap AlgorithmIdentifier"));
         return;
     }
 
     if (!unwrappingKey->allows(CryptoKeyUsageUnwrapKey)) {
-        promise->reject(INVALID_ACCESS_ERR, ASCIILiteral("Unwrapping CryptoKey doesn't support unwrapKey operation"));
+        promise->reject(InvalidAccessError, ASCIILiteral("Unwrapping CryptoKey doesn't support unwrapKey operation"));
         return;
     }
 
@@ -1229,7 +1229,7 @@ static void jsSubtleCryptoFunctionUnwrapKeyPromise(ExecState& state, Ref<Deferre
 
         auto callback = [promise = promise.copyRef()](CryptoKey& key) mutable {
             if ((key.type() == CryptoKeyType::Private || key.type() == CryptoKeyType::Secret) && !key.usagesBitmap()) {
-                rejectWithException(WTFMove(promise), SYNTAX_ERR);
+                rejectWithException(WTFMove(promise), SyntaxError);
                 return;
             }
             promise->resolve<IDLInterface<CryptoKey>>(key);

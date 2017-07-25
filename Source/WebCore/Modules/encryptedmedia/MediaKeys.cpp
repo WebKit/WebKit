@@ -57,11 +57,11 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContex
     // When this method is invoked, the user agent must run the following steps:
     // 1. If this object's supported session types value does not contain sessionType, throw [WebIDL] a NotSupportedError.
     if (!m_supportedSessionTypes.contains(sessionType))
-        return Exception(NOT_SUPPORTED_ERR);
+        return Exception(NotSupportedError);
 
     // 2. If the implementation does not support MediaKeySession operations in the current state, throw [WebIDL] an InvalidStateError.
     if (!m_implementation->supportsSessions())
-        return Exception(INVALID_STATE_ERR);
+        return Exception(InvalidStateError);
 
     // 3. Let session be a new MediaKeySession object, and initialize it as follows:
     // NOTE: Continued in MediaKeySession.
@@ -98,7 +98,7 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
         // 5.1. Use this object's cdm instance to process certificate.
         if (m_instance->setServerCertificate(WTFMove(certificate)) == CDMInstance::Failed) {
             // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.
-            promise->reject(INVALID_STATE_ERR);
+            promise->reject(InvalidStateError);
             return;
         }
 

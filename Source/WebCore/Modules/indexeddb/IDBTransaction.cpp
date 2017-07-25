@@ -146,10 +146,10 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
     ASSERT(currentThread() == m_database->originThreadID());
 
     if (!scriptExecutionContext())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (isFinishedOrFinishing())
-        return Exception { INVALID_STATE_ERR, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished.") };
+        return Exception { InvalidStateError, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished.") };
 
     Locker<Lock> locker(m_referencedObjectStoreLock);
 
@@ -167,11 +167,11 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
 
     auto* info = m_database->info().infoForExistingObjectStore(objectStoreName);
     if (!info)
-        return Exception { NOT_FOUND_ERR, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.") };
+        return Exception { NotFoundError, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.") };
 
     // Version change transactions are scoped to every object store in the database.
     if (!info || (!found && !isVersionChange()))
-        return Exception { NOT_FOUND_ERR, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.") };
+        return Exception { NotFoundError, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.") };
 
     auto objectStore = std::make_unique<IDBObjectStore>(*scriptExecutionContext(), *info, *this);
     auto* rawObjectStore = objectStore.get();
@@ -208,7 +208,7 @@ ExceptionOr<void> IDBTransaction::abort()
     ASSERT(currentThread() == m_database->originThreadID());
 
     if (isFinishedOrFinishing())
-        return Exception { INVALID_STATE_ERR, ASCIILiteral("Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished.") };
+        return Exception { InvalidStateError, ASCIILiteral("Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished.") };
 
     internalAbort();
 
@@ -294,7 +294,7 @@ void IDBTransaction::abortOnServerAndCancelRequests(IDBClient::TransactionOperat
 
     m_currentlyCompletingRequest = nullptr;
     
-    IDBError error(ABORT_ERR);
+    IDBError error(AbortError);
 
     abortInProgressOperations(error);
 

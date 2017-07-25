@@ -44,7 +44,7 @@ unsigned SQLResultSetRowList::length() const
 ExceptionOr<Vector<WTF::KeyValuePair<String, SQLValue>>> SQLResultSetRowList::item(unsigned index) const
 {
     if (index >= length())
-        return Exception { INDEX_SIZE_ERR };
+        return Exception { IndexSizeError };
 
     Vector<WTF::KeyValuePair<String, SQLValue>> result;
 

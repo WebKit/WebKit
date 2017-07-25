@@ -73,18 +73,18 @@ String RTCDTMFSender::toneBuffer() const
 ExceptionOr<void> RTCDTMFSender::insertDTMF(const String&, std::optional<int> duration, std::optional<int> interToneGap)
 {
     if (!canInsertDTMF())
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
 
     if (duration && (duration.value() > maxToneDurationMs || duration.value() < minToneDurationMs))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     if (interToneGap && interToneGap.value() < minInterToneGapMs)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     m_duration = duration.value_or(defaultToneDurationMs);
     m_interToneGap = interToneGap.value_or(defaultInterToneGapMs);
 
-    return Exception { SYNTAX_ERR };
+    return Exception { SyntaxError };
 }
 
 void RTCDTMFSender::didPlayTone(const String& tone)

@@ -123,7 +123,7 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const
     bool quotaException = false;
     storageArea->setItem(frame, key, value, quotaException);
     if (quotaException)
-        errorString = DOMException::name(QUOTA_EXCEEDED_ERR);
+        errorString = DOMException::name(QuotaExceededError);
 }
 
 void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, const InspectorObject& storageId, const String& key)

@@ -48,7 +48,7 @@ ExceptionOr<void> UserMessageHandler::postMessage(RefPtr<SerializedScriptValue>&
     // Check to see if the descriptor has been removed. This can happen if the host application has
     // removed the named message handler at the WebKit2 API level.
     if (!m_descriptor)
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     m_descriptor->didPostMessage(*this, value.get());
     return { };

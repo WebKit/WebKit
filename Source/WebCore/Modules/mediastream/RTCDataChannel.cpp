@@ -95,23 +95,23 @@ const AtomicString& RTCDataChannel::binaryType() const
 ExceptionOr<void> RTCDataChannel::setBinaryType(const AtomicString& binaryType)
 {
     if (binaryType == blobKeyword())
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
     if (binaryType == arraybufferKeyword()) {
         m_binaryType = BinaryType::ArrayBuffer;
         return { };
     }
-    return Exception { TYPE_MISMATCH_ERR };
+    return Exception { TypeMismatchError };
 }
 
 ExceptionOr<void> RTCDataChannel::send(const String& data)
 {
     // FIXME: We should only throw in Connected state.
     if (m_readyState != RTCDataChannelState::Open)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (!m_handler->sendStringData(data)) {
         // FIXME: Decide what the right exception here is.
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     }
 
     return { };
@@ -121,7 +121,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBuffer& data)
 {
     // FIXME: We should only throw in Connected state.
     if (m_readyState != RTCDataChannelState::Open)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     size_t dataLength = data.byteLength();
     if (!dataLength)
@@ -131,7 +131,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBuffer& data)
 
     if (!m_handler->sendRawData(dataPointer, dataLength)) {
         // FIXME: Decide what the right exception here is.
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     }
 
     return { };
@@ -146,7 +146,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBufferView& data)
 ExceptionOr<void> RTCDataChannel::send(Blob&)
 {
     // FIXME: Implement.
-    return Exception { NOT_SUPPORTED_ERR };
+    return Exception { NotSupportedError };
 }
 
 void RTCDataChannel::close()

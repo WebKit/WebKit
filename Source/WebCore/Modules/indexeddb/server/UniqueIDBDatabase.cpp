@@ -978,7 +978,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
 
     auto* objectStoreInfo = m_backingStore->infoForObjectStore(objectStoreIdentifier);
     if (!objectStoreInfo) {
-        error = IDBError(INVALID_STATE_ERR, ASCIILiteral("Object store cannot be found in the backing store"));
+        error = IDBError(InvalidStateError, ASCIILiteral("Object store cannot be found in the backing store"));
         postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
         return;
     }

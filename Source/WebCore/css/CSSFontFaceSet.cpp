@@ -333,13 +333,13 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
     auto style = MutableStyleProperties::create();
     auto parseResult = CSSParser::parseValue(style, CSSPropertyFont, font, true, HTMLStandardMode);
     if (parseResult == CSSParser::ParseResult::Error)
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     FontSelectionRequest request = computeFontSelectionRequest(style.get());
 
     auto family = style->getPropertyCSSValue(CSSPropertyFontFamily);
     if (!is<CSSValueList>(family.get()))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
     CSSValueList& familyList = downcast<CSSValueList>(*family);
 
     HashSet<AtomicString> uniqueFamilies;

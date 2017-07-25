@@ -442,7 +442,7 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
         break;
 
     default:
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
     }
 
     convertedResult.errors.appendVector(convert(result.errors));
@@ -540,21 +540,21 @@ static bool isSecure(DocumentLoader& documentLoader)
 static ExceptionOr<void> canCallApplePaySessionAPIs(Document& document)
 {
     if (!isSecure(*document.loader()))
-        return Exception { INVALID_ACCESS_ERR, "Trying to call an ApplePaySession API from an insecure document." };
+        return Exception { InvalidAccessError, "Trying to call an ApplePaySession API from an insecure document." };
 
     auto& topDocument = document.topDocument();
     if (&document != &topDocument) {
         auto& topOrigin = topDocument.topOrigin();
 
         if (!document.securityOrigin().isSameSchemeHostPort(topOrigin))
-            return Exception { INVALID_ACCESS_ERR, "Trying to call an ApplePaySession API from a document with an different security origin than its top-level frame." };
+            return Exception { InvalidAccessError, "Trying to call an ApplePaySession API from a document with an different security origin than its top-level frame." };
 
         for (auto* ancestorDocument = document.parentDocument(); ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
             if (!isSecure(*ancestorDocument->loader()))
-                return Exception { INVALID_ACCESS_ERR, "Trying to call an ApplePaySession API from a document with an insecure parent frame." };
+                return Exception { InvalidAccessError, "Trying to call an ApplePaySession API from a document with an insecure parent frame." };
 
             if (!ancestorDocument->securityOrigin().isSameSchemeHostPort(topOrigin))
-                return Exception { INVALID_ACCESS_ERR, "Trying to call an ApplePaySession API from a document with an different security origin than its top-level frame." };
+                return Exception { InvalidAccessError, "Trying to call an ApplePaySession API from a document with an different security origin than its top-level frame." };
         }
     }
 
@@ -568,12 +568,12 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, un
         return canCall.releaseException();
 
     if (!ScriptController::processingUserGesture())
-        return Exception { INVALID_ACCESS_ERR, "Must create a new ApplePaySession from a user gesture handler." };
+        return Exception { InvalidAccessError, "Must create a new ApplePaySession from a user gesture handler." };
 
     auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
 
     if (!version || !paymentCoordinator.supportsVersion(version))
-        return Exception { INVALID_ACCESS_ERR, makeString("\"" + String::number(version), "\" is not a supported version.") };
+        return Exception { InvalidAccessError, makeString("\"" + String::number(version), "\" is not a supported version.") };
 
     auto convertedPaymentRequest = convertAndValidate(version, WTFMove(paymentRequest));
     if (convertedPaymentRequest.hasException())
@@ -596,7 +596,7 @@ ApplePaySession::~ApplePaySession()
 ExceptionOr<bool> ApplePaySession::supportsVersion(ScriptExecutionContext& scriptExecutionContext, unsigned version)
 {
     if (!version)
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     auto& document = downcast<Document>(scriptExecutionContext);
 
@@ -663,7 +663,7 @@ ExceptionOr<void> ApplePaySession::openPaymentSetup(ScriptExecutionContext& scri
         return canCall.releaseException();
 
     if (!ScriptController::processingUserGesture())
-        return Exception { INVALID_ACCESS_ERR, "Must call ApplePaySession.openPaymentSetup from a user gesture handler." };
+        return Exception { InvalidAccessError, "Must call ApplePaySession.openPaymentSetup from a user gesture handler." };
 
     RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
     auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
@@ -678,10 +678,10 @@ ExceptionOr<void> ApplePaySession::openPaymentSetup(ScriptExecutionContext& scri
 ExceptionOr<void> ApplePaySession::begin()
 {
     if (!canBegin())
-        return Exception { INVALID_ACCESS_ERR, "Payment session is already active." };
+        return Exception { InvalidAccessError, "Payment session is already active." };
 
     if (paymentCoordinator().hasActiveSession())
-        return Exception { INVALID_ACCESS_ERR, "Page already has an active payment session." };
+        return Exception { InvalidAccessError, "Page already has an active payment session." };
 
     auto& document = *downcast<Document>(scriptExecutionContext());
 
@@ -690,7 +690,7 @@ ExceptionOr<void> ApplePaySession::begin()
         linkIconURLs.append(icon.url);
 
     if (!paymentCoordinator().beginPaymentSession(*this, document.url(), linkIconURLs, m_paymentRequest))
-        return Exception { INVALID_ACCESS_ERR, "There is already has an active payment session." };
+        return Exception { InvalidAccessError, "There is already has an active payment session." };
 
     m_state = State::Active;
 
@@ -702,7 +702,7 @@ ExceptionOr<void> ApplePaySession::begin()
 ExceptionOr<void> ApplePaySession::abort()
 {
     if (!canAbort())
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     m_state = State::Aborted;
     paymentCoordinator().abortPaymentSession();
@@ -715,7 +715,7 @@ ExceptionOr<void> ApplePaySession::abort()
 ExceptionOr<void> ApplePaySession::completeMerchantValidation(JSC::ExecState& state, JSC::JSValue merchantSessionValue)
 {
     if (!canCompleteMerchantValidation())
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     if (!merchantSessionValue.isObject())
         return Exception { TypeError };
@@ -727,7 +727,7 @@ ExceptionOr<void> ApplePaySession::completeMerchantValidation(JSC::ExecState& st
     auto merchantSession = PaymentMerchantSession::fromJS(state, asObject(merchantSessionValue), errorMessage);
     if (!merchantSession) {
         window.printErrorMessage(errorMessage);
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
     }
 
     m_merchantValidationState = MerchantValidationState::ValidationComplete;
@@ -739,7 +739,7 @@ ExceptionOr<void> ApplePaySession::completeMerchantValidation(JSC::ExecState& st
 ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(ApplePayShippingMethodUpdate&& update)
 {
     if (!canCompleteShippingMethodSelection())
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     auto convertedUpdate = convertAndValidate(WTFMove(update));
     if (convertedUpdate.hasException())
@@ -754,7 +754,7 @@ ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(ApplePayShipp
 ExceptionOr<void> ApplePaySession::completeShippingContactSelection(ApplePayShippingContactUpdate&& update)
 {
     if (!canCompleteShippingContactSelection())
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     auto convertedUpdate = convertAndValidate(WTFMove(update));
     if (convertedUpdate.hasException())
@@ -769,7 +769,7 @@ ExceptionOr<void> ApplePaySession::completeShippingContactSelection(ApplePayShip
 ExceptionOr<void> ApplePaySession::completePaymentMethodSelection(ApplePayPaymentMethodUpdate&& update)
 {
     if (!canCompletePaymentMethodSelection())
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     auto convertedUpdate = convertAndValidate(WTFMove(update));
     if (convertedUpdate.hasException())
@@ -784,7 +784,7 @@ ExceptionOr<void> ApplePaySession::completePaymentMethodSelection(ApplePayPaymen
 ExceptionOr<void> ApplePaySession::completePayment(ApplePayPaymentAuthorizationResult&& result)
 {
     if (!canCompletePayment())
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
 
     auto convertedResultOrException = convertAndValidate(WTFMove(result));
     if (convertedResultOrException.hasException())
@@ -827,7 +827,7 @@ ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(unsigned shor
         return { };
 
     default:
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
     }
 
     update.newTotal = WTFMove(newTotal);
@@ -868,7 +868,7 @@ ExceptionOr<void> ApplePaySession::completeShippingContactSelection(unsigned sho
         break;
 
     default:
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
     }
 
     if (errorCode)

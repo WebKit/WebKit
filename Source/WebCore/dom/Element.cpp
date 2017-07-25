@@ -1228,7 +1228,7 @@ const AtomicString& Element::getAttributeNS(const AtomicString& namespaceURI, co
 ExceptionOr<void> Element::setAttribute(const AtomicString& localName, const AtomicString& value)
 {
     if (!Document::isValidName(localName))
-        return Exception { INVALID_CHARACTER_ERR };
+        return Exception { InvalidCharacterError };
 
     synchronizeAttribute(localName);
     auto caseAdjustedLocalName = shouldIgnoreAttributeCase(*this) ? localName.convertToASCIILowercase() : localName;
@@ -1824,9 +1824,9 @@ static bool canAttachAuthorShadowRoot(const Element& element)
 ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
 {
     if (!canAttachAuthorShadowRoot(*this))
-        return Exception { NOT_SUPPORTED_ERR };
+        return Exception { NotSupportedError };
     if (shadowRoot())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
     if (init.mode == ShadowRootMode::UserAgent)
         return Exception { TypeError };
     auto shadow = ShadowRoot::create(document(), init.mode);
@@ -2142,10 +2142,10 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
     if (oldAttrNode.get() == &attrNode)
         return WTFMove(oldAttrNode);
 
-    // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
+    // InUseAttributeError: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
     if (attrNode.ownerElement() && attrNode.ownerElement() != this)
-        return Exception { INUSE_ATTRIBUTE_ERR };
+        return Exception { InUseAttributeError };
 
     {
     NoEventDispatchAssertion assertNoEventDispatch;
@@ -2189,10 +2189,10 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
     if (oldAttrNode.get() == &attrNode)
         return WTFMove(oldAttrNode);
 
-    // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
+    // InUseAttributeError: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
     if (attrNode.ownerElement() && attrNode.ownerElement() != this)
-        return Exception { INUSE_ATTRIBUTE_ERR };
+        return Exception { InUseAttributeError };
 
     unsigned index = 0;
     
@@ -2224,18 +2224,18 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
 ExceptionOr<Ref<Attr>> Element::removeAttributeNode(Attr& attr)
 {
     if (attr.ownerElement() != this)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     ASSERT(&document() == &attr.document());
 
     synchronizeAllAttributes();
 
     if (!m_elementData)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     auto existingAttributeIndex = m_elementData->findAttributeIndexByName(attr.qualifiedName());
     if (existingAttributeIndex == ElementData::attributeNotFound)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     Ref<Attr> oldAttrNode { attr };
 
@@ -2252,7 +2252,7 @@ ExceptionOr<QualifiedName> Element::parseAttributeName(const AtomicString& names
         return parseResult.releaseException();
     QualifiedName parsedAttributeName { parseResult.releaseReturnValue() };
     if (!Document::hasValidNamespaceForAttributes(parsedAttributeName))
-        return Exception { NAMESPACE_ERR };
+        return Exception { NamespaceError };
     return WTFMove(parsedAttributeName);
 }
 
@@ -2558,7 +2558,7 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
 {
     auto* parentElement = this->parentElement();
     if (!is<HTMLElement>(parentElement))
-        return Exception { NO_MODIFICATION_ALLOWED_ERR };
+        return Exception { NoModificationAllowedError };
 
     Ref<HTMLElement> parent = downcast<HTMLElement>(*parentElement);
     RefPtr<Node> prev = previousSibling();
@@ -3659,7 +3659,7 @@ ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newC
         return newChild.ptr();
     }
 
-    return Exception { SYNTAX_ERR };
+    return Exception { SyntaxError };
 }
 
 ExceptionOr<Element*> Element::insertAdjacentElement(const String& where, Element& newChild)
@@ -3676,12 +3676,12 @@ static ExceptionOr<ContainerNode&> contextNodeForInsertion(const String& where, 
     if (equalLettersIgnoringASCIICase(where, "beforebegin") || equalLettersIgnoringASCIICase(where, "afterend")) {
         auto* parent = element.parentNode();
         if (!parent || is<Document>(*parent))
-            return Exception { NO_MODIFICATION_ALLOWED_ERR };
+            return Exception { NoModificationAllowedError };
         return *parent;
     }
     if (equalLettersIgnoringASCIICase(where, "afterbegin") || equalLettersIgnoringASCIICase(where, "beforeend"))
         return element;
-    return Exception { SYNTAX_ERR };
+    return Exception { SyntaxError };
 }
 
 // Step 2 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.

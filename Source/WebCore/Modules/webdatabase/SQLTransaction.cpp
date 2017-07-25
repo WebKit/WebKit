@@ -75,7 +75,7 @@ SQLTransaction::~SQLTransaction()
 ExceptionOr<void> SQLTransaction::executeSql(const String& sqlStatement, std::optional<Vector<SQLValue>>&& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& callbackError)
 {
     if (!m_executeSqlAllowed || !m_database->opened())
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     int permissions = DatabaseAuthorizer::ReadWriteMask;
     if (!m_database->databaseContext().allowDatabaseAccess())

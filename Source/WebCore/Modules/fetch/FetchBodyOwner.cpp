@@ -152,7 +152,7 @@ void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)
 void FetchBodyOwner::json(Ref<DeferredPromise>&& promise)
 {
     if (isBodyNull()) {
-        promise->reject(SYNTAX_ERR);
+        promise->reject(SyntaxError);
         return;
     }
     if (isDisturbedOrLocked()) {

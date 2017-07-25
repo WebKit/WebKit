@@ -159,7 +159,7 @@ XMLHttpRequest::State XMLHttpRequest::readyState() const
 ExceptionOr<OwnedString> XMLHttpRequest::responseText()
 {
     if (m_responseType != ResponseType::EmptyString && m_responseType != ResponseType::Text)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
     return OwnedString { responseTextIgnoringResponseType() };
 }
 
@@ -173,7 +173,7 @@ void XMLHttpRequest::didCacheResponse()
 ExceptionOr<Document*> XMLHttpRequest::responseXML()
 {
     if (m_responseType != ResponseType::EmptyString && m_responseType != ResponseType::Document)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     if (!doneWithoutErrors())
         return nullptr;
@@ -238,7 +238,7 @@ ExceptionOr<void> XMLHttpRequest::setTimeout(unsigned timeout)
 {
     if (scriptExecutionContext()->isDocument() && !m_async) {
         logConsoleError(scriptExecutionContext(), "XMLHttpRequest.timeout cannot be set for synchronous HTTP(S) requests made from the window context.");
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
     }
     m_timeoutMilliseconds = timeout;
     if (!m_timeoutTimer.isActive())
@@ -253,7 +253,7 @@ ExceptionOr<void> XMLHttpRequest::setTimeout(unsigned timeout)
 ExceptionOr<void> XMLHttpRequest::setResponseType(ResponseType type)
 {
     if (m_state >= LOADING)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated
     // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
@@ -261,7 +261,7 @@ ExceptionOr<void> XMLHttpRequest::setResponseType(ResponseType type)
     // such as file: and data: still make sense to allow.
     if (!m_async && scriptExecutionContext()->isDocument() && m_url.protocolIsInHTTPFamily()) {
         logConsoleError(scriptExecutionContext(), "XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.");
-        return Exception { INVALID_ACCESS_ERR };
+        return Exception { InvalidAccessError };
     }
 
     m_responseType = type;
@@ -317,7 +317,7 @@ void XMLHttpRequest::callReadyStateChangeListener()
 ExceptionOr<void> XMLHttpRequest::setWithCredentials(bool value)
 {
     if (m_state > OPENED || m_sendFlag)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     m_includeCredentials = value;
     return { };
@@ -418,10 +418,10 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     ASSERT(m_state == UNSENT);
 
     if (!isValidHTTPToken(method))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     if (!isAllowedHTTPMethod(method))
-        return Exception { SECURITY_ERR };
+        return Exception { SecurityError };
 
     if (!async && scriptExecutionContext()->isDocument()) {
         // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated
@@ -430,13 +430,13 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
         // such as file: and data: still make sense to allow.
         if (url.protocolIsInHTTPFamily() && m_responseType != ResponseType::EmptyString) {
             logConsoleError(scriptExecutionContext(), "Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.");
-            return Exception { INVALID_ACCESS_ERR };
+            return Exception { InvalidAccessError };
         }
 
         // Similarly, timeouts are disabled for synchronous requests as well.
         if (m_timeoutMilliseconds > 0) {
             logConsoleError(scriptExecutionContext(), "Synchronous XMLHttpRequests must not have a timeout value set.");
-            return Exception { INVALID_ACCESS_ERR };
+            return Exception { InvalidAccessError };
         }
     }
 
@@ -482,13 +482,13 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
     auto& context = *scriptExecutionContext();
 
     if (m_state != OPENED || m_sendFlag)
-        return ExceptionOr<void> { Exception { INVALID_STATE_ERR } };
+        return ExceptionOr<void> { Exception { InvalidStateError } };
     ASSERT(!m_loader);
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
     if (!context.shouldBypassMainWorldContentSecurityPolicy() && !context.contentSecurityPolicy()->allowConnectToSource(m_url)) {
         if (!m_async)
-            return ExceptionOr<void> { Exception { NETWORK_ERR } };
+            return ExceptionOr<void> { Exception { NetworkError } };
         setPendingActivity(this);
         m_timeoutTimer.stop();
         m_networkErrorTimer.startOneShot(0_s);
@@ -686,7 +686,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
 {
     // Only GET request is supported for blob URL.
     if (!m_async && m_url.protocolIsBlob() && m_method != "GET")
-        return Exception { NETWORK_ERR };
+        return Exception { NetworkError };
 
     m_sendFlag = true;
 
@@ -769,7 +769,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
     if (m_exceptionCode)
         return Exception { m_exceptionCode };
     if (m_error)
-        return Exception { NETWORK_ERR };
+        return Exception { NetworkError };
     return { };
 }
 
@@ -896,7 +896,7 @@ void XMLHttpRequest::dropProtection()
 ExceptionOr<void> XMLHttpRequest::overrideMimeType(const String& override)
 {
     if (m_state == LOADING || m_state == DONE)
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
 
     m_mimeTypeOverride = override;
     return { };
@@ -909,12 +909,12 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
         if (usesDashboardBackwardCompatibilityMode())
             return { };
 #endif
-        return Exception { INVALID_STATE_ERR };
+        return Exception { InvalidStateError };
     }
 
     String normalizedValue = stripLeadingAndTrailingHTTPSpaces(value);
     if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(normalizedValue))
-        return Exception { SYNTAX_ERR };
+        return Exception { SyntaxError };
 
     // A privileged script (e.g. a Dashboard widget) can set any headers.
     if (!securityOrigin()->canLoadLocalResources() && !isAllowedHTTPHeader(name)) {
@@ -1004,7 +1004,7 @@ void XMLHttpRequest::didFail(const ResourceError& error)
         return;
 
     if (error.isCancellation()) {
-        m_exceptionCode = ABORT_ERR;
+        m_exceptionCode = AbortError;
         abortError();
         return;
     }
@@ -1032,7 +1032,7 @@ void XMLHttpRequest::didFail(const ResourceError& error)
         m_networkErrorTimer.startOneShot(0_s);
         return;
     }
-    m_exceptionCode = NETWORK_ERR;
+    m_exceptionCode = NetworkError;
     networkError();
 }
 
@@ -1197,11 +1197,11 @@ void XMLHttpRequest::didReachTimeout()
 
     m_sendFlag = false;
     m_error = true;
-    m_exceptionCode = TIMEOUT_ERR;
+    m_exceptionCode = TimeoutError;
 
     if (!m_async) {
         m_state = DONE;
-        m_exceptionCode = TIMEOUT_ERR;
+        m_exceptionCode = TimeoutError;
         return;
     }
 

@@ -82,7 +82,7 @@ IDBError MemoryIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
     LOG(IndexedDB, "MemoryIDBBackingStore::beginTransaction");
 
     if (m_transactions.contains(info.identifier()))
-        return { INVALID_STATE_ERR, "Backing store asked to create transaction it already has a record of" };
+        return { InvalidStateError, "Backing store asked to create transaction it already has a record of" };
 
     auto transaction = MemoryBackingStoreTransaction::create(*this, info);
 
@@ -108,7 +108,7 @@ IDBError MemoryIDBBackingStore::abortTransaction(const IDBResourceIdentifier& tr
 
     auto transaction = m_transactions.take(transactionIdentifier);
     if (!transaction)
-        return { INVALID_STATE_ERR, "Backing store asked to abort transaction it didn't have record of" };
+        return { InvalidStateError, "Backing store asked to abort transaction it didn't have record of" };
 
     transaction->abort();
 
@@ -121,7 +121,7 @@ IDBError MemoryIDBBackingStore::commitTransaction(const IDBResourceIdentifier& t
 
     auto transaction = m_transactions.take(transactionIdentifier);
     if (!transaction)
-        return { INVALID_STATE_ERR, "Backing store asked to commit transaction it didn't have record of" };
+        return { InvalidStateError, "Backing store asked to commit transaction it didn't have record of" };
 
     transaction->commit();
 

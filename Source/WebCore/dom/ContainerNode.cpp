@@ -194,28 +194,28 @@ static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node&
         ASSERT(!newParent.isDocumentTypeNode());
         ASSERT(isChildTypeAllowed(newParent, newChild));
         if (containsConsideringHostElements(newChild, newParent))
-            return Exception { HIERARCHY_REQUEST_ERR };
+            return Exception { HierarchyRequestError };
         if (operation == Document::AcceptChildOperation::InsertOrAdd && refChild && refChild->parentNode() != &newParent)
-            return Exception { NOT_FOUND_ERR };
+            return Exception { NotFoundError };
         return { };
     }
 
     // This should never happen, but also protect release builds from tree corruption.
     ASSERT(!newChild.isPseudoElement());
     if (newChild.isPseudoElement())
-        return Exception { HIERARCHY_REQUEST_ERR };
+        return Exception { HierarchyRequestError };
 
     if (containsConsideringHostElements(newChild, newParent))
-        return Exception { HIERARCHY_REQUEST_ERR };
+        return Exception { HierarchyRequestError };
 
     if (operation == Document::AcceptChildOperation::InsertOrAdd && refChild && refChild->parentNode() != &newParent)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     if (is<Document>(newParent)) {
         if (!downcast<Document>(newParent).canAcceptChild(newChild, refChild, operation))
-            return Exception { HIERARCHY_REQUEST_ERR };
+            return Exception { HierarchyRequestError };
     } else if (!isChildTypeAllowed(newParent, newChild))
-        return Exception { HIERARCHY_REQUEST_ERR };
+        return Exception { HierarchyRequestError };
 
     return { };
 }
@@ -225,7 +225,7 @@ static inline ExceptionOr<void> checkAcceptChildGuaranteedNodeTypes(ContainerNod
     ASSERT(!newParent.isDocumentTypeNode());
     ASSERT(isChildTypeAllowed(newParent, newChild));
     if (newChild.contains(&newParent))
-        return Exception { HIERARCHY_REQUEST_ERR };
+        return Exception { HierarchyRequestError };
     return { };
 }
 
@@ -413,9 +413,9 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
     if (validityResult.hasException())
         return validityResult.releaseException();
 
-    // NOT_FOUND_ERR: Raised if oldChild is not a child of this node.
+    // NotFoundError: Raised if oldChild is not a child of this node.
     if (oldChild.parentNode() != this)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     RefPtr<Node> refChild = oldChild.nextSibling();
     if (refChild.get() == &newChild)
@@ -525,9 +525,9 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
 
     Ref<ContainerNode> protectedThis(*this);
 
-    // NOT_FOUND_ERR: Raised if oldChild is not a child of this node.
+    // NotFoundError: Raised if oldChild is not a child of this node.
     if (oldChild.parentNode() != this)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     Ref<Node> child(oldChild);
 
@@ -535,7 +535,7 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
 
     // Mutation events in willRemoveChild might have moved this child into a different parent.
     if (child->parentNode() != this)
-        return Exception { NOT_FOUND_ERR };
+        return Exception { NotFoundError };
 
     {
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;

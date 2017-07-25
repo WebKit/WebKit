@@ -53,7 +53,7 @@ ExceptionOr<void> UserMediaRequest::start(Document& document, MediaConstraints&&
 {
     auto* userMedia = UserMediaController::from(document.page());
     if (!userMedia)
-        return Exception { NOT_SUPPORTED_ERR }; // FIXME: Why is it better to return an exception here instead of rejecting the promise as we do just below?
+        return Exception { NotSupportedError }; // FIXME: Why is it better to return an exception here instead of rejecting the promise as we do just below?
 
     if (!audioConstraints.isValid && !videoConstraints.isValid) {
         promise.reject(TypeError);
@@ -208,11 +208,11 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invali
         break;
     case MediaAccessDenialReason::UserMediaDisabled:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - user media disabled");
-        m_promise.reject(SECURITY_ERR);
+        m_promise.reject(SecurityError);
         break;
     case MediaAccessDenialReason::NoCaptureDevices:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - no capture devices");
-        m_promise.reject(NOT_FOUND_ERR);
+        m_promise.reject(NotFoundError);
         break;
     case MediaAccessDenialReason::InvalidConstraint:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraint - %s", invalidConstraint.utf8().data());
@@ -224,7 +224,7 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invali
         break;
     case MediaAccessDenialReason::OtherFailure:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - other failure");
-        m_promise.reject(ABORT_ERR);
+        m_promise.reject(AbortError);
         break;
     case MediaAccessDenialReason::PermissionDenied:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - permission denied");

@@ -67,7 +67,7 @@ void raiseTypeErrorException()
 
 void raiseNotSupportedErrorException()
 {
-    raiseDOMErrorException(WebCore::NOT_SUPPORTED_ERR);
+    raiseDOMErrorException(WebCore::NotSupportedError);
 }
 
 void raiseDOMErrorException(WebCore::Exception&& exception)
