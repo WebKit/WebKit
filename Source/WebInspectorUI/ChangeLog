@@ -1,3 +1,27 @@
+2017-07-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inline multiple console log values if they are simple
+        https://bugs.webkit.org/show_bug.cgi?id=174746
+        <rdar://problem/33469376>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/IssueMessage.js:
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.type): Deleted.
+        Remove this as it isn't as useful as directly checking the type.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendExtraParameters):
+        (WebInspector.ConsoleMessageView.prototype._appendFormattedArguments):
+        (WebInspector.ConsoleMessageView.prototype._hasSimpleDisplay):
+        (WebInspector.ConsoleMessageView.prototype._isStackTrace):
+        For leading primitive/simple values, display them inline on the console message.
+
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.hasSimpleDisplay):
+        Provide a helper to determine if a formatted value will be simple.
+
 2017-07-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: Add a switch for Spreadsheet model style editor to experimental settings

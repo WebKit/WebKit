@@ -162,18 +162,6 @@ WebInspector.RemoteObject = class RemoteObject
         });
     }
 
-    static type(remoteObject)
-    {
-        if (remoteObject === null)
-            return "null";
-
-        var type = typeof remoteObject;
-        if (type !== "object" && type !== "function")
-            return type;
-
-        return remoteObject.type;
-    }
-
     // Public
 
     get target()

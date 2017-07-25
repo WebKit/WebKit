@@ -132,7 +132,7 @@ WebInspector.IssueMessage = class IssueMessage extends WebInspector.Object
         if (!parameters)
             return this._consoleMessage.messageText;
 
-        if (WebInspector.RemoteObject.type(parameters[0]) !== "string")
+        if (parameters[0].type !== "string")
             return this._consoleMessage.messageText;
 
         function valueFormatter(obj)

@@ -25,6 +25,28 @@
 
 WebInspector.FormattedValue = {};
 
+WebInspector.FormattedValue.hasSimpleDisplay = function(object)
+{
+    switch (object.type) {
+    case "boolean":
+    case "number":
+    case "string":
+    case "symbol":
+    case "undefined":
+        return true;
+
+    case "function":
+        return false;
+
+    case "object":
+        var subtype = object.subtype;
+        return subtype === "null" || subtype === "regexp" || subtype === "date";
+    }
+
+    console.assert(false, "All RemoteObject types should be handled above");
+    return false;
+};
+
 WebInspector.FormattedValue.classNameForTypes = function(type, subtype)
 {
     return "formatted-" + (subtype ? subtype : type);
