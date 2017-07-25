@@ -327,10 +327,6 @@ private:
     void applyCascadedProperties(CascadedProperties&, int firstProperty, int lastProperty, const MatchResult*);
     void cascadeMatches(CascadedProperties&, const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
 
-    static bool isValidRegionStyleProperty(CSSPropertyID);
-#if ENABLE(VIDEO_TRACK)
-    static bool isValidCueStyleProperty(CSSPropertyID);
-#endif
     void matchPageRules(MatchResult&, RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>&, bool isLeftPage, bool isFirstPage, const String& pageName);
 

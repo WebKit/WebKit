@@ -1474,8 +1474,8 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
 }
 
 // http://dev.w3.org/csswg/css3-regions/#the-at-region-style-rule
-// FIXME: add incremental support for other region styling properties.
-inline bool StyleResolver::isValidRegionStyleProperty(CSSPropertyID id)
+// FIXME: Add incremental support for other region styling properties.
+static inline bool isValidRegionStyleProperty(CSSPropertyID id)
 {
     switch (id) {
     case CSSPropertyBackgroundColor:
@@ -1489,7 +1489,7 @@ inline bool StyleResolver::isValidRegionStyleProperty(CSSPropertyID id)
 }
 
 #if ENABLE(VIDEO_TRACK)
-inline bool StyleResolver::isValidCueStyleProperty(CSSPropertyID id)
+static inline bool isValidCueStyleProperty(CSSPropertyID id)
 {
     switch (id) {
     case CSSPropertyBackground:
@@ -2146,10 +2146,10 @@ void StyleResolver::CascadedProperties::addMatch(const MatchResult& matchResult,
         }
         CSSPropertyID propertyID = current.id();
 
-        if (propertyWhitelistType == PropertyWhitelistRegion && !StyleResolver::isValidRegionStyleProperty(propertyID))
+        if (propertyWhitelistType == PropertyWhitelistRegion && !isValidRegionStyleProperty(propertyID))
             continue;
 #if ENABLE(VIDEO_TRACK)
-        if (propertyWhitelistType == PropertyWhitelistCue && !StyleResolver::isValidCueStyleProperty(propertyID))
+        if (propertyWhitelistType == PropertyWhitelistCue && !isValidCueStyleProperty(propertyID))
             continue;
 #endif
 

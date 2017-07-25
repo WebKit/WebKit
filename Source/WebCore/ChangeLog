@@ -1,3 +1,23 @@
+2017-07-25  Daniel Bates  <dabates@apple.com>
+
+        Make StyleResolver::isValid{Cue, Region}StyleProperty() static, inline, non-member functions
+        https://bugs.webkit.org/show_bug.cgi?id=174827
+
+        Reviewed by Simon Fraser.
+
+        StyleResolver::isValid{Cue, Region}StyleProperty() access neither instance nor
+        class data. Moreover, they are private member functions and hence cannot be
+        used outside of StyleResolver's implementation. So, make these static, inline,
+        non-member functions.
+
+        * css/StyleResolver.cpp:
+        (WebCore::isValidRegionStyleProperty):
+        (WebCore::isValidCueStyleProperty):
+        (WebCore::StyleResolver::CascadedProperties::addMatch):
+        (WebCore::StyleResolver::isValidRegionStyleProperty): Deleted.
+        (WebCore::StyleResolver::isValidCueStyleProperty): Deleted.
+        * css/StyleResolver.h:
+
 2017-07-25  Per Arne Vollan  <pvollan@apple.com>
 
         Dragged links are blurry on 1x displays.
