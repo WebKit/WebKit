@@ -1,3 +1,36 @@
+2017-07-25  Jonathan Bedard  <jbedard@apple.com>
+
+        Replace --runtime with something for both ios-simulator and ios-device
+        https://bugs.webkit.org/show_bug.cgi?id=173775
+        <rdar://problem/32952164>
+
+        Reviewed by Aakash Jain.
+
+        Add --version flag for both iOS simulator and iOS device.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Add --version flag and move --no-install.
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options): Move --no-intall to run_webkit_tests.py.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort):
+        (IOSPort._is_valid_ios_version): Check that the provided version string is legal.
+        (IOSPort.get_option): If accessing the iOS version, check that it is a valid version string.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.ios_version): Consult --version flag before checking connected
+        devices for iOS version.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.make_port): Set --version option so that we can generate test
+        expectation paths without devices connected.
+        (IOSDeviceTest.test_additional_platform_directory): Deleted.
+        (IOSDeviceTest.test_baseline_searchpath): Deleted.
+        (IOSDeviceTest.test_expectations_ordering): Deleted.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.simulator_runtime): If no runtime is specified, use the --version
+        flag to specify a runtime.
+        (IOSSimulatorPort.ios_version): First check the --version flag, then the --runtime
+        flag and then use the default runtime.
+
 2017-07-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] TestWebKitAPI tests are no longer built since the WebKit2 rename

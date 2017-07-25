@@ -36,6 +36,7 @@ class IOSDeviceTest(ios_testcase.IOSTest):
 
     def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
         port = super(IOSDeviceTest, self).make_port(host=host, port_name=port_name, options=options, os_name=os_name, s_version=os_version, kwargs=kwargs)
+        port.set_option('version', '11.0')
         return port
 
     def test_operating_system(self):
@@ -87,13 +88,3 @@ class IOSDeviceTest(ios_testcase.IOSTest):
         port = self.make_port(port_name=self.port_name)
         with self.assertRaises(RuntimeError):
             port._get_crash_log('DumpRenderTree', 1234, None, None, time.time(), wait_for_log=False)
-
-    # FIXME: https://bugs.webkit.org/show_bug.cgi?id=173775
-    def test_additional_platform_directory(self):
-        pass
-
-    def test_baseline_searchpath(self):
-        pass
-
-    def test_expectations_ordering(self):
-        pass
