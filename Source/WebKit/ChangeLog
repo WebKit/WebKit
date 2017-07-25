@@ -1,3 +1,18 @@
+2017-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK][WPE] Remove useless conditional in IconDatabase::setIconDataForIconURL
+        https://bugs.webkit.org/show_bug.cgi?id=174792
+
+        Reviewed by Carlos Garcia Campos.
+
+        We have in IconDatabase::setIconDataForIconURL some code in a conditional to check if it's
+        not being executed on the icon sync thread. But at the top of the function is an assertion
+        to ensure the code is never executed on the icon sync thread. The condition is therefore
+        useless and the code should be executed unconditionally.
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::setIconDataForIconURL):
+
 2017-07-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Icon database error and crash

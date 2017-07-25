@@ -581,16 +581,12 @@ void IconDatabase::setIconDataForIconURL(RefPtr<SharedBuffer>&& data, const Stri
     }
 
     // Send notification out regarding all PageURLs that retain this icon
-    // But not if we're on the sync thread because that implies this mapping
-    // comes from the initial import which we don't want notifications for
-    if (!IS_ICON_SYNC_THREAD()) {
-        // Start the timer to commit this change - or further delay the timer if it was already started
-        scheduleOrDeferSyncTimer();
+    // Start the timer to commit this change - or further delay the timer if it was already started
+    scheduleOrDeferSyncTimer();
 
-        for (auto& pageURL : pageURLs) {
-            LOG(IconDatabase, "Dispatching notification that retaining pageURL %s has a new icon", urlForLogging(pageURL).ascii().data());
-            m_client->didChangeIconForPageURL(pageURL);
-        }
+    for (auto& pageURL : pageURLs) {
+        LOG(IconDatabase, "Dispatching notification that retaining pageURL %s has a new icon", urlForLogging(pageURL).ascii().data());
+        m_client->didChangeIconForPageURL(pageURL);
     }
 }
 
