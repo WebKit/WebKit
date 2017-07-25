@@ -542,6 +542,7 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp
 
     platform/network/cocoa/CookieCocoa.mm
+    platform/network/cocoa/CookieStorageObserver.mm
     platform/network/cocoa/CredentialCocoa.mm
     platform/network/cocoa/NetworkLoadMetrics.mm
     platform/network/cocoa/NetworkStorageSessionCocoa.mm
