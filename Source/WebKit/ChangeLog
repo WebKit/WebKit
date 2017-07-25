@@ -1,3 +1,22 @@
+2017-07-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r218629): [GTK] ASSERTION FAILED: m_eglDisplay == EGL_NO_DISPLAY in WebCore::PlatformDisplay::~PlatformDisplay
+        https://bugs.webkit.org/show_bug.cgi?id=174789
+
+        Reviewed by Žan Doberšek.
+
+        Before r218629, the wayland nested compositor display was a singleton created on demand by
+        AcceleratedSurfaceWayland, but now it's created unconditionally on web process creation when a valid display
+        name is received from the UI process. The side effect of this is that now the shared display is created after
+        the nested compositor display that is not a singleton anymore. The atexit used by PlatformDisplay to shutdown
+        egl display assumes that it will be registered by the shared display. Since we switched to on demand AC mode,
+        the shared display is only used in the web process when entering AC mode, that's why it only crashes when we
+        have entered AC at least once. We just need to ensure that the shared display is created before the nested
+        compositor display.
+
+        * WebProcess/gtk/WaylandCompositorDisplay.cpp:
+        (WebKit::WaylandCompositorDisplay::create): Check we are under wayland before creating the WaylandCompositorDisplay.
+
 2017-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] ASSERTION FAILED: client in WebKit::IconDatabase::setClient

@@ -40,6 +40,9 @@ std::unique_ptr<WaylandCompositorDisplay> WaylandCompositorDisplay::create(const
     if (displayName.isNull())
         return nullptr;
 
+    if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::Wayland)
+        return nullptr;
+
     struct wl_display* display = wl_display_connect(displayName.utf8().data());
     if (!display) {
         WTFLogAlways("PlatformDisplayWayland initialization: failed to connect to the Wayland display: %s", displayName.utf8().data());
