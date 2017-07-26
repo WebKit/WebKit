@@ -1,5 +1,30 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219638. rdar://problem/33523787
+
+    2017-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r218910): Crash when password field changes to text field
+            https://bugs.webkit.org/show_bug.cgi?id=174560
+
+            Reviewed by Zalan Bujtas.
+
+            The crash was caused by textMarkerDataForFirstPositionInTextControl accessing a nullptr returned by getOrCreate.
+            Unfortunately, in order to this fix bug while preserving the exact behavior would require synchronously creating
+            a renderer for the editing host when the input type changed since we can't create an accessbility object out of
+            a renderer-less node.
+
+            Instead, revert back to pre-r218910 behavior of always using the text control element's axID when notifying
+            the value change. While this is inconsistent with the way editing commands report content changes, I've since
+            learned that VoiceOver has code to deal with this exact situation.
+
+            Test: accessibility/mac/input-type-change-crash-2.html
+
+            * accessibility/AXObjectCache.cpp:
+            (WebCore::AXObjectCache::textMarkerDataForFirstPositionInTextControl):
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219610. rdar://problem/33523847
 
     2017-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>

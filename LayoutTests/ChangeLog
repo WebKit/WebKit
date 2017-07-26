@@ -1,5 +1,21 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219638. rdar://problem/33523787
+
+    2017-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r218910): Crash when password field changes to text field
+            https://bugs.webkit.org/show_bug.cgi?id=174560
+
+            Reviewed by Zalan Bujtas.
+
+            Added a regression test based on the test case provided by Daniel Bates.
+
+            * accessibility/mac/input-type-change-crash-2-expected.txt: Added.
+            * accessibility/mac/input-type-change-crash-2.html: Added.
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219610. rdar://problem/33523847
 
     2017-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
