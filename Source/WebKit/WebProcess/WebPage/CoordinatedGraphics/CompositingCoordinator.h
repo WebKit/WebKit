@@ -101,7 +101,7 @@ private:
     // GraphicsLayerClient
     void notifyAnimationStarted(const WebCore::GraphicsLayer*, const String&, double time) override;
     void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
-    void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect, WebCore::GraphicsLayerPaintBehavior) override;
+    void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& clipRect, WebCore::GraphicsLayerPaintFlags) override;
     float deviceScaleFactor() const override;
     float pageScaleFactor() const override;
 

@@ -1579,7 +1579,7 @@ bool GraphicsLayerCA::platformCALayerShowRepaintCounter(PlatformCALayer* platfor
     return isShowingRepaintCounter();
 }
 
-void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
+void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintFlags flags)
 {
     m_hasEverPainted = true;
     if (m_displayList) {
@@ -1595,7 +1595,7 @@ void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsCon
     }
 
     TraceScope tracingScope(PaintLayerStart, PaintLayerEnd);
-    paintGraphicsLayerContents(context, clip, layerPaintBehavior);
+    paintGraphicsLayerContents(context, clip, flags);
 }
 
 void GraphicsLayerCA::platformCALayerSetNeedsToRevalidateTiles()

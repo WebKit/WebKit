@@ -61,7 +61,7 @@ private:
     GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return GraphicsLayer::CompositingCoordinatesTopDown; }
     bool platformCALayerContentsOpaque() const override { return true; }
     bool platformCALayerDrawsContent() const override { return true; }
-    void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) override;
+    void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintFlags) override;
     float platformCALayerDeviceScaleFactor() const override;
 
     void updateTimerFired();

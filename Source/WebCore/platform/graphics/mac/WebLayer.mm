@@ -57,7 +57,7 @@ using namespace WebCore;
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
     if (layer) {
         PlatformCALayer::RepaintRectList rectsToPaint = PlatformCALayer::collectRectsToPaint(context, layer);
-        PlatformCALayer::drawLayerContents(context, layer, rectsToPaint, self.isRenderingInContext ? GraphicsLayerPaintNormal : GraphicsLayerPaintAllowAsyncImageDecoding);
+        PlatformCALayer::drawLayerContents(context, layer, rectsToPaint, self.isRenderingInContext ? GraphicsLayerPaintFlags::None : GraphicsLayerPaintFlags::AllowAsyncImageDecoding);
     }
 }
 
@@ -137,7 +137,7 @@ using namespace WebCore;
         graphicsContext.setIsAcceleratedContext(layer->acceleratesDrawing());
 
         FloatRect clipBounds = CGContextGetClipBoundingBox(context);
-        layer->owner()->platformCALayerPaintContents(layer, graphicsContext, clipBounds, self.isRenderingInContext ? GraphicsLayerPaintNormal : GraphicsLayerPaintAllowAsyncImageDecoding);
+        layer->owner()->platformCALayerPaintContents(layer, graphicsContext, clipBounds, self.isRenderingInContext ? GraphicsLayerPaintFlags::None : GraphicsLayerPaintFlags::AllowAsyncImageDecoding);
     }
 }
 

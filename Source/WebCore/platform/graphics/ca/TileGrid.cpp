@@ -712,15 +712,12 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
     }
 }
 
-void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, GraphicsLayerPaintBehavior layerPaintBehavior)
+void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, GraphicsLayerPaintFlags flags)
 {
 #if PLATFORM(IOS)
     if (pthread_main_np())
         WebThreadLock();
 #endif
-
-    if (platformCALayerRepaintCount(platformCALayer))
-        layerPaintBehavior &= ~GraphicsLayerPaintAllowAsyncImageDecoding;
 
     {
         GraphicsContextStateSaver stateSaver(context);
@@ -730,7 +727,7 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
         context.scale(m_scale);
 
         PlatformCALayer::RepaintRectList dirtyRects = PlatformCALayer::collectRectsToPaint(context.platformContext(), platformCALayer);
-        PlatformCALayer::drawLayerContents(context.platformContext(), &m_controller.rootLayer(), dirtyRects, layerPaintBehavior);
+        PlatformCALayer::drawLayerContents(context.platformContext(), &m_controller.rootLayer(), dirtyRects, flags);
     }
 
     int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);
@@ -769,12 +766,6 @@ bool TileGrid::isUsingDisplayListDrawing(PlatformCALayer*) const
 bool TileGrid::platformCALayerContentsOpaque() const
 {
     return m_controller.tilesAreOpaque();
-}
-
-int TileGrid::platformCALayerRepaintCount(PlatformCALayer* platformCALayer) const
-{
-    const auto it = m_tileRepaintCounts.find(platformCALayer);
-    return it != m_tileRepaintCounts.end() ? it->value : 0;
 }
 
 int TileGrid::platformCALayerIncrementRepaintCount(PlatformCALayer* platformCALayer)

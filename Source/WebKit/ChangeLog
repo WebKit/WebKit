@@ -1,5 +1,23 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219620. rdar://problem/33523847
+
+    2017-07-18  Matt Lewis  <jlewis3@apple.com>
+
+            Unreviewed, rolling out r219610.
+
+            This caused an api failure on all platforms for the test
+            SnapshotImageLargeAsyncDecoding
+
+            Reverted changeset:
+
+            "Async image decoding for large images should be disabled
+            after the first time a tile is painted"
+            https://bugs.webkit.org/show_bug.cgi?id=174451
+            http://trac.webkit.org/changeset/219610
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219764. rdar://problem/33523878
 
     2017-07-22  Chris Dumez  <cdumez@apple.com>

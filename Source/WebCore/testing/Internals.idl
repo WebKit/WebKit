@@ -249,9 +249,8 @@ enum EventThrottlingBehavior {
     void setImageFrameDecodingDuration(HTMLImageElement element, unrestricted float duration);
     void resetImageAnimation(HTMLImageElement element);
     boolean isImageAnimating(HTMLImageElement element);
-    void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement element, boolean enabled);
+    void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement element, boolean value);
     unsigned long imageDecodeCount(HTMLImageElement element);
-    void setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement element, boolean enabled);
 
     void setGridMaxTracksLimit(unsigned long maxTracksLimit);
 

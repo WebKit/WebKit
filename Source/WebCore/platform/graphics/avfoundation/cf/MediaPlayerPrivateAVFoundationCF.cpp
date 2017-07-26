@@ -220,7 +220,7 @@ private:
 
     virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime) { }
     virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayer::CompositingCoordinatesBottomUp; }
-    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) { }
+    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintFlags) { }
     virtual bool platformCALayerShowDebugBorders() const { return false; }
     virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const { return false; }
     virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) { return 0; }
