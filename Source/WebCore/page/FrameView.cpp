@@ -4949,27 +4949,6 @@ FloatPoint FrameView::documentToClientPoint(FloatPoint p) const
     return p;
 }
 
-FloatRect FrameView::layoutViewportToAbsoluteRect(FloatRect rect) const
-{
-    ASSERT(frame().settings().visualViewportEnabled());
-    rect.moveBy(layoutViewportRect().location());
-    rect.scale(frame().frameScaleFactor());
-    return rect;
-}
-
-FloatPoint FrameView::layoutViewportToAbsolutePoint(FloatPoint p) const
-{
-    ASSERT(frame().settings().visualViewportEnabled());
-    p.moveBy(layoutViewportRect().location());
-    return p.scaled(frame().frameScaleFactor());
-}
-
-FloatPoint FrameView::clientToLayoutViewportPoint(FloatPoint p) const
-{
-    ASSERT(frame().settings().visualViewportEnabled());
-    return p.scaled(frame().pageZoomFactor());
-}
-
 void FrameView::setTracksRepaints(bool trackRepaints)
 {
     if (trackRepaints == m_isTrackingRepaints)
