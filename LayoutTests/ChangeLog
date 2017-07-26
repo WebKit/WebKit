@@ -1,5 +1,20 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219751. rdar://problem/33523861
+
+    2017-07-21  Nan Wang  <n_wang@apple.com>
+
+            AX: Expose form validation on iOS as hint
+            https://bugs.webkit.org/show_bug.cgi?id=174722
+            <rdar://problem/33459761>
+
+            Reviewed by Chris Fleizach.
+
+            * accessibility/ios-simulator/form-control-validation-message-expected.txt: Added.
+            * accessibility/ios-simulator/form-control-validation-message.html: Added.
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219638. rdar://problem/33523787
 
     2017-07-18  Ryosuke Niwa  <rniwa@webkit.org>

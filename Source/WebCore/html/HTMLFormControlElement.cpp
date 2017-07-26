@@ -488,6 +488,11 @@ bool HTMLFormControlElement::checkValidity(Vector<RefPtr<HTMLFormControlElement>
     return false;
 }
 
+bool HTMLFormControlElement::isShowingValidationMessage() const
+{
+    return m_validationMessage && m_validationMessage->isVisible();
+}
+    
 bool HTMLFormControlElement::reportValidity()
 {
     Vector<RefPtr<HTMLFormControlElement>> elements;
