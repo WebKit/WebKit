@@ -374,10 +374,10 @@ bool CachedImage::CachedImageObserver::canDestroyDecodedData(const Image& image)
     return true;
 }
 
-void CachedImage::CachedImageObserver::imageFrameAvailable(const Image& image, ImageAnimatingState animatingState, const IntRect* changeRect)
+void CachedImage::CachedImageObserver::imageFrameAvailable(const Image& image, ImageAnimatingState animatingState, const IntRect* changeRect, DecodingStatus decodingStatus)
 {
     for (auto cachedImage : m_cachedImages)
-        cachedImage->imageFrameAvailable(image, animatingState, changeRect);
+        cachedImage->imageFrameAvailable(image, animatingState, changeRect, decodingStatus);
 }
 
 void CachedImage::CachedImageObserver::changedInRect(const Image& image, const IntRect* rect)
@@ -548,7 +548,7 @@ bool CachedImage::canDestroyDecodedData(const Image& image)
     return true;
 }
 
-void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState animatingState, const IntRect* changeRect)
+void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState animatingState, const IntRect* changeRect, DecodingStatus decodingStatus)
 {
     if (&image != m_image)
         return;
@@ -567,7 +567,8 @@ void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState an
     if (visibleState == VisibleInViewportState::No && animatingState == ImageAnimatingState::Yes)
         m_image->stopAnimation();
 
-    m_pendingImageDrawingClients.clear();
+    if (decodingStatus != DecodingStatus::Partial)
+        m_pendingImageDrawingClients.clear();
 }
 
 void CachedImage::changedInRect(const Image& image, const IntRect* rect)

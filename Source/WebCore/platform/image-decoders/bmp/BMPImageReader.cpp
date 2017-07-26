@@ -81,7 +81,7 @@ bool BMPImageReader::decodeBMP(bool onlySize)
         if (!m_buffer->initialize(m_parent->size(), m_parent->premultiplyAlpha()))
             return m_parent->setFailed(); // Unable to allocate.
 
-        m_buffer->setDecodingStatus(ImageFrame::DecodingStatus::Partial);
+        m_buffer->setDecodingStatus(DecodingStatus::Partial);
         m_buffer->setHasAlpha(false);
 
         if (!m_isTopDown)
@@ -117,7 +117,7 @@ bool BMPImageReader::decodeBMP(bool onlySize)
     }
 
     // Done!
-    m_buffer->setDecodingStatus(ImageFrame::DecodingStatus::Complete);
+    m_buffer->setDecodingStatus(DecodingStatus::Complete);
     return true;
 }
 
