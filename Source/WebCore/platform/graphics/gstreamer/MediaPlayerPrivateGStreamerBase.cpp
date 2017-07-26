@@ -1034,6 +1034,12 @@ unsigned MediaPlayerPrivateGStreamerBase::videoDecodedByteCount() const
 bool MediaPlayerPrivateGStreamerBase::supportsKeySystem(const String& keySystem, const String& mimeType)
 {
     GST_INFO("Checking for KeySystem support with %s and type %s: false.", keySystem.utf8().data(), mimeType.utf8().data());
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (equalLettersIgnoringASCIICase(keySystem, "org.w3.clearkey"))
+        return true;
+#endif
+
     return false;
 }
 

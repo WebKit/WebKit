@@ -1,3 +1,15 @@
+2017-07-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME][GStreamer] Handle ClearKey as a supported key system
+        https://bugs.webkit.org/show_bug.cgi?id=174778
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::supportsKeySystem):
+        Return true for the 'org.w3.clearkey' key system when building with
+        ENCRYPTED_MEDIA enabled. The underlying implementation will follow.
+
 2017-07-26  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Fix a potential crash in the platform pasteboard when reading a string
