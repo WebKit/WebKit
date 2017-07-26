@@ -14,9 +14,6 @@ svg/custom/svg-fonts-fallback.xhtml [ Failure ]
 svg/wicd/test-rightsizing-b.xhtml [ Failure ]
 fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure  ]
 
-# <rdar://problem/30059973> REGRESSION: LayoutTest userscripts/user-script-audio-document.html failing
-userscripts/user-script-audio-document.html [ Failure ]
-
 # <rdar://problem/30493910> REGRESSION: LayoutTest fast/writing-mode/broken-ideograph-small-caps.html failing
 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ImageOnlyFailure ]
 
