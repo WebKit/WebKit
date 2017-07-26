@@ -433,7 +433,6 @@ webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.darker.html [ Fai
 webkit.org/b/137530 canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.missingargs.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.path.rect.winding.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]

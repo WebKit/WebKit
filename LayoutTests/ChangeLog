@@ -1,3 +1,20 @@
+2017-07-26  Ms2ger  <Ms2ger@igalia.com>
+
+        Fix an incorrect check in 2d.missingargs.html.
+        https://bugs.webkit.org/show_bug.cgi?id=174854
+
+        Reviewed by Carlos Garcia Campos.
+
+        The check was introduced without explanation in r168302. This change reverts
+        it to the previous, correct check.
+
+        * canvas/philip/tests/2d.missingargs-expected.txt:
+        * canvas/philip/tests/2d.missingargs.html:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/canvas/philip/tests/2d.missingargs-expected.txt: Removed.
+        * platform/wpe/TestExpectations:
+
 2017-07-26  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Enable KeyboardEvent key and code attributes
