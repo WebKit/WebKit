@@ -1,5 +1,36 @@
 2017-07-26  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME][GStreamer] Multi-key support in the GStreamer ClearKey decryptor
+        https://bugs.webkit.org/show_bug.cgi?id=174779
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In the CENC decryptor, the key ID value is retrieved from the info structure
+        on the GstProtectionMeta object. GstBuffer for that value is retrieved and
+        passed to the setupCipher() function.
+
+        In the ClearKey decryptor (which extends the CENC decryptor), the single
+        GstBuffer object on the private instance that holds the key value is replaced
+        with a Vector object that holds pairs of key ID and value GstBuffers. In the
+        handleKeyResponse() implementation that Vector is emptied and then refilled
+        with key ID and value pairs that are passed in through the drm-cipher-clearkey
+        structure that's attached to the GstEvent that signalled new key information.
+
+        In the ClearKey decryptor's setupCipher() implementation the passed-in key ID
+        buffer is used to find a matching key ID and value pair stored on the private
+        instance. If not found, an error is thrown. If found, the matching key value
+        is used for decryption.
+
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webKitMediaClearKeyDecryptorHandleKeyResponse):
+        (webKitMediaClearKeyDecryptorSetupCipher):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptTransformInPlace):
+        (webKitMediaCommonEncryptionDecryptDefaultSetupCipher):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h:
+
+2017-07-26  Zan Dobersek  <zdobersek@igalia.com>
+
         [EME][GStreamer] Handle ClearKey as a supported key system
         https://bugs.webkit.org/show_bug.cgi?id=174778
 

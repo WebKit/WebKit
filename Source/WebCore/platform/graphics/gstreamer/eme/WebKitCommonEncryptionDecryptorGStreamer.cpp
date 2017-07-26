@@ -44,7 +44,7 @@ static GstCaps* webkitMediaCommonEncryptionDecryptTransformCaps(GstBaseTransform
 static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseTransform*, GstBuffer*);
 static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransform*, GstEvent*);
 
-static gboolean webKitMediaCommonEncryptionDecryptDefaultSetupCipher(WebKitMediaCommonEncryptionDecrypt*);
+static gboolean webKitMediaCommonEncryptionDecryptDefaultSetupCipher(WebKitMediaCommonEncryptionDecrypt*, GstBuffer*);
 static void webKitMediaCommonEncryptionDecryptDefaultReleaseCipher(WebKitMediaCommonEncryptionDecrypt*);
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_common_encryption_decrypt_debug_category);
@@ -253,8 +253,16 @@ static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseT
         subSamplesBuffer = gst_value_get_buffer(value);
     }
 
+    value = gst_structure_get_value(protectionMeta->info, "kid");
+    if (!value) {
+        GST_ERROR_OBJECT(self, "Failed to get key ID for sample");
+        gst_buffer_remove_meta(buffer, reinterpret_cast<GstMeta*>(protectionMeta));
+        return GST_FLOW_NOT_SUPPORTED;
+    }
+
+    GstBuffer* keyIDBuffer = gst_value_get_buffer(value);
     WebKitMediaCommonEncryptionDecryptClass* klass = WEBKIT_MEDIA_CENC_DECRYPT_GET_CLASS(self);
-    if (!klass->setupCipher(self)) {
+    if (!klass->setupCipher(self, keyIDBuffer)) {
         GST_ERROR_OBJECT(self, "Failed to configure cipher");
         gst_buffer_remove_meta(buffer, reinterpret_cast<GstMeta*>(protectionMeta));
         return GST_FLOW_NOT_SUPPORTED;
@@ -349,7 +357,7 @@ static GstStateChangeReturn webKitMediaCommonEncryptionDecryptorChangeState(GstE
 }
 
 
-static gboolean webKitMediaCommonEncryptionDecryptDefaultSetupCipher(WebKitMediaCommonEncryptionDecrypt*)
+static gboolean webKitMediaCommonEncryptionDecryptDefaultSetupCipher(WebKitMediaCommonEncryptionDecrypt*, GstBuffer*)
 {
     return true;
 }
