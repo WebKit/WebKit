@@ -31,8 +31,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_TIMING)
-
 #include "LoadTiming.h"
 #include "NetworkLoadMetrics.h"
 #include "PerformanceEntry.h"
@@ -81,5 +79,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PerformanceResourceTiming)
     static bool isType(const WebCore::PerformanceEntry& entry) { return entry.isResource(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(WEB_TIMING)

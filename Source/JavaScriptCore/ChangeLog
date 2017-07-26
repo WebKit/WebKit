@@ -1,3 +1,12 @@
+2017-07-26  Brian Burg  <bburg@apple.com>
+
+        Remove WEB_TIMING feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=174795
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-07-26  Mark Lam  <mark.lam@apple.com>
 
         Add the ability to change sp and pc to the ARM64 JIT probe.

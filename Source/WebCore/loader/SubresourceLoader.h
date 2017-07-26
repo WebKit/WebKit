@@ -97,9 +97,7 @@ private:
 
     void notifyDone();
 
-#if ENABLE(WEB_TIMING)
     void reportResourceTiming(const NetworkLoadMetrics&);
-#endif
 
 #if USE(QUICK_LOOK)
     bool shouldCreatePreviewLoaderForResponse(const ResourceResponse&) const;

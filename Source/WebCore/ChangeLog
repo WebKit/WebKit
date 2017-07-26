@@ -1,3 +1,108 @@
+2017-07-26  Brian Burg  <bburg@apple.com>
+
+        Remove WEB_TIMING feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=174795
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/js/JSPerformanceEntryCustom.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::setReadyState):
+        (WebCore::Document::finishedParsing):
+        * dom/Document.h:
+        (WebCore::Document::timing):
+        * dom/DocumentTiming.h:
+        * dom/EventTargetFactory.in:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::finishedTimingForWorkerLoad):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ResourceTimingInformation.cpp:
+        * loader/ResourceTimingInformation.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::reportResourceTiming):
+        * loader/SubresourceLoader.h:
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didFail):
+        (WebCore::ThreadableLoaderClient::didFinishTiming):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishTiming):
+        * loader/WorkerThreadableLoader.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::revalidateResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        * loader/cache/CachedResourceLoader.h:
+        (WebCore::CachedResourceLoader::resourceTimingInformation):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::~DOMWindow):
+        (WebCore::DOMWindow::resetDOMWindowProperties):
+        (WebCore::DOMWindow::nowTimestamp):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/DOMWindow.h:
+        * page/GlobalPerformance.idl:
+        * page/Performance.cpp:
+        * page/Performance.h:
+        * page/Performance.idl:
+        * page/PerformanceEntry.cpp:
+        * page/PerformanceEntry.h:
+        * page/PerformanceEntry.idl:
+        * page/PerformanceMark.h:
+        * page/PerformanceMark.idl:
+        * page/PerformanceMeasure.h:
+        * page/PerformanceMeasure.idl:
+        * page/PerformanceNavigation.cpp:
+        * page/PerformanceNavigation.h:
+        * page/PerformanceNavigation.idl:
+        * page/PerformanceObserver.cpp:
+        * page/PerformanceObserver.h:
+        * page/PerformanceObserver.idl:
+        * page/PerformanceObserverCallback.h:
+        * page/PerformanceObserverCallback.idl:
+        * page/PerformanceObserverEntryList.cpp:
+        * page/PerformanceObserverEntryList.h:
+        * page/PerformanceObserverEntryList.idl:
+        * page/PerformanceResourceTiming.cpp:
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceResourceTiming.idl:
+        * page/PerformanceTiming.cpp:
+        * page/PerformanceTiming.h:
+        * page/PerformanceTiming.idl:
+        * page/PerformanceUserTiming.cpp:
+        * page/PerformanceUserTiming.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::start):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandleInternal::didFinish):
+        (WebCore::ResourceHandleInternal::calculateWebTimingInformations):
+        (WebCore::ResourceHandleInternal::dispatchSynchronousJob):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::restartedCallback):
+        (WebCore::sendRequestCallback):
+        (WebCore::createSoupMessageForHandleAndRequest):
+        (WebCore::ResourceHandle::sendPendingRequest):
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::removeAllEventListeners):
+        * workers/WorkerGlobalScope.h:
+
 2017-07-26  Chris Dumez  <cdumez@apple.com>
 
         Pressing the Escape key should not be a valid user gesture to enter fullscreen

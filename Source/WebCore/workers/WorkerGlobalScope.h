@@ -102,10 +102,7 @@ public:
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
 
     Crypto& crypto();
-
-#if ENABLE(WEB_TIMING)
     Performance& performance() const;
-#endif
 
     void removeAllEventListeners() final;
 
@@ -185,10 +182,7 @@ private:
     RefPtr<SocketProvider> m_socketProvider;
 #endif
 
-#if ENABLE(WEB_TIMING)
     RefPtr<Performance> m_performance;
-#endif
-
     mutable RefPtr<Crypto> m_crypto;
 };
 

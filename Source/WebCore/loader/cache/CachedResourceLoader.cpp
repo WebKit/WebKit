@@ -725,11 +725,9 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     }
 #endif
 
-#if ENABLE(WEB_TIMING)
     LoadTiming loadTiming;
     loadTiming.markStartTimeAndFetchStart();
     InitiatorContext initiatorContext = request.options().initiatorContext;
-#endif
 
     if (request.resourceRequest().url().protocolIsInHTTPFamily())
         updateHTTPRequestHeaders(type, request);
@@ -781,9 +779,9 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
             if (!shouldContinueAfterNotifyingLoadedFromMemoryCache(request, resource.get()))
                 return nullptr;
             logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::usedKey());
-            memoryCache.resourceAccessed(*resource);
-#if ENABLE(WEB_TIMING)
             loadTiming.setResponseEnd(MonotonicTime::now());
+
+            memoryCache.resourceAccessed(*resource);
 
             if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled() && document() && !resource->isLoading()) {
                 auto resourceTiming = ResourceTiming::fromCache(url, request.initiatorName(), loadTiming, resource->response(), *request.origin());
@@ -796,7 +794,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
                     m_resourceTimingInfo.addResourceTiming(*resource.get(), *document(), WTFMove(resourceTiming));
                 }
             }
-#endif
+
             if (forPreload == ForPreload::No)
                 resource->setLoadPriority(request.priority());
         }
@@ -862,10 +860,10 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
 
     memoryCache.remove(resource);
     memoryCache.add(*newResource);
-#if ENABLE(WEB_TIMING)
+
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
         m_resourceTimingInfo.storeResourceTimingInitiatorInformation(newResource, newResource->initiatorName(), frame());
-#endif
+
     return newResource;
 }
 
@@ -881,10 +879,10 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
 
     if (resource->allowsCaching() && !memoryCache.add(*resource))
         resource->setOwningCachedResourceLoader(this);
-#if ENABLE(WEB_TIMING)
+
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
         m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, resource->initiatorName(), frame());
-#endif
+
     return resource;
 }
 

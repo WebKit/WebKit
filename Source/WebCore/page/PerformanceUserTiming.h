@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_TIMING)
-
 #include "ExceptionOr.h"
 #include "PerformanceMark.h"
 #include "PerformanceMeasure.h"
@@ -64,5 +62,3 @@ private:
 };
 
 }
-
-#endif // ENABLE(WEB_TIMING)

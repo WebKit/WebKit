@@ -144,11 +144,7 @@ using namespace WebCore;
 
     ResourceResponse resourceResponse(response);
     resourceResponse.setSource(ResourceResponse::Source::Network);
-#if ENABLE(WEB_TIMING)
     ResourceHandle::getConnectionTimingData(connection, resourceResponse.deprecatedNetworkLoadMetrics());
-#else
-    UNUSED_PARAM(connection);
-#endif
 
     m_handle->didReceiveResponse(WTFMove(resourceResponse));
 }

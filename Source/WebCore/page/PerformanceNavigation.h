@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_TIMING)
-
 #include "DOMWindowProperty.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
@@ -59,5 +57,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_TIMING)

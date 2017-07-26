@@ -1,3 +1,22 @@
+2017-07-26  Brian Burg  <bburg@apple.com>
+
+        Remove WEB_TIMING feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=174795
+
+        Reviewed by Alex Christensen.
+
+        Remove fallback for ports that lack WEB_TIMING.
+
+        * UserInterface/Base/Utilities.js:
+        (timestamp): Deleted.
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.Connection.prototype._dispatchResponse):
+        (InspectorBackend.Connection.prototype._dispatchEvent):
+        (InspectorBackend.Connection.prototype._sendCommandToBackendWithCallback):
+        (InspectorBackend.Connection.prototype._sendCommandToBackendExpectingPromise):
+        * UserInterface/Protocol/MessageDispatcher.js:
+        (WebInspector.dispatchNextQueuedMessageFromBackend):
+
 2017-07-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Don't output "No message" for multi-value logs like console.log(x, y)

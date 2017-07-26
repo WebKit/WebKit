@@ -424,9 +424,7 @@ DOMWindow::~DOMWindow()
         ASSERT(!m_statusbar);
         ASSERT(!m_toolbar);
         ASSERT(!m_navigator);
-#if ENABLE(WEB_TIMING)
         ASSERT(!m_performance);
-#endif
         ASSERT(!m_location);
         ASSERT(!m_media);
         ASSERT(!m_sessionStorage);
@@ -608,10 +606,7 @@ void DOMWindow::resetDOMWindowProperties()
     m_sessionStorage = nullptr;
     m_statusbar = nullptr;
     m_toolbar = nullptr;
-
-#if ENABLE(WEB_TIMING)
     m_performance = nullptr;
-#endif
 }
 
 bool DOMWindow::isCurrentlyDisplayedInFrame() const
@@ -796,8 +791,6 @@ Navigator* DOMWindow::navigator() const
     return m_navigator.get();
 }
 
-#if ENABLE(WEB_TIMING)
-
 Performance* DOMWindow::performance() const
 {
     if (!isCurrentlyDisplayedInFrame())
@@ -809,15 +802,9 @@ Performance* DOMWindow::performance() const
     return m_performance.get();
 }
 
-#endif
-
 double DOMWindow::nowTimestamp() const
 {
-#if ENABLE(WEB_TIMING)
     return performance() ? performance()->now() / 1000 : 0;
-#else
-    return document() ? document()->monotonicTimestamp() : 0;
-#endif
 }
 
 Location* DOMWindow::location() const
@@ -2061,10 +2048,8 @@ void DOMWindow::removeAllEventListeners()
         controller->removeAllDeviceEventListeners(this);
 #endif
 
-#if ENABLE(WEB_TIMING)
     if (m_performance)
         m_performance->removeAllEventListeners();
-#endif
 
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);

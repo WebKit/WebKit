@@ -26,7 +26,6 @@
 // https://w3c.github.io/user-timing/
 
 [
-    Conditional=WEB_TIMING,
     EnabledAtRuntime=UserTiming,
     Exposed=(Window,Worker),
 ] interface PerformanceMeasure : PerformanceEntry {

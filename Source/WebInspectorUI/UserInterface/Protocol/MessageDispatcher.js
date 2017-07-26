@@ -29,14 +29,14 @@ WebInspector._messagesToDispatch = [];
 WebInspector.dispatchNextQueuedMessageFromBackend = function()
 {
     const startCount = WebInspector._messagesToDispatch.length;
-    const startTimestamp = timestamp();
+    const startTimestamp = performance.now();
     const timeLimitPerRunLoop = 10; // milliseconds
 
     let i = 0;
     for (; i < WebInspector._messagesToDispatch.length; ++i) {
         // Defer remaining messages if we have taken too long. In practice, single
         // messages like Page.getResourceContent blow through the time budget.
-        if (timestamp() - startTimestamp > timeLimitPerRunLoop)
+        if (performance.now() - startTimestamp > timeLimitPerRunLoop)
             break;
 
         InspectorBackend.dispatch(WebInspector._messagesToDispatch[i]);
@@ -51,7 +51,7 @@ WebInspector.dispatchNextQueuedMessageFromBackend = function()
     }
 
     if (InspectorBackend.dumpInspectorTimeStats) {
-        let messageDuration = (timestamp() - startTimestamp).toFixed(3);
+        let messageDuration = (performance.now() - startTimestamp).toFixed(3);
         let dispatchedCount = startCount - WebInspector._messagesToDispatch.length;
         let remainingCount = WebInspector._messagesToDispatch.length;
         console.log(`time-stats: --- RunLoop duration: ${messageDuration}ms; dispatched: ${dispatchedCount}; remaining: ${remainingCount}`);

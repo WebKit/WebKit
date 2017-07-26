@@ -169,15 +169,13 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
         if (_CFURLRequestCopyProtocolPropertyForKey(handle->firstRequest().cfURLRequest(DoNotUpdateHTTPBody), CFSTR("ForceHTMLMIMEType")))
             CFURLResponseSetMIMEType(cfResponse.get(), CFSTR("text/html"));
 #endif // !PLATFORM(IOS)
-        
+
         ResourceResponse resourceResponse(cfResponse.get());
-#if ENABLE(WEB_TIMING)
         ResourceHandle::getConnectionTimingData(parameters.connection.get(), resourceResponse.deprecatedNetworkLoadMetrics());
-#endif
-        
+
         handle->didReceiveResponse(WTFMove(resourceResponse));
     };
-    
+
     ProtectedParameters parameters { makeRef(*this), connection, cfResponse };
     dispatch_async_f(dispatch_get_main_queue(), &parameters, work);
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);

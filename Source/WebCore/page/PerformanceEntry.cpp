@@ -31,8 +31,6 @@
 #include "config.h"
 #include "PerformanceEntry.h"
 
-#if ENABLE(WEB_TIMING)
-
 #include "RuntimeEnabledFeatures.h"
 
 namespace WebCore {
@@ -71,5 +69,3 @@ std::optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(con
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_TIMING)

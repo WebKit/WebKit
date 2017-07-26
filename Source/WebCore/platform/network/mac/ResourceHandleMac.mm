@@ -131,7 +131,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, SchedulingBehavior schedulingBehavior, NSDictionary *connectionProperties)
 #endif
 {
-#if ENABLE(WEB_TIMING) && !HAVE(TIMINGDATAOPTIONS)
+#if !HAVE(TIMINGDATAOPTIONS)
     setCollectsTimingData();
 #endif
 
@@ -725,28 +725,23 @@ void ResourceHandle::continueWillCacheResponse(NSCachedURLResponse *response)
 
     [(id)delegate() continueWillCacheResponse:response];
 }
-    
+
 #endif // !USE(CFURLCONNECTION)
-    
-#if ENABLE(WEB_TIMING)
 
 #if USE(CFURLCONNECTION)
-    
+
 void ResourceHandle::getConnectionTimingData(CFURLConnectionRef connection, NetworkLoadMetrics& timing)
 {
     copyTimingData((__bridge NSDictionary*)adoptCF(_CFURLConnectionCopyTimingData(connection)).get(), timing);
 }
-    
+
 #else
-    
+
 void ResourceHandle::getConnectionTimingData(NSURLConnection *connection, NetworkLoadMetrics& timing)
 {
     copyTimingData([connection _timingData], timing);
 }
-    
+
 #endif
-    
-#endif // ENABLE(WEB_TIMING)
 
 } // namespace WebCore
-

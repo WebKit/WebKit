@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PerformanceObserver.h"
 
-#if ENABLE(WEB_TIMING)
-
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Performance.h"
@@ -102,5 +100,3 @@ void PerformanceObserver::deliver()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_TIMING)

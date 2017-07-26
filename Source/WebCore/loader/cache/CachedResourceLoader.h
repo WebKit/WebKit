@@ -141,9 +141,7 @@ public:
 
     void documentDidFinishLoadEvent();
 
-#if ENABLE(WEB_TIMING)
     ResourceTimingInformation& resourceTimingInformation() { return m_resourceTimingInfo; }
-#endif
 
     bool isAlwaysOnLoggingAllowed() const;
 
@@ -185,17 +183,15 @@ private:
     mutable DocumentResourceMap m_documentResources;
     Document* m_document;
     DocumentLoader* m_documentLoader;
-    
+
     int m_requestCount;
-    
+
     std::unique_ptr<ListHashSet<CachedResource*>> m_preloads;
     Timer m_unusedPreloadsTimer;
 
     Timer m_garbageCollectDocumentResourcesTimer;
 
-#if ENABLE(WEB_TIMING)
     ResourceTimingInformation m_resourceTimingInfo;
-#endif
 
     // 29 bits left
     bool m_autoLoadImages : 1;

@@ -26,7 +26,6 @@
 // https://w3c.github.io/performance-timeline/
 
 [
-    Conditional=WEB_TIMING,
     EnabledAtRuntime=PerformanceTimeline,
     Exposed=(Window,Worker),
     ImplementationLacksVTable,

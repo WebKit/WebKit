@@ -1150,9 +1150,7 @@ public:
     DeviceOrientationController* deviceOrientationController() const;
 #endif
 
-#if ENABLE(WEB_TIMING)
     const DocumentTiming& timing() const { return m_documentTiming; }
-#endif
 
     double monotonicTimestamp() const;
 
@@ -1635,9 +1633,7 @@ private:
 
     ViewportArguments m_viewportArguments;
 
-#if ENABLE(WEB_TIMING)
     DocumentTiming m_documentTiming;
-#endif
 
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
     

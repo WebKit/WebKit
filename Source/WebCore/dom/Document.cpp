@@ -1208,7 +1208,6 @@ void Document::setReadyState(ReadyState readyState)
     if (readyState == m_readyState)
         return;
 
-#if ENABLE(WEB_TIMING)
     switch (readyState) {
     case Loading:
         if (!m_documentTiming.domLoading)
@@ -1223,11 +1222,10 @@ void Document::setReadyState(ReadyState readyState)
             m_documentTiming.domComplete = MonotonicTime::now();
         break;
     }
-#endif
 
     m_readyState = readyState;
     dispatchEvent(Event::create(eventNames().readystatechangeEvent, false, false));
-    
+
     if (settings().suppressesIncrementalRendering())
         setVisualUpdatesAllowed(readyState);
 }
@@ -5154,17 +5152,13 @@ void Document::finishedParsing()
     ASSERT(!scriptableDocumentParser() || m_readyState != Loading);
     setParsing(false);
 
-#if ENABLE(WEB_TIMING)
     if (!m_documentTiming.domContentLoadedEventStart)
         m_documentTiming.domContentLoadedEventStart = MonotonicTime::now();
-#endif
 
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, true, false));
 
-#if ENABLE(WEB_TIMING)
     if (!m_documentTiming.domContentLoadedEventEnd)
         m_documentTiming.domContentLoadedEventEnd = MonotonicTime::now();
-#endif
 
     if (RefPtr<Frame> f = frame()) {
         // FrameLoader::finishedParsing() might end up calling Document::implicitClose() if all

@@ -60,9 +60,7 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
 
     auto request = requestWithCredentials;
     if (request.url().protocolIsInHTTPFamily()) {
-#if ENABLE(WEB_TIMING)
         m_startTime = MonotonicTime::now();
-#endif
         auto url = request.url();
         if (m_storedCredentials == AllowStoredCredentials) {
             m_user = url.user();
@@ -171,14 +169,12 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
     g_signal_connect(m_soupMessage.get(), "got-headers", G_CALLBACK(gotHeadersCallback), this);
     g_signal_connect(m_soupMessage.get(), "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), this);
     g_signal_connect(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), "authenticate",  G_CALLBACK(authenticateCallback), this);
-#if ENABLE(WEB_TIMING)
     g_signal_connect(m_soupMessage.get(), "network-event", G_CALLBACK(networkEventCallback), this);
     g_signal_connect(m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), this);
 #if SOUP_CHECK_VERSION(2, 49, 91)
     g_signal_connect(m_soupMessage.get(), "starting", G_CALLBACK(startingCallback), this);
 #else
     g_signal_connect(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), "request-started", G_CALLBACK(requestStartedCallback), this);
-#endif
 #endif
 }
 
@@ -343,9 +339,7 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
         else
             m_inputStream = WTFMove(inputStream);
 
-#if ENABLE(WEB_TIMING)
         m_networkLoadMetrics.responseStart = MonotonicTime::now() - m_startTime;
-#endif
     } else {
         m_response.setURL(m_firstRequest.url());
         const gchar* contentType = soup_request_get_content_type(m_soupRequest.get());
@@ -365,7 +359,6 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
 {
     ASSERT(!m_response.isNull());
 
-#if ENABLE(WEB_TIMING)
     // FIXME: Remove this once nobody depends on deprecatedNetworkLoadMetrics.
     NetworkLoadMetrics& deprecatedResponseMetrics = m_response.deprecatedNetworkLoadMetrics();
     deprecatedResponseMetrics.responseStart = m_networkLoadMetrics.responseStart;
@@ -376,7 +369,6 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
     deprecatedResponseMetrics.connectEnd = m_networkLoadMetrics.connectEnd;
     deprecatedResponseMetrics.requestStart = m_networkLoadMetrics.requestStart;
     deprecatedResponseMetrics.responseStart = m_networkLoadMetrics.responseStart;
-#endif
 
     didReceiveResponse(ResourceResponse(m_response), [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
         if (m_state == State::Canceling || m_state == State::Completed) {
@@ -406,10 +398,8 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
 
 void NetworkDataTaskSoup::dispatchDidCompleteWithError(const ResourceError& error)
 {
-#if ENABLE(WEB_TIMING)
     m_networkLoadMetrics.responseEnd = MonotonicTime::now() - m_startTime;
     m_networkLoadMetrics.markComplete();
-#endif
 
     m_client->didCompleteWithError(error, m_networkLoadMetrics);
 }
@@ -687,12 +677,11 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 
         auto request = newRequest;
         if (request.url().protocolIsInHTTPFamily()) {
-#if ENABLE(WEB_TIMING)
             if (isCrossOrigin) {
                 m_startTime = MonotonicTime::now();
                 m_networkLoadMetrics.reset();
             }
-#endif
+
             applyAuthenticationToRequest(request);
         }
         createRequest(WTFMove(request));
@@ -848,7 +837,6 @@ void NetworkDataTaskSoup::didGetHeaders()
     // Soup adds more headers to the request after starting signal is emitted, and got-headers
     // is the first one we receive after starting, so we use it also to get information about the
     // request headers.
-#if ENABLE(WEB_TIMING)
     if (shouldCaptureExtraNetworkLoadMetrics()) {
         HTTPHeaderMap requestHeaders;
         SoupMessageHeadersIter headersIter;
@@ -859,7 +847,6 @@ void NetworkDataTaskSoup::didGetHeaders()
             requestHeaders.set(String(headerName), String(headerValue));
         m_networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
     }
-#endif
 }
 
 void NetworkDataTaskSoup::wroteBodyDataCallback(SoupMessage* soupMessage, SoupBuffer* buffer, NetworkDataTaskSoup* task)
@@ -1049,7 +1036,6 @@ void NetworkDataTaskSoup::didFail(const ResourceError& error)
     dispatchDidCompleteWithError(error);
 }
 
-#if ENABLE(WEB_TIMING)
 void NetworkDataTaskSoup::networkEventCallback(SoupMessage* soupMessage, GSocketClientEvent event, GIOStream*, NetworkDataTaskSoup* task)
 {
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client)
@@ -1138,7 +1124,6 @@ void NetworkDataTaskSoup::didRestart()
     m_startTime = MonotonicTime::now();
     m_networkLoadMetrics.reset();
 }
-#endif // ENABLE(WEB_TIMING)
 
 } // namespace WebKit
 

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_TIMING)
-
 #include "CachedResourceHandle.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -55,5 +53,3 @@ private:
 };
 
 }
-
-#endif // ENABLE(WEB_TIMING)

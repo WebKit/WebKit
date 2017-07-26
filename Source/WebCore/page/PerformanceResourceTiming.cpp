@@ -33,8 +33,6 @@
 #include "config.h"
 #include "PerformanceResourceTiming.h"
 
-#if ENABLE(WEB_TIMING)
-
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "LoadTiming.h"
@@ -235,5 +233,3 @@ double PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp(Seconds d
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_TIMING)

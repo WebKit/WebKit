@@ -170,7 +170,7 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLC
 #endif
 
     ResourceResponse resourceResponse(cfResponse);
-#if PLATFORM(COCOA) && ENABLE(WEB_TIMING)
+#if PLATFORM(COCOA)
     ResourceHandle::getConnectionTimingData(connection, resourceResponse.deprecatedNetworkLoadMetrics());
 #else
     UNUSED_PARAM(connection);

@@ -192,13 +192,10 @@ using namespace WebCore;
 
         if ([m_handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) _propertyForKey:@"ForceHTMLMIMEType"])
             [r _setMIMEType:@"text/html"];
-        
+
         ResourceResponse resourceResponse(r);
-#if ENABLE(WEB_TIMING)
         ResourceHandle::getConnectionTimingData(connection, resourceResponse.deprecatedNetworkLoadMetrics());
-#else
-        UNUSED_PARAM(connection);
-#endif
+
         m_handle->didReceiveResponse(WTFMove(resourceResponse));
     });
 

@@ -270,7 +270,7 @@ bool ResourceHandle::start()
 
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
-#if ENABLE(WEB_TIMING) && PLATFORM(COCOA) && !HAVE(TIMINGDATAOPTIONS)
+#if PLATFORM(COCOA) && !HAVE(TIMINGDATAOPTIONS)
     setCollectsTimingData();
 #endif
 
@@ -282,7 +282,7 @@ bool ResourceHandle::start()
     CFURLConnectionStart(d->m_connection.get());
 
     LOG(Network, "CFNet - Starting URL %s (handle=%p, conn=%p)", firstRequest().url().string().utf8().data(), this, d->m_connection.get());
-    
+
     return true;
 }
 

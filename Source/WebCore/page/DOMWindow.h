@@ -293,10 +293,7 @@ public:
     int orientation() const;
 #endif
 
-#if ENABLE(WEB_TIMING)
     Performance* performance() const;
-#endif
-
     double nowTimestamp() const;
 
 #if PLATFORM(IOS)
@@ -408,9 +405,7 @@ private:
 
     RefPtr<CustomElementRegistry> m_customElementRegistry;
 
-#if ENABLE(WEB_TIMING)
     mutable RefPtr<Performance> m_performance;
-#endif
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
     mutable RefPtr<WebKitNamespace> m_webkitNamespace;

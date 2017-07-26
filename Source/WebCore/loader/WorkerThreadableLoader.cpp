@@ -222,7 +222,6 @@ void WorkerThreadableLoader::MainThreadBridge::didFail(const ResourceError& erro
     }, m_taskMode);
 }
 
-#if ENABLE(WEB_TIMING)
 void WorkerThreadableLoader::MainThreadBridge::didFinishTiming(const ResourceTiming& resourceTiming)
 {
     m_loaderProxy.postTaskForModeToWorkerGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), resourceTiming = resourceTiming.isolatedCopy()] (ScriptExecutionContext& context) mutable {
@@ -233,6 +232,5 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishTiming(const ResourceTim
         downcast<WorkerGlobalScope>(context).performance().addResourceTiming(WTFMove(resourceTiming));
     }, m_taskMode);
 }
-#endif
 
 } // namespace WebCore

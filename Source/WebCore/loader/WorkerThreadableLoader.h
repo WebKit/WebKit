@@ -102,10 +102,7 @@ namespace WebCore {
             void didReceiveData(const char*, int dataLength) override;
             void didFinishLoading(unsigned long identifier) override;
             void didFail(const ResourceError&) override;
-
-#if ENABLE(WEB_TIMING)
             void didFinishTiming(const ResourceTiming&) override;
-#endif
 
             // Only to be used on the main thread.
             RefPtr<ThreadableLoader> m_mainThreadLoader;

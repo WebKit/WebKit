@@ -25,6 +25,4 @@
 
 // https://w3c.github.io/performance-timeline/
 
-[
-    Conditional=WEB_TIMING,
-] callback PerformanceObserverCallback = void (PerformanceObserverEntryList entries, PerformanceObserver observer);
+callback PerformanceObserverCallback = void (PerformanceObserverEntryList entries, PerformanceObserver observer);

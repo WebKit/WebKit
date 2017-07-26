@@ -181,9 +181,7 @@ public:
     void dispatchSynchronousJob();
     void handleDataURL();
 
-#if ENABLE(WEB_TIMING)
     void calculateWebTimingInformations();
-#endif
 
 #endif
 

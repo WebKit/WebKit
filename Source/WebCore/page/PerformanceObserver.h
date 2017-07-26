@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_TIMING)
-
 #include "ExceptionOr.h"
 #include "PerformanceEntry.h"
 #include "PerformanceObserverCallback.h"
@@ -70,5 +68,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_TIMING)

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_TIMING)
-
 #include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 
@@ -42,5 +40,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_TIMING)

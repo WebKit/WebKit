@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_TIMING)
-
 #include "PerformanceEntry.h"
 #include <wtf/text/WTFString.h>
 
@@ -50,5 +48,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PerformanceMeasure)
     static bool isType(const WebCore::PerformanceEntry& entry) { return entry.isMeasure(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(WEB_TIMING)

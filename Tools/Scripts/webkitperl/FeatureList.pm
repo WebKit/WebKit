@@ -389,9 +389,6 @@ my @features = (
     { option => "web-sockets", desc => "Toggle Web Sockets support",
       define => "ENABLE_WEB_SOCKETS", default => 1, value => \$webSocketsSupport },
 
-    { option => "web-timing", desc => "Toggle Web Timing support",
-      define => "ENABLE_WEB_TIMING", default => 1, value => \$webTimingSupport },
-
     { option => "webassembly", desc => "Toggle WebAssembly support",
       define => "ENABLE_WEBASSEMBLY", default => ((isARM64() || isX86_64()) && (isGtk() || isJSCOnly() || isWPE())) , value => \$webAssemblySupport },
 

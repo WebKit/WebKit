@@ -129,15 +129,15 @@ public:
     id delegate();
     void releaseDelegate();
 #endif
-        
-#if PLATFORM(COCOA) && ENABLE(WEB_TIMING)
+
+#if PLATFORM(COCOA)
 #if USE(CFURLCONNECTION)
     static void getConnectionTimingData(CFURLConnectionRef, NetworkLoadMetrics&);
 #else
     static void getConnectionTimingData(NSURLConnection *, NetworkLoadMetrics&);
 #endif
 #endif
-        
+
 #if PLATFORM(COCOA)
     void schedule(WTF::SchedulePair&);
     void unschedule(WTF::SchedulePair&);

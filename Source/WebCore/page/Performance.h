@@ -32,8 +32,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_TIMING)
-
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
@@ -118,5 +116,3 @@ private:
 };
 
 }
-
-#endif // ENABLE(WEB_TIMING)

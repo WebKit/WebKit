@@ -27,8 +27,6 @@
 #include "config.h"
 #include "PerformanceUserTiming.h"
 
-#if ENABLE(WEB_TIMING)
-
 #include "Document.h"
 #include "PerformanceTiming.h"
 #include <wtf/NeverDestroyed.h>
@@ -187,5 +185,3 @@ Vector<RefPtr<PerformanceEntry>> UserTiming::getMeasures(const String& name) con
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_TIMING)

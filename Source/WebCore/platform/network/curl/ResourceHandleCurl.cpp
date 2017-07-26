@@ -375,9 +375,8 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
 
 void ResourceHandleInternal::didFinish()
 {
-#if ENABLE(WEB_TIMING)
     calculateWebTimingInformations();
-#endif
+
     if (m_cancelled)
         return;
 
@@ -520,7 +519,6 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
     ASSERT_NOT_REACHED();
 }
 
-#if ENABLE(WEB_TIMING)
 void ResourceHandleInternal::calculateWebTimingInformations()
 {
     double preTransferTime = 0;
@@ -542,7 +540,6 @@ void ResourceHandleInternal::calculateWebTimingInformations()
     if (appConnectTime)
         m_response.deprecatedNetworkLoadMetrics().secureConnectionStart = Seconds(connectTime);
 }
-#endif
 
 void ResourceHandleInternal::handleLocalReceiveResponse()
 {
@@ -989,9 +986,7 @@ void ResourceHandleInternal::dispatchSynchronousJob()
     // curl_easy_perform blocks until the transfert is finished.
     CURLcode ret = m_curlHandle.perform();
 
-#if ENABLE(WEB_TIMING)
     calculateWebTimingInformations();
-#endif
 
     if (client()) {
         if (ret != CURLE_OK)
