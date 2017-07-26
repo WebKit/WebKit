@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class BlobCallback;
+class CanvasRenderingContext2D;
 class CanvasRenderingContext;
 class GraphicsContext;
 class GraphicsContextStateSaver;
@@ -50,6 +51,8 @@ class ImageBuffer;
 class ImageData;
 class MediaSample;
 class MediaStream;
+class WebGLRenderingContextBase;
+class WebGPURenderingContext;
 struct UncachedString;
 
 namespace DisplayList {
@@ -96,18 +99,20 @@ public:
         reset();
     }
 
+    ExceptionOr<std::optional<RenderingContext>> getContext(JSC::ExecState&, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+
     CanvasRenderingContext* getContext(const String&);
 
     static bool is2dType(const String&);
-    CanvasRenderingContext* getContext2d(const String&);
+    CanvasRenderingContext2D* getContext2d(const String&);
 
 #if ENABLE(WEBGL)
     static bool is3dType(const String&);
-    CanvasRenderingContext* getContextWebGL(const String&, WebGLContextAttributes&& = { });
+    WebGLRenderingContextBase* getContextWebGL(const String&, WebGLContextAttributes&& = { });
 #endif
 #if ENABLE(WEBGPU)
     static bool isWebGPUType(const String&);
-    CanvasRenderingContext* getContextWebGPU(const String&);
+    WebGPURenderingContext* getContextWebGPU(const String&);
 #endif
 
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);

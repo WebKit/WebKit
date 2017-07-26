@@ -3764,7 +3764,6 @@
 		9391A99C1629D70000297330 /* ScrollingTreeScrollingNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9391A99A1629D6FF00297330 /* ScrollingTreeScrollingNode.cpp */; };
 		9391A99D1629D70000297330 /* ScrollingTreeScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391A99B1629D70000297330 /* ScrollingTreeScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9392146918A6D791000EE688 /* TextIteratorBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 9392146818A6D791000EE688 /* TextIteratorBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9392262D1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9392262C1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp */; };
 		9392262F10321084006E7D5D /* JSCSSRuleListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */; };
 		9392F1420AD185F400691BD4 /* RenderCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9392F1410AD185F400691BD4 /* RenderCounter.h */; };
 		9392F1440AD185FE00691BD4 /* RenderCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9392F1430AD185FE00691BD4 /* RenderCounter.cpp */; };
@@ -11904,7 +11903,6 @@
 		9391A99A1629D6FF00297330 /* ScrollingTreeScrollingNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeScrollingNode.cpp; sourceTree = "<group>"; };
 		9391A99B1629D70000297330 /* ScrollingTreeScrollingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeScrollingNode.h; sourceTree = "<group>"; };
 		9392146818A6D791000EE688 /* TextIteratorBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextIteratorBehavior.h; sourceTree = "<group>"; };
-		9392262C1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLCanvasElementCustom.cpp; sourceTree = "<group>"; };
 		9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRuleListCustom.cpp; sourceTree = "<group>"; };
 		9392F1410AD185F400691BD4 /* RenderCounter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderCounter.h; sourceTree = "<group>"; };
 		9392F1430AD185FE00691BD4 /* RenderCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderCounter.cpp; sourceTree = "<group>"; };
@@ -23510,7 +23508,6 @@
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
-				9392262C1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp */,
 				BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */,
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
@@ -31834,7 +31831,6 @@
 				1AE2AA240A1CDAB400B42B25 /* JSHTMLBRElement.cpp in Sources */,
 				A80E7EA00A1A83E3007FB8C5 /* JSHTMLButtonElement.cpp in Sources */,
 				938E666009F09B81008A48EC /* JSHTMLCanvasElement.cpp in Sources */,
-				9392262D1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp in Sources */,
 				BCCBAD400C18C14200CE890F /* JSHTMLCollection.cpp in Sources */,
 				BCCBAD3B0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp in Sources */,
 				8367587E1C56E99B008A1087 /* JSHTMLDataElement.cpp in Sources */,

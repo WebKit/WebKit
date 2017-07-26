@@ -24,7 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-typedef (CanvasRenderingContext2D or WebGLRenderingContextBase) RenderingContext;
+ typedef (
+ #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+     WebGLRenderingContext or
+ #endif
+ #if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
+     WebGL2RenderingContext or
+ #endif
+ #if defined(ENABLE_WEBGPU) && ENABLE_WEBGPU
+     WebGPURenderingContext or
+ #endif
+     CanvasRenderingContext2D) RenderingContext;
 
 [
     JSGenerateToNativeObject,
@@ -34,7 +44,7 @@ typedef (CanvasRenderingContext2D or WebGLRenderingContextBase) RenderingContext
     attribute unsigned long width;
     attribute unsigned long height;
 
-    [Custom] RenderingContext? getContext(DOMString contextId, any... arguments);
+    [CallWith=ScriptState, MayThrowException] RenderingContext? getContext(DOMString contextId, any... arguments);
 
     [MayThrowException] DOMString toDataURL(optional DOMString type, optional any quality);
     [CallWith=ScriptExecutionContext, MayThrowException] void toBlob(BlobCallback callback, optional DOMString type, optional any quality);

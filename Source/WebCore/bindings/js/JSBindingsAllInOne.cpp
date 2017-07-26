@@ -62,7 +62,6 @@
 #include "JSEventCustom.cpp"
 #include "JSEventListener.cpp"
 #include "JSEventTargetCustom.cpp"
-#include "JSHTMLCanvasElementCustom.cpp"
 #include "JSHTMLCollectionCustom.cpp"
 #include "JSHTMLDocumentCustom.cpp"
 #include "JSHTMLElementCustom.cpp"

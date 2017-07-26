@@ -1185,7 +1185,6 @@ set(WebCore_SOURCES
     bindings/js/JSEventCustom.cpp
     bindings/js/JSEventListener.cpp
     bindings/js/JSEventTargetCustom.cpp
-    bindings/js/JSHTMLCanvasElementCustom.cpp
     bindings/js/JSHTMLCollectionCustom.cpp
     bindings/js/JSHTMLDocumentCustom.cpp
     bindings/js/JSHTMLElementCustom.cpp

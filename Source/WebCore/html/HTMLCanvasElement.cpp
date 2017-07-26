@@ -44,6 +44,7 @@
 #include "HTMLParserIdioms.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMConvertDictionary.h"
 #include "MIMETypeRegistry.h"
 #include "RenderElement.h"
 #include "RenderHTMLCanvas.h"
@@ -64,7 +65,11 @@
 
 #if ENABLE(WEBGL)
 #include "WebGLContextAttributes.h"
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
+#endif
+
+#if ENABLE(WEBGL2)
+#include "WebGL2RenderingContext.h"
 #endif
 
 #if ENABLE(WEBGPU)
@@ -73,7 +78,6 @@
 
 #if PLATFORM(COCOA)
 #include "MediaSampleAVFObjC.h"
-
 #include "CoreMediaSoftLink.h"
 #endif
 
@@ -219,6 +223,44 @@ static inline size_t maxActivePixelMemory()
     return maxPixelMemory;
 }
 
+ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::ExecState& state, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+{
+    if (is2dType(contextId)) {
+        if (auto context = getContext2d(contextId))
+            return std::optional<RenderingContext> { RefPtr<CanvasRenderingContext2D> { context } };
+        return std::optional<RenderingContext> { std::nullopt };
+    }
+
+#if ENABLE(WEBGL)
+    if (is3dType(contextId)) {
+        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, !arguments.isEmpty() ? arguments[0].get() : JSC::jsUndefined());
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+
+        if (auto context = getContextWebGL(contextId, WTFMove(attributes))) {
+            if (is<WebGLRenderingContext>(*context))
+                return std::optional<RenderingContext> { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*context) } };
+#if ENABLE(WEBGL2)
+            if (is<WebGL2RenderingContext>(*context))
+                return std::optional<RenderingContext> { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*context) } };
+#endif
+        }
+        
+        return std::optional<RenderingContext> { std::nullopt };
+    }
+#endif
+
+#if ENABLE(WEBGPU)
+    if (isWebGPUType(contextId)) {
+        if (auto context = getContextWebGPU(contextId))
+            return std::optional<RenderingContext> { RefPtr<WebGPURenderingContext> { context } };
+        return std::optional<RenderingContext> { std::nullopt };
+    }
+#endif
+
+    return std::optional<RenderingContext> { std::nullopt };
+}
+
 CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 {
     if (HTMLCanvasElement::is2dType(type))
@@ -242,12 +284,13 @@ bool HTMLCanvasElement::is2dType(const String& type)
     return type == "2d";
 }
 
-CanvasRenderingContext* HTMLCanvasElement::getContext2d(const String& type)
+CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type)
 {
     ASSERT_UNUSED(HTMLCanvasElement::is2dType(type), type);
 
     if (m_context && !m_context->is2d())
         return nullptr;
+
     if (!m_context) {
         bool usesDashboardCompatibilityMode = false;
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -278,7 +321,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext2d(const String& type)
 #endif
     }
 
-    return m_context.get();
+    return static_cast<CanvasRenderingContext2D*>(m_context.get());
 }
 
 #if ENABLE(WEBGL)
@@ -312,7 +355,7 @@ bool HTMLCanvasElement::is3dType(const String& type)
         || type == "webkit-3d";
 }
 
-CanvasRenderingContext* HTMLCanvasElement::getContextWebGL(const String& type, WebGLContextAttributes&& attrs)
+WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(const String& type, WebGLContextAttributes&& attrs)
 {
     ASSERT(HTMLCanvasElement::is3dType(type));
 
@@ -332,7 +375,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContextWebGL(const String& type, W
         }
     }
 
-    return m_context.get();
+    return static_cast<WebGLRenderingContextBase*>(m_context.get());
 }
 #endif
 
@@ -342,7 +385,7 @@ bool HTMLCanvasElement::isWebGPUType(const String& type)
     return type == "webgpu";
 }
 
-CanvasRenderingContext* HTMLCanvasElement::getContextWebGPU(const String& type)
+WebGPURenderingContext* HTMLCanvasElement::getContextWebGPU(const String& type)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
 
@@ -362,7 +405,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContextWebGPU(const String& type)
         }
     }
 
-    return m_context.get();
+    return static_cast<WebGPURenderingContext*>(m_context.get());
 }
 #endif
 
