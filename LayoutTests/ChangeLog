@@ -1,5 +1,22 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219594. rdar://problem/33523357
+
+    2017-07-17  Timothy Horton  <timothy_horton@apple.com>
+
+            Page using safe area constant properties jumps to correct layout after resize
+            https://bugs.webkit.org/show_bug.cgi?id=174598
+            <rdar://problem/33364275>
+
+            Reviewed by Simon Fraser.
+
+            * fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation-expected.txt: Added.
+            * fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation.html: Added.
+            Add a test making sure that dynamic-viewport-update-based rotation
+            updates safe area insets when needed.
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219841. rdar://problem/33524930
 
     2017-07-24  Jeremy Jones  <jeremyj@apple.com>
