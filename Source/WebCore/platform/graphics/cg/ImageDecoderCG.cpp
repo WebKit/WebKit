@@ -36,6 +36,7 @@
 #include "Logging.h"
 #include "SharedBuffer.h"
 #include <wtf/NeverDestroyed.h>
+#include "UTIRegistry.h"
 
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
@@ -186,6 +187,10 @@ String ImageDecoder::filenameExtension() const
 
 EncodedDataStatus ImageDecoder::encodedDataStatus() const
 {
+    String uti = this->uti();
+    if (uti.isEmpty())
+        return EncodedDataStatus::Unknown;
+
     switch (CGImageSourceGetStatus(m_nativeDecoder.get())) {
     case kCGImageStatusUnknownType:
         return EncodedDataStatus::Error;
@@ -200,6 +205,9 @@ EncodedDataStatus ImageDecoder::encodedDataStatus() const
         return EncodedDataStatus::Error;
 
     case kCGImageStatusIncomplete: {
+        if (!isAllowedImageUTI(uti))
+            return EncodedDataStatus::Error;
+
         RetainPtr<CFDictionaryRef> image0Properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
         if (!image0Properties)
             return EncodedDataStatus::TypeAvailable;
@@ -211,6 +219,9 @@ EncodedDataStatus ImageDecoder::encodedDataStatus() const
     }
 
     case kCGImageStatusComplete:
+        if (!isAllowedImageUTI(uti))
+            return EncodedDataStatus::Error;
+
         return EncodedDataStatus::Complete;
     }
 
