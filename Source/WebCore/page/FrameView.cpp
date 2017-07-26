@@ -4931,7 +4931,7 @@ FloatPoint FrameView::absoluteToDocumentPoint(FloatPoint p, std::optional<float>
 
 FloatSize FrameView::documentToClientOffset() const
 {
-    FloatSize clientOrigin = frame().settings().visualViewportEnabled() ? -toFloatSize(layoutViewportRect().location()) : -toFloatSize(visibleContentRect().location());
+    FloatSize clientOrigin = -toFloatSize(visibleContentRect().location());
 
     // Layout and visual viewports are affected by page zoom, so we need to factor that out.
     return clientOrigin.scaled(1 / frame().pageZoomFactor());

@@ -13,18 +13,18 @@ absolute client rect: 120, 100 - 50 x 25
 Scrolled to 476, 526
 layoutViewport: 76, 226 - 800 x 600
 visualViewportRect: 476, 526 - 400 x 300
-fixed client bounds: 12, 10 - 30 x 20
-fixed client rect: 12, 10 - 30 x 20
-absolute client bounds: 44, -126 - 50 x 25
-absolute client rect: 44, -126 - 50 x 25
+fixed client bounds: -388, -290 - 30 x 20
+fixed client rect: -388, -290 - 30 x 20
+absolute client bounds: -356, -426 - 50 x 25
+absolute client rect: -356, -426 - 50 x 25
 
 Scrolled to 100, 776
 layoutViewport: 76, 476 - 800 x 600
 visualViewportRect: 100, 776 - 400 x 300
-fixed client bounds: 12, 10 - 30 x 20
-fixed client rect: 12, 10 - 30 x 20
-absolute client bounds: 44, -376 - 50 x 25
-absolute client rect: 44, -376 - 50 x 25
+fixed client bounds: -12, -290 - 30 x 20
+fixed client rect: -12, -290 - 30 x 20
+absolute client bounds: 20, -676 - 50 x 25
+absolute client rect: 20, -676 - 50 x 25
 
 Scrolled to 50, 300
 layoutViewport: 50, 300 - 800 x 600
