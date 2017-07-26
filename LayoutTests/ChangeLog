@@ -1,5 +1,14 @@
 2017-07-26  Matt Lewis  <jlewis3@apple.com>
 
+        Marked Multiple imported/w3c/web-platform-tests/ as failing.
+        <rdar://problem/33251388>
+
+        Unreviewed test gardening.
+
+        * platform/ios-11/TestExpectations:
+
+2017-07-26  Matt Lewis  <jlewis3@apple.com>
+
         Rebaselined http/tests/quicklook/top-navigation-blocked-expected.txt.
         https://bugs.webkit.org/show_bug.cgi?id=174755
         
