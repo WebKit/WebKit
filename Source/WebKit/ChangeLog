@@ -1,5 +1,32 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219754. rdar://problem/33523873
+
+    2017-07-21  Brady Eidson  <beidson@apple.com>
+
+            Crash in many WebKit apps marking a connection invalid under Messages::NetworkProcessProxy::canAuthenticateAgainstProtectionSpace.
+            <rdar://problem/28822272> and https://bugs.webkit.org/show_bug.cgi?id=174729
+
+            Reviewed by Tim Horton.
+
+            Previously, when a NetworkLoad generated a "CanAuthenticateAgainstProtectionSpace" event, the message went from
+            Network process -> Web process -> UI process.
+
+            In that case, MESSAGE_CHECKing the validity of the frame in WebPageProxy made sense.
+
+            In r202511 we cut the WebProcess out of this and had Networking go straight to UI process.
+
+            As a result, the message check became invalid. The Networking process cannot possible know the validity of
+            particular WebPage or WebFrame identifiers.
+
+            We simply need to validate the input in NetworkProcessProxy.
+
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::canAuthenticateAgainstProtectionSpace): Validate both the page and frame ids before
+              passing the call along to the WebPageProxy. Also, if either of those validations fail, respond to the network process.
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219750. rdar://problem/33523870
 
     2017-07-21  Andy Estes  <aestes@apple.com>
