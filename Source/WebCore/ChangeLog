@@ -1,3 +1,19 @@
+2017-07-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Icon loader error on startup
+        https://bugs.webkit.org/show_bug.cgi?id=174787
+
+        Reviewed by Brady Eidson.
+
+        This is a regression of the new icon loading, it happens with pages that shouldn't have a favicon, like about
+        pages. IconController::startLoader() did several checks before starting the load that
+        DocumentLoader::startIconLoading() is not doing. It checked that the frame is the main one, the document can have
+        an icon (document url is not empty and not about:blank) and that favicon url is in HTTP family. We should do the
+        same checks now before starting to load icons.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startIconLoading):
+
 2017-07-25  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for HTMLCanvasElement

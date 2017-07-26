@@ -1613,18 +1613,20 @@ void DocumentLoader::startIconLoading()
     if (!document)
         return;
 
+    if (!m_frame->isMainFrame())
+        return;
+
+    if (document->url().isEmpty() || document->url().isBlankURL())
+        return;
+
     m_linkIcons = LinkIconCollector { *document }.iconsOfTypes({ LinkIconType::Favicon, LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon });
 
-    bool hasFavicon = false;
-    for (auto& icon : m_linkIcons) {
-        if (icon.type == LinkIconType::Favicon) {
-            hasFavicon = true;
-            break;
-        }
-    }
+    auto findResult = m_linkIcons.findMatching([](auto& icon) { return icon.type == LinkIconType::Favicon; });
+    if (findResult == notFound)
+        m_linkIcons.append({ document->completeURL(ASCIILiteral("/favicon.ico")), LinkIconType::Favicon, String(), std::nullopt });
 
-    if (!hasFavicon)
-        m_linkIcons.append({ m_frame->document()->completeURL(ASCIILiteral("/favicon.ico")), LinkIconType::Favicon, String(), std::nullopt });
+    if (!m_linkIcons.size())
+        return;
 
     Vector<std::pair<WebCore::LinkIcon&, uint64_t>> iconDecisions;
     iconDecisions.reserveInitialCapacity(m_linkIcons.size());
