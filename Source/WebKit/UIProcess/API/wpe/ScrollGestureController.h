@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-struct ScrollGestureController {
+class ScrollGestureController {
 public:
     ScrollGestureController() = default;
 

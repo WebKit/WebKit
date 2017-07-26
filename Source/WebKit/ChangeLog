@@ -1,3 +1,13 @@
+2017-07-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fix a compiler warning that springs up when
+        building the WPE port with Clang.
+
+        * UIProcess/API/wpe/ScrollGestureController.h:
+        Let ScrollGestureController be a class, and not a struct.
+        This fits the usual pattern, and also matches the forward
+        declaration used in WPE's PageClientImpl.h.
+
 2017-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.17.5 release.
