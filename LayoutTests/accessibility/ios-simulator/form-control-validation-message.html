@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<form>
+  Required text input: <input id="input" type="text" required=""><input id="submit" type="submit" id="firstSubmitButton">
+</form>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that we are exposing form validation message through hint on iOS.");
+
+    if (window.accessibilityController) {
+
+        var input = accessibilityController.accessibleElementById("input");
+        
+        shouldBe("input.helpText", "'AXHint: '");
+        document.getElementById("submit").click();
+        shouldBe("input.helpText", "'AXHint: Fill out this field'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

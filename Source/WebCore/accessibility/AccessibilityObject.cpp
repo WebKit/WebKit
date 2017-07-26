@@ -44,6 +44,7 @@
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "HTMLDetailsElement.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -3161,6 +3162,20 @@ bool AccessibilityObject::isDOMHidden() const
     
     const RenderStyle& style = renderer->style();
     return style.display() == NONE || style.visibility() != VISIBLE;
+}
+
+bool AccessibilityObject::isShowingValidationMessage() const
+{
+    if (is<HTMLFormControlElement>(node()))
+        return downcast<HTMLFormControlElement>(*node()).isShowingValidationMessage();
+    return false;
+}
+
+String AccessibilityObject::validationMessage() const
+{
+    if (is<HTMLFormControlElement>(node()))
+        return downcast<HTMLFormControlElement>(*node()).validationMessage();
+    return String();
 }
 
 AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
