@@ -5097,14 +5097,15 @@ RenderLayer* RenderLayer::hitTestFixedLayersInNamedFlows(RenderLayer* /*rootLaye
         RenderLayer* hitLayer = fixedLayer->hitTestLayer(fixedLayer->renderer().flowThreadContainingBlock()->layer(), nullptr, request, tempResult,
             hitTestRect, hitTestLocation, false, transformState, zOffsetForDescendants);
 
-        // If it a rect-based test, we can safely append the temporary result since it might had hit
+        // If it a list-based test, we can safely append the temporary result since it might had hit
         // nodes but not necesserily had hitLayer set.
-        if (result.isRectBasedTest())
-            result.append(tempResult);
+        ASSERT(!result.isRectBasedTest() || request.resultIsElementList());
+        if (request.resultIsElementList())
+            result.append(tempResult, request);
 
         if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState)) {
             resultLayer = hitLayer;
-            if (!result.isRectBasedTest())
+            if (!request.resultIsElementList())
                 result = tempResult;
             if (!depthSortDescendants)
                 break;
@@ -5271,16 +5272,16 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         bool insideFragmentForegroundRect = false;
         if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestDescendants, insideFragmentForegroundRect)
             && isHitCandidate(this, false, zOffsetForContentsPtr, unflattenedTransformState.get())) {
-            if (result.isRectBasedTest())
-                result.append(tempResult);
+            if (request.resultIsElementList())
+                result.append(tempResult, request);
             else
                 result = tempResult;
             if (!depthSortDescendants)
                 return this;
             // Foreground can depth-sort with descendant layers, so keep this as a candidate.
             candidateLayer = this;
-        } else if (insideFragmentForegroundRect && result.isRectBasedTest())
-            result.append(tempResult);
+        } else if (insideFragmentForegroundRect && request.resultIsElementList())
+            result.append(tempResult, request);
     }
 
     // Now check our negative z-index children.
@@ -5301,14 +5302,14 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         bool insideFragmentBackgroundRect = false;
         if (hitTestContentsForFragments(layerFragments, request, tempResult, hitTestLocation, HitTestSelf, insideFragmentBackgroundRect)
             && isHitCandidate(this, false, zOffsetForContentsPtr, unflattenedTransformState.get())) {
-            if (result.isRectBasedTest())
-                result.append(tempResult);
+            if (request.resultIsElementList())
+                result.append(tempResult, request);
             else
                 result = tempResult;
             return this;
         }
-        if (insideFragmentBackgroundRect && result.isRectBasedTest())
-            result.append(tempResult);
+        if (insideFragmentBackgroundRect && request.resultIsElementList())
+            result.append(tempResult, request);
     }
 
     return nullptr;
@@ -5423,7 +5424,7 @@ bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& 
     if (!renderer().hitTest(request, result, hitTestLocation, toLayoutPoint(layerBounds.location() - renderBoxLocation()), hitTestFilter)) {
         // It's wrong to set innerNode, but then claim that you didn't hit anything, unless it is
         // a rect-based test.
-        ASSERT(!result.innerNode() || (result.isRectBasedTest() && result.rectBasedTestResult().size()));
+        ASSERT(!result.innerNode() || (request.resultIsElementList() && result.listBasedTestResult().size()));
         return false;
     }
 
@@ -5472,14 +5473,15 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
         HitTestResult tempResult(result.hitTestLocation());
         hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformState, zOffsetForDescendants);
 
-        // If it a rect-based test, we can safely append the temporary result since it might had hit
+        // If it is a list-based test, we can safely append the temporary result since it might had hit
         // nodes but not necesserily had hitLayer set.
-        if (result.isRectBasedTest())
-            result.append(tempResult);
+        ASSERT(!result.isRectBasedTest() || request.resultIsElementList());
+        if (request.resultIsElementList())
+            result.append(tempResult, request);
 
         if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState)) {
             resultLayer = hitLayer;
-            if (!result.isRectBasedTest())
+            if (!request.resultIsElementList())
                 result = tempResult;
             if (!depthSortDescendants)
                 break;
@@ -7220,11 +7222,11 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
 
         HitTestResult tempResult(result.hitTestLocation());
         RenderLayer* hitLayer = flowThread->layer()->hitTestLayer(flowThread->layer(), nullptr, newRequest, tempResult, hitTestRectInFlowThread, newHitTestLocation, false, transformState, zOffsetForDescendants);
-        if (result.isRectBasedTest())
-            result.append(tempResult);
+        if (request.resultIsElementList())
+            result.append(tempResult, request);
         if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState)) {
             resultLayer = hitLayer;
-            if (!result.isRectBasedTest())
+            if (!request.resultIsElementList())
                 result = tempResult;
             if (!depthSortDescendants)
                 break;

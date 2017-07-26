@@ -151,7 +151,7 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
         if (!locationInContainer.intersects(lineRect))
             continue;
         renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-        if (!result.addNodeToRectBasedTestResult(renderer.node(), request, locationInContainer, lineRect))
+        if (result.addNodeToListBasedTestResult(renderer.node(), request, locationInContainer, lineRect) == HitTestProgress::Stop)
             return true;
     }
     return false;

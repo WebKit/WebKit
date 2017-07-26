@@ -667,8 +667,8 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         }
     }
 
-    if (!inside && result.isRectBasedTest())
-        result.append(tempResult);
+    if (!inside && request.resultIsElementList())
+        result.append(tempResult, request);
     if (inside)
         result = tempResult;
     return inside;

@@ -420,7 +420,7 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
             // FIXME: nodeAtFloatPoint() doesn't handle rect-based hit tests yet.
             if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {
                 updateHitTestResult(result, pointInBorderBox);
-                if (!result.addNodeToRectBasedTestResult(child->node(), request, locationInContainer))
+                if (result.addNodeToListBasedTestResult(child->node(), request, locationInContainer) == HitTestProgress::Stop)
                     return true;
             }
         }
@@ -435,7 +435,7 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
         LayoutRect boundsRect(accumulatedOffset + location(), size());
         if (locationInContainer.intersects(boundsRect)) {
             updateHitTestResult(result, pointInBorderBox);
-            if (!result.addNodeToRectBasedTestResult(&svgSVGElement(), request, locationInContainer, boundsRect))
+            if (result.addNodeToListBasedTestResult(&svgSVGElement(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)
                 return true;
         }
     }

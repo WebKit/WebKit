@@ -1548,10 +1548,10 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
                     return true;
                 }
             }
-            if (!result.isRectBasedTest())
+            if (!request.resultIsElementList())
                 break;
         }
-        if (!result.isRectBasedTest())
+        if (!request.resultIsElementList())
             break;
     }
 

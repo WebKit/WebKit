@@ -95,8 +95,8 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_scrollbar(other.scrollbar())
     , m_isOverWidget(other.isOverWidget())
 {
-    // Only copy the NodeSet in case of rect hit test.
-    m_rectBasedTestResult = other.m_rectBasedTestResult ? std::make_unique<NodeSet>(*other.m_rectBasedTestResult) : nullptr;
+    // Only copy the NodeSet in case of list hit test.
+    m_listBasedTestResult = other.m_listBasedTestResult ? std::make_unique<NodeSet>(*other.m_listBasedTestResult) : nullptr;
 }
 
 HitTestResult::~HitTestResult()
@@ -114,8 +114,8 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     m_scrollbar = other.scrollbar();
     m_isOverWidget = other.isOverWidget();
 
-    // Only copy the NodeSet in case of rect hit test.
-    m_rectBasedTestResult = other.m_rectBasedTestResult ? std::make_unique<NodeSet>(*other.m_rectBasedTestResult) : nullptr;
+    // Only copy the NodeSet in case of list hit test.
+    m_listBasedTestResult = other.m_listBasedTestResult ? std::make_unique<NodeSet>(*other.m_listBasedTestResult) : nullptr;
 
     return *this;
 }
@@ -656,49 +656,55 @@ bool HitTestResult::isContentEditable() const
     return m_innerNonSharedNode->hasEditableStyle();
 }
 
-bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const LayoutRect& rect)
+HitTestProgress HitTestResult::addNodeToListBasedTestResult(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const LayoutRect& rect)
 {
-    // If it is not a rect-based hit test, this method has to be no-op.
-    // Return false, so the hit test stops.
-    if (!isRectBasedTest())
-        return false;
+    // If it is not a list-based hit test, this method has to be no-op.
+    if (!request.resultIsElementList()) {
+        ASSERT(!isRectBasedTest());
+        return HitTestProgress::Stop;
+    }
 
-    // If node is null, return true so the hit test can continue.
     if (!node)
-        return true;
+        return HitTestProgress::Continue;
 
     if (request.disallowsUserAgentShadowContent() && node->isInUserAgentShadowTree())
         node = node->document().ancestorNodeInThisScope(node);
 
-    mutableRectBasedTestResult().add(node);
+    mutableListBasedTestResult().add(node);
+
+    if (request.includesAllElementsUnderPoint())
+        return HitTestProgress::Continue;
 
     bool regionFilled = rect.contains(locationInContainer.boundingBox());
-    return !regionFilled;
+    return regionFilled ? HitTestProgress::Stop : HitTestProgress::Continue;
 }
 
-bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const FloatRect& rect)
+HitTestProgress HitTestResult::addNodeToListBasedTestResult(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const FloatRect& rect)
 {
-    // If it is not a rect-based hit test, this method has to be no-op.
-    // Return false, so the hit test stops.
-    if (!isRectBasedTest())
-        return false;
+    // If it is not a list-based hit test, this method has to be no-op.
+    if (!request.resultIsElementList()) {
+        ASSERT(!isRectBasedTest());
+        return HitTestProgress::Stop;
+    }
 
-    // If node is null, return true so the hit test can continue.
     if (!node)
-        return true;
+        return HitTestProgress::Continue;
 
     if (request.disallowsUserAgentShadowContent() && node->isInUserAgentShadowTree())
         node = node->document().ancestorNodeInThisScope(node);
 
-    mutableRectBasedTestResult().add(node);
+    mutableListBasedTestResult().add(node);
+
+    if (request.includesAllElementsUnderPoint())
+        return HitTestProgress::Continue;
 
     bool regionFilled = rect.contains(locationInContainer.boundingBox());
-    return !regionFilled;
+    return regionFilled ? HitTestProgress::Stop : HitTestProgress::Continue;
 }
 
-void HitTestResult::append(const HitTestResult& other)
+void HitTestResult::append(const HitTestResult& other, const HitTestRequest& request)
 {
-    ASSERT(isRectBasedTest() && other.isRectBasedTest());
+    ASSERT_UNUSED(request, request.resultIsElementList());
 
     if (!m_innerNode && other.innerNode()) {
         m_innerNode = other.innerNode();
@@ -710,25 +716,25 @@ void HitTestResult::append(const HitTestResult& other)
         m_isOverWidget = other.isOverWidget();
     }
 
-    if (other.m_rectBasedTestResult) {
-        NodeSet& set = mutableRectBasedTestResult();
-        for (NodeSet::const_iterator it = other.m_rectBasedTestResult->begin(), last = other.m_rectBasedTestResult->end(); it != last; ++it)
-            set.add(it->get());
+    if (other.m_listBasedTestResult) {
+        NodeSet& set = mutableListBasedTestResult();
+        for (auto node : *other.m_listBasedTestResult)
+            set.add(node.get());
     }
 }
 
-const HitTestResult::NodeSet& HitTestResult::rectBasedTestResult() const
+const HitTestResult::NodeSet& HitTestResult::listBasedTestResult() const
 {
-    if (!m_rectBasedTestResult)
-        m_rectBasedTestResult = std::make_unique<NodeSet>();
-    return *m_rectBasedTestResult;
+    if (!m_listBasedTestResult)
+        m_listBasedTestResult = std::make_unique<NodeSet>();
+    return *m_listBasedTestResult;
 }
 
-HitTestResult::NodeSet& HitTestResult::mutableRectBasedTestResult()
+HitTestResult::NodeSet& HitTestResult::mutableListBasedTestResult()
 {
-    if (!m_rectBasedTestResult)
-        m_rectBasedTestResult = std::make_unique<NodeSet>();
-    return *m_rectBasedTestResult;
+    if (!m_listBasedTestResult)
+        m_listBasedTestResult = std::make_unique<NodeSet>();
+    return *m_listBasedTestResult;
 }
 
 Vector<String> HitTestResult::dictationAlternatives() const

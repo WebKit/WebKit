@@ -1,0 +1,5 @@
+ 
+
+PASS elementsFromPoint on the root document for points in iframe elements 
+PASS elementsFromPoint on inner documents 
+

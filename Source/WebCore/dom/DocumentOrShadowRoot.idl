@@ -31,7 +31,7 @@
     // Extensions from Shadow DOM API (https://w3c.github.io/webcomponents/spec/shadow/#extensions-to-the-documentorshadowroot-mixin).
     // DOMSelection? getSelection(); // FIXME: We currently have this on Document only.
     Element? elementFromPoint(double x, double y);
-    // sequence<Element> elementsFromPoint(double x, double y); // FIXME: Implement this.
+    sequence<Element> elementsFromPoint(double x, double y);
     // CaretPosition? caretPositionFromPoint(double x, double y); // FIXME: Implement this.
     readonly attribute Element? activeElement;
     // readonly attribute StyleSheetList styleSheets; // FIXME: Implement this.

@@ -1829,7 +1829,7 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
     float zoomFactor = frame->pageZoomFactor();
     LayoutPoint point(centerX * zoomFactor + frameView->scrollX(), centerY * zoomFactor + frameView->scrollY());
 
-    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::CollectMultipleElements;
     if (ignoreClipping)
         hitType |= HitTestRequest::IgnoreClipping;
     if (!allowUserAgentShadowContent)
@@ -1843,24 +1843,13 @@ ExceptionOr<RefPtr<NodeList>> Internals::nodesFromRect(Document& document, int c
     if (!request.ignoreClipping() && !frameView->visibleContentRect().intersects(HitTestLocation::rectForPoint(point, topPadding, rightPadding, bottomPadding, leftPadding)))
         return nullptr;
 
+    HitTestResult result(point, topPadding, rightPadding, bottomPadding, leftPadding);
+    renderView->hitTest(request, result);
+    const HitTestResult::NodeSet& nodeSet = result.listBasedTestResult();
     Vector<Ref<Node>> matches;
-
-    // Need padding to trigger a rect based hit test, but we want to return a NodeList
-    // so we special case this.
-    if (!topPadding && !rightPadding && !bottomPadding && !leftPadding) {
-        HitTestResult result(point);
-        renderView->hitTest(request, result);
-        if (result.innerNode())
-            matches.append(*result.innerNode()->deprecatedShadowAncestorNode());
-    } else {
-        HitTestResult result(point, topPadding, rightPadding, bottomPadding, leftPadding);
-        renderView->hitTest(request, result);
-
-        const HitTestResult::NodeSet& nodeSet = result.rectBasedTestResult();
-        matches.reserveInitialCapacity(nodeSet.size());
-        for (auto& node : nodeSet)
-            matches.uncheckedAppend(*node);
-    }
+    matches.reserveInitialCapacity(nodeSet.size());
+    for (auto& node : nodeSet)
+        matches.uncheckedAppend(*node);
 
     return RefPtr<NodeList> { StaticNodeList::create(WTFMove(matches)) };
 }

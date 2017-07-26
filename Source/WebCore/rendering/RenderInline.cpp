@@ -959,9 +959,9 @@ bool RenderInline::hitTestCulledInline(const HitTestRequest& request, HitTestRes
 
     if (context.intersected()) {
         updateHitTestResult(result, tmpLocation.point());
-        // We can not use addNodeToRectBasedTestResult to determine if we fully enclose the hit-test area
+        // We cannot use addNodeToListBasedTestResult to determine if we fully enclose the hit-test area
         // because it can only handle rectangular targets.
-        result.addNodeToRectBasedTestResult(element(), request, locationInContainer);
+        result.addNodeToListBasedTestResult(element(), request, locationInContainer);
         return regionResult.contains(tmpLocation.boundingBox());
     }
     return false;

@@ -372,8 +372,8 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 
         bool isInsideChildFrame = childRoot.hitTest(newHitTestRequest, newHitTestLocation, childFrameResult);
 
-        if (newHitTestLocation.isRectBasedTest())
-            result.append(childFrameResult);
+        if (request.resultIsElementList())
+            result.append(childFrameResult, request);
         else if (isInsideChildFrame)
             result = childFrameResult;
 

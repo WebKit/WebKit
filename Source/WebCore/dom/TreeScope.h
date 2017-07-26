@@ -29,6 +29,7 @@
 #include "DocumentOrderedMap.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -87,7 +88,8 @@ public:
     void removeLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement&);
     HTMLLabelElement* labelElementForId(const AtomicString& forAttributeValue);
 
-    WEBCORE_EXPORT Element* elementFromPoint(double x, double y);
+    WEBCORE_EXPORT RefPtr<Element> elementFromPoint(double clientX, double clientY);
+    WEBCORE_EXPORT Vector<RefPtr<Element>> elementsFromPoint(double clientX, double clientY);
 
     // Find first anchor with the given name.
     // First searches for an element with the given ID, but if that fails, then looks

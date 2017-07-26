@@ -32,6 +32,7 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "HitTestRequest.h"
+#include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGResourceMarker.h"
@@ -353,7 +354,8 @@ bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
         if ((hitRules.canHitStroke && (svgStyle.hasStroke() || !hitRules.requireStroke) && strokeContains(localPoint, hitRules.requireStroke))
             || (hitRules.canHitFill && (svgStyle.hasFill() || !hitRules.requireFill) && fillContains(localPoint, hitRules.requireFill, fillRule))) {
             updateHitTestResult(result, LayoutPoint(localPoint));
-            return true;
+            if (result.addNodeToListBasedTestResult(&graphicsElement(), request, localPoint) == HitTestProgress::Stop)
+                return true;
         }
     }
     return false;

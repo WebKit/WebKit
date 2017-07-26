@@ -1347,7 +1347,6 @@ fast/table/colspanMinWidth-vertical.html [ Skip ]
 fast/forms/range/range-remove-on-drag.html [ Skip ]
 
 # CSSOM View module
-webkit.org/b/153137 imported/w3c/web-platform-tests/cssom-view/elementsFromPoint.html [ Skip ]
 webkit.org/b/5991 imported/w3c/web-platform-tests/cssom-view/scrollingElement.html [ Skip ]
 
 # FileAPI

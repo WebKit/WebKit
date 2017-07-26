@@ -1122,6 +1122,8 @@ DragSourceAction EventHandler::updateDragSourceActionsAllowed() const
 
 HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, HitTestRequest::HitTestRequestType hitType, const LayoutSize& padding) const
 {
+    ASSERT((hitType & HitTestRequest::CollectMultipleElements) || padding.isEmpty());
+
     Ref<Frame> protectedFrame(m_frame);
 
     // We always send hitTestResultAtPoint to the main frame if we have one,
