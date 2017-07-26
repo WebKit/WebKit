@@ -221,6 +221,8 @@ Bug(WPE) fast/dynamic/window-resize-scrollbars-test.html [ Timeout ]
 Bug(WPE) fast/encoding [ Pass ]
 Bug(WPE) fast/encoding/mailto-always-utf-8.html [ Timeout ]
 
+fast/events/constructors/keyboard-event-constructor.html [ Pass ]
+
 Bug(WPE) fast/innerHTML [ Pass ]
 Bug(WPE) fast/innerHTML/001.html [ ImageOnlyFailure ]
 
