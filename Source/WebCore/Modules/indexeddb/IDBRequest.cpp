@@ -485,7 +485,7 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     m_result = std::nullopt;
     m_readyState = ReadyState::Pending;
     m_domError = nullptr;
-    m_idbError = { };
+    m_idbError = IDBError { };
 
     m_cursorRequestNotifier = std::make_unique<ScopeGuard>([this]() {
         m_pendingCursor->decrementOutstandingRequestCount();

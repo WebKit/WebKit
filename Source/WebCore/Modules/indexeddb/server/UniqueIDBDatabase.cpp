@@ -694,7 +694,7 @@ void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transact
 
     auto* info = m_databaseInfo->infoForExistingObjectStore(objectStoreName);
     if (!info) {
-        performErrorCallback(callbackID, { UnknownError, ASCIILiteral("Attempt to delete non-existant object store") });
+        performErrorCallback(callbackID, IDBError { UnknownError, ASCIILiteral("Attempt to delete non-existant object store") });
         return;
     }
 
@@ -735,7 +735,7 @@ void UniqueIDBDatabase::renameObjectStore(UniqueIDBDatabaseTransaction& transact
 
     auto* info = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
     if (!info) {
-        performErrorCallback(callbackID, { UnknownError, ASCIILiteral("Attempt to rename non-existant object store") });
+        performErrorCallback(callbackID, IDBError { UnknownError, ASCIILiteral("Attempt to rename non-existant object store") });
         return;
     }
 
@@ -844,13 +844,13 @@ void UniqueIDBDatabase::deleteIndex(UniqueIDBDatabaseTransaction& transaction, u
 
     auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
     if (!objectStoreInfo) {
-        performErrorCallback(callbackID, { UnknownError, ASCIILiteral("Attempt to delete index from non-existant object store") });
+        performErrorCallback(callbackID, IDBError { UnknownError, ASCIILiteral("Attempt to delete index from non-existant object store") });
         return;
     }
 
     auto* indexInfo = objectStoreInfo->infoForExistingIndex(indexName);
     if (!indexInfo) {
-        performErrorCallback(callbackID, { UnknownError, ASCIILiteral("Attempt to delete non-existant index") });
+        performErrorCallback(callbackID, IDBError { UnknownError, ASCIILiteral("Attempt to delete non-existant index") });
         return;
     }
 
@@ -894,13 +894,13 @@ void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, u
 
     auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
     if (!objectStoreInfo) {
-        performErrorCallback(callbackID, { UnknownError, ASCIILiteral("Attempt to rename index in non-existant object store") });
+        performErrorCallback(callbackID, IDBError { UnknownError, ASCIILiteral("Attempt to rename index in non-existant object store") });
         return;
     }
 
     auto* indexInfo = objectStoreInfo->infoForExistingIndex(indexIdentifier);
     if (!indexInfo) {
-        performErrorCallback(callbackID, { UnknownError, ASCIILiteral("Attempt to rename non-existant index") });
+        performErrorCallback(callbackID, IDBError { UnknownError, ASCIILiteral("Attempt to rename non-existant index") });
         return;
     }
 
@@ -1329,7 +1329,7 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
             return;
         }
 
-        performErrorCallback(callbackID, { UnknownError, ASCIILiteral("Attempt to commit transaction that is already finishing") });
+        performErrorCallback(callbackID, IDBError { UnknownError, ASCIILiteral("Attempt to commit transaction that is already finishing") });
         return;
     }
 
@@ -1373,7 +1373,7 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
             return;
         }
 
-        performErrorCallback(callbackID, { UnknownError, ASCIILiteral("Attempt to abort transaction that is already finishing") });
+        performErrorCallback(callbackID, IDBError { UnknownError, ASCIILiteral("Attempt to abort transaction that is already finishing") });
         return;
     }
 

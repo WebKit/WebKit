@@ -31,14 +31,13 @@
 
 namespace WebCore {
 
+// This array needs to be kept in sync with the ExceptionCode enumeration.
 // http://heycam.github.io/webidl/#idl-DOMException-error-names
 static const DOMException::Description descriptions[] = {
     { "IndexSizeError", "The index is not in the allowed range.", 1 },
-    { nullptr, nullptr, 0 }, // DOMStringSizeError
     { "HierarchyRequestError", "The operation would yield an incorrect node tree.", 3 },
     { "WrongDocumentError", "The object is in the wrong document.", 4 },
     { "InvalidCharacterError", "The string contains invalid characters.", 5 },
-    { nullptr, nullptr, 0 }, // NoDataAllowedError
     { "NoModificationAllowedError", "The object can not be modified.", 7 },
     { "NotFoundError", "The object can not be found here.", 8 },
     { "NotSupportedError", "The operation is not supported.", 9 },
@@ -48,7 +47,6 @@ static const DOMException::Description descriptions[] = {
     { "InvalidModificationError", " The object can not be modified in this way.", 13 },
     { "NamespaceError", "The operation is not allowed by Namespaces in XML.", 14 },
     { "InvalidAccessError", "The object does not support the operation or argument.", 15 },
-    { nullptr, nullptr, 0 }, // ValidationError
     { "TypeMismatchError", "The type of an object was incompatible with the expected type of the parameter associated to the object.", 17 },
     { "SecurityError", "The operation is insecure.", 18 },
     { "NetworkError", " A network error occurred.", 19 },
@@ -69,14 +67,13 @@ static const DOMException::Description descriptions[] = {
     { "OperationError", "The operation failed for an operation-specific reason.", 0 },
     { "NotAllowedError", "The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission.", 0 }
 };
+static_assert(!IndexSizeError, "This table needs to be kept in sync with DOMException names in ExceptionCode enumeration");
+static_assert(NotAllowedError == WTF_ARRAY_LENGTH(descriptions) - 1, "This table needs to be kept in sync with DOMException names in ExceptionCode enumeration");
 
 auto DOMException::description(ExceptionCode ec) -> const Description&
 {
-    size_t index = ec - 1;
-    if (index < WTF_ARRAY_LENGTH(descriptions)) {
-        ASSERT(!descriptions[index].legacyCode || descriptions[index].legacyCode == ec);
-        return descriptions[index];
-    }
+    if (ec < WTF_ARRAY_LENGTH(descriptions))
+        return descriptions[ec];
 
     static const Description emptyDescription { nullptr, nullptr, 0 };
     return emptyDescription;

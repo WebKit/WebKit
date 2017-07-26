@@ -97,7 +97,7 @@ IDBError IndexValueStore::addRecord(const IDBKeyData& indexKey, const IDBKeyData
     result.iterator->value->addKey(valueKey);
     m_orderedKeys.insert(indexKey);
 
-    return { };
+    return IDBError { };
 }
 
 void IndexValueStore::removeRecord(const IDBKeyData& indexKey, const IDBKeyData& valueKey)

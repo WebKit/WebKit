@@ -360,7 +360,7 @@ void WebIDBConnectionToServer::didGetAllDatabaseNames(uint64_t callbackID, const
 
 void WebIDBConnectionToServer::connectionToServerLost()
 {
-    m_connectionToServer->connectionToServerLost({ WebCore::UnknownError, ASCIILiteral("An internal error was encountered in the Indexed Database server") });
+    m_connectionToServer->connectionToServerLost(IDBError { WebCore::UnknownError, ASCIILiteral("An internal error was encountered in the Indexed Database server") });
 }
 
 } // namespace WebKit

@@ -1216,7 +1216,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
             // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
             // In that case, we cannot successfully store this record, so we callback with an error.
             RefPtr<IDBClient::TransactionOperation> protectedOperation(&operation);
-            auto result = IDBResultData::error(operation.identifier(), { UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
+            auto result = IDBResultData::error(operation.identifier(), IDBError { UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
             scriptExecutionContext()->postTask([protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)](ScriptExecutionContext&) {
                 protectedOperation->doComplete(result);
             });
@@ -1238,7 +1238,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
 
         // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
         // In that case, we cannot successfully store this record, so we callback with an error.
-        auto result = IDBResultData::error(protectedOperation->identifier(), { UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
+        auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
         callOnMainThread([protectedThis = WTFMove(protectedThis), protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)]() mutable {
             protectedOperation->doComplete(result);
         });

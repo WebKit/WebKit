@@ -102,7 +102,7 @@ IDBError MemoryObjectStore::createIndex(MemoryBackingStoreTransaction& transacti
     transaction.addNewIndex(index.get());
     registerIndex(WTFMove(index));
 
-    return { };
+    return IDBError { };
 }
 
 void MemoryObjectStore::maybeRestoreDeletedIndex(Ref<MemoryIndex>&& index)
@@ -153,7 +153,7 @@ IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transacti
     m_info.deleteIndex(indexIdentifier);
     transaction.indexDeleted(*index);
 
-    return { };
+    return IDBError { };
 }
 
 void MemoryObjectStore::deleteAllIndexes(MemoryBackingStoreTransaction& transaction)
@@ -304,7 +304,7 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
 
     auto jsValue = deserializeIDBValueToJSValue(UniqueIDBDatabase::databaseThreadExecState(), value);
     if (jsValue.isUndefinedOrNull())
-        return { };
+        return IDBError { };
 
     IDBError error;
     Vector<std::pair<MemoryIndex*, IndexKey>> changedIndexRecords;
@@ -335,14 +335,14 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
 IDBError MemoryObjectStore::populateIndexWithExistingRecords(MemoryIndex& index)
 {
     if (!m_keyValueStore)
-        return { };
+        return IDBError { };
 
     JSLockHolder locker(UniqueIDBDatabase::databaseThreadVM());
 
     for (auto iterator : *m_keyValueStore) {
         auto jsValue = deserializeIDBValueToJSValue(UniqueIDBDatabase::databaseThreadExecState(), iterator.value);
         if (jsValue.isUndefinedOrNull())
-            return { };
+            return IDBError { };
 
         IndexKey indexKey;
         generateIndexKeyForValue(UniqueIDBDatabase::databaseThreadExecState(), index.info(), jsValue, indexKey);
@@ -355,7 +355,7 @@ IDBError MemoryObjectStore::populateIndexWithExistingRecords(MemoryIndex& index)
             return error;
     }
 
-    return { };
+    return IDBError { };
 }
 
 uint64_t MemoryObjectStore::countForKeyRange(uint64_t indexIdentifier, const IDBKeyRangeData& inRange) const

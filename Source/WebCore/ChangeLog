@@ -1,3 +1,35 @@
+2017-07-25  Chris Dumez  <cdumez@apple.com>
+
+        Clean up ExceptionCode enumeration
+        https://bugs.webkit.org/show_bug.cgi?id=174812
+
+        Reviewed by Darin Adler.
+
+        Clean up ExceptionCode enumeration:
+        - Updated comments to reflect the latest WebIDL specification
+        - Drop special values given to some exception codes. Those legacy codes are already in the
+          table inside DOMException.cpp. This also allows us to drop empty rows in the DOMException
+          table
+        - Drop NoException value in the enumeration and use std::optional<ExceptionCode> when needed
+          instead.
+
+        * Modules/indexeddb/shared/IDBError.cpp:
+        (WebCore::IDBError::IDBError):
+        (WebCore::IDBError::name):
+        (WebCore::IDBError::message):
+        * Modules/indexeddb/shared/IDBError.h:
+        (WebCore::IDBError::code):
+        (WebCore::IDBError::encode):
+        (WebCore::IDBError::decode):
+        * dom/DOMException.cpp:
+        * dom/ExceptionCode.h:
+        * fileapi/FileReaderSync.cpp:
+        (WebCore::errorCodeToException):
+        (WebCore::FileReaderSync::startLoading):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+        * xml/XMLHttpRequest.h:
+
 2017-07-25  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add "carteBancaire" as a supported payment network

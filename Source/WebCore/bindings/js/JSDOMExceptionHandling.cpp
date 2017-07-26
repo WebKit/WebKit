@@ -124,7 +124,7 @@ void reportCurrentException(ExecState* exec)
 
 static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String* message = nullptr)
 {
-    if (!ec || ec == ExistingExceptionError)
+    if (ec == ExistingExceptionError)
         return jsUndefined();
 
     // FIXME: Handle other WebIDL exception types.

@@ -35,20 +35,18 @@ namespace WebCore {
 
 class IDBError {
 public:
-    IDBError() { }
-    IDBError(ExceptionCode);
-    WEBCORE_EXPORT IDBError(ExceptionCode, const String& message);
+    WEBCORE_EXPORT explicit IDBError(std::optional<ExceptionCode> = std::nullopt, const String& message = { });
 
     static IDBError userDeleteError()
     {
-        return { UnknownError, ASCIILiteral("Database deleted by request of the user") };
+        return IDBError { UnknownError, ASCIILiteral("Database deleted by request of the user") };
     }
 
     IDBError& operator=(const IDBError&);
 
     RefPtr<DOMError> toDOMError() const;
 
-    ExceptionCode code() const { return m_code; }
+    std::optional<ExceptionCode> code() const { return m_code; }
     String name() const;
     String message() const;
 
@@ -60,22 +58,35 @@ public:
     template<class Decoder> static bool decode(Decoder&, IDBError&);
 
 private:
-    ExceptionCode m_code { NoException };
+    std::optional<ExceptionCode> m_code;
     String m_message;
 };
 
 template<class Encoder>
 void IDBError::encode(Encoder& encoder) const
 {
-    encoder.encodeEnum(m_code);
+    if (m_code) {
+        encoder << true;
+        encoder.encodeEnum(m_code.value());
+    } else
+        encoder << false;
     encoder << m_message;
 }
     
 template<class Decoder>
 bool IDBError::decode(Decoder& decoder, IDBError& error)
 {
-    if (!decoder.decodeEnum(error.m_code))
+    bool hasCode = false;
+    if (!decoder.decode(hasCode))
         return false;
+
+    if (hasCode) {
+        ExceptionCode ec;
+        if (!decoder.decodeEnum(ec))
+            return false;
+        error.m_code = ec;
+    } else
+        error.m_code = std::nullopt;
 
     if (!decoder.decode(error.m_message))
         return false;

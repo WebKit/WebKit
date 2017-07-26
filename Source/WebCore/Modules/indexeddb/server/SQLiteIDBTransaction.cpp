@@ -62,27 +62,27 @@ IDBError SQLiteIDBTransaction::begin(SQLiteDatabase& database)
     m_sqliteTransaction->begin();
 
     if (m_sqliteTransaction->inProgress())
-        return { };
+        return IDBError { };
 
-    return { UnknownError, ASCIILiteral("Could not start SQLite transaction in database backend") };
+    return IDBError { UnknownError, ASCIILiteral("Could not start SQLite transaction in database backend") };
 }
 
 IDBError SQLiteIDBTransaction::commit()
 {
     LOG(IndexedDB, "SQLiteIDBTransaction::commit");
     if (!m_sqliteTransaction || !m_sqliteTransaction->inProgress())
-        return { UnknownError, ASCIILiteral("No SQLite transaction in progress to commit") };
+        return IDBError { UnknownError, ASCIILiteral("No SQLite transaction in progress to commit") };
 
     m_sqliteTransaction->commit();
 
     if (m_sqliteTransaction->inProgress())
-        return { UnknownError, ASCIILiteral("Unable to commit SQLite transaction in database backend") };
+        return IDBError { UnknownError, ASCIILiteral("Unable to commit SQLite transaction in database backend") };
 
     deleteBlobFilesIfNecessary();
     moveBlobFilesIfNecessary();
 
     reset();
-    return { };
+    return IDBError { };
 }
 
 void SQLiteIDBTransaction::moveBlobFilesIfNecessary()
@@ -125,15 +125,15 @@ IDBError SQLiteIDBTransaction::abort()
     m_blobTemporaryAndStoredFilenames.clear();
 
     if (!m_sqliteTransaction || !m_sqliteTransaction->inProgress())
-        return { UnknownError, ASCIILiteral("No SQLite transaction in progress to abort") };
+        return IDBError { UnknownError, ASCIILiteral("No SQLite transaction in progress to abort") };
 
     m_sqliteTransaction->rollback();
 
     if (m_sqliteTransaction->inProgress())
-        return { UnknownError, ASCIILiteral("Unable to abort SQLite transaction in database backend") };
+        return IDBError { UnknownError, ASCIILiteral("Unable to abort SQLite transaction in database backend") };
 
     reset();
-    return { };
+    return IDBError { };
 }
 
 void SQLiteIDBTransaction::reset()

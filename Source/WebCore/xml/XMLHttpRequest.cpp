@@ -742,7 +742,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         }
     }
 
-    m_exceptionCode = NoException;
+    m_exceptionCode = std::nullopt;
     m_error = false;
 
     if (m_async) {
@@ -767,7 +767,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
     }
 
     if (m_exceptionCode)
-        return Exception { m_exceptionCode };
+        return Exception { m_exceptionCode.value() };
     if (m_error)
         return Exception { NetworkError };
     return { };

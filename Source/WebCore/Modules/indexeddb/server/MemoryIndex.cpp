@@ -228,7 +228,7 @@ IDBError MemoryIndex::putIndexKey(const IDBKeyData& valueKey, const IndexKey& in
         notifyCursorsOfValueChange(key, valueKey);
     }
 
-    return { };
+    return IDBError { };
 }
 
 void MemoryIndex::removeRecord(const IDBKeyData& valueKey, const IndexKey& indexKey)
