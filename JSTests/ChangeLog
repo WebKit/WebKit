@@ -1,3 +1,17 @@
+2017-07-26  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: test throwing out of the start function
+        https://bugs.webkit.org/show_bug.cgi?id=165714
+        <rdar://problem/29760251>
+
+        Reviewed by Keith Miller.
+
+        * wasm/assert.js:
+        * wasm/function-tests/trap-from-start.js: Added.
+        (StartTraps):
+        * wasm/function-tests/trap-from-start-async.js: Added.
+        (async.StartTrapsAsync):
+
 2017-07-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] Arguments elimination is suppressed by unreachable blocks
