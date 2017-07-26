@@ -1,3 +1,10 @@
+2017-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK distcheck.
+
+        * gtk/make-dist.py:
+        (ensure_version_if_possible): Use the right pkg-config filename, it's webkit2gtk not webkitgtk.
+
 2017-07-25  Brady Eidson  <beidson@apple.com>
 
         ResourceLoadStatistics grandfathering happens much too often.

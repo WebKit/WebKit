@@ -1,3 +1,11 @@
+2017-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK distcheck.
+
+        Ensure WebDriver derived sources directory is created, WebKitFS.cmake is useless for this.
+
+        * PlatformGTK.cmake:
+
 2017-07-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: rename m_browsingContext as m_currentBrowsingContext in Session
