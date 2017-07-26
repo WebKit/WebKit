@@ -179,7 +179,7 @@ public:
     operator struct curl_slist** () { return &m_list; }
 
     const struct curl_slist* head() const { return m_list; }
-    bool isEmpty() const { return m_list; }
+    bool isEmpty() const { return !m_list; }
     void clear()
     {
         if (m_list) {

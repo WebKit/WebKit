@@ -704,6 +704,8 @@ size_t ResourceHandleInternal::willPrepareSendData(char* ptr, size_t blockSize, 
 
 void ResourceHandleInternal::didReceiveHeaderLine(const String& header)
 {
+    ASSERT(isMainThread());
+
     auto splitPosition = header.find(":");
     if (splitPosition != notFound) {
         String key = header.left(splitPosition).stripWhiteSpace();
@@ -898,8 +900,12 @@ size_t ResourceHandleInternal::headerCallback(char* ptr, size_t size, size_t nme
             if (!d->m_cancelled)
                 d->didReceiveAllHeaders(httpCode, contentLength);
         });
-    } else
-        d->didReceiveHeaderLine(header);
+    } else {
+        callOnMainThread([job = RefPtr<ResourceHandle>(job), d, header] {
+            if (!d->m_cancelled)
+                d->didReceiveHeaderLine(header);
+        });
+    }
 
     return totalSize;
 }
