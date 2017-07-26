@@ -1,3 +1,22 @@
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219836. rdar://problem/33523818
+
+    2017-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [Mac WK2] Add an API test to cover r219765 (null dereference in [WKWebView dealloc])
+            https://bugs.webkit.org/show_bug.cgi?id=174793
+
+            Reviewed by Tim Horton.
+
+            Adds a new unit test that invokes some asynchronous NSTextInputClient SPI methods as the web view is tearing
+            down. Without r219765, this test will dereference null and crash.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/TestWebKitAPI/mac/NSTextInputClientSPI.h: Added.
+            * TestWebKitAPI/Tests/mac/WKWebViewSelectionTests.mm:
+            (TEST):
+
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219709. rdar://problem/33462692
