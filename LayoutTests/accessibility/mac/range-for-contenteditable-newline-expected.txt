@@ -7,9 +7,9 @@ abc
 
 
 def
-The quick brown fox
+ab
 
-jumped over the lazy dog
+cd ef
 
 Text in a pre element
 is displayed in a fixed-width
@@ -26,14 +26,11 @@ PASS textTest is 'test'
 PASS textareaTextHello is 'hello'
 PASS textareaTextWorld is 'world'
 PASS textDEF is 'def'
-PASS rangeForLine is '{21, 25}'
-PASS textLine is 'jumped over the lazy dog'
-PASS firstLine is 0
-PASS secondLine is 1
+PASS rangeValue is '[newline][newline]cd'
 PASS rangeForLine is '{22, 30}'
 PASS textLine is 'is displayed in a fixed-width\n'
 PASS firstLine is 0
-FAIL secondLine should be 1. Was 2.
+PASS secondLine is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE
