@@ -179,11 +179,6 @@ webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-res
 webkit.org/b/169917 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
 
-# WebGL2
-Bug(WPE) webgl/webgl-vertex-array-object-defined.html [ Failure ]
-Bug(WPE) webgl/webgl2-rendering-context-defined.html [ Failure ]
-Bug(WPE) webgl/webgl2-rendering-context-obtain.html [ Failure ]
-
 # security/
 # Require EventSender support
 Bug(WPE) security/contentSecurityPolicy/image-with-blob-url-allowed-by-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Skip ]

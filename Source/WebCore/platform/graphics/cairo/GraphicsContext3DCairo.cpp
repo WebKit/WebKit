@@ -69,7 +69,7 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
 {
     // This implementation doesn't currently support rendering directly to the HostWindow.
     if (renderStyle == RenderDirectlyToHostWindow)
-        return 0;
+        return nullptr;
 
     static bool initialized = false;
     static bool success = true;
@@ -80,9 +80,18 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
         initialized = true;
     }
     if (!success)
-        return 0;
+        return nullptr;
 
-    return adoptRef(new GraphicsContext3D(attributes, hostWindow, renderStyle));
+    // Create the GraphicsContext3D object first in order to establist a current context on this thread.
+    auto context = adoptRef(new GraphicsContext3D(attributes, hostWindow, renderStyle));
+
+#if USE(LIBEPOXY) && USE(OPENGL_ES_2)
+    // Bail if GLES3 was requested but cannot be provided.
+    if (attributes.useGLES3 && !epoxy_is_desktop_gl() && epoxy_gl_version() < 30)
+        return nullptr;
+#endif
+
+    return context;
 }
 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::RenderStyle renderStyle)
@@ -181,7 +190,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
         ::glEnable(GL_POINT_SPRITE);
     }
 #else
-    m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT);
+    // Adjust the shader specification depending on whether GLES3 (i.e. WebGL2 support) was requested.
+    m_compiler = ANGLEWebKitBridge(SH_ESSL_OUTPUT, m_attrs.useGLES3 ? SH_WEBGL2_SPEC : SH_WEBGL_SPEC);
 #endif
 
     // ANGLE initialization.

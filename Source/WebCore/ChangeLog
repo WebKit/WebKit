@@ -1,3 +1,41 @@
+2017-07-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] WebGL2 support
+        https://bugs.webkit.org/show_bug.cgi?id=174249
+
+        Reviewed by Alex Christensen.
+
+        Implement WebGL2 support in GraphicsContext3DCairo for the WPE port, but keep
+        the implementation specific to libepoxy (which WPE leverages by default).
+
+        In the GraphicsContext3D::create() method, we first construct the
+        GraphicsContext3D object that also ensures a current GL context on this thread.
+        Only then can we determine through libepoxy whether the underlying GL library
+        is able to support WebGL2.
+
+        For WebGL2, the GLES3 support is required. The initial libepoxy implementation
+        ensures this only in case of 'non-desktop GL' library of minimum version 3.0.
+        This effectively translates to the only supported configuration being the
+        EGL and OpenGL ES 3.0 (or higher) combination. If this cannot be ensured, we
+        discard the existing GraphicsContext3D object and return null.
+
+        WebGL2 can also be supported via OpenGL (i.e. 'desktop GL'), but this hasn't
+        been tested yet. Implementation will in the future be extended to support that
+        as required.
+
+        In the GraphicsContext3D constructor itself, the ANGLEWebKitBridge constructor
+        has to now receive the second argument, the desired shader specification that's
+        used when parsing the provided shaders. This should be SH_WEBGL_SPEC for WebGL1,
+        and SH_WEBGL2_SPEC for WebGL2.
+
+        No new tests -- a small set of existing WebGL2 tests is unskipped and passing.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        Add WebGL2-specific methods to the build.
+
 2017-07-26  Nan Wang  <n_wang@apple.com>
 
         AX: should dispatch accessibilityPerformPressAction async on MacOS

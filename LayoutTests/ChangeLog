@@ -1,3 +1,14 @@
+2017-07-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] WebGL2 support
+        https://bugs.webkit.org/show_bug.cgi?id=174249
+
+        Reviewed by Alex Christensen.
+
+        * platform/wpe/TestExpectations:
+        Unskip WebGL2 tests under the webgl/ directory. More tests under fast/canvas/webgl2/
+        will be unskipped later.
+
 2017-07-26  Nan Wang  <n_wang@apple.com>
 
         AX: should dispatch accessibilityPerformPressAction async on MacOS
