@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TextIndicator.h"
 
+#include "ColorHash.h"
 #include "Document.h"
 #include "Editor.h"
 #include "Element.h"
@@ -209,21 +210,15 @@ static bool styleContainsComplexBackground(const RenderStyle& style)
     return false;
 }
 
-static Vector<Color> estimatedTextColorsForRange(const Range& range)
+static HashSet<Color> estimatedTextColorsForRange(const Range& range)
 {
-    Vector<Color> colors;
-    HashSet<RGBA32> uniqueRGBValues;
+    HashSet<Color> colors;
     for (TextIterator iterator(&range); !iterator.atEnd(); iterator.advance()) {
         auto* node = iterator.node();
         if (!is<Text>(node) || !is<RenderText>(node->renderer()))
             continue;
 
-        auto& color = node->renderer()->style().color();
-        if (uniqueRGBValues.contains(color.rgb()))
-            continue;
-
-        uniqueRGBValues.add(color.rgb());
-        colors.append(color);
+        colors.add(node->renderer()->style().color());
     }
     return colors;
 }
@@ -264,7 +259,7 @@ static Color estimatedBackgroundColorForRange(const Range& range, const Frame& f
     return estimatedBackgroundColor;
 }
 
-static void adjustTextIndicatorDataOptionsForEstimatedColorsIfNecessary(TextIndicatorData& data, const Color& backgroundColor, Vector<Color>&& textColors)
+static void adjustTextIndicatorDataOptionsForEstimatedColorsIfNecessary(TextIndicatorData& data, const Color& backgroundColor, HashSet<Color>&& textColors)
 {
     if (data.options & TextIndicatorOptionPaintAllContent)
         return;
