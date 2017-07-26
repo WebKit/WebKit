@@ -1,3 +1,14 @@
+2017-07-26  Frederic Wang  <fwang@igalia.com>
+
+        Unreviewed, add demos (frame sandboxing and scrolling) for a blog post.
+
+        * demos/frames/sandboxing/am-i-sandboxed.html: Added.
+        * demos/frames/sandboxing/framebusting-success.html: Added.
+        * demos/frames/sandboxing/framebusting-without-user-activation.html: Added.
+        * demos/frames/sandboxing/index.html: Added.
+        * demos/frames/scrollable-iframes.html: Added.
+        * demos/frames/scrollingElement.html: Added.
+
 2017-07-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, add the final demo page for a WebCrypto API blog post
