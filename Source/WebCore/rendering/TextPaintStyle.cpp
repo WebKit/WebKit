@@ -187,7 +187,7 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
     else
         newMode &= ~TextModeLetterpress;
 #endif
-    if (paintStyle.strokeWidth > 0)
+    if (paintStyle.strokeWidth > 0 && paintStyle.strokeColor.isVisible())
         newMode |= TextModeStroke;
     if (mode != newMode) {
         context.setTextDrawingMode(newMode);
