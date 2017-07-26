@@ -69,6 +69,8 @@ public:
     void updateProcessSuppressionDisabled(RefCounterEvent);
 #endif
 
+    const Vector<RefPtr<PluginProcessProxy>>& pluginProcesses() const { return m_pluginProcesses; }
+
 private:
     PluginProcessManager();
 

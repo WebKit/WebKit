@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import <WebKit/WKFoundation.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/RetainPtr.h>
@@ -116,5 +117,40 @@ TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartup)
 
     TestWebKitAPI::Util::run(&callbackFlag);
 }
+
+TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
+{
+    // Ensure the shared process pool exists so the data store operations we're about to do work with it.
+    WKProcessPool *sharedProcessPool = [WKProcessPool _sharedProcessPool];
+
+    EXPECT_EQ((pid_t)0, [sharedProcessPool _databaseProcessIdentifier]);
+    EXPECT_EQ((size_t)0, [sharedProcessPool _pluginProcessCount]);
+
+    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    [dataStore _setResourceLoadStatisticsEnabled:NO];
+
+    NSURL *statisticsDirectoryURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *targetURL = [statisticsDirectoryURL URLByAppendingPathComponent:@"full_browsing_session_resourceLog.plist"];
+    NSURL *testResourceURL = [[NSBundle mainBundle] URLForResource:@"EmptyGrandfatheredResourceLoadStatistics" withExtension:@"plist" subdirectory:@"TestWebKitAPI.resources"];
+
+    [[NSFileManager defaultManager] createDirectoryAtURL:statisticsDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:testResourceURL toURL:targetURL error:nil];
+
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
+
+    static bool doneFlag;
+    [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
+        EXPECT_TRUE([message isEqualToString:@"PopulatedWithoutGrandfathering"]);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:targetURL.path]);
+
+    EXPECT_EQ((pid_t)0, [sharedProcessPool _databaseProcessIdentifier]);
+    EXPECT_EQ((size_t)0, [sharedProcessPool _pluginProcessCount]);
+}
+
 #endif
 

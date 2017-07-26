@@ -32,6 +32,7 @@
 #import "CacheModel.h"
 #import "DownloadClient.h"
 #import "Logging.h"
+#import "PluginProcessManager.h"
 #import "SandboxUtilities.h"
 #import "UIGamepadProvider.h"
 #import "WKObject.h"
@@ -399,6 +400,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return _processPool->networkProcessIdentifier();
 }
 
+- (pid_t)_databaseProcessIdentifier
+{
+    return _processPool->databaseProcessIdentifier();
+}
+
 - (void)_syncNetworkProcessCookies
 {
     _processPool->syncNetworkProcessCookies();
@@ -407,6 +413,15 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 - (size_t)_webProcessCount
 {
     return _processPool->processes().size();
+}
+
+- (size_t)_pluginProcessCount
+{
+#if !PLATFORM(IOS)
+    return WebKit::PluginProcessManager::singleton().pluginProcesses().size();
+#else
+    return 0;
+#endif
 }
 
 + (void)_forceGameControllerFramework
