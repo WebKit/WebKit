@@ -41,6 +41,7 @@ class DocumentFragment;
 class FloatQuad;
 class Node;
 class NodeWithIndex;
+class RenderText;
 class SelectionRect;
 class Text;
 class VisiblePosition;
@@ -116,12 +117,13 @@ public:
     };
 
     // Not transform-friendly
-    WEBCORE_EXPORT void absoluteTextRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr) const;
+    enum class RespectClippingForTextRects { No, Yes };
+    WEBCORE_EXPORT void absoluteTextRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr, RespectClippingForTextRects = RespectClippingForTextRects::No) const;
     WEBCORE_EXPORT IntRect absoluteBoundingBox() const;
 
     // Transform-friendly
     WEBCORE_EXPORT void absoluteTextQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = nullptr) const;
-    WEBCORE_EXPORT FloatRect absoluteBoundingRect() const;
+    WEBCORE_EXPORT FloatRect absoluteBoundingRect(RespectClippingForTextRects = RespectClippingForTextRects::No) const;
 #if PLATFORM(IOS)
     WEBCORE_EXPORT void collectSelectionRects(Vector<SelectionRect>&) const;
     WEBCORE_EXPORT int collectSelectionRectsWithoutUnionInteriorLines(Vector<SelectionRect>&) const;
@@ -162,8 +164,10 @@ private:
     ExceptionOr<RefPtr<DocumentFragment>> processContents(ActionType);
 
     enum class CoordinateSpace { Absolute, Client };
-    Vector<FloatQuad> borderAndTextQuads(CoordinateSpace) const;
-    FloatRect boundingRect(CoordinateSpace) const;
+    Vector<FloatRect> borderAndTextRects(CoordinateSpace, RespectClippingForTextRects = RespectClippingForTextRects::No) const;
+    FloatRect boundingRect(CoordinateSpace, RespectClippingForTextRects = RespectClippingForTextRects::No) const;
+
+    Vector<FloatRect> absoluteRectsForRangeInText(Node*, RenderText&, bool useSelectionHeight, bool& isFixed, RespectClippingForTextRects) const;
 
     Ref<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;

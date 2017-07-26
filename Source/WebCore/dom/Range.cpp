@@ -1166,8 +1166,38 @@ IntRect Range::absoluteBoundingBox() const
     return result;
 }
 
-void Range::absoluteTextRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFixedPosition* inFixed) const
+Vector<FloatRect> Range::absoluteRectsForRangeInText(Node* node, RenderText& renderText, bool useSelectionHeight, bool& isFixed, RespectClippingForTextRects respectClippingForTextRects) const
 {
+    unsigned startOffset = node == &startContainer() ? m_start.offset() : 0;
+    unsigned endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<unsigned>::max();
+
+    auto textQuads = renderText.absoluteQuadsForRange(startOffset, endOffset, useSelectionHeight, &isFixed);
+
+    if (respectClippingForTextRects == RespectClippingForTextRects::Yes) {
+        Vector<FloatRect> clippedRects;
+
+        auto absoluteClippedOverflowRect = renderText.absoluteClippedOverflowRect();
+
+        for (auto& quad : textQuads) {
+            auto clippedRect = intersection(quad.boundingBox(), absoluteClippedOverflowRect);
+            if (!clippedRect.isEmpty())
+                clippedRects.append(clippedRect);
+        }
+
+        return clippedRects;
+    }
+
+    Vector<FloatRect> floatRects;
+    floatRects.reserveInitialCapacity(textQuads.size());
+    for (auto& quad : textQuads)
+        floatRects.append(quad.boundingBox());
+    return floatRects;
+}
+
+void Range::absoluteTextRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFixedPosition* inFixed, RespectClippingForTextRects respectClippingForTextRects) const
+{
+    // FIXME: This function should probably return FloatRects.
+
     bool allFixed = true;
     bool someFixed = false;
 
@@ -1180,15 +1210,15 @@ void Range::absoluteTextRects(Vector<IntRect>& rects, bool useSelectionHeight, R
         if (renderer->isBR())
             renderer->absoluteRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
         else if (is<RenderText>(*renderer)) {
-            unsigned startOffset = node == &startContainer() ? m_start.offset() : 0;
-            unsigned endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<unsigned>::max();
-            rects.appendVector(downcast<RenderText>(*renderer).absoluteRectsForRange(startOffset, endOffset, useSelectionHeight, &isFixed));
+            auto rectsForRenderer = absoluteRectsForRangeInText(node, downcast<RenderText>(*renderer), useSelectionHeight, isFixed, respectClippingForTextRects);
+            for (auto& rect : rectsForRenderer)
+                rects.append(enclosingIntRect(rect));
         } else
             continue;
         allFixed &= isFixed;
         someFixed |= isFixed;
     }
-    
+
     if (inFixed)
         *inFixed = allFixed ? EntirelyFixedPosition : (someFixed ? PartiallyFixedPosition : NotFixedPosition);
 }
@@ -1765,7 +1795,7 @@ ExceptionOr<void> Range::expand(const String& unit)
 
 Ref<DOMRectList> Range::getClientRects() const
 {
-    return DOMRectList::create(borderAndTextQuads(CoordinateSpace::Client));
+    return DOMRectList::create(borderAndTextRects(CoordinateSpace::Client));
 }
 
 Ref<DOMRect> Range::getBoundingClientRect() const
@@ -1773,9 +1803,9 @@ Ref<DOMRect> Range::getBoundingClientRect() const
     return DOMRect::create(boundingRect(CoordinateSpace::Client));
 }
 
-Vector<FloatQuad> Range::borderAndTextQuads(CoordinateSpace space) const
+Vector<FloatRect> Range::borderAndTextRects(CoordinateSpace space, RespectClippingForTextRects respectClippingForTextRects) const
 {
-    Vector<FloatQuad> quads;
+    Vector<FloatRect> rects;
 
     ownerDocument().updateLayoutIgnorePendingStylesheets();
 
@@ -1799,36 +1829,38 @@ Vector<FloatQuad> Range::borderAndTextQuads(CoordinateSpace space) const
                 renderer->absoluteQuads(elementQuads);
                 if (space == CoordinateSpace::Client)
                     node->document().convertAbsoluteToClientQuads(elementQuads, renderer->style());
-                quads.appendVector(elementQuads);
+                
+                for (auto& quad : elementQuads)
+                    rects.append(quad.boundingBox());
             }
         } else if (is<Text>(*node)) {
             if (auto* renderer = downcast<Text>(*node).renderer()) {
-                unsigned startOffset = node == &startContainer() ? m_start.offset() : 0;
-                unsigned endOffset = node == &endContainer() ? m_end.offset() : std::numeric_limits<unsigned>::max();
-                auto textQuads = renderer->absoluteQuadsForRange(startOffset, endOffset);
+                bool isFixed;
+                auto clippedRects = absoluteRectsForRangeInText(node, *renderer, false, isFixed, respectClippingForTextRects);
                 if (space == CoordinateSpace::Client)
-                    node->document().convertAbsoluteToClientQuads(textQuads, renderer->style());
-                quads.appendVector(textQuads);
+                    node->document().convertAbsoluteToClientRects(clippedRects, renderer->style());
+
+                rects.appendVector(clippedRects);
             }
         }
     }
 
-    return quads;
+    return rects;
 }
 
-FloatRect Range::boundingRect(CoordinateSpace space) const
+FloatRect Range::boundingRect(CoordinateSpace space, RespectClippingForTextRects respectClippingForTextRects) const
 {
     FloatRect result;
-    for (auto& quad : borderAndTextQuads(space))
-        result.unite(quad.boundingBox());
+    for (auto& rect : borderAndTextRects(space, respectClippingForTextRects))
+        result.unite(rect);
     return result;
 }
 
-FloatRect Range::absoluteBoundingRect() const
+FloatRect Range::absoluteBoundingRect(RespectClippingForTextRects respectClippingForTextRects) const
 {
-    return boundingRect(CoordinateSpace::Absolute);
+    return boundingRect(CoordinateSpace::Absolute, respectClippingForTextRects);
 }
-    
+
 TextStream& operator<<(TextStream& ts, const RangeBoundaryPoint& r)
 {
     return ts << r.toPosition();
