@@ -1,5 +1,28 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219829. rdar://problem/33523803
+
+    2017-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+            Change "client" coordinates back to match scrolling coordinates
+            https://bugs.webkit.org/show_bug.cgi?id=174734
+            rdar://problem/33336930
+
+            Reviewed by Tim Horton.
+
+            Baidu.com (which uses jQuery), and various iOS apps make the assumption that getBoundingClientRect() returns a rectangle
+            that can be used to set or compare with the scroll position. With visual viewports, that assumption is no longer valid
+            when the page is zoomed, or when the keyboard has caused the visual viewport to detach from the layout viewport.
+
+            At this point the compatibility cost of shipping layout viewport-based client rects seems higher than the gain, so revert
+            to the shipping behavior. This reverts r216803, and will re-introduce bugs that occurred on zoomed pages on macOS,
+            many of which are noted in webkit.org/b/170981.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::documentToClientOffset):
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219761. rdar://problem/33523829
 
     2017-07-22  Timothy Horton  <timothy_horton@apple.com>

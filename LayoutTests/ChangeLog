@@ -1,5 +1,30 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219829. rdar://problem/33523803
+
+    2017-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+            Revert "client" coordinates to be in scrolling coordinates
+            https://bugs.webkit.org/show_bug.cgi?id=174734
+            rdar://problem/33336930
+
+            Reviewed by Tim Horton.
+
+            Rebaseline.
+
+            * fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-mainframe-expected.txt:
+            * fast/visual-viewport/client-coordinates-relative-to-layout-viewport-expected.txt:
+            * fast/visual-viewport/client-rects-relative-to-layout-viewport-expected.txt:
+            * fast/visual-viewport/zoomed-fixed-expected.txt:
+            * fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt:
+            * fast/zooming/client-rect-in-fixed-zoomed-expected.txt:
+            * platform/ios-wk2/fast/visual-viewport/client-rects-relative-to-layout-viewport-expected.txt:
+            * platform/ios-wk2/imported/w3c/web-platform-tests/cssom-view/elementFromPoint-expected.txt: Added.
+            * platform/ios/fast/visual-viewport/zoomed-fixed-expected.txt:
+            * platform/ios/fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt:
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219755. rdar://problem/33523843
 
     2017-07-21  Per Arne Vollan  <pvollan@apple.com>
