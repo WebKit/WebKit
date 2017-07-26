@@ -1119,12 +1119,15 @@ PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(CGContextR
     return dirtyRects;
 }
 
-void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList& dirtyRects, GraphicsLayerPaintFlags flags)
+void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList& dirtyRects, GraphicsLayerPaintBehavior layerPaintBehavior)
 {
     WebCore::PlatformCALayerClient* layerContents = platformCALayer->owner();
     if (!layerContents)
         return;
-    
+
+    if (layerContents->platformCALayerRepaintCount(platformCALayer))
+        layerPaintBehavior &= ~GraphicsLayerPaintAllowAsyncImageDecoding;
+
 #if PLATFORM(IOS)
     WKSetCurrentGraphicsContext(context);
 #endif
@@ -1166,7 +1169,7 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
             GraphicsContextStateSaver stateSaver(graphicsContext);
             graphicsContext.clip(rect);
             
-            layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect, flags);
+            layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect, layerPaintBehavior);
         }
         
 #if PLATFORM(IOS)

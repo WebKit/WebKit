@@ -1,5 +1,90 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219610. rdar://problem/33523847
+
+    2017-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Async image decoding for large images should be disabled after the first time a tile is painted
+            https://bugs.webkit.org/show_bug.cgi?id=174451
+
+            Reviewed by Simon Fraser.
+
+            Flashing because of DOM mutation can be fixed by disabling the asynchronous
+            image decoding after the first time a tile was painted.
+
+            We can detect this by consulting the tile repaintCount. If it is zero, then
+            it is safe to use asynchronous image decoded. If the tile repaintCount is
+            greater than zero, we are not sure if the renderer rectangle has an image
+            drawn in it already or not. In this case we have to use the synchronous
+            image decoding to avoid causing a flash.
+
+            Tests: fast/images/async-image-background-change.html
+                   fast/images/async-image-src-change.html
+                   http/tests/multipart/multipart-async-image.html
+
+            * page/PageOverlayController.cpp:
+            (WebCore::PageOverlayController::paintContents):
+            * page/PageOverlayController.h:
+            * page/linux/ResourceUsageOverlayLinux.cpp:
+            * page/mac/ServicesOverlayController.h:
+            * page/mac/ServicesOverlayController.mm:
+            (WebCore::ServicesOverlayController::Highlight::paintContents):
+            * platform/graphics/BitmapImage.h:
+            * platform/graphics/GraphicsLayer.cpp:
+            (WebCore::GraphicsLayer::paintGraphicsLayerContents):
+            * platform/graphics/GraphicsLayer.h:
+            * platform/graphics/GraphicsLayerClient.h:
+            (WebCore::GraphicsLayerClient::paintContents):
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            (WebCore::LayerClient::platformCALayerPaintContents):
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::platformCALayerPaintContents):
+            * platform/graphics/ca/GraphicsLayerCA.h:
+            * platform/graphics/ca/PlatformCALayer.h:
+            * platform/graphics/ca/PlatformCALayerClient.h:
+            (WebCore::PlatformCALayerClient::platformCALayerRepaintCount):
+            * platform/graphics/ca/TileCoverageMap.cpp:
+            (WebCore::TileCoverageMap::platformCALayerPaintContents):
+            * platform/graphics/ca/TileCoverageMap.h:
+            * platform/graphics/ca/TileGrid.cpp:
+            (WebCore::TileGrid::platformCALayerPaintContents):
+            (WebCore::TileGrid::platformCALayerRepaintCount):
+            * platform/graphics/ca/TileGrid.h:
+            * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+            (PlatformCALayer::drawLayerContents):
+            * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+            (PlatformCALayer::drawLayerContents):
+            * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+            (PlatformCALayerWinInternal::displayCallback):
+            * platform/graphics/ca/win/WebTiledBackingLayerWin.cpp:
+            (WebTiledBackingLayerWin::displayCallback):
+            * platform/graphics/mac/WebLayer.mm:
+            (-[WebLayer drawInContext:]):
+            (-[WebSimpleLayer drawInContext:]):
+            * rendering/RenderBoxModelObject.cpp:
+            (WebCore::RenderBoxModelObject::decodingModeForImageDraw):
+            * rendering/RenderElement.h:
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::paintContents):
+            * rendering/RenderLayerBacking.h:
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::paintContents):
+            * rendering/RenderLayerCompositor.h:
+            * testing/Internals.cpp:
+            (WebCore::imageFromImageElement):
+            (WebCore::bitmapImageFromImageElement):
+            (WebCore::Internals::imageFrameIndex):
+            (WebCore::Internals::setImageFrameDecodingDuration):
+            (WebCore::Internals::resetImageAnimation):
+            (WebCore::Internals::isImageAnimating):
+            (WebCore::Internals::setClearDecoderAfterAsyncFrameRequestForTesting):
+            (WebCore::Internals::imageDecodeCount):
+            (WebCore::Internals::setLargeImageAsyncDecodingEnabledForTesting):
+            * testing/Internals.h:
+            * testing/Internals.idl:
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Revert r219342. rdar://problem/33523803
 
 2017-07-24  Jason Marcell  <jmarcell@apple.com>

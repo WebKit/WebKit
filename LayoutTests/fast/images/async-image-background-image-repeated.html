@@ -50,6 +50,10 @@
             image.onload = function() {
                 var elements = document.getElementsByClassName("image-background");
  
+                 // Force async image decoding for this image.
+                if (window.internals)
+                    internals.setLargeImageAsyncDecodingEnabledForTesting(image, true);
+
                 // Change the background of the elements.
                 if (window.internals && window.testRunner) {
                     var promises = [];
