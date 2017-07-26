@@ -6559,6 +6559,23 @@ void Document::convertAbsoluteToClientQuads(Vector<FloatQuad>& quads, const Rend
         quad.move(documentToClientOffset);
     }
 }
+    
+void Document::convertAbsoluteToClientRects(Vector<FloatRect>& rects, const RenderStyle& style)
+{
+    if (!view())
+        return;
+    
+    auto& frameView = *view();
+    float inverseFrameScale = frameView.absoluteToDocumentScaleFactor(style.effectiveZoom());
+    auto documentToClientOffset = frameView.documentToClientOffset();
+    
+    for (auto& rect : rects) {
+        if (inverseFrameScale != 1)
+            rect.scale(inverseFrameScale);
+        
+        rect.move(documentToClientOffset);
+    }
+}
 
 void Document::convertAbsoluteToClientRect(FloatRect& rect, const RenderStyle& style)
 {

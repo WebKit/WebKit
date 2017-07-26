@@ -37,6 +37,13 @@ DOMRectList::DOMRectList(const Vector<FloatQuad>& quads)
         m_items.uncheckedAppend(DOMRect::create(quad.boundingBox()));
 }
 
+DOMRectList::DOMRectList(const Vector<FloatRect>& rects)
+{
+    m_items.reserveInitialCapacity(rects.size());
+    for (auto& rect : rects)
+        m_items.uncheckedAppend(DOMRect::create(rect));
+}
+
 DOMRectList::~DOMRectList()
 {
 }

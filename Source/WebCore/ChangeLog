@@ -1,5 +1,70 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219756. rdar://problem/33523829
+
+    2017-07-21  Timothy Horton  <timothy_horton@apple.com>
+
+            Drag and Drop preview image for Twitter link is the wrong shape
+            https://bugs.webkit.org/show_bug.cgi?id=174731
+            <rdar://problem/33335616>
+
+            Reviewed by Zalan Bujtas.
+
+            TextIndicator uses Range::borderAndTextQuads and ::absoluteTextRects
+            in order to get the rects of the indicated text. Currently, these
+            functions do not respect clipping, so clipped-out text (e.g. as seen
+            inside links on Twitter) generates lots of meaningless indicated rects.
+
+            * page/TextIndicator.cpp:
+            (WebCore::estimatedBackgroundColorForRange):
+            (WebCore::hasAnyIllegibleColors):
+            Change adjustTextIndicatorDataOptionsForEstimatedColorsIfNecessary
+            to instead be hasAnyIllegibleColors, and referred to in the same place
+            as hasNonInlineOrReplacedElements, so that it follows the same
+            upgrade path (leaving textRects empty, so that it is later filled in
+            with the absoluteBoundingRect). This was a mistake in r219033, which
+            instead would end up painting all content, but filling in textRects
+            with the actual individual text rects.
+
+            This alone changes the behavior on Twitter from lots of jagged misplaced
+            rects to a too-large bounding rect. Combined with the following changes,
+            the bounding rect is reduced to the right size:
+
+            (WebCore::initializeIndicator):
+            Adopt the new Range::borderAndTextQuads and ::absoluteTextRects parameter
+            and opt-in to respecting clipping for text rects.
+
+            * dom/DOMRectList.cpp:
+            (WebCore::DOMRectList::DOMRectList):
+            * dom/DOMRectList.h:
+            (WebCore::DOMRectList::create):
+            Add a DOMRectList constructor and create() that take FloatRects, similar
+            to the one that takes FloatQuads, but without the boundingRect() calls.
+
+            * dom/Document.h:
+            * dom/Document.cpp:
+            (WebCore::Document::convertAbsoluteToClientRects):
+            Add convertAbsoluteToClientRects, similar to covertAbsoluteToClientQuads,
+            except acting on rects instead of quads.
+
+            * dom/Range.cpp:
+            (WebCore::Range::absoluteRectsForRangeInText):
+            (WebCore::Range::absoluteTextRects):
+            (WebCore::Range::getClientRects):
+            (WebCore::Range::borderAndTextRects):
+            (WebCore::Range::boundingRect):
+            (WebCore::Range::absoluteBoundingRect):
+            (WebCore::Range::borderAndTextQuads): Deleted.
+            * dom/Range.h:
+            Replace borderAndTextQuads with borderAndTextRects, because all callers
+            just ended up calling boundingBox() on the quads.
+
+            Factor absoluteRectsForRangeInText out of absoluteTextRects and
+            borderAndTextQuads, and teach it to optionally intersect the text rects
+            with their renderer's absoluteClippedOverflowRect.
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219755. rdar://problem/33523843
 
     2017-07-21  Per Arne Vollan  <pvollan@apple.com>
