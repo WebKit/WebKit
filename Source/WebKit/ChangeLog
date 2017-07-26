@@ -1,5 +1,34 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219594. rdar://problem/33523357
+
+    2017-07-17  Timothy Horton  <timothy_horton@apple.com>
+
+            Page using safe area constant properties jumps to correct layout after resize
+            https://bugs.webkit.org/show_bug.cgi?id=174598
+            <rdar://problem/33364275>
+
+            Reviewed by Simon Fraser.
+
+            Test: fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation.html
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::dynamicViewportSizeUpdate):
+            Plumb unobscured safe area insets through in the dynamicViewportSizeUpdate,
+            like we do in VisibleContentRectUpdate (once again sad that these aren't
+            more similar), so that it will be correct in the during-rotation snapshot,
+            instead of only becoming correct in the first visible content rect update
+            post-rotation.
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219845. rdar://problem/33523884
 
     2017-07-24  Chris Dumez  <cdumez@apple.com>
