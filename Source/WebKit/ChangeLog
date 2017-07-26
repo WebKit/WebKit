@@ -1,5 +1,28 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219739. rdar://problem/33523884
+
+    2017-07-21  Chris Dumez  <cdumez@apple.com>
+
+            WebResourceLoadStatisticsStore::m_operatingDates is unsafely modified from several threads
+            https://bugs.webkit.org/show_bug.cgi?id=174721
+            <rdar://problem/33400343>
+
+            Reviewed by Brent Fulgham.
+
+            WebResourceLoadStatisticsStore::m_operatingDates is supposed to only be modified on
+            the background thread. However, WebResourceLoadStatisticsStore::performDailyTasks()
+            was mistakenly calling includeTodayAsOperatingDateIfNecessary() on the main thread,
+            which would modify m_operatingDates. This could lead to crashes such as the
+            one in <rdar://problem/33400343>, as the main thread may modify m_operatingDates
+            while we are interating over it on the background thread to save it to disk.
+
+            * UIProcess/WebResourceLoadStatisticsStore.cpp:
+            (WebKit::WebResourceLoadStatisticsStore::performDailyTasks):
+            (WebKit::WebResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary):
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219594. rdar://problem/33523357
 
     2017-07-17  Timothy Horton  <timothy_horton@apple.com>
