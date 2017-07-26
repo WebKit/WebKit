@@ -1,5 +1,23 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219736. rdar://problem/33523835
+
+    2017-07-21  Jeremy Jones  <jeremyj@apple.com>
+
+            Noise when AudioChannel lengths don't match.
+            https://bugs.webkit.org/show_bug.cgi?id=174706
+            rdar://problem/33389856
+
+            Reviewed by Eric Carlson.
+
+            When AudioChannel lengths don't match, copyFrom() returns early leaving uninitialized data in the audio buffer.
+            This change zeros out the data, so there isn't objectionable noise sent to the speaker.
+
+            * platform/audio/AudioChannel.cpp:
+            (WebCore::AudioChannel::copyFrom):
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219638. rdar://problem/33523787
 
     2017-07-18  Ryosuke Niwa  <rniwa@webkit.org>
