@@ -683,14 +683,14 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
     if (_remoteObjectRegistry)
         _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID());
+#endif
 
     _page->close();
 
+#if PLATFORM(IOS)
     [_remoteObjectRegistry _invalidate];
     [[_configuration _contentProviderRegistry] removePage:*_page];
-#if PLATFORM(IOS)
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), nullptr, nullptr);
-#endif
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_scrollView setInternalDelegate:nil];
 #endif

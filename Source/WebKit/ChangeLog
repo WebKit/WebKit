@@ -1,5 +1,46 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219765. rdar://problem/33523818
+
+    2017-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [Mac WK2] Fix null dereference in asynchronous NSTextInputClient methods when deallocating a WKWebView
+            https://bugs.webkit.org/show_bug.cgi?id=174751
+            <rdar://problem/33132405>
+
+            Reviewed by Darin Adler.
+
+            Tweaks -[WKWebView dealloc] to close the WebPageProxy at an earlier time, prior to destroying the WebViewImpl.
+            This fixes a NSTextInputClient crash in WKWebView when exercising the following scenario:
+
+            (1) Suppose that NSTextInputContext invokes an asynchronous text input query on WKWebView immediately before
+            WKWebView is deallocated, such that WebPageProxy's CallbackMap contains an NSTextInputContext callback at the
+            time that -[WKWebView dealloc] is called. Additionally, suppose that this callback from NSTextInputContext
+            invokes additional NSTextInputClient methods on the WKWebView that involve plumbing through to the WebViewImpl
+            (which is stored as _impl on the WKWebView).
+
+            (2) Observe that when calling [super dealloc] in [WKWebView dealloc], we will destroy the WebViewImpl as a
+            result of setting our unique pointer to _impl to be null. In ~WebViewImpl, we invoke WebPageProxy::close, which
+            in turn invokes WebPageProxy::resetState.
+
+            (3) WebPageProxy::resetState then calls m_callbacks.invalidate(error), which triggers all pending callbacks.
+            This invokes the block described in (1), which causes us to try and call back into WKWebView, invoking
+            NSTextInputClient methods. Without the fix in this patch, these methods currently assume that _impl is nonnull,
+            even though we've already cleared out the pointer in (2), so we segfault with a null dereference.
+
+            After this patch, we close the _page at an earlier time, such that the state is reset before the WebViewImpl
+            (and corresponding _impl unique_ptr in WKWebView) is torn down. This ensures that _impl will not be null for
+            callbacks invoked after beginning to deallocate the WKWebView.
+
+            Forcing this scenario in a custom AppKit root that triggers async NSTextInputClient methods immediately when a
+            WKWebView is being deallocated produces a crash with the same stack trace as what we observe in the radar, but
+            there are no known steps to actually reproduce this crash in shipping software.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView dealloc]):
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219754. rdar://problem/33523873
 
     2017-07-21  Brady Eidson  <beidson@apple.com>
