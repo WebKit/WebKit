@@ -1,6 +1,6 @@
 
 These two events should have the same client coordinates:
 
-Received event touchstart with client coords 150, 160
-Received event click with client coords 150, 160
+Received event touchstart with client coords 83, 110
+Received event click with client coords 83, 110
 
