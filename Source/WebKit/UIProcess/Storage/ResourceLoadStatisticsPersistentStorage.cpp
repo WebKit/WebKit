@@ -85,6 +85,7 @@ static std::unique_ptr<KeyedDecoder> createDecoderForFile(const String& path)
 ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage(WebResourceLoadStatisticsStore& store, const String& storageDirectoryPath)
     : m_memoryStore(store)
     , m_storageDirectoryPath(storageDirectoryPath)
+    , m_asyncWriteTimer(RunLoop::main(), this, &ResourceLoadStatisticsPersistentStorage::asyncWriteTimerFired)
 {
 }
 
@@ -237,6 +238,14 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
         m_memoryStore.grandfatherExistingWebsiteData();
 }
 
+void ResourceLoadStatisticsPersistentStorage::asyncWriteTimerFired()
+{
+    ASSERT(RunLoop::isMain());
+    m_memoryStore.statisticsQueue().dispatch([this] () mutable {
+        writeMemoryStoreToDisk();
+    });
+}
+
 void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
 {
     ASSERT(!RunLoop::isMain());
@@ -280,8 +289,8 @@ void ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore()
         if (!m_hasPendingWrite) {
             m_hasPendingWrite = true;
             Seconds delay = minimumWriteInterval - timeSinceLastWrite + 1_s;
-            m_memoryStore.statisticsQueue().dispatchAfter(delay, [this] () mutable {
-                writeMemoryStoreToDisk();
+            RunLoop::main().dispatch([this, protectedThis = makeRef(*this), delay] {
+                m_asyncWriteTimer.startOneShot(delay);
             });
         }
         return;
@@ -305,6 +314,8 @@ void ResourceLoadStatisticsPersistentStorage::clear()
 
 void ResourceLoadStatisticsPersistentStorage::finishAllPendingWorkSynchronously()
 {
+    m_asyncWriteTimer.stop();
+
     BinarySemaphore semaphore;
     // Make sure any pending work in our queue is finished before we terminate.
     m_memoryStore.statisticsQueue().dispatch([&semaphore, this] {
@@ -314,6 +325,16 @@ void ResourceLoadStatisticsPersistentStorage::finishAllPendingWorkSynchronously(
         semaphore.signal();
     });
     semaphore.wait(WallTime::infinity());
+}
+
+void ResourceLoadStatisticsPersistentStorage::ref()
+{
+    m_memoryStore.ref();
+}
+
+void ResourceLoadStatisticsPersistentStorage::deref()
+{
+    m_memoryStore.deref();
 }
 
 #if !PLATFORM(IOS)
