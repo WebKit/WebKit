@@ -1,5 +1,27 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219742. rdar://problem/33523798
+
+    2017-07-21  Zalan Bujtas  <zalan@apple.com>
+
+            iBooks: Overlapping/missing content at beginning/end of paragraph.
+            https://bugs.webkit.org/show_bug.cgi?id=174717
+            <rdar://problem/33117912>
+
+            Reviewed by Simon Fraser.
+
+            By definiton simple and normal line layout should always produce the exact same lineboxes. It enables us not
+            to force repaint while swapping between these 2 line layouts.
+            However in certain cases (font size pixel rounding as an example) they don't agree on how much content fits the line and
+            that could result in missing/overlapping content due to the lack of repaint.
+
+            Unable to test.
+
+            * rendering/RenderBlockFlow.cpp:
+            (WebCore::RenderBlockFlow::ensureLineBoxes):
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219737. rdar://problem/33523854
 
     2017-07-21  Jeremy Jones  <jeremyj@apple.com>
