@@ -80,7 +80,7 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         this._selectedSettingsView.updateLayout();
 
         let navigationItem = this._navigationBar.findNavigationItem(settingsView.identifier);
-        console.assert(navigationItem, "Missing navigation item for settings view.", settingsView)
+        console.assert(navigationItem, "Missing navigation item for settings view.", settingsView);
         if (!navigationItem)
             return;
 
@@ -125,7 +125,7 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
             return;
 
         let index = this._settingsViews.indexOf(settingsView);
-        console.assert(index !== -1, "SettingsView not found.", settingsView)
+        console.assert(index !== -1, "SettingsView not found.", settingsView);
         if (index === -1)
             return;
 
