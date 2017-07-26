@@ -1,3 +1,7 @@
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
+        Revert r219342. rdar://problem/33523803
+
 2017-07-24  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219665.

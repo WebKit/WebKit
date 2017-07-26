@@ -4924,17 +4924,9 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     
     updateLayerListsIfNeeded();
 
-    ASSERT(!isRenderFlowThread());
-    LayoutRect hitTestArea = renderer().view().documentRect();
-    if (!request.ignoreClipping()) {
-        if (renderer().settings().visualViewportEnabled()) {
-            auto& frameView = renderer().view().frameView();
-            LayoutRect layoutViewportBounds({ }, frameView.layoutViewportRect().size());
-            LayoutRect absoluteLayoutViewportRect = LayoutRect(frameView.layoutViewportToAbsoluteRect(layoutViewportBounds));
-            hitTestArea.intersect(absoluteLayoutViewportRect);
-        } else
-            hitTestArea.intersect(renderer().view().frameView().visibleContentRect(LegacyIOSDocumentVisibleRect));
-    }
+    LayoutRect hitTestArea = isOutOfFlowRenderFlowThread() ? downcast<RenderFlowThread>(renderer()).visualOverflowRect() : renderer().view().documentRect();
+    if (!request.ignoreClipping())
+        hitTestArea.intersect(renderer().view().frameView().visibleContentRect(LegacyIOSDocumentVisibleRect));
 
     RenderLayer* insideLayer = hitTestLayer(this, nullptr, request, result, hitTestArea, hitTestLocation, false);
     if (!insideLayer) {
