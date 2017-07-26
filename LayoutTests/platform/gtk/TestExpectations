@@ -3008,7 +3008,6 @@ webkit.org/b/144765 fast/events/touch/touch-slider-no-js-touch-listener.html [ F
 
 webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
-webkit.org/b/145048 http/tests/misc/bad-charset-alias.html [ Failure ]
 webkit.org/b/145049 fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
