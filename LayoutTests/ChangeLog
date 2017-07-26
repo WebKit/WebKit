@@ -1,5 +1,27 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219837. rdar://problem/33524936
+
+    2017-07-24  Jeremy Jones  <jeremyj@apple.com>
+
+            5 wav media layoutTest timeouts on High Sierra
+            https://bugs.webkit.org/show_bug.cgi?id=174725
+            rdar://problem/30182218
+
+            Reviewed by Andreas Kling.
+
+            Underlying issue is fixed. Re-enable tests on High Sierra.
+
+            media/audio-controls-timeline-in-media-document.html
+            media/audio-data-url.html
+            media/media-document-audio-controls-visible.html
+            media/media-document-audio-repaint.html
+            media/media-document-audio-size.html
+
+            * platform/mac-highsierra/TestExpectations:
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219829. rdar://problem/33523803
 
     2017-07-24  Simon Fraser  <simon.fraser@apple.com>
