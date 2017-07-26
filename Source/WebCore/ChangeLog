@@ -1,3 +1,58 @@
+2017-07-26  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Review WebKitWebSource after r219252.
+        https://bugs.webkit.org/show_bug.cgi?id=174415
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove ResourceHandleStreamingClient, and flatten the StreamingClient
+        into CachedResourceStreamingClient (the only implemetation left). They
+        are no longer required after r219252.
+
+        Also remove the locking code. It's not needed now, and what existed
+        was heavy-handed and missed several cases it was supposed to protect
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init):
+        (webKitWebSrcDispose):
+        (webKitWebSrcStop):
+        (webKitWebSrcStart):
+        (webKitWebSrcNeedData):
+        (webKitWebSrcEnoughData):
+        (webKitWebSrcSeek):
+        (webKitWebSrcSetMediaPlayer):
+        (CachedResourceStreamingClient::CachedResourceStreamingClient):
+        (CachedResourceStreamingClient::~CachedResourceStreamingClient):
+        (CachedResourceStreamingClient::getOrCreateReadBuffer):
+        (CachedResourceStreamingClient::responseReceived):
+        (CachedResourceStreamingClient::dataReceived):
+        (CachedResourceStreamingClient::loadFinished):
+        (ResourceHandleStreamingClient::create): Deleted.
+        (): Deleted.
+        (StreamingClient::StreamingClient): Deleted.
+        (StreamingClient::~StreamingClient): Deleted.
+        (StreamingClient::createReadBuffer): Deleted.
+        (StreamingClient::handleResponseReceived): Deleted.
+        (StreamingClient::handleDataReceived): Deleted.
+        (StreamingClient::handleNotifyFinished): Deleted.
+        (ResourceHandleStreamingClient::ResourceHandleStreamingClient): Deleted.
+        (ResourceHandleStreamingClient::~ResourceHandleStreamingClient): Deleted.
+        (ResourceHandleStreamingClient::cleanupAndStopRunLoop): Deleted.
+        (ResourceHandleStreamingClient::invalidate): Deleted.
+        (ResourceHandleStreamingClient::loadFailed): Deleted.
+        (ResourceHandleStreamingClient::setDefersLoading): Deleted.
+        (ResourceHandleStreamingClient::getOrCreateReadBuffer): Deleted.
+        (ResourceHandleStreamingClient::willSendRequest): Deleted.
+        (ResourceHandleStreamingClient::didReceiveResponse): Deleted.
+        (ResourceHandleStreamingClient::didReceiveData): Deleted.
+        (ResourceHandleStreamingClient::didReceiveBuffer): Deleted.
+        (ResourceHandleStreamingClient::didFinishLoading): Deleted.
+        (ResourceHandleStreamingClient::didFail): Deleted.
+        (ResourceHandleStreamingClient::wasBlocked): Deleted.
+        (ResourceHandleStreamingClient::cannotShowURL): Deleted.
+
 2017-07-26  Brian Burg  <bburg@apple.com>
 
         Remove WEB_TIMING feature flag
