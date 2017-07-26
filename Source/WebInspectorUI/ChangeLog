@@ -1,5 +1,20 @@
 2017-07-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Don't output "No message" for multi-value logs like console.log(x, y)
+        https://bugs.webkit.org/show_bug.cgi?id=174842
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Removed "No message".
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendFormattedArguments):
+        Track whether or not outputting the next parameter will need a divider
+        in front of it or not.
+
+2017-07-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix warnings about console.assert lines without semicolons
         https://bugs.webkit.org/show_bug.cgi?id=174840
 

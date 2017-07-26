@@ -444,14 +444,22 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         if (shouldFormatWithStringSubstitution && this._isStackTrace(parameters[0]))
             shouldFormatWithStringSubstitution = false;
 
-        // Format string / message / default message.
+        let needsDivider = false;
+        function appendDividerIfNeeded() {
+            if (!needsDivider)
+                return null;
+            let element = builderElement.appendChild(document.createElement("span"));
+            element.classList.add("console-message-preview-divider");
+            element.textContent = ` ${enDash} `;
+            return element;
+        }
+
+        // Format string.
         if (shouldFormatWithStringSubstitution) {
             let result = this._formatWithSubstitutionString(parameters, builderElement);
             parameters = result.unusedSubstitutions;
             this._extraParameters = parameters;
-        } else {
-            let defaultMessage = WebInspector.UIString("No message");
-            builderElement.append(defaultMessage);
+            needsDivider = true;
         }
 
         // Trailing inline parameters.
@@ -469,9 +477,9 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                 this._extraParameters = parameters;
 
                 for (let parameter of simpleParameters) {
-                    let enclosedElement = builderElement.appendChild(document.createElement("span"));
-                    enclosedElement.classList.add("console-message-preview-divider", "inline-lossless");
-                    enclosedElement.textContent = ` ${enDash} `;
+                    let dividerElement = appendDividerIfNeeded();
+                    if (dividerElement)
+                        dividerElement.classList.add("inline-lossless");
 
                     let previewContainer = builderElement.appendChild(document.createElement("span"));
                     previewContainer.classList.add("inline-lossless");
@@ -485,6 +493,8 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                     let previewElement = isPreviewView ? preview.element : preview;
                     previewContainer.appendChild(previewElement);
 
+                    needsDivider = true;
+
                     // Simple displayable parameters should pretty much always be lossless.
                     // An exception might be a truncated string.
                     console.assert((isPreviewView && preview.lossless) || (!isPreviewView && this._shouldConsiderObjectLossless(parameter)));
@@ -495,9 +505,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             if (parameters.length === 1 && !this._isStackTrace(parameters[0])) {
                 let parameter = parameters[0];
 
-                let enclosedElement = builderElement.appendChild(document.createElement("span"));
-                enclosedElement.classList.add("console-message-preview-divider");
-                enclosedElement.textContent = ` ${enDash} `;
+                let dividerElement = appendDividerIfNeeded();
 
                 let previewContainer = builderElement.appendChild(document.createElement("span"));
                 previewContainer.classList.add("console-message-preview");
@@ -511,10 +519,13 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                 let previewElement = isPreviewView ? preview.element : preview;
                 previewContainer.appendChild(previewElement);
 
+                needsDivider = true;
+
                 // If this preview is effectively lossless, we can avoid making this console message expandable.
                 if ((isPreviewView && preview.lossless) || (!isPreviewView && this._shouldConsiderObjectLossless(parameter))) {
                     this._extraParameters = null;
-                    enclosedElement.classList.add("inline-lossless");
+                    if (dividerElement)
+                        dividerElement.classList.add("inline-lossless");
                     previewContainer.classList.add("inline-lossless");
                 }
             } else if (parameters.length) {

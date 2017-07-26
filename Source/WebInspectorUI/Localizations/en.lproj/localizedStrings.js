@@ -586,7 +586,6 @@ localizedStrings["No Results Found"] = "No Results Found";
 localizedStrings["No Search Results"] = "No Search Results";
 localizedStrings["No Watch Expressions"] = "No Watch Expressions";
 localizedStrings["No matching ARIA role"] = "No matching ARIA role";
-localizedStrings["No message"] = "No message";
 localizedStrings["No preview available"] = "No preview available";
 localizedStrings["Node"] = "Node";
 localizedStrings["Node Removed"] = "Node Removed";
