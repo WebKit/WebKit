@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(DATABASE_PROCESS)
-
 #include "ChildProcess.h"
 #include "SandboxExtension.h"
 #include <WebCore/IDBBackingStore.h>
@@ -126,5 +124,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)

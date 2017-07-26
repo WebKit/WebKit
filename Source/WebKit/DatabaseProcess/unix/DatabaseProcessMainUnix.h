@@ -23,10 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseProcessMainUnix_h
-#define DatabaseProcessMainUnix_h
-
-#if ENABLE(DATABASE_PROCESS)
+#pragma once
 
 #include <WebKit/WKBase.h>
 
@@ -37,7 +34,3 @@ WK_EXPORT int DatabaseProcessMainUnix(int argc, char** argv);
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)
-
-#endif // DatabaseProcessMainUnix_h

@@ -33,8 +33,6 @@
 #include "WebsiteData.h"
 #include <WebCore/NotImplemented.h>
 
-#if ENABLE(DATABASE_PROCESS)
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -223,5 +221,3 @@ void DatabaseProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Co
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)

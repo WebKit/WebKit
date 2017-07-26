@@ -31,8 +31,6 @@
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebProcess.h"
 
-#if ENABLE(DATABASE_PROCESS)
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -93,5 +91,3 @@ WebIDBConnectionToServer& WebToDatabaseProcessConnection::idbConnectionToServerF
 #endif
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)

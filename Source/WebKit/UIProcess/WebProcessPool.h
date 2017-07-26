@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataStore.h"
+#include "DatabaseProcessProxy.h"
 #include "DownloadProxyMap.h"
 #include "GenericCallback.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
@@ -52,10 +53,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
-
-#if ENABLE(DATABASE_PROCESS)
-#include "DatabaseProcessProxy.h"
-#endif
 
 #if ENABLE(MEDIA_SESSION)
 #include "WebMediaSessionFocusManager.h"
@@ -315,12 +312,10 @@ public:
 
     void getNetworkProcessConnection(Ref<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>&&);
 
-#if ENABLE(DATABASE_PROCESS)
     void ensureDatabaseProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore);
     DatabaseProcessProxy* databaseProcess() { return m_databaseProcess.get(); }
     void getDatabaseProcessConnection(Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>&&);
     void databaseProcessCrashed(DatabaseProcessProxy*);
-#endif
 
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;
@@ -554,11 +549,8 @@ private:
     bool m_canHandleHTTPSServerTrustEvaluation;
     bool m_didNetworkProcessCrash;
     RefPtr<NetworkProcessProxy> m_networkProcess;
-
-#if ENABLE(DATABASE_PROCESS)
     RefPtr<DatabaseProcessProxy> m_databaseProcess;
-#endif
-    
+
     HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
     HashMap<uint64_t, RefPtr<StatisticsRequest>> m_statisticsRequests;
 
@@ -637,12 +629,8 @@ void WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 template<typename T>
 void WebProcessPool::sendToDatabaseProcessRelaunchingIfNecessary(T&& message)
 {
-#if ENABLE(DATABASE_PROCESS)
     ensureDatabaseProcessAndWebsiteDataStore(nullptr);
     m_databaseProcess->send(std::forward<T>(message), 0);
-#else
-    sendToAllProcessesRelaunchingThemIfNecessary(std::forward<T>(message));
-#endif
 }
 
 template<typename T>

@@ -32,8 +32,6 @@
 #include "WebIDBConnectionToClientMessages.h"
 #include <wtf/RunLoop.h>
 
-#if ENABLE(DATABASE_PROCESS)
-
 namespace WebKit {
 
 Ref<DatabaseToWebProcessConnection> DatabaseToWebProcessConnection::create(IPC::Connection::Identifier connectionIdentifier)
@@ -127,5 +125,3 @@ void DatabaseToWebProcessConnection::removeIDBConnectionToServer(uint64_t server
 
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)

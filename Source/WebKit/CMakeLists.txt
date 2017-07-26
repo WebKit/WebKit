@@ -875,18 +875,6 @@ if (ENABLE_PLUGIN_PROCESS AND NOT "${PORT}" STREQUAL "Mac")
     endif ()
 endif ()
 
-if (ENABLE_DATABASE_PROCESS AND NOT "${PORT}" STREQUAL "Mac")
-    add_definitions(-DENABLE_DATABASE_PROCESS=1)
-    add_executable(DatabaseProcess ${DatabaseProcess_SOURCES})
-    add_webkit2_prefix_header(DatabaseProcess)
-    target_link_libraries(DatabaseProcess ${DatabaseProcess_LIBRARIES})
-    install(TARGETS DatabaseProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
-
-    if (WebKit2_DatabaseProcess_OUTPUT_NAME)
-        set_target_properties(DatabaseProcess PROPERTIES OUTPUT_NAME ${WebKit2_DatabaseProcess_OUTPUT_NAME})
-    endif ()
-endif ()
-
 if ("${PORT}" STREQUAL "Mac")
     set(_web_xpc_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/XPCServices/com.apple.WebKit.WebContent.Development.xpc/Contents)
     make_directory(${_web_xpc_dir}/MacOS)

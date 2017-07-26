@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DatabaseProcessCreationParameters.h"
 
-#if ENABLE(DATABASE_PROCESS)
-
 #include "ArgumentCoders.h"
 
 namespace WebKit {
@@ -60,5 +58,3 @@ bool DatabaseProcessCreationParameters::decode(IPC::Decoder& decoder, DatabasePr
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)

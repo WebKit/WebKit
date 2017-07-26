@@ -51,9 +51,7 @@ public:
         Plugin64,
 #endif
         Network,
-#if ENABLE(DATABASE_PROCESS)
         Database,
-#endif
     };
 
     struct LaunchOptions {

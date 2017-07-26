@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DatabaseProcess.h"
 
-#if ENABLE(DATABASE_PROCESS)
-
 #include "DatabaseProcessCreationParameters.h"
 #include "DatabaseProcessMessages.h"
 #include "DatabaseProcessProxyMessages.h"
@@ -324,5 +322,3 @@ void DatabaseProcess::initializeSandbox(const ChildProcessInitializationParamete
 #endif
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)

@@ -24,16 +24,13 @@
  *
  */
 
-#ifndef WebToDatabaseProcessConnection_h
-#define WebToDatabaseProcessConnection_h
+#pragma once
 
 #include "Connection.h"
 #include "MessageSender.h"
 #include "WebIDBConnectionToServer.h"
 #include <WebCore/SessionID.h>
 #include <wtf/RefCounted.h>
-
-#if ENABLE(DATABASE_PROCESS)
 
 namespace WebCore {
 class SessionID;
@@ -76,6 +73,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)
-#endif // WebToDatabaseProcessConnection_h

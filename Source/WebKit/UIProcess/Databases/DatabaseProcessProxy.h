@@ -23,10 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseProcessProxy_h
-#define DatabaseProcessProxy_h
-
-#if ENABLE(DATABASE_PROCESS)
+#pragma once
 
 #include "ChildProcessProxy.h"
 #include "ProcessLauncher.h"
@@ -94,7 +91,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)
-
-#endif // DatabaseProcessProxy_h

@@ -35,6 +35,8 @@
 #include "APILegacyContextHistoryClient.h"
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
+#include "DatabaseProcessCreationParameters.h"
+#include "DatabaseProcessMessages.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "GamepadData.h"
@@ -82,11 +84,6 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringBuilder.h>
-
-#if ENABLE(DATABASE_PROCESS)
-#include "DatabaseProcessCreationParameters.h"
-#include "DatabaseProcessMessages.h"
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ServicesController.h"
@@ -517,7 +514,6 @@ void WebProcessPool::getNetworkProcessConnection(Ref<Messages::WebProcessProxy::
     m_networkProcess->getNetworkProcessConnection(WTFMove(reply));
 }
 
-#if ENABLE(DATABASE_PROCESS)
 void WebProcessPool::ensureDatabaseProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore)
 {
     // *********
@@ -564,7 +560,6 @@ void WebProcessPool::databaseProcessCrashed(DatabaseProcessProxy* databaseProces
     m_client.databaseProcessDidCrash(this);
     m_databaseProcess = nullptr;
 }
-#endif
 
 void WebProcessPool::willStartUsingPrivateBrowsing()
 {
@@ -1080,14 +1075,10 @@ pid_t WebProcessPool::networkProcessIdentifier()
 
 pid_t WebProcessPool::databaseProcessIdentifier()
 {
-#if ENABLE(DATABASE_PROCESS)
     if (!m_databaseProcess)
         return 0;
 
     return m_databaseProcess->processIdentifier();
-#else
-    return 0;
-#endif
 }
 
 void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
@@ -1313,13 +1304,11 @@ void WebProcessPool::clearCachedCredentials()
 
 void WebProcessPool::terminateDatabaseProcess()
 {
-#if ENABLE(DATABASE_PROCESS)
     if (!m_databaseProcess)
         return;
 
     m_databaseProcess->terminate();
     m_databaseProcess = nullptr;
-#endif
 }
 
 void WebProcessPool::terminateNetworkProcess()

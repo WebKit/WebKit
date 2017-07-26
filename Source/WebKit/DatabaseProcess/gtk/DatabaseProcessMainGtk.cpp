@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DatabaseProcessMainUnix.h"
 
-#if ENABLE(DATABASE_PROCESS)
-
 #include "ChildProcessMain.h"
 #include "DatabaseProcess.h"
 
@@ -39,5 +37,3 @@ int DatabaseProcessMainUnix(int argc, char** argv)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)

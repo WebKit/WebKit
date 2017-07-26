@@ -431,7 +431,6 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
         });
     }
 
-#if ENABLE(DATABASE_PROCESS)
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
             processPool->ensureDatabaseProcessAndWebsiteDataStore(this);
@@ -442,7 +441,6 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
             });
         }
     }
-#endif
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         callbackAggregator->addPendingCallback();
@@ -727,7 +725,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
         });
     }
 
-#if ENABLE(DATABASE_PROCESS)
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
             processPool->ensureDatabaseProcessAndWebsiteDataStore(this);
@@ -738,7 +735,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
             });
         }
     }
-#endif
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         callbackAggregator->addPendingCallback();
@@ -1006,7 +1002,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         });
     }
 
-#if ENABLE(DATABASE_PROCESS)
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
             processPool->ensureDatabaseProcessAndWebsiteDataStore(this);
@@ -1017,7 +1012,6 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             });
         }
     }
-#endif
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         HashSet<WebCore::SecurityOriginData> origins;

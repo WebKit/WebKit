@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
+#if ENABLE(INDEXED_DATABASE)
 
 messages -> WebIDBConnectionToServer {
     DidDeleteDatabase(WebCore::IDBResultData result)
@@ -50,4 +50,4 @@ messages -> WebIDBConnectionToServer {
     DidGetAllDatabaseNames(uint64_t callbackID, Vector<String> databaseNames)
 }
 
-#endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
+#endif // ENABLE(INDEXED_DATABASE)

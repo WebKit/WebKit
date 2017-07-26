@@ -64,6 +64,7 @@
 #include "WebProcessProxyMessages.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebSocketStream.h"
+#include "WebToDatabaseProcessConnection.h"
 #include "WebsiteData.h"
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/JSLock.h>
@@ -124,10 +125,6 @@
 
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShim.h"
-#endif
-
-#if ENABLE(DATABASE_PROCESS)
-#include "WebToDatabaseProcessConnection.h"
 #endif
 
 #if ENABLE(NOTIFICATIONS)
@@ -1139,7 +1136,6 @@ WebLoaderStrategy& WebProcess::webLoaderStrategy()
     return m_webLoaderStrategy;
 }
 
-#if ENABLE(DATABASE_PROCESS)
 void WebProcess::webToDatabaseProcessConnectionClosed(WebToDatabaseProcessConnection* connection)
 {
     ASSERT(m_webToDatabaseProcessConnection);
@@ -1178,8 +1174,6 @@ void WebProcess::ensureWebToDatabaseProcessConnection()
         return;
     m_webToDatabaseProcessConnection = WebToDatabaseProcessConnection::create(connectionIdentifier);
 }
-
-#endif // ENABLED(DATABASE_PROCESS)
 
 void WebProcess::setEnhancedAccessibility(bool flag)
 {

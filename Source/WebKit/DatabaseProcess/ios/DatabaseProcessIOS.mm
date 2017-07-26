@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS) && ENABLE(DATABASE_PROCESS)
+#if PLATFORM(IOS)
 
 #import "DatabaseProcess.h"
 
@@ -61,4 +61,4 @@ void DatabaseProcess::initializeSandbox(const ChildProcessInitializationParamete
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS) && ENABLE(DATABASE_PROCESS)
+#endif // PLATFORM(IOS)

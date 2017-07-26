@@ -30,8 +30,6 @@
 #include <WebCore/SessionID.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(DATABASE_PROCESS)
-
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -54,5 +52,3 @@ struct DatabaseProcessCreationParameters {
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)

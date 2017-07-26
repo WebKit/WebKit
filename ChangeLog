@@ -1,3 +1,15 @@
+2017-07-26  Brady Eidson  <beidson@apple.com>
+
+        Remove DATABASE_PROCESS build flag.
+        https://bugs.webkit.org/show_bug.cgi?id=174868
+
+        Reviewed by Andy Estes.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2017-07-26  Brian Burg  <bburg@apple.com>
 
         Remove WEB_TIMING feature flag

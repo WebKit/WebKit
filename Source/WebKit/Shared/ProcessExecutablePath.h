@@ -25,17 +25,13 @@
 
 #include <wtf/text/WTFString.h>
 
-#ifndef ProcessExecutablePath_h
-#define ProcessExecutablePath_h
+#pragma once
 
 namespace WebKit {
 
 String executablePathOfWebProcess();
 String executablePathOfPluginProcess();
 String executablePathOfNetworkProcess();
-#if ENABLE(DATABASE_PROCESS)
 String executablePathOfDatabaseProcess();
-#endif
-}
 
-#endif
+}

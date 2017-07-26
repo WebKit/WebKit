@@ -23,16 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseToWebProcessConnection_h
-#define DatabaseToWebProcessConnection_h
+#pragma once
 
 #include "Connection.h"
 #include "MessageSender.h"
 
 #include <WebCore/SessionID.h>
 #include <wtf/HashMap.h>
-
-#if ENABLE(DATABASE_PROCESS)
 
 namespace WebKit {
 
@@ -72,6 +69,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DATABASE_PROCESS)
-#endif // DatabaseToWebProcessConnection_h

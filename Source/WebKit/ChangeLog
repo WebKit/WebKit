@@ -1,5 +1,65 @@
 2017-07-26  Brady Eidson  <beidson@apple.com>
 
+        Remove DATABASE_PROCESS build flag.
+        https://bugs.webkit.org/show_bug.cgi?id=174868
+
+        Reviewed by Andy Estes.
+
+        * CMakeLists.txt:
+        * DatabaseProcess/DatabaseProcess.cpp:
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseProcess.messages.in:
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.messages.in:
+        * DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in:
+        * DatabaseProcess/gtk/DatabaseProcessMainGtk.cpp:
+        * DatabaseProcess/ios/DatabaseProcessIOS.mm:
+        * DatabaseProcess/mac/DatabaseProcessMac.mm:
+        * DatabaseProcess/unix/DatabaseProcessMainUnix.h:
+        * Shared/Databases/DatabaseProcessCreationParameters.cpp:
+        * Shared/Databases/DatabaseProcessCreationParameters.h:
+        * Shared/ProcessExecutablePath.h:
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        (WebKit::executablePathOfDatabaseProcess):
+        * Shared/wpe/ProcessExecutablePathWPE.cpp:
+        (WebKit::executablePathOfDatabaseProcess):
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Databases/DatabaseProcessProxy.messages.in:
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+        * UIProcess/Launcher/wpe/ProcessLauncherWPE.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::grantSandboxExtensionsToDatabaseProcessForBlobs):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::databaseProcessCrashed):
+        (WebKit::WebProcessPool::databaseProcessIdentifier):
+        (WebKit::WebProcessPool::terminateDatabaseProcess):
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToDatabaseProcessRelaunchingIfNecessary):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getDatabaseProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+        * WebKit2Prefix.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.messages.in:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+
+2017-07-26  Brady Eidson  <beidson@apple.com>
+
         Add test to verify certain child processes are not launched as a side effect of enabling ResourceLoadStatistics.
         https://bugs.webkit.org/show_bug.cgi?id=174851
 

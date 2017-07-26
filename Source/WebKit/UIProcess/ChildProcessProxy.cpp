@@ -70,11 +70,9 @@ void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchO
     case ProcessLauncher::ProcessType::Network:
         varname = "NETWORK_PROCESS_CMD_PREFIX";
         break;
-#if ENABLE(DATABASE_PROCESS)
     case ProcessLauncher::ProcessType::Database:
         varname = "DATABASE_PROCESS_CMD_PREFIX";
         break;
-#endif
     }
     const char* processCmdPrefix = getenv(varname);
     if (processCmdPrefix && *processCmdPrefix)
