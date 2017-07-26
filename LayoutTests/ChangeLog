@@ -1,3 +1,14 @@
+2017-07-26  Ms2ger  <Ms2ger@igalia.com>
+
+        Remove obsolete failure expectations for 2d.fillStyle.parse.{rgb,rgba}-eof.
+        https://bugs.webkit.org/show_bug.cgi?id=174857
+
+        Reviewed by Žan Doberšek.
+
+        These tests started passing in r209666.
+
+        * platform/gtk/TestExpectations:
+
 2017-07-26  Javier Fernandez  <jfernandez@igalia.com>
 
         InsertOrderedList command applied to table cells inserts an extra BR before the table
