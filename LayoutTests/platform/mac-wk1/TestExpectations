@@ -156,6 +156,11 @@ http/tests/cache/disk-cache
 http/tests/inspector/network/resource-response-source-disk-cache.html
 http/tests/inspector/network/resource-sizes-disk-cache.html
 
+# Async image decoding is WK2 only
+fast/images/async-image-background-change.html
+fast/images/async-image-src-change.html
+http/tests/multipart/multipart-async-image.html
+
 [ Yosemite+ ] fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 
 # ShouldOpenExternalURLs not yet supported in WK1

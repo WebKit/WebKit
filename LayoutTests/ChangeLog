@@ -1,5 +1,52 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219610. rdar://problem/33523847
+
+    2017-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Async image decoding for large images should be disabled after the first time a tile is painted
+            https://bugs.webkit.org/show_bug.cgi?id=174451
+
+            Reviewed by Simon Fraser.
+
+            To test async image decoding for large images, we have to create the <img>
+            element dynamically so we can listen to the load and webkitImageFrameReady
+            events and know reliably when to end the test. But with this patch the async
+            image decoding for large images will be disabled after the first paint.
+            That means async image decoding for large images will be disabled always
+            unless we force the async image decoding till the image is painted for the
+            first time. We use Internals::setLargeImageAsyncDecodingEnabledForTesting()
+            to force the async image decoding. So painting an image in this case will
+            require multiple paints; in all of them the async image decoding will be
+            enabled. But this is okay because it resembles the case where the <img> is
+            created from a static <img> tag in the HTML file.
+
+            For new tests, where we want to make sure that mutating the DOM will not
+            cause a flash, async image decoding will be forced till the image is drawn
+            for the first time. After that the async image decoding is enabled but not
+            forced.
+
+            Disable new tests for WK1 because the async image decoding is always enabled
+            because tiling does not necessarily exist in WK1 . But eventually the async
+            image decoding for large images will be always disabled for WK1.
+
+            * fast/images/async-image-background-change-expected.html: Added.
+            * fast/images/async-image-background-change.html: Added.
+            * fast/images/async-image-background-image-repeated.html:
+            * fast/images/async-image-background-image.html:
+            * fast/images/async-image-multiple-clients-repaint.html:
+            * fast/images/async-image-src-change-expected.html: Added.
+            * fast/images/async-image-src-change.html: Added.
+            * fast/images/resources/green-400x400.png: Added.
+            * fast/images/resources/red-100x100.png: Added.
+            * fast/images/resources/red-400x400.png: Added.
+            * http/tests/multipart/multipart-async-image-expected.txt: Added.
+            * http/tests/multipart/multipart-async-image.html: Added.
+            * platform/ios-wk1/TestExpectations:
+            * platform/mac-wk1/TestExpectations:
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Revert r219342. rdar://problem/33523803
 
 2017-07-24  Jason Marcell  <jmarcell@apple.com>

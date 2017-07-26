@@ -65,6 +65,10 @@
 
             var image = new Image();
             image.onload = function() {
+                // Force async image decoding for this image.
+                if (window.internals)
+                    internals.setLargeImageAsyncDecodingEnabledForTesting(image, true);
+
                 if (window.internals && window.testRunner) {
                     setElementImageBackground(document.querySelector(".small-box"), image).then(() => {
                         // Call the next setElementImageBackground() asynchronously, using setTimeout(, 0),

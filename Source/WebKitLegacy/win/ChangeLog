@@ -1,3 +1,20 @@
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219610. rdar://problem/33523847
+
+    2017-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Async image decoding for large images should be disabled after the first time a tile is painted
+            https://bugs.webkit.org/show_bug.cgi?id=174451
+
+            Reviewed by Simon Fraser.
+
+            * FullscreenVideoController.cpp:
+            (FullscreenVideoController::LayerClient::platformCALayerPaintContents):
+            * WebCoreSupport/AcceleratedCompositingContext.cpp:
+            (AcceleratedCompositingContext::paintContents):
+            * WebCoreSupport/AcceleratedCompositingContext.h:
+
 2017-07-14  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Don't start downloading more than once for same request
