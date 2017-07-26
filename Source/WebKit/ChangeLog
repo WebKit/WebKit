@@ -1,5 +1,33 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219750. rdar://problem/33523870
+
+    2017-07-21  Andy Estes  <aestes@apple.com>
+
+            [iOS] Adopt UIImagePickerControllerImageURL for photo uploads
+            https://bugs.webkit.org/show_bug.cgi?id=174723
+            <rdar://problem/33223962>
+
+            Reviewed by Joseph Pecoraro.
+
+            In iOS 11, use the URL provided by UIImagePickerControllerImageURL, if available, as the
+            file URL for photo uploads. Since we use the UIImagePickerController imageExportPreset of
+            UIImagePickerControllerImageURLExportPresetCompatible, UIKit will take care of converting
+            HEIF images to JPEG for us. For other types (GIF, JPEG, and PNG), it will preserve the
+            original format.
+
+            Since UIImagePickerController now provides GIF and PNG representations, we no longer need to
+            use PHImageManager to access the original assets. This patch removes the
+            PHAsset/PHImageManager code added in r185241.
+
+            * Platform/spi/ios/PhotosSPI.h: Removed.
+            * UIProcess/ios/forms/WKFileUploadPanel.mm:
+            (-[WKFileUploadPanel _uploadItemFromMediaInfo:successBlock:failureBlock:]):
+            (-[WKFileUploadPanel _uploadItemForImage:withAssetURL:successBlock:failureBlock:]): Deleted.
+            * WebKit.xcodeproj/project.pbxproj:
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219610. rdar://problem/33523847
 
     2017-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
