@@ -1,5 +1,40 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219738. rdar://problem/33523826
+
+    2017-07-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            [CG] An image should not invoke many system calls before confirming its format is supported
+            https://bugs.webkit.org/show_bug.cgi?id=174692
+
+            Reviewed by Tim Horton.
+
+            We should be careful when invoking system calls before confirming that the
+            image type is available and it is one of the whitelist formats. Otherwise
+            we will be calling the parsers of the unsupported formats.
+
+            * loader/cache/CachedImage.cpp:
+            (WebCore::CachedImage::setImageDataBuffer): The check isAllowedImageUTI()
+            is now done in ImageDecoder::encodedDataStatus() which will return Error
+            if there is an error in the data or "isAllowedImageUTI() returns false."
+
+            * platform/graphics/BitmapImage.cpp:
+            (WebCore::BitmapImage::dataChanged): Avoid calling canUseAsyncDecodingForLargeImages()
+            before confirming the image type is available and it's supported by WebKit.
+            canUseAsyncDecodingForLargeImages() tries to cache the first frame of the
+            image to know its size. Asking the ImageFrameCache to destroy its decoded
+            frames is not needed unless ImageFrameCache::decodedSize() is not zero.
+
+            * platform/graphics/cg/ImageDecoderCG.cpp:
+            (WebCore::ImageDecoder::encodedDataStatus): Avoid calling CGImageSourceGetStatus()
+            before knowing the UTI of the image. When knowing it, we call CGImageSourceGetStatus()
+            and if it returns kCGImageStatusIncomplete or kCGImageStatusComplete, we
+            check whether isAllowedImageUTI() or not. If isAllowedImageUTI() returns
+            false, return Error which will make the CachedImage cancel loading the
+            rest of the image.
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219829. rdar://problem/33523803
 
     2017-07-24  Simon Fraser  <simon.fraser@apple.com>
