@@ -153,12 +153,12 @@ Buildbot.prototype = {
 
     javaScriptCoreTestFailuresURLForIteration: function(iteration, name)
     {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/" + name + "/logs/json/text";
+        return this.buildPageURLForIteration(iteration) + "/steps/" + name + "/logs/json/text";
     },
 
     javaScriptCoreTestStdioUrlForIteration: function(iteration, name)
     {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/" + name + "/logs/stdio";
+        return this.buildPageURLForIteration(iteration) + "/steps/" + name + "/logs/stdio";
     },
 
     layoutTestResultsDirectoryURLForIteration: function(iteration)

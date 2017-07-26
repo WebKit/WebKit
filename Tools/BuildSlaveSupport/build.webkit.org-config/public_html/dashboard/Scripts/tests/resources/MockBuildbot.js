@@ -40,7 +40,6 @@ MockBuildbot.prototype = {
 
     javaScriptCoreTestStdioUrlForIteration: function(iteration, name)
     {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/" + name + "/logs/stdio";
-
+        return this.buildPageURLForIteration(iteration) + "/steps/" + name + "/logs/stdio";
     },
 }

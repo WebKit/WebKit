@@ -1,3 +1,16 @@
+2017-07-26  Aakash Jain  <aakash_jain@apple.com>
+
+        Remove duplicate code from Buildbot.js in dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=174870
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.javaScriptCoreTestFailuresURLForIteration): Remove duplicate code and reuse buildPageURLForIteration() to construct URL.
+        (Buildbot.prototype.javaScriptCoreTestStdioUrlForIteration): Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/tests/resources/MockBuildbot.js:
+        (MockBuildbot.prototype.javaScriptCoreTestStdioUrlForIteration): Ditto for tests.
+
 2017-07-26  Brady Eidson  <beidson@apple.com>
 
         Add test to verify certain child processes are not launched as a side effect of enabling ResourceLoadStatistics.
