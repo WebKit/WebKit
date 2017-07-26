@@ -1,3 +1,9 @@
+2017-07-26  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        Unreviewed, added Romain Bellessort to contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-07-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] WebGL2 support
