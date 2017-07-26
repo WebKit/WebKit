@@ -52,8 +52,7 @@ void* wrap(API::Object*);
 
 @end
 
-NS_ROOT_CLASS
-@interface WKObject <WKObject>
+@interface WKObject : NSProxy <WKObject>
 
 - (NSObject *)_web_createTarget NS_RETURNS_RETAINED;
 

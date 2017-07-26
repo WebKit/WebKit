@@ -31,6 +31,7 @@
 
 #import <WebKit/WKString.h>
 #import <objc/runtime.h>
+#import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
 
@@ -55,6 +56,16 @@ TEST(WebKit2, WKObject_classMethods)
     ASSERT_NE((Class)0, wkObjectClass);
 
     ASSERT_TRUE([wkObjectClass conformsToProtocol:@protocol(NSObject)]);
+}
+
+TEST(WebKit2, WKObject_classInDictionary)
+{
+    Class wkObjectClass = NSClassFromString(@"WKObject");
+    ASSERT_NE((Class)0, wkObjectClass);
+
+    auto map = adoptNS([[NSMapTable alloc] initWithKeyOptions:NSMapTableStrongMemory valueOptions:NSMapTableWeakMemory capacity:0]);
+    [map setObject:@"test" forKey:wkObjectClass];
+    ASSERT_TRUE([@"test" isEqualToString:(NSString *)[map objectForKey: wkObjectClass]]);
 }
 
 } // namespace TestWebKitAPI

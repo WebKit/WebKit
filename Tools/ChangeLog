@@ -1,5 +1,22 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219764. rdar://problem/33523878
+
+    2017-07-22  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION(r204565): WKObject is broken
+            https://bugs.webkit.org/show_bug.cgi?id=174736
+            <rdar://problem/33246169>
+
+            Reviewed by Dan Bernstein.
+
+            Add API test that used to crash.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/WKObject.mm:
+            (TestWebKitAPI::TEST):
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219836. rdar://problem/33523818
 
     2017-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
