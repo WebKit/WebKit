@@ -328,7 +328,7 @@ inline void CanvasRenderingContext2D::FontProxy::initialize(FontSelector& fontSe
     m_font.fontSelector()->registerForInvalidationCallbacks(*this);
 }
 
-inline FontMetrics CanvasRenderingContext2D::FontProxy::fontMetrics() const
+inline const FontMetrics& CanvasRenderingContext2D::FontProxy::fontMetrics() const
 {
     return m_font.fontMetrics();
 }
@@ -338,9 +338,9 @@ inline const FontCascadeDescription& CanvasRenderingContext2D::FontProxy::fontDe
     return m_font.fontDescription();
 }
 
-inline float CanvasRenderingContext2D::FontProxy::width(const TextRun& textRun) const
+inline float CanvasRenderingContext2D::FontProxy::width(const TextRun& textRun, GlyphOverflow* overflow) const
 {
-    return m_font.width(textRun);
+    return m_font.width(textRun, 0, overflow);
 }
 
 inline void CanvasRenderingContext2D::FontProxy::drawBidiText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction action) const
@@ -2344,9 +2344,77 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
     String normalizedText = text;
     normalizeSpaces(normalizedText);
 
-    metrics->setWidth(fontProxy().width(TextRun(normalizedText)));
+    const RenderStyle* computedStyle;
+    auto direction = toTextDirection(state().direction, &computedStyle);
+    bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
+
+    TextRun textRun(normalizedText, 0, 0, AllowTrailingExpansion, direction, override, true);
+    auto& font = fontProxy();
+    auto& fontMetrics = font.fontMetrics();
+
+    GlyphOverflow glyphOverflow;
+    glyphOverflow.computeBounds = true;
+    float fontWidth = font.width(textRun, &glyphOverflow);
+    metrics->setWidth(fontWidth);
+
+    FloatPoint offset = textOffset(fontWidth, direction);
+
+    metrics->setActualBoundingBoxAscent(glyphOverflow.top - offset.y());
+    metrics->setActualBoundingBoxDescent(glyphOverflow.bottom + offset.y());
+    metrics->setFontBoundingBoxAscent(fontMetrics.ascent() - offset.y());
+    metrics->setFontBoundingBoxDescent(fontMetrics.descent() + offset.y());
+    metrics->setEmHeightAscent(fontMetrics.ascent() - offset.y());
+    metrics->setEmHeightDescent(fontMetrics.descent() + offset.y());
+    metrics->setHangingBaseline(fontMetrics.ascent() - offset.y());
+    metrics->setAlphabeticBaseline(-offset.y());
+    metrics->setIdeographicBaseline(-fontMetrics.descent() - offset.y());
+
+    metrics->setActualBoundingBoxLeft(glyphOverflow.left - offset.x());
+    metrics->setActualBoundingBoxRight(fontWidth + glyphOverflow.right + offset.x());
 
     return metrics;
+}
+
+FloatPoint CanvasRenderingContext2D::textOffset(float width, TextDirection direction)
+{
+    auto& fontMetrics = fontProxy().fontMetrics();
+    FloatPoint offset;
+
+    switch (state().textBaseline) {
+    case TopTextBaseline:
+    case HangingTextBaseline:
+        offset.setY(fontMetrics.ascent());
+        break;
+    case BottomTextBaseline:
+    case IdeographicTextBaseline:
+        offset.setY(-fontMetrics.descent());
+        break;
+    case MiddleTextBaseline:
+        offset.setY(fontMetrics.height() / 2 - fontMetrics.descent());
+        break;
+    case AlphabeticTextBaseline:
+    default:
+        break;
+    }
+
+    bool isRTL = direction == RTL;
+    auto align = state().textAlign;
+    if (align == StartTextAlign)
+        align = isRTL ? RightTextAlign : LeftTextAlign;
+    else if (align == EndTextAlign)
+        align = isRTL ? LeftTextAlign : RightTextAlign;
+
+    switch (align) {
+    case CenterTextAlign:
+        offset.setX(-width / 2);
+        break;
+    case RightTextAlign:
+        offset.setX(-width);
+        break;
+    default:
+        break;
+    }
+    return offset;
 }
 
 void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, std::optional<float> maxWidth)
@@ -2380,51 +2448,14 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
     const RenderStyle* computedStyle;
     auto direction = toTextDirection(state().direction, &computedStyle);
-    bool isRTL = direction == RTL;
     bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
 
     TextRun textRun(normalizedText, 0, 0, AllowTrailingExpansion, direction, override, true);
-    // Draw the item text at the correct point.
-    FloatPoint location(x, y);
-    switch (state().textBaseline) {
-    case TopTextBaseline:
-    case HangingTextBaseline:
-        location.setY(y + fontMetrics.ascent());
-        break;
-    case BottomTextBaseline:
-    case IdeographicTextBaseline:
-        location.setY(y - fontMetrics.descent());
-        break;
-    case MiddleTextBaseline:
-        location.setY(y - fontMetrics.descent() + fontMetrics.height() / 2);
-        break;
-    case AlphabeticTextBaseline:
-    default:
-         // Do nothing.
-        break;
-    }
-
-    float fontWidth = fontProxy.width(TextRun(normalizedText, 0, 0, AllowTrailingExpansion, direction, override));
-
+    float fontWidth = fontProxy.width(textRun);
     bool useMaxWidth = maxWidth && maxWidth.value() < fontWidth;
     float width = useMaxWidth ? maxWidth.value() : fontWidth;
-
-    auto align = state().textAlign;
-    if (align == StartTextAlign)
-        align = isRTL ? RightTextAlign : LeftTextAlign;
-    else if (align == EndTextAlign)
-        align = isRTL ? LeftTextAlign : RightTextAlign;
-
-    switch (align) {
-    case CenterTextAlign:
-        location.setX(location.x() - width / 2);
-        break;
-    case RightTextAlign:
-        location.setX(location.x() - width);
-        break;
-    default:
-        break;
-    }
+    FloatPoint location(x, y);
+    location += textOffset(width, direction);
 
     // The slop built in to this mask rect matches the heuristic used in FontCGWin.cpp for GDI text.
     FloatRect textRect = FloatRect(location.x() - fontMetrics.height() / 2, location.y() - fontMetrics.ascent() - fontMetrics.lineGap(),

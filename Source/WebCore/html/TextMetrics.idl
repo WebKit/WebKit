@@ -26,5 +26,16 @@
     ImplementationLacksVTable,
 ] interface TextMetrics {
     readonly attribute unrestricted float width;
+    readonly attribute unrestricted float actualBoundingBoxLeft;
+    readonly attribute unrestricted float actualBoundingBoxRight;
+    readonly attribute unrestricted float fontBoundingBoxAscent;
+    readonly attribute unrestricted float fontBoundingBoxDescent;
+    readonly attribute unrestricted float actualBoundingBoxAscent;
+    readonly attribute unrestricted float actualBoundingBoxDescent;
+    readonly attribute unrestricted float emHeightAscent;
+    readonly attribute unrestricted float emHeightDescent;
+    readonly attribute unrestricted float hangingBaseline;
+    readonly attribute unrestricted float alphabeticBaseline;
+    readonly attribute unrestricted float ideographicBaseline;
 };
 

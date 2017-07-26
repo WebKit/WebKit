@@ -62,8 +62,15 @@ bool FontCascade::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>*, GlyphOverflow*) const
+float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>*, GlyphOverflow* glyphOverflow) const
 {
+    if (glyphOverflow) {
+        // FIXME: Calculate the actual values rather than just the font's ascent and descent
+        glyphOverflow->top = glyphOverflow->computeBounds ? fontMetrics().ascent() : 0;
+        glyphOverflow->bottom = glyphOverflow->computeBounds ? fontMetrics().descent() : 0;
+        glyphOverflow->left = 0;
+        glyphOverflow->right = 0;
+    }
     HarfBuzzShaper shaper(this, run);
     if (shaper.shape())
         return shaper.totalWidth();
