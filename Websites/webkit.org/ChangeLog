@@ -1,5 +1,12 @@
 2017-07-26  Frederic Wang  <fwang@igalia.com>
 
+        Unreviewed, minor adjustments to the previous demo.
+
+        * demos/frames/index.html: Added. Index page for the list of demos.
+        * demos/frames/sandboxing/index.html: Minor fixes.
+
+2017-07-26  Frederic Wang  <fwang@igalia.com>
+
         Unreviewed, add demos (frame sandboxing and scrolling) for a blog post.
 
         * demos/frames/sandboxing/am-i-sandboxed.html: Added.

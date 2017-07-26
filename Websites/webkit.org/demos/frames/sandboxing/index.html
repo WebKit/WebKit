@@ -8,8 +8,10 @@
 
     <h1>Frame Sandboxing</h1>
 
-    <p>Note: In order to run these demos, you might need to modify your
-      preference to allow javascripts, popups or modal dialogs.</p>
+    <p>This page contains some demos for the
+      <a href="https://html.spec.whatwg.org/multipage/iframe-embed-object.html#attr-iframe-sandbox">sandbox attribute of the iframe element</a>.
+      In order to run these demos, you might need to modify your
+      preference to allow javascript, popups and modal dialogs.</p>
 
     <h2>Basic flags</h2>
 
@@ -29,13 +31,12 @@
 
     <h2>allow-popup-to-escape-sandbox</h2>
 
-    <p>By default, popups opened from a sandboxed frames has the
+    <p>By default, popups opened from a sandboxed frames have the
       same restrictions as the frame.
       This is sometimes not wanted e.g. for the landing page of trusted ads.
       The <code>allow-popup-to-escape-sandbox</code> flag allows the popups
       to be opened in a new unsandboxed context. Click the
-      "Open this page as a popup" links to check the difference to see the
-      effect of that flag:
+      "Open this page as a popup" links to see the effect of that flag:
     </p>
     <ul>
       <li><code>allow-popups</code>: <iframe sandbox="allow-popups" src="am-i-sandboxed.html"></iframe></li>
