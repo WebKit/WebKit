@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageAreaMap_h
-#define StorageAreaMap_h
+#pragma once
 
 #include "MessageReceiver.h"
 #include <WebCore/SecurityOrigin.h>
@@ -102,5 +101,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // StorageAreaMap_h

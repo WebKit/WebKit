@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebStorageNamespaceProvider_h
-#define WebStorageNamespaceProvider_h
+#pragma once
 
 #include <WebCore/StorageNamespaceProvider.h>
 
@@ -47,5 +46,3 @@ private:
 };
 
 }
-
-#endif // WebStorageNamespaceProvider_h

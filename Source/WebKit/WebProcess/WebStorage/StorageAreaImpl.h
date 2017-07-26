@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageAreaImpl_h
-#define StorageAreaImpl_h
+#pragma once
 
 #include "MessageReceiver.h"
 #include <WebCore/StorageArea.h>
@@ -70,5 +69,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // StorageAreaImpl_h

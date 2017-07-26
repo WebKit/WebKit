@@ -44,8 +44,8 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/Network/CustomProtocols"
     "${WEBKIT2_DIR}/UIProcess/Notifications"
     "${WEBKIT2_DIR}/UIProcess/Plugins"
-    "${WEBKIT2_DIR}/UIProcess/Storage"
     "${WEBKIT2_DIR}/UIProcess/UserContent"
+    "${WEBKIT2_DIR}/UIProcess/WebStorage"
     "${WEBKIT2_DIR}/UIProcess/WebsiteData"
     "${WEBKIT2_DIR}/WebProcess"
     "${WEBKIT2_DIR}/WebProcess/ApplePay"
@@ -73,10 +73,10 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/Plugins"
     "${WEBKIT2_DIR}/WebProcess/Plugins/Netscape"
     "${WEBKIT2_DIR}/WebProcess/ResourceCache"
-    "${WEBKIT2_DIR}/WebProcess/Storage"
     "${WEBKIT2_DIR}/WebProcess/UserContent"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport"
     "${WEBKIT2_DIR}/WebProcess/WebPage"
+    "${WEBKIT2_DIR}/WebProcess/WebStorage"
     "${DERIVED_SOURCES_WEBKIT2_DIR}"
     "${DERIVED_SOURCES_WEBKIT2_DIR}/include"
     "${CMAKE_SOURCE_DIR}/WebKitLibraries"
@@ -284,6 +284,7 @@ set(WebKit2_SOURCES
     UIProcess/ProcessAssertion.cpp
     UIProcess/ProcessThrottler.cpp
     UIProcess/RemoteWebInspectorProxy.cpp
+    UIProcess/ResourceLoadStatisticsPersistentStorage.cpp
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/StatisticsRequest.cpp
     UIProcess/TextCheckerCompletion.cpp
@@ -429,12 +430,11 @@ set(WebKit2_SOURCES
     UIProcess/Plugins/PluginProcessManager.cpp
     UIProcess/Plugins/PluginProcessProxy.cpp
 
-    UIProcess/Storage/LocalStorageDatabase.cpp
-    UIProcess/Storage/LocalStorageDatabaseTracker.cpp
-    UIProcess/Storage/ResourceLoadStatisticsPersistentStorage.cpp
-
     UIProcess/UserContent/WebScriptMessageHandler.cpp
     UIProcess/UserContent/WebUserContentControllerProxy.cpp
+
+    UIProcess/WebStorage/LocalStorageDatabase.cpp
+    UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp
 
     UIProcess/WebsiteData/WebsiteDataRecord.cpp
     UIProcess/WebsiteData/WebsiteDataStore.cpp
@@ -527,11 +527,6 @@ set(WebKit2_SOURCES
     WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
 
-    WebProcess/Storage/StorageAreaImpl.cpp
-    WebProcess/Storage/StorageAreaMap.cpp
-    WebProcess/Storage/StorageNamespaceImpl.cpp
-    WebProcess/Storage/WebStorageNamespaceProvider.cpp
-
     WebProcess/UserContent/WebUserContentController.cpp
 
     WebProcess/WebCoreSupport/SessionStateConversion.cpp
@@ -576,6 +571,11 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp
     WebProcess/WebPage/WebURLSchemeTaskProxy.cpp
     WebProcess/WebPage/WebUndoStep.cpp
+
+    WebProcess/WebStorage/StorageAreaImpl.cpp
+    WebProcess/WebStorage/StorageAreaMap.cpp
+    WebProcess/WebStorage/StorageNamespaceImpl.cpp
+    WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
 )
 
 set(WebKit2_MESSAGES_IN_FILES
@@ -631,9 +631,9 @@ set(WebKit2_MESSAGES_IN_FILES
 
     UIProcess/Plugins/PluginProcessProxy.messages.in
 
-    UIProcess/Storage/StorageManager.messages.in
-
     UIProcess/UserContent/WebUserContentControllerProxy.messages.in
+
+    UIProcess/WebStorage/StorageManager.messages.in
 
     WebProcess/WebProcess.messages.in
 
@@ -661,8 +661,6 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/Plugins/PluginProcessConnectionManager.messages.in
     WebProcess/Plugins/PluginProxy.messages.in
 
-    WebProcess/Storage/StorageAreaMap.messages.in
-
     WebProcess/UserContent/WebUserContentController.messages.in
 
     WebProcess/WebPage/DrawingArea.messages.in
@@ -673,6 +671,8 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/WebPage/WebInspectorInterruptDispatcher.messages.in
     WebProcess/WebPage/WebInspectorUI.messages.in
     WebProcess/WebPage/WebPage.messages.in
+
+    WebProcess/WebStorage/StorageAreaMap.messages.in
 )
 
 set(WebProcess_LIBRARIES

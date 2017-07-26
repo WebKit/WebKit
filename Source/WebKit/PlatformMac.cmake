@@ -278,7 +278,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp
     UIProcess/Scrolling/RemoteScrollingTree.cpp
 
-    UIProcess/Storage/StorageManager.cpp
+    UIProcess/WebStorage/StorageManager.cpp
 
     UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 

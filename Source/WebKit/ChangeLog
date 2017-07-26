@@ -1,5 +1,44 @@
 2017-07-26  Brady Eidson  <beidson@apple.com>
 
+        Rename {Web/UI}Process/Storage to {Web/UI}Process/WebStorage.
+        https://bugs.webkit.org/show_bug.cgi?id=174871
+
+        Reviewed by Chris Dumez.
+
+        The standard these directories help implement is the "Web Storage" standard.
+        "Storage" is too general of a word that we have plans to start using in other contexts soon.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWPE.cmake:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp: Renamed from Source/WebKit/UIProcess/Storage/ResourceLoadStatisticsPersistentStorage.cpp.
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.h: Renamed from Source/WebKit/UIProcess/Storage/ResourceLoadStatisticsPersistentStorage.h.
+        * UIProcess/WebStorage/LocalStorageDatabase.cpp: Renamed from Source/WebKit/UIProcess/Storage/LocalStorageDatabase.cpp.
+        * UIProcess/WebStorage/LocalStorageDatabase.h: Renamed from Source/WebKit/UIProcess/Storage/LocalStorageDatabase.h.
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp: Renamed from Source/WebKit/UIProcess/Storage/LocalStorageDatabaseTracker.cpp.
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.h: Renamed from Source/WebKit/UIProcess/Storage/LocalStorageDatabaseTracker.h.
+        * UIProcess/WebStorage/StorageManager.cpp: Renamed from Source/WebKit/UIProcess/Storage/StorageManager.cpp.
+        * UIProcess/WebStorage/StorageManager.h: Renamed from Source/WebKit/UIProcess/Storage/StorageManager.h.
+        * UIProcess/WebStorage/StorageManager.messages.in: Renamed from Source/WebKit/UIProcess/Storage/StorageManager.messages.in.
+        * UIProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm: Renamed from Source/WebKit/UIProcess/Storage/ios/LocalStorageDatabaseTrackerIOS.mm.
+        * UIProcess/ios/ResourceLoadStatisticsPersistentStorageIOS.mm: Renamed from Source/WebKit/UIProcess/Storage/ios/ResourceLoadStatisticsPersistentStorageIOS.mm.
+
+        * WebProcess/WebStorage/StorageAreaImpl.cpp: Renamed from Source/WebKit/WebProcess/Storage/StorageAreaImpl.cpp.
+        * WebProcess/WebStorage/StorageAreaImpl.h: Renamed from Source/WebKit/WebProcess/Storage/StorageAreaImpl.h.
+        * WebProcess/WebStorage/StorageAreaMap.cpp: Renamed from Source/WebKit/WebProcess/Storage/StorageAreaMap.cpp.
+        * WebProcess/WebStorage/StorageAreaMap.h: Renamed from Source/WebKit/WebProcess/Storage/StorageAreaMap.h.
+        * WebProcess/WebStorage/StorageAreaMap.messages.in: Renamed from Source/WebKit/WebProcess/Storage/StorageAreaMap.messages.in.
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp: Renamed from Source/WebKit/WebProcess/Storage/StorageNamespaceImpl.cpp.
+        * WebProcess/WebStorage/StorageNamespaceImpl.h: Renamed from Source/WebKit/WebProcess/Storage/StorageNamespaceImpl.h.
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.cpp: Renamed from Source/WebKit/WebProcess/Storage/WebStorageNamespaceProvider.cpp.
+        * WebProcess/WebStorage/WebStorageNamespaceProvider.h: Renamed from Source/WebKit/WebProcess/Storage/WebStorageNamespaceProvider.h.
+
+2017-07-26  Brady Eidson  <beidson@apple.com>
+
         Remove DATABASE_PROCESS build flag.
         https://bugs.webkit.org/show_bug.cgi?id=174868
 

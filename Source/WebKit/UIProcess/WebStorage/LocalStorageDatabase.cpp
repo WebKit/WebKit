@@ -249,9 +249,8 @@ void LocalStorageDatabase::scheduleDatabaseUpdate()
 
     m_didScheduleDatabaseUpdate = true;
 
-    RefPtr<LocalStorageDatabase> localStorageDatabase(this);
-    m_queue->dispatchAfter(databaseUpdateInterval, [localStorageDatabase] {
-        localStorageDatabase->updateDatabase();
+    m_queue->dispatchAfter(databaseUpdateInterval, [protectedThis = makeRef(*this)] {
+        protectedThis->updateDatabase();
     });
 }
 
