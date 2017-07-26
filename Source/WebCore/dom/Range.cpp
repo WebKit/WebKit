@@ -1175,13 +1175,14 @@ Vector<FloatRect> Range::absoluteRectsForRangeInText(Node* node, RenderText& ren
 
     if (respectClippingForTextRects == RespectClippingForTextRects::Yes) {
         Vector<FloatRect> clippedRects;
+        clippedRects.reserveInitialCapacity(textQuads.size());
 
         auto absoluteClippedOverflowRect = renderText.absoluteClippedOverflowRect();
 
         for (auto& quad : textQuads) {
             auto clippedRect = intersection(quad.boundingBox(), absoluteClippedOverflowRect);
             if (!clippedRect.isEmpty())
-                clippedRects.append(clippedRect);
+                clippedRects.uncheckedAppend(clippedRect);
         }
 
         return clippedRects;
@@ -1190,7 +1191,7 @@ Vector<FloatRect> Range::absoluteRectsForRangeInText(Node* node, RenderText& ren
     Vector<FloatRect> floatRects;
     floatRects.reserveInitialCapacity(textQuads.size());
     for (auto& quad : textQuads)
-        floatRects.append(quad.boundingBox());
+        floatRects.uncheckedAppend(quad.boundingBox());
     return floatRects;
 }
 

@@ -1,5 +1,21 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219761. rdar://problem/33523829
+
+    2017-07-22  Timothy Horton  <timothy_horton@apple.com>
+
+            Drag and Drop preview image for Twitter link is the wrong shape
+            ​https://bugs.webkit.org/show_bug.cgi?id=174731
+            <rdar://problem/33335616>
+
+            * dom/Range.cpp:
+            (WebCore::Range::absoluteRectsForRangeInText):
+            * page/TextIndicator.cpp:
+            (WebCore::initializeIndicator):
+            Apply some post-landing review feedback for r219756.
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219756. rdar://problem/33523829
 
     2017-07-21  Timothy Horton  <timothy_horton@apple.com>
