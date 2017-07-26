@@ -1018,8 +1018,24 @@ private:
 
     Inst createStore(Air::Kind move, Value* value, const Arg& dest)
     {
-        if (imm(value) && isValidForm(move.opcode, Arg::Imm, dest.kind()))
-            return Inst(move, m_value, imm(value), dest);
+        if (auto imm_value = imm(value)) {
+            if (isARM64() && imm_value.value() == 0) {
+                switch (move.opcode) {
+                default:
+                    break;
+                case Air::Move32:
+                    if (isValidForm(StoreZero32, dest.kind()) && dest.isValidForm(Width32))
+                        return Inst(StoreZero32, m_value, dest);
+                    break;
+                case Air::Move:
+                    if (isValidForm(StoreZero64, dest.kind()) && dest.isValidForm(Width64))
+                        return Inst(StoreZero64, m_value, dest);
+                    break;
+                }
+            }
+            if (isValidForm(move.opcode, Arg::Imm, dest.kind()))
+                return Inst(move, m_value, imm_value, dest);
+        }
 
         return Inst(move, m_value, tmp(value), dest);
     }

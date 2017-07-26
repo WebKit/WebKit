@@ -1,3 +1,44 @@
+2017-07-25  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: generate smaller binaries
+        https://bugs.webkit.org/show_bug.cgi?id=174818
+
+        Reviewed by Filip Pizlo.
+
+        This patch reduces generated code size for WebAssembly in 2 ways:
+
+        1. Use the ZR register when storing zero on ARM64.
+        2. Synthesize wasm context lazily.
+
+        This leads to a modest size reduction on both x86-64 and ARM64 for
+        large WebAssembly games, without any performance loss on WasmBench
+        and TitzerBench.
+
+        The reason this works is that these games, using Emscripten,
+        generate 100k+ tiny functions, and our JIT allocation granule
+        rounds all allocations up to 32 bytes. There are plenty of other
+        simple gains to be had, I've filed a follow-up bug at
+        webkit.org/b/174819
+
+        We should further avoid the per-function cost of tiering, which
+        represents the bulk of code generated for small functions.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::storeZero64):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::storeZero64):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::createStore): this doesn't make sense
+        for x86 because it constrains register reuse and codegen in a way
+        that doesn't affect ARM64 because it has a dedicated zero
+        register.
+        * b3/air/AirOpcode.opcodes: add the storeZero64 opcode.
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::instanceValue):
+        (JSC::Wasm::B3IRGenerator::restoreWasmContext):
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::materializeWasmContext): Deleted.
+
 2017-07-23  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should do LICM

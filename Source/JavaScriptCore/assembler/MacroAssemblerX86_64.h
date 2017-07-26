@@ -894,6 +894,16 @@ public:
         m_assembler.movq_rm(scratchRegister(), address.offset, address.base, address.index, address.scale);
     }
     
+    void storeZero64(ImplicitAddress address)
+    {
+        store64(TrustedImm32(0), address);
+    }
+    
+    void storeZero64(BaseIndex address)
+    {
+        store64(TrustedImm32(0), address);
+    }
+    
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         padBeforePatch();

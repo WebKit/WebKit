@@ -649,7 +649,12 @@ Move32 U:G:32, ZD:G:32
 Move32 U:G:32, ZD:G:32, S:G:32
     Addr, Addr, Tmp
 
+# FIXME: StoreZero32 and StoreZero64 are hacks on ARM64, we can do better: https://bugs.webkit.org/show_bug.cgi?id=174821
 StoreZero32 D:G:32
+    Addr
+    Index
+
+64: StoreZero64 D:G:64
     Addr
     Index
 

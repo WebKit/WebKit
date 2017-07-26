@@ -1343,6 +1343,16 @@ public:
         m_assembler.str<64>(src, dest, simm);
     }
     
+    void storeZero64(ImplicitAddress address)
+    {
+        store64(ARM64Registers::zr, address);
+    }
+    
+    void storeZero64(BaseIndex address)
+    {
+        store64(ARM64Registers::zr, address);
+    }
+    
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         DataLabel32 label(this);
