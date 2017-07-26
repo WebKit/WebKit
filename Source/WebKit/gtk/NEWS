@@ -1,4 +1,17 @@
 =================
+WebKitGTK+ 2.17.5
+=================
+
+What's new in WebKitGTK+ 2.17.5?
+
+  - Add initial implementation of WebDriver.
+  - Enable GStreamerGL by default when building with GStreamer >= 1.10.
+  - Fix position of context menu in Wayland.
+  - Properly close cookies database at network process exit.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Ukrainian.
+
+=================
 WebKitGTK+ 2.17.4
 =================
 
