@@ -1,5 +1,18 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219877. rdar://problem/33523803
+
+    2017-07-25  Matt Lewis  <jlewis3@apple.com>
+
+            Rebaselined missed test.
+            https://bugs.webkit.org/show_bug.cgi?id=174734
+
+            Unreviewed test gardening.
+
+            * fast/events/touch/ios/touches-client-coords-after-zoom-expected.txt:
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219876. rdar://problem/33523847
 
     2017-07-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
