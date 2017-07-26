@@ -48,10 +48,13 @@
 
 namespace JSC { namespace B3 {
 
+class BackwardsCFG;
+class BackwardsDominators;
 class BasicBlock;
 class BlockInsertionSet;
 class CFG;
 class Dominators;
+class NaturalLoops;
 class StackSlot;
 class Value;
 class Variable;
@@ -175,6 +178,9 @@ public:
     CFG& cfg() const { return *m_cfg; }
 
     Dominators& dominators();
+    NaturalLoops& naturalLoops();
+    BackwardsCFG& backwardsCFG();
+    BackwardsDominators& backwardsDominators();
 
     void addFastConstant(const ValueKey&);
     bool isFastConstant(const ValueKey&);
@@ -271,6 +277,9 @@ private:
     SparseCollection<Value> m_values;
     std::unique_ptr<CFG> m_cfg;
     std::unique_ptr<Dominators> m_dominators;
+    std::unique_ptr<NaturalLoops> m_naturalLoops;
+    std::unique_ptr<BackwardsCFG> m_backwardsCFG;
+    std::unique_ptr<BackwardsDominators> m_backwardsDominators;
     HashSet<ValueKey> m_fastConstants;
     unsigned m_numEntrypoints { 1 };
     const char* m_lastPhaseName;

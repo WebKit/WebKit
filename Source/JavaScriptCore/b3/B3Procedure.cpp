@@ -29,12 +29,15 @@
 #if ENABLE(B3_JIT)
 
 #include "AirCode.h"
+#include "B3BackwardsCFG.h"
+#include "B3BackwardsDominators.h"
 #include "B3BasicBlockInlines.h"
 #include "B3BasicBlockUtils.h"
 #include "B3BlockWorklist.h"
 #include "B3CFG.h"
 #include "B3DataSection.h"
 #include "B3Dominators.h"
+#include "B3NaturalLoops.h"
 #include "B3OpaqueByproducts.h"
 #include "B3PhiChildren.h"
 #include "B3StackSlot.h"
@@ -200,6 +203,9 @@ void Procedure::resetReachability()
 void Procedure::invalidateCFG()
 {
     m_dominators = nullptr;
+    m_naturalLoops = nullptr;
+    m_backwardsCFG = nullptr;
+    m_backwardsDominators = nullptr;
 }
 
 void Procedure::dump(PrintStream& out) const
@@ -289,6 +295,27 @@ Dominators& Procedure::dominators()
     if (!m_dominators)
         m_dominators = std::make_unique<Dominators>(*this);
     return *m_dominators;
+}
+
+NaturalLoops& Procedure::naturalLoops()
+{
+    if (!m_naturalLoops)
+        m_naturalLoops = std::make_unique<NaturalLoops>(*this);
+    return *m_naturalLoops;
+}
+
+BackwardsCFG& Procedure::backwardsCFG()
+{
+    if (!m_backwardsCFG)
+        m_backwardsCFG = std::make_unique<BackwardsCFG>(*this);
+    return *m_backwardsCFG;
+}
+
+BackwardsDominators& Procedure::backwardsDominators()
+{
+    if (!m_backwardsDominators)
+        m_backwardsDominators = std::make_unique<BackwardsDominators>(*this);
+    return *m_backwardsDominators;
 }
 
 void Procedure::addFastConstant(const ValueKey& constant)

@@ -75,6 +75,9 @@ struct Effects {
     // Memory fences cannot be reordered around each other regardless of their effects. This is flagged
     // if the operation is a memory fence.
     bool fence { false };
+    
+    // WARNING: The B3::hoistLoopInvariantValues() phase thinks that it understands this exhaustively. If you
+    // add any new kinds of things that can be read or written, you should check that phase.
 
     HeapRange writes;
     HeapRange reads;

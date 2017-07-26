@@ -79,6 +79,7 @@ set(WTF_HEADERS
     MessageQueue.h
     MetaAllocator.h
     MetaAllocatorHandle.h
+    NaturalLoops.h
     MonotonicTime.h
     Noncopyable.h
     NumberOfCores.h

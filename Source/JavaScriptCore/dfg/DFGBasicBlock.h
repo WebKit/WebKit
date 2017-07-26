@@ -229,9 +229,7 @@ struct BasicBlock : RefCounted<BasicBlock> {
     float executionCount;
     
     // These fields are reserved for NaturalLoops.
-    static const unsigned numberOfInnerMostLoopIndices = 2;
-    unsigned innerMostLoopIndices[numberOfInnerMostLoopIndices];
-
+    
     struct SSAData {
         WTF_MAKE_FAST_ALLOCATED;
     public:

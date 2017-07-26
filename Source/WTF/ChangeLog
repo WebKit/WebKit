@@ -1,3 +1,46 @@
+2017-07-23  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should do LICM
+        https://bugs.webkit.org/show_bug.cgi?id=174750
+
+        Reviewed by Keith Miller and Saam Barati.
+        
+        Moved DFG::NaturalLoops to WTF. The new templatized NaturalLoops<> uses the same Graph abstraction as
+        Dominators<>. This allows us to add a B3::NaturalLoops for free.
+        
+        Also made small tweaks to RangeSet, which the LICM uses.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Dominators.h:
+        * wtf/NaturalLoops.h: Added.
+        (WTF::NaturalLoop::NaturalLoop):
+        (WTF::NaturalLoop::graph):
+        (WTF::NaturalLoop::header):
+        (WTF::NaturalLoop::size):
+        (WTF::NaturalLoop::at):
+        (WTF::NaturalLoop::operator[]):
+        (WTF::NaturalLoop::contains):
+        (WTF::NaturalLoop::index):
+        (WTF::NaturalLoop::isOuterMostLoop):
+        (WTF::NaturalLoop::dump):
+        (WTF::NaturalLoop::addBlock):
+        (WTF::NaturalLoops::NaturalLoops):
+        (WTF::NaturalLoops::graph):
+        (WTF::NaturalLoops::numLoops):
+        (WTF::NaturalLoops::loop):
+        (WTF::NaturalLoops::headerOf):
+        (WTF::NaturalLoops::innerMostLoopOf):
+        (WTF::NaturalLoops::innerMostOuterLoop):
+        (WTF::NaturalLoops::belongsTo):
+        (WTF::NaturalLoops::loopDepth):
+        (WTF::NaturalLoops::loopsOf):
+        (WTF::NaturalLoops::dump):
+        * wtf/RangeSet.h:
+        (WTF::RangeSet::begin):
+        (WTF::RangeSet::end):
+        (WTF::RangeSet::addAll):
+
 2017-07-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Implement FALLTHROUGH attribute for C with GCC

@@ -26,6 +26,7 @@
 #ifndef WTFDominators_h
 #define WTFDominators_h
 
+#include <wtf/CommaPrinter.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/GraphNodeWorklist.h>
 

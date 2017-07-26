@@ -1,3 +1,105 @@
+2017-07-23  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should do LICM
+        https://bugs.webkit.org/show_bug.cgi?id=174750
+
+        Reviewed by Keith Miller and Saam Barati.
+        
+        Added a LICM phase to B3. This phase is called hoistLoopInvariantValues, to conform to the B3 naming
+        convention for phases (it has to be an imperative). The phase uses NaturalLoops and BackwardsDominators,
+        so this adds those analyses to B3. BackwardsDominators was already available in templatized form. This
+        change templatizes DFG::NaturalLoops so that we can just use it.
+        
+        The LICM phase itself is really simple. We are decently precise with our handling of everything except
+        the relationship between control dependence and side exits.
+        
+        Also added a bunch of tests.
+        
+        This isn't super important. It's perf-neutral on JS benchmarks. FTL already does LICM on DFG SSA IR, and
+        probably all current WebAssembly content has had LICM done to it. That being said, this is a cheap phase
+        so it doesn't hurt to have it.
+        
+        I wrote it because I thought I needed it for bug 174727. It turns out that there's a better way to
+        handle the problem I had, so I ended up not needed it - but by then I had already written it. I think
+        it's good to have it because LICM is one of those core compiler phases; every compiler has it
+        eventually.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3BackwardsCFG.h: Added.
+        (JSC::B3::BackwardsCFG::BackwardsCFG):
+        * b3/B3BackwardsDominators.h: Added.
+        (JSC::B3::BackwardsDominators::BackwardsDominators):
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::appendNonTerminal):
+        * b3/B3Effects.h:
+        * b3/B3EnsureLoopPreHeaders.cpp: Added.
+        (JSC::B3::ensureLoopPreHeaders):
+        * b3/B3EnsureLoopPreHeaders.h: Added.
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3HoistLoopInvariantValues.cpp: Added.
+        (JSC::B3::hoistLoopInvariantValues):
+        * b3/B3HoistLoopInvariantValues.h: Added.
+        * b3/B3NaturalLoops.h: Added.
+        (JSC::B3::NaturalLoops::NaturalLoops):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::invalidateCFG):
+        (JSC::B3::Procedure::naturalLoops):
+        (JSC::B3::Procedure::backwardsCFG):
+        (JSC::B3::Procedure::backwardsDominators):
+        * b3/B3Procedure.h:
+        * b3/testb3.cpp:
+        (JSC::B3::generateLoop):
+        (JSC::B3::makeArrayForLoops):
+        (JSC::B3::generateLoopNotBackwardsDominant):
+        (JSC::B3::oneFunction):
+        (JSC::B3::noOpFunction):
+        (JSC::B3::testLICMPure):
+        (JSC::B3::testLICMPureSideExits):
+        (JSC::B3::testLICMPureWritesPinned):
+        (JSC::B3::testLICMPureWrites):
+        (JSC::B3::testLICMReadsLocalState):
+        (JSC::B3::testLICMReadsPinned):
+        (JSC::B3::testLICMReads):
+        (JSC::B3::testLICMPureNotBackwardsDominant):
+        (JSC::B3::testLICMPureFoiledByChild):
+        (JSC::B3::testLICMPureNotBackwardsDominantFoiledByChild):
+        (JSC::B3::testLICMExitsSideways):
+        (JSC::B3::testLICMWritesLocalState):
+        (JSC::B3::testLICMWrites):
+        (JSC::B3::testLICMFence):
+        (JSC::B3::testLICMWritesPinned):
+        (JSC::B3::testLICMControlDependent):
+        (JSC::B3::testLICMControlDependentNotBackwardsDominant):
+        (JSC::B3::testLICMControlDependentSideExits):
+        (JSC::B3::testLICMReadsPinnedWritesPinned):
+        (JSC::B3::testLICMReadsWritesDifferentHeaps):
+        (JSC::B3::testLICMReadsWritesOverlappingHeaps):
+        (JSC::B3::testLICMDefaultCall):
+        (JSC::B3::run):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGCFG.h:
+        * dfg/DFGNaturalLoops.cpp: Removed.
+        * dfg/DFGNaturalLoops.h:
+        (JSC::DFG::NaturalLoops::NaturalLoops):
+        (JSC::DFG::NaturalLoop::NaturalLoop): Deleted.
+        (JSC::DFG::NaturalLoop::header): Deleted.
+        (JSC::DFG::NaturalLoop::size): Deleted.
+        (JSC::DFG::NaturalLoop::at): Deleted.
+        (JSC::DFG::NaturalLoop::operator[]): Deleted.
+        (JSC::DFG::NaturalLoop::contains): Deleted.
+        (JSC::DFG::NaturalLoop::index): Deleted.
+        (JSC::DFG::NaturalLoop::isOuterMostLoop): Deleted.
+        (JSC::DFG::NaturalLoop::addBlock): Deleted.
+        (JSC::DFG::NaturalLoops::numLoops): Deleted.
+        (JSC::DFG::NaturalLoops::loop): Deleted.
+        (JSC::DFG::NaturalLoops::headerOf): Deleted.
+        (JSC::DFG::NaturalLoops::innerMostLoopOf): Deleted.
+        (JSC::DFG::NaturalLoops::innerMostOuterLoop): Deleted.
+        (JSC::DFG::NaturalLoops::belongsTo): Deleted.
+        (JSC::DFG::NaturalLoops::loopDepth): Deleted.
+
 2017-07-24  Filip Pizlo  <fpizlo@apple.com>
 
         GC should be fine with trading blocks between destructor and non-destructor blocks

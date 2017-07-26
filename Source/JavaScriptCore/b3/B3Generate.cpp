@@ -36,6 +36,7 @@
 #include "B3EliminateCommonSubexpressions.h"
 #include "B3FixSSA.h"
 #include "B3FoldPathConstants.h"
+#include "B3HoistLoopInvariantValues.h"
 #include "B3InferSwitches.h"
 #include "B3LegalizeMemoryOffsets.h"
 #include "B3LowerMacros.h"
@@ -83,6 +84,7 @@ void generateToAir(Procedure& procedure)
     if (procedure.optLevel() >= 2) {
         reduceDoubleToFloat(procedure);
         reduceStrength(procedure);
+        hoistLoopInvariantValues(procedure);
         eliminateCommonSubexpressions(procedure);
         inferSwitches(procedure);
         duplicateTails(procedure);

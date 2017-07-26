@@ -143,11 +143,13 @@ set(JavaScriptCore_SOURCES
     b3/B3DuplicateTails.cpp
     b3/B3Effects.cpp
     b3/B3EliminateCommonSubexpressions.cpp
+    b3/B3EnsureLoopPreHeaders.cpp
     b3/B3FenceValue.cpp
     b3/B3FixSSA.cpp
     b3/B3FoldPathConstants.cpp
     b3/B3FrequencyClass.cpp
     b3/B3Generate.cpp
+    b3/B3HoistLoopInvariantValues.cpp
     b3/B3InferSwitches.cpp
     b3/B3InsertionSet.cpp
     b3/B3Kind.cpp
@@ -364,7 +366,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGMinifiedNode.cpp
     dfg/DFGMovHintRemovalPhase.cpp
     dfg/DFGMultiGetByOffsetData.cpp
-    dfg/DFGNaturalLoops.cpp
     dfg/DFGNode.cpp
     dfg/DFGNodeAbstractValuePair.cpp
     dfg/DFGNodeFlags.cpp

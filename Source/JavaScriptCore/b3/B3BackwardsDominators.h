@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,52 +25,24 @@
 
 #pragma once
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(B3_JIT)
 
-#include "DFGBasicBlock.h"
-#include "DFGBlockMapInlines.h"
-#include "DFGBlockSet.h"
-#include "DFGGraph.h"
+#include "B3BackwardsCFG.h"
+#include <wtf/Dominators.h>
 
-namespace JSC { namespace DFG {
+namespace JSC { namespace B3 {
 
-class CFG {
-    WTF_MAKE_NONCOPYABLE(CFG);
+class BackwardsDominators : public WTF::Dominators<BackwardsCFG> {
+    WTF_MAKE_NONCOPYABLE(BackwardsDominators);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef BasicBlock* Node;
-    typedef BlockSet Set;
-    template<typename T> using Map = BlockMap<T>;
-    typedef BlockList List;
-
-    CFG(Graph& graph)
-        : m_graph(graph)
+    BackwardsDominators(Procedure& proc)
+        : WTF::Dominators<BackwardsCFG>(proc.backwardsCFG())
     {
     }
-
-    Node root() { return m_graph.block(0); }
-
-    template<typename T>
-    Map<T> newMap() { return BlockMap<T>(m_graph); }
-
-    DFG::Node::SuccessorsIterable successors(Node node) { return node->successors(); }
-    PredecessorList& predecessors(Node node) { return node->predecessors; }
-
-    unsigned index(Node node) const { return node->index; }
-    Node node(unsigned index) const { return m_graph.block(index); }
-    unsigned numNodes() const { return m_graph.numBlocks(); }
-    
-    PointerDump<BasicBlock> dump(Node node) const { return pointerDump(node); }
-
-    void dump(PrintStream& out) const
-    {
-        m_graph.dump(out);
-    }
-
-private:
-    Graph& m_graph;
 };
 
-} } // namespace JSC::DFG
+} } // namespace JSC::B3
 
-#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(B3_JIT)
+

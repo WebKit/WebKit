@@ -57,7 +57,7 @@ void BasicBlock::append(Value* value)
 void BasicBlock::appendNonTerminal(Value* value)
 {
     m_values.append(m_values.last());
-    m_values[m_values.size() - 1] = value;
+    m_values[m_values.size() - 2] = value;
     value->owner = this;
 }
 
