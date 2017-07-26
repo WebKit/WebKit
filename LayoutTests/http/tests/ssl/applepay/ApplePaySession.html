@@ -72,6 +72,7 @@ function go() {
     logAndShouldThrow("request = validRequest(); request.supportedNetworks = [];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.supportedNetworks = ['invalidNetwork'];", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.supportedNetworks = ['invalidNetwork', 'visa'];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.supportedNetworks = ['carteBancaire'];", "new ApplePaySession(2, request)")
     // FIXME: Should duplicate supportedNetworks be allowed?
     logAndShouldNotThrow("request = validRequest(); request.supportedNetworks = ['visa', 'visa'];", "new ApplePaySession(2, request)")
     
