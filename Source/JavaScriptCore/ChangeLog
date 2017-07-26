@@ -1,3 +1,39 @@
+2017-07-26  Mark Lam  <mark.lam@apple.com>
+
+        Add the ability to change sp and pc to the ARM64 JIT probe.
+        https://bugs.webkit.org/show_bug.cgi?id=174697
+        <rdar://problem/33436965>
+
+        Reviewed by JF Bastien.
+
+        This patch implements the following:
+
+        1. The ARM64 probe now supports modifying the pc and sp.
+
+           However, lr is not preserved when modifying the pc because it is used as the
+           scratch register for the indirect jump. Hence, the probe handler function
+           may not modify both lr and pc in the same probe invocation.
+
+        2. Fix probe tests to use bitwise comparison when comparing double register
+           values. Otherwise, equivalent nan values will be interpreted as not equivalent.
+
+        3. Change the minimum offset increment in testProbeModifiesStackPointer to be
+           16 bytes for ARM64.  This is because the ARM64 probe now uses the ldp and stp
+           instructions which require 16 byte alignment for their memory access.
+
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::arm64ProbeError):
+        (JSC::MacroAssembler::probe):
+        (JSC::arm64ProbeTrampoline): Deleted.
+        * assembler/testmasm.cpp:
+        (JSC::isSpecialGPR):
+        (JSC::testProbeReadsArgumentRegisters):
+        (JSC::testProbeWritesArgumentRegisters):
+        (JSC::testProbePreservesGPRS):
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::testProbeModifiesStackPointerToInsideProbeContextOnStack):
+        (JSC::testProbeModifiesStackPointerToNBytesBelowSP):
+
 2017-07-25  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: generate smaller binaries
