@@ -1,3 +1,17 @@
+2017-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Pressing the Escape key should not be a valid user gesture to enter fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=174864
+        <rdar://problem/33009088>
+
+        Reviewed by Geoffrey Garen.
+
+        Add support for eventSender.keyDown('escape') in DRT to match the behavior of
+        WKTR.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+
 2017-07-26  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         Unreviewed, added Romain Bellessort to contributors.json.
