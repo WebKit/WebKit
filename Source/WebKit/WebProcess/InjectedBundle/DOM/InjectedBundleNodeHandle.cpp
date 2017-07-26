@@ -169,7 +169,7 @@ static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& painti
     if (options & SnapshotOptionsExcludeSelectionHighlighting)
         shouldPaintSelection = FrameView::ExcludeSelection;
 
-    PaintBehavior paintBehavior = (frameView->paintBehavior() & ~PaintBehaviorAllowAsyncImageDecoding) | PaintBehaviorFlattenCompositingLayers;
+    PaintBehavior paintBehavior = frameView->paintBehavior() | (PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting);
     if (options & SnapshotOptionsForceBlackText)
         paintBehavior |= PaintBehaviorForceBlackText;
     if (options & SnapshotOptionsForceWhiteText)

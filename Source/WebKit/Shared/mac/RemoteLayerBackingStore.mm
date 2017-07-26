@@ -336,7 +336,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
 
     context.scale(m_scale);
     
-    auto flags = m_layer->context() && m_layer->context()->nextFlushIsForImmediatePaint() ? WebCore::GraphicsLayerPaintFlags::None : WebCore::GraphicsLayerPaintFlags::AllowAsyncImageDecoding;
+    auto flags = m_layer->context() && m_layer->context()->nextFlushIsForImmediatePaint() ? WebCore::GraphicsLayerPaintSnapshotting : WebCore::GraphicsLayerPaintNormal;
     
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {

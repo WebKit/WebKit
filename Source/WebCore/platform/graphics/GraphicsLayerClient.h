@@ -75,7 +75,12 @@ enum LayerTreeAsTextBehaviorFlags {
 };
 typedef unsigned LayerTreeAsTextBehavior;
 
-enum class GraphicsLayerPaintFlags { None, AllowAsyncImageDecoding };
+enum GraphicsLayerPaintFlags {
+    GraphicsLayerPaintNormal                    = 0,
+    GraphicsLayerPaintSnapshotting              = 1 << 0,
+    GraphicsLayerPaintFirstTilePaint            = 1 << 1,
+};
+typedef unsigned GraphicsLayerPaintBehavior;
     
 class GraphicsLayerClient {
 public:
@@ -94,7 +99,7 @@ public:
     // Notification that this layer requires a flush before the next display refresh.
     virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) { }
 
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& /* inClip */, GraphicsLayerPaintFlags) { }
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& /* inClip */, GraphicsLayerPaintBehavior) { }
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const { }
 
     // Provides current transform (taking transform-origin and animations into account). Input matrix has been
