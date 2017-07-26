@@ -1,5 +1,30 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219755. rdar://problem/33523843
+
+    2017-07-21  Per Arne Vollan  <pvollan@apple.com>
+
+            Round-tripping stroke-width styles through getComputedStyle cause the text to gain a stroke.
+            https://bugs.webkit.org/show_bug.cgi?id=174701
+            <rdar://problem/32903679>
+
+            Reviewed by Simon Fraser.
+
+            The initial value of stroke-color should be transparent, see https://www.w3.org/TR/fill-stroke-3/#stroke-color.
+            Also, there is no need to set the graphics context in text stroke mode, if the stroke color is not visible.
+
+            Test: fast/css/round-trip-stroke-width-using-computed-style.html
+
+            * rendering/TextPaintStyle.cpp:
+            (WebCore::updateGraphicsContext):
+            * rendering/style/RenderStyle.h:
+            (WebCore::RenderStyle::initialStrokeWidth):
+            (WebCore::RenderStyle::initialStrokeColor):
+            * rendering/style/StyleRareInheritedData.cpp:
+            (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219752. rdar://problem/33524766
 
     2017-07-21  Timothy Horton  <timothy_horton@apple.com>
