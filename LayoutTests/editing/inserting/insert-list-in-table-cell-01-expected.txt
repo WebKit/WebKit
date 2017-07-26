@@ -1,0 +1,36 @@
+Insert list items in a single table cell:
+
+Before:
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         id="element"
+|         "<#selection-anchor>fsdf<#selection-focus>"
+|       <td>
+|         "fsdf"
+|     <tr>
+|       <td>
+|         "gghfg"
+|       <td>
+|         "fsfg"
+
+After:
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         id="element"
+|         <ol>
+|           <li>
+|             "<#selection-anchor>fsdf<#selection-focus>"
+|             <br>
+|       <td>
+|         "fsdf"
+|     <tr>
+|       <td>
+|         "gghfg"
+|       <td>
+|         "fsfg"

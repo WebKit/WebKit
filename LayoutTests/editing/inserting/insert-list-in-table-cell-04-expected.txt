@@ -1,0 +1,37 @@
+Insert a list item in a table:
+
+Before:
+| <table>
+|   border="1"
+|   id="element"
+|   <tbody>
+|     <tr>
+|       <td>
+|         "fsdf"
+|       <td>
+|         "fsdf"
+|     <tr>
+|       <td>
+|         "gghfg"
+|       <td>
+|         "fsfg"
+
+After:
+| <ol>
+|   <li>
+|     <#selection-anchor>
+|     <table>
+|       border="1"
+|       id="element"
+|       <tbody>
+|         <tr>
+|           <td>
+|             "fsdf"
+|           <td>
+|             "fsdf"
+|         <tr>
+|           <td>
+|             "gghfg"
+|           <td>
+|             "fsfg"
+|     <#selection-focus>

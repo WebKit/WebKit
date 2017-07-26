@@ -1,0 +1,33 @@
+Exec insertOrderedList twice in a table removes the previously inserted list item:
+
+Before:
+| <table>
+|   border="1"
+|   id="element"
+|   <tbody>
+|     <tr>
+|       <td>
+|         "fsdf"
+|       <td>
+|         "fsdf"
+|     <tr>
+|       <td>
+|         "gghfg"
+|       <td>
+|         "fsfg"
+
+After:
+| <table>
+|   border="1"
+|   id="element"
+|   <tbody>
+|     <tr>
+|       <td>
+|         "fsdf"
+|       <td>
+|         "fsdf"
+|     <tr>
+|       <td>
+|         "gghfg"
+|       <td>
+|         "fsfg<#selection-focus>"

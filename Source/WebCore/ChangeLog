@@ -1,3 +1,31 @@
+2017-07-26  Javier Fernandez  <jfernandez@igalia.com>
+
+        InsertOrderedList command applied to table cells inserts an extra BR before the table
+        https://bugs.webkit.org/show_bug.cgi?id=174593
+
+        Reviewed by Darin Adler.
+
+        Don't add BR when pruning empty blocks if it's the start of a paragraph.
+
+        The function MoveParagraph is used for several operations and editing
+        commands, like 'insertOrderedList'. When moving paragraphs we check out
+        whether we should add a 'br' element to avoid undesired block collapse.
+
+        However, we shouldn't do this when destination is the start of a
+        paragraph.
+
+        Tests: editing/inserting/insert-list-in-table-cell-01.html
+               editing/inserting/insert-list-in-table-cell-02.html
+               editing/inserting/insert-list-in-table-cell-03.html
+               editing/inserting/insert-list-in-table-cell-04.html
+               editing/inserting/insert-list-in-table-cell-05.html
+               editing/inserting/insert-list-in-table-cell-06.html
+               editing/inserting/insert-list-in-table-cell-07.html
+               editing/inserting/insert-list-in-table-cell-08.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+
 2017-07-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] WebGL2 support
