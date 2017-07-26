@@ -62,6 +62,9 @@ public:
     virtual void paintRenderingResultsToCanvas() {}
     virtual PlatformLayer* platformLayer() const { return 0; }
 
+    bool callTracingActive() const { return m_callTracingActive; }
+    void setCallTracingActive(bool callTracingActive) { m_callTracingActive = callTracingActive; }
+
 protected:
     CanvasRenderingContext(HTMLCanvasElement&);
     bool wouldTaintOrigin(const CanvasPattern*);
@@ -76,6 +79,8 @@ protected:
             canvas().setOriginTainted();
     }
     void checkOrigin(const URL&);
+
+    bool m_callTracingActive { false };
 
 private:
     HTMLCanvasElement& m_canvas;

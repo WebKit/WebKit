@@ -4676,6 +4676,15 @@ sub GenerateAttributeGetterBodyDefinition
         
         my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "${functionName}(" . join(", ", @arguments) . ")", "*thisObject.globalObject()");
         push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->isMapLike;
+
+        my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
+        if ($callTracingCallback) {
+            AddToImplIncludes("CallTracer.h");
+
+            push(@$outputArray, "    if (UNLIKELY(impl.callTracingActive()))\n");
+            push(@$outputArray, "        CallTracer::$callTracingCallback(impl, ASCIILiteral(\"" . $attribute->name . "\"));\n");
+        }
+
         push(@$outputArray, "    JSValue result = ${toJSExpression};\n");
         push(@$outputArray, "    thisObject.m_" . $attribute->name . ".set(state.vm(), &thisObject, result);\n") if $attribute->extendedAttributes->{CachedAttribute};
         push(@$outputArray, "    return result;\n");
@@ -4879,6 +4888,14 @@ sub GenerateAttributeSetterBodyDefinition
 
         my $functionString = "${functionName}(" . join(", ", @arguments) . ")";
         $functionString = "propagateException(state, throwScope, $functionString)" if $attribute->extendedAttributes->{SetterMayThrowException};
+
+        my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
+        if ($callTracingCallback) {
+            AddToImplIncludes("CallTracer.h");
+
+            push(@$outputArray, "    if (UNLIKELY(impl.callTracingActive()))\n");
+            push(@$outputArray, "        CallTracer::$callTracingCallback(impl, ASCIILiteral(\"" . $attribute->name . "\"), { nativeValue });\n");
+        }
 
         push(@$outputArray, "    ${functionString};\n");
         push(@$outputArray, "    return true;\n");
@@ -6014,6 +6031,19 @@ sub GenerateCallbackImplementationContent
 sub GenerateImplementationFunctionCall
 {
     my ($outputArray, $operation, $interface, $functionString, $indent) = @_;
+
+    my $callTracingCallback = $operation->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
+    if ($callTracingCallback) {
+        AddToImplIncludes("CallTracer.h");
+
+        my @inspectorRecordingArguments = ();
+        foreach my $argument (@{$operation->arguments}) {
+            push(@inspectorRecordingArguments, $argument->name);
+        }
+
+        push(@$outputArray, $indent . "if (UNLIKELY(impl.callTracingActive()))\n");
+        push(@$outputArray, $indent . "    CallTracer::$callTracingCallback(impl, ASCIILiteral(\"" . $operation->name . "\"), { " . join(", ", @inspectorRecordingArguments) . " });\n");
+    }
 
     if (OperationHasForcedReturnValue($operation)) {
         push(@$outputArray, $indent . "$functionString;\n");

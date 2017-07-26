@@ -23,32 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasObserver = class CanvasObserver
-{
-    // Events defined by the "Canvas" domain.
+#pragma once
 
-    canvasAdded(canvas)
-    {
-        WebInspector.canvasManager.canvasAdded(canvas);
-    }
+#include "CanvasRenderingContext2D.h"
+#include "DOMMatrixInit.h"
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
-    canvasRemoved(canvasId)
-    {
-        WebInspector.canvasManager.canvasRemoved(canvasId);
-    }
+namespace WebCore {
 
-    canvasMemoryChanged(canvasId, memoryCost)
-    {
-        WebInspector.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
-    }
+class DOMPath;
+class Element;
+class HTMLImageElement;
+class ImageData;
 
-    cssCanvasClientNodesChanged(canvasId)
-    {
-        WebInspector.canvasManager.cssCanvasClientNodesChanged(canvasId);
-    }
+typedef Variant<
+    Element*,
+    HTMLImageElement*,
+    ImageData*,
+    DOMMatrixInit,
+    DOMPath*,
+    Vector<float>,
+    String,
+    double,
+    float,
+    int,
+    bool,
+    std::optional<float>,
+    CanvasImageSource,
+    CanvasRenderingContext2D::Style,
+    CanvasRenderingContext2D::WindingRule,
+    CanvasRenderingContext2D::ImageSmoothingQuality
+> CanvasActionParameterVariant;
 
-    recordingFinished(canvasId, recording)
-    {
-        WebInspector.canvasManager.recordingFinished(canvasId, recording);
-    }
-};
+} // namespace WebCore

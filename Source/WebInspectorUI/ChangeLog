@@ -1,3 +1,44 @@
+2017-07-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create protocol for recording Canvas contexts
+        https://bugs.webkit.org/show_bug.cgi?id=174481
+
+        Reviewed by Joseph Pecoraro.
+
+        Create model objects that effectively mirror the protocol objects sent for Canvas recordings.
+
+        * .eslintrc:
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WebInspector.CanvasManager.prototype.recordingFinished):
+        * UserInterface/Protocol/CanvasObserver.js:
+        (WebInspector.CanvasObserver.prototype.recordingFinished):
+
+        * UserInterface/Models/Recording.js: Added.
+        (WebInspector.Recording):
+        (WebInspector.Recording.fromPayload):
+        (WebInspector.Recording.prototype.get type):
+        (WebInspector.Recording.prototype.get initialState):
+        (WebInspector.Recording.prototype.get frames):
+        (WebInspector.Recording.prototype.get data):
+        (WebInspector.Recording.prototype.toJSON):
+
+        * UserInterface/Models/RecordingAction.js: Added.
+        (WebInspector.RecordingAction):
+        (WebInspector.RecordingAction.fromPayload):
+        (WebInspector.RecordingAction.prototype.get name):
+        (WebInspector.RecordingAction.prototype.get parameters):
+        (WebInspector.RecordingAction.prototype.toJSON):
+
+        * UserInterface/Models/RecordingFrame.js: Added.
+        (WebInspector.RecordingFrame):
+        (WebInspector.RecordingFrame.fromPayload):
+        (WebInspector.RecordingFrame.prototype.get actions):
+        (WebInspector.RecordingFrame.prototype.get incomplete):
+        (WebInspector.RecordingFrame.prototype.toJSON):
+
 2017-07-26  Brian Burg  <bburg@apple.com>
 
         Remove WEB_TIMING feature flag

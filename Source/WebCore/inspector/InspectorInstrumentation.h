@@ -32,12 +32,20 @@
 #pragma once
 
 #include "CSSSelector.h"
+#include "CallTracerTypes.h"
+#include "CanvasGradient.h"
+#include "CanvasPattern.h"
+#include "CanvasRenderingContext.h"
+#include "DOMPath.h"
 #include "DocumentThreadableLoader.h"
 #include "Element.h"
 #include "FormData.h"
 #include "Frame.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
 #include "HitTestResult.h"
+#include "ImageData.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentationCookie.h"
 #include "Page.h"
@@ -224,6 +232,8 @@ public:
     static void didChangeCSSCanvasClientNodes(HTMLCanvasElement&);
     static void didCreateCanvasRenderingContext(HTMLCanvasElement&);
     static void didChangeCanvasMemory(HTMLCanvasElement&);
+    static void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<CanvasActionParameterVariant>&& = { });
+    static void didFinishRecordingCanvasFrame(HTMLCanvasElement&, bool forceDispatch = false);
 
     static void networkStateChanged(Page&);
     static void updateApplicationCacheStatus(Frame*);
@@ -381,6 +391,8 @@ private:
     static void didChangeCSSCanvasClientNodesImpl(InstrumentingAgents*, HTMLCanvasElement&);
     static void didCreateCanvasRenderingContextImpl(InstrumentingAgents*, HTMLCanvasElement&);
     static void didChangeCanvasMemoryImpl(InstrumentingAgents*, HTMLCanvasElement&);
+    static void recordCanvasActionImpl(InstrumentingAgents*, CanvasRenderingContext&, const String&, Vector<CanvasActionParameterVariant>&& = { });
+    static void didFinishRecordingCanvasFrameImpl(InstrumentingAgents*, HTMLCanvasElement&, bool forceDispatch = false);
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
     static void renderLayerDestroyedImpl(InstrumentingAgents&, const RenderLayer&);
@@ -1084,6 +1096,20 @@ inline void InspectorInstrumentation::didChangeCanvasMemory(HTMLCanvasElement& c
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
         didChangeCanvasMemoryImpl(instrumentingAgents, canvasElement);
+}
+
+inline void InspectorInstrumentation::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<CanvasActionParameterVariant>&& parameters)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasRenderingContext.canvas().document()))
+        recordCanvasActionImpl(instrumentingAgents, canvasRenderingContext, name, WTFMove(parameters));
+}
+
+inline void InspectorInstrumentation::didFinishRecordingCanvasFrame(HTMLCanvasElement& canvasElement, bool forceDispatch)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
+        didFinishRecordingCanvasFrameImpl(instrumentingAgents, canvasElement, forceDispatch);
 }
 
 inline void InspectorInstrumentation::networkStateChanged(Page& page)

@@ -49,6 +49,59 @@ bool buildPathFromString(const String& d, Path& result)
     return SVGPathParser::parse(source, builder);
 }
 
+String buildStringFromPath(const Path& path)
+{
+    StringBuilder builder;
+
+    if (!path.isNull() && !path.isEmpty()) {
+        path.apply([&builder] (const PathElement& element) {
+            switch (element.type) {
+            case PathElementMoveToPoint:
+                builder.append('M');
+                builder.appendECMAScriptNumber(element.points[0].x());
+                builder.append(' ');
+                builder.appendECMAScriptNumber(element.points[0].y());
+                break;
+            case PathElementAddLineToPoint:
+                builder.append('L');
+                builder.appendECMAScriptNumber(element.points[0].x());
+                builder.append(' ');
+                builder.appendECMAScriptNumber(element.points[0].y());
+                break;
+            case PathElementAddQuadCurveToPoint:
+                builder.append('Q');
+                builder.appendECMAScriptNumber(element.points[0].x());
+                builder.append(' ');
+                builder.appendECMAScriptNumber(element.points[0].y());
+                builder.append(',');
+                builder.appendECMAScriptNumber(element.points[1].x());
+                builder.append(' ');
+                builder.appendECMAScriptNumber(element.points[1].y());
+                break;
+            case PathElementAddCurveToPoint:
+                builder.append('C');
+                builder.appendECMAScriptNumber(element.points[0].x());
+                builder.append(' ');
+                builder.appendECMAScriptNumber(element.points[0].y());
+                builder.append(',');
+                builder.appendECMAScriptNumber(element.points[1].x());
+                builder.append(' ');
+                builder.appendECMAScriptNumber(element.points[1].y());
+                builder.append(',');
+                builder.appendECMAScriptNumber(element.points[2].x());
+                builder.append(' ');
+                builder.appendECMAScriptNumber(element.points[2].y());
+                break;
+            case PathElementCloseSubpath:
+                builder.append('Z');
+                break;
+            }
+        });
+    }
+
+    return builder.toString();
+}
+
 bool buildSVGPathByteStreamFromSVGPathSegListValues(const SVGPathSegListValues& list, SVGPathByteStream& result, PathParsingMode parsingMode)
 {
     result.clear();

@@ -3956,6 +3956,9 @@
 		94E839521DFB2A12007BC6A7 /* CSSNamespaceRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E8394E1DFB2700007BC6A7 /* CSSNamespaceRule.cpp */; };
 		94E839551DFB2BC4007BC6A7 /* JSCSSNamespaceRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E839531DFB2BA6007BC6A7 /* JSCSSNamespaceRule.cpp */; };
 		94E839561DFB2BC4007BC6A7 /* JSCSSNamespaceRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 94E839541DFB2BA6007BC6A7 /* JSCSSNamespaceRule.h */; };
+		952076041F2675FE007D2AAB /* CallTracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 952076001F2675F9007D2AAB /* CallTracer.cpp */; };
+		952076051F2675FE007D2AAB /* CallTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = 952076011F2675F9007D2AAB /* CallTracer.h */; };
+		952076061F2675FE007D2AAB /* CallTracerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 952076021F2675F9007D2AAB /* CallTracerTypes.h */; };
 		96ABA42314BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96ABA42214BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp */; };
 		9703E1BF15DC4E37001F24C8 /* JSVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E9EC8B15DC492F004F2E71 /* JSVoidCallback.cpp */; };
 		97059977107D975200A50A7C /* PolicyCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97059973107D975200A50A7C /* PolicyCallback.cpp */; };
@@ -12088,6 +12091,9 @@
 		94E839531DFB2BA6007BC6A7 /* JSCSSNamespaceRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSNamespaceRule.cpp; sourceTree = "<group>"; };
 		94E839541DFB2BA6007BC6A7 /* JSCSSNamespaceRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSNamespaceRule.h; sourceTree = "<group>"; };
 		950C4C02BED8936F818E2F99 /* JSSVGGraphicsElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGGraphicsElement.h; sourceTree = "<group>"; };
+		952076001F2675F9007D2AAB /* CallTracer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CallTracer.cpp; sourceTree = "<group>"; };
+		952076011F2675F9007D2AAB /* CallTracer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallTracer.h; sourceTree = "<group>"; };
+		952076021F2675F9007D2AAB /* CallTracerTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallTracerTypes.h; sourceTree = "<group>"; };
 		96ABA42214BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DOpenGLCommon.cpp; sourceTree = "<group>"; };
 		97059973107D975200A50A7C /* PolicyCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolicyCallback.cpp; sourceTree = "<group>"; };
 		97059974107D975200A50A7C /* PolicyCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyCallback.h; sourceTree = "<group>"; };
@@ -23402,6 +23408,9 @@
 				E30592651E27A3C600D57C98 /* CachedScriptFetcher.cpp */,
 				E30592661E27A3C600D57C98 /* CachedScriptFetcher.h */,
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
+				952076001F2675F9007D2AAB /* CallTracer.cpp */,
+				952076011F2675F9007D2AAB /* CallTracer.h */,
+				952076021F2675F9007D2AAB /* CallTracerTypes.h */,
 				0F60F3291DFBB10400416D6C /* CommonVM.cpp */,
 				0F60F32A1DFBB10400416D6C /* CommonVM.h */,
 				BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */,
@@ -26577,6 +26586,8 @@
 				E43AF8E71AC5B7EC00CA717E /* CacheValidation.h in Headers */,
 				49AE2D97134EE5F90072920A /* CalculationValue.h in Headers */,
 				7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */,
+				952076051F2675FE007D2AAB /* CallTracer.h in Headers */,
+				952076061F2675FE007D2AAB /* CallTracerTypes.h in Headers */,
 				415CDAF51E6B8F8B004F11EE /* CanvasCaptureMediaStreamTrack.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
 				4671E0661D67A59600C6B497 /* CanvasPath.h in Headers */,
@@ -30666,6 +30677,7 @@
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
 				E43AF8E61AC5B7E800CA717E /* CacheValidation.cpp in Sources */,
 				49AE2D96134EE5F90072920A /* CalculationValue.cpp in Sources */,
+				952076041F2675FE007D2AAB /* CallTracer.cpp in Sources */,
 				415CDAF41E6B8F87004F11EE /* CanvasCaptureMediaStreamTrack.cpp in Sources */,
 				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
 				4671E0651D67A59600C6B497 /* CanvasPath.cpp in Sources */,

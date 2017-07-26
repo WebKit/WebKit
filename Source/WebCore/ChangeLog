@@ -1,3 +1,106 @@
+2017-07-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create protocol for recording Canvas contexts
+        https://bugs.webkit.org/show_bug.cgi?id=174481
+
+        Reviewed by Joseph Pecoraro.
+
+        Currently, a recording doesn't actually "start" until an action is performed on the context.
+        This change adds the recording logic, but it does not use it anywhere. Additonal tests will
+        be added in the patches that add uses:
+         - <https://webkit.org/b/174482> Web Inspector: Record actions performed on CanvasRenderingContext2D
+         - <https://webkit.org/b/174483> Web Inspector: Record actions performed on WebGLRenderingContext
+
+        Test: inspector/model/recording.html
+
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeGetterBodyDefinition):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateImplementationFunctionCall):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CallTracer.h: Added.
+        * bindings/js/CallTracer.cpp: Added.
+        (WebCore::CallTracer::recordCanvasAction):
+        * bindings/js/CallTracerTypes.h: Added.
+        * bindings/scripts/test/TestCallTracer.idl: Added.
+        * bindings/scripts/test/JS/JSTestCallTracer.h: Added.
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp: Added.
+
+        Create new IDL extended attribute called "CallTracingCallback" that will add code to call a
+        static function on CallTracer with the given extended attribute value as the function name,
+        the `impl` object as the first parameter, the name of the attribute/operation as the second,
+        and an optional object that accepts an initializer list of all the parameters as the third.
+
+        This function will not be called, however, unless a `callTracingActive` function on the
+        `impl` object returns true, and this is marked as UNLIKELY.
+
+        "CallTracingCallback" can be added to an Interface, in which case it will apply to all
+        attributes/operations of the generated class, or an individual Attribute/Operation.
+
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::callTracingActive):
+        (WebCore::CanvasRenderingContext::setCallTracingActive):
+
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::~InspectorCanvas):
+        (WebCore::InspectorCanvas::resetRecordingData):
+        (WebCore::InspectorCanvas::hasRecordingData):
+        (WebCore::InspectorCanvas::recordAction):
+        (WebCore::InspectorCanvas::releaseInitialState):
+        (WebCore::InspectorCanvas::releaseFrames):
+        (WebCore::InspectorCanvas::releaseData):
+        (WebCore::InspectorCanvas::markNewFrame):
+        (WebCore::InspectorCanvas::markCurrentFrameIncomplete):
+        (WebCore::InspectorCanvas::setBufferLimit):
+        (WebCore::InspectorCanvas::hasBufferSpace):
+        (WebCore::InspectorCanvas::singleFrame):
+        (WebCore::InspectorCanvas::setSingleFrame):
+        (WebCore::InspectorCanvas::indexForData):
+        (WebCore::buildArrayForAffineTransform):
+        (WebCore::buildArrayForVector):
+        (WebCore::InspectorCanvas::buildInitialState):
+        (WebCore::InspectorCanvas::buildAction):
+        (WebCore::InspectorCanvas::buildArrayForCanvasGradient):
+        (WebCore::InspectorCanvas::buildArrayForCanvasPattern):
+        (WebCore::InspectorCanvas::buildArrayForImageData):
+
+        Hold the recording data on the corresponding InspectorCanvas. Recording Frames are
+        completed when the HTMLCanvasElement paints or a  0_s timer is fired. A recording is not
+        considered valid until at least one action is performed on the canvas context. Once that
+        condition is satisfied, canceling the recording will flush the data.
+
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::InspectorCanvasAgent):
+        (WebCore::InspectorCanvasAgent::disable):
+        (WebCore::InspectorCanvasAgent::requestRecording):
+        (WebCore::InspectorCanvasAgent::cancelRecording):
+        (WebCore::InspectorCanvasAgent::recordCanvasAction):
+        (WebCore::InspectorCanvasAgent::didFinishRecordingCanvasFrame):
+        (WebCore::InspectorCanvasAgent::canvasDestroyed):
+        (WebCore::InspectorCanvasAgent::canvasRecordingTimerFired):
+        (WebCore::InspectorCanvasAgent::clearCanvasData):
+
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::recordCanvasAction):
+        (WebCore::InspectorInstrumentation::recordCanvasActionImpl):
+        (WebCore::InspectorInstrumentation::didFinishRecordingCanvasFrameImpl):
+
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::stringForWindingRule):
+        (WebCore::CanvasRenderingContext2D::stringForImageSmoothingQuality):
+
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::stops):
+
+        * svg/SVGPathUtilities.h:
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::buildStringFromPath):
+
 2017-07-26  Ali Juma  <ajuma@chromium.org>
 
         Implement document.elementsFromPoint

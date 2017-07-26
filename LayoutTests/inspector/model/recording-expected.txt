@@ -1,0 +1,143 @@
+Testing the fault-tolerance of WebInspector.Recording.
+
+
+== Running test suite: Recording
+-- Running test case: Recording.fromPayload.nullObject
+null
+
+-- Running test case: Recording.fromPayload.nonObject
+null
+
+-- Running test case: Recording.fromPayload.emptyObject
+null
+
+-- Running test case: Recording.fromPayload.invalidTopLevelMembers
+null
+
+-- Running test case: Recording.fromPayload.invalidSubMembers
+{
+  "version": 1,
+  "type": "test",
+  "initialState": {},
+  "frames": [
+    {
+      "actions": []
+    }
+  ],
+  "data": [
+    "test"
+  ]
+}
+
+-- Running test case: Recording.fromPayload.invalidFrame
+{
+  "version": 1,
+  "type": "test",
+  "initialState": {
+    "attributes": {
+      "test": "test"
+    },
+    "parameters": [
+      "test"
+    ],
+    "content": "test"
+  },
+  "frames": [
+    {
+      "actions": []
+    }
+  ],
+  "data": [
+    "test"
+  ]
+}
+
+-- Running test case: Recording.fromPayload.invalidAction
+{
+  "version": 1,
+  "type": "test",
+  "initialState": {
+    "attributes": {
+      "test": "test"
+    },
+    "parameters": [
+      "test"
+    ],
+    "content": "test"
+  },
+  "frames": [
+    {
+      "actions": [
+        [
+          -1,
+          []
+        ]
+      ],
+      "incomplete": true
+    }
+  ],
+  "data": [
+    "test"
+  ]
+}
+
+-- Running test case: Recording.fromPayload.invalidActionMembers
+{
+  "version": 1,
+  "type": "test",
+  "initialState": {
+    "attributes": {
+      "test": "test"
+    },
+    "parameters": [
+      "test"
+    ],
+    "content": "test"
+  },
+  "frames": [
+    {
+      "actions": [
+        [
+          null,
+          []
+        ]
+      ],
+      "incomplete": true
+    }
+  ],
+  "data": [
+    "test"
+  ]
+}
+
+-- Running test case: Recording.fromPayload.valid
+{
+  "version": 1,
+  "type": "test",
+  "initialState": {
+    "attributes": {
+      "test": "test"
+    },
+    "parameters": [
+      "test"
+    ],
+    "content": "test"
+  },
+  "frames": [
+    {
+      "actions": [
+        [
+          0,
+          [
+            0
+          ]
+        ]
+      ],
+      "incomplete": true
+    }
+  ],
+  "data": [
+    "test"
+  ]
+}
+

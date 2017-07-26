@@ -146,6 +146,8 @@ namespace WebCore {
                 { }
         };
 
+        const Vector<ColorStop, 2>& stops() const { return m_stops; }
+
         void setStopsSorted(bool s) { m_stopsSorted = s; }
         
         void setSpreadMethod(GradientSpreadMethod);

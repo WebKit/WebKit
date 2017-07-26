@@ -23,32 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasObserver = class CanvasObserver
-{
-    // Events defined by the "Canvas" domain.
+#pragma once
 
-    canvasAdded(canvas)
-    {
-        WebInspector.canvasManager.canvasAdded(canvas);
-    }
+#include "CallTracerTypes.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
-    canvasRemoved(canvasId)
-    {
-        WebInspector.canvasManager.canvasRemoved(canvasId);
-    }
+namespace WebCore {
 
-    canvasMemoryChanged(canvasId, memoryCost)
-    {
-        WebInspector.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
-    }
+class CanvasRenderingContext;
 
-    cssCanvasClientNodesChanged(canvasId)
-    {
-        WebInspector.canvasManager.cssCanvasClientNodesChanged(canvasId);
-    }
-
-    recordingFinished(canvasId, recording)
-    {
-        WebInspector.canvasManager.recordingFinished(canvasId, recording);
-    }
+class CallTracer {
+public:
+    static void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<CanvasActionParameterVariant>&& = { });
 };
+
+} // namespace WebCore

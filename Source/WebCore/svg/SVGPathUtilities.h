@@ -36,6 +36,9 @@ class SVGPathSegListValues;
 bool buildPathFromString(const String&, Path&);
 bool buildPathFromByteStream(const SVGPathByteStream&, Path&);
 
+// Path -> String
+String buildStringFromPath(const Path&);
+
 // SVGPathSegListValues/String -> SVGPathByteStream
 bool buildSVGPathByteStreamFromSVGPathSegListValues(const SVGPathSegListValues&, SVGPathByteStream& result, PathParsingMode);
 bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&&, SVGPathByteStream&, PathParsingMode);

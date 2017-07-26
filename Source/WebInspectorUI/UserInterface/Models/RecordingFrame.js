@@ -23,32 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasObserver = class CanvasObserver
+WebInspector.RecordingFrame = class RecordingFrame
 {
-    // Events defined by the "Canvas" domain.
-
-    canvasAdded(canvas)
+    constructor(actions, {incomplete} = {})
     {
-        WebInspector.canvasManager.canvasAdded(canvas);
+        this._actions = actions;
+        this._incomplete = incomplete;
     }
 
-    canvasRemoved(canvasId)
+    // Static
+
+    static fromPayload(payload)
     {
-        WebInspector.canvasManager.canvasRemoved(canvasId);
+        if (typeof payload !== "object" || payload === null)
+            payload = {};
+
+        if (!Array.isArray(payload.actions))
+            payload.actions = [];
+
+        let actions = payload.actions.map(WebInspector.RecordingAction.fromPayload);
+        return new WebInspector.RecordingFrame(actions, {
+            incomplete: !!payload.incomplete,
+        });
     }
 
-    canvasMemoryChanged(canvasId, memoryCost)
-    {
-        WebInspector.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
-    }
+    // Public
 
-    cssCanvasClientNodesChanged(canvasId)
-    {
-        WebInspector.canvasManager.cssCanvasClientNodesChanged(canvasId);
-    }
+    get actions() { return this._actions; }
+    get incomplete() { return this._incomplete; }
 
-    recordingFinished(canvasId, recording)
+    toJSON()
     {
-        WebInspector.canvasManager.recordingFinished(canvasId, recording);
+        let json = {
+            actions: this._actions.map((action) => action.toJSON()),
+        };
+        if (this._incomplete)
+            json.incomplete = this._incomplete;
+        return json;
     }
 };

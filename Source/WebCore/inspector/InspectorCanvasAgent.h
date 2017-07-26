@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CallTracerTypes.h"
 #include "HTMLCanvasElement.h"
 #include "InspectorCanvas.h"
 #include "InspectorWebAgentBase.h"
@@ -32,7 +33,6 @@
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -43,6 +43,7 @@ class InjectedScriptManager;
 
 namespace WebCore {
 
+class CanvasRenderingContext;
 class WebGLRenderingContextBase;
 
 typedef String ErrorString;
@@ -65,6 +66,8 @@ public:
     void requestContent(ErrorString&, const String& canvasId, String* content) override;
     void requestCSSCanvasClientNodes(ErrorString&, const String& canvasId, RefPtr<Inspector::Protocol::Array<int>>&) override;
     void resolveCanvasContext(ErrorString&, const String& canvasId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) override;
+    void requestRecording(ErrorString&, const String& canvasId, const bool* const singleFrame, const int* const memoryLimit) override;
+    void cancelRecording(ErrorString&, const String& canvasId) override;
 
     // InspectorInstrumentation
     void frameNavigated(Frame&);
@@ -72,6 +75,8 @@ public:
     void didChangeCSSCanvasClientNodes(HTMLCanvasElement&);
     void didCreateCanvasRenderingContext(HTMLCanvasElement&);
     void didChangeCanvasMemory(HTMLCanvasElement&);
+    void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<CanvasActionParameterVariant>&& = { });
+    void didFinishRecordingCanvasFrame(HTMLCanvasElement&, bool forceDispatch = false);
 
     // CanvasObserver
     void canvasChanged(HTMLCanvasElement&, const FloatRect&) override { }
@@ -80,6 +85,7 @@ public:
 
 private:
     void canvasDestroyedTimerFired();
+    void canvasRecordingTimerFired();
     void clearCanvasData();
     String unbindCanvas(InspectorCanvas&);
     InspectorCanvas* assertInspectorCanvas(ErrorString&, const String&);
@@ -92,7 +98,9 @@ private:
     HashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
     HashMap<HTMLCanvasElement*, String> m_canvasToCSSCanvasName;
     Vector<String> m_removedCanvasIdentifiers;
-    Timer m_timer;
+    Timer m_canvasDestroyedTimer;
+    Timer m_canvasRecordingTimer;
+
     bool m_enabled { false };
 };
 

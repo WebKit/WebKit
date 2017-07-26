@@ -23,32 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasObserver = class CanvasObserver
+WebInspector.RecordingAction = class RecordingAction
 {
-    // Events defined by the "Canvas" domain.
-
-    canvasAdded(canvas)
+    constructor(name, parameters)
     {
-        WebInspector.canvasManager.canvasAdded(canvas);
+        this._name = name;
+        this._parameters = parameters;
     }
 
-    canvasRemoved(canvasId)
+    // Static
+
+    // Payload format: [name, parameters]
+    static fromPayload(payload)
     {
-        WebInspector.canvasManager.canvasRemoved(canvasId);
+        if (!Array.isArray(payload))
+            payload = [];
+
+        if (isNaN(payload[0]))
+            payload[0] = -1;
+
+        if (!Array.isArray(payload[1]))
+            payload[1] = [];
+
+        return new WebInspector.RecordingAction(...payload);
     }
 
-    canvasMemoryChanged(canvasId, memoryCost)
-    {
-        WebInspector.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
-    }
+    // Public
 
-    cssCanvasClientNodesChanged(canvasId)
-    {
-        WebInspector.canvasManager.cssCanvasClientNodesChanged(canvasId);
-    }
+    get name() { return this._resolvedName; }
+    get parameters() { return this._resolvedParameters; }
 
-    recordingFinished(canvasId, recording)
+    toJSON()
     {
-        WebInspector.canvasManager.recordingFinished(canvasId, recording);
+        return [this._name, this._parameters];
     }
 };

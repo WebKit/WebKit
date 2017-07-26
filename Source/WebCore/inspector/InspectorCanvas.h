@@ -25,16 +25,39 @@
 
 #pragma once
 
+#include "CallTracerTypes.h"
 #include <inspector/InspectorProtocolObjects.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/HashMap.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class CanvasGradient;
+class CanvasPattern;
 class HTMLCanvasElement;
+class HTMLImageElement;
+class HTMLVideoElement;
+class ImageData;
 class InstrumentingAgents;
 
 typedef String ErrorString;
+
+typedef Variant<
+    const HTMLImageElement*,
+#if ENABLE(VIDEO)
+    HTMLVideoElement*,
+#endif
+    HTMLCanvasElement*,
+    const CanvasGradient*,
+    const CanvasPattern*,
+    const ImageData*,
+    String
+> DuplicateDataVariant;
 
 class InspectorCanvas final : public RefCounted<InspectorCanvas> {
 public:
@@ -44,16 +67,49 @@ public:
     HTMLCanvasElement& canvas() { return m_canvas; }
     const String& cssCanvasName() { return m_cssCanvasName; }
 
+    void resetRecordingData();
+    bool hasRecordingData() const;
+    void recordAction(const String&, Vector<CanvasActionParameterVariant>&& = { });
+
+    RefPtr<Inspector::Protocol::Recording::InitialState>&& releaseInitialState() { return WTFMove(m_initialState); }
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>>&& releaseFrames() { return WTFMove(m_frames); }
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>>&& releaseData();
+
+    void markNewFrame();
+    void markCurrentFrameIncomplete();
+
+    void setBufferLimit(long);
+    bool hasBufferSpace() const;
+
+    bool singleFrame() const { return m_singleFrame; }
+    void setSingleFrame(bool singleFrame) { m_singleFrame = singleFrame; }
+
     Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(InstrumentingAgents&);
 
-    ~InspectorCanvas() { }
+    ~InspectorCanvas();
 
 private:
     InspectorCanvas(HTMLCanvasElement&, const String& cssCanvasName);
 
+    int indexForData(DuplicateDataVariant);
+    RefPtr<Inspector::Protocol::Recording::InitialState> buildInitialState();
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildAction(const String&, Vector<CanvasActionParameterVariant>&& = { });
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForCanvasGradient(const CanvasGradient&);
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForCanvasPattern(const CanvasPattern&);
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForImageData(const ImageData&);
+
     String m_identifier;
     HTMLCanvasElement& m_canvas;
     String m_cssCanvasName;
+
+    RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>> m_frames;
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> m_currentActions;
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> m_serializedDuplicateData;
+    Vector<DuplicateDataVariant> m_indexedDuplicateData;
+    size_t m_bufferLimit { 100 * 1024 * 1024 };
+    size_t m_bufferUsed { 0 };
+    bool m_singleFrame { true };
 };
 
 } // namespace WebCore

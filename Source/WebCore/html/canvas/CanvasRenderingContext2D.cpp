@@ -965,6 +965,19 @@ static WindRule toWindRule(CanvasRenderingContext2D::WindingRule rule)
     return rule == CanvasRenderingContext2D::WindingRule::Nonzero ? RULE_NONZERO : RULE_EVENODD;
 }
 
+String CanvasRenderingContext2D::stringForWindingRule(WindingRule windingRule)
+{
+    switch (windingRule) {
+    case WindingRule::Nonzero:
+        return ASCIILiteral("nonzero");
+    case WindingRule::Evenodd:
+        return ASCIILiteral("evenodd");
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
 void CanvasRenderingContext2D::fill(WindingRule windingRule)
 {
     fillInternal(m_path, windingRule);
@@ -2557,6 +2570,21 @@ static inline InterpolationQuality smoothingToInterpolationQuality(CanvasRenderi
     ASSERT_NOT_REACHED();
     return InterpolationLow;
 };
+
+String CanvasRenderingContext2D::stringForImageSmoothingQuality(ImageSmoothingQuality imageSmoothingQuality)
+{
+    switch (imageSmoothingQuality) {
+    case ImageSmoothingQuality::Low:
+        return ASCIILiteral("low");
+    case ImageSmoothingQuality::Medium:
+        return ASCIILiteral("medium");
+    case ImageSmoothingQuality::High:
+        return ASCIILiteral("high");
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
 
 auto CanvasRenderingContext2D::imageSmoothingQuality() const -> ImageSmoothingQuality
 {

@@ -980,6 +980,18 @@ void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents* in
         canvasAgent->didChangeCanvasMemory(canvasElement);
 }
 
+void InspectorInstrumentation::recordCanvasActionImpl(InstrumentingAgents* instrumentingAgents, CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<CanvasActionParameterVariant>&& parameters)
+{
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+        canvasAgent->recordCanvasAction(canvasRenderingContext, name, WTFMove(parameters));
+}
+
+void InspectorInstrumentation::didFinishRecordingCanvasFrameImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement, bool forceDispatch)
+{
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+        canvasAgent->didFinishRecordingCanvasFrame(canvasElement, forceDispatch);
+}
+
 #if ENABLE(RESOURCE_USAGE)
 void InspectorInstrumentation::didHandleMemoryPressureImpl(InstrumentingAgents& instrumentingAgents, Critical critical)
 {

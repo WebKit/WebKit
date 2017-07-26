@@ -92,6 +92,22 @@
             "returns": [
                 { "name": "object", "$ref": "Runtime.RemoteObject", "description": "JavaScript object wrapper for given canvas context." }
             ]
+        },
+        {
+            "name": "requestRecording",
+            "description": "Requests that the next frame or up to the given number of bytes of data be recorded for the given canvas.",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" },
+                { "name": "singleFrame", "type": "boolean", "optional": true, "description": "Whether to record a single frame or until the memory limit is reached." },
+                { "name": "memoryLimit", "type": "integer", "optional": true, "description": "Memory limit of recorded data." }
+            ]
+        },
+        {
+            "name": "cancelRecording",
+            "description": "Cancels a requested recording for the given canvas.",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" }
+            ]
         }
     ],
     "events": [
@@ -118,6 +134,13 @@
             "name": "cssCanvasClientNodesChanged",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." }
+            ]
+        },
+        {
+            "name": "recordingFinished",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" },
+                { "name": "recording", "$ref": "Recording.Recording" }
             ]
         }
     ]

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Recording");
+
+    function addTest({name, payload}) {
+        suite.addTestCase({
+            name,
+            test() {
+                let recording = WebInspector.Recording.fromPayload(payload);
+                InspectorTest.log(recording ? JSON.stringify(recording.toJSON(), null, 2) : recording);
+                return true;
+            }
+        });
+    }
+
+    let tests = [
+        {
+            name: "Recording.fromPayload.nullObject",
+            payload: null,
+        },
+        {
+            name: "Recording.fromPayload.nonObject",
+            payload: "INVALID",
+        },
+        {
+            name: "Recording.fromPayload.emptyObject",
+            payload: {},
+        },
+        {
+            name: "Recording.fromPayload.invalidTopLevelMembers",
+            payload: {
+                version: null,
+                type: null,
+                initialState: null,
+                frames: null,
+                data: null,
+            },
+        },
+        {
+            name: "Recording.fromPayload.invalidSubMembers",
+            payload: {
+                version: 1,
+                type: "test",
+                initialState: {
+                    attributes: null,
+                    parameters: null,
+                    content: null,
+                },
+                frames: [null],
+                data: ["test"],
+            },
+        },
+        {
+            name: "Recording.fromPayload.invalidFrame",
+            payload: {
+                version: 1,
+                type: "test",
+                initialState: {
+                    attributes: {
+                        test: "test",
+                    },
+                    parameters: ["test"],
+                    content: "test",
+                },
+                frames: [
+                    {
+                        actions: null,
+                        incomplete: null,
+                    },
+                ],
+                data: ["test"],
+            },
+        },
+        {
+            name: "Recording.fromPayload.invalidAction",
+            payload: {
+                version: 1,
+                type: "test",
+                initialState: {
+                    attributes: {
+                        test: "test",
+                    },
+                    parameters: ["test"],
+                    content: "test",
+                },
+                frames: [
+                    {
+                        actions: [null],
+                        incomplete: true,
+                    },
+                ],
+                data: ["test"],
+            },
+        },
+        {
+            name: "Recording.fromPayload.invalidActionMembers",
+            payload: {
+                version: 1,
+                type: "test",
+                initialState: {
+                    attributes: {
+                        test: "test",
+                    },
+                    parameters: ["test"],
+                    content: "test",
+                },
+                frames: [
+                    {
+                        actions: [
+                            [
+                                null,
+                                null,
+                            ],
+                        ],
+                        incomplete: true,
+                    },
+                ],
+                data: ["test"],
+            },
+        },
+        {
+            name: "Recording.fromPayload.valid",
+            payload: {
+                version: 1,
+                type: "test",
+                initialState: {
+                    attributes: {
+                        test: "test",
+                    },
+                    parameters: ["test"],
+                    content: "test",
+                },
+                frames: [
+                    {
+                        actions: [
+                            [
+                                0,
+                                [0],
+                            ],
+                        ],
+                        incomplete: true,
+                    },
+                ],
+                data: ["test"],
+            },
+        },
+    ];
+    tests.forEach(addTest);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the fault-tolerance of WebInspector.Recording.</p>
+</body>
+</html>

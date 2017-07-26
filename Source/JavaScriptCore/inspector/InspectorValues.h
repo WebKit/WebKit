@@ -274,6 +274,8 @@ public:
 
     unsigned length() const { return static_cast<unsigned>(m_map.size()); }
 
+    RefPtr<InspectorValue> get(size_t index) const;
+
     size_t memoryCost() const final;
 
 protected:
@@ -288,8 +290,6 @@ protected:
     void pushValue(RefPtr<InspectorValue>&&);
     void pushObject(RefPtr<InspectorObjectBase>&&);
     void pushArray(RefPtr<InspectorArrayBase>&&);
-
-    RefPtr<InspectorValue> get(size_t index) const;
 
     void writeJSON(StringBuilder& output) const override;
 

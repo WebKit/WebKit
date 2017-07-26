@@ -26,13 +26,28 @@
 #include "config.h"
 #include "InspectorCanvas.h"
 
+#include "AffineTransform.h"
+#include "CachedImage.h"
+#include "CanvasGradient.h"
+#include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
+#include "DOMPath.h"
 #include "Document.h"
+#include "FloatPoint.h"
 #include "Frame.h"
+#include "Gradient.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
+#include "Image.h"
+#include "ImageBuffer.h"
+#include "ImageData.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
+#include "Pattern.h"
+#include "SVGPathUtilities.h"
+#include "StringAdaptors.h"
 #if ENABLE(WEBGL)
 #include "WebGLRenderingContext.h"
 #endif
@@ -58,6 +73,83 @@ InspectorCanvas::InspectorCanvas(HTMLCanvasElement& canvas, const String& cssCan
     , m_canvas(canvas)
     , m_cssCanvasName(cssCanvasName)
 {
+}
+
+InspectorCanvas::~InspectorCanvas()
+{
+    resetRecordingData();
+}
+
+void InspectorCanvas::resetRecordingData()
+{
+    m_initialState = nullptr;
+    m_frames = nullptr;
+    m_currentActions = nullptr;
+    m_serializedDuplicateData = nullptr;
+    m_indexedDuplicateData.clear();
+    m_bufferLimit = 100 * 1024 * 1024;
+    m_bufferUsed = 0;
+    m_singleFrame = true;
+
+    m_canvas.renderingContext()->setCallTracingActive(false);
+}
+
+bool InspectorCanvas::hasRecordingData() const
+{
+    return m_initialState && m_frames;
+}
+
+void InspectorCanvas::recordAction(const String& name, Vector<CanvasActionParameterVariant>&& parameters)
+{
+    if (!hasRecordingData()) {
+        m_initialState = buildInitialState();
+        m_bufferUsed += m_initialState->memoryCost();
+
+        m_frames = Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>::create();
+    }
+
+    if (!m_currentActions) {
+        m_currentActions = Inspector::Protocol::Array<InspectorValue>::create();
+
+        auto frame = Inspector::Protocol::Recording::Frame::create()
+            .setActions(m_currentActions)
+            .release();
+
+        m_frames->addItem(WTFMove(frame));
+    }
+
+    auto action = buildAction(name, WTFMove(parameters));
+    m_bufferUsed += action->memoryCost();
+    m_currentActions->addItem(WTFMove(action));
+}
+
+RefPtr<Inspector::Protocol::Array<InspectorValue>>&& InspectorCanvas::releaseData()
+{
+    m_indexedDuplicateData.clear();
+    return WTFMove(m_serializedDuplicateData);
+}
+
+void InspectorCanvas::markNewFrame()
+{
+    m_currentActions = nullptr;
+}
+
+void InspectorCanvas::markCurrentFrameIncomplete()
+{
+    if (!m_currentActions)
+        return;
+
+    static_cast<Inspector::Protocol::Recording::Frame*>(m_frames->get(m_frames->length() - 1).get())->setIncomplete(true);
+}
+
+void InspectorCanvas::setBufferLimit(long memoryLimit)
+{
+    m_bufferLimit = std::min<long>(memoryLimit, std::numeric_limits<int>::max());
+}
+
+bool InspectorCanvas::hasBufferSpace() const
+{
+    return m_bufferUsed < m_bufferLimit;
 }
 
 Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(InstrumentingAgents& instrumentingAgents)
@@ -128,6 +220,309 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(I
         canvas->setMemoryCost(memoryCost);
 
     return canvas;
+}
+
+int InspectorCanvas::indexForData(DuplicateDataVariant data)
+{
+    size_t index = m_indexedDuplicateData.find(data);
+    if (index != notFound) {
+        ASSERT(index < std::numeric_limits<int>::max());
+        return static_cast<int>(index);
+    }
+
+    if (!m_serializedDuplicateData)
+        m_serializedDuplicateData = Inspector::Protocol::Array<InspectorValue>::create();
+
+    RefPtr<InspectorValue> item;
+    WTF::switchOn(data,
+        [&] (const HTMLImageElement* imageElement) {
+            String dataURL = ASCIILiteral("data:,");
+
+            if (CachedImage* cachedImage = imageElement->cachedImage()) {
+                Image* image = cachedImage->image();
+                if (image && image != &Image::nullImage()) {
+                    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated);
+                    imageBuffer->context().drawImage(*image, FloatPoint(0, 0));
+                    dataURL = imageBuffer->toDataURL("image/png");
+                }
+            }
+
+            item = InspectorValue::create(dataURL);
+        },
+#if ENABLE(VIDEO)
+        [&] (HTMLVideoElement* videoElement) {
+            String dataURL = ASCIILiteral("data:,");
+
+            unsigned videoWidth = videoElement->videoWidth();
+            unsigned videoHeight = videoElement->videoHeight();
+            std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated);
+            if (imageBuffer) {
+                videoElement->paintCurrentFrameInContext(imageBuffer->context(), FloatRect(0, 0, videoWidth, videoHeight));
+                dataURL = imageBuffer->toDataURL("image/png");
+            }
+
+            item = InspectorValue::create(dataURL);
+        },
+#endif
+        [&] (HTMLCanvasElement* canvasElement) {
+            String dataURL = ASCIILiteral("data:,");
+
+            ExceptionOr<UncachedString> result = canvasElement->toDataURL(ASCIILiteral("image/png"));
+            if (!result.hasException())
+                dataURL = result.releaseReturnValue().string;
+
+            item = InspectorValue::create(dataURL);
+        },
+        [&] (const CanvasGradient* canvasGradient) { item = buildArrayForCanvasGradient(*canvasGradient); },
+        [&] (const CanvasPattern* canvasPattern) { item = buildArrayForCanvasPattern(*canvasPattern); },
+        [&] (const ImageData* imageData) { item = buildArrayForImageData(*imageData); },
+        [&] (const String& value) { item = InspectorValue::create(value); }
+    );
+
+    m_bufferUsed += item->memoryCost();
+    m_serializedDuplicateData->addItem(WTFMove(item));
+
+    m_indexedDuplicateData.append(data);
+    index = m_indexedDuplicateData.size() - 1;
+
+    ASSERT(index < std::numeric_limits<int>::max());
+    return static_cast<int>(index);
+}
+
+static RefPtr<Inspector::Protocol::Array<double>> buildArrayForAffineTransform(const AffineTransform& affineTransform)
+{
+    RefPtr<Inspector::Protocol::Array<double>> array = Inspector::Protocol::Array<double>::create();
+    array->addItem(affineTransform.a());
+    array->addItem(affineTransform.b());
+    array->addItem(affineTransform.c());
+    array->addItem(affineTransform.d());
+    array->addItem(affineTransform.e());
+    array->addItem(affineTransform.f());
+    return array;
+}
+
+static RefPtr<Inspector::Protocol::Array<double>> buildArrayForVector(const Vector<float>& vector)
+{
+    RefPtr<Inspector::Protocol::Array<double>> array = Inspector::Protocol::Array<double>::create();
+    for (double item : vector)
+        array->addItem(item);
+    return array;
+}
+
+RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
+{
+    RefPtr<Inspector::Protocol::Recording::InitialState> initialState = Inspector::Protocol::Recording::InitialState::create()
+        .release();
+
+    auto attributes = InspectorObject::create();
+    attributes->setInteger(ASCIILiteral("width"), canvas().width());
+    attributes->setInteger(ASCIILiteral("height"), canvas().height());
+
+    auto parameters = Inspector::Protocol::Array<InspectorValue>::create();
+
+    const CanvasRenderingContext* canvasRenderingContext = canvas().renderingContext();
+    if (is<CanvasRenderingContext2D>(canvasRenderingContext)) {
+        const CanvasRenderingContext2D* context2d = downcast<CanvasRenderingContext2D>(canvasRenderingContext);
+        const CanvasRenderingContext2D::State& state = context2d->state();
+
+        attributes->setArray(ASCIILiteral("setTransform"), buildArrayForAffineTransform(state.transform));
+        attributes->setDouble(ASCIILiteral("globalAlpha"), context2d->globalAlpha());
+        attributes->setString(ASCIILiteral("globalCompositeOperation"), context2d->globalCompositeOperation());
+        attributes->setDouble(ASCIILiteral("lineWidth"), context2d->lineWidth());
+        attributes->setString(ASCIILiteral("lineCap"), context2d->lineCap());
+        attributes->setString(ASCIILiteral("lineJoin"), context2d->lineJoin());
+        attributes->setDouble(ASCIILiteral("miterLimit"), context2d->miterLimit());
+        attributes->setDouble(ASCIILiteral("shadowOffsetX"), context2d->shadowOffsetX());
+        attributes->setDouble(ASCIILiteral("shadowOffsetY"), context2d->shadowOffsetY());
+        attributes->setDouble(ASCIILiteral("shadowBlur"), context2d->shadowBlur());
+        attributes->setString(ASCIILiteral("shadowColor"), context2d->shadowColor());
+
+        // The parameter to `setLineDash` is itself an array, so we need to wrap the parameters
+        // list in an array to allow spreading.
+        auto setLineDash = Inspector::Protocol::Array<InspectorValue>::create();
+        setLineDash->addItem(buildArrayForVector(state.lineDash));
+        attributes->setArray(ASCIILiteral("setLineDash"), WTFMove(setLineDash));
+
+        attributes->setDouble(ASCIILiteral("lineDashOffset"), context2d->lineDashOffset());
+        attributes->setString(ASCIILiteral("font"), context2d->font());
+        attributes->setString(ASCIILiteral("textAlign"), context2d->textAlign());
+        attributes->setString(ASCIILiteral("textBaseline"), context2d->textBaseline());
+        attributes->setString(ASCIILiteral("direction"), context2d->direction());
+
+        int strokeStyleIndex;
+        if (CanvasGradient* canvasGradient = state.strokeStyle.canvasGradient())
+            strokeStyleIndex = indexForData(canvasGradient);
+        else if (CanvasPattern* canvasPattern = state.strokeStyle.canvasPattern())
+            strokeStyleIndex = indexForData(canvasPattern);
+        else
+            strokeStyleIndex = indexForData(state.strokeStyle.color());
+        attributes->setInteger(ASCIILiteral("strokeStyle"), strokeStyleIndex);
+
+        int fillStyleIndex;
+        if (CanvasGradient* canvasGradient = state.fillStyle.canvasGradient())
+            fillStyleIndex = indexForData(canvasGradient);
+        else if (CanvasPattern* canvasPattern = state.fillStyle.canvasPattern())
+            fillStyleIndex = indexForData(canvasPattern);
+        else
+            fillStyleIndex = indexForData(state.fillStyle.color());
+        attributes->setInteger(ASCIILiteral("fillStyle"), fillStyleIndex);
+
+        attributes->setBoolean(ASCIILiteral("imageSmoothingEnabled"), context2d->imageSmoothingEnabled());
+        attributes->setString(ASCIILiteral("imageSmoothingQuality"), CanvasRenderingContext2D::stringForImageSmoothingQuality(context2d->imageSmoothingQuality()));
+    }
+
+    // <https://webkit.org/b/174483> Web Inspector: Record actions performed on WebGLRenderingContext
+
+    initialState->setAttributes(WTFMove(attributes));
+
+    if (parameters->length())
+        initialState->setParameters(WTFMove(parameters));
+
+    ExceptionOr<UncachedString> result = canvas().toDataURL(ASCIILiteral("image/png"));
+    if (!result.hasException())
+        initialState->setContent(result.releaseReturnValue().string);
+
+    return initialState;
+}
+
+RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::buildAction(const String& name, Vector<CanvasActionParameterVariant>&& parameters)
+{
+    RefPtr<Inspector::Protocol::Array<InspectorValue>> action = Inspector::Protocol::Array<InspectorValue>::create();
+    action->addItem(static_cast<double>(indexForData(name)));
+
+    RefPtr<Inspector::Protocol::Array<InspectorValue>> parametersData = Inspector::Protocol::Array<Inspector::InspectorValue>::create();
+    for (CanvasActionParameterVariant& item : parameters) {
+        WTF::switchOn(item,
+            [&] (const Element*) {
+                // Elements are not serializable, so add a string as a placeholder since the actual
+                // element cannot be reconstructed in the frontend.
+                parametersData->addItem(indexForData(String("element")));
+            },
+            [&] (const HTMLImageElement* value) { parametersData->addItem(indexForData(value)); },
+            [&] (const ImageData* value) {
+                if (value)
+                    parametersData->addItem(indexForData(value));
+            },
+            [&] (const DOMMatrixInit& value) {
+                RefPtr<Inspector::Protocol::Array<double>> array = Inspector::Protocol::Array<double>::create();
+                array->addItem(value.a.value_or(1));
+                array->addItem(value.b.value_or(0));
+                array->addItem(value.c.value_or(0));
+                array->addItem(value.d.value_or(1));
+                array->addItem(value.e.value_or(0));
+                array->addItem(value.f.value_or(0));
+                parametersData->addItem(WTFMove(array));
+            },
+            [&] (const DOMPath* value) { parametersData->addItem(indexForData(buildStringFromPath(value->path()))); },
+            [&] (const Vector<float>& value) { parametersData->addItem(buildArrayForVector(value)); },
+            [&] (const String& value) { parametersData->addItem(indexForData(value)); },
+            [&] (double value) { parametersData->addItem(value); },
+            [&] (float value) { parametersData->addItem(value); },
+            [&] (int value) { parametersData->addItem(value); },
+            [&] (bool value) { parametersData->addItem(value); },
+            [&] (const std::optional<float>& value) {
+                if (value)
+                    parametersData->addItem(value.value());
+            },
+            [&] (CanvasImageSource& canvasImageSource) {
+                WTF::switchOn(canvasImageSource,
+                    [&] (const RefPtr<HTMLImageElement>& value) { parametersData->addItem(indexForData(value.get())); },
+#if ENABLE(VIDEO)
+                    [&] (RefPtr<HTMLVideoElement>& value) { parametersData->addItem(indexForData(value.get())); },
+#endif
+                    [&] (RefPtr<HTMLCanvasElement>& value) { parametersData->addItem(indexForData(value.get())); }
+                );
+            },
+            [&] (const CanvasRenderingContext2D::Style& style) {
+                WTF::switchOn(style,
+                    [&] (const String& value) { parametersData->addItem(indexForData(value)); },
+                    [&] (const RefPtr<CanvasGradient>& value) { parametersData->addItem(indexForData(value.get())); },
+                    [&] (const RefPtr<CanvasPattern>& value) { parametersData->addItem(indexForData(value.get())); }
+                );
+            },
+            [&] (CanvasRenderingContext2D::WindingRule value) {
+                String windingRule = CanvasRenderingContext2D::stringForWindingRule(value);
+                parametersData->addItem(indexForData(windingRule));
+            },
+            [&] (CanvasRenderingContext2D::ImageSmoothingQuality value) {
+                String imageSmoothingQuality = CanvasRenderingContext2D::stringForImageSmoothingQuality(value);
+                parametersData->addItem(indexForData(imageSmoothingQuality));
+            }
+        );
+    }
+    action->addItem(WTFMove(parametersData));
+
+    return action;
+}
+
+RefPtr<Inspector::Protocol::Array<InspectorValue>> InspectorCanvas::buildArrayForCanvasGradient(const CanvasGradient& canvasGradient)
+{
+    const Gradient& gradient = canvasGradient.gradient();
+    bool isRadial = gradient.isRadial();
+
+    String type = isRadial ? ASCIILiteral("radial-gradient") : ASCIILiteral("linear-gradient");
+
+    RefPtr<Inspector::Protocol::Array<float>> parameters = Inspector::Protocol::Array<float>::create();
+    parameters->addItem(gradient.p0().x());
+    parameters->addItem(gradient.p0().y());
+    if (isRadial)
+        parameters->addItem(gradient.startRadius());
+    parameters->addItem(gradient.p1().x());
+    parameters->addItem(gradient.p1().y());
+    if (isRadial)
+        parameters->addItem(gradient.endRadius());
+
+    RefPtr<Inspector::Protocol::Array<InspectorValue>> stops = Inspector::Protocol::Array<InspectorValue>::create();
+    for (const Gradient::ColorStop& colorStop : gradient.stops()) {
+        RefPtr<Inspector::Protocol::Array<InspectorValue>> stop = Inspector::Protocol::Array<InspectorValue>::create();
+        stop->addItem(colorStop.offset);
+        stop->addItem(indexForData(colorStop.color.cssText()));
+        stops->addItem(WTFMove(stop));
+    }
+
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> array = Inspector::Protocol::Array<Inspector::InspectorValue>::create();
+    array->addItem(indexForData(type));
+    array->addItem(WTFMove(parameters));
+    array->addItem(WTFMove(stops));
+    return array;
+}
+
+RefPtr<Inspector::Protocol::Array<InspectorValue>> InspectorCanvas::buildArrayForCanvasPattern(const CanvasPattern& canvasPattern)
+{
+    Image& tileImage = canvasPattern.pattern().tileImage();
+    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(tileImage.size(), RenderingMode::Unaccelerated);
+    imageBuffer->context().drawImage(tileImage, FloatPoint(0, 0));
+
+    String repeat;
+    bool repeatX = canvasPattern.pattern().repeatX();
+    bool repeatY = canvasPattern.pattern().repeatY();
+    if (repeatX && repeatY)
+        repeat = ASCIILiteral("repeat");
+    else if (repeatX && !repeatY)
+        repeat = ASCIILiteral("repeat-x");
+    else if (!repeatX && repeatY)
+        repeat = ASCIILiteral("repeat-y");
+    else
+        repeat = ASCIILiteral("no-repeat");
+
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> array = Inspector::Protocol::Array<Inspector::InspectorValue>::create();
+    array->addItem(indexForData("pattern"));
+    array->addItem(indexForData(imageBuffer->toDataURL("image/png")));
+    array->addItem(indexForData(repeat));
+    return array;
+}
+
+RefPtr<Inspector::Protocol::Array<InspectorValue>> InspectorCanvas::buildArrayForImageData(const ImageData& imageData)
+{
+    RefPtr<Inspector::Protocol::Array<int>> data = Inspector::Protocol::Array<int>::create();
+    for (size_t i = 0; i < imageData.data()->length(); ++i)
+        data->addItem(imageData.data()->item(i));
+
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> array = Inspector::Protocol::Array<Inspector::InspectorValue>::create();
+    array->addItem(WTFMove(data));
+    array->addItem(imageData.width());
+    array->addItem(imageData.height());
+    return array;
 }
 
 } // namespace WebCore

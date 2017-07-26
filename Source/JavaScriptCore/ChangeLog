@@ -1,3 +1,31 @@
+2017-07-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create protocol for recording Canvas contexts
+        https://bugs.webkit.org/show_bug.cgi?id=174481
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Canvas.json:
+         - Add `requestRecording` command to mark the provided canvas as having requested a recording.
+         - Add `cancelRecording` command to clear a previously marked canvas and flush any recorded data.
+         - Add `recordingFinished` event that is fired once a recording is finished.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * inspector/protocol/Recording.json: Added.
+         - Add `Type` enum that lists the types of recordings
+         - Add `InitialState` type that contains information about the canvas context at the
+           beginning of the recording.
+         - Add `Frame` type that holds a list of actions that were recorded.
+         - Add `Recording` type as the container object of recording data.
+
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        (JSBackendCommandsGenerator.generate_domain):
+        Create an agent for domains with no events or commands.
+
+        * inspector/InspectorValues.h:
+        Make Array `get` public so that values can be retrieved if needed.
+
 2017-07-26  Brian Burg  <bburg@apple.com>
 
         Remove WEB_TIMING feature flag

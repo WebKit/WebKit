@@ -31,6 +31,10 @@
         "CachedAttribute": {
             "contextsAllowed": ["attribute"]
         },
+        "CallTracingCallback": {
+            "contextsAllowed": ["interface", "attribute", "operation"],
+            "values": ["*"]
+        },
         "CallbackNeedsOperatorEqual": {
             "contextsAllowed": ["callback-function"]
         },

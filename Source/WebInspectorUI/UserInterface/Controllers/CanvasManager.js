@@ -96,6 +96,19 @@ WebInspector.CanvasManager = class CanvasManager extends WebInspector.Object
         canvas.cssCanvasClientNodesChanged();
     }
 
+    recordingFinished(canvasIdentifier, recordingPayload)
+    {
+        // Called from WebInspector.CanvasObserver.
+
+        let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
+        console.assert(canvas);
+        if (!canvas)
+            return;
+
+        let recording = WebInspector.Recording.fromPayload(recordingPayload);
+        this.dispatchEventToListeners(WebInspector.CanvasManager.Event.RecordingFinished, {canvas, recording});
+    }
+
     // Private
 
     _mainResourceDidChange(event)
@@ -117,4 +130,5 @@ WebInspector.CanvasManager.Event = {
     Cleared: "canvas-manager-cleared",
     CanvasWasAdded: "canvas-manager-canvas-was-added",
     CanvasWasRemoved: "canvas-manager-canvas-was-removed",
+    RecordingFinished: "canvas-managger-recording-finished",
 };
