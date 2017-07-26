@@ -27,6 +27,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/RunLoop.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,6 +50,9 @@ public:
 
     void finishAllPendingWorkSynchronously();
 
+    void ref();
+    void deref();
+
 private:
     String storageDirectoryPath() const;
     String resourceLogFilePath() const;
@@ -61,9 +65,11 @@ private:
     void populateMemoryStoreFromDisk();
     void excludeFromBackup() const;
     void refreshMemoryStoreFromDisk();
+    void asyncWriteTimerFired();
 
     WebResourceLoadStatisticsStore& m_memoryStore;
     const String m_storageDirectoryPath;
+    RunLoop::Timer<ResourceLoadStatisticsPersistentStorage> m_asyncWriteTimer;
     std::unique_ptr<WebCore::FileMonitor> m_fileMonitor;
     WallTime m_lastStatisticsFileSyncTime;
     MonotonicTime m_lastStatisticsWriteTime;
