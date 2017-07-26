@@ -1,5 +1,14 @@
 2017-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix WebKit2 derived sources directory creation after r219488.
+
+        The variable is still DERIVED_SOURCES_WEBKIT2_DIR, not DERIVED_SOURCES_WEBKIT_DIR. Build was not really affected
+        because WebKit2 makefile creates the directory too.
+
+        * Source/cmake/WebKitFS.cmake:
+
+2017-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.17.5 release.
 
         * Source/cmake/OptionsGTK.cmake: Bump version numbers.
