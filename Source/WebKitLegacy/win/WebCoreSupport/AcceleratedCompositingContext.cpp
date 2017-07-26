@@ -403,7 +403,7 @@ void AcceleratedCompositingContext::layerFlushTimerFired()
         scheduleLayerFlush();
 }
 
-void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& rectToPaint, GraphicsLayerPaintBehavior)
+void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const FloatRect& rectToPaint, GraphicsLayerPaintFlags)
 {
     context.save();
     context.clip(rectToPaint);

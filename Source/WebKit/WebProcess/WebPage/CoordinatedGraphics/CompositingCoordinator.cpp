@@ -266,7 +266,7 @@ void CompositingCoordinator::notifyFlushRequired(const GraphicsLayer*)
         m_client.notifyFlushRequired();
 }
 
-void CompositingCoordinator::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect, GraphicsLayerPaintBehavior)
+void CompositingCoordinator::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect, GraphicsLayerPaintFlags)
 {
     m_client.paintLayerContents(graphicsLayer, graphicsContext, enclosingIntRect(clipRect));
 }

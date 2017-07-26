@@ -107,8 +107,6 @@ public:
     bool canUseAsyncDecodingForLargeImages() const;
     bool shouldUseAsyncDecodingForAnimatedImages() const;
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool value) { m_clearDecoderAfterAsyncFrameRequestForTesting = value; }
-    void setLargeImageAsyncDecodingEnabledForTesting(bool enabled) { m_largeImageAsyncDecodingEnabledForTesting = enabled; }
-    bool isLargeImageAsyncDecodingEnabledForTesting() const { return m_largeImageAsyncDecodingEnabledForTesting; }
 
     WEBCORE_EXPORT unsigned decodeCountForTesting() const;
 
@@ -226,7 +224,6 @@ private:
     bool m_showDebugBackground { false };
 
     bool m_clearDecoderAfterAsyncFrameRequestForTesting { false };
-    bool m_largeImageAsyncDecodingEnabledForTesting { false };
 
 #if !LOG_DISABLED
     size_t m_lateFrameCount { 0 };

@@ -109,7 +109,7 @@ PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(CGContextR
     return dirtyRects;
 }
 
-void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList&, GraphicsLayerPaintBehavior)
+void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList&, GraphicsLayerPaintFlags)
 {
     intern(platformCALayer)->displayCallback(platformCALayer->platformLayer(), context);
 }

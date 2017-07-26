@@ -152,7 +152,7 @@ void TileCoverageMap::update()
     m_visibleViewportIndicatorLayer.get().setBorderColor(visibleRectIndicatorColor);
 }
 
-void TileCoverageMap::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, GraphicsLayerPaintBehavior)
+void TileCoverageMap::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, GraphicsLayerPaintFlags)
 {
     ASSERT_UNUSED(platformCALayer, platformCALayer == m_layer.ptr());
     m_controller.tileGrid().drawTileMapContents(context.platformContext(), m_layer.get().bounds());
