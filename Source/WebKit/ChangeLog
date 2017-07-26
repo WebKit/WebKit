@@ -1,5 +1,56 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219764. rdar://problem/33523878
+
+    2017-07-22  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION(r204565): WKObject is broken
+            https://bugs.webkit.org/show_bug.cgi?id=174736
+            <rdar://problem/33246169>
+
+            Reviewed by Dan Bernstein.
+
+            Revert r204565 as making WKObject a root class caused unexpected crashes.
+            Instead, we now have WKObject inherit from NSProxy (instead of previously
+            NSObject) and we forward calls to the target.
+
+            We also need to provide an implementation for private methods such as
+            isNSString__ to address the issue with NSStrings that r204565 was trying
+            to fix.
+
+            * Shared/Cocoa/APIObject.mm:
+            (API::Object::unwrap):
+            * Shared/Cocoa/WKObject.h:
+            * Shared/Cocoa/WKObject.mm:
+            (-[WKObject dealloc]):
+            (-[WKObject hash]):
+            (-[WKObject isKindOfClass:]):
+            (-[WKObject isMemberOfClass:]):
+            (-[WKObject respondsToSelector:]):
+            (-[WKObject conformsToProtocol:]):
+            (-[WKObject forwardingTargetForSelector:]):
+            (-[WKObject description]):
+            (-[WKObject debugDescription]):
+            (-[WKObject classForCoder]):
+            (-[WKObject classForKeyedArchiver]):
+            (-[WKObject _web_createTarget]):
+            (-[WKObject forwardInvocation:]):
+            (-[WKObject methodSignatureForSelector:]):
+            (-[WKObject isNSObject__]):
+            (-[WKObject isNSArray__]):
+            (-[WKObject isNSCFConstantString__]):
+            (-[WKObject isNSData__]):
+            (-[WKObject isNSDate__]):
+            (-[WKObject isNSDictionary__]):
+            (-[WKObject isNSNumber__]):
+            (-[WKObject isNSOrderedSet__]):
+            (-[WKObject isNSSet__]):
+            (-[WKObject isNSString__]):
+            (-[WKObject isNSTimeZone__]):
+            (-[WKObject isNSValue__]):
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219739. rdar://problem/33523884
 
     2017-07-21  Chris Dumez  <cdumez@apple.com>

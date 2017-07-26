@@ -334,9 +334,6 @@ API::Object* Object::unwrap(void* object)
     if (!object)
         return nullptr;
 
-    ASSERT([(id)object conformsToProtocol:@protocol(WKObject)]);
-    ASSERT([(id)object respondsToSelector:@selector(_apiObject)]);
-
     return &static_cast<id <WKObject>>(object)._apiObject;
 }
 
