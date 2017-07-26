@@ -2177,27 +2177,17 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
 // This function exits as a performance optimization to avoid a synchronous layout.
 std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTextControl(HTMLTextFormControlElement& textControl)
 {
-    TextControlInnerTextElement* innerTextElement = textControl.innerTextElement();
-    if (!innerTextElement)
-        return std::nullopt;
-
     if (is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(textControl).isPasswordField())
         return std::nullopt;
 
-    Position firstPosition = firstPositionInNode(innerTextElement);
-    Node* firstChild = innerTextElement->firstChild();
-    if (!firstChild)
-        firstChild = innerTextElement;
-    ContainerNode* editingHost = highestEditableRoot(firstPosition);
-    if (!editingHost) // textControl is no longer editable. e.g. readonly or disabled.
-        return std::nullopt;
-
     AXObjectCache* cache = textControl.document().axObjectCache();
-    RefPtr<AccessibilityObject> obj = cache->getOrCreate(editingHost);
+    RefPtr<AccessibilityObject> obj = cache->getOrCreate(&textControl);
+    if (!obj)
+        return std::nullopt;
 
     TextMarkerData textMarkerData;
     textMarkerData.axID = obj.get()->axObjectID();
-    textMarkerData.node = firstChild;
+    textMarkerData.node = &textControl;
 
     cache->setNodeInUse(&textControl);
 
