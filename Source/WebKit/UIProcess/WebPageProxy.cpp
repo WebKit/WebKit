@@ -4689,12 +4689,12 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
         return;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    for (size_t i = 0; i < fileURLs.size(); ++i) {
-        SandboxExtension::HandleArray sandboxExtensionHandles;
-        sandboxExtensionHandles.allocate(fileURLs.size());
+    SandboxExtension::HandleArray sandboxExtensionHandles;
+    sandboxExtensionHandles.allocate(fileURLs.size());
+    for (size_t i = 0; i < fileURLs.size(); ++i)
         SandboxExtension::createHandle(fileURLs[i], SandboxExtension::ReadOnly, sandboxExtensionHandles[i]);
-        m_process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(sandboxExtensionHandles), m_pageID);
-    }
+
+    m_process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(sandboxExtensionHandles), m_pageID);
 #endif
 
     m_process->send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->dataReference() : IPC::DataReference()), m_pageID);
@@ -4710,9 +4710,9 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
         return;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
+    SandboxExtension::HandleArray sandboxExtensionHandles;
+    sandboxExtensionHandles.allocate(fileURLs.size());
     for (size_t i = 0; i < fileURLs.size(); ++i) {
-        SandboxExtension::HandleArray sandboxExtensionHandles;
-        sandboxExtensionHandles.allocate(fileURLs.size());
         bool createdExtension = SandboxExtension::createHandle(fileURLs[i], SandboxExtension::ReadOnly, sandboxExtensionHandles[i]);
         if (!createdExtension) {
             // This can legitimately fail if a directory containing the file is deleted after the file was chosen.
@@ -4720,8 +4720,9 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
             WTFLogAlways("WebPageProxy::didChooseFilesForOpenPanel: could not create a sandbox extension for '%s'\n", fileURLs[i].utf8().data());
             continue;
         }
-        m_process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(sandboxExtensionHandles), m_pageID);
     }
+
+    m_process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(sandboxExtensionHandles), m_pageID);
 #endif
 
     m_process->send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs), m_pageID);
