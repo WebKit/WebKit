@@ -595,23 +595,23 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // -currentContextDrawingToScreen returns YES for bitmap contexts.
     BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
     if (isPrinting)
-        return PaintBehaviorFlattenCompositingLayers;
+        return PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting;
 #endif
 
     if (!WKCGContextIsBitmapContext(context))
-        return PaintBehaviorAllowAsyncImageDecoding;
+        return PaintBehaviorNormal;
 
     // If we're drawing into a bitmap, we might be snapshotting, or drawing into a layer-backed view.
     if (WebHTMLView *htmlDocumentView = [self _webHTMLDocumentView]) {
 #if PLATFORM(IOS)
         if ([[htmlDocumentView window] isInSnapshottingPaint])
-            return 0;
+            return PaintBehaviorSnapshotting;
 #endif
         if ([htmlDocumentView _web_isDrawingIntoLayer])
-            return PaintBehaviorAllowAsyncImageDecoding;
+            return PaintBehaviorNormal;
     }
     
-    return PaintBehaviorFlattenCompositingLayers;
+    return PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting;
 }
 
 - (void)_drawRect:(NSRect)rect contentsOnly:(BOOL)contentsOnly
@@ -644,9 +644,12 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         if (FrameView* parentView = parentFrame ? parentFrame->view() : nullptr) {
             if (parentView->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
                 paintBehavior |= PaintBehaviorFlattenCompositingLayers;
-                
-            if (parentView->paintBehavior() & PaintBehaviorAllowAsyncImageDecoding)
-                paintBehavior |= PaintBehaviorAllowAsyncImageDecoding;
+            
+            if (parentView->paintBehavior() & PaintBehaviorSnapshotting)
+                paintBehavior |= PaintBehaviorSnapshotting;
+            
+            if (parentView->paintBehavior() & PaintBehaviorTileFirstPaint)
+                paintBehavior |= PaintBehaviorTileFirstPaint;
         }
     } else
         paintBehavior |= [self _paintBehaviorForDestinationContext:ctx];

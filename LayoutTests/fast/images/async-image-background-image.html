@@ -32,9 +32,12 @@
 
             var image = new Image();
             image.onload = function() {
+                // Force async image decoding for this image.
+                if (window.internals)
+                    internals.setLargeImageAsyncDecodingEnabledForTesting(image, true);
+
+                // Change the background of the element.                 
                 var element = document.getElementsByClassName("image-background")[0];
- 
-                // Change the background of the element.
                 element.style.backgroundImage = 'url(' + image.src + ')';
  
                 if (window.internals && window.testRunner) {

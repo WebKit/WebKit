@@ -738,79 +738,58 @@ unsigned Internals::memoryCacheSize() const
     return MemoryCache::singleton().size();
 }
 
-unsigned Internals::imageFrameIndex(HTMLImageElement& element)
+static Image* imageFromImageElement(HTMLImageElement& element)
 {
     auto* cachedImage = element.cachedImage();
-    if (!cachedImage)
-        return 0;
+    return cachedImage ? cachedImage->image() : nullptr;
+}
 
-    auto* image = cachedImage->image();
-    return is<BitmapImage>(image) ? downcast<BitmapImage>(*image).currentFrame() : 0;
+static BitmapImage* bitmapImageFromImageElement(HTMLImageElement& element)
+{
+    auto* image = imageFromImageElement(element);
+    return image && is<BitmapImage>(image) ? &downcast<BitmapImage>(*image) : nullptr;
+}
+
+unsigned Internals::imageFrameIndex(HTMLImageElement& element)
+{
+    auto* bitmapImage = bitmapImageFromImageElement(element);
+    return bitmapImage ? bitmapImage->currentFrame() : 0;
 }
 
 void Internals::setImageFrameDecodingDuration(HTMLImageElement& element, float duration)
 {
-    auto* cachedImage = element.cachedImage();
-    if (!cachedImage)
-        return;
-
-    auto* image = cachedImage->image();
-    if (!is<BitmapImage>(image))
-        return;
-
-    downcast<BitmapImage>(*image).setFrameDecodingDurationForTesting(Seconds { duration });
+    if (auto* bitmapImage = bitmapImageFromImageElement(element))
+        bitmapImage->setFrameDecodingDurationForTesting(Seconds { duration });
 }
 
 void Internals::resetImageAnimation(HTMLImageElement& element)
 {
-    auto* cachedImage = element.cachedImage();
-    if (!cachedImage)
-        return;
-
-    auto* image = cachedImage->image();
-    if (!is<BitmapImage>(image))
-        return;
-
-    image->resetAnimation();
+    if (auto* image = imageFromImageElement(element))
+        image->resetAnimation();
 }
 
 bool Internals::isImageAnimating(HTMLImageElement& element)
 {
-    auto* cachedImage = element.cachedImage();
-    if (!cachedImage)
-        return false;
-
-    auto* image = cachedImage->image();
-    if (!image)
-        return false;
-
-    return image->isAnimating() || image->animationPending();
+    auto* image = imageFromImageElement(element);
+    return image && (image->isAnimating() || image->animationPending());
 }
 
-void Internals::setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement& element, bool value)
+void Internals::setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement& element, bool enabled)
 {
-    auto* cachedImage = element.cachedImage();
-    if (!cachedImage)
-        return;
-
-    auto* image = cachedImage->image();
-    if (!is<BitmapImage>(image))
-        return;
-
-    downcast<BitmapImage>(*image).setClearDecoderAfterAsyncFrameRequestForTesting(value);
+    if (auto* bitmapImage = bitmapImageFromImageElement(element))
+        bitmapImage->setClearDecoderAfterAsyncFrameRequestForTesting(enabled);
 }
 
 unsigned Internals::imageDecodeCount(HTMLImageElement& element)
 {
-    auto* cachedImage = element.cachedImage();
-    if (!cachedImage)
-        return 0;
+    auto* bitmapImage = bitmapImageFromImageElement(element);
+    return bitmapImage ? bitmapImage->decodeCountForTesting() : 0;
+}
 
-    auto* image = cachedImage->image();
-    if (!is<BitmapImage>(image))
-        return 0;
-
-    return downcast<BitmapImage>(*image).decodeCountForTesting();
+void Internals::setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement& element, bool enabled)
+{
+    if (auto* bitmapImage = bitmapImageFromImageElement(element))
+        bitmapImage->setLargeImageAsyncDecodingEnabledForTesting(enabled);
 }
 
 void Internals::setGridMaxTracksLimit(unsigned maxTrackLimit)

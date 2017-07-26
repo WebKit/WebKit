@@ -82,7 +82,7 @@ private:
 
         // GraphicsLayerClient
         void notifyFlushRequired(const GraphicsLayer*) override;
-        void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& inClip, GraphicsLayerPaintFlags) override;
+        void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const FloatRect& inClip, GraphicsLayerPaintBehavior) override;
         float deviceScaleFactor() const override;
 
         void didFinishFadeOutAnimation();
