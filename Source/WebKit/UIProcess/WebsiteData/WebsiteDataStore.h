@@ -127,6 +127,8 @@ public:
     void addPendingCookie(const WebCore::Cookie&);
     void removePendingCookie(const WebCore::Cookie&);
 
+    void enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback);
+
 private:
     explicit WebsiteDataStore(WebCore::SessionID);
     explicit WebsiteDataStore(Configuration, WebCore::SessionID);

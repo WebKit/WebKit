@@ -157,6 +157,23 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 @implementation WKWebsiteDataStore (WKPrivate)
 
++ (NSSet<NSString *> *)_allWebsiteDataTypesIncludingPrivate
+{
+    static dispatch_once_t onceToken;
+    static NSSet *allWebsiteDataTypes;
+    dispatch_once(&onceToken, ^ {
+        auto *privateTypes = @[_WKWebsiteDataTypeHSTSCache, _WKWebsiteDataTypeMediaKeys, _WKWebsiteDataTypeSearchFieldRecentSearches, _WKWebsiteDataTypeResourceLoadStatistics, _WKWebsiteDataTypeCredentials
+#if !TARGET_OS_IPHONE
+        , _WKWebsiteDataTypePlugInData
+#endif
+        ];
+
+        allWebsiteDataTypes = [[[self allWebsiteDataTypes] setByAddingObjectsFromArray:privateTypes] retain];
+    });
+
+    return allWebsiteDataTypes;
+}
+
 - (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration
 {
     if (!(self = [super init]))
@@ -449,7 +466,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!store)
         return;
 
-    store->scheduleClearInMemoryAndPersistent();
+    store->scheduleClearInMemoryAndPersistent(WebKit::WebResourceLoadStatisticsStore::ShouldGrandfather::Yes);
 }
 
 - (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours
@@ -458,7 +475,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!store)
         return;
 
-    store->scheduleClearInMemoryAndPersistent(std::chrono::system_clock::now() - std::chrono::hours(hours));
+    store->scheduleClearInMemoryAndPersistent(std::chrono::system_clock::now() - std::chrono::hours(hours), WebKit::WebResourceLoadStatisticsStore::ShouldGrandfather::Yes);
 }
 
 - (void)_resourceLoadStatisticsResetToConsistentState
@@ -471,6 +488,22 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
     store->resetParametersToDefaultValues();
     store->scheduleClearInMemory();
+}
+
+- (void)_setResourceLoadStatisticsTestingCallback:(void (^)(WKWebsiteDataStore *, NSString *))callback
+{
+    if (callback) {
+        _websiteDataStore->websiteDataStore().enableResourceLoadStatisticsAndSetTestingCallback([callback = makeBlockPtr(callback), self](const String& event) {
+            callback(self, (NSString *)event);
+        });
+        return;
+    }
+
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setStatisticsTestingCallback(nullptr);
 }
 
 @end

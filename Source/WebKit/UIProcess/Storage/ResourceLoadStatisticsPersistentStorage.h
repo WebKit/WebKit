@@ -45,13 +45,18 @@ public:
     ~ResourceLoadStatisticsPersistentStorage();
 
     void initialize();
-    void scheduleOrWriteMemoryStore();
     void clear();
 
     void finishAllPendingWorkSynchronously();
 
     void ref();
     void deref();
+
+    enum class ForceImmediateWrite {
+        No,
+        Yes,
+    };
+    void scheduleOrWriteMemoryStore(ForceImmediateWrite);
 
 private:
     String storageDirectoryPath() const;

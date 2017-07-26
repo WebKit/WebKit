@@ -234,8 +234,7 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
 
     m_lastStatisticsFileSyncTime = readTime;
 
-    if (m_memoryStore.isEmpty())
-        m_memoryStore.grandfatherExistingWebsiteData();
+    m_memoryStore.logTestingEvent(ASCIILiteral("PopulatedWithoutGrandfathering"));
 }
 
 void ResourceLoadStatisticsPersistentStorage::asyncWriteTimerFired()
@@ -280,12 +279,12 @@ void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
     startMonitoringDisk();
 }
 
-void ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore()
+void ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore(ForceImmediateWrite forceImmediateWrite)
 {
     ASSERT(!RunLoop::isMain());
 
     auto timeSinceLastWrite = MonotonicTime::now() - m_lastStatisticsWriteTime;
-    if (timeSinceLastWrite < minimumWriteInterval) {
+    if (forceImmediateWrite != ForceImmediateWrite::Yes && timeSinceLastWrite < minimumWriteInterval) {
         if (!m_hasPendingWrite) {
             m_hasPendingWrite = true;
             Seconds delay = minimumWriteInterval - timeSinceLastWrite + 1_s;
