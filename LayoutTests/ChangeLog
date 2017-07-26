@@ -1,5 +1,22 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219841. rdar://problem/33524930
+
+    2017-07-24  Jeremy Jones  <jeremyj@apple.com>
+
+            LayoutTest userscripts/user-script-audio-document.html failing on High Sierra
+            https://bugs.webkit.org/show_bug.cgi?id=174726
+            rdar://problem/30059973
+
+            Reviewed by Alexey Proskuryakov.
+
+            Underlying issue has been resolved.
+            Re-enable test: userscripts/user-script-audio-document.html
+
+            * platform/mac-highsierra/TestExpectations:
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219837. rdar://problem/33524936
 
     2017-07-24  Jeremy Jones  <jeremyj@apple.com>
