@@ -161,6 +161,17 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     
     unsigned cellSize = this->cellSize();
     
+    VM& vm = *this->vm();
+    auto destroy = [&] (void* cell) {
+        JSCell* jsCell = static_cast<JSCell*>(cell);
+        if (!jsCell->isZapped()) {
+            destroyFunc(vm, jsCell);
+            jsCell->zap();
+        }
+    };
+    
+    m_allocator->setIsDestructible(NoLockingNecessary, this, false);
+    
     if (Options::useBumpAllocator()
         && emptyMode == IsEmpty
         && newlyAllocatedMode == DoesNotHaveNewlyAllocated) {
@@ -181,14 +192,17 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         char* payloadEnd = startOfLastCell + cellSize;
         RELEASE_ASSERT(payloadEnd - MarkedBlock::blockSize <= bitwise_cast<char*>(&block));
         char* payloadBegin = bitwise_cast<char*>(block.atoms() + firstAtom());
-        if (scribbleMode == Scribble)
-            scribble(payloadBegin, payloadEnd - payloadBegin);
+        
         if (sweepMode == SweepToFreeList)
             setIsFreeListed();
-        else
-            m_allocator->setIsEmpty(NoLockingNecessary, this, true);
         if (space()->isMarking())
             block.m_lock.unlock();
+        if (destructionMode != BlockHasNoDestructors) {
+            for (char* cell = payloadBegin; cell < payloadEnd; cell += cellSize)
+                destroy(cell);
+        }
+        if (scribbleMode == Scribble)
+            scribble(payloadBegin, payloadEnd - payloadBegin);
         if (sweepMode == SweepToFreeList)
             freeList->initializeBump(payloadEnd, payloadEnd - payloadBegin);
         if (false)
@@ -205,17 +219,11 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     cryptographicallyRandomValues(&secret, sizeof(uintptr_t));
     bool isEmpty = true;
     Vector<size_t> deadCells;
-    VM& vm = *this->vm();
     auto handleDeadCell = [&] (size_t i) {
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&block.atoms()[i]);
 
-        if (destructionMode != BlockHasNoDestructors && emptyMode == NotEmpty) {
-            JSCell* jsCell = static_cast<JSCell*>(cell);
-            if (!jsCell->isZapped()) {
-                destroyFunc(vm, jsCell);
-                jsCell->zap();
-            }
-        }
+        if (destructionMode != BlockHasNoDestructors && emptyMode == NotEmpty)
+            destroy(cell);
 
         if (sweepMode == SweepToFreeList) {
             FreeCell* freeCell = reinterpret_cast_ptr<FreeCell*>(cell);
@@ -273,24 +281,56 @@ void MarkedBlock::Handle::finishSweepKnowingSubspace(FreeList* freeList, const D
     MarksMode marksMode = this->marksMode();
 
     auto trySpecialized = [&] () -> bool {
-        if (sweepMode != SweepToFreeList)
-            return false;
         if (scribbleMode != DontScribble)
             return false;
         if (newlyAllocatedMode != DoesNotHaveNewlyAllocated)
             return false;
         if (destructionMode != BlockHasDestructors)
             return false;
-        if (emptyMode == IsEmpty)
-            return false;
         
-        switch (marksMode) {
-        case MarksNotStale:
-            specializedSweep<true, NotEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, IsEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, destroyFunc);
-            return true;
-        case MarksStale:
-            specializedSweep<true, NotEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, IsEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, destroyFunc);
-            return true;
+        switch (emptyMode) {
+        case IsEmpty:
+            switch (sweepMode) {
+            case SweepOnly:
+                switch (marksMode) {
+                case MarksNotStale:
+                    specializedSweep<true, IsEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, IsEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, destroyFunc);
+                    return true;
+                case MarksStale:
+                    specializedSweep<true, IsEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, IsEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, destroyFunc);
+                    return true;
+                }
+            case SweepToFreeList:
+                switch (marksMode) {
+                case MarksNotStale:
+                    specializedSweep<true, IsEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, IsEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, destroyFunc);
+                    return true;
+                case MarksStale:
+                    specializedSweep<true, IsEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, IsEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, destroyFunc);
+                    return true;
+                }
+            }
+        case NotEmpty:
+            switch (sweepMode) {
+            case SweepOnly:
+                switch (marksMode) {
+                case MarksNotStale:
+                    specializedSweep<true, NotEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, NotEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, destroyFunc);
+                    return true;
+                case MarksStale:
+                    specializedSweep<true, NotEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, NotEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, destroyFunc);
+                    return true;
+                }
+            case SweepToFreeList:
+                switch (marksMode) {
+                case MarksNotStale:
+                    specializedSweep<true, NotEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, NotEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, destroyFunc);
+                    return true;
+                case MarksStale:
+                    specializedSweep<true, NotEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, NotEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, destroyFunc);
+                    return true;
+                }
+            }
         }
         
         return false;
@@ -320,8 +360,6 @@ inline MarkedBlock::Handle::EmptyMode MarkedBlock::Handle::emptyMode()
     // - It's true when the block is freshly allocated.
     // - It's true if the block had been swept in the past, all destructors were called, and that
     //   sweep proved that the block is empty.
-    // - It's false if there are any destructors that need to be called, even if the block has no
-    //   live objects.
     return m_allocator->isEmpty(NoLockingNecessary, this) ? IsEmpty : NotEmpty;
 }
 

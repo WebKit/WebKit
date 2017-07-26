@@ -67,17 +67,8 @@ bool MarkedAllocator::isPagedOut(double deadline)
     return false;
 }
 
-bool MarkedAllocator::shouldStealEmptyBlocksFromOtherAllocators() const
-{
-    return !needsDestruction();
-}
-
 MarkedBlock::Handle* MarkedAllocator::findEmptyBlockToSteal()
 {
-    // Don't allow others to steal from us, if we wouldn't steal from others.
-    if (!shouldStealEmptyBlocksFromOtherAllocators())
-        return nullptr;
-    
     m_emptyCursor = m_empty.findBit(m_emptyCursor, true);
     if (m_emptyCursor >= m_blocks.size())
         return nullptr;
@@ -111,8 +102,7 @@ void* MarkedAllocator::tryAllocateWithoutCollecting()
             return result;
     }
     
-    if (Options::stealEmptyBlocksFromOtherAllocators()
-        && shouldStealEmptyBlocksFromOtherAllocators()) {
+    if (Options::stealEmptyBlocksFromOtherAllocators()) {
         if (MarkedBlock::Handle* block = markedSpace().findEmptyBlockToSteal()) {
             block->sweep(nullptr);
             
@@ -389,18 +379,16 @@ void MarkedAllocator::endMarking()
     // know what kind of collection it is. That knowledge is already encoded in the m_markingXYZ
     // vectors.
     
-    if (needsDestruction()) {
-        // If blocks need destruction then nothing is empty! This is a correct assertion but may
-        // become wrong once we go full concurrent: when we create a new block, it will flicker
-        // into the empty set for a tiny moment. On the other hand, this code is likely to be run
-        // in stopTheWorld.
-        ASSERT(m_empty.isEmpty());
-        m_canAllocateButNotEmpty = m_live & ~m_markingRetired;
-        return;
-    }
-    
     m_empty = m_live & ~m_markingNotEmpty;
     m_canAllocateButNotEmpty = m_live & m_markingNotEmpty & ~m_markingRetired;
+    if (needsDestruction()) {
+        // There are some blocks that we didn't allocate out of in the last cycle, but we swept them. This
+        // will forget that we did that and we will end up sweeping them again and attempting to call their
+        // destructors again. That's fine because of zapping. The only time when we cannot forget is when
+        // we just allocate a block or when we move a block from one size class to another. That doesn't
+        // happen here.
+        m_destructible = m_live;
+    }
     
     if (false) {
         dataLog("Bits for ", m_cellSize, ", ", m_attributes, " after endMarking:\n");
@@ -437,7 +425,7 @@ void MarkedAllocator::sweep()
 
 void MarkedAllocator::shrink()
 {
-    m_empty.forEachSetBit(
+    (m_empty & ~m_destructible).forEachSetBit(
         [&] (size_t index) {
             markedSpace().freeBlock(m_blocks[index]);
         });

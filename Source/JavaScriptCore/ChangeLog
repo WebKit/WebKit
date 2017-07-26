@@ -1,3 +1,68 @@
+2017-07-24  Filip Pizlo  <fpizlo@apple.com>
+
+        GC should be fine with trading blocks between destructor and non-destructor blocks
+        https://bugs.webkit.org/show_bug.cgi?id=174811
+
+        Reviewed by Mark Lam.
+        
+        Our GC has the ability to trade blocks between MarkedAllocators. A MarkedAllocator is a
+        size-class-within-a-Subspace. The ability to trade helps reduce memory wastage due to
+        fragmentation. Prior to this change, this only worked between blocks that did not have destructors.
+        This was partly a policy decision. But mostly, it was fallout from the way we use the `empty` block
+        set.
+        
+        Here's how `empty` used to work. If a block is empty, we don't run destructors. We say that a block
+        is empty if:
+        
+        A) It has no live objects and its a non-destructor block, or
+        B) We just allocated it (so it has no destructors even if it's a destructor block), or
+        C) We just stole it from another allocator (so it also has no destructors), or
+        D) We just swept the block and ran all destructors.
+        
+        Case (A) is for trading blocks. That's how a different MarkedAllocator would know that this is a
+        block that could be stolen.
+
+        Cases (B) and (C) need to be detected for correctness, since otherwise we might try to run
+        destructors in blocks that have garbage bits. In that case, the isZapped check won't detect that
+        cells don't need destruction, so without having the `empty` bit we would try to destruct garbage
+        and crash. Currently, we know that we have cases (B) and (C) when the block is empty.
+        
+        Case (D) is necessary for detecting which blocks can be removed when we `shrink` the heap.
+        
+        If we tried to enable trading of blocks between allocators without making any changes to how
+        `empty` works, then it just would not work. We have to set the `empty` bits of blocks that have no
+        live objects in order for those bits to be candidates for trading. But if we do that, then our
+        logic for cases (B-D) will think that the block has no destructible objects. That's bad, since then
+        our destructors won't run and we'll leak memory.
+        
+        This change fixes this issue by decoupling the "do I have destructors" question from the "do I have
+        live objects" question by introducing a new `destructible` bitvector. The GC flags all live blocks
+        as being destructible at the end. We clear the destructible bit in cases (B-D). Cases (B-C) are
+        handled entirely by the new destrictible bit, while case (D) is detected by looking for blocks that
+        are (empty & ~destructible).
+        
+        Then we can simply remove all destructor-oriented special-casing of the `empty` bit. And we can
+        remove destructor-oriented special-casing of block trading.
+
+        This is a perf-neutral change. We expect most free memory to be in non-destructor blocks anyway,
+        so this change is more about clean-up than perf. But, this could reduce memory usage in some
+        pathological cases.
+        
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::findEmptyBlockToSteal):
+        (JSC::MarkedAllocator::tryAllocateWithoutCollecting):
+        (JSC::MarkedAllocator::endMarking):
+        (JSC::MarkedAllocator::shrink):
+        (JSC::MarkedAllocator::shouldStealEmptyBlocksFromOtherAllocators): Deleted.
+        * heap/MarkedAllocator.h:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::lastChanceToFinalize):
+        (JSC::MarkedBlock::Handle::sweep):
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        (JSC::MarkedBlock::Handle::finishSweepKnowingSubspace):
+        (JSC::MarkedBlock::Handle::emptyMode):
+
 2017-07-25  Keith Miller  <keith_miller@apple.com>
 
         Remove Broken CompareEq constant folding phase.

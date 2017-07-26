@@ -41,9 +41,10 @@ class LLIntOffsetsExtractor;
 
 #define FOR_EACH_MARKED_ALLOCATOR_BIT(macro) \
     macro(live, Live) /* The set of block indices that have actual blocks. */\
-    macro(empty, Empty) /* The set of all blocks that have no live objects and nothing to destroy. */ \
+    macro(empty, Empty) /* The set of all blocks that have no live objects. */ \
     macro(allocated, Allocated) /* The set of all blocks that are full of live objects. */\
     macro(canAllocateButNotEmpty, CanAllocateButNotEmpty) /* The set of all blocks are neither empty nor retired (i.e. are more than minMarkedBlockUtilization full). */ \
+    macro(destructible, Destructible) /* The set of all blocks that may have destructors to run. */\
     macro(eden, Eden) /* The set of all blocks that have new objects since the last GC. */\
     macro(unswept, Unswept) /* The set of all blocks that could be swept by the incremental sweeper. */\
     \
@@ -64,69 +65,6 @@ class LLIntOffsetsExtractor;
 // improve perf since it would not change the collector's behavior, and either way the allocator
 // has to look at both bitvectors.
 // https://bugs.webkit.org/show_bug.cgi?id=162121
-
-// Note that this collector supports overlapping allocator state with marking state, since in a
-// concurrent collector you allow allocation while marking is running. So it's best to visualize a
-// full mutable->eden collect->mutate->full collect cycle and see how the bits above get affected.
-// The example below tries to be exhaustive about what happens to the bits, but omits a lot of
-// things that happen to other state.
-//
-// Create allocator
-// - all bits are empty
-// Start allocating in some block
-// - allocate the block and set the live bit.
-// - the empty bit for the block flickers on and then gets immediately cleared by sweeping.
-// - set the eden bit.
-// Finish allocating in that block
-// - set the allocated bit.
-// Do that to a lot of blocks and then start an eden collection.
-// - beginMarking() has nothing to do.
-// - by default we have cleared markingNotEmpty/markingRetired bits.
-// - marking builds up markingNotEmpty/markingRetired bits.
-// We do endMarking()
-// - clear all allocated bits.
-// - for destructor blocks: fragmented = live & ~markingRetired
-// - for non-destructor blocks:
-//       empty = live & ~markingNotEmpty
-//       fragmented = live & markingNotEmpty & ~markingRetired
-// Snapshotting.
-// - unswept |= eden
-// Prepare for allocation.
-// - clear eden
-// Finish collection.
-// Allocate in some block that had some free and some live objects.
-// - clear the canAllocateButNotEmpty bit
-// - clear the unswept bit
-// - set the eden bit
-// Finish allocating (set the allocated bit).
-// Allocate in some block that was completely empty.
-// - clear the empty bit
-// - clear the unswept bit
-// - set the eden bit.
-// Finish allocating (set the allocated bit).
-// Allocate in some block that was completely empty in another allocator.
-// - clear the empty bit
-// - clear all bits in that allocator
-// - set the live bit in another allocator and the empty bit.
-// - clear the empty, unswept bits.
-// - set the eden bit.
-// Finish allocating (set the allocated bit).
-// Start a full collection.
-// - beginMarking() clears markingNotEmpty, markingRetired
-// - the heap version is incremented
-// - marking rebuilds markingNotEmpty/markingretired bits.
-// We do endMarking()
-// - clear all allocated bits.
-// - set canAllocateButNotEmpty/empty the same way as in eden collection.
-// Snapshotting.
-// - unswept = live
-// prepare for allocation.
-// - clear eden.
-// Finish collection.
-//
-// Notice how in this scheme, the empty/canAllocateButNotEmpty state stays separate from the
-// markingNotEmpty/markingRetired state. This is one step towards having separated allocation and
-// marking state.
 
 class MarkedAllocator {
     friend class LLIntOffsetsExtractor;
@@ -216,8 +154,6 @@ public:
     
 private:
     friend class MarkedBlock;
-    
-    bool shouldStealEmptyBlocksFromOtherAllocators() const;
     
     JS_EXPORT_PRIVATE void* allocateSlowCase(GCDeferralContext*);
     JS_EXPORT_PRIVATE void* tryAllocateSlowCase(GCDeferralContext*);

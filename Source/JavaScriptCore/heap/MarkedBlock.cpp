@@ -152,6 +152,7 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
 void MarkedBlock::Handle::lastChanceToFinalize()
 {
     allocator()->setIsAllocated(NoLockingNecessary, this, false);
+    allocator()->setIsDestructible(NoLockingNecessary, this, true);
     m_block->m_marks.clearAll();
     m_block->clearHasAnyMarked();
     m_block->m_markingVersion = heap()->objectSpace().markingVersion();
@@ -403,8 +404,11 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     m_allocator->setIsUnswept(NoLockingNecessary, this, false);
     
     m_weakSet.sweep();
+    
+    bool needsDestruction = m_attributes.destruction == NeedsDestruction
+        && m_allocator->isDestructible(NoLockingNecessary, this);
 
-    if (sweepMode == SweepOnly && m_attributes.destruction == DoesNotNeedDestruction)
+    if (sweepMode == SweepOnly && !needsDestruction)
         return;
 
     if (UNLIKELY(m_isFreeListed)) {
@@ -417,7 +421,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     if (space()->isMarking())
         block().m_lock.lock();
     
-    if (m_attributes.destruction == NeedsDestruction) {
+    if (needsDestruction) {
         subspace()->finishSweep(*this, freeList);
         return;
     }
