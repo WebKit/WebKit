@@ -1,5 +1,25 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219752. rdar://problem/33524766
+
+    2017-07-21  Timothy Horton  <timothy_horton@apple.com>
+
+            TextIndicator::estimatedTextColorsForRange asserts inside HashSet code (inserting reserved value)
+            https://bugs.webkit.org/show_bug.cgi?id=174733
+
+            Reviewed by Wenson Hsieh.
+
+            * page/TextIndicator.cpp:
+            (WebCore::estimatedTextColorsForRange):
+            (WebCore::adjustTextIndicatorDataOptionsForEstimatedColorsIfNecessary):
+            RGBA32 isn't a valid hash key, because we have no traits that define the
+            empty or deleted values, nor do we have any bits we could feasibly
+            use -- the full range of RGBA32 is easy to reach with various colors.
+
+            Instead, hash Color directly.
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219751. rdar://problem/33523861
 
     2017-07-21  Nan Wang  <n_wang@apple.com>
