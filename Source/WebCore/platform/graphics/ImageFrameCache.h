@@ -93,7 +93,7 @@ public:
 
     // ImageFrame metadata which does not require caching the ImageFrame.
     bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t, const DecodingOptions&);
-    ImageFrame::DecodingStatus frameDecodingStatusAtIndex(size_t);
+    DecodingStatus frameDecodingStatusAtIndex(size_t);
     bool frameHasAlphaAtIndex(size_t);
     bool frameHasImageAtIndex(size_t);
     bool frameHasFullSizeNativeImageAtIndex(size_t, const std::optional<SubsamplingLevel>&);
@@ -131,9 +131,9 @@ private:
     void decodedSizeReset(unsigned decodedSize);
 
     void setNativeImage(NativeImagePtr&&);
-    void cacheMetadataAtIndex(size_t, SubsamplingLevel, ImageFrame::DecodingStatus = ImageFrame::DecodingStatus::Invalid);
-    void cacheNativeImageAtIndex(NativeImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, ImageFrame::DecodingStatus = ImageFrame::DecodingStatus::Invalid);
-    void cacheNativeImageAtIndexAsync(NativeImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, ImageFrame::DecodingStatus);
+    void cacheMetadataAtIndex(size_t, SubsamplingLevel, DecodingStatus = DecodingStatus::Invalid);
+    void cacheNativeImageAtIndex(NativeImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus = DecodingStatus::Invalid);
+    void cacheNativeImageAtIndexAsync(NativeImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus);
 
     Ref<WorkQueue> decodingQueue();
 
@@ -151,7 +151,7 @@ private:
         size_t index;
         SubsamplingLevel subsamplingLevel;
         DecodingOptions decodingOptions;
-        ImageFrame::DecodingStatus decodingStatus;
+        DecodingStatus decodingStatus;
         bool operator==(const ImageFrameRequest& other) const
         {
             return index == other.index && subsamplingLevel == other.subsamplingLevel && decodingOptions == other.decodingOptions && decodingStatus == other.decodingStatus;

@@ -326,8 +326,6 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
 #endif
     if (bitmapImage.isLargeImageAsyncDecodingEnabledForTesting())
         return DecodingMode::Asynchronous;
-    if (document().isImageDocument())
-        return DecodingMode::Synchronous;
     if (!settings().largeImageAsyncDecodingEnabled())
         return DecodingMode::Synchronous;
     if (!bitmapImage.canUseAsyncDecodingForLargeImages())

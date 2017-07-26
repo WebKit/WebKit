@@ -247,7 +247,7 @@ bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
     if (buffer.isInvalid() && !initFrameBuffer(frameIndex))
         return false; // initFrameBuffer() has already called setFailed().
 
-    buffer.setDecodingStatus(ImageFrame::DecodingStatus::Complete);
+    buffer.setDecodingStatus(DecodingStatus::Complete);
     buffer.setDuration(frameDuration);
     buffer.setDisposalMethod(disposalMethod);
 
@@ -401,7 +401,7 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
     buffer->backingStore()->setFrameRect(IntRect(left, top, right - left, bottom - top));
 
     // Update our status to be partially complete.
-    buffer->setDecodingStatus(ImageFrame::DecodingStatus::Partial);
+    buffer->setDecodingStatus(DecodingStatus::Partial);
 
     // Reset the alpha pixel tracker for this frame.
     m_currentBufferSawAlpha = false;

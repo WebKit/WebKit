@@ -1,5 +1,79 @@
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219762. rdar://problem/33523889
+
+    2017-07-22  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            REGRESSION(r219045): A partially loaded image may not be repainted when its complete frame finishes decoding
+            https://bugs.webkit.org/show_bug.cgi?id=174230
+
+            Reviewed by Simon Fraser.
+
+            Because of r219045, we now only repaint the CachedImageClinets which tried
+            to draw the image but they could not because they have to wait for the image
+            decoding to finish. This was done by keeping a HashSet of these clients
+            and make CachedImage own it. This HashSet is cleared once the image frame
+            finishes decoding and all the waited clients are repainted.
+
+            But Multiple asynchronous image decoding requests are allowed for the same
+            frame if new data is added to the image source. If we tried to draw the
+            same image twice before it finishes decoding the first request, we will
+            not be to record this second request since the HashSet will not add the
+            same client twice. When he second request finishes decoding, CachedImage
+            will not repaint any client since its HashSet is empty.
+
+            To fix this problem we can do the following. When an image frame finishes
+            decoding, CachedImage will keep its HashSet of pending drawing clients as
+            long as the image frame is a partially loaded frame.
+
+            * loader/cache/CachedImage.cpp:
+            (WebCore::CachedImage::CachedImageObserver::imageFrameAvailable):
+            (WebCore::CachedImage::imageFrameAvailable):
+            * loader/cache/CachedImage.h:
+            * platform/graphics/BitmapImage.cpp:
+            (WebCore::BitmapImage::destroyDecodedData):
+            (WebCore::BitmapImage::dataChanged):
+            (WebCore::BitmapImage::setCurrentFrameDecodingStatusIfNecessary):
+            (WebCore::BitmapImage::draw):
+            (WebCore::BitmapImage::internalStartAnimation):
+            (WebCore::BitmapImage::internalAdvanceAnimation):
+            (WebCore::BitmapImage::imageFrameAvailableAtIndex):
+            * platform/graphics/BitmapImage.h:
+            * platform/graphics/ImageFrame.cpp:
+            (WebCore::ImageFrame::decodingStatus):
+            * platform/graphics/ImageFrame.h: Move DecodingStatus out of this class
+            to ImageTypes.h to avoid adding other header files to ImageObvsever.h
+            * platform/graphics/ImageFrameCache.cpp:
+            (WebCore::ImageFrameCache::setNativeImage):
+            (WebCore::ImageFrameCache::cacheMetadataAtIndex):
+            (WebCore::ImageFrameCache::cacheNativeImageAtIndex):
+            (WebCore::ImageFrameCache::cacheNativeImageAtIndexAsync):
+            (WebCore::ImageFrameCache::requestFrameAsyncDecodingAtIndex):
+            (WebCore::ImageFrameCache::frameDecodingStatusAtIndex):
+            * platform/graphics/ImageFrameCache.h:
+            * platform/graphics/ImageObserver.h:
+            * platform/graphics/ImageSource.h:
+            (WebCore::ImageSource::frameDecodingStatusAtIndex):
+            * platform/graphics/ImageTypes.h:
+            * platform/image-decoders/bmp/BMPImageReader.cpp:
+            (WebCore::BMPImageReader::decodeBMP):
+            * platform/image-decoders/gif/GIFImageDecoder.cpp:
+            (WebCore::GIFImageDecoder::frameComplete):
+            (WebCore::GIFImageDecoder::initFrameBuffer):
+            * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+            (WebCore::JPEGImageDecoder::outputScanlines):
+            (WebCore::JPEGImageDecoder::jpegComplete):
+            * platform/image-decoders/png/PNGImageDecoder.cpp:
+            (WebCore::PNGImageDecoder::rowAvailable):
+            (WebCore::PNGImageDecoder::pngComplete):
+            (WebCore::PNGImageDecoder::frameComplete):
+            * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+            (WebCore::WEBPImageDecoder::decode):
+            * rendering/RenderBoxModelObject.cpp:
+            (WebCore::RenderBoxModelObject::decodingModeForImageDraw):
+
+2017-07-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219738. rdar://problem/33523826
 
     2017-07-21  Said Abou-Hallawa  <sabouhallawa@apple.com>

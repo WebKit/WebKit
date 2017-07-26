@@ -190,19 +190,19 @@ void ImageFrameCache::setNativeImage(NativeImagePtr&& nativeImage)
 
     frame.m_nativeImage = WTFMove(nativeImage);
 
-    frame.m_decodingStatus = ImageFrame::DecodingStatus::Complete;
+    frame.m_decodingStatus = DecodingStatus::Complete;
     frame.m_size = nativeImageSize(frame.m_nativeImage);
     frame.m_hasAlpha = nativeImageHasAlpha(frame.m_nativeImage);
 }
 
-void ImageFrameCache::cacheMetadataAtIndex(size_t index, SubsamplingLevel subsamplingLevel, ImageFrame::DecodingStatus decodingStatus)
+void ImageFrameCache::cacheMetadataAtIndex(size_t index, SubsamplingLevel subsamplingLevel, DecodingStatus decodingStatus)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
 
     ASSERT(isDecoderAvailable());
-    if (decodingStatus == ImageFrame::DecodingStatus::Invalid)
-        frame.m_decodingStatus = m_decoder->frameIsCompleteAtIndex(index) ? ImageFrame::DecodingStatus::Complete : ImageFrame::DecodingStatus::Partial;
+    if (decodingStatus == DecodingStatus::Invalid)
+        frame.m_decodingStatus = m_decoder->frameIsCompleteAtIndex(index) ? DecodingStatus::Complete : DecodingStatus::Partial;
     else
         frame.m_decodingStatus = decodingStatus;
 
@@ -224,7 +224,7 @@ void ImageFrameCache::cacheMetadataAtIndex(size_t index, SubsamplingLevel subsam
         frame.m_duration = m_decoder->frameDurationAtIndex(index);
 }
 
-void ImageFrameCache::cacheNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions, ImageFrame::DecodingStatus decodingStatus)
+void ImageFrameCache::cacheNativeImageAtIndex(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions, DecodingStatus decodingStatus)
 {
     ASSERT(index < m_frames.size());
     ImageFrame& frame = m_frames[index];
@@ -246,7 +246,7 @@ void ImageFrameCache::cacheNativeImageAtIndex(NativeImagePtr&& nativeImage, size
     decodedSizeIncreased(frame.frameBytes());
 }
 
-void ImageFrameCache::cacheNativeImageAtIndexAsync(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions, ImageFrame::DecodingStatus decodingStatus)
+void ImageFrameCache::cacheNativeImageAtIndexAsync(NativeImagePtr&& nativeImage, size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions, DecodingStatus decodingStatus)
 {
     if (!isDecoderAvailable())
         return;
@@ -314,7 +314,7 @@ void ImageFrameCache::requestFrameAsyncDecodingAtIndex(size_t index, Subsampling
         startAsyncDecodingQueue();
     
     ASSERT(index < m_frames.size());
-    ImageFrame::DecodingStatus decodingStatus = m_decoder->frameIsCompleteAtIndex(index) ? ImageFrame::DecodingStatus::Complete : ImageFrame::DecodingStatus::Partial;
+    DecodingStatus decodingStatus = m_decoder->frameIsCompleteAtIndex(index) ? DecodingStatus::Complete : DecodingStatus::Partial;
 
     LOG(Images, "ImageFrameCache::%s - %p - url: %s [enqueuing frame %ld for decoding]", __FUNCTION__, this, sourceURL().string().utf8().data(), index);
     m_frameRequestQueue.enqueue({ index, subsamplingLevel, sizeForDrawing, decodingStatus });
@@ -499,9 +499,9 @@ bool ImageFrameCache::frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_
     return it != m_frameCommitQueue.end();
 }
 
-ImageFrame::DecodingStatus ImageFrameCache::frameDecodingStatusAtIndex(size_t index)
+DecodingStatus ImageFrameCache::frameDecodingStatusAtIndex(size_t index)
 {
-    return frameMetadataAtIndex<ImageFrame::DecodingStatus>(index, (&ImageFrame::decodingStatus));
+    return frameMetadataAtIndex<DecodingStatus>(index, (&ImageFrame::decodingStatus));
 }
 
 bool ImageFrameCache::frameHasAlphaAtIndex(size_t index)
