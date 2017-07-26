@@ -1,3 +1,24 @@
+2017-07-26  Mark Lam  <mark.lam@apple.com>
+
+        Make run-javascriptcore-test run testair, testb3, and testmasm.
+        https://bugs.webkit.org/show_bug.cgi?id=174837
+        <rdar://problem/33522927>
+
+        Reviewed by Saam Barati and Filip Pizlo.
+
+        1. Refactors code for running testapi so that we can use it to run other tests.
+        2. Added running of testmasm, testair, testb3.
+
+        Note: the existing testapi invocation code does not support remote invocation of
+        the tests (e.g. on a ARM device).  Hence, the new additions of testmasm, testair,
+        and testb3 also do not support remote invocation.  If we wish to add remote
+        invocation support, we should do that in a separate patch.
+
+        * Scripts/run-javascriptcore-tests:
+        (testPath):
+        (runTest):
+        (testapiPath): Deleted.
+
 2017-07-26  Aakash Jain  <aakash_jain@apple.com>
 
         Remove duplicate code from Buildbot.js in dashboard
