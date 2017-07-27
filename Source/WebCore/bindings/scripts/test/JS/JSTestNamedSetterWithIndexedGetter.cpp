@@ -105,7 +105,7 @@ const ClassInfo JSTestNamedSetterWithIndexedGetterPrototype::s_info = { "TestNam
 void JSTestNamedSetterWithIndexedGetterPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedSetterWithIndexedGetterPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedSetterWithIndexedGetter::info(), JSTestNamedSetterWithIndexedGetterPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedSetterWithIndexedGetter::s_info = { "TestNamedSetterWithIndexedGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIndexedGetter) };

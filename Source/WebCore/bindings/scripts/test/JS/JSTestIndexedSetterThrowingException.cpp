@@ -95,7 +95,7 @@ const ClassInfo JSTestIndexedSetterThrowingExceptionPrototype::s_info = { "TestI
 void JSTestIndexedSetterThrowingExceptionPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestIndexedSetterThrowingExceptionPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestIndexedSetterThrowingException::info(), JSTestIndexedSetterThrowingExceptionPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestIndexedSetterThrowingException::s_info = { "TestIndexedSetterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterThrowingException) };

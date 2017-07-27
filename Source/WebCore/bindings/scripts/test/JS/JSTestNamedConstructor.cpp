@@ -130,7 +130,7 @@ const ClassInfo JSTestNamedConstructorPrototype::s_info = { "TestNamedConstructo
 void JSTestNamedConstructorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedConstructorPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedConstructor::info(), JSTestNamedConstructorPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedConstructor::s_info = { "TestNamedConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedConstructor) };

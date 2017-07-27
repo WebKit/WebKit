@@ -78,6 +78,7 @@ public:
 private:
     UniquedStringImpl* m_impl;
 };
+static_assert(sizeof(PropertyName) == sizeof(UniquedStringImpl*), "UniquedStringImpl* and PropertyName should be compatible to invoke easily from JIT code.");
 
 inline bool operator==(PropertyName a, const Identifier& b)
 {

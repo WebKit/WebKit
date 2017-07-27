@@ -40,11 +40,11 @@ public:
     // actually somewhat likely because of how we do buffering of new cases.
     CallLinkInfo* callLinkInfo() const { return m_callLinkInfo.get(); }
     JSObject* customSlotBase() const { return m_customSlotBase.get(); }
-    DOMJIT::GetterSetter* domJIT() const { return m_domJIT; }
+    std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
 
     JSObject* alternateBase() const override;
 
-    void emitDOMJITGetter(AccessGenerationState&, GPRReg baseForGetGPR);
+    void emitDOMJITGetter(AccessGenerationState&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
 
     static std::unique_ptr<AccessCase> create(
         VM&, JSCell* owner, AccessType, PropertyOffset, Structure*,
@@ -53,7 +53,7 @@ public:
         WatchpointSet* additionalSet = nullptr,
         PropertySlot::GetValueFunc = nullptr,
         JSObject* customSlotBase = nullptr,
-        DOMJIT::GetterSetter* = nullptr);
+        std::optional<DOMAttributeAnnotation> = std::nullopt);
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, Structure*, PropertyOffset,
         const ObjectPropertyConditionSet&, PutPropertySlot::PutValueFunc = nullptr,
@@ -63,6 +63,8 @@ public:
     std::unique_ptr<AccessCase> clone() const override;
 
     ~GetterSetterAccessCase();
+
+    void* customAccessor() const { return m_customAccessor.opaque; }
 
 private:
     GetterSetterAccessCase(VM&, JSCell*, AccessType, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, JSObject* customSlotBase);
@@ -76,7 +78,7 @@ private:
         PropertySlot::GetValueFunc getter;
         void* opaque;
     } m_customAccessor;
-    DOMJIT::GetterSetter* m_domJIT;
+    std::optional<DOMAttributeAnnotation> m_domAttribute;
 };
 
 } // namespace JSC

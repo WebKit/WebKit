@@ -258,6 +258,11 @@ JSObject* throwSyntaxError(ExecState* exec, ThrowScope& scope, const String& mes
     return throwException(exec, scope, createSyntaxError(exec, message));
 }
 
+JSValue throwDOMAttributeGetterTypeError(ExecState* exec, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName)
+{
+    return throwTypeError(exec, scope, makeString("The ", classInfo->className, '.', String(propertyName.uid()), " getter can only be used on instances of ", classInfo->className));
+}
+
 JSObject* createError(ExecState* exec, const String& message)
 {
     return createError(exec, message, nullptr);

@@ -100,7 +100,7 @@ const ClassInfo JSTestNamedDeleterWithIdentifierPrototype::s_info = { "TestNamed
 void JSTestNamedDeleterWithIdentifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedDeleterWithIdentifierPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedDeleterWithIdentifier::info(), JSTestNamedDeleterWithIdentifierPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedDeleterWithIdentifier::s_info = { "TestNamedDeleterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterWithIdentifier) };

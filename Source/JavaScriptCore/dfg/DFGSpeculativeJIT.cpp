@@ -8087,6 +8087,24 @@ void SpeculativeJIT::compileCallDOM(Node* node)
 void SpeculativeJIT::compileCallDOMGetter(Node* node)
 {
     DOMJIT::CallDOMGetterSnippet* snippet = node->callDOMGetterData()->snippet;
+    if (!snippet) {
+        auto* getter = node->callDOMGetterData()->customAccessorGetter;
+        SpeculateCellOperand base(this, node->child1());
+        JSValueRegsTemporary result(this);
+
+        JSValueRegs resultRegs = result.regs();
+        GPRReg baseGPR = base.gpr();
+
+        flushRegisters();
+#if USE(JSVALUE64)
+        callCustomGetter(bitwise_cast<J_JITOperation_EJI>(getter), resultRegs, baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
+#else
+        callCustomGetter(bitwise_cast<J_JITOperation_EJI>(getter), resultRegs, TrustedImm32(JSValue::CellTag), baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
+#endif
+        m_jit.exceptionCheck();
+        jsValueResult(resultRegs, node);
+        return;
+    }
 
     Vector<GPRReg> gpScratch;
     Vector<FPRReg> fpScratch;

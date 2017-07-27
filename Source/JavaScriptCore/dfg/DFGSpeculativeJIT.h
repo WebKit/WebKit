@@ -1917,6 +1917,17 @@ public:
         m_jit.setupArgumentsWithExecState(arg1.gpr());
         return appendCallSetResult(operation, result);
     }
+
+    JITCompiler::Call callCustomGetter(J_JITOperation_EJI function, JSValueRegs result, GPRReg arg1, UniquedStringImpl* uid)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(uid));
+        m_jit.storePtr(GPRInfo::callFrameRegister, &m_jit.vm()->topCallFrame);
+        m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
+        JITCompiler::Call call = m_jit.appendCall(function);
+        if (result.payloadGPR() != InvalidGPRReg)
+            m_jit.move(GPRInfo::returnValueGPR, result.payloadGPR());
+        return call;
+    }
 #else // USE(JSVALUE32_64)
     JITCompiler::Call callOperation(Z_JITOperation_EOJ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2)
     {
@@ -2454,6 +2465,16 @@ public:
     {
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR());
         return appendCallSetResult(operation, result);
+    }
+
+    JITCompiler::Call callCustomGetter(J_JITOperation_EJI function, JSValueRegs result, TrustedImm32 arg1Tag, GPRReg arg1Payload, UniquedStringImpl* uid)
+    {
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, TrustedImmPtr(uid));
+        m_jit.storePtr(GPRInfo::callFrameRegister, &m_jit.vm()->topCallFrame);
+        m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
+        JITCompiler::Call call = m_jit.appendCall(function);
+        m_jit.setupResults(result.payloadGPR(), result.tagGPR());
+        return call;
     }
 #endif // USE(JSVALUE32_64)
     

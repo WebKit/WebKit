@@ -94,7 +94,7 @@ const ClassInfo JSTestNamedGetterCallWithPrototype::s_info = { "TestNamedGetterC
 void JSTestNamedGetterCallWithPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedGetterCallWithPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedGetterCallWith::info(), JSTestNamedGetterCallWithPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedGetterCallWith::s_info = { "TestNamedGetterCallWith", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWith) };

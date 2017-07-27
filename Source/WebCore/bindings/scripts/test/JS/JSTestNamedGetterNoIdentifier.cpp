@@ -94,7 +94,7 @@ const ClassInfo JSTestNamedGetterNoIdentifierPrototype::s_info = { "TestNamedGet
 void JSTestNamedGetterNoIdentifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedGetterNoIdentifierPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedGetterNoIdentifier::info(), JSTestNamedGetterNoIdentifierPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedGetterNoIdentifier::s_info = { "TestNamedGetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterNoIdentifier) };

@@ -46,7 +46,8 @@ public:
         const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         std::unique_ptr<CallLinkStatus> = nullptr,
         JSFunction* = nullptr,
-        DOMJIT::GetterSetter* = nullptr);
+        PropertySlot::GetValueFunc = nullptr,
+        std::optional<DOMAttributeAnnotation> = std::nullopt);
 
     ~GetByIdVariant();
     
@@ -65,7 +66,8 @@ public:
     CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
     Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
-    DOMJIT::GetterSetter* domJIT() const { return m_domJIT; }
+    PropertySlot::GetValueFunc customAccessorGetter() const { return m_customAccessorGetter; }
+    std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
 
     bool isPropertyUnset() const { return offset() == invalidOffset; }
 
@@ -84,7 +86,8 @@ private:
     PropertyOffset m_offset;
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
     JSFunction* m_intrinsicFunction;
-    DOMJIT::GetterSetter* m_domJIT;
+    PropertySlot::GetValueFunc m_customAccessorGetter;
+    std::optional<DOMAttributeAnnotation> m_domAttribute;
 };
 
 } // namespace JSC

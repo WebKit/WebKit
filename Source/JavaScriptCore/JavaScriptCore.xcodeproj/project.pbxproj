@@ -2350,6 +2350,9 @@
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E124A8F60E555775003091F1 /* OpaqueJSString.cpp */; };
 		E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E3A570DF9278C00D90B34 /* VM.cpp */; };
+		E31618131EC5FE170006A218 /* DOMAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618101EC5FE080006A218 /* DOMAnnotation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E31618141EC5FE220006A218 /* DOMAttributeGetterSetter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E31618111EC5FE080006A218 /* DOMAttributeGetterSetter.cpp */; };
+		E31618151EC5FE270006A218 /* DOMAttributeGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E318CBC01B8AEF5100A2929D /* JSModuleNamespaceObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E318CBBE1B8AEF5100A2929D /* JSModuleNamespaceObject.cpp */; };
 		E318CBC11B8AEF5100A2929D /* JSModuleNamespaceObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CBBF1B8AEF5100A2929D /* JSModuleNamespaceObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E322E5A21DA64439006E7709 /* DFGSnippetParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E322E5A01DA64435006E7709 /* DFGSnippetParams.cpp */; };
@@ -4986,6 +4989,9 @@
 		E18E3A560DF9278C00D90B34 /* VM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = VM.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		E18E3A570DF9278C00D90B34 /* VM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = VM.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		E30677971B8BC6F5003F87F0 /* ModuleLoaderPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ModuleLoaderPrototype.js; sourceTree = "<group>"; };
+		E31618101EC5FE080006A218 /* DOMAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAnnotation.h; sourceTree = "<group>"; };
+		E31618111EC5FE080006A218 /* DOMAttributeGetterSetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMAttributeGetterSetter.cpp; sourceTree = "<group>"; };
+		E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAttributeGetterSetter.h; sourceTree = "<group>"; };
 		E318CBBE1B8AEF5100A2929D /* JSModuleNamespaceObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleNamespaceObject.cpp; sourceTree = "<group>"; };
 		E318CBBF1B8AEF5100A2929D /* JSModuleNamespaceObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleNamespaceObject.h; sourceTree = "<group>"; };
 		E322E5A01DA64435006E7709 /* DFGSnippetParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSnippetParams.cpp; path = dfg/DFGSnippetParams.cpp; sourceTree = "<group>"; };
@@ -6641,6 +6647,9 @@
 				52678F901A04177C006A306D /* ControlFlowProfiler.h */,
 				2A111243192FCE79005EE18D /* CustomGetterSetter.cpp */,
 				2A111244192FCE79005EE18D /* CustomGetterSetter.h */,
+				E31618101EC5FE080006A218 /* DOMAnnotation.h */,
+				E31618111EC5FE080006A218 /* DOMAttributeGetterSetter.cpp */,
+				E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */,
 				0F2B66B017B6B5AB00A7AE3F /* DataView.cpp */,
 				0F2B66B117B6B5AB00A7AE3F /* DataView.h */,
 				BCD203450E17135E002C7E82 /* DateConstructor.cpp */,
@@ -8850,6 +8859,7 @@
 				A5EA710319F6DE6F0098F5EC /* generate_objc_backend_dispatcher_header.py in Headers */,
 				A5EA710419F6DE720098F5EC /* generate_objc_backend_dispatcher_implementation.py in Headers */,
 				A5EA710519F6DE740098F5EC /* generate_objc_configuration_header.py in Headers */,
+				E31618151EC5FE270006A218 /* DOMAttributeGetterSetter.h in Headers */,
 				A5EA710619F6DE760098F5EC /* generate_objc_configuration_implementation.py in Headers */,
 				A5EA710819F6DE7A0098F5EC /* generate_objc_frontend_dispatcher_implementation.py in Headers */,
 				A5EA710919F6DE7C0098F5EC /* generate_objc_header.py in Headers */,
@@ -8937,6 +8947,7 @@
 				99F1A7011B98FBEC00463B26 /* InspectorFrontendRouter.h in Headers */,
 				A5339EC61BB399A60054F005 /* InspectorHeapAgent.h in Headers */,
 				E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */,
+				E31618131EC5FE170006A218 /* DOMAnnotation.h in Headers */,
 				E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */,
 				A532438C18568335002ED692 /* InspectorProtocolObjects.h in Headers */,
 				A55D93AC18514F7900400DED /* InspectorProtocolTypes.h in Headers */,
@@ -10380,6 +10391,7 @@
 				0FF0F19D16B72A08005DF95B /* DFGCommon.cpp in Sources */,
 				0FEA0A31170D40BF00BB722C /* DFGCommonData.cpp in Sources */,
 				0F38B01717CFE75500B144D3 /* DFGCompilationKey.cpp in Sources */,
+				E31618141EC5FE220006A218 /* DOMAttributeGetterSetter.cpp in Sources */,
 				0F38B01917CFE75500B144D3 /* DFGCompilationMode.cpp in Sources */,
 				0F3B3A1A153E68F2003ED0FF /* DFGConstantFoldingPhase.cpp in Sources */,
 				0FED67B91B26256D0066CE15 /* DFGConstantHoistingPhase.cpp in Sources */,

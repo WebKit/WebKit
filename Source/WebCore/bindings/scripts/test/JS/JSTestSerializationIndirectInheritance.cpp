@@ -90,7 +90,7 @@ const ClassInfo JSTestSerializationIndirectInheritancePrototype::s_info = { "Tes
 void JSTestSerializationIndirectInheritancePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestSerializationIndirectInheritancePrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestSerializationIndirectInheritance::info(), JSTestSerializationIndirectInheritancePrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestSerializationIndirectInheritance::s_info = { "TestSerializationIndirectInheritance", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSerializationIndirectInheritance) };

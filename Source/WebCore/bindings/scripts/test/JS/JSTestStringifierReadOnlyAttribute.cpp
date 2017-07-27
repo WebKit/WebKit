@@ -93,7 +93,7 @@ template<> const ClassInfo JSTestStringifierReadOnlyAttributeConstructor::s_info
 static const HashTableValue JSTestStringifierReadOnlyAttributePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadOnlyAttributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestStringifierReadOnlyAttributeConstructor) } },
-    { "identifier", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadOnlyAttributeIdentifier), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "identifier", ReadOnly | CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadOnlyAttributeIdentifier), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "toString", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestStringifierReadOnlyAttributePrototypeFunctionToString), (intptr_t) (0) } },
 };
 
@@ -102,7 +102,7 @@ const ClassInfo JSTestStringifierReadOnlyAttributePrototype::s_info = { "TestStr
 void JSTestStringifierReadOnlyAttributePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestStringifierReadOnlyAttributePrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestStringifierReadOnlyAttribute::info(), JSTestStringifierReadOnlyAttributePrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestStringifierReadOnlyAttribute::s_info = { "TestStringifierReadOnlyAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadOnlyAttribute) };
@@ -184,7 +184,7 @@ static inline JSValue jsTestStringifierReadOnlyAttributeIdentifierGetter(ExecSta
 
 EncodedJSValue jsTestStringifierReadOnlyAttributeIdentifier(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestStringifierReadOnlyAttribute>::get<jsTestStringifierReadOnlyAttributeIdentifierGetter>(*state, thisValue, "identifier");
+    return IDLAttribute<JSTestStringifierReadOnlyAttribute>::get<jsTestStringifierReadOnlyAttributeIdentifierGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "identifier");
 }
 
 static inline JSC::EncodedJSValue jsTestStringifierReadOnlyAttributePrototypeFunctionToStringBody(JSC::ExecState* state, typename IDLOperation<JSTestStringifierReadOnlyAttribute>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

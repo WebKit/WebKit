@@ -96,7 +96,7 @@ const ClassInfo JSTestNamedAndIndexedSetterNoIdentifierPrototype::s_info = { "Te
 void JSTestNamedAndIndexedSetterNoIdentifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedAndIndexedSetterNoIdentifierPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedAndIndexedSetterNoIdentifier::info(), JSTestNamedAndIndexedSetterNoIdentifierPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedAndIndexedSetterNoIdentifier::s_info = { "TestNamedAndIndexedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedAndIndexedSetterNoIdentifier) };

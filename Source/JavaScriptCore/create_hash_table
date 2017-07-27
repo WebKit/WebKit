@@ -345,7 +345,7 @@ sub output() {
     print "};\n";
     print "\n";
     print "static const struct HashTable $name =\n";
-    print "    \{ $packedSize, $compactHashSizeMask, $hasSetter, $nameEntries, $nameIndex \};\n";
+    print "    \{ $packedSize, $compactHashSizeMask, $hasSetter, nullptr, $nameEntries, $nameIndex \};\n";
     print "\n";
     print "} // namespace JSC\n";
 }

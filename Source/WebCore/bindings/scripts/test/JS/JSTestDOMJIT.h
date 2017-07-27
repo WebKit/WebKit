@@ -59,322 +59,147 @@ protected:
 };
 
 
-// DOMJIT emitters for attributes
+// DOM JIT Attributes
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITAnyAttr(void);
-class TestDOMJITAnyAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITAnyAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITAnyAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITBooleanAttr(void);
-class TestDOMJITBooleanAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITBooleanAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITBooleanAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITByteAttr(void);
-class TestDOMJITByteAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITByteAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITByteAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITOctetAttr(void);
-class TestDOMJITOctetAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITOctetAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITOctetAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITShortAttr(void);
-class TestDOMJITShortAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITShortAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITShortAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedShortAttr(void);
-class TestDOMJITUnsignedShortAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUnsignedShortAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUnsignedShortAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITLongAttr(void);
-class TestDOMJITLongAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITLongAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITLongAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedLongAttr(void);
-class TestDOMJITUnsignedLongAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUnsignedLongAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUnsignedLongAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITLongLongAttr(void);
-class TestDOMJITLongLongAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITLongLongAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITLongLongAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedLongLongAttr(void);
-class TestDOMJITUnsignedLongLongAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUnsignedLongLongAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUnsignedLongLongAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITFloatAttr(void);
-class TestDOMJITFloatAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITFloatAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITFloatAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnrestrictedFloatAttr(void);
-class TestDOMJITUnrestrictedFloatAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUnrestrictedFloatAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUnrestrictedFloatAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITDoubleAttr(void);
-class TestDOMJITDoubleAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITDoubleAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITDoubleAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnrestrictedDoubleAttr(void);
-class TestDOMJITUnrestrictedDoubleAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUnrestrictedDoubleAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUnrestrictedDoubleAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITDomStringAttr(void);
-class TestDOMJITDomStringAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITDomStringAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITDomStringAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITByteStringAttr(void);
-class TestDOMJITByteStringAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITByteStringAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITByteStringAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUsvStringAttr(void);
-class TestDOMJITUsvStringAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUsvStringAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUsvStringAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITNodeAttr(void);
-class TestDOMJITNodeAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITNodeAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITNodeAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITBooleanNullableAttr(void);
-class TestDOMJITBooleanNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITBooleanNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITBooleanNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITByteNullableAttr(void);
-class TestDOMJITByteNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITByteNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITByteNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITOctetNullableAttr(void);
-class TestDOMJITOctetNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITOctetNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITOctetNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITShortNullableAttr(void);
-class TestDOMJITShortNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITShortNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITShortNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedShortNullableAttr(void);
-class TestDOMJITUnsignedShortNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUnsignedShortNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUnsignedShortNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITLongNullableAttr(void);
-class TestDOMJITLongNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITLongNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITLongNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedLongNullableAttr(void);
-class TestDOMJITUnsignedLongNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUnsignedLongNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUnsignedLongNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITLongLongNullableAttr(void);
-class TestDOMJITLongLongNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITLongLongNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITLongLongNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedLongLongNullableAttr(void);
-class TestDOMJITUnsignedLongLongNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUnsignedLongLongNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUnsignedLongLongNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITFloatNullableAttr(void);
-class TestDOMJITFloatNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITFloatNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITFloatNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnrestrictedFloatNullableAttr(void);
-class TestDOMJITUnrestrictedFloatNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUnrestrictedFloatNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUnrestrictedFloatNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITDoubleNullableAttr(void);
-class TestDOMJITDoubleNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITDoubleNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITDoubleNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnrestrictedDoubleNullableAttr(void);
-class TestDOMJITUnrestrictedDoubleNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUnrestrictedDoubleNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUnrestrictedDoubleNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITDomStringNullableAttr(void);
-class TestDOMJITDomStringNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITDomStringNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITDomStringNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITByteStringNullableAttr(void);
-class TestDOMJITByteStringNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITByteStringNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITByteStringNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUsvStringNullableAttr(void);
-class TestDOMJITUsvStringNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITUsvStringNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITUsvStringNullableAttrAttribute();
 #endif
-};
 
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITNodeNullableAttr(void);
-class TestDOMJITNodeNullableAttrDOMJIT : public JSC::DOMJIT::GetterSetter {
-public:
-    TestDOMJITNodeNullableAttrDOMJIT();
 #if ENABLE(JIT)
-    Ref<JSC::DOMJIT::CallDOMGetterSnippet> callDOMGetter() override;
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileTestDOMJITNodeNullableAttrAttribute();
 #endif
-};
 
 template<> struct JSDOMWrapperConverterTraits<TestDOMJIT> {
     using WrapperClass = JSTestDOMJIT;

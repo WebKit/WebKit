@@ -1889,7 +1889,7 @@ private:
         case CallDOMGetter: {
             DOMJIT::CallDOMGetterSnippet* snippet = node->callDOMGetterData()->snippet;
             fixEdge<CellUse>(node->child1()); // DOM.
-            if (snippet->requireGlobalObject)
+            if (snippet && snippet->requireGlobalObject)
                 fixEdge<KnownCellUse>(node->child2()); // GlobalObject.
             break;
         }

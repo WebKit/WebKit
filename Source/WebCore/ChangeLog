@@ -1,3 +1,426 @@
+2017-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Hoist DOM binding attribute getter prologue into JavaScriptCore taking advantage of DOMJIT / CheckSubClass
+        https://bugs.webkit.org/show_bug.cgi?id=171637
+
+        Reviewed by Darin Adler.
+
+        We use DOMAttribute. When DOMAttribute is specified, ClassInfo check is performed by JSC side.
+        So, we can drop ClassInfo check from the actual function.
+
+        We also simplify DOMJIT::GetterSetter to make it smaller size.
+
+        WebCore size comparison
+            Before: 48443292
+            After:  48087800 (0.7% reduction)
+
+        Speedometer Scores show 0.8% improvement.
+            Before: 158.9 +- 0.46
+            After:  160.2 +- 0.36
+
+        Dromaeo DOM core Scores show 5.8% improvement.
+                                        Before                   After
+            Total Score:         8424.12runs/s ±1.38%     8911.60runs/s ±1.47%
+              DOM Attributes    12627.27runs/s ±1.87%    14023.17runs/s ±1.87%
+              DOM Modification   1207.82runs/s ±2.48%     1204.21runs/s ±3.05%
+              DOM Query         68068.82runs/s ±0.63%    74273.38runs/s ±0.69%
+              DOM Traversal      1240.07runs/s ±1.96%     1256.64runs/s ±1.77%
+
+        Performance improvement can be explained by the following optimizations.
+
+        1. Type checks are typically eliminated in all the JIT tiers. IC / DFG / FTL can
+           drop type checks since get_by_id operation already performs a structure check
+           which subsumes this type check.
+        2. Direct getter call by CallDOMGetter without creating IC in DFG and FTL.
+
+        * bindings/js/JSDOMAttribute.h:
+        (WebCore::IDLAttribute::get):
+        Add CastedThisErrorBehavior::Assert case. When this is specified, we perform casting without using jsDynamicCast.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsAcceleratedDOMAttribute):
+        (GetJSCAttributesForAttribute):
+        (GenerateHeader):
+        (GeneratePropertiesHashTable):
+        (GenerateImplementation):
+        (GenerateAttributeGetterTrampolineDefinition):
+        (GenerateAttributeGetterDefinition):
+        (GenerateCallbackImplementationContent):
+        (GenerateHashTableValueArray):
+        (GenerateHashTable):
+        (GenerateConstructorHelperMethods):
+        Update CodeGeneratorJS to emit DOMAttribute. And DOMJIT::GetterSetter becomes changed to be smaller size.
+
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::JSInterfaceNamePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::JSMapLikePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        (WebCore::JSReadOnlyMapLikePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObjectPrototype::finishCreation):
+        (WebCore::jsTestActiveDOMObjectExcitingAttr):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::JSTestCEReactionsPrototype::finishCreation):
+        (WebCore::jsTestCEReactionsAttributeWithCEReactions):
+        (WebCore::jsTestCEReactionsReflectAttributeWithCEReactions):
+        (WebCore::jsTestCEReactionsStringifierAttribute):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::JSTestCEReactionsStringifierPrototype::finishCreation):
+        (WebCore::jsTestCEReactionsStringifierValue):
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::JSTestCallTracerPrototype::finishCreation):
+        (WebCore::jsTestCallTracerTestAttributeInterface):
+        (WebCore::jsTestCallTracerTestAttributeSpecified):
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        (WebCore::JSTestCallbackInterfaceConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::JSTestClassWithJSBuiltinConstructorPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObjectPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::JSTestDOMJITPrototype::finishCreation):
+        (WebCore::TestDOMJITAnyAttrDOMJIT::TestDOMJITAnyAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITAnyAttr): Deleted.
+        (WebCore::TestDOMJITBooleanAttrDOMJIT::TestDOMJITBooleanAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITBooleanAttr): Deleted.
+        (WebCore::TestDOMJITByteAttrDOMJIT::TestDOMJITByteAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITByteAttr): Deleted.
+        (WebCore::TestDOMJITOctetAttrDOMJIT::TestDOMJITOctetAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITOctetAttr): Deleted.
+        (WebCore::TestDOMJITShortAttrDOMJIT::TestDOMJITShortAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITShortAttr): Deleted.
+        (WebCore::TestDOMJITUnsignedShortAttrDOMJIT::TestDOMJITUnsignedShortAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedShortAttr): Deleted.
+        (WebCore::TestDOMJITLongAttrDOMJIT::TestDOMJITLongAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITLongAttr): Deleted.
+        (WebCore::TestDOMJITUnsignedLongAttrDOMJIT::TestDOMJITUnsignedLongAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedLongAttr): Deleted.
+        (WebCore::TestDOMJITLongLongAttrDOMJIT::TestDOMJITLongLongAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITLongLongAttr): Deleted.
+        (WebCore::TestDOMJITUnsignedLongLongAttrDOMJIT::TestDOMJITUnsignedLongLongAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedLongLongAttr): Deleted.
+        (WebCore::TestDOMJITFloatAttrDOMJIT::TestDOMJITFloatAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITFloatAttr): Deleted.
+        (WebCore::TestDOMJITUnrestrictedFloatAttrDOMJIT::TestDOMJITUnrestrictedFloatAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUnrestrictedFloatAttr): Deleted.
+        (WebCore::TestDOMJITDoubleAttrDOMJIT::TestDOMJITDoubleAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITDoubleAttr): Deleted.
+        (WebCore::TestDOMJITUnrestrictedDoubleAttrDOMJIT::TestDOMJITUnrestrictedDoubleAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUnrestrictedDoubleAttr): Deleted.
+        (WebCore::TestDOMJITDomStringAttrDOMJIT::TestDOMJITDomStringAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITDomStringAttr): Deleted.
+        (WebCore::TestDOMJITByteStringAttrDOMJIT::TestDOMJITByteStringAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITByteStringAttr): Deleted.
+        (WebCore::TestDOMJITUsvStringAttrDOMJIT::TestDOMJITUsvStringAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUsvStringAttr): Deleted.
+        (WebCore::TestDOMJITNodeAttrDOMJIT::TestDOMJITNodeAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITNodeAttr): Deleted.
+        (WebCore::TestDOMJITBooleanNullableAttrDOMJIT::TestDOMJITBooleanNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITBooleanNullableAttr): Deleted.
+        (WebCore::TestDOMJITByteNullableAttrDOMJIT::TestDOMJITByteNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITByteNullableAttr): Deleted.
+        (WebCore::TestDOMJITOctetNullableAttrDOMJIT::TestDOMJITOctetNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITOctetNullableAttr): Deleted.
+        (WebCore::TestDOMJITShortNullableAttrDOMJIT::TestDOMJITShortNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITShortNullableAttr): Deleted.
+        (WebCore::TestDOMJITUnsignedShortNullableAttrDOMJIT::TestDOMJITUnsignedShortNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedShortNullableAttr): Deleted.
+        (WebCore::TestDOMJITLongNullableAttrDOMJIT::TestDOMJITLongNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITLongNullableAttr): Deleted.
+        (WebCore::TestDOMJITUnsignedLongNullableAttrDOMJIT::TestDOMJITUnsignedLongNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedLongNullableAttr): Deleted.
+        (WebCore::TestDOMJITLongLongNullableAttrDOMJIT::TestDOMJITLongLongNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITLongLongNullableAttr): Deleted.
+        (WebCore::TestDOMJITUnsignedLongLongNullableAttrDOMJIT::TestDOMJITUnsignedLongLongNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedLongLongNullableAttr): Deleted.
+        (WebCore::TestDOMJITFloatNullableAttrDOMJIT::TestDOMJITFloatNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITFloatNullableAttr): Deleted.
+        (WebCore::TestDOMJITUnrestrictedFloatNullableAttrDOMJIT::TestDOMJITUnrestrictedFloatNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUnrestrictedFloatNullableAttr): Deleted.
+        (WebCore::TestDOMJITDoubleNullableAttrDOMJIT::TestDOMJITDoubleNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITDoubleNullableAttr): Deleted.
+        (WebCore::TestDOMJITUnrestrictedDoubleNullableAttrDOMJIT::TestDOMJITUnrestrictedDoubleNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUnrestrictedDoubleNullableAttr): Deleted.
+        (WebCore::TestDOMJITDomStringNullableAttrDOMJIT::TestDOMJITDomStringNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITDomStringNullableAttr): Deleted.
+        (WebCore::TestDOMJITByteStringNullableAttrDOMJIT::TestDOMJITByteStringNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITByteStringNullableAttr): Deleted.
+        (WebCore::TestDOMJITUsvStringNullableAttrDOMJIT::TestDOMJITUsvStringNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITUsvStringNullableAttr): Deleted.
+        (WebCore::TestDOMJITNodeNullableAttrDOMJIT::TestDOMJITNodeNullableAttrDOMJIT): Deleted.
+        (WebCore::domJITGetterSetterForTestDOMJITNodeNullableAttr): Deleted.
+        * bindings/scripts/test/JS/JSTestDOMJIT.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorPrototype::finishCreation):
+        (WebCore::jsTestEventConstructorAttr1):
+        (WebCore::jsTestEventConstructorAttr2):
+        (WebCore::jsTestEventConstructorAttr3):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTargetPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestExceptionPrototype::finishCreation):
+        (WebCore::jsTestExceptionName):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachablePrototype::finishCreation):
+        (WebCore::jsTestGenerateIsReachableASecretAttribute):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::jsTestGlobalObjectRegularAttribute):
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestIndexedSetterNoIdentifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestIndexedSetterThrowingExceptionPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestIndexedSetterWithIdentifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::initializeProperties):
+        (WebCore::JSTestInterfacePrototype::finishCreation):
+        (WebCore::jsTestInterfaceImplementsStr1):
+        (WebCore::jsTestInterfaceImplementsStr2):
+        (WebCore::jsTestInterfaceImplementsStr3):
+        (WebCore::jsTestInterfaceImplementsNode):
+        (WebCore::jsTestInterfaceSupplementalStr1):
+        (WebCore::jsTestInterfaceSupplementalStr2):
+        (WebCore::jsTestInterfaceSupplementalStr3):
+        (WebCore::jsTestInterfaceSupplementalNode):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        (WebCore::JSTestInterfaceLeadingUnderscorePrototype::finishCreation):
+        (WebCore::jsTestInterfaceLeadingUnderscoreReadonly):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::JSTestIterablePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::JSTestJSBuiltinConstructorPrototype::finishCreation):
+        (WebCore::jsTestJSBuiltinConstructorTestAttributeCustom):
+        (WebCore::jsTestJSBuiltinConstructorTestAttributeRWCustom):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterThrowingExceptionPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        (WebCore::JSTestNamedDeleterNoIdentifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        (WebCore::JSTestNamedDeleterThrowingExceptionPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        (WebCore::JSTestNamedDeleterWithIdentifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedDeleterWithIndexedGetterPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        (WebCore::JSTestNamedGetterCallWithPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedGetterNoIdentifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedGetterWithIdentifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedSetterNoIdentifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedSetterThrowingExceptionPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedSetterWithIdentifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetterPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetterPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        (WebCore::JSTestNamedSetterWithOverrideBuiltinsPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesPrototype::finishCreation):
+        (WebCore::jsTestNamedSetterWithUnforgablePropertiesUnforgeableAttribute):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype::finishCreation):
+        (WebCore::jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttribute):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodePrototype::finishCreation):
+        (WebCore::jsTestNodeName):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::initializeProperties):
+        (WebCore::JSTestObjPrototype::finishCreation):
+        (WebCore::jsTestObjReadOnlyLongAttr):
+        (WebCore::jsTestObjReadOnlyStringAttr):
+        (WebCore::jsTestObjReadOnlyTestObjAttr):
+        (WebCore::jsTestObjEnumAttr):
+        (WebCore::jsTestObjByteAttr):
+        (WebCore::jsTestObjOctetAttr):
+        (WebCore::jsTestObjShortAttr):
+        (WebCore::jsTestObjClampedShortAttr):
+        (WebCore::jsTestObjEnforceRangeShortAttr):
+        (WebCore::jsTestObjUnsignedShortAttr):
+        (WebCore::jsTestObjLongAttr):
+        (WebCore::jsTestObjLongLongAttr):
+        (WebCore::jsTestObjUnsignedLongLongAttr):
+        (WebCore::jsTestObjStringAttr):
+        (WebCore::jsTestObjUsvstringAttr):
+        (WebCore::jsTestObjTestObjAttr):
+        (WebCore::jsTestObjTestNullableObjAttr):
+        (WebCore::jsTestObjUnforgeableAttr):
+        (WebCore::jsTestObjStringAttrTreatingNullAsEmptyString):
+        (WebCore::jsTestObjUsvstringAttrTreatingNullAsEmptyString):
+        (WebCore::jsTestObjByteStringAttrTreatingNullAsEmptyString):
+        (WebCore::jsTestObjStringLongRecordAttr):
+        (WebCore::jsTestObjUsvstringLongRecordAttr):
+        (WebCore::jsTestObjStringObjRecordAttr):
+        (WebCore::jsTestObjStringNullableObjRecordAttr):
+        (WebCore::jsTestObjDictionaryAttr):
+        (WebCore::jsTestObjNullableDictionaryAttr):
+        (WebCore::jsTestObjAnnotatedTypeInUnionAttr):
+        (WebCore::jsTestObjAnnotatedTypeInSequenceAttr):
+        (WebCore::jsTestObjImplementationEnumAttr):
+        (WebCore::jsTestObjXMLObjAttr):
+        (WebCore::jsTestObjCreate):
+        (WebCore::jsTestObjReflectedStringAttr):
+        (WebCore::jsTestObjReflectedUSVStringAttr):
+        (WebCore::jsTestObjReflectedIntegralAttr):
+        (WebCore::jsTestObjReflectedUnsignedIntegralAttr):
+        (WebCore::jsTestObjReflectedBooleanAttr):
+        (WebCore::jsTestObjReflectedURLAttr):
+        (WebCore::jsTestObjReflectedUSVURLAttr):
+        (WebCore::jsTestObjReflectedCustomIntegralAttr):
+        (WebCore::jsTestObjReflectedCustomBooleanAttr):
+        (WebCore::jsTestObjReflectedCustomURLAttr):
+        (WebCore::jsTestObjEnabledAtRuntimeAttribute):
+        (WebCore::jsTestObjEnabledBySettingAttribute):
+        (WebCore::jsTestObjTypedArrayAttr):
+        (WebCore::jsTestObjAttributeWithGetterException):
+        (WebCore::jsTestObjAttributeWithSetterException):
+        (WebCore::jsTestObjStringAttrWithGetterException):
+        (WebCore::jsTestObjStringAttrWithSetterException):
+        (WebCore::jsTestObjCustomAttr):
+        (WebCore::jsTestObjOnfoo):
+        (WebCore::jsTestObjOnwebkitfoo):
+        (WebCore::jsTestObjWithScriptStateAttribute):
+        (WebCore::jsTestObjWithCallWithAndSetterCallWithAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAttribute):
+        (WebCore::jsTestObjWithScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttribute):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises):
+        (WebCore::jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute):
+        (WebCore::jsTestObjConditionalAttr1):
+        (WebCore::jsTestObjConditionalAttr2):
+        (WebCore::jsTestObjConditionalAttr3):
+        (WebCore::jsTestObjCachedAttribute1):
+        (WebCore::jsTestObjCachedAttribute2):
+        (WebCore::jsTestObjAnyAttribute):
+        (WebCore::jsTestObjObjectAttribute):
+        (WebCore::jsTestObjContentDocument):
+        (WebCore::jsTestObjMutablePoint):
+        (WebCore::jsTestObjStrawberry):
+        (WebCore::jsTestObjDescription):
+        (WebCore::jsTestObjId):
+        (WebCore::jsTestObjHash):
+        (WebCore::jsTestObjReplaceableAttribute):
+        (WebCore::jsTestObjNullableDoubleAttribute):
+        (WebCore::jsTestObjNullableLongAttribute):
+        (WebCore::jsTestObjNullableBooleanAttribute):
+        (WebCore::jsTestObjNullableStringAttribute):
+        (WebCore::jsTestObjNullableLongSettableAttribute):
+        (WebCore::jsTestObjNullableStringSettableAttribute):
+        (WebCore::jsTestObjNullableUSVStringSettableAttribute):
+        (WebCore::jsTestObjNullableByteStringSettableAttribute):
+        (WebCore::jsTestObjNullableStringValue):
+        (WebCore::jsTestObjAttribute):
+        (WebCore::jsTestObjAttributeWithReservedEnumType):
+        (WebCore::jsTestObjPutForwardsAttribute):
+        (WebCore::jsTestObjPutForwardsNullableAttribute):
+        (WebCore::jsTestObjStringifierAttribute):
+        (WebCore::jsTestObjConditionallyReadWriteAttribute):
+        (WebCore::jsTestObjConditionalAndConditionallyReadWriteAttribute):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::JSTestOverloadedConstructorsWithSequencePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::JSTestOverrideBuiltinsPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::JSTestPluginInterfacePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::JSTestPromiseRejectionEventPrototype::finishCreation):
+        (WebCore::jsTestPromiseRejectionEventReason):
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::JSTestSerializationPrototype::finishCreation):
+        (WebCore::jsTestSerializationFirstStringAttribute):
+        (WebCore::jsTestSerializationSecondLongAttribute):
+        (WebCore::jsTestSerializationThirdUnserializableAttribute):
+        (WebCore::jsTestSerializationFourthUnrestrictedDoubleAttribute):
+        (WebCore::jsTestSerializationFifthLongAttribute):
+        (WebCore::jsTestSerializationSixthTypedefAttribute):
+        (WebCore::jsTestSerializationSeventhDirectlySerializableAttribute):
+        (WebCore::jsTestSerializationEighthIndirectlyAttribute):
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.cpp:
+        (WebCore::JSTestSerializationIndirectInheritancePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        (WebCore::JSTestSerializationInheritPrototype::finishCreation):
+        (WebCore::jsTestSerializationInheritInheritLongAttribute):
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        (WebCore::JSTestSerializationInheritFinalPrototype::finishCreation):
+        (WebCore::jsTestSerializationInheritFinalFinalLongAttributeFoo):
+        (WebCore::jsTestSerializationInheritFinalFinalLongAttributeBar):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::finishCreation):
+        (WebCore::jsTestSerializedScriptValueInterfaceValue):
+        (WebCore::jsTestSerializedScriptValueInterfaceReadonlyValue):
+        (WebCore::jsTestSerializedScriptValueInterfaceCachedValue):
+        (WebCore::jsTestSerializedScriptValueInterfacePorts):
+        (WebCore::jsTestSerializedScriptValueInterfaceCachedReadonlyValue):
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        (WebCore::JSTestStringifierPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        (WebCore::JSTestStringifierAnonymousOperationPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        (WebCore::JSTestStringifierNamedOperationPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        (WebCore::JSTestStringifierOperationImplementedAsPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        (WebCore::JSTestStringifierOperationNamedToStringPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        (WebCore::JSTestStringifierReadOnlyAttributePrototype::finishCreation):
+        (WebCore::jsTestStringifierReadOnlyAttributeIdentifier):
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::JSTestStringifierReadWriteAttributePrototype::finishCreation):
+        (WebCore::jsTestStringifierReadWriteAttributeIdentifier):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::initializeProperties):
+        (WebCore::JSTestTypedefsPrototype::finishCreation):
+        (WebCore::jsTestTypedefsUnsignedLongLongAttr):
+        (WebCore::jsTestTypedefsSerializedScriptValue):
+        (WebCore::jsTestTypedefsAttributeWithClamp):
+        (WebCore::jsTestTypedefsAttributeWithClampInTypedef):
+        (WebCore::jsTestTypedefsAttrWithGetterException):
+        (WebCore::jsTestTypedefsAttrWithSetterException):
+        (WebCore::jsTestTypedefsStringAttrWithGetterException):
+        (WebCore::jsTestTypedefsStringAttrWithSetterException):
+        (WebCore::jsTestTypedefsBufferSourceAttr):
+        (WebCore::jsTestTypedefsDomTimeStampAttr):
+        They are binding test rebaselines.
+
+        * domjit/DOMJITIDLTypeFilter.h:
+        * domjit/JSDocumentDOMJIT.cpp:
+        (WebCore::compileDocumentDocumentElementAttribute):
+        (WebCore::compileDocumentBodyAttribute):
+        (WebCore::DocumentDocumentElementDOMJIT::callDOMGetter): Deleted.
+        (WebCore::DocumentBodyDOMJIT::callDOMGetter): Deleted.
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::compileNodeFirstChildAttribute):
+        (WebCore::compileNodeLastChildAttribute):
+        (WebCore::compileNodeNextSiblingAttribute):
+        (WebCore::compileNodePreviousSiblingAttribute):
+        (WebCore::compileNodeParentNodeAttribute):
+        (WebCore::compileNodeNodeTypeAttribute):
+        (WebCore::compileNodeOwnerDocumentAttribute):
+        (WebCore::NodeFirstChildDOMJIT::callDOMGetter): Deleted.
+        (WebCore::NodeLastChildDOMJIT::callDOMGetter): Deleted.
+        (WebCore::NodeNextSiblingDOMJIT::callDOMGetter): Deleted.
+        (WebCore::NodePreviousSiblingDOMJIT::callDOMGetter): Deleted.
+        (WebCore::NodeParentNodeDOMJIT::callDOMGetter): Deleted.
+        (WebCore::NodeNodeTypeDOMJIT::callDOMGetter): Deleted.
+        (WebCore::NodeOwnerDocumentDOMJIT::callDOMGetter): Deleted.
+        DOMJIT::GetterSetter becomes smaller constexpr data.
+
 2017-07-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] Not having a key id buffer should not always error

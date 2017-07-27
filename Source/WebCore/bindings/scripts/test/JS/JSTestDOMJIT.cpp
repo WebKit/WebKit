@@ -43,7 +43,6 @@
 #include <interpreter/FrameTracers.h>
 #include <runtime/JSCInlines.h>
 #include <wtf/GetPtr.h>
-#include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
 
@@ -112,6 +111,356 @@ static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementById((
 
 static const JSC::DOMJIT::Signature DOMJITSignatureForTestDOMJITGetElementsByName((uintptr_t)unsafeJsTestDOMJITPrototypeFunctionGetElementsByName, JSTestDOMJIT::info(), JSC::DOMJIT::Effect::forRead(DOMJIT::AbstractHeapRepository::DOM), DOMJIT::IDLResultTypeFilter<IDLInterface<NodeList>>::value, DOMJIT::IDLArgumentTypeFilter<IDLAtomicStringAdaptor<IDLDOMString>>::value);
 
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITAnyAttr {
+    jsTestDOMJITAnyAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITAnyAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLAny>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITBooleanAttr {
+    jsTestDOMJITBooleanAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITBooleanAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLBoolean>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITByteAttr {
+    jsTestDOMJITByteAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITByteAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLByte>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITOctetAttr {
+    jsTestDOMJITOctetAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITOctetAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLOctet>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITShortAttr {
+    jsTestDOMJITShortAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITShortAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLShort>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUnsignedShortAttr {
+    jsTestDOMJITUnsignedShortAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUnsignedShortAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLUnsignedShort>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITLongAttr {
+    jsTestDOMJITLongAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITLongAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLLong>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUnsignedLongAttr {
+    jsTestDOMJITUnsignedLongAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUnsignedLongAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLUnsignedLong>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITLongLongAttr {
+    jsTestDOMJITLongLongAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITLongLongAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLLongLong>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUnsignedLongLongAttr {
+    jsTestDOMJITUnsignedLongLongAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUnsignedLongLongAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLUnsignedLongLong>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITFloatAttr {
+    jsTestDOMJITFloatAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITFloatAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLFloat>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUnrestrictedFloatAttr {
+    jsTestDOMJITUnrestrictedFloatAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUnrestrictedFloatAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLUnrestrictedFloat>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITDoubleAttr {
+    jsTestDOMJITDoubleAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITDoubleAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLDouble>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUnrestrictedDoubleAttr {
+    jsTestDOMJITUnrestrictedDoubleAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUnrestrictedDoubleAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLUnrestrictedDouble>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITDomStringAttr {
+    jsTestDOMJITDomStringAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITDomStringAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLDOMString>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITByteStringAttr {
+    jsTestDOMJITByteStringAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITByteStringAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLByteString>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUsvStringAttr {
+    jsTestDOMJITUsvStringAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUsvStringAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLUSVString>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITNodeAttr {
+    jsTestDOMJITNodeAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITNodeAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLInterface<Node>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITBooleanNullableAttr {
+    jsTestDOMJITBooleanNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITBooleanNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLBoolean>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITByteNullableAttr {
+    jsTestDOMJITByteNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITByteNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLByte>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITOctetNullableAttr {
+    jsTestDOMJITOctetNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITOctetNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLOctet>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITShortNullableAttr {
+    jsTestDOMJITShortNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITShortNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLShort>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUnsignedShortNullableAttr {
+    jsTestDOMJITUnsignedShortNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUnsignedShortNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUnsignedShort>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITLongNullableAttr {
+    jsTestDOMJITLongNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITLongNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLLong>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUnsignedLongNullableAttr {
+    jsTestDOMJITUnsignedLongNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUnsignedLongNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUnsignedLong>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITLongLongNullableAttr {
+    jsTestDOMJITLongLongNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITLongLongNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLLongLong>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUnsignedLongLongNullableAttr {
+    jsTestDOMJITUnsignedLongLongNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUnsignedLongLongNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUnsignedLongLong>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITFloatNullableAttr {
+    jsTestDOMJITFloatNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITFloatNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLFloat>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUnrestrictedFloatNullableAttr {
+    jsTestDOMJITUnrestrictedFloatNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUnrestrictedFloatNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUnrestrictedFloat>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITDoubleNullableAttr {
+    jsTestDOMJITDoubleNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITDoubleNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDouble>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUnrestrictedDoubleNullableAttr {
+    jsTestDOMJITUnrestrictedDoubleNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUnrestrictedDoubleNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUnrestrictedDouble>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITDomStringNullableAttr {
+    jsTestDOMJITDomStringNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITDomStringNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDOMString>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITByteStringNullableAttr {
+    jsTestDOMJITByteStringNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITByteStringNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLByteString>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITUsvStringNullableAttr {
+    jsTestDOMJITUsvStringNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITUsvStringNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUSVString>>::value
+};
+
+static const JSC::DOMJIT::GetterSetter DOMJITAttributeForTestDOMJITNodeNullableAttr {
+    jsTestDOMJITNodeNullableAttr,
+#if ENABLE(JIT)
+    &compileTestDOMJITNodeNullableAttrAttribute,
+#else
+    nullptr,
+#endif
+    DOMJIT::IDLResultTypeFilter<IDLNullable<IDLInterface<Node>>>::value
+};
+
 class JSTestDOMJITPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
@@ -158,41 +507,41 @@ template<> const ClassInfo JSTestDOMJITConstructor::s_info = { "TestDOMJIT", &Ba
 static const HashTableValue JSTestDOMJITPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDOMJITConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestDOMJITConstructor) } },
-    { "anyAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITAnyAttr), (intptr_t) (0) } },
-    { "booleanAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITBooleanAttr), (intptr_t) (0) } },
-    { "byteAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITByteAttr), (intptr_t) (0) } },
-    { "octetAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITOctetAttr), (intptr_t) (0) } },
-    { "shortAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITShortAttr), (intptr_t) (0) } },
-    { "unsignedShortAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUnsignedShortAttr), (intptr_t) (0) } },
-    { "longAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITLongAttr), (intptr_t) (0) } },
-    { "unsignedLongAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUnsignedLongAttr), (intptr_t) (0) } },
-    { "longLongAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITLongLongAttr), (intptr_t) (0) } },
-    { "unsignedLongLongAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUnsignedLongLongAttr), (intptr_t) (0) } },
-    { "floatAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITFloatAttr), (intptr_t) (0) } },
-    { "unrestrictedFloatAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUnrestrictedFloatAttr), (intptr_t) (0) } },
-    { "doubleAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITDoubleAttr), (intptr_t) (0) } },
-    { "unrestrictedDoubleAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUnrestrictedDoubleAttr), (intptr_t) (0) } },
-    { "domStringAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITDomStringAttr), (intptr_t) (0) } },
-    { "byteStringAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITByteStringAttr), (intptr_t) (0) } },
-    { "usvStringAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUsvStringAttr), (intptr_t) (0) } },
-    { "nodeAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITNodeAttr), (intptr_t) (0) } },
-    { "booleanNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITBooleanNullableAttr), (intptr_t) (0) } },
-    { "byteNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITByteNullableAttr), (intptr_t) (0) } },
-    { "octetNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITOctetNullableAttr), (intptr_t) (0) } },
-    { "shortNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITShortNullableAttr), (intptr_t) (0) } },
-    { "unsignedShortNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUnsignedShortNullableAttr), (intptr_t) (0) } },
-    { "longNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITLongNullableAttr), (intptr_t) (0) } },
-    { "unsignedLongNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUnsignedLongNullableAttr), (intptr_t) (0) } },
-    { "longLongNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITLongLongNullableAttr), (intptr_t) (0) } },
-    { "unsignedLongLongNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUnsignedLongLongNullableAttr), (intptr_t) (0) } },
-    { "floatNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITFloatNullableAttr), (intptr_t) (0) } },
-    { "unrestrictedFloatNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUnrestrictedFloatNullableAttr), (intptr_t) (0) } },
-    { "doubleNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITDoubleNullableAttr), (intptr_t) (0) } },
-    { "unrestrictedDoubleNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUnrestrictedDoubleNullableAttr), (intptr_t) (0) } },
-    { "domStringNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITDomStringNullableAttr), (intptr_t) (0) } },
-    { "byteStringNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITByteStringNullableAttr), (intptr_t) (0) } },
-    { "usvStringNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITUsvStringNullableAttr), (intptr_t) (0) } },
-    { "nodeNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<DOMJITGetterSetterGenerator>(domJITGetterSetterForTestDOMJITNodeNullableAttr), (intptr_t) (0) } },
+    { "anyAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITAnyAttr), (intptr_t) (0) } },
+    { "booleanAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITBooleanAttr), (intptr_t) (0) } },
+    { "byteAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITByteAttr), (intptr_t) (0) } },
+    { "octetAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITOctetAttr), (intptr_t) (0) } },
+    { "shortAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITShortAttr), (intptr_t) (0) } },
+    { "unsignedShortAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUnsignedShortAttr), (intptr_t) (0) } },
+    { "longAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITLongAttr), (intptr_t) (0) } },
+    { "unsignedLongAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUnsignedLongAttr), (intptr_t) (0) } },
+    { "longLongAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITLongLongAttr), (intptr_t) (0) } },
+    { "unsignedLongLongAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUnsignedLongLongAttr), (intptr_t) (0) } },
+    { "floatAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITFloatAttr), (intptr_t) (0) } },
+    { "unrestrictedFloatAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUnrestrictedFloatAttr), (intptr_t) (0) } },
+    { "doubleAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITDoubleAttr), (intptr_t) (0) } },
+    { "unrestrictedDoubleAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUnrestrictedDoubleAttr), (intptr_t) (0) } },
+    { "domStringAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITDomStringAttr), (intptr_t) (0) } },
+    { "byteStringAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITByteStringAttr), (intptr_t) (0) } },
+    { "usvStringAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUsvStringAttr), (intptr_t) (0) } },
+    { "nodeAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITNodeAttr), (intptr_t) (0) } },
+    { "booleanNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITBooleanNullableAttr), (intptr_t) (0) } },
+    { "byteNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITByteNullableAttr), (intptr_t) (0) } },
+    { "octetNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITOctetNullableAttr), (intptr_t) (0) } },
+    { "shortNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITShortNullableAttr), (intptr_t) (0) } },
+    { "unsignedShortNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUnsignedShortNullableAttr), (intptr_t) (0) } },
+    { "longNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITLongNullableAttr), (intptr_t) (0) } },
+    { "unsignedLongNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUnsignedLongNullableAttr), (intptr_t) (0) } },
+    { "longLongNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITLongLongNullableAttr), (intptr_t) (0) } },
+    { "unsignedLongLongNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUnsignedLongLongNullableAttr), (intptr_t) (0) } },
+    { "floatNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITFloatNullableAttr), (intptr_t) (0) } },
+    { "unrestrictedFloatNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUnrestrictedFloatNullableAttr), (intptr_t) (0) } },
+    { "doubleNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITDoubleNullableAttr), (intptr_t) (0) } },
+    { "unrestrictedDoubleNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUnrestrictedDoubleNullableAttr), (intptr_t) (0) } },
+    { "domStringNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITDomStringNullableAttr), (intptr_t) (0) } },
+    { "byteStringNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITByteStringNullableAttr), (intptr_t) (0) } },
+    { "usvStringNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITUsvStringNullableAttr), (intptr_t) (0) } },
+    { "nodeNullableAttr", ReadOnly | CustomAccessor | DOMJITAttribute, NoIntrinsic, { (intptr_t)static_cast<const JSC::DOMJIT::GetterSetter*>(&DOMJITAttributeForTestDOMJITNodeNullableAttr), (intptr_t) (0) } },
     { "getAttribute", JSC::Function | DOMJITFunction, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestDOMJITPrototypeFunctionGetAttribute), (intptr_t) static_cast<const JSC::DOMJIT::Signature*>(&DOMJITSignatureForTestDOMJITGetAttribute) } },
     { "item", JSC::Function | DOMJITFunction, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestDOMJITPrototypeFunctionItem), (intptr_t) static_cast<const JSC::DOMJIT::Signature*>(&DOMJITSignatureForTestDOMJITItem) } },
     { "hasAttribute", JSC::Function | DOMJITFunction, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestDOMJITPrototypeFunctionHasAttribute), (intptr_t) static_cast<const JSC::DOMJIT::Signature*>(&DOMJITSignatureForTestDOMJITHasAttribute) } },
@@ -205,7 +554,7 @@ const ClassInfo JSTestDOMJITPrototype::s_info = { "TestDOMJITPrototype", &Base::
 void JSTestDOMJITPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestDOMJITPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestDOMJIT::info(), JSTestDOMJITPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestDOMJIT::s_info = { "TestDOMJIT", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDOMJIT) };
@@ -284,17 +633,6 @@ EncodedJSValue jsTestDOMJITAnyAttr(ExecState* state, EncodedJSValue thisValue, P
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITAnyAttrGetter>(*state, thisValue, "anyAttr");
 }
 
-TestDOMJITAnyAttrDOMJIT::TestDOMJITAnyAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITAnyAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLAny>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITAnyAttr()
-{
-    static NeverDestroyed<TestDOMJITAnyAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITBooleanAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -307,17 +645,6 @@ static inline JSValue jsTestDOMJITBooleanAttrGetter(ExecState& state, JSTestDOMJ
 EncodedJSValue jsTestDOMJITBooleanAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITBooleanAttrGetter>(*state, thisValue, "booleanAttr");
-}
-
-TestDOMJITBooleanAttrDOMJIT::TestDOMJITBooleanAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITBooleanAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLBoolean>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITBooleanAttr()
-{
-    static NeverDestroyed<TestDOMJITBooleanAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITByteAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -334,17 +661,6 @@ EncodedJSValue jsTestDOMJITByteAttr(ExecState* state, EncodedJSValue thisValue, 
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITByteAttrGetter>(*state, thisValue, "byteAttr");
 }
 
-TestDOMJITByteAttrDOMJIT::TestDOMJITByteAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITByteAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLByte>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITByteAttr()
-{
-    static NeverDestroyed<TestDOMJITByteAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITOctetAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -357,17 +673,6 @@ static inline JSValue jsTestDOMJITOctetAttrGetter(ExecState& state, JSTestDOMJIT
 EncodedJSValue jsTestDOMJITOctetAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITOctetAttrGetter>(*state, thisValue, "octetAttr");
-}
-
-TestDOMJITOctetAttrDOMJIT::TestDOMJITOctetAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITOctetAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLOctet>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITOctetAttr()
-{
-    static NeverDestroyed<TestDOMJITOctetAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITShortAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -384,17 +689,6 @@ EncodedJSValue jsTestDOMJITShortAttr(ExecState* state, EncodedJSValue thisValue,
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITShortAttrGetter>(*state, thisValue, "shortAttr");
 }
 
-TestDOMJITShortAttrDOMJIT::TestDOMJITShortAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITShortAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLShort>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITShortAttr()
-{
-    static NeverDestroyed<TestDOMJITShortAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITUnsignedShortAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -407,17 +701,6 @@ static inline JSValue jsTestDOMJITUnsignedShortAttrGetter(ExecState& state, JSTe
 EncodedJSValue jsTestDOMJITUnsignedShortAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUnsignedShortAttrGetter>(*state, thisValue, "unsignedShortAttr");
-}
-
-TestDOMJITUnsignedShortAttrDOMJIT::TestDOMJITUnsignedShortAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUnsignedShortAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLUnsignedShort>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedShortAttr()
-{
-    static NeverDestroyed<TestDOMJITUnsignedShortAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITLongAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -434,17 +717,6 @@ EncodedJSValue jsTestDOMJITLongAttr(ExecState* state, EncodedJSValue thisValue, 
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITLongAttrGetter>(*state, thisValue, "longAttr");
 }
 
-TestDOMJITLongAttrDOMJIT::TestDOMJITLongAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITLongAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLLong>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITLongAttr()
-{
-    static NeverDestroyed<TestDOMJITLongAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITUnsignedLongAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -457,17 +729,6 @@ static inline JSValue jsTestDOMJITUnsignedLongAttrGetter(ExecState& state, JSTes
 EncodedJSValue jsTestDOMJITUnsignedLongAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUnsignedLongAttrGetter>(*state, thisValue, "unsignedLongAttr");
-}
-
-TestDOMJITUnsignedLongAttrDOMJIT::TestDOMJITUnsignedLongAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUnsignedLongAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLUnsignedLong>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedLongAttr()
-{
-    static NeverDestroyed<TestDOMJITUnsignedLongAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITLongLongAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -484,17 +745,6 @@ EncodedJSValue jsTestDOMJITLongLongAttr(ExecState* state, EncodedJSValue thisVal
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITLongLongAttrGetter>(*state, thisValue, "longLongAttr");
 }
 
-TestDOMJITLongLongAttrDOMJIT::TestDOMJITLongLongAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITLongLongAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLLongLong>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITLongLongAttr()
-{
-    static NeverDestroyed<TestDOMJITLongLongAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITUnsignedLongLongAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -507,17 +757,6 @@ static inline JSValue jsTestDOMJITUnsignedLongLongAttrGetter(ExecState& state, J
 EncodedJSValue jsTestDOMJITUnsignedLongLongAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUnsignedLongLongAttrGetter>(*state, thisValue, "unsignedLongLongAttr");
-}
-
-TestDOMJITUnsignedLongLongAttrDOMJIT::TestDOMJITUnsignedLongLongAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUnsignedLongLongAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLUnsignedLongLong>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedLongLongAttr()
-{
-    static NeverDestroyed<TestDOMJITUnsignedLongLongAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITFloatAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -534,17 +773,6 @@ EncodedJSValue jsTestDOMJITFloatAttr(ExecState* state, EncodedJSValue thisValue,
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITFloatAttrGetter>(*state, thisValue, "floatAttr");
 }
 
-TestDOMJITFloatAttrDOMJIT::TestDOMJITFloatAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITFloatAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLFloat>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITFloatAttr()
-{
-    static NeverDestroyed<TestDOMJITFloatAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITUnrestrictedFloatAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -557,17 +785,6 @@ static inline JSValue jsTestDOMJITUnrestrictedFloatAttrGetter(ExecState& state, 
 EncodedJSValue jsTestDOMJITUnrestrictedFloatAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUnrestrictedFloatAttrGetter>(*state, thisValue, "unrestrictedFloatAttr");
-}
-
-TestDOMJITUnrestrictedFloatAttrDOMJIT::TestDOMJITUnrestrictedFloatAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUnrestrictedFloatAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLUnrestrictedFloat>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnrestrictedFloatAttr()
-{
-    static NeverDestroyed<TestDOMJITUnrestrictedFloatAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITDoubleAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -584,17 +801,6 @@ EncodedJSValue jsTestDOMJITDoubleAttr(ExecState* state, EncodedJSValue thisValue
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITDoubleAttrGetter>(*state, thisValue, "doubleAttr");
 }
 
-TestDOMJITDoubleAttrDOMJIT::TestDOMJITDoubleAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITDoubleAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLDouble>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITDoubleAttr()
-{
-    static NeverDestroyed<TestDOMJITDoubleAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITUnrestrictedDoubleAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -607,17 +813,6 @@ static inline JSValue jsTestDOMJITUnrestrictedDoubleAttrGetter(ExecState& state,
 EncodedJSValue jsTestDOMJITUnrestrictedDoubleAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUnrestrictedDoubleAttrGetter>(*state, thisValue, "unrestrictedDoubleAttr");
-}
-
-TestDOMJITUnrestrictedDoubleAttrDOMJIT::TestDOMJITUnrestrictedDoubleAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUnrestrictedDoubleAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLUnrestrictedDouble>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnrestrictedDoubleAttr()
-{
-    static NeverDestroyed<TestDOMJITUnrestrictedDoubleAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITDomStringAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -634,17 +829,6 @@ EncodedJSValue jsTestDOMJITDomStringAttr(ExecState* state, EncodedJSValue thisVa
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITDomStringAttrGetter>(*state, thisValue, "domStringAttr");
 }
 
-TestDOMJITDomStringAttrDOMJIT::TestDOMJITDomStringAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITDomStringAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLDOMString>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITDomStringAttr()
-{
-    static NeverDestroyed<TestDOMJITDomStringAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITByteStringAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -657,17 +841,6 @@ static inline JSValue jsTestDOMJITByteStringAttrGetter(ExecState& state, JSTestD
 EncodedJSValue jsTestDOMJITByteStringAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITByteStringAttrGetter>(*state, thisValue, "byteStringAttr");
-}
-
-TestDOMJITByteStringAttrDOMJIT::TestDOMJITByteStringAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITByteStringAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLByteString>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITByteStringAttr()
-{
-    static NeverDestroyed<TestDOMJITByteStringAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITUsvStringAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -684,17 +857,6 @@ EncodedJSValue jsTestDOMJITUsvStringAttr(ExecState* state, EncodedJSValue thisVa
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUsvStringAttrGetter>(*state, thisValue, "usvStringAttr");
 }
 
-TestDOMJITUsvStringAttrDOMJIT::TestDOMJITUsvStringAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUsvStringAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLUSVString>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUsvStringAttr()
-{
-    static NeverDestroyed<TestDOMJITUsvStringAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITNodeAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -707,17 +869,6 @@ static inline JSValue jsTestDOMJITNodeAttrGetter(ExecState& state, JSTestDOMJIT&
 EncodedJSValue jsTestDOMJITNodeAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITNodeAttrGetter>(*state, thisValue, "nodeAttr");
-}
-
-TestDOMJITNodeAttrDOMJIT::TestDOMJITNodeAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITNodeAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLInterface<Node>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITNodeAttr()
-{
-    static NeverDestroyed<TestDOMJITNodeAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITBooleanNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -734,17 +885,6 @@ EncodedJSValue jsTestDOMJITBooleanNullableAttr(ExecState* state, EncodedJSValue 
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITBooleanNullableAttrGetter>(*state, thisValue, "booleanNullableAttr");
 }
 
-TestDOMJITBooleanNullableAttrDOMJIT::TestDOMJITBooleanNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITBooleanNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLBoolean>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITBooleanNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITBooleanNullableAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITByteNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -757,17 +897,6 @@ static inline JSValue jsTestDOMJITByteNullableAttrGetter(ExecState& state, JSTes
 EncodedJSValue jsTestDOMJITByteNullableAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITByteNullableAttrGetter>(*state, thisValue, "byteNullableAttr");
-}
-
-TestDOMJITByteNullableAttrDOMJIT::TestDOMJITByteNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITByteNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLByte>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITByteNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITByteNullableAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITOctetNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -784,17 +913,6 @@ EncodedJSValue jsTestDOMJITOctetNullableAttr(ExecState* state, EncodedJSValue th
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITOctetNullableAttrGetter>(*state, thisValue, "octetNullableAttr");
 }
 
-TestDOMJITOctetNullableAttrDOMJIT::TestDOMJITOctetNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITOctetNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLOctet>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITOctetNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITOctetNullableAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITShortNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -807,17 +925,6 @@ static inline JSValue jsTestDOMJITShortNullableAttrGetter(ExecState& state, JSTe
 EncodedJSValue jsTestDOMJITShortNullableAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITShortNullableAttrGetter>(*state, thisValue, "shortNullableAttr");
-}
-
-TestDOMJITShortNullableAttrDOMJIT::TestDOMJITShortNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITShortNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLShort>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITShortNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITShortNullableAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITUnsignedShortNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -834,17 +941,6 @@ EncodedJSValue jsTestDOMJITUnsignedShortNullableAttr(ExecState* state, EncodedJS
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUnsignedShortNullableAttrGetter>(*state, thisValue, "unsignedShortNullableAttr");
 }
 
-TestDOMJITUnsignedShortNullableAttrDOMJIT::TestDOMJITUnsignedShortNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUnsignedShortNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUnsignedShort>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedShortNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITUnsignedShortNullableAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITLongNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -857,17 +953,6 @@ static inline JSValue jsTestDOMJITLongNullableAttrGetter(ExecState& state, JSTes
 EncodedJSValue jsTestDOMJITLongNullableAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITLongNullableAttrGetter>(*state, thisValue, "longNullableAttr");
-}
-
-TestDOMJITLongNullableAttrDOMJIT::TestDOMJITLongNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITLongNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLLong>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITLongNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITLongNullableAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITUnsignedLongNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -884,17 +969,6 @@ EncodedJSValue jsTestDOMJITUnsignedLongNullableAttr(ExecState* state, EncodedJSV
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUnsignedLongNullableAttrGetter>(*state, thisValue, "unsignedLongNullableAttr");
 }
 
-TestDOMJITUnsignedLongNullableAttrDOMJIT::TestDOMJITUnsignedLongNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUnsignedLongNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUnsignedLong>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedLongNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITUnsignedLongNullableAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITLongLongNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -907,17 +981,6 @@ static inline JSValue jsTestDOMJITLongLongNullableAttrGetter(ExecState& state, J
 EncodedJSValue jsTestDOMJITLongLongNullableAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITLongLongNullableAttrGetter>(*state, thisValue, "longLongNullableAttr");
-}
-
-TestDOMJITLongLongNullableAttrDOMJIT::TestDOMJITLongLongNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITLongLongNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLLongLong>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITLongLongNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITLongLongNullableAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITUnsignedLongLongNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -934,17 +997,6 @@ EncodedJSValue jsTestDOMJITUnsignedLongLongNullableAttr(ExecState* state, Encode
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUnsignedLongLongNullableAttrGetter>(*state, thisValue, "unsignedLongLongNullableAttr");
 }
 
-TestDOMJITUnsignedLongLongNullableAttrDOMJIT::TestDOMJITUnsignedLongLongNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUnsignedLongLongNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUnsignedLongLong>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnsignedLongLongNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITUnsignedLongLongNullableAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITFloatNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -957,17 +1009,6 @@ static inline JSValue jsTestDOMJITFloatNullableAttrGetter(ExecState& state, JSTe
 EncodedJSValue jsTestDOMJITFloatNullableAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITFloatNullableAttrGetter>(*state, thisValue, "floatNullableAttr");
-}
-
-TestDOMJITFloatNullableAttrDOMJIT::TestDOMJITFloatNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITFloatNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLFloat>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITFloatNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITFloatNullableAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITUnrestrictedFloatNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -984,17 +1025,6 @@ EncodedJSValue jsTestDOMJITUnrestrictedFloatNullableAttr(ExecState* state, Encod
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUnrestrictedFloatNullableAttrGetter>(*state, thisValue, "unrestrictedFloatNullableAttr");
 }
 
-TestDOMJITUnrestrictedFloatNullableAttrDOMJIT::TestDOMJITUnrestrictedFloatNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUnrestrictedFloatNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUnrestrictedFloat>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnrestrictedFloatNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITUnrestrictedFloatNullableAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITDoubleNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -1007,17 +1037,6 @@ static inline JSValue jsTestDOMJITDoubleNullableAttrGetter(ExecState& state, JST
 EncodedJSValue jsTestDOMJITDoubleNullableAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITDoubleNullableAttrGetter>(*state, thisValue, "doubleNullableAttr");
-}
-
-TestDOMJITDoubleNullableAttrDOMJIT::TestDOMJITDoubleNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITDoubleNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDouble>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITDoubleNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITDoubleNullableAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITUnrestrictedDoubleNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -1034,17 +1053,6 @@ EncodedJSValue jsTestDOMJITUnrestrictedDoubleNullableAttr(ExecState* state, Enco
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUnrestrictedDoubleNullableAttrGetter>(*state, thisValue, "unrestrictedDoubleNullableAttr");
 }
 
-TestDOMJITUnrestrictedDoubleNullableAttrDOMJIT::TestDOMJITUnrestrictedDoubleNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUnrestrictedDoubleNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUnrestrictedDouble>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUnrestrictedDoubleNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITUnrestrictedDoubleNullableAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITDomStringNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -1057,17 +1065,6 @@ static inline JSValue jsTestDOMJITDomStringNullableAttrGetter(ExecState& state, 
 EncodedJSValue jsTestDOMJITDomStringNullableAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITDomStringNullableAttrGetter>(*state, thisValue, "domStringNullableAttr");
-}
-
-TestDOMJITDomStringNullableAttrDOMJIT::TestDOMJITDomStringNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITDomStringNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLDOMString>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITDomStringNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITDomStringNullableAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSValue jsTestDOMJITByteStringNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
@@ -1084,17 +1081,6 @@ EncodedJSValue jsTestDOMJITByteStringNullableAttr(ExecState* state, EncodedJSVal
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITByteStringNullableAttrGetter>(*state, thisValue, "byteStringNullableAttr");
 }
 
-TestDOMJITByteStringNullableAttrDOMJIT::TestDOMJITByteStringNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITByteStringNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLByteString>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITByteStringNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITByteStringNullableAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITUsvStringNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -1109,17 +1095,6 @@ EncodedJSValue jsTestDOMJITUsvStringNullableAttr(ExecState* state, EncodedJSValu
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITUsvStringNullableAttrGetter>(*state, thisValue, "usvStringNullableAttr");
 }
 
-TestDOMJITUsvStringNullableAttrDOMJIT::TestDOMJITUsvStringNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITUsvStringNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLUSVString>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITUsvStringNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITUsvStringNullableAttrDOMJIT> compiler;
-    return &compiler.get();
-}
-
 static inline JSValue jsTestDOMJITNodeNullableAttrGetter(ExecState& state, JSTestDOMJIT& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -1132,17 +1107,6 @@ static inline JSValue jsTestDOMJITNodeNullableAttrGetter(ExecState& state, JSTes
 EncodedJSValue jsTestDOMJITNodeNullableAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return IDLAttribute<JSTestDOMJIT>::get<jsTestDOMJITNodeNullableAttrGetter>(*state, thisValue, "nodeNullableAttr");
-}
-
-TestDOMJITNodeNullableAttrDOMJIT::TestDOMJITNodeNullableAttrDOMJIT()
-    : JSC::DOMJIT::GetterSetter(jsTestDOMJITNodeNullableAttr, nullptr, JSTestDOMJIT::info(), DOMJIT::IDLResultTypeFilter<IDLNullable<IDLInterface<Node>>>::value)
-{
-}
-
-JSC::DOMJIT::GetterSetter* domJITGetterSetterForTestDOMJITNodeNullableAttr()
-{
-    static NeverDestroyed<TestDOMJITNodeNullableAttrDOMJIT> compiler;
-    return &compiler.get();
 }
 
 static inline JSC::EncodedJSValue jsTestDOMJITPrototypeFunctionGetAttributeBody(JSC::ExecState* state, typename IDLOperation<JSTestDOMJIT>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

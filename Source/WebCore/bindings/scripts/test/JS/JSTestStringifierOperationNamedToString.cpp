@@ -99,7 +99,7 @@ const ClassInfo JSTestStringifierOperationNamedToStringPrototype::s_info = { "Te
 void JSTestStringifierOperationNamedToStringPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestStringifierOperationNamedToStringPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestStringifierOperationNamedToString::info(), JSTestStringifierOperationNamedToStringPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestStringifierOperationNamedToString::s_info = { "TestStringifierOperationNamedToString", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierOperationNamedToString) };

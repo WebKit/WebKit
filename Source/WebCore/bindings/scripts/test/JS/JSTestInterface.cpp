@@ -258,7 +258,7 @@ template<> void JSTestInterfaceConstructor::initializeProperties(VM& vm, JSDOMGl
     putDirect(vm, vm.propertyNames->prototype, JSTestInterface::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestInterface"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
-    reifyStaticProperties(vm, JSTestInterfaceConstructorTableValues, *this);
+    reifyStaticProperties(vm, JSTestInterface::info(), JSTestInterfaceConstructorTableValues, *this);
 }
 
 template<> const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
@@ -269,42 +269,42 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceConstructor) } },
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStr1", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "implementsStr1", ReadOnly | CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStr2", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr2) } },
+    { "implementsStr2", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr2) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsStr3", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr3) } },
+    { "implementsStr3", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsStr3) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "implementsNode", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsNode) } },
+    { "implementsNode", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceImplementsNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceImplementsNode) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "supplementalStr1", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "supplementalStr1", ReadOnly | CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "supplementalStr2", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr2) } },
+    { "supplementalStr2", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr2) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "supplementalStr3", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr3) } },
+    { "supplementalStr3", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalStr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalStr3) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    { "supplementalNode", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalNode) } },
+    { "supplementalNode", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalNode) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -375,7 +375,7 @@ const ClassInfo JSTestInterfacePrototype::s_info = { "TestInterfacePrototype", &
 void JSTestInterfacePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestInterfacePrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestInterface::info(), JSTestInterfacePrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterface) };
@@ -508,7 +508,7 @@ static inline JSValue jsTestInterfaceImplementsStr1Getter(ExecState& state, JSTe
 
 EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr1Getter>(*state, thisValue, "implementsStr1");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr1Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "implementsStr1");
 }
 
 #endif
@@ -525,7 +525,7 @@ static inline JSValue jsTestInterfaceImplementsStr2Getter(ExecState& state, JSTe
 
 EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr2Getter>(*state, thisValue, "implementsStr2");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr2Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "implementsStr2");
 }
 
 #endif
@@ -559,7 +559,7 @@ static inline JSValue jsTestInterfaceImplementsStr3Getter(ExecState& state, JSTe
 
 EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr3Getter>(*state, thisValue, "implementsStr3");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsStr3Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "implementsStr3");
 }
 
 #endif
@@ -592,7 +592,7 @@ static inline JSValue jsTestInterfaceImplementsNodeGetter(ExecState& state, JSTe
 
 EncodedJSValue jsTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsNodeGetter>(*state, thisValue, "implementsNode");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceImplementsNodeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "implementsNode");
 }
 
 #endif
@@ -678,7 +678,7 @@ static inline JSValue jsTestInterfaceSupplementalStr1Getter(ExecState& state, JS
 
 EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr1Getter>(*state, thisValue, "supplementalStr1");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr1Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "supplementalStr1");
 }
 
 #endif
@@ -695,7 +695,7 @@ static inline JSValue jsTestInterfaceSupplementalStr2Getter(ExecState& state, JS
 
 EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr2Getter>(*state, thisValue, "supplementalStr2");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr2Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "supplementalStr2");
 }
 
 #endif
@@ -729,7 +729,7 @@ static inline JSValue jsTestInterfaceSupplementalStr3Getter(ExecState& state, JS
 
 EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr3Getter>(*state, thisValue, "supplementalStr3");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalStr3Getter, CastedThisErrorBehavior::Assert>(*state, thisValue, "supplementalStr3");
 }
 
 #endif
@@ -762,7 +762,7 @@ static inline JSValue jsTestInterfaceSupplementalNodeGetter(ExecState& state, JS
 
 EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalNodeGetter>(*state, thisValue, "supplementalNode");
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceSupplementalNodeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "supplementalNode");
 }
 
 #endif

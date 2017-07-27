@@ -146,7 +146,7 @@ template<> void JSTestCallbackInterfaceConstructor::initializeProperties(VM& vm,
     UNUSED_PARAM(globalObject);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestCallbackInterface"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
-    reifyStaticProperties(vm, JSTestCallbackInterfaceConstructorTableValues, *this);
+    reifyStaticProperties(vm, nullptr, JSTestCallbackInterfaceConstructorTableValues, *this);
 }
 
 template<> const ClassInfo JSTestCallbackInterfaceConstructor::s_info = { "TestCallbackInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallbackInterfaceConstructor) };

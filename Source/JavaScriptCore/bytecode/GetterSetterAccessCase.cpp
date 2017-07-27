@@ -50,7 +50,7 @@ GetterSetterAccessCase::GetterSetterAccessCase(VM& vm, JSCell* owner, AccessType
 std::unique_ptr<AccessCase> GetterSetterAccessCase::create(
     VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure,
     const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet,
-    PropertySlot::GetValueFunc customGetter, JSObject* customSlotBase, DOMJIT::GetterSetter* domJIT)
+    PropertySlot::GetValueFunc customGetter, JSObject* customSlotBase, std::optional<DOMAttributeAnnotation> domAttribute)
 {
     switch (type) {
     case Getter:
@@ -62,7 +62,7 @@ std::unique_ptr<AccessCase> GetterSetterAccessCase::create(
     };
 
     std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, offset, structure, conditionSet, viaProxy, additionalSet, customSlotBase));
-    result->m_domJIT = domJIT;
+    result->m_domAttribute = domAttribute;
     result->m_customAccessor.getter = customGetter;
     return WTFMove(result);
 }
@@ -88,7 +88,7 @@ GetterSetterAccessCase::GetterSetterAccessCase(const GetterSetterAccessCase& oth
     , m_customSlotBase(other.m_customSlotBase)
 {
     m_customAccessor.opaque = other.m_customAccessor.opaque;
-    m_domJIT = other.m_domJIT;
+    m_domAttribute = other.m_domAttribute;
 }
 
 std::unique_ptr<AccessCase> GetterSetterAccessCase::clone() const
@@ -114,7 +114,7 @@ void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma) con
     out.print(comma, "customAccessor = ", RawPointer(m_customAccessor.opaque));
 }
 
-void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, GPRReg baseForGetGPR)
+void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, const DOMJIT::GetterSetter* domJIT, GPRReg baseForGetGPR)
 {
     CCallHelpers& jit = *state.jit;
     StructureStubInfo& stubInfo = *state.stubInfo;
@@ -123,7 +123,7 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, GPRR
     GPRReg scratchGPR = state.scratchGPR;
 
     // We construct the environment that can execute the DOMJIT::Snippet here.
-    Ref<DOMJIT::CallDOMGetterSnippet> snippet = domJIT()->callDOMGetter();
+    Ref<DOMJIT::CallDOMGetterSnippet> snippet = domJIT->compiler()();
 
     Vector<GPRReg> gpScratch;
     Vector<FPRReg> fpScratch;

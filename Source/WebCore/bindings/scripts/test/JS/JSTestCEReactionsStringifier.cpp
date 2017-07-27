@@ -95,7 +95,7 @@ template<> const ClassInfo JSTestCEReactionsStringifierConstructor::s_info = { "
 static const HashTableValue JSTestCEReactionsStringifierPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierConstructor) } },
-    { "value", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierValue) } },
+    { "value", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierValue) } },
     { "toString", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCEReactionsStringifierPrototypeFunctionToString), (intptr_t) (0) } },
 };
 
@@ -104,7 +104,7 @@ const ClassInfo JSTestCEReactionsStringifierPrototype::s_info = { "TestCEReactio
 void JSTestCEReactionsStringifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestCEReactionsStringifierPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestCEReactionsStringifier::info(), JSTestCEReactionsStringifierPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestCEReactionsStringifier::s_info = { "TestCEReactionsStringifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsStringifier) };
@@ -186,7 +186,7 @@ static inline JSValue jsTestCEReactionsStringifierValueGetter(ExecState& state, 
 
 EncodedJSValue jsTestCEReactionsStringifierValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueGetter>(*state, thisValue, "value");
+    return IDLAttribute<JSTestCEReactionsStringifier>::get<jsTestCEReactionsStringifierValueGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "value");
 }
 
 static inline bool setJSTestCEReactionsStringifierValueSetter(ExecState& state, JSTestCEReactionsStringifier& thisObject, JSValue value, ThrowScope& throwScope)

@@ -93,7 +93,7 @@ const ClassInfo JSTestPluginInterfacePrototype::s_info = { "TestPluginInterfaceP
 void JSTestPluginInterfacePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestPluginInterfacePrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestPluginInterface::info(), JSTestPluginInterfacePrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestPluginInterface::s_info = { "TestPluginInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPluginInterface) };

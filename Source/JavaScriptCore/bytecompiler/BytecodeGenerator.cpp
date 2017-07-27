@@ -2020,7 +2020,7 @@ bool BytecodeGenerator::instantiateLexicalVariables(const VariableEnvironment& l
                 varOffset = VarOffset(local->virtualRegister());
             }
 
-            SymbolTableEntry newEntry(varOffset, entry.value.isConst() ? ReadOnly : 0);
+            SymbolTableEntry newEntry(varOffset, entry.value.isConst() ? ReadOnly : None);
             symbolTable->add(NoLockingNecessary, entry.key.get(), newEntry);
         }
     }

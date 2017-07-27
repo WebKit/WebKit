@@ -88,10 +88,10 @@ static const struct CompactHashIndex JSTestActiveDOMObjectTableIndex[2] = {
 
 static const HashTableValue JSTestActiveDOMObjectTableValues[] =
 {
-    { "excitingAttr", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestActiveDOMObjectExcitingAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "excitingAttr", ReadOnly | CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestActiveDOMObjectExcitingAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-static const HashTable JSTestActiveDOMObjectTable = { 1, 1, true, JSTestActiveDOMObjectTableValues, JSTestActiveDOMObjectTableIndex };
+static const HashTable JSTestActiveDOMObjectTable = { 1, 1, true, JSTestActiveDOMObject::info(), JSTestActiveDOMObjectTableValues, JSTestActiveDOMObjectTableIndex };
 template<> JSValue JSTestActiveDOMObjectConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -121,7 +121,7 @@ const ClassInfo JSTestActiveDOMObjectPrototype::s_info = { "TestActiveDOMObjectP
 void JSTestActiveDOMObjectPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestActiveDOMObjectPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestActiveDOMObject::info(), JSTestActiveDOMObjectPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestActiveDOMObject::s_info = { "TestActiveDOMObject", &Base::s_info, &JSTestActiveDOMObjectTable, nullptr, CREATE_METHOD_TABLE(JSTestActiveDOMObject) };
@@ -205,7 +205,7 @@ static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState& state, 
 
 EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestActiveDOMObject>::get<jsTestActiveDOMObjectExcitingAttrGetter>(*state, thisValue, "excitingAttr");
+    return IDLAttribute<JSTestActiveDOMObject>::get<jsTestActiveDOMObjectExcitingAttrGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "excitingAttr");
 }
 
 static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExcitingFunctionBody(JSC::ExecState* state, typename IDLOperation<JSTestActiveDOMObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

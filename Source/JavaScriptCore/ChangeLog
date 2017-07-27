@@ -1,3 +1,146 @@
+2017-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Hoist DOM binding attribute getter prologue into JavaScriptCore taking advantage of DOMJIT / CheckSubClass
+        https://bugs.webkit.org/show_bug.cgi?id=171637
+
+        Reviewed by Darin Adler.
+
+        Each DOM attribute getter has the code to perform ClassInfo check. But it is largely duplicate and causes code bloating.
+        In this patch, we move ClassInfo check from WebCore to JSC and reduce code size.
+
+        We introduce DOMAnnotation which has ClassInfo* and DOMJIT::GetterSetter*. If the getter is not DOMJIT getter, this
+        DOMJIT::GetterSetter becomes nullptr. We support such a CustomAccessorGetter in all the JIT tiers.
+
+        In IC, we drop CheckSubClass completely since IC's Structure check subsumes it. We do not enable this optimization for
+        op_get_by_id_with_this case yet.
+        In DFG and FTL, we emit CheckSubClass node. Which is typically removed by CheckStructure leading to CheckSubClass.
+
+        And we add DOMAttributeGetterSetter, which is derived class of CustomGetterSetter. It holds DOMAnnotation and perform
+        ClassInfo check.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::GetByIdVariant):
+        (JSC::GetByIdVariant::operator=):
+        (JSC::GetByIdVariant::attemptToMerge):
+        (JSC::GetByIdVariant::dumpInContext):
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::customAccessorGetter):
+        (JSC::GetByIdVariant::domAttribute):
+        (JSC::GetByIdVariant::domJIT): Deleted.
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::create):
+        (JSC::GetterSetterAccessCase::GetterSetterAccessCase):
+        (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+        * bytecode/GetterSetterAccessCase.h:
+        (JSC::GetterSetterAccessCase::domAttribute):
+        (JSC::GetterSetterAccessCase::customAccessor):
+        (JSC::GetterSetterAccessCase::domJIT): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::instantiateLexicalVariables):
+        * create_hash_table:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::blessCallDOMGetter):
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callCustomGetter):
+        * domjit/DOMJITGetterSetter.h:
+        (JSC::DOMJIT::GetterSetter::GetterSetter):
+        (JSC::DOMJIT::GetterSetter::getter):
+        (JSC::DOMJIT::GetterSetter::compiler):
+        (JSC::DOMJIT::GetterSetter::resultType):
+        (JSC::DOMJIT::GetterSetter::~GetterSetter): Deleted.
+        (JSC::DOMJIT::GetterSetter::setter): Deleted.
+        (JSC::DOMJIT::GetterSetter::thisClassInfo): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        * jsc.cpp:
+        (WTF::DOMJITGetter::DOMJITAttribute::DOMJITAttribute):
+        (WTF::DOMJITGetter::DOMJITAttribute::callDOMGetter):
+        (WTF::DOMJITGetter::customGetter):
+        (WTF::DOMJITGetter::finishCreation):
+        (WTF::DOMJITGetterComplex::DOMJITAttribute::DOMJITAttribute):
+        (WTF::DOMJITGetterComplex::DOMJITAttribute::callDOMGetter):
+        (WTF::DOMJITGetterComplex::customGetter):
+        (WTF::DOMJITGetterComplex::finishCreation):
+        (WTF::DOMJITGetter::DOMJITNodeDOMJIT::DOMJITNodeDOMJIT): Deleted.
+        (WTF::DOMJITGetter::DOMJITNodeDOMJIT::slowCall): Deleted.
+        (WTF::DOMJITGetter::domJITNodeGetterSetter): Deleted.
+        (WTF::DOMJITGetterComplex::DOMJITNodeDOMJIT::DOMJITNodeDOMJIT): Deleted.
+        (WTF::DOMJITGetterComplex::DOMJITNodeDOMJIT::slowCall): Deleted.
+        (WTF::DOMJITGetterComplex::domJITNodeGetterSetter): Deleted.
+        * runtime/CustomGetterSetter.h:
+        (JSC::CustomGetterSetter::create):
+        (JSC::CustomGetterSetter::setter):
+        (JSC::CustomGetterSetter::CustomGetterSetter):
+        (): Deleted.
+        * runtime/DOMAnnotation.h: Added.
+        (JSC::operator==):
+        (JSC::operator!=):
+        * runtime/DOMAttributeGetterSetter.cpp: Added.
+        * runtime/DOMAttributeGetterSetter.h: Copied from Source/JavaScriptCore/runtime/CustomGetterSetter.h.
+        (JSC::isDOMAttributeGetterSetter):
+        * runtime/Error.cpp:
+        (JSC::throwDOMAttributeGetterTypeError):
+        * runtime/Error.h:
+        (JSC::throwVMDOMAttributeGetterTypeError):
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        (JSC::JSCustomGetterSetterFunction::customGetterSetterFunctionCall):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::getOwnStaticPropertySlot):
+        (JSC::JSObject::reifyAllStaticProperties):
+        (JSC::JSObject::fillGetterPropertySlot):
+        (JSC::JSObject::findPropertyHashEntry): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::getOwnNonIndexPropertySlot):
+        (JSC::JSObject::fillCustomGetterPropertySlot):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::domJIT):
+        (JSC::getStaticPropertySlotFromTable):
+        (JSC::putEntry):
+        (JSC::lookupPut):
+        (JSC::reifyStaticProperty):
+        (JSC::reifyStaticProperties):
+        Each static property table has a new field ClassInfo*. It indicates that which ClassInfo check DOMAttribute registered in
+        this static property table requires.
+
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/PropertyName.h:
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::customGetter):
+        (JSC::PropertySlot::customAccessorGetter):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::domAttribute):
+        (JSC::PropertySlot::setCustom):
+        (JSC::PropertySlot::setCacheableCustom):
+        (JSC::PropertySlot::getValue):
+        (JSC::PropertySlot::domJIT): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-07-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create protocol for recording Canvas contexts

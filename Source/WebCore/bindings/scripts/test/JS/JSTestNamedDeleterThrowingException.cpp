@@ -94,7 +94,7 @@ const ClassInfo JSTestNamedDeleterThrowingExceptionPrototype::s_info = { "TestNa
 void JSTestNamedDeleterThrowingExceptionPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedDeleterThrowingExceptionPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedDeleterThrowingException::info(), JSTestNamedDeleterThrowingExceptionPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedDeleterThrowingException::s_info = { "TestNamedDeleterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedDeleterThrowingException) };

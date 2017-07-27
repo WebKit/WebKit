@@ -41,7 +41,7 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
     thisObject.putDirectNonIndexAccessor(vm, propertyName, accessor, attributesForStructure(value.attributes()));
 }
 
-bool setUpStaticFunctionSlot(VM& vm, const HashTableValue* entry, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
+bool setUpStaticFunctionSlot(VM& vm, const ClassInfo* classInfo, const HashTableValue* entry, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
 {
     ASSERT(thisObject->globalObject());
     ASSERT(entry->attributes() & BuiltinOrFunctionOrAccessorOrLazyProperty);
@@ -55,7 +55,7 @@ bool setUpStaticFunctionSlot(VM& vm, const HashTableValue* entry, JSObject* this
         if (thisObject->staticPropertiesReified())
             return false;
 
-        reifyStaticProperty(vm, propertyName, *entry, *thisObject);
+        reifyStaticProperty(vm, classInfo, propertyName, *entry, *thisObject);
 
         offset = thisObject->getDirectOffset(vm, propertyName, attributes);
         if (!isValidOffset(offset)) {

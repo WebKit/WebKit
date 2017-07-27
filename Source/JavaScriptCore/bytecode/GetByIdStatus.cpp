@@ -244,7 +244,8 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
             case ComplexGetStatus::Inlineable: {
                 std::unique_ptr<CallLinkStatus> callLinkStatus;
                 JSFunction* intrinsicFunction = nullptr;
-                DOMJIT::GetterSetter* domJIT = nullptr;
+                PropertySlot::GetValueFunc customAccessorGetter = nullptr;
+                std::optional<DOMAttributeAnnotation> domAttribute;
 
                 switch (access.type()) {
                 case AccessCase::Load:
@@ -265,8 +266,9 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                     break;
                 }
                 case AccessCase::CustomAccessorGetter: {
-                    domJIT = access.as<GetterSetterAccessCase>().domJIT();
-                    if (!domJIT)
+                    customAccessorGetter = bitwise_cast<PropertySlot::GetValueFunc>(access.as<GetterSetterAccessCase>().customAccessor());
+                    domAttribute = access.as<GetterSetterAccessCase>().domAttribute();
+                    if (!domAttribute)
                         return GetByIdStatus(slowPathState, true);
                     result.m_state = Custom;
                     break;
@@ -282,12 +284,13 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                     StructureSet(structure), complexGetStatus.offset(),
                     complexGetStatus.conditionSet(), WTFMove(callLinkStatus),
                     intrinsicFunction,
-                    domJIT);
+                    customAccessorGetter,
+                    domAttribute);
 
                 if (!result.appendVariant(variant))
                     return GetByIdStatus(slowPathState, true);
 
-                if (domJIT) {
+                if (domAttribute) {
                     // Give up when cutom accesses are not merged into one.
                     if (result.numVariants() != 1)
                         return GetByIdStatus(slowPathState, true);

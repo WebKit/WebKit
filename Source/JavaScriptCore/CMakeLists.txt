@@ -711,6 +711,7 @@ set(JavaScriptCore_SOURCES
     runtime/ConstructData.cpp
     runtime/ControlFlowProfiler.cpp
     runtime/CustomGetterSetter.cpp
+    runtime/DOMAttributeGetterSetter.cpp
     runtime/DataView.cpp
     runtime/DateConstructor.cpp
     runtime/DateConversion.cpp

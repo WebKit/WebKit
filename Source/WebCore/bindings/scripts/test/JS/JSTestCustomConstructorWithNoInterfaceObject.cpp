@@ -98,7 +98,7 @@ const ClassInfo JSTestCustomConstructorWithNoInterfaceObjectPrototype::s_info = 
 void JSTestCustomConstructorWithNoInterfaceObjectPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestCustomConstructorWithNoInterfaceObjectPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestCustomConstructorWithNoInterfaceObject::info(), JSTestCustomConstructorWithNoInterfaceObjectPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestCustomConstructorWithNoInterfaceObject::s_info = { "TestCustomConstructorWithNoInterfaceObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCustomConstructorWithNoInterfaceObject) };

@@ -47,7 +47,7 @@ Ref<JSC::Snippet> checkSubClassSnippetForJSDocument()
     return DOMJIT::checkDOM<Document>();
 }
 
-Ref<JSC::DOMJIT::CallDOMGetterSnippet> DocumentDocumentElementDOMJIT::callDOMGetter()
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileDocumentDocumentElementAttribute()
 {
     Ref<JSC::DOMJIT::CallDOMGetterSnippet> snippet = JSC::DOMJIT::CallDOMGetterSnippet::create();
     snippet->numGPScratchRegisters = 1;
@@ -80,7 +80,7 @@ static void loadLocalName(CCallHelpers& jit, GPRReg htmlElement, GPRReg localNam
     jit.loadPtr(CCallHelpers::Address(localNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameImpl);
 }
 
-Ref<JSC::DOMJIT::CallDOMGetterSnippet> DocumentBodyDOMJIT::callDOMGetter()
+Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileDocumentBodyAttribute()
 {
     Ref<JSC::DOMJIT::CallDOMGetterSnippet> snippet = JSC::DOMJIT::CallDOMGetterSnippet::create();
     snippet->numGPScratchRegisters = 2;

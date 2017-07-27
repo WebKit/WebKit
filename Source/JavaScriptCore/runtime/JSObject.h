@@ -30,6 +30,7 @@
 #include "CallFrame.h"
 #include "ClassInfo.h"
 #include "CustomGetterSetter.h"
+#include "DOMAttributeGetterSetter.h"
 #include "Heap.h"
 #include "IndexingHeaderInlines.h"
 #include "JSCell.h"
@@ -1009,11 +1010,15 @@ private:
 
     bool getNonIndexPropertySlot(ExecState*, PropertyName, PropertySlot&);
     bool getOwnNonIndexPropertySlot(VM&, Structure*, PropertyName, PropertySlot&);
-    JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, unsigned, PropertyOffset);
-    void fillCustomGetterPropertySlot(PropertySlot&, JSValue, unsigned, Structure*);
+    JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSCell*, unsigned, PropertyOffset);
+    void fillCustomGetterPropertySlot(VM&, PropertySlot&, CustomGetterSetter*, unsigned, Structure*);
 
     JS_EXPORT_PRIVATE bool getOwnStaticPropertySlot(VM&, PropertyName, PropertySlot&);
-    JS_EXPORT_PRIVATE const HashTableValue* findPropertyHashEntry(VM&, PropertyName) const;
+    struct PropertyHashEntry {
+        const HashTable* table;
+        const HashTableValue* value;
+    };
+    std::optional<PropertyHashEntry> findPropertyHashEntry(VM&, PropertyName) const;
         
     bool putIndexedDescriptor(ExecState*, SparseArrayEntry*, const PropertyDescriptor&, PropertyDescriptor& old);
         
@@ -1325,10 +1330,10 @@ ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* struc
         JSType type = cell->type();
         switch (type) {
         case GetterSetterType:
-            fillGetterPropertySlot(slot, value, attributes, offset);
+            fillGetterPropertySlot(slot, cell, attributes, offset);
             return true;
         case CustomGetterSetterType:
-            fillCustomGetterPropertySlot(slot, value, attributes, structure);
+            fillCustomGetterPropertySlot(vm, slot, jsCast<CustomGetterSetter*>(cell), attributes, structure);
             return true;
         default:
             break;
@@ -1339,16 +1344,21 @@ ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* struc
     return true;
 }
 
-ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(PropertySlot& slot, JSValue customGetterSetter, unsigned attributes, Structure* structure)
+ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(VM& vm, PropertySlot& slot, CustomGetterSetter* customGetterSetter, unsigned attributes, Structure* structure)
 {
-    if (structure->isUncacheableDictionary()) {
-        slot.setCustom(this, attributes, jsCast<CustomGetterSetter*>(customGetterSetter)->getter());
+    if (isDOMAttributeGetterSetter(vm, customGetterSetter)) {
+        auto* domAttribute = jsCast<DOMAttributeGetterSetter*>(customGetterSetter);
+        if (structure->isUncacheableDictionary())
+            slot.setCustom(this, attributes, domAttribute->getter(), domAttribute->domAttribute());
+        else
+            slot.setCacheableCustom(this, attributes, domAttribute->getter(), domAttribute->domAttribute());
         return;
     }
 
-    // This access is cacheable because Structure requires an attributeChangedTransition
-    // if this property stops being an accessor.
-    slot.setCacheableCustom(this, attributes, jsCast<CustomGetterSetter*>(customGetterSetter)->getter(), jsCast<CustomGetterSetter*>(customGetterSetter)->domJIT());
+    if (structure->isUncacheableDictionary())
+        slot.setCustom(this, attributes, customGetterSetter->getter());
+    else
+        slot.setCacheableCustom(this, attributes, customGetterSetter->getter());
 }
 
 // It may seem crazy to inline a function this large, especially a virtual function,

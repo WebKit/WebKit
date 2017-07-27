@@ -94,7 +94,7 @@ template<> const ClassInfo JSTestStringifierReadWriteAttributeConstructor::s_inf
 static const HashTableValue JSTestStringifierReadWriteAttributePrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadWriteAttributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestStringifierReadWriteAttributeConstructor) } },
-    { "identifier", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadWriteAttributeIdentifier), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestStringifierReadWriteAttributeIdentifier) } },
+    { "identifier", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestStringifierReadWriteAttributeIdentifier), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestStringifierReadWriteAttributeIdentifier) } },
     { "toString", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestStringifierReadWriteAttributePrototypeFunctionToString), (intptr_t) (0) } },
 };
 
@@ -103,7 +103,7 @@ const ClassInfo JSTestStringifierReadWriteAttributePrototype::s_info = { "TestSt
 void JSTestStringifierReadWriteAttributePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestStringifierReadWriteAttributePrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestStringifierReadWriteAttribute::info(), JSTestStringifierReadWriteAttributePrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestStringifierReadWriteAttribute::s_info = { "TestStringifierReadWriteAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierReadWriteAttribute) };
@@ -185,7 +185,7 @@ static inline JSValue jsTestStringifierReadWriteAttributeIdentifierGetter(ExecSt
 
 EncodedJSValue jsTestStringifierReadWriteAttributeIdentifier(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestStringifierReadWriteAttribute>::get<jsTestStringifierReadWriteAttributeIdentifierGetter>(*state, thisValue, "identifier");
+    return IDLAttribute<JSTestStringifierReadWriteAttribute>::get<jsTestStringifierReadWriteAttributeIdentifierGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "identifier");
 }
 
 static inline bool setJSTestStringifierReadWriteAttributeIdentifierSetter(ExecState& state, JSTestStringifierReadWriteAttribute& thisObject, JSValue value, ThrowScope& throwScope)

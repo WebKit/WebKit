@@ -92,7 +92,7 @@ const ClassInfo JSInterfaceNamePrototype::s_info = { "InterfaceNamePrototype", &
 void JSInterfaceNamePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSInterfaceNamePrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSInterfaceName::info(), JSInterfaceNamePrototypeTableValues, *this);
 }
 
 const ClassInfo JSInterfaceName::s_info = { "InterfaceName", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInterfaceName) };

@@ -103,7 +103,7 @@ const ClassInfo JSTestOverrideBuiltinsPrototype::s_info = { "TestOverrideBuiltin
 void JSTestOverrideBuiltinsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestOverrideBuiltinsPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestOverrideBuiltins::info(), JSTestOverrideBuiltinsPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestOverrideBuiltins::s_info = { "TestOverrideBuiltins", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverrideBuiltins) };

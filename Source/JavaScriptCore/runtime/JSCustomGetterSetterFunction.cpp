@@ -37,19 +37,27 @@ const ClassInfo JSCustomGetterSetterFunction::s_info = { "Function", &Base::s_in
 
 EncodedJSValue JSC_HOST_CALL JSCustomGetterSetterFunction::customGetterSetterFunctionCall(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSCustomGetterSetterFunction* customGetterSetterFunction = jsCast<JSCustomGetterSetterFunction*>(exec->jsCallee());
     CustomGetterSetter* customGetterSetter = customGetterSetterFunction->customGetterSetter();
+    JSValue thisValue = exec->thisValue();
 
     if (customGetterSetterFunction->isSetter()) {
         CustomGetterSetter::CustomSetter setter = customGetterSetter->setter();
         ASSERT(setter);
-        callCustomSetter(exec, setter, true, exec->thisValue(), exec->argument(0));
+        callCustomSetter(exec, setter, true, thisValue, exec->argument(0));
         return JSValue::encode(jsUndefined());
     }
 
-    CustomGetterSetter::CustomGetter getter = customGetterSetter->getter();
-    ASSERT(getter);
-    return getter(exec, JSValue::encode(exec->thisValue()), customGetterSetterFunction->propertyName());
+    if (isDOMAttributeGetterSetter(vm, customGetterSetter)) {
+        auto domAttribute = jsCast<DOMAttributeGetterSetter*>(customGetterSetter)->domAttribute();
+        if (!thisValue.inherits(vm, domAttribute.classInfo))
+            return throwVMDOMAttributeGetterTypeError(exec, scope, domAttribute.classInfo, customGetterSetterFunction->propertyName());
+    }
+
+    return customGetterSetter->getter()(exec, JSValue::encode(thisValue), customGetterSetterFunction->propertyName());
 }
 
 JSCustomGetterSetterFunction::JSCustomGetterSetterFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, const Type type, const PropertyName& propertyName)

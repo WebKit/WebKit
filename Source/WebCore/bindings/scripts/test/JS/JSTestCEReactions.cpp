@@ -103,9 +103,9 @@ template<> const ClassInfo JSTestCEReactionsConstructor::s_info = { "TestCEReact
 static const HashTableValue JSTestCEReactionsPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsConstructor) } },
-    { "attributeWithCEReactions", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsAttributeWithCEReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsAttributeWithCEReactions) } },
-    { "reflectAttributeWithCEReactions", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsReflectAttributeWithCEReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsReflectAttributeWithCEReactions) } },
-    { "stringifierAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierAttribute) } },
+    { "attributeWithCEReactions", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsAttributeWithCEReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsAttributeWithCEReactions) } },
+    { "reflectAttributeWithCEReactions", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsReflectAttributeWithCEReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsReflectAttributeWithCEReactions) } },
+    { "stringifierAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifierAttribute) } },
     { "methodWithCEReactions", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCEReactionsPrototypeFunctionMethodWithCEReactions), (intptr_t) (0) } },
 };
 
@@ -114,7 +114,7 @@ const ClassInfo JSTestCEReactionsPrototype::s_info = { "TestCEReactionsPrototype
 void JSTestCEReactionsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestCEReactionsPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestCEReactions::info(), JSTestCEReactionsPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestCEReactions::s_info = { "TestCEReactions", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactions) };
@@ -196,7 +196,7 @@ static inline JSValue jsTestCEReactionsAttributeWithCEReactionsGetter(ExecState&
 
 EncodedJSValue jsTestCEReactionsAttributeWithCEReactions(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestCEReactions>::get<jsTestCEReactionsAttributeWithCEReactionsGetter>(*state, thisValue, "attributeWithCEReactions");
+    return IDLAttribute<JSTestCEReactions>::get<jsTestCEReactionsAttributeWithCEReactionsGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "attributeWithCEReactions");
 }
 
 static inline bool setJSTestCEReactionsAttributeWithCEReactionsSetter(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
@@ -227,7 +227,7 @@ static inline JSValue jsTestCEReactionsReflectAttributeWithCEReactionsGetter(Exe
 
 EncodedJSValue jsTestCEReactionsReflectAttributeWithCEReactions(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestCEReactions>::get<jsTestCEReactionsReflectAttributeWithCEReactionsGetter>(*state, thisValue, "reflectAttributeWithCEReactions");
+    return IDLAttribute<JSTestCEReactions>::get<jsTestCEReactionsReflectAttributeWithCEReactionsGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "reflectAttributeWithCEReactions");
 }
 
 static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsSetter(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
@@ -258,7 +258,7 @@ static inline JSValue jsTestCEReactionsStringifierAttributeGetter(ExecState& sta
 
 EncodedJSValue jsTestCEReactionsStringifierAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestCEReactions>::get<jsTestCEReactionsStringifierAttributeGetter>(*state, thisValue, "stringifierAttribute");
+    return IDLAttribute<JSTestCEReactions>::get<jsTestCEReactionsStringifierAttributeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "stringifierAttribute");
 }
 
 static inline bool setJSTestCEReactionsStringifierAttributeSetter(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)

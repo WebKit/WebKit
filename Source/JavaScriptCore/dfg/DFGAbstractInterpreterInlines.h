@@ -2412,9 +2412,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CallDOMGetter: {
         CallDOMGetterData* callDOMGetterData = node->callDOMGetterData();
         DOMJIT::CallDOMGetterSnippet* snippet = callDOMGetterData->snippet;
-        if (snippet->effect.writes)
+        if (!snippet || snippet->effect.writes)
             clobberWorld(node->origin.semantic, clobberLimit);
-        forNode(node).setType(m_graph, callDOMGetterData->domJIT->resultType());
+        if (callDOMGetterData->domJIT)
+            forNode(node).setType(m_graph, callDOMGetterData->domJIT->resultType());
+        else
+            forNode(node).makeBytecodeTop();
         break;
     }
     case CallDOM: {

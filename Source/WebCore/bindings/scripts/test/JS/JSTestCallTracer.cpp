@@ -105,8 +105,8 @@ template<> const ClassInfo JSTestCallTracerConstructor::s_info = { "TestCallTrac
 static const HashTableValue JSTestCallTracerPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCallTracerConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCallTracerConstructor) } },
-    { "testAttributeInterface", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCallTracerTestAttributeInterface), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCallTracerTestAttributeInterface) } },
-    { "testAttributeSpecified", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCallTracerTestAttributeSpecified), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCallTracerTestAttributeSpecified) } },
+    { "testAttributeInterface", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCallTracerTestAttributeInterface), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCallTracerTestAttributeInterface) } },
+    { "testAttributeSpecified", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCallTracerTestAttributeSpecified), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCallTracerTestAttributeSpecified) } },
     { "testOperationInterface", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCallTracerPrototypeFunctionTestOperationInterface), (intptr_t) (0) } },
     { "testOperationSpecified", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCallTracerPrototypeFunctionTestOperationSpecified), (intptr_t) (0) } },
     { "testOperationWithArguments", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCallTracerPrototypeFunctionTestOperationWithArguments), (intptr_t) (3) } },
@@ -118,7 +118,7 @@ const ClassInfo JSTestCallTracerPrototype::s_info = { "TestCallTracerPrototype",
 void JSTestCallTracerPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestCallTracerPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestCallTracer::info(), JSTestCallTracerPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestCallTracer::s_info = { "TestCallTracer", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracer) };
@@ -202,7 +202,7 @@ static inline JSValue jsTestCallTracerTestAttributeInterfaceGetter(ExecState& st
 
 EncodedJSValue jsTestCallTracerTestAttributeInterface(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestAttributeInterfaceGetter>(*state, thisValue, "testAttributeInterface");
+    return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestAttributeInterfaceGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "testAttributeInterface");
 }
 
 static inline bool setJSTestCallTracerTestAttributeInterfaceSetter(ExecState& state, JSTestCallTracer& thisObject, JSValue value, ThrowScope& throwScope)
@@ -236,7 +236,7 @@ static inline JSValue jsTestCallTracerTestAttributeSpecifiedGetter(ExecState& st
 
 EncodedJSValue jsTestCallTracerTestAttributeSpecified(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestAttributeSpecifiedGetter>(*state, thisValue, "testAttributeSpecified");
+    return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestAttributeSpecifiedGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "testAttributeSpecified");
 }
 
 static inline bool setJSTestCallTracerTestAttributeSpecifiedSetter(ExecState& state, JSTestCallTracer& thisObject, JSValue value, ThrowScope& throwScope)

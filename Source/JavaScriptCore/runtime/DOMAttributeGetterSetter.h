@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,52 +25,49 @@
 
 #pragma once
 
-#include "JSCell.h"
-#include "PropertySlot.h"
-#include "PutPropertySlot.h"
-#include "Structure.h"
+#include "CustomGetterSetter.h"
+#include "DOMAnnotation.h"
 
 namespace JSC {
+namespace DOMJIT {
 
-class CustomGetterSetter : public JSCell {
+class GetterSetter;
+
+}
+
+class DOMAttributeGetterSetter final : public CustomGetterSetter {
 public:
-    typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    using Base = CustomGetterSetter;
 
-    typedef PropertySlot::GetValueFunc CustomGetter;
-    typedef PutPropertySlot::PutValueFunc CustomSetter;
-
-    static CustomGetterSetter* create(VM& vm, CustomGetter customGetter, CustomSetter customSetter)
+    static DOMAttributeGetterSetter* create(VM& vm, CustomGetter customGetter, CustomSetter customSetter, DOMAttributeAnnotation domAttribute)
     {
-        CustomGetterSetter* customGetterSetter = new (NotNull, allocateCell<CustomGetterSetter>(vm.heap)) CustomGetterSetter(vm, vm.customGetterSetterStructure.get(), customGetter, customSetter);
+        DOMAttributeGetterSetter* customGetterSetter = new (NotNull, allocateCell<DOMAttributeGetterSetter>(vm.heap)) DOMAttributeGetterSetter(vm, customGetter, customSetter, domAttribute);
         customGetterSetter->finishCreation(vm);
         return customGetterSetter;
     }
 
-    CustomGetterSetter::CustomGetter getter() const { return m_getter; }
-    CustomGetterSetter::CustomSetter setter() const { return m_setter; }
+    DOMAttributeAnnotation domAttribute() const { return m_domAttribute; }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(CustomGetterSetterType, StructureFlags), info());
     }
-        
+
     DECLARE_EXPORT_INFO;
 
-protected:
-    CustomGetterSetter(VM& vm, Structure* structure, CustomGetter getter, CustomSetter setter)
-        : JSCell(vm, structure)
-        , m_getter(getter)
-        , m_setter(setter)
+private:
+    DOMAttributeGetterSetter(VM& vm, CustomGetter getter, CustomSetter setter, DOMAttributeAnnotation domAttribute)
+        : Base(vm, vm.domAttributeGetterSetterStructure.get(), getter, setter)
+        , m_domAttribute(domAttribute)
     {
     }
 
-private:
-    CustomGetter m_getter;
-    CustomSetter m_setter;
+    DOMAttributeAnnotation m_domAttribute;
 };
 
-JS_EXPORT_PRIVATE bool callCustomSetter(ExecState*, CustomGetterSetter::CustomSetter, bool isAccessor, JSValue thisValue, JSValue);
-JS_EXPORT_PRIVATE bool callCustomSetter(ExecState*, JSValue customGetterSetter, bool isAccessor, JSObject* slotBase, JSValue thisValue, JSValue);
+inline bool isDOMAttributeGetterSetter(VM& vm, JSCell* cell)
+{
+    return cell->classInfo(vm) == DOMAttributeGetterSetter::info();
+}
 
 } // namespace JSC

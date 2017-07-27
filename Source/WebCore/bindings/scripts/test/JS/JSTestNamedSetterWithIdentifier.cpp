@@ -100,7 +100,7 @@ const ClassInfo JSTestNamedSetterWithIdentifierPrototype::s_info = { "TestNamedS
 void JSTestNamedSetterWithIdentifierPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedSetterWithIdentifierPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedSetterWithIdentifier::info(), JSTestNamedSetterWithIdentifierPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedSetterWithIdentifier::s_info = { "TestNamedSetterWithIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithIdentifier) };

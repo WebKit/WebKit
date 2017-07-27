@@ -1017,6 +1017,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case CallDOMGetter: {
         DOMJIT::CallDOMGetterSnippet* snippet = node->callDOMGetterData()->snippet;
+        if (!snippet) {
+            read(World);
+            write(Heap);
+            return;
+        }
         DOMJIT::Effect effect = snippet->effect;
         if (effect.reads) {
             if (effect.reads == DOMJIT::HeapRange::top())
@@ -1033,7 +1038,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         if (effect.def != DOMJIT::HeapRange::top()) {
             DOMJIT::HeapRange range = effect.def;
             if (range == DOMJIT::HeapRange::none())
-                def(PureValue(node, node->callDOMGetterData()->domJIT));
+                def(PureValue(node, bitwise_cast<uintptr_t>(node->callDOMGetterData()->customAccessorGetter)));
             else {
                 // Def with heap location. We do not include "GlobalObject" for that since this information is included in the base node.
                 // We only see the DOMJIT getter here. So just including "base" is ok.

@@ -63,6 +63,12 @@ public:
     {
         auto throwScope = DECLARE_THROW_SCOPE(state.vm());
 
+        if (shouldThrow == CastedThisErrorBehavior::Assert) {
+            ASSERT(cast(state, thisValue));
+            auto* thisObject = JSC::jsCast<JSClass*>(JSC::JSValue::decode(thisValue));
+            return JSC::JSValue::encode(getter(state, *thisObject, throwScope));
+        }
+
         auto* thisObject = cast(state, thisValue);
         if (UNLIKELY(!thisObject)) {
             if (shouldThrow == CastedThisErrorBehavior::Throw)

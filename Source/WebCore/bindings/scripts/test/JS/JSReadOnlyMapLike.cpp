@@ -115,7 +115,7 @@ const ClassInfo JSReadOnlyMapLikePrototype::s_info = { "ReadOnlyMapLikePrototype
 void JSReadOnlyMapLikePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSReadOnlyMapLikePrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSReadOnlyMapLike::info(), JSReadOnlyMapLikePrototypeTableValues, *this);
     putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);
 }
 

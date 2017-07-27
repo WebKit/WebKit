@@ -237,7 +237,8 @@ struct StackAccessData {
 };
 
 struct CallDOMGetterData {
-    DOMJIT::GetterSetter* domJIT { nullptr };
+    PropertySlot::GetValueFunc customAccessorGetter { nullptr };
+    const DOMJIT::GetterSetter* domJIT { nullptr };
     DOMJIT::CallDOMGetterSnippet* snippet { nullptr };
     unsigned identifierNumber { 0 };
 };

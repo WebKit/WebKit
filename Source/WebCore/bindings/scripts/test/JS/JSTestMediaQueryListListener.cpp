@@ -101,7 +101,7 @@ const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQuer
 void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestMediaQueryListListenerPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestMediaQueryListListener::info(), JSTestMediaQueryListListenerPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };

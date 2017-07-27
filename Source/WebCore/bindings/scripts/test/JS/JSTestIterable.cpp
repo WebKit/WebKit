@@ -107,7 +107,7 @@ const ClassInfo JSTestIterablePrototype::s_info = { "TestIterablePrototype", &Ba
 void JSTestIterablePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestIterablePrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestIterable::info(), JSTestIterablePrototypeTableValues, *this);
     putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);
 }
 

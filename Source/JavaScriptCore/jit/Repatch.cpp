@@ -277,9 +277,9 @@ static InlineCacheAction tryCacheGetByID(const GCSafeConcurrentJSLocker& locker,
         if (slot.isCacheableGetter())
             getter = jsDynamicCast<JSFunction*>(vm, slot.getterSetter()->getter());
 
-        DOMJIT::GetterSetter* domJIT = nullptr;
-        if (slot.isCacheableCustom() && slot.domJIT())
-            domJIT = slot.domJIT();
+        std::optional<DOMAttributeAnnotation> domAttribute;
+        if (slot.isCacheableCustom() && slot.domAttribute())
+            domAttribute = slot.domAttribute();
 
         if (kind == GetByIDKind::Try) {
             AccessCase::AccessType type;
@@ -308,15 +308,14 @@ static InlineCacheAction tryCacheGetByID(const GCSafeConcurrentJSLocker& locker,
                 else
                     type = AccessCase::CustomValueGetter;
 
-                // we don't emit IC for DOMJIT when op is get_by_id_with_this
-                if (Options::useDOMJIT() && kind == GetByIDKind::WithThis && type == AccessCase::CustomAccessorGetter && domJIT)
+                if (kind == GetByIDKind::WithThis && type == AccessCase::CustomAccessorGetter && domAttribute)
                     return GiveUpOnCache;
 
                 newCase = GetterSetterAccessCase::create(
                     vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,
                     slot.watchpointSet(), slot.isCacheableCustom() ? slot.customGetter() : nullptr,
                     slot.isCacheableCustom() ? slot.slotBase() : nullptr,
-                    domJIT);
+                    domAttribute);
             }
         }
     }

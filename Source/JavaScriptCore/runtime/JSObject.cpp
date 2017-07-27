@@ -792,8 +792,8 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
         }
         if (!obj->staticPropertiesReified()) {
             if (obj->classInfo(vm)->hasStaticSetterOrReadonlyProperties()) {
-                if (auto* entry = obj->findPropertyHashEntry(vm, propertyName))
-                    return putEntry(exec, entry, obj, this, propertyName, value, slot);
+                if (auto entry = obj->findPropertyHashEntry(vm, propertyName))
+                    return putEntry(exec, entry->table->classForThis, entry->value, obj, this, propertyName, value, slot);
             }
         }
         if (obj->type() == ProxyObjectType && propertyName != vm.propertyNames->underscoreProto) {
@@ -1800,11 +1800,11 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
     unsigned attributes;
 
     if (!thisObject->staticPropertiesReified()) {
-        if (auto* entry = thisObject->findPropertyHashEntry(vm, propertyName)) {
+        if (auto entry = thisObject->findPropertyHashEntry(vm, propertyName)) {
             // If the static table contains a non-configurable (DontDelete) property then we can return early;
             // if there is a property in the storage array it too must be non-configurable (the language does
             // not allow repacement of a non-configurable property with a configurable one).
-            if (entry->attributes() & DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable) {
+            if (entry->value->attributes() & DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable) {
                 ASSERT(!isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes)) || attributes & DontDelete);
                 return false;
             }
@@ -2003,22 +2003,22 @@ bool JSObject::getOwnStaticPropertySlot(VM& vm, PropertyName propertyName, Prope
 {
     for (auto* info = classInfo(vm); info; info = info->parentClass) {
         if (auto* table = info->staticPropHashTable) {
-            if (getStaticPropertySlotFromTable(vm, *table, this, propertyName, slot))
+            if (getStaticPropertySlotFromTable(vm, table->classForThis, *table, this, propertyName, slot))
                 return true;
         }
     }
     return false;
 }
 
-const HashTableValue* JSObject::findPropertyHashEntry(VM& vm, PropertyName propertyName) const
+auto JSObject::findPropertyHashEntry(VM& vm, PropertyName propertyName) const -> std::optional<PropertyHashEntry>
 {
     for (const ClassInfo* info = classInfo(vm); info; info = info->parentClass) {
         if (const HashTable* propHashTable = info->staticPropHashTable) {
             if (const HashTableValue* entry = propHashTable->entry(propertyName))
-                return entry;
+                return PropertyHashEntry { propHashTable, entry };
         }
     }
-    return 0;
+    return std::nullopt;
 }
 
 bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue hasInstanceValue)
@@ -2303,14 +2303,14 @@ void JSObject::reifyAllStaticProperties(ExecState* exec)
             auto key = Identifier::fromString(&vm, value.m_key);
             PropertyOffset offset = getDirectOffset(vm, key, attributes);
             if (!isValidOffset(offset))
-                reifyStaticProperty(vm, key, value, *this);
+                reifyStaticProperty(vm, hashTable->classForThis, key, value, *this);
         }
     }
 
     structure(vm)->setStaticPropertiesReified(true);
 }
 
-NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue getterSetter, unsigned attributes, PropertyOffset offset)
+NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSCell* getterSetter, unsigned attributes, PropertyOffset offset)
 {
     if (structure()->isUncacheableDictionary()) {
         slot.setGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter));

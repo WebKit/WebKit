@@ -94,7 +94,7 @@ const ClassInfo JSTestNamedSetterWithOverrideBuiltinsPrototype::s_info = { "Test
 void JSTestNamedSetterWithOverrideBuiltinsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedSetterWithOverrideBuiltinsPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedSetterWithOverrideBuiltins::info(), JSTestNamedSetterWithOverrideBuiltinsPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedSetterWithOverrideBuiltins::s_info = { "TestNamedSetterWithOverrideBuiltins", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithOverrideBuiltins) };

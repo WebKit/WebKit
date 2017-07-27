@@ -1,3 +1,8 @@
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`bad value: ${String(actual)}`);
+}
+
 function shouldThrow(func, errorMessage) {
     var errorThrown = false;
     var error = null;
@@ -13,16 +18,9 @@ function shouldThrow(func, errorMessage) {
         throw new Error(`bad error: ${String(error)}`);
 }
 
-var complex = createDOMJITGetterComplexObject();
-var object = {};
-object.__proto__ = complex;
-function access(object)
-{
-    return object.customGetter;
-}
-noInline(access);
-for (var i = 0; i < 1e4; ++i) {
+var domjit = createDOMJITGetterObject();
+for (var i = 0; i < 1e3; ++i) {
     shouldThrow(() => {
-        access(object);
-    }, `TypeError: The DOMJITGetterComplex.customGetter getter can only be used on instances of DOMJITGetterComplex`);
+        Reflect.get(domjit, 'customGetter', { customGetter: 42 });
+    }, `TypeError: The DOMJITNode.customGetter getter can only be used on instances of DOMJITNode`);
 }

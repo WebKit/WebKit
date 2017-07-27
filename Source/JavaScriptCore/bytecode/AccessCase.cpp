@@ -549,13 +549,18 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             return;
         }
 
-        if (Options::useDOMJIT() && m_type == CustomAccessorGetter && this->as<GetterSetterAccessCase>().domJIT()) {
+        if (m_type == CustomAccessorGetter && this->as<GetterSetterAccessCase>().domAttribute()) {
             auto& access = this->as<GetterSetterAccessCase>();
             // We do not need to emit CheckDOM operation since structure check ensures
             // that the structure of the given base value is structure()! So all we should
             // do is performing the CheckDOM thingy in IC compiling time here.
-            if (structure()->classInfo()->isSubClassOf(access.domJIT()->thisClassInfo())) {
-                access.emitDOMJITGetter(state, baseForGetGPR);
+            if (!structure()->classInfo()->isSubClassOf(access.domAttribute()->classInfo)) {
+                state.failAndIgnore.append(jit.jump());
+                return;
+            }
+
+            if (Options::useDOMJIT() && access.domAttribute()->domJIT) {
+                access.emitDOMJITGetter(state, access.domAttribute()->domJIT, baseForGetGPR);
                 return;
             }
         }

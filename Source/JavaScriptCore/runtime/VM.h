@@ -92,6 +92,7 @@ class CodeBlock;
 class CodeCache;
 class CommonIdentifiers;
 class CustomGetterSetter;
+class DOMAttributeGetterSetter;
 class ExecState;
 class Exception;
 class ExceptionScope;
@@ -314,6 +315,7 @@ public:
     Strong<Structure> propertyNameIteratorStructure;
     Strong<Structure> propertyNameEnumeratorStructure;
     Strong<Structure> customGetterSetterStructure;
+    Strong<Structure> domAttributeGetterSetterStructure;
     Strong<Structure> scopedArgumentsTableStructure;
     Strong<Structure> apiWrapperStructure;
     Strong<Structure> nativeExecutableStructure;

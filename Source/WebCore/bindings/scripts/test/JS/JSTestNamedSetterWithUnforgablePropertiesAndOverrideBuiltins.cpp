@@ -86,11 +86,11 @@ static const struct CompactHashIndex JSTestNamedSetterWithUnforgablePropertiesAn
 
 static const HashTableValue JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTableValues[] =
 {
-    { "unforgeableAttribute", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "unforgeableAttribute", DontDelete | ReadOnly | CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "unforgeableOperation", DontDelete | ReadOnly | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperation), (intptr_t) (0) } },
 };
 
-static const HashTable JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTable = { 2, 3, true, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTableValues, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTableIndex };
+static const HashTable JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTable = { 2, 3, true, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::info(), JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTableValues, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTableIndex };
 template<> JSValue JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -118,7 +118,7 @@ const ClassInfo JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsProt
 void JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::info(), JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::s_info = { "TestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins", &Base::s_info, &JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins) };
@@ -304,7 +304,7 @@ static inline JSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuilti
 
 EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::get<jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttributeGetter>(*state, thisValue, "unforgeableAttribute");
+    return IDLAttribute<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::get<jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttributeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "unforgeableAttribute");
 }
 
 static inline JSC::EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperationBody(JSC::ExecState* state, typename IDLOperation<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

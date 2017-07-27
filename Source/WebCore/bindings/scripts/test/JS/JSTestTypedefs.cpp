@@ -138,7 +138,7 @@ static const HashTableValue JSTestTypedefsTableValues[] =
     { 0, 0, NoIntrinsic, { 0, 0 } }
 };
 
-static const HashTable JSTestTypedefsTable = { 0, 1, false, JSTestTypedefsTableValues, JSTestTypedefsTableIndex };
+static const HashTable JSTestTypedefsTable = { 0, 1, false, JSTestTypedefs::info(), JSTestTypedefsTableValues, JSTestTypedefsTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestTypedefsConstructorTableValues[] =
@@ -176,7 +176,7 @@ template<> void JSTestTypedefsConstructor::initializeProperties(VM& vm, JSDOMGlo
     putDirect(vm, vm.propertyNames->prototype, JSTestTypedefs::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestTypedefs"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(3), ReadOnly | DontEnum);
-    reifyStaticProperties(vm, JSTestTypedefsConstructorTableValues, *this);
+    reifyStaticProperties(vm, JSTestTypedefs::info(), JSTestTypedefsConstructorTableValues, *this);
 }
 
 template<> const ClassInfo JSTestTypedefsConstructor::s_info = { "TestTypedefs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsConstructor) };
@@ -186,16 +186,16 @@ template<> const ClassInfo JSTestTypedefsConstructor::s_info = { "TestTypedefs",
 static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
 {
     { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsConstructor) } },
-    { "unsignedLongLongAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsUnsignedLongLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsUnsignedLongLongAttr) } },
-    { "serializedScriptValue", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsSerializedScriptValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsSerializedScriptValue) } },
-    { "attributeWithClamp", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttributeWithClamp), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttributeWithClamp) } },
-    { "attributeWithClampInTypedef", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttributeWithClampInTypedef), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttributeWithClampInTypedef) } },
-    { "attrWithGetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttrWithGetterException) } },
-    { "attrWithSetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttrWithSetterException) } },
-    { "stringAttrWithGetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsStringAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsStringAttrWithGetterException) } },
-    { "stringAttrWithSetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsStringAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsStringAttrWithSetterException) } },
-    { "bufferSourceAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsBufferSourceAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsBufferSourceAttr) } },
-    { "domTimeStampAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsDomTimeStampAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsDomTimeStampAttr) } },
+    { "unsignedLongLongAttr", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsUnsignedLongLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsUnsignedLongLongAttr) } },
+    { "serializedScriptValue", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsSerializedScriptValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsSerializedScriptValue) } },
+    { "attributeWithClamp", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttributeWithClamp), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttributeWithClamp) } },
+    { "attributeWithClampInTypedef", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttributeWithClampInTypedef), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttributeWithClampInTypedef) } },
+    { "attrWithGetterException", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttrWithGetterException) } },
+    { "attrWithSetterException", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsAttrWithSetterException) } },
+    { "stringAttrWithGetterException", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsStringAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsStringAttrWithGetterException) } },
+    { "stringAttrWithSetterException", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsStringAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsStringAttrWithSetterException) } },
+    { "bufferSourceAttr", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsBufferSourceAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsBufferSourceAttr) } },
+    { "domTimeStampAttr", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsDomTimeStampAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefsDomTimeStampAttr) } },
     { "func", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFunc), (intptr_t) (0) } },
     { "setShadow", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionSetShadow), (intptr_t) (3) } },
     { "methodWithSequenceArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMethodWithSequenceArg), (intptr_t) (1) } },
@@ -218,7 +218,7 @@ const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefsPrototype", &Ba
 void JSTestTypedefsPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestTypedefsPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestTypedefs::info(), JSTestTypedefsPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsTable, nullptr, CREATE_METHOD_TABLE(JSTestTypedefs) };
@@ -300,7 +300,7 @@ static inline JSValue jsTestTypedefsUnsignedLongLongAttrGetter(ExecState& state,
 
 EncodedJSValue jsTestTypedefsUnsignedLongLongAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsUnsignedLongLongAttrGetter>(*state, thisValue, "unsignedLongLongAttr");
+    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsUnsignedLongLongAttrGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "unsignedLongLongAttr");
 }
 
 static inline bool setJSTestTypedefsUnsignedLongLongAttrSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
@@ -330,7 +330,7 @@ static inline JSValue jsTestTypedefsSerializedScriptValueGetter(ExecState& state
 
 EncodedJSValue jsTestTypedefsSerializedScriptValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsSerializedScriptValueGetter>(*state, thisValue, "serializedScriptValue");
+    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsSerializedScriptValueGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "serializedScriptValue");
 }
 
 static inline bool setJSTestTypedefsSerializedScriptValueSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
@@ -372,7 +372,7 @@ static inline JSValue jsTestTypedefsAttributeWithClampGetter(ExecState& state, J
 
 EncodedJSValue jsTestTypedefsAttributeWithClamp(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsAttributeWithClampGetter>(*state, thisValue, "attributeWithClamp");
+    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsAttributeWithClampGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "attributeWithClamp");
 }
 
 static inline bool setJSTestTypedefsAttributeWithClampSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
@@ -402,7 +402,7 @@ static inline JSValue jsTestTypedefsAttributeWithClampInTypedefGetter(ExecState&
 
 EncodedJSValue jsTestTypedefsAttributeWithClampInTypedef(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsAttributeWithClampInTypedefGetter>(*state, thisValue, "attributeWithClampInTypedef");
+    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsAttributeWithClampInTypedefGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "attributeWithClampInTypedef");
 }
 
 static inline bool setJSTestTypedefsAttributeWithClampInTypedefSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
@@ -432,7 +432,7 @@ static inline JSValue jsTestTypedefsAttrWithGetterExceptionGetter(ExecState& sta
 
 EncodedJSValue jsTestTypedefsAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsAttrWithGetterExceptionGetter>(*state, thisValue, "attrWithGetterException");
+    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsAttrWithGetterExceptionGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "attrWithGetterException");
 }
 
 static inline bool setJSTestTypedefsAttrWithGetterExceptionSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
@@ -462,7 +462,7 @@ static inline JSValue jsTestTypedefsAttrWithSetterExceptionGetter(ExecState& sta
 
 EncodedJSValue jsTestTypedefsAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsAttrWithSetterExceptionGetter>(*state, thisValue, "attrWithSetterException");
+    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsAttrWithSetterExceptionGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "attrWithSetterException");
 }
 
 static inline bool setJSTestTypedefsAttrWithSetterExceptionSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
@@ -492,7 +492,7 @@ static inline JSValue jsTestTypedefsStringAttrWithGetterExceptionGetter(ExecStat
 
 EncodedJSValue jsTestTypedefsStringAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsStringAttrWithGetterExceptionGetter>(*state, thisValue, "stringAttrWithGetterException");
+    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsStringAttrWithGetterExceptionGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "stringAttrWithGetterException");
 }
 
 static inline bool setJSTestTypedefsStringAttrWithGetterExceptionSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
@@ -522,7 +522,7 @@ static inline JSValue jsTestTypedefsStringAttrWithSetterExceptionGetter(ExecStat
 
 EncodedJSValue jsTestTypedefsStringAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsStringAttrWithSetterExceptionGetter>(*state, thisValue, "stringAttrWithSetterException");
+    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsStringAttrWithSetterExceptionGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "stringAttrWithSetterException");
 }
 
 static inline bool setJSTestTypedefsStringAttrWithSetterExceptionSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
@@ -552,7 +552,7 @@ static inline JSValue jsTestTypedefsBufferSourceAttrGetter(ExecState& state, JST
 
 EncodedJSValue jsTestTypedefsBufferSourceAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsBufferSourceAttrGetter>(*state, thisValue, "bufferSourceAttr");
+    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsBufferSourceAttrGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "bufferSourceAttr");
 }
 
 static inline bool setJSTestTypedefsBufferSourceAttrSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
@@ -582,7 +582,7 @@ static inline JSValue jsTestTypedefsDomTimeStampAttrGetter(ExecState& state, JST
 
 EncodedJSValue jsTestTypedefsDomTimeStampAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsDomTimeStampAttrGetter>(*state, thisValue, "domTimeStampAttr");
+    return IDLAttribute<JSTestTypedefs>::get<jsTestTypedefsDomTimeStampAttrGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "domTimeStampAttr");
 }
 
 static inline bool setJSTestTypedefsDomTimeStampAttrSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)

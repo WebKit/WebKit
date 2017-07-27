@@ -86,11 +86,11 @@ static const struct CompactHashIndex JSTestNamedSetterWithUnforgablePropertiesTa
 
 static const HashTableValue JSTestNamedSetterWithUnforgablePropertiesTableValues[] =
 {
-    { "unforgeableAttribute", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithUnforgablePropertiesUnforgeableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "unforgeableAttribute", DontDelete | ReadOnly | CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithUnforgablePropertiesUnforgeableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "unforgeableOperation", DontDelete | ReadOnly | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestNamedSetterWithUnforgablePropertiesInstanceFunctionUnforgeableOperation), (intptr_t) (0) } },
 };
 
-static const HashTable JSTestNamedSetterWithUnforgablePropertiesTable = { 2, 3, true, JSTestNamedSetterWithUnforgablePropertiesTableValues, JSTestNamedSetterWithUnforgablePropertiesTableIndex };
+static const HashTable JSTestNamedSetterWithUnforgablePropertiesTable = { 2, 3, true, JSTestNamedSetterWithUnforgableProperties::info(), JSTestNamedSetterWithUnforgablePropertiesTableValues, JSTestNamedSetterWithUnforgablePropertiesTableIndex };
 template<> JSValue JSTestNamedSetterWithUnforgablePropertiesConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -118,7 +118,7 @@ const ClassInfo JSTestNamedSetterWithUnforgablePropertiesPrototype::s_info = { "
 void JSTestNamedSetterWithUnforgablePropertiesPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedSetterWithUnforgablePropertiesPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedSetterWithUnforgableProperties::info(), JSTestNamedSetterWithUnforgablePropertiesPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedSetterWithUnforgableProperties::s_info = { "TestNamedSetterWithUnforgableProperties", &Base::s_info, &JSTestNamedSetterWithUnforgablePropertiesTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithUnforgableProperties) };
@@ -317,7 +317,7 @@ static inline JSValue jsTestNamedSetterWithUnforgablePropertiesUnforgeableAttrib
 
 EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesUnforgeableAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    return IDLAttribute<JSTestNamedSetterWithUnforgableProperties>::get<jsTestNamedSetterWithUnforgablePropertiesUnforgeableAttributeGetter>(*state, thisValue, "unforgeableAttribute");
+    return IDLAttribute<JSTestNamedSetterWithUnforgableProperties>::get<jsTestNamedSetterWithUnforgablePropertiesUnforgeableAttributeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "unforgeableAttribute");
 }
 
 static inline JSC::EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesInstanceFunctionUnforgeableOperationBody(JSC::ExecState* state, typename IDLOperation<JSTestNamedSetterWithUnforgableProperties>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

@@ -94,7 +94,7 @@ const ClassInfo JSTestNamedSetterThrowingExceptionPrototype::s_info = { "TestNam
 void JSTestNamedSetterThrowingExceptionPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestNamedSetterThrowingExceptionPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestNamedSetterThrowingException::info(), JSTestNamedSetterThrowingExceptionPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestNamedSetterThrowingException::s_info = { "TestNamedSetterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterThrowingException) };

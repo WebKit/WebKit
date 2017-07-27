@@ -37,13 +37,15 @@ GetByIdVariant::GetByIdVariant(
     const ObjectPropertyConditionSet& conditionSet,
     std::unique_ptr<CallLinkStatus> callLinkStatus,
     JSFunction* intrinsicFunction,
-    DOMJIT::GetterSetter* domJIT)
+    PropertySlot::GetValueFunc customAccessorGetter,
+    std::optional<DOMAttributeAnnotation> domAttribute)
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
     , m_offset(offset)
     , m_callLinkStatus(WTFMove(callLinkStatus))
     , m_intrinsicFunction(intrinsicFunction)
-    , m_domJIT(domJIT)
+    , m_customAccessorGetter(customAccessorGetter)
+    , m_domAttribute(domAttribute)
 {
     if (!structureSet.size()) {
         ASSERT(offset == invalidOffset);
@@ -67,7 +69,8 @@ GetByIdVariant& GetByIdVariant::operator=(const GetByIdVariant& other)
     m_conditionSet = other.m_conditionSet;
     m_offset = other.m_offset;
     m_intrinsicFunction = other.m_intrinsicFunction;
-    m_domJIT = other.m_domJIT;
+    m_customAccessorGetter = other.m_customAccessorGetter;
+    m_domAttribute = other.m_domAttribute;
     if (other.m_callLinkStatus)
         m_callLinkStatus = std::make_unique<CallLinkStatus>(*other.m_callLinkStatus);
     else
@@ -106,8 +109,15 @@ bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
     if (!canMergeIntrinsicStructures(other))
         return false;
 
-    if (m_domJIT != other.m_domJIT)
+    if (m_customAccessorGetter != other.m_customAccessorGetter)
         return false;
+
+    if (m_domAttribute || other.m_domAttribute) {
+        if (!(m_domAttribute && other.m_domAttribute))
+            return false;
+        if (*m_domAttribute != *other.m_domAttribute)
+            return false;
+    }
 
     if (m_conditionSet.isEmpty() != other.m_conditionSet.isEmpty())
         return false;
@@ -144,8 +154,13 @@ void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
         out.print(", call = ", *m_callLinkStatus);
     if (m_intrinsicFunction)
         out.print(", intrinsic = ", *m_intrinsicFunction);
-    if (m_domJIT)
-        out.print(", domjit = ", RawPointer(m_domJIT));
+    if (m_customAccessorGetter)
+        out.print(", customaccessorgetter = ", RawPointer(bitwise_cast<const void*>(m_customAccessorGetter)));
+    if (m_domAttribute) {
+        out.print(", domclass = ", RawPointer(m_domAttribute->classInfo));
+        if (m_domAttribute->domJIT)
+            out.print(", domjit = ", RawPointer(m_domAttribute->domJIT));
+    }
     out.print(">");
 }
 

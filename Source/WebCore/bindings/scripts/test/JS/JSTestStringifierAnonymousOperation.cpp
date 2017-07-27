@@ -99,7 +99,7 @@ const ClassInfo JSTestStringifierAnonymousOperationPrototype::s_info = { "TestSt
 void JSTestStringifierAnonymousOperationPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestStringifierAnonymousOperationPrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestStringifierAnonymousOperation::info(), JSTestStringifierAnonymousOperationPrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestStringifierAnonymousOperation::s_info = { "TestStringifierAnonymousOperation", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierAnonymousOperation) };

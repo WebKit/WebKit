@@ -90,6 +90,7 @@ JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, ThrowScope&, const String
 JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*, ThrowScope&);
 JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*, ThrowScope&, const String& errorMessage);
 inline JSObject* throwRangeError(ExecState* state, ThrowScope& scope, const String& errorMessage) { return throwException(state, scope, createRangeError(state, errorMessage)); }
+JS_EXPORT_PRIVATE JSValue throwDOMAttributeGetterTypeError(ExecState*, ThrowScope&, const ClassInfo*, PropertyName);
 
 // Convenience wrappers, wrap result as an EncodedJSValue.
 inline void throwVMError(ExecState* exec, ThrowScope& scope, Exception* exception) { throwException(exec, scope, exception); }
@@ -99,6 +100,7 @@ inline EncodedJSValue throwVMTypeError(ExecState* exec, ThrowScope& scope) { ret
 inline EncodedJSValue throwVMTypeError(ExecState* exec, ThrowScope& scope, ASCIILiteral errorMessage) { return JSValue::encode(throwTypeError(exec, scope, errorMessage)); }
 inline EncodedJSValue throwVMTypeError(ExecState* exec, ThrowScope& scope, const String& errorMessage) { return JSValue::encode(throwTypeError(exec, scope, errorMessage)); }
 inline EncodedJSValue throwVMRangeError(ExecState* state, ThrowScope& scope, const String& errorMessage) { return JSValue::encode(throwRangeError(state, scope, errorMessage)); }
+inline EncodedJSValue throwVMDOMAttributeGetterTypeError(ExecState* state, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName) { return JSValue::encode(throwDOMAttributeGetterTypeError(state, scope, classInfo, propertyName)); }
 
 class StrictModeTypeErrorFunction : public InternalFunction {
 private:

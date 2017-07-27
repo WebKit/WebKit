@@ -121,7 +121,7 @@ const ClassInfo JSMapLikePrototype::s_info = { "MapLikePrototype", &Base::s_info
 void JSMapLikePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSMapLikePrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSMapLike::info(), JSMapLikePrototypeTableValues, *this);
     putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);
 }
 

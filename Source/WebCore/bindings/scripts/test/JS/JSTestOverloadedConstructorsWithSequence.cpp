@@ -143,7 +143,7 @@ const ClassInfo JSTestOverloadedConstructorsWithSequencePrototype::s_info = { "T
 void JSTestOverloadedConstructorsWithSequencePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSTestOverloadedConstructorsWithSequencePrototypeTableValues, *this);
+    reifyStaticProperties(vm, JSTestOverloadedConstructorsWithSequence::info(), JSTestOverloadedConstructorsWithSequencePrototypeTableValues, *this);
 }
 
 const ClassInfo JSTestOverloadedConstructorsWithSequence::s_info = { "TestOverloadedConstructorsWithSequence", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequence) };

@@ -1,3 +1,16 @@
+2017-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Hoist DOM binding attribute getter prologue into JavaScriptCore taking advantage of DOMJIT / CheckSubClass
+        https://bugs.webkit.org/show_bug.cgi?id=171637
+
+        Reviewed by Darin Adler.
+
+        * stress/domjit-getter-complex-with-incorrect-object.js:
+        (i.shouldThrow):
+        * stress/domjit-getter-type-check.js: Copied from JSTests/stress/domjit-getter-complex-with-incorrect-object.js.
+        (shouldBe):
+        (i.shouldThrow):
+
 2017-07-26  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: test throwing out of the start function
