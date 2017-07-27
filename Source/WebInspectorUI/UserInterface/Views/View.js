@@ -173,6 +173,7 @@ WebInspector.View = class View extends WebInspector.Object
     // Protected
 
     get layoutReason() { return this._layoutReason; }
+    get didInitialLayout() { return this._didInitialLayout; }
 
     didMoveToWindow(isAttachedToRoot)
     {

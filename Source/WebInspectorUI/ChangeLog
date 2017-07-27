@@ -1,5 +1,24 @@
 2017-07-26  Devin Rousso  <drousso@apple.com>
 
+        Uncaught Exception: undefined is not an object (evaluating 'this._memoryRow.value = Number.bytesToString(this._canvas.memoryCost)')
+        https://bugs.webkit.org/show_bug.cgi?id=174823
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._refreshIdentitySection):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._refreshSourceSection):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._refreshAttributesSection):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._refreshCSSCanvasSection):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._formatMemoryRow):
+        Early return if the view has not called initialLayout, as the rows might not have been
+        constructed yet.
+
+        * UserInterface/Views/View.js:
+        (WebInspector.View.prototype.get didInitialLayout): Added.
+
+2017-07-26  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: create protocol for recording Canvas contexts
         https://bugs.webkit.org/show_bug.cgi?id=174481
 

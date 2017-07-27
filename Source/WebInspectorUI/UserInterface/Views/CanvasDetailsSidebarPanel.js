@@ -143,9 +143,6 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
 
     _refreshIdentitySection()
     {
-        if (!this._canvas)
-            return;
-
         this._nameRow.value = this._canvas.displayName;
         this._typeRow.value = WebInspector.Canvas.displayNameForContextType(this._canvas.contextType);
         this._formatMemoryRow();
@@ -153,7 +150,7 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
 
     _refreshSourceSection()
     {
-        if (!this._canvas)
+        if (!this.didInitialLayout)
             return;
 
         this._nodeRow.value = this._canvas.cssCanvasName ? null : emDash;
@@ -224,9 +221,6 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
 
     _refreshAttributesSection()
     {
-        if (!this._canvas)
-            return;
-
         if (isEmptyObject(this._canvas.contextAttributes)) {
             // Remove the DataGrid to show the placeholder text.
             this._attributesDataGridRow.dataGrid = null;
@@ -254,7 +248,7 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
 
     _refreshCSSCanvasSection()
     {
-        if (!this._canvas)
+        if (!this.didInitialLayout)
             return;
 
         if (!this._canvas.cssCanvasName) {
@@ -279,6 +273,9 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
 
     _formatMemoryRow()
     {
+        if (!this.didInitialLayout)
+            return;
+
         if (!this._canvas.memoryCost || isNaN(this._canvas.memoryCost)) {
             this._memoryRow.value = emDash;
             return;
