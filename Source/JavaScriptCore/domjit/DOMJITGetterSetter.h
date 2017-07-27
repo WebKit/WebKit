@@ -32,6 +32,8 @@
 
 namespace JSC { namespace DOMJIT {
 
+class CallDOMGetterSnippet;
+
 class GetterSetter {
 public:
     using CustomGetter = PropertySlot::GetValueFunc;

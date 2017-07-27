@@ -1,5 +1,12 @@
 2017-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for CLoop
+        https://bugs.webkit.org/show_bug.cgi?id=171637
+
+        * domjit/DOMJITGetterSetter.h:
+
+2017-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Hoist DOM binding attribute getter prologue into JavaScriptCore taking advantage of DOMJIT / CheckSubClass
         https://bugs.webkit.org/show_bug.cgi?id=171637
 
