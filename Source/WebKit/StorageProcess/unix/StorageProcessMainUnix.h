@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,12 @@
 
 #pragma once
 
-#ifdef __cplusplus
+#include <WebKit/WKBase.h>
+
+namespace WebKit {
+
 extern "C" {
-#endif
-
-// FIXME: Remove these after <rdar://problem/30772033> is fixed.
-void StorageServiceInitializer();
-void NetworkServiceInitializer();
-void PluginServiceInitializer();
-void WebContentServiceInitializer();
-
-#ifdef __cplusplus
+WK_EXPORT int StorageProcessMainUnix(int argc, char** argv);
 }
-#endif
+
+} // namespace WebKit

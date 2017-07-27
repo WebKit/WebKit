@@ -4,7 +4,7 @@ global:
   WebProcessMainUnix;
   NetworkProcessMainUnix;
   PluginProcessMainUnix;
-  DatabaseProcessMainUnix;
+  StorageProcessMainUnix;
   _ZN6WebKit22WebKitExtensionManager10initializeEPNS_14InjectedBundleEPN3API6ObjectE;
   _ZN6WebKit22WebKitExtensionManager9singletonEv;
 local:

@@ -64,7 +64,7 @@
 #include "WebProcessProxyMessages.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebSocketStream.h"
-#include "WebToDatabaseProcessConnection.h"
+#include "WebToStorageProcessConnection.h"
 #include "WebsiteData.h"
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/JSLock.h>

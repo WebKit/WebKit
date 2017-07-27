@@ -27,13 +27,13 @@
 #include "NetworkProcessProxy.h"
 
 #include "AuthenticationChallengeProxy.h"
-#include "DatabaseProcessMessages.h"
 #include "DownloadProxyMessages.h"
 #include "LegacyCustomProtocolManagerProxyMessages.h"
 #include "Logging.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "SandboxExtension.h"
+#include "StorageProcessMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
@@ -299,7 +299,7 @@ void NetworkProcessProxy::grantSandboxExtensionsToDatabaseProcessForBlobs(uint64
         SandboxExtension::createHandle(paths[i], SandboxExtension::ReadWrite, extensions[i]);
     }
 
-    m_processPool.sendToDatabaseProcessRelaunchingIfNecessary(Messages::DatabaseProcess::GrantSandboxExtensionsForBlobs(paths, extensions));
+    m_processPool.sendToDatabaseProcessRelaunchingIfNecessary(Messages::StorageProcess::GrantSandboxExtensionsForBlobs(paths, extensions));
 #endif
     connection()->send(Messages::NetworkProcess::DidGrantSandboxExtensionsToDatabaseProcessForBlobs(requestID), 0);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "StorageProcessMainUnix.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "ChildProcessMain.h"
+#include "StorageProcess.h"
 
-// FIXME: Remove these after <rdar://problem/30772033> is fixed.
-void StorageServiceInitializer();
-void NetworkServiceInitializer();
-void PluginServiceInitializer();
-void WebContentServiceInitializer();
+namespace WebKit {
 
-#ifdef __cplusplus
+int StorageProcessMainUnix(int argc, char** argv)
+{
+    return ChildProcessMain<StorageProcess, ChildProcessMainBase>(argc, argv);
 }
-#endif
+
+} // namespace WebKit

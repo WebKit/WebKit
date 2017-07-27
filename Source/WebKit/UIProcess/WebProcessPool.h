@@ -29,7 +29,6 @@
 #include "APIObject.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataStore.h"
-#include "DatabaseProcessProxy.h"
 #include "DownloadProxyMap.h"
 #include "GenericCallback.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
@@ -40,6 +39,7 @@
 #include "PluginInfoStore.h"
 #include "ProcessThrottler.h"
 #include "StatisticsRequest.h"
+#include "StorageProcessProxy.h"
 #include "VisitedLinkStore.h"
 #include "WebContextClient.h"
 #include "WebContextConnectionClient.h"
@@ -313,9 +313,9 @@ public:
     void getNetworkProcessConnection(Ref<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>&&);
 
     void ensureDatabaseProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore);
-    DatabaseProcessProxy* databaseProcess() { return m_databaseProcess.get(); }
+    StorageProcessProxy* databaseProcess() { return m_databaseProcess.get(); }
     void getDatabaseProcessConnection(Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>&&);
-    void databaseProcessCrashed(DatabaseProcessProxy*);
+    void databaseProcessCrashed(StorageProcessProxy*);
 
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;
@@ -549,7 +549,7 @@ private:
     bool m_canHandleHTTPSServerTrustEvaluation;
     bool m_didNetworkProcessCrash;
     RefPtr<NetworkProcessProxy> m_networkProcess;
-    RefPtr<DatabaseProcessProxy> m_databaseProcess;
+    RefPtr<StorageProcessProxy> m_databaseProcess;
 
     HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
     HashMap<uint64_t, RefPtr<StatisticsRequest>> m_statisticsRequests;

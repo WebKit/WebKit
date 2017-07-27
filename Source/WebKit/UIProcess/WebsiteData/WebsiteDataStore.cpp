@@ -28,9 +28,9 @@
 
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataRecord.h"
-#include "DatabaseProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "StorageManager.h"
+#include "StorageProcessCreationParameters.h"
 #include "WebCookieManagerProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
@@ -1315,11 +1315,11 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
         processPool->setResourceLoadStatisticsEnabled(true);
 }
 
-DatabaseProcessCreationParameters WebsiteDataStore::databaseProcessParameters()
+StorageProcessCreationParameters WebsiteDataStore::databaseProcessParameters()
 {
     resolveDirectoriesIfNecessary();
 
-    DatabaseProcessCreationParameters parameters;
+    StorageProcessCreationParameters parameters;
 
     parameters.sessionID = m_sessionID;
 

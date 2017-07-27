@@ -28,8 +28,8 @@
 
 namespace WebKit {
 
-class DatabaseProcessProxy;
 class NetworkProcessProxy;
+class StorageProcessProxy;
 class WebProcessPool;
 class WebProcessProxy;
 
@@ -56,7 +56,7 @@ public:
     {
     }
 
-    virtual void processDidClose(DatabaseProcessProxy*)
+    virtual void processDidClose(StorageProcessProxy*)
     {
     }
 
