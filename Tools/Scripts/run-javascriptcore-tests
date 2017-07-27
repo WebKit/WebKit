@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2013-2017 Apple Inc.  All rights reserved.
+# Copyright (C) 2005-2017 Apple Inc.  All rights reserved.
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -56,15 +56,28 @@ my $memoryLimited;
 
 my $buildJSC = 1;
 
-my $runTestMasm = 1;
-my $runTestAir = 1;
-my $runTestB3 = 1;
-my $runTestAPI = 1;
+use constant {
+    ENV_VAR_SAYS_DO_RUN => 4,
+    ENV_VAR_SAYS_DONT_RUN => 3,
+    RUN_IF_NO_TESTS_SPECIFIED => 2,
+    DO_RUN => 1,
+    DONT_RUN => 0,
+};
 
-my $runJSCStress = 1;
+my $runTestMasm = RUN_IF_NO_TESTS_SPECIFIED;
+my $runTestAir = RUN_IF_NO_TESTS_SPECIFIED;
+my $runTestB3 = RUN_IF_NO_TESTS_SPECIFIED;
+my $runTestAPI = RUN_IF_NO_TESTS_SPECIFIED;
+my $runJSCStress = RUN_IF_NO_TESTS_SPECIFIED;
+my $runMozillaTests = RUN_IF_NO_TESTS_SPECIFIED;
+
+# $runJITStressTests is special because it is not for enabling a different set of tests.
+# Instead it is only meaningful for when we want to disable using JIT test configurations
+# on the JSC stress test or mozilla tests.
 my $runJITStressTests = 1;
-my $runMozillaTests = 1;
+
 my $runQuickMode = 0;
+
 my $forceCollectContinuously = 0;
 my $envVars = "";
 my $gmallocPath = undef;
@@ -79,9 +92,9 @@ my $jsonFileName;
 
 if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM}) {
     if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM} eq "true") {
-        $runTestMasm = 1;
+        $runTestMasm = ENV_VAR_SAYS_DO_RUN;
     } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM} eq "false") {
-        $runTestMasm = 0;
+        $runTestMasm = ENV_VAR_SAYS_DONT_RUN;
     } else {
         print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_TESTMASM environment variable: '"
             . $ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM} . "'. Should be set to 'true' or 'false'.\n";
@@ -90,9 +103,9 @@ if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM}) {
 
 if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAIR}) {
     if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAIR} eq "true") {
-        $runTestAir = 1;
+        $runTestAir = ENV_VAR_SAYS_DO_RUN;
     } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAIR} eq "false") {
-        $runTestAir = 0;
+        $runTestAir = ENV_VAR_SAYS_DONT_RUN;
     } else {
         print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_TESTAIR environment variable: '"
             . $ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAIR} . "'. Should be set to 'true' or 'false'.\n";
@@ -101,9 +114,9 @@ if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAIR}) {
 
 if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTB3}) {
     if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTB3} eq "true") {
-        $runTestB3 = 1;
+        $runTestB3 = ENV_VAR_SAYS_DO_RUN;
     } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTB3} eq "false") {
-        $runTestB3 = 0;
+        $runTestB3 = ENV_VAR_SAYS_DONT_RUN;
     } else {
         print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_TESTB3 environment variable: '"
             . $ENV{RUN_JAVASCRIPTCORE_TESTS_TESTB3} . "'. Should be set to 'true' or 'false'.\n";
@@ -112,9 +125,9 @@ if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTB3}) {
 
 if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI}) {
     if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI} eq "true") {
-        $runTestAPI = 1;
+        $runTestAPI = ENV_VAR_SAYS_DO_RUN;
     } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI} eq "false") {
-        $runTestAPI = 0;
+        $runTestAPI = ENV_VAR_SAYS_DONT_RUN;
     } else {
         print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_TESTAPI environment variable: '"
             . $ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI} . "'. Should be set to 'true' or 'false'.\n";
@@ -136,15 +149,26 @@ if ($ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS}) {
     push @extraTests, $ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS};
 }
 
+sub defaultStringForTestState {
+    my ($state) = @_;
+    if ($state == ENV_VAR_SAYS_DONT_RUN) {
+        return "will not run due to environment variable";
+    } elsif ($state == DONT_RUN) {
+        return "will not run";
+    } else {
+        return "will run";
+    }
+}
+
 my $programName = basename($0);
 my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
-my $testmasmDefault = $runTestMasm ? "will run" : "will not run";
-my $testairDefault = $runTestAir ? "will run" : "will not run";
-my $testb3Default = $runTestB3 ? "will run" : "will not run";
-my $testapiDefault = $runTestAPI ? "will run" : "will not run";
-my $jscStressDefault = $runJSCStress ? "will run" : " will not run";
+my $testmasmDefault = defaultStringForTestState($runTestMasm);
+my $testairDefault = defaultStringForTestState($runTestAir);
+my $testb3Default = defaultStringForTestState($runTestB3);
+my $testapiDefault = defaultStringForTestState($runTestAPI);
+my $jscStressDefault = defaultStringForTestState($runJSCStress);
+my $mozillaTestsDefault = defaultStringForTestState($runMozillaTests);
 my $jitStressTestsDefault = $runJITStressTests ? "will run" : " will not run";
-my $mozillaTestsDefault = $runMozillaTests ? "will run" : " will not run";
 my $quickModeDefault = $runQuickMode ? "some" : "all";
 my $failFastDefault = $failFast ? "fail fast" : "don't fail fast";
 my $filter;
@@ -154,13 +178,13 @@ Usage: $programName [options] [options to pass to build system]
   --root=                       Path to pre-built root containing jsc
   --[no-]ftl-jit                Turn the FTL JIT on or off
   --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
-  --[no-]testmasm               Run (or don't run) testmasm (default: $testmasmDefault)
-  --[no-]testair                Run (or don't run) testair (default: $testairDefault)
-  --[no-]testb3                 Run (or don't run) testb3 (default: $testb3Default)
-  --[no-]testapi                Run (or don't run) testapi (default: $testapiDefault)
-  --[no-]jsc-stress             Run (or don't run) the JSC stress tests (default: $jscStressDefault)
+  --[no-]testmasm               Only run (or don't run) testmasm (default: $testmasmDefault)
+  --[no-]testair                Only run (or don't run) testair (default: $testairDefault)
+  --[no-]testb3                 Only run (or don't run) testb3 (default: $testb3Default)
+  --[no-]testapi                Only run (or don't run) testapi (default: $testapiDefault)
+  --[no-]jsc-stress             Only run (or don't run) the JSC stress tests (default: $jscStressDefault)
+  --[no-]mozilla-tests          Only run (or don't run) the Mozilla tests (default: $mozillaTestsDefault)
   --[no-]jit-stress-tests       Run (or don't run) the JIT stress tests (default: $jitStressTestsDefault)
-  --[no-]mozilla-tests          Run (or don't run) the Mozilla tests (default: $mozillaTestsDefault)
   --[no-]quick                  Run some (or all) of the regular testing modes (default: $quickModeDefault)
                                 If the runner only runs some it will run the default and no-cjit-validate modes.
                                 Note, this will not change the behavior of tests that specify their own modes.
@@ -187,12 +211,19 @@ Usage: $programName [options] [options to pass to build system]
   --gmalloc:                    Run tests with Guard Malloc enabled (if no path is given: $gmallocDefaultPath is used)
 
 Environment Variables:
-  - set RUN_JAVASCRIPTCORE_TESTS_TESTMASM to "true" or "false" (no quotes) to determine if we run the testmasm tests.
-  - set RUN_JAVASCRIPTCORE_TESTS_TESTAIR to "true" or "false" (no quotes) to determine if we run the testair tests.
-  - set RUN_JAVASCRIPTCORE_TESTS_TESTB3 to "true" or "false" (no quotes) to determine if we run the testb3 tests.
-  - set RUN_JAVASCRIPTCORE_TESTS_TESTAPI to "true" or "false" (no quotes) to determine if we run the testapi tests.
+  - set RUN_JAVASCRIPTCORE_TESTS_TESTMASM to "true" or "false" (no quotes) to determine if we run testmasm by default.
+  - set RUN_JAVASCRIPTCORE_TESTS_TESTAIR to "true" or "false" (no quotes) to determine if we run testair by default.
+  - set RUN_JAVASCRIPTCORE_TESTS_TESTB3 to "true" or "false" (no quotes) to determine if we run testb3 by default.
+  - set RUN_JAVASCRIPTCORE_TESTS_TESTAPI to "true" or "false" (no quotes) to determine if we run testapi by default.
   - set RUN_JAVASCRIPTCORE_TESTS_BUILD to "true" or "false" (no quotes) to set the should-we-build-before-running-tests setting.
   - set RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS to the path of a yaml file or a directory of JS files to be run as part of run-javascriptcore-tests.
+
+If one or more --<testname> options are specified, only those tests will run. For example,
+the following only runs testmasm and testapi:
+    \$ run-javascriptcore-tests --testmasm --testapi
+
+Otherwise, all tests will run unless the test is disabled using --no-<testname> or an
+environment variable.
 EOF
 
 GetOptions(
@@ -204,8 +235,8 @@ GetOptions(
     'testb3!' => \$runTestB3,
     'testapi!' => \$runTestAPI,
     'jsc-stress!' => \$runJSCStress,
-    'jit-stress-tests!' => \$runJITStressTests,
     'mozilla-tests!' => \$runMozillaTests,
+    'jit-stress-tests!' => \$runJITStressTests,
     'quick!' => \$runQuickMode,
     'fail-fast!' => \$failFast,
     'force-collectContinuously!' => \$forceCollectContinuously,
@@ -222,6 +253,34 @@ GetOptions(
     'env-vars=s' => \$envVars,
     'gmalloc:s' => \$gmallocPath,
 );
+
+
+my $specificTestsSpecified = 0;
+if ($runTestMasm == DO_RUN
+   || $runTestAir == DO_RUN
+   || $runTestB3 == DO_RUN
+   || $runTestAPI == DO_RUN
+   || $runJSCStress == DO_RUN
+   || $runMozillaTests == DO_RUN) {
+    $specificTestsSpecified = 1;
+}
+
+sub enableTestOrNot {
+    my ($state) = @_;
+    if ($state == RUN_IF_NO_TESTS_SPECIFIED || $state == ENV_VAR_SAYS_DO_RUN) {
+        return $specificTestsSpecified ? DONT_RUN : DO_RUN;
+    } elsif ($state == ENV_VAR_SAYS_DONT_RUN) {
+        return DONT_RUN;
+    }
+    return $state;
+}
+
+$runTestMasm = enableTestOrNot($runTestMasm);
+$runTestAir = enableTestOrNot($runTestAir);
+$runTestB3 = enableTestOrNot($runTestB3);
+$runTestAPI = enableTestOrNot($runTestAPI);
+$runJSCStress = enableTestOrNot($runJSCStress);
+$runMozillaTests = enableTestOrNot($runMozillaTests);
 
 # Assume any arguments left over from GetOptions are assumed to be build arguments
 my @buildArgs = @ARGV;
@@ -319,6 +378,7 @@ sub runJSCStressTests
 {
     my $jscStressResultsDir = $productDir . "/jsc-stress-results";
 
+    my $hasTestsToRun = 0;
     my @testList;
     if ($runJSCStress) {
         @testList = (
@@ -342,10 +402,12 @@ sub runJSCStressTests
             "JSTests/modules.yaml",
             "JSTests/ChakraCore.yaml",
             "JSTests/wasm.yaml");
+        $hasTestsToRun = 1;
     }
 
     if ($runMozillaTests) {
         push(@testList, "JSTests/mozilla/mozilla-tests.yaml");
+        $hasTestsToRun = 1;
     }
 
     # Set LANG environment variable so the stress tests will work with newer ruby (<rdar://problem/15010705>)
@@ -423,10 +485,17 @@ sub runJSCStressTests
 
     for my $testSuite (@extraTests) {
         push(@jscStressDriverCmd, $testSuite);
+        $hasTestsToRun = 1;
     }
     if (defined($ENV{"EXTRA_JSC_TESTS"})) {
         push(@jscStressDriverCmd, $ENV{"EXTRA_JSC_TESTS"});
+        $hasTestsToRun = 1;
     }
+
+    if (!$hasTestsToRun) {
+        exit(0);
+    }
+
     print "Running: " . join(" ", @jscStressDriverCmd) . "\n";
     my $result = system(@jscStressDriverCmd);
     exit exitStatus($result) if $result;

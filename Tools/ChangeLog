@@ -1,5 +1,45 @@
 2017-07-26  Mark Lam  <mark.lam@apple.com>
 
+        Add ability to only run specific tests in run-javascriptcore-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=174884
+
+        Reviewed by Saam Barati.
+
+        For example, if we only want to run testapi, we can do so as follows:
+            $ run-javascriptcore-tests --testapi
+
+        Previously, specifying --testapi effectively does nothing because we run all tests
+        by default.  Only --no-testapi had the effect of disabling the test set.  This
+        old behavior for --testapi is not very useful or meaningful.  We're now changing
+        it to mean that we will only run that test.
+
+        With this change, we can also run more than one set of tests.  For example, if we
+        only want to run testmasm and testair, we can do so as follows:
+            $ run-javascriptcore-tests --testmasm --testair
+
+        By default, if no specific test option is specified, run-javascriptcore-tests will
+        run all tests.
+
+        Note that the jsc stress tests (--jsc-stress) are a different set of tests than
+        the mozilla tests (--mozilla-tests) even though both are run via the lower level
+        run-jsc-stress-tests test harness.  Hence, if you only specify one of the tests,
+        the other set will not run.  For example, the following only runs the mozilla tests:
+            $ run-javascriptcore-tests --mozilla-tests
+
+        Note also that --jit-stress-tests is not for choosing a different set of tests.
+        Instead, it is used for determining whether we run JIT'ed test configurations
+        on the jsc stress tests and mozilla tests.  As a result, specifying
+        --jit-stress-tests will not omit other tests.  For example, the following still
+        runs all tests:
+            $ run-javascriptcore-tests --jit-stress-tests
+
+        * Scripts/run-javascriptcore-tests:
+        (defaultStringForTestState):
+        (enableTestOrNot):
+        (runJSCStressTests):
+
+2017-07-26  Mark Lam  <mark.lam@apple.com>
+
         Make run-javascriptcore-test run testair, testb3, and testmasm.
         https://bugs.webkit.org/show_bug.cgi?id=174837
         <rdar://problem/33522927>
