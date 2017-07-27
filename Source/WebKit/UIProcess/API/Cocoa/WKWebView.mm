@@ -2695,7 +2695,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         return;
 
     self._currentContentView.hidden = NO;
-    [_passwordView removeFromSuperview];
+    [_passwordView hide];
     _passwordView = nil;
 }
 
