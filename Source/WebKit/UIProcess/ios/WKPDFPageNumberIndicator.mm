@@ -63,7 +63,10 @@ const NSTimeInterval indicatorMoveDuration = 0.3;
     self.layer.allowsGroupOpacity = NO;
     self.layer.allowsGroupBlending = NO;
 
-    _backdropView = adoptNS([[_UIBackdropView alloc] initWithPrivateStyle:_UIBackdropViewStyle_Light]);
+    _UIBackdropViewSettings *backdropViewSettings = [_UIBackdropViewSettings settingsForPrivateStyle:_UIBackdropViewStyle_Light];
+    backdropViewSettings.scale = 0.5;
+
+    _backdropView = adoptNS([[_UIBackdropView alloc] initWithSettings:backdropViewSettings]);
     [_backdropView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     [self addSubview:_backdropView.get()];
     [self _makeRoundedCorners];

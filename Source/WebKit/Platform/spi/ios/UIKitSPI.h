@@ -72,6 +72,7 @@
 #import <UIKit/UIWebTiledView.h>
 #import <UIKit/UIWebTouchEventsGestureRecognizer.h>
 #import <UIKit/UIWindow_Private.h>
+#import <UIKit/_UIBackdropViewSettings.h>
 #import <UIKit/_UIBackdropView_Private.h>
 #import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
@@ -727,11 +728,20 @@ typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
     _UIBackdropViewStyle_Dark = 2030
 };
 
+@interface _UIBackdropViewSettings : NSObject
+@end
+
+@interface _UIBackdropViewSettings ()
++ (_UIBackdropViewSettings *)settingsForPrivateStyle:(_UIBackdropViewStylePrivate)style;
+@property (nonatomic, assign) CGFloat scale;
+@end
+
 @interface _UIBackdropView : UIView
 @end
 
-@interface _UIBackdropView (_UIBackdropViewDetails)
+@interface _UIBackdropView ()
 - (instancetype)initWithPrivateStyle:(_UIBackdropViewStylePrivate)style;
+- (instancetype)initWithSettings:(_UIBackdropViewSettings *)settings;
 - (instancetype)initWithFrame:(CGRect)frame privateStyle:(_UIBackdropViewStylePrivate)style;
 @property (nonatomic, strong, readonly) UIView *contentView;
 @end

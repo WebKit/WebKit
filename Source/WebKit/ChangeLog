@@ -1,3 +1,17 @@
+2017-07-27  Tim Horton  <timothy_horton@apple.com>
+
+        PDF page number indicator is very flashy when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=174882
+        <rdar://problem/23760981>
+
+        Reviewed by Andy Estes.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKPDFPageNumberIndicator.mm:
+        (-[WKPDFPageNumberIndicator initWithFrame:]):
+        Increase the backdrop rendering resolution to reduce flashiness.
+        It's still not perfect, but it's quite visibly better.
+
 2017-07-26  Brady Eidson  <beidson@apple.com>
 
         ResourceLoadStatistics API tests fail on El Capitan.
