@@ -1,5 +1,29 @@
 2017-07-27  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME] Allow CDMInstance type traits specialization
+        https://bugs.webkit.org/show_bug.cgi?id=174886
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Allow using the trait-based type casting for the CDMInstance class and its
+        derivatives. ImplementationType enumeration values are to be used and
+        returned from the new implementationType() virtual method. This method is
+        leveraged in the type trait specialization that enables using is<>() and
+        downcast<>() helpers for CDMInstance objects.
+
+        This will allow differentiating between CDMInstance implementations once
+        the media playback pipeline has to retrieve any key information that's
+        necessary for playback of encrypted content.
+
+        MockCDMInstance class overrides the implementationType() method, returning
+        the ImplementationType::Mock value. Type trait specializations for this
+        class aren't added since they're not needed anywhere at this point.
+
+        * platform/encryptedmedia/CDMInstance.h:
+        * testing/MockCDMFactory.h:
+
+2017-07-27  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Key serialization support
         https://bugs.webkit.org/show_bug.cgi?id=173883
 
