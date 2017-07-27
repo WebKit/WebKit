@@ -1,5 +1,22 @@
 2017-07-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        [GStreamer][EME] Not having a key id buffer should not always error
+        https://bugs.webkit.org/show_bug.cgi?id=174889
+
+        Reviewed by Žan Doberšek.
+
+        In r219946 we introduced a hard requirement for a key id buffer
+        that does not happen for all CDMs.
+
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webKitMediaClearKeyDecryptorSetupCipher): Check for key id buffer
+        and error if we didn't get it.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptTransformInPlace): Soften the
+        requirement for key id buffer.
+
+2017-07-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         [GStreamer][EME] Fix phony debug output in player base for supported key system
         https://bugs.webkit.org/show_bug.cgi?id=174888
 

@@ -254,13 +254,10 @@ static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseT
     }
 
     value = gst_structure_get_value(protectionMeta->info, "kid");
-    if (!value) {
-        GST_ERROR_OBJECT(self, "Failed to get key ID for sample");
-        gst_buffer_remove_meta(buffer, reinterpret_cast<GstMeta*>(protectionMeta));
-        return GST_FLOW_NOT_SUPPORTED;
-    }
+    GstBuffer* keyIDBuffer = nullptr;
+    if (value)
+        keyIDBuffer = gst_value_get_buffer(value);
 
-    GstBuffer* keyIDBuffer = gst_value_get_buffer(value);
     WebKitMediaCommonEncryptionDecryptClass* klass = WEBKIT_MEDIA_CENC_DECRYPT_GET_CLASS(self);
     if (!klass->setupCipher(self, keyIDBuffer)) {
         GST_ERROR_OBJECT(self, "Failed to configure cipher");
