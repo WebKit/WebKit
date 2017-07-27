@@ -1,3 +1,23 @@
+2017-07-27  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: VoiceOver silent or skipping over time values on media player.
+        https://bugs.webkit.org/show_bug.cgi?id=174324
+        <rdar://problem/32021784>
+
+        Reviewed by Antoine Quint.
+
+        Added role attribute to modern media controls time lable class so that VoiceOver can access the time label when the media is playing.
+
+        Updated time-label.html to test role attribute on mac. 
+        Added ios-time-label.html to run time-label test without testing for role since accessibilityController does not expose a role property on iOS.
+
+        * media/modern-media-controls/time-label/ios-time-label-expected.txt: Copied from LayoutTests/media/modern-media-controls/time-label/time-label-expected.txt.
+        * media/modern-media-controls/time-label/ios-time-label.html: Copied from LayoutTests/media/modern-media-controls/time-label/time-label.html.
+        * media/modern-media-controls/time-label/time-label-expected.txt:
+        * media/modern-media-controls/time-label/time-label.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Hoist DOM binding attribute getter prologue into JavaScriptCore taking advantage of DOMJIT / CheckSubClass

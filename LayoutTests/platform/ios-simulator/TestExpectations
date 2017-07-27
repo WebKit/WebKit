@@ -105,6 +105,9 @@ media/modern-media-controls/status-support [ Pass ]
 media/modern-media-controls/time-control [ Pass ]
 media/modern-media-controls/time-label [ Pass ]
 media/modern-media-controls/time-labels-support [ Pass ]
+
+# accessibilityController.role cannot be tested on iOS
+media/modern-media-controls/time-label/time-label.html [ Skip ]
 media/modern-media-controls/tracks-button [ Pass ]
 
 # AirPlay cannot be tested on iOS

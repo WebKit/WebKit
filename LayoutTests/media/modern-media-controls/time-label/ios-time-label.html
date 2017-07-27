@@ -61,8 +61,7 @@ scheduler.frameDidFire = function()
     remainingLabel = remainingTimeLabel.element.getAttribute("aria-label").split(":")[0];
     shouldBeEqualToString("elaspedLabel", "Elapsed");
     shouldBeEqualToString("remainingLabel", "Remaining");
-    shouldBeEqualToString("accessibilityController.accessibleElementById('remaining').role", "AXRole: AXStaticText");
-    shouldBeEqualToString("accessibilityController.accessibleElementById('elasped').role", "AXRole: AXStaticText");
+
     timeLabel.element.remove();
     remainingTimeLabel.element.remove();
     elaspedTimeLabel.element.remove();
