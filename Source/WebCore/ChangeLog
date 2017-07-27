@@ -1,3 +1,27 @@
+2017-07-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Key serialization support
+        https://bugs.webkit.org/show_bug.cgi?id=173883
+
+        Reviewed by Jiewen Tan.
+
+        Implement crypto key serialization for platforms that use libgcrypt.
+
+        Despite the function names and the existing implementation for the Mac port,
+        we don't perform the KEK wrapping and unwrapping due to the review feedback
+        advising against it.
+
+        Instead the passed-in key data is simply copied and returned as the result of
+        the 'wrapping' operation, and similarly the passed-in serialized data is simply
+        copied and returned as the result of the 'unwrapping' operation.
+
+        No new tests -- related tests are now passing and are unskipped.
+
+        * crypto/gcrypt/SerializedCryptoKeyWrapGCrypt.cpp:
+        (WebCore::getDefaultWebCryptoMasterKey):
+        (WebCore::wrapSerializedCryptoKey):
+        (WebCore::unwrapSerializedCryptoKey):
+
 2017-07-26  Arnaud Renevier  <a.renevier@sisa.samsung.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Implement new TextMetrics, returned by canvas measureText()

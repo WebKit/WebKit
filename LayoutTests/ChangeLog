@@ -1,3 +1,13 @@
+2017-07-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Key serialization support
+        https://bugs.webkit.org/show_bug.cgi?id=173883
+
+        Reviewed by Jiewen Tan.
+
+        * platform/wpe/TestExpectations: Unskip the crypto/worker/ tests that
+        utilize key serialization and are now passing.
+
 2017-07-26  Arnaud Renevier  <a.renevier@sisa.samsung.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Implement new TextMetrics, returned by canvas measureText()
