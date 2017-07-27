@@ -49,6 +49,7 @@ public:
 
     enum class ImplementationType {
         Mock,
+        ClearKey,
     };
 
     virtual ImplementationType implementationType() const = 0;

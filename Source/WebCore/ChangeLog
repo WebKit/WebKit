@@ -1,5 +1,55 @@
 2017-07-27  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME][GStreamer] Add barebones CDM interface implementations for ClearKey
+        https://bugs.webkit.org/show_bug.cgi?id=174887
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add empty ClearKey derivations of CDMFactory, CDMPrivate and CDMInstance
+        classes. These will be enhanced as the implementation progresses.
+
+        ClearKey is added to CDMInstance::ImplementationType, and the
+        CDMInstanceClearKey::implementationType() override returns that value.
+        Type traits specialization for the CDMInstanceClearKey class is also
+        added, utilizing the CDMInstance::ImplementationType::ClearKey value.
+
+        The implementation file is added to the WPE build, along with the
+        necessary inclusion directory.
+
+        * PlatformWPE.cmake:
+        * platform/encryptedmedia/CDMInstance.h:
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp: Added.
+        (WebCore::CDMFactoryClearKey::createCDM):
+        (WebCore::CDMFactoryClearKey::supportsKeySystem):
+        (WebCore::CDMPrivateClearKey::supportsInitDataType):
+        (WebCore::CDMPrivateClearKey::supportsConfiguration):
+        (WebCore::CDMPrivateClearKey::supportsConfigurationWithRestrictions):
+        (WebCore::CDMPrivateClearKey::supportsSessionTypeWithConfiguration):
+        (WebCore::CDMPrivateClearKey::supportsRobustness):
+        (WebCore::CDMPrivateClearKey::distinctiveIdentifiersRequirement):
+        (WebCore::CDMPrivateClearKey::persistentStateRequirement):
+        (WebCore::CDMPrivateClearKey::distinctiveIdentifiersAreUniquePerOriginAndClearable):
+        (WebCore::CDMPrivateClearKey::createInstance):
+        (WebCore::CDMPrivateClearKey::loadAndInitialize):
+        (WebCore::CDMPrivateClearKey::supportsServerCertificates):
+        (WebCore::CDMPrivateClearKey::supportsSessions):
+        (WebCore::CDMPrivateClearKey::supportsInitData):
+        (WebCore::CDMPrivateClearKey::sanitizeResponse):
+        (WebCore::CDMPrivateClearKey::sanitizeSessionId):
+        (WebCore::CDMInstanceClearKey::initializeWithConfiguration):
+        (WebCore::CDMInstanceClearKey::setDistinctiveIdentifiersAllowed):
+        (WebCore::CDMInstanceClearKey::setPersistentStateAllowed):
+        (WebCore::CDMInstanceClearKey::setServerCertificate):
+        (WebCore::CDMInstanceClearKey::requestLicense):
+        (WebCore::CDMInstanceClearKey::updateLicense):
+        (WebCore::CDMInstanceClearKey::loadSession):
+        (WebCore::CDMInstanceClearKey::closeSession):
+        (WebCore::CDMInstanceClearKey::removeSessionData):
+        (WebCore::CDMInstanceClearKey::storeRecordOfKeyUsage):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h: Added.
+
+2017-07-27  Zan Dobersek  <zdobersek@igalia.com>
+
         [EME] Allow CDMInstance type traits specialization
         https://bugs.webkit.org/show_bug.cgi?id=174886
 
