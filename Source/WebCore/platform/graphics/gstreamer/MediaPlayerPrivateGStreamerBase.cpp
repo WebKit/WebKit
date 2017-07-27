@@ -1033,14 +1033,15 @@ unsigned MediaPlayerPrivateGStreamerBase::videoDecodedByteCount() const
 
 bool MediaPlayerPrivateGStreamerBase::supportsKeySystem(const String& keySystem, const String& mimeType)
 {
-    GST_INFO("Checking for KeySystem support with %s and type %s: false.", keySystem.utf8().data(), mimeType.utf8().data());
+    bool result = false;
 
 #if ENABLE(ENCRYPTED_MEDIA)
     if (equalLettersIgnoringASCIICase(keySystem, "org.w3.clearkey"))
-        return true;
+        result = true;
 #endif
 
-    return false;
+    GST_DEBUG("checking for KeySystem support with %s and type %s: %s", keySystem.utf8().data(), mimeType.utf8().data(), result ? "true" : "false");
+    return result;
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamerBase::extendedSupportsType(const MediaEngineSupportParameters& parameters, MediaPlayer::SupportsType result)
