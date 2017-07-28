@@ -1,5 +1,19 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219949. rdar://problem/33595616
+
+    2017-07-26  Nan Wang  <n_wang@apple.com>
+
+            AX: Incorrect range from index and length in contenteditable with <p> tags
+            https://bugs.webkit.org/show_bug.cgi?id=174856
+
+            Reviewed by Chris Fleizach.
+
+            * accessibility/mac/range-for-contenteditable-newline-expected.txt:
+            * accessibility/mac/range-for-contenteditable-newline.html:
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219906. rdar://problem/33595387
 
     2017-07-26  Nan Wang  <n_wang@apple.com>

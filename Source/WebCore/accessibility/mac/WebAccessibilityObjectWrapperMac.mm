@@ -3960,6 +3960,11 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
     }
     
     if ([attribute isEqualToString:NSAccessibilityStringForRangeParameterizedAttribute]) {
+        if (m_object->isTextControl()) {
+            PlainTextRange plainTextRange = PlainTextRange(range.location, range.length);
+            return m_object->doAXStringForRange(plainTextRange);
+        }
+        
         CharacterOffset start = cache->characterOffsetForIndex(range.location, m_object);
         CharacterOffset end = cache->characterOffsetForIndex(range.location + range.length, m_object);
         if (start.isNull() || end.isNull())

@@ -1,5 +1,25 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219949. rdar://problem/33595616
+
+    2017-07-26  Nan Wang  <n_wang@apple.com>
+
+            AX: Incorrect range from index and length in contenteditable with <p> tags
+            https://bugs.webkit.org/show_bug.cgi?id=174856
+
+            Reviewed by Chris Fleizach.
+
+            When asking for the string inside a text control with a given range, we sometimes get
+            a wrong string at the line boundary due to a bad plain range to text marker conversion.
+            To fix this, we should use the exsisting method on text controls to avoid this issue.
+
+            Updated the test to test the problematic case.
+
+            * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+            (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219906. rdar://problem/33595387
 
     2017-07-26  Nan Wang  <n_wang@apple.com>
