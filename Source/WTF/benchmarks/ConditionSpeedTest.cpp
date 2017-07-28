@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,12 +24,15 @@
  */
 
 // On Mac, you can build this like so:
-// clang++ -o ConditionSpeedTest Source/WTF/benchmarks/ConditionSpeedTest.cpp -O3 -W -ISource/WTF -LWebKitBuild/Release -lWTF -framework Foundation -licucore -std=c++11
+// xcrun clang++ -o ConditionSpeedTest Source/WTF/benchmarks/ConditionSpeedTest.cpp -O3 -W -ISource/WTF -ISource/WTF/icu -LWebKitBuild/Release -lWTF -framework Foundation -licucore -std=c++14 -fvisibility=hidden
 
 #include "config.h"
 
+#include "ToyLocks.h"
+#include <condition_variable>
 #include <mutex>
 #include <thread>
+#include <type_traits>
 #include <unistd.h>
 #include <wtf/Condition.h>
 #include <wtf/CurrentTime.h>
@@ -57,11 +60,18 @@ NO_RETURN void usage()
     exit(1);
 }
 
-template<typename Functor, typename ConditionType, typename LockType>
-void wait(ConditionType& condition, LockType& lock, const Functor& predicate)
+template<typename Functor, typename ConditionType, typename LockType, typename std::enable_if<!std::is_same<ConditionType, std::condition_variable>::value>::type* = nullptr>
+void wait(ConditionType& condition, LockType& lock, std::unique_lock<LockType>&, const Functor& predicate)
 {
     while (!predicate())
         condition.wait(lock);
+}
+
+template<typename Functor, typename ConditionType, typename LockType, typename std::enable_if<std::is_same<ConditionType, std::condition_variable>::value>::type* = nullptr>
+void wait(ConditionType& condition, LockType&, std::unique_lock<LockType>& locker, const Functor& predicate)
+{
+    while (!predicate())
+        condition.wait(locker);
 }
 
 template<typename LockType, typename ConditionType, typename NotifyFunctor, typename NotifyAllFunctor>
@@ -95,7 +105,7 @@ void runTest(
                     {
                         std::unique_lock<LockType> locker(lock);
                         wait(
-                            emptyCondition, lock,
+                            emptyCondition, lock, locker,
                             [&] () {
                                 if (verbose)
                                     dataLog(toString(Thread::current(), ": Checking consumption predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
@@ -126,7 +136,7 @@ void runTest(
                     {
                         std::unique_lock<LockType> locker(lock);
                         wait(
-                            fullCondition, lock,
+                            fullCondition, lock, locker,
                             [&] () {
                                 if (verbose)
                                     dataLog(toString(Thread::current(), ": Checking production predicate with shouldContinue = ", shouldContinue, ", queue.size() == ", queue.size(), "\n"));
@@ -150,8 +160,8 @@ void runTest(
     }
     notifyAll(emptyCondition);
 
-    for (ThreadIdentifier threadIdentifier : consumerThreads)
-        waitForThreadCompletion(threadIdentifier);
+    for (auto& threadIdentifier : consumerThreads)
+        threadIdentifier->waitForCompletion();
 
     RELEASE_ASSERT(numProducers * numMessagesPerProducer == received.size());
     std::sort(received.begin(), received.end());
@@ -199,7 +209,7 @@ int main(int argc, char** argv)
     if (!strcmp(argv[1], "lock") || !strcmp(argv[1], "all")) {
         runBenchmark<Lock, Condition>(
             "WTF Lock NotifyOne",
-            [&] (Condition& condition, bool mustNotify) {
+            [&] (Condition& condition, bool) {
                 condition.notifyOne();
             },
             [&] (Condition& condition) {
@@ -217,22 +227,22 @@ int main(int argc, char** argv)
         didRun = true;
     }
     if (!strcmp(argv[1], "mutex") || !strcmp(argv[1], "all")) {
-        runBenchmark<Mutex, ThreadCondition>(
-            "Platform Mutex NotifyOne",
-            [&] (ThreadCondition& condition, bool mustNotify) {
-                condition.signal();
+        runBenchmark<std::mutex, std::condition_variable>(
+            "std::mutex NotifyOne",
+            [&] (std::condition_variable& condition, bool) {
+                condition.notify_one();
             },
-            [&] (ThreadCondition& condition) {
-                condition.broadcast();
+            [&] (std::condition_variable& condition) {
+                condition.notify_all();
             });
-        runBenchmark<Mutex, ThreadCondition>(
-            "Platform Mutex NotifyAll",
-            [&] (ThreadCondition& condition, bool mustNotify) {
+        runBenchmark<std::mutex, std::condition_variable>(
+            "std::mutex NotifyAll",
+            [&] (std::condition_variable& condition, bool mustNotify) {
                 if (mustNotify)
-                    condition.broadcast();
+                    condition.notify_all();
             },
-            [&] (ThreadCondition& condition) {
-                condition.broadcast();
+            [&] (std::condition_variable& condition) {
+                condition.notify_all();
             });
         didRun = true;
     }
