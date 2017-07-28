@@ -13,8 +13,8 @@ world</textarea>
 <div id="textcontrol2" contenteditable="true">abc<div><br></div<div><br></div><div><br></div><div>def</div></div>
 
 <div id="textcontrol3" contenteditable="true">
-<p>The quick brown fox</p>
-<p>jumped over the lazy dog</p>
+<p>ab</p>
+<p>cd ef</p>
 </div>
 
 <div id="textcontrol4" contenteditable="true">
@@ -59,14 +59,10 @@ font
     
     // Test line ranges in contenteditable
     var textControl3 = accessibilityController.accessibleElementById("textcontrol3");
-    var rangeForLine = textControl3.rangeForLine(1);
-    shouldBe("rangeForLine", "'{21, 25}'");
-    var textLine = textControl3.stringForRange(21, 25);
-    shouldBe("textLine", "'jumped over the lazy dog'");
-    var firstLine = textControl3.lineForIndex(20);
-    var secondLine = textControl3.lineForIndex(46);
-    shouldBe("firstLine", "0");
-    shouldBe("secondLine", "1");
+    var rangeValue = textControl3.stringForRange(2, 4);
+    // Replace the newline characters, and make sure it has two of them
+    rangeValue = rangeValue.replace(/(?:\r\n|\r|\n)/g, '[newline]'); 
+    shouldBe("rangeValue", "'[newline][newline]cd'");
     
     // pre tag in contenteditable
     var textControl4 = accessibilityController.accessibleElementById("textcontrol4");
@@ -75,7 +71,7 @@ font
     textLine = textControl4.stringForRange(22, 30);
     shouldBe("textLine", "'is displayed in a fixed-width\\n'");
     firstLine = textControl4.lineForIndex(21);
-    secondLine = textControl4.lineForIndex(52);
+    secondLine = textControl4.lineForIndex(51);
     shouldBe("firstLine", "0");
     shouldBe("secondLine", "1");
 
