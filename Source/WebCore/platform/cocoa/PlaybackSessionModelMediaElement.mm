@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WebPlaybackSessionModelMediaElement.h"
+#import "PlaybackSessionModelMediaElement.h"
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
@@ -47,16 +47,16 @@
 
 namespace WebCore {
 
-WebPlaybackSessionModelMediaElement::WebPlaybackSessionModelMediaElement()
+PlaybackSessionModelMediaElement::PlaybackSessionModelMediaElement()
     : EventListener(EventListener::CPPEventListenerType)
 {
 }
 
-WebPlaybackSessionModelMediaElement::~WebPlaybackSessionModelMediaElement()
+PlaybackSessionModelMediaElement::~PlaybackSessionModelMediaElement()
 {
 }
 
-void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaElement)
+void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaElement)
 {
     if (m_mediaElement == mediaElement)
         return;
@@ -85,12 +85,12 @@ void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* medi
     updateForEventName(eventNameAll());
 }
 
-void WebPlaybackSessionModelMediaElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
+void PlaybackSessionModelMediaElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
 {
     updateForEventName(event.type());
 }
 
-void WebPlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicString& eventName)
+void PlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicString& eventName)
 {
     if (m_clients.isEmpty())
         return;
@@ -176,79 +176,79 @@ void WebPlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicSt
             client->mutedChanged(isMuted());
     }
 }
-void WebPlaybackSessionModelMediaElement::addClient(WebPlaybackSessionModelClient& client)
+void PlaybackSessionModelMediaElement::addClient(PlaybackSessionModelClient& client)
 {
     ASSERT(!m_clients.contains(&client));
     m_clients.add(&client);
 }
 
-void WebPlaybackSessionModelMediaElement::removeClient(WebPlaybackSessionModelClient& client)
+void PlaybackSessionModelMediaElement::removeClient(PlaybackSessionModelClient& client)
 {
     ASSERT(m_clients.contains(&client));
     m_clients.remove(&client);
 }
 
-void WebPlaybackSessionModelMediaElement::play()
+void PlaybackSessionModelMediaElement::play()
 {
     if (m_mediaElement)
         m_mediaElement->play();
 }
 
-void WebPlaybackSessionModelMediaElement::pause()
+void PlaybackSessionModelMediaElement::pause()
 {
     if (m_mediaElement)
         m_mediaElement->pause();
 }
 
-void WebPlaybackSessionModelMediaElement::togglePlayState()
+void PlaybackSessionModelMediaElement::togglePlayState()
 {
     if (m_mediaElement)
         m_mediaElement->togglePlayState();
 }
 
-void WebPlaybackSessionModelMediaElement::beginScrubbing()
+void PlaybackSessionModelMediaElement::beginScrubbing()
 {
     if (m_mediaElement)
         m_mediaElement->beginScrubbing();
 }
 
-void WebPlaybackSessionModelMediaElement::endScrubbing()
+void PlaybackSessionModelMediaElement::endScrubbing()
 {
     if (m_mediaElement)
         m_mediaElement->endScrubbing();
 }
 
-void WebPlaybackSessionModelMediaElement::seekToTime(double time)
+void PlaybackSessionModelMediaElement::seekToTime(double time)
 {
     if (m_mediaElement)
         m_mediaElement->setCurrentTime(time);
 }
 
-void WebPlaybackSessionModelMediaElement::fastSeek(double time)
+void PlaybackSessionModelMediaElement::fastSeek(double time)
 {
     if (m_mediaElement)
         m_mediaElement->fastSeek(time);
 }
 
-void WebPlaybackSessionModelMediaElement::beginScanningForward()
+void PlaybackSessionModelMediaElement::beginScanningForward()
 {
     if (m_mediaElement)
         m_mediaElement->beginScanning(MediaControllerInterface::Forward);
 }
 
-void WebPlaybackSessionModelMediaElement::beginScanningBackward()
+void PlaybackSessionModelMediaElement::beginScanningBackward()
 {
     if (m_mediaElement)
         m_mediaElement->beginScanning(MediaControllerInterface::Backward);
 }
 
-void WebPlaybackSessionModelMediaElement::endScanning()
+void PlaybackSessionModelMediaElement::endScanning()
 {
     if (m_mediaElement)
         m_mediaElement->endScanning();
 }
 
-void WebPlaybackSessionModelMediaElement::selectAudioMediaOption(uint64_t selectedAudioIndex)
+void PlaybackSessionModelMediaElement::selectAudioMediaOption(uint64_t selectedAudioIndex)
 {
     if (!m_mediaElement)
         return;
@@ -257,7 +257,7 @@ void WebPlaybackSessionModelMediaElement::selectAudioMediaOption(uint64_t select
         m_audioTracksForMenu[i]->setEnabled(i == selectedAudioIndex);
 }
 
-void WebPlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
+void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
 {
     if (!m_mediaElement)
         return;
@@ -271,7 +271,7 @@ void WebPlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t inde
     m_mediaElement->setSelectedTextTrack(textTrack);
 }
 
-void WebPlaybackSessionModelMediaElement::togglePictureInPicture()
+void PlaybackSessionModelMediaElement::togglePictureInPicture()
 {
     if (m_mediaElement->fullscreenMode() == MediaPlayerEnums::VideoFullscreenModePictureInPicture)
         m_mediaElement->exitFullscreen();
@@ -279,18 +279,18 @@ void WebPlaybackSessionModelMediaElement::togglePictureInPicture()
         m_mediaElement->enterFullscreen(MediaPlayerEnums::VideoFullscreenModePictureInPicture);
 }
 
-void WebPlaybackSessionModelMediaElement::toggleMuted()
+void PlaybackSessionModelMediaElement::toggleMuted()
 {
     setMuted(!isMuted());
 }
 
-void WebPlaybackSessionModelMediaElement::setMuted(bool muted)
+void PlaybackSessionModelMediaElement::setMuted(bool muted)
 {
     if (m_mediaElement)
         m_mediaElement->setMuted(muted);
 }
 
-void WebPlaybackSessionModelMediaElement::updateMediaSelectionOptions()
+void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
 {
     if (!m_mediaElement)
         return;
@@ -322,7 +322,7 @@ void WebPlaybackSessionModelMediaElement::updateMediaSelectionOptions()
     }
 }
 
-void WebPlaybackSessionModelMediaElement::updateMediaSelectionIndices()
+void PlaybackSessionModelMediaElement::updateMediaSelectionIndices()
 {
     auto audioIndex = audioMediaSelectedIndex();
     auto legibleIndex = legibleMediaSelectedIndex();
@@ -333,7 +333,7 @@ void WebPlaybackSessionModelMediaElement::updateMediaSelectionIndices()
     }
 }
 
-double WebPlaybackSessionModelMediaElement::playbackStartedTime() const
+double PlaybackSessionModelMediaElement::playbackStartedTime() const
 {
     if (!m_mediaElement)
         return 0;
@@ -341,7 +341,7 @@ double WebPlaybackSessionModelMediaElement::playbackStartedTime() const
     return m_mediaElement->playbackStartedTime();
 }
 
-const Vector<AtomicString>& WebPlaybackSessionModelMediaElement::observedEventNames()
+const Vector<AtomicString>& PlaybackSessionModelMediaElement::observedEventNames()
 {
     // FIXME(157452): Remove the right-hand constructor notation once NeverDestroyed supports initializer_lists.
     static NeverDestroyed<Vector<AtomicString>> names = Vector<AtomicString>({
@@ -359,60 +359,60 @@ const Vector<AtomicString>& WebPlaybackSessionModelMediaElement::observedEventNa
     return names.get();
 }
 
-const AtomicString&  WebPlaybackSessionModelMediaElement::eventNameAll()
+const AtomicString&  PlaybackSessionModelMediaElement::eventNameAll()
 {
     static NeverDestroyed<AtomicString> eventNameAll("allEvents", AtomicString::ConstructFromLiteral);
     return eventNameAll;
 }
 
-double WebPlaybackSessionModelMediaElement::duration() const
+double PlaybackSessionModelMediaElement::duration() const
 {
     if (!m_mediaElement)
         return 0;
     return m_mediaElement->supportsSeeking() ? m_mediaElement->duration() : std::numeric_limits<double>::quiet_NaN();
 }
 
-double WebPlaybackSessionModelMediaElement::currentTime() const
+double PlaybackSessionModelMediaElement::currentTime() const
 {
     return m_mediaElement ? m_mediaElement->currentTime() : 0;
 }
 
-double WebPlaybackSessionModelMediaElement::bufferedTime() const
+double PlaybackSessionModelMediaElement::bufferedTime() const
 {
     return m_mediaElement ? m_mediaElement->maxBufferedTime() : 0;
 }
 
-bool WebPlaybackSessionModelMediaElement::isPlaying() const
+bool PlaybackSessionModelMediaElement::isPlaying() const
 {
     return m_mediaElement ? !m_mediaElement->paused() : false;
 }
 
-float WebPlaybackSessionModelMediaElement::playbackRate() const
+float PlaybackSessionModelMediaElement::playbackRate() const
 {
     return m_mediaElement ? m_mediaElement->playbackRate() : 0;
 }
 
-Ref<TimeRanges> WebPlaybackSessionModelMediaElement::seekableRanges() const
+Ref<TimeRanges> PlaybackSessionModelMediaElement::seekableRanges() const
 {
     return m_mediaElement ? m_mediaElement->seekable() : TimeRanges::create();
 }
 
-double WebPlaybackSessionModelMediaElement::seekableTimeRangesLastModifiedTime() const
+double PlaybackSessionModelMediaElement::seekableTimeRangesLastModifiedTime() const
 {
     return m_mediaElement ? m_mediaElement->seekableTimeRangesLastModifiedTime() : 0;
 }
 
-double WebPlaybackSessionModelMediaElement::liveUpdateInterval() const
+double PlaybackSessionModelMediaElement::liveUpdateInterval() const
 {
     return m_mediaElement ? m_mediaElement->liveUpdateInterval() : 0;
 }
     
-bool WebPlaybackSessionModelMediaElement::canPlayFastReverse() const
+bool PlaybackSessionModelMediaElement::canPlayFastReverse() const
 {
     return m_mediaElement ? m_mediaElement->minFastReverseRate() < 0.0 : false;
 }
 
-Vector<MediaSelectionOption> WebPlaybackSessionModelMediaElement::audioMediaSelectionOptions() const
+Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::audioMediaSelectionOptions() const
 {
     Vector<MediaSelectionOption> audioOptions;
 
@@ -428,7 +428,7 @@ Vector<MediaSelectionOption> WebPlaybackSessionModelMediaElement::audioMediaSele
     return audioOptions;
 }
 
-uint64_t WebPlaybackSessionModelMediaElement::audioMediaSelectedIndex() const
+uint64_t PlaybackSessionModelMediaElement::audioMediaSelectedIndex() const
 {
     for (size_t index = 0; index < m_audioTracksForMenu.size(); ++index) {
         if (m_audioTracksForMenu[index]->enabled())
@@ -437,7 +437,7 @@ uint64_t WebPlaybackSessionModelMediaElement::audioMediaSelectedIndex() const
     return std::numeric_limits<uint64_t>::max();
 }
 
-Vector<MediaSelectionOption> WebPlaybackSessionModelMediaElement::legibleMediaSelectionOptions() const
+Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::legibleMediaSelectionOptions() const
 {
     Vector<MediaSelectionOption> legibleOptions;
 
@@ -452,7 +452,7 @@ Vector<MediaSelectionOption> WebPlaybackSessionModelMediaElement::legibleMediaSe
     return legibleOptions;
 }
 
-uint64_t WebPlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
+uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
 {
     uint64_t selectedIndex = std::numeric_limits<uint64_t>::max();
     uint64_t offIndex = 0;
@@ -489,12 +489,12 @@ uint64_t WebPlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
     return selectedIndex;
 }
 
-bool WebPlaybackSessionModelMediaElement::externalPlaybackEnabled() const
+bool PlaybackSessionModelMediaElement::externalPlaybackEnabled() const
 {
     return m_mediaElement && m_mediaElement->webkitCurrentPlaybackTargetIsWireless();
 }
 
-WebPlaybackSessionModel::ExternalPlaybackTargetType WebPlaybackSessionModelMediaElement::externalPlaybackTargetType() const
+PlaybackSessionModel::ExternalPlaybackTargetType PlaybackSessionModelMediaElement::externalPlaybackTargetType() const
 {
     if (!m_mediaElement || !m_mediaElement->mediaControlsHost())
         return TargetTypeNone;
@@ -512,19 +512,19 @@ WebPlaybackSessionModel::ExternalPlaybackTargetType WebPlaybackSessionModelMedia
     }
 }
 
-String WebPlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName() const
+String PlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName() const
 {
     if (m_mediaElement && m_mediaElement->mediaControlsHost())
         return m_mediaElement->mediaControlsHost()->externalDeviceDisplayName();
     return emptyString();
 }
 
-bool WebPlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled() const
+bool PlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled() const
 {
     return m_mediaElement && m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled(*m_mediaElement);
 }
 
-bool WebPlaybackSessionModelMediaElement::isMuted() const
+bool PlaybackSessionModelMediaElement::isMuted() const
 {
     return m_mediaElement ? m_mediaElement->muted() : false;
 }

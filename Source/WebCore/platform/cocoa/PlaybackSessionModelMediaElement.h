@@ -29,7 +29,7 @@
 
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
-#include "WebPlaybackSessionModel.h"
+#include "PlaybackSessionModel.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -39,15 +39,15 @@ namespace WebCore {
 class AudioTrack;
 class HTMLMediaElement;
 class TextTrack;
-class WebPlaybackSessionInterface;
+class PlaybackSessionInterface;
 
-class WebPlaybackSessionModelMediaElement final : public WebPlaybackSessionModel, public EventListener {
+class PlaybackSessionModelMediaElement final : public PlaybackSessionModel, public EventListener {
 public:
-    static Ref<WebPlaybackSessionModelMediaElement> create()
+    static Ref<PlaybackSessionModelMediaElement> create()
     {
-        return adoptRef(*new WebPlaybackSessionModelMediaElement());
+        return adoptRef(*new PlaybackSessionModelMediaElement());
     }
-    WEBCORE_EXPORT virtual ~WebPlaybackSessionModelMediaElement();
+    WEBCORE_EXPORT virtual ~PlaybackSessionModelMediaElement();
     WEBCORE_EXPORT void setMediaElement(HTMLMediaElement*);
     HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
 
@@ -55,8 +55,8 @@ public:
     void updateForEventName(const WTF::AtomicString&);
     bool operator==(const EventListener& rhs) const final { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 
-    WEBCORE_EXPORT void addClient(WebPlaybackSessionModelClient&);
-    WEBCORE_EXPORT void removeClient(WebPlaybackSessionModelClient&);
+    WEBCORE_EXPORT void addClient(PlaybackSessionModelClient&);
+    WEBCORE_EXPORT void removeClient(PlaybackSessionModelClient&);
     WEBCORE_EXPORT void play() final;
     WEBCORE_EXPORT void pause() final;
     WEBCORE_EXPORT void togglePlayState() final;
@@ -94,7 +94,7 @@ public:
     bool isMuted() const final;
 
 protected:
-    WEBCORE_EXPORT WebPlaybackSessionModelMediaElement();
+    WEBCORE_EXPORT PlaybackSessionModelMediaElement();
 
 private:
     void progressEventTimerFired();
@@ -103,7 +103,7 @@ private:
 
     RefPtr<HTMLMediaElement> m_mediaElement;
     bool m_isListening { false };
-    HashSet<WebPlaybackSessionModelClient*> m_clients;
+    HashSet<PlaybackSessionModelClient*> m_clients;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
 

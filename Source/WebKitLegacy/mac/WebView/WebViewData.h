@@ -54,8 +54,8 @@ class Page;
 class TextIndicatorWindow;
 class ValidationBubble;
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-class WebPlaybackSessionInterfaceMac;
-class WebPlaybackSessionModelMediaElement;
+class PlaybackSessionInterfaceMac;
+class PlaybackSessionModelMediaElement;
 #endif
 }
 
@@ -338,8 +338,8 @@ private:
 #endif
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    RefPtr<WebCore::WebPlaybackSessionModelMediaElement> playbackSessionModel;
-    RefPtr<WebCore::WebPlaybackSessionInterfaceMac> playbackSessionInterface;
+    RefPtr<WebCore::PlaybackSessionModelMediaElement> playbackSessionModel;
+    RefPtr<WebCore::PlaybackSessionInterfaceMac> playbackSessionInterface;
 #endif
     
 #if ENABLE(FULLSCREEN_API)

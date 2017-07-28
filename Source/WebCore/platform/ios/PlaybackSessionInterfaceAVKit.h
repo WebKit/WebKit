@@ -30,9 +30,9 @@
 
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
+#include "PlaybackSessionInterface.h"
+#include "PlaybackSessionModel.h"
 #include "Timer.h"
-#include "WebPlaybackSessionInterface.h"
-#include "WebPlaybackSessionModel.h"
 #include <functional>
 #include <objc/objc.h>
 #include <wtf/RefCounted.h>
@@ -51,26 +51,26 @@ class String;
 
 namespace WebCore {
 class IntRect;
-class WebPlaybackSessionModel;
+class PlaybackSessionModel;
 class WebPlaybackSessionChangeObserver;
 
-class WEBCORE_EXPORT WebPlaybackSessionInterfaceAVKit
-    : public WebPlaybackSessionInterface
-    , public WebPlaybackSessionModelClient
-    , public RefCounted<WebPlaybackSessionInterfaceAVKit> {
+class WEBCORE_EXPORT PlaybackSessionInterfaceAVKit
+    : public PlaybackSessionInterface
+    , public PlaybackSessionModelClient
+    , public RefCounted<PlaybackSessionInterfaceAVKit> {
 
 public:
-    static Ref<WebPlaybackSessionInterfaceAVKit> create(WebPlaybackSessionModel& model)
+    static Ref<PlaybackSessionInterfaceAVKit> create(PlaybackSessionModel& model)
     {
-        return adoptRef(*new WebPlaybackSessionInterfaceAVKit(model));
+        return adoptRef(*new PlaybackSessionInterfaceAVKit(model));
     }
-    virtual ~WebPlaybackSessionInterfaceAVKit();
-    WebPlaybackSessionModel* webPlaybackSessionModel() const { return m_playbackSessionModel; }
+    virtual ~PlaybackSessionInterfaceAVKit();
+    PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionModel; }
 
-    // WebPlaybackSessionInterface
+    // PlaybackSessionInterface
     WEBCORE_EXPORT void resetMediaState() override;
 
-    // WebPlaybackSessionModelClient
+    // PlaybackSessionModelClient
     WEBCORE_EXPORT void durationChanged(double) override;
     WEBCORE_EXPORT void currentTimeChanged(double currentTime, double anchorTime) override;
     WEBCORE_EXPORT void bufferedTimeChanged(double) override;
@@ -79,7 +79,7 @@ public:
     WEBCORE_EXPORT void canPlayFastReverseChanged(bool) override;
     WEBCORE_EXPORT void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
     WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
-    WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
+    WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
     WEBCORE_EXPORT void wirelessVideoPlaybackDisabledChanged(bool) override;
     WEBCORE_EXPORT void mutedChanged(bool) override;
 
@@ -88,10 +88,10 @@ public:
     WebAVPlayerController *playerController() const { return m_playerController.get(); }
 
 protected:
-    WEBCORE_EXPORT WebPlaybackSessionInterfaceAVKit(WebPlaybackSessionModel&);
+    WEBCORE_EXPORT PlaybackSessionInterfaceAVKit(PlaybackSessionModel&);
 
     RetainPtr<WebAVPlayerController> m_playerController;
-    WebPlaybackSessionModel* m_playbackSessionModel { nullptr };
+    PlaybackSessionModel* m_playbackSessionModel { nullptr };
 };
 
 }

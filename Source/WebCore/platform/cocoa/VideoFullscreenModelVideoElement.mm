@@ -26,13 +26,13 @@
 #import "config.h"
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-#import "WebVideoFullscreenModelVideoElement.h"
+#import "VideoFullscreenModelVideoElement.h"
 
 #import "DOMWindow.h"
 #import "History.h"
 #import "Logging.h"
 #import "MediaControlsHost.h"
-#import "WebPlaybackSessionModelMediaElement.h"
+#import "PlaybackSessionModelMediaElement.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventListener.h>
@@ -47,16 +47,16 @@
 
 using namespace WebCore;
 
-WebVideoFullscreenModelVideoElement::WebVideoFullscreenModelVideoElement()
+VideoFullscreenModelVideoElement::VideoFullscreenModelVideoElement()
     : EventListener(EventListener::CPPEventListenerType)
 {
 }
 
-WebVideoFullscreenModelVideoElement::~WebVideoFullscreenModelVideoElement()
+VideoFullscreenModelVideoElement::~VideoFullscreenModelVideoElement()
 {
 }
 
-void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
+void VideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
 {
     if (m_videoElement == videoElement)
         return;
@@ -81,12 +81,12 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
     updateForEventName(eventNameAll());
 }
 
-void WebVideoFullscreenModelVideoElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
+void VideoFullscreenModelVideoElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
 {
     updateForEventName(event.type());
 }
 
-void WebVideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicString& eventName)
+void VideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicString& eventName)
 {
     if (m_clients.isEmpty())
         return;
@@ -100,7 +100,7 @@ void WebVideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicSt
     }
 }
 
-void WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer* videoLayer, WTF::Function<void()>&& completionHandler)
+void VideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer* videoLayer, WTF::Function<void()>&& completionHandler)
 {
     if (m_videoFullscreenLayer == videoLayer) {
         completionHandler();
@@ -123,7 +123,7 @@ void WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer*
     m_videoElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get(), WTFMove(completionHandler));
 }
 
-void WebVideoFullscreenModelVideoElement::waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler)
+void VideoFullscreenModelVideoElement::waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler)
 {
     if (!m_videoElement) {
         completionHandler();
@@ -133,7 +133,7 @@ void WebVideoFullscreenModelVideoElement::waitForPreparedForInlineThen(WTF::Func
     m_videoElement->waitForPreparedForInlineThen(WTFMove(completionHandler));
 }
 
-void WebVideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
+void VideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
     if (m_videoElement && m_videoElement->fullscreenMode() != mode)
         m_videoElement->setFullscreenMode(mode);
@@ -148,7 +148,7 @@ void WebVideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElement
     }
 }
 
-void WebVideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
+void VideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
 {
     m_videoFrame = rect;
     [m_videoFullscreenLayer setBounds:CGRect(rect)];
@@ -156,14 +156,14 @@ void WebVideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
         m_videoElement->setVideoFullscreenFrame(rect);
 }
 
-void WebVideoFullscreenModelVideoElement::setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity gravity)
+void VideoFullscreenModelVideoElement::setVideoLayerGravity(VideoFullscreenModel::VideoGravity gravity)
 {
     MediaPlayer::VideoGravity videoGravity = MediaPlayer::VideoGravityResizeAspect;
-    if (gravity == WebVideoFullscreenModel::VideoGravityResize)
+    if (gravity == VideoFullscreenModel::VideoGravityResize)
         videoGravity = MediaPlayer::VideoGravityResize;
-    else if (gravity == WebVideoFullscreenModel::VideoGravityResizeAspect)
+    else if (gravity == VideoFullscreenModel::VideoGravityResizeAspect)
         videoGravity = MediaPlayer::VideoGravityResizeAspect;
-    else if (gravity == WebVideoFullscreenModel::VideoGravityResizeAspectFill)
+    else if (gravity == VideoFullscreenModel::VideoGravityResizeAspectFill)
         videoGravity = MediaPlayer::VideoGravityResizeAspectFill;
     else
         ASSERT_NOT_REACHED();
@@ -171,37 +171,37 @@ void WebVideoFullscreenModelVideoElement::setVideoLayerGravity(WebVideoFullscree
     m_videoElement->setVideoFullscreenGravity(videoGravity);
 }
 
-const Vector<AtomicString>& WebVideoFullscreenModelVideoElement::observedEventNames()
+const Vector<AtomicString>& VideoFullscreenModelVideoElement::observedEventNames()
 {
     static const auto names = makeNeverDestroyed(Vector<AtomicString> { eventNames().resizeEvent });
     return names;
 }
 
-const AtomicString& WebVideoFullscreenModelVideoElement::eventNameAll()
+const AtomicString& VideoFullscreenModelVideoElement::eventNameAll()
 {
     static NeverDestroyed<AtomicString> sEventNameAll = "allEvents";
     return sEventNameAll;
 }
 
-void WebVideoFullscreenModelVideoElement::fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
+void VideoFullscreenModelVideoElement::fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
 {
     if (m_videoElement)
         m_videoElement->fullscreenModeChanged(videoFullscreenMode);
 }
 
-void WebVideoFullscreenModelVideoElement::addClient(WebVideoFullscreenModelClient& client)
+void VideoFullscreenModelVideoElement::addClient(VideoFullscreenModelClient& client)
 {
     ASSERT(!m_clients.contains(&client));
     m_clients.add(&client);
 }
 
-void WebVideoFullscreenModelVideoElement::removeClient(WebVideoFullscreenModelClient& client)
+void VideoFullscreenModelVideoElement::removeClient(VideoFullscreenModelClient& client)
 {
     ASSERT(m_clients.contains(&client));
     m_clients.remove(&client);
 }
 
-bool WebVideoFullscreenModelVideoElement::isVisible() const
+bool VideoFullscreenModelVideoElement::isVisible() const
 {
     if (!m_videoElement)
         return false;
@@ -212,7 +212,7 @@ bool WebVideoFullscreenModelVideoElement::isVisible() const
     return false;
 }
 
-void WebVideoFullscreenModelVideoElement::setHasVideo(bool hasVideo)
+void VideoFullscreenModelVideoElement::setHasVideo(bool hasVideo)
 {
     if (hasVideo == m_hasVideo)
         return;
@@ -223,7 +223,7 @@ void WebVideoFullscreenModelVideoElement::setHasVideo(bool hasVideo)
         client->hasVideoChanged(m_hasVideo);
 }
 
-void WebVideoFullscreenModelVideoElement::setVideoDimensions(const FloatSize& videoDimensions)
+void VideoFullscreenModelVideoElement::setVideoDimensions(const FloatSize& videoDimensions)
 {
     if (m_videoDimensions == videoDimensions)
         return;

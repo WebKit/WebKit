@@ -41,11 +41,11 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
+#import "VideoFullscreenManagerProxy.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
-#import "WebVideoFullscreenManagerProxy.h"
 #import <WebCore/FrameView.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>

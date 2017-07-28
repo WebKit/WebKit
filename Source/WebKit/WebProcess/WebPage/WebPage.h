@@ -186,11 +186,11 @@ class WebNotificationClient;
 class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPageOverlay;
-class WebPlaybackSessionManager;
+class PlaybackSessionManager;
 class WebPopupMenu;
 class WebUndoStep;
 class WebUserContentController;
-class WebVideoFullscreenManager;
+class VideoFullscreenManager;
 class WebWheelEvent;
 enum FindOptions : uint16_t;
 struct AssistedNodeInformation;
@@ -266,8 +266,8 @@ public:
     bool isInspectorPage() { return !!m_inspectorUI || !!m_remoteInspectorUI; }
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    WebPlaybackSessionManager& playbackSessionManager();
-    WebVideoFullscreenManager& videoFullscreenManager();
+    PlaybackSessionManager& playbackSessionManager();
+    VideoFullscreenManager& videoFullscreenManager();
 #endif
 #if PLATFORM(IOS)
     void setAllowsMediaDocumentInlinePlayback(bool);
@@ -1400,8 +1400,8 @@ private:
     RefPtr<RemoteWebInspectorUI> m_remoteInspectorUI;
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    RefPtr<WebPlaybackSessionManager> m_playbackSessionManager;
-    RefPtr<WebVideoFullscreenManager> m_videoFullscreenManager;
+    RefPtr<PlaybackSessionManager> m_playbackSessionManager;
+    RefPtr<VideoFullscreenManager> m_videoFullscreenManager;
 #endif
 #if PLATFORM(IOS)
     bool m_allowsMediaDocumentInlinePlayback { false };

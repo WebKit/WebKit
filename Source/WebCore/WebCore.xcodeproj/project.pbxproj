@@ -1683,8 +1683,8 @@
 		3F8020361E9E47C300DEC61D /* CoreAudioCaptureDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F8020311E9E381D00DEC61D /* CoreAudioCaptureDevice.cpp */; };
 		3F8020371E9E47C500DEC61D /* CoreAudioCaptureDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F8020341E9E381D00DEC61D /* CoreAudioCaptureDeviceManager.h */; };
 		3F8020381E9E47C900DEC61D /* CoreAudioCaptureDeviceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F8020331E9E381D00DEC61D /* CoreAudioCaptureDeviceManager.cpp */; };
-		3FBC4AF3189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */; };
-		3FBC4AF4189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3FBC4AF3189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3FBC4AF1189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm */; };
+		3FBC4AF4189881560046EE38 /* VideoFullscreenInterfaceAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FBC4AF2189881560046EE38 /* VideoFullscreenInterfaceAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3FF1FA661E7350FD00C1002F /* CoreAudioCaptureSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F3BB5821E709EE400C701F2 /* CoreAudioCaptureSource.cpp */; };
 		3FF813A71DBA8640009BF001 /* PointerLockController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFC434F192406A900A0D3B5 /* PointerLockController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3FFFF9A8159D9A550020BBD5 /* WebKitCSSViewportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */; };
@@ -2463,11 +2463,11 @@
 		51FB5505113E3E9100821176 /* JSCloseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FB5503113E3E9100821176 /* JSCloseEvent.cpp */; };
 		51FB67DB1AE6B82B00D06C5A /* ContentExtensionStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FB67D91AE6B5E400D06C5A /* ContentExtensionStyleSheet.cpp */; };
 		51FB67DC1AE6B82F00D06C5A /* ContentExtensionStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FB67DA1AE6B5E400D06C5A /* ContentExtensionStyleSheet.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		52131E5B1C4F15760033F802 /* WebVideoFullscreenInterfaceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52131E5A1C4F15610033F802 /* WebVideoFullscreenInterfaceMac.mm */; };
+		52131E5B1C4F15760033F802 /* VideoFullscreenInterfaceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52131E5A1C4F15610033F802 /* VideoFullscreenInterfaceMac.mm */; };
 		526724F31CB2FEAD0075974D /* TextTrackRepresentationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 526724F11CB2FDF60075974D /* TextTrackRepresentationCocoa.mm */; };
 		52B0D4BE1C57FD1E0077CE53 /* PlatformView.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		52B0D4C01C57FD660077CE53 /* WebVideoFullscreenChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BF1C57FD660077CE53 /* WebVideoFullscreenChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		52B0D4C21C57FF910077CE53 /* WebVideoFullscreenInterfaceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4C11C57FF910077CE53 /* WebVideoFullscreenInterfaceMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52B0D4C01C57FD660077CE53 /* VideoFullscreenChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52B0D4C21C57FF910077CE53 /* VideoFullscreenInterfaceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B6C9C215E3F4DF00690B05 /* DOMNamedFlowCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B6C9BD15E3F4DF00690B05 /* DOMNamedFlowCollection.cpp */; };
 		52B6C9C315E3F4DF00690B05 /* DOMNamedFlowCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B6C9BE15E3F4DF00690B05 /* DOMNamedFlowCollection.h */; };
 		52B6C9C515E3F4DF00690B05 /* NamedFlowCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52B6C9C015E3F4DF00690B05 /* NamedFlowCollection.cpp */; };
@@ -2475,9 +2475,9 @@
 		52CCA9E215E3F62C0053C77F /* JSDOMNamedFlowCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52CCA9E015E3F62C0053C77F /* JSDOMNamedFlowCollection.cpp */; };
 		52CCA9E315E3F62C0053C77F /* JSDOMNamedFlowCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CCA9E115E3F62C0053C77F /* JSDOMNamedFlowCollection.h */; };
 		52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManager.mm */; };
-		52D5A1A71C57489D00DE34A3 /* WebVideoFullscreenModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1A41C57488900DE34A3 /* WebVideoFullscreenModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		52D5A1A81C5748A300DE34A3 /* WebVideoFullscreenModelVideoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1A51C57488900DE34A3 /* WebVideoFullscreenModelVideoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		52D5A1A91C5748A900DE34A3 /* WebVideoFullscreenModelVideoElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A1A61C57488900DE34A3 /* WebVideoFullscreenModelVideoElement.mm */; };
+		52D5A1A71C57489D00DE34A3 /* VideoFullscreenModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1A41C57488900DE34A3 /* VideoFullscreenModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52D5A1A81C5748A300DE34A3 /* VideoFullscreenModelVideoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1A51C57488900DE34A3 /* VideoFullscreenModelVideoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52D5A1A91C5748A900DE34A3 /* VideoFullscreenModelVideoElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A1A61C57488900DE34A3 /* VideoFullscreenModelVideoElement.mm */; };
 		52E2CAFC19FF0207001EEB4F /* MediaProducer.h in Headers */ = {isa = PBXBuildFile; fileRef = 52E2CAFB19FF0207001EEB4F /* MediaProducer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52F10865162B6DA4009AC81E /* MixedContentChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52F10862162B6D82009AC81E /* MixedContentChecker.cpp */; };
 		52F10866162B6DA8009AC81E /* MixedContentChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F10863162B6D82009AC81E /* MixedContentChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6169,15 +6169,15 @@
 		CDA07FBE18E0A16A004699FA /* SystemSleepListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA07FBC18E0A16A004699FA /* SystemSleepListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA07FC118E0A22B004699FA /* SystemSleepListenerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA07FBF18E0A22B004699FA /* SystemSleepListenerMac.mm */; };
 		CDA07FC218E0A22B004699FA /* SystemSleepListenerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA07FC018E0A22B004699FA /* SystemSleepListenerMac.h */; };
-		CDA29A091CBD99F400901CCF /* WebPlaybackSessionInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A081CBD99F400901CCF /* WebPlaybackSessionInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CDA29A0B1CBD9A7400901CCF /* WebPlaybackSessionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A0A1CBD9A7400901CCF /* WebPlaybackSessionModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CDA29A0E1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A0C1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.mm */; };
-		CDA29A0F1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A0D1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CDA29A161CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A141CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm */; };
-		CDA29A171CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A151CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CDA29A301CBF74D400901CCF /* WebPlaybackSessionInterfaceAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A2F1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.mm */; };
+		CDA29A091CBD99F400901CCF /* PlaybackSessionInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A081CBD99F400901CCF /* PlaybackSessionInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA29A0B1CBD9A7400901CCF /* PlaybackSessionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A0A1CBD9A7400901CCF /* PlaybackSessionModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA29A0E1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A0C1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.mm */; };
+		CDA29A0F1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A0D1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA29A161CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A141CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm */; };
+		CDA29A171CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A151CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceAVKit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceAVKit.mm */; };
 		CDA29A311CBF74DA00901CCF /* WebAVPlayerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A2D1CBF73FC00901CCF /* WebAVPlayerController.mm */; };
-		CDA29A321CC01A9500901CCF /* WebPlaybackSessionInterfaceAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A2E1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA29A321CC01A9500901CCF /* PlaybackSessionInterfaceAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA79824170A258300D45C55 /* AudioSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA79823170A258300D45C55 /* AudioSession.cpp */; };
 		CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA79825170A279000D45C55 /* AudioSessionIOS.mm */; };
 		CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA79821170A22DC00D45C55 /* AudioSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9293,8 +9293,8 @@
 		3F8020321E9E381D00DEC61D /* CoreAudioCaptureDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudioCaptureDevice.h; sourceTree = "<group>"; };
 		3F8020331E9E381D00DEC61D /* CoreAudioCaptureDeviceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreAudioCaptureDeviceManager.cpp; sourceTree = "<group>"; };
 		3F8020341E9E381D00DEC61D /* CoreAudioCaptureDeviceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudioCaptureDeviceManager.h; sourceTree = "<group>"; };
-		3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenInterfaceAVKit.mm; sourceTree = "<group>"; };
-		3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenInterfaceAVKit.h; sourceTree = "<group>"; };
+		3FBC4AF1189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenInterfaceAVKit.mm; sourceTree = "<group>"; };
+		3FBC4AF2189881560046EE38 /* VideoFullscreenInterfaceAVKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenInterfaceAVKit.h; sourceTree = "<group>"; };
 		3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSViewportRule.cpp; sourceTree = "<group>"; };
 		3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSViewportRule.h; sourceTree = "<group>"; };
 		3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportStyleResolver.cpp; sourceTree = "<group>"; };
@@ -10186,12 +10186,12 @@
 		51FB5503113E3E9100821176 /* JSCloseEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCloseEvent.cpp; sourceTree = "<group>"; };
 		51FB67D91AE6B5E400D06C5A /* ContentExtensionStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionStyleSheet.cpp; sourceTree = "<group>"; };
 		51FB67DA1AE6B5E400D06C5A /* ContentExtensionStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionStyleSheet.h; sourceTree = "<group>"; };
-		52131E5A1C4F15610033F802 /* WebVideoFullscreenInterfaceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenInterfaceMac.mm; sourceTree = "<group>"; };
+		52131E5A1C4F15610033F802 /* VideoFullscreenInterfaceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenInterfaceMac.mm; sourceTree = "<group>"; };
 		526724F11CB2FDF60075974D /* TextTrackRepresentationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextTrackRepresentationCocoa.mm; sourceTree = "<group>"; };
 		526724F21CB2FDF60075974D /* TextTrackRepresentationCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentationCocoa.h; sourceTree = "<group>"; };
 		52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformView.h; sourceTree = "<group>"; };
-		52B0D4BF1C57FD660077CE53 /* WebVideoFullscreenChangeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenChangeObserver.h; sourceTree = "<group>"; };
-		52B0D4C11C57FF910077CE53 /* WebVideoFullscreenInterfaceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenInterfaceMac.h; sourceTree = "<group>"; };
+		52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenChangeObserver.h; sourceTree = "<group>"; };
+		52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenInterfaceMac.h; sourceTree = "<group>"; };
 		52B6C9BD15E3F4DF00690B05 /* DOMNamedFlowCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMNamedFlowCollection.cpp; sourceTree = "<group>"; };
 		52B6C9BE15E3F4DF00690B05 /* DOMNamedFlowCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMNamedFlowCollection.h; sourceTree = "<group>"; };
 		52B6C9BF15E3F4DF00690B05 /* DOMNamedFlowCollection.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMNamedFlowCollection.idl; sourceTree = "<group>"; };
@@ -10201,9 +10201,9 @@
 		52CCA9E115E3F62C0053C77F /* JSDOMNamedFlowCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMNamedFlowCollection.h; sourceTree = "<group>"; };
 		52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenLayerManager.mm; sourceTree = "<group>"; };
 		52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenLayerManager.h; sourceTree = "<group>"; };
-		52D5A1A41C57488900DE34A3 /* WebVideoFullscreenModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenModel.h; sourceTree = "<group>"; };
-		52D5A1A51C57488900DE34A3 /* WebVideoFullscreenModelVideoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenModelVideoElement.h; sourceTree = "<group>"; };
-		52D5A1A61C57488900DE34A3 /* WebVideoFullscreenModelVideoElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenModelVideoElement.mm; sourceTree = "<group>"; };
+		52D5A1A41C57488900DE34A3 /* VideoFullscreenModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenModel.h; sourceTree = "<group>"; };
+		52D5A1A51C57488900DE34A3 /* VideoFullscreenModelVideoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenModelVideoElement.h; sourceTree = "<group>"; };
+		52D5A1A61C57488900DE34A3 /* VideoFullscreenModelVideoElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenModelVideoElement.mm; sourceTree = "<group>"; };
 		52E2CAFB19FF0207001EEB4F /* MediaProducer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaProducer.h; sourceTree = "<group>"; };
 		52F10862162B6D82009AC81E /* MixedContentChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MixedContentChecker.cpp; sourceTree = "<group>"; };
 		52F10863162B6D82009AC81E /* MixedContentChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MixedContentChecker.h; sourceTree = "<group>"; };
@@ -14671,16 +14671,16 @@
 		CDA07FBC18E0A16A004699FA /* SystemSleepListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSleepListener.h; sourceTree = "<group>"; };
 		CDA07FBF18E0A22B004699FA /* SystemSleepListenerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemSleepListenerMac.mm; sourceTree = "<group>"; };
 		CDA07FC018E0A22B004699FA /* SystemSleepListenerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSleepListenerMac.h; sourceTree = "<group>"; };
-		CDA29A081CBD99F400901CCF /* WebPlaybackSessionInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionInterface.h; sourceTree = "<group>"; };
-		CDA29A0A1CBD9A7400901CCF /* WebPlaybackSessionModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionModel.h; sourceTree = "<group>"; };
-		CDA29A0C1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackSessionModelMediaElement.mm; sourceTree = "<group>"; };
-		CDA29A0D1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionModelMediaElement.h; sourceTree = "<group>"; };
-		CDA29A141CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackSessionInterfaceMac.mm; sourceTree = "<group>"; };
-		CDA29A151CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionInterfaceMac.h; sourceTree = "<group>"; };
+		CDA29A081CBD99F400901CCF /* PlaybackSessionInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionInterface.h; sourceTree = "<group>"; };
+		CDA29A0A1CBD9A7400901CCF /* PlaybackSessionModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionModel.h; sourceTree = "<group>"; };
+		CDA29A0C1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionModelMediaElement.mm; sourceTree = "<group>"; };
+		CDA29A0D1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionModelMediaElement.h; sourceTree = "<group>"; };
+		CDA29A141CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionInterfaceMac.mm; sourceTree = "<group>"; };
+		CDA29A151CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionInterfaceMac.h; sourceTree = "<group>"; };
 		CDA29A2C1CBF73FC00901CCF /* WebAVPlayerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAVPlayerController.h; sourceTree = "<group>"; };
 		CDA29A2D1CBF73FC00901CCF /* WebAVPlayerController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAVPlayerController.mm; sourceTree = "<group>"; };
-		CDA29A2E1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionInterfaceAVKit.h; sourceTree = "<group>"; };
-		CDA29A2F1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackSessionInterfaceAVKit.mm; sourceTree = "<group>"; };
+		CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceAVKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionInterfaceAVKit.h; sourceTree = "<group>"; };
+		CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceAVKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionInterfaceAVKit.mm; sourceTree = "<group>"; };
 		CDA79821170A22DC00D45C55 /* AudioSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSession.h; sourceTree = "<group>"; };
 		CDA79823170A258300D45C55 /* AudioSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSession.cpp; sourceTree = "<group>"; };
 		CDA79825170A279000D45C55 /* AudioSessionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSessionIOS.mm; sourceTree = "<group>"; };
@@ -19057,14 +19057,14 @@
 				E1A3162C134BC32D007C9A4F /* WebNSAttributedStringExtras.mm */,
 				CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */,
 				CD5896DF1CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm */,
-				CDA29A151CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h */,
-				CDA29A141CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm */,
+				CDA29A151CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h */,
+				CDA29A141CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm */,
 				CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */,
 				CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */,
 				CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */,
 				CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */,
-				52B0D4C11C57FF910077CE53 /* WebVideoFullscreenInterfaceMac.h */,
-				52131E5A1C4F15610033F802 /* WebVideoFullscreenInterfaceMac.mm */,
+				52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */,
+				52131E5A1C4F15610033F802 /* VideoFullscreenInterfaceMac.mm */,
 				CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */,
 				CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */,
 				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
@@ -21065,14 +21065,14 @@
 				FE0D84EA1048436E001A179E /* WebEvent.mm */,
 				F482230F1E3869B80066FC79 /* WebItemProviderPasteboard.h */,
 				F482230E1E3869B80066FC79 /* WebItemProviderPasteboard.mm */,
-				CDA29A2E1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.h */,
-				CDA29A2F1CBF73FC00901CCF /* WebPlaybackSessionInterfaceAVKit.mm */,
+				CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceAVKit.h */,
+				CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceAVKit.mm */,
 				1F8756B11E22BEEF0042C40D /* WebSQLiteDatabaseTrackerClient.h */,
 				1F8756B01E22BEEF0042C40D /* WebSQLiteDatabaseTrackerClient.mm */,
 				3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */,
 				3F42B31C1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm */,
-				3FBC4AF2189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h */,
-				3FBC4AF1189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm */,
+				3FBC4AF2189881560046EE38 /* VideoFullscreenInterfaceAVKit.h */,
+				3FBC4AF1189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm */,
 				E453903C0EAFD637003695C8 /* WidgetIOS.mm */,
 			);
 			path = ios;
@@ -21119,14 +21119,14 @@
 				CDC979F31C498C0900DB50D4 /* WebCoreNSErrorExtras.h */,
 				CDC979F21C498C0900DB50D4 /* WebCoreNSErrorExtras.mm */,
 				5DFEBAB618592B6D00C75BEB /* WebKitAvailability.h */,
-				CDA29A081CBD99F400901CCF /* WebPlaybackSessionInterface.h */,
-				CDA29A0A1CBD9A7400901CCF /* WebPlaybackSessionModel.h */,
-				CDA29A0D1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.h */,
-				CDA29A0C1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.mm */,
-				52B0D4BF1C57FD660077CE53 /* WebVideoFullscreenChangeObserver.h */,
-				52D5A1A41C57488900DE34A3 /* WebVideoFullscreenModel.h */,
-				52D5A1A51C57488900DE34A3 /* WebVideoFullscreenModelVideoElement.h */,
-				52D5A1A61C57488900DE34A3 /* WebVideoFullscreenModelVideoElement.mm */,
+				CDA29A081CBD99F400901CCF /* PlaybackSessionInterface.h */,
+				CDA29A0A1CBD9A7400901CCF /* PlaybackSessionModel.h */,
+				CDA29A0D1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.h */,
+				CDA29A0C1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.mm */,
+				52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */,
+				52D5A1A41C57488900DE34A3 /* VideoFullscreenModel.h */,
+				52D5A1A51C57488900DE34A3 /* VideoFullscreenModelVideoElement.h */,
+				52D5A1A61C57488900DE34A3 /* VideoFullscreenModelVideoElement.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -30000,11 +30000,11 @@
 				0709D7931AE5557E004E42F8 /* WebMediaSessionManagerMac.h in Headers */,
 				E1A3162D134BC32D007C9A4F /* WebNSAttributedStringExtras.h in Headers */,
 				CD5896E21CD2B15100B3BCC8 /* WebPlaybackControlsManager.h in Headers */,
-				CDA29A091CBD99F400901CCF /* WebPlaybackSessionInterface.h in Headers */,
-				CDA29A321CC01A9500901CCF /* WebPlaybackSessionInterfaceAVKit.h in Headers */,
-				CDA29A171CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.h in Headers */,
-				CDA29A0B1CBD9A7400901CCF /* WebPlaybackSessionModel.h in Headers */,
-				CDA29A0F1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.h in Headers */,
+				CDA29A091CBD99F400901CCF /* PlaybackSessionInterface.h in Headers */,
+				CDA29A321CC01A9500901CCF /* PlaybackSessionInterfaceAVKit.h in Headers */,
+				CDA29A171CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h in Headers */,
+				CDA29A0B1CBD9A7400901CCF /* PlaybackSessionModel.h in Headers */,
+				CDA29A0F1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.h in Headers */,
 				1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */,
 				1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */,
 				1A569D1B0D7E2B82007C3983 /* WebScriptObjectProtocol.h in Headers */,
@@ -30021,14 +30021,14 @@
 				1F8756B21E22C3350042C40D /* WebSQLiteDatabaseTrackerClient.h in Headers */,
 				31DEA4561B39F4D900F77178 /* WebSystemBackdropLayer.h in Headers */,
 				0F580FA31496939100FB5BD8 /* WebTiledBackingLayer.h in Headers */,
-				52B0D4C01C57FD660077CE53 /* WebVideoFullscreenChangeObserver.h in Headers */,
+				52B0D4C01C57FD660077CE53 /* VideoFullscreenChangeObserver.h in Headers */,
 				CD82030A1395AB6A00F956C6 /* WebVideoFullscreenController.h in Headers */,
 				3F42B31D1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h in Headers */,
 				CD82030C1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h in Headers */,
-				3FBC4AF4189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.h in Headers */,
-				52B0D4C21C57FF910077CE53 /* WebVideoFullscreenInterfaceMac.h in Headers */,
-				52D5A1A71C57489D00DE34A3 /* WebVideoFullscreenModel.h in Headers */,
-				52D5A1A81C5748A300DE34A3 /* WebVideoFullscreenModelVideoElement.h in Headers */,
+				3FBC4AF4189881560046EE38 /* VideoFullscreenInterfaceAVKit.h in Headers */,
+				52B0D4C21C57FF910077CE53 /* VideoFullscreenInterfaceMac.h in Headers */,
+				52D5A1A71C57489D00DE34A3 /* VideoFullscreenModel.h in Headers */,
+				52D5A1A81C5748A300DE34A3 /* VideoFullscreenModelVideoElement.h in Headers */,
 				F12171F616A8CF0B000053CA /* WebVTTElement.h in Headers */,
 				5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */,
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,
@@ -33700,9 +33700,9 @@
 				0709D7921AE5557E004E42F8 /* WebMediaSessionManagerMac.cpp in Sources */,
 				E1A3162E134BC32D007C9A4F /* WebNSAttributedStringExtras.mm in Sources */,
 				CD5896E11CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm in Sources */,
-				CDA29A301CBF74D400901CCF /* WebPlaybackSessionInterfaceAVKit.mm in Sources */,
-				CDA29A161CBDA56C00901CCF /* WebPlaybackSessionInterfaceMac.mm in Sources */,
-				CDA29A0E1CBD9CFE00901CCF /* WebPlaybackSessionModelMediaElement.mm in Sources */,
+				CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceAVKit.mm in Sources */,
+				CDA29A161CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm in Sources */,
+				CDA29A0E1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.mm in Sources */,
 				1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */,
 				97AABD1A14FA09D5007457AE /* WebSocket.cpp in Sources */,
 				97AABD1D14FA09D5007457AE /* WebSocketChannel.cpp in Sources */,
@@ -33718,9 +33718,9 @@
 				CD82030B1395AB6A00F956C6 /* WebVideoFullscreenController.mm in Sources */,
 				3F42B31E1881191B00278AAC /* WebVideoFullscreenControllerAVKit.mm in Sources */,
 				CD82030D1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm in Sources */,
-				3FBC4AF3189881560046EE38 /* WebVideoFullscreenInterfaceAVKit.mm in Sources */,
-				52131E5B1C4F15760033F802 /* WebVideoFullscreenInterfaceMac.mm in Sources */,
-				52D5A1A91C5748A900DE34A3 /* WebVideoFullscreenModelVideoElement.mm in Sources */,
+				3FBC4AF3189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm in Sources */,
+				52131E5B1C4F15760033F802 /* VideoFullscreenInterfaceMac.mm in Sources */,
+				52D5A1A91C5748A900DE34A3 /* VideoFullscreenModelVideoElement.mm in Sources */,
 				F12171F516A8CED2000053CA /* WebVTTElement.cpp in Sources */,
 				5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */,
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,

@@ -31,9 +31,9 @@
 
 #import "AVKitSPI.h"
 #import "Logging.h"
+#import "PlaybackSessionInterfaceAVKit.h"
+#import "PlaybackSessionModel.h"
 #import "TimeRanges.h"
-#import "WebPlaybackSessionInterfaceAVKit.h"
-#import "WebPlaybackSessionModel.h"
 #import <AVFoundation/AVTime.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>

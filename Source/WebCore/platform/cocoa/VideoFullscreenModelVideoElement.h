@@ -32,7 +32,7 @@
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
 #include "PlatformLayer.h"
-#include "WebVideoFullscreenModel.h"
+#include "VideoFullscreenModel.h"
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -43,15 +43,15 @@ namespace WebCore {
 class AudioTrack;
 class HTMLVideoElement;
 class TextTrack;
-class WebPlaybackSessionModelMediaElement;
+class PlaybackSessionModelMediaElement;
 
-class WebVideoFullscreenModelVideoElement : public WebVideoFullscreenModel, public EventListener {
+class VideoFullscreenModelVideoElement : public VideoFullscreenModel, public EventListener {
 public:
-    static RefPtr<WebVideoFullscreenModelVideoElement> create()
+    static RefPtr<VideoFullscreenModelVideoElement> create()
     {
-        return adoptRef(*new WebVideoFullscreenModelVideoElement());
+        return adoptRef(*new VideoFullscreenModelVideoElement());
     }
-    WEBCORE_EXPORT virtual ~WebVideoFullscreenModelVideoElement();
+    WEBCORE_EXPORT virtual ~VideoFullscreenModelVideoElement();
     WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
     HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
@@ -61,8 +61,8 @@ public:
     void updateForEventName(const WTF::AtomicString&);
     bool operator==(const EventListener& rhs) const override { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 
-    WEBCORE_EXPORT void addClient(WebVideoFullscreenModelClient&) override;
-    WEBCORE_EXPORT void removeClient(WebVideoFullscreenModelClient&) override;
+    WEBCORE_EXPORT void addClient(VideoFullscreenModelClient&) override;
+    WEBCORE_EXPORT void removeClient(VideoFullscreenModelClient&) override;
     WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) override;
     WEBCORE_EXPORT void setVideoLayerGravity(VideoGravity) override;
@@ -73,7 +73,7 @@ public:
 
 
 protected:
-    WEBCORE_EXPORT WebVideoFullscreenModelVideoElement();
+    WEBCORE_EXPORT VideoFullscreenModelVideoElement();
 
 private:
     void setHasVideo(bool);
@@ -85,7 +85,7 @@ private:
     RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     bool m_isListening { false };
-    HashSet<WebVideoFullscreenModelClient*> m_clients;
+    HashSet<VideoFullscreenModelClient*> m_clients;
     bool m_hasVideo { false };
     FloatSize m_videoDimensions;
     FloatRect m_videoFrame;

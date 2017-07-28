@@ -22,7 +22,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-messages -> WebPlaybackSessionManager {
+messages -> PlaybackSessionManager {
     Play(uint64_t contextId)
     Pause(uint64_t contextId)
     TogglePlayState(uint64_t contextId)

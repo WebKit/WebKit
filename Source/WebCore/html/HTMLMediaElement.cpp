@@ -117,7 +117,7 @@
 
 #if PLATFORM(IOS)
 #include "RuntimeApplicationChecks.h"
-#include "WebVideoFullscreenInterfaceAVKit.h"
+#include "VideoFullscreenInterfaceAVKit.h"
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -156,7 +156,7 @@
 #endif
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-#include "WebVideoFullscreenModel.h"
+#include "VideoFullscreenModel.h"
 #endif
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document().page() && document().page()->isAlwaysOnLoggingAllowed(), Media, "%p - HTMLMediaElement::" fmt, this, ##__VA_ARGS__)

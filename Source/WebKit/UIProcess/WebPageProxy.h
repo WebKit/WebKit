@@ -201,9 +201,9 @@ class WebBackForwardListItem;
 class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebFullScreenManagerProxy;
-class WebPlaybackSessionManagerProxy;
+class PlaybackSessionManagerProxy;
 class WebNavigationState;
-class WebVideoFullscreenManagerProxy;
+class VideoFullscreenManagerProxy;
 class WebKeyboardEvent;
 class WebURLSchemeHandler;
 class WebMouseEvent;
@@ -343,8 +343,8 @@ public:
     void setFullscreenClient(std::unique_ptr<API::FullscreenClient>&&);
 #endif
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    WebPlaybackSessionManagerProxy* playbackSessionManager();
-    WebVideoFullscreenManagerProxy* videoFullscreenManager();
+    PlaybackSessionManagerProxy* playbackSessionManager();
+    VideoFullscreenManagerProxy* videoFullscreenManager();
 #endif
 
 #if PLATFORM(IOS)
@@ -1680,8 +1680,8 @@ private:
 #endif
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    RefPtr<WebPlaybackSessionManagerProxy> m_playbackSessionManager;
-    RefPtr<WebVideoFullscreenManagerProxy> m_videoFullscreenManager;
+    RefPtr<PlaybackSessionManagerProxy> m_playbackSessionManager;
+    RefPtr<VideoFullscreenManagerProxy> m_videoFullscreenManager;
 #endif
 
 #if PLATFORM(IOS)

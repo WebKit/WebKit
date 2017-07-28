@@ -78,8 +78,8 @@
 #include <WebCore/Settings.h>
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-#include "WebPlaybackSessionManager.h"
-#include "WebVideoFullscreenManager.h"
+#include "PlaybackSessionManager.h"
+#include "VideoFullscreenManager.h"
 #endif
 
 #if ENABLE(ASYNC_SCROLLING)

@@ -316,8 +316,8 @@
 
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-#import <WebCore/WebPlaybackSessionInterfaceMac.h>
-#import <WebCore/WebPlaybackSessionModelMediaElement.h>
+#import <WebCore/PlaybackSessionInterfaceMac.h>
+#import <WebCore/PlaybackSessionModelMediaElement.h>
 #endif
 
 #if ENABLE(DATA_INTERACTION)
@@ -9265,11 +9265,11 @@ bool LayerFlushController::flushLayers()
         return;
 
     if (!_private->playbackSessionModel)
-        _private->playbackSessionModel = WebPlaybackSessionModelMediaElement::create();
+        _private->playbackSessionModel = PlaybackSessionModelMediaElement::create();
     _private->playbackSessionModel->setMediaElement(&mediaElement);
 
     if (!_private->playbackSessionInterface)
-        _private->playbackSessionInterface = WebPlaybackSessionInterfaceMac::create(*_private->playbackSessionModel);
+        _private->playbackSessionInterface = PlaybackSessionInterfaceMac::create(*_private->playbackSessionModel);
 
     [self updateTouchBar];
 }

@@ -871,8 +871,8 @@
 		37FC19471850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37FC194A18510D6A008CFA47 /* WKNSURLAuthenticationChallenge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37FC194818510D6A008CFA47 /* WKNSURLAuthenticationChallenge.mm */; };
 		37FC194B18510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */; };
-		3F418EF91887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF51887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp */; };
-		3F418EFB1887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF71887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp */; };
+		3F418EF91887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF51887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp */; };
+		3F418EFB1887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F418EF71887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp */; };
 		3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */; };
 		3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BB15893F630090FF62 /* WebColorChooser.h */; };
 		3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorPicker.h */; };
@@ -1109,9 +1109,9 @@
 		5272D4C91E735F0900EB4290 /* WKProtectionSpaceNS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5272D4CA1E735F0900EB4290 /* WKProtectionSpaceNS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5272D4C81E735F0900EB4290 /* WKProtectionSpaceNS.mm */; };
 		528C37C1195CBB1A00D8B9CC /* WKBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		52D5A1B01C57495A00DE34A3 /* WebVideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1AA1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.h */; };
-		52D5A1B11C57496200DE34A3 /* WebVideoFullscreenManagerProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A1AC1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.mm */; };
-		52D5A1B71C574A0200DE34A3 /* WebVideoFullscreenManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A1B41C5749F200DE34A3 /* WebVideoFullscreenManager.mm */; };
+		52D5A1B01C57495A00DE34A3 /* VideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */; };
+		52D5A1B11C57496200DE34A3 /* VideoFullscreenManagerProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A1AC1C57494E00DE34A3 /* VideoFullscreenManagerProxy.mm */; };
+		52D5A1B71C574A0200DE34A3 /* VideoFullscreenManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A1B41C5749F200DE34A3 /* VideoFullscreenManager.mm */; };
 		5302583B1DCBBD2200DA89C2 /* NetworkCaptureResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5302582E1DCBBD1D00DA89C2 /* NetworkCaptureResource.cpp */; };
 		5302583C1DCBBD2200DA89C2 /* NetworkCaptureResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5302582F1DCBBD1D00DA89C2 /* NetworkCaptureResource.h */; };
 		5302583D1DCBBD2200DA89C2 /* NetworkCaptureEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530258301DCBBD1D00DA89C2 /* NetworkCaptureEvent.cpp */; };
@@ -1923,14 +1923,14 @@
 		CD78E1171DB7DC0A0014A2DE /* APIFullscreenClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD78E1161DB7DC0A0014A2DE /* APIFullscreenClient.h */; };
 		CD78E1191DB7E5AD0014A2DE /* _WKFullscreenDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD78E1181DB7E5AD0014A2DE /* _WKFullscreenDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA041F41ACE2105004A13EC /* BackBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */; };
-		CDA29A1A1CBDBF4100901CCF /* WebPlaybackSessionManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A181CBDBF4100901CCF /* WebPlaybackSessionManager.mm */; };
-		CDA29A1B1CBDBF4100901CCF /* WebPlaybackSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A191CBDBF4100901CCF /* WebPlaybackSessionManager.h */; };
-		CDA29A201CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A1E1CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.h */; };
-		CDA29A211CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A1F1CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.mm */; };
-		CDA29A281CBEB67A00901CCF /* WebPlaybackSessionManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A241CBEB67A00901CCF /* WebPlaybackSessionManagerMessageReceiver.cpp */; };
-		CDA29A291CBEB67A00901CCF /* WebPlaybackSessionManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A251CBEB67A00901CCF /* WebPlaybackSessionManagerMessages.h */; };
-		CDA29A2A1CBEB67A00901CCF /* WebPlaybackSessionManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A261CBEB67A00901CCF /* WebPlaybackSessionManagerProxyMessageReceiver.cpp */; };
-		CDA29A2B1CBEB67A00901CCF /* WebPlaybackSessionManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A271CBEB67A00901CCF /* WebPlaybackSessionManagerProxyMessages.h */; };
+		CDA29A1A1CBDBF4100901CCF /* PlaybackSessionManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */; };
+		CDA29A1B1CBDBF4100901CCF /* PlaybackSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */; };
+		CDA29A201CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A1E1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h */; };
+		CDA29A211CBEB5FB00901CCF /* PlaybackSessionManagerProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A1F1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.mm */; };
+		CDA29A281CBEB67A00901CCF /* PlaybackSessionManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A241CBEB67A00901CCF /* PlaybackSessionManagerMessageReceiver.cpp */; };
+		CDA29A291CBEB67A00901CCF /* PlaybackSessionManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A251CBEB67A00901CCF /* PlaybackSessionManagerMessages.h */; };
+		CDA29A2A1CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A261CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp */; };
+		CDA29A2B1CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A271CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h */; };
 		CDC382FE17211799008A2FC3 /* SecItemShimLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */; };
 		CDC38307172117DD008A2FC3 /* CookieStorageShimLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC382F9172116D3008A2FC3 /* CookieStorageShimLibrary.cpp */; };
 		CDC3830C17212282008A2FC3 /* CookieStorageShimLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC3830B172121CE008A2FC3 /* CookieStorageShimLibrary.h */; };
@@ -3088,10 +3088,10 @@
 		37FC19461850FBF2008CFA47 /* WKBrowsingContextLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		37FC194818510D6A008CFA47 /* WKNSURLAuthenticationChallenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSURLAuthenticationChallenge.mm; sourceTree = "<group>"; };
 		37FC194918510D6A008CFA47 /* WKNSURLAuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLAuthenticationChallenge.h; sourceTree = "<group>"; };
-		3F418EF51887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVideoFullscreenManagerMessageReceiver.cpp; sourceTree = "<group>"; };
-		3F418EF61887BD97002795FD /* WebVideoFullscreenManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenManagerMessages.h; sourceTree = "<group>"; };
-		3F418EF71887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVideoFullscreenManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		3F418EF81887BD97002795FD /* WebVideoFullscreenManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenManagerProxyMessages.h; sourceTree = "<group>"; };
+		3F418EF51887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoFullscreenManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		3F418EF61887BD97002795FD /* VideoFullscreenManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManagerMessages.h; sourceTree = "<group>"; };
+		3F418EF71887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoFullscreenManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		3F418EF81887BD97002795FD /* VideoFullscreenManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManagerProxyMessages.h; sourceTree = "<group>"; };
 		3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorChooser.cpp; sourceTree = "<group>"; };
 		3F87B9BB15893F630090FF62 /* WebColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooser.h; sourceTree = "<group>"; };
 		3F87B9BF158940D80090FF62 /* WebColorPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPicker.h; sourceTree = "<group>"; };
@@ -3370,12 +3370,12 @@
 		5272B2891406985D0096A5D0 /* StatisticsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsData.h; sourceTree = "<group>"; };
 		5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKProtectionSpaceNS.h; path = mac/WKProtectionSpaceNS.h; sourceTree = "<group>"; };
 		5272D4C81E735F0900EB4290 /* WKProtectionSpaceNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKProtectionSpaceNS.mm; path = mac/WKProtectionSpaceNS.mm; sourceTree = "<group>"; };
-		52D5A1AA1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenManagerProxy.h; sourceTree = "<group>"; };
-		52D5A1AB1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebVideoFullscreenManagerProxy.messages.in; sourceTree = "<group>"; };
-		52D5A1AC1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenManagerProxy.mm; sourceTree = "<group>"; };
-		52D5A1B21C5749F200DE34A3 /* WebVideoFullscreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenManager.h; sourceTree = "<group>"; };
-		52D5A1B31C5749F200DE34A3 /* WebVideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebVideoFullscreenManager.messages.in; sourceTree = "<group>"; };
-		52D5A1B41C5749F200DE34A3 /* WebVideoFullscreenManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenManager.mm; sourceTree = "<group>"; };
+		52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManagerProxy.h; sourceTree = "<group>"; };
+		52D5A1AB1C57494E00DE34A3 /* VideoFullscreenManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoFullscreenManagerProxy.messages.in; sourceTree = "<group>"; };
+		52D5A1AC1C57494E00DE34A3 /* VideoFullscreenManagerProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenManagerProxy.mm; sourceTree = "<group>"; };
+		52D5A1B21C5749F200DE34A3 /* VideoFullscreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenManager.h; sourceTree = "<group>"; };
+		52D5A1B31C5749F200DE34A3 /* VideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoFullscreenManager.messages.in; sourceTree = "<group>"; };
+		52D5A1B41C5749F200DE34A3 /* VideoFullscreenManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenManager.mm; sourceTree = "<group>"; };
 		5302582E1DCBBD1D00DA89C2 /* NetworkCaptureResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkCaptureResource.cpp; path = NetworkProcess/capture/NetworkCaptureResource.cpp; sourceTree = "<group>"; };
 		5302582F1DCBBD1D00DA89C2 /* NetworkCaptureResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkCaptureResource.h; path = NetworkProcess/capture/NetworkCaptureResource.h; sourceTree = "<group>"; };
 		530258301DCBBD1D00DA89C2 /* NetworkCaptureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkCaptureEvent.cpp; path = NetworkProcess/capture/NetworkCaptureEvent.cpp; sourceTree = "<group>"; };
@@ -4255,16 +4255,16 @@
 		CD78E1161DB7DC0A0014A2DE /* APIFullscreenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFullscreenClient.h; sourceTree = "<group>"; };
 		CD78E1181DB7E5AD0014A2DE /* _WKFullscreenDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFullscreenDelegate.h; sourceTree = "<group>"; };
 		CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackBoardServicesSPI.h; sourceTree = "<group>"; };
-		CDA29A181CBDBF4100901CCF /* WebPlaybackSessionManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackSessionManager.mm; sourceTree = "<group>"; };
-		CDA29A191CBDBF4100901CCF /* WebPlaybackSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionManager.h; sourceTree = "<group>"; };
-		CDA29A1C1CBDBF5B00901CCF /* WebPlaybackSessionManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPlaybackSessionManager.messages.in; sourceTree = "<group>"; };
-		CDA29A1E1CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionManagerProxy.h; sourceTree = "<group>"; };
-		CDA29A1F1CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPlaybackSessionManagerProxy.mm; sourceTree = "<group>"; };
-		CDA29A221CBEB61A00901CCF /* WebPlaybackSessionManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPlaybackSessionManagerProxy.messages.in; sourceTree = "<group>"; };
-		CDA29A241CBEB67A00901CCF /* WebPlaybackSessionManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPlaybackSessionManagerMessageReceiver.cpp; sourceTree = "<group>"; };
-		CDA29A251CBEB67A00901CCF /* WebPlaybackSessionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionManagerMessages.h; sourceTree = "<group>"; };
-		CDA29A261CBEB67A00901CCF /* WebPlaybackSessionManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPlaybackSessionManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		CDA29A271CBEB67A00901CCF /* WebPlaybackSessionManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlaybackSessionManagerProxyMessages.h; sourceTree = "<group>"; };
+		CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionManager.mm; sourceTree = "<group>"; };
+		CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionManager.h; sourceTree = "<group>"; };
+		CDA29A1C1CBDBF5B00901CCF /* PlaybackSessionManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PlaybackSessionManager.messages.in; sourceTree = "<group>"; };
+		CDA29A1E1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionManagerProxy.h; sourceTree = "<group>"; };
+		CDA29A1F1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionManagerProxy.mm; sourceTree = "<group>"; };
+		CDA29A221CBEB61A00901CCF /* PlaybackSessionManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PlaybackSessionManagerProxy.messages.in; sourceTree = "<group>"; };
+		CDA29A241CBEB67A00901CCF /* PlaybackSessionManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlaybackSessionManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		CDA29A251CBEB67A00901CCF /* PlaybackSessionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionManagerMessages.h; sourceTree = "<group>"; };
+		CDA29A261CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlaybackSessionManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		CDA29A271CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionManagerProxyMessages.h; sourceTree = "<group>"; };
 		CDC382F717211506008A2FC3 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = /System/Library/Frameworks/CFNetwork.framework; sourceTree = "<absolute>"; };
 		CDC382F9172116D3008A2FC3 /* CookieStorageShimLibrary.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CookieStorageShimLibrary.cpp; sourceTree = "<group>"; };
 		CDC3830617211799008A2FC3 /* WebProcessShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = WebProcessShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5196,17 +5196,17 @@
 				2D1B5D5A18586599006C6596 /* ViewGestureController.messages.in */,
 				1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */,
 				7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */,
-				CDA29A1E1CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.h */,
-				CDA29A221CBEB61A00901CCF /* WebPlaybackSessionManagerProxy.messages.in */,
-				CDA29A1F1CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.mm */,
+				CDA29A1E1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h */,
+				CDA29A221CBEB61A00901CCF /* PlaybackSessionManagerProxy.messages.in */,
+				CDA29A1F1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.mm */,
 				7CE4D2151A49148400C7F152 /* WebProcessPoolCocoa.mm */,
 				1A04F6171A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm */,
 				7AAD175E1EA6AF37003B0894 /* WebResourceLoadStatisticsStoreCocoa.mm */,
 				51D124311E6DE521002B2820 /* WebURLSchemeHandlerCocoa.h */,
 				51D124321E6DE521002B2820 /* WebURLSchemeHandlerCocoa.mm */,
-				52D5A1AA1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.h */,
-				52D5A1AB1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.messages.in */,
-				52D5A1AC1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.mm */,
+				52D5A1AA1C57494E00DE34A3 /* VideoFullscreenManagerProxy.h */,
+				52D5A1AB1C57494E00DE34A3 /* VideoFullscreenManagerProxy.messages.in */,
+				52D5A1AC1C57494E00DE34A3 /* VideoFullscreenManagerProxy.mm */,
 				2DFC7DB91BCCC19500C1548C /* WebViewImpl.h */,
 				2DFC7DBA1BCCC19500C1548C /* WebViewImpl.mm */,
 				1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */,
@@ -6390,14 +6390,14 @@
 				CD491B051E70D05F00009066 /* UserMediaCaptureManager.cpp */,
 				CD491B061E70D05F00009066 /* UserMediaCaptureManager.h */,
 				CD491B0A1E732D1200009066 /* UserMediaCaptureManager.messages.in */,
-				CDA29A191CBDBF4100901CCF /* WebPlaybackSessionManager.h */,
-				CDA29A1C1CBDBF5B00901CCF /* WebPlaybackSessionManager.messages.in */,
-				CDA29A181CBDBF4100901CCF /* WebPlaybackSessionManager.mm */,
+				CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */,
+				CDA29A1C1CBDBF5B00901CCF /* PlaybackSessionManager.messages.in */,
+				CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */,
 				ECA680D71E690DF800731D20 /* WebProcessCocoa.h */,
 				7C6E70F918B2D4A000F24E2E /* WebProcessCocoa.mm */,
-				52D5A1B21C5749F200DE34A3 /* WebVideoFullscreenManager.h */,
-				52D5A1B31C5749F200DE34A3 /* WebVideoFullscreenManager.messages.in */,
-				52D5A1B41C5749F200DE34A3 /* WebVideoFullscreenManager.mm */,
+				52D5A1B21C5749F200DE34A3 /* VideoFullscreenManager.h */,
+				52D5A1B31C5749F200DE34A3 /* VideoFullscreenManager.messages.in */,
+				52D5A1B41C5749F200DE34A3 /* VideoFullscreenManager.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -7879,10 +7879,10 @@
 				1AB1F7931D1B3613007C9BD1 /* WebPaymentCoordinatorMessages.h */,
 				1AB1F7941D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessageReceiver.cpp */,
 				1AB1F7951D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h */,
-				CDA29A241CBEB67A00901CCF /* WebPlaybackSessionManagerMessageReceiver.cpp */,
-				CDA29A251CBEB67A00901CCF /* WebPlaybackSessionManagerMessages.h */,
-				CDA29A261CBEB67A00901CCF /* WebPlaybackSessionManagerProxyMessageReceiver.cpp */,
-				CDA29A271CBEB67A00901CCF /* WebPlaybackSessionManagerProxyMessages.h */,
+				CDA29A241CBEB67A00901CCF /* PlaybackSessionManagerMessageReceiver.cpp */,
+				CDA29A251CBEB67A00901CCF /* PlaybackSessionManagerMessages.h */,
+				CDA29A261CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp */,
+				CDA29A271CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h */,
 				1A043F6712514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp */,
 				1A043F6812514D8B00FFBFB5 /* WebProcessConnectionMessages.h */,
 				BC3066BC125A442100E71278 /* WebProcessMessageReceiver.cpp */,
@@ -7904,10 +7904,10 @@
 				1AAF08B619269E6D00B6390C /* WebUserContentControllerMessages.h */,
 				7C361D76192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp */,
 				7C361D77192803BD0036A59D /* WebUserContentControllerProxyMessages.h */,
-				3F418EF51887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp */,
-				3F418EF61887BD97002795FD /* WebVideoFullscreenManagerMessages.h */,
-				3F418EF71887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp */,
-				3F418EF81887BD97002795FD /* WebVideoFullscreenManagerProxyMessages.h */,
+				3F418EF51887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp */,
+				3F418EF61887BD97002795FD /* VideoFullscreenManagerMessages.h */,
+				3F418EF71887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp */,
+				3F418EF81887BD97002795FD /* VideoFullscreenManagerProxyMessages.h */,
 			);
 			name = "Derived Sources";
 			path = DerivedSources/WebKit2;
@@ -8739,10 +8739,10 @@
 				1AB1F7991D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h in Headers */,
 				0F850FE71ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h in Headers */,
 				1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */,
-				CDA29A1B1CBDBF4100901CCF /* WebPlaybackSessionManager.h in Headers */,
-				CDA29A291CBEB67A00901CCF /* WebPlaybackSessionManagerMessages.h in Headers */,
-				CDA29A201CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.h in Headers */,
-				CDA29A2B1CBEB67A00901CCF /* WebPlaybackSessionManagerProxyMessages.h in Headers */,
+				CDA29A1B1CBDBF4100901CCF /* PlaybackSessionManager.h in Headers */,
+				CDA29A291CBEB67A00901CCF /* PlaybackSessionManagerMessages.h in Headers */,
+				CDA29A201CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h in Headers */,
+				CDA29A2B1CBEB67A00901CCF /* PlaybackSessionManagerProxyMessages.h in Headers */,
 				31D5929F166E060000E6BF02 /* WebPlugInClient.h in Headers */,
 				BC5744F012638FB3006F0F12 /* WebPopupItem.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
@@ -8795,7 +8795,7 @@
 				7C361D79192803BD0036A59D /* WebUserContentControllerProxyMessages.h in Headers */,
 				15739BBD1B42042D00D258C1 /* WebUserMediaClient.h in Headers */,
 				83EE575C1DB7D61100C74C50 /* WebValidationMessageClient.h in Headers */,
-				52D5A1B01C57495A00DE34A3 /* WebVideoFullscreenManagerProxy.h in Headers */,
+				52D5A1B01C57495A00DE34A3 /* VideoFullscreenManagerProxy.h in Headers */,
 				2DFC7DBB1BCCC19500C1548C /* WebViewImpl.h in Headers */,
 				29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h in Headers */,
 				29232DF418B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h in Headers */,
@@ -10347,10 +10347,10 @@
 				1A3E736211CC2659007BD539 /* WebPlatformStrategies.cpp in Sources */,
 				C0337DDD127A521C008FF4F4 /* WebPlatformTouchPoint.cpp in Sources */,
 				2DA944A21884E4F000ED86DB /* WebPlatformTouchPointIOS.cpp in Sources */,
-				CDA29A1A1CBDBF4100901CCF /* WebPlaybackSessionManager.mm in Sources */,
-				CDA29A281CBEB67A00901CCF /* WebPlaybackSessionManagerMessageReceiver.cpp in Sources */,
-				CDA29A211CBEB5FB00901CCF /* WebPlaybackSessionManagerProxy.mm in Sources */,
-				CDA29A2A1CBEB67A00901CCF /* WebPlaybackSessionManagerProxyMessageReceiver.cpp in Sources */,
+				CDA29A1A1CBDBF4100901CCF /* PlaybackSessionManager.mm in Sources */,
+				CDA29A281CBEB67A00901CCF /* PlaybackSessionManagerMessageReceiver.cpp in Sources */,
+				CDA29A211CBEB5FB00901CCF /* PlaybackSessionManagerProxy.mm in Sources */,
+				CDA29A2A1CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp in Sources */,
 				31D5929E166E060000E6BF02 /* WebPlugInClient.cpp in Sources */,
 				1A08FEE41D593E2A008BA8CB /* WebPluginInfoProvider.cpp in Sources */,
 				BC5744EF12638FB3006F0F12 /* WebPopupItem.cpp in Sources */,
@@ -10424,10 +10424,10 @@
 				7C361D78192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp in Sources */,
 				15739BBE1B42046600D258C1 /* WebUserMediaClient.cpp in Sources */,
 				83EE575B1DB7D61100C74C50 /* WebValidationMessageClient.cpp in Sources */,
-				52D5A1B71C574A0200DE34A3 /* WebVideoFullscreenManager.mm in Sources */,
-				3F418EF91887BD97002795FD /* WebVideoFullscreenManagerMessageReceiver.cpp in Sources */,
-				52D5A1B11C57496200DE34A3 /* WebVideoFullscreenManagerProxy.mm in Sources */,
-				3F418EFB1887BD97002795FD /* WebVideoFullscreenManagerProxyMessageReceiver.cpp in Sources */,
+				52D5A1B71C574A0200DE34A3 /* VideoFullscreenManager.mm in Sources */,
+				3F418EF91887BD97002795FD /* VideoFullscreenManagerMessageReceiver.cpp in Sources */,
+				52D5A1B11C57496200DE34A3 /* VideoFullscreenManagerProxy.mm in Sources */,
+				3F418EFB1887BD97002795FD /* VideoFullscreenManagerProxyMessageReceiver.cpp in Sources */,
 				2DFC7DBC1BCCC19500C1548C /* WebViewImpl.mm in Sources */,
 				C0337DD1127A2980008FF4F4 /* WebWheelEvent.cpp in Sources */,
 				868160D0187645570021E79D /* WindowServerConnection.mm in Sources */,

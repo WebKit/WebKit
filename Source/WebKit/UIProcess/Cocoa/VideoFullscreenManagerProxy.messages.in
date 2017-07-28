@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-messages -> WebVideoFullscreenManagerProxy {
+messages -> VideoFullscreenManagerProxy {
     SetHasVideo(uint64_t contextId, bool hasVideo)
     SetVideoDimensions(uint64_t contextId, WebCore::FloatSize videoDimensions)
     SetupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, WebCore::IntRect initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture)

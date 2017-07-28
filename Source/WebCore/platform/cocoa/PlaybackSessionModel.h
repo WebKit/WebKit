@@ -34,14 +34,14 @@
 namespace WebCore {
 
 class TimeRanges;
-class WebPlaybackSessionModelClient;
+class PlaybackSessionModelClient;
 struct MediaSelectionOption;
 
-class WebPlaybackSessionModel {
+class PlaybackSessionModel {
 public:
-    virtual ~WebPlaybackSessionModel() { };
-    virtual void addClient(WebPlaybackSessionModelClient&) = 0;
-    virtual void removeClient(WebPlaybackSessionModelClient&) = 0;
+    virtual ~PlaybackSessionModel() { };
+    virtual void addClient(PlaybackSessionModelClient&) = 0;
+    virtual void removeClient(PlaybackSessionModelClient&) = 0;
 
     virtual void play() = 0;
     virtual void pause() = 0;
@@ -83,9 +83,9 @@ public:
     virtual bool isMuted() const = 0;
 };
 
-class WebPlaybackSessionModelClient {
+class PlaybackSessionModelClient {
 public:
-    virtual ~WebPlaybackSessionModelClient() { };
+    virtual ~PlaybackSessionModelClient() { };
     virtual void durationChanged(double) { }
     virtual void currentTimeChanged(double /* currentTime */, double /* anchorTime */) { }
     virtual void bufferedTimeChanged(double) { }
@@ -97,7 +97,7 @@ public:
     virtual void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /* options */, uint64_t /* selectedIndex */) { }
     virtual void audioMediaSelectionIndexChanged(uint64_t) { }
     virtual void legibleMediaSelectionIndexChanged(uint64_t) { }
-    virtual void externalPlaybackChanged(bool /* enabled */, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) { }
+    virtual void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) { }
     virtual void wirelessVideoPlaybackDisabledChanged(bool) { }
     virtual void mutedChanged(bool) { }
 };

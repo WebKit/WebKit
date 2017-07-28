@@ -154,8 +154,8 @@ MESSAGE_RECEIVERS = \
     WebPasteboardProxy \
     WebPaymentCoordinator \
     WebPaymentCoordinatorProxy \
-    WebPlaybackSessionManager \
-    WebPlaybackSessionManagerProxy \
+    PlaybackSessionManager \
+    PlaybackSessionManagerProxy \
     WebProcess \
     WebProcessConnection \
     WebProcessPool \
@@ -168,8 +168,8 @@ MESSAGE_RECEIVERS = \
     WebSocketStream \
     WebUserContentController \
     WebUserContentControllerProxy \
-    WebVideoFullscreenManager \
-    WebVideoFullscreenManagerProxy \
+    VideoFullscreenManager \
+    VideoFullscreenManagerProxy \
 #
 
 SCRIPTS = \

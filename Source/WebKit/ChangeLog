@@ -1,3 +1,45 @@
+2017-07-28  Jeremy Jones  <jeremyj@apple.com>
+
+        Remove Web prefix from WebVideoFullscreen and WebPlaybackSession classes.
+        https://bugs.webkit.org/show_bug.cgi?id=174437
+
+        Reviewed by Darin Adler.
+
+        Remove redundant Web- prefix from classes in WebKit namespace.
+
+        * DerivedSources.make:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h: Renamed from Source/WebKit/UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h.
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in: Renamed from Source/WebKit/UIProcess/Cocoa/WebPlaybackSessionManagerProxy.messages.in.
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm: Added.
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h: Renamed from Source/WebKit/UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h.
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in: Renamed from Source/WebKit/UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in.
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm: Renamed from Source/WebKit/UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm.
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm: Removed.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateMediaTouchBar):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_weakPtrFactory):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::playbackSessionManager):
+        (WebKit::WebPageProxy::videoFullscreenManager):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::playbackSessionManager):
+        (WebKit::WebPage::videoFullscreenManager):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/cocoa/PlaybackSessionManager.h: Renamed from Source/WebKit/WebProcess/cocoa/WebPlaybackSessionManager.h.
+        * WebProcess/cocoa/PlaybackSessionManager.messages.in: Renamed from Source/WebKit/WebProcess/cocoa/WebPlaybackSessionManager.messages.in.
+        * WebProcess/cocoa/PlaybackSessionManager.mm: Added.
+        * WebProcess/cocoa/VideoFullscreenManager.h: Renamed from Source/WebKit/WebProcess/cocoa/WebVideoFullscreenManager.h.
+        (WebKit::VideoFullscreenInterfaceContext::create):
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in: Renamed from Source/WebKit/WebProcess/cocoa/WebVideoFullscreenManager.messages.in.
+        * WebProcess/cocoa/VideoFullscreenManager.mm: Renamed from Source/WebKit/WebProcess/cocoa/WebVideoFullscreenManager.mm.
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm: Removed.
+
 2017-07-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [CMake] Re-add the StorageProcess executable target

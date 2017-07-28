@@ -28,9 +28,9 @@
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #include "HTMLMediaElementEnums.h"
-#include "WebPlaybackSessionInterfaceMac.h"
-#include "WebPlaybackSessionModel.h"
-#include "WebVideoFullscreenModel.h"
+#include "PlaybackSessionInterfaceMac.h"
+#include "PlaybackSessionModel.h"
+#include "VideoFullscreenModel.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -41,31 +41,31 @@ OBJC_CLASS WebVideoFullscreenInterfaceMacObjC;
 namespace WebCore {
 class IntRect;
 class FloatSize;
-class WebPlaybackSessionInterfaceMac;
-class WebVideoFullscreenChangeObserver;
+class PlaybackSessionInterfaceMac;
+class VideoFullscreenChangeObserver;
 
-class WEBCORE_EXPORT WebVideoFullscreenInterfaceMac
-    : public WebVideoFullscreenModelClient
-    , private WebPlaybackSessionModelClient
-    , public RefCounted<WebVideoFullscreenInterfaceMac> {
+class WEBCORE_EXPORT VideoFullscreenInterfaceMac
+    : public VideoFullscreenModelClient
+    , private PlaybackSessionModelClient
+    , public RefCounted<VideoFullscreenInterfaceMac> {
 
 public:
-    static Ref<WebVideoFullscreenInterfaceMac> create(WebPlaybackSessionInterfaceMac& playbackSessionInterface)
+    static Ref<VideoFullscreenInterfaceMac> create(PlaybackSessionInterfaceMac& playbackSessionInterface)
     {
-        return adoptRef(*new WebVideoFullscreenInterfaceMac(playbackSessionInterface));
+        return adoptRef(*new VideoFullscreenInterfaceMac(playbackSessionInterface));
     }
-    virtual ~WebVideoFullscreenInterfaceMac();
-    WebVideoFullscreenModel* webVideoFullscreenModel() const { return m_videoFullscreenModel; }
-    WebPlaybackSessionModel* webPlaybackSessionModel() const { return m_playbackSessionInterface->webPlaybackSessionModel(); }
-    WEBCORE_EXPORT void setWebVideoFullscreenModel(WebVideoFullscreenModel*);
-    WebVideoFullscreenChangeObserver* webVideoFullscreenChangeObserver() const { return m_fullscreenChangeObserver; }
-    WEBCORE_EXPORT void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
+    virtual ~VideoFullscreenInterfaceMac();
+    VideoFullscreenModel* videoFullscreenModel() const { return m_videoFullscreenModel; }
+    PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
+    WEBCORE_EXPORT void setVideoFullscreenModel(VideoFullscreenModel*);
+    VideoFullscreenChangeObserver* videoFullscreenChangeObserver() const { return m_fullscreenChangeObserver; }
+    WEBCORE_EXPORT void setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver*);
 
-    // WebPlaybackSessionModelClient
+    // PlaybackSessionModelClient
     WEBCORE_EXPORT void rateChanged(bool isPlaying, float playbackRate) override;
-    WEBCORE_EXPORT void externalPlaybackChanged(bool  enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
+    WEBCORE_EXPORT void externalPlaybackChanged(bool  enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
 
-    // WebVideoFullscreenModelClient
+    // VideoFullscreenModelClient
     WEBCORE_EXPORT void hasVideoChanged(bool) final;
     WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) final;
 
@@ -93,10 +93,10 @@ public:
     WEBCORE_EXPORT WebVideoFullscreenInterfaceMacObjC *videoFullscreenInterfaceObjC();
 
 private:
-    WebVideoFullscreenInterfaceMac(WebPlaybackSessionInterfaceMac&);
-    Ref<WebPlaybackSessionInterfaceMac> m_playbackSessionInterface;
-    WebVideoFullscreenModel* m_videoFullscreenModel { nullptr };
-    WebVideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
+    VideoFullscreenInterfaceMac(PlaybackSessionInterfaceMac&);
+    Ref<PlaybackSessionInterfaceMac> m_playbackSessionInterface;
+    VideoFullscreenModel* m_videoFullscreenModel { nullptr };
+    VideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
     RetainPtr<WebVideoFullscreenInterfaceMacObjC> m_webVideoFullscreenInterfaceObjC;
 };

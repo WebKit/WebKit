@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-messages -> WebPlaybackSessionManagerProxy {
+messages -> PlaybackSessionManagerProxy {
     ResetMediaState(uint64_t contextId)
     CurrentTimeChanged(uint64_t contextId, double currentTime, double hostTime)
     BufferedTimeChanged(uint64_t contextId, double bufferedTime)

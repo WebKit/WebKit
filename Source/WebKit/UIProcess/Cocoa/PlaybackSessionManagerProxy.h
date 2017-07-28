@@ -31,8 +31,8 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/MediaSelectionOption.h>
 #include <WebCore/PlatformView.h>
+#include <WebCore/PlaybackSessionModel.h>
 #include <WebCore/TimeRanges.h>
-#include <WebCore/WebPlaybackSessionModel.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -40,35 +40,35 @@
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(IOS)
-#include <WebCore/WebPlaybackSessionInterfaceAVKit.h>
+#include <WebCore/PlaybackSessionInterfaceAVKit.h>
 #else
-#include <WebCore/WebPlaybackSessionInterfaceMac.h>
+#include <WebCore/PlaybackSessionInterfaceMac.h>
 #endif
 
 #if PLATFORM(IOS)
-typedef WebCore::WebPlaybackSessionInterfaceAVKit PlatformWebPlaybackSessionInterface;
+typedef WebCore::PlaybackSessionInterfaceAVKit PlatformPlaybackSessionInterface;
 #else
-typedef WebCore::WebPlaybackSessionInterfaceMac PlatformWebPlaybackSessionInterface;
+typedef WebCore::PlaybackSessionInterfaceMac PlatformPlaybackSessionInterface;
 #endif
 
 namespace WebKit {
 
 class WebPageProxy;
-class WebPlaybackSessionManagerProxy;
+class PlaybackSessionManagerProxy;
 
-class WebPlaybackSessionModelContext final: public RefCounted<WebPlaybackSessionModelContext>, public WebCore::WebPlaybackSessionModel  {
+class PlaybackSessionModelContext final: public RefCounted<PlaybackSessionModelContext>, public WebCore::PlaybackSessionModel  {
 public:
-    static Ref<WebPlaybackSessionModelContext> create(WebPlaybackSessionManagerProxy& manager, uint64_t contextId)
+    static Ref<PlaybackSessionModelContext> create(PlaybackSessionManagerProxy& manager, uint64_t contextId)
     {
-        return adoptRef(*new WebPlaybackSessionModelContext(manager, contextId));
+        return adoptRef(*new PlaybackSessionModelContext(manager, contextId));
     }
-    virtual ~WebPlaybackSessionModelContext() { }
+    virtual ~PlaybackSessionModelContext() { }
 
     void invalidate() { m_manager = nullptr; }
 
-    // WebPlaybackSessionModel
-    void addClient(WebCore::WebPlaybackSessionModelClient&) final;
-    void removeClient(WebCore::WebPlaybackSessionModelClient&)final;
+    // PlaybackSessionModel
+    void addClient(WebCore::PlaybackSessionModelClient&) final;
+    void removeClient(WebCore::PlaybackSessionModelClient&)final;
 
     void durationChanged(double);
     void currentTimeChanged(double);
@@ -81,20 +81,20 @@ public:
     void legibleMediaSelectionOptionsChanged(const Vector<WebCore::MediaSelectionOption>& options, uint64_t index);
     void audioMediaSelectionIndexChanged(uint64_t selectedIndex);
     void legibleMediaSelectionIndexChanged(uint64_t selectedIndex);
-    void externalPlaybackChanged(bool, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String&);
+    void externalPlaybackChanged(bool, PlaybackSessionModel::ExternalPlaybackTargetType, const String&);
     void wirelessVideoPlaybackDisabledChanged(bool);
     void mutedChanged(bool);
 
 private:
-    friend class WebVideoFullscreenModelContext;
+    friend class VideoFullscreenModelContext;
 
-    WebPlaybackSessionModelContext(WebPlaybackSessionManagerProxy& manager, uint64_t contextId)
+    PlaybackSessionModelContext(PlaybackSessionManagerProxy& manager, uint64_t contextId)
         : m_manager(&manager)
         , m_contextId(contextId)
     {
     }
 
-    // WebPlaybackSessionModel
+    // PlaybackSessionModel
     void play() final;
     void pause() final;
     void togglePlayState() final;
@@ -127,14 +127,14 @@ private:
     Vector<WebCore::MediaSelectionOption> legibleMediaSelectionOptions() const final { return m_legibleMediaSelectionOptions; }
     uint64_t legibleMediaSelectedIndex() const final { return m_legibleMediaSelectedIndex; }
     bool externalPlaybackEnabled() const final { return m_externalPlaybackEnabled; }
-    WebPlaybackSessionModel::ExternalPlaybackTargetType externalPlaybackTargetType() const final { return m_externalPlaybackTargetType; }
+    PlaybackSessionModel::ExternalPlaybackTargetType externalPlaybackTargetType() const final { return m_externalPlaybackTargetType; }
     String externalPlaybackLocalizedDeviceName() const final { return m_externalPlaybackLocalizedDeviceName; }
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
     bool isMuted() const final { return m_muted; }
 
-    WebPlaybackSessionManagerProxy* m_manager;
+    PlaybackSessionManagerProxy* m_manager;
     uint64_t m_contextId;
-    HashSet<WebCore::WebPlaybackSessionModelClient*> m_clients;
+    HashSet<WebCore::PlaybackSessionModelClient*> m_clients;
     double m_playbackStartedTime { 0 };
     bool m_playbackStartedTimeNeedsUpdate { false };
     double m_duration { 0 };
@@ -152,38 +152,38 @@ private:
     Vector<WebCore::MediaSelectionOption> m_legibleMediaSelectionOptions;
     uint64_t m_legibleMediaSelectedIndex { 0 };
     bool m_externalPlaybackEnabled { false };
-    WebPlaybackSessionModel::ExternalPlaybackTargetType m_externalPlaybackTargetType { WebPlaybackSessionModel::TargetTypeNone };
+    PlaybackSessionModel::ExternalPlaybackTargetType m_externalPlaybackTargetType { PlaybackSessionModel::TargetTypeNone };
     String m_externalPlaybackLocalizedDeviceName;
     bool m_wirelessVideoPlaybackDisabled { false };
     bool m_muted { false };
 };
 
-class WebPlaybackSessionManagerProxy : public RefCounted<WebPlaybackSessionManagerProxy>, private IPC::MessageReceiver {
+class PlaybackSessionManagerProxy : public RefCounted<PlaybackSessionManagerProxy>, private IPC::MessageReceiver {
 public:
-    static RefPtr<WebPlaybackSessionManagerProxy> create(WebPageProxy&);
-    virtual ~WebPlaybackSessionManagerProxy();
+    static RefPtr<PlaybackSessionManagerProxy> create(WebPageProxy&);
+    virtual ~PlaybackSessionManagerProxy();
 
     void invalidate();
 
-    PlatformWebPlaybackSessionInterface* controlsManagerInterface();
+    PlatformPlaybackSessionInterface* controlsManagerInterface();
     void requestControlledElementID();
 
 private:
-    friend class WebPlaybackSessionModelContext;
-    friend class WebVideoFullscreenManagerProxy;
+    friend class PlaybackSessionModelContext;
+    friend class VideoFullscreenManagerProxy;
 
-    explicit WebPlaybackSessionManagerProxy(WebPageProxy&);
+    explicit PlaybackSessionManagerProxy(WebPageProxy&);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    typedef std::tuple<RefPtr<WebPlaybackSessionModelContext>, RefPtr<PlatformWebPlaybackSessionInterface>> ModelInterfaceTuple;
+    typedef std::tuple<RefPtr<PlaybackSessionModelContext>, RefPtr<PlatformPlaybackSessionInterface>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(uint64_t contextId);
     ModelInterfaceTuple& ensureModelAndInterface(uint64_t contextId);
-    WebPlaybackSessionModelContext& ensureModel(uint64_t contextId);
-    PlatformWebPlaybackSessionInterface& ensureInterface(uint64_t contextId);
+    PlaybackSessionModelContext& ensureModel(uint64_t contextId);
+    PlatformPlaybackSessionInterface& ensureInterface(uint64_t contextId);
     void addClientForContext(uint64_t contextId);
     void removeClientForContext(uint64_t contextId);
 
-    // Messages from WebPlaybackSessionManager
+    // Messages from PlaybackSessionManager
     void setUpPlaybackControlsManagerWithID(uint64_t contextId);
     void clearPlaybackControlsManager();
     void resetMediaState(uint64_t contextId);
@@ -203,7 +203,7 @@ private:
     void handleControlledElementIDResponse(uint64_t, String) const;
     void mutedChanged(uint64_t contextId, bool muted);
 
-    // Messages to WebPlaybackSessionManager
+    // Messages to PlaybackSessionManager
     void play(uint64_t contextId);
     void pause(uint64_t contextId);
     void togglePlayState(uint64_t contextId);

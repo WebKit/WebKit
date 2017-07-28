@@ -37,9 +37,9 @@ namespace WebCore {
 
 class TimeRanges;
 
-class WebPlaybackSessionInterface {
+class PlaybackSessionInterface {
 public:
-    virtual ~WebPlaybackSessionInterface() { };
+    virtual ~PlaybackSessionInterface() { };
     virtual void resetMediaState() = 0;
 };
 

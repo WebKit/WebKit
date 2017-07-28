@@ -25,7 +25,7 @@
 
 
 #import "config.h"
-#import "WebPlaybackSessionInterfaceAVKit.h"
+#import "PlaybackSessionInterfaceAVKit.h"
 
 #if PLATFORM(IOS)
 #if HAVE(AVKIT)
@@ -33,9 +33,9 @@
 #import "AVKitSPI.h"
 #import "Logging.h"
 #import "MediaSelectionOption.h"
+#import "PlaybackSessionModel.h"
 #import "TimeRanges.h"
 #import "WebAVPlayerController.h"
-#import "WebPlaybackSessionModel.h"
 #import <AVFoundation/AVTime.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
@@ -48,7 +48,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 namespace WebCore {
 
-WebPlaybackSessionInterfaceAVKit::WebPlaybackSessionInterfaceAVKit(WebPlaybackSessionModel& model)
+PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionModel& model)
     : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))
     , m_playbackSessionModel(&model)
 {
@@ -68,7 +68,7 @@ WebPlaybackSessionInterfaceAVKit::WebPlaybackSessionInterfaceAVKit(WebPlaybackSe
     wirelessVideoPlaybackDisabledChanged(model.wirelessVideoPlaybackDisabled());
 }
 
-WebPlaybackSessionInterfaceAVKit::~WebPlaybackSessionInterfaceAVKit()
+PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
 {
     [m_playerController setPlaybackSessionInterface:nullptr];
     [m_playerController setExternalPlaybackActive:false];
@@ -76,12 +76,12 @@ WebPlaybackSessionInterfaceAVKit::~WebPlaybackSessionInterfaceAVKit()
     invalidate();
 }
 
-void WebPlaybackSessionInterfaceAVKit::resetMediaState()
+void PlaybackSessionInterfaceAVKit::resetMediaState()
 {
     [m_playerController resetMediaState];
 }
 
-void WebPlaybackSessionInterfaceAVKit::durationChanged(double duration)
+void PlaybackSessionInterfaceAVKit::durationChanged(double duration)
 {
     WebAVPlayerController* playerController = m_playerController.get();
 
@@ -97,7 +97,7 @@ void WebPlaybackSessionInterfaceAVKit::durationChanged(double duration)
     playerController.status = AVPlayerControllerStatusReadyToPlay;
 }
 
-void WebPlaybackSessionInterfaceAVKit::currentTimeChanged(double currentTime, double anchorTime)
+void PlaybackSessionInterfaceAVKit::currentTimeChanged(double currentTime, double anchorTime)
 {
     NSTimeInterval anchorTimeStamp = ![m_playerController rate] ? NAN : anchorTime;
     AVValueTiming *timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime
@@ -106,7 +106,7 @@ void WebPlaybackSessionInterfaceAVKit::currentTimeChanged(double currentTime, do
     [m_playerController setTiming:timing];
 }
 
-void WebPlaybackSessionInterfaceAVKit::bufferedTimeChanged(double bufferedTime)
+void PlaybackSessionInterfaceAVKit::bufferedTimeChanged(double bufferedTime)
 {
     WebAVPlayerController* playerController = m_playerController.get();
     double duration = playerController.contentDuration;
@@ -118,12 +118,12 @@ void WebPlaybackSessionInterfaceAVKit::bufferedTimeChanged(double bufferedTime)
     playerController.loadedTimeRanges = @[@0, @(normalizedBufferedTime)];
 }
 
-void WebPlaybackSessionInterfaceAVKit::rateChanged(bool isPlaying, float playbackRate)
+void PlaybackSessionInterfaceAVKit::rateChanged(bool isPlaying, float playbackRate)
 {
     [m_playerController setRate:isPlaying ? playbackRate : 0.];
 }
 
-void WebPlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
+void PlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
 {
     RetainPtr<NSMutableArray> seekableRanges = adoptNS([[NSMutableArray alloc] init]);
 
@@ -140,7 +140,7 @@ void WebPlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& t
     [m_playerController setLiveUpdateInterval:liveUpdateInterval];
 }
 
-void WebPlaybackSessionInterfaceAVKit::canPlayFastReverseChanged(bool canPlayFastReverse)
+void PlaybackSessionInterfaceAVKit::canPlayFastReverseChanged(bool canPlayFastReverse)
 {
     [m_playerController setCanScanBackward:canPlayFastReverse];
 }
@@ -156,7 +156,7 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelecti
     return webOptions;
 }
 
-void WebPlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+void PlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
     [m_playerController setAudioMediaSelectionOptions:webOptions.get()];
@@ -164,7 +164,7 @@ void WebPlaybackSessionInterfaceAVKit::audioMediaSelectionOptionsChanged(const V
         [m_playerController setCurrentAudioMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];
 }
 
-void WebPlaybackSessionInterfaceAVKit::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+void PlaybackSessionInterfaceAVKit::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     RetainPtr<NSMutableArray> webOptions = mediaSelectionOptions(options);
     [m_playerController setLegibleMediaSelectionOptions:webOptions.get()];
@@ -172,12 +172,12 @@ void WebPlaybackSessionInterfaceAVKit::legibleMediaSelectionOptionsChanged(const
         [m_playerController setCurrentLegibleMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];
 }
 
-void WebPlaybackSessionInterfaceAVKit::externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType targetType, const String& localizedDeviceName)
+void PlaybackSessionInterfaceAVKit::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, const String& localizedDeviceName)
 {
     AVPlayerControllerExternalPlaybackType externalPlaybackType = AVPlayerControllerExternalPlaybackTypeNone;
-    if (targetType == WebPlaybackSessionModel::TargetTypeAirPlay)
+    if (targetType == PlaybackSessionModel::TargetTypeAirPlay)
         externalPlaybackType = AVPlayerControllerExternalPlaybackTypeAirPlay;
-    else if (targetType == WebPlaybackSessionModel::TargetTypeTVOut)
+    else if (targetType == PlaybackSessionModel::TargetTypeTVOut)
         externalPlaybackType = AVPlayerControllerExternalPlaybackTypeTVOut;
 
     WebAVPlayerController* playerController = m_playerController.get();
@@ -186,17 +186,17 @@ void WebPlaybackSessionInterfaceAVKit::externalPlaybackChanged(bool enabled, Web
     playerController.externalPlaybackActive = enabled;
 }
 
-void WebPlaybackSessionInterfaceAVKit::wirelessVideoPlaybackDisabledChanged(bool disabled)
+void PlaybackSessionInterfaceAVKit::wirelessVideoPlaybackDisabledChanged(bool disabled)
 {
     [m_playerController setAllowsExternalPlayback:!disabled];
 }
 
-void WebPlaybackSessionInterfaceAVKit::mutedChanged(bool muted)
+void PlaybackSessionInterfaceAVKit::mutedChanged(bool muted)
 {
     [m_playerController setMuted:muted];
 }
 
-void WebPlaybackSessionInterfaceAVKit::invalidate()
+void PlaybackSessionInterfaceAVKit::invalidate()
 {
     if (!m_playbackSessionModel)
         return;

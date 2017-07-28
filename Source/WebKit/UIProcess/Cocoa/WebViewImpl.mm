@@ -41,6 +41,7 @@
 #import "PageClient.h"
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
+#import "PlaybackSessionManagerProxy.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
@@ -62,7 +63,6 @@
 #import "WebEventFactory.h"
 #import "WebInspectorProxy.h"
 #import "WebPageProxy.h"
-#import "WebPlaybackSessionManagerProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "_WKRemoteObjectRegistryInternal.h"
@@ -1170,8 +1170,8 @@ void WebViewImpl::updateMediaTouchBar()
         [m_playbackControlsManager setCanTogglePictureInPicture:YES];
     }
 
-    if (PlatformWebPlaybackSessionInterface* interface = m_page->playbackSessionManager()->controlsManagerInterface())
-        [m_playbackControlsManager setWebPlaybackSessionInterfaceMac:interface];
+    if (PlatformPlaybackSessionInterface* interface = m_page->playbackSessionManager()->controlsManagerInterface())
+        [m_playbackControlsManager setPlaybackSessionInterfaceMac:interface];
 
     [m_mediaTouchBarProvider setPlaybackControlsController:m_playbackControlsManager.get()];
     [m_mediaPlaybackControlsView setPlaybackControlsController:m_playbackControlsManager.get()];

@@ -218,10 +218,10 @@
 
 #if PLATFORM(COCOA)
 #include "PDFPlugin.h"
+#include "PlaybackSessionManager.h"
 #include "RemoteLayerTreeTransaction.h"
+#include "VideoFullscreenManager.h"
 #include "WKStringCF.h"
-#include "WebPlaybackSessionManager.h"
-#include "WebVideoFullscreenManager.h"
 #include <WebCore/LegacyWebArchive.h>
 #endif
 
@@ -3471,17 +3471,17 @@ RemoteWebInspectorUI* WebPage::remoteInspectorUI()
 }
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-WebPlaybackSessionManager& WebPage::playbackSessionManager()
+PlaybackSessionManager& WebPage::playbackSessionManager()
 {
     if (!m_playbackSessionManager)
-        m_playbackSessionManager = WebPlaybackSessionManager::create(*this);
+        m_playbackSessionManager = PlaybackSessionManager::create(*this);
     return *m_playbackSessionManager;
 }
 
-WebVideoFullscreenManager& WebPage::videoFullscreenManager()
+VideoFullscreenManager& WebPage::videoFullscreenManager()
 {
     if (!m_videoFullscreenManager)
-        m_videoFullscreenManager = WebVideoFullscreenManager::create(*this, playbackSessionManager());
+        m_videoFullscreenManager = VideoFullscreenManager::create(*this, playbackSessionManager());
     return *m_videoFullscreenManager;
 }
 #endif

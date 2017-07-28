@@ -28,8 +28,8 @@
 #import "AVKitSPI.h"
 
 namespace WebCore {
-class WebPlaybackSessionModel;
-class WebPlaybackSessionInterfaceAVKit;
+class PlaybackSessionModel;
+class PlaybackSessionInterfaceAVKit;
 }
 
 @interface WebAVMediaSelectionOption : NSObject
@@ -44,8 +44,8 @@ class WebPlaybackSessionInterfaceAVKit;
 }
 
 @property (retain) AVPlayerController* playerControllerProxy;
-@property (assign) WebCore::WebPlaybackSessionModel* delegate;
-@property (assign) WebCore::WebPlaybackSessionInterfaceAVKit* playbackSessionInterface;
+@property (assign) WebCore::PlaybackSessionModel* delegate;
+@property (assign) WebCore::PlaybackSessionInterfaceAVKit* playbackSessionInterface;
 
 @property (readonly) BOOL canScanForward;
 @property BOOL canScanBackward;

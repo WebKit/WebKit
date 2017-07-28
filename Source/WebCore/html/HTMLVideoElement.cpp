@@ -46,7 +46,7 @@
 #include "TextStream.h"
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-#include "WebVideoFullscreenModel.h"
+#include "VideoFullscreenModel.h"
 #endif
 
 namespace WebCore {

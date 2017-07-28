@@ -51,8 +51,8 @@
 #endif
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-#import <WebCore/WebPlaybackSessionInterfaceMac.h>
-#import <WebCore/WebPlaybackSessionModelMediaElement.h>
+#import <WebCore/PlaybackSessionInterfaceMac.h>
+#import <WebCore/PlaybackSessionModelMediaElement.h>
 #endif
 
 BOOL applicationIsTerminating = NO;

@@ -28,8 +28,8 @@
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #include "HTMLMediaElementEnums.h"
-#include "WebPlaybackSessionInterface.h"
-#include "WebPlaybackSessionModel.h"
+#include "PlaybackSessionInterface.h"
+#include "PlaybackSessionModel.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -38,21 +38,21 @@ OBJC_CLASS WebPlaybackControlsManager;
 
 namespace WebCore {
 class IntRect;
-class WebPlaybackSessionModel;
+class PlaybackSessionModel;
 
-class WEBCORE_EXPORT WebPlaybackSessionInterfaceMac final
-    : public WebPlaybackSessionInterface
-    , public WebPlaybackSessionModelClient
-    , public RefCounted<WebPlaybackSessionInterfaceMac> {
+class WEBCORE_EXPORT PlaybackSessionInterfaceMac final
+    : public PlaybackSessionInterface
+    , public PlaybackSessionModelClient
+    , public RefCounted<PlaybackSessionInterfaceMac> {
 public:
-    static Ref<WebPlaybackSessionInterfaceMac> create(WebPlaybackSessionModel&);
-    virtual ~WebPlaybackSessionInterfaceMac();
-    WebPlaybackSessionModel* webPlaybackSessionModel() const { return m_playbackSessionModel; }
+    static Ref<PlaybackSessionInterfaceMac> create(PlaybackSessionModel&);
+    virtual ~PlaybackSessionInterfaceMac();
+    PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionModel; }
 
-    // WebPlaybackSessionInterface
+    // PlaybackSessionInterface
     WEBCORE_EXPORT void resetMediaState() final { }
 
-    // WebPlaybackSessionModelClient
+    // PlaybackSessionModelClient
     WEBCORE_EXPORT void durationChanged(double) final;
     WEBCORE_EXPORT void currentTimeChanged(double /*currentTime*/, double /*anchorTime*/) final;
     WEBCORE_EXPORT void rateChanged(bool /*isPlaying*/, float /*playbackRate*/) final;
@@ -61,7 +61,7 @@ public:
     WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& /*options*/, uint64_t /*selectedIndex*/) final;
     WEBCORE_EXPORT void audioMediaSelectionIndexChanged(uint64_t) final;
     WEBCORE_EXPORT void legibleMediaSelectionIndexChanged(uint64_t) final;
-    WEBCORE_EXPORT void externalPlaybackChanged(bool /* enabled */, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) final;
+    WEBCORE_EXPORT void externalPlaybackChanged(bool /* enabled */, PlaybackSessionModel::ExternalPlaybackTargetType, const String& /* localizedDeviceName */) final;
 
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void ensureControlsManager();
@@ -73,8 +73,8 @@ public:
     WEBCORE_EXPORT void endScrubbing();
 
 private:
-    WebPlaybackSessionInterfaceMac(WebPlaybackSessionModel&);
-    WebPlaybackSessionModel* m_playbackSessionModel { nullptr };
+    PlaybackSessionInterfaceMac(PlaybackSessionModel&);
+    PlaybackSessionModel* m_playbackSessionModel { nullptr };
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebPlaybackControlsManager *m_playbackControlsManager  { nullptr };
 

@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WebPlaybackSessionInterfaceMac.h"
+#import "PlaybackSessionInterfaceMac.h"
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
@@ -32,9 +32,9 @@
 #import "IntRect.h"
 #import "MediaSelectionOption.h"
 #import "MediaTimeAVFoundation.h"
+#import "PlaybackSessionModel.h"
 #import "TimeRanges.h"
 #import "WebPlaybackControlsManager.h"
-#import "WebPlaybackSessionModel.h"
 #import <AVFoundation/AVTime.h>
 
 #import "CoreMediaSoftLink.h"
@@ -46,24 +46,24 @@ using namespace WebCore;
 
 namespace WebCore {
 
-Ref<WebPlaybackSessionInterfaceMac> WebPlaybackSessionInterfaceMac::create(WebPlaybackSessionModel& model)
+Ref<PlaybackSessionInterfaceMac> PlaybackSessionInterfaceMac::create(PlaybackSessionModel& model)
 {
-    auto interface = adoptRef(*new WebPlaybackSessionInterfaceMac(model));
+    auto interface = adoptRef(*new PlaybackSessionInterfaceMac(model));
     model.addClient(interface);
     return interface;
 }
 
-WebPlaybackSessionInterfaceMac::WebPlaybackSessionInterfaceMac(WebPlaybackSessionModel& model)
+PlaybackSessionInterfaceMac::PlaybackSessionInterfaceMac(PlaybackSessionModel& model)
     : m_playbackSessionModel(&model)
 {
 }
 
-WebPlaybackSessionInterfaceMac::~WebPlaybackSessionInterfaceMac()
+PlaybackSessionInterfaceMac::~PlaybackSessionInterfaceMac()
 {
     invalidate();
 }
 
-void WebPlaybackSessionInterfaceMac::durationChanged(double duration)
+void PlaybackSessionInterfaceMac::durationChanged(double duration)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
@@ -78,7 +78,7 @@ void WebPlaybackSessionInterfaceMac::durationChanged(double duration)
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::currentTimeChanged(double currentTime, double anchorTime)
+void PlaybackSessionInterfaceMac::currentTimeChanged(double currentTime, double anchorTime)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
@@ -89,7 +89,7 @@ void WebPlaybackSessionInterfaceMac::currentTimeChanged(double currentTime, doub
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackRate)
+void PlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackRate)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
@@ -102,17 +102,17 @@ void WebPlaybackSessionInterfaceMac::rateChanged(bool isPlaying, float playbackR
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::beginScrubbing()
+void PlaybackSessionInterfaceMac::beginScrubbing()
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], 0, false);
 #endif
-    webPlaybackSessionModel()->beginScrubbing();
+    playbackSessionModel()->beginScrubbing();
 }
 
-void WebPlaybackSessionInterfaceMac::endScrubbing()
+void PlaybackSessionInterfaceMac::endScrubbing()
 {
-    webPlaybackSessionModel()->endScrubbing();
+    playbackSessionModel()->endScrubbing();
 }
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -130,7 +130,7 @@ static RetainPtr<NSMutableArray> timeRangesToArray(const TimeRanges& timeRanges)
 }
 #endif
 
-void WebPlaybackSessionInterfaceMac::seekableRangesChanged(const TimeRanges& timeRanges, double, double)
+void PlaybackSessionInterfaceMac::seekableRangesChanged(const TimeRanges& timeRanges, double, double)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setSeekableTimeRanges:timeRangesToArray(timeRanges).get()];
@@ -139,7 +139,7 @@ void WebPlaybackSessionInterfaceMac::seekableRangesChanged(const TimeRanges& tim
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+void PlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setAudioMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
@@ -149,7 +149,7 @@ void WebPlaybackSessionInterfaceMac::audioMediaSelectionOptionsChanged(const Vec
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
+void PlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setLegibleMediaSelectionOptions:options withSelectedIndex:static_cast<NSUInteger>(selectedIndex)];
@@ -159,7 +159,7 @@ void WebPlaybackSessionInterfaceMac::legibleMediaSelectionOptionsChanged(const V
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::audioMediaSelectionIndexChanged(uint64_t selectedIndex)
+void PlaybackSessionInterfaceMac::audioMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setAudioMediaSelectionIndex:selectedIndex];
@@ -168,7 +168,7 @@ void WebPlaybackSessionInterfaceMac::audioMediaSelectionIndexChanged(uint64_t se
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::legibleMediaSelectionIndexChanged(uint64_t selectedIndex)
+void PlaybackSessionInterfaceMac::legibleMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setLegibleMediaSelectionIndex:selectedIndex];
@@ -177,7 +177,7 @@ void WebPlaybackSessionInterfaceMac::legibleMediaSelectionIndexChanged(uint64_t 
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType, const String&)
+void PlaybackSessionInterfaceMac::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String&)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     [playBackControlsManager() setCanTogglePictureInPicture:!enabled];
@@ -186,7 +186,7 @@ void WebPlaybackSessionInterfaceMac::externalPlaybackChanged(bool enabled, WebPl
 #endif
 }
 
-void WebPlaybackSessionInterfaceMac::invalidate()
+void PlaybackSessionInterfaceMac::invalidate()
 {
     if (!m_playbackSessionModel)
         return;
@@ -195,7 +195,7 @@ void WebPlaybackSessionInterfaceMac::invalidate()
     m_playbackSessionModel = nullptr;
 }
 
-void WebPlaybackSessionInterfaceMac::ensureControlsManager()
+void PlaybackSessionInterfaceMac::ensureControlsManager()
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     playBackControlsManager();
@@ -204,12 +204,12 @@ void WebPlaybackSessionInterfaceMac::ensureControlsManager()
 
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
-WebPlaybackControlsManager *WebPlaybackSessionInterfaceMac::playBackControlsManager()
+WebPlaybackControlsManager *PlaybackSessionInterfaceMac::playBackControlsManager()
 {
     return m_playbackControlsManager;
 }
 
-void WebPlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackControlsManager *manager)
+void PlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackControlsManager *manager)
 {
     m_playbackControlsManager = manager;
 
@@ -230,13 +230,13 @@ void WebPlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackContr
     [manager setLegibleMediaSelectionOptions:m_playbackSessionModel->legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->legibleMediaSelectedIndex())];
 }
 
-void WebPlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double currentTime, double anchorTime, double playbackRate, bool isPlaying)
+void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double currentTime, double anchorTime, double playbackRate, bool isPlaying)
 {
     WebPlaybackControlsManager *manager = playBackControlsManager();
     if (!manager)
         return;
 
-    WebPlaybackSessionModel *model = webPlaybackSessionModel();
+    PlaybackSessionModel *model = playbackSessionModel();
     if (!model)
         return;
 

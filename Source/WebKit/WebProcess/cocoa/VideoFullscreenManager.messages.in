@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-messages -> WebVideoFullscreenManager {
+messages -> VideoFullscreenManager {
     RequestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool finishedWithMedia)
     DidSetupFullscreen(uint64_t contextId)
     DidExitFullscreen(uint64_t contextId)

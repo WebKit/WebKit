@@ -126,12 +126,12 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "UIKitSPI.h"
+#import "VideoFullscreenManagerProxy.h"
 #import "WKContentViewInteraction.h"
 #import "WKPDFView.h"
 #import "WKPasswordView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
-#import "WebVideoFullscreenManagerProxy.h"
 #import "_WKWebViewPrintFormatter.h"
 #import <UIKit/UIApplication.h>
 #import <WebCore/CoreGraphicsSPI.h>
