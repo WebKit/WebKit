@@ -19,7 +19,9 @@ if (window.testRunner && window.accessibilityController) {
 
     inputFile.addEventListener("DOMActivate", function() { 
         debug("DOMActivate was called"); 
-        finishJSTest();
+        setTimeout(function() {
+            finishJSTest();
+        }, 10);
     });
 
     accessibilityController.accessibleElementById("filetype").press();

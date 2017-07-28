@@ -15,6 +15,8 @@
     description("This tests that the search field cancel button is exposed correctly.");
     
     if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+    
         var button = accessibilityController.accessibleElementById("search").childAtIndex(1);
         
         shouldBe("button.description", "'AXDescription: cancel'");
@@ -25,9 +27,11 @@
         shouldBe("document.getElementById('search').value", "'X'");
         
         button.press();
-        
-        // Search field has no value after press.
-        shouldBe("document.getElementById('search').value", "''");
+        setTimeout(function() {
+            // Search field has no value after press.
+            shouldBe("document.getElementById('search').value", "''");
+            finishJSTest();
+        }, 10);
     }
 </script>
 
