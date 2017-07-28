@@ -1267,4 +1267,8 @@
 #define HAVE_RSA_PSS 1
 #endif
 
+#if !OS(WINDOWS) && !OS(SOLARIS)
+#define HAVE_STACK_BOUNDS_FOR_NEW_THREAD 1
+#endif
+
 #endif /* WTF_Platform_h */

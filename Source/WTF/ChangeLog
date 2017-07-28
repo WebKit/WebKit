@@ -1,3 +1,56 @@
+2017-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Drop Thread initialization wait in some platforms by introducing StackBounds::newThreadStackBounds(PlatformThreadHandle&)
+        https://bugs.webkit.org/show_bug.cgi?id=174303
+
+        Reviewed by Mark Lam.
+
+        Currently, the caller thread of Thread::create() need to wait for completion of the initialization of the target thread.
+        This is because we need to initialize Thread::m_stack in the target thread. Before this patch, a target thread's
+        StackBounds can only be retrieved by the target thread itself. However, this potentially causes context-switching between
+        the caller and the target threads and hurts efficiency of creating threads.
+
+        Fortunately, in some platforms (including major platforms except for Windows), we can get StackBounds of a target
+        thread from a caller thread. This allows us to avoid waiting for completion of thread initialization.
+
+        In this patch, we introduce HAVE_STACK_BOUNDS_FOR_NEW_THREAD and StackBounds::newThreadStackBounds. When creating
+        a new thread, we will use StackBounds::newThreadStackBounds to get StackBounds if possible. As a result, we
+        do not need to wait for completion of thread initialization to ensure m_stack field of Thread is initialized.
+
+        While some documents claim that it is possible on Windows to get the StackBounds of another thread[1], the method relies on
+        undocumented Windows NT APIs (NtQueryInformationThread, NtReadVirtualMemory etc.). So in this patch, we just
+        use the conservative approach simply waiting for completion of thread initialization.
+
+        [1]: https://stackoverflow.com/questions/3918375/how-to-get-thread-stack-information-on-windows
+
+        * wtf/Platform.h:
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::newThreadStackBounds):
+        (WTF::StackBounds::currentThreadStackBoundsInternal):
+        (WTF::StackBounds::initialize): Deleted.
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::currentThreadStackBounds):
+        (WTF::StackBounds::StackBounds):
+        * wtf/Threading.cpp:
+        (WTF::Thread::NewThreadContext::NewThreadContext):
+        (WTF::Thread::entryPoint):
+        (WTF::Thread::create):
+        (WTF::Thread::initialize): Deleted.
+        * wtf/Threading.h:
+        * wtf/ThreadingPrimitives.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::initializeCurrentThreadEvenIfNonWTFCreated):
+        (WTF::wtfThreadEntryPoint):
+        (WTF::Thread::establishHandle):
+        (WTF::Thread::initializeCurrentThreadInternal):
+        (WTF::Thread::current):
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::initializeCurrentThreadEvenIfNonWTFCreated):
+        (WTF::Thread::initializeCurrentThreadInternal):
+        (WTF::Thread::current):
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform):
+
 2017-07-27  JF Bastien  <jfbastien@apple.com>
 
         Update lock benchmarks

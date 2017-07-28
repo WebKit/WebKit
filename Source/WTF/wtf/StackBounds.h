@@ -28,6 +28,7 @@
 #define StackBounds_h
 
 #include <algorithm>
+#include <wtf/ThreadingPrimitives.h>
 
 namespace WTF {
 
@@ -42,18 +43,15 @@ class StackBounds {
 public:
     static constexpr StackBounds emptyBounds() { return StackBounds(); }
 
+#if HAVE(STACK_BOUNDS_FOR_NEW_THREAD)
+    // This function is only effective for newly created threads. In some platform, it returns a bogus value for the main thread.
+    static StackBounds newThreadStackBounds(PlatformThreadHandle);
+#endif
     static StackBounds currentThreadStackBounds()
     {
-        StackBounds bounds;
-        bounds.initialize();
-        bounds.checkConsistency();
-        return bounds;
-    }
-
-    StackBounds(void* origin, void* end)
-        : m_origin(origin)
-        , m_bound(end)
-    {
+        auto result = currentThreadStackBoundsInternal();
+        result.checkConsistency();
+        return result;
     }
 
     void* origin() const
@@ -127,13 +125,19 @@ public:
     }
 
 private:
+    StackBounds(void* origin, void* end)
+        : m_origin(origin)
+        , m_bound(end)
+    {
+    }
+
     constexpr StackBounds()
         : m_origin(nullptr)
         , m_bound(nullptr)
     {
     }
 
-    WTF_EXPORT_PRIVATE void initialize();
+    WTF_EXPORT_PRIVATE static StackBounds currentThreadStackBoundsInternal();
 
     void checkConsistency() const
     {

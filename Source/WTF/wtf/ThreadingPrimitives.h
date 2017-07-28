@@ -46,9 +46,11 @@
 namespace WTF {
 
 #if USE(PTHREADS)
-typedef pthread_mutex_t PlatformMutex;
-typedef pthread_cond_t PlatformCondition;
+using PlatformThreadHandle = pthread_t;
+using PlatformMutex = pthread_mutex_t;
+using PlatformCondition = pthread_cond_t;
 #elif OS(WINDOWS)
+using PlatformThreadHandle = HANDLE;
 struct PlatformMutex {
     CRITICAL_SECTION m_internalMutex;
     size_t m_recursionCount;

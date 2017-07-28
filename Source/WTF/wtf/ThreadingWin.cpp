@@ -115,9 +115,8 @@ Thread::~Thread()
         CloseHandle(m_handle);
 }
 
-void Thread::initializeCurrentThreadEvenIfNonWTFCreated(Thread& thread)
+void Thread::initializeCurrentThreadEvenIfNonWTFCreated()
 {
-    thread.initialize();
 }
 
 // MS_VC_EXCEPTION, THREADNAME_INFO, and setThreadNameInternal all come from <http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx>.
@@ -132,7 +131,7 @@ typedef struct tagTHREADNAME_INFO {
 } THREADNAME_INFO;
 #pragma pack(pop)
 
-void Thread::initializeCurrentThreadInternal(Thread& thread, const char* szThreadName)
+void Thread::initializeCurrentThreadInternal(const char* szThreadName)
 {
 #if COMPILER(MINGW)
     // FIXME: Implement thread name setting with MingW.
@@ -149,7 +148,7 @@ void Thread::initializeCurrentThreadInternal(Thread& thread, const char* szThrea
     } __except (EXCEPTION_CONTINUE_EXECUTION) {
     }
 #endif
-    initializeCurrentThreadEvenIfNonWTFCreated(thread);
+    initializeCurrentThreadEvenIfNonWTFCreated();
 }
 
 void Thread::initializePlatformThreading()
@@ -257,8 +256,9 @@ Thread& Thread::current()
     RELEASE_ASSERT(isSuccessful);
 
     thread->establishPlatformSpecificHandle(handle, currentID());
+    thread->m_stack = StackBounds::currentThreadStackBounds();
     ThreadHolder::initialize(thread.get());
-    initializeCurrentThreadEvenIfNonWTFCreated(thread.get());
+    initializeCurrentThreadEvenIfNonWTFCreated();
     return thread.get();
 }
 

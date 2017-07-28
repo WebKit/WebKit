@@ -188,9 +188,8 @@ void Thread::initializePlatformThreading()
 #endif
 }
 
-void Thread::initializeCurrentThreadEvenIfNonWTFCreated(Thread& thread)
+void Thread::initializeCurrentThreadEvenIfNonWTFCreated()
 {
-    thread.initialize();
 #if !OS(DARWIN)
     sigset_t mask;
     sigemptyset(&mask);
@@ -199,13 +198,13 @@ void Thread::initializeCurrentThreadEvenIfNonWTFCreated(Thread& thread)
 #endif
 }
 
-static void* wtfThreadEntryPoint(void* data)
+static void* wtfThreadEntryPoint(void* context)
 {
-    Thread::entryPoint(reinterpret_cast<Thread::NewThreadContext*>(data));
+    Thread::entryPoint(reinterpret_cast<Thread::NewThreadContext*>(context));
     return nullptr;
 }
 
-bool Thread::establishHandle(NewThreadContext* data)
+bool Thread::establishHandle(NewThreadContext* context)
 {
     pthread_t threadHandle;
     pthread_attr_t attr;
@@ -213,17 +212,17 @@ bool Thread::establishHandle(NewThreadContext* data)
 #if HAVE(QOS_CLASSES)
     pthread_attr_set_qos_class_np(&attr, adjustedQOSClass(QOS_CLASS_USER_INITIATED), 0);
 #endif
-    int error = pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, data);
+    int error = pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, context);
     pthread_attr_destroy(&attr);
     if (error) {
-        LOG_ERROR("Failed to create pthread at entry point %p with data %p", wtfThreadEntryPoint, data);
+        LOG_ERROR("Failed to create pthread at entry point %p with context %p", wtfThreadEntryPoint, context);
         return false;
     }
     establishPlatformSpecificHandle(threadHandle);
     return true;
 }
 
-void Thread::initializeCurrentThreadInternal(Thread& thread, const char* threadName)
+void Thread::initializeCurrentThreadInternal(const char* threadName)
 {
 #if HAVE(PTHREAD_SETNAME_NP)
     pthread_setname_np(normalizeThreadName(threadName));
@@ -232,7 +231,7 @@ void Thread::initializeCurrentThreadInternal(Thread& thread, const char* threadN
 #else
     UNUSED_PARAM(threadName);
 #endif
-    initializeCurrentThreadEvenIfNonWTFCreated(thread);
+    initializeCurrentThreadEvenIfNonWTFCreated();
 }
 
 void Thread::changePriority(int delta)
@@ -295,8 +294,9 @@ Thread& Thread::current()
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
     Ref<Thread> thread = adoptRef(*new Thread());
     thread->establishPlatformSpecificHandle(pthread_self());
+    thread->m_stack = StackBounds::currentThreadStackBounds();
     ThreadHolder::initialize(thread.get());
-    initializeCurrentThreadEvenIfNonWTFCreated(thread.get());
+    initializeCurrentThreadEvenIfNonWTFCreated();
     return thread.get();
 }
 

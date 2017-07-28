@@ -114,8 +114,8 @@ public:
 
     // Called in the thread during initialization.
     // Helpful for platforms where the thread name must be set from within the thread.
-    static void initializeCurrentThreadInternal(Thread&, const char* threadName);
-    static void initializeCurrentThreadEvenIfNonWTFCreated(Thread&);
+    static void initializeCurrentThreadInternal(const char* threadName);
+    static void initializeCurrentThreadEvenIfNonWTFCreated();
     
     WTF_EXPORT_PRIVATE static const unsigned lockSpinLimit;
     WTF_EXPORT_PRIVATE static void yield();
@@ -146,19 +146,18 @@ public:
 #endif
 
     struct NewThreadContext;
-    static void entryPoint(NewThreadContext* data);
+    static void entryPoint(NewThreadContext*);
 protected:
     Thread();
 
     // Internal platform-specific Thread establishment implementation.
-    bool establishHandle(NewThreadContext* data);
+    bool establishHandle(NewThreadContext*);
 
 #if USE(PTHREADS)
     void establishPlatformSpecificHandle(pthread_t);
 #else
     void establishPlatformSpecificHandle(HANDLE, ThreadIdentifier);
 #endif
-    void initialize();
 
 #if USE(PTHREADS) && !OS(DARWIN)
     static void signalHandlerSuspendResume(int, siginfo_t*, void* ucontext);
