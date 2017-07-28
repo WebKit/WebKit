@@ -30,10 +30,6 @@ WebInspector.CSSStyleSheetTreeElement = class CSSStyleSheetTreeElement extends W
         console.assert(styleSheet instanceof WebInspector.CSSStyleSheet);
         console.assert(styleSheet.isInspectorStyleSheet());
 
-        const classNames = ["stylesheet", "stylesheet-icon"];
-        const title = WebInspector.UIString("Inspector Style Sheet");
-        const subtitle = null;
-        const hasChildren = false;
-        super(styleSheet, classNames, title, subtitle, styleSheet, hasChildren);
+        super(styleSheet, ["stylesheet", "stylesheet-icon"], WebInspector.UIString("Inspector Style Sheet"));
     }
 };

@@ -32,7 +32,8 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
         if (!className)
             className = WebInspector.BreakpointTreeElement.GenericLineIconStyleClassName;
 
-        super(["breakpoint", className], title, null, breakpoint, false);
+        const subtitle = null;
+        super(["breakpoint", className], title, subtitle, breakpoint);
 
         this._breakpoint = breakpoint;
         this._probeSet = null;

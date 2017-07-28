@@ -30,8 +30,8 @@ WebInspector.SearchResultTreeElement = class SearchResultTreeElement extends Web
         console.assert(representedObject instanceof WebInspector.DOMSearchMatchObject || representedObject instanceof WebInspector.SourceCodeSearchMatchObject);
 
         var title = WebInspector.SearchResultTreeElement.truncateAndHighlightTitle(representedObject.title, representedObject.searchTerm, representedObject.sourceCodeTextRange);
-
-        super(representedObject.className, title, null, representedObject, false);
+        const subtitle = null;
+        super(representedObject.className, title, subtitle, representedObject);
     }
 
     // Static

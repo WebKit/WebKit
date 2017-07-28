@@ -29,7 +29,8 @@ WebInspector.DOMNodeTreeElement = class DOMNodeTreeElement extends WebInspector.
     {
         console.assert(domNode instanceof WebInspector.DOMNode);
 
-        super("dom-node", domNode.displayName, null, domNode, true);
+        const subtitle = null;
+        super("dom-node", domNode.displayName, subtitle, domNode, {hasChildren: true});
 
         this.status = WebInspector.linkifyNodeReferenceElement(domNode, WebInspector.createGoToArrowButton());
     }

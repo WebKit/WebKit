@@ -37,7 +37,9 @@ WebInspector.IssueTreeElement = class IssueTreeElement extends WebInspector.Gene
             break;
         }
 
-        super([WebInspector.IssueTreeElement.StyleClassName, levelStyleClassName], null, null, issueMessage, false);
+        const title = null;
+        const subtitle = null;
+        super([WebInspector.IssueTreeElement.StyleClassName, levelStyleClassName], title, subtitle, issueMessage);
 
         this._issueMessage = issueMessage;
         this._updateTitles();

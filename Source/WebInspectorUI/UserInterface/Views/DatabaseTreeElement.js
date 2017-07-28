@@ -29,7 +29,8 @@ WebInspector.DatabaseTreeElement = class DatabaseTreeElement extends WebInspecto
     {
         console.assert(representedObject instanceof WebInspector.DatabaseObject);
 
-        super("database-icon", representedObject.name, null, representedObject, true);
+        const subtitle = null;
+        super("database-icon", representedObject.name, subtitle, representedObject, {hasChildren: true});
 
         this.hasChildren = false;
 

@@ -1,3 +1,39 @@
+2017-07-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Cleanup unused/invalid parameters for TreeElements
+        https://bugs.webkit.org/show_bug.cgi?id=173987
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TreeElement.js:
+        * UserInterface/Views/GeneralTreeElement.js:
+
+        * UserInterface/Views/ApplicationCacheFrameTreeElement.js:
+        * UserInterface/Views/BreakpointTreeElement.js:
+        * UserInterface/Views/CSSStyleSheetTreeElement.js:
+        * UserInterface/Views/CallFrameTreeElement.js:
+        * UserInterface/Views/ContentFlowTreeElement.js:
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        * UserInterface/Views/DatabaseTableTreeElement.js:
+        * UserInterface/Views/DatabaseTreeElement.js:
+        * UserInterface/Views/FolderTreeElement.js:
+        * UserInterface/Views/FolderizedTreeElement.js:
+        * UserInterface/Views/FrameTreeElement.js:
+        * UserInterface/Views/IndexedDatabaseObjectStoreIndexTreeElement.js:
+        * UserInterface/Views/IndexedDatabaseObjectStoreTreeElement.js:
+        * UserInterface/Views/IndexedDatabaseTreeElement.js:
+        * UserInterface/Views/IssueTreeElement.js:
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        * UserInterface/Views/ProfileNodeTreeElement.js:
+        * UserInterface/Views/ResourceTreeElement.js:
+        * UserInterface/Views/ScriptTreeElement.js:
+        * UserInterface/Views/SearchResultTreeElement.js:
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        * UserInterface/Views/SourceMapResourceTreeElement.js:
+        * UserInterface/Views/StorageTreeElement.js:
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        * UserInterface/Views/TypeTreeElement.js:
+
 2017-07-26  Devin Rousso  <drousso@apple.com>
 
         Uncaught Exception: undefined is not an object (evaluating 'this._memoryRow.value = Number.bytesToString(this._canvas.memoryCost)')

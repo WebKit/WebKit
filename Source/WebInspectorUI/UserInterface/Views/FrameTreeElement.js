@@ -25,11 +25,11 @@
 
 WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.ResourceTreeElement
 {
-    constructor(frame, representedObject)
+    constructor(frame)
     {
         console.assert(frame instanceof WebInspector.Frame);
 
-        super(frame.mainResource, representedObject || frame);
+        super(frame.mainResource, frame);
 
         this._frame = frame;
 

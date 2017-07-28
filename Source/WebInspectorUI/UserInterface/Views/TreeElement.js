@@ -28,12 +28,12 @@
 
 WebInspector.TreeElement = class TreeElement extends WebInspector.Object
 {
-    constructor(title, representedObject, hasChildren)
+    constructor(title, representedObject, options = {})
     {
         super();
 
         this._title = title;
-        this.representedObject = (representedObject || {});
+        this.representedObject = representedObject || {};
 
         if (this.representedObject.__treeElementIdentifier)
             this.identifier = this.representedObject.__treeElementIdentifier;
@@ -46,7 +46,7 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
         this._selectable = true;
         this.expanded = false;
         this.selected = false;
-        this.hasChildren = hasChildren;
+        this.hasChildren = options.hasChildren;
         this.children = [];
         this.treeOutline = null;
         this.parent = null;

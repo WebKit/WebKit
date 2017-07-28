@@ -31,7 +31,10 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
         console.assert(propertyPath instanceof WebInspector.PropertyPath);
         console.assert(!property || property instanceof WebInspector.PropertyDescriptor);
 
-        super(null, null, null, representedObject, false);
+        const classNames = null;
+        const title = null;
+        const subtitle = null;
+        super(classNames, title, subtitle, representedObject);
 
         this._property = property;
         this._propertyPath = propertyPath;

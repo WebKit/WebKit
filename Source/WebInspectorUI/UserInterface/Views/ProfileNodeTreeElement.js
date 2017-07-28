@@ -72,9 +72,7 @@ WebInspector.ProfileNodeTreeElement = class ProfileNodeTreeElement extends WebIn
         if (profileNode.functionName && profileNode.functionName.startsWith("on") && profileNode.functionName.length >= 5)
             className = WebInspector.CallFrameView.EventListenerIconStyleClassName;
 
-        var hasChildren = !!profileNode.childNodes.length;
-
-        super([className], title, subtitle, profileNode, hasChildren);
+        super([className], title, subtitle, profileNode, {hasChildren: !!profileNode.childNodes.length});
 
         this._profileNode = profileNode;
         this._delegate = delegate || null;

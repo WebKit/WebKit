@@ -27,7 +27,10 @@ WebInspector.TypeTreeElement = class TypeTreeElement extends WebInspector.Genera
 {
     constructor(name, structureDescription, isPrototype)
     {
-        super(null, null, null, structureDescription || null, false);
+        const classNames = null;
+        const title = null;
+        const subtitle = null;
+        super(classNames, title, subtitle, structureDescription || null);
 
         console.assert(!structureDescription || structureDescription instanceof WebInspector.StructureDescription);
 

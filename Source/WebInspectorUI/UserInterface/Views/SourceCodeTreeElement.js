@@ -25,11 +25,11 @@
 
 WebInspector.SourceCodeTreeElement = class SourceCodeTreeElement extends WebInspector.FolderizedTreeElement
 {
-    constructor(sourceCode, classNames, title, subtitle, representedObject, hasChildren)
+    constructor(sourceCode, classNames, title, subtitle, representedObject)
     {
         console.assert(sourceCode instanceof WebInspector.SourceCode);
 
-        super(classNames, title, subtitle, representedObject || sourceCode, hasChildren);
+        super(classNames, title, subtitle, representedObject || sourceCode);
 
         this._updateSourceCode(sourceCode);
     }

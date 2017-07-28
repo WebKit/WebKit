@@ -29,6 +29,7 @@ WebInspector.DatabaseTableTreeElement = class DatabaseTableTreeElement extends W
     {
         console.assert(representedObject instanceof WebInspector.DatabaseTableObject);
 
-        super("database-table-icon", representedObject.name, null, representedObject, false);
+        const subtitle = null;
+        super("database-table-icon", representedObject.name, subtitle, representedObject);
     }
 };

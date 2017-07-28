@@ -29,7 +29,9 @@ WebInspector.ApplicationCacheFrameTreeElement = class ApplicationCacheFrameTreeE
     {
         console.assert(representedObject instanceof WebInspector.ApplicationCacheFrame);
 
-        super("application-cache-frame", "", "", representedObject, false);
+        const title = null;
+        const subtitle = null;
+        super("application-cache-frame", title, subtitle, representedObject);
 
         this.updateTitles();
     }

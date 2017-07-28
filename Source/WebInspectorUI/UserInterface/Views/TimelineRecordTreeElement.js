@@ -55,7 +55,7 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
         let iconStyleClass = WebInspector.TimelineTabContentView.iconClassNameForRecord(timelineRecord);
         let title = WebInspector.TimelineTabContentView.displayNameForRecord(timelineRecord);
 
-        super([iconStyleClass], title, subtitle, representedObject || timelineRecord, false);
+        super([iconStyleClass], title, subtitle, representedObject || timelineRecord);
 
         this._record = timelineRecord;
         this._sourceCodeLocation = sourceCodeLocation;

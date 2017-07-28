@@ -31,8 +31,7 @@ WebInspector.FolderTreeElement = class FolderTreeElement extends WebInspector.Ge
 
         const classNames = [WebInspector.FolderTreeElement.FolderIconStyleClassName];
         const subtitle = null;
-        const hasChildren = true;
-        super(classNames, title, subtitle, representedObject, hasChildren);
+        super(classNames, title, subtitle, representedObject, {hasChildren: true});
     }
 };
 

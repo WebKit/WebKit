@@ -25,9 +25,9 @@
 
 WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInspector.GeneralTreeElement
 {
-    constructor(classNames, title, subtitle, representedObject, hasChildren)
+    constructor(classNames, title, subtitle, representedObject)
     {
-        super(classNames, title, subtitle, representedObject, hasChildren);
+        super(classNames, title, subtitle, representedObject);
 
         this.shouldRefreshChildren = true;
 

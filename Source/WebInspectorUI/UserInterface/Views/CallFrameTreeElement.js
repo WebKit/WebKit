@@ -31,8 +31,8 @@ WebInspector.CallFrameTreeElement = class CallFrameTreeElement extends WebInspec
 
         let className = WebInspector.CallFrameView.iconClassNameForCallFrame(callFrame);
         let title = callFrame.functionName || WebInspector.UIString("(anonymous function)");
-
-        super(["call-frame", className], title, null, callFrame, false);
+        const subtitle = null;
+        super(["call-frame", className], title, subtitle, callFrame);
 
         this._callFrame = callFrame;
         this._isActiveCallFrame = false;

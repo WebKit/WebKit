@@ -29,7 +29,9 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
     {
         console.assert(resource instanceof WebInspector.Resource);
 
-        super(resource, ["resource", WebInspector.ResourceTreeElement.ResourceIconStyleClassName, resource.type], "", "", representedObject || resource, false);
+        const title = null;
+        const subtitle = null;
+        super(resource, ["resource", WebInspector.ResourceTreeElement.ResourceIconStyleClassName, resource.type], title, subtitle, representedObject || resource);
 
         this._updateResource(resource);
     }

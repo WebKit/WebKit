@@ -25,7 +25,7 @@
 
 WebInspector.SourceMapResourceTreeElement = class SourceMapResourceTreeElement extends WebInspector.ResourceTreeElement
 {
-    constructor(sourceMapResource, representedObject)
+    constructor(sourceMapResource)
     {
         console.assert(sourceMapResource instanceof WebInspector.SourceMapResource);
 

@@ -25,9 +25,9 @@
 
 WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.TreeElement
 {
-    constructor(classNames, title, subtitle, representedObject, hasChildren)
+    constructor(classNames, title, subtitle, representedObject, options)
     {
-        super("", representedObject, hasChildren);
+        super("", representedObject, options);
 
         this.classNames = classNames;
 

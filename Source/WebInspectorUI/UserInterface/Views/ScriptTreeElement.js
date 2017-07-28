@@ -29,14 +29,16 @@ WebInspector.ScriptTreeElement = class ScriptTreeElement extends WebInspector.So
     {
         console.assert(script instanceof WebInspector.Script);
 
-        super(script, "script", null, null, script, false);
+        const title = null;
+        const subtitle = null;
+        super(script, "script", title, subtitle);
 
         this.mainTitle = script.displayName;
 
         if (script.url && !script.dynamicallyAddedScriptElement) {
             // Show the host as the subtitle if it is different from the main title.
-            var subtitle = WebInspector.displayNameForHost(script.urlComponents.host);
-            this.subtitle = this.mainTitle !== subtitle ? subtitle : null;
+            let host = WebInspector.displayNameForHost(script.urlComponents.host);
+            this.subtitle = this.mainTitle !== host ? host : null;
 
             this.tooltip = script.url;
 
