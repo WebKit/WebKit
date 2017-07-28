@@ -1,3 +1,39 @@
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219895. rdar://problem/33595450
+
+    2017-07-25  Keith Miller  <keith_miller@apple.com>
+
+            Remove Broken CompareEq constant folding phase.
+            https://bugs.webkit.org/show_bug.cgi?id=174846
+            <rdar://problem/32978808>
+
+            Reviewed by Saam Barati.
+
+            This bug happened when we would get code like the following:
+
+            a: JSConst(Undefined)
+            b: GetLocal(SomeObjectOrUndefined)
+            ...
+            c: CompareEq(Check:ObjectOrOther:b, Check:ObjectOrOther:a)
+
+            constant folding will turn this into:
+
+            a: JSConst(Undefined)
+            b: GetLocal(SomeObjectOrUndefined)
+            ...
+            c: CompareEq(Check:ObjectOrOther:b, Other:a)
+
+            But the SpeculativeJIT/FTL lowering will fail to check b
+            properly which leads to an assertion failure in the AI.
+
+            I'll follow up with a more robust fix later. For now, I'll remove the
+            case that generates the code. Removing the code appears to be perf
+            neutral.
+
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219633. rdar://problem/33465535

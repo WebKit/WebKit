@@ -135,10 +135,8 @@ private:
             }
 
             case CompareEq: {
-                if (!m_interpreter.needsTypeCheck(node->child1(), SpecOther))
-                    node->child1().setUseKind(OtherUse);
-                if (!m_interpreter.needsTypeCheck(node->child2(), SpecOther))
-                    node->child2().setUseKind(OtherUse);
+                // FIXME: We should add back the broken folding phase here for comparisions where we prove at least one side has type SpecOther.
+                // See: https://bugs.webkit.org/show_bug.cgi?id=174844
                 break;
             }
                 
