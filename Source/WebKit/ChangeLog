@@ -1,5 +1,22 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219987. rdar://problem/33595619
+
+    2017-07-27  Nan Wang  <n_wang@apple.com>
+
+            AX: A11Y: Zoom no longer follows keyboard insertion point in safari
+            https://bugs.webkit.org/show_bug.cgi?id=174869
+
+            Reviewed by David Kilzer.
+
+            There was a recent change by denying XPC services access by default.
+            In UAZoomChangeFocus we need to send message to HIServices, so let's
+            allow the connection to XPC services for that.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219973. rdar://problem/33595608
 
     2017-07-26  Tim Horton  <timothy_horton@apple.com>

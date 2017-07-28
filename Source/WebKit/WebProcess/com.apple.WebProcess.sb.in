@@ -192,6 +192,7 @@
     (xpc-service-name "com.apple.coremedia.videodecoder")
     (xpc-service-name "com.apple.coremedia.videoencoder")
     (xpc-service-name-regex #"\.apple-extension-service$")
+    (xpc-service-name "com.apple.hiservices-xpcservice")
 )
 #endif
 
