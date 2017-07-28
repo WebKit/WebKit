@@ -51,6 +51,7 @@ const ClassInfo JSPromisePrototype::s_info = { "PromisePrototype", &Base::s_info
 @begin promisePrototypeTable
   then         JSBuiltin            DontEnum|Function 2
   catch        JSBuiltin            DontEnum|Function 1
+  finally      JSBuiltin            DontEnum|Function 1
 @end
 */
 

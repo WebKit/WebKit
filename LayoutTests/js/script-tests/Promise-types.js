@@ -22,6 +22,9 @@ shouldBe("aPromise.then.length", "2");
 shouldBeDefined("aPromise.catch");
 shouldBeType("aPromise.catch", "Function");
 shouldBe("aPromise.catch.length", "1");
+shouldBeType("aPromise.finally", "Function");
+shouldBe("aPromise.finally.length", "1");
+
 
 debug("aPromise2 = Promise(...)")
 shouldThrow(`Promise(function(resolve, reject) { resolve(1); })`);

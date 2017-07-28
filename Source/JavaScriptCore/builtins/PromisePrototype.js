@@ -62,3 +62,72 @@ function then(onFulfilled, onRejected)
 
     return resultCapability.@promise;
 }
+
+function finally(onFinally)
+{
+    "use strict";
+
+    if (!@isPromise(this))
+        @throwTypeError("|this| is not a Promise");
+
+    const constructor = @speciesConstructor(this, @Promise);
+
+    @assert(@isConstructor(constructor));
+
+    let thenFinally;
+    let catchFinally;
+
+    if (typeof onFinally !== "function") {
+        thenFinally = onFinally;
+        catchFinally = onFinally;
+    } else {
+        thenFinally = @getThenFinally(onFinally, constructor);
+        catchFinally = @getCatchFinally(onFinally, constructor);
+    }
+
+    return this.then(thenFinally, catchFinally);
+}
+
+@globalPrivate
+function getThenFinally(onFinally, constructor)
+{
+    "use strict";
+
+    return function(value)
+    {
+        @assert(typeof onFinally === "function");
+        const result = onFinally();
+
+        @assert(@isConstructor(constructor));
+        const resultCapability = @newPromiseCapability(constructor);
+
+        resultCapability.@resolve.@call(@undefined, result);
+
+        const promise = resultCapability.@promise;
+        const valueThunk = function () { return value; };
+
+        return promise.then(valueThunk);
+    }
+}
+
+@globalPrivate
+function getCatchFinally(onFinally, constructor)
+{
+    "use strict";
+
+    return function(reason)
+    {
+        @assert(typeof onFinally === "function");
+        const result = onFinally();
+
+        @assert(@isConstructor(constructor));
+        const resultCapability = @newPromiseCapability(constructor);
+
+        resultCapability.@resolve.@call(@undefined, result);
+
+        const promise = resultCapability.@promise;
+        const thrower = function () { throw reason; };
+
+        return promise.then(thrower);
+    }
+}

@@ -15,6 +15,8 @@ PASS aPromise.then.length is 2
 PASS aPromise.catch is defined.
 PASS aPromise.catch is an instance of Function
 PASS aPromise.catch.length is 1
+PASS aPromise.finally is an instance of Function
+PASS aPromise.finally.length is 1
 aPromise2 = Promise(...)
 PASS Promise(function(resolve, reject) { resolve(1); }) threw exception TypeError: calling Promise constructor without new is invalid.
 
