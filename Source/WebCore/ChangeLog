@@ -1,5 +1,37 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219998. rdar://problem/33595610
+
+    2017-07-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS DnD] [WK1] Snapshots generated using -[DOMRange renderImageForcingBlackText:] are upside down
+            https://bugs.webkit.org/show_bug.cgi?id=174928
+            <rdar://problem/33584280>
+
+            Reviewed by Tim Horton.
+
+            Pulls the implementation of createDragImageForRange out into DragImageIOS, and use TextIndicator to generate a
+            snapshot instead of FrameSelection's snapshotting utilities. This makes snapshotting a DOMRange behave the same
+            way as snapshotting a dragged selection.
+
+            No way of testing TextIndicator-based snapshotting yet.
+
+            * platform/DragImage.cpp:
+
+            Guard createDragImageForRange for !PLATFORM(IOS).
+
+            * platform/ios/DragImageIOS.mm:
+            (WebCore::createDragImageForSelection):
+
+            Add a FIXME to point out that having an additional context flip inside the UIGraphicsImageRenderer block results
+            in an upside-down drag image being returned from createDragImageFromImage. This image is being flipped elsewhere
+            in drag initiation code, which eventually results in the correct orientation; we'll need further investigation
+            to remove this extraneous flip.
+
+            (WebCore::createDragImageForRange):
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219992. rdar://problem/33595621
 
     2017-07-27  Jeremy Jones  <jeremyj@apple.com>

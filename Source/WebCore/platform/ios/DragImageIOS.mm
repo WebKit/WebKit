@@ -210,6 +210,8 @@ DragImageRef createDragImageForSelection(Frame& frame, TextIndicatorData& indica
     RetainPtr<UIGraphicsImageRenderer> render = adoptNS([allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size()]);
     UIImage *finalImage = [render.get() imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContext context(rendererContext.CGContext);
+        // FIXME: The context flip here should not be necessary, and suggests that somewhere else in the regular
+        // drag initiation flow, we unnecessarily flip the graphics context.
         context.translate(0, imageRect.height());
         context.scale({ 1, -1 });
         context.drawImage(*image, imageRect);
@@ -222,6 +224,32 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
 {
     notImplemented();
     return image;
+}
+
+DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlackText)
+{
+    if (auto document = frame.document())
+        document->updateLayout();
+
+    if (range.collapsed())
+        return nil;
+
+    TextIndicatorOptions options = defaultSelectionDragImageTextIndicatorOptions;
+    if (!forceBlackText)
+        options |= TextIndicatorOptionRespectTextColor;
+
+    auto textIndicator = TextIndicator::createWithRange(range, options, TextIndicatorPresentationTransition::None);
+    if (!textIndicator || !textIndicator->contentImage())
+        return nil;
+
+    auto& image = *textIndicator->contentImage();
+    auto render = adoptNS([allocUIGraphicsImageRendererInstance() initWithSize:image.size()]);
+    UIImage *finalImage = [render.get() imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
+        GraphicsContext context(rendererContext.CGContext);
+        context.drawImage(image, FloatPoint());
+    }];
+
+    return finalImage.CGImage;
 }
 
 #else
@@ -244,6 +272,11 @@ RetainPtr<CGImageRef> scaleDragImage(RetainPtr<CGImageRef>, FloatSize)
 }
 
 RetainPtr<CGImageRef> createDragImageFromImage(Image*, ImageOrientationDescription)
+{
+    return nullptr;
+}
+
+DragImageRef createDragImageForRange(Frame&, Range&, bool)
 {
     return nullptr;
 }
