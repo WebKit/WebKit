@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "ResourceLoadStatisticsClassifier.h"
 #include "ResourceLoadStatisticsPersistentStorage.h"
+#include "WebsiteDataType.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
@@ -59,12 +60,14 @@ enum class ShouldClearFirst;
 class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     using UpdateCookiePartitioningForDomainsHandler = WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst)>;
-    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, UpdateCookiePartitioningForDomainsHandler&& updateCookiePartitioningForDomainsHandler = { })
+    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, UpdateCookiePartitioningForDomainsHandler&& updateCookiePartitioningForDomainsHandler = { })
     {
-        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(updateCookiePartitioningForDomainsHandler)));
+        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), WTFMove(updateCookiePartitioningForDomainsHandler)));
     }
 
     ~WebResourceLoadStatisticsStore();
+
+    static const OptionSet<WebsiteDataType>& monitoredDataTypes();
 
     bool isEmpty() const { return m_resourceStatisticsMap.isEmpty(); }
     WorkQueue& statisticsQueue() { return m_statisticsQueue.get(); }
@@ -98,8 +101,13 @@ public:
     void scheduleCookiePartitioningStateReset();
 
     void scheduleClearInMemory();
-    void scheduleClearInMemoryAndPersistent();
-    void scheduleClearInMemoryAndPersistent(std::chrono::system_clock::time_point modifiedSince);
+    
+    enum class ShouldGrandfather {
+        No,
+        Yes,
+    };
+    void scheduleClearInMemoryAndPersistent(ShouldGrandfather);
+    void scheduleClearInMemoryAndPersistent(std::chrono::system_clock::time_point modifiedSince, ShouldGrandfather);
 
     void setTimeToLiveUserInteraction(Seconds);
     void setTimeToLiveCookiePartitionFree(Seconds);
@@ -117,9 +125,12 @@ public:
     void mergeWithDataFromDecoder(WebCore::KeyedDecoder&);
     void clearInMemory();
     void grandfatherExistingWebsiteData();
-    
+
+    void setStatisticsTestingCallback(Function<void (const String&)>&& callback) { m_statisticsTestingCallback = WTFMove(callback); }
+    void logTestingEvent(const String&);
+
 private:
-    WebResourceLoadStatisticsStore(const String&, UpdateCookiePartitioningForDomainsHandler&&);
+    WebResourceLoadStatisticsStore(const String&, Function<void (const String&)>&& testingCallback, UpdateCookiePartitioningForDomainsHandler&&);
 
     void removeDataRecords();
 
@@ -177,6 +188,8 @@ private:
     Parameters m_parameters;
 
     bool m_dataRecordsBeingRemoved { false };
+
+    Function<void (const String&)> m_statisticsTestingCallback;
 };
 
 } // namespace WebKit
