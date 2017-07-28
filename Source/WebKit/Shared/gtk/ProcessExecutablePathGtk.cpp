@@ -84,9 +84,9 @@ String executablePathOfNetworkProcess()
     return findWebKitProcess("WebKitNetworkProcess");
 }
 
-String executablePathOfDatabaseProcess()
+String executablePathOfStorageProcess()
 {
-    return findWebKitProcess("WebKitDatabaseProcess");
+    return findWebKitProcess("WebKitStorageProcess");
 }
 
 } // namespace WebKit

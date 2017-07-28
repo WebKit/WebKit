@@ -51,7 +51,7 @@ public:
         Plugin64,
 #endif
         Network,
-        Database,
+        Storage,
     };
 
     struct LaunchOptions {

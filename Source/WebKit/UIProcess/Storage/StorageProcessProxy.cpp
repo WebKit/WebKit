@@ -66,7 +66,7 @@ StorageProcessProxy::~StorageProcessProxy()
 
 void StorageProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    launchOptions.processType = ProcessLauncher::ProcessType::Database;
+    launchOptions.processType = ProcessLauncher::ProcessType::Storage;
     ChildProcessProxy::getLaunchOptions(launchOptions);
 }
 
@@ -111,7 +111,7 @@ void StorageProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, Optio
     send(Messages::StorageProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, origins, callbackID), 0);
 }
 
-void StorageProcessProxy::getDatabaseProcessConnection(Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>&& reply)
+void StorageProcessProxy::getStorageProcessConnection(Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
 {
     m_pendingConnectionReplies.append(WTFMove(reply));
 
@@ -120,12 +120,12 @@ void StorageProcessProxy::getDatabaseProcessConnection(Ref<Messages::WebProcessP
         return;
     }
 
-    send(Messages::StorageProcess::CreateDatabaseToWebProcessConnection(), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::StorageProcess::CreateStorageToWebProcessConnection(), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void StorageProcessProxy::didClose(IPC::Connection&)
 {
-    // The database process must have crashed or exited, so send any pending sync replies we might have.
+    // The storage process must have crashed or exited, so send any pending sync replies we might have.
     while (!m_pendingConnectionReplies.isEmpty()) {
         auto reply = m_pendingConnectionReplies.takeFirst();
 
@@ -150,19 +150,19 @@ void StorageProcessProxy::didClose(IPC::Connection&)
         callback();
     m_pendingDeleteWebsiteDataForOriginsCallbacks.clear();
 
-    // Tell ProcessPool to forget about this database process. This may cause us to be deleted.
-    m_processPool->databaseProcessCrashed(this);
+    // Tell ProcessPool to forget about this storage process. This may cause us to be deleted.
+    m_processPool->storageProcessCrashed(this);
 }
 
 void StorageProcessProxy::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
 }
 
-void StorageProcessProxy::didCreateDatabaseToWebProcessConnection(const IPC::Attachment& connectionIdentifier)
+void StorageProcessProxy::didCreateStorageToWebProcessConnection(const IPC::Attachment& connectionIdentifier)
 {
     ASSERT(!m_pendingConnectionReplies.isEmpty());
 
-    RefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
+    RefPtr<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     reply->send(connectionIdentifier);
@@ -215,7 +215,7 @@ void StorageProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     }
 
     for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
-        send(Messages::StorageProcess::CreateDatabaseToWebProcessConnection(), 0);
+        send(Messages::StorageProcess::CreateStorageToWebProcessConnection(), 0);
     
     m_numPendingConnectionRequests = 0;
 }

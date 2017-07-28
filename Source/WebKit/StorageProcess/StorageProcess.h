@@ -61,7 +61,7 @@ public:
 
     WorkQueue& queue() { return m_queue.get(); }
 
-    void postDatabaseTask(CrossThreadTask&&);
+    void postStorageTask(CrossThreadTask&&);
 
 #if ENABLE(INDEXED_DATABASE)
     // WebCore::IDBServer::IDBBackingStoreFileHandler
@@ -90,7 +90,7 @@ private:
 
     // Message Handlers
     void initializeWebsiteDataStore(const StorageProcessCreationParameters&);
-    void createDatabaseToWebProcessConnection();
+    void createStorageToWebProcessConnection();
 
     void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID);
     void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
@@ -105,7 +105,7 @@ private:
 #endif
 
     // For execution on work queue thread only
-    void performNextDatabaseTask();
+    void performNextStorageTask();
     void ensurePathExists(const String&);
 
     Vector<RefPtr<StorageToWebProcessConnection>> m_databaseToWebProcessConnections;
@@ -119,8 +119,8 @@ private:
     HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
     HashMap<uint64_t, WTF::Function<void (SandboxExtension::HandleArray&&)>> m_sandboxExtensionForBlobsCompletionHandlers;
 
-    Deque<CrossThreadTask> m_databaseTasks;
-    Lock m_databaseTaskMutex;
+    Deque<CrossThreadTask> m_storageTasks;
+    Lock m_storageTaskMutex;
 };
 
 } // namespace WebKit

@@ -121,7 +121,7 @@ void StorageProcess::initializeWebsiteDataStore(const StorageProcessCreationPara
     addResult.iterator->value = parameters.indexedDatabaseDirectory;
     SandboxExtension::consumePermanently(parameters.indexedDatabaseDirectoryExtensionHandle);
 
-    postDatabaseTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.indexedDatabaseDirectory));
+    postStorageTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.indexedDatabaseDirectory));
 #endif
 }
 
@@ -133,39 +133,39 @@ void StorageProcess::ensurePathExists(const String& path)
         LOG_ERROR("Failed to make all directories for path '%s'", path.utf8().data());
 }
 
-void StorageProcess::postDatabaseTask(CrossThreadTask&& task)
+void StorageProcess::postStorageTask(CrossThreadTask&& task)
 {
     ASSERT(RunLoop::isMain());
 
-    LockHolder locker(m_databaseTaskMutex);
+    LockHolder locker(m_storageTaskMutex);
 
-    m_databaseTasks.append(WTFMove(task));
+    m_storageTasks.append(WTFMove(task));
 
     m_queue->dispatch([this] {
-        performNextDatabaseTask();
+        performNextStorageTask();
     });
 }
 
-void StorageProcess::performNextDatabaseTask()
+void StorageProcess::performNextStorageTask()
 {
     ASSERT(!RunLoop::isMain());
 
     CrossThreadTask task;
     {
-        LockHolder locker(m_databaseTaskMutex);
-        ASSERT(!m_databaseTasks.isEmpty());
-        task = m_databaseTasks.takeFirst();
+        LockHolder locker(m_storageTaskMutex);
+        ASSERT(!m_storageTasks.isEmpty());
+        task = m_storageTasks.takeFirst();
     }
 
     task.performTask();
 }
 
-void StorageProcess::createDatabaseToWebProcessConnection()
+void StorageProcess::createStorageToWebProcessConnection()
 {
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
     m_databaseToWebProcessConnections.append(StorageToWebProcessConnection::create(socketPair.server));
-    parentProcessConnection()->send(Messages::StorageProcessProxy::DidCreateDatabaseToWebProcessConnection(IPC::Attachment(socketPair.client)), 0);
+    parentProcessConnection()->send(Messages::StorageProcessProxy::DidCreateStorageToWebProcessConnection(IPC::Attachment(socketPair.client)), 0);
 #elif OS(DARWIN)
     // Create the listening port.
     mach_port_t listeningPort;
@@ -175,7 +175,7 @@ void StorageProcess::createDatabaseToWebProcessConnection()
     m_databaseToWebProcessConnections.append(StorageToWebProcessConnection::create(IPC::Connection::Identifier(listeningPort)));
 
     IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-    parentProcessConnection()->send(Messages::StorageProcessProxy::DidCreateDatabaseToWebProcessConnection(clientPort), 0);
+    parentProcessConnection()->send(Messages::StorageProcessProxy::DidCreateStorageToWebProcessConnection(clientPort), 0);
 #else
     notImplemented();
 #endif
@@ -196,7 +196,7 @@ void StorageProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteData
 
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases)) {
         // FIXME: Pick the right database store based on the session ID.
-        postDatabaseTask(CrossThreadTask([this, completionHandler = WTFMove(completionHandler), path = WTFMove(path)]() mutable {
+        postStorageTask(CrossThreadTask([this, completionHandler = WTFMove(completionHandler), path = WTFMove(path)]() mutable {
             RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), securityOrigins = indexedDatabaseOrigins(path)] {
                 WebsiteData websiteData;
                 for (const auto& securityOrigin : securityOrigins)

@@ -46,7 +46,7 @@ void StorageProcess::initializeProcess(const ChildProcessInitializationParameter
 
 void StorageProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Database Storage", "visible name of the database process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Storage", "visible name of the storage process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 }
 
