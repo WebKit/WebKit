@@ -1007,12 +1007,12 @@ sub get_function_line_ranges_for_cpp($$)
                 next;
             }
 
-            if ($1 eq "const") {
+            if ($1 eq "const" and !$in_parentheses) {
                 $potential_name .= " const";
                 next;
             }
 
-            if ($1 eq "volatile") {
+            if ($1 eq "volatile" and !$in_parentheses) {
                 $potential_name .= " volatile";
                 next;
             }
