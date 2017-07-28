@@ -192,17 +192,15 @@ void ObjectToStringAdaptiveStructureWatchpoint::install()
     m_key.object()->structure()->addTransitionWatchpoint(this);
 }
 
-void ObjectToStringAdaptiveStructureWatchpoint::fireInternal(const FireDetail& detail)
+void ObjectToStringAdaptiveStructureWatchpoint::fireInternal(const FireDetail&)
 {
+    if (!m_structureRareData->isLive())
+        return;
+
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
         install();
         return;
     }
-
-    StringPrintStream out;
-    out.print("ObjectToStringValue Adaptation of ", m_key, " failed: ", detail);
-
-    StringFireDetail stringDetail(out.toCString().data());
 
     m_structureRareData->clearObjectToStringValue();
 }
@@ -218,13 +216,8 @@ bool ObjectToStringAdaptiveInferredPropertyValueWatchpoint::isValid() const
     return m_structureRareData->isLive();
 }
 
-void ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire(const FireDetail& detail)
+void ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire(const FireDetail&)
 {
-    StringPrintStream out;
-    out.print("Adaptation of ", key(), " failed: ", detail);
-    
-    StringFireDetail stringDetail(out.toCString().data());
-    
     m_structureRareData->clearObjectToStringValue();
 }
 
