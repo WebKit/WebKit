@@ -108,7 +108,6 @@ void MediaDocumentParser::createDocumentStructure()
     m_mediaElement = videoElement.ptr();
     videoElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom());
     videoElement->setAttributeWithoutSynchronization(autoplayAttr, emptyAtom());
-    videoElement->setAttributeWithoutSynchronization(playsinlineAttr, emptyAtom());
     videoElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());
     if (auto* loader = document.loader())
         videoElement->setAttributeWithoutSynchronization(typeAttr, loader->responseMIMEType());
