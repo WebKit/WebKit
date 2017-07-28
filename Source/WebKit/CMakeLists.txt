@@ -866,6 +866,17 @@ if (WebKit2_NetworkProcess_OUTPUT_NAME)
     set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit2_NetworkProcess_OUTPUT_NAME})
 endif ()
 
+if (NOT "${PORT}" STREQUAL "Mac")
+    add_executable(StorageProcess ${StorageProcess_SOURCES})
+    add_webkit2_prefix_header(StorageProcess)
+    target_link_libraries(StorageProcess ${StorageProcess_LIBRARIES})
+    install(TARGETS StorageProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
+
+    if (WebKit2_StorageProcess_OUTPUT_NAME)
+        set_target_properties(StorageProcess PROPERTIES OUTPUT_NAME ${WebKit2_StorageProcess_OUTPUT_NAME})
+    endif ()
+endif ()
+
 if (ENABLE_PLUGIN_PROCESS AND NOT "${PORT}" STREQUAL "Mac")
     add_definitions(-DENABLE_PLUGIN_PROCESS=1)
     add_executable(PluginProcess ${PluginProcess_SOURCES})
