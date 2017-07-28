@@ -76,4 +76,13 @@ void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLScheme
 #endif
 }
 
+void WebURLSchemeHandlerCocoa::platformTaskCompleted(WebURLSchemeTask& task)
+{
+#if WK_API_ENABLED
+    m_apiTasks.remove(task.identifier());
+#else
+    UNUSED_PARAM(task);
+#endif
+}
+
 } // namespace WebKit

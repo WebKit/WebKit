@@ -27,6 +27,7 @@
 
 #include "WebURLSchemeTask.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -47,6 +48,8 @@ public:
 
     void startTask(WebPageProxy&, uint64_t taskIdentifier, const WebCore::ResourceRequest&);
     void stopTask(WebPageProxy&, uint64_t taskIdentifier);
+    void stopAllTasksForPage(WebPageProxy&);
+    void taskCompleted(WebURLSchemeTask&);
 
 protected:
     WebURLSchemeHandler();
@@ -54,10 +57,12 @@ protected:
 private:
     virtual void platformStartTask(WebPageProxy&, WebURLSchemeTask&) = 0;
     virtual void platformStopTask(WebPageProxy&, WebURLSchemeTask&) = 0;
+    virtual void platformTaskCompleted(WebURLSchemeTask&) = 0;
 
     uint64_t m_identifier;
 
     HashMap<uint64_t, Ref<WebURLSchemeTask>> m_tasks;
+    HashMap<uint64_t, HashSet<uint64_t>> m_tasksByPageIdentifier;
 
 }; // class WebURLSchemeHandler
 
