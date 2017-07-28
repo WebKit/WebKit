@@ -1,3 +1,28 @@
+2017-07-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ASSERTION FAILED: candidate->op() == PhantomCreateRest || candidate->op() == PhantomDirectArguments || candidate->op() == PhantomClonedArguments || candidate->op() == PhantomSpread || candidate->op() == PhantomNewArrayWithSpread
+        https://bugs.webkit.org/show_bug.cgi?id=174900
+
+        Reviewed by Saam Barati.
+
+        In the arguments elimination phase, due to high cost of AI, we intentionally do not run AI.
+        Instead, we use ForceOSRExit etc. (pseudo terminals) not to look into unreachable nodes.
+        The problem is that even transforming phase also checks this pseudo terminals.
+
+            BB1
+            1: ForceOSRExit
+            2: CreateDirectArguments
+
+            BB2
+            3: GetButterfly(@2)
+            4: ForceOSRExit
+
+        In the above case, @2 is not converted to PhantomDirectArguments. But @3 is processed. And the assertion fires.
+
+        In this patch, we do not list candidates up after seeing pseudo terminals in basic blocks.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2017-07-27  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         [ES] Add support finally to Promise

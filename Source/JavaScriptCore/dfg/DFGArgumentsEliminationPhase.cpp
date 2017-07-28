@@ -152,6 +152,8 @@ private:
                 default:
                     break;
                 }
+                if (node->isPseudoTerminal())
+                    break;
             }
         }
         
