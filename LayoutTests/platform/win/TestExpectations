@@ -4062,3 +4062,4 @@ webkit.org/b/174801 fast/text/line-height-minimumFontSize.html [ Failure ]
 
 webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Timeout ]
 
+imported/w3c/web-platform-tests/cors/allow-headers.htm [ Slow ]
