@@ -1,5 +1,14 @@
 2017-07-28  Matt Lewis  <jlewis3@apple.com>
 
+        Marked fast/images/pdf-as-image-with-annotations.html as image failure.
+        <rdar://problem/33550614>
+
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra/TestExpectations:
+
+2017-07-28  Matt Lewis  <jlewis3@apple.com>
+
         Marked multiple iimported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ as failing.
         <rdar://problem/33548297>
 
