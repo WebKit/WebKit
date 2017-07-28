@@ -1,5 +1,32 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219992. rdar://problem/33595621
+
+    2017-07-27  Jeremy Jones  <jeremyj@apple.com>
+
+            Don't override _allowsMediaDocumentInlinePlayback in MediaDocument with playsinlineAttr.
+            https://bugs.webkit.org/show_bug.cgi?id=174850
+            rdar://problem/33449903
+
+            Reviewed by Jon Lee.
+
+            This change removes playsinlineAttr from MediaDocument so that it doesn't override the setting
+            from _allowsMediaDocumentInlinePlayback. In its place is an update to requiresFullscreenForVideoPlayback
+            that implements the details of exactly which media documents are still allowed to play inlne.
+
+            Media documents always use a video element; but when there are no video tracks, it has behavior like
+            an audio element. See media-controller.js isAudio().
+
+            This change preserves this behavior with respect to fullscreen requirements for media document by
+            mirroring the isAudio() check in requiresFullscreenForVideoPlayback.
+
+            * html/MediaDocument.cpp:
+            (WebCore::MediaDocumentParser::createDocumentStructure):
+            * html/MediaElementSession.cpp:
+            (WebCore::MediaElementSession::requiresFullscreenForVideoPlayback):
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219991. rdar://problem/33595570
 
     2017-07-27  Jeremy Jones  <jeremyj@apple.com>

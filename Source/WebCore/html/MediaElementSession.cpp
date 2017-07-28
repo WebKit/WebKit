@@ -560,6 +560,13 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElem
     if (is<HTMLAudioElement>(element))
         return false;
 
+    if (element.document().isMediaDocument()) {
+        ASSERT(is<HTMLVideoElement>(element));
+        const HTMLVideoElement& videoElement = *downcast<const HTMLVideoElement>(&element);
+        if (element.readyState() < HTMLVideoElement::HAVE_METADATA || !videoElement.hasEverHadVideo())
+            return false;
+    }
+
     if (element.isTemporarilyAllowingInlinePlaybackAfterFullscreen())
         return false;
 
@@ -575,6 +582,10 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElem
     if (dyld_get_program_sdk_version() < DYLD_IOS_VERSION_10_0)
         return !element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr);
 #endif
+
+    if (element.document().isMediaDocument() && element.document().ownerElement())
+        return false;
+
     return !element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
 }
 
