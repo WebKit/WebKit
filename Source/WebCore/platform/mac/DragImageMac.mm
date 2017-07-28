@@ -287,6 +287,11 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     currentY += linkImagePadding;
 
     boundingRect = FloatRect(0, 0, maximumUsedTextWidth + linkImagePadding * 2, currentY);
+
+    // To work around blurry drag images on 1x displays, make the width and height a multiple of 2.
+    // FIXME: remove this workaround when <rdar://problem/33059739> is fixed.
+    boundingRect.setWidth((static_cast<int>(boundingRect.width()) / 2) * 2);
+    boundingRect.setHeight((static_cast<int>(boundingRect.height() / 2) * 2));
 }
 
 DragImageRef createDragImageForLink(Element&, URL& url, const String& title, TextIndicatorData&, FontRenderingMode, float)
