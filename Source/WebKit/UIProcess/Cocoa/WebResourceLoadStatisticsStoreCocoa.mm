@@ -26,10 +26,6 @@
 #include "config.h"
 #import "WebResourceLoadStatisticsStore.h"
 
-#import "WebPreferencesKeys.h"
-
-using namespace WebCore;
-
 namespace WebKit {
 
 void WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded()
@@ -37,20 +33,21 @@ void WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded()
     static dispatch_once_t initOnce;
 
     dispatch_once(&initOnce, ^ {
-        const size_t hourInSeconds = 3600;
-        const size_t dayInSeconds = 24 * hourInSeconds;
+        Seconds timeToLiveUserInteraction([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsTimeToLiveUserInteraction"]);
+        if (timeToLiveUserInteraction > 0_s && timeToLiveUserInteraction <= 24_h * 30)
+            setTimeToLiveUserInteraction(timeToLiveUserInteraction);
 
-        double timeToLiveUserInteraction = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveUserInteractionKey()];
-        if (timeToLiveUserInteraction > 0 && timeToLiveUserInteraction <= 30 * dayInSeconds)
-            setTimeToLiveUserInteraction(Seconds { timeToLiveUserInteraction });
+        Seconds timeToLiveCookiePartitionFree([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsTimeToLiveCookiePartitionFree"]);
+        if (timeToLiveCookiePartitionFree > 0_s && timeToLiveCookiePartitionFree <= 24_h)
+            setTimeToLiveCookiePartitionFree(timeToLiveCookiePartitionFree);
 
-        double timeToLiveCookiePartitionFree = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveCookiePartitionFreeKey()];
-        if (timeToLiveCookiePartitionFree > 0 && timeToLiveCookiePartitionFree <= dayInSeconds)
-            setTimeToLiveCookiePartitionFree(Seconds { timeToLiveCookiePartitionFree });
+        Seconds minimumTimeBetweenDataRecordsRemoval([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsMinimumTimeBetweenDataRecordsRemoval"]);
+        if (minimumTimeBetweenDataRecordsRemoval > 0_s && minimumTimeBetweenDataRecordsRemoval < 1_h)
+            setMinimumTimeBetweenDataRecordsRemoval(minimumTimeBetweenDataRecordsRemoval);
 
-        double grandfatheringTime = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsGrandfatheringTimeKey()];
-        if (grandfatheringTime > 0 && grandfatheringTime <= 7 * dayInSeconds)
-            setGrandfatheringTime(Seconds { grandfatheringTime });
+        Seconds grandfatheringTime([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsGrandfatheringTime"]);
+        if (grandfatheringTime > 0_s && grandfatheringTime <= 24_h * 7)
+            setGrandfatheringTime(grandfatheringTime);
     });
 }
 
