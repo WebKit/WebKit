@@ -134,3 +134,6 @@ imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html 
 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html [ Failure ]
 
+# <rdar://problem/33555052>
+imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Pass Crash ]
+
