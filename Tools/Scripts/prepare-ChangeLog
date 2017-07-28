@@ -1007,9 +1007,25 @@ sub get_function_line_ranges_for_cpp($$)
                 next;
             }
 
+            if ($1 eq "const") {
+                $potential_name .= " const";
+                next;
+            }
+
+            if ($1 eq "volatile") {
+                $potential_name .= " volatile";
+                next;
+            }
+
+            # C++ auto function() -> type
+            if ($1 eq ">") {
+                $skip_til_brace_or_semicolon = 1 unless ($in_parentheses || $in_braces);
+                next;
+            }
+
             # C++ constructor initializers
             if ($1 eq ":") {
-                  $skip_til_brace_or_semicolon = 1 unless ($in_parentheses || $in_braces);
+                $skip_til_brace_or_semicolon = 1 unless ($in_parentheses || $in_braces);
             }
 
             # Open brace.

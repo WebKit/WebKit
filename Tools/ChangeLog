@@ -1,3 +1,26 @@
+2017-07-28  JF Bastien  <jfbastien@apple.com>
+
+        Using "auto <function()> -> returnType" breaks prepare-ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=174930
+
+        Reviewed by Daniel Bates.
+
+        Teach prepare-ChangeLog about C++ auto arrow return, and while I'm
+        here also teach it about const and volatile overloads. I didn't do
+        reference and rvalue reference overloads because we don't really
+        use them, and the current parser throws away those characters and
+        it doesn't seem worth making it more complex.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_cpp):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests-expected.txt:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests.cpp:
+        (Foo::Arrow::arrow):
+        (Foo::Arrow::otherArrow):
+        (Foo::Arrow::otherArrow const):
+        (Foo::Arrow::otherArrow volatile):
+        (Foo::Arrow::otherArrow const volatile):
+
 2017-07-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Building with ENABLE_VIDEO=OFF fails

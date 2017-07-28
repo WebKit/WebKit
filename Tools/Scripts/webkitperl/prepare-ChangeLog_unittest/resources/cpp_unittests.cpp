@@ -391,3 +391,38 @@ class Class109 {
 void Class110<TemplateClass>::func36()
 {
 }
+
+namespace Foo {
+    class Arrow {
+    public:
+        typedef int MyType;
+        auto arrow(MyType a, MyType b) -> MyType
+        {
+            return 42;
+        }
+        MyType otherArrow(MyType a);
+        MyType otherArrow(MyType a) const;
+        MyType otherArrow(MyType a) volatile;
+        MyType otherArrow(MyType a) const volatile;
+    };
+
+    auto Arrow::otherArrow(MyType a) -> MyType
+    {
+        return 0xc0defefe;
+    }
+
+    auto Arrow::otherArrow(MyType a) const -> MyType
+    {
+        return 0xc0defefe;
+    }
+
+    auto Arrow::otherArrow(MyType a) volatile -> MyType
+    {
+        return 0xc0defefe;
+    }
+
+    auto Arrow::otherArrow(MyType a) const volatile -> MyType
+    {
+        return 0xc0defefe;
+    }
+}

@@ -221,6 +221,31 @@
       '391',
       '393',
       'Class110<TemplateClass>::func36'
+    ],
+    [
+      '399',
+      '402',
+      'Foo::Arrow::arrow'
+    ],
+    [
+      '409',
+      '412',
+      'Foo::Arrow::otherArrow'
+    ],
+    [
+      '414',
+      '417',
+      'Foo::Arrow::otherArrow const'
+    ],
+    [
+      '419',
+      '422',
+      'Foo::Arrow::otherArrow volatile'
+    ],
+    [
+      '424',
+      '427',
+      'Foo::Arrow::otherArrow const volatile'
     ]
   ]
 }
