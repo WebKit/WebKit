@@ -989,8 +989,9 @@ bool WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason(WebVideoFu
 
     if (webPlaybackSessionModel() && (reason == ExitFullScreenReason::DoneButtonTapped || reason == ExitFullScreenReason::RemoteControlStopEventReceived))
         webPlaybackSessionModel()->pause();
-    
-    m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, reason == ExitFullScreenReason::DoneButtonTapped);
+
+    BOOL finished = reason == ExitFullScreenReason::DoneButtonTapped || reason == ExitFullScreenReason::PinchGestureHandled;
+    m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, finished);
 
     if (!m_watchdogTimer.isActive())
         m_watchdogTimer.startOneShot(defaultWatchdogTimerInterval);
