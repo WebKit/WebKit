@@ -1,3 +1,12 @@
+2017-07-28  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION(r125147): Layout Test svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg is failing
+        https://bugs.webkit.org/show_bug.cgi?id=93589
+
+        Unreviewed test gardening, this test is also a flaky timeout on Windows.
+
+        * platform/win/TestExpectations:
+
 2017-07-28  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Implement EventSenderProxy in WTR
