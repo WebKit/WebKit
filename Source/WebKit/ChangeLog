@@ -1,5 +1,26 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219973. rdar://problem/33595608
+
+    2017-07-26  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r211160): Can't pinch to zoom unlocked encrypted PDFs in WKWebView
+            https://bugs.webkit.org/show_bug.cgi?id=174881
+            <rdar://problem/33556312>
+
+            Reviewed by Andy Estes.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _hidePasswordView]):
+            WKPasswordView saves and restores a bunch of scroll view properties, including
+            those relating to zoom limits. The restoration happens in -[WKPasswordView hide],
+            which is never called. Instead, the code added in r211160 just calls
+            removeFromSuperview after unlocking, never restoring the old zoom limits,
+            causing the then fully unlocked PDF to not be zoomable. Fix this by calling
+            -hide instead of -removeFromSuperview (which -hide also calls).
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219855. rdar://problem/33595427
 
     2017-07-24  Chris Dumez  <cdumez@apple.com>
