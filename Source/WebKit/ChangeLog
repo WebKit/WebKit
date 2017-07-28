@@ -1,3 +1,25 @@
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219855. rdar://problem/33595427
+
+    2017-07-24  Chris Dumez  <cdumez@apple.com>
+
+            [WK2][Cocoa] Allow overriding the ITP data removal internal using a default
+            https://bugs.webkit.org/show_bug.cgi?id=174802
+            <rdar://problem/33497898>
+
+            Reviewed by Sam Weinig.
+
+            Allow overriding the ITP data removal internal using a default to facilitate testing.
+            Can be used like so:
+            defaults write -g ResourceLoadStatisticsMinimumTimeBetweenDataRecordsRemoval 60
+
+            Will cause us to write every 60 seconds instead of 3600.
+
+            * Shared/WebPreferencesDefinitions.h:
+            * UIProcess/Cocoa/WebResourceLoadStatisticsStoreCocoa.mm:
+            (WebKit::WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded):
+
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219876. rdar://problem/33523847
