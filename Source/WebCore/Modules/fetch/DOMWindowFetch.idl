@@ -26,10 +26,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (FetchRequest or USVString) RequestInfo;
+
 [
     Conditional=FETCH_API,
     EnabledAtRuntime=FetchAPI,
 ] partial interface DOMWindow {
-    [JSBuiltin] Promise<Response> fetch(any input, optional RequestInit init);
-    [PrivateIdentifier, ImplementedAs=fetch] Promise<Response> fetchRequest(FetchRequest request);
+    [JSBuiltin] Promise<FetchResponse> fetch(RequestInfo input, optional FetchRequestInit init);
+    [PrivateIdentifier, ImplementedAs=fetch] Promise<FetchResponse> fetchRequest(FetchRequest request);
 };

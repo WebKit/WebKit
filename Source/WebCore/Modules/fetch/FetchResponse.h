@@ -31,6 +31,7 @@
 #if ENABLE(FETCH_API)
 
 #include "FetchBodyOwner.h"
+#include "FetchHeaders.h"
 #include "ResourceResponse.h"
 #include <runtime/TypedArrays.h>
 
@@ -47,6 +48,12 @@ class ReadableStreamSource;
 class FetchResponse final : public FetchBodyOwner {
 public:
     using Type = ResourceResponse::Type;
+
+    struct Init {
+        unsigned short status { 200 };
+        String statusText { ASCIILiteral("OK") };
+        std::optional<FetchHeaders::Init> headers;
+    };
 
     static Ref<FetchResponse> create(ScriptExecutionContext& context) { return adoptRef(*new FetchResponse(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
     static Ref<FetchResponse> error(ScriptExecutionContext&);

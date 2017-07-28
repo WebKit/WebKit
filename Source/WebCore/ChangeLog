@@ -1,3 +1,41 @@
+2017-07-28  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Split-up and cleanup Fetch IDL files in preparation for removing unnecessary js builtins
+        https://bugs.webkit.org/show_bug.cgi?id=174915
+
+        Reviewed by Alex Christensen.
+
+        - Split FetchRequest enums and Init dictionary out of FetchRequest so they
+          can be used from other files like WorkerGlobalScopeFetch and DOMWindowFetch.
+        - Add missing FetchResponseInit. Currently unused but will be in a subsequent patch.
+        - Add and update comments about missing properties and functions.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * Modules/fetch/DOMWindowFetch.idl:
+        * Modules/fetch/FetchBody.idl:
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchHeaders.h:
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/fetch/FetchReferrerPolicy.h: Added.
+        * Modules/fetch/FetchReferrerPolicy.idl: Added.
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchRequestCache.h: Added.
+        * Modules/fetch/FetchRequestCache.idl: Added.
+        * Modules/fetch/FetchRequestCredentials.h: Added.
+        * Modules/fetch/FetchRequestCredentials.idl: Added.
+        * Modules/fetch/FetchRequestInit.h: Added.
+        * Modules/fetch/FetchRequestInit.idl: Added.
+        * Modules/fetch/FetchRequestMode.h: Added.
+        * Modules/fetch/FetchRequestMode.idl: Added.
+        * Modules/fetch/FetchRequestRedirect.h: Added.
+        * Modules/fetch/FetchRequestRedirect.idl: Added.
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/WorkerGlobalScopeFetch.idl:
+
 2017-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r216944): Fallback fonts erroneously visible when the primary font is loading

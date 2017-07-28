@@ -26,6 +26,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) HeadersInit;
+
 [
     Conditional=FETCH_API,
     EnabledAtRuntime=FetchAPI,
@@ -36,14 +38,14 @@
     PrivateIdentifier,
     PublicIdentifier,
 ] interface FetchHeaders {
-    [MayThrowException] void append(DOMString name, DOMString value);
-    [MayThrowException, ImplementedAs=remove] void delete(DOMString name);
-    [MayThrowException] DOMString? get(DOMString name);
-    [MayThrowException] boolean has(DOMString name);
-    [MayThrowException] void set(DOMString name, DOMString value);
+    [MayThrowException] void append(ByteString name, ByteString value);
+    [MayThrowException, ImplementedAs=remove] void delete(ByteString name);
+    [MayThrowException] ByteString? get(ByteString name);
+    [MayThrowException] boolean has(ByteString name);
+    [MayThrowException] void set(ByteString name, ByteString value);
 
-    iterable<DOMString, DOMString>;
+    iterable<ByteString, ByteString>;
 
-    [ImplementedAs=append, MayThrowException, PrivateIdentifier] void appendFromJS(DOMString name, DOMString value);
+    [ImplementedAs=append, MayThrowException, PrivateIdentifier] void appendFromJS(ByteString name, ByteString value);
     [ImplementedAs=fill, PrivateIdentifier] void fillFromJS(FetchHeaders? headers);
 };

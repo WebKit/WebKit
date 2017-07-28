@@ -26,10 +26,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredirect" };
-
-typedef (ArrayBufferView or ArrayBuffer) BufferSource;
+// FIXME: Should include ReadableStream
 typedef (Blob or BufferSource or DOMFormData or URLSearchParams or USVString) BodyInit;
+typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) HeadersInit;
+
+enum FetchResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredirect" };
+
+dictionary FetchResponseInit {
+    unsigned short status = 200;
+    ByteString statusText = "OK";
+    HeadersInit headers;
+};
 
 [
     ActiveDOMObject,
@@ -39,23 +46,30 @@ typedef (Blob or BufferSource or DOMFormData or URLSearchParams or USVString) Bo
     Exposed=(Window,Worker),
     InterfaceName=Response,
     JSBuiltinConstructor,
+    // Constructor(optional BodyInit? body = null, optional FetchResponseInit init)
     PrivateIdentifier,
     PublicIdentifier,
 ] interface FetchResponse {
     [CallWith=ScriptExecutionContext, NewObject] static FetchResponse error();
-    [CallWith=ScriptExecutionContext, MayThrowException, NewObject] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
+    [CallWith=ScriptExecutionContext, MayThrowException, NewObject] static FetchResponse redirect(USVString url, optional unsigned short status = 302);
 
-    readonly attribute ResponseType type;
+    readonly attribute FetchResponseType type;
 
-    readonly attribute DOMString url;
+    readonly attribute USVString url;
     readonly attribute boolean redirected;
     readonly attribute unsigned short status;
     readonly attribute boolean ok;
-    readonly attribute DOMString statusText;
-    readonly attribute FetchHeaders headers; // FIXME: Add support for SameObject keyword; use it here.
-    [JSBuiltin] readonly attribute ReadableStream? body;
+    readonly attribute ByteString statusText;
+    readonly attribute FetchHeaders headers; // FIXME: Should be [SameObject].
+    // FIXME: Add support for trailers.
+    // readonly attribute Promise<Headers> trailer;
 
-    // Copy of FetchBody IDL as we want to implement some of these as built-ins.
+    [JSBuiltin] FetchResponse clone();
+
+
+    // FIXME: Copy of FetchBody IDL as we want to implement some of these as built-ins.
+    // This should be a FetchResponse implements FetchBody;
+    [JSBuiltin] readonly attribute ReadableStream? body;
     [JSBuiltin] readonly attribute boolean bodyUsed;
     [JSBuiltin] Promise<ArrayBuffer> arrayBuffer();
     [JSBuiltin] Promise<Blob> blob();
@@ -63,14 +77,10 @@ typedef (Blob or BufferSource or DOMFormData or URLSearchParams or USVString) Bo
     [JSBuiltin] Promise<any> json();
     [JSBuiltin] Promise<USVString> text();
 
-    [JSBuiltin] FetchResponse clone();
-
     [NewObject, PrivateIdentifier] FetchResponse cloneForJS();
-
     [Conditional=STREAMS_API, PrivateIdentifier] void startConsumingStream(unsigned short type);
     [Conditional=STREAMS_API, PrivateIdentifier] void consumeChunk(Uint8Array chunk);
     [Conditional=STREAMS_API, PrivateIdentifier] Promise<any> finishConsumingStream();
-
     [PrivateIdentifier] Promise<any> consume(unsigned short type);
     [PrivateIdentifier] boolean isLoading();
     [MayThrowException, PrivateIdentifier] void setStatus(unsigned short status, DOMString statusText);

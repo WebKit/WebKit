@@ -3269,6 +3269,24 @@
 		7CD494CC1A86EB1D000A87EC /* RenderAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD494CA1A86EB1D000A87EC /* RenderAttachment.cpp */; };
 		7CD494CD1A86EB1D000A87EC /* RenderAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD494CB1A86EB1D000A87EC /* RenderAttachment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CDE8EBE1F193BCB00168FE7 /* CSSStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CDE8EBC1F193BC500168FE7 /* CSSStyleDeclaration.cpp */; };
+		7CE1914A1F2A98B900272F78 /* FetchRequestInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191471F2A98AF00272F78 /* FetchRequestInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CE1914D1F2A9AFB00272F78 /* FetchReferrerPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE1914B1F2A9AFB00272F78 /* FetchReferrerPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CE191511F2A9B0A00272F78 /* FetchRequestMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE1914F1F2A9B0A00272F78 /* FetchRequestMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CE191551F2A9B1D00272F78 /* FetchRequestCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191531F2A9B1D00272F78 /* FetchRequestCredentials.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CE1915A1F2A9B3400272F78 /* FetchRequestCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191571F2A9B3400272F78 /* FetchRequestCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CE191601F2A9B4F00272F78 /* FetchRequestRedirect.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE1915D1F2A9B4F00272F78 /* FetchRequestRedirect.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CE191701F2ABE7100272F78 /* JSFetchReferrerPolicy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE191671F2AB70100272F78 /* JSFetchReferrerPolicy.cpp */; };
+		7CE191711F2ABE7100272F78 /* JSFetchReferrerPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191681F2AB70300272F78 /* JSFetchReferrerPolicy.h */; };
+		7CE191721F2ABE7100272F78 /* JSFetchRequestCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE1916E1F2AB70D00272F78 /* JSFetchRequestCache.cpp */; };
+		7CE191731F2ABE7100272F78 /* JSFetchRequestCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191641F2AB6FB00272F78 /* JSFetchRequestCache.h */; };
+		7CE191741F2ABE7100272F78 /* JSFetchRequestCredentials.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE1916B1F2AB70800272F78 /* JSFetchRequestCredentials.cpp */; };
+		7CE191751F2ABE7100272F78 /* JSFetchRequestCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191661F2AB6FF00272F78 /* JSFetchRequestCredentials.h */; };
+		7CE191761F2ABE7100272F78 /* JSFetchRequestInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE1916D1F2AB70C00272F78 /* JSFetchRequestInit.cpp */; };
+		7CE191771F2ABE7100272F78 /* JSFetchRequestInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191691F2AB70500272F78 /* JSFetchRequestInit.h */; };
+		7CE191781F2ABE7100272F78 /* JSFetchRequestMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE191651F2AB6FD00272F78 /* JSFetchRequestMode.cpp */; };
+		7CE191791F2ABE7100272F78 /* JSFetchRequestMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE1916C1F2AB70A00272F78 /* JSFetchRequestMode.h */; };
+		7CE1917A1F2ABE7100272F78 /* JSFetchRequestRedirect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE1916F1F2AB70F00272F78 /* JSFetchRequestRedirect.cpp */; };
+		7CE1917B1F2ABE7100272F78 /* JSFetchRequestRedirect.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE1916A1F2AB70600272F78 /* JSFetchRequestRedirect.h */; };
 		7CE58D4A1DD64A5B00128552 /* SVGPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE58D491DD64A5B00128552 /* SVGPoint.h */; };
 		7CE58D4E1DD694FE00128552 /* SVGRectTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE58D4D1DD694FE00128552 /* SVGRectTraits.h */; };
 		7CE58D501DD69A1E00128552 /* SVGNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE58D4F1DD69A1E00128552 /* SVGNumber.h */; };
@@ -11307,6 +11325,30 @@
 		7CD494CA1A86EB1D000A87EC /* RenderAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderAttachment.cpp; sourceTree = "<group>"; };
 		7CD494CB1A86EB1D000A87EC /* RenderAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderAttachment.h; sourceTree = "<group>"; };
 		7CDE8EBC1F193BC500168FE7 /* CSSStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSStyleDeclaration.cpp; sourceTree = "<group>"; };
+		7CE191471F2A98AF00272F78 /* FetchRequestInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchRequestInit.h; sourceTree = "<group>"; };
+		7CE191491F2A98B000272F78 /* FetchRequestInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchRequestInit.idl; sourceTree = "<group>"; };
+		7CE1914B1F2A9AFB00272F78 /* FetchReferrerPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchReferrerPolicy.h; sourceTree = "<group>"; };
+		7CE1914C1F2A9AFB00272F78 /* FetchReferrerPolicy.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FetchReferrerPolicy.idl; sourceTree = "<group>"; };
+		7CE1914F1F2A9B0A00272F78 /* FetchRequestMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchRequestMode.h; sourceTree = "<group>"; };
+		7CE191501F2A9B0A00272F78 /* FetchRequestMode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FetchRequestMode.idl; sourceTree = "<group>"; };
+		7CE191531F2A9B1D00272F78 /* FetchRequestCredentials.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchRequestCredentials.h; sourceTree = "<group>"; };
+		7CE191541F2A9B1D00272F78 /* FetchRequestCredentials.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FetchRequestCredentials.idl; sourceTree = "<group>"; };
+		7CE191571F2A9B3400272F78 /* FetchRequestCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchRequestCache.h; sourceTree = "<group>"; };
+		7CE191591F2A9B3400272F78 /* FetchRequestCache.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FetchRequestCache.idl; sourceTree = "<group>"; };
+		7CE1915D1F2A9B4F00272F78 /* FetchRequestRedirect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchRequestRedirect.h; sourceTree = "<group>"; };
+		7CE1915F1F2A9B4F00272F78 /* FetchRequestRedirect.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FetchRequestRedirect.idl; sourceTree = "<group>"; };
+		7CE191641F2AB6FB00272F78 /* JSFetchRequestCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFetchRequestCache.h; sourceTree = "<group>"; };
+		7CE191651F2AB6FD00272F78 /* JSFetchRequestMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchRequestMode.cpp; sourceTree = "<group>"; };
+		7CE191661F2AB6FF00272F78 /* JSFetchRequestCredentials.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFetchRequestCredentials.h; sourceTree = "<group>"; };
+		7CE191671F2AB70100272F78 /* JSFetchReferrerPolicy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchReferrerPolicy.cpp; sourceTree = "<group>"; };
+		7CE191681F2AB70300272F78 /* JSFetchReferrerPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFetchReferrerPolicy.h; sourceTree = "<group>"; };
+		7CE191691F2AB70500272F78 /* JSFetchRequestInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFetchRequestInit.h; sourceTree = "<group>"; };
+		7CE1916A1F2AB70600272F78 /* JSFetchRequestRedirect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFetchRequestRedirect.h; sourceTree = "<group>"; };
+		7CE1916B1F2AB70800272F78 /* JSFetchRequestCredentials.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchRequestCredentials.cpp; sourceTree = "<group>"; };
+		7CE1916C1F2AB70A00272F78 /* JSFetchRequestMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFetchRequestMode.h; sourceTree = "<group>"; };
+		7CE1916D1F2AB70C00272F78 /* JSFetchRequestInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchRequestInit.cpp; sourceTree = "<group>"; };
+		7CE1916E1F2AB70D00272F78 /* JSFetchRequestCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchRequestCache.cpp; sourceTree = "<group>"; };
+		7CE1916F1F2AB70F00272F78 /* JSFetchRequestRedirect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchRequestRedirect.cpp; sourceTree = "<group>"; };
 		7CE58D491DD64A5B00128552 /* SVGPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPoint.h; sourceTree = "<group>"; };
 		7CE58D4D1DD694FE00128552 /* SVGRectTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGRectTraits.h; sourceTree = "<group>"; };
 		7CE58D4F1DD69A1E00128552 /* SVGNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGNumber.h; sourceTree = "<group>"; };
@@ -17773,6 +17815,18 @@
 				41F54F881C50C4F600338488 /* FetchRequest.h */,
 				41F54F891C50C4F600338488 /* FetchRequest.idl */,
 				412455331EF442C400F11809 /* FetchRequest.js */,
+				7CE1914B1F2A9AFB00272F78 /* FetchReferrerPolicy.h */,
+				7CE1914C1F2A9AFB00272F78 /* FetchReferrerPolicy.idl */,
+				7CE1914F1F2A9B0A00272F78 /* FetchRequestMode.h */,
+				7CE191501F2A9B0A00272F78 /* FetchRequestMode.idl */,
+				7CE191471F2A98AF00272F78 /* FetchRequestInit.h */,
+				7CE191491F2A98B000272F78 /* FetchRequestInit.idl */,
+				7CE191571F2A9B3400272F78 /* FetchRequestCache.h */,
+				7CE191591F2A9B3400272F78 /* FetchRequestCache.idl */,
+				7CE191531F2A9B1D00272F78 /* FetchRequestCredentials.h */,
+				7CE191541F2A9B1D00272F78 /* FetchRequestCredentials.idl */,
+				7CE1915D1F2A9B4F00272F78 /* FetchRequestRedirect.h */,
+				7CE1915F1F2A9B4F00272F78 /* FetchRequestRedirect.idl */,
 				413015D51C7B570400091C6E /* FetchResponse.cpp */,
 				413015D61C7B570400091C6E /* FetchResponse.h */,
 				413015D71C7B570400091C6E /* FetchResponse.idl */,
@@ -17794,8 +17848,20 @@
 				7F4C96D91AD4483500365A50 /* JSFetchBody.h */,
 				7D4C96D81AD4483500365A50 /* JSFetchHeaders.cpp */,
 				7D4C96D91AD4483500365A50 /* JSFetchHeaders.h */,
+				7CE191671F2AB70100272F78 /* JSFetchReferrerPolicy.cpp */,
+				7CE191681F2AB70300272F78 /* JSFetchReferrerPolicy.h */,
 				7E4C96D81AD4483500365A50 /* JSFetchRequest.cpp */,
 				7E4C96D91AD4483500365A50 /* JSFetchRequest.h */,
+				7CE1916E1F2AB70D00272F78 /* JSFetchRequestCache.cpp */,
+				7CE191641F2AB6FB00272F78 /* JSFetchRequestCache.h */,
+				7CE1916B1F2AB70800272F78 /* JSFetchRequestCredentials.cpp */,
+				7CE191661F2AB6FF00272F78 /* JSFetchRequestCredentials.h */,
+				7CE1916D1F2AB70C00272F78 /* JSFetchRequestInit.cpp */,
+				7CE191691F2AB70500272F78 /* JSFetchRequestInit.h */,
+				7CE191651F2AB6FD00272F78 /* JSFetchRequestMode.cpp */,
+				7CE1916C1F2AB70A00272F78 /* JSFetchRequestMode.h */,
+				7CE1916F1F2AB70F00272F78 /* JSFetchRequestRedirect.cpp */,
+				7CE1916A1F2AB70600272F78 /* JSFetchRequestRedirect.h */,
 				8E4C96D81AD4483500365A50 /* JSFetchResponse.cpp */,
 				8E4C96D91AD4483500365A50 /* JSFetchResponse.h */,
 				7E4C96D81AD4483500365A51 /* JSReadableStreamSource.cpp */,
@@ -26390,6 +26456,7 @@
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
 				319848011A1D817B00A13318 /* AnimationEvent.h in Headers */,
 				49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */,
+				7CE1914A1F2A98B900272F78 /* FetchRequestInit.h in Headers */,
 				31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
@@ -26465,6 +26532,7 @@
 				FDB052E01561A42C00B500D6 /* AudioSummingJunction.h in Headers */,
 				BE88E0D91715D2A200658D98 /* AudioTrack.h in Headers */,
 				BE88E0DC1715D2A200658D98 /* AudioTrackList.h in Headers */,
+				7CE1914D1F2A9AFB00272F78 /* FetchReferrerPolicy.h in Headers */,
 				CD8B5A4C180E17C0008B8E65 /* AudioTrackMediaSource.h in Headers */,
 				BEF29EEB1715DD0900C4B4C9 /* AudioTrackPrivate.h in Headers */,
 				CDE3A85417F5FCE600C5BE20 /* AudioTrackPrivateAVF.h in Headers */,
@@ -26662,6 +26730,7 @@
 				79F2F5A21091939A000D87CB /* CompositionEvent.h in Headers */,
 				2DD5A7271EBEE47D009BA597 /* CompositionUnderline.h in Headers */,
 				FD31608F12B026F700C1A359 /* Cone.h in Headers */,
+				7CE191601F2A9B4F00272F78 /* FetchRequestRedirect.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */,
 				A818721C0977D3C0005826D9 /* ContainerNode.h in Headers */,
@@ -26779,6 +26848,7 @@
 				E19AC3EF1824DC7900349426 /* CryptoAlgorithmSHA224.h in Headers */,
 				E19AC3F11824DC7900349426 /* CryptoAlgorithmSHA256.h in Headers */,
 				E19AC3F31824DC7900349426 /* CryptoAlgorithmSHA384.h in Headers */,
+				7CE191751F2ABE7100272F78 /* JSFetchRequestCredentials.h in Headers */,
 				E19AC3F51824DC7900349426 /* CryptoAlgorithmSHA512.h in Headers */,
 				5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */,
 				E157A8E518173A3A009F821D /* CryptoKey.h in Headers */,
@@ -27864,6 +27934,7 @@
 				FDA15EAC12B03EE1003A583A /* JSGainNode.h in Headers */,
 				518F5002194CAC3A0081BAAE /* JSGamepad.h in Headers */,
 				518F5004194CAC3A0081BAAE /* JSGamepadButton.h in Headers */,
+				7CE191791F2ABE7100272F78 /* JSFetchRequestMode.h in Headers */,
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
 				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
 				0FDA7C1F188322FC00C954B5 /* JSGestureEvent.h in Headers */,
@@ -27983,6 +28054,7 @@
 				E44614190CD6826900FADA75 /* JSMediaError.h in Headers */,
 				2D9BF7281DBFDB0D007A7D99 /* JSMediaKeyMessageEvent.h in Headers */,
 				2D9BF7291DBFDB10007A7D99 /* JSMediaKeys.h in Headers */,
+				7CE1917B1F2ABE7100272F78 /* JSFetchRequestRedirect.h in Headers */,
 				2D9BF72A1DBFDB13007A7D99 /* JSMediaKeySession.h in Headers */,
 				CDF4B71E1E01E11A00E235A2 /* JSMediaKeySessionType.h in Headers */,
 				CDF4B72C1E03C63E00E235A2 /* JSMediaKeysRequirement.h in Headers */,
@@ -28056,6 +28128,7 @@
 				CB38FD5B1CD2325B00592A3F /* JSPerformanceResourceTiming.h in Headers */,
 				8A9A588811E84F37008ACFD1 /* JSPerformanceTiming.h in Headers */,
 				FDEA6247152102FC00479DF0 /* JSPeriodicWave.h in Headers */,
+				7CE191731F2ABE7100272F78 /* JSFetchRequestCache.h in Headers */,
 				93B70D6C09EB0C7C009D8468 /* JSPluginElementFunctions.h in Headers */,
 				5189F01E10B37BD900F3C739 /* JSPopStateEvent.h in Headers */,
 				598365DD1355F557001B185D /* JSPositionCallback.h in Headers */,
@@ -28740,6 +28813,7 @@
 				1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */,
 				3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */,
 				65A21468097A329100B9050A /* Page.h in Headers */,
+				7CE191771F2ABE7100272F78 /* JSFetchRequestInit.h in Headers */,
 				1477E7770BF4134A00152872 /* PageCache.h in Headers */,
 				CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */,
 				F3820893147D35F90010BC06 /* PageConsoleAgent.h in Headers */,
@@ -28907,6 +28981,7 @@
 				443918001A91B2F8006E04F2 /* QuickLookSoftLink.h in Headers */,
 				CE1252391A166FA000864480 /* QuickLookSPI.h in Headers */,
 				072AE1E8183C0741000A5988 /* QuickTimePluginReplacement.h in Headers */,
+				7CE191511F2A9B0A00272F78 /* FetchRequestMode.h in Headers */,
 				379E371713736A6600B9E919 /* QuotedPrintable.h in Headers */,
 				5A574F29131DB96D00471B88 /* QuotesData.h in Headers */,
 				B22279720D00BF220071B782 /* RadialGradientAttributes.h in Headers */,
@@ -29138,6 +29213,7 @@
 				316DE7021E83AE1D0084C261 /* RTCDataChannelState.h in Headers */,
 				078E092017D14D1C00420AA1 /* RTCDTMFSender.h in Headers */,
 				078E093E17D16E1C00420AA1 /* RTCDTMFSenderHandler.h in Headers */,
+				7CE191711F2ABE7100272F78 /* JSFetchReferrerPolicy.h in Headers */,
 				078E093F17D16E1C00420AA1 /* RTCDTMFSenderHandlerClient.h in Headers */,
 				078E092117D14D1C00420AA1 /* RTCDTMFToneChangeEvent.h in Headers */,
 				078E092317D14D1C00420AA1 /* RTCIceCandidate.h in Headers */,
@@ -29600,6 +29676,7 @@
 				83C1D42C178D5AB500141E68 /* SVGPathSegCurvetoQuadraticRel.h in Headers */,
 				83C1D42D178D5AB500141E68 /* SVGPathSegCurvetoQuadraticSmoothAbs.h in Headers */,
 				83C1D42E178D5AB500141E68 /* SVGPathSegCurvetoQuadraticSmoothRel.h in Headers */,
+				7CE191551F2A9B1D00272F78 /* FetchRequestCredentials.h in Headers */,
 				83C1D42F178D5AB500141E68 /* SVGPathSegLinetoAbs.h in Headers */,
 				B2227A780D00BF220071B782 /* SVGPathSegLinetoHorizontal.h in Headers */,
 				83C1D430178D5AB500141E68 /* SVGPathSegLinetoHorizontalAbs.h in Headers */,
@@ -29749,6 +29826,7 @@
 				9759E94314EF1CF80026A2DD /* TextTrackCue.h in Headers */,
 				071A9EC3168FBC55002629F9 /* TextTrackCueGeneric.h in Headers */,
 				9759E94614EF1CF80026A2DD /* TextTrackCueList.h in Headers */,
+				7CE1915A1F2A9B3400272F78 /* FetchRequestCache.h in Headers */,
 				076970871463AD8700F502CF /* TextTrackList.h in Headers */,
 				B1AD4E7413A12A4600846B27 /* TextTrackLoader.h in Headers */,
 				CD8B5A49180E138B008B8E65 /* TextTrackMediaSource.h in Headers */,
@@ -30805,6 +30883,7 @@
 				57B5F7F81E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.cpp in Sources */,
 				57B5F80E1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp in Sources */,
 				E1FE137A184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp in Sources */,
+				7CE191781F2ABE7100272F78 /* JSFetchRequestMode.cpp in Sources */,
 				E1FE137E184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp in Sources */,
 				5750A9861E6A216800705C4A /* CryptoAlgorithmECDH.cpp in Sources */,
 				576814351E6FE3E800E77754 /* CryptoAlgorithmECDHMac.cpp in Sources */,
@@ -31434,6 +31513,7 @@
 				A871DB2D0A150BD600B12A68 /* HTMLTablePartElement.cpp in Sources */,
 				A871DB300A150BD600B12A68 /* HTMLTableRowElement.cpp in Sources */,
 				93442CA00D2B336000338FF9 /* HTMLTableRowsCollection.cpp in Sources */,
+				7CE1917A1F2ABE7100272F78 /* JSFetchRequestRedirect.cpp in Sources */,
 				A871DB260A150BD600B12A68 /* HTMLTableSectionElement.cpp in Sources */,
 				D66817FA166FE6D700FA07B4 /* HTMLTemplateElement.cpp in Sources */,
 				A81369D7097374F600D74463 /* HTMLTextAreaElement.cpp in Sources */,
@@ -31641,6 +31721,7 @@
 				BC124EFF0C26447A009E2349 /* JSBarProp.cpp in Sources */,
 				57C7A6A01E57919B00C67D71 /* JSBasicCredential.cpp in Sources */,
 				BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */,
+				7CE191761F2ABE7100272F78 /* JSFetchRequestInit.cpp in Sources */,
 				70F546E8B8B5D7DC54EE144E /* JSBeforeUnloadEvent.cpp in Sources */,
 				FDF09DC81399B62200688E5B /* JSBiquadFilterNode.cpp in Sources */,
 				2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */,
@@ -32402,6 +32483,7 @@
 				517A63C41B74318B00E7DCDC /* KeyedEncoderCF.cpp in Sources */,
 				A513B3D8114B166A001C429B /* KeyEventCocoa.mm in Sources */,
 				2655413A1489811C000DFC5D /* KeyEventIOS.mm in Sources */,
+				7CE191721F2ABE7100272F78 /* JSFetchRequestCache.cpp in Sources */,
 				935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */,
 				316FE1190E6E1DA700BF6088 /* KeyframeAnimation.cpp in Sources */,
 				12A253DB1C8FF7DC00C22295 /* KeyframeEffect.cpp in Sources */,
@@ -32831,6 +32913,7 @@
 				BCEA485F097D93020094C9E4 /* RenderBlock.cpp in Sources */,
 				BC10D76717D8EE6E005E2626 /* RenderBlockFlow.cpp in Sources */,
 				BCEA4852097D93020094C9E4 /* RenderBlockLineLayout.cpp in Sources */,
+				7CE191701F2ABE7100272F78 /* JSFetchReferrerPolicy.cpp in Sources */,
 				BCEA4861097D93020094C9E4 /* RenderBox.cpp in Sources */,
 				BC96DB460F3A882200573CB3 /* RenderBoxModelObject.cpp in Sources */,
 				BCEA4865097D93020094C9E4 /* RenderButton.cpp in Sources */,
@@ -32860,6 +32943,7 @@
 				0F580D000F12DE9B0051D689 /* RenderLayerBacking.cpp in Sources */,
 				0F580CFE0F12DE9B0051D689 /* RenderLayerCompositor.cpp in Sources */,
 				50D10D991545F5760096D288 /* RenderLayerFilterInfo.cpp in Sources */,
+				7CE191741F2ABE7100272F78 /* JSFetchRequestCredentials.cpp in Sources */,
 				3C244FEBA375AC633F88BE6F /* RenderLayerModelObject.cpp in Sources */,
 				BC33FB1B0F30EE85002CDD7C /* RenderLineBoxList.cpp in Sources */,
 				BCEA4863097D93020094C9E4 /* RenderLineBreak.cpp in Sources */,

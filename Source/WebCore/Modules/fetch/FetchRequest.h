@@ -33,6 +33,7 @@
 #include "ExceptionOr.h"
 #include "FetchBodyOwner.h"
 #include "FetchOptions.h"
+#include "FetchRequestInit.h"
 #include "ResourceRequest.h"
 #include <wtf/Optional.h>
 
@@ -44,8 +45,6 @@ class URLSearchParams;
 
 class FetchRequest final : public FetchBodyOwner {
 public:
-    static Ref<FetchRequest> create(ScriptExecutionContext& context) { return adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { })); }
-
     using Cache = FetchOptions::Cache;
     using Credentials = FetchOptions::Credentials;
     using Destination = FetchOptions::Destination;
@@ -53,18 +52,9 @@ public:
     using Redirect = FetchOptions::Redirect;
     using ReferrerPolicy = FetchOptions::ReferrerPolicy;
     using Type = FetchOptions::Type;
+    using Init = FetchRequestInit;
 
-    struct Init {
-        String method;
-        String referrer;
-        std::optional<ReferrerPolicy> referrerPolicy;
-        std::optional<Mode> mode;
-        std::optional<Credentials> credentials;
-        std::optional<Cache> cache;
-        std::optional<Redirect> redirect;
-        String integrity;
-        JSC::JSValue window;
-    };
+    static Ref<FetchRequest> create(ScriptExecutionContext& context) { return adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { })); }
 
     ExceptionOr<FetchHeaders&> initializeWith(FetchRequest&, const Init&);
     ExceptionOr<FetchHeaders&> initializeWith(const String&, const Init&);

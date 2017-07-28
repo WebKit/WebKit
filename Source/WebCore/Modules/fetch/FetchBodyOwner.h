@@ -44,14 +44,15 @@ public:
     FetchBodyOwner(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
 
     // Exposed Body API
-    bool isDisturbed() const { return m_isDisturbed; };
-
+    // FIXME: Missing body attribute returning a ReadableStream.
+    bool bodyUsed() const { return isDisturbed(); }
     void arrayBuffer(Ref<DeferredPromise>&&);
     void blob(Ref<DeferredPromise>&&);
     void formData(Ref<DeferredPromise>&&);
     void json(Ref<DeferredPromise>&&);
     void text(Ref<DeferredPromise>&&);
 
+    bool isDisturbed() const { return m_isDisturbed; };
     bool isDisturbedOrLocked() const;
 
     void loadBlob(const Blob&, FetchBodyConsumer*);

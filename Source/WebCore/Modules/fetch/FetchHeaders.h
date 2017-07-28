@@ -33,6 +33,8 @@
 #include "ExceptionOr.h"
 #include "HTTPHeaderMap.h"
 #include <wtf/HashTraits.h>
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -45,6 +47,8 @@ public:
         RequestNoCors,
         Response
     };
+
+    using Init = Variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>>;
 
     static Ref<FetchHeaders> create(Guard guard = Guard::None) { return adoptRef(*new FetchHeaders { guard }); }
     static Ref<FetchHeaders> create(const FetchHeaders& headers) { return adoptRef(*new FetchHeaders { headers }); }
