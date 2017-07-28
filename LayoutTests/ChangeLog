@@ -1,5 +1,20 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220003. rdar://problem/33595572
+
+    2017-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r216944): Fallback fonts erroneously visible when the primary font is loading
+            https://bugs.webkit.org/show_bug.cgi?id=174772
+            <rdar://problem/33267643>
+
+            Reviewed by Simon Fraser.
+
+            * http/tests/webfont/font-loading-system-fallback-visibility-FontRanges-expected.html: Added.
+            * http/tests/webfont/font-loading-system-fallback-visibility-FontRanges.html: Added.
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219950. rdar://problem/33595459
 
     2017-07-26  Chris Dumez  <cdumez@apple.com>
