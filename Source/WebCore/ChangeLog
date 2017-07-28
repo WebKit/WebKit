@@ -1,5 +1,38 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220003. rdar://problem/33595572
+
+    2017-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r216944): Fallback fonts erroneously visible when the primary font is loading
+            https://bugs.webkit.org/show_bug.cgi?id=174772
+            <rdar://problem/33267643>
+
+            Reviewed by Simon Fraser.
+
+            During a font load, we try pretty hard to find a font to use that isn't the
+            last resort font (which happens to be Times). We do this by iterating through
+            all the fonts in the font-family list, as well as through all the relevant
+            @font-face blocks which share the requested font family name.
+
+            Unfortunately, if we find one of these fallback fonts, we were simply using it
+            directly, which means that it was being drawn as visible (because the
+            visibility setting lives inside the Font object). Instead, we should carry the
+            invisibility setting from the interstitial font to this used fallback font.
+
+            This patch is an extension of r219221, which fixed the problem only for system
+            fallback fonts. This patch adopts the same methodology to all fallback fonts.
+
+            Test: http/tests/webfont/font-loading-system-fallback-visibility-FontRanges.html
+
+            * platform/graphics/FontCascadeFonts.cpp:
+            (WebCore::FontCascadeFonts::glyphDataForVariant):
+            (WebCore::glyphPageFromFontRanges):
+            * platform/graphics/FontRanges.cpp:
+            (WebCore::FontRanges::glyphDataForCharacter):
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219998. rdar://problem/33595610
 
     2017-07-28  Wenson Hsieh  <wenson_hsieh@apple.com>
