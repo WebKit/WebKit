@@ -1,3 +1,16 @@
+2017-07-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Building with ENABLE_VIDEO=OFF fails
+        https://bugs.webkit.org/show_bug.cgi?id=174940
+
+        Reviewed by Alex Christensen.
+
+        When GStreamer usage is completely disabled at build time, CMake does not query pkg-config for the GStreamer.
+        This adds missing USE(GSTREAMER) guards in order to make testing code buildable when GStreamer usage is disabled.
+
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (methodCallCallback): Add missing USE(GSTREAMER) guard.
+
 2017-07-28  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Implement EventSenderProxy in WTR

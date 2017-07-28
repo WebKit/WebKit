@@ -22,7 +22,9 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <gio/gio.h>
+#if USE(GSTREAMER)
 #include <gst/gst.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Deque.h>
@@ -396,6 +398,7 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         g_dbus_method_invocation_return_value(invocation,
             g_variant_new("(u)", static_cast<guint32>(getCurrentProcessID())));
     } else if (!g_strcmp0(methodName, "RemoveAVPluginsFromGSTRegistry")) {
+#if USE(GSTREAMER)
         gst_init(nullptr, nullptr);
         static const char* avPlugins[] = { "libav", "omx", "vaapi", nullptr };
         GstRegistry* registry = gst_registry_get();
@@ -405,6 +408,7 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
                 gst_object_unref(plugin);
             }
         }
+#endif
         g_dbus_method_invocation_return_value(invocation, nullptr);
     }
 }
