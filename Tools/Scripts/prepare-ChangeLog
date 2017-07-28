@@ -688,7 +688,7 @@ sub generateNewChangeLogs($$$$$$$$$$$$$$)
         print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
         print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
 
-        if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/ || @$requiresTests) {
+        if (unixPath($prefix) =~ m|/WebCore/$| || @$requiresTests) {
             if (@$addedRegressionTests) {
                 print CHANGE_LOG normalizeLineEndings(testListForChangeLog(sort @$addedRegressionTests), $endl);
             } else {

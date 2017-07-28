@@ -1,3 +1,20 @@
+2017-07-28  Daniel Bates  <dabates@apple.com>
+
+        prepare-ChangeLog should not list added layout tests in PAL ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=174876
+
+        Reviewed by Alex Christensen.
+
+        Do not list added layout tests in the PAL ChangeLog as such tests are unlikely to be related
+        to a PAL change. Unit tests are more appropriate for PAL changes than layout tests because
+        they provide a more direct way to test the platform abstraction.
+
+        As a side effect of this change we no longer list added layout tests in WebCore/platform/gtk/po/ChangeLog.
+
+        * Scripts/prepare-ChangeLog:
+        (generateNewChangeLogs): Only list added layout tests in the WebCore ChangeLog regardless
+        of the current working directory.
+
 2017-07-28  Jonathan Bedard  <jbedard@apple.com>
 
         Using "auto <function()> -> returnType" breaks prepare-ChangeLog
