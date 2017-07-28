@@ -1,5 +1,6 @@
 find_package(LibGBM REQUIRED)
 find_package(WPEBackend-mesa REQUIRED)
+find_package(Libxkbcommon 0.4.0 REQUIRED)
 
 add_custom_target(WebKitTestRunner-forwarding-headers
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${WEBKIT_TESTRUNNER_DIR} --output ${FORWARDING_HEADERS_DIR} --platform wpe
@@ -23,6 +24,7 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${CAIRO_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBGBM_INCLUDE_DIRS}
+    ${LIBXKBCOMMON_INCLUDE_DIRS}
     ${WPE_MESA_INCLUDE_DIRS}
 )
 
@@ -30,6 +32,7 @@ list(APPEND WebKitTestRunner_LIBRARIES
     ${CAIRO_LIBRARIES}
     ${GLIB_LIBRARIES}
     ${LIBGBM_LIBRARIES}
+    ${LIBXKBCOMMON_LIBRARIES}
     ${WPE_MESA_LIBRARIES}
 )
 

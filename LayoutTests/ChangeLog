@@ -1,3 +1,21 @@
+2017-07-28  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Implement EventSenderProxy in WTR
+        https://bugs.webkit.org/show_bug.cgi?id=173419
+
+        Reviewed by Žan Doberšek.
+
+        Add the implementation of EventSenderProxy to the WTR. This
+        allows us to extend the coverage of the test suite in WKWPE.
+
+        * platform/wpe/TestExpectations: Unskip fast/events tests, marking failures
+        that are related to features not yet implemented in WPE. Also remove other
+        tests that are now passing thanks to having event injection.
+        * platform/wpe/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt: Update.
+        * platform/wpe/fast/dynamic/layer-hit-test-crash-expected.txt: Update.
+        * platform/wpe/fast/events/clientXY-in-zoom-and-scroll-expected.txt: Added.
+        * platform/wpe/ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling-expected.txt: Update.
+
 2017-07-27  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         [ES] Add support finally to Promise

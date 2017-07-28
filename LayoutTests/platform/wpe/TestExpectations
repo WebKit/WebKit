@@ -103,18 +103,6 @@ Bug(WPE) ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOn
 Bug(WPE) ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
 Bug(WPE) ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 
-Bug(WPE) scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
-Bug(WPE) scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
-Bug(WPE) scrollbars/scrollbar-miss-mousemove-disabled.html [ Failure ]
-Bug(WPE) scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Failure ]
-Bug(WPE) scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Failure ]
-Bug(WPE) scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Failure ]
-Bug(WPE) scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html [ Failure ]
-Bug(WPE) scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html [ Failure ]
-Bug(WPE) scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html [ Failure ]
-Bug(WPE) scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Failure ]
-Bug(WPE) scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
-
 # These are prone to run in parallel, consuming all the memory on the system.
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-1.html [ Skip ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-2.html [ Skip ]
@@ -218,7 +206,6 @@ Bug(WPE) fast/dynamic [ Pass ]
 Bug(WPE) fast/dynamic/window-resize-scrollbars-test.html [ Timeout ]
 
 Bug(WPE) fast/encoding [ Pass ]
-Bug(WPE) fast/encoding/mailto-always-utf-8.html [ Timeout ]
 
 fast/events/constructors/keyboard-event-constructor.html [ Pass ]
 
@@ -230,7 +217,6 @@ Bug(WPE) fast/parser/entities-in-attributes.xhtml [ Failure ]
 Bug(WPE) fast/parser/entities-in-xhtml.xhtml [ Failure ]
 Bug(WPE) fast/parser/external-entities-in-xslt.xml [ Failure ]
 Bug(WPE) fast/parser/nested-fragment-parser-crash.html [ Failure ]
-Bug(WPE) fast/parser/tabindex-parsing.html [ Failure ]
 Bug(WPE) fast/parser/xml-colon-entity.html [ Failure ]
 Bug(WPE) fast/parser/xml-declaration-missing-ending-mark.html [ Failure ]
 
@@ -260,6 +246,244 @@ Bug(WPE) fast/xmlhttprequest/xmlhttprequest-no-file-access.html [ Timeout ]
 Bug(WPE) fast/constructors [ Pass ]
 Bug(WPE) fast/cookies [ Pass ]
 Bug(WPE) fast/custom-elements [ Pass ]
+
+Bug(WPE) fast/events [ Pass ]
+# These tests were moved on r187990 from platform/ios-simulator/ios/fast/events/touch
+webkit.org/b/148940 fast/events/touch/document-create-touch-list-ios.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/gesture-event-basic.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/input-touch-target.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/inserted-fragment-touch-target.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/moved-touch-target.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/multi-touch-some-without-handlers.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/ontouchstart-active-selector.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/removed-fragment-touch-target.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/removed-touch-target.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/text-node-touch-target.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/textarea-touch-target.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/touch-event-frames.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/touch-event-pageXY.html [ Skip ]
+webkit.org/b/148940 fast/events/touch/zoomed-touch-event-pageXY.html [ Skip ]
+
+# Need support for internals.settings.setDeviceSupportsMouse
+fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html [ Skip ]
+# ENABLE_TOUCH_SLIDER is disabled in WPE.
+fast/events/touch/touch-slider.html [ Skip ]
+# WPE does not support touch event canceling
+webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Skip ]
+fast/events/touch/touch-input-element-change-documents.html
+
+webkit.org/b/174673 fast/events/arrow-keys-on-body.html [ Failure ]
+webkit.org/b/174673 fast/events/keyboardevent-code.html [ Failure ]
+webkit.org/b/174673 fast/events/keyboardevent-key.html [ Failure ]
+webkit.org/b/174673 fast/events/key-events-in-input-button.html [ Failure ]
+webkit.org/b/174673 fast/events/key-events-in-input-text.html [ Failure ]
+
+# clickCount related failures
+webkit.org/b/174674 fast/events/click-count.html [ Failure ]
+webkit.org/b/174674 fast/events/dblclick-addEventListener.html [ Failure ]
+webkit.org/b/174674 fast/events/mouse-click-events.html [ Failure ]
+webkit.org/b/174674 fast/events/selectstart-by-double-triple-clicks.html [ Failure ]
+webkit.org/b/174674 fast/events/zoom-dblclick.html [ Failure ]
+
+webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
+
+# ENABLE_PROXIMITY_EVENTS is OFF in WPE.
+fast/events/constructors/device-proximity-event-constructor.html [ Skip ]
+
+# ENABLE_DRAG_SUPPORT is OFF in WPE.
+fast/events/5056619.html [ Skip ]
+fast/events/before-input-events-prevent-drag-and-drop.html [ Skip ]
+fast/events/bogus-dropEffect-effectAllowed.html [ Skip ]
+fast/events/clear-drag-state.html [ Skip ]
+fast/events/do-not-drag-and-drop-data-detectors-link.html [ Skip ]
+fast/events/drag-and-drop-autoscroll-inner-frame.html [ Skip ]
+fast/events/drag-and-drop-autoscroll.html [ Skip ]
+fast/events/drag-and-drop-dataTransfer-types-nocrash.html [ Skip ]
+fast/events/drag-and-drop-fire-drag-dragover.html [ Skip ]
+fast/events/drag-and-drop-link-containing-block.html [ Skip ]
+fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ]
+fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Skip ]
+fast/events/drag-and-drop-link.html [ Skip ]
+fast/events/drag-and-drop-set-drag-data-arguments.html [ Skip ]
+fast/events/drag-and-drop-subframe-dataTransfer.html [ Skip ]
+fast/events/drag-and-drop.html [ Skip ]
+fast/events/drag-customData.html [ Skip ]
+fast/events/drag-dataTransferItemList-file-handling.html [ Skip ]
+fast/events/drag-display-none-element.html [ Skip ]
+fast/events/drag-image-filename.html [ Skip ]
+fast/events/drag-in-frames.html [ Skip ]
+fast/events/drag-outside-window.html [ Skip ]
+fast/events/drag-parent-node.html [ Skip ]
+fast/events/drag-select-when-zoomed-with-header.html [ Skip ]
+fast/events/drag-select-when-zoomed.html [ Skip ]
+fast/events/drag-selects-image.html [ Skip ]
+fast/events/drag-text-with-clear.html [ Skip ]
+fast/events/draggable-div-customdata.html [ Skip ]
+fast/events/draggable-div-nodata.html [ Skip ]
+fast/events/dropzone-001.html [ Skip ]
+fast/events/dropzone-002.html [ Skip ]
+fast/events/dropzone-003.html [ Skip ]
+fast/events/dropzone-005.html [ Skip ]
+fast/events/event-attribute.html [ Skip ]
+fast/events/mousedown-inside-dragstart-should-not-cause-crash.html [ Skip ]
+fast/events/ondragenter.html [ Skip ]
+fast/events/remove-target-with-shadow-in-drag.html [ Skip ]
+fast/events/resources/drag-in-frames-left.html [ Skip ]
+fast/events/resources/drag-in-frames-right.html [ Skip ]
+fast/events/shift-drag-selection-on-image-triggers-drag-n-drop.html [ Skip ]
+fast/events/shift-drag-selection-on-link-triggers-drag-n-drop.html [ Skip ]
+fast/events/touch/gesture/long-press-on-draggable-element-triggers-drag.html [ Skip ]
+fast/events/touch/gesture/resources/drag-inside-iframe2.html [ Skip ]
+fast/events/touch/gesture/resources/drag-inside-nested-iframes3.html [ Skip ]
+
+# Tests below are copied from wk2 expectations, because we've marked
+#  as passing the whole fast/events directory.
+
+# WebKitTestRunner needs testRunner.abortModal
+# <https://bugs.webkit.org/show_bug.cgi?id=69548>
+fast/events/beforeunload-showModalDialog.html
+fast/events/pagehide-showModalDialog.html
+fast/events/scroll-event-during-modal-dialog.html
+fast/events/show-modal-dialog-onblur-onfocus.html
+fast/events/unload-showModalDialog.html
+
+# WebKitTestRunner needs an implementation of eventSender.beginDragWithFiles
+# https://bugs.webkit.org/show_bug.cgi?id=64285
+fast/events/data-transfer-files-attribute-identity.html
+fast/events/drag-file-crash.html
+fast/events/drag-to-navigate.html
+fast/events/drop-handler-should-not-stop-navigate.html
+fast/events/drop-with-file-paths.html
+fast/events/dropzone-004.html
+fast/events/file-input-hidden-in-ondrop.html
+fast/events/input-element-display-none-in-dragleave-crash.html
+fast/events/only-valid-drop-targets-receive-file-drop.html
+fast/events/prevent-drag-to-navigate.html
+
+# WebKitTestRunner needs textInputController
+# <https://bugs.webkit.org/show_bug.cgi?id=42337>
+fast/events/ime-composition-events-001.html
+
+# testRunner.setWindowIsKey() has no effect on the web process side in WebKit2
+# https://bugs.webkit.org/show_bug.cgi?id=81736 rdar://problem/11088268
+fast/events/blur-focus-window-should-blur-focus-element.html
+
+# eventSender.dragMode is unimplemented in WKTR
+# Mac: https://bugs.webkit.org/show_bug.cgi?id=68552
+fast/events/controlclick-no-onclick.html
+fast/events/moving-text-should-fire-drop-and-dragend-events.html
+fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
+fast/events/ondrop-text-html.html
+
+# WTR needs an implementation for eventSender.continuousMouseScrollBy
+# https://bugs.webkit.org/show_bug.cgi?id=69417
+fast/events/wheelevent-direction-inverted-from-device.html
+
+# The tests below need gardening after the EventSenderWPE has been added.
+# Most of them are probably failing because of missing support of event related
+# features in WPE.
+webkit.org/b/173419 fast/events/autoscroll-in-overflow-hidden-html.html [ Failure ]
+webkit.org/b/173419 fast/events/autoscroll-in-textarea.html [ Failure ]
+webkit.org/b/173419 fast/events/autoscroll-in-textfield.html [ Failure ]
+webkit.org/b/173419 fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html [ Failure ]
+webkit.org/b/173419 fast/events/before-input-prevent-paste.html [ Failure ]
+webkit.org/b/173419 fast/events/click-focus-control.html [ Failure ]
+webkit.org/b/173419 fast/events/click-range-slider.html [ Failure ]
+webkit.org/b/173419 fast/events/constructors/media-stream-event-constructor.html [ Failure ]
+webkit.org/b/173419 fast/events/constructors/mouse-event-constructor.html [ Failure ]
+webkit.org/b/173419 fast/events/constructors/overconstrained-error-event-constructor.html [ Failure ]
+webkit.org/b/173419 fast/events/constructors/wheel-event-constructor.html [ Failure ]
+webkit.org/b/173419 fast/events/content-changed-during-drop.html [ Failure ]
+webkit.org/b/173419 fast/events/context-activated-by-key-event.html [ Failure ]
+webkit.org/b/173419 fast/events/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
+webkit.org/b/173419 fast/events/crash-on-mutate-during-drop.html [ Failure ]
+webkit.org/b/173419 fast/events/frame-tab-focus.html [ Failure ]
+webkit.org/b/173419 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
+webkit.org/b/173419 fast/events/input-events-drag-and-drop.html [ Failure ]
+webkit.org/b/173419 fast/events/input-events-insert-by-drop.html [ Failure ]
+webkit.org/b/173419 fast/events/input-events-paste-data.html [ Failure ]
+webkit.org/b/173419 fast/events/input-events-paste-rich-datatransfer.html [ Failure ]
+webkit.org/b/173419 fast/events/js-keyboard-event-creation.html [ Failure ]
+webkit.org/b/173419 fast/events/keydown-1.html [ Failure ]
+webkit.org/b/173419 fast/events/keydown-numpad-keys.html [ Failure ]
+webkit.org/b/173419 fast/events/mouse-cursor-image-set.html [ Failure ]
+webkit.org/b/173419 fast/events/mouse-drag-from-frame-to-other-frame.html [ Failure ]
+webkit.org/b/173419 fast/events/mouse-drag-from-frame.html [ Failure ]
+webkit.org/b/173419 fast/events/mouseenterleave-on-subframe.html [ Failure ]
+webkit.org/b/173419 fast/events/mouseover-button.html [ Failure ]
+webkit.org/b/173419 fast/events/mouseover-mouseout.html [ Failure ]
+webkit.org/b/173419 fast/events/mouseover-mouseout2.html [ Failure ]
+webkit.org/b/173419 fast/events/mouseup-from-button2.html [ Failure ]
+webkit.org/b/173419 fast/events/no-scroll-on-input-text-selection.html [ Failure ]
+webkit.org/b/173419 fast/events/node-event-anchor-lock.html [ Failure ]
+webkit.org/b/173419 fast/events/offsetX-offsetY.html [ Failure ]
+webkit.org/b/173419 fast/events/onchange-range-slider.html [ Failure ]
+webkit.org/b/173419 fast/events/option-tab.html [ Failure ]
+webkit.org/b/173419 fast/events/page-scaled-mouse-click-iframe.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-in-scrolling-div.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-paging-x-in-scrolling-div.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-paging-x-in-scrolling-page.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
+webkit.org/b/173419 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
+webkit.org/b/173419 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
+webkit.org/b/173419 fast/events/selectstart-by-drag.html [ Failure ]
+webkit.org/b/173419 fast/events/selectstart-by-single-click-with-shift.html [ Failure ]
+webkit.org/b/173419 fast/events/sequential-focus-navigation-starting-point.html [ Failure ]
+webkit.org/b/173419 fast/events/shadow-event-path-2.html [ Failure ]
+webkit.org/b/173419 fast/events/shadow-event-path.html [ Failure ]
+webkit.org/b/173419 fast/events/special-key-events-in-input-text.html [ Failure ]
+webkit.org/b/173419 fast/events/tabindex-focus-blur-all.html [ Failure ]
+webkit.org/b/173419 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
+webkit.org/b/173419 fast/events/touch/basic-multi-touch-events.html [ Failure ]
+webkit.org/b/173419 fast/events/touch/document-create-touch-list.html [ Failure ]
+webkit.org/b/173419 fast/events/touch/document-create-touch.html [ Failure ]
+webkit.org/b/173419 fast/events/touch/emulate-touch-events.html [ Failure ]
+webkit.org/b/173419 fast/events/touch/touch-before-pressing-spin-button.html [ Failure ]
+webkit.org/b/173419 fast/events/webkit-media-key-events-constructor.html [ Failure ]
+webkit.org/b/173419 fast/events/wheelevent-basic.html [ Failure ]
+webkit.org/b/173419 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
+webkit.org/b/173419 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
+webkit.org/b/173419 fast/events/autoscroll-main-document.html [ Timeout ]
+webkit.org/b/173419 fast/events/autoscroll-should-not-stop-on-keypress.html [ Timeout ]
+webkit.org/b/173419 fast/events/autoscroll-when-zoomed.html [ Timeout ]
+webkit.org/b/173419 fast/events/before-input-prevent-insert-replacement.html [ Timeout ]
+webkit.org/b/173419 fast/events/can-click-element-on-page-with-active-pseudo-class-and-search-field.html [ Timeout ]
+webkit.org/b/173419 fast/events/clipboard-dataTransferItemList.html [ Timeout ]
+webkit.org/b/173419 fast/events/drag-dataTransferItemList.html [ Timeout ]
+webkit.org/b/173419 fast/events/event-view-toString.html [ Timeout ]
+webkit.org/b/173419 fast/events/frame-detached-in-mousedown.html [ Timeout ]
+webkit.org/b/173419 fast/events/iframe-onmousemove.html [ Timeout ]
+webkit.org/b/173419 fast/events/input-event-insert-replacement.html [ Timeout ]
+webkit.org/b/173419 fast/events/mouse-force-changed.html [ Timeout ]
+webkit.org/b/173419 fast/events/mouse-force-down.html [ Timeout ]
+webkit.org/b/173419 fast/events/mouse-force-up.html [ Timeout ]
+webkit.org/b/173419 fast/events/mouse-moved-remove-frame-crash.html [ Timeout ]
+webkit.org/b/173419 fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
+webkit.org/b/173419 fast/events/page-visibility-iframe-move-test.html [ Timeout ]
+webkit.org/b/173419 fast/events/page-visibility-iframe-propagation-test.html [ Timeout ]
+webkit.org/b/173419 fast/events/page-visibility-onvisibilitychange.html [ Timeout ]
+webkit.org/b/173419 fast/events/page-visibility-transition-test.html [ Timeout ]
+webkit.org/b/173419 fast/events/popup-blocking-click-in-iframe.html [ Timeout ]
+webkit.org/b/173419 fast/events/scroll-after-click-on-tab-index.html [ Timeout ]
+webkit.org/b/173419 fast/events/standalone-image-drag-to-editable.html [ Timeout ]
+webkit.org/b/173419 fast/events/touch/emulated-touch-iframe.html [ Timeout ]
+webkit.org/b/173419 fast/events/touch/multi-touch-grouped-targets.html [ Timeout ]
+webkit.org/b/173419 fast/events/touch/multi-touch-inside-nested-iframes.html [ Timeout ]
+webkit.org/b/173419 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
+webkit.org/b/173419 fast/events/touch/touch-target-limited.html [ Timeout ]
+webkit.org/b/173419 fast/events/touch/touch-target.html [ Timeout ]
+webkit.org/b/173419 fast/events/wheel-event-destroys-frame.html [ Timeout ]
+
+fast/events/ios [ Skip ]
+fast/events/touch/ios [ Skip ]
+fast/events/touch/gesture [ Skip ]
+
 Bug(WPE) fast/eventsource [ Pass ]
 Bug(WPE) fast/gradients [ Pass ]
 Bug(WPE) fast/leaks [ Pass ]
@@ -312,12 +536,10 @@ Bug(WPE) fast/dom/HTMLTableSectionElement [ Pass ]
 Bug(WPE) fast/dom/HTMLTemplateElement [ Pass ]
 Bug(WPE) fast/dom/HTMLTextAreaElement [ Pass ]
 Bug(WPE) fast/dom/MutationObserver [ Pass ]
-Bug(WPE) fast/dom/MutationObserver/end-of-task-delivery.html [ Timeout ]
-Bug(WPE) fast/dom/MutationObserver/inline-event-listener.html [ Timeout ]
+webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 Bug(WPE) fast/dom/NavigatorContentUtils [ Pass ]
 Bug(WPE) fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Failure ]
 Bug(WPE) fast/dom/Node [ Pass ]
-Bug(WPE) fast/dom/Node/mutation-blur.html [ Timeout ]
 Bug(WPE) fast/dom/NodeList [ Pass ]
 Bug(WPE) fast/dom/Orientation [ Pass ]
 Bug(WPE) fast/dom/Range [ Pass ]
@@ -334,7 +556,6 @@ Bug(WPE) fast/dom/nodesFromRect [ Pass ]
 Bug(WPE) storage/indexeddb/modern/index-3-private.html [ Crash ]
 Bug(WPE) storage/indexeddb/modern/worker-getall.html [ Timeout ]
 Bug(WPE) storage/domstorage/events/basic-body-attribute.html [ Failure ]
-webkit.org/b/173419 storage/domstorage/sessionstorage/set-item-synchronous-keydown.html [ Failure ]
 Bug(WPE) storage/indexeddb/basics-workers.html [ Failure ]
 Bug(WPE) storage/indexeddb/cursor-advance-workers.html [ Failure ]
 Bug(WPE) storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html [ Failure ]

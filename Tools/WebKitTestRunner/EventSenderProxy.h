@@ -38,6 +38,11 @@
 #include <wtf/HashSet.h>
 #endif
 
+#if PLATFORM(WPE)
+#include <wpe/input.h>
+#include <wtf/HashSet.h>
+#endif
+
 #if PLATFORM(COCOA)
 OBJC_CLASS NSEvent;
 #endif
@@ -114,6 +119,12 @@ private:
     void sendUpdatedTouchEvents();
 #endif
 
+#if PLATFORM(WPE)
+    Vector<struct wpe_input_touch_event_raw> getUpdatedTouchEvents();
+    void removeUpdatedTouchEvents();
+    void prepareAndDispatchTouchEvent(enum wpe_input_touch_event_type);
+#endif
+
     double m_time;
     WKPoint m_position;
     bool m_leftMouseButtonDown;
@@ -128,6 +139,11 @@ private:
     unsigned m_mouseButtonCurrentlyDown;
     Vector<GUniquePtr<GdkEvent>> m_touchEvents;
     HashSet<int> m_updatedTouchEvents;
+#elif PLATFORM(WPE)
+    struct wpe_view_backend* m_viewBackend;
+    uint32_t m_buttonState;
+    Vector<struct wpe_input_touch_event_raw> m_touchEvents;
+    HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_updatedTouchEvents;
 #endif
 };
 

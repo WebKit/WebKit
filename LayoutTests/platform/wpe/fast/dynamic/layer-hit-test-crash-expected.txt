@@ -15,3 +15,4 @@ layer at (50,50) size 200x200
   RenderBlock (positioned) zI: 1 {DIV} at (50,50) size 200x200 [bgcolor=#FFFF00]
 layer at (70,50) size 100x100
   RenderBlock (positioned) zI: 5 {DIV} at (20,0) size 100x100 [bgcolor=#FF0000]
+caret: position 0 of child 1 {DIV} of child 3 {DIV} of body
