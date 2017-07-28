@@ -59,6 +59,8 @@ private:
     virtual void platformStopTask(WebPageProxy&, WebURLSchemeTask&) = 0;
     virtual void platformTaskCompleted(WebURLSchemeTask&) = 0;
 
+    void removeTaskFromPageMap(uint64_t pageID, uint64_t taskID);
+
     uint64_t m_identifier;
 
     HashMap<uint64_t, Ref<WebURLSchemeTask>> m_tasks;
