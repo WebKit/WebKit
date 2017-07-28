@@ -1,5 +1,14 @@
 2017-07-28  Matt Lewis  <jlewis3@apple.com>
 
+        Marked multiple iimported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ as failing.
+        <rdar://problem/33548297>
+
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra/TestExpectations:
+
+2017-07-28  Matt Lewis  <jlewis3@apple.com>
+
         Marked imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html as flaky.
         <rdar://problem/33555052>
 
