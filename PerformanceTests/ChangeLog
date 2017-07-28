@@ -1,3 +1,24 @@
+2017-07-27  Mathias Bynens  <mathias@chromium.org>
+
+        Speedometer 2.0: Document Angular 4 build process
+        https://bugs.webkit.org/show_bug.cgi?id=174896
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch documents the build process for the Angular 4 example, pins the dependencies (so
+        that builds are deterministic), and updates the generated files accordingly.
+
+        * Speedometer/resources/todomvc/architecture-examples/angular/README.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/*: Update per build instructions.
+        * Speedometer/resources/todomvc/architecture-examples/angular/e2e/app.e2e-spec.ts: Removed unused file.
+        * Speedometer/resources/todomvc/architecture-examples/angular/e2e/app.po.ts: Removed unused file.
+        * Speedometer/resources/todomvc/architecture-examples/angular/e2e/tsconfig.e2e.json: Removed unused file.
+        * Speedometer/resources/todomvc/architecture-examples/angular/package.json: Remove unneeded scripts.
+        * Speedometer/resources/todomvc/architecture-examples/angular/package-lock.json: Added to pin dependencies.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/app/app.component.ts: Updated.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/environments/environment.ts: Updated.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/index.html: Made title consistent.
+
 2017-07-25  Mathias Bynens  <mathias@qiwi.be>
 
         Speedometer 2.0: Document es2015-babel-webpack build process
