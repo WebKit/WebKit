@@ -42,11 +42,13 @@ enum ProcessingUserGestureState {
     NotProcessingUserGesture
 };
 
+enum class UserGestureType { EscapeKey, Other };
+
 class UserGestureToken : public RefCounted<UserGestureToken> {
 public:
-    static RefPtr<UserGestureToken> create(ProcessingUserGestureState state)
+    static RefPtr<UserGestureToken> create(ProcessingUserGestureState state, UserGestureType gestureType)
     {
-        return adoptRef(new UserGestureToken(state));
+        return adoptRef(new UserGestureToken(state, gestureType));
     }
 
     WEBCORE_EXPORT ~UserGestureToken();
@@ -54,6 +56,7 @@ public:
     ProcessingUserGestureState state() const { return m_state; }
     bool processingUserGesture() const { return m_state == ProcessingUserGesture; }
     bool processingUserGestureForMedia() const { return m_state == ProcessingUserGesture || m_state == ProcessingPotentialUserGesture; }
+    UserGestureType gestureType() const { return m_gestureType; }
 
     void addDestructionObserver(WTF::Function<void (UserGestureToken&)>&& observer)
     {
@@ -61,13 +64,15 @@ public:
     }
 
 private:
-    UserGestureToken(ProcessingUserGestureState state)
+    UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType)
         : m_state(state)
+        , m_gestureType(gestureType)
     {
     }
 
     ProcessingUserGestureState m_state = NotProcessingUserGesture;
     Vector<WTF::Function<void (UserGestureToken&)>> m_destructionObservers;
+    UserGestureType m_gestureType;
 };
 
 class UserGestureIndicator {
@@ -79,7 +84,7 @@ public:
     WEBCORE_EXPORT static bool processingUserGestureForMedia();
 
     // If a document is provided, its last known user gesture timestamp is updated.
-    WEBCORE_EXPORT explicit UserGestureIndicator(std::optional<ProcessingUserGestureState>, Document* = nullptr);
+    WEBCORE_EXPORT explicit UserGestureIndicator(std::optional<ProcessingUserGestureState>, Document* = nullptr, UserGestureType = UserGestureType::Other);
     WEBCORE_EXPORT explicit UserGestureIndicator(RefPtr<UserGestureToken>);
     WEBCORE_EXPORT ~UserGestureIndicator();
 

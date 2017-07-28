@@ -1,5 +1,33 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219950. rdar://problem/33595459
+
+    2017-07-26  Chris Dumez  <cdumez@apple.com>
+
+            Pressing the Escape key should not be a valid user gesture to enter fullscreen
+            https://bugs.webkit.org/show_bug.cgi?id=174864
+            <rdar://problem/33009088>
+
+            Reviewed by Geoffrey Garen.
+
+            Pressing the Escape key should not be a valid user gesture to enter fullscreen since this
+            is the gesture to exit fullscreen already.
+
+            Test: fullscreen/requestFullscreen-escape-key.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::requestFullScreenForElement):
+            * dom/UserGestureIndicator.cpp:
+            (WebCore::UserGestureIndicator::UserGestureIndicator):
+            * dom/UserGestureIndicator.h:
+            (WebCore::UserGestureToken::create):
+            (WebCore::UserGestureToken::gestureType):
+            (WebCore::UserGestureToken::UserGestureToken):
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::internalKeyEvent):
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219949. rdar://problem/33595616
 
     2017-07-26  Nan Wang  <n_wang@apple.com>
