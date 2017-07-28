@@ -1,3 +1,14 @@
+2017-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r216944): Fallback fonts erroneously visible when the primary font is loading
+        https://bugs.webkit.org/show_bug.cgi?id=174772
+        <rdar://problem/33267643>
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/webfont/font-loading-system-fallback-visibility-FontRanges-expected.html: Added.
+        * http/tests/webfont/font-loading-system-fallback-visibility-FontRanges.html: Added.
+
 2017-07-28  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION(r125147): Layout Test svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg is failing
