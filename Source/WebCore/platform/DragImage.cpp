@@ -152,6 +152,8 @@ struct ScopedFrameSelectionState {
     std::optional<unsigned> endOffset;
 };
 
+#if !PLATFORM(IOS)
+
 DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlackText)
 {
     frame.document()->updateLayout();
@@ -189,6 +191,8 @@ DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlack
     // FrameView but snapshotSelection() uses the selection from the Frame itself.
     return createDragImageFromSnapshot(snapshotFrameRect(frame, view->selectionBounds(), options), nullptr);
 }
+
+#endif
 
 DragImageRef createDragImageForImage(Frame& frame, Node& node, IntRect& imageRect, IntRect& elementRect)
 {
