@@ -37,10 +37,12 @@ if (window.accessibilityController) {
         debug("muteButton.stringValue: " + muteButton.stringValue);
         debug("press muteButton");
         muteButton.press();
-        debug("muteButton.stringValue: " + muteButton.stringValue + "\n");
+        setTimeout(function() {
+            debug("muteButton.stringValue: " + muteButton.stringValue + "\n");
               
-        // Left/Right arrow key should have 0.5 second step on timeline. 
-        checkTimeLineValue(rightArrow);
+            // Left/Right arrow key should have 0.5 second step on timeline. 
+            checkTimeLineValue(rightArrow);
+        }, 10);
     }); 
     
     waitForEvent("seeked", function () {

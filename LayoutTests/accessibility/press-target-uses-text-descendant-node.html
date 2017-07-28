@@ -40,9 +40,13 @@
 
     function startTest() {
        accessibilityController.accessibleElementById("link").press();
-       debug("\nNow pressing on button\n");
-       accessibilityController.accessibleElementById("button").press();
-       finishJSTest();
+       setTimeout(function() {
+           debug("\nNow pressing on button\n");
+           accessibilityController.accessibleElementById("button").press();
+           setTimeout(function() {
+               finishJSTest();
+           }, 10);
+       }, 10);
     }
 
     if (window.accessibilityController) {

@@ -1,5 +1,25 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219906. rdar://problem/33595387
+
+    2017-07-26  Nan Wang  <n_wang@apple.com>
+
+            AX: should dispatch accessibilityPerformPressAction async on MacOS
+            https://bugs.webkit.org/show_bug.cgi?id=174849
+
+            Reviewed by Chris Fleizach.
+
+            If performing the accessibility press action results in a modal alert being displayed,
+            it can cause VoiceOver to hang. To fix it, we should dispatch the action asynchronously.
+
+            Updated tests to adapt to this change.
+
+            * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+            (-[WebAccessibilityObjectWrapper accessibilityPerformPressAction]):
+            (-[WebAccessibilityObjectWrapper _accessibilityPerformPressAction]):
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219891. rdar://problem/33595436
 
     2017-07-25  Per Arne Vollan  <pvollan@apple.com>

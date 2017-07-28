@@ -54,13 +54,23 @@
 
     description("This tests that when certain control type elements are pressed, a valid event is sent that references the right element.");
 
+    var items = new Array("group", "button", "tab", "radio", "checkbox", "menuitem", "menuitemcheckbox", "menuitemradio", "listitem", "button2");
+    var length = items.length;
+    
     if (window.accessibilityController) {
-
-        var items = new Array("group", "button", "tab", "radio", "checkbox", "menuitem", "menuitemcheckbox", "menuitemradio", "listitem", "button2");
-        for (var k = 0; k < items.length; k++) {
-           document.getElementById(items[k]).focus();
-           accessibilityController.focusedElement.press();
-        }
+        jsTestIsAsync = true;
+        // AXPress on Mac is async, let's give it some delay and do it recursively.
+        accessibilityPress(0);
+    }
+    
+    function accessibilityPress(k) {
+        if (k == length)
+            finishJSTest();
+        
+        accessibilityController.accessibleElementById(items[k]).press();
+        setTimeout(function() {
+            accessibilityPress(k+1);
+        }, 10);
     }
 
 </script>

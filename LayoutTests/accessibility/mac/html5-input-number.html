@@ -17,9 +17,10 @@
     description("This tests that input type='number' exposes the accessibility of it's stepper correctly");
 
     if (window.accessibilityController) {
-
+        window.jsTestIsAsync = true;
+        
         document.getElementById("number").focus();
-        var textfield = accessibilityController.focusedElement;
+        var textfield = accessibilityController.accessibleElementById("number");
 
         // Verify that the click point is the same as the child.
         shouldBe("textfield.childrenCount", "1");
@@ -39,17 +40,21 @@
 
         // Increment.
         incrementor.childAtIndex(0).press();
-        shouldBe("textfield.stringValue", "'AXValue: 1'");
-
-        shouldBe("incrementor.childAtIndex(1).role", "'AXRole: AXButton'");
-        shouldBe("incrementor.childAtIndex(1).subrole", "'AXSubrole: AXDecrementArrow'");
-        shouldBeTrue("incrementor.childAtIndex(1).width > 0");
-        shouldBeTrue("incrementor.childAtIndex(1).height > 0");
-        shouldBeTrue("incrementor.childAtIndex(1).isEnabled");
-
-        // Decrement.
-        incrementor.childAtIndex(1).press();
-        shouldBe("textfield.stringValue", "'AXValue: 0'");
+        setTimeout(function() {
+            shouldBe("textfield.stringValue", "'AXValue: 1'");
+            shouldBe("incrementor.childAtIndex(1).role", "'AXRole: AXButton'");
+            shouldBe("incrementor.childAtIndex(1).subrole", "'AXSubrole: AXDecrementArrow'");
+            shouldBeTrue("incrementor.childAtIndex(1).width > 0");
+            shouldBeTrue("incrementor.childAtIndex(1).height > 0");
+            shouldBeTrue("incrementor.childAtIndex(1).isEnabled");
+            
+            // Decrement.
+            incrementor.childAtIndex(1).press();
+            setTimeout(function() {
+                shouldBe("textfield.stringValue", "'AXValue: 0'");
+                finishJSTest();
+            }, 10);
+        }, 10);
     }
 
 </script>

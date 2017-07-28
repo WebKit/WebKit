@@ -50,9 +50,20 @@
     }
     
     if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        
         // Press all targets.
-        for (var i = 0; i < targetCount; ++i)
-            accessibilityController.accessibleElementById("t" + i).press();
+        accessibilityPress(0);
+    }
+    
+    function accessibilityPress(i) {
+        if (i == targetCount)
+            finishJSTest();
+        
+        accessibilityController.accessibleElementById("t" + i).press();
+        setTimeout(function() {
+            accessibilityPress(i+1);
+        }, 10);
     }
 </script>
 
