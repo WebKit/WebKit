@@ -294,12 +294,12 @@ void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewWillStartPanGestur
     scrollingTree().scrollingTreeNodeWillStartPanGesture();
 }
 
-void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteration)
+void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteraction)
 {
     if (m_updatingFromStateNode)
         return;
 
-    scrollingTree().scrollPositionChangedViaDelegatedScrolling(scrollingNodeID(), scrollPosition, inUserInteration);
+    scrollingTree().scrollPositionChangedViaDelegatedScrolling(scrollingNodeID(), scrollPosition, inUserInteraction);
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::currentSnapPointIndicesDidChange(unsigned horizontal, unsigned vertical)

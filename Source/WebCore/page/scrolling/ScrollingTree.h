@@ -89,7 +89,7 @@ public:
 
     // Delegated scrolling has scrolled a node. Update layer positions on descendant tree nodes,
     // and call scrollingTreeNodeDidScroll().
-    WEBCORE_EXPORT virtual void scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, bool inUserInteration);
+    WEBCORE_EXPORT virtual void scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, bool inUserInteraction);
 
     WEBCORE_EXPORT virtual void currentSnapPointIndicesDidChange(ScrollingNodeID, unsigned horizontal, unsigned vertical) = 0;
 

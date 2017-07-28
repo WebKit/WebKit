@@ -1,3 +1,14 @@
+2017-07-28  Frederic Wang  <fwang@igalia.cpm>
+
+        Fix typo in scrollPositionChangedViaDelegatedScrolling
+        https://bugs.webkit.org/show_bug.cgi?id=174937
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll):
+
 2017-07-28  Jeremy Jones  <jeremyj@apple.com>
 
         Remove Web prefix from WebVideoFullscreen and WebPlaybackSession classes.

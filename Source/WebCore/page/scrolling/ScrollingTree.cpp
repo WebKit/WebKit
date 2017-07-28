@@ -102,7 +102,7 @@ void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID,
     downcast<ScrollingTreeScrollingNode>(*node).updateLayersAfterViewportChange(fixedPositionRect, scale);
 }
 
-void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatPoint& scrollPosition, bool inUserInteration)
+void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatPoint& scrollPosition, bool inUserInteraction)
 {
     ScrollingTreeNode* node = nodeForID(nodeID);
     if (!is<ScrollingTreeOverflowScrollingNode>(node))
@@ -112,7 +112,7 @@ void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID n
     downcast<ScrollingTreeOverflowScrollingNode>(*node).updateLayersAfterDelegatedScroll(scrollPosition);
 
     // Update GraphicsLayers and scroll state.
-    scrollingTreeNodeDidScroll(nodeID, scrollPosition, std::nullopt, inUserInteration ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
+    scrollingTreeNodeDidScroll(nodeID, scrollPosition, std::nullopt, inUserInteraction ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
 }
 
 void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)

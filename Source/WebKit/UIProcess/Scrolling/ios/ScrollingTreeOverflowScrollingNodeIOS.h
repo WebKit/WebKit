@@ -44,7 +44,7 @@ public:
     void overflowScrollWillStart();
     void overflowScrollDidEnd();
     void overflowScrollViewWillStartPanGesture();
-    void scrollViewDidScroll(const WebCore::FloatPoint&, bool inUserInteration);
+    void scrollViewDidScroll(const WebCore::FloatPoint&, bool inUserInteraction);
     void currentSnapPointIndicesDidChange(unsigned horizontal, unsigned vertical);
 
     CALayer *scrollLayer() const { return m_scrollLayer.get(); }
