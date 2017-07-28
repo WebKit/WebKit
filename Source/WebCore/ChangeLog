@@ -1,3 +1,24 @@
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219891. rdar://problem/33595436
+
+    2017-07-25  Per Arne Vollan  <pvollan@apple.com>
+
+            Dragged links are blurry on 1x displays.
+            https://bugs.webkit.org/show_bug.cgi?id=174831
+            <rdar://problem/33519698>
+
+            Reviewed by Simon Fraser.
+
+            When the width and height of the drag image is a multiple of 2, the drag image is not blurry
+            on a 1x display. This is a workaround which should be removed when <rdar://problem/33059739>
+            is fixed.
+
+            No new tests, since this is not straightforward to test with a layout test.
+
+            * platform/mac/DragImageMac.mm:
+            (WebCore::LinkImageLayout::LinkImageLayout):
+
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219876. rdar://problem/33523847
