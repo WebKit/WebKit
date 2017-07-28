@@ -934,6 +934,10 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
         const unichar ch = NSDeleteFunctionKey;
         eventCharacter = [NSString stringWithCharacters:&ch length:1];
         keyCode = 0x75;
+    } else if ([character isEqualToString:@"escape"]) {
+        const unichar ch = 0x1B;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+        keyCode = 0x35;
     } else if ([character isEqualToString:@"printScreen"]) {
         const unichar ch = NSPrintScreenFunctionKey;
         eventCharacter = [NSString stringWithCharacters:&ch length:1];

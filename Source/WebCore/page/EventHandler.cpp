@@ -3163,7 +3163,11 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     if (!element)
         return false;
 
-    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document());
+    UserGestureType gestureType = UserGestureType::Other;
+    if (initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE)
+        gestureType = UserGestureType::EscapeKey;
+
+    UserGestureIndicator gestureIndicator(ProcessingUserGesture, m_frame.document(), gestureType);
     UserTypingGestureIndicator typingGestureIndicator(m_frame);
 
     if (FrameView* view = m_frame.view())

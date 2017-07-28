@@ -5778,8 +5778,15 @@ void Document::requestFullScreenForElement(Element* element, FullScreenCheckType
         //   An algorithm is allowed to show a pop-up if, in the task in which the algorithm is running, either:
         //   - an activation behavior is currently being processed whose click event was trusted, or
         //   - the event listener for a trusted click event is being handled.
-        if (!ScriptController::processingUserGesture())
+        if (!UserGestureIndicator::processingUserGesture())
             break;
+
+        // We do not allow pressing the Escape key as a user gesture to enter fullscreen since this is the key
+        // to exit fullscreen.
+        if (UserGestureIndicator::currentUserGesture()->gestureType() == UserGestureType::EscapeKey) {
+            addConsoleMessage(MessageSource::Security, MessageLevel::Error, ASCIILiteral("The Escape key may not be used as a user gesture to enter fullscreen"));
+            break;
+        }
 
         // There is a previously-established user preference, security risk, or platform limitation.
         if (!page() || !page()->settings().fullScreenEnabled())

@@ -1,5 +1,22 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219950. rdar://problem/33595459
+
+    2017-07-26  Chris Dumez  <cdumez@apple.com>
+
+            Pressing the Escape key should not be a valid user gesture to enter fullscreen
+            https://bugs.webkit.org/show_bug.cgi?id=174864
+            <rdar://problem/33009088>
+
+            Reviewed by Geoffrey Garen.
+
+            Add layout test coverage.
+
+            * fullscreen/requestFullscreen-escape-key-expected.txt: Added.
+            * fullscreen/requestFullscreen-escape-key.html: Added.
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219949. rdar://problem/33595616
 
     2017-07-26  Nan Wang  <n_wang@apple.com>
