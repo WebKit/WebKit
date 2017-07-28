@@ -1136,6 +1136,7 @@ set(WebCore_SOURCES
 
     bindings/js/CachedModuleScriptLoader.cpp
     bindings/js/CachedScriptFetcher.cpp
+    bindings/js/CallTracer.cpp
     bindings/js/CommonVM.cpp
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/GCController.cpp

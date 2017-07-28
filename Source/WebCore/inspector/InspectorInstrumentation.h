@@ -33,19 +33,13 @@
 
 #include "CSSSelector.h"
 #include "CallTracerTypes.h"
-#include "CanvasGradient.h"
-#include "CanvasPattern.h"
 #include "CanvasRenderingContext.h"
-#include "DOMPath.h"
 #include "DocumentThreadableLoader.h"
 #include "Element.h"
 #include "FormData.h"
 #include "Frame.h"
 #include "HTMLCanvasElement.h"
-#include "HTMLImageElement.h"
-#include "HTMLVideoElement.h"
 #include "HitTestResult.h"
-#include "ImageData.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentationCookie.h"
 #include "Page.h"
@@ -232,7 +226,7 @@ public:
     static void didChangeCSSCanvasClientNodes(HTMLCanvasElement&);
     static void didCreateCanvasRenderingContext(HTMLCanvasElement&);
     static void didChangeCanvasMemory(HTMLCanvasElement&);
-    static void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<CanvasActionParameterVariant>&& = { });
+    static void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
     static void didFinishRecordingCanvasFrame(HTMLCanvasElement&, bool forceDispatch = false);
 
     static void networkStateChanged(Page&);
@@ -391,7 +385,7 @@ private:
     static void didChangeCSSCanvasClientNodesImpl(InstrumentingAgents*, HTMLCanvasElement&);
     static void didCreateCanvasRenderingContextImpl(InstrumentingAgents*, HTMLCanvasElement&);
     static void didChangeCanvasMemoryImpl(InstrumentingAgents*, HTMLCanvasElement&);
-    static void recordCanvasActionImpl(InstrumentingAgents*, CanvasRenderingContext&, const String&, Vector<CanvasActionParameterVariant>&& = { });
+    static void recordCanvasActionImpl(InstrumentingAgents*, CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
     static void didFinishRecordingCanvasFrameImpl(InstrumentingAgents*, HTMLCanvasElement&, bool forceDispatch = false);
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
@@ -1098,7 +1092,7 @@ inline void InspectorInstrumentation::didChangeCanvasMemory(HTMLCanvasElement& c
         didChangeCanvasMemoryImpl(instrumentingAgents, canvasElement);
 }
 
-inline void InspectorInstrumentation::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<CanvasActionParameterVariant>&& parameters)
+inline void InspectorInstrumentation::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasRenderingContext.canvas().document()))

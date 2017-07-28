@@ -75,7 +75,7 @@ public:
     void didChangeCSSCanvasClientNodes(HTMLCanvasElement&);
     void didCreateCanvasRenderingContext(HTMLCanvasElement&);
     void didChangeCanvasMemory(HTMLCanvasElement&);
-    void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<CanvasActionParameterVariant>&& = { });
+    void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
     void didFinishRecordingCanvasFrame(HTMLCanvasElement&, bool forceDispatch = false);
 
     // CanvasObserver

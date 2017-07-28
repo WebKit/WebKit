@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recording");
+
+    suite.addTestCase({
+        name: "Canvas.requestRecording.InvalidCanvasId",
+        description: "Invalid canvas identifiers should cause an error.",
+        test(resolve, reject) {
+            const canvasId = "DOES_NOT_EXIST";
+            CanvasAgent.requestRecording(canvasId, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.cancelRecording.InvalidCanvasId",
+        description: "Invalid canvas identifiers should cause an error.",
+        test(resolve, reject) {
+            const canvasId = "DOES_NOT_EXIST";
+            CanvasAgent.cancelRecording(canvasId, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test general cases of CanvasAgent recording calls.</p>
+</body>
+</html>

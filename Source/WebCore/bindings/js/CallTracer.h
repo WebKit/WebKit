@@ -35,7 +35,7 @@ class CanvasRenderingContext;
 
 class CallTracer {
 public:
-    static void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<CanvasActionParameterVariant>&& = { });
+    static void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
 };
 
 } // namespace WebCore

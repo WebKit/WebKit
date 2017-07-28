@@ -26,20 +26,12 @@
 #include "config.h"
 #include "CallTracer.h"
 
-#include "CanvasGradient.h"
-#include "CanvasPattern.h"
 #include "CanvasRenderingContext.h"
-#include "DOMPath.h"
-#include "Element.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLImageElement.h"
-#include "HTMLVideoElement.h"
-#include "ImageData.h"
 #include "InspectorInstrumentation.h"
 
 namespace WebCore {
 
-void CallTracer::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<CanvasActionParameterVariant>&& parameters)
+void CallTracer::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
     InspectorInstrumentation::recordCanvasAction(canvasRenderingContext, name, WTFMove(parameters));
 }

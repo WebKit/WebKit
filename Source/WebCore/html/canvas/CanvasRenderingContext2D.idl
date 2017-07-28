@@ -37,6 +37,7 @@ typedef (HTMLImageElement or HTMLCanvasElement) CanvasImageSource;
     CustomIsReachable,
     JSGenerateToJSObject,
     JSCustomMarkFunction,
+    CallTracingCallback=recordCanvasAction,
 ] interface CanvasRenderingContext2D {
 
     // back-reference to the canvas

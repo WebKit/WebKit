@@ -26,19 +26,11 @@
 #include "config.h"
 #include "InspectorCanvasAgent.h"
 
-#include "CanvasGradient.h"
-#include "CanvasPattern.h"
 #include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
-#include "DOMMatrixInit.h"
-#include "DOMPath.h"
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLImageElement.h"
-#include "HTMLVideoElement.h"
-#include "ImageData.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSCanvasRenderingContext2D.h"
@@ -337,7 +329,7 @@ void InspectorCanvasAgent::didChangeCanvasMemory(HTMLCanvasElement& canvasElemen
     m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), canvasElement.memoryCost());
 }
 
-void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<CanvasActionParameterVariant>&& parameters)
+void InspectorCanvasAgent::recordCanvasAction(CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
     HTMLCanvasElement& canvasElement = canvasRenderingContext.canvas();
 

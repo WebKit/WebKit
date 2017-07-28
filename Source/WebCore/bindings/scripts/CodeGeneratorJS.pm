@@ -4724,10 +4724,8 @@ sub GenerateAttributeGetterBodyDefinition
 
         my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
         if ($callTracingCallback) {
-            AddToImplIncludes("CallTracer.h");
-
-            push(@$outputArray, "    if (UNLIKELY(impl.callTracingActive()))\n");
-            push(@$outputArray, "        CallTracer::$callTracingCallback(impl, ASCIILiteral(\"" . $attribute->name . "\"));\n");
+            my @callTracerArguments = ();
+            GenerateCallTracer($outputArray, $callTracingCallback, $attribute->name, \@callTracerArguments, "    ");
         }
 
         push(@$outputArray, "    JSValue result = ${toJSExpression};\n");
@@ -4914,10 +4912,10 @@ sub GenerateAttributeSetterBodyDefinition
 
         my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
         if ($callTracingCallback) {
-            AddToImplIncludes("CallTracer.h");
-
-            push(@$outputArray, "    if (UNLIKELY(impl.callTracingActive()))\n");
-            push(@$outputArray, "        CallTracer::$callTracingCallback(impl, ASCIILiteral(\"" . $attribute->name . "\"), { nativeValue });\n");
+            my $indent = "    ";
+            my @callTracerArguments = ();
+            push(@callTracerArguments, GenerateCallTracerParameter("nativeValue", $attribute->type, $indent));
+            GenerateCallTracer($outputArray, $callTracingCallback, $attribute->name, \@callTracerArguments, $indent);
         }
 
         push(@$outputArray, "    ${functionString};\n");
@@ -6057,15 +6055,11 @@ sub GenerateImplementationFunctionCall
 
     my $callTracingCallback = $operation->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
     if ($callTracingCallback) {
-        AddToImplIncludes("CallTracer.h");
-
-        my @inspectorRecordingArguments = ();
+        my @callTracerArguments = ();
         foreach my $argument (@{$operation->arguments}) {
-            push(@inspectorRecordingArguments, $argument->name);
+            push(@callTracerArguments, GenerateCallTracerParameter($argument->name, $argument->type, $indent));
         }
-
-        push(@$outputArray, $indent . "if (UNLIKELY(impl.callTracingActive()))\n");
-        push(@$outputArray, $indent . "    CallTracer::$callTracingCallback(impl, ASCIILiteral(\"" . $operation->name . "\"), { " . join(", ", @inspectorRecordingArguments) . " });\n");
+        GenerateCallTracer($outputArray, $callTracingCallback, $operation->name, \@callTracerArguments, $indent);
     }
 
     if (OperationHasForcedReturnValue($operation)) {
@@ -7261,6 +7255,42 @@ sub AddJSBuiltinIncludesIfNeeded()
 
     foreach my $attribute (@{$interface->attributes}) {
         AddToImplIncludes(GetJSBuiltinScopeName($interface, $attribute) . "Builtins.h", $attribute->extendedAttributes->{Conditional}) if IsJSBuiltin($interface, $attribute);
+    }
+}
+
+sub GenerateCallTracerParameter()
+{
+    my ($name, $type, $indent) = @_;
+
+    if ($type->isUnion) {
+        return $indent . "    WTF::visit([&] (auto& value) { callTracerParameters.append(value); }, " . $name . ");";
+    }
+
+    return $indent . "    callTracerParameters.append(" . $name . ");";
+}
+
+sub GenerateCallTracer()
+{
+    my ($outputArray, $callTracingCallback, $name, $arguments, $indent) = @_;
+
+    AddToImplIncludes("CallTracer.h");
+
+    my $count = scalar(@$arguments);
+
+    push(@$outputArray, $indent . "if (UNLIKELY(impl.callTracingActive()))");
+    if ($count) {
+        push(@$outputArray, " {\n");
+        push(@$outputArray, $indent . "    Vector<" . $codeGenerator->WK_ucfirst($callTracingCallback) . "Variant> callTracerParameters;\n");
+        push(@$outputArray, join("\n", @$arguments));
+    }
+    push(@$outputArray, "\n");
+    push(@$outputArray, $indent . "    CallTracer::" . $callTracingCallback . "(impl, ASCIILiteral(\"" . $name . "\")");
+    if ($count) {
+        push(@$outputArray, ", WTFMove(callTracerParameters)");
+    }
+    push(@$outputArray, ");\n");
+    if ($count) {
+        push(@$outputArray, $indent . "}\n")
     }
 }
 

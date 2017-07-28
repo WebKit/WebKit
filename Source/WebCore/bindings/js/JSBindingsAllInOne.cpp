@@ -26,6 +26,7 @@
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
 #include "CachedModuleScriptLoader.cpp"
+#include "CallTracer.cpp"
 #include "DOMWrapperWorld.cpp"
 #include "GCController.cpp"
 #include "JSAnimationTimelineCustom.cpp"

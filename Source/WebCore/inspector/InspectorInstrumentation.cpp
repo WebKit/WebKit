@@ -980,7 +980,7 @@ void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents* in
         canvasAgent->didChangeCanvasMemory(canvasElement);
 }
 
-void InspectorInstrumentation::recordCanvasActionImpl(InstrumentingAgents* instrumentingAgents, CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<CanvasActionParameterVariant>&& parameters)
+void InspectorInstrumentation::recordCanvasActionImpl(InstrumentingAgents* instrumentingAgents, CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
     if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
         canvasAgent->recordCanvasAction(canvasRenderingContext, name, WTFMove(parameters));

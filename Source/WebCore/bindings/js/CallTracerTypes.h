@@ -25,36 +25,45 @@
 
 #pragma once
 
+#include "CanvasGradient.h"
+#include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "DOMMatrixInit.h"
+#include "DOMPath.h"
+#include "Element.h"
+#include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
+#include "ImageData.h"
+#include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class DOMPath;
-class Element;
-class HTMLImageElement;
-class ImageData;
-
 typedef Variant<
+    CanvasRenderingContext2D::ImageSmoothingQuality,
+    CanvasRenderingContext2D::WindingRule,
+    DOMMatrixInit,
+    DOMPath*,
     Element*,
     HTMLImageElement*,
     ImageData*,
-    DOMMatrixInit,
-    DOMPath*,
+    RefPtr<CanvasGradient>,
+    RefPtr<CanvasPattern>,
+    RefPtr<HTMLCanvasElement>,
+    RefPtr<HTMLImageElement>,
+#if ENABLE(VIDEO)
+    RefPtr<HTMLVideoElement>,
+#endif
     Vector<float>,
     String,
     double,
     float,
     int,
     bool,
-    std::optional<float>,
-    CanvasImageSource,
-    CanvasRenderingContext2D::Style,
-    CanvasRenderingContext2D::WindingRule,
-    CanvasRenderingContext2D::ImageSmoothingQuality
-> CanvasActionParameterVariant;
+    std::optional<float>
+> RecordCanvasActionVariant;
 
 } // namespace WebCore

@@ -505,6 +505,9 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 
 void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 {
+    if (UNLIKELY(m_context && m_context->callTracingActive()))
+        InspectorInstrumentation::didFinishRecordingCanvasFrame(*this);
+
     // Clear the dirty rect
     m_dirtyRect = FloatRect();
 

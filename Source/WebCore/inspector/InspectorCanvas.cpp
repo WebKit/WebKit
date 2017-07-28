@@ -99,7 +99,7 @@ bool InspectorCanvas::hasRecordingData() const
     return m_initialState && m_frames;
 }
 
-void InspectorCanvas::recordAction(const String& name, Vector<CanvasActionParameterVariant>&& parameters)
+void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
     if (!hasRecordingData()) {
         m_initialState = buildInitialState();
@@ -385,23 +385,21 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
     return initialState;
 }
 
-RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::buildAction(const String& name, Vector<CanvasActionParameterVariant>&& parameters)
+RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::buildAction(const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
     RefPtr<Inspector::Protocol::Array<InspectorValue>> action = Inspector::Protocol::Array<InspectorValue>::create();
-    action->addItem(static_cast<double>(indexForData(name)));
+    action->addItem(indexForData(name));
 
     RefPtr<Inspector::Protocol::Array<InspectorValue>> parametersData = Inspector::Protocol::Array<Inspector::InspectorValue>::create();
-    for (CanvasActionParameterVariant& item : parameters) {
+    for (RecordCanvasActionVariant& item : parameters) {
         WTF::switchOn(item,
-            [&] (const Element*) {
-                // Elements are not serializable, so add a string as a placeholder since the actual
-                // element cannot be reconstructed in the frontend.
-                parametersData->addItem(indexForData(String("element")));
+            [&] (const CanvasRenderingContext2D::WindingRule& value) {
+                String windingRule = CanvasRenderingContext2D::stringForWindingRule(value);
+                parametersData->addItem(indexForData(windingRule));
             },
-            [&] (const HTMLImageElement* value) { parametersData->addItem(indexForData(value)); },
-            [&] (const ImageData* value) {
-                if (value)
-                    parametersData->addItem(indexForData(value));
+            [&] (const CanvasRenderingContext2D::ImageSmoothingQuality& value) {
+                String imageSmoothingQuality = CanvasRenderingContext2D::stringForImageSmoothingQuality(value);
+                parametersData->addItem(indexForData(imageSmoothingQuality));
             },
             [&] (const DOMMatrixInit& value) {
                 RefPtr<Inspector::Protocol::Array<double>> array = Inspector::Protocol::Array<double>::create();
@@ -414,6 +412,23 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
                 parametersData->addItem(WTFMove(array));
             },
             [&] (const DOMPath* value) { parametersData->addItem(indexForData(buildStringFromPath(value->path()))); },
+            [&] (const Element*) {
+                // Elements are not serializable, so add a string as a placeholder since the actual
+                // element cannot be reconstructed in the frontend.
+                parametersData->addItem(indexForData(String("element")));
+            },
+            [&] (HTMLImageElement* value) { parametersData->addItem(indexForData(value)); },
+            [&] (ImageData* value) {
+                if (value)
+                    parametersData->addItem(indexForData(value));
+            },
+            [&] (const RefPtr<CanvasGradient>& value) { parametersData->addItem(indexForData(value.get())); },
+            [&] (const RefPtr<CanvasPattern>& value) { parametersData->addItem(indexForData(value.get())); },
+            [&] (RefPtr<HTMLCanvasElement>& value) { parametersData->addItem(indexForData(value.get())); },
+            [&] (const RefPtr<HTMLImageElement>& value) { parametersData->addItem(indexForData(value.get())); },
+#if ENABLE(VIDEO)
+            [&] (RefPtr<HTMLVideoElement>& value) { parametersData->addItem(indexForData(value.get())); },
+#endif
             [&] (const Vector<float>& value) { parametersData->addItem(buildArrayForVector(value)); },
             [&] (const String& value) { parametersData->addItem(indexForData(value)); },
             [&] (double value) { parametersData->addItem(value); },
@@ -423,30 +438,6 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
             [&] (const std::optional<float>& value) {
                 if (value)
                     parametersData->addItem(value.value());
-            },
-            [&] (CanvasImageSource& canvasImageSource) {
-                WTF::switchOn(canvasImageSource,
-                    [&] (const RefPtr<HTMLImageElement>& value) { parametersData->addItem(indexForData(value.get())); },
-#if ENABLE(VIDEO)
-                    [&] (RefPtr<HTMLVideoElement>& value) { parametersData->addItem(indexForData(value.get())); },
-#endif
-                    [&] (RefPtr<HTMLCanvasElement>& value) { parametersData->addItem(indexForData(value.get())); }
-                );
-            },
-            [&] (const CanvasRenderingContext2D::Style& style) {
-                WTF::switchOn(style,
-                    [&] (const String& value) { parametersData->addItem(indexForData(value)); },
-                    [&] (const RefPtr<CanvasGradient>& value) { parametersData->addItem(indexForData(value.get())); },
-                    [&] (const RefPtr<CanvasPattern>& value) { parametersData->addItem(indexForData(value.get())); }
-                );
-            },
-            [&] (CanvasRenderingContext2D::WindingRule value) {
-                String windingRule = CanvasRenderingContext2D::stringForWindingRule(value);
-                parametersData->addItem(indexForData(windingRule));
-            },
-            [&] (CanvasRenderingContext2D::ImageSmoothingQuality value) {
-                String imageSmoothingQuality = CanvasRenderingContext2D::stringForImageSmoothingQuality(value);
-                parametersData->addItem(indexForData(imageSmoothingQuality));
             }
         );
     }

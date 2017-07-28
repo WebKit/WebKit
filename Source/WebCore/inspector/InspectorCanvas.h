@@ -47,18 +47,6 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-typedef Variant<
-    const HTMLImageElement*,
-#if ENABLE(VIDEO)
-    HTMLVideoElement*,
-#endif
-    HTMLCanvasElement*,
-    const CanvasGradient*,
-    const CanvasPattern*,
-    const ImageData*,
-    String
-> DuplicateDataVariant;
-
 class InspectorCanvas final : public RefCounted<InspectorCanvas> {
 public:
     static Ref<InspectorCanvas> create(HTMLCanvasElement&, const String& cssCanvasName);
@@ -69,7 +57,7 @@ public:
 
     void resetRecordingData();
     bool hasRecordingData() const;
-    void recordAction(const String&, Vector<CanvasActionParameterVariant>&& = { });
+    void recordAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
 
     RefPtr<Inspector::Protocol::Recording::InitialState>&& releaseInitialState() { return WTFMove(m_initialState); }
     RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>>&& releaseFrames() { return WTFMove(m_frames); }
@@ -91,9 +79,21 @@ public:
 private:
     InspectorCanvas(HTMLCanvasElement&, const String& cssCanvasName);
 
+    typedef Variant<
+        CanvasGradient*,
+        CanvasPattern*,
+        HTMLCanvasElement*,
+        HTMLImageElement*,
+#if ENABLE(VIDEO)
+        HTMLVideoElement*,
+#endif
+        ImageData*,
+        String
+    > DuplicateDataVariant;
+
     int indexForData(DuplicateDataVariant);
     RefPtr<Inspector::Protocol::Recording::InitialState> buildInitialState();
-    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildAction(const String&, Vector<CanvasActionParameterVariant>&& = { });
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
     RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForCanvasGradient(const CanvasGradient&);
     RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForCanvasPattern(const CanvasPattern&);
     RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> buildArrayForImageData(const ImageData&);
