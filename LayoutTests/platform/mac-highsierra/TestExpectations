@@ -141,7 +141,4 @@ imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Pass Crash ]
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_long_empty.https.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_empty.https.html [ Failure ]
 
-# <rdar://problem/33550614>
-fast/images/pdf-as-image-with-annotations.html [ ImageOnlyFailure ]
-
 

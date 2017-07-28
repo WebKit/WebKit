@@ -1,5 +1,18 @@
 2017-07-28  Matt Lewis  <jlewis3@apple.com>
 
+        Unreviewed, rolling out r220016.
+
+        Test needs to be unskipped due to configuration change in High
+        Sierra.
+
+        Reverted changeset:
+
+        "Marked fast/images/pdf-as-image-with-annotations.html as
+        image failure."
+        http://trac.webkit.org/changeset/220016
+
+2017-07-28  Matt Lewis  <jlewis3@apple.com>
+
         Marked fast/images/pdf-as-image-with-annotations.html as image failure.
         <rdar://problem/33550614>
 
