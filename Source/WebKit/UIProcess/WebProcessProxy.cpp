@@ -330,6 +330,10 @@ void WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<Web
             callbackAggregator->removePendingCallback();
         });
     }
+
+    // FIXME: It's bizarre that this call is on WebProcessProxy and that it doesn't work if there are no visited pages.
+    // This should actually be a function of WebsiteDataStore and it should work even if there are no WebViews instances.
+    callbackAggregator->callIfNeeded();
 }
     
 void WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()

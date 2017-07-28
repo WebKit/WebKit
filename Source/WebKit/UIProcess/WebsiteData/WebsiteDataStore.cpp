@@ -813,8 +813,19 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
     }
 #endif
 
-    if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics) && m_resourceLoadStatistics)
-        m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince);
+    // FIXME <rdar://problem/33491222>; scheduleClearInMemoryAndPersistent does not have a completion handler,
+    // so the completion handler for this removeData() call can be called prematurely.
+    if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics) && m_resourceLoadStatistics) {
+        auto deletedTypesRaw = dataTypes.toRaw();
+        auto monitoredTypesRaw = WebResourceLoadStatisticsStore::monitoredDataTypes().toRaw();
+
+        // If we are deleting all of the data types that the resource load statistics store monitors
+        // we do not need to re-grandfather old data.
+        if ((monitoredTypesRaw & deletedTypesRaw) == monitoredTypesRaw)
+            m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince, WebResourceLoadStatisticsStore::ShouldGrandfather::No);
+        else
+            m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince, WebResourceLoadStatisticsStore::ShouldGrandfather::Yes);
+    }
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
@@ -1082,8 +1093,19 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     }
 #endif
 
-    if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics) && m_resourceLoadStatistics)
-        m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent();
+    // FIXME <rdar://problem/33491222>; scheduleClearInMemoryAndPersistent does not have a completion handler,
+    // so the completion handler for this removeData() call can be called prematurely.
+    if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics) && m_resourceLoadStatistics) {
+        auto deletedTypesRaw = dataTypes.toRaw();
+        auto monitoredTypesRaw = WebResourceLoadStatisticsStore::monitoredDataTypes().toRaw();
+
+        // If we are deleting all of the data types that the resource load statistics store monitors
+        // we do not need to re-grandfather old data.
+        if ((monitoredTypesRaw & deletedTypesRaw) == monitoredTypesRaw)
+            m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(WebResourceLoadStatisticsStore::ShouldGrandfather::No);
+        else
+            m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(WebResourceLoadStatisticsStore::ShouldGrandfather::Yes);
+    }
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
@@ -1270,18 +1292,33 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
         return;
 
     if (enabled) {
+        ASSERT(!m_resourceLoadStatistics);
+        enableResourceLoadStatisticsAndSetTestingCallback(nullptr);
+        return;
+    }
+
+    m_resourceLoadStatistics = nullptr;
+    for (auto& processPool : processPools())
+        processPool->setResourceLoadStatisticsEnabled(false);
+}
+
+void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback)
+{
+    if (m_resourceLoadStatistics) {
+        m_resourceLoadStatistics->setStatisticsTestingCallback(WTFMove(callback));
+        return;
+    }
+
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-        m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, [this] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst shouldClearFirst) {
-            updateCookiePartitioningForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, shouldClearFirst);
-        });
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), [this] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst shouldClearFirst) {
+        updateCookiePartitioningForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, shouldClearFirst);
+    });
 #else
-        m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory);
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, nullptr);
 #endif
-    } else
-        m_resourceLoadStatistics = nullptr;
 
     for (auto& processPool : processPools())
-        processPool->setResourceLoadStatisticsEnabled(enabled);
+        processPool->setResourceLoadStatisticsEnabled(true);
 }
 
 DatabaseProcessCreationParameters WebsiteDataStore::databaseProcessParameters()

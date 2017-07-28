@@ -1,5 +1,63 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219904. rdar://problem/33595576
+
+    2017-07-25  Brady Eidson  <beidson@apple.com>
+
+            ResourceLoadStatistics grandfathering happens much too often.
+            <rdar://problem/32655834> and https://bugs.webkit.org/show_bug.cgi?id=174825
+
+            Reviewed by Chris Dumez.
+
+            The ResourceLoadStatistics grandfathering procedure happens too often.
+            - With an empty memory store, even though an empty memory store is a perfectly valid state.
+            - On each launch, even if grandfathering happened on the last launch - because grandfathering
+              data would not automatically be saved to disk.
+            - After clearing all website data, at which point no grandfathering can possibly be relevant
+              because there is no data to grandfather.
+
+            This patch fixes those cases and adds API tests to verify they remain fixed.
+
+            * Shared/WebsiteData/WebsiteDataType.h:
+
+            * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+            (+[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate]): allWebsiteDataTypes, but even with the private ones.
+            (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStore]): If the types being cleared cover all of
+              the types that ResourceLoadStatistics care about, don't grandfather afterwards.
+            (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:]): Ditto.
+            (-[WKWebsiteDataStore _setResourceLoadStatisticsTestingCallback:]):
+            * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
+            * UIProcess/Storage/ResourceLoadStatisticsPersistentStorage.cpp:
+            (WebKit::ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk): Don't grandfather if the store read from
+              disk is empty (as being empty is perfectly fine), and also log the event of "populated without grandfathering".
+            * UIProcess/Storage/ResourceLoadStatisticsPersistentStorage.h:
+
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData):
+
+            * UIProcess/WebResourceLoadStatisticsStore.cpp:
+            (WebKit::WebResourceLoadStatisticsStore::monitoredDataTypes):
+            (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+            (WebKit::WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore):
+            (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData): Schedule a write right away so we don't re-grandfather
+              on next launch, and also log the grandfathering event.
+            (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent): Takes a ShouldGrandfather flag
+              to tell whether or not data should be re-grandfathered after the store is cleared.
+            (WebKit::WebResourceLoadStatisticsStore::logTestingEvent): Log the event to the testing client.
+            (WebKit::dataTypesToRemove): Deleted.
+            * UIProcess/WebResourceLoadStatisticsStore.h:
+
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::removeData):
+            (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+            (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback): Handles enabling ResourceLoadStatistics both
+              with and without a testing callback.
+            * UIProcess/WebsiteData/WebsiteDataStore.h:
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219987. rdar://problem/33595619
 
     2017-07-27  Nan Wang  <n_wang@apple.com>
