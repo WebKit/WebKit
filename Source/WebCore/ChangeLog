@@ -1,5 +1,26 @@
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219991. rdar://problem/33595570
+
+    2017-07-27  Jeremy Jones  <jeremyj@apple.com>
+
+            MediaDocument fullscreen pinch gesture should trigger navigate back.
+            https://bugs.webkit.org/show_bug.cgi?id=174914
+
+            Reviewed by Jon Lee.
+
+            No new tests because only effect is from interaction with platform.
+
+            For media documents, pressing the "done" button on fullscreen video navigates back
+            to the previous page. The same should happen for other gestures that pause playback
+            when returning to inline. This allows the gesture to have the same behavior as the
+            button.
+
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason):
+
+2017-07-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219950. rdar://problem/33595459
 
     2017-07-26  Chris Dumez  <cdumez@apple.com>
