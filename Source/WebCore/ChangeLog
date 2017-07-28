@@ -1,3 +1,18 @@
+2017-07-28  Jeremy Jones  <jeremyj@apple.com>
+
+        WebMediaSessionHelper calls -[UIApplication beginReceivingRemoteControlEvents] from WebThread
+        https://bugs.webkit.org/show_bug.cgi?id=174934
+        rdar://problem/33586772
+
+        Reviewed by Eric Carlson.
+
+        No new tests because no effect on DOM.
+
+        This dispatches a UIKit call to the main thread since it might happen on WebThread in WK1.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper initWithCallback:]):
+
 2017-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] Reeder's defaults font is Times instead of San Francisco

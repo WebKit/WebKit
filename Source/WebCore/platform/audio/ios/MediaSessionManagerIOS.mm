@@ -338,8 +338,10 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
     [self allocateVolumeView];
 
     // Now playing won't work unless we turn on the delivery of remote control events.
-    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-    
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+    });
+
     return self;
 }
 
