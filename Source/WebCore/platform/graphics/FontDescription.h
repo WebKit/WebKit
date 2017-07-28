@@ -232,6 +232,10 @@ public:
     const AtomicString& familyAt(unsigned i) const { return m_families[i]; }
     const RefCountedArray<AtomicString>& families() const { return m_families; }
 
+    static bool familyNamesAreEqual(const AtomicString&, const AtomicString&);
+    static unsigned familyNameHash(const AtomicString&);
+    static String foldedFamilyName(const AtomicString&);
+
     unsigned effectiveFamilyCount() const;
     FontFamilySpecification effectiveFamilyAt(unsigned) const;
 

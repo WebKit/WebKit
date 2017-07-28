@@ -31,6 +31,7 @@
 #include "FontDescription.h"
 
 #include "LocaleToScriptMapping.h"
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -154,5 +155,32 @@ bool FontCascadeDescription::familiesEqualForTextAutoSizing(const FontCascadeDes
 }
 
 #endif // ENABLE(TEXT_AUTOSIZING)
+
+bool FontCascadeDescription::familyNamesAreEqual(const AtomicString& family1, const AtomicString& family2)
+{
+    // FIXME: <rdar://problem/33594253> CoreText matches dot-prefixed font names case sensitively. We should
+    // always take the case insensitive patch once this radar is fixed.
+    if (family1.startsWith('.'))
+        return StringHash::equal(family1.string(), family2.string());
+    return ASCIICaseInsensitiveHash::equal(family1, family2);
+}
+
+unsigned FontCascadeDescription::familyNameHash(const AtomicString& family)
+{
+    // FIXME: <rdar://problem/33594253> CoreText matches dot-prefixed font names case sensitively. We should
+    // always take the case insensitive patch once this radar is fixed.
+    if (family.startsWith('.'))
+        return StringHash::hash(family.string());
+    return ASCIICaseInsensitiveHash::hash(family);
+}
+
+String FontCascadeDescription::foldedFamilyName(const AtomicString& family)
+{
+    // FIXME: <rdar://problem/33594253> CoreText matches dot-prefixed font names case sensitively. We should
+    // always take the case insensitive patch once this radar is fixed.
+    if (family.startsWith('.'))
+        return family.string();
+    return family.string().foldCase();
+}
 
 } // namespace WebCore
