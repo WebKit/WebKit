@@ -1,3 +1,15 @@
+2017-07-28  Matt Rajca  <mrajca@apple.com>
+
+        Don't add autoplay restrictions to media elements created in response to user gestures.
+        https://bugs.webkit.org/show_bug.cgi?id=174947
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-create-with-user-gesture.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+
 2017-07-28  Jeremy Jones  <jeremyj@apple.com>
 
         WebMediaSessionHelper calls -[UIApplication beginReceivingRemoteControlEvents] from WebThread
