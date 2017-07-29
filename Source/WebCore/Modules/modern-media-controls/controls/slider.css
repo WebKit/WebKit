@@ -81,7 +81,11 @@
     height: 100%;
     background-color: transparent;
     -webkit-appearance: none !important;
+    /* Disabling this for now because the outline is visualy inconsistent with the button 
+       focus state. Tracking at https://bugs.webkit.org/show_bug.cgi?id=174906 */
+    outline: none;
 }
+
 
 .ios .slider > input {
     /* On iOS only, we want to only capture events on the thumb and not the track. */

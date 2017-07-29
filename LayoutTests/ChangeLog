@@ -1,3 +1,16 @@
+2017-07-29  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: FKA: Buttons need a visible focus indicator
+        https://bugs.webkit.org/show_bug.cgi?id=171040
+        <rdar://problem/30922548>
+
+        Reviewed by Antoine Quint.
+
+        * media/modern-media-controls/button/button-focus-state-expected.txt: Added.
+        * media/modern-media-controls/button/button-focus-state.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-elcapitan/TestExpectations:
+
 2017-07-28  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove JS builtin bindings for FetchHeaders

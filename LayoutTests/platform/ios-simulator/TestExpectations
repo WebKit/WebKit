@@ -124,6 +124,9 @@ media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
 media/modern-media-controls/placard-support/ipad [ Skip ]
 media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
 
+# There is no focus state for on iOS
+media/modern-media-controls/button/button-focus-state.html [ Skip ]
+
 # These tests rely on fullscreen which do not use the WebKit media controls on iOS
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Skip ]

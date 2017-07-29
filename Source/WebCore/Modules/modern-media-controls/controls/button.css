@@ -50,6 +50,15 @@ button > picture {
     pointer-events: none;
 }
 
+button:focus {
+    outline: none;
+}
+
+button:focus > picture {
+    background-color: -webkit-focus-ring-color !important;
+    mix-blend-mode: normal !important;
+}
+
 button.skip-back > picture,
 button.play-pause > picture,
 button.skip-forward > picture {
