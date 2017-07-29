@@ -68,7 +68,10 @@ class SourceBufferPrivateAVFObjCErrorClient {
 public:
     virtual ~SourceBufferPrivateAVFObjCErrorClient() { }
     virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *, bool& shouldIgnore) = 0;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) = 0;
+#pragma clang diagnostic pop
 };
 
 class SourceBufferPrivateAVFObjC final : public SourceBufferPrivate {
@@ -109,7 +112,10 @@ public:
     void registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
     void unregisterForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
     void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *);
+#pragma clang diagnostic pop
 
     void setVideoLayer(AVSampleBufferDisplayLayer*);
     void setDecompressionSession(WebCoreDecompressionSession*);
@@ -139,7 +145,10 @@ private:
     void destroyRenderers();
 
     void flushVideo();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     void flush(AVSampleBufferAudioRenderer *);
+#pragma clang diagnostic pop
 
     WeakPtr<SourceBufferPrivateAVFObjC> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
@@ -153,7 +162,10 @@ private:
     RetainPtr<AVStreamDataParser> m_parser;
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     HashMap<int, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
+#pragma clang diagnostic pop
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
     RetainPtr<WebAVSampleBufferErrorListener> m_errorListener;
     RetainPtr<NSError> m_hdcpError;
