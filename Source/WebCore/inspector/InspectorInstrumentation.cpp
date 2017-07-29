@@ -61,6 +61,7 @@
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "ScriptController.h"
+#include "ScriptExecutionContext.h"
 #include "WebConsoleAgent.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebSocketFrame.h"
@@ -350,6 +351,18 @@ void InspectorInstrumentation::didRemoveTimerImpl(InstrumentingAgents& instrumen
         timelineAgent->didRemoveTimer(timerId, frameForScriptExecutionContext(context));
 }
 
+void InspectorInstrumentation::didAddEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomicString& eventType)
+{
+    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
+        pageDebuggerAgent->didAddEventListener(target, eventType);
+}
+
+void InspectorInstrumentation::willRemoveEventListenerImpl(InstrumentingAgents& instrumentingAgents, EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+{
+    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
+        pageDebuggerAgent->willRemoveEventListener(target, eventType, listener, capture);
+}
+
 InspectorInstrumentationCookie InspectorInstrumentation::willCallFunctionImpl(InstrumentingAgents& instrumentingAgents, const String& scriptName, int scriptLine, ScriptExecutionContext* context)
 {
     int timelineAgentId = 0;
@@ -378,9 +391,18 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(I
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
-void InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents& instrumentingAgents, const Event& event)
+void InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents& instrumentingAgents, const Event& event, const RegisteredEventListener& listener)
 {
+    if (PageDebuggerAgent* pageDebuggerAgent = instrumentingAgents.pageDebuggerAgent())
+        pageDebuggerAgent->willHandleEvent(listener);
+
     pauseOnNativeEventIfNeeded(instrumentingAgents, true, event.type(), false);
+}
+
+void InspectorInstrumentation::didHandleEventImpl(InstrumentingAgents& instrumentingAgents)
+{
+    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent())
+        debuggerAgent->didDispatchAsyncCall();
 }
 
 void InspectorInstrumentation::didDispatchEventImpl(const InspectorInstrumentationCookie& cookie)

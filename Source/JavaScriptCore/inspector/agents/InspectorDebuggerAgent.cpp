@@ -1145,6 +1145,8 @@ void InspectorDebuggerAgent::clearAsyncStackTraceData()
 {
     m_pendingAsyncCalls.clear();
     m_currentAsyncCallIdentifier = std::nullopt;
+
+    didClearAsyncStackTraceData();
 }
 
 } // namespace Inspector

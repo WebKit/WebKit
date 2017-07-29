@@ -34,6 +34,8 @@
 
 #include "CachedResource.h"
 #include "Document.h"
+#include "EventListener.h"
+#include "EventTarget.h"
 #include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
@@ -41,6 +43,7 @@
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageScriptDebugServer.h"
+#include "ScriptExecutionContext.h"
 #include "ScriptState.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
@@ -91,6 +94,12 @@ String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
     }
 
     return InspectorDebuggerAgent::sourceMapURLForScript(script);
+}
+
+void PageDebuggerAgent::didClearAsyncStackTraceData()
+{
+    m_registeredEventListeners.clear();
+    m_nextEventListenerIdentifier = 1;
 }
 
 void PageDebuggerAgent::muteConsole()
@@ -149,6 +158,51 @@ void PageDebuggerAgent::mainFrameStoppedLoading()
 void PageDebuggerAgent::mainFrameNavigated()
 {
     setSuppressAllPauses(false);
+}
+
+void PageDebuggerAgent::didAddEventListener(EventTarget& target, const AtomicString& eventType)
+{
+    if (!breakpointsActive())
+        return;
+
+    auto& eventListeners = target.eventListeners(eventType);
+    const RefPtr<RegisteredEventListener>& listener = eventListeners.last();
+    if (m_registeredEventListeners.contains(listener.get())) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    JSC::ExecState* scriptState = target.scriptExecutionContext()->execState();
+    if (!scriptState)
+        return;
+
+    int identifier = m_nextEventListenerIdentifier++;
+    m_registeredEventListeners.set(listener.get(), identifier);
+
+    didScheduleAsyncCall(scriptState, InspectorDebuggerAgent::AsyncCallType::EventListener, identifier, listener->isOnce());
+}
+
+void PageDebuggerAgent::willRemoveEventListener(EventTarget& target, const AtomicString& eventType, EventListener& listener, bool capture)
+{
+    auto& eventListeners = target.eventListeners(eventType);
+    size_t listenerIndex = eventListeners.findMatching([&](auto& registeredListener) {
+        return &registeredListener->callback() == &listener && registeredListener->useCapture() == capture;
+    });
+
+    if (listenerIndex == notFound)
+        return;
+
+    int identifier = m_registeredEventListeners.take(eventListeners[listenerIndex].get());
+    didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::EventListener, identifier);
+}
+
+void PageDebuggerAgent::willHandleEvent(const RegisteredEventListener& listener)
+{
+    auto it = m_registeredEventListeners.find(&listener);
+    if (it == m_registeredEventListeners.end())
+        return;
+
+    willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::EventListener, it->value);
 }
 
 void PageDebuggerAgent::didRequestAnimationFrame(int callbackId, Document& document)

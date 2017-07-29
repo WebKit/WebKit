@@ -1,3 +1,16 @@
+2017-07-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: capture an async stack trace when web content calls addEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=174739
+        <rdar://problem/33468197>
+
+        Reviewed by Brian Burg.
+
+        Add test case checking that async stack traces are recorded for addEventListener.
+
+        * inspector/debugger/async-stack-trace-expected.txt:
+        * inspector/debugger/async-stack-trace.html:
+
 2017-07-28  Matt Rajca  <mrajca@apple.com>
 
         Don't add autoplay restrictions to media elements created in response to user gestures.

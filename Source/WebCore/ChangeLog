@@ -1,3 +1,37 @@
+2017-07-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: capture an async stack trace when web content calls addEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=174739
+        <rdar://problem/33468197>
+
+        Reviewed by Brian Burg.
+
+        Test: inspector/debugger/async-stack-trace.html
+
+        Add instrumentation to EventTarget to support showing asynchronous
+        stack traces when the debugger breaks in a script event listener.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::removeEventListener):
+        (WebCore::EventTarget::fireEventListeners):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didAddEventListenerImpl):
+        (WebCore::InspectorInstrumentation::willRemoveEventListenerImpl):
+        (WebCore::InspectorInstrumentation::willHandleEventImpl):
+        (WebCore::InspectorInstrumentation::didHandleEventImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didAddEventListener):
+        (WebCore::InspectorInstrumentation::willRemoveEventListener):
+        (WebCore::InspectorInstrumentation::willHandleEvent):
+        (WebCore::InspectorInstrumentation::didHandleEvent):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::didClearAsyncStackTraceData):
+        (WebCore::PageDebuggerAgent::didAddEventListener):
+        (WebCore::PageDebuggerAgent::willRemoveEventListener):
+        (WebCore::PageDebuggerAgent::willHandleEvent):
+        * inspector/PageDebuggerAgent.h:
+
 2017-07-28  Matt Rajca  <mrajca@apple.com>
 
         Don't add autoplay restrictions to media elements created in response to user gestures.

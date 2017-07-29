@@ -1,3 +1,19 @@
+2017-07-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: capture an async stack trace when web content calls addEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=174739
+        <rdar://problem/33468197>
+
+        Reviewed by Brian Burg.
+
+        Allow debugger agents to perform custom logic when asynchronous stack
+        trace data is cleared. For example, the PageDebuggerAgent would clear
+        its list of registered listeners for which call stacks have been recorded.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::clearAsyncStackTraceData):
+        * inspector/agents/InspectorDebuggerAgent.h:
+
 2017-07-28  Mark Lam  <mark.lam@apple.com>
 
         ObjectToStringAdaptiveStructureWatchpoint should not fire if it's dying imminently.

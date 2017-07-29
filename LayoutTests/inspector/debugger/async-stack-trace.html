@@ -41,6 +41,15 @@ function testReferenceCounting() {
     }, timerDelay);
 }
 
+function testAddEventListener() {
+    document.body.addEventListener("click", function clickFired() {
+        document.body.removeEventListener("click", clickFired);
+        pauseThenFinishTest();
+    });
+
+    document.body.click();
+}
+
 function recursiveCallThenTest(testFunction, depth) {
     if (depth) {
         recursiveCallThenTest(testFunction, depth - 1);
@@ -93,6 +102,7 @@ function test()
     addSimpleTestCase("SetInterval", "testSetInterval(3)");
     addSimpleTestCase("ChainedRequestAnimationFrame", "testChainedRequestAnimationFrame()");
     addSimpleTestCase("ReferenceCounting", "testReferenceCounting()");
+    addSimpleTestCase("AddEventListener", "testAddEventListener()");
 
     function setup(resolve) {
         InspectorTest.log("Save DebuggerManager.asyncStackTraceDepth");

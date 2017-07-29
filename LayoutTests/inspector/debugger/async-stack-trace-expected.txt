@@ -64,6 +64,18 @@ ASYNC CALL STACK:
 3: --- setInterval ---
 4: [F] testReferenceCounting
 5: [P] Global Code
+
+-- Running test case: CheckAsyncStackTrace.AddEventListener
+PAUSE #1
+CALL STACK:
+0: [F] pauseThenFinishTest
+1: [F] clickFired
+2: [F] testAddEventListener
+3: [P] Global Code
+ASYNC CALL STACK:
+4: --- addEventListener ---
+5: [F] testAddEventListener
+6: [P] Global Code
 -- Running test setup.
 Save DebuggerManager.asyncStackTraceDepth
 
