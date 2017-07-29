@@ -54,7 +54,7 @@ class WebProcessPool;
 class WebResourceLoadStatisticsStore;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
-struct StorageProcessCreationParameters;
+struct DatabaseProcessCreationParameters;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
 
@@ -121,7 +121,7 @@ public:
     bool isAssociatedProcessPool(WebProcessPool&) const;
 
     WebsiteDataStoreParameters parameters();
-    StorageProcessCreationParameters databaseProcessParameters();
+    DatabaseProcessCreationParameters databaseProcessParameters();
 
     Vector<WebCore::Cookie> pendingCookies() const;
     void addPendingCookie(const WebCore::Cookie&);

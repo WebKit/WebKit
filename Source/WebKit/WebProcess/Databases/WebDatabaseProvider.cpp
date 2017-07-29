@@ -27,7 +27,7 @@
 #include "WebDatabaseProvider.h"
 
 #include "WebProcess.h"
-#include "WebToStorageProcessConnection.h"
+#include "WebToDatabaseProcessConnection.h"
 #include <WebCore/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>

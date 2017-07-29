@@ -29,14 +29,14 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "DataReference.h"
+#include "DatabaseToWebProcessConnectionMessages.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
-#include "StorageToWebProcessConnectionMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBConnectionToClientMessages.h"
 #include "WebIDBResult.h"
 #include "WebProcess.h"
-#include "WebToStorageProcessConnection.h"
+#include "WebToDatabaseProcessConnection.h"
 #include <WebCore/IDBConnectionToServer.h>
 #include <WebCore/IDBCursorInfo.h>
 #include <WebCore/IDBError.h>
@@ -65,14 +65,14 @@ WebIDBConnectionToServer::WebIDBConnectionToServer(SessionID sessionID)
 {
     relaxAdoptionRequirement();
 
-    m_isOpenInServer = sendSync(Messages::StorageToWebProcessConnection::EstablishIDBConnectionToServer(sessionID), Messages::StorageToWebProcessConnection::EstablishIDBConnectionToServer::Reply(m_identifier));
+    m_isOpenInServer = sendSync(Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer(sessionID), Messages::DatabaseToWebProcessConnection::EstablishIDBConnectionToServer::Reply(m_identifier));
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
 }
 
 WebIDBConnectionToServer::~WebIDBConnectionToServer()
 {
     if (m_isOpenInServer)
-        send(Messages::StorageToWebProcessConnection::RemoveIDBConnectionToServer(m_identifier));
+        send(Messages::DatabaseToWebProcessConnection::RemoveIDBConnectionToServer(m_identifier));
 }
 
 IPC::Connection* WebIDBConnectionToServer::messageSenderConnection()

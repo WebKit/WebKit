@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DatabaseProcessCreationParameters.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "ArgumentCoders.h"
 
-// FIXME: Remove these after <rdar://problem/30772033> is fixed.
-void DatabaseServiceInitializer();
-void NetworkServiceInitializer();
-void PluginServiceInitializer();
-void WebContentServiceInitializer();
+namespace WebKit {
 
-#ifdef __cplusplus
+DatabaseProcessCreationParameters::DatabaseProcessCreationParameters()
+{
 }
+
+void DatabaseProcessCreationParameters::encode(IPC::Encoder& encoder) const
+{
+#if ENABLE(INDEXED_DATABASE)
+    encoder << sessionID;
+    encoder << indexedDatabaseDirectory;
+    encoder << indexedDatabaseDirectoryExtensionHandle;
 #endif
+}
+
+bool DatabaseProcessCreationParameters::decode(IPC::Decoder& decoder, DatabaseProcessCreationParameters& result)
+{
+#if ENABLE(INDEXED_DATABASE)
+    if (!decoder.decode(result.sessionID))
+        return false;
+    if (!decoder.decode(result.indexedDatabaseDirectory))
+        return false;
+    if (!decoder.decode(result.indexedDatabaseDirectoryExtensionHandle))
+        return false;
+#endif
+
+    return true;
+}
+
+} // namespace WebKit

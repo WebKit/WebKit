@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DatabaseProcessMainUnix.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "ChildProcessMain.h"
+#include "DatabaseProcess.h"
 
-// FIXME: Remove these after <rdar://problem/30772033> is fixed.
-void DatabaseServiceInitializer();
-void NetworkServiceInitializer();
-void PluginServiceInitializer();
-void WebContentServiceInitializer();
+namespace WebKit {
 
-#ifdef __cplusplus
+int DatabaseProcessMainUnix(int argc, char** argv)
+{
+    return ChildProcessMain<DatabaseProcess, ChildProcessMainBase>(argc, argv);
 }
-#endif
+
+} // namespace WebKit

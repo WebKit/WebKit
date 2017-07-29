@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#import "EnvironmentUtilities.h"
+#import "DatabaseProcess.h"
+#import "WKBase.h"
+#import "XPCServiceEntryPoint.h"
 
-// FIXME: Remove these after <rdar://problem/30772033> is fixed.
-void DatabaseServiceInitializer();
-void NetworkServiceInitializer();
-void PluginServiceInitializer();
-void WebContentServiceInitializer();
+using namespace WebKit;
 
-#ifdef __cplusplus
+extern "C" WK_EXPORT void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage);
+
+void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
+{
+    XPCServiceInitializer<DatabaseProcess, XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
 }
-#endif

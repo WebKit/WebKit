@@ -19,6 +19,8 @@ if (NOT AVFAUDIO_LIBRARY-NOTFOUND)
 endif ()
 
 list(APPEND WebKit2_SOURCES
+    DatabaseProcess/mac/DatabaseProcessMac.mm
+
     NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm
 
     NetworkProcess/Downloads/PendingDownload.cpp
@@ -158,8 +160,6 @@ list(APPEND WebKit2_SOURCES
     Shared/mac/WebGestureEvent.cpp
     Shared/mac/WebHitTestResultData.mm
     Shared/mac/WebMemorySampler.mac.mm
-
-    StorageProcess/mac/StorageProcessMac.mm
 
     UIProcess/HighPerformanceGraphicsUsageSampler.cpp
     UIProcess/PerActivityStateCPUUsageSampler.cpp
@@ -451,8 +451,8 @@ list(APPEND NetworkProcess_SOURCES
     ${XPCService_SOURCES}
 )
 
-list(APPEND StorageProcess_SOURCES
-    StorageProcess/EntryPoint/mac/XPCService/StorageServiceEntryPoint.mm
+list(APPEND DatabaseProcess_SOURCES
+    DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm
     ${XPCService_SOURCES}
 )
 

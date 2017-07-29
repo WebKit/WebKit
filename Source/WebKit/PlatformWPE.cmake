@@ -47,8 +47,8 @@ list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp
 )
 
-list(APPEND StorageProcess_SOURCES
-    StorageProcess/EntryPoint/unix/StorageProcessMain.cpp
+list(APPEND DatabaseProcess_SOURCES
+    DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp
 )
 
 list(APPEND WebKit2_SOURCES
@@ -261,7 +261,7 @@ list(APPEND WebKit2_SOURCES
     WebProcess/wpe/WebProcessMainWPE.cpp
 
     # FIXME-GWSHARE:
-    StorageProcess/gtk/StorageProcessMainGtk.cpp
+    DatabaseProcess/gtk/DatabaseProcessMainGtk.cpp
 )
 
 list(APPEND WebKit2_MESSAGES_IN_FILES
@@ -376,6 +376,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     "${WEBCORE_DIR}/platform/network/soup"
+    "${WEBKIT2_DIR}/DatabaseProcess/unix"
     "${WEBKIT2_DIR}/NetworkProcess/CustomProtocols/soup"
     "${WEBKIT2_DIR}/NetworkProcess/Downloads/soup"
     "${WEBKIT2_DIR}/NetworkProcess/soup"
@@ -391,7 +392,6 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/soup"
     "${WEBKIT2_DIR}/Shared/unix"
     "${WEBKIT2_DIR}/Shared/wpe"
-    "${WEBKIT2_DIR}/StorageProcess/unix"
     "${WEBKIT2_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT2_DIR}/UIProcess/API/C/wpe"
     "${WEBKIT2_DIR}/UIProcess/API/glib"
