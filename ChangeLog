@@ -1,3 +1,9 @@
+2017-07-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix for GTK and WPE about StorageProcess renaming
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2017-07-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r219986.

@@ -47,7 +47,7 @@ list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp
 )
 
-list(APPEND DatabaseProcess_SOURCES
+list(APPEND StorageProcess_SOURCES
     DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp
 )
 

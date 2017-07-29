@@ -451,7 +451,7 @@ list(APPEND NetworkProcess_SOURCES
     ${XPCService_SOURCES}
 )
 
-list(APPEND DatabaseProcess_SOURCES
+list(APPEND StorageProcess_SOURCES
     DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm
     ${XPCService_SOURCES}
 )

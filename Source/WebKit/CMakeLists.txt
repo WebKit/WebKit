@@ -683,7 +683,7 @@ set(NetworkProcess_LIBRARIES
     WebKit2
 )
 
-set(DatabaseProcess_LIBRARIES
+set(StorageProcess_LIBRARIES
     WebKit2
 )
 
