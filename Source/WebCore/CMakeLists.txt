@@ -3824,7 +3824,6 @@ add_dependencies(WebCoreTestSupportBindings WebCoreDerivedSources)
 
 set(WebCore_BUILTINS_SOURCES
     ${WEBCORE_DIR}/Modules/fetch/DOMWindowFetch.js
-    ${WEBCORE_DIR}/Modules/fetch/FetchHeaders.js
     ${WEBCORE_DIR}/Modules/fetch/FetchInternals.js
     ${WEBCORE_DIR}/Modules/fetch/FetchRequest.js
     ${WEBCORE_DIR}/Modules/fetch/FetchResponse.js

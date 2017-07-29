@@ -1382,7 +1382,6 @@ CommandLineAPIModuleSource.h : CommandLineAPIModuleSource.js
 
 WebCore_BUILTINS_SOURCES = \
     ${WebCore}/Modules/fetch/DOMWindowFetch.js \
-    $(WebCore)/Modules/fetch/FetchHeaders.js \
     $(WebCore)/Modules/fetch/FetchInternals.js \
     $(WebCore)/Modules/fetch/FetchRequest.js \
     $(WebCore)/Modules/fetch/FetchResponse.js \

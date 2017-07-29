@@ -34,7 +34,8 @@ typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) Heade
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
     InterfaceName=Headers,
-    JSBuiltinConstructor,
+    Constructor(optional HeadersInit init),
+    ConstructorMayThrowException,
     PrivateIdentifier,
     PublicIdentifier,
 ] interface FetchHeaders {

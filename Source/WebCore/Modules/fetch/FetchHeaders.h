@@ -50,6 +50,9 @@ public:
 
     using Init = Variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>>;
 
+    using HeadersInit = Variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>>;
+    static ExceptionOr<Ref<FetchHeaders>> create(std::optional<HeadersInit>&&);
+
     static Ref<FetchHeaders> create(Guard guard = Guard::None) { return adoptRef(*new FetchHeaders { guard }); }
     static Ref<FetchHeaders> create(const FetchHeaders& headers) { return adoptRef(*new FetchHeaders { headers }); }
 
@@ -82,7 +85,12 @@ public:
     void setGuard(Guard);
 
 private:
-    FetchHeaders(Guard guard) : m_guard(guard) { }
+    FetchHeaders(Guard guard, HTTPHeaderMap&& headers = { })
+        : m_guard(guard)
+        , m_headers(WTFMove(headers))
+    {
+    }
+
     FetchHeaders(const FetchHeaders&);
 
     Guard m_guard;
@@ -90,8 +98,7 @@ private:
 };
 
 inline FetchHeaders::FetchHeaders(const FetchHeaders& other)
-    : RefCounted()
-    , m_guard(other.m_guard)
+    : m_guard(other.m_guard)
     , m_headers(other.m_headers)
 {
 }

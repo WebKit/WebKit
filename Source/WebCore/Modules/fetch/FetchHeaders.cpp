@@ -50,16 +50,50 @@ static ExceptionOr<bool> canWriteHeader(const String& name, const String& value,
     return true;
 }
 
-ExceptionOr<void> FetchHeaders::append(const String& name, const String& value)
+static ExceptionOr<void> appendToHeaderMap(const String& name, const String& value, HTTPHeaderMap& headers, FetchHeaders::Guard guard)
 {
     String normalizedValue = stripLeadingAndTrailingHTTPSpaces(value);
-    auto canWriteResult = canWriteHeader(name, normalizedValue, m_guard);
+    auto canWriteResult = canWriteHeader(name, normalizedValue, guard);
     if (canWriteResult.hasException())
         return canWriteResult.releaseException();
     if (!canWriteResult.releaseReturnValue())
         return { };
-    m_headers.add(name, normalizedValue);
+    headers.add(name, normalizedValue);
     return { };
+}
+
+
+ExceptionOr<Ref<FetchHeaders>> FetchHeaders::create(std::optional<HeadersInit>&& headersInit)
+{
+    HTTPHeaderMap headers;
+
+    if (headersInit) {
+        if (WTF::holds_alternative<Vector<Vector<String>>>(*headersInit)) {
+            auto& sequence = WTF::get<Vector<Vector<String>>>(*headersInit);
+            for (auto& header : sequence) {
+                if (header.size() != 2)
+                    return Exception { TypeError, "Header sub-sequence must contain exactly two items" };
+                auto result = appendToHeaderMap(header[0], header[1], headers, Guard::None);
+                if (result.hasException())
+                    return result.releaseException();
+            }
+        } else {
+            auto& record = WTF::get<Vector<WTF::KeyValuePair<String, String>>>(*headersInit);
+            for (auto& header : record) {
+                auto result = appendToHeaderMap(header.key, header.value, headers, Guard::None);
+                if (result.hasException())
+                    return result.releaseException();
+            }
+        }
+    }
+
+    return adoptRef(*new FetchHeaders { Guard::None, WTFMove(headers) });
+}
+
+
+ExceptionOr<void> FetchHeaders::append(const String& name, const String& value)
+{
+    return appendToHeaderMap(name, value, m_headers, m_guard);
 }
 
 ExceptionOr<void> FetchHeaders::remove(const String& name)
