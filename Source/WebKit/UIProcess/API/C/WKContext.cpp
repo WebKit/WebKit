@@ -590,5 +590,5 @@ pid_t WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)
 
 pid_t WKContextGetDatabaseProcessIdentifier(WKContextRef contextRef)
 {
-    return toImpl(contextRef)->storageProcessIdentifier();
+    return toImpl(contextRef)->databaseProcessIdentifier();
 }

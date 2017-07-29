@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> StorageProcessProxy LegacyReceiver {
-    DidCreateStorageToWebProcessConnection(IPC::Attachment connectionIdentifier)
+    DidCreateDatabaseToWebProcessConnection(IPC::Attachment connectionIdentifier)
 
     DidFetchWebsiteData(uint64_t callbackID, struct WebKit::WebsiteData websiteData)
     DidDeleteWebsiteData(uint64_t callbackID)

@@ -80,7 +80,7 @@ messages -> NetworkProcess LegacyReceiver {
     CancelPrepareToSuspend()
     ProcessDidResume()
 
-    DidGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID)
+    DidGrantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t requestID)
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     UpdateCookiePartitioningForTopPrivatelyOwnedDomains(Vector<String> domainsToRemove, Vector<String> domainsToAdd, bool shouldClearFirst)

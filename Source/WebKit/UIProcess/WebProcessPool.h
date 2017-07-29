@@ -160,8 +160,8 @@ public:
     template<typename T, typename U> void sendSyncToNetworkingProcess(T&& message, U&& reply);
     template<typename T> void sendToNetworkingProcessRelaunchingIfNecessary(T&& message);
 
-    // Sends the message to WebProcess or StorageProcess as approporiate for current process model.
-    template<typename T> void sendToStorageProcessRelaunchingIfNecessary(T&& message);
+    // Sends the message to WebProcess or DatabaseProcess as approporiate for current process model.
+    template<typename T> void sendToDatabaseProcessRelaunchingIfNecessary(T&& message);
 
     void processDidFinishLaunching(WebProcessProxy*);
 
@@ -199,7 +199,7 @@ public:
 #endif
 
     pid_t networkProcessIdentifier();
-    pid_t storageProcessIdentifier();
+    pid_t databaseProcessIdentifier();
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
@@ -255,7 +255,7 @@ public:
     void setAllowsAnySSLCertificateForWebSocket(bool);
 
     void clearCachedCredentials();
-    void terminateStorageProcess();
+    void terminateDatabaseProcess();
     void terminateNetworkProcess();
 
     void syncNetworkProcessCookies();
@@ -312,10 +312,10 @@ public:
 
     void getNetworkProcessConnection(Ref<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>&&);
 
-    void ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore);
-    StorageProcessProxy* storageProcess() { return m_storageProcess.get(); }
-    void getStorageProcessConnection(Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
-    void storageProcessCrashed(StorageProcessProxy*);
+    void ensureDatabaseProcessAndWebsiteDataStore(WebsiteDataStore* relevantDataStore);
+    StorageProcessProxy* databaseProcess() { return m_databaseProcess.get(); }
+    void getDatabaseProcessConnection(Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>&&);
+    void databaseProcessCrashed(StorageProcessProxy*);
 
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;
@@ -549,7 +549,7 @@ private:
     bool m_canHandleHTTPSServerTrustEvaluation;
     bool m_didNetworkProcessCrash;
     RefPtr<NetworkProcessProxy> m_networkProcess;
-    RefPtr<StorageProcessProxy> m_storageProcess;
+    RefPtr<StorageProcessProxy> m_databaseProcess;
 
     HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
     HashMap<uint64_t, RefPtr<StatisticsRequest>> m_statisticsRequests;
@@ -627,10 +627,10 @@ void WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 }
 
 template<typename T>
-void WebProcessPool::sendToStorageProcessRelaunchingIfNecessary(T&& message)
+void WebProcessPool::sendToDatabaseProcessRelaunchingIfNecessary(T&& message)
 {
-    ensureStorageProcessAndWebsiteDataStore(nullptr);
-    m_storageProcess->send(std::forward<T>(message), 0);
+    ensureDatabaseProcessAndWebsiteDataStore(nullptr);
+    m_databaseProcess->send(std::forward<T>(message), 0);
 }
 
 template<typename T>

@@ -398,7 +398,7 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
         for (auto& file : fileReferences)
             file->revokeFileAccess();
 
-        NetworkProcess::singleton().grantSandboxExtensionsToStorageProcessForBlobs(fileNames, [this, protectedThis = WTFMove(protectedThis), requestIdentifier, fileNames]() {
+        NetworkProcess::singleton().grantSandboxExtensionsToDatabaseProcessForBlobs(fileNames, [this, protectedThis = WTFMove(protectedThis), requestIdentifier, fileNames]() {
             if (!m_connection->isValid())
                 return;
 

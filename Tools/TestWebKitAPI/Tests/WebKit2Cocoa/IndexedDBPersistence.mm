@@ -75,8 +75,8 @@ TEST(IndexedDB, IndexedDBPersistence)
     // Ditch this web view (ditching its web process)
     webView = nil;
 
-    // Terminate the storage process
-    [configuration.get().processPool _terminateStorageProcess];
+    // Terminate the database process
+    [configuration.get().processPool _terminateDatabaseProcess];
 
     // Make a new web view to finish the test
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

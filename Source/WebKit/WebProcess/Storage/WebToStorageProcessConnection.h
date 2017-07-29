@@ -38,13 +38,13 @@ class SessionID;
 
 namespace WebKit {
 
-class WebToStorageProcessConnection : public RefCounted<WebToStorageProcessConnection>, public IPC::Connection::Client, public IPC::MessageSender {
+class WebToDatabaseProcessConnection : public RefCounted<WebToDatabaseProcessConnection>, public IPC::Connection::Client, public IPC::MessageSender {
 public:
-    static Ref<WebToStorageProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
+    static Ref<WebToDatabaseProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
     {
-        return adoptRef(*new WebToStorageProcessConnection(connectionIdentifier));
+        return adoptRef(*new WebToDatabaseProcessConnection(connectionIdentifier));
     }
-    ~WebToStorageProcessConnection();
+    ~WebToDatabaseProcessConnection();
     
     IPC::Connection& connection() { return m_connection.get(); }
 
@@ -53,7 +53,7 @@ public:
 #endif
 
 private:
-    WebToStorageProcessConnection(IPC::Connection::Identifier);
+    WebToDatabaseProcessConnection(IPC::Connection::Identifier);
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

@@ -55,7 +55,7 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
         return "com.apple.WebKit.WebContent";
     case ProcessLauncher::ProcessType::Network:
         return "com.apple.WebKit.Networking";
-    case ProcessLauncher::ProcessType::Storage:
+    case ProcessLauncher::ProcessType::Database:
         return "com.apple.WebKit.Storage";
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::ProcessType::Plugin32:

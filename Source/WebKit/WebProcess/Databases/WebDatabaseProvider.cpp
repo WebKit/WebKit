@@ -79,8 +79,8 @@ WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToS
         return result.iterator->value->connectionToServer();
     }
 
-    ASSERT(WebProcess::singleton().webToStorageProcessConnection());
-    return WebProcess::singleton().webToStorageProcessConnection()->idbConnectionToServerForSession(sessionID).coreConnectionToServer();
+    ASSERT(WebProcess::singleton().webToDatabaseProcessConnection());
+    return WebProcess::singleton().webToDatabaseProcessConnection()->idbConnectionToServerForSession(sessionID).coreConnectionToServer();
 }
 
 #endif

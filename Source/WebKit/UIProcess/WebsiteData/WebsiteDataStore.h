@@ -121,7 +121,7 @@ public:
     bool isAssociatedProcessPool(WebProcessPool&) const;
 
     WebsiteDataStoreParameters parameters();
-    StorageProcessCreationParameters storageProcessParameters();
+    StorageProcessCreationParameters databaseProcessParameters();
 
     Vector<WebCore::Cookie> pendingCookies() const;
     void addPendingCookie(const WebCore::Cookie&);

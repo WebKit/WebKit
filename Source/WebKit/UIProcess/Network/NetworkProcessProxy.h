@@ -111,7 +111,7 @@ private:
     void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
     void didDeleteWebsiteData(uint64_t callbackID);
     void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
-    void grantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID, const Vector<String>& paths);
+    void grantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t requestID, const Vector<String>& paths);
     void logDiagnosticMessage(uint64_t pageID, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
     void logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);

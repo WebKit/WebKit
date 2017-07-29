@@ -32,6 +32,6 @@ namespace WebKit {
 String executablePathOfWebProcess();
 String executablePathOfPluginProcess();
 String executablePathOfNetworkProcess();
-String executablePathOfStorageProcess();
+String executablePathOfDatabaseProcess();
 
 }

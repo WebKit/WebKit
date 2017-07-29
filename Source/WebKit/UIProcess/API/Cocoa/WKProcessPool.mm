@@ -385,9 +385,9 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->setAutomationSession(automationSession ? automationSession->_session.get() : nullptr);
 }
 
-- (void)_terminateStorageProcess
+- (void)_terminateDatabaseProcess
 {
-    _processPool->terminateStorageProcess();
+    _processPool->terminateDatabaseProcess();
 }
 
 - (void)_terminateNetworkProcess
@@ -400,9 +400,9 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return _processPool->networkProcessIdentifier();
 }
 
-- (pid_t)_storageProcessIdentifier
+- (pid_t)_databaseProcessIdentifier
 {
-    return _processPool->storageProcessIdentifier();
+    return _processPool->databaseProcessIdentifier();
 }
 
 - (void)_syncNetworkProcessCookies
