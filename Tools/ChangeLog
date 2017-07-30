@@ -1,3 +1,24 @@
+2017-07-30  Darin Adler  <darin@apple.com>
+
+        Remove code in HTMLObjectElement attribute parsing that forces style resolution and layout
+        https://bugs.webkit.org/show_bug.cgi?id=130653
+
+        Reviewed by Antti Koivisto.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didFinishLoadForFrame): Omit now-unneeded "shouldDump" argument
+        when calling frameDidChangeLocation.
+        (WTR::InjectedBundlePage::frameDidChangeLocation): Removed "shouldDump" argument. This was
+        causing WebKitTestRunner to not dump anything in cases where DumpRenderTree will dump, and
+        thus causing mysterious failures of a couple of tests. There are two remaining issues:
+        1) WebKitTestRunner won't run its dump code if there is no "page", and there is no such
+        consideration in DumpRenderTree and 2) Both DumpRenderTree and WebKitTestRunner share the
+        same logic flaw that causes "top loading frame" to get set to one of the subframes in
+        tests where  the following sequence occurs: test calls waitUntilDone, main frame finishes
+        loading, subframe starts loading. It would be good to clean that up some day, but for now
+        this patch makes the two work identically rather than changing both.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h: Updated for change above.
+
 2017-07-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Replace RetainPtr<> with auto when adopting allocated ObjC objects in DataInteractionTests

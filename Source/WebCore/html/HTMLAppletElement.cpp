@@ -40,17 +40,19 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLAppletElement::HTMLAppletElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : HTMLPlugInImageElement(tagName, document, createdByParser)
+inline HTMLAppletElement::HTMLAppletElement(const QualifiedName& tagName, Document& document)
+    : HTMLPlugInImageElement(tagName, document)
 {
     ASSERT(hasTagName(appletTag));
 
-    m_serviceType = "application/x-java-applet";
+    m_serviceType = ASCIILiteral { "application/x-java-applet" };
 }
 
-Ref<HTMLAppletElement> HTMLAppletElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<HTMLAppletElement> HTMLAppletElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new HTMLAppletElement(tagName, document, createdByParser));
+    auto result = adoptRef(*new HTMLAppletElement(tagName, document));
+    result->finishCreating();
+    return result;
 }
 
 void HTMLAppletElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -104,10 +106,11 @@ RenderWidget* HTMLAppletElement::renderWidgetLoadingPlugin() const
 
 void HTMLAppletElement::updateWidget(CreatePlugins createPlugins)
 {
-    setNeedsWidgetUpdate(false);
     // FIXME: This should ASSERT isFinishedParsingChildren() instead.
-    if (!isFinishedParsingChildren())
+    if (!isFinishedParsingChildren()) {
+        setNeedsWidgetUpdate(false);
         return;
+    }
 
 #if PLATFORM(IOS)
     UNUSED_PARAM(createPlugins);
@@ -115,11 +118,10 @@ void HTMLAppletElement::updateWidget(CreatePlugins createPlugins)
     // FIXME: It's sadness that we have this special case here.
     //        See http://trac.webkit.org/changeset/25128 and
     //        plugins/netscape-plugin-setwindow-size.html
-    if (createPlugins == CreatePlugins::No) {
-        // Ensure updateWidget() is called again during layout to create the plug-in.
-        setNeedsWidgetUpdate(true);
+    if (createPlugins == CreatePlugins::No)
         return;
-    }
+
+    setNeedsWidgetUpdate(false);
 
     RenderEmbeddedObject* renderer = renderEmbeddedObject();
 

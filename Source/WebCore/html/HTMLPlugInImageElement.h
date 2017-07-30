@@ -81,21 +81,24 @@ public:
     SnapshotDecision snapshotDecision() const { return m_snapshotDecision; }
 
 protected:
-    HTMLPlugInImageElement(const QualifiedName& tagName, Document&, bool createdByParser);
+    HTMLPlugInImageElement(const QualifiedName& tagName, Document&);
+    void finishCreating();
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
+
     bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) final;
 
     bool isImageType();
     HTMLImageLoader* imageLoader() { return m_imageLoader.get(); }
+    void updateImageLoaderWithNewURLSoon();
 
     bool allowedToLoadFrameURL(const String& url);
     bool wouldLoadAsPlugIn(const String& url, const String& serviceType);
 
+    void scheduleUpdateForAfterStyleResolution();
+
     String m_serviceType;
     String m_url;
-
-    std::unique_ptr<HTMLImageLoader> m_imageLoader;
 
 private:
     bool isPlugInImageElement() const final { return true; }
@@ -103,12 +106,12 @@ private:
 
     bool allowedToLoadPluginContent(const String& url, const String& mimeType) const;
 
-    void finishParsingChildren() final;
     void didAddUserAgentShadowRoot(ShadowRoot*) final;
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;
     void willRecalcStyle(Style::Change) final;
+    void didRecalcStyle(Style::Change) final;
     void didAttachRenderers() final;
     void willDetachRenderers() final;
 
@@ -120,8 +123,7 @@ private:
 
     void updateSnapshot(Image*) final;
 
-    void startLoadingImage();
-    void updateWidgetIfNecessary();
+    void updateAfterStyleResolution();
 
     void simulatedMouseClickTimerFired();
 
@@ -146,6 +148,9 @@ private:
     IntSize m_sizeWhenSnapshotted;
     SnapshotDecision m_snapshotDecision { SnapshotNotYetDecided };
     bool m_plugInDimensionsSpecified { false };
+    std::unique_ptr<HTMLImageLoader> m_imageLoader;
+    bool m_needsImageReload { false };
+    bool m_hasUpdateScheduledForAfterStyleResolution { false };
 };
 
 } // namespace WebCore

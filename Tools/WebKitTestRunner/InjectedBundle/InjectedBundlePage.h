@@ -171,7 +171,7 @@ private:
     void platformDidStartProvisionalLoadForFrame(WKBundleFrameRef);
     String platformResponseMimeType(WKURLResponseRef);
 
-    void frameDidChangeLocation(WKBundleFrameRef, bool shouldDump = false);
+    void frameDidChangeLocation(WKBundleFrameRef);
 
     WKBundlePageRef m_page;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;

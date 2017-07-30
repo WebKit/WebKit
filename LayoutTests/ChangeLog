@@ -1,3 +1,38 @@
+2017-07-30  Darin Adler  <darin@apple.com>
+
+        Remove code in HTMLObjectElement attribute parsing that forces style resolution and layout
+        https://bugs.webkit.org/show_bug.cgi?id=130653
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/international/embed-bidi-style-in-isolate-crash.html: Removed onerror attribute
+        in the audio element in this test. The error event does fire during the test, which causes
+        the test to fail. Before, the test was prematurely exiting before the load failed, preventing
+        the test from failing, but also meaning we didn't finish running the test.
+
+        * imported/blink/fast/dom/Window/open-window-features-fuzz.html: Use waitUntilDone and
+        notifyDone to prevent the test from exiting prematurely. Use a URL that won't trigger loading
+        outside the web browser; the URL is not what mattered to this test. Before, the test was
+        prematurely exiting before the test ran. Note also, that I don't think this is testing
+        much effectively; not sure we are getting any benefit from this test since before it was
+        not really running to completion anyway.
+
+        * media/event-queue-crash-expected.txt: Updated expectations to expect syntax error. Before
+        there was a race and often the test exited before the syntax error could be logged.
+
+        * platform/mac/TestExpectations: Removed flakiness expectation from the
+        media/event-queue-crash.html test. What made it flaky was a race with the load event,
+        and that race should be fixed by the change to FrameLoader::checkLoadCompleteForThisFrame.
+        The same race existed on all platforms, not just Mac, so this flakiness expectation should
+        be in the main TextExpectations file if anywhere. But I believe it is not needed at all.
+        For media/modern-media-controls/media-documents/background-color-and-centering.html,
+        added image failure expectation because under modern WebKit on Mac the image now captures
+        the upper left hand corner of the controls overlay. Still seems to pass on iOS and the bug
+        this was created for was iOS-specific, so should be OK for now.
+
+        * webarchive/loading/video-in-webarchive-expected.txt: Updated. The old result shows evidence
+        of a premature load event, fixed by the change to FrameLoader::checkLoadCompleteForThisFrame.
+
 2017-07-30  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove JS builtin bindings for FetchRequest, DOMWindowFetch and WorkerGlobalScopeFetch

@@ -43,20 +43,22 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : HTMLPlugInImageElement(tagName, document, createdByParser)
+inline HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document& document)
+    : HTMLPlugInImageElement(tagName, document)
 {
     ASSERT(hasTagName(embedTag));
 }
 
-Ref<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new HTMLEmbedElement(tagName, document, createdByParser));
+    auto result = adoptRef(*new HTMLEmbedElement(tagName, document));
+    result->finishCreating();
+    return result;
 }
 
 Ref<HTMLEmbedElement> HTMLEmbedElement::create(Document& document)
 {
-    return adoptRef(*new HTMLEmbedElement(embedTag, document, false));
+    return create(embedTag, document);
 }
 
 static inline RenderWidget* findWidgetRenderer(const Node* node)
@@ -112,16 +114,11 @@ void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomicStr
         // this up to the HTMLPlugInImageElement to be shared.
     } else if (name == codeAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
-        // FIXME: Why no call to the image loader?
+        // FIXME: Why no call to updateImageLoaderWithNewURLSoon?
         // FIXME: If both code and src attributes are specified, last one parsed/changed wins. That can't be right!
     } else if (name == srcAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
-        document().updateStyleIfNeeded();
-        if (renderer() && isImageType()) {
-            if (!m_imageLoader)
-                m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
-            m_imageLoader->updateFromElementIgnoringPreviousError();
-        }
+        updateImageLoaderWithNewURLSoon();
         // FIXME: If both code and src attributes are specified, last one parsed/changed wins. That can't be right!
     } else
         HTMLPlugInImageElement::parseAttribute(name, value);
@@ -144,24 +141,26 @@ void HTMLEmbedElement::updateWidget(CreatePlugins createPlugins)
 {
     ASSERT(!renderEmbeddedObject()->isPluginUnavailable());
     ASSERT(needsWidgetUpdate());
-    setNeedsWidgetUpdate(false);
 
-    if (m_url.isEmpty() && m_serviceType.isEmpty())
+    if (m_url.isEmpty() && m_serviceType.isEmpty()) {
+        setNeedsWidgetUpdate(false);
         return;
+    }
 
     // Note these pass m_url and m_serviceType to allow better code sharing with
     // <object> which modifies url and serviceType before calling these.
-    if (!allowedToLoadFrameURL(m_url))
+    if (!allowedToLoadFrameURL(m_url)) {
+        setNeedsWidgetUpdate(false);
         return;
+    }
 
     // FIXME: It's sadness that we have this special case here.
     //        See http://trac.webkit.org/changeset/25128 and
     //        plugins/netscape-plugin-setwindow-size.html
-    if (createPlugins == CreatePlugins::No && wouldLoadAsPlugIn(m_url, m_serviceType)) {
-        // Ensure updateWidget() is called again during layout to create the Netscape plug-in.
-        setNeedsWidgetUpdate(true);
+    if (createPlugins == CreatePlugins::No && wouldLoadAsPlugIn(m_url, m_serviceType))
         return;
-    }
+
+    setNeedsWidgetUpdate(false);
 
     // FIXME: These should be joined into a PluginParameters class.
     Vector<String> paramNames;

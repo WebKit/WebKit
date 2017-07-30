@@ -5160,7 +5160,7 @@ void Document::finishedParsing()
     if (!m_documentTiming.domContentLoadedEventEnd)
         m_documentTiming.domContentLoadedEventEnd = MonotonicTime::now();
 
-    if (RefPtr<Frame> f = frame()) {
+    if (RefPtr<Frame> frame = this->frame()) {
         // FrameLoader::finishedParsing() might end up calling Document::implicitClose() if all
         // resource loads are complete. HTMLObjectElements can start loading their resources from
         // post attach callbacks triggered by resolveStyle(). This means if we parse out an <object>
@@ -5170,9 +5170,8 @@ void Document::finishedParsing()
         // See https://bugs.webkit.org/show_bug.cgi?id=36864 starting around comment 35.
         updateStyleIfNeeded();
 
-        f->loader().finishedParsing();
-
-        InspectorInstrumentation::domContentLoadedEventFired(*f);
+        frame->loader().finishedParsing();
+        InspectorInstrumentation::domContentLoadedEventFired(*frame);
     }
 
     // Schedule dropping of the DocumentSharedObjectPool. We keep it alive for a while after parsing finishes
@@ -6223,7 +6222,13 @@ void Document::decrementLoadEventDelayCount()
 
 void Document::loadEventDelayTimerFired()
 {
+    // FIXME: Should the call to FrameLoader::checkLoadComplete be moved inside Document::checkCompleted?
+    // FIXME: Should this also call DocumentLoader::checkLoadComplete?
+    // FIXME: Not obvious why checkCompleted needs to go first. The order these are called is
+    // visible to WebKit clients, but it's more like a race than a well-defined relationship.
     checkCompleted();
+    if (auto* frame = this->frame())
+        frame->loader().checkLoadComplete();
 }
 
 void Document::checkCompleted()
@@ -6606,7 +6611,7 @@ void Document::decrementActiveParserCount()
     if (!frame())
         return;
 
-    // FIXME: We should call loader()->checkLoadComplete() as well here,
+    // FIXME: We should call DocumentLoader::checkLoadComplete as well here,
     // but it seems to cause http/tests/security/feed-urls-from-remote.html
     // to timeout on Mac WK1; see http://webkit.org/b/110554 and http://webkit.org/b/110401.
     frame()->loader().checkLoadComplete();

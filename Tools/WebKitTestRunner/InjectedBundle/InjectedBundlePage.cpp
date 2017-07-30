@@ -934,7 +934,7 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
     if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
         dumpLoadEvent(frame, "didFinishLoadForFrame");
 
-    frameDidChangeLocation(frame, /*shouldDump*/ true);
+    frameDidChangeLocation(frame);
 }
 
 void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundleFrameRef frame, WKErrorRef)
@@ -2009,7 +2009,7 @@ String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef)
 }
 #endif
 
-void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame, bool shouldDump)
+void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
 {
     auto& injectedBundle = InjectedBundle::singleton();
     if (frame != injectedBundle.topLoadingFrame())
@@ -2025,7 +2025,7 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame, bool sho
         return;
     }
 
-    if (shouldDump)
+    if (injectedBundle.pageCount())
         injectedBundle.page()->dump();
     else
         injectedBundle.done();

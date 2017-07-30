@@ -2235,6 +2235,11 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 {
     ASSERT(m_client.hasWebView());
 
+    // FIXME: Should this check be done in checkLoadComplete instead of here?
+    // FIXME: Why does this one check need to be repeated here, and not the many others from checkCompleted?
+    if (m_frame.document()->isDelayingLoadEvent())
+        return;
+
     switch (m_state) {
         case FrameStateProvisional: {
             // FIXME: Prohibiting any provisional load failures from being sent to clients
@@ -2575,6 +2580,7 @@ void FrameLoader::detachFromParent()
     if (Frame* parent = m_frame.tree().parent()) {
         parent->loader().closeAndRemoveChild(m_frame);
         parent->loader().scheduleCheckCompleted();
+        parent->loader().scheduleCheckLoadComplete();
     } else {
         m_frame.setView(nullptr);
         m_frame.willDetachPage();

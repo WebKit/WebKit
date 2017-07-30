@@ -28,10 +28,10 @@ namespace WebCore {
 
 class HTMLAppletElement final : public HTMLPlugInImageElement {
 public:
-    static Ref<HTMLAppletElement> create(const QualifiedName&, Document&, bool createdByParser);
+    static Ref<HTMLAppletElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLAppletElement(const QualifiedName&, Document&, bool createdByParser);
+    HTMLAppletElement(const QualifiedName&, Document&);
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     bool isURLAttribute(const Attribute&) const final;

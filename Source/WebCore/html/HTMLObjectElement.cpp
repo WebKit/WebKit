@@ -60,20 +60,18 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
-    : HTMLPlugInImageElement(tagName, document, createdByParser)
+inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+    : HTMLPlugInImageElement(tagName, document)
     , FormAssociatedElement(form)
 {
     ASSERT(hasTagName(objectTag));
 }
 
-inline HTMLObjectElement::~HTMLObjectElement()
+Ref<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
-}
-
-Ref<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
-{
-    return adoptRef(*new HTMLObjectElement(tagName, document, form, createdByParser));
+    auto result = adoptRef(*new HTMLObjectElement(tagName, document, form));
+    result->finishCreating();
+    return result;
 }
 
 RenderWidget* HTMLObjectElement::renderWidgetLoadingPlugin() const
@@ -112,14 +110,9 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         setNeedsWidgetUpdate(true);
     } else if (name == dataAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
-        document().updateStyleIfNeeded();
-        if (isImageType() && renderer()) {
-            if (!m_imageLoader)
-                m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
-            m_imageLoader->updateFromElementIgnoringPreviousError();
-        }
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
         setNeedsWidgetUpdate(true);
+        updateImageLoaderWithNewURLSoon();
     } else if (name == classidAttr) {
         invalidateRenderer = true;
         setNeedsWidgetUpdate(true);
@@ -129,7 +122,8 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
     if (!invalidateRenderer || !isConnected() || !renderer())
         return;
 
-    clearUseFallbackContent();
+    m_useFallbackContent = false;
+    scheduleUpdateForAfterStyleResolution();
     invalidateStyleAndRenderersForSubtree();
 }
 
@@ -215,7 +209,6 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     }
 }
 
-    
 bool HTMLObjectElement::hasFallbackContent() const
 {
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
@@ -271,16 +264,20 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
 {
     ASSERT(!renderEmbeddedObject()->isPluginUnavailable());
     ASSERT(needsWidgetUpdate());
-    setNeedsWidgetUpdate(false);
+
     // FIXME: This should ASSERT isFinishedParsingChildren() instead.
-    if (!isFinishedParsingChildren())
+    if (!isFinishedParsingChildren()) {
+        setNeedsWidgetUpdate(false);
         return;
+    }
 
     // FIXME: I'm not sure it's ever possible to get into updateWidget during a
     // removal, but just in case we should avoid loading the frame to prevent
     // security bugs.
-    if (!SubframeLoadingDisabler::canLoadFrame(*this))
+    if (!SubframeLoadingDisabler::canLoadFrame(*this)) {
+        setNeedsWidgetUpdate(false);
         return;
+    }
 
     String url = this->url();
     String serviceType = this->serviceType();
@@ -291,17 +288,18 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
     parametersForPlugin(paramNames, paramValues, url, serviceType);
 
     // Note: url is modified above by parametersForPlugin.
-    if (!allowedToLoadFrameURL(url))
+    if (!allowedToLoadFrameURL(url)) {
+        setNeedsWidgetUpdate(false);
         return;
+    }
 
     // FIXME: It's sadness that we have this special case here.
     //        See http://trac.webkit.org/changeset/25128 and
     //        plugins/netscape-plugin-setwindow-size.html
-    if (createPlugins == CreatePlugins::No && wouldLoadAsPlugIn(url, serviceType)) {
-        // Ensure updateWidget() is called again during layout to create the Netscape plug-in.
-        setNeedsWidgetUpdate(true);
+    if (createPlugins == CreatePlugins::No && wouldLoadAsPlugIn(url, serviceType))
         return;
-    }
+
+    setNeedsWidgetUpdate(false);
 
     Ref<HTMLObjectElement> protectedThis(*this); // beforeload and plugin loading can make arbitrary DOM mutations.
     bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(url);
@@ -338,6 +336,7 @@ void HTMLObjectElement::childrenChanged(const ChildChange& change)
     updateExposedState();
     if (isConnected() && !m_useFallbackContent) {
         setNeedsWidgetUpdate(true);
+        scheduleUpdateForAfterStyleResolution();
         invalidateStyleForSubtree();
     }
     HTMLPlugInImageElement::childrenChanged(change);
@@ -361,6 +360,7 @@ void HTMLObjectElement::renderFallbackContent()
     if (!isConnected())
         return;
 
+    scheduleUpdateForAfterStyleResolution();
     invalidateStyleAndRenderersForSubtree();
 
     // Before we give up and use fallback content, check to see if this is a MIME type issue.
@@ -375,12 +375,6 @@ void HTMLObjectElement::renderFallbackContent()
     }
 
     m_useFallbackContent = true;
-
-    // This was added to keep Acid 2 non-flaky. A style recalc is required to make fallback resources load.
-    // Without forcing, this may happen after all the other resources have been loaded and the document is already
-    // considered complete. FIXME: Would be better to address this with incrementLoadEventDelayCount instead
-    // or disentangle loading from style entirely.
-    document().updateStyleIfNeeded();
 }
 
 static inline bool preventsParentObjectFromExposure(const Element& child)
@@ -516,10 +510,9 @@ bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)
 
 bool HTMLObjectElement::canContainRangeEndPoint() const
 {
-    // Call through to HTMLElement because we need to skip HTMLPlugInElement
-    // when calling through to the derived class since returns false unconditionally.
-    // An object element with fallback content should basically be treated like
-    // a generic HTML element.
+    // Call through to HTMLElement because HTMLPlugInElement::canContainRangeEndPoint
+    // returns false unconditionally. An object element using fallback content is
+    // treated like a generic HTML element.
     return m_useFallbackContent && HTMLElement::canContainRangeEndPoint();
 }
 

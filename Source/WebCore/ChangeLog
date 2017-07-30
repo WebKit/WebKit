@@ -1,3 +1,121 @@
+2017-07-30  Darin Adler  <darin@apple.com>
+
+        Remove code in HTMLObjectElement attribute parsing that forces style resolution and layout
+        https://bugs.webkit.org/show_bug.cgi?id=130653
+
+        Reviewed by Antti Koivisto.
+
+        Also fixes a bug where load events are delivered prematurely in some cases
+        when an object, embed, frame, or iframe element is still loading.
+
+        * dom/Document.cpp:
+        (WebCore::Document::loadEventDelayTimerFired): Added a call to
+        FrameLoader::checkLoadComplete. Goes along with the change to
+        FrameLoader::checkLoadCompleteForThisFrame, which now respects the
+        isDelayingLoadEvent flag.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::HTMLAppletElement): Removed the createdByParser argument,
+        no longer needed by the base class.
+        (WebCore::HTMLAppletElement::create): Added call to finishCreating, which is now part of
+        the process of creating any object in a class derived from HTMLPlugInImageElement.
+        (WebCore::HTMLAppletElement::updateWidget): Rearranged logic so setNeedsWidgetUpdate
+        is only called when it's becoming false; avoids a false/true/false round trip that can
+        cause trouble.
+        * html/HTMLAppletElement.h: Updated for the above.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::HTMLEmbedElement): Removed the createdByParser argument,
+        no longer needed by the base class.
+        (WebCore::HTMLEmbedElement::create): Added call to finishCreating, which is now part of
+        the process of creating any object in a class derived from HTMLPlugInImageElement.
+        (WebCore::HTMLEmbedElement::parseAttribute): Changed srcAttr to call
+        updateImageLoaderWithNewURLSoon to do the image loading logic.
+        (WebCore::HTMLEmbedElement::updateWidget): Rearranged logic so setNeedsWidgetUpdate
+        is only called when it's becoming false; avoids a false/true/false round trip that can
+        cause trouble.
+        * html/HTMLEmbedElement.h: Updated for the above.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState): Call setShouldDelayLoadEvent(false) when
+        transitioning to HAVE_CURRENT_DATA (or beyond), even if we have already fired a loadeddata
+        event in the past. This matches what the HTML specification calls for, but only if you
+        read it carefully. Without this change, and with the more complete implementation of
+        load event delay below, one of the regression tests hangs because are permanently stuck
+        dealying load events. Also added a FIXME about other code that likely has a similar
+        problem; the symptom is likely to be subtle and minor, though.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement): Removed the createdByParser argument,
+        no longer needed by the base class.
+        (WebCore::HTMLObjectElement::create): Added call to finishCreating, which is now part of
+        the process of creating any object in a class derived from HTMLPlugInImageElement.
+        (WebCore::HTMLObjectElement::parseAttribute): Changed dataAttr to use
+        updateImageLoaderWithNewURLSoon. Explicitly call scheduleUpdateForAfterStyleResolution
+        since just calling invalidateStyleAndRenderersForSubtree alone is no longer sufficient.
+        (WebCore::HTMLObjectElement::updateWidget): Rearranged logic so setNeedsWidgetUpdate
+        is only called when it's becoming false; avoids a false/true/false round trip that can
+        cause trouble.
+        (WebCore::HTMLObjectElement::childrenChanged): Added calls to the new
+        scheduleUpdateForAfterStyleResolution since invalidating style is no longer sufficient.
+        (WebCore::HTMLObjectElement::renderFallbackContent): Remove the call to
+        updateStyleIfNeeded. This is the main change that the title of this bug refers to.
+        * html/HTMLObjectElement.h: Updated for the above. Also removed the
+        clearUseFallbackContent function because it's clearer to set the data member in
+        line at the single call site in HTMLObjectElement::parseAttribute.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement): Removed the createdByParser
+        argument; no need to set an m_needsWidgetUpdate flag differently for parser cases now.
+        (WebCore::HTMLPlugInImageElement::finshCreating): Added. To be called after creating
+        an element to do work that can't be done in a constructor.
+        (WebCore::HTMLPlugInImageElement::didRecalcStyle): Added. Calls the new
+        scheduleUpdateForAfterStyleResolution function.
+        (WebCore::HTMLPlugInImageElement::didAttachRenderers): Moved all the logic from this
+        function into scheduleUpdateForAfterStyleResolution. Also added a call through to the base
+        class; cleans things up, even though it's just an assertion.
+        (WebCore::HTMLPlugInImageElement::willDetachRenderers): Removed the call to
+        setNeedsWidgetUpdate(true) here; no longer needed because the new logic already
+        does the right thing in this case.
+        (WebCore::HTMLPlugInImageElement::updateWidgetIfNecessary): Deleted. Now handled by
+        updateAfterStyleResolution instead.
+        (WebCore::HTMLPlugInImageElement::finishParsingChildren): Deleted. Handling updates
+        after parsing all the children now comes naturally out of the new implementation.
+        (WebCore::HTMLPlugInImageElement::scheduleUpdateForAfterStyleResolution): Added.
+        Schedules a call to updateAfterStyleResolution when needed, and equally importantly,
+        increments the load event delay count to make sure that loads that are part of that
+        update can participate in decision about whether it's time for the load event.
+        (WebCore::HTMLPlugInImageElement::updateAfterStyleResolution): Added.
+        Combines updateWidgetIfNecessary and startLoadingImage, and also deals with the new
+        m_needsImageReload boolean in cases where no actual loading is done.
+        (WebCore::HTMLPlugInImageElement::didMoveToNewDocument): Update load event delay
+        count when moving an element that is in the middle of loading. This lets the
+        updateAfterStyleResolution function do the right thing even when the element is
+        moved without leaving anything stuck in a strange state.
+        (WebCore::HTMLPlugInImageElement::prepareForDocumentSuspension): Call the new
+        scheduleUpdateForAfterStyleResolution since invalidating style is no longer sufficient.
+        (WebCore::HTMLPlugInImageElement::startLoadingImage): Deleted. Now handled by
+        updateAfterStyleResolution instead.
+        (WebCore::HTMLPlugInImageElement::updateImageLoaderWithNewURLSoon): Added. Does all
+        the right things for when an image URL is changed; for use by the concrete derived classes.
+        * html/HTMLPlugInImageElement.h: Updated for above changes. Also made m_imageLoader
+        private rather than protected, and added the two new boolean data members.
+
+        * html/HTMLTagNames.in: Removed unneeded constructorNeedsCreatedByParser flags for
+        applet, embed, and object.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::isLoadingInAPISense): Return true if the document is
+        delaying a load event.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Don't do any work if
+        isDelayingLoadEvent is true; otherwise this function can have a side effect of
+        triggering the load event.
+        (WebCore::FrameLoader::detachFromParent): Schedule a checkLoadComplete here, too, not
+        just a checkCompleted. This is relevant if the frame we are detaching was delaying
+        a load event because it no longer will be and so the load might be complete.
+
 2017-07-30  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove JS builtin bindings for FetchRequest, DOMWindowFetch and WorkerGlobalScopeFetch

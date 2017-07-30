@@ -92,14 +92,18 @@ static const String subtitleText(Page& page, const String& mimeType)
     }).iterator->value;
 };
 
-HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document& document, bool createdByParser)
+HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document& document)
     : HTMLPlugInElement(tagName, document)
-    , m_needsWidgetUpdate(!createdByParser) // Set true in finishParsingChildren.
     , m_simulatedMouseClickTimer(*this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
     , m_removeSnapshotTimer(*this, &HTMLPlugInImageElement::removeSnapshotTimerFired)
     , m_createdDuringUserGesture(ScriptController::processingUserGesture())
 {
     setHasCustomStyleResolveCallbacks();
+}
+
+void HTMLPlugInImageElement::finishCreating()
+{
+    scheduleUpdateForAfterStyleResolution();
 }
 
 HTMLPlugInImageElement::~HTMLPlugInImageElement()
@@ -205,39 +209,27 @@ void HTMLPlugInImageElement::willRecalcStyle(Style::Change change)
 
     // FIXME: There shoudn't be need to force render tree reconstruction here.
     // It is only done because loading and load event dispatching is tied to render tree construction.
-    if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType() && (displayState() != DisplayingSnapshot))
+    if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType() && displayState() != DisplayingSnapshot)
         invalidateStyleAndRenderersForSubtree();
+}
+
+void HTMLPlugInImageElement::didRecalcStyle(Style::Change styleChange)
+{
+    scheduleUpdateForAfterStyleResolution();
+
+    HTMLPlugInElement::didRecalcStyle(styleChange);
 }
 
 void HTMLPlugInImageElement::didAttachRenderers()
 {
-    if (!isImageType()) {
-        RefPtr<HTMLPlugInImageElement> element = this;
-        Style::queuePostResolutionCallback([element]{
-            element->updateWidgetIfNecessary();
-        });
-        return;
-    }
-    if (!renderer() || useFallbackContent())
-        return;
+    m_needsWidgetUpdate = true;
+    scheduleUpdateForAfterStyleResolution();
 
-    // Image load might complete synchronously and cause us to re-enter.
-    RefPtr<HTMLPlugInImageElement> element = this;
-    Style::queuePostResolutionCallback([element]{
-        element->startLoadingImage();
-    });
+    HTMLPlugInElement::didAttachRenderers();
 }
 
 void HTMLPlugInImageElement::willDetachRenderers()
 {
-    // FIXME: Because of the insanity that is HTMLPlugInImageElement::willRecalcStyle,
-    // we can end up detaching during an attach() call, before we even have a
-    // renderer. In that case, don't mark the widget for update.
-    if (renderer() && !useFallbackContent()) {
-        // Update the widget the next time we attach (detaching destroys the plugin).
-        setNeedsWidgetUpdate(true);
-    }
-
     auto* widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
     if (is<PluginViewBase>(widget))
         downcast<PluginViewBase>(*widget).willDetatchRenderer();
@@ -245,30 +237,47 @@ void HTMLPlugInImageElement::willDetachRenderers()
     HTMLPlugInElement::willDetachRenderers();
 }
 
-void HTMLPlugInImageElement::updateWidgetIfNecessary()
+void HTMLPlugInImageElement::scheduleUpdateForAfterStyleResolution()
 {
-    document().updateStyleIfNeeded();
-
-    if (!needsWidgetUpdate() || useFallbackContent() || isImageType())
+    if (m_hasUpdateScheduledForAfterStyleResolution)
         return;
 
-    if (!renderEmbeddedObject() || renderEmbeddedObject()->isPluginUnavailable())
-        return;
+    document().incrementLoadEventDelayCount();
 
-    updateWidget(CreatePlugins::No);
+    m_hasUpdateScheduledForAfterStyleResolution = true;
+
+    Style::queuePostResolutionCallback([protectedThis = makeRef(*this)] {
+        protectedThis->updateAfterStyleResolution();
+    });
 }
 
-void HTMLPlugInImageElement::finishParsingChildren()
+void HTMLPlugInImageElement::updateAfterStyleResolution()
 {
-    HTMLPlugInElement::finishParsingChildren();
-    if (useFallbackContent())
-        return;
+    m_hasUpdateScheduledForAfterStyleResolution = false;
 
-    // HTMLObjectElement needs to delay widget updates until after all children are parsed,
-    // For HTMLEmbedElement this delay is unnecessary, but there is no harm in doing the same.
-    setNeedsWidgetUpdate(true);
-    if (isConnected())
-        invalidateStyleForSubtree();
+    // Do this after style resolution, since the image or widget load might complete synchronously
+    // and cause us to re-enter otherwise. Also, we can't really answer the question "do I have a renderer"
+    // accurately until after style resolution.
+
+    if (renderer() && !useFallbackContent()) {
+        if (isImageType()) {
+            if (!m_imageLoader)
+                m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
+            if (m_needsImageReload)
+                m_imageLoader->updateFromElementIgnoringPreviousError();
+            else
+                m_imageLoader->updateFromElement();
+        } else {
+            if (needsWidgetUpdate() && renderEmbeddedObject() && !renderEmbeddedObject()->isPluginUnavailable())
+                updateWidget(CreatePlugins::No);
+        }
+    }
+
+    // Either we reloaded the image just now, or we had some reason not to.
+    // Either way, clear the flag now, since we don't need to remember to try again.
+    m_needsImageReload = false;
+
+    document().decrementLoadEventDelayCount();
 }
 
 void HTMLPlugInImageElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
@@ -281,6 +290,11 @@ void HTMLPlugInImageElement::didMoveToNewDocument(Document& oldDocument, Documen
 
     if (m_imageLoader)
         m_imageLoader->elementDidMoveToNewDocument();
+
+    if (m_hasUpdateScheduledForAfterStyleResolution) {
+        oldDocument.decrementLoadEventDelayCount();
+        newDocument.incrementLoadEventDelayCount();
+    }
 
     HTMLPlugInElement::didMoveToNewDocument(oldDocument, newDocument);
 }
@@ -295,16 +309,10 @@ void HTMLPlugInImageElement::prepareForDocumentSuspension()
 
 void HTMLPlugInImageElement::resumeFromDocumentSuspension()
 {
+    scheduleUpdateForAfterStyleResolution();
     invalidateStyleAndRenderersForSubtree();
 
     HTMLPlugInElement::resumeFromDocumentSuspension();
-}
-
-void HTMLPlugInImageElement::startLoadingImage()
-{
-    if (!m_imageLoader)
-        m_imageLoader = std::make_unique<HTMLImageLoader>(*this);
-    m_imageLoader->updateFromElement();
 }
 
 void HTMLPlugInImageElement::updateSnapshot(Image* image)
@@ -775,6 +783,16 @@ bool HTMLPlugInImageElement::requestObject(const String& url, const String& mime
         return true;
     
     return document().frame()->loader().subframeLoader().requestObject(*this, url, getNameAttribute(), mimeType, paramNames, paramValues);
+}
+
+void HTMLPlugInImageElement::updateImageLoaderWithNewURLSoon()
+{
+    if (m_needsImageReload)
+        return;
+
+    m_needsImageReload = true;
+    scheduleUpdateForAfterStyleResolution();
+    invalidateStyle();
 }
 
 } // namespace WebCore

@@ -1048,6 +1048,8 @@ bool DocumentLoader::isLoadingInAPISense() const
             return true;
         if (m_cachedResourceLoader->requestCount())
             return true;
+        if (document.isDelayingLoadEvent())
+            return true;
         if (document.processingLoadEvent())
             return true;
         if (document.hasActiveParser())
