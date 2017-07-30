@@ -167,10 +167,10 @@ namespace TestWebKitAPI {
 
 TEST(DataInteractionTests, ImageToContentEditable)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_TRUE([webView editorContainsImageElement]);
@@ -198,10 +198,10 @@ TEST(DataInteractionTests, CanStartDragOnEnormousImage)
 
 TEST(DataInteractionTests, ImageToTextarea)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"image-and-textarea"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("", [webView editorValue]);
@@ -216,10 +216,10 @@ TEST(DataInteractionTests, ImageToTextarea)
 
 TEST(DataInteractionTests, ImageInLinkToInput)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"image-in-link-and-input"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
@@ -230,11 +230,11 @@ TEST(DataInteractionTests, ImageInLinkToInput)
 
 TEST(DataInteractionTests, ImageInLinkWithoutHREFToInput)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"image-in-link-and-input"];
     [webView stringByEvaluatingJavaScript:@"link.href = ''"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("", [webView editorValue]);
@@ -257,8 +257,8 @@ TEST(DataInteractionTests, ImageDoesNotUseElementSizeAsEstimatedSize)
 
 TEST(DataInteractionTests, ContentEditableToContentEditable)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"autofocus-contenteditable"];
     [dataInteractionSimulator waitForInputSession];
@@ -277,8 +277,8 @@ TEST(DataInteractionTests, ContentEditableToContentEditable)
 
 TEST(DataInteractionTests, ContentEditableToTextarea)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"contenteditable-and-textarea"];
     [dataInteractionSimulator waitForInputSession];
@@ -297,8 +297,8 @@ TEST(DataInteractionTests, ContentEditableToTextarea)
 
 TEST(DataInteractionTests, ContentEditableMoveParagraphs)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"two-paragraph-contenteditable"];
     [dataInteractionSimulator waitForInputSession];
@@ -327,8 +327,8 @@ TEST(DataInteractionTests, DragImageFromContentEditable)
 
 TEST(DataInteractionTests, TextAreaToInput)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"textarea-to-input"];
     [dataInteractionSimulator waitForInputSession];
@@ -341,8 +341,8 @@ TEST(DataInteractionTests, TextAreaToInput)
 
 TEST(DataInteractionTests, SinglePlainTextWordTypeIdentifiers)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"textarea-to-input"];
     [dataInteractionSimulator waitForInputSession];
@@ -360,8 +360,8 @@ TEST(DataInteractionTests, SinglePlainTextWordTypeIdentifiers)
 
 TEST(DataInteractionTests, SinglePlainTextURLTypeIdentifiers)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
 
     [webView loadTestPageNamed:@"textarea-to-input"];
     [dataInteractionSimulator waitForInputSession];
@@ -380,10 +380,10 @@ TEST(DataInteractionTests, SinglePlainTextURLTypeIdentifiers)
 
 TEST(DataInteractionTests, LinkToInput)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
@@ -407,10 +407,10 @@ TEST(DataInteractionTests, LinkToInput)
 
 TEST(DataInteractionTests, BackgroundImageLinkToInput)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"background-image-link-and-input"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://www.apple.com/", [webView editorValue].UTF8String);
@@ -425,10 +425,10 @@ TEST(DataInteractionTests, BackgroundImageLinkToInput)
 
 TEST(DataInteractionTests, CanPreventStart)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"prevent-start"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_EQ(DataInteractionCancelled, [dataInteractionSimulator phase]);
@@ -442,10 +442,10 @@ TEST(DataInteractionTests, CanPreventStart)
 
 TEST(DataInteractionTests, CanPreventOperation)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"prevent-operation"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_FALSE([webView editorContainsImageElement]);
@@ -458,10 +458,10 @@ TEST(DataInteractionTests, CanPreventOperation)
 
 TEST(DataInteractionTests, EnterAndLeaveEvents)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 450)];
 
     EXPECT_WK_STREQ("", [webView editorValue].UTF8String);
@@ -495,14 +495,14 @@ TEST(DataInteractionTests, ExternalSourcePlainTextToIFrame)
 
 TEST(DataInteractionTests, ExternalSourceJSONToFileInput)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
 
-    RetainPtr<UIItemProvider> simulatedJSONItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto simulatedJSONItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *jsonData = [@"{ \"foo\": \"bar\",  \"bar\": \"baz\" }" dataUsingEncoding:NSUTF8StringEncoding];
     [simulatedJSONItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeJSON withData:jsonData];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator setExternalItemProviders:@[ simulatedJSONItemProvider.get() ]];
     [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
@@ -511,14 +511,14 @@ TEST(DataInteractionTests, ExternalSourceJSONToFileInput)
 
 TEST(DataInteractionTests, ExternalSourceImageToFileInput)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
 
-    RetainPtr<UIItemProvider> simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
     [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG withData:imageData];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator setExternalItemProviders:@[ simulatedImageItemProvider.get() ]];
     [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
@@ -599,18 +599,18 @@ TEST(DataInteractionTests, ExternalSourceZIPArchiveToUploadArea)
 
 TEST(DataInteractionTests, ExternalSourceImageAndHTMLToSingleFileInput)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
 
-    RetainPtr<UIItemProvider> simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
     [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG withData:imageData];
 
-    RetainPtr<UIItemProvider> simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
     [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get(), simulatedImageItemProvider.get() ]];
     [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
@@ -620,19 +620,19 @@ TEST(DataInteractionTests, ExternalSourceImageAndHTMLToSingleFileInput)
 
 TEST(DataInteractionTests, ExternalSourceImageAndHTMLToMultipleFileInput)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
     [webView stringByEvaluatingJavaScript:@"input.setAttribute('multiple', '')"];
 
-    RetainPtr<UIItemProvider> simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
     [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG withData:imageData];
 
-    RetainPtr<UIItemProvider> simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
     [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get(), simulatedImageItemProvider.get() ]];
     [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
@@ -758,12 +758,12 @@ TEST(DataInteractionTests, RespectsExternalSourceFidelityRankings)
 
 TEST(DataInteractionTests, ExternalSourceUTF8PlainTextOnly)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
 
     NSString *textPayload = @"Ceci n'est pas une string";
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    RetainPtr<UIItemProvider> simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
     [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
     {
         completionBlock([textPayload dataUsingEncoding:NSUTF8StringEncoding], nil);
@@ -777,11 +777,11 @@ TEST(DataInteractionTests, ExternalSourceUTF8PlainTextOnly)
 
 TEST(DataInteractionTests, ExternalSourceJPEGOnly)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    RetainPtr<UIItemProvider> simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
     [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeJPEG options:nil loadHandler:^NSProgress *(UIItemProviderDataLoadCompletionBlock completionBlock)
     {
         completionBlock(UIImageJPEGRepresentation(testIconImage(), 0.5), nil);
@@ -889,14 +889,14 @@ TEST(DataInteractionTests, ExternalSourceOverrideDropInsertURL)
 
 TEST(DataInteractionTests, OverrideDataInteractionOperation)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
 
-    RetainPtr<UIItemProvider> simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
     [simulatedItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:[@"<body></body>" dataUsingEncoding:NSUTF8StringEncoding]];
 
     __block bool finishedLoadingData = false;
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
     [dataInteractionSimulator setOverrideDataInteractionOperationBlock:^NSUInteger(NSUInteger operation, id session)
     {
@@ -1008,10 +1008,10 @@ TEST(DataInteractionTests, LargeImageToTargetDiv)
     auto testWebViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[testWebViewConfiguration preferences] _setLargeImageAsyncDecodingEnabled:NO];
 
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:testWebViewConfiguration.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:testWebViewConfiguration.get()]);
     [webView synchronouslyLoadTestPageNamed:@"div-and-large-image"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(200, 400) to:CGPointMake(200, 150)];
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
     checkTypeIdentifierAndIsNotOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
@@ -1020,11 +1020,11 @@ TEST(DataInteractionTests, LargeImageToTargetDiv)
 
 TEST(DataInteractionTests, LinkWithEmptyHREF)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
     [webView stringByEvaluatingJavaScript:@"document.querySelector('a').href = ''"];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
     EXPECT_EQ(DataInteractionCancelled, [dataInteractionSimulator phase]);
@@ -1071,7 +1071,7 @@ TEST(DataInteractionTests, DoNotCrashWhenSelectionIsClearedInDragStart)
 
 TEST(DataInteractionTests, CustomActionSheetPopover)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"link-and-target-div"];
 
     auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
@@ -1095,7 +1095,7 @@ TEST(DataInteractionTests, UnresponsivePageDoesNotHangUI)
     _WKProcessPoolConfiguration *processPoolConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
     processPoolConfiguration.ignoreSynchronousMessagingTimeoutsForTesting = YES;
 
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:[[[WKWebViewConfiguration alloc] init] autorelease] processPoolConfiguration:processPoolConfiguration]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:[[[WKWebViewConfiguration alloc] init] autorelease] processPoolConfiguration:processPoolConfiguration]);
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView evaluateJavaScript:@"while(1);" completionHandler:nil];
 
