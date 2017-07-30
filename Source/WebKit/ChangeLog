@@ -1,3 +1,21 @@
+2017-07-30  Brady Eidson  <beidson@apple.com>
+
+        Add URLSchemeHandler API tests that verify the lack of URLSchemeTask object leaks.
+        https://bugs.webkit.org/show_bug.cgi?id=174958
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/APIURLSchemeTask.h:
+
+        * UIProcess/API/C/WKTestingSupport.cpp:
+        (WKGetAPIURLSchemeTaskInstanceCount):
+        (WKGetWebURLSchemeTaskInstanceCount):
+        * UIProcess/API/C/WKTestingSupport.h:
+
+        * UIProcess/WebURLSchemeTask.h:
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-07-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for GTK and WPE about StorageProcess renaming

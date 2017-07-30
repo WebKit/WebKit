@@ -25,25 +25,15 @@
 
 #pragma once
 
-#include "APIObject.h"
-#include <wtf/InstanceCounted.h>
+#include <WebKit/WKBase.h>
 
-namespace WebKit {
-class WebURLSchemeTask;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT size_t WKGetAPIURLSchemeTaskInstanceCount();
+WK_EXPORT size_t WKGetWebURLSchemeTaskInstanceCount();
+
+#ifdef __cplusplus
 }
-
-namespace API {
-
-class URLSchemeTask final : public ObjectImpl<Object::Type::URLSchemeTask>, public InstanceCounted<URLSchemeTask> {
-public:
-    static Ref<URLSchemeTask> create(WebKit::WebURLSchemeTask&);
-
-    WebKit::WebURLSchemeTask& task() { return m_webURLSchemeTask.get(); }
-
-private:
-    URLSchemeTask(WebKit::WebURLSchemeTask&);
-
-    Ref<WebKit::WebURLSchemeTask> m_webURLSchemeTask;
-};
-
-}
+#endif

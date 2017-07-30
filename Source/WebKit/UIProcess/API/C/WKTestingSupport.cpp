@@ -23,27 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WKTestingSupport.h"
 
-#include "APIObject.h"
-#include <wtf/InstanceCounted.h>
+#include "APIURLSchemeTask.h"
+#include "WebURLSchemeTask.h"
 
-namespace WebKit {
-class WebURLSchemeTask;
+size_t WKGetAPIURLSchemeTaskInstanceCount()
+{
+    return API::URLSchemeTask::instanceCount();
 }
 
-namespace API {
-
-class URLSchemeTask final : public ObjectImpl<Object::Type::URLSchemeTask>, public InstanceCounted<URLSchemeTask> {
-public:
-    static Ref<URLSchemeTask> create(WebKit::WebURLSchemeTask&);
-
-    WebKit::WebURLSchemeTask& task() { return m_webURLSchemeTask.get(); }
-
-private:
-    URLSchemeTask(WebKit::WebURLSchemeTask&);
-
-    Ref<WebKit::WebURLSchemeTask> m_webURLSchemeTask;
-};
-
+size_t WKGetWebURLSchemeTaskInstanceCount()
+{
+    return WebKit::WebURLSchemeTask::instanceCount();
 }
