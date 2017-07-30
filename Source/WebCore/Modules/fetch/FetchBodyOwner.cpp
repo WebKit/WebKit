@@ -109,7 +109,7 @@ void FetchBodyOwner::cloneBody(const FetchBodyOwner& owner)
     m_body = owner.m_body->clone();
 }
 
-void FetchBodyOwner::extractBody(ScriptExecutionContext& context, FetchBody::BindingDataType&& value)
+void FetchBodyOwner::extractBody(ScriptExecutionContext& context, FetchBody::Init&& value)
 {
     m_body = FetchBody::extract(context, WTFMove(value), m_contentType);
 }

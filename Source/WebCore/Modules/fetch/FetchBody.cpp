@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-FetchBody FetchBody::extract(ScriptExecutionContext& context, BindingDataType&& value, String& contentType)
+FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, String& contentType)
 {
     if (WTF::holds_alternative<RefPtr<Blob>>(value)) {
         Ref<const Blob> blob = WTF::get<RefPtr<Blob>>(value).releaseNonNull();

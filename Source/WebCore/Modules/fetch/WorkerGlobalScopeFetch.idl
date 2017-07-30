@@ -32,6 +32,5 @@ typedef (FetchRequest or USVString) RequestInfo;
     Conditional=FETCH_API,
     EnabledAtRuntime=FetchAPI,
 ] partial interface WorkerGlobalScope {
-    [JSBuiltin] Promise<FetchResponse> fetch(RequestInfo input, optional FetchRequestInit init);
-    [PrivateIdentifier, ImplementedAs=fetch] Promise<FetchResponse> fetchRequest(FetchRequest request);
+    Promise<FetchResponse> fetch(RequestInfo input, optional FetchRequestInit init);
 };

@@ -1,3 +1,19 @@
+2017-07-30  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove JS builtin bindings for FetchRequest, DOMWindowFetch and WorkerGlobalScopeFetch
+        https://bugs.webkit.org/show_bug.cgi?id=174974
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/fetch/api/basic/mode-same-origin.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-others-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-cookies.any-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-expected.txt:
+        * web-platform-tests/fetch/api/request/request-bad-port-expected.txt:
+        Update results to have the correct line number for exceptions reported in the console.
+
 2017-07-28  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove JS builtin bindings for FetchHeaders

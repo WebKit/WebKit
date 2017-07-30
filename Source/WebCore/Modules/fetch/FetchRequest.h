@@ -45,6 +45,9 @@ class URLSearchParams;
 
 class FetchRequest final : public FetchBodyOwner {
 public:
+    using Init = FetchRequestInit;
+    using Info = Variant<RefPtr<FetchRequest>, String>;
+
     using Cache = FetchOptions::Cache;
     using Credentials = FetchOptions::Credentials;
     using Destination = FetchOptions::Destination;
@@ -52,14 +55,8 @@ public:
     using Redirect = FetchOptions::Redirect;
     using ReferrerPolicy = FetchOptions::ReferrerPolicy;
     using Type = FetchOptions::Type;
-    using Init = FetchRequestInit;
 
-    static Ref<FetchRequest> create(ScriptExecutionContext& context) { return adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { })); }
-
-    ExceptionOr<FetchHeaders&> initializeWith(FetchRequest&, const Init&);
-    ExceptionOr<FetchHeaders&> initializeWith(const String&, const Init&);
-    ExceptionOr<void> setBody(FetchBody::BindingDataType&&);
-    ExceptionOr<void> setBodyFromInputRequest(FetchRequest*);
+    static ExceptionOr<Ref<FetchRequest>> create(ScriptExecutionContext&, Info&&, Init&&);
 
     const String& method() const { return m_internalRequest.request.httpMethod(); }
     const String& url() const;
@@ -93,7 +90,11 @@ public:
 private:
     FetchRequest(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, InternalRequest&&);
 
-    ExceptionOr<FetchHeaders&> initializeOptions(const Init&);
+    ExceptionOr<void> initializeOptions(const Init&);
+    ExceptionOr<void> initializeWith(FetchRequest&, Init&&);
+    ExceptionOr<void> initializeWith(const String&, Init&&);
+    ExceptionOr<void> setBody(FetchBody::Init&&);
+    ExceptionOr<void> setBody(FetchRequest&);
 
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;

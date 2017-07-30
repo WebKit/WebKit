@@ -65,7 +65,7 @@ protected:
     bool isBodyNull() const { return !m_body; }
     void cloneBody(const FetchBodyOwner&);
 
-    void extractBody(ScriptExecutionContext&, FetchBody::BindingDataType&&);
+    void extractBody(ScriptExecutionContext&, FetchBody::Init&&);
     void updateContentType();
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
 

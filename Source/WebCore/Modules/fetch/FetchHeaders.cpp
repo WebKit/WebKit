@@ -62,34 +62,72 @@ static ExceptionOr<void> appendToHeaderMap(const String& name, const String& val
     return { };
 }
 
+static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapConstIterator::KeyValue& header, HTTPHeaderMap& headers, FetchHeaders::Guard guard)
+{
+    auto canWriteResult = canWriteHeader(header.key, header.value, guard);
+    if (canWriteResult.hasException())
+        return canWriteResult.releaseException();
+    if (!canWriteResult.releaseReturnValue())
+        return { };
+    if (header.keyAsHTTPHeaderName)
+        headers.add(header.keyAsHTTPHeaderName.value(), header.value);
+    else
+        headers.add(header.key, header.value);
+    return { };
+}
 
-ExceptionOr<Ref<FetchHeaders>> FetchHeaders::create(std::optional<HeadersInit>&& headersInit)
+// https://fetch.spec.whatwg.org/#concept-headers-fill
+static ExceptionOr<void> fillHeaderMap(HTTPHeaderMap& headers, const FetchHeaders::Init& headersInit, FetchHeaders::Guard guard)
+{
+    if (WTF::holds_alternative<Vector<Vector<String>>>(headersInit)) {
+        auto& sequence = WTF::get<Vector<Vector<String>>>(headersInit);
+        for (auto& header : sequence) {
+            if (header.size() != 2)
+                return Exception { TypeError, "Header sub-sequence must contain exactly two items" };
+            auto result = appendToHeaderMap(header[0], header[1], headers, guard);
+            if (result.hasException())
+                return result.releaseException();
+        }
+    } else {
+        auto& record = WTF::get<Vector<WTF::KeyValuePair<String, String>>>(headersInit);
+        for (auto& header : record) {
+            auto result = appendToHeaderMap(header.key, header.value, headers, guard);
+            if (result.hasException())
+                return result.releaseException();
+        }
+    }
+
+    return { };
+}
+
+ExceptionOr<Ref<FetchHeaders>> FetchHeaders::create(std::optional<Init>&& headersInit)
 {
     HTTPHeaderMap headers;
 
     if (headersInit) {
-        if (WTF::holds_alternative<Vector<Vector<String>>>(*headersInit)) {
-            auto& sequence = WTF::get<Vector<Vector<String>>>(*headersInit);
-            for (auto& header : sequence) {
-                if (header.size() != 2)
-                    return Exception { TypeError, "Header sub-sequence must contain exactly two items" };
-                auto result = appendToHeaderMap(header[0], header[1], headers, Guard::None);
-                if (result.hasException())
-                    return result.releaseException();
-            }
-        } else {
-            auto& record = WTF::get<Vector<WTF::KeyValuePair<String, String>>>(*headersInit);
-            for (auto& header : record) {
-                auto result = appendToHeaderMap(header.key, header.value, headers, Guard::None);
-                if (result.hasException())
-                    return result.releaseException();
-            }
-        }
+        auto result = fillHeaderMap(headers, *headersInit, Guard::None);
+        if (result.hasException())
+            return result.releaseException();
     }
 
     return adoptRef(*new FetchHeaders { Guard::None, WTFMove(headers) });
 }
 
+ExceptionOr<void> FetchHeaders::fill(const Init& headerInit)
+{
+    return fillHeaderMap(m_headers, headerInit, m_guard);
+}
+
+ExceptionOr<void> FetchHeaders::fill(const FetchHeaders& otherHeaders)
+{
+    for (auto& header : otherHeaders.m_headers) {
+        auto result = appendToHeaderMap(header, m_headers, m_guard);
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    return { };
+}
 
 ExceptionOr<void> FetchHeaders::append(const String& name, const String& value)
 {

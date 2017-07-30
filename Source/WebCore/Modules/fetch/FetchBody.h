@@ -63,8 +63,8 @@ public:
     bool isText() const { return WTF::holds_alternative<String>(m_data); }
     bool isReadableStream() const { return m_isReadableStream; }
 
-    using BindingDataType = Variant<RefPtr<Blob>, RefPtr<ArrayBufferView>, RefPtr<ArrayBuffer>, RefPtr<DOMFormData>, RefPtr<URLSearchParams>, String>;
-    static FetchBody extract(ScriptExecutionContext&, BindingDataType&&, String&);
+    using Init = Variant<RefPtr<Blob>, RefPtr<ArrayBufferView>, RefPtr<ArrayBuffer>, RefPtr<DOMFormData>, RefPtr<URLSearchParams>, String>;
+    static FetchBody extract(ScriptExecutionContext&, Init&&, String&);
     static FetchBody loadingBody() { return { }; }
     static FetchBody readableStreamBody();
 

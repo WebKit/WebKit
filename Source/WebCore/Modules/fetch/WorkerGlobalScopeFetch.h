@@ -30,16 +30,16 @@
 
 #if ENABLE(FETCH_API)
 
+#include "FetchRequest.h"
 #include "JSDOMPromiseDeferred.h"
 
 namespace WebCore {
 
-class FetchRequest;
 class WorkerGlobalScope;
 
 class WorkerGlobalScopeFetch {
 public:
-    static void fetch(WorkerGlobalScope&, FetchRequest&, Ref<DeferredPromise>&&);
+    static void fetch(WorkerGlobalScope&, FetchRequest::Info&&, FetchRequest::Init&&, Ref<DeferredPromise>&&);
 };
 
 } // namespace WebCore

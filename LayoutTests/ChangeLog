@@ -1,3 +1,13 @@
+2017-07-30  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove JS builtin bindings for FetchRequest, DOMWindowFetch and WorkerGlobalScopeFetch
+        https://bugs.webkit.org/show_bug.cgi?id=174974
+
+        Reviewed by Darin Adler.
+
+        * http/tests/inspector/network/fetch-network-data-expected.txt:
+        Update results to have the correct line number for exceptions reported in the console.
+
 2017-07-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderImageResourceStyleImage::image() should return the nullImage() if the image is not available

@@ -1381,11 +1381,8 @@ CommandLineAPIModuleSource.h : CommandLineAPIModuleSource.js
 # WebCore JS Builtins
 
 WebCore_BUILTINS_SOURCES = \
-    ${WebCore}/Modules/fetch/DOMWindowFetch.js \
     $(WebCore)/Modules/fetch/FetchInternals.js \
-    $(WebCore)/Modules/fetch/FetchRequest.js \
     $(WebCore)/Modules/fetch/FetchResponse.js \
-    ${WebCore}/Modules/fetch/WorkerGlobalScopeFetch.js \
     $(WebCore)/Modules/mediastream/NavigatorUserMedia.js \
     $(WebCore)/Modules/mediastream/RTCPeerConnection.js \
     $(WebCore)/Modules/mediastream/RTCPeerConnectionInternals.js \

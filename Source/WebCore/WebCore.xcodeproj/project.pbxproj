@@ -1700,9 +1700,6 @@
 		41103AAE1E39791000769F03 /* RealtimeIncomingAudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41103AAA1E39790A00769F03 /* RealtimeIncomingAudioSource.cpp */; };
 		4123081B138C429700BCCFCA /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F19B1A08245E5A001E9ABC /* WebCore.framework */; };
 		41230913138C42FF00BCCFCA /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
-		412455341EF442C500F11809 /* FetchRequest.js in Resources */ = {isa = PBXBuildFile; fileRef = 412455331EF442C400F11809 /* FetchRequest.js */; };
-		412455361EF442D000F11809 /* DOMWindowFetch.js in Resources */ = {isa = PBXBuildFile; fileRef = 412455351EF442CE00F11809 /* DOMWindowFetch.js */; };
-		412455381EF442DB00F11809 /* WorkerGlobalScopeFetch.js in Resources */ = {isa = PBXBuildFile; fileRef = 412455371EF442DA00F11809 /* WorkerGlobalScopeFetch.js */; };
 		4127D5370F8AAB1D00E424F5 /* ScriptState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */; };
 		4129DF851BB5B80700322A16 /* JSReadableStreamPrivateConstructors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4129DF831BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.cpp */; };
 		4129DF861BB5B80C00322A16 /* JSReadableStreamPrivateConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9327,9 +9324,6 @@
 		41189EF71AD8232800B90A0D /* ReadableStreamDefaultController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamDefaultController.idl; sourceTree = "<group>"; };
 		41189EF71AD8232800B93F64 /* ReadableByteStreamController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableByteStreamController.idl; sourceTree = "<group>"; };
 		41189EF71AD8232800B95672 /* ReadableStreamBYOBRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadableStreamBYOBRequest.idl; sourceTree = "<group>"; };
-		412455331EF442C400F11809 /* FetchRequest.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FetchRequest.js; sourceTree = "<group>"; };
-		412455351EF442CE00F11809 /* DOMWindowFetch.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = DOMWindowFetch.js; sourceTree = "<group>"; };
-		412455371EF442DA00F11809 /* WorkerGlobalScopeFetch.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = WorkerGlobalScopeFetch.js; sourceTree = "<group>"; };
 		4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptState.cpp; sourceTree = "<group>"; };
 		4129DF831BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamPrivateConstructors.cpp; sourceTree = "<group>"; };
 		4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamPrivateConstructors.h; sourceTree = "<group>"; };
@@ -17794,7 +17788,6 @@
 				418C39521C8DAC7B0051C8A3 /* DOMWindowFetch.cpp */,
 				418C39531C8DAC7B0051C8A3 /* DOMWindowFetch.h */,
 				418C39541C8DAC7B0051C8A3 /* DOMWindowFetch.idl */,
-				412455351EF442CE00F11809 /* DOMWindowFetch.js */,
 				41F54F7D1C50C4F600338488 /* FetchBody.cpp */,
 				41F54F7E1C50C4F600338488 /* FetchBody.h */,
 				41F54F7F1C50C4F600338488 /* FetchBody.idl */,
@@ -17812,7 +17805,6 @@
 				41F54F871C50C4F600338488 /* FetchRequest.cpp */,
 				41F54F881C50C4F600338488 /* FetchRequest.h */,
 				41F54F891C50C4F600338488 /* FetchRequest.idl */,
-				412455331EF442C400F11809 /* FetchRequest.js */,
 				7CE1914B1F2A9AFB00272F78 /* FetchReferrerPolicy.h */,
 				7CE1914C1F2A9AFB00272F78 /* FetchReferrerPolicy.idl */,
 				7CE1914F1F2A9B0A00272F78 /* FetchRequestMode.h */,
@@ -17834,7 +17826,6 @@
 				418C39571C8DD6960051C8A3 /* WorkerGlobalScopeFetch.cpp */,
 				418C39581C8DD6960051C8A3 /* WorkerGlobalScopeFetch.h */,
 				418C39591C8DD6960051C8A3 /* WorkerGlobalScopeFetch.idl */,
-				412455371EF442DA00F11809 /* WorkerGlobalScopeFetch.js */,
 			);
 			path = fetch;
 			sourceTree = "<group>";
@@ -30346,8 +30337,6 @@
 				A11E8C051B1E28F40003A7C7 /* copyCursor.png in Resources */,
 				D02B64B214089E56006EFA21 /* DictationPhraseWithAlternativesDot.png in Resources */,
 				D02B64B314089E56006EFA21 /* DictationPhraseWithAlternativesDot@2x.png in Resources */,
-				412455361EF442D000F11809 /* DOMWindowFetch.js in Resources */,
-				412455341EF442C500F11809 /* FetchRequest.js in Resources */,
 				7CC7E3D717208C0F003C5277 /* IDNScriptWhiteList.txt in Resources */,
 				2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */,
 				BCAD180A131C7A0D00990406 /* Localizable.strings in Resources */,
@@ -30371,7 +30360,6 @@
 				1C2417BA1992C04100EF9938 /* SpellingDot@3x.png in Resources */,
 				93153BDC141959BC00FCF5BE /* textAreaResizeCorner.png in Resources */,
 				9370918D1416D86B00477333 /* textAreaResizeCorner@2x.png in Resources */,
-				412455381EF442DB00F11809 /* WorkerGlobalScopeFetch.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

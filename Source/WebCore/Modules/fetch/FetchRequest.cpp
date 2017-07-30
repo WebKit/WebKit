@@ -119,7 +119,7 @@ static bool methodCanHaveBody(const FetchRequest::InternalRequest& internalReque
     return internalRequest.request.httpMethod() != "GET" && internalRequest.request.httpMethod() != "HEAD";
 }
 
-ExceptionOr<FetchHeaders&> FetchRequest::initializeOptions(const Init& init)
+ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
 {
     ASSERT(scriptExecutionContext());
 
@@ -135,10 +135,11 @@ ExceptionOr<FetchHeaders&> FetchRequest::initializeOptions(const Init& init)
             return Exception { TypeError, ASCIILiteral("There cannot be an integrity in no-cors mode.") };
         m_headers->setGuard(FetchHeaders::Guard::RequestNoCors);
     }
-    return m_headers.get();
+    
+    return { };
 }
 
-ExceptionOr<FetchHeaders&> FetchRequest::initializeWith(const String& url, const Init& init)
+ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 {
     ASSERT(scriptExecutionContext());
     // FIXME: Tighten the URL parsing algorithm according https://url.spec.whatwg.org/#concept-url-parser.
@@ -153,40 +154,97 @@ ExceptionOr<FetchHeaders&> FetchRequest::initializeWith(const String& url, const
     m_internalRequest.request.setRequester(ResourceRequest::Requester::Fetch);
     m_internalRequest.request.setInitiatorIdentifier(scriptExecutionContext()->resourceRequestIdentifier());
 
-    return initializeOptions(init);
+    auto optionsResult = initializeOptions(init);
+    if (optionsResult.hasException())
+        return optionsResult.releaseException();
+
+    if (init.headers) {
+        auto fillResult = m_headers->fill(*init.headers);
+        if (fillResult.hasException())
+            return fillResult.releaseException();
+    }
+
+    if (init.body) {
+        auto setBodyResult = setBody(WTFMove(*init.body));
+        if (setBodyResult.hasException())
+            return setBodyResult.releaseException();
+    }
+
+    updateContentType();
+    return { };
 }
 
-ExceptionOr<FetchHeaders&> FetchRequest::initializeWith(FetchRequest& input, const Init& init)
+ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 {
     if (input.isDisturbedOrLocked())
         return Exception {TypeError, ASCIILiteral("Request input is disturbed or locked.") };
 
     m_internalRequest = input.m_internalRequest;
 
-    return initializeOptions(init);
+    auto optionsResult = initializeOptions(init);
+    if (optionsResult.hasException())
+        return optionsResult.releaseException();
+
+    if (init.headers) {
+        auto fillResult = m_headers->fill(*init.headers);
+        if (fillResult.hasException())
+            return fillResult.releaseException();
+    } else {
+        auto fillResult = m_headers->fill(input.headers());
+        if (fillResult.hasException())
+            return fillResult.releaseException();
+    }
+
+    if (init.body) {
+        auto setBodyResult = setBody(WTFMove(*init.body));
+        if (setBodyResult.hasException())
+            return setBodyResult.releaseException();
+    } else {
+        auto setBodyResult = setBody(input);
+        if (setBodyResult.hasException())
+            return setBodyResult.releaseException();
+    }
+
+    updateContentType();
+    return { };
 }
 
-ExceptionOr<void> FetchRequest::setBody(FetchBody::BindingDataType&& body)
+ExceptionOr<void> FetchRequest::setBody(FetchBody::Init&& body)
 {
     if (!methodCanHaveBody(m_internalRequest))
         return Exception { TypeError };
 
     ASSERT(scriptExecutionContext());
     extractBody(*scriptExecutionContext(), WTFMove(body));
-    updateContentType();
     return { };
 }
 
-ExceptionOr<void> FetchRequest::setBodyFromInputRequest(FetchRequest* request)
+ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
 {
-    if (request && !request->isBodyNull()) {
+    if (!request.isBodyNull()) {
         if (!methodCanHaveBody(m_internalRequest))
             return Exception { TypeError };
-        m_body = WTFMove(request->m_body);
-        request->setDisturbed();
+        m_body = WTFMove(request.m_body);
+        request.setDisturbed();
     }
-    updateContentType();
     return { };
+}
+
+ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& context, Info&& input, Init&& init)
+{
+    auto request = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { }));
+
+    if (WTF::holds_alternative<String>(input)) {
+        auto result = request->initializeWith(WTF::get<String>(input), WTFMove(init));
+        if (result.hasException())
+            return result.releaseException();
+    } else {
+        auto result = request->initializeWith(*WTF::get<RefPtr<FetchRequest>>(input), WTFMove(init));
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    return WTFMove(request);
 }
 
 String FetchRequest::referrer() const

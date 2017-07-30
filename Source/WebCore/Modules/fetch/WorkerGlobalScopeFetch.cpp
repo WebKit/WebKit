@@ -36,9 +36,15 @@
 
 namespace WebCore {
 
-void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest& request, Ref<DeferredPromise>&& promise)
+void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
 {
-    FetchResponse::fetch(scope, request, WTFMove(promise));
+    auto request = FetchRequest::create(scope, WTFMove(input), WTFMove(init));
+    if (request.hasException()) {
+        promise->reject(request.releaseException());
+        return;
+    }
+
+    FetchResponse::fetch(scope, request.releaseReturnValue().get(), WTFMove(promise));
 }
 
 } // namespace WebCore

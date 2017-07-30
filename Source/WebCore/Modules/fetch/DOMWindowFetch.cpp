@@ -38,12 +38,21 @@
 
 namespace WebCore {
 
-void DOMWindowFetch::fetch(DOMWindow& window, FetchRequest& request, Ref<DeferredPromise>&& promise)
+void DOMWindowFetch::fetch(DOMWindow& window, FetchRequest::Info&& input, FetchRequest::Init&& init, Ref<DeferredPromise>&& promise)
 {
     auto* document = window.document();
-    if (!document)
+    if (!document) {
+        promise->reject(InvalidStateError);
         return;
-    FetchResponse::fetch(*document, request, WTFMove(promise));
+    }
+
+    auto request = FetchRequest::create(*document, WTFMove(input), WTFMove(init));
+    if (request.hasException()) {
+        promise->reject(request.releaseException());
+        return;
+    }
+
+    FetchResponse::fetch(*document, request.releaseReturnValue().get(), WTFMove(promise));
 }
 
 } // namespace WebCore

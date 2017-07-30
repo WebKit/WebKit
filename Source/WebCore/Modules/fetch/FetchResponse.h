@@ -70,7 +70,7 @@ public:
 #endif
 
     ExceptionOr<void> setStatus(int status, const String& statusText);
-    void initializeWith(FetchBody::BindingDataType&&);
+    void initializeWith(FetchBody::Init&&);
     void setBodyAsReadableStream();
 
     Type type() const { return m_response.type(); }

@@ -74,7 +74,7 @@ ExceptionOr<void> FetchResponse::setStatus(int status, const String& statusText)
     return { };
 }
 
-void FetchResponse::initializeWith(FetchBody::BindingDataType&& body)
+void FetchResponse::initializeWith(FetchBody::Init&& body)
 {
     ASSERT(scriptExecutionContext());
     extractBody(*scriptExecutionContext(), WTFMove(body));
