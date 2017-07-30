@@ -945,23 +945,53 @@ class Error < NoChildren
     end
 end
 
+class ConstExpr < NoChildren
+    attr_reader :variable, :value
+
+    def initialize(codeOrigin, value)
+        super(codeOrigin)
+        @value = value
+    end
+
+    @@mapping = {}
+
+    def self.forName(codeOrigin, text)
+        unless @@mapping[text]
+            @@mapping[text] = ConstExpr.new(codeOrigin, text)
+        end
+        @@mapping[text]
+    end
+
+    def dump
+        "constexpr (#{@value.dump})"
+    end
+
+    def <=>(other)
+        @value <=> other.value
+    end
+
+    def immediate?
+        true
+    end
+end
+
 class ConstDecl < Node
     attr_reader :variable, :value
-    
+
     def initialize(codeOrigin, variable, value)
         super(codeOrigin)
         @variable = variable
         @value = value
     end
-    
+
     def children
         [@variable, @value]
     end
-    
+
     def mapChildren
         ConstDecl.new(codeOrigin, (yield @variable), (yield @value))
     end
-    
+
     def dump
         "const #{@variable.dump} = #{@value.dump}"
     end

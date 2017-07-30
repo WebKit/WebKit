@@ -315,7 +315,7 @@ begin
     configurationList = offsetsAndConfigurationIndex(offsetsFile)
 rescue MissingMagicValuesException
     $stderr.puts "offlineasm: No magic values found. Skipping assembly file generation."
-    exit 0
+    exit 1
 end
 
 # The MS compiler doesn't accept DWARF2 debug annotations.
@@ -366,7 +366,7 @@ File.open(outputFlnm, "w") {
                 $enableDebugAnnotations = false
             end
 
-            lowLevelAST = lowLevelAST.resolve(*buildOffsetsMap(lowLevelAST, offsetsList))
+            lowLevelAST = lowLevelAST.resolve(buildOffsetsMap(lowLevelAST, offsetsList))
             lowLevelAST.validate
             emitCodeInConfiguration(concreteSettings, lowLevelAST, backend) {
                 $asm.inAsm {

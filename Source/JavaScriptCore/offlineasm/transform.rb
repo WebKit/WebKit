@@ -249,32 +249,46 @@ end
 #
 
 class Node
-    def resolveOffsets(offsets, sizes)
+    def resolveOffsets(constantsMap)
         mapChildren {
             | child |
-            child.resolveOffsets(offsets, sizes)
+            child.resolveOffsets(constantsMap)
         }
     end
 end
 
 class StructOffset
-    def resolveOffsets(offsets, sizes)
-        if offsets[self]
-            Immediate.new(codeOrigin, offsets[self])
+    def resolveOffsets(constantsMap)
+        if constantsMap[self]
+            Immediate.new(codeOrigin, constantsMap[self])
         else
-            self
+            puts "Could not find #{self.inspect} in #{constantsMap.keys.inspect}"
+            puts "sizes = #{constantsMap.inspect}"
+            raise
         end
     end
 end
 
 class Sizeof
-    def resolveOffsets(offsets, sizes)
-        if sizes[self]
-            Immediate.new(codeOrigin, sizes[self])
+    def resolveOffsets(constantsMap)
+        if constantsMap[self]
+            Immediate.new(codeOrigin, constantsMap[self])
         else
-            puts "Could not find #{self.inspect} in #{sizes.keys.inspect}"
-            puts "sizes = #{sizes.inspect}"
-            self
+            puts "Could not find #{self.inspect} in #{constantsMap.keys.inspect}"
+            puts "sizes = #{constantsMap.inspect}"
+            raise
+        end
+    end
+end
+
+class ConstExpr
+    def resolveOffsets(constantsMap)
+        if constantsMap[self]
+            Immediate.new(codeOrigin, constantsMap[self])
+        else
+            puts "Could not find #{self.inspect} in #{constantsMap.keys.inspect}"
+            puts "sizes = #{constantsMap.inspect}"
+            raise
         end
     end
 end
@@ -377,8 +391,8 @@ end
 #
 
 class Node
-    def resolve(offsets, sizes)
-        demacroify({}).resolveOffsets(offsets, sizes).fold
+    def resolve(constantsMap)
+        demacroify({}).resolveOffsets(constantsMap).fold
     end
 end
 

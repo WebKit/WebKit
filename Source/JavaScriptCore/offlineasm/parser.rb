@@ -3,7 +3,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
-# 1. Redistributions of source code must retain the above copyright
+# 1. Redistributions of source code must retain the above copyrighht
 #    notice, this list of conditions and the following disclaimer.
 # 2. Redistributions in binary form must reproduce the above copyright
 #    notice, this list of conditions and the following disclaimer in the
@@ -222,7 +222,7 @@ def isInstruction(token)
 end
 
 def isKeyword(token)
-    token =~ /\A((true)|(false)|(if)|(then)|(else)|(elsif)|(end)|(and)|(or)|(not)|(global)|(macro)|(const)|(sizeof)|(error)|(include))\Z/ or
+    token =~ /\A((true)|(false)|(if)|(then)|(else)|(elsif)|(end)|(and)|(or)|(not)|(global)|(macro)|(const)|(constexpr)|(sizeof)|(error)|(include))\Z/ or
         token =~ REGISTER_PATTERN or
         isInstruction(token)
 end
@@ -417,6 +417,30 @@ class Parser
         raise if names.empty?
         [codeOrigin, names]
     end
+
+    def parseTextInParens
+        skipNewLine
+        codeOrigin = @tokens[@idx].codeOrigin
+        raise unless @tokens[@idx] == "("
+        @idx += 1
+        # need at least one item
+        raise if @tokens[@idx] == ")"
+        numEnclosedParens = 0
+        text = []
+        while @tokens[@idx] != ")" || numEnclosedParens > 0
+            if @tokens[@idx] == "("
+                numEnclosedParens += 1
+            elsif @tokens[@idx] == ")"
+                numEnclosedParens -= 1
+            end
+
+            text << @tokens[@idx].string
+            @idx += 1
+        end
+        @idx += 1
+        return [codeOrigin, text]
+    end
+
     
     def parseExpressionAtom
         skipNewLine
@@ -453,6 +477,17 @@ class Parser
             @idx += 1
             codeOrigin, names = parseColonColon
             Sizeof.forName(codeOrigin, names.join('::'))
+        elsif @tokens[@idx] == "constexpr"
+            @idx += 1
+            skipNewLine
+            if @tokens[@idx] == "("
+                codeOrigin, text = parseTextInParens
+                text = text.join
+            else
+                codeOrigin, text = parseColonColon
+                text = text.join("::")
+            end
+            ConstExpr.forName(codeOrigin, text)
         elsif isLabel @tokens[@idx]
             result = LabelReference.new(@tokens[@idx].codeOrigin, Label.forName(@tokens[@idx].codeOrigin, @tokens[@idx].string))
             @idx += 1
@@ -481,7 +516,7 @@ class Parser
     end
     
     def couldBeExpression
-        @tokens[@idx] == "-" or @tokens[@idx] == "~" or @tokens[@idx] == "sizeof" or isInteger(@tokens[@idx]) or isString(@tokens[@idx]) or isVariable(@tokens[@idx]) or @tokens[@idx] == "("
+        @tokens[@idx] == "-" or @tokens[@idx] == "~" or @tokens[@idx] == "sizeof" or @tokens[@idx] == "constexpr" or isInteger(@tokens[@idx]) or isString(@tokens[@idx]) or isVariable(@tokens[@idx]) or @tokens[@idx] == "("
     end
     
     def parseExpressionAdd

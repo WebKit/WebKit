@@ -153,11 +153,11 @@ end
 
 # These declarations must match interpreter/JSStack.h.
 
+const PtrSize = constexpr (sizeof(void*))
+
 if JSVALUE64
-    const PtrSize = 8
     const CallFrameHeaderSlots = 5
 else
-    const PtrSize = 4
     const CallFrameHeaderSlots = 4
     const CallFrameAlignSlots = 1
 end
@@ -205,21 +205,21 @@ else
 end
 
 # NOTE: The values below must be in sync with what is in PutByIdFlags.h.
-const PutByIdPrimaryTypeMask = 0x6
-const PutByIdPrimaryTypeSecondary = 0x0
-const PutByIdPrimaryTypeObjectWithStructure = 0x2
-const PutByIdPrimaryTypeObjectWithStructureOrOther = 0x4
-const PutByIdSecondaryTypeMask = -0x8
-const PutByIdSecondaryTypeBottom = 0x0
-const PutByIdSecondaryTypeBoolean = 0x8
-const PutByIdSecondaryTypeOther = 0x10
-const PutByIdSecondaryTypeInt32 = 0x18
-const PutByIdSecondaryTypeNumber = 0x20
-const PutByIdSecondaryTypeString = 0x28
-const PutByIdSecondaryTypeSymbol = 0x30
-const PutByIdSecondaryTypeObject = 0x38
-const PutByIdSecondaryTypeObjectOrOther = 0x40
-const PutByIdSecondaryTypeTop = 0x48
+const PutByIdPrimaryTypeMask = constexpr PutByIdPrimaryTypeMask
+const PutByIdPrimaryTypeSecondary = constexpr PutByIdPrimaryTypeSecondary
+const PutByIdPrimaryTypeObjectWithStructure = constexpr PutByIdPrimaryTypeObjectWithStructure
+const PutByIdPrimaryTypeObjectWithStructureOrOther = constexpr PutByIdPrimaryTypeObjectWithStructureOrOther
+const PutByIdSecondaryTypeMask = constexpr PutByIdSecondaryTypeMask
+const PutByIdSecondaryTypeBottom = constexpr PutByIdSecondaryTypeBottom
+const PutByIdSecondaryTypeBoolean = constexpr PutByIdSecondaryTypeBoolean
+const PutByIdSecondaryTypeOther = constexpr PutByIdSecondaryTypeOther
+const PutByIdSecondaryTypeInt32 = constexpr PutByIdSecondaryTypeInt32
+const PutByIdSecondaryTypeNumber = constexpr PutByIdSecondaryTypeNumber
+const PutByIdSecondaryTypeString = constexpr PutByIdSecondaryTypeString
+const PutByIdSecondaryTypeSymbol = constexpr PutByIdSecondaryTypeSymbol
+const PutByIdSecondaryTypeObject = constexpr PutByIdSecondaryTypeObject
+const PutByIdSecondaryTypeObjectOrOther = constexpr PutByIdSecondaryTypeObjectOrOther
+const PutByIdSecondaryTypeTop = constexpr PutByIdSecondaryTypeTop
 
 const CallOpCodeSize = 9
 
@@ -245,9 +245,9 @@ const CalleeSaveSpaceStackAligned = (CalleeSaveSpaceAsVirtualRegisters * SlotSiz
 
 
 # Watchpoint states
-const ClearWatchpoint = 0
-const IsWatched = 1
-const IsInvalidated = 2
+const ClearWatchpoint = constexpr ClearWatchpoint
+const IsWatched = constexpr IsWatched
+const IsInvalidated = constexpr IsInvalidated
 
 # ShadowChicken data
 const ShadowChickenTailMarker = 0x7a11
@@ -333,52 +333,52 @@ else
 end
 
 # Constant for reasoning about butterflies.
-const IsArray                  = 0x01
-const IndexingShapeMask        = 0x0E
-const NoIndexingShape          = 0x00
-const Int32Shape               = 0x04
-const DoubleShape              = 0x06
-const ContiguousShape          = 0x08
-const ArrayStorageShape        = 0x0A
-const SlowPutArrayStorageShape = 0x0C
+const IsArray                  = constexpr IsArray
+const IndexingShapeMask        = constexpr IndexingShapeMask
+const NoIndexingShape          = constexpr NoIndexingShape
+const Int32Shape               = constexpr Int32Shape
+const DoubleShape              = constexpr DoubleShape
+const ContiguousShape          = constexpr ContiguousShape
+const ArrayStorageShape        = constexpr ArrayStorageShape
+const SlowPutArrayStorageShape = constexpr SlowPutArrayStorageShape
 
 # Type constants.
-const StringType = 6
-const SymbolType = 7
-const ObjectType = 23
-const FinalObjectType = 24
-const JSFunctionType = 26
-const ArrayType = 34
-const DerivedArrayType = 35
-const ProxyObjectType = 53
+const StringType = constexpr StringType
+const SymbolType = constexpr SymbolType
+const ObjectType = constexpr ObjectType
+const FinalObjectType = constexpr FinalObjectType
+const JSFunctionType = constexpr JSFunctionType
+const ArrayType = constexpr ArrayType
+const DerivedArrayType = constexpr DerivedArrayType
+const ProxyObjectType = constexpr ProxyObjectType
 
 # The typed array types need to be numbered in a particular order because of the manually written
 # switch statement in get_by_val and put_by_val.
-const Int8ArrayType = 36
-const Int16ArrayType = 37
-const Int32ArrayType = 38
-const Uint8ArrayType = 39
-const Uint8ClampedArrayType = 40
-const Uint16ArrayType = 41
-const Uint32ArrayType = 42
-const Float32ArrayType = 43
-const Float64ArrayType = 44
+const Int8ArrayType = constexpr Int8ArrayType
+const Int16ArrayType = constexpr Int16ArrayType
+const Int32ArrayType = constexpr Int32ArrayType
+const Uint8ArrayType = constexpr Uint8ArrayType
+const Uint8ClampedArrayType = constexpr Uint8ClampedArrayType
+const Uint16ArrayType = constexpr Uint16ArrayType
+const Uint32ArrayType = constexpr Uint32ArrayType
+const Float32ArrayType = constexpr Float32ArrayType
+const Float64ArrayType = constexpr Float64ArrayType
 
 const FirstArrayType = Int8ArrayType
 const LastArrayType = Float64ArrayType
 
 # Type flags constants.
-const MasqueradesAsUndefined = 1
-const ImplementsDefaultHasInstance = 2
+const MasqueradesAsUndefined = constexpr MasqueradesAsUndefined
+const ImplementsDefaultHasInstance = constexpr ImplementsDefaultHasInstance
 
 # Bytecode operand constants.
-const FirstConstantRegisterIndex = 0x40000000
+const FirstConstantRegisterIndex = constexpr FirstConstantRegisterIndex
 
 # Code type constants.
-const GlobalCode = 0
-const EvalCode = 1
-const FunctionCode = 2
-const ModuleCode = 3
+const GlobalCode = constexpr GlobalCode
+const EvalCode = constexpr EvalCode
+const FunctionCode = constexpr FunctionCode
+const ModuleCode = constexpr ModuleCode
 
 # The interpreter steals the tag word of the argument count.
 const LLIntReturnPC = ArgumentCount + TagOffset
@@ -390,16 +390,16 @@ const HashFlags8BitBuffer = 8
 const firstOutOfLineOffset = 100
 
 # ResolveType
-const GlobalProperty = 0
-const GlobalVar = 1
-const GlobalLexicalVar = 2
-const ClosureVar = 3
-const LocalClosureVar = 4
-const ModuleVar = 5
-const GlobalPropertyWithVarInjectionChecks = 6
-const GlobalVarWithVarInjectionChecks = 7
-const GlobalLexicalVarWithVarInjectionChecks = 8
-const ClosureVarWithVarInjectionChecks = 9
+const GlobalProperty = constexpr GlobalProperty
+const GlobalVar = constexpr GlobalVar
+const GlobalLexicalVar = constexpr GlobalLexicalVar
+const ClosureVar = constexpr ClosureVar
+const LocalClosureVar = constexpr LocalClosureVar
+const ModuleVar = constexpr ModuleVar
+const GlobalPropertyWithVarInjectionChecks = constexpr GlobalPropertyWithVarInjectionChecks
+const GlobalVarWithVarInjectionChecks = constexpr GlobalVarWithVarInjectionChecks
+const GlobalLexicalVarWithVarInjectionChecks = constexpr GlobalLexicalVarWithVarInjectionChecks
+const ClosureVarWithVarInjectionChecks = constexpr ClosureVarWithVarInjectionChecks
 
 const ResolveTypeMask = 0x3ff
 const InitializationModeMask = 0xffc00
@@ -1256,210 +1256,210 @@ end
 _llint_op_create_direct_arguments:
     traceExecution()
     callOpcodeSlowPath(_slow_path_create_direct_arguments)
-    dispatch(2)
+    dispatch(constexpr op_create_direct_arguments_length)
 
 
 _llint_op_create_scoped_arguments:
     traceExecution()
     callOpcodeSlowPath(_slow_path_create_scoped_arguments)
-    dispatch(3)
+    dispatch(constexpr op_create_scoped_arguments_length)
 
 
 _llint_op_create_cloned_arguments:
     traceExecution()
     callOpcodeSlowPath(_slow_path_create_cloned_arguments)
-    dispatch(2)
+    dispatch(constexpr op_create_cloned_arguments_length)
 
 
 _llint_op_create_this:
     traceExecution()
     callOpcodeSlowPath(_slow_path_create_this)
-    dispatch(5)
+    dispatch(constexpr op_create_this_length)
 
 
 _llint_op_new_object:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_object)
-    dispatch(4)
+    dispatch(constexpr op_new_object_length)
 
 
 _llint_op_new_func:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_func)
-    dispatch(4)
+    dispatch(constexpr op_new_func_length)
 
 
 _llint_op_new_generator_func:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_generator_func)
-    dispatch(4)
+    dispatch(constexpr op_new_generator_func_length)
 
 
 _llint_op_new_async_func:
     traceExecution()
     callSlowPath(_llint_slow_path_new_async_func)
-    dispatch(4)
+    dispatch(constexpr op_new_async_func_length)
 
 
 _llint_op_new_array:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_array)
-    dispatch(5)
+    dispatch(constexpr op_new_array_length)
 
 
 _llint_op_new_array_with_spread:
     traceExecution()
     callOpcodeSlowPath(_slow_path_new_array_with_spread)
-    dispatch(5)
+    dispatch(constexpr op_new_array_with_spread_length)
 
 
 _llint_op_spread:
     traceExecution()
     callOpcodeSlowPath(_slow_path_spread)
-    dispatch(3)
+    dispatch(constexpr op_spread_length)
 
 
 _llint_op_new_array_with_size:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_array_with_size)
-    dispatch(4)
+    dispatch(constexpr op_new_array_with_size_length)
 
 
 _llint_op_new_array_buffer:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_array_buffer)
-    dispatch(5)
+    dispatch(constexpr op_new_array_buffer_length)
 
 
 _llint_op_new_regexp:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_regexp)
-    dispatch(3)
+    dispatch(constexpr op_new_regexp_length)
 
 
 _llint_op_less:
     traceExecution()
     callOpcodeSlowPath(_slow_path_less)
-    dispatch(4)
+    dispatch(constexpr op_less_length)
 
 
 _llint_op_lesseq:
     traceExecution()
     callOpcodeSlowPath(_slow_path_lesseq)
-    dispatch(4)
+    dispatch(constexpr op_lesseq_length)
 
 
 _llint_op_greater:
     traceExecution()
     callOpcodeSlowPath(_slow_path_greater)
-    dispatch(4)
+    dispatch(constexpr op_greater_length)
 
 
 _llint_op_greatereq:
     traceExecution()
     callOpcodeSlowPath(_slow_path_greatereq)
-    dispatch(4)
+    dispatch(constexpr op_greatereq_length)
 
 
 _llint_op_mod:
     traceExecution()
     callOpcodeSlowPath(_slow_path_mod)
-    dispatch(4)
+    dispatch(constexpr op_mod_length)
 
 
 _llint_op_pow:
     traceExecution()
     callOpcodeSlowPath(_slow_path_pow)
-    dispatch(4)
+    dispatch(constexpr op_pow_length)
 
 
 _llint_op_typeof:
     traceExecution()
     callOpcodeSlowPath(_slow_path_typeof)
-    dispatch(3)
+    dispatch(constexpr op_typeof_length)
 
 
 _llint_op_is_object_or_null:
     traceExecution()
     callOpcodeSlowPath(_slow_path_is_object_or_null)
-    dispatch(3)
+    dispatch(constexpr op_is_object_or_null_length)
 
 _llint_op_is_function:
     traceExecution()
     callOpcodeSlowPath(_slow_path_is_function)
-    dispatch(3)
+    dispatch(constexpr op_is_function_length)
 
 
 _llint_op_in:
     traceExecution()
     callOpcodeSlowPath(_slow_path_in)
-    dispatch(5)
+    dispatch(constexpr op_in_length)
 
 
 _llint_op_try_get_by_id:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_try_get_by_id)
-    dispatch(5)
+    dispatch(constexpr op_try_get_by_id_length)
 
 
 _llint_op_del_by_id:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_del_by_id)
-    dispatch(4)
+    dispatch(constexpr op_del_by_id_length)
 
 
 _llint_op_del_by_val:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_del_by_val)
-    dispatch(4)
+    dispatch(constexpr op_del_by_val_length)
 
 
 _llint_op_put_by_index:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_put_by_index)
-    dispatch(4)
+    dispatch(constexpr op_put_by_index_length)
 
 
 _llint_op_put_getter_by_id:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_put_getter_by_id)
-    dispatch(5)
+    dispatch(constexpr op_put_getter_by_id_length)
 
 
 _llint_op_put_setter_by_id:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_put_setter_by_id)
-    dispatch(5)
+    dispatch(constexpr op_put_setter_by_id_length)
 
 
 _llint_op_put_getter_setter_by_id:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_put_getter_setter_by_id)
-    dispatch(6)
+    dispatch(constexpr op_put_getter_setter_by_id_length)
 
 
 _llint_op_put_getter_by_val:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_put_getter_by_val)
-    dispatch(5)
+    dispatch(constexpr op_put_getter_by_val_length)
 
 
 _llint_op_put_setter_by_val:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_put_setter_by_val)
-    dispatch(5)
+    dispatch(constexpr op_put_setter_by_val_length)
 
 
 _llint_op_define_data_property:
     traceExecution()
     callOpcodeSlowPath(_slow_path_define_data_property)
-    dispatch(5)
+    dispatch(constexpr op_define_data_property_length)
 
 
 _llint_op_define_accessor_property:
     traceExecution()
     callOpcodeSlowPath(_slow_path_define_accessor_property)
-    dispatch(6)
+    dispatch(constexpr op_define_accessor_property_length)
 
 
 _llint_op_jtrue:
@@ -1543,7 +1543,7 @@ _llint_op_jngreatereq:
 _llint_op_loop_hint:
     traceExecution()
     checkSwitchToJITForLoop()
-    dispatch(1)
+    dispatch(constexpr op_loop_hint_length)
 
 
 _llint_op_check_traps:
@@ -1553,7 +1553,7 @@ _llint_op_check_traps:
     loadb VM::m_traps+VMTraps::m_needTrapHandling[t1], t0
     btpnz t0, .handleTraps
 .afterHandlingTraps:
-    dispatch(1)
+    dispatch(constexpr op_check_traps_length)
 .handleTraps:
     callTrapHandler(.throwHandler)
     jmp .afterHandlingTraps
@@ -1574,7 +1574,7 @@ end
 
 
 _llint_op_nop:
-    dispatch(1)
+    dispatch(constexpr op_nop_length)
 
 
 _llint_op_switch_string:
@@ -1586,23 +1586,23 @@ _llint_op_switch_string:
 _llint_op_new_func_exp:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_func_exp)
-    dispatch(4)
+    dispatch(constexpr op_new_func_exp_length)
 
 _llint_op_new_generator_func_exp:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_generator_func_exp)
-    dispatch(4)
+    dispatch(constexpr op_new_generator_func_exp_length)
 
 _llint_op_new_async_func_exp:
     traceExecution()
     callSlowPath(_llint_slow_path_new_async_func_exp)
-    dispatch(4)
+    dispatch(constexpr op_new_async_func_exp_length)
 
 
 _llint_op_set_function_name:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_set_function_name)
-    dispatch(3)
+    dispatch(constexpr op_set_function_name_length)
 
 _llint_op_call:
     traceExecution()
@@ -1708,25 +1708,25 @@ _llint_generic_return_point:
 _llint_op_strcat:
     traceExecution()
     callOpcodeSlowPath(_slow_path_strcat)
-    dispatch(4)
+    dispatch(constexpr op_strcat_length)
 
 
 _llint_op_push_with_scope:
     traceExecution()
     callOpcodeSlowPath(_slow_path_push_with_scope)
-    dispatch(4)
+    dispatch(constexpr op_push_with_scope_length)
 
 
 _llint_op_assert:
     traceExecution()
     callOpcodeSlowPath(_slow_path_assert)
-    dispatch(3)
+    dispatch(constexpr op_assert_length)
 
 
 _llint_op_unreachable:
     traceExecution()
     callOpcodeSlowPath(_slow_path_unreachable)
-    dispatch(1)
+    dispatch(constexpr op_unreachable_length)
 
 
 _llint_op_yield:
@@ -1736,19 +1736,19 @@ _llint_op_yield:
 _llint_op_create_lexical_environment:
     traceExecution()
     callOpcodeSlowPath(_slow_path_create_lexical_environment)
-    dispatch(5)
+    dispatch(constexpr op_create_lexical_environment_length)
 
 
 _llint_op_throw:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_throw)
-    dispatch(2)
+    dispatch(constexpr op_throw_length)
 
 
 _llint_op_throw_static_error:
     traceExecution()
     callOpcodeSlowPath(_slow_path_throw_static_error)
-    dispatch(3)
+    dispatch(constexpr op_throw_static_error_length)
 
 
 _llint_op_debug:
@@ -1758,7 +1758,7 @@ _llint_op_debug:
     btiz t0, .opDebugDone
     callOpcodeSlowPath(_llint_slow_path_debug)
 .opDebugDone:                    
-    dispatch(3)
+    dispatch(constexpr op_debug_length)
 
 
 _llint_native_call_trampoline:
@@ -1771,82 +1771,82 @@ _llint_native_construct_trampoline:
 _llint_op_get_enumerable_length:
     traceExecution()
     callOpcodeSlowPath(_slow_path_get_enumerable_length)
-    dispatch(3)
+    dispatch(constexpr op_get_enumerable_length_length)
 
 _llint_op_has_indexed_property:
     traceExecution()
     callOpcodeSlowPath(_slow_path_has_indexed_property)
-    dispatch(5)
+    dispatch(constexpr op_has_indexed_property_length)
 
 _llint_op_has_structure_property:
     traceExecution()
     callOpcodeSlowPath(_slow_path_has_structure_property)
-    dispatch(5)
+    dispatch(constexpr op_has_structure_property_length)
 
 _llint_op_has_generic_property:
     traceExecution()
     callOpcodeSlowPath(_slow_path_has_generic_property)
-    dispatch(4)
+    dispatch(constexpr op_has_generic_property_length)
 
 _llint_op_get_direct_pname:
     traceExecution()
     callOpcodeSlowPath(_slow_path_get_direct_pname)
-    dispatch(7)
+    dispatch(constexpr op_get_direct_pname_length)
 
 _llint_op_get_property_enumerator:
     traceExecution()
     callOpcodeSlowPath(_slow_path_get_property_enumerator)
-    dispatch(3)
+    dispatch(constexpr op_get_property_enumerator_length)
 
 _llint_op_enumerator_structure_pname:
     traceExecution()
     callOpcodeSlowPath(_slow_path_next_structure_enumerator_pname)
-    dispatch(4)
+    dispatch(constexpr op_enumerator_structure_pname_length)
 
 _llint_op_enumerator_generic_pname:
     traceExecution()
     callOpcodeSlowPath(_slow_path_next_generic_enumerator_pname)
-    dispatch(4)
+    dispatch(constexpr op_enumerator_generic_pname_length)
 
 _llint_op_to_index_string:
     traceExecution()
     callOpcodeSlowPath(_slow_path_to_index_string)
-    dispatch(3)
+    dispatch(constexpr op_to_index_string_length)
 
 _llint_op_create_rest:
     traceExecution()
     callOpcodeSlowPath(_slow_path_create_rest)
-    dispatch(4)
+    dispatch(constexpr op_create_rest_length)
 
 _llint_op_instanceof:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_instanceof)
-    dispatch(4)
+    dispatch(constexpr op_instanceof_length)
 
 _llint_op_get_by_id_with_this:
     traceExecution()
     callOpcodeSlowPath(_slow_path_get_by_id_with_this)
-    dispatch(6)
+    dispatch(constexpr op_get_by_id_with_this_length)
 
 _llint_op_get_by_val_with_this:
     traceExecution()
     callOpcodeSlowPath(_slow_path_get_by_val_with_this)
-    dispatch(6)
+    dispatch(constexpr op_get_by_val_with_this_length)
 
 _llint_op_put_by_id_with_this:
     traceExecution()
     callOpcodeSlowPath(_slow_path_put_by_id_with_this)
-    dispatch(5)
+    dispatch(constexpr op_put_by_id_with_this_length)
 
 _llint_op_put_by_val_with_this:
     traceExecution()
     callOpcodeSlowPath(_slow_path_put_by_val_with_this)
-    dispatch(5)
+    dispatch(constexpr op_put_by_val_with_this_length)
 
 _llint_op_resolve_scope_for_hoisting_func_decl_in_eval:
     traceExecution()
     callOpcodeSlowPath(_slow_path_resolve_scope_for_hoisting_func_decl_in_eval)
-    dispatch(4)
+    dispatch(constexpr op_resolve_scope_for_hoisting_func_decl_in_eval_length)
 
 # Lastly, make sure that we can link even though we don't support all opcodes.
 # These opcodes should never arise when using LLInt or either JIT. We assert

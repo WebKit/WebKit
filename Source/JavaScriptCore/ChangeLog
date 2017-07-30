@@ -1,3 +1,36 @@
+2017-07-29  Keith Miller  <keith_miller@apple.com>
+
+        LLInt offsets extractor should be able to handle C++ constexprs
+        https://bugs.webkit.org/show_bug.cgi?id=174964
+
+        Reviewed by Saam Barati.
+
+        This patch adds new syntax to the offline asm language. The new keyword,
+        constexpr, takes the subsequent identifier and maps it to a C++ constexpr
+        expression. Additionally, if the value is not an identifier you can wrap it in
+        parentheses. e.g. constexpr (myConstexprFunction() + OBJECT_OFFSET(Foo, bar)),
+        which will get converted into:
+        static_cast<int64_t>(myConstexprFunction() + OBJECT_OFFSET(Foo, bar));
+
+        This patch also changes the data format the LLIntOffsetsExtractor
+        binary produces.  Previously, it would produce unsigned values,
+        after this patch every value is an int64_t.  Using an int64_t is
+        useful because it means that we can represent any constant needed.
+        int32_t masks are sign extended then passed then converted to a
+        negative literal sting in the assembler so it will be the constant
+        expected.
+
+        * llint/LLIntOffsetsExtractor.cpp:
+        (JSC::LLIntOffsetsExtractor::dummy):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/asm.rb:
+        * offlineasm/ast.rb:
+        * offlineasm/generate_offset_extractor.rb:
+        * offlineasm/offsets.rb:
+        * offlineasm/parser.rb:
+        * offlineasm/transform.rb:
+
 2017-07-28  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: capture an async stack trace when web content calls addEventListener

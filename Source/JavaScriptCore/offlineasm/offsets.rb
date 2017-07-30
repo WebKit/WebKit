@@ -24,15 +24,8 @@
 require "config"
 require "ast"
 
-def to32Bit(value)
-    if value > 0x7fffffff
-        value -= 1 << 32
-    end
-    value
-end
-
-OFFSET_HEADER_MAGIC_NUMBERS = [ to32Bit(0x9e43fd66), to32Bit(0x4379bfba) ]
-OFFSET_MAGIC_NUMBERS = [ to32Bit(0xec577ac7), to32Bit(0x0ff5e755) ]
+OFFSET_HEADER_MAGIC_NUMBERS = [ 0x2e43fd66, 0x4379bfba ]
+OFFSET_MAGIC_NUMBERS = [ 0x5c577ac7, 0x0ff5e755 ]
 
 #
 # MissingMagicValuesException
@@ -46,8 +39,9 @@ end
 #
 # offsetsList(ast)
 # sizesList(ast)
+# constsLists(ast)
 #
-# Returns a list of offsets and sizes used by the AST.
+# Returns a list of offsets, sizeofs, and consts used by the AST.
 #
 
 def offsetsList(ast)
@@ -56,6 +50,10 @@ end
 
 def sizesList(ast)
     ast.filter(Sizeof).uniq.sort
+end
+
+def constsList(ast)
+    ast.filter(ConstExpr).uniq.sort
 end
 
 #
@@ -73,17 +71,29 @@ def offsetsAndConfigurationIndex(file)
     def readInt(endianness, bytes)
         if endianness == :little
             # Little endian
-            (bytes[0] << 0 |
-             bytes[1] << 8 |
-             bytes[2] << 16 |
-             bytes[3] << 24)
+            number = (bytes[0] << 0  |
+                      bytes[1] << 8  |
+                      bytes[2] << 16 |
+                      bytes[3] << 24 |
+                      bytes[4] << 32 |
+                      bytes[5] << 40 |
+                      bytes[6] << 48 |
+                      bytes[7] << 56)
         else
             # Big endian
-            (bytes[0] << 24 |
-             bytes[1] << 16 |
-             bytes[2] << 8 |
-             bytes[3] << 0)
+            number = (bytes[0] << 56 |
+                      bytes[1] << 48 |
+                      bytes[2] << 40 |
+                      bytes[3] << 32 |
+                      bytes[4] << 24 |
+                      bytes[5] << 16 |
+                      bytes[6] << 8  |
+                      bytes[7] << 0)
         end
+        if number > 0x7fffffff_ffffffff
+            number -= 1 << 64
+        end
+        number
     end
     
     def prepareMagic(endianness, numbers)
@@ -91,7 +101,7 @@ def offsetsAndConfigurationIndex(file)
         numbers.each {
             | number |
             currentBytes = []
-            4.times {
+            8.times {
                 currentBytes << (number & 0xff)
                 number >>= 8
             }
@@ -170,25 +180,30 @@ def offsetsAndConfigurationIndex(file)
 end
 
 #
-# buildOffsetsMap(ast, offsetsList) -> [offsets, sizes]
+# buildOffsetsMap(ast, extractedConstants) -> map
 #
-# Builds a mapping between StructOffset nodes and their values.
+# Builds a mapping between StructOffset, Sizeof, and ConstExpr nodes and their values.
 #
 
-def buildOffsetsMap(ast, offsetsList)
-    offsetsMap = {}
-    sizesMap = {}
+def buildOffsetsMap(ast, extractedConstants)
+    map = {}
     astOffsetsList = offsetsList(ast)
     astSizesList = sizesList(ast)
-    raise unless astOffsetsList.size + astSizesList.size == offsetsList.size
-    offsetsList(ast).each_with_index {
+    astConstsList = constsList(ast)
+
+    raise unless astOffsetsList.size + astSizesList.size + astConstsList.size == extractedConstants.size
+    astOffsetsList.each_with_index {
         | structOffset, index |
-        offsetsMap[structOffset] = offsetsList.shift
+        map[structOffset] = extractedConstants.shift
     }
-    sizesList(ast).each_with_index {
+    astSizesList.each_with_index {
         | sizeof, index |
-        sizesMap[sizeof] = offsetsList.shift
+        map[sizeof] = extractedConstants.shift
     }
-    [offsetsMap, sizesMap]
+    astConstsList.each_with_index {
+        | const, index |
+        map[const] = extractedConstants.shift
+    }
+    map
 end
 
