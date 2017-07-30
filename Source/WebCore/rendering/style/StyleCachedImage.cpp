@@ -29,7 +29,6 @@
 #include "CSSImageValue.h"
 #include "CachedImage.h"
 #include "RenderElement.h"
-#include "RenderView.h"
 
 namespace WebCore {
 

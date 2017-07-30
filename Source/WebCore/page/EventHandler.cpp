@@ -86,7 +86,6 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SpatialNavigation.h"
-#include "StyleCachedImage.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "UserGestureIndicator.h"
