@@ -108,10 +108,7 @@ void printInternal(PrintStream& out, const StringImpl* string)
 
 void printInternal(PrintStream& out, bool value)
 {
-    if (value)
-        out.print("true");
-    else
-        out.print("false");
+    out.print(boolForPrinting(value));
 }
 
 void printInternal(PrintStream& out, int value)

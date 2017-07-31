@@ -44,6 +44,11 @@ class StringImpl;
 class StringView;
 class UniquedStringImpl;
 
+inline const char* boolForPrinting(bool value)
+{
+    return value ? "true" : "false";
+}
+
 class PrintStream {
     WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(PrintStream);
 public:
@@ -337,6 +342,7 @@ void printInternal(PrintStream& out, const std::optional<T>& value)
 
 } // namespace WTF
 
+using WTF::boolForPrinting;
 using WTF::CharacterDump;
 using WTF::PointerDump;
 using WTF::PrintStream;

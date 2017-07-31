@@ -197,7 +197,7 @@ void MediaPlayerPrivateGStreamerMSE::seek(float time)
     }
 
     m_isEndReached = false;
-    GST_DEBUG("m_seeking=%s, m_seekTime=%f", m_seeking ? "true" : "false", m_seekTime);
+    GST_DEBUG("m_seeking=%s, m_seekTime=%f", boolForPrinting(m_seeking), m_seekTime);
 }
 
 void MediaPlayerPrivateGStreamerMSE::configurePlaySink()
