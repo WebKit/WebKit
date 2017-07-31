@@ -1,3 +1,17 @@
+2017-07-31  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220012. rdar://problem/33619526
+
+    2017-07-28  Mark Lam  <mark.lam@apple.com>
+
+            ObjectToStringAdaptiveStructureWatchpoint should not fire if it's dying imminently.
+            https://bugs.webkit.org/show_bug.cgi?id=174948
+            <rdar://problem/33495680>
+
+            Reviewed by Filip Pizlo.
+
+            * stress/regress-174948.js: Added.
+
 2017-07-13  Mark Lam  <mark.lam@apple.com>
 
         Add some additional test cases for bug 170896.

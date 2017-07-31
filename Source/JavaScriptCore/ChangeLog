@@ -1,3 +1,40 @@
+2017-07-31  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220012. rdar://problem/33619526
+
+    2017-07-28  Mark Lam  <mark.lam@apple.com>
+
+            ObjectToStringAdaptiveStructureWatchpoint should not fire if it's dying imminently.
+            https://bugs.webkit.org/show_bug.cgi?id=174948
+            <rdar://problem/33495680>
+
+            Reviewed by Filip Pizlo.
+
+            ObjectToStringAdaptiveStructureWatchpoint is owned by StructureRareData.  If its
+            owner StructureRareData is already known to be dead (in terms of GC liveness) but
+            hasn't been destructed yet (i.e. not swept by the GC yet), we should ignore all
+            requests to fire this watchpoint.
+
+            If the GC had the chance to sweep the StructureRareData, thereby destructing the
+            ObjectToStringAdaptiveStructureWatchpoint, it (the watchpoint) would have removed
+            itself from the WatchpointSet it was on.  Hence, it would not have been fired.
+
+            But since the watchpoint hasn't been destructed yet, it still remains on the
+            WatchpointSet and needs to guard against being fired in this state.  The fix is
+            to simply return early if its owner StructureRareData is not live.  This has the
+            effect of the watchpoint fire being a no-op, which is equivalent to the watchpoint
+            not firing as we would expect.
+
+            This patch also removes some cargo cult copying of watchpoint code which
+            instantiates a StringFireDetail.  In a few cases, that StringFireDetail is never
+            used.  This patch removes these unnecessary instantiations.
+
+            * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+            (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal):
+            * runtime/StructureRareData.cpp:
+            (JSC::ObjectToStringAdaptiveStructureWatchpoint::fireInternal):
+            (JSC::ObjectToStringAdaptiveInferredPropertyValueWatchpoint::handleFire):
+
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219895. rdar://problem/33595450
