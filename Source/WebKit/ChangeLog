@@ -1,3 +1,18 @@
+2017-07-31  Daniel Bates  <dabates@apple.com>
+
+        WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction() may not be able to
+        determine page that initiated navigation
+        https://bugs.webkit.org/show_bug.cgi?id=174531
+
+        Remove a comment from WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction()
+        about determining the originating page independently from the originating frame. There
+        does not seem to be much value to fixing this. We can always revisit this issue if we
+        discover a strong motivating example. See <https://bugs.webkit.org/show_bug.cgi?id=174531#c1>
+        for more details.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2017-07-31  Sam Weinig  <sam@webkit.org>
 
         Remove unnecessary exceptions from storage code
