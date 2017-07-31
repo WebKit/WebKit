@@ -41,6 +41,7 @@ static bool done;
 @interface SchemeHandler : NSObject <WKURLSchemeHandler>
 @property (readonly) NSMutableArray<NSURL *> *startedURLs;
 @property (readonly) NSMutableArray<NSURL *> *stoppedURLs;
+@property (assign) BOOL shouldFinish;
 - (instancetype)initWithData:(NSData *)data mimeType:(NSString *)inMIMEType;
 @end
 
@@ -59,6 +60,7 @@ static bool done;
     mimeType = inMIMEType;
     _startedURLs = [[NSMutableArray alloc] init];
     _stoppedURLs = [[NSMutableArray alloc] init];
+    _shouldFinish = YES;
 
     return self;
 }
@@ -84,7 +86,8 @@ static bool done;
     RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType.get() expectedContentLength:1 textEncodingName:nil]);
     [task didReceiveResponse:response.get()];
     [task didReceiveData:resourceData.get()];
-    [task didFinish];
+    if (_shouldFinish)
+        [task didFinish];
 }
 
 - (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
@@ -133,6 +136,7 @@ TEST(URLSchemeHandler, NoMIMEType)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     RetainPtr<SchemeHandler> handler = adoptNS([[SchemeHandler alloc] initWithData:[NSData dataWithBytesNoCopy:(void*)mainBytes length:sizeof(mainBytes) freeWhenDone:NO] mimeType:nil]);
+    handler.get().shouldFinish = NO;
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

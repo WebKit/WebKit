@@ -80,28 +80,30 @@ void WebURLSchemeHandler::stopTask(WebPageProxy& page, uint64_t taskIdentifier)
     if (iterator == m_tasks.end())
         return;
 
-    auto pageIterator = m_tasksByPageIdentifier.find(page.pageID());
-    ASSERT(pageIterator != m_tasksByPageIdentifier.end());
-    ASSERT(pageIterator->value.contains(taskIdentifier));
-    pageIterator->value.remove(taskIdentifier);
-
     iterator->value->stop();
     platformStopTask(page, iterator->value);
 
+    removeTaskFromPageMap(page.pageID(), taskIdentifier);
     m_tasks.remove(iterator);
-    if (pageIterator->value.isEmpty())
-        m_tasksByPageIdentifier.remove(pageIterator);
 }
 
 void WebURLSchemeHandler::taskCompleted(WebURLSchemeTask& task)
 {
     auto takenTask = m_tasks.take(task.identifier());
     ASSERT_UNUSED(takenTask, takenTask->ptr() == &task);
-
-    ASSERT(m_tasksByPageIdentifier.get(task.pageID()).contains(task.identifier()));
-    m_tasksByPageIdentifier.get(task.pageID()).remove(task.identifier());
+    removeTaskFromPageMap(task.pageID(), task.identifier());
 
     platformTaskCompleted(task);
+}
+
+void WebURLSchemeHandler::removeTaskFromPageMap(uint64_t pageID, uint64_t taskID)
+{
+    auto iterator = m_tasksByPageIdentifier.find(pageID);
+    ASSERT(iterator != m_tasksByPageIdentifier.end());
+    ASSERT(iterator->value.contains(taskID));
+    iterator->value.remove(taskID);
+    if (iterator->value.isEmpty())
+        m_tasksByPageIdentifier.remove(iterator);
 }
 
 } // namespace WebKit

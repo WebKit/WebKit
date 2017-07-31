@@ -1,3 +1,21 @@
+2017-07-31  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220033. rdar://problem/33619596
+
+    2017-07-28  Brady Eidson  <beidson@apple.com>
+
+            API tests that use URLSchemeHandler are failing.
+            https://bugs.webkit.org/show_bug.cgi?id=174950
+
+            Reviewed by Alex Christensen.
+
+            Fix the NoMIMEType test to be correct.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/WKURLSchemeHandler-1.mm:
+            (-[SchemeHandler initWithData:mimeType:]):
+            (-[SchemeHandler webView:startURLSchemeTask:]):
+            (TEST):
+
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219904. rdar://problem/33595576

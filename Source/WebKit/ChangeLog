@@ -1,5 +1,25 @@
 2017-07-31  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220033. rdar://problem/33619596
+
+    2017-07-28  Brady Eidson  <beidson@apple.com>
+
+            API tests that use URLSchemeHandler are failing.
+            https://bugs.webkit.org/show_bug.cgi?id=174950
+
+            Reviewed by Alex Christensen.
+
+            Make sure that in all cases where we remove the last task from the page->task map...
+            ...We also remove the map itself.
+
+            * UIProcess/WebURLSchemeHandler.cpp:
+            (WebKit::WebURLSchemeHandler::stopTask):
+            (WebKit::WebURLSchemeHandler::taskCompleted):
+            (WebKit::WebURLSchemeHandler::removeTaskFromPageMap):
+            * UIProcess/WebURLSchemeHandler.h:
+
+2017-07-31  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220011. rdar://problem/33619596
 
     2017-07-28  Brady Eidson  <beidson@apple.com>
