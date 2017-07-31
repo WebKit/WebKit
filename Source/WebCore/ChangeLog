@@ -1,5 +1,25 @@
 2017-07-31  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220042. rdar://problem/33619586
+
+    2017-07-29  Nan Wang  <n_wang@apple.com>
+
+            AX: findMatchingObjects doesn't work when the startObject is ignored
+            https://bugs.webkit.org/show_bug.cgi?id=174965
+
+            Reviewed by Chris Fleizach.
+
+            findMatchingObjects would return a wrong element if we pass in an ignored
+            start object. To fix this, we should use the closest accessible sibling as
+            the start object.
+
+            Test: accessibility/mac/search-predicate-from-ignored-element.html
+
+            * accessibility/AccessibilityObject.cpp:
+            (WebCore::appendChildrenToArray):
+
+2017-07-31  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220009. rdar://problem/33619585
 
     2017-07-28  Myles C. Maxfield  <mmaxfield@apple.com>

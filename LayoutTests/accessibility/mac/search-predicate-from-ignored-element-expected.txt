@@ -1,0 +1,16 @@
+First line of text
+button 
+Third line of text
+This tests the ability to search for accessible elements from an ignored element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element.stringForTextMarkerRange(markerRange) is 'First line of text'
+PASS element.stringForTextMarkerRange(lineRange) is 'button'
+PASS resultElement.stringValue is 'AXValue: Third line of text'
+PASS resultElement.stringValue is 'AXValue: First line of text'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
