@@ -37,7 +37,7 @@
 #include <wtf/ThreadHolder.h>
 #include <wtf/ThreadMessage.h>
 #include <wtf/ThreadingPrimitives.h>
-#include <wtf/WTFThreadData.h>
+#include <wtf/text/AtomicStringTable.h>
 #include <wtf/text/StringView.h>
 
 #if HAVE(QOS_CLASSES)
@@ -94,6 +94,13 @@ const char* Thread::normalizeThreadName(const char* threadName)
 #endif
 }
 
+void Thread::initializeInThread()
+{
+    m_savedLastStackTop = stack().origin();
+    AtomicStringTable::create(*this);
+    m_currentAtomicStringTable = m_defaultAtomicStringTable;
+}
+
 void Thread::entryPoint(NewThreadContext* newThreadContext)
 {
     Function<void()> function;
@@ -105,7 +112,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
         ASSERT(context->stage == NewThreadContext::Stage::EstablishedHandle);
 
         // Initialize thread holder with established ID.
-        ThreadHolder::initialize(context->thread.get());
+        ThreadHolder::initialize(context->thread.copyRef());
 
         Thread::initializeCurrentThreadInternal(context->name);
         function = WTFMove(context->entryPoint);
@@ -116,6 +123,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
         context->stage = NewThreadContext::Stage::Initialized;
         context->condition.signal();
 #endif
+        context->thread->initializeInThread();
     }
 
     ASSERT(!Thread::current().stack().isEmpty());
@@ -155,14 +163,6 @@ RefPtr<Thread> Thread::create(const char* name, Function<void()>&& entryPoint)
     return WTFMove(thread);
 }
 
-Thread* Thread::currentMayBeNull()
-{
-    ThreadHolder* data = ThreadHolder::current();
-    if (data)
-        return &data->thread();
-    return nullptr;
-}
-
 static bool shouldRemoveThreadFromThreadGroup()
 {
 #if OS(WINDOWS)
@@ -197,6 +197,9 @@ void Thread::didExit()
             threadGroup->m_threads.remove(*this);
         }
     }
+    if (m_atomicStringTableDestructor)
+        m_atomicStringTableDestructor(m_defaultAtomicStringTable);
+
     // We would like to say "thread is exited" after unregistering threads from thread groups.
     // So we need to separate m_isShuttingDown from m_didExit.
     std::lock_guard<std::mutex> locker(m_mutex);
@@ -277,9 +280,8 @@ void initializeThreading()
 {
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [] {
-        ThreadHolder::initializeOnce();
         initializeRandomNumberGenerator();
-        wtfThreadData();
+        Thread::current();
         initializeDates();
         Thread::initializePlatformThreading();
     });

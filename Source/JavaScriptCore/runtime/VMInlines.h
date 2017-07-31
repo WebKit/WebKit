@@ -34,7 +34,7 @@ namespace JSC {
 bool VM::ensureStackCapacityFor(Register* newTopOfStack)
 {
 #if ENABLE(JIT)
-    ASSERT(wtfThreadData().stack().isGrowingDownward());
+    ASSERT(Thread::current().stack().isGrowingDownward());
     return newTopOfStack >= m_softStackLimit;
 #else
     return ensureStackCapacityForCLoop(newTopOfStack);

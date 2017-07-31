@@ -27,6 +27,7 @@
 
 #include <wtf/LockAlgorithm.h>
 #include <wtf/ParkingLot.h>
+#include <wtf/Threading.h>
 
 // It's a good idea to avoid including this header in too many places, so that it's possible to change
 // the lock algorithm slow path without recompiling the world. Right now this should be included in two

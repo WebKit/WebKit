@@ -1,3 +1,52 @@
+2017-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Merge WTFThreadData to Thread::current
+        https://bugs.webkit.org/show_bug.cgi?id=174716
+
+        Reviewed by Sam Weinig.
+
+        Use Thread::current() instead.
+
+        * API/JSContext.mm:
+        (+[JSContext currentContext]):
+        (+[JSContext currentThis]):
+        (+[JSContext currentCallee]):
+        (+[JSContext currentArguments]):
+        (-[JSContext beginCallbackWithData:calleeValue:thisValue:argumentCount:arguments:]):
+        (-[JSContext endCallbackWithData:]):
+        * heap/Heap.cpp:
+        (JSC::Heap::requestCollection):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::checkModuleSyntax):
+        (JSC::evaluate):
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        (JSC::linkAndEvaluateModule):
+        (JSC::importModule):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::checkCurrentAtomicStringTable):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        (JSC::JSLock::willReleaseLock):
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::grabAllLocks):
+        * runtime/JSLock.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::updateStackLimits):
+        (JSC::VM::committedStackByteCount):
+        * runtime/VM.h:
+        (JSC::VM::isSafeToRecurse const):
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        * runtime/VMInlines.h:
+        (JSC::VM::ensureStackCapacityFor):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::isSafeToRecurse const):
+
 2017-07-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Introduce Private Symbols

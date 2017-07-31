@@ -41,36 +41,41 @@ void ThreadHolder::initializeOnce()
     threadSpecificKeyCreate(&m_key, destruct);
 }
 
-ThreadHolder* ThreadHolder::current()
+ThreadHolder& ThreadHolder::initialize(Ref<Thread>&& thread)
 {
+    auto* holder = new ThreadHolder(WTFMove(thread));
+#if !HAVE(FAST_TLS)
+    // Ideally we'd have this as a release assert everywhere, but that would hurt performance.
+    // Having this release assert here means that we will catch "didn't call
+    // WTF::initializeThreading() soon enough" bugs in release mode.
     ASSERT(m_key != InvalidThreadSpecificKey);
-    return static_cast<ThreadHolder*>(threadSpecificGet(m_key));
-}
-
-void ThreadHolder::initialize(Thread& thread)
-{
-    if (!current()) {
-        // Ideally we'd have this as a release assert everywhere, but that would hurt performance.
-        // Having this release assert here means that we will catch "didn't call
-        // WTF::initializeThreading() soon enough" bugs in release mode.
-        ASSERT(m_key != InvalidThreadSpecificKey);
-        threadSpecificSet(m_key, new ThreadHolder(thread));
-    }
+    threadSpecificSet(m_key, holder);
+#else
+    _pthread_setspecific_direct(WTF_THREAD_DATA_KEY, holder);
+    pthread_key_init_np(WTF_THREAD_DATA_KEY, &destruct);
+#endif
+    return *holder;
 }
 
 void ThreadHolder::destruct(void* data)
 {
-    ThreadHolder* threadIdentifierData = static_cast<ThreadHolder*>(data);
-    ASSERT(threadIdentifierData);
+    ThreadHolder* holder = static_cast<ThreadHolder*>(data);
+    ASSERT(holder);
 
-    if (threadIdentifierData->m_isDestroyedOnce) {
-        delete threadIdentifierData;
+    if (holder->m_isDestroyedOnce) {
+        delete holder;
         return;
     }
 
-    threadIdentifierData->m_isDestroyedOnce = true;
+    holder->m_isDestroyedOnce = true;
     // Re-setting the value for key causes another destruct() call after all other thread-specific destructors were called.
-    threadSpecificSet(m_key, threadIdentifierData);
+#if !HAVE(FAST_TLS)
+    ASSERT(m_key != InvalidThreadSpecificKey);
+    threadSpecificSet(m_key, holder);
+#else
+    _pthread_setspecific_direct(WTF_THREAD_DATA_KEY, holder);
+    pthread_key_init_np(WTF_THREAD_DATA_KEY, &destruct);
+#endif
 }
 
 } // namespace WTF

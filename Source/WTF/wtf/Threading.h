@@ -39,6 +39,8 @@
 #include <wtf/PlatformRegisters.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StackBounds.h>
+#include <wtf/StackStats.h>
+#include <wtf/ThreadHolder.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -50,12 +52,12 @@
 namespace WTF {
 
 class AbstractLocker;
+class AtomicStringTable;
 class ThreadMessageData;
 
-enum class ThreadGroupAddResult;
+using AtomicStringTableDestructor = void (*)(AtomicStringTable*);
 
-using ThreadIdentifier = uint32_t;
-typedef void (*ThreadFunction)(void* argument);
+enum class ThreadGroupAddResult;
 
 class ThreadGroup;
 class ThreadHolder;
@@ -65,6 +67,7 @@ class Thread : public ThreadSafeRefCounted<Thread> {
 public:
     friend class ThreadGroup;
     friend class ThreadHolder;
+    friend class AtomicStringTable;
 
     WTF_EXPORT_PRIVATE ~Thread();
 
@@ -73,8 +76,7 @@ public:
     WTF_EXPORT_PRIVATE static RefPtr<Thread> create(const char* threadName, Function<void()>&&);
 
     // Returns Thread object.
-    WTF_EXPORT_PRIVATE static Thread& current();
-    static Thread* currentMayBeNull();
+    static Thread& current();
 
     // Returns ThreadIdentifier directly. It is useful if the user only cares about identity
     // of threads. At that time, users should know that holding this ThreadIdentifier does not ensure
@@ -141,6 +143,47 @@ public:
         return m_stack;
     }
 
+    AtomicStringTable* atomicStringTable()
+    {
+        return m_currentAtomicStringTable;
+    }
+
+    AtomicStringTable* setCurrentAtomicStringTable(AtomicStringTable* atomicStringTable)
+    {
+        AtomicStringTable* oldAtomicStringTable = m_currentAtomicStringTable;
+        m_currentAtomicStringTable = atomicStringTable;
+        return oldAtomicStringTable;
+    }
+
+#if ENABLE(STACK_STATS)
+    StackStats::PerThreadStats& stackStats()
+    {
+        return m_stackStats;
+    }
+#endif
+
+    void* savedStackPointerAtVMEntry()
+    {
+        return m_savedStackPointerAtVMEntry;
+    }
+
+    void setSavedStackPointerAtVMEntry(void* stackPointerAtVMEntry)
+    {
+        m_savedStackPointerAtVMEntry = stackPointerAtVMEntry;
+    }
+
+    void* savedLastStackTop()
+    {
+        return m_savedLastStackTop;
+    }
+
+    void setSavedLastStackTop(void* lastStackTop)
+    {
+        m_savedLastStackTop = lastStackTop;
+    }
+
+    void* m_apiData { nullptr };
+
 #if OS(DARWIN)
     mach_port_t machThread() { return m_platformThread; }
 #endif
@@ -150,13 +193,16 @@ public:
 protected:
     Thread();
 
+    static Ref<Thread> createCurrentThread();
+    void initializeInThread();
+
     // Internal platform-specific Thread establishment implementation.
     bool establishHandle(NewThreadContext*);
 
 #if USE(PTHREADS)
-    void establishPlatformSpecificHandle(pthread_t);
+    void establishPlatformSpecificHandle(PlatformThreadHandle);
 #else
-    void establishPlatformSpecificHandle(HANDLE, ThreadIdentifier);
+    void establishPlatformSpecificHandle(PlatformThreadHandle, ThreadIdentifier);
 #endif
 
 #if USE(PTHREADS) && !OS(DARWIN)
@@ -197,22 +243,25 @@ protected:
     Vector<std::weak_ptr<ThreadGroup>> m_threadGroups;
     bool m_isShuttingDown { false };
     bool m_didExit { false };
-#if USE(PTHREADS)
-    pthread_t m_handle;
-
+    PlatformThreadHandle m_handle;
 #if OS(DARWIN)
     mach_port_t m_platformThread;
-#else
+#elif USE(PTHREADS)
     sem_t m_semaphoreForSuspendResume;
     PlatformRegisters m_platformRegisters;
     unsigned m_suspendCount { 0 };
     std::atomic<bool> m_suspended { false };
 #endif
-#elif OS(WINDOWS)
-    HANDLE m_handle { INVALID_HANDLE_VALUE };
-#else
-#error Unknown System
+
+    AtomicStringTable* m_currentAtomicStringTable { nullptr };
+    AtomicStringTable* m_defaultAtomicStringTable { nullptr };
+    AtomicStringTableDestructor m_atomicStringTableDestructor { nullptr };
+
+#if ENABLE(STACK_STATS)
+    StackStats::PerThreadStats m_stackStats;
 #endif
+    void* m_savedStackPointerAtVMEntry { nullptr };
+    void* m_savedLastStackTop;
 };
 
 // This function can be called from any threads.
@@ -223,6 +272,10 @@ inline ThreadIdentifier currentThread()
     return Thread::currentID();
 }
 
+inline Thread& Thread::current()
+{
+    return ThreadHolder::current().thread();
+}
 
 // FIXME: The following functions remain because they are used from WebKit Windows support library,
 // WebKitQuartzCoreAdditions.dll. When updating the support library, we should use new API instead

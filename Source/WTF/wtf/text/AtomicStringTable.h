@@ -24,19 +24,19 @@
 #define WTF_AtomicStringTable_h
 
 #include <wtf/HashSet.h>
-#include <wtf/WTFThreadData.h>
 #include <wtf/text/StringImpl.h>
 
 namespace WTF {
 
 class StringImpl;
+class Thread;
 
 class AtomicStringTable {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE ~AtomicStringTable();
 
-    static void create(WTFThreadData&);
+    static void create(Thread&);
     HashSet<StringImpl*>& table() { return m_table; }
 
 private:
@@ -46,5 +46,6 @@ private:
 };
 
 }
+using WTF::AtomicStringTable;
 
 #endif

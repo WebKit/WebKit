@@ -150,7 +150,6 @@ set(WTF_HEADERS
     Variant.h
     Vector.h
     VectorTraits.h
-    WTFThreadData.h
     WallTime.h
     WeakPtr.h
     WordLock.h
@@ -254,7 +253,6 @@ set(WTF_SOURCES
     Threading.cpp
     TimeWithDynamicClockType.cpp
     UUID.cpp
-    WTFThreadData.cpp
     WallTime.cpp
     WordLock.cpp
     WorkQueue.cpp

@@ -43,4 +43,9 @@ ThreadHolder::~ThreadHolder()
     m_thread->didExit();
 }
 
+ThreadHolder& ThreadHolder::initializeCurrent()
+{
+    return initialize(Thread::createCurrentThread());
+}
+
 } // namespace WTF

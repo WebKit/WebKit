@@ -68,7 +68,6 @@
 #include <wtf/Stopwatch.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSpecific.h>
-#include <wtf/WTFThreadData.h>
 #include <wtf/text/SymbolRegistry.h>
 #include <wtf/text/WTFString.h>
 #if ENABLE(REGEXP_TRACING)
@@ -243,7 +242,7 @@ public:
     // WebCore has a one-to-one mapping of threads to VMs;
     // either create() or createLeaked() should only be called once
     // on a thread, this is the 'default' VM (it uses the
-    // thread's default string uniquing table from wtfThreadData).
+    // thread's default string uniquing table from Thread::current()).
     // API contexts created using the new context group aware interface
     // create APIContextGroup objects which require less locking of JSC
     // than the old singleton APIShared VM created for use by
@@ -691,7 +690,7 @@ private:
 
     bool isSafeToRecurse(void* stackLimit) const
     {
-        ASSERT(wtfThreadData().stack().isGrowingDownward());
+        ASSERT(Thread::current().stack().isGrowingDownward());
         void* curr = reinterpret_cast<void*>(&curr);
         return curr >= stackLimit;
     }
