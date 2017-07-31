@@ -1,3 +1,17 @@
+2017-07-31  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r220048.
+
+        This revision caused multiple crashes in fast/images. See
+        webkit.org/b/174990
+
+        Reverted changeset:
+
+        "RenderImageResourceStyleImage::image() should return the
+        nullImage() if the image is not available"
+        https://bugs.webkit.org/show_bug.cgi?id=174874
+        http://trac.webkit.org/changeset/220048
+
 2017-07-31  Per Arne Vollan  <pvollan@apple.com>
 
         Do not mark all web-platform tests as slow, as this increases time spent on layout tests.

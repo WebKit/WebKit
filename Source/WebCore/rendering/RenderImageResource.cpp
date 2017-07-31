@@ -32,6 +32,7 @@
 #include "Image.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
+#include "RenderImageResourceStyleImage.h"
 
 namespace WebCore {
 

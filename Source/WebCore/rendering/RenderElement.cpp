@@ -50,6 +50,7 @@
 #include "RenderDescendantIterator.h"
 #include "RenderFlexibleBox.h"
 #include "RenderImage.h"
+#include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
