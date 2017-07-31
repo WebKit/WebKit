@@ -46,11 +46,11 @@ namespace bmalloc {
 //
 // Object* object = PerProcess<Object>::get();
 // x = object->m_field; // OK
-// if (gobalFlag) { ... } // Undefined behavior.
+// if (globalFlag) { ... } // Undefined behavior.
 //
 // std::lock_guard<StaticMutex> lock(PerProcess<Object>::mutex());
 // Object* object = PerProcess<Object>::get(lock);
-// if (gobalFlag) { ... } // OK.
+// if (globalFlag) { ... } // OK.
 
 template<typename T>
 class PerProcess {

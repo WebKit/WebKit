@@ -1,3 +1,11 @@
+2017-07-31  Mark Lam  <mark.lam@apple.com>
+
+        Fixed some comment typos.
+
+        Not reviewed.
+
+        * bmalloc/PerProcess.h:
+
 2017-07-14  Filip Pizlo  <fpizlo@apple.com>
 
         It should be easy to decide how WebKit yields
