@@ -1,3 +1,10 @@
+2017-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Fixed a typo. task.id() isn't a thing in this function.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.createWithCustomConfiguration):
+
 2017-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix.
