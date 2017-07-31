@@ -1,3 +1,37 @@
+2017-07-31  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220009. rdar://problem/33619585
+
+    2017-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [macOS] Reeder's defaults font is Times instead of San Francisco
+            https://bugs.webkit.org/show_bug.cgi?id=174885
+            <rdar://problem/33462483>
+
+            Reviewed by Simon Fraser.
+
+            Reeder uses explicit dot-prefixed names in its source code. Within Core Text,
+            dot-prefixed names cannot be matched case insensitively. The solution is to
+            not case-fold these family names, and to make our caches case sensitive for
+            these special names.
+
+            Tests: fast/text/font-lookup-dot-prefix-case-sensitive-2.html
+                   fast/text/font-lookup-dot-prefix-case-sensitive.html
+
+            * platform/graphics/FontCache.cpp:
+            (WebCore::FontPlatformDataCacheKey::operator==):
+            (WebCore::FontPlatformDataCacheKeyHash::hash):
+            * platform/graphics/FontCascade.cpp:
+            (WebCore::keysMatch):
+            (WebCore::computeFontCascadeCacheHash):
+            * platform/graphics/FontDescription.cpp:
+            (WebCore::FontCascadeDescription::familyNamesAreEqual):
+            (WebCore::FontCascadeDescription::familyNameHash):
+            (WebCore::FontCascadeDescription::foldedFamilyName):
+            * platform/graphics/FontDescription.h:
+            * platform/graphics/cocoa/FontCacheCoreText.cpp:
+            (WebCore::FontDatabase::fontForPostScriptName):
+
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220003. rdar://problem/33595572

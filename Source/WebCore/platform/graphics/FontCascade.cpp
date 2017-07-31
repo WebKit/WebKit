@@ -202,7 +202,7 @@ static bool keysMatch(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b
     if (size != b.families.size())
         return false;
     for (unsigned i = 0; i < size; ++i) {
-        if (!equalIgnoringASCIICase(a.families[i], b.families[i]))
+        if (!FontCascadeDescription::familyNamesAreEqual(a.families[i], b.families[i]))
             return false;
     }
     return true;
@@ -246,8 +246,8 @@ static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
     hasher.add(key.fontSelectorId);
     hasher.add(key.fontSelectorVersion);
     for (unsigned i = 0; i < key.families.size(); ++i) {
-        StringImpl* family = key.families[i].impl();
-        hasher.add(family ? ASCIICaseInsensitiveHash::hash(family) : 0);
+        auto& family = key.families[i];
+        hasher.add(family.isNull() ? 0 : FontCascadeDescription::familyNameHash(family));
     }
     return hasher.hash();
 }
