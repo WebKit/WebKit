@@ -610,7 +610,23 @@ static void appendChildrenToArray(AccessibilityObject* object, bool isForward, A
     size_t startIndex = isForward ? childrenSize : 0;
     size_t endIndex = isForward ? 0 : childrenSize;
 
+    // If the startObject is ignored, we should use an accessible sibling as a start element instead.
+    if (startObject && startObject->accessibilityIsIgnored() && startObject->isDescendantOfObject(object)) {
+        AccessibilityObject* parentObject = startObject->parentObject();
+        // Go up the parent chain to find the highest ancestor that's also being ignored.
+        while (parentObject && parentObject->accessibilityIsIgnored()) {
+            if (parentObject == object)
+                break;
+            startObject = parentObject;
+            parentObject = parentObject->parentObject();
+        }
+        // Get the un-ignored sibling based on the search direction, and update the searchPosition.
+        while (startObject && startObject->accessibilityIsIgnored())
+            startObject = isForward ? startObject->previousSibling() : startObject->nextSibling();
+    }
+    
     size_t searchPosition = startObject ? searchChildren.find(startObject) : WTF::notFound;
+    
     if (searchPosition != WTF::notFound) {
         if (isForward)
             endIndex = searchPosition + 1;
