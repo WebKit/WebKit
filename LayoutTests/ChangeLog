@@ -1,5 +1,20 @@
 2017-07-31  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220048. rdar://problem/33619591
+
+    2017-07-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            RenderImageResourceStyleImage::image() should return the nullImage() if the image is not available
+            https://bugs.webkit.org/show_bug.cgi?id=174874
+            <rdar://problem/33530130>
+
+            Reviewed by Darin Adler.
+
+            * fast/images/image-element-image-content-data-expected.txt: Added.
+            * fast/images/image-element-image-content-data.html: Added.
+
+2017-07-31  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220042. rdar://problem/33619586
 
     2017-07-29  Nan Wang  <n_wang@apple.com>
