@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "WebURLSchemeHandler.h"
 #import "WebURLSchemeTask.h"
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceResponse.h>
@@ -60,6 +61,13 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 }
 
 @implementation WKURLSchemeTaskImpl
+
+- (void)dealloc
+{
+    _urlSchemeTask->API::URLSchemeTask::~URLSchemeTask();
+
+    [super dealloc];
+}
 
 - (NSURLRequest *)request
 {

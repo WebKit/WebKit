@@ -1,3 +1,64 @@
+2017-07-31  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220011. rdar://problem/33619596
+
+    2017-07-28  Brady Eidson  <beidson@apple.com>
+
+            WKURLSchemeTaskImpl instances are being abandoned (except if the task is stopped).
+            <rdar://problem/33568276> and https://bugs.webkit.org/show_bug.cgi?id=174895
+
+            Reviewed by Alex Christensen.
+
+            There was a lot going on here:
+            - There was an unbroken cycle between URLSchemeHandlers and URLSchemeTasks
+            - WKURLSchemeTasks were not destroying their API::URLSchemeTask implementation object
+            - When a WKWebView was dealloc'ed, it was not cleaning up the related UIProcess tasks
+            - If the NetworkingProcess crashed, WebProcesses were not cleaning up their tasks
+              (and therefore the UIProcess tasks were also not getting cleaned up)
+            - If a WebProcess crashed, the UIProcess was not cleaning up the related tasks
+
+            * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+            (-[WKURLSchemeTaskImpl dealloc]): Call API::~URLSchemeTask
+
+            * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.h:
+            * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm:
+            (WebKit::WebURLSchemeHandlerCocoa::platformTaskCompleted): Clear out the API wrapper map
+              so the wrapper and implementation object can both be destroyed.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::close): Call stopAllURLSchemeTasks.
+            (WebKit::WebPageProxy::processDidTerminate): Call stopAllURLSchemeTasks.
+            (WebKit::WebPageProxy::stopAllURLSchemeTasks):
+            * UIProcess/WebPageProxy.h:
+
+            * UIProcess/WebURLSchemeHandler.cpp:
+            (WebKit::WebURLSchemeHandler::startTask):
+            (WebKit::WebURLSchemeHandler::stopAllTasksForPage):
+            (WebKit::WebURLSchemeHandler::stopTask):
+            (WebKit::WebURLSchemeHandler::taskCompleted):
+            * UIProcess/WebURLSchemeHandler.h:
+
+            * UIProcess/WebURLSchemeTask.cpp:
+            (WebKit::WebURLSchemeTask::WebURLSchemeTask):
+            * UIProcess/WebURLSchemeTask.h:
+            (WebKit::WebURLSchemeTask::pageID): Store separate from the WebPage so messaging
+              is possible even after the WebPage* has been cleared.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::stopAllURLSchemeTasks):
+            * WebProcess/WebPage/WebPage.h:
+
+            * WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp:
+            (WebKit::WebURLSchemeHandlerProxy::stopAllTasks):
+            (WebKit::WebURLSchemeHandlerProxy::taskDidComplete):
+            (WebKit::WebURLSchemeHandlerProxy::taskDidStopLoading):
+            (WebKit::WebURLSchemeHandlerProxy::removeTask):
+            * WebProcess/WebPage/WebURLSchemeHandlerProxy.h:
+
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::networkProcessConnectionClosed): Call stopAllURLSchemeTasks
+              for each WebPage.
+
 2017-07-28  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219904. rdar://problem/33595576
