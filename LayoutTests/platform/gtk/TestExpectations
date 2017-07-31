@@ -3217,8 +3217,6 @@ webkit.org/b/163973 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
 
 webkit.org/b/163974 fast/canvas/drawImage-with-negative-source-destination.html [ Failure ]
 
-webkit.org/b/163975 fast/css/image-set-unprefixed.html [ Failure ]
-
 webkit.org/b/163976 fast/css/user-drag-none.html [ Failure ]
 
 webkit.org/b/163977 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
