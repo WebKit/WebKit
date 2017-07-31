@@ -1222,7 +1222,6 @@ set(WebCore_SOURCES
     bindings/js/JSReadableStreamPrivateConstructors.cpp
     bindings/js/JSReadableStreamSourceCustom.cpp
     bindings/js/JSSVGPathSegCustom.cpp
-    bindings/js/JSStorageCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSSubtleCryptoCustom.cpp
     bindings/js/JSTextCustom.cpp

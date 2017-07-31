@@ -98,11 +98,6 @@ StorageAreaImpl::StorageAreaImpl(const StorageAreaImpl& area)
     ASSERT(!m_isShutdown);
 }
 
-bool StorageAreaImpl::canAccessStorage(Frame* frame)
-{
-    return frame && frame->page();
-}
-
 StorageType StorageAreaImpl::storageType() const
 {
     return m_storageType;

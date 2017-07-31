@@ -549,7 +549,6 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
         void removeItem(Frame*, const String&) final { }
         void clear(Frame*) final { }
         bool contains(const String&) final { return false; }
-        bool canAccessStorage(Frame*) final { return false; }
         StorageType storageType() const final { return StorageType::Local; }
         size_t memoryBytesUsedByCache() final { return 0; }
         SecurityOriginData securityOrigin() const final { return { }; }

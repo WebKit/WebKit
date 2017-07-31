@@ -1,3 +1,44 @@
+2017-07-31  Sam Weinig  <sam@webkit.org>
+
+        Remove unnecessary exceptions from storage code
+        https://bugs.webkit.org/show_bug.cgi?id=174572
+
+        Reviewed by Chris Dumez.
+
+        Remove checks for canAccessStorage() and the exceptions they would cause.
+        These were used for Storage in ephemeral sessions, but they are now supported.
+        Add checks for a null frame to functions that can mutate the storage, as the
+        frame is needed for that, and it retains our existing behavior for disconnected
+        frames. By removing these checks / exceptions, we can fully generate Storage.idl.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSStorageCustom.cpp: Removed.
+        Remove JSStorageCustom.cpp
+
+        * loader/EmptyClients.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+        * storage/StorageArea.h:
+        Remove canAccessStorage.
+
+        * storage/Storage.cpp:
+        (WebCore::Storage::length):
+        (WebCore::Storage::key):
+        (WebCore::Storage::getItem):
+        (WebCore::Storage::setItem):
+        (WebCore::Storage::removeItem):
+        (WebCore::Storage::clear):
+        (WebCore::Storage::contains):
+        (WebCore::Storage::isSupportedPropertyName):
+        (WebCore::Storage::supportedPropertyNames):
+        * storage/Storage.h:
+        * storage/Storage.idl:
+        Remove canAccessStorage checks and corresponding exceptions. Add supportedPropertyNames
+        to allow the removal of the [CustomGetOwnPropertyNames].
+
 2017-07-31  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r220060.

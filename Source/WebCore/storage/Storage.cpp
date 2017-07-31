@@ -57,34 +57,25 @@ Storage::~Storage()
     m_storageArea->decrementAccessCount();
 }
 
-ExceptionOr<unsigned> Storage::length() const
+unsigned Storage::length() const
 {
-    if (!m_storageArea->canAccessStorage(m_frame))
-        return Exception { SecurityError };
-
     return m_storageArea->length();
 }
 
-ExceptionOr<String> Storage::key(unsigned index) const
+String Storage::key(unsigned index) const
 {
-    if (!m_storageArea->canAccessStorage(m_frame))
-        return Exception { SecurityError };
-
     return m_storageArea->key(index);
 }
 
-ExceptionOr<String> Storage::getItem(const String& key) const
+String Storage::getItem(const String& key) const
 {
-    if (!m_storageArea->canAccessStorage(m_frame))
-        return Exception { SecurityError };
-
     return m_storageArea->item(key);
 }
 
 ExceptionOr<void> Storage::setItem(const String& key, const String& value)
 {
-    if (!m_storageArea->canAccessStorage(m_frame))
-        return Exception { SecurityError };
+    if (!m_frame)
+        return Exception { InvalidAccessError };
 
     bool quotaException = false;
     m_storageArea->setItem(m_frame, key, value, quotaException);
@@ -95,8 +86,8 @@ ExceptionOr<void> Storage::setItem(const String& key, const String& value)
 
 ExceptionOr<void> Storage::removeItem(const String& key)
 {
-    if (!m_storageArea->canAccessStorage(m_frame))
-        return Exception { SecurityError };
+    if (!m_frame)
+        return Exception { InvalidAccessError };
 
     m_storageArea->removeItem(m_frame, key);
     return { };
@@ -104,27 +95,34 @@ ExceptionOr<void> Storage::removeItem(const String& key)
 
 ExceptionOr<void> Storage::clear()
 {
-    if (!m_storageArea->canAccessStorage(m_frame))
-        return Exception { SecurityError };
+    if (!m_frame)
+        return Exception { InvalidAccessError };
 
     m_storageArea->clear(m_frame);
     return { };
 }
 
-ExceptionOr<bool> Storage::contains(const String& key) const
+bool Storage::contains(const String& key) const
 {
-    if (!m_storageArea->canAccessStorage(m_frame))
-        return Exception { SecurityError };
-
     return m_storageArea->contains(key);
 }
 
 bool Storage::isSupportedPropertyName(const String& propertyName) const
 {
-    if (!m_storageArea->canAccessStorage(m_frame))
-        return false;
-
     return m_storageArea->contains(propertyName);
+}
+
+Vector<AtomicString> Storage::supportedPropertyNames() const
+{
+    unsigned length = m_storageArea->length();
+
+    Vector<AtomicString> result;
+    result.reserveInitialCapacity(length);
+
+    for (unsigned i = 0; i < length; ++i)
+        result.uncheckedAppend(m_storageArea->key(i));
+
+    return result;
 }
 
 } // namespace WebCore

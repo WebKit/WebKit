@@ -163,11 +163,6 @@ private:
         return m_storageMap->contains(key);
     }
 
-    bool canAccessStorage(Frame* frame)
-    {
-        return frame && frame->page();
-    }
-
     StorageType storageType() const
     {
         return StorageType::EphemeralLocal;

@@ -51,7 +51,6 @@ public:
     virtual void clear(Frame* sourceFrame) = 0;
     virtual bool contains(const String& key) = 0;
 
-    virtual bool canAccessStorage(Frame*) = 0;
     virtual StorageType storageType() const = 0;
 
     virtual size_t memoryBytesUsedByCache() = 0;

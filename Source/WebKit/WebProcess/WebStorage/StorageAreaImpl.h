@@ -56,7 +56,6 @@ private:
     void removeItem(WebCore::Frame* sourceFrame, const String& key) override;
     void clear(WebCore::Frame* sourceFrame) override;
     bool contains(const String& key) override;
-    bool canAccessStorage(WebCore::Frame*) override;
     WebCore::StorageType storageType() const override;
     size_t memoryBytesUsedByCache() override;
     void incrementAccessCount() override;

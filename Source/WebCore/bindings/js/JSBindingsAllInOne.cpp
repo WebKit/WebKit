@@ -85,7 +85,6 @@
 #include "JSPopStateEventCustom.cpp"
 #include "JSReadableStreamPrivateConstructors.cpp"
 #include "JSSVGPathSegCustom.cpp"
-#include "JSStorageCustom.cpp"
 #include "JSStyleSheetCustom.cpp"
 #include "JSTextCustom.cpp"
 #include "JSTextTrackCueCustom.cpp"

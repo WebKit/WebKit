@@ -2419,7 +2419,6 @@
 		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
 		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
 		51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */; };
 		51D1248B1E73627F002B2820 /* NetworkStorageSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D1248A1E73625C002B2820 /* NetworkStorageSessionCocoa.mm */; };
 		51D1248D1E7364AA002B2820 /* CookieCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D1248C1E736456002B2820 /* CookieCocoa.mm */; };
 		51D7236C1BB6174900478CA3 /* IDBResultData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7236A1BB60BFE00478CA3 /* IDBResultData.cpp */; };
@@ -10125,7 +10124,6 @@
 		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
 		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
 		51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFramePlatformData.h; sourceTree = "<group>"; };
-		51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageCustom.cpp; sourceTree = "<group>"; };
 		51D1248A1E73625C002B2820 /* NetworkStorageSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkStorageSessionCocoa.mm; sourceTree = "<group>"; };
 		51D1248C1E736456002B2820 /* CookieCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieCocoa.mm; sourceTree = "<group>"; };
 		51D7196C181106DF0016DC51 /* DOMWindowIndexedDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowIndexedDatabase.cpp; sourceTree = "<group>"; };
@@ -23579,7 +23577,6 @@
 				C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */,
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
-				51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */,
 				57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */,
 				E1FF8F661807460800132674 /* JSWebKitSubtleCryptoCustom.cpp */,
 				BC348BBD0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp */,
@@ -32182,7 +32179,6 @@
 				B59DD6A211902A52007E9684 /* JSSQLTransactionErrorCallback.cpp in Sources */,
 				A86629D409DA2B48009633A7 /* JSStaticRange.cpp in Sources */,
 				51E3F9D60DA05E1D00250911 /* JSStorage.cpp in Sources */,
-				51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */,
 				51E0BAEA0DA55D4A00A9E417 /* JSStorageEvent.cpp in Sources */,
 				0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */,
 				BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */,

@@ -864,20 +864,14 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage() const
     if (!document->securityOrigin().canAccessSessionStorage(document->topOrigin()))
         return Exception { SecurityError };
 
-    if (m_sessionStorage) {
-        if (!m_sessionStorage->area().canAccessStorage(m_frame))
-            return Exception { SecurityError };
+    if (m_sessionStorage)
         return m_sessionStorage.get();
-    }
 
     auto* page = document->page();
     if (!page)
         return nullptr;
 
     auto storageArea = page->sessionStorage()->storageArea(SecurityOriginData::fromSecurityOrigin(document->securityOrigin()));
-    if (!storageArea->canAccessStorage(m_frame))
-        return Exception { SecurityError };
-
     m_sessionStorage = Storage::create(m_frame, WTFMove(storageArea));
     return m_sessionStorage.get();
 }
@@ -898,11 +892,8 @@ ExceptionOr<Storage*> DOMWindow::localStorage() const
     // FIXME: We should consider supporting access/modification to local storage
     // after calling window.close(). See <https://bugs.webkit.org/show_bug.cgi?id=135330>.
     if (!page || !page->isClosing()) {
-        if (m_localStorage) {
-            if (!m_localStorage->area().canAccessStorage(m_frame))
-                return Exception { SecurityError };
+        if (m_localStorage)
             return m_localStorage.get();
-        }
     }
 
     if (!page)
@@ -915,10 +906,6 @@ ExceptionOr<Storage*> DOMWindow::localStorage() const
         return nullptr;
 
     auto storageArea = page->storageNamespaceProvider().localStorageArea(*document);
-
-    if (!storageArea->canAccessStorage(m_frame))
-        return Exception { SecurityError };
-
     m_localStorage = Storage::create(m_frame, WTFMove(storageArea));
     return m_localStorage.get();
 }

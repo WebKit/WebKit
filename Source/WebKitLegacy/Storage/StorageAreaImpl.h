@@ -53,7 +53,6 @@ public:
     void clear(WebCore::Frame* sourceFrame) override;
     bool contains(const String& key) override;
 
-    bool canAccessStorage(WebCore::Frame* sourceFrame) override;
     WebCore::StorageType storageType() const override;
 
     size_t memoryBytesUsedByCache() override;

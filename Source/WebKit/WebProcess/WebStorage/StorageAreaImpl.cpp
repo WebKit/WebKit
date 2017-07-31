@@ -96,11 +96,6 @@ bool StorageAreaImpl::contains(const String& key)
     return m_storageAreaMap->contains(key);
 }
 
-bool StorageAreaImpl::canAccessStorage(Frame* frame)
-{
-    return frame && frame->page();
-}
-
 StorageType StorageAreaImpl::storageType() const
 {
     return m_storageAreaMap->storageType();

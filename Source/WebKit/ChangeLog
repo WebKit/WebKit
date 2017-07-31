@@ -1,3 +1,16 @@
+2017-07-31  Sam Weinig  <sam@webkit.org>
+
+        Remove unnecessary exceptions from storage code
+        https://bugs.webkit.org/show_bug.cgi?id=174572
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::canAccessStorage): Deleted.
+        * WebProcess/Storage/StorageAreaImpl.h:
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        Remove canAccessStorage. It is no longer called.
+
 2017-07-30  Brady Eidson  <beidson@apple.com>
 
         Add URLSchemeHandler API tests that verify the lack of URLSchemeTask object leaks.
