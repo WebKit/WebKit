@@ -38,12 +38,12 @@ namespace Symbols {
 JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_BUILTIN_STATIC_SYMBOLS)
 #undef INITIALIZE_BUILTIN_STATIC_SYMBOLS
 
-#define INITIALIZE_BUILTIN_PRIVATE_NAMES(name) SymbolImpl::StaticSymbolImpl name##PrivateName { "PrivateSymbol." #name };
+#define INITIALIZE_BUILTIN_PRIVATE_NAMES(name) SymbolImpl::StaticSymbolImpl name##PrivateName { "PrivateSymbol." #name, SymbolImpl::s_flagIsPrivate };
 JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_PRIVATE_NAMES)
 JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_BUILTIN_PRIVATE_NAMES)
 #undef INITIALIZE_BUILTIN_PRIVATE_NAMES
 
-SymbolImpl::StaticSymbolImpl dollarVMPrivateName { "PrivateSymbol.$vm" };
+SymbolImpl::StaticSymbolImpl dollarVMPrivateName { "PrivateSymbol.$vm", SymbolImpl::s_flagIsPrivate };
 
 } // namespace Symbols
 } // namespace JSC

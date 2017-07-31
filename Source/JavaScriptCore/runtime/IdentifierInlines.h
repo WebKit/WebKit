@@ -143,7 +143,7 @@ inline JSValue identifierToJSValue(VM& vm, const Identifier& identifier)
 
 inline JSValue identifierToSafePublicJSValue(VM& vm, const Identifier& identifier) 
 {
-    if (identifier.isSymbol() && !vm.propertyNames->isPrivateName(identifier))
+    if (identifier.isSymbol() && !identifier.isPrivateName())
         return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
     return jsString(&vm, identifier.impl());
 }

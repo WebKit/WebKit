@@ -190,6 +190,7 @@ class StringImpl : private StringImplShape {
     friend class JSC::LLIntOffsetsExtractor;
     friend class AtomicStringImpl;
     friend class SymbolImpl;
+    friend class PrivateSymbolImpl;
     friend class RegisteredSymbolImpl;
     
 private:

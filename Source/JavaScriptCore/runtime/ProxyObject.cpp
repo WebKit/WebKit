@@ -135,7 +135,7 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
         return jsUndefined();
     };
 
-    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
+    if (propertyName.isPrivateName())
         return performDefaultGet();
 
     JSValue handlerValue = proxyObject->handler();
@@ -199,7 +199,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
         return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);
     };
 
-    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid()))) {
+    if (propertyName.isPrivateName()) {
         scope.release();
         return performDefaultGetOwnProperty();
     }
@@ -305,7 +305,7 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
         return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);
     };
 
-    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid()))) {
+    if (propertyName.isPrivateName()) {
         scope.release();
         return performDefaultHasProperty();
     }
@@ -407,7 +407,7 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
         return false;
     }
 
-    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid()))) {
+    if (propertyName.isPrivateName()) {
         scope.release();
         return performDefaultPut();
     }
@@ -604,7 +604,7 @@ bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, Defa
         return false;
     }
 
-    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid()))) {
+    if (propertyName.isPrivateName()) {
         scope.release();
         return performDefaultDelete();
     }
@@ -795,7 +795,7 @@ bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propert
         return target->methodTable(vm)->defineOwnProperty(target, exec, propertyName, descriptor, shouldThrow);
     };
 
-    if (vm.propertyNames->isPrivateName(Identifier::fromUid(&vm, propertyName.uid())))
+    if (propertyName.isPrivateName())
         return performDefaultDefineOwnProperty();
 
     JSValue handlerValue = this->handler();

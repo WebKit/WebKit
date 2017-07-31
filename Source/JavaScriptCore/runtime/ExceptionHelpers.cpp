@@ -82,7 +82,7 @@ JSObject* createStackOverflowError(ExecState* exec, JSGlobalObject* globalObject
 
 JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
 {
-    if (exec->propertyNames().isPrivateName(ident)) {
+    if (ident.isPrivateName()) {
         String message(makeString("Can't find private variable: @", exec->propertyNames().lookUpPublicName(ident).string()));
         return createReferenceError(exec, message);
     }

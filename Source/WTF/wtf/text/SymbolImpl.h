@@ -36,13 +36,15 @@ class RegisteredSymbolImpl;
 class SymbolImpl : public UniquedStringImpl {
 public:
     using Flags = unsigned;
-    static constexpr const Flags s_flagDefault = 0u;
-    static constexpr const Flags s_flagIsNullSymbol = 0b01u;
-    static constexpr const Flags s_flagIsRegistered = 0b10u;
+    static constexpr Flags s_flagDefault = 0u;
+    static constexpr Flags s_flagIsNullSymbol = 0b001u;
+    static constexpr Flags s_flagIsRegistered = 0b010u;
+    static constexpr Flags s_flagIsPrivate = 0b100u;
 
     unsigned hashForSymbol() const { return m_hashForSymbol; }
     bool isNullSymbol() const { return m_flags & s_flagIsNullSymbol; }
     bool isRegistered() const { return m_flags & s_flagIsRegistered; }
+    bool isPrivate() const { return m_flags & s_flagIsPrivate; }
 
     SymbolRegistry* symbolRegistry() const;
 
@@ -55,18 +57,20 @@ public:
         WTF_MAKE_NONCOPYABLE(StaticSymbolImpl);
     public:
         template<unsigned characterCount>
-        constexpr StaticSymbolImpl(const char (&characters)[characterCount])
+        constexpr StaticSymbolImpl(const char (&characters)[characterCount], Flags flags = s_flagDefault)
             : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
                 s_hashFlag8BitBuffer | s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
             , m_hashForSymbol(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
+            , m_flags(flags)
         {
         }
 
         template<unsigned characterCount>
-        constexpr StaticSymbolImpl(const char16_t (&characters)[characterCount])
+        constexpr StaticSymbolImpl(const char16_t (&characters)[characterCount], Flags flags = s_flagDefault)
             : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
                 s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
             , m_hashForSymbol(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
+            , m_flags(flags)
         {
         }
 
@@ -77,7 +81,7 @@ public:
 
         StringImpl* m_owner { nullptr }; // We do not make StaticSymbolImpl BufferSubstring. Thus we can make this nullptr.
         unsigned m_hashForSymbol;
-        Flags m_flags { s_flagDefault };
+        Flags m_flags;
     };
 
 protected:
@@ -103,11 +107,11 @@ protected:
         ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
     }
 
-    SymbolImpl()
+    SymbolImpl(Flags flags = s_flagDefault)
         : UniquedStringImpl(CreateSymbol)
         , m_owner(StringImpl::empty())
         , m_hashForSymbol(nextHashForSymbol())
-        , m_flags(s_flagIsNullSymbol)
+        , m_flags(flags | s_flagIsNullSymbol)
     {
         ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
     }
@@ -119,6 +123,28 @@ protected:
     Flags m_flags { s_flagDefault };
 };
 static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl), "");
+
+class PrivateSymbolImpl : public SymbolImpl {
+public:
+    WTF_EXPORT_STRING_API static Ref<PrivateSymbolImpl> createNullSymbol();
+    WTF_EXPORT_STRING_API static Ref<PrivateSymbolImpl> create(StringImpl& rep);
+
+private:
+    PrivateSymbolImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base)
+        : SymbolImpl(characters, length, WTFMove(base), s_flagIsPrivate)
+    {
+    }
+
+    PrivateSymbolImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base)
+        : SymbolImpl(characters, length, WTFMove(base), s_flagIsPrivate)
+    {
+    }
+
+    PrivateSymbolImpl()
+        : SymbolImpl(s_flagIsPrivate)
+    {
+    }
+};
 
 class RegisteredSymbolImpl : public SymbolImpl {
 private:
@@ -193,4 +219,5 @@ ValueCheck<const SymbolImpl*> {
 } // namespace WTF
 
 using WTF::SymbolImpl;
+using WTF::PrivateSymbolImpl;
 using WTF::RegisteredSymbolImpl;

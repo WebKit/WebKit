@@ -77,7 +77,7 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
 
 BytecodeIntrinsicNode::EmitterType BytecodeIntrinsicRegistry::lookup(const Identifier& ident) const
 {
-    if (!m_vm.propertyNames->isPrivateName(ident))
+    if (!ident.isPrivateName())
         return nullptr;
     auto iterator = m_bytecodeIntrinsicMap.find(ident.impl());
     if (iterator == m_bytecodeIntrinsicMap.end())

@@ -1,3 +1,45 @@
+2017-07-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Introduce Private Symbols
+        https://bugs.webkit.org/show_bug.cgi?id=174935
+
+        Reviewed by Darin Adler.
+
+        Use SymbolImpl::isPrivate().
+
+        * builtins/BuiltinNames.cpp:
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::isPrivateName): Deleted.
+        * builtins/BuiltinUtils.h:
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::lookup):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::isPrivateName): Deleted.
+        * runtime/CommonIdentifiers.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        * runtime/Identifier.h:
+        (JSC::Identifier::isPrivateName):
+        * runtime/IdentifierInlines.h:
+        (JSC::identifierToSafePublicJSValue):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorAssign):
+        (JSC::defineProperties):
+        (JSC::setIntegrityLevel):
+        (JSC::testIntegrityLevel):
+        (JSC::ownPropertyKeys):
+        * runtime/PrivateName.h:
+        (JSC::PrivateName::PrivateName):
+        * runtime/PropertyName.h:
+        (JSC::PropertyName::isPrivateName):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::ProxyObject::performHasProperty):
+        (JSC::ProxyObject::performPut):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performDefineOwnProperty):
+
 2017-07-29  Keith Miller  <keith_miller@apple.com>
 
         LLInt offsets extractor should be able to handle C++ constexprs

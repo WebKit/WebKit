@@ -356,7 +356,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(ExecState* exec)
         if (foundSymbol) {
             for (unsigned j = 0; j < numProperties; j++) {
                 const auto& propertyName = properties[j];
-                if (propertyName.isSymbol() && !vm.propertyNames->isPrivateName(propertyName)) {
+                if (propertyName.isSymbol() && !propertyName.isPrivateName()) {
                     assign(propertyName);
                     RETURN_IF_EXCEPTION(scope, { });
                 }
@@ -565,7 +565,7 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
     }
     for (size_t i = 0; i < numProperties; i++) {
         Identifier propertyName = propertyNames[i];
-        if (vm.propertyNames->isPrivateName(propertyName))
+        if (propertyName.isPrivateName())
             continue;
         object->methodTable(vm)->defineOwnProperty(object, exec, propertyName, descriptors[i], true);
         RETURN_IF_EXCEPTION(scope, { });
@@ -631,7 +631,7 @@ bool setIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
     PropertyNameArray::const_iterator end = properties.end();
     for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
         Identifier propertyName = *iter;
-        if (vm.propertyNames->isPrivateName(propertyName))
+        if (propertyName.isPrivateName())
             continue;
 
         PropertyDescriptor desc;
@@ -680,7 +680,7 @@ bool testIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
     PropertyNameArray::const_iterator end = keys.end();
     for (PropertyNameArray::const_iterator iter = keys.begin(); iter != end; ++iter) {
         Identifier propertyName = *iter;
-        if (vm.propertyNames->isPrivateName(propertyName))
+        if (propertyName.isPrivateName())
             continue;
 
         // a. Let currentDesc be ? O.[[GetOwnProperty]](k)
@@ -868,7 +868,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
         for (size_t i = 0; i < numProperties; i++) {
             const auto& identifier = properties[i];
             ASSERT(identifier.isSymbol());
-            if (!vm.propertyNames->isPrivateName(identifier)) {
+            if (!identifier.isPrivateName()) {
                 if (filterPropertyIfNeeded(identifier))
                     keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
                 RETURN_IF_EXCEPTION(scope, nullptr);
@@ -882,10 +882,9 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
         size_t numProperties = properties.size();
         for (size_t i = 0; i < numProperties; i++) {
             const auto& identifier = properties[i];
-            if (identifier.isSymbol()) {
-                if (!vm.propertyNames->isPrivateName(identifier))
-                    propertySymbols.append(identifier);
-            } else {
+            if (identifier.isSymbol() && !identifier.isPrivateName())
+                propertySymbols.append(identifier);
+            else {
                 if (filterPropertyIfNeeded(identifier))
                     keys->push(exec, jsOwnedString(exec, identifier.string()));
                 RETURN_IF_EXCEPTION(scope, nullptr);

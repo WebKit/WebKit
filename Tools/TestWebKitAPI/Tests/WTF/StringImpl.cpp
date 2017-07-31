@@ -530,6 +530,7 @@ TEST(WTF, StringImplCreateNullSymbol)
 {
     auto reference = SymbolImpl::createNullSymbol();
     ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isPrivate());
     ASSERT_TRUE(reference->isNullSymbol());
     ASSERT_FALSE(reference->isAtomic());
     ASSERT_EQ(0u, reference->length());
@@ -541,6 +542,7 @@ TEST(WTF, StringImplCreateSymbol)
     auto original = stringFromUTF8("original");
     auto reference = SymbolImpl::create(original);
     ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isPrivate());
     ASSERT_FALSE(reference->isNullSymbol());
     ASSERT_FALSE(reference->isAtomic());
     ASSERT_FALSE(original->isSymbol());
@@ -551,6 +553,32 @@ TEST(WTF, StringImplCreateSymbol)
     auto empty = stringFromUTF8("");
     auto emptyReference = SymbolImpl::create(empty);
     ASSERT_TRUE(emptyReference->isSymbol());
+    ASSERT_FALSE(emptyReference->isPrivate());
+    ASSERT_FALSE(emptyReference->isNullSymbol());
+    ASSERT_FALSE(emptyReference->isAtomic());
+    ASSERT_FALSE(empty->isSymbol());
+    ASSERT_TRUE(empty->isAtomic());
+    ASSERT_EQ(empty->length(), emptyReference->length());
+    ASSERT_TRUE(equal(emptyReference.ptr(), ""));
+}
+
+TEST(WTF, StringImplCreatePrivateSymbol)
+{
+    auto original = stringFromUTF8("original");
+    auto reference = PrivateSymbolImpl::create(original);
+    ASSERT_TRUE(reference->isSymbol());
+    ASSERT_TRUE(reference->isPrivate());
+    ASSERT_FALSE(reference->isNullSymbol());
+    ASSERT_FALSE(reference->isAtomic());
+    ASSERT_FALSE(original->isSymbol());
+    ASSERT_FALSE(original->isAtomic());
+    ASSERT_EQ(original->length(), reference->length());
+    ASSERT_TRUE(equal(reference.ptr(), "original"));
+
+    auto empty = stringFromUTF8("");
+    auto emptyReference = PrivateSymbolImpl::create(empty);
+    ASSERT_TRUE(emptyReference->isSymbol());
+    ASSERT_TRUE(emptyReference->isPrivate());
     ASSERT_FALSE(emptyReference->isNullSymbol());
     ASSERT_FALSE(emptyReference->isAtomic());
     ASSERT_FALSE(empty->isSymbol());
@@ -564,6 +592,7 @@ TEST(WTF, StringImplSymbolToAtomicString)
     auto original = stringFromUTF8("original");
     auto reference = SymbolImpl::create(original);
     ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isPrivate());
     ASSERT_FALSE(reference->isAtomic());
 
     auto result = AtomicStringImpl::lookUp(reference.ptr());
@@ -583,6 +612,7 @@ TEST(WTF, StringImplNullSymbolToAtomicString)
 {
     auto reference = SymbolImpl::createNullSymbol();
     ASSERT_TRUE(reference->isSymbol());
+    ASSERT_FALSE(reference->isPrivate());
     ASSERT_FALSE(reference->isAtomic());
 
     // Because the substring of the reference is the empty string which is already interned.
@@ -688,6 +718,23 @@ TEST(WTF, StaticStringImpl)
     ASSERT_TRUE(equal(str1, str2));
     ASSERT_EQ(&str1, &str2);
     ASSERT_EQ(str1.impl(), str2.impl());
+}
+
+static SymbolImpl::StaticSymbolImpl staticSymbol {"Cocoa"};
+static SymbolImpl::StaticSymbolImpl staticPrivateSymbol {"Cocoa", SymbolImpl::s_flagIsPrivate };
+
+TEST(WTF, StaticSymbolImpl)
+{
+    auto& symbol = static_cast<SymbolImpl&>(staticSymbol);
+    ASSERT_TRUE(symbol.isSymbol());
+    ASSERT_FALSE(symbol.isPrivate());
+}
+
+TEST(WTF, StaticPrivateSymbolImpl)
+{
+    auto& symbol = static_cast<SymbolImpl&>(staticPrivateSymbol);
+    ASSERT_TRUE(symbol.isSymbol());
+    ASSERT_TRUE(symbol.isPrivate());
 }
 
 } // namespace TestWebKitAPI

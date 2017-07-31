@@ -139,6 +139,7 @@ public:
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
     bool isSymbol() const { return !isNull() && impl()->isSymbol(); }
+    bool isPrivateName() const { return isSymbol() && static_cast<const SymbolImpl*>(impl())->isPrivate(); }
 
     friend bool operator==(const Identifier&, const Identifier&);
     friend bool operator!=(const Identifier&, const Identifier&);

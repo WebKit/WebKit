@@ -57,6 +57,11 @@ public:
         return m_impl && m_impl->isSymbol();
     }
 
+    bool isPrivateName() const
+    {
+        return isSymbol() && static_cast<const SymbolImpl*>(m_impl)->isPrivate();
+    }
+
     UniquedStringImpl* uid() const
     {
         return m_impl;

@@ -51,21 +51,6 @@ CommonIdentifiers::~CommonIdentifiers()
 {
 }
 
-bool CommonIdentifiers::isPrivateName(SymbolImpl& uid) const
-{
-    return m_builtinNames->isPrivateName(uid);
-}
-
-bool CommonIdentifiers::isPrivateName(UniquedStringImpl& uid) const
-{
-    return m_builtinNames->isPrivateName(uid);
-}
-
-bool CommonIdentifiers::isPrivateName(const Identifier& ident) const
-{
-    return m_builtinNames->isPrivateName(ident);
-}
-
 const Identifier* CommonIdentifiers::lookUpPrivateName(const Identifier& ident) const
 {
     return m_builtinNames->lookUpPrivateName(ident);

@@ -48,6 +48,12 @@ public:
     {
     }
 
+    enum PrivateSymbolTag { PrivateSymbol };
+    explicit PrivateName(PrivateSymbolTag, const String& description)
+        : m_uid(PrivateSymbolImpl::create(*description.impl()))
+    {
+    }
+
     PrivateName(const PrivateName& privateName)
         : m_uid(privateName.m_uid.copyRef())
     {
