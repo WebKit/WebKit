@@ -1,3 +1,12 @@
+2017-07-31  Per Arne Vollan  <pvollan@apple.com>
+
+        Do not mark all web-platform tests as slow, as this increases time spent on layout tests.
+        Only mark individual web-platform tests as slow.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Support optional catch binding

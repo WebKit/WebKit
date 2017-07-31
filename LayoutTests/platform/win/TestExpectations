@@ -4062,6 +4062,8 @@ webkit.org/b/174801 fast/text/line-height-minimumFontSize.html [ Failure ]
 
 webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Timeout ]
 
-# Many web-platform tests are slow on Windows.
-imported/w3c/web-platform-tests [ Slow ]
+imported/w3c/web-platform-tests/cors/allow-headers.htm [ Slow ]
+imported/w3c/web-platform-tests/cors/simple-requests.htm [ Slow ]
+imported/w3c/web-platform-tests/fetch/api/basic/accept-header.any.html [ Slow ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.html [ Slow ]
 
