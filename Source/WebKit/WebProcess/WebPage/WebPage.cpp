@@ -5909,6 +5909,16 @@ WebURLSchemeHandlerProxy* WebPage::urlSchemeHandlerForScheme(const String& schem
     return m_schemeToURLSchemeHandlerProxyMap.get(scheme);
 }
 
+void WebPage::stopAllURLSchemeTasks()
+{
+    HashSet<WebURLSchemeHandlerProxy*> handlers;
+    for (auto& handler : m_schemeToURLSchemeHandlerProxyMap.values())
+        handlers.add(handler.get());
+
+    for (auto* handler : handlers)
+        handler->stopAllTasks();
+}
+
 void WebPage::registerURLSchemeHandler(uint64_t handlerIdentifier, const String& scheme)
 {
     auto schemeResult = m_schemeToURLSchemeHandlerProxyMap.add(scheme, WebURLSchemeHandlerProxy::create(*this, handlerIdentifier));

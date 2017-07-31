@@ -55,6 +55,12 @@ void WebURLSchemeHandlerProxy::startNewTask(ResourceLoader& loader)
     result.iterator->value->startLoading();
 }
 
+void WebURLSchemeHandlerProxy::stopAllTasks()
+{
+    while (!m_tasks.isEmpty())
+        m_tasks.begin()->value->stopLoading();
+}
+
 void WebURLSchemeHandlerProxy::taskDidPerformRedirection(uint64_t taskIdentifier, WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& newRequest)
 {
     auto* task = m_tasks.get(taskIdentifier);
@@ -84,18 +90,25 @@ void WebURLSchemeHandlerProxy::taskDidReceiveData(uint64_t taskIdentifier, size_
 
 void WebURLSchemeHandlerProxy::taskDidComplete(uint64_t taskIdentifier, const ResourceError& error)
 {
-    auto task = m_tasks.take(taskIdentifier);
-    if (!task)
-        return;
-
-    WebProcess::singleton().webLoaderStrategy().removeURLSchemeTaskProxy(*task);
-    task->didComplete(error);
+    if (auto task = removeTask(taskIdentifier))
+        task->didComplete(error);
 }
 
 void WebURLSchemeHandlerProxy::taskDidStopLoading(WebURLSchemeTaskProxy& task)
 {
     ASSERT(m_tasks.get(task.identifier()) == &task);
-    m_tasks.remove(task.identifier());
+    removeTask(task.identifier());
+}
+
+RefPtr<WebURLSchemeTaskProxy> WebURLSchemeHandlerProxy::removeTask(uint64_t identifier)
+{
+    auto task = m_tasks.take(identifier);
+    if (!task)
+        return nullptr;
+
+    WebProcess::singleton().webLoaderStrategy().removeURLSchemeTaskProxy(*task);
+
+    return task;
 }
 
 } // namespace WebKit

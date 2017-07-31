@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebURLSchemeHandler.h"
 
+#include "WebPageProxy.h"
 #include "WebURLSchemeTask.h"
 
 using namespace WebCore;
@@ -53,7 +54,24 @@ void WebURLSchemeHandler::startTask(WebPageProxy& page, uint64_t taskIdentifier,
     auto result = m_tasks.add(taskIdentifier, WebURLSchemeTask::create(*this, page, taskIdentifier, request));
     ASSERT(result.isNewEntry);
 
+    auto pageEntry = m_tasksByPageIdentifier.add(page.pageID(), HashSet<uint64_t>());
+    ASSERT(!pageEntry.iterator->value.contains(taskIdentifier));
+    pageEntry.iterator->value.add(taskIdentifier);
+
     platformStartTask(page, result.iterator->value);
+}
+
+void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page)
+{
+    auto iterator = m_tasksByPageIdentifier.find(page.pageID());
+    if (iterator == m_tasksByPageIdentifier.end())
+        return;
+
+    auto& tasksByPage = iterator->value;
+    while (!tasksByPage.isEmpty())
+        stopTask(page, *tasksByPage.begin());
+
+    ASSERT(m_tasksByPageIdentifier.find(page.pageID()) == m_tasksByPageIdentifier.end());
 }
 
 void WebURLSchemeHandler::stopTask(WebPageProxy& page, uint64_t taskIdentifier)
@@ -62,11 +80,28 @@ void WebURLSchemeHandler::stopTask(WebPageProxy& page, uint64_t taskIdentifier)
     if (iterator == m_tasks.end())
         return;
 
-    iterator->value->stop();
+    auto pageIterator = m_tasksByPageIdentifier.find(page.pageID());
+    ASSERT(pageIterator != m_tasksByPageIdentifier.end());
+    ASSERT(pageIterator->value.contains(taskIdentifier));
+    pageIterator->value.remove(taskIdentifier);
 
+    iterator->value->stop();
     platformStopTask(page, iterator->value);
 
     m_tasks.remove(iterator);
+    if (pageIterator->value.isEmpty())
+        m_tasksByPageIdentifier.remove(pageIterator);
+}
+
+void WebURLSchemeHandler::taskCompleted(WebURLSchemeTask& task)
+{
+    auto takenTask = m_tasks.take(task.identifier());
+    ASSERT_UNUSED(takenTask, takenTask->ptr() == &task);
+
+    ASSERT(m_tasksByPageIdentifier.get(task.pageID()).contains(task.identifier()));
+    m_tasksByPageIdentifier.get(task.pageID()).remove(task.identifier());
+
+    platformTaskCompleted(task);
 }
 
 } // namespace WebKit

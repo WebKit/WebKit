@@ -44,6 +44,7 @@ WebURLSchemeTask::WebURLSchemeTask(WebURLSchemeHandler& handler, WebPageProxy& p
     : m_urlSchemeHandler(handler)
     , m_page(&page)
     , m_identifier(resourceIdentifier)
+    , m_pageIdentifier(page.pageID())
     , m_request(request)
 {
 }
@@ -115,6 +116,8 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
 
     m_completed = true;
     m_page->send(Messages::WebPage::URLSchemeTaskDidComplete(m_urlSchemeHandler->identifier(), m_identifier, error));
+    m_urlSchemeHandler->taskCompleted(*this);
+
     return ExceptionType::None;
 }
 

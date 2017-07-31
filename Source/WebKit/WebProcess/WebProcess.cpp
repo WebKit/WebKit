@@ -1145,6 +1145,9 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 
     m_webLoaderStrategy.networkProcessCrashed();
     WebSocketStream::networkProcessCrashed();
+
+    for (auto& page : m_pageMap.values())
+        page->stopAllURLSchemeTasks();
 }
 
 WebLoaderStrategy& WebProcess::webLoaderStrategy()
