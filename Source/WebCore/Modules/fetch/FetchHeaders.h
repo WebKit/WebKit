@@ -100,7 +100,8 @@ inline FetchHeaders::FetchHeaders(Guard guard, HTTPHeaderMap&& headers)
 }
 
 inline FetchHeaders::FetchHeaders(const FetchHeaders& other)
-    : m_guard(other.m_guard)
+    : RefCounted<FetchHeaders>()
+    , m_guard(other.m_guard)
     , m_headers(other.m_headers)
 {
 }

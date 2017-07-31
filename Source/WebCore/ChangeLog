@@ -1,3 +1,17 @@
+2017-07-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Suppress the -Wextra compiler warning when building with GCC 6.3.0,
+        explicitly initializing the RefCounted<> base class in the
+        FetchHeaders(const FetchHeaders&) constructor.
+
+        Note that while that's the signature of the copy constructor for the FetchHeaders
+        class, the base RefCounted<> class is not copyable, so the default RefCounted<>
+        constructor is used, but the FetchHeaders resources are normally copied into the
+        new object from the one that's passed in.
+
+        * Modules/fetch/FetchHeaders.h:
+        (WebCore::FetchHeaders::FetchHeaders):
+
 2017-07-30  Darin Adler  <darin@apple.com>
 
         Remove code in HTMLObjectElement attribute parsing that forces style resolution and layout
