@@ -204,7 +204,7 @@ else
     const LowestTag = DeletedValueTag
 end
 
-# NOTE: The values below must be in sync with what is in PutByIdFlags.h.
+# PutByIdFlags data
 const PutByIdPrimaryTypeMask = constexpr PutByIdPrimaryTypeMask
 const PutByIdPrimaryTypeSecondary = constexpr PutByIdPrimaryTypeSecondary
 const PutByIdPrimaryTypeObjectWithStructure = constexpr PutByIdPrimaryTypeObjectWithStructure
@@ -250,7 +250,7 @@ const IsWatched = constexpr IsWatched
 const IsInvalidated = constexpr IsInvalidated
 
 # ShadowChicken data
-const ShadowChickenTailMarker = 0x7a11
+const ShadowChickenTailMarker = constexpr ShadowChicken::Packet::tailMarkerValue
 
 # ArithProfile data
 const ArithProfileInt = 0x100000
@@ -401,15 +401,15 @@ const GlobalVarWithVarInjectionChecks = constexpr GlobalVarWithVarInjectionCheck
 const GlobalLexicalVarWithVarInjectionChecks = constexpr GlobalLexicalVarWithVarInjectionChecks
 const ClosureVarWithVarInjectionChecks = constexpr ClosureVarWithVarInjectionChecks
 
-const ResolveTypeMask = 0x3ff
-const InitializationModeMask = 0xffc00
-const InitializationModeShift = 10
-const NotInitialization = 2
+const ResolveTypeMask = constexpr GetPutInfo::typeBits
+const InitializationModeMask = constexpr GetPutInfo::initializationBits
+const InitializationModeShift = constexpr GetPutInfo::initializationShift
+const NotInitialization = constexpr InitializationMode::NotInitialization
 
-const MarkedBlockSize = 16 * 1024
+const MarkedBlockSize = constexpr MarkedBlock::blockSize
 const MarkedBlockMask = ~(MarkedBlockSize - 1)
 
-const BlackThreshold = 0
+const BlackThreshold = constexpr blackThreshold
 
 # Allocation constants
 if JSVALUE64

@@ -77,11 +77,12 @@ public:
         {
         }
         
-        static const unsigned unlikelyValue = 0x7a11;
-        
+        static const constexpr unsigned unlikelyValue = 0x7a11;
+
+        static const constexpr intptr_t tailMarkerValue = static_cast<intptr_t>(unlikelyValue);
         static JSObject* tailMarker()
         {
-            return bitwise_cast<JSObject*>(static_cast<intptr_t>(unlikelyValue));
+            return bitwise_cast<JSObject*>(tailMarkerValue);
         }
         
         static JSObject* throwMarker()

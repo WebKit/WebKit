@@ -1,3 +1,22 @@
+2017-07-31  Keith Miller  <keith_miller@apple.com>
+
+        Make more things LLInt constexprs
+        https://bugs.webkit.org/show_bug.cgi?id=174994
+
+        Reviewed by Saam Barati.
+
+        This patch makes more const values in the LLInt constexprs.
+        It also deletes all of the no longer necessary static_asserts in
+        LLIntData.cpp. Finally, it fixes a typo in parser.rb.
+
+        * interpreter/ShadowChicken.h:
+        (JSC::ShadowChicken::Packet::tailMarker):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/generate_offset_extractor.rb:
+        * offlineasm/parser.rb:
+
 2017-07-31  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r220060.

@@ -153,79 +153,8 @@ void Data::performAssertions(VM& vm)
 #elif (CPU(X86_64) && OS(WINDOWS))
     ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 3);
 #endif
-    
-    STATIC_ASSERT(StringType == 6);
-    STATIC_ASSERT(SymbolType == 7);
-    STATIC_ASSERT(ObjectType == 23);
-    STATIC_ASSERT(FinalObjectType == 24);
-    STATIC_ASSERT(JSFunctionType == 26);
-    STATIC_ASSERT(ArrayType == 34);
-    STATIC_ASSERT(DerivedArrayType == 35);
-    STATIC_ASSERT(ProxyObjectType == 53);
-    STATIC_ASSERT(Int8ArrayType == 36);
-    STATIC_ASSERT(Int16ArrayType == 37);
-    STATIC_ASSERT(Int32ArrayType == 38);
-    STATIC_ASSERT(Uint8ArrayType == 39);
-    STATIC_ASSERT(Uint8ClampedArrayType == 40);
-    STATIC_ASSERT(Uint16ArrayType == 41);
-    STATIC_ASSERT(Uint32ArrayType == 42);
-    STATIC_ASSERT(Float32ArrayType == 43);
-    STATIC_ASSERT(Float64ArrayType == 44);
-    STATIC_ASSERT(MasqueradesAsUndefined == 1);
-    STATIC_ASSERT(ImplementsDefaultHasInstance == 2);
-    STATIC_ASSERT(FirstConstantRegisterIndex == 0x40000000);
-    STATIC_ASSERT(GlobalCode == 0);
-    STATIC_ASSERT(EvalCode == 1);
-    STATIC_ASSERT(FunctionCode == 2);
-    STATIC_ASSERT(ModuleCode == 3);
-    
-    STATIC_ASSERT(IsArray == 0x01);
-    STATIC_ASSERT(IndexingShapeMask == 0x0E);
-    STATIC_ASSERT(NoIndexingShape == 0x00);
-    STATIC_ASSERT(Int32Shape == 0x04);
-    STATIC_ASSERT(DoubleShape == 0x06);
-    STATIC_ASSERT(ContiguousShape == 0x08);
-    STATIC_ASSERT(ArrayStorageShape == 0x0A);
-    STATIC_ASSERT(SlowPutArrayStorageShape == 0x0C);
 
     ASSERT(!(reinterpret_cast<ptrdiff_t>((reinterpret_cast<WriteBarrier<JSCell>*>(0x4000)->slot())) - 0x4000));
-    static_assert(PutByIdPrimaryTypeMask == 0x6, "LLInt assumes PutByIdPrimaryTypeMask is == 0x6");
-    static_assert(PutByIdPrimaryTypeSecondary == 0x0, "LLInt assumes PutByIdPrimaryTypeSecondary is == 0x0");
-    static_assert(PutByIdPrimaryTypeObjectWithStructure == 0x2, "LLInt assumes PutByIdPrimaryTypeObjectWithStructure is == 0x2");
-    static_assert(PutByIdPrimaryTypeObjectWithStructureOrOther == 0x4, "LLInt assumes PutByIdPrimaryTypeObjectWithStructureOrOther is == 0x4");
-    static_assert(PutByIdSecondaryTypeMask == -0x8, "LLInt assumes PutByIdSecondaryTypeMask is == -0x8");
-    static_assert(PutByIdSecondaryTypeBottom == 0x0, "LLInt assumes PutByIdSecondaryTypeBottom is == 0x0");
-    static_assert(PutByIdSecondaryTypeBoolean == 0x8, "LLInt assumes PutByIdSecondaryTypeBoolean is == 0x8");
-    static_assert(PutByIdSecondaryTypeOther == 0x10, "LLInt assumes PutByIdSecondaryTypeOther is == 0x10");
-    static_assert(PutByIdSecondaryTypeInt32 == 0x18, "LLInt assumes PutByIdSecondaryTypeInt32 is == 0x18");
-    static_assert(PutByIdSecondaryTypeNumber == 0x20, "LLInt assumes PutByIdSecondaryTypeNumber is == 0x20");
-    static_assert(PutByIdSecondaryTypeString == 0x28, "LLInt assumes PutByIdSecondaryTypeString is == 0x28");
-    static_assert(PutByIdSecondaryTypeSymbol == 0x30, "LLInt assumes PutByIdSecondaryTypeSymbol is == 0x30");
-    static_assert(PutByIdSecondaryTypeObject == 0x38, "LLInt assumes PutByIdSecondaryTypeObject is == 0x38");
-    static_assert(PutByIdSecondaryTypeObjectOrOther == 0x40, "LLInt assumes PutByIdSecondaryTypeObjectOrOther is == 0x40");
-    static_assert(PutByIdSecondaryTypeTop == 0x48, "LLInt assumes PutByIdSecondaryTypeTop is == 0x48");
-
-    static_assert(GlobalProperty == 0, "LLInt assumes GlobalProperty ResultType is == 0");
-    static_assert(GlobalVar == 1, "LLInt assumes GlobalVar ResultType is == 1");
-    static_assert(GlobalLexicalVar == 2, "LLInt assumes GlobalLexicalVar ResultType is == 2");
-    static_assert(ClosureVar == 3, "LLInt assumes ClosureVar ResultType is == 3");
-    static_assert(LocalClosureVar == 4, "LLInt assumes LocalClosureVar ResultType is == 4");
-    static_assert(ModuleVar == 5, "LLInt assumes ModuleVar ResultType is == 5");
-    static_assert(GlobalPropertyWithVarInjectionChecks == 6, "LLInt assumes GlobalPropertyWithVarInjectionChecks ResultType is == 6");
-    static_assert(GlobalVarWithVarInjectionChecks == 7, "LLInt assumes GlobalVarWithVarInjectionChecks ResultType is == 7");
-    static_assert(GlobalLexicalVarWithVarInjectionChecks == 8, "LLInt assumes GlobalLexicalVarWithVarInjectionChecks ResultType is == 8");
-    static_assert(ClosureVarWithVarInjectionChecks == 9, "LLInt assumes ClosureVarWithVarInjectionChecks ResultType is == 9");
-
-    static_assert(static_cast<unsigned>(InitializationMode::NotInitialization) == 2, "LLInt assumes that InitializationMode::NotInitialization is 0");
-    
-    STATIC_ASSERT(GetPutInfo::typeBits == 0x3ff);
-    STATIC_ASSERT(GetPutInfo::initializationShift == 10);
-    STATIC_ASSERT(GetPutInfo::initializationBits == 0xffc00);
-
-    STATIC_ASSERT(MarkedBlock::blockSize == 16 * 1024);
-    STATIC_ASSERT(blackThreshold == 0);
-
-    ASSERT(bitwise_cast<uintptr_t>(ShadowChicken::Packet::tailMarker()) == static_cast<uintptr_t>(0x7a11));
 
     // FIXME: make these assertions less horrible.
 #if !ASSERT_DISABLED

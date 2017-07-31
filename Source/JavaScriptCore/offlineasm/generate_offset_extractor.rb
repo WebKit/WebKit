@@ -121,6 +121,17 @@ File.open(outputFlnm, "w") {
     $output = outp
     outp.puts inputHash
     length = 0
+
+    emitCodeInAllConfigurations(prunedAST) {
+        | settings, ast, backend, index |
+        constsList = ast.filter(ConstExpr).uniq.sort
+
+        constsList.each_with_index {
+            | const, index |
+            outp.puts "constexpr int64_t constValue#{index} = static_cast<int64_t>(#{const.value});"
+        }
+    }
+
     emitCodeInAllConfigurations(prunedAST) {
         | settings, ast, backend, index |
         offsetsList = ast.filter(StructOffset).uniq.sort
@@ -152,24 +163,12 @@ File.open(outputFlnm, "w") {
             emitMagicNumber
             outp.puts "sizeof(#{sizeof.struct}),"
         }
-        constsList.each {
-            | const |
+        constsList.each_index {
+            | index |
             emitMagicNumber
-            outp.puts "static_cast<int64_t>(#{const.value}),"
+            outp.puts "constValue#{index},"
         }
     }
     outp.puts "};"
-
-    emitCodeInAllConfigurations(prunedAST) {
-        | settings, ast, backend, index |
-        constsList = ast.filter(ConstExpr).uniq.sort
-
-        constsList.each_with_index {
-            | const, index |
-            outp.puts "constexpr int64_t isConst#{index} = static_cast<int64_t>(#{const.value});"
-            # Make a trivally true static assert that uses the last value...
-            outp.puts "static_assert(isConst#{index} || true, \"\");"
-        }
-    }
 
 }
