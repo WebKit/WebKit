@@ -907,7 +907,7 @@ public:
 
     const InstalledFont& fontForPostScriptName(const AtomicString& postScriptName)
     {
-        auto folded = postScriptName.string().foldCase();
+        const auto& folded = FontCascadeDescription::foldedFamilyName(postScriptName);
         return m_postScriptNameToFontDescriptors.ensure(folded, [&] {
             auto postScriptNameString = folded.createCFString();
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
