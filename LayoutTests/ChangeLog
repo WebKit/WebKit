@@ -1,3 +1,19 @@
+2017-07-31  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Layout Tests fast/dom/{Element,Range}/getClientRects.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=141700
+
+        Reviewed by Sam Weinig.
+
+        Add gtk-specific expectations for getClientRects tests.
+
+        Since these expectations depend on text metrics, it is unsurprising that they
+        are platform-dependent.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/Element/getClientRects-expected.txt: Added.
+        * platform/gtk/fast/dom/Range/getClientRects-expected.txt:
+
 2017-07-30  Darin Adler  <darin@apple.com>
 
         Remove code in HTMLObjectElement attribute parsing that forces style resolution and layout
