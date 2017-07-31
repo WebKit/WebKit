@@ -141,15 +141,15 @@
 
 + (JSContext *)currentContext
 {
-    Thread& thread = Thread::current();
-    CallbackData *entry = (CallbackData *)thread.m_apiData;
+    WTFThreadData& threadData = wtfThreadData();
+    CallbackData *entry = (CallbackData *)threadData.m_apiData;
     return entry ? entry->context : nil;
 }
 
 + (JSValue *)currentThis
 {
-    Thread& thread = Thread::current();
-    CallbackData *entry = (CallbackData *)thread.m_apiData;
+    WTFThreadData& threadData = wtfThreadData();
+    CallbackData *entry = (CallbackData *)threadData.m_apiData;
     if (!entry)
         return nil;
     return [JSValue valueWithJSValueRef:entry->thisValue inContext:[JSContext currentContext]];
@@ -157,8 +157,8 @@
 
 + (JSValue *)currentCallee
 {
-    Thread& thread = Thread::current();
-    CallbackData *entry = (CallbackData *)thread.m_apiData;
+    WTFThreadData& threadData = wtfThreadData();
+    CallbackData *entry = (CallbackData *)threadData.m_apiData;
     if (!entry)
         return nil;
     return [JSValue valueWithJSValueRef:entry->calleeValue inContext:[JSContext currentContext]];
@@ -166,8 +166,8 @@
 
 + (NSArray *)currentArguments
 {
-    Thread& thread = Thread::current();
-    CallbackData *entry = (CallbackData *)thread.m_apiData;
+    WTFThreadData& threadData = wtfThreadData();
+    CallbackData *entry = (CallbackData *)threadData.m_apiData;
 
     if (!entry)
         return nil;
@@ -294,21 +294,21 @@
 
 - (void)beginCallbackWithData:(CallbackData *)callbackData calleeValue:(JSValueRef)calleeValue thisValue:(JSValueRef)thisValue argumentCount:(size_t)argumentCount arguments:(const JSValueRef *)arguments
 {
-    Thread& thread = Thread::current();
+    WTFThreadData& threadData = wtfThreadData();
     [self retain];
-    CallbackData *prevStack = (CallbackData *)thread.m_apiData;
+    CallbackData *prevStack = (CallbackData *)threadData.m_apiData;
     *callbackData = (CallbackData){ prevStack, self, [self.exception retain], calleeValue, thisValue, argumentCount, arguments, nil };
-    thread.m_apiData = callbackData;
+    threadData.m_apiData = callbackData;
     self.exception = nil;
 }
 
 - (void)endCallbackWithData:(CallbackData *)callbackData
 {
-    Thread& thread = Thread::current();
+    WTFThreadData& threadData = wtfThreadData();
     self.exception = callbackData->preservedException;
     [callbackData->preservedException release];
     [callbackData->currentArguments release];
-    thread.m_apiData = callbackData->next;
+    threadData.m_apiData = callbackData->next;
     [self release];
 }
 

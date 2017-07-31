@@ -31,7 +31,7 @@
 #include "HashFunctions.h"
 #include "StringPrintStream.h"
 #include "ThreadSpecific.h"
-#include "Threading.h"
+#include "ThreadingPrimitives.h"
 #include "Vector.h"
 #include "WeakRandom.h"
 #include "WordLock.h"

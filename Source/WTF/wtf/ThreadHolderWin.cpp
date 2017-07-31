@@ -56,9 +56,15 @@ void ThreadHolder::initializeOnce()
     threadSpecificKeyCreate(&m_key, destruct);
 }
 
-ThreadHolder* ThreadHolder::currentDying()
+ThreadHolder* ThreadHolder::current()
 {
     ASSERT(m_key != InvalidThreadSpecificKey);
+    ThreadHolder* holder = static_cast<ThreadHolder*>(threadSpecificGet(m_key));
+    if (holder) {
+        ASSERT(holder != InvalidThreadHolder);
+        return holder;
+    }
+
     // After FLS is destroyed, this map offers the value until the second thread exit callback is called.
     std::lock_guard<std::mutex> locker(threadMapMutex());
     return threadMap().get(currentThread());
@@ -74,21 +80,21 @@ RefPtr<Thread> ThreadHolder::get(ThreadIdentifier id)
     return nullptr;
 }
 
-ThreadHolder& ThreadHolder::initialize(Ref<Thread>&& thread)
+void ThreadHolder::initialize(Thread& thread)
 {
-    // Ideally we'd have this as a release assert everywhere, but that would hurt performance.
-    // Having this release assert here means that we will catch "didn't call
-    // WTF::initializeThreading() soon enough" bugs in release mode.
-    ASSERT(m_key != InvalidThreadSpecificKey);
-    // FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
-    auto id = thread->id();
-    auto* holder = new ThreadHolder(WTFMove(thread));
-    threadSpecificSet(m_key, holder);
-    {
-        std::lock_guard<std::mutex> locker(threadMapMutex());
-        threadMap().add(id, holder);
+    if (!current()) {
+        // Ideally we'd have this as a release assert everywhere, but that would hurt performance.
+        // Having this release assert here means that we will catch "didn't call
+        // WTF::initializeThreading() soon enough" bugs in release mode.
+        ASSERT(m_key != InvalidThreadSpecificKey);
+        // FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
+        auto* holder = new ThreadHolder(thread);
+        threadSpecificSet(m_key, holder);
+        {
+            std::lock_guard<std::mutex> locker(threadMapMutex());
+            threadMap().add(thread.id(), holder);
+        }
     }
-    return *holder;
 }
 
 void ThreadHolder::destruct(void* data)

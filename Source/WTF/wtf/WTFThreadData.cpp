@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +20,49 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ *
  */
 
-#pragma once
+#include "config.h"
+#include "WTFThreadData.h"
 
-#include "ProfilerDatabase.h"
-#include "VM.h"
-#include "Watchdog.h"
+#include <wtf/text/AtomicStringTable.h>
 
-namespace JSC {
-    
-bool VM::ensureStackCapacityFor(Register* newTopOfStack)
-{
-#if ENABLE(JIT)
-    ASSERT(wtfThreadData().stack().isGrowingDownward());
-    return newTopOfStack >= m_softStackLimit;
-#else
-    return ensureStackCapacityForCLoop(newTopOfStack);
+#if USE(WEB_THREAD)
+#include <wtf/MainThread.h>
 #endif
-    
-}
 
-bool VM::isSafeToRecurseSoft() const
-{
-    bool safe = isSafeToRecurse(m_softStackLimit);
-#if !ENABLE(JIT)
-    safe = safe && isSafeToRecurseSoftCLoop();
+namespace WTF {
+
+#if !HAVE(FAST_TLS)
+ThreadSpecific<WTFThreadData>* WTFThreadData::staticData;
 #endif
-    return safe;
-}
 
-template<typename Func>
-void VM::logEvent(CodeBlock* codeBlock, const char* summary, const Func& func)
+WTFThreadData::WTFThreadData()
+    : m_stackBounds(StackBounds::currentThreadStackBounds())
+    , m_savedLastStackTop(stack().origin())
 {
-    if (LIKELY(!m_perBytecodeProfiler))
-        return;
-    
-    m_perBytecodeProfiler->logEvent(codeBlock, summary, func());
+    AtomicStringTable::create(*this);
+    m_currentAtomicStringTable = m_defaultAtomicStringTable;
 }
 
-} // namespace JSC
+WTFThreadData::~WTFThreadData()
+{
+    if (m_atomicStringTableDestructor)
+        m_atomicStringTableDestructor(m_defaultAtomicStringTable);
+}
+
+#if HAVE(FAST_TLS)
+WTFThreadData& WTFThreadData::createAndRegisterForGetspecificDirect()
+{
+    WTFThreadData* data = new WTFThreadData;
+    _pthread_setspecific_direct(WTF_THREAD_DATA_KEY, data);
+    pthread_key_init_np(WTF_THREAD_DATA_KEY, [](void* data){
+        delete static_cast<WTFThreadData*>(data);
+    });
+    return *data;
+}
+#endif
+
+} // namespace WTF

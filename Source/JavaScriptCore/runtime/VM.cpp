@@ -114,6 +114,7 @@
 #include <wtf/SimpleStats.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
+#include <wtf/WTFThreadData.h>
 #include <wtf/text/AtomicStringTable.h>
 #include <wtf/text/SymbolRegistry.h>
 
@@ -175,7 +176,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , topVMEntryFrame(nullptr)
     , topCallFrame(CallFrame::noCaller())
     , promiseDeferredTimer(std::make_unique<PromiseDeferredTimer>(*this))
-    , m_atomicStringTable(vmType == Default ? Thread::current().atomicStringTable() : new AtomicStringTable)
+    , m_atomicStringTable(vmType == Default ? wtfThreadData().atomicStringTable() : new AtomicStringTable)
     , propertyNames(nullptr)
     , emptyList(new ArgList)
     , machineCodeBytesPerBytecodeWordForBaselineJIT(std::make_unique<SimpleStats>())
@@ -210,13 +211,13 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_shadowChicken(std::make_unique<ShadowChicken>())
 {
     interpreter = new Interpreter(*this);
-    StackBounds stack = Thread::current().stack();
+    StackBounds stack = wtfThreadData().stack();
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
     setLastStackTop(stack.origin());
 
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);
-    AtomicStringTable* existingEntryAtomicStringTable = Thread::current().setCurrentAtomicStringTable(m_atomicStringTable);
+    AtomicStringTable* existingEntryAtomicStringTable = wtfThreadData().setCurrentAtomicStringTable(m_atomicStringTable);
     propertyNames = new CommonIdentifiers(this);
     structureStructure.set(*this, Structure::createStructure(*this));
     structureRareDataStructure.set(*this, StructureRareData::createStructure(*this, 0, jsNull()));
@@ -269,7 +270,7 @@ VM::VM(VMType vmType, HeapType heapType)
     nativeStdFunctionCellStructure.set(*this, NativeStdFunctionCell::createStructure(*this, 0, jsNull()));
     smallStrings.initializeCommonStrings(*this);
 
-    Thread::current().setCurrentAtomicStringTable(existingEntryAtomicStringTable);
+    wtfThreadData().setCurrentAtomicStringTable(existingEntryAtomicStringTable);
 
 #if ENABLE(JIT)
     jitStubs = std::make_unique<JITThunks>();
@@ -671,7 +672,7 @@ inline void VM::updateStackLimits()
     void* lastSoftStackLimit = m_softStackLimit;
 #endif
 
-    const StackBounds& stack = Thread::current().stack();
+    const StackBounds& stack = wtfThreadData().stack();
     size_t reservedZoneSize = Options::reservedZoneSize();
     // We should have already ensured that Options::reservedZoneSize() >= minimumReserveZoneSize at
     // options initialization time, and the option value should not have been changed thereafter.
@@ -885,9 +886,9 @@ size_t VM::committedStackByteCount()
 #if ENABLE(JIT)
     // When using the C stack, we don't know how many stack pages are actually
     // committed. So, we use the current stack usage as an estimate.
-    ASSERT(Thread::current().stack().isGrowingDownward());
+    ASSERT(wtfThreadData().stack().isGrowingDownward());
     int8_t* current = reinterpret_cast<int8_t*>(&current);
-    int8_t* high = reinterpret_cast<int8_t*>(Thread::current().stack().origin());
+    int8_t* high = reinterpret_cast<int8_t*>(wtfThreadData().stack().origin());
     return high - current;
 #else
     return CLoopStack::committedByteCount();

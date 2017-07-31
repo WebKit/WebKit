@@ -28,7 +28,6 @@
 #if USE(VIDEOTOOLBOX)
 
 #include <CoreMedia/CMTime.h>
-#include <functional>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
 #include <wtf/OSObjectPtr.h>

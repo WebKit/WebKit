@@ -1,3 +1,16 @@
+2017-07-31  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r220060.
+
+        This broke our internal builds. Contact reviewer of patch for
+        more information.
+
+        Reverted changeset:
+
+        "Merge WTFThreadData to Thread::current"
+        https://bugs.webkit.org/show_bug.cgi?id=174716
+        http://trac.webkit.org/changeset/220060
+
 2017-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Merge WTFThreadData to Thread::current

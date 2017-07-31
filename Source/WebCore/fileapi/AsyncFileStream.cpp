@@ -41,7 +41,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 

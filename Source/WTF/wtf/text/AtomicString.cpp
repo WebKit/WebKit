@@ -23,10 +23,8 @@
 #include "config.h"
 #include "AtomicString.h"
 
-#include <mutex>
-#include <wtf/MainThread.h>
-#include <wtf/text/IntegerToStringConversion.h>
-
+#include "IntegerToStringConversion.h"
+#include "MainThread.h"
 #include "dtoa.h"
 
 namespace WTF {

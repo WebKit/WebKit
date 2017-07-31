@@ -286,16 +286,18 @@ void Thread::detach()
         didBecomeDetached();
 }
 
-
-Ref<Thread> Thread::createCurrentThread()
+Thread& Thread::current()
 {
+    if (Thread* current = currentMayBeNull())
+        return *current;
+
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
     Ref<Thread> thread = adoptRef(*new Thread());
     thread->establishPlatformSpecificHandle(pthread_self());
     thread->m_stack = StackBounds::currentThreadStackBounds();
-    thread->initializeInThread();
+    ThreadHolder::initialize(thread.get());
     initializeCurrentThreadEvenIfNonWTFCreated();
-    return thread;
+    return thread.get();
 }
 
 ThreadIdentifier Thread::currentID()

@@ -29,16 +29,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ThreadHolder_h
-#define ThreadHolder_h
+#pragma once
 
-#include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
 #include <wtf/ThreadSpecific.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
-
-class Thread;
 
 // Holds Thread in the thread-specific storage. The destructor of this holder reliably destroy Thread.
 // For pthread, it employs pthreads-specific 2-pass destruction to reliably remove Thread.
@@ -51,26 +47,23 @@ public:
 
     // One time initialization for this class as a whole.
     // This method must be called before initialize() and it is not thread-safe.
-    WTF_EXPORT_PRIVATE static void initializeOnce();
+    static void initializeOnce();
 
     // Creates and puts an instance of ThreadHolder into thread-specific storage.
-    WTF_EXPORT_PRIVATE static ThreadHolder& initialize(Ref<Thread>&&);
-    WTF_EXPORT_PRIVATE static ThreadHolder& initializeCurrent();
+    static void initialize(Thread&);
 
     // Returns 0 if thread-specific storage was not initialized.
-    static ThreadHolder& current();
-    static ThreadHolder* currentMayBeNull();
+    static ThreadHolder* current();
 
     Thread& thread() { return m_thread.get(); }
 
 #if OS(WINDOWS)
-    WTF_EXPORT_PRIVATE static ThreadHolder* currentDying();
     static RefPtr<Thread> get(ThreadIdentifier);
 #endif
 
 private:
-    ThreadHolder(Ref<Thread>&& thread)
-        : m_thread(WTFMove(thread))
+    ThreadHolder(Thread& thread)
+        : m_thread(thread)
         , m_isDestroyedOnce(false)
     {
     }
@@ -84,39 +77,7 @@ private:
 
     Ref<Thread> m_thread;
     bool m_isDestroyedOnce;
-    static WTF_EXPORTDATA ThreadSpecificKey m_key;
+    static ThreadSpecificKey m_key;
 };
 
-inline ThreadHolder* ThreadHolder::currentMayBeNull()
-{
-#if !HAVE(FAST_TLS)
-    ASSERT(m_key != InvalidThreadSpecificKey);
-    return static_cast<ThreadHolder*>(threadSpecificGet(m_key));
-#else
-    return static_cast<ThreadHolder*>(_pthread_getspecific_direct(WTF_THREAD_DATA_KEY));
-#endif
-}
-
-inline ThreadHolder& ThreadHolder::current()
-{
-    // WRT WebCore:
-    //    ThreadHolder is used on main thread before it could possibly be used
-    //    on secondary ones, so there is no need for synchronization here.
-    // WRT JavaScriptCore:
-    //    Thread::current() is initially called from initializeThreading(), ensuring
-    //    this is initially called in a pthread_once locked context.
-#if !HAVE(FAST_TLS)
-    if (UNLIKELY(ThreadHolder::m_key == InvalidThreadSpecificKey))
-        initializeOnce();
-#endif
-    if (auto* holder = currentMayBeNull())
-        return *holder;
-#if OS(WINDOWS)
-    if (auto* holder = currentDying())
-        return *holder;
-#endif
-    return initializeCurrent();
-}
-
 } // namespace WTF
-#endif // ThreadHolder_h

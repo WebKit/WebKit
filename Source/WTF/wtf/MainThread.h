@@ -33,7 +33,7 @@
 #include <stdint.h>
 #include <wtf/Function.h>
 #include <wtf/Optional.h>
-#include <wtf/ThreadingPrimitives.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
 

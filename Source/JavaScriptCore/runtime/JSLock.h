@@ -25,7 +25,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/AtomicStringTable.h>
 
 namespace JSC {

@@ -702,7 +702,7 @@ static void StartWebThread()
 {
     webThreadStarted = TRUE;
 
-    // ThreadGlobalData touches AtomicString, which requires Threading initialization.
+    // ThreadGlobalData touches AtomicString, which requires WTFThreadData and Threading initialization.
     WTF::initializeThreading();
 
     // Initialize AtomicString on the main thread.

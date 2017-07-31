@@ -41,13 +41,14 @@
 #include "Parser.h"
 #include "ProgramExecutable.h"
 #include "ScriptProfilingScope.h"
+#include <wtf/WTFThreadData.h>
 
 namespace JSC {
 
 bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedException)
 {
     JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
 
     ProgramExecutable* program = ProgramExecutable::create(exec, source);
     JSObject* error = program->checkSyntax(exec);
@@ -63,7 +64,7 @@ bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedExc
 bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
 {
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     return !!parse<ProgramNode>(
         &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, SuperBinding::NotNeeded, error);
@@ -73,7 +74,7 @@ bool checkModuleSyntax(ExecState* exec, const SourceCode& source, ParserError& e
 {
     VM& vm = exec->vm();
     JSLockHolder lock(vm);
-    RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
         &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::Strict, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, SuperBinding::NotNeeded, error);
@@ -91,7 +92,7 @@ JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, N
     VM& vm = exec->vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     CodeProfiling profile(source);
@@ -166,7 +167,7 @@ static JSInternalPromise* loadAndEvaluateModule(const JSLockHolder& lock, ExecSt
 JSInternalPromise* loadAndEvaluateModule(ExecState* exec, const String& moduleName, JSValue scriptFetcher)
 {
     JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!exec->vm().isCollectorBusyOnCurrentThread());
 
     return loadAndEvaluateModule(lock, exec, exec->vmEntryGlobalObject(), Identifier::fromString(exec, moduleName), scriptFetcher);
@@ -177,7 +178,7 @@ JSInternalPromise* loadAndEvaluateModule(ExecState* exec, const SourceCode& sour
     VM& vm = exec->vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     Symbol* key = createSymbolForEntryPointModule(vm);
@@ -204,7 +205,7 @@ static JSInternalPromise* loadModule(const JSLockHolder& lock, ExecState* exec, 
 JSInternalPromise* loadModule(ExecState* exec, const String& moduleName, JSValue scriptFetcher)
 {
     JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!exec->vm().isCollectorBusyOnCurrentThread());
 
     return loadModule(lock, exec, exec->vmEntryGlobalObject(), Identifier::fromString(exec, moduleName), scriptFetcher);
@@ -215,7 +216,7 @@ JSInternalPromise* loadModule(ExecState* exec, const SourceCode& source, JSValue
     VM& vm = exec->vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(vm.atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     Symbol* key = createSymbolForEntryPointModule(vm);
@@ -233,7 +234,7 @@ JSInternalPromise* loadModule(ExecState* exec, const SourceCode& source, JSValue
 JSValue linkAndEvaluateModule(ExecState* exec, const Identifier& moduleKey, JSValue scriptFetcher)
 {
     JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!exec->vm().isCollectorBusyOnCurrentThread());
 
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
@@ -243,7 +244,7 @@ JSValue linkAndEvaluateModule(ExecState* exec, const Identifier& moduleKey, JSVa
 JSInternalPromise* importModule(ExecState* exec, const Identifier& moduleKey, JSValue scriptFetcher)
 {
     JSLockHolder lock(exec);
-    RELEASE_ASSERT(exec->vm().atomicStringTable() == Thread::current().atomicStringTable());
+    RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!exec->vm().isCollectorBusyOnCurrentThread());
 
     return exec->vmEntryGlobalObject()->moduleLoader()->requestImportModule(exec, moduleKey, scriptFetcher);

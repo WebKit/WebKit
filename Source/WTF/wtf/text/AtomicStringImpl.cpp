@@ -32,6 +32,7 @@
 #include "StringHash.h"
 #include "StringPrintStream.h"
 #include "Threading.h"
+#include "WTFThreadData.h"
 #include <wtf/unicode/UTF8.h>
 
 #if USE(WEB_THREAD)
@@ -71,7 +72,7 @@ using StringTableImpl = HashSet<StringImpl*>;
 
 static ALWAYS_INLINE StringTableImpl& stringTable()
 {
-    return Thread::current().atomicStringTable()->table();
+    return wtfThreadData().atomicStringTable()->table();
 }
 
 template<typename T, typename HashTranslator>
