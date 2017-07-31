@@ -33,7 +33,6 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderElement.h"
-#include "StyleCachedImage.h"
 #include "StyleResolver.h"
 #include <wtf/text/StringBuilder.h>
 
