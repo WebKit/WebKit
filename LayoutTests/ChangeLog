@@ -1,3 +1,11 @@
+2017-07-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, test gardening
+
+        * platform/mac-highsierra/TestExpectations:
+        * platform/mac-highsierra/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_long_empty.https-expected.txt: Added.
+        * platform/mac-highsierra/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_empty.https-expected.txt: Added.
+
 2017-07-31  Matt Lewis  <jlewis3@apple.com>
 
         Skipped  http/tests/media/video-play-stall.html.

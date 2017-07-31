@@ -136,9 +136,3 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html 
 
 # <rdar://problem/33555052>
 imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Pass Crash ]
-
-# <rdar://problem/33548297> Multiple imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ are failing on High Sierra
-imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_long_empty.https.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_empty.https.html [ Failure ]
-
-
