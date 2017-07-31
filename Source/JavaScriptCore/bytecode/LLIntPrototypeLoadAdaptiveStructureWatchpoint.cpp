@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,17 +47,12 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install()
     m_key.object()->structure()->addTransitionWatchpoint(this);
 }
 
-void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(const FireDetail& detail)
+void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(const FireDetail&)
 {
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
         install();
         return;
     }
-
-    StringPrintStream out;
-    out.print("ObjectToStringValue Adaptation of ", m_key, " failed: ", detail);
-
-    StringFireDetail stringDetail(out.toCString().data());
 
     CodeBlock::clearLLIntGetByIdCache(m_getByIdInstruction);
 }
