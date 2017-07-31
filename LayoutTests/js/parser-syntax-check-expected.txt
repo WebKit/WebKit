@@ -631,8 +631,8 @@ PASS Invalid: "try {} finally {} catch(e) {}". Produced the following syntax err
 PASS Invalid: "function f() { try {} finally {} catch(e) {} }". Produced the following syntax error: "SyntaxError: Unexpected keyword 'catch'"
 PASS Invalid: "try {} catch (...) {}". Produced the following syntax error: "SyntaxError: Unexpected token '...'. Expected a parameter pattern or a ')' in parameter list."
 PASS Invalid: "function f() { try {} catch (...) {} }". Produced the following syntax error: "SyntaxError: Unexpected token '...'. Expected a parameter pattern or a ')' in parameter list."
-PASS Invalid: "try {} catch {}". Produced the following syntax error: "SyntaxError: Unexpected token '{'. Expected '(' to start a 'catch' target."
-PASS Invalid: "function f() { try {} catch {} }". Produced the following syntax error: "SyntaxError: Unexpected token '{'. Expected '(' to start a 'catch' target."
+PASS Valid:   "try {} catch {}"
+PASS Valid:   "function f() { try {} catch {} }"
 PASS Valid:   "if (a) try {} finally {} else b;"
 PASS Valid:   "function f() { if (a) try {} finally {} else b; }"
 PASS Valid:   "if (--a()) do with(1) try {} catch(ke) { f() ; g() } while (a in b) else {}" with ReferenceError

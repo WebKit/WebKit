@@ -86,11 +86,11 @@ var successfullyParsed = true;
 
 <script>
 if (!successfullyParsed)
-    printTestPassed('Expected parsing failure');
+    printTestFailed('Expected parsing failure');
 else if (sputnikException)
-    printTestPassed(sputnikException);
+    printTestFailed(sputnikException);
 else
-    printTestFailed("No error detected");
+    printTestPassed("No error detected");
 testPrint('<br /><span class="pass">TEST COMPLETE</span>');
 </script>
 </body>

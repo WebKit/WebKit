@@ -1,5 +1,48 @@
 2017-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Support optional catch binding
+        https://bugs.webkit.org/show_bug.cgi?id=174981
+
+        Reviewed by Saam Barati.
+
+        This patch implements optional catch binding proposal[1], which is now stage 3.
+        This proposal adds a new `catch` brace with no error value binding.
+
+            ```
+                try {
+                    ...
+                } catch {
+                    ...
+                }
+            ```
+
+        Sometimes we do not need to get error value actually. For example, the function returns
+        boolean which means whether the function succeeds.
+
+            ```
+            function parse(result) // -> bool
+            {
+                 try {
+                     parseInner(result);
+                 } catch {
+                     return false;
+                 }
+                 return true;
+            }
+            ```
+
+        In the above case, we are not interested in the actual error value. Without this syntax,
+        we always need to introduce a binding for an error value that is just ignored.
+
+        [1]: https://michaelficarra.github.io/optional-catch-binding-proposal/
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseTryStatement):
+
+2017-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Merge WTFThreadData to Thread::current
         https://bugs.webkit.org/show_bug.cgi?id=174716
 

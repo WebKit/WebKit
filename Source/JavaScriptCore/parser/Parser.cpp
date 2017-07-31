@@ -1633,27 +1633,32 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
     if (match(CATCH)) {
         next();
         
-        handleProductionOrFail(OPENPAREN, "(", "start", "'catch' target");
-        AutoPopScopeRef catchScope(this, pushScope());
-        catchScope->setIsLexicalScope();
-        catchScope->preventVarDeclarations();
-        const Identifier* ident = nullptr;
-        if (matchSpecIdentifier()) {
-            ident = m_token.m_data.ident;
-            catchPattern = context.createBindingLocation(m_token.m_location, *ident, m_token.m_startPosition, m_token.m_endPosition, AssignmentContext::DeclarationStatement);
-            next();
-            failIfTrueIfStrict(catchScope->declareLexicalVariable(ident, false) & DeclarationResult::InvalidStrictMode, "Cannot declare a catch variable named '", ident->impl(), "' in strict mode");
+        if (match(OPENBRACE)) {
+            catchBlock = parseBlockStatement(context);
+            failIfFalse(catchBlock, "Unable to parse 'catch' block");
         } else {
-            catchPattern = parseDestructuringPattern(context, DestructuringKind::DestructureToCatchParameters, ExportType::NotExported);
-            failIfFalse(catchPattern, "Cannot parse this destructuring pattern");
+            handleProductionOrFail(OPENPAREN, "(", "start", "'catch' target");
+            AutoPopScopeRef catchScope(this, pushScope());
+            catchScope->setIsLexicalScope();
+            catchScope->preventVarDeclarations();
+            const Identifier* ident = nullptr;
+            if (matchSpecIdentifier()) {
+                ident = m_token.m_data.ident;
+                catchPattern = context.createBindingLocation(m_token.m_location, *ident, m_token.m_startPosition, m_token.m_endPosition, AssignmentContext::DeclarationStatement);
+                next();
+                failIfTrueIfStrict(catchScope->declareLexicalVariable(ident, false) & DeclarationResult::InvalidStrictMode, "Cannot declare a catch variable named '", ident->impl(), "' in strict mode");
+            } else {
+                catchPattern = parseDestructuringPattern(context, DestructuringKind::DestructureToCatchParameters, ExportType::NotExported);
+                failIfFalse(catchPattern, "Cannot parse this destructuring pattern");
+            }
+            handleProductionOrFail(CLOSEPAREN, ")", "end", "'catch' target");
+            matchOrFail(OPENBRACE, "Expected exception handler to be a block statement");
+            catchBlock = parseBlockStatement(context);
+            failIfFalse(catchBlock, "Unable to parse 'catch' block");
+            catchEnvironment = catchScope->finalizeLexicalEnvironment();
+            RELEASE_ASSERT(!ident || (catchEnvironment.size() == 1 && catchEnvironment.contains(ident->impl())));
+            popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo);
         }
-        handleProductionOrFail(CLOSEPAREN, ")", "end", "'catch' target");
-        matchOrFail(OPENBRACE, "Expected exception handler to be a block statement");
-        catchBlock = parseBlockStatement(context);
-        failIfFalse(catchBlock, "Unable to parse 'catch' block");
-        catchEnvironment = catchScope->finalizeLexicalEnvironment();
-        RELEASE_ASSERT(!ident || (catchEnvironment.size() == 1 && catchEnvironment.contains(ident->impl())));
-        popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo);
     }
     
     if (match(FINALLY)) {

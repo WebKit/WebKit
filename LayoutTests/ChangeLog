@@ -1,3 +1,17 @@
+2017-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Support optional catch binding
+        https://bugs.webkit.org/show_bug.cgi?id=174981
+
+        Reviewed by Saam Barati.
+
+        Rebaseline existing tests.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+        * sputnik/Conformance/12_Statement/12.14_The_try_Statement/S12.14_A16_T4-expected.txt:
+        * sputnik/Conformance/12_Statement/12.14_The_try_Statement/S12.14_A16_T4.html:
+
 2017-07-31  Per Arne Vollan  <pvollan@apple.com>
 
         Many web-platform tests are slow on Windows.

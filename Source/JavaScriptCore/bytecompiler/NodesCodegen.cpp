@@ -3413,15 +3413,20 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             tryData = generator.pushTry(*catchLabel, *finallyViaThrowLabel, HandlerType::Finally);
         }
 
-        generator.emitPushCatchScope(m_lexicalVariables);
-        m_catchPattern->bindValue(generator, thrownValueRegister.get());
+        if (m_catchPattern) {
+            generator.emitPushCatchScope(m_lexicalVariables);
+            m_catchPattern->bindValue(generator, thrownValueRegister.get());
+        }
+
         generator.emitProfileControlFlow(m_tryBlock->endOffset() + 1);
         if (m_finallyBlock)
             generator.emitNode(dst, m_catchBlock);
         else
             generator.emitNodeInTailPosition(dst, m_catchBlock);
         generator.emitLoad(thrownValueRegister.get(), jsUndefined());
-        generator.emitPopCatchScope(m_lexicalVariables);
+
+        if (m_catchPattern)
+            generator.emitPopCatchScope(m_lexicalVariables);
 
         if (m_finallyBlock) {
             generator.emitSetCompletionType(CompletionType::Normal);
