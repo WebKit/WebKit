@@ -1,3 +1,17 @@
+2017-08-01  Ms2ger  <Ms2ger@igalia.com>
+
+        REGRESSION(r205909): Layout test editing/pasteboard/image-in-iframe.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=163185
+
+        Reviewed by Sam Weinig.
+
+        Remove obsolete failure expectation for image-in-iframe.html.
+
+        The bug was fixed in r212428. (The test was also broken by both landings for
+        bug 170956, until r216174 fixed it again.)
+
+        * platform/gtk/TestExpectations:
+
 2017-08-01  Darin Adler  <darin@apple.com>
 
         REGRESSION (r220052): http/tests/media/video-play-stall.html times out

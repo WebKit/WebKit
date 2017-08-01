@@ -3163,8 +3163,6 @@ webkit.org/b/161589 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailu
 
 webkit.org/b/163184 editing/pasteboard/copy-standalone-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/163185 editing/pasteboard/image-in-iframe.html [ Failure ]
-
 webkit.org/b/163186 editing/pasteboard/onpaste-text-html.html [ Failure ]
 
 # Failing since a new URLParser has been enabled on r207162
