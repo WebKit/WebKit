@@ -1,0 +1,99 @@
+<script>
+    function log(msg)
+    {
+//        alert(msg);
+        window.webkit.messageHandlers.testHandler.postMessage(msg);
+    }
+
+    function shouldBeType(_a, _type)
+    {
+        var exception;
+        var _av;
+        try {
+            _av = eval(_a);
+        } catch (e) {
+            exception = e;
+        }
+
+        var _typev = eval(_type);
+        if (_av instanceof _typev) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Values that are used to infer the type of a given primitive type.
+    var testValues = [
+        undefined,
+        null,
+        5, // Int
+        0,
+        1,
+        false,
+        true,
+        5.5, // Double
+        "Hello,World!",
+        ""
+    ];
+
+    // Values that are used to infer the type of a given Boolean/String type.
+    var testTypeValues = [
+        { item: new Boolean(true), type: "Boolean", value: true },
+        { item: new Boolean(false), type: "Boolean", value: false },
+        { item: new String(), type: "String", value: "" }
+    ];
+
+    var openRequest = indexedDB.open("backward_compatibility");
+    openRequest.onerror = function(event) {
+        log("Error: " + event.target.error.name);
+    }
+    openRequest.onsuccess = function(event) {
+        db = event.target.result;
+        readType();
+    }
+
+    var result = true;
+    function readType()
+    {
+        var objectStore = db.transaction("type").objectStore("type");
+        objectStore.openCursor().onsuccess = function(event) {
+            cursor = event.target.result;
+            if (cursor) {
+                result = result && shouldBeType("cursor.value", cursor.key);
+                cursor.continue();
+            } else
+                readValue();
+        };
+    }
+
+    function readValue()
+    {
+        var objectStore = db.transaction("value").objectStore("value");
+        objectStore.openCursor().onsuccess = function(event) {
+            cursor = event.target.result;
+            if (cursor) {
+                result = result && (cursor.value === testValues[cursor.key - 1]);
+                cursor.continue();
+            } else
+                readTypeValue();
+        };
+    }
+
+    function readTypeValue()
+    {
+        var objectStore = db.transaction("typeValue").objectStore("typeValue");
+        objectStore.openCursor().onsuccess = function(event) {
+            cursor = event.target.result;
+            if (cursor) {
+                result = result && shouldBeType("cursor.value", testTypeValues[cursor.key - 1].type) && (cursor.value == testTypeValues[cursor.key - 1].value);
+                cursor.continue();
+            } else {
+                if (result)
+                    log("Pass");
+                else
+                    log("Fail");
+            }
+        };
+    }
+</script>

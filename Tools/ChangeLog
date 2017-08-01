@@ -1,3 +1,36 @@
+2017-07-26  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add tests to detect mistakes in backward compatibility when the structured clone algorithm is changed in the future
+        https://bugs.webkit.org/show_bug.cgi?id=173998
+
+        Reviewed by Darin Adler.
+
+        Since the structured clone algorithm is used for data stored in persistent databases, we need tests to help us
+        detect mistakes in backward compatibility in the future when we change it.
+
+        The way it works is to read from a pre-baked database and see if all the values are matched with the expectations.
+        Surprisedly, some of structured clonable objects cannot be stored into the indexedDB. Those are FileList,
+        ObjectReference, MessagePortReference, ArrayBufferView, ArrayBufferTransfer, NonMapProperties, NonSetProperties,
+        SharedArrayBuffer, WasmModule, DOMPointReadOnly, DOMPoint, DOMRectReadOnly, DOMRect, DOMMatrixReadOnly, DOMMatrix,
+        DOMQuad and Error. CryptoKey objects are not included as well as they need new API for encrypting/decrypting the
+        internal key data slot.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBStructuredCloneBackwardCompatibility.mm: Added.
+        (-[IndexedDBStructuredCloneBackwardCompatibilityMessageHandler userContentController:didReceiveScriptMessage:]):
+        (getNextMessage):
+        (TEST):
+        Here is the API test that moves the pre-baked database to the location where TestWebKitAPI can read from.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBStructuredCloneBackwardCompatibility.sqlite3: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBStructuredCloneBackwardCompatibility.sqlite3-shm: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBStructuredCloneBackwardCompatibility.sqlite3-wal: Added.
+        These are the pre-baked databases.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBStructuredCloneBackwardCompatibilityRead.html: Added.
+        This is the actual test that do all the reads and comparisons.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBStructuredCloneBackwardCompatibilityWrite.html: Added.
+        This is the page that bakes the database. It never runs automatically. It is for someone who needs to teach
+        IndexedDB new stuffs. Then it can be used to bake the database again.
+
 2017-08-01  Brady Eidson  <beidson@apple.com>
 
         API test URLSchemeHandler.Exceptions is Exiting out early on macOS Debug..

@@ -117,6 +117,7 @@ enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEn
     SetDataStartVisitEntry, SetDataEndVisitKey };
 
 // These can't be reordered, and any new types must be added to the end of the list
+// When making changes to these lists please cover your new type(s) in the API test "IndexedDB.StructuredCloneBackwardCompatibility"
 enum SerializationTag {
     ArrayTag = 1,
     ObjectTag = 2,

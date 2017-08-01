@@ -1,0 +1,171 @@
+<script>
+    function log(msg)
+    {
+//        alert(msg);
+        window.webkit.messageHandlers.testHandler.postMessage(msg);
+    }
+
+    function shouldBeType(_a, _type)
+    {
+        var exception;
+        var _av;
+        try {
+            _av = eval(_a);
+        } catch (e) {
+            exception = e;
+        }
+
+        var _typev = eval(_type);
+        if (_av instanceof _typev) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Values that are used to infer the type of a given primitive type.
+    var testValues = [
+        undefined,
+        null,
+        5, // Int
+        0,
+        1,
+        false,
+        true,
+        5.5, // Double
+        "Hello,World!",
+        ""
+    ];
+
+    // Values that are used to infer the type of a given Boolean/String type.
+    var testTypeValues = [
+        { item: new Boolean(true), type: "Boolean", value: true },
+        { item: new Boolean(false), type: "Boolean", value: false },
+        { item: new String(), type: "String", value: "" }
+    ];
+
+    indexedDB.deleteDatabase("backward_compatibility");
+    var openRequest = indexedDB.open("backward_compatibility");
+    openRequest.onupgradeneeded = function(event) {
+        // This objectStore stores elements that we only need to check its type to determine its serialization tag.
+        var objectStore = event.target.result.createObjectStore("type");
+        // This objectStore stores elements that we need to check its value to determine its serialization tag.
+        var objectStore = event.target.result.createObjectStore("value", { autoIncrement : true });
+        // This objectStore stores elements that we need to check both its type and its value to determine its serialization tag.
+        var objectStore = event.target.result.createObjectStore("typeValue", { autoIncrement : true });
+    }
+    openRequest.onerror = function(event) {
+        log("Error: " + event.target.error.name);
+    }
+    openRequest.onsuccess = function(event) {
+        db = event.target.result;
+        storeType();
+    }
+
+    function storeType()
+    {
+        var transaction = db.transaction("type", "readwrite");
+        transaction.onerror = function(event) {
+            log("Error: " + event.target.error.name);
+        }
+        transaction.oncomplete = function(event) { storeValue(); }
+
+        var objectStore = transaction.objectStore("type");
+        // The key of an item is the type of its value, hence we could determine type mismatch, i.e. serialization tag reorder
+        // simply by using an item's key and value.
+        objectStore.add([1, 2], "Array");
+        objectStore.add({ property: null }, "Object");
+        objectStore.add(new Date(), "Date");
+        objectStore.add(new File(["foo"], "foo.txt"), "File");
+        objectStore.add(new ImageData(100, 100), "ImageData");
+        objectStore.add(new Blob(["foo"]), "Blob");
+        objectStore.add(new RegExp(''), "RegExp");
+        objectStore.add(new ArrayBuffer(1), "ArrayBuffer");
+        objectStore.add(new String(''), "String");
+        objectStore.add(new Number(12), "Number");
+        objectStore.add(new Set([1, 2]), "Set");
+        objectStore.add(new Map(), "Map");
+        // Typed arrays
+        objectStore.add(new Int8Array(), "Int8Array");
+        objectStore.add(new Uint8Array(), "Uint8Array");
+        objectStore.add(new Uint8ClampedArray(), "Uint8ClampedArray");
+        objectStore.add(new Int16Array(), "Int16Array");
+        objectStore.add(new Uint16Array(), "Uint16Array");
+        objectStore.add(new Int32Array(), "Int32Array");
+        objectStore.add(new Uint32Array(), "Uint32Array");
+        objectStore.add(new Float32Array(), "Float32Array");
+        objectStore.add(new Float64Array(), "Float64Array");
+    }
+
+    function storeValue()
+    {
+        var transaction = db.transaction("value", "readwrite");
+        transaction.onerror = function(event) {
+            log("Error: " + event.target.error.name);
+        }
+        transaction.oncomplete = function(event) { storeTypeValue(); }
+
+        var objectStore = transaction.objectStore("value");
+        // Here we store values in the test matrix in order and read them in order to see if any mismatch happens.
+        for (var i = 0; i < testValues.length; i++)
+            objectStore.add(testValues[i]);
+    }
+
+    function storeTypeValue()
+    {
+        var transaction = db.transaction("typeValue", "readwrite");
+        transaction.onerror = function(event) {
+            log("Error: " + event.target.error.name);
+        }
+        transaction.oncomplete = function(event) { readType(); }
+
+        var objectStore = transaction.objectStore("typeValue");
+        // Here we store items in the test matrix in order and read them in order to see if any mismatches its type and value.
+        for (var i = 0; i < testTypeValues.length; i++)
+            objectStore.add(testTypeValues[i].item);
+    }
+
+    var result = true;
+    function readType()
+    {
+        var objectStore = db.transaction("type").objectStore("type");
+        objectStore.openCursor().onsuccess = function(event) {
+            cursor = event.target.result;
+            if (cursor) {
+                result = result && shouldBeType("cursor.value", cursor.key);
+                cursor.continue();
+            } else
+                readValue();
+        };
+    }
+
+    function readValue()
+    {
+        var objectStore = db.transaction("value").objectStore("value");
+        objectStore.openCursor().onsuccess = function(event) {
+            cursor = event.target.result;
+            if (cursor) {
+                result = result && (cursor.value === testValues[cursor.key - 1]);
+                cursor.continue();
+            } else
+                readTypeValue();
+        };
+    }
+
+    function readTypeValue()
+    {
+        var objectStore = db.transaction("typeValue").objectStore("typeValue");
+        objectStore.openCursor().onsuccess = function(event) {
+            cursor = event.target.result;
+            if (cursor) {
+                result = result && shouldBeType("cursor.value", testTypeValues[cursor.key - 1].type) && (cursor.value == testTypeValues[cursor.key - 1].value);
+                cursor.continue();
+            } else {
+                if (result)
+                    log("Pass");
+                else
+                    log("Fail");
+            }
+        };
+    }
+</script>
