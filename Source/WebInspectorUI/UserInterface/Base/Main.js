@@ -435,6 +435,7 @@ WebInspector.contentLoaded = function()
         WebInspector.ElementsTabContentView,
         WebInspector.NetworkTabContentView,
         WebInspector.NewTabContentView,
+        WebInspector.RecordingTabContentView,
         WebInspector.ResourcesTabContentView,
         WebInspector.SearchTabContentView,
         WebInspector.SettingsTabContentView,
@@ -507,10 +508,14 @@ WebInspector.contentLoaded = function()
 // This function returns a lazily constructed instance of a class scoped to this WebInspector
 // instance. In the unlikely event that we ever need to construct multiple WebInspector instances
 // this allows us to scope objects within the WebInspector.
+// Classes can prevent usage of this function via a static `disallowInstanceForClass` function that
+// returns true. It is then their responsibility to ensure that the returned value is tracked.
 // Currently it is only used for sidebars.
 WebInspector.instanceForClass = function(constructor)
 {
     console.assert(typeof constructor === "function");
+    if (typeof constructor.disallowInstanceForClass === "function" && constructor.disallowInstanceForClass())
+        return new constructor;
 
     let key = `__${constructor.name}`;
     if (!WebInspector[key])
@@ -860,46 +865,6 @@ WebInspector.close = function()
     InspectorFrontendHost.closeWindow();
 };
 
-WebInspector.saveDataToFile = function(saveData, forceSaveAs)
-{
-    console.assert(saveData);
-    if (!saveData)
-        return;
-
-    if (typeof saveData.customSaveHandler === "function") {
-        saveData.customSaveHandler(forceSaveAs);
-        return;
-    }
-
-    console.assert(saveData.content);
-    if (!saveData.content)
-        return;
-
-    let url = saveData.url || "";
-    let suggestedName = parseURL(url).lastPathComponent;
-    if (!suggestedName) {
-        suggestedName = WebInspector.UIString("Untitled");
-        let dataURLTypeMatch = /^data:([^;]+)/.exec(url);
-        if (dataURLTypeMatch)
-            suggestedName += WebInspector.fileExtensionForMIMEType(dataURLTypeMatch[1]) || "";
-    }
-
-    if (typeof saveData.content === "string") {
-        const base64Encoded = saveData.base64Encoded || false;
-        InspectorFrontendHost.save(suggestedName, saveData.content, base64Encoded, forceSaveAs || saveData.forceSaveAs);
-        return;
-    }
-
-    let fileReader = new FileReader;
-    fileReader.readAsDataURL(saveData.content);
-    fileReader.addEventListener("loadend", () => {
-        let dataURLComponents = parseDataURL(fileReader.result);
-
-        const base64Encoded = true;
-        InspectorFrontendHost.save(suggestedName, dataURLComponents.data, base64Encoded, forceSaveAs || saveData.forceSaveAs);
-    });
-};
-
 WebInspector.isConsoleFocused = function()
 {
     return this.quickConsole.prompt.focused;
@@ -1118,6 +1083,9 @@ WebInspector.tabContentViewClassForRepresentedObject = function(representedObjec
         representedObject instanceof WebInspector.ApplicationCacheFrame || representedObject instanceof WebInspector.IndexedDatabaseObjectStore ||
         representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
         return WebInspector.ResourcesTabContentView;
+
+    if (representedObject instanceof WebInspector.Recording)
+        return WebInspector.RecordingTabContentView;
 
     return null;
 };

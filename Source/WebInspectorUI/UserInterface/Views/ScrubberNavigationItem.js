@@ -23,20 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.canvas {
-    background-color: hsl(0, 0%, 90%);
-}
+WebInspector.ScrubberNavigationItem = class ScrubberNavigationItem extends WebInspector.FlexibleSpaceNavigationItem
+{
+    constructor(identifier)
+    {
+        super(identifier);
 
-.content-view.canvas > .preview {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    padding: 15px;
-}
+        this._sliderElement = this._element.appendChild(document.createElement("input"));
+        this._sliderElement.type = "range";
+        this._sliderElement.addEventListener("input", this._sliderChanged.bind(this));
+    }
 
-.content-view.canvas > .preview > img {
-    max-width: 100%;
-    max-height: 100%;
-}
+    // Public
+
+    get value() { return parseInt(this._sliderElement.value); }
+    set value(value) { this._sliderElement.value = value; }
+
+    get min() { return parseInt(this._sliderElement.min); }
+    set min(min) { this._sliderElement.min = min; }
+
+    get max() { return parseInt(this._sliderElement.max); }
+    set max(max) { this._sliderElement.max = max; }
+
+    get disabled()
+    {
+        return this._sliderElement.disabled;
+    }
+
+    set disabled(flag)
+    {
+        this._sliderElement.disabled = !!flag;
+    }
+
+    // Protected
+
+    get additionalClassNames()
+    {
+        return super.additionalClassNames.concat(["scrubber"]);
+    }
+
+    // Private
+
+    _sliderChanged(event)
+    {
+        this.dispatchEventToListeners(WebInspector.ScrubberNavigationItem.Event.ValueChanged);
+    }
+};
+
+WebInspector.ScrubberNavigationItem.Event = {
+    ValueChanged: "slider-navigation-item-value-changed",
+};

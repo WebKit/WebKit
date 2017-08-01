@@ -161,6 +161,7 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         this.addSubview(this._navigationBar);
 
         this._createGeneralSettingsView();
+        this._createExperimentalSettingsView();
 
         WebInspector.notifications.addEventListener(WebInspector.Notification.DebugUIEnabledDidChange, this._updateDebugSettingsViewVisibility, this);
         this._updateDebugSettingsViewVisibility();
@@ -226,6 +227,42 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         this.addSettingsView(generalSettingsView);
     }
 
+    _createExperimentalSettingsView()
+    {
+        let experimentalSettingsView = new WebInspector.SettingsView("experimental", WebInspector.UIString("Experimental"));
+
+        if (window.CanvasAgent) {
+            experimentalSettingsView.addSetting(WebInspector.UIString("Canvas:"), WebInspector.settings.experimentalShowCanvasContextsInResources, WebInspector.UIString("Show Contexts in Resources Tab"));
+
+            experimentalSettingsView.addSeparator();
+        }
+
+        experimentalSettingsView.addSetting(WebInspector.UIString("Styles Panel:"), WebInspector.settings.experimentalSpreadsheetStyleEditor, WebInspector.UIString("Spreadsheet Style Editor"));
+
+        experimentalSettingsView.addSeparator();
+
+        let reloadInspectorButton = document.createElement("button");
+        reloadInspectorButton.textContent = WebInspector.UIString("Reload Web Inspector");
+        reloadInspectorButton.addEventListener("click", () => { window.location.reload(); });
+
+        let reloadInspectorContainerElement = experimentalSettingsView.addCenteredContainer(reloadInspectorButton, WebInspector.UIString("for changes to take effect"));
+        reloadInspectorContainerElement.classList.add("hidden");
+
+        function listenForChange(setting) {
+            let initialValue = setting.value;
+            setting.addEventListener(WebInspector.Setting.Event.Changed, () => {
+                reloadInspectorContainerElement.classList.toggle("hidden", initialValue === setting.value);
+            });
+        }
+
+        if (window.CanvasAgent)
+            listenForChange(WebInspector.settings.experimentalShowCanvasContextsInResources);
+
+        listenForChange(WebInspector.settings.experimentalSpreadsheetStyleEditor);
+
+        this.addSettingsView(experimentalSettingsView);
+    }
+
     _createDebugSettingsView()
     {
         if (this._debugSettingsView)
@@ -259,29 +296,6 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         let layoutDirectionEditor = this._debugSettingsView.addGroupWithCustomSetting(WebInspector.unlocalizedString("Layout Direction:"), WebInspector.SettingEditor.Type.Select, {values: layoutDirectionValues});
         layoutDirectionEditor.value = WebInspector.settings.layoutDirection.value;
         layoutDirectionEditor.addEventListener(WebInspector.SettingEditor.Event.ValueDidChange, () => { WebInspector.setLayoutDirection(layoutDirectionEditor.value); });
-
-        if (window.CanvasAgent) {
-            this._debugSettingsView.addSeparator();
-
-            this._debugSettingsView.addSetting(WebInspector.UIString("Canvas:"), WebInspector.settings.experimentalShowCanvasContextsInResources, WebInspector.UIString("Show Contexts in Resources Tab"));
-        }
-
-        this._debugSettingsView.addSeparator();
-        this._debugSettingsView.addSetting(WebInspector.unlocalizedString("Styles Panel:"), WebInspector.settings.experimentalSpreadsheetStyleEditor, WebInspector.unlocalizedString("Spreadsheet Style Editor"));
-
-        this._debugSettingsView.addSeparator();
-
-        let reloadInspectorButton = document.createElement("button");
-        reloadInspectorButton.textContent = WebInspector.unlocalizedString("Reload Web Inspector");
-        reloadInspectorButton.addEventListener("click", () => { window.location.reload(); });
-
-        let reloadInspectorContainerElement = this._debugSettingsView.addCenteredContainer(reloadInspectorButton, WebInspector.unlocalizedString("for changes to take effect"));
-        reloadInspectorContainerElement.classList.add("hidden");
-
-        let experimentalSpreadsheetStyleEditorInitialValue = WebInspector.settings.experimentalSpreadsheetStyleEditor.value;
-        WebInspector.settings.experimentalSpreadsheetStyleEditor.addEventListener(WebInspector.Setting.Event.Changed, () => {
-            reloadInspectorContainerElement.classList.toggle("hidden", experimentalSpreadsheetStyleEditorInitialValue === WebInspector.settings.experimentalSpreadsheetStyleEditor.value);
-        });
 
         this.addSettingsView(this._debugSettingsView);
     }

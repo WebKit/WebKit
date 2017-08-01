@@ -194,6 +194,14 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         });
     }
 
+    toggleRecording(flag, singleFrame, callback)
+    {
+        if (flag)
+            CanvasAgent.requestRecording(this._identifier, singleFrame, callback);
+        else
+            CanvasAgent.cancelRecording(this._identifier, callback);
+    }
+
     saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.Canvas.FrameURLCookieKey] = this._frame.url.hash;

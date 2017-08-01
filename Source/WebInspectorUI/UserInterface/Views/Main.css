@@ -368,7 +368,7 @@ body[dir=rtl] .go-to-arrow {
     }
 }
 
-img.show-grid {
+:matches(img, canvas).show-grid {
     background-image: linear-gradient(315deg, transparent 75%, hsl(0, 0%, 95%) 75%),
                       linear-gradient(45deg, transparent 75%, hsl(0, 0%, 95%) 75%),
                       linear-gradient(315deg, hsl(0, 0%, 95%) 25%, transparent 25%),

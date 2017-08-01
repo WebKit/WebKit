@@ -177,7 +177,9 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
     {
         if (!this._navigationSidebarPanelConstructor)
             return null;
-        return WebInspector.instanceForClass(this._navigationSidebarPanelConstructor);
+        if (!this._navigationSidebarPanel)
+            this._navigationSidebarPanel = WebInspector.instanceForClass(this._navigationSidebarPanelConstructor);
+        return this._navigationSidebarPanel;
     }
 
     get navigationSidebarCollapsedSetting() { return this._navigationSidebarCollapsedSetting; }

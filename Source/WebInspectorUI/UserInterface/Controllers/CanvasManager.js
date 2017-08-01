@@ -106,6 +106,8 @@ WebInspector.CanvasManager = class CanvasManager extends WebInspector.Object
             return;
 
         let recording = WebInspector.Recording.fromPayload(recordingPayload);
+        recording.source = canvas;
+
         this.dispatchEventToListeners(WebInspector.CanvasManager.Event.RecordingFinished, {canvas, recording});
     }
 

@@ -25,7 +25,7 @@
 
 WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 {
-    constructor(element, delegate, disableBackForward, disableFindBanner)
+    constructor(element, delegate, disableBackForward, disableFindBanner, flexibleNavigationItem)
     {
         super(element);
 
@@ -79,8 +79,8 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
         this._contentViewSelectionPathNavigationItem = new WebInspector.HierarchicalPathNavigationItem;
 
-        this._dividingFlexibleSpaceNavigationItem = new WebInspector.FlexibleSpaceNavigationItem;
-        this._navigationBar.addNavigationItem(this._dividingFlexibleSpaceNavigationItem);
+        this._flexibleNavigationItem = flexibleNavigationItem || new WebInspector.FlexibleSpaceNavigationItem;
+        this._navigationBar.addNavigationItem(this._flexibleNavigationItem);
 
         WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
         WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
@@ -392,7 +392,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         this._removeAllNavigationItems();
 
         let navigationBar = this.navigationBar;
-        let insertionIndex = navigationBar.navigationItems.indexOf(this._dividingFlexibleSpaceNavigationItem) + 1;
+        let insertionIndex = navigationBar.navigationItems.indexOf(this._flexibleNavigationItem) + 1;
         console.assert(insertionIndex >= 0);
 
         // Keep track of items we'll be adding to the navigation bar.

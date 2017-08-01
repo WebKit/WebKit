@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.navigation-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-
-    border-bottom: 1px solid var(--border-color);
-
-    height: var(--navigation-bar-height);
-
-    white-space: nowrap;
-    overflow: hidden;
-
-    outline: none;
+.sidebar > .panel.details.recording-state > .content > .data-grid {
+    min-height: 100%;
 }
 
-.navigation-bar .item {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
+.sidebar > .panel.details.recording-state > .content > .data-grid tr.modified {
+    background-color: var(--value-changed-highlight);
+}
 
-    height: auto;
-    outline: none;
+.sidebar > .panel.details.recording-state > .content > .data-grid tr:not(.selected).non-standard {
+    opacity: 0.5;
+}
+
+.sidebar > .panel.details.recording-state > .content > .data-grid tr:not(.selected) .unavailable {
+    color: grey;
 }

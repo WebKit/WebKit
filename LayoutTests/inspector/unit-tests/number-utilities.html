@@ -113,6 +113,22 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "Number.countDigits",
+        test() {
+            InspectorTest.expectEqual(Number.countDigits(0), 1, "0 should have 1 digit");
+            InspectorTest.expectEqual(Number.countDigits(-0), 1, "-0 should have 1 digit");
+            for (let i = 1; i < 10; ++i) {
+                let digits = i + 1;
+                let num = 10 ** i;
+                InspectorTest.expectEqual(Number.countDigits(num), digits, `${num} should have ${digits} digits`);
+                InspectorTest.expectEqual(Number.countDigits(-num), digits, `${-num} should have ${digits} digits`);
+            }
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

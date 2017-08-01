@@ -25,14 +25,14 @@
 
 WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WebInspector.TabContentView
 {
-    constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors, disableBackForward)
+    constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors, disableBackForward, flexibleNavigationItem)
     {
         if (typeof styleClassNames === "string")
             styleClassNames = [styleClassNames];
 
         styleClassNames.push("content-browser");
 
-        var contentBrowser = new WebInspector.ContentBrowser(null, null, disableBackForward);
+        var contentBrowser = new WebInspector.ContentBrowser(null, null, disableBackForward, false, flexibleNavigationItem);
 
         super(identifier, styleClassNames, tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors);
 

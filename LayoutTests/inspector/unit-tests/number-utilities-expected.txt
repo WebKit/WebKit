@@ -63,3 +63,25 @@ PASS: padding of 2 with one decimal should add no zeros
 PASS: padding of 3 with one decimal should add no zeros
 PASS: padding of 4 with one decimal should add one zero
 
+-- Running test case: Number.countDigits
+PASS: 0 should have 1 digit
+PASS: -0 should have 1 digit
+PASS: 10 should have 2 digits
+PASS: -10 should have 2 digits
+PASS: 100 should have 3 digits
+PASS: -100 should have 3 digits
+PASS: 1000 should have 4 digits
+PASS: -1000 should have 4 digits
+PASS: 10000 should have 5 digits
+PASS: -10000 should have 5 digits
+PASS: 100000 should have 6 digits
+PASS: -100000 should have 6 digits
+PASS: 1000000 should have 7 digits
+PASS: -1000000 should have 7 digits
+PASS: 10000000 should have 8 digits
+PASS: -10000000 should have 8 digits
+PASS: 100000000 should have 9 digits
+PASS: -100000000 should have 9 digits
+PASS: 1000000000 should have 10 digits
+PASS: -1000000000 should have 10 digits
+

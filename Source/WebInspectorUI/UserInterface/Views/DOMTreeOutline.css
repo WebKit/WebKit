@@ -289,7 +289,7 @@ body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
 }
 
 @keyframes node-state-changed {
-    from { background-color: hsla(83, 100%, 48%, 0.4); }
+    from { background-color: var(--value-changed-highlight); }
 }
 
 .node-state-changed {

@@ -1,0 +1,142 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.sidebar > .panel.navigation.recording > :matches(.content, .empty-content-placeholder) {
+    top: var(--navigation-bar-height);
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline {
+    min-height: 100%;
+    background: var(--transparent-stripe-background-gradient);
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline > .item.parent:not(.action, .selected).expanded {
+    background-color: white;
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline .item.action:not(.initial-state)::before {
+    position: relative;
+    top: 3px;
+    content: attr(data-index);
+    font-family: Menlo, monospace;
+    text-align: end;
+}
+
+body[dir=ltr] .sidebar > .panel.navigation.recording > .content > .tree-outline .item.action:not(.initial-state)::before {
+    float: left;
+    margin-right: var(--tree-outline-icon-margin-end);
+    margin-left: 0;
+}
+
+body[dir=rtl] .sidebar > .panel.navigation.recording > .content > .tree-outline .item.action:not(.initial-state)::before {
+    float: right;
+    margin-right: 0;
+    margin-left: var(--tree-outline-icon-margin-end);
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="2"] .item.action:not(.initial-state)::before {
+    min-width: 1.2em;
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="3"] .item.action:not(.initial-state)::before {
+    min-width: 1.9em;
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="4"] .item.action:not(.initial-state)::before {
+    min-width: 3.1em;
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="5"] .item.action:not(.initial-state)::before {
+    min-width: 3.7em;
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="6"] .item.action:not(.initial-state)::before {
+    min-width: 4.2em;
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="7"] .item.action:not(.initial-state)::before {
+    min-width: 5.4em;
+}
+
+.sidebar > .panel.navigation.recording > .content .action > .icon {
+    content: url("../Images/Source.svg");
+}
+
+.sidebar > .panel.navigation.recording > .content .action.function > .icon {
+    content: url(../Images/Function.svg);
+}
+
+.sidebar > .panel.navigation.recording > .content .action.attribute.getter > .icon {
+    content: url(../Images/Eye.svg);
+}
+
+.sidebar > .panel.navigation.recording > .content .tree-outline:matches(:focus, .force-focus) .action.attribute.getter.selected > .icon {
+    filter: invert();
+}
+
+.sidebar > .panel.navigation.recording > .content .action.attribute.boolean > .icon {
+    content: url(../Images/TypeBoolean.svg);
+}
+
+.sidebar > .panel.navigation.recording > .content .action.attribute.number > .icon {
+    content: url(../Images/TypeNumber.svg);
+}
+
+.sidebar > .panel.navigation.recording > .content .action.attribute.object > .icon {
+    content: url(../Images/TypeObject.svg);
+}
+
+.sidebar > .panel.navigation.recording > .content .action.attribute.string > .icon {
+    content: url(../Images/TypeString.svg);
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline > .item.parent:not(.action) > .icon {
+    content: url(../Images/RenderingFrame.svg);
+}
+
+.sidebar > .panel.navigation.recording > .content .action:matches(.invalid, .missing) > .icon {
+    filter: grayscale();
+}
+
+body[dir=ltr] .sidebar > .panel.navigation.recording > .content .action:not(.initial-state) > .icon {
+    margin-left: 0;
+}
+
+body[dir=rtl] .sidebar > .panel.navigation.recording > .content .action:not(.initial-state) > .icon {
+    margin-right: 0;
+}
+
+.sidebar > .panel.navigation.recording > .content .action.visual:not(.selected, .invalid) {
+    background-color: var(--value-visual-highlight);
+}
+
+.sidebar > .panel.navigation.recording > .content .action:not(.selected, .initial-state) > .titles .parameter.swizzled {
+    color: grey;
+}
+
+.sidebar > .panel.navigation.recording > .content .action.invalid:not(.selected, .initial-state) > .titles .name,
+.sidebar > .panel.navigation.recording > .content .action.missing:not(.selected, .initial-state) > .titles .parameter.swizzled.missing {
+    color: red;
+}

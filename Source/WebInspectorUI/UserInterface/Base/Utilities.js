@@ -1128,6 +1128,18 @@ Object.defineProperty(Number, "zeroPad",
     },
 });
 
+Object.defineProperty(Number, "countDigits",
+{
+    value(num)
+    {
+        if (num === 0)
+            return 1;
+
+        num = Math.abs(num);
+        return Math.floor(Math.log(num) * Math.LOG10E) + 1;
+    }
+});
+
 Object.defineProperty(Number.prototype, "maxDecimals",
 {
     value(decimals)

@@ -37,6 +37,13 @@ WebInspector.CanvasContentView = class CanvasContentView extends WebInspector.Co
         this._previewImageElement = null;
         this._errorElement = null;
 
+        if (representedObject.contextType === WebInspector.Canvas.ContextType.Canvas2D) {
+            const toolTip = WebInspector.UIString("Request recording of actions. Shift-click to record a single frame.");
+            const altToolTip = WebInspector.UIString("Cancel recording");
+            this._recordButtonNavigationItem = new WebInspector.ToggleButtonNavigationItem("canvas-record", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
+            this._recordButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleRecording, this);
+        }
+
         this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("canvas-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._showPreview, this);
 
@@ -49,7 +56,17 @@ WebInspector.CanvasContentView = class CanvasContentView extends WebInspector.Co
 
     get navigationItems()
     {
-        return [this._refreshButtonNavigationItem, this._showGridButtonNavigationItem];
+        let navigationItems = [this._refreshButtonNavigationItem, this._showGridButtonNavigationItem];
+        if (this._recordButtonNavigationItem)
+            navigationItems.unshift(this._recordButtonNavigationItem);
+        return navigationItems;
+    }
+
+    initialLayout()
+    {
+        super.initialLayout();
+
+        WebInspector.canvasManager.addEventListener(WebInspector.CanvasManager.Event.RecordingFinished, this._recordingFinished, this);
     }
 
     shown()
@@ -68,7 +85,36 @@ WebInspector.CanvasContentView = class CanvasContentView extends WebInspector.Co
         super.hidden();
     }
 
+    closed()
+    {
+        WebInspector.canvasManager.removeEventListener(null, null, this);
+
+        super.closed();
+    }
+
     // Private
+
+    _toggleRecording(event)
+    {
+        let toggled = this._recordButtonNavigationItem.toggled;
+        let singleFrame = event.data.nativeEvent.shiftKey;
+        this.representedObject.toggleRecording(!toggled, singleFrame, (error) => {
+            console.assert(!error);
+
+            this._recordButtonNavigationItem.toggled = !toggled;
+        });
+    }
+
+    _recordingFinished(event)
+    {
+        if (event.data.canvas !== this.representedObject)
+            return;
+
+        if (this._recordButtonNavigationItem)
+            this._recordButtonNavigationItem.toggled = false;
+
+        WebInspector.showRepresentedObject(event.data.recording);
+    }
 
     _showPreview()
     {

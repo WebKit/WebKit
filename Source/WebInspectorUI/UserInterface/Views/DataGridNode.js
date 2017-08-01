@@ -25,7 +25,7 @@
 
 WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
 {
-    constructor(data, hasChildren)
+    constructor(data, hasChildren, classNames)
     {
         super();
 
@@ -42,6 +42,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         this.previousSibling = null;
         this.nextSibling = null;
         this.disclosureToggleWidth = 10;
+        this._classNames = classNames || [];
     }
 
     get hidden()
@@ -100,6 +101,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
             this._element.classList.add("revealed");
         if (this._hidden)
             this._element.classList.add("hidden");
+        this._element.classList.add(...this._classNames);
 
         this.createCells();
         return this._element;

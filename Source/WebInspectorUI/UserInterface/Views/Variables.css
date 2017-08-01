@@ -61,6 +61,9 @@
     --text-color-gray-medium: hsl(0, 0%, 50%);
     --error-text-color: hsl(0, 86%, 47%);
 
+    --value-changed-highlight: hsla(83, 100%, 48%, 0.4);
+    --value-visual-highlight: hsla(60, 100%, 50%, 0.4);
+
     --breakpoint-fill-color: hsl(212, 45%, 54%);
     --breakpoint-stroke-color: hsl(212, 45%, 48%);
     --breakpoint-disabled-fill-color: hsl(212, 40%, 84%);
@@ -91,6 +94,7 @@
 
     --even-zebra-stripe-row-background-color: white;
     --odd-zebra-stripe-row-background-color: hsl(0, 0%, 95%);
+    --transparent-stripe-background-gradient: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03)) top left / 100% 40px;
 
     --toolbar-height: 36px;
     --tab-bar-height: 24px;

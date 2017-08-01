@@ -1,3 +1,224 @@
+2017-08-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create Recording tab for displaying recordings
+        https://bugs.webkit.org/show_bug.cgi?id=174484
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WebInspector.CanvasManager.prototype.recordingFinished):
+        * UserInterface/Models/Canvas.js:
+        (WebInspector.Canvas.prototype.toggleRecording):
+
+        * UserInterface/Models/Recording.js:
+        (WebInspector.Recording):
+        (WebInspector.Recording.synthesizeError):
+        (WebInspector.Recording.prototype.get actions):
+        (WebInspector.Recording.prototype.get source):
+        (WebInspector.Recording.prototype.set source):
+        (WebInspector.Recording.prototype.swizzle):
+
+        * UserInterface/Models/RecordingAction.js:
+        (WebInspector.RecordingAction):
+        (WebInspector.RecordingAction.isFunctionForType):
+        (WebInspector.RecordingAction.get name):
+        (WebInspector.RecordingAction.get parameters):
+        (WebInspector.RecordingAction.prototype.get valid):
+        (WebInspector.RecordingAction.prototype.set valid):
+        (WebInspector.RecordingAction.get isFunction):
+        (WebInspector.RecordingAction.get isGetter):
+        (WebInspector.RecordingAction.get isVisual):
+        (WebInspector.RecordingAction.get stateModifiers):
+        (WebInspector.RecordingAction.prototype.swizzle):
+        (WebInspector.RecordingAction.prototype.parameterSwizzleTypeForTypeAtIndex):
+
+        * UserInterface/Models/RecordingInitialStateAction.js: Added.
+        (WebInspector.RecordingInitialStateAction):
+
+        * UserInterface/Views/RecordingTabContentView.js: Added.
+        (WebInspector.RecordingTabContentView):
+        (WebInspector.RecordingTabContentView.tabInfo):
+        (WebInspector.RecordingTabContentView.prototype.get type):
+        (WebInspector.RecordingTabContentView.prototype.canShowRepresentedObject):
+        (WebInspector.RecordingTabContentView.prototype.showRepresentedObject):
+        (WebInspector.RecordingTabContentView.prototype.restoreStateFromCookie):
+        (WebInspector.RecordingTabContentView.prototype.saveStateToCookie):
+        (WebInspector.RecordingTabContentView.prototype.closed):
+        (WebInspector.RecordingTabContentView.prototype._updateActionIndex):
+        (WebInspector.RecordingTabContentView.prototype._scrubberNavigationItemValueChanged):
+        (WebInspector.RecordingTabContentView.prototype._navigationSidebarImport):
+        (WebInspector.RecordingTabContentView.prototype._navigationSidebarTreeOutlineSelectionChanged):
+
+        * UserInterface/Views/RecordingContentView.js: Added.
+        (WebInspector.RecordingContentView):
+        (WebInspector.RecordingContentView.prototype.get navigationItems):
+        (WebInspector.RecordingContentView.prototype.updateActionIndex):
+        (WebInspector.RecordingContentView.prototype.shown):
+        (WebInspector.RecordingContentView.prototype.get supplementalRepresentedObjects):
+        (WebInspector.RecordingContentView.prototype._generateContentCanvas2D):
+        (WebInspector.RecordingContentView.prototype._applyAction):
+        (WebInspector.RecordingContentView.prototype._updateImageGrid):
+        (WebInspector.RecordingContentView.prototype._showGridButtonClicked):
+        * UserInterface/Views/RecordingContentView.css: Copied from Source/WebInspectorUI/UserInterface/Views/CanvasContentView.css.
+        (.content-view:not(.tab).recording):
+        (.content-view:not(.tab).recording > .preview-container):
+        (.content-view:not(.tab).recording canvas):
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js: Added.
+        (WebInspector.RecordingNavigationSidebarPanel):
+        (WebInspector.RecordingNavigationSidebarPanel.disallowInstanceForClass):
+        (WebInspector.RecordingNavigationSidebarPanel.prototype.set recording):
+        (WebInspector.RecordingNavigationSidebarPanel.prototype.updateActionIndex):
+        (WebInspector.RecordingNavigationSidebarPanel.prototype.initialLayout):
+        (WebInspector.RecordingNavigationSidebarPanel.prototype._importNavigationItemClicked):
+        (WebInspector.RecordingNavigationSidebarPanel.prototype._exportNavigationItemClicked):
+        * UserInterface/Views/RecordingNavigationSidebarPanel.css: Added.
+        (.sidebar > .panel.navigation.recording > :matches(.content, .empty-content-placeholder)):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline > .item.parent:not(.action, .selected).expanded):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline .item.action:not(.initial-state)::before):
+        (body[dir=ltr] .sidebar > .panel.navigation.recording > .content > .tree-outline .item.action:not(.initial-state)::before):
+        (body[dir=rtl] .sidebar > .panel.navigation.recording > .content > .tree-outline .item.action:not(.initial-state)::before):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="2"] .item.action:not(.initial-state)::before):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="3"] .item.action:not(.initial-state)::before):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="4"] .item.action:not(.initial-state)::before):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="5"] .item.action:not(.initial-state)::before):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="6"] .item.action:not(.initial-state)::before):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="7"] .item.action:not(.initial-state)::before):
+        (.sidebar > .panel.navigation.recording > .content .action > .icon):
+        (.sidebar > .panel.navigation.recording > .content .action.function > .icon):
+        (.sidebar > .panel.navigation.recording > .content .action.attribute.getter > .icon):
+        (.sidebar > .panel.navigation.recording > .content .tree-outline:matches(:focus, .force-focus) .action.attribute.getter.selected > .icon):
+        (.sidebar > .panel.navigation.recording > .content .action.attribute.boolean > .icon):
+        (.sidebar > .panel.navigation.recording > .content .action.attribute.number > .icon):
+        (.sidebar > .panel.navigation.recording > .content .action.attribute.object > .icon):
+        (.sidebar > .panel.navigation.recording > .content .action.attribute.string > .icon):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline > .item.parent:not(.action) > .icon):
+        (.sidebar > .panel.navigation.recording > .content .action:matches(.invalid, .missing) > .icon):
+        (body[dir=ltr] .sidebar > .panel.navigation.recording > .content .action:not(.initial-state) > .icon):
+        (body[dir=rtl] .sidebar > .panel.navigation.recording > .content .action:not(.initial-state) > .icon):
+        (.sidebar > .panel.navigation.recording > .content .action.visual:not(.selected, .invalid)):
+        (.sidebar > .panel.navigation.recording > .content .action:not(.selected, .initial-state) > .titles .parameter.swizzled):
+        (.sidebar > .panel.navigation.recording > .content .action.invalid:not(.selected, .initial-state) > .titles .name,):
+
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js: Added.
+        (WebInspector.RecordingStateDetailsSidebarPanel):
+        (WebInspector.RecordingStateDetailsSidebarPanel.disallowInstanceForClass):
+        (WebInspector.RecordingStateDetailsSidebarPanel.prototype.inspect):
+        (WebInspector.RecordingStateDetailsSidebarPanel.prototype.set recording):
+        (WebInspector.RecordingStateDetailsSidebarPanel.prototype.updateActionIndex):
+        (WebInspector.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D):
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.css: Added.
+        (.sidebar > .panel.details.recording-state > .content > .data-grid):
+        (.sidebar > .panel.details.recording-state > .content > .data-grid tr.modified):
+        (.sidebar > .panel.details.recording-state > .content > .data-grid tr:not(.selected).non-standard):
+        (.sidebar > .panel.details.recording-state > .content > .data-grid tr:not(.selected) .unavailable):
+
+        * UserInterface/Views/RecordingActionTreeElement.js: Added.
+        (WebInspector.RecordingActionTreeElement):
+        (WebInspector.RecordingActionTreeElement._generateDOM):
+        (WebInspector.RecordingActionTreeElement.prototype.get index):
+        (WebInspector.RecordingActionTreeElement.get filterableData):
+        (WebInspector.RecordingActionTreeElement.prototype.get filterableData):
+        (WebInspector.RecordingActionTreeElement.prototype.onattach):
+        (WebInspector.RecordingActionTreeElement.prototype.populateContextMenu):
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector.instanceForClass):
+
+        * UserInterface/Base/FileUtilites.js: Added.
+        (WebInspector.saveDataToFile): Moved from UserInterface/Base/Main.js
+        (WebInspector.loadDataFromFile):
+
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WebInspector.ButtonNavigationItem.prototype._mouseClicked):
+        Send the native event as part of the data.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WebInspector.CanvasContentView):
+        (WebInspector.CanvasContentView.prototype.get navigationItems):
+        (WebInspector.CanvasContentView.prototype.initialLayout):
+        (WebInspector.CanvasContentView.prototype.closed):
+        (WebInspector.CanvasContentView.prototype._toggleRecording):
+        (WebInspector.CanvasContentView.prototype._recordingFinished):
+        * UserInterface/Views/CanvasContentView.css:
+        (.content-view.canvas):
+
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.inspect):
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser):
+        (WebInspector.ContentBrowser.prototype._updateContentViewNavigationItems):
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView):
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/Views/ScrubberNavigationItem.js: Added.
+        (WebInspector.ScrubberNavigationItem):
+        (WebInspector.ScrubberNavigationItem.prototype.get value):
+        (WebInspector.ScrubberNavigationItem.prototype.set value):
+        (WebInspector.ScrubberNavigationItem.prototype.get min):
+        (WebInspector.ScrubberNavigationItem.prototype.set min):
+        (WebInspector.ScrubberNavigationItem.prototype.get max):
+        (WebInspector.ScrubberNavigationItem.prototype.set max):
+        (WebInspector.ScrubberNavigationItem.prototype.set disabled):
+        (WebInspector.ScrubberNavigationItem.prototype.get additionalClassNames):
+        (WebInspector.ScrubberNavigationItem.prototype._sliderChanged):
+        * UserInterface/Views/ScrubberNavigationItem.css: Added.
+        (.navigation-bar .item.scrubber):
+        (.navigation-bar .item.scrubber > input):
+        (.navigation-bar .item.scrubber > input[disabled]):
+        Allow the flexible space to be replaced with a navigation item at construction.
+
+        * UserInterface/Views/DataGridNode.js:
+        (WebInspector.DataGridNode):
+        (WebInspector.DataGridNode.prototype.get element):
+        Allow a list of CSS classes to be added to the node's element.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView.prototype.initialLayout):
+        (WebInspector.SettingsTabContentView.prototype._createExperimentalSettingsView.listenForChange):
+        (WebInspector.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        (WebInspector.SettingsTabContentView.prototype._createDebugSettingsView):
+        Move experimental settings to their own panel.
+
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView.prototype.get navigationSidebarPanel):
+        Save the NavigationSidebarPanel after it's constructed.
+
+        * UserInterface/Base/Utilities.js:
+        (Number.countDigits):
+
+        * UserInterface/Images/Recording.svg: Added.
+        * UserInterface/Images/RenderingFrame.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/TimelineRecordRenderingFrame.svg.
+        * UserInterface/Images/gtk/RenderingFrame.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/gtk/TimelineRecordRenderingFrame.svg.
+        * UserInterface/Views/TimelineIcons.css:
+        (.rendering-frame-record .icon):
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (@keyframes node-state-changed):
+        * UserInterface/Views/Main.css:
+        (:matches(img, canvas).show-grid):
+        (img.show-grid): Deleted.
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar):
+        * UserInterface/Views/NetworkSidebarPanel.css:
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content > .tree-outline):
+        * UserInterface/Views/TimelineTabContentView.css:
+        (.timeline.tab.content-view .navigation-bar > .item.radio):
+        * UserInterface/Views/TimelineView.css:
+        (.panel.navigation.timeline.timeline-recording-content-view-showing > .content > .tree-outline):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Create CSS variables for the DOM modification flash color and the color striping.
+
 2017-07-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Cleanup unused/invalid parameters for TreeElements

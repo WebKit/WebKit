@@ -92,8 +92,7 @@
 }
 
 .sidebar > .panel.navigation.network.network-grid-content-view-showing > .content > .tree-outline {
-    background-image: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03));
-    background-size: 100% 40px;
+    background: var(--transparent-stripe-background-gradient);
 }
 
 .sidebar > .panel.navigation.network .tree-outline > .preserved:not(.selected) > :not(.status) {

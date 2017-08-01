@@ -42,6 +42,8 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
         if (!(objects instanceof Array))
             objects = [objects];
 
+        objects = objects.map((object) => object instanceof WebInspector.Recording ? object.source : object);
+
         this.canvas = objects.find((object) => object instanceof WebInspector.Canvas);
 
         return !!this._canvas;

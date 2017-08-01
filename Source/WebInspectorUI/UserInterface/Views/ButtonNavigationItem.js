@@ -128,7 +128,7 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
     {
         if (!this.enabled)
             return;
-        this.dispatchEventToListeners(WebInspector.ButtonNavigationItem.Event.Clicked);
+        this.dispatchEventToListeners(WebInspector.ButtonNavigationItem.Event.Clicked, {nativeEvent: event});
     }
 };
 

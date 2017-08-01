@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.navigation-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-
-    border-bottom: 1px solid var(--border-color);
-
-    height: var(--navigation-bar-height);
-
-    white-space: nowrap;
-    overflow: hidden;
-
-    outline: none;
+.navigation-bar .item.scrubber {
+    padding: 0 4px;
 }
 
-.navigation-bar .item {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-
-    height: auto;
-    outline: none;
+.navigation-bar .item.scrubber > input {
+    width: 100%;
 }
+
+.navigation-bar .item.scrubber > input[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+} 

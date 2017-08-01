@@ -158,6 +158,9 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         if (representedObject instanceof WebInspector.HeapSnapshotProxy || representedObject instanceof WebInspector.HeapSnapshotDiffProxy)
             return new WebInspector.HeapSnapshotClusterContentView(representedObject, extraArguments);
 
+        if (representedObject instanceof WebInspector.Recording)
+            return new WebInspector.RecordingContentView(representedObject, extraArguments);
+
         if (representedObject instanceof WebInspector.Collection)
             return new WebInspector.CollectionContentView(representedObject, extraArguments);
 
@@ -279,6 +282,8 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         if (representedObject instanceof WebInspector.CallingContextTree)
             return true;
         if (representedObject instanceof WebInspector.HeapSnapshotProxy || representedObject instanceof WebInspector.HeapSnapshotDiffProxy)
+            return true;
+        if (representedObject instanceof WebInspector.Recording)
             return true;
         if (representedObject instanceof WebInspector.Collection)
             return true;
