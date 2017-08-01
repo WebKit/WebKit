@@ -4,8 +4,6 @@ set_property(DIRECTORY . PROPERTY FOLDER "WebKit2")
 
 set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}"
-    "${WEBKIT2_DIR}/DatabaseProcess"
-    "${WEBKIT2_DIR}/DatabaseProcess/IndexedDB"
     "${WEBKIT2_DIR}/NetworkProcess"
     "${WEBKIT2_DIR}/NetworkProcess/CustomProtocols"
     "${WEBKIT2_DIR}/NetworkProcess/Downloads"
@@ -28,7 +26,10 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/Plugins"
     "${WEBKIT2_DIR}/Shared/Plugins/Netscape"
     "${WEBKIT2_DIR}/Shared/Plugins/Netscape/x11"
+    "${WEBKIT2_DIR}/Shared/Storage"
     "${WEBKIT2_DIR}/Shared/WebsiteData"
+    "${WEBKIT2_DIR}/StorageProcess"
+    "${WEBKIT2_DIR}/StorageProcess/IndexedDB"
     "${WEBKIT2_DIR}/UIProcess"
     "${WEBKIT2_DIR}/UIProcess/API"
     "${WEBKIT2_DIR}/UIProcess/API/C"
@@ -36,7 +37,6 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/ApplePay"
     "${WEBKIT2_DIR}/UIProcess/Authentication"
     "${WEBKIT2_DIR}/UIProcess/Automation"
-    "${WEBKIT2_DIR}/UIProcess/Databases"
     "${WEBKIT2_DIR}/UIProcess/Downloads"
     "${WEBKIT2_DIR}/UIProcess/Gamepad"
     "${WEBKIT2_DIR}/UIProcess/Launcher"
@@ -44,6 +44,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/Network/CustomProtocols"
     "${WEBKIT2_DIR}/UIProcess/Notifications"
     "${WEBKIT2_DIR}/UIProcess/Plugins"
+    "${WEBKIT2_DIR}/UIProcess/Storage"
     "${WEBKIT2_DIR}/UIProcess/UserContent"
     "${WEBKIT2_DIR}/UIProcess/WebStorage"
     "${WEBKIT2_DIR}/UIProcess/WebsiteData"
@@ -73,6 +74,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/Plugins"
     "${WEBKIT2_DIR}/WebProcess/Plugins/Netscape"
     "${WEBKIT2_DIR}/WebProcess/ResourceCache"
+    "${WEBKIT2_DIR}/WebProcess/Storage"
     "${WEBKIT2_DIR}/WebProcess/UserContent"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport"
     "${WEBKIT2_DIR}/WebProcess/WebPage"
@@ -96,11 +98,6 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
 endif ()
 
 set(WebKit2_SOURCES
-    DatabaseProcess/DatabaseProcess.cpp
-    DatabaseProcess/DatabaseToWebProcessConnection.cpp
-
-    DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp
-
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
 
     NetworkProcess/Downloads/BlobDownloadClient.cpp
@@ -254,8 +251,6 @@ set(WebKit2_SOURCES
 
     Shared/Authentication/AuthenticationManager.cpp
 
-    Shared/Databases/DatabaseProcessCreationParameters.cpp
-
     Shared/Databases/IndexedDB/IDBUtilities.cpp
     Shared/Databases/IndexedDB/WebIDBResult.cpp
 
@@ -272,8 +267,14 @@ set(WebKit2_SOURCES
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
     Shared/Plugins/Netscape/PluginInformation.cpp
 
+    Shared/Storage/StorageProcessCreationParameters.cpp
+
     Shared/WebsiteData/WebsiteData.cpp
 
+    StorageProcess/StorageProcess.cpp
+    StorageProcess/StorageToWebProcessConnection.cpp
+
+    StorageProcess/IndexedDB/WebIDBConnectionToClient.cpp
     UIProcess/BackgroundProcessResponsivenessTimer.cpp
     UIProcess/ChildProcessProxy.cpp
     UIProcess/DrawingAreaProxy.cpp
@@ -405,8 +406,6 @@ set(WebKit2_SOURCES
 
     UIProcess/Automation/WebAutomationSession.cpp
 
-    UIProcess/Databases/DatabaseProcessProxy.cpp
-
     UIProcess/Downloads/DownloadProxy.cpp
     UIProcess/Downloads/DownloadProxyMap.cpp
 
@@ -430,6 +429,8 @@ set(WebKit2_SOURCES
     UIProcess/Plugins/PluginProcessManager.cpp
     UIProcess/Plugins/PluginProcessProxy.cpp
 
+    UIProcess/Storage/StorageProcessProxy.cpp
+
     UIProcess/UserContent/WebScriptMessageHandler.cpp
     UIProcess/UserContent/WebUserContentControllerProxy.cpp
 
@@ -447,7 +448,6 @@ set(WebKit2_SOURCES
     WebProcess/Cookies/WebCookieManager.cpp
 
     WebProcess/Databases/WebDatabaseProvider.cpp
-    WebProcess/Databases/WebToDatabaseProcessConnection.cpp
 
     WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp
 
@@ -527,6 +527,8 @@ set(WebKit2_SOURCES
     WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
 
+    WebProcess/Storage/WebToStorageProcessConnection.cpp
+
     WebProcess/UserContent/WebUserContentController.cpp
 
     WebProcess/WebCoreSupport/SessionStateConversion.cpp
@@ -579,11 +581,6 @@ set(WebKit2_SOURCES
 )
 
 set(WebKit2_MESSAGES_IN_FILES
-    DatabaseProcess/DatabaseProcess.messages.in
-    DatabaseProcess/DatabaseToWebProcessConnection.messages.in
-
-    DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in
-
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 
     NetworkProcess/NetworkConnectionToWebProcess.messages.in
@@ -606,6 +603,11 @@ set(WebKit2_MESSAGES_IN_FILES
 
     Shared/Plugins/NPObjectMessageReceiver.messages.in
 
+    StorageProcess/StorageProcess.messages.in
+    StorageProcess/StorageToWebProcessConnection.messages.in
+
+    StorageProcess/IndexedDB/WebIDBConnectionToClient.messages.in
+
     UIProcess/DrawingAreaProxy.messages.in
     UIProcess/RemoteWebInspectorProxy.messages.in
     UIProcess/VisitedLinkStore.messages.in
@@ -621,8 +623,6 @@ set(WebKit2_MESSAGES_IN_FILES
 
     UIProcess/Automation/WebAutomationSession.messages.in
 
-    UIProcess/Databases/DatabaseProcessProxy.messages.in
-
     UIProcess/Downloads/DownloadProxy.messages.in
 
     UIProcess/Network/NetworkProcessProxy.messages.in
@@ -630,6 +630,8 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 
     UIProcess/Plugins/PluginProcessProxy.messages.in
+
+    UIProcess/Storage/StorageProcessProxy.messages.in
 
     UIProcess/UserContent/WebUserContentControllerProxy.messages.in
 

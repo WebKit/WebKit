@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextSupplement_h
-#define WebContextSupplement_h
+#import "config.h"
+
+#if PLATFORM(IOS)
+
+#import "StorageProcess.h"
+
+#import "SandboxInitializationParameters.h"
+#import <WebCore/FileSystem.h>
+#import <WebCore/LocalizedStrings.h>
+#import <WebCore/NotImplemented.h>
+#import <WebKitSystemInterface.h>
+
+using namespace WebCore;
+
+#define ENABLE_MANUAL_DATABASE_SANDBOXING 0
 
 namespace WebKit {
 
-class NetworkProcessProxy;
-class StorageProcessProxy;
-class WebProcessPool;
-class WebProcessProxy;
+void StorageProcess::initializeProcess(const ChildProcessInitializationParameters&)
+{
+}
 
-class WebContextSupplement {
-public:
-    WebContextSupplement(WebProcessPool* processPool)
-        : m_processPool(processPool)
-    {
-    }
+void StorageProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
+{
+}
 
-    virtual ~WebContextSupplement()
-    {
-    }
-
-    virtual void processPoolDestroyed()
-    {
-    }
-
-    virtual void processDidClose(WebProcessProxy*)
-    {
-    }
-
-    virtual void processDidClose(NetworkProcessProxy*)
-    {
-    }
-
-    virtual void processDidClose(StorageProcessProxy*)
-    {
-    }
-
-    WebProcessPool* processPool() const { return m_processPool; }
-    void clearProcessPool() { m_processPool = nullptr; }
-
-    void ref() { refWebContextSupplement(); }
-    void deref() { derefWebContextSupplement(); }
-
-private:
-    virtual void refWebContextSupplement() = 0;
-    virtual void derefWebContextSupplement() = 0;
-
-    WebProcessPool* m_processPool;
-};
+void StorageProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
+{
+#if ENABLE_MANUAL_DATABASE_SANDBOXING
+    // Need to override the default, because service has a different bundle ID.
+    NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
+    sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.Databases" ofType:@"sb"]);
+    ChildProcess::initializeSandbox(parameters, sandboxParameters);
+#endif
+}
 
 } // namespace WebKit
 
-#endif // WebContextSupplement_h
+#endif // PLATFORM(IOS)

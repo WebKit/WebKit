@@ -2,7 +2,7 @@ set(WebKit2_OUTPUT_NAME webkit2gtk-${WEBKITGTK_API_VERSION})
 set(WebKit2_WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(WebKit2_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
 set(WebKit2_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
-set(WebKit2_StorageProcess_OUTPUT_NAME WebKitDatabaseProcess)
+set(WebKit2_StorageProcess_OUTPUT_NAME WebKitStorageProcess)
 
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WEBKIT2GTK_DIR})
@@ -25,8 +25,6 @@ add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}")
 set(WebKit2_USE_PREFIX_HEADER ON)
 
 list(APPEND WebKit2_SOURCES
-    DatabaseProcess/gtk/DatabaseProcessMainGtk.cpp
-
     NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp
 
     NetworkProcess/cache/NetworkCacheCodersSoup.cpp
@@ -100,6 +98,8 @@ list(APPEND WebKit2_SOURCES
     Shared/soup/WebErrorsSoup.cpp
 
     Shared/unix/ChildProcessMain.cpp
+
+    StorageProcess/gtk/StorageProcessMainGtk.cpp
 
     UIProcess/AcceleratedDrawingAreaProxy.cpp
     UIProcess/BackingStore.cpp
@@ -758,7 +758,6 @@ list(INSERT WebKit2_INCLUDE_DIRECTORIES 0
 
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/PluginProcess/unix"
-    "${WEBKIT2_DIR}/DatabaseProcess/unix"
     "${WEBKIT2_DIR}/NetworkProcess/CustomProtocols/soup"
     "${WEBKIT2_DIR}/NetworkProcess/Downloads/soup"
     "${WEBKIT2_DIR}/NetworkProcess/gtk"
@@ -777,6 +776,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/linux"
     "${WEBKIT2_DIR}/Shared/soup"
     "${WEBKIT2_DIR}/Shared/unix"
+    "${WEBKIT2_DIR}/StorageProcess/unix"
     "${WEBKIT2_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT2_DIR}/UIProcess/API/C/gtk"
     "${WEBKIT2_DIR}/UIProcess/API/glib"
@@ -837,7 +837,7 @@ list(APPEND NetworkProcess_SOURCES
 )
 
 list(APPEND StorageProcess_SOURCES
-    DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp
+    StorageProcess/EntryPoint/unix/StorageProcessMain.cpp
 )
 
 set(SharedWebKit2Libraries

@@ -1,3 +1,68 @@
+2017-08-01  Brady Eidson  <beidson@apple.com>
+
+        Part 1 of: Rename DatabaseProcess to StorageProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=174879
+
+        Reviewed by Andy Estes.
+
+        This patch is all about renaming source files and renaming the process itself (touching build system files, etc etc).
+
+        Some renaming in actual code did result (Some class/struct names, method names, etc)
+
+        Part 2 (174880) will go through and update all references in code itself from "Database" to "Storage"
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWPE.cmake:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * Configurations/StorageService.xcconfig: Renamed from Source/WebKit/Configurations/DatabaseService.xcconfig.
+        * StorageProcess/EntryPoint/mac/XPCService/StorageService/Info.plist: Renamed from Source/WebKit/DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService/Info.plist.
+        * StorageProcess/mac/com.apple.WebKit.Databases.sb.in: Renamed from Source/WebKit/DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in.
+
+        * Shared/Storage/StorageProcessCreationParameters.cpp: Renamed from Source/WebKit/Shared/Databases/DatabaseProcessCreationParameters.cpp.
+        * Shared/Storage/StorageProcessCreationParameters.h: Renamed from Source/WebKit/Shared/Databases/DatabaseProcessCreationParameters.h.
+
+        * StorageProcess/EntryPoint/mac/XPCService/StorageServiceEntryPoint.mm: Renamed from Source/WebKit/DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm.
+        * StorageProcess/EntryPoint/unix/StorageProcessMain.cpp: Renamed from Source/WebKit/DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp.
+
+        * StorageProcess/IndexedDB/WebIDBConnectionToClient.cpp: Renamed from Source/WebKit/DatabaseProcess/IndexedDB/WebIDBConnectionToClient.cpp.
+        * StorageProcess/IndexedDB/WebIDBConnectionToClient.h: Renamed from Source/WebKit/DatabaseProcess/IndexedDB/WebIDBConnectionToClient.h.
+        * StorageProcess/IndexedDB/WebIDBConnectionToClient.messages.in: Renamed from Source/WebKit/DatabaseProcess/IndexedDB/WebIDBConnectionToClient.messages.in.
+
+        * StorageProcess/StorageProcess.cpp: Renamed from Source/WebKit/DatabaseProcess/DatabaseProcess.cpp.
+        * StorageProcess/StorageProcess.h: Renamed from Source/WebKit/DatabaseProcess/DatabaseProcess.h.
+        * StorageProcess/StorageProcess.messages.in: Renamed from Source/WebKit/DatabaseProcess/DatabaseProcess.messages.in.
+
+        * StorageProcess/StorageToWebProcessConnection.cpp: Renamed from Source/WebKit/DatabaseProcess/DatabaseToWebProcessConnection.cpp.
+        * StorageProcess/StorageToWebProcessConnection.h: Renamed from Source/WebKit/DatabaseProcess/DatabaseToWebProcessConnection.h.
+        * StorageProcess/StorageToWebProcessConnection.messages.in: Renamed from Source/WebKit/DatabaseProcess/DatabaseToWebProcessConnection.messages.in.
+
+        * StorageProcess/gtk/StorageProcessMainGtk.cpp: Renamed from Source/WebKit/DatabaseProcess/gtk/DatabaseProcessMainGtk.cpp.
+        * StorageProcess/ios/StorageProcessIOS.mm: Renamed from Source/WebKit/DatabaseProcess/ios/DatabaseProcessIOS.mm.
+        * StorageProcess/mac/StorageProcessMac.mm: Renamed from Source/WebKit/DatabaseProcess/mac/DatabaseProcessMac.mm.
+        * StorageProcess/unix/StorageProcessMainUnix.h: Renamed from Source/WebKit/DatabaseProcess/unix/DatabaseProcessMainUnix.h.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+
+        * UIProcess/Storage/StorageProcessProxy.cpp: Renamed from Source/WebKit/UIProcess/Databases/DatabaseProcessProxy.cpp.
+        * UIProcess/Storage/StorageProcessProxy.h: Renamed from Source/WebKit/UIProcess/Databases/DatabaseProcessProxy.h.
+        * UIProcess/Storage/StorageProcessProxy.messages.in: Renamed from Source/WebKit/UIProcess/Databases/DatabaseProcessProxy.messages.in.
+
+        * UIProcess/WebContextSupplement.h:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp: Renamed from Source/WebKit/WebProcess/Databases/WebToDatabaseProcessConnection.cpp.
+        * WebProcess/Storage/WebToStorageProcessConnection.h: Renamed from Source/WebKit/WebProcess/Databases/WebToDatabaseProcessConnection.h.
+
+        * WebProcess/WebProcess.cpp:
+
 2017-08-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] WebKitFS.cmake depends on options set in Option cmake files that are included later

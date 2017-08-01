@@ -1,3 +1,13 @@
+2017-08-01  Brady Eidson  <beidson@apple.com>
+
+        Part 1 of: Rename DatabaseProcess to StorageProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=174879
+
+        Reviewed by Andy Estes.
+
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/gtksymbols.filter:
+
 2017-08-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] WebKitFS.cmake depends on options set in Option cmake files that are included later

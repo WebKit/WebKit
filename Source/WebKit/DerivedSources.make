@@ -22,9 +22,6 @@
 
 VPATH = \
     $(WebKit2) \
-    $(WebKit2)/DatabaseProcess \
-    $(WebKit2)/DatabaseProcess/IndexedDB \
-    $(WebKit2)/DatabaseProcess/mac \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/CustomProtocols \
     $(WebKit2)/NetworkProcess/mac \
@@ -36,6 +33,9 @@ VPATH = \
     $(WebKit2)/Shared/API/Cocoa \
     $(WebKit2)/Shared/Authentication \
     $(WebKit2)/Shared/mac \
+    $(WebKit2)/StorageProcess \
+    $(WebKit2)/StorageProcess/IndexedDB \
+    $(WebKit2)/StorageProcess/mac \
     $(WebKit2)/WebProcess/ApplePay \
     $(WebKit2)/WebProcess/ApplicationCache \
     $(WebKit2)/WebProcess/Automation \
@@ -72,6 +72,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Network/CustomProtocols \
     $(WebKit2)/UIProcess/Notifications \
     $(WebKit2)/UIProcess/Plugins \
+    $(WebKit2)/UIProcess/Storage \
     $(WebKit2)/UIProcess/UserContent \
     $(WebKit2)/UIProcess/WebStorage \
     $(WebKit2)/UIProcess/mac \
@@ -91,9 +92,6 @@ endif
 MESSAGE_RECEIVERS = \
     AuthenticationManager \
     ChildProcess \
-    DatabaseProcess \
-    DatabaseProcessProxy \
-    DatabaseToWebProcessConnection \
     DownloadProxy \
     DrawingArea \
     DrawingAreaProxy \
@@ -125,6 +123,9 @@ MESSAGE_RECEIVERS = \
     SmartMagnificationController \
     StorageAreaMap \
     StorageManager \
+    StorageProcess \
+    StorageProcessProxy \
+    StorageToWebProcessConnection \
     UserMediaCaptureManager \
     UserMediaCaptureManagerProxy \
     ViewGestureController \

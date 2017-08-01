@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextSupplement_h
-#define WebContextSupplement_h
+#import "config.h"
 
-namespace WebKit {
+#import "EnvironmentUtilities.h"
+#import "StorageProcess.h"
+#import "WKBase.h"
+#import "XPCServiceEntryPoint.h"
 
-class NetworkProcessProxy;
-class StorageProcessProxy;
-class WebProcessPool;
-class WebProcessProxy;
+using namespace WebKit;
 
-class WebContextSupplement {
-public:
-    WebContextSupplement(WebProcessPool* processPool)
-        : m_processPool(processPool)
-    {
-    }
+extern "C" WK_EXPORT void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage);
 
-    virtual ~WebContextSupplement()
-    {
-    }
-
-    virtual void processPoolDestroyed()
-    {
-    }
-
-    virtual void processDidClose(WebProcessProxy*)
-    {
-    }
-
-    virtual void processDidClose(NetworkProcessProxy*)
-    {
-    }
-
-    virtual void processDidClose(StorageProcessProxy*)
-    {
-    }
-
-    WebProcessPool* processPool() const { return m_processPool; }
-    void clearProcessPool() { m_processPool = nullptr; }
-
-    void ref() { refWebContextSupplement(); }
-    void deref() { derefWebContextSupplement(); }
-
-private:
-    virtual void refWebContextSupplement() = 0;
-    virtual void derefWebContextSupplement() = 0;
-
-    WebProcessPool* m_processPool;
-};
-
-} // namespace WebKit
-
-#endif // WebContextSupplement_h
+void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
+{
+    XPCServiceInitializer<StorageProcess, XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
+}

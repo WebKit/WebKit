@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextSupplement_h
-#define WebContextSupplement_h
+#include "config.h"
+#include "StorageProcessCreationParameters.h"
+
+#include "ArgumentCoders.h"
 
 namespace WebKit {
 
-class NetworkProcessProxy;
-class StorageProcessProxy;
-class WebProcessPool;
-class WebProcessProxy;
+StorageProcessCreationParameters::StorageProcessCreationParameters()
+{
+}
 
-class WebContextSupplement {
-public:
-    WebContextSupplement(WebProcessPool* processPool)
-        : m_processPool(processPool)
-    {
-    }
+void StorageProcessCreationParameters::encode(IPC::Encoder& encoder) const
+{
+#if ENABLE(INDEXED_DATABASE)
+    encoder << sessionID;
+    encoder << indexedDatabaseDirectory;
+    encoder << indexedDatabaseDirectoryExtensionHandle;
+#endif
+}
 
-    virtual ~WebContextSupplement()
-    {
-    }
+bool StorageProcessCreationParameters::decode(IPC::Decoder& decoder, StorageProcessCreationParameters& result)
+{
+#if ENABLE(INDEXED_DATABASE)
+    if (!decoder.decode(result.sessionID))
+        return false;
+    if (!decoder.decode(result.indexedDatabaseDirectory))
+        return false;
+    if (!decoder.decode(result.indexedDatabaseDirectoryExtensionHandle))
+        return false;
+#endif
 
-    virtual void processPoolDestroyed()
-    {
-    }
-
-    virtual void processDidClose(WebProcessProxy*)
-    {
-    }
-
-    virtual void processDidClose(NetworkProcessProxy*)
-    {
-    }
-
-    virtual void processDidClose(StorageProcessProxy*)
-    {
-    }
-
-    WebProcessPool* processPool() const { return m_processPool; }
-    void clearProcessPool() { m_processPool = nullptr; }
-
-    void ref() { refWebContextSupplement(); }
-    void deref() { derefWebContextSupplement(); }
-
-private:
-    virtual void refWebContextSupplement() = 0;
-    virtual void derefWebContextSupplement() = 0;
-
-    WebProcessPool* m_processPool;
-};
+    return true;
+}
 
 } // namespace WebKit
-
-#endif // WebContextSupplement_h

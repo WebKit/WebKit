@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextSupplement_h
-#define WebContextSupplement_h
+#pragma once
+
+#include <WebKit/WKBase.h>
 
 namespace WebKit {
 
-class NetworkProcessProxy;
-class StorageProcessProxy;
-class WebProcessPool;
-class WebProcessProxy;
-
-class WebContextSupplement {
-public:
-    WebContextSupplement(WebProcessPool* processPool)
-        : m_processPool(processPool)
-    {
-    }
-
-    virtual ~WebContextSupplement()
-    {
-    }
-
-    virtual void processPoolDestroyed()
-    {
-    }
-
-    virtual void processDidClose(WebProcessProxy*)
-    {
-    }
-
-    virtual void processDidClose(NetworkProcessProxy*)
-    {
-    }
-
-    virtual void processDidClose(StorageProcessProxy*)
-    {
-    }
-
-    WebProcessPool* processPool() const { return m_processPool; }
-    void clearProcessPool() { m_processPool = nullptr; }
-
-    void ref() { refWebContextSupplement(); }
-    void deref() { derefWebContextSupplement(); }
-
-private:
-    virtual void refWebContextSupplement() = 0;
-    virtual void derefWebContextSupplement() = 0;
-
-    WebProcessPool* m_processPool;
-};
+extern "C" {
+WK_EXPORT int StorageProcessMainUnix(int argc, char** argv);
+}
 
 } // namespace WebKit
-
-#endif // WebContextSupplement_h

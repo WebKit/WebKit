@@ -35,8 +35,6 @@
 #include "APILegacyContextHistoryClient.h"
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
-#include "DatabaseProcessCreationParameters.h"
-#include "DatabaseProcessMessages.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "GamepadData.h"
@@ -49,6 +47,8 @@
 #include "PerActivityStateCPUUsageSampler.h"
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
+#include "StorageProcessCreationParameters.h"
+#include "StorageProcessMessages.h"
 #include "TextChecker.h"
 #include "UIGamepad.h"
 #include "UIGamepadProvider.h"
@@ -521,9 +521,9 @@ void WebProcessPool::ensureDatabaseProcessAndWebsiteDataStore(WebsiteDataStore* 
     // *********
 
     if (!m_databaseProcess) {
-        m_databaseProcess = DatabaseProcessProxy::create(this);
+        m_databaseProcess = StorageProcessProxy::create(this);
 
-        DatabaseProcessCreationParameters parameters;
+        StorageProcessCreationParameters parameters;
 #if ENABLE(INDEXED_DATABASE)
         ASSERT(!m_configuration->indexedDBDatabaseDirectory().isEmpty());
 
@@ -533,13 +533,13 @@ void WebProcessPool::ensureDatabaseProcessAndWebsiteDataStore(WebsiteDataStore* 
 #endif
 
         ASSERT(!parameters.indexedDatabaseDirectory.isEmpty());
-        m_databaseProcess->send(Messages::DatabaseProcess::InitializeWebsiteDataStore(parameters), 0);
+        m_databaseProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(parameters), 0);
     }
 
     if (!relevantDataStore || relevantDataStore == &websiteDataStore().websiteDataStore())
         return;
 
-    m_databaseProcess->send(Messages::DatabaseProcess::InitializeWebsiteDataStore(relevantDataStore->databaseProcessParameters()), 0);
+    m_databaseProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(relevantDataStore->databaseProcessParameters()), 0);
 }
 
 void WebProcessPool::getDatabaseProcessConnection(Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>&& reply)
@@ -549,7 +549,7 @@ void WebProcessPool::getDatabaseProcessConnection(Ref<Messages::WebProcessProxy:
     m_databaseProcess->getDatabaseProcessConnection(WTFMove(reply));
 }
 
-void WebProcessPool::databaseProcessCrashed(DatabaseProcessProxy* databaseProcessProxy)
+void WebProcessPool::databaseProcessCrashed(StorageProcessProxy* databaseProcessProxy)
 {
     ASSERT(m_databaseProcess);
     ASSERT(databaseProcessProxy == m_databaseProcess.get());
@@ -961,7 +961,7 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
 #if ENABLE(INDEXED_DATABASE)
         auto databaseParameters = page.websiteDataStore().databaseProcessParameters();
         if (!databaseParameters.indexedDatabaseDirectory.isEmpty())
-            sendToDatabaseProcessRelaunchingIfNecessary(Messages::DatabaseProcess::InitializeWebsiteDataStore(databaseParameters));
+            sendToDatabaseProcessRelaunchingIfNecessary(Messages::StorageProcess::InitializeWebsiteDataStore(databaseParameters));
 #endif
     }
 }
