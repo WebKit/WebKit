@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicString.h>
 
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
@@ -83,11 +84,9 @@
 namespace WebCore {
 namespace MediaFeatureNames {
 
-#ifndef CSS_MEDIAQUERY_NAMES_HIDE_GLOBALS
-#define CSS_MEDIAQUERY_NAMES_DECLARE(name, string) extern const AtomicString name;
+#define CSS_MEDIAQUERY_NAMES_DECLARE(name, string) extern LazyNeverDestroyed<const AtomicString> name;
     CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(CSS_MEDIAQUERY_NAMES_DECLARE)
 #undef CSS_MEDIAQUERY_NAMES_DECLARE
-#endif
 
     void init();
 

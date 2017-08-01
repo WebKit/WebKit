@@ -19,18 +19,12 @@
  */
 
 #include "config.h"
-
-#ifdef SKIP_STATIC_CONSTRUCTORS_ON_GCC
-#define CSS_MEDIAQUERY_NAMES_HIDE_GLOBALS 1
-#endif
-
 #include "MediaFeatureNames.h"
-#include <wtf/StaticConstructors.h>
 
 namespace WebCore {
 namespace MediaFeatureNames {
 
-#define DEFINE_MEDIAFEATURE_GLOBAL(name, string) DEFINE_GLOBAL(AtomicString, name)
+#define DEFINE_MEDIAFEATURE_GLOBAL(name, string) LazyNeverDestroyed<const AtomicString> name;
 CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(DEFINE_MEDIAFEATURE_GLOBAL)
 #undef DEFINE_MEDIAFEATURE_GLOBAL
 
@@ -38,9 +32,8 @@ void init()
 {
     static bool initialized;
     if (!initialized) {
-        // Use placement new to initialize the globals.
         AtomicString::init();
-#define INITIALIZE_GLOBAL(name, string) new (NotNull, (void*)&name) AtomicString(string, AtomicString::ConstructFromLiteral);
+#define INITIALIZE_GLOBAL(name, string) name.construct(string, AtomicString::ConstructFromLiteral);
         CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(INITIALIZE_GLOBAL)
 #undef INITIALIZE_GLOBAL
         initialized = true;

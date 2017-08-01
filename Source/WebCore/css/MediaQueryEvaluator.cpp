@@ -718,7 +718,7 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
 
     static NeverDestroyed<MediaQueryFunctionMap> map = [] {
         MediaQueryFunctionMap map;
-#define ADD_TO_FUNCTIONMAP(name, str) add(map, MediaFeatureNames::name.impl(), name##Evaluate);
+#define ADD_TO_FUNCTIONMAP(name, str) add(map, MediaFeatureNames::name->impl(), name##Evaluate);
         CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(ADD_TO_FUNCTIONMAP);
 #undef ADD_TO_FUNCTIONMAP
         return map;
