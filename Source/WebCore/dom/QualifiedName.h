@@ -21,7 +21,6 @@
 #pragma once
 
 #include <wtf/HashTraits.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -105,8 +104,10 @@ private:
     RefPtr<QualifiedNameImpl> m_impl;
 };
 
-extern LazyNeverDestroyed<const QualifiedName> anyName;
+#ifndef WEBCORE_QUALIFIEDNAME_HIDE_GLOBALS
+extern const QualifiedName anyName;
 inline const QualifiedName& anyQName() { return anyName; }
+#endif
 
 const QualifiedName& nullQName();
 
