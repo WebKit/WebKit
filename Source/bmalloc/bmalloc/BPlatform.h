@@ -42,6 +42,10 @@
 #define BOS_UNIX 1
 #endif
 
+#if defined(WIN32) || defined(_WIN32)
+#define BOS_WINDOWS 1
+#endif
+
 #if BOS(DARWIN) && ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) \
     || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE) \
     || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
