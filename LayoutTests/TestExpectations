@@ -1157,7 +1157,6 @@ webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/text-level-se
 webkit.org/b/169264 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-samedoc.html [ Failure ]
 
 imported/w3c/web-platform-tests/XMLHttpRequest/open-url-redirected-worker-origin.htm [ Failure Pass  ]
-imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-synconmain.html [ Failure ]
 imported/w3c/web-platform-tests/cssom/MediaList.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/007.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/joint_session_history/001.html [ Failure ]
