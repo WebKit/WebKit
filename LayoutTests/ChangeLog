@@ -1,3 +1,18 @@
+2017-08-01  Youenn Fablet  <youenn@apple.com>
+
+        Layout tests with 'https' suffix should be run over HTTPS
+        https://bugs.webkit.org/show_bug.cgi?id=174992
+
+        Reviewed by Chris Dumez.
+
+        Updating test to allow display insecure content as otherwise the test would not complete now that it is run over HTTPS.
+        Adding WK1 expected files as the warning message is not printed.
+
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/iframe-upgrade.https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/iframe-upgrade.https.html:
+        * platform/ios-wk1/http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/iframe-upgrade.https-expected.txt: Added.
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/iframe-upgrade.https-expected.txt: Added.
+
 2017-08-01  Matt Lewis  <jlewis3@apple.com>
 
         Marked imported/w3c/IndexedDB-private-browsing/idbfactory_open.html as flaky.

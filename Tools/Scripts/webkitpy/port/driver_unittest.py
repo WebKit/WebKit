@@ -118,7 +118,9 @@ class DriverTest(unittest.TestCase):
         self.assertEqual(driver.test_to_uri('http/tests/foo.html'), 'http://127.0.0.1:8000/foo.html')
         self.assertEqual(driver.test_to_uri('http/tests/ssl/bar.html'), 'https://127.0.0.1:8443/ssl/bar.html')
         self.assertEqual(driver.test_to_uri('imported/w3c/web-platform-tests/foo/bar.html'), 'http://localhost:8800/foo/bar.html')
+        self.assertEqual(driver.test_to_uri('imported/w3c/web-platform-tests/foo/bar.https.html'), 'https://localhost:9443/foo/bar.https.html')
         self.assertEqual(driver.test_to_uri('http/wpt/bar2.html'), 'http://localhost:8800/WebKit/bar2.html')
+        self.assertEqual(driver.test_to_uri('http/wpt/bar2.https.html'), 'https://localhost:9443/WebKit/bar2.https.html')
 
     def test_uri_to_test(self):
         port = self.make_port()
@@ -126,8 +128,10 @@ class DriverTest(unittest.TestCase):
         self.assertEqual(driver.uri_to_test('file://%s/foo/bar.html' % port.layout_tests_dir()), 'foo/bar.html')
         self.assertEqual(driver.uri_to_test('http://127.0.0.1:8000/foo.html'), 'http/tests/foo.html')
         self.assertEqual(driver.uri_to_test('https://127.0.0.1:8443/ssl/bar.html'), 'http/tests/ssl/bar.html')
+        self.assertEqual(driver.uri_to_test('https://127.0.0.1:8443/ssl/bar.https.html'), 'http/tests/ssl/bar.https.html')
         self.assertEqual(driver.uri_to_test('http://localhost:8800/foo/bar.html'), 'imported/w3c/web-platform-tests/foo/bar.html')
         self.assertEqual(driver.uri_to_test('http://localhost:8800/WebKit/bar2.html'), 'http/wpt/bar2.html')
+        self.assertEqual(driver.uri_to_test('https://localhost:9443/WebKit/bar2.https.html'), 'http/wpt/bar2.https.html')
 
     def test_read_block(self):
         port = TestWebKitPort()

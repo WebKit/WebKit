@@ -68,7 +68,7 @@ def run_server(options, args, stdout, stderr):
         return EXCEPTIONAL_EXIT_STATUS
 
     if options.web_platform_test_server:
-        print "Starting web-platform-tests server on <%s>" % web_platform_test_server.base_url(port)
+        print "Starting web-platform-tests server on <%s> and <%s>" % (web_platform_test_server.base_http_url(port), web_platform_test_server.base_https_url(port))
         port.start_web_platform_test_server()
 
     if options.httpd_server:

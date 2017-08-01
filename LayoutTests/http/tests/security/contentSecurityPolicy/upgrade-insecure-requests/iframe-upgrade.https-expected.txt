@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 1: The page at about:srcdoc was allowed to display insecure content from http://localhost:8000/security/resources/post-origin-to-parent.html.
+
 
 
 PASS Same-host frames are upgraded. 

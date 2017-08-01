@@ -167,7 +167,8 @@ class Driver(object):
             self._profiler = None
 
         self.web_platform_test_server_doc_root = self._port.web_platform_test_server_doc_root()
-        self.web_platform_test_server_base_url = self._port.web_platform_test_server_base_url()
+        self.web_platform_test_server_base_http_url = self._port.web_platform_test_server_base_http_url()
+        self.web_platform_test_server_base_https_url = self._port.web_platform_test_server_base_https_url()
 
     def __del__(self):
         self.stop()
@@ -266,22 +267,23 @@ class Driver(object):
     def is_web_platform_test(self, test_name):
         return test_name.startswith(self.web_platform_test_server_doc_root)
 
+    def wpt_test_path_to_uri(self, path):
+        return self.web_platform_test_server_base_https_url + path if ".https." in path else self.web_platform_test_server_base_http_url + path
+
+    def http_test_path_to_uri(self, path):
+        return "https://127.0.0.1:8443/" + path if path.startswith("ssl") or ".https." in path else "http://127.0.0.1:8000/" + path
+
     def test_to_uri(self, test_name):
         """Convert a test name to a URI."""
         if self.is_web_platform_test(test_name):
-            return self.web_platform_test_server_base_url + test_name[len(self.web_platform_test_server_doc_root):]
+            return self.wpt_test_path_to_uri(test_name[len(self.web_platform_test_server_doc_root):])
         if self.is_webkit_specific_web_platform_test(test_name):
-            return self.web_platform_test_server_base_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE + test_name[len(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR):]
+            return self.wpt_test_path_to_uri(self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE + test_name[len(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR):])
 
         if not self.is_http_test(test_name):
             return path.abspath_to_uri(self._port.host.platform, self._port.abspath_for_test(test_name))
 
-        relative_path = test_name[len(self.HTTP_DIR):]
-
-        # TODO(dpranke): remove the SSL reference?
-        if relative_path.startswith("ssl/"):
-            return "https://127.0.0.1:8443/" + relative_path
-        return "http://127.0.0.1:8000/" + relative_path
+        return self.http_test_path_to_uri(test_name[len(self.HTTP_DIR):])
 
     def uri_to_test(self, uri):
         """Return the base layout test name for a given URI.
@@ -296,10 +298,14 @@ class Driver(object):
             if not prefix.endswith('/'):
                 prefix += '/'
             return uri[len(prefix):]
-        if uri.startswith(self.web_platform_test_server_base_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE):
-            return uri.replace(self.web_platform_test_server_base_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE, self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
-        if uri.startswith(self.web_platform_test_server_base_url):
-            return uri.replace(self.web_platform_test_server_base_url, self.web_platform_test_server_doc_root)
+        if uri.startswith(self.web_platform_test_server_base_http_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE):
+            return uri.replace(self.web_platform_test_server_base_http_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE, self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
+        if uri.startswith(self.web_platform_test_server_base_https_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE):
+            return uri.replace(self.web_platform_test_server_base_https_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE, self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
+        if uri.startswith(self.web_platform_test_server_base_http_url):
+            return uri.replace(self.web_platform_test_server_base_http_url, self.web_platform_test_server_doc_root)
+        if uri.startswith(self.web_platform_test_server_base_https_url):
+            return uri.replace(self.web_platform_test_server_base_https_url, self.web_platform_test_server_doc_root)
         if uri.startswith("http://"):
             return uri.replace('http://127.0.0.1:8000/', self.HTTP_DIR)
         if uri.startswith("https://"):

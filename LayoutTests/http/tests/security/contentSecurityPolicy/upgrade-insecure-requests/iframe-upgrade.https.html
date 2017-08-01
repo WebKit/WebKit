@@ -40,6 +40,10 @@ async_test(t => {
 }, "Cross-host frames are upgraded.");
 
 async_test(t => {
+    // WEBKIT change: updated the test to allow display of insecure content.
+    if (window.internals)
+        internals.settings.setAllowDisplayOfInsecureContent(true);
+
     var iframe = document.createElement('iframe');
     iframe.srcdoc = "<a href='HTTP://localhost:8000/security/resources/post-origin-to-parent.html'>Navigate!</a>" +
                "<script>document.querySelector('a').click()</scr" + "ipt>";
