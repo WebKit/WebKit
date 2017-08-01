@@ -28,7 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface HTMLTemplateElement : HTMLElement {
-    [Custom] readonly attribute DocumentFragment content;
+[
+    JSCustomMarkFunction,
+] interface HTMLTemplateElement : HTMLElement {
+    readonly attribute DocumentFragment content;
 };
-

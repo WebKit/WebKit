@@ -1,3 +1,18 @@
+2017-08-01  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Swap a custom attribute for a custom mark function for HTMLTemplateElement
+        https://bugs.webkit.org/show_bug.cgi?id=175006
+
+        Reviewed by Chris Dumez.
+
+        Use the standard way of augmenting GC, visitAdditionalChildren, rather
+        than using a private name to create ownership.
+
+        * bindings/js/JSHTMLTemplateElementCustom.cpp:
+        (WebCore::JSHTMLTemplateElement::visitAdditionalChildren):
+        (WebCore::JSHTMLTemplateElement::content const): Deleted.
+        * html/HTMLTemplateElement.idl:
+
 2017-08-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Gather crypto constants in a single location
