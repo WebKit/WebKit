@@ -1,3 +1,12 @@
+2017-08-01  Matt Lewis  <jlewis3@apple.com>
+
+        Marked imported/w3c/IndexedDB-private-browsing/idbfactory_open.html as flaky.
+        <rdar://problem/33555052>
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-08-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebCrypto] Add PKCS#8 import test that covers `parameters` and `publicKey` values in ECPrivateKey
