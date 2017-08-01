@@ -46,7 +46,7 @@ void WebContextClient::networkProcessDidCrash(WebProcessPool* processPool)
     m_client.networkProcessDidCrash(toAPI(processPool), m_client.base.clientInfo);
 }
 
-void WebContextClient::databaseProcessDidCrash(WebProcessPool* processPool)
+void WebContextClient::storageProcessDidCrash(WebProcessPool* processPool)
 {
     if (!m_client.databaseProcessDidCrash)
         return;

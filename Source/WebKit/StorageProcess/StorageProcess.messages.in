@@ -25,7 +25,7 @@ messages -> StorageProcess LegacyReceiver {
     InitializeWebsiteDataStore(struct WebKit::StorageProcessCreationParameters processCreationParameters)
 
     # Creates a connection for communication with a WebProcess
-    CreateDatabaseToWebProcessConnection()
+    CreateStorageToWebProcessConnection()
 
     FetchWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, uint64_t callbackID)
     DeleteWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)

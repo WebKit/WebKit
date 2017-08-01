@@ -86,7 +86,7 @@ class WebLoaderStrategy;
 class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
-class WebToDatabaseProcessConnection;
+class WebToStorageProcessConnection;
 enum class WebsiteDataType;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
@@ -164,8 +164,8 @@ public:
     LibWebRTCNetwork& libWebRTCNetwork();
 #endif
 
-    void webToDatabaseProcessConnectionClosed(WebToDatabaseProcessConnection*);
-    WebToDatabaseProcessConnection* webToDatabaseProcessConnection();
+    void webToStorageProcessConnectionClosed(WebToStorageProcessConnection*);
+    WebToStorageProcessConnection* webToStorageProcessConnection();
 
     void setCacheModel(uint32_t);
 
@@ -383,8 +383,8 @@ private:
 
     std::unique_ptr<WebAutomationSessionProxy> m_automationSessionProxy;
 
-    void ensureWebToDatabaseProcessConnection();
-    RefPtr<WebToDatabaseProcessConnection> m_webToDatabaseProcessConnection;
+    void ensureWebToStorageProcessConnection();
+    RefPtr<WebToStorageProcessConnection> m_webToStorageProcessConnection;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<PluginProcessConnectionManager> m_pluginProcessConnectionManager;

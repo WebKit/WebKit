@@ -1139,31 +1139,30 @@ WebLoaderStrategy& WebProcess::webLoaderStrategy()
     return m_webLoaderStrategy;
 }
 
-void WebProcess::webToDatabaseProcessConnectionClosed(WebToDatabaseProcessConnection* connection)
+void WebProcess::webToStorageProcessConnectionClosed(WebToStorageProcessConnection* connection)
 {
-    ASSERT(m_webToDatabaseProcessConnection);
-    ASSERT(m_webToDatabaseProcessConnection == connection);
+    ASSERT(m_webToStorageProcessConnection);
+    ASSERT(m_webToStorageProcessConnection == connection);
 
-    m_webToDatabaseProcessConnection = nullptr;
+    m_webToStorageProcessConnection = nullptr;
 }
 
-WebToDatabaseProcessConnection* WebProcess::webToDatabaseProcessConnection()
+WebToStorageProcessConnection* WebProcess::webToStorageProcessConnection()
 {
-    if (!m_webToDatabaseProcessConnection)
-        ensureWebToDatabaseProcessConnection();
+    if (!m_webToStorageProcessConnection)
+        ensureWebToStorageProcessConnection();
 
-    return m_webToDatabaseProcessConnection.get();
+    return m_webToStorageProcessConnection.get();
 }
 
-void WebProcess::ensureWebToDatabaseProcessConnection()
+void WebProcess::ensureWebToStorageProcessConnection()
 {
-    if (m_webToDatabaseProcessConnection)
+    if (m_webToStorageProcessConnection)
         return;
 
     IPC::Attachment encodedConnectionIdentifier;
 
-    if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetDatabaseProcessConnection(),
-        Messages::WebProcessProxy::GetDatabaseProcessConnection::Reply(encodedConnectionIdentifier), 0))
+    if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetStorageProcessConnection(), Messages::WebProcessProxy::GetStorageProcessConnection::Reply(encodedConnectionIdentifier), 0))
         return;
 
 #if USE(UNIX_DOMAIN_SOCKETS)
@@ -1175,7 +1174,7 @@ void WebProcess::ensureWebToDatabaseProcessConnection()
 #endif
     if (IPC::Connection::identifierIsNull(connectionIdentifier))
         return;
-    m_webToDatabaseProcessConnection = WebToDatabaseProcessConnection::create(connectionIdentifier);
+    m_webToStorageProcessConnection = WebToStorageProcessConnection::create(connectionIdentifier);
 }
 
 void WebProcess::setEnhancedAccessibility(bool flag)

@@ -433,10 +433,10 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
 
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
-            processPool->ensureDatabaseProcessAndWebsiteDataStore(this);
+            processPool->ensureStorageProcessAndWebsiteDataStore(this);
 
             callbackAggregator->addPendingCallback();
-            processPool->databaseProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator, processPool](WebsiteData websiteData) {
+            processPool->storageProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator, processPool](WebsiteData websiteData) {
                 callbackAggregator->removePendingCallback(WTFMove(websiteData));
             });
         }
@@ -727,10 +727,10 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
 
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
-            processPool->ensureDatabaseProcessAndWebsiteDataStore(this);
+            processPool->ensureStorageProcessAndWebsiteDataStore(this);
 
             callbackAggregator->addPendingCallback();
-            processPool->databaseProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator, processPool] {
+            processPool->storageProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator, processPool] {
                 callbackAggregator->removePendingCallback();
             });
         }
@@ -1004,10 +1004,10 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
     if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && isPersistent()) {
         for (auto& processPool : processPools()) {
-            processPool->ensureDatabaseProcessAndWebsiteDataStore(this);
+            processPool->ensureStorageProcessAndWebsiteDataStore(this);
 
             callbackAggregator->addPendingCallback();
-            processPool->databaseProcess()->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator, processPool] {
+            processPool->storageProcess()->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator, processPool] {
                 callbackAggregator->removePendingCallback();
             });
         }
@@ -1315,7 +1315,7 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
         processPool->setResourceLoadStatisticsEnabled(true);
 }
 
-StorageProcessCreationParameters WebsiteDataStore::databaseProcessParameters()
+StorageProcessCreationParameters WebsiteDataStore::storageProcessParameters()
 {
     resolveDirectoriesIfNecessary();
 

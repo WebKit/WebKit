@@ -35,17 +35,17 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebToDatabaseProcessConnection::WebToDatabaseProcessConnection(IPC::Connection::Identifier connectionIdentifier)
+WebToStorageProcessConnection::WebToStorageProcessConnection(IPC::Connection::Identifier connectionIdentifier)
     : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
 {
     m_connection->open();
 }
 
-WebToDatabaseProcessConnection::~WebToDatabaseProcessConnection()
+WebToStorageProcessConnection::~WebToStorageProcessConnection()
 {
 }
 
-void WebToDatabaseProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void WebToStorageProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
 #if ENABLE(INDEXED_DATABASE)
     if (decoder.messageReceiverName() == Messages::WebIDBConnectionToServer::messageReceiverName()) {
@@ -59,7 +59,7 @@ void WebToDatabaseProcessConnection::didReceiveMessage(IPC::Connection& connecti
     ASSERT_NOT_REACHED();
 }
 
-void WebToDatabaseProcessConnection::didClose(IPC::Connection& connection)
+void WebToStorageProcessConnection::didClose(IPC::Connection& connection)
 {
 #if ENABLE(INDEXED_DATABASE)
     for (auto& connection : m_webIDBConnectionsByIdentifier.values())
@@ -69,15 +69,15 @@ void WebToDatabaseProcessConnection::didClose(IPC::Connection& connection)
     m_webIDBConnectionsBySession.clear();
 #endif
 
-    WebProcess::singleton().webToDatabaseProcessConnectionClosed(this);
+    WebProcess::singleton().webToStorageProcessConnectionClosed(this);
 }
 
-void WebToDatabaseProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
+void WebToStorageProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
 }
 
 #if ENABLE(INDEXED_DATABASE)
-WebIDBConnectionToServer& WebToDatabaseProcessConnection::idbConnectionToServerForSession(const SessionID& sessionID)
+WebIDBConnectionToServer& WebToStorageProcessConnection::idbConnectionToServerForSession(const SessionID& sessionID)
 {
     auto result = m_webIDBConnectionsBySession.add(sessionID, nullptr);
     if (result.isNewEntry) {

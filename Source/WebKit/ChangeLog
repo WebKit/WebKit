@@ -1,5 +1,156 @@
 2017-08-01  Brady Eidson  <beidson@apple.com>
 
+        Part 2 of: Rename DatabaseProcess to StorageProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=174880
+
+        Reviewed by Andy Estes.
+
+        Rename some more variables, classes, etc. to reflect the change.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles):
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::grantSandboxExtensionsToStorageProcessForBlobs):
+        (WebKit::NetworkProcess::didGrantSandboxExtensionsToStorageProcessForBlobs):
+        (WebKit::NetworkProcess::grantSandboxExtensionsToDatabaseProcessForBlobs): Deleted.
+        (WebKit::NetworkProcess::didGrantSandboxExtensionsToDatabaseProcessForBlobs): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        * Shared/ProcessExecutablePath.h:
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        (WebKit::executablePathOfStorageProcess):
+        (WebKit::executablePathOfDatabaseProcess): Deleted.
+        * Shared/wpe/ProcessExecutablePathWPE.cpp:
+        (WebKit::executablePathOfStorageProcess):
+        (WebKit::executablePathOfDatabaseProcess): Deleted.
+
+        * StorageProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::putOrAdd):
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::initializeWebsiteDataStore):
+        (WebKit::StorageProcess::postStorageTask):
+        (WebKit::StorageProcess::performNextStorageTask):
+        (WebKit::StorageProcess::createStorageToWebProcessConnection):
+        (WebKit::StorageProcess::fetchWebsiteData):
+        (WebKit::StorageProcess::postDatabaseTask): Deleted.
+        (WebKit::StorageProcess::performNextDatabaseTask): Deleted.
+        (WebKit::StorageProcess::createDatabaseToWebProcessConnection): Deleted.
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * StorageProcess/mac/StorageProcessMac.mm:
+        (WebKit::StorageProcess::initializeProcessName):
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetDatabaseProcessIdentifier):
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _terminateStorageProcess]):
+        (-[WKProcessPool _storageProcessIdentifier]):
+        (-[WKProcessPool _terminateDatabaseProcess]): Deleted.
+        (-[WKProcessPool _databaseProcessIdentifier]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+        * UIProcess/Launcher/wpe/ProcessLauncherWPE.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::grantSandboxExtensionsToStorageProcessForBlobs):
+        (WebKit::NetworkProcessProxy::grantSandboxExtensionsToDatabaseProcessForBlobs): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::getLaunchOptions):
+        (WebKit::StorageProcessProxy::getStorageProcessConnection):
+        (WebKit::StorageProcessProxy::didClose):
+        (WebKit::StorageProcessProxy::didCreateStorageToWebProcessConnection):
+        (WebKit::StorageProcessProxy::didFinishLaunching):
+        (WebKit::StorageProcessProxy::getDatabaseProcessConnection): Deleted.
+        (WebKit::StorageProcessProxy::didCreateDatabaseToWebProcessConnection): Deleted.
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.messages.in:
+
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::storageProcessDidCrash):
+        (WebKit::WebContextClient::databaseProcessDidCrash): Deleted.
+        * UIProcess/WebContextClient.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore):
+        (WebKit::WebProcessPool::getStorageProcessConnection):
+        (WebKit::WebProcessPool::storageProcessCrashed):
+        (WebKit::WebProcessPool::pageAddedToProcess):
+        (WebKit::WebProcessPool::storageProcessIdentifier):
+        (WebKit::WebProcessPool::terminateStorageProcess):
+        (WebKit::WebProcessPool::ensureDatabaseProcessAndWebsiteDataStore): Deleted.
+        (WebKit::WebProcessPool::getDatabaseProcessConnection): Deleted.
+        (WebKit::WebProcessPool::databaseProcessCrashed): Deleted.
+        (WebKit::WebProcessPool::databaseProcessIdentifier): Deleted.
+        (WebKit::WebProcessPool::terminateDatabaseProcess): Deleted.
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToStorageProcessRelaunchingIfNecessary):
+        (WebKit::WebProcessPool::sendToDatabaseProcessRelaunchingIfNecessary): Deleted.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getStorageProcessConnection):
+        (WebKit::WebProcessProxy::getDatabaseProcessConnection): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::storageProcessParameters):
+        (WebKit::WebsiteDataStore::databaseProcessParameters): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::messageSenderConnection):
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        (WebKit::WebDatabaseProvider::idbConnectionToServerForSession):
+
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::WebToStorageProcessConnection):
+        (WebKit::WebToStorageProcessConnection::~WebToStorageProcessConnection):
+        (WebKit::WebToStorageProcessConnection::didReceiveMessage):
+        (WebKit::WebToStorageProcessConnection::didClose):
+        (WebKit::WebToStorageProcessConnection::didReceiveInvalidMessage):
+        (WebKit::WebToStorageProcessConnection::idbConnectionToServerForSession):
+        (WebKit::WebToDatabaseProcessConnection::WebToDatabaseProcessConnection): Deleted.
+        (WebKit::WebToDatabaseProcessConnection::~WebToDatabaseProcessConnection): Deleted.
+        (WebKit::WebToDatabaseProcessConnection::didReceiveMessage): Deleted.
+        (WebKit::WebToDatabaseProcessConnection::didClose): Deleted.
+        (WebKit::WebToDatabaseProcessConnection::didReceiveInvalidMessage): Deleted.
+        (WebKit::WebToDatabaseProcessConnection::idbConnectionToServerForSession): Deleted.
+        * WebProcess/Storage/WebToStorageProcessConnection.h:
+        (WebKit::WebToStorageProcessConnection::create):
+        (WebKit::WebToDatabaseProcessConnection::create): Deleted.
+        (WebKit::WebToDatabaseProcessConnection::connection): Deleted.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webToStorageProcessConnectionClosed):
+        (WebKit::WebProcess::webToStorageProcessConnection):
+        (WebKit::WebProcess::ensureWebToStorageProcessConnection):
+        (WebKit::WebProcess::webToDatabaseProcessConnectionClosed): Deleted.
+        (WebKit::WebProcess::webToDatabaseProcessConnection): Deleted.
+        (WebKit::WebProcess::ensureWebToDatabaseProcessConnection): Deleted.
+        * WebProcess/WebProcess.h:
+
+2017-08-01  Brady Eidson  <beidson@apple.com>
+
         Part 1 of: Rename DatabaseProcess to StorageProcess.
         https://bugs.webkit.org/show_bug.cgi?id=174879
 

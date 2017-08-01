@@ -52,7 +52,7 @@ public:
     void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void()>&& completionHandler);
     void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, WTF::Function<void()>&& completionHandler);
 
-    void getDatabaseProcessConnection(Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>&&);
+    void getStorageProcessConnection(Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
 
 private:
     StorageProcessProxy(WebProcessPool*);
@@ -69,7 +69,7 @@ private:
     void didReceiveStorageProcessProxyMessage(IPC::Connection&, IPC::Decoder&);
 
     // Message handlers
-    void didCreateDatabaseToWebProcessConnection(const IPC::Attachment&);
+    void didCreateStorageToWebProcessConnection(const IPC::Attachment&);
     void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
     void didDeleteWebsiteData(uint64_t callbackID);
     void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
@@ -83,7 +83,7 @@ private:
     WebProcessPool* m_processPool;
 
     unsigned m_numPendingConnectionRequests;
-    Deque<Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>> m_pendingConnectionReplies;
+    Deque<Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>> m_pendingConnectionReplies;
 
     HashMap<uint64_t, WTF::Function<void (WebsiteData)>> m_pendingFetchWebsiteDataCallbacks;
     HashMap<uint64_t, WTF::Function<void ()>> m_pendingDeleteWebsiteDataCallbacks;

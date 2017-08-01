@@ -121,7 +121,7 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     [[[webView configuration] processPool] _syncNetworkProcessCookies];
 
     // Forcibly shut down everything of WebKit that we can.
-    [[[webView configuration] processPool] _terminateDatabaseProcess];
+    [[[webView configuration] processPool] _terminateStorageProcess];
     auto pid = [webView _webProcessIdentifier];
     if (pid)
         kill(pid, SIGKILL);
@@ -159,7 +159,7 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
 
     // Data stores can't delete anything unless a WKProcessPool exists, so make sure the shared data store exists.
     auto *processPool = [WKProcessPool _sharedProcessPool];
-    [processPool _terminateDatabaseProcess];
+    [processPool _terminateStorageProcess];
     RetainPtr<WKWebsiteDataStore> dataStore = [[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()];
     RetainPtr<NSSet> types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
 
