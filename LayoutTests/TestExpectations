@@ -1398,5 +1398,3 @@ webkit.org/b/172609 fetch/closing-while-fetching-blob.html [ Skip ]
 webkit.org/b/172514 [ Debug ] imported/w3c/web-platform-tests/innerText/getter.html [ Skip ]
 
 webkit.org/b/173333 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Skip ]
-
-webkit.org/b/174988 http/tests/media/video-play-stall.html [ Skip ]

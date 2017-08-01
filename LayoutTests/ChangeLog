@@ -1,3 +1,18 @@
+2017-08-01  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r220052): http/tests/media/video-play-stall.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=174988
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Stop skipping this test.
+
+        * http/tests/media/video-play-stall.html: Use a 0-duration timeout to sidestep an
+        issue where the test runner never thinks the test is done because of the stalled
+        media loading, and times out. The behaviors here aren't great, but there is no
+        reason to think that this confused state has any effect on web browsing; just on
+        our test runners in a test that intentionally has a still loading video in it.
+
 2017-08-01  Ms2ger  <Ms2ger@igalia.com>
 
         Correct the line numbers in GTK's scheme-about.any-expected.txt.
