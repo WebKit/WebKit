@@ -1,3 +1,38 @@
+2017-08-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebCrypto] Add PKCS#8 import test that covers `parameters` and `publicKey` values in ECPrivateKey
+        https://bugs.webkit.org/show_bug.cgi?id=174420
+
+        Reviewed by Darin Adler.
+
+        Add test cases that cover testing of the optional ECParameters and publicKey bit string
+        attributes in the ECPrivateKey ASN.1 structure that's embedded in the PKCS#8 PrivateKeyInfo
+        ASN.1 structure.
+
+        Per the spec, if the ECParameters attribute in the ECPrivateKey structure is present, the
+        relevant curve object identifier should match the same curve identifier that's used in the
+        ECParameters attribute of the AlgorithmIdentifier structure in PrivateKeyInfo. Both of these
+        should of course match the curve that was specified for the import operation.
+
+        For the publicKey bit string, the data contained there should be properly formatted for
+        the specific curve, meaning it should be of proper curve-specific size and that it should
+        use 0x04 as the leading byte, signalling an uncompressed EC point. On top of that the public
+        key should have a valid value that positions it on the specified elliptic curve.
+
+        These cases are covered for PKCS#8 key imports for P-256 and P-384 curves and for both ECDH
+        and ECDSA algorithms in the newly-introduced tests. They are skipped on all platforms since
+        no implementation in WebKit can pass them yet.
+
+        * TestExpectations:
+        * crypto/subtle/ecdh-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey-expected.txt: Added.
+        * crypto/subtle/ecdh-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html: Added.
+        * crypto/subtle/ecdh-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey-expected.txt: Added.
+        * crypto/subtle/ecdh-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html: Added.
+        * crypto/subtle/ecdsa-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html: Added.
+        * crypto/subtle/ecdsa-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey-expected.txt: Added.
+        * crypto/subtle/ecdsa-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html: Added.
+
 2017-08-01  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Layout test fast/forms/content-with-margins-inside-button.html is failing

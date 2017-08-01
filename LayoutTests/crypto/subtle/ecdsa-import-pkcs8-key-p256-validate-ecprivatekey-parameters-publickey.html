@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test that importing P-256 EC keys for the ECDSA algorithm through PKCS#8 fails in case of incorrect curve identifier or public key used in the ECPrivateKey structure");
+
+jsTestIsAsync = true;
+
+// Valid P-256 key that has matching named curve identifiers in ECParameters structures under
+// both AlgorithmIdentifier parameters and under ECPrivateKey parameters in the PKCS#8 structure,
+// as well as a valid public key under ECPrivateKey.
+var pkcs8P256ValidKey = hexStringToUint8Array("308193020100301306072a8648ce3d020106082a8648ce3d0301070479307702010104203595fbf4dbf7ae788c5eae2f91c32a056dc2e8b37188edd50b2042bd767a97fba00a06082a8648ce3d030107a144034200040c6fc54db9cd81005b53fd7871b496712341531d1a2a0952b2f5ee192a560988563c3527d69bcf156c6eef098d3db3564ee77b6ecffb9f61486c8be7434fe4e2");
+
+// Invalid P-256 key that has mismatched named curve identifiers in the mentioned ECParameters structures.
+var pkcs8P256KeyMismatchedCurveIdentifiers = hexStringToUint8Array("308190020100301306072a8648ce3d020106082a8648ce3d0301070476307402010104203595fbf4dbf7ae788c5eae2f91c32a056dc2e8b37188edd50b2042bd767a97fba00706052b81040022a144034200040c6fc54db9cd81005b53fd7871b496712341531d1a2a0952b2f5ee192a560988563c3527d69bcf156c6eef098d3db3564ee77b6ecffb9f61486c8be7434fe4e2");
+
+// Invalid P-256 key that has a public key of invalid length (its last byte is clipped).
+var pkcs8P256KeyInvalidPublicKeyLength = hexStringToUint8Array("308186020100301306072a8648ce3d020106082a8648ce3d030107046c306a02010104203595fbf4dbf7ae788c5eae2f91c32a056dc2e8b37188edd50b2042bd767a97fba143034100040c6fc54db9cd81005b53fd7871b496712341531d1a2a0952b2f5ee192a560988563c3527d69bcf156c6eef098d3db3564ee77b6ecffb9f61486c8be7434fe4e2");
+
+// Invalid P-256 key that has a public key of invalid EC point format (leading 0x05 byte instead of 0x04).
+var pkcs8P256KeyInvalidPublicKeyECPointFormat= hexStringToUint8Array("308187020100301306072a8648ce3d020106082a8648ce3d030107046d306b02010104203595fbf4dbf7ae788c5eae2f91c32a056dc2e8b37188edd50b2042bd767a97fba144034200050c6fc54db9cd81005b53fd7871b496712341531d1a2a0952b2f5ee192a560988563c3527d69bcf156c6eef098d3db3564ee77b6ecffb9f61486c8be7434fe4e2");
+
+// Invalid P-256 key that has a public key of invalid value (0xabad1dea).
+var pkcs8P256KeyInvalidPublicKey = hexStringToUint8Array("308187020100301306072a8648ce3d020106082a8648ce3d030107046d306b02010104203595fbf4dbf7ae788c5eae2f91c32a056dc2e8b37188edd50b2042bd767a97fba14403420004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000abad1dea");
+
+function importKey(keyData)
+{
+    return crypto.subtle.importKey("pkcs8", keyData, { name: "ECDSA", namedCurve: "P-256" }, true, [ "sign" ]);
+}
+
+Promise.resolve().then(function(result) {
+    debug("ECDSA: importing P-256 key that uses matching curve identifiers and valid public key in ECParameters structures in PKCS#8 ...");
+    return importKey(pkcs8P256ValidKey);
+}).then(function(result) {
+    testPassed("Successfully imported a P-256 key.");
+
+    debug("ECDSA: importing P-256 key whose curve identifiers in ECParameters structures in PKCS#8 don't match ...");
+    return shouldReject('importKey(pkcs8P256KeyMismatchedCurveIdentifiers)');
+}).then(function(result) {
+    debug("ECDSA: importing P-256 key that has a public key in PKCS#8 of invalid length ...");
+    return shouldReject('importKey(pkcs8P256KeyInvalidPublicKeyLength)');
+}).then(function(result) {
+    debug("ECDSA: importing P-256 key that has a public key in PKCS#8 of invalid EC point format ...");
+    return shouldReject('importKey(pkcs8P256KeyInvalidPublicKeyECPointFormat)');
+}).then(function(result) {
+    debug("ECDSA: importing P-256 key that has an invalid public key in PKCS#8 ...");
+    return shouldReject('importKey(pkcs8P256KeyInvalidPublicKey)');
+}).then(function(result) {
+    finishJSTest();
+});;
+
+</script>
+
+</body>
+</html>

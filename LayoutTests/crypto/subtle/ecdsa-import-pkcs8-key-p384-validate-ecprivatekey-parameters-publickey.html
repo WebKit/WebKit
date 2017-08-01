@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test that importing P-384 EC keys for the ECDSA algorithm through PKCS#8 fails in case of incorrect curve identifier or public key used in the ECPrivateKey structure");
+
+jsTestIsAsync = true;
+
+// Valid P-384 key that has matching named curve identifiers in ECParameters structures under
+// both AlgorithmIdentifier parameters and under ECPrivateKey parameters in the PKCS#8 structure,
+// as well as a valid public key under ECPrivateKey.
+var pkcs8P384ValidKey = hexStringToUint8Array("3081bf020100301006072a8648ce3d020106052b810400220481a73081a402010104305710bb8ab960e7efc1d211febba928d7f895ebc804c4d49171b1f2e7fda2a4ae12be81035d5dfdc8320b739e3022eaaca00706052b81040022a16403620004e8dcc7339c61b04dbb28df9aa8944daf3fcb6cad7826190920e2898060d592266762ca8674bb283547d41fd5305e3c965cda6b7bfb9c297a30768f023fae7244300b206ccd8cf9ff491a21ec4cde5be93518bf4f20d0613c8da16151a75086d3");
+
+// Invalid P-384 key that has mismatched named curve identifiers in the mentioned ECParameters structures.
+var pkcs8P384KeyMismatchedCurveIdentifiers = hexStringToUint8Array("3081c2020100301006072a8648ce3d020106052b810400220481aa3081a702010104305710bb8ab960e7efc1d211febba928d7f895ebc804c4d49171b1f2e7fda2a4ae12be81035d5dfdc8320b739e3022eaaca00a06082a8648ce3d030107a16403620004e8dcc7339c61b04dbb28df9aa8944daf3fcb6cad7826190920e2898060d592266762ca8674bb283547d41fd5305e3c965cda6b7bfb9c297a30768f023fae7244300b206ccd8cf9ff491a21ec4cde5be93518bf4f20d0613c8da16151a75086d3");
+
+// Invalid P-384 key that has a public key of invalid length (its last byte is clipped).
+var pkcs8P384KeyInvalidPublicKeyLength = hexStringToUint8Array("3081b5020100301006072a8648ce3d020106052b8104002204819d30819a02010104305710bb8ab960e7efc1d211febba928d7f895ebc804c4d49171b1f2e7fda2a4ae12be81035d5dfdc8320b739e3022eaaca16303610004e8dcc7339c61b04dbb28df9aa8944daf3fcb6cad7826190920e2898060d592266762ca8674bb283547d41fd5305e3c965cda6b7bfb9c297a30768f023fae7244300b206ccd8cf9ff491a21ec4cde5be93518bf4f20d0613c8da16151a75086");
+
+// Invalid P-384 key that has a public key of invalid EC point format (leading 0x05 byte instead of 0x04).
+var pkcs8P384KeyInvalidPublicKeyECPointFormat = hexStringToUint8Array("3081b6020100301006072a8648ce3d020106052b8104002204819e30819b02010104305710bb8ab960e7efc1d211febba928d7f895ebc804c4d49171b1f2e7fda2a4ae12be81035d5dfdc8320b739e3022eaaca16403620005e8dcc7339c61b04dbb28df9aa8944daf3fcb6cad7826190920e2898060d592266762ca8674bb283547d41fd5305e3c965cda6b7bfb9c297a30768f023fae7244300b206ccd8cf9ff491a21ec4cde5be93518bf4f20d0613c8da16151a75086d3");
+
+// Invalid P-384 key that has a public key of invalid value (0xabad1dea).
+var pkcs8P384KeyInvalidPublicKey = hexStringToUint8Array("3081b6020100301006072a8648ce3d020106052b8104002204819e30819b02010104305710bb8ab960e7efc1d211febba928d7f895ebc804c4d49171b1f2e7fda2a4ae12be81035d5dfdc8320b739e3022eaaca164036200040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000abad1dea");
+
+function importKey(keyData, curve)
+{
+    return crypto.subtle.importKey("pkcs8", keyData, { name: "ECDSA", namedCurve: "P-384" }, true, [ "sign" ]);
+}
+
+Promise.resolve().then(function(result) {
+    debug("ECDSA: importing P-384 key that uses matching curve identifiers and valid public key in ECParameters structures in PKCS#8 ...");
+    return importKey(pkcs8P384ValidKey);
+}).then(function(result) {
+    testPassed("Successfully imported a P-384 key.");
+
+    debug("ECDSA: importing P-384 key whose curve identifiers in ECParameters structures in PKCS#8 don't match ...");
+    return shouldReject('importKey(pkcs8P384KeyMismatchedCurveIdentifiers)');
+}).then(function(result) {
+    debug("ECDSA: importing P-384 key that has a public key in PKCS#8 of invalid length ...");
+    return shouldReject('importKey(pkcs8P384KeyInvalidPublicKeyLength)');
+}).then(function(result) {
+    debug("ECDSA: importing P-384 key that has a public key in PKCS#8 of invalid EC point format ...");
+    return shouldReject('importKey(pkcs8P384KeyInvalidPublicKeyECPointFormat)');
+}).then(function(result) {
+    debug("ECDSA: importing P-384 key that has an invalid public key in PKCS#8 ...");
+    return shouldReject('importKey(pkcs8P384KeyInvalidPublicKey)');
+}).then(function(result) {
+    finishJSTest();
+});;
+
+</script>
+
+</body>
+</html>

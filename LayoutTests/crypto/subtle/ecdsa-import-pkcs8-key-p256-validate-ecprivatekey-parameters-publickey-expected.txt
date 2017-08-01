@@ -1,0 +1,19 @@
+Test that importing P-256 EC keys for the ECDSA algorithm through PKCS#8 fails in case of incorrect curve identifier or public key used in the ECPrivateKey structure
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+ECDSA: importing P-256 key that uses matching curve identifiers and valid public key in ECParameters structures in PKCS#8 ...
+PASS Successfully imported a P-256 key.
+ECDSA: importing P-256 key whose curve identifiers in ECParameters structures in PKCS#8 don't match ...
+PASS importKey(pkcs8P256KeyMismatchedCurveIdentifiers) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+ECDSA: importing P-256 key that has a public key in PKCS#8 of invalid length ...
+PASS importKey(pkcs8P256KeyInvalidPublicKeyLength) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+ECDSA: importing P-256 key that has a public key in PKCS#8 of invalid EC point format ...
+PASS importKey(pkcs8P256KeyInvalidPublicKeyECPointFormat) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+ECDSA: importing P-256 key that has an invalid public key in PKCS#8 ...
+PASS importKey(pkcs8P256KeyInvalidPublicKey) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
