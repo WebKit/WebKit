@@ -1,5 +1,15 @@
 2017-08-01  Brady Eidson  <beidson@apple.com>
 
+        API test URLSchemeHandler.Exceptions is Exiting out early on macOS Debug..
+        https://bugs.webkit.org/show_bug.cgi?id=175030
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKURLSchemeHandler-1.mm:
+        (-[TaskSchemeHandler webView:startURLSchemeTask:]): Stop calling an invalid NSError constructor.
+
+2017-08-01  Brady Eidson  <beidson@apple.com>
+
         Part 2 of: Rename DatabaseProcess to StorageProcess.
         https://bugs.webkit.org/show_bug.cgi?id=174880
 

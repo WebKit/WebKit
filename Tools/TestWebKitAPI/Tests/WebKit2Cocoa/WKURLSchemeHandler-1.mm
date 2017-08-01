@@ -312,7 +312,7 @@ enum class Command {
                 [task didFinish];
                 break;
             case Command::Error:
-                [task didFailWithError:[[[NSError alloc] init] autorelease]];
+                [task didFailWithError:[NSError errorWithDomain:@"WebKit" code:1 userInfo:nil]];
                 break;
             }
         }
