@@ -57,8 +57,28 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     include(Options${PORT})
 
     # -----------------------------------------------------------------------------
-    # config.h
+    # Create derived sources directories
     # -----------------------------------------------------------------------------
 
+    if (ENABLE_WEBCORE)
+        file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBCORE_DIR})
+    endif ()
+
+    if (ENABLE_WEBKIT)
+        file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2_DIR})
+    endif ()
+
+    if (ENABLE_WEBKIT_LEGACY)
+        file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKITLEGACY_DIR})
+        file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT_DIR})
+    endif ()
+
+    if (ENABLE_WEBDRIVER)
+        file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBDRIVER_DIR})
+    endif ()
+
+    # -----------------------------------------------------------------------------
+    # config.h
+    # -----------------------------------------------------------------------------
     CREATE_CONFIGURATION_HEADER()
 endif ()

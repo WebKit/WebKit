@@ -1,3 +1,17 @@
+2017-08-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] WebKitFS.cmake depends on options set in Option cmake files that are included later
+        https://bugs.webkit.org/show_bug.cgi?id=174855
+
+        Reviewed by Carlos Garcia Campos.
+
+        Create derived sources directories in WebKitCommon.cmake instead of WebKitFS.cmake, which is
+        too soon. I tried changing the include order, but other stuff in WebKitFS.cmake really is
+        needed before including the port options file.
+
+        * Source/cmake/WebKitCommon.cmake:
+        * Source/cmake/WebKitFS.cmake:
+
 2017-07-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for GTK and WPE about StorageProcess renaming

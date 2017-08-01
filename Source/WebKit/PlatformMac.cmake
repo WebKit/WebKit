@@ -383,8 +383,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/mac/SecItemShimLibrary.mm
 )
 
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2_DIR})
-
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${PAL_DIR}"
     "${WEBKIT2_DIR}/NetworkProcess/cocoa"
