@@ -304,16 +304,14 @@ static bool orientationEvaluate(CSSValue* value, const CSSToLengthConversionData
     if (!view)
         return false;
 
-    auto width = view->layoutWidth();
-    auto height = view->layoutHeight();
-
+    auto viewSize = view->layoutSizeForMediaQuery();
     if (!is<CSSPrimitiveValue>(value)) {
         // Expression (orientation) evaluates to true if width and height >= 0.
-        return height >= 0 && width >= 0;
+        return viewSize.height() >= 0 && viewSize.width() >= 0;
     }
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
-    if (width > height) // Square viewport is portrait.
+    if (viewSize.width() > viewSize.height()) // Square viewport is portrait.
         return keyword == CSSValueLandscape;
     return keyword == CSSValuePortrait;
 }
@@ -324,12 +322,11 @@ static bool aspectRatioEvaluate(CSSValue* value, const CSSToLengthConversionData
     // assume if we have a device, its aspect ratio is non-zero
     if (!value)
         return true;
-
     FrameView* view = frame.view();
     if (!view)
         return true;
-
-    return compareAspectRatioValue(value, view->layoutWidth(), view->layoutHeight(), op);
+    auto viewSize = view->layoutSizeForMediaQuery();
+    return compareAspectRatioValue(value, viewSize.width(), viewSize.height(), op);
 }
 
 static bool deviceAspectRatioEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
@@ -445,7 +442,7 @@ static bool heightEvaluate(CSSValue* value, const CSSToLengthConversionData& con
     FrameView* view = frame.view();
     if (!view)
         return false;
-    int height = view->layoutHeight();
+    int height = view->layoutSizeForMediaQuery().height();
     if (!value)
         return height;
     if (auto* renderView = frame.document()->renderView())
@@ -459,7 +456,7 @@ static bool widthEvaluate(CSSValue* value, const CSSToLengthConversionData& conv
     FrameView* view = frame.view();
     if (!view)
         return false;
-    int width = view->layoutWidth();
+    int width = view->layoutSizeForMediaQuery().width();
     if (!value)
         return width;
     if (auto* renderView = frame.document()->renderView())
