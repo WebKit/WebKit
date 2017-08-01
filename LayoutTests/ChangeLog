@@ -1,3 +1,14 @@
+2017-08-01  Ms2ger  <Ms2ger@igalia.com>
+
+        Correct the line numbers in GTK's scheme-about.any-expected.txt.
+        https://bugs.webkit.org/show_bug.cgi?id=175017
+
+        Reviewed by Sam Weinig.
+
+        The code fix landed in r220050.
+
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt:
+
 2017-07-31  Ms2ger  <Ms2ger@igalia.com>
 
         Remove some obsolete expected failures blamed on the threaded compositor.
