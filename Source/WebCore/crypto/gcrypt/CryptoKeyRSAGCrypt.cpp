@@ -260,15 +260,11 @@ static bool supportedAlgorithmIdentifier(const uint8_t* data, size_t size)
     //       of that structure has to contain one of id-sha{1,256,384,512} OIDs that match
     //       the specified hash algorithm
 
-    static const std::array<uint8_t, 21> s_id_rsaEncryption { { "1.2.840.113549.1.1.1" } };
-    static const std::array<uint8_t, 21> s_id_RSAES_OAEP { { "1.2.840.113549.1.1.7" } };
-    static const std::array<uint8_t, 22> s_id_RSASSA_PSS { { "1.2.840.113549.1.1.10" } };
-
-    if (size == s_id_rsaEncryption.size() && !std::memcmp(data, s_id_rsaEncryption.data(), size))
+    if (CryptoConstants::matches(data, size, CryptoConstants::s_rsaEncryptionIdentifier))
         return true;
-    if (size == s_id_RSAES_OAEP.size() && !std::memcmp(data, s_id_RSAES_OAEP.data(), size))
+    if (CryptoConstants::matches(data, size, CryptoConstants::s_RSAES_OAEPIdentifier))
         return false; // Not yet supported.
-    if (size == s_id_RSASSA_PSS.size() && !std::memcmp(data, s_id_RSASSA_PSS.data(), size))
+    if (CryptoConstants::matches(data, size, CryptoConstants::s_RSASSA_PSSIdentifier))
         return false; // Not yet supported.
     return false;
 }
@@ -333,7 +329,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identif
         if (!version)
             return nullptr;
 
-        if (version->size() != 1 || version->at(0) != 0x00)
+        if (!CryptoConstants::matches(version->data(), version->size(), CryptoConstants::s_asn1Version0))
             return nullptr;
     }
 
@@ -364,7 +360,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identif
         if (!version)
             return nullptr;
 
-        if (version->size() != 1 || version->at(0) != 0x00)
+        if (!CryptoConstants::matches(version->data(), version->size(), CryptoConstants::s_asn1Version0))
             return nullptr;
     }
 
@@ -461,11 +457,11 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
         // - RSA-OAEP:
         //     - this should write out id-RSAES-OAEP, along with setting `algorithm.parameters`
         //       to a RSAES-OAEP-params structure
-        if (!PAL::TASN1::writeElement(spki, "algorithm.algorithm", "1.2.840.113549.1.1.1", 1))
+        if (!PAL::TASN1::writeElement(spki, "algorithm.algorithm", CryptoConstants::s_rsaEncryptionIdentifier.data(), 1))
             return Exception { OperationError };
 
         // Write out the null value under `algorithm.parameters`.
-        if (!PAL::TASN1::writeElement(spki, "algorithm.parameters", "\x05\x00", 2))
+        if (!PAL::TASN1::writeElement(spki, "algorithm.parameters", CryptoConstants::s_asn1NullValue.data(), CryptoConstants::s_asn1NullValue.size()))
             return Exception { OperationError };
 
         // Write out the `RSAPublicKey` data under `subjectPublicKey`. Because this is a
@@ -601,7 +597,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
             return Exception { OperationError };
 
         // Write out a null value under `algorithm.parameters`.
-        if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.parameters", "\x05\x00", 2))
+        if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.parameters", CryptoConstants::s_asn1NullValue.data(), CryptoConstants::s_asn1NullValue.size()))
             return Exception { OperationError };
 
         // Write out the `RSAPrivateKey` data under `privateKey`.

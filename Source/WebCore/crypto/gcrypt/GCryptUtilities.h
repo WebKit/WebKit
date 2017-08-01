@@ -26,12 +26,43 @@
  */
 
 #include "CryptoAlgorithmIdentifier.h"
+#include <array>
+#include <cstring>
 #include <gcrypt.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
 
 namespace WebCore {
+
+namespace CryptoConstants {
+
+static const std::array<uint8_t, 18> s_ecPublicKeyIdentifier { { "1.2.840.10045.2.1" } };
+static const std::array<uint8_t, 13> s_ecDHIdentifier { { "1.3.132.1.12" } };
+
+static const std::array<uint8_t, 20> s_secp256r1Identifier { { "1.2.840.10045.3.1.7" } };
+static const std::array<uint8_t, 13> s_secp384r1Identifier { { "1.3.132.0.34" } };
+static const std::array<uint8_t, 13> s_secp521r1Identifier { { "1.3.132.0.35" } };
+
+static const std::array<uint8_t, 21> s_rsaEncryptionIdentifier { { "1.2.840.113549.1.1.1" } };
+static const std::array<uint8_t, 21> s_RSAES_OAEPIdentifier { { "1.2.840.113549.1.1.7" } };
+static const std::array<uint8_t, 22> s_RSASSA_PSSIdentifier { { "1.2.840.113549.1.1.10" } };
+
+static const std::array<uint8_t, 2> s_asn1NullValue { { 0x05, 0x00 } };
+static const std::array<uint8_t, 1> s_asn1Version0 { { 0x00 } };
+
+static const std::array<uint8_t, 1> s_ecUncompressedFormatLeadingByte { { 0x04 } };
+
+template<size_t N>
+static inline bool matches(const void* lhs, size_t size, const std::array<uint8_t, N>& rhs)
+{
+    if (size != rhs.size())
+        return false;
+
+    return !std::memcmp(lhs, rhs.data(), rhs.size());
+}
+
+} // namespace CryptoConstants
 
 static inline std::optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)
 {

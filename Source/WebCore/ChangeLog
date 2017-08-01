@@ -1,3 +1,54 @@
+2017-08-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Gather crypto constants in a single location
+        https://bugs.webkit.org/show_bug.cgi?id=174091
+
+        Reviewed by Jiewen Tan.
+
+        Gather common constants used across the libgcrypt-specific Web Crypto
+        implementations in a single place -- in the GCryptUtilities.h header,
+        inside the CryptoConstants namespace. The various ASN.1 object identifiers
+        and other helper values are placed inside, in the std::array<uint8_t, N>
+        container.
+
+        Additionally, CryptoConstants::matches() helper function is provided. It
+        compares the provided data-and-size pair with the given std::array
+        container and returns true if the std::memcmp() call returns 0.
+
+        Changes in CryptoKeyEC and CryptoKeyRSA consist mostly of switching to the
+        use of CryptoConstants::matches() and the CryptoConstants data arrays, as
+        well as some whitespace cleanup.
+
+        Additionallity in CryptoKeyEC, the helper functions covering various curve
+        attributes are reordered, renamed and reorganized for simplicity.
+
+        No new tests -- no changes in behavior.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::curveIdentifier):
+        (WebCore::curveSize):
+        (WebCore::curveUncompressedFieldElementSize):
+        (WebCore::curveUncompressedPointSize):
+        (WebCore::CryptoKeyEC::platformImportRaw):
+        (WebCore::CryptoKeyEC::platformImportJWKPublic):
+        (WebCore::CryptoKeyEC::platformImportJWKPrivate):
+        (WebCore::supportedAlgorithmIdentifier):
+        (WebCore::curveForIdentifier):
+        (WebCore::CryptoKeyEC::platformImportSpki):
+        (WebCore::CryptoKeyEC::platformExportRaw):
+        (WebCore::CryptoKeyEC::platformAddFieldElements):
+        (WebCore::CryptoKeyEC::platformExportSpki):
+        (WebCore::CryptoKeyEC::platformExportPkcs8):
+        (WebCore::uncompressedPointSizeForCurve): Deleted.
+        (WebCore::uncompressedFieldElementSizeForCurve): Deleted.
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::supportedAlgorithmIdentifier):
+        (WebCore::CryptoKeyRSA::importPkcs8):
+        (WebCore::CryptoKeyRSA::exportSpki):
+        (WebCore::CryptoKeyRSA::exportPkcs8):
+        * crypto/gcrypt/GCryptUtilities.h:
+        (WebCore::CryptoConstants::matches):
+
 2017-07-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Use LazyNeverDestroyed instead of DEFINE_GLOBAL for MediaFeatureNames
