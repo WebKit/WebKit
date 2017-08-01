@@ -1,3 +1,14 @@
+2017-08-01  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        [JSC] Remove unnecessary print from stress\promise-finally.js test
+        https://bugs.webkit.org/show_bug.cgi?id=175015
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/promise-finally.js:
+        (p.finally):
+        (then):
+
 2017-07-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, update test262 results for optional catch binding

@@ -374,10 +374,8 @@ p.finally(function () {
   finallySpy(arguments.length);
   return {};
 }).then(function (x) {
-    print('success');
     fulfillSpy(x === obj);
 }, function (x) {
-    print('fail');
     rejectSpy(x === obj);
 });
 
