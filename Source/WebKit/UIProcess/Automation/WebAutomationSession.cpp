@@ -499,6 +499,7 @@ void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame
             m_loadTimer.stop();
             callback->sendSuccess(InspectorObject::create());
         }
+        m_domainNotifier->browsingContextCleared(handleForWebPageProxy(*frame.page()));
     } else {
         if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID())) {
             m_loadTimer.stop();
@@ -519,6 +520,12 @@ void WebAutomationSession::keyboardEventsFlushedForPage(const WebPageProxy& page
         callback->sendSuccess(InspectorObject::create());
 }
 
+void WebAutomationSession::willClosePage(const WebPageProxy& page)
+{
+    String handle = handleForWebPageProxy(page);
+    m_domainNotifier->browsingContextCleared(handle);
+}
+    
 void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const WebFrameProxy&, const API::OpenPanelParameters& parameters, WebOpenPanelResultListenerProxy& resultListener)
 {
     if (!m_filesToSelectForFileUpload.size()) {

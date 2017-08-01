@@ -521,6 +521,13 @@
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
                 { "name": "selectionCancelled", "type": "boolean", "description": "If true, the chooser was dismissed because file selection was cancelled." }
             ]
+        },
+        {
+            "name": "browsingContextCleared",
+            "description": "Fired when the specified browsing context has navigated or closed. Existing element references from the browsing context are no longer valid.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle" }
+            ]
         }
     ]
 }

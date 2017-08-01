@@ -740,6 +740,11 @@ void WebPageProxy::close()
     if (m_activePopupMenu)
         m_activePopupMenu->cancelTracking();
 
+    if (m_controlledByAutomation) {
+        if (auto* automationSession = process().processPool().automationSession())
+            automationSession->willClosePage(*this);
+    }
+
 #if ENABLE(CONTEXT_MENUS)
     m_activeContextMenu = nullptr;
 #endif

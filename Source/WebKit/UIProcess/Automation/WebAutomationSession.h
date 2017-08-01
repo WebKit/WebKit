@@ -96,6 +96,7 @@ public:
     void navigationOccurredForFrame(const WebFrameProxy&);
     void inspectorFrontendLoaded(const WebPageProxy&);
     void keyboardEventsFlushedForPage(const WebPageProxy&);
+    void willClosePage(const WebPageProxy&);
     void handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy&, const API::OpenPanelParameters&, WebOpenPanelResultListenerProxy&);
 
 #if ENABLE(REMOTE_INSPECTOR)
