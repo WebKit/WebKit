@@ -23,32 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptProfilerObserver = class ScriptProfilerObserver
+WI.ScriptProfilerObserver = class ScriptProfilerObserver
 {
     // Events defined by the "ScriptProfiler" domain.
 
     trackingStart(timestamp)
     {
-        WebInspector.timelineManager.scriptProfilerTrackingStarted(timestamp);
+        WI.timelineManager.scriptProfilerTrackingStarted(timestamp);
     }
 
     trackingUpdate(event)
     {
-        WebInspector.timelineManager.scriptProfilerTrackingUpdated(event);
+        WI.timelineManager.scriptProfilerTrackingUpdated(event);
     }
 
     trackingComplete(samples)
     {
-        WebInspector.timelineManager.scriptProfilerTrackingCompleted(samples);
+        WI.timelineManager.scriptProfilerTrackingCompleted(samples);
     }
 
     programmaticCaptureStarted()
     {
-        WebInspector.timelineManager.scriptProfilerProgrammaticCaptureStarted();
+        WI.timelineManager.scriptProfilerProgrammaticCaptureStarted();
     }
 
     programmaticCaptureStopped()
     {
-        WebInspector.timelineManager.scriptProfilerProgrammaticCaptureStopped();
+        WI.timelineManager.scriptProfilerProgrammaticCaptureStopped();
     }
 };

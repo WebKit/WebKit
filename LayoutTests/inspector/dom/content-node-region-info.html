@@ -27,13 +27,13 @@
 <script>
 function test()
 {
-    let displayNameGetter = Object.getOwnPropertyDescriptor(WebInspector.DOMNode.prototype, "displayName").get;
+    let displayNameGetter = Object.getOwnPropertyDescriptor(WI.DOMNode.prototype, "displayName").get;
     let queryList = ["#flow", ".contentNode1", ".contentNode2", "body", "#region1", "#region2"];
     let documentNodeId = null;
 
-    WebInspector.domTreeManager.requestDocument(function(documentNode) {
+    WI.domTreeManager.requestDocument(function(documentNode) {
         documentNodeId = documentNode.id;
-        WebInspector.domTreeManager.getNamedFlowCollection(documentNodeId);
+        WI.domTreeManager.getNamedFlowCollection(documentNodeId);
         next();
     });
 
@@ -45,13 +45,13 @@ function test()
     function query(selector, callback)
     {
         InspectorTest.log("\nSelector: " + selector);
-        WebInspector.domTreeManager.querySelector(documentNodeId, selector, function(contentNodeId) {
+        WI.domTreeManager.querySelector(documentNodeId, selector, function(contentNodeId) {
             if (!contentNodeId) {
                 InspectorTest.log("DOM node not found.");
                 callback();
             }
-            let domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
-            WebInspector.domTreeManager.getNodeContentFlowInfo(domNode, function(error, result) {
+            let domNode = WI.domTreeManager.nodeForId(contentNodeId);
+            WI.domTreeManager.getNodeContentFlowInfo(domNode, function(error, result) {
                 console.assert(!error);
                 if (result) {
                     InspectorTest.log("Region flow name: " + (result.regionFlow ? result.regionFlow.name : "none"));

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Target = class Target extends WebInspector.Object
+WI.Target = class Target extends WI.Object
 {
     constructor(identifier, name, type, connection)
     {
@@ -35,8 +35,8 @@ WebInspector.Target = class Target extends WebInspector.Object
         this._connection = connection;
         this._executionContext = null;
         this._mainResource = null;
-        this._resourceCollection = new WebInspector.ResourceCollection;
-        this._extraScriptCollection = new WebInspector.Collection(WebInspector.Collection.TypeVerifier.Script);
+        this._resourceCollection = new WI.ResourceCollection;
+        this._extraScriptCollection = new WI.Collection(WI.Collection.TypeVerifier.Script);
 
         this._connection.target = this;
     }
@@ -66,7 +66,7 @@ WebInspector.Target = class Target extends WebInspector.Object
     {
         this._resourceCollection.add(resource);
 
-        this.dispatchEventToListeners(WebInspector.Target.Event.ResourceAdded, {resource});
+        this.dispatchEventToListeners(WI.Target.Event.ResourceAdded, {resource});
     }
 
     adoptResource(resource)
@@ -80,16 +80,16 @@ WebInspector.Target = class Target extends WebInspector.Object
     {
         this._extraScriptCollection.add(script);
 
-        this.dispatchEventToListeners(WebInspector.Target.Event.ScriptAdded, {script});
+        this.dispatchEventToListeners(WI.Target.Event.ScriptAdded, {script});
     }
 };
 
-WebInspector.Target.Type = {
+WI.Target.Type = {
     Main: Symbol("main"),
     Worker: Symbol("worker"),
 };
 
-WebInspector.Target.Event = {
+WI.Target.Event = {
     ResourceAdded: "target-resource-added",
     ScriptAdded: "target-script-added",
 };

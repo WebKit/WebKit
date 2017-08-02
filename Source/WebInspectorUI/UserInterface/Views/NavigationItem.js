@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NavigationItem = class NavigationItem extends WebInspector.Object
+WI.NavigationItem = class NavigationItem extends WI.Object
 {
     constructor(identifier, role, label)
     {

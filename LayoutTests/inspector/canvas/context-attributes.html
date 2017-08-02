@@ -20,12 +20,12 @@ function test() {
             name,
             description: "Check that created canvases have the correct type and attributes sent to the frontend.",
             test(resolve, reject) {
-                WebInspector.canvasManager.awaitEvent(WebInspector.CanvasManager.Event.CanvasWasAdded)
+                WI.canvasManager.awaitEvent(WI.CanvasManager.Event.CanvasWasAdded)
                 .then((event) => {
                     let canvas = event.data.canvas;
                     InspectorTest.log("Added canvas.");
 
-                    let contextDisplayName = WebInspector.Canvas.displayNameForContextType(contextType);
+                    let contextDisplayName = WI.Canvas.displayNameForContextType(contextType);
                     InspectorTest.expectEqual(canvas.contextType, contextType, `Canvas context should be "${contextDisplayName}".`);
                     InspectorTest.log(JSON.stringify(canvas.contextAttributes, null, 2));
 
@@ -34,7 +34,7 @@ function test() {
                 })
                 .then(resolve, reject);
 
-                let type = contextType === WebInspector.Canvas.ContextType.Canvas2D ? "2d" : "webgl";
+                let type = contextType === WI.Canvas.ContextType.Canvas2D ? "2d" : "webgl";
                 let attributes = JSON.stringify(contextAttributes);
                 InspectorTest.evaluateInPage(`createCanvas("${type}", ${attributes})`);
             }
@@ -44,15 +44,15 @@ function test() {
     const testCases = [
         {
             name: "Create2DCanvasContext",
-            contextType: WebInspector.Canvas.ContextType.Canvas2D,
+            contextType: WI.Canvas.ContextType.Canvas2D,
         },
         {
             name: "CreateWebGLCanvasContext",
-            contextType: WebInspector.Canvas.ContextType.WebGL,
+            contextType: WI.Canvas.ContextType.WebGL,
         },
         {
             name: "CreateWebGLCanvasContextWithAttributes",
-            contextType: WebInspector.Canvas.ContextType.WebGL,
+            contextType: WI.Canvas.ContextType.WebGL,
             contextAttributes: {alpha: false},
         }
     ];

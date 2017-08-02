@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Object
+WI.TimelineRecording = class TimelineRecording extends WI.Object
 {
     constructor(identifier, displayName, instruments)
     {
@@ -35,15 +35,15 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         this._capturing = false;
         this._readonly = false;
         this._instruments = instruments || [];
-        this._topDownCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.TopDown);
-        this._bottomUpCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.BottomUp);
-        this._topFunctionsTopDownCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.TopFunctionsTopDown);
-        this._topFunctionsBottomUpCallingContextTree = new WebInspector.CallingContextTree(WebInspector.CallingContextTree.Type.TopFunctionsBottomUp);
+        this._topDownCallingContextTree = new WI.CallingContextTree(WI.CallingContextTree.Type.TopDown);
+        this._bottomUpCallingContextTree = new WI.CallingContextTree(WI.CallingContextTree.Type.BottomUp);
+        this._topFunctionsTopDownCallingContextTree = new WI.CallingContextTree(WI.CallingContextTree.Type.TopFunctionsTopDown);
+        this._topFunctionsBottomUpCallingContextTree = new WI.CallingContextTree(WI.CallingContextTree.Type.TopFunctionsBottomUp);
 
-        for (let type of WebInspector.TimelineManager.availableTimelineTypes()) {
-            let timeline = WebInspector.Timeline.create(type);
+        for (let type of WI.TimelineManager.availableTimelineTypes()) {
+            let timeline = WI.Timeline.create(type);
             this._timelines.set(type, timeline);
-            timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
+            timeline.addEventListener(WI.Timeline.Event.TimesUpdated, this._timelineTimesUpdated, this);
         }
 
         // For legacy backends, we compute the elapsed time of records relative to this timestamp.
@@ -56,7 +56,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
 
     static sourceCodeTimelinesSupported()
     {
-        return WebInspector.debuggableType === WebInspector.DebuggableType.Web;
+        return WI.debuggableType === WI.DebuggableType.Web;
     }
 
     // Public
@@ -118,7 +118,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
 
         this._readonly = true;
 
-        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.Unloaded);
+        this.dispatchEventToListeners(WI.TimelineRecording.Event.Unloaded);
     }
 
     reset(suppressEvents)
@@ -139,11 +139,11 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         for (var timeline of this._timelines.values())
             timeline.reset(suppressEvents);
 
-        WebInspector.RenderingFrameTimelineRecord.resetFrameIndex();
+        WI.RenderingFrameTimelineRecord.resetFrameIndex();
 
         if (!suppressEvents) {
-            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.Reset);
-            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimesUpdated);
+            this.dispatchEventToListeners(WI.TimelineRecording.Event.Reset);
+            this.dispatchEventToListeners(WI.TimelineRecording.Event.TimesUpdated);
         }
     }
 
@@ -172,22 +172,22 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
 
     addInstrument(instrument)
     {
-        console.assert(instrument instanceof WebInspector.Instrument, instrument);
+        console.assert(instrument instanceof WI.Instrument, instrument);
         console.assert(!this._instruments.includes(instrument), this._instruments, instrument);
 
         this._instruments.push(instrument);
 
-        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.InstrumentAdded, {instrument});
+        this.dispatchEventToListeners(WI.TimelineRecording.Event.InstrumentAdded, {instrument});
     }
 
     removeInstrument(instrument)
     {
-        console.assert(instrument instanceof WebInspector.Instrument, instrument);
+        console.assert(instrument instanceof WI.Instrument, instrument);
         console.assert(this._instruments.includes(instrument), this._instruments, instrument);
 
         this._instruments.remove(instrument);
 
-        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.InstrumentRemoved, {instrument});
+        this.dispatchEventToListeners(WI.TimelineRecording.Event.InstrumentRemoved, {instrument});
     }
 
     addEventMarker(marker)
@@ -197,7 +197,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
 
         this._eventMarkers.push(marker);
 
-        this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.MarkerAdded, {marker});
+        this.dispatchEventToListeners(WI.TimelineRecording.Event.MarkerAdded, {marker});
     }
 
     addRecord(record)
@@ -211,17 +211,17 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         timeline.addRecord(record);
 
         // Some records don't have source code timelines.
-        if (record.type === WebInspector.TimelineRecord.Type.Network
-            || record.type === WebInspector.TimelineRecord.Type.RenderingFrame
-            || record.type === WebInspector.TimelineRecord.Type.Memory
-            || record.type === WebInspector.TimelineRecord.Type.HeapAllocations)
+        if (record.type === WI.TimelineRecord.Type.Network
+            || record.type === WI.TimelineRecord.Type.RenderingFrame
+            || record.type === WI.TimelineRecord.Type.Memory
+            || record.type === WI.TimelineRecord.Type.HeapAllocations)
             return;
 
-        if (!WebInspector.TimelineRecording.sourceCodeTimelinesSupported())
+        if (!WI.TimelineRecording.sourceCodeTimelinesSupported())
             return;
 
         // Add the record to the source code timelines.
-        var activeMainResource = WebInspector.frameResourceManager.mainFrame.provisionalMainResource || WebInspector.frameResourceManager.mainFrame.mainResource;
+        var activeMainResource = WI.frameResourceManager.mainFrame.provisionalMainResource || WI.frameResourceManager.mainFrame.mainResource;
         var sourceCode = record.sourceCodeLocation ? record.sourceCodeLocation.sourceCode : activeMainResource;
 
         var sourceCodeTimelines = this._sourceCodeTimelinesMap.get(sourceCode);
@@ -234,7 +234,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         var key = this._keyForRecord(record);
         var sourceCodeTimeline = sourceCodeTimelines.get(key);
         if (!sourceCodeTimeline) {
-            sourceCodeTimeline = new WebInspector.SourceCodeTimeline(sourceCode, record.sourceCodeLocation, record.type, record.eventType);
+            sourceCodeTimeline = new WI.SourceCodeTimeline(sourceCode, record.sourceCodeLocation, record.type, record.eventType);
             sourceCodeTimelines.set(key, sourceCodeTimeline);
             newTimeline = true;
         }
@@ -242,12 +242,12 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         sourceCodeTimeline.addRecord(record);
 
         if (newTimeline)
-            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, {sourceCodeTimeline});
+            this.dispatchEventToListeners(WI.TimelineRecording.Event.SourceCodeTimelineAdded, {sourceCodeTimeline});
     }
 
     addMemoryPressureEvent(memoryPressureEvent)
     {
-        let memoryTimeline = this._timelines.get(WebInspector.TimelineRecord.Type.Memory);
+        let memoryTimeline = this._timelines.get(WI.TimelineRecord.Type.Memory);
         console.assert(memoryTimeline, this._timelines);
         if (!memoryTimeline)
             return;
@@ -268,14 +268,14 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
     addScriptInstrumentForProgrammaticCapture()
     {
         for (let instrument of this._instruments) {
-            if (instrument instanceof WebInspector.ScriptInstrument)
+            if (instrument instanceof WI.ScriptInstrument)
                 return;
         }
 
-        this.addInstrument(new WebInspector.ScriptInstrument);
+        this.addInstrument(new WI.ScriptInstrument);
 
         let instrumentTypes = this._instruments.map((instrument) => instrument.timelineRecordType);
-        WebInspector.timelineManager.enabledTimelineTypes = instrumentTypes;
+        WI.timelineManager.enabledTimelineTypes = instrumentTypes;
     }
 
     computeElapsedTime(timestamp)
@@ -286,15 +286,15 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         // COMPATIBILITY (iOS 8): old backends send timestamps (seconds or milliseconds since the epoch),
         // rather than seconds elapsed since timeline capturing started. We approximate the latter by
         // subtracting the start timestamp, as old versions did not use monotonic times.
-        if (WebInspector.TimelineRecording.isLegacy === undefined)
-            WebInspector.TimelineRecording.isLegacy = timestamp > WebInspector.TimelineRecording.TimestampThresholdForLegacyRecordConversion;
+        if (WI.TimelineRecording.isLegacy === undefined)
+            WI.TimelineRecording.isLegacy = timestamp > WI.TimelineRecording.TimestampThresholdForLegacyRecordConversion;
 
-        if (!WebInspector.TimelineRecording.isLegacy)
+        if (!WI.TimelineRecording.isLegacy)
             return timestamp;
 
         // If the record's start time is large, but not really large, then it is seconds since epoch
         // not millseconds since epoch, so convert it to milliseconds.
-        if (timestamp < WebInspector.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds)
+        if (timestamp < WI.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds)
             timestamp *= 1000;
 
         if (isNaN(this._legacyFirstRecordedTimestamp))
@@ -308,7 +308,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
     {
         console.assert(isNaN(this._legacyFirstRecordedTimestamp));
 
-        if (timestamp < WebInspector.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds)
+        if (timestamp < WI.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds)
             timestamp *= 1000;
 
         this._legacyFirstRecordedTimestamp = timestamp;
@@ -322,7 +322,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
             this._startTime = timestamp;
             this._endTime = timestamp;
 
-            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimesUpdated);
+            this.dispatchEventToListeners(WI.TimelineRecording.Event.TimesUpdated);
         }
     }
 
@@ -331,9 +331,9 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
     _keyForRecord(record)
     {
         var key = record.type;
-        if (record instanceof WebInspector.ScriptTimelineRecord || record instanceof WebInspector.LayoutTimelineRecord)
+        if (record instanceof WI.ScriptTimelineRecord || record instanceof WI.LayoutTimelineRecord)
             key += ":" + record.eventType;
-        if (record instanceof WebInspector.ScriptTimelineRecord && record.eventType === WebInspector.ScriptTimelineRecord.EventType.EventDispatched)
+        if (record instanceof WI.ScriptTimelineRecord && record.eventType === WI.ScriptTimelineRecord.EventType.EventDispatched)
             key += ":" + record.details;
         if (record.sourceCodeLocation)
             key += ":" + record.sourceCodeLocation.lineNumber + ":" + record.sourceCodeLocation.columnNumber;
@@ -356,11 +356,11 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         }
 
         if (changed)
-            this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.TimesUpdated);
+            this.dispatchEventToListeners(WI.TimelineRecording.Event.TimesUpdated);
     }
 };
 
-WebInspector.TimelineRecording.Event = {
+WI.TimelineRecording.Event = {
     Reset: "timeline-recording-reset",
     Unloaded: "timeline-recording-unloaded",
     SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added",
@@ -370,6 +370,6 @@ WebInspector.TimelineRecording.Event = {
     MarkerAdded: "timeline-recording-marker-added",
 };
 
-WebInspector.TimelineRecording.isLegacy = undefined;
-WebInspector.TimelineRecording.TimestampThresholdForLegacyRecordConversion = 10000000; // Some value not near zero.
-WebInspector.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds = 1420099200000; // Date.parse("Jan 1, 2015"). Milliseconds since epoch.
+WI.TimelineRecording.isLegacy = undefined;
+WI.TimelineRecording.TimestampThresholdForLegacyRecordConversion = 10000000; // Some value not near zero.
+WI.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds = 1420099200000; // Date.parse("Jan 1, 2015"). Milliseconds since epoch.

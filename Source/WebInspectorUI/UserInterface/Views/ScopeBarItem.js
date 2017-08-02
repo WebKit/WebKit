@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
+WI.ScopeBarItem = class ScopeBarItem extends WI.Object
 {
     constructor(id, label, exclusive, className)
     {
@@ -40,7 +40,7 @@ WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
         this._label = label;
         this._exclusive = exclusive;
 
-        this._selectedSetting = new WebInspector.Setting("scopebaritem-" + id, false);
+        this._selectedSetting = new WI.Setting("scopebaritem-" + id, false);
 
         this._element.classList.toggle("selected", this._selectedSetting.value);
     }
@@ -85,7 +85,7 @@ WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
         this._element.classList.toggle("selected", selected);
         this._selectedSetting.value = selected;
 
-        this.dispatchEventToListeners(WebInspector.ScopeBarItem.Event.SelectionChanged, {withModifier});
+        this.dispatchEventToListeners(WI.ScopeBarItem.Event.SelectionChanged, {withModifier});
     }
 
     // Private
@@ -100,6 +100,6 @@ WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
     }
 };
 
-WebInspector.ScopeBarItem.Event = {
+WI.ScopeBarItem.Event = {
     SelectionChanged: "scope-bar-item-selection-did-change"
 };

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
+WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 {
     constructor(id)
     {
@@ -48,7 +48,7 @@ WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
 
     static resetUniqueDisplayNameNumbers()
     {
-        WebInspector.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
+        WI.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
     }
 
     // Public
@@ -88,13 +88,13 @@ WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
     get displayName()
     {
         if (this._url)
-            return WebInspector.displayNameForURL(this._url, this.urlComponents);
+            return WI.displayNameForURL(this._url, this.urlComponents);
 
         // Assign a unique number to the StyleSheet object so it will stay the same.
         if (!this._uniqueDisplayNameNumber)
             this._uniqueDisplayNameNumber = this.constructor._nextUniqueDisplayNameNumber++;
 
-        return WebInspector.UIString("Anonymous StyleSheet %d").format(this._uniqueDisplayNameNumber);
+        return WI.UIString("Anonymous StyleSheet %d").format(this._uniqueDisplayNameNumber);
     }
 
     get startLineNumber()
@@ -114,7 +114,7 @@ WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
 
     isInspectorStyleSheet()
     {
-        return this._origin === WebInspector.CSSStyleSheet.Type.Inspector;
+        return this._origin === WI.CSSStyleSheet.Type.Inspector;
     }
 
     isInlineStyleTag()
@@ -180,7 +180,7 @@ WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
 
             DOMAgent.markUndoableState();
 
-            this.dispatchEventToListeners(WebInspector.CSSStyleSheet.Event.ContentDidChange);
+            this.dispatchEventToListeners(WI.CSSStyleSheet.Event.ContentDidChange);
         }
 
         this._ignoreNextContentDidChangeNotification = true;
@@ -207,18 +207,18 @@ WebInspector.CSSStyleSheet = class CSSStyleSheet extends WebInspector.SourceCode
         }
 
         this.markContentAsStale();
-        this.dispatchEventToListeners(WebInspector.CSSStyleSheet.Event.ContentDidChange);
+        this.dispatchEventToListeners(WI.CSSStyleSheet.Event.ContentDidChange);
         return true;
     }
 };
 
-WebInspector.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
+WI.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
 
-WebInspector.CSSStyleSheet.Event = {
+WI.CSSStyleSheet.Event = {
     ContentDidChange: "stylesheet-content-did-change"
 };
 
-WebInspector.CSSStyleSheet.Type = {
+WI.CSSStyleSheet.Type = {
     Author: "css-stylesheet-type-author",
     User: "css-stylesheet-type-user",
     UserAgent: "css-stylesheet-type-user-agent",

@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsoleSession = class ConsoleSession extends WebInspector.Object
+WI.ConsoleSession = class ConsoleSession extends WI.Object
 {
     constructor(data)
     {
@@ -42,17 +42,17 @@ WebInspector.ConsoleSession = class ConsoleSession extends WebInspector.Object
 
         let headerText = "";
         switch (data.newSessionReason) {
-        case WebInspector.ConsoleSession.NewSessionReason.PageReloaded:
-            headerText = WebInspector.UIString("Page reloaded at %s");
+        case WI.ConsoleSession.NewSessionReason.PageReloaded:
+            headerText = WI.UIString("Page reloaded at %s");
             break;
-        case WebInspector.ConsoleSession.NewSessionReason.PageNavigated:
-            headerText = WebInspector.UIString("Page navigated at %s");
+        case WI.ConsoleSession.NewSessionReason.PageNavigated:
+            headerText = WI.UIString("Page navigated at %s");
             break;
-        case WebInspector.ConsoleSession.NewSessionReason.ConsoleCleared:
-            headerText = WebInspector.UIString("Console cleared at %s");
+        case WI.ConsoleSession.NewSessionReason.ConsoleCleared:
+            headerText = WI.UIString("Console cleared at %s");
             break;
         default:
-            headerText = WebInspector.UIString("Console opened at %s");
+            headerText = WI.UIString("Console opened at %s");
             break;
         }
 
@@ -69,7 +69,7 @@ WebInspector.ConsoleSession = class ConsoleSession extends WebInspector.Object
     addMessageView(messageView)
     {
         var messageElement = messageView.element;
-        messageElement.classList.add(WebInspector.LogContentView.ItemWrapperStyleClassName);
+        messageElement.classList.add(WI.LogContentView.ItemWrapperStyleClassName);
         this.append(messageElement);
     }
 
@@ -85,7 +85,7 @@ WebInspector.ConsoleSession = class ConsoleSession extends WebInspector.Object
     }
 };
 
-WebInspector.ConsoleSession.NewSessionReason = {
+WI.ConsoleSession.NewSessionReason = {
     PageReloaded: Symbol("Page reloaded"),
     PageNavigated: Symbol("Page navigated"),
     ConsoleCleared: Symbol("Console cleared"),

@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetailsSidebarPanel extends WebInspector.DetailsSidebarPanel
+WI.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetailsSidebarPanel extends WI.DetailsSidebarPanel
 {
     constructor()
     {
-        super("application-cache-details", WebInspector.UIString("Storage"));
+        super("application-cache-details", WI.UIString("Storage"));
 
         this.element.classList.add("application-cache");
 
@@ -44,9 +44,9 @@ WebInspector.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetails
 
         var applicationCacheFrameToInspect = null;
 
-        // Iterate over the objects to find a WebInspector.ApplicationCacheFrame to inspect.
+        // Iterate over the objects to find a WI.ApplicationCacheFrame to inspect.
         for (var i = 0; i < objects.length; ++i) {
-            if (objects[i] instanceof WebInspector.ApplicationCacheFrame) {
+            if (objects[i] instanceof WI.ApplicationCacheFrame) {
                 applicationCacheFrameToInspect = objects[i];
                 break;
             }
@@ -78,23 +78,23 @@ WebInspector.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetails
     {
         super.initialLayout();
 
-        this._locationManifestURLRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Manifest URL"));
-        this._locationFrameURLRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Frame URL"));
+        this._locationManifestURLRow = new WI.DetailsSectionSimpleRow(WI.UIString("Manifest URL"));
+        this._locationFrameURLRow = new WI.DetailsSectionSimpleRow(WI.UIString("Frame URL"));
 
-        let locationGroup = new WebInspector.DetailsSectionGroup([this._locationManifestURLRow, this._locationFrameURLRow]);
-        let locationSection = new WebInspector.DetailsSection("application-cache-location", WebInspector.UIString("Location"), [locationGroup]);
+        let locationGroup = new WI.DetailsSectionGroup([this._locationManifestURLRow, this._locationFrameURLRow]);
+        let locationSection = new WI.DetailsSection("application-cache-location", WI.UIString("Location"), [locationGroup]);
 
-        this._onlineRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Online"));
-        this._statusRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Status"));
+        this._onlineRow = new WI.DetailsSectionSimpleRow(WI.UIString("Online"));
+        this._statusRow = new WI.DetailsSectionSimpleRow(WI.UIString("Status"));
 
-        let statusGroup = new WebInspector.DetailsSectionGroup([this._onlineRow, this._statusRow]);
-        let statusSection = new WebInspector.DetailsSection("application-cache-status", WebInspector.UIString("Status"), [statusGroup]);
+        let statusGroup = new WI.DetailsSectionGroup([this._onlineRow, this._statusRow]);
+        let statusSection = new WI.DetailsSection("application-cache-status", WI.UIString("Status"), [statusGroup]);
 
         this.contentView.element.appendChild(locationSection.element);
         this.contentView.element.appendChild(statusSection.element);
 
-        WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.NetworkStateUpdated, this._networkStateUpdated, this);
-        WebInspector.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._frameManifestStatusChanged, this);
+        WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.NetworkStateUpdated, this._networkStateUpdated, this);
+        WI.applicationCacheManager.addEventListener(WI.ApplicationCacheManager.Event.FrameManifestStatusChanged, this._frameManifestStatusChanged, this);
     }
 
     layout()
@@ -126,7 +126,7 @@ WebInspector.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetails
         if (!this.applicationCacheFrame)
             return;
 
-        console.assert(event.data.frameManifest instanceof WebInspector.ApplicationCacheFrame);
+        console.assert(event.data.frameManifest instanceof WI.ApplicationCacheFrame);
         if (event.data.frameManifest !== this.applicationCacheFrame)
             return;
 
@@ -135,17 +135,17 @@ WebInspector.ApplicationCacheDetailsSidebarPanel = class ApplicationCacheDetails
 
     _refreshOnlineRow()
     {
-        this._onlineRow.value = WebInspector.applicationCacheManager.online ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
+        this._onlineRow.value = WI.applicationCacheManager.online ? WI.UIString("Yes") : WI.UIString("No");
     }
 
     _refreshStatusRow()
     {
-        this._statusRow.value = WebInspector.ApplicationCacheDetailsSidebarPanel.Status[this.applicationCacheFrame.status];
+        this._statusRow.value = WI.ApplicationCacheDetailsSidebarPanel.Status[this.applicationCacheFrame.status];
     }
 };
 
 // This needs to be kept in sync with ApplicationCacheManager.js.
-WebInspector.ApplicationCacheDetailsSidebarPanel.Status = {
+WI.ApplicationCacheDetailsSidebarPanel.Status = {
     0: "Uncached",
     1: "Idle",
     2: "Checking",

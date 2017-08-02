@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.WorkerManager = class WorkerManager extends WebInspector.Object
+WI.WorkerManager = class WorkerManager extends WI.Object
 {
     constructor()
     {
@@ -40,8 +40,8 @@ WebInspector.WorkerManager = class WorkerManager extends WebInspector.Object
     workerCreated(workerId, url)
     {
         let connection = new InspectorBackend.WorkerConnection(workerId);
-        let workerTarget = new WebInspector.WorkerTarget(workerId, url, connection);
-        WebInspector.targetManager.addTarget(workerTarget);
+        let workerTarget = new WI.WorkerTarget(workerId, url, connection);
+        WI.targetManager.addTarget(workerTarget);
 
         this._connections.set(workerId, connection);
 
@@ -53,7 +53,7 @@ WebInspector.WorkerManager = class WorkerManager extends WebInspector.Object
     {
         let connection = this._connections.take(workerId);
 
-        WebInspector.targetManager.removeTarget(connection.target);
+        WI.targetManager.removeTarget(connection.target);
     }
 
     dispatchMessageFromWorker(workerId, message)

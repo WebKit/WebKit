@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProbeManager = class ProbeManager extends WebInspector.Object
+WI.ProbeManager = class ProbeManager extends WI.Object
 {
     constructor()
     {
@@ -37,13 +37,13 @@ WebInspector.ProbeManager = class ProbeManager extends WebInspector.Object
         this._probesByIdentifier = new Map;
         this._probeSetsByBreakpoint = new Map;
 
-        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointAdded, this._breakpointAdded, this);
-        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointRemoved, this._breakpointRemoved, this);
-        WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ActionsDidChange, this._breakpointActionsChanged, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointAdded, this._breakpointAdded, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointRemoved, this._breakpointRemoved, this);
+        WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ActionsDidChange, this._breakpointActionsChanged, this);
 
         // Saved breakpoints should not be restored on the first event loop turn, because it
         // makes manager initialization order very fragile. No breakpoints should be available.
-        console.assert(!WebInspector.debuggerManager.breakpoints.length, "No breakpoints should exist before all the managers are constructed.");
+        console.assert(!WI.debuggerManager.breakpoints.length, "No breakpoints should exist before all the managers are constructed.");
     }
 
     // Public
@@ -58,15 +58,15 @@ WebInspector.ProbeManager = class ProbeManager extends WebInspector.Object
         return this._probesByIdentifier.get(identifier);
     }
 
-    // Protected (called by WebInspector.DebuggerObserver)
+    // Protected (called by WI.DebuggerObserver)
 
     didSampleProbe(target, sample)
     {
         console.assert(this._probesByIdentifier.has(sample.probeId), "Unknown probe identifier specified for sample: ", sample);
         let probe = this._probesByIdentifier.get(sample.probeId);
-        let elapsedTime = WebInspector.timelineManager.computeElapsedTime(sample.timestamp);
-        let object = WebInspector.RemoteObject.fromPayload(sample.payload, target);
-        probe.addSample(new WebInspector.ProbeSample(sample.sampleId, sample.batchId, elapsedTime, object));
+        let elapsedTime = WI.timelineManager.computeElapsedTime(sample.timestamp);
+        let object = WI.RemoteObject.fromPayload(sample.payload, target);
+        probe.addSample(new WI.ProbeSample(sample.sampleId, sample.batchId, elapsedTime, object));
     }
 
     // Private
@@ -74,12 +74,12 @@ WebInspector.ProbeManager = class ProbeManager extends WebInspector.Object
     _breakpointAdded(breakpointOrEvent)
     {
         var breakpoint;
-        if (breakpointOrEvent instanceof WebInspector.Breakpoint)
+        if (breakpointOrEvent instanceof WI.Breakpoint)
             breakpoint = breakpointOrEvent;
         else
             breakpoint = breakpointOrEvent.data.breakpoint;
 
-        console.assert(breakpoint instanceof WebInspector.Breakpoint, "Unknown object passed as breakpoint: ", breakpoint);
+        console.assert(breakpoint instanceof WI.Breakpoint, "Unknown object passed as breakpoint: ", breakpoint);
 
         if (this._knownProbeIdentifiersForBreakpoint.has(breakpoint))
             return;
@@ -101,12 +101,12 @@ WebInspector.ProbeManager = class ProbeManager extends WebInspector.Object
     _breakpointActionsChanged(breakpointOrEvent)
     {
         var breakpoint;
-        if (breakpointOrEvent instanceof WebInspector.Breakpoint)
+        if (breakpointOrEvent instanceof WI.Breakpoint)
             breakpoint = breakpointOrEvent;
         else
             breakpoint = breakpointOrEvent.target;
 
-        console.assert(breakpoint instanceof WebInspector.Breakpoint, "Unknown object passed as breakpoint: ", breakpoint);
+        console.assert(breakpoint instanceof WI.Breakpoint, "Unknown object passed as breakpoint: ", breakpoint);
 
         // Sometimes actions change before the added breakpoint is fully dispatched.
         if (!this._knownProbeIdentifiersForBreakpoint.has(breakpoint)) {
@@ -126,7 +126,7 @@ WebInspector.ProbeManager = class ProbeManager extends WebInspector.Object
                 // New probe; find or create relevant probe set.
                 knownProbeIdentifiers.add(probeIdentifier);
                 var probeSet = this._probeSetForBreakpoint(breakpoint);
-                var newProbe = new WebInspector.Probe(probeIdentifier, breakpoint, probeAction.data);
+                var newProbe = new WI.Probe(probeIdentifier, breakpoint, probeAction.data);
                 this._probesByIdentifier.set(probeIdentifier, newProbe);
                 probeSet.addProbe(newProbe);
                 return;
@@ -154,7 +154,7 @@ WebInspector.ProbeManager = class ProbeManager extends WebInspector.Object
             if (!probeSet.probes.length) {
                 this._probeSetsByBreakpoint.delete(probeSet.breakpoint);
                 probeSet.willRemove();
-                this.dispatchEventToListeners(WebInspector.ProbeManager.Event.ProbeSetRemoved, {probeSet});
+                this.dispatchEventToListeners(WI.ProbeManager.Event.ProbeSetRemoved, {probeSet});
             }
         }, this);
     }
@@ -164,14 +164,14 @@ WebInspector.ProbeManager = class ProbeManager extends WebInspector.Object
         if (this._probeSetsByBreakpoint.has(breakpoint))
             return this._probeSetsByBreakpoint.get(breakpoint);
 
-        var newProbeSet = new WebInspector.ProbeSet(breakpoint);
+        var newProbeSet = new WI.ProbeSet(breakpoint);
         this._probeSetsByBreakpoint.set(breakpoint, newProbeSet);
-        this.dispatchEventToListeners(WebInspector.ProbeManager.Event.ProbeSetAdded, {probeSet: newProbeSet});
+        this.dispatchEventToListeners(WI.ProbeManager.Event.ProbeSetAdded, {probeSet: newProbeSet});
         return newProbeSet;
     }
 };
 
-WebInspector.ProbeManager.Event = {
+WI.ProbeManager.Event = {
     ProbeSetAdded: "probe-manager-probe-set-added",
     ProbeSetRemoved: "probe-manager-probe-set-removed",
 };

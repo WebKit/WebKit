@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FolderTreeElement = class FolderTreeElement extends WebInspector.GeneralTreeElement
+WI.FolderTreeElement = class FolderTreeElement extends WI.GeneralTreeElement
 {
     constructor(title, representedObject)
     {
-        console.assert(!representedObject || representedObject instanceof WebInspector.Collection);
+        console.assert(!representedObject || representedObject instanceof WI.Collection);
 
-        const classNames = [WebInspector.FolderTreeElement.FolderIconStyleClassName];
+        const classNames = [WI.FolderTreeElement.FolderIconStyleClassName];
         const subtitle = null;
         super(classNames, title, subtitle, representedObject, {hasChildren: true});
     }
 };
 
-WebInspector.FolderTreeElement.FolderIconStyleClassName = "folder-icon";
+WI.FolderTreeElement.FolderIconStyleClassName = "folder-icon";

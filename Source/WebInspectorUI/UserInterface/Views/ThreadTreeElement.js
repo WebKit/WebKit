@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.GeneralTreeElement
+WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
 {
     constructor(target)
     {
@@ -31,7 +31,7 @@ WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.Ge
 
         this._target = target;
 
-        this._idleTreeElement = new WebInspector.IdleTreeElement;
+        this._idleTreeElement = new WI.IdleTreeElement;
     }
 
     // Public
@@ -44,7 +44,7 @@ WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.Ge
 
         this._updateStatus();
 
-        let targetData = WebInspector.debuggerManager.dataForTarget(this._target);
+        let targetData = WI.debuggerManager.dataForTarget(this._target);
         let callFrames = targetData.callFrames;
 
         if (targetData.pausing || !callFrames.length) {
@@ -53,11 +53,11 @@ WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.Ge
             return;
         }
 
-        let activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+        let activeCallFrame = WI.debuggerManager.activeCallFrame;
         let activeCallFrameTreeElement = null;
 
         for (let callFrame of callFrames) {
-            let callFrameTreeElement = new WebInspector.CallFrameTreeElement(callFrame);
+            let callFrameTreeElement = new WI.CallFrameTreeElement(callFrame);
             if (callFrame === activeCallFrame)
                 activeCallFrameTreeElement = callFrameTreeElement;
             this.appendChild(callFrameTreeElement);
@@ -80,20 +80,20 @@ WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.Ge
                 console.assert(boundaryCallFrame.nativeCode && !boundaryCallFrame.sourceCodeLocation);
             } else {
                 // Create a generic native CallFrame for the asynchronous boundary.
-                const functionName = WebInspector.UIString("(async)");
+                const functionName = WI.UIString("(async)");
                 const nativeCode = true;
-                boundaryCallFrame = new WebInspector.CallFrame(null, null, null, functionName, null, null, nativeCode);
+                boundaryCallFrame = new WI.CallFrame(null, null, null, functionName, null, null, nativeCode);
             }
 
             const isAsyncBoundaryCallFrame = true;
-            this.appendChild(new WebInspector.CallFrameTreeElement(boundaryCallFrame, isAsyncBoundaryCallFrame));
+            this.appendChild(new WI.CallFrameTreeElement(boundaryCallFrame, isAsyncBoundaryCallFrame));
 
             let startIndex = currentStackTrace.topCallFrameIsBoundary ? 1 : 0;
             for (let i = startIndex; i < currentStackTrace.callFrames.length; ++i)
-                this.appendChild(new WebInspector.CallFrameTreeElement(currentStackTrace.callFrames[i]));
+                this.appendChild(new WI.CallFrameTreeElement(currentStackTrace.callFrames[i]));
 
             if (currentStackTrace.truncated) {
-                let truncatedTreeElement = new WebInspector.GeneralTreeElement("truncated-call-frames", WebInspector.UIString("Call Frames Truncated"));
+                let truncatedTreeElement = new WI.GeneralTreeElement("truncated-call-frames", WI.UIString("Call Frames Truncated"));
                 truncatedTreeElement.selectable = false;
                 this.appendChild(truncatedTreeElement);
             }
@@ -116,10 +116,10 @@ WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.Ge
 
     populateContextMenu(contextMenu, event)
     {
-        let targetData = WebInspector.debuggerManager.dataForTarget(this._target);
+        let targetData = WI.debuggerManager.dataForTarget(this._target);
 
-        contextMenu.appendItem(WebInspector.UIString("Resume Thread"), () => {
-            WebInspector.debuggerManager.continueUntilNextRunLoop(this._target);
+        contextMenu.appendItem(WI.UIString("Resume Thread"), () => {
+            WI.debuggerManager.continueUntilNextRunLoop(this._target);
         }, !targetData.paused);
 
         super.populateContextMenu(contextMenu, event);
@@ -134,14 +134,14 @@ WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.Ge
         if (!this.element)
             return;
 
-        let targetData = WebInspector.debuggerManager.dataForTarget(this._target);
+        let targetData = WI.debuggerManager.dataForTarget(this._target);
         if (!targetData.paused)
             return;
 
         if (!this._statusButton) {
-            let tooltip = WebInspector.UIString("Resume Thread");
-            this._statusButton = new WebInspector.TreeElementStatusButton(useSVGSymbol("Images/Resume.svg", "resume", tooltip));
-            this._statusButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, () => { WebInspector.debuggerManager.continueUntilNextRunLoop(this._target); });
+            let tooltip = WI.UIString("Resume Thread");
+            this._statusButton = new WI.TreeElementStatusButton(useSVGSymbol("Images/Resume.svg", "resume", tooltip));
+            this._statusButton.addEventListener(WI.TreeElementStatusButton.Event.Clicked, () => { WI.debuggerManager.continueUntilNextRunLoop(this._target); });
             this._statusButton.element.addEventListener("mousedown", (event) => {
                 // Prevent tree element from being selected.
                 event.stopPropagation();

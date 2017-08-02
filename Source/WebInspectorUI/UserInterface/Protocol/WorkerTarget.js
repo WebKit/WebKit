@@ -23,25 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.WorkerTarget = class WorkerTarget extends WebInspector.Target
+WI.WorkerTarget = class WorkerTarget extends WI.Target
 {
     constructor(workerId, name, connection)
     {
-        super(workerId, name, WebInspector.Target.Type.Worker, connection);
+        super(workerId, name, WI.Target.Type.Worker, connection);
 
-        WebInspector.frameResourceManager.adoptOrphanedResourcesForTarget(this);
+        WI.frameResourceManager.adoptOrphanedResourcesForTarget(this);
 
         if (this.RuntimeAgent) {
-            this._executionContext = new WebInspector.ExecutionContext(this, WebInspector.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, false, null);
+            this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, false, null);
             this.RuntimeAgent.enable();
-            if (WebInspector.showJavaScriptTypeInformationSetting && WebInspector.showJavaScriptTypeInformationSetting.value)
+            if (WI.showJavaScriptTypeInformationSetting && WI.showJavaScriptTypeInformationSetting.value)
                 this.RuntimeAgent.enableTypeProfiler();
-            if (WebInspector.enableControlFlowProfilerSetting && WebInspector.enableControlFlowProfilerSetting.value)
+            if (WI.enableControlFlowProfilerSetting && WI.enableControlFlowProfilerSetting.value)
                 this.RuntimeAgent.enableControlFlowProfiler();
         }
 
         if (this.DebuggerAgent)
-            WebInspector.debuggerManager.initializeTarget(this);
+            WI.debuggerManager.initializeTarget(this);
 
         if (this.ConsoleAgent)
             this.ConsoleAgent.enable();
@@ -54,6 +54,6 @@ WebInspector.WorkerTarget = class WorkerTarget extends WebInspector.Target
 
     get displayName()
     {
-        return WebInspector.displayNameForURL(this._name);
+        return WI.displayNameForURL(this._name);
     }
 };

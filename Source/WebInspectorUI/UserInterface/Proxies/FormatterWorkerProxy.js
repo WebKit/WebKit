@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FormatterWorkerProxy = class FormatterWorkerProxy
+WI.FormatterWorkerProxy = class FormatterWorkerProxy
 {
     constructor()
     {

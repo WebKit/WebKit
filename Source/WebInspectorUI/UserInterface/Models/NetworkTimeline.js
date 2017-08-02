@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTimeline = class NetworkTimeline extends WebInspector.Timeline
+WI.NetworkTimeline = class NetworkTimeline extends WI.Timeline
 {
     // Public
 
     recordForResource(resource)
     {
-        console.assert(resource instanceof WebInspector.Resource);
+        console.assert(resource instanceof WI.Resource);
 
         return this._resourceRecordMap.get(resource) || null;
     }
@@ -43,7 +43,7 @@ WebInspector.NetworkTimeline = class NetworkTimeline extends WebInspector.Timeli
 
     addRecord(record)
     {
-        console.assert(record instanceof WebInspector.ResourceTimelineRecord);
+        console.assert(record instanceof WI.ResourceTimelineRecord);
 
         // Don't allow duplicate records for a resource.
         if (this._resourceRecordMap.has(record.resource))

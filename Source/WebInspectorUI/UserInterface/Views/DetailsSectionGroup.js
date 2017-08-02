@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionGroup = class DetailsSectionGroup extends WebInspector.Object
+WI.DetailsSectionGroup = class DetailsSectionGroup extends WI.Object
 {
     constructor(rows)
     {

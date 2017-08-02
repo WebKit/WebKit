@@ -22,8 +22,8 @@ function test()
     }
 
     function logStyleSheets() {
-        WebInspector.cssStyleManager.styleSheets.sort((a, b) => a.url.localeCompare(b.url)).forEach((styleSheet) => {
-            let frameString = styleSheet.parentFrame.id === WebInspector.frameResourceManager.mainFrame.id ? "<mainframe>" : "<childframe>";
+        WI.cssStyleManager.styleSheets.sort((a, b) => a.url.localeCompare(b.url)).forEach((styleSheet) => {
+            let frameString = styleSheet.parentFrame.id === WI.frameResourceManager.mainFrame.id ? "<mainframe>" : "<childframe>";
             InspectorTest.log(`URL: ${sanitizeURL(styleSheet.url)} ${frameString}`);
         });
     }
@@ -34,7 +34,7 @@ function test()
         name: "CheckStyleSheets",
         description: "Ensure there is currently one stylesheet.",
         test(resolve, reject) {
-            InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === 1, "Should be one stylesheets.");
+            InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 1, "Should be one stylesheets.");
             logStyleSheets();
             resolve();
         }
@@ -44,10 +44,10 @@ function test()
         name: "CheckStyleSheetsAfterAddingSubframe",
         description: "Ensure subframe stylesheets are added.",
         test(resolve, reject) {
-            WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetAdded)
+            WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetAdded)
             .then((event) => {
-                InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === 2, "Should be two stylesheets.");
-                InspectorTest.expectThat(event.data.styleSheet.parentFrame !== WebInspector.frameResourceManager.mainFrame.id, "New StyleSheet is for a subframe");
+                InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 2, "Should be two stylesheets.");
+                InspectorTest.expectThat(event.data.styleSheet.parentFrame !== WI.frameResourceManager.mainFrame.id, "New StyleSheet is for a subframe");
                 logStyleSheets();
             })
             .then(resolve, reject);
@@ -60,10 +60,10 @@ function test()
         name: "CheckStyleSheetsAfterRemovingSubframe",
         description: "Ensure subframe stylesheets are removed.",
         test(resolve, reject) {
-            WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetRemoved)
+            WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetRemoved)
             .then((event) => {
-                InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === 1, "Should be one stylesheet.");
-                InspectorTest.expectThat(event.data.styleSheet.parentFrame !== WebInspector.frameResourceManager.mainFrame.id, "Removed StyleSheet is for a subframe");
+                InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 1, "Should be one stylesheet.");
+                InspectorTest.expectThat(event.data.styleSheet.parentFrame !== WI.frameResourceManager.mainFrame.id, "Removed StyleSheet is for a subframe");
                 logStyleSheets();
             })
             .then(resolve, reject);

@@ -17,9 +17,9 @@ function test()
 {
     function typeString(type) {
         switch (type) {
-        case WebInspector.Target.Type.Main:
+        case WI.Target.Type.Main:
             return "Main";
-        case WebInspector.Target.Type.Worker:
+        case WI.Target.Type.Worker:
             return "Worker";
         default:
             return "Unknown";
@@ -27,7 +27,7 @@ function test()
     }
 
     function dumpTargets() {
-        for (let target of WebInspector.targets)
+        for (let target of WI.targets)
             InspectorTest.log(`Target - ${typeString(target.type)} - ${target.displayName}`);
     }
 
@@ -38,11 +38,11 @@ function test()
         name: "TargetManager.MainTarget",
         description: "We should always have the main target.",
         test(resolve, reject) {
-            InspectorTest.assert(WebInspector.targets === WebInspector.targetManager.targets);
-            InspectorTest.expectEqual(WebInspector.targets.size, 1, "Targets list should always start out with the main target.");
-            InspectorTest.expectEqual([...WebInspector.targets][0], WebInspector.mainTarget, "Target list should always contain the main target.");
-            InspectorTest.expectNotNull(WebInspector.mainTarget.executionContext, "Main target should have an ExecutionContext.");
-            InspectorTest.expectEqual(WebInspector.mainTarget.RuntimeAgent, RuntimeAgent, "Main target should have the global RuntimeAgent.");
+            InspectorTest.assert(WI.targets === WI.targetManager.targets);
+            InspectorTest.expectEqual(WI.targets.size, 1, "Targets list should always start out with the main target.");
+            InspectorTest.expectEqual([...WI.targets][0], WI.mainTarget, "Target list should always contain the main target.");
+            InspectorTest.expectNotNull(WI.mainTarget.executionContext, "Main target should have an ExecutionContext.");
+            InspectorTest.expectEqual(WI.mainTarget.RuntimeAgent, RuntimeAgent, "Main target should have the global RuntimeAgent.");
             dumpTargets();
             resolve();
         }
@@ -53,10 +53,10 @@ function test()
         description: "Creating a Worker should create a new Worker Target.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("createWorker()");
-            WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetAdded, (event) => {
+            WI.targetManager.singleFireEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
                 let target = event.data.target;
-                InspectorTest.assert(target instanceof WebInspector.Target);
-                InspectorTest.expectEqual(target.type, WebInspector.Target.Type.Worker, "Added Target should have Worker type.");
+                InspectorTest.assert(target instanceof WI.Target);
+                InspectorTest.expectEqual(target.type, WI.Target.Type.Worker, "Added Target should have Worker type.");
                 InspectorTest.expectNotNull(target.executionContext, "Added Target should have an ExecutionContext.");
                 InspectorTest.expectNotNull(target.RuntimeAgent, "Added Target should have a RuntimeAgent.");
                 InspectorTest.expectNotEqual(target.RuntimeAgent, RuntimeAgent, "Added Target RuntimeAgent should not be the global RuntimeAgent.");
@@ -71,10 +71,10 @@ function test()
         description: "Creating a Worker should create a new Worker Target.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("terminateWorker()");
-            WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetRemoved, (event) => {
+            WI.targetManager.singleFireEventListener(WI.TargetManager.Event.TargetRemoved, (event) => {
                 let target = event.data.target;
-                InspectorTest.assert(target instanceof WebInspector.Target);
-                InspectorTest.expectEqual(target.type, WebInspector.Target.Type.Worker, "Removed Target should have Worker type.");
+                InspectorTest.assert(target instanceof WI.Target);
+                InspectorTest.expectEqual(target.type, WI.Target.Type.Worker, "Removed Target should have Worker type.");
                 dumpTargets();
                 resolve();
             });
@@ -86,6 +86,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Test for TargetManager and other global WebInspector.Target objects.</p>
+<p>Test for TargetManager and other global WI.Target objects.</p>
 </body>
 </html>

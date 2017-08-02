@@ -37,7 +37,7 @@ function test()
         description: "Make sure we properly collect location information.",
         test(resolve, reject) {
             InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
-                let tree = WebInspector.CallingContextTree.__test_makeTreeFromProtocolMessageObject(messageObject);
+                let tree = WI.CallingContextTree.__test_makeTreeFromProtocolMessageObject(messageObject);
                 let foundLine19Column14 = false;
                 let foundLine25Column14 = false;
                 tree.forEachNode((node) => {

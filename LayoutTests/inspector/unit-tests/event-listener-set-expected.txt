@@ -1,4 +1,4 @@
-Testing basic functionality of WebInspector.EventListenerSet.
+Testing basic functionality of WI.EventListenerSet.
 
 Registering listeners.
 Installing listeners.

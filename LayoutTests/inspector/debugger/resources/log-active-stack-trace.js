@@ -1,17 +1,17 @@
 TestPage.registerInitializer(() => {
     window.getActiveStackTrace = function() {
-        InspectorTest.assert(WebInspector.debuggerManager.activeCallFrame, "Active call frame should exist.");
-        if (!WebInspector.debuggerManager.activeCallFrame)
+        InspectorTest.assert(WI.debuggerManager.activeCallFrame, "Active call frame should exist.");
+        if (!WI.debuggerManager.activeCallFrame)
             return null;
 
-        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
         InspectorTest.assert(targetData, "Data for active call frame target should exist.");
         if (!targetData)
             return null;
 
         const topCallFrameIsBoundary = false;
         const truncated = false;
-        return new WebInspector.StackTrace(targetData.callFrames, topCallFrameIsBoundary, truncated, targetData.asyncStackTrace);
+        return new WI.StackTrace(targetData.callFrames, topCallFrameIsBoundary, truncated, targetData.asyncStackTrace);
     }
 
     window.logActiveStackTrace = function() {

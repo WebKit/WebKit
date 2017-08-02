@@ -19,7 +19,7 @@ function pause2() {
 function test()
 {
     function topCallFrameName() {
-        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.mainTarget);
+        let targetData = WI.debuggerManager.dataForTarget(WI.mainTarget);
         return targetData.callFrames[0].functionName;
     }
 
@@ -42,14 +42,14 @@ function test()
         description: "Debugger.continueUntilNextRunLoop should only work when paused.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerMultiplePauses()");
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 InspectorTest.pass("Received First Pause Event.");
                 InspectorTest.expectEqual(topCallFrameName(), "pause1", "Should be paused in pause1.");
-                WebInspector.debuggerManager.continueUntilNextRunLoop(WebInspector.mainTarget);
-                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                WI.debuggerManager.continueUntilNextRunLoop(WI.mainTarget);
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                     InspectorTest.pass("Received Second Pause Event.");
                     InspectorTest.expectEqual(topCallFrameName(), "pause2", "Should be paused in pause2.");
-                    WebInspector.debuggerManager.resume().then(resolve, reject);
+                    WI.debuggerManager.resume().then(resolve, reject);
                 });
             });
         }

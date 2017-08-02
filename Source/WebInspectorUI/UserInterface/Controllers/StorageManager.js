@@ -24,7 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.StorageManager = class StorageManager extends WebInspector.Object
+WI.StorageManager = class StorageManager extends WI.Object
 {
     constructor()
     {
@@ -37,8 +37,8 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
         if (window.IndexedDBAgent)
             IndexedDBAgent.enable();
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.SecurityOriginDidChange, this._securityOriginDidChange, this);
 
         this.initialize();
     }
@@ -78,18 +78,18 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
 
     domStorageWasAdded(id, host, isLocalStorage)
     {
-        var domStorage = new WebInspector.DOMStorageObject(id, host, isLocalStorage);
+        var domStorage = new WI.DOMStorageObject(id, host, isLocalStorage);
 
         this._domStorageObjects.push(domStorage);
-        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasAdded, {domStorage});
+        this.dispatchEventToListeners(WI.StorageManager.Event.DOMStorageObjectWasAdded, {domStorage});
     }
 
     databaseWasAdded(id, host, name, version)
     {
-        var database = new WebInspector.DatabaseObject(id, host, name, version);
+        var database = new WI.DatabaseObject(id, host, name, version);
 
         this._databaseObjects.push(database);
-        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DatabaseWasAdded, {database});
+        this.dispatchEventToListeners(WI.StorageManager.Event.DatabaseWasAdded, {database});
     }
 
     itemsCleared(storageId)
@@ -126,7 +126,7 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
         console.assert(database);
         if (!database)
             return;
-        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DatabaseWasInspected, {database});
+        this.dispatchEventToListeners(WI.StorageManager.Event.DatabaseWasInspected, {database});
     }
 
     inspectDOMStorage(id)
@@ -135,7 +135,7 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
         console.assert(domStorage);
         if (!domStorage)
             return;
-        this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasInspected, {domStorage});
+        this.dispatchEventToListeners(WI.StorageManager.Event.DOMStorageObjectWasInspected, {domStorage});
     }
 
     requestIndexedDatabaseData(objectStore, objectStoreIndex, startEntryIndex, maximumEntryCount, callback)
@@ -155,9 +155,9 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
 
             for (var entryPayload of entryPayloads) {
                 var entry = {};
-                entry.primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                entry.key = WebInspector.RemoteObject.fromPayload(entryPayload.key);
-                entry.value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                entry.primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                entry.key = WI.RemoteObject.fromPayload(entryPayload.key);
+                entry.value = WI.RemoteObject.fromPayload(entryPayload.value);
                 entries.push(entry);
             }
 
@@ -200,12 +200,12 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
 
     _mainResourceDidChange(event)
     {
-        console.assert(event.target instanceof WebInspector.Frame);
+        console.assert(event.target instanceof WI.Frame);
 
         if (event.target.isMainFrame()) {
             // If we are dealing with the main frame, we want to clear our list of objects, because we are navigating to a new page.
             this.initialize();
-            this.dispatchEventToListeners(WebInspector.StorageManager.Event.Cleared);
+            this.dispatchEventToListeners(WI.StorageManager.Event.Cleared);
 
             this._addDOMStorageIfNeeded(event.target);
             this._addIndexedDBDatabasesIfNeeded(event.target);
@@ -219,8 +219,8 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
         if (this._cookieStorageObjects[host])
             return;
 
-        this._cookieStorageObjects[host] = new WebInspector.CookieStorageObject(host);
-        this.dispatchEventToListeners(WebInspector.StorageManager.Event.CookieStorageObjectWasAdded, {cookieStorage: this._cookieStorageObjects[host]});
+        this._cookieStorageObjects[host] = new WI.CookieStorageObject(host);
+        this.dispatchEventToListeners(WI.StorageManager.Event.CookieStorageObjectWasAdded, {cookieStorage: this._cookieStorageObjects[host]});
     }
 
     _addDOMStorageIfNeeded(frame)
@@ -269,10 +269,10 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
                 return;
 
             var objectStores = databasePayload.objectStores.map(processObjectStore);
-            var indexedDatabase = new WebInspector.IndexedDatabase(databasePayload.name, securityOrigin, databasePayload.version, objectStores);
+            var indexedDatabase = new WI.IndexedDatabase(databasePayload.name, securityOrigin, databasePayload.version, objectStores);
 
             this._indexedDatabases.push(indexedDatabase);
-            this.dispatchEventToListeners(WebInspector.StorageManager.Event.IndexedDatabaseWasAdded, {indexedDatabase});
+            this.dispatchEventToListeners(WI.StorageManager.Event.IndexedDatabaseWasAdded, {indexedDatabase});
         }
 
         function processKeyPath(keyPathPayload)
@@ -294,13 +294,13 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
         {
             var keyPath = processKeyPath(objectStorePayload.keyPath);
             var indexes = objectStorePayload.indexes.map(processObjectStoreIndex);
-            return new WebInspector.IndexedDatabaseObjectStore(objectStorePayload.name, keyPath, objectStorePayload.autoIncrement, indexes);
+            return new WI.IndexedDatabaseObjectStore(objectStorePayload.name, keyPath, objectStorePayload.autoIncrement, indexes);
         }
 
         function processObjectStoreIndex(objectStoreIndexPayload)
         {
             var keyPath = processKeyPath(objectStoreIndexPayload.keyPath);
-            return new WebInspector.IndexedDatabaseObjectStoreIndex(objectStoreIndexPayload.name, keyPath, objectStoreIndexPayload.unique, objectStoreIndexPayload.multiEntry);
+            return new WI.IndexedDatabaseObjectStoreIndex(objectStoreIndexPayload.name, keyPath, objectStoreIndexPayload.unique, objectStoreIndexPayload.multiEntry);
         }
 
         IndexedDBAgent.requestDatabaseNames(securityOrigin, processDatabaseNames.bind(this));
@@ -308,7 +308,7 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
 
     _securityOriginDidChange(event)
     {
-        console.assert(event.target instanceof WebInspector.Frame);
+        console.assert(event.target instanceof WI.Frame);
 
         this._addDOMStorageIfNeeded(event.target);
         this._addIndexedDBDatabasesIfNeeded(event.target);
@@ -325,7 +325,7 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
     }
 };
 
-WebInspector.StorageManager.Event = {
+WI.StorageManager.Event = {
     CookieStorageObjectWasAdded: "storage-manager-cookie-storage-object-was-added",
     DOMStorageObjectWasAdded: "storage-manager-dom-storage-object-was-added",
     DOMStorageObjectWasInspected: "storage-dom-object-was-inspected",

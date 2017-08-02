@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScrubberNavigationItem = class ScrubberNavigationItem extends WebInspector.FlexibleSpaceNavigationItem
+WI.ScrubberNavigationItem = class ScrubberNavigationItem extends WI.FlexibleSpaceNavigationItem
 {
     constructor(identifier)
     {
@@ -66,10 +66,10 @@ WebInspector.ScrubberNavigationItem = class ScrubberNavigationItem extends WebIn
 
     _sliderChanged(event)
     {
-        this.dispatchEventToListeners(WebInspector.ScrubberNavigationItem.Event.ValueChanged);
+        this.dispatchEventToListeners(WI.ScrubberNavigationItem.Event.ValueChanged);
     }
 };
 
-WebInspector.ScrubberNavigationItem.Event = {
+WI.ScrubberNavigationItem.Event = {
     ValueChanged: "slider-navigation-item-value-changed",
 };

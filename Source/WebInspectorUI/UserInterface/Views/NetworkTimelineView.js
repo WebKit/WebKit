@@ -23,92 +23,92 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspector.TimelineView
+WI.NetworkTimelineView = class NetworkTimelineView extends WI.TimelineView
 {
     constructor(timeline, extraArguments)
     {
         super(timeline, extraArguments);
 
-        console.assert(timeline.type === WebInspector.TimelineRecord.Type.Network);
+        console.assert(timeline.type === WI.TimelineRecord.Type.Network);
 
         let columns = {name: {}, domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, protocol: {}, priority: {}, remoteAddress: {}, connectionIdentifier: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}, graph: {}};
 
-        columns.name.title = WebInspector.UIString("Name");
+        columns.name.title = WI.UIString("Name");
         columns.name.icon = true;
         columns.name.width = "10%";
         columns.name.locked = true;
 
-        columns.domain.title = WebInspector.UIString("Domain");
+        columns.domain.title = WI.UIString("Domain");
         columns.domain.width = "8%";
 
-        columns.type.title = WebInspector.UIString("Type");
+        columns.type.title = WI.UIString("Type");
         columns.type.width = "7%";
 
         let typeToLabelMap = new Map;
-        for (let key in WebInspector.Resource.Type) {
-            let value = WebInspector.Resource.Type[key];
-            typeToLabelMap.set(value, WebInspector.Resource.displayNameForType(value, true));
+        for (let key in WI.Resource.Type) {
+            let value = WI.Resource.Type[key];
+            typeToLabelMap.set(value, WI.Resource.displayNameForType(value, true));
         }
 
-        columns.type.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("network", typeToLabelMap);
+        columns.type.scopeBar = WI.TimelineDataGrid.createColumnScopeBar("network", typeToLabelMap);
         this._scopeBar = columns.type.scopeBar;
 
-        columns.method.title = WebInspector.UIString("Method");
+        columns.method.title = WI.UIString("Method");
         columns.method.width = "4%";
 
-        columns.scheme.title = WebInspector.UIString("Scheme");
+        columns.scheme.title = WI.UIString("Scheme");
         columns.scheme.width = "4%";
 
-        columns.statusCode.title = WebInspector.UIString("Status");
+        columns.statusCode.title = WI.UIString("Status");
         columns.statusCode.width = "4%";
 
-        columns.cached.title = WebInspector.UIString("Cached");
+        columns.cached.title = WI.UIString("Cached");
         columns.cached.width = "6%";
 
-        columns.protocol.title = WebInspector.UIString("Protocol");
+        columns.protocol.title = WI.UIString("Protocol");
         columns.protocol.width = "5%";
         columns.protocol.hidden = true;
 
-        columns.priority.title = WebInspector.UIString("Priority");
+        columns.priority.title = WI.UIString("Priority");
         columns.priority.width = "5%";
         columns.priority.hidden = true;
 
-        columns.remoteAddress.title = WebInspector.UIString("IP Address");
+        columns.remoteAddress.title = WI.UIString("IP Address");
         columns.remoteAddress.width = "8%";
         columns.remoteAddress.hidden = true;
 
-        columns.connectionIdentifier.title = WebInspector.UIString("Connection ID");
+        columns.connectionIdentifier.title = WI.UIString("Connection ID");
         columns.connectionIdentifier.width = "5%";
         columns.connectionIdentifier.hidden = true;
         columns.connectionIdentifier.aligned = "right";
 
-        columns.size.title = WebInspector.UIString("Size");
+        columns.size.title = WI.UIString("Size");
         columns.size.width = "6%";
         columns.size.aligned = "right";
 
-        columns.transferSize.title = WebInspector.UIString("Transferred");
+        columns.transferSize.title = WI.UIString("Transferred");
         columns.transferSize.width = "8%";
         columns.transferSize.aligned = "right";
 
-        columns.requestSent.title = WebInspector.UIString("Start Time");
+        columns.requestSent.title = WI.UIString("Start Time");
         columns.requestSent.width = "9%";
         columns.requestSent.aligned = "right";
 
-        columns.latency.title = WebInspector.UIString("Latency");
+        columns.latency.title = WI.UIString("Latency");
         columns.latency.width = "9%";
         columns.latency.aligned = "right";
 
-        columns.duration.title = WebInspector.UIString("Duration");
+        columns.duration.title = WI.UIString("Duration");
         columns.duration.width = "9%";
         columns.duration.aligned = "right";
 
         for (let column in columns)
             columns[column].sortable = true;
 
-        this._timelineRuler = new WebInspector.TimelineRuler;
+        this._timelineRuler = new WI.TimelineRuler;
         this._timelineRuler.allowsClippedLabels = true;
 
-        columns.graph.title = WebInspector.UIString("Timeline");
+        columns.graph.title = WI.UIString("Timeline");
         columns.graph.width = "15%";
         columns.graph.headerView = this._timelineRuler;
         columns.graph.sortable = false;
@@ -121,10 +121,10 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
             delete columns.connectionIdentifier;
         }
 
-        this._dataGrid = new WebInspector.TimelineDataGrid(columns);
+        this._dataGrid = new WI.TimelineDataGrid(columns);
         this._dataGrid.sortDelegate = this;
         this._dataGrid.sortColumnIdentifier = "requestSent";
-        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Ascending;
         this._dataGrid.createSettings("network-timeline-view");
 
         this.setupDataGrid(this._dataGrid);
@@ -132,7 +132,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         this.element.classList.add("network");
         this.addSubview(this._dataGrid);
 
-        timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
+        timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
         this._pendingRecords = [];
         this._resourceDataGridNodeMap = new Map;
@@ -147,10 +147,10 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
         if (!this._dataGrid.selectedNode || this._dataGrid.selectedNode.hidden)
             return null;
 
-        console.assert(this._dataGrid.selectedNode instanceof WebInspector.ResourceTimelineDataGridNode);
+        console.assert(this._dataGrid.selectedNode instanceof WI.ResourceTimelineDataGridNode);
 
-        let pathComponent = new WebInspector.TimelineDataGridNodePathComponent(this._dataGrid.selectedNode, this._dataGrid.selectedNode.resource);
-        pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
+        let pathComponent = new WI.TimelineDataGridNodePathComponent(this._dataGrid.selectedNode, this._dataGrid.selectedNode.resource);
+        pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
         return [pathComponent];
     }
 
@@ -170,7 +170,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
 
     closed()
     {
-        console.assert(this.representedObject instanceof WebInspector.Timeline);
+        console.assert(this.representedObject instanceof WI.Timeline);
         this.representedObject.removeEventListener(null, null, this);
 
         this._dataGrid.closed();
@@ -191,7 +191,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
     dataGridSortComparator(sortColumnIdentifier, sortDirection, node1, node2)
     {
         if (sortColumnIdentifier === "priority")
-            return WebInspector.Resource.comparePriority(node1.data.priority, node2.data.priority) * sortDirection;
+            return WI.Resource.comparePriority(node1.data.priority, node2.data.priority) * sortDirection;
         
         if (sortColumnIdentifier == "name") {
             let displayName1 = node1.displayName();
@@ -211,7 +211,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
     dataGridNodePathComponentSelected(event)
     {
         let pathComponent = event.data.pathComponent;
-        console.assert(pathComponent instanceof WebInspector.TimelineDataGridNodePathComponent);
+        console.assert(pathComponent instanceof WI.TimelineDataGridNodePathComponent);
 
         let dataGridNode = pathComponent.timelineDataGridNode;
         console.assert(dataGridNode.dataGrid === this._dataGrid);
@@ -256,7 +256,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
 
             const includesGraph = false;
             const shouldShowPopover = true;
-            dataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
+            dataGridNode = new WI.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
             this._resourceDataGridNodeMap.set(resourceTimelineRecord.resource, dataGridNode);
 
             this._dataGrid.addRowInSortOrder(null, dataGridNode);
@@ -268,7 +268,7 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
     _networkTimelineRecordAdded(event)
     {
         var resourceTimelineRecord = event.data.record;
-        console.assert(resourceTimelineRecord instanceof WebInspector.ResourceTimelineRecord);
+        console.assert(resourceTimelineRecord instanceof WI.ResourceTimelineRecord);
 
         this._pendingRecords.push(resourceTimelineRecord);
 

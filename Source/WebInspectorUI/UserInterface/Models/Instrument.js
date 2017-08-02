@@ -23,25 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Instrument = class Instrument
+WI.Instrument = class Instrument
 {
     // Static
 
     static createForTimelineType(type)
     {
         switch (type) {
-        case WebInspector.TimelineRecord.Type.Network:
-            return new WebInspector.NetworkInstrument;
-        case WebInspector.TimelineRecord.Type.Layout:
-            return new WebInspector.LayoutInstrument;
-        case WebInspector.TimelineRecord.Type.Script:
-            return new WebInspector.ScriptInstrument;
-        case WebInspector.TimelineRecord.Type.RenderingFrame:
-            return new WebInspector.FPSInstrument;
-        case WebInspector.TimelineRecord.Type.Memory:
-            return new WebInspector.MemoryInstrument;
-        case WebInspector.TimelineRecord.Type.HeapAllocations:
-            return new WebInspector.HeapAllocationsInstrument;
+        case WI.TimelineRecord.Type.Network:
+            return new WI.NetworkInstrument;
+        case WI.TimelineRecord.Type.Layout:
+            return new WI.LayoutInstrument;
+        case WI.TimelineRecord.Type.Script:
+            return new WI.ScriptInstrument;
+        case WI.TimelineRecord.Type.RenderingFrame:
+            return new WI.FPSInstrument;
+        case WI.TimelineRecord.Type.Memory:
+            return new WI.MemoryInstrument;
+        case WI.TimelineRecord.Type.HeapAllocations:
+            return new WI.HeapAllocationsInstrument;
         default:
             console.error("Unknown TimelineRecord.Type: " + type);
             return null;
@@ -52,10 +52,10 @@ WebInspector.Instrument = class Instrument
     {
         console.assert(window.TimelineAgent, "Attempted to start legacy timeline agent without TimelineAgent.");
 
-        if (WebInspector.Instrument._legacyTimelineAgentStarted)
+        if (WI.Instrument._legacyTimelineAgentStarted)
             return;
 
-        WebInspector.Instrument._legacyTimelineAgentStarted = true;
+        WI.Instrument._legacyTimelineAgentStarted = true;
 
         if (initiatedByBackend)
             return;
@@ -65,17 +65,17 @@ WebInspector.Instrument = class Instrument
         // COMPATIBILITY (iOS 7): recordingStarted event did not exist yet. Start explicitly.
         if (!TimelineAgent.hasEvent("recordingStarted")) {
             result.then(function() {
-                WebInspector.timelineManager.capturingStarted();
+                WI.timelineManager.capturingStarted();
             });
         }
     }
 
     static stopLegacyTimelineAgent(initiatedByBackend)
     {
-        if (!WebInspector.Instrument._legacyTimelineAgentStarted)
+        if (!WI.Instrument._legacyTimelineAgentStarted)
             return;
 
-        WebInspector.Instrument._legacyTimelineAgentStarted = false;
+        WI.Instrument._legacyTimelineAgentStarted = false;
 
         if (initiatedByBackend)
             return;
@@ -92,13 +92,13 @@ WebInspector.Instrument = class Instrument
 
     startInstrumentation(initiatedByBackend)
     {
-        WebInspector.Instrument.startLegacyTimelineAgent(initiatedByBackend);
+        WI.Instrument.startLegacyTimelineAgent(initiatedByBackend);
     }
 
     stopInstrumentation(initiatedByBackend)
     {
-        WebInspector.Instrument.stopLegacyTimelineAgent(initiatedByBackend);
+        WI.Instrument.stopLegacyTimelineAgent(initiatedByBackend);
     }
 };
 
-WebInspector.Instrument._legacyTimelineAgentStarted = false;
+WI.Instrument._legacyTimelineAgentStarted = false;

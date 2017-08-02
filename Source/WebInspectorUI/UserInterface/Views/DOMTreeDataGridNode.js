@@ -24,7 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMTreeDataGridNode = class DOMTreeDataGridNode extends WebInspector.DataGridNode
+WI.DOMTreeDataGridNode = class DOMTreeDataGridNode extends WI.DataGridNode
 {
     constructor(domNode)
     {
@@ -56,7 +56,7 @@ WebInspector.DOMTreeDataGridNode = class DOMTreeDataGridNode extends WebInspecto
         let mainTitle = this._domNode.displayName;
         fragment.append(mainTitle);
 
-        let goToButton = fragment.appendChild(WebInspector.createGoToArrowButton());
+        let goToButton = fragment.appendChild(WI.createGoToArrowButton());
         goToButton.addEventListener("click", this._goToArrowWasClicked.bind(this), false);
 
         return fragment;
@@ -64,6 +64,6 @@ WebInspector.DOMTreeDataGridNode = class DOMTreeDataGridNode extends WebInspecto
 
     _goToArrowWasClicked()
     {
-        WebInspector.showMainFrameDOMTree(this._domNode);
+        WI.showMainFrameDOMTree(this._domNode);
     }
 };

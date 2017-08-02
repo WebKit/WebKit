@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreContentView extends WebInspector.ContentView
+WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreContentView extends WI.ContentView
 {
     constructor(objectStoreOrIndex)
     {
@@ -31,10 +31,10 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
 
         this.element.classList.add("indexed-database-object-store");
 
-        if (objectStoreOrIndex instanceof WebInspector.IndexedDatabaseObjectStore) {
+        if (objectStoreOrIndex instanceof WI.IndexedDatabaseObjectStore) {
             this._objectStore = objectStoreOrIndex;
             this._objectStoreIndex = null;
-        } else if (objectStoreOrIndex instanceof WebInspector.IndexedDatabaseObjectStoreIndex) {
+        } else if (objectStoreOrIndex instanceof WI.IndexedDatabaseObjectStoreIndex) {
             this._objectStore = objectStoreOrIndex.parentObjectStore;
             this._objectStoreIndex = objectStoreOrIndex;
         }
@@ -44,7 +44,7 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
             if (!keyPath)
                 return "";
             if (keyPath instanceof Array)
-                return keyPath.join(WebInspector.UIString(", "));
+                return keyPath.join(WI.UIString(", "));
             console.assert(keyPath instanceof String || typeof keyPath === "string");
             return keyPath;
         }
@@ -52,22 +52,22 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
         var displayPrimaryKeyPath = displayKeyPath(this._objectStore.keyPath);
 
         var columnInfo = {
-            primaryKey: {title: displayPrimaryKeyPath ? WebInspector.UIString("Primary Key \u2014 %s").format(displayPrimaryKeyPath) : WebInspector.UIString("Primary Key")},
+            primaryKey: {title: displayPrimaryKeyPath ? WI.UIString("Primary Key \u2014 %s").format(displayPrimaryKeyPath) : WI.UIString("Primary Key")},
             key: {},
-            value: {title: WebInspector.UIString("Value")}
+            value: {title: WI.UIString("Value")}
         };
 
         if (this._objectStoreIndex) {
             // When there is an index, show the key path in the Key column.
             var displayIndexKeyPath = displayKeyPath(this._objectStoreIndex.keyPath);
-            columnInfo.key.title = WebInspector.UIString("Index Key \u2014 %s").format(displayIndexKeyPath);
+            columnInfo.key.title = WI.UIString("Index Key \u2014 %s").format(displayIndexKeyPath);
         } else {
             // Only need to show Key for indexes -- it is the same as Primary Key
             // when there is no index being used.
             delete columnInfo.key;
         }
 
-        this._dataGrid = new WebInspector.DataGrid(columnInfo);
+        this._dataGrid = new WI.DataGrid(columnInfo);
         this._dataGrid.variableHeightRows = true;
         this._dataGrid.scrollContainer.addEventListener("scroll", this._dataGridScrolled.bind(this));
         this.addSubview(this._dataGrid);
@@ -77,11 +77,11 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
         this._fetchingMoreData = false;
         this._fetchMoreData();
 
-        this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("indexed-database-object-store-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
-        this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
+        this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("indexed-database-object-store-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
+        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
 
-        this._clearButtonNavigationItem = new WebInspector.ButtonNavigationItem("indexed-database-object-store-clear", WebInspector.UIString("Clear object store"), "Images/NavigationItemTrash.svg", 15, 15);
-        this._clearButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearButtonClicked, this);
+        this._clearButtonNavigationItem = new WI.ButtonNavigationItem("indexed-database-object-store-clear", WI.UIString("Clear object store"), "Images/NavigationItemTrash.svg", 15, 15);
+        this._clearButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._clearButtonClicked, this);
     }
 
     // Public
@@ -100,7 +100,7 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
 
     saveToCookie(cookie)
     {
-        cookie.type = WebInspector.ContentViewCookieType.IndexedDatabaseObjectStore;
+        cookie.type = WI.ContentViewCookieType.IndexedDatabaseObjectStore;
         cookie.securityOrigin = this._objectStore.parentDatabase.securityOrigin;
         cookie.databaseName = this._objectStore.parentDatabase.name;
         cookie.objectStoreName = this._objectStore.name;
@@ -145,7 +145,7 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
             this._moreEntriesAvailable = moreAvailable;
 
             for (var entry of entries) {
-                var dataGridNode = new WebInspector.IndexedDatabaseEntryDataGridNode(entry);
+                var dataGridNode = new WI.IndexedDatabaseEntryDataGridNode(entry);
                 this._dataGrid.appendChild(dataGridNode);
             }
 
@@ -157,7 +157,7 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
 
         this._fetchingMoreData = true;
 
-        WebInspector.storageManager.requestIndexedDatabaseData(this._objectStore, this._objectStoreIndex, this._entries.length, 25, processEntries.bind(this));
+        WI.storageManager.requestIndexedDatabaseData(this._objectStore, this._objectStoreIndex, this._entries.length, 25, processEntries.bind(this));
     }
 
     _refreshButtonClicked()
@@ -168,7 +168,7 @@ WebInspector.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObject
 
     _clearButtonClicked()
     {
-        WebInspector.storageManager.clearObjectStore(this._objectStore);
+        WI.storageManager.clearObjectStore(this._objectStore);
         this._reset();
     }
 };

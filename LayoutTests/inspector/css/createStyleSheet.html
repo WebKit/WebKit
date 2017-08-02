@@ -6,7 +6,7 @@
 function test()
 {
     let addedStyleSheet;
-    let mainFrame = WebInspector.frameResourceManager.mainFrame;
+    let mainFrame = WI.frameResourceManager.mainFrame;
 
     let suite = InspectorTest.createAsyncSuite("CSS.createStyleSheet");
 
@@ -14,7 +14,7 @@ function test()
         name: "CheckNoStyleSheets",
         description: "Ensure there are no stylesheets.",
         test(resolve, reject) {
-            InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === 0, "Should be no stylesheets.");
+            InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 0, "Should be no stylesheets.");
             resolve();
         }
     });
@@ -24,10 +24,10 @@ function test()
             name: "CreateInspectorStyleSheetCall" + i,
             description: "Should create a new inspector stylesheet.",
             test(resolve, reject) {
-                WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetAdded)
+                WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetAdded)
                 .then((event) => {
-                    InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === i, "Should increase the list of stylesheets.");
-                    InspectorTest.expectThat(event.data.styleSheet.origin === WebInspector.CSSStyleSheet.Type.Inspector, "Added StyleSheet origin should be 'inspector'.");
+                    InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === i, "Should increase the list of stylesheets.");
+                    InspectorTest.expectThat(event.data.styleSheet.origin === WI.CSSStyleSheet.Type.Inspector, "Added StyleSheet origin should be 'inspector'.");
                     InspectorTest.expectThat(event.data.styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
                     InspectorTest.expectThat(event.data.styleSheet.parentFrame === mainFrame, "Added StyleSheet frame should be the main frame.");
                     if (addedStyleSheet)
@@ -41,7 +41,7 @@ function test()
         });
     }
 
-    WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetRemoved)
+    WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetRemoved)
     .then((event) => {
         InspectorTest.fail("Should not be removing any StyleSheets in this test.");
     });

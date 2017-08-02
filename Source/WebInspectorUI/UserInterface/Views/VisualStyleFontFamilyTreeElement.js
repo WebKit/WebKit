@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleFontFamilyTreeElement = class VisualStyleFontFamilyTreeElement extends WebInspector.GeneralTreeElement
+WI.VisualStyleFontFamilyTreeElement = class VisualStyleFontFamilyTreeElement extends WI.GeneralTreeElement
 {
     constructor(text)
     {
-        super([WebInspector.VisualStyleCommaSeparatedKeywordEditor.ListItemClassName, "visual-style-font-family-list-item"], text);
+        super([WI.VisualStyleCommaSeparatedKeywordEditor.ListItemClassName, "visual-style-font-family-list-item"], text);
 
         this._keywordEditor = document.createElement("input");
         this._keywordEditor.classList.add("visual-style-comma-separated-keyword-item-editor");
-        this._keywordEditor.placeholder = WebInspector.UIString("(modify the boxes below to add a value)");
+        this._keywordEditor.placeholder = WI.UIString("(modify the boxes below to add a value)");
         this._keywordEditor.spellcheck = false;
         this._keywordEditor.addEventListener("keydown", this._keywordEditorKeyDown.bind(this));
         this._keywordEditor.addEventListener("keyup", this._keywordEditorKeyUp.bind(this));
@@ -45,21 +45,21 @@ WebInspector.VisualStyleFontFamilyTreeElement = class VisualStyleFontFamilyTreeE
         if (this.keywordEditorHidden)
             return;
 
-        let bounds = WebInspector.Rect.rectFromClientRect(this._keywordEditor.getBoundingClientRect());
+        let bounds = WI.Rect.rectFromClientRect(this._keywordEditor.getBoundingClientRect());
         return bounds.pad(padding || 0);
     }
 
     updateMainTitle(text)
     {
         this.mainTitle = this._keywordEditor.value = text;
-        this._listItemNode.style.fontFamily = text + ", " + WebInspector.VisualStyleFontFamilyTreeElement.FontFamilyFallback;
+        this._listItemNode.style.fontFamily = text + ", " + WI.VisualStyleFontFamilyTreeElement.FontFamilyFallback;
 
         let hasText = text && text.length;
         this._listItemNode.classList.toggle("no-value", !hasText);
         if (!hasText)
             this.subtitle = this._keywordEditor.placeholder;
 
-        this.dispatchEventToListeners(WebInspector.VisualStyleFontFamilyTreeElement.Event.KeywordChanged);
+        this.dispatchEventToListeners(WI.VisualStyleFontFamilyTreeElement.Event.KeywordChanged);
     }
 
     get currentlyEditing()
@@ -119,24 +119,24 @@ WebInspector.VisualStyleFontFamilyTreeElement = class VisualStyleFontFamilyTreeE
             return;
 
         let keyCode = event.keyCode;
-        let enterKeyCode = WebInspector.KeyboardShortcut.Key.Enter.keyCode;
+        let enterKeyCode = WI.KeyboardShortcut.Key.Enter.keyCode;
         if (keyCode === enterKeyCode) {
             this._listItemNode.classList.add("editor-hidden");
-            this.dispatchEventToListeners(WebInspector.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown, {key: "Enter"});
+            this.dispatchEventToListeners(WI.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown, {key: "Enter"});
             return;
         }
 
-        let escapeKeyCode = WebInspector.KeyboardShortcut.Key.Escape.keyCode;
+        let escapeKeyCode = WI.KeyboardShortcut.Key.Escape.keyCode;
         if (keyCode === escapeKeyCode) {
-            this.dispatchEventToListeners(WebInspector.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown, {key: "Escape"});
+            this.dispatchEventToListeners(WI.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown, {key: "Escape"});
             return;
         }
 
-        let tabKeyCode = WebInspector.KeyboardShortcut.Key.Tab.keyCode;
+        let tabKeyCode = WI.KeyboardShortcut.Key.Tab.keyCode;
         if (keyCode === tabKeyCode) {
             event.preventDefault();
             this._dontFireKeyUp = true;
-            this.dispatchEventToListeners(WebInspector.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown, {key: "Tab"});
+            this.dispatchEventToListeners(WI.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown, {key: "Tab"});
             return;
         }
 
@@ -144,11 +144,11 @@ WebInspector.VisualStyleFontFamilyTreeElement = class VisualStyleFontFamilyTreeE
         if (key === "Up" || key === "Down") {
             event.preventDefault();
             this._dontFireKeyUp = true;
-            this.dispatchEventToListeners(WebInspector.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown, {key});
+            this.dispatchEventToListeners(WI.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown, {key});
             return;
         }
 
-        this.dispatchEventToListeners(WebInspector.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown);
+        this.dispatchEventToListeners(WI.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown);
     }
 
     _keywordEditorKeyUp()
@@ -162,13 +162,13 @@ WebInspector.VisualStyleFontFamilyTreeElement = class VisualStyleFontFamilyTreeE
     _keywordEditorBlurred()
     {
         this.hideKeywordEditor();
-        this.dispatchEventToListeners(WebInspector.VisualStyleFontFamilyTreeElement.Event.EditorBlurred);
+        this.dispatchEventToListeners(WI.VisualStyleFontFamilyTreeElement.Event.EditorBlurred);
     }
 };
 
-WebInspector.VisualStyleFontFamilyTreeElement.FontFamilyFallback = "-apple-system, sans-serif";
+WI.VisualStyleFontFamilyTreeElement.FontFamilyFallback = "-apple-system, sans-serif";
 
-WebInspector.VisualStyleFontFamilyTreeElement.Event = {
+WI.VisualStyleFontFamilyTreeElement.Event = {
     KeywordChanged: "visual-style-font-family-tree-element-keyword-changed",
     EditorKeyDown: "visual-style-font-family-tree-element-editor-key-down",
     EditorBlurred: "visual-style-font-family-tree-element-editor-blurred"

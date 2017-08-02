@@ -11,7 +11,7 @@ function test()
         name: "FindSpecialCharacterIndices",
         description: "Should correctly find special filename characters.",
         test() {
-            let matcher = new WebInspector.ResourceQueryController;
+            let matcher = new WI.ResourceQueryController;
             let tests = [
                 {
                     filename: "Abcd",
@@ -70,7 +70,7 @@ function test()
         name: "ExecuteQueryAgainstNoResources",
         description: "Should return no results if no resources were added to the controller.",
         test() {
-            let matcher = new WebInspector.ResourceQueryController;
+            let matcher = new WI.ResourceQueryController;
             let results = matcher.executeQuery("abcde");
             InspectorTest.expectThat(!results.length, "Should return no results.")
         }
@@ -81,8 +81,8 @@ function test()
         description: "Empty queries and queries containing only whitespace should return no results.",
         test() {
             const whitespaceCharacters = " \t\r\n";
-            let matcher = new WebInspector.ResourceQueryController;
-            matcher.addResource(new WebInspector.Resource("abcde"));
+            let matcher = new WI.ResourceQueryController;
+            matcher.addResource(new WI.Resource("abcde"));
 
             for (let query of whitespaceCharacters) {
                 let results = matcher.executeQuery(query);
@@ -98,8 +98,8 @@ function test()
         name: "ExecuteQueryContainingWhitespace",
         description: "Whitespace within a query should be ignored.",
         test() {
-            let matcher = new WebInspector.ResourceQueryController;
-            matcher.addResource(new WebInspector.Resource("abcde"));
+            let matcher = new WI.ResourceQueryController;
+            matcher.addResource(new WI.Resource("abcde"));
 
             for (let query of [" abcde", "abcde ", " abcde ", "a b c d e", "a  b  c  d  e"]) {
                 let results = matcher.executeQuery(query);
@@ -112,7 +112,7 @@ function test()
         name: "ExecuteQueryMatchNone",
         description: "Should not find a match.",
         test() {
-            let matcher = new WebInspector.ResourceQueryController;
+            let matcher = new WI.ResourceQueryController;
             let tests = [
                 {query: "abcde", filename: "abcd"},
                 {query: "abcd-", filename: "abcde"},
@@ -121,7 +121,7 @@ function test()
 
             for (let {query, filename} of tests) {
                 matcher.reset();
-                matcher.addResource(new WebInspector.Resource(filename));
+                matcher.addResource(new WI.Resource(filename));
                 let results = matcher.executeQuery(query);
                 InspectorTest.expectThat(!results.length, `Query "${query}" shouldn't match "${filename}".`);
             }
@@ -132,7 +132,7 @@ function test()
         name: "ExecuteQueryMatchesExpectedCharacters",
         description: "Should match the expected query characters.",
         test() {
-            let matcher = new WebInspector.ResourceQueryController;
+            let matcher = new WI.ResourceQueryController;
             let tests = [
                 {
                     query: "abcd",
@@ -188,7 +188,7 @@ function test()
 
             for (let {query, filename, expected} of tests) {
                 matcher.reset();
-                matcher.addResource(new WebInspector.Resource(filename));
+                matcher.addResource(new WI.Resource(filename));
 
                 let results = matcher.executeQuery(query);
                 InspectorTest.assert(results.length === 1, "Should return exactly one match.");
@@ -223,7 +223,7 @@ function test()
         name: "ExecuteQueryShouldIgnoreCase",
         description: "Queries that differ only in case should return identical results.",
         test() {
-            let matcher = new WebInspector.ResourceQueryController;
+            let matcher = new WI.ResourceQueryController;
             let tests = [
                 {
                     query: "abcd",
@@ -256,7 +256,7 @@ function test()
                 InspectorTest.log(`All case permutations of query "${query}" should match "${expected}" in "${filename}".`);
 
                 matcher.reset();
-                matcher.addResource(new WebInspector.Resource(filename));
+                matcher.addResource(new WI.Resource(filename));
 
                 for (let queryPermutation of casePermutations(query)) {
                     let results = matcher.executeQuery(queryPermutation);
@@ -272,8 +272,8 @@ function test()
         description: "Check that query results are ranked by descending relevance.",
         test() {
             let filenames = ["AbCdE", "AbcDe", "abcde", "AxbcDe", "AxBxCxDxEx", "AxbxcDe", "xabcde"]; // Filenames in order of descending rank.
-            let matcher = new WebInspector.ResourceQueryController;
-            filenames.forEach((filename) => matcher.addResource(new WebInspector.Resource(filename)));
+            let matcher = new WI.ResourceQueryController;
+            filenames.forEach((filename) => matcher.addResource(new WI.Resource(filename)));
 
             let query = "abcde";
             let results = matcher.executeQuery(query);
@@ -287,8 +287,8 @@ function test()
         description: "Check that matches close to the beginning of the filename rank higher.",
         test() {
             let filenames = ["bcd", "BxCxDx", "AxBxCxDx", "abcd", "xxxAxxxBxxxCxxxD"]; // Filenames in order of descending rank.
-            let matcher = new WebInspector.ResourceQueryController;
-            filenames.forEach((filename) => matcher.addResource(new WebInspector.Resource(filename)));
+            let matcher = new WI.ResourceQueryController;
+            filenames.forEach((filename) => matcher.addResource(new WI.Resource(filename)));
 
             let query = "bcd";
             let results = matcher.executeQuery(query);
@@ -301,7 +301,7 @@ function test()
         name: "ExecuteQueryConsecutiveRankings",
         description: "Check that consecutive matches rank higher.",
         test() {
-            let matcher = new WebInspector.ResourceQueryController;
+            let matcher = new WI.ResourceQueryController;
             let tests = [
                 {
                     filenames: ["Color.js", "HighlightColor.js", "CxxOxxLxxOxxR.js"],
@@ -320,7 +320,7 @@ function test()
             let passed = true;
             for (let {filenames, query} of tests) {
                 matcher.reset();
-                filenames.forEach((filename) => matcher.addResource(new WebInspector.Resource(filename)));
+                filenames.forEach((filename) => matcher.addResource(new WI.Resource(filename)));
 
                 let results = matcher.executeQuery(query);
                 let resultFilenames = results.map((result) => result.resource.displayName);
@@ -337,10 +337,10 @@ function test()
         description: "Check that query result TextRanges are correct.",
         test() {
             function textRange(start, end) {
-                return new WebInspector.TextRange(0, start, 0, end);
+                return new WI.TextRange(0, start, 0, end);
             }
 
-            let matcher = new WebInspector.ResourceQueryController;
+            let matcher = new WI.ResourceQueryController;
             let tests = [
                 {filename: "a", ranges: []},
                 {filename: "abcde", ranges: [textRange(0, 5)]},
@@ -349,7 +349,7 @@ function test()
 
             for (let {filename, ranges} of tests) {
                 matcher.reset();
-                matcher.addResource(new WebInspector.Resource(filename));
+                matcher.addResource(new WI.Resource(filename));
 
                 let results = matcher.executeQuery("abcde");
                 let resultTextRanges = results.length ? results[0].matchingTextRanges : [];
@@ -363,6 +363,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-    <p>Testing WebInspector.ResourceQueryController.</p>
+    <p>Testing WI.ResourceQueryController.</p>
 </body>
 </html>

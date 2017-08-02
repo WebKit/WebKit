@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ButtonToolbarItem = class ButtonToolbarItem extends WebInspector.ButtonNavigationItem
+WI.ButtonToolbarItem = class ButtonToolbarItem extends WI.ButtonNavigationItem
 {
     constructor(identifier, toolTip, label, image, role)
     {
@@ -31,7 +31,7 @@ WebInspector.ButtonToolbarItem = class ButtonToolbarItem extends WebInspector.Bu
 
         if (typeof label === "string") {
             this._labelElement = document.createElement("div");
-            this._labelElement.className = WebInspector.ButtonToolbarItem.LabelStyleClassName;
+            this._labelElement.className = WI.ButtonToolbarItem.LabelStyleClassName;
             this._element.appendChild(this._labelElement);
 
             this.label = label;
@@ -55,4 +55,4 @@ WebInspector.ButtonToolbarItem = class ButtonToolbarItem extends WebInspector.Bu
     }
 };
 
-WebInspector.ButtonToolbarItem.LabelStyleClassName = "label";
+WI.ButtonToolbarItem.LabelStyleClassName = "label";

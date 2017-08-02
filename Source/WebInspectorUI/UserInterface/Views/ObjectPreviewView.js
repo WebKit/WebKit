@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Object
+WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
 {
     constructor(preview, mode)
     {
-        console.assert(preview instanceof WebInspector.ObjectPreview);
+        console.assert(preview instanceof WI.ObjectPreview);
 
         super();
 
         this._preview = preview;
-        this._mode = mode || WebInspector.ObjectPreviewView.Mode.Full;
+        this._mode = mode || WI.ObjectPreviewView.Mode.Full;
 
         this._element = document.createElement("span");
         this._element.className = "object-preview";
@@ -93,8 +93,8 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
     setOriginatingObjectInfo(remoteObject, propertyPath)
     {
         console.assert(!this._remoteObject);
-        console.assert(remoteObject instanceof WebInspector.RemoteObject);
-        console.assert(!propertyPath || propertyPath instanceof WebInspector.PropertyPath);
+        console.assert(remoteObject instanceof WI.RemoteObject);
+        console.assert(!propertyPath || propertyPath instanceof WI.PropertyPath);
 
         this._remoteObject = remoteObject;
         this._propertyPath = propertyPath || null;
@@ -108,16 +108,16 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
     {
         // Display null / regexps as simple formatted values even in title.
         if (this._preview.subtype === "regexp" || this._preview.subtype === "null")
-            this._titleElement.appendChild(WebInspector.FormattedValue.createElementForObjectPreview(this._preview));
+            this._titleElement.appendChild(WI.FormattedValue.createElementForObjectPreview(this._preview));
         else if (this._preview.subtype === "node")
-            this._titleElement.appendChild(WebInspector.FormattedValue.createElementForNodePreview(this._preview));
+            this._titleElement.appendChild(WI.FormattedValue.createElementForNodePreview(this._preview));
         else
             this._titleElement.textContent = this._preview.description || "";
     }
 
     _numberOfPropertiesToShowInMode()
     {
-        return this._mode === WebInspector.ObjectPreviewView.Mode.Brief ? 3 : Infinity;
+        return this._mode === WI.ObjectPreviewView.Mode.Brief ? 3 : Infinity;
     }
 
     _appendPreview(element, preview)
@@ -234,9 +234,9 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
             if (property.valuePreview)
                 this._appendPreview(element, property.valuePreview);
             else if (property.subtype === "node")
-                element.appendChild(WebInspector.FormattedValue.createElementForNodePreview(property));
+                element.appendChild(WI.FormattedValue.createElementForNodePreview(property));
             else
-                element.appendChild(WebInspector.FormattedValue.createElementForPropertyPreview(property));
+                element.appendChild(WI.FormattedValue.createElementForPropertyPreview(property));
         }
 
         if (numberAdded === limit && preview.propertyPreviews.length > limit) {
@@ -258,33 +258,33 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
     _appendValuePreview(element, preview)
     {
         if (preview.subtype === "node") {
-            element.appendChild(WebInspector.FormattedValue.createElementForNodePreview(preview));
+            element.appendChild(WI.FormattedValue.createElementForNodePreview(preview));
             return false;
         }
 
-        element.appendChild(WebInspector.FormattedValue.createElementForObjectPreview(preview));
+        element.appendChild(WI.FormattedValue.createElementForObjectPreview(preview));
         return true;
     }
 
     _contextMenuHandler(event)
     {
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
 
         event.__addedObjectPreviewContextMenuItems = true;
 
-        contextMenu.appendItem(WebInspector.UIString("Log Value"), () => {
+        contextMenu.appendItem(WI.UIString("Log Value"), () => {
             let isImpossible = !this._propertyPath || this._propertyPath.isFullPathImpossible();
-            let text = isImpossible ? WebInspector.UIString("Selected Value") : this._propertyPath.displayPath(WebInspector.PropertyPath.Type.Value);
+            let text = isImpossible ? WI.UIString("Selected Value") : this._propertyPath.displayPath(WI.PropertyPath.Type.Value);
 
             if (!isImpossible)
-                WebInspector.quickConsole.prompt.pushHistoryItem(text);
+                WI.quickConsole.prompt.pushHistoryItem(text);
 
-            WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, this._remoteObject, isImpossible);
+            WI.consoleLogViewController.appendImmediateExecutionWithResult(text, this._remoteObject, isImpossible);
         });
     }
 };
 
-WebInspector.ObjectPreviewView.Mode = {
+WI.ObjectPreviewView.Mode = {
     Brief: Symbol("object-preview-brief"),
     Full: Symbol("object-preview-full"),
 };

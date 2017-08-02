@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
+WI.CSSProperty = class CSSProperty extends WI.Object
 {
     constructor(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange)
     {
@@ -40,7 +40,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
     static isInheritedPropertyName(name)
     {
         console.assert(typeof name === "string");
-        if (name in WebInspector.CSSKeywordCompletions.InheritedProperties)
+        if (name in WI.CSSKeywordCompletions.InheritedProperties)
             return true;
         // Check if the name is a CSS variable.
         return name.startsWith("--");
@@ -101,7 +101,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         this._enabled = enabled;
         this._implicit = implicit;
         this._anonymous = anonymous;
-        this._inherited = WebInspector.CSSProperty.isInheritedPropertyName(name);
+        this._inherited = WI.CSSProperty.isInheritedPropertyName(name);
         this._valid = valid;
         this._variable = name.startsWith("--");
         this._styleSheetTextRange = styleSheetTextRange || null;
@@ -115,7 +115,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         delete this._hasOtherVendorNameOrKeyword;
 
         if (changed)
-            this.dispatchEventToListeners(WebInspector.CSSProperty.Event.Changed);
+            this.dispatchEventToListeners(WI.CSSProperty.Event.Changed);
     }
 
     get synthesizedText()
@@ -140,7 +140,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         if (this._canonicalName)
             return this._canonicalName;
 
-        this._canonicalName = WebInspector.cssStyleManager.canonicalNameForPropertyName(this.name);
+        this._canonicalName = WI.cssStyleManager.canonicalNameForPropertyName(this.name);
 
         return this._canonicalName;
     }
@@ -156,7 +156,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
 
     get enabled()
     {
-        return this._enabled && this._ownerStyle && (!isNaN(this._index) || this._ownerStyle.type === WebInspector.CSSStyleDeclaration.Type.Computed);
+        return this._enabled && this._ownerStyle && (!isNaN(this._index) || this._ownerStyle.type === WI.CSSStyleDeclaration.Type.Computed);
     }
 
     get overridden() { return this._overridden; }
@@ -181,7 +181,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
             if (this._overridden === previousOverridden)
                 return;
 
-            this.dispatchEventToListeners(WebInspector.CSSProperty.Event.OverriddenStatusChanged);
+            this.dispatchEventToListeners(WI.CSSProperty.Event.OverriddenStatusChanged);
         }
 
         this._overriddenStatusChangedTimeout = setTimeout(delayed.bind(this), 0);
@@ -219,7 +219,7 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         if (!endLine)
             endColumn -= styleTextRange.startColumn;
 
-        this._styleDeclarationTextRange = new WebInspector.TextRange(startLine, startColumn, endLine, endColumn);
+        this._styleDeclarationTextRange = new WI.TextRange(startLine, startColumn, endLine, endColumn);
 
         return this._styleDeclarationTextRange;
     }
@@ -247,13 +247,13 @@ WebInspector.CSSProperty = class CSSProperty extends WebInspector.Object
         if ("_hasOtherVendorNameOrKeyword" in this)
             return this._hasOtherVendorNameOrKeyword;
 
-        this._hasOtherVendorNameOrKeyword = WebInspector.cssStyleManager.propertyNameHasOtherVendorPrefix(this.name) || WebInspector.cssStyleManager.propertyValueHasOtherVendorKeyword(this.value);
+        this._hasOtherVendorNameOrKeyword = WI.cssStyleManager.propertyNameHasOtherVendorPrefix(this.name) || WI.cssStyleManager.propertyValueHasOtherVendorKeyword(this.value);
 
         return this._hasOtherVendorNameOrKeyword;
     }
 };
 
-WebInspector.CSSProperty.Event = {
+WI.CSSProperty.Event = {
     Changed: "css-property-changed",
     OverriddenStatusChanged: "css-property-overridden-status-changed"
 };

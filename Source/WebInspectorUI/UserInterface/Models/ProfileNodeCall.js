@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileNodeCall = class ProfileNodeCall
+WI.ProfileNodeCall = class ProfileNodeCall
 {
     constructor(startTime, totalTime)
     {

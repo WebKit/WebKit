@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleBasicInput = class VisualStyleBasicInput extends WebInspector.VisualStylePropertyEditor
+WI.VisualStyleBasicInput = class VisualStyleBasicInput extends WI.VisualStylePropertyEditor
 {
     constructor(propertyNames, text, placeholder, layoutReversed)
     {

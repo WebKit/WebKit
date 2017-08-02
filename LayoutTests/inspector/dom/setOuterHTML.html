@@ -71,9 +71,9 @@ function test()
         });
     });
 
-    WebInspector.domTreeManager.requestDocument(function(documentNode) {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "#x", function(nodeId) {
-            domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+    WI.domTreeManager.requestDocument(function(documentNode) {
+        WI.domTreeManager.querySelector(documentNode.id, "#x", function(nodeId) {
+            domNode = WI.domTreeManager.nodeForId(nodeId);
             InspectorTest.assert(domNode, "DOMNode exists.");
             suite.runTestCasesAndFinish();
         });

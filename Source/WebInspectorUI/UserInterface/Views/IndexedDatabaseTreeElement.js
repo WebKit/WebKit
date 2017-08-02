@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseTreeElement = class IndexedDatabaseTreeElement extends WebInspector.GeneralTreeElement
+WI.IndexedDatabaseTreeElement = class IndexedDatabaseTreeElement extends WI.GeneralTreeElement
 {
     constructor(indexedDatabase)
     {
-        console.assert(indexedDatabase instanceof WebInspector.IndexedDatabase);
+        console.assert(indexedDatabase instanceof WI.IndexedDatabase);
 
         const subtitle = null;
         super("database-icon", indexedDatabase.name, subtitle, indexedDatabase, {hasChildren: !!indexedDatabase.objectStores.length});
@@ -59,6 +59,6 @@ WebInspector.IndexedDatabaseTreeElement = class IndexedDatabaseTreeElement exten
         this.removeChildren();
 
         for (var objectStore of this._indexedDatabase.objectStores)
-            this.appendChild(new WebInspector.IndexedDatabaseObjectStoreTreeElement(objectStore));
+            this.appendChild(new WI.IndexedDatabaseObjectStoreTreeElement(objectStore));
     }
 };

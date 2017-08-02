@@ -24,7 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BasicBlockAnnotator = class BasicBlockAnnotator extends WebInspector.Annotator
+WI.BasicBlockAnnotator = class BasicBlockAnnotator extends WI.Annotator
 {
     constructor(sourceCodeTextEditor, script)
     {
@@ -108,7 +108,7 @@ WebInspector.BasicBlockAnnotator = class BasicBlockAnnotator extends WebInspecto
         if (this._isTextRangeOnlyClosingBrace(startPosition, endPosition))
             return null;
 
-        var marker = this.sourceCodeTextEditor.addStyleToTextRange(startPosition, endPosition, WebInspector.BasicBlockAnnotator.HasNotExecutedClassName);
+        var marker = this.sourceCodeTextEditor.addStyleToTextRange(startPosition, endPosition, WI.BasicBlockAnnotator.HasNotExecutedClassName);
         return marker;
     }
 
@@ -128,4 +128,4 @@ WebInspector.BasicBlockAnnotator = class BasicBlockAnnotator extends WebInspecto
     }
 };
 
-WebInspector.BasicBlockAnnotator.HasNotExecutedClassName = "basic-block-has-not-executed";
+WI.BasicBlockAnnotator.HasNotExecutedClassName = "basic-block-has-not-executed";

@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PropertyPath = class PropertyPath
+WI.PropertyPath = class PropertyPath
 {
     constructor(object, pathComponent, parent, isPrototype)
     {
-        console.assert(object instanceof WebInspector.RemoteObject || object === null);
+        console.assert(object instanceof WI.RemoteObject || object === null);
         console.assert(!pathComponent || typeof pathComponent === "string");
-        console.assert(!parent || parent instanceof WebInspector.PropertyPath);
+        console.assert(!parent || parent instanceof WI.PropertyPath);
         console.assert(!parent || pathComponent.length);
 
         // We allow property pathes with null objects as end-caps only.
@@ -47,7 +47,7 @@ WebInspector.PropertyPath = class PropertyPath
 
     static emptyPropertyPathForScope(object)
     {
-        return new WebInspector.PropertyPath(object, WebInspector.PropertyPath.SpecialPathComponent.EmptyPathComponentForScope);
+        return new WI.PropertyPath(object, WI.PropertyPath.SpecialPathComponent.EmptyPathComponentForScope);
     }
 
     // Public
@@ -114,7 +114,7 @@ WebInspector.PropertyPath = class PropertyPath
 
     displayPath(type)
     {
-        return type === WebInspector.PropertyPath.Type.Value ? this.reducedPath : this.fullPath;
+        return type === WI.PropertyPath.Type.Value ? this.reducedPath : this.fullPath;
     }
 
     isRoot()
@@ -124,7 +124,7 @@ WebInspector.PropertyPath = class PropertyPath
 
     isScope()
     {
-        return this._pathComponent === WebInspector.PropertyPath.SpecialPathComponent.EmptyPathComponentForScope;
+        return this._pathComponent === WI.PropertyPath.SpecialPathComponent.EmptyPathComponentForScope;
     }
 
     isPathComponentImpossible()
@@ -148,93 +148,93 @@ WebInspector.PropertyPath = class PropertyPath
         var isPrototype = propertyName === "__proto__";
 
         if (this.isScope())
-            return new WebInspector.PropertyPath(object, propertyName, this, isPrototype);
+            return new WI.PropertyPath(object, propertyName, this, isPrototype);
 
         var component = this._canPropertyNameBeDotAccess(propertyName) ? "." + propertyName : "[" + doubleQuotedString(propertyName) + "]";
-        return new WebInspector.PropertyPath(object, component, this, isPrototype);
+        return new WI.PropertyPath(object, component, this, isPrototype);
     }
 
     appendPropertySymbol(object, symbolName)
     {
-        var component = WebInspector.PropertyPath.SpecialPathComponent.SymbolPropertyName + (symbolName.length ? "(" + symbolName + ")" : "");
-        return new WebInspector.PropertyPath(object, component, this);
+        var component = WI.PropertyPath.SpecialPathComponent.SymbolPropertyName + (symbolName.length ? "(" + symbolName + ")" : "");
+        return new WI.PropertyPath(object, component, this);
     }
 
     appendInternalPropertyName(object, propertyName)
     {
-        var component = WebInspector.PropertyPath.SpecialPathComponent.InternalPropertyName + "[" + propertyName + "]";
-        return new WebInspector.PropertyPath(object, component, this);
+        var component = WI.PropertyPath.SpecialPathComponent.InternalPropertyName + "[" + propertyName + "]";
+        return new WI.PropertyPath(object, component, this);
     }
 
     appendGetterPropertyName(object, propertyName)
     {
         var component = ".__lookupGetter__(" + doubleQuotedString(propertyName) + ")";
-        return new WebInspector.PropertyPath(object, component, this);
+        return new WI.PropertyPath(object, component, this);
     }
 
     appendSetterPropertyName(object, propertyName)
     {
         var component = ".__lookupSetter__(" + doubleQuotedString(propertyName) + ")";
-        return new WebInspector.PropertyPath(object, component, this);
+        return new WI.PropertyPath(object, component, this);
     }
 
     appendArrayIndex(object, indexString)
     {
         var component = "[" + indexString + "]";
-        return new WebInspector.PropertyPath(object, component, this);
+        return new WI.PropertyPath(object, component, this);
     }
 
     appendMapKey(object)
     {
-        var component = WebInspector.PropertyPath.SpecialPathComponent.MapKey;
-        return new WebInspector.PropertyPath(object, component, this);
+        var component = WI.PropertyPath.SpecialPathComponent.MapKey;
+        return new WI.PropertyPath(object, component, this);
     }
 
     appendMapValue(object, keyObject)
     {
-        console.assert(!keyObject || keyObject instanceof WebInspector.RemoteObject);
+        console.assert(!keyObject || keyObject instanceof WI.RemoteObject);
 
         if (keyObject && keyObject.hasValue()) {
             if (keyObject.type === "string") {
                 var component = ".get(" + doubleQuotedString(keyObject.description) + ")";
-                return new WebInspector.PropertyPath(object, component, this);
+                return new WI.PropertyPath(object, component, this);
             }
 
             var component = ".get(" + keyObject.description + ")";
-            return new WebInspector.PropertyPath(object, component, this);
+            return new WI.PropertyPath(object, component, this);
         }
 
-        var component = WebInspector.PropertyPath.SpecialPathComponent.MapValue;
-        return new WebInspector.PropertyPath(object, component, this);
+        var component = WI.PropertyPath.SpecialPathComponent.MapValue;
+        return new WI.PropertyPath(object, component, this);
     }
 
     appendSetIndex(object)
     {
-        var component = WebInspector.PropertyPath.SpecialPathComponent.SetIndex;
-        return new WebInspector.PropertyPath(object, component, this);
+        var component = WI.PropertyPath.SpecialPathComponent.SetIndex;
+        return new WI.PropertyPath(object, component, this);
     }
 
     appendSymbolProperty(object)
     {
-        var component = WebInspector.PropertyPath.SpecialPathComponent.SymbolPropertyName;
-        return new WebInspector.PropertyPath(object, component, this);
+        var component = WI.PropertyPath.SpecialPathComponent.SymbolPropertyName;
+        return new WI.PropertyPath(object, component, this);
     }
 
     appendPropertyDescriptor(object, descriptor, type)
     {
-        console.assert(descriptor instanceof WebInspector.PropertyDescriptor);
+        console.assert(descriptor instanceof WI.PropertyDescriptor);
 
         if (descriptor.isInternalProperty)
             return this.appendInternalPropertyName(object, descriptor.name);
         if (descriptor.symbol)
             return this.appendSymbolProperty(object);
 
-        if (type === WebInspector.PropertyPath.Type.Getter)
+        if (type === WI.PropertyPath.Type.Getter)
             return this.appendGetterPropertyName(object, descriptor.name);
-        if (type === WebInspector.PropertyPath.Type.Setter)
+        if (type === WI.PropertyPath.Type.Setter)
             return this.appendSetterPropertyName(object, descriptor.name);
 
-        console.assert(type === WebInspector.PropertyPath.Type.Value);
+        console.assert(type === WI.PropertyPath.Type.Value);
 
         if (this._object.subtype === "array" && !isNaN(parseInt(descriptor.name)))
             return this.appendArrayIndex(object, descriptor.name);
@@ -250,7 +250,7 @@ WebInspector.PropertyPath = class PropertyPath
     }
 };
 
-WebInspector.PropertyPath.SpecialPathComponent = {
+WI.PropertyPath.SpecialPathComponent = {
     InternalPropertyName: "@internal",
     SymbolPropertyName: "@symbol",
     MapKey: "@mapkey",
@@ -259,7 +259,7 @@ WebInspector.PropertyPath.SpecialPathComponent = {
     EmptyPathComponentForScope: "",
 };
 
-WebInspector.PropertyPath.Type = {
+WI.PropertyPath.Type = {
     Value: "value",
     Getter: "getter",
     Setter: "setter",

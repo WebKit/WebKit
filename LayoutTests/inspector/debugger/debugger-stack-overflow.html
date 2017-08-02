@@ -15,25 +15,25 @@ function test()
         // 0 based indices.
         let testInfo = {line: 8, column: 8};
         let location = scriptObject.createSourceCodeLocation(testInfo.line, testInfo.column);
-        let breakpoint = new WebInspector.Breakpoint(location);
-        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+        let breakpoint = new WI.Breakpoint(location);
+        WI.debuggerManager.addBreakpoint(breakpoint);
         InspectorTest.evaluateInPage("start()");
     }
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
-        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        var activeCallFrame = WI.debuggerManager.activeCallFrame;
         if (!activeCallFrame)
             return;
 
-        WebInspector.debuggerManager.resume();
+        WI.debuggerManager.resume();
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, function(event) {
         InspectorTest.log("Tests done");
         InspectorTest.completeTest();
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
         eventScriptObject = event.data.script;
         
         if (/stack-overflow\.js$/.test(eventScriptObject.url)) {

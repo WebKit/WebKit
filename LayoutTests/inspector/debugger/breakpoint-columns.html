@@ -38,17 +38,17 @@ function test()
         var testInfo = testInfoList[currentTestIndex];
         
         var location = currentScripts[testInfo.scriptIndex].createSourceCodeLocation(testInfo.line, testInfo.column);
-        var breakpoint = new WebInspector.Breakpoint(location);
+        var breakpoint = new WI.Breakpoint(location);
 
-        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+        WI.debuggerManager.addBreakpoint(breakpoint);
 
         InspectorTest.evaluateInPage(testInfo.startFunc);
 
         currentTestIndex++;
     }        
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
-        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        var activeCallFrame = WI.debuggerManager.activeCallFrame;
 
         if (!activeCallFrame)
             return;
@@ -58,14 +58,14 @@ function test()
         InspectorTest.log("Hit breakpoint at " + stopLocation);
         InspectorTest.evaluateInPage("console.log('Paused at " + stopLocation + "')");
 
-        WebInspector.debuggerManager.resume();
+        WI.debuggerManager.resume();
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, function(event) {
        runNextTest();
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
         var scriptObject = event.data.script;
         
         if (/column-breakpoints-1\.js$/.test(scriptObject.url)) {

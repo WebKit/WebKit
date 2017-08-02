@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RecordingFrame = class RecordingFrame
+WI.RecordingFrame = class RecordingFrame
 {
     constructor(actions, {incomplete} = {})
     {
@@ -41,8 +41,8 @@ WebInspector.RecordingFrame = class RecordingFrame
         if (!Array.isArray(payload.actions))
             payload.actions = [];
 
-        let actions = payload.actions.map(WebInspector.RecordingAction.fromPayload);
-        return new WebInspector.RecordingFrame(actions, {
+        let actions = payload.actions.map(WI.RecordingAction.fromPayload);
+        return new WI.RecordingFrame(actions, {
             incomplete: !!payload.incomplete,
         });
     }

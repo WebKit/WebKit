@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.TimelineView
+WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 {
     constructor(timeline, extraArguments)
     {
@@ -31,7 +31,7 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
         this._recording = extraArguments.recording;
 
-        console.assert(timeline.type === WebInspector.TimelineRecord.Type.Memory, timeline);
+        console.assert(timeline.type === WI.TimelineRecord.Type.Memory, timeline);
 
         this.element.classList.add("memory");
 
@@ -56,9 +56,9 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
             return chartFlexContainerElement;
         }
 
-        let usageTooltip = WebInspector.UIString("Breakdown of each memory category at the end of the selected time range");
-        let usageChartContainerElement = createChartContainer(overviewElement, WebInspector.UIString("Breakdown"), usageTooltip);
-        this._usageCircleChart = new WebInspector.CircleChart({size: 120, innerRadiusRatio: 0.5});
+        let usageTooltip = WI.UIString("Breakdown of each memory category at the end of the selected time range");
+        let usageChartContainerElement = createChartContainer(overviewElement, WI.UIString("Breakdown"), usageTooltip);
+        this._usageCircleChart = new WI.CircleChart({size: 120, innerRadiusRatio: 0.5});
         usageChartContainerElement.appendChild(this._usageCircleChart.element);
         this._usageLegendElement = usageChartContainerElement.appendChild(document.createElement("div"));
         this._usageLegendElement.classList.add("legend", "usage");
@@ -66,9 +66,9 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
         let dividerElement = overviewElement.appendChild(document.createElement("div"));
         dividerElement.classList.add("divider");
 
-        let maxComparisonTooltip = WebInspector.UIString("Comparison of total memory size at the end of the selected time range to the maximum memory size in this recording");
-        let maxComparisonChartContainerElement = createChartContainer(overviewElement, WebInspector.UIString("Max Comparison"), maxComparisonTooltip);
-        this._maxComparisonCircleChart = new WebInspector.CircleChart({size: 120, innerRadiusRatio: 0.5});
+        let maxComparisonTooltip = WI.UIString("Comparison of total memory size at the end of the selected time range to the maximum memory size in this recording");
+        let maxComparisonChartContainerElement = createChartContainer(overviewElement, WI.UIString("Max Comparison"), maxComparisonTooltip);
+        this._maxComparisonCircleChart = new WI.CircleChart({size: 120, innerRadiusRatio: 0.5});
         maxComparisonChartContainerElement.appendChild(this._maxComparisonCircleChart.element);
         this._maxComparisonLegendElement = maxComparisonChartContainerElement.appendChild(document.createElement("div"));
         this._maxComparisonLegendElement.classList.add("legend", "maximum");
@@ -76,13 +76,13 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
         let detailsContainerElement = this._detailsContainerElement = contentElement.appendChild(document.createElement("div"));
         detailsContainerElement.classList.add("details");
 
-        this._timelineRuler = new WebInspector.TimelineRuler;
+        this._timelineRuler = new WI.TimelineRuler;
         this.addSubview(this._timelineRuler);
         detailsContainerElement.appendChild(this._timelineRuler.element);
 
         let detailsSubtitleElement = detailsContainerElement.appendChild(document.createElement("div"));
         detailsSubtitleElement.classList.add("subtitle");
-        detailsSubtitleElement.textContent = WebInspector.UIString("Categories");
+        detailsSubtitleElement.textContent = WI.UIString("Categories");
 
         this._didInitializeCategories = false;
         this._categoryViews = [];
@@ -92,7 +92,7 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
         this._maxComparisonMaximumSizeElement = null;
         this._maxComparisonCurrentSizeElement = null;
 
-        timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._memoryTimelineRecordAdded, this);
+        timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._memoryTimelineRecordAdded, this);
     }
 
     // Static
@@ -100,14 +100,14 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
     static displayNameForCategory(category)
     {
         switch (category) {
-        case WebInspector.MemoryCategory.Type.JavaScript:
-            return WebInspector.UIString("JavaScript");
-        case WebInspector.MemoryCategory.Type.Images:
-            return WebInspector.UIString("Images");
-        case WebInspector.MemoryCategory.Type.Layers:
-            return WebInspector.UIString("Layers");
-        case WebInspector.MemoryCategory.Type.Page:
-            return WebInspector.UIString("Page");
+        case WI.MemoryCategory.Type.JavaScript:
+            return WI.UIString("JavaScript");
+        case WI.MemoryCategory.Type.Images:
+            return WI.UIString("Images");
+        case WI.MemoryCategory.Type.Layers:
+            return WI.UIString("Layers");
+        case WI.MemoryCategory.Type.Page:
+            return WI.UIString("Page");
         }
     }
 
@@ -117,7 +117,7 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
     {
         super.shown();
 
-        this._timelineRuler.updateLayout(WebInspector.View.LayoutReason.Resize);
+        this._timelineRuler.updateLayout(WI.View.LayoutReason.Resize);
     }
 
     hidden()
@@ -127,7 +127,7 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
     closed()
     {
-        console.assert(this.representedObject instanceof WebInspector.Timeline);
+        console.assert(this.representedObject instanceof WI.Timeline);
         this.representedObject.removeEventListener(null, null, this);
     }
 
@@ -371,7 +371,7 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
             segments.push(type);
 
             // Per-category graph.
-            let categoryView = new WebInspector.MemoryCategoryView(type, WebInspector.MemoryTimelineView.displayNameForCategory(type));
+            let categoryView = new WI.MemoryCategoryView(type, WI.MemoryTimelineView.displayNameForCategory(type));
             this._categoryViews.push(categoryView);
             if (!lastCategoryViewElement)
                 this._detailsContainerElement.appendChild(categoryView.element);
@@ -380,7 +380,7 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
             lastCategoryViewElement = categoryView.element;
 
             // Usage legend rows.
-            let sizeElement = appendLegendRow.call(this, this._usageLegendElement, type, WebInspector.MemoryTimelineView.displayNameForCategory(type));
+            let sizeElement = appendLegendRow.call(this, this._usageLegendElement, type, WI.MemoryTimelineView.displayNameForCategory(type));
             this._usageLegendSizeElementMap.set(type, sizeElement);
         }
 
@@ -388,14 +388,14 @@ WebInspector.MemoryTimelineView = class MemoryTimelineView extends WebInspector.
 
         // Max comparison legend rows.
         this._maxComparisonCircleChart.segments = ["current", "remainder"];
-        this._maxComparisonMaximumSizeElement = appendLegendRow.call(this, this._maxComparisonLegendElement, "remainder", WebInspector.UIString("Maximum"), WebInspector.UIString("Maximum maximum memory size in this recording"));
-        this._maxComparisonCurrentSizeElement = appendLegendRow.call(this, this._maxComparisonLegendElement, "current", WebInspector.UIString("Current"), WebInspector.UIString("Total memory size at the end of the selected time range"));
+        this._maxComparisonMaximumSizeElement = appendLegendRow.call(this, this._maxComparisonLegendElement, "remainder", WI.UIString("Maximum"), WI.UIString("Maximum maximum memory size in this recording"));
+        this._maxComparisonCurrentSizeElement = appendLegendRow.call(this, this._maxComparisonLegendElement, "current", WI.UIString("Current"), WI.UIString("Total memory size at the end of the selected time range"));
     }
 
     _memoryTimelineRecordAdded(event)
     {
         let memoryTimelineRecord = event.data.record;
-        console.assert(memoryTimelineRecord instanceof WebInspector.MemoryTimelineRecord);
+        console.assert(memoryTimelineRecord instanceof WI.MemoryTimelineRecord);
 
         if (!this._didInitializeCategories)
             this._initializeCategoryViews(memoryTimelineRecord);

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.AnalyzerManager = class AnalyzerManager extends WebInspector.Object
+WI.AnalyzerManager = class AnalyzerManager extends WI.Object
 {
     constructor()
     {
@@ -63,7 +63,7 @@ WebInspector.AnalyzerManager = class AnalyzerManager extends WebInspector.Object
 
         this._sourceCodeMessagesMap = new WeakMap;
 
-        WebInspector.SourceCode.addEventListener(WebInspector.SourceCode.Event.ContentDidChange, this._handleSourceCodeContentDidChange, this);
+        WI.SourceCode.addEventListener(WI.SourceCode.Event.ContentDidChange, this._handleSourceCodeContentDidChange, this);
     }
 
     // Public
@@ -71,7 +71,7 @@ WebInspector.AnalyzerManager = class AnalyzerManager extends WebInspector.Object
     getAnalyzerMessagesForSourceCode(sourceCode)
     {
         return new Promise(function(resolve, reject) {
-            var analyzer = WebInspector.AnalyzerManager._typeAnalyzerMap.get(sourceCode.type);
+            var analyzer = WI.AnalyzerManager._typeAnalyzerMap.get(sourceCode.type);
             if (!analyzer) {
                 reject(new Error("This resource type cannot be analyzed."));
                 return;
@@ -89,7 +89,7 @@ WebInspector.AnalyzerManager = class AnalyzerManager extends WebInspector.Object
 
                 // Raw line and column numbers are one-based. SourceCodeLocation expects them to be zero-based so we subtract 1 from each.
                 for (var rawAnalyzerMessage of rawAnalyzerMessages)
-                    analyzerMessages.push(new WebInspector.AnalyzerMessage(new WebInspector.SourceCodeLocation(sourceCode, rawAnalyzerMessage.line - 1, rawAnalyzerMessage.column - 1), rawAnalyzerMessage.message, rawAnalyzerMessage.ruleId));
+                    analyzerMessages.push(new WI.AnalyzerMessage(new WI.SourceCodeLocation(sourceCode, rawAnalyzerMessage.line - 1, rawAnalyzerMessage.column - 1), rawAnalyzerMessage.message, rawAnalyzerMessage.ruleId));
 
                 this._sourceCodeMessagesMap.set(sourceCode, analyzerMessages);
 
@@ -102,7 +102,7 @@ WebInspector.AnalyzerManager = class AnalyzerManager extends WebInspector.Object
 
     sourceCodeCanBeAnalyzed(sourceCode)
     {
-        return sourceCode.type === WebInspector.Resource.Type.Script;
+        return sourceCode.type === WI.Resource.Type.Script;
     }
 
     // Private
@@ -116,7 +116,7 @@ WebInspector.AnalyzerManager = class AnalyzerManager extends WebInspector.Object
     }
 };
 
-WebInspector.AnalyzerManager._typeAnalyzerMap = new Map;
+WI.AnalyzerManager._typeAnalyzerMap = new Map;
 
 // <https://webkit.org/b/136515> Web Inspector: JavaScript source text editor should have a linter
-// WebInspector.AnalyzerManager._typeAnalyzerMap.set(WebInspector.Resource.Type.Script, eslint);
+// WI.AnalyzerManager._typeAnalyzerMap.set(WI.Resource.Type.Script, eslint);

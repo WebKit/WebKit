@@ -23,59 +23,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WebInspector.TimelineView
+WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.TimelineView
 {
     constructor(timeline, extraArguments)
     {
         super(timeline, extraArguments);
 
-        console.assert(timeline.type === WebInspector.TimelineRecord.Type.Script);
+        console.assert(timeline.type === WI.TimelineRecord.Type.Script);
 
         let columns = {name: {}, location: {}, callCount: {}, startTime: {}, totalTime: {}, selfTime: {}, averageTime: {}};
 
-        columns.name.title = WebInspector.UIString("Name");
+        columns.name.title = WI.UIString("Name");
         columns.name.width = "10%";
         columns.name.icon = true;
         columns.name.disclosure = true;
         columns.name.locked = true;
 
-        columns.location.title = WebInspector.UIString("Location");
+        columns.location.title = WI.UIString("Location");
         columns.location.icon = true;
         columns.location.width = "15%";
 
         let isSamplingProfiler = !!window.ScriptProfilerAgent;
         if (isSamplingProfiler)
-            columns.callCount.title = WebInspector.UIString("Samples");
+            columns.callCount.title = WI.UIString("Samples");
         else {
             // COMPATIBILITY(iOS 9): ScriptProfilerAgent did not exist yet, we had call counts, not samples.
-            columns.callCount.title = WebInspector.UIString("Calls");
+            columns.callCount.title = WI.UIString("Calls");
         }
         columns.callCount.width = "5%";
         columns.callCount.aligned = "right";
 
-        columns.startTime.title = WebInspector.UIString("Start Time");
+        columns.startTime.title = WI.UIString("Start Time");
         columns.startTime.width = "10%";
         columns.startTime.aligned = "right";
 
-        columns.totalTime.title = WebInspector.UIString("Total Time");
+        columns.totalTime.title = WI.UIString("Total Time");
         columns.totalTime.width = "10%";
         columns.totalTime.aligned = "right";
 
-        columns.selfTime.title = WebInspector.UIString("Self Time");
+        columns.selfTime.title = WI.UIString("Self Time");
         columns.selfTime.width = "10%";
         columns.selfTime.aligned = "right";
 
-        columns.averageTime.title = WebInspector.UIString("Average Time");
+        columns.averageTime.title = WI.UIString("Average Time");
         columns.averageTime.width = "10%";
         columns.averageTime.aligned = "right";
 
         for (var column in columns)
             columns[column].sortable = true;
 
-        this._dataGrid = new WebInspector.ScriptTimelineDataGrid(columns);
+        this._dataGrid = new WI.ScriptTimelineDataGrid(columns);
         this._dataGrid.sortDelegate = this;
         this._dataGrid.sortColumnIdentifier = "startTime";
-        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Ascending;
         this._dataGrid.createSettings("script-timeline-view");
 
         this.setupDataGrid(this._dataGrid);
@@ -83,8 +83,8 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
         this.element.classList.add("script");
         this.addSubview(this._dataGrid);
 
-        timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._scriptTimelineRecordAdded, this);
-        timeline.addEventListener(WebInspector.Timeline.Event.Refreshed, this._scriptTimelineRecordRefreshed, this);
+        timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._scriptTimelineRecordAdded, this);
+        timeline.addEventListener(WI.Timeline.Event.Refreshed, this._scriptTimelineRecordRefreshed, this);
 
         this._pendingRecords = [];
     }
@@ -109,7 +109,7 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
 
     closed()
     {
-        console.assert(this.representedObject instanceof WebInspector.Timeline);
+        console.assert(this.representedObject instanceof WI.Timeline);
         this.representedObject.removeEventListener(null, null, this);
 
         this._dataGrid.closed();
@@ -124,12 +124,12 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
         var pathComponents = [];
 
         while (dataGridNode && !dataGridNode.root) {
-            console.assert(dataGridNode instanceof WebInspector.TimelineDataGridNode);
+            console.assert(dataGridNode instanceof WI.TimelineDataGridNode);
             if (dataGridNode.hidden)
                 return null;
 
-            let pathComponent = new WebInspector.TimelineDataGridNodePathComponent(dataGridNode);
-            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
+            let pathComponent = new WI.TimelineDataGridNodePathComponent(dataGridNode);
+            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
             pathComponents.unshift(pathComponent);
             dataGridNode = dataGridNode.parent;
         }
@@ -193,7 +193,7 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
 
     _processPendingRecords()
     {
-        if (WebInspector.timelineManager.scriptProfilerIsTracking())
+        if (WI.timelineManager.scriptProfilerIsTracking())
             return;
 
         if (!this._pendingRecords.length)
@@ -210,11 +210,11 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
                 rootNodes = scriptTimelineRecord.profile.topDownRootNodes;
             }
 
-            let dataGridNode = new WebInspector.ScriptTimelineDataGridNode(scriptTimelineRecord, zeroTime);
+            let dataGridNode = new WI.ScriptTimelineDataGridNode(scriptTimelineRecord, zeroTime);
             this._dataGrid.addRowInSortOrder(null, dataGridNode);
 
             for (let profileNode of rootNodes) {
-                let profileNodeDataGridNode = new WebInspector.ProfileNodeDataGridNode(profileNode, zeroTime, startTime, endTime);
+                let profileNodeDataGridNode = new WI.ProfileNodeDataGridNode(profileNode, zeroTime, startTime, endTime);
                 this._dataGrid.addRowInSortOrder(null, profileNodeDataGridNode, dataGridNode);
             }
         }
@@ -225,7 +225,7 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
     _scriptTimelineRecordAdded(event)
     {
         var scriptTimelineRecord = event.data.record;
-        console.assert(scriptTimelineRecord instanceof WebInspector.ScriptTimelineRecord);
+        console.assert(scriptTimelineRecord instanceof WI.ScriptTimelineRecord);
 
         this._pendingRecords.push(scriptTimelineRecord);
 

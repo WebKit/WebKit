@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
+WI.ScriptSyntaxTree = class ScriptSyntaxTree
 {
     constructor(sourceText, script)
     {
-        console.assert(script && script instanceof WebInspector.Script, script);
+        console.assert(script && script instanceof WI.Script, script);
 
         this._script = script;
 
         try {
-            let sourceType = this._script.sourceType === WebInspector.Script.SourceType.Module ? "module" : "script";
+            let sourceType = this._script.sourceType === WI.Script.SourceType.Module ? "module" : "script";
             let esprimaSyntaxTree = esprima.parse(sourceText, {range: true, sourceType});
             this._syntaxTree = this._createInternalSyntaxTree(esprimaSyntaxTree);
             this._parsedSuccessfully = true;
@@ -148,14 +148,14 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
 
         function removeFunctionsFilter(node)
         {
-            return node.type !== WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression
-                && node.type !== WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration
-                && node.type !== WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression;
+            return node.type !== WI.ScriptSyntaxTree.NodeType.FunctionExpression
+                && node.type !== WI.ScriptSyntaxTree.NodeType.FunctionDeclaration
+                && node.type !== WI.ScriptSyntaxTree.NodeType.ArrowFunctionExpression;
         }
 
         var nodes = this.filter(removeFunctionsFilter, startNode);
         var hasNonEmptyReturnStatement = false;
-        var returnStatementType = WebInspector.ScriptSyntaxTree.NodeType.ReturnStatement;
+        var returnStatementType = WI.ScriptSyntaxTree.NodeType.ReturnStatement;
         for (var node of nodes) {
             if (node.type === returnStatementType && node.argument) {
                 hasNonEmptyReturnStatement = true;
@@ -170,7 +170,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
 
     static functionReturnDivot(node)
     {
-        console.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration || node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression || node.type === WebInspector.ScriptSyntaxTree.NodeType.MethodDefinition || node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression);
+        console.assert(node.type === WI.ScriptSyntaxTree.NodeType.FunctionDeclaration || node.type === WI.ScriptSyntaxTree.NodeType.FunctionExpression || node.type === WI.ScriptSyntaxTree.NodeType.MethodDefinition || node.type === WI.ScriptSyntaxTree.NodeType.ArrowFunctionExpression);
 
         // COMPATIBILITY (iOS 9): Legacy Backends view the return type as being the opening "{" of the function body.
         // After iOS 9, this is to move to the start of the function statement/expression. See below:
@@ -197,13 +197,13 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
 
         for (var node of nodesToUpdate) {
             switch (node.type) {
-            case WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration:
-            case WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression:
-            case WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression:
+            case WI.ScriptSyntaxTree.NodeType.FunctionDeclaration:
+            case WI.ScriptSyntaxTree.NodeType.FunctionExpression:
+            case WI.ScriptSyntaxTree.NodeType.ArrowFunctionExpression:
                 for (var param of node.params) {
                     for (var identifier of this._gatherIdentifiersInDeclaration(param)) {
                         allRequests.push({
-                            typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
+                            typeInformationDescriptor: WI.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
                             sourceID,
                             divot: identifier.range[0]
                         });
@@ -212,16 +212,16 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
                 }
 
                 allRequests.push({
-                    typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.FunctionReturn,
+                    typeInformationDescriptor: WI.ScriptSyntaxTree.TypeProfilerSearchDescriptor.FunctionReturn,
                     sourceID,
-                    divot: WebInspector.ScriptSyntaxTree.functionReturnDivot(node)
+                    divot: WI.ScriptSyntaxTree.functionReturnDivot(node)
                 });
                 allRequestNodes.push(node);
                 break;
-            case WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator:
+            case WI.ScriptSyntaxTree.NodeType.VariableDeclarator:
                 for (var identifier of this._gatherIdentifiersInDeclaration(node.id)) {
                     allRequests.push({
-                        typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
+                        typeInformationDescriptor: WI.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
                         sourceID,
                         divot: identifier.range[0]
                     });
@@ -242,8 +242,8 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
 
             for (var i = 0; i < typeInformationArray.length; i++) {
                 var node = allRequestNodes[i];
-                var typeInformation = WebInspector.TypeDescription.fromPayload(typeInformationArray[i]);
-                if (allRequests[i].typeInformationDescriptor === WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.FunctionReturn)
+                var typeInformation = WI.TypeDescription.fromPayload(typeInformationArray[i]);
+                if (allRequests[i].typeInformationDescriptor === WI.ScriptSyntaxTree.TypeProfilerSearchDescriptor.FunctionReturn)
                     node.attachments.returnTypes = typeInformation;
                 else
                     node.attachments.types = typeInformation;
@@ -262,28 +262,28 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
         function gatherIdentifiers(node)
         {
             switch (node.type) {
-                case WebInspector.ScriptSyntaxTree.NodeType.Identifier:
+                case WI.ScriptSyntaxTree.NodeType.Identifier:
                     return [node];
-                case WebInspector.ScriptSyntaxTree.NodeType.Property:
+                case WI.ScriptSyntaxTree.NodeType.Property:
                     return gatherIdentifiers(node.value);
-                case WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern:
+                case WI.ScriptSyntaxTree.NodeType.ObjectPattern:
                     var identifiers = [];
                     for (var property of node.properties) {
                         for (var identifier of gatherIdentifiers(property))
                             identifiers.push(identifier);
                     }
                     return identifiers;
-                case WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern:
+                case WI.ScriptSyntaxTree.NodeType.ArrayPattern:
                     var identifiers = [];
                     for (var element of node.elements) {
                         for (var identifier of gatherIdentifiers(element))
                             identifiers.push(identifier);
                     }
                     return identifiers;
-                case WebInspector.ScriptSyntaxTree.NodeType.AssignmentPattern:
+                case WI.ScriptSyntaxTree.NodeType.AssignmentPattern:
                     return gatherIdentifiers(node.left);
-                case WebInspector.ScriptSyntaxTree.NodeType.RestElement:
-                case WebInspector.ScriptSyntaxTree.NodeType.RestProperty:
+                case WI.ScriptSyntaxTree.NodeType.RestElement:
+                case WI.ScriptSyntaxTree.NodeType.RestProperty:
                     return gatherIdentifiers(node.argument);
                 default:
                     console.assert(false, "Unexpected node type in variable declarator: " + node.type);
@@ -291,7 +291,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             }
         }
 
-        console.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier || node.type === WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern || node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern || node.type === WebInspector.ScriptSyntaxTree.NodeType.RestElement || node.type === WebInspector.ScriptSyntaxTree.NodeType.RestProperty);
+        console.assert(node.type === WI.ScriptSyntaxTree.NodeType.Identifier || node.type === WI.ScriptSyntaxTree.NodeType.ObjectPattern || node.type === WI.ScriptSyntaxTree.NodeType.ArrayPattern || node.type === WI.ScriptSyntaxTree.NodeType.RestElement || node.type === WI.ScriptSyntaxTree.NodeType.RestProperty);
 
         return gatherIdentifiers(node);
     }
@@ -315,227 +315,227 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
         callback(node, state);
 
         switch (node.type) {
-        case WebInspector.ScriptSyntaxTree.NodeType.AssignmentExpression:
+        case WI.ScriptSyntaxTree.NodeType.AssignmentExpression:
             this._recurse(node.left, callback, state);
             this._recurse(node.right, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ArrayExpression:
-        case WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern:
+        case WI.ScriptSyntaxTree.NodeType.ArrayExpression:
+        case WI.ScriptSyntaxTree.NodeType.ArrayPattern:
             this._recurseArray(node.elements, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.AssignmentPattern:
+        case WI.ScriptSyntaxTree.NodeType.AssignmentPattern:
             this._recurse(node.left, callback, state);
             this._recurse(node.right, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.AwaitExpression:
+        case WI.ScriptSyntaxTree.NodeType.AwaitExpression:
             this._recurse(node.argument, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.BlockStatement:
+        case WI.ScriptSyntaxTree.NodeType.BlockStatement:
             this._recurseArray(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.BinaryExpression:
+        case WI.ScriptSyntaxTree.NodeType.BinaryExpression:
             this._recurse(node.left, callback, state);
             this._recurse(node.right, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.BreakStatement:
+        case WI.ScriptSyntaxTree.NodeType.BreakStatement:
             this._recurse(node.label, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.CatchClause:
+        case WI.ScriptSyntaxTree.NodeType.CatchClause:
             this._recurse(node.param, callback, state);
             this._recurse(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.CallExpression:
+        case WI.ScriptSyntaxTree.NodeType.CallExpression:
             this._recurse(node.callee, callback, state);
             this._recurseArray(node.arguments, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ClassBody:
+        case WI.ScriptSyntaxTree.NodeType.ClassBody:
             this._recurseArray(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ClassDeclaration:
-        case WebInspector.ScriptSyntaxTree.NodeType.ClassExpression:
+        case WI.ScriptSyntaxTree.NodeType.ClassDeclaration:
+        case WI.ScriptSyntaxTree.NodeType.ClassExpression:
             this._recurse(node.id, callback, state);
             this._recurse(node.superClass, callback, state);
             this._recurse(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ContinueStatement:
+        case WI.ScriptSyntaxTree.NodeType.ContinueStatement:
             this._recurse(node.label, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.DoWhileStatement:
+        case WI.ScriptSyntaxTree.NodeType.DoWhileStatement:
             this._recurse(node.body, callback, state);
             this._recurse(node.test, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement:
+        case WI.ScriptSyntaxTree.NodeType.ExpressionStatement:
             this._recurse(node.expression, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ForStatement:
+        case WI.ScriptSyntaxTree.NodeType.ForStatement:
             this._recurse(node.init, callback, state);
             this._recurse(node.test, callback, state);
             this._recurse(node.update, callback, state);
             this._recurse(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ForInStatement:
-        case WebInspector.ScriptSyntaxTree.NodeType.ForOfStatement:
+        case WI.ScriptSyntaxTree.NodeType.ForInStatement:
+        case WI.ScriptSyntaxTree.NodeType.ForOfStatement:
             this._recurse(node.left, callback, state);
             this._recurse(node.right, callback, state);
             this._recurse(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration:
-        case WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression:
-        case WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression:
+        case WI.ScriptSyntaxTree.NodeType.FunctionDeclaration:
+        case WI.ScriptSyntaxTree.NodeType.FunctionExpression:
+        case WI.ScriptSyntaxTree.NodeType.ArrowFunctionExpression:
             this._recurse(node.id, callback, state);
             this._recurseArray(node.params, callback, state);
             this._recurse(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.IfStatement:
+        case WI.ScriptSyntaxTree.NodeType.IfStatement:
             this._recurse(node.test, callback, state);
             this._recurse(node.consequent, callback, state);
             this._recurse(node.alternate, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.LabeledStatement:
+        case WI.ScriptSyntaxTree.NodeType.LabeledStatement:
             this._recurse(node.label, callback, state);
             this._recurse(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.LogicalExpression:
+        case WI.ScriptSyntaxTree.NodeType.LogicalExpression:
             this._recurse(node.left, callback, state);
             this._recurse(node.right, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.MemberExpression:
+        case WI.ScriptSyntaxTree.NodeType.MemberExpression:
             this._recurse(node.object, callback, state);
             this._recurse(node.property, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.MethodDefinition:
+        case WI.ScriptSyntaxTree.NodeType.MethodDefinition:
             this._recurse(node.key, callback, state);
             this._recurse(node.value, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.NewExpression:
+        case WI.ScriptSyntaxTree.NodeType.NewExpression:
             this._recurse(node.callee, callback, state);
             this._recurseArray(node.arguments, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression:
-        case WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern:
+        case WI.ScriptSyntaxTree.NodeType.ObjectExpression:
+        case WI.ScriptSyntaxTree.NodeType.ObjectPattern:
             this._recurseArray(node.properties, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.Program:
+        case WI.ScriptSyntaxTree.NodeType.Program:
             this._recurseArray(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.Property:
+        case WI.ScriptSyntaxTree.NodeType.Property:
             this._recurse(node.key, callback, state);
             this._recurse(node.value, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.RestElement:
+        case WI.ScriptSyntaxTree.NodeType.RestElement:
             this._recurse(node.argument, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.RestProperty:
+        case WI.ScriptSyntaxTree.NodeType.RestProperty:
             this._recurse(node.argument, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ReturnStatement:
+        case WI.ScriptSyntaxTree.NodeType.ReturnStatement:
             this._recurse(node.argument, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.SequenceExpression:
+        case WI.ScriptSyntaxTree.NodeType.SequenceExpression:
             this._recurseArray(node.expressions, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.SpreadElement:
+        case WI.ScriptSyntaxTree.NodeType.SpreadElement:
             this._recurse(node.argument, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.SpreadProperty:
+        case WI.ScriptSyntaxTree.NodeType.SpreadProperty:
             this._recurse(node.argument, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.SwitchStatement:
+        case WI.ScriptSyntaxTree.NodeType.SwitchStatement:
             this._recurse(node.discriminant, callback, state);
             this._recurseArray(node.cases, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.SwitchCase:
+        case WI.ScriptSyntaxTree.NodeType.SwitchCase:
             this._recurse(node.test, callback, state);
             this._recurseArray(node.consequent, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ConditionalExpression:
+        case WI.ScriptSyntaxTree.NodeType.ConditionalExpression:
             this._recurse(node.test, callback, state);
             this._recurse(node.consequent, callback, state);
             this._recurse(node.alternate, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.TaggedTemplateExpression:
+        case WI.ScriptSyntaxTree.NodeType.TaggedTemplateExpression:
             this._recurse(node.tag, callback, state);
             this._recurse(node.quasi, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.TemplateLiteral:
+        case WI.ScriptSyntaxTree.NodeType.TemplateLiteral:
             this._recurseArray(node.quasis, callback, state);
             this._recurseArray(node.expressions, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ThrowStatement:
+        case WI.ScriptSyntaxTree.NodeType.ThrowStatement:
             this._recurse(node.argument, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.TryStatement:
+        case WI.ScriptSyntaxTree.NodeType.TryStatement:
             this._recurse(node.block, callback, state);
             this._recurse(node.handler, callback, state);
             this._recurse(node.finalizer, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.UnaryExpression:
+        case WI.ScriptSyntaxTree.NodeType.UnaryExpression:
             this._recurse(node.argument, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.UpdateExpression:
+        case WI.ScriptSyntaxTree.NodeType.UpdateExpression:
             this._recurse(node.argument, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration:
+        case WI.ScriptSyntaxTree.NodeType.VariableDeclaration:
             this._recurseArray(node.declarations, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator:
+        case WI.ScriptSyntaxTree.NodeType.VariableDeclarator:
             this._recurse(node.id, callback, state);
             this._recurse(node.init, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.WhileStatement:
+        case WI.ScriptSyntaxTree.NodeType.WhileStatement:
             this._recurse(node.test, callback, state);
             this._recurse(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.WithStatement:
+        case WI.ScriptSyntaxTree.NodeType.WithStatement:
             this._recurse(node.object, callback, state);
             this._recurse(node.body, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.YieldExpression:
+        case WI.ScriptSyntaxTree.NodeType.YieldExpression:
             this._recurse(node.argument, callback, state);
             break;
 
         // Modules.
 
-        case WebInspector.ScriptSyntaxTree.NodeType.ExportAllDeclaration:
+        case WI.ScriptSyntaxTree.NodeType.ExportAllDeclaration:
             this._recurse(node.source, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ExportNamedDeclaration:
+        case WI.ScriptSyntaxTree.NodeType.ExportNamedDeclaration:
             this._recurse(node.declaration, callback, state);
             this._recurseArray(node.specifiers, callback, state);
             this._recurse(node.source, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ExportDefaultDeclaration:
+        case WI.ScriptSyntaxTree.NodeType.ExportDefaultDeclaration:
             this._recurse(node.declaration, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ExportSpecifier:
+        case WI.ScriptSyntaxTree.NodeType.ExportSpecifier:
             this._recurse(node.local, callback, state);
             this._recurse(node.exported, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ImportDeclaration:
+        case WI.ScriptSyntaxTree.NodeType.ImportDeclaration:
             this._recurseArray(node.specifiers, callback, state);
             this._recurse(node.source, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ImportDefaultSpecifier:
+        case WI.ScriptSyntaxTree.NodeType.ImportDefaultSpecifier:
             this._recurse(node.local, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ImportNamespaceSpecifier:
+        case WI.ScriptSyntaxTree.NodeType.ImportNamespaceSpecifier:
             this._recurse(node.local, callback, state);
             break;
-        case WebInspector.ScriptSyntaxTree.NodeType.ImportSpecifier:
+        case WI.ScriptSyntaxTree.NodeType.ImportSpecifier:
             this._recurse(node.imported, callback, state);
             this._recurse(node.local, callback, state);
             break;
 
         // All the leaf nodes go here.
-        case WebInspector.ScriptSyntaxTree.NodeType.DebuggerStatement:
-        case WebInspector.ScriptSyntaxTree.NodeType.EmptyStatement:
-        case WebInspector.ScriptSyntaxTree.NodeType.Identifier:
-        case WebInspector.ScriptSyntaxTree.NodeType.Import:
-        case WebInspector.ScriptSyntaxTree.NodeType.Literal:
-        case WebInspector.ScriptSyntaxTree.NodeType.MetaProperty:
-        case WebInspector.ScriptSyntaxTree.NodeType.Super:
-        case WebInspector.ScriptSyntaxTree.NodeType.ThisExpression:
-        case WebInspector.ScriptSyntaxTree.NodeType.TemplateElement:
+        case WI.ScriptSyntaxTree.NodeType.DebuggerStatement:
+        case WI.ScriptSyntaxTree.NodeType.EmptyStatement:
+        case WI.ScriptSyntaxTree.NodeType.Identifier:
+        case WI.ScriptSyntaxTree.NodeType.Import:
+        case WI.ScriptSyntaxTree.NodeType.Literal:
+        case WI.ScriptSyntaxTree.NodeType.MetaProperty:
+        case WI.ScriptSyntaxTree.NodeType.Super:
+        case WI.ScriptSyntaxTree.NodeType.ThisExpression:
+        case WI.ScriptSyntaxTree.NodeType.TemplateElement:
             break;
         }
 
@@ -561,19 +561,19 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
         switch (node.type) {
         case "ArrayExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ArrayExpression,
+                type: WI.ScriptSyntaxTree.NodeType.ArrayExpression,
                 elements: node.elements.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ArrayPattern":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ArrayPattern,
+                type: WI.ScriptSyntaxTree.NodeType.ArrayPattern,
                 elements: node.elements.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ArrowFunctionExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression,
+                type: WI.ScriptSyntaxTree.NodeType.ArrowFunctionExpression,
                 id: this._createInternalSyntaxTree(node.id),
                 params: node.params.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
@@ -585,7 +585,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "AssignmentExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.AssignmentExpression,
+                type: WI.ScriptSyntaxTree.NodeType.AssignmentExpression,
                 operator: node.operator,
                 left: this._createInternalSyntaxTree(node.left),
                 right: this._createInternalSyntaxTree(node.right)
@@ -593,26 +593,26 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "AssignmentPattern":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.AssignmentPattern,
+                type: WI.ScriptSyntaxTree.NodeType.AssignmentPattern,
                 left: this._createInternalSyntaxTree(node.left),
                 right: this._createInternalSyntaxTree(node.right),
             };
             break;
         case "AwaitExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.AwaitExpression,
+                type: WI.ScriptSyntaxTree.NodeType.AwaitExpression,
                 argument: this._createInternalSyntaxTree(node.argument),
             };
             break;
         case "BlockStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.BlockStatement,
+                type: WI.ScriptSyntaxTree.NodeType.BlockStatement,
                 body: node.body.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "BinaryExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.BinaryExpression,
+                type: WI.ScriptSyntaxTree.NodeType.BinaryExpression,
                 operator: node.operator,
                 left: this._createInternalSyntaxTree(node.left),
                 right: this._createInternalSyntaxTree(node.right)
@@ -620,33 +620,33 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "BreakStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.BreakStatement,
+                type: WI.ScriptSyntaxTree.NodeType.BreakStatement,
                 label: this._createInternalSyntaxTree(node.label)
             };
             break;
         case "CallExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.CallExpression,
+                type: WI.ScriptSyntaxTree.NodeType.CallExpression,
                 callee: this._createInternalSyntaxTree(node.callee),
                 arguments: node.arguments.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "CatchClause":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.CatchClause,
+                type: WI.ScriptSyntaxTree.NodeType.CatchClause,
                 param: this._createInternalSyntaxTree(node.param),
                 body: this._createInternalSyntaxTree(node.body)
             };
             break;
         case "ClassBody":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ClassBody,
+                type: WI.ScriptSyntaxTree.NodeType.ClassBody,
                 body: node.body.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ClassDeclaration":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ClassDeclaration,
+                type: WI.ScriptSyntaxTree.NodeType.ClassDeclaration,
                 id: this._createInternalSyntaxTree(node.id),
                 superClass: this._createInternalSyntaxTree(node.superClass),
                 body: this._createInternalSyntaxTree(node.body),
@@ -654,7 +654,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "ClassExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ClassExpression,
+                type: WI.ScriptSyntaxTree.NodeType.ClassExpression,
                 id: this._createInternalSyntaxTree(node.id),
                 superClass: this._createInternalSyntaxTree(node.superClass),
                 body: this._createInternalSyntaxTree(node.body),
@@ -662,7 +662,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "ConditionalExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ConditionalExpression,
+                type: WI.ScriptSyntaxTree.NodeType.ConditionalExpression,
                 test: this._createInternalSyntaxTree(node.test),
                 consequent: this._createInternalSyntaxTree(node.consequent),
                 alternate: this._createInternalSyntaxTree(node.alternate)
@@ -670,36 +670,36 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "ContinueStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ContinueStatement,
+                type: WI.ScriptSyntaxTree.NodeType.ContinueStatement,
                 label: this._createInternalSyntaxTree(node.label)
             };
             break;
         case "DoWhileStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.DoWhileStatement,
+                type: WI.ScriptSyntaxTree.NodeType.DoWhileStatement,
                 body: this._createInternalSyntaxTree(node.body),
                 test: this._createInternalSyntaxTree(node.test)
             };
             break;
         case "DebuggerStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.DebuggerStatement
+                type: WI.ScriptSyntaxTree.NodeType.DebuggerStatement
             };
             break;
         case "EmptyStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.EmptyStatement
+                type: WI.ScriptSyntaxTree.NodeType.EmptyStatement
             };
             break;
         case "ExpressionStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement,
+                type: WI.ScriptSyntaxTree.NodeType.ExpressionStatement,
                 expression: this._createInternalSyntaxTree(node.expression)
             };
             break;
         case "ForStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ForStatement,
+                type: WI.ScriptSyntaxTree.NodeType.ForStatement,
                 init: this._createInternalSyntaxTree(node.init),
                 test: this._createInternalSyntaxTree(node.test),
                 update: this._createInternalSyntaxTree(node.update),
@@ -708,7 +708,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "ForInStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ForInStatement,
+                type: WI.ScriptSyntaxTree.NodeType.ForInStatement,
                 left: this._createInternalSyntaxTree(node.left),
                 right: this._createInternalSyntaxTree(node.right),
                 body: this._createInternalSyntaxTree(node.body)
@@ -716,7 +716,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "ForOfStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ForOfStatement,
+                type: WI.ScriptSyntaxTree.NodeType.ForOfStatement,
                 left: this._createInternalSyntaxTree(node.left),
                 right: this._createInternalSyntaxTree(node.right),
                 body: this._createInternalSyntaxTree(node.body)
@@ -724,7 +724,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "FunctionDeclaration":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration,
+                type: WI.ScriptSyntaxTree.NodeType.FunctionDeclaration,
                 id: this._createInternalSyntaxTree(node.id),
                 params: node.params.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
@@ -735,7 +735,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "FunctionExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression,
+                type: WI.ScriptSyntaxTree.NodeType.FunctionExpression,
                 id: this._createInternalSyntaxTree(node.id),
                 params: node.params.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
@@ -746,13 +746,13 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "Identifier":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.Identifier,
+                type: WI.ScriptSyntaxTree.NodeType.Identifier,
                 name: node.name
             };
             break;
         case "IfStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.IfStatement,
+                type: WI.ScriptSyntaxTree.NodeType.IfStatement,
                 test: this._createInternalSyntaxTree(node.test),
                 consequent: this._createInternalSyntaxTree(node.consequent),
                 alternate: this._createInternalSyntaxTree(node.alternate)
@@ -760,21 +760,21 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "Literal":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.Literal,
+                type: WI.ScriptSyntaxTree.NodeType.Literal,
                 value: node.value,
                 raw: node.raw
             };
             break;
         case "LabeledStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.LabeledStatement,
+                type: WI.ScriptSyntaxTree.NodeType.LabeledStatement,
                 label: this._createInternalSyntaxTree(node.label),
                 body: this._createInternalSyntaxTree(node.body)
             };
             break;
         case "LogicalExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.LogicalExpression,
+                type: WI.ScriptSyntaxTree.NodeType.LogicalExpression,
                 left: this._createInternalSyntaxTree(node.left),
                 right: this._createInternalSyntaxTree(node.right),
                 operator: node.operator
@@ -782,7 +782,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "MemberExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.MemberExpression,
+                type: WI.ScriptSyntaxTree.NodeType.MemberExpression,
                 object: this._createInternalSyntaxTree(node.object),
                 property: this._createInternalSyntaxTree(node.property),
                 computed: node.computed
@@ -791,14 +791,14 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
         case "MetaProperty":
             // i.e: new.target produces {meta: "new", property: "target"}
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.MetaProperty,
+                type: WI.ScriptSyntaxTree.NodeType.MetaProperty,
                 meta: this._createInternalSyntaxTree(node.meta),
                 property: this._createInternalSyntaxTree(node.property),
             };
             break;
         case "MethodDefinition":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.MethodDefinition,
+                type: WI.ScriptSyntaxTree.NodeType.MethodDefinition,
                 key: this._createInternalSyntaxTree(node.key),
                 value: this._createInternalSyntaxTree(node.value),
                 computed: node.computed,
@@ -809,33 +809,33 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "NewExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.NewExpression,
+                type: WI.ScriptSyntaxTree.NodeType.NewExpression,
                 callee: this._createInternalSyntaxTree(node.callee),
                 arguments: node.arguments.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ObjectExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ObjectExpression,
+                type: WI.ScriptSyntaxTree.NodeType.ObjectExpression,
                 properties: node.properties.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ObjectPattern":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ObjectPattern,
+                type: WI.ScriptSyntaxTree.NodeType.ObjectPattern,
                 properties: node.properties.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "Program":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.Program,
+                type: WI.ScriptSyntaxTree.NodeType.Program,
                 sourceType: node.sourceType,
                 body: node.body.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "Property":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.Property,
+                type: WI.ScriptSyntaxTree.NodeType.Property,
                 key: this._createInternalSyntaxTree(node.key),
                 value: this._createInternalSyntaxTree(node.value),
                 kind: node.kind,
@@ -847,94 +847,94 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "RestElement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.RestElement,
+                type: WI.ScriptSyntaxTree.NodeType.RestElement,
                 argument: this._createInternalSyntaxTree(node.argument)
             };
             break;
         case "RestProperty":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.RestProperty,
+                type: WI.ScriptSyntaxTree.NodeType.RestProperty,
                 argument: this._createInternalSyntaxTree(node.argument),
             };
             break;
         case "ReturnStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ReturnStatement,
+                type: WI.ScriptSyntaxTree.NodeType.ReturnStatement,
                 argument: this._createInternalSyntaxTree(node.argument)
             };
             break;
         case "SequenceExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.SequenceExpression,
+                type: WI.ScriptSyntaxTree.NodeType.SequenceExpression,
                 expressions: node.expressions.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "SpreadElement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.SpreadElement,
+                type: WI.ScriptSyntaxTree.NodeType.SpreadElement,
                 argument: this._createInternalSyntaxTree(node.argument),
             };
             break;
         case "SpreadProperty":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.SpreadProperty,
+                type: WI.ScriptSyntaxTree.NodeType.SpreadProperty,
                 argument: this._createInternalSyntaxTree(node.argument),
             };
             break;
         case "Super":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.Super
+                type: WI.ScriptSyntaxTree.NodeType.Super
             };
             break;
         case "SwitchStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.SwitchStatement,
+                type: WI.ScriptSyntaxTree.NodeType.SwitchStatement,
                 discriminant: this._createInternalSyntaxTree(node.discriminant),
                 cases: node.cases.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "SwitchCase":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.SwitchCase,
+                type: WI.ScriptSyntaxTree.NodeType.SwitchCase,
                 test: this._createInternalSyntaxTree(node.test),
                 consequent: node.consequent.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "TaggedTemplateExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.TaggedTemplateExpression,
+                type: WI.ScriptSyntaxTree.NodeType.TaggedTemplateExpression,
                 tag: this._createInternalSyntaxTree(node.tag),
                 quasi: this._createInternalSyntaxTree(node.quasi)
             };
             break;
         case "TemplateElement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.TemplateElement,
+                type: WI.ScriptSyntaxTree.NodeType.TemplateElement,
                 value: node.value,
                 tail: node.tail
             };
             break;
         case "TemplateLiteral":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.TemplateLiteral,
+                type: WI.ScriptSyntaxTree.NodeType.TemplateLiteral,
                 quasis: node.quasis.map(this._createInternalSyntaxTree, this),
                 expressions: node.expressions.map(this._createInternalSyntaxTree, this)
             };
             break;
         case "ThisExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ThisExpression
+                type: WI.ScriptSyntaxTree.NodeType.ThisExpression
             };
             break;
         case "ThrowStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ThrowStatement,
+                type: WI.ScriptSyntaxTree.NodeType.ThrowStatement,
                 argument: this._createInternalSyntaxTree(node.argument)
             };
             break;
         case "TryStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.TryStatement,
+                type: WI.ScriptSyntaxTree.NodeType.TryStatement,
                 block: this._createInternalSyntaxTree(node.block),
                 handler: this._createInternalSyntaxTree(node.handler),
                 finalizer: this._createInternalSyntaxTree(node.finalizer)
@@ -942,14 +942,14 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "UnaryExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.UnaryExpression,
+                type: WI.ScriptSyntaxTree.NodeType.UnaryExpression,
                 operator: node.operator,
                 argument: this._createInternalSyntaxTree(node.argument)
             };
             break;
         case "UpdateExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.UpdateExpression,
+                type: WI.ScriptSyntaxTree.NodeType.UpdateExpression,
                 operator: node.operator,
                 prefix: node.prefix,
                 argument: this._createInternalSyntaxTree(node.argument)
@@ -957,35 +957,35 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "VariableDeclaration":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.VariableDeclaration,
+                type: WI.ScriptSyntaxTree.NodeType.VariableDeclaration,
                 declarations: node.declarations.map(this._createInternalSyntaxTree, this),
                 kind: node.kind
             };
             break;
         case "VariableDeclarator":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.VariableDeclarator,
+                type: WI.ScriptSyntaxTree.NodeType.VariableDeclarator,
                 id: this._createInternalSyntaxTree(node.id),
                 init: this._createInternalSyntaxTree(node.init)
             };
             break;
         case "WhileStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.WhileStatement,
+                type: WI.ScriptSyntaxTree.NodeType.WhileStatement,
                 test: this._createInternalSyntaxTree(node.test),
                 body: this._createInternalSyntaxTree(node.body)
             };
             break;
         case "WithStatement":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.WithStatement,
+                type: WI.ScriptSyntaxTree.NodeType.WithStatement,
                 object: this._createInternalSyntaxTree(node.object),
                 body: this._createInternalSyntaxTree(node.body)
             };
             break;
         case "YieldExpression":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.YieldExpression,
+                type: WI.ScriptSyntaxTree.NodeType.YieldExpression,
                 argument: this._createInternalSyntaxTree(node.argument),
                 delegate: node.delegate
             };
@@ -995,13 +995,13 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
 
         case "ExportAllDeclaration":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ExportAllDeclaration,
+                type: WI.ScriptSyntaxTree.NodeType.ExportAllDeclaration,
                 source: this._createInternalSyntaxTree(node.source),
             };
             break;
         case "ExportNamedDeclaration":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ExportNamedDeclaration,
+                type: WI.ScriptSyntaxTree.NodeType.ExportNamedDeclaration,
                 declaration: this._createInternalSyntaxTree(node.declaration),
                 specifiers: node.specifiers.map(this._createInternalSyntaxTree, this),
                 source: this._createInternalSyntaxTree(node.source),
@@ -1009,44 +1009,44 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
             break;
         case "ExportDefaultDeclaration":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ExportDefaultDeclaration,
+                type: WI.ScriptSyntaxTree.NodeType.ExportDefaultDeclaration,
                 declaration: this._createInternalSyntaxTree(node.declaration),
             };
             break;
         case "ExportSpecifier":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ExportSpecifier,
+                type: WI.ScriptSyntaxTree.NodeType.ExportSpecifier,
                 local: this._createInternalSyntaxTree(node.local),
                 exported: this._createInternalSyntaxTree(node.exported),
             };
             break;
         case "Import":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.Import,
+                type: WI.ScriptSyntaxTree.NodeType.Import,
             };
             break;
         case "ImportDeclaration":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ImportDeclaration,
+                type: WI.ScriptSyntaxTree.NodeType.ImportDeclaration,
                 specifiers: node.specifiers.map(this._createInternalSyntaxTree, this),
                 source: this._createInternalSyntaxTree(node.source),
             };
             break;
         case "ImportDefaultSpecifier":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ImportDefaultSpecifier,
+                type: WI.ScriptSyntaxTree.NodeType.ImportDefaultSpecifier,
                 local: this._createInternalSyntaxTree(node.local),
             };
             break;
         case "ImportNamespaceSpecifier":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ImportNamespaceSpecifier,
+                type: WI.ScriptSyntaxTree.NodeType.ImportNamespaceSpecifier,
                 local: this._createInternalSyntaxTree(node.local),
             };
             break;
         case "ImportSpecifier":
             result = {
-                type: WebInspector.ScriptSyntaxTree.NodeType.ImportSpecifier,
+                type: WI.ScriptSyntaxTree.NodeType.ImportSpecifier,
                 imported: this._createInternalSyntaxTree(node.imported),
                 local: this._createInternalSyntaxTree(node.local),
             };
@@ -1066,12 +1066,12 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
 };
 
 // This should be kept in sync with an enum in JavaSciptCore/runtime/TypeProfiler.h
-WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor = {
+WI.ScriptSyntaxTree.TypeProfilerSearchDescriptor = {
     NormalExpression: 1,
     FunctionReturn: 2
 };
 
-WebInspector.ScriptSyntaxTree.NodeType = {
+WI.ScriptSyntaxTree.NodeType = {
     ArrayExpression: Symbol("array-expression"),
     ArrayPattern: Symbol("array-pattern"),
     ArrowFunctionExpression: Symbol("arrow-function-expression"),

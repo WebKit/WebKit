@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseHostTreeElement = class DatabaseHostTreeElement extends WebInspector.StorageTreeElement
+WI.DatabaseHostTreeElement = class DatabaseHostTreeElement extends WI.StorageTreeElement
 {
     constructor(host)
     {
-        super(WebInspector.FolderTreeElement.FolderIconStyleClassName, WebInspector.displayNameForHost(host), null);
+        super(WI.FolderTreeElement.FolderIconStyleClassName, WI.displayNameForHost(host), null);
 
         this._host = host;
 
@@ -39,11 +39,11 @@ WebInspector.DatabaseHostTreeElement = class DatabaseHostTreeElement extends Web
 
     get name()
     {
-        return WebInspector.displayNameForHost(this._host);
+        return WI.displayNameForHost(this._host);
     }
 
     get categoryName()
     {
-        return WebInspector.UIString("Databases");
+        return WI.UIString("Databases");
     }
 };

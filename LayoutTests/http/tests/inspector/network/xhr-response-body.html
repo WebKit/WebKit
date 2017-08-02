@@ -47,10 +47,10 @@ function test()
             name, description,
             test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
-                WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
                     .then((event) => {
                         let resource = event.data.resource;
-                        InspectorTest.expectEqual(resource.type, WebInspector.Resource.Type.XHR, "Resource should be XHR type.");
+                        InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR type.");
                         return resource.requestContent();
                     })
                     .then(contentHandler)

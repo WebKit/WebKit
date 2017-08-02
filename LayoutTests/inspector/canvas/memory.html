@@ -28,7 +28,7 @@ function test() {
             // performed on that canvas that requires the image buffer.  A blank canvas that was
             // just created will not have a buffer, so its memory cost will be 0/NaN.
 
-            let canvases = WebInspector.canvasManager.canvases.filter((canvas) => canvas.contextType === WebInspector.Canvas.ContextType.Canvas2D);
+            let canvases = WI.canvasManager.canvases.filter((canvas) => canvas.contextType === WI.Canvas.ContextType.Canvas2D);
             if (!canvases.length) {
                 reject("Missing 2D canvas.");
                 return;
@@ -45,7 +45,7 @@ function test() {
         name: "Canvas.memory.canvasMemoryChanged",
         description: "Check that memory cost is updated when the backend value changes.",
         test(resolve, reject) {
-            let canvases = WebInspector.canvasManager.canvases.filter((canvas) => canvas.contextType === WebInspector.Canvas.ContextType.Canvas2D);
+            let canvases = WI.canvasManager.canvases.filter((canvas) => canvas.contextType === WI.Canvas.ContextType.Canvas2D);
             if (!canvases.length) {
                 reject("Missing 2D canvas.");
                 return;
@@ -53,7 +53,7 @@ function test() {
 
             InspectorTest.assert(canvases.length === 1, "There should only be one canvas-2d.");
 
-            canvases[0].awaitEvent(WebInspector.Canvas.Event.MemoryChanged)
+            canvases[0].awaitEvent(WI.Canvas.Event.MemoryChanged)
             .then((event) => {
                 InspectorTest.log(`Memory cost of canvas updated to ${event.target.memoryCost}.`);
             })

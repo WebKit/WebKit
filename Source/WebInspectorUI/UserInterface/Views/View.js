@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.View = class View extends WebInspector.Object
+WI.View = class View extends WI.Object
 {
     constructor(element)
     {
@@ -45,10 +45,10 @@ WebInspector.View = class View extends WebInspector.Object
 
     static rootView()
     {
-        if (!WebInspector.View._rootView)
-            WebInspector.View._rootView = new WebInspector.View(document.body);
+        if (!WI.View._rootView)
+            WI.View._rootView = new WI.View(document.body);
 
-        return WebInspector.View._rootView;
+        return WI.View._rootView;
     }
 
     // Public
@@ -92,9 +92,9 @@ WebInspector.View = class View extends WebInspector.Object
 
     insertSubviewBefore(view, referenceView)
     {
-        console.assert(view instanceof WebInspector.View);
-        console.assert(!referenceView || referenceView instanceof WebInspector.View);
-        console.assert(view !== WebInspector.View._rootView, "Root view cannot be a subview.");
+        console.assert(view instanceof WI.View);
+        console.assert(!referenceView || referenceView instanceof WI.View);
+        console.assert(view !== WI.View._rootView, "Root view cannot be a subview.");
 
         if (this._subviews.includes(view)) {
             console.assert(false, "Cannot add view that is already a subview.", view);
@@ -117,7 +117,7 @@ WebInspector.View = class View extends WebInspector.Object
 
     removeSubview(view)
     {
-        console.assert(view instanceof WebInspector.View);
+        console.assert(view instanceof WI.View);
         console.assert(view.element.parentNode === this._element, "Subview DOM element must be a child of the parent view element.");
 
         if (!this._subviews.includes(view)) {
@@ -162,12 +162,12 @@ WebInspector.View = class View extends WebInspector.Object
         if (this._dirty)
             return;
 
-        WebInspector.View._scheduleLayoutForView(this);
+        WI.View._scheduleLayoutForView(this);
     }
 
     cancelLayout()
     {
-        WebInspector.View._cancelScheduledLayoutForView(this);
+        WI.View._cancelScheduledLayoutForView(this);
     }
 
     // Protected
@@ -180,7 +180,7 @@ WebInspector.View = class View extends WebInspector.Object
         this._isAttachedToRoot = isAttachedToRoot;
 
         if (this._isAttachedToRoot && this._needsLayoutWhenAttachedToRoot) {
-            WebInspector.View._scheduleLayoutForView(this);
+            WI.View._scheduleLayoutForView(this);
             this._needsLayoutWhenAttachedToRoot = false;
         }
 
@@ -192,7 +192,7 @@ WebInspector.View = class View extends WebInspector.Object
     {
         this._parentView = parentView;
 
-        let isAttachedToRoot = this.isDescendantOf(WebInspector.View._rootView);
+        let isAttachedToRoot = this.isDescendantOf(WI.View._rootView);
         this.didMoveToWindow(isAttachedToRoot);
 
         if (!this._parentView)
@@ -245,7 +245,7 @@ WebInspector.View = class View extends WebInspector.Object
             this._didInitialLayout = true;
         }
 
-        if (this._layoutReason === WebInspector.View.LayoutReason.Resize)
+        if (this._layoutReason === WI.View.LayoutReason.Resize)
             this.sizeDidChange();
 
         this.layout();
@@ -260,10 +260,10 @@ WebInspector.View = class View extends WebInspector.Object
 
     _setLayoutReason(layoutReason)
     {
-        if (this._layoutReason === WebInspector.View.LayoutReason.Resize)
+        if (this._layoutReason === WI.View.LayoutReason.Resize)
             return;
 
-        this._layoutReason = layoutReason || WebInspector.View.LayoutReason.Dirty;
+        this._layoutReason = layoutReason || WI.View.LayoutReason.Dirty;
     }
 
     // Layout controller logic
@@ -285,10 +285,10 @@ WebInspector.View = class View extends WebInspector.Object
             return;
         }
 
-        if (WebInspector.View._scheduledLayoutUpdateIdentifier)
+        if (WI.View._scheduledLayoutUpdateIdentifier)
             return;
 
-        WebInspector.View._scheduledLayoutUpdateIdentifier = requestAnimationFrame(WebInspector.View._visitViewTreeForLayout);
+        WI.View._scheduledLayoutUpdateIdentifier = requestAnimationFrame(WI.View._visitViewTreeForLayout);
     }
 
     static _cancelScheduledLayoutForView(view)
@@ -303,25 +303,25 @@ WebInspector.View = class View extends WebInspector.Object
             parentView = parentView.parentView;
         }
 
-        if (!WebInspector.View._scheduledLayoutUpdateIdentifier)
+        if (!WI.View._scheduledLayoutUpdateIdentifier)
             return;
 
-        let rootView = WebInspector.View._rootView;
+        let rootView = WI.View._rootView;
         if (!rootView || rootView._dirtyDescendantsCount)
             return;
 
         // No views need layout, so cancel the pending requestAnimationFrame.
-        cancelAnimationFrame(WebInspector.View._scheduledLayoutUpdateIdentifier);
-        WebInspector.View._scheduledLayoutUpdateIdentifier = undefined;
+        cancelAnimationFrame(WI.View._scheduledLayoutUpdateIdentifier);
+        WI.View._scheduledLayoutUpdateIdentifier = undefined;
     }
 
     static _visitViewTreeForLayout()
     {
-        console.assert(WebInspector.View._rootView, "Cannot layout view tree without a root.");
+        console.assert(WI.View._rootView, "Cannot layout view tree without a root.");
 
-        WebInspector.View._scheduledLayoutUpdateIdentifier = undefined;
+        WI.View._scheduledLayoutUpdateIdentifier = undefined;
 
-        let views = [WebInspector.View._rootView];
+        let views = [WI.View._rootView];
         while (views.length) {
             let view = views.shift();
             if (view.layoutPending)
@@ -334,10 +334,10 @@ WebInspector.View = class View extends WebInspector.Object
     }
 };
 
-WebInspector.View.LayoutReason = {
+WI.View.LayoutReason = {
     Dirty: Symbol("layout-reason-dirty"),
     Resize: Symbol("layout-reason-resize")
 };
 
-WebInspector.View._rootView = null;
-WebInspector.View._scheduledLayoutUpdateIdentifier = undefined;
+WI.View._rootView = null;
+WI.View._scheduledLayoutUpdateIdentifier = undefined;

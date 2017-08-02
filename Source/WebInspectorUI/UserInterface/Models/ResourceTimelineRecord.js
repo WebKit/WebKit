@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceTimelineRecord = class ResourceTimelineRecord extends WebInspector.TimelineRecord
+WI.ResourceTimelineRecord = class ResourceTimelineRecord extends WI.TimelineRecord
 {
     constructor(resource)
     {
-        super(WebInspector.TimelineRecord.Type.Network);
+        super(WI.TimelineRecord.Type.Network);
 
         this._resource = resource;
-        this._resource.addEventListener(WebInspector.Resource.Event.TimestampsDidChange, this._dispatchUpdatedEvent, this);
+        this._resource.addEventListener(WI.Resource.Event.TimestampsDidChange, this._dispatchUpdatedEvent, this);
     }
 
     // Public
@@ -69,6 +69,6 @@ WebInspector.ResourceTimelineRecord = class ResourceTimelineRecord extends WebIn
 
     _dispatchUpdatedEvent()
     {
-        this.dispatchEventToListeners(WebInspector.TimelineRecord.Event.Updated);
+        this.dispatchEventToListeners(WI.TimelineRecord.Event.Updated);
     }
 };

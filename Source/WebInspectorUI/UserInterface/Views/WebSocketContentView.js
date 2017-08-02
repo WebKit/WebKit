@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspector.ContentView
+WI.WebSocketContentView = class WebSocketContentView extends WI.ContentView
 {
     constructor(resource)
     {
-        console.assert(resource instanceof WebInspector.WebSocketResource, resource);
+        console.assert(resource instanceof WI.WebSocketResource, resource);
 
         super(resource);
 
@@ -41,18 +41,18 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
         this.element.classList.add("web-socket", "resource");
 
         let columns = {data: {}};
-        columns.data.title = WebInspector.UIString("Data");
+        columns.data.title = WI.UIString("Data");
         columns.data.sortable = false;
         columns.data.width = "85%";
 
         if (this._showTimeColumn)
-            columns.time = {title: WebInspector.UIString("Time"), sortable: true};
+            columns.time = {title: WI.UIString("Time"), sortable: true};
 
-        this._dataGrid = new WebInspector.DataGrid(columns);
+        this._dataGrid = new WI.DataGrid(columns);
         this._dataGrid.variableHeightRows = true;
         this.addSubview(this._dataGrid);
 
-        this._addRow(WebInspector.UIString("WebSocket Connection Established"), this._resource.walltime);
+        this._addRow(WI.UIString("WebSocket Connection Established"), this._resource.walltime);
 
         this._dataGrid.updateLayout();
     }
@@ -62,18 +62,18 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
     static textForOpcode(opcode)
     {
         switch (opcode) {
-        case WebInspector.WebSocketResource.OpCodes.ContinuationFrame:
-            return WebInspector.UIString("Continuation Frame");
-        case WebInspector.WebSocketResource.OpCodes.TextFrame:
-            return WebInspector.UIString("Text Frame");
-        case WebInspector.WebSocketResource.OpCodes.BinaryFrame:
-            return WebInspector.UIString("Binary Frame");
-        case WebInspector.WebSocketResource.OpCodes.ConnectionCloseFrame:
-            return WebInspector.UIString("Connection Close Frame");
-        case WebInspector.WebSocketResource.OpCodes.PingFrame:
-            return WebInspector.UIString("Ping Frame");
-        case WebInspector.WebSocketResource.OpCodes.PongFrame:
-            return WebInspector.UIString("Pong Frame");
+        case WI.WebSocketResource.OpCodes.ContinuationFrame:
+            return WI.UIString("Continuation Frame");
+        case WI.WebSocketResource.OpCodes.TextFrame:
+            return WI.UIString("Text Frame");
+        case WI.WebSocketResource.OpCodes.BinaryFrame:
+            return WI.UIString("Binary Frame");
+        case WI.WebSocketResource.OpCodes.ConnectionCloseFrame:
+            return WI.UIString("Connection Close Frame");
+        case WI.WebSocketResource.OpCodes.PingFrame:
+            return WI.UIString("Ping Frame");
+        case WI.WebSocketResource.OpCodes.PongFrame:
+            return WI.UIString("Pong Frame");
         }
     }
 
@@ -82,14 +82,14 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
     shown()
     {
         this._updateFrames();
-        this._resource.addEventListener(WebInspector.WebSocketResource.Event.FrameAdded, this._updateFramesSoon, this);
-        this._resource.addEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateFramesSoon, this);
+        this._resource.addEventListener(WI.WebSocketResource.Event.FrameAdded, this._updateFramesSoon, this);
+        this._resource.addEventListener(WI.WebSocketResource.Event.ReadyStateChanged, this._updateFramesSoon, this);
     }
 
     hidden()
     {
-        this._resource.removeEventListener(WebInspector.WebSocketResource.Event.FrameAdded, this._updateFramesSoon, this);
-        this._resource.removeEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateFramesSoon, this);
+        this._resource.removeEventListener(WI.WebSocketResource.Event.FrameAdded, this._updateFramesSoon, this);
+        this._resource.removeEventListener(WI.WebSocketResource.Event.ReadyStateChanged, this._updateFramesSoon, this);
     }
 
     // Private
@@ -113,8 +113,8 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
         this._framesRendered = framesLength;
 
         if (this._lastRenderedReadyState !== this._resource.readyState) {
-            if (this._resource.readyState === WebInspector.WebSocketResource.ReadyState.Closed)
-                this._dataGrid.appendChild(new WebInspector.SpanningDataGridNode(WebInspector.UIString("Connection Closed")));
+            if (this._resource.readyState === WI.WebSocketResource.ReadyState.Closed)
+                this._dataGrid.appendChild(new WI.SpanningDataGridNode(WI.UIString("Connection Closed")));
 
             this._lastRenderedReadyState = this._resource.readyState;
         }
@@ -126,11 +126,11 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
     _addFrame(data, isOutgoing, opcode, time)
     {
         let nodeText;
-        let isText = opcode === WebInspector.WebSocketResource.OpCodes.TextFrame;
+        let isText = opcode === WI.WebSocketResource.OpCodes.TextFrame;
         if (isText)
             nodeText = data;
         else
-            nodeText = WebInspector.WebSocketContentView.textForOpcode(opcode);
+            nodeText = WI.WebSocketContentView.textForOpcode(opcode);
 
         this._addRow(nodeText, time, {isOutgoing, isText});
     }
@@ -139,9 +139,9 @@ WebInspector.WebSocketContentView = class WebSocketContentView extends WebInspec
     {
         let node;
         if (this._showTimeColumn)
-            node = new WebInspector.WebSocketDataGridNode(Object.shallowMerge({data, time}, attributes));
+            node = new WI.WebSocketDataGridNode(Object.shallowMerge({data, time}, attributes));
         else
-            node = new WebInspector.WebSocketDataGridNode(Object.shallowMerge({data}, attributes));
+            node = new WI.WebSocketDataGridNode(Object.shallowMerge({data}, attributes));
 
         this._dataGrid.appendChild(node);
 

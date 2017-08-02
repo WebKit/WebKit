@@ -44,18 +44,18 @@ function test() {
         suite.runTestCasesAndFinish();
     }
 
-    WebInspector.domTreeManager.requestDocument((documentNode) => {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "#test-node", (contentNodeId) => {
+    WI.domTreeManager.requestDocument((documentNode) => {
+        WI.domTreeManager.querySelector(documentNode.id, "#test-node", (contentNodeId) => {
             if (!contentNodeId) {
                 InspectorTest.log("DOM node not found.");
                 InspectorTest.completeTest();
                 return;
             }
 
-            let domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
-            nodeStyles = WebInspector.cssStyleManager.stylesForNode(domNode);
+            let domNode = WI.domTreeManager.nodeForId(contentNodeId);
+            nodeStyles = WI.cssStyleManager.stylesForNode(domNode);
             if (nodeStyles.needsRefresh) {
-                nodeStyles.awaitEvent(WebInspector.DOMNodeStyles.Event.Refreshed)
+                nodeStyles.awaitEvent(WI.DOMNodeStyles.Event.Refreshed)
                 .then(validateSelectors);
             } else
                 validateSelectors();

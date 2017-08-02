@@ -12,13 +12,13 @@ function test()
             name, description,
             test(resolve, reject) {
                 InspectorTest.log("Push node with path: " + path);
-                WebInspector.domTreeManager.pushNodeByPathToFrontend(path, (nodeIdentifier) => {
+                WI.domTreeManager.pushNodeByPathToFrontend(path, (nodeIdentifier) => {
                     if (!nodeIdentifier) {
                         reject();
                         return;
                     }
 
-                    let node = WebInspector.domTreeManager.nodeForId(nodeIdentifier);
+                    let node = WI.domTreeManager.nodeForId(nodeIdentifier);
                     InspectorTest.expectEqual(node.path(), path, "Pushed node has correct path.");
                     resolve();
                 });

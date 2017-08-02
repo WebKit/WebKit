@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LoggingProtocolTracer = class LoggingProtocolTracer extends WebInspector.ProtocolTracer
+WI.LoggingProtocolTracer = class LoggingProtocolTracer extends WI.ProtocolTracer
 {
     constructor()
     {

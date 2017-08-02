@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseUserQueryErrorView = class DatabaseUserQueryErrorView extends WebInspector.DatabaseUserQueryViewBase
+WI.DatabaseUserQueryErrorView = class DatabaseUserQueryErrorView extends WI.DatabaseUserQueryViewBase
 {
     constructor(query, message)
     {

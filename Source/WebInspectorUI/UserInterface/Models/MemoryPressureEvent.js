@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MemoryPressureEvent = class MemoryPressureEvent
+WI.MemoryPressureEvent = class MemoryPressureEvent
 {
     constructor(timestamp, severity)
     {
@@ -38,18 +38,18 @@ WebInspector.MemoryPressureEvent = class MemoryPressureEvent
         let severity;
         switch (protocolSeverity) {
         case MemoryAgent.MemoryPressureSeverity.Critical:
-            severity = WebInspector.MemoryPressureEvent.Severity.Critical;
+            severity = WI.MemoryPressureEvent.Severity.Critical;
             break;
         case MemoryAgent.MemoryPressureSeverity.NonCritical:
-            severity = WebInspector.MemoryPressureEvent.Severity.NonCritical;
+            severity = WI.MemoryPressureEvent.Severity.NonCritical;
             break;
         default:
             console.error("Unexpected memory pressure severity", protocolSeverity);
-            severity = WebInspector.MemoryPressureEvent.Severity.NonCritical;
+            severity = WI.MemoryPressureEvent.Severity.NonCritical;
             break;
         }
 
-        return new WebInspector.MemoryPressureEvent(timestamp, severity);
+        return new WI.MemoryPressureEvent(timestamp, severity);
     }
 
     // Public
@@ -58,7 +58,7 @@ WebInspector.MemoryPressureEvent = class MemoryPressureEvent
     get severity() { return this._severity; }
 };
 
-WebInspector.MemoryPressureEvent.Severity = {
+WI.MemoryPressureEvent.Severity = {
     Critical: Symbol("Critical"),
     NonCritical: Symbol("NonCritical"),
 };

@@ -9,15 +9,15 @@ TestPage.needToSanitizeUncaughtExceptionURLs = true;
 
 function test()
 {
-    WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
-    WebInspector.debuggerManager.assertionsBreakpoint.disabled = false;
+    WI.debuggerManager.allExceptionsBreakpoint.disabled = false;
+    WI.debuggerManager.assertionsBreakpoint.disabled = false;
 
-    for (let script of WebInspector.debuggerManager.dataForTarget(WebInspector.mainTarget).scripts) {
+    for (let script of WI.debuggerManager.dataForTarget(WI.mainTarget).scripts) {
         if (!/pause-reasons\.js$/.test(script.url))
             continue;
         let sourceCodeLocation = script.createSourceCodeLocation(3, 0);
-        let breakpoint = new WebInspector.Breakpoint(sourceCodeLocation);
-        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+        let breakpoint = new WI.Breakpoint(sourceCodeLocation);
+        WI.debuggerManager.addBreakpoint(breakpoint);
         break;
     }
 
@@ -44,8 +44,8 @@ function test()
                 expression += `;setTimeout(() => { TestPage.dispatchEventToFrontend("AfterTestFunction"); })`;
                 InspectorTest.evaluateInPage(expression);
 
-                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
-                    let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
                     InspectorTest.log("PAUSE #" + (++pauses));
                     InspectorTest.log("  REASON: " + targetData.pauseReason);
                     if (targetData.pauseData)
@@ -53,11 +53,11 @@ function test()
                     else
                         InspectorTest.log("  NO DATA");
 
-                    WebInspector.debuggerManager.resume().catch(reject);
+                    WI.debuggerManager.resume().catch(reject);
                     InspectorTest.singleFireEventListener("AfterTestFunction", resolve);
                 });
 
-                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Resumed, function(event) {
                     InspectorTest.log("RESUMED");
                 });
             }
@@ -92,7 +92,7 @@ function test()
         name: "Debugger.PauseReason.PauseImmediately",
         description: "Pause for Debugger.pause command should have expected pause reason.",
         expression: "setTimeout(() => { 1 + 1 })",
-        setup() { WebInspector.debuggerManager.pause(); },
+        setup() { WI.debuggerManager.pause(); },
     });
 
     suite.runTestCasesAndFinish();

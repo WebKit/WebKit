@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MemoryTimeline = class MemoryTimeline extends WebInspector.Timeline
+WI.MemoryTimeline = class MemoryTimeline extends WI.Timeline
 {
     // Public
 
@@ -31,11 +31,11 @@ WebInspector.MemoryTimeline = class MemoryTimeline extends WebInspector.Timeline
 
     addMemoryPressureEvent(memoryPressureEvent)
     {
-        console.assert(memoryPressureEvent instanceof WebInspector.MemoryPressureEvent);
+        console.assert(memoryPressureEvent instanceof WI.MemoryPressureEvent);
 
         this._pressureEvents.push(memoryPressureEvent);
 
-        this.dispatchEventToListeners(WebInspector.MemoryTimeline.Event.MemoryPressureEventAdded, {memoryPressureEvent});
+        this.dispatchEventToListeners(WI.MemoryTimeline.Event.MemoryPressureEventAdded, {memoryPressureEvent});
     }
 
     // Protected
@@ -48,6 +48,6 @@ WebInspector.MemoryTimeline = class MemoryTimeline extends WebInspector.Timeline
     }
 };
 
-WebInspector.MemoryTimeline.Event = {
+WI.MemoryTimeline.Event = {
     MemoryPressureEventAdded: "memory-timeline-memory-pressure-event-added",
 };

@@ -17,29 +17,29 @@ function test()
             description,
             test(resolve, reject) {
                 let didPause = false;
-                let listener = WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                     didPause = true;
                     InspectorTest.fail("Should not have paused.");
-                    WebInspector.debuggerManager.resume();
+                    WI.debuggerManager.resume();
                     reject();
                 });
 
                 breakpoint.disabled = false;
-                WebInspector.debuggerManager.breakpointsEnabled = false;
+                WI.debuggerManager.breakpointsEnabled = false;
 
                 InspectorTest.evaluateInPage(expression, () => {
                     InspectorTest.expectFalse(didPause, "Should not pause.")
-                    WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.Paused, listener);
-                    WebInspector.debuggerManager.resume();
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+                    WI.debuggerManager.resume();
                     resolve();
                 });
             }
         });
     }
 
-    addTestCase("AssertionsBreakpoint", "Should not pause on assertion failure.", "assertFalse()", WebInspector.debuggerManager.assertionsBreakpoint);
-    addTestCase("AllUncaughtExceptionsBreakpoint", "Should not pause on uncaught exception.", "doThrow()", WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint);
-    addTestCase("AllExceptionsBreakpoint", "Should not pause on caught exception.", "testCatch()", WebInspector.debuggerManager.allExceptionsBreakpoint);
+    addTestCase("AssertionsBreakpoint", "Should not pause on assertion failure.", "assertFalse()", WI.debuggerManager.assertionsBreakpoint);
+    addTestCase("AllUncaughtExceptionsBreakpoint", "Should not pause on uncaught exception.", "doThrow()", WI.debuggerManager.allUncaughtExceptionsBreakpoint);
+    addTestCase("AllExceptionsBreakpoint", "Should not pause on caught exception.", "testCatch()", WI.debuggerManager.allExceptionsBreakpoint);
 
     suite.runTestCasesAndFinish();
 }

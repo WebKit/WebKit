@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleFontFamilyListEditor = class VisualStyleFontFamilyListEditor extends WebInspector.VisualStyleCommaSeparatedKeywordEditor
+WI.VisualStyleFontFamilyListEditor = class VisualStyleFontFamilyListEditor extends WI.VisualStyleCommaSeparatedKeywordEditor
 {
     constructor(propertyNames, text, longhandProperties, layoutReversed)
     {
@@ -31,8 +31,8 @@ WebInspector.VisualStyleFontFamilyListEditor = class VisualStyleFontFamilyListEd
 
         this._commaSeparatedKeywords.element.addEventListener("scroll", this._hideCompletions.bind(this));
 
-        this._completionController = new WebInspector.VisualStyleCompletionsController(this);
-        this._completionController.addEventListener(WebInspector.VisualStyleCompletionsController.Event.CompletionSelected, this._completionClicked, this);
+        this._completionController = new WI.VisualStyleCompletionsController(this);
+        this._completionController.addEventListener(WI.VisualStyleCompletionsController.Event.CompletionSelected, this._completionClicked, this);
 
         this._wrapWithQuotesRegExp = /^[a-zA-Z\-]+$/;
         this._removeWrappedQuotesRegExp = /[\"\']/g;
@@ -71,9 +71,9 @@ WebInspector.VisualStyleFontFamilyListEditor = class VisualStyleFontFamilyListEd
             value = value.replace(this._removeWrappedQuotesRegExp, "");
 
         let valueElement = super._addCommaSeparatedKeyword(value, index);
-        valueElement.addEventListener(WebInspector.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown, this._treeElementKeyDown, this);
-        valueElement.addEventListener(WebInspector.VisualStyleFontFamilyTreeElement.Event.KeywordChanged, this._treeElementKeywordChanged, this);
-        valueElement.addEventListener(WebInspector.VisualStyleFontFamilyTreeElement.Event.EditorBlurred, this._hideCompletions, this);
+        valueElement.addEventListener(WI.VisualStyleFontFamilyTreeElement.Event.EditorKeyDown, this._treeElementKeyDown, this);
+        valueElement.addEventListener(WI.VisualStyleFontFamilyTreeElement.Event.KeywordChanged, this._treeElementKeywordChanged, this);
+        valueElement.addEventListener(WI.VisualStyleFontFamilyTreeElement.Event.EditorBlurred, this._hideCompletions, this);
         return valueElement;
     }
 
@@ -153,6 +153,6 @@ WebInspector.VisualStyleFontFamilyListEditor = class VisualStyleFontFamilyListEd
 
     _createNewTreeElement(value)
     {
-        return new WebInspector.VisualStyleFontFamilyTreeElement(value);
+        return new WI.VisualStyleFontFamilyTreeElement(value);
     }
 };

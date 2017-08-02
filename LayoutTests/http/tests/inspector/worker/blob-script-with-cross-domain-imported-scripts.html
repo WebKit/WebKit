@@ -14,7 +14,7 @@ function triggerWorkerStart() {
 function test()
 {
     let workerTarget;
-    let mainTarget = WebInspector.mainTarget;
+    let mainTarget = WI.mainTarget;
 
     function sanitizeURL(url) {
         if (!url)
@@ -36,7 +36,7 @@ function test()
 
     function dumpWorkerScripts() {
         InspectorTest.log("SCRIPTS:");
-        let targetData = WebInspector.debuggerManager.dataForTarget(workerTarget);
+        let targetData = WI.debuggerManager.dataForTarget(workerTarget);
         let urls = [];
         for (let script of targetData.scripts)
             urls.push(sanitizeURL(script.url));
@@ -59,21 +59,21 @@ function test()
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerWorkerStart()");
 
-            WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetAdded, (event) => {
+            WI.targetManager.singleFireEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
                 workerTarget = event.data.target;
-                InspectorTest.assert(workerTarget instanceof WebInspector.Target);
-                InspectorTest.expectEqual(workerTarget.type, WebInspector.Target.Type.Worker, "Added Target should have Worker type.");
+                InspectorTest.assert(workerTarget instanceof WI.Target);
+                InspectorTest.expectEqual(workerTarget.type, WI.Target.Type.Worker, "Added Target should have Worker type.");
             });
 
             let seen = 0;
             const expected = 3;
-            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
                 if (event.data.script.target === workerTarget)
                     seen++;
                 if (seen !== expected)
                     return;
 
-                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, listener);
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, listener);
                 dumpWorkerResources();
                 dumpWorkerScripts();
                 resolve();

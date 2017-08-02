@@ -13,13 +13,13 @@ function test()
         test(resolve, reject) {
             ConsoleAgent.clearMessages();
 
-            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
             .then((event) => {
                 InspectorTest.assert(false, "MessageAdded event should not fire.");
             })
             .then(reject, reject);
 
-            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.Cleared)
+            WI.logManager.awaitEvent(WI.LogManager.Event.Cleared)
             .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
             })

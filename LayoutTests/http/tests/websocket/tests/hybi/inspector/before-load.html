@@ -23,15 +23,15 @@ function test()
         let readyStateString = "";
 
         switch (readyState) {
-        case WebInspector.WebSocketResource.ReadyState.Closed:
+        case WI.WebSocketResource.ReadyState.Closed:
             readyStateString = "closed";
             break;
 
-        case WebInspector.WebSocketResource.ReadyState.Connecting:
+        case WI.WebSocketResource.ReadyState.Connecting:
             readyStateString = "connecting";
             break;
 
-        case WebInspector.WebSocketResource.ReadyState.Open:
+        case WI.WebSocketResource.ReadyState.Open:
             readyStateString = "open";
             break;
 
@@ -45,7 +45,7 @@ function test()
         description: "Test that the existing websocket is sent to the frontend when it is first opened.",
         test(resolve, reject) {
             const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
-            let webSocketResources = WebInspector.frameResourceManager.mainFrame.resourceCollectionForType(WebInspector.Resource.Type.WebSocket);
+            let webSocketResources = WI.frameResourceManager.mainFrame.resourceCollectionForType(WI.Resource.Type.WebSocket);
             InspectorTest.expectEqual(webSocketResources.items.size, 1, "Should have 1 WebSocketResource");
 
             let webSocketResource = webSocketResources.toArray()[0];
@@ -54,7 +54,7 @@ function test()
                 return;
             }
 
-            InspectorTest.expectThat(webSocketResource instanceof WebInspector.WebSocketResource, "Resource should be a WebSocket.");
+            InspectorTest.expectThat(webSocketResource instanceof WI.WebSocketResource, "Resource should be a WebSocket.");
             InspectorTest.expectEqual(webSocketResource.url, url, `Resource URL should be "${url}".`);
             InspectorTest.expectThat(!isEmptyObject(webSocketResource.requestHeaders), "Resource should have request headers.");
             InspectorTest.expectThat(!isEmptyObject(webSocketResource.responseHeaders), "Resource should have response headers.");

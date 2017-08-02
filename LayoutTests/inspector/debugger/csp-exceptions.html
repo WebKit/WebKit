@@ -26,13 +26,13 @@ function test()
         description: "Trigger a CSP Exception inside of script should pause.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("setTimeout(triggerCSPExceptionInsideScript)");
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 InspectorTest.pass("CSP Exception caused by script evaluation should pause.");
-                WebInspector.debuggerManager.resume();
+                WI.debuggerManager.resume();
             });
 
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
-                InspectorTest.assert(event.data.message.level === WebInspector.ConsoleMessage.MessageLevel.Error);
+            WI.logManager.singleFireEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+                InspectorTest.assert(event.data.message.level === WI.ConsoleMessage.MessageLevel.Error);
                 InspectorTest.pass("CSP Exception Console Message: " + event.data.message.messageText);
                 resolve();
             });
@@ -45,15 +45,15 @@ function test()
         test(resolve, reject) {
             InspectorTest.evaluateInPage("setTimeout(triggerCSPExceptionOutsideScript)");
             let didPause = false;
-            let tempPauseFailListener = WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            let tempPauseFailListener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 didPause = true;
                 InspectorTest.fail("CSP Exception caused outside of script evaluation should not pause, but did.");
-                WebInspector.debuggerManager.resume();
+                WI.debuggerManager.resume();
                 reject();
             });
-            WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
-                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.Paused, tempPauseFailListener, null);
-                InspectorTest.assert(event.data.message.level === WebInspector.ConsoleMessage.MessageLevel.Error);
+            WI.logManager.singleFireEventListener(WI.LogManager.Event.MessageAdded, (event) => {
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, tempPauseFailListener, null);
+                InspectorTest.assert(event.data.message.level === WI.ConsoleMessage.MessageLevel.Error);
                 InspectorTest.expectFalse(didPause, "CSP Exception caused outside of script evaluation should not pause.");
                 InspectorTest.pass("CSP Exception Console Message: " + event.data.message.messageText);
                 resolve();

@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RecordingInitialStateAction = class RecordingInitialStateAction extends WebInspector.RecordingAction
+WI.RecordingInitialStateAction = class RecordingInitialStateAction extends WI.RecordingAction
 {
     constructor()
     {
         super();
 
-        this._name = WebInspector.UIString("Initial State");
+        this._name = WI.UIString("Initial State");
 
         this._valid = false;
     }

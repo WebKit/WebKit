@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends WebInspector.VisualStylePropertyEditor
+WI.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends WI.VisualStylePropertyEditor
 {
     constructor(propertyNames, text, possibleValues, possibleUnits, allowNegativeValues, layoutReversed)
     {
-        let unitlessNumberUnit = WebInspector.UIString("Number");
+        let unitlessNumberUnit = WI.UIString("Number");
 
         super(propertyNames, text, possibleValues, possibleUnits || [unitlessNumberUnit], "number-input-box", layoutReversed);
 
@@ -46,11 +46,11 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         this._keywordSelectElement = document.createElement("select");
         this._keywordSelectElement.classList.add("number-input-keyword-select");
         if (this._possibleUnits.advanced)
-            this._keywordSelectElement.title = WebInspector.UIString("Option-click to show all units");
+            this._keywordSelectElement.title = WI.UIString("Option-click to show all units");
 
         this._unchangedOptionElement = document.createElement("option");
         this._unchangedOptionElement.value = "";
-        this._unchangedOptionElement.text = WebInspector.UIString("Unchanged");
+        this._unchangedOptionElement.text = WI.UIString("Unchanged");
         this._keywordSelectElement.appendChild(this._unchangedOptionElement);
 
         this._keywordSelectElement.appendChild(document.createElement("hr"));

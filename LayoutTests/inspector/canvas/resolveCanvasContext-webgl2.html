@@ -20,7 +20,7 @@ function test()
         name: `Canvas.resolveCanvasContextWebGL2.validIdentifier`,
         description: "Should return a valid object for the given canvas identifier.",
         test(resolve, reject) {
-            let canvas = WebInspector.canvasManager.canvases.find((canvas) => canvas.contextType === WebInspector.Canvas.ContextType.WebGL2);
+            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL2);
             if (!canvas) {
                 reject(`Missing Canvas.`);
                 return;

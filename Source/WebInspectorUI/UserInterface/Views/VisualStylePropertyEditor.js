@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends WebInspector.Object
+WI.VisualStylePropertyEditor = class VisualStylePropertyEditor extends WI.Object
 {
     constructor(propertyNames, label, possibleValues, possibleUnits, className, layoutReversed)
     {
@@ -109,7 +109,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         }
 
         this._propertyReferenceName = propertyNames[0];
-        this._propertyReferenceText = WebInspector.VisualStyleDetailsPanel.propertyReferenceInfo[this._propertyReferenceName];
+        this._propertyReferenceText = WI.VisualStyleDetailsPanel.propertyReferenceInfo[this._propertyReferenceName];
         this._hasPropertyReference = this._propertyReferenceText && !!this._propertyReferenceText.trim().length;
         this._representedProperty = null;
     }
@@ -122,7 +122,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
         styleText = styleText || "";
 
-        let linePrefixText = WebInspector.indentString();
+        let linePrefixText = WI.indentString();
         let lineSuffixWhitespace = "\n";
         let trimmedText = styleText.trimRight();
         let textHasNewlines = trimmedText.includes("\n");
@@ -291,7 +291,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
             if (!propertyMissing && property && !property.valid) {
                 this._element.classList.add("invalid-value");
-                this._warningElement.title = WebInspector.UIString("The value “%s” is not supported for this property.").format(propertyText);
+                this._warningElement.title = WI.UIString("The value “%s” is not supported for this property.").format(propertyText);
                 this.specialPropertyPlaceholderElementText = propertyText;
                 return;
             }
@@ -305,7 +305,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
             if (propertyValuesConflict) {
                 this._updatedValues.conflictingValues = true;
-                this.specialPropertyPlaceholderElementText = WebInspector.UIString("(multiple)");
+                this.specialPropertyPlaceholderElementText = WI.UIString("(multiple)");
                 break;
             }
         }
@@ -348,7 +348,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
             if (property.textContainsNameRegExp.test(text))
                 text = text.replace(property.replacementRegExp, value !== null ? "$1$2: " + value + ";" : "$1");
             else if (value !== null)
-                text += WebInspector.VisualStylePropertyEditor.generateFormattedTextForNewProperty(text, property.name, value);
+                text += WI.VisualStylePropertyEditor.generateFormattedTextForNewProperty(text, property.name, value);
         }
         return text;
     }
@@ -502,7 +502,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         this._checkDependencies();
         this._element.classList.remove("invalid-value");
 
-        this.dispatchEventToListeners(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange);
+        this.dispatchEventToListeners(WI.VisualStylePropertyEditor.Event.ValueDidChange);
         return true;
     }
 
@@ -548,7 +548,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         }
 
         this._element.classList.toggle("missing-dependency", !!title.length);
-        this._warningElement.title = title.length ? WebInspector.UIString("Missing Dependencies:%s").format(title) : null;
+        this._warningElement.title = title.length ? WI.UIString("Missing Dependencies:%s").format(title) : null;
     }
 
     _titleElementPrepareForClick(event)
@@ -596,13 +596,13 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
         propertyInfoElement.appendChild(document.createTextNode(this._propertyReferenceText));
 
-        let bounds = WebInspector.Rect.rectFromClientRect(this._titleElement.getBoundingClientRect());
-        let popover = new WebInspector.Popover(this);
+        let bounds = WI.Rect.rectFromClientRect(this._titleElement.getBoundingClientRect());
+        let popover = new WI.Popover(this);
         popover.content = propertyInfoElement;
-        popover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_Y]);
+        popover.present(bounds.pad(2), [WI.RectEdge.MIN_Y]);
         popover.windowResizeHandler = () => {
-            let bounds = WebInspector.Rect.rectFromClientRect(this._titleElement.getBoundingClientRect());
-            popover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_Y]);
+            let bounds = WI.Rect.rectFromClientRect(this._titleElement.getBoundingClientRect());
+            popover.present(bounds.pad(2), [WI.RectEdge.MIN_Y]);
         };
     }
 
@@ -612,6 +612,6 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
     }
 };
 
-WebInspector.VisualStylePropertyEditor.Event = {
+WI.VisualStylePropertyEditor.Event = {
     ValueDidChange: "visual-style-property-editor-value-changed"
 };

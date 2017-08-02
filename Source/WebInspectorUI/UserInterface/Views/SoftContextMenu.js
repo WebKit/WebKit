@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SoftContextMenu = class SoftContextMenu
+WI.SoftContextMenu = class SoftContextMenu
 {
     constructor(items, parentMenu)
     {
@@ -174,7 +174,7 @@ WebInspector.SoftContextMenu = class SoftContextMenu
         if (this._subMenu)
             return;
 
-        this._subMenu = new WebInspector.SoftContextMenu(menuItemElement._subItems, this);
+        this._subMenu = new WI.SoftContextMenu(menuItemElement._subItems, this);
         this._subMenu.show({
             pageX: this._contextMenuElement.offsetLeft + menuItemElement.offsetWidth,
             pageY: this._contextMenuElement.offsetTop + menuItemElement.offsetTop - 4
@@ -276,7 +276,7 @@ WebInspector.SoftContextMenu = class SoftContextMenu
         if (!menuItemElement._subItems) {
             this._discardMenu(true, event);
             if (typeof menuItemElement._actionId === "number") {
-                WebInspector.ContextMenu.contextMenuItemSelected(menuItemElement._actionId);
+                WI.ContextMenu.contextMenuItemSelected(menuItemElement._actionId);
                 menuItemElement._actionId = null;
             }
             return;

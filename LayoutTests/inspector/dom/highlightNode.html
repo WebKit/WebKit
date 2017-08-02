@@ -7,7 +7,7 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("DOM.highlightNode");
 
-    let mainFrame = WebInspector.frameResourceManager.mainFrame;
+    let mainFrame = WI.frameResourceManager.mainFrame;
     let childFrames = mainFrame.childFrameCollection.toArray();
     InspectorTest.expectEqual(childFrames.length, 1, "Page should have a subframe.");
 
@@ -54,8 +54,8 @@ function test()
         name: "MainFrameNodeViaNodeId",
         description: "Should highlight a node in the main frame using node id.",
         test(resolve, reject) {
-            WebInspector.domTreeManager.querySelector(mainFrameDocumentNodeId, "#id-one", function(nodeId) {
-                mainFrameTargetNode = WebInspector.domTreeManager.nodeForId(nodeId);
+            WI.domTreeManager.querySelector(mainFrameDocumentNodeId, "#id-one", function(nodeId) {
+                mainFrameTargetNode = WI.domTreeManager.nodeForId(nodeId);
                 DOMAgent.highlightNode(highlightConfig, mainFrameTargetNode.id, undefined, (error) => {
                     InspectorTest.assert(!error, "Should not have an error.");
                     dumpHighlight(resolve);
@@ -68,8 +68,8 @@ function test()
         name: "ChildFrameNodeViaNodeId",
         description: "Should highlight a node in the child frame using node id.",
         test(resolve, reject) {
-            WebInspector.domTreeManager.querySelector(childFrameDocumentNodeId, "#id-one", function(nodeId) {
-                childFrameTargetNode = WebInspector.domTreeManager.nodeForId(nodeId);
+            WI.domTreeManager.querySelector(childFrameDocumentNodeId, "#id-one", function(nodeId) {
+                childFrameTargetNode = WI.domTreeManager.nodeForId(nodeId);
                 DOMAgent.highlightNode(highlightConfig, childFrameTargetNode.id, undefined, (error) => {
                     InspectorTest.assert(!error, "Should not have an error.");
                     dumpHighlight(resolve);
@@ -82,7 +82,7 @@ function test()
         name: "MainFrameNodeViaObjectId",
         description: "Should highlight a node in the main frame using object id.",
         test(resolve, reject) {
-            WebInspector.RemoteObject.resolveNode(mainFrameTargetNode, "test", (remoteObject) => {
+            WI.RemoteObject.resolveNode(mainFrameTargetNode, "test", (remoteObject) => {
                 DOMAgent.highlightNode(highlightConfig, undefined, remoteObject.objectId, (error) => {
                     InspectorTest.assert(!error, "Should not have an error.");
                     dumpHighlight(resolve);
@@ -95,7 +95,7 @@ function test()
         name: "ChildFrameNodeViaObjectId",
         description: "Should highlight a node in the child frame using object id.",
         test(resolve, reject) {
-            WebInspector.RemoteObject.resolveNode(childFrameTargetNode, "test", (remoteObject) => {
+            WI.RemoteObject.resolveNode(childFrameTargetNode, "test", (remoteObject) => {
                 DOMAgent.highlightNode(highlightConfig, undefined, remoteObject.objectId, (error) => {
                     InspectorTest.assert(!error, "Should not have an error.");
                     dumpHighlight(resolve);
@@ -142,10 +142,10 @@ function test()
         }
     });
 
-    WebInspector.domTreeManager.requestDocument((documentNode) => {
+    WI.domTreeManager.requestDocument((documentNode) => {
         mainFrameDocumentNodeId = documentNode.id;
         RuntimeAgent.evaluate.invoke({expression: "document", objectGroup: "test", contextId: childFrames[0].pageExecutionContext.id}, (error, remoteObjectPayload) => {
-            let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload)
+            let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload)
             remoteObject.pushNodeToFrontend((documentNodeId) => {
                 childFrameDocumentNodeId = documentNodeId
 

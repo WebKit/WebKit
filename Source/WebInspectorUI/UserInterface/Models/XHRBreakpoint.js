@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.XHRBreakpoint = class XHRBreakpoint extends WebInspector.Object
+WI.XHRBreakpoint = class XHRBreakpoint extends WI.Object
 {
     constructor(type, url, disabled)
     {
         super();
 
-        this._type = type || WebInspector.XHRBreakpoint.Type.Text;
+        this._type = type || WI.XHRBreakpoint.Type.Text;
         this._url = url || "";
         this._disabled = disabled || false;
     }
@@ -51,7 +51,7 @@ WebInspector.XHRBreakpoint = class XHRBreakpoint extends WebInspector.Object
 
         this._disabled = disabled;
 
-        this.dispatchEventToListeners(WebInspector.XHRBreakpoint.Event.DisabledStateDidChange);
+        this.dispatchEventToListeners(WI.XHRBreakpoint.Event.DisabledStateDidChange);
     }
 
     get serializableInfo()
@@ -65,18 +65,18 @@ WebInspector.XHRBreakpoint = class XHRBreakpoint extends WebInspector.Object
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WebInspector.XHRBreakpoint.URLCookieKey] = this._url;
+        cookie[WI.XHRBreakpoint.URLCookieKey] = this._url;
     }
 };
 
-WebInspector.XHRBreakpoint.URLCookieKey = "xhr-breakpoint-url";
+WI.XHRBreakpoint.URLCookieKey = "xhr-breakpoint-url";
 
-WebInspector.XHRBreakpoint.Event = {
+WI.XHRBreakpoint.Event = {
     DisabledStateDidChange: "xhr-breakpoint-disabled-state-did-change",
     ResolvedStateDidChange: "xhr-breakpoint-resolved-state-did-change",
 };
 
-WebInspector.XHRBreakpoint.Type = {
+WI.XHRBreakpoint.Type = {
     Text: "text",
     RegularExpression: "regex",
 };

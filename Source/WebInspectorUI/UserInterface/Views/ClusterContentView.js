@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ClusterContentView = class ClusterContentView extends WebInspector.ContentView
+WI.ClusterContentView = class ClusterContentView extends WI.ContentView
 {
     constructor(representedObject)
     {
@@ -31,13 +31,13 @@ WebInspector.ClusterContentView = class ClusterContentView extends WebInspector.
 
         this.element.classList.add("cluster");
 
-        this._contentViewContainer = new WebInspector.ContentViewContainer;
-        this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
+        this._contentViewContainer = new WI.ContentViewContainer;
+        this._contentViewContainer.addEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
         this.addSubview(this._contentViewContainer);
 
-        WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
-        WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
-        WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange, this._contentViewNumberOfSearchResultsDidChange, this);
+        WI.ContentView.addEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
+        WI.ContentView.addEventListener(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
+        WI.ContentView.addEventListener(WI.ContentView.Event.NumberOfSearchResultsDidChange, this._contentViewNumberOfSearchResultsDidChange, this);
     }
 
     // Public
@@ -81,7 +81,7 @@ WebInspector.ClusterContentView = class ClusterContentView extends WebInspector.
 
         this._contentViewContainer.closeAllContentViews();
 
-        WebInspector.ContentView.removeEventListener(null, null, this);
+        WI.ContentView.removeEventListener(null, null, this);
     }
 
     canGoBack()
@@ -229,29 +229,29 @@ WebInspector.ClusterContentView = class ClusterContentView extends WebInspector.
                 currentContentView.searchCleared();
         }
 
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange);
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.NavigationItemsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.NumberOfSearchResultsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
     }
 
     _contentViewSelectionPathComponentDidChange(event)
     {
         if (event.target !== this._contentViewContainer.currentContentView)
             return;
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
     _contentViewSupplementalRepresentedObjectsDidChange(event)
     {
         if (event.target !== this._contentViewContainer.currentContentView)
             return;
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange);
     }
 
     _contentViewNumberOfSearchResultsDidChange(event)
     {
         if (event.target !== this._contentViewContainer.currentContentView)
             return;
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.NumberOfSearchResultsDidChange);
     }
 };

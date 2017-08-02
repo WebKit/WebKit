@@ -23,17 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Sidebar = class Sidebar extends WebInspector.View
+WI.Sidebar = class Sidebar extends WI.View
 {
     constructor(element, side, sidebarPanels, role, label, hasNavigationBar)
     {
         super(element);
 
-        console.assert(!side || side === WebInspector.Sidebar.Sides.Left || side === WebInspector.Sidebar.Sides.Right);
-        this._side = side || WebInspector.Sidebar.Sides.Left;
+        console.assert(!side || side === WI.Sidebar.Sides.Left || side === WI.Sidebar.Sides.Right);
+        this._side = side || WI.Sidebar.Sides.Left;
         this._collapsed = true;
 
-        this.element.classList.add("sidebar", this._side, WebInspector.Sidebar.CollapsedStyleClassName);
+        this.element.classList.add("sidebar", this._side, WI.Sidebar.CollapsedStyleClassName);
 
         this.element.setAttribute("role", role || "group");
         if (label)
@@ -42,12 +42,12 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
         if (hasNavigationBar) {
             this.element.classList.add("has-navigation-bar");
 
-            this._navigationBar = new WebInspector.NavigationBar(null, null, "tablist");
-            this._navigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
+            this._navigationBar = new WI.NavigationBar(null, null, "tablist");
+            this._navigationBar.addEventListener(WI.NavigationBar.Event.NavigationItemSelected, this._navigationItemSelected, this);
             this.addSubview(this._navigationBar);
         }
 
-        this._resizer = new WebInspector.Resizer(WebInspector.Resizer.RuleOrientation.Vertical, this);
+        this._resizer = new WI.Resizer(WI.Resizer.RuleOrientation.Vertical, this);
         this.element.insertBefore(this._resizer.element, this.element.firstChild);
 
         this._sidebarPanels = [];
@@ -67,8 +67,8 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
 
     insertSidebarPanel(sidebarPanel, index)
     {
-        console.assert(sidebarPanel instanceof WebInspector.SidebarPanel);
-        if (!(sidebarPanel instanceof WebInspector.SidebarPanel))
+        console.assert(sidebarPanel instanceof WI.SidebarPanel);
+        if (!(sidebarPanel instanceof WI.SidebarPanel))
             return;
 
         console.assert(!sidebarPanel.parentSidebar);
@@ -154,16 +154,16 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
             }
         }
 
-        this.dispatchEventToListeners(WebInspector.Sidebar.Event.SidebarPanelSelected);
+        this.dispatchEventToListeners(WI.Sidebar.Event.SidebarPanelSelected);
     }
 
     get minimumWidth()
     {
         if (this._navigationBar)
-            return Math.max(WebInspector.Sidebar.AbsoluteMinimumWidth, this._navigationBar.minimumWidth);
+            return Math.max(WI.Sidebar.AbsoluteMinimumWidth, this._navigationBar.minimumWidth);
         if (this._selectedSidebarPanel)
-            return Math.max(WebInspector.Sidebar.AbsoluteMinimumWidth, this._selectedSidebarPanel.minimumWidth);
-        return WebInspector.Sidebar.AbsoluteMinimumWidth;
+            return Math.max(WI.Sidebar.AbsoluteMinimumWidth, this._selectedSidebarPanel.minimumWidth);
+        return WI.Sidebar.AbsoluteMinimumWidth;
     }
 
     get maximumWidth()
@@ -197,7 +197,7 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
             return;
 
         this._collapsed = flag || false;
-        this.element.classList.toggle(WebInspector.Sidebar.CollapsedStyleClassName);
+        this.element.classList.toggle(WI.Sidebar.CollapsedStyleClassName);
 
         if (!this._collapsed && this._navigationBar)
             this._navigationBar.needsLayout();
@@ -211,8 +211,8 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
             this._selectedSidebarPanel.visibilityDidChange();
         }
 
-        this.dispatchEventToListeners(WebInspector.Sidebar.Event.CollapsedStateDidChange);
-        this.dispatchEventToListeners(WebInspector.Sidebar.Event.WidthDidChange);
+        this.dispatchEventToListeners(WI.Sidebar.Event.CollapsedStateDidChange);
+        this.dispatchEventToListeners(WI.Sidebar.Event.WidthDidChange);
     }
 
     get sidebarPanels()
@@ -229,7 +229,7 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
     {
         var sidebarPanel = null;
 
-        if (sidebarPanelOrIdentifierOrIndex instanceof WebInspector.SidebarPanel) {
+        if (sidebarPanelOrIdentifierOrIndex instanceof WI.SidebarPanel) {
             if (this._sidebarPanels.includes(sidebarPanelOrIdentifierOrIndex))
                 sidebarPanel = sidebarPanelOrIdentifierOrIndex;
         } else if (typeof sidebarPanelOrIdentifierOrIndex === "number") {
@@ -255,10 +255,10 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
 
     resizerDragging(resizer, positionDelta)
     {
-        if (this._side === WebInspector.Sidebar.Sides.Left)
+        if (this._side === WI.Sidebar.Sides.Left)
             positionDelta *= -1;
 
-        if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL)
+        if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
             positionDelta *= -1;
 
         var newWidth = positionDelta + this._widthBeforeResize;
@@ -290,12 +290,12 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
             return;
 
         if (this._navigationBar)
-            this._navigationBar.updateLayoutIfNeeded(WebInspector.View.LayoutReason.Resize);
+            this._navigationBar.updateLayoutIfNeeded(WI.View.LayoutReason.Resize);
 
         if (this._selectedSidebarPanel)
-            this._selectedSidebarPanel.updateLayoutIfNeeded(WebInspector.View.LayoutReason.Resize);
+            this._selectedSidebarPanel.updateLayoutIfNeeded(WI.View.LayoutReason.Resize);
 
-        this.dispatchEventToListeners(WebInspector.Sidebar.Event.WidthDidChange, {newWidth});
+        this.dispatchEventToListeners(WI.Sidebar.Event.WidthDidChange, {newWidth});
     }
 
     _navigationItemSelected(event)
@@ -304,15 +304,15 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.View
     }
 };
 
-WebInspector.Sidebar.CollapsedStyleClassName = "collapsed";
-WebInspector.Sidebar.AbsoluteMinimumWidth = 200;
+WI.Sidebar.CollapsedStyleClassName = "collapsed";
+WI.Sidebar.AbsoluteMinimumWidth = 200;
 
-WebInspector.Sidebar.Sides = {
+WI.Sidebar.Sides = {
     Right: "right",
     Left: "left"
 };
 
-WebInspector.Sidebar.Event = {
+WI.Sidebar.Event = {
     SidebarPanelSelected: "sidebar-panel-selected",
     CollapsedStateDidChange: "sidebar-collapsed-state-did-change",
     WidthDidChange: "sidebar-width-did-change",

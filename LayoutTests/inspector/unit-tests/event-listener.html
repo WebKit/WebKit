@@ -6,8 +6,8 @@
 function test()
 {
     const KaboomEvent = "kaboom";
-    var emitter = new WebInspector.Object();
-    var context = new WebInspector.Object();
+    var emitter = new WI.Object();
+    var context = new WI.Object();
     var data = [1, 2, 3];
 
     function kaboomCallback(event) {
@@ -20,7 +20,7 @@ function test()
 
     // Test for multiple firings of the listener.
 
-    var listener = new WebInspector.EventListener(context);
+    var listener = new WI.EventListener(context);
     InspectorTest.assert(!emitter.hasEventListeners(KaboomEvent), "Emitter should not have any listeners.");
     emitter.dispatchEventToListeners(KaboomEvent, data); // Should not fire anything.
 
@@ -52,7 +52,7 @@ function test()
 
     // Test for single firing of the listener.
 
-    var singleListener = new WebInspector.EventListener(context, true);
+    var singleListener = new WI.EventListener(context, true);
     InspectorTest.assert(!emitter.hasEventListeners(KaboomEvent), "Emitter should not have any listeners.");
     emitter.dispatchEventToListeners(KaboomEvent, data); // Should not fire anything.
 
@@ -68,13 +68,13 @@ function test()
 
     // Test for various error cases and abuse.
 
-    var badListener = new WebInspector.EventListener(context);
+    var badListener = new WI.EventListener(context);
     badListener.connect(data, data, data); // Should complain about non-callable callback.
     badListener.connect(null, KaboomEvent, kaboomCallback); // Should complain about non-callable callback.
     badListener.connect(emitter, KaboomEvent, null); // Should complain about non-callable callback.
     badListener.connect(emitter, null, kaboomCallback); // Should complain about null event.
 
-    var badListener2 = new WebInspector.EventListener(context);
+    var badListener2 = new WI.EventListener(context);
     badListener2.disconnect(); // Should complain about already disconnected.
     badListener2.connect(emitter, KaboomEvent, kaboomCallback);
     badListener2.connect(emitter, KaboomEvent, kaboomCallback); // Should complain about already connected.
@@ -88,6 +88,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-    <p>Testing basic functionality of WebInspector.EventListener.</p>
+    <p>Testing basic functionality of WI.EventListener.</p>
 </body>
 </html>

@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WebInspector.DetailsSidebarPanel
+WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.DetailsSidebarPanel
 {
     constructor()
     {
-        super("canvas", WebInspector.UIString("Canvas"));
+        super("canvas", WI.UIString("Canvas"));
 
         this.element.classList.add("canvas");
 
@@ -42,9 +42,9 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
         if (!(objects instanceof Array))
             objects = [objects];
 
-        objects = objects.map((object) => object instanceof WebInspector.Recording ? object.source : object);
+        objects = objects.map((object) => object instanceof WI.Recording ? object.source : object);
 
-        this.canvas = objects.find((object) => object instanceof WebInspector.Canvas);
+        this.canvas = objects.find((object) => object instanceof WI.Canvas);
 
         return !!this._canvas;
     }
@@ -60,22 +60,22 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
             return;
 
         if (this._node) {
-            this._node.removeEventListener(WebInspector.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);
-            this._node.removeEventListener(WebInspector.DOMNode.Event.AttributeRemoved, this._refreshSourceSection, this);
+            this._node.removeEventListener(WI.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);
+            this._node.removeEventListener(WI.DOMNode.Event.AttributeRemoved, this._refreshSourceSection, this);
 
             this._node = null;
         }
 
         if (this._canvas) {
-            this._canvas.removeEventListener(WebInspector.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
-            this._canvas.removeEventListener(WebInspector.Canvas.Event.CSSCanvasClientNodesChanged, this._refreshCSSCanvasSection, this);
+            this._canvas.removeEventListener(WI.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
+            this._canvas.removeEventListener(WI.Canvas.Event.CSSCanvasClientNodesChanged, this._refreshCSSCanvasSection, this);
         }
 
         this._canvas = canvas || null;
 
         if (this._canvas) {
-            this._canvas.addEventListener(WebInspector.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
-            this._canvas.addEventListener(WebInspector.Canvas.Event.CSSCanvasClientNodesChanged, this._refreshCSSCanvasSection, this);
+            this._canvas.addEventListener(WI.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
+            this._canvas.addEventListener(WI.Canvas.Event.CSSCanvasClientNodesChanged, this._refreshCSSCanvasSection, this);
         }
 
         this.needsLayout();
@@ -87,35 +87,35 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
     {
         super.initialLayout();
 
-        this._nameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Name"));
-        this._typeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Type"));
-        this._memoryRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Memory"));
-        this._memoryRow.tooltip = WebInspector.UIString("Memory usage of this canvas");
+        this._nameRow = new WI.DetailsSectionSimpleRow(WI.UIString("Name"));
+        this._typeRow = new WI.DetailsSectionSimpleRow(WI.UIString("Type"));
+        this._memoryRow = new WI.DetailsSectionSimpleRow(WI.UIString("Memory"));
+        this._memoryRow.tooltip = WI.UIString("Memory usage of this canvas");
 
-        let identitySection = new WebInspector.DetailsSection("canvas-details", WebInspector.UIString("Identity"));
-        identitySection.groups = [new WebInspector.DetailsSectionGroup([this._nameRow, this._typeRow, this._memoryRow])];
+        let identitySection = new WI.DetailsSection("canvas-details", WI.UIString("Identity"));
+        identitySection.groups = [new WI.DetailsSectionGroup([this._nameRow, this._typeRow, this._memoryRow])];
         this.contentView.element.appendChild(identitySection.element);
 
-        this._nodeRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Node"));
-        this._cssCanvasRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("CSS Canvas"));
-        this._widthRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Width"));
-        this._heightRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Height"));
-        this._datachedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Detached"));
+        this._nodeRow = new WI.DetailsSectionSimpleRow(WI.UIString("Node"));
+        this._cssCanvasRow = new WI.DetailsSectionSimpleRow(WI.UIString("CSS Canvas"));
+        this._widthRow = new WI.DetailsSectionSimpleRow(WI.UIString("Width"));
+        this._heightRow = new WI.DetailsSectionSimpleRow(WI.UIString("Height"));
+        this._datachedRow = new WI.DetailsSectionSimpleRow(WI.UIString("Detached"));
 
-        let sourceSection = new WebInspector.DetailsSection("canvas-source", WebInspector.UIString("Source"));
-        sourceSection.groups = [new WebInspector.DetailsSectionGroup([this._nodeRow, this._cssCanvasRow, this._widthRow, this._heightRow, this._datachedRow])];
+        let sourceSection = new WI.DetailsSection("canvas-source", WI.UIString("Source"));
+        sourceSection.groups = [new WI.DetailsSectionGroup([this._nodeRow, this._cssCanvasRow, this._widthRow, this._heightRow, this._datachedRow])];
         this.contentView.element.appendChild(sourceSection.element);
 
-        this._attributesDataGridRow = new WebInspector.DetailsSectionDataGridRow(null, WebInspector.UIString("No Attributes"));
+        this._attributesDataGridRow = new WI.DetailsSectionDataGridRow(null, WI.UIString("No Attributes"));
 
-        let attributesSection = new WebInspector.DetailsSection("canvas-attributes", WebInspector.UIString("Attributes"));
-        attributesSection.groups = [new WebInspector.DetailsSectionGroup([this._attributesDataGridRow])];
+        let attributesSection = new WI.DetailsSection("canvas-attributes", WI.UIString("Attributes"));
+        attributesSection.groups = [new WI.DetailsSectionGroup([this._attributesDataGridRow])];
         this.contentView.element.appendChild(attributesSection.element);
 
-        this._cssCanvasClientsRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Nodes"));
+        this._cssCanvasClientsRow = new WI.DetailsSectionSimpleRow(WI.UIString("Nodes"));
 
-        this._cssCanvasSection = new WebInspector.DetailsSection("canvas-css", WebInspector.UIString("CSS"));
-        this._cssCanvasSection.groups = [new WebInspector.DetailsSectionGroup([this._cssCanvasClientsRow])];
+        this._cssCanvasSection = new WI.DetailsSection("canvas-css", WI.UIString("CSS"));
+        this._cssCanvasSection.groups = [new WI.DetailsSectionGroup([this._cssCanvasClientsRow])];
         this._cssCanvasSection.element.hidden = true;
         this.contentView.element.appendChild(this._cssCanvasSection.element);
     }
@@ -146,7 +146,7 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
     _refreshIdentitySection()
     {
         this._nameRow.value = this._canvas.displayName;
-        this._typeRow.value = WebInspector.Canvas.displayNameForContextType(this._canvas.contextType);
+        this._typeRow.value = WI.Canvas.displayNameForContextType(this._canvas.contextType);
         this._formatMemoryRow();
     }
 
@@ -167,20 +167,20 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
 
             if (node !== this._node) {
                 if (this._node) {
-                    this._node.removeEventListener(WebInspector.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);
-                    this._node.removeEventListener(WebInspector.DOMNode.Event.AttributeRemoved, this._refreshSourceSection, this);
+                    this._node.removeEventListener(WI.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);
+                    this._node.removeEventListener(WI.DOMNode.Event.AttributeRemoved, this._refreshSourceSection, this);
 
                     this._node = null;
                 }
 
                 this._node = node;
 
-                this._node.addEventListener(WebInspector.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);
-                this._node.addEventListener(WebInspector.DOMNode.Event.AttributeRemoved, this._refreshSourceSection, this);
+                this._node.addEventListener(WI.DOMNode.Event.AttributeModified, this._refreshSourceSection, this);
+                this._node.addEventListener(WI.DOMNode.Event.AttributeRemoved, this._refreshSourceSection, this);
             }
 
             if (!this._canvas.cssCanvasName)
-                this._nodeRow.value = WebInspector.linkifyNodeReference(this._node);
+                this._nodeRow.value = WI.linkifyNodeReference(this._node);
 
             let setRowValueIfValidAttributeValue = (row, attribute) => {
                 let value = Number(this._node.getAttribute(attribute));
@@ -198,7 +198,7 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
                 // attributes, we need to invoke the getter for each to get the actual value.
                 //  - https://html.spec.whatwg.org/multipage/canvas.html#attr-canvas-width
                 //  - https://html.spec.whatwg.org/multipage/canvas.html#attr-canvas-height
-                WebInspector.RemoteObject.resolveNode(node, "", (remoteObject) => {
+                WI.RemoteObject.resolveNode(node, "", (remoteObject) => {
                     if (!remoteObject)
                         return;
 
@@ -217,7 +217,7 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
             }
 
             if (!this._canvas.cssCanvasName && !this._node.parentNode)
-                this._datachedRow.value = WebInspector.UIString("Yes");
+                this._datachedRow.value = WI.UIString("Yes");
         });
     }
 
@@ -231,9 +231,9 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
 
         let dataGrid = this._attributesDataGridRow.dataGrid;
         if (!dataGrid) {
-            dataGrid = this._attributesDataGridRow.dataGrid = new WebInspector.DataGrid({
-                name: {title: WebInspector.UIString("Name")},
-                value: {title: WebInspector.UIString("Value"), width: "30%"},
+            dataGrid = this._attributesDataGridRow.dataGrid = new WI.DataGrid({
+                name: {title: WI.UIString("Name")},
+                value: {title: WI.UIString("Value"), width: "30%"},
             });
         }
 
@@ -241,7 +241,7 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
 
         for (let attribute in this._canvas.contextAttributes) {
             let data = {name: attribute, value: this._canvas.contextAttributes[attribute]};
-            let dataGridNode = new WebInspector.DataGridNode(data);
+            let dataGridNode = new WI.DataGridNode(data);
             dataGrid.appendChild(dataGridNode);
         }
 
@@ -268,7 +268,7 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
 
             let fragment = document.createDocumentFragment();
             for (let clientNode of cssCanvasClientNodes)
-                fragment.appendChild(WebInspector.linkifyNodeReference(clientNode));
+                fragment.appendChild(WI.linkifyNodeReference(clientNode));
             this._cssCanvasClientsRow.value = fragment;
         });
     }

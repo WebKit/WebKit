@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.Object
+WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
 {
     constructor(sourceCode, lineNumber, columnNumber)
     {
         super();
 
-        console.assert(sourceCode === null || sourceCode instanceof WebInspector.SourceCode);
-        console.assert(!(sourceCode instanceof WebInspector.SourceMapResource));
+        console.assert(sourceCode === null || sourceCode instanceof WI.SourceCode);
+        console.assert(!(sourceCode instanceof WI.SourceMapResource));
         console.assert(typeof lineNumber === "number" && !isNaN(lineNumber) && lineNumber >= 0);
         console.assert(typeof columnNumber === "number" && !isNaN(columnNumber) && columnNumber >= 0);
 
@@ -40,8 +40,8 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
         this._resolveFormattedLocation();
 
         if (this._sourceCode) {
-            this._sourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
-            this._sourceCode.addEventListener(WebInspector.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+            this._sourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
+            this._sourceCode.addEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
         }
 
         this._resetMappedLocation();
@@ -80,7 +80,7 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
     position()
     {
-        return new WebInspector.SourceCodePosition(this.lineNumber, this.columnNumber);
+        return new WI.SourceCodePosition(this.lineNumber, this.columnNumber);
     }
 
     // Formatted line and column if the original source code is pretty printed.
@@ -98,7 +98,7 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
     formattedPosition()
     {
-        return new WebInspector.SourceCodePosition(this.formattedLineNumber, this.formattedColumnNumber);
+        return new WI.SourceCodePosition(this.formattedLineNumber, this.formattedColumnNumber);
     }
 
     // Display line and column:
@@ -125,7 +125,7 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
     displayPosition()
     {
-        return new WebInspector.SourceCodePosition(this.displayLineNumber, this.displayColumnNumber);
+        return new WI.SourceCodePosition(this.displayLineNumber, this.displayColumnNumber);
     }
 
     // User presentable location strings: "file:lineNumber:columnNumber".
@@ -148,10 +148,10 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
     tooltipString()
     {
         if (!this.hasDifferentDisplayLocation())
-            return this.originalLocationString(WebInspector.SourceCodeLocation.ColumnStyle.Shown, WebInspector.SourceCodeLocation.NameStyle.Full);
+            return this.originalLocationString(WI.SourceCodeLocation.ColumnStyle.Shown, WI.SourceCodeLocation.NameStyle.Full);
 
-        var tooltip = WebInspector.UIString("Located at %s").format(this.displayLocationString(WebInspector.SourceCodeLocation.ColumnStyle.Shown, WebInspector.SourceCodeLocation.NameStyle.Full));
-        tooltip += "\n" + WebInspector.UIString("Originally %s").format(this.originalLocationString(WebInspector.SourceCodeLocation.ColumnStyle.Shown, WebInspector.SourceCodeLocation.NameStyle.Full));
+        var tooltip = WI.UIString("Located at %s").format(this.displayLocationString(WI.SourceCodeLocation.ColumnStyle.Shown, WI.SourceCodeLocation.NameStyle.Full));
+        tooltip += "\n" + WI.UIString("Originally %s").format(this.originalLocationString(WI.SourceCodeLocation.ColumnStyle.Shown, WI.SourceCodeLocation.NameStyle.Full));
         return tooltip;
     }
 
@@ -203,7 +203,7 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
         element.title = prefix + this.tooltipString();
 
-        this.addEventListener(WebInspector.SourceCodeLocation.Event.DisplayLocationChanged, function(event) {
+        this.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, function(event) {
             if (this.sourceCode)
                 element.title = prefix + this.tooltipString();
         }, this);
@@ -222,10 +222,10 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
             if (!showAlternativeLocation) {
                 element[propertyName] = this.displayLocationString(columnStyle, nameStyle, prefix);
-                element.classList.toggle(WebInspector.SourceCodeLocation.DisplayLocationClassName, this.hasDifferentDisplayLocation());
+                element.classList.toggle(WI.SourceCodeLocation.DisplayLocationClassName, this.hasDifferentDisplayLocation());
             } else if (this.hasDifferentDisplayLocation()) {
                 element[propertyName] = this.originalLocationString(columnStyle, nameStyle, prefix);
-                element.classList.remove(WebInspector.SourceCodeLocation.DisplayLocationClassName);
+                element.classList.remove(WI.SourceCodeLocation.DisplayLocationClassName);
             }
         }
 
@@ -236,7 +236,7 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
         updateDisplayString.call(this, false);
 
-        this.addEventListener(WebInspector.SourceCodeLocation.Event.DisplayLocationChanged, function(event) {
+        this.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, function(event) {
             if (this.sourceCode)
                 updateDisplayString.call(this, currentDisplay, true);
         }, this);
@@ -251,22 +251,22 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
 
     setSourceCode(sourceCode)
     {
-        console.assert((this._sourceCode === null && sourceCode instanceof WebInspector.SourceCode) || (this._sourceCode instanceof WebInspector.SourceCode && sourceCode === null));
+        console.assert((this._sourceCode === null && sourceCode instanceof WI.SourceCode) || (this._sourceCode instanceof WI.SourceCode && sourceCode === null));
 
         if (sourceCode === this._sourceCode)
             return;
 
         this._makeChangeAndDispatchChangeEventIfNeeded(function() {
             if (this._sourceCode) {
-                this._sourceCode.removeEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
-                this._sourceCode.removeEventListener(WebInspector.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+                this._sourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
+                this._sourceCode.removeEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
             }
 
             this._sourceCode = sourceCode;
 
             if (this._sourceCode) {
-                this._sourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
-                this._sourceCode.addEventListener(WebInspector.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+                this._sourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
+                this._sourceCode.addEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
             }
         });
     }
@@ -314,29 +314,29 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
         if (!sourceCode)
             return "";
 
-        columnStyle = columnStyle || WebInspector.SourceCodeLocation.ColumnStyle.OnlyIfLarge;
-        nameStyle = nameStyle || WebInspector.SourceCodeLocation.NameStyle.Short;
+        columnStyle = columnStyle || WI.SourceCodeLocation.ColumnStyle.OnlyIfLarge;
+        nameStyle = nameStyle || WI.SourceCodeLocation.NameStyle.Short;
         prefix = prefix || "";
 
         let lineString = lineNumber + 1; // The user visible line number is 1-based.
-        if (columnStyle === WebInspector.SourceCodeLocation.ColumnStyle.Shown && columnNumber > 0)
+        if (columnStyle === WI.SourceCodeLocation.ColumnStyle.Shown && columnNumber > 0)
             lineString += ":" + (columnNumber + 1); // The user visible column number is 1-based.
-        else if (columnStyle === WebInspector.SourceCodeLocation.ColumnStyle.OnlyIfLarge && columnNumber > WebInspector.SourceCodeLocation.LargeColumnNumber)
+        else if (columnStyle === WI.SourceCodeLocation.ColumnStyle.OnlyIfLarge && columnNumber > WI.SourceCodeLocation.LargeColumnNumber)
             lineString += ":" + (columnNumber + 1); // The user visible column number is 1-based.
-        else if (columnStyle === WebInspector.SourceCodeLocation.ColumnStyle.Hidden)
+        else if (columnStyle === WI.SourceCodeLocation.ColumnStyle.Hidden)
             lineString = "";
 
         switch (nameStyle) {
-        case WebInspector.SourceCodeLocation.NameStyle.None:
+        case WI.SourceCodeLocation.NameStyle.None:
             return prefix + lineString;
 
-        case WebInspector.SourceCodeLocation.NameStyle.Short:
-        case WebInspector.SourceCodeLocation.NameStyle.Full:
+        case WI.SourceCodeLocation.NameStyle.Short:
+        case WI.SourceCodeLocation.NameStyle.Full:
             var displayURL = sourceCode.displayURL;
-            var name = nameStyle === WebInspector.SourceCodeLocation.NameStyle.Full && displayURL ? displayURL : sourceCode.displayName;
-            if (columnStyle === WebInspector.SourceCodeLocation.ColumnStyle.Hidden)
+            var name = nameStyle === WI.SourceCodeLocation.NameStyle.Full && displayURL ? displayURL : sourceCode.displayName;
+            if (columnStyle === WI.SourceCodeLocation.ColumnStyle.Hidden)
                 return prefix + name;
-            var lineSuffix = displayURL ? ":" + lineString : WebInspector.UIString(" (line %s)").format(lineString);
+            var lineSuffix = displayURL ? ":" + lineString : WI.UIString(" (line %s)").format(lineString);
             return prefix + name + lineSuffix;
 
         default:
@@ -425,9 +425,9 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
                 oldDisplayColumnNumber
             };
             if (displayLocationChanged)
-                this.dispatchEventToListeners(WebInspector.SourceCodeLocation.Event.DisplayLocationChanged, oldData);
+                this.dispatchEventToListeners(WI.SourceCodeLocation.Event.DisplayLocationChanged, oldData);
             if (anyLocationChanged)
-                this.dispatchEventToListeners(WebInspector.SourceCodeLocation.Event.LocationChanged, oldData);
+                this.dispatchEventToListeners(WI.SourceCodeLocation.Event.LocationChanged, oldData);
         }
     }
 
@@ -442,23 +442,23 @@ WebInspector.SourceCodeLocation = class SourceCodeLocation extends WebInspector.
     }
 };
 
-WebInspector.SourceCodeLocation.DisplayLocationClassName = "display-location";
+WI.SourceCodeLocation.DisplayLocationClassName = "display-location";
 
-WebInspector.SourceCodeLocation.LargeColumnNumber = 80;
+WI.SourceCodeLocation.LargeColumnNumber = 80;
 
-WebInspector.SourceCodeLocation.NameStyle = {
+WI.SourceCodeLocation.NameStyle = {
     None: "none", // File name not included.
     Short: "short", // Only the file name.
     Full: "full" // Full URL is used.
 };
 
-WebInspector.SourceCodeLocation.ColumnStyle = {
+WI.SourceCodeLocation.ColumnStyle = {
     Hidden: "hidden",             // line and column numbers are not included.
     OnlyIfLarge: "only-if-large", // column numbers greater than 80 are shown.
     Shown: "shown"                // non-zero column numbers are shown.
 };
 
-WebInspector.SourceCodeLocation.Event = {
+WI.SourceCodeLocation.Event = {
     LocationChanged: "source-code-location-location-changed",
     DisplayLocationChanged: "source-code-location-display-location-changed"
 };

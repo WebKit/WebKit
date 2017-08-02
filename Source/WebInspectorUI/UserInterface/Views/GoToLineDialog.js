@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Dialog
+WI.GoToLineDialog = class GoToLineDialog extends WI.Dialog
 {
     constructor(delegate)
     {
@@ -35,7 +35,7 @@ WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Dialog
 
         this._input = field.appendChild(document.createElement("input"));
         this._input.type = "text";
-        this._input.placeholder = WebInspector.UIString("Line Number");
+        this._input.placeholder = WI.UIString("Line Number");
         this._input.spellcheck = false;
 
         this._clearIcon = field.appendChild(document.createElement("img"));
@@ -83,19 +83,19 @@ WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Dialog
     _handleInputEvent(event)
     {
         let force = this._input.value !== "";
-        this.element.classList.toggle(WebInspector.GoToLineDialog.NonEmptyClassName, force);
+        this.element.classList.toggle(WI.GoToLineDialog.NonEmptyClassName, force);
     }
 
     _handleKeydownEvent(event)
     {
-        if (event.keyCode === WebInspector.KeyboardShortcut.Key.Escape.keyCode) {
+        if (event.keyCode === WI.KeyboardShortcut.Key.Escape.keyCode) {
             if (this._input.value === "")
                 this.dismiss();
             else
                 this._clear();
 
             event.preventDefault();
-        } else if (event.keyCode === WebInspector.KeyboardShortcut.Key.Enter.keyCode) {
+        } else if (event.keyCode === WI.KeyboardShortcut.Key.Enter.keyCode) {
             let value = parseInt(this._input.value, 10);
 
             if (this.representedObjectIsValid(value)) {
@@ -130,8 +130,8 @@ WebInspector.GoToLineDialog = class GoToLineDialog extends WebInspector.Dialog
     _clear()
     {
         this._input.value = "";
-        this.element.classList.remove(WebInspector.GoToLineDialog.NonEmptyClassName);
+        this.element.classList.remove(WI.GoToLineDialog.NonEmptyClassName);
     }
 };
 
-WebInspector.GoToLineDialog.NonEmptyClassName = "non-empty";
+WI.GoToLineDialog.NonEmptyClassName = "non-empty";

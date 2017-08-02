@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceTimingData = class ResourceTimingData
+WI.ResourceTimingData = class ResourceTimingData
 {
     constructor(resource, data)
     {
@@ -82,7 +82,7 @@ WebInspector.ResourceTimingData = class ResourceTimingData
         if (isNaN(data.connectStart) && !isNaN(data.secureConnectionStart))
             data.connectStart = data.secureConnectionStart;
 
-        return new WebInspector.ResourceTimingData(resource, data);
+        return new WI.ResourceTimingData(resource, data);
     }
 
     // Public

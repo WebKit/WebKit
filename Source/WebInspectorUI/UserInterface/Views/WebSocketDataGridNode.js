@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.WebSocketDataGridNode = class WebSocketDataGridNode extends WebInspector.DataGridNode
+WI.WebSocketDataGridNode = class WebSocketDataGridNode extends WI.DataGridNode
 {
     // Public
 
@@ -32,7 +32,7 @@ WebInspector.WebSocketDataGridNode = class WebSocketDataGridNode extends WebInsp
         if (columnIdentifier === "data") {
             let fragment = document.createDocumentFragment();
             if (this._data.isOutgoing) {
-                let iconElement = useSVGSymbol("Images/ArrowUp.svg", "icon", WebInspector.UIString("Outgoing message"));
+                let iconElement = useSVGSymbol("Images/ArrowUp.svg", "icon", WI.UIString("Outgoing message"));
                 fragment.appendChild(iconElement);
             }
             fragment.appendChild(document.createTextNode(this._data.data));
@@ -52,16 +52,16 @@ WebInspector.WebSocketDataGridNode = class WebSocketDataGridNode extends WebInsp
         let logResult = (result, wasThrown, savedResultIndex) => {
             console.assert(!wasThrown);
 
-            const title = WebInspector.UIString("Selected Frame");
+            const title = WI.UIString("Selected Frame");
             const addSpecialUserLogClass = true;
             const shouldRevealConsole = true;
-            WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(title, result, addSpecialUserLogClass, shouldRevealConsole);
+            WI.consoleLogViewController.appendImmediateExecutionWithResult(title, result, addSpecialUserLogClass, shouldRevealConsole);
         };
 
         if (this._data.isText) {
-            let remoteObject = WebInspector.RemoteObject.fromPrimitiveValue(this._data.data);
-            contextMenu.appendItem(WebInspector.UIString("Log Frame Text"), () => {
-                WebInspector.runtimeManager.saveResult(remoteObject, (savedResultIndex) => {
+            let remoteObject = WI.RemoteObject.fromPrimitiveValue(this._data.data);
+            contextMenu.appendItem(WI.UIString("Log Frame Text"), () => {
+                WI.runtimeManager.saveResult(remoteObject, (savedResultIndex) => {
                     logResult(remoteObject, false, savedResultIndex);
                 });
             });
@@ -71,16 +71,16 @@ WebInspector.WebSocketDataGridNode = class WebSocketDataGridNode extends WebInsp
                 // We still need to execute this, however, in order to try-catch if it fails.
                 JSON.parse(this._data.data);
 
-                contextMenu.appendItem(WebInspector.UIString("Log Frame Value"), () => {
+                contextMenu.appendItem(WI.UIString("Log Frame Value"), () => {
                     const options = {
-                        objectGroup: WebInspector.RuntimeManager.ConsoleObjectGroup,
+                        objectGroup: WI.RuntimeManager.ConsoleObjectGroup,
                         generatePreview: true,
                         saveResult: true,
                         doNotPauseOnExceptionsAndMuteConsole: true,
                     };
 
                     let expression = "(" + this._data.data + ")";
-                    WebInspector.runtimeManager.evaluateInInspectedWindow(expression, options, logResult);
+                    WI.runtimeManager.evaluateInInspectedWindow(expression, options, logResult);
                 });
             } catch (error) { }
 

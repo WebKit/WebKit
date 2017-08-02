@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WebInspector.TimelineDataGridNode
+WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.TimelineDataGridNode
 {
     constructor(resourceTimelineRecord, includesGraph, graphDataSource, shouldShowPopover)
     {
@@ -33,16 +33,16 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         this._record = resourceTimelineRecord;
         this._shouldShowPopover = shouldShowPopover;
 
-        this._resource.addEventListener(WebInspector.Resource.Event.LoadingDidFinish, this._needsRefresh, this);
-        this._resource.addEventListener(WebInspector.Resource.Event.LoadingDidFail, this._needsRefresh, this);
-        this._resource.addEventListener(WebInspector.Resource.Event.URLDidChange, this._needsRefresh, this);
+        this._resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._needsRefresh, this);
+        this._resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._needsRefresh, this);
+        this._resource.addEventListener(WI.Resource.Event.URLDidChange, this._needsRefresh, this);
 
         if (includesGraph)
-            this._record.addEventListener(WebInspector.TimelineRecord.Event.Updated, this._timelineRecordUpdated, this);
+            this._record.addEventListener(WI.TimelineRecord.Event.Updated, this._timelineRecordUpdated, this);
         else {
-            this._resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._needsRefresh, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.SizeDidChange, this._needsRefresh, this);
-            this._resource.addEventListener(WebInspector.Resource.Event.TransferSizeDidChange, this._needsRefresh, this);
+            this._resource.addEventListener(WI.Resource.Event.TypeDidChange, this._needsRefresh, this);
+            this._resource.addEventListener(WI.Resource.Event.SizeDidChange, this._needsRefresh, this);
+            this._resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._needsRefresh, this);
         }
     }
 
@@ -69,7 +69,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         if (!this._includesGraph) {
             var zeroTime = this.graphDataSource ? this.graphDataSource.zeroTime : 0;
 
-            data.domain = WebInspector.displayNameForHost(resource.urlComponents.host);
+            data.domain = WI.displayNameForHost(resource.urlComponents.host);
             data.scheme = resource.urlComponents.scheme ? resource.urlComponents.scheme.toUpperCase() : "";
             data.method = resource.requestMethod;
             data.type = resource.type;
@@ -109,7 +109,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             return this._createNameCellDocumentFragment();
 
         case "type":
-            var text = WebInspector.Resource.displayNameForType(value);
+            var text = WI.Resource.displayNameForType(value);
             cell.title = text;
             return text;
 
@@ -152,7 +152,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             return value || emDash;
 
         case "priority":
-            var title = WebInspector.Resource.displayNameForPriority(value);
+            var title = WI.Resource.displayNameForPriority(value);
             if (title)
                 cell.title = title;
             return title || emDash;
@@ -175,12 +175,12 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
 
     iconClassNames()
     {
-        return [WebInspector.ResourceTreeElement.ResourceIconStyleClassName, this.resource.type];
+        return [WI.ResourceTreeElement.ResourceIconStyleClassName, this.resource.type];
     }
 
     appendContextMenuItems(contextMenu)
     {
-        WebInspector.appendContextMenuItemsForSourceCode(contextMenu, this._resource);
+        WI.appendContextMenuItemsForSourceCode(contextMenu, this._resource);
     }
 
     // Protected
@@ -190,7 +190,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         if (!this._shouldShowPopover)
             return;
 
-        if (!recordBar.records.length || recordBar.records[0].type !== WebInspector.TimelineRecord.Type.Network)
+        if (!recordBar.records.length || recordBar.records[0].type !== WI.TimelineRecord.Type.Network)
             return;
 
         console.assert(!this._mouseEnterRecordBarListener);
@@ -203,7 +203,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         if (!this._shouldShowPopover)
             return;
 
-        if (!recordBar.records.length || recordBar.records[0].type !== WebInspector.TimelineRecord.Type.Network)
+        if (!recordBar.records.length || recordBar.records[0].type !== WI.TimelineRecord.Type.Network)
             return;
 
         recordBar.element.removeEventListener("mouseenter", this._mouseEnterRecordBarListener);
@@ -238,7 +238,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         }
 
         if (parentResourceHost !== this._resource.urlComponents.host || frame.isMainFrame() && isMainResource) {
-            let subtitle = WebInspector.displayNameForHost(this._resource.urlComponents.host);
+            let subtitle = WI.displayNameForHost(this._resource.urlComponents.host);
             if (mainTitle !== subtitle) {
                 let subtitleElement = document.createElement("span");
                 subtitleElement.classList.add("subtitle");
@@ -256,24 +256,24 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             return emDash;
 
         let responseSource = this._resource.responseSource;
-        if (responseSource === WebInspector.Resource.ResponseSource.MemoryCache || responseSource === WebInspector.Resource.ResponseSource.DiskCache) {
+        if (responseSource === WI.Resource.ResponseSource.MemoryCache || responseSource === WI.Resource.ResponseSource.DiskCache) {
             console.assert(this._resource.cached, "This resource has a cache responseSource it should also be marked as cached", this._resource);
             let span = document.createElement("span");
             let cacheType = document.createElement("span");
             cacheType.classList = "cache-type";
-            cacheType.textContent = responseSource === WebInspector.Resource.ResponseSource.MemoryCache ? WebInspector.UIString("(Memory)") : WebInspector.UIString("(Disk)");
-            span.append(WebInspector.UIString("Yes"), " ", cacheType);
+            cacheType.textContent = responseSource === WI.Resource.ResponseSource.MemoryCache ? WI.UIString("(Memory)") : WI.UIString("(Disk)");
+            span.append(WI.UIString("Yes"), " ", cacheType);
             return span;
         }
 
         let fragment = document.createDocumentFragment();
-        fragment.append(this._resource.cached ? WebInspector.UIString("Yes") : WebInspector.UIString("No"));
+        fragment.append(this._resource.cached ? WI.UIString("Yes") : WI.UIString("No"));
         return fragment;
     }
 
     _needsRefresh()
     {
-        if (this.dataGrid instanceof WebInspector.TimelineDataGrid) {
+        if (this.dataGrid instanceof WI.TimelineDataGrid) {
             this.dataGrid.dataGridNodeNeedsRefresh(this);
             return;
         }
@@ -296,7 +296,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             ignoreNetworkTab: true,
             ignoreSearchTab: true,
         };
-        WebInspector.showSourceCode(this._resource, options);
+        WI.showSourceCode(this._resource, options);
     }
 
     _updateStatus(cell)
@@ -317,7 +317,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             return;
 
         if (!this._spinner)
-            this._spinner = new WebInspector.IndeterminateProgressSpinner;
+            this._spinner = new WI.IndeterminateProgressSpinner;
 
         let contentElement = cell.firstChild;
         contentElement.appendChild(this._spinner.element);
@@ -325,14 +325,14 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
 
     _mouseoverRecordBar(event)
     {
-        let recordBar = WebInspector.TimelineRecordBar.fromElement(event.target);
+        let recordBar = WI.TimelineRecordBar.fromElement(event.target);
         console.assert(recordBar);
         if (!recordBar)
             return;
 
         let calculateTargetFrame = () => {
-            let columnRect = WebInspector.Rect.rectFromClientRect(this.elementWithColumnIdentifier("graph").getBoundingClientRect());
-            let barRect = WebInspector.Rect.rectFromClientRect(event.target.getBoundingClientRect());
+            let columnRect = WI.Rect.rectFromClientRect(this.elementWithColumnIdentifier("graph").getBoundingClientRect());
+            let barRect = WI.Rect.rectFromClientRect(event.target.getBoundingClientRect());
             return columnRect.intersectionWithRect(barRect);
         };
 
@@ -360,11 +360,11 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             let descriptionElement = document.createElement("span");
             descriptionElement.classList.add("description");
             if (resource.failed)
-                descriptionElement.textContent = WebInspector.UIString("Resource failed to load.");
+                descriptionElement.textContent = WI.UIString("Resource failed to load.");
             else if (resource.urlComponents.scheme === "data")
-                descriptionElement.textContent = WebInspector.UIString("Resource was loaded with the “data“ scheme.");
+                descriptionElement.textContent = WI.UIString("Resource was loaded with the “data“ scheme.");
             else
-                descriptionElement.textContent = WebInspector.UIString("Resource was served from the cache.");
+                descriptionElement.textContent = WI.UIString("Resource was served from the cache.");
             popoverContentElement.appendChild(descriptionElement);
         } else {
             let columns = {
@@ -372,7 +372,7 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
                     width: "80px"
                 },
                 graph: {
-                    width: `${WebInspector.ResourceTimelineDataGridNode.PopoverGraphColumnWidthPixels}px`
+                    width: `${WI.ResourceTimelineDataGridNode.PopoverGraphColumnWidthPixels}px`
                 },
                 duration: {
                     width: "70px",
@@ -380,50 +380,50 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
                 }
             };
 
-            let popoverDataGrid = new WebInspector.DataGrid(columns);
+            let popoverDataGrid = new WI.DataGrid(columns);
             popoverDataGrid.inline = true;
             popoverDataGrid.headerVisible = false;
             popoverContentElement.appendChild(popoverDataGrid.element);
 
             let graphDataSource = {
-                get secondsPerPixel() { return resource.duration / WebInspector.ResourceTimelineDataGridNode.PopoverGraphColumnWidthPixels; },
+                get secondsPerPixel() { return resource.duration / WI.ResourceTimelineDataGridNode.PopoverGraphColumnWidthPixels; },
                 get zeroTime() { return resource.firstTimestamp; },
                 get startTime() { return resource.firstTimestamp; },
                 get currentTime() { return this.endTime; },
 
                 get endTime()
                 {
-                    let endTimePadding = this.secondsPerPixel * WebInspector.TimelineRecordBar.MinimumWidthPixels;
+                    let endTimePadding = this.secondsPerPixel * WI.TimelineRecordBar.MinimumWidthPixels;
                     return resource.lastTimestamp + endTimePadding;
                 }
             };
 
             let secondTimestamp = resource.timingData.domainLookupStart || resource.timingData.connectStart || resource.timingData.requestStart;
             if (secondTimestamp - resource.timingData.startTime)
-                popoverDataGrid.appendChild(new WebInspector.ResourceTimingPopoverDataGridNode(WebInspector.UIString("Stalled"), resource.timingData.startTime, secondTimestamp, graphDataSource));
+                popoverDataGrid.appendChild(new WI.ResourceTimingPopoverDataGridNode(WI.UIString("Stalled"), resource.timingData.startTime, secondTimestamp, graphDataSource));
             if (resource.timingData.domainLookupStart)
-                popoverDataGrid.appendChild(new WebInspector.ResourceTimingPopoverDataGridNode(WebInspector.UIString("DNS"), resource.timingData.domainLookupStart, resource.timingData.domainLookupEnd, graphDataSource));
+                popoverDataGrid.appendChild(new WI.ResourceTimingPopoverDataGridNode(WI.UIString("DNS"), resource.timingData.domainLookupStart, resource.timingData.domainLookupEnd, graphDataSource));
             if (resource.timingData.connectStart)
-                popoverDataGrid.appendChild(new WebInspector.ResourceTimingPopoverDataGridNode(WebInspector.UIString("Connection"), resource.timingData.connectStart, resource.timingData.connectEnd, graphDataSource));
+                popoverDataGrid.appendChild(new WI.ResourceTimingPopoverDataGridNode(WI.UIString("Connection"), resource.timingData.connectStart, resource.timingData.connectEnd, graphDataSource));
             if (resource.timingData.secureConnectionStart)
-                popoverDataGrid.appendChild(new WebInspector.ResourceTimingPopoverDataGridNode(WebInspector.UIString("Secure"), resource.timingData.secureConnectionStart, resource.timingData.connectEnd, graphDataSource));
-            popoverDataGrid.appendChild(new WebInspector.ResourceTimingPopoverDataGridNode(WebInspector.UIString("Request"), resource.timingData.requestStart, resource.timingData.responseStart, graphDataSource));
-            popoverDataGrid.appendChild(new WebInspector.ResourceTimingPopoverDataGridNode(WebInspector.UIString("Response"), resource.timingData.responseStart, resource.timingData.responseEnd, graphDataSource));
+                popoverDataGrid.appendChild(new WI.ResourceTimingPopoverDataGridNode(WI.UIString("Secure"), resource.timingData.secureConnectionStart, resource.timingData.connectEnd, graphDataSource));
+            popoverDataGrid.appendChild(new WI.ResourceTimingPopoverDataGridNode(WI.UIString("Request"), resource.timingData.requestStart, resource.timingData.responseStart, graphDataSource));
+            popoverDataGrid.appendChild(new WI.ResourceTimingPopoverDataGridNode(WI.UIString("Response"), resource.timingData.responseStart, resource.timingData.responseEnd, graphDataSource));
 
             const higherResolution = true;
             let totalData = {
-                description: WebInspector.UIString("Total time"),
+                description: WI.UIString("Total time"),
                 duration: Number.secondsToMillisecondsString(resource.timingData.responseEnd - resource.timingData.startTime, higherResolution)
             };
-            popoverDataGrid.appendChild(new WebInspector.DataGridNode(totalData));
+            popoverDataGrid.appendChild(new WI.DataGridNode(totalData));
 
             popoverDataGrid.updateLayout();
         }
 
         if (!this.dataGrid._popover)
-            this.dataGrid._popover = new WebInspector.Popover;
+            this.dataGrid._popover = new WI.Popover;
 
-        let preferredEdges = [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MIN_X];
+        let preferredEdges = [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MIN_X];
         this.dataGrid._popover.windowResizeHandler = () => {
             let bounds = calculateTargetFrame();
             this.dataGrid._popover.present(bounds.pad(2), preferredEdges);
@@ -436,12 +436,12 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
             this.dataGrid._dismissPopoverTimeout = setTimeout(() => {
                 if (this.dataGrid)
                     this.dataGrid._popover.dismiss();
-            }, WebInspector.ResourceTimelineDataGridNode.DelayedPopoverDismissalTimeout);
+            }, WI.ResourceTimelineDataGridNode.DelayedPopoverDismissalTimeout);
         }, {once: true});
 
         this.dataGrid._popover.presentNewContentWithFrame(popoverContentElement, targetFrame.pad(2), preferredEdges);
     }
 };
 
-WebInspector.ResourceTimelineDataGridNode.PopoverGraphColumnWidthPixels = 110;
-WebInspector.ResourceTimelineDataGridNode.DelayedPopoverDismissalTimeout = 500;
+WI.ResourceTimelineDataGridNode.PopoverGraphColumnWidthPixels = 110;
+WI.ResourceTimelineDataGridNode.DelayedPopoverDismissalTimeout = 500;

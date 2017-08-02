@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSeparatedKeywordEditor extends WebInspector.VisualStylePropertyEditor
+WI.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSeparatedKeywordEditor extends WI.VisualStylePropertyEditor
 {
     constructor(propertyNames, text, longhandProperties, insertNewItemsBeforeSelected, layoutReversed)
     {
@@ -37,8 +37,8 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
         listElement.addEventListener("keydown", this._listElementKeyDown.bind(this));
         this.contentElement.appendChild(listElement);
 
-        this._commaSeparatedKeywords = new WebInspector.TreeOutline(listElement);
-        this._commaSeparatedKeywords.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+        this._commaSeparatedKeywords = new WI.TreeOutline(listElement);
+        this._commaSeparatedKeywords.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
         let controlContainer = document.createElement("div");
         controlContainer.classList.add("visual-style-comma-separated-keyword-controls");
@@ -48,7 +48,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
         addGlyphElement.addEventListener("click", this._addEmptyCommaSeparatedKeyword.bind(this));
         controlContainer.appendChild(addGlyphElement);
 
-        let removeGlyphElement = useSVGSymbol("Images/Minus.svg", "visual-style-remove-comma-separated-keyword", WebInspector.UIString("Remove selected item"));
+        let removeGlyphElement = useSVGSymbol("Images/Minus.svg", "visual-style-remove-comma-separated-keyword", WI.UIString("Remove selected item"));
         removeGlyphElement.addEventListener("click", this._removeSelectedCommaSeparatedKeyword.bind(this));
         controlContainer.appendChild(removeGlyphElement);
     }
@@ -96,7 +96,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
 
         this._commaSeparatedKeywords.removeChildren();
         if (!commaSeparatedValue || !commaSeparatedValue.length) {
-            this.dispatchEventToListeners(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.NoRemainingTreeItems);
+            this.dispatchEventToListeners(WI.VisualStyleCommaSeparatedKeywordEditor.Event.NoRemainingTreeItems);
             return;
         }
 
@@ -207,8 +207,8 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
             return;
 
         let keyCode = event.keyCode;
-        let backspaceKeyCode = WebInspector.KeyboardShortcut.Key.Backspace.keyCode;
-        let deleteKeyCode = WebInspector.KeyboardShortcut.Key.Delete.keyCode;
+        let backspaceKeyCode = WI.KeyboardShortcut.Key.Backspace.keyCode;
+        let deleteKeyCode = WI.KeyboardShortcut.Key.Delete.keyCode;
         if (keyCode === backspaceKeyCode || keyCode === deleteKeyCode)
             this._removeSelectedCommaSeparatedKeyword();
     }
@@ -220,7 +220,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
             return;
 
         this._removeEmptyCommaSeparatedKeywords();
-        this.dispatchEventToListeners(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, {text: treeElement.mainTitle});
+        this.dispatchEventToListeners(WI.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, {text: treeElement.mainTitle});
     }
 
     _treeElementIsEmpty(item)
@@ -231,7 +231,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
     _addEmptyCommaSeparatedKeyword()
     {
         let newTreeElement = this._addCommaSeparatedKeyword(null, this._commaSeparatedKeywords.selectedTreeElementIndex);
-        newTreeElement.subtitle = WebInspector.UIString("(modify the boxes below to add a value)");
+        newTreeElement.subtitle = WI.UIString("(modify the boxes below to add a value)");
         newTreeElement.element.classList.add("no-value");
         newTreeElement.select(true, true);
         return newTreeElement;
@@ -272,20 +272,20 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
 
         this._commaSeparatedKeywords.removeChild(treeElement);
         if (!this._commaSeparatedKeywords.children.length)
-            this.dispatchEventToListeners(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.NoRemainingTreeItems);
+            this.dispatchEventToListeners(WI.VisualStyleCommaSeparatedKeywordEditor.Event.NoRemainingTreeItems);
 
         this._valueDidChange();
     }
 
     _createNewTreeElement(value)
     {
-        return new WebInspector.GeneralTreeElement(WebInspector.VisualStyleCommaSeparatedKeywordEditor.ListItemClassName, value);
+        return new WI.GeneralTreeElement(WI.VisualStyleCommaSeparatedKeywordEditor.ListItemClassName, value);
     }
 };
 
-WebInspector.VisualStyleCommaSeparatedKeywordEditor.ListItemClassName = "visual-style-comma-separated-keyword-item";
+WI.VisualStyleCommaSeparatedKeywordEditor.ListItemClassName = "visual-style-comma-separated-keyword-item";
 
-WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event = {
+WI.VisualStyleCommaSeparatedKeywordEditor.Event = {
     TreeItemSelected: "visual-style-comma-separated-keyword-editor-tree-item-selected",
     NoRemainingTreeItems: "visual-style-comma-separated-keyword-editor-no-remaining-tree-items"
 };

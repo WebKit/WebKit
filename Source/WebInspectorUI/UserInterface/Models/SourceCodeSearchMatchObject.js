@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject
+WI.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject
 {
     constructor(sourceCode, lineText, searchTerm, textRange)
     {
-        console.assert(sourceCode instanceof WebInspector.SourceCode);
+        console.assert(sourceCode instanceof WI.SourceCode);
 
         this._sourceCode = sourceCode;
         this._lineText = lineText;
@@ -50,13 +50,13 @@ WebInspector.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject
     saveIdentityToCookie(cookie)
     {
         if (this._sourceCode.url)
-            cookie[WebInspector.SourceCodeSearchMatchObject.URLCookieKey] = this._sourceCode.url.hash;
+            cookie[WI.SourceCodeSearchMatchObject.URLCookieKey] = this._sourceCode.url.hash;
 
         var textRange = this._sourceCodeTextRange.textRange;
-        cookie[WebInspector.SourceCodeSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
+        cookie[WI.SourceCodeSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
     }
 };
 
-WebInspector.SourceCodeSearchMatchObject.TypeIdentifier = "source-code-search-match-object";
-WebInspector.SourceCodeSearchMatchObject.URLCookieKey = "source-code-url";
-WebInspector.SourceCodeSearchMatchObject.TextRangeKey = "text-range";
+WI.SourceCodeSearchMatchObject.TypeIdentifier = "source-code-search-match-object";
+WI.SourceCodeSearchMatchObject.URLCookieKey = "source-code-url";
+WI.SourceCodeSearchMatchObject.TextRangeKey = "text-range";

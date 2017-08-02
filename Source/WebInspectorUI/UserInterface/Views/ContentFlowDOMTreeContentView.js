@@ -28,16 +28,16 @@
  * SUCH DAMAGE.
  */
 
-WebInspector.ContentFlowDOMTreeContentView = class ContentFlowDOMTreeContentView extends WebInspector.DOMTreeContentView
+WI.ContentFlowDOMTreeContentView = class ContentFlowDOMTreeContentView extends WI.DOMTreeContentView
 {
     constructor(contentFlow)
     {
-        console.assert(contentFlow instanceof WebInspector.ContentFlow, contentFlow);
+        console.assert(contentFlow instanceof WI.ContentFlow, contentFlow);
 
         super(contentFlow);
 
-        contentFlow.addEventListener(WebInspector.ContentFlow.Event.ContentNodeWasAdded, this._contentNodeWasAdded, this);
-        contentFlow.addEventListener(WebInspector.ContentFlow.Event.ContentNodeWasRemoved, this._contentNodeWasRemoved, this);
+        contentFlow.addEventListener(WI.ContentFlow.Event.ContentNodeWasAdded, this._contentNodeWasAdded, this);
+        contentFlow.addEventListener(WI.ContentFlow.Event.ContentNodeWasRemoved, this._contentNodeWasRemoved, this);
 
         this._createContentTrees();
     }
@@ -64,7 +64,7 @@ WebInspector.ContentFlowDOMTreeContentView = class ContentFlowDOMTreeContentView
     {
         var contentNodes = this.representedObject.contentNodes;
         for (var contentNode of contentNodes)
-            this.domTreeOutline.appendChild(new WebInspector.DOMTreeElement(contentNode));
+            this.domTreeOutline.appendChild(new WI.DOMTreeElement(contentNode));
 
         var documentURL = contentNodes.length ? contentNodes[0].ownerDocument.documentURL : null;
         this._restoreSelectedNodeAfterUpdate(documentURL, contentNodes[0]);
@@ -72,7 +72,7 @@ WebInspector.ContentFlowDOMTreeContentView = class ContentFlowDOMTreeContentView
 
     _contentNodeWasAdded(event)
     {
-        var treeElement = new WebInspector.DOMTreeElement(event.data.node);
+        var treeElement = new WI.DOMTreeElement(event.data.node);
         if (!event.data.before) {
             this.domTreeOutline.appendChild(treeElement);
             return;

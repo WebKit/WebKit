@@ -1,11 +1,11 @@
-Testing WebInspector.Object.
+Testing WI.Object.
 
 
 == Running test suite: Object
--- Running test case: WebInspector.Object.prototype.dispatchEventToListeners
+-- Running test case: WI.Object.prototype.dispatchEventToListeners
 Dispatch count: 1
 
--- Running test case: WebInspector.Object.prototype.awaitEvent
+-- Running test case: WI.Object.prototype.awaitEvent
 PASS: Await event handler should be dispatched just once.
 Dispatch count: 1
 

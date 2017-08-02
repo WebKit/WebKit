@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ApplicationCacheFrameTreeElement = class ApplicationCacheFrameTreeElement extends WebInspector.GeneralTreeElement
+WI.ApplicationCacheFrameTreeElement = class ApplicationCacheFrameTreeElement extends WI.GeneralTreeElement
 {
     constructor(representedObject)
     {
-        console.assert(representedObject instanceof WebInspector.ApplicationCacheFrame);
+        console.assert(representedObject instanceof WI.ApplicationCacheFrame);
 
         const title = null;
         const subtitle = null;
@@ -41,16 +41,16 @@ WebInspector.ApplicationCacheFrameTreeElement = class ApplicationCacheFrameTreeE
         var url = this.representedObject.frame.url;
         var parsedURL = parseURL(url);
 
-        this.mainTitle = WebInspector.displayNameForURL(url, parsedURL);
+        this.mainTitle = WI.displayNameForURL(url, parsedURL);
 
         // Show the host as the subtitle only if it doesn't match the subtitle of the manifest tree element,
         // and it doesn't match the mainTitle.
-        var subtitle = WebInspector.displayNameForHost(parsedURL.host);
+        var subtitle = WI.displayNameForHost(parsedURL.host);
 
         var manifestTreeElement = null;
         var currentAncestor = this.parent;
         while (currentAncestor && !currentAncestor.root) {
-            if (currentAncestor instanceof WebInspector.ApplicationCacheManifestTreeElement) {
+            if (currentAncestor instanceof WI.ApplicationCacheManifestTreeElement) {
                 manifestTreeElement = currentAncestor;
                 break;
             }

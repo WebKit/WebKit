@@ -23,20 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TypeTreeView = class TypeTreeView extends WebInspector.Object
+WI.TypeTreeView = class TypeTreeView extends WI.Object
 {
     constructor(typeDescription)
     {
         super();
 
-        console.assert(typeDescription instanceof WebInspector.TypeDescription);
+        console.assert(typeDescription instanceof WI.TypeDescription);
 
         this._typeDescription = typeDescription;
 
         this._element = document.createElement("div");
         this._element.className = "type-tree";
 
-        this._outline = new WebInspector.TreeOutline;
+        this._outline = new WI.TreeOutline;
         this._outline.customIndent = true;
         this._outline.element.classList.add("type");
         this._element.appendChild(this._outline.element);
@@ -74,19 +74,19 @@ WebInspector.TypeTreeView = class TypeTreeView extends WebInspector.Object
             types.push({name: structure.constructorName, structure});
         for (var primitiveName of this._typeDescription.typeSet.primitiveTypeNames)
             types.push({name: primitiveName});
-        types.sort(WebInspector.ObjectTreeView.comparePropertyDescriptors);
+        types.sort(WI.ObjectTreeView.comparePropertyDescriptors);
 
         for (var type of types)
-            this._outline.appendChild(new WebInspector.TypeTreeElement(type.name, type.structure, false));
+            this._outline.appendChild(new WI.TypeTreeElement(type.name, type.structure, false));
 
         if (this._typeDescription.truncated) {
-            var truncatedMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(ellipsis);
-            this._outline.appendChild(new WebInspector.TreeElement(truncatedMessageElement, null, false));
+            var truncatedMessageElement = WI.ObjectTreeView.createEmptyMessageElement(ellipsis);
+            this._outline.appendChild(new WI.TreeElement(truncatedMessageElement, null, false));
         }
 
         if (!this._outline.children.length) {
-            var errorMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Properties"));
-            this._outline.appendChild(new WebInspector.TreeElement(errorMessageElement, null, false));
+            var errorMessageElement = WI.ObjectTreeView.createEmptyMessageElement(WI.UIString("No Properties"));
+            this._outline.appendChild(new WI.TreeElement(errorMessageElement, null, false));
         }
     }
 };

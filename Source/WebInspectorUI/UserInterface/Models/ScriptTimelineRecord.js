@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspector.TimelineRecord
+WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 {
     constructor(eventType, startTime, endTime, callFrames, sourceCodeLocation, details, profilePayload)
     {
-        super(WebInspector.TimelineRecord.Type.Script, startTime, endTime, callFrames, sourceCodeLocation);
+        super(WI.TimelineRecord.Type.Script, startTime, endTime, callFrames, sourceCodeLocation);
 
         console.assert(eventType);
 
-        if (eventType in WebInspector.ScriptTimelineRecord.EventType)
-            eventType = WebInspector.ScriptTimelineRecord.EventType[eventType];
+        if (eventType in WI.ScriptTimelineRecord.EventType)
+            eventType = WI.ScriptTimelineRecord.EventType[eventType];
 
         this._eventType = eventType;
         this._details = details || "";
@@ -73,15 +73,15 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
 
     isGarbageCollection()
     {
-        return this._eventType === WebInspector.ScriptTimelineRecord.EventType.GarbageCollected;
+        return this._eventType === WI.ScriptTimelineRecord.EventType.GarbageCollected;
     }
 
     saveIdentityToCookie(cookie)
     {
         super.saveIdentityToCookie(cookie);
 
-        cookie[WebInspector.ScriptTimelineRecord.EventTypeCookieKey] = this._eventType;
-        cookie[WebInspector.ScriptTimelineRecord.DetailsCookieKey] = this._details;
+        cookie[WI.ScriptTimelineRecord.EventTypeCookieKey] = this._eventType;
+        cookie[WI.ScriptTimelineRecord.DetailsCookieKey] = this._details;
     }
 
     get profilePayload()
@@ -111,9 +111,9 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
             console.assert("id" in nodePayload);
 
             if (nodePayload.url) {
-                var sourceCode = WebInspector.frameResourceManager.resourceForURL(nodePayload.url);
+                var sourceCode = WI.frameResourceManager.resourceForURL(nodePayload.url);
                 if (!sourceCode)
-                    sourceCode = WebInspector.debuggerManager.scriptsForURL(nodePayload.url, WebInspector.assumingMainTarget())[0];
+                    sourceCode = WI.debuggerManager.scriptsForURL(nodePayload.url, WI.assumingMainTarget())[0];
 
                 // The lineNumber is 1-based, but we expect 0-based.
                 var lineNumber = nodePayload.lineNumber - 1;
@@ -124,7 +124,7 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
             var isProgramCode = nodePayload.functionName === "(program)";
             var isAnonymousFunction = nodePayload.functionName === "(anonymous function)";
 
-            var type = isProgramCode ? WebInspector.ProfileNode.Type.Program : WebInspector.ProfileNode.Type.Function;
+            var type = isProgramCode ? WI.ProfileNode.Type.Program : WI.ProfileNode.Type.Function;
             var functionName = !isProgramCode && !isAnonymousFunction && nodePayload.functionName !== "(unknown)" ? nodePayload.functionName : null;
 
             // COMPATIBILITY (iOS 8): Timeline.CPUProfileNodes used to include an array of complete
@@ -135,7 +135,7 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
                 calls = nodePayload.calls.map(profileNodeCallFromPayload);
             }
 
-            return new WebInspector.ProfileNode(nodePayload.id, type, functionName, sourceCodeLocation, nodePayload.callInfo, calls, nodePayload.children);
+            return new WI.ProfileNode(nodePayload.id, type, functionName, sourceCodeLocation, nodePayload.callInfo, calls, nodePayload.children);
         }
 
         function profileNodeCallFromPayload(nodeCallPayload)
@@ -143,9 +143,9 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
             console.assert("startTime" in nodeCallPayload);
             console.assert("totalTime" in nodeCallPayload);
 
-            var startTime = WebInspector.timelineManager.computeElapsedTime(nodeCallPayload.startTime);
+            var startTime = WI.timelineManager.computeElapsedTime(nodeCallPayload.startTime);
 
-            return new WebInspector.ProfileNodeCall(startTime, nodeCallPayload.totalTime);
+            return new WI.ProfileNodeCall(startTime, nodeCallPayload.totalTime);
         }
 
         var rootNodes = payload.rootNodes;
@@ -178,11 +178,11 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
                 this._callCountOrSamples += rootNodes[i].callInfo.callCount;
         }
 
-        this._profile = new WebInspector.Profile(rootNodes);
+        this._profile = new WI.Profile(rootNodes);
     }
 };
 
-WebInspector.ScriptTimelineRecord.EventType = {
+WI.ScriptTimelineRecord.EventType = {
     ScriptEvaluated: "script-timeline-record-script-evaluated",
     APIScriptEvaluated: "script-timeline-record-api-script-evaluated",
     MicrotaskDispatched: "script-timeline-record-microtask-dispatched",
@@ -198,9 +198,9 @@ WebInspector.ScriptTimelineRecord.EventType = {
     GarbageCollected: "script-timeline-record-garbage-collected",
 };
 
-WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, details, includeDetailsInMainTitle)
+WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, includeDetailsInMainTitle)
 {
-    if (details && !WebInspector.ScriptTimelineRecord._eventDisplayNames) {
+    if (details && !WI.ScriptTimelineRecord._eventDisplayNames) {
         // These display names are not localized because they closely represent
         // the real API name, just with word spaces and Title Case.
 
@@ -354,65 +354,65 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
         nameMap.set("writeend", "Write End");
         nameMap.set("writestart", "Write Start");
 
-        WebInspector.ScriptTimelineRecord._eventDisplayNames = nameMap;
+        WI.ScriptTimelineRecord._eventDisplayNames = nameMap;
     }
 
     switch (eventType) {
-    case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:
-    case WebInspector.ScriptTimelineRecord.EventType.APIScriptEvaluated:
-        return WebInspector.UIString("Script Evaluated");
-    case WebInspector.ScriptTimelineRecord.EventType.MicrotaskDispatched:
-        return WebInspector.UIString("Microtask Dispatched");
-    case WebInspector.ScriptTimelineRecord.EventType.EventDispatched:
+    case WI.ScriptTimelineRecord.EventType.ScriptEvaluated:
+    case WI.ScriptTimelineRecord.EventType.APIScriptEvaluated:
+        return WI.UIString("Script Evaluated");
+    case WI.ScriptTimelineRecord.EventType.MicrotaskDispatched:
+        return WI.UIString("Microtask Dispatched");
+    case WI.ScriptTimelineRecord.EventType.EventDispatched:
         if (details && (details instanceof String || typeof details === "string")) {
-            var eventDisplayName = WebInspector.ScriptTimelineRecord._eventDisplayNames.get(details) || details.capitalize();
-            return WebInspector.UIString("%s Event Dispatched").format(eventDisplayName);
+            var eventDisplayName = WI.ScriptTimelineRecord._eventDisplayNames.get(details) || details.capitalize();
+            return WI.UIString("%s Event Dispatched").format(eventDisplayName);
         }
-        return WebInspector.UIString("Event Dispatched");
-    case WebInspector.ScriptTimelineRecord.EventType.ProbeSampleRecorded:
-        return WebInspector.UIString("Probe Sample Recorded");
-    case WebInspector.ScriptTimelineRecord.EventType.ConsoleProfileRecorded:
+        return WI.UIString("Event Dispatched");
+    case WI.ScriptTimelineRecord.EventType.ProbeSampleRecorded:
+        return WI.UIString("Probe Sample Recorded");
+    case WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded:
         if (details && (details instanceof String || typeof details === "string"))
-            return WebInspector.UIString("“%s” Profile Recorded").format(details);
-        return WebInspector.UIString("Console Profile Recorded");
-    case WebInspector.ScriptTimelineRecord.EventType.GarbageCollected:
+            return WI.UIString("“%s” Profile Recorded").format(details);
+        return WI.UIString("Console Profile Recorded");
+    case WI.ScriptTimelineRecord.EventType.GarbageCollected:
         console.assert(details);
-        if (details && (details instanceof WebInspector.GarbageCollection) && includeDetailsInMainTitle) {
+        if (details && (details instanceof WI.GarbageCollection) && includeDetailsInMainTitle) {
             switch (details.type) {
-            case WebInspector.GarbageCollection.Type.Partial:
-                return WebInspector.UIString("Partial Garbage Collection");
-            case WebInspector.GarbageCollection.Type.Full:
-                return WebInspector.UIString("Full Garbage Collection");
+            case WI.GarbageCollection.Type.Partial:
+                return WI.UIString("Partial Garbage Collection");
+            case WI.GarbageCollection.Type.Full:
+                return WI.UIString("Full Garbage Collection");
             }
         }
-        return WebInspector.UIString("Garbage Collection");
-    case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
+        return WI.UIString("Garbage Collection");
+    case WI.ScriptTimelineRecord.EventType.TimerFired:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Timer %d Fired").format(details);
-        return WebInspector.UIString("Timer Fired");
-    case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
+            return WI.UIString("Timer %d Fired").format(details);
+        return WI.UIString("Timer Fired");
+    case WI.ScriptTimelineRecord.EventType.TimerInstalled:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Timer %d Installed").format(details.timerId);
-        return WebInspector.UIString("Timer Installed");
-    case WebInspector.ScriptTimelineRecord.EventType.TimerRemoved:
+            return WI.UIString("Timer %d Installed").format(details.timerId);
+        return WI.UIString("Timer Installed");
+    case WI.ScriptTimelineRecord.EventType.TimerRemoved:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Timer %d Removed").format(details);
-        return WebInspector.UIString("Timer Removed");
-    case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired:
+            return WI.UIString("Timer %d Removed").format(details);
+        return WI.UIString("Timer Removed");
+    case WI.ScriptTimelineRecord.EventType.AnimationFrameFired:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Animation Frame %d Fired").format(details);
-        return WebInspector.UIString("Animation Frame Fired");
-    case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameRequested:
+            return WI.UIString("Animation Frame %d Fired").format(details);
+        return WI.UIString("Animation Frame Fired");
+    case WI.ScriptTimelineRecord.EventType.AnimationFrameRequested:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Animation Frame %d Requested").format(details);
-        return WebInspector.UIString("Animation Frame Requested");
-    case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
+            return WI.UIString("Animation Frame %d Requested").format(details);
+        return WI.UIString("Animation Frame Requested");
+    case WI.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Animation Frame %d Canceled").format(details);
-        return WebInspector.UIString("Animation Frame Canceled");
+            return WI.UIString("Animation Frame %d Canceled").format(details);
+        return WI.UIString("Animation Frame Canceled");
     }
 };
 
-WebInspector.ScriptTimelineRecord.TypeIdentifier = "script-timeline-record";
-WebInspector.ScriptTimelineRecord.EventTypeCookieKey = "script-timeline-record-event-type";
-WebInspector.ScriptTimelineRecord.DetailsCookieKey = "script-timeline-record-details";
+WI.ScriptTimelineRecord.TypeIdentifier = "script-timeline-record";
+WI.ScriptTimelineRecord.EventTypeCookieKey = "script-timeline-record-event-type";
+WI.ScriptTimelineRecord.DetailsCookieKey = "script-timeline-record-details";

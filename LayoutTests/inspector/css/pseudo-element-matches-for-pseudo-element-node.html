@@ -30,15 +30,15 @@ function test() {
         InspectorTest.completeTest();                
     }
 
-    WebInspector.domTreeManager.requestDocument(function(documentNode) {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "#x", function(contentNodeId) {
-            var domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
+    WI.domTreeManager.requestDocument(function(documentNode) {
+        WI.domTreeManager.querySelector(documentNode.id, "#x", function(contentNodeId) {
+            var domNode = WI.domTreeManager.nodeForId(contentNodeId);
             InspectorTest.assert(domNode);
             var beforePseudoElementDOMNode = domNode.beforePseudoElement();
             InspectorTest.expectThat(beforePseudoElementDOMNode, "Got ::before pseudo element for #x");
             InspectorTest.log("Refreshing styles for ::before pseudo element");
-            nodeStyles = WebInspector.cssStyleManager.stylesForNode(beforePseudoElementDOMNode);
-            nodeStyles.addEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, validateStyles);
+            nodeStyles = WI.cssStyleManager.stylesForNode(beforePseudoElementDOMNode);
+            nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, validateStyles);
             nodeStyles.refresh();
         });
     });

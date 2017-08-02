@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasContentView = class CanvasContentView extends WebInspector.ContentView
+WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 {
     constructor(representedObject)
     {
-        console.assert(representedObject instanceof WebInspector.Canvas);
+        console.assert(representedObject instanceof WI.Canvas);
 
         super(representedObject);
 
@@ -37,19 +37,19 @@ WebInspector.CanvasContentView = class CanvasContentView extends WebInspector.Co
         this._previewImageElement = null;
         this._errorElement = null;
 
-        if (representedObject.contextType === WebInspector.Canvas.ContextType.Canvas2D) {
-            const toolTip = WebInspector.UIString("Request recording of actions. Shift-click to record a single frame.");
-            const altToolTip = WebInspector.UIString("Cancel recording");
-            this._recordButtonNavigationItem = new WebInspector.ToggleButtonNavigationItem("canvas-record", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
-            this._recordButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleRecording, this);
+        if (representedObject.contextType === WI.Canvas.ContextType.Canvas2D) {
+            const toolTip = WI.UIString("Request recording of actions. Shift-click to record a single frame.");
+            const altToolTip = WI.UIString("Cancel recording");
+            this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("canvas-record", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
+            this._recordButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleRecording, this);
         }
 
-        this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("canvas-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
-        this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._showPreview, this);
+        this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("canvas-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
+        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showPreview, this);
 
-        this._showGridButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-grid", WebInspector.UIString("Show Grid"), WebInspector.UIString("Hide Grid"), "Images/NavigationItemCheckers.svg", 13, 13);
-        this._showGridButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
-        this._showGridButtonNavigationItem.activated = !!WebInspector.settings.showImageGrid.value;
+        this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show Grid"), WI.UIString("Hide Grid"), "Images/NavigationItemCheckers.svg", 13, 13);
+        this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
+        this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
     }
 
     // Protected
@@ -66,7 +66,7 @@ WebInspector.CanvasContentView = class CanvasContentView extends WebInspector.Co
     {
         super.initialLayout();
 
-        WebInspector.canvasManager.addEventListener(WebInspector.CanvasManager.Event.RecordingFinished, this._recordingFinished, this);
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingFinished, this._recordingFinished, this);
     }
 
     shown()
@@ -75,19 +75,19 @@ WebInspector.CanvasContentView = class CanvasContentView extends WebInspector.Co
 
         this._showPreview();
 
-        WebInspector.settings.showImageGrid.addEventListener(WebInspector.Setting.Event.Changed, this._updateImageGrid, this);
+        WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
     }
 
     hidden()
     {
-        WebInspector.settings.showImageGrid.removeEventListener(WebInspector.Setting.Event.Changed, this._updateImageGrid, this);
+        WI.settings.showImageGrid.removeEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
 
         super.hidden();
     }
 
     closed()
     {
-        WebInspector.canvasManager.removeEventListener(null, null, this);
+        WI.canvasManager.removeEventListener(null, null, this);
 
         super.closed();
     }
@@ -113,7 +113,7 @@ WebInspector.CanvasContentView = class CanvasContentView extends WebInspector.Co
         if (this._recordButtonNavigationItem)
             this._recordButtonNavigationItem.toggled = false;
 
-        WebInspector.showRepresentedObject(event.data.recording);
+        WI.showRepresentedObject(event.data.recording);
     }
 
     _showPreview()
@@ -124,7 +124,7 @@ WebInspector.CanvasContentView = class CanvasContentView extends WebInspector.Co
 
             if (!this._errorElement) {
                 const isError = true;
-                this._errorElement = WebInspector.createMessageTextView(WebInspector.UIString("No Preview Available"), isError);
+                this._errorElement = WI.createMessageTextView(WI.UIString("No Preview Available"), isError);
             }
 
             this.element.appendChild(this._errorElement);
@@ -161,14 +161,14 @@ WebInspector.CanvasContentView = class CanvasContentView extends WebInspector.Co
         if (!this._previewImageElement)
             return;
 
-        let activated = WebInspector.settings.showImageGrid.value;
+        let activated = WI.settings.showImageGrid.value;
         this._showGridButtonNavigationItem.activated = activated;
         this._previewImageElement.classList.toggle("show-grid", activated);
     }
 
     _showGridButtonClicked(event)
     {
-        WebInspector.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
+        WI.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
 
         this._updateImageGrid();
     }

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceQueryMatch = class QueryMatch
+WI.ResourceQueryMatch = class QueryMatch
 {
     constructor(type, index, queryIndex)
     {
@@ -40,7 +40,7 @@ WebInspector.ResourceQueryMatch = class QueryMatch
     get queryIndex() { return this._queryIndex; }
 };
 
-WebInspector.ResourceQueryMatch.Type = {
+WI.ResourceQueryMatch.Type = {
     Normal: Symbol("normal"),
     Special: Symbol("special")
 };

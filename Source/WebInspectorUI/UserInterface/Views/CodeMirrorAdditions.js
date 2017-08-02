@@ -579,7 +579,7 @@
                     if (coords.bottom > maxY) {
                         if (ch > startChar) {
                             var maxX = Math.ceil(this.cursorCoords({ch: ch - 1, line}).right);
-                            lineRects.push(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
+                            lineRects.push(new WI.Rect(minX, minY, maxX - minX, maxY - minY));
                         }
                         var minX = Math.floor(coords.left);
                         var minY = Math.floor(coords.top);
@@ -587,19 +587,19 @@
                     }
                 }
                 maxX = Math.ceil(coords.right);
-                lineRects.push(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
+                lineRects.push(new WI.Rect(minX, minY, maxX - minX, maxY - minY));
             } else {
                 var minX = Math.floor(firstCharCoords.left);
                 var minY = Math.floor(firstCharCoords.top);
                 var maxX = Math.ceil(endCharCoords.right);
                 var maxY = Math.ceil(endCharCoords.bottom);
-                lineRects.push(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
+                lineRects.push(new WI.Rect(minX, minY, maxX - minX, maxY - minY));
             }
         }
         return lineRects;
     });
 
-    let mac = WebInspector.Platform.name === "mac";
+    let mac = WI.Platform.name === "mac";
 
     CodeMirror.keyMap["default"] = {
         "Alt-Up": alterNumber.bind(null, 1),
@@ -642,7 +642,7 @@
     });
 })();
 
-WebInspector.compareCodeMirrorPositions = function(a, b)
+WI.compareCodeMirrorPositions = function(a, b)
 {
     var lineCompare = a.line - b.line;
     if (lineCompare !== 0)
@@ -653,7 +653,7 @@ WebInspector.compareCodeMirrorPositions = function(a, b)
     return aColumn - bColumn;
 };
 
-WebInspector.walkTokens = function(cm, mode, initialPosition, callback)
+WI.walkTokens = function(cm, mode, initialPosition, callback)
 {
     let state = CodeMirror.copyState(mode, cm.getTokenAt(initialPosition).state);
     if (state.localState)

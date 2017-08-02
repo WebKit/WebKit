@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSRule = class CSSRule extends WebInspector.Object
+WI.CSSRule = class CSSRule extends WI.Object
 {
     constructor(nodeStyles, ownerStyleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList)
     {
@@ -53,7 +53,7 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
 
     get editable()
     {
-        return !!this._id && (this._type === WebInspector.CSSStyleSheet.Type.Author || this._type === WebInspector.CSSStyleSheet.Type.Inspector);
+        return !!this._id && (this._type === WI.CSSStyleSheet.Type.Author || this._type === WI.CSSStyleSheet.Type.Inspector);
     }
 
     update(sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList, dontFireEvents)
@@ -91,7 +91,7 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
             this._style.ownerRule = this;
 
         if (changed)
-            this.dispatchEventToListeners(WebInspector.CSSRule.Event.Changed);
+            this.dispatchEventToListeners(WI.CSSRule.Event.Changed);
     }
 
     get type()
@@ -242,16 +242,16 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
 
     _selectorRejected(error)
     {
-        this.dispatchEventToListeners(WebInspector.CSSRule.Event.SelectorChanged, {valid: !error});
+        this.dispatchEventToListeners(WI.CSSRule.Event.SelectorChanged, {valid: !error});
     }
 
     _selectorResolved(rulePayload)
     {
-        this.dispatchEventToListeners(WebInspector.CSSRule.Event.SelectorChanged, {valid: !!rulePayload});
+        this.dispatchEventToListeners(WI.CSSRule.Event.SelectorChanged, {valid: !!rulePayload});
     }
 };
 
-WebInspector.CSSRule.Event = {
+WI.CSSRule.Event = {
     Changed: "css-rule-changed",
     SelectorChanged: "css-rule-invalid-selector"
 };

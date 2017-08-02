@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleUnitSlider = class VisualStyleUnitSlider extends WebInspector.VisualStylePropertyEditor
+WI.VisualStyleUnitSlider = class VisualStyleUnitSlider extends WI.VisualStylePropertyEditor
 {
     constructor(propertyNames, label, layoutReversed)
     {
         super(propertyNames, label, null, null, "unit-slider", layoutReversed);
 
-        this._slider = new WebInspector.Slider;
+        this._slider = new WI.Slider;
         this._slider.delegate = this;
         this.contentElement.appendChild(this._slider.element);
     }

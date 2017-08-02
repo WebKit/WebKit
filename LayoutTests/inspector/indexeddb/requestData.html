@@ -22,7 +22,7 @@ function test()
         test(resolve, reject) {
             // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
             // <https://webkit.org/b/148006> Each test should run with its own clean data store
-            IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
+            IndexedDBAgent.requestDatabaseNames(WI.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
                 InspectorTest.evaluateInPage("deleteDatabaseNames(" + JSON.stringify(names) + ")", resolve);
             });
         }
@@ -33,11 +33,11 @@ function test()
         description: "Request data for an object store with different indexes.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('Database1', 1)");
-            IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "Database1", (error, database) => {
+            IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "Database1", (error, database) => {
                 InspectorTest.expectNoError(error);
 
                 let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
-                const securityOrigin = WebInspector.frameResourceManager.mainFrame.securityOrigin;
+                const securityOrigin = WI.frameResourceManager.mainFrame.securityOrigin;
                 const skipCount = 0;
                 const pageSize = 10;
 
@@ -52,8 +52,8 @@ function test()
                     let expectedNamesOrderedByPrimaryKey = ["Thirsty Hamster", "Jamming Peacock", "Bustling Badger", "Monstrous Beaver"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
                     }
@@ -71,9 +71,9 @@ function test()
                     let expectedNamesOrderedByName = expectedKeysOrderedByName;
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let key = WebInspector.RemoteObject.fromPayload(entryPayload.key);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let key = WI.RemoteObject.fromPayload(entryPayload.key);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by name: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(key.value === expectedKeysOrderedByName[i], `Key should be ordered by name: '${expectedKeysOrderedByName[i]}'`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByName[i], `Value should be a remote object for: '${expectedNamesOrderedByName[i]}'`);
@@ -92,9 +92,9 @@ function test()
                     let expectedNamesOrderedByEmail = ["Bustling Badger", "Monstrous Beaver", "Thirsty Hamster", "Jamming Peacock"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let key = WebInspector.RemoteObject.fromPayload(entryPayload.key);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let key = WI.RemoteObject.fromPayload(entryPayload.key);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by email: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(key.value === expectedKeysOrderedByEmail[i], `Key should be ordered by email: '${expectedKeysOrderedByEmail[i]}'`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByEmail[i], `Value should be a remote object for: '${expectedNamesOrderedByEmail[i]}'`);
@@ -111,11 +111,11 @@ function test()
         description: "Request data for an object store with paginated requests.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('Database2', 1)");
-            IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "Database2", (error, database) => {
+            IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "Database2", (error, database) => {
                 InspectorTest.expectNoError(error);
 
                 let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
-                const securityOrigin = WebInspector.frameResourceManager.mainFrame.securityOrigin;
+                const securityOrigin = WI.frameResourceManager.mainFrame.securityOrigin;
                 const indexName = "";
                 const pageSize = 2;
 
@@ -130,8 +130,8 @@ function test()
                     let expectedNamesOrderedByPrimaryKey = ["Thirsty Hamster", "Jamming Peacock"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
                     }
@@ -148,8 +148,8 @@ function test()
                     let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Monstrous Beaver"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
                     }
@@ -165,11 +165,11 @@ function test()
         description: "Request key range bounded data for an object store.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('Database3', 1)");
-            IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "Database3", (error, database) => {
+            IndexedDBAgent.requestDatabase(WI.frameResourceManager.mainFrame.securityOrigin, "Database3", (error, database) => {
                 InspectorTest.expectNoError(error);
 
                 let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
-                const securityOrigin = WebInspector.frameResourceManager.mainFrame.securityOrigin;
+                const securityOrigin = WI.frameResourceManager.mainFrame.securityOrigin;
                 const indexName = "Name Index";
                 const skipCount = 0;
                 const pageSize = 10;
@@ -196,8 +196,8 @@ function test()
                     let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hamster"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
                     }
@@ -217,8 +217,8 @@ function test()
                     let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hamster"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
                     }
@@ -238,8 +238,8 @@ function test()
                     let expectedNamesOrderedByPrimaryKey = ["Thirsty Hamster"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
                     }
@@ -259,8 +259,8 @@ function test()
                     let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
                     }
@@ -280,8 +280,8 @@ function test()
                     let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
                     }
@@ -301,8 +301,8 @@ function test()
                     let expectedNamesOrderedByPrimaryKey = ["Bustling Badger", "Jamming Peacock"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
                     }
@@ -322,8 +322,8 @@ function test()
                     let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
-                        let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
-                        let value = WebInspector.RemoteObject.fromPayload(entryPayload.value);
+                        let primaryKey = WI.RemoteObject.fromPayload(entryPayload.primaryKey);
+                        let value = WI.RemoteObject.fromPayload(entryPayload.value);
                         InspectorTest.expectThat(primaryKey.value === expectedPrimaryKeyOrder[i], `Primary key should be ordered by primary key: ${expectedPrimaryKeyOrder[i]}`);
                         InspectorTest.expectThat(objectPropertyPreview(value, "name").value === expectedNamesOrderedByPrimaryKey[i], `Value should be a remote object for: '${expectedNamesOrderedByPrimaryKey[i]}'`);
                     }

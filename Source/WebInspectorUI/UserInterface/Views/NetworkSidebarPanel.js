@@ -23,17 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspector.NavigationSidebarPanel
+WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarPanel
 {
     constructor(contentBrowser)
     {
-        super("network", WebInspector.UIString("Network"), false);
+        super("network", WI.UIString("Network"), false);
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         this.contentBrowser = contentBrowser;
 
-        this.filterBar.placeholder = WebInspector.UIString("Filter Resource List");
+        this.filterBar.placeholder = WI.UIString("Filter Resource List");
 
         this.contentTreeOutline.element.classList.add("network-grid");
         this.contentTreeOutline.disclosureButtons = false;
@@ -49,7 +49,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
     showDefaultContentView()
     {
         if (!this._networkGridView)
-            this._networkGridView = new WebInspector.NetworkGridContentView(null, {networkSidebarPanel: this});
+            this._networkGridView = new WI.NetworkGridContentView(null, {networkSidebarPanel: this});
 
         this.contentBrowser.showContentView(this._networkGridView);
     }
@@ -59,7 +59,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
         if (this._clickedTreeElementGoToArrow)
             return true;
 
-        if (this.contentBrowser.currentContentView instanceof WebInspector.NetworkGridContentView)
+        if (this.contentBrowser.currentContentView instanceof WI.NetworkGridContentView)
             return false;
 
         return !this.restoringState;
@@ -69,34 +69,34 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
     initialLayout()
     {
-        this._navigationBar = new WebInspector.NavigationBar;
+        this._navigationBar = new WI.NavigationBar;
         this.addSubview(this._navigationBar);
 
         this._resourcesTitleBarElement = document.createElement("div");
-        this._resourcesTitleBarElement.textContent = WebInspector.UIString("Name");
+        this._resourcesTitleBarElement.textContent = WI.UIString("Name");
         this._resourcesTitleBarElement.classList.add("title-bar");
         this.element.appendChild(this._resourcesTitleBarElement);
 
         let scopeItemPrefix = "network-sidebar-";
         let scopeBarItems = [];
 
-        scopeBarItems.push(new WebInspector.ScopeBarItem(scopeItemPrefix + "type-all", WebInspector.UIString("All Resources"), true));
+        scopeBarItems.push(new WI.ScopeBarItem(scopeItemPrefix + "type-all", WI.UIString("All Resources"), true));
 
-        for (let key in WebInspector.Resource.Type) {
-            let value = WebInspector.Resource.Type[key];
-            let scopeBarItem = new WebInspector.ScopeBarItem(scopeItemPrefix + value, WebInspector.Resource.displayNameForType(value, true));
-            scopeBarItem[WebInspector.NetworkSidebarPanel.ResourceTypeSymbol] = value;
+        for (let key in WI.Resource.Type) {
+            let value = WI.Resource.Type[key];
+            let scopeBarItem = new WI.ScopeBarItem(scopeItemPrefix + value, WI.Resource.displayNameForType(value, true));
+            scopeBarItem[WI.NetworkSidebarPanel.ResourceTypeSymbol] = value;
             scopeBarItems.push(scopeBarItem);
         }
 
-        this._scopeBar = new WebInspector.ScopeBar("network-sidebar-scope-bar", scopeBarItems, scopeBarItems[0], true);
-        this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
+        this._scopeBar = new WI.ScopeBar("network-sidebar-scope-bar", scopeBarItems, scopeBarItems[0], true);
+        this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 
         this._navigationBar.addNavigationItem(this._scopeBar);
 
-        WebInspector.timelineManager.persistentNetworkTimeline.addEventListener(WebInspector.Timeline.Event.Reset, this._networkTimelineReset, this);
+        WI.timelineManager.persistentNetworkTimeline.addEventListener(WI.Timeline.Event.Reset, this._networkTimelineReset, this);
 
-        this.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
+        this.contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
         this._contentBrowserCurrentContentViewDidChange();
     }
 
@@ -104,7 +104,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
     {
         console.assert(cookie);
 
-        cookie[WebInspector.NetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey] = this.contentBrowser.currentContentView instanceof WebInspector.NetworkGridContentView;
+        cookie[WI.NetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey] = this.contentBrowser.currentContentView instanceof WI.NetworkGridContentView;
 
         super.saveStateToCookie(cookie);
     }
@@ -115,7 +115,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
         // Don't call NavigationSidebarPanel.restoreStateFromCookie, because it tries to match based
         // on type selected tree element. This would cause the grid to be deselected.
-        if (cookie[WebInspector.NetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey])
+        if (cookie[WI.NetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey])
             return;
 
         super.restoreStateFromCookie(cookie, relaxedMatchDelay);
@@ -139,14 +139,14 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
         function match()
         {
-            if (treeElement instanceof WebInspector.FrameTreeElement)
-                return selectedScopeBarItem[WebInspector.NetworkSidebarPanel.ResourceTypeSymbol] === WebInspector.Resource.Type.Document;
+            if (treeElement instanceof WI.FrameTreeElement)
+                return selectedScopeBarItem[WI.NetworkSidebarPanel.ResourceTypeSymbol] === WI.Resource.Type.Document;
 
-            console.assert(treeElement instanceof WebInspector.ResourceTreeElement, "Unknown treeElement", treeElement);
-            if (!(treeElement instanceof WebInspector.ResourceTreeElement))
+            console.assert(treeElement instanceof WI.ResourceTreeElement, "Unknown treeElement", treeElement);
+            if (!(treeElement instanceof WI.ResourceTreeElement))
                 return false;
 
-            return treeElement.resource.type === selectedScopeBarItem[WebInspector.NetworkSidebarPanel.ResourceTypeSymbol];
+            return treeElement.resource.type === selectedScopeBarItem[WI.NetworkSidebarPanel.ResourceTypeSymbol];
         }
 
         var matched = match();
@@ -157,23 +157,23 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
     treeElementAddedOrChanged(treeElement)
     {
-        if (treeElement.status && treeElement.status[WebInspector.NetworkSidebarPanel.TreeElementStatusButtonSymbol] || !treeElement.treeOutline)
+        if (treeElement.status && treeElement.status[WI.NetworkSidebarPanel.TreeElementStatusButtonSymbol] || !treeElement.treeOutline)
             return;
 
         var fragment = document.createDocumentFragment();
 
-        var closeButton = new WebInspector.TreeElementStatusButton(useSVGSymbol("Images/Close.svg", null, WebInspector.UIString("Close resource view")));
+        var closeButton = new WI.TreeElementStatusButton(useSVGSymbol("Images/Close.svg", null, WI.UIString("Close resource view")));
         closeButton.element.classList.add("close");
-        closeButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementCloseButtonClicked, this);
+        closeButton.addEventListener(WI.TreeElementStatusButton.Event.Clicked, this._treeElementCloseButtonClicked, this);
         fragment.appendChild(closeButton.element);
 
-        let goToButton = new WebInspector.TreeElementStatusButton(WebInspector.createGoToArrowButton());
-        goToButton[WebInspector.NetworkSidebarPanel.TreeElementSymbol] = treeElement;
-        goToButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementGoToArrowWasClicked, this);
+        let goToButton = new WI.TreeElementStatusButton(WI.createGoToArrowButton());
+        goToButton[WI.NetworkSidebarPanel.TreeElementSymbol] = treeElement;
+        goToButton.addEventListener(WI.TreeElementStatusButton.Event.Clicked, this._treeElementGoToArrowWasClicked, this);
         fragment.appendChild(goToButton.element);
 
         treeElement.status = fragment;
-        treeElement.status[WebInspector.NetworkSidebarPanel.TreeElementStatusButtonSymbol] = true;
+        treeElement.status[WI.NetworkSidebarPanel.TreeElementStatusButtonSymbol] = true;
     }
 
     // Private
@@ -181,7 +181,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
     _mainResourceDidChange(event)
     {
         let frame = event.target;
-        if (!frame.isMainFrame() || WebInspector.settings.clearNetworkOnNavigate.value)
+        if (!frame.isMainFrame() || WI.settings.clearNetworkOnNavigate.value)
             return;
 
         for (let treeElement of this.contentTreeOutline.children)
@@ -196,7 +196,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
     _contentBrowserCurrentContentViewDidChange(event)
     {
-        var didShowNetworkGridContentView = this.contentBrowser.currentContentView instanceof WebInspector.NetworkGridContentView;
+        var didShowNetworkGridContentView = this.contentBrowser.currentContentView instanceof WI.NetworkGridContentView;
         this.element.classList.toggle("network-grid-content-view-showing", didShowNetworkGridContentView);
     }
 
@@ -204,8 +204,8 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
     {
         this._clickedTreeElementGoToArrow = true;
 
-        let treeElement = event.target[WebInspector.NetworkSidebarPanel.TreeElementSymbol];
-        console.assert(treeElement instanceof WebInspector.TreeElement);
+        let treeElement = event.target[WI.NetworkSidebarPanel.TreeElementSymbol];
+        console.assert(treeElement instanceof WI.TreeElement);
 
         treeElement.select(true, true);
 
@@ -229,8 +229,8 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
     }
 };
 
-WebInspector.NetworkSidebarPanel.ResourceTypeSymbol = Symbol("resource-type");
-WebInspector.NetworkSidebarPanel.TreeElementSymbol = Symbol("tree-element");
-WebInspector.NetworkSidebarPanel.TreeElementStatusButtonSymbol = Symbol("tree-element-status-button");
+WI.NetworkSidebarPanel.ResourceTypeSymbol = Symbol("resource-type");
+WI.NetworkSidebarPanel.TreeElementSymbol = Symbol("tree-element");
+WI.NetworkSidebarPanel.TreeElementStatusButtonSymbol = Symbol("tree-element-status-button");
 
-WebInspector.NetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey = "network-sidebar-panel-showing-network-grid-content-view";
+WI.NetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey = "network-sidebar-panel-showing-network-grid-content-view";

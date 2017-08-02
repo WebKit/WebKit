@@ -2,8 +2,8 @@ TestPage.registerInitializer(function() {
     function loadFormattingTestAndExpectedResults(testURL) {
         let expectedURL = testURL.replace(/\.([^\.]+)$/, "-expected.$1");
         return Promise.all([
-            NetworkAgent.loadResource(WebInspector.frameResourceManager.mainFrame.id, testURL),
-            NetworkAgent.loadResource(WebInspector.frameResourceManager.mainFrame.id, expectedURL)
+            NetworkAgent.loadResource(WI.frameResourceManager.mainFrame.id, testURL),
+            NetworkAgent.loadResource(WI.frameResourceManager.mainFrame.id, expectedURL)
         ]).then(function(results) {
             return Promise.resolve({testText: results[0].content, expectedText: results[1].content });
         });
@@ -14,7 +14,7 @@ TestPage.registerInitializer(function() {
             let {testText, expectedText} = results;
             return new Promise(function(resolve, reject) {
                 const indentString = "    ";
-                let workerProxy = WebInspector.FormatterWorkerProxy.singleton();
+                let workerProxy = WI.FormatterWorkerProxy.singleton();
                 let isModule = /^module/.test(testName);
                 workerProxy.formatJavaScript(testText, isModule, indentString, ({formattedText, sourceMapData}) => {
                     let pass = formattedText === expectedText;
@@ -42,7 +42,7 @@ TestPage.registerInitializer(function() {
     }
 
     window.addFormattingTests = function(suite, mode, tests) {
-        let testPageURL = WebInspector.frameResourceManager.mainFrame.mainResource.url;
+        let testPageURL = WI.frameResourceManager.mainFrame.mainResource.url;
         let testPageResourcesURL = testPageURL.substring(0, testPageURL.lastIndexOf("/"));            
 
         for (let test of tests) {

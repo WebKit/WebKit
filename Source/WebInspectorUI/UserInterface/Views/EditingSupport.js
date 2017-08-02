@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.isBeingEdited = function(element)
+WI.isBeingEdited = function(element)
 {
     while (element) {
         if (element.__editing)
@@ -34,28 +34,28 @@ WebInspector.isBeingEdited = function(element)
     return false;
 };
 
-WebInspector.markBeingEdited = function(element, value)
+WI.markBeingEdited = function(element, value)
 {
     if (value) {
         if (element.__editing)
             return false;
         element.__editing = true;
-        WebInspector.__editingCount = (WebInspector.__editingCount || 0) + 1;
+        WI.__editingCount = (WI.__editingCount || 0) + 1;
     } else {
         if (!element.__editing)
             return false;
         delete element.__editing;
-        --WebInspector.__editingCount;
+        --WI.__editingCount;
     }
     return true;
 };
 
-WebInspector.isEditingAnyField = function()
+WI.isEditingAnyField = function()
 {
-    return !!WebInspector.__editingCount;
+    return !!WI.__editingCount;
 };
 
-WebInspector.isEventTargetAnEditableField = function(event)
+WI.isEventTargetAnEditableField = function(event)
 {
     var textInputTypes = {"text": true, "search": true, "tel": true, "url": true, "email": true, "password": true};
     if (event.target instanceof HTMLInputElement)
@@ -71,13 +71,13 @@ WebInspector.isEventTargetAnEditableField = function(event)
     if (event.target.enclosingNodeOrSelfWithClass("text-prompt"))
         return true;
 
-    if (WebInspector.isBeingEdited(event.target))
+    if (WI.isBeingEdited(event.target))
         return true;
 
     return false;
 };
 
-WebInspector.EditingConfig = class EditingConfig
+WI.EditingConfig = class EditingConfig
 {
     constructor(commitHandler, cancelHandler, context)
     {
@@ -108,12 +108,12 @@ WebInspector.EditingConfig = class EditingConfig
     }
 };
 
-WebInspector.startEditing = function(element, config)
+WI.startEditing = function(element, config)
 {
-    if (!WebInspector.markBeingEdited(element, true))
+    if (!WI.markBeingEdited(element, true))
         return null;
 
-    config = config || new WebInspector.EditingConfig(function() {}, function() {});
+    config = config || new WI.EditingConfig(function() {}, function() {});
     var committedCallback = config.commitHandler;
     var cancelledCallback = config.cancelHandler;
     var pasteCallback = config.pasteHandler;
@@ -147,7 +147,7 @@ WebInspector.startEditing = function(element, config)
 
     function cleanUpAfterEditing()
     {
-        WebInspector.markBeingEdited(element, false);
+        WI.markBeingEdited(element, false);
 
         this.classList.remove("editing");
         this.contentEditable = false;
@@ -170,7 +170,7 @@ WebInspector.startEditing = function(element, config)
         if (pasteCallback)
             element.removeEventListener("paste", pasteEventListener, true);
 
-        WebInspector.restoreFocusFromElement(element);
+        WI.restoreFocusFromElement(element);
     }
 
     function editingCancelled()
@@ -197,7 +197,7 @@ WebInspector.startEditing = function(element, config)
         var hasOnlyMetaModifierKey = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
         if (isEnterKey(event) && (!config.multiline || hasOnlyMetaModifierKey))
             return "commit";
-        else if (event.keyCode === WebInspector.KeyboardShortcut.Key.Escape.keyCode || event.keyIdentifier === "U+001B")
+        else if (event.keyCode === WI.KeyboardShortcut.Key.Escape.keyCode || event.keyIdentifier === "U+001B")
             return "cancel";
         else if (event.keyIdentifier === "U+0009") // Tab key
             return "move-" + (event.shiftKey ? "backward" : "forward");
@@ -242,7 +242,7 @@ WebInspector.startEditing = function(element, config)
             if (!range.commonAncestorContainer.isSelfOrDescendant(element))
                 return false;
 
-            let wordRange = range.startContainer.rangeOfWord(range.startOffset, WebInspector.EditingSupport.StyleValueDelimiters, element);
+            let wordRange = range.startContainer.rangeOfWord(range.startOffset, WI.EditingSupport.StyleValueDelimiters, element);
             let word = wordRange.toString();
             let wordPrefix = "";
             let wordSuffix = "";
@@ -258,7 +258,7 @@ WebInspector.startEditing = function(element, config)
                 }
             }
 
-            let matches = WebInspector.EditingSupport.CSSNumberRegex.exec(word);
+            let matches = WI.EditingSupport.CSSNumberRegex.exec(word);
             if (!matches || matches.length !== 4)
                 return;
 
@@ -325,7 +325,7 @@ WebInspector.startEditing = function(element, config)
     };
 };
 
-WebInspector.EditingSupport = {
+WI.EditingSupport = {
     StyleValueDelimiters: " \xA0\t\n\"':;,/()",
     CSSNumberRegex: /(.*?)(-?(?:\d+(?:\.\d+)?|\.\d+))(.*)/,
     NumberRegex: /^(-?(?:\d+(?:\.\d+)?|\.\d+))$/

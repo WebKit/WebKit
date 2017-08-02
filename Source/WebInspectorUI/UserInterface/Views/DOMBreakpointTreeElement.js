@@ -23,17 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends WebInspector.GeneralTreeElement
+WI.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends WI.GeneralTreeElement
 {
     constructor(breakpoint, className, title)
     {
-        console.assert(breakpoint instanceof WebInspector.DOMBreakpoint);
+        console.assert(breakpoint instanceof WI.DOMBreakpoint);
 
         if (!className)
-            className = WebInspector.BreakpointTreeElement.GenericLineIconStyleClassName;
+            className = WI.BreakpointTreeElement.GenericLineIconStyleClassName;
 
         if (!title)
-            title = WebInspector.DOMBreakpointTreeElement.displayNameForType(breakpoint.type);
+            title = WI.DOMBreakpointTreeElement.displayNameForType(breakpoint.type);
 
         super(["breakpoint", className], title, null, breakpoint);
 
@@ -41,7 +41,7 @@ WebInspector.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends W
         this._statusImageElement.classList.add("status-image", "resolved");
         this.status = this._statusImageElement;
 
-        breakpoint.addEventListener(WebInspector.DOMBreakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
+        breakpoint.addEventListener(WI.DOMBreakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
 
         this._updateStatus();
     }
@@ -51,12 +51,12 @@ WebInspector.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends W
     static displayNameForType(type)
     {
         switch (type) {
-        case WebInspector.DOMBreakpoint.Type.SubtreeModified:
-            return WebInspector.UIString("Subtree Modified");
-        case WebInspector.DOMBreakpoint.Type.AttributeModified:
-            return WebInspector.UIString("Attribute Modified");
-        case WebInspector.DOMBreakpoint.Type.NodeRemoved:
-            return WebInspector.UIString("Node Removed");
+        case WI.DOMBreakpoint.Type.SubtreeModified:
+            return WI.UIString("Subtree Modified");
+        case WI.DOMBreakpoint.Type.AttributeModified:
+            return WI.UIString("Attribute Modified");
+        case WI.DOMBreakpoint.Type.NodeRemoved:
+            return WI.UIString("Node Removed");
         default:
             console.error("Unexpected DOM breakpoint type: " + type);
             return null;
@@ -93,7 +93,7 @@ WebInspector.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends W
 
     ondelete()
     {
-        WebInspector.domDebuggerManager.removeDOMBreakpoint(this.representedObject);
+        WI.domDebuggerManager.removeDOMBreakpoint(this.representedObject);
         return true;
     }
 
@@ -112,12 +112,12 @@ WebInspector.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends W
     populateContextMenu(contextMenu, event)
     {
         let breakpoint = this.representedObject;
-        let label = breakpoint.disabled ? WebInspector.UIString("Enable Breakpoint") : WebInspector.UIString("Disable Breakpoint");
+        let label = breakpoint.disabled ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint");
         contextMenu.appendItem(label, this._toggleBreakpoint.bind(this));
 
         contextMenu.appendSeparator();
-        contextMenu.appendItem(WebInspector.UIString("Delete Breakpoint"), function() {
-            WebInspector.domDebuggerManager.removeDOMBreakpoint(breakpoint);
+        contextMenu.appendItem(WI.UIString("Delete Breakpoint"), function() {
+            WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
         });
     }
 

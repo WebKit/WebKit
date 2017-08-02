@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.XHRBreakpointPopover = class XHRBreakpointPopover extends WebInspector.Popover
+WI.XHRBreakpointPopover = class XHRBreakpointPopover extends WI.Popover
 {
     constructor(delegate)
     {
         super(delegate);
 
-        this._result = WebInspector.InputPopover.Result.None;
-        this._type = WebInspector.XHRBreakpoint.Type.Text;
+        this._result = WI.InputPopover.Result.None;
+        this._type = WI.XHRBreakpoint.Type.Text;
         this._value = null;
 
         this._codeMirror = null;
@@ -56,7 +56,7 @@ WebInspector.XHRBreakpointPopover = class XHRBreakpointPopover extends WebInspec
 
         let label = document.createElement("div");
         label.classList.add("label");
-        label.textContent = WebInspector.UIString("Break on request with URL:");
+        label.textContent = WI.UIString("Break on request with URL:");
 
         let editorWrapper = document.createElement("div");
         editorWrapper.classList.add("editor-wrapper");
@@ -71,8 +71,8 @@ WebInspector.XHRBreakpointPopover = class XHRBreakpointPopover extends WebInspec
             selectElement.append(optionElement);
         }
 
-        addOption(WebInspector.UIString("Containing"), WebInspector.XHRBreakpoint.Type.Text);
-        addOption(WebInspector.UIString("Matching"), WebInspector.XHRBreakpoint.Type.RegularExpression);
+        addOption(WI.UIString("Containing"), WI.XHRBreakpoint.Type.Text);
+        addOption(WI.UIString("Matching"), WI.XHRBreakpoint.Type.RegularExpression);
 
         selectElement.value = this._type;
         selectElement.addEventListener("change", (event) => {
@@ -96,7 +96,7 @@ WebInspector.XHRBreakpointPopover = class XHRBreakpointPopover extends WebInspec
         let editorElement = document.createElement("div");
         editorElement.classList.add("editor");
 
-        this._codeMirror = WebInspector.CodeMirrorEditor.create(editorElement, {
+        this._codeMirror = WI.CodeMirrorEditor.create(editorElement, {
             lineWrapping: false,
             matchBrackets: false,
             scrollbarStyle: null,
@@ -105,7 +105,7 @@ WebInspector.XHRBreakpointPopover = class XHRBreakpointPopover extends WebInspec
 
         this._codeMirror.addKeyMap({
             "Enter": () => {
-                this._result = WebInspector.InputPopover.Result.Committed;
+                this._result = WI.InputPopover.Result.Committed;
                 this._value = this._codeMirror.getValue().trim();
                 this.dismiss();
             },
@@ -120,11 +120,11 @@ WebInspector.XHRBreakpointPopover = class XHRBreakpointPopover extends WebInspec
     {
         let placeholder;
         let mimeType;
-        if (this._type === WebInspector.XHRBreakpoint.Type.Text) {
-            placeholder = WebInspector.UIString("Text");
+        if (this._type === WI.XHRBreakpoint.Type.Text) {
+            placeholder = WI.UIString("Text");
             mimeType = "text/plain";
         } else {
-            placeholder = WebInspector.UIString("Regular Expression");
+            placeholder = WI.UIString("Regular Expression");
             mimeType = "text/x-regex";
         }
 
@@ -137,7 +137,7 @@ WebInspector.XHRBreakpointPopover = class XHRBreakpointPopover extends WebInspec
         if (!this._targetElement)
             return;
 
-        let targetFrame = WebInspector.Rect.rectFromClientRect(this._targetElement.getBoundingClientRect());
+        let targetFrame = WI.Rect.rectFromClientRect(this._targetElement.getBoundingClientRect());
         this.present(targetFrame, this._preferredEdges);
 
         // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.

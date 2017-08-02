@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.ContentView
+WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 {
     constructor(representedObject)
     {
@@ -31,55 +31,55 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
         super(representedObject);
 
-        this._compositingBordersButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("layer-borders", WebInspector.UIString("Show compositing borders"), WebInspector.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 13, 13);
-        this._compositingBordersButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
+        this._compositingBordersButtonNavigationItem = new WI.ActivateButtonNavigationItem("layer-borders", WI.UIString("Show compositing borders"), WI.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 13, 13);
+        this._compositingBordersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
         this._compositingBordersButtonNavigationItem.enabled = !!PageAgent.getCompositingBordersVisible;
 
-        WebInspector.showPaintRectsSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
-        this._paintFlashingButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("paint-flashing", WebInspector.UIString("Enable paint flashing"), WebInspector.UIString("Disable paint flashing"), "Images/PaintFlashing.svg", 16, 16);
-        this._paintFlashingButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._togglePaintFlashing, this);
+        WI.showPaintRectsSetting.addEventListener(WI.Setting.Event.Changed, this._showPaintRectsSettingChanged, this);
+        this._paintFlashingButtonNavigationItem = new WI.ActivateButtonNavigationItem("paint-flashing", WI.UIString("Enable paint flashing"), WI.UIString("Disable paint flashing"), "Images/PaintFlashing.svg", 16, 16);
+        this._paintFlashingButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePaintFlashing, this);
         this._paintFlashingButtonNavigationItem.enabled = !!PageAgent.setShowPaintRects;
-        this._paintFlashingButtonNavigationItem.activated = PageAgent.setShowPaintRects && WebInspector.showPaintRectsSetting.value;
+        this._paintFlashingButtonNavigationItem.activated = PageAgent.setShowPaintRects && WI.showPaintRectsSetting.value;
 
-        WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
-        this._showsShadowDOMButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("shows-shadow-DOM", WebInspector.UIString("Show shadow DOM nodes"), WebInspector.UIString("Hide shadow DOM nodes"), "Images/ShadowDOM.svg", 13, 13);
-        this._showsShadowDOMButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleShowsShadowDOMSetting, this);
+        WI.showShadowDOMSetting.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
+        this._showsShadowDOMButtonNavigationItem = new WI.ActivateButtonNavigationItem("shows-shadow-DOM", WI.UIString("Show shadow DOM nodes"), WI.UIString("Hide shadow DOM nodes"), "Images/ShadowDOM.svg", 13, 13);
+        this._showsShadowDOMButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowsShadowDOMSetting, this);
         this._showShadowDOMSettingChanged();
 
-        WebInspector.showPrintStylesSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showPrintStylesSettingChanged, this);
-        this._showPrintStylesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("print-styles", WebInspector.UIString("Force Print Media Styles"), WebInspector.UIString("Use Default Media Styles"), "Images/Printer.svg", 16, 16);
-        this._showPrintStylesButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._togglePrintStylesSetting, this);
+        WI.showPrintStylesSetting.addEventListener(WI.Setting.Event.Changed, this._showPrintStylesSettingChanged, this);
+        this._showPrintStylesButtonNavigationItem = new WI.ActivateButtonNavigationItem("print-styles", WI.UIString("Force Print Media Styles"), WI.UIString("Use Default Media Styles"), "Images/Printer.svg", 16, 16);
+        this._showPrintStylesButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrintStylesSetting, this);
         this._showPrintStylesSettingChanged();
 
         this.element.classList.add("dom-tree");
         this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
-        this._domTreeOutline = new WebInspector.DOMTreeOutline(true, true, true);
-        this._domTreeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementAdded, this._domTreeElementAdded, this);
-        this._domTreeOutline.addEventListener(WebInspector.DOMTreeOutline.Event.SelectedNodeChanged, this._selectedNodeDidChange, this);
+        this._domTreeOutline = new WI.DOMTreeOutline(true, true, true);
+        this._domTreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._domTreeElementAdded, this);
+        this._domTreeOutline.addEventListener(WI.DOMTreeOutline.Event.SelectedNodeChanged, this._selectedNodeDidChange, this);
         this._domTreeOutline.wireToDomAgent();
         this._domTreeOutline.editable = true;
         this.element.appendChild(this._domTreeOutline.element);
 
-        WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.AttributeModified, this._domNodeChanged, this);
-        WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.AttributeRemoved, this._domNodeChanged, this);
-        WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.CharacterDataModified, this._domNodeChanged, this);
+        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.AttributeModified, this._domNodeChanged, this);
+        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.AttributeRemoved, this._domNodeChanged, this);
+        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.CharacterDataModified, this._domNodeChanged, this);
 
-        this._lastSelectedNodePathSetting = new WebInspector.Setting("last-selected-node-path", null);
+        this._lastSelectedNodePathSetting = new WI.Setting("last-selected-node-path", null);
 
         this._numberOfSearchResults = null;
 
         this._breakpointGutterEnabled = false;
         this._pendingBreakpointNodeIdentifiers = new Set;
 
-        if (WebInspector.domDebuggerManager.supported) {
-            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange, this._breakpointsEnabledDidChange, this);
+        if (WI.domDebuggerManager.supported) {
+            WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this._breakpointsEnabledDidChange, this);
 
-            WebInspector.domDebuggerManager.addEventListener(WebInspector.DOMDebuggerManager.Event.DOMBreakpointAdded, this._domBreakpointAddedOrRemoved, this);
-            WebInspector.domDebuggerManager.addEventListener(WebInspector.DOMDebuggerManager.Event.DOMBreakpointRemoved, this._domBreakpointAddedOrRemoved, this);
+            WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointAdded, this._domBreakpointAddedOrRemoved, this);
+            WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, this._domBreakpointAddedOrRemoved, this);
 
-            WebInspector.DOMBreakpoint.addEventListener(WebInspector.DOMBreakpoint.Event.DisabledStateDidChange, this._domBreakpointDisabledStateDidChange, this);
-            WebInspector.DOMBreakpoint.addEventListener(WebInspector.DOMBreakpoint.Event.ResolvedStateDidChange, this._domBreakpointResolvedStateDidChange, this);
+            WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.DisabledStateDidChange, this._domBreakpointDisabledStateDidChange, this);
+            WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.ResolvedStateDidChange, this._domBreakpointResolvedStateDidChange, this);
 
             this._breakpointsEnabledDidChange();
         }
@@ -120,7 +120,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
     {
         super.shown();
 
-        this._domTreeOutline.setVisible(true, WebInspector.isConsoleFocused());
+        this._domTreeOutline.setVisible(true, WI.isConsoleFocused());
         this._updateCompositingBordersButtonToMatchPageSettings();
 
         if (!this._domTreeOutline.rootDOMNode)
@@ -133,7 +133,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
     {
         super.hidden();
 
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
+        WI.domTreeManager.hideDOMNodeHighlight();
         this._domTreeOutline.setVisible(false);
     }
 
@@ -141,12 +141,12 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
     {
         super.closed();
 
-        WebInspector.showPaintRectsSetting.removeEventListener(null, null, this);
-        WebInspector.showShadowDOMSetting.removeEventListener(null, null, this);
-        WebInspector.debuggerManager.removeEventListener(null, null, this);
-        WebInspector.domTreeManager.removeEventListener(null, null, this);
-        WebInspector.domDebuggerManager.removeEventListener(null, null, this);
-        WebInspector.DOMBreakpoint.removeEventListener(null, null, this);
+        WI.showPaintRectsSetting.removeEventListener(null, null, this);
+        WI.showShadowDOMSetting.removeEventListener(null, null, this);
+        WI.debuggerManager.removeEventListener(null, null, this);
+        WI.domTreeManager.removeEventListener(null, null, this);
+        WI.domDebuggerManager.removeEventListener(null, null, this);
+        WI.DOMBreakpoint.removeEventListener(null, null, this);
 
         this._domTreeOutline.close();
         this._pendingBreakpointNodeIdentifiers.clear();
@@ -165,8 +165,8 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
                 continue;
             }
 
-            var pathComponent = new WebInspector.DOMTreeElementPathComponent(treeElement, treeElement.representedObject);
-            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.Clicked, this._pathComponentSelected, this);
+            var pathComponent = new WI.DOMTreeElementPathComponent(treeElement, treeElement.representedObject);
+            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.Clicked, this._pathComponentSelected, this);
             pathComponents.unshift(pathComponent);
             treeElement = treeElement.parent;
         }
@@ -205,14 +205,14 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
     get supportsSave()
     {
-        return WebInspector.canArchiveMainFrame();
+        return WI.canArchiveMainFrame();
     }
 
     get saveData()
     {
         function saveHandler(forceSaveAs)
         {
-            WebInspector.archiveMainFrame();
+            WI.archiveMainFrame();
         }
 
         return {customSaveHandler: saveHandler};
@@ -267,7 +267,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
             this._searchIdentifier = searchIdentifier;
             this._numberOfSearchResults = resultsCount;
 
-            this.dispatchEventToListeners(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange);
+            this.dispatchEventToListeners(WI.ContentView.Event.NumberOfSearchResultsDidChange);
 
             this._showSearchHighlights();
 
@@ -355,7 +355,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
             console.assert(nodeIdentifiers.length === 1);
 
-            var domNode = WebInspector.domTreeManager.nodeForId(nodeIdentifiers[0]);
+            var domNode = WI.domTreeManager.nodeForId(nodeIdentifiers[0]);
             console.assert(domNode);
             if (!domNode)
                 return;
@@ -372,7 +372,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
     _restoreSelectedNodeAfterUpdate(documentURL, defaultNode)
     {
-        if (!WebInspector.domTreeManager.restoreSelectedNodeIsAllowed)
+        if (!WI.domTreeManager.restoreSelectedNodeIsAllowed)
             return;
 
         function selectNode(lastSelectedNode)
@@ -385,7 +385,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
                 return;
 
             this._dontSetLastSelectedNodePath = true;
-            this.selectAndRevealDOMNode(nodeToFocus, WebInspector.isConsoleFocused());
+            this.selectAndRevealDOMNode(nodeToFocus, WI.isConsoleFocused());
             this._dontSetLastSelectedNodePath = false;
 
             // If this wasn't the last selected node, then expand it.
@@ -395,14 +395,14 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
         function selectLastSelectedNode(nodeId)
         {
-            if (!WebInspector.domTreeManager.restoreSelectedNodeIsAllowed)
+            if (!WI.domTreeManager.restoreSelectedNodeIsAllowed)
                 return;
 
-            selectNode.call(this, WebInspector.domTreeManager.nodeForId(nodeId));
+            selectNode.call(this, WI.domTreeManager.nodeForId(nodeId));
         }
 
         if (documentURL && this._lastSelectedNodePathSetting.value && this._lastSelectedNodePathSetting.value.path && this._lastSelectedNodePathSetting.value.url === documentURL.hash)
-            WebInspector.domTreeManager.pushNodeByPathToFrontend(this._lastSelectedNodePathSetting.value.path, selectLastSelectedNode.bind(this));
+            WI.domTreeManager.pushNodeByPathToFrontend(this._lastSelectedNodePathSetting.value.path, selectLastSelectedNode.bind(this));
         else
             selectNode.call(this);
     }
@@ -414,8 +414,8 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
         let treeElement = event.data.element;
         let node = treeElement.representedObject;
-        console.assert(node instanceof WebInspector.DOMNode);
-        if (!(node instanceof WebInspector.DOMNode))
+        console.assert(node instanceof WI.DOMNode);
+        if (!(node instanceof WI.DOMNode))
             return;
 
         if (!this._pendingBreakpointNodeIdentifiers.delete(node.id))
@@ -428,12 +428,12 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
     {
         var selectedDOMNode = this._domTreeOutline.selectedDOMNode();
         if (selectedDOMNode && !this._dontSetLastSelectedNodePath)
-            this._lastSelectedNodePathSetting.value = {url: WebInspector.frameResourceManager.mainFrame.url.hash, path: selectedDOMNode.path()};
+            this._lastSelectedNodePathSetting.value = {url: WI.frameResourceManager.mainFrame.url.hash, path: selectedDOMNode.path()};
 
         if (selectedDOMNode)
             ConsoleAgent.addInspectedNode(selectedDOMNode.id);
 
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
     _pathComponentSelected(event)
@@ -441,8 +441,8 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
         if (!event.data.pathComponent)
             return;
 
-        console.assert(event.data.pathComponent instanceof WebInspector.DOMTreeElementPathComponent);
-        console.assert(event.data.pathComponent.domTreeElement instanceof WebInspector.DOMTreeElement);
+        console.assert(event.data.pathComponent instanceof WI.DOMTreeElementPathComponent);
+        console.assert(event.data.pathComponent.domTreeElement instanceof WI.DOMTreeElement);
 
         this._domTreeOutline.selectDOMNode(event.data.pathComponent.domTreeElement.representedObject, true);
     }
@@ -453,7 +453,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
         if (selectedDOMNode !== event.data.node)
             return;
 
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
     _mouseWasClicked(event)
@@ -466,7 +466,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
         event.preventDefault();
         event.stopPropagation();
 
-        if (WebInspector.isBeingEdited(anchorElement)) {
+        if (WI.isBeingEdited(anchorElement)) {
             // Don't follow the link when it is being edited.
             return;
         }
@@ -483,16 +483,16 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
         function followLink()
         {
-            // Since followLink is delayed, the call to WebInspector.openURL can't look at window.event
+            // Since followLink is delayed, the call to WI.openURL can't look at window.event
             // to see if the command key is down like it normally would. So we need to do that check
-            // before calling WebInspector.openURL.
+            // before calling WI.openURL.
             const options = {
                 alwaysOpenExternally: event ? event.metaKey : false,
                 lineNumber: anchorElement.lineNumber,
                 ignoreNetworkTab: true,
                 ignoreSearchTab: true,
             };
-            WebInspector.openURL(anchorElement.href, this._frame, options);
+            WI.openURL(anchorElement.href, this._frame, options);
         }
 
         // Start a timeout since this is a single click, if the timeout is canceled before it fires,
@@ -512,7 +512,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
     _togglePaintFlashing(event)
     {
-        WebInspector.showPaintRectsSetting.value = !WebInspector.showPaintRectsSetting.value;
+        WI.showPaintRectsSetting.value = !WI.showPaintRectsSetting.value;
     }
 
     _updateCompositingBordersButtonToMatchPageSettings()
@@ -531,34 +531,34 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
     {
         console.assert(PageAgent.setShowPaintRects);
 
-        this._paintFlashingButtonNavigationItem.activated = WebInspector.showPaintRectsSetting.value;
+        this._paintFlashingButtonNavigationItem.activated = WI.showPaintRectsSetting.value;
 
         PageAgent.setShowPaintRects(this._paintFlashingButtonNavigationItem.activated);
     }
 
     _showShadowDOMSettingChanged(event)
     {
-        this._showsShadowDOMButtonNavigationItem.activated = WebInspector.showShadowDOMSetting.value;
+        this._showsShadowDOMButtonNavigationItem.activated = WI.showShadowDOMSetting.value;
     }
 
     _toggleShowsShadowDOMSetting(event)
     {
-        WebInspector.showShadowDOMSetting.value = !WebInspector.showShadowDOMSetting.value;
+        WI.showShadowDOMSetting.value = !WI.showShadowDOMSetting.value;
     }
 
     _showPrintStylesSettingChanged(event)
     {
-        this._showPrintStylesButtonNavigationItem.activated = WebInspector.showPrintStylesSetting.value;
+        this._showPrintStylesButtonNavigationItem.activated = WI.showPrintStylesSetting.value;
     }
 
     _togglePrintStylesSetting(event)
     {
-        WebInspector.showPrintStylesSetting.value = !WebInspector.showPrintStylesSetting.value;
+        WI.showPrintStylesSetting.value = !WI.showPrintStylesSetting.value;
 
-        let mediaType = WebInspector.showPrintStylesSetting.value ? "print" : "";
+        let mediaType = WI.showPrintStylesSetting.value ? "print" : "";
         PageAgent.setEmulatedMedia(mediaType);
 
-        WebInspector.cssStyleManager.mediaTypeChanged();
+        WI.cssStyleManager.mediaTypeChanged();
     }
 
     _showSearchHighlights()
@@ -579,7 +579,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
             console.assert(nodeIdentifiers.length === this._numberOfSearchResults);
 
             for (var i = 0; i < nodeIdentifiers.length; ++i) {
-                var domNode = WebInspector.domTreeManager.nodeForId(nodeIdentifiers[i]);
+                var domNode = WI.domTreeManager.nodeForId(nodeIdentifiers[i]);
                 console.assert(domNode);
                 if (!domNode)
                     continue;
@@ -629,7 +629,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
     _updateBreakpointStatus(nodeIdentifier)
     {
-        let domNode = WebInspector.domTreeManager.nodeForId(nodeIdentifier);
+        let domNode = WI.domTreeManager.nodeForId(nodeIdentifier);
         if (!domNode)
             return;
 
@@ -639,16 +639,16 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
             return;
         }
 
-        let breakpoints = WebInspector.domDebuggerManager.domBreakpointsForNode(domNode);
+        let breakpoints = WI.domDebuggerManager.domBreakpointsForNode(domNode);
         if (!breakpoints.length) {
-            treeElement.breakpointStatus = WebInspector.DOMTreeElement.BreakpointStatus.None;
+            treeElement.breakpointStatus = WI.DOMTreeElement.BreakpointStatus.None;
             return;
         }
 
         this.breakpointGutterEnabled = true;
 
         let disabled = breakpoints.some((item) => item.disabled);
-        treeElement.breakpointStatus = disabled ? WebInspector.DOMTreeElement.BreakpointStatus.DisabledBreakpoint : WebInspector.DOMTreeElement.BreakpointStatus.Breakpoint;
+        treeElement.breakpointStatus = disabled ? WI.DOMTreeElement.BreakpointStatus.DisabledBreakpoint : WI.DOMTreeElement.BreakpointStatus.Breakpoint;
     }
 
     _restoreBreakpointsAfterUpdate()
@@ -658,7 +658,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
         this.breakpointGutterEnabled = false;
 
         let updatedNodes = new Set;
-        for (let breakpoint of WebInspector.domDebuggerManager.domBreakpoints) {
+        for (let breakpoint of WI.domDebuggerManager.domBreakpoints) {
             if (updatedNodes.has(breakpoint.domNodeIdentifier))
                 continue;
 
@@ -668,6 +668,6 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
 
     _breakpointsEnabledDidChange(event)
     {
-        this._domTreeOutline.element.classList.toggle("breakpoints-disabled", !WebInspector.debuggerManager.breakpointsEnabled);
+        this._domTreeOutline.element.classList.toggle("breakpoints-disabled", !WI.debuggerManager.breakpointsEnabled);
     }
 };

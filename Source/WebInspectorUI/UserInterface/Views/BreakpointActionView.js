@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspector.Object
+WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 {
     constructor(action, delegate, omitFocus)
     {
@@ -45,10 +45,10 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
         var picker = header.appendChild(document.createElement("select"));
         picker.addEventListener("change", this._pickerChanged.bind(this));
 
-        for (var key in WebInspector.BreakpointAction.Type) {
-            var type = WebInspector.BreakpointAction.Type[key];
+        for (var key in WI.BreakpointAction.Type) {
+            var type = WI.BreakpointAction.Type[key];
             var option = document.createElement("option");
-            option.textContent = WebInspector.BreakpointActionView.displayStringForType(type);
+            option.textContent = WI.BreakpointActionView.displayStringForType(type);
             option.selected = this._action.type === type;
             option.value = type;
             picker.add(option);
@@ -60,12 +60,12 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
         let appendActionButton = buttonContainerElement.appendChild(document.createElement("button"));
         appendActionButton.className = "breakpoint-action-append-button";
         appendActionButton.addEventListener("click", this._appendActionButtonClicked.bind(this));
-        appendActionButton.title = WebInspector.UIString("Add new breakpoint action after this action");
+        appendActionButton.title = WI.UIString("Add new breakpoint action after this action");
 
         let removeActionButton = buttonContainerElement.appendChild(document.createElement("button"));
         removeActionButton.className = "breakpoint-action-remove-button";
         removeActionButton.addEventListener("click", this._removeAction.bind(this));
-        removeActionButton.title = WebInspector.UIString("Remove this breakpoint action");
+        removeActionButton.title = WI.UIString("Remove this breakpoint action");
 
         this._bodyElement = this._element.appendChild(document.createElement("div"));
         this._bodyElement.className = "breakpoint-action-block-body";
@@ -78,14 +78,14 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
     static displayStringForType(type)
     {
         switch (type) {
-        case WebInspector.BreakpointAction.Type.Log:
-            return WebInspector.UIString("Log Message");
-        case WebInspector.BreakpointAction.Type.Evaluate:
-            return WebInspector.UIString("Evaluate JavaScript");
-        case WebInspector.BreakpointAction.Type.Sound:
-            return WebInspector.UIString("Play Sound");
-        case WebInspector.BreakpointAction.Type.Probe:
-            return WebInspector.UIString("Probe Expression");
+        case WI.BreakpointAction.Type.Log:
+            return WI.UIString("Log Message");
+        case WI.BreakpointAction.Type.Evaluate:
+            return WI.UIString("Evaluate JavaScript");
+        case WI.BreakpointAction.Type.Sound:
+            return WI.UIString("Play Sound");
+        case WI.BreakpointAction.Type.Probe:
+            return WI.UIString("Probe Expression");
         default:
             console.assert(false);
             return "";
@@ -131,11 +131,11 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
         this._bodyElement.removeChildren();
 
         switch (this._action.type) {
-        case WebInspector.BreakpointAction.Type.Log:
+        case WI.BreakpointAction.Type.Log:
             this._bodyElement.hidden = false;
 
             var input = this._bodyElement.appendChild(document.createElement("input"));
-            input.placeholder = WebInspector.UIString("Message");
+            input.placeholder = WI.UIString("Message");
             input.addEventListener("change", this._logInputChanged.bind(this));
             input.value = this._action.data || "";
             input.spellcheck = false;
@@ -145,18 +145,18 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
             var descriptionElement = this._bodyElement.appendChild(document.createElement("div"));
             descriptionElement.classList.add("description");
             descriptionElement.setAttribute("dir", "ltr");
-            descriptionElement.textContent = WebInspector.UIString("${expr} = expression");
+            descriptionElement.textContent = WI.UIString("${expr} = expression");
             break;
 
-        case WebInspector.BreakpointAction.Type.Evaluate:
-        case WebInspector.BreakpointAction.Type.Probe:
+        case WI.BreakpointAction.Type.Evaluate:
+        case WI.BreakpointAction.Type.Probe:
             this._bodyElement.hidden = false;
 
             var editorElement = this._bodyElement.appendChild(document.createElement("div"));
             editorElement.classList.add("breakpoint-action-eval-editor");
-            editorElement.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
+            editorElement.classList.add(WI.SyntaxHighlightedStyleClassName);
 
-            this._codeMirror = WebInspector.CodeMirrorEditor.create(editorElement, {
+            this._codeMirror = WI.CodeMirrorEditor.create(editorElement, {
                 lineWrapping: true,
                 mode: "text/javascript",
                 indentWithTabs: true,
@@ -170,8 +170,8 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
 
             this._codeMirrorViewport = {from: null, to: null};
 
-            var completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror);
-            completionController.addExtendedCompletionProvider("javascript", WebInspector.javaScriptRuntimeCompletionProvider);
+            var completionController = new WI.CodeMirrorCompletionController(this._codeMirror);
+            completionController.addExtendedCompletionProvider("javascript", WI.javaScriptRuntimeCompletionProvider);
 
             // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
             setTimeout(() => {
@@ -182,7 +182,7 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
 
             break;
 
-        case WebInspector.BreakpointAction.Type.Sound:
+        case WI.BreakpointAction.Type.Sound:
             this._bodyElement.hidden = true;
             break;
 

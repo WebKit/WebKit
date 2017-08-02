@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseObserver = class DatabaseObserver
+WI.DatabaseObserver = class DatabaseObserver
 {
     // Events defined by the "Database" domain.
 
     addDatabase(database)
     {
-        WebInspector.storageManager.databaseWasAdded(database.id, database.domain, database.name, database.version);
+        WI.storageManager.databaseWasAdded(database.id, database.domain, database.name, database.version);
     }
 };

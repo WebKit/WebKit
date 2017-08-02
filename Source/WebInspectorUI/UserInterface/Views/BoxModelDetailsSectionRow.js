@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WebInspector.DetailsSectionRow
+WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.DetailsSectionRow
 {
     constructor()
     {
-        super(WebInspector.UIString("No Box Model Information"));
+        super(WI.UIString("No Box Model Information"));
 
         this.element.classList.add("box-model");
 
@@ -44,11 +44,11 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
     set nodeStyles(nodeStyles)
     {
         if (this._nodeStyles && this._nodeStyles.computedStyle)
-            this._nodeStyles.computedStyle.removeEventListener(WebInspector.CSSStyleDeclaration.Event.PropertiesChanged, this._refresh, this);
+            this._nodeStyles.computedStyle.removeEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, this._refresh, this);
 
         this._nodeStyles = nodeStyles;
         if (this._nodeStyles && this._nodeStyles.computedStyle)
-            this._nodeStyles.computedStyle.addEventListener(WebInspector.CSSStyleDeclaration.Event.PropertiesChanged, this._refresh, this);
+            this._nodeStyles.computedStyle.addEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, this._refresh, this);
 
         this._refresh();
     }
@@ -94,10 +94,10 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             if (this._highlightMode === mode)
                 return;
             this._highlightMode = mode;
-            WebInspector.domTreeManager.highlightDOMNode(nodeId, mode);
+            WI.domTreeManager.highlightDOMNode(nodeId, mode);
         } else {
             this._highlightMode = null;
-            WebInspector.domTreeManager.hideDOMNodeHighlight();
+            WI.domTreeManager.hideDOMNodeHighlight();
         }
 
         for (var i = 0; this._boxElements && i < this._boxElements.length; ++i) {
@@ -246,7 +246,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
 
     _startEditing(targetElement, box, styleProperty, computedStyle)
     {
-        if (WebInspector.isBeingEdited(targetElement))
+        if (WI.isBeingEdited(targetElement))
             return;
 
         // If the target element has a title use it as the editing value
@@ -261,8 +261,8 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
 
         this._isEditingMetrics = true;
 
-        var config = new WebInspector.EditingConfig(this._editingCommitted.bind(this), this._editingCancelled.bind(this), context);
-        WebInspector.startEditing(targetElement, config);
+        var config = new WI.EditingConfig(this._editingCommitted.bind(this), this._editingCancelled.bind(this), context);
+        WI.startEditing(targetElement, config);
 
         window.getSelection().setBaseAndExtent(targetElement, 0, targetElement, 1);
     }
@@ -287,7 +287,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
         // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
         // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
         var result = Number((number + changeAmount).toFixed(6));
-        if (!String(result).match(WebInspector.EditingSupport.NumberRegex))
+        if (!String(result).match(WI.EditingSupport.NumberRegex))
             return null;
 
         return result;
@@ -309,10 +309,10 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             return;
 
         var originalValue = element.textContent;
-        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.EditingSupport.StyleValueDelimiters, element);
+        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WI.EditingSupport.StyleValueDelimiters, element);
         var wordString = wordRange.toString();
 
-        var matches = WebInspector.EditingSupport.NumberRegex.exec(wordString);
+        var matches = WI.EditingSupport.NumberRegex.exec(wordString);
         var replacementString;
         if (matches && matches.length) {
             var prefix = matches[1];
@@ -423,7 +423,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             object.release();
         }
 
-        WebInspector.RemoteObject.resolveNode(this._nodeStyles.node, "", resolvedNode.bind(this));
+        WI.RemoteObject.resolveNode(this._nodeStyles.node, "", resolvedNode.bind(this));
     }
 
     _editingCommitted(element, userInput, previousContent, context)

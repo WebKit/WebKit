@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.saveDataToFile = function(saveData, forceSaveAs)
+WI.saveDataToFile = function(saveData, forceSaveAs)
 {
     console.assert(saveData);
     if (!saveData)
@@ -41,10 +41,10 @@ WebInspector.saveDataToFile = function(saveData, forceSaveAs)
     let url = saveData.url || "";
     let suggestedName = parseURL(url).lastPathComponent;
     if (!suggestedName) {
-        suggestedName = WebInspector.UIString("Untitled");
+        suggestedName = WI.UIString("Untitled");
         let dataURLTypeMatch = /^data:([^;]+)/.exec(url);
         if (dataURLTypeMatch)
-            suggestedName += WebInspector.fileExtensionForMIMEType(dataURLTypeMatch[1]) || "";
+            suggestedName += WI.fileExtensionForMIMEType(dataURLTypeMatch[1]) || "";
     }
 
     if (typeof saveData.content === "string") {
@@ -63,7 +63,7 @@ WebInspector.saveDataToFile = function(saveData, forceSaveAs)
     });
 };
 
-WebInspector.loadDataFromFile = function(callback)
+WI.loadDataFromFile = function(callback)
 {
     let inputElement = document.createElement("input");
     inputElement.type = "file";

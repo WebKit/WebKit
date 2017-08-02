@@ -23,13 +23,13 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
+WI.ProfileView = class ProfileView extends WI.ContentView
 {
     constructor(callingContextTree, extraArguments)
     {
         super(callingContextTree);
 
-        console.assert(callingContextTree instanceof WebInspector.CallingContextTree);
+        console.assert(callingContextTree instanceof WI.CallingContextTree);
 
         this._startTime = 0;
         this._endTime = Infinity;
@@ -41,32 +41,32 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
 
         let columns = {
             totalTime: {
-                title: WebInspector.UIString("Total Time"),
+                title: WI.UIString("Total Time"),
                 width: "120px",
                 sortable: true,
                 aligned: "right",
             },
             selfTime: {
-                title: WebInspector.UIString("Self Time"),
+                title: WI.UIString("Self Time"),
                 width: "75px",
                 sortable: true,
                 aligned: "right",
             },
             function: {
-                title: WebInspector.UIString("Function"),
+                title: WI.UIString("Function"),
                 disclosure: true,
             },
         };
 
-        this._dataGrid = new WebInspector.DataGrid(columns);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._dataGridSortChanged, this);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.ExpandedNode, this._dataGridNodeExpanded, this);
+        this._dataGrid = new WI.DataGrid(columns);
+        this._dataGrid.addEventListener(WI.DataGrid.Event.SortChanged, this._dataGridSortChanged, this);
+        this._dataGrid.addEventListener(WI.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+        this._dataGrid.addEventListener(WI.DataGrid.Event.ExpandedNode, this._dataGridNodeExpanded, this);
         this._dataGrid.element.addEventListener("mouseover", this._mouseOverDataGrid.bind(this));
         this._dataGrid.element.addEventListener("mouseleave", this._mouseLeaveDataGrid.bind(this));
         this._dataGrid.indentWidth = 20;
         this._dataGrid.sortColumnIdentifier = "totalTime";
-        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Descending;
+        this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Descending;
         this._dataGrid.createSettings("profile-view");
 
         // Currently we create a new ProfileView for each CallingContextTree, so
@@ -127,8 +127,8 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
             for (let profileDataGridNode of this._profileDataGridTree.focusNodes) {
                 let displayName = profileDataGridNode.displayName();
                 let className = profileDataGridNode.iconClassName();
-                let pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, profileDataGridNode);
-                pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.Clicked, this._pathComponentClicked, this);
+                let pathComponent = new WI.HierarchicalPathComponent(displayName, className, profileDataGridNode);
+                pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.Clicked, this._pathComponentClicked, this);
                 pathComponents.push(pathComponent);
             }
         }
@@ -142,14 +142,14 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
     {
         let hadFocusNodes = this.hasFocusNodes();
 
-        let sortComparator = WebInspector.ProfileDataGridTree.buildSortComparator(this._dataGrid.sortColumnIdentifier, this._dataGrid.sortOrder);
-        this._profileDataGridTree = new WebInspector.ProfileDataGridTree(this._callingContextTree, this._startTime, this._endTime, sortComparator);
-        this._profileDataGridTree.addEventListener(WebInspector.ProfileDataGridTree.Event.FocusChanged, this._dataGridTreeFocusChanged, this);
-        this._profileDataGridTree.addEventListener(WebInspector.ProfileDataGridTree.Event.ModifiersChanged, this._dataGridTreeModifiersChanged, this);
+        let sortComparator = WI.ProfileDataGridTree.buildSortComparator(this._dataGrid.sortColumnIdentifier, this._dataGrid.sortOrder);
+        this._profileDataGridTree = new WI.ProfileDataGridTree(this._callingContextTree, this._startTime, this._endTime, sortComparator);
+        this._profileDataGridTree.addEventListener(WI.ProfileDataGridTree.Event.FocusChanged, this._dataGridTreeFocusChanged, this);
+        this._profileDataGridTree.addEventListener(WI.ProfileDataGridTree.Event.ModifiersChanged, this._dataGridTreeModifiersChanged, this);
         this._repopulateDataGridFromTree();
 
         if (hadFocusNodes)
-            this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+            this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
     _repopulateDataGridFromTree()
@@ -192,7 +192,7 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
         this._repopulateDataGridFromTree();
         this._profileDataGridTree.refresh();
 
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
     _dataGridTreeModifiersChanged(event)
@@ -205,7 +205,7 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
         if (!this._profileDataGridTree)
             return;
 
-        this._profileDataGridTree.sortComparator = WebInspector.ProfileDataGridTree.buildSortComparator(this._dataGrid.sortColumnIdentifier, this._dataGrid.sortOrder);
+        this._profileDataGridTree.sortComparator = WI.ProfileDataGridTree.buildSortComparator(this._dataGrid.sortColumnIdentifier, this._dataGrid.sortOrder);
         this._repopulateDataGridFromTree();
     }
 
@@ -213,14 +213,14 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
     {
         let oldSelectedNode = event.data.oldSelectedNode;
         if (oldSelectedNode) {
-            this._removeGuidanceElement(WebInspector.ProfileView.GuidanceType.Selected, oldSelectedNode);
-            oldSelectedNode.forEachChildInSubtree((node) => this._removeGuidanceElement(WebInspector.ProfileView.GuidanceType.Selected, node));
+            this._removeGuidanceElement(WI.ProfileView.GuidanceType.Selected, oldSelectedNode);
+            oldSelectedNode.forEachChildInSubtree((node) => this._removeGuidanceElement(WI.ProfileView.GuidanceType.Selected, node));
         }
 
         let newSelectedNode = this._dataGrid.selectedNode;
         if (newSelectedNode) {
-            this._removeGuidanceElement(WebInspector.ProfileView.GuidanceType.Selected, newSelectedNode);
-            newSelectedNode.forEachChildInSubtree((node) => this._appendGuidanceElement(WebInspector.ProfileView.GuidanceType.Selected, node, newSelectedNode));
+            this._removeGuidanceElement(WI.ProfileView.GuidanceType.Selected, newSelectedNode);
+            newSelectedNode.forEachChildInSubtree((node) => this._appendGuidanceElement(WI.ProfileView.GuidanceType.Selected, node, newSelectedNode));
 
             this._sharedData.selectedNodeHash = newSelectedNode.callingContextTreeNode.hash;
         }
@@ -232,12 +232,12 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
 
         if (this._dataGrid.selectedNode) {
             if (expandedNode.isInSubtreeOfNode(this._dataGrid.selectedNode))
-                expandedNode.forEachImmediateChild((node) => this._appendGuidanceElement(WebInspector.ProfileView.GuidanceType.Selected, node, this._dataGrid.selectedNode));
+                expandedNode.forEachImmediateChild((node) => this._appendGuidanceElement(WI.ProfileView.GuidanceType.Selected, node, this._dataGrid.selectedNode));
         }
 
         if (this._hoveredDataGridNode) {
             if (expandedNode.isInSubtreeOfNode(this._hoveredDataGridNode))
-                expandedNode.forEachImmediateChild((node) => this._appendGuidanceElement(WebInspector.ProfileView.GuidanceType.Hover, node, this._hoveredDataGridNode));
+                expandedNode.forEachImmediateChild((node) => this._appendGuidanceElement(WI.ProfileView.GuidanceType.Hover, node, this._hoveredDataGridNode));
         }
     }
 
@@ -248,15 +248,15 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
             return;
 
         if (this._hoveredDataGridNode) {
-            this._removeGuidanceElement(WebInspector.ProfileView.GuidanceType.Hover, this._hoveredDataGridNode);
-            this._hoveredDataGridNode.forEachChildInSubtree((node) => this._removeGuidanceElement(WebInspector.ProfileView.GuidanceType.Hover, node));
+            this._removeGuidanceElement(WI.ProfileView.GuidanceType.Hover, this._hoveredDataGridNode);
+            this._hoveredDataGridNode.forEachChildInSubtree((node) => this._removeGuidanceElement(WI.ProfileView.GuidanceType.Hover, node));
         }
 
         this._hoveredDataGridNode = hoveredDataGridNode;
 
         if (this._hoveredDataGridNode) {
-            this._appendGuidanceElement(WebInspector.ProfileView.GuidanceType.Hover, this._hoveredDataGridNode, this._hoveredDataGridNode);
-            this._hoveredDataGridNode.forEachChildInSubtree((node) => this._appendGuidanceElement(WebInspector.ProfileView.GuidanceType.Hover, node, this._hoveredDataGridNode));
+            this._appendGuidanceElement(WI.ProfileView.GuidanceType.Hover, this._hoveredDataGridNode, this._hoveredDataGridNode);
+            this._hoveredDataGridNode.forEachChildInSubtree((node) => this._appendGuidanceElement(WI.ProfileView.GuidanceType.Hover, node, this._hoveredDataGridNode));
         }
     }
 
@@ -265,8 +265,8 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
         if (!this._hoveredDataGridNode)
             return;
 
-        this._removeGuidanceElement(WebInspector.ProfileView.GuidanceType.Hover, this._hoveredDataGridNode);
-        this._hoveredDataGridNode.forEachChildInSubtree((node) => this._removeGuidanceElement(WebInspector.ProfileView.GuidanceType.Hover, node));
+        this._removeGuidanceElement(WI.ProfileView.GuidanceType.Hover, this._hoveredDataGridNode);
+        this._hoveredDataGridNode.forEachChildInSubtree((node) => this._removeGuidanceElement(WI.ProfileView.GuidanceType.Hover, node));
 
         this._hoveredDataGridNode = null;
     }
@@ -302,7 +302,7 @@ WebInspector.ProfileView = class ProfileView extends WebInspector.ContentView
     }
 };
 
-WebInspector.ProfileView.GuidanceType = {
+WI.ProfileView.GuidanceType = {
     Selected: "selected",
     Hover: "hover",
 };

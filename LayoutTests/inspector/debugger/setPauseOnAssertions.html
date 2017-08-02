@@ -11,7 +11,7 @@ function triggerAssertions() {
 function test()
 {
     // Pause on all exceptions should not affect pausing on assertions.
-    WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
+    WI.debuggerManager.allExceptionsBreakpoint.disabled = false;
 
     let suite = InspectorTest.createAsyncSuite("Debugger.setPauseOnAssertions");
 
@@ -19,16 +19,16 @@ function test()
         name: "Debugger.setPauseOnAssertions.Disabled",
         description: "Do not pause on assertions when disabled.",
         test(resolve, reject) {
-            WebInspector.debuggerManager.assertionsBreakpoint.disabled = true;
+            WI.debuggerManager.assertionsBreakpoint.disabled = true;
 
-            let listener = WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 InspectorTest.fail("Should not have paused.");
                 reject();
             });
 
             InspectorTest.evaluateInPage("triggerAssertions()", () => {
                 InspectorTest.pass("Should not pause.");
-                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.Paused, listener);
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
                 resolve();
             });
         }
@@ -38,12 +38,12 @@ function test()
         name: "Debugger.setPauseOnAssertions.Enabled",
         description: "Pause on assertions when enabled.",
         test(resolve, reject) {
-            WebInspector.debuggerManager.assertionsBreakpoint.disabled = false;
+            WI.debuggerManager.assertionsBreakpoint.disabled = false;
 
             let didPause = false;
-            let listener = WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 InspectorTest.pass("Should paused.");
-                WebInspector.debuggerManager.resume();
+                WI.debuggerManager.resume();
                 didPause = true;
             });
 

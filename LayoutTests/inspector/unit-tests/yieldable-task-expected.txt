@@ -1,4 +1,4 @@
-Testing WebInspector.YieldableTask.
+Testing WI.YieldableTask.
 
 
 == Running test suite: YieldableTask

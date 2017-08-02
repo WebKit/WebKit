@@ -23,32 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasObserver = class CanvasObserver
+WI.CanvasObserver = class CanvasObserver
 {
     // Events defined by the "Canvas" domain.
 
     canvasAdded(canvas)
     {
-        WebInspector.canvasManager.canvasAdded(canvas);
+        WI.canvasManager.canvasAdded(canvas);
     }
 
     canvasRemoved(canvasId)
     {
-        WebInspector.canvasManager.canvasRemoved(canvasId);
+        WI.canvasManager.canvasRemoved(canvasId);
     }
 
     canvasMemoryChanged(canvasId, memoryCost)
     {
-        WebInspector.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
+        WI.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
     }
 
     cssCanvasClientNodesChanged(canvasId)
     {
-        WebInspector.canvasManager.cssCanvasClientNodesChanged(canvasId);
+        WI.canvasManager.cssCanvasClientNodesChanged(canvasId);
     }
 
     recordingFinished(canvasId, recording)
     {
-        WebInspector.canvasManager.recordingFinished(canvasId, recording);
+        WI.canvasManager.recordingFinished(canvasId, recording);
     }
 };

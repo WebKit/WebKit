@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CookieStorageTreeElement = class CookieStorageTreeElement extends WebInspector.StorageTreeElement
+WI.CookieStorageTreeElement = class CookieStorageTreeElement extends WI.StorageTreeElement
 {
     constructor(representedObject)
     {
-        console.assert(representedObject instanceof WebInspector.CookieStorageObject);
+        console.assert(representedObject instanceof WI.CookieStorageObject);
 
-        super("cookie-icon", WebInspector.displayNameForHost(representedObject.host), representedObject);
+        super("cookie-icon", WI.displayNameForHost(representedObject.host), representedObject);
     }
 
     // Public
@@ -41,6 +41,6 @@ WebInspector.CookieStorageTreeElement = class CookieStorageTreeElement extends W
 
     get categoryName()
     {
-        return WebInspector.UIString("Cookies");
+        return WI.UIString("Cookies");
     }
 };

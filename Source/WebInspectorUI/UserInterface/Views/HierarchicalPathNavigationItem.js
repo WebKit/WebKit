@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends WebInspector.NavigationItem
+WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends WI.NavigationItem
 {
     constructor(identifier, components)
     {
@@ -61,13 +61,13 @@ WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationIt
             return;
 
         for (var i = 0; this._components && i < this._components.length; ++i)
-            this._components[i].removeEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._siblingPathComponentWasSelected, this);
+            this._components[i].removeEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._siblingPathComponentWasSelected, this);
 
         // Make a shallow copy of the newComponents array using slice.
         this._components = newComponents.slice(0);
 
         for (var i = 0; i < this._components.length; ++i)
-            this._components[i].addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._siblingPathComponentWasSelected, this);
+            this._components[i].addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._siblingPathComponentWasSelected, this);
 
         this.element.removeChildren();
         delete this._collapsedComponent;
@@ -87,15 +87,15 @@ WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationIt
 
     get alwaysShowLastPathComponentSeparator()
     {
-        return this.element.classList.contains(WebInspector.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName);
+        return this.element.classList.contains(WI.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName);
     }
 
     set alwaysShowLastPathComponentSeparator(flag)
     {
         if (flag)
-            this.element.classList.add(WebInspector.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName);
+            this.element.classList.add(WI.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName);
         else
-            this.element.classList.remove(WebInspector.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName);
+            this.element.classList.remove(WI.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName);
     }
 
     updateLayout(expandOnly)
@@ -129,7 +129,7 @@ WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationIt
                 continue;
 
             // Skip flexible space items since they can take up no space at the minimum width.
-            if (navigationBar.navigationItems[i] instanceof WebInspector.FlexibleSpaceNavigationItem)
+            if (navigationBar.navigationItems[i] instanceof WI.FlexibleSpaceNavigationItem)
                 continue;
 
             totalOtherItemsWidth += navigationBar.navigationItems[i].element.realOffsetWidth;
@@ -186,7 +186,7 @@ WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationIt
         var i = middle;
 
         // Create a component that will represent the hidden components with a ellipse as the display name.
-        this._collapsedComponent = new WebInspector.HierarchicalPathComponent(ellipsis, []);
+        this._collapsedComponent = new WI.HierarchicalPathComponent(ellipsis, []);
         this._collapsedComponent.collapsed = true;
 
         // Insert it in the middle, it doesn't matter exactly where since the elements around it will be hidden soon.
@@ -244,12 +244,12 @@ WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationIt
 
     _siblingPathComponentWasSelected(event)
     {
-        this.dispatchEventToListeners(WebInspector.HierarchicalPathNavigationItem.Event.PathComponentWasSelected, event.data);
+        this.dispatchEventToListeners(WI.HierarchicalPathNavigationItem.Event.PathComponentWasSelected, event.data);
     }
 };
 
-WebInspector.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName = "always-show-last-path-component-separator";
+WI.HierarchicalPathNavigationItem.AlwaysShowLastPathComponentSeparatorStyleClassName = "always-show-last-path-component-separator";
 
-WebInspector.HierarchicalPathNavigationItem.Event = {
+WI.HierarchicalPathNavigationItem.Event = {
     PathComponentWasSelected: "hierarchical-path-navigation-item-path-component-was-selected"
 };

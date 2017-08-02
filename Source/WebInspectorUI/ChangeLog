@@ -1,5 +1,29 @@
 2017-08-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: simplify WebInspector with WI
+        https://bugs.webkit.org/show_bug.cgi?id=175058
+
+        Reviewed by Joseph Pecoraro.
+
+        * .eslintrc:
+
+        * Tools/PrettyPrinting/FormatterDebug.js:
+        * Tools/PrettyPrinting/index.html:
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
+        * UserInterface/Base/*.js:
+        * UserInterface/Controllers/*.js:
+        * UserInterface/Debug/*.js:
+        * UserInterface/Models/*.js:
+        * UserInterface/Protocol/*.js:
+        * UserInterface/Proxies/*.js:
+        * UserInterface/Test/*.js:
+        * UserInterface/Views/*.js:
+
+2017-08-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: create Recording tab for displaying recordings
         https://bugs.webkit.org/show_bug.cgi?id=174484
 

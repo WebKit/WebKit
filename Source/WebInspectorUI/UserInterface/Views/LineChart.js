@@ -38,7 +38,7 @@
 //      </svg>
 //  </div>
 
-WebInspector.LineChart = class LineChart
+WI.LineChart = class LineChart
 {
     constructor(size)
     {

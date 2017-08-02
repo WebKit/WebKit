@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends WebInspector.TimelineDataGridNode
+WI.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends WI.TimelineDataGridNode
 {
     constructor(profileNode, baseStartTime, rangeStartTime, rangeEndTime)
     {
@@ -136,14 +136,14 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
         let title = this._profileNode.functionName;
         if (!title) {
             switch (this._profileNode.type) {
-            case WebInspector.ProfileNode.Type.Function:
-                title = WebInspector.UIString("(anonymous function)");
+            case WI.ProfileNode.Type.Function:
+                title = WI.UIString("(anonymous function)");
                 break;
-            case WebInspector.ProfileNode.Type.Program:
-                title = WebInspector.UIString("(program)");
+            case WI.ProfileNode.Type.Program:
+                title = WI.UIString("(program)");
                 break;
             default:
-                title = WebInspector.UIString("(anonymous function)");
+                title = WI.UIString("(anonymous function)");
                 console.error("Unknown ProfileNode type: " + this._profileNode.type);
             }
         }
@@ -155,13 +155,13 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
     {
         let className;
         switch (this._profileNode.type) {
-        case WebInspector.ProfileNode.Type.Function:
-            className = WebInspector.CallFrameView.FunctionIconStyleClassName;
+        case WI.ProfileNode.Type.Function:
+            className = WI.CallFrameView.FunctionIconStyleClassName;
             if (!this._profileNode.sourceCodeLocation)
-                className = WebInspector.CallFrameView.NativeIconStyleClassName;
+                className = WI.CallFrameView.NativeIconStyleClassName;
             break;
-        case WebInspector.ProfileNode.Type.Program:
-            className = WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass;
+        case WI.ProfileNode.Type.Program:
+            className = WI.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass;
             break;
         }
 
@@ -170,7 +170,7 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
         // This is more than likely an event listener function with an "on" prefix and it is
         // as long or longer than the shortest event listener name -- "oncut".
         if (this._profileNode.functionName && this._profileNode.functionName.startsWith("on") && this._profileNode.functionName.length >= 5)
-            className = WebInspector.CallFrameView.EventListenerIconStyleClassName;
+            className = WI.CallFrameView.EventListenerIconStyleClassName;
 
         return [className];
     }
@@ -186,6 +186,6 @@ WebInspector.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends Web
         this.removeChildren();
 
         for (let node of this._profileNode.childNodes)
-            this.appendChild(new WebInspector.ProfileNodeDataGridNode(node, this.baseStartTime, this.rangeStartTime, this.rangeEndTime));
+            this.appendChild(new WI.ProfileNodeDataGridNode(node, this.baseStartTime, this.rangeStartTime, this.rangeEndTime));
     }
 };

@@ -67,7 +67,7 @@ function test()
         name: "SimpleURLGenerateCURL",
         description: "Generate cURL command from a simple URL.",
         test(resolve, reject) {
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
             .then((event) => {
                 let resource = event.data.resource;
                 let curl = resource.generateCURLCommand().split(" \\\n");
@@ -87,7 +87,7 @@ function test()
         name: "SpecialURLGenerateCURL",
         description: "Generate cURL command from a URL containing special characters.",
         test(resolve, reject) {
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
             .then((event) => {
                 let resource = event.data.resource;
                 let curl = resource.generateCURLCommand().split(" \\\n");
@@ -104,7 +104,7 @@ function test()
         name: "SpecialHeadersGenerateCURLValidPOSIXOutput",
         description: "Generate cURL command from a request containing special characters in the headers and verify valid POSIX output.",
         test(resolve, reject) {
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
             .then((event) => {
                 let resource = event.data.resource;
                 let curl = resource.generateCURLCommand().split(" \\\n");
@@ -123,7 +123,7 @@ function test()
         name: "URLWithUTF8GenerateCURL",
         description: "Generate cURL command from a URL containing UTF8 characters.",
         test(resolve, reject) {
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
             .then((event) => {
                 let resource = event.data.resource;
                 let curl = resource.generateCURLCommand().split(" \\\n");
@@ -140,7 +140,7 @@ function test()
         name: "POSTRequestURLEncodedDataGenerateCURL",
         description: "Generate cURL command from a POST request with URL encoded data.",
         test(resolve, reject) {
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
             .then((event) => {
                 let resource = event.data.resource;
                 let curl = resource.generateCURLCommand().split(" \\\n");
@@ -159,7 +159,7 @@ function test()
         name: "POSTRequestURLEncodedDataUTF8GenerateCURL",
         description: "Generate cURL command from a POST request with URL encoded UTF8 data.",
         test(resolve, reject) {
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
             .then((event) => {
                 let resource = event.data.resource;
                 let curl = resource.generateCURLCommand().split(" \\\n");
@@ -177,7 +177,7 @@ function test()
         name: "PUTRequestWithJSONGenerateCURL",
         description: "Generate cURL command from a PUT request with JSON data.",
         test(resolve, reject) {
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
             .then((event) => {
                 let resource = event.data.resource;
                 let curl = resource.generateCURLCommand().split(" \\\n");

@@ -47,13 +47,13 @@ function test()
         let lastMessageWalltime;
         let resource = event.data.resource;
 
-        resource.addEventListener(WebInspector.WebSocketResource.Event.FrameAdded, function(event) {
+        resource.addEventListener(WI.WebSocketResource.Event.FrameAdded, function(event) {
             let frame = event.data;
             frameAddedCount++;
 
             if (frameAddedCount <= 5) {
                 InspectorTest.expectEqual(frame.data, null, "Frame should not have data.");
-                InspectorTest.expectEqual(frame.opcode, WebInspector.WebSocketResource.OpCodes.BinaryFrame, "Frame should be binary.");
+                InspectorTest.expectEqual(frame.opcode, WI.WebSocketResource.OpCodes.BinaryFrame, "Frame should be binary.");
 
                 if (frameAddedCount === 1) {
                     InspectorTest.expectThat(frame.isOutgoing, "Frame should be outgoing.");
@@ -74,7 +74,7 @@ function test()
 
         let sizeDidChangeCount = 0;
 
-        resource.addEventListener(WebInspector.Resource.Event.SizeDidChange, function(event) {
+        resource.addEventListener(WI.Resource.Event.SizeDidChange, function(event) {
             sizeDidChangeCount++;
 
             if (sizeDidChangeCount === 1)
@@ -95,7 +95,7 @@ function test()
         name: "WebSocket.BinaryBlob",
         description: "Should receive binary blob WebSocket messages.",
         test(resolve, reject) {
-            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, resourceWasAdded.bind(null, resolve, reject));
+            WI.Frame.singleFireEventListener(WI.Frame.Event.ResourceWasAdded, resourceWasAdded.bind(null, resolve, reject));
             InspectorTest.evaluateInPage(`createWebSocketConnection("blob")`);
         }
     });
@@ -104,7 +104,7 @@ function test()
         name: "WebSocket.ArrayBuffer",
         description: "Should receive ArrayBuffer WebSocket messages.",
         test(resolve, reject) {
-            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, resourceWasAdded.bind(null, resolve, reject));
+            WI.Frame.singleFireEventListener(WI.Frame.Event.ResourceWasAdded, resourceWasAdded.bind(null, resolve, reject));
             InspectorTest.evaluateInPage(`createWebSocketConnection("arraybuffer")`);
         }
     });

@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCode = class SourceCode extends WebInspector.Object
+WI.SourceCode = class SourceCode extends WI.Object
 {
     constructor()
     {
         super();
 
-        this._originalRevision = new WebInspector.SourceCodeRevision(this, null, false);
+        this._originalRevision = new WI.SourceCodeRevision(this, null, false);
         this._currentRevision = this._originalRevision;
 
         this._sourceMaps = null;
@@ -58,8 +58,8 @@ WebInspector.SourceCode = class SourceCode extends WebInspector.Object
 
     set currentRevision(revision)
     {
-        console.assert(revision instanceof WebInspector.SourceCodeRevision);
-        if (!(revision instanceof WebInspector.SourceCodeRevision))
+        console.assert(revision instanceof WI.SourceCodeRevision);
+        if (!(revision instanceof WI.SourceCodeRevision))
             return;
 
         console.assert(revision.sourceCode === this);
@@ -68,7 +68,7 @@ WebInspector.SourceCode = class SourceCode extends WebInspector.Object
 
         this._currentRevision = revision;
 
-        this.dispatchEventToListeners(WebInspector.SourceCode.Event.ContentDidChange);
+        this.dispatchEventToListeners(WI.SourceCode.Event.ContentDidChange);
     }
 
     get content()
@@ -97,14 +97,14 @@ WebInspector.SourceCode = class SourceCode extends WebInspector.Object
 
     addSourceMap(sourceMap)
     {
-        console.assert(sourceMap instanceof WebInspector.SourceMap);
+        console.assert(sourceMap instanceof WI.SourceMap);
 
         if (!this._sourceMaps)
             this._sourceMaps = [];
 
         this._sourceMaps.push(sourceMap);
 
-        this.dispatchEventToListeners(WebInspector.SourceCode.Event.SourceMapAdded);
+        this.dispatchEventToListeners(WI.SourceCode.Event.SourceMapAdded);
     }
 
     get formatterSourceMap()
@@ -115,11 +115,11 @@ WebInspector.SourceCode = class SourceCode extends WebInspector.Object
     set formatterSourceMap(formatterSourceMap)
     {
         console.assert(this._formatterSourceMap === null || formatterSourceMap === null);
-        console.assert(formatterSourceMap === null || formatterSourceMap instanceof WebInspector.FormatterSourceMap);
+        console.assert(formatterSourceMap === null || formatterSourceMap instanceof WI.FormatterSourceMap);
 
         this._formatterSourceMap = formatterSourceMap;
 
-        this.dispatchEventToListeners(WebInspector.SourceCode.Event.FormatterDidChange);
+        this.dispatchEventToListeners(WI.SourceCode.Event.FormatterDidChange);
     }
 
     requestContent()
@@ -131,17 +131,17 @@ WebInspector.SourceCode = class SourceCode extends WebInspector.Object
 
     createSourceCodeLocation(lineNumber, columnNumber)
     {
-        return new WebInspector.SourceCodeLocation(this, lineNumber, columnNumber);
+        return new WI.SourceCodeLocation(this, lineNumber, columnNumber);
     }
 
     createLazySourceCodeLocation(lineNumber, columnNumber)
     {
-        return new WebInspector.LazySourceCodeLocation(this, lineNumber, columnNumber);
+        return new WI.LazySourceCodeLocation(this, lineNumber, columnNumber);
     }
 
     createSourceCodeTextRange(textRange)
     {
-        return new WebInspector.SourceCodeTextRange(this, textRange);
+        return new WI.SourceCodeTextRange(this, textRange);
     }
 
     // Protected
@@ -156,7 +156,7 @@ WebInspector.SourceCode = class SourceCode extends WebInspector.Object
 
         this.handleCurrentRevisionContentChange();
 
-        this.dispatchEventToListeners(WebInspector.SourceCode.Event.ContentDidChange);
+        this.dispatchEventToListeners(WI.SourceCode.Event.ContentDidChange);
     }
 
     handleCurrentRevisionContentChange()
@@ -217,7 +217,7 @@ WebInspector.SourceCode = class SourceCode extends WebInspector.Object
     }
 };
 
-WebInspector.SourceCode.Event = {
+WI.SourceCode.Event = {
     ContentDidChange: "source-code-content-did-change",
     SourceMapAdded: "source-code-source-map-added",
     FormatterDidChange: "source-code-formatter-did-change",

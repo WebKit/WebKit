@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ActivateButtonNavigationItem = class ActivateButtonNavigationItem extends WebInspector.ButtonNavigationItem
+WI.ActivateButtonNavigationItem = class ActivateButtonNavigationItem extends WI.ButtonNavigationItem
 {
     constructor(identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, role)
     {
@@ -48,12 +48,12 @@ WebInspector.ActivateButtonNavigationItem = class ActivateButtonNavigationItem e
 
     get activated()
     {
-        return this.element.classList.contains(WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName);
+        return this.element.classList.contains(WI.ActivateButtonNavigationItem.ActivatedStyleClassName);
     }
 
     set activated(flag)
     {
-        this.element.classList.toggle(WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName, flag);
+        this.element.classList.toggle(WI.ActivateButtonNavigationItem.ActivatedStyleClassName, flag);
 
         if (flag) {
             this.toolTip = this._activatedToolTip;
@@ -74,4 +74,4 @@ WebInspector.ActivateButtonNavigationItem = class ActivateButtonNavigationItem e
     }
 };
 
-WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName = "activated";
+WI.ActivateButtonNavigationItem.ActivatedStyleClassName = "activated";

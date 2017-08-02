@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CookieStorageContentView = class CookieStorageContentView extends WebInspector.ContentView
+WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentView
 {
     constructor(representedObject)
     {
@@ -31,8 +31,8 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
 
         this.element.classList.add("cookie-storage");
 
-        this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("cookie-storage-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
-        this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
+        this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("cookie-storage-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
+        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
 
         this.update();
     }
@@ -56,7 +56,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
 
     saveToCookie(cookie)
     {
-        cookie.type = WebInspector.ContentViewCookieType.CookieStorage;
+        cookie.type = WI.ContentViewCookieType.CookieStorage;
         cookie.host = this.representedObject.host;
     }
 
@@ -75,46 +75,46 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
         if (!this._dataGrid) {
             var columns = {name: {}, value: {}, domain: {}, path: {}, expires: {}, size: {}, http: {}, secure: {}};
 
-            columns.name.title = WebInspector.UIString("Name");
+            columns.name.title = WI.UIString("Name");
             columns.name.sortable = true;
             columns.name.width = "24%";
             columns.name.locked = true;
 
-            columns.value.title = WebInspector.UIString("Value");
+            columns.value.title = WI.UIString("Value");
             columns.value.sortable = true;
             columns.value.width = "34%";
             columns.value.locked = true;
 
-            columns.domain.title = WebInspector.UIString("Domain");
+            columns.domain.title = WI.UIString("Domain");
             columns.domain.sortable = true;
             columns.domain.width = "7%";
 
-            columns.path.title = WebInspector.UIString("Path");
+            columns.path.title = WI.UIString("Path");
             columns.path.sortable = true;
             columns.path.width = "7%";
 
-            columns.expires.title = WebInspector.UIString("Expires");
+            columns.expires.title = WI.UIString("Expires");
             columns.expires.sortable = true;
             columns.expires.width = "7%";
 
-            columns.size.title = WebInspector.UIString("Size");
+            columns.size.title = WI.UIString("Size");
             columns.size.aligned = "right";
             columns.size.sortable = true;
             columns.size.width = "7%";
 
-            columns.http.title = WebInspector.UIString("HTTP");
+            columns.http.title = WI.UIString("HTTP");
             columns.http.aligned = "centered";
             columns.http.sortable = true;
             columns.http.width = "7%";
 
-            columns.secure.title = WebInspector.UIString("Secure");
+            columns.secure.title = WI.UIString("Secure");
             columns.secure.aligned = "centered";
             columns.secure.sortable = true;
             columns.secure.width = "7%";
 
-            this._dataGrid = new WebInspector.DataGrid(columns, null, this._deleteCallback.bind(this));
+            this._dataGrid = new WI.DataGrid(columns, null, this._deleteCallback.bind(this));
             this._dataGrid.columnChooserEnabled = true;
-            this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
+            this._dataGrid.addEventListener(WI.DataGrid.Event.SortChanged, this._sortDataGrid, this);
 
             this.addSubview(this._dataGrid);
             this._dataGrid.updateLayout();
@@ -136,10 +136,10 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
                 "secure": cookie.secure ? checkmark : "",
             };
 
-            if (cookie.type !== WebInspector.CookieType.Request)
-                data["expires"] = cookie.session ? WebInspector.UIString("Session") : new Date(cookie.expires).toLocaleString();
+            if (cookie.type !== WI.CookieType.Request)
+                data["expires"] = cookie.session ? WI.UIString("Session") : new Date(cookie.expires).toLocaleString();
 
-            var node = new WebInspector.DataGridNode(data);
+            var node = new WI.DataGridNode(data);
             node.cookie = cookie;
 
             this._dataGrid.appendChild(node);
@@ -157,7 +157,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
         };
 
         let allResources = [];
-        for (let frame of WebInspector.frameResourceManager.frames) {
+        for (let frame of WI.frameResourceManager.frames) {
             // The main resource isn't in the list of resources, so add it as a candidate.
             allResources.push(frame.mainResource);
             allResources = allResources.concat(frame.resourceCollection.toArray());
@@ -167,7 +167,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
 
         let cookiesForDomain = cookies.filter((cookie) => {
             return resourcesForDomain.some((resource) => {
-                return WebInspector.CookieStorageObject.cookieMatchesResourceURL(cookie, resource.url);
+                return WI.CookieStorageObject.cookieMatchesResourceURL(cookie, resource.url);
             });
         });
         return cookiesForDomain;
@@ -231,7 +231,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
     }
 };
 
-WebInspector.CookieType = {
+WI.CookieType = {
     Request: 0,
     Response: 1
 };

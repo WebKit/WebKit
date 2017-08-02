@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel extends WebInspector.NavigationSidebarPanel
+WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel extends WI.NavigationSidebarPanel
 {
     constructor()
     {
-        super("recording", WebInspector.UIString("Recording"));
+        super("recording", WI.UIString("Recording"));
 
         this.contentTreeOutline.customIndent = true;
 
-        this.filterBar.placeholder = WebInspector.UIString("Filter Actions");
+        this.filterBar.placeholder = WI.UIString("Filter Actions");
 
         this.recording = null;
 
@@ -60,19 +60,19 @@ WebInspector.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarP
         if (this._recording) {
             this.contentTreeOutline.element.dataset.indent = Number.countDigits(this._recording.actions.length);
 
-            if (this._recording.actions[0] instanceof WebInspector.RecordingInitialStateAction)
-                this.contentTreeOutline.appendChild(new WebInspector.RecordingActionTreeElement(this._recording.actions[0], 0, this._recording.type));
+            if (this._recording.actions[0] instanceof WI.RecordingInitialStateAction)
+                this.contentTreeOutline.appendChild(new WI.RecordingActionTreeElement(this._recording.actions[0], 0, this._recording.type));
 
             let cumulativeActionIndex = 1;
             this._recording.frames.forEach((frame, frameIndex) => {
-                let folder = new WebInspector.FolderTreeElement(WebInspector.UIString("Frame %d").format((frameIndex + 1).toLocaleString()));
+                let folder = new WI.FolderTreeElement(WI.UIString("Frame %d").format((frameIndex + 1).toLocaleString()));
                 this.contentTreeOutline.appendChild(folder);
 
                 for (let i = 0; i < frame.actions.length; ++i)
-                    folder.appendChild(new WebInspector.RecordingActionTreeElement(frame.actions[i], cumulativeActionIndex + i, this._recording.type));
+                    folder.appendChild(new WI.RecordingActionTreeElement(frame.actions[i], cumulativeActionIndex + i, this._recording.type));
 
                 if (frame.incomplete)
-                    folder.subtitle = WebInspector.UIString("Incomplete");
+                    folder.subtitle = WI.UIString("Incomplete");
 
                 if (this._recording.frames.length === 1)
                     folder.expand();
@@ -81,7 +81,7 @@ WebInspector.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarP
             });
         }
 
-        this.updateEmptyContentPlaceholder(WebInspector.UIString("No Recording Data"));
+        this.updateEmptyContentPlaceholder(WI.UIString("No Recording Data"));
 
         if (this._exportButton)
             this._exportButton.disabled = !this.contentTreeOutline.children.length;
@@ -94,7 +94,7 @@ WebInspector.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarP
             return;
 
         let treeOutline = this.contentTreeOutline;
-        if (!(this._recording.actions[0] instanceof WebInspector.RecordingInitialStateAction) || index) {
+        if (!(this._recording.actions[0] instanceof WI.RecordingInitialStateAction) || index) {
             treeOutline = treeOutline.children[0];
             while (index > treeOutline.children.length) {
                 index -= treeOutline.children.length;
@@ -111,7 +111,7 @@ WebInspector.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarP
 
         const omitFocus = false;
         const selectedByUser = false;
-        let suppressOnSelect = !(treeElementToSelect instanceof WebInspector.FolderTreeElement);
+        let suppressOnSelect = !(treeElementToSelect instanceof WI.FolderTreeElement);
         const suppressOnDeselect = true;
         treeElementToSelect.revealAndSelect(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect);
     }
@@ -124,15 +124,15 @@ WebInspector.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarP
 
         const role = "button";
 
-        const importLabel = WebInspector.UIString("Import");
-        let importNavigationItem = new WebInspector.NavigationItem("recording-import", role, importLabel);
+        const importLabel = WI.UIString("Import");
+        let importNavigationItem = new WI.NavigationItem("recording-import", role, importLabel);
 
         this._importButton = importNavigationItem.element.appendChild(document.createElement("button"));
         this._importButton.textContent = importLabel;
         this._importButton.addEventListener("click", this._importNavigationItemClicked.bind(this));
 
-        const exportLabel = WebInspector.UIString("Export");
-        let exportNavigationItem = new WebInspector.NavigationItem("recording-export", role, exportLabel);
+        const exportLabel = WI.UIString("Export");
+        let exportNavigationItem = new WI.NavigationItem("recording-export", role, exportLabel);
 
         this._exportButton = exportNavigationItem.element.appendChild(document.createElement("button"));
         this._exportButton.textContent = exportLabel;
@@ -140,14 +140,14 @@ WebInspector.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarP
         this._exportButton.addEventListener("click", this._exportNavigationItemClicked.bind(this));
 
         const element = null;
-        this.addSubview(new WebInspector.NavigationBar(element, [importNavigationItem, exportNavigationItem]));
+        this.addSubview(new WI.NavigationBar(element, [importNavigationItem, exportNavigationItem]));
     }
 
     // Private
 
     _importNavigationItemClicked(event)
     {
-        WebInspector.loadDataFromFile((data) => {
+        WI.loadDataFromFile((data) => {
             if (!data)
                 return;
 
@@ -155,11 +155,11 @@ WebInspector.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarP
             try {
                 payload = JSON.parse(data);
             } catch (e) {
-                WebInspector.Recording.synthesizeError(e);
+                WI.Recording.synthesizeError(e);
                 return;
             }
 
-            this.dispatchEventToListeners(WebInspector.RecordingNavigationSidebarPanel.Event.Import, {payload});
+            this.dispatchEventToListeners(WI.RecordingNavigationSidebarPanel.Event.Import, {payload});
         });
     }
 
@@ -169,13 +169,13 @@ WebInspector.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarP
             return;
 
         const forceSaveAs = true;
-        WebInspector.saveDataToFile({
+        WI.saveDataToFile({
             url: "web-inspector:///Recording.json",
             content: JSON.stringify(this._recording.toJSON()),
         }, forceSaveAs);
     }
 };
 
-WebInspector.RecordingNavigationSidebarPanel.Event = {
+WI.RecordingNavigationSidebarPanel.Event = {
     Import: "recording-navigation-sidebar-panel-import",
 };

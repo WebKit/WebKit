@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspector.TimelineView
+WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
 {
     constructor(recording, extraArguments)
     {
@@ -33,34 +33,34 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
 
         let columns = {name: {}, graph: {}};
 
-        columns.name.title = WebInspector.UIString("Name");
+        columns.name.title = WI.UIString("Name");
         columns.name.width = "20%";
         columns.name.icon = true;
         columns.name.disclosure = true;
 
-        this._timelineRuler = new WebInspector.TimelineRuler;
+        this._timelineRuler = new WI.TimelineRuler;
         this._timelineRuler.allowsClippedLabels = true;
 
         columns.graph.width = "80%";
         columns.graph.headerView = this._timelineRuler;
 
-        this._dataGrid = new WebInspector.DataGrid(columns);
+        this._dataGrid = new WI.DataGrid(columns);
 
         this.setupDataGrid(this._dataGrid);
 
-        this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
+        this._currentTimeMarker = new WI.TimelineMarker(0, WI.TimelineMarker.Type.CurrentTime);
         this._timelineRuler.addMarker(this._currentTimeMarker);
 
         this.element.classList.add("overview");
         this.addSubview(this._dataGrid);
 
-        this._networkTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
+        this._networkTimeline = recording.timelines.get(WI.TimelineRecord.Type.Network);
         if (this._networkTimeline)
-            this._networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
+            this._networkTimeline.addEventListener(WI.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
-        recording.addEventListener(WebInspector.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
-        recording.addEventListener(WebInspector.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
-        recording.addEventListener(WebInspector.TimelineRecording.Event.Reset, this._recordingReset, this);
+        recording.addEventListener(WI.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
+        recording.addEventListener(WI.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
+        recording.addEventListener(WI.TimelineRecording.Event.Reset, this._recordingReset, this);
 
         this._pendingRepresentedObjects = [];
         this._resourceDataGridNodeMap = new Map;
@@ -82,7 +82,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
     {
         super.shown();
 
-        this._timelineRuler.updateLayout(WebInspector.View.LayoutReason.Resize);
+        this._timelineRuler.updateLayout(WI.View.LayoutReason.Resize);
     }
 
     closed()
@@ -101,12 +101,12 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
         let pathComponents = [];
 
         while (dataGridNode && !dataGridNode.root) {
-            console.assert(dataGridNode instanceof WebInspector.TimelineDataGridNode);
+            console.assert(dataGridNode instanceof WI.TimelineDataGridNode);
             if (dataGridNode.hidden)
                 return null;
 
-            let pathComponent = new WebInspector.TimelineDataGridNodePathComponent(dataGridNode);
-            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
+            let pathComponent = new WI.TimelineDataGridNodePathComponent(dataGridNode);
+            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
             pathComponents.unshift(pathComponent);
             dataGridNode = dataGridNode.parent;
         }
@@ -164,9 +164,9 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
     {
         function getStartTime(dataGridNode)
         {
-            if (dataGridNode instanceof WebInspector.ResourceTimelineDataGridNode)
+            if (dataGridNode instanceof WI.ResourceTimelineDataGridNode)
                 return dataGridNode.resource.firstTimestamp;
-            if (dataGridNode instanceof WebInspector.SourceCodeTimelineTimelineDataGridNode)
+            if (dataGridNode instanceof WI.SourceCodeTimelineTimelineDataGridNode)
                 return dataGridNode.sourceCodeTimeline.startTime;
 
             console.error("Unknown data grid node.", dataGridNode);
@@ -209,11 +209,11 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
 
         let resourceTimelineRecord = this._networkTimeline ? this._networkTimeline.recordForResource(resource) : null;
         if (!resourceTimelineRecord)
-            resourceTimelineRecord = new WebInspector.ResourceTimelineRecord(resource);
+            resourceTimelineRecord = new WI.ResourceTimelineRecord(resource);
 
         const includesGraph = true;
         const shouldShowPopover = false;
-        let resourceDataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
+        let resourceDataGridNode = new WI.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
         this._resourceDataGridNodeMap.set(resource, resourceDataGridNode);
 
         let expandedByDefault = false;
@@ -244,7 +244,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
     _addSourceCodeTimeline(sourceCodeTimeline)
     {
         let parentDataGridNode = sourceCodeTimeline.sourceCodeLocation ? this._addResourceToDataGridIfNeeded(sourceCodeTimeline.sourceCode) : null;
-        let sourceCodeTimelineDataGridNode = new WebInspector.SourceCodeTimelineTimelineDataGridNode(sourceCodeTimeline, this);
+        let sourceCodeTimelineDataGridNode = new WI.SourceCodeTimelineTimelineDataGridNode(sourceCodeTimeline, this);
         this._resourceDataGridNodeMap.set(sourceCodeTimeline, sourceCodeTimelineDataGridNode);
 
         this._insertDataGridNode(sourceCodeTimelineDataGridNode, parentDataGridNode);
@@ -256,9 +256,9 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
             return;
 
         for (var representedObject of this._pendingRepresentedObjects) {
-            if (representedObject instanceof WebInspector.Resource)
+            if (representedObject instanceof WI.Resource)
                 this._addResourceToDataGridIfNeeded(representedObject);
-            else if (representedObject instanceof WebInspector.SourceCodeTimeline)
+            else if (representedObject instanceof WI.SourceCodeTimeline)
                 this._addSourceCodeTimeline(representedObject);
             else
                 console.error("Unknown represented object");
@@ -270,7 +270,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
     _networkTimelineRecordAdded(event)
     {
         var resourceTimelineRecord = event.data.record;
-        console.assert(resourceTimelineRecord instanceof WebInspector.ResourceTimelineRecord);
+        console.assert(resourceTimelineRecord instanceof WI.ResourceTimelineRecord);
 
         this._pendingRepresentedObjects.push(resourceTimelineRecord.resource);
 

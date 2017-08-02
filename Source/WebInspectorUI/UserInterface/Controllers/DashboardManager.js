@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DashboardManager = class DashboardManager extends WebInspector.Object
+WI.DashboardManager = class DashboardManager extends WI.Object
 {
     constructor()
     {
         super();
 
         this._dashboards = {};
-        this._dashboards.default = new WebInspector.DefaultDashboard;
-        this._dashboards.debugger = new WebInspector.DebuggerDashboard;
+        this._dashboards.default = new WI.DefaultDashboard;
+        this._dashboards.debugger = new WI.DebuggerDashboard;
     }
 
     get dashboards()

@@ -27,13 +27,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Color = class Color
+WI.Color = class Color
 {
     constructor(format, components)
     {
         this.format = format;
 
-        if (format === WebInspector.Color.Format.HSL || format === WebInspector.Color.Format.HSLA)
+        if (format === WI.Color.Format.HSL || format === WI.Color.Format.HSLA)
             this._hsla = components;
         else
             this._rgba = components;
@@ -48,7 +48,7 @@ WebInspector.Color = class Color
         let value = colorString.toLowerCase().replace(/%|\s+/g, "");
         let transparentKeywords = ["transparent", "rgba(0,0,0,0)", "hsla(0,0,0,0)"];
         if (transparentKeywords.includes(value)) {
-            let color = new WebInspector.Color(WebInspector.Color.Format.Keyword, [0, 0, 0, 0]);
+            let color = new WI.Color(WI.Color.Format.Keyword, [0, 0, 0, 0]);
             color.keyword = "transparent";
             color.original = colorString;
             return color;
@@ -62,28 +62,28 @@ WebInspector.Color = class Color
                 let hex = match[1].toUpperCase();
                 let len = hex.length;
                 if (len === 3) {
-                    return new WebInspector.Color(WebInspector.Color.Format.ShortHEX, [
+                    return new WI.Color(WI.Color.Format.ShortHEX, [
                         parseInt(hex.charAt(0) + hex.charAt(0), 16),
                         parseInt(hex.charAt(1) + hex.charAt(1), 16),
                         parseInt(hex.charAt(2) + hex.charAt(2), 16),
                         1
                     ]);
                 } else if (len === 6) {
-                    return new WebInspector.Color(WebInspector.Color.Format.HEX, [
+                    return new WI.Color(WI.Color.Format.HEX, [
                         parseInt(hex.substring(0, 2), 16),
                         parseInt(hex.substring(2, 4), 16),
                         parseInt(hex.substring(4, 6), 16),
                         1
                     ]);
                 } else if (len === 4) {
-                    return new WebInspector.Color(WebInspector.Color.Format.ShortHEXAlpha, [
+                    return new WI.Color(WI.Color.Format.ShortHEXAlpha, [
                         parseInt(hex.charAt(0) + hex.charAt(0), 16),
                         parseInt(hex.charAt(1) + hex.charAt(1), 16),
                         parseInt(hex.charAt(2) + hex.charAt(2), 16),
                         parseInt(hex.charAt(3) + hex.charAt(3), 16) / 255
                     ]);
                 } else if (len === 8) {
-                    return new WebInspector.Color(WebInspector.Color.Format.HEXAlpha, [
+                    return new WI.Color(WI.Color.Format.HEXAlpha, [
                         parseInt(hex.substring(0, 2), 16),
                         parseInt(hex.substring(2, 4), 16),
                         parseInt(hex.substring(4, 6), 16),
@@ -95,7 +95,7 @@ WebInspector.Color = class Color
                 let rgb = match[2].split(/\s*,\s*/);
                 if (rgb.length !== 3)
                     return null;
-                return new WebInspector.Color(WebInspector.Color.Format.RGB, [
+                return new WI.Color(WI.Color.Format.RGB, [
                     parseInt(rgb[0]),
                     parseInt(rgb[1]),
                     parseInt(rgb[2]),
@@ -103,9 +103,9 @@ WebInspector.Color = class Color
                 ]);
             } else if (match[3]) { // keyword
                 let keyword = match[3].toLowerCase();
-                if (!WebInspector.Color.Keywords.hasOwnProperty(keyword))
+                if (!WI.Color.Keywords.hasOwnProperty(keyword))
                     return null;
-                let color = new WebInspector.Color(WebInspector.Color.Format.Keyword, WebInspector.Color.Keywords[keyword].concat(1));
+                let color = new WI.Color(WI.Color.Format.Keyword, WI.Color.Keywords[keyword].concat(1));
                 color.keyword = keyword;
                 color.original = colorString;
                 return color;
@@ -113,7 +113,7 @@ WebInspector.Color = class Color
                 let hsl = match[4].replace(/%/g, "").split(/\s*,\s*/);
                 if (hsl.length !== 3)
                     return null;
-                return new WebInspector.Color(WebInspector.Color.Format.HSL, [
+                return new WI.Color(WI.Color.Format.HSL, [
                     parseInt(hsl[0]),
                     parseInt(hsl[1]),
                     parseInt(hsl[2]),
@@ -130,7 +130,7 @@ WebInspector.Color = class Color
                 let rgba = match[1].split(/\s*,\s*/);
                 if (rgba.length !== 4)
                     return null;
-                return new WebInspector.Color(WebInspector.Color.Format.RGBA, [
+                return new WI.Color(WI.Color.Format.RGBA, [
                     parseInt(rgba[0]),
                     parseInt(rgba[1]),
                     parseInt(rgba[2]),
@@ -140,7 +140,7 @@ WebInspector.Color = class Color
                 let hsla = match[2].replace(/%/g, "").split(/\s*,\s*/);
                 if (hsla.length !== 4)
                     return null;
-                return new WebInspector.Color(WebInspector.Color.Format.HSLA, [
+                return new WI.Color(WI.Color.Format.HSLA, [
                     parseInt(hsla[0]),
                     parseInt(hsla[1]),
                     parseInt(hsla[2]),
@@ -233,33 +233,33 @@ WebInspector.Color = class Color
         format = format || this.format;
 
         switch (format) {
-        case WebInspector.Color.Format.Original:
-        case WebInspector.Color.Format.HEX:
-        case WebInspector.Color.Format.HEXAlpha:
-            return this.simple ? WebInspector.Color.Format.RGB : WebInspector.Color.Format.RGBA;
+        case WI.Color.Format.Original:
+        case WI.Color.Format.HEX:
+        case WI.Color.Format.HEXAlpha:
+            return this.simple ? WI.Color.Format.RGB : WI.Color.Format.RGBA;
 
-        case WebInspector.Color.Format.RGB:
-        case WebInspector.Color.Format.RGBA:
-            return this.simple ? WebInspector.Color.Format.HSL : WebInspector.Color.Format.HSLA;
+        case WI.Color.Format.RGB:
+        case WI.Color.Format.RGBA:
+            return this.simple ? WI.Color.Format.HSL : WI.Color.Format.HSLA;
 
-        case WebInspector.Color.Format.HSL:
-        case WebInspector.Color.Format.HSLA:
+        case WI.Color.Format.HSL:
+        case WI.Color.Format.HSLA:
             if (this.isKeyword())
-                return WebInspector.Color.Format.Keyword;
+                return WI.Color.Format.Keyword;
             if (this.simple)
-                return this.canBeSerializedAsShortHEX() ? WebInspector.Color.Format.ShortHEX : WebInspector.Color.Format.HEX;
-            return this.canBeSerializedAsShortHEX() ? WebInspector.Color.Format.ShortHEXAlpha : WebInspector.Color.Format.HEXAlpha;
+                return this.canBeSerializedAsShortHEX() ? WI.Color.Format.ShortHEX : WI.Color.Format.HEX;
+            return this.canBeSerializedAsShortHEX() ? WI.Color.Format.ShortHEXAlpha : WI.Color.Format.HEXAlpha;
 
-        case WebInspector.Color.Format.ShortHEX:
-            return WebInspector.Color.Format.HEX;
+        case WI.Color.Format.ShortHEX:
+            return WI.Color.Format.HEX;
 
-        case WebInspector.Color.Format.ShortHEXAlpha:
-            return WebInspector.Color.Format.HEXAlpha;
+        case WI.Color.Format.ShortHEXAlpha:
+            return WI.Color.Format.HEXAlpha;
 
-        case WebInspector.Color.Format.Keyword:
+        case WI.Color.Format.Keyword:
             if (this.simple)
-                return this.canBeSerializedAsShortHEX() ? WebInspector.Color.Format.ShortHEX : WebInspector.Color.Format.HEX;
-            return this.canBeSerializedAsShortHEX() ? WebInspector.Color.Format.ShortHEXAlpha : WebInspector.Color.Format.HEXAlpha;
+                return this.canBeSerializedAsShortHEX() ? WI.Color.Format.ShortHEX : WI.Color.Format.HEX;
+            return this.canBeSerializedAsShortHEX() ? WI.Color.Format.ShortHEXAlpha : WI.Color.Format.HEXAlpha;
 
         default:
             console.error("Unknown color format.");
@@ -308,17 +308,17 @@ WebInspector.Color = class Color
     copy()
     {
         switch (this.format) {
-        case WebInspector.Color.Format.RGB:
-        case WebInspector.Color.Format.HEX:
-        case WebInspector.Color.Format.ShortHEX:
-        case WebInspector.Color.Format.HEXAlpha:
-        case WebInspector.Color.Format.ShortHEXAlpha:
-        case WebInspector.Color.Format.Keyword:
-        case WebInspector.Color.Format.RGBA:
-            return new WebInspector.Color(this.format, this.rgba);
-        case WebInspector.Color.Format.HSL:
-        case WebInspector.Color.Format.HSLA:
-            return new WebInspector.Color(this.format, this.hsla);
+        case WI.Color.Format.RGB:
+        case WI.Color.Format.HEX:
+        case WI.Color.Format.ShortHEX:
+        case WI.Color.Format.HEXAlpha:
+        case WI.Color.Format.ShortHEXAlpha:
+        case WI.Color.Format.Keyword:
+        case WI.Color.Format.RGBA:
+            return new WI.Color(this.format, this.rgba);
+        case WI.Color.Format.HSL:
+        case WI.Color.Format.HSLA:
+            return new WI.Color(this.format, this.hsla);
         }
     }
 
@@ -328,25 +328,25 @@ WebInspector.Color = class Color
             format = this.format;
 
         switch (format) {
-        case WebInspector.Color.Format.Original:
+        case WI.Color.Format.Original:
             return this._toOriginalString();
-        case WebInspector.Color.Format.RGB:
+        case WI.Color.Format.RGB:
             return this._toRGBString();
-        case WebInspector.Color.Format.RGBA:
+        case WI.Color.Format.RGBA:
             return this._toRGBAString();
-        case WebInspector.Color.Format.HSL:
+        case WI.Color.Format.HSL:
             return this._toHSLString();
-        case WebInspector.Color.Format.HSLA:
+        case WI.Color.Format.HSLA:
             return this._toHSLAString();
-        case WebInspector.Color.Format.HEX:
+        case WI.Color.Format.HEX:
             return this._toHEXString();
-        case WebInspector.Color.Format.ShortHEX:
+        case WI.Color.Format.ShortHEX:
             return this._toShortHEXString();
-        case WebInspector.Color.Format.HEXAlpha:
+        case WI.Color.Format.HEXAlpha:
             return this._toHEXAlphaString();
-        case WebInspector.Color.Format.ShortHEXAlpha:
+        case WI.Color.Format.ShortHEXAlpha:
             return this._toShortHEXAlphaString();
-        case WebInspector.Color.Format.Keyword:
+        case WI.Color.Format.Keyword:
             return this._toKeywordString();
         }
 
@@ -362,7 +362,7 @@ WebInspector.Color = class Color
             return Array.shallowEqual(this._rgba, [0, 0, 0, 0]) || Array.shallowEqual(this._hsla, [0, 0, 0, 0]);
 
         let rgb = (this._rgba && this._rgba.slice(0, 3)) || this._hslToRGB(this._hsla);
-        return Object.keys(WebInspector.Color.Keywords).some(key => Array.shallowEqual(WebInspector.Color.Keywords[key], rgb));
+        return Object.keys(WI.Color.Keywords).some(key => Array.shallowEqual(WI.Color.Keywords[key], rgb));
     }
 
     canBeSerializedAsShortHEX()
@@ -409,7 +409,7 @@ WebInspector.Color = class Color
             return this._toRGBAString();
         }
 
-        let keywords = WebInspector.Color.Keywords;
+        let keywords = WI.Color.Keywords;
         for (let keyword in keywords) {
             if (!keywords.hasOwnProperty(keyword))
                 continue;
@@ -599,7 +599,7 @@ WebInspector.Color = class Color
     }
 };
 
-WebInspector.Color.Format = {
+WI.Color.Format = {
     Original: "color-format-original",
     Keyword: "color-format-keyword",
     HEX: "color-format-hex",
@@ -612,7 +612,7 @@ WebInspector.Color.Format = {
     HSLA: "color-format-hsla"
 };
 
-WebInspector.Color.Keywords = {
+WI.Color.Keywords = {
     "aliceblue": [240, 248, 255],
     "antiquewhite": [250, 235, 215],
     "aquamarine": [127, 255, 212],

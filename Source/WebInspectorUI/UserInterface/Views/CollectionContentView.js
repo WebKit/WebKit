@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CollectionContentView = class CollectionContentView extends WebInspector.ContentView
+WI.CollectionContentView = class CollectionContentView extends WI.ContentView
 {
     constructor(collection)
     {
-        console.assert(collection instanceof WebInspector.Collection);
+        console.assert(collection instanceof WI.Collection);
 
         super(collection);
 
-        this.representedObject.addEventListener(WebInspector.Collection.Event.ItemAdded, this._handleItemAdded, this);
-        this.representedObject.addEventListener(WebInspector.Collection.Event.ItemRemoved, this._handleItemRemoved, this);
+        this.representedObject.addEventListener(WI.Collection.Event.ItemAdded, this._handleItemAdded, this);
+        this.representedObject.addEventListener(WI.Collection.Event.ItemRemoved, this._handleItemRemoved, this);
 
         this._contentViewMap = new WeakMap;
         this._handleClickMap = new WeakMap;
@@ -40,61 +40,61 @@ WebInspector.CollectionContentView = class CollectionContentView extends WebInsp
         this._contentViewConstructor = null;
         let title = "";
         switch (this.representedObject.typeVerifier) {
-        case WebInspector.Collection.TypeVerifier.Frame:
-            title = WebInspector.UIString("Frames");
+        case WI.Collection.TypeVerifier.Frame:
+            title = WI.UIString("Frames");
             break;
 
-        case WebInspector.Collection.TypeVerifier.ContentFlow:
-            title = WebInspector.UIString("Flows");
+        case WI.Collection.TypeVerifier.ContentFlow:
+            title = WI.UIString("Flows");
             break;
 
-        case WebInspector.Collection.TypeVerifier.Script:
-            title = WebInspector.UIString("Extra Scripts");
+        case WI.Collection.TypeVerifier.Script:
+            title = WI.UIString("Extra Scripts");
             break;
 
-        case WebInspector.Collection.TypeVerifier.Resource:
-            title = WebInspector.UIString("Resource");
+        case WI.Collection.TypeVerifier.Resource:
+            title = WI.UIString("Resource");
             break;
 
-        case WebInspector.ResourceCollection.TypeVerifier.Document:
-            title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.Document, true);
+        case WI.ResourceCollection.TypeVerifier.Document:
+            title = WI.Resource.displayNameForType(WI.Resource.Type.Document, true);
             break;
 
-        case WebInspector.ResourceCollection.TypeVerifier.Stylesheet:
-            title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.Stylesheet, true);
+        case WI.ResourceCollection.TypeVerifier.Stylesheet:
+            title = WI.Resource.displayNameForType(WI.Resource.Type.Stylesheet, true);
             break;
 
-        case WebInspector.ResourceCollection.TypeVerifier.Image:
-            this._contentViewConstructor = WebInspector.ImageResourceContentView;
-            title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.Image, true);
+        case WI.ResourceCollection.TypeVerifier.Image:
+            this._contentViewConstructor = WI.ImageResourceContentView;
+            title = WI.Resource.displayNameForType(WI.Resource.Type.Image, true);
             break;
 
-        case WebInspector.ResourceCollection.TypeVerifier.Font:
-            title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.Font, true);
+        case WI.ResourceCollection.TypeVerifier.Font:
+            title = WI.Resource.displayNameForType(WI.Resource.Type.Font, true);
             break;
 
-        case WebInspector.ResourceCollection.TypeVerifier.Script:
-            title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.Script, true);
+        case WI.ResourceCollection.TypeVerifier.Script:
+            title = WI.Resource.displayNameForType(WI.Resource.Type.Script, true);
             break;
 
-        case WebInspector.ResourceCollection.TypeVerifier.XHR:
-            title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.XHR, true);
+        case WI.ResourceCollection.TypeVerifier.XHR:
+            title = WI.Resource.displayNameForType(WI.Resource.Type.XHR, true);
             break;
 
-        case WebInspector.ResourceCollection.TypeVerifier.Fetch:
-            title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.Fetch, true);
+        case WI.ResourceCollection.TypeVerifier.Fetch:
+            title = WI.Resource.displayNameForType(WI.Resource.Type.Fetch, true);
             break;
 
-        case WebInspector.ResourceCollection.TypeVerifier.WebSocket:
-            title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.WebSocket, true);
+        case WI.ResourceCollection.TypeVerifier.WebSocket:
+            title = WI.Resource.displayNameForType(WI.Resource.Type.WebSocket, true);
             break;
 
-        case WebInspector.ResourceCollection.TypeVerifier.Other:
-            title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.Other, true);
+        case WI.ResourceCollection.TypeVerifier.Other:
+            title = WI.Resource.displayNameForType(WI.Resource.Type.Other, true);
             break;
         }
 
-        this._contentPlaceholder = new WebInspector.TitleView(title);
+        this._contentPlaceholder = new WI.TitleView(title);
 
         this.element.classList.add("collection");
     }
@@ -123,18 +123,18 @@ WebInspector.CollectionContentView = class CollectionContentView extends WebInsp
 
         let contentView = new this._contentViewConstructor(item);
 
-        contentView.addEventListener(WebInspector.ResourceContentView.Event.ContentError, this._handleContentError, this);
+        contentView.addEventListener(WI.ResourceContentView.Event.ContentError, this._handleContentError, this);
 
         let handleClick = (event) => {
             if (event.button !== 0 || event.ctrlKey)
                 return;
 
-            WebInspector.showRepresentedObject(item);
+            WI.showRepresentedObject(item);
         };
         this._handleClickMap.set(item, handleClick);
         contentView.element.addEventListener("click", handleClick);
 
-        contentView.element.title = WebInspector.displayNameForURL(item.url, item.urlComponents);
+        contentView.element.title = WI.displayNameForURL(item.url, item.urlComponents);
 
         this.addSubview(contentView);
         this._contentViewMap.set(item, contentView);

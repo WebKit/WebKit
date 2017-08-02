@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ControlToolbarItem = class ControlToolbarItem extends WebInspector.ButtonNavigationItem
+WI.ControlToolbarItem = class ControlToolbarItem extends WI.ButtonNavigationItem
 {
     constructor(identifier, toolTip, image, imageWidth, imageHeight)
     {

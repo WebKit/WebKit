@@ -2,8 +2,8 @@ TestPage.registerInitializer(function() {
     function loadPrettyPrintingTestAndExpectedResults(testURL) {
         let expectedURL = testURL.replace(/\.([^\.]+)$/, "-expected.$1");
         return Promise.all([
-            NetworkAgent.loadResource(WebInspector.frameResourceManager.mainFrame.id, testURL),
-            NetworkAgent.loadResource(WebInspector.frameResourceManager.mainFrame.id, expectedURL)
+            NetworkAgent.loadResource(WI.frameResourceManager.mainFrame.id, testURL),
+            NetworkAgent.loadResource(WI.frameResourceManager.mainFrame.id, expectedURL)
         ]).then(function(results) {
             return Promise.resolve({testText: results[0].content, expectedText: results[1].content });
         });
@@ -21,7 +21,7 @@ TestPage.registerInitializer(function() {
             const end = {line: editor.lineCount() - 1};
             const indentString = "    ";
             let builder = new FormatterContentBuilder(indentString);
-            let formatter = new WebInspector.Formatter(editor, builder);
+            let formatter = new WI.Formatter(editor, builder);
             formatter.format(start, end);
 
             let pass = builder.formattedContent === expectedText;
@@ -45,7 +45,7 @@ TestPage.registerInitializer(function() {
     }
 
     window.addPrettyPrintingTests = function(suite, mode, tests) {
-        let testPageURL = WebInspector.frameResourceManager.mainFrame.mainResource.url;
+        let testPageURL = WI.frameResourceManager.mainFrame.mainResource.url;
         let testPageResourcesURL = testPageURL.substring(0, testPageURL.lastIndexOf("/"));            
 
         for (let test of tests) {

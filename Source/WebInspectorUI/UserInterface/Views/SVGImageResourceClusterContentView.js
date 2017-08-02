@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SVGImageResourceClusterContentView = class SVGImageResourceClusterContentView extends WebInspector.ClusterContentView
+WI.SVGImageResourceClusterContentView = class SVGImageResourceClusterContentView extends WI.ClusterContentView
 {
     constructor(resource)
     {
@@ -34,19 +34,19 @@ WebInspector.SVGImageResourceClusterContentView = class SVGImageResourceClusterC
         let createPathComponent = (displayName, className, identifier) => {
             const textOnly = false;
             const showSelectorArrows = true;
-            let pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, textOnly, showSelectorArrows);
-            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+            let pathComponent = new WI.HierarchicalPathComponent(displayName, className, identifier, textOnly, showSelectorArrows);
+            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
             pathComponent.comparisonData = resource;
             return pathComponent;
         };
 
-        this._imagePathComponent = createPathComponent(WebInspector.UIString("Image"), "image-icon", WebInspector.SVGImageResourceClusterContentView.Identifier.Image);
-        this._sourcePathComponent = createPathComponent(WebInspector.UIString("Source"), "source-icon", WebInspector.SVGImageResourceClusterContentView.Identifier.Source);
+        this._imagePathComponent = createPathComponent(WI.UIString("Image"), "image-icon", WI.SVGImageResourceClusterContentView.Identifier.Image);
+        this._sourcePathComponent = createPathComponent(WI.UIString("Source"), "source-icon", WI.SVGImageResourceClusterContentView.Identifier.Source);
 
         this._imagePathComponent.nextSibling = this._sourcePathComponent;
         this._sourcePathComponent.previousSibling = this._imagePathComponent;
 
-        this._currentContentViewSetting = new WebInspector.Setting("svg-image-resource-cluster-current-view-" + this._resource.url.hash, WebInspector.SVGImageResourceClusterContentView.Identifier.Image);
+        this._currentContentViewSetting = new WI.Setting("svg-image-resource-cluster-current-view-" + this._resource.url.hash, WI.SVGImageResourceClusterContentView.Identifier.Image);
     }
 
     // Public
@@ -85,14 +85,14 @@ WebInspector.SVGImageResourceClusterContentView = class SVGImageResourceClusterC
 
     saveToCookie(cookie)
     {
-        cookie[WebInspector.SVGImageResourceClusterContentView.ContentViewIdentifierCookieKey] = this._currentContentViewSetting.value;
+        cookie[WI.SVGImageResourceClusterContentView.ContentViewIdentifierCookieKey] = this._currentContentViewSetting.value;
     }
 
     restoreFromCookie(cookie)
     {
-        let contentView = this._showContentViewForIdentifier(cookie[WebInspector.SVGImageResourceClusterContentView.ContentViewIdentifierCookieKey]);
+        let contentView = this._showContentViewForIdentifier(cookie[WI.SVGImageResourceClusterContentView.ContentViewIdentifierCookieKey]);
         if (typeof contentView.revealPosition === "function" && "lineNumber" in cookie && "columnNumber" in cookie)
-            contentView.revealPosition(new WebInspector.SourceCodePosition(cookie.lineNumber, cookie.columnNumber));
+            contentView.revealPosition(new WI.SourceCodePosition(cookie.lineNumber, cookie.columnNumber));
     }
 
     // Private
@@ -102,9 +102,9 @@ WebInspector.SVGImageResourceClusterContentView = class SVGImageResourceClusterC
         console.assert(contentView);
         if (!contentView)
             return null;
-        if (contentView instanceof WebInspector.ImageResourceContentView)
+        if (contentView instanceof WI.ImageResourceContentView)
             return this._imagePathComponent;
-        if (contentView instanceof WebInspector.TextContentView)
+        if (contentView instanceof WI.TextContentView)
             return this._sourcePathComponent;
         console.error("Unknown contentView.");
         return null;
@@ -115,10 +115,10 @@ WebInspector.SVGImageResourceClusterContentView = class SVGImageResourceClusterC
         console.assert(contentView);
         if (!contentView)
             return null;
-        if (contentView instanceof WebInspector.ImageResourceContentView)
-            return WebInspector.SVGImageResourceClusterContentView.Identifier.Image;
-        if (contentView instanceof WebInspector.TextContentView)
-            return WebInspector.SVGImageResourceClusterContentView.Identifier.Source;
+        if (contentView instanceof WI.ImageResourceContentView)
+            return WI.SVGImageResourceClusterContentView.Identifier.Image;
+        if (contentView instanceof WI.TextContentView)
+            return WI.SVGImageResourceClusterContentView.Identifier.Source;
         console.error("Unknown contentView.");
         return null;
     }
@@ -128,12 +128,12 @@ WebInspector.SVGImageResourceClusterContentView = class SVGImageResourceClusterC
         let contentViewToShow = null;
 
         switch (identifier) {
-        case WebInspector.SVGImageResourceClusterContentView.Identifier.Image:
-            contentViewToShow = new WebInspector.ImageResourceContentView(this._resource);
+        case WI.SVGImageResourceClusterContentView.Identifier.Image:
+            contentViewToShow = new WI.ImageResourceContentView(this._resource);
             break;
 
-        case WebInspector.SVGImageResourceClusterContentView.Identifier.Source:
-            contentViewToShow = new WebInspector.TextContentView("", this._resource.mimeType);
+        case WI.SVGImageResourceClusterContentView.Identifier.Source:
+            contentViewToShow = new WI.TextContentView("", this._resource.mimeType);
 
             this._resource.requestContent().then((result) => {
                 let fileReader = new FileReader;
@@ -146,7 +146,7 @@ WebInspector.SVGImageResourceClusterContentView = class SVGImageResourceClusterC
 
         default:
             // Default to showing the image.
-            contentViewToShow = new WebInspector.ImageResourceContentView(this._resource);
+            contentViewToShow = new WI.ImageResourceContentView(this._resource);
             break;
         }
 
@@ -161,9 +161,9 @@ WebInspector.SVGImageResourceClusterContentView = class SVGImageResourceClusterC
     }
 };
 
-WebInspector.SVGImageResourceClusterContentView.ContentViewIdentifierCookieKey = "svg-image-resource-cluster-content-view-identifier";
+WI.SVGImageResourceClusterContentView.ContentViewIdentifierCookieKey = "svg-image-resource-cluster-content-view-identifier";
 
-WebInspector.SVGImageResourceClusterContentView.Identifier = {
+WI.SVGImageResourceClusterContentView.Identifier = {
     Image: "image",
     Source: "source",
 };

@@ -20,11 +20,11 @@ function test()
         description: "Trigger a blocked resource load and ensure we get notified of the request.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("createBlockedResourceLoad()");
-            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+            WI.Frame.singleFireEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
                 let resource = event.data.resource;
-                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
                 InspectorTest.expectThat(resource.url === "", "Request url should be rewritten to the null string.");
-                resource.singleFireEventListener(WebInspector.Resource.Event.LoadingDidFail, (event) => {
+                resource.singleFireEventListener(WI.Resource.Event.LoadingDidFail, (event) => {
                     InspectorTest.pass("Resource load should fail.");
                     resolve();
                 });

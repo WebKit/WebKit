@@ -23,7 +23,7 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspector.DataGridNode
+WI.ProfileDataGridNode = class ProfileDataGridNode extends WI.DataGridNode
 {
     constructor(callingContextTreeNode, tree)
     {
@@ -52,15 +52,15 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
     {
         let title = this._node.name;
         if (!title)
-            return WebInspector.UIString("(anonymous function)");
+            return WI.UIString("(anonymous function)");
         if (title === "(program)")
-            return WebInspector.UIString("(program)");
+            return WI.UIString("(program)");
         return title;
     }
 
     iconClassName()
     {
-        let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID, WebInspector.assumingMainTarget());
+        let script = WI.debuggerManager.scriptForIdentifier(this._node.sourceID, WI.assumingMainTarget());
         if (!script || !script.url)
             return "native-icon";
         if (this._node.name === "(program)")
@@ -111,14 +111,14 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
     appendContextMenuItems(contextMenu)
     {
         let disableFocus = this === this._tree.currentFocusNode;
-        contextMenu.appendItem(WebInspector.UIString("Focus on Subtree"), () => {
+        contextMenu.appendItem(WI.UIString("Focus on Subtree"), () => {
             this._tree.addFocusNode(this);
         }, disableFocus);
 
         // FIXME: <https://webkit.org/b/155072> Web Inspector: Charge to Caller should work with Bottom Up Profile View
-        let disableChargeToCaller = this._tree.callingContextTree.type === WebInspector.CallingContextTree.Type.BottomUp;
-        contextMenu.appendItem(WebInspector.UIString("Charge ‘%s’ to Callers").format(this.displayName()), () => {
-            this._tree.addModifier({type: WebInspector.ProfileDataGridTree.ModifierType.ChargeToCaller, source: this._node});
+        let disableChargeToCaller = this._tree.callingContextTree.type === WI.CallingContextTree.Type.BottomUp;
+        contextMenu.appendItem(WI.UIString("Charge ‘%s’ to Callers").format(this.displayName()), () => {
+            this._tree.addModifier({type: WI.ProfileDataGridTree.ModifierType.ChargeToCaller, source: this._node});
         }, disableChargeToCaller);
 
         contextMenu.appendSeparator();
@@ -130,7 +130,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
     {
         if (columnIdentifier === "function") {
             let filterableData = [this.displayName()];
-            let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID, WebInspector.assumingMainTarget());
+            let script = WI.debuggerManager.scriptForIdentifier(this._node.sourceID, WI.assumingMainTarget());
             if (script && script.url && this._node.line >= 0 && this._node.column >= 0)
                 filterableData.push(script.url);
             return filterableData;
@@ -147,13 +147,13 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         // This doesn't handle removing a single modifier and re-inserting a single child.
 
         // FIXME: <https://webkit.org/b/155072> Web Inspector: Charge to Caller should work with Bottom Up Profile View
-        let isBottomUp = this._tree.callingContextTree.type === WebInspector.CallingContextTree.Type.BottomUp;
+        let isBottomUp = this._tree.callingContextTree.type === WI.CallingContextTree.Type.BottomUp;
         if (!this._tree.hasModifiers() || isBottomUp) {
             // Add back child data grid nodes that were previously charged to us.
             if (!this.shouldRefreshChildren && this._childrenToChargeToSelf.size) {
                 for (let child of this._childrenToChargeToSelf) {
                     console.assert(child.hasStackTraceInTimeRange(this._tree.startTime, this._tree.endTime));
-                    this.appendChild(new WebInspector.ProfileDataGridNode(child, this._tree));
+                    this.appendChild(new WI.ProfileDataGridNode(child, this._tree));
                 }
 
                 this.sort();
@@ -172,7 +172,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         this._node.forEachChild((child) => {
             if (child.hasStackTraceInTimeRange(this._tree.startTime, this._tree.endTime)) {
                 for (let {type, source} of this._tree.modifiers) {
-                    if (type === WebInspector.ProfileDataGridTree.ModifierType.ChargeToCaller) {
+                    if (type === WI.ProfileDataGridTree.ModifierType.ChargeToCaller) {
                         if (child.equals(source)) {
                             this._childrenToChargeToSelf.add(child);
                             this._extraSelfTimeFromChargedChildren += child.filteredTimestampsAndDuration(this._tree.startTime, this._tree.endTime).duration;
@@ -232,14 +232,14 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         let titleElement = fragment.appendChild(document.createElement("span"));
         titleElement.textContent = title;
 
-        let script = WebInspector.debuggerManager.scriptForIdentifier(this._node.sourceID, WebInspector.assumingMainTarget());
+        let script = WI.debuggerManager.scriptForIdentifier(this._node.sourceID, WI.assumingMainTarget());
         if (script && script.url && this._node.line >= 0 && this._node.column >= 0) {
             // Convert from 1-based line and column to 0-based.
             let sourceCodeLocation = script.createSourceCodeLocation(this._node.line - 1, this._node.column - 1);
 
             let locationElement = fragment.appendChild(document.createElement("span"));
             locationElement.classList.add("location");
-            sourceCodeLocation.populateLiveDisplayLocationString(locationElement, "textContent", WebInspector.SourceCodeLocation.ColumnStyle.Hidden, WebInspector.SourceCodeLocation.NameStyle.Short);
+            sourceCodeLocation.populateLiveDisplayLocationString(locationElement, "textContent", WI.SourceCodeLocation.ColumnStyle.Hidden, WI.SourceCodeLocation.NameStyle.Short);
 
             const options = {
                 dontFloat: true,
@@ -247,7 +247,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
                 ignoreNetworkTab: true,
                 ignoreSearchTab: true,
             };
-            fragment.appendChild(WebInspector.createSourceCodeLocationLink(sourceCodeLocation, options));
+            fragment.appendChild(WI.createSourceCodeLocationLink(sourceCodeLocation, options));
         }
 
         return fragment;
@@ -263,7 +263,7 @@ WebInspector.ProfileDataGridNode = class ProfileDataGridNode extends WebInspecto
         this._node.forEachChild((child) => {
             if (!this._childrenToChargeToSelf.has(child)) {
                 if (child.hasStackTraceInTimeRange(this._tree.startTime, this._tree.endTime))
-                    this.appendChild(new WebInspector.ProfileDataGridNode(child, this._tree));
+                    this.appendChild(new WI.ProfileDataGridNode(child, this._tree));
             }
         });
 

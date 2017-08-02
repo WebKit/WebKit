@@ -24,11 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends WebInspector.DetailsSidebarPanel
+WI.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends WI.DetailsSidebarPanel
 {
     constructor()
     {
-        super("probe", WebInspector.UIString("Probes"));
+        super("probe", WI.UIString("Probes"));
 
         this._probeSetSections = new Map;
         this._inspectedProbeSets = [];
@@ -62,7 +62,7 @@ WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends W
             objects = [objects];
 
         var inspectedProbeSets = objects.filter(function(object) {
-            return object instanceof WebInspector.ProbeSet;
+            return object instanceof WI.ProbeSet;
         });
 
         inspectedProbeSets.sort(function sortBySourceLocation(aProbeSet, bProbeSet) {
@@ -90,11 +90,11 @@ WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends W
     {
         super.initialLayout();
 
-        WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded, this);
-        WebInspector.probeManager.addEventListener(WebInspector.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);
+        WI.probeManager.addEventListener(WI.ProbeManager.Event.ProbeSetAdded, this._probeSetAdded, this);
+        WI.probeManager.addEventListener(WI.ProbeManager.Event.ProbeSetRemoved, this._probeSetRemoved, this);
 
         // Initialize sidebar sections for probe sets that already exist.
-        for (var probeSet of WebInspector.probeManager.probeSets)
+        for (var probeSet of WI.probeManager.probeSets)
             this._probeSetAdded(probeSet);
     }
 
@@ -112,13 +112,13 @@ WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends W
     _probeSetAdded(probeSetOrEvent)
     {
         var probeSet;
-        if (probeSetOrEvent instanceof WebInspector.ProbeSet)
+        if (probeSetOrEvent instanceof WI.ProbeSet)
             probeSet = probeSetOrEvent;
         else
             probeSet = probeSetOrEvent.data.probeSet;
         console.assert(!this._probeSetSections.has(probeSet), "New probe group ", probeSet, " already has its own sidebar.");
 
-        var newSection = new WebInspector.ProbeSetDetailsSection(probeSet);
+        var newSection = new WI.ProbeSetDetailsSection(probeSet);
         this._probeSetSections.set(probeSet, newSection);
     }
 

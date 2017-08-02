@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProtocolTracer = class ProtocolTracer
+WI.ProtocolTracer = class ProtocolTracer
 {
     // Public
 

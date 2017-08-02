@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ColorWheel = class ColorWheel extends WebInspector.Object
+WI.ColorWheel = class ColorWheel extends WI.Object
 {
     constructor()
     {
@@ -60,7 +60,7 @@ WebInspector.ColorWheel = class ColorWheel extends WebInspector.Object
         // We shrink the radius a bit for better anti-aliasing.
         this._radius = dimension / 2 - 2;
 
-        this._setCrosshairPosition(new WebInspector.Point(dimension / 2, dimension / 2));
+        this._setCrosshairPosition(new WI.Point(dimension / 2, dimension / 2));
 
         this._drawRawCanvas();
         this._draw();
@@ -87,7 +87,7 @@ WebInspector.ColorWheel = class ColorWheel extends WebInspector.Object
         if (this._crosshairPosition)
             return this._colorAtPointWithBrightness(this._crosshairPosition.x * window.devicePixelRatio, this._crosshairPosition.y * window.devicePixelRatio, this._brightness);
 
-        return new WebInspector.Color(WebInspector.Color.Format.RGBA, [0, 0, 0, 0]);
+        return new WI.Color(WI.Color.Format.RGBA, [0, 0, 0, 0]);
     }
 
     set tintedColor(tintedColor)
@@ -102,7 +102,7 @@ WebInspector.ColorWheel = class ColorWheel extends WebInspector.Object
         if (this._crosshairPosition)
             return this._colorAtPointWithBrightness(this._crosshairPosition.x * window.devicePixelRatio, this._crosshairPosition.y * window.devicePixelRatio, 1);
 
-        return new WebInspector.Color(WebInspector.Color.Format.RGBA, [0, 0, 0, 0]);
+        return new WI.Color(WI.Color.Format.RGBA, [0, 0, 0, 0]);
     }
 
     // Protected
@@ -157,12 +157,12 @@ WebInspector.ColorWheel = class ColorWheel extends WebInspector.Object
 
         function pointOnCircumference(c, r, a)
         {
-            return new WebInspector.Point(c.x + r * Math.cos(a), c.y + r * Math.sin(a));
+            return new WI.Point(c.x + r * Math.cos(a), c.y + r * Math.sin(a));
         }
 
         var dimension = this._dimension;
         var point = window.webkitConvertPointFromPageToNode(this._finalCanvas, new WebKitPoint(event.pageX, event.pageY));
-        var center = new WebInspector.Point(dimension / 2, dimension / 2);
+        var center = new WI.Point(dimension / 2, dimension / 2);
         if (distance(point, center) > this._radius) {
             var angle = angleFromCenterToPoint(center, point);
             point = pointOnCircumference(center, this._radius, angle);
@@ -189,14 +189,14 @@ WebInspector.ColorWheel = class ColorWheel extends WebInspector.Object
     _tintedColorToPointAndBrightness(color)
     {
         var rgb = color.rgb;
-        var hsv = WebInspector.Color.rgb2hsv(rgb[0], rgb[1], rgb[2]);
+        var hsv = WI.Color.rgb2hsv(rgb[0], rgb[1], rgb[2]);
         var cosHue = Math.cos(hsv[0] * Math.PI / 180);
         var sinHue = Math.sin(hsv[0] * Math.PI / 180);
         var center = this._dimension / 2;
         var x = center + (center * cosHue * hsv[1]);
         var y = center - (center * sinHue * hsv[1]);
         return {
-            point: new WebInspector.Point(x, y),
+            point: new WI.Point(x, y),
             brightness: hsv[2]
         };
     }
@@ -233,15 +233,15 @@ WebInspector.ColorWheel = class ColorWheel extends WebInspector.Object
         var distance = Math.sqrt(xDis * xDis + yDis * yDis);
 
         if (distance - center > 0.001)
-            return new WebInspector.Color(WebInspector.Color.Format.RGBA, [0, 0, 0, 0]);
+            return new WI.Color(WI.Color.Format.RGBA, [0, 0, 0, 0]);
 
         var h = Math.atan2(y - center, center - x) * 180 / Math.PI;
         h = (h + 180) % 360;
         var v = brightness;
         var s = Math.max(0, distance) / center;
 
-        var rgb = WebInspector.Color.hsv2rgb(h, s, v);
-        return new WebInspector.Color(WebInspector.Color.Format.RGBA, [
+        var rgb = WI.Color.hsv2rgb(h, s, v);
+        return new WI.Color(WI.Color.Format.RGBA, [
             Math.round(rgb[0] * 255),
             Math.round(rgb[1] * 255),
             Math.round(rgb[2] * 255),

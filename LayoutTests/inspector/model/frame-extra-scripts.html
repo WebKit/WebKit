@@ -11,9 +11,9 @@ function triggerAddScriptElement() {
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("WebInspector.Frame.extraScriptCollection");
+    let suite = InspectorTest.createAsyncSuite("WI.Frame.extraScriptCollection");
 
-    let mainFrame = WebInspector.frameResourceManager.mainFrame;
+    let mainFrame = WI.frameResourceManager.mainFrame;
 
     suite.addTestCase({
         name: "FrameHasNoExtraScriptsYet",
@@ -28,7 +28,7 @@ function test()
         name: "AddExtraScript",
         description: "Add extra script.",
         test(resolve, reject) {
-            WebInspector.frameResourceManager.mainFrame.awaitEvent(WebInspector.Frame.Event.ExtraScriptAdded)
+            WI.frameResourceManager.mainFrame.awaitEvent(WI.Frame.Event.ExtraScriptAdded)
             .then((event) => {
                 InspectorTest.pass("ExtraScriptAdded event fired.");
                 InspectorTest.expectThat(event.data.script.dynamicallyAddedScriptElement, "Script should identify as dynamic.");
@@ -45,6 +45,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>WebInspector.Frame.extraScriptCollection.</p>
+<p>WI.Frame.extraScriptCollection.</p>
 </body>
 </html>

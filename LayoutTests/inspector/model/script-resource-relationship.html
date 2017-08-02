@@ -34,7 +34,7 @@ function triggerScriptElement() {
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("WebInspector.Script and WebInspector.Resource relationship");
+    let suite = InspectorTest.createAsyncSuite("WI.Script and WI.Resource relationship");
 
     function validateNormalRelationship(resource, script) {
         InspectorTest.expectThat(resource.url === script.url, "Resource and Script have the same URL.");
@@ -50,8 +50,8 @@ function test()
             let script = null;
             let resource = null;
             
-            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptListener);
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
             .then((event) => {
                 resource = event.data.resource;
                 validateRelationship();
@@ -74,7 +74,7 @@ function test()
                 validateNormalRelationship(resource, script);
                 InspectorTest.expectThat(!script.sourceURL, "Script should not have a sourceURL.");
 
-                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener, null);
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptListener, null);
                 resolve();
             }
 
@@ -89,8 +89,8 @@ function test()
             let script = null;
             let resource = null;
 
-            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptListener);
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
             .then((event) => {
                 resource = event.data.resource;
                 validateRelationship();
@@ -112,7 +112,7 @@ function test()
 
                 validateNormalRelationship(resource, script);
                 InspectorTest.expectThat(script.sourceURL === "foo.js", "Script should have a sourceURL.");
-                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener, null);
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptListener, null);
                 resolve();
             }
 
@@ -124,8 +124,8 @@ function test()
         name: "ScriptWithoutResource",
         description: "A named eval does not have a resource.",
         test(resolve, reject) {
-            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
-            let resourceListener = WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+            WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptListener);
+            let resourceListener = WI.Frame.singleFireEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
                 InspectorTest.fail("Resource should not be added.");
                 reject();
             });
@@ -140,8 +140,8 @@ function test()
                 InspectorTest.expectThat(script.resource === null, "Script should not be associated with a Resource.");
                 InspectorTest.expectThat(script.sourceURL === "script-only.js", "Script should have a sourceURL.");
 
-                WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.ResourceWasAdded, resourceListener, null);
-                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener, null);
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, resourceListener, null);
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptListener, null);
                 resolve();
             }
 
@@ -153,7 +153,7 @@ function test()
         name: "DynamicallyAddedScriptElementNoResource",
         description: "A dynamically added script element has no resource.",
         test(resolve, reject) {
-            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener);
+            WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptListener);
 
             function scriptListener(event) {
                 if (event.data.script.sourceURL !== "dynamically-added-script-element.js")
@@ -164,7 +164,7 @@ function test()
                 InspectorTest.expectThat(script.dynamicallyAddedScriptElement, "Script should identify as a dynamically added script element.");
                 InspectorTest.expectThat(script.resource === null, "Script should not be associated when a resource.");
 
-                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, scriptListener, null);
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptListener, null);
                 resolve();
             }
 
@@ -176,7 +176,7 @@ function test()
         name: "DocumentWithInlineScripts",
         description: "A document resource may be associated with multiple inline scripts.",
         test(resolve, reject) {
-            let mainResource = WebInspector.frameResourceManager.mainFrame.mainResource;
+            let mainResource = WI.frameResourceManager.mainFrame.mainResource;
             let scripts = mainResource.scripts.slice().sort((a, b) => a.range.startLine - b.range.startLine);
 
             // Scripts are:
@@ -205,6 +205,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>WebInspector.Script and WebInspector.Resource relationship.</p>
+<p>WI.Script and WI.Resource relationship.</p>
 </body>
 </html>

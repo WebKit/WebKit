@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleTimingEditor = class VisualStyleTimingEditor extends WebInspector.VisualStyleKeywordPicker
+WI.VisualStyleTimingEditor = class VisualStyleTimingEditor extends WI.VisualStyleKeywordPicker
 {
     constructor(propertyNames, text, possibleValues, layoutReversed)
     {
@@ -35,18 +35,18 @@ WebInspector.VisualStyleTimingEditor = class VisualStyleTimingEditor extends Web
 
         this._customBezierOptionElement = this._keywordSelectElement.createChild("option");
         this._customBezierOptionElement.value = "bezier";
-        this._customBezierOptionElement.text = WebInspector.UIString("Bezier");
+        this._customBezierOptionElement.text = WI.UIString("Bezier");
 
         this._customSpringOptionElement = this._keywordSelectElement.createChild("option");
         this._customSpringOptionElement.value = "spring";
-        this._customSpringOptionElement.text = WebInspector.UIString("Spring");
+        this._customSpringOptionElement.text = WI.UIString("Spring");
 
-        this._bezierSwatch = new WebInspector.InlineSwatch(WebInspector.InlineSwatch.Type.Bezier);
-        this._bezierSwatch.addEventListener(WebInspector.InlineSwatch.Event.ValueChanged, this._bezierSwatchValueChanged, this);
+        this._bezierSwatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Bezier);
+        this._bezierSwatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, this._bezierSwatchValueChanged, this);
         this.contentElement.appendChild(this._bezierSwatch.element);
 
-        this._springSwatch = new WebInspector.InlineSwatch(WebInspector.InlineSwatch.Type.Spring);
-        this._springSwatch.addEventListener(WebInspector.InlineSwatch.Event.ValueChanged, this._springSwatchValueChanged, this);
+        this._springSwatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Spring);
+        this._springSwatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, this._springSwatchValueChanged, this);
         this.contentElement.appendChild(this._springSwatch.element);
     }
 
@@ -115,7 +115,7 @@ WebInspector.VisualStyleTimingEditor = class VisualStyleTimingEditor extends Web
 
     set _bezierValue(text)
     {
-        this._bezierSwatch.value = WebInspector.CubicBezier.fromString(text);
+        this._bezierSwatch.value = WI.CubicBezier.fromString(text);
     }
 
     get _springValue()
@@ -129,7 +129,7 @@ WebInspector.VisualStyleTimingEditor = class VisualStyleTimingEditor extends Web
 
     set _springValue(text)
     {
-        this._springSwatch.value = WebInspector.Spring.fromString(text);
+        this._springSwatch.value = WI.Spring.fromString(text);
     }
 
     _handleKeywordChanged()

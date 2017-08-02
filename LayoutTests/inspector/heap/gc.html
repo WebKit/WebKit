@@ -13,12 +13,12 @@ function test()
         test(resolve, reject) {
             HeapAgent.gc();
             let resolving = false;
-            WebInspector.heapManager.addEventListener(WebInspector.HeapManager.Event.GarbageCollected, (event) => {
+            WI.heapManager.addEventListener(WI.HeapManager.Event.GarbageCollected, (event) => {
                 // Due to the asynchronous nature of Heap.garbageCollected events, we may see
                 // non-Full GC events before we see the Full collection triggered by HeapAgent.gc.
-                if (!resolving && event.data.collection.type === WebInspector.GarbageCollection.Type.Full) {
-                    InspectorTest.expectThat(event.data.collection instanceof WebInspector.GarbageCollection, "Event should have GarbageCollection data.");
-                    InspectorTest.expectThat(event.data.collection.type === WebInspector.GarbageCollection.Type.Full, "GarbageCollection type should be Full.");
+                if (!resolving && event.data.collection.type === WI.GarbageCollection.Type.Full) {
+                    InspectorTest.expectThat(event.data.collection instanceof WI.GarbageCollection, "Event should have GarbageCollection data.");
+                    InspectorTest.expectThat(event.data.collection.type === WI.GarbageCollection.Type.Full, "GarbageCollection type should be Full.");
                     resolving = true;
                     resolve();
                 }

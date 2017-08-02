@@ -24,7 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LogManager = class LogManager extends WebInspector.Object
+WI.LogManager = class LogManager extends WI.Object
 {
     constructor()
     {
@@ -33,42 +33,42 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
         this._clearMessagesRequested = false;
         this._isNewPageOrReload = false;
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
     // Public
 
     messageWasAdded(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId)
     {
-        // Called from WebInspector.ConsoleObserver.
+        // Called from WI.ConsoleObserver.
 
         // FIXME: Get a request from request ID.
 
         if (parameters)
-            parameters = parameters.map((x) => WebInspector.RemoteObject.fromPayload(x, target));
+            parameters = parameters.map((x) => WI.RemoteObject.fromPayload(x, target));
 
-        let message = new WebInspector.ConsoleMessage(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
+        let message = new WI.ConsoleMessage(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
 
-        this.dispatchEventToListeners(WebInspector.LogManager.Event.MessageAdded, {message});
+        this.dispatchEventToListeners(WI.LogManager.Event.MessageAdded, {message});
 
         if (message.level === "warning" || message.level === "error")
-            WebInspector.issueManager.issueWasAdded(message);
+            WI.issueManager.issueWasAdded(message);
     }
 
     messagesCleared()
     {
-        // Called from WebInspector.ConsoleObserver.
+        // Called from WI.ConsoleObserver.
 
-        WebInspector.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
+        WI.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
 
         if (this._clearMessagesRequested) {
             // Frontend requested "clear console" and Backend successfully completed the request.
             this._clearMessagesRequested = false;
-            this.dispatchEventToListeners(WebInspector.LogManager.Event.Cleared);
+            this.dispatchEventToListeners(WI.LogManager.Event.Cleared);
         } else {
             // Received an unrequested clear console event.
             // This could be for a navigation or other reasons (like console.clear()).
-            // If this was a reload, we may not want to dispatch WebInspector.LogManager.Event.Cleared.
+            // If this was a reload, we may not want to dispatch WI.LogManager.Event.Cleared.
             // To detect if this is a reload we wait a turn and check if there was a main resource change reload.
             setTimeout(this._delayedMessagesCleared.bind(this), 0);
         }
@@ -79,26 +79,26 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
         if (this._isNewPageOrReload) {
             this._isNewPageOrReload = false;
 
-            if (!WebInspector.settings.clearLogOnNavigate.value)
+            if (!WI.settings.clearLogOnNavigate.value)
                 return;
         }
 
         // A console.clear() or command line clear() happened.
-        this.dispatchEventToListeners(WebInspector.LogManager.Event.Cleared);
+        this.dispatchEventToListeners(WI.LogManager.Event.Cleared);
     }
 
     messageRepeatCountUpdated(count)
     {
-        // Called from WebInspector.ConsoleObserver.
+        // Called from WI.ConsoleObserver.
 
-        this.dispatchEventToListeners(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, {count});
+        this.dispatchEventToListeners(WI.LogManager.Event.PreviousMessageRepeatCountUpdated, {count});
     }
 
     requestClearMessages()
     {
         this._clearMessagesRequested = true;
 
-        for (let target of WebInspector.targets)
+        for (let target of WI.targets)
             target.ConsoleAgent.clearMessages();
     }
 
@@ -106,7 +106,7 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
 
     _mainResourceDidChange(event)
     {
-        console.assert(event.target instanceof WebInspector.Frame);
+        console.assert(event.target instanceof WI.Frame);
 
         if (!event.target.isMainFrame())
             return;
@@ -115,13 +115,13 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
 
         let timestamp = Date.now();
         let wasReloaded = event.data.oldMainResource && event.data.oldMainResource.url === event.target.mainResource.url;
-        this.dispatchEventToListeners(WebInspector.LogManager.Event.SessionStarted, {timestamp, wasReloaded});
+        this.dispatchEventToListeners(WI.LogManager.Event.SessionStarted, {timestamp, wasReloaded});
 
-        WebInspector.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
+        WI.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
     }
 };
 
-WebInspector.LogManager.Event = {
+WI.LogManager.Event = {
     SessionStarted: "log-manager-session-was-started",
     Cleared: "log-manager-cleared",
     MessageAdded: "log-manager-message-added",

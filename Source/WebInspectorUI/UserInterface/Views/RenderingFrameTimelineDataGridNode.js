@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDataGridNode extends WebInspector.TimelineDataGridNode
+WI.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDataGridNode extends WI.TimelineDataGridNode
 {
     constructor(renderingFrameTimelineRecord, baseStartTime)
     {
@@ -43,11 +43,11 @@ WebInspector.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDa
     get data()
     {
         if (!this._cachedData) {
-            let name = WebInspector.TimelineTabContentView.displayNameForRecord(this._record);
-            let scriptTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Script);
-            let layoutTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Layout);
-            let paintTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Paint);
-            let otherTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Other);
+            let name = WI.TimelineTabContentView.displayNameForRecord(this._record);
+            let scriptTime = this._record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Script);
+            let layoutTime = this._record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Layout);
+            let paintTime = this._record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Paint);
+            let otherTime = this._record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Other);
             this._cachedData = {
                 name,
                 startTime: this._record.startTime,

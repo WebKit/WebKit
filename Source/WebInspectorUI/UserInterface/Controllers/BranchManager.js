@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BranchManager = class BranchManager extends WebInspector.Object
+WI.BranchManager = class BranchManager extends WI.Object
 {
     constructor()
     {
         super();
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         this.initialize();
     }
@@ -38,8 +38,8 @@ WebInspector.BranchManager = class BranchManager extends WebInspector.Object
 
     initialize()
     {
-        this._originalBranch = new WebInspector.Branch(WebInspector.UIString("Original"), null, true);
-        this._currentBranch = this._originalBranch.fork(WebInspector.UIString("Working Copy"));
+        this._originalBranch = new WI.Branch(WI.UIString("Original"), null, true);
+        this._currentBranch = this._originalBranch.fork(WI.UIString("Working Copy"));
         this._branches = [this._originalBranch, this._currentBranch];
     }
 
@@ -55,8 +55,8 @@ WebInspector.BranchManager = class BranchManager extends WebInspector.Object
 
     set currentBranch(branch)
     {
-        console.assert(branch instanceof WebInspector.Branch);
-        if (!(branch instanceof WebInspector.Branch))
+        console.assert(branch instanceof WI.Branch);
+        if (!(branch instanceof WI.Branch))
             return;
 
         this._currentBranch.revert();
@@ -71,8 +71,8 @@ WebInspector.BranchManager = class BranchManager extends WebInspector.Object
         if (!fromBranch)
             fromBranch = this._originalBranch;
 
-        console.assert(fromBranch instanceof WebInspector.Branch);
-        if (!(fromBranch instanceof WebInspector.Branch))
+        console.assert(fromBranch instanceof WI.Branch);
+        if (!(fromBranch instanceof WI.Branch))
             return null;
 
         var newBranch = fromBranch.fork(displayName);
@@ -82,8 +82,8 @@ WebInspector.BranchManager = class BranchManager extends WebInspector.Object
 
     deleteBranch(branch)
     {
-        console.assert(branch instanceof WebInspector.Branch);
-        if (!(branch instanceof WebInspector.Branch))
+        console.assert(branch instanceof WI.Branch);
+        if (!(branch instanceof WI.Branch))
             return;
 
         console.assert(branch !== this._originalBranch);
@@ -100,7 +100,7 @@ WebInspector.BranchManager = class BranchManager extends WebInspector.Object
 
     _mainResourceDidChange(event)
     {
-        console.assert(event.target instanceof WebInspector.Frame);
+        console.assert(event.target instanceof WI.Frame);
 
         if (!event.target.isMainFrame())
             return;

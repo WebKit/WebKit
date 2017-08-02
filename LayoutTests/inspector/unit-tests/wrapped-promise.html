@@ -11,7 +11,7 @@ function test()
         name: "WrappedPromise.constructor resolve",
         description: "Should be able to resolve the promise using the 'resolve' callback argument.",
         test(resolve, reject) {
-            let result = new WebInspector.WrappedPromise((resolve, reject) => {
+            let result = new WI.WrappedPromise((resolve, reject) => {
                 resolve();
             });
 
@@ -23,7 +23,7 @@ function test()
         name: "WrappedPromise.constructor reject",
         description: "Should be able to reject the promise using the 'reject' callback argument.",
         test(resolve, reject) {
-            let result = new WebInspector.WrappedPromise((resolve, reject) => {
+            let result = new WI.WrappedPromise((resolve, reject) => {
                 reject();
             });
 
@@ -35,7 +35,7 @@ function test()
         name: "WrappedPromise.prototype.resolve",
         description: "Should be able to resolve the promise using resolve().",
         test(resolve, reject) {
-            let result = new WebInspector.WrappedPromise;
+            let result = new WI.WrappedPromise;
             result.promise.then(resolve, reject);
 
             result.resolve();
@@ -46,7 +46,7 @@ function test()
         name: "WrappedPromise.prototype.reject",
         description: "Should be able to reject the promise using reject().",
         test(resolve, reject) {
-            let result = new WebInspector.WrappedPromise;
+            let result = new WI.WrappedPromise;
             result.promise.then(reject, resolve);
 
             result.reject();
@@ -57,7 +57,7 @@ function test()
         name: "WrappedPromise.prototype.get settled",
         description: "Should be able to see that the promise is settled.",
         test(resolve, reject) {
-            let result = new WebInspector.WrappedPromise;
+            let result = new WI.WrappedPromise;
             InspectorTest.expectFalse(result.settled, "Should not be settled yet.");
 
             result.promise.then(() => {

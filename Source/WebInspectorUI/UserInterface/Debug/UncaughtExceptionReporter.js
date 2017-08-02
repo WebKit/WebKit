@@ -72,7 +72,7 @@ function handleUncaughtException(event) {
 }
 
 function handleUncaughtExceptionRecord(exceptionRecord) {
-    if (!WebInspector.settings.enableUncaughtExceptionReporter.value)
+    if (!WI.settings.enableUncaughtExceptionReporter.value)
         return;
 
     if (!window.__uncaughtExceptions)
@@ -87,7 +87,7 @@ function handleUncaughtExceptionRecord(exceptionRecord) {
     if (!loadCompleted || isFirstException)
         window.__uncaughtExceptions.push(exceptionRecord);
 
-    // If WebInspector.contentLoaded throws an uncaught exception, then these
+    // If WI.contentLoaded throws an uncaught exception, then these
     // listeners will not work correctly because the UI is not fully loaded.
     // Prevent any event handlers from running in an inconsistent state.
     if (isFirstException)
@@ -115,7 +115,7 @@ function dismissErrorSheet() {
     window.__uncaughtExceptions = [];
 
     // Do this last in case WebInspector's internal state is corrupted.
-    WebInspector.updateWindowTitle();
+    WI.updateWindowTitle();
 
     // FIXME (151959): tell the frontend host to hide a draggable title bar.
 }
@@ -181,7 +181,7 @@ function createErrorSheet() {
 
     let inspectedPageURL = null;
     try {
-        inspectedPageURL = WebInspector.frameResourceManager.mainFrame.url;
+        inspectedPageURL = WI.frameResourceManager.mainFrame.url;
     } catch (e) { }
 
     let topLevelItems = [

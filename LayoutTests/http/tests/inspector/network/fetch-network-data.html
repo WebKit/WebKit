@@ -12,22 +12,22 @@ function test()
         suite.addTestCase({
             name, test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
-                WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                WI.Frame.singleFireEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
                     let resource = event.data.resource;
-                    InspectorTest.expectEqual(resource.type, WebInspector.Resource.Type.Fetch, "Resource should be Fetch type.");
+                    InspectorTest.expectEqual(resource.type, WI.Resource.Type.Fetch, "Resource should be Fetch type.");
                     if (loadedHandler) {
-                        resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish)
+                        resource.awaitEvent(WI.Resource.Event.LoadingDidFinish)
                             .then(() => { InspectorTest.pass("Resource should have loaded successfully.") })
                             .then(() => { loadedHandler(resource); })
                             .then(resolve, reject);
-                        resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFail)
+                        resource.awaitEvent(WI.Resource.Event.LoadingDidFail)
                             .then(() => { InspectorTest.fail("Resource should not have failed to load.") })
                             .then(reject, reject);
                     } else if (failedHandler) {
-                        resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish)
+                        resource.awaitEvent(WI.Resource.Event.LoadingDidFinish)
                             .then(() => { InspectorTest.fail("Resource should not have loaded successfully.") })
                             .then(resolve, reject);
-                        resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFail)
+                        resource.awaitEvent(WI.Resource.Event.LoadingDidFail)
                             .then(() => { InspectorTest.pass("Resource should have failed to load.") })
                             .then(() => { failedHandler(resource); })
                             .then(resolve, reject);

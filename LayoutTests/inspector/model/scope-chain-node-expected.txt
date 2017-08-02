@@ -18,11 +18,11 @@ CONSOLE MESSAGE: line 119: nested blocks
 CONSOLE MESSAGE: line 130: class (method)
 CONSOLE MESSAGE: line 139: class (static)
 CONSOLE MESSAGE: line 145: normal
-Tests for the WebInspector.ScopeChainNode model object.
+Tests for the WI.ScopeChainNode model object.
 
 
-== Running test suite: WebInspector.ScopeChainNode
--- Running test case: WebInspector.ScopeChainNode.AllTypes
+== Running test suite: WI.ScopeChainNode
+-- Running test case: WI.ScopeChainNode.AllTypes
 PASS: ScopeChain should have 13 scopes.
 SCOPE CHAIN:
     Closure
@@ -52,7 +52,7 @@ SCOPE CHAIN:
       - lexicalGlobalVariable: 2
     Global
 
--- Running test case: WebInspector.ScopeChainNode.FunctionNameInFunctionExpression
+-- Running test case: WI.ScopeChainNode.FunctionNameInFunctionExpression
 SCOPE CHAIN:
     Closure
       (empty)
@@ -64,7 +64,7 @@ SCOPE CHAIN:
       - lexicalGlobalVariable: 2
     Global
 
--- Running test case: WebInspector.ScopeChainNode.FunctionNameInClassMethod
+-- Running test case: WI.ScopeChainNode.FunctionNameInClassMethod
 SCOPE CHAIN:
     Closure
       (empty)
@@ -76,7 +76,7 @@ SCOPE CHAIN:
       - lexicalGlobalVariable: 2
     Global
 
--- Running test case: WebInspector.ScopeChainNode.BlockScopes
+-- Running test case: WI.ScopeChainNode.BlockScopes
 PASS: Pause #1 - Top scope should be normal function Closure/Local scope.
 PASS: Pause #2 - Top scope should be Block scope.
 PASS: Pause #3 - Top scope should be Block scope.

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleURLInput = class VisualStyleURLInput extends WebInspector.VisualStylePropertyEditor
+WI.VisualStyleURLInput = class VisualStyleURLInput extends WI.VisualStylePropertyEditor
 {
     constructor(propertyNames, text, possibleValues, layoutReversed)
     {
@@ -31,7 +31,7 @@ WebInspector.VisualStyleURLInput = class VisualStyleURLInput extends WebInspecto
 
         this._urlInputElement = document.createElement("input");
         this._urlInputElement.type = "url";
-        this._urlInputElement.placeholder = WebInspector.UIString("Enter a URL");
+        this._urlInputElement.placeholder = WI.UIString("Enter a URL");
         this._urlInputElement.addEventListener("keyup", this.debounce(250)._valueDidChange);
         this.contentElement.appendChild(this._urlInputElement);
     }

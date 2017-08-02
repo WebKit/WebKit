@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleRelativeNumberSlider = class VisualStyleRelativeNumberSlider extends WebInspector.VisualStyleNumberInputBox
+WI.VisualStyleRelativeNumberSlider = class VisualStyleRelativeNumberSlider extends WI.VisualStyleNumberInputBox
 {
     constructor(propertyNames, text, possibleValues, possibleUnits, allowNegativeValues, layoutReversed)
     {

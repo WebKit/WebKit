@@ -29,7 +29,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.roleSelectorForNode = function(node)
+WI.roleSelectorForNode = function(node)
 {
     // This is proposed syntax for CSS 4 computed role selector :role(foo) and subject to change.
     // See http://lists.w3.org/Archives/Public/www-style/2013Jul/0104.html
@@ -40,24 +40,24 @@ WebInspector.roleSelectorForNode = function(node)
     return title;
 };
 
-WebInspector.linkifyAccessibilityNodeReference = function(node)
+WI.linkifyAccessibilityNodeReference = function(node)
 {
     if (!node)
         return null;
     // Same as linkifyNodeReference except the link text has the classnames removed...
     // ...for list brevity, and both text and title have roleSelectorForNode appended.
-    var link = WebInspector.linkifyNodeReference(node);
+    var link = WI.linkifyNodeReference(node);
     var tagIdSelector = link.title;
     var classSelectorIndex = tagIdSelector.indexOf(".");
     if (classSelectorIndex > -1)
         tagIdSelector = tagIdSelector.substring(0, classSelectorIndex);
-    var roleSelector = WebInspector.roleSelectorForNode(node);
+    var roleSelector = WI.roleSelectorForNode(node);
     link.textContent = tagIdSelector + roleSelector;
     link.title += roleSelector;
     return link;
 };
 
-WebInspector.linkifyNodeReference = function(node, options = {})
+WI.linkifyNodeReference = function(node, options = {})
 {
     let displayName = node.displayName;
     if (!isNaN(options.maxLength))
@@ -65,10 +65,10 @@ WebInspector.linkifyNodeReference = function(node, options = {})
 
     let link = document.createElement("span");
     link.append(displayName);
-    return WebInspector.linkifyNodeReferenceElement(node, link, Object.shallowMerge(options, {displayName}));
+    return WI.linkifyNodeReferenceElement(node, link, Object.shallowMerge(options, {displayName}));
 };
 
-WebInspector.linkifyNodeReferenceElement = function(node, element, options = {})
+WI.linkifyNodeReferenceElement = function(node, element, options = {})
 {
     element.setAttribute("role", "link");
     element.title = options.displayName || node.displayName;
@@ -77,12 +77,12 @@ WebInspector.linkifyNodeReferenceElement = function(node, element, options = {})
     if ((nodeType !== Node.DOCUMENT_NODE || node.parentNode) && nodeType !== Node.TEXT_NODE)
         element.classList.add("node-link");
 
-    element.addEventListener("click", WebInspector.domTreeManager.inspectElement.bind(WebInspector.domTreeManager, node.id));
-    element.addEventListener("mouseover", WebInspector.domTreeManager.highlightDOMNode.bind(WebInspector.domTreeManager, node.id, "all"));
-    element.addEventListener("mouseout", WebInspector.domTreeManager.hideDOMNodeHighlight.bind(WebInspector.domTreeManager));
+    element.addEventListener("click", WI.domTreeManager.inspectElement.bind(WI.domTreeManager, node.id));
+    element.addEventListener("mouseover", WI.domTreeManager.highlightDOMNode.bind(WI.domTreeManager, node.id, "all"));
+    element.addEventListener("mouseout", WI.domTreeManager.hideDOMNodeHighlight.bind(WI.domTreeManager));
     element.addEventListener("contextmenu", (event) => {
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-        WebInspector.appendContextMenuItemsForDOMNode(contextMenu, node, options);
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+        WI.appendContextMenuItemsForDOMNode(contextMenu, node, options);
     });
 
     return element;
@@ -93,9 +93,9 @@ function createSVGElement(tagName)
     return document.createElementNS("http://www.w3.org/2000/svg", tagName);
 }
 
-WebInspector.cssPath = function(node)
+WI.cssPath = function(node)
 {
-    console.assert(node instanceof WebInspector.DOMNode, "Expected a DOMNode.");
+    console.assert(node instanceof WI.DOMNode, "Expected a DOMNode.");
     if (node.nodeType() !== Node.ELEMENT_NODE)
         return "";
 
@@ -107,7 +107,7 @@ WebInspector.cssPath = function(node)
 
     let components = [];
     while (node) {
-        let component = WebInspector.cssPathComponent(node);
+        let component = WI.cssPathComponent(node);
         if (!component)
             break;
         components.push(component);
@@ -120,9 +120,9 @@ WebInspector.cssPath = function(node)
     return components.map((x) => x.value).join(" > ") + suffix;
 };
 
-WebInspector.cssPathComponent = function(node)
+WI.cssPathComponent = function(node)
 {
-    console.assert(node instanceof WebInspector.DOMNode, "Expected a DOMNode.");
+    console.assert(node instanceof WI.DOMNode, "Expected a DOMNode.");
     console.assert(!node.isPseudoElement());
     if (node.nodeType() !== Node.ELEMENT_NODE)
         return null;
@@ -192,16 +192,16 @@ WebInspector.cssPathComponent = function(node)
     return {value: selector, done: false};
 };
 
-WebInspector.xpath = function(node)
+WI.xpath = function(node)
 {
-    console.assert(node instanceof WebInspector.DOMNode, "Expected a DOMNode.");
+    console.assert(node instanceof WI.DOMNode, "Expected a DOMNode.");
 
     if (node.nodeType() === Node.DOCUMENT_NODE)
         return "/";
 
     let components = [];
     while (node) {
-        let component = WebInspector.xpathComponent(node);
+        let component = WI.xpathComponent(node);
         if (!component)
             break;
         components.push(component);
@@ -216,11 +216,11 @@ WebInspector.xpath = function(node)
     return prefix + components.map((x) => x.value).join("/");
 };
 
-WebInspector.xpathComponent = function(node)
+WI.xpathComponent = function(node)
 {
-    console.assert(node instanceof WebInspector.DOMNode, "Expected a DOMNode.");
+    console.assert(node instanceof WI.DOMNode, "Expected a DOMNode.");
 
-    let index = WebInspector.xpathIndex(node);
+    let index = WI.xpathIndex(node);
     if (index === -1)
         return null;
 
@@ -259,7 +259,7 @@ WebInspector.xpathComponent = function(node)
     return {value, done: false};
 };
 
-WebInspector.xpathIndex = function(node)
+WI.xpathIndex = function(node)
 {
     // Root node.
     if (!node.parentNode)

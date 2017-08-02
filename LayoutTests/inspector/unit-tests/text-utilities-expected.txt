@@ -2,7 +2,7 @@ Testing basic functionality of functions defined in TextUtilities.js.
 
 
 == Running test suite: TextUtilities
--- Running test case: WebInspector.rangeForNextCSSNameOrValue
+-- Running test case: WI.rangeForNextCSSNameOrValue
 PASS: Next name/value token in "" starting at index 0 is "" [0, 0]
 PASS: Next name/value token in "" starting at index 2 is "" [0, 0]
 PASS: Next name/value token in "foo" starting at index 0 is "foo" [0, 3]

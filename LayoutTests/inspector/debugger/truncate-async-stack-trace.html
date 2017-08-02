@@ -26,15 +26,15 @@ function test()
         name: "TruncateBranchingStackTrace",
         description: "Check that branching stack traces can be truncated.",
         test(resolve, reject) {
-            WebInspector.debuggerManager.awaitEvent(WebInspector.DebuggerManager.Event.Paused)
+            WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused)
             .then((event) => {
                 InspectorTest.pass("Paused in branching stack trace.");
-                WebInspector.debuggerManager.resume();
+                WI.debuggerManager.resume();
             });
 
             InspectorTest.awaitEvent("AfterTestFunction").then(resolve, reject);
 
-            let repeatCount = WebInspector.debuggerManager.asyncStackTraceDepth;
+            let repeatCount = WI.debuggerManager.asyncStackTraceDepth;
             InspectorTest.evaluateInPage(`testBranchingTruncate(${repeatCount})`);
         }
     });

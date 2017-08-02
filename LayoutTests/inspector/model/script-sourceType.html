@@ -18,42 +18,42 @@ function triggerModuleScript() {
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("WebInspector.Script.SourceType");
+    let suite = InspectorTest.createAsyncSuite("WI.Script.SourceType");
 
     suite.addTestCase({
-        name: "WebInspector.Script.SourceType.Program",
+        name: "WI.Script.SourceType.Program",
         description: "Normal <script src> should be Program.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerProgramScript()");
-            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
                 let script = event.data.script;
                 if (!/program.js$/.test(script.url))
                     return;
 
-                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, listener);
-                InspectorTest.expectEqual(script.sourceType, WebInspector.Script.SourceType.Program, `<script> should be SourceType.Program.`);
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, listener);
+                InspectorTest.expectEqual(script.sourceType, WI.Script.SourceType.Program, `<script> should be SourceType.Program.`);
                 resolve();
             });
         }
     });
 
     suite.addTestCase({
-        name: "WebInspector.Script.SourceType.Module",
+        name: "WI.Script.SourceType.Module",
         description: "Module <script type=module> should be Module.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerModuleScript()");
-            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
                 let script = event.data.script;
                 if (!/module.js$/.test(script.url))
                     return;
 
                 if (/other-module.js$/.test(script.url)) {
-                    InspectorTest.expectEqual(script.sourceType, WebInspector.Script.SourceType.Module, `imported module should be SourceType.Module.`);
+                    InspectorTest.expectEqual(script.sourceType, WI.Script.SourceType.Module, `imported module should be SourceType.Module.`);
                     return;
                 }
 
-                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, listener);
-                InspectorTest.expectEqual(script.sourceType, WebInspector.Script.SourceType.Module, `<script type="module"> should be SourceType.Module.`);
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, listener);
+                InspectorTest.expectEqual(script.sourceType, WI.Script.SourceType.Module, `<script type="module"> should be SourceType.Module.`);
                 resolve();
             });
         }
@@ -64,6 +64,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Tests for WebInspector.Script.SourceType.</p>
+<p>Tests for WI.Script.SourceType.</p>
 </body>
 </html>

@@ -8,10 +8,10 @@ function test()
     let suite = InspectorTest.createSyncSuite("TextUtilities");
 
     suite.addTestCase({
-        name: "WebInspector.rangeForNextCSSNameOrValue",
+        name: "WI.rangeForNextCSSNameOrValue",
         test() {
             function testValid(text, index, expected) {
-                let actual = WebInspector.rangeForNextCSSNameOrValue(text, index);
+                let actual = WI.rangeForNextCSSNameOrValue(text, index);
                 InspectorTest.expectShallowEqual(actual, expected, `Next name/value token in "${text}" starting at index ${index} is "${text.substring(actual.from, actual.to)}" [${actual.from}, ${actual.to}]`);
             }
 

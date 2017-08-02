@@ -23,74 +23,74 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkObserver = class NetworkObserver
+WI.NetworkObserver = class NetworkObserver
 {
     // Events defined by the "Network" domain.
 
     requestWillBeSent(requestId, frameId, loaderId, documentURL, request, timestamp, initiator, redirectResponse, type, targetId)
     {
-        WebInspector.frameResourceManager.resourceRequestWillBeSent(requestId, frameId, loaderId, request, type, redirectResponse, timestamp, initiator, targetId);
+        WI.frameResourceManager.resourceRequestWillBeSent(requestId, frameId, loaderId, request, type, redirectResponse, timestamp, initiator, targetId);
     }
 
     requestServedFromCache(requestId)
     {
         // COMPATIBILITY (iOS 10.3): The backend no longer sends this.
-        WebInspector.frameResourceManager.markResourceRequestAsServedFromMemoryCache(requestId);
+        WI.frameResourceManager.markResourceRequestAsServedFromMemoryCache(requestId);
     }
 
     responseReceived(requestId, frameId, loaderId, timestamp, type, response)
     {
-        WebInspector.frameResourceManager.resourceRequestDidReceiveResponse(requestId, frameId, loaderId, type, response, timestamp);
+        WI.frameResourceManager.resourceRequestDidReceiveResponse(requestId, frameId, loaderId, type, response, timestamp);
     }
 
     dataReceived(requestId, timestamp, dataLength, encodedDataLength)
     {
-        WebInspector.frameResourceManager.resourceRequestDidReceiveData(requestId, dataLength, encodedDataLength, timestamp);
+        WI.frameResourceManager.resourceRequestDidReceiveData(requestId, dataLength, encodedDataLength, timestamp);
     }
 
     loadingFinished(requestId, timestamp, sourceMapURL, metrics)
     {
-        WebInspector.frameResourceManager.resourceRequestDidFinishLoading(requestId, timestamp, sourceMapURL, metrics);
+        WI.frameResourceManager.resourceRequestDidFinishLoading(requestId, timestamp, sourceMapURL, metrics);
     }
 
     loadingFailed(requestId, timestamp, errorText, canceled)
     {
-        WebInspector.frameResourceManager.resourceRequestDidFailLoading(requestId, canceled, timestamp, errorText);
+        WI.frameResourceManager.resourceRequestDidFailLoading(requestId, canceled, timestamp, errorText);
     }
 
     requestServedFromMemoryCache(requestId, frameId, loaderId, documentURL, timestamp, initiator, resource)
     {
-        WebInspector.frameResourceManager.resourceRequestWasServedFromMemoryCache(requestId, frameId, loaderId, resource, timestamp, initiator);
+        WI.frameResourceManager.resourceRequestWasServedFromMemoryCache(requestId, frameId, loaderId, resource, timestamp, initiator);
     }
 
     webSocketCreated(requestId, url)
     {
-        WebInspector.frameResourceManager.webSocketCreated(requestId, url);
+        WI.frameResourceManager.webSocketCreated(requestId, url);
     }
 
     webSocketWillSendHandshakeRequest(requestId, timestamp, walltime, request)
     {
-        WebInspector.frameResourceManager.webSocketWillSendHandshakeRequest(requestId, timestamp, walltime, request);
+        WI.frameResourceManager.webSocketWillSendHandshakeRequest(requestId, timestamp, walltime, request);
     }
 
     webSocketHandshakeResponseReceived(requestId, timestamp, response)
     {
-        WebInspector.frameResourceManager.webSocketHandshakeResponseReceived(requestId, timestamp, response);
+        WI.frameResourceManager.webSocketHandshakeResponseReceived(requestId, timestamp, response);
     }
 
     webSocketClosed(requestId, timestamp)
     {
-        WebInspector.frameResourceManager.webSocketClosed(requestId, timestamp);
+        WI.frameResourceManager.webSocketClosed(requestId, timestamp);
     }
 
     webSocketFrameReceived(requestId, timestamp, response)
     {
-        WebInspector.frameResourceManager.webSocketFrameReceived(requestId, timestamp, response);
+        WI.frameResourceManager.webSocketFrameReceived(requestId, timestamp, response);
     }
 
     webSocketFrameSent(requestId, timestamp, response)
     {
-        WebInspector.frameResourceManager.webSocketFrameSent(requestId, timestamp, response);
+        WI.frameResourceManager.webSocketFrameSent(requestId, timestamp, response);
     }
 
     webSocketFrameError(requestId, timestamp, errorMessage)

@@ -11,7 +11,7 @@ function test()
         suite.addTestCase({
             name,
             test() {
-                let recording = WebInspector.Recording.fromPayload(payload);
+                let recording = WI.Recording.fromPayload(payload);
                 InspectorTest.log(recording ? JSON.stringify(recording.toJSON(), null, 2) : recording);
                 return true;
             }
@@ -157,6 +157,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-    <p>Testing the fault-tolerance of WebInspector.Recording.</p>
+    <p>Testing the fault-tolerance of WI.Recording.</p>
 </body>
 </html>

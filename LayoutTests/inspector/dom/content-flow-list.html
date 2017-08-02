@@ -43,11 +43,11 @@ function test()
         InspectorTest.completeTest();
     }
 
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, function() {
-        domTree = WebInspector.frameResourceManager.mainFrame.domTree;
-        domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, onRootDOMNodeInvalidated);
-        domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasAdded, onContentFlowWasAdded);
-        domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasRemoved, onContentFlowWasRemoved);
+    WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, function() {
+        domTree = WI.frameResourceManager.mainFrame.domTree;
+        domTree.addEventListener(WI.DOMTree.Event.RootDOMNodeInvalidated, onRootDOMNodeInvalidated);
+        domTree.addEventListener(WI.DOMTree.Event.ContentFlowWasAdded, onContentFlowWasAdded);
+        domTree.addEventListener(WI.DOMTree.Event.ContentFlowWasRemoved, onContentFlowWasRemoved);
         domTree.requestContentFlowList();
     });
 

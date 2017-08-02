@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInspector.GeneralTreeElement
+WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeElement
 {
     constructor(classNames, title, subtitle, representedObject)
     {
@@ -116,7 +116,7 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
 
         this._newChildQueue.push(representedObject);
         if (!this._newChildQueueTimeoutIdentifier)
-            this._newChildQueueTimeoutIdentifier = setTimeout(this._populateFromNewChildQueue.bind(this), WebInspector.FolderizedTreeElement.NewChildQueueUpdateInterval);
+            this._newChildQueueTimeoutIdentifier = setTimeout(this._populateFromNewChildQueue.bind(this), WI.FolderizedTreeElement.NewChildQueueUpdateInterval);
     }
 
     removeChildForRepresentedObject(representedObject)
@@ -229,8 +229,8 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
     _compareTreeElementsByMainTitle(a, b)
     {
         // Folders before anything.
-        let aIsFolder = a instanceof WebInspector.FolderTreeElement;
-        let bIsFolder = b instanceof WebInspector.FolderTreeElement;
+        let aIsFolder = a instanceof WI.FolderTreeElement;
+        let bIsFolder = b instanceof WI.FolderTreeElement;
         if (aIsFolder && !bIsFolder)
             return -1;
         if (bIsFolder && !aIsFolder)
@@ -264,8 +264,8 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
         if (oldParent === this)
             return;
 
-        console.assert(oldParent instanceof WebInspector.FolderTreeElement);
-        if (!(oldParent instanceof WebInspector.FolderTreeElement))
+        console.assert(oldParent instanceof WI.FolderTreeElement);
+        if (!(oldParent instanceof WI.FolderTreeElement))
             return;
 
         // Remove the old parent folder if it is now empty.
@@ -282,8 +282,8 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
 
         function createFolderTreeElement(settings)
         {
-            let folderTreeElement = new WebInspector.FolderTreeElement(settings.displayName, settings.representedObject);
-            let folderExpandedSetting = new WebInspector.Setting(settings.type + "-folder-expanded-" + this._folderSettingsKey, false);
+            let folderTreeElement = new WI.FolderTreeElement(settings.displayName, settings.representedObject);
+            let folderExpandedSetting = new WI.Setting(settings.type + "-folder-expanded-" + this._folderSettingsKey, false);
             this._folderExpandedSettingMap.set(folderTreeElement, folderExpandedSetting);
 
             if (folderExpandedSetting.value)
@@ -358,7 +358,7 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
                 return true;
 
             // If there are lots of this resource type, then count it as a large category.
-            if (childCount >= WebInspector.FolderizedTreeElement.LargeChildCountThreshold) {
+            if (childCount >= WI.FolderizedTreeElement.LargeChildCountThreshold) {
                 // If we already have other resources in other small or medium categories, make folders.
                 if (numberOfSmallCategories || numberOfMediumCategories)
                     return true;
@@ -368,9 +368,9 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
             }
 
             // Check if this is a medium category.
-            if (childCount >= WebInspector.FolderizedTreeElement.MediumChildCountThreshold) {
+            if (childCount >= WI.FolderizedTreeElement.MediumChildCountThreshold) {
                 // If this is the medium category that puts us over the maximum allowed, make folders.
-                return ++numberOfMediumCategories >= WebInspector.FolderizedTreeElement.NumberOfMediumCategoriesThreshold;
+                return ++numberOfMediumCategories >= WI.FolderizedTreeElement.NumberOfMediumCategoriesThreshold;
             }
 
             // This is a small category.
@@ -387,7 +387,7 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
     }
 };
 
-WebInspector.FolderizedTreeElement.MediumChildCountThreshold = 5;
-WebInspector.FolderizedTreeElement.LargeChildCountThreshold = 15;
-WebInspector.FolderizedTreeElement.NumberOfMediumCategoriesThreshold = 2;
-WebInspector.FolderizedTreeElement.NewChildQueueUpdateInterval = 500;
+WI.FolderizedTreeElement.MediumChildCountThreshold = 5;
+WI.FolderizedTreeElement.LargeChildCountThreshold = 15;
+WI.FolderizedTreeElement.NumberOfMediumCategoriesThreshold = 2;
+WI.FolderizedTreeElement.NewChildQueueUpdateInterval = 500;

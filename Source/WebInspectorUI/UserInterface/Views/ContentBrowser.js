@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
+WI.ContentBrowser = class ContentBrowser extends WI.View
 {
     constructor(element, delegate, disableBackForward, disableFindBanner, flexibleNavigationItem)
     {
@@ -31,61 +31,61 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
         this.element.classList.add("content-browser");
 
-        this._navigationBar = new WebInspector.NavigationBar;
+        this._navigationBar = new WI.NavigationBar;
         this.addSubview(this._navigationBar);
 
-        this._contentViewContainer = new WebInspector.ContentViewContainer;
-        this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
+        this._contentViewContainer = new WI.ContentViewContainer;
+        this._contentViewContainer.addEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
         this.addSubview(this._contentViewContainer);
 
         if (!disableBackForward) {
-            let isRTL = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL;
+            let isRTL = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL;
 
             let goBack = () => { this.goBack(); };
             let goForward = () => { this.goForward(); };
 
-            let backShortcutKey = isRTL ? WebInspector.KeyboardShortcut.Key.Right : WebInspector.KeyboardShortcut.Key.Left;
-            let forwardShortcutKey = isRTL ? WebInspector.KeyboardShortcut.Key.Left : WebInspector.KeyboardShortcut.Key.Right;
-            this._backKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, backShortcutKey, goBack, this.element);
-            this._forwardKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Control, forwardShortcutKey, goForward, this.element);
+            let backShortcutKey = isRTL ? WI.KeyboardShortcut.Key.Right : WI.KeyboardShortcut.Key.Left;
+            let forwardShortcutKey = isRTL ? WI.KeyboardShortcut.Key.Left : WI.KeyboardShortcut.Key.Right;
+            this._backKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Control, backShortcutKey, goBack, this.element);
+            this._forwardKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Control, forwardShortcutKey, goForward, this.element);
 
             let leftArrow = "Images/BackForwardArrows.svg#left-arrow-mask";
             let rightArrow = "Images/BackForwardArrows.svg#right-arrow-mask";
             let backButtonImage = isRTL ? rightArrow : leftArrow;
             let forwardButtonImage = isRTL ? leftArrow : rightArrow;
 
-            this._backNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), backButtonImage, 8, 13);
-            this._backNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, goBack);
+            this._backNavigationItem = new WI.ButtonNavigationItem("back", WI.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), backButtonImage, 8, 13);
+            this._backNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, goBack);
             this._backNavigationItem.enabled = false;
             this._navigationBar.addNavigationItem(this._backNavigationItem);
 
-            this._forwardNavigationItem = new WebInspector.ButtonNavigationItem("forward", WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), forwardButtonImage, 8, 13);
-            this._forwardNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, goForward);
+            this._forwardNavigationItem = new WI.ButtonNavigationItem("forward", WI.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), forwardButtonImage, 8, 13);
+            this._forwardNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, goForward);
             this._forwardNavigationItem.enabled = false;
             this._navigationBar.addNavigationItem(this._forwardNavigationItem);
 
-            this._navigationBar.addNavigationItem(new WebInspector.DividerNavigationItem);
+            this._navigationBar.addNavigationItem(new WI.DividerNavigationItem);
         }
 
         if (!disableFindBanner) {
-            this._findBanner = new WebInspector.FindBanner(this);
-            this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidShow, this._findBannerDidShow, this);
-            this._findBanner.addEventListener(WebInspector.FindBanner.Event.DidHide, this._findBannerDidHide, this);
+            this._findBanner = new WI.FindBanner(this);
+            this._findBanner.addEventListener(WI.FindBanner.Event.DidShow, this._findBannerDidShow, this);
+            this._findBanner.addEventListener(WI.FindBanner.Event.DidHide, this._findBannerDidHide, this);
         }
 
-        this._hierarchicalPathNavigationItem = new WebInspector.HierarchicalPathNavigationItem;
-        this._hierarchicalPathNavigationItem.addEventListener(WebInspector.HierarchicalPathNavigationItem.Event.PathComponentWasSelected, this._hierarchicalPathComponentWasSelected, this);
+        this._hierarchicalPathNavigationItem = new WI.HierarchicalPathNavigationItem;
+        this._hierarchicalPathNavigationItem.addEventListener(WI.HierarchicalPathNavigationItem.Event.PathComponentWasSelected, this._hierarchicalPathComponentWasSelected, this);
         this._navigationBar.addNavigationItem(this._hierarchicalPathNavigationItem);
 
-        this._contentViewSelectionPathNavigationItem = new WebInspector.HierarchicalPathNavigationItem;
+        this._contentViewSelectionPathNavigationItem = new WI.HierarchicalPathNavigationItem;
 
-        this._flexibleNavigationItem = flexibleNavigationItem || new WebInspector.FlexibleSpaceNavigationItem;
+        this._flexibleNavigationItem = flexibleNavigationItem || new WI.FlexibleSpaceNavigationItem;
         this._navigationBar.addNavigationItem(this._flexibleNavigationItem);
 
-        WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
-        WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
-        WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.NumberOfSearchResultsDidChange, this._contentViewNumberOfSearchResultsDidChange, this);
-        WebInspector.ContentView.addEventListener(WebInspector.ContentView.Event.NavigationItemsDidChange, this._contentViewNavigationItemsDidChange, this);
+        WI.ContentView.addEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
+        WI.ContentView.addEventListener(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
+        WI.ContentView.addEventListener(WI.ContentView.Event.NumberOfSearchResultsDidChange, this._contentViewNumberOfSearchResultsDidChange, this);
+        WI.ContentView.addEventListener(WI.ContentView.Event.NavigationItemsDidChange, this._contentViewNavigationItemsDidChange, this);
 
         this._delegate = delegate || null;
 
@@ -330,7 +330,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         var pathComponents = [];
 
         while (treeElement && !treeElement.root) {
-            var pathComponent = new WebInspector.GeneralTreeElementPathComponent(treeElement);
+            var pathComponent = new WI.GeneralTreeElementPathComponent(treeElement);
             pathComponents.unshift(pathComponent);
             treeElement = treeElement.parent;
         }
@@ -382,7 +382,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
             return;
 
         if (!forceUpdate) {
-            let previousItems = this._currentContentViewNavigationItems.filter((item) => !(item instanceof WebInspector.DividerNavigationItem));
+            let previousItems = this._currentContentViewNavigationItems.filter((item) => !(item instanceof WI.DividerNavigationItem));
             let isUnchanged = Array.shallowEqual(previousItems, currentContentView.navigationItems);
 
             if (isUnchanged)
@@ -401,8 +401,8 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         // Go through each of the items of the new content view and add a divider before them.
         currentContentView.navigationItems.forEach(function(navigationItem, index) {
             // Add dividers before items unless it's the first item and not a button.
-            if (index !== 0 || navigationItem instanceof WebInspector.ButtonNavigationItem) {
-                let divider = new WebInspector.DividerNavigationItem;
+            if (index !== 0 || navigationItem instanceof WI.ButtonNavigationItem) {
+                let divider = new WI.DividerNavigationItem;
                 navigationBar.insertNavigationItem(divider, insertionIndex++);
                 newNavigationItems.push(divider);
             }
@@ -447,7 +447,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
     {
         this._dispatchCurrentRepresentedObjectsDidChangeEvent.cancelDebounce();
 
-        this.dispatchEventToListeners(WebInspector.ContentBrowser.Event.CurrentRepresentedObjectsDidChange);
+        this.dispatchEventToListeners(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange);
     }
 
     _contentViewSelectionPathComponentDidChange(event)
@@ -486,7 +486,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
         this._navigationBar.needsLayout();
 
-        this.dispatchEventToListeners(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange);
+        this.dispatchEventToListeners(WI.ContentBrowser.Event.CurrentContentViewDidChange);
 
         this._dispatchCurrentRepresentedObjectsDidChangeEvent();
     }
@@ -503,13 +503,13 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
     _hierarchicalPathComponentWasSelected(event)
     {
-        console.assert(event.data.pathComponent instanceof WebInspector.GeneralTreeElementPathComponent);
+        console.assert(event.data.pathComponent instanceof WI.GeneralTreeElementPathComponent);
 
         var treeElement = event.data.pathComponent.generalTreeElement;
         var originalTreeElement = treeElement;
 
         // Some tree elements (like folders) are not viewable. Find the first descendant that is viewable.
-        while (treeElement && !WebInspector.ContentView.isViewable(treeElement.representedObject))
+        while (treeElement && !WI.ContentView.isViewable(treeElement.representedObject))
             treeElement = treeElement.traverseNextTreeElement(false, originalTreeElement, false);
 
         if (!treeElement)
@@ -519,7 +519,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
     }
 };
 
-WebInspector.ContentBrowser.Event = {
+WI.ContentBrowser.Event = {
     CurrentRepresentedObjectsDidChange: "content-browser-current-represented-objects-did-change",
     CurrentContentViewDidChange: "content-browser-current-content-view-did-change"
 };

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MultipleScopeBarItem = class MultipleScopeBarItem extends WebInspector.Object
+WI.MultipleScopeBarItem = class MultipleScopeBarItem extends WI.Object
 {
     constructor(scopeBarItems)
     {
@@ -91,7 +91,7 @@ WebInspector.MultipleScopeBarItem = class MultipleScopeBarItem extends WebInspec
                 scopeBarItem.selected = false;
             }
 
-            scopeBarItem.addEventListener(WebInspector.ScopeBarItem.Event.SelectionChanged, this._itemSelectionDidChange, this);
+            scopeBarItem.addEventListener(WI.ScopeBarItem.Event.SelectionChanged, this._itemSelectionDidChange, this);
 
             this._selectElement.appendChild(createOption(scopeBarItem));
         }
@@ -137,8 +137,8 @@ WebInspector.MultipleScopeBarItem = class MultipleScopeBarItem extends WebInspec
             this._selectedScopeBarItem.selected = true;
         }
 
-        var withModifier = WebInspector.modifierKeys.metaKey && !WebInspector.modifierKeys.ctrlKey && !WebInspector.modifierKeys.altKey && !WebInspector.modifierKeys.shiftKey;
-        this.dispatchEventToListeners(WebInspector.ScopeBarItem.Event.SelectionChanged, {withModifier});
+        var withModifier = WI.modifierKeys.metaKey && !WI.modifierKeys.ctrlKey && !WI.modifierKeys.altKey && !WI.modifierKeys.shiftKey;
+        this.dispatchEventToListeners(WI.ScopeBarItem.Event.SelectionChanged, {withModifier});
 
         this._ignoreItemSelectedEvent = false;
     }

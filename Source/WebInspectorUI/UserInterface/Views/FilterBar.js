@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FilterBar = class FilterBar extends WebInspector.Object
+WI.FilterBar = class FilterBar extends WI.Object
 {
     constructor(element)
     {
@@ -32,7 +32,7 @@ WebInspector.FilterBar = class FilterBar extends WebInspector.Object
         this._element = element || document.createElement("div");
         this._element.classList.add("filter-bar");
 
-        this._filtersNavigationBar = new WebInspector.NavigationBar;
+        this._filtersNavigationBar = new WI.NavigationBar;
         this._element.appendChild(this._filtersNavigationBar.element);
 
         this._filterFunctionsMap = new Map;
@@ -86,9 +86,9 @@ WebInspector.FilterBar = class FilterBar extends WebInspector.Object
 
     addFilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight)
     {
-        var filterBarButton = new WebInspector.FilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight);
-        filterBarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._handleFilterBarButtonClicked, this);
-        filterBarButton.addEventListener(WebInspector.FilterBarButton.Event.ActivatedStateToggled, this._handleFilterButtonToggled, this);
+        var filterBarButton = new WI.FilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight);
+        filterBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleFilterBarButtonClicked, this);
+        filterBarButton.addEventListener(WI.FilterBarButton.Event.ActivatedStateToggled, this._handleFilterButtonToggled, this);
         this._filtersNavigationBar.addNavigationItem(filterBarButton);
         if (filterBarButton.activated) {
             this._filterFunctionsMap.set(filterBarButton.identifier, filterBarButton.filterFunction);
@@ -138,11 +138,11 @@ WebInspector.FilterBar = class FilterBar extends WebInspector.Object
     {
         if (this.hasFilterChanged()) {
             this._lastFilterValue = this.filters;
-            this.dispatchEventToListeners(WebInspector.FilterBar.Event.FilterDidChange);
+            this.dispatchEventToListeners(WI.FilterBar.Event.FilterDidChange);
         }
     }
 };
 
-WebInspector.FilterBar.Event = {
+WI.FilterBar.Event = {
     FilterDidChange: "filter-bar-text-filter-did-change"
 };

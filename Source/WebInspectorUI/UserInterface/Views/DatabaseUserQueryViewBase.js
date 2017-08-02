@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseUserQueryViewBase = class DatabaseUserQueryViewBase extends WebInspector.View
+WI.DatabaseUserQueryViewBase = class DatabaseUserQueryViewBase extends WI.View
 {
     constructor(query)
     {

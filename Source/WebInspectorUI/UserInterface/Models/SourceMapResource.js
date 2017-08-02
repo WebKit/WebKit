@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Resource
+WI.SourceMapResource = class SourceMapResource extends WI.Resource
 {
     constructor(url, sourceMap)
     {
@@ -34,15 +34,15 @@ WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Re
 
         this._sourceMap = sourceMap;
 
-        var inheritedMIMEType = this._sourceMap.originalSourceCode instanceof WebInspector.Resource ? this._sourceMap.originalSourceCode.syntheticMIMEType : null;
+        var inheritedMIMEType = this._sourceMap.originalSourceCode instanceof WI.Resource ? this._sourceMap.originalSourceCode.syntheticMIMEType : null;
 
-        var fileExtension = WebInspector.fileExtensionForURL(url);
-        var fileExtensionMIMEType = WebInspector.mimeTypeForFileExtension(fileExtension, true);
+        var fileExtension = WI.fileExtensionForURL(url);
+        var fileExtensionMIMEType = WI.mimeTypeForFileExtension(fileExtension, true);
 
         // FIXME: This is a layering violation. It should use a helper function on the
         // Resource base-class to set _mimeType and _type.
         this._mimeType = fileExtensionMIMEType || inheritedMIMEType || "text/javascript";
-        this._type = WebInspector.Resource.typeFromMIMEType(this._mimeType);
+        this._type = WI.Resource.typeFromMIMEType(this._mimeType);
 
         // Mark the resource as loaded so it does not show a spinner in the sidebar.
         // We will really load the resource the first time content is requested.
@@ -94,7 +94,7 @@ WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Re
         {
             this.markAsFailed();
             return Promise.resolve({
-                error: WebInspector.UIString("An error occurred trying to load the resource."),
+                error: WI.UIString("An error occurred trying to load the resource."),
                 content,
                 mimeType,
                 statusCode
@@ -106,7 +106,7 @@ WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Re
             // There was an error calling NetworkAgent.loadResource.
             console.error(error || "There was an unknown error calling NetworkAgent.loadResource.");
             this.markAsFailed();
-            return Promise.resolve({error: WebInspector.UIString("An error occurred trying to load the resource.")});
+            return Promise.resolve({error: WI.UIString("An error occurred trying to load the resource.")});
         }
 
         function sourceMapResourceLoaded(parameters)
@@ -137,11 +137,11 @@ WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Re
             return sourceMapResourceLoadError.call(this);
 
         var frameIdentifier = null;
-        if (this._sourceMap.originalSourceCode instanceof WebInspector.Resource && this._sourceMap.originalSourceCode.parentFrame)
+        if (this._sourceMap.originalSourceCode instanceof WI.Resource && this._sourceMap.originalSourceCode.parentFrame)
             frameIdentifier = this._sourceMap.originalSourceCode.parentFrame.id;
 
         if (!frameIdentifier)
-            frameIdentifier = WebInspector.frameResourceManager.mainFrame.id;
+            frameIdentifier = WI.frameResourceManager.mainFrame.id;
 
         return NetworkAgent.loadResource(frameIdentifier, this.url).then(sourceMapResourceLoaded.bind(this)).catch(sourceMapResourceLoadError.bind(this));
     }
@@ -155,7 +155,7 @@ WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Re
 
         // If the raw location is an inline script we need to include that offset.
         var originalSourceCode = this._sourceMap.originalSourceCode;
-        if (originalSourceCode instanceof WebInspector.Script) {
+        if (originalSourceCode instanceof WI.Script) {
             if (rawLineNumber === 0)
                 rawColumnNumber += originalSourceCode.range.startColumn;
             rawLineNumber += originalSourceCode.range.startLine;
@@ -173,6 +173,6 @@ WebInspector.SourceMapResource = class SourceMapResource extends WebInspector.Re
         // However, we can provide the most accurate mapped locations in construction.
         var startSourceCodeLocation = this.createSourceCodeLocation(textRange.startLine, textRange.startColumn);
         var endSourceCodeLocation = this.createSourceCodeLocation(textRange.endLine, textRange.endColumn);
-        return new WebInspector.SourceCodeTextRange(this._sourceMap.originalSourceCode, startSourceCodeLocation, endSourceCodeLocation);
+        return new WI.SourceCodeTextRange(this._sourceMap.originalSourceCode, startSourceCodeLocation, endSourceCodeLocation);
     }
 };

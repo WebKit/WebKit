@@ -24,13 +24,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Annotator = class Annotator extends WebInspector.Object
+WI.Annotator = class Annotator extends WI.Object
 {
     constructor(sourceCodeTextEditor)
     {
         super();
 
-        console.assert(sourceCodeTextEditor instanceof WebInspector.SourceCodeTextEditor, sourceCodeTextEditor);
+        console.assert(sourceCodeTextEditor instanceof WI.SourceCodeTextEditor, sourceCodeTextEditor);
 
         this._sourceCodeTextEditor = sourceCodeTextEditor;
         this._timeoutIdentifier = null;

@@ -37,11 +37,11 @@ TestPage.registerInitializer(() => {
                 continue;
             }
 
-            WebInspector.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, (remoteObject, wasThrown) => {
+            WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, (remoteObject, wasThrown) => {
                 InspectorTest.log("");
                 InspectorTest.log("-----------------------------------------------------");
                 InspectorTest.log("EXPRESSION: " + expression);
-                InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
+                InspectorTest.assert(remoteObject instanceof WI.RemoteObject);
                 InspectorTest.log(JSON.stringify(remoteObject, remoteObjectJSONFilter, 2));
                 checkComplete();
             });

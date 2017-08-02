@@ -26,7 +26,7 @@
 // FIXME: Provide Parameter lists for the constructors themselves? (new RegExp(...)).
 // FIXME: Provide Parameter lists for global functions (eval, decodeURI, ...).
 
-WebInspector.NativeConstructorFunctionParameters = {
+WI.NativeConstructorFunctionParameters = {
     Object: {
         assign: "target, ...sources",
         create: "prototype, [propertiesObject]",
@@ -220,7 +220,7 @@ WebInspector.NativeConstructorFunctionParameters = {
     },
 };
 
-WebInspector.NativePrototypeFunctionParameters = {
+WI.NativePrototypeFunctionParameters = {
 
     // Built-in JavaScript objects.
     // FIXME: TypedArrays (Int8Array, etc),
@@ -2178,7 +2178,7 @@ WebInspector.NativePrototypeFunctionParameters = {
 (function() {
     // COMPATIBILITY (iOS 9): EventTarget properties were on instances, now there
     // is an actual EventTarget prototype in the chain.
-    var EventTarget = WebInspector.NativePrototypeFunctionParameters.EventTarget;
+    var EventTarget = WI.NativePrototypeFunctionParameters.EventTarget;
     var eventTargetTypes = [
         "Node", "Window",
         "AudioNode", "AudioTrackList", "DOMApplicationCache", "FileReader",
@@ -2188,7 +2188,7 @@ WebInspector.NativePrototypeFunctionParameters = {
         "WorkerGlobalScope", "XMLHttpRequest", "webkitMediaStream", "webkitRTCPeerConnection"
     ];
     for (var type of eventTargetTypes)
-        Object.assign(WebInspector.NativePrototypeFunctionParameters[type], EventTarget);
+        Object.assign(WI.NativePrototypeFunctionParameters[type], EventTarget);
 
     var ElementQueries = {
         getElementsByClassName: "classNames",
@@ -2197,27 +2197,27 @@ WebInspector.NativePrototypeFunctionParameters = {
         querySelector: "selectors",
         querySelectorAll: "selectors",
     };
-    Object.assign(WebInspector.NativePrototypeFunctionParameters.Element, ElementQueries);
-    Object.assign(WebInspector.NativePrototypeFunctionParameters.Document, ElementQueries);
+    Object.assign(WI.NativePrototypeFunctionParameters.Element, ElementQueries);
+    Object.assign(WI.NativePrototypeFunctionParameters.Document, ElementQueries);
 
     var ChildNode = {
         after: "[node|string]...",
         before: "[node|string]...",
         replaceWith: "[node|string]...",
     };
-    Object.assign(WebInspector.NativePrototypeFunctionParameters.Element, ChildNode);
-    Object.assign(WebInspector.NativePrototypeFunctionParameters.CharacterData, ChildNode);
+    Object.assign(WI.NativePrototypeFunctionParameters.Element, ChildNode);
+    Object.assign(WI.NativePrototypeFunctionParameters.CharacterData, ChildNode);
 
     var ParentNode = {
         append: "[node|string]...",
         prepend: "[node|string]...",
     };
-    Object.assign(WebInspector.NativePrototypeFunctionParameters.Element, ParentNode);
-    Object.assign(WebInspector.NativePrototypeFunctionParameters.Document, ParentNode);
-    Object.assign(WebInspector.NativePrototypeFunctionParameters.DocumentFragment, ParentNode);
+    Object.assign(WI.NativePrototypeFunctionParameters.Element, ParentNode);
+    Object.assign(WI.NativePrototypeFunctionParameters.Document, ParentNode);
+    Object.assign(WI.NativePrototypeFunctionParameters.DocumentFragment, ParentNode);
 
     // COMPATIBILITY (iOS 9): window.console used to be a Console object instance,
     // now it is just a namespace object on the global object.
-    WebInspector.NativePrototypeFunctionParameters.Console = WebInspector.NativeConstructorFunctionParameters.Console;
+    WI.NativePrototypeFunctionParameters.Console = WI.NativeConstructorFunctionParameters.Console;
 
 })();

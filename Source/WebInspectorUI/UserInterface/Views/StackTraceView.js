@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.StackTraceView = class StackTraceView extends WebInspector.Object
+WI.StackTraceView = class StackTraceView extends WI.Object
 {
     constructor(stackTrace)
     {
@@ -35,10 +35,10 @@ WebInspector.StackTraceView = class StackTraceView extends WebInspector.Object
         for (var callFrame of stackTrace.callFrames) {
             if (!callFrame.sourceCodeLocation && callFrame.functionName === null)
                 continue;
-            if (callFrame.isConsoleEvaluation && !WebInspector.isDebugUIEnabled())
+            if (callFrame.isConsoleEvaluation && !WI.isDebugUIEnabled())
                 continue;
 
-            var callFrameElement = new WebInspector.CallFrameView(callFrame, true);
+            var callFrameElement = new WI.CallFrameView(callFrame, true);
             element.appendChild(callFrameElement);
         }
     }

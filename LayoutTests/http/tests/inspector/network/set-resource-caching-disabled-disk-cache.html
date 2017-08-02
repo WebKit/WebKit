@@ -30,12 +30,12 @@ function test()
             test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
                 Promise.all([
-                    WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded),
-                    WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.ResponseReceived),
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
                     InspectorTest.awaitEvent("LoadComplete"),
                 ]).then(([resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent]) => {
                     let resource = resourceWasAddedEvent.data.resource;
-                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
                     InspectorTest.expectEqual(resource, responseReceivedEvent.target, "Resource should receive a Response.");
                     if (statusCode)
                         InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
@@ -57,7 +57,7 @@ function test()
         name: "SetResourceCachingDisabled.DiskCache",
         description: "Fail to load a resource from the disk cache when resource caching is disabled",
         expression: `triggerDiskCacheLoad()`,
-        responseSource: WebInspector.Resource.ResponseSource.Network,
+        responseSource: WI.Resource.ResponseSource.Network,
         setup(resolve) { NetworkAgent.setResourceCachingDisabled(true); resolve(); },
         statusCode: 200,
     });

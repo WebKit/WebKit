@@ -24,15 +24,15 @@ function test()
         var testInfos = [{line : 3, column : 8}, {line : 4, column : 8}];
         for (let testInfo of testInfos) {
             let location = scriptObject.createSourceCodeLocation(testInfo.line, testInfo.column);
-            let breakpoint = new WebInspector.Breakpoint(location);
-            WebInspector.debuggerManager.addBreakpoint(breakpoint);
+            let breakpoint = new WI.Breakpoint(location);
+            WI.debuggerManager.addBreakpoint(breakpoint);
         }
         InspectorTest.evaluateInPage("startRecurse()");
     }
 
     let numBreakpointHits = 0;
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
-        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        var activeCallFrame = WI.debuggerManager.activeCallFrame;
 
         if (!activeCallFrame)
             return;
@@ -47,7 +47,7 @@ function test()
         InspectorTest.log("Going to look at the top " + numFramesToInspect + " frames.");
         InspectorTest.log("------------------------------------");
 
-        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
         let callFrames = targetData.callFrames;
 
         InspectorTest.assert(callFrames.length > numFramesToInspect); // We just look at top 50. This isn't a precise number. But it gets at the gist of the debugging experience.
@@ -79,17 +79,17 @@ function test()
             });
         }
 
-        WebInspector.debuggerManager.resume();
+        WI.debuggerManager.resume();
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, function(event) {
         if (numBreakpointHits === 2) {
             InspectorTest.log("Tests done");
             InspectorTest.completeTest();
         }
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
         eventScriptObject = event.data.script;
         
         if (/tail-recursion\.js$/.test(eventScriptObject.url)) {

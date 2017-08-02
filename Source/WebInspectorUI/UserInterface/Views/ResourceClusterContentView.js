@@ -23,31 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceClusterContentView = class ResourceClusterContentView extends WebInspector.ClusterContentView
+WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.ClusterContentView
 {
     constructor(resource)
     {
         super(resource);
 
         this._resource = resource;
-        this._resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
-        this._resource.addEventListener(WebInspector.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
+        this._resource.addEventListener(WI.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
+        this._resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
 
         function createPathComponent(displayName, className, identifier)
         {
-            let pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, false, true);
-            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+            let pathComponent = new WI.HierarchicalPathComponent(displayName, className, identifier, false, true);
+            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
             pathComponent.comparisonData = resource;
             return pathComponent;
         }
 
-        this._requestPathComponent = createPathComponent.call(this, WebInspector.UIString("Request"), WebInspector.ResourceClusterContentView.RequestIconStyleClassName, WebInspector.ResourceClusterContentView.RequestIdentifier);
-        this._responsePathComponent = createPathComponent.call(this, WebInspector.UIString("Response"), WebInspector.ResourceClusterContentView.ResponseIconStyleClassName, WebInspector.ResourceClusterContentView.ResponseIdentifier);
+        this._requestPathComponent = createPathComponent.call(this, WI.UIString("Request"), WI.ResourceClusterContentView.RequestIconStyleClassName, WI.ResourceClusterContentView.RequestIdentifier);
+        this._responsePathComponent = createPathComponent.call(this, WI.UIString("Response"), WI.ResourceClusterContentView.ResponseIconStyleClassName, WI.ResourceClusterContentView.ResponseIdentifier);
 
         this._requestPathComponent.nextSibling = this._responsePathComponent;
         this._responsePathComponent.previousSibling = this._requestPathComponent;
 
-        this._currentContentViewSetting = new WebInspector.Setting("resource-current-view-" + this._resource.url.hash, WebInspector.ResourceClusterContentView.ResponseIdentifier);
+        this._currentContentViewSetting = new WI.Setting("resource-current-view-" + this._resource.url.hash, WI.ResourceClusterContentView.ResponseIdentifier);
     }
 
     // Public
@@ -63,36 +63,36 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
             return this._responseContentView;
 
         switch (this._resource.type) {
-        case WebInspector.Resource.Type.Document:
-        case WebInspector.Resource.Type.Script:
-        case WebInspector.Resource.Type.Stylesheet:
-            this._responseContentView = new WebInspector.TextResourceContentView(this._resource);
+        case WI.Resource.Type.Document:
+        case WI.Resource.Type.Script:
+        case WI.Resource.Type.Stylesheet:
+            this._responseContentView = new WI.TextResourceContentView(this._resource);
             break;
 
-        case WebInspector.Resource.Type.XHR:
-        case WebInspector.Resource.Type.Fetch:
+        case WI.Resource.Type.XHR:
+        case WI.Resource.Type.Fetch:
             // FIXME: <https://webkit.org/b/165495> Web Inspector: XHR / Fetch for non-text content should not show garbled text
             // XHR / Fetch content may not always be text.
-            this._responseContentView = new WebInspector.TextResourceContentView(this._resource);
+            this._responseContentView = new WI.TextResourceContentView(this._resource);
             break;
 
-        case WebInspector.Resource.Type.Image:
+        case WI.Resource.Type.Image:
             if (this._resource.mimeTypeComponents.type === "image/svg+xml")
-                this._responseContentView = new WebInspector.SVGImageResourceClusterContentView(this._resource);
+                this._responseContentView = new WI.SVGImageResourceClusterContentView(this._resource);
             else
-                this._responseContentView = new WebInspector.ImageResourceContentView(this._resource);
+                this._responseContentView = new WI.ImageResourceContentView(this._resource);
             break;
 
-        case WebInspector.Resource.Type.Font:
-            this._responseContentView = new WebInspector.FontResourceContentView(this._resource);
+        case WI.Resource.Type.Font:
+            this._responseContentView = new WI.FontResourceContentView(this._resource);
             break;
 
-        case WebInspector.Resource.Type.WebSocket:
-            this._responseContentView = new WebInspector.WebSocketContentView(this._resource);
+        case WI.Resource.Type.WebSocket:
+            this._responseContentView = new WI.WebSocketContentView(this._resource);
             break;
 
         default:
-            this._responseContentView = new WebInspector.GenericResourceContentView(this._resource);
+            this._responseContentView = new WI.GenericResourceContentView(this._resource);
             break;
         }
 
@@ -107,7 +107,7 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
         if (this._requestContentView)
             return this._requestContentView;
 
-        this._requestContentView = new WebInspector.TextContentView(this._resource.requestData || "", this._resource.requestDataContentType);
+        this._requestContentView = new WI.TextContentView(this._resource.requestData || "", this._resource.requestDataContentType);
 
         return this._requestContentView;
     }
@@ -145,21 +145,21 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
 
     saveToCookie(cookie)
     {
-        cookie[WebInspector.ResourceClusterContentView.ContentViewIdentifierCookieKey] = this._currentContentViewSetting.value;
+        cookie[WI.ResourceClusterContentView.ContentViewIdentifierCookieKey] = this._currentContentViewSetting.value;
     }
 
     restoreFromCookie(cookie)
     {
-        var contentView = this._showContentViewForIdentifier(cookie[WebInspector.ResourceClusterContentView.ContentViewIdentifierCookieKey]);
+        var contentView = this._showContentViewForIdentifier(cookie[WI.ResourceClusterContentView.ContentViewIdentifierCookieKey]);
         if (typeof contentView.revealPosition === "function" && "lineNumber" in cookie && "columnNumber" in cookie)
-            contentView.revealPosition(new WebInspector.SourceCodePosition(cookie.lineNumber, cookie.columnNumber));
+            contentView.revealPosition(new WI.SourceCodePosition(cookie.lineNumber, cookie.columnNumber));
     }
 
     showRequest()
     {
         this._shownInitialContent = true;
 
-        return this._showContentViewForIdentifier(WebInspector.ResourceClusterContentView.RequestIdentifier);
+        return this._showContentViewForIdentifier(WI.ResourceClusterContentView.RequestIdentifier);
     }
 
     showResponse(positionToReveal, textRangeToSelect, forceUnformatted)
@@ -172,7 +172,7 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
             this._forceUnformatted = forceUnformatted;
         }
 
-        var responseContentView = this._showContentViewForIdentifier(WebInspector.ResourceClusterContentView.ResponseIdentifier);
+        var responseContentView = this._showContentViewForIdentifier(WI.ResourceClusterContentView.ResponseIdentifier);
         if (typeof responseContentView.revealPosition === "function")
             responseContentView.revealPosition(positionToReveal, textRangeToSelect, forceUnformatted);
         return responseContentView;
@@ -212,9 +212,9 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
         if (!contentView)
             return null;
         if (contentView === this._requestContentView)
-            return WebInspector.ResourceClusterContentView.RequestIdentifier;
+            return WI.ResourceClusterContentView.RequestIdentifier;
         if (contentView === this._responseContentView)
-            return WebInspector.ResourceClusterContentView.ResponseIdentifier;
+            return WI.ResourceClusterContentView.ResponseIdentifier;
         console.error("Unknown contentView.");
         return null;
     }
@@ -224,10 +224,10 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
         var contentViewToShow = null;
 
         switch (identifier) {
-        case WebInspector.ResourceClusterContentView.RequestIdentifier:
+        case WI.ResourceClusterContentView.RequestIdentifier:
             contentViewToShow = this._canShowRequestContentView() ? this.requestContentView : null;
             break;
-        case WebInspector.ResourceClusterContentView.ResponseIdentifier:
+        case WI.ResourceClusterContentView.ResponseIdentifier:
             contentViewToShow = this.responseContentView;
             break;
         }
@@ -275,9 +275,9 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
     }
 };
 
-WebInspector.ResourceClusterContentView.ContentViewIdentifierCookieKey = "resource-cluster-content-view-identifier";
+WI.ResourceClusterContentView.ContentViewIdentifierCookieKey = "resource-cluster-content-view-identifier";
 
-WebInspector.ResourceClusterContentView.RequestIconStyleClassName = "request-icon";
-WebInspector.ResourceClusterContentView.ResponseIconStyleClassName = "response-icon";
-WebInspector.ResourceClusterContentView.RequestIdentifier = "request";
-WebInspector.ResourceClusterContentView.ResponseIdentifier = "response";
+WI.ResourceClusterContentView.RequestIconStyleClassName = "request-icon";
+WI.ResourceClusterContentView.ResponseIconStyleClassName = "response-icon";
+WI.ResourceClusterContentView.RequestIdentifier = "request";
+WI.ResourceClusterContentView.ResponseIdentifier = "response";

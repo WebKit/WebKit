@@ -5,36 +5,36 @@
 <script>
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("WebInspector.Gradient");
+    let suite = InspectorTest.createAsyncSuite("WI.Gradient");
 
     suite.addTestCase({
-        name: "WebInspector.Gradient.fromString",
+        name: "WI.Gradient.fromString",
         description: "Test we can detect gradients from strings.",
         test(resolve, reject) {
             function testGood(string, expectedSubclass) {
-                let gradient = WebInspector.Gradient.fromString(string);
-                InspectorTest.expectThat(gradient instanceof WebInspector.Gradient, `'${string}' is valid`);
+                let gradient = WI.Gradient.fromString(string);
+                InspectorTest.expectThat(gradient instanceof WI.Gradient, `'${string}' is valid`);
                 InspectorTest.expectThat(gradient && gradient instanceof expectedSubclass, `'${string}' is the expected subclass '${expectedSubclass.name}'`);
             }
 
             function testBad(string) {
-                let gradient = WebInspector.Gradient.fromString(string);
+                let gradient = WI.Gradient.fromString(string);
                 InspectorTest.expectThat(!gradient, `'${string}' is not valid`);
                 if (gradient)
                     InspectorTest.fail(`'${string}' is valid with subclass '${gradient.constructor.name}'`);
             }
 
-            testGood("linear-gradient(red, blue)", WebInspector.LinearGradient);
-            testGood("linear-gradient(0deg, red, blue)", WebInspector.LinearGradient);
-            testGood("linear-gradient(to top, red, blue)", WebInspector.LinearGradient);
-            testGood("linear-gradient(to top, red, green 50%, blue)", WebInspector.LinearGradient);
-            testGood("repeating-linear-gradient(0deg, red, blue)", WebInspector.LinearGradient);
+            testGood("linear-gradient(red, blue)", WI.LinearGradient);
+            testGood("linear-gradient(0deg, red, blue)", WI.LinearGradient);
+            testGood("linear-gradient(to top, red, blue)", WI.LinearGradient);
+            testGood("linear-gradient(to top, red, green 50%, blue)", WI.LinearGradient);
+            testGood("repeating-linear-gradient(0deg, red, blue)", WI.LinearGradient);
 
-            testGood("radial-gradient(red, blue)", WebInspector.RadialGradient);
-            testGood("radial-gradient(0deg, red, blue)", WebInspector.RadialGradient);
-            testGood("radial-gradient(ellipse, red, blue)", WebInspector.RadialGradient);
-            testGood("radial-gradient(ellipse, red, green 50%, blue)", WebInspector.RadialGradient);
-            testGood("repeating-radial-gradient(red, blue)", WebInspector.RadialGradient);
+            testGood("radial-gradient(red, blue)", WI.RadialGradient);
+            testGood("radial-gradient(0deg, red, blue)", WI.RadialGradient);
+            testGood("radial-gradient(ellipse, red, blue)", WI.RadialGradient);
+            testGood("radial-gradient(ellipse, red, green 50%, blue)", WI.RadialGradient);
+            testGood("repeating-radial-gradient(red, blue)", WI.RadialGradient);
 
             InspectorTest.log("");
 
@@ -58,12 +58,12 @@ function test()
     });
 
     suite.addTestCase({
-        name: "WebInspector.Gradient.prototype.toString",
+        name: "WI.Gradient.prototype.toString",
         description: "Test the different toString outputs.",
         test(resolve, reject) {
             function test(string, expected = string) {
-                let gradient = WebInspector.Gradient.fromString(string);
-                InspectorTest.expectThat(gradient instanceof WebInspector.Gradient, `'${string}' is valid`);
+                let gradient = WI.Gradient.fromString(string);
+                InspectorTest.expectThat(gradient instanceof WI.Gradient, `'${string}' is valid`);
                 InspectorTest.expectEqual(gradient && gradient.toString(), expected, `toString() output matches '${expected}'`);
             }
 
@@ -82,10 +82,10 @@ function test()
     });
 
     suite.addTestCase({
-        name: "WebInspector.LinearGradient.prototype.set angleUnits",
+        name: "WI.LinearGradient.prototype.set angleUnits",
         description: "Test the recalculation of the angle value when changing angle units.",
         test(resolve, reject) {
-            let gradient = WebInspector.Gradient.fromString("linear-gradient(red, blue)");
+            let gradient = WI.Gradient.fromString("linear-gradient(red, blue)");
             if (!gradient) {
                 InspectorTest.fail("'linear-gradient(red, blue)' is not valid");
                 reject();
@@ -97,19 +97,19 @@ function test()
                 InspectorTest.expectEqual(gradient.toString(), "linear-gradient(red, blue)", "toString() returns the same value regardless of angle units");
             }
 
-            test(180, WebInspector.LinearGradient.AngleUnits.DEG);
+            test(180, WI.LinearGradient.AngleUnits.DEG);
 
-            gradient.angleUnits = WebInspector.LinearGradient.AngleUnits.RAD;
+            gradient.angleUnits = WI.LinearGradient.AngleUnits.RAD;
 
-            test(3.14, WebInspector.LinearGradient.AngleUnits.RAD);
+            test(3.14, WI.LinearGradient.AngleUnits.RAD);
 
-            gradient.angleUnits = WebInspector.LinearGradient.AngleUnits.GRAD;
+            gradient.angleUnits = WI.LinearGradient.AngleUnits.GRAD;
 
-            test(200, WebInspector.LinearGradient.AngleUnits.GRAD);
+            test(200, WI.LinearGradient.AngleUnits.GRAD);
 
-            gradient.angleUnits = WebInspector.LinearGradient.AngleUnits.TURN;
+            gradient.angleUnits = WI.LinearGradient.AngleUnits.TURN;
 
-            test(0.5, WebInspector.LinearGradient.AngleUnits.TURN);
+            test(0.5, WI.LinearGradient.AngleUnits.TURN);
 
             resolve();
         }
@@ -120,6 +120,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Tests for the WebInspector.Gradient model object.</p>
+<p>Tests for the WI.Gradient model object.</p>
 </body>
 </html>

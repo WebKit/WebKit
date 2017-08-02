@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.XHRBreakpointTreeController = class XHRBreakpointsTreeController extends WebInspector.Object
+WI.XHRBreakpointTreeController = class XHRBreakpointsTreeController extends WI.Object
 {
     constructor(treeOutline)
     {
@@ -31,14 +31,14 @@ WebInspector.XHRBreakpointTreeController = class XHRBreakpointsTreeController ex
 
         this._treeOutline = treeOutline;
 
-        WebInspector.domDebuggerManager.addEventListener(WebInspector.DOMDebuggerManager.Event.XHRBreakpointAdded, this._xhrBreakpointAdded, this);
-        WebInspector.domDebuggerManager.addEventListener(WebInspector.DOMDebuggerManager.Event.XHRBreakpointRemoved, this._xhrBreakpointRemoved, this);
+        WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.XHRBreakpointAdded, this._xhrBreakpointAdded, this);
+        WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.XHRBreakpointRemoved, this._xhrBreakpointRemoved, this);
 
-        this._allReqestsBreakpointTreeElement = new WebInspector.XHRBreakpointTreeElement(WebInspector.domDebuggerManager.allRequestsBreakpoint, WebInspector.DebuggerSidebarPanel.AssertionIconStyleClassName, WebInspector.UIString("All Requests"));
+        this._allReqestsBreakpointTreeElement = new WI.XHRBreakpointTreeElement(WI.domDebuggerManager.allRequestsBreakpoint, WI.DebuggerSidebarPanel.AssertionIconStyleClassName, WI.UIString("All Requests"));
 
         this._treeOutline.appendChild(this._allReqestsBreakpointTreeElement);
 
-        for (let breakpoint of WebInspector.domDebuggerManager.xhrBreakpoints)
+        for (let breakpoint of WI.domDebuggerManager.xhrBreakpoints)
             this._addTreeElement(breakpoint);
     }
 
@@ -55,8 +55,8 @@ WebInspector.XHRBreakpointTreeController = class XHRBreakpointsTreeController ex
 
     disconnect()
     {
-        WebInspector.Frame.removeEventListener(null, null, this);
-        WebInspector.domDebuggerManager.removeEventListener(null, null, this);
+        WI.Frame.removeEventListener(null, null, this);
+        WI.domDebuggerManager.removeEventListener(null, null, this);
     }
 
     // Private
@@ -83,6 +83,6 @@ WebInspector.XHRBreakpointTreeController = class XHRBreakpointsTreeController ex
         if (treeElement)
             return;
 
-        this._treeOutline.appendChild(new WebInspector.XHRBreakpointTreeElement(breakpoint));
+        this._treeOutline.appendChild(new WI.XHRBreakpointTreeElement(breakpoint));
     }
 };

@@ -26,7 +26,7 @@
 {
     const selectedStyleClassName = "selected";
 
-    WebInspector.TextToggleButtonNavigationItem = class TextToggleButtonNavigationItem extends WebInspector.ButtonNavigationItem
+    WI.TextToggleButtonNavigationItem = class TextToggleButtonNavigationItem extends WI.ButtonNavigationItem
     {
         constructor(identifier, title)
         {

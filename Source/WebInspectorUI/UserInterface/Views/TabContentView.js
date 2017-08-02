@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TabContentView = class TabContentView extends WebInspector.ContentView
+WI.TabContentView = class TabContentView extends WI.ContentView
 {
     constructor(identifier, styleClassNames, tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors)
     {
         console.assert(typeof identifier === "string");
         console.assert(typeof styleClassNames === "string" || styleClassNames.every((className) => typeof className === "string"));
-        console.assert(tabBarItem instanceof WebInspector.TabBarItem);
+        console.assert(tabBarItem instanceof WI.TabBarItem);
         console.assert(!navigationSidebarPanelConstructor || typeof navigationSidebarPanelConstructor === "function");
         console.assert(!detailsSidebarPanelConstructors || detailsSidebarPanelConstructors.every((detailsSidebarPanelConstructor) => typeof detailsSidebarPanelConstructor === "function"));
 
@@ -49,14 +49,14 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
 
         const defaultSidebarWidth = 300;
 
-        this._navigationSidebarCollapsedSetting = new WebInspector.Setting(identifier + "-navigation-sidebar-collapsed", false);
-        this._navigationSidebarWidthSetting = new WebInspector.Setting(identifier + "-navigation-sidebar-width", defaultSidebarWidth);
+        this._navigationSidebarCollapsedSetting = new WI.Setting(identifier + "-navigation-sidebar-collapsed", false);
+        this._navigationSidebarWidthSetting = new WI.Setting(identifier + "-navigation-sidebar-width", defaultSidebarWidth);
 
-        this._detailsSidebarCollapsedSetting = new WebInspector.Setting(identifier + "-details-sidebar-collapsed", true);
-        this._detailsSidebarSelectedPanelSetting = new WebInspector.Setting(identifier + "-details-sidebar-selected-panel", null);
-        this._detailsSidebarWidthSetting = new WebInspector.Setting(identifier + "-details-sidebar-width", defaultSidebarWidth);
+        this._detailsSidebarCollapsedSetting = new WI.Setting(identifier + "-details-sidebar-collapsed", true);
+        this._detailsSidebarSelectedPanelSetting = new WI.Setting(identifier + "-details-sidebar-selected-panel", null);
+        this._detailsSidebarWidthSetting = new WI.Setting(identifier + "-details-sidebar-width", defaultSidebarWidth);
 
-        this._cookieSetting = new WebInspector.Setting(identifier + "-tab-cookie", {});
+        this._cookieSetting = new WI.Setting(identifier + "-tab-cookie", {});
     }
 
     static isTabAllowed()
@@ -132,7 +132,7 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
         super.shown();
 
         if (this._shouldRestoreStateWhenShown)
-            this.restoreStateFromCookie(WebInspector.StateRestorationType.Delayed);
+            this.restoreStateFromCookie(WI.StateRestorationType.Delayed);
     }
 
     restoreStateFromCookie(restorationType)
@@ -145,9 +145,9 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
         this._shouldRestoreStateWhenShown = false;
 
         var relaxMatchDelay = 0;
-        if (restorationType === WebInspector.StateRestorationType.Load)
+        if (restorationType === WI.StateRestorationType.Load)
             relaxMatchDelay = 1000;
-        else if (restorationType === WebInspector.StateRestorationType.Navigation)
+        else if (restorationType === WI.StateRestorationType.Navigation)
             relaxMatchDelay = 2000;
 
         let cookie = this._cookieSetting.value || {};
@@ -178,7 +178,7 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
         if (!this._navigationSidebarPanelConstructor)
             return null;
         if (!this._navigationSidebarPanel)
-            this._navigationSidebarPanel = WebInspector.instanceForClass(this._navigationSidebarPanelConstructor);
+            this._navigationSidebarPanel = WI.instanceForClass(this._navigationSidebarPanelConstructor);
         return this._navigationSidebarPanel;
     }
 
@@ -188,7 +188,7 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
     get detailsSidebarPanels()
     {
         if (!this._detailsSidebarPanels)
-            this._detailsSidebarPanels = this._detailsSidebarPanelConstructors.map(constructor => WebInspector.instanceForClass(constructor));
+            this._detailsSidebarPanels = this._detailsSidebarPanelConstructors.map(constructor => WI.instanceForClass(constructor));
 
         return this._detailsSidebarPanels;
     }

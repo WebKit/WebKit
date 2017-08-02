@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
+WI.CSSStyleManager = class CSSStyleManager extends WI.Object
 {
     constructor()
     {
@@ -32,16 +32,16 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         if (window.CSSAgent)
             CSSAgent.enable();
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceAdded, this);
-        WebInspector.Resource.addEventListener(WebInspector.SourceCode.Event.ContentDidChange, this._resourceContentDidChange, this);
-        WebInspector.Resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceAdded, this);
+        WI.Resource.addEventListener(WI.SourceCode.Event.ContentDidChange, this._resourceContentDidChange, this);
+        WI.Resource.addEventListener(WI.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
 
-        WebInspector.DOMNode.addEventListener(WebInspector.DOMNode.Event.AttributeModified, this._nodeAttributesDidChange, this);
-        WebInspector.DOMNode.addEventListener(WebInspector.DOMNode.Event.AttributeRemoved, this._nodeAttributesDidChange, this);
-        WebInspector.DOMNode.addEventListener(WebInspector.DOMNode.Event.EnabledPseudoClassesChanged, this._nodePseudoClassesDidChange, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.AttributeModified, this._nodeAttributesDidChange, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.AttributeRemoved, this._nodeAttributesDidChange, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.EnabledPseudoClassesChanged, this._nodePseudoClassesDidChange, this);
 
-        this._colorFormatSetting = new WebInspector.Setting("default-color-format", WebInspector.Color.Format.Original);
+        this._colorFormatSetting = new WI.Setting("default-color-format", WI.Color.Format.Original);
 
         this._styleSheetIdentifierMap = new Map;
         this._styleSheetFrameURLMap = new Map;
@@ -58,13 +58,13 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
     {
         switch (origin) {
         case CSSAgent.StyleSheetOrigin.Regular:
-            return WebInspector.CSSStyleSheet.Type.Author;
+            return WI.CSSStyleSheet.Type.Author;
         case CSSAgent.StyleSheetOrigin.User:
-            return WebInspector.CSSStyleSheet.Type.User;
+            return WI.CSSStyleSheet.Type.User;
         case CSSAgent.StyleSheetOrigin.UserAgent:
-            return WebInspector.CSSStyleSheet.Type.UserAgent;
+            return WI.CSSStyleSheet.Type.UserAgent;
         case CSSAgent.StyleSheetOrigin.Inspector:
-            return WebInspector.CSSStyleSheet.Type.Inspector;
+            return WI.CSSStyleSheet.Type.Inspector;
         default:
             console.assert(false, "Unknown CSS.StyleSheetOrigin", origin);
             return CSSAgent.StyleSheetOrigin.Regular;
@@ -75,16 +75,16 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
     {
         switch (source) {
         case CSSAgent.CSSMediaSource.MediaRule:
-            return WebInspector.CSSMedia.Type.MediaRule;
+            return WI.CSSMedia.Type.MediaRule;
         case CSSAgent.CSSMediaSource.ImportRule:
-            return WebInspector.CSSMedia.Type.ImportRule;
+            return WI.CSSMedia.Type.ImportRule;
         case CSSAgent.CSSMediaSource.LinkedSheet:
-            return WebInspector.CSSMedia.Type.LinkedStyleSheet;
+            return WI.CSSMedia.Type.LinkedStyleSheet;
         case CSSAgent.CSSMediaSource.InlineSheet:
-            return WebInspector.CSSMedia.Type.InlineStyleSheet;
+            return WI.CSSMedia.Type.InlineStyleSheet;
         default:
             console.assert(false, "Unknown CSS.CSSMediaSource", source);
-            return WebInspector.CSSMedia.Type.MediaRule;
+            return WI.CSSMedia.Type.MediaRule;
         }
     }
 
@@ -152,7 +152,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         if (styleSheet)
             return styleSheet;
 
-        styleSheet = new WebInspector.CSSStyleSheet(id);
+        styleSheet = new WI.CSSStyleSheet(id);
         this._styleSheetIdentifierMap.set(id, styleSheet);
         return styleSheet;
     }
@@ -162,7 +162,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
         if (node.id in this._nodeStylesMap)
             return this._nodeStylesMap[node.id];
 
-        var styles = new WebInspector.DOMNodeStyles(node);
+        var styles = new WI.DOMNodeStyles(node);
         this._nodeStylesMap[node.id] = styles;
         return styles;
     }
@@ -171,7 +171,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
     {
         var inspectorStyleSheets = this._inspectorStyleSheetsForFrame(frame);
         for (let styleSheet of inspectorStyleSheets) {
-            if (styleSheet[WebInspector.CSSStyleManager.PreferredInspectorStyleSheetSymbol]) {
+            if (styleSheet[WI.CSSStyleManager.PreferredInspectorStyleSheetSymbol]) {
                 callback(styleSheet);
                 return;
             }
@@ -182,8 +182,8 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         if (CSSAgent.createStyleSheet) {
             CSSAgent.createStyleSheet(frame.id, function(error, styleSheetId) {
-                let styleSheet = WebInspector.cssStyleManager.styleSheetForIdentifier(styleSheetId);
-                styleSheet[WebInspector.CSSStyleManager.PreferredInspectorStyleSheetSymbol] = true;
+                let styleSheet = WI.cssStyleManager.styleSheetForIdentifier(styleSheetId);
+                styleSheet[WI.CSSStyleManager.PreferredInspectorStyleSheetSymbol] = true;
                 callback(styleSheet);
             });
             return;
@@ -205,7 +205,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
                 return;
             }
 
-            let remoteObject = WebInspector.RemoteObject.fromPayload(documentRemoteObjectPayload);
+            let remoteObject = WI.RemoteObject.fromPayload(documentRemoteObjectPayload);
             remoteObject.pushNodeToFrontend(documentNodeAvailable.bind(null, remoteObject));
         }
 
@@ -241,13 +241,13 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
             }
 
             let styleSheetId = payload.ruleId.styleSheetId;
-            let styleSheet = WebInspector.cssStyleManager.styleSheetForIdentifier(styleSheetId);
+            let styleSheet = WI.cssStyleManager.styleSheetForIdentifier(styleSheetId);
             if (!styleSheet) {
                 callback(null);
                 return;
             }
 
-            styleSheet[WebInspector.CSSStyleManager.PreferredInspectorStyleSheetSymbol] = true;
+            styleSheet[WI.CSSStyleManager.PreferredInspectorStyleSheetSymbol] = true;
 
             console.assert(styleSheet.isInspectorStyleSheet());
             console.assert(styleSheet.parentFrame === frame);
@@ -266,7 +266,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
     mediaQueryResultChanged()
     {
-        // Called from WebInspector.CSSObserver.
+        // Called from WI.CSSObserver.
 
         for (var key in this._nodeStylesMap)
             this._nodeStylesMap[key].mediaQueryResultDidChange();
@@ -274,7 +274,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
     styleSheetChanged(styleSheetIdentifier)
     {
-        // Called from WebInspector.CSSObserver.
+        // Called from WI.CSSObserver.
         var styleSheet = this.styleSheetForIdentifier(styleSheetIdentifier);
         console.assert(styleSheet);
 
@@ -290,11 +290,11 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
     {
         console.assert(!this._styleSheetIdentifierMap.has(styleSheetInfo.styleSheetId), "Attempted to add a CSSStyleSheet but identifier was already in use");
         let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
-        let parentFrame = WebInspector.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId);
-        let origin = WebInspector.CSSStyleManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
+        let parentFrame = WI.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId);
+        let origin = WI.CSSStyleManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
         styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
 
-        this.dispatchEventToListeners(WebInspector.CSSStyleManager.Event.StyleSheetAdded, {styleSheet});
+        this.dispatchEventToListeners(WI.CSSStyleManager.Event.StyleSheetAdded, {styleSheet});
     }
 
     styleSheetRemoved(styleSheetIdentifier)
@@ -306,7 +306,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
         this._styleSheetIdentifierMap.delete(styleSheetIdentifier);
 
-        this.dispatchEventToListeners(WebInspector.CSSStyleManager.Event.StyleSheetRemoved, {styleSheet});
+        this.dispatchEventToListeners(WI.CSSStyleManager.Event.StyleSheetRemoved, {styleSheet});
     }
 
     // Private
@@ -349,7 +349,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
     _mainResourceDidChange(event)
     {
-        console.assert(event.target instanceof WebInspector.Frame);
+        console.assert(event.target instanceof WI.Frame);
 
         if (!event.target.isMainFrame())
             return;
@@ -364,12 +364,12 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
     _resourceAdded(event)
     {
-        console.assert(event.target instanceof WebInspector.Frame);
+        console.assert(event.target instanceof WI.Frame);
 
         var resource = event.data.resource;
         console.assert(resource);
 
-        if (resource.type !== WebInspector.Resource.Type.Stylesheet)
+        if (resource.type !== WI.Resource.Type.Stylesheet)
             return;
 
         this._clearStyleSheetsForResource(resource);
@@ -377,10 +377,10 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
     _resourceTypeDidChange(event)
     {
-        console.assert(event.target instanceof WebInspector.Resource);
+        console.assert(event.target instanceof WI.Resource);
 
         var resource = event.target;
-        if (resource.type !== WebInspector.Resource.Type.Stylesheet)
+        if (resource.type !== WI.Resource.Type.Stylesheet)
             return;
 
         this._clearStyleSheetsForResource(resource);
@@ -405,7 +405,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
     _lookupStyleSheet(frame, url, callback)
     {
-        console.assert(frame instanceof WebInspector.Frame);
+        console.assert(frame instanceof WI.Frame);
 
         let key = this._frameURLMapKey(frame, url);
 
@@ -435,8 +435,8 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
             }
 
             for (let styleSheetInfo of styleSheets) {
-                let parentFrame = WebInspector.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId);
-                let origin = WebInspector.CSSStyleManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
+                let parentFrame = WI.frameResourceManager.frameForIdentifier(styleSheetInfo.frameId);
+                let origin = WI.CSSStyleManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
 
                 // COMPATIBILITY (iOS 9): The info did not have 'isInline', 'startLine', and 'startColumn', so make false and 0 in these cases.
                 let isInline = styleSheetInfo.isInline || false;
@@ -463,7 +463,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
             return;
 
         // Ignore if it isn't a CSS stylesheet.
-        if (resource.type !== WebInspector.Resource.Type.Stylesheet || resource.syntheticMIMEType !== "text/css")
+        if (resource.type !== WI.Resource.Type.Stylesheet || resource.syntheticMIMEType !== "text/css")
             return;
 
         function applyStyleSheetChanges()
@@ -480,7 +480,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
                 // ignore the next _updateResourceContent call.
                 resource.__ignoreNextUpdateResourceContent = true;
 
-                WebInspector.branchManager.currentBranch.revisionForRepresentedObject(styleSheet).content = resource.content;
+                WI.branchManager.currentBranch.revisionForRepresentedObject(styleSheet).content = resource.content;
             }
 
             this._lookupStyleSheetForResource(resource, styleSheetFound.bind(this));
@@ -511,7 +511,7 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
                 // Only try to update stylesheet resources. Other resources, like documents, can contain
                 // multiple stylesheets and we don't have the source ranges to update those.
-                if (representedObject.type !== WebInspector.Resource.Type.Stylesheet)
+                if (representedObject.type !== WI.Resource.Type.Stylesheet)
                     return;
             }
 
@@ -522,10 +522,10 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
 
             this._ignoreResourceContentDidChangeEventForResource = representedObject;
 
-            let revision = WebInspector.branchManager.currentBranch.revisionForRepresentedObject(representedObject);
+            let revision = WI.branchManager.currentBranch.revisionForRepresentedObject(representedObject);
             if (styleSheet.isInspectorStyleSheet()) {
                 revision.content = representedObject.content;
-                styleSheet.dispatchEventToListeners(WebInspector.SourceCode.Event.ContentDidChange);
+                styleSheet.dispatchEventToListeners(WI.SourceCode.Event.ContentDidChange);
             } else
                 revision.content = parameters.content;
 
@@ -551,11 +551,11 @@ WebInspector.CSSStyleManager = class CSSStyleManager extends WebInspector.Object
     }
 };
 
-WebInspector.CSSStyleManager.Event = {
+WI.CSSStyleManager.Event = {
     StyleSheetAdded: "css-style-manager-style-sheet-added",
     StyleSheetRemoved: "css-style-manager-style-sheet-removed",
 };
 
-WebInspector.CSSStyleManager.PseudoElementNames = ["before", "after"];
-WebInspector.CSSStyleManager.ForceablePseudoClasses = ["active", "focus", "hover", "visited"];
-WebInspector.CSSStyleManager.PreferredInspectorStyleSheetSymbol = Symbol("css-style-manager-preferred-inspector-stylesheet");
+WI.CSSStyleManager.PseudoElementNames = ["before", "after"];
+WI.CSSStyleManager.ForceablePseudoClasses = ["active", "focus", "hover", "visited"];
+WI.CSSStyleManager.PreferredInspectorStyleSheetSymbol = Symbol("css-style-manager-preferred-inspector-stylesheet");

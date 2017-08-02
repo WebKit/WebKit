@@ -28,47 +28,47 @@ function mul(a, b)
 function test()
 {
     // First, set up the breakpoint, start timeline capturing, and trigger execution of installTimer().
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
         var scriptObject = event.data.script;
 
         if (!/timeline-helper\.js$/.test(scriptObject.url))
             return;
 
         var location = scriptObject.createSourceCodeLocation(17, 0);  // Inside timeline-helper.js:hook()
-        var breakpoint = new WebInspector.Breakpoint(location);
-        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+        var breakpoint = new WI.Breakpoint(location);
+        WI.debuggerManager.addBreakpoint(breakpoint);
         InspectorTest.addResult("Added a breakpoint inside hook().")
 
-        WebInspector.timelineManager.startCapturing();
+        WI.timelineManager.startCapturing();
         InspectorTest.evaluateInPage("installTimer()");
     });
 
     // Second, the debugger will pause during timeline capturing. Resume, then stop timeline capturing.
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, function(event) {
         InspectorTest.addResult("Debugger paused;");
         checkIfExceptionLoopsForever();
     });
 
     function checkIfExceptionLoopsForever() {
-        WebInspector.runtimeManager.evaluateInInspectedWindow("({}).x.x", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
+        WI.runtimeManager.evaluateInInspectedWindow("({}).x.x", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
             InspectorTest.addResult("An exception was " + (wasThrown ? "" : "not ") + "thrown from the injected script.");
-            WebInspector.debuggerManager.resume().then(function() {
+            WI.debuggerManager.resume().then(function() {
                 InspectorTest.addResult("Debugger resumed; stopping timeline capture.");
-                WebInspector.timelineManager.stopCapturing();
+                WI.timelineManager.stopCapturing();
             });
         });
     }
 
     // When timeline capturing stops, inspect the resulting timeline records for a profile.
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, function(event) {
-        var recording = WebInspector.timelineManager.activeRecording;
-        var scriptTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Script);
+    WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, function(event) {
+        var recording = WI.timelineManager.activeRecording;
+        var scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
         console.assert(scriptTimeline);
 
         InspectorTest.addResult("Timeline capturing stopped. Inspecting the active recording....");
 
         for (var record of scriptTimeline.records) {
-            if (record.eventType !== WebInspector.ScriptTimelineRecord.EventType.TimerFired)
+            if (record.eventType !== WI.ScriptTimelineRecord.EventType.TimerFired)
                 continue;
 
             var result = record.profile ? "TRUE" : "FALSE";

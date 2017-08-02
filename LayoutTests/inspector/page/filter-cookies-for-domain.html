@@ -164,7 +164,7 @@ function test()
 
             for (let cookieDomain in testcasesByCookieDomain) {
                 for (let expected of testcasesByCookieDomain[cookieDomain]) {
-                    let output = WebInspector.CookieStorageObject.cookieDomainMatchesResourceDomain(cookieDomain, expected.input);
+                    let output = WI.CookieStorageObject.cookieDomainMatchesResourceDomain(cookieDomain, expected.input);
                     let verdictText = expected.output ? "should match" : "should not match";
                     InspectorTest.expectThat(output === expected.output, `${cookieDomain} ${verdictText} ${expected.input}`);
                 }

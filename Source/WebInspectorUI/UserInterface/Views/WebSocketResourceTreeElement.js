@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.WebSocketResourceTreeElement = class WebSocketResourceTreeElement extends WebInspector.ResourceTreeElement
+WI.WebSocketResourceTreeElement = class WebSocketResourceTreeElement extends WI.ResourceTreeElement
 {
     // Overrides from TreeElement
 
@@ -33,26 +33,26 @@ WebInspector.WebSocketResourceTreeElement = class WebSocketResourceTreeElement e
 
         this._updateConnectionStatus();
 
-        this.resource.addEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateConnectionStatus, this);
+        this.resource.addEventListener(WI.WebSocketResource.Event.ReadyStateChanged, this._updateConnectionStatus, this);
     }
 
     ondetach()
     {
         super.ondetach();
 
-        this.resource.removeEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateConnectionStatus, this);
+        this.resource.removeEventListener(WI.WebSocketResource.Event.ReadyStateChanged, this._updateConnectionStatus, this);
     }
 
     populateContextMenu(contextMenu, event)
     {
-        contextMenu.appendItem(WebInspector.UIString("Log WebSocket"), () => {
-            WebInspector.RemoteObject.resolveWebSocket(this._resource, WebInspector.RuntimeManager.ConsoleObjectGroup, (remoteObject) => {
+        contextMenu.appendItem(WI.UIString("Log WebSocket"), () => {
+            WI.RemoteObject.resolveWebSocket(this._resource, WI.RuntimeManager.ConsoleObjectGroup, (remoteObject) => {
                 if (!remoteObject)
                     return;
 
-                const text = WebInspector.UIString("Selected WebSocket");
+                const text = WI.UIString("Selected WebSocket");
                 const addSpecialUserLogClass = true;
-                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
             });
         });
 
@@ -66,22 +66,22 @@ WebInspector.WebSocketResourceTreeElement = class WebSocketResourceTreeElement e
     _updateConnectionStatus()
     {
         switch (this.resource.readyState) {
-        case WebInspector.WebSocketResource.ReadyState.Closed:
+        case WI.WebSocketResource.ReadyState.Closed:
             this.status = "";
             break;
 
-        case WebInspector.WebSocketResource.ReadyState.Connecting:
+        case WI.WebSocketResource.ReadyState.Connecting:
             var connectionIndicatorElement = document.createElement("div");
             connectionIndicatorElement.classList.add("ready-state", "connecting");
-            connectionIndicatorElement.title = WebInspector.UIString("Connecting");
+            connectionIndicatorElement.title = WI.UIString("Connecting");
 
             this.status = connectionIndicatorElement;
             break;
 
-        case WebInspector.WebSocketResource.ReadyState.Open:
+        case WI.WebSocketResource.ReadyState.Open:
             var connectionIndicatorElement = document.createElement("div");
             connectionIndicatorElement.classList.add("ready-state", "open");
-            connectionIndicatorElement.title = WebInspector.UIString("Open");
+            connectionIndicatorElement.title = WI.UIString("Open");
 
             this.status = connectionIndicatorElement;
             break;

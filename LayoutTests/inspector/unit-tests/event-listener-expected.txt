@@ -1,4 +1,4 @@
-Testing basic functionality of WebInspector.EventListener.
+Testing basic functionality of WI.EventListener.
 
 Connecting the listener.
 Invoked callback for kaboom event.

@@ -7,7 +7,7 @@ TestPage.registerInitializer(() => {
     }
 
     window.findScript = function(regex) {
-        let resources = WebInspector.frameResourceManager.mainFrame.resourceCollection.items;
+        let resources = WI.frameResourceManager.mainFrame.resourceCollection.items;
         for (let resource of resources) {
             if (regex.test(resource.url))
                 return resource.scripts[0];
@@ -28,12 +28,12 @@ TestPage.registerInitializer(() => {
     }
 
     window.loadMainPageContent = function() {
-        return loadLinesFromSourceCode(WebInspector.frameResourceManager.mainFrame.mainResource);
+        return loadLinesFromSourceCode(WI.frameResourceManager.mainFrame.mainResource);
     }
 
     window.setBreakpointsOnLinesWithBreakpointComment = function(resource) {
         if (!resource)
-            resource = WebInspector.frameResourceManager.mainFrame.mainResource;
+            resource = WI.frameResourceManager.mainFrame.mainResource;
 
         function createLocation(resource, lineNumber, columnNumber) {
             return {url: resource.url, lineNumber, columnNumber};
@@ -54,7 +54,7 @@ TestPage.registerInitializer(() => {
     }
 
     window.logResolvedBreakpointLinesWithContext = function(inputLocation, resolvedLocation, context) {
-        if (resolvedLocation.sourceCode !== linesSourceCode && !WebInspector.frameResourceManager.mainFrame.mainResource.scripts.includes(resolvedLocation.sourceCode)) {
+        if (resolvedLocation.sourceCode !== linesSourceCode && !WI.frameResourceManager.mainFrame.mainResource.scripts.includes(resolvedLocation.sourceCode)) {
             InspectorTest.log("--- Source Unavailable ---");
             return;
         }
@@ -95,7 +95,7 @@ TestPage.registerInitializer(() => {
     }
 
     window.logLinesWithContext = function(location, context) {
-        if (location.sourceCode !== linesSourceCode && !WebInspector.frameResourceManager.mainFrame.mainResource.scripts.includes(location.sourceCode)) {
+        if (location.sourceCode !== linesSourceCode && !WI.frameResourceManager.mainFrame.mainResource.scripts.includes(location.sourceCode)) {
             InspectorTest.log("--- Source Unavailable ---");
             return;
         }
@@ -116,7 +116,7 @@ TestPage.registerInitializer(() => {
     }
 
     window.logPauseLocation = function() {
-        let callFrame = WebInspector.debuggerManager.activeCallFrame;
+        let callFrame = WI.debuggerManager.activeCallFrame;
         let name = callFrame.functionName || "<anonymous>";
         let location = callFrame.sourceCodeLocation;
         let line = location.lineNumber + 1;
@@ -133,31 +133,31 @@ TestPage.registerInitializer(() => {
         switch (type) {
         case "in":
             InspectorTest.log("ACTION: step-in");
-            WebInspector.debuggerManager.stepInto();
+            WI.debuggerManager.stepInto();
             break;
         case "over":
             InspectorTest.log("ACTION: step-over");
-            WebInspector.debuggerManager.stepOver();
+            WI.debuggerManager.stepOver();
             break;
         case "out":
             InspectorTest.log("ACTION: step-out");
-            WebInspector.debuggerManager.stepOut();
+            WI.debuggerManager.stepOut();
             break;
         case "resume":
             InspectorTest.log("ACTION: resume");
-            WebInspector.debuggerManager.resume();
+            WI.debuggerManager.resume();
             break;
         default:
             InspectorTest.fail("Unhandled step.");
-            WebInspector.debuggerManager.resume();
+            WI.debuggerManager.resume();
             break;
         }
     }
 
     window.initializeSteppingTestSuite = function(testSuite) {
         suite = testSuite;
-        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
-            if (!WebInspector.debuggerManager.activeCallFrame)
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+            if (!WI.debuggerManager.activeCallFrame)
                 return;
             logPauseLocation();
             step(currentSteps.shift());
@@ -171,16 +171,16 @@ TestPage.registerInitializer(() => {
                 // Setup.
                 currentSteps = steps;
                 InspectorTest.assert(steps[steps.length - 1] === "resume", "The test should always resume at the end to avoid timeouts.");
-                WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = pauseOnAllException ? false : true;
+                WI.debuggerManager.allExceptionsBreakpoint.disabled = pauseOnAllException ? false : true;
 
                 // Trigger entry and step through it.
                 InspectorTest.evaluateInPage(expression);
                 InspectorTest.log(`EXPRESSION: ${expression}`);
                 InspectorTest.log(`STEPS: ${steps.join(", ")}`);
-                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
-                    InspectorTest.log(`PAUSED (${WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target).pauseReason})`);
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    InspectorTest.log(`PAUSED (${WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target).pauseReason})`);
                 });
-                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, (event) => {
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Resumed, (event) => {
                     InspectorTest.log("RESUMED");
                     InspectorTest.expectThat(steps.length === 0, "Should have used all steps.");
                     resolve();

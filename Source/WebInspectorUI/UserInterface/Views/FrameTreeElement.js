@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.ResourceTreeElement
+WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
 {
     constructor(frame)
     {
-        console.assert(frame instanceof WebInspector.Frame);
+        console.assert(frame instanceof WI.Frame);
 
         super(frame.mainResource, frame);
 
@@ -35,39 +35,39 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
 
         this._updateExpandedSetting();
 
-        frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
-        frame.addEventListener(WebInspector.Frame.Event.ResourceWasRemoved, this._resourceWasRemoved, this);
-        frame.addEventListener(WebInspector.Frame.Event.ExtraScriptAdded, this._extraScriptAdded, this);
-        frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasAdded, this._childFrameWasAdded, this);
-        frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
+        frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+        frame.addEventListener(WI.Frame.Event.ResourceWasRemoved, this._resourceWasRemoved, this);
+        frame.addEventListener(WI.Frame.Event.ExtraScriptAdded, this._extraScriptAdded, this);
+        frame.addEventListener(WI.Frame.Event.ChildFrameWasAdded, this._childFrameWasAdded, this);
+        frame.addEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
 
-        frame.domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasAdded, this._childContentFlowWasAdded, this);
-        frame.domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasRemoved, this._childContentFlowWasRemoved, this);
-        frame.domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, this._rootDOMNodeInvalidated, this);
+        frame.domTree.addEventListener(WI.DOMTree.Event.ContentFlowWasAdded, this._childContentFlowWasAdded, this);
+        frame.domTree.addEventListener(WI.DOMTree.Event.ContentFlowWasRemoved, this._childContentFlowWasRemoved, this);
+        frame.domTree.addEventListener(WI.DOMTree.Event.RootDOMNodeInvalidated, this._rootDOMNodeInvalidated, this);
 
         this.shouldRefreshChildren = true;
         this.folderSettingsKey = this._frame.url.hash;
 
-        this.registerFolderizeSettings("frames", WebInspector.UIString("Frames"), this._frame.childFrameCollection, WebInspector.FrameTreeElement);
-        this.registerFolderizeSettings("flows", WebInspector.UIString("Flows"), this._frame.domTree.contentFlowCollection, WebInspector.ContentFlowTreeElement);
-        this.registerFolderizeSettings("extra-scripts", WebInspector.UIString("Extra Scripts"), this._frame.extraScriptCollection, WebInspector.ScriptTreeElement);
+        this.registerFolderizeSettings("frames", WI.UIString("Frames"), this._frame.childFrameCollection, WI.FrameTreeElement);
+        this.registerFolderizeSettings("flows", WI.UIString("Flows"), this._frame.domTree.contentFlowCollection, WI.ContentFlowTreeElement);
+        this.registerFolderizeSettings("extra-scripts", WI.UIString("Extra Scripts"), this._frame.extraScriptCollection, WI.ScriptTreeElement);
 
-        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value)
-            this.registerFolderizeSettings("canvases", WebInspector.UIString("Canvases"), this._frame.canvasCollection, WebInspector.CanvasTreeElement);
+        if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value)
+            this.registerFolderizeSettings("canvases", WI.UIString("Canvases"), this._frame.canvasCollection, WI.CanvasTreeElement);
 
         function forwardingConstructor(representedObject, ...extraArguments) {
-            if (representedObject instanceof WebInspector.CSSStyleSheet)
-                return new WebInspector.CSSStyleSheetTreeElement(representedObject, ...extraArguments);
-            return new WebInspector.ResourceTreeElement(representedObject, ...extraArguments);
+            if (representedObject instanceof WI.CSSStyleSheet)
+                return new WI.CSSStyleSheetTreeElement(representedObject, ...extraArguments);
+            return new WI.ResourceTreeElement(representedObject, ...extraArguments);
         }
 
-        for (let [key, value] of Object.entries(WebInspector.Resource.Type)) {
-            let folderName = WebInspector.Resource.displayNameForType(value, true);
+        for (let [key, value] of Object.entries(WI.Resource.Type)) {
+            let folderName = WI.Resource.displayNameForType(value, true);
 
             let treeElementConstructor = forwardingConstructor;
-            if (value === WebInspector.Resource.Type.WebSocket)
-                treeElementConstructor = WebInspector.WebSocketResourceTreeElement;
+            if (value === WI.Resource.Type.WebSocket)
+                treeElementConstructor = WI.WebSocketResourceTreeElement;
 
             this.registerFolderizeSettings(key, folderName, this._frame.resourceCollectionForType(value), treeElementConstructor);
         }
@@ -121,23 +121,23 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
     onattach()
     {
         // Immediate superclasses are skipped, since Frames handle their own SourceMapResources.
-        WebInspector.GeneralTreeElement.prototype.onattach.call(this);
+        WI.GeneralTreeElement.prototype.onattach.call(this);
 
-        WebInspector.cssStyleManager.addEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
+        WI.cssStyleManager.addEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
 
-        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value) {
-            this._frame.canvasCollection.addEventListener(WebInspector.Collection.Event.ItemAdded, this._canvasWasAdded, this);
-            this._frame.canvasCollection.addEventListener(WebInspector.Collection.Event.ItemRemoved, this._canvasWasRemoved, this);
+        if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value) {
+            this._frame.canvasCollection.addEventListener(WI.Collection.Event.ItemAdded, this._canvasWasAdded, this);
+            this._frame.canvasCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._canvasWasRemoved, this);
         }
     }
 
     ondetach()
     {
-        WebInspector.cssStyleManager.removeEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
+        WI.cssStyleManager.removeEventListener(WI.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
 
-        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value) {
-            this._frame.canvasCollection.removeEventListener(WebInspector.Collection.Event.ItemAdded, this._canvasWasAdded, this);
-            this._frame.canvasCollection.removeEventListener(WebInspector.Collection.Event.ItemRemoved, this._canvasWasRemoved, this);
+        if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value) {
+            this._frame.canvasCollection.removeEventListener(WI.Collection.Event.ItemAdded, this._canvasWasAdded, this);
+            this._frame.canvasCollection.removeEventListener(WI.Collection.Event.ItemRemoved, this._canvasWasRemoved, this);
         }
 
         super.ondetach();
@@ -150,11 +150,11 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         if (a === b)
             return 0;
 
-        var aIsResource = a instanceof WebInspector.ResourceTreeElement;
-        var bIsResource = b instanceof WebInspector.ResourceTreeElement;
+        var aIsResource = a instanceof WI.ResourceTreeElement;
+        var bIsResource = b instanceof WI.ResourceTreeElement;
 
         if (aIsResource && bIsResource)
-            return WebInspector.ResourceTreeElement.compareResourceTreeElements(a, b);
+            return WI.ResourceTreeElement.compareResourceTreeElements(a, b);
 
         if (!aIsResource && !bIsResource) {
             // When both components are not resources then default to base class comparison.
@@ -199,13 +199,13 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
                 this.addChildForRepresentedObject(extraScript);
         }
 
-        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value) {
+        if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value) {
             for (let canvas of this._frame.canvasCollection.items)
                 this.addChildForRepresentedObject(canvas);
         }
 
         const doNotCreateIfMissing = true;
-        WebInspector.cssStyleManager.preferredInspectorStyleSheetForFrame(this._frame, this.addRepresentedObjectToNewChildQueue.bind(this), doNotCreateIfMissing);
+        WI.cssStyleManager.preferredInspectorStyleSheetForFrame(this._frame, this.addRepresentedObjectToNewChildQueue.bind(this), doNotCreateIfMissing);
     }
 
     onexpand()
@@ -226,7 +226,7 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
 
     _updateExpandedSetting()
     {
-        this._expandedSetting = new WebInspector.Setting("frame-expanded-" + this._frame.url.hash, this._frame.isMainFrame() ? true : false);
+        this._expandedSetting = new WI.Setting("frame-expanded-" + this._frame.url.hash, this._frame.isMainFrame() ? true : false);
         if (this._expandedSetting.value)
             this.expand();
         else

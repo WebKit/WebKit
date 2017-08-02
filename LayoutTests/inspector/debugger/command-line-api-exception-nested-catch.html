@@ -8,16 +8,16 @@ window.onerror = function(){};
 
 function test()
 {
-    WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
+    WI.debuggerManager.allExceptionsBreakpoint.disabled = false;
 
     function dumpCommandLineAPIValue(prefix) {
-        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
+        WI.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
             InspectorTest.log(prefix + ": $exception => " + result.description);
         });
     }
 
     function checkIfExceptionValueMatchesVariable(varName) {
-        WebInspector.runtimeManager.evaluateInInspectedWindow("$exception === " + varName, {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
+        WI.runtimeManager.evaluateInInspectedWindow("$exception === " + varName, {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, function(result, wasThrown) {
             InspectorTest.log("  CATCH: $exception === " + varName + " ? " + result.description);
         });
     }
@@ -29,7 +29,7 @@ function test()
         name: "EmptyBefore",
         description: "Without exceptions, $exception should be undefined",
         test(resolve, reject) {
-            WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
+            WI.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
                 InspectorTest.expectThat(result.description === "undefined", "$exception should be undefined if there is no exception.");
                 resolve();
             });
@@ -43,8 +43,8 @@ function test()
             InspectorTest.evaluateInPage("setTimeout(nestedCatchBlocks, 0)");
 
             let phase = 0;
-            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
-                if (!WebInspector.debuggerManager.activeCallFrame)
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (!WI.debuggerManager.activeCallFrame)
                     return;
 
                 phase++;
@@ -52,14 +52,14 @@ function test()
                 // Skip past the first pause to the second pause.
                 if (phase === 1) {
                     dumpCommandLineAPIValue("OUTER 1");
-                    WebInspector.debuggerManager.resume();
+                    WI.debuggerManager.resume();
                     return;
                 }
 
                 // Paused on the exception in the inner try, step over to get into the inner catch.
                 if (phase === 2) {
                     dumpCommandLineAPIValue("INNER 1");
-                    WebInspector.debuggerManager.stepOver();
+                    WI.debuggerManager.stepOver();
                     return;
                 }
 
@@ -67,7 +67,7 @@ function test()
                 if (phase === 3) {
                     dumpCommandLineAPIValue("INNER 2");
                     checkIfExceptionValueMatchesVariable("e2");
-                    WebInspector.debuggerManager.stepOver();
+                    WI.debuggerManager.stepOver();
                     return;
                 }
         
@@ -76,8 +76,8 @@ function test()
                     dumpCommandLineAPIValue("OUTER 2");
                     checkIfExceptionValueMatchesVariable("e1");
                     InspectorTest.singleFireEventListener("AfterTestFunction", resolve);
-                    WebInspector.debuggerManager.resume().then(() => {
-                        WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, listener);
+                    WI.debuggerManager.resume().then(() => {
+                        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
                     }, reject);
                     return;
                 }
@@ -89,7 +89,7 @@ function test()
         name: "EmptyAfter",
         description: "Without exceptions, $exception should be undefined",
         test(resolve, reject) {
-            WebInspector.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
+            WI.runtimeManager.evaluateInInspectedWindow("$exception", {objectGroup: "test", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true}, (result, wasThrown) => {
                 InspectorTest.expectThat(result.description === "undefined", "$exception should be undefined if there is no exception.");
                 resolve();
             });

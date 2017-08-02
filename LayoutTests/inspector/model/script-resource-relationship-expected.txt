@@ -1,7 +1,7 @@
-WebInspector.Script and WebInspector.Resource relationship.
+WI.Script and WI.Resource relationship.
 
 
-== Running test suite: WebInspector.Script and WebInspector.Resource relationship
+== Running test suite: WI.Script and WI.Resource relationship
 -- Running test case: ScriptWithResource
 PASS: Only one Script should be added.
 PASS: Resource and Script have the same URL.

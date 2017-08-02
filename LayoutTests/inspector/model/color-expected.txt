@@ -1,8 +1,8 @@
-Tests for the WebInspector.Color model object.
+Tests for the WI.Color model object.
 
 
-== Running test suite: WebInspector.Color
--- Running test case: WebInspector.Color.fromString
+== Running test suite: WI.Color
+-- Running test case: WI.Color.fromString
 PASS: '#000' should be detected
 PASS: '#000' was the expected 'Short HEX' format
 PASS: '#a0A' should be detected
@@ -77,7 +77,7 @@ PASS: 'hsl(0, 0%, 50%, 1)' should not be detected
 PASS: 'hsla(0, 0%, 50%, 1, 2)' should not be detected
 PASS: 'superblue' should not be detected
 
--- Running test case: WebInspector.Color properties
+-- Running test case: WI.Color properties
 PASS: 'red' should have alpha of 1.
 PASS: 'red' should be simple.
 PASS: 'red' should be a keyword.
@@ -103,13 +103,13 @@ PASS: '#11122233' should not be serializable as a short Hex
 PASS: '#11223344' should be serializable as a short Hex
 PASS: '#11223345' should not be serializable as a short Hex
 
--- Running test case: WebInspector.Color.prototype.nextFormat
+-- Running test case: WI.Color.prototype.nextFormat
 PASS: All format phases of 'transparent' should be as expected.
 PASS: All format phases of 'red' should be as expected.
 PASS: All format phases of 'rgb(100, 150, 200)' should be as expected.
 PASS: All format phases of 'rgba(100, 150, 200, 0.5)' should be as expected.
 
--- Running test case: WebInspector.Color.prototype.toString
+-- Running test case: WI.Color.prototype.toString
 PASS: Color as 'Original' should be 'RED'
 PASS: Color as 'Keyword' should be 'red'
 PASS: Color as 'Short HEX' should be '#f00'

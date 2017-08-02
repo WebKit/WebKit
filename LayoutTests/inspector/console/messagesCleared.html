@@ -11,7 +11,7 @@ function test()
         name: "ClearViaConsoleClearMessagesAPI",
         description: "Calling Console.clearMessages should trigger Console.messagesCleared.",
         test(resolve, reject) {
-            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.Cleared)
+            WI.logManager.awaitEvent(WI.LogManager.Event.Cleared)
             .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
             })
@@ -25,7 +25,7 @@ function test()
         name: "ClearViaConsoleAPI",
         description: "Calling console.clear() should trigger Console.messagesCleared.",
         test(resolve, reject) {
-            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.Cleared)
+            WI.logManager.awaitEvent(WI.LogManager.Event.Cleared)
             .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
             })
@@ -39,13 +39,13 @@ function test()
         name: "ClearViaCommandLineAPI",
         description: "Calling `clear()` in the command line API should trigger Console.messagesCleared.",
         test(resolve, reject) {
-            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.Cleared)
+            WI.logManager.awaitEvent(WI.LogManager.Event.Cleared)
             .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
             })
             .then(resolve, reject);
 
-            WebInspector.runtimeManager.evaluateInInspectedWindow("clear()", {objectGroup: "test", includeCommandLineAPI: true}, function(){});
+            WI.runtimeManager.evaluateInInspectedWindow("clear()", {objectGroup: "test", includeCommandLineAPI: true}, function(){});
         }
     });
 
@@ -53,7 +53,7 @@ function test()
         name: "ClearViaPageReload",
         description: "Reloading the page should trigger Console.messagesCleared.",
         test(resolve, reject) {
-            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.Cleared)
+            WI.logManager.awaitEvent(WI.LogManager.Event.Cleared)
             .then((event) => {
                 InspectorTest.expectThat(event, "Cleared event should fire.");
             })

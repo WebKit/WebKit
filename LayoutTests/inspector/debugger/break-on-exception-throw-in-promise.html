@@ -8,7 +8,7 @@ TestPage.allowUncaughtExceptions = true;
 
 function test()
 {
-    WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
+    WI.debuggerManager.allExceptionsBreakpoint.disabled = false;
 
     let suite = InspectorTest.createAsyncSuite("BreakOnAnyException.Promise");
 
@@ -17,16 +17,16 @@ function test()
             name, description,
             test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
-                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
-                    let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
                     InspectorTest.expectThat(targetData.pauseReason === "exception", "Should pause for exception.");
-                    let callFrame = WebInspector.debuggerManager.activeCallFrame;
+                    let callFrame = WI.debuggerManager.activeCallFrame;
                     let name = callFrame.functionName || "<anonymous>";
                     let location = callFrame.sourceCodeLocation;
                     let line = location.lineNumber + 1;
                     let column = location.columnNumber + 1;
                     InspectorTest.log(`PAUSE AT ${name}:${line}:${column}`);
-                    WebInspector.debuggerManager.resume().then(resolve, reject);
+                    WI.debuggerManager.resume().then(resolve, reject);
                 });
             }
         });
@@ -63,7 +63,7 @@ function test()
             InspectorTest.evaluateInPage("setTimeout(testThrowingInPromiseWithRethrowInCatch)");
 
             function logPauseLocation() {
-                let callFrame = WebInspector.debuggerManager.activeCallFrame;
+                let callFrame = WI.debuggerManager.activeCallFrame;
                 let name = callFrame.functionName || "<anonymous>";
                 let location = callFrame.sourceCodeLocation;
                 let line = location.lineNumber + 1;
@@ -72,19 +72,19 @@ function test()
             }
 
             let phase = 0;
-            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
-                if (!WebInspector.debuggerManager.activeCallFrame)
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (!WI.debuggerManager.activeCallFrame)
                     return;
 
                 phase++;
 
-                let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+                let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
 
                 // Pause at throw inside then.
                 if (phase === 1) {
                     InspectorTest.expectThat(targetData.pauseReason === "exception", "Should pause for exception.");
                     logPauseLocation();
-                    WebInspector.debuggerManager.resume();
+                    WI.debuggerManager.resume();
                     return;
                 }
 
@@ -92,8 +92,8 @@ function test()
                 if (phase === 2) {
                     InspectorTest.expectThat(targetData.pauseReason === "exception", "Should pause for exception.");
                     logPauseLocation();
-                    WebInspector.debuggerManager.resume().then(() => {
-                        WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, listener);
+                    WI.debuggerManager.resume().then(() => {
+                        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
                         resolve();
                     }, reject);
                     return;

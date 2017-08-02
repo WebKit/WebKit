@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Object
+WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
 {
     constructor(snapshotObjectId, identifier, title, totalSize, totalObjectCount, liveSize, categories)
     {
@@ -40,9 +40,9 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
 
         console.assert(!this.invalid);
 
-        if (!WebInspector.HeapSnapshotProxy.ValidSnapshotProxies)
-            WebInspector.HeapSnapshotProxy.ValidSnapshotProxies = [];
-        WebInspector.HeapSnapshotProxy.ValidSnapshotProxies.push(this);
+        if (!WI.HeapSnapshotProxy.ValidSnapshotProxies)
+            WI.HeapSnapshotProxy.ValidSnapshotProxies = [];
+        WI.HeapSnapshotProxy.ValidSnapshotProxies.push(this);
     }
 
     // Static
@@ -50,18 +50,18 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
     static deserialize(objectId, serializedSnapshot)
     {
         let {identifier, title, totalSize, totalObjectCount, liveSize, categories} = serializedSnapshot;
-        return new WebInspector.HeapSnapshotProxy(objectId, identifier, title, totalSize, totalObjectCount, liveSize, categories);
+        return new WI.HeapSnapshotProxy(objectId, identifier, title, totalSize, totalObjectCount, liveSize, categories);
     }
 
     static invalidateSnapshotProxies()
     {
-        if (!WebInspector.HeapSnapshotProxy.ValidSnapshotProxies)
+        if (!WI.HeapSnapshotProxy.ValidSnapshotProxies)
             return;
 
-        for (let snapshotProxy of WebInspector.HeapSnapshotProxy.ValidSnapshotProxies)
+        for (let snapshotProxy of WI.HeapSnapshotProxy.ValidSnapshotProxies)
             snapshotProxy._invalidate();
 
-        WebInspector.HeapSnapshotProxy.ValidSnapshotProxies = null;
+        WI.HeapSnapshotProxy.ValidSnapshotProxies = null;
     }
 
     // Public
@@ -82,28 +82,28 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
             return;
 
         this.update(() => {
-            this.dispatchEventToListeners(WebInspector.HeapSnapshotProxy.Event.CollectedNodes, event.data);
+            this.dispatchEventToListeners(WI.HeapSnapshotProxy.Event.CollectedNodes, event.data);
         });
     }
 
     allocationBucketCounts(bucketSizes, callback)
     {
         console.assert(!this.invalid);
-        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "allocationBucketCounts", bucketSizes, callback);
+        WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "allocationBucketCounts", bucketSizes, callback);
     }
 
     instancesWithClassName(className, callback)
     {
         console.assert(!this.invalid);
-        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "instancesWithClassName", className, (serializedNodes) => {
-            callback(serializedNodes.map(WebInspector.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId)));
+        WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "instancesWithClassName", className, (serializedNodes) => {
+            callback(serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId)));
         });
     }
 
     update(callback)
     {
         console.assert(!this.invalid);
-        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "update", ({liveSize, categories}) => {
+        WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "update", ({liveSize, categories}) => {
             this._liveSize = liveSize;
             this._categories = Map.fromObject(categories);
             callback();
@@ -113,8 +113,8 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
     nodeWithIdentifier(nodeIdentifier, callback)
     {
         console.assert(!this.invalid);
-        WebInspector.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "nodeWithIdentifier", nodeIdentifier, (serializedNode) => {
-            callback(WebInspector.HeapSnapshotNodeProxy.deserialize(this._proxyObjectId, serializedNode));
+        WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "nodeWithIdentifier", nodeIdentifier, (serializedNode) => {
+            callback(WI.HeapSnapshotNodeProxy.deserialize(this._proxyObjectId, serializedNode));
         });
     }
 
@@ -125,11 +125,11 @@ WebInspector.HeapSnapshotProxy = class HeapSnapshotProxy extends WebInspector.Ob
         this._proxyObjectId = 0;
         this._liveSize = 0;
 
-        this.dispatchEventToListeners(WebInspector.HeapSnapshotProxy.Event.Invalidated);
+        this.dispatchEventToListeners(WI.HeapSnapshotProxy.Event.Invalidated);
     }
 };
 
-WebInspector.HeapSnapshotProxy.Event = {
+WI.HeapSnapshotProxy.Event = {
     CollectedNodes: "heap-snapshot-proxy-collected-nodes",
     Invalidated: "heap-snapshot-proxy-invalidated",
 };

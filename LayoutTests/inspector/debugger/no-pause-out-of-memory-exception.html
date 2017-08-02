@@ -18,7 +18,7 @@ window.addEventListener("error", (event) => {
 
 function test()
 {
-    WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
+    WI.debuggerManager.allExceptionsBreakpoint.disabled = false;
 
     let suite = InspectorTest.createAsyncSuite("Debugger.OutOfMemoryException");
 
@@ -28,7 +28,7 @@ function test()
         test(resolve, reject) {
             let paused = false;
 
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 paused = true;
                 InspectorTest.fail("Should not pause.");
                 reject();

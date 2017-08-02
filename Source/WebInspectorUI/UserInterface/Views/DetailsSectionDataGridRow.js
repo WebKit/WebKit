@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionDataGridRow = class DetailsSectionDataGridRow extends WebInspector.DetailsSectionRow
+WI.DetailsSectionDataGridRow = class DetailsSectionDataGridRow extends WI.DetailsSectionRow
 {
     constructor(dataGrid, emptyMessage)
     {

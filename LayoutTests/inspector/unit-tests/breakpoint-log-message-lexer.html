@@ -17,7 +17,7 @@ function test()
         suite.addTestCase({
             name,
             test() {
-                let lexer = new WebInspector.BreakpointLogMessageLexer;
+                let lexer = new WI.BreakpointLogMessageLexer;
                 let tokens = lexer.tokenize(input);
                 InspectorTest.log("Input: " + input);
                 InspectorTest.expectShallowEqual(tokens, expectedTokens, "Token stream should match expected tokens.");
@@ -37,7 +37,7 @@ function test()
         input: "hello world",
         expectedTokens: [
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.PlainText,
+                type: WI.BreakpointLogMessageLexer.TokenType.PlainText,
                 data: "hello world",
             }
         ]
@@ -48,7 +48,7 @@ function test()
         input: "${x}",
         expectedTokens: [
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                type: WI.BreakpointLogMessageLexer.TokenType.Expression,
                 data: "x",
             }
         ]
@@ -59,7 +59,7 @@ function test()
         input: "${'x' + `${'y'}`}",
         expectedTokens: [
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                type: WI.BreakpointLogMessageLexer.TokenType.Expression,
                 data: "'x' + `${'y'}`",
             }
         ]
@@ -70,11 +70,11 @@ function test()
         input: "abc ${x}",
         expectedTokens: [
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.PlainText,
+                type: WI.BreakpointLogMessageLexer.TokenType.PlainText,
                 data: "abc ",
             },
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                type: WI.BreakpointLogMessageLexer.TokenType.Expression,
                 data: "x",
             },
         ]
@@ -85,11 +85,11 @@ function test()
         input: "${x} abc",
         expectedTokens: [
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                type: WI.BreakpointLogMessageLexer.TokenType.Expression,
                 data: "x",
             },
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.PlainText,
+                type: WI.BreakpointLogMessageLexer.TokenType.PlainText,
                 data: " abc",
             },
         ]
@@ -100,7 +100,7 @@ function test()
         input: "${({a: '${}'}).a}",
         expectedTokens: [
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                type: WI.BreakpointLogMessageLexer.TokenType.Expression,
                 data: "({a: '${}'}).a",
             }
         ]
@@ -111,7 +111,7 @@ function test()
         input: "${/\\}/.test('${')}",
         expectedTokens: [
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                type: WI.BreakpointLogMessageLexer.TokenType.Expression,
                 data: "/\\}/.test('${')",
             }
         ]
@@ -122,15 +122,15 @@ function test()
         input: "${1} ${2}",
         expectedTokens: [
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                type: WI.BreakpointLogMessageLexer.TokenType.Expression,
                 data: "1",
             },
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.PlainText,
+                type: WI.BreakpointLogMessageLexer.TokenType.PlainText,
                 data: " ",
             },
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                type: WI.BreakpointLogMessageLexer.TokenType.Expression,
                 data: "2",
             }
         ]
@@ -141,11 +141,11 @@ function test()
         input: "${1}{2}",
         expectedTokens: [
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                type: WI.BreakpointLogMessageLexer.TokenType.Expression,
                 data: "1",
             },
             {
-                type: WebInspector.BreakpointLogMessageLexer.TokenType.PlainText,
+                type: WI.BreakpointLogMessageLexer.TokenType.PlainText,
                 data: "{2}",
             },
         ]

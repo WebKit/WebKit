@@ -19,7 +19,7 @@ function test()
         }
     });
 
-    WebInspector.domTreeManager.requestDocument((documentNode) => {
+    WI.domTreeManager.requestDocument((documentNode) => {
         documentNodeId = documentNode.id;
         suite.runTestCasesAndFinish();
     });

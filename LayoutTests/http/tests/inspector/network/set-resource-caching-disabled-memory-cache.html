@@ -21,7 +21,7 @@ function test()
                 InspectorTest.reloadPage({ignoreCache});
                 InspectorTest.awaitEvent("LoadComplete").then((event) => {
                     let resource = null;
-                    for (let item of WebInspector.frameResourceManager.mainFrame.resourceCollection.items) {
+                    for (let item of WI.frameResourceManager.mainFrame.resourceCollection.items) {
                         if (pattern.test(item.url)) {
                             resource = item;
                             break;
@@ -32,7 +32,7 @@ function test()
                         reject();
                         return;
                     }
-                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be exist.");
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be exist.");
                     InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
                     InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
                 }).then(resolve, reject);
@@ -46,7 +46,7 @@ function test()
         pattern: /cached-script\.js$/,
         setup(resolve) { NetworkAgent.setResourceCachingDisabled(true); resolve(); },
         ignoreCache: false,
-        responseSource: WebInspector.Resource.ResponseSource.Network,
+        responseSource: WI.Resource.ResponseSource.Network,
         statusCode: 200,
     });
 

@@ -26,8 +26,8 @@
 function createCodeMirrorTextMarkers(type, pattern, matchFunction, codeMirror, range, callback)
 {
     var createdMarkers = [];
-    var start = range instanceof WebInspector.TextRange ? range.startLine : 0;
-    var end = range instanceof WebInspector.TextRange ? range.endLine + 1 : codeMirror.lineCount();
+    var start = range instanceof WI.TextRange ? range.startLine : 0;
+    var end = range instanceof WI.TextRange ? range.endLine + 1 : codeMirror.lineCount();
     for (var lineNumber = start; lineNumber < end; ++lineNumber) {
         var lineContent = codeMirror.getLine(lineNumber);
         var match = pattern.exec(lineContent);
@@ -43,7 +43,7 @@ function createCodeMirrorTextMarkers(type, pattern, matchFunction, codeMirror, r
             var foundMarker = false;
             var markers = codeMirror.findMarksAt(to);
             for (var j = 0; j < markers.length; ++j) {
-                if (WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(markers[j]).type === WebInspector.TextMarker.Type[type]) {
+                if (WI.TextMarker.textMarkerForCodeMirrorTextMarker(markers[j]).type === WI.TextMarker.Type[type]) {
                     foundMarker = true;
                     break;
                 }
@@ -62,14 +62,14 @@ function createCodeMirrorTextMarkers(type, pattern, matchFunction, codeMirror, r
             }
 
             let valueString = match[1];
-            let value = WebInspector[type] ? WebInspector[type].fromString(valueString) : null;
-            if (WebInspector[type] && !value) {
+            let value = WI[type] ? WI[type].fromString(valueString) : null;
+            if (WI[type] && !value) {
                 match = pattern.exec(lineContent);
                 continue;
             }
 
             var marker = codeMirror.markText(from, to);
-            marker = new WebInspector.TextMarker(marker, WebInspector.TextMarker.Type[type]);
+            marker = new WI.TextMarker(marker, WI.TextMarker.Type[type]);
             createdMarkers.push(marker);
 
             if (typeof callback === "function")
@@ -125,8 +125,8 @@ function createCodeMirrorGradientTextMarkers(codeMirror, range, callback)
 {
     var createdMarkers = [];
 
-    var start = range instanceof WebInspector.TextRange ? range.startLine : 0;
-    var end = range instanceof WebInspector.TextRange ? range.endLine + 1 : codeMirror.lineCount();
+    var start = range instanceof WI.TextRange ? range.startLine : 0;
+    var end = range instanceof WI.TextRange ? range.endLine + 1 : codeMirror.lineCount();
 
     var gradientRegex = /(repeating-)?(linear|radial)-gradient\s*\(\s*/g;
 
@@ -170,13 +170,13 @@ function createCodeMirrorGradientTextMarkers(codeMirror, range, callback)
             var to = {line: lineNumber, ch: endChar};
 
             var gradientString = codeMirror.getRange(from, to);
-            var gradient = WebInspector.Gradient.fromString(gradientString);
+            var gradient = WI.Gradient.fromString(gradientString);
             if (!gradient) {
                 match = gradientRegex.exec(lineContent);
                 continue;
             }
 
-            var marker = new WebInspector.TextMarker(codeMirror.markText(from, to), WebInspector.TextMarker.Type.Gradient);
+            var marker = new WI.TextMarker(codeMirror.markText(from, to), WI.TextMarker.Type.Gradient);
 
             createdMarkers.push(marker);
 

@@ -31,7 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSCompletions = class CSSCompletions
+WI.CSSCompletions = class CSSCompletions
 {
     constructor(properties, acceptEmptyPrefix)
     {
@@ -79,7 +79,7 @@ WebInspector.CSSCompletions = class CSSCompletions
 
     static requestCSSCompletions()
     {
-        if (WebInspector.CSSCompletions.cssNameCompletions)
+        if (WI.CSSCompletions.cssNameCompletions)
             return;
 
         function propertyNamesCallback(error, names)
@@ -87,9 +87,9 @@ WebInspector.CSSCompletions = class CSSCompletions
             if (error)
                 return;
 
-            WebInspector.CSSCompletions.cssNameCompletions = new WebInspector.CSSCompletions(names, false);
+            WI.CSSCompletions.cssNameCompletions = new WI.CSSCompletions(names, false);
 
-            WebInspector.CSSKeywordCompletions.addCustomCompletions(names);
+            WI.CSSKeywordCompletions.addCustomCompletions(names);
 
             // CodeMirror is not included by tests so we shouldn't assume it always exists.
             // If it isn't available we skip MIME type associations.
@@ -119,8 +119,8 @@ WebInspector.CSSCompletions = class CSSCompletions
             for (var property of names)
                 collectPropertyNameForCodeMirror(property.name);
 
-            for (var propertyName in WebInspector.CSSKeywordCompletions._propertyKeywordMap) {
-                var keywords = WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName];
+            for (var propertyName in WI.CSSKeywordCompletions._propertyKeywordMap) {
+                var keywords = WI.CSSKeywordCompletions._propertyKeywordMap[propertyName];
                 for (var i = 0; i < keywords.length; ++i) {
                     // Skip numbers, like the ones defined for font-weight.
                     if (!isNaN(Number(keywords[i])))
@@ -129,7 +129,7 @@ WebInspector.CSSCompletions = class CSSCompletions
                 }
             }
 
-            WebInspector.CSSKeywordCompletions._colors.forEach(function(colorName) {
+            WI.CSSKeywordCompletions._colors.forEach(function(colorName) {
                 colorKeywordsForCodeMirror[nameForCodeMirror(colorName)] = true;
             });
 
@@ -157,8 +157,8 @@ WebInspector.CSSCompletions = class CSSCompletions
             if (error)
                 return;
 
-            WebInspector.CSSKeywordCompletions.addPropertyCompletionValues("font-family", fontFamilyNames);
-            WebInspector.CSSKeywordCompletions.addPropertyCompletionValues("font", fontFamilyNames);
+            WI.CSSKeywordCompletions.addPropertyCompletionValues("font-family", fontFamilyNames);
+            WI.CSSKeywordCompletions.addPropertyCompletionValues("font", fontFamilyNames);
         }
 
         if (window.CSSAgent) {
@@ -295,4 +295,4 @@ WebInspector.CSSCompletions = class CSSCompletions
     }
 };
 
-WebInspector.CSSCompletions.cssNameCompletions = null;
+WI.CSSCompletions.cssNameCompletions = null;

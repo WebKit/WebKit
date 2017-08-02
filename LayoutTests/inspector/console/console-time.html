@@ -13,13 +13,13 @@ function test()
         test(resolve, reject) {
             let seen = 0;
             const expected = 3;
-            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+            WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, handler);
             function handler(event) {
                 let message = event.data.message;
-                InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
                 InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
                 if (++seen === expected) {
-                    WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, handler);
                     resolve();
                 }
             }
@@ -39,10 +39,10 @@ function test()
         name: "UserLabels",
         description: "Test that user labels works as expected.",
         test(resolve, reject) {
-            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
             .then((event) => {
                 let message = event.data.message;
-                InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
                 InspectorTest.expectThat(message.messageText.includes("my-label"), "Message should contain the 'my-label' label name somewhere.");
             })
             .then(resolve, reject);
@@ -58,14 +58,14 @@ function test()
         test(resolve, reject) {
             let seen = 0;
             const expected = 2;
-            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+            WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, handler);
             function handler(event) {
                 let message = event.data.message;
                 let expectedLabel = seen === 0 ? "my-label-2" : "my-label-1";
-                InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
                 InspectorTest.expectThat(message.messageText.includes(expectedLabel), "Message should contain the '" + expectedLabel + "' label name somewhere.");
                 if (++seen === expected) {
-                    WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, handler);
                     resolve();
                 }
             }
@@ -81,17 +81,17 @@ function test()
         name: "WarnWhenExisting",
         description: "Test for a warning when trying to start an already started timer.",
         test(resolve, reject) {
-            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+            WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, handler);
             function handler(event) {
                 let message = event.data.message;
-                if (message.level === WebInspector.ConsoleMessage.MessageLevel.Warning) {
-                    InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                if (message.level === WI.ConsoleMessage.MessageLevel.Warning) {
+                    InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
                     InspectorTest.pass("Should receive a Warning level message");
                     InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
                     return;
                 }
-                if (message.type === WebInspector.ConsoleMessage.MessageType.Timing) {
-                    WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+                if (message.type === WI.ConsoleMessage.MessageType.Timing) {
+                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, handler);
                     resolve();
                 }
             }
@@ -106,11 +106,11 @@ function test()
         name: "WarnWhenNotExisting",
         description: "Test for a warning when trying to start an already started timer.",
         test(resolve, reject) {
-            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
             .then((event) => {
                 let message = event.data.message;
-                InspectorTest.expectThat(message.type === WebInspector.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
-                InspectorTest.expectThat(message.level === WebInspector.ConsoleMessage.MessageLevel.Warning, "Should receive a Warning level message.");
+                InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.level === WI.ConsoleMessage.MessageLevel.Warning, "Should receive a Warning level message.");
                 InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
             })
             .then(resolve, reject);

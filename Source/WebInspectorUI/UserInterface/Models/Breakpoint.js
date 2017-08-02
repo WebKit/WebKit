@@ -23,33 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
+WI.Breakpoint = class Breakpoint extends WI.Object
 {
     constructor(sourceCodeLocationOrInfo, disabled, condition)
     {
         super();
 
-        if (sourceCodeLocationOrInfo instanceof WebInspector.SourceCodeLocation) {
+        if (sourceCodeLocationOrInfo instanceof WI.SourceCodeLocation) {
             var sourceCode = sourceCodeLocationOrInfo.sourceCode;
             var contentIdentifier = sourceCode ? sourceCode.contentIdentifier : null;
-            var scriptIdentifier = sourceCode instanceof WebInspector.Script ? sourceCode.id : null;
-            var target = sourceCode instanceof WebInspector.Script ? sourceCode.target : null;
+            var scriptIdentifier = sourceCode instanceof WI.Script ? sourceCode.id : null;
+            var target = sourceCode instanceof WI.Script ? sourceCode.target : null;
             var location = sourceCodeLocationOrInfo;
         } else if (sourceCodeLocationOrInfo && typeof sourceCodeLocationOrInfo === "object") {
             // The 'url' fallback is for transitioning from older frontends and should be removed.
             var contentIdentifier = sourceCodeLocationOrInfo.contentIdentifier || sourceCodeLocationOrInfo.url;
             var lineNumber = sourceCodeLocationOrInfo.lineNumber || 0;
             var columnNumber = sourceCodeLocationOrInfo.columnNumber || 0;
-            var location = new WebInspector.SourceCodeLocation(null, lineNumber, columnNumber);
+            var location = new WI.SourceCodeLocation(null, lineNumber, columnNumber);
             var ignoreCount = sourceCodeLocationOrInfo.ignoreCount || 0;
             var autoContinue = sourceCodeLocationOrInfo.autoContinue || false;
             var actions = sourceCodeLocationOrInfo.actions || [];
             for (var i = 0; i < actions.length; ++i)
-                actions[i] = new WebInspector.BreakpointAction(this, actions[i]);
+                actions[i] = new WI.BreakpointAction(this, actions[i]);
             disabled = sourceCodeLocationOrInfo.disabled;
             condition = sourceCodeLocationOrInfo.condition;
         } else
-            console.error("Unexpected type passed to WebInspector.Breakpoint", sourceCodeLocationOrInfo);
+            console.error("Unexpected type passed to WI.Breakpoint", sourceCodeLocationOrInfo);
 
         this._id = null;
         this._contentIdentifier = contentIdentifier || null;
@@ -63,8 +63,8 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         this._resolved = false;
 
         this._sourceCodeLocation = location;
-        this._sourceCodeLocation.addEventListener(WebInspector.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationLocationChanged, this);
-        this._sourceCodeLocation.addEventListener(WebInspector.SourceCodeLocation.Event.DisplayLocationChanged, this._sourceCodeLocationDisplayLocationChanged, this);
+        this._sourceCodeLocation.addEventListener(WI.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationLocationChanged, this);
+        this._sourceCodeLocation.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, this._sourceCodeLocationDisplayLocationChanged, this);
     }
 
     // Public
@@ -111,14 +111,14 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
         function isSpecialBreakpoint()
         {
-            return this._sourceCodeLocation.isEqual(new WebInspector.SourceCodeLocation(null, Infinity, Infinity));
+            return this._sourceCodeLocation.isEqual(new WI.SourceCodeLocation(null, Infinity, Infinity));
         }
 
         console.assert(!resolved || this._sourceCodeLocation.sourceCode || isSpecialBreakpoint.call(this), "Breakpoints must have a SourceCode to be resolved.", this);
 
         this._resolved = resolved || false;
 
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ResolvedStateDidChange);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.ResolvedStateDidChange);
     }
 
     get disabled()
@@ -133,7 +133,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
         this._disabled = disabled || false;
 
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.DisabledStateDidChange);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.DisabledStateDidChange);
     }
 
     get condition()
@@ -148,7 +148,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
         this._condition = condition;
 
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ConditionDidChange);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.ConditionDidChange);
     }
 
     get ignoreCount()
@@ -167,7 +167,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
         this._ignoreCount = ignoreCount;
 
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.IgnoreCountDidChange);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.IgnoreCountDidChange);
     }
 
     get autoContinue()
@@ -182,7 +182,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
         this._autoContinue = cont;
 
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.AutoContinueDidChange);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.AutoContinueDidChange);
     }
 
     get actions()
@@ -218,7 +218,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
     get probeActions()
     {
         return this._actions.filter(function(action) {
-            return action.type === WebInspector.BreakpointAction.Type.Probe;
+            return action.type === WI.BreakpointAction.Type.Probe;
         });
     }
 
@@ -246,7 +246,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
     createAction(type, precedingAction, data)
     {
-        var newAction = new WebInspector.BreakpointAction(this, type, data || null);
+        var newAction = new WI.BreakpointAction(this, type, data || null);
 
         if (!precedingAction)
             this._actions.push(newAction);
@@ -259,14 +259,14 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
                 this._actions.splice(index + 1, 0, newAction);
         }
 
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.ActionsDidChange);
 
         return newAction;
     }
 
     recreateAction(type, actionToReplace)
     {
-        var newAction = new WebInspector.BreakpointAction(this, type, null);
+        var newAction = new WI.BreakpointAction(this, type, null);
 
         var index = this._actions.indexOf(actionToReplace);
         console.assert(index !== -1);
@@ -275,7 +275,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
         this._actions[index] = newAction;
 
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.ActionsDidChange);
 
         return newAction;
     }
@@ -292,7 +292,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         if (!this._actions.length)
             this.autoContinue = false;
 
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.ActionsDidChange);
     }
 
     clearActions(type)
@@ -302,14 +302,14 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         else
             this._actions = this._actions.filter(function(action) { return action.type !== type; });
 
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.ActionsDidChange);
     }
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WebInspector.Breakpoint.ContentIdentifierCookieKey] = this.contentIdentifier;
-        cookie[WebInspector.Breakpoint.LineNumberCookieKey] = this.sourceCodeLocation.lineNumber;
-        cookie[WebInspector.Breakpoint.ColumnNumberCookieKey] = this.sourceCodeLocation.columnNumber;
+        cookie[WI.Breakpoint.ContentIdentifierCookieKey] = this.contentIdentifier;
+        cookie[WI.Breakpoint.LineNumberCookieKey] = this.sourceCodeLocation.lineNumber;
+        cookie[WI.Breakpoint.ColumnNumberCookieKey] = this.sourceCodeLocation.columnNumber;
     }
 
     // Protected (Called by BreakpointAction)
@@ -321,7 +321,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         if (index === -1)
             return;
 
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.ActionsDidChange);
     }
 
     // Private
@@ -336,23 +336,23 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
     _sourceCodeLocationLocationChanged(event)
     {
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.LocationDidChange, event.data);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.LocationDidChange, event.data);
     }
 
     _sourceCodeLocationDisplayLocationChanged(event)
     {
-        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.DisplayLocationDidChange, event.data);
+        this.dispatchEventToListeners(WI.Breakpoint.Event.DisplayLocationDidChange, event.data);
     }
 };
 
-WebInspector.Breakpoint.DefaultBreakpointActionType = WebInspector.BreakpointAction.Type.Log;
+WI.Breakpoint.DefaultBreakpointActionType = WI.BreakpointAction.Type.Log;
 
-WebInspector.Breakpoint.TypeIdentifier = "breakpoint";
-WebInspector.Breakpoint.ContentIdentifierCookieKey = "breakpoint-content-identifier";
-WebInspector.Breakpoint.LineNumberCookieKey = "breakpoint-line-number";
-WebInspector.Breakpoint.ColumnNumberCookieKey = "breakpoint-column-number";
+WI.Breakpoint.TypeIdentifier = "breakpoint";
+WI.Breakpoint.ContentIdentifierCookieKey = "breakpoint-content-identifier";
+WI.Breakpoint.LineNumberCookieKey = "breakpoint-line-number";
+WI.Breakpoint.ColumnNumberCookieKey = "breakpoint-column-number";
 
-WebInspector.Breakpoint.Event = {
+WI.Breakpoint.Event = {
     DisabledStateDidChange: "breakpoint-disabled-state-did-change",
     ResolvedStateDidChange: "breakpoint-resolved-state-did-change",
     ConditionDidChange: "breakpoint-condition-did-change",

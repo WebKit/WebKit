@@ -23,27 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WebInspector.ClusterContentView
+WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.ClusterContentView
 {
     constructor(timeline, extraArguments)
     {
         super(timeline);
 
-        console.assert(timeline.type === WebInspector.TimelineRecord.Type.Script);
+        console.assert(timeline.type === WI.TimelineRecord.Type.Script);
 
-        this._currentContentViewSetting = new WebInspector.Setting("script-cluster-timeline-view-current-view", WebInspector.ScriptClusterTimelineView.EventsIdentifier);
+        this._currentContentViewSetting = new WI.Setting("script-cluster-timeline-view-current-view", WI.ScriptClusterTimelineView.EventsIdentifier);
 
         let showSelectorArrows = this._canShowProfileView();
         function createPathComponent(displayName, className, identifier)
         {
-            let pathComponent = new WebInspector.HierarchicalPathComponent(displayName, className, identifier, false, showSelectorArrows);
-            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+            let pathComponent = new WI.HierarchicalPathComponent(displayName, className, identifier, false, showSelectorArrows);
+            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
             pathComponent.comparisonData = timeline;
             return pathComponent;
         }
 
-        this._eventsPathComponent = createPathComponent.call(this, WebInspector.UIString("Events"), "events-icon", WebInspector.ScriptClusterTimelineView.EventsIdentifier);
-        this._profilePathComponent = createPathComponent.call(this, WebInspector.UIString("Call Trees"), "call-trees-icon", WebInspector.ScriptClusterTimelineView.ProfileIdentifier);
+        this._eventsPathComponent = createPathComponent.call(this, WI.UIString("Events"), "events-icon", WI.ScriptClusterTimelineView.EventsIdentifier);
+        this._profilePathComponent = createPathComponent.call(this, WI.UIString("Call Trees"), "call-trees-icon", WI.ScriptClusterTimelineView.ProfileIdentifier);
 
         if (this._canShowProfileView()) {
             this._eventsPathComponent.nextSibling = this._profilePathComponent;
@@ -51,12 +51,12 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         }
 
         // FIXME: We should be able to create these lazily.
-        this._eventsContentView = new WebInspector.ScriptDetailsTimelineView(this.representedObject, extraArguments);
-        this._profileContentView = this._canShowProfileView() ? new WebInspector.ScriptProfileTimelineView(this.representedObject, extraArguments) : null;
+        this._eventsContentView = new WI.ScriptDetailsTimelineView(this.representedObject, extraArguments);
+        this._profileContentView = this._canShowProfileView() ? new WI.ScriptProfileTimelineView(this.representedObject, extraArguments) : null;
 
         this._showContentViewForIdentifier(this._currentContentViewSetting.value);
 
-        this.contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._scriptClusterViewCurrentContentViewDidChange, this);
+        this.contentViewContainer.addEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this._scriptClusterViewCurrentContentViewDidChange, this);
     }
 
     // TimelineView
@@ -112,17 +112,17 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
 
     saveToCookie(cookie)
     {
-        cookie[WebInspector.ScriptClusterTimelineView.ContentViewIdentifierCookieKey] = this._currentContentViewSetting.value;
+        cookie[WI.ScriptClusterTimelineView.ContentViewIdentifierCookieKey] = this._currentContentViewSetting.value;
     }
 
     restoreFromCookie(cookie)
     {
-        this._showContentViewForIdentifier(cookie[WebInspector.ScriptClusterTimelineView.ContentViewIdentifierCookieKey]);
+        this._showContentViewForIdentifier(cookie[WI.ScriptClusterTimelineView.ContentViewIdentifierCookieKey]);
     }
 
     showEvents()
     {
-        return this._showContentViewForIdentifier(WebInspector.ScriptClusterTimelineView.EventsIdentifier);
+        return this._showContentViewForIdentifier(WI.ScriptClusterTimelineView.EventsIdentifier);
     }
 
     showProfile()
@@ -130,7 +130,7 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         if (!this._canShowProfileView())
             return this.showEvents();
 
-        return this._showContentViewForIdentifier(WebInspector.ScriptClusterTimelineView.ProfileIdentifier);
+        return this._showContentViewForIdentifier(WI.ScriptClusterTimelineView.ProfileIdentifier);
     }
 
     // Private
@@ -160,9 +160,9 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         if (!contentView)
             return null;
         if (contentView === this._eventsContentView)
-            return WebInspector.ScriptClusterTimelineView.EventsIdentifier;
+            return WI.ScriptClusterTimelineView.EventsIdentifier;
         if (contentView === this._profileContentView)
-            return WebInspector.ScriptClusterTimelineView.ProfileIdentifier;
+            return WI.ScriptClusterTimelineView.ProfileIdentifier;
         console.error("Unknown contentView.");
         return null;
     }
@@ -172,10 +172,10 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
         let contentViewToShow = null;
 
         switch (identifier) {
-        case WebInspector.ScriptClusterTimelineView.EventsIdentifier:
+        case WI.ScriptClusterTimelineView.EventsIdentifier:
             contentViewToShow = this.eventsContentView;
             break;
-        case WebInspector.ScriptClusterTimelineView.ProfileIdentifier:
+        case WI.ScriptClusterTimelineView.ProfileIdentifier:
             contentViewToShow = this.profileContentView;
             break;
         }
@@ -210,7 +210,7 @@ WebInspector.ScriptClusterTimelineView = class ScriptClusterTimelineView extends
     }
 };
 
-WebInspector.ScriptClusterTimelineView.ContentViewIdentifierCookieKey = "script-cluster-timeline-view-identifier";
+WI.ScriptClusterTimelineView.ContentViewIdentifierCookieKey = "script-cluster-timeline-view-identifier";
 
-WebInspector.ScriptClusterTimelineView.EventsIdentifier = "events";
-WebInspector.ScriptClusterTimelineView.ProfileIdentifier = "profile";
+WI.ScriptClusterTimelineView.EventsIdentifier = "events";
+WI.ScriptClusterTimelineView.ProfileIdentifier = "profile";

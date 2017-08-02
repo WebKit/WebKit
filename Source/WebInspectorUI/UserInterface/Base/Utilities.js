@@ -1023,8 +1023,8 @@ Object.defineProperty(Number, "secondsToMillisecondsString",
         let ms = seconds * 1000;
 
         if (higherResolution)
-            return WebInspector.UIString("%.2fms").format(ms);
-        return WebInspector.UIString("%.1fms").format(ms);
+            return WI.UIString("%.2fms").format(ms);
+        return WI.UIString("%.1fms").format(ms);
     }
 });
 
@@ -1034,40 +1034,40 @@ Object.defineProperty(Number, "secondsToString",
     {
         let ms = seconds * 1000;
         if (!ms)
-            return WebInspector.UIString("%.0fms").format(0);
+            return WI.UIString("%.0fms").format(0);
 
         if (Math.abs(ms) < 10) {
             if (higherResolution)
-                return WebInspector.UIString("%.3fms").format(ms);
-            return WebInspector.UIString("%.2fms").format(ms);
+                return WI.UIString("%.3fms").format(ms);
+            return WI.UIString("%.2fms").format(ms);
         }
 
         if (Math.abs(ms) < 100) {
             if (higherResolution)
-                return WebInspector.UIString("%.2fms").format(ms);
-            return WebInspector.UIString("%.1fms").format(ms);
+                return WI.UIString("%.2fms").format(ms);
+            return WI.UIString("%.1fms").format(ms);
         }
 
         if (Math.abs(ms) < 1000) {
             if (higherResolution)
-                return WebInspector.UIString("%.1fms").format(ms);
-            return WebInspector.UIString("%.0fms").format(ms);
+                return WI.UIString("%.1fms").format(ms);
+            return WI.UIString("%.0fms").format(ms);
         }
 
         // Do not go over seconds when in high resolution mode.
         if (higherResolution || Math.abs(seconds) < 60)
-            return WebInspector.UIString("%.2fs").format(seconds);
+            return WI.UIString("%.2fs").format(seconds);
 
         let minutes = seconds / 60;
         if (Math.abs(minutes) < 60)
-            return WebInspector.UIString("%.1fmin").format(minutes);
+            return WI.UIString("%.1fmin").format(minutes);
 
         let hours = minutes / 60;
         if (Math.abs(hours) < 24)
-            return WebInspector.UIString("%.1fhrs").format(hours);
+            return WI.UIString("%.1fhrs").format(hours);
 
         let days = hours / 24;
-        return WebInspector.UIString("%.1f days").format(days);
+        return WI.UIString("%.1f days").format(days);
     }
 });
 
@@ -1079,26 +1079,26 @@ Object.defineProperty(Number, "bytesToString",
             higherResolution = true;
 
         if (Math.abs(bytes) < 1024)
-            return WebInspector.UIString("%.0f B").format(bytes);
+            return WI.UIString("%.0f B").format(bytes);
 
         let kilobytes = bytes / 1024;
         if (Math.abs(kilobytes) < 1024) {
             if (higherResolution || Math.abs(kilobytes) < 10)
-                return WebInspector.UIString("%.2f KB").format(kilobytes);
-            return WebInspector.UIString("%.1f KB").format(kilobytes);
+                return WI.UIString("%.2f KB").format(kilobytes);
+            return WI.UIString("%.1f KB").format(kilobytes);
         }
 
         let megabytes = kilobytes / 1024;
         if (Math.abs(megabytes) < 1024) {
             if (higherResolution || Math.abs(megabytes) < 10)
-                return WebInspector.UIString("%.2f MB").format(megabytes);
-            return WebInspector.UIString("%.1f MB").format(megabytes);
+                return WI.UIString("%.2f MB").format(megabytes);
+            return WI.UIString("%.1f MB").format(megabytes);
         }
 
         let gigabytes = megabytes / 1024;
         if (higherResolution || Math.abs(gigabytes) < 10)
-            return WebInspector.UIString("%.2f GB").format(gigabytes);
-        return WebInspector.UIString("%.1f GB").format(gigabytes);
+            return WI.UIString("%.2f GB").format(gigabytes);
+        return WI.UIString("%.1f GB").format(gigabytes);
     }
 });
 
@@ -1110,12 +1110,12 @@ Object.defineProperty(Number, "abbreviate",
             return num.toLocaleString();
 
         if (num < 1000000)
-            return WebInspector.UIString("%.1fK").format(Math.round(num / 100) / 10);
+            return WI.UIString("%.1fK").format(Math.round(num / 100) / 10);
 
         if (num < 1000000000)
-            return WebInspector.UIString("%.1fM").format(Math.round(num / 100000) / 10);
+            return WI.UIString("%.1fM").format(Math.round(num / 100000) / 10);
 
-        return WebInspector.UIString("%.1fB").format(Math.round(num / 100000000) / 10);
+        return WI.UIString("%.1fB").format(Math.round(num / 100000000) / 10);
     }
 });
 

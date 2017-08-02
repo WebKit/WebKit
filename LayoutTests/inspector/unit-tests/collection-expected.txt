@@ -2,19 +2,19 @@ Testing all methods of Collection.
 
 
 == Running test suite: Collection
--- Running test case: WebInspector.Collection.prototype.add
+-- Running test case: WI.Collection.prototype.add
 ["one","two"]
 ["one","two",3]
 
--- Running test case: WebInspector.Collection.prototype.remove
+-- Running test case: WI.Collection.prototype.remove
 ["one","two"]
 ["two"]
 
--- Running test case: WebInspector.Collection.prototype.clear
+-- Running test case: WI.Collection.prototype.clear
 ["one","two",3]
 []
 
--- Running test case: WebInspector.Collection.prototype.get typeVerifier
+-- Running test case: WI.Collection.prototype.get typeVerifier
 ["one","two"]
 ["one","two"]
 PASS: typeVerifier is the given function.

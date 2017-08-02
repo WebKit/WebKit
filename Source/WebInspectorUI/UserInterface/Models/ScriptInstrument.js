@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptInstrument = class ScriptInstrument extends WebInspector.Instrument
+WI.ScriptInstrument = class ScriptInstrument extends WI.Instrument
 {
     // Protected
 
     get timelineRecordType()
     {
-        return WebInspector.TimelineRecord.Type.Script;
+        return WI.TimelineRecord.Type.Script;
     }
 
     startInstrumentation(initiatedByBackend)

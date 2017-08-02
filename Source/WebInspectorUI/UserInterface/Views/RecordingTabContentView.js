@@ -23,17 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RecordingTabContentView = class RecordingTabContentView extends WebInspector.ContentBrowserTabContentView
+WI.RecordingTabContentView = class RecordingTabContentView extends WI.ContentBrowserTabContentView
 {
     constructor()
     {
-        let {image, title} = WebInspector.RecordingTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
+        let {image, title} = WI.RecordingTabContentView.tabInfo();
+        let tabBarItem = new WI.GeneralTabBarItem(image, title);
 
-        const navigationSidebarPanelConstructor = WebInspector.RecordingNavigationSidebarPanel;
-        const detailsSidebarPanelConstructors = [WebInspector.RecordingStateDetailsSidebarPanel, WebInspector.CanvasDetailsSidebarPanel];
+        const navigationSidebarPanelConstructor = WI.RecordingNavigationSidebarPanel;
+        const detailsSidebarPanelConstructors = [WI.RecordingStateDetailsSidebarPanel, WI.CanvasDetailsSidebarPanel];
         const disableBackForward = true;
-        let flexibleNavigationItem = new WebInspector.ScrubberNavigationItem;
+        let flexibleNavigationItem = new WI.ScrubberNavigationItem;
         super("recording", "recording", tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors, disableBackForward, flexibleNavigationItem);
 
         this._visualActionIndexes = [];
@@ -41,10 +41,10 @@ WebInspector.RecordingTabContentView = class RecordingTabContentView extends Web
         this._scrubberNavigationItem = flexibleNavigationItem;
         this._scrubberNavigationItem.value = 0;
         this._scrubberNavigationItem.disabled = true;
-        this._scrubberNavigationItem.addEventListener(WebInspector.ScrubberNavigationItem.Event.ValueChanged, this._scrubberNavigationItemValueChanged, this);
+        this._scrubberNavigationItem.addEventListener(WI.ScrubberNavigationItem.Event.ValueChanged, this._scrubberNavigationItemValueChanged, this);
 
-        this.navigationSidebarPanel.addEventListener(WebInspector.RecordingNavigationSidebarPanel.Event.Import, this._navigationSidebarImport, this);
-        this.navigationSidebarPanel.contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._navigationSidebarTreeOutlineSelectionChanged, this);
+        this.navigationSidebarPanel.addEventListener(WI.RecordingNavigationSidebarPanel.Event.Import, this._navigationSidebarImport, this);
+        this.navigationSidebarPanel.contentTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._navigationSidebarTreeOutlineSelectionChanged, this);
 
         this._recording = null;
     }
@@ -55,7 +55,7 @@ WebInspector.RecordingTabContentView = class RecordingTabContentView extends Web
     {
         return {
             image: "Images/Recording.svg",
-            title: WebInspector.UIString("Recording"),
+            title: WI.UIString("Recording"),
         };
     }
 
@@ -63,7 +63,7 @@ WebInspector.RecordingTabContentView = class RecordingTabContentView extends Web
 
     get type()
     {
-        return WebInspector.RecordingTabContentView.Type;
+        return WI.RecordingTabContentView.Type;
     }
 
     canShowRepresentedObject(representedObject)
@@ -73,7 +73,7 @@ WebInspector.RecordingTabContentView = class RecordingTabContentView extends Web
         if (this._recording)
             return false;
 
-        return representedObject instanceof WebInspector.Recording;
+        return representedObject instanceof WI.Recording;
     }
 
     showRepresentedObject(representedObject, cookie)
@@ -156,9 +156,9 @@ WebInspector.RecordingTabContentView = class RecordingTabContentView extends Web
 
     _navigationSidebarImport(event)
     {
-        let recording = WebInspector.Recording.fromPayload(event.data.payload);
+        let recording = WI.Recording.fromPayload(event.data.payload);
         if (!recording) {
-            WebInspector.Recording.synthesizeError(WebInspector.UIString("unsupported version."));
+            WI.Recording.synthesizeError(WI.UIString("unsupported version."));
             return;
         }
 
@@ -173,10 +173,10 @@ WebInspector.RecordingTabContentView = class RecordingTabContentView extends Web
 
         let options = {suppressNavigationUpdate: true};
         let selectedTreeElement = this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement;
-        if (selectedTreeElement instanceof WebInspector.FolderTreeElement)
+        if (selectedTreeElement instanceof WI.FolderTreeElement)
             selectedTreeElement = selectedTreeElement.children.lastValue;
         this._updateActionIndex(selectedTreeElement.index, options);
     }
 };
 
-WebInspector.RecordingTabContentView.Type = "recording";
+WI.RecordingTabContentView.Type = "recording";

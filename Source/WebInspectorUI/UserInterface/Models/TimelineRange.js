@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRange = class TimelineRange
+WI.TimelineRange = class TimelineRange
 {
     constructor(startValue, endValue)
     {

@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
+WI.GradientSlider = class GradientSlider extends WI.Object
 {
     constructor(delegate)
     {
@@ -41,7 +41,7 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
         this._selectedKnob = null;
         this._canvas = document.createElement("canvas");
 
-        this._keyboardShortcutEsc = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape);
+        this._keyboardShortcutEsc = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape);
     }
 
     // Public
@@ -58,7 +58,7 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
             this._addArea.addEventListener("mousemove", this);
             this._addArea.addEventListener("mouseout", this);
             this._addArea.addEventListener("click", this);
-            this._addArea.className = WebInspector.GradientSlider.AddAreaClassName;
+            this._addArea.className = WI.GradientSlider.AddAreaClassName;
         }
         return this._element;
     }
@@ -112,7 +112,7 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
 
     knobXDidChange(knob)
     {
-        knob.stop.offset = knob.x / WebInspector.GradientSlider.Width;
+        knob.stop.offset = knob.x / WI.GradientSlider.Width;
         this._sortStops();
         this._updateCanvas();
     }
@@ -124,7 +124,7 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
 
     knobWillDetach(knob)
     {
-        knob.element.classList.add(WebInspector.GradientSlider.DetachingClassName);
+        knob.element.classList.add(WI.GradientSlider.DetachingClassName);
 
         this._stops.remove(knob.stop);
         this._knobs.remove(knob);
@@ -143,9 +143,9 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
             this.delegate.gradientSliderStopWasSelected(this, knob.stop);
 
         if (this._selectedKnob)
-            WebInspector.addWindowKeydownListener(this);
+            WI.addWindowKeydownListener(this);
         else
-            WebInspector.removeWindowKeydownListener(this);
+            WI.removeWindowKeydownListener(this);
     }
 
     // Private
@@ -175,9 +175,9 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
 
         this._knobs.push(this._shadowKnob);
 
-        this._shadowKnob.element.classList.remove(WebInspector.GradientSlider.ShadowClassName);
+        this._shadowKnob.element.classList.remove(WI.GradientSlider.ShadowClassName);
 
-        var stop = {offset: this._shadowKnob.x / WebInspector.GradientSlider.Width, color: this._shadowKnob.wellColor};
+        var stop = {offset: this._shadowKnob.x / WI.GradientSlider.Width, color: this._shadowKnob.wellColor};
         this._stops.push(stop);
         this._sortStops();
         this._updateStops();
@@ -190,15 +190,15 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
     _updateShadowKnob(event)
     {
         if (!this._shadowKnob) {
-            this._shadowKnob = new WebInspector.GradientSliderKnob(this);
-            this._shadowKnob.element.classList.add(WebInspector.GradientSlider.ShadowClassName);
+            this._shadowKnob = new WI.GradientSliderKnob(this);
+            this._shadowKnob.element.classList.add(WI.GradientSlider.ShadowClassName);
             this.element.appendChild(this._shadowKnob.element);
         }
 
         this._shadowKnob.x = window.webkitConvertPointFromPageToNode(this.element, new WebKitPoint(event.pageX, event.pageY)).x;
 
         var colorData = this._canvas.getContext("2d").getImageData(this._shadowKnob.x - 1, 0, 1, 1).data;
-        this._shadowKnob.wellColor = new WebInspector.Color(WebInspector.Color.Format.RGB, [colorData[0], colorData[1], colorData[2], colorData[3] / 255]);
+        this._shadowKnob.wellColor = new WI.Color(WI.Color.Format.RGB, [colorData[0], colorData[1], colorData[2], colorData[3] / 255]);
     }
 
     _sortStops()
@@ -216,8 +216,8 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
 
     _updateCanvas()
     {
-        var w = WebInspector.GradientSlider.Width;
-        var h = WebInspector.GradientSlider.Height;
+        var w = WI.GradientSlider.Width;
+        var h = WI.GradientSlider.Height;
 
         this._canvas.width = w;
         this._canvas.height = h;
@@ -243,7 +243,7 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
             this._knobs.pop().element.remove();
 
         while (this._knobs.length < this._stops.length) {
-            var knob = new WebInspector.GradientSliderKnob(this);
+            var knob = new WI.GradientSliderKnob(this);
             this.element.appendChild(knob.element);
             this._knobs.push(knob);
         }
@@ -253,20 +253,20 @@ WebInspector.GradientSlider = class GradientSlider extends WebInspector.Object
             var knob = this._knobs[i];
 
             knob.stop = stop;
-            knob.x = Math.round(stop.offset * WebInspector.GradientSlider.Width);
+            knob.x = Math.round(stop.offset * WI.GradientSlider.Width);
             knob.selected = stop === selectedStop;
         }
     }
 };
 
-WebInspector.GradientSlider.Width = 238;
-WebInspector.GradientSlider.Height = 19;
+WI.GradientSlider.Width = 238;
+WI.GradientSlider.Height = 19;
 
-WebInspector.GradientSlider.AddAreaClassName = "add-area";
-WebInspector.GradientSlider.DetachingClassName = "detaching";
-WebInspector.GradientSlider.ShadowClassName = "shadow";
+WI.GradientSlider.AddAreaClassName = "add-area";
+WI.GradientSlider.DetachingClassName = "detaching";
+WI.GradientSlider.ShadowClassName = "shadow";
 
-WebInspector.GradientSliderKnob = class GradientSliderKnob extends WebInspector.Object
+WI.GradientSliderKnob = class GradientSliderKnob extends WI.Object
 {
     constructor(delegate)
     {
@@ -340,7 +340,7 @@ WebInspector.GradientSliderKnob = class GradientSliderKnob extends WebInspector.
 
     get selected()
     {
-        return this._element.classList.contains(WebInspector.GradientSliderKnob.SelectedClassName);
+        return this._element.classList.contains(WI.GradientSliderKnob.SelectedClassName);
     }
 
     set selected(selected)
@@ -348,7 +348,7 @@ WebInspector.GradientSliderKnob = class GradientSliderKnob extends WebInspector.
         if (this.selected === selected)
             return;
 
-        this._element.classList.toggle(WebInspector.GradientSliderKnob.SelectedClassName, selected);
+        this._element.classList.toggle(WI.GradientSliderKnob.SelectedClassName, selected);
 
         if (this.delegate && typeof this.delegate.knobSelectionChanged === "function")
             this.delegate.knobSelectionChanged(this);
@@ -394,7 +394,7 @@ WebInspector.GradientSliderKnob = class GradientSliderKnob extends WebInspector.
 
     _handleMousemove(event)
     {
-        var w = WebInspector.GradientSlider.Width;
+        var w = WI.GradientSlider.Width;
 
         this._moved = true;
 
@@ -427,7 +427,7 @@ WebInspector.GradientSliderKnob = class GradientSliderKnob extends WebInspector.
 
         if (this._detaching) {
             this.element.addEventListener("transitionend", this);
-            this.element.classList.add(WebInspector.GradientSliderKnob.FadeOutClassName);
+            this.element.classList.add(WI.GradientSliderKnob.FadeOutClassName);
             this.selected = false;
         } else if (!this._moved)
             this.selected = !this.selected;
@@ -436,7 +436,7 @@ WebInspector.GradientSliderKnob = class GradientSliderKnob extends WebInspector.
     _handleTransitionEnd(event)
     {
         this.element.removeEventListener("transitionend", this);
-        this.element.classList.remove(WebInspector.GradientSliderKnob.FadeOutClassName);
+        this.element.classList.remove(WI.GradientSliderKnob.FadeOutClassName);
         this.element.remove();
     }
 
@@ -446,5 +446,5 @@ WebInspector.GradientSliderKnob = class GradientSliderKnob extends WebInspector.
     }
 };
 
-WebInspector.GradientSliderKnob.SelectedClassName = "selected";
-WebInspector.GradientSliderKnob.FadeOutClassName = "fade-out";
+WI.GradientSliderKnob.SelectedClassName = "selected";
+WI.GradientSliderKnob.FadeOutClassName = "fade-out";

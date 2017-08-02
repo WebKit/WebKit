@@ -25,7 +25,7 @@ function test() {
 
                 InspectorTest.expectThat(insertedOrRemovedDOMNode === testDOMNode.beforePseudoElement(), "New DOMNode is the beforePseudoElement");
                 InspectorTest.expectThat(insertedOrRemovedDOMNode.parentNode === testDOMNode, "New DOMNode is a child of #x");
-                InspectorTest.expectThat(insertedOrRemovedDOMNode.pseudoType() === WebInspector.DOMNode.PseudoElementType.Before, "New DOMNode is a before pseudo element");
+                InspectorTest.expectThat(insertedOrRemovedDOMNode.pseudoType() === WI.DOMNode.PseudoElementType.Before, "New DOMNode is a before pseudo element");
 
                 previousInsertedDOMNode = insertedOrRemovedDOMNode;
                 next();
@@ -47,7 +47,7 @@ function test() {
 
                 InspectorTest.expectThat(insertedOrRemovedDOMNode === previousInsertedDOMNode, "Removed DOMNode was the before pseudo element");
                 InspectorTest.expectThat(insertedOrRemovedDOMNode.parentNode === null, "Removed DOMNode has no parent");
-                InspectorTest.expectThat(insertedOrRemovedDOMNode.pseudoType() === WebInspector.DOMNode.PseudoElementType.Before, "Removed DOMNode was a before pseudo element");
+                InspectorTest.expectThat(insertedOrRemovedDOMNode.pseudoType() === WI.DOMNode.PseudoElementType.Before, "Removed DOMNode was a before pseudo element");
 
                 previousInsertedDOMNode = null;
                 next();
@@ -69,7 +69,7 @@ function test() {
 
                 InspectorTest.expectThat(insertedOrRemovedDOMNode === testDOMNode.afterPseudoElement(), "New DOMNode is the afterPseudoElement");
                 InspectorTest.expectThat(insertedOrRemovedDOMNode.parentNode === testDOMNode, "New DOMNode is a child of #x");
-                InspectorTest.expectThat(insertedOrRemovedDOMNode.pseudoType() === WebInspector.DOMNode.PseudoElementType.After, "New DOMNode is an after pseudo element");
+                InspectorTest.expectThat(insertedOrRemovedDOMNode.pseudoType() === WI.DOMNode.PseudoElementType.After, "New DOMNode is an after pseudo element");
 
                 previousInsertedDOMNode = insertedOrRemovedDOMNode;
                 next();
@@ -91,7 +91,7 @@ function test() {
 
                 InspectorTest.expectThat(insertedOrRemovedDOMNode === previousInsertedDOMNode, "Removed DOMNode was the after pseudo element");
                 InspectorTest.expectThat(insertedOrRemovedDOMNode.parentNode === null, "Removed DOMNode has no parent");
-                InspectorTest.expectThat(insertedOrRemovedDOMNode.pseudoType() === WebInspector.DOMNode.PseudoElementType.After, "Removed DOMNode was an after pseudo element");
+                InspectorTest.expectThat(insertedOrRemovedDOMNode.pseudoType() === WI.DOMNode.PseudoElementType.After, "Removed DOMNode was an after pseudo element");
 
                 previousInsertedDOMNode = null;
                 next();
@@ -111,9 +111,9 @@ function test() {
         InspectorTest.completeTest();
     }
 
-    WebInspector.domTreeManager.requestDocument(function(documentNode) {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "#x", function(nodeId) {
-            testDOMNode = WebInspector.domTreeManager.nodeForId(nodeId);
+    WI.domTreeManager.requestDocument(function(documentNode) {
+        WI.domTreeManager.querySelector(documentNode.id, "#x", function(nodeId) {
+            testDOMNode = WI.domTreeManager.nodeForId(nodeId);
             InspectorTest.log("");
             InspectorTest.expectThat(testDOMNode, "Got DOMNode for #x");
             InspectorTest.assert(!testDOMNode.pseudoType());
@@ -125,7 +125,7 @@ function test() {
         });
     });
 
-    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.NodeInserted, function(event) {
+    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeInserted, function(event) {
         // Test logging will add nodes to the test page. Ignore any elements added that are not children of our test node.
         if (event.data.parent !== testDOMNode)
             return;
@@ -135,7 +135,7 @@ function test() {
         next();
     });
 
-    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.NodeRemoved, function(event) {
+    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeRemoved, function(event) {
         InspectorTest.log("EVENT: NodeRemoved");
         insertedOrRemovedDOMNode = event.data.node;
         next();

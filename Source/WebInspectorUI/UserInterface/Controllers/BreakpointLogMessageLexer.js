@@ -23,17 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BreakpointLogMessageLexer = class BreakpointLogMessageLexer extends WebInspector.Object
+WI.BreakpointLogMessageLexer = class BreakpointLogMessageLexer extends WI.Object
 {
     constructor()
     {
         super();
 
         this._stateFunctions = {
-            [WebInspector.BreakpointLogMessageLexer.State.Expression]: this._expression,
-            [WebInspector.BreakpointLogMessageLexer.State.PlainText]: this._plainText,
-            [WebInspector.BreakpointLogMessageLexer.State.PossiblePlaceholder]: this._possiblePlaceholder,
-            [WebInspector.BreakpointLogMessageLexer.State.RegExpOrStringLiteral]: this._regExpOrStringLiteral,
+            [WI.BreakpointLogMessageLexer.State.Expression]: this._expression,
+            [WI.BreakpointLogMessageLexer.State.PlainText]: this._plainText,
+            [WI.BreakpointLogMessageLexer.State.PossiblePlaceholder]: this._possiblePlaceholder,
+            [WI.BreakpointLogMessageLexer.State.RegExpOrStringLiteral]: this._regExpOrStringLiteral,
         };
 
         this.reset();
@@ -69,7 +69,7 @@ WebInspector.BreakpointLogMessageLexer = class BreakpointLogMessageLexer extends
         this._buffer = "";
 
         this._index = 0;
-        this._states = [WebInspector.BreakpointLogMessageLexer.State.PlainText];
+        this._states = [WI.BreakpointLogMessageLexer.State.PlainText];
         this._literalStartCharacter = "";
         this._curlyBraceDepth = 0;
         this._tokens = [];
@@ -79,12 +79,12 @@ WebInspector.BreakpointLogMessageLexer = class BreakpointLogMessageLexer extends
 
      _finishPlainText()
     {
-        this._appendToken(WebInspector.BreakpointLogMessageLexer.TokenType.PlainText);
+        this._appendToken(WI.BreakpointLogMessageLexer.TokenType.PlainText);
     }
 
     _finishExpression()
     {
-        this._appendToken(WebInspector.BreakpointLogMessageLexer.TokenType.Expression);
+        this._appendToken(WI.BreakpointLogMessageLexer.TokenType.Expression);
     }
 
     _appendToken(type)
@@ -120,7 +120,7 @@ WebInspector.BreakpointLogMessageLexer = class BreakpointLogMessageLexer extends
             if (this._curlyBraceDepth === 0) {
                 this._finishExpression();
 
-                console.assert(this._states.lastValue === WebInspector.BreakpointLogMessageLexer.State.Expression);
+                console.assert(this._states.lastValue === WI.BreakpointLogMessageLexer.State.Expression);
                 this._states.pop();
                 return;
             }
@@ -132,7 +132,7 @@ WebInspector.BreakpointLogMessageLexer = class BreakpointLogMessageLexer extends
 
         if (character === "/" || character === "\"" || character === "'") {
             this._literalStartCharacter = character;
-            this._states.push(WebInspector.BreakpointLogMessageLexer.State.RegExpOrStringLiteral);
+            this._states.push(WI.BreakpointLogMessageLexer.State.RegExpOrStringLiteral);
         } else if (character === "{")
             this._curlyBraceDepth++;
     }
@@ -142,7 +142,7 @@ WebInspector.BreakpointLogMessageLexer = class BreakpointLogMessageLexer extends
         let character = this._peek();
 
         if (character === "$")
-            this._states.push(WebInspector.BreakpointLogMessageLexer.State.PossiblePlaceholder);
+            this._states.push(WI.BreakpointLogMessageLexer.State.PossiblePlaceholder);
         else {
             this._buffer += character;
             this._consume();
@@ -155,13 +155,13 @@ WebInspector.BreakpointLogMessageLexer = class BreakpointLogMessageLexer extends
         console.assert(character === "$");
         let nextCharacter = this._peek();
 
-        console.assert(this._states.lastValue === WebInspector.BreakpointLogMessageLexer.State.PossiblePlaceholder);
+        console.assert(this._states.lastValue === WI.BreakpointLogMessageLexer.State.PossiblePlaceholder);
         this._states.pop();
 
         if (nextCharacter === "{") {
             this._finishPlainText();
             this._consume();
-            this._states.push(WebInspector.BreakpointLogMessageLexer.State.Expression);
+            this._states.push(WI.BreakpointLogMessageLexer.State.Expression);
         } else
             this._buffer += character;
     }
@@ -178,20 +178,20 @@ WebInspector.BreakpointLogMessageLexer = class BreakpointLogMessageLexer extends
         }
 
         if (character === this._literalStartCharacter) {
-            console.assert(this._states.lastValue === WebInspector.BreakpointLogMessageLexer.State.RegExpOrStringLiteral);
+            console.assert(this._states.lastValue === WI.BreakpointLogMessageLexer.State.RegExpOrStringLiteral);
             this._states.pop();
         }
     }
 };
 
-WebInspector.BreakpointLogMessageLexer.State = {
+WI.BreakpointLogMessageLexer.State = {
     Expression: Symbol("expression"),
     PlainText: Symbol("plain-text"),
     PossiblePlaceholder: Symbol("possible-placeholder"),
     RegExpOrStringLiteral: Symbol("regexp-or-string-literal"),
 };
 
-WebInspector.BreakpointLogMessageLexer.TokenType = {
+WI.BreakpointLogMessageLexer.TokenType = {
     PlainText: "token-type-plain-text",
     Expression: "token-type-expression",
 };

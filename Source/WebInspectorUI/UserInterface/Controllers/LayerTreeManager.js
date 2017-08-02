@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayerTreeManager = class LayerTreeManager extends WebInspector.Object
+WI.LayerTreeManager = class LayerTreeManager extends WI.Object
 {
     constructor()
     {
@@ -145,10 +145,10 @@ WebInspector.LayerTreeManager = class LayerTreeManager extends WebInspector.Obje
 
     layerTreeDidChange()
     {
-        this.dispatchEventToListeners(WebInspector.LayerTreeManager.Event.LayerTreeDidChange);
+        this.dispatchEventToListeners(WI.LayerTreeManager.Event.LayerTreeDidChange);
     }
 };
 
-WebInspector.LayerTreeManager.Event = {
+WI.LayerTreeManager.Event = {
     LayerTreeDidChange: "layer-tree-did-change"
 };

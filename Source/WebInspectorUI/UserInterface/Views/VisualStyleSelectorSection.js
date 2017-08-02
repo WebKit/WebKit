@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection extends WebInspector.DetailsSection
+WI.VisualStyleSelectorSection = class VisualStyleSelectorSection extends WI.DetailsSection
 {
     constructor()
     {
@@ -33,7 +33,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         let controlElement = document.createElement("div");
         controlElement.classList.add("controls");
 
-        super("visual-style-selector-section", WebInspector.UIString("Style Rules"), [selectorSection], controlElement);
+        super("visual-style-selector-section", WI.UIString("Style Rules"), [selectorSection], controlElement);
 
         this._nodeStyles = null;
 
@@ -53,13 +53,13 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         selectorListElement.classList.add("selector-list");
         selectorSection.element.appendChild(selectorListElement);
 
-        this._selectors = new WebInspector.TreeOutline(selectorListElement);
+        this._selectors = new WI.TreeOutline(selectorListElement);
         this._selectors.disclosureButtons = false;
-        this._selectors.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._selectorChanged, this);
+        this._selectors.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._selectorChanged, this);
 
         this._newInspectorRuleSelector = null;
 
-        let addGlyphElement = useSVGSymbol("Images/Plus13.svg", "visual-style-selector-section-add-rule", WebInspector.UIString("Add new rule"));
+        let addGlyphElement = useSVGSymbol("Images/Plus13.svg", "visual-style-selector-section-add-rule", WI.UIString("Add new rule"));
         addGlyphElement.addEventListener("click", this._addNewRuleClick.bind(this));
         addGlyphElement.addEventListener("contextmenu", this._addNewRuleContextMenu.bind(this));
         controlElement.appendChild(addGlyphElement);
@@ -74,7 +74,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
     {
         let style = this.currentStyle();
         if (style)
-            this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol] = style;
+            this._nodeStyles[WI.VisualStyleSelectorSection.LastSelectedRuleSymbol] = style;
 
         if (nodeStyles)
             this._nodeStyles = nodeStyles;
@@ -97,19 +97,19 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             orderedPseudoRules.reverse();
 
         function createSelectorItem(style, title, subtitle) {
-            let selector = new WebInspector.VisualStyleSelectorTreeItem(this, style, title, subtitle);
-            selector.addEventListener(WebInspector.VisualStyleSelectorTreeItem.Event.CheckboxChanged, this._treeElementCheckboxToggled, this);
+            let selector = new WI.VisualStyleSelectorTreeItem(this, style, title, subtitle);
+            selector.addEventListener(WI.VisualStyleSelectorTreeItem.Event.CheckboxChanged, this._treeElementCheckboxToggled, this);
             this._selectors.appendChild(selector);
 
             if (style.isInspectorRule() && this._newInspectorRuleSelector === style.selectorText && !style.hasProperties()) {
                 selector.select(true);
                 selector.element.scrollIntoView();
-                this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol] = style;
+                this._nodeStyles[WI.VisualStyleSelectorSection.LastSelectedRuleSymbol] = style;
                 this._newInspectorRuleSelector = null;
                 return;
             }
 
-            if (this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol] === style) {
+            if (this._nodeStyles[WI.VisualStyleSelectorSection.LastSelectedRuleSymbol] === style) {
                 selector.select(true);
                 selector.element.scrollIntoView();
             }
@@ -156,17 +156,17 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         }
 
         if (this._nodeStyles.inlineStyle) {
-            if (!this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol])
-                this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol] = this._nodeStyles.inlineStyle;
+            if (!this._nodeStyles[WI.VisualStyleSelectorSection.LastSelectedRuleSymbol])
+                this._nodeStyles[WI.VisualStyleSelectorSection.LastSelectedRuleSymbol] = this._nodeStyles.inlineStyle;
 
             // Inline Style
-            createSelectorItem.call(this, this._nodeStyles.inlineStyle, WebInspector.UIString("This Element"));
-        } else if (!this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol])
-            this._nodeStyles[WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol] = this._nodeStyles.matchedRules[0].style;
+            createSelectorItem.call(this, this._nodeStyles.inlineStyle, WI.UIString("This Element"));
+        } else if (!this._nodeStyles[WI.VisualStyleSelectorSection.LastSelectedRuleSymbol])
+            this._nodeStyles[WI.VisualStyleSelectorSection.LastSelectedRuleSymbol] = this._nodeStyles.matchedRules[0].style;
 
         // Matched Rules
         for (let rule of uniqueOrderedRules(this._nodeStyles.matchedRules)) {
-            if (rule.type === WebInspector.CSSStyleSheet.Type.UserAgent) {
+            if (rule.type === WI.CSSStyleSheet.Type.UserAgent) {
                 insertAllMatchingPseudoRules.call(this, true);
                 continue;
             }
@@ -187,12 +187,12 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             let divider = null;
 
             for (let rule of uniqueOrderedRules(inherited.matchedRules)) {
-                if (rule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
+                if (rule.type === WI.CSSStyleSheet.Type.UserAgent)
                     continue;
 
                 if (!divider) {
-                    let dividerText = WebInspector.UIString("Inherited from %s").format(inherited.node.displayName);
-                    divider = new WebInspector.GeneralTreeElement("section-divider", dividerText);
+                    let dividerText = WI.UIString("Inherited from %s").format(inherited.node.displayName);
+                    divider = new WI.GeneralTreeElement("section-divider", dividerText);
                     divider.selectable = false;
                     this._selectors.appendChild(divider);
                 }
@@ -254,7 +254,7 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
 
         this._currentSelectorText.textContent = selectorText;
 
-        this.dispatchEventToListeners(WebInspector.VisualStyleSelectorSection.Event.SelectorChanged);
+        this.dispatchEventToListeners(WI.VisualStyleSelectorSection.Event.SelectorChanged);
     }
 
     _addNewRuleClick(event)
@@ -278,15 +278,15 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         if (!this._nodeStyles || this._nodeStyles.node.isInUserAgentShadowTree())
             return;
 
-        let styleSheets = WebInspector.cssStyleManager.styleSheets.filter(styleSheet => styleSheet.hasInfo() && !styleSheet.isInlineStyleTag() && !styleSheet.isInlineStyleAttributeStyleSheet());
+        let styleSheets = WI.cssStyleManager.styleSheets.filter(styleSheet => styleSheet.hasInfo() && !styleSheet.isInlineStyleTag() && !styleSheet.isInlineStyleAttributeStyleSheet());
         if (!styleSheets.length)
             return;
 
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
 
         const handler = null;
         const disabled = true;
-        contextMenu.appendItem(WebInspector.UIString("Available Style Sheets"), handler, disabled);
+        contextMenu.appendItem(WI.UIString("Available Style Sheets"), handler, disabled);
 
         for (let styleSheet of styleSheets) {
             contextMenu.appendItem(styleSheet.displayName, () => {
@@ -315,8 +315,8 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             newStyleText = "/* " + styleText.replace(/(\s*;(?!$)\s*)/g, "$1 *//* ") + " */";
 
         style.text = newStyleText;
-        style[WebInspector.VisualStyleDetailsPanel.StyleDisabledSymbol] = !styleEnabled;
-        this.dispatchEventToListeners(WebInspector.VisualStyleSelectorSection.Event.SelectorChanged);
+        style[WI.VisualStyleDetailsPanel.StyleDisabledSymbol] = !styleEnabled;
+        this.dispatchEventToListeners(WI.VisualStyleSelectorSection.Event.SelectorChanged);
 
     }
 
@@ -330,11 +330,11 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
             return;
 
         if (!style.ownerRule) {
-            WebInspector.domTreeManager.highlightDOMNode(style.node.id);
+            WI.domTreeManager.highlightDOMNode(style.node.id);
             return;
         }
 
-        WebInspector.domTreeManager.highlightSelector(style.ownerRule.selectorText, style.node.ownerDocument.frameIdentifier);
+        WI.domTreeManager.highlightSelector(style.ownerRule.selectorText, style.node.ownerDocument.frameIdentifier);
     }
 
     _handleMouseOut()
@@ -342,12 +342,12 @@ WebInspector.VisualStyleSelectorSection = class VisualStyleSelectorSection exten
         if (!this.collapsed)
             return;
 
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
+        WI.domTreeManager.hideDOMNodeHighlight();
     }
 };
 
-WebInspector.VisualStyleSelectorSection.LastSelectedRuleSymbol = Symbol("visual-style-selector-section-last-selected-rule");
+WI.VisualStyleSelectorSection.LastSelectedRuleSymbol = Symbol("visual-style-selector-section-last-selected-rule");
 
-WebInspector.VisualStyleSelectorSection.Event = {
+WI.VisualStyleSelectorSection.Event = {
     SelectorChanged: "visual-style-selector-section-selector-changed"
 };

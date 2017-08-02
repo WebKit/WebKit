@@ -18,7 +18,7 @@ function test() {
         name: "Canvas.requestNode.missingDocument",
         description: "Getting the canvas node requires that WebInspector knows about the document.",
         test(resolve, reject) {
-            let canvases = WebInspector.canvasManager.canvases;
+            let canvases = WI.canvasManager.canvases;
             InspectorTest.expectEqual(canvases.length, 3, "The page should have three canvases.");
             if (!canvases.length) {
                 reject("Missing canvas.");
@@ -37,7 +37,7 @@ function test() {
         name: "Canvas.requestNode.validCanvasId",
         description: "Get the node id for each canvas on the page.",
         test(resolve, reject) {
-            let canvases = WebInspector.canvasManager.canvases;
+            let canvases = WI.canvasManager.canvases;
             let expectedLength = canvases.length;
             InspectorTest.assert(expectedLength === 3, "The page has 3 canvases.");
 
@@ -63,14 +63,14 @@ function test() {
             }
 
             canvases.forEach((canvas) => {
-                WebInspector.domTreeManager.requestDocument((documentNode) => {
+                WI.domTreeManager.requestDocument((documentNode) => {
                     CanvasAgent.requestNode(canvas.identifier, (error, nodeId) => {
                         if (error) {
                             reject(error);
                             return;
                         }
 
-                        nodesMap.set(canvas, WebInspector.domTreeManager.nodeForId(nodeId));
+                        nodesMap.set(canvas, WI.domTreeManager.nodeForId(nodeId));
                         if (nodesMap.size === expectedLength)
                             finish();
                     });

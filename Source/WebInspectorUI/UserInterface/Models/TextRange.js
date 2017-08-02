@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextRange = class TextRange
+WI.TextRange = class TextRange
 {
     constructor(startLineOrStartOffset, startColumnOrEndOffset, endLine, endColumn)
     {
@@ -62,12 +62,12 @@ WebInspector.TextRange = class TextRange
 
     startPosition()
     {
-        return new WebInspector.SourceCodePosition(this._startLine, this._startColumn);
+        return new WI.SourceCodePosition(this._startLine, this._startColumn);
     }
 
     endPosition()
     {
-        return new WebInspector.SourceCodePosition(this._endLine, this._endColumn);
+        return new WI.SourceCodePosition(this._endLine, this._endColumn);
     }
 
     resolveOffsets(text)

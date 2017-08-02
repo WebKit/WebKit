@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Recording = class Recording
+WI.Recording = class Recording
 {
     constructor(version, type, initialState, frames, data)
     {
@@ -33,7 +33,7 @@ WebInspector.Recording = class Recording
         this._frames = frames;
         this._data = data;
 
-        this._actions = [new WebInspector.RecordingInitialStateAction].concat(...this._frames.map((frame) => frame.actions));
+        this._actions = [new WI.RecordingInitialStateAction].concat(...this._frames.map((frame) => frame.actions));
         this._swizzle = [];
         this._source = null;
 
@@ -42,7 +42,7 @@ WebInspector.Recording = class Recording
                 action.swizzle(this);
 
                 let prototype = null;
-                if (this._type === WebInspector.Recording.Type.Canvas2D)
+                if (this._type === WI.Recording.Type.Canvas2D)
                     prototype = CanvasRenderingContext2D.prototype;
 
                 if (prototype) {
@@ -51,7 +51,7 @@ WebInspector.Recording = class Recording
                     if (!validName || !validFunction) {
                         action.valid = false;
 
-                        WebInspector.Recording.synthesizeError(WebInspector.UIString("“%s” is invalid.").format(action.name));
+                        WI.Recording.synthesizeError(WI.UIString("“%s” is invalid.").format(action.name));
                     }
                 }
             }
@@ -71,7 +71,7 @@ WebInspector.Recording = class Recording
         let type = null;
         switch (payload.type) {
         case RecordingAgent.Type.Canvas2D:
-            type = WebInspector.Recording.Type.Canvas2D;
+            type = WI.Recording.Type.Canvas2D;
             break;
         default:
             type = String(payload.type);
@@ -93,19 +93,19 @@ WebInspector.Recording = class Recording
         if (!Array.isArray(payload.data))
             payload.data = [];
 
-        let frames = payload.frames.map(WebInspector.RecordingFrame.fromPayload);
-        return new WebInspector.Recording(payload.version, type, payload.initialState, frames, payload.data);
+        let frames = payload.frames.map(WI.RecordingFrame.fromPayload);
+        return new WI.Recording(payload.version, type, payload.initialState, frames, payload.data);
     }
 
     static synthesizeError(message)
     {
-        const target = WebInspector.mainTarget;
-        const source = WebInspector.ConsoleMessage.MessageSource.Other;
-        const level = WebInspector.ConsoleMessage.MessageLevel.Error;
-        let consoleMessage = new WebInspector.ConsoleMessage(target, source, level, WebInspector.UIString("Recording error: %s").format(message));
+        const target = WI.mainTarget;
+        const source = WI.ConsoleMessage.MessageSource.Other;
+        const level = WI.ConsoleMessage.MessageLevel.Error;
+        let consoleMessage = new WI.ConsoleMessage(target, source, level, WI.UIString("Recording error: %s").format(message));
         consoleMessage.shouldRevealConsole = true;
 
-        WebInspector.consoleLogViewController.appendConsoleMessage(consoleMessage);
+        WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
     }
 
     // Public
@@ -129,49 +129,49 @@ WebInspector.Recording = class Recording
             try {
                 let data = this._data[index];
                 switch (type) {
-                case WebInspector.Recording.Swizzle.CanvasStyle:
+                case WI.Recording.Swizzle.CanvasStyle:
                     if (Array.isArray(data)) {
                         let context = document.createElement("canvas").getContext("2d");
 
-                        let canvasStyle = this.swizzle(data[0], WebInspector.Recording.Swizzle.String);
+                        let canvasStyle = this.swizzle(data[0], WI.Recording.Swizzle.String);
                         if (canvasStyle === "linear-gradient" || canvasStyle === "radial-gradient") {
                             this._swizzle[index][type] = canvasStyle === "radial-gradient" ? context.createRadialGradient(...data[1]) : context.createLinearGradient(...data[1]);
                             for (let stop of data[2]) {
-                                let color = this.swizzle(stop[1], WebInspector.Recording.Swizzle.String);
+                                let color = this.swizzle(stop[1], WI.Recording.Swizzle.String);
                                 this._swizzle[index][type].addColorStop(stop[0], color);
                             }
                         } else if (canvasStyle === "pattern") {
-                            let image = this.swizzle(data[1], WebInspector.Recording.Swizzle.Image);
-                            let repeat = this.swizzle(data[2], WebInspector.Recording.Swizzle.String);
+                            let image = this.swizzle(data[1], WI.Recording.Swizzle.Image);
+                            let repeat = this.swizzle(data[2], WI.Recording.Swizzle.String);
                             this._swizzle[index][type] = context.createPattern(image, repeat);
                         }
                     } else if (typeof data === "string")
                         this._swizzle[index][type] = data;
                     break;
-                case WebInspector.Recording.Swizzle.Element:
-                    this._swizzle[index][type] = WebInspector.Recording.Swizzle.Invalid;
+                case WI.Recording.Swizzle.Element:
+                    this._swizzle[index][type] = WI.Recording.Swizzle.Invalid;
                     break;
-                case WebInspector.Recording.Swizzle.Image:
+                case WI.Recording.Swizzle.Image:
                     this._swizzle[index][type] = new Image;
                     this._swizzle[index][type].src = data;
                     break;
-                case WebInspector.Recording.Swizzle.ImageData:
+                case WI.Recording.Swizzle.ImageData:
                     this._swizzle[index][type] = new ImageData(new Uint8ClampedArray(data[0]), parseInt(data[1]), parseInt(data[2]));
                     break;
-                case WebInspector.Recording.Swizzle.Path2D:
+                case WI.Recording.Swizzle.Path2D:
                     this._swizzle[index][type] = new Path2D(data);
                     break;
-                case WebInspector.Recording.Swizzle.String:
+                case WI.Recording.Swizzle.String:
                     if (typeof data === "string")
                         this._swizzle[index][type] = data;
                     break;
                 }
             } catch (e) {
-                this._swizzle[index][type] = WebInspector.Recording.Swizzle.Invalid;
+                this._swizzle[index][type] = WI.Recording.Swizzle.Invalid;
             }
 
             if (!(type in this._swizzle[index]))
-                this._swizzle[index][type] = WebInspector.Recording.Swizzle.Invalid;
+                this._swizzle[index][type] = WI.Recording.Swizzle.Invalid;
         }
 
         return this._swizzle[index][type];
@@ -197,11 +197,11 @@ WebInspector.Recording = class Recording
     }
 };
 
-WebInspector.Recording.Type = {
+WI.Recording.Type = {
     Canvas2D: "canvas-2d",
 };
 
-WebInspector.Recording.Swizzle = {
+WI.Recording.Swizzle = {
     CanvasStyle: "CanvasStyle",
     Element: "Element",
     Image: "Image",

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProtocolTrace = class ProtocolTrace
+WI.ProtocolTrace = class ProtocolTrace
 {
     constructor()
     {
@@ -50,7 +50,7 @@ WebInspector.ProtocolTrace = class ProtocolTrace
         // This follows the file name of screen shots on OS X (en-US):
         // "Protocol Trace 2015-12-31 at 12.43.04.json".
         // When the Intl API is implemented, we can do a better job.
-        let filename = WebInspector.unlocalizedString(`Protocol Trace at ${YYYY}-${MM}-${DD} ${hh}.${mm}.${ss}.json`);
+        let filename = WI.unlocalizedString(`Protocol Trace at ${YYYY}-${MM}-${DD} ${hh}.${mm}.${ss}.json`);
         return {url: "web-inspector:///" + encodeURIComponent(filename), content: JSON.stringify(this._entries)};
     }
 };

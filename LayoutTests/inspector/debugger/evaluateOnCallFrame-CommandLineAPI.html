@@ -51,23 +51,23 @@ function test()
     }
 
     function testEvaluateOnStrictCallFrame(expression, callback) {
-        let callFrame = WebInspector.debuggerManager.activeCallFrame; // bar
+        let callFrame = WI.debuggerManager.activeCallFrame; // bar
         testEvaluateOnCallFrame(callFrame, expression, callback);
     }
 
     function testEvaluateOnStrictCallFrameThrows(expression, callback) {
-        let callFrame = WebInspector.debuggerManager.activeCallFrame; // bar
+        let callFrame = WI.debuggerManager.activeCallFrame; // bar
         testEvaluateOnCallFrameThrows(callFrame, expression, callback);
     }
 
     function testEvaluateOnNonStrictCallFrame(expression, callback) {
-        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
         let callFrame = targetData.callFrames[1]; // foo
         testEvaluateOnCallFrame(callFrame, expression, callback);
     }
 
     function testEvaluateOnNonStrictCallFrameThrows(expression, callback) {
-        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
         let callFrame = targetData.callFrames[1]; // foo
         testEvaluateOnCallFrameThrows(callFrame, expression, callback);
     }
@@ -78,8 +78,8 @@ function test()
         name: "ValidateCallFrames",
         description: "Test6 evaluate can access CommandLineAPI methods.",
         test(resolve, reject) {
-            let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
-            InspectorTest.expectThat(WebInspector.debuggerManager.activeCallFrame.functionName === "bar", "Strict call frame is `bar`.");
+            let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+            InspectorTest.expectThat(WI.debuggerManager.activeCallFrame.functionName === "bar", "Strict call frame is `bar`.");
             InspectorTest.expectThat(targetData.callFrames[1].functionName === "foo", "Non-strict call frame is `foo`.");
 
             testEvaluateOnStrictCallFrame("a", (x) => { InspectorTest.expectThat(x === 6, "`a` should be 5 in `bar`."); });
@@ -214,13 +214,13 @@ function test()
     suite.addTestCase({
         name: "Complete",
         test(resolve, reject) {
-            WebInspector.debuggerManager.resume();
+            WI.debuggerManager.resume();
             resolve();
         }
     })
 
     InspectorTest.evaluateInPage("triggerPause()");
-    WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+    WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
         suite.runTestCasesAndFinish();
     });
 }

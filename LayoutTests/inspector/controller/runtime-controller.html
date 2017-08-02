@@ -33,7 +33,7 @@ function test()
         description: "Test evaluating an object literal string conveniently converts wraps it in parenthesis to avoid misinterpretation as a program with a block and labeled statement.",
         test(resolve, reject) {
             function testSource(expression, callback) {
-                WebInspector.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
+                WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
                     InspectorTest.log("Source: " + expression);
                     callback(result, wasThrown);
                 });
@@ -76,7 +76,7 @@ function test()
         description: "Test evaluating a simple await expression wraps it into an async function and eventually resolves the value.",
         test(resolve, reject) {
             function testSource(expression, callback) {
-                WebInspector.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
+                WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
                     InspectorTest.log("Source: " + expression);
                     callback(result, wasThrown);
                 });
@@ -112,13 +112,13 @@ function test()
 
             // We can resolve after receiving the expected number of console.info messages.
             let seen = 0;
-            let listener = WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+            let listener = WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
                 let consoleMessage = event.data.message;
-                if (consoleMessage.level !== WebInspector.ConsoleMessage.MessageLevel.Info)
+                if (consoleMessage.level !== WI.ConsoleMessage.MessageLevel.Info)
                     return;
                 if (++seen !== expected)
                     return;
-                WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, listener);
+                WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, listener);
                 resolve();
             });
         }

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchronizer extends WebInspector.Object
+WI.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchronizer extends WI.Object
 {
     constructor(treeOutline, dataGrid, delegate)
     {
@@ -39,9 +39,9 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
 
         this._treeOutline.__dataGridNode = this._dataGrid;
 
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.ExpandedNode, this._dataGridNodeExpanded, this);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.CollapsedNode, this._dataGridNodeCollapsed, this);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+        this._dataGrid.addEventListener(WI.DataGrid.Event.ExpandedNode, this._dataGridNodeExpanded, this);
+        this._dataGrid.addEventListener(WI.DataGrid.Event.CollapsedNode, this._dataGridNodeCollapsed, this);
+        this._dataGrid.addEventListener(WI.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
 
         this._dataGrid.element.addEventListener("focus", this._dataGridGainedFocus.bind(this));
         this._dataGrid.element.addEventListener("blur", this._dataGridLostFocus.bind(this));
@@ -49,11 +49,11 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
         this._treeOutline.element.addEventListener("focus", this._treeOutlineGainedFocus.bind(this));
         this._treeOutline.element.addEventListener("blur", this._treeOutlineLostFocus.bind(this));
 
-        treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementAdded, this._treeElementAdded, this);
-        treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementRemoved, this._treeElementRemoved, this);
-        treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange, this);
-        treeOutline.addEventListener(WebInspector.TreeOutline.Event.ElementVisibilityDidChange, this._treeElementVisibilityDidChange, this);
-        treeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+        treeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._treeElementAdded, this);
+        treeOutline.addEventListener(WI.TreeOutline.Event.ElementRemoved, this._treeElementRemoved, this);
+        treeOutline.addEventListener(WI.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange, this);
+        treeOutline.addEventListener(WI.TreeOutline.Event.ElementVisibilityDidChange, this._treeElementVisibilityDidChange, this);
+        treeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
     }
 
     // Public

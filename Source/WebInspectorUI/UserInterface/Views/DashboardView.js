@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DashboardView = class DashboardView extends WebInspector.Object
+WI.DashboardView = class DashboardView extends WI.Object
 {
     constructor(representedObject, identifier)
     {
@@ -44,11 +44,11 @@ WebInspector.DashboardView = class DashboardView extends WebInspector.Object
     {
         console.assert(representedObject);
 
-        if (representedObject instanceof WebInspector.DefaultDashboard)
-            return new WebInspector.DefaultDashboardView(representedObject);
+        if (representedObject instanceof WI.DefaultDashboard)
+            return new WI.DefaultDashboardView(representedObject);
 
-        if (representedObject instanceof WebInspector.DebuggerDashboard)
-            return new WebInspector.DebuggerDashboardView(representedObject);
+        if (representedObject instanceof WI.DebuggerDashboard)
+            return new WI.DebuggerDashboardView(representedObject);
 
         throw "Can't make a DashboardView for an unknown representedObject.";
     }

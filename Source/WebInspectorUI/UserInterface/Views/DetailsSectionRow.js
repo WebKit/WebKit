@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionRow = class DetailsSectionRow extends WebInspector.Object
+WI.DetailsSectionRow = class DetailsSectionRow extends WI.Object
 {
     constructor(emptyMessage)
     {
@@ -57,7 +57,7 @@ WebInspector.DetailsSectionRow = class DetailsSectionRow extends WebInspector.Ob
 
     showEmptyMessage()
     {
-        this.element.classList.add(WebInspector.DetailsSectionRow.EmptyStyleClassName);
+        this.element.classList.add(WI.DetailsSectionRow.EmptyStyleClassName);
 
         if (this._emptyMessage instanceof Node) {
             this.element.removeChildren();
@@ -68,9 +68,9 @@ WebInspector.DetailsSectionRow = class DetailsSectionRow extends WebInspector.Ob
 
     hideEmptyMessage()
     {
-        this.element.classList.remove(WebInspector.DetailsSectionRow.EmptyStyleClassName);
+        this.element.classList.remove(WI.DetailsSectionRow.EmptyStyleClassName);
         this.element.removeChildren();
     }
 };
 
-WebInspector.DetailsSectionRow.EmptyStyleClassName = "empty";
+WI.DetailsSectionRow.EmptyStyleClassName = "empty";

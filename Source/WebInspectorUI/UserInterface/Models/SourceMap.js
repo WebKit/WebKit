@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceMap = class SourceMap
+WI.SourceMap = class SourceMap
 {
     constructor(sourceMappingURL, payload, originalSourceCode)
     {
-        if (!WebInspector.SourceMap._base64Map) {
+        if (!WI.SourceMap._base64Map) {
             var base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-            WebInspector.SourceMap._base64Map = {};
+            WI.SourceMap._base64Map = {};
             for (var i = 0; i < base64Digits.length; ++i)
-                WebInspector.SourceMap._base64Map[base64Digits.charAt(i)] = i;
+                WI.SourceMap._base64Map[base64Digits.charAt(i)] = i;
         }
 
         this._originalSourceCode = originalSourceCode || null;
@@ -183,7 +183,7 @@ WebInspector.SourceMap = class SourceMap
 
         this._sourceRoot = map.sourceRoot || null;
 
-        var stringCharIterator = new WebInspector.SourceMap.StringCharIterator(map.mappings);
+        var stringCharIterator = new WI.SourceMap.StringCharIterator(map.mappings);
         var sourceURL = sources[sourceIndex];
 
         while (true) {
@@ -243,10 +243,10 @@ WebInspector.SourceMap = class SourceMap
         var result = 0;
         var shift = 0;
         do {
-            var digit = WebInspector.SourceMap._base64Map[stringCharIterator.next()];
-            result += (digit & WebInspector.SourceMap.VLQ_BASE_MASK) << shift;
-            shift += WebInspector.SourceMap.VLQ_BASE_SHIFT;
-        } while (digit & WebInspector.SourceMap.VLQ_CONTINUATION_MASK);
+            var digit = WI.SourceMap._base64Map[stringCharIterator.next()];
+            result += (digit & WI.SourceMap.VLQ_BASE_MASK) << shift;
+            shift += WI.SourceMap.VLQ_BASE_SHIFT;
+        } while (digit & WI.SourceMap.VLQ_CONTINUATION_MASK);
 
         // Fix the sign.
         var negative = result & 1;
@@ -255,11 +255,11 @@ WebInspector.SourceMap = class SourceMap
     }
 };
 
-WebInspector.SourceMap.VLQ_BASE_SHIFT = 5;
-WebInspector.SourceMap.VLQ_BASE_MASK = (1 << 5) - 1;
-WebInspector.SourceMap.VLQ_CONTINUATION_MASK = 1 << 5;
+WI.SourceMap.VLQ_BASE_SHIFT = 5;
+WI.SourceMap.VLQ_BASE_MASK = (1 << 5) - 1;
+WI.SourceMap.VLQ_CONTINUATION_MASK = 1 << 5;
 
-WebInspector.SourceMap.StringCharIterator = class StringCharIterator
+WI.SourceMap.StringCharIterator = class StringCharIterator
 {
     constructor(string)
     {

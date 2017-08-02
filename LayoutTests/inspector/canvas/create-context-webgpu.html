@@ -14,16 +14,16 @@ function test() {
     addSimpleTestCase({
         name: "Attached",
         expression: `createAttachedCanvas("webgpu")`,
-        contextType: WebInspector.Canvas.ContextType.WebGPU,
+        contextType: WI.Canvas.ContextType.WebGPU,
     });
 
     addSimpleTestCase({
         name: "Detached",
         expression: `createDetachedCanvas("webgpu")`,
-        contextType: WebInspector.Canvas.ContextType.WebGPU,
+        contextType: WI.Canvas.ContextType.WebGPU,
     });
 
-    addCSSCanvasTestCase(WebInspector.Canvas.ContextType.WebGPU);
+    addCSSCanvasTestCase(WI.Canvas.ContextType.WebGPU);
 
     suite.runTestCasesAndFinish();
 }

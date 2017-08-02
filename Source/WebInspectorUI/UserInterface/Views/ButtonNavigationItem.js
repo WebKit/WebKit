@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspector.NavigationItem
+WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 {
     constructor(identifier, toolTipOrLabel, image, imageWidth, imageHeight, role, label)
     {
@@ -73,7 +73,7 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
 
     set label(newLabel)
     {
-        this._element.classList.add(WebInspector.ButtonNavigationItem.TextOnlyClassName);
+        this._element.classList.add(WI.ButtonNavigationItem.TextOnlyClassName);
         this._element.textContent = newLabel || "";
         if (this.parentNavigationBar)
             this.parentNavigationBar.needsLayout();
@@ -92,7 +92,7 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
         }
 
         this._element.removeChildren();
-        this._element.classList.remove(WebInspector.ButtonNavigationItem.TextOnlyClassName);
+        this._element.classList.remove(WI.ButtonNavigationItem.TextOnlyClassName);
 
         this._image = newImage;
 
@@ -104,15 +104,15 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
 
     get enabled()
     {
-        return !this._element.classList.contains(WebInspector.ButtonNavigationItem.DisabledStyleClassName);
+        return !this._element.classList.contains(WI.ButtonNavigationItem.DisabledStyleClassName);
     }
 
     set enabled(flag)
     {
         if (flag)
-            this._element.classList.remove(WebInspector.ButtonNavigationItem.DisabledStyleClassName);
+            this._element.classList.remove(WI.ButtonNavigationItem.DisabledStyleClassName);
         else
-            this._element.classList.add(WebInspector.ButtonNavigationItem.DisabledStyleClassName);
+            this._element.classList.add(WI.ButtonNavigationItem.DisabledStyleClassName);
     }
 
     // Protected
@@ -128,13 +128,13 @@ WebInspector.ButtonNavigationItem = class ButtonNavigationItem extends WebInspec
     {
         if (!this.enabled)
             return;
-        this.dispatchEventToListeners(WebInspector.ButtonNavigationItem.Event.Clicked, {nativeEvent: event});
+        this.dispatchEventToListeners(WI.ButtonNavigationItem.Event.Clicked, {nativeEvent: event});
     }
 };
 
-WebInspector.ButtonNavigationItem.DisabledStyleClassName = "disabled";
-WebInspector.ButtonNavigationItem.TextOnlyClassName = "text-only";
+WI.ButtonNavigationItem.DisabledStyleClassName = "disabled";
+WI.ButtonNavigationItem.TextOnlyClassName = "text-only";
 
-WebInspector.ButtonNavigationItem.Event = {
+WI.ButtonNavigationItem.Event = {
     Clicked: "button-navigation-item-clicked"
 };

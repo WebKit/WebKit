@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScopeChainNode = class ScopeChainNode
+WI.ScopeChainNode = class ScopeChainNode
 {
     constructor(type, objects, name, location, empty)
     {
         console.assert(typeof type === "string");
-        console.assert(objects.every((x) => x instanceof WebInspector.RemoteObject));
+        console.assert(objects.every((x) => x instanceof WI.RemoteObject));
 
-        if (type in WebInspector.ScopeChainNode.Type)
-            type = WebInspector.ScopeChainNode.Type[type];
+        if (type in WI.ScopeChainNode.Type)
+            type = WI.ScopeChainNode.Type[type];
 
         this._type = type || null;
         this._objects = objects || [];
@@ -61,11 +61,11 @@ WebInspector.ScopeChainNode = class ScopeChainNode
 
     convertToLocalScope()
     {
-        this._type = WebInspector.ScopeChainNode.Type.Local;
+        this._type = WI.ScopeChainNode.Type.Local;
     }
 };
 
-WebInspector.ScopeChainNode.Type = {
+WI.ScopeChainNode.Type = {
     Local: "scope-chain-type-local",
     Global: "scope-chain-type-global",
     GlobalLexicalEnvironment: "scope-chain-type-global-lexical-environment",

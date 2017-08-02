@@ -45,11 +45,11 @@ function test()
                 resolve();
             });
 
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 InspectorTest.pass("Paused.");
-                WebInspector.debuggerManager.resume().catch(reject);
+                WI.debuggerManager.resume().catch(reject);
             });
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, (event) => {
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Resumed, (event) => {
                 InspectorTest.pass("Resumed.");
             });
         }

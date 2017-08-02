@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
+WI.SidebarPanel = class SidebarPanel extends WI.View
 {
     constructor(identifier, displayName)
     {
@@ -40,7 +40,7 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
         this.element.setAttribute("role", "group");
         this.element.setAttribute("aria-label", displayName);
 
-        this._contentView = new WebInspector.View;
+        this._contentView = new WI.View;
         this._contentView.element.classList.add("content");
         this.addSubview(this._contentView);
     }

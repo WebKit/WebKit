@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Branch = class Branch
+WI.Branch = class Branch
 {
     constructor(displayName, revisions, locked)
     {
@@ -64,14 +64,14 @@ WebInspector.Branch = class Branch
     {
         for (var i = 0; i < this._revisions.length; ++i) {
             var revision = this._revisions[i];
-            if (revision instanceof WebInspector.SourceCodeRevision && revision.sourceCode === representedObject)
+            if (revision instanceof WI.SourceCodeRevision && revision.sourceCode === representedObject)
                 return revision;
         }
 
         if (doNotCreateIfNeeded)
             return null;
 
-        if (representedObject instanceof WebInspector.SourceCode) {
+        if (representedObject instanceof WI.SourceCode) {
             var revision = representedObject.originalRevision.copy();
             representedObject.currentRevision = revision;
             this.addRevision(revision);
@@ -83,7 +83,7 @@ WebInspector.Branch = class Branch
 
     addRevision(revision)
     {
-        console.assert(revision instanceof WebInspector.Revision);
+        console.assert(revision instanceof WI.Revision);
 
         if (this._locked)
             return;
@@ -96,7 +96,7 @@ WebInspector.Branch = class Branch
 
     removeRevision(revision)
     {
-        console.assert(revision instanceof WebInspector.Revision);
+        console.assert(revision instanceof WI.Revision);
 
         if (this._locked)
             return;
@@ -115,7 +115,7 @@ WebInspector.Branch = class Branch
     fork(displayName)
     {
         var copiedRevisions = this._revisions.map(function(revision) { return revision.copy(); });
-        return new WebInspector.Branch(displayName, copiedRevisions);
+        return new WI.Branch(displayName, copiedRevisions);
     }
 
     apply()

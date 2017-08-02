@@ -41,12 +41,12 @@ function getAnonymousFunctionError()
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("WebInspector.StackTrace.isLikelyStackTrace");
+    let suite = InspectorTest.createAsyncSuite("WI.StackTrace.isLikelyStackTrace");
 
     suite.addTestCase({
         name: "notStacktrace",
         test(resolve, reject) {
-            var result = WebInspector.StackTrace.isLikelyStackTrace("Messages:42\nUnread:16");
+            var result = WI.StackTrace.isLikelyStackTrace("Messages:42\nUnread:16");
             InspectorTest.assert(result, "Should NOT be a stacktrace.");
             resolve();
         }
@@ -59,7 +59,7 @@ function test()
                 if (error)
                     reject(error);
 
-                InspectorTest.assert(WebInspector.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
+                InspectorTest.assert(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
 
                 resolve();
             });
@@ -73,7 +73,7 @@ function test()
                 if (error)
                     reject(error);
 
-                InspectorTest.assert(WebInspector.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
+                InspectorTest.assert(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
 
                 resolve();
             });
@@ -87,7 +87,7 @@ function test()
                 if (error)
                     reject(error);
 
-                InspectorTest.assert(WebInspector.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
+                InspectorTest.assert(WI.StackTrace.isLikelyStackTrace(result), "Should be a stacktrace.");
 
                 resolve();
             });

@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextMarker = class TextMarker
+WI.TextMarker = class TextMarker
 {
     constructor(codeMirrorTextMarker, type)
     {
         this._codeMirrorTextMarker = codeMirrorTextMarker;
         codeMirrorTextMarker.__webInspectorTextMarker = this;
 
-        this._type = type || WebInspector.TextMarker.Type.Plain;
+        this._type = type || WI.TextMarker.Type.Plain;
     }
 
     // Static
 
     static textMarkerForCodeMirrorTextMarker(codeMirrorTextMarker)
     {
-        return codeMirrorTextMarker.__webInspectorTextMarker || new WebInspector.TextMarker(codeMirrorTextMarker);
+        return codeMirrorTextMarker.__webInspectorTextMarker || new WI.TextMarker(codeMirrorTextMarker);
     }
 
     // Public
@@ -57,14 +57,14 @@ WebInspector.TextMarker = class TextMarker
         var range = this._codeMirrorTextMarker.find();
         if (!range)
             return null;
-        return new WebInspector.TextRange(range.from.line, range.from.ch, range.to.line, range.to.ch);
+        return new WI.TextRange(range.from.line, range.from.ch, range.to.line, range.to.ch);
     }
 
     get rects()
     {
         var range = this._codeMirrorTextMarker.find();
         if (!range)
-            return WebInspector.Rect.ZERO_RECT;
+            return WI.Rect.ZERO_RECT;
         return this._codeMirrorTextMarker.doc.cm.rectsForRange({
             start: range.from,
             end: range.to
@@ -77,7 +77,7 @@ WebInspector.TextMarker = class TextMarker
     }
 };
 
-WebInspector.TextMarker.Type = {
+WI.TextMarker.Type = {
     Color: "text-marker-type-color",
     Gradient: "text-marker-type-gradient",
     Plain: "text-marker-type-plain",

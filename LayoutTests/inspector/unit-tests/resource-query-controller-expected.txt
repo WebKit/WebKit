@@ -1,4 +1,4 @@
-Testing WebInspector.ResourceQueryController.
+Testing WI.ResourceQueryController.
 
 
 == Running test suite: ResourceQueryController

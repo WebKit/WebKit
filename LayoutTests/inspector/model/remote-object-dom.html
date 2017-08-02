@@ -28,7 +28,7 @@ function test()
         {expression: `document.querySelectorAll(".my-test")`}, // Non-Live NodeList
     ];
 
-    if (!window.WebInspector) {
+    if (!window.WI) {
         window.steps = steps;
         return;
     }

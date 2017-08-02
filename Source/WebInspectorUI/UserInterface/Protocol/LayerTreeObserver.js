@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayerTreeObserver = class LayerTreeObserver
+WI.LayerTreeObserver = class LayerTreeObserver
 {
     // Events defined by the "LayerTree" domain.
 
     layerTreeDidChange()
     {
-        if (WebInspector.layerTreeManager.supported)
-            WebInspector.layerTreeManager.layerTreeDidChange();
+        if (WI.layerTreeManager.supported)
+            WI.layerTreeManager.layerTreeDidChange();
     }
 };

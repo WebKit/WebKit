@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FormatterSourceMap = class FormatterSourceMap extends WebInspector.Object
+WI.FormatterSourceMap = class FormatterSourceMap extends WI.Object
 {
     constructor(originalLineEndings, formattedLineEndings, mapping)
     {
@@ -38,7 +38,7 @@ WebInspector.FormatterSourceMap = class FormatterSourceMap extends WebInspector.
 
     static fromSourceMapData({originalLineEndings, formattedLineEndings, mapping})
     {
-        return new WebInspector.FormatterSourceMap(originalLineEndings, formattedLineEndings, mapping);
+        return new WI.FormatterSourceMap(originalLineEndings, formattedLineEndings, mapping);
     }
 
     // Public

@@ -23,6 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DebuggerDashboard = class DebuggerDashboard
+WI.DebuggerDashboard = class DebuggerDashboard
 {
 };

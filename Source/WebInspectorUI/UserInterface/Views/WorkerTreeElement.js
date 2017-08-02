@@ -26,32 +26,32 @@
 // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
 // When we are guaranteed a Resource and not a Script we can extend ResourceTreeElement.
 
-WebInspector.WorkerTreeElement = class WorkerTreeElement extends WebInspector.ScriptTreeElement
+WI.WorkerTreeElement = class WorkerTreeElement extends WI.ScriptTreeElement
 {
     constructor(target)
     {
         super(target.mainResource);
 
-        console.assert(target instanceof WebInspector.Target);
-        console.assert(target.type === WebInspector.Target.Type.Worker);
-        console.assert(target.mainResource instanceof WebInspector.Script);
+        console.assert(target instanceof WI.Target);
+        console.assert(target.type === WI.Target.Type.Worker);
+        console.assert(target.mainResource instanceof WI.Script);
 
         this._target = target;
-        this._target.addEventListener(WebInspector.Target.Event.ResourceAdded, this._resourceAdded, this);
-        this._target.addEventListener(WebInspector.Target.Event.ScriptAdded, this._scriptAdded, this);
+        this._target.addEventListener(WI.Target.Event.ResourceAdded, this._resourceAdded, this);
+        this._target.addEventListener(WI.Target.Event.ScriptAdded, this._scriptAdded, this);
 
-        this._expandedSetting = new WebInspector.Setting("worker-expanded-" + this._target.name.hash, true);
+        this._expandedSetting = new WI.Setting("worker-expanded-" + this._target.name.hash, true);
 
         // Scripts are top level.
-        this.registerFolderizeSettings("scripts", null, this._target.resourceCollection.resourceCollectionForType(WebInspector.Resource.Type.Script), WebInspector.ResourceTreeElement);
-        this.registerFolderizeSettings("extra-scripts", null, this._target.extraScriptCollection, WebInspector.ScriptTreeElement);
+        this.registerFolderizeSettings("scripts", null, this._target.resourceCollection.resourceCollectionForType(WI.Resource.Type.Script), WI.ResourceTreeElement);
+        this.registerFolderizeSettings("extra-scripts", null, this._target.extraScriptCollection, WI.ScriptTreeElement);
 
         // All other resources may be folderized.
-        for (let [key, value] of Object.entries(WebInspector.Resource.Type)) {
-            if (value === WebInspector.Resource.Type.Script)
+        for (let [key, value] of Object.entries(WI.Resource.Type)) {
+            if (value === WI.Resource.Type.Script)
                 continue;
-            let folderName = WebInspector.Resource.displayNameForType(value, true);
-            this.registerFolderizeSettings(key, folderName, this._target.resourceCollection.resourceCollectionForType(value), WebInspector.ResourceTreeElement);
+            let folderName = WI.Resource.displayNameForType(value, true);
+            this.registerFolderizeSettings(key, folderName, this._target.resourceCollection.resourceCollectionForType(value), WI.ResourceTreeElement);
         }
 
         this.updateParentStatus();
@@ -103,7 +103,7 @@ WebInspector.WorkerTreeElement = class WorkerTreeElement extends WebInspector.Sc
     populateContextMenu(contextMenu, event)
     {
         // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
-        WebInspector.appendContextMenuItemsForSourceCode(contextMenu, this.script.resource ? this.script.resource : this.script);
+        WI.appendContextMenuItemsForSourceCode(contextMenu, this.script.resource ? this.script.resource : this.script);
 
         super.populateContextMenu(contextMenu, event);
     }
@@ -129,18 +129,18 @@ WebInspector.WorkerTreeElement = class WorkerTreeElement extends WebInspector.Sc
     {
         // Handle our own SourceMapResources. Skip immediate superclasses.
 
-        WebInspector.GeneralTreeElement.prototype.onattach.call(this);
+        WI.GeneralTreeElement.prototype.onattach.call(this);
     }
 
     // Overrides from FolderizedTreeElement
 
     compareChildTreeElements(a, b)
     {
-        let aIsResource = a instanceof WebInspector.ResourceTreeElement;
-        let bIsResource = b instanceof WebInspector.ResourceTreeElement;
+        let aIsResource = a instanceof WI.ResourceTreeElement;
+        let bIsResource = b instanceof WI.ResourceTreeElement;
 
         if (aIsResource && bIsResource)
-            return WebInspector.ResourceTreeElement.compareResourceTreeElements(a, b);
+            return WI.ResourceTreeElement.compareResourceTreeElements(a, b);
 
         if (!aIsResource && !bIsResource)
             return super.compareChildTreeElements(a, b);

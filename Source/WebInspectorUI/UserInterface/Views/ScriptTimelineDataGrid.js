@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineDataGrid = class ScriptTimelineDataGrid extends WebInspector.TimelineDataGrid
+WI.ScriptTimelineDataGrid = class ScriptTimelineDataGrid extends WI.TimelineDataGrid
 {
     // Protected
 

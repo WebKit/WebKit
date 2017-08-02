@@ -19,19 +19,19 @@ function test()
         description: "Check if a resource has timing information.",
         test(resolve, reject) {
             Promise.all([
-                WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded),
-                WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.ResponseReceived),
-                WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish)
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                WI.Resource.awaitEvent(WI.Resource.Event.LoadingDidFinish)
             ])
             .then(([resourceWasAddedEvent, responseReceivedEvent, loadingDidFinishEvent]) => {
                 let resource = resourceWasAddedEvent.data.resource;
 
-                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
                 InspectorTest.expectThat(resource === responseReceivedEvent.target, "Added Resource received a response.");
                 InspectorTest.expectThat(resource === loadingDidFinishEvent.target, "Added Resource did finish loading.");
 
                 let timingData = resource.timingData;
-                InspectorTest.expectThat(timingData instanceof WebInspector.ResourceTimingData, "Newly added resource should have a resource timing model.");
+                InspectorTest.expectThat(timingData instanceof WI.ResourceTimingData, "Newly added resource should have a resource timing model.");
                 InspectorTest.expectThat(timingData.startTime > 0, "Resource should have a start time.");
                 InspectorTest.expectThat(timingData.requestStart > 0, "Resource should have a request start time.");
                 InspectorTest.expectThat(timingData.responseStart > 0, "Resource should have a response start time.");

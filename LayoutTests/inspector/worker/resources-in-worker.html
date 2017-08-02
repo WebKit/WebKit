@@ -37,7 +37,7 @@ function triggerWorkerImportScript() {
 function test()
 {
     let workerTarget = null;
-    let mainTarget = WebInspector.mainTarget;
+    let mainTarget = WI.mainTarget;
 
     function sanitizeURL(url) {
         return url.replace(/^.*?LayoutTests\//, "");
@@ -59,10 +59,10 @@ function test()
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerWorkerStart()");
 
-            WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetAdded, (event) => {
+            WI.targetManager.singleFireEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
                 workerTarget = event.data.target;
-                InspectorTest.assert(workerTarget instanceof WebInspector.Target);
-                InspectorTest.expectEqual(workerTarget.type, WebInspector.Target.Type.Worker, "Added Target should have Worker type.");
+                InspectorTest.assert(workerTarget instanceof WI.Target);
+                InspectorTest.expectEqual(workerTarget.type, WI.Target.Type.Worker, "Added Target should have Worker type.");
             });
 
             InspectorTest.singleFireEventListener("WorkerIsReady", () => {
@@ -77,11 +77,11 @@ function test()
         test(resolve, reject) {
             InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 1, "Worker Target should have 1 resource.");
             InspectorTest.evaluateInPage("triggerWorkerResourceLoadXHR()");
-            workerTarget.awaitEvent(WebInspector.Target.Event.ResourceAdded)
+            workerTarget.awaitEvent(WI.Target.Event.ResourceAdded)
                 .then((event) => {
                     let resource = event.data.resource;
-                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Worker Target should dispatch ResourceAdded event.");
-                    InspectorTest.expectEqual(resource.type, WebInspector.Resource.Type.XHR, "Resource should be XHR.");
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Worker Target should dispatch ResourceAdded event.");
+                    InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR.");
                     InspectorTest.expectEqual(resource.target, workerTarget, "Resource should be tied to the Worker Target.");
                     InspectorTest.expectNull(resource.parentFrame, "Resource has no parent frame.");
                     InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 2, "Worker Target should have 2 resources.");
@@ -97,13 +97,13 @@ function test()
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerMainResourceLoadXHR()");
             InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 2, "Worker Target should still have 2 resources.");
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
                 .then((event) => {
                     let resource = event.data.resource;
-                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Frame should dispatch ResourceWasAdded event.");
-                    InspectorTest.expectEqual(resource.type, WebInspector.Resource.Type.XHR, "Resource should be XHR.");
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Frame should dispatch ResourceWasAdded event.");
+                    InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR.");
                     InspectorTest.expectEqual(resource.target, mainTarget, "Resource should be tied to the Main Target.");
-                    InspectorTest.expectEqual(resource.parentFrame, WebInspector.frameResourceManager.mainFrame, "Resource parentFrame is the main frame.");
+                    InspectorTest.expectEqual(resource.parentFrame, WI.frameResourceManager.mainFrame, "Resource parentFrame is the main frame.");
                     InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 2, "Worker Target should still have 2 resources.");
                     dumpWorkerResources();
                     resolve();
@@ -117,10 +117,10 @@ function test()
         test(resolve, reject) {
             InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 2, "Worker Target should have 2 resources.");
             InspectorTest.evaluateInPage("triggerWorkerResourceLoadFetch()");
-            workerTarget.awaitEvent(WebInspector.Target.Event.ResourceAdded)
+            workerTarget.awaitEvent(WI.Target.Event.ResourceAdded)
                 .then((event) => {
                     let resource = event.data.resource;
-                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Worker Target should dispatch ResourceAdded event.");
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Worker Target should dispatch ResourceAdded event.");
                     // FIXME: Add resource type for Fetch that is not XHR?
                     InspectorTest.expectEqual(resource.target, workerTarget, "Resource should be tied to the Worker Target.");
                     InspectorTest.expectNull(resource.parentFrame, "Resource has no parent frame.");
@@ -137,13 +137,13 @@ function test()
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerMainResourceLoadFetch()");
             InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 3, "Worker Target should still have 3 resources.");
-            WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+            WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
                 .then((event) => {
                     let resource = event.data.resource;
-                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Frame should dispatch ResourceWasAdded event.");
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Frame should dispatch ResourceWasAdded event.");
                     // FIXME: Add resource type for Fetch that is not XHR?
                     InspectorTest.expectEqual(resource.target, mainTarget, "Resource should be tied to the Main Target.");
-                    InspectorTest.expectEqual(resource.parentFrame, WebInspector.frameResourceManager.mainFrame, "Resource parentFrame is the main frame.");
+                    InspectorTest.expectEqual(resource.parentFrame, WI.frameResourceManager.mainFrame, "Resource parentFrame is the main frame.");
                     InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 3, "Worker Target should still have 3 resources.");
                     dumpWorkerResources();
                     resolve();
@@ -157,10 +157,10 @@ function test()
         test(resolve, reject) {
             InspectorTest.expectEqual(workerTarget.resourceCollection.items.size, 3, "Worker Target should still have 3 resources.");
             InspectorTest.evaluateInPage("triggerWorkerImportScript()");
-            workerTarget.awaitEvent(WebInspector.Target.Event.ResourceAdded)
+            workerTarget.awaitEvent(WI.Target.Event.ResourceAdded)
                 .then((event) => {
                     let resource = event.data.resource;
-                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Worker Target should dispatch ResourceAdded event.");
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Worker Target should dispatch ResourceAdded event.");
                     // FIXME: <https://webkit.org/b/164425> Worker Script Loads (new Worker(...), importScripts(...)) should be classified as Scripts not Raw requests
                     InspectorTest.expectEqual(resource.target, workerTarget, "Resource should be tied to the Worker Target.");
                     InspectorTest.expectNull(resource.parentFrame, "Resource has no parent frame.");

@@ -11,10 +11,10 @@ function test()
         return url.replace(/^.*?LayoutTests\//, "");
     }
 
-    let mainTarget = WebInspector.mainTarget;
-    let workerTarget = Array.from(WebInspector.targets).find((target) => target.type === WebInspector.Target.Type.Worker);
-    let mainDebuggerData = WebInspector.debuggerManager.dataForTarget(mainTarget);
-    let workerDebuggerData = WebInspector.debuggerManager.dataForTarget(workerTarget);
+    let mainTarget = WI.mainTarget;
+    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.Target.Type.Worker);
+    let mainDebuggerData = WI.debuggerManager.dataForTarget(mainTarget);
+    let workerDebuggerData = WI.debuggerManager.dataForTarget(workerTarget);
     if (!workerTarget) {
         InspectorTest.fail("Missing Worker Target");
         InspectorTest.completeTest();
@@ -28,7 +28,7 @@ function test()
         description: "Worker main resource should be a script tied to the Worker.",
         test(resolve, reject) {
             let script = workerTarget.mainResource;
-            InspectorTest.expectThat(script instanceof WebInspector.Script, "Worker target's main resource should be a Script.");
+            InspectorTest.expectThat(script instanceof WI.Script, "Worker target's main resource should be a Script.");
             InspectorTest.expectEqual(script.target, workerTarget, "Worker target's main resource should be owned by a Worker target.");
             InspectorTest.expectThat(workerDebuggerData.scripts.includes(script), "Worker DebuggerData should include script.");
             InspectorTest.expectThat(workerDebuggerData.scriptForIdentifier(script.id), "Worker DebuggerData should include script by identifier.");
@@ -47,7 +47,7 @@ function test()
         description: "Worker should be told of all scripts, like imported scripts.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage(`worker.postMessage("triggerImportScripts")`);
-            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
                 let script = event.data.script;
                 if (!/worker-import-1\.js$/.test(script.url))
                     return;
@@ -61,7 +61,7 @@ function test()
                 script.requestContent()
                     .then(({content}) => {
                         InspectorTest.expectThat(content.includes("workerImport1"), "Imported script content should have 'workerImport1'.");
-                        WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, listener);
+                        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, listener);
                         resolve();
                     }).catch(reject);
             });
@@ -73,7 +73,7 @@ function test()
         description: "Worker should be told of all scripts, like named evaluations.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage(`worker.postMessage("triggerEvalScript")`);
-            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
                 let script = event.data.script;
                 if (!/worker-eval\.js$/.test(script.sourceURL))
                     return;
@@ -86,7 +86,7 @@ function test()
                 script.requestContent()
                     .then(({content}) => {
                         InspectorTest.expectThat(content.includes("workerEval"), "Eval script content should have 'workerEval'.");
-                        WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, listener);
+                        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, listener);
                         resolve();
                     }).catch(reject);
             });

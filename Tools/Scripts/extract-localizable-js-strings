@@ -72,9 +72,9 @@ for my $file (sort @files) {
     while (<SOURCE>) {
         chomp;
 
-        # Handle WebInspector strings. Prints a warning if a non-string literal is passed to WebInspector.UIString().
-        HandleUIString($1, $1, "", $file, $.) while s/WebInspector\.UIString\("([^"]+)"\)//;
-        print "$file:$.:WARNING: $&\n" while s/WebInspector\.UIString\(.*?\)//;
+        # Handle WebInspector strings. Prints a warning if a non-string literal is passed to WI.UIString().
+        HandleUIString($1, $1, "", $file, $.) while s/WI\.UIString\("([^"]+)"\)//;
+        print "$file:$.:WARNING: $&\n" while s/WI\.UIString\(.*?\)//;
 
         # Handle strings for other projects that also use this script.
         HandleUIString($2, $2, "", $file, $.) while s/(\bclass="[^"]*l12n-tooltip[^"]*"[^>]*)title="([^"]+)"/$1/;

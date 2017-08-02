@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineDataGridNodePathComponent = class TimelineDataGridNodePathComponent extends WebInspector.HierarchicalPathComponent
+WI.TimelineDataGridNodePathComponent = class TimelineDataGridNodePathComponent extends WI.HierarchicalPathComponent
 {
     constructor(timelineDataGridNode, representedObject)
     {
@@ -48,7 +48,7 @@ WebInspector.TimelineDataGridNodePathComponent = class TimelineDataGridNodePathC
         if (!previousSibling)
             return null;
 
-        return new WebInspector.TimelineDataGridNodePathComponent(previousSibling);
+        return new WI.TimelineDataGridNodePathComponent(previousSibling);
     }
 
     get nextSibling()
@@ -60,6 +60,6 @@ WebInspector.TimelineDataGridNodePathComponent = class TimelineDataGridNodePathC
         if (!nextSibling)
             return null;
 
-        return new WebInspector.TimelineDataGridNodePathComponent(nextSibling);
+        return new WI.TimelineDataGridNodePathComponent(nextSibling);
     }
 };

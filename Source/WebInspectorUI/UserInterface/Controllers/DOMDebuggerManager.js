@@ -23,43 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.Object
+WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 {
     constructor()
     {
         super();
 
-        this._domBreakpointsSetting = new WebInspector.Setting("dom-breakpoints", []);
+        this._domBreakpointsSetting = new WI.Setting("dom-breakpoints", []);
         this._domBreakpointURLMap = new Map;
         this._domBreakpointFrameIdentifierMap = new Map;
 
-        this._xhrBreakpointsSetting = new WebInspector.Setting("xhr-breakpoints", []);
+        this._xhrBreakpointsSetting = new WI.Setting("xhr-breakpoints", []);
         this._xhrBreakpoints = [];
-        this._allRequestsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-requests", false);
+        this._allRequestsBreakpointEnabledSetting = new WI.Setting("break-on-all-requests", false);
 
-        this._allRequestsBreakpoint = new WebInspector.XHRBreakpoint(null, null, !this._allRequestsBreakpointEnabledSetting.value);
+        this._allRequestsBreakpoint = new WI.XHRBreakpoint(null, null, !this._allRequestsBreakpointEnabledSetting.value);
 
-        WebInspector.DOMBreakpoint.addEventListener(WebInspector.DOMBreakpoint.Event.DisabledStateDidChange, this._domBreakpointDisabledStateDidChange, this);
-        WebInspector.XHRBreakpoint.addEventListener(WebInspector.XHRBreakpoint.Event.DisabledStateDidChange, this._xhrBreakpointDisabledStateDidChange, this);
+        WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.DisabledStateDidChange, this._domBreakpointDisabledStateDidChange, this);
+        WI.XHRBreakpoint.addEventListener(WI.XHRBreakpoint.Event.DisabledStateDidChange, this._xhrBreakpointDisabledStateDidChange, this);
 
-        WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.NodeRemoved, this._nodeRemoved, this);
-        WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.NodeInserted, this._nodeInserted, this);
+        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeRemoved, this._nodeRemoved, this);
+        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeInserted, this._nodeInserted, this);
 
-        WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+        WI.frameResourceManager.addEventListener(WI.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         if (this.supported) {
             this._restoringBreakpoints = true;
 
             for (let cookie of this._domBreakpointsSetting.value) {
-                let breakpoint = new WebInspector.DOMBreakpoint(cookie, cookie.type, cookie.disabled);
+                let breakpoint = new WI.DOMBreakpoint(cookie, cookie.type, cookie.disabled);
                 this.addDOMBreakpoint(breakpoint);
             }
 
             for (let cookie of this._xhrBreakpointsSetting.value) {
-                let breakpoint = new WebInspector.XHRBreakpoint(cookie.type, cookie.url, cookie.disabled);
+                let breakpoint = new WI.XHRBreakpoint(cookie.type, cookie.url, cookie.disabled);
                 this.addXHRBreakpoint(breakpoint);
             }
 
@@ -82,7 +82,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
     get domBreakpoints()
     {
-        let mainFrame = WebInspector.frameResourceManager.mainFrame;
+        let mainFrame = WI.frameResourceManager.mainFrame;
         if (!mainFrame)
             return [];
 
@@ -111,7 +111,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
     domBreakpointsForNode(node)
     {
-        console.assert(node instanceof WebInspector.DOMNode);
+        console.assert(node instanceof WI.DOMNode);
 
         if (!node)
             return [];
@@ -126,7 +126,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
     addDOMBreakpoint(breakpoint)
     {
-        console.assert(breakpoint instanceof WebInspector.DOMBreakpoint);
+        console.assert(breakpoint instanceof WI.DOMBreakpoint);
         if (!breakpoint || !breakpoint.url)
             return;
 
@@ -140,14 +140,14 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         if (breakpoint.domNodeIdentifier)
             this._resolveDOMBreakpoint(breakpoint, breakpoint.domNodeIdentifier);
 
-        this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.DOMBreakpointAdded, {breakpoint});
+        this.dispatchEventToListeners(WI.DOMDebuggerManager.Event.DOMBreakpointAdded, {breakpoint});
 
         this._saveDOMBreakpoints();
     }
 
     removeDOMBreakpoint(breakpoint)
     {
-        console.assert(breakpoint instanceof WebInspector.DOMBreakpoint);
+        console.assert(breakpoint instanceof WI.DOMBreakpoint);
         if (!breakpoint)
             return;
 
@@ -167,7 +167,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         if (!urlBreakpoints.length)
             this._domBreakpointURLMap.delete(breakpoint.url);
 
-        this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.DOMBreakpointRemoved, {breakpoint});
+        this.dispatchEventToListeners(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, {breakpoint});
 
         breakpoint.domNodeIdentifier = null;
 
@@ -191,7 +191,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
     addXHRBreakpoint(breakpoint)
     {
-        console.assert(breakpoint instanceof WebInspector.XHRBreakpoint);
+        console.assert(breakpoint instanceof WI.XHRBreakpoint);
         if (!breakpoint)
             return;
 
@@ -204,7 +204,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
         this._xhrBreakpoints.push(breakpoint);
 
-        this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.XHRBreakpointAdded, {breakpoint});
+        this.dispatchEventToListeners(WI.DOMDebuggerManager.Event.XHRBreakpointAdded, {breakpoint});
 
         this._resolveXHRBreakpoint(breakpoint);
         this._saveXHRBreakpoints();
@@ -212,7 +212,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
     removeXHRBreakpoint(breakpoint)
     {
-        console.assert(breakpoint instanceof WebInspector.XHRBreakpoint);
+        console.assert(breakpoint instanceof WI.XHRBreakpoint);
         if (!breakpoint)
             return;
 
@@ -222,7 +222,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         this._xhrBreakpoints.remove(breakpoint, true);
 
         this._saveXHRBreakpoints();
-        this.dispatchEventToListeners(WebInspector.DOMDebuggerManager.Event.XHRBreakpointRemoved, {breakpoint});
+        this.dispatchEventToListeners(WI.DOMDebuggerManager.Event.XHRBreakpointRemoved, {breakpoint});
 
         if (breakpoint.disabled)
             return;
@@ -238,7 +238,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
     _detachDOMBreakpoint(breakpoint)
     {
         let nodeIdentifier = breakpoint.domNodeIdentifier;
-        let node = WebInspector.domTreeManager.nodeForId(nodeIdentifier);
+        let node = WI.domTreeManager.nodeForId(nodeIdentifier);
         console.assert(node, "Missing DOM node for breakpoint.", breakpoint);
         if (!node)
             return;
@@ -281,7 +281,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
     _speculativelyResolveBreakpoints()
     {
-        let mainFrame = WebInspector.frameResourceManager.mainFrame;
+        let mainFrame = WI.frameResourceManager.mainFrame;
         if (!mainFrame)
             return;
 
@@ -291,7 +291,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
                 if (breakpoint.domNodeIdentifier)
                     continue;
 
-                WebInspector.domTreeManager.pushNodeByPathToFrontend(breakpoint.path, (nodeIdentifier) => {
+                WI.domTreeManager.pushNodeByPathToFrontend(breakpoint.path, (nodeIdentifier) => {
                     if (!nodeIdentifier)
                         return;
 
@@ -306,7 +306,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
 
     _resolveDOMBreakpoint(breakpoint, nodeIdentifier)
     {
-        let node = WebInspector.domTreeManager.nodeForId(nodeIdentifier);
+        let node = WI.domTreeManager.nodeForId(nodeIdentifier);
         console.assert(node, "Missing DOM node for nodeIdentifier.", nodeIdentifier);
         if (!node)
             return;
@@ -361,7 +361,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
         if (breakpoint.disabled)
             DOMDebuggerAgent.removeXHRBreakpoint(breakpoint.url, breakpointUpdated);
         else {
-            let isRegex = breakpoint.type === WebInspector.XHRBreakpoint.Type.RegularExpression;
+            let isRegex = breakpoint.type === WI.XHRBreakpoint.Type.RegularExpression;
             DOMDebuggerAgent.setXHRBreakpoint(breakpoint.url, isRegex, breakpointUpdated);
         }
     }
@@ -372,7 +372,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
             return;
 
         this._updateXHRBreakpoint(breakpoint, () => {
-            breakpoint.dispatchEventToListeners(WebInspector.XHRBreakpoint.Event.ResolvedStateDidChange);
+            breakpoint.dispatchEventToListeners(WI.XHRBreakpoint.Event.ResolvedStateDidChange);
         });
     }
 
@@ -485,7 +485,7 @@ WebInspector.DOMDebuggerManager = class DOMDebuggerManager extends WebInspector.
     }
 };
 
-WebInspector.DOMDebuggerManager.Event = {
+WI.DOMDebuggerManager.Event = {
     DOMBreakpointAdded: "dom-debugger-manager-dom-breakpoint-added",
     DOMBreakpointRemoved: "dom-debugger-manager-dom-breakpoint-removed",
     XHRBreakpointAdded: "dom-debugger-manager-xhr-breakpoint-added",

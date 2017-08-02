@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.EventListener = class EventListener
+WI.EventListener = class EventListener
 {
     constructor(thisObject, fireOnce)
     {
@@ -41,8 +41,8 @@ WebInspector.EventListener = class EventListener
         console.assert(!this._emitter && !this._callback, "EventListener already bound to a callback.", this);
         console.assert(callback, "Missing callback for event: " + type);
         console.assert(emitter, "Missing event emitter for event: " + type);
-        var emitterIsValid = emitter && (emitter instanceof WebInspector.Object || emitter instanceof Node || (typeof emitter.addEventListener === "function"));
-        console.assert(emitterIsValid, "Event emitter ", emitter, " (type:" + type + ") is null or does not implement Node or WebInspector.Object!");
+        var emitterIsValid = emitter && (emitter instanceof WI.Object || emitter instanceof Node || (typeof emitter.addEventListener === "function"));
+        console.assert(emitterIsValid, "Event emitter ", emitter, " (type:" + type + ") is null or does not implement Node or WI.Object!");
 
         if (!emitterIsValid || !type || !callback)
             return;

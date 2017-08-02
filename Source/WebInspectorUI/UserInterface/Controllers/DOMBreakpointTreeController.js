@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMBreakpointTreeController = class DOMBreakpointsTreeController extends WebInspector.Object
+WI.DOMBreakpointTreeController = class DOMBreakpointsTreeController extends WI.Object
 {
     constructor(treeOutline)
     {
@@ -33,34 +33,34 @@ WebInspector.DOMBreakpointTreeController = class DOMBreakpointsTreeController ex
         this._breakpointTreeElements = new Map;
         this._domNodeTreeElements = new Map;
 
-        WebInspector.DOMBreakpoint.addEventListener(WebInspector.DOMBreakpoint.Event.ResolvedStateDidChange, this._domBreakpointResolvedStateDidChange, this);
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.ResolvedStateDidChange, this._domBreakpointResolvedStateDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
-        WebInspector.domDebuggerManager.addEventListener(WebInspector.DOMDebuggerManager.Event.DOMBreakpointAdded, this._domBreakpointAdded, this);
-        WebInspector.domDebuggerManager.addEventListener(WebInspector.DOMDebuggerManager.Event.DOMBreakpointRemoved, this._domBreakpointRemoved, this);
+        WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointAdded, this._domBreakpointAdded, this);
+        WI.domDebuggerManager.addEventListener(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved, this._domBreakpointRemoved, this);
     }
 
     // Static
 
     static appendBreakpointContextMenuItems(contextMenu, domNode, allowEditing)
     {
-        console.assert(WebInspector.domDebuggerManager.supported);
+        console.assert(WI.domDebuggerManager.supported);
 
-        let subMenu = contextMenu.appendSubMenuItem(WebInspector.UIString("Break on…"));
+        let subMenu = contextMenu.appendSubMenuItem(WI.UIString("Break on…"));
 
-        let breakpoints = WebInspector.domDebuggerManager.domBreakpointsForNode(domNode);
+        let breakpoints = WI.domDebuggerManager.domBreakpointsForNode(domNode);
         let keyValuePairs = breakpoints.map((breakpoint) => [breakpoint.type, breakpoint]);
         let breakpointsByType = new Map(keyValuePairs);
 
-        for (let type of Object.values(WebInspector.DOMBreakpoint.Type)) {
-            let label = WebInspector.DOMBreakpointTreeElement.displayNameForType(type);
+        for (let type of Object.values(WI.DOMBreakpoint.Type)) {
+            let label = WI.DOMBreakpointTreeElement.displayNameForType(type);
             let breakpoint = breakpointsByType.get(type);
 
             subMenu.appendCheckboxItem(label, function() {
                 if (breakpoint)
-                    WebInspector.domDebuggerManager.removeDOMBreakpoint(breakpoint);
+                    WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
                 else
-                    WebInspector.domDebuggerManager.addDOMBreakpoint(new WebInspector.DOMBreakpoint(domNode, type));
+                    WI.domDebuggerManager.addDOMBreakpoint(new WI.DOMBreakpoint(domNode, type));
             }, !!breakpoint, false);
         }
 
@@ -68,13 +68,13 @@ WebInspector.DOMBreakpointTreeController = class DOMBreakpointsTreeController ex
             contextMenu.appendSeparator();
 
             let shouldEnable = breakpoints.some((breakpoint) => breakpoint.disabled);
-            let label = shouldEnable ? WebInspector.UIString("Enable Breakpoints") : WebInspector.UIString("Disable Breakpoints");
+            let label = shouldEnable ? WI.UIString("Enable Breakpoints") : WI.UIString("Disable Breakpoints");
             contextMenu.appendItem(label, () => {
                 breakpoints.forEach((breakpoint) => breakpoint.disabled = !shouldEnable);
             });
 
-            contextMenu.appendItem(WebInspector.UIString("Delete Breakpoints"), function() {
-                WebInspector.domDebuggerManager.removeDOMBreakpointsForNode(domNode);
+            contextMenu.appendItem(WI.UIString("Delete Breakpoints"), function() {
+                WI.domDebuggerManager.removeDOMBreakpointsForNode(domNode);
             });
         }
     }
@@ -83,9 +83,9 @@ WebInspector.DOMBreakpointTreeController = class DOMBreakpointsTreeController ex
 
     disconnect()
     {
-        WebInspector.DOMBreakpoint.removeEventListener(null, null, this);
-        WebInspector.Frame.removeEventListener(null, null, this);
-        WebInspector.domDebuggerManager.removeEventListener(null, null, this);
+        WI.DOMBreakpoint.removeEventListener(null, null, this);
+        WI.Frame.removeEventListener(null, null, this);
+        WI.domDebuggerManager.removeEventListener(null, null, this);
     }
 
     // Private
@@ -97,17 +97,17 @@ WebInspector.DOMBreakpointTreeController = class DOMBreakpointsTreeController ex
         let shouldExpandParent = false;
 
         if (!parentTreeElement) {
-            let domNode = WebInspector.domTreeManager.nodeForId(nodeIdentifier);
+            let domNode = WI.domTreeManager.nodeForId(nodeIdentifier);
             console.assert(domNode, "Missing DOMNode for identifier", nodeIdentifier);
 
-            parentTreeElement = new WebInspector.DOMNodeTreeElement(domNode);
+            parentTreeElement = new WI.DOMNodeTreeElement(domNode);
             this._treeOutline.appendChild(parentTreeElement);
             this._domNodeTreeElements.set(nodeIdentifier, parentTreeElement);
 
             shouldExpandParent = true;
         }
 
-        let treeElement = new WebInspector.DOMBreakpointTreeElement(breakpoint);
+        let treeElement = new WI.DOMBreakpointTreeElement(breakpoint);
         parentTreeElement.appendChild(treeElement);
 
         if (shouldExpandParent)

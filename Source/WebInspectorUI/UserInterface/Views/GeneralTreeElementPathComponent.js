@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.GeneralTreeElementPathComponent = class GeneralTreeElementPathComponent extends WebInspector.HierarchicalPathComponent
+WI.GeneralTreeElementPathComponent = class GeneralTreeElementPathComponent extends WI.HierarchicalPathComponent
 {
     constructor(generalTreeElement, representedObject)
     {
         super(generalTreeElement.mainTitle, generalTreeElement.classNames, representedObject || generalTreeElement.representedObject);
 
         this._generalTreeElement = generalTreeElement;
-        generalTreeElement.addEventListener(WebInspector.GeneralTreeElement.Event.MainTitleDidChange, this._mainTitleDidChange, this);
+        generalTreeElement.addEventListener(WI.GeneralTreeElement.Event.MainTitleDidChange, this._mainTitleDidChange, this);
     }
 
     // Public
@@ -49,7 +49,7 @@ WebInspector.GeneralTreeElementPathComponent = class GeneralTreeElementPathCompo
         if (!previousSibling)
             return null;
 
-        return new WebInspector.GeneralTreeElementPathComponent(previousSibling);
+        return new WI.GeneralTreeElementPathComponent(previousSibling);
     }
 
     get nextSibling()
@@ -61,7 +61,7 @@ WebInspector.GeneralTreeElementPathComponent = class GeneralTreeElementPathCompo
         if (!nextSibling)
             return null;
 
-        return new WebInspector.GeneralTreeElementPathComponent(nextSibling);
+        return new WI.GeneralTreeElementPathComponent(nextSibling);
     }
 
     // Private

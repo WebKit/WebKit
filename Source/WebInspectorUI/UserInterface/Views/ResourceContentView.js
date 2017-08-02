@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceContentView = class ResourceContentView extends WebInspector.ContentView
+WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 {
     constructor(resource, styleClassName)
     {
-        console.assert(resource instanceof WebInspector.Resource || resource instanceof WebInspector.CSSStyleSheet, resource);
+        console.assert(resource instanceof WI.Resource || resource instanceof WI.CSSStyleSheet, resource);
         console.assert(typeof styleClassName === "string");
 
         super(resource);
@@ -39,7 +39,7 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
         this._spinnerTimeout = setTimeout(() => {
             // Append a spinner while waiting for contentAvailable. Subclasses are responsible for
             // removing the spinner before showing the resource content by calling removeLoadingIndicator.
-            let spinner = new WebInspector.IndeterminateProgressSpinner;
+            let spinner = new WI.IndeterminateProgressSpinner;
             this.element.appendChild(spinner.element);
 
             this._spinnerTimeout = undefined;
@@ -51,9 +51,9 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
         resource.requestContent().then(this._contentAvailable.bind(this)).catch(this.showGenericErrorMessage.bind(this));
 
         if (!this.managesOwnIssues) {
-            WebInspector.issueManager.addEventListener(WebInspector.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
+            WI.issueManager.addEventListener(WI.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
 
-            var issues = WebInspector.issueManager.issuesForSourceCode(resource);
+            var issues = WI.issueManager.issuesForSourceCode(resource);
             for (var i = 0; i < issues.length; ++i)
                 this.addIssue(issues[i]);
         }
@@ -83,14 +83,14 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
 
     showGenericErrorMessage()
     {
-        this._contentError(WebInspector.UIString("An error occurred trying to load the resource."));
+        this._contentError(WI.UIString("An error occurred trying to load the resource."));
     }
 
     addIssue(issue)
     {
         // This generically shows only the last issue, subclasses can override for better handling.
         this.element.removeChildren();
-        this.element.appendChild(WebInspector.createMessageTextView(issue.text, issue.level === WebInspector.IssueMessage.Level.Error));
+        this.element.appendChild(WI.createMessageTextView(issue.text, issue.level === WI.IssueMessage.Level.Error));
     }
 
     closed()
@@ -98,7 +98,7 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
         super.closed();
 
         if (!this.managesOwnIssues)
-            WebInspector.issueManager.removeEventListener(null, null, this);
+            WI.issueManager.removeEventListener(null, null, this);
     }
 
     // Protected
@@ -135,9 +135,9 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
 
         this.removeLoadingIndicator();
 
-        this.element.appendChild(WebInspector.createMessageTextView(error, true));
+        this.element.appendChild(WI.createMessageTextView(error, true));
 
-        this.dispatchEventToListeners(WebInspector.ResourceContentView.Event.ContentError);
+        this.dispatchEventToListeners(WI.ResourceContentView.Event.ContentError);
     }
 
     _hasContent()
@@ -150,7 +150,7 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
         console.assert(!this.managesOwnIssues);
 
         var issue = event.data.issue;
-        if (!WebInspector.IssueManager.issueMatchSourceCode(issue, this.resource))
+        if (!WI.IssueManager.issueMatchSourceCode(issue, this.resource))
             return;
 
         this.addIssue(issue);
@@ -158,10 +158,10 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
 
     _mouseWasClicked(event)
     {
-        WebInspector.handlePossibleLinkClick(event, this.resource.parentFrame);
+        WI.handlePossibleLinkClick(event, this.resource.parentFrame);
     }
 };
 
-WebInspector.ResourceContentView.Event = {
+WI.ResourceContentView.Event = {
     ContentError: "resource-content-view-content-error",
 };

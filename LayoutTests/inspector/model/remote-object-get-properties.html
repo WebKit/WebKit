@@ -79,8 +79,8 @@ function test()
         InspectorTest.log("-----------------------------------------------------");
         InspectorTest.log("EXPRESSION: " + step.expression);
 
-        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, function(remoteObject, wasThrown) {
-            InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
+        WI.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, function(remoteObject, wasThrown) {
+            InspectorTest.assert(remoteObject instanceof WI.RemoteObject);
             InspectorTest.log("type: " + remoteObject.type);
             if (remoteObject.subtype)
                 InspectorTest.log("subtype: " + remoteObject.subtype);
@@ -88,7 +88,7 @@ function test()
             remoteObject.getOwnPropertyDescriptors(function(properties) {
                 InspectorTest.log("\nOWN PROPERTIES:");
                 for (var property of properties) {
-                    InspectorTest.assert(property instanceof WebInspector.PropertyDescriptor);
+                    InspectorTest.assert(property instanceof WI.PropertyDescriptor);
                     InspectorTest.log("    " + property.name);
                 }
             });
@@ -96,7 +96,7 @@ function test()
             remoteObject.getDisplayablePropertyDescriptors(function(properties) {
                 InspectorTest.log("\nDISPLAYABLE PROPERTIES:");
                 for (var property of properties) {
-                    InspectorTest.assert(property instanceof WebInspector.PropertyDescriptor);
+                    InspectorTest.assert(property instanceof WI.PropertyDescriptor);
                     InspectorTest.log("    " + property.name);
                 }
             });
@@ -104,7 +104,7 @@ function test()
             remoteObject.getAllPropertyDescriptors(function(properties) {
                 InspectorTest.log("\nALL PROPERTIES:");
                 for (var property of properties) {
-                    InspectorTest.assert(property instanceof WebInspector.PropertyDescriptor);
+                    InspectorTest.assert(property instanceof WI.PropertyDescriptor);
                     InspectorTest.log("    " + property.name);
                 }
 

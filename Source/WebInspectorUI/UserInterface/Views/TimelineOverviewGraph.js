@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInspector.View
+WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
 {
     constructor(timelineOverview)
     {
@@ -47,27 +47,27 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
 
     static createForTimeline(timeline, timelineOverview)
     {
-        console.assert(timeline instanceof WebInspector.Timeline, timeline);
-        console.assert(timelineOverview instanceof WebInspector.TimelineOverview, timelineOverview);
+        console.assert(timeline instanceof WI.Timeline, timeline);
+        console.assert(timelineOverview instanceof WI.TimelineOverview, timelineOverview);
 
         var timelineType = timeline.type;
-        if (timelineType === WebInspector.TimelineRecord.Type.Network)
-            return new WebInspector.NetworkTimelineOverviewGraph(timeline, timelineOverview);
+        if (timelineType === WI.TimelineRecord.Type.Network)
+            return new WI.NetworkTimelineOverviewGraph(timeline, timelineOverview);
 
-        if (timelineType === WebInspector.TimelineRecord.Type.Layout)
-            return new WebInspector.LayoutTimelineOverviewGraph(timeline, timelineOverview);
+        if (timelineType === WI.TimelineRecord.Type.Layout)
+            return new WI.LayoutTimelineOverviewGraph(timeline, timelineOverview);
 
-        if (timelineType === WebInspector.TimelineRecord.Type.Script)
-            return new WebInspector.ScriptTimelineOverviewGraph(timeline, timelineOverview);
+        if (timelineType === WI.TimelineRecord.Type.Script)
+            return new WI.ScriptTimelineOverviewGraph(timeline, timelineOverview);
 
-        if (timelineType === WebInspector.TimelineRecord.Type.RenderingFrame)
-            return new WebInspector.RenderingFrameTimelineOverviewGraph(timeline, timelineOverview);
+        if (timelineType === WI.TimelineRecord.Type.RenderingFrame)
+            return new WI.RenderingFrameTimelineOverviewGraph(timeline, timelineOverview);
 
-        if (timelineType === WebInspector.TimelineRecord.Type.Memory)
-            return new WebInspector.MemoryTimelineOverviewGraph(timeline, timelineOverview);
+        if (timelineType === WI.TimelineRecord.Type.Memory)
+            return new WI.MemoryTimelineOverviewGraph(timeline, timelineOverview);
 
-        if (timelineType === WebInspector.TimelineRecord.Type.HeapAllocations)
-            return new WebInspector.HeapAllocationsTimelineOverviewGraph(timeline, timelineOverview);
+        if (timelineType === WI.TimelineRecord.Type.HeapAllocations)
+            return new WI.HeapAllocationsTimelineOverviewGraph(timeline, timelineOverview);
 
         throw new Error("Can't make a graph for an unknown timeline.");
     }
@@ -248,11 +248,11 @@ WebInspector.TimelineOverviewGraph = class TimelineOverviewGraph extends WebInsp
             this._scheduledSelectedRecordLayoutUpdateIdentifier = undefined;
 
             this.updateSelectedRecord();
-            this.dispatchEventToListeners(WebInspector.TimelineOverviewGraph.Event.RecordSelected, {record: this.selectedRecord});
+            this.dispatchEventToListeners(WI.TimelineOverviewGraph.Event.RecordSelected, {record: this.selectedRecord});
         });
     }
 };
 
-WebInspector.TimelineOverviewGraph.Event = {
+WI.TimelineOverviewGraph.Event = {
     RecordSelected: "timeline-overview-graph-record-selected"
 };

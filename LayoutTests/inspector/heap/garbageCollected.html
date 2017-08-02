@@ -41,13 +41,13 @@ function test()
 
             let seenFull = false;
             let seenPartial = false;
-            WebInspector.heapManager.addEventListener(WebInspector.HeapManager.Event.GarbageCollected, (event) => {
+            WI.heapManager.addEventListener(WI.HeapManager.Event.GarbageCollected, (event) => {
                 if (seenFull && seenPartial)
                     return;
 
-                if (event.data.collection.type === WebInspector.GarbageCollection.Type.Full)
+                if (event.data.collection.type === WI.GarbageCollection.Type.Full)
                     seenFull = true;
-                else if (event.data.collection.type === WebInspector.GarbageCollection.Type.Partial)
+                else if (event.data.collection.type === WI.GarbageCollection.Type.Partial)
                     seenPartial = true;
 
                 if (seenFull && seenPartial) {

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleKeywordPicker = class VisualStyleKeywordPicker extends WebInspector.VisualStylePropertyEditor
+WI.VisualStyleKeywordPicker = class VisualStyleKeywordPicker extends WI.VisualStylePropertyEditor
 {
     constructor(propertyNames, text, possibleValues, layoutReversed)
     {
@@ -32,11 +32,11 @@ WebInspector.VisualStyleKeywordPicker = class VisualStyleKeywordPicker extends W
         this._keywordSelectElement = document.createElement("select");
         this._keywordSelectElement.classList.add("keyword-picker-select");
         if (this._possibleValues.advanced)
-            this._keywordSelectElement.title = WebInspector.UIString("Option-click to show all values");
+            this._keywordSelectElement.title = WI.UIString("Option-click to show all values");
 
         this._unchangedOptionElement = document.createElement("option");
         this._unchangedOptionElement.value = "";
-        this._unchangedOptionElement.text = WebInspector.UIString("Unchanged");
+        this._unchangedOptionElement.text = WI.UIString("Unchanged");
         this._keywordSelectElement.appendChild(this._unchangedOptionElement);
 
         this._keywordSelectElement.appendChild(document.createElement("hr"));

@@ -45,8 +45,8 @@ function test()
     }
 
     function areAllTargetsPaused() {
-        for (let target of WebInspector.targets) {
-            let targetData = WebInspector.debuggerManager.dataForTarget(target);
+        for (let target of WI.targets) {
+            let targetData = WI.debuggerManager.dataForTarget(target);
             if (!targetData.paused)
                 return false;
         }
@@ -56,9 +56,9 @@ function test()
     function whenAllTargetsPaused() {
         InspectorTest.assert(!areAllTargetsPaused());
         return new Promise((resolve, reject) => {
-            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
                 if (areAllTargetsPaused()) {
-                    WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, listener);
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
                     resolve();
                 }
             });
@@ -72,9 +72,9 @@ function test()
         description: "Create multiple workers.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage(`triggerCreateWorkers(); triggerWorkerResponse();`);
-            WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetAdded, (event) => {
+            WI.targetManager.singleFireEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
                 workerTarget1 = event.data.target;
-                WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetAdded, (event) => {
+                WI.targetManager.singleFireEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
                     workerTarget2 = event.data.target;
                     InspectorTest.pass("Two Workers created.");
                 });
@@ -92,24 +92,24 @@ function test()
         name: "Worker.Debugger.SharedBreakpoint.BreakpointAdded",
         description: "All workers should pause on the breakpoint after adding it.",
         test(resolve, reject) {
-            InspectorTest.assert(workerTarget1.mainResource instanceof WebInspector.Script);
+            InspectorTest.assert(workerTarget1.mainResource instanceof WI.Script);
             let location = workerTarget1.mainResource.createSourceCodeLocation(8, 0);
-            breakpoint = new WebInspector.Breakpoint(location);
-            WebInspector.debuggerManager.addBreakpoint(breakpoint);
+            breakpoint = new WI.Breakpoint(location);
+            WI.debuggerManager.addBreakpoint(breakpoint);
 
             InspectorTest.evaluateInPage(`triggerWorkerBreakpointPauses()`);
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 pauseTheMainThread();
                 whenAllTargetsPaused().then(() => {
-                    let target = WebInspector.debuggerManager.activeCallFrame.target;
-                    let targetData = WebInspector.debuggerManager.dataForTarget(target);
+                    let target = WI.debuggerManager.activeCallFrame.target;
+                    let targetData = WI.debuggerManager.dataForTarget(target);
 
                     InspectorTest.pass("All Targets paused.");
-                    InspectorTest.expectEqual(target.type, WebInspector.Target.Type.Worker, "Active CalleFrame should be in a Worker.");
-                    InspectorTest.expectEqual(targetData.pauseReason, WebInspector.DebuggerManager.PauseReason.Breakpoint, "Pause reason should be a breakpoint.");
+                    InspectorTest.expectEqual(target.type, WI.Target.Type.Worker, "Active CalleFrame should be in a Worker.");
+                    InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.Breakpoint, "Pause reason should be a breakpoint.");
                     window.loadLinesFromSourceCode(target.mainResource).then(() => {
                         logPauseLocation();
-                        WebInspector.debuggerManager.resume().then(resolve, reject);
+                        WI.debuggerManager.resume().then(resolve, reject);
                     });
                 });
             });
@@ -120,7 +120,7 @@ function test()
         name: "Worker.Debugger.SharedBreakpoint.BreakpointRemoved",
         description: "No worker should pause on the breakpoint after removing it.",
         test(resolve, reject) {
-            WebInspector.debuggerManager.removeBreakpoint(breakpoint);
+            WI.debuggerManager.removeBreakpoint(breakpoint);
 
             InspectorTest.evaluateInPage(`triggerWorkerBreakpointPauses()`);
             InspectorTest.evaluateInPage(`triggerWorkerResponse()`);

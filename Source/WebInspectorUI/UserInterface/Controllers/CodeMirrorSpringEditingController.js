@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CodeMirrorSpringEditingController = class CodeMirrorSpringEditingController extends WebInspector.CodeMirrorEditingController
+WI.CodeMirrorSpringEditingController = class CodeMirrorSpringEditingController extends WI.CodeMirrorEditingController
 {
     // Public
 
     get initialValue()
     {
-        return WebInspector.Spring.fromString(this.text);
+        return WI.Spring.fromString(this.text);
     }
 
     get cssClassName()
@@ -39,8 +39,8 @@ WebInspector.CodeMirrorSpringEditingController = class CodeMirrorSpringEditingCo
 
     popoverWillPresent(popover)
     {
-        this._springEditor = new WebInspector.SpringEditor;
-        this._springEditor.addEventListener(WebInspector.SpringEditor.Event.SpringChanged, this._springEditorSpringChanged, this);
+        this._springEditor = new WI.SpringEditor;
+        this._springEditor.addEventListener(WI.SpringEditor.Event.SpringChanged, this._springEditorSpringChanged, this);
         popover.content = this._springEditor.element;
     }
 

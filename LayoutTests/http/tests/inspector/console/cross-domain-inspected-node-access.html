@@ -7,7 +7,7 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("CommandLineAPI.$0.cross-frame");
 
-    let mainFrame = WebInspector.frameResourceManager.mainFrame;
+    let mainFrame = WI.frameResourceManager.mainFrame;
     let childFrames = mainFrame.childFrameCollection.toArray();
     InspectorTest.expectEqual(childFrames.length, 1, "Page should have a subframe.");
 
@@ -23,7 +23,7 @@ function test()
             RuntimeAgent.evaluate.invoke({expression: "$0", includeCommandLineAPI: true}, (error, remoteObjectPayload, wasThrown) => {    
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.assert(!wasThrown, "Should not be an exception.");
-                let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
+                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
                 InspectorTest.expectThat(remoteObject.value === null, "MainFrame access to $0 node in subframe should be null.");
                 resolve();
             });
@@ -39,7 +39,7 @@ function test()
             RuntimeAgent.evaluate.invoke({expression: "$0", includeCommandLineAPI: true}, (error, remoteObjectPayload, wasThrown) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.assert(!wasThrown, "Should not be an exception.");
-                let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
+                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
                 InspectorTest.expectThat(remoteObject.isNode(), "MainFrame access to $0 node in main frame should be a node.");
                 resolve();
             });
@@ -55,7 +55,7 @@ function test()
             RuntimeAgent.evaluate.invoke({expression: "$0", includeCommandLineAPI: true, contextId: childFrames[0].pageExecutionContext.id}, (error, remoteObjectPayload, wasThrown) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.assert(!wasThrown, "Should not be an exception.");
-                let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
+                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
                 InspectorTest.expectThat(remoteObject.value === null, "SubFrame access to $0 node in main frame should be null.");
                 resolve();
             });
@@ -71,18 +71,18 @@ function test()
             RuntimeAgent.evaluate.invoke({expression: "$0", includeCommandLineAPI: true, contextId: childFrames[0].pageExecutionContext.id}, (error, remoteObjectPayload, wasThrown) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.assert(!wasThrown, "Should not be an exception.");
-                let remoteObject = WebInspector.RemoteObject.fromPayload(remoteObjectPayload);
+                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
                 InspectorTest.expectThat(remoteObject.isNode(), "SubFrame access to $0 node in sub frame should be a node.");
                 resolve();
             });
         }
     });
 
-    WebInspector.domTreeManager.requestDocument((documentNode) => {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "iframe#myframe", (nodeId) => {
-            let iframeNode = WebInspector.domTreeManager.nodeForId(nodeId);
+    WI.domTreeManager.requestDocument((documentNode) => {
+        WI.domTreeManager.querySelector(documentNode.id, "iframe#myframe", (nodeId) => {
+            let iframeNode = WI.domTreeManager.nodeForId(nodeId);
             let iframeDocumentNodeId = iframeNode.children[0].id;
-            WebInspector.domTreeManager.querySelector(iframeDocumentNodeId, "div#rootDiv", (nodeId) => {
+            WI.domTreeManager.querySelector(iframeDocumentNodeId, "div#rootDiv", (nodeId) => {
                 nodeInMainFrameId = iframeNode.id;
                 nodeInSubFrameId = nodeId;
                 suite.runTestCasesAndFinish();

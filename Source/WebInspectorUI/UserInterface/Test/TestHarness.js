@@ -23,7 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-TestHarness = class TestHarness extends WebInspector.Object
+TestHarness = class TestHarness extends WI.Object
 {
     constructor()
     {

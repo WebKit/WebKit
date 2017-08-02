@@ -68,7 +68,7 @@ function test()
                         reject();
                 }
 
-                WebInspector.runtimeManager.evaluateInInspectedWindow(`String(${input})`, {objectGroup: "test", includeCommandLineAPI: true}, callback);
+                WI.runtimeManager.evaluateInInspectedWindow(`String(${input})`, {objectGroup: "test", includeCommandLineAPI: true}, callback);
             }
         })
     }
@@ -80,9 +80,9 @@ function test()
 
     function listenForConsoleWarning(resolve, reject) {
         // Detect console warning for $('foo').
-        WebInspector.logManager.singleFireEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+        WI.logManager.singleFireEventListener(WI.LogManager.Event.MessageAdded, (event) => {
             let message = event.data.message;
-            InspectorTest.assert(message instanceof WebInspector.ConsoleMessage);
+            InspectorTest.assert(message instanceof WI.ConsoleMessage);
             InspectorTest.log(`CONSOLE: ${message.messageText}`);
         });
 
@@ -90,14 +90,14 @@ function test()
     }
 
     function selectElementForDollarZero(resolve, reject) {
-        WebInspector.domTreeManager.requestDocument((documentNode) => {
+        WI.domTreeManager.requestDocument((documentNode) => {
             if (!documentNode) {
                 InspectorTest.log("FAIL: DOM node not found.");
                 return reject();
             }
 
             // Select div#foo for $0.
-            WebInspector.domTreeManager.querySelector(documentNode.id, "#foo", (contentNodeId) => {
+            WI.domTreeManager.querySelector(documentNode.id, "#foo", (contentNodeId) => {
                 if (!contentNodeId) {
                     InspectorTest.log("FAIL: DOM node not found.");
                     return reject();

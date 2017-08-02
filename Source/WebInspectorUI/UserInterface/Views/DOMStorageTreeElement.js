@@ -23,34 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMStorageTreeElement = class DOMStorageTreeElement extends WebInspector.StorageTreeElement
+WI.DOMStorageTreeElement = class DOMStorageTreeElement extends WI.StorageTreeElement
 {
     constructor(representedObject)
     {
-        console.assert(representedObject instanceof WebInspector.DOMStorageObject);
+        console.assert(representedObject instanceof WI.DOMStorageObject);
 
         if (representedObject.isLocalStorage())
-            var className = WebInspector.DOMStorageTreeElement.LocalStorageIconStyleClassName;
+            var className = WI.DOMStorageTreeElement.LocalStorageIconStyleClassName;
         else
-            var className = WebInspector.DOMStorageTreeElement.SessionStorageIconStyleClassName;
+            var className = WI.DOMStorageTreeElement.SessionStorageIconStyleClassName;
 
-        super(className, WebInspector.displayNameForHost(representedObject.host), representedObject);
+        super(className, WI.displayNameForHost(representedObject.host), representedObject);
     }
 
     // Public
 
     get name()
     {
-        return WebInspector.displayNameForHost(this.representedObject.host);
+        return WI.displayNameForHost(this.representedObject.host);
     }
 
     get categoryName()
     {
         if (this.representedObject.isLocalStorage())
-            return WebInspector.UIString("Local Storage");
-        return WebInspector.UIString("Session Storage");
+            return WI.UIString("Local Storage");
+        return WI.UIString("Session Storage");
     }
 };
 
-WebInspector.DOMStorageTreeElement.LocalStorageIconStyleClassName = "local-storage-icon";
-WebInspector.DOMStorageTreeElement.SessionStorageIconStyleClassName = "session-storage-icon";
+WI.DOMStorageTreeElement.LocalStorageIconStyleClassName = "local-storage-icon";
+WI.DOMStorageTreeElement.SessionStorageIconStyleClassName = "session-storage-icon";

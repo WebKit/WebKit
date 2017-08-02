@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WebInspector.TimelineOverviewGraph
+WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.TimelineOverviewGraph
 {
     constructor(timeline, timelineOverview)
     {
@@ -31,16 +31,16 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
 
         this.element.classList.add("memory");
 
-        console.assert(timeline instanceof WebInspector.MemoryTimeline);
+        console.assert(timeline instanceof WI.MemoryTimeline);
 
         this._memoryTimeline = timeline;
-        this._memoryTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._memoryTimelineRecordAdded, this);
-        this._memoryTimeline.addEventListener(WebInspector.MemoryTimeline.Event.MemoryPressureEventAdded, this._memoryTimelineMemoryPressureEventAdded, this);
+        this._memoryTimeline.addEventListener(WI.Timeline.Event.RecordAdded, this._memoryTimelineRecordAdded, this);
+        this._memoryTimeline.addEventListener(WI.MemoryTimeline.Event.MemoryPressureEventAdded, this._memoryTimelineMemoryPressureEventAdded, this);
 
         this._didInitializeCategories = false;
 
-        let size = new WebInspector.Size(0, this.height);
-        this._chart = new WebInspector.StackedLineChart(size);
+        let size = new WI.Size(0, this.height);
+        this._chart = new WI.StackedLineChart(size);
         this.element.appendChild(this._chart.element);
 
         this._legendElement = this.element.appendChild(document.createElement("div"));
@@ -91,7 +91,7 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
             return;
 
         if (this._chart.size.width !== graphWidth || this._chart.size.height !== this.height)
-            this._chart.size = new WebInspector.Size(graphWidth, this.height);
+            this._chart.size = new WI.Size(graphWidth, this.height);
 
         let graphStartTime = this.startTime;
         let visibleEndTime = Math.min(this.endTime, this.currentTime);
@@ -120,7 +120,7 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
             }
 
             let memoryPressureEvent = visibleMemoryPressureEventMarkers[i];
-            let property = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL ? "right" : "left";
+            let property = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "right" : "left";
             markerElement.style.setProperty(property, `${xScale(memoryPressureEvent.timestamp)}px`);
         }
 
@@ -224,7 +224,7 @@ WebInspector.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph ext
             this._legendElement.textContent = "";
         } else {
             this._legendElement.hidden = false;
-            this._legendElement.textContent = WebInspector.UIString("Maximum Size: %s").format(Number.bytesToString(this._maxSize));
+            this._legendElement.textContent = WI.UIString("Maximum Size: %s").format(Number.bytesToString(this._maxSize));
         }
     }
 

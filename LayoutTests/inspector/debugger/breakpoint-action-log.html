@@ -17,17 +17,17 @@ function test()
         name: "TemplateLiteralPlaceholders",
         description: "Evaluate breakpoint with logging actions that include placeholders.",
         test(resolve, reject) {
-            WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+            WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
                 let scriptObject = event.data.script;
                 if (!/script\-for\-breakpoint\-actions\.js$/.test(scriptObject.url))
                     return;
 
                 let location = scriptObject.createSourceCodeLocation(4, 0);
-                let breakpoint = new WebInspector.Breakpoint(location);
+                let breakpoint = new WI.Breakpoint(location);
                 breakpoint.autoContinue = true;
 
                 function addLogAction(data) {
-                    breakpoint.createAction(WebInspector.BreakpointAction.Type.Log, breakpoint.actions.lastValue, data);
+                    breakpoint.createAction(WI.BreakpointAction.Type.Log, breakpoint.actions.lastValue, data);
                 }
 
                 addLogAction("`${a}`");
@@ -41,7 +41,7 @@ function test()
                 addLogAction("close curly brace in RegExp: ${/\\}/.test('}')}");
                 addLogAction("${a} and ${JSON.stringify(b)}");
 
-                WebInspector.debuggerManager.addBreakpoint(breakpoint);
+                WI.debuggerManager.addBreakpoint(breakpoint);
 
                 InspectorTest.evaluateInPage("runBreakpointActions()", resolve);
             });

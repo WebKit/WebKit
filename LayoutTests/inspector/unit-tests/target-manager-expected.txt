@@ -1,4 +1,4 @@
-Test for TargetManager and other global WebInspector.Target objects.
+Test for TargetManager and other global WI.Target objects.
 
 
 == Running test suite: TargetManager

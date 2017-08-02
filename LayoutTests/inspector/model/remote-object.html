@@ -171,7 +171,7 @@ function test()
         {expression: `Object.freeze({})`},
     ];
 
-    if (!window.WebInspector) {
+    if (!window.WI) {
         window.steps = steps;
         return;
     }

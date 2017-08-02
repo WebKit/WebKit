@@ -1,4 +1,4 @@
-Testing the fault-tolerance of WebInspector.Recording.
+Testing the fault-tolerance of WI.Recording.
 
 
 == Running test suite: Recording

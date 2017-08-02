@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ContentView = class ContentView extends WebInspector.View
+WI.ContentView = class ContentView extends WI.View
 {
     constructor(representedObject, extraArguments)
     {
         // Concrete object instantiation.
-        console.assert(!representedObject || WebInspector.ContentView.isViewable(representedObject), representedObject);
+        console.assert(!representedObject || WI.ContentView.isViewable(representedObject), representedObject);
 
         super();
 
@@ -45,97 +45,97 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
     {
         console.assert(representedObject);
 
-        if (representedObject instanceof WebInspector.Frame)
-            return new WebInspector.ResourceClusterContentView(representedObject.mainResource, extraArguments);
+        if (representedObject instanceof WI.Frame)
+            return new WI.ResourceClusterContentView(representedObject.mainResource, extraArguments);
 
-        if (representedObject instanceof WebInspector.Resource)
-            return new WebInspector.ResourceClusterContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.Resource)
+            return new WI.ResourceClusterContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.Script)
-            return new WebInspector.ScriptContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.Script)
+            return new WI.ScriptContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.CSSStyleSheet)
-            return new WebInspector.TextResourceContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.CSSStyleSheet)
+            return new WI.TextResourceContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.Canvas)
-            return new WebInspector.CanvasContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.Canvas)
+            return new WI.CanvasContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.TimelineRecording)
-            return new WebInspector.TimelineRecordingContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.TimelineRecording)
+            return new WI.TimelineRecordingContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.Timeline) {
+        if (representedObject instanceof WI.Timeline) {
             var timelineType = representedObject.type;
-            if (timelineType === WebInspector.TimelineRecord.Type.Network)
-                return new WebInspector.NetworkTimelineView(representedObject, extraArguments);
+            if (timelineType === WI.TimelineRecord.Type.Network)
+                return new WI.NetworkTimelineView(representedObject, extraArguments);
 
-            if (timelineType === WebInspector.TimelineRecord.Type.Layout)
-                return new WebInspector.LayoutTimelineView(representedObject, extraArguments);
+            if (timelineType === WI.TimelineRecord.Type.Layout)
+                return new WI.LayoutTimelineView(representedObject, extraArguments);
 
-            if (timelineType === WebInspector.TimelineRecord.Type.Script)
-                return new WebInspector.ScriptClusterTimelineView(representedObject, extraArguments);
+            if (timelineType === WI.TimelineRecord.Type.Script)
+                return new WI.ScriptClusterTimelineView(representedObject, extraArguments);
 
-            if (timelineType === WebInspector.TimelineRecord.Type.RenderingFrame)
-                return new WebInspector.RenderingFrameTimelineView(representedObject, extraArguments);
+            if (timelineType === WI.TimelineRecord.Type.RenderingFrame)
+                return new WI.RenderingFrameTimelineView(representedObject, extraArguments);
 
-            if (timelineType === WebInspector.TimelineRecord.Type.Memory)
-                return new WebInspector.MemoryTimelineView(representedObject, extraArguments);
+            if (timelineType === WI.TimelineRecord.Type.Memory)
+                return new WI.MemoryTimelineView(representedObject, extraArguments);
 
-            if (timelineType === WebInspector.TimelineRecord.Type.HeapAllocations)
-                return new WebInspector.HeapAllocationsTimelineView(representedObject, extraArguments);
+            if (timelineType === WI.TimelineRecord.Type.HeapAllocations)
+                return new WI.HeapAllocationsTimelineView(representedObject, extraArguments);
         }
 
-        if (representedObject instanceof WebInspector.Breakpoint || representedObject instanceof WebInspector.IssueMessage) {
+        if (representedObject instanceof WI.Breakpoint || representedObject instanceof WI.IssueMessage) {
             if (representedObject.sourceCodeLocation)
-                return WebInspector.ContentView.createFromRepresentedObject(representedObject.sourceCodeLocation.displaySourceCode, extraArguments);
+                return WI.ContentView.createFromRepresentedObject(representedObject.sourceCodeLocation.displaySourceCode, extraArguments);
         }
 
-        if (representedObject instanceof WebInspector.DOMStorageObject)
-            return new WebInspector.DOMStorageContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.DOMStorageObject)
+            return new WI.DOMStorageContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.CookieStorageObject)
-            return new WebInspector.CookieStorageContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.CookieStorageObject)
+            return new WI.CookieStorageContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.DatabaseTableObject)
-            return new WebInspector.DatabaseTableContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.DatabaseTableObject)
+            return new WI.DatabaseTableContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.DatabaseObject)
-            return new WebInspector.DatabaseContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.DatabaseObject)
+            return new WI.DatabaseContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.IndexedDatabase)
-            return new WebInspector.IndexedDatabaseContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.IndexedDatabase)
+            return new WI.IndexedDatabaseContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.IndexedDatabaseObjectStore)
-            return new WebInspector.IndexedDatabaseObjectStoreContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.IndexedDatabaseObjectStore)
+            return new WI.IndexedDatabaseObjectStoreContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
-            return new WebInspector.IndexedDatabaseObjectStoreContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.IndexedDatabaseObjectStoreIndex)
+            return new WI.IndexedDatabaseObjectStoreContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.ApplicationCacheFrame)
-            return new WebInspector.ApplicationCacheFrameContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.ApplicationCacheFrame)
+            return new WI.ApplicationCacheFrameContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.DOMTree)
-            return new WebInspector.FrameDOMTreeContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.DOMTree)
+            return new WI.FrameDOMTreeContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.DOMSearchMatchObject) {
-            var resultView = new WebInspector.FrameDOMTreeContentView(WebInspector.frameResourceManager.mainFrame.domTree, extraArguments);
+        if (representedObject instanceof WI.DOMSearchMatchObject) {
+            var resultView = new WI.FrameDOMTreeContentView(WI.frameResourceManager.mainFrame.domTree, extraArguments);
             resultView.restoreFromCookie({nodeToSelect: representedObject.domNode});
             return resultView;
         }
 
-        if (representedObject instanceof WebInspector.DOMNode) {
+        if (representedObject instanceof WI.DOMNode) {
             if (representedObject.frame) {
-                let resultView = WebInspector.ContentView.createFromRepresentedObject(representedObject.frame, extraArguments);
+                let resultView = WI.ContentView.createFromRepresentedObject(representedObject.frame, extraArguments);
                 resultView.restoreFromCookie({nodeToSelect: representedObject});
                 return resultView;
             }
         }
 
-        if (representedObject instanceof WebInspector.SourceCodeSearchMatchObject) {
+        if (representedObject instanceof WI.SourceCodeSearchMatchObject) {
             var resultView;
-            if (representedObject.sourceCode instanceof WebInspector.Resource)
-                resultView = new WebInspector.ResourceClusterContentView(representedObject.sourceCode, extraArguments);
-            else if (representedObject.sourceCode instanceof WebInspector.Script)
-                resultView = new WebInspector.ScriptContentView(representedObject.sourceCode, extraArguments);
+            if (representedObject.sourceCode instanceof WI.Resource)
+                resultView = new WI.ResourceClusterContentView(representedObject.sourceCode, extraArguments);
+            else if (representedObject.sourceCode instanceof WI.Script)
+                resultView = new WI.ScriptContentView(representedObject.sourceCode, extraArguments);
             else
                 console.error("Unknown SourceCode", representedObject.sourceCode);
 
@@ -146,28 +146,28 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
             return resultView;
         }
 
-        if (representedObject instanceof WebInspector.LogObject)
-            return new WebInspector.LogContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.LogObject)
+            return new WI.LogContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.ContentFlow)
-            return new WebInspector.ContentFlowDOMTreeContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.ContentFlow)
+            return new WI.ContentFlowDOMTreeContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.CallingContextTree)
-            return new WebInspector.ProfileView(representedObject, extraArguments);
+        if (representedObject instanceof WI.CallingContextTree)
+            return new WI.ProfileView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.HeapSnapshotProxy || representedObject instanceof WebInspector.HeapSnapshotDiffProxy)
-            return new WebInspector.HeapSnapshotClusterContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.HeapSnapshotProxy || representedObject instanceof WI.HeapSnapshotDiffProxy)
+            return new WI.HeapSnapshotClusterContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.Recording)
-            return new WebInspector.RecordingContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.Recording)
+            return new WI.RecordingContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WebInspector.Collection)
-            return new WebInspector.CollectionContentView(representedObject, extraArguments);
+        if (representedObject instanceof WI.Collection)
+            return new WI.CollectionContentView(representedObject, extraArguments);
 
         if (typeof representedObject === "string" || representedObject instanceof String)
-            return new WebInspector.TextContentView(representedObject, extraArguments);
+            return new WI.TextContentView(representedObject, extraArguments);
 
-        console.assert(!WebInspector.ContentView.isViewable(representedObject));
+        console.assert(!WI.ContentView.isViewable(representedObject));
 
         throw new Error("Can't make a ContentView for an unknown representedObject of type: " + representedObject.constructor.name);
     }
@@ -178,58 +178,58 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
 
         // Some represented objects attempt to resolve a better represented object.
         // This may result in null, for example a Breakpoint which doesn't have a SourceCode.
-        let resolvedRepresentedObject = WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject);
+        let resolvedRepresentedObject = WI.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject);
         if (!resolvedRepresentedObject)
             return null;
 
-        let existingContentView = resolvedRepresentedObject[WebInspector.ContentView.ContentViewForRepresentedObjectSymbol];
-        console.assert(!existingContentView || existingContentView instanceof WebInspector.ContentView);
+        let existingContentView = resolvedRepresentedObject[WI.ContentView.ContentViewForRepresentedObjectSymbol];
+        console.assert(!existingContentView || existingContentView instanceof WI.ContentView);
         if (existingContentView)
             return existingContentView;
 
         if (onlyExisting)
             return null;
 
-        let newContentView = WebInspector.ContentView.createFromRepresentedObject(representedObject, extraArguments);
-        console.assert(newContentView instanceof WebInspector.ContentView);
+        let newContentView = WI.ContentView.createFromRepresentedObject(representedObject, extraArguments);
+        console.assert(newContentView instanceof WI.ContentView);
         if (!newContentView)
             return null;
 
         console.assert(newContentView.representedObject === resolvedRepresentedObject, "createFromRepresentedObject and resolvedRepresentedObjectForRepresentedObject are out of sync for type", representedObject.constructor.name);
-        newContentView.representedObject[WebInspector.ContentView.ContentViewForRepresentedObjectSymbol] = newContentView;
+        newContentView.representedObject[WI.ContentView.ContentViewForRepresentedObjectSymbol] = newContentView;
         return newContentView;
     }
 
     static closedContentViewForRepresentedObject(representedObject)
     {
-        let resolvedRepresentedObject = WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject);
-        resolvedRepresentedObject[WebInspector.ContentView.ContentViewForRepresentedObjectSymbol] = null;
+        let resolvedRepresentedObject = WI.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject);
+        resolvedRepresentedObject[WI.ContentView.ContentViewForRepresentedObjectSymbol] = null;
     }
 
     static resolvedRepresentedObjectForRepresentedObject(representedObject)
     {
-        if (representedObject instanceof WebInspector.Frame)
+        if (representedObject instanceof WI.Frame)
             return representedObject.mainResource;
 
-        if (representedObject instanceof WebInspector.Breakpoint || representedObject instanceof WebInspector.IssueMessage) {
+        if (representedObject instanceof WI.Breakpoint || representedObject instanceof WI.IssueMessage) {
             if (representedObject.sourceCodeLocation)
                 return representedObject.sourceCodeLocation.displaySourceCode;
         }
 
-        if (representedObject instanceof WebInspector.DOMBreakpoint) {
+        if (representedObject instanceof WI.DOMBreakpoint) {
             if (representedObject.domNode)
-                return WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject.domNode);
+                return WI.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject.domNode);
         }
 
-        if (representedObject instanceof WebInspector.DOMNode) {
+        if (representedObject instanceof WI.DOMNode) {
             if (representedObject.frame)
-                return WebInspector.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject.frame);
+                return WI.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject.frame);
         }
 
-        if (representedObject instanceof WebInspector.DOMSearchMatchObject)
-            return WebInspector.frameResourceManager.mainFrame.domTree;
+        if (representedObject instanceof WI.DOMSearchMatchObject)
+            return WI.frameResourceManager.mainFrame.domTree;
 
-        if (representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
+        if (representedObject instanceof WI.SourceCodeSearchMatchObject)
             return representedObject.sourceCode;
 
         return representedObject;
@@ -237,55 +237,55 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
 
     static isViewable(representedObject)
     {
-        if (representedObject instanceof WebInspector.Frame)
+        if (representedObject instanceof WI.Frame)
             return true;
-        if (representedObject instanceof WebInspector.Resource)
+        if (representedObject instanceof WI.Resource)
             return true;
-        if (representedObject instanceof WebInspector.Script)
+        if (representedObject instanceof WI.Script)
             return true;
-        if (representedObject instanceof WebInspector.CSSStyleSheet)
+        if (representedObject instanceof WI.CSSStyleSheet)
             return true;
-        if (representedObject instanceof WebInspector.Canvas)
+        if (representedObject instanceof WI.Canvas)
             return true;
-        if (representedObject instanceof WebInspector.TimelineRecording)
+        if (representedObject instanceof WI.TimelineRecording)
             return true;
-        if (representedObject instanceof WebInspector.Timeline)
+        if (representedObject instanceof WI.Timeline)
             return true;
-        if (representedObject instanceof WebInspector.Breakpoint || representedObject instanceof WebInspector.IssueMessage)
+        if (representedObject instanceof WI.Breakpoint || representedObject instanceof WI.IssueMessage)
             return representedObject.sourceCodeLocation;
-        if (representedObject instanceof WebInspector.DOMStorageObject)
+        if (representedObject instanceof WI.DOMStorageObject)
             return true;
-        if (representedObject instanceof WebInspector.CookieStorageObject)
+        if (representedObject instanceof WI.CookieStorageObject)
             return true;
-        if (representedObject instanceof WebInspector.DatabaseTableObject)
+        if (representedObject instanceof WI.DatabaseTableObject)
             return true;
-        if (representedObject instanceof WebInspector.DatabaseObject)
+        if (representedObject instanceof WI.DatabaseObject)
             return true;
-        if (representedObject instanceof WebInspector.IndexedDatabase)
+        if (representedObject instanceof WI.IndexedDatabase)
             return true;
-        if (representedObject instanceof WebInspector.IndexedDatabaseObjectStore)
+        if (representedObject instanceof WI.IndexedDatabaseObjectStore)
             return true;
-        if (representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
+        if (representedObject instanceof WI.IndexedDatabaseObjectStoreIndex)
             return true;
-        if (representedObject instanceof WebInspector.ApplicationCacheFrame)
+        if (representedObject instanceof WI.ApplicationCacheFrame)
             return true;
-        if (representedObject instanceof WebInspector.DOMTree)
+        if (representedObject instanceof WI.DOMTree)
             return true;
-        if (representedObject instanceof WebInspector.DOMSearchMatchObject)
+        if (representedObject instanceof WI.DOMSearchMatchObject)
             return true;
-        if (representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
+        if (representedObject instanceof WI.SourceCodeSearchMatchObject)
             return true;
-        if (representedObject instanceof WebInspector.LogObject)
+        if (representedObject instanceof WI.LogObject)
             return true;
-        if (representedObject instanceof WebInspector.ContentFlow)
+        if (representedObject instanceof WI.ContentFlow)
             return true;
-        if (representedObject instanceof WebInspector.CallingContextTree)
+        if (representedObject instanceof WI.CallingContextTree)
             return true;
-        if (representedObject instanceof WebInspector.HeapSnapshotProxy || representedObject instanceof WebInspector.HeapSnapshotDiffProxy)
+        if (representedObject instanceof WI.HeapSnapshotProxy || representedObject instanceof WI.HeapSnapshotDiffProxy)
             return true;
-        if (representedObject instanceof WebInspector.Recording)
+        if (representedObject instanceof WI.Recording)
             return true;
-        if (representedObject instanceof WebInspector.Collection)
+        if (representedObject instanceof WI.Collection)
             return true;
         if (typeof representedObject === "string" || representedObject instanceof String)
             return true;
@@ -348,7 +348,7 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
     get supportsSplitContentBrowser()
     {
         // Implemented by subclasses.
-        return WebInspector.dockedConfigurationSupportsSplitContentBrowser();
+        return WI.dockedConfigurationSupportsSplitContentBrowser();
     }
 
     shown()
@@ -459,11 +459,11 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
     }
 };
 
-WebInspector.ContentView.Event = {
+WI.ContentView.Event = {
     SelectionPathComponentsDidChange: "content-view-selection-path-components-did-change",
     SupplementalRepresentedObjectsDidChange: "content-view-supplemental-represented-objects-did-change",
     NumberOfSearchResultsDidChange: "content-view-number-of-search-results-did-change",
     NavigationItemsDidChange: "content-view-navigation-items-did-change"
 };
 
-WebInspector.ContentView.ContentViewForRepresentedObjectSymbol = Symbol("content-view-for-represented-object");
+WI.ContentView.ContentViewForRepresentedObjectSymbol = Symbol("content-view-for-represented-object");

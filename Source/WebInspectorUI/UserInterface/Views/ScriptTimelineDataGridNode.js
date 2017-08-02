@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WebInspector.TimelineDataGridNode
+WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.TimelineDataGridNode
 {
     constructor(scriptTimelineRecord, baseStartTime, rangeStartTime, rangeEndTime)
     {
@@ -94,12 +94,12 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
 
         this._subtitle = "";
 
-        if (this._record.eventType === WebInspector.ScriptTimelineRecord.EventType.TimerInstalled) {
+        if (this._record.eventType === WI.ScriptTimelineRecord.EventType.TimerInstalled) {
             let timeoutString = Number.secondsToString(this._record.details.timeout / 1000);
             if (this._record.details.repeating)
-                this._subtitle = WebInspector.UIString("%s interval").format(timeoutString);
+                this._subtitle = WI.UIString("%s interval").format(timeoutString);
             else
-                this._subtitle = WebInspector.UIString("%s delay").format(timeoutString);
+                this._subtitle = WI.UIString("%s delay").format(timeoutString);
         }
 
         return this._subtitle;

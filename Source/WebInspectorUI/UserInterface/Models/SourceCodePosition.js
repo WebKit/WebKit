@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodePosition = class SourceCodePosition
+WI.SourceCodePosition = class SourceCodePosition
 {
     constructor(lineNumber, columNumber)
     {

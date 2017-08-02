@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsoleMessage = class ConsoleMessage
+WI.ConsoleMessage = class ConsoleMessage
 {
     constructor(target, source, level, message, type, url, line, column, repeatCount, parameters, callFrames, request)
     {
         console.assert(typeof source === "string");
         console.assert(typeof level === "string");
         console.assert(typeof message === "string");
-        console.assert(target instanceof WebInspector.Target);
-        console.assert(!parameters || parameters.every((x) => x instanceof WebInspector.RemoteObject));
+        console.assert(target instanceof WI.Target);
+        console.assert(!parameters || parameters.every((x) => x instanceof WI.RemoteObject));
 
         this._target = target;
         this._source = source;
         this._level = level;
         this._messageText = message;
-        this._type = type || WebInspector.ConsoleMessage.MessageType.Log;
+        this._type = type || WI.ConsoleMessage.MessageType.Log;
 
         this._url = url || null;
         this._line = line || 0;
@@ -48,7 +48,7 @@ WebInspector.ConsoleMessage = class ConsoleMessage
         this._parameters = parameters;
 
         callFrames = callFrames || [];
-        this._stackTrace = WebInspector.StackTrace.fromPayload(this._target, {callFrames});
+        this._stackTrace = WI.StackTrace.fromPayload(this._target, {callFrames});
 
         this._request = request;
     }
@@ -83,11 +83,11 @@ WebInspector.ConsoleMessage = class ConsoleMessage
         // If that doesn't exist try to get a location from the url/line/column in the ConsoleMessage.
         // FIXME <http://webkit.org/b/76404>: Remove the string equality checks for undefined once we don't get that value anymore.
         if (this._url && this._url !== "undefined") {
-            let sourceCode = WebInspector.frameResourceManager.resourceForURL(this._url);
+            let sourceCode = WI.frameResourceManager.resourceForURL(this._url);
             if (sourceCode) {
                 let lineNumber = this._line > 0 ? this._line - 1 : 0;
                 let columnNumber = this._column > 0 ? this._column - 1 : 0;
-                this._sourceCodeLocation = new WebInspector.SourceCodeLocation(sourceCode, lineNumber, columnNumber);
+                this._sourceCodeLocation = new WI.SourceCodeLocation(sourceCode, lineNumber, columnNumber);
                 return this._sourceCodeLocation;
             }
         }
@@ -97,7 +97,7 @@ WebInspector.ConsoleMessage = class ConsoleMessage
     }
 };
 
-WebInspector.ConsoleMessage.MessageSource = {
+WI.ConsoleMessage.MessageSource = {
     HTML: "html",
     XML: "xml",
     JS: "javascript",
@@ -111,7 +111,7 @@ WebInspector.ConsoleMessage.MessageSource = {
     Other: "other",
 };
 
-WebInspector.ConsoleMessage.MessageType = {
+WI.ConsoleMessage.MessageType = {
     Log: "log",
     Dir: "dir",
     DirXML: "dirxml",
@@ -127,7 +127,7 @@ WebInspector.ConsoleMessage.MessageType = {
     Result: "result", // Frontend Only.
 };
 
-WebInspector.ConsoleMessage.MessageLevel = {
+WI.ConsoleMessage.MessageLevel = {
     Log: "log",
     Info: "info",
     Warning: "warning",

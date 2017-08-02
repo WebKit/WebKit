@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Formatter = class Formatter
+WI.Formatter = class Formatter
 {
     constructor(codeMirror, builder)
     {

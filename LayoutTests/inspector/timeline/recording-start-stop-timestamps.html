@@ -13,7 +13,7 @@ function test()
         InspectorTest.log((condition ? "PASS" : "FAIL") + ": " + message);
     }
 
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, function(event) {
+    WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStarted, function(event) {
         InspectorTest.assert(typeof event.data.startTime === "number");
         InspectorTest.assert(event.data.startTime > 0);
 
@@ -29,7 +29,7 @@ function test()
         recordingStartTime = event.data.startTime;
     });
 
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, function(event) {
+    WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, function(event) {
         InspectorTest.assert(typeof event.data.endTime === "number");
         InspectorTest.assert(event.data.endTime > 0);
 

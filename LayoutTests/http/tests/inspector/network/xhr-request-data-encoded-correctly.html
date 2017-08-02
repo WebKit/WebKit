@@ -19,14 +19,14 @@ function test()
         description: "XHR with request data is encoded correctly.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage(`createXHRResource()`);
-            WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+            WI.Frame.singleFireEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
                 let resource = event.data.resource;
-                InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
+                InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
                 InspectorTest.expectThat(resource.requestData === "utf8=👍", "Request data should have expected content.");
-                resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish)
+                resource.awaitEvent(WI.Resource.Event.LoadingDidFinish)
                     .then((event) => { InspectorTest.pass("Resource load should finish.") })
                     .then(resolve, reject);
-                resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFail)
+                resource.awaitEvent(WI.Resource.Event.LoadingDidFail)
                     .then(() => { InspectorTest.fail("Resource should not have failed to load.") })
                     .then(reject, reject);
             });

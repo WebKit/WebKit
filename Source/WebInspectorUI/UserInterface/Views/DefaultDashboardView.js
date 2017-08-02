@@ -23,39 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspector.DashboardView
+WI.DefaultDashboardView = class DefaultDashboardView extends WI.DashboardView
 {
     constructor(representedObject)
     {
         super(representedObject, "default");
 
-        representedObject.addEventListener(WebInspector.DefaultDashboard.Event.DataDidChange, () => { this._updateDisplaySoon(); });
+        representedObject.addEventListener(WI.DefaultDashboard.Event.DataDidChange, () => { this._updateDisplaySoon(); });
         this._scheduledUpdateIdentifier = undefined;
 
         this._items = {
             resourcesCount: {
-                tooltip: WebInspector.UIString("Show page resources"),
+                tooltip: WI.UIString("Show page resources"),
                 handler: this._resourcesItemWasClicked
             },
             resourcesSize: {
-                tooltip: WebInspector.UIString("Show network information"),
+                tooltip: WI.UIString("Show network information"),
                 handler: this._networkItemWasClicked
             },
             time: {
-                tooltip: WebInspector.UIString("Show page load timing"),
+                tooltip: WI.UIString("Show page load timing"),
                 handler: this._timelineItemWasClicked
             },
             logs: {
-                tooltip: WebInspector.UIString("Show messages logged to the Console"),
-                handler: this._consoleItemWasClicked.bind(this, WebInspector.LogContentView.Scopes.Logs)
+                tooltip: WI.UIString("Show messages logged to the Console"),
+                handler: this._consoleItemWasClicked.bind(this, WI.LogContentView.Scopes.Logs)
             },
             errors: {
-                tooltip: WebInspector.UIString("Show errors logged to the Console"),
-                handler: this._consoleItemWasClicked.bind(this, WebInspector.LogContentView.Scopes.Errors)
+                tooltip: WI.UIString("Show errors logged to the Console"),
+                handler: this._consoleItemWasClicked.bind(this, WI.LogContentView.Scopes.Errors)
             },
             issues: {
-                tooltip: WebInspector.UIString("Show warnings logged to the Console"),
-                handler: this._consoleItemWasClicked.bind(this, WebInspector.LogContentView.Scopes.Warnings)
+                tooltip: WI.UIString("Show warnings logged to the Console"),
+                handler: this._consoleItemWasClicked.bind(this, WI.LogContentView.Scopes.Warnings)
             }
         };
 
@@ -124,7 +124,7 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
     _itemWasClicked(name)
     {
         var item = this._items[name];
-        if (!item.container.classList.contains(WebInspector.DefaultDashboardView.EnabledItemStyleClassName))
+        if (!item.container.classList.contains(WI.DefaultDashboardView.EnabledItemStyleClassName))
             return;
 
         if (item.handler)
@@ -133,22 +133,22 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
 
     _resourcesItemWasClicked()
     {
-        WebInspector.showResourcesTab();
+        WI.showResourcesTab();
     }
 
     _networkItemWasClicked()
     {
-        WebInspector.showNetworkTab();
+        WI.showNetworkTab();
     }
 
     _timelineItemWasClicked()
     {
-        WebInspector.showTimelineTab();
+        WI.showTimelineTab();
     }
 
     _consoleItemWasClicked(scope)
     {
-        WebInspector.showConsoleTab(scope);
+        WI.showConsoleTab(scope);
     }
 
     _setConsoleItemValue(itemName, newValue)
@@ -189,12 +189,12 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
     {
         if (enabled) {
             item.container.title = item.tooltip;
-            item.container.classList.add(WebInspector.DefaultDashboardView.EnabledItemStyleClassName);
+            item.container.classList.add(WI.DefaultDashboardView.EnabledItemStyleClassName);
         } else {
             item.container.title = "";
-            item.container.classList.remove(WebInspector.DefaultDashboardView.EnabledItemStyleClassName);
+            item.container.classList.remove(WI.DefaultDashboardView.EnabledItemStyleClassName);
         }
     }
 };
 
-WebInspector.DefaultDashboardView.EnabledItemStyleClassName = "enabled";
+WI.DefaultDashboardView.EnabledItemStyleClassName = "enabled";

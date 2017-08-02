@@ -56,9 +56,9 @@ function test()
         });
     }
 
-    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+    WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
         let message = event.data.message;
-        InspectorTest.assert(message instanceof WebInspector.ConsoleMessage);
+        InspectorTest.assert(message instanceof WI.ConsoleMessage);
         if (messageChecker && messageChecker(message)) {
             messageChecker = null;
             untilPromiseResolver(message);
@@ -83,42 +83,42 @@ function test()
         name: "Console.StackTrace.ConsoleTrace",
         description: "StackTrace from console.trace().",
         expression: `setTimeout(triggerConsoleTrace)`,
-        condition(message) { return message.type === WebInspector.ConsoleMessage.MessageType.Trace; },
+        condition(message) { return message.type === WI.ConsoleMessage.MessageType.Trace; },
     });
 
     addTestCase({
         name: "Console.StackTrace.ConsoleError",
         description: "StackTrace from console.error().",
         expression: `setTimeout(triggerConsoleError)`,
-        condition(message) { return message.level === WebInspector.ConsoleMessage.MessageLevel.Error; },
+        condition(message) { return message.level === WI.ConsoleMessage.MessageLevel.Error; },
     });
 
     addTestCase({
         name: "Console.StackTrace.UncaughtException",
         description: "StackTrace from an uncaught exception.",
         expression: `setTimeout(triggerUncaughtException)`,
-        condition(message) { return message.level === WebInspector.ConsoleMessage.MessageLevel.Error; },
+        condition(message) { return message.level === WI.ConsoleMessage.MessageLevel.Error; },
     });
 
     addTestCase({
         name: "Console.StackTrace.UnhandledPromiseRejection.PromiseReject",
         description: "StackTrace from an unhandled promise rejection via Promise.reject(...).",
         expression: `setTimeout(triggerUnhandledRejectionPromiseReject)`,
-        condition(message) { return message.level === WebInspector.ConsoleMessage.MessageLevel.Error; },
+        condition(message) { return message.level === WI.ConsoleMessage.MessageLevel.Error; },
     });
 
     addTestCase({
         name: "Console.StackTrace.UnhandledPromiseRejection.ExplicitReject",
         description: "StackTrace from an unhandled promise rejection via reject(...).",
         expression: `setTimeout(triggerUnhandledRejectionExplicit)`,
-        condition(message) { return message.level === WebInspector.ConsoleMessage.MessageLevel.Error; },
+        condition(message) { return message.level === WI.ConsoleMessage.MessageLevel.Error; },
     });
 
     addTestCase({
         name: "Console.StackTrace.UnhandledPromiseRejection.ImplicitReject",
         description: "StackTrace from an unhandled promise rejection due to an uncaught exception in a promise reaction.",
         expression: `setTimeout(triggerUnhandledRejectionImplicitWithException)`,
-        condition(message) { return message.level === WebInspector.ConsoleMessage.MessageLevel.Error; },
+        condition(message) { return message.level === WI.ConsoleMessage.MessageLevel.Error; },
     });
 
     suite.runTestCasesAndFinish();

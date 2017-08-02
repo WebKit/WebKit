@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SettingsView = class SettingsView extends WebInspector.View
+WI.SettingsView = class SettingsView extends WI.View
 {
     constructor(identifier, displayName)
     {
@@ -54,7 +54,7 @@ WebInspector.SettingsView = class SettingsView extends WebInspector.View
 
     addGroup(title)
     {
-        let settingsGroup = new WebInspector.SettingsGroup(title);
+        let settingsGroup = new WI.SettingsGroup(title);
         this.element.append(settingsGroup.element);
 
         return settingsGroup;
@@ -80,7 +80,7 @@ WebInspector.SettingsView = class SettingsView extends WebInspector.View
     }
 };
 
-WebInspector.SettingsView.EditorType = {
+WI.SettingsView.EditorType = {
     Checkbox: "settings-view-editor-type-checkbox",
     Numeric: "settings-view-editor-type-numeric",
     Select: "settings-view-editor-type-select",

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.YieldableTask = class YieldableTask
+WI.YieldableTask = class YieldableTask
 {
     constructor(delegate, items, options={})
     {

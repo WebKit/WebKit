@@ -39,45 +39,45 @@ InspectorFrontendAPI = {
 
     isTimelineProfilingEnabled: function()
     {
-        return WebInspector.timelineManager.isCapturing();
+        return WI.timelineManager.isCapturing();
     },
 
     setTimelineProfilingEnabled: function(enabled)
     {
-        if (WebInspector.timelineManager.isCapturing() === enabled)
+        if (WI.timelineManager.isCapturing() === enabled)
             return;
 
         if (enabled)
-            WebInspector.timelineManager.startCapturing();
+            WI.timelineManager.startCapturing();
         else
-            WebInspector.timelineManager.stopCapturing();
+            WI.timelineManager.stopCapturing();
     },
 
     setElementSelectionEnabled: function(enabled)
     {
-        WebInspector.domTreeManager.inspectModeEnabled = enabled;
+        WI.domTreeManager.inspectModeEnabled = enabled;
     },
 
     setDockingUnavailable: function(unavailable)
     {
-        WebInspector.updateDockingAvailability(!unavailable);
+        WI.updateDockingAvailability(!unavailable);
     },
 
     setDockSide: function(side)
     {
-        WebInspector.updateDockedState(side);
+        WI.updateDockedState(side);
     },
 
     setIsVisible: function(visible)
     {
-        WebInspector.updateVisibilityState(visible);
+        WI.updateVisibilityState(visible);
     },
 
     showConsole: function()
     {
-        WebInspector.showConsoleTab();
+        WI.showConsoleTab();
 
-        WebInspector.quickConsole.prompt.focus();
+        WI.quickConsole.prompt.focus();
 
         // If the page is still loading, focus the quick console again after tabindex autofocus.
         if (document.readyState !== "complete")
@@ -91,7 +91,7 @@ InspectorFrontendAPI = {
         console.assert(event.type === "readystatechange" || event.type === "visibilitychange");
 
         if (document.readyState === "complete" && document.visibilityState === "visible") {
-            WebInspector.quickConsole.prompt.focus();
+            WI.quickConsole.prompt.focus();
             document.removeEventListener("readystatechange", this);
             document.removeEventListener("visibilitychange", this);
         }
@@ -99,12 +99,12 @@ InspectorFrontendAPI = {
 
     showResources: function()
     {
-        WebInspector.showResourcesTab();
+        WI.showResourcesTab();
     },
 
     showTimelines: function()
     {
-        WebInspector.showTimelineTab();
+        WI.showTimelineTab();
     },
 
     showMainResourceForFrame: function(frameIdentifier)
@@ -113,13 +113,13 @@ InspectorFrontendAPI = {
             ignoreNetworkTab: true,
             ignoreSearchTab: true,
         };
-        WebInspector.showSourceCodeForFrame(frameIdentifier, options);
+        WI.showSourceCodeForFrame(frameIdentifier, options);
     },
 
     contextMenuItemSelected: function(id)
     {
         try {
-            WebInspector.ContextMenu.contextMenuItemSelected(id);
+            WI.ContextMenu.contextMenuItemSelected(id);
         } catch (e) {
             console.error("Uncaught exception in inspector page under contextMenuItemSelected", e);
         }
@@ -127,12 +127,12 @@ InspectorFrontendAPI = {
 
     contextMenuCleared: function()
     {
-        WebInspector.ContextMenu.contextMenuCleared();
+        WI.ContextMenu.contextMenuCleared();
     },
 
     dispatchMessageAsync: function(messageObject)
     {
-        WebInspector.dispatchMessageFromBackend(messageObject);
+        WI.dispatchMessageFromBackend(messageObject);
     },
 
     dispatchMessage: function(messageObject)

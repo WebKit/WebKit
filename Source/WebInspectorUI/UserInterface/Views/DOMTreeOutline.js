@@ -28,7 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutline
+WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 {
     constructor(omitRootDOMNode, selectEnabled, excludeRevealElementContextMenu)
     {
@@ -43,7 +43,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         this.element.addEventListener("drop", this._ondrop.bind(this), false);
         this.element.addEventListener("dragend", this._ondragend.bind(this), false);
 
-        this.element.classList.add("dom", WebInspector.SyntaxHighlightedStyleClassName);
+        this.element.classList.add("dom", WI.SyntaxHighlightedStyleClassName);
 
         this._includeRootDOMNode = !omitRootDOMNode;
         this._selectEnabled = selectEnabled;
@@ -55,22 +55,22 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         this._editing = false;
         this._visible = false;
 
-        this._hideElementKeyboardShortcut = new WebInspector.KeyboardShortcut(null, "H", this._hideElement.bind(this), this.element);
+        this._hideElementKeyboardShortcut = new WI.KeyboardShortcut(null, "H", this._hideElement.bind(this), this.element);
         this._hideElementKeyboardShortcut.implicitlyPreventsDefault = false;
 
-        WebInspector.showShadowDOMSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
+        WI.showShadowDOMSetting.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
     }
 
     // Public
 
     wireToDomAgent()
     {
-        this._elementsTreeUpdater = new WebInspector.DOMTreeUpdater(this);
+        this._elementsTreeUpdater = new WI.DOMTreeUpdater(this);
     }
 
     close()
     {
-        WebInspector.showShadowDOMSetting.removeEventListener(null, null, this);
+        WI.showShadowDOMSetting.removeEventListener(null, null, this);
 
         if (this._elementsTreeUpdater) {
             this._elementsTreeUpdater.close();
@@ -164,14 +164,14 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
         var treeElement;
         if (this._includeRootDOMNode) {
-            treeElement = new WebInspector.DOMTreeElement(this.rootDOMNode);
+            treeElement = new WI.DOMTreeElement(this.rootDOMNode);
             treeElement.selectable = this._selectEnabled;
             this.appendChild(treeElement);
         } else {
             // FIXME: this could use findTreeElement to reuse a tree element if it already exists
             var node = this.rootDOMNode.firstChild;
             while (node) {
-                treeElement = new WebInspector.DOMTreeElement(node);
+                treeElement = new WI.DOMTreeElement(node);
                 treeElement.selectable = this._selectEnabled;
                 this.appendChild(treeElement);
                 node = node.nextSibling;
@@ -197,7 +197,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     _selectedNodeChanged()
     {
-        this.dispatchEventToListeners(WebInspector.DOMTreeOutline.Event.SelectedNodeChanged);
+        this.dispatchEventToListeners(WI.DOMTreeOutline.Event.SelectedNodeChanged);
     }
 
     findTreeElement(node)
@@ -251,7 +251,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
             treeElement._populateNodeContextMenu(contextMenu);
 
         const options = {excludeRevealElement: this._excludeRevealElementContextMenu};
-        WebInspector.appendContextMenuItemsForDOMNode(contextMenu, treeElement.representedObject, options);
+        WI.appendContextMenuItemsForDOMNode(contextMenu, treeElement.representedObject, options);
 
         super.populateContextMenu(contextMenu, event, treeElement);
     }
@@ -267,7 +267,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         if (!node || this._suppressRevealAndSelect)
             return;
 
-        if (!WebInspector.showShadowDOMSetting.value) {
+        if (!WI.showShadowDOMSetting.value) {
             while (node && node.isInShadowTree())
                 node = node.parentNode;
             if (!node)
@@ -312,7 +312,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
                 element._createTooltipForNode();
         }
 
-        WebInspector.domTreeManager.highlightDOMNode(element ? element.representedObject.id : 0);
+        WI.domTreeManager.highlightDOMNode(element ? element.representedObject.id : 0);
     }
 
     _onmouseout(event)
@@ -326,7 +326,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
             this._previousHoveredElement = null;
         }
 
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
+        WI.domTreeManager.hideDOMNodeHighlight();
     }
 
     _ondragstart(event)
@@ -345,14 +345,14 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         event.dataTransfer.effectAllowed = "copyMove";
         this._nodeBeingDragged = treeElement.representedObject;
 
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
+        WI.domTreeManager.hideDOMNodeHighlight();
 
         return true;
     }
 
     _ondragover(event)
     {
-        if (event.dataTransfer.types.includes(WebInspector.CSSStyleDetailsSidebarPanel.ToggledClassesDragType)) {
+        if (event.dataTransfer.types.includes(WI.CSSStyleDetailsSidebarPanel.ToggledClassesDragType)) {
             event.preventDefault();
             event.dataTransfer.dropEffect = "copy";
             return false;
@@ -394,7 +394,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
             return false;
 
         var node = treeElement.representedObject;
-        if (!(node instanceof WebInspector.DOMNode))
+        if (!(node instanceof WI.DOMNode))
             return false;
 
         if (!node.parentNode || node.parentNode.nodeType() !== Node.ELEMENT_NODE)
@@ -413,7 +413,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
                 return;
 
             this._updateModifiedNodes();
-            var newNode = WebInspector.domTreeManager.nodeForId(newNodeId);
+            var newNode = WI.domTreeManager.nodeForId(newNodeId);
             if (newNode)
                 this.selectDOMNode(newNode, true);
         }
@@ -434,7 +434,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
             this._nodeBeingDragged.moveTo(parentNode, anchorNode, callback.bind(this));
         } else {
-            let className = event.dataTransfer.getData(WebInspector.CSSStyleDetailsSidebarPanel.ToggledClassesDragType);
+            let className = event.dataTransfer.getData(WI.CSSStyleDetailsSidebarPanel.ToggledClassesDragType);
             if (className && treeElement)
                 treeElement.representedObject.toggleClass(className, true);
         }
@@ -485,7 +485,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     _hideElement(event, keyboardShortcut)
     {
-        if (!this.selectedTreeElement || WebInspector.isEditingAnyField())
+        if (!this.selectedTreeElement || WI.isEditingAnyField())
             return;
 
         event.preventDefault();
@@ -528,10 +528,10 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
             object.release();
         }
 
-        WebInspector.RemoteObject.resolveNode(effectiveNode, "", resolvedNode);
+        WI.RemoteObject.resolveNode(effectiveNode, "", resolvedNode);
     }
 };
 
-WebInspector.DOMTreeOutline.Event = {
+WI.DOMTreeOutline.Event = {
     SelectedNodeChanged: "dom-tree-outline-selected-node-changed"
 };

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectTreeArrayIndexTreeElement = class ObjectTreeArrayIndexTreeElement extends WebInspector.ObjectTreeBaseTreeElement
+WI.ObjectTreeArrayIndexTreeElement = class ObjectTreeArrayIndexTreeElement extends WI.ObjectTreeBaseTreeElement
 {
     constructor(property, propertyPath)
     {
@@ -69,7 +69,7 @@ WebInspector.ObjectTreeArrayIndexTreeElement = class ObjectTreeArrayIndexTreeEle
 
         var resolvedValue = this.resolvedValue();
         if (resolvedValue)
-            valueElement.appendChild(WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(resolvedValue, this.resolvedValuePropertyPath()));
+            valueElement.appendChild(WI.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(resolvedValue, this.resolvedValuePropertyPath()));
         else {
             if (this.property.hasGetter())
                 container.appendChild(this.createGetterElement(true));

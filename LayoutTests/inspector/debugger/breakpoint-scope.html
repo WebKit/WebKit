@@ -29,16 +29,16 @@ function test()
 
         var testInfo = testInfoList[currentTestIndex];
         var location = scriptObject.createSourceCodeLocation(testInfo.line, testInfo.column);
-        var breakpoint = new WebInspector.Breakpoint(location);
+        var breakpoint = new WI.Breakpoint(location);
 
-        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+        WI.debuggerManager.addBreakpoint(breakpoint);
         InspectorTest.evaluateInPage(testInfo.startFunc);
 
         currentTestIndex++;
     }
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
-        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        var activeCallFrame = WI.debuggerManager.activeCallFrame;
 
         if (!activeCallFrame)
             return;
@@ -48,7 +48,7 @@ function test()
         InspectorTest.log("Hit breakpoint at " + stopLocation);
         InspectorTest.evaluateInPage("console.log('Paused at " + stopLocation + "')");
 
-        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+        var activeCallFrame = WI.debuggerManager.activeCallFrame;
         var scopeChain = activeCallFrame.scopeChain;
         var scopeTypes = [];
         var scopeTypeIndex = 0;
@@ -56,7 +56,7 @@ function test()
 
         for (var scope of scopeChain) {
             scopeTypes.push(scope.type);
-            if (scope.type !== WebInspector.ScopeChainNode.Type.Global) {
+            if (scope.type !== WI.ScopeChainNode.Type.Global) {
                 scope.objects[0].getAllPropertyDescriptors(function(properties) {
                     InspectorTest.log(scopeTypes[scopeTypeIndex++] + " properties:");
                     for (var propertyDescriptor of properties)
@@ -70,16 +70,16 @@ function test()
         }
 
         if (globalScopeCount != 1)
-            InspectorTest.log("Error: too many " + WebInspector.ScopeChainNode.Type.Global + " scopes");
+            InspectorTest.log("Error: too many " + WI.ScopeChainNode.Type.Global + " scopes");
 
-        WebInspector.debuggerManager.resume();
+        WI.debuggerManager.resume();
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, function(event) {
        runNextTest();
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
         eventScriptObject = event.data.script;
         
         if (/scope\.js$/.test(eventScriptObject.url)) {

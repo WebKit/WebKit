@@ -24,40 +24,40 @@
  */
 
 // This function is invoked after the inspector has loaded.
-WebInspector.runBootstrapOperations = function() {
-    WebInspector.showDebugUISetting = new WebInspector.Setting("show-debug-ui", false);
+WI.runBootstrapOperations = function() {
+    WI.showDebugUISetting = new WI.Setting("show-debug-ui", false);
 
     // Toggle Debug UI setting.
-    new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Option | WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "D", () => {
-        WebInspector.showDebugUISetting.value = !WebInspector.showDebugUISetting.value;
+    new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Option | WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, "D", () => {
+        WI.showDebugUISetting.value = !WI.showDebugUISetting.value;
     });
 
     // Reload the Web Inspector.
-    new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Option | WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "R", () => {
+    new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Option | WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, "R", () => {
         window.location.reload();
     });
 
-    const toolTip = WebInspector.unlocalizedString("Enable dump inspector messages to console");
-    const activatedToolTip = WebInspector.unlocalizedString("Disable dump inspector messages to console");
-    let debugInspectorToolbarButton = new WebInspector.ActivateButtonToolbarItem("debug-inspector", toolTip, activatedToolTip, null, "Images/Console.svg");
+    const toolTip = WI.unlocalizedString("Enable dump inspector messages to console");
+    const activatedToolTip = WI.unlocalizedString("Disable dump inspector messages to console");
+    let debugInspectorToolbarButton = new WI.ActivateButtonToolbarItem("debug-inspector", toolTip, activatedToolTip, null, "Images/Console.svg");
     debugInspectorToolbarButton.activated = InspectorBackend.dumpInspectorProtocolMessages;
-    WebInspector.toolbar.addToolbarItem(debugInspectorToolbarButton, WebInspector.Toolbar.Section.CenterRight);
-    debugInspectorToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, () => {
+    WI.toolbar.addToolbarItem(debugInspectorToolbarButton, WI.Toolbar.Section.CenterRight);
+    debugInspectorToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
         InspectorBackend.dumpInspectorProtocolMessages = !InspectorBackend.dumpInspectorProtocolMessages;
         debugInspectorToolbarButton.activated = InspectorBackend.dumpInspectorProtocolMessages;
     });
-    WebInspector.settings.autoLogProtocolMessages.addEventListener(WebInspector.Setting.Event.Changed, () => {
+    WI.settings.autoLogProtocolMessages.addEventListener(WI.Setting.Event.Changed, () => {
         debugInspectorToolbarButton.activated = InspectorBackend.dumpInspectorProtocolMessages;
     });
 
     function updateDebugUI()
     {
-        debugInspectorToolbarButton.hidden = !WebInspector.showDebugUISetting.value;
+        debugInspectorToolbarButton.hidden = !WI.showDebugUISetting.value;
     }
 
-    WebInspector.showDebugUISetting.addEventListener(WebInspector.Setting.Event.Changed, () => {
+    WI.showDebugUISetting.addEventListener(WI.Setting.Event.Changed, () => {
         updateDebugUI();
-        WebInspector.notifications.dispatchEventToListeners(WebInspector.Notification.DebugUIEnabledDidChange);
+        WI.notifications.dispatchEventToListeners(WI.Notification.DebugUIEnabledDidChange);
     });
 
     updateDebugUI();

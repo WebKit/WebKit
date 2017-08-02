@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.rangeForNextCSSNameOrValue = function(text, index = 0) {
+WI.rangeForNextCSSNameOrValue = function(text, index = 0) {
     let from = 0;
     let to = 0;
 

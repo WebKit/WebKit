@@ -8,10 +8,10 @@ function test()
     let suite = InspectorTest.createAsyncSuite("Object");
 
     suite.addTestCase({
-        name: "WebInspector.Object.prototype.dispatchEventToListeners",
-        description: "WebInspector.Object shouldn't dispatch constructor-level events multiple times",
+        name: "WI.Object.prototype.dispatchEventToListeners",
+        description: "WI.Object shouldn't dispatch constructor-level events multiple times",
         test(resolve, reject) {
-            class Parent extends WebInspector.Object {}
+            class Parent extends WI.Object {}
             class Child extends Parent {}
 
             const eventName = "clicked";
@@ -29,13 +29,13 @@ function test()
     });
 
     suite.addTestCase({
-        name: "WebInspector.Object.prototype.awaitEvent",
+        name: "WI.Object.prototype.awaitEvent",
         description: "awaitEvent should only trigger once",
         test(resolve, reject) {
             const eventName = "test";
             let dispatchCount = 0;
 
-            let object = new WebInspector.Object;
+            let object = new WI.Object;
 
             object.awaitEvent(eventName).then(() => {
                 dispatchCount++;
@@ -60,6 +60,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-    <p>Testing WebInspector.Object.</p>
+    <p>Testing WI.Object.</p>
 </body>
 </html>

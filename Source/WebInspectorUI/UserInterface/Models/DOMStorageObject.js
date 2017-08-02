@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMStorageObject = class DOMStorageObject extends WebInspector.Object
+WI.DOMStorageObject = class DOMStorageObject extends WI.Object
 {
     constructor(id, host, isLocalStorage)
     {
@@ -43,8 +43,8 @@ WebInspector.DOMStorageObject = class DOMStorageObject extends WebInspector.Obje
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WebInspector.DOMStorageObject.HostCookieKey] = this.host;
-        cookie[WebInspector.DOMStorageObject.LocalStorageCookieKey] = this.isLocalStorage();
+        cookie[WI.DOMStorageObject.HostCookieKey] = this.host;
+        cookie[WI.DOMStorageObject.LocalStorageCookieKey] = this.isLocalStorage();
     }
 
     isLocalStorage()
@@ -85,33 +85,33 @@ WebInspector.DOMStorageObject = class DOMStorageObject extends WebInspector.Obje
     itemsCleared()
     {
         this._entries.clear();
-        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemsCleared);
+        this.dispatchEventToListeners(WI.DOMStorageObject.Event.ItemsCleared);
     }
 
     itemRemoved(key)
     {
         this._entries.delete(key);
-        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemRemoved, {key});
+        this.dispatchEventToListeners(WI.DOMStorageObject.Event.ItemRemoved, {key});
     }
 
     itemAdded(key, value)
     {
         this._entries.set(key, value);
-        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemAdded, {key, value});
+        this.dispatchEventToListeners(WI.DOMStorageObject.Event.ItemAdded, {key, value});
     }
 
     itemUpdated(key, oldValue, value)
     {
         this._entries.set(key, value);
-        this.dispatchEventToListeners(WebInspector.DOMStorageObject.Event.ItemUpdated, {key, oldValue, value});
+        this.dispatchEventToListeners(WI.DOMStorageObject.Event.ItemUpdated, {key, oldValue, value});
     }
 };
 
-WebInspector.DOMStorageObject.TypeIdentifier = "dom-storage";
-WebInspector.DOMStorageObject.HostCookieKey = "dom-storage-object-host";
-WebInspector.DOMStorageObject.LocalStorageCookieKey = "dom-storage-object-local-storage";
+WI.DOMStorageObject.TypeIdentifier = "dom-storage";
+WI.DOMStorageObject.HostCookieKey = "dom-storage-object-host";
+WI.DOMStorageObject.LocalStorageCookieKey = "dom-storage-object-local-storage";
 
-WebInspector.DOMStorageObject.Event = {
+WI.DOMStorageObject.Event = {
     ItemsCleared: "dom-storage-object-items-cleared",
     ItemAdded: "dom-storage-object-item-added",
     ItemRemoved: "dom-storage-object-item-removed",

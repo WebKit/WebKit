@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseContentView = class IndexedDatabaseContentView extends WebInspector.ContentView
+WI.IndexedDatabaseContentView = class IndexedDatabaseContentView extends WI.ContentView
 {
     constructor(database)
     {
@@ -31,11 +31,11 @@ WebInspector.IndexedDatabaseContentView = class IndexedDatabaseContentView exten
 
         this._element.classList.add("indexed-database");
 
-        this._databaseHostRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Host"));
-        this._databaseSecurityOriginRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Security Origin"));
-        this._databaseVersionRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Version"));
-        this._databaseGroup = new WebInspector.DetailsSectionGroup([this._databaseHostRow, this._databaseSecurityOriginRow, this._databaseVersionRow]);
-        this._databaseSection = new WebInspector.DetailsSection("indexed-database-details", WebInspector.UIString("Database"), [this._databaseGroup]);
+        this._databaseHostRow = new WI.DetailsSectionSimpleRow(WI.UIString("Host"));
+        this._databaseSecurityOriginRow = new WI.DetailsSectionSimpleRow(WI.UIString("Security Origin"));
+        this._databaseVersionRow = new WI.DetailsSectionSimpleRow(WI.UIString("Version"));
+        this._databaseGroup = new WI.DetailsSectionGroup([this._databaseHostRow, this._databaseSecurityOriginRow, this._databaseVersionRow]);
+        this._databaseSection = new WI.DetailsSection("indexed-database-details", WI.UIString("Database"), [this._databaseGroup]);
 
         this.element.append(this._databaseSection.element);
 

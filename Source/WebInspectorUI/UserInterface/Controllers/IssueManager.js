@@ -23,25 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IssueManager = class IssueManager extends WebInspector.Object
+WI.IssueManager = class IssueManager extends WI.Object
 {
     constructor()
     {
         super();
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.Cleared, this._logCleared, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.logManager.addEventListener(WI.LogManager.Event.Cleared, this._logCleared, this);
 
         this.initialize();
     }
 
     static issueMatchSourceCode(issue, sourceCode)
     {
-        if (sourceCode instanceof WebInspector.SourceMapResource)
+        if (sourceCode instanceof WI.SourceMapResource)
             return issue.sourceCodeLocation && issue.sourceCodeLocation.displaySourceCode === sourceCode;
-        if (sourceCode instanceof WebInspector.Resource)
+        if (sourceCode instanceof WI.Resource)
             return issue.url === sourceCode.url && (!issue.sourceCodeLocation || issue.sourceCodeLocation.sourceCode === sourceCode);
-        if (sourceCode instanceof WebInspector.Script)
+        if (sourceCode instanceof WI.Script)
             return issue.sourceCodeLocation && issue.sourceCodeLocation.sourceCode === sourceCode;
         return false;
     }
@@ -52,16 +52,16 @@ WebInspector.IssueManager = class IssueManager extends WebInspector.Object
     {
         this._issues = [];
 
-        this.dispatchEventToListeners(WebInspector.IssueManager.Event.Cleared);
+        this.dispatchEventToListeners(WI.IssueManager.Event.Cleared);
     }
 
     issueWasAdded(consoleMessage)
     {
-        let issue = new WebInspector.IssueMessage(consoleMessage);
+        let issue = new WI.IssueMessage(consoleMessage);
 
         this._issues.push(issue);
 
-        this.dispatchEventToListeners(WebInspector.IssueManager.Event.IssueWasAdded, {issue});
+        this.dispatchEventToListeners(WI.IssueManager.Event.IssueWasAdded, {issue});
     }
 
     issuesForSourceCode(sourceCode)
@@ -70,7 +70,7 @@ WebInspector.IssueManager = class IssueManager extends WebInspector.Object
 
         for (var i = 0; i < this._issues.length; ++i) {
             var issue = this._issues[i];
-            if (WebInspector.IssueManager.issueMatchSourceCode(issue, sourceCode))
+            if (WI.IssueManager.issueMatchSourceCode(issue, sourceCode))
                 issues.push(issue);
         }
 
@@ -86,7 +86,7 @@ WebInspector.IssueManager = class IssueManager extends WebInspector.Object
 
     _mainResourceDidChange(event)
     {
-        console.assert(event.target instanceof WebInspector.Frame);
+        console.assert(event.target instanceof WI.Frame);
 
         if (!event.target.isMainFrame())
             return;
@@ -95,7 +95,7 @@ WebInspector.IssueManager = class IssueManager extends WebInspector.Object
     }
 };
 
-WebInspector.IssueManager.Event = {
+WI.IssueManager.Event = {
     IssueWasAdded: "issue-manager-issue-was-added",
     Cleared: "issue-manager-cleared"
 };

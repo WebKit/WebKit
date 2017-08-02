@@ -35,7 +35,7 @@ function test()
         url: "resources/lorem.txt?" + Math.random(),
         statusCode: 200,
         compressed: false,
-        responseSource: WebInspector.Resource.ResponseSource.Network,
+        responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
         requestBodyTransferSize: 0,
         responseBodyTransferSize: 2955,
@@ -48,7 +48,7 @@ function test()
         url: "resources/gzipped-lorem.php?" + Math.random(),
         statusCode: 200,
         compressed: true,
-        responseSource: WebInspector.Resource.ResponseSource.Network,
+        responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
         requestBodyTransferSize: 0,
         responseBodyTransferSize: 1229,
@@ -61,7 +61,7 @@ function test()
         url: "resources/gzipped-lorem-no-content-length.php?" + Math.random(),
         statusCode: 200,
         compressed: true,
-        responseSource: WebInspector.Resource.ResponseSource.Network,
+        responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
         requestBodyTransferSize: 0,
         responseBodyTransferSize: 1229,
@@ -74,7 +74,7 @@ function test()
         url: "/resources/square100.png?" + Math.random(),
         statusCode: 200,
         compressed: false,
-        responseSource: WebInspector.Resource.ResponseSource.Network,
+        responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
         requestBodyTransferSize: 0,
         responseBodyTransferSize: 12940,
@@ -87,7 +87,7 @@ function test()
         url: "resources/404.php?" + Math.random(),
         statusCode: 404,
         compressed: false,
-        responseSource: WebInspector.Resource.ResponseSource.Network,
+        responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
         requestBodyTransferSize: 0,
         responseBodyTransferSize: 512,
@@ -99,7 +99,7 @@ function test()
         description: "Sizes of a resource with request data",
         statusCode: 200,
         compressed: false,
-        responseSource: WebInspector.Resource.ResponseSource.Network,
+        responseSource: WI.Resource.ResponseSource.Network,
         headers: true,
         requestBodyTransferSize: 1027,
         responseBodyTransferSize: 28,
@@ -107,7 +107,7 @@ function test()
         resourceLoader() {
             InspectorTest.evaluateInPage(`triggerNetworkLoadWithRequestData()`);
             return Promise.all([
-                WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded),
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
                 InspectorTest.awaitEvent("LoadComplete"),
             ]).then(([resourceWasAddedEvent, loadCompleteEvent]) => {
                 return resourceWasAddedEvent.data.resource;

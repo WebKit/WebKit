@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasManager = class CanvasManager extends WebInspector.Object
+WI.CanvasManager = class CanvasManager extends WI.Object
 {
     constructor()
     {
         super();
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         this._canvasIdentifierMap = new Map;
 
@@ -46,21 +46,21 @@ WebInspector.CanvasManager = class CanvasManager extends WebInspector.Object
 
     canvasAdded(canvasPayload)
     {
-        // Called from WebInspector.CanvasObserver.
+        // Called from WI.CanvasObserver.
 
         console.assert(!this._canvasIdentifierMap.has(canvasPayload.canvasId), `Canvas already exists with id ${canvasPayload.canvasId}.`);
 
-        let canvas = WebInspector.Canvas.fromPayload(canvasPayload);
+        let canvas = WI.Canvas.fromPayload(canvasPayload);
         this._canvasIdentifierMap.set(canvas.identifier, canvas);
 
         canvas.frame.canvasCollection.add(canvas);
 
-        this.dispatchEventToListeners(WebInspector.CanvasManager.Event.CanvasWasAdded, {canvas});
+        this.dispatchEventToListeners(WI.CanvasManager.Event.CanvasWasAdded, {canvas});
     }
 
     canvasRemoved(canvasIdentifier)
     {
-        // Called from WebInspector.CanvasObserver.
+        // Called from WI.CanvasObserver.
 
         let canvas = this._canvasIdentifierMap.take(canvasIdentifier);
         console.assert(canvas);
@@ -69,12 +69,12 @@ WebInspector.CanvasManager = class CanvasManager extends WebInspector.Object
 
         canvas.frame.canvasCollection.remove(canvas);
 
-        this.dispatchEventToListeners(WebInspector.CanvasManager.Event.CanvasWasRemoved, {canvas});
+        this.dispatchEventToListeners(WI.CanvasManager.Event.CanvasWasRemoved, {canvas});
     }
 
     canvasMemoryChanged(canvasIdentifier, memoryCost)
     {
-        // Called from WebInspector.CanvasObserver.
+        // Called from WI.CanvasObserver.
 
         let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
         console.assert(canvas);
@@ -86,7 +86,7 @@ WebInspector.CanvasManager = class CanvasManager extends WebInspector.Object
 
     cssCanvasClientNodesChanged(canvasIdentifier)
     {
-        // Called from WebInspector.CanvasObserver.
+        // Called from WI.CanvasObserver.
 
         let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
         console.assert(canvas);
@@ -98,37 +98,37 @@ WebInspector.CanvasManager = class CanvasManager extends WebInspector.Object
 
     recordingFinished(canvasIdentifier, recordingPayload)
     {
-        // Called from WebInspector.CanvasObserver.
+        // Called from WI.CanvasObserver.
 
         let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
         console.assert(canvas);
         if (!canvas)
             return;
 
-        let recording = WebInspector.Recording.fromPayload(recordingPayload);
+        let recording = WI.Recording.fromPayload(recordingPayload);
         recording.source = canvas;
 
-        this.dispatchEventToListeners(WebInspector.CanvasManager.Event.RecordingFinished, {canvas, recording});
+        this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingFinished, {canvas, recording});
     }
 
     // Private
 
     _mainResourceDidChange(event)
     {
-        console.assert(event.target instanceof WebInspector.Frame);
+        console.assert(event.target instanceof WI.Frame);
         if (!event.target.isMainFrame())
             return;
 
-        WebInspector.Canvas.resetUniqueDisplayNameNumbers();
+        WI.Canvas.resetUniqueDisplayNameNumbers();
 
         if (this._canvasIdentifierMap.size) {
             this._canvasIdentifierMap.clear();
-            this.dispatchEventToListeners(WebInspector.CanvasManager.Event.Cleared);
+            this.dispatchEventToListeners(WI.CanvasManager.Event.Cleared);
         }
     }
 };
 
-WebInspector.CanvasManager.Event = {
+WI.CanvasManager.Event = {
     Cleared: "canvas-manager-cleared",
     CanvasWasAdded: "canvas-manager-canvas-was-added",
     CanvasWasRemoved: "canvas-manager-canvas-was-removed",

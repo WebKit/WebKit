@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleSheetTreeElement = class CSSStyleSheetTreeElement extends WebInspector.SourceCodeTreeElement
+WI.CSSStyleSheetTreeElement = class CSSStyleSheetTreeElement extends WI.SourceCodeTreeElement
 {
     constructor(styleSheet)
     {
-        console.assert(styleSheet instanceof WebInspector.CSSStyleSheet);
+        console.assert(styleSheet instanceof WI.CSSStyleSheet);
         console.assert(styleSheet.isInspectorStyleSheet());
 
-        super(styleSheet, ["stylesheet", "stylesheet-icon"], WebInspector.UIString("Inspector Style Sheet"));
+        super(styleSheet, ["stylesheet", "stylesheet-icon"], WI.UIString("Inspector Style Sheet"));
     }
 };

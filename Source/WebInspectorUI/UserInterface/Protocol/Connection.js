@@ -145,7 +145,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
         try {
             callback.apply(null, callbackArguments);
         } catch (e) {
-            WebInspector.reportInternalError(e, {"cause": `An uncaught exception was thrown while dispatching response callback for command ${command.qualifiedName}.`});
+            WI.reportInternalError(e, {"cause": `An uncaught exception was thrown while dispatching response callback for command ${command.qualifiedName}.`});
         }
     }
 
@@ -195,7 +195,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
             for (let tracer of InspectorBackend.activeTracers)
                 tracer.logFrontendException(messageObject, e);
 
-            WebInspector.reportInternalError(e, {"cause": `An uncaught exception was thrown while handling event: ${qualifiedName}`});
+            WI.reportInternalError(e, {"cause": `An uncaught exception was thrown while handling event: ${qualifiedName}`});
         }
 
         InspectorBackend.currentDispatchState.event = null;

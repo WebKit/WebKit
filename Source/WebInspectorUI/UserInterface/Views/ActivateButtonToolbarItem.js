@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ActivateButtonToolbarItem = class ActivateButtonToolbarItem extends WebInspector.ActivateButtonNavigationItem
+WI.ActivateButtonToolbarItem = class ActivateButtonToolbarItem extends WI.ActivateButtonNavigationItem
 {
     constructor(identifier, defaultToolTip, activatedToolTip, label, image, role)
     {
@@ -31,7 +31,7 @@ WebInspector.ActivateButtonToolbarItem = class ActivateButtonToolbarItem extends
 
         if (typeof label === "string") {
             this._labelElement = document.createElement("div");
-            this._labelElement.className = WebInspector.ButtonToolbarItem.LabelStyleClassName;
+            this._labelElement.className = WI.ButtonToolbarItem.LabelStyleClassName;
             this._element.appendChild(this._labelElement);
 
             this.label = label;

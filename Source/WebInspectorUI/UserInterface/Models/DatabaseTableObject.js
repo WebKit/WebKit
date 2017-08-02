@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseTableObject = class DatabaseTableObject
+WI.DatabaseTableObject = class DatabaseTableObject
 {
     constructor(name, database)
     {
-        console.assert(database instanceof WebInspector.DatabaseObject);
+        console.assert(database instanceof WI.DatabaseObject);
 
         this._name = name;
         this._database = database;
@@ -40,9 +40,9 @@ WebInspector.DatabaseTableObject = class DatabaseTableObject
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WebInspector.DatabaseTableObject.NameCookieKey] = this.name;
+        cookie[WI.DatabaseTableObject.NameCookieKey] = this.name;
     }
 };
 
-WebInspector.DatabaseTableObject.TypeIdentifier = "database-table";
-WebInspector.DatabaseTableObject.NameCookieKey = "database-table-object-name";
+WI.DatabaseTableObject.TypeIdentifier = "database-table";
+WI.DatabaseTableObject.NameCookieKey = "database-table-object-name";

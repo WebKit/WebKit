@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Popover = class Popover extends WebInspector.Object
+WI.Popover = class Popover extends WI.Object
 {
     constructor(delegate)
     {
@@ -31,10 +31,10 @@ WebInspector.Popover = class Popover extends WebInspector.Object
 
         this.delegate = delegate;
         this._edge = null;
-        this._frame = new WebInspector.Rect;
+        this._frame = new WI.Rect;
         this._content = null;
-        this._targetFrame = new WebInspector.Rect;
-        this._anchorPoint = new WebInspector.Point;
+        this._targetFrame = new WI.Rect;
+        this._anchorPoint = new WI.Point;
         this._preferredEdges = null;
         this._resizeHandler = null;
 
@@ -63,7 +63,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
 
     get visible()
     {
-        return this._element.parentNode === document.body && !this._element.classList.contains(WebInspector.Popover.FadeOutClassName);
+        return this._element.parentNode === document.body && !this._element.classList.contains(WI.Popover.FadeOutClassName);
     }
 
     set frame(frame)
@@ -151,9 +151,9 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         window.removeEventListener("resize", this, true);
         window.removeEventListener("keypress", this, true);
 
-        WebInspector.quickConsole.keyboardShortcutDisabled = false;
+        WI.quickConsole.keyboardShortcutDisabled = false;
 
-        this._element.classList.add(WebInspector.Popover.FadeOutClassName);
+        this._element.classList.add(WI.Popover.FadeOutClassName);
 
         if (this.delegate && typeof this.delegate.willDismissPopover === "function")
             this.delegate.willDismissPopover(this);
@@ -164,8 +164,8 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         switch (event.type) {
         case "mousedown":
         case "scroll":
-            if (!this._element.contains(event.target) && !event.target.enclosingNodeOrSelfWithClass(WebInspector.Popover.IgnoreAutoDismissClassName)
-                && !event[WebInspector.Popover.EventPreventDismissSymbol]) {
+            if (!this._element.contains(event.target) && !event.target.enclosingNodeOrSelfWithClass(WI.Popover.IgnoreAutoDismissClassName)
+                && !event[WI.Popover.EventPreventDismissSymbol]) {
                 this.dismiss();
             }
             break;
@@ -174,13 +174,13 @@ WebInspector.Popover = class Popover extends WebInspector.Object
                 this._resizeHandler();
             break;
         case "keypress":
-            if (event.keyCode === WebInspector.KeyboardShortcut.Key.Escape.keyCode)
+            if (event.keyCode === WI.KeyboardShortcut.Key.Escape.keyCode)
                 this.dismiss();
             break;
         case "transitionend":
             if (event.target === this._element) {
                 document.body.removeChild(this._element);
-                this._element.classList.remove(WebInspector.Popover.FadeOutClassName);
+                this._element.classList.remove(WI.Popover.FadeOutClassName);
                 this._container.textContent = "";
                 if (this.delegate && typeof this.delegate.didDismissPopover === "function")
                     this.delegate.didDismissPopover(this);
@@ -207,7 +207,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         if (this._element.parentNode !== document.body)
             document.body.appendChild(this._element);
         else
-            this._element.classList.remove(WebInspector.Popover.FadeOutClassName);
+            this._element.classList.remove(WI.Popover.FadeOutClassName);
 
         this._dismissing = false;
 
@@ -225,18 +225,18 @@ WebInspector.Popover = class Popover extends WebInspector.Object
 
             // Get the ideal size for the popover to fit its content.
             var popoverBounds = this._element.getBoundingClientRect();
-            this._preferredSize = new WebInspector.Size(Math.ceil(popoverBounds.width), Math.ceil(popoverBounds.height));
+            this._preferredSize = new WI.Size(Math.ceil(popoverBounds.width), Math.ceil(popoverBounds.height));
         }
 
-        var titleBarOffset = WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release >= 10 ? 22 : 0;
-        var containerFrame = new WebInspector.Rect(0, titleBarOffset, window.innerWidth, window.innerHeight - titleBarOffset);
+        var titleBarOffset = WI.Platform.name === "mac" && WI.Platform.version.release >= 10 ? 22 : 0;
+        var containerFrame = new WI.Rect(0, titleBarOffset, window.innerWidth, window.innerHeight - titleBarOffset);
         // The frame of the window with a little inset to make sure we have room for shadows.
-        containerFrame = containerFrame.inset(WebInspector.Popover.ShadowEdgeInsets);
+        containerFrame = containerFrame.inset(WI.Popover.ShadowEdgeInsets);
 
         // Work out the metrics for all edges.
         var metrics = new Array(preferredEdges.length);
-        for (var edgeName in WebInspector.RectEdge) {
-            var edge = WebInspector.RectEdge[edgeName];
+        for (var edgeName in WI.RectEdge) {
+            var edge = WI.RectEdge[edgeName];
             var item = {
                 edge,
                 metrics: this._bestMetricsForEdge(this._preferredSize, targetFrame, containerFrame, edge)
@@ -269,22 +269,22 @@ WebInspector.Popover = class Popover extends WebInspector.Object
 
         this._edge = bestEdge;
 
-        if (bestFrame === WebInspector.Rect.ZERO_RECT) {
+        if (bestFrame === WI.Rect.ZERO_RECT) {
             // The target for the popover is offscreen.
             this.dismiss();
         } else {
             switch (bestEdge) {
-            case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
-                anchorPoint = new WebInspector.Point(bestFrame.size.width - WebInspector.Popover.ShadowPadding, targetFrame.midY() - bestFrame.minY());
+            case WI.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
+                anchorPoint = new WI.Point(bestFrame.size.width - WI.Popover.ShadowPadding, targetFrame.midY() - bestFrame.minY());
                 break;
-            case WebInspector.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
-                anchorPoint = new WebInspector.Point(WebInspector.Popover.ShadowPadding, targetFrame.midY() - bestFrame.minY());
+            case WI.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
+                anchorPoint = new WI.Point(WI.Popover.ShadowPadding, targetFrame.midY() - bestFrame.minY());
                 break;
-            case WebInspector.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
-                anchorPoint = new WebInspector.Point(targetFrame.midX() - bestFrame.minX(), bestFrame.size.height - WebInspector.Popover.ShadowPadding);
+            case WI.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
+                anchorPoint = new WI.Point(targetFrame.midX() - bestFrame.minX(), bestFrame.size.height - WI.Popover.ShadowPadding);
                 break;
-            case WebInspector.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
-                anchorPoint = new WebInspector.Point(targetFrame.midX() - bestFrame.minX(), WebInspector.Popover.ShadowPadding);
+            case WI.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
+                anchorPoint = new WI.Point(targetFrame.midX() - bestFrame.minX(), WI.Popover.ShadowPadding);
                 break;
             }
 
@@ -299,7 +299,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             }
 
             // Make sure content is centered in case either of the dimension is smaller than the minimal bounds.
-            if (this._preferredSize.width < WebInspector.Popover.MinWidth || this._preferredSize.height < WebInspector.Popover.MinHeight)
+            if (this._preferredSize.width < WI.Popover.MinWidth || this._preferredSize.height < WI.Popover.MinHeight)
                 this._container.classList.add("center");
             else
                 this._container.classList.remove("center");
@@ -318,13 +318,13 @@ WebInspector.Popover = class Popover extends WebInspector.Object
     _cssClassNameForEdge()
     {
         switch (this._edge) {
-        case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
+        case WI.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
             return "arrow-right";
-        case WebInspector.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
+        case WI.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
             return "arrow-left";
-        case WebInspector.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
+        case WI.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
             return "arrow-down";
-        case WebInspector.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
+        case WI.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
             return "arrow-up";
         }
         console.error("Unknown edge.");
@@ -343,7 +343,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         var startTime = Date.now();
         var duration = 350;
         var epsilon = 1 / (200 * duration);
-        var spline = new WebInspector.CubicBezier(0.25, 0.1, 0.25, 1);
+        var spline = new WI.CubicBezier(0.25, 0.1, 0.25, 1);
 
         var fromFrame = this._frame.copy();
         var fromAnchor = this._anchorPoint.copy();
@@ -357,14 +357,14 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         {
             var progress = spline.solve(Math.min((Date.now() - startTime) / duration, 1), epsilon);
 
-            this.frame = new WebInspector.Rect(
+            this.frame = new WI.Rect(
                 animatedValue(fromFrame.minX(), toFrame.minX(), progress),
                 animatedValue(fromFrame.minY(), toFrame.minY(), progress),
                 animatedValue(fromFrame.size.width, toFrame.size.width, progress),
                 animatedValue(fromFrame.size.height, toFrame.size.height, progress)
             ).round();
 
-            this._setAnchorPoint(new WebInspector.Point(
+            this._setAnchorPoint(new WI.Point(
                 animatedValue(fromAnchor.x, toAnchor.x, progress),
                 animatedValue(fromAnchor.y, toAnchor.y, progress)
             ));
@@ -399,23 +399,23 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         // Bounds of the path don't take into account the arrow, but really only the tight bounding box
         // of the content contained within the frame.
         var bounds;
-        var arrowHeight = WebInspector.Popover.AnchorSize.height;
+        var arrowHeight = WI.Popover.AnchorSize.height;
         switch (this._edge) {
-        case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
-            bounds = new WebInspector.Rect(0, 0, width - arrowHeight, height);
+        case WI.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
+            bounds = new WI.Rect(0, 0, width - arrowHeight, height);
             break;
-        case WebInspector.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
-            bounds = new WebInspector.Rect(arrowHeight, 0, width - arrowHeight, height);
+        case WI.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
+            bounds = new WI.Rect(arrowHeight, 0, width - arrowHeight, height);
             break;
-        case WebInspector.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
-            bounds = new WebInspector.Rect(0, 0, width, height - arrowHeight);
+        case WI.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
+            bounds = new WI.Rect(0, 0, width, height - arrowHeight);
             break;
-        case WebInspector.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
-            bounds = new WebInspector.Rect(0, arrowHeight, width, height - arrowHeight);
+        case WI.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
+            bounds = new WI.Rect(0, arrowHeight, width, height - arrowHeight);
             break;
         }
 
-        bounds = bounds.inset(WebInspector.Popover.ShadowEdgeInsets);
+        bounds = bounds.inset(WI.Popover.ShadowEdgeInsets);
 
         // Clip the frame.
         ctx.fillStyle = "black";
@@ -448,34 +448,34 @@ WebInspector.Popover = class Popover extends WebInspector.Object
     _bestMetricsForEdge(preferredSize, targetFrame, containerFrame, edge)
     {
         var x, y;
-        var width = preferredSize.width + (WebInspector.Popover.ShadowPadding * 2) + (WebInspector.Popover.ContentPadding * 2);
-        var height = preferredSize.height + (WebInspector.Popover.ShadowPadding * 2) + (WebInspector.Popover.ContentPadding * 2);
-        var arrowLength = WebInspector.Popover.AnchorSize.height;
+        var width = preferredSize.width + (WI.Popover.ShadowPadding * 2) + (WI.Popover.ContentPadding * 2);
+        var height = preferredSize.height + (WI.Popover.ShadowPadding * 2) + (WI.Popover.ContentPadding * 2);
+        var arrowLength = WI.Popover.AnchorSize.height;
 
         switch (edge) {
-        case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
+        case WI.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
             width += arrowLength;
-            x = targetFrame.origin.x - width + WebInspector.Popover.ShadowPadding;
+            x = targetFrame.origin.x - width + WI.Popover.ShadowPadding;
             y = targetFrame.origin.y - (height - targetFrame.size.height) / 2;
             break;
-        case WebInspector.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
+        case WI.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
             width += arrowLength;
-            x = targetFrame.origin.x + targetFrame.size.width - WebInspector.Popover.ShadowPadding;
+            x = targetFrame.origin.x + targetFrame.size.width - WI.Popover.ShadowPadding;
             y = targetFrame.origin.y - (height - targetFrame.size.height) / 2;
             break;
-        case WebInspector.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
+        case WI.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
             height += arrowLength;
             x = targetFrame.origin.x - (width - targetFrame.size.width) / 2;
-            y = targetFrame.origin.y - height + WebInspector.Popover.ShadowPadding;
+            y = targetFrame.origin.y - height + WI.Popover.ShadowPadding;
             break;
-        case WebInspector.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
+        case WI.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
             height += arrowLength;
             x = targetFrame.origin.x - (width - targetFrame.size.width) / 2;
-            y = targetFrame.origin.y + targetFrame.size.height - WebInspector.Popover.ShadowPadding;
+            y = targetFrame.origin.y + targetFrame.size.height - WI.Popover.ShadowPadding;
             break;
         }
 
-        if (edge === WebInspector.RectEdge.MIN_X || edge === WebInspector.RectEdge.MAX_X) {
+        if (edge === WI.RectEdge.MIN_X || edge === WI.RectEdge.MAX_X) {
             if (y < containerFrame.minY())
                 y = containerFrame.minY();
             if (y + height > containerFrame.maxY())
@@ -487,45 +487,45 @@ WebInspector.Popover = class Popover extends WebInspector.Object
                 x = containerFrame.maxX() - width;
         }
 
-        var preferredFrame = new WebInspector.Rect(x, y, width, height);
+        var preferredFrame = new WI.Rect(x, y, width, height);
         var bestFrame = preferredFrame.intersectionWithRect(containerFrame);
 
-        width = bestFrame.size.width - (WebInspector.Popover.ShadowPadding * 2);
-        height = bestFrame.size.height - (WebInspector.Popover.ShadowPadding * 2);
+        width = bestFrame.size.width - (WI.Popover.ShadowPadding * 2);
+        height = bestFrame.size.height - (WI.Popover.ShadowPadding * 2);
 
         switch (edge) {
-        case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
-        case WebInspector.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
+        case WI.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
+        case WI.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
             width -= arrowLength;
             break;
-        case WebInspector.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
-        case WebInspector.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
+        case WI.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
+        case WI.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
             height -= arrowLength;
             break;
         }
 
         return {
             frame: bestFrame,
-            contentSize: new WebInspector.Size(width, height)
+            contentSize: new WI.Size(width, height)
         };
     }
 
     _drawFrame(ctx, bounds, anchorEdge)
     {
-        let cornerRadius = WebInspector.Popover.CornerRadius;
-        let arrowHalfLength = WebInspector.Popover.AnchorSize.width * 0.5;
+        let cornerRadius = WI.Popover.CornerRadius;
+        let arrowHalfLength = WI.Popover.AnchorSize.width * 0.5;
         let anchorPoint = this._anchorPoint;
 
         // Prevent the arrow from being positioned against one of the popover's rounded corners.
         let arrowPadding = cornerRadius + arrowHalfLength;
-        if (anchorEdge === WebInspector.RectEdge.MIN_Y || anchorEdge === WebInspector.RectEdge.MAX_Y)
+        if (anchorEdge === WI.RectEdge.MIN_Y || anchorEdge === WI.RectEdge.MAX_Y)
             anchorPoint.x = Number.constrain(anchorPoint.x, bounds.minX() + arrowPadding, bounds.maxX() - arrowPadding);
         else
             anchorPoint.y = Number.constrain(anchorPoint.y, bounds.minY() + arrowPadding, bounds.maxY() - arrowPadding);
 
         ctx.beginPath();
         switch (anchorEdge) {
-        case WebInspector.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
+        case WI.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
             ctx.moveTo(bounds.maxX(), bounds.minY() + cornerRadius);
             ctx.lineTo(bounds.maxX(), anchorPoint.y - arrowHalfLength);
             ctx.lineTo(anchorPoint.x, anchorPoint.y);
@@ -535,7 +535,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
             ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
             break;
-        case WebInspector.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
+        case WI.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
             ctx.moveTo(bounds.minX(), bounds.maxY() - cornerRadius);
             ctx.lineTo(bounds.minX(), anchorPoint.y + arrowHalfLength);
             ctx.lineTo(anchorPoint.x, anchorPoint.y);
@@ -545,7 +545,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
             ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
             break;
-        case WebInspector.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
+        case WI.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
             ctx.moveTo(bounds.maxX() - cornerRadius, bounds.maxY());
             ctx.lineTo(anchorPoint.x + arrowHalfLength, bounds.maxY());
             ctx.lineTo(anchorPoint.x, anchorPoint.y);
@@ -555,7 +555,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
             ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
             break;
-        case WebInspector.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
+        case WI.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
             ctx.moveTo(bounds.minX() + cornerRadius, bounds.minY());
             ctx.lineTo(anchorPoint.x - arrowHalfLength, bounds.minY());
             ctx.lineTo(anchorPoint.x, anchorPoint.y);
@@ -579,18 +579,18 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             window.addEventListener("resize", this, true);
             window.addEventListener("keypress", this, true);
 
-            WebInspector.quickConsole.keyboardShortcutDisabled = true;
+            WI.quickConsole.keyboardShortcutDisabled = true;
         }
     }
 };
 
-WebInspector.Popover.FadeOutClassName = "fade-out";
-WebInspector.Popover.CornerRadius = 5;
-WebInspector.Popover.MinWidth = 40;
-WebInspector.Popover.MinHeight = 40;
-WebInspector.Popover.ShadowPadding = 5;
-WebInspector.Popover.ContentPadding = 5;
-WebInspector.Popover.AnchorSize = new WebInspector.Size(22, 11);
-WebInspector.Popover.ShadowEdgeInsets = new WebInspector.EdgeInsets(WebInspector.Popover.ShadowPadding);
-WebInspector.Popover.IgnoreAutoDismissClassName = "popover-ignore-auto-dismiss";
-WebInspector.Popover.EventPreventDismissSymbol = Symbol("popover-event-prevent-dismiss");
+WI.Popover.FadeOutClassName = "fade-out";
+WI.Popover.CornerRadius = 5;
+WI.Popover.MinWidth = 40;
+WI.Popover.MinHeight = 40;
+WI.Popover.ShadowPadding = 5;
+WI.Popover.ContentPadding = 5;
+WI.Popover.AnchorSize = new WI.Size(22, 11);
+WI.Popover.ShadowEdgeInsets = new WI.EdgeInsets(WI.Popover.ShadowPadding);
+WI.Popover.IgnoreAutoDismissClassName = "popover-ignore-auto-dismiss";
+WI.Popover.EventPreventDismissSymbol = Symbol("popover-event-prevent-dismiss");

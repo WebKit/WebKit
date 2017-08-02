@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MemoryCategory = class MemoryCategory
+WI.MemoryCategory = class MemoryCategory
 {
     constructor(type, size)
     {
@@ -36,7 +36,7 @@ WebInspector.MemoryCategory = class MemoryCategory
     }
 };
 
-WebInspector.MemoryCategory.Type = {
+WI.MemoryCategory.Type = {
     JavaScript: "javascript",
     Images: "images",
     Layers: "layers",

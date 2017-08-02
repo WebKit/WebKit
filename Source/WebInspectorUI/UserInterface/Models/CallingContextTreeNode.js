@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CallingContextTreeNode = class CallingContextTreeNode
+WI.CallingContextTreeNode = class CallingContextTreeNode
 {
     constructor(sourceID, line, column, name, url, hash)
     {
@@ -33,7 +33,7 @@ WebInspector.CallingContextTreeNode = class CallingContextTreeNode
         this._column = column;
         this._name = name;
         this._url = url;
-        this._uid = WebInspector.CallingContextTreeNode.__uid++;
+        this._uid = WI.CallingContextTreeNode.__uid++;
 
         this._timestamps = [];
         this._durations = [];
@@ -41,7 +41,7 @@ WebInspector.CallingContextTreeNode = class CallingContextTreeNode
         this._leafDurations = [];
         this._expressionLocations = {}; // Keys are "line:column" strings. Values are arrays of timestamps in sorted order.
 
-        this._hash = hash || WebInspector.CallingContextTreeNode._hash(this);
+        this._hash = hash || WI.CallingContextTreeNode._hash(this);
     }
 
     // Static and Private
@@ -128,11 +128,11 @@ WebInspector.CallingContextTreeNode = class CallingContextTreeNode
 
     findOrMakeChild(stackFrame)
     {
-        let hash = WebInspector.CallingContextTreeNode._hash(stackFrame);
+        let hash = WI.CallingContextTreeNode._hash(stackFrame);
         let node = this._children[hash];
         if (node)
             return node;
-        node = new WebInspector.CallingContextTreeNode(stackFrame.sourceID, stackFrame.line, stackFrame.column, stackFrame.name, stackFrame.url, hash);
+        node = new WI.CallingContextTreeNode(stackFrame.sourceID, stackFrame.line, stackFrame.column, stackFrame.name, stackFrame.url, hash);
         this._children[hash] = node;
         return node;
     }
@@ -239,4 +239,4 @@ WebInspector.CallingContextTreeNode = class CallingContextTreeNode
     }
 };
 
-WebInspector.CallingContextTreeNode.__uid = 0;
+WI.CallingContextTreeNode.__uid = 0;

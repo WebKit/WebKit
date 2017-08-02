@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RecordingContentView = class RecordingContentView extends WebInspector.ContentView
+WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 {
     constructor(representedObject)
     {
-        console.assert(representedObject instanceof WebInspector.Recording);
+        console.assert(representedObject instanceof WI.Recording);
 
         super(representedObject);
 
@@ -37,10 +37,10 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
 
         this.element.classList.add("recording", this.representedObject.type);
 
-        if (this.representedObject.type === WebInspector.Recording.Type.Canvas2D) {
-            this._showGridButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-grid", WebInspector.UIString("Show Grid"), WebInspector.UIString("Hide Grid"), "Images/NavigationItemCheckers.svg", 13, 13);
-            this._showGridButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
-            this._showGridButtonNavigationItem.activated = !!WebInspector.settings.showImageGrid.value;
+        if (this.representedObject.type === WI.Recording.Type.Canvas2D) {
+            this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show Grid"), WI.UIString("Hide Grid"), "Images/NavigationItemCheckers.svg", 13, 13);
+            this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
+            this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
         }
 
         this._previewContainer = this.element.appendChild(document.createElement("div"));
@@ -51,7 +51,7 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
 
     get navigationItems()
     {
-        if (this.representedObject.type === WebInspector.Recording.Type.Canvas2D)
+        if (this.representedObject.type === WI.Recording.Type.Canvas2D)
             return [this._showGridButtonNavigationItem];
         return [];
     }
@@ -64,7 +64,7 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
 
         this._index = index;
 
-        if (this.representedObject.type === WebInspector.Recording.Type.Canvas2D)
+        if (this.representedObject.type === WI.Recording.Type.Canvas2D)
             this._generateContentCanvas2D(index, options);
     }
 
@@ -74,7 +74,7 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
     {
         super.shown();
 
-        if (this.representedObject.type === WebInspector.Recording.Type.Canvas2D)
+        if (this.representedObject.type === WI.Recording.Type.Canvas2D)
             this._updateImageGrid();
     }
 
@@ -106,7 +106,7 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
             return;
         }
 
-        let snapshotIndex = Math.floor(index / WebInspector.RecordingContentView.SnapshotInterval);
+        let snapshotIndex = Math.floor(index / WI.RecordingContentView.SnapshotInterval);
         let snapshot = this._snapshots[snapshotIndex];
 
         let actions = this.representedObject.actions;
@@ -124,7 +124,7 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
                     continue;
 
                 try {
-                    if (WebInspector.RecordingAction.functionForType(this.representedObject.type, name))
+                    if (WI.RecordingAction.functionForType(this.representedObject.type, name))
                         snapshot.context[name](...snapshot.state[name]);
                     else
                         snapshot.context[name] = snapshot.state[name];
@@ -154,7 +154,7 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
 
         if (!snapshot) {
             snapshot = this._snapshots[snapshotIndex] = {};
-            snapshot.index = snapshotIndex * WebInspector.RecordingContentView.SnapshotInterval;
+            snapshot.index = snapshotIndex * WI.RecordingContentView.SnapshotInterval;
             while (snapshot.index && actions[snapshot.index].name !== "beginPath")
                 --snapshot.index;
 
@@ -179,9 +179,9 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
                 for (let key in initialState.attributes) {
                     let value = initialState.attributes[key];
                     if (key === "strokeStyle" || key === "fillStyle")
-                        value = this.representedObject.swizzle(value, WebInspector.Recording.Swizzle.CanvasStyle);
+                        value = this.representedObject.swizzle(value, WI.Recording.Swizzle.CanvasStyle);
 
-                    if (value === WebInspector.Recording.Swizzle.Invalid)
+                    if (value === WI.Recording.Swizzle.Invalid)
                         continue;
 
                     snapshot.state[key] = value;
@@ -243,7 +243,7 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
         if (!action.valid)
             return;
 
-        if (action.parameters.includes(WebInspector.Recording.Swizzle.Invalid))
+        if (action.parameters.includes(WI.Recording.Swizzle.Invalid))
             return;
 
         try {
@@ -257,7 +257,7 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
                     context[name] = action.parameters[0];
             }
         } catch (e) {
-            WebInspector.Recording.synthesizeError(WebInspector.UIString("“%s” threw an error.").format(action.name));
+            WI.Recording.synthesizeError(WI.UIString("“%s” threw an error.").format(action.name));
 
             action.valid = false;
         }
@@ -265,20 +265,20 @@ WebInspector.RecordingContentView = class RecordingContentView extends WebInspec
 
     _updateImageGrid()
     {
-        let activated = WebInspector.settings.showImageGrid.value;
+        let activated = WI.settings.showImageGrid.value;
         this._showGridButtonNavigationItem.activated = activated;
 
-        let snapshotIndex = Math.floor(this._index / WebInspector.RecordingContentView.SnapshotInterval);
+        let snapshotIndex = Math.floor(this._index / WI.RecordingContentView.SnapshotInterval);
         if (!isNaN(this._index) && this._snapshots[snapshotIndex])
             this._snapshots[snapshotIndex].element.classList.toggle("show-grid", activated);
     }
 
     _showGridButtonClicked(event)
     {
-        WebInspector.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
+        WI.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
 
         this._updateImageGrid();
     }
 };
 
-WebInspector.RecordingContentView.SnapshotInterval = 5000;
+WI.RecordingContentView.SnapshotInterval = 5000;

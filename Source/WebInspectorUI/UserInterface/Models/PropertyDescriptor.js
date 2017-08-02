@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PropertyDescriptor = class PropertyDescriptor
+WI.PropertyDescriptor = class PropertyDescriptor
 {
     constructor(descriptor, symbol, isOwnProperty, wasThrown, nativeGetter, isInternalProperty)
     {
         console.assert(descriptor);
         console.assert(descriptor.name);
-        console.assert(!descriptor.value || descriptor.value instanceof WebInspector.RemoteObject);
-        console.assert(!descriptor.get || descriptor.get instanceof WebInspector.RemoteObject);
-        console.assert(!descriptor.set || descriptor.set instanceof WebInspector.RemoteObject);
-        console.assert(!symbol || symbol instanceof WebInspector.RemoteObject);
+        console.assert(!descriptor.value || descriptor.value instanceof WI.RemoteObject);
+        console.assert(!descriptor.get || descriptor.get instanceof WI.RemoteObject);
+        console.assert(!descriptor.set || descriptor.set instanceof WI.RemoteObject);
+        console.assert(!symbol || symbol instanceof WI.RemoteObject);
 
         this._name = descriptor.name;
         this._value = descriptor.value;
@@ -57,14 +57,14 @@ WebInspector.PropertyDescriptor = class PropertyDescriptor
     static fromPayload(payload, internal, target)
     {
         if (payload.value)
-            payload.value = WebInspector.RemoteObject.fromPayload(payload.value, target);
+            payload.value = WI.RemoteObject.fromPayload(payload.value, target);
         if (payload.get)
-            payload.get = WebInspector.RemoteObject.fromPayload(payload.get, target);
+            payload.get = WI.RemoteObject.fromPayload(payload.get, target);
         if (payload.set)
-            payload.set = WebInspector.RemoteObject.fromPayload(payload.set, target);
+            payload.set = WI.RemoteObject.fromPayload(payload.set, target);
 
         if (payload.symbol)
-            payload.symbol = WebInspector.RemoteObject.fromPayload(payload.symbol, target);
+            payload.symbol = WI.RemoteObject.fromPayload(payload.symbol, target);
 
         if (internal) {
             console.assert(payload.value);
@@ -72,7 +72,7 @@ WebInspector.PropertyDescriptor = class PropertyDescriptor
             payload.isOwn = true;
         }
 
-        return new WebInspector.PropertyDescriptor(payload, payload.symbol, payload.isOwn, payload.wasThrown, payload.nativeGetter, internal);
+        return new WI.PropertyDescriptor(payload, payload.symbol, payload.isOwn, payload.wasThrown, payload.nativeGetter, internal);
     }
 
     // Public

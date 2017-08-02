@@ -41,11 +41,11 @@ function test()
     let suite = InspectorTest.createAsyncSuite("Debugger.stepOut");
 
     // Always step-out when call frames change.
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
-        if (!WebInspector.debuggerManager.activeCallFrame)
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+        if (!WI.debuggerManager.activeCallFrame)
             return;
         logPauseLocation();
-        WebInspector.debuggerManager.stepOut();
+        WI.debuggerManager.stepOut();
     });
 
     function addTestCase({name, description, expression}) {
@@ -53,10 +53,10 @@ function test()
             name, description,
             test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
-                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
-                    InspectorTest.log(`PAUSED (${WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target).pauseReason})`);
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    InspectorTest.log(`PAUSED (${WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target).pauseReason})`);
                 });
-                WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Resumed, (event) => {
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Resumed, (event) => {
                     InspectorTest.log("RESUMED");
                     resolve();
                 });

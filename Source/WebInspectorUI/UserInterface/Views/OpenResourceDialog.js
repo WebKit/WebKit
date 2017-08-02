@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.Dialog
+WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 {
     constructor(delegate)
     {
@@ -36,7 +36,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
 
         this._inputElement = fieldElement.appendChild(document.createElement("input"));
         this._inputElement.type = "text";
-        this._inputElement.placeholder = WebInspector.UIString("File or Resource");
+        this._inputElement.placeholder = WI.UIString("File or Resource");
         this._inputElement.spellcheck = false;
 
         this._clearIconElement = fieldElement.appendChild(document.createElement("img"));
@@ -47,17 +47,17 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         this._clearIconElement.addEventListener("mousedown", this._handleMousedownEvent.bind(this));
         this._clearIconElement.addEventListener("click", this._handleClickEvent.bind(this));
 
-        this._treeOutline = new WebInspector.TreeOutline;
+        this._treeOutline = new WI.TreeOutline;
         this._treeOutline.allowsRepeatSelection = true;
         this._treeOutline.disclosureButtons = false;
         this._treeOutline.large = true;
 
-        this._treeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+        this._treeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
         this._treeOutline.element.addEventListener("focus", () => { this._inputElement.focus(); });
 
         this.element.appendChild(this._treeOutline.element);
 
-        this._queryController = new WebInspector.ResourceQueryController;
+        this._queryController = new WI.ResourceQueryController;
         this._filteredResults = [];
     }
 
@@ -90,12 +90,12 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         {
             let treeElement = null;
 
-            if (representedObject instanceof WebInspector.SourceMapResource)
-                treeElement = new WebInspector.SourceMapResourceTreeElement(representedObject);
-            else if (representedObject instanceof WebInspector.Resource)
-                treeElement = new WebInspector.ResourceTreeElement(representedObject);
-            else if (representedObject instanceof WebInspector.Script)
-                treeElement = new WebInspector.ScriptTreeElement(representedObject);
+            if (representedObject instanceof WI.SourceMapResource)
+                treeElement = new WI.SourceMapResourceTreeElement(representedObject);
+            else if (representedObject instanceof WI.Resource)
+                treeElement = new WI.ResourceTreeElement(representedObject);
+            else if (representedObject instanceof WI.Script)
+                treeElement = new WI.ScriptTreeElement(representedObject);
 
             return treeElement;
         }
@@ -110,7 +110,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
                 continue;
 
             treeElement.mainTitle = createHighlightedTitleFragment(resource.displayName, result.matchingTextRanges);
-            treeElement[WebInspector.OpenResourceDialog.ResourceMatchCookieDataSymbol] = result.cookie;
+            treeElement[WI.OpenResourceDialog.ResourceMatchCookieDataSymbol] = result.cookie;
             this._treeOutline.appendChild(treeElement);
         }
 
@@ -120,26 +120,26 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
 
     didDismissDialog()
     {
-        WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        WebInspector.Frame.removeEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
-        WebInspector.Target.removeEventListener(WebInspector.Target.Event.ResourceAdded, this._resourceWasAdded, this);
-        WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, this._scriptAdded, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+        WI.Target.removeEventListener(WI.Target.Event.ResourceAdded, this._resourceWasAdded, this);
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, this._scriptAdded, this);
 
         this._queryController.reset();
     }
 
     didPresentDialog()
     {
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
-        WebInspector.Target.addEventListener(WebInspector.Target.Event.ResourceAdded, this._resourceWasAdded, this);
-        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, this._scriptAdded, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
+        WI.Target.addEventListener(WI.Target.Event.ResourceAdded, this._resourceWasAdded, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, this._scriptAdded, this);
 
-        if (WebInspector.frameResourceManager.mainFrame)
-            this._addResourcesForFrame(WebInspector.frameResourceManager.mainFrame);
+        if (WI.frameResourceManager.mainFrame)
+            this._addResourcesForFrame(WI.frameResourceManager.mainFrame);
 
-        for (let target of WebInspector.targets) {
-            if (target !== WebInspector.mainTarget)
+        for (let target of WI.targets) {
+            if (target !== WI.mainTarget)
                 this._addResourcesForTarget(target);
         }
 
@@ -153,25 +153,25 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
 
     _handleKeydownEvent(event)
     {
-        if (event.keyCode === WebInspector.KeyboardShortcut.Key.Escape.keyCode) {
+        if (event.keyCode === WI.KeyboardShortcut.Key.Escape.keyCode) {
             if (this._inputElement.value === "")
                 this.dismiss();
             else
                 this._clear();
 
             event.preventDefault();
-        } else if (event.keyCode === WebInspector.KeyboardShortcut.Key.Enter.keyCode) {
+        } else if (event.keyCode === WI.KeyboardShortcut.Key.Enter.keyCode) {
             if (this._treeOutline.selectedTreeElement) {
-                this.dismiss(this._treeOutline.selectedTreeElement.representedObject, this._treeOutline.selectedTreeElement[WebInspector.OpenResourceDialog.ResourceMatchCookieDataSymbol]);
+                this.dismiss(this._treeOutline.selectedTreeElement.representedObject, this._treeOutline.selectedTreeElement[WI.OpenResourceDialog.ResourceMatchCookieDataSymbol]);
                 event.preventDefault();
                 return;
             }
 
             // ":<line>:<column>" jumps to a location for the current ContentView.
             if (/^:\d/.test(this._inputElement.value)) {
-                let visibleContentView = WebInspector.focusedOrVisibleContentView();
+                let visibleContentView = WI.focusedOrVisibleContentView();
                 let representedObject = visibleContentView ? visibleContentView.representedObject : null;
-                if (representedObject && representedObject instanceof WebInspector.SourceCode) {
+                if (representedObject && representedObject instanceof WI.SourceCode) {
                     let [, lineNumber, columnNumber] = this._inputElement.value.split(":");
                     lineNumber = lineNumber ? parseInt(lineNumber, 10) - 1 : 0;
                     columnNumber = columnNumber ? parseInt(columnNumber, 10) - 1 : 0;
@@ -182,12 +182,12 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
             }
 
             this._inputElement.select();
-        } else if (event.keyCode === WebInspector.KeyboardShortcut.Key.Up.keyCode || event.keyCode === WebInspector.KeyboardShortcut.Key.Down.keyCode) {
+        } else if (event.keyCode === WI.KeyboardShortcut.Key.Up.keyCode || event.keyCode === WI.KeyboardShortcut.Key.Down.keyCode) {
             let treeElement = this._treeOutline.selectedTreeElement;
             if (!treeElement)
                 return;
 
-            let adjacentSiblingProperty = event.keyCode === WebInspector.KeyboardShortcut.Key.Up.keyCode ? "previousSibling" : "nextSibling";
+            let adjacentSiblingProperty = event.keyCode === WI.KeyboardShortcut.Key.Up.keyCode ? "previousSibling" : "nextSibling";
             treeElement = treeElement[adjacentSiblingProperty];
             if (treeElement)
                 treeElement.revealAndSelect(true, false, true, true);
@@ -198,7 +198,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
 
     _handleKeyupEvent(event)
     {
-        if (event.keyCode === WebInspector.KeyboardShortcut.Key.Up.keyCode || event.keyCode === WebInspector.KeyboardShortcut.Key.Down.keyCode)
+        if (event.keyCode === WI.KeyboardShortcut.Key.Up.keyCode || event.keyCode === WI.KeyboardShortcut.Key.Down.keyCode)
             return;
 
         this._updateFilter();
@@ -257,7 +257,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         if (!event.data.selectedByUser)
             return;
 
-        this.dismiss(treeElement.representedObject, treeElement[WebInspector.OpenResourceDialog.ResourceMatchCookieDataSymbol]);
+        this.dismiss(treeElement.representedObject, treeElement[WI.OpenResourceDialog.ResourceMatchCookieDataSymbol]);
     }
 
     _addResource(resource, suppressFilterUpdate)
@@ -296,7 +296,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         for (let resource of target.resourceCollection.items)
             this._addResource(resource, suppressFilterUpdate);
 
-        let targetData = WebInspector.debuggerManager.dataForTarget(target);
+        let targetData = WI.debuggerManager.dataForTarget(target);
         for (let script of targetData.scripts) {
             if (script.resource)
                 continue;
@@ -325,11 +325,11 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         if (script.resource)
             return;
 
-        if (script.target === WebInspector.mainTarget)
+        if (script.target === WI.mainTarget)
             return;
 
         this._addResource(script);
     }
 };
 
-WebInspector.OpenResourceDialog.ResourceMatchCookieDataSymbol = Symbol("open-resource-dialog-resource-match-cookie-data");
+WI.OpenResourceDialog.ResourceMatchCookieDataSymbol = Symbol("open-resource-dialog-resource-match-cookie-data");

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleKeywordCheckbox = class VisualStyleKeywordCheckbox extends WebInspector.VisualStylePropertyEditor
+WI.VisualStyleKeywordCheckbox = class VisualStyleKeywordCheckbox extends WI.VisualStylePropertyEditor
 {
     constructor(propertyNames, text, value, layoutReversed)
     {

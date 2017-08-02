@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RecordingActionTreeElement = class RecordingActionTreeElement extends WebInspector.GeneralTreeElement
+WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.GeneralTreeElement
 {
     constructor(representedObject, index, recordingType)
     {
-        console.assert(representedObject instanceof WebInspector.RecordingAction);
+        console.assert(representedObject instanceof WI.RecordingAction);
 
-        let {classNames, copyText, titleFragment} = WebInspector.RecordingActionTreeElement._generateDOM(representedObject, recordingType);
+        let {classNames, copyText, titleFragment} = WI.RecordingActionTreeElement._generateDOM(representedObject, recordingType);
 
         const subtitle = null;
         super(classNames, titleFragment, subtitle, representedObject);
@@ -45,7 +45,7 @@ WebInspector.RecordingActionTreeElement = class RecordingActionTreeElement exten
         let classNames = ["action"];
         let copyText = recordingAction.name;
 
-        let isInitialState = recordingAction instanceof WebInspector.RecordingInitialStateAction;
+        let isInitialState = recordingAction instanceof WI.RecordingInitialStateAction;
         if (recordingAction.isFunction)
             classNames.push("function");
         else if (!isInitialState) {
@@ -93,16 +93,16 @@ WebInspector.RecordingActionTreeElement = class RecordingActionTreeElement exten
                 let swizzleType = recordingAction.parameterSwizzleTypeForTypeAtIndex(recordingType, i);
                 if (swizzleType && typeof parameter !== "string") {
                     parameterElement.classList.add("swizzled");
-                    if (parameter === WebInspector.Recording.Swizzle.Invalid) {
+                    if (parameter === WI.Recording.Swizzle.Invalid) {
                         parameterElement.classList.add("missing");
 
                         hasMissingParameter = true;
                     }
 
                     if (parameter instanceof CanvasGradient)
-                        parameterElement.textContent = WebInspector.unlocalizedString("Gradient");
+                        parameterElement.textContent = WI.unlocalizedString("Gradient");
                     else if (parameter instanceof CanvasPattern)
-                        parameterElement.textContent = WebInspector.unlocalizedString("Pattern");
+                        parameterElement.textContent = WI.unlocalizedString("Pattern");
                     else
                         parameterElement.textContent = swizzleType;
 
@@ -168,7 +168,7 @@ WebInspector.RecordingActionTreeElement = class RecordingActionTreeElement exten
 
     populateContextMenu(contextMenu, event)
     {
-        contextMenu.appendItem(WebInspector.UIString("Copy Action"), () => {
+        contextMenu.appendItem(WI.UIString("Copy Action"), () => {
             InspectorFrontendHost.copyText("context." + this._copyText + ";");
         });
 

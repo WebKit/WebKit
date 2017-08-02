@@ -54,7 +54,7 @@ function test()
         name: "CheckNoStyleSheets",
         description: "Ensure there are currently no stylesheets.",
         test(resolve, reject) {
-            InspectorTest.expectThat(WebInspector.cssStyleManager.styleSheets.length === 0, "Should be no stylesheets.");
+            InspectorTest.expectThat(WI.cssStyleManager.styleSheets.length === 0, "Should be no stylesheets.");
             resolve();
         }
     });
@@ -67,10 +67,10 @@ function test()
         suite.addTestCase({
             name: `Add${title}`,
             test(resolve, reject) {
-                WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetAdded)
+                WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetAdded)
                 .then((event) => {
                     addedStyleSheet = event.data.styleSheet;
-                    InspectorTest.expectThat(addedStyleSheet instanceof WebInspector.CSSStyleSheet, "StyleSheetAdded event should fire.");
+                    InspectorTest.expectThat(addedStyleSheet instanceof WI.CSSStyleSheet, "StyleSheetAdded event should fire.");
                     if (checkStyleSheetRemovedCallback)
                         checkStyleSheetAddedCallback(addedStyleSheet);
                 })
@@ -84,9 +84,9 @@ function test()
             name: `Disable${title}`,
             description: "Disable the newly added stylesheet.",
             test(resolve, reject) {
-                WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetRemoved)
+                WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetRemoved)
                 .then((event) => {
-                    InspectorTest.assert(event.data.styleSheet instanceof WebInspector.CSSStyleSheet, "Event data should be a CSSStyleSheet");
+                    InspectorTest.assert(event.data.styleSheet instanceof WI.CSSStyleSheet, "Event data should be a CSSStyleSheet");
                     InspectorTest.expectThat(addedStyleSheet === event.data.styleSheet, "StyleSheetRemoved event should fire for the same CSSStyleSheet.");
                 })
                 .then(resolve, reject);
@@ -99,9 +99,9 @@ function test()
             name: `Enable${title}`,
             description: "Enable the just disabled stylesheet.",
             test(resolve, reject) {
-                WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetAdded)
+                WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetAdded)
                 .then((event) => {
-                    InspectorTest.assert(event.data.styleSheet instanceof WebInspector.CSSStyleSheet, "Event data should be a CSSStyleSheet");
+                    InspectorTest.assert(event.data.styleSheet instanceof WI.CSSStyleSheet, "Event data should be a CSSStyleSheet");
                     InspectorTest.expectThat(addedStyleSheet !== event.data.styleSheet, "StyleSheetAdded event should fire with a new CSSStyleSheet.");
                     addedStyleSheet = event.data.styleSheet;
                 })
@@ -118,9 +118,9 @@ function test()
             suite.addTestCase({
                 name: extraDisableTitle,
                 test(resolve, reject) {
-                    WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetRemoved)
+                    WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetRemoved)
                     .then((event) => {
-                        InspectorTest.assert(event.data.styleSheet instanceof WebInspector.CSSStyleSheet, "Event data should be a CSSStyleSheet");
+                        InspectorTest.assert(event.data.styleSheet instanceof WI.CSSStyleSheet, "Event data should be a CSSStyleSheet");
                         InspectorTest.expectThat(addedStyleSheet === event.data.styleSheet, "StyleSheetRemoved event should fire for the same CSSStyleSheet.");
                     })
                     .then(resolve, reject);
@@ -132,9 +132,9 @@ function test()
             suite.addTestCase({
                 name: extraEnableTitle,
                 test(resolve, reject) {
-                    WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetAdded)
+                    WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetAdded)
                     .then((event) => {
-                        InspectorTest.assert(event.data.styleSheet instanceof WebInspector.CSSStyleSheet, "Event data should be a CSSStyleSheet");
+                        InspectorTest.assert(event.data.styleSheet instanceof WI.CSSStyleSheet, "Event data should be a CSSStyleSheet");
                         InspectorTest.expectThat(addedStyleSheet !== event.data.styleSheet, "StyleSheetAdded event should fire with a new CSSStyleSheet.");
                         addedStyleSheet = event.data.styleSheet;
                     })
@@ -148,9 +148,9 @@ function test()
         suite.addTestCase({
             name: `Remove${title}`,
             test(resolve, reject) {
-                WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetRemoved)
+                WI.cssStyleManager.awaitEvent(WI.CSSStyleManager.Event.StyleSheetRemoved)
                 .then((event) => {
-                    InspectorTest.expectThat(event.data.styleSheet instanceof WebInspector.CSSStyleSheet, "StyleSheetAdded event should fire.");
+                    InspectorTest.expectThat(event.data.styleSheet instanceof WI.CSSStyleSheet, "StyleSheetAdded event should fire.");
                     if (checkStyleSheetRemovedCallback)
                         checkStyleSheetRemovedCallback(event.data.styleSheet);
                     addedStyleSheet = null;

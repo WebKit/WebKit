@@ -23,34 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
+WI.Toolbar = class Toolbar extends WI.NavigationBar
 {
     constructor(element)
     {
         super(element, null, "toolbar");
 
         this._controlSectionElement = document.createElement("div");
-        this._controlSectionElement.className = WebInspector.Toolbar.ControlSectionStyleClassName;
+        this._controlSectionElement.className = WI.Toolbar.ControlSectionStyleClassName;
         this.element.appendChild(this._controlSectionElement);
 
         this._leftSectionElement = document.createElement("div");
-        this._leftSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.LeftItemSectionStyleClassName;
+        this._leftSectionElement.className = WI.Toolbar.ItemSectionStyleClassName + " " + WI.Toolbar.LeftItemSectionStyleClassName;
         this.element.appendChild(this._leftSectionElement);
 
         this._centerLeftSectionElement = document.createElement("div");
-        this._centerLeftSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.CenterLeftItemSectionStyleClassName;
+        this._centerLeftSectionElement.className = WI.Toolbar.ItemSectionStyleClassName + " " + WI.Toolbar.CenterLeftItemSectionStyleClassName;
         this.element.appendChild(this._centerLeftSectionElement);
 
         this._centerSectionElement = document.createElement("div");
-        this._centerSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.CenterItemSectionStyleClassName;
+        this._centerSectionElement.className = WI.Toolbar.ItemSectionStyleClassName + " " + WI.Toolbar.CenterItemSectionStyleClassName;
         this.element.appendChild(this._centerSectionElement);
 
         this._centerRightSectionElement = document.createElement("div");
-        this._centerRightSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.CenterRightItemSectionStyleClassName;
+        this._centerRightSectionElement.className = WI.Toolbar.ItemSectionStyleClassName + " " + WI.Toolbar.CenterRightItemSectionStyleClassName;
         this.element.appendChild(this._centerRightSectionElement);
 
         this._rightSectionElement = document.createElement("div");
-        this._rightSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.RightItemSectionStyleClassName;
+        this._rightSectionElement.className = WI.Toolbar.ItemSectionStyleClassName + " " + WI.Toolbar.RightItemSectionStyleClassName;
         this.element.appendChild(this._rightSectionElement);
     }
 
@@ -61,28 +61,28 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
         var sectionElement;
 
         switch (sectionIdentifier) {
-        case WebInspector.Toolbar.Section.Control:
+        case WI.Toolbar.Section.Control:
             sectionElement = this._controlSectionElement;
             break;
 
-        case WebInspector.Toolbar.Section.Left:
+        case WI.Toolbar.Section.Left:
             sectionElement = this._leftSectionElement;
             break;
 
-        case WebInspector.Toolbar.Section.CenterLeft:
+        case WI.Toolbar.Section.CenterLeft:
             sectionElement = this._centerLeftSectionElement;
             break;
 
         default:
-        case WebInspector.Toolbar.Section.Center:
+        case WI.Toolbar.Section.Center:
             sectionElement = this._centerSectionElement;
             break;
 
-        case WebInspector.Toolbar.Section.CenterRight:
+        case WI.Toolbar.Section.CenterRight:
             sectionElement = this._centerRightSectionElement;
             break;
 
-        case WebInspector.Toolbar.Section.Right:
+        case WI.Toolbar.Section.Right:
             sectionElement = this._rightSectionElement;
             break;
         }
@@ -101,13 +101,13 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
             return;
 
         // Force collapsed style for JavaScript debuggables.
-        if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript) {
-            this.element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName);
+        if (WI.debuggableType === WI.DebuggableType.JavaScript) {
+            this.element.classList.add(WI.NavigationBar.CollapsedStyleClassName);
             return;
         }
 
         // Remove the collapsed style class to test if the items can fit at full width.
-        this.element.classList.remove(WebInspector.NavigationBar.CollapsedStyleClassName);
+        this.element.classList.remove(WI.NavigationBar.CollapsedStyleClassName);
 
         function isOverflowingToolbar()
         {
@@ -125,20 +125,20 @@ WebInspector.Toolbar = class Toolbar extends WebInspector.NavigationBar
         if (!isOverflowingToolbar.call(this))
             return;
 
-        this.element.classList.add(WebInspector.NavigationBar.CollapsedStyleClassName);
+        this.element.classList.add(WI.NavigationBar.CollapsedStyleClassName);
     }
 };
 
-WebInspector.Toolbar.StyleClassName = "toolbar";
-WebInspector.Toolbar.ControlSectionStyleClassName = "control-section";
-WebInspector.Toolbar.ItemSectionStyleClassName = "item-section";
-WebInspector.Toolbar.LeftItemSectionStyleClassName = "left";
-WebInspector.Toolbar.CenterLeftItemSectionStyleClassName = "center-left";
-WebInspector.Toolbar.CenterItemSectionStyleClassName = "center";
-WebInspector.Toolbar.CenterRightItemSectionStyleClassName = "center-right";
-WebInspector.Toolbar.RightItemSectionStyleClassName = "right";
+WI.Toolbar.StyleClassName = "toolbar";
+WI.Toolbar.ControlSectionStyleClassName = "control-section";
+WI.Toolbar.ItemSectionStyleClassName = "item-section";
+WI.Toolbar.LeftItemSectionStyleClassName = "left";
+WI.Toolbar.CenterLeftItemSectionStyleClassName = "center-left";
+WI.Toolbar.CenterItemSectionStyleClassName = "center";
+WI.Toolbar.CenterRightItemSectionStyleClassName = "center-right";
+WI.Toolbar.RightItemSectionStyleClassName = "right";
 
-WebInspector.Toolbar.Section = {
+WI.Toolbar.Section = {
     Control: "control",
     Left: "left",
     CenterLeft: "center-left",

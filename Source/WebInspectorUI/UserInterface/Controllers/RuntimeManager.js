@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
+WI.RuntimeManager = class RuntimeManager extends WI.Object
 {
     constructor()
     {
@@ -32,9 +32,9 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
         // Enable the RuntimeAgent to receive notification of execution contexts.
         RuntimeAgent.enable();
 
-        this._activeExecutionContext = WebInspector.mainTarget.executionContext;
+        this._activeExecutionContext = WI.mainTarget.executionContext;
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ExecutionContextsCleared, this._frameExecutionContextsCleared, this);
+        WI.Frame.addEventListener(WI.Frame.Event.ExecutionContextsCleared, this._frameExecutionContextsCleared, this);
     }
 
     // Public
@@ -51,7 +51,7 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
 
         this._activeExecutionContext = executionContext;
 
-        this.dispatchEventToListeners(WebInspector.RuntimeManager.Event.ActiveExecutionContextChanged);
+        this.dispatchEventToListeners(WI.RuntimeManager.Event.ActiveExecutionContextChanged);
     }
 
     evaluateInInspectedWindow(expression, options, callback)
@@ -84,14 +84,14 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
         let target = this._activeExecutionContext.target;
         let executionContextId = this._activeExecutionContext.id;
 
-        if (WebInspector.debuggerManager.activeCallFrame) {
-            target = WebInspector.debuggerManager.activeCallFrame.target;
+        if (WI.debuggerManager.activeCallFrame) {
+            target = WI.debuggerManager.activeCallFrame.target;
             executionContextId = target.executionContext.id;
         }
 
         function evalCallback(error, result, wasThrown, savedResultIndex)
         {
-            this.dispatchEventToListeners(WebInspector.RuntimeManager.Event.DidEvaluate, {objectGroup});
+            this.dispatchEventToListeners(WI.RuntimeManager.Event.DidEvaluate, {objectGroup});
 
             if (error) {
                 console.error(error);
@@ -102,12 +102,12 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
             if (returnByValue)
                 callback(null, wasThrown, wasThrown ? null : result, savedResultIndex);
             else
-                callback(WebInspector.RemoteObject.fromPayload(result, target), wasThrown, savedResultIndex);
+                callback(WI.RemoteObject.fromPayload(result, target), wasThrown, savedResultIndex);
         }
 
-        if (WebInspector.debuggerManager.activeCallFrame) {
+        if (WI.debuggerManager.activeCallFrame) {
             // COMPATIBILITY (iOS 8): "saveResult" did not exist.
-            target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult}, evalCallback.bind(this), target.DebuggerAgent);
+            target.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult}, evalCallback.bind(this), target.DebuggerAgent);
             return;
         }
 
@@ -117,7 +117,7 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
 
     saveResult(remoteObject, callback)
     {
-        console.assert(remoteObject instanceof WebInspector.RemoteObject);
+        console.assert(remoteObject instanceof WI.RemoteObject);
 
         // COMPATIBILITY (iOS 8): Runtime.saveResult did not exist.
         if (!RuntimeAgent.saveResult) {
@@ -163,7 +163,7 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
 
         let currentContextWasDestroyed = contexts.some((context) => context.id === this._activeExecutionContext.id);
         if (currentContextWasDestroyed)
-            this.activeExecutionContext = WebInspector.mainTarget.executionContext;
+            this.activeExecutionContext = WI.mainTarget.executionContext;
     }
 
     _tryApplyAwaitConvenience(originalExpression)
@@ -252,10 +252,10 @@ undefined;`;
     }
 };
 
-WebInspector.RuntimeManager.ConsoleObjectGroup = "console";
-WebInspector.RuntimeManager.TopLevelExecutionContextIdentifier = undefined;
+WI.RuntimeManager.ConsoleObjectGroup = "console";
+WI.RuntimeManager.TopLevelExecutionContextIdentifier = undefined;
 
-WebInspector.RuntimeManager.Event = {
+WI.RuntimeManager.Event = {
     DidEvaluate: Symbol("runtime-manager-did-evaluate"),
     DefaultExecutionContextChanged: Symbol("runtime-manager-default-execution-context-changed"),
     ActiveExecutionContextChanged: Symbol("runtime-manager-active-execution-context-changed"),

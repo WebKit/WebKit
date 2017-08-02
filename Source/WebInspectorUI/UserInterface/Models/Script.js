@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Script = class Script extends WebInspector.SourceCode
+WI.Script = class Script extends WI.SourceCode
 {
     constructor(target, id, range, url, sourceType, injected, sourceURL, sourceMapURL)
     {
         super();
 
         console.assert(id);
-        console.assert(target instanceof WebInspector.Target);
-        console.assert(range instanceof WebInspector.TextRange);
+        console.assert(target instanceof WI.Target);
+        console.assert(range instanceof WI.TextRange);
 
         this._target = target;
         this._id = id || null;
         this._range = range || null;
         this._url = url || null;
-        this._sourceType = sourceType || WebInspector.Script.SourceType.Program;
+        this._sourceType = sourceType || WI.Script.SourceType.Program;
         this._sourceURL = sourceURL || null;
         this._sourceMappingURL = sourceMapURL || null;
         this._injected = injected || false;
@@ -49,7 +49,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         // If this Script was a dynamically added <script> to a Document,
         // do not associate with the Document resource, instead associate
         // with the frame as a dynamic script.
-        if (this._resource && this._resource.type === WebInspector.Resource.Type.Document && !this._range.startLine && !this._range.startColumn) {
+        if (this._resource && this._resource.type === WI.Resource.Type.Document && !this._range.startLine && !this._range.startColumn) {
             console.assert(this._resource.isMainResource());
             let documentResource = this._resource;
             this._resource = null;
@@ -65,15 +65,15 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         }
 
         if (this._sourceMappingURL)
-            WebInspector.sourceMapManager.downloadSourceMap(this._sourceMappingURL, this._url, this);
+            WI.sourceMapManager.downloadSourceMap(this._sourceMappingURL, this._url, this);
     }
 
     // Static
 
     static resetUniqueDisplayNameNumbers()
     {
-        WebInspector.Script._nextUniqueDisplayNameNumber = 1;
-        WebInspector.Script._nextUniqueConsoleDisplayNameNumber = 1;
+        WI.Script._nextUniqueDisplayNameNumber = 1;
+        WI.Script._nextUniqueConsoleDisplayNameNumber = 1;
     }
 
     // Public
@@ -124,27 +124,27 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
     get displayName()
     {
         if (this._url && !this._dynamicallyAddedScriptElement)
-            return WebInspector.displayNameForURL(this._url, this.urlComponents);
+            return WI.displayNameForURL(this._url, this.urlComponents);
 
         if (isWebInspectorConsoleEvaluationScript(this._sourceURL)) {
             console.assert(this._uniqueDisplayNameNumber);
-            return WebInspector.UIString("Console Evaluation %d").format(this._uniqueDisplayNameNumber);
+            return WI.UIString("Console Evaluation %d").format(this._uniqueDisplayNameNumber);
         }
 
         if (this._sourceURL) {
             if (!this._sourceURLComponents)
                 this._sourceURLComponents = parseURL(this._sourceURL);
-            return WebInspector.displayNameForURL(this._sourceURL, this._sourceURLComponents);
+            return WI.displayNameForURL(this._sourceURL, this._sourceURLComponents);
         }
 
         if (this._dynamicallyAddedScriptElement)
-            return WebInspector.UIString("Script Element %d").format(this._dynamicallyAddedScriptElementNumber);
+            return WI.UIString("Script Element %d").format(this._dynamicallyAddedScriptElementNumber);
 
         // Assign a unique number to the script object so it will stay the same.
         if (!this._uniqueDisplayNameNumber)
             this._uniqueDisplayNameNumber = this.constructor._nextUniqueDisplayNameNumber++;
 
-        return WebInspector.UIString("Anonymous Script %d").format(this._uniqueDisplayNameNumber);
+        return WI.UIString("Anonymous Script %d").format(this._uniqueDisplayNameNumber);
     }
 
     get displayURL()
@@ -153,9 +153,9 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         const dataURIMaxSize = 64;
 
         if (this._url)
-            return WebInspector.truncateURL(this._url, isMultiLine, dataURIMaxSize);
+            return WI.truncateURL(this._url, isMultiLine, dataURIMaxSize);
         if (this._sourceURL)
-            return WebInspector.truncateURL(this._sourceURL, isMultiLine, dataURIMaxSize);
+            return WI.truncateURL(this._sourceURL, isMultiLine, dataURIMaxSize);
         return null;
     }
 
@@ -197,8 +197,8 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WebInspector.Script.URLCookieKey] = this.url;
-        cookie[WebInspector.Script.DisplayNameCookieKey] = this.displayName;
+        cookie[WI.Script.URLCookieKey] = this.url;
+        cookie[WI.Script.DisplayNameCookieKey] = this.displayName;
     }
 
     requestScriptSyntaxTree(callback)
@@ -214,7 +214,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         };
 
         var content = this.content;
-        if (!content && this._resource && this._resource.type === WebInspector.Resource.Type.Script && this._resource.finished)
+        if (!content && this._resource && this._resource.type === WI.Resource.Type.Script && this._resource.finished)
             content = this._resource.content;
         if (content) {
             setTimeout(makeSyntaxTreeAndCallCallback, 0, content);
@@ -241,8 +241,8 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         if (!this._url)
             return null;
 
-        let resolver = WebInspector.frameResourceManager;
-        if (this._target !== WebInspector.mainTarget)
+        let resolver = WI.frameResourceManager;
+        if (this._target !== WI.mainTarget)
             resolver = this._target.resourceCollection;
 
         try {
@@ -286,18 +286,18 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         if (this._scriptSyntaxTree || !sourceText)
             return;
 
-        this._scriptSyntaxTree = new WebInspector.ScriptSyntaxTree(sourceText, this);
+        this._scriptSyntaxTree = new WI.ScriptSyntaxTree(sourceText, this);
     }
 };
 
-WebInspector.Script.SourceType = {
+WI.Script.SourceType = {
     Program: "script-source-type-program",
     Module: "script-source-type-module",
 };
 
-WebInspector.Script.TypeIdentifier = "script";
-WebInspector.Script.URLCookieKey = "script-url";
-WebInspector.Script.DisplayNameCookieKey = "script-display-name";
+WI.Script.TypeIdentifier = "script";
+WI.Script.URLCookieKey = "script-url";
+WI.Script.DisplayNameCookieKey = "script-display-name";
 
-WebInspector.Script._nextUniqueDisplayNameNumber = 1;
-WebInspector.Script._nextUniqueConsoleDisplayNameNumber = 1;
+WI.Script._nextUniqueDisplayNameNumber = 1;
+WI.Script._nextUniqueConsoleDisplayNameNumber = 1;

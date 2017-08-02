@@ -23,16 +23,16 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends WebInspector.Object
+WI.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends WI.Object
 {
     constructor(heapSnapshot, sortComparator)
     {
         super();
 
-        console.assert(heapSnapshot instanceof WebInspector.HeapSnapshotProxy || heapSnapshot instanceof WebInspector.HeapSnapshotDiffProxy);
+        console.assert(heapSnapshot instanceof WI.HeapSnapshotProxy || heapSnapshot instanceof WI.HeapSnapshotDiffProxy);
 
         this._heapSnapshot = heapSnapshot;
-        this._heapSnapshot.addEventListener(WebInspector.HeapSnapshotProxy.Event.CollectedNodes, this._heapSnapshotCollectedNodes, this);
+        this._heapSnapshot.addEventListener(WI.HeapSnapshotProxy.Event.CollectedNodes, this._heapSnapshotCollectedNodes, this);
 
         this._children = [];
         this._sortComparator = sortComparator;
@@ -49,7 +49,7 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
 
     static buildSortComparator(columnIdentifier, sortOrder)
     {
-        let multiplier = sortOrder === WebInspector.DataGrid.SortOrder.Ascending ? 1 : -1;
+        let multiplier = sortOrder === WI.DataGrid.SortOrder.Ascending ? 1 : -1;
         let numberCompare = (columnIdentifier, a, b) => multiplier * (a.data[columnIdentifier] - b.data[columnIdentifier]);
         let nameCompare = (a, b) => {
             // Sort by property name if available. Property names before no property name.
@@ -97,10 +97,10 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
     get popover()
     {
         if (!this._popover) {
-            this._popover = new WebInspector.Popover(this);
+            this._popover = new WI.Popover(this);
             this._popover.windowResizeHandler = () => {
-                let bounds = WebInspector.Rect.rectFromClientRect(this._popoverTargetElement.getBoundingClientRect());
-                this._popover.present(bounds.pad(2), [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
+                let bounds = WI.Rect.rectFromClientRect(this._popoverTargetElement.getBoundingClientRect());
+                this._popover.present(bounds.pad(2), [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
             };
         }
 
@@ -191,7 +191,7 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
     {
         this.sort();
 
-        this.dispatchEventToListeners(WebInspector.HeapSnapshotDataGridTree.Event.DidPopulate);
+        this.dispatchEventToListeners(WI.HeapSnapshotDataGridTree.Event.DidPopulate);
     }
 
     // Private
@@ -202,11 +202,11 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
     }
 };
 
-WebInspector.HeapSnapshotDataGridTree.Event = {
+WI.HeapSnapshotDataGridTree.Event = {
     DidPopulate: "heap-snapshot-data-grid-tree-did-populate",
 };
 
-WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesDataGridTree extends WebInspector.HeapSnapshotDataGridTree
+WI.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesDataGridTree extends WI.HeapSnapshotDataGridTree
 {
     get alwaysShowRetainedSize()
     {
@@ -225,7 +225,7 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
             if (!liveCount)
                 continue;
 
-            this.appendChild(new WebInspector.HeapSnapshotClassDataGridNode({className, size, retainedSize, count: liveCount}, this));
+            this.appendChild(new WI.HeapSnapshotClassDataGridNode({className, size, retainedSize, count: liveCount}, this));
         }
 
         this.didPopulate();
@@ -245,7 +245,7 @@ WebInspector.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesData
     }
 };
 
-WebInspector.HeapSnapshotObjectGraphDataGridTree = class HeapSnapshotInstancesDataGridTree extends WebInspector.HeapSnapshotDataGridTree
+WI.HeapSnapshotObjectGraphDataGridTree = class HeapSnapshotInstancesDataGridTree extends WI.HeapSnapshotDataGridTree
 {
     get alwaysShowRetainedSize()
     {
@@ -256,7 +256,7 @@ WebInspector.HeapSnapshotObjectGraphDataGridTree = class HeapSnapshotInstancesDa
     {
         this.heapSnapshot.instancesWithClassName("GlobalObject", (instances) => {
             for (let instance of instances)
-                this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this));
+                this.appendChild(new WI.HeapSnapshotInstanceDataGridNode(instance, this));
         });
 
         this.heapSnapshot.instancesWithClassName("Window", (instances) => {
@@ -265,7 +265,7 @@ WebInspector.HeapSnapshotObjectGraphDataGridTree = class HeapSnapshotInstancesDa
                 // In any case, ignore objects not dominated by the root, as they
                 // are probably not what we want.
                 if (instance.dominatorNodeIdentifier === 0)
-                    this.appendChild(new WebInspector.HeapSnapshotInstanceDataGridNode(instance, this));
+                    this.appendChild(new WI.HeapSnapshotInstanceDataGridNode(instance, this));
             }
 
             this.didPopulate();

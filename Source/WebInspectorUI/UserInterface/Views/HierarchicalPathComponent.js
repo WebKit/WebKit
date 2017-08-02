@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends WebInspector.Object
+WI.HierarchicalPathComponent = class HierarchicalPathComponent extends WI.Object
 {
     constructor(displayName, styleClassNames, representedObject, textOnly, showSelectorArrows)
     {
@@ -133,10 +133,10 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
     get minimumWidth()
     {
         if (this._collapsed)
-            return WebInspector.HierarchicalPathComponent.MinimumWidthCollapsed;
+            return WI.HierarchicalPathComponent.MinimumWidthCollapsed;
         if (this._selectorArrows)
-            return WebInspector.HierarchicalPathComponent.MinimumWidth + WebInspector.HierarchicalPathComponent.SelectorArrowsWidth;
-        return WebInspector.HierarchicalPathComponent.MinimumWidth;
+            return WI.HierarchicalPathComponent.MinimumWidth + WI.HierarchicalPathComponent.SelectorArrowsWidth;
+        return WI.HierarchicalPathComponent.MinimumWidth;
     }
 
     get forcedWidth()
@@ -150,9 +150,9 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
     set forcedWidth(width)
     {
         if (typeof width === "number") {
-            let minimumWidthForOneCharacterTruncatedTitle = WebInspector.HierarchicalPathComponent.MinimumWidthForOneCharacterTruncatedTitle;
+            let minimumWidthForOneCharacterTruncatedTitle = WI.HierarchicalPathComponent.MinimumWidthForOneCharacterTruncatedTitle;
             if (this.selectorArrows)
-                minimumWidthForOneCharacterTruncatedTitle += WebInspector.HierarchicalPathComponent.SelectorArrowsWidth;
+                minimumWidthForOneCharacterTruncatedTitle += WI.HierarchicalPathComponent.SelectorArrowsWidth;
 
             // If the width is less than the minimum width required to show a single character and ellipsis, then
             // just collapse down to the bare minimum to show only the icon.
@@ -296,21 +296,21 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
 
     _selectElementMouseUp(event)
     {
-        this.dispatchEventToListeners(WebInspector.HierarchicalPathComponent.Event.Clicked, {pathComponent: this.selectedPathComponent});
+        this.dispatchEventToListeners(WI.HierarchicalPathComponent.Event.Clicked, {pathComponent: this.selectedPathComponent});
     }
 
     _selectElementSelectionChanged(event)
     {
-        this.dispatchEventToListeners(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, {pathComponent: this.selectedPathComponent});
+        this.dispatchEventToListeners(WI.HierarchicalPathComponent.Event.SiblingWasSelected, {pathComponent: this.selectedPathComponent});
     }
 };
 
-WebInspector.HierarchicalPathComponent.MinimumWidth = 32;
-WebInspector.HierarchicalPathComponent.MinimumWidthCollapsed = 24;
-WebInspector.HierarchicalPathComponent.MinimumWidthForOneCharacterTruncatedTitle = 54;
-WebInspector.HierarchicalPathComponent.SelectorArrowsWidth = 12;
+WI.HierarchicalPathComponent.MinimumWidth = 32;
+WI.HierarchicalPathComponent.MinimumWidthCollapsed = 24;
+WI.HierarchicalPathComponent.MinimumWidthForOneCharacterTruncatedTitle = 54;
+WI.HierarchicalPathComponent.SelectorArrowsWidth = 12;
 
-WebInspector.HierarchicalPathComponent.Event = {
+WI.HierarchicalPathComponent.Event = {
     SiblingWasSelected: "hierarchical-path-component-sibling-was-selected",
     Clicked: "hierarchical-path-component-clicked"
 };

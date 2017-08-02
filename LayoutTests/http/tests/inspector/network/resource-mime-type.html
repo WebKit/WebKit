@@ -47,10 +47,10 @@ function test()
             name, description,
             test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
-                WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
+                WI.Frame.singleFireEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
                     let resource = event.data.resource;
-                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be created.");
-                    resource.singleFireEventListener(WebInspector.Resource.Event.ResponseReceived, (event) => {
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+                    resource.singleFireEventListener(WI.Resource.Event.ResponseReceived, (event) => {
                         InspectorTest.expectEqual(resource.type, type, `Resource Type should be '${type}'.`);
                         InspectorTest.expectEqual(resource.mimeType, mimeType, `Resource mimeType should be '${mimeType}'.`);
                         InspectorTest.expectEqual(resource.syntheticMIMEType, synthetic, `Resource syntheticMIMEType should be '${synthetic}'.`);
@@ -66,10 +66,10 @@ function test()
             name, description,
             test(resolve, reject) {
                 InspectorTest.evaluateInPage(expression);
-                WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ChildFrameWasAdded, (event) => {
+                WI.Frame.singleFireEventListener(WI.Frame.Event.ChildFrameWasAdded, (event) => {
                     // At this point the frame's resource has loaded.
                     let resource = event.data.childFrame.mainResource;
-                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Frame MainResource should be created.");
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Frame MainResource should be created.");
                     InspectorTest.expectEqual(resource.type, type, `Resource Type should be '${type}'.`);
                     InspectorTest.expectEqual(resource.mimeType, mimeType, `Resource mimeType should be '${mimeType}'.`);
                     InspectorTest.expectEqual(resource.syntheticMIMEType, synthetic, `Resource syntheticMIMEType should be '${synthetic}'.`);
@@ -95,7 +95,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Script.js",
         expression: `loadScriptWithURL("resources/script.js")`,
-        type: WebInspector.Resource.Type.Script,
+        type: WI.Resource.Type.Script,
         mimeType: mimeTypeForExtension.js,
         synthetic: mimeTypeForExtension.js,
     });
@@ -103,7 +103,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Script.txt",
         expression: `loadScriptWithURL("resources/script.txt")`,
-        type: WebInspector.Resource.Type.Script,
+        type: WI.Resource.Type.Script,
         mimeType: mimeTypeForExtension.txt,
         synthetic: "text/javascript",
     });
@@ -113,7 +113,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Stylesheet.css",
         expression: `loadStyleSheetWithURL("resources/stylesheet.css")`,
-        type: WebInspector.Resource.Type.Stylesheet,
+        type: WI.Resource.Type.Stylesheet,
         mimeType: mimeTypeForExtension.css,
         synthetic: mimeTypeForExtension.css,
     });
@@ -121,7 +121,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Stylesheet.txt",
         expression: `loadStyleSheetWithURL("resources/stylesheet.txt")`,
-        type: WebInspector.Resource.Type.Stylesheet,
+        type: WI.Resource.Type.Stylesheet,
         mimeType: mimeTypeForExtension.txt,
         synthetic: "text/css",
     });
@@ -131,7 +131,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Image.png",
         expression: `loadImageWithURL("/resources/square100.png")`,
-        type: WebInspector.Resource.Type.Image,
+        type: WI.Resource.Type.Image,
         mimeType: mimeTypeForExtension.png,
         synthetic: mimeTypeForExtension.png,
     });
@@ -139,7 +139,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Image.jpg",
         expression: `loadImageWithURL("/resources/square20.jpg")`,
-        type: WebInspector.Resource.Type.Image,
+        type: WI.Resource.Type.Image,
         mimeType: mimeTypeForExtension.jpg,
         synthetic: mimeTypeForExtension.jpg,
     });
@@ -149,7 +149,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.XHR.js",
         expression: `loadXHRWithURL("resources/script.js")`,
-        type: WebInspector.Resource.Type.XHR,
+        type: WI.Resource.Type.XHR,
         mimeType: mimeTypeForExtension.js,
         synthetic: mimeTypeForExtension.js,
     });
@@ -157,7 +157,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.XHR.css",
         expression: `loadXHRWithURL("resources/stylesheet.css")`,
-        type: WebInspector.Resource.Type.XHR,
+        type: WI.Resource.Type.XHR,
         mimeType: mimeTypeForExtension.css,
         synthetic: mimeTypeForExtension.css,
     });
@@ -165,7 +165,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.XHR.png",
         expression: `loadXHRWithURL("/resources/square100.png")`,
-        type: WebInspector.Resource.Type.XHR,
+        type: WI.Resource.Type.XHR,
         mimeType: mimeTypeForExtension.png,
         synthetic: mimeTypeForExtension.png,
     });
@@ -173,7 +173,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.XHR.txt",
         expression: `loadXHRWithURL("/resources/square20.jpg")`,
-        type: WebInspector.Resource.Type.XHR,
+        type: WI.Resource.Type.XHR,
         mimeType: mimeTypeForExtension.jpg,
         synthetic: mimeTypeForExtension.jpg,
     });
@@ -181,7 +181,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.XHR.json",
         expression: `loadXHRWithURL("resources/json.php")`,
-        type: WebInspector.Resource.Type.XHR,
+        type: WI.Resource.Type.XHR,
         mimeType: mimeTypeForExtension.json,
         synthetic: mimeTypeForExtension.json,
     });
@@ -189,7 +189,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.XHR.html",
         expression: `loadXHRWithURL("resources/data.html")`,
-        type: WebInspector.Resource.Type.XHR,
+        type: WI.Resource.Type.XHR,
         mimeType: mimeTypeForExtension.html,
         synthetic: mimeTypeForExtension.html,
     });
@@ -199,7 +199,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Fetch.js",
         expression: `loadFetchWithURL("resources/script.js")`,
-        type: WebInspector.Resource.Type.Fetch,
+        type: WI.Resource.Type.Fetch,
         mimeType: mimeTypeForExtension.js,
         synthetic: mimeTypeForExtension.js,
     });
@@ -207,7 +207,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Fetch.css",
         expression: `loadFetchWithURL("resources/stylesheet.css")`,
-        type: WebInspector.Resource.Type.Fetch,
+        type: WI.Resource.Type.Fetch,
         mimeType: mimeTypeForExtension.css,
         synthetic: mimeTypeForExtension.css,
     });
@@ -215,7 +215,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Fetch.png",
         expression: `loadFetchWithURL("/resources/square100.png")`,
-        type: WebInspector.Resource.Type.Fetch,
+        type: WI.Resource.Type.Fetch,
         mimeType: mimeTypeForExtension.png,
         synthetic: mimeTypeForExtension.png,
     });
@@ -223,7 +223,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Fetch.txt",
         expression: `loadFetchWithURL("/resources/square20.jpg")`,
-        type: WebInspector.Resource.Type.Fetch,
+        type: WI.Resource.Type.Fetch,
         mimeType: mimeTypeForExtension.jpg,
         synthetic: mimeTypeForExtension.jpg,
     });
@@ -231,7 +231,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Fetch.json",
         expression: `loadFetchWithURL("resources/json.php")`,
-        type: WebInspector.Resource.Type.Fetch,
+        type: WI.Resource.Type.Fetch,
         mimeType: mimeTypeForExtension.json,
         synthetic: mimeTypeForExtension.json,
     });
@@ -239,7 +239,7 @@ function test()
     addTestCase({
         name: "Resource.MIMEType.Fetch.html",
         expression: `loadFetchWithURL("resources/data.html")`,
-        type: WebInspector.Resource.Type.Fetch,
+        type: WI.Resource.Type.Fetch,
         mimeType: mimeTypeForExtension.html,
         synthetic: mimeTypeForExtension.html,
     });
@@ -249,7 +249,7 @@ function test()
     addDocumentResourceTestCase({
         name: "Resource.MIMEType.Document.js",
         expression: `loadDocumentWithURL("resources/script.js")`,
-        type: WebInspector.Resource.Type.Document,
+        type: WI.Resource.Type.Document,
         mimeType: mimeTypeForExtension.js,
         synthetic: mimeTypeForExtension.js,
     });
@@ -257,7 +257,7 @@ function test()
     addDocumentResourceTestCase({
         name: "Resource.MIMEType.Document.css",
         expression: `loadDocumentWithURL("resources/stylesheet.css")`,
-        type: WebInspector.Resource.Type.Document,
+        type: WI.Resource.Type.Document,
         mimeType: mimeTypeForExtension.css,
         synthetic: mimeTypeForExtension.css,
     });
@@ -265,7 +265,7 @@ function test()
     addDocumentResourceTestCase({
         name: "Resource.MIMEType.Document.png",
         expression: `loadDocumentWithURL("/resources/square100.png")`,
-        type: WebInspector.Resource.Type.Document,
+        type: WI.Resource.Type.Document,
         mimeType: mimeTypeForExtension.png,
         synthetic: mimeTypeForExtension.png,
     });
@@ -273,7 +273,7 @@ function test()
     addDocumentResourceTestCase({
         name: "Resource.MIMEType.Document.txt",
         expression: `loadDocumentWithURL("/resources/square20.jpg")`,
-        type: WebInspector.Resource.Type.Document,
+        type: WI.Resource.Type.Document,
         mimeType: mimeTypeForExtension.jpg,
         synthetic: mimeTypeForExtension.jpg,
     });
@@ -281,7 +281,7 @@ function test()
     addDocumentResourceTestCase({
         name: "Resource.MIMEType.Document.json",
         expression: `loadDocumentWithURL("resources/json.php")`,
-        type: WebInspector.Resource.Type.Document,
+        type: WI.Resource.Type.Document,
         mimeType: mimeTypeForExtension.json,
         synthetic: mimeTypeForExtension.json,
     });
@@ -289,7 +289,7 @@ function test()
     addDocumentResourceTestCase({
         name: "Resource.MIMEType.Document.html",
         expression: `loadDocumentWithURL("resources/data.html")`,
-        type: WebInspector.Resource.Type.Document,
+        type: WI.Resource.Type.Document,
         mimeType: mimeTypeForExtension.html,
         synthetic: mimeTypeForExtension.html,
     });

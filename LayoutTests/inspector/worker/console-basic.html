@@ -33,15 +33,15 @@ function test()
         });
     }
 
-    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
+    WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, function(event) {
         let message = event.data.message;
-        InspectorTest.assert(message instanceof WebInspector.ConsoleMessage);
+        InspectorTest.assert(message instanceof WI.ConsoleMessage);
         if (triggerNextConsoleMessage)
             triggerNextConsoleMessage(message);
     });
 
-    let mainTarget = WebInspector.mainTarget;
-    let workerTarget = Array.from(WebInspector.targets).find((target) => target.type === WebInspector.Target.Type.Worker);
+    let mainTarget = WI.mainTarget;
+    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.Target.Type.Worker);
     if (!workerTarget) {
         InspectorTest.fail("Missing Worker Target");
         InspectorTest.completeTest();

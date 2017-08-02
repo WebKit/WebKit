@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineDataGrid = class LayoutTimelineDataGrid extends WebInspector.TimelineDataGrid
+WI.LayoutTimelineDataGrid = class LayoutTimelineDataGrid extends WI.TimelineDataGrid
 {
     // Protected
 

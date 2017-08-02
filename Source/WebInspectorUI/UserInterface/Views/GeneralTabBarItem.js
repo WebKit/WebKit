@@ -24,15 +24,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.GeneralTabBarItem = class GeneralTabBarItem extends WebInspector.TabBarItem
+WI.GeneralTabBarItem = class GeneralTabBarItem extends WI.TabBarItem
 {
     constructor(image, title, representedObject)
     {
         super(image, title, representedObject);
 
         let closeButtonElement = document.createElement("div");
-        closeButtonElement.classList.add(WebInspector.TabBarItem.CloseButtonStyleClassName);
-        closeButtonElement.title = WebInspector.UIString("Click to close this tab; Option-click to close all tabs except this one");
+        closeButtonElement.classList.add(WI.TabBarItem.CloseButtonStyleClassName);
+        closeButtonElement.title = WI.UIString("Click to close this tab; Option-click to close all tabs except this one");
         this.element.insertBefore(closeButtonElement, this.element.firstChild);
 
         this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
@@ -77,15 +77,15 @@ WebInspector.GeneralTabBarItem = class GeneralTabBarItem extends WebInspector.Ta
             let tabBarItems = this._parentTabBar.tabBarItems;
             for (let i = tabBarItems.length - 1; i >= 0; --i) {
                 let item = tabBarItems[i];
-                if (item === this || item instanceof WebInspector.PinnedTabBarItem)
+                if (item === this || item instanceof WI.PinnedTabBarItem)
                     continue;
                 this._parentTabBar.removeTabBarItem(item);
             }
         };
 
-        let hasOtherNonPinnedTabs = this._parentTabBar.tabBarItems.some((item) => item !== this && !(item instanceof WebInspector.PinnedTabBarItem));
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-        contextMenu.appendItem(WebInspector.UIString("Close Tab"), closeTab, this.isDefaultTab);
-        contextMenu.appendItem(WebInspector.UIString("Close Other Tabs"), closeOtherTabs, !hasOtherNonPinnedTabs);
+        let hasOtherNonPinnedTabs = this._parentTabBar.tabBarItems.some((item) => item !== this && !(item instanceof WI.PinnedTabBarItem));
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+        contextMenu.appendItem(WI.UIString("Close Tab"), closeTab, this.isDefaultTab);
+        contextMenu.appendItem(WI.UIString("Close Other Tabs"), closeOtherTabs, !hasOtherNonPinnedTabs);
     }
 };

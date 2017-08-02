@@ -39,15 +39,15 @@ TestPage.registerInitializer(function() {
                 else {
                     InspectorTest.evaluateInPage(`fetch(${JSON.stringify(url)})`);
                     promise = Promise.all([
-                        WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded),
-                        WebInspector.Resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish),
+                        WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                        WI.Resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
                     ]).then(([resourceWasAddedEvent, loadCompleteEvent]) => {
                         return resourceWasAddedEvent.data.resource;
                     });
                 }
 
                 promise.then((resource) => {
-                    InspectorTest.assert(resource instanceof WebInspector.Resource, "Resource should be created.");
+                    InspectorTest.assert(resource instanceof WI.Resource, "Resource should be created.");
                     InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}.`);
                     InspectorTest.expectEqual(resource.compressed, compressed, `compressed should be ${compressed}.`);
                     InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}.`);

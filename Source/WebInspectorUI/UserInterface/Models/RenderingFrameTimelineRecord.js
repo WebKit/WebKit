@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord extends WebInspector.TimelineRecord
+WI.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord extends WI.TimelineRecord
 {
     constructor(startTime, endTime)
     {
-        super(WebInspector.TimelineRecord.Type.RenderingFrame, startTime, endTime);
+        super(WI.TimelineRecord.Type.RenderingFrame, startTime, endTime);
 
         this._durationByTaskType = new Map;
         this._frameIndex = -1;
@@ -37,32 +37,32 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
 
     static resetFrameIndex()
     {
-        WebInspector.RenderingFrameTimelineRecord._nextFrameIndex = 0;
+        WI.RenderingFrameTimelineRecord._nextFrameIndex = 0;
     }
 
     static displayNameForTaskType(taskType)
     {
         switch (taskType) {
-        case WebInspector.RenderingFrameTimelineRecord.TaskType.Script:
-            return WebInspector.UIString("Script");
-        case WebInspector.RenderingFrameTimelineRecord.TaskType.Layout:
-            return WebInspector.UIString("Layout");
-        case WebInspector.RenderingFrameTimelineRecord.TaskType.Paint:
-            return WebInspector.UIString("Paint");
-        case WebInspector.RenderingFrameTimelineRecord.TaskType.Other:
-            return WebInspector.UIString("Other");
+        case WI.RenderingFrameTimelineRecord.TaskType.Script:
+            return WI.UIString("Script");
+        case WI.RenderingFrameTimelineRecord.TaskType.Layout:
+            return WI.UIString("Layout");
+        case WI.RenderingFrameTimelineRecord.TaskType.Paint:
+            return WI.UIString("Paint");
+        case WI.RenderingFrameTimelineRecord.TaskType.Other:
+            return WI.UIString("Other");
         }
     }
 
     static taskTypeForTimelineRecord(record)
     {
         switch (record.type) {
-        case WebInspector.TimelineRecord.Type.Script:
-            return WebInspector.RenderingFrameTimelineRecord.TaskType.Script;
-        case WebInspector.TimelineRecord.Type.Layout:
-            if (record.eventType === WebInspector.LayoutTimelineRecord.EventType.Paint || record.eventType === WebInspector.LayoutTimelineRecord.EventType.Composite)
-                return WebInspector.RenderingFrameTimelineRecord.TaskType.Paint;
-            return WebInspector.RenderingFrameTimelineRecord.TaskType.Layout;
+        case WI.TimelineRecord.Type.Script:
+            return WI.RenderingFrameTimelineRecord.TaskType.Script;
+        case WI.TimelineRecord.Type.Layout:
+            if (record.eventType === WI.LayoutTimelineRecord.EventType.Paint || record.eventType === WI.LayoutTimelineRecord.EventType.Composite)
+                return WI.RenderingFrameTimelineRecord.TaskType.Paint;
+            return WI.RenderingFrameTimelineRecord.TaskType.Layout;
         default:
             console.error("Unsupported timeline record type: " + record.type);
             return null;
@@ -86,7 +86,7 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
         console.assert(this._frameIndex === -1, "Frame index should only be set once.");
         if (this._frameIndex >= 0)
             return;
-        this._frameIndex = WebInspector.RenderingFrameTimelineRecord._nextFrameIndex++;
+        this._frameIndex = WI.RenderingFrameTimelineRecord._nextFrameIndex++;
     }
 
     durationForTask(taskType)
@@ -95,11 +95,11 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
             return this._durationByTaskType.get(taskType);
 
         var duration;
-        if (taskType === WebInspector.RenderingFrameTimelineRecord.TaskType.Other)
+        if (taskType === WI.RenderingFrameTimelineRecord.TaskType.Other)
             duration = this._calculateDurationRemainder();
         else {
             duration = this.children.reduce(function(previousValue, currentValue) {
-                if (taskType !== WebInspector.RenderingFrameTimelineRecord.taskTypeForTimelineRecord(currentValue))
+                if (taskType !== WI.RenderingFrameTimelineRecord.taskTypeForTimelineRecord(currentValue))
                     return previousValue;
 
                 var currentDuration = currentValue.duration;
@@ -108,11 +108,11 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
                 return previousValue + currentDuration;
             }, 0);
 
-            if (taskType === WebInspector.RenderingFrameTimelineRecord.TaskType.Script) {
+            if (taskType === WI.RenderingFrameTimelineRecord.TaskType.Script) {
                 // Layout events synchronously triggered from JavaScript must be subtracted from the total
                 // script time, to prevent the time from being counted twice.
                 duration -= this.children.reduce(function(previousValue, currentValue) {
-                    if (currentValue.type === WebInspector.TimelineRecord.Type.Layout && (currentValue.sourceCodeLocation || currentValue.callFrames))
+                    if (currentValue.type === WI.TimelineRecord.Type.Layout && (currentValue.sourceCodeLocation || currentValue.callFrames))
                         return previousValue + currentValue.duration;
                     return previousValue;
                 }, 0);
@@ -127,22 +127,22 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
 
     _calculateDurationRemainder()
     {
-        return Object.keys(WebInspector.RenderingFrameTimelineRecord.TaskType).reduce((previousValue, key) => {
-            let taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[key];
-            if (taskType === WebInspector.RenderingFrameTimelineRecord.TaskType.Other)
+        return Object.keys(WI.RenderingFrameTimelineRecord.TaskType).reduce((previousValue, key) => {
+            let taskType = WI.RenderingFrameTimelineRecord.TaskType[key];
+            if (taskType === WI.RenderingFrameTimelineRecord.TaskType.Other)
                 return previousValue;
             return previousValue - this.durationForTask(taskType);
         }, this.duration);
     }
 };
 
-WebInspector.RenderingFrameTimelineRecord.TaskType = {
+WI.RenderingFrameTimelineRecord.TaskType = {
     Script: "rendering-frame-timeline-record-script",
     Layout: "rendering-frame-timeline-record-layout",
     Paint: "rendering-frame-timeline-record-paint",
     Other: "rendering-frame-timeline-record-other"
 };
 
-WebInspector.RenderingFrameTimelineRecord.TypeIdentifier = "rendering-frame-timeline-record";
+WI.RenderingFrameTimelineRecord.TypeIdentifier = "rendering-frame-timeline-record";
 
-WebInspector.RenderingFrameTimelineRecord._nextFrameIndex = 0;
+WI.RenderingFrameTimelineRecord._nextFrameIndex = 0;

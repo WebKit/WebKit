@@ -19,7 +19,7 @@ function test() {
                 }
 
                 for (let eventListener of eventListeners) {
-                    let node = WebInspector.domTreeManager.nodeForId(eventListener.nodeId);
+                    let node = WI.domTreeManager.nodeForId(eventListener.nodeId);
 
 
                     InspectorTest.log(`Event: ${eventListener.type}`);
@@ -43,15 +43,15 @@ function test() {
         }
     });
 
-    WebInspector.domTreeManager.requestDocument((documentNode) => {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "div#x", (contentNodeId) => {
+    WI.domTreeManager.requestDocument((documentNode) => {
+        WI.domTreeManager.querySelector(documentNode.id, "div#x", (contentNodeId) => {
             if (!contentNodeId) {
                 InspectorTest.fail("DOM node not found.");
                 InspectorTest.completeTest();
                 return;
             }
 
-            domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
+            domNode = WI.domTreeManager.nodeForId(contentNodeId);
 
             suite.runTestCasesAndFinish();
         });

@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectTreeMapEntryTreeElement = class ObjectTreeMapEntryTreeElement extends WebInspector.ObjectTreeBaseTreeElement
+WI.ObjectTreeMapEntryTreeElement = class ObjectTreeMapEntryTreeElement extends WI.ObjectTreeBaseTreeElement
 {
     constructor(object, propertyPath)
     {
-        console.assert(object instanceof WebInspector.RemoteObject);
+        console.assert(object instanceof WI.RemoteObject);
 
         // Treat the same as an array-index just with different strings and widths.
         super(object, propertyPath);
@@ -54,7 +54,7 @@ WebInspector.ObjectTreeMapEntryTreeElement = class ObjectTreeMapEntryTreeElement
 
     propertyPathType()
     {
-        return WebInspector.PropertyPath.Type.Value;
+        return WI.PropertyPath.Type.Value;
     }
 
     titleFragment()
@@ -75,13 +75,13 @@ WebInspector.ObjectTreeMapEntryTreeElement = class ObjectTreeMapEntryTreeElement
         // Value.
         var valueElement = container.appendChild(document.createElement("span"));
         valueElement.className = "index-value";
-        valueElement.appendChild(WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(this._object, propertyPath));
+        valueElement.appendChild(WI.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject(this._object, propertyPath));
 
         return container;
     }
 };
 
-WebInspector.ObjectTreeMapKeyTreeElement = class ObjectTreeMapKeyTreeElement extends WebInspector.ObjectTreeMapEntryTreeElement
+WI.ObjectTreeMapKeyTreeElement = class ObjectTreeMapKeyTreeElement extends WI.ObjectTreeMapEntryTreeElement
 {
     constructor(object, propertyPath)
     {
@@ -96,7 +96,7 @@ WebInspector.ObjectTreeMapKeyTreeElement = class ObjectTreeMapKeyTreeElement ext
 
     displayPropertyName()
     {
-        return WebInspector.UIString("key");
+        return WI.UIString("key");
     }
 
     resolvedValuePropertyPath()
@@ -105,7 +105,7 @@ WebInspector.ObjectTreeMapKeyTreeElement = class ObjectTreeMapKeyTreeElement ext
     }
 };
 
-WebInspector.ObjectTreeMapValueTreeElement = class ObjectTreeMapValueTreeElement extends WebInspector.ObjectTreeMapEntryTreeElement
+WI.ObjectTreeMapValueTreeElement = class ObjectTreeMapValueTreeElement extends WI.ObjectTreeMapEntryTreeElement
 {
     constructor(object, propertyPath, key)
     {
@@ -122,7 +122,7 @@ WebInspector.ObjectTreeMapValueTreeElement = class ObjectTreeMapValueTreeElement
 
     displayPropertyName()
     {
-        return WebInspector.UIString("value");
+        return WI.UIString("value");
     }
 
     resolvedValuePropertyPath()

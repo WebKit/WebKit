@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
+WI.HoverMenu = class HoverMenu extends WI.Object
 {
     constructor(delegate)
     {
@@ -54,7 +54,7 @@ WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
 
         document.body.appendChild(this._element);
         this._drawOutline(rects);
-        this._element.classList.add(WebInspector.HoverMenu.VisibleClassName);
+        this._element.classList.add(WI.HoverMenu.VisibleClassName);
 
         window.addEventListener("scroll", this, true);
     }
@@ -67,7 +67,7 @@ WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
         if (discrete)
             this._element.remove();
 
-        this._element.classList.remove(WebInspector.HoverMenu.VisibleClassName);
+        this._element.classList.remove(WI.HoverMenu.VisibleClassName);
 
         window.removeEventListener("scroll", this, true);
     }
@@ -85,7 +85,7 @@ WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
             this._handleClickEvent(event);
             break;
         case "transitionend":
-            if (!this._element.classList.contains(WebInspector.HoverMenu.VisibleClassName))
+            if (!this._element.classList.contains(WI.HoverMenu.VisibleClassName))
                 this._element.remove();
             break;
         }
@@ -116,7 +116,7 @@ WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
         else
             this._drawOverlappingLines(rects);
 
-        var bounds = WebInspector.Rect.unionOfRects(rects).pad(3); // padding + 1/2 stroke-width
+        var bounds = WI.Rect.unionOfRects(rects).pad(3); // padding + 1/2 stroke-width
 
         var style = this._element.style;
         style.left = bounds.minX() + "px";
@@ -210,7 +210,7 @@ WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
         var lastLineMaxX = rects.lastValue.maxX() + PADDING;
 
         if (firstLineMinX === minX && lastLineMaxX === maxX)
-            return this._addRect(new WebInspector.Rect(minX, minY, maxX - minX, maxY - minY));
+            return this._addRect(new WI.Rect(minX, minY, maxX - minX, maxY - minY));
 
         var lastLineMinY = rects.lastValue.minY() + PADDING;
         if (rects[0].minX() === minX + PADDING) {
@@ -272,4 +272,4 @@ WebInspector.HoverMenu = class HoverMenu extends WebInspector.Object
     }
 };
 
-WebInspector.HoverMenu.VisibleClassName = "visible";
+WI.HoverMenu.VisibleClassName = "visible";

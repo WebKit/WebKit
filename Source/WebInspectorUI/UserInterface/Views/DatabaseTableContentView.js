@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends WebInspector.ContentView
+WI.DatabaseTableContentView = class DatabaseTableContentView extends WI.ContentView
 {
     constructor(representedObject)
     {
@@ -31,8 +31,8 @@ WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends W
 
         this.element.classList.add("database-table");
 
-        this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("database-table-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
-        this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
+        this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("database-table-refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
+        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
         this._messageTextViewElement = null;
 
         this.update();
@@ -52,7 +52,7 @@ WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends W
 
     saveToCookie(cookie)
     {
-        cookie.type = WebInspector.ContentViewCookieType.DatabaseTable;
+        cookie.type = WI.ContentViewCookieType.DatabaseTable;
         cookie.host = this.representedObject.host;
         cookie.name = this.representedObject.name;
         cookie.database = this.representedObject.database.name;
@@ -86,7 +86,7 @@ WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends W
             this._messageTextViewElement.remove();
 
         if (columnNames.length) {
-            this._dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
+            this._dataGrid = WI.DataGrid.createSortableDataGrid(columnNames, values);
 
             this.addSubview(this._dataGrid);
             this._dataGrid.updateLayout();
@@ -95,7 +95,7 @@ WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends W
 
         // We were returned a table with no columns. This can happen when a table has
         // no data, the SELECT query only returns column names when there is data.
-        this._messageTextViewElement = WebInspector.createMessageTextView(WebInspector.UIString("The “%s”\ntable is empty.").format(this.representedObject.name), false);
+        this._messageTextViewElement = WI.createMessageTextView(WI.UIString("The “%s”\ntable is empty.").format(this.representedObject.name), false);
         this.element.appendChild(this._messageTextViewElement);
     }
 
@@ -109,7 +109,7 @@ WebInspector.DatabaseTableContentView = class DatabaseTableContentView extends W
         if (this._messageTextViewElement)
             this._messageTextViewElement.remove();
 
-        this._messageTextViewElement = WebInspector.createMessageTextView(WebInspector.UIString("An error occurred trying to read the “%s” table.").format(this.representedObject.name), true);
+        this._messageTextViewElement = WI.createMessageTextView(WI.UIString("An error occurred trying to read the “%s” table.").format(this.representedObject.name), true);
         this.element.appendChild(this._messageTextViewElement);
     }
 

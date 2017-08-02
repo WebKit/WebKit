@@ -219,10 +219,10 @@ function parseQueryString(queryString, arrayResult)
     return parameters;
 }
 
-WebInspector.displayNameForURL = function(url, urlComponents)
+WI.displayNameForURL = function(url, urlComponents)
 {
     if (url.startsWith("data:"))
-        return WebInspector.truncateURL(url);
+        return WI.truncateURL(url);
 
     if (!urlComponents)
         urlComponents = parseURL(url);
@@ -234,10 +234,10 @@ WebInspector.displayNameForURL = function(url, urlComponents)
         displayName = urlComponents.lastPathComponent;
     }
 
-    return displayName || WebInspector.displayNameForHost(urlComponents.host) || url;
+    return displayName || WI.displayNameForHost(urlComponents.host) || url;
 };
 
-WebInspector.truncateURL = function(url, multiline = false, dataURIMaxSize = 6)
+WI.truncateURL = function(url, multiline = false, dataURIMaxSize = 6)
 {
     if (!url.startsWith("data:"))
         return url;
@@ -258,7 +258,7 @@ WebInspector.truncateURL = function(url, multiline = false, dataURIMaxSize = 6)
     return header + firstChunk + middleChunk + lastChunk;
 };
 
-WebInspector.displayNameForHost = function(host)
+WI.displayNameForHost = function(host)
 {
     // FIXME <rdar://problem/11237413>: This should decode punycode hostnames.
     return host;

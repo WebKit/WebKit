@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleCompletionsController = class VisualStyleCompletionsController extends WebInspector.Object
+WI.VisualStyleCompletionsController = class VisualStyleCompletionsController extends WI.Object
 {
     constructor(delegate)
     {
         super();
 
         this._delegate = delegate || null;
-        this._suggestionsView = new WebInspector.CompletionSuggestionsView(this);
+        this._suggestionsView = new WI.CompletionSuggestionsView(this);
         this._completions = null;
         this._currentCompletions = [];
         this._selectedCompletionIndex = 0;
@@ -70,7 +70,7 @@ WebInspector.VisualStyleCompletionsController = class VisualStyleCompletionsCont
     completionSuggestionsClickedCompletion(suggestionsView, text)
     {
         suggestionsView.hide();
-        this.dispatchEventToListeners(WebInspector.VisualStyleCompletionsController.Event.CompletionSelected, {text});
+        this.dispatchEventToListeners(WI.VisualStyleCompletionsController.Event.CompletionSelected, {text});
     }
 
     previous()
@@ -127,6 +127,6 @@ WebInspector.VisualStyleCompletionsController = class VisualStyleCompletionsCont
     }
 };
 
-WebInspector.VisualStyleCompletionsController.Event = {
+WI.VisualStyleCompletionsController.Event = {
     CompletionSelected: "visual-style-completions-controller-completion-selected"
 };

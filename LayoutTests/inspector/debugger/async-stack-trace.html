@@ -82,13 +82,13 @@ function test()
                 function handlePaused() {
                     InspectorTest.log(`PAUSE #${++pauseCount}`);
                     logActiveStackTrace();
-                    WebInspector.debuggerManager.resume();
+                    WI.debuggerManager.resume();
                 }
 
-                WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, handlePaused);
+                WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, handlePaused);
 
                 InspectorTest.singleFireEventListener("AfterTestFunction", () => {
-                    WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.Paused, handlePaused);
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, handlePaused);
                     resolve();
                 });
 
@@ -106,13 +106,13 @@ function test()
 
     function setup(resolve) {
         InspectorTest.log("Save DebuggerManager.asyncStackTraceDepth");
-        this.savedCallStackDepth = WebInspector.debuggerManager.asyncStackTraceDepth;
+        this.savedCallStackDepth = WI.debuggerManager.asyncStackTraceDepth;
         resolve();
     }
 
     function teardown(resolve) {
         InspectorTest.log("Restore DebuggerManager.asyncStackTraceDepth");
-        WebInspector.debuggerManager.asyncStackTraceDepth = this.savedCallStackDepth;
+        WI.debuggerManager.asyncStackTraceDepth = this.savedCallStackDepth;
         resolve();
     }
 
@@ -121,15 +121,15 @@ function test()
         setup,
         teardown,
         test(resolve, reject) {
-            WebInspector.debuggerManager.awaitEvent(WebInspector.DebuggerManager.Event.Paused)
+            WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused)
             .then((event) => {
                 let stackTrace = getActiveStackTrace();
                 let asyncStackTrace = stackTrace.parentStackTrace;
                 InspectorTest.expectNull(asyncStackTrace, "Async stack trace should be null.");
-                WebInspector.debuggerManager.resume().then(resolve, reject);
+                WI.debuggerManager.resume().then(resolve, reject);
             });
 
-            WebInspector.debuggerManager.asyncStackTraceDepth = 0;
+            WI.debuggerManager.asyncStackTraceDepth = 0;
             InspectorTest.evaluateInPage("testRequestAnimationFrame()");
         }
     });
@@ -151,7 +151,7 @@ function test()
                 const framesPerCallStack = 2;
                 const expectedStackTraceDepth = asyncStackTraceDepth + (asyncStackTraceDepth % framesPerCallStack);
 
-                WebInspector.debuggerManager.awaitEvent(WebInspector.DebuggerManager.Event.Paused)
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused)
                 .then((event) => {
                     let stackTrace = getActiveStackTrace();
                     InspectorTest.assert(stackTrace && stackTrace.callFrames);
@@ -169,11 +169,11 @@ function test()
                     InspectorTest.expectEqual(stackTraceDepth, expectedStackTraceDepth, "StackTrace should be truncated to the nearest call stack.");
 
                     logActiveStackTrace();
-                    WebInspector.debuggerManager.resume().then(resolve, reject);
+                    WI.debuggerManager.resume().then(resolve, reject);
                 });
 
                 InspectorTest.log(`Set Debugger.asyncStackTraceDepth equal to ${asyncStackTraceDepth}`);
-                WebInspector.debuggerManager.asyncStackTraceDepth = asyncStackTraceDepth;
+                WI.debuggerManager.asyncStackTraceDepth = asyncStackTraceDepth;
 
                 let repeatCount = Math.floor(asyncStackTraceDepth / framesPerCallStack) + 1;
                 InspectorTest.evaluateInPage(`repeatingRequestAnimationFrame(${repeatCount})`);

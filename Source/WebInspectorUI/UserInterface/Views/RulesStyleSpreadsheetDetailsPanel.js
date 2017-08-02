@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RulesStyleSpreadsheetDetailsPanel = class RulesStyleSpreadsheetDetailsPanel extends WebInspector.StyleDetailsPanel
+WI.RulesStyleSpreadsheetDetailsPanel = class RulesStyleSpreadsheetDetailsPanel extends WI.StyleDetailsPanel
 {
     constructor(delegate)
     {
-        super(delegate, "rules", "rules", WebInspector.UIString("Styles \u2014 Rules"));
+        super(delegate, "rules", "rules", WI.UIString("Styles \u2014 Rules"));
     }
 
     // Public
 
     filterDidChange()
     {
-        // Called by WebInspector.CSSStyleDetailsSidebarPanel.prototype._filterDidChange.
+        // Called by WI.CSSStyleDetailsSidebarPanel.prototype._filterDidChange.
         // Unimplemented.
     }
 

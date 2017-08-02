@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.InspectorObserver = class InspectorObserver
+WI.InspectorObserver = class InspectorObserver
 {
     // Events defined by the "Inspector" domain.
 
@@ -39,16 +39,16 @@ WebInspector.InspectorObserver = class InspectorObserver
 
     inspect(payload, hints)
     {
-        let remoteObject = WebInspector.RemoteObject.fromPayload(payload, WebInspector.mainTarget);
+        let remoteObject = WI.RemoteObject.fromPayload(payload, WI.mainTarget);
         if (remoteObject.subtype === "node") {
-            WebInspector.domTreeManager.inspectNodeObject(remoteObject);
+            WI.domTreeManager.inspectNodeObject(remoteObject);
             return;
         }
 
         if (remoteObject.type === "function") {
             remoteObject.findFunctionSourceCodeLocation().then((sourceCodeLocation) => {
-                if (sourceCodeLocation instanceof WebInspector.SourceCodeLocation) {
-                    WebInspector.showSourceCodeLocation(sourceCodeLocation, {
+                if (sourceCodeLocation instanceof WI.SourceCodeLocation) {
+                    WI.showSourceCodeLocation(sourceCodeLocation, {
                         ignoreNetworkTab: true,
                         ignoreSearchTab: true,
                     });
@@ -59,15 +59,15 @@ WebInspector.InspectorObserver = class InspectorObserver
         }
 
         if (hints.databaseId)
-            WebInspector.storageManager.inspectDatabase(hints.databaseId);
+            WI.storageManager.inspectDatabase(hints.databaseId);
         else if (hints.domStorageId)
-            WebInspector.storageManager.inspectDOMStorage(hints.domStorageId);
+            WI.storageManager.inspectDOMStorage(hints.domStorageId);
 
         remoteObject.release();
     }
 
     activateExtraDomains(domains)
     {
-        WebInspector.activateExtraDomains(domains);
+        WI.activateExtraDomains(domains);
     }
 };

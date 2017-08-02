@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController extends WebInspector.Object
+WI.CodeMirrorEditingController = class CodeMirrorEditingController extends WI.Object
 {
     constructor(codeMirror, marker)
     {
@@ -38,7 +38,7 @@ WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController ext
         // The value must support .toString() and .copy() methods.
         this._value = this.initialValue;
 
-        this._keyboardShortcutEsc = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape);
+        this._keyboardShortcutEsc = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape);
     }
 
     // Public
@@ -90,7 +90,7 @@ WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController ext
         var lines = text.split("\n");
         var endLine = this._range.startLine + lines.length - 1;
         var endColumn = lines.length > 1 ? lines.lastValue.length : this._range.startColumn + text.length;
-        this._range = new WebInspector.TextRange(this._range.startLine, this._range.startColumn, endLine, endColumn);
+        this._range = new WI.TextRange(this._range.startLine, this._range.startColumn, endLine, endColumn);
     }
 
     get initialValue()
@@ -114,12 +114,12 @@ WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController ext
     {
         // Best to display the popover to the left or above the edited range since its end position may change, but not its start
         // position. This way we minimize the chances of overlaying the edited range as it changes.
-        return [WebInspector.RectEdge.MIN_X, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MAX_X];
+        return [WI.RectEdge.MIN_X, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_Y, WI.RectEdge.MAX_X];
     }
 
     popoverTargetFrameWithRects(rects)
     {
-        return WebInspector.Rect.unionOfRects(rects);
+        return WI.Rect.unionOfRects(rects);
     }
 
     presentHoverMenu()
@@ -127,7 +127,7 @@ WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController ext
         if (!this.cssClassName)
             return;
 
-        this._hoverMenu = new WebInspector.HoverMenu(this);
+        this._hoverMenu = new WI.HoverMenu(this);
         this._hoverMenu.element.classList.add(this.cssClassName);
         this._rects = this._marker.rects;
         this._hoverMenu.present(this._rects);
@@ -171,12 +171,12 @@ WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController ext
 
     hoverMenuButtonWasPressed(hoverMenu)
     {
-        this._popover = new WebInspector.Popover(this);
+        this._popover = new WI.Popover(this);
         this.popoverWillPresent(this._popover);
         this._popover.present(this.popoverTargetFrameWithRects(this._rects).pad(2), this.popoverPreferredEdges);
         this.popoverDidPresent(this._popover);
 
-        WebInspector.addWindowKeydownListener(this);
+        WI.addWindowKeydownListener(this);
 
         hoverMenu.dismiss();
 
@@ -191,7 +191,7 @@ WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController ext
         delete this._popover;
         delete this._originalValue;
 
-        WebInspector.removeWindowKeydownListener(this);
+        WI.removeWindowKeydownListener(this);
         this.popoverDidDismiss();
 
         if (this._delegate && typeof this._delegate.editingControllerDidFinishEditing === "function")

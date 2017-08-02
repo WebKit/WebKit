@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FilterBarNavigationItem = class FilterBarNavigationItem extends WebInspector.NavigationItem
+WI.FilterBarNavigationItem = class FilterBarNavigationItem extends WI.NavigationItem
 {
     constructor()
     {
         super();
 
-        this._filterBar = new WebInspector.FilterBar(this.element);
+        this._filterBar = new WI.FilterBar(this.element);
     }
 
     // Public

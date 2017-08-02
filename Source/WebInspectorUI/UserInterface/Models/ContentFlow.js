@@ -27,7 +27,7 @@
  * SUCH DAMAGE.
  */
 
-WebInspector.ContentFlow = class ContentFlow extends WebInspector.Object
+WI.ContentFlow = class ContentFlow extends WI.Object
 {
     constructor(documentNodeIdentifier, name, overset, contentNodes)
     {
@@ -67,7 +67,7 @@ WebInspector.ContentFlow = class ContentFlow extends WebInspector.Object
         if (this._overset === overset)
             return;
         this._overset = overset;
-        this.dispatchEventToListeners(WebInspector.ContentFlow.Event.FlowOversetWasChanged);
+        this.dispatchEventToListeners(WI.ContentFlow.Event.FlowOversetWasChanged);
     }
 
     get contentNodes()
@@ -80,13 +80,13 @@ WebInspector.ContentFlow = class ContentFlow extends WebInspector.Object
         var index = this._contentNodes.indexOf(referenceNode);
         console.assert(index !== -1);
         this._contentNodes.splice(index, 0, contentNode);
-        this.dispatchEventToListeners(WebInspector.ContentFlow.Event.ContentNodeWasAdded, {node: contentNode, before: referenceNode});
+        this.dispatchEventToListeners(WI.ContentFlow.Event.ContentNodeWasAdded, {node: contentNode, before: referenceNode});
     }
 
     appendContentNode(contentNode)
     {
         this._contentNodes.push(contentNode);
-        this.dispatchEventToListeners(WebInspector.ContentFlow.Event.ContentNodeWasAdded, {node: contentNode});
+        this.dispatchEventToListeners(WI.ContentFlow.Event.ContentNodeWasAdded, {node: contentNode});
     }
 
     removeContentNode(contentNode)
@@ -94,11 +94,11 @@ WebInspector.ContentFlow = class ContentFlow extends WebInspector.Object
         var index = this._contentNodes.indexOf(contentNode);
         console.assert(index !== -1);
         this._contentNodes.splice(index, 1);
-        this.dispatchEventToListeners(WebInspector.ContentFlow.Event.ContentNodeWasRemoved, {node: contentNode});
+        this.dispatchEventToListeners(WI.ContentFlow.Event.ContentNodeWasRemoved, {node: contentNode});
     }
 };
 
-WebInspector.ContentFlow.Event = {
+WI.ContentFlow.Event = {
     OversetWasChanged: "content-flow-overset-was-changed",
     ContentNodeWasAdded: "content-flow-content-node-was-added",
     ContentNodeWasRemoved: "content-flow-content-node-was-removed"

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink extends WebInspector.Object
+WI.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink extends WI.Object
 {
     constructor(linkedProperties, className, linksToHideWhenLinked)
     {
@@ -34,7 +34,7 @@ WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink
         this._lastPropertyEdited = null;
 
         for (let property of this._linkedProperties)
-            property.addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, this._linkedPropertyValueChanged, this);
+            property.addEventListener(WI.VisualStylePropertyEditor.Event.ValueDidChange, this._linkedPropertyValueChanged, this);
 
         this._element = document.createElement("div");
         this._element.classList.add("visual-style-property-editor-link", className || "");
@@ -45,7 +45,7 @@ WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink
 
         this._iconElement = document.createElement("div");
         this._iconElement.classList.add("visual-style-property-editor-link-icon");
-        this._iconElement.title = WebInspector.UIString("Click to link property values");
+        this._iconElement.title = WI.UIString("Click to link property values");
         this._iconElement.addEventListener("mouseover", this._iconMouseover.bind(this));
         this._iconElement.addEventListener("mouseout", this._iconMouseout.bind(this));
         this._iconElement.addEventListener("click", this._iconClicked.bind(this));
@@ -85,7 +85,7 @@ WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink
         if (this._unlinkedIcon)
             this._unlinkedIcon.hidden = this._linked;
 
-        this._iconElement.title = this._linked ? WebInspector.UIString("Remove link") : WebInspector.UIString("Link property values");
+        this._iconElement.title = this._linked ? WI.UIString("Remove link") : WI.UIString("Link property values");
 
         for (let linkToHide of this._linksToHideWhenLinked)
             linkToHide.disabled = this._linked;

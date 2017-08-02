@@ -76,7 +76,7 @@ function test()
         return stackTrace;
     }
 
-    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+    WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, (event) => {
         InspectorTest.log("\nconsole.trace():");
 
         let stackTrace = [];
@@ -106,7 +106,7 @@ function test()
                 InspectorTest.evaluateInPage(expression, (error, result) => {
                     InspectorTest.assert(!error, error);
                     InspectorTest.log("\nError object:");
-                    let stackTrace = stripFilePaths(stripPayloadAfterGlobalCode(WebInspector.StackTrace._parseStackTrace(result.value)));
+                    let stackTrace = stripFilePaths(stripPayloadAfterGlobalCode(WI.StackTrace._parseStackTrace(result.value)));
                     InspectorTest.log(JSON.stringify(stackTrace, null, 4));
                     resolve();
                 });

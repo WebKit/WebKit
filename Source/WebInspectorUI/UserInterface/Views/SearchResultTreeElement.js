@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SearchResultTreeElement = class SearchResultTreeElement extends WebInspector.GeneralTreeElement
+WI.SearchResultTreeElement = class SearchResultTreeElement extends WI.GeneralTreeElement
 {
     constructor(representedObject)
     {
-        console.assert(representedObject instanceof WebInspector.DOMSearchMatchObject || representedObject instanceof WebInspector.SourceCodeSearchMatchObject);
+        console.assert(representedObject instanceof WI.DOMSearchMatchObject || representedObject instanceof WI.SourceCodeSearchMatchObject);
 
-        var title = WebInspector.SearchResultTreeElement.truncateAndHighlightTitle(representedObject.title, representedObject.searchTerm, representedObject.sourceCodeTextRange);
+        var title = WI.SearchResultTreeElement.truncateAndHighlightTitle(representedObject.title, representedObject.searchTerm, representedObject.sourceCodeTextRange);
         const subtitle = null;
         super(representedObject.className, title, subtitle, representedObject);
     }
@@ -38,7 +38,7 @@ WebInspector.SearchResultTreeElement = class SearchResultTreeElement extends Web
 
     static truncateAndHighlightTitle(title, searchTerm, sourceCodeTextRange)
     {
-        let isRTL = WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL;
+        let isRTL = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL;
         const charactersToShowBeforeSearchMatch = isRTL ? 20 : 15;
         const charactersToShowAfterSearchMatch = isRTL ? 15 : 50;
 

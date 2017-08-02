@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel extends WebInspector.DetailsSidebarPanel
+WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel extends WI.DetailsSidebarPanel
 {
     constructor()
     {
-        super("recording-state", WebInspector.UIString("State"));
+        super("recording-state", WI.UIString("State"));
 
         this._recording = null;
         this._index = NaN;
@@ -49,7 +49,7 @@ WebInspector.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSide
         if (!(objects instanceof Array))
             objects = [objects];
 
-        this.recording = objects.find((object) => object instanceof WebInspector.Recording && object.type === WebInspector.Recording.Type.Canvas2D);
+        this.recording = objects.find((object) => object instanceof WI.Recording && object.type === WI.Recording.Type.Canvas2D);
 
         return !!this._recording;
     }
@@ -74,7 +74,7 @@ WebInspector.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSide
 
         this._index = index;
 
-        if (this._recording.type === WebInspector.Recording.Type.Canvas2D)
+        if (this._recording.type === WI.Recording.Type.Canvas2D)
             this._generateDetailsCanvas2D(context, options);
 
         this.updateLayoutIfNeeded();
@@ -85,9 +85,9 @@ WebInspector.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSide
     _generateDetailsCanvas2D(context, options = {})
     {
         if (!this._dataGrid) {
-            this._dataGrid = new WebInspector.DataGrid({
-                name: {title: WebInspector.UIString("Name")},
-                value: {title: WebInspector.UIString("Value")},
+            this._dataGrid = new WI.DataGrid({
+                name: {title: WI.UIString("Name")},
+                value: {title: WI.UIString("Value")},
             });
         }
         if (!this._dataGrid.parentView)
@@ -135,9 +135,9 @@ WebInspector.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSide
                     value = document.createElement("span");
                     value.classList.add("unavailable");
                     if (isGradient)
-                        value.textContent = WebInspector.unlocalizedString("Gradient");
+                        value.textContent = WI.unlocalizedString("Gradient");
                     else if (isPattern)
-                        value.textContent = WebInspector.unlocalizedString("Pattern");
+                        value.textContent = WI.unlocalizedString("Pattern");
                 } else {
                     if (value instanceof DOMMatrix)
                         value = [value.a, value.b, value.c, value.d, value.e, value.f];
@@ -153,7 +153,7 @@ WebInspector.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSide
                 classNames.push("non-standard");
 
             const hasChildren = false;
-            this._dataGrid.appendChild(new WebInspector.DataGridNode({name, value}, hasChildren, classNames));
+            this._dataGrid.appendChild(new WI.DataGridNode({name, value}, hasChildren, classNames));
         }
     }
 };

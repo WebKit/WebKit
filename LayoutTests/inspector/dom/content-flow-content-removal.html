@@ -20,7 +20,7 @@ function test()
 
     function onRootDOMNodeInvalidated()
     {
-        WebInspector.frameResourceManager.mainFrame.domTree.requestContentFlowList();
+        WI.frameResourceManager.mainFrame.domTree.requestContentFlowList();
     }
 
     function onContentFlowWasAdded(event)
@@ -31,7 +31,7 @@ function test()
         InspectorTest.expectThat(contentFlow.contentNodes[0].getAttribute("id") === "contentStatic", "ContentFlow.contentNodes[0].id is \"#contentStatic\".");
         InspectorTest.expectThat(contentFlow.contentNodes[1].getAttribute("id") === "contentRemoved", "ContentFlow.contentNodes[1].id is \"#contentRemoved\".");
 
-        contentFlow.addEventListener(WebInspector.ContentFlow.Event.ContentNodeWasRemoved, onContentNodeWasRemoved, null);
+        contentFlow.addEventListener(WI.ContentFlow.Event.ContentNodeWasRemoved, onContentNodeWasRemoved, null);
 
         InspectorTest.evaluateInPage("changeFlowContent()");
     }
@@ -43,10 +43,10 @@ function test()
         InspectorTest.completeTest();
     }
 
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, function() {
-        var domTree = WebInspector.frameResourceManager.mainFrame.domTree;
-        domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, onRootDOMNodeInvalidated, null);
-        domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasAdded, onContentFlowWasAdded, null);
+    WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, function() {
+        var domTree = WI.frameResourceManager.mainFrame.domTree;
+        domTree.addEventListener(WI.DOMTree.Event.RootDOMNodeInvalidated, onRootDOMNodeInvalidated, null);
+        domTree.addEventListener(WI.DOMTree.Event.ContentFlowWasAdded, onContentFlowWasAdded, null);
         domTree.requestContentFlowList();
     });
 

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LineWidget = class LineWidget
+WI.LineWidget = class LineWidget
 {
     constructor(codeMirrorLineWidget, widgetElement)
     {

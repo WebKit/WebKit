@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CallFrameView = class CallFrameView extends WebInspector.Object
+WI.CallFrameView = class CallFrameView extends WI.Object
 {
     constructor(callFrame, showFunctionName)
     {
-        console.assert(callFrame instanceof WebInspector.CallFrame);
+        console.assert(callFrame instanceof WI.CallFrame);
 
         var callFrameElement = document.createElement("div");
-        callFrameElement.classList.add("call-frame", WebInspector.CallFrameView.iconClassNameForCallFrame(callFrame));
+        callFrameElement.classList.add("call-frame", WI.CallFrameView.iconClassNameForCallFrame(callFrame));
 
         var subtitleElement = document.createElement("span");
         subtitleElement.classList.add("subtitle");
 
         var sourceCodeLocation = callFrame.sourceCodeLocation;
         if (sourceCodeLocation) {
-            WebInspector.linkifyElement(callFrameElement, sourceCodeLocation);
+            WI.linkifyElement(callFrameElement, sourceCodeLocation);
 
             var linkElement = document.createElement("a");
             linkElement.classList.add("source-link");
@@ -63,7 +63,7 @@ WebInspector.CallFrameView = class CallFrameView extends WebInspector.Object
             var imgElement = document.createElement("img");
             imgElement.classList.add("icon");
 
-            titleElement.append(imgElement, callFrame.functionName || WebInspector.UIString("(anonymous function)"));
+            titleElement.append(imgElement, callFrame.functionName || WI.UIString("(anonymous function)"));
         }
 
         callFrameElement.append(titleElement, subtitleElement);
@@ -74,25 +74,25 @@ WebInspector.CallFrameView = class CallFrameView extends WebInspector.Object
     static iconClassNameForCallFrame(callFrame)
     {
         if (callFrame.isTailDeleted)
-            return WebInspector.CallFrameView.TailDeletedIcon;
+            return WI.CallFrameView.TailDeletedIcon;
 
         if (callFrame.programCode)
-            return WebInspector.CallFrameView.ProgramIconStyleClassName;
+            return WI.CallFrameView.ProgramIconStyleClassName;
 
         // This is more than likely an event listener function with an "on" prefix and it is
         // as long or longer than the shortest event listener name -- "oncut".
         if (callFrame.functionName && callFrame.functionName.startsWith("on") && callFrame.functionName.length >= 5)
-            return WebInspector.CallFrameView.EventListenerIconStyleClassName;
+            return WI.CallFrameView.EventListenerIconStyleClassName;
 
         if (callFrame.nativeCode)
-            return WebInspector.CallFrameView.NativeIconStyleClassName;
+            return WI.CallFrameView.NativeIconStyleClassName;
 
-        return WebInspector.CallFrameView.FunctionIconStyleClassName;
+        return WI.CallFrameView.FunctionIconStyleClassName;
     }
 };
 
-WebInspector.CallFrameView.ProgramIconStyleClassName = "program-icon";
-WebInspector.CallFrameView.FunctionIconStyleClassName = "function-icon";
-WebInspector.CallFrameView.EventListenerIconStyleClassName = "event-listener-icon";
-WebInspector.CallFrameView.NativeIconStyleClassName = "native-icon";
-WebInspector.CallFrameView.TailDeletedIcon = "tail-deleted";
+WI.CallFrameView.ProgramIconStyleClassName = "program-icon";
+WI.CallFrameView.FunctionIconStyleClassName = "function-icon";
+WI.CallFrameView.EventListenerIconStyleClassName = "event-listener-icon";
+WI.CallFrameView.NativeIconStyleClassName = "native-icon";
+WI.CallFrameView.TailDeletedIcon = "tail-deleted";

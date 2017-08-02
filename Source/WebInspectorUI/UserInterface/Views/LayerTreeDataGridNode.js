@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WebInspector.DataGridNode
+WI.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WI.DataGridNode
 {
     constructor(layer)
     {
@@ -60,10 +60,10 @@ WebInspector.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WebInsp
     {
         this._layer = layer;
 
-        var domNode = WebInspector.domTreeManager.nodeForId(layer.nodeId);
+        var domNode = WI.domTreeManager.nodeForId(layer.nodeId);
 
         this.data = {
-            name: domNode ? domNode.displayName : WebInspector.UIString("Unknown node"),
+            name: domNode ? domNode.displayName : WI.UIString("Unknown node"),
             paintCount: layer.paintCount || emDash,
             memory: Number.bytesToString(layer.memory || 0)
         };
@@ -100,7 +100,7 @@ WebInspector.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WebInsp
 
         fragment.appendChild(document.createElement("img")).className = "icon";
 
-        var goToButton = this._makeOutlet("goToButton", fragment.appendChild(WebInspector.createGoToArrowButton()));
+        var goToButton = this._makeOutlet("goToButton", fragment.appendChild(WI.createGoToArrowButton()));
         goToButton.addEventListener("click", this._goToArrowWasClicked.bind(this), false);
 
         var label = this._makeOutlet("label", fragment.appendChild(document.createElement("span")));
@@ -114,7 +114,7 @@ WebInspector.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WebInsp
 
         var reflectionLabel = this._makeOutlet("reflectionLabel", document.createElement("span"));
         reflectionLabel.className = "reflection";
-        reflectionLabel.textContent = " \u2014 " + WebInspector.UIString("Reflection");
+        reflectionLabel.textContent = " \u2014 " + WI.UIString("Reflection");
 
         return fragment;
     }
@@ -135,7 +135,7 @@ WebInspector.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WebInsp
 
         this._outlets.nameLabel.textContent = data;
 
-        if (WebInspector.domTreeManager.nodeForId(layer.nodeId))
+        if (WI.domTreeManager.nodeForId(layer.nodeId))
             label.parentNode.insertBefore(this._outlets.goToButton, label.parentNode.firstChild);
         else if (this._outlets.goToButton.parentNode)
             label.parentNode.removeChild(this._outlets.goToButton);
@@ -159,7 +159,7 @@ WebInspector.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WebInsp
 
     _goToArrowWasClicked()
     {
-        var domNode = WebInspector.domTreeManager.nodeForId(this._layer.nodeId);
-        WebInspector.showMainFrameDOMTree(domNode);
+        var domNode = WI.domTreeManager.nodeForId(this._layer.nodeId);
+        WI.showMainFrameDOMTree(domNode);
     }
 };

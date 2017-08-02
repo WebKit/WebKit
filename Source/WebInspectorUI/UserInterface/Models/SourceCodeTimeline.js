@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeTimeline = class SourceCodeTimeline extends WebInspector.Timeline
+WI.SourceCodeTimeline = class SourceCodeTimeline extends WI.Timeline
 {
     constructor(sourceCode, sourceCodeLocation, recordType, recordEventType)
     {
@@ -48,18 +48,18 @@ WebInspector.SourceCodeTimeline = class SourceCodeTimeline extends WebInspector.
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WebInspector.SourceCodeTimeline.SourceCodeURLCookieKey] = this._sourceCode.url ? this._sourceCode.url.hash : null;
-        cookie[WebInspector.SourceCodeTimeline.SourceCodeLocationLineCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.lineNumber : null;
-        cookie[WebInspector.SourceCodeTimeline.SourceCodeLocationColumnCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.columnNumber : null;
-        cookie[WebInspector.SourceCodeTimeline.RecordTypeCookieKey] = this._recordType || null;
-        cookie[WebInspector.SourceCodeTimeline.RecordEventTypeCookieKey] = this._recordEventType || null;
+        cookie[WI.SourceCodeTimeline.SourceCodeURLCookieKey] = this._sourceCode.url ? this._sourceCode.url.hash : null;
+        cookie[WI.SourceCodeTimeline.SourceCodeLocationLineCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.lineNumber : null;
+        cookie[WI.SourceCodeTimeline.SourceCodeLocationColumnCookieKey] = this._sourceCodeLocation ? this._sourceCodeLocation.columnNumber : null;
+        cookie[WI.SourceCodeTimeline.RecordTypeCookieKey] = this._recordType || null;
+        cookie[WI.SourceCodeTimeline.RecordEventTypeCookieKey] = this._recordEventType || null;
     }
 };
 
-WebInspector.SourceCodeTimeline.TypeIdentifier = "source-code-timeline";
-WebInspector.SourceCodeTimeline.SourceCodeURLCookieKey = "source-code-timeline-source-code-url";
-WebInspector.SourceCodeTimeline.SourceCodeLocationLineCookieKey = "source-code-timeline-source-code-location-line";
-WebInspector.SourceCodeTimeline.SourceCodeLocationColumnCookieKey = "source-code-timeline-source-code-location-column";
-WebInspector.SourceCodeTimeline.SourceCodeURLCookieKey = "source-code-timeline-source-code-url";
-WebInspector.SourceCodeTimeline.RecordTypeCookieKey = "source-code-timeline-record-type";
-WebInspector.SourceCodeTimeline.RecordEventTypeCookieKey = "source-code-timeline-record-event-type";
+WI.SourceCodeTimeline.TypeIdentifier = "source-code-timeline";
+WI.SourceCodeTimeline.SourceCodeURLCookieKey = "source-code-timeline-source-code-url";
+WI.SourceCodeTimeline.SourceCodeLocationLineCookieKey = "source-code-timeline-source-code-location-line";
+WI.SourceCodeTimeline.SourceCodeLocationColumnCookieKey = "source-code-timeline-source-code-location-column";
+WI.SourceCodeTimeline.SourceCodeURLCookieKey = "source-code-timeline-source-code-url";
+WI.SourceCodeTimeline.RecordTypeCookieKey = "source-code-timeline-record-type";
+WI.SourceCodeTimeline.RecordEventTypeCookieKey = "source-code-timeline-record-event-type";

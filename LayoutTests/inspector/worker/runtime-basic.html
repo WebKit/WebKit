@@ -12,8 +12,8 @@ function test()
         return url.replace(/^.*?LayoutTests\//, "");
     }
 
-    let mainTarget = WebInspector.mainTarget;
-    let workerTarget = Array.from(WebInspector.targets).find((target) => target.type === WebInspector.Target.Type.Worker);
+    let mainTarget = WI.mainTarget;
+    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.Target.Type.Worker);
     if (!workerTarget) {
         InspectorTest.fail("Missing Worker Target");
         InspectorTest.completeTest();
@@ -27,7 +27,7 @@ function test()
         description: "Main target evaluation.",
         test(resolve, reject) {
             mainTarget.RuntimeAgent.evaluate("passphrase").then((payload) => {
-                let remoteObject = WebInspector.RemoteObject.fromPayload(payload.result, mainTarget);
+                let remoteObject = WI.RemoteObject.fromPayload(payload.result, mainTarget);
                 InspectorTest.log(`Target - ${mainTarget.displayName} - passphrase - ${remoteObject.description}`);
                 resolve();
             }).catch(reject);
@@ -39,7 +39,7 @@ function test()
         description: "Worker target evaluation.",
         test(resolve, reject) {
             workerTarget.RuntimeAgent.evaluate("passphrase").then((payload) => {
-                let remoteObject = WebInspector.RemoteObject.fromPayload(payload.result, workerTarget);
+                let remoteObject = WI.RemoteObject.fromPayload(payload.result, workerTarget);
                 InspectorTest.log(`Target - ${workerTarget.displayName} - passphrase - ${remoteObject.description}`);
                 resolve();
             }).catch(reject);
@@ -51,7 +51,7 @@ function test()
         description: "Should be able to dig further into RemoteObjects.",
         test(resolve, reject) {
             mainTarget.RuntimeAgent.evaluate("location").then((payload) => {
-                let remoteObject = WebInspector.RemoteObject.fromPayload(payload.result, mainTarget);
+                let remoteObject = WI.RemoteObject.fromPayload(payload.result, mainTarget);
                 remoteObject.getDisplayablePropertyDescriptors((propertyDescriptors) => {
                     let hrefPropertyDescriptor = propertyDescriptors.find((p) => p.name === "href");
                     let hrefValue = sanitizeURL(hrefPropertyDescriptor.value.description);
@@ -67,7 +67,7 @@ function test()
         description: "Should be able to dig further into RemoteObjects.",
         test(resolve, reject) {
             workerTarget.RuntimeAgent.evaluate("location").then((payload) => {
-                let remoteObject = WebInspector.RemoteObject.fromPayload(payload.result, workerTarget);
+                let remoteObject = WI.RemoteObject.fromPayload(payload.result, workerTarget);
                 remoteObject.getDisplayablePropertyDescriptors((propertyDescriptors) => {
                     let hrefPropertyDescriptor = propertyDescriptors.find((p) => p.name === "href");
                     let hrefValue = sanitizeURL(hrefPropertyDescriptor.value.description);

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceQueryController = class ResourceQueryController extends WebInspector.Object
+WI.ResourceQueryController = class ResourceQueryController extends WI.Object
 {
     constructor()
     {
@@ -75,7 +75,7 @@ WebInspector.ResourceQueryController = class ResourceQueryController extends Web
 
             let matches = this._findQueryMatches(query, cachedData.searchString, cachedData.specialCharacterIndices);
             if (matches.length)
-                results.push(new WebInspector.ResourceQueryResult(resource, matches, cookie));
+                results.push(new WI.ResourceQueryResult(resource, matches, cookie));
         }
 
         // Resources are sorted in descending order by rank. Resources of equal
@@ -96,11 +96,11 @@ WebInspector.ResourceQueryController = class ResourceQueryController extends Web
         let searchIndex = 0;
         let specialIndex = 0;
         let deadBranches = new Array(query.length).fill(Infinity);
-        let type = WebInspector.ResourceQueryMatch.Type.Special;
+        let type = WI.ResourceQueryMatch.Type.Special;
 
         function pushMatch(index)
         {
-            matches.push(new WebInspector.ResourceQueryMatch(type, index, queryIndex));
+            matches.push(new WI.ResourceQueryMatch(type, index, queryIndex));
             searchIndex = index + 1;
             queryIndex++;
         }
@@ -135,7 +135,7 @@ WebInspector.ResourceQueryController = class ResourceQueryController extends Web
                 queryIndex--;
 
                 let lastMatch = matches.pop();
-                if (lastMatch.type !== WebInspector.ResourceQueryMatch.Type.Special)
+                if (lastMatch.type !== WI.ResourceQueryMatch.Type.Special)
                     continue;
 
                 deadBranches[lastMatch.queryIndex] = lastMatch.index;
@@ -147,14 +147,14 @@ WebInspector.ResourceQueryController = class ResourceQueryController extends Web
         }
 
         while (queryIndex < query.length && searchIndex < searchString.length) {
-            if (type === WebInspector.ResourceQueryMatch.Type.Special && !matchNextSpecialCharacter())
-                type = WebInspector.ResourceQueryMatch.Type.Normal;
+            if (type === WI.ResourceQueryMatch.Type.Special && !matchNextSpecialCharacter())
+                type = WI.ResourceQueryMatch.Type.Normal;
 
-            if (type === WebInspector.ResourceQueryMatch.Type.Normal) {
+            if (type === WI.ResourceQueryMatch.Type.Normal) {
                 let index = searchString.indexOf(query[queryIndex], searchIndex);
                 if (index >= 0 && index < deadBranches[queryIndex]) {
                     pushMatch(index);
-                    type = WebInspector.ResourceQueryMatch.Type.Special;
+                    type = WI.ResourceQueryMatch.Type.Special;
                 } else if (!backtrack())
                     return [];
             }

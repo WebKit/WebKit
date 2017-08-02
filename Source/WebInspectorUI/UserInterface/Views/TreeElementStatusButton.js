@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TreeElementStatusButton = class TreeElementStatusButton extends WebInspector.Object
+WI.TreeElementStatusButton = class TreeElementStatusButton extends WI.Object
 {
     constructor(element)
     {
@@ -45,7 +45,7 @@ WebInspector.TreeElementStatusButton = class TreeElementStatusButton extends Web
 
     get hidden()
     {
-        return !this._element.classList.contains(WebInspector.TreeElementStatusButton.DisabledStyleClassName);
+        return !this._element.classList.contains(WI.TreeElementStatusButton.DisabledStyleClassName);
     }
 
     set hidden(flag)
@@ -55,15 +55,15 @@ WebInspector.TreeElementStatusButton = class TreeElementStatusButton extends Web
 
     get enabled()
     {
-        return !this._element.classList.contains(WebInspector.TreeElementStatusButton.DisabledStyleClassName);
+        return !this._element.classList.contains(WI.TreeElementStatusButton.DisabledStyleClassName);
     }
 
     set enabled(flag)
     {
         if (flag)
-            this._element.classList.remove(WebInspector.TreeElementStatusButton.DisabledStyleClassName);
+            this._element.classList.remove(WI.TreeElementStatusButton.DisabledStyleClassName);
         else
-            this._element.classList.add(WebInspector.TreeElementStatusButton.DisabledStyleClassName);
+            this._element.classList.add(WI.TreeElementStatusButton.DisabledStyleClassName);
     }
 
     // Private
@@ -75,12 +75,12 @@ WebInspector.TreeElementStatusButton = class TreeElementStatusButton extends Web
 
         event.stopPropagation();
 
-        this.dispatchEventToListeners(WebInspector.TreeElementStatusButton.Event.Clicked, event);
+        this.dispatchEventToListeners(WI.TreeElementStatusButton.Event.Clicked, event);
     }
 };
 
-WebInspector.TreeElementStatusButton.DisabledStyleClassName = "disabled";
+WI.TreeElementStatusButton.DisabledStyleClassName = "disabled";
 
-WebInspector.TreeElementStatusButton.Event = {
+WI.TreeElementStatusButton.Event = {
     Clicked: "status-button-clicked"
 };

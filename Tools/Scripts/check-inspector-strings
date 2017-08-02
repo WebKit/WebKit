@@ -90,10 +90,10 @@ def extract_ui_strings(str, out):
     line_unrecognized = False
     idx = 0
     while idx < len(str):
-        idx = str.find("WebInspector.UIString(", idx)
+        idx = str.find("WI.UIString(", idx)
         if idx == -1:
             break
-        idx = idx + len("WebInspector.UIString(")
+        idx = idx + len("WI.UIString(")
         balance = 1
         item_recognized = False
         while idx < len(str):
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     _log.debug("WebKit checkout found with root: %s" % checkout_root)
     change_directory(filesystem, checkout_root=checkout_root, paths=None)
 
-    strings_extractor = StringsExtractor([r"(WebInspector\.UIString\(.*)", r"\"((?:[^\"\\]|\\.)*?)\""])
+    strings_extractor = StringsExtractor([r"(WI\.UIString\(.*)", r"\"((?:[^\"\\]|\\.)*?)\""])
     file_reader = TextFileReader(filesystem, strings_extractor)
     file_reader.process_paths([_inspector_directory])
     localized_strings_extractor = LocalizedStringsExtractor()

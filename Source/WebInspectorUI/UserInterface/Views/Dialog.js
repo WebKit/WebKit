@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Dialog = class Dialog extends WebInspector.View
+WI.Dialog = class Dialog extends WI.View
 {
     constructor(delegate)
     {

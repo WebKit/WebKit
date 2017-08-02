@@ -23,23 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMNodeTreeElement = class DOMNodeTreeElement extends WebInspector.GeneralTreeElement
+WI.DOMNodeTreeElement = class DOMNodeTreeElement extends WI.GeneralTreeElement
 {
     constructor(domNode)
     {
-        console.assert(domNode instanceof WebInspector.DOMNode);
+        console.assert(domNode instanceof WI.DOMNode);
 
         const subtitle = null;
         super("dom-node", domNode.displayName, subtitle, domNode, {hasChildren: true});
 
-        this.status = WebInspector.linkifyNodeReferenceElement(domNode, WebInspector.createGoToArrowButton());
+        this.status = WI.linkifyNodeReferenceElement(domNode, WI.createGoToArrowButton());
     }
 
     // Protected
 
     ondelete()
     {
-        WebInspector.domDebuggerManager.removeDOMBreakpointsForNode(this.representedObject);
+        WI.domDebuggerManager.removeDOMBreakpointsForNode(this.representedObject);
         return true;
     }
 
@@ -48,12 +48,12 @@ WebInspector.DOMNodeTreeElement = class DOMNodeTreeElement extends WebInspector.
         contextMenu.appendSeparator();
 
         const allowEditing = true;
-        WebInspector.DOMBreakpointTreeController.appendBreakpointContextMenuItems(contextMenu, this.representedObject, allowEditing);
+        WI.DOMBreakpointTreeController.appendBreakpointContextMenuItems(contextMenu, this.representedObject, allowEditing);
 
         contextMenu.appendSeparator();
 
-        contextMenu.appendItem(WebInspector.UIString("Reveal in DOM Tree"), () => {
-            WebInspector.domTreeManager.inspectElement(this.representedObject.id);
+        contextMenu.appendItem(WI.UIString("Reveal in DOM Tree"), () => {
+            WI.domTreeManager.inspectElement(this.representedObject.id);
         });
     }
 };

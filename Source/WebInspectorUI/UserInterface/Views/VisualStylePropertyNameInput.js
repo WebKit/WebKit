@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStylePropertyNameInput = class VisualStylePropertyNameInput extends WebInspector.VisualStylePropertyEditor
+WI.VisualStylePropertyNameInput = class VisualStylePropertyNameInput extends WI.VisualStylePropertyEditor
 {
     constructor(propertyNames, text, layoutReversed)
     {
         super(propertyNames, text, null, null, "property-name-input", layoutReversed);
 
         this._propertyNameInputElement = document.createElement("input");
-        this._propertyNameInputElement.placeholder = WebInspector.UIString("Enter property name");
+        this._propertyNameInputElement.placeholder = WI.UIString("Enter property name");
         this._propertyNameInputElement.addEventListener("keydown", this._inputKeyDown.bind(this));
         this._propertyNameInputElement.addEventListener("keyup", this.debounce(250)._inputKeyUp);
         this._propertyNameInputElement.addEventListener("blur", this._hideCompletions.bind(this));
         this.contentElement.appendChild(this._propertyNameInputElement);
 
-        this._completionController = new WebInspector.VisualStyleCompletionsController(this);
-        this._completionController.addEventListener(WebInspector.VisualStyleCompletionsController.Event.CompletionSelected, this._completionClicked, this);
+        this._completionController = new WI.VisualStyleCompletionsController(this);
+        this._completionController.addEventListener(WI.VisualStyleCompletionsController.Event.CompletionSelected, this._completionClicked, this);
     }
 
     // Public
@@ -84,8 +84,8 @@ WebInspector.VisualStylePropertyNameInput = class VisualStylePropertyNameInput e
             return;
 
         let keyCode = event.keyCode;
-        let enterKeyCode = WebInspector.KeyboardShortcut.Key.Enter.keyCode;
-        let tabKeyCode = WebInspector.KeyboardShortcut.Key.Tab.keyCode;
+        let enterKeyCode = WI.KeyboardShortcut.Key.Enter.keyCode;
+        let tabKeyCode = WI.KeyboardShortcut.Key.Tab.keyCode;
         if (keyCode === enterKeyCode || keyCode === tabKeyCode) {
             this.value = this._completionController.currentCompletion;
             this._hideCompletions();
@@ -93,7 +93,7 @@ WebInspector.VisualStylePropertyNameInput = class VisualStylePropertyNameInput e
             return;
         }
 
-        let escapeKeyCode = WebInspector.KeyboardShortcut.Key.Escape.keyCode;
+        let escapeKeyCode = WI.KeyboardShortcut.Key.Escape.keyCode;
         if (keyCode === escapeKeyCode) {
             this._hideCompletions();
             return;
@@ -121,7 +121,7 @@ WebInspector.VisualStylePropertyNameInput = class VisualStylePropertyNameInput e
             return;
 
         if (this._completionController.update(this.value)) {
-            let bounds = WebInspector.Rect.rectFromClientRect(this._propertyNameInputElement.getBoundingClientRect());
+            let bounds = WI.Rect.rectFromClientRect(this._propertyNameInputElement.getBoundingClientRect());
             if (!bounds)
                 return;
 

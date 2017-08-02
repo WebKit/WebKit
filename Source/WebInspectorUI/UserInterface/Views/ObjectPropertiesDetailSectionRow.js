@@ -23,23 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectPropertiesDetailSectionRow = class ObjectPropertiesDetailSectionRow extends WebInspector.DetailsSectionRow
+WI.ObjectPropertiesDetailSectionRow = class ObjectPropertiesDetailSectionRow extends WI.DetailsSectionRow
 {
     constructor(objectTree, sectionForDeferredExpand)
     {
         super();
 
-        console.assert(objectTree instanceof WebInspector.ObjectTreeView);
-        console.assert(!sectionForDeferredExpand || sectionForDeferredExpand instanceof WebInspector.DetailsSection);
+        console.assert(objectTree instanceof WI.ObjectTreeView);
+        console.assert(!sectionForDeferredExpand || sectionForDeferredExpand instanceof WI.DetailsSection);
 
         this._objectTree = objectTree;
 
         this.hideEmptyMessage();
-        this.element.classList.add("properties", WebInspector.SyntaxHighlightedStyleClassName);
+        this.element.classList.add("properties", WI.SyntaxHighlightedStyleClassName);
         this.element.appendChild(objectTree.element);
 
         if (sectionForDeferredExpand && sectionForDeferredExpand.collapsed)
-            sectionForDeferredExpand.addEventListener(WebInspector.DetailsSection.Event.CollapsedStateChanged, this._detailsSectionCollapsedStateChanged, this);
+            sectionForDeferredExpand.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._detailsSectionCollapsedStateChanged, this);
         else
             this._objectTree.expand();
     }
@@ -56,6 +56,6 @@ WebInspector.ObjectPropertiesDetailSectionRow = class ObjectPropertiesDetailSect
 
         this._objectTree.expand();
 
-        event.target.removeEventListener(WebInspector.DetailsSection.Event.CollapsedStateChanged, this._detailsSectionCollapsedStateChanged, this);
+        event.target.removeEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._detailsSectionCollapsedStateChanged, this);
     }
 };

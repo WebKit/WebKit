@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.KeyboardShortcut = class KeyboardShortcut
+WI.KeyboardShortcut = class KeyboardShortcut
 {
     constructor(modifiers, key, callback, targetElement)
     {
@@ -33,13 +33,13 @@ WebInspector.KeyboardShortcut = class KeyboardShortcut
 
         if (typeof key === "string") {
             key = key[0].toUpperCase();
-            key = new WebInspector.Key(key.charCodeAt(0), key);
+            key = new WI.Key(key.charCodeAt(0), key);
         }
 
         if (callback && !targetElement)
             targetElement = document;
 
-        this._modifiers = modifiers || WebInspector.KeyboardShortcut.Modifier.None;
+        this._modifiers = modifiers || WI.KeyboardShortcut.Modifier.None;
         this._key = key;
         this._targetElement = targetElement;
         this._callback = callback;
@@ -53,9 +53,9 @@ WebInspector.KeyboardShortcut = class KeyboardShortcut
 
             targetKeyboardShortcuts.push(this);
 
-            if (!WebInspector.KeyboardShortcut._registeredKeyDownListener) {
-                WebInspector.KeyboardShortcut._registeredKeyDownListener = true;
-                window.addEventListener("keydown", WebInspector.KeyboardShortcut._handleKeyDown);
+            if (!WI.KeyboardShortcut._registeredKeyDownListener) {
+                WI.KeyboardShortcut._registeredKeyDownListener = true;
+                window.addEventListener("keydown", WI.KeyboardShortcut._handleKeyDown);
             }
         }
     }
@@ -105,13 +105,13 @@ WebInspector.KeyboardShortcut = class KeyboardShortcut
     {
         var result = "";
 
-        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Control)
+        if (this._modifiers & WI.KeyboardShortcut.Modifier.Control)
             result += "\u2303";
-        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Option)
-            result += WebInspector.Platform.name === "mac" ? "\u2325" : "\u2387";
-        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Shift)
+        if (this._modifiers & WI.KeyboardShortcut.Modifier.Option)
+            result += WI.Platform.name === "mac" ? "\u2325" : "\u2387";
+        if (this._modifiers & WI.KeyboardShortcut.Modifier.Shift)
             result += "\u21e7";
-        if (this._modifiers & WebInspector.KeyboardShortcut.Modifier.Command)
+        if (this._modifiers & WI.KeyboardShortcut.Modifier.Command)
             result += "\u2318";
 
         result += this._key.toString();
@@ -173,20 +173,20 @@ WebInspector.KeyboardShortcut = class KeyboardShortcut
         if (this._key.keyCode !== event.keyCode)
             return false;
 
-        var eventModifiers = WebInspector.KeyboardShortcut.Modifier.None;
+        var eventModifiers = WI.KeyboardShortcut.Modifier.None;
         if (event.shiftKey)
-            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Shift;
+            eventModifiers |= WI.KeyboardShortcut.Modifier.Shift;
         if (event.ctrlKey)
-            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Control;
+            eventModifiers |= WI.KeyboardShortcut.Modifier.Control;
         if (event.altKey)
-            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Option;
+            eventModifiers |= WI.KeyboardShortcut.Modifier.Option;
         if (event.metaKey)
-            eventModifiers |= WebInspector.KeyboardShortcut.Modifier.Command;
+            eventModifiers |= WI.KeyboardShortcut.Modifier.Command;
         return this._modifiers === eventModifiers;
     }
 };
 
-WebInspector.Key = class Key
+WI.Key = class Key
 {
     constructor(keyCode, displayName)
     {
@@ -212,7 +212,7 @@ WebInspector.Key = class Key
     }
 };
 
-WebInspector.KeyboardShortcut.Modifier = {
+WI.KeyboardShortcut.Modifier = {
     None: 0,
     Shift: 1,
     Control: 2,
@@ -221,47 +221,47 @@ WebInspector.KeyboardShortcut.Modifier = {
 
     get CommandOrControl()
     {
-        return WebInspector.Platform.name === "mac" ? this.Command : this.Control;
+        return WI.Platform.name === "mac" ? this.Command : this.Control;
     }
 };
 
-WebInspector.KeyboardShortcut.Key = {
-    Backspace: new WebInspector.Key(8, "\u232b"),
-    Tab: new WebInspector.Key(9, "\u21e5"),
-    Enter: new WebInspector.Key(13, "\u21a9"),
-    Escape: new WebInspector.Key(27, "\u238b"),
-    Space: new WebInspector.Key(32, "Space"), // UIString populated in WebInspector.loaded.
-    PageUp: new WebInspector.Key(33, "\u21de"),
-    PageDown: new WebInspector.Key(34, "\u21df"),
-    End: new WebInspector.Key(35, "\u2198"),
-    Home: new WebInspector.Key(36, "\u2196"),
-    Left: new WebInspector.Key(37, "\u2190"),
-    Up: new WebInspector.Key(38, "\u2191"),
-    Right: new WebInspector.Key(39, "\u2192"),
-    Down: new WebInspector.Key(40, "\u2193"),
-    Delete: new WebInspector.Key(46, "\u2326"),
-    Zero: new WebInspector.Key(48, "0"),
-    F1: new WebInspector.Key(112, "F1"),
-    F2: new WebInspector.Key(113, "F2"),
-    F3: new WebInspector.Key(114, "F3"),
-    F4: new WebInspector.Key(115, "F4"),
-    F5: new WebInspector.Key(116, "F5"),
-    F6: new WebInspector.Key(117, "F6"),
-    F7: new WebInspector.Key(118, "F7"),
-    F8: new WebInspector.Key(119, "F8"),
-    F9: new WebInspector.Key(120, "F9"),
-    F10: new WebInspector.Key(121, "F10"),
-    F11: new WebInspector.Key(122, "F11"),
-    F12: new WebInspector.Key(123, "F12"),
-    Semicolon: new WebInspector.Key(186, ";"),
-    Plus: new WebInspector.Key(187, "+"),
-    Comma: new WebInspector.Key(188, ","),
-    Minus: new WebInspector.Key(189, "-"),
-    Period: new WebInspector.Key(190, "."),
-    Slash: new WebInspector.Key(191, "/"),
-    Apostrophe: new WebInspector.Key(192, "`"),
-    LeftCurlyBrace: new WebInspector.Key(219, "{"),
-    Backslash: new WebInspector.Key(220, "\\"),
-    RightCurlyBrace: new WebInspector.Key(221, "}"),
-    SingleQuote: new WebInspector.Key(222, "\'")
+WI.KeyboardShortcut.Key = {
+    Backspace: new WI.Key(8, "\u232b"),
+    Tab: new WI.Key(9, "\u21e5"),
+    Enter: new WI.Key(13, "\u21a9"),
+    Escape: new WI.Key(27, "\u238b"),
+    Space: new WI.Key(32, "Space"), // UIString populated in WI.loaded.
+    PageUp: new WI.Key(33, "\u21de"),
+    PageDown: new WI.Key(34, "\u21df"),
+    End: new WI.Key(35, "\u2198"),
+    Home: new WI.Key(36, "\u2196"),
+    Left: new WI.Key(37, "\u2190"),
+    Up: new WI.Key(38, "\u2191"),
+    Right: new WI.Key(39, "\u2192"),
+    Down: new WI.Key(40, "\u2193"),
+    Delete: new WI.Key(46, "\u2326"),
+    Zero: new WI.Key(48, "0"),
+    F1: new WI.Key(112, "F1"),
+    F2: new WI.Key(113, "F2"),
+    F3: new WI.Key(114, "F3"),
+    F4: new WI.Key(115, "F4"),
+    F5: new WI.Key(116, "F5"),
+    F6: new WI.Key(117, "F6"),
+    F7: new WI.Key(118, "F7"),
+    F8: new WI.Key(119, "F8"),
+    F9: new WI.Key(120, "F9"),
+    F10: new WI.Key(121, "F10"),
+    F11: new WI.Key(122, "F11"),
+    F12: new WI.Key(123, "F12"),
+    Semicolon: new WI.Key(186, ";"),
+    Plus: new WI.Key(187, "+"),
+    Comma: new WI.Key(188, ","),
+    Minus: new WI.Key(189, "-"),
+    Period: new WI.Key(190, "."),
+    Slash: new WI.Key(191, "/"),
+    Apostrophe: new WI.Key(192, "`"),
+    LeftCurlyBrace: new WI.Key(219, "{"),
+    Backslash: new WI.Key(220, "\\"),
+    RightCurlyBrace: new WI.Key(221, "}"),
+    SingleQuote: new WI.Key(222, "\'")
 };

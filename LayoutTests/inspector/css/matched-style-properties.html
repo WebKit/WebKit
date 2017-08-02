@@ -35,7 +35,7 @@ function test() {
     {
         for (var i = 0; i < nodeStyles.matchedRules.length; ++i) {
             var rule = nodeStyles.matchedRules[i];
-            if (rule.type !== WebInspector.CSSStyleSheet.Type.Author)
+            if (rule.type !== WI.CSSStyleSheet.Type.Author)
                 continue;
 
             for (var j = 0; j < rule.style.properties.length; ++j) {
@@ -54,18 +54,18 @@ function test() {
 
     function onStylesRefreshed()
     {
-        nodeStyles.removeEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+        nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
         validateStyles();
     }
 
-    WebInspector.domTreeManager.requestDocument(function(documentNode) {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "#node1", function(contentNodeId) {
+    WI.domTreeManager.requestDocument(function(documentNode) {
+        WI.domTreeManager.querySelector(documentNode.id, "#node1", function(contentNodeId) {
             if (contentNodeId) {
-                var domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
-                nodeStyles = WebInspector.cssStyleManager.stylesForNode(domNode);
+                var domNode = WI.domTreeManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssStyleManager.stylesForNode(domNode);
 
                 if (nodeStyles.needsRefresh)
-                    nodeStyles.addEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+                    nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
                 else
                     validateStyles();
             } else {

@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BackForwardEntry = class BackForwardEntry
+WI.BackForwardEntry = class BackForwardEntry
 {
     constructor(contentView, cookie)
     {
@@ -46,7 +46,7 @@ WebInspector.BackForwardEntry = class BackForwardEntry
 
     makeCopy(newCookie)
     {
-        let copy = new WebInspector.BackForwardEntry(this._contentView, newCookie || this.cookie);
+        let copy = new WI.BackForwardEntry(this._contentView, newCookie || this.cookie);
         copy._tombstone = this._tombstone;
         copy._scrollPositions = this._scrollPositions.slice();
         return copy;

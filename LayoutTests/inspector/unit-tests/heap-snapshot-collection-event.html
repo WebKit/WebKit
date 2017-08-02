@@ -25,9 +25,9 @@ function test()
             InspectorTest.evaluateInPage("triggerCreateObjects()");
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
                 workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                    snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                    snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
                     InspectorTest.expectThat(snapshot, "Should create HeapSnapshotProxy snapshot.");
                     resolve();
                 });
@@ -40,7 +40,7 @@ function test()
         test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerRemoveObjects()");
 
-            let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+            let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
                 workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {

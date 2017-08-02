@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WebInspector.HierarchicalPathComponent
+WI.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WI.HierarchicalPathComponent
 {
     constructor(domTreeElement, representedObject)
     {
@@ -35,45 +35,45 @@ WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent ext
         switch (node.nodeType()) {
         case Node.ELEMENT_NODE:
             if (node.isPseudoElement()) {
-                className = WebInspector.DOMTreeElementPathComponent.DOMPseudoElementIconStyleClassName;
+                className = WI.DOMTreeElementPathComponent.DOMPseudoElementIconStyleClassName;
                 title = "::" + node.pseudoType();
             } else {
-                className = WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
+                className = WI.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
                 title = node.displayName;
             }
             break;
 
         case Node.TEXT_NODE:
-            className = WebInspector.DOMTreeElementPathComponent.DOMTextNodeIconStyleClassName;
+            className = WI.DOMTreeElementPathComponent.DOMTextNodeIconStyleClassName;
             title = "\"" + node.nodeValue().trimEnd(32) + "\"";
             break;
 
         case Node.COMMENT_NODE:
-            className = WebInspector.DOMTreeElementPathComponent.DOMCommentIconStyleClassName;
+            className = WI.DOMTreeElementPathComponent.DOMCommentIconStyleClassName;
             title = "<!--" + node.nodeValue().trimEnd(32) + "-->";
             break;
 
         case Node.DOCUMENT_TYPE_NODE:
-            className = WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
+            className = WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
             title = "<!DOCTYPE>";
             break;
 
         case Node.DOCUMENT_NODE:
-            className = WebInspector.DOMTreeElementPathComponent.DOMDocumentIconStyleClassName;
+            className = WI.DOMTreeElementPathComponent.DOMDocumentIconStyleClassName;
             title = node.nodeNameInCorrectCase();
             break;
 
         case Node.CDATA_SECTION_NODE:
-            className = WebInspector.DOMTreeElementPathComponent.DOMCharacterDataIconStyleClassName;
+            className = WI.DOMTreeElementPathComponent.DOMCharacterDataIconStyleClassName;
             title = "<![CDATA[" + node.trimEnd(32) + "]]>";
             break;
 
         case Node.DOCUMENT_FRAGMENT_NODE:
             // FIXME: At some point we might want a different icon for this.
             // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE
-            className = WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
+            className = WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
             if (node.shadowRootType())
-                title = WebInspector.UIString("Shadow Content");
+                title = WI.UIString("Shadow Content");
             else
                 title = node.displayName;
             break;
@@ -81,13 +81,13 @@ WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent ext
         case Node.PROCESSING_INSTRUCTION_NODE:
             // FIXME: At some point we might want a different icon for this.
             // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE.
-            className = WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
+            className = WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName;
             title = node.nodeNameInCorrectCase();
             break;
 
         default:
             console.error("Unknown DOM node type: ", node.nodeType());
-            className = WebInspector.DOMTreeElementPathComponent.DOMNodeIconStyleClassName;
+            className = WI.DOMTreeElementPathComponent.DOMNodeIconStyleClassName;
             title = node.nodeNameInCorrectCase();
         }
 
@@ -107,7 +107,7 @@ WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent ext
     {
         if (!this._domTreeElement.previousSibling)
             return null;
-        return new WebInspector.DOMTreeElementPathComponent(this._domTreeElement.previousSibling);
+        return new WI.DOMTreeElementPathComponent(this._domTreeElement.previousSibling);
     }
 
     get nextSibling()
@@ -116,7 +116,7 @@ WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent ext
             return null;
         if (this._domTreeElement.nextSibling.isCloseTag())
             return null;
-        return new WebInspector.DOMTreeElementPathComponent(this._domTreeElement.nextSibling);
+        return new WI.DOMTreeElementPathComponent(this._domTreeElement.nextSibling);
     }
 
     // Protected
@@ -124,20 +124,20 @@ WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent ext
     mouseOver()
     {
         var nodeId = this._domTreeElement.representedObject.id;
-        WebInspector.domTreeManager.highlightDOMNode(nodeId);
+        WI.domTreeManager.highlightDOMNode(nodeId);
     }
 
     mouseOut()
     {
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
+        WI.domTreeManager.hideDOMNodeHighlight();
     }
 };
 
-WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName = "dom-element-icon";
-WebInspector.DOMTreeElementPathComponent.DOMPseudoElementIconStyleClassName = "dom-pseudo-element-icon";
-WebInspector.DOMTreeElementPathComponent.DOMTextNodeIconStyleClassName = "dom-text-node-icon";
-WebInspector.DOMTreeElementPathComponent.DOMCommentIconStyleClassName = "dom-comment-icon";
-WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName = "dom-document-type-icon";
-WebInspector.DOMTreeElementPathComponent.DOMDocumentIconStyleClassName = "dom-document-icon";
-WebInspector.DOMTreeElementPathComponent.DOMCharacterDataIconStyleClassName = "dom-character-data-icon";
-WebInspector.DOMTreeElementPathComponent.DOMNodeIconStyleClassName = "dom-node-icon";
+WI.DOMTreeElementPathComponent.DOMElementIconStyleClassName = "dom-element-icon";
+WI.DOMTreeElementPathComponent.DOMPseudoElementIconStyleClassName = "dom-pseudo-element-icon";
+WI.DOMTreeElementPathComponent.DOMTextNodeIconStyleClassName = "dom-text-node-icon";
+WI.DOMTreeElementPathComponent.DOMCommentIconStyleClassName = "dom-comment-icon";
+WI.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName = "dom-document-type-icon";
+WI.DOMTreeElementPathComponent.DOMDocumentIconStyleClassName = "dom-document-icon";
+WI.DOMTreeElementPathComponent.DOMCharacterDataIconStyleClassName = "dom-character-data-icon";
+WI.DOMTreeElementPathComponent.DOMNodeIconStyleClassName = "dom-node-icon";

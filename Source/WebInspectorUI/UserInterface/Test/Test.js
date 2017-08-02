@@ -23,51 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DebuggableType = {
+WI.DebuggableType = {
     Web: "web",
     JavaScript: "javascript"
 };
 
-WebInspector.loaded = function()
+WI.loaded = function()
 {
-    this.debuggableType = WebInspector.DebuggableType.Web;
+    this.debuggableType = WI.DebuggableType.Web;
     this.hasExtraDomains = false;
 
     // Register observers for events from the InspectorBackend.
     // The initialization order should match the same in Main.js.
-    InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);
-    InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
-    InspectorBackend.registerConsoleDispatcher(new WebInspector.ConsoleObserver);
-    InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
-    InspectorBackend.registerNetworkDispatcher(new WebInspector.NetworkObserver);
-    InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerObserver);
-    InspectorBackend.registerHeapDispatcher(new WebInspector.HeapObserver);
-    InspectorBackend.registerDOMStorageDispatcher(new WebInspector.DOMStorageObserver);
-    InspectorBackend.registerTimelineDispatcher(new WebInspector.TimelineObserver);
-    InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
-    InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
-    InspectorBackend.registerWorkerDispatcher(new WebInspector.WorkerObserver);
-    InspectorBackend.registerCanvasDispatcher(new WebInspector.CanvasObserver);
+    InspectorBackend.registerInspectorDispatcher(new WI.InspectorObserver);
+    InspectorBackend.registerPageDispatcher(new WI.PageObserver);
+    InspectorBackend.registerConsoleDispatcher(new WI.ConsoleObserver);
+    InspectorBackend.registerDOMDispatcher(new WI.DOMObserver);
+    InspectorBackend.registerNetworkDispatcher(new WI.NetworkObserver);
+    InspectorBackend.registerDebuggerDispatcher(new WI.DebuggerObserver);
+    InspectorBackend.registerHeapDispatcher(new WI.HeapObserver);
+    InspectorBackend.registerDOMStorageDispatcher(new WI.DOMStorageObserver);
+    InspectorBackend.registerTimelineDispatcher(new WI.TimelineObserver);
+    InspectorBackend.registerCSSDispatcher(new WI.CSSObserver);
+    InspectorBackend.registerRuntimeDispatcher(new WI.RuntimeObserver);
+    InspectorBackend.registerWorkerDispatcher(new WI.WorkerObserver);
+    InspectorBackend.registerCanvasDispatcher(new WI.CanvasObserver);
 
-    WebInspector.mainTarget = new WebInspector.MainTarget;
+    WI.mainTarget = new WI.MainTarget;
 
     // Instantiate controllers used by tests.
-    this.targetManager = new WebInspector.TargetManager;
-    this.frameResourceManager = new WebInspector.FrameResourceManager;
-    this.storageManager = new WebInspector.StorageManager;
-    this.domTreeManager = new WebInspector.DOMTreeManager;
-    this.cssStyleManager = new WebInspector.CSSStyleManager;
-    this.logManager = new WebInspector.LogManager;
-    this.issueManager = new WebInspector.IssueManager;
-    this.runtimeManager = new WebInspector.RuntimeManager;
-    this.heapManager = new WebInspector.HeapManager;
-    this.memoryManager = new WebInspector.MemoryManager;
-    this.timelineManager = new WebInspector.TimelineManager;
-    this.debuggerManager = new WebInspector.DebuggerManager;
-    this.probeManager = new WebInspector.ProbeManager;
-    this.workerManager = new WebInspector.WorkerManager;
-    this.domDebuggerManager = new WebInspector.DOMDebuggerManager;
-    this.canvasManager = new WebInspector.CanvasManager;
+    this.targetManager = new WI.TargetManager;
+    this.frameResourceManager = new WI.FrameResourceManager;
+    this.storageManager = new WI.StorageManager;
+    this.domTreeManager = new WI.DOMTreeManager;
+    this.cssStyleManager = new WI.CSSStyleManager;
+    this.logManager = new WI.LogManager;
+    this.issueManager = new WI.IssueManager;
+    this.runtimeManager = new WI.RuntimeManager;
+    this.heapManager = new WI.HeapManager;
+    this.memoryManager = new WI.MemoryManager;
+    this.timelineManager = new WI.TimelineManager;
+    this.debuggerManager = new WI.DebuggerManager;
+    this.probeManager = new WI.ProbeManager;
+    this.workerManager = new WI.WorkerManager;
+    this.domDebuggerManager = new WI.DOMDebuggerManager;
+    this.canvasManager = new WI.CanvasManager;
 
     document.addEventListener("DOMContentLoaded", this.contentLoaded);
 
@@ -76,13 +76,13 @@ WebInspector.loaded = function()
     ConsoleAgent.enable();
 
     // Perform one-time tasks.
-    WebInspector.CSSCompletions.requestCSSCompletions();
+    WI.CSSCompletions.requestCSSCompletions();
 
     // Global settings.
-    this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", true);
+    this.showShadowDOMSetting = new WI.Setting("show-shadow-dom", true);
 };
 
-WebInspector.contentLoaded = function()
+WI.contentLoaded = function()
 {
     // Signal that the frontend is now ready to receive messages.
     InspectorFrontendAPI.loadCompleted();
@@ -92,30 +92,30 @@ WebInspector.contentLoaded = function()
     InspectorFrontendHost.loaded();
 };
 
-Object.defineProperty(WebInspector, "targets",
+Object.defineProperty(WI, "targets",
 {
     get() { return this.targetManager.targets; }
 });
 
-WebInspector.assumingMainTarget = () => WebInspector.mainTarget;
+WI.assumingMainTarget = () => WI.mainTarget;
 
-WebInspector.isDebugUIEnabled = () => false;
+WI.isDebugUIEnabled = () => false;
 
-WebInspector.unlocalizedString = (string) => string;
-WebInspector.UIString = (string) => string;
+WI.unlocalizedString = (string) => string;
+WI.UIString = (string) => string;
 
-WebInspector.indentString = () => "    ";
+WI.indentString = () => "    ";
 
 // Add stubs that are called by the frontend API.
-WebInspector.updateDockedState = () => {};
-WebInspector.updateDockingAvailability = () => {};
-WebInspector.updateVisibilityState = () => {};
+WI.updateDockedState = () => {};
+WI.updateDockingAvailability = () => {};
+WI.updateVisibilityState = () => {};
 
 window.InspectorTest = new FrontendTestHarness();
 
 InspectorTest.redirectConsoleToTestOutput();
 
-WebInspector.reportInternalError = (e) => { console.error(e); };
+WI.reportInternalError = (e) => { console.error(e); };
 
 window.reportUnhandledRejection = InspectorTest.reportUnhandledRejection.bind(InspectorTest);
 window.onerror = InspectorTest.reportUncaughtExceptionFromEvent.bind(InspectorTest);

@@ -1,8 +1,8 @@
-Tests for the WebInspector.StackTrace model object.
+Tests for the WI.StackTrace model object.
 
 
-== Running test suite: WebInspector.StackTrace
--- Running test case: WebInspector.ConsoleMessage.StackTrace
+== Running test suite: WI.StackTrace
+-- Running test case: WI.ConsoleMessage.StackTrace
 PASS: ConsoleMessage type should be Trace.
 PASS: ConsoleMessage should have StackTrace.
 PASS: CallFrame in StackTrace has no identifier.

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RecordingAction = class RecordingAction
+WI.RecordingAction = class RecordingAction
 {
     constructor(name, parameters)
     {
@@ -55,12 +55,12 @@ WebInspector.RecordingAction = class RecordingAction
         if (!Array.isArray(payload[1]))
             payload[1] = [];
 
-        return new WebInspector.RecordingAction(...payload);
+        return new WI.RecordingAction(...payload);
     }
 
     static isFunctionForType(type, name)
     {
-        let functionNames = WebInspector.RecordingAction._functionNames[type];
+        let functionNames = WI.RecordingAction._functionNames[type];
         if (!functionNames)
             return false;
 
@@ -82,7 +82,7 @@ WebInspector.RecordingAction = class RecordingAction
 
     swizzle(recording)
     {
-        this._name = recording.swizzle(this._payloadName, WebInspector.Recording.Swizzle.String);
+        this._name = recording.swizzle(this._payloadName, WI.Recording.Swizzle.String);
 
         this._parameters = this._payloadParameters.map((item, i) => {
             let type = this.parameterSwizzleTypeForTypeAtIndex(recording.type, i);
@@ -90,20 +90,20 @@ WebInspector.RecordingAction = class RecordingAction
                 return item;
 
             let swizzled = recording.swizzle(item, type);
-            if (swizzled === WebInspector.Recording.Swizzle.Invalid)
+            if (swizzled === WI.Recording.Swizzle.Invalid)
                 this._valid = false;
 
             return swizzled;
         });
 
-        this._isFunction = WebInspector.RecordingAction.isFunctionForType(recording.type, this._name);
+        this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
         this._isGetter = !this._isFunction && !this._parameters.length;
 
-        let visualNames = WebInspector.RecordingAction._visualNames[recording.type];
+        let visualNames = WI.RecordingAction._visualNames[recording.type];
         this._isVisual = visualNames ? visualNames.includes(this._name) : false;
 
         this._stateModifiers = [this._name];
-        let stateModifiers = WebInspector.RecordingAction._stateModifiers[recording.type];
+        let stateModifiers = WI.RecordingAction._stateModifiers[recording.type];
         if (stateModifiers) {
             let modifiedByAction = stateModifiers[this._name];
             if (modifiedByAction)
@@ -113,7 +113,7 @@ WebInspector.RecordingAction = class RecordingAction
 
     parameterSwizzleTypeForTypeAtIndex(type, index)
     {
-        let functionNames = WebInspector.RecordingAction._parameterSwizzleTypeForTypeAtIndex[type];
+        let functionNames = WI.RecordingAction._parameterSwizzleTypeForTypeAtIndex[type];
         if (!functionNames)
             return null;
 
@@ -160,10 +160,10 @@ WebInspector.RecordingAction = class RecordingAction
 //     }
 
 {
-    let {CanvasStyle, Element, Image, ImageData, Path2D, String} = WebInspector.Recording.Swizzle;
+    let {CanvasStyle, Element, Image, ImageData, Path2D, String} = WI.Recording.Swizzle;
 
-    WebInspector.RecordingAction._parameterSwizzleTypeForTypeAtIndex = {
-        [WebInspector.Recording.Type.Canvas2D]: {
+    WI.RecordingAction._parameterSwizzleTypeForTypeAtIndex = {
+        [WI.Recording.Type.Canvas2D]: {
             "clip": {
                 1: {0: String},
                 2: {0: Path2D, 1: String},
@@ -276,8 +276,8 @@ WebInspector.RecordingAction = class RecordingAction
     };
 }
 
-WebInspector.RecordingAction._functionNames = {
-    [WebInspector.Recording.Type.Canvas2D]: [
+WI.RecordingAction._functionNames = {
+    [WI.Recording.Type.Canvas2D]: [
         "arc",
         "arcTo",
         "beginPath",
@@ -339,8 +339,8 @@ WebInspector.RecordingAction._functionNames = {
     ],
 };
 
-WebInspector.RecordingAction._visualNames = {
-    [WebInspector.Recording.Type.Canvas2D]: [
+WI.RecordingAction._visualNames = {
+    [WI.Recording.Type.Canvas2D]: [
         "clearRect",
         "drawFocusIfNeeded",
         "drawImage",
@@ -356,8 +356,8 @@ WebInspector.RecordingAction._visualNames = {
     ],
 };
 
-WebInspector.RecordingAction._stateModifiers = {
-    [WebInspector.Recording.Type.Canvas2D]: {
+WI.RecordingAction._stateModifiers = {
+    [WI.Recording.Type.Canvas2D]: {
         clearShadow: ["shadowOffsetX", "shadowOffsetY", "shadowBlur", "shadowColor"],
         resetTransform: ["transform"],
         rotate: ["transform"],

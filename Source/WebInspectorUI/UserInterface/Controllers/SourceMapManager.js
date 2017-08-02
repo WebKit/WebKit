@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Object
+WI.SourceMapManager = class SourceMapManager extends WI.Object
 {
     constructor()
     {
@@ -32,7 +32,7 @@ WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Obje
         this._sourceMapURLMap = {};
         this._downloadingSourceMaps = {};
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
     // Public
@@ -46,8 +46,8 @@ WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Obje
     {
         // The baseURL could have come from a "//# sourceURL". Attempt to get a
         // reasonable absolute URL for the base by using the main resource's URL.
-        if (WebInspector.frameResourceManager.mainFrame)
-            baseURL = absoluteURL(baseURL, WebInspector.frameResourceManager.mainFrame.url);
+        if (WI.frameResourceManager.mainFrame)
+            baseURL = absoluteURL(baseURL, WI.frameResourceManager.mainFrame.url);
 
         if (sourceMapURL.startsWith("data:")) {
             this._loadAndParseSourceMap(sourceMapURL, baseURL, originalSourceCode);
@@ -75,7 +75,7 @@ WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Obje
             this._loadAndParseSourceMap(sourceMapURL, baseURL, originalSourceCode);
         }
 
-        if (!WebInspector.frameResourceManager.mainFrame) {
+        if (!WI.frameResourceManager.mainFrame) {
             // If we don't have a main frame, then we are likely in the middle of building the resource tree.
             // Delaying until the next runloop is enough in this case to then start loading the source map.
             setTimeout(loadAndParseSourceMap.bind(this), 0);
@@ -111,7 +111,7 @@ WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Obje
             try {
                 var payload = JSON.parse(content);
                 var baseURL = sourceMapURL.startsWith("data:") ? originalSourceCode.url : sourceMapURL;
-                var sourceMap = new WebInspector.SourceMap(baseURL, payload, originalSourceCode);
+                var sourceMap = new WI.SourceMap(baseURL, payload, originalSourceCode);
                 this._loadAndParseSucceeded(sourceMapURL, sourceMap);
             } catch (e) {
                 this._loadAndParseFailed(sourceMapURL);
@@ -133,11 +133,11 @@ WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Obje
         }
 
         var frameIdentifier = null;
-        if (originalSourceCode instanceof WebInspector.Resource && originalSourceCode.parentFrame)
+        if (originalSourceCode instanceof WI.Resource && originalSourceCode.parentFrame)
             frameIdentifier = originalSourceCode.parentFrame.id;
 
         if (!frameIdentifier)
-            frameIdentifier = WebInspector.frameResourceManager.mainFrame.id;
+            frameIdentifier = WI.frameResourceManager.mainFrame.id;
 
         NetworkAgent.loadResource(frameIdentifier, sourceMapURL, sourceMapLoaded.bind(this));
     }
@@ -158,7 +158,7 @@ WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Obje
 
         var sources = sourceMap.sources();
         for (var i = 0; i < sources.length; ++i) {
-            var sourceMapResource = new WebInspector.SourceMapResource(sources[i], sourceMap);
+            var sourceMapResource = new WI.SourceMapResource(sources[i], sourceMap);
             sourceMap.addResource(sourceMapResource);
         }
 
@@ -167,8 +167,8 @@ WebInspector.SourceMapManager = class SourceMapManager extends WebInspector.Obje
 
         // If the originalSourceCode was not a Resource, be sure to also associate with the Resource if one exists.
         // FIXME: We should try to use the right frame instead of a global lookup by URL.
-        if (!(sourceMap.originalSourceCode instanceof WebInspector.Resource)) {
-            console.assert(sourceMap.originalSourceCode instanceof WebInspector.Script);
+        if (!(sourceMap.originalSourceCode instanceof WI.Resource)) {
+            console.assert(sourceMap.originalSourceCode instanceof WI.Script);
             var resource = sourceMap.originalSourceCode.resource;
             if (resource)
                 resource.addSourceMap(sourceMap);

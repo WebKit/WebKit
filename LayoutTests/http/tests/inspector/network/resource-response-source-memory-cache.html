@@ -18,7 +18,7 @@ function test()
                 InspectorTest.reloadPage({ignoreCache});
                 InspectorTest.awaitEvent("LoadComplete").then((event) => {
                     let resource = null;
-                    for (let item of WebInspector.frameResourceManager.mainFrame.resourceCollection.items) {
+                    for (let item of WI.frameResourceManager.mainFrame.resourceCollection.items) {
                         if (pattern.test(item.url)) {
                             resource = item;
                             break;
@@ -29,7 +29,7 @@ function test()
                         reject();
                         return;
                     }
-                    InspectorTest.expectThat(resource instanceof WebInspector.Resource, "Resource should be exist.");
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be exist.");
                     InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
                     InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
                 }).then(resolve, reject);
@@ -42,7 +42,7 @@ function test()
         description: "Load a resource from the memory cache by reloading this page.",
         pattern: /cached-script\.js$/,
         ignoreCache: false,
-        responseSource: WebInspector.Resource.ResponseSource.MemoryCache,
+        responseSource: WI.Resource.ResponseSource.MemoryCache,
         statusCode: 200,
     });
 

@@ -25,19 +25,19 @@ function test()
         }
     }
 
-    let suite = InspectorTest.createAsyncSuite("WebInspector.StackTrace");
+    let suite = InspectorTest.createAsyncSuite("WI.StackTrace");
 
     suite.addTestCase({
-        name: "WebInspector.ConsoleMessage.StackTrace",
+        name: "WI.ConsoleMessage.StackTrace",
         description: "Test we can create a StackTrace from console messages (Console.StackTrace).",
         test(resolve, reject) {
-            WebInspector.logManager.awaitEvent(WebInspector.LogManager.Event.MessageAdded)
+            WI.logManager.awaitEvent(WI.LogManager.Event.MessageAdded)
             .then((event) => {
                 // Trace message should always have a stack trace.
                 let consoleMessage = event.data.message;
                 let stackTrace = consoleMessage.stackTrace;
-                InspectorTest.expectThat(consoleMessage.type === WebInspector.ConsoleMessage.MessageType.Trace, "ConsoleMessage type should be Trace.");
-                InspectorTest.expectThat(stackTrace instanceof WebInspector.StackTrace, "ConsoleMessage should have StackTrace.");
+                InspectorTest.expectThat(consoleMessage.type === WI.ConsoleMessage.MessageType.Trace, "ConsoleMessage type should be Trace.");
+                InspectorTest.expectThat(stackTrace instanceof WI.StackTrace, "ConsoleMessage should have StackTrace.");
 
                 // Console message stack trace call frame's do not have debugging information.
                 InspectorTest.expectThat(stackTrace.callFrames[0].id === null, "CallFrame in StackTrace has no identifier.");
@@ -57,6 +57,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Tests for the WebInspector.StackTrace model object.</p>
+<p>Tests for the WI.StackTrace model object.</p>
 </body>
 </html>

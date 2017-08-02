@@ -52,9 +52,9 @@ function test()
                 InspectorTest.evaluateInPage("triggerCreateStringObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
                     InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                    let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                    let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
                     workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                        let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                        let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
                         snapshot.instancesWithClassName("string", (strings) => {
                             let heapSnapshotNode = strings.reduce((result, x) => result.id < x.id ? x : result, strings[0]);
                             HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
@@ -77,9 +77,9 @@ function test()
                 InspectorTest.evaluateInPage("triggerCreateFunctionObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
                     InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                    let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                    let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
                     workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                        let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                        let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
                         snapshot.instancesWithClassName("Function", (functions) => {
                             let heapSnapshotNode = functions.reduce((result, x) => result.id < x.id ? x : result, functions[0]);
                             HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
@@ -102,9 +102,9 @@ function test()
                 InspectorTest.evaluateInPage("triggerCreateMapObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
                     InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                    let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                    let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
                     workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                        let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                        let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
                         snapshot.instancesWithClassName("Map", (maps) => {
                             let heapSnapshotNode = maps.reduce((result, x) => result.id < x.id ? x : result, maps[0]);
                             HeapAgent.getPreview(heapSnapshotNode.id, (error, string, functionDetails, objectPreviewPayload) => {
@@ -142,9 +142,9 @@ function test()
                 InspectorTest.evaluateInPage("triggerCreateMapObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
                     InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
-                    let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+                    let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
                     workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                        let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                        let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
 
                         InspectorTest.evaluateInPage("triggerDeleteMapObject()");
                         HeapAgent.gc();

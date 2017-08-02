@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebInspector.DetailsSectionRow
+WI.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WI.DetailsSectionRow
 {
     constructor(delegate, chartSize, innerRadiusRatio)
     {
-        super(WebInspector.UIString("No Chart Available"));
+        super(WI.UIString("No Chart Available"));
 
         innerRadiusRatio = innerRadiusRatio || 0;
         console.assert(chartSize > 0, chartSize);
@@ -154,7 +154,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
     clearItems()
     {
         for (let item of this._items.values()) {
-            let path = item[WebInspector.ChartDetailsSectionRow.ChartSegmentPathSymbol];
+            let path = item[WI.ChartDetailsSectionRow.ChartSegmentPathSymbol];
             if (path)
                 path.remove();
         }
@@ -225,8 +225,8 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         }
 
         for (let [id, item] of this._items) {
-            if (item[WebInspector.ChartDetailsSectionRow.LegendItemValueElementSymbol]) {
-                let valueElement = item[WebInspector.ChartDetailsSectionRow.LegendItemValueElementSymbol];
+            if (item[WI.ChartDetailsSectionRow.LegendItemValueElementSymbol]) {
+                let valueElement = item[WI.ChartDetailsSectionRow.LegendItemValueElementSymbol];
                 valueElement.textContent = formatItemValue.call(this, item);
                 continue;
             }
@@ -243,7 +243,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
                 keyElement.type = "checkbox";
                 keyElement.classList.add(className);
                 keyElement.checked = item.checked;
-                keyElement[WebInspector.ChartDetailsSectionRow.DataItemIdSymbol] = id;
+                keyElement[WI.ChartDetailsSectionRow.DataItemIdSymbol] = id;
 
                 keyElement.addEventListener("change", this._legendItemCheckboxValueChanged.bind(this));
 
@@ -260,7 +260,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
             valueElement.classList.add("value");
             valueElement.textContent = formatItemValue.call(this, item);
 
-            item[WebInspector.ChartDetailsSectionRow.LegendItemValueElementSymbol] = valueElement;
+            item[WI.ChartDetailsSectionRow.LegendItemValueElementSymbol] = valueElement;
 
             let legendItemElement = document.createElement("div");
             legendItemElement.classList.add("legend-item");
@@ -273,8 +273,8 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
     _legendItemCheckboxValueChanged(event)
     {
         let checkbox = event.target;
-        let id = checkbox[WebInspector.ChartDetailsSectionRow.DataItemIdSymbol];
-        this.dispatchEventToListeners(WebInspector.ChartDetailsSectionRow.Event.LegendItemChecked, {id, checked: checkbox.checked});
+        let id = checkbox[WI.ChartDetailsSectionRow.DataItemIdSymbol];
+        this.dispatchEventToListeners(WI.ChartDetailsSectionRow.Event.LegendItemChecked, {id, checked: checkbox.checked});
     }
 
     _needsLayout()
@@ -357,14 +357,14 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         let startAngle = -Math.PI / 2;
         let endAngle = 0;
         for (let [id, item] of this._items) {
-            let path = item[WebInspector.ChartDetailsSectionRow.ChartSegmentPathSymbol];
+            let path = item[WI.ChartDetailsSectionRow.ChartSegmentPathSymbol];
             if (!path) {
                 path = createSVGElement("path");
                 path.classList.add("chart-segment");
                 path.setAttribute("fill", item.color);
                 this._chartElement.appendChild(path);
 
-                item[WebInspector.ChartDetailsSectionRow.ChartSegmentPathSymbol] = path;
+                item[WI.ChartDetailsSectionRow.ChartSegmentPathSymbol] = path;
             }
 
             if (!item.value) {
@@ -383,10 +383,10 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
     }
 };
 
-WebInspector.ChartDetailsSectionRow.DataItemIdSymbol = Symbol("chart-details-section-row-data-item-id");
-WebInspector.ChartDetailsSectionRow.ChartSegmentPathSymbol = Symbol("chart-details-section-row-chart-segment-path");
-WebInspector.ChartDetailsSectionRow.LegendItemValueElementSymbol = Symbol("chart-details-section-row-legend-item-value-element");
+WI.ChartDetailsSectionRow.DataItemIdSymbol = Symbol("chart-details-section-row-data-item-id");
+WI.ChartDetailsSectionRow.ChartSegmentPathSymbol = Symbol("chart-details-section-row-chart-segment-path");
+WI.ChartDetailsSectionRow.LegendItemValueElementSymbol = Symbol("chart-details-section-row-legend-item-value-element");
 
-WebInspector.ChartDetailsSectionRow.Event = {
+WI.ChartDetailsSectionRow.Event = {
     LegendItemChecked: "chart-details-section-row-legend-item-checked"
 };

@@ -23,39 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem extends WebInspector.GeneralTreeElement
+WI.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem extends WI.GeneralTreeElement
 {
     constructor(delegate, style, title, subtitle)
     {
         let iconClassName;
         switch (style.type) {
-        case WebInspector.CSSStyleDeclaration.Type.Rule:
-            console.assert(style.ownerRule instanceof WebInspector.CSSRule, style.ownerRule);
+        case WI.CSSStyleDeclaration.Type.Rule:
+            console.assert(style.ownerRule instanceof WI.CSSRule, style.ownerRule);
 
             if (style.inherited)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.InheritedStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.Author)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.AuthorStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.User)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.UserStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.UserAgentStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.Inspector)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.InspectorStyleRuleIconStyleClassName;
+                iconClassName = WI.CSSStyleDeclarationSection.InheritedStyleRuleIconStyleClassName;
+            else if (style.ownerRule.type === WI.CSSStyleSheet.Type.Author)
+                iconClassName = WI.CSSStyleDeclarationSection.AuthorStyleRuleIconStyleClassName;
+            else if (style.ownerRule.type === WI.CSSStyleSheet.Type.User)
+                iconClassName = WI.CSSStyleDeclarationSection.UserStyleRuleIconStyleClassName;
+            else if (style.ownerRule.type === WI.CSSStyleSheet.Type.UserAgent)
+                iconClassName = WI.CSSStyleDeclarationSection.UserAgentStyleRuleIconStyleClassName;
+            else if (style.ownerRule.type === WI.CSSStyleSheet.Type.Inspector)
+                iconClassName = WI.CSSStyleDeclarationSection.InspectorStyleRuleIconStyleClassName;
             break;
 
-        case WebInspector.CSSStyleDeclaration.Type.Inline:
-        case WebInspector.CSSStyleDeclaration.Type.Attribute:
+        case WI.CSSStyleDeclaration.Type.Inline:
+        case WI.CSSStyleDeclaration.Type.Attribute:
             if (style.inherited)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.InheritedElementStyleRuleIconStyleClassName;
+                iconClassName = WI.CSSStyleDeclarationSection.InheritedElementStyleRuleIconStyleClassName;
             else
-                iconClassName = WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
+                iconClassName = WI.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
             break;
         }
 
         let iconClasses = [iconClassName];
         if (style.ownerRule && style.ownerRule.hasMatchedPseudoElementSelector())
-            iconClasses.push(WebInspector.CSSStyleDeclarationSection.PseudoElementSelectorStyleClassName);
+            iconClasses.push(WI.CSSStyleDeclarationSection.PseudoElementSelectorStyleClassName);
 
         title = title.trim();
 
@@ -96,7 +96,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
 
         this._checkboxElement = document.createElement("input");
         this._checkboxElement.type = "checkbox";
-        this._checkboxElement.checked = !this.representedObject[WebInspector.VisualStyleDetailsPanel.StyleDisabledSymbol];
+        this._checkboxElement.checked = !this.representedObject[WI.VisualStyleDetailsPanel.StyleDisabledSymbol];
         this._updateCheckboxTitle();
         this._checkboxElement.addEventListener("change", this._handleCheckboxChanged.bind(this));
         this._listItemNode.insertBefore(this._checkboxElement, this._iconElement);
@@ -109,9 +109,9 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
         this._mainTitleElement.addEventListener("keyup", this._highlightNodesWithSelector.bind(this));
         this._mainTitleElement.addEventListener("blur", this._commitSelector.bind(this));
 
-        this.representedObject.addEventListener(WebInspector.CSSStyleDeclaration.Event.InitialTextModified, this._styleTextModified, this);
+        this.representedObject.addEventListener(WI.CSSStyleDeclaration.Event.InitialTextModified, this._styleTextModified, this);
         if (this.representedObject.ownerRule)
-            this.representedObject.ownerRule.addEventListener(WebInspector.CSSRule.Event.SelectorChanged, this._updateSelectorIcon, this);
+            this.representedObject.ownerRule.addEventListener(WI.CSSRule.Event.SelectorChanged, this._updateSelectorIcon, this);
 
         this._styleTextModified();
     }
@@ -124,12 +124,12 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
 
     populateContextMenu(contextMenu, event)
     {
-        contextMenu.appendItem(WebInspector.UIString("Copy Rule"), () => {
+        contextMenu.appendItem(WI.UIString("Copy Rule"), () => {
             InspectorFrontendHost.copyText(this.representedObject.generateCSSRuleString());
         });
 
         if (this.representedObject.modified) {
-            contextMenu.appendItem(WebInspector.UIString("Reset"), () => {
+            contextMenu.appendItem(WI.UIString("Reset"), () => {
                 this.representedObject.resetText();
             });
         }
@@ -137,32 +137,32 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
         if (!this.representedObject.ownerRule)
             return;
 
-        contextMenu.appendItem(WebInspector.UIString("Show Source"), () => {
+        contextMenu.appendItem(WI.UIString("Show Source"), () => {
             const options = {
                 ignoreNetworkTab: true,
                 ignoreSearchTab: true,
             };
 
             if (event.metaKey)
-                WebInspector.showOriginalUnformattedSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation, options);
+                WI.showOriginalUnformattedSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation, options);
             else
-                WebInspector.showSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation, options);
+                WI.showSourceCodeLocation(this.representedObject.ownerRule.sourceCodeLocation, options);
         });
 
         // Only used one colon temporarily since single-colon pseudo elements are valid CSS.
-        if (WebInspector.CSSStyleManager.PseudoElementNames.some((className) => this.representedObject.selectorText.includes(":" + className)))
+        if (WI.CSSStyleManager.PseudoElementNames.some((className) => this.representedObject.selectorText.includes(":" + className)))
             return;
 
-        if (WebInspector.CSSStyleManager.ForceablePseudoClasses.every((className) => !this.representedObject.selectorText.includes(":" + className))) {
+        if (WI.CSSStyleManager.ForceablePseudoClasses.every((className) => !this.representedObject.selectorText.includes(":" + className))) {
             contextMenu.appendSeparator();
 
-            for (let pseudoClass of WebInspector.CSSStyleManager.ForceablePseudoClasses) {
+            for (let pseudoClass of WI.CSSStyleManager.ForceablePseudoClasses) {
                 if (pseudoClass === "visited" && this.representedObject.node.nodeName() !== "A")
                     continue;
 
                 let pseudoClassSelector = ":" + pseudoClass;
 
-                contextMenu.appendItem(WebInspector.UIString("Add %s Rule").format(pseudoClassSelector), () => {
+                contextMenu.appendItem(WI.UIString("Add %s Rule").format(pseudoClassSelector), () => {
                     this.representedObject.node.setPseudoClassEnabled(pseudoClass, true);
                     let pseudoSelectors = this.representedObject.ownerRule.selectors.map((selector) => selector.text + pseudoClassSelector);
                     this.representedObject.nodeStyles.addRule(pseudoSelectors.join(", "));
@@ -172,7 +172,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
 
         contextMenu.appendSeparator();
 
-        for (let pseudoElement of WebInspector.CSSStyleManager.PseudoElementNames) {
+        for (let pseudoElement of WI.CSSStyleManager.PseudoElementNames) {
             let pseudoElementSelector = "::" + pseudoElement;
             const styleText = "content: \"\";";
 
@@ -188,7 +188,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
                 }
             }
 
-            let title = existingTreeItem ? WebInspector.UIString("Select %s Rule") : WebInspector.UIString("Create %s Rule");
+            let title = existingTreeItem ? WI.UIString("Select %s Rule") : WI.UIString("Create %s Rule");
             contextMenu.appendItem(title.format(pseudoElementSelector), () => {
                 if (existingTreeItem) {
                     existingTreeItem.select(true, true);
@@ -208,30 +208,30 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
     _highlightNodesWithSelector()
     {
         if (!this.representedObject.ownerRule) {
-            WebInspector.domTreeManager.highlightDOMNode(this.representedObject.node.id);
+            WI.domTreeManager.highlightDOMNode(this.representedObject.node.id);
             return;
         }
 
-        WebInspector.domTreeManager.highlightSelector(this.selectorText, this.representedObject.node.ownerDocument.frameIdentifier);
+        WI.domTreeManager.highlightSelector(this.selectorText, this.representedObject.node.ownerDocument.frameIdentifier);
     }
 
     _hideDOMNodeHighlight()
     {
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
+        WI.domTreeManager.hideDOMNodeHighlight();
     }
 
     _handleCheckboxChanged(event)
     {
         this._updateCheckboxTitle();
-        this.dispatchEventToListeners(WebInspector.VisualStyleSelectorTreeItem.Event.CheckboxChanged, {enabled: this._checkboxElement.checked});
+        this.dispatchEventToListeners(WI.VisualStyleSelectorTreeItem.Event.CheckboxChanged, {enabled: this._checkboxElement.checked});
     }
 
     _updateCheckboxTitle()
     {
         if (this._checkboxElement.checked)
-            this._checkboxElement.title = WebInspector.UIString("Comment out rule");
+            this._checkboxElement.title = WI.UIString("Comment out rule");
         else
-            this._checkboxElement.title = WebInspector.UIString("Uncomment rule");
+            this._checkboxElement.title = WI.UIString("Uncomment rule");
     }
 
     _handleMainTitleMouseDown(event)
@@ -247,7 +247,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
     {
         this._highlightNodesWithSelector();
 
-        let enterKeyCode = WebInspector.KeyboardShortcut.Key.Enter.keyCode;
+        let enterKeyCode = WI.KeyboardShortcut.Key.Enter.keyCode;
         if (event.keyCode === enterKeyCode)
             this._mainTitleElement.blur();
     }
@@ -276,8 +276,8 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
         this._hasInvalidSelector = event && event.data && !event.data.valid;
         this._listItemNode.classList.toggle("selector-invalid", !!this._hasInvalidSelector);
         if (this._hasInvalidSelector) {
-            this._iconElement.title = WebInspector.UIString("The selector “%s” is invalid.\nClick to revert to the previous selector.").format(this.selectorText);
-            this.mainTitleElement.title = WebInspector.UIString("Using previous selector “%s”").format(this.representedObject.ownerRule.selectorText);
+            this._iconElement.title = WI.UIString("The selector “%s” is invalid.\nClick to revert to the previous selector.").format(this.selectorText);
+            this.mainTitleElement.title = WI.UIString("Using previous selector “%s”").format(this.representedObject.ownerRule.selectorText);
             return;
         }
 
@@ -285,7 +285,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
         this.mainTitleElement.title = null;
 
         let hasMatchedPseudoElementSelector = this.representedObject.ownerRule && this.representedObject.ownerRule.hasMatchedPseudoElementSelector();
-        this._iconClasses.toggleIncludes(WebInspector.CSSStyleDeclarationSection.PseudoElementSelectorStyleClassName, hasMatchedPseudoElementSelector);
+        this._iconClasses.toggleIncludes(WI.CSSStyleDeclarationSection.PseudoElementSelectorStyleClassName, hasMatchedPseudoElementSelector);
     }
 
     _handleIconElementClicked(event)
@@ -298,6 +298,6 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
     }
 };
 
-WebInspector.VisualStyleSelectorTreeItem.Event = {
+WI.VisualStyleSelectorTreeItem.Event = {
     CheckboxChanged: "visual-style-selector-item-checkbox-changed"
 };

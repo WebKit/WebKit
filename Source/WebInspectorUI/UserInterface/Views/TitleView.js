@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TitleView = class TitleView extends WebInspector.View
+WI.TitleView = class TitleView extends WI.View
 {
     constructor(title)
     {

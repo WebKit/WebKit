@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FlexibleSpaceNavigationItem = class FlexibleSpaceNavigationItem extends WebInspector.NavigationItem
+WI.FlexibleSpaceNavigationItem = class FlexibleSpaceNavigationItem extends WI.NavigationItem
 {
     // Protected
 

@@ -28,15 +28,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMTreeUpdater = function(treeOutline)
+WI.DOMTreeUpdater = function(treeOutline)
 {
-    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.NodeInserted, this._nodeInserted, this);
-    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.NodeRemoved, this._nodeRemoved, this);
-    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.AttributeModified, this._attributesUpdated, this);
-    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.AttributeRemoved, this._attributesUpdated, this);
-    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.CharacterDataModified, this._characterDataModified, this);
-    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.DocumentUpdated, this._documentUpdated, this);
-    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.ChildNodeCountUpdated, this._childNodeCountUpdated, this);
+    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeInserted, this._nodeInserted, this);
+    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeRemoved, this._nodeRemoved, this);
+    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.AttributeModified, this._attributesUpdated, this);
+    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.AttributeRemoved, this._attributesUpdated, this);
+    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.CharacterDataModified, this._characterDataModified, this);
+    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.DocumentUpdated, this._documentUpdated, this);
+    WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.ChildNodeCountUpdated, this._childNodeCountUpdated, this);
 
     this._treeOutline = treeOutline;
 
@@ -50,10 +50,10 @@ WebInspector.DOMTreeUpdater = function(treeOutline)
     this._textContentAttributeSymbol = Symbol("text-content-attribute");
 };
 
-WebInspector.DOMTreeUpdater.prototype = {
+WI.DOMTreeUpdater.prototype = {
     close: function()
     {
-        WebInspector.domTreeManager.removeEventListener(null, null, this);
+        WI.domTreeManager.removeEventListener(null, null, this);
     },
 
     _documentUpdated: function(event)
@@ -149,7 +149,7 @@ WebInspector.DOMTreeUpdater.prototype = {
 
     _reset: function()
     {
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
+        WI.domTreeManager.hideDOMNodeHighlight();
 
         this._recentlyInsertedNodes.clear();
         this._recentlyDeletedNodes.clear();

@@ -72,7 +72,7 @@
         "SyncTestSuite": true,
         "TestHarness": true,
         "TestSuite": true,
-        "WebInspector": true,
+        "WI": true,
 
         // Externals
         "CodeMirror": true,

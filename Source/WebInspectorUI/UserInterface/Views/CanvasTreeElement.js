@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasTreeElement = class CanvasTreeElement extends WebInspector.GeneralTreeElement
+WI.CanvasTreeElement = class CanvasTreeElement extends WI.GeneralTreeElement
 {
     constructor(representedObject)
     {
-        console.assert(representedObject instanceof WebInspector.Canvas);
+        console.assert(representedObject instanceof WI.Canvas);
 
         const subtitle = null;
         super(["canvas", representedObject.contextType], representedObject.displayName, subtitle, representedObject);
@@ -47,14 +47,14 @@ WebInspector.CanvasTreeElement = class CanvasTreeElement extends WebInspector.Ge
     {
         super.populateContextMenu(contextMenu, event);
 
-        contextMenu.appendItem(WebInspector.UIString("Log Canvas Context"), () => {
-            WebInspector.RemoteObject.resolveCanvasContext(this.representedObject, WebInspector.RuntimeManager.ConsoleObjectGroup, (remoteObject) => {
+        contextMenu.appendItem(WI.UIString("Log Canvas Context"), () => {
+            WI.RemoteObject.resolveCanvasContext(this.representedObject, WI.RuntimeManager.ConsoleObjectGroup, (remoteObject) => {
                 if (!remoteObject)
                     return;
 
-                const text = WebInspector.UIString("Selected Canvas Context");
+                const text = WI.UIString("Selected Canvas Context");
                 const addSpecialUserLogClass = true;
-                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
             });
         });
 
@@ -67,20 +67,20 @@ WebInspector.CanvasTreeElement = class CanvasTreeElement extends WebInspector.Ge
     {
         if (this.representedObject.cssCanvasName) {
             this.representedObject.requestCSSCanvasClientNodes((cssCanvasClientNodes) => {
-                WebInspector.domTreeManager.highlightDOMNodeList(cssCanvasClientNodes.map((node) => node.id), "all");
+                WI.domTreeManager.highlightDOMNodeList(cssCanvasClientNodes.map((node) => node.id), "all");
             });
         } else {
             this.representedObject.requestNode((node) => {
                 if (!node || !node.ownerDocument)
                     return;
 
-                WebInspector.domTreeManager.highlightDOMNode(node.id, "all");
+                WI.domTreeManager.highlightDOMNode(node.id, "all");
             });
         }
     }
 
     _handleMouseOut(event)
     {
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
+        WI.domTreeManager.hideDOMNodeHighlight();
     }
 };

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
+WI.SpringEditor = class SpringEditor extends WI.Object
 {
     constructor()
     {
@@ -33,7 +33,7 @@ WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
         this._element.classList.add("spring-editor");
 
         this._previewContainer = this._element.createChild("div", "spring-preview");
-        this._previewContainer.title = WebInspector.UIString("Restart animation");
+        this._previewContainer.title = WI.UIString("Restart animation");
         this._previewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bind(this));
 
         this._previewElement = this._previewContainer.createChild("div");
@@ -65,18 +65,18 @@ WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
             this[inputKey].addEventListener("keydown", this._handleNumberInputKeydown.bind(this));
         }
 
-        createInputsForParameter.call(this, "mass", WebInspector.UIString("Mass"));
+        createInputsForParameter.call(this, "mass", WI.UIString("Mass"));
         this._massInput.min = this._massSlider.min = 1;
 
-        createInputsForParameter.call(this, "stiffness", WebInspector.UIString("Stiffness"));
+        createInputsForParameter.call(this, "stiffness", WI.UIString("Stiffness"));
         this._stiffnessInput.min = this._stiffnessSlider.min = 1;
 
-        createInputsForParameter.call(this, "damping", WebInspector.UIString("Damping"));
+        createInputsForParameter.call(this, "damping", WI.UIString("Damping"));
         this._dampingInput.min = this._dampingSlider.min = 0;
 
-        createInputsForParameter.call(this, "initialVelocity", WebInspector.UIString("Initial Velocity"));
+        createInputsForParameter.call(this, "initialVelocity", WI.UIString("Initial Velocity"));
 
-        this._spring = new WebInspector.Spring(1, 100, 10, 0);
+        this._spring = new WI.Spring(1, 100, 10, 0);
     }
 
     // Public
@@ -96,7 +96,7 @@ WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
         if (!spring)
             return;
 
-        let isSpring = spring instanceof WebInspector.Spring;
+        let isSpring = spring instanceof WI.Spring;
         console.assert(isSpring);
         if (!isSpring)
             return;
@@ -191,11 +191,11 @@ WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
             this._initialVelocityInput.value = this._initialVelocitySlider.value = this._spring.initialVelocity.maxDecimals(3);
             break;
         default:
-            WebInspector.reportInternalError("Input event fired for unrecognized element");
+            WI.reportInternalError("Input event fired for unrecognized element");
             return;
         }
 
-        this.dispatchEventToListeners(WebInspector.SpringEditor.Event.SpringChanged, {spring: this._spring});
+        this.dispatchEventToListeners(WI.SpringEditor.Event.SpringChanged, {spring: this._spring});
 
         this._resetPreviewAnimation();
     }
@@ -223,7 +223,7 @@ WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
 
         this._timingContainer.classList.add("animate");
 
-        if (WebInspector.resolvedLayoutDirection() === WebInspector.LayoutDirection.RTL) {
+        if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL) {
             this._previewElement.style.transform = "translateX(-85px)";
             this._timingElement.style.transform = "translateX(-170px)";
         } else {
@@ -243,6 +243,6 @@ WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
     }
 };
 
-WebInspector.SpringEditor.Event = {
+WI.SpringEditor.Event = {
     SpringChanged: "spring-editor-spring-changed"
 };

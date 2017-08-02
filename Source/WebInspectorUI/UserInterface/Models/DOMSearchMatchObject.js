@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMSearchMatchObject = class DOMSearchMatchObject
+WI.DOMSearchMatchObject = class DOMSearchMatchObject
 {
     constructor(resource, domNode, title, searchTerm, textRange)
     {
-        console.assert(resource instanceof WebInspector.Resource);
-        console.assert(domNode instanceof WebInspector.DOMNode);
+        console.assert(resource instanceof WI.Resource);
+        console.assert(domNode instanceof WI.DOMNode);
 
         this._resource = resource;
         this._domNode = domNode;
@@ -120,10 +120,10 @@ WebInspector.DOMSearchMatchObject = class DOMSearchMatchObject
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WebInspector.DOMSearchMatchObject.URLCookieKey] = this._resource.url.hash;
-        cookie[WebInspector.DOMSearchMatchObject.TitleKey] = this._title;
+        cookie[WI.DOMSearchMatchObject.URLCookieKey] = this._resource.url.hash;
+        cookie[WI.DOMSearchMatchObject.TitleKey] = this._title;
         var textRange = this._sourceCodeTextRange.textRange;
-        cookie[WebInspector.DOMSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
+        cookie[WI.DOMSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
     }
 
     // Private
@@ -132,39 +132,39 @@ WebInspector.DOMSearchMatchObject = class DOMSearchMatchObject
     {
         switch (this._domNode.nodeType()) {
         case Node.ELEMENT_NODE:
-            return WebInspector.DOMSearchMatchObject.DOMMatchElementIconStyleClassName;
+            return WI.DOMSearchMatchObject.DOMMatchElementIconStyleClassName;
 
         case Node.TEXT_NODE:
-            return WebInspector.DOMSearchMatchObject.DOMMatchTextNodeIconStyleClassName;
+            return WI.DOMSearchMatchObject.DOMMatchTextNodeIconStyleClassName;
 
         case Node.COMMENT_NODE:
-            return WebInspector.DOMSearchMatchObject.DOMMatchCommentIconStyleClassName;
+            return WI.DOMSearchMatchObject.DOMMatchCommentIconStyleClassName;
 
         case Node.DOCUMENT_TYPE_NODE:
-            return WebInspector.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName;
+            return WI.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName;
 
         case Node.CDATA_SECTION_NODE:
-            return WebInspector.DOMSearchMatchObject.DOMMatchCharacterDataIconStyleClassName;
+            return WI.DOMSearchMatchObject.DOMMatchCharacterDataIconStyleClassName;
 
         case Node.PROCESSING_INSTRUCTION_NODE:
             // <rdar://problem/12800950> Need icon for DOCUMENT_FRAGMENT_NODE and PROCESSING_INSTRUCTION_NODE
-            return WebInspector.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName;
+            return WI.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName;
 
         default:
             console.error("Unknown DOM node type: ", this._domNode.nodeType());
-            return WebInspector.DOMSearchMatchObject.DOMMatchNodeIconStyleClassName;
+            return WI.DOMSearchMatchObject.DOMMatchNodeIconStyleClassName;
         }
     }
 };
 
-WebInspector.DOMSearchMatchObject.DOMMatchElementIconStyleClassName = "dom-match-element-icon";
-WebInspector.DOMSearchMatchObject.DOMMatchTextNodeIconStyleClassName = "dom-match-text-node-icon";
-WebInspector.DOMSearchMatchObject.DOMMatchCommentIconStyleClassName = "dom-match-comment-icon";
-WebInspector.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName = "dom-match-document-type-icon";
-WebInspector.DOMSearchMatchObject.DOMMatchCharacterDataIconStyleClassName = "dom-match-character-data-icon";
-WebInspector.DOMSearchMatchObject.DOMMatchNodeIconStyleClassName = "dom-match-node-icon";
+WI.DOMSearchMatchObject.DOMMatchElementIconStyleClassName = "dom-match-element-icon";
+WI.DOMSearchMatchObject.DOMMatchTextNodeIconStyleClassName = "dom-match-text-node-icon";
+WI.DOMSearchMatchObject.DOMMatchCommentIconStyleClassName = "dom-match-comment-icon";
+WI.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName = "dom-match-document-type-icon";
+WI.DOMSearchMatchObject.DOMMatchCharacterDataIconStyleClassName = "dom-match-character-data-icon";
+WI.DOMSearchMatchObject.DOMMatchNodeIconStyleClassName = "dom-match-node-icon";
 
-WebInspector.DOMSearchMatchObject.TypeIdentifier = "dom-search-match-object";
-WebInspector.DOMSearchMatchObject.URLCookieKey = "resource-url";
-WebInspector.DOMSearchMatchObject.TitleKey = "title";
-WebInspector.DOMSearchMatchObject.TextRangeKey = "text-range";
+WI.DOMSearchMatchObject.TypeIdentifier = "dom-search-match-object";
+WI.DOMSearchMatchObject.URLCookieKey = "resource-url";
+WI.DOMSearchMatchObject.TitleKey = "title";
+WI.DOMSearchMatchObject.TextRangeKey = "text-range";

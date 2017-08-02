@@ -23,30 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourcesTabContentView = class ResourcesTabContentView extends WebInspector.ContentBrowserTabContentView
+WI.ResourcesTabContentView = class ResourcesTabContentView extends WI.ContentBrowserTabContentView
 {
     constructor(identifier)
     {
-        let {image, title} = WebInspector.ResourcesTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
-        let detailsSidebarPanelConstructors = [WebInspector.ResourceDetailsSidebarPanel, WebInspector.ProbeDetailsSidebarPanel];
+        let {image, title} = WI.ResourcesTabContentView.tabInfo();
+        let tabBarItem = new WI.GeneralTabBarItem(image, title);
+        let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel];
 
-        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value)
-            detailsSidebarPanelConstructors.push(WebInspector.CanvasDetailsSidebarPanel);
+        if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value)
+            detailsSidebarPanelConstructors.push(WI.CanvasDetailsSidebarPanel);
 
         // FIXME: Until ContentFlows are moved to the Elements tab, these details sidebar panels need to be included.
-        detailsSidebarPanelConstructors = detailsSidebarPanelConstructors.concat([WebInspector.DOMNodeDetailsSidebarPanel, WebInspector.CSSStyleDetailsSidebarPanel]);
+        detailsSidebarPanelConstructors = detailsSidebarPanelConstructors.concat([WI.DOMNodeDetailsSidebarPanel, WI.CSSStyleDetailsSidebarPanel]);
         if (window.LayerTreeAgent)
-            detailsSidebarPanelConstructors.push(WebInspector.LayerTreeDetailsSidebarPanel);
+            detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
 
-        super(identifier || "resources", "resources", tabBarItem, WebInspector.ResourceSidebarPanel, detailsSidebarPanelConstructors);
+        super(identifier || "resources", "resources", tabBarItem, WI.ResourceSidebarPanel, detailsSidebarPanelConstructors);
     }
 
     static tabInfo()
     {
         return {
             image: "Images/Resources.svg",
-            title: WebInspector.UIString("Resources"),
+            title: WI.UIString("Resources"),
         };
     }
 
@@ -54,7 +54,7 @@ WebInspector.ResourcesTabContentView = class ResourcesTabContentView extends Web
 
     get type()
     {
-        return WebInspector.ResourcesTabContentView.Type;
+        return WI.ResourcesTabContentView.Type;
     }
 
     get supportsSplitContentBrowser()
@@ -64,14 +64,14 @@ WebInspector.ResourcesTabContentView = class ResourcesTabContentView extends Web
 
     canShowRepresentedObject(representedObject)
     {
-        return representedObject instanceof WebInspector.Frame
-            || representedObject instanceof WebInspector.Resource
-            || representedObject instanceof WebInspector.Script
-            || representedObject instanceof WebInspector.CSSStyleSheet
-            || representedObject instanceof WebInspector.ContentFlow
-            || representedObject instanceof WebInspector.Canvas
-            || representedObject instanceof WebInspector.Collection;
+        return representedObject instanceof WI.Frame
+            || representedObject instanceof WI.Resource
+            || representedObject instanceof WI.Script
+            || representedObject instanceof WI.CSSStyleSheet
+            || representedObject instanceof WI.ContentFlow
+            || representedObject instanceof WI.Canvas
+            || representedObject instanceof WI.Collection;
     }
 };
 
-WebInspector.ResourcesTabContentView.Type = "resources";
+WI.ResourcesTabContentView.Type = "resources";

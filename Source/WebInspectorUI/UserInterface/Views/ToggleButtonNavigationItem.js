@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ToggleButtonNavigationItem = class ToggleButtonNavigationItem extends WebInspector.ButtonNavigationItem
+WI.ToggleButtonNavigationItem = class ToggleButtonNavigationItem extends WI.ButtonNavigationItem
 {
     constructor(identifier, defaultToolTip, alternateToolTip, defaultImage, alternateImage, imageWidth, imageHeight)
     {

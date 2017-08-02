@@ -23,30 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HeapObserver = class HeapObserver
+WI.HeapObserver = class HeapObserver
 {
     // Events defined by the "Heap" domain.
 
     garbageCollected(collection)
     {
-        WebInspector.heapManager.garbageCollected(this.target, collection);
+        WI.heapManager.garbageCollected(this.target, collection);
     }
 
     trackingStart(timestamp, snapshotStringData)
     {
-        let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+        let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
         workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-            let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
-            WebInspector.timelineManager.heapTrackingStarted(timestamp, snapshot);
+            let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+            WI.timelineManager.heapTrackingStarted(timestamp, snapshot);
         });
     }
 
     trackingComplete(timestamp, snapshotStringData)
     {
-        let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
+        let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
         workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-            let snapshot = WebInspector.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
-            WebInspector.timelineManager.heapTrackingCompleted(timestamp, snapshot);
+            let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+            WI.timelineManager.heapTrackingCompleted(timestamp, snapshot);
         });
     }
 };

@@ -208,7 +208,7 @@
         // Setup.
         const indentString = "    ";
         var builder = new FormatterContentBuilder(indentString);
-        var formatter = new WebInspector.Formatter(cm, builder);
+        var formatter = new WI.Formatter(cm, builder);
 
         // Time the formatter.
         var startTime = Date.now();
@@ -328,7 +328,7 @@
             const end = {line: editor.lineCount() - 1};
             const indentString = "    ";
             var builder = new FormatterContentBuilder(indentString);
-            var formatter = new WebInspector.Formatter(editor, builder);
+            var formatter = new WI.Formatter(editor, builder);
             formatter.format(start, end);
 
             // Compare results.

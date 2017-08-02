@@ -23,6 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LogObject = class LogObject
+WI.LogObject = class LogObject
 {
 };

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspector.Object
+WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 {
     constructor(nodeStyles, ownerStyleSheet, id, type, node, inherited, text, properties, styleSheetTextRange)
     {
@@ -81,10 +81,10 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         if (!this._id)
             return false;
 
-        if (this._type === WebInspector.CSSStyleDeclaration.Type.Rule)
+        if (this._type === WI.CSSStyleDeclaration.Type.Rule)
             return this._ownerRule && this._ownerRule.editable;
 
-        if (this._type === WebInspector.CSSStyleDeclaration.Type.Inline)
+        if (this._type === WI.CSSStyleDeclaration.Type.Inline)
             return !this._node.isInUserAgentShadowTree();
 
         return false;
@@ -159,7 +159,7 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
 
         function delayed()
         {
-            this.dispatchEventToListeners(WebInspector.CSSStyleDeclaration.Event.PropertiesChanged, {addedProperties, removedProperties});
+            this.dispatchEventToListeners(WI.CSSStyleDeclaration.Event.PropertiesChanged, {addedProperties, removedProperties});
         }
 
         // Delay firing the PropertiesChanged event so DOMNodeStyles has a chance to mark overridden and associated properties.
@@ -186,17 +186,17 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         if (this._text === text)
             return;
 
-        let trimmedText = WebInspector.CSSStyleDeclarationTextEditor.PrefixWhitespace + text.trim();
+        let trimmedText = WI.CSSStyleDeclarationTextEditor.PrefixWhitespace + text.trim();
         if (this._text === trimmedText)
             return;
 
-        if (trimmedText === WebInspector.CSSStyleDeclarationTextEditor.PrefixWhitespace || this._type === WebInspector.CSSStyleDeclaration.Type.Inline)
+        if (trimmedText === WI.CSSStyleDeclarationTextEditor.PrefixWhitespace || this._type === WI.CSSStyleDeclaration.Type.Inline)
             text = trimmedText;
 
         let modified = text !== this._initialText;
         if (modified !== this._hasModifiedInitialText) {
             this._hasModifiedInitialText = modified;
-            this.dispatchEventToListeners(WebInspector.CSSStyleDeclaration.Event.InitialTextModified);
+            this.dispatchEventToListeners(WI.CSSStyleDeclaration.Event.InitialTextModified);
         }
 
         this._nodeStyles.changeStyleText(this, text);
@@ -292,7 +292,7 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
         if (bestMatchProperty)
             return bestMatchProperty;
 
-        var newProperty = new WebInspector.CSSProperty(NaN, null, name);
+        var newProperty = new WI.CSSProperty(NaN, null, name);
         newProperty.ownerStyle = this;
 
         this._pendingProperties.push(newProperty);
@@ -302,7 +302,7 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
 
     generateCSSRuleString()
     {
-        let indentString = WebInspector.indentString();
+        let indentString = WI.indentString();
         let styleText = "";
         let mediaList = this.mediaList;
         let mediaQueriesCount = mediaList.length;
@@ -333,7 +333,7 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
 
     isInspectorRule()
     {
-        return this._ownerRule && this._ownerRule.type === WebInspector.CSSStyleSheet.Type.Inspector;
+        return this._ownerRule && this._ownerRule.type === WI.CSSStyleSheet.Type.Inspector;
     }
 
     hasProperties()
@@ -349,12 +349,12 @@ WebInspector.CSSStyleDeclaration = class CSSStyleDeclaration extends WebInspecto
     }
 };
 
-WebInspector.CSSStyleDeclaration.Event = {
+WI.CSSStyleDeclaration.Event = {
     PropertiesChanged: "css-style-declaration-properties-changed",
     InitialTextModified: "css-style-declaration-initial-text-modified"
 };
 
-WebInspector.CSSStyleDeclaration.Type = {
+WI.CSSStyleDeclaration.Type = {
     Rule: "css-style-declaration-type-rule",
     Inline: "css-style-declaration-type-inline",
     Attribute: "css-style-declaration-type-attribute",

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CodeMirrorEditor = class CodeMirrorEditor
+WI.CodeMirrorEditor = class CodeMirrorEditor
 {
     static create(element, options)
     {
@@ -38,7 +38,7 @@ WebInspector.CodeMirrorEditor = class CodeMirrorEditor
         let codeMirror = new CodeMirror(element, options);
 
         // Override some Mac specific keybindings.
-        if (WebInspector.Platform.name === "mac") {
+        if (WI.Platform.name === "mac") {
             codeMirror.addKeyMap({
                 "Home": () => { codeMirror.scrollIntoView({line: 0, ch: 0}); },
                 "End": () => { codeMirror.scrollIntoView({line: codeMirror.lineCount() - 1, ch: null}); },
@@ -47,7 +47,7 @@ WebInspector.CodeMirrorEditor = class CodeMirrorEditor
 
         // Set up default controllers that should be present for
         // all CodeMirror editor instances.
-        new WebInspector.CodeMirrorTextKillController(codeMirror);
+        new WI.CodeMirrorTextKillController(codeMirror);
 
         return codeMirror;
     }

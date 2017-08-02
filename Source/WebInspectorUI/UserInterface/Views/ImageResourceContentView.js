@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ImageResourceContentView = class ImageResourceContentView extends WebInspector.ResourceContentView
+WI.ImageResourceContentView = class ImageResourceContentView extends WI.ResourceContentView
 {
     constructor(resource)
     {
@@ -31,11 +31,11 @@ WebInspector.ImageResourceContentView = class ImageResourceContentView extends W
 
         this._imageElement = null;
 
-        const toolTip = WebInspector.UIString("Show Grid");
-        const activatedToolTip = WebInspector.UIString("Hide Grid");
-        this._showGridButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-grid", toolTip, activatedToolTip, "Images/NavigationItemCheckers.svg", 13, 13);
-        this._showGridButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
-        this._showGridButtonNavigationItem.activated = !!WebInspector.settings.showImageGrid.value;
+        const toolTip = WI.UIString("Show Grid");
+        const activatedToolTip = WI.UIString("Hide Grid");
+        this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", toolTip, activatedToolTip, "Images/NavigationItemCheckers.svg", 13, 13);
+        this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
+        this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
     }
 
     // Public
@@ -72,12 +72,12 @@ WebInspector.ImageResourceContentView = class ImageResourceContentView extends W
 
         this._updateImageGrid();
 
-        WebInspector.settings.showImageGrid.addEventListener(WebInspector.Setting.Event.Changed, this._updateImageGrid, this);
+        WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
     }
 
     hidden()
     {
-        WebInspector.settings.showImageGrid.removeEventListener(WebInspector.Setting.Event.Changed, this._updateImageGrid, this);
+        WI.settings.showImageGrid.removeEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
 
         super.hidden();
     }
@@ -89,14 +89,14 @@ WebInspector.ImageResourceContentView = class ImageResourceContentView extends W
         if (!this._imageElement)
             return;
 
-        let activated = WebInspector.settings.showImageGrid.value;
+        let activated = WI.settings.showImageGrid.value;
         this._showGridButtonNavigationItem.activated = activated;
         this._imageElement.classList.toggle("show-grid", activated);
     }
 
     _showGridButtonClicked(event)
     {
-        WebInspector.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
+        WI.settings.showImageGrid.value = !this._showGridButtonNavigationItem.activated;
 
         this._updateImageGrid();
     }

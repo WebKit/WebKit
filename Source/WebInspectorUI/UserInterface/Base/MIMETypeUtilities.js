@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.fileExtensionForURL = function(url)
+WI.fileExtensionForURL = function(url)
 {
     var lastPathComponent = parseURL(url).lastPathComponent;
     if (!lastPathComponent)
@@ -36,7 +36,7 @@ WebInspector.fileExtensionForURL = function(url)
     return lastPathComponent.substr(index + 1);
 };
 
-WebInspector.mimeTypeForFileExtension = function(extension)
+WI.mimeTypeForFileExtension = function(extension)
 {
     const extensionToMIMEType = {
         // Document types.
@@ -79,7 +79,7 @@ WebInspector.mimeTypeForFileExtension = function(extension)
     return extensionToMIMEType[extension] || null;
 };
 
-WebInspector.fileExtensionForMIMEType = function(mimeType)
+WI.fileExtensionForMIMEType = function(mimeType)
 {
     const mimeTypeToExtension = {
         // Document types.

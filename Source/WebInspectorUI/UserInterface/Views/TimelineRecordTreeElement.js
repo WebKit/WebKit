@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends WebInspector.GeneralTreeElement
+WI.TimelineRecordTreeElement = class TimelineRecordTreeElement extends WI.GeneralTreeElement
 {
     constructor(timelineRecord, subtitleNameStyle, includeDetailsInMainTitle, sourceCodeLocation, representedObject)
     {
@@ -32,28 +32,28 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
         sourceCodeLocation = sourceCodeLocation || timelineRecord.sourceCodeLocation || null;
 
         let alternateSubtitle = null;
-        if (includeDetailsInMainTitle && timelineRecord.type === WebInspector.TimelineRecord.Type.Script && timelineRecord.eventType === WebInspector.ScriptTimelineRecord.EventType.TimerInstalled) {
+        if (includeDetailsInMainTitle && timelineRecord.type === WI.TimelineRecord.Type.Script && timelineRecord.eventType === WI.ScriptTimelineRecord.EventType.TimerInstalled) {
             let timeoutString = Number.secondsToString(timelineRecord.details.timeout / 1000);
             alternateSubtitle = document.createElement("span");
             alternateSubtitle.classList.add("alternate-subtitle");
             if (timelineRecord.details.repeating)
-                alternateSubtitle.textContent = WebInspector.UIString("%s interval").format(timeoutString);
+                alternateSubtitle.textContent = WI.UIString("%s interval").format(timeoutString);
             else
-                alternateSubtitle.textContent = WebInspector.UIString("%s delay").format(timeoutString);
+                alternateSubtitle.textContent = WI.UIString("%s delay").format(timeoutString);
         }
 
         let subtitle = null;
         if (sourceCodeLocation) {
             subtitle = document.createElement("span");
 
-            if (subtitleNameStyle !== WebInspector.SourceCodeLocation.NameStyle.None)
+            if (subtitleNameStyle !== WI.SourceCodeLocation.NameStyle.None)
                 sourceCodeLocation.populateLiveDisplayLocationString(subtitle, "textContent", null, subtitleNameStyle);
             else
-                sourceCodeLocation.populateLiveDisplayLocationString(subtitle, "textContent", null, WebInspector.SourceCodeLocation.NameStyle.None, WebInspector.UIString("line "));
+                sourceCodeLocation.populateLiveDisplayLocationString(subtitle, "textContent", null, WI.SourceCodeLocation.NameStyle.None, WI.UIString("line "));
         }
 
-        let iconStyleClass = WebInspector.TimelineTabContentView.iconClassNameForRecord(timelineRecord);
-        let title = WebInspector.TimelineTabContentView.displayNameForRecord(timelineRecord);
+        let iconStyleClass = WI.TimelineTabContentView.iconClassNameForRecord(timelineRecord);
+        let title = WI.TimelineTabContentView.displayNameForRecord(timelineRecord);
 
         super([iconStyleClass], title, subtitle, representedObject || timelineRecord);
 
@@ -101,16 +101,16 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
     }
 };
 
-WebInspector.TimelineRecordTreeElement.StyleRecordIconStyleClass = "style-record";
-WebInspector.TimelineRecordTreeElement.LayoutRecordIconStyleClass = "layout-record";
-WebInspector.TimelineRecordTreeElement.PaintRecordIconStyleClass = "paint-record";
-WebInspector.TimelineRecordTreeElement.CompositeRecordIconStyleClass = "composite-record";
-WebInspector.TimelineRecordTreeElement.RenderingFrameRecordIconStyleClass = "rendering-frame-record";
-WebInspector.TimelineRecordTreeElement.APIRecordIconStyleClass = "api-record";
-WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass = "evaluated-record";
-WebInspector.TimelineRecordTreeElement.EventRecordIconStyleClass = "event-record";
-WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass = "timer-record";
-WebInspector.TimelineRecordTreeElement.AnimationRecordIconStyleClass = "animation-record";
-WebInspector.TimelineRecordTreeElement.ProbeRecordIconStyleClass = "probe-record";
-WebInspector.TimelineRecordTreeElement.ConsoleProfileIconStyleClass = "console-profile-record";
-WebInspector.TimelineRecordTreeElement.GarbageCollectionIconStyleClass = "garbage-collection-profile-record";
+WI.TimelineRecordTreeElement.StyleRecordIconStyleClass = "style-record";
+WI.TimelineRecordTreeElement.LayoutRecordIconStyleClass = "layout-record";
+WI.TimelineRecordTreeElement.PaintRecordIconStyleClass = "paint-record";
+WI.TimelineRecordTreeElement.CompositeRecordIconStyleClass = "composite-record";
+WI.TimelineRecordTreeElement.RenderingFrameRecordIconStyleClass = "rendering-frame-record";
+WI.TimelineRecordTreeElement.APIRecordIconStyleClass = "api-record";
+WI.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass = "evaluated-record";
+WI.TimelineRecordTreeElement.EventRecordIconStyleClass = "event-record";
+WI.TimelineRecordTreeElement.TimerRecordIconStyleClass = "timer-record";
+WI.TimelineRecordTreeElement.AnimationRecordIconStyleClass = "animation-record";
+WI.TimelineRecordTreeElement.ProbeRecordIconStyleClass = "probe-record";
+WI.TimelineRecordTreeElement.ConsoleProfileIconStyleClass = "console-profile-record";
+WI.TimelineRecordTreeElement.GarbageCollectionIconStyleClass = "garbage-collection-profile-record";

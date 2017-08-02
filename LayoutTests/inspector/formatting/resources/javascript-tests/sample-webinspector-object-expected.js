@@ -1,4 +1,4 @@
-WebInspector.Object = class WebInspectorObject
+WI.Object = class WebInspectorObject
 {
     constructor()
     {
@@ -75,27 +75,27 @@ WebInspector.Object = class WebInspectorObject
     }
     addEventListener()
     {
-        return WebInspector.Object.addEventListener.apply(this, arguments);
+        return WI.Object.addEventListener.apply(this, arguments);
     }
     singleFireEventListener()
     {
-        return WebInspector.Object.singleFireEventListener.apply(this, arguments);
+        return WI.Object.singleFireEventListener.apply(this, arguments);
     }
     removeEventListener()
     {
-        return WebInspector.Object.removeEventListener.apply(this, arguments);
+        return WI.Object.removeEventListener.apply(this, arguments);
     }
     hasEventListeners()
     {
-        return WebInspector.Object.hasEventListeners.apply(this, arguments);
+        return WI.Object.hasEventListeners.apply(this, arguments);
     }
     retainedObjectsWithPrototype()
     {
-        return WebInspector.Object.retainedObjectsWithPrototype.apply(this, arguments);
+        return WI.Object.retainedObjectsWithPrototype.apply(this, arguments);
     }
     dispatchEventToListeners(eventType, eventData)
     {
-        let event = new WebInspector.Event(this, eventType, eventData);
+        let event = new WI.Event(this, eventType, eventData);
         function dispatch(object)
         {
             if (!object || event._stoppedPropagation)
@@ -127,7 +127,7 @@ WebInspector.Object = class WebInspectorObject
     }
 }
 ;
-WebInspector.Event = class Event
+WI.Event = class Event
 {
     constructor(target, type, data)
     {
@@ -147,8 +147,8 @@ WebInspector.Event = class Event
     }
 }
 ;
-WebInspector.notifications = new WebInspector.Object;
-WebInspector.Notification = {
+WI.notifications = new WI.Object;
+WI.Notification = {
     GlobalModifierKeysDidChange: "global-modifiers-did-change",
     PageArchiveStarted: "page-archive-started",
     PageArchiveEnded: "page-archive-ended",

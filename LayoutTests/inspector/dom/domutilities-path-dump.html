@@ -39,22 +39,22 @@ function test()
         }
     }
 
-    WebInspector.domTreeManager.requestDocument((documentNode) => {
+    WI.domTreeManager.requestDocument((documentNode) => {
         // Push all the nodes to the frontend.
-        WebInspector.domTreeManager.querySelector(documentNode.id, "html", (nodeId) => {
-            let htmlNode = WebInspector.domTreeManager.nodeForId(nodeId);
+        WI.domTreeManager.querySelector(documentNode.id, "html", (nodeId) => {
+            let htmlNode = WI.domTreeManager.nodeForId(nodeId);
             htmlNode.getSubtree(10, () => {
                 buildNodeList(htmlNode, 0);
 
                 InspectorTest.log("");
                 InspectorTest.log("-- CSS Selector Paths --");
-                processList(WebInspector.cssPath, (selector) => {
+                processList(WI.cssPath, (selector) => {
                     InspectorTest.evaluateInPage("verifySelector(" + JSON.stringify(selector) + ")");
                 });
 
                 InspectorTest.log("");
                 InspectorTest.log("-- XPaths --");
-                processList(WebInspector.xpath, (xpath) => {
+                processList(WI.xpath, (xpath) => {
                     InspectorTest.evaluateInPage("verifyXPath(" + JSON.stringify(xpath) + ")");
                 });
 
@@ -68,7 +68,7 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Test for WebInspector.cssPath.</p>
+<p>Test for WI.cssPath.</p>
 
 <article></article>
 <article></article>

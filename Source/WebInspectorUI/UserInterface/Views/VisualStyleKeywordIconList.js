@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleKeywordIconList = class VisualStyleKeywordIconList extends WebInspector.VisualStylePropertyEditor
+WI.VisualStyleKeywordIconList = class VisualStyleKeywordIconList extends WI.VisualStylePropertyEditor
 {
     constructor(propertyNames, text, possibleValues, layoutReversed)
     {

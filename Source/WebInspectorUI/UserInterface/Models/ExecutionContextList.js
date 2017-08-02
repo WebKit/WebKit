@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ExecutionContextList = class ExecutionContextList
+WI.ExecutionContextList = class ExecutionContextList
 {
     constructor()
     {

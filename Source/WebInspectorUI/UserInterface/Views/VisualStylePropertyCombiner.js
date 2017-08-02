@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner extends WebInspector.Object
+WI.VisualStylePropertyCombiner = class VisualStylePropertyCombiner extends WI.Object
 {
     constructor(propertyName, propertyEditors, spreadNumberValues)
     {
@@ -36,7 +36,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
         this._spreadNumberValues = !!spreadNumberValues && this._propertyEditors.length >= 4;
 
         for (let editor of this._propertyEditors) {
-            editor.addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, this._handlePropertyEditorValueChanged, this);
+            editor.addEventListener(WI.VisualStylePropertyEditor.Event.ValueDidChange, this._handlePropertyEditorValueChanged, this);
             editor.suppressStyleTextUpdate = true;
         }
 
@@ -81,7 +81,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
         if (this._textContainsNameRegExp.test(text))
             text = text.replace(this._replacementRegExp, value !== null ? "$1$2: " + value + ";" : "$1");
         else if (value !== null)
-            text += WebInspector.VisualStylePropertyEditor.generateFormattedTextForNewProperty(text, this._propertyName, value);
+            text += WI.VisualStylePropertyEditor.generateFormattedTextForNewProperty(text, this._propertyName, value);
 
         return text;
     }
@@ -116,7 +116,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
             return;
 
         for (let editor of this._propertyEditors)
-            editor[WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol] = false;
+            editor[WI.VisualStylePropertyCombiner.EditorUpdatedSymbol] = false;
 
         function updateEditor(editor, value) {
             let updatedValues = editor.getValuesFromText(value || "", propertyMissing);
@@ -124,7 +124,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
                 return;
 
             editor.updateEditorValues(updatedValues);
-            editor[WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol] = true;
+            editor[WI.VisualStylePropertyCombiner.EditorUpdatedSymbol] = true;
         }
 
         if (this._spreadNumberValues) {
@@ -148,7 +148,7 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
 
         function updateCompatibleEditor(value) {
             for (let editor of this._propertyEditors) {
-                if (value && !editor.valueIsCompatible(value) || editor[WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol])
+                if (value && !editor.valueIsCompatible(value) || editor[WI.VisualStylePropertyCombiner.EditorUpdatedSymbol])
                     continue;
 
                 if (this._currentValueIsKeyword && editor.disabled)
@@ -197,8 +197,8 @@ WebInspector.VisualStylePropertyCombiner = class VisualStylePropertyCombiner ext
             this._style.text = this.modifyPropertyText(this._style.text, value);
 
         this._propertyMissing = !value;
-        this.dispatchEventToListeners(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange);
+        this.dispatchEventToListeners(WI.VisualStylePropertyEditor.Event.ValueDidChange);
     }
 };
 
-WebInspector.VisualStylePropertyCombiner.EditorUpdatedSymbol = Symbol("visual-style-property-combiner-editor-updated");
+WI.VisualStylePropertyCombiner.EditorUpdatedSymbol = Symbol("visual-style-property-combiner-editor-updated");

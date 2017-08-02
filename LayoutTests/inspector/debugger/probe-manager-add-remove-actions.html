@@ -7,7 +7,7 @@
 <script>
 function test()
 {
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, function() {
+    WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, function() {
         InspectorTest.startTracingBreakpoints();
         InspectorTest.startTracingProbes();
 
@@ -21,9 +21,9 @@ function test()
                 InspectorTest.completeTest();
         }
 
-        WebInspector.Probe.addEventListener(WebInspector.Probe.Event.SampleAdded, incrementTick);
+        WI.Probe.addEventListener(WI.Probe.Event.SampleAdded, incrementTick);
 
-        WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
 
             var scriptObject = event.data.script;
 
@@ -32,14 +32,14 @@ function test()
 
             var location = scriptObject.createSourceCodeLocation(4, 0);
             // Create the breakpoint and its actions before sending anything to the backend.
-            var breakpoint = new WebInspector.Breakpoint(location);
+            var breakpoint = new WI.Breakpoint(location);
             breakpoint.autoContinue = true;
             for (var i of [0, 1])
-                breakpoint.createAction(WebInspector.BreakpointAction.Type.Probe, null, "a");
+                breakpoint.createAction(WI.BreakpointAction.Type.Probe, null, "a");
 
-            WebInspector.debuggerManager.addBreakpoint(breakpoint);
+            WI.debuggerManager.addBreakpoint(breakpoint);
 
-            breakpoint.addEventListener(WebInspector.Breakpoint.Event.ResolvedStateDidChange, function() {
+            breakpoint.addEventListener(WI.Breakpoint.Event.ResolvedStateDidChange, function() {
                 InspectorTest.expectThat(breakpoint.resolved, "Breakpoint should be resolved.");
             });
 

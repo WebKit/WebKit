@@ -14,7 +14,7 @@ function test()
     // FIXME: <https://webkit.org/b/124066> Uncaught exceptions raised in promise completion functions are not printed to console
     // FIXME: <https://webkit.org/b/147502> Uncaught Exception in promise does not trigger break on uncaught exception breakpoint
 
-    WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint.disabled = false;
+    WI.debuggerManager.allUncaughtExceptionsBreakpoint.disabled = false;
 
     let suite = InspectorTest.createAsyncSuite("BreakOnUncaughtException.Promise");
 
@@ -25,15 +25,15 @@ function test()
                 InspectorTest.evaluateInPage(expression);
                 InspectorTest.evaluateInPage(`setTimeout(() => { TestPage.dispatchEventToFrontend("AfterTestFunction"); }, 50)`);
 
-                let listener = WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                     InspectorTest.fail("Should not have paused.");
-                    WebInspector.debuggerManager.resume();
+                    WI.debuggerManager.resume();
                     reject();
                 });
 
                 InspectorTest.singleFireEventListener("AfterTestFunction", (event) => {
                     InspectorTest.pass("Should not pause, exception is 'caught' by Promise.");
-                    WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.Paused, listener);
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
                     resolve();
                 });
             }

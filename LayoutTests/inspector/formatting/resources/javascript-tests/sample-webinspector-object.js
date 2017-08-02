@@ -1,4 +1,4 @@
-WebInspector.Object=class WebInspectorObject
+WI.Object=class WebInspectorObject
 {constructor()
 {this._listeners=null;} 
 static addEventListener(eventType,listener,thisObject)
@@ -22,13 +22,13 @@ static retainedObjectsWithPrototype(proto)
 {let results=new Set;if(this._listeners){this._listeners.forEach(function(listenersTable,eventType){listenersTable.forEach(function(pair){let thisObject=pair[0];if(thisObject instanceof proto)
 results.add(thisObject);});});}
 return results;} 
-addEventListener(){return WebInspector.Object.addEventListener.apply(this,arguments);}
-singleFireEventListener(){return WebInspector.Object.singleFireEventListener.apply(this,arguments);}
-removeEventListener(){return WebInspector.Object.removeEventListener.apply(this,arguments);}
-hasEventListeners(){return WebInspector.Object.hasEventListeners.apply(this,arguments);}
-retainedObjectsWithPrototype(){return WebInspector.Object.retainedObjectsWithPrototype.apply(this,arguments);}
+addEventListener(){return WI.Object.addEventListener.apply(this,arguments);}
+singleFireEventListener(){return WI.Object.singleFireEventListener.apply(this,arguments);}
+removeEventListener(){return WI.Object.removeEventListener.apply(this,arguments);}
+hasEventListeners(){return WI.Object.hasEventListeners.apply(this,arguments);}
+retainedObjectsWithPrototype(){return WI.Object.retainedObjectsWithPrototype.apply(this,arguments);}
 dispatchEventToListeners(eventType,eventData)
-{let event=new WebInspector.Event(this,eventType,eventData);function dispatch(object)
+{let event=new WI.Event(this,eventType,eventData);function dispatch(object)
 {if(!object||event._stoppedPropagation)
 return;let listenerTypesMap=object._listeners;if(!listenerTypesMap||!object.hasOwnProperty("_listeners"))
 return;let listenersTable=listenerTypesMap.get(eventType);if(!listenersTable)
@@ -36,10 +36,10 @@ return;let listeners=listenersTable.toArray();for(let i=0,length=listeners.lengt
 break;}}
 dispatch(this);event._stoppedPropagation=false;let constructor=this.constructor;while(constructor){dispatch(constructor);if(!constructor.prototype.__proto__)
 break;constructor=constructor.prototype.__proto__.constructor;}
-return event.defaultPrevented;}};WebInspector.Event=class Event
+return event.defaultPrevented;}};WI.Event=class Event
 {constructor(target,type,data)
 {this.target=target;this.type=type;this.data=data;this.defaultPrevented=false;this._stoppedPropagation=false;}
 stopPropagation()
 {this._stoppedPropagation=true;}
 preventDefault()
-{this.defaultPrevented=true;}};WebInspector.notifications=new WebInspector.Object;WebInspector.Notification={GlobalModifierKeysDidChange:"global-modifiers-did-change",PageArchiveStarted:"page-archive-started",PageArchiveEnded:"page-archive-ended",ExtraDomainsActivated:"extra-domains-activated",TabTypesChanged:"tab-types-changed",DebugUIEnabledDidChange:"debug-ui-enabled-did-change",};
+{this.defaultPrevented=true;}};WI.notifications=new WI.Object;WI.Notification={GlobalModifierKeysDidChange:"global-modifiers-did-change",PageArchiveStarted:"page-archive-started",PageArchiveEnded:"page-archive-ended",ExtraDomainsActivated:"extra-domains-activated",TabTypesChanged:"tab-types-changed",DebugUIEnabledDidChange:"debug-ui-enabled-did-change",};

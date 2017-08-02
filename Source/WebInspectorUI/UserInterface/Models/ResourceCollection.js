@@ -24,11 +24,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.Collection
+WI.ResourceCollection = class ResourceCollection extends WI.Collection
 {
     constructor(resourceType)
     {
-        super(WebInspector.ResourceCollection.verifierForType(resourceType));
+        super(WI.ResourceCollection.verifierForType(resourceType));
 
         this._resourceType = resourceType || null;
         this._resourceURLMap = new Map;
@@ -39,26 +39,26 @@ WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.
 
     static verifierForType(type) {
         switch (type) {
-        case WebInspector.Resource.Type.Document:
-            return WebInspector.ResourceCollection.TypeVerifier.Document;
-        case WebInspector.Resource.Type.Stylesheet:
-            return WebInspector.ResourceCollection.TypeVerifier.Stylesheet;
-        case WebInspector.Resource.Type.Image:
-            return WebInspector.ResourceCollection.TypeVerifier.Image;
-        case WebInspector.Resource.Type.Font:
-            return WebInspector.ResourceCollection.TypeVerifier.Font;
-        case WebInspector.Resource.Type.Script:
-            return WebInspector.ResourceCollection.TypeVerifier.Script;
-        case WebInspector.Resource.Type.XHR:
-            return WebInspector.ResourceCollection.TypeVerifier.XHR;
-        case WebInspector.Resource.Type.Fetch:
-            return WebInspector.ResourceCollection.TypeVerifier.Fetch;
-        case WebInspector.Resource.Type.WebSocket:
-            return WebInspector.ResourceCollection.TypeVerifier.WebSocket;
-        case WebInspector.Resource.Type.Other:
-            return WebInspector.ResourceCollection.TypeVerifier.Other;
+        case WI.Resource.Type.Document:
+            return WI.ResourceCollection.TypeVerifier.Document;
+        case WI.Resource.Type.Stylesheet:
+            return WI.ResourceCollection.TypeVerifier.Stylesheet;
+        case WI.Resource.Type.Image:
+            return WI.ResourceCollection.TypeVerifier.Image;
+        case WI.Resource.Type.Font:
+            return WI.ResourceCollection.TypeVerifier.Font;
+        case WI.Resource.Type.Script:
+            return WI.ResourceCollection.TypeVerifier.Script;
+        case WI.Resource.Type.XHR:
+            return WI.ResourceCollection.TypeVerifier.XHR;
+        case WI.Resource.Type.Fetch:
+            return WI.ResourceCollection.TypeVerifier.Fetch;
+        case WI.Resource.Type.WebSocket:
+            return WI.ResourceCollection.TypeVerifier.WebSocket;
+        case WI.Resource.Type.Other:
+            return WI.ResourceCollection.TypeVerifier.Other;
         default:
-            return WebInspector.Collection.TypeVerifier.Resource;
+            return WI.Collection.TypeVerifier.Resource;
         }
     }
 
@@ -78,7 +78,7 @@ WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.
 
         let resourcesCollectionForType = this._resourcesTypeMap.get(type);
         if (!resourcesCollectionForType) {
-            resourcesCollectionForType = new WebInspector.ResourceCollection(type);
+            resourcesCollectionForType = new WI.ResourceCollection(type);
             this._resourcesTypeMap.set(type, resourcesCollectionForType);
         }
 
@@ -126,14 +126,14 @@ WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.
             resourcesCollectionForType.add(resource);
         }
 
-        resource.addEventListener(WebInspector.Resource.Event.URLDidChange, this._resourceURLDidChange, this);
-        resource.addEventListener(WebInspector.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
+        resource.addEventListener(WI.Resource.Event.URLDidChange, this._resourceURLDidChange, this);
+        resource.addEventListener(WI.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
     }
 
     _disassociateWithResource(resource, skipRemoval)
     {
-        resource.removeEventListener(WebInspector.Resource.Event.URLDidChange, this._resourceURLDidChange, this);
-        resource.removeEventListener(WebInspector.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
+        resource.removeEventListener(WI.Resource.Event.URLDidChange, this._resourceURLDidChange, this);
+        resource.removeEventListener(WI.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
 
         if (skipRemoval)
             return;
@@ -149,8 +149,8 @@ WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.
     _resourceURLDidChange(event)
     {
         let resource = event.target;
-        console.assert(resource instanceof WebInspector.Resource);
-        if (!(resource instanceof WebInspector.Resource))
+        console.assert(resource instanceof WI.Resource);
+        if (!(resource instanceof WI.Resource))
             return;
 
         let oldURL = event.data.oldURL;
@@ -165,8 +165,8 @@ WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.
     _resourceTypeDidChange(event)
     {
         let resource = event.target;
-        console.assert(resource instanceof WebInspector.Resource);
-        if (!(resource instanceof WebInspector.Resource))
+        console.assert(resource instanceof WI.Resource);
+        if (!(resource instanceof WI.Resource))
             return;
 
         if (this._resourceType) {
@@ -186,18 +186,18 @@ WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.
     }
 };
 
-WebInspector.ResourceCollection.TypeVerifier = {
-    Document: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Document,
+WI.ResourceCollection.TypeVerifier = {
+    Document: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Document,
     Stylesheet: (object) => {
-        if (WebInspector.Collection.TypeVerifier.CSSStyleSheet(object))
+        if (WI.Collection.TypeVerifier.CSSStyleSheet(object))
             return true;
-        return WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Stylesheet
+        return WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Stylesheet
     },
-    Image: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Image,
-    Font: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Font,
-    Script: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Script,
-    XHR: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.XHR,
-    Fetch: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Fetch,
-    WebSocket: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.WebSocket,
-    Other: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Other,
+    Image: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Image,
+    Font: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Font,
+    Script: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Script,
+    XHR: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.XHR,
+    Fetch: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Fetch,
+    WebSocket: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.WebSocket,
+    Other: (object) => WI.Collection.TypeVerifier.Resource(object) && object.type === WI.Resource.Type.Other,
 };

@@ -23,77 +23,77 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMObserver = class DOMObserver
+WI.DOMObserver = class DOMObserver
 {
     // Events defined by the "DOM" domain.
 
     documentUpdated()
     {
-        WebInspector.domTreeManager._documentUpdated();
+        WI.domTreeManager._documentUpdated();
     }
 
     setChildNodes(parentId, payloads)
     {
-        WebInspector.domTreeManager._setChildNodes(parentId, payloads);
+        WI.domTreeManager._setChildNodes(parentId, payloads);
     }
 
     attributeModified(nodeId, name, value)
     {
-        WebInspector.domTreeManager._attributeModified(nodeId, name, value);
+        WI.domTreeManager._attributeModified(nodeId, name, value);
     }
 
     attributeRemoved(nodeId, name)
     {
-        WebInspector.domTreeManager._attributeRemoved(nodeId, name);
+        WI.domTreeManager._attributeRemoved(nodeId, name);
     }
 
     inlineStyleInvalidated(nodeIds)
     {
-        WebInspector.domTreeManager._inlineStyleInvalidated(nodeIds);
+        WI.domTreeManager._inlineStyleInvalidated(nodeIds);
     }
 
     characterDataModified(nodeId, characterData)
     {
-        WebInspector.domTreeManager._characterDataModified(nodeId, characterData);
+        WI.domTreeManager._characterDataModified(nodeId, characterData);
     }
 
     childNodeCountUpdated(nodeId, childNodeCount)
     {
-        WebInspector.domTreeManager._childNodeCountUpdated(nodeId, childNodeCount);
+        WI.domTreeManager._childNodeCountUpdated(nodeId, childNodeCount);
     }
 
     childNodeInserted(parentNodeId, previousNodeId, payload)
     {
-        WebInspector.domTreeManager._childNodeInserted(parentNodeId, previousNodeId, payload);
+        WI.domTreeManager._childNodeInserted(parentNodeId, previousNodeId, payload);
     }
 
     childNodeRemoved(parentNodeId, nodeId)
     {
-        WebInspector.domTreeManager._childNodeRemoved(parentNodeId, nodeId);
+        WI.domTreeManager._childNodeRemoved(parentNodeId, nodeId);
     }
 
     shadowRootPushed(parentNodeId, nodeId)
     {
-        WebInspector.domTreeManager._childNodeInserted(parentNodeId, 0, nodeId);
+        WI.domTreeManager._childNodeInserted(parentNodeId, 0, nodeId);
     }
 
     shadowRootPopped(parentNodeId, nodeId)
     {
-        WebInspector.domTreeManager._childNodeRemoved(parentNodeId, nodeId);
+        WI.domTreeManager._childNodeRemoved(parentNodeId, nodeId);
     }
 
     customElementStateChanged(nodeId, customElementState)
     {
-        WebInspector.domTreeManager._customElementStateChanged(nodeId, customElementState);
+        WI.domTreeManager._customElementStateChanged(nodeId, customElementState);
     }
 
     pseudoElementAdded(parentNodeId, pseudoElement)
     {
-        WebInspector.domTreeManager._pseudoElementAdded(parentNodeId, pseudoElement);
+        WI.domTreeManager._pseudoElementAdded(parentNodeId, pseudoElement);
     }
 
     pseudoElementRemoved(parentNodeId, pseudoElementId)
     {
-        WebInspector.domTreeManager._pseudoElementRemoved(parentNodeId, pseudoElementId);
+        WI.domTreeManager._pseudoElementRemoved(parentNodeId, pseudoElementId);
     }
 };

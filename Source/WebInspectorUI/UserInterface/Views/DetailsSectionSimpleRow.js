@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends WebInspector.DetailsSectionRow
+WI.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends WI.DetailsSectionRow
 {
     constructor(label, value)
     {
@@ -43,7 +43,7 @@ WebInspector.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends Web
         // <div> set to "display: table-cell" selects text outside the cell.
         //
         // On triple-click, adjust the selection range to include only the value
-        // element if the selection extends WebInspector.beyond it.
+        // element if the selection extends WI.beyond it.
         var valueElementClicked = function(event) {
             event.stopPropagation();
 
@@ -91,16 +91,16 @@ WebInspector.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends Web
         this._value = value || "";
 
         if (this._value) {
-            this.element.classList.remove(WebInspector.DetailsSectionSimpleRow.EmptyStyleClassName);
+            this.element.classList.remove(WI.DetailsSectionSimpleRow.EmptyStyleClassName);
 
             // If the value has space characters that cause word wrapping then we don't need the data class.
             if (/[\s\u200b]/.test(this._value))
-                this.element.classList.remove(WebInspector.DetailsSectionSimpleRow.DataStyleClassName);
+                this.element.classList.remove(WI.DetailsSectionSimpleRow.DataStyleClassName);
             else
-                this.element.classList.add(WebInspector.DetailsSectionSimpleRow.DataStyleClassName);
+                this.element.classList.add(WI.DetailsSectionSimpleRow.DataStyleClassName);
         } else {
-            this.element.classList.add(WebInspector.DetailsSectionSimpleRow.EmptyStyleClassName);
-            this.element.classList.remove(WebInspector.DetailsSectionSimpleRow.DataStyleClassName);
+            this.element.classList.add(WI.DetailsSectionSimpleRow.EmptyStyleClassName);
+            this.element.classList.remove(WI.DetailsSectionSimpleRow.DataStyleClassName);
         }
 
         if (value instanceof Node) {
@@ -121,5 +121,5 @@ WebInspector.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends Web
     }
 };
 
-WebInspector.DetailsSectionSimpleRow.DataStyleClassName = "data";
-WebInspector.DetailsSectionSimpleRow.EmptyStyleClassName = "empty";
+WI.DetailsSectionSimpleRow.DataStyleClassName = "data";
+WI.DetailsSectionSimpleRow.EmptyStyleClassName = "empty";

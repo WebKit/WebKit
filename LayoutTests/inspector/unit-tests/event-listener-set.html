@@ -8,10 +8,10 @@ function test()
     const FooEvent = "foo";
     const BarEvent = "bar";
     const BazEvent = "baz";
-    var emitter1 = new WebInspector.Object();
-    var emitter2 = new WebInspector.Object();
-    var context1 = new WebInspector.Object();
-    var context2 = new WebInspector.Object();
+    var emitter1 = new WI.Object();
+    var emitter2 = new WI.Object();
+    var context1 = new WI.Object();
+    var context2 = new WI.Object();
     var data1 = [1, 2, 3];
     var data2 = [4, 6, 8];
 
@@ -44,7 +44,7 @@ function test()
 
     // Test for multiple firings of listeners in the set.
 
-    var listenerSet = new WebInspector.EventListenerSet(context1);
+    var listenerSet = new WI.EventListenerSet(context1);
     InspectorTest.assert(!emitter1.hasEventListeners(FooEvent), "Emitter should not have any listeners.");
     emitter1.dispatchEventToListeners(FooEvent, data1); // Should not fire anything.
 
@@ -112,6 +112,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-    <p>Testing basic functionality of WebInspector.EventListenerSet.</p>
+    <p>Testing basic functionality of WI.EventListenerSet.</p>
 </body>
 </html>

@@ -23,26 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.TimelineView
+WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 {
     constructor(timeline, extraArguments)
     {
         super(timeline, extraArguments);
 
-        console.assert(timeline.type === WebInspector.TimelineRecord.Type.Layout, timeline);
+        console.assert(timeline.type === WI.TimelineRecord.Type.Layout, timeline);
 
         let columns = {type: {}, name: {}, location: {}, area: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
 
-        columns.name.title = WebInspector.UIString("Type");
+        columns.name.title = WI.UIString("Type");
         columns.name.width = "15%";
 
         var typeToLabelMap = new Map;
-        for (var key in WebInspector.LayoutTimelineRecord.EventType) {
-            var value = WebInspector.LayoutTimelineRecord.EventType[key];
-            typeToLabelMap.set(value, WebInspector.LayoutTimelineRecord.displayNameForEventType(value));
+        for (var key in WI.LayoutTimelineRecord.EventType) {
+            var value = WI.LayoutTimelineRecord.EventType[key];
+            typeToLabelMap.set(value, WI.LayoutTimelineRecord.displayNameForEventType(value));
         }
 
-        columns.type.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("layout", typeToLabelMap);
+        columns.type.scopeBar = WI.TimelineDataGrid.createColumnScopeBar("layout", typeToLabelMap);
         columns.type.hidden = true;
         columns.type.locked = true;
 
@@ -52,36 +52,36 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
         this._scopeBar = columns.type.scopeBar;
 
-        columns.location.title = WebInspector.UIString("Initiator");
+        columns.location.title = WI.UIString("Initiator");
         columns.location.width = "25%";
 
-        columns.area.title = WebInspector.UIString("Area");
+        columns.area.title = WI.UIString("Area");
         columns.area.width = "8%";
 
-        columns.width.title = WebInspector.UIString("Width");
+        columns.width.title = WI.UIString("Width");
         columns.width.width = "8%";
 
-        columns.height.title = WebInspector.UIString("Height");
+        columns.height.title = WI.UIString("Height");
         columns.height.width = "8%";
 
-        columns.startTime.title = WebInspector.UIString("Start Time");
+        columns.startTime.title = WI.UIString("Start Time");
         columns.startTime.width = "8%";
         columns.startTime.aligned = "right";
 
-        columns.totalTime.title = WebInspector.UIString("Duration");
+        columns.totalTime.title = WI.UIString("Duration");
         columns.totalTime.width = "8%";
         columns.totalTime.aligned = "right";
 
         for (var column in columns)
             columns[column].sortable = true;
 
-        this._dataGrid = new WebInspector.LayoutTimelineDataGrid(columns);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridSelectedNodeChanged, this);
+        this._dataGrid = new WI.LayoutTimelineDataGrid(columns);
+        this._dataGrid.addEventListener(WI.DataGrid.Event.SelectedNodeChanged, this._dataGridSelectedNodeChanged, this);
 
         this.setupDataGrid(this._dataGrid);
 
         this._dataGrid.sortColumnIdentifier = "startTime";
-        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Ascending;
         this._dataGrid.createSettings("layout-timeline-view");
 
         this._hoveredTreeElement = null;
@@ -95,7 +95,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         this.element.classList.add("layout");
         this.addSubview(this._dataGrid);
 
-        timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
+        timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
 
         this._pendingRecords = [];
     }
@@ -111,12 +111,12 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
         let pathComponents = [];
 
         while (dataGridNode && !dataGridNode.root) {
-            console.assert(dataGridNode instanceof WebInspector.TimelineDataGridNode);
+            console.assert(dataGridNode instanceof WI.TimelineDataGridNode);
             if (dataGridNode.hidden)
                 return null;
 
-            let pathComponent = new WebInspector.TimelineDataGridNodePathComponent(dataGridNode);
-            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
+            let pathComponent = new WI.TimelineDataGridNodePathComponent(dataGridNode);
+            pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this.dataGridNodePathComponentSelected, this);
             pathComponents.unshift(pathComponent);
             dataGridNode = dataGridNode.parent;
         }
@@ -144,7 +144,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
 
     closed()
     {
-        console.assert(this.representedObject instanceof WebInspector.Timeline);
+        console.assert(this.representedObject instanceof WI.Timeline);
         this.representedObject.removeEventListener(null, null, this);
 
         this._dataGrid.closed();
@@ -201,7 +201,7 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
             return;
 
         for (var layoutTimelineRecord of this._pendingRecords) {
-            let dataGridNode = new WebInspector.LayoutTimelineDataGridNode(layoutTimelineRecord, this.zeroTime);
+            let dataGridNode = new WI.LayoutTimelineDataGridNode(layoutTimelineRecord, this.zeroTime);
 
             this._dataGrid.addRowInSortOrder(null, dataGridNode);
 
@@ -214,9 +214,9 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
                 }
 
                 let childRecord = entry.children[entry.index];
-                console.assert(childRecord.type === WebInspector.TimelineRecord.Type.Layout, childRecord);
+                console.assert(childRecord.type === WI.TimelineRecord.Type.Layout, childRecord);
 
-                let childDataGridNode = new WebInspector.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
+                let childDataGridNode = new WI.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
                 console.assert(entry.parentDataGridNode, "entry without parent!");
                 this._dataGrid.addRowInSortOrder(null, childDataGridNode, entry.parentDataGridNode);
 
@@ -232,10 +232,10 @@ WebInspector.LayoutTimelineView = class LayoutTimelineView extends WebInspector.
     _layoutTimelineRecordAdded(event)
     {
         var layoutTimelineRecord = event.data.record;
-        console.assert(layoutTimelineRecord instanceof WebInspector.LayoutTimelineRecord);
+        console.assert(layoutTimelineRecord instanceof WI.LayoutTimelineRecord);
 
         // Only add top-level records, to avoid processing child records multiple times.
-        if (layoutTimelineRecord.parent instanceof WebInspector.LayoutTimelineRecord)
+        if (layoutTimelineRecord.parent instanceof WI.LayoutTimelineRecord)
             return;
 
         this._pendingRecords.push(layoutTimelineRecord);

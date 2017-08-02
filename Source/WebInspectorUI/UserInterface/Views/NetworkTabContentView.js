@@ -23,22 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTabContentView = class NetworkTabContentView extends WebInspector.ContentBrowserTabContentView
+WI.NetworkTabContentView = class NetworkTabContentView extends WI.ContentBrowserTabContentView
 {
     constructor(identifier)
     {
-        let {image, title} = WebInspector.NetworkTabContentView.tabInfo();
-        let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
-        let detailsSidebarPanelConstructors = [WebInspector.ResourceDetailsSidebarPanel, WebInspector.ProbeDetailsSidebarPanel];
+        let {image, title} = WI.NetworkTabContentView.tabInfo();
+        let tabBarItem = new WI.GeneralTabBarItem(image, title);
+        let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel];
 
-        super(identifier || "network", "network", tabBarItem, WebInspector.NetworkSidebarPanel, detailsSidebarPanelConstructors);
+        super(identifier || "network", "network", tabBarItem, WI.NetworkSidebarPanel, detailsSidebarPanelConstructors);
     }
 
     static tabInfo()
     {
         return {
             image: "Images/Network.svg",
-            title: WebInspector.UIString("Network"),
+            title: WI.UIString("Network"),
         };
     }
 
@@ -51,12 +51,12 @@ WebInspector.NetworkTabContentView = class NetworkTabContentView extends WebInsp
 
     get type()
     {
-        return WebInspector.NetworkTabContentView.Type;
+        return WI.NetworkTabContentView.Type;
     }
 
     canShowRepresentedObject(representedObject)
     {
-        if (!(representedObject instanceof WebInspector.Resource))
+        if (!(representedObject instanceof WI.Resource))
             return false;
 
         return !!this.navigationSidebarPanel.contentTreeOutline.getCachedTreeElement(representedObject);
@@ -70,4 +70,4 @@ WebInspector.NetworkTabContentView = class NetworkTabContentView extends WebInsp
     }
 };
 
-WebInspector.NetworkTabContentView.Type = "network";
+WI.NetworkTabContentView.Type = "network";

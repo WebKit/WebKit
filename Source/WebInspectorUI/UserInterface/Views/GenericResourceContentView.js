@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.GenericResourceContentView = class GenericResourceContentView extends WebInspector.ResourceContentView
+WI.GenericResourceContentView = class GenericResourceContentView extends WI.ResourceContentView
 {
     constructor(resource)
     {

@@ -31,12 +31,12 @@ function test()
         test(resolve, reject) {
             let seen = 0;
             const expected = 16;
-            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+            WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, handler);
             function handler(event) {
                 let message = event.data.message;
                 InspectorTest.log(message.messageText);
                 if (++seen === expected) {
-                    WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, handler);
                     resolve();
                 }
             }
@@ -52,12 +52,12 @@ function test()
         test(resolve, reject) {
             let seen = 0;
             const expected = 20;
-            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+            WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, handler);
             function handler(event) {
                 let message = event.data.message;
                 InspectorTest.log(message.messageText);
                 if (++seen === expected) {
-                    WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
+                    WI.logManager.removeEventListener(WI.LogManager.Event.MessageAdded, handler);
                     resolve();
                 }
             }

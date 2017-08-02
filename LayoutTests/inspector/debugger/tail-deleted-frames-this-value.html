@@ -15,13 +15,13 @@ function test()
         // 0 based indices.
         let testInfo = {line: 3, column: 4};
         let location = scriptObject.createSourceCodeLocation(testInfo.line, testInfo.column);
-        let breakpoint = new WebInspector.Breakpoint(location);
-        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+        let breakpoint = new WI.Breakpoint(location);
+        WI.debuggerManager.addBreakpoint(breakpoint);
         InspectorTest.evaluateInPage("startABC()");
     }
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, function(event) {
-        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        var activeCallFrame = WI.debuggerManager.activeCallFrame;
 
         if (!activeCallFrame)
             return;
@@ -39,7 +39,7 @@ function test()
             {functionName: 'c', thisValue: ['cThis', 0], isTailDeleted: true}
         ];
 
-        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
         let callFrames = targetData.callFrames;
 
         InspectorTest.assert(callFrames.length >= expectedFrames.length);
@@ -72,16 +72,16 @@ function test()
                 InspectorTest.pass(`Call Frame ${i} 'this' value is correct.`);
             }
 
-            WebInspector.debuggerManager.resume();
+            WI.debuggerManager.resume();
         });
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, function(event) {
         InspectorTest.log("Tests done");
         InspectorTest.completeTest();
     });
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
         eventScriptObject = event.data.script;
         
         if (/tail-deleted-frames-this-value\.js$/.test(eventScriptObject.url)) {

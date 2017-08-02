@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TypeDescription = class TypeDescription
+WI.TypeDescription = class TypeDescription
 {
     constructor(leastCommonAncestor, typeSet, structures, valid, truncated)
     {
         console.assert(!leastCommonAncestor || typeof leastCommonAncestor === "string");
-        console.assert(!typeSet || typeSet instanceof WebInspector.TypeSet);
-        console.assert(!structures || structures.every((x) => x instanceof WebInspector.StructureDescription));
+        console.assert(!typeSet || typeSet instanceof WI.TypeSet);
+        console.assert(!structures || structures.every((x) => x instanceof WI.StructureDescription));
 
         this._leastCommonAncestor = leastCommonAncestor || null;
         this._typeSet = typeSet || null;
@@ -45,13 +45,13 @@ WebInspector.TypeDescription = class TypeDescription
     {
         var typeSet = undefined;
         if (payload.typeSet)
-            typeSet = WebInspector.TypeSet.fromPayload(payload.typeSet);
+            typeSet = WI.TypeSet.fromPayload(payload.typeSet);
 
         var structures = undefined;
         if (payload.structures)
-            structures = payload.structures.map(WebInspector.StructureDescription.fromPayload);
+            structures = payload.structures.map(WI.StructureDescription.fromPayload);
 
-        return new WebInspector.TypeDescription(payload.leastCommonAncestor, typeSet, structures, payload.isValid, payload.isTruncated);
+        return new WI.TypeDescription(payload.leastCommonAncestor, typeSet, structures, payload.isValid, payload.isTruncated);
     }
 
     // Public

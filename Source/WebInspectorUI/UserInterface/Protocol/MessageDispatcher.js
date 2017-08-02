@@ -24,41 +24,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector._messagesToDispatch = [];
+WI._messagesToDispatch = [];
 
-WebInspector.dispatchNextQueuedMessageFromBackend = function()
+WI.dispatchNextQueuedMessageFromBackend = function()
 {
-    const startCount = WebInspector._messagesToDispatch.length;
+    const startCount = WI._messagesToDispatch.length;
     const startTimestamp = performance.now();
     const timeLimitPerRunLoop = 10; // milliseconds
 
     let i = 0;
-    for (; i < WebInspector._messagesToDispatch.length; ++i) {
+    for (; i < WI._messagesToDispatch.length; ++i) {
         // Defer remaining messages if we have taken too long. In practice, single
         // messages like Page.getResourceContent blow through the time budget.
         if (performance.now() - startTimestamp > timeLimitPerRunLoop)
             break;
 
-        InspectorBackend.dispatch(WebInspector._messagesToDispatch[i]);
+        InspectorBackend.dispatch(WI._messagesToDispatch[i]);
     }
 
-    if (i === WebInspector._messagesToDispatch.length) {
-        WebInspector._messagesToDispatch = [];
-        WebInspector._dispatchTimeout = null;
+    if (i === WI._messagesToDispatch.length) {
+        WI._messagesToDispatch = [];
+        WI._dispatchTimeout = null;
     } else {
-        WebInspector._messagesToDispatch = WebInspector._messagesToDispatch.slice(i);
-        WebInspector._dispatchTimeout = setTimeout(WebInspector.dispatchNextQueuedMessageFromBackend, 0);
+        WI._messagesToDispatch = WI._messagesToDispatch.slice(i);
+        WI._dispatchTimeout = setTimeout(WI.dispatchNextQueuedMessageFromBackend, 0);
     }
 
     if (InspectorBackend.dumpInspectorTimeStats) {
         let messageDuration = (performance.now() - startTimestamp).toFixed(3);
-        let dispatchedCount = startCount - WebInspector._messagesToDispatch.length;
-        let remainingCount = WebInspector._messagesToDispatch.length;
+        let dispatchedCount = startCount - WI._messagesToDispatch.length;
+        let remainingCount = WI._messagesToDispatch.length;
         console.log(`time-stats: --- RunLoop duration: ${messageDuration}ms; dispatched: ${dispatchedCount}; remaining: ${remainingCount}`);
     }
 };
 
-WebInspector.dispatchMessageFromBackend = function(message)
+WI.dispatchMessageFromBackend = function(message)
 {
     // Enforce asynchronous interaction between the backend and the frontend by queueing messages.
     // The messages are dequeued on a zero delay timeout.

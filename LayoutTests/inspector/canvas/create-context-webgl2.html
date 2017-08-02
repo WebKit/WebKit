@@ -14,16 +14,16 @@ function test() {
     addSimpleTestCase({
         name: "Attached",
         expression: `createAttachedCanvas("webgl2")`,
-        contextType: WebInspector.Canvas.ContextType.WebGL2,
+        contextType: WI.Canvas.ContextType.WebGL2,
     });
 
     addSimpleTestCase({
         name: "Detached",
         expression: `createDetachedCanvas("webgl2")`,
-        contextType: WebInspector.Canvas.ContextType.WebGL2,
+        contextType: WI.Canvas.ContextType.WebGL2,
     });
 
-    addCSSCanvasTestCase(WebInspector.Canvas.ContextType.WebGL2);
+    addCSSCanvasTestCase(WI.Canvas.ContextType.WebGL2);
 
     suite.runTestCasesAndFinish();
 }

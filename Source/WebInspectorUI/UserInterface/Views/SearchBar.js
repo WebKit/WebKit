@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SearchBar = class SearchBar extends WebInspector.NavigationItem
+WI.SearchBar = class SearchBar extends WI.NavigationItem
 {
     constructor(identifier, placeholder, delegate, suppressIncremental)
     {
@@ -33,8 +33,8 @@ WebInspector.SearchBar = class SearchBar extends WebInspector.NavigationItem
 
         this._element.classList.add("search-bar");
 
-        this._keyboardShortcutEsc = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape);
-        this._keyboardShortcutEnter = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Enter);
+        this._keyboardShortcutEsc = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape);
+        this._keyboardShortcutEnter = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Enter);
 
         this._searchInput = this._element.appendChild(document.createElement("input"));
         this._searchInput.type = "search";
@@ -72,7 +72,7 @@ WebInspector.SearchBar = class SearchBar extends WebInspector.NavigationItem
 
     _handleSearchEvent(event)
     {
-        this.dispatchEventToListeners(WebInspector.SearchBar.Event.TextChanged);
+        this.dispatchEventToListeners(WI.SearchBar.Event.TextChanged);
     }
 
     _handleKeydownEvent(event)
@@ -93,6 +93,6 @@ WebInspector.SearchBar = class SearchBar extends WebInspector.NavigationItem
     }
 };
 
-WebInspector.SearchBar.Event = {
+WI.SearchBar.Event = {
     TextChanged: "searchbar-text-did-change"
 };

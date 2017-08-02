@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkInstrument = class NetworkInstrument extends WebInspector.Instrument
+WI.NetworkInstrument = class NetworkInstrument extends WI.Instrument
 {
     // Protected
 
     get timelineRecordType()
     {
-        return WebInspector.TimelineRecord.Type.Network;
+        return WI.TimelineRecord.Type.Network;
     }
 
     startInstrumentation(initiatedByBackend)

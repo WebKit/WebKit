@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleTabbedPropertiesRow = class VisualStyleTabbedPropertiesRow extends WebInspector.DetailsSectionRow
+WI.VisualStyleTabbedPropertiesRow = class VisualStyleTabbedPropertiesRow extends WI.DetailsSectionRow
 {
     constructor(tabMap)
     {

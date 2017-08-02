@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScopeRadioButtonNavigationItem = class ScopeRadioButtonNavigationItem extends WebInspector.RadioButtonNavigationItem
+WI.ScopeRadioButtonNavigationItem = class ScopeRadioButtonNavigationItem extends WI.RadioButtonNavigationItem
 {
     constructor(identifier, toolTip, scopeItems, defaultScopeItem)
     {
@@ -85,10 +85,10 @@ WebInspector.ScopeRadioButtonNavigationItem = class ScopeRadioButtonNavigationIt
         }
 
         this._element.title = selectedItemIdentifier.label;
-        this.dispatchEventToListeners(WebInspector.ScopeRadioButtonNavigationItem.Event.SelectedItemChanged);
+        this.dispatchEventToListeners(WI.ScopeRadioButtonNavigationItem.Event.SelectedItemChanged);
     }
 };
 
-WebInspector.ScopeRadioButtonNavigationItem.Event = {
+WI.ScopeRadioButtonNavigationItem.Event = {
     SelectedItemChanged: "scope-radio-button-navigation-item-selected-item-changed"
 };

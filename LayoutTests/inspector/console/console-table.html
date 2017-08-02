@@ -37,9 +37,9 @@ function test()
         return value;
     }
 
-    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
+    WI.logManager.addEventListener(WI.LogManager.Event.MessageAdded, function(event) {
         var message = event.data.message;
-        InspectorTest.assert(message instanceof WebInspector.ConsoleMessage);
+        InspectorTest.assert(message instanceof WI.ConsoleMessage);
         InspectorTest.log("\nSTEP: " + steps[currentStepIndex]);
         InspectorTest.log(JSON.stringify(message, remoteObjectJSONFilter, "  "));
 
@@ -48,7 +48,7 @@ function test()
     });
 
     for (var step of steps)
-        WebInspector.runtimeManager.evaluateInInspectedWindow(step, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, function(){});
+        WI.runtimeManager.evaluateInInspectedWindow(step, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, function(){});
 }
 </script>
 </head>

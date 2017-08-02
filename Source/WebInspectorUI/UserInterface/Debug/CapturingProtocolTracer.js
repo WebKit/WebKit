@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CapturingProtocolTracer = class CapturingProtocolTracer extends WebInspector.ProtocolTracer
+WI.CapturingProtocolTracer = class CapturingProtocolTracer extends WI.ProtocolTracer
 {
     constructor()
     {
         super();
 
-        this._trace = new WebInspector.ProtocolTrace;
+        this._trace = new WI.ProtocolTrace;
     }
 
     // Public

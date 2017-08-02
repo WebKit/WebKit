@@ -40,7 +40,7 @@ function test() {
         name: "Canvas.CSSCanvasClients.InitialLoad",
         description: "Check that the CanvasManager has one CSS canvas initially.",
         test(resolve, reject) {
-            let canvases = WebInspector.canvasManager.canvases;
+            let canvases = WI.canvasManager.canvases;
             InspectorTest.expectEqual(canvases.length, 1, "CanvasManager should have one canvas.");
             if (!canvases.length) {
                 reject("Missing canvas.");
@@ -60,7 +60,7 @@ function test() {
         name: "Canvas.CSSCanvasClients.Create",
         description: "Check that creating a CSS canvas client node is tracked correctly.",
         test(resolve, reject) {
-            WebInspector.Canvas.awaitEvent(WebInspector.Canvas.Event.CSSCanvasClientNodesChanged)
+            WI.Canvas.awaitEvent(WI.Canvas.Event.CSSCanvasClientNodesChanged)
             .then((event) => {
                 InspectorTest.expectEqual(event.target.cssCanvasName, "css-canvas", `Canvas with created client should have CSS name "css-canvas".`);
                 event.target.requestCSSCanvasClientNodes((clientNodes) => {
@@ -78,7 +78,7 @@ function test() {
         name: "Canvas.CSSCanvasClients.Destroy",
         description: "Check that destroying a CSS canvas client node is tracked correctly.",
         test(resolve, reject) {
-            WebInspector.Canvas.awaitEvent(WebInspector.Canvas.Event.CSSCanvasClientNodesChanged)
+            WI.Canvas.awaitEvent(WI.Canvas.Event.CSSCanvasClientNodesChanged)
             .then((event) => {
                 InspectorTest.expectEqual(event.target.cssCanvasName, "css-canvas", `Canvas with destroyed client should have CSS name "css-canvas".`);
                 event.target.requestCSSCanvasClientNodes((clientNodes) => {

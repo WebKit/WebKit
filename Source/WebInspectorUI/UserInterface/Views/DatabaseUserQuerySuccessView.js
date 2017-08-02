@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseUserQuerySuccessView = class DatabaseUserQuerySuccessView extends WebInspector.DatabaseUserQueryViewBase
+WI.DatabaseUserQuerySuccessView = class DatabaseUserQuerySuccessView extends WI.DatabaseUserQueryViewBase
 {
     constructor(query, columnNames, values)
     {
         super(query);
 
-        this._dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
+        this._dataGrid = WI.DataGrid.createSortableDataGrid(columnNames, values);
         if (this._dataGrid) {
             this._dataGrid.inline = true;
 
@@ -38,7 +38,7 @@ WebInspector.DatabaseUserQuerySuccessView = class DatabaseUserQuerySuccessView e
             this._dataGrid.updateLayoutIfNeeded();
         } else {
             this.resultElement.classList.add("no-results");
-            this.resultElement.textContent = WebInspector.UIString("Query returned no results.");
+            this.resultElement.textContent = WI.UIString("Query returned no results.");
         }
     }
 

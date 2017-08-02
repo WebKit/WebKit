@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WebInspector.TimelineOverviewGraph
+WI.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WI.TimelineOverviewGraph
 {
     constructor(timeline, timelineOverview)
     {
@@ -32,7 +32,7 @@ WebInspector.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph ext
         this.element.classList.add("layout");
 
         this._layoutTimeline = timeline;
-        this._layoutTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
+        this._layoutTimeline.addEventListener(WI.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
 
         this.reset();
     }
@@ -79,7 +79,7 @@ WebInspector.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph ext
         {
             var timelineRecordBar = row.recordBars[recordBarIndex];
             if (!timelineRecordBar)
-                timelineRecordBar = row.recordBars[recordBarIndex] = new WebInspector.TimelineRecordBar(records, renderMode);
+                timelineRecordBar = row.recordBars[recordBarIndex] = new WI.TimelineRecordBar(records, renderMode);
             else {
                 timelineRecordBar.renderMode = renderMode;
                 timelineRecordBar.records = records;
@@ -91,7 +91,7 @@ WebInspector.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph ext
             ++recordBarIndex;
         }
 
-        WebInspector.TimelineRecordBar.createCombinedBars(row.records, secondsPerPixel, this, createBar.bind(this));
+        WI.TimelineRecordBar.createCombinedBars(row.records, secondsPerPixel, this, createBar.bind(this));
 
         // Remove the remaining unused TimelineRecordBars.
         for (; recordBarIndex < row.recordBars.length; ++recordBarIndex) {
@@ -103,9 +103,9 @@ WebInspector.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph ext
     _layoutTimelineRecordAdded(event)
     {
         var layoutTimelineRecord = event.data.record;
-        console.assert(layoutTimelineRecord instanceof WebInspector.LayoutTimelineRecord);
+        console.assert(layoutTimelineRecord instanceof WI.LayoutTimelineRecord);
 
-        if (layoutTimelineRecord.eventType === WebInspector.LayoutTimelineRecord.EventType.Paint || layoutTimelineRecord.eventType === WebInspector.LayoutTimelineRecord.EventType.Composite)
+        if (layoutTimelineRecord.eventType === WI.LayoutTimelineRecord.EventType.Paint || layoutTimelineRecord.eventType === WI.LayoutTimelineRecord.EventType.Composite)
             this._timelinePaintRecordRow.records.push(layoutTimelineRecord);
         else
             this._timelineLayoutRecordRow.records.push(layoutTimelineRecord);

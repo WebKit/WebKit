@@ -25,7 +25,7 @@ function test()
     var scriptsCount = 0;
     const expectedScriptsCount = 5;
 
-    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
         var script = event.data.script;
         if (!/LayoutTests/.test(script.url) && !/eval\d\.js/.test(script.sourceURL))
             return;

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceQueryResult = class ResourceQueryResult
+WI.ResourceQueryResult = class ResourceQueryResult
 {
     constructor(resource, matches, cookie)
     {
@@ -64,7 +64,7 @@ WebInspector.ResourceQueryResult = class ResourceQueryResult
         const specialMultiplier = 5;
 
         function getMultiplier(match) {
-            if (match.type === WebInspector.ResourceQueryMatch.Type.Special)
+            if (match.type === WI.ResourceQueryMatch.Type.Special)
                 return specialMultiplier;
 
             return 1;
@@ -118,12 +118,12 @@ WebInspector.ResourceQueryResult = class ResourceQueryResult
             }
 
             // Begin a new range when a gap between this match and the previous match is found.
-            ranges.push(new WebInspector.TextRange(0, startIndex, 0, endIndex + 1));
+            ranges.push(new WI.TextRange(0, startIndex, 0, endIndex + 1));
             startIndex = match.index;
             endIndex = startIndex;
         }
 
-        ranges.push(new WebInspector.TextRange(0, startIndex, 0, endIndex + 1));
+        ranges.push(new WI.TextRange(0, startIndex, 0, endIndex + 1));
         return ranges;
     }
 

@@ -36,7 +36,7 @@ function test()
         description: "Sample some basic code.",
         test(resolve, reject) {
             InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
-                let tree = WebInspector.CallingContextTree.__test_makeTreeFromProtocolMessageObject(messageObject);
+                let tree = WI.CallingContextTree.__test_makeTreeFromProtocolMessageObject(messageObject);
 
                 let trace = [
                     {name: "top"},

@@ -54,14 +54,14 @@ function test()
 
         // Run the expression, and then run a garbage collection on a different
         // event loop so no objects are kept alive by the stack.
-        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, function(remoteObject, wasThrown) {
-            WebInspector.runtimeManager.evaluateInInspectedWindow("GCController.collect()", {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, function() {
-                InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
+        WI.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, function(remoteObject, wasThrown) {
+            WI.runtimeManager.evaluateInInspectedWindow("GCController.collect()", {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, function() {
+                InspectorTest.assert(remoteObject instanceof WI.RemoteObject);
                 remoteObject.getCollectionEntries(0, 100, function(entries) {
                     InspectorTest.log("ENTRIES:");
                     entries.sort((a, b) => a.value.value - b.value.value);
                     for (let entry of entries)
-                        InspectorTest.assert(entry instanceof WebInspector.CollectionEntry);
+                        InspectorTest.assert(entry instanceof WI.CollectionEntry);
                     InspectorTest.log(JSON.stringify(entries, remoteObjectJSONFilter, "  "));
                     remoteObject.releaseWeakCollectionEntries();
                     runNextStep();

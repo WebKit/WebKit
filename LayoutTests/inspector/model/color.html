@@ -7,85 +7,85 @@ function test()
 {
     function formatToString(format) {
         switch (format) {
-        case WebInspector.Color.Format.Original:
+        case WI.Color.Format.Original:
             return "Original";
-        case WebInspector.Color.Format.Keyword:
+        case WI.Color.Format.Keyword:
             return "Keyword";
-        case WebInspector.Color.Format.HEX:
+        case WI.Color.Format.HEX:
             return "HEX";
-        case WebInspector.Color.Format.ShortHEX:
+        case WI.Color.Format.ShortHEX:
             return "Short HEX";
-        case WebInspector.Color.Format.HEXAlpha:
+        case WI.Color.Format.HEXAlpha:
             return "HEX with Alpha";
-        case WebInspector.Color.Format.ShortHEXAlpha:
+        case WI.Color.Format.ShortHEXAlpha:
             return "Short HEX with Alpha";
-        case WebInspector.Color.Format.RGB:
+        case WI.Color.Format.RGB:
             return "RGB";
-        case WebInspector.Color.Format.RGBA:
+        case WI.Color.Format.RGBA:
             return "RGBA";
-        case WebInspector.Color.Format.HSL:
+        case WI.Color.Format.HSL:
             return "HSL";
-        case WebInspector.Color.Format.HSLA:
+        case WI.Color.Format.HSLA:
             return "HSLA";
         default:
             return "Unexpected format";
         }
     }
 
-    let suite = InspectorTest.createAsyncSuite("WebInspector.Color");
+    let suite = InspectorTest.createAsyncSuite("WI.Color");
 
     suite.addTestCase({
-        name: "WebInspector.Color.fromString",
+        name: "WI.Color.fromString",
         description: "Test we can detect colors from strings.",
         test(resolve, reject) {
             function testGood(string, expectedFormat) {
-                let color = WebInspector.Color.fromString(string);
-                InspectorTest.expectThat(color instanceof WebInspector.Color, `'${string}' should be detected`);
+                let color = WI.Color.fromString(string);
+                InspectorTest.expectThat(color instanceof WI.Color, `'${string}' should be detected`);
                 InspectorTest.expectThat(color && color.format === expectedFormat, `'${string}' was the expected '${formatToString(expectedFormat)}' format`);
             }
 
             function testBad(string) {
-                let color = WebInspector.Color.fromString(string);
+                let color = WI.Color.fromString(string);
                 InspectorTest.expectThat(color === null, `'${string}' should not be detected`);
                 if (color) InspectorTest.log(`'${string}' detected with format '${formatToString(color.format)}'`);
             }
 
-            testGood("#000", WebInspector.Color.Format.ShortHEX);
-            testGood("#a0A", WebInspector.Color.Format.ShortHEX);
-            testGood("#000000", WebInspector.Color.Format.HEX);
-            testGood("#a0Aa0A", WebInspector.Color.Format.HEX);
+            testGood("#000", WI.Color.Format.ShortHEX);
+            testGood("#a0A", WI.Color.Format.ShortHEX);
+            testGood("#000000", WI.Color.Format.HEX);
+            testGood("#a0Aa0A", WI.Color.Format.HEX);
 
-            testGood("#0000", WebInspector.Color.Format.ShortHEXAlpha);
-            testGood("#a0Af", WebInspector.Color.Format.ShortHEXAlpha);
-            testGood("#00000000", WebInspector.Color.Format.HEXAlpha);
-            testGood("#a0Aa0Aff", WebInspector.Color.Format.HEXAlpha);
+            testGood("#0000", WI.Color.Format.ShortHEXAlpha);
+            testGood("#a0Af", WI.Color.Format.ShortHEXAlpha);
+            testGood("#00000000", WI.Color.Format.HEXAlpha);
+            testGood("#a0Aa0Aff", WI.Color.Format.HEXAlpha);
 
-            testGood("rgb(1,2,3)", WebInspector.Color.Format.RGB);
-            testGood("RGB(1,2,3)", WebInspector.Color.Format.RGB);
-            testGood("rgb(999, 999, 999)", WebInspector.Color.Format.RGB);
-            testGood("rgb( 1 , 1 , 1 )", WebInspector.Color.Format.RGB);
+            testGood("rgb(1,2,3)", WI.Color.Format.RGB);
+            testGood("RGB(1,2,3)", WI.Color.Format.RGB);
+            testGood("rgb(999, 999, 999)", WI.Color.Format.RGB);
+            testGood("rgb( 1 , 1 , 1 )", WI.Color.Format.RGB);
 
-            testGood("rgba(1,2,3,0)", WebInspector.Color.Format.RGBA);
-            testGood("RGBA(1,2,3,0)", WebInspector.Color.Format.RGBA);
-            testGood("rgba(999, 999, 999, 999)", WebInspector.Color.Format.RGBA);
-            testGood("rgba( 1 , 1 , 1 , 0.5 )", WebInspector.Color.Format.RGBA);
+            testGood("rgba(1,2,3,0)", WI.Color.Format.RGBA);
+            testGood("RGBA(1,2,3,0)", WI.Color.Format.RGBA);
+            testGood("rgba(999, 999, 999, 999)", WI.Color.Format.RGBA);
+            testGood("rgba( 1 , 1 , 1 , 0.5 )", WI.Color.Format.RGBA);
 
-            testGood("hsl(0, 0%, 50%)", WebInspector.Color.Format.HSL);
-            testGood("HSL(0, 0%, 50%)", WebInspector.Color.Format.HSL);
-            testGood("hsl(999, 999%, 999%)", WebInspector.Color.Format.HSL);
-            testGood("hsl( 0 , 0% , 50% )", WebInspector.Color.Format.HSL);
+            testGood("hsl(0, 0%, 50%)", WI.Color.Format.HSL);
+            testGood("HSL(0, 0%, 50%)", WI.Color.Format.HSL);
+            testGood("hsl(999, 999%, 999%)", WI.Color.Format.HSL);
+            testGood("hsl( 0 , 0% , 50% )", WI.Color.Format.HSL);
             
-            testGood("hsla(0, 0%, 50%, 0)", WebInspector.Color.Format.HSLA);
-            testGood("HSLA(0, 0%, 50%, 0)", WebInspector.Color.Format.HSLA);
-            testGood("hsla(999, 999%, 999%, 999)", WebInspector.Color.Format.HSLA);
-            testGood("hsla( 0 , 0% , 50% , 0.5 )", WebInspector.Color.Format.HSLA);
+            testGood("hsla(0, 0%, 50%, 0)", WI.Color.Format.HSLA);
+            testGood("HSLA(0, 0%, 50%, 0)", WI.Color.Format.HSLA);
+            testGood("hsla(999, 999%, 999%, 999)", WI.Color.Format.HSLA);
+            testGood("hsla( 0 , 0% , 50% , 0.5 )", WI.Color.Format.HSLA);
 
-            testGood("blue", WebInspector.Color.Format.Keyword);
-            testGood("BLuE", WebInspector.Color.Format.Keyword);
-            testGood("midnightblue", WebInspector.Color.Format.Keyword);
-            testGood("royalblue", WebInspector.Color.Format.Keyword);
-            testGood("steelblue", WebInspector.Color.Format.Keyword);
-            testGood("transparent", WebInspector.Color.Format.Keyword);
+            testGood("blue", WI.Color.Format.Keyword);
+            testGood("BLuE", WI.Color.Format.Keyword);
+            testGood("midnightblue", WI.Color.Format.Keyword);
+            testGood("royalblue", WI.Color.Format.Keyword);
+            testGood("steelblue", WI.Color.Format.Keyword);
+            testGood("transparent", WI.Color.Format.Keyword);
 
             InspectorTest.log("");
 
@@ -112,7 +112,7 @@ function test()
     });
 
     suite.addTestCase({
-        name: "WebInspector.Color properties",
+        name: "WI.Color properties",
         description: "Test different color properties.",
         test(resolve, reject) {
             function shallowEqual(arr1, arr2) {
@@ -129,7 +129,7 @@ function test()
 
             let color;
 
-            color = WebInspector.Color.fromString("red");
+            color = WI.Color.fromString("red");
             InspectorTest.expectThat(color.alpha === 1, "'red' should have alpha of 1.");
             InspectorTest.expectThat(color.simple === true, "'red' should be simple.");
             InspectorTest.expectThat(color.isKeyword() === true, "'red' should be a keyword.");
@@ -139,7 +139,7 @@ function test()
             InspectorTest.expectThat(shallowEqual(color.hsla, [0, 100, 50, 1]), "'red' has hsla of [0, 100, 50, 1].");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === true, "'red' should be serializable as a short Hex");
 
-            color = WebInspector.Color.fromString("transparent");
+            color = WI.Color.fromString("transparent");
             InspectorTest.expectThat(color.alpha === 0, "'transparent' should have alpha of 0.");
             InspectorTest.expectThat(color.simple === false, "'transparent' should not be simple.");
             InspectorTest.expectThat(color.isKeyword() === true, "'transparent' should be a keyword.");
@@ -149,7 +149,7 @@ function test()
             InspectorTest.expectThat(shallowEqual(color.hsla, [0, 0, 0, 0]), "'transparent' has hsla of [0, 0, 0, 0].");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === true, "'transparent' should be serializable as a short Hex");
 
-            color = WebInspector.Color.fromString("#11122233");
+            color = WI.Color.fromString("#11122233");
             InspectorTest.expectThat(color.alpha !== 0, "'#11122233' should not have alpha of 0.");
             InspectorTest.expectThat(color.simple === false, "'#11122233' should be not be simple.");
             InspectorTest.expectThat(color.isKeyword() === false, "'#11122233' should not be a keyword.");
@@ -157,10 +157,10 @@ function test()
             InspectorTest.expectThat(shallowEqual(color.hsla, [236, 33, 10, 0.2]), "'#11122233' has hsla of [236, 33, 10, 0.2].");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === false, "'#11122233' should not be serializable as a short Hex");
 
-            color = WebInspector.Color.fromString("#11223344");
+            color = WI.Color.fromString("#11223344");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === true, "'#11223344' should be serializable as a short Hex");
 
-            color = WebInspector.Color.fromString("#11223345");
+            color = WI.Color.fromString("#11223345");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === false, "'#11223345' should not be serializable as a short Hex");
 
             resolve();
@@ -168,12 +168,12 @@ function test()
     });
 
     suite.addTestCase({
-        name: "WebInspector.Color.prototype.nextFormat",
+        name: "WI.Color.prototype.nextFormat",
         description: "Test we can cycle through color formats for different colors.",
         test(resolve, reject) {
             function test(string, phases) {
-                let color = WebInspector.Color.fromString(string);
-                color.format = WebInspector.Color.Format.Original;
+                let color = WI.Color.fromString(string);
+                color.format = WI.Color.Format.Original;
 
                 let pass = true;
                 for (let expectedNextFormat of phases) {
@@ -188,34 +188,34 @@ function test()
 
             // All with alpha.
             test("transparent", [
-                WebInspector.Color.Format.RGBA,
-                WebInspector.Color.Format.HSLA,
-                WebInspector.Color.Format.Keyword,
-                WebInspector.Color.Format.ShortHEXAlpha,
-                WebInspector.Color.Format.HEXAlpha,
+                WI.Color.Format.RGBA,
+                WI.Color.Format.HSLA,
+                WI.Color.Format.Keyword,
+                WI.Color.Format.ShortHEXAlpha,
+                WI.Color.Format.HEXAlpha,
             ]);
 
             // All without alpha.
             test("red", [
-                WebInspector.Color.Format.RGB,
-                WebInspector.Color.Format.HSL,
-                WebInspector.Color.Format.Keyword,
-                WebInspector.Color.Format.ShortHEX,
-                WebInspector.Color.Format.HEX,
+                WI.Color.Format.RGB,
+                WI.Color.Format.HSL,
+                WI.Color.Format.Keyword,
+                WI.Color.Format.ShortHEX,
+                WI.Color.Format.HEX,
             ]);
 
             // No short hex or keyword.
             test("rgb(100, 150, 200)", [
-                WebInspector.Color.Format.RGB,
-                WebInspector.Color.Format.HSL,
-                WebInspector.Color.Format.HEX,
+                WI.Color.Format.RGB,
+                WI.Color.Format.HSL,
+                WI.Color.Format.HEX,
             ]);
 
             // No short hex alpha or keyword.
             test("rgba(100, 150, 200, 0.5)", [
-                WebInspector.Color.Format.RGBA,
-                WebInspector.Color.Format.HSLA,
-                WebInspector.Color.Format.HEXAlpha,
+                WI.Color.Format.RGBA,
+                WI.Color.Format.HSLA,
+                WI.Color.Format.HEXAlpha,
             ]);
 
             resolve();
@@ -223,7 +223,7 @@ function test()
     });
 
     suite.addTestCase({
-        name: "WebInspector.Color.prototype.toString",
+        name: "WI.Color.prototype.toString",
         description: "Test the different toString outputs.",
         test(resolve, reject) {
             let color;
@@ -234,30 +234,30 @@ function test()
             }
 
             // A color with all formats.
-            color = WebInspector.Color.fromString("RED");
-            test("RED", WebInspector.Color.Format.Original);
-            test("red", WebInspector.Color.Format.Keyword);
-            test("#f00", WebInspector.Color.Format.ShortHEX);
-            test("#ff0000", WebInspector.Color.Format.HEX);
-            test("#f00f", WebInspector.Color.Format.ShortHEXAlpha);
-            test("#ff0000ff", WebInspector.Color.Format.HEXAlpha);
-            test("rgb(255, 0, 0)", WebInspector.Color.Format.RGB);
-            test("rgba(255, 0, 0, 1)", WebInspector.Color.Format.RGBA);
-            test("hsl(0, 100%, 50%)", WebInspector.Color.Format.HSL);
-            test("hsla(0, 100%, 50%, 1)", WebInspector.Color.Format.HSLA);
+            color = WI.Color.fromString("RED");
+            test("RED", WI.Color.Format.Original);
+            test("red", WI.Color.Format.Keyword);
+            test("#f00", WI.Color.Format.ShortHEX);
+            test("#ff0000", WI.Color.Format.HEX);
+            test("#f00f", WI.Color.Format.ShortHEXAlpha);
+            test("#ff0000ff", WI.Color.Format.HEXAlpha);
+            test("rgb(255, 0, 0)", WI.Color.Format.RGB);
+            test("rgba(255, 0, 0, 1)", WI.Color.Format.RGBA);
+            test("hsl(0, 100%, 50%)", WI.Color.Format.HSL);
+            test("hsla(0, 100%, 50%, 1)", WI.Color.Format.HSLA);
 
             // A color which cannot be some formats, those fallback to something else.
-            color = WebInspector.Color.fromString("rGbA(  100, 200, 255, 0.5  )");
-            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.Original); // Original text ignored for some formats.
-            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.Keyword); // fallback (rgba)
-            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.ShortHEX); // fallback (rgba)
-            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.HEX); // fallback (rgba)
-            test("#64c8ff80", WebInspector.Color.Format.ShortHEXAlpha); // fallback (hex alpha)
-            test("#64c8ff80", WebInspector.Color.Format.HEXAlpha);
-            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.RGB); // fallback (rgba)
-            test("rgba(100, 200, 255, 0.5)", WebInspector.Color.Format.RGBA);
-            test("hsla(201, 100%, 70%, 0.5)", WebInspector.Color.Format.HSL); // fallback (hsla)
-            test("hsla(201, 100%, 70%, 0.5)", WebInspector.Color.Format.HSLA);
+            color = WI.Color.fromString("rGbA(  100, 200, 255, 0.5  )");
+            test("rgba(100, 200, 255, 0.5)", WI.Color.Format.Original); // Original text ignored for some formats.
+            test("rgba(100, 200, 255, 0.5)", WI.Color.Format.Keyword); // fallback (rgba)
+            test("rgba(100, 200, 255, 0.5)", WI.Color.Format.ShortHEX); // fallback (rgba)
+            test("rgba(100, 200, 255, 0.5)", WI.Color.Format.HEX); // fallback (rgba)
+            test("#64c8ff80", WI.Color.Format.ShortHEXAlpha); // fallback (hex alpha)
+            test("#64c8ff80", WI.Color.Format.HEXAlpha);
+            test("rgba(100, 200, 255, 0.5)", WI.Color.Format.RGB); // fallback (rgba)
+            test("rgba(100, 200, 255, 0.5)", WI.Color.Format.RGBA);
+            test("hsla(201, 100%, 70%, 0.5)", WI.Color.Format.HSL); // fallback (hsla)
+            test("hsla(201, 100%, 70%, 0.5)", WI.Color.Format.HSLA);
 
             // FIXME: Should we clamp rgb(300, 300, 300) => rgb(255, 255, 255) in toStrings?
             // FIXME: Should we always stash the original string, no matter how poor?
@@ -271,6 +271,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Tests for the WebInspector.Color model object.</p>
+<p>Tests for the WI.Color model object.</p>
 </body>
 </html>

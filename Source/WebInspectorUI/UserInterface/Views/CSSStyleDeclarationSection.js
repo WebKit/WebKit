@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection extends WebInspector.Object
+WI.CSSStyleDeclarationSection = class CSSStyleDeclarationSection extends WI.Object
 {
     constructor(delegate, style)
     {
-        console.assert(style instanceof WebInspector.CSSStyleDeclaration, style);
+        console.assert(style instanceof WI.CSSStyleDeclaration, style);
 
         super();
 
@@ -41,8 +41,8 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         this._element = document.createElement("div");
         this._element.classList.add("style-declaration-section");
 
-        new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this), this._element);
-        new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "S", this._save.bind(this), this._element);
+        new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this), this._element);
+        new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "S", this._save.bind(this), this._element);
 
         this._headerElement = document.createElement("div");
         this._headerElement.classList.add("header");
@@ -51,12 +51,12 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
             let lockedIconElement = this._headerElement.createChild("img", "locked-icon");
 
             let styleLabel;
-            if (style.ownerRule && style.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
-                styleLabel = WebInspector.UIString("User Agent Stylesheet");
+            if (style.ownerRule && style.ownerRule.type === WI.CSSStyleSheet.Type.UserAgent)
+                styleLabel = WI.UIString("User Agent Stylesheet");
             else
-                styleLabel = WebInspector.UIString("Style rule");
+                styleLabel = WI.UIString("Style rule");
 
-            lockedIconElement.title = WebInspector.UIString("%s cannot be modified").format(styleLabel);
+            lockedIconElement.title = WI.UIString("%s cannot be modified").format(styleLabel);
         }
 
         this._iconElement = this._headerElement.createChild("img", "icon");
@@ -88,9 +88,9 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         this._propertiesElement.classList.add("properties");
 
         this._editorActive = false;
-        this._propertiesTextEditor = new WebInspector.CSSStyleDeclarationTextEditor(this, style);
-        this._propertiesTextEditor.addEventListener(WebInspector.CSSStyleDeclarationTextEditor.Event.ContentChanged, this._editorContentChanged.bind(this));
-        this._propertiesTextEditor.addEventListener(WebInspector.CSSStyleDeclarationTextEditor.Event.Blurred, this._editorBlurred.bind(this));
+        this._propertiesTextEditor = new WI.CSSStyleDeclarationTextEditor(this, style);
+        this._propertiesTextEditor.addEventListener(WI.CSSStyleDeclarationTextEditor.Event.ContentChanged, this._editorContentChanged.bind(this));
+        this._propertiesTextEditor.addEventListener(WI.CSSStyleDeclarationTextEditor.Event.Blurred, this._editorBlurred.bind(this));
         this._propertiesElement.appendChild(this._propertiesTextEditor.element);
 
         this._element.appendChild(this._headerElement);
@@ -98,33 +98,33 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
         let iconClassName = null;
         switch (style.type) {
-        case WebInspector.CSSStyleDeclaration.Type.Rule:
+        case WI.CSSStyleDeclaration.Type.Rule:
             console.assert(style.ownerRule);
 
             if (style.inherited)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.InheritedStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.Author)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.AuthorStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.User)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.UserStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.UserAgentStyleRuleIconStyleClassName;
-            else if (style.ownerRule.type === WebInspector.CSSStyleSheet.Type.Inspector)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.InspectorStyleRuleIconStyleClassName;
+                iconClassName = WI.CSSStyleDeclarationSection.InheritedStyleRuleIconStyleClassName;
+            else if (style.ownerRule.type === WI.CSSStyleSheet.Type.Author)
+                iconClassName = WI.CSSStyleDeclarationSection.AuthorStyleRuleIconStyleClassName;
+            else if (style.ownerRule.type === WI.CSSStyleSheet.Type.User)
+                iconClassName = WI.CSSStyleDeclarationSection.UserStyleRuleIconStyleClassName;
+            else if (style.ownerRule.type === WI.CSSStyleSheet.Type.UserAgent)
+                iconClassName = WI.CSSStyleDeclarationSection.UserAgentStyleRuleIconStyleClassName;
+            else if (style.ownerRule.type === WI.CSSStyleSheet.Type.Inspector)
+                iconClassName = WI.CSSStyleDeclarationSection.InspectorStyleRuleIconStyleClassName;
             break;
 
-        case WebInspector.CSSStyleDeclaration.Type.Inline:
-        case WebInspector.CSSStyleDeclaration.Type.Attribute:
+        case WI.CSSStyleDeclaration.Type.Inline:
+        case WI.CSSStyleDeclaration.Type.Attribute:
             if (style.inherited)
-                iconClassName = WebInspector.CSSStyleDeclarationSection.InheritedElementStyleRuleIconStyleClassName;
+                iconClassName = WI.CSSStyleDeclarationSection.InheritedElementStyleRuleIconStyleClassName;
             else
-                iconClassName = WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
+                iconClassName = WI.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
             break;
         }
 
         if (style.editable) {
             this._iconElement.classList.add("toggle-able");
-            this._iconElement.title = WebInspector.UIString("Comment All Properties");
+            this._iconElement.title = WI.UIString("Comment All Properties");
             this._iconElement.addEventListener("click", this._handleIconElementClicked.bind(this));
         }
 
@@ -132,11 +132,11 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         this._element.classList.add(iconClassName);
 
         if (!style.editable)
-            this._element.classList.add(WebInspector.CSSStyleDeclarationSection.LockedStyleClassName);
+            this._element.classList.add(WI.CSSStyleDeclarationSection.LockedStyleClassName);
         else if (style.ownerRule)
-            this._style.ownerRule.addEventListener(WebInspector.CSSRule.Event.SelectorChanged, this._updateSelectorIcon.bind(this));
+            this._style.ownerRule.addEventListener(WI.CSSRule.Event.SelectorChanged, this._updateSelectorIcon.bind(this));
         else
-            this._element.classList.add(WebInspector.CSSStyleDeclarationSection.SelectorLockedStyleClassName);
+            this._element.classList.add(WI.CSSStyleDeclarationSection.SelectorLockedStyleClassName);
 
         this.refresh();
 
@@ -157,15 +157,15 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
     get lastInGroup()
     {
-        return this._element.classList.contains(WebInspector.CSSStyleDeclarationSection.LastInGroupStyleClassName);
+        return this._element.classList.contains(WI.CSSStyleDeclarationSection.LastInGroupStyleClassName);
     }
 
     set lastInGroup(last)
     {
         if (last)
-            this._element.classList.add(WebInspector.CSSStyleDeclarationSection.LastInGroupStyleClassName);
+            this._element.classList.add(WI.CSSStyleDeclarationSection.LastInGroupStyleClassName);
         else
-            this._element.classList.remove(WebInspector.CSSStyleDeclarationSection.LastInGroupStyleClassName);
+            this._element.classList.remove(WI.CSSStyleDeclarationSection.LastInGroupStyleClassName);
     }
 
     get focused()
@@ -188,29 +188,29 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
         function appendSelector(selector, matched)
         {
-            console.assert(selector instanceof WebInspector.CSSSelector);
+            console.assert(selector instanceof WI.CSSSelector);
 
             let selectorElement = document.createElement("span");
             selectorElement.textContent = selector.text;
 
             if (matched)
-                selectorElement.classList.add(WebInspector.CSSStyleDeclarationSection.MatchedSelectorElementStyleClassName);
+                selectorElement.classList.add(WI.CSSStyleDeclarationSection.MatchedSelectorElementStyleClassName);
 
             let specificity = selector.specificity;
             if (specificity) {
-                let tooltip = WebInspector.UIString("Specificity: (%d, %d, %d)").format(specificity[0], specificity[1], specificity[2]);
+                let tooltip = WI.UIString("Specificity: (%d, %d, %d)").format(specificity[0], specificity[1], specificity[2]);
                 if (selector.dynamic) {
                     tooltip += "\n";
                     if (this._style.inherited)
-                        tooltip += WebInspector.UIString("Dynamically calculated for the parent element");
+                        tooltip += WI.UIString("Dynamically calculated for the parent element");
                     else
-                        tooltip += WebInspector.UIString("Dynamically calculated for the selected element");
+                        tooltip += WI.UIString("Dynamically calculated for the selected element");
                 }
                 selectorElement.title = tooltip;
             } else if (selector.dynamic) {
-                let tooltip = WebInspector.UIString("Specificity: No value for selected element");
+                let tooltip = WI.UIString("Specificity: No value for selected element");
                 tooltip += "\n";
-                tooltip += WebInspector.UIString("Dynamically calculated for the selected element and did not match");
+                tooltip += WI.UIString("Dynamically calculated for the selected element and did not match");
                 selectorElement.title = tooltip;
             }
 
@@ -222,12 +222,12 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         {
             let selectorElement = document.createElement("span");
             selectorElement.textContent = selectorText;
-            selectorElement.classList.add(WebInspector.CSSStyleDeclarationSection.MatchedSelectorElementStyleClassName);
+            selectorElement.classList.add(WI.CSSStyleDeclarationSection.MatchedSelectorElementStyleClassName);
             this._selectorElement.appendChild(selectorElement);
         }
 
         switch (this._style.type) {
-        case WebInspector.CSSStyleDeclaration.Type.Rule:
+        case WI.CSSStyleDeclaration.Type.Rule:
             console.assert(this._style.ownerRule);
 
             let selectors = this._style.ownerRule.selectors;
@@ -243,7 +243,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
                     if (matchedSelectorIndices.includes(i) && selectors[i].isPseudoElementSelector())
                         hasMatchingPseudoElementSelector = true;
                 }
-                this._element.classList.toggle(WebInspector.CSSStyleDeclarationSection.PseudoElementSelectorStyleClassName, hasMatchingPseudoElementSelector);
+                this._element.classList.toggle(WI.CSSStyleDeclarationSection.PseudoElementSelectorStyleClassName, hasMatchingPseudoElementSelector);
             } else
                 appendSelectorTextKnownToMatch.call(this, this._style.ownerRule.selectorText);
 
@@ -254,29 +254,29 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
                     ignoreSearchTab: true,
                 };
                 if (this._style.ownerStyleSheet.isInspectorStyleSheet()) {
-                    options.nameStyle = WebInspector.SourceCodeLocation.NameStyle.None;
-                    options.prefix = WebInspector.UIString("Inspector Style Sheet") + ":";
+                    options.nameStyle = WI.SourceCodeLocation.NameStyle.None;
+                    options.prefix = WI.UIString("Inspector Style Sheet") + ":";
                 }
 
-                let sourceCodeLink = WebInspector.createSourceCodeLocationLink(this._style.ownerRule.sourceCodeLocation, options);
+                let sourceCodeLink = WI.createSourceCodeLocationLink(this._style.ownerRule.sourceCodeLocation, options);
                 this._originElement.appendChild(sourceCodeLink);
             } else {
                 let originString;
                 switch (this._style.ownerRule.type) {
-                case WebInspector.CSSStyleSheet.Type.Author:
-                    originString = WebInspector.UIString("Author Stylesheet");
+                case WI.CSSStyleSheet.Type.Author:
+                    originString = WI.UIString("Author Stylesheet");
                     break;
 
-                case WebInspector.CSSStyleSheet.Type.User:
-                    originString = WebInspector.UIString("User Stylesheet");
+                case WI.CSSStyleSheet.Type.User:
+                    originString = WI.UIString("User Stylesheet");
                     break;
 
-                case WebInspector.CSSStyleSheet.Type.UserAgent:
-                    originString = WebInspector.UIString("User Agent Stylesheet");
+                case WI.CSSStyleSheet.Type.UserAgent:
+                    originString = WI.UIString("User Agent Stylesheet");
                     break;
 
-                case WebInspector.CSSStyleSheet.Type.Inspector:
-                    originString = WebInspector.UIString("Web Inspector");
+                case WI.CSSStyleSheet.Type.Inspector:
+                    originString = WI.UIString("Web Inspector");
                     break;
                 }
 
@@ -287,14 +287,14 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
             break;
 
-        case WebInspector.CSSStyleDeclaration.Type.Inline:
+        case WI.CSSStyleDeclaration.Type.Inline:
             appendSelectorTextKnownToMatch.call(this, this._style.node.displayName);
-            this._originElement.append(WebInspector.UIString("Style Attribute"));
+            this._originElement.append(WI.UIString("Style Attribute"));
             break;
 
-        case WebInspector.CSSStyleDeclaration.Type.Attribute:
+        case WI.CSSStyleDeclaration.Type.Attribute:
             appendSelectorTextKnownToMatch.call(this, this._style.node.displayName);
-            this._originElement.append(WebInspector.UIString("HTML Attributes"));
+            this._originElement.append(WI.UIString("HTML Attributes"));
             break;
         }
 
@@ -320,15 +320,15 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
     findMatchingPropertiesAndSelectors(needle)
     {
-        this._element.classList.remove(WebInspector.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName, WebInspector.CSSStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName);
+        this._element.classList.remove(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName, WI.CSSStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName);
 
         var hasMatchingSelector = false;
 
         for (var selectorElement of this._selectorElements) {
-            selectorElement.classList.remove(WebInspector.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+            selectorElement.classList.remove(WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
 
             if (needle && selectorElement.textContent.includes(needle)) {
-                selectorElement.classList.add(WebInspector.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+                selectorElement.classList.add(WI.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
                 hasMatchingSelector = true;
             }
         }
@@ -341,7 +341,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         var hasMatchingProperty = this._propertiesTextEditor.findMatchingProperties(needle);
 
         if (!hasMatchingProperty && !hasMatchingSelector) {
-            this._element.classList.add(WebInspector.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+            this._element.classList.add(WI.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
             return false;
         }
 
@@ -440,7 +440,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
     _handleSelectorPaste(event)
     {
-        if (this._style.type === WebInspector.CSSStyleDeclaration.Type.Inline || !this._style.ownerRule)
+        if (this._style.type === WI.CSSStyleDeclaration.Type.Inline || !this._style.ownerRule)
             return;
 
         if (!event || !event.clipboardData)
@@ -478,16 +478,16 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         if (window.getSelection().toString().length)
             return;
 
-        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
 
-        contextMenu.appendItem(WebInspector.UIString("Copy Rule"), () => {
+        contextMenu.appendItem(WI.UIString("Copy Rule"), () => {
             InspectorFrontendHost.copyText(this._style.generateCSSRuleString());
         });
 
         if (this._style.inherited)
             return;
 
-        contextMenu.appendItem(WebInspector.UIString("Duplicate Selector"), () => {
+        contextMenu.appendItem(WI.UIString("Duplicate Selector"), () => {
             if (this._delegate && typeof this._delegate.focusEmptySectionWithStyle === "function") {
                 let existingRules = this._style.nodeStyles.rulesForSelector(this._currentSelectorText);
                 for (let rule of existingRules) {
@@ -500,19 +500,19 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         });
 
         // Only used one colon temporarily since single-colon pseudo elements are valid CSS.
-        if (WebInspector.CSSStyleManager.PseudoElementNames.some((className) => this._style.selectorText.includes(":" + className)))
+        if (WI.CSSStyleManager.PseudoElementNames.some((className) => this._style.selectorText.includes(":" + className)))
             return;
 
-        if (WebInspector.CSSStyleManager.ForceablePseudoClasses.every((className) => !this._style.selectorText.includes(":" + className))) {
+        if (WI.CSSStyleManager.ForceablePseudoClasses.every((className) => !this._style.selectorText.includes(":" + className))) {
             contextMenu.appendSeparator();
 
-            for (let pseudoClass of WebInspector.CSSStyleManager.ForceablePseudoClasses) {
+            for (let pseudoClass of WI.CSSStyleManager.ForceablePseudoClasses) {
                 if (pseudoClass === "visited" && this._style.node.nodeName() !== "A")
                     continue;
 
                 let pseudoClassSelector = ":" + pseudoClass;
 
-                contextMenu.appendItem(WebInspector.UIString("Add %s Rule").format(pseudoClassSelector), () => {
+                contextMenu.appendItem(WI.UIString("Add %s Rule").format(pseudoClassSelector), () => {
                     this._style.node.setPseudoClassEnabled(pseudoClass, true);
 
                     let selector;
@@ -528,7 +528,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
         contextMenu.appendSeparator();
 
-        for (let pseudoElement of WebInspector.CSSStyleManager.PseudoElementNames) {
+        for (let pseudoElement of WI.CSSStyleManager.PseudoElementNames) {
             let pseudoElementSelector = "::" + pseudoElement;
             const styleText = "content: \"\";";
 
@@ -543,7 +543,7 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
                 }
             }
 
-            let title = existingSection ? WebInspector.UIString("Focus %s Rule") : WebInspector.UIString("Create %s Rule");
+            let title = existingSection ? WI.UIString("Focus %s Rule") : WI.UIString("Create %s Rule");
             contextMenu.appendItem(title.format(pseudoElementSelector), () => {
                 if (existingSection) {
                     existingSection.focus();
@@ -570,23 +570,23 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         }
 
         this._ruleDisabled = this._ruleDisabled ? !this._propertiesTextEditor.uncommentAllProperties() : this._propertiesTextEditor.commentAllProperties();
-        this._iconElement.title = this._ruleDisabled ? WebInspector.UIString("Uncomment All Properties") : WebInspector.UIString("Comment All Properties");
+        this._iconElement.title = this._ruleDisabled ? WI.UIString("Uncomment All Properties") : WI.UIString("Comment All Properties");
         this._element.classList.toggle("rule-disabled", this._ruleDisabled);
     }
 
     _highlightNodesWithSelector()
     {
         if (!this._style.ownerRule) {
-            WebInspector.domTreeManager.highlightDOMNode(this._style.node.id);
+            WI.domTreeManager.highlightDOMNode(this._style.node.id);
             return;
         }
 
-        WebInspector.domTreeManager.highlightSelector(this._currentSelectorText, this._style.node.ownerDocument.frameIdentifier);
+        WI.domTreeManager.highlightSelector(this._currentSelectorText, this._style.node.ownerDocument.frameIdentifier);
     }
 
     _hideDOMNodeHighlight()
     {
-        WebInspector.domTreeManager.hideDOMNodeHighlight();
+        WI.domTreeManager.hideDOMNodeHighlight();
     }
 
     _handleMouseOver(event)
@@ -623,17 +623,17 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         event.preventDefault();
         event.stopPropagation();
 
-        if (this._style.type !== WebInspector.CSSStyleDeclaration.Type.Rule) {
+        if (this._style.type !== WI.CSSStyleDeclaration.Type.Rule) {
             // FIXME: Can't save CSS inside <style></style> <https://webkit.org/b/150357>
             InspectorFrontendHost.beep();
             return;
         }
 
-        console.assert(this._style.ownerRule instanceof WebInspector.CSSRule);
-        console.assert(this._style.ownerRule.sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
+        console.assert(this._style.ownerRule instanceof WI.CSSRule);
+        console.assert(this._style.ownerRule.sourceCodeLocation instanceof WI.SourceCodeLocation);
 
         let sourceCode = this._style.ownerRule.sourceCodeLocation.sourceCode;
-        if (sourceCode.type !== WebInspector.Resource.Type.Stylesheet) {
+        if (sourceCode.type !== WI.Resource.Type.Stylesheet) {
             // FIXME: Can't save CSS inside style="" <https://webkit.org/b/150357>
             InspectorFrontendHost.beep();
             return;
@@ -641,25 +641,25 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
 
         var url;
         if (sourceCode.urlComponents.scheme === "data") {
-            let mainResource = WebInspector.frameResourceManager.mainFrame.mainResource;
+            let mainResource = WI.frameResourceManager.mainFrame.mainResource;
             let pathDirectory = mainResource.url.slice(0, -mainResource.urlComponents.lastPathComponent.length);
             url = pathDirectory + "base64.css";
         } else
             url = sourceCode.url;
 
         const saveAs = event.shiftKey;
-        WebInspector.saveDataToFile({url: url, content: sourceCode.content}, saveAs);
+        WI.saveDataToFile({url: url, content: sourceCode.content}, saveAs);
     }
 
     _handleKeyDown(event)
     {
-        if (event.keyCode === WebInspector.KeyboardShortcut.Key.Enter.keyCode) {
+        if (event.keyCode === WI.KeyboardShortcut.Key.Enter.keyCode) {
             event.preventDefault();
             this.focus();
             return;
         }
 
-        if (event.keyCode !== WebInspector.KeyboardShortcut.Key.Tab.keyCode) {
+        if (event.keyCode !== WI.KeyboardShortcut.Key.Tab.keyCode) {
             this._highlightNodesWithSelector();
             return;
         }
@@ -723,12 +723,12 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         this._hasInvalidSelector = event && event.data && !event.data.valid;
         this._element.classList.toggle("invalid-selector", !!this._hasInvalidSelector);
         if (this._hasInvalidSelector) {
-            this._iconElement.title = WebInspector.UIString("The selector “%s” is invalid.\nClick to revert to the previous selector.").format(this._selectorElement.textContent.trim());
-            this._selectorInput.title = WebInspector.UIString("Using previous selector “%s”").format(this._style.ownerRule.selectorText);
+            this._iconElement.title = WI.UIString("The selector “%s” is invalid.\nClick to revert to the previous selector.").format(this._selectorElement.textContent.trim());
+            this._selectorInput.title = WI.UIString("Using previous selector “%s”").format(this._style.ownerRule.selectorText);
             return;
         }
 
-        this._iconElement.title = this._ruleDisabled ? WebInspector.UIString("Uncomment All Properties") : WebInspector.UIString("Comment All Properties");
+        this._iconElement.title = this._ruleDisabled ? WI.UIString("Uncomment All Properties") : WI.UIString("Comment All Properties");
         this._selectorInput.title = "";
     }
 
@@ -740,23 +740,23 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
     _editorBlurred(event)
     {
         this._editorActive = false;
-        this.dispatchEventToListeners(WebInspector.CSSStyleDeclarationSection.Event.Blurred);
+        this.dispatchEventToListeners(WI.CSSStyleDeclarationSection.Event.Blurred);
     }
 };
 
-WebInspector.CSSStyleDeclarationSection.Event = {
+WI.CSSStyleDeclarationSection.Event = {
     Blurred: "css-style-declaration-sections-blurred"
 };
 
-WebInspector.CSSStyleDeclarationSection.LockedStyleClassName = "locked";
-WebInspector.CSSStyleDeclarationSection.SelectorLockedStyleClassName = "selector-locked";
-WebInspector.CSSStyleDeclarationSection.LastInGroupStyleClassName = "last-in-group";
-WebInspector.CSSStyleDeclarationSection.MatchedSelectorElementStyleClassName = "matched";
-WebInspector.CSSStyleDeclarationSection.PseudoElementSelectorStyleClassName = "pseudo-element-selector";
+WI.CSSStyleDeclarationSection.LockedStyleClassName = "locked";
+WI.CSSStyleDeclarationSection.SelectorLockedStyleClassName = "selector-locked";
+WI.CSSStyleDeclarationSection.LastInGroupStyleClassName = "last-in-group";
+WI.CSSStyleDeclarationSection.MatchedSelectorElementStyleClassName = "matched";
+WI.CSSStyleDeclarationSection.PseudoElementSelectorStyleClassName = "pseudo-element-selector";
 
-WebInspector.CSSStyleDeclarationSection.AuthorStyleRuleIconStyleClassName = "author-style-rule-icon";
-WebInspector.CSSStyleDeclarationSection.UserStyleRuleIconStyleClassName = "user-style-rule-icon";
-WebInspector.CSSStyleDeclarationSection.UserAgentStyleRuleIconStyleClassName = "user-agent-style-rule-icon";
-WebInspector.CSSStyleDeclarationSection.InspectorStyleRuleIconStyleClassName = "inspector-style-rule-icon";
-WebInspector.CSSStyleDeclarationSection.InheritedStyleRuleIconStyleClassName = "inherited-style-rule-icon";
-WebInspector.CSSStyleDeclarationSection.InheritedElementStyleRuleIconStyleClassName = "inherited-element-style-rule-icon";
+WI.CSSStyleDeclarationSection.AuthorStyleRuleIconStyleClassName = "author-style-rule-icon";
+WI.CSSStyleDeclarationSection.UserStyleRuleIconStyleClassName = "user-style-rule-icon";
+WI.CSSStyleDeclarationSection.UserAgentStyleRuleIconStyleClassName = "user-agent-style-rule-icon";
+WI.CSSStyleDeclarationSection.InspectorStyleRuleIconStyleClassName = "inspector-style-rule-icon";
+WI.CSSStyleDeclarationSection.InheritedStyleRuleIconStyleClassName = "inherited-style-rule-icon";
+WI.CSSStyleDeclarationSection.InheritedElementStyleRuleIconStyleClassName = "inherited-element-style-rule-icon";

@@ -148,14 +148,14 @@ function test() {
         }
     });
 
-    WebInspector.domTreeManager.requestDocument((documentNode) => {
-        WebInspector.domTreeManager.querySelector(documentNode.id, "div#x", (contentNodeId) => {
+    WI.domTreeManager.requestDocument((documentNode) => {
+        WI.domTreeManager.querySelector(documentNode.id, "div#x", (contentNodeId) => {
             if (contentNodeId) {
-                let domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
-                nodeStyles = WebInspector.cssStyleManager.stylesForNode(domNode);
+                let domNode = WI.domTreeManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssStyleManager.stylesForNode(domNode);
 
                 if (nodeStyles.needsRefresh) {
-                    nodeStyles.singleFireEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, (event) => {
+                    nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
                         suite.runTestCasesAndFinish()
                     });
                 } else

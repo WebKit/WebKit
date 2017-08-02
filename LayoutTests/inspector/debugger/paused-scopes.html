@@ -8,14 +8,14 @@ function test()
 {
     function scopeTypeName(type) {
         switch (type) {
-            case WebInspector.ScopeChainNode.Type.Local: return "Local";
-            case WebInspector.ScopeChainNode.Type.Global: return "Global";
-            case WebInspector.ScopeChainNode.Type.GlobalLexicalEnvironment: return "GlobalLexicalEnvironment";
-            case WebInspector.ScopeChainNode.Type.With: return "With";
-            case WebInspector.ScopeChainNode.Type.Closure: return "Closure";
-            case WebInspector.ScopeChainNode.Type.Catch: return "Catch";
-            case WebInspector.ScopeChainNode.Type.FunctionName: return "FunctionName";
-            case WebInspector.ScopeChainNode.Type.Block: return "Block";
+            case WI.ScopeChainNode.Type.Local: return "Local";
+            case WI.ScopeChainNode.Type.Global: return "Global";
+            case WI.ScopeChainNode.Type.GlobalLexicalEnvironment: return "GlobalLexicalEnvironment";
+            case WI.ScopeChainNode.Type.With: return "With";
+            case WI.ScopeChainNode.Type.Closure: return "Closure";
+            case WI.ScopeChainNode.Type.Catch: return "Catch";
+            case WI.ScopeChainNode.Type.FunctionName: return "FunctionName";
+            case WI.ScopeChainNode.Type.Block: return "Block";
             default: return "Unknown!";
         };
     }
@@ -31,7 +31,7 @@ function test()
         for (let scope of scopeChain) {
             let data = {scope, properties: []};
             scopeChainData.push(data);
-            if (scope.type === WebInspector.ScopeChainNode.Type.Global)
+            if (scope.type === WI.ScopeChainNode.Type.Global)
                 continue;
 
             for (let scopeObject of scope.objects) {
@@ -72,7 +72,7 @@ function test()
     }
 
     function dumpCallFrames() {
-        let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.debuggerManager.activeCallFrame.target);
+        let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
         let callFrames = targetData.callFrames;
         let chain = Promise.resolve();
         for (let callFrame of callFrames)
@@ -88,7 +88,7 @@ function test()
         description: "Dump CallFrames and Scopes with the first pause.",
         test(resolve, reject) {
             InspectorTest.evaluateInPage("setTimeout(entry)");
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 dumpCallFrames().then(resolve, reject);
             });
         }
@@ -98,8 +98,8 @@ function test()
         name: "PausedCallFrameScope.TriggerSecondPause",
         description: "Dump CallFrames and Scopes with the second pause.",
         test(resolve, reject) {
-            WebInspector.debuggerManager.resume();
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            WI.debuggerManager.resume();
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 dumpCallFrames().then(resolve, reject);
             });
         }
@@ -109,8 +109,8 @@ function test()
         name: "PausedCallFrameScope.TriggerThirdPause",
         description: "Dump CallFrames and Scopes with the third pause.",
         test(resolve, reject) {
-            WebInspector.debuggerManager.resume();
-            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+            WI.debuggerManager.resume();
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 dumpCallFrames().then(resolve, reject);
             });
         }
@@ -119,7 +119,7 @@ function test()
     suite.addTestCase({
         name: "PausedCallFrameScope.Complete",
         test(resolve, reject) {
-            WebInspector.debuggerManager.resume().then(resolve, reject);
+            WI.debuggerManager.resume().then(resolve, reject);
         }
     });
 

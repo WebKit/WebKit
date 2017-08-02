@@ -23,51 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker extends WebInspector.VisualStylePropertyEditor
+WI.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker extends WI.VisualStylePropertyEditor
 {
     constructor(propertyNames, text, possibleValues, layoutReversed)
     {
         super(propertyNames, text, possibleValues, null, "background-picker", layoutReversed);
 
-        this._gradientSwatch = new WebInspector.InlineSwatch(WebInspector.InlineSwatch.Type.Gradient);
-        this._gradientSwatch.addEventListener(WebInspector.InlineSwatch.Event.ValueChanged, this._gradientSwatchColorChanged, this);
+        this._gradientSwatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Gradient);
+        this._gradientSwatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, this._gradientSwatchColorChanged, this);
         this.contentElement.appendChild(this._gradientSwatch.element);
 
         this._valueInputElement = document.createElement("input");
         this._valueInputElement.classList.add("value-input");
         this._valueInputElement.type = "url";
-        this._valueInputElement.placeholder = WebInspector.UIString("Enter a URL");
+        this._valueInputElement.placeholder = WI.UIString("Enter a URL");
         this._valueInputElement.addEventListener("input", this.debounce(250)._valueInputValueChanged);
         this.contentElement.appendChild(this._valueInputElement);
 
         this._valueTypePickerElement = document.createElement("select");
         this._valueTypePickerElement.classList.add("value-type-picker-select");
         if (this._possibleValues.advanced)
-            this._valueTypePickerElement.title = WebInspector.UIString("Option-click to show all values");
+            this._valueTypePickerElement.title = WI.UIString("Option-click to show all values");
 
         let imageOption = document.createElement("option");
         imageOption.value = "url";
-        imageOption.text = WebInspector.UIString("Image");
+        imageOption.text = WI.UIString("Image");
         this._valueTypePickerElement.appendChild(imageOption);
 
         let linearGradientOption = document.createElement("option");
         linearGradientOption.value = "linear-gradient";
-        linearGradientOption.text = WebInspector.UIString("Linear Gradient");
+        linearGradientOption.text = WI.UIString("Linear Gradient");
         this._valueTypePickerElement.appendChild(linearGradientOption);
 
         let radialGradientOption = document.createElement("option");
         radialGradientOption.value = "radial-gradient";
-        radialGradientOption.text = WebInspector.UIString("Radial Gradient");
+        radialGradientOption.text = WI.UIString("Radial Gradient");
         this._valueTypePickerElement.appendChild(radialGradientOption);
 
         let repeatingLinearGradientOption = document.createElement("option");
         repeatingLinearGradientOption.value = "repeating-linear-gradient";
-        repeatingLinearGradientOption.text = WebInspector.UIString("Repeating Linear Gradient");
+        repeatingLinearGradientOption.text = WI.UIString("Repeating Linear Gradient");
         this._valueTypePickerElement.appendChild(repeatingLinearGradientOption);
 
         let repeatingRadialGradientOption = document.createElement("option");
         repeatingRadialGradientOption.value = "repeating-radial-gradient";
-        repeatingRadialGradientOption.text = WebInspector.UIString("Repeating Radial Gradient");
+        repeatingRadialGradientOption.text = WI.UIString("Repeating Radial Gradient");
         this._valueTypePickerElement.appendChild(repeatingRadialGradientOption);
 
         this._valueTypePickerElement.appendChild(document.createElement("hr"));
@@ -134,14 +134,14 @@ WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker ext
         this._valueInputElement.disabled = supportedKeyword;
         if (supportedKeyword) {
             this._valueInputElement.value = "";
-            this._valueInputElement.placeholder = WebInspector.UIString("Using Keyword Value");
+            this._valueInputElement.placeholder = WI.UIString("Using Keyword Value");
         } else {
             if (this._currentType === "image") {
                 this._valueInputElement.type = "url";
-                this._valueInputElement.placeholder = WebInspector.UIString("Enter a URL");
+                this._valueInputElement.placeholder = WI.UIString("Enter a URL");
             } else if (gradientValue) {
                 this._valueInputElement.type = "text";
-                this._valueInputElement.placeholder = WebInspector.UIString("Enter a Gradient");
+                this._valueInputElement.placeholder = WI.UIString("Enter a Gradient");
             }
         }
     }
@@ -152,7 +152,7 @@ WebInspector.VisualStyleBackgroundPicker = class VisualStyleBackgroundPicker ext
         if (!value || value === this._currentType)
             return;
 
-        this._gradientSwatch.value = WebInspector.Gradient.fromString(value);
+        this._gradientSwatch.value = WI.Gradient.fromString(value);
     }
 
     _gradientSwatchColorChanged(event)

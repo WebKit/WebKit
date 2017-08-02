@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.StorageTreeElement = class StorageTreeElement extends WebInspector.GeneralTreeElement
+WI.StorageTreeElement = class StorageTreeElement extends WI.GeneralTreeElement
 {
     constructor(classNames, title, representedObject)
     {

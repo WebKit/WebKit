@@ -29,52 +29,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSKeywordCompletions = {};
+WI.CSSKeywordCompletions = {};
 
-WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
+WI.CSSKeywordCompletions.forProperty = function(propertyName)
 {
     let acceptedKeywords = ["initial", "unset", "revert", "var()"];
     let isNotPrefixed = propertyName.charAt(0) !== "-";
 
-    if (propertyName in WebInspector.CSSKeywordCompletions._propertyKeywordMap)
-        acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName]);
-    else if (isNotPrefixed && ("-webkit-" + propertyName) in WebInspector.CSSKeywordCompletions._propertyKeywordMap)
-        acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._propertyKeywordMap["-webkit-" + propertyName]);
+    if (propertyName in WI.CSSKeywordCompletions._propertyKeywordMap)
+        acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._propertyKeywordMap[propertyName]);
+    else if (isNotPrefixed && ("-webkit-" + propertyName) in WI.CSSKeywordCompletions._propertyKeywordMap)
+        acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._propertyKeywordMap["-webkit-" + propertyName]);
 
-    if (propertyName in WebInspector.CSSKeywordCompletions._colorAwareProperties)
-        acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
-    else if (isNotPrefixed && ("-webkit-" + propertyName) in WebInspector.CSSKeywordCompletions._colorAwareProperties)
-        acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
+    if (propertyName in WI.CSSKeywordCompletions._colorAwareProperties)
+        acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._colors);
+    else if (isNotPrefixed && ("-webkit-" + propertyName) in WI.CSSKeywordCompletions._colorAwareProperties)
+        acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._colors);
     else if (propertyName.endsWith("color"))
-        acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
+        acceptedKeywords = acceptedKeywords.concat(WI.CSSKeywordCompletions._colors);
 
     // Only suggest "inherit" on inheritable properties even though it is valid on all properties.
-    if (propertyName in WebInspector.CSSKeywordCompletions.InheritedProperties)
+    if (propertyName in WI.CSSKeywordCompletions.InheritedProperties)
         acceptedKeywords.push("inherit");
-    else if (isNotPrefixed && ("-webkit-" + propertyName) in WebInspector.CSSKeywordCompletions.InheritedProperties)
+    else if (isNotPrefixed && ("-webkit-" + propertyName) in WI.CSSKeywordCompletions.InheritedProperties)
         acceptedKeywords.push("inherit");
 
-    if (acceptedKeywords.includes(WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder) && WebInspector.CSSCompletions.cssNameCompletions) {
-        acceptedKeywords.remove(WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder);
-        acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSCompletions.cssNameCompletions.values);
+    if (acceptedKeywords.includes(WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder) && WI.CSSCompletions.cssNameCompletions) {
+        acceptedKeywords.remove(WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder);
+        acceptedKeywords = acceptedKeywords.concat(WI.CSSCompletions.cssNameCompletions.values);
     }
 
-    return new WebInspector.CSSCompletions(acceptedKeywords, true);
+    return new WI.CSSCompletions(acceptedKeywords, true);
 };
 
-WebInspector.CSSKeywordCompletions.addCustomCompletions = function(properties)
+WI.CSSKeywordCompletions.addCustomCompletions = function(properties)
 {
     for (var property of properties) {
         if (property.values)
-            WebInspector.CSSKeywordCompletions.addPropertyCompletionValues(property.name, property.values);
+            WI.CSSKeywordCompletions.addPropertyCompletionValues(property.name, property.values);
     }
 };
 
-WebInspector.CSSKeywordCompletions.addPropertyCompletionValues = function(propertyName, newValues)
+WI.CSSKeywordCompletions.addPropertyCompletionValues = function(propertyName, newValues)
 {
-    var existingValues = WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName];
+    var existingValues = WI.CSSKeywordCompletions._propertyKeywordMap[propertyName];
     if (!existingValues) {
-        WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName] = newValues;
+        WI.CSSKeywordCompletions._propertyKeywordMap[propertyName] = newValues;
         return;
     }
 
@@ -84,12 +84,12 @@ WebInspector.CSSKeywordCompletions.addPropertyCompletionValues = function(proper
     for (var value of newValues)
         union.add(value);
 
-    WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName] = [...union.values()];
+    WI.CSSKeywordCompletions._propertyKeywordMap[propertyName] = [...union.values()];
 };
 
-WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder = "__all-properties__";
+WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder = "__all-properties__";
 
-WebInspector.CSSKeywordCompletions.InheritedProperties = [
+WI.CSSKeywordCompletions.InheritedProperties = [
     "azimuth", "border-collapse", "border-spacing", "caption-side", "clip-rule", "color", "color-interpolation",
     "color-interpolation-filters", "color-rendering", "cursor", "direction", "elevation", "empty-cells", "fill",
     "fill-opacity", "fill-rule", "font", "font-family", "font-size", "font-style", "font-variant", "font-variant-numeric", "font-weight", "font-optical-sizing",
@@ -118,7 +118,7 @@ WebInspector.CSSKeywordCompletions.InheritedProperties = [
     "-webkit-overflow-scrolling", "-webkit-touch-callout", "-webkit-tap-highlight-color"
 ].keySet();
 
-WebInspector.CSSKeywordCompletions._colors = [
+WI.CSSKeywordCompletions._colors = [
     "aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red",
     "silver", "teal", "white", "yellow", "transparent", "currentcolor", "grey", "aliceblue", "antiquewhite",
     "aquamarine", "azure", "beige", "bisque", "blanchedalmond", "blueviolet", "brown", "burlywood", "cadetblue",
@@ -139,7 +139,7 @@ WebInspector.CSSKeywordCompletions._colors = [
     "wheat", "whitesmoke", "yellowgreen", "rgb()", "rgba()", "hsl()", "hsla()"
 ];
 
-WebInspector.CSSKeywordCompletions._colorAwareProperties = [
+WI.CSSKeywordCompletions._colorAwareProperties = [
     "background", "background-color", "background-image", "border", "border-color", "border-top", "border-right", "border-bottom",
     "border-left", "border-top-color", "border-right-color", "border-bottom-color", "border-left-color", "box-shadow", "color",
     "fill", "outline", "outline-color", "stroke", "text-line-through", "text-line-through-color", "text-overline", "text-overline-color",
@@ -151,7 +151,7 @@ WebInspector.CSSKeywordCompletions._colorAwareProperties = [
     "-webkit-tap-highlight-color"
 ].keySet();
 
-WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
+WI.CSSKeywordCompletions._propertyKeywordMap = {
     "table-layout": [
         "auto", "fixed"
     ],
@@ -718,13 +718,13 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "normal", "break-word"
     ],
     "transition": [
-        "none", "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "spring()", "all", WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder
+        "none", "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "spring()", "all", WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder
     ],
     "transition-timing-function": [
         "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "spring()"
     ],
     "transition-property": [
-        "all", "none", WebInspector.CSSKeywordCompletions.AllPropertyNamesPlaceholder
+        "all", "none", WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder
     ],
     "-webkit-column-progression": [
         "normal", "reverse"

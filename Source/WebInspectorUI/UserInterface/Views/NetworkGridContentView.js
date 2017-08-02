@@ -23,86 +23,86 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebInspector.ContentView
+WI.NetworkGridContentView = class NetworkGridContentView extends WI.ContentView
 {
     constructor(representedObject, extraArguments)
     {
         console.assert(extraArguments);
-        console.assert(extraArguments.networkSidebarPanel instanceof WebInspector.NetworkSidebarPanel);
+        console.assert(extraArguments.networkSidebarPanel instanceof WI.NetworkSidebarPanel);
 
         super(representedObject);
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         this._networkSidebarPanel = extraArguments.networkSidebarPanel;
 
         this._contentTreeOutline = this._networkSidebarPanel.contentTreeOutline;
-        this._contentTreeOutline.addEventListener(WebInspector.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+        this._contentTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
         let columns = {domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, protocol: {}, priority: {}, remoteAddress: {}, connectionIdentifier: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}, graph: {}};
 
-        columns.domain.title = columns.domain.tooltip = WebInspector.UIString("Domain");
+        columns.domain.title = columns.domain.tooltip = WI.UIString("Domain");
         columns.domain.width = "10%";
 
-        columns.type.title = columns.type.tooltip = WebInspector.UIString("Type");
+        columns.type.title = columns.type.tooltip = WI.UIString("Type");
         columns.type.width = "6%";
 
-        columns.method.title = columns.method.tooltip = WebInspector.UIString("Method");
+        columns.method.title = columns.method.tooltip = WI.UIString("Method");
         columns.method.width = "5%";
 
-        columns.scheme.title = columns.scheme.tooltip = WebInspector.UIString("Scheme");
+        columns.scheme.title = columns.scheme.tooltip = WI.UIString("Scheme");
         columns.scheme.width = "5%";
 
-        columns.statusCode.title = columns.statusCode.tooltip = WebInspector.UIString("Status");
+        columns.statusCode.title = columns.statusCode.tooltip = WI.UIString("Status");
         columns.statusCode.width = "5%";
 
-        columns.cached.title = columns.cached.tooltip = WebInspector.UIString("Cached");
+        columns.cached.title = columns.cached.tooltip = WI.UIString("Cached");
         columns.cached.width = "8%";
 
-        columns.protocol.title = columns.protocol.tooltip = WebInspector.UIString("Protocol");
+        columns.protocol.title = columns.protocol.tooltip = WI.UIString("Protocol");
         columns.protocol.width = "5%";
         columns.protocol.hidden = true;
 
-        columns.priority.title = columns.priority.tooltip = WebInspector.UIString("Priority");
+        columns.priority.title = columns.priority.tooltip = WI.UIString("Priority");
         columns.priority.width = "5%";
         columns.priority.hidden = true;
 
-        columns.remoteAddress.title = columns.remoteAddress.tooltip = WebInspector.UIString("IP Address");
+        columns.remoteAddress.title = columns.remoteAddress.tooltip = WI.UIString("IP Address");
         columns.remoteAddress.width = "8%";
         columns.remoteAddress.hidden = true;
 
-        columns.connectionIdentifier.title = columns.connectionIdentifier.tooltip = WebInspector.UIString("Connection ID");
+        columns.connectionIdentifier.title = columns.connectionIdentifier.tooltip = WI.UIString("Connection ID");
         columns.connectionIdentifier.width = "5%";
         columns.connectionIdentifier.hidden = true;
         columns.connectionIdentifier.aligned = "right";
 
-        columns.size.title = columns.size.tooltip = WebInspector.UIString("Size");
+        columns.size.title = columns.size.tooltip = WI.UIString("Size");
         columns.size.width = "6%";
         columns.size.aligned = "right";
 
-        columns.transferSize.title = columns.transferSize.tooltip = WebInspector.UIString("Transferred");
+        columns.transferSize.title = columns.transferSize.tooltip = WI.UIString("Transferred");
         columns.transferSize.width = "8%";
         columns.transferSize.aligned = "right";
 
-        columns.requestSent.title = columns.requestSent.tooltip = WebInspector.UIString("Start Time");
+        columns.requestSent.title = columns.requestSent.tooltip = WI.UIString("Start Time");
         columns.requestSent.width = "9%";
         columns.requestSent.aligned = "right";
 
-        columns.latency.title = columns.latency.tooltip = WebInspector.UIString("Latency");
+        columns.latency.title = columns.latency.tooltip = WI.UIString("Latency");
         columns.latency.width = "9%";
         columns.latency.aligned = "right";
 
-        columns.duration.title = columns.duration.tooltip = WebInspector.UIString("Duration");
+        columns.duration.title = columns.duration.tooltip = WI.UIString("Duration");
         columns.duration.width = "9%";
         columns.duration.aligned = "right";
 
         for (let column in columns)
             columns[column].sortable = true;
 
-        this._timelineRuler = new WebInspector.TimelineRuler;
+        this._timelineRuler = new WI.TimelineRuler;
         this._timelineRuler.allowsClippedLabels = true;
 
-        columns.graph.title = WebInspector.UIString("Timeline");
+        columns.graph.title = WI.UIString("Timeline");
         columns.graph.width = "20%";
         columns.graph.headerView = this._timelineRuler;
         columns.graph.sortable = false;
@@ -115,33 +115,33 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
             delete columns.connectionIdentifier;
         }
 
-        this._dataGrid = new WebInspector.TimelineDataGrid(columns, this._contentTreeOutline);
-        this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
+        this._dataGrid = new WI.TimelineDataGrid(columns, this._contentTreeOutline);
+        this._dataGrid.addEventListener(WI.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.sortDelegate = this;
         this._dataGrid.sortColumnIdentifier = "requestSent";
-        this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+        this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Ascending;
         this._dataGrid.createSettings("network-grid-content-view");
 
         this.element.classList.add("network-grid");
         this.addSubview(this._dataGrid);
 
-        let networkTimeline = WebInspector.timelineManager.persistentNetworkTimeline;
-        networkTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
-        networkTimeline.addEventListener(WebInspector.Timeline.Event.Reset, this._networkTimelineReset, this);
+        let networkTimeline = WI.timelineManager.persistentNetworkTimeline;
+        networkTimeline.addEventListener(WI.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
+        networkTimeline.addEventListener(WI.Timeline.Event.Reset, this._networkTimelineReset, this);
 
         // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
         if (window.NetworkAgent && NetworkAgent.setResourceCachingDisabled) {
-            let toolTipForDisableResourceCache = WebInspector.UIString("Ignore the resource cache when loading resources");
-            let activatedToolTipForDisableResourceCache = WebInspector.UIString("Use the resource cache when loading resources");
-            this._disableResourceCacheNavigationItem = new WebInspector.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/IgnoreCaches.svg", 16, 16);
-            this._disableResourceCacheNavigationItem.activated = WebInspector.resourceCachingDisabledSetting.value;
+            let toolTipForDisableResourceCache = WI.UIString("Ignore the resource cache when loading resources");
+            let activatedToolTipForDisableResourceCache = WI.UIString("Use the resource cache when loading resources");
+            this._disableResourceCacheNavigationItem = new WI.ActivateButtonNavigationItem("disable-resource-cache", toolTipForDisableResourceCache, activatedToolTipForDisableResourceCache, "Images/IgnoreCaches.svg", 16, 16);
+            this._disableResourceCacheNavigationItem.activated = WI.resourceCachingDisabledSetting.value;
 
-            this._disableResourceCacheNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleDisableResourceCache, this);
-            WebInspector.resourceCachingDisabledSetting.addEventListener(WebInspector.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
+            this._disableResourceCacheNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleDisableResourceCache, this);
+            WI.resourceCachingDisabledSetting.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
         }
 
-        this._clearNetworkItemsNavigationItem = new WebInspector.ButtonNavigationItem("clear-network-items", WebInspector.UIString("Clear Network Items (%s)").format(WebInspector.clearKeyboardShortcut.displayName), "Images/NavigationItemClear.svg", 16, 16);
-        this._clearNetworkItemsNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, () => this.reset());
+        this._clearNetworkItemsNavigationItem = new WI.ButtonNavigationItem("clear-network-items", WI.UIString("Clear Network Items (%s)").format(WI.clearKeyboardShortcut.displayName), "Images/NavigationItemClear.svg", 16, 16);
+        this._clearNetworkItemsNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => this.reset());
 
         this._pendingRecords = [];
         this._loadingResourceCount = 0;
@@ -165,8 +165,8 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         if (!this._contentTreeOutline.selectedTreeElement || this._contentTreeOutline.selectedTreeElement.hidden)
             return null;
 
-        var pathComponent = new WebInspector.GeneralTreeElementPathComponent(this._contentTreeOutline.selectedTreeElement);
-        pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._treeElementPathComponentSelected, this);
+        var pathComponent = new WI.GeneralTreeElementPathComponent(this._contentTreeOutline.selectedTreeElement);
+        pathComponent.addEventListener(WI.HierarchicalPathComponent.Event.SiblingWasSelected, this._treeElementPathComponentSelected, this);
         return [pathComponent];
     }
 
@@ -187,7 +187,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
         this._dataGrid.shown();
 
-        this._dataGrid.updateLayout(WebInspector.View.LayoutReason.Resize);
+        this._dataGrid.updateLayout(WI.View.LayoutReason.Resize);
 
         if (this._loadingResourceCount && !this._scheduledCurrentTimeUpdateIdentifier)
             this._startUpdatingCurrentTime();
@@ -248,7 +248,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
         if (!this._scheduledCurrentTimeUpdateIdentifier) {
             this._timelineRuler.endTime = this.endTime;
-            this._endTime = this._lastRecordEndTime + WebInspector.TimelineRecordBar.MinimumWidthPixels * this.secondsPerPixel;
+            this._endTime = this._lastRecordEndTime + WI.TimelineRecordBar.MinimumWidthPixels * this.secondsPerPixel;
         }
 
         this._timelineRuler.endTime = this.endTime;
@@ -272,7 +272,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     dataGridSortComparator(sortColumnIdentifier, sortDirection, node1, node2)
     {
         if (sortColumnIdentifier === "priority")
-            return WebInspector.Resource.comparePriority(node1.data.priority, node2.data.priority) * sortDirection;
+            return WI.Resource.comparePriority(node1.data.priority, node2.data.priority) * sortDirection;
 
         return null;
     }
@@ -281,12 +281,12 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
     _resourceCachingDisabledSettingChanged()
     {
-        this._disableResourceCacheNavigationItem.activated = WebInspector.resourceCachingDisabledSetting.value;
+        this._disableResourceCacheNavigationItem.activated = WI.resourceCachingDisabledSetting.value;
     }
 
     _toggleDisableResourceCache()
     {
-        WebInspector.resourceCachingDisabledSetting.value = !WebInspector.resourceCachingDisabledSetting.value;
+        WI.resourceCachingDisabledSetting.value = !WI.resourceCachingDisabledSetting.value;
     }
 
     _processPendingRecords()
@@ -300,11 +300,11 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
             if (treeElement)
                 continue;
 
-            treeElement = new WebInspector.ResourceTreeElement(resourceTimelineRecord.resource);
+            treeElement = new WI.ResourceTreeElement(resourceTimelineRecord.resource);
 
             const includesGraph = false;
             const shouldShowPopover = true;
-            let dataGridNode = new WebInspector.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
+            let dataGridNode = new WI.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
 
             this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);
         }
@@ -315,7 +315,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     _mainResourceDidChange(event)
     {
         let frame = event.target;
-        if (!frame.isMainFrame() || WebInspector.settings.clearNetworkOnNavigate.value)
+        if (!frame.isMainFrame() || WI.settings.clearNetworkOnNavigate.value)
             return;
 
         for (let dataGridNode of this._dataGrid.children)
@@ -330,14 +330,14 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     _networkTimelineRecordAdded(event)
     {
         let resourceTimelineRecord = event.data.record;
-        console.assert(resourceTimelineRecord instanceof WebInspector.ResourceTimelineRecord);
+        console.assert(resourceTimelineRecord instanceof WI.ResourceTimelineRecord);
 
         let update = (event) => {
-            if (event.target[WebInspector.NetworkGridContentView.ResourceDidFinishOrFail])
+            if (event.target[WI.NetworkGridContentView.ResourceDidFinishOrFail])
                 return;
 
             event.target.removeEventListener(null, null, this);
-            event.target[WebInspector.NetworkGridContentView.ResourceDidFinishOrFail] = true;
+            event.target[WI.NetworkGridContentView.ResourceDidFinishOrFail] = true;
 
             this._loadingResourceCount--;
             if (this._loadingResourceCount)
@@ -358,9 +358,9 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
         if (resource.finished || resource.failed || resource.canceled)
             return;
 
-        resource[WebInspector.NetworkGridContentView.ResourceDidFinishOrFail] = false;
-        resource.addEventListener(WebInspector.Resource.Event.LoadingDidFinish, update, this);
-        resource.addEventListener(WebInspector.Resource.Event.LoadingDidFail, update, this);
+        resource[WI.NetworkGridContentView.ResourceDidFinishOrFail] = false;
+        resource.addEventListener(WI.Resource.Event.LoadingDidFinish, update, this);
+        resource.addEventListener(WI.Resource.Event.LoadingDidFail, update, this);
 
         this._loadingResourceCount++;
         if (this._scheduledCurrentTimeUpdateIdentifier)
@@ -370,7 +370,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
             this._startTime = this._endTime = resourceTimelineRecord.startTime;
 
         // FIXME: <https://webkit.org/b/153634> Web Inspector: some background tabs think they are the foreground tab and do unnecessary work
-        if (!(WebInspector.tabBrowser.selectedTabContentView instanceof WebInspector.NetworkTabContentView))
+        if (!(WI.tabBrowser.selectedTabContentView instanceof WI.NetworkTabContentView))
             return;
 
         this._startUpdatingCurrentTime();
@@ -386,14 +386,14 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
     _treeSelectionDidChange(event)
     {
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
 
         if (!this._networkSidebarPanel.canShowDifferentContentView())
             return;
 
         let treeElement = event.data.selectedElement;
-        if (treeElement instanceof WebInspector.ResourceTreeElement) {
-            WebInspector.showRepresentedObject(treeElement.representedObject);
+        if (treeElement instanceof WI.ResourceTreeElement) {
+            WI.showRepresentedObject(treeElement.representedObject);
             return;
         }
 
@@ -402,7 +402,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
 
     _dataGridNodeSelected(event)
     {
-        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
     }
 
     _update(timestamp)
@@ -427,7 +427,7 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
             return;
 
         // Don't update the current time if the Inspector is not visible, as the requestAnimationFrames won't work.
-        if (!WebInspector.visible)
+        if (!WI.visible)
             return;
 
         if (!this._updateCallback)
@@ -451,4 +451,4 @@ WebInspector.NetworkGridContentView = class NetworkGridContentView extends WebIn
     }
 };
 
-WebInspector.NetworkGridContentView.ResourceDidFinishOrFail = Symbol("ResourceDidFinishOrFail");
+WI.NetworkGridContentView.ResourceDidFinishOrFail = Symbol("ResourceDidFinishOrFail");

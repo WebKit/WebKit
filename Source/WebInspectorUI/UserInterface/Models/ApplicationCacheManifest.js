@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ApplicationCacheManifest = class ApplicationCacheManifest
+WI.ApplicationCacheManifest = class ApplicationCacheManifest
 {
     constructor(manifestURL)
     {

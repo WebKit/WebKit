@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
+WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 {
     constructor(node)
     {
@@ -75,9 +75,9 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
         this._needsRefresh = false;
 
-        let fetchedMatchedStylesPromise = new WebInspector.WrappedPromise;
-        let fetchedInlineStylesPromise = new WebInspector.WrappedPromise;
-        let fetchedComputedStylesPromise = new WebInspector.WrappedPromise;
+        let fetchedMatchedStylesPromise = new WI.WrappedPromise;
+        let fetchedInlineStylesPromise = new WI.WrappedPromise;
+        let fetchedComputedStylesPromise = new WI.WrappedPromise;
 
         // Ensure we resolve these promises even in the case of an error.
         function wrap(func, promise) {
@@ -137,7 +137,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                 var inheritedRulePayload = inheritedRulesPayload[i];
 
                 var inheritedRuleInfo = {node: currentNode};
-                inheritedRuleInfo.inlineStyle = inheritedRulePayload.inlineStyle ? this._parseStyleDeclarationPayload(inheritedRulePayload.inlineStyle, currentNode, true, WebInspector.CSSStyleDeclaration.Type.Inline) : null;
+                inheritedRuleInfo.inlineStyle = inheritedRulePayload.inlineStyle ? this._parseStyleDeclarationPayload(inheritedRulePayload.inlineStyle, currentNode, true, WI.CSSStyleDeclaration.Type.Inline) : null;
                 inheritedRuleInfo.matchedRules = inheritedRulePayload.matchedCSSRules ? parseRuleMatchArrayPayload.call(this, inheritedRulePayload.matchedCSSRules, currentNode, true) : [];
 
                 if (inheritedRuleInfo.inlineStyle || inheritedRuleInfo.matchedRules.length)
@@ -152,8 +152,8 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
         function fetchedInlineStyles(error, inlineStylePayload, attributesStylePayload)
         {
-            this._inlineStyle = inlineStylePayload ? this._parseStyleDeclarationPayload(inlineStylePayload, this._node, false, WebInspector.CSSStyleDeclaration.Type.Inline) : null;
-            this._attributesStyle = attributesStylePayload ? this._parseStyleDeclarationPayload(attributesStylePayload, this._node, false, WebInspector.CSSStyleDeclaration.Type.Attribute) : null;
+            this._inlineStyle = inlineStylePayload ? this._parseStyleDeclarationPayload(inlineStylePayload, this._node, false, WI.CSSStyleDeclaration.Type.Inline) : null;
+            this._attributesStyle = attributesStylePayload ? this._parseStyleDeclarationPayload(attributesStylePayload, this._node, false, WI.CSSStyleDeclaration.Type.Attribute) : null;
 
             this._updateStyleCascade();
 
@@ -166,7 +166,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             for (var i = 0; computedPropertiesPayload && i < computedPropertiesPayload.length; ++i) {
                 var propertyPayload = computedPropertiesPayload[i];
 
-                var canonicalName = WebInspector.cssStyleManager.canonicalNameForPropertyName(propertyPayload.name);
+                var canonicalName = WI.cssStyleManager.canonicalNameForPropertyName(propertyPayload.name);
                 propertyPayload.implicit = !this._propertyNameToEffectivePropertyMap[canonicalName];
 
                 var property = this._parseStylePropertyPayload(propertyPayload, NaN, this._computedStyle);
@@ -178,7 +178,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             if (this._computedStyle)
                 this._computedStyle.update(null, properties);
             else
-                this._computedStyle = new WebInspector.CSSStyleDeclaration(this, null, null, WebInspector.CSSStyleDeclaration.Type.Computed, this._node, false, null, properties);
+                this._computedStyle = new WI.CSSStyleDeclaration(this, null, null, WI.CSSStyleDeclaration.Type.Computed, this._node, false, null, properties);
 
             let significantChange = false;
             for (let key in this._styleDeclarationsMap) {
@@ -205,7 +205,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                 if (!this._includeUserAgentRulesOnNextRefresh) {
                     // We can assume all the styles with the same key are from the same stylesheet and rule, so we only check the first.
                     let firstStyle = this._styleDeclarationsMap[key][0];
-                    if (firstStyle && firstStyle.ownerRule && firstStyle.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent) {
+                    if (firstStyle && firstStyle.ownerRule && firstStyle.ownerRule.type === WI.CSSStyleSheet.Type.UserAgent) {
                         // User Agent styles get different identifiers after some edits. This would cause us to fire a significant refreshed
                         // event more than it is helpful. And since the user agent stylesheet is static it shouldn't match differently
                         // between refreshes for the same node. This issue is tracked by: https://webkit.org/b/110055
@@ -227,7 +227,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                     if (!this._includeUserAgentRulesOnNextRefresh) {
                         // See above for why we skip user agent style rules.
                         var firstStyle = this._previousStyleDeclarationsMap[key][0];
-                        if (firstStyle && firstStyle.ownerRule && firstStyle.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
+                        if (firstStyle && firstStyle.ownerRule && firstStyle.ownerRule.type === WI.CSSStyleSheet.Type.UserAgent)
                             continue;
                     }
 
@@ -243,13 +243,13 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             delete this._previousRulesMap;
             delete this._previousStyleDeclarationsMap;
 
-            this.dispatchEventToListeners(WebInspector.DOMNodeStyles.Event.Refreshed, {significantChange});
+            this.dispatchEventToListeners(WI.DOMNodeStyles.Event.Refreshed, {significantChange});
 
             fetchedComputedStylesPromise.resolve();
         }
 
         // FIXME: Convert to pushing StyleSheet information to the frontend. <rdar://problem/13213680>
-        WebInspector.cssStyleManager.fetchStyleSheetsIfNeeded();
+        WI.cssStyleManager.fetchStyleSheetsIfNeeded();
 
         CSSAgent.getMatchedStylesForNode.invoke({nodeId: this._node.id, includePseudo: true, includeInherited: true}, wrap.call(this, fetchedMatchedStyles, fetchedMatchedStylesPromise));
         CSSAgent.getInlineStylesForNode.invoke({nodeId: this._node.id}, wrap.call(this, fetchedInlineStyles, fetchedInlineStylesPromise));
@@ -309,9 +309,9 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         }
 
         if (styleSheetId)
-            inspectorStyleSheetAvailable.call(this, WebInspector.cssStyleManager.styleSheetForIdentifier(styleSheetId));
+            inspectorStyleSheetAvailable.call(this, WI.cssStyleManager.styleSheetForIdentifier(styleSheetId));
         else
-            WebInspector.cssStyleManager.preferredInspectorStyleSheetForFrame(this._node.frame, inspectorStyleSheetAvailable.bind(this));
+            WI.cssStyleManager.preferredInspectorStyleSheetForFrame(this._node.frame, inspectorStyleSheetAvailable.bind(this));
     }
 
     rulesForSelector(selector)
@@ -371,7 +371,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         if (property)
             return property;
 
-        let canonicalName = WebInspector.cssStyleManager.canonicalNameForPropertyName(name);
+        let canonicalName = WI.cssStyleManager.canonicalNameForPropertyName(name);
         return this._propertyNameToEffectivePropertyMap[canonicalName] || null;
     }
 
@@ -441,7 +441,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
     changeRuleSelector(rule, selector)
     {
         selector = selector || "";
-        let result = new WebInspector.WrappedPromise;
+        let result = new WI.WrappedPromise;
 
         function ruleSelectorChanged(error, rulePayload)
         {
@@ -494,7 +494,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
         // Try to use the node to find the frame which has the correct resource first.
         if (this._node.ownerDocument) {
-            var mainResource = WebInspector.frameResourceManager.resourceForURL(this._node.ownerDocument.documentURL);
+            var mainResource = WI.frameResourceManager.resourceForURL(this._node.ownerDocument.documentURL);
             if (mainResource) {
                 var parentFrame = mainResource.parentFrame;
                 sourceCode = parentFrame.resourceForURL(sourceURL);
@@ -503,7 +503,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
         // If that didn't find the resource, then search all frames.
         if (!sourceCode)
-            sourceCode = WebInspector.frameResourceManager.resourceForURL(sourceURL);
+            sourceCode = WI.frameResourceManager.resourceForURL(sourceURL);
 
         if (!sourceCode)
             return null;
@@ -516,7 +516,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         if (!payload)
             return null;
 
-        return new WebInspector.TextRange(payload.startLine, payload.startColumn, payload.endLine, payload.endColumn);
+        return new WI.TextRange(payload.startLine, payload.startColumn, payload.endLine, payload.endColumn);
     }
 
     _parseStylePropertyPayload(payload, index, styleDeclaration, styleText)
@@ -578,7 +578,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             }
         }
 
-        return new WebInspector.CSSProperty(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
+        return new WI.CSSProperty(index, text, name, value, priority, enabled, overridden, implicit, anonymous, valid, styleSheetTextRange);
     }
 
     _parseStyleDeclarationPayload(payload, node, inherited, type, rule, updateAllStyles)
@@ -592,7 +592,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         var id = payload.styleId;
         var mapKey = id ? id.styleSheetId + ":" + id.ordinal : null;
 
-        if (type === WebInspector.CSSStyleDeclaration.Type.Attribute)
+        if (type === WI.CSSStyleDeclaration.Type.Attribute)
             mapKey = node.id + ":attribute";
 
         var styleDeclaration = rule ? rule.style : null;
@@ -660,7 +660,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         for (var i = 0; payload.cssProperties && i < payload.cssProperties.length; ++i) {
             var propertyPayload = payload.cssProperties[i];
 
-            if (inherited && WebInspector.CSSProperty.isInheritedPropertyName(propertyPayload.name))
+            if (inherited && WI.CSSProperty.isInheritedPropertyName(propertyPayload.name))
                 ++inheritedPropertyCount;
 
             var property = this._parseStylePropertyPayload(propertyPayload, i, styleDeclaration, text);
@@ -674,17 +674,17 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             return styleDeclaration;
         }
 
-        var styleSheet = id ? WebInspector.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
+        var styleSheet = id ? WI.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
         if (styleSheet) {
-            if (type === WebInspector.CSSStyleDeclaration.Type.Inline)
+            if (type === WI.CSSStyleDeclaration.Type.Inline)
                 styleSheet.markAsInlineStyleAttributeStyleSheet();
-            styleSheet.addEventListener(WebInspector.CSSStyleSheet.Event.ContentDidChange, this._styleSheetContentDidChange, this);
+            styleSheet.addEventListener(WI.CSSStyleSheet.Event.ContentDidChange, this._styleSheetContentDidChange, this);
         }
 
         if (inherited && !inheritedPropertyCount)
             return null;
 
-        styleDeclaration = new WebInspector.CSSStyleDeclaration(this, styleSheet, id, type, node, inherited, text, properties, styleSheetTextRange);
+        styleDeclaration = new WI.CSSStyleDeclaration(this, styleSheet, id, type, node, inherited, text, properties, styleSheetTextRange);
 
         if (mapKey) {
             styleDeclarations.push(styleDeclaration);
@@ -704,12 +704,12 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         // Now they are CSSSelector objects with multiple properties.
         if (typeof selectors[0] === "string") {
             return selectors.map(function(selectorText) {
-                return new WebInspector.CSSSelector(selectorText);
+                return new WI.CSSSelector(selectorText);
             });
         }
 
         return selectors.map(function(selectorPayload) {
-            return new WebInspector.CSSSelector(selectorPayload.text, selectorPayload.specificity, selectorPayload.dynamic);
+            return new WI.CSSSelector(selectorPayload.text, selectorPayload.specificity, selectorPayload.dynamic);
         });
     }
 
@@ -752,15 +752,15 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             }
         }
 
-        var style = this._parseStyleDeclarationPayload(payload.style, node, inherited, WebInspector.CSSStyleDeclaration.Type.Rule, rule);
+        var style = this._parseStyleDeclarationPayload(payload.style, node, inherited, WI.CSSStyleDeclaration.Type.Rule, rule);
         if (!style)
             return null;
 
-        var styleSheet = id ? WebInspector.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
+        var styleSheet = id ? WI.cssStyleManager.styleSheetForIdentifier(id.styleSheetId) : null;
 
         var selectorText = payload.selectorList.text;
         var selectors = this._parseSelectorListPayload(payload.selectorList);
-        var type = WebInspector.CSSStyleManager.protocolStyleSheetOriginToEnum(payload.origin);
+        var type = WI.CSSStyleManager.protocolStyleSheetOriginToEnum(payload.origin);
 
         var sourceCodeLocation = null;
         var sourceRange = payload.selectorList.range;
@@ -781,13 +781,13 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         var mediaList = [];
         for (var i = 0; payload.media && i < payload.media.length; ++i) {
             var mediaItem = payload.media[i];
-            var mediaType = WebInspector.CSSStyleManager.protocolMediaSourceToEnum(mediaItem.source);
+            var mediaType = WI.CSSStyleManager.protocolMediaSourceToEnum(mediaItem.source);
             var mediaText = mediaItem.text;
             var mediaSourceCodeLocation = this._createSourceCodeLocation(mediaItem.sourceURL, mediaItem.sourceLine);
             if (styleSheet)
                 mediaSourceCodeLocation = styleSheet.offsetSourceCodeLocation(mediaSourceCodeLocation);
 
-            mediaList.push(new WebInspector.CSSMedia(mediaType, mediaText, mediaSourceCodeLocation));
+            mediaList.push(new WI.CSSMedia(mediaType, mediaText, mediaSourceCodeLocation));
         }
 
         if (rule) {
@@ -796,9 +796,9 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
         }
 
         if (styleSheet)
-            styleSheet.addEventListener(WebInspector.CSSStyleSheet.Event.ContentDidChange, this._styleSheetContentDidChange, this);
+            styleSheet.addEventListener(WI.CSSStyleSheet.Event.ContentDidChange, this._styleSheetContentDidChange, this);
 
-        rule = new WebInspector.CSSRule(this, styleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList);
+        rule = new WI.CSSRule(this, styleSheet, id, type, sourceCodeLocation, selectorText, selectors, matchedSelectorIndices, style, mediaList);
 
         if (mapKey)
             this._rulesMap[mapKey] = rule;
@@ -809,7 +809,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
     _markAsNeedsRefresh()
     {
         this._needsRefresh = true;
-        this.dispatchEventToListeners(WebInspector.DOMNodeStyles.Event.NeedsRefresh);
+        this.dispatchEventToListeners(WI.DOMNodeStyles.Event.NeedsRefresh);
     }
 
     _styleSheetContentDidChange(event)
@@ -869,13 +869,13 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
             // Only append to the result array here for author and inspector rules since attribute
             // styles come between author rules and user/user agent rules.
             switch (rule.type) {
-            case WebInspector.CSSStyleSheet.Type.Inspector:
-            case WebInspector.CSSStyleSheet.Type.Author:
+            case WI.CSSStyleSheet.Type.Inspector:
+            case WI.CSSStyleSheet.Type.Author:
                 result.push(rule.style);
                 break;
 
-            case WebInspector.CSSStyleSheet.Type.User:
-            case WebInspector.CSSStyleSheet.Type.UserAgent:
+            case WI.CSSStyleSheet.Type.User:
+            case WI.CSSStyleSheet.Type.UserAgent:
                 userAndUserAgentStyles.push(rule.style);
                 break;
             }
@@ -949,7 +949,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                 if (!property.valid)
                     continue;
 
-                if (!WebInspector.CSSCompletions.cssNameCompletions.isShorthandPropertyName(property.name))
+                if (!WI.CSSCompletions.cssNameCompletions.isShorthandPropertyName(property.name))
                     continue;
 
                 if (knownShorthands[property.canonicalName] && !knownShorthands[property.canonicalName].overridden) {
@@ -969,7 +969,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                 var shorthandProperty = null;
 
                 if (!isEmptyObject(knownShorthands)) {
-                    var possibleShorthands = WebInspector.CSSCompletions.cssNameCompletions.shorthandsForLonghand(property.canonicalName);
+                    var possibleShorthands = WI.CSSCompletions.cssNameCompletions.shorthandsForLonghand(property.canonicalName);
                     for (var k = 0; k < possibleShorthands.length; ++k) {
                         if (possibleShorthands[k] in knownShorthands) {
                             shorthandProperty = knownShorthands[possibleShorthands[k]];
@@ -1001,7 +1001,7 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
     }
 };
 
-WebInspector.DOMNodeStyles.Event = {
+WI.DOMNodeStyles.Event = {
     NeedsRefresh: "dom-node-styles-needs-refresh",
     Refreshed: "dom-node-styles-refreshed"
 };

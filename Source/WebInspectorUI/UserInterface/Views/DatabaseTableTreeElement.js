@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseTableTreeElement = class DatabaseTableTreeElement extends WebInspector.GeneralTreeElement
+WI.DatabaseTableTreeElement = class DatabaseTableTreeElement extends WI.GeneralTreeElement
 {
     constructor(representedObject)
     {
-        console.assert(representedObject instanceof WebInspector.DatabaseTableObject);
+        console.assert(representedObject instanceof WI.DatabaseTableObject);
 
         const subtitle = null;
         super("database-table-icon", representedObject.name, subtitle, representedObject);

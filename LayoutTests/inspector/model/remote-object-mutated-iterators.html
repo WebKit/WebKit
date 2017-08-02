@@ -27,7 +27,7 @@ function test()
         {expression: `argumentsIter.__proto__.next = function(){}; argumentsIter`},
     ];
 
-    if (!window.WebInspector) {
+    if (!window.WI) {
         window.steps = steps;
         return;
     }

@@ -23,38 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSObserver = class CSSObserver
+WI.CSSObserver = class CSSObserver
 {
     // Events defined by the "CSS" domain.
 
     mediaQueryResultChanged()
     {
-        WebInspector.cssStyleManager.mediaQueryResultChanged();
+        WI.cssStyleManager.mediaQueryResultChanged();
     }
 
     styleSheetChanged(styleSheetId)
     {
-        WebInspector.cssStyleManager.styleSheetChanged(styleSheetId);
+        WI.cssStyleManager.styleSheetChanged(styleSheetId);
     }
 
     styleSheetAdded(styleSheetInfo)
     {
-        WebInspector.cssStyleManager.styleSheetAdded(styleSheetInfo);
+        WI.cssStyleManager.styleSheetAdded(styleSheetInfo);
     }
 
     styleSheetRemoved(id)
     {
-        WebInspector.cssStyleManager.styleSheetRemoved(id);
+        WI.cssStyleManager.styleSheetRemoved(id);
     }
 
     namedFlowCreated(namedFlow)
     {
-        WebInspector.domTreeManager.namedFlowCreated(namedFlow);
+        WI.domTreeManager.namedFlowCreated(namedFlow);
     }
 
     namedFlowRemoved(documentNodeId, flowName)
     {
-        WebInspector.domTreeManager.namedFlowRemoved(documentNodeId, flowName);
+        WI.domTreeManager.namedFlowRemoved(documentNodeId, flowName);
     }
 
     // COMPATIBILITY (iOS 7): regionLayoutUpdated was removed and replaced by regionOversetChanged.
@@ -65,16 +65,16 @@ WebInspector.CSSObserver = class CSSObserver
 
     regionOversetChanged(namedFlow)
     {
-        WebInspector.domTreeManager.regionOversetChanged(namedFlow);
+        WI.domTreeManager.regionOversetChanged(namedFlow);
     }
 
     registeredNamedFlowContentElement(documentNodeId, flowName, contentNodeId, nextContentElementNodeId)
     {
-        WebInspector.domTreeManager.registeredNamedFlowContentElement(documentNodeId, flowName, contentNodeId, nextContentElementNodeId);
+        WI.domTreeManager.registeredNamedFlowContentElement(documentNodeId, flowName, contentNodeId, nextContentElementNodeId);
     }
 
     unregisteredNamedFlowContentElement(documentNodeId, flowName, contentNodeId)
     {
-        WebInspector.domTreeManager.unregisteredNamedFlowContentElement(documentNodeId, flowName, contentNodeId);
+        WI.domTreeManager.unregisteredNamedFlowContentElement(documentNodeId, flowName, contentNodeId);
     }
 };

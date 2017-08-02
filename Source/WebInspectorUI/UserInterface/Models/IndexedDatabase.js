@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabase = class IndexedDatabase
+WI.IndexedDatabase = class IndexedDatabase
 {
     constructor(name, securityOrigin, version, objectStores)
     {
@@ -47,11 +47,11 @@ WebInspector.IndexedDatabase = class IndexedDatabase
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WebInspector.IndexedDatabase.NameCookieKey] = this._name;
-        cookie[WebInspector.IndexedDatabase.HostCookieKey] = this._host;
+        cookie[WI.IndexedDatabase.NameCookieKey] = this._name;
+        cookie[WI.IndexedDatabase.HostCookieKey] = this._host;
     }
 };
 
-WebInspector.IndexedDatabase.TypeIdentifier = "indexed-database";
-WebInspector.IndexedDatabase.NameCookieKey = "indexed-database-name";
-WebInspector.IndexedDatabase.HostCookieKey = "indexed-database-host";
+WI.IndexedDatabase.TypeIdentifier = "indexed-database";
+WI.IndexedDatabase.NameCookieKey = "indexed-database-name";
+WI.IndexedDatabase.HostCookieKey = "indexed-database-host";

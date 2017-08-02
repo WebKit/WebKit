@@ -23,19 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WebInspector.GeneralTreeElement
+WI.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends WI.GeneralTreeElement
 {
     constructor(breakpoint, className, title)
     {
-        console.assert(breakpoint instanceof WebInspector.XHRBreakpoint);
+        console.assert(breakpoint instanceof WI.XHRBreakpoint);
 
         if (!className)
-            className = WebInspector.BreakpointTreeElement.GenericLineIconStyleClassName;
+            className = WI.BreakpointTreeElement.GenericLineIconStyleClassName;
 
         let subtitle;
         if (!title) {
-            title = WebInspector.UIString("URL");
-            if (breakpoint.type === WebInspector.XHRBreakpoint.Type.Text)
+            title = WI.UIString("URL");
+            if (breakpoint.type === WI.XHRBreakpoint.Type.Text)
                 subtitle = doubleQuotedString(breakpoint.url);
             else
                 subtitle = "/" + breakpoint.url + "/";
@@ -47,7 +47,7 @@ WebInspector.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends W
         this._statusImageElement.classList.add("status-image", "resolved");
         this.status = this._statusImageElement;
 
-        breakpoint.addEventListener(WebInspector.XHRBreakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
+        breakpoint.addEventListener(WI.XHRBreakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
 
         this._updateStatus();
     }
@@ -82,7 +82,7 @@ WebInspector.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends W
 
     ondelete()
     {
-        WebInspector.domDebuggerManager.removeXHRBreakpoint(this.representedObject);
+        WI.domDebuggerManager.removeXHRBreakpoint(this.representedObject);
         return true;
     }
 
@@ -101,13 +101,13 @@ WebInspector.XHRBreakpointTreeElement = class XHRBreakpointTreeElement extends W
     populateContextMenu(contextMenu, event)
     {
         let breakpoint = this.representedObject;
-        let label = breakpoint.disabled ? WebInspector.UIString("Enable Breakpoint") : WebInspector.UIString("Disable Breakpoint");
+        let label = breakpoint.disabled ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint");
         contextMenu.appendItem(label, this._toggleBreakpoint.bind(this));
 
-        if (WebInspector.domDebuggerManager.isBreakpointRemovable(breakpoint)) {
+        if (WI.domDebuggerManager.isBreakpointRemovable(breakpoint)) {
             contextMenu.appendSeparator();
-            contextMenu.appendItem(WebInspector.UIString("Delete Breakpoint"), function() {
-                WebInspector.domDebuggerManager.removeXHRBreakpoint(breakpoint);
+            contextMenu.appendItem(WI.UIString("Delete Breakpoint"), function() {
+                WI.domDebuggerManager.removeXHRBreakpoint(breakpoint);
             });
         }
     }
