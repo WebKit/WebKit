@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,8 @@
 
 #include "BPlatform.h"
 #include "Inline.h"
+#include "PerHeapKind.h"
+#include "VMAllocate.h"
 #include <mutex>
 #include <pthread.h>
 
@@ -63,9 +65,9 @@ private:
 class Cache;
 template<typename T> struct PerThreadStorage;
 
-// For now, we only support PerThread<Cache>. We can expand to other types by
+// For now, we only support PerThread<PerHeapKind<Cache>>. We can expand to other types by
 // using more keys.
-template<> struct PerThreadStorage<Cache> {
+template<> struct PerThreadStorage<PerHeapKind<Cache>> {
     static const pthread_key_t key = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0;
 
     static void* get()
@@ -131,14 +133,16 @@ template<typename T>
 void PerThread<T>::destructor(void* p)
 {
     T* t = static_cast<T*>(p);
-    delete t;
+    t->~T();
+    vmDeallocate(t, vmSize(sizeof(T)));
 }
 
 template<typename T>
 T* PerThread<T>::getSlowCase()
 {
     BASSERT(!getFastCase());
-    T* t = new T;
+    T* t = static_cast<T*>(vmAllocate(vmSize(sizeof(T))));
+    new (t) T();
     PerThreadStorage<T>::init(t, destructor);
     return t;
 }

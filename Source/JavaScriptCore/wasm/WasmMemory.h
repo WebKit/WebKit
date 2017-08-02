@@ -45,10 +45,9 @@ namespace Wasm {
 // FIXME: We should support other modes. see: https://bugs.webkit.org/show_bug.cgi?id=162693
 enum class MemoryMode : uint8_t {
     BoundsChecking,
-    Signaling,
-    NumberOfMemoryModes
+    Signaling
 };
-static constexpr size_t NumberOfMemoryModes = static_cast<size_t>(MemoryMode::NumberOfMemoryModes);
+static constexpr size_t NumberOfMemoryModes = 2;
 JS_EXPORT_PRIVATE const char* makeString(MemoryMode);
 
 class Memory : public RefCounted<Memory> {
@@ -58,16 +57,13 @@ public:
     void dump(WTF::PrintStream&) const;
 
     explicit operator bool() const { return !!m_memory; }
-
-    static void initializePreallocations();
+    
     static RefPtr<Memory> create(VM&, PageCount initial, PageCount maximum);
 
-    Memory() = default;
     ~Memory();
 
     static size_t fastMappedRedzoneBytes();
     static size_t fastMappedBytes(); // Includes redzone.
-    static size_t maxFastMemoryCount();
     static bool addressIsInActiveFastMemory(void*);
 
     void* memory() const { return m_memory; }
@@ -81,7 +77,7 @@ public:
 
     // grow() should only be called from the JSWebAssemblyMemory object since that object needs to update internal
     // pointers with the current base and size.
-    bool grow(PageCount);
+    bool grow(VM&, PageCount);
 
     void check() {  ASSERT(!deletionHasBegun()); }
 private:

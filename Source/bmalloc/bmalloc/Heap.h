@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,25 +26,25 @@
 #ifndef Heap_h
 #define Heap_h
 
+#include "AllocationKind.h"
 #include "AsyncTask.h"
 #include "BumpRange.h"
+#include "Chunk.h"
 #include "Environment.h"
+#include "HeapKind.h"
 #include "LargeMap.h"
 #include "LineMetadata.h"
 #include "List.h"
 #include "Map.h"
 #include "Mutex.h"
 #include "Object.h"
+#include "PerHeapKind.h"
+#include "PerProcess.h"
 #include "SmallLine.h"
 #include "SmallPage.h"
-#include "VMHeap.h"
 #include "Vector.h"
 #include <array>
 #include <mutex>
-
-#if BOS(DARWIN)
-#include <dispatch/dispatch.h>
-#endif
 
 namespace bmalloc {
 
@@ -55,7 +55,11 @@ class EndTag;
 
 class Heap {
 public:
-    Heap(std::lock_guard<StaticMutex>&);
+    Heap(HeapKind, std::lock_guard<StaticMutex>&);
+    
+    static StaticMutex& mutex() { return PerProcess<PerHeapKind<Heap>>::mutex(); }
+    
+    HeapKind kind() const { return m_kind; }
     
     DebugHeap* debugHeap() { return m_debugHeap; }
 
@@ -64,19 +68,15 @@ public:
     void derefSmallLine(std::lock_guard<StaticMutex>&, Object, LineCache&);
     void deallocateLineCache(std::lock_guard<StaticMutex>&, LineCache&);
 
-    void* allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
-    void* tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
-    void deallocateLarge(std::lock_guard<StaticMutex>&, void*);
+    void* allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t, AllocationKind = AllocationKind::Physical);
+    void* tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t, AllocationKind = AllocationKind::Physical);
+    void deallocateLarge(std::lock_guard<StaticMutex>&, void*, AllocationKind = AllocationKind::Physical);
 
     bool isLarge(std::lock_guard<StaticMutex>&, void*);
     size_t largeSize(std::lock_guard<StaticMutex>&, void*);
     void shrinkLarge(std::lock_guard<StaticMutex>&, const Range&, size_t);
 
     void scavenge(std::lock_guard<StaticMutex>&);
-
-#if BOS(DARWIN)
-    void setScavengerThreadQOSClass(qos_class_t overrideClass) { m_requestedScavengerThreadQOSClass = overrideClass; }
-#endif
 
 private:
     struct LargeObjectHash {
@@ -88,6 +88,8 @@ private:
     };
 
     ~Heap() = delete;
+    
+    bool usingGigacage();
     
     void initializeLineMetadata();
     void initializePageMetadata();
@@ -107,12 +109,14 @@ private:
     void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
 
-    LargeRange splitAndAllocate(LargeRange&, size_t alignment, size_t);
+    LargeRange splitAndAllocate(LargeRange&, size_t alignment, size_t, AllocationKind);
 
     void scheduleScavenger(size_t);
     void scheduleScavengerIfUnderMemoryPressure(size_t);
     
     void concurrentScavenge();
+    
+    HeapKind m_kind;
     
     size_t m_vmPageSizePhysical;
     Vector<LineMetadata> m_smallLineMetadata;
@@ -134,13 +138,6 @@ private:
 
     Environment m_environment;
     DebugHeap* m_debugHeap;
-
-    VMHeap m_vmHeap;
-
-#if BOS(DARWIN)
-    dispatch_source_t m_pressureHandlerDispatchSource;
-    qos_class_t m_requestedScavengerThreadQOSClass { QOS_CLASS_USER_INITIATED };
-#endif
 };
 
 inline void Heap::allocateSmallBumpRanges(

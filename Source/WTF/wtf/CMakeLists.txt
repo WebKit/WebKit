@@ -38,6 +38,7 @@ set(WTF_HEADERS
     Forward.h
     FunctionDispatcher.h
     GetPtr.h
+    Gigacage.h
     GlobalVersion.h
     GraphNodeWorklist.h
     GregorianDateTime.h
@@ -219,6 +220,7 @@ set(WTF_SOURCES
     FastMalloc.cpp
     FilePrintStream.cpp
     FunctionDispatcher.cpp
+    Gigacage.cpp
     GlobalVersion.cpp
     GregorianDateTime.cpp
     HashTable.cpp

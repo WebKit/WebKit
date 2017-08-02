@@ -1045,6 +1045,8 @@ private:
     PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
 
 protected:
+    // FIXME: This should do caging.
+    // https://bugs.webkit.org/show_bug.cgi?id=175039
     AuxiliaryBarrier<Butterfly*> m_butterfly;
 #if USE(JSVALUE32_64)
 private:

@@ -30,8 +30,9 @@
 
 #import "GPUDevice.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
+#import <wtf/Gigacage.h>
+#import <wtf/PageBlock.h>
 
 namespace WebCore {
 
@@ -41,8 +42,21 @@ GPUBuffer::GPUBuffer(GPUDevice* device, ArrayBufferView* data)
 
     if (!device || !device->platformDevice() || !data)
         return;
-
-    m_buffer = adoptNS((MTLBuffer *)[device->platformDevice() newBufferWithBytes:data->baseAddress() length:data->byteLength() options:MTLResourceOptionCPUCacheModeDefault]);
+    
+    size_t pageSize = WTF::pageSize();
+    size_t pageAlignedSize = roundUpToMultipleOf(pageSize, data->byteLength());
+    void* pageAlignedCopy = Gigacage::tryAlignedMalloc(pageSize, pageAlignedSize);
+    if (!pageAlignedCopy)
+        return;
+    memcpy(pageAlignedCopy, data->baseAddress(), data->byteLength());
+    m_contents = ArrayBuffer::createFromBytes(pageAlignedCopy, data->byteLength(), [] (void* ptr) { Gigacage::alignedFree(ptr); });
+    m_contents->ref();
+    ArrayBuffer* capturedContents = m_contents.get();
+    m_buffer = adoptNS((MTLBuffer *)[device->platformDevice() newBufferWithBytesNoCopy:m_contents->data() length:pageAlignedSize options:MTLResourceOptionCPUCacheModeDefault deallocator:^(void*, NSUInteger) { capturedContents->deref(); }]);
+    if (!m_buffer) {
+        m_contents->deref();
+        m_contents = nullptr;
+    }
 }
 
 unsigned long GPUBuffer::length() const
@@ -55,13 +69,6 @@ unsigned long GPUBuffer::length() const
 
 RefPtr<ArrayBuffer> GPUBuffer::contents()
 {
-    if (m_contents)
-        return m_contents;
-
-    if (!m_buffer)
-        return nullptr;
-
-    m_contents = ArrayBuffer::createFromBytes([m_buffer contents], [m_buffer length], [] (void*) { });
     return m_contents;
 }
 

@@ -11,10 +11,12 @@ set(bmalloc_SOURCES
     bmalloc/Deallocator.cpp
     bmalloc/DebugHeap.cpp
     bmalloc/Environment.cpp
+    bmalloc/Gigacage.cpp
     bmalloc/Heap.cpp
     bmalloc/LargeMap.cpp
     bmalloc/Logging.cpp
     bmalloc/ObjectType.cpp
+    bmalloc/Scavenger.cpp
     bmalloc/StaticMutex.cpp
     bmalloc/VMHeap.cpp
     bmalloc/mbmalloc.cpp

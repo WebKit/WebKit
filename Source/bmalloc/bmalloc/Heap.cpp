@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +28,21 @@
 #include "AvailableMemory.h"
 #include "BumpAllocator.h"
 #include "Chunk.h"
+#include "Gigacage.h"
 #include "DebugHeap.h"
 #include "PerProcess.h"
+#include "Scavenger.h"
 #include "SmallLine.h"
 #include "SmallPage.h"
+#include "VMHeap.h"
+#include "bmalloc.h"
 #include <thread>
 
 namespace bmalloc {
 
-Heap::Heap(std::lock_guard<StaticMutex>&)
-    : m_vmPageSizePhysical(vmPageSizePhysical())
+Heap::Heap(HeapKind kind, std::lock_guard<StaticMutex>&)
+    : m_kind(kind)
+    , m_vmPageSizePhysical(vmPageSizePhysical())
     , m_scavenger(*this, &Heap::concurrentScavenge)
     , m_debugHeap(nullptr)
 {
@@ -49,17 +54,22 @@ Heap::Heap(std::lock_guard<StaticMutex>&)
     
     if (m_environment.isDebugHeapEnabled())
         m_debugHeap = PerProcess<DebugHeap>::get();
-
-#if BOS(DARWIN)
-    auto queue = dispatch_queue_create("WebKit Malloc Memory Pressure Handler", DISPATCH_QUEUE_SERIAL);
-    m_pressureHandlerDispatchSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, DISPATCH_MEMORYPRESSURE_CRITICAL, queue);
-    dispatch_source_set_event_handler(m_pressureHandlerDispatchSource, ^{
-        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-        scavenge(lock);
-    });
-    dispatch_resume(m_pressureHandlerDispatchSource);
-    dispatch_release(queue);
+    else {
+        Gigacage::ensureGigacage();
+#if GIGACAGE_ENABLED
+        if (usingGigacage()) {
+            RELEASE_BASSERT(g_gigacageBasePtr);
+            m_largeFree.add(LargeRange(g_gigacageBasePtr, GIGACAGE_SIZE, 0));
+        }
 #endif
+    }
+    
+    PerProcess<Scavenger>::get();
+}
+
+bool Heap::usingGigacage()
+{
+    return m_kind == HeapKind::Gigacage && g_gigacageBasePtr;
 }
 
 void Heap::initializeLineMetadata()
@@ -120,10 +130,10 @@ void Heap::initializePageMetadata()
 
 void Heap::concurrentScavenge()
 {
-    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    std::lock_guard<StaticMutex> lock(mutex());
 
 #if BOS(DARWIN)
-    pthread_set_qos_class_self_np(m_requestedScavengerThreadQOSClass, 0);
+    pthread_set_qos_class_self_np(PerProcess<Scavenger>::getFastCase()->requestedScavengerThreadQOSClass(), 0);
 #endif
 
     if (m_isGrowing && !isUnderMemoryPressure()) {
@@ -438,7 +448,7 @@ void Heap::allocateSmallBumpRangesByObject(
     }
 }
 
-LargeRange Heap::splitAndAllocate(LargeRange& range, size_t alignment, size_t size)
+LargeRange Heap::splitAndAllocate(LargeRange& range, size_t alignment, size_t size, AllocationKind allocationKind)
 {
     LargeRange prev;
     LargeRange next;
@@ -457,11 +467,20 @@ LargeRange Heap::splitAndAllocate(LargeRange& range, size_t alignment, size_t si
         next = pair.second;
     }
     
-    if (range.physicalSize() < range.size()) {
-        scheduleScavengerIfUnderMemoryPressure(range.size());
+    switch (allocationKind) {
+    case AllocationKind::Virtual:
+        if (range.physicalSize())
+            vmDeallocatePhysicalPagesSloppy(range.begin(), range.size());
+        break;
         
-        vmAllocatePhysicalPagesSloppy(range.begin() + range.physicalSize(), range.size() - range.physicalSize());
-        range.setPhysicalSize(range.size());
+    case AllocationKind::Physical:
+        if (range.physicalSize() < range.size()) {
+            scheduleScavengerIfUnderMemoryPressure(range.size());
+            
+            vmAllocatePhysicalPagesSloppy(range.begin() + range.physicalSize(), range.size() - range.physicalSize());
+            range.setPhysicalSize(range.size());
+        }
+        break;
     }
     
     if (prev)
@@ -476,7 +495,7 @@ LargeRange Heap::splitAndAllocate(LargeRange& range, size_t alignment, size_t si
     return range;
 }
 
-void* Heap::tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t size)
+void* Heap::tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t size, AllocationKind allocationKind)
 {
     BASSERT(isPowerOfTwo(alignment));
 
@@ -494,21 +513,24 @@ void* Heap::tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, si
 
     LargeRange range = m_largeFree.remove(alignment, size);
     if (!range) {
-        range = m_vmHeap.tryAllocateLargeChunk(alignment, size);
-        if (!range)
+        if (usingGigacage())
             return nullptr;
 
+        range = PerProcess<VMHeap>::get()->tryAllocateLargeChunk(alignment, size, allocationKind);
+        if (!range)
+            return nullptr;
+        
         m_largeFree.add(range);
 
         range = m_largeFree.remove(alignment, size);
     }
 
-    return splitAndAllocate(range, alignment, size).begin();
+    return splitAndAllocate(range, alignment, size, allocationKind).begin();
 }
 
-void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size)
+void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size, AllocationKind allocationKind)
 {
-    void* result = tryAllocateLarge(lock, alignment, size);
+    void* result = tryAllocateLarge(lock, alignment, size, allocationKind);
     RELEASE_BASSERT(result);
     return result;
 }
@@ -529,16 +551,15 @@ void Heap::shrinkLarge(std::lock_guard<StaticMutex>&, const Range& object, size_
 
     size_t size = m_largeAllocated.remove(object.begin());
     LargeRange range = LargeRange(object, size);
-    splitAndAllocate(range, alignment, newSize);
+    splitAndAllocate(range, alignment, newSize, AllocationKind::Physical);
 
     scheduleScavenger(size);
 }
 
-void Heap::deallocateLarge(std::lock_guard<StaticMutex>&, void* object)
+void Heap::deallocateLarge(std::lock_guard<StaticMutex>&, void* object, AllocationKind allocationKind)
 {
     size_t size = m_largeAllocated.remove(object);
-    m_largeFree.add(LargeRange(object, size, size));
-    
+    m_largeFree.add(LargeRange(object, size, allocationKind == AllocationKind::Physical ? size : 0));
     scheduleScavenger(size);
 }
 

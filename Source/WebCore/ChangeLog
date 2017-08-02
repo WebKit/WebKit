@@ -1,3 +1,18 @@
+2017-08-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Bmalloc and GC should put auxiliaries (butterflies, typed array backing stores) in a gigacage (separate multi-GB VM region)
+        https://bugs.webkit.org/show_bug.cgi?id=174727
+
+        Reviewed by Mark Lam.
+
+        No new tests because no change in behavior.
+        
+        Needed to teach Metal how to allocate in the Gigacage.
+
+        * platform/graphics/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::GPUBuffer):
+        (WebCore::GPUBuffer::contents):
+
 2017-08-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Implement Font::platformBoundsForGlyph

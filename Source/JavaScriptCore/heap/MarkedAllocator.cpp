@@ -103,7 +103,10 @@ void* MarkedAllocator::tryAllocateWithoutCollecting()
     }
     
     if (Options::stealEmptyBlocksFromOtherAllocators()) {
-        if (MarkedBlock::Handle* block = markedSpace().findEmptyBlockToSteal()) {
+        if (MarkedBlock::Handle* block = m_subspace->findEmptyBlockToSteal()) {
+            RELEASE_ASSERT(block->subspace()->canTradeBlocksWith(m_subspace));
+            RELEASE_ASSERT(m_subspace->canTradeBlocksWith(block->subspace()));
+            
             block->sweep(nullptr);
             
             // It's good that this clears canAllocateButNotEmpty as well as all other bits,
@@ -240,7 +243,7 @@ MarkedBlock::Handle* MarkedAllocator::tryAllocateBlock()
 {
     SuperSamplerScope superSamplerScope(false);
     
-    MarkedBlock::Handle* handle = MarkedBlock::tryCreate(*m_heap);
+    MarkedBlock::Handle* handle = MarkedBlock::tryCreate(*m_heap, subspace());
     if (!handle)
         return nullptr;
     

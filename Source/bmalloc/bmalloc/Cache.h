@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,9 @@
 #define Cache_h
 
 #include "Allocator.h"
+#include "BExport.h"
 #include "Deallocator.h"
+#include "HeapKind.h"
 #include "PerThread.h"
 
 namespace bmalloc {
@@ -36,80 +38,77 @@ namespace bmalloc {
 
 class Cache {
 public:
-    void* operator new(size_t);
-    void operator delete(void*, size_t);
+    static void* tryAllocate(HeapKind, size_t);
+    static void* allocate(HeapKind, size_t);
+    static void* tryAllocate(HeapKind, size_t alignment, size_t);
+    static void* allocate(HeapKind, size_t alignment, size_t);
+    static void deallocate(HeapKind, void*);
+    static void* reallocate(HeapKind, void*, size_t);
 
-    static void* tryAllocate(size_t);
-    static void* allocate(size_t);
-    static void* tryAllocate(size_t alignment, size_t);
-    static void* allocate(size_t alignment, size_t);
-    static void deallocate(void*);
-    static void* reallocate(void*, size_t);
+    static void scavenge(HeapKind);
 
-    static void scavenge();
-
-    Cache();
+    Cache(HeapKind);
 
     Allocator& allocator() { return m_allocator; }
     Deallocator& deallocator() { return m_deallocator; }
 
 private:
-    static void* tryAllocateSlowCaseNullCache(size_t);
-    static void* allocateSlowCaseNullCache(size_t);
-    static void* allocateSlowCaseNullCache(size_t alignment, size_t);
-    static void deallocateSlowCaseNullCache(void*);
-    static void* reallocateSlowCaseNullCache(void*, size_t);
+    BEXPORT static void* tryAllocateSlowCaseNullCache(HeapKind, size_t);
+    BEXPORT static void* allocateSlowCaseNullCache(HeapKind, size_t);
+    BEXPORT static void* allocateSlowCaseNullCache(HeapKind, size_t alignment, size_t);
+    BEXPORT static void deallocateSlowCaseNullCache(HeapKind, void*);
+    BEXPORT static void* reallocateSlowCaseNullCache(HeapKind, void*, size_t);
 
     Deallocator m_deallocator;
     Allocator m_allocator;
 };
 
-inline void* Cache::tryAllocate(size_t size)
+inline void* Cache::tryAllocate(HeapKind heapKind, size_t size)
 {
-    Cache* cache = PerThread<Cache>::getFastCase();
-    if (!cache)
-        return tryAllocateSlowCaseNullCache(size);
-    return cache->allocator().tryAllocate(size);
+    PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
+    if (!caches)
+        return tryAllocateSlowCaseNullCache(heapKind, size);
+    return caches->at(heapKind).allocator().tryAllocate(size);
 }
 
-inline void* Cache::allocate(size_t size)
+inline void* Cache::allocate(HeapKind heapKind, size_t size)
 {
-    Cache* cache = PerThread<Cache>::getFastCase();
-    if (!cache)
-        return allocateSlowCaseNullCache(size);
-    return cache->allocator().allocate(size);
+    PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
+    if (!caches)
+        return allocateSlowCaseNullCache(heapKind, size);
+    return caches->at(heapKind).allocator().allocate(size);
 }
 
-inline void* Cache::tryAllocate(size_t alignment, size_t size)
+inline void* Cache::tryAllocate(HeapKind heapKind, size_t alignment, size_t size)
 {
-    Cache* cache = PerThread<Cache>::getFastCase();
-    if (!cache)
-        return allocateSlowCaseNullCache(alignment, size);
-    return cache->allocator().tryAllocate(alignment, size);
+    PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
+    if (!caches)
+        return allocateSlowCaseNullCache(heapKind, alignment, size);
+    return caches->at(heapKind).allocator().tryAllocate(alignment, size);
 }
 
-inline void* Cache::allocate(size_t alignment, size_t size)
+inline void* Cache::allocate(HeapKind heapKind, size_t alignment, size_t size)
 {
-    Cache* cache = PerThread<Cache>::getFastCase();
-    if (!cache)
-        return allocateSlowCaseNullCache(alignment, size);
-    return cache->allocator().allocate(alignment, size);
+    PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
+    if (!caches)
+        return allocateSlowCaseNullCache(heapKind, alignment, size);
+    return caches->at(heapKind).allocator().allocate(alignment, size);
 }
 
-inline void Cache::deallocate(void* object)
+inline void Cache::deallocate(HeapKind heapKind, void* object)
 {
-    Cache* cache = PerThread<Cache>::getFastCase();
-    if (!cache)
-        return deallocateSlowCaseNullCache(object);
-    return cache->deallocator().deallocate(object);
+    PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
+    if (!caches)
+        return deallocateSlowCaseNullCache(heapKind, object);
+    return caches->at(heapKind).deallocator().deallocate(object);
 }
 
-inline void* Cache::reallocate(void* object, size_t newSize)
+inline void* Cache::reallocate(HeapKind heapKind, void* object, size_t newSize)
 {
-    Cache* cache = PerThread<Cache>::getFastCase();
-    if (!cache)
-        return reallocateSlowCaseNullCache(object, newSize);
-    return cache->allocator().reallocate(object, newSize);
+    PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
+    if (!caches)
+        return reallocateSlowCaseNullCache(heapKind, object, newSize);
+    return caches->at(heapKind).allocator().reallocate(object, newSize);
 }
 
 } // namespace bmalloc

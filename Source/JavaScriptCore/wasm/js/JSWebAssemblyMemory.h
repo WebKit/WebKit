@@ -41,6 +41,13 @@ class JSWebAssemblyMemory : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
+    template<typename CellType>
+    static Subspace* subspaceFor(VM& vm)
+    {
+        // We hold onto a lot of memory, so it makes a lot of sense to be swept eagerly.
+        return &vm.eagerlySweptDestructibleObjectSpace;
+    }
+
     static JSWebAssemblyMemory* create(ExecState*, VM&, Structure*, Ref<Wasm::Memory>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 

@@ -58,6 +58,7 @@ Subspace::Subspace(CString name, Heap& heap, AllocatorAttributes attributes)
     : m_space(heap.objectSpace())
     , m_name(name)
     , m_attributes(attributes)
+    , m_allocatorForEmptyAllocation(m_space.firstAllocator())
 {
     // It's remotely possible that we're GCing right now even if the client is careful to only
     // create subspaces right after VM creation, since collectContinuously (and probably other
@@ -85,6 +86,23 @@ void Subspace::finishSweep(MarkedBlock::Handle& block, FreeList* freeList)
 void Subspace::destroy(VM& vm, JSCell* cell)
 {
     DestroyFunc()(vm, cell);
+}
+
+bool Subspace::canTradeBlocksWith(Subspace*)
+{
+    return true;
+}
+
+void* Subspace::tryAllocateAlignedMemory(size_t alignment, size_t size)
+{
+    void* result = tryFastAlignedMalloc(alignment, size);
+    return result;
+}
+
+void Subspace::freeAlignedMemory(void* basePtr)
+{
+    fastAlignedFree(basePtr);
+    WTF::compilerFence();
 }
 
 // The reason why we distinguish between allocate and tryAllocate is to minimize the number of
@@ -133,6 +151,31 @@ void* Subspace::tryAllocate(GCDeferralContext* deferralContext, size_t size)
         result = tryAllocateSlow(deferralContext, size);
     didAllocate(result);
     return result;
+}
+
+void Subspace::prepareForAllocation()
+{
+    forEachAllocator(
+        [&] (MarkedAllocator& allocator) {
+            allocator.prepareForAllocation();
+        });
+
+    m_allocatorForEmptyAllocation = m_space.firstAllocator();
+}
+
+MarkedBlock::Handle* Subspace::findEmptyBlockToSteal()
+{
+    for (; m_allocatorForEmptyAllocation; m_allocatorForEmptyAllocation = m_allocatorForEmptyAllocation->nextAllocator()) {
+        Subspace* otherSubspace = m_allocatorForEmptyAllocation->subspace();
+        if (!canTradeBlocksWith(otherSubspace))
+            continue;
+        if (!otherSubspace->canTradeBlocksWith(this))
+            continue;
+        
+        if (MarkedBlock::Handle* block = m_allocatorForEmptyAllocation->findEmptyBlockToSteal())
+            return block;
+    }
+    return nullptr;
 }
 
 MarkedAllocator* Subspace::allocatorForSlow(size_t size)

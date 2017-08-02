@@ -59,6 +59,10 @@ public:
     // These get called for large objects.
     virtual void destroy(VM&, JSCell*);
     
+    virtual bool canTradeBlocksWith(Subspace* other);
+    virtual void* tryAllocateAlignedMemory(size_t alignment, size_t size);
+    virtual void freeAlignedMemory(void*);
+    
     MarkedAllocator* tryAllocatorFor(size_t);
     MarkedAllocator* allocatorFor(size_t);
     
@@ -67,6 +71,16 @@ public:
     
     JS_EXPORT_PRIVATE void* tryAllocate(size_t);
     JS_EXPORT_PRIVATE void* tryAllocate(GCDeferralContext*, size_t);
+    
+    void prepareForAllocation();
+    
+    void didCreateFirstAllocator(MarkedAllocator* allocator) { m_allocatorForEmptyAllocation = allocator; }
+    
+    // Finds an empty block from any Subspace that agrees to trade blocks with us.
+    MarkedBlock::Handle* findEmptyBlockToSteal();
+    
+    template<typename Func>
+    void forEachAllocator(const Func&);
     
     template<typename Func>
     void forEachMarkedBlock(const Func&);
@@ -103,6 +117,7 @@ private:
     
     std::array<MarkedAllocator*, MarkedSpace::numSizeClasses> m_allocatorForSizeStep;
     MarkedAllocator* m_firstAllocator { nullptr };
+    MarkedAllocator* m_allocatorForEmptyAllocation { nullptr }; // Uses the MarkedSpace linked list of blocks.
     SentinelLinkedList<LargeAllocation, BasicRawSentinelNode<LargeAllocation>> m_largeAllocations;
 };
 

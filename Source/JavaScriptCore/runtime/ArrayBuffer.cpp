@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "ArrayBufferNeuteringWatchpoint.h"
 #include "JSArrayBufferView.h"
 #include "JSCInlines.h"
+#include <wtf/Gigacage.h>
 
 namespace JSC {
 
@@ -102,20 +103,20 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
             return;
         }
     }
-    bool allocationSucceeded = false;
-    if (policy == ZeroInitialize)
-        allocationSucceeded = WTF::tryFastCalloc(numElements, elementByteSize).getValue(m_data);
-    else {
-        ASSERT(policy == DontInitialize);
-        allocationSucceeded = WTF::tryFastMalloc(numElements * elementByteSize).getValue(m_data);
-    }
-
-    if (allocationSucceeded) {
-        m_sizeInBytes = numElements * elementByteSize;
-        m_destructor = [] (void* p) { fastFree(p); };
+    size_t size = static_cast<size_t>(numElements) * static_cast<size_t>(elementByteSize);
+    if (!size)
+        size = 1; // Make sure malloc actually allocates something, but not too much. We use null to mean that the buffer is neutered.
+    m_data = Gigacage::tryMalloc(size);
+    if (!m_data) {
+        reset();
         return;
     }
-    reset();
+    
+    if (policy == ZeroInitialize)
+        memset(m_data, 0, size);
+
+    m_sizeInBytes = numElements * elementByteSize;
+    m_destructor = [] (void* p) { Gigacage::free(p); };
 }
 
 void ArrayBufferContents::makeShared()
@@ -180,13 +181,26 @@ Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents&& contents)
     return adoptRef(*new ArrayBuffer(WTFMove(contents)));
 }
 
+// FIXME: We cannot use this except if the memory comes from the cage.
+// Current this is only used from:
+// - JSGenericTypedArrayView<>::slowDownAndWasteMemory. But in that case, the memory should have already come
+//   from the cage.
 Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLength)
 {
-    return createFromBytes(data, byteLength, [] (void* p) { fastFree(p); });
+    return createFromBytes(data, byteLength, [] (void* p) { Gigacage::free(p); });
 }
 
+// FIXME: We cannot use this except if the memory comes from the cage.
+// Currently this is only used from:
+// - The C API. We could support that by either having the system switch to a mode where typed arrays are no
+//   longer caged, or we could introduce a new set of typed array types that are uncaged and get accessed
+//   differently.
+// - WebAssembly. Wasm should allocate from the cage.
 Ref<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, unsigned byteLength, ArrayBufferDestructorFunction&& destructor)
 {
+    if (!Gigacage::isCaged(data) && data && byteLength)
+        Gigacage::disableGigacage();
+    
     ArrayBufferContents contents(const_cast<void*>(data), byteLength, WTFMove(destructor));
     return create(WTFMove(contents));
 }
@@ -204,7 +218,7 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(ArrayBuffer& other)
 RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(const void* source, unsigned byteLength)
 {
     ArrayBufferContents contents;
-    contents.tryAllocate(byteLength, 1, ArrayBufferContents::ZeroInitialize);
+    contents.tryAllocate(byteLength, 1, ArrayBufferContents::DontInitialize);
     if (!contents.m_data)
         return nullptr;
     return createInternal(WTFMove(contents), source, byteLength);

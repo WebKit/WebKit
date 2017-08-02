@@ -65,6 +65,8 @@ Value* InsertionSet::insertClone(size_t index, Value* value)
 
 void InsertionSet::execute(BasicBlock* block)
 {
+    for (Insertion& insertion : m_insertions)
+        insertion.element()->owner = block;
     bubbleSort(m_insertions.begin(), m_insertions.end());
     executeInsertions(block->m_values, m_insertions);
     m_bottomForType = TypeMap<Value*>();

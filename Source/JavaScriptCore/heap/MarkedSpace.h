@@ -93,6 +93,7 @@ public:
     Heap* heap() const { return m_heap; }
     
     void lastChanceToFinalize(); // You must call stopAllocating before you call this.
+    void freeMemory();
 
     static size_t optimalSizeFor(size_t);
     
@@ -155,9 +156,6 @@ public:
     unsigned largeAllocationsForThisCollectionSize() const { return m_largeAllocationsForThisCollectionSize; }
     
     MarkedAllocator* firstAllocator() const { return m_firstAllocator; }
-    MarkedAllocator* allocatorForEmptyAllocation() const { return m_allocatorForEmptyAllocation; }
-    
-    MarkedBlock::Handle* findEmptyBlockToSteal();
     
     Lock& allocatorLock() { return m_allocatorLock; }
     MarkedAllocator* addMarkedAllocator(const AbstractLocker&, Subspace*, size_t cellSize);
@@ -215,7 +213,6 @@ private:
     Bag<MarkedAllocator> m_bagOfAllocators;
     MarkedAllocator* m_firstAllocator { nullptr };
     MarkedAllocator* m_lastAllocator { nullptr };
-    MarkedAllocator* m_allocatorForEmptyAllocation { nullptr };
 
     friend class HeapVerifier;
 };

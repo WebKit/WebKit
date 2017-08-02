@@ -4656,6 +4656,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
         
     case GetButterfly:
+    case GetButterflyWithoutCaging:
         compileGetButterfly(node);
         break;
 

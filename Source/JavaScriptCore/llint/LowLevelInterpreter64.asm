@@ -1198,6 +1198,8 @@ _llint_op_is_object:
 
 macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
     bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
+    # FIXME: Should do caging
+    # https://bugs.webkit.org/show_bug.cgi?id=175036
     loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
     negi propertyOffsetAsInt
     sxi2q propertyOffsetAsInt, propertyOffsetAsInt
@@ -1211,6 +1213,8 @@ end
 
 macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
     bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
+    # FIXME: Should do caging
+    # https://bugs.webkit.org/show_bug.cgi?id=175036
     loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
     negi propertyOffsetAsInt
     sxi2q propertyOffsetAsInt, propertyOffsetAsInt
@@ -1287,6 +1291,8 @@ _llint_op_get_array_length:
     btiz t2, IsArray, .opGetArrayLengthSlow
     btiz t2, IndexingShapeMask, .opGetArrayLengthSlow
     loadisFromInstruction(1, t1)
+    # FIXME: Should do caging
+    # https://bugs.webkit.org/show_bug.cgi?id=175036
     loadp JSObject::m_butterfly[t3], t0
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetArrayLengthSlow
@@ -1470,6 +1476,8 @@ _llint_op_get_by_val:
     loadisFromInstruction(3, t3)
     loadConstantOrVariableInt32(t3, t1, .opGetByValSlow)
     sxi2q t1, t1
+    # FIXME: Should do caging
+    # https://bugs.webkit.org/show_bug.cgi?id=175036
     loadp JSObject::m_butterfly[t0], t3
     andi IndexingShapeMask, t2
     bieq t2, Int32Shape, .opGetByValIsContiguous
@@ -1517,6 +1525,8 @@ _llint_op_get_by_val:
     bia t2, LastArrayType - FirstArrayType, .opGetByValSlow
     
     # Sweet, now we know that we have a typed array. Do some basic things now.
+    # FIXME: Should do caging
+    # https://bugs.webkit.org/show_bug.cgi?id=175036
     loadp JSArrayBufferView::m_vector[t0], t3
     biaeq t1, JSArrayBufferView::m_length[t0], .opGetByValSlow
     
@@ -1608,6 +1618,8 @@ macro putByVal(slowPath)
     loadisFromInstruction(2, t0)
     loadConstantOrVariableInt32(t0, t3, .opPutByValSlow)
     sxi2q t3, t3
+    # FIXME: Should do caging
+    # https://bugs.webkit.org/show_bug.cgi?id=175036
     loadp JSObject::m_butterfly[t1], t0
     andi IndexingShapeMask, t2
     bineq t2, Int32Shape, .opPutByValNotInt32

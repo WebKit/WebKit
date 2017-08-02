@@ -25,15 +25,15 @@
 
 #include "bmalloc.h"
 
-#define EXPORT __attribute__((visibility("default")))
+#include "BExport.h"
 
 extern "C" {
 
-EXPORT void* mbmalloc(size_t);
-EXPORT void* mbmemalign(size_t, size_t);
-EXPORT void mbfree(void*, size_t);
-EXPORT void* mbrealloc(void*, size_t, size_t);
-EXPORT void mbscavenge();
+BEXPORT void* mbmalloc(size_t);
+BEXPORT void* mbmemalign(size_t, size_t);
+BEXPORT void mbfree(void*, size_t);
+BEXPORT void* mbrealloc(void*, size_t, size_t);
+BEXPORT void mbscavenge();
     
 void* mbmalloc(size_t size)
 {

@@ -358,8 +358,6 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
             case MemoryMode::Signaling:
                 ASSERT_UNUSED(pinnedGPR, InvalidGPRReg == pinnedGPR);
                 break;
-            case MemoryMode::NumberOfMemoryModes:
-                ASSERT_NOT_REACHED();
             }
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
@@ -637,9 +635,6 @@ inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, 
             m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), pointer, sizeOfOperation + offset - 1, maximum);
         }
         break;
-
-    case MemoryMode::NumberOfMemoryModes:
-        RELEASE_ASSERT_NOT_REACHED();
     }
     pointer = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), pointer);
     return m_currentBlock->appendNew<WasmAddressValue>(m_proc, origin(), pointer, m_memoryBaseGPR);

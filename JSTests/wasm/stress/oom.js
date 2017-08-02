@@ -1,3 +1,6 @@
+// We don't need N versions of this simultaneously filling up RAM.
+//@ runDefault
+
 const verbose = false;
 
 // Use a full 4GiB so that exhaustion is likely to occur faster. We're not

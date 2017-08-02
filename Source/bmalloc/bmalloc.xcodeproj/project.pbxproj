@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F3DA0141F267AB800342C08 /* AllocationKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3DA0131F267AB800342C08 /* AllocationKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F5BF1471F22A8B10029D91D /* HeapKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1461F22A8B10029D91D /* HeapKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F5BF1491F22A8D80029D91D /* PerHeapKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1481F22A8D80029D91D /* PerHeapKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F5BF14D1F22B0C30029D91D /* Gigacage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF14C1F22B0C30029D91D /* Gigacage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F5BF14F1F22DEAF0029D91D /* Gigacage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5BF14E1F22DEAF0029D91D /* Gigacage.cpp */; };
+		0F5BF1521F22E1570029D91D /* Scavenger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5BF1501F22E1570029D91D /* Scavenger.cpp */; };
+		0F5BF1531F22E1570029D91D /* Scavenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1511F22E1570029D91D /* Scavenger.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F5BF1731F23C5710029D91D /* BExport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1721F23C5710029D91D /* BExport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400274918F89C1300115C97 /* Heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DA320C18875B09007269E0 /* Heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400274A18F89C2300115C97 /* VMHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 144F7BFC18BFC517003537F3 /* VMHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 140FA00219CE429C00FFD3C8 /* BumpRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -75,6 +83,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0F3DA0131F267AB800342C08 /* AllocationKind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AllocationKind.h; path = bmalloc/AllocationKind.h; sourceTree = "<group>"; };
+		0F5BF1461F22A8B10029D91D /* HeapKind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HeapKind.h; path = bmalloc/HeapKind.h; sourceTree = "<group>"; };
+		0F5BF1481F22A8D80029D91D /* PerHeapKind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PerHeapKind.h; path = bmalloc/PerHeapKind.h; sourceTree = "<group>"; };
+		0F5BF14C1F22B0C30029D91D /* Gigacage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Gigacage.h; path = bmalloc/Gigacage.h; sourceTree = "<group>"; };
+		0F5BF14E1F22DEAF0029D91D /* Gigacage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Gigacage.cpp; path = bmalloc/Gigacage.cpp; sourceTree = "<group>"; };
+		0F5BF1501F22E1570029D91D /* Scavenger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Scavenger.cpp; path = bmalloc/Scavenger.cpp; sourceTree = "<group>"; };
+		0F5BF1511F22E1570029D91D /* Scavenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Scavenger.h; path = bmalloc/Scavenger.h; sourceTree = "<group>"; };
+		0F5BF1721F23C5710029D91D /* BExport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BExport.h; path = bmalloc/BExport.h; sourceTree = "<group>"; };
 		140FA00219CE429C00FFD3C8 /* BumpRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BumpRange.h; path = bmalloc/BumpRange.h; sourceTree = "<group>"; };
 		140FA00419CE4B6800FFD3C8 /* LineMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LineMetadata.h; path = bmalloc/LineMetadata.h; sourceTree = "<group>"; };
 		14105E8318E14374003A106E /* ObjectType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectType.cpp; path = bmalloc/ObjectType.cpp; sourceTree = "<group>"; };
@@ -235,18 +251,23 @@
 		14D9DB4E17F2866E00EAAB79 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				0F3DA0131F267AB800342C08 /* AllocationKind.h */,
 				140FA00219CE429C00FFD3C8 /* BumpRange.h */,
 				147DC6E21CA5B70B00724E8D /* Chunk.h */,
 				142B44341E2839E7001DA6E9 /* DebugHeap.cpp */,
 				142B44351E2839E7001DA6E9 /* DebugHeap.h */,
 				14895D8F1A3A319C0006235D /* Environment.cpp */,
 				14895D901A3A319C0006235D /* Environment.h */,
+				0F5BF14E1F22DEAF0029D91D /* Gigacage.cpp */,
+				0F5BF14C1F22B0C30029D91D /* Gigacage.h */,
 				14DA320E18875D9F007269E0 /* Heap.cpp */,
 				14DA320C18875B09007269E0 /* Heap.h */,
 				140FA00419CE4B6800FFD3C8 /* LineMetadata.h */,
 				144BE11E1CA346520099C8C0 /* Object.h */,
 				14105E8318E14374003A106E /* ObjectType.cpp */,
 				1485656018A43DBA00ED6942 /* ObjectType.h */,
+				0F5BF1501F22E1570029D91D /* Scavenger.cpp */,
+				0F5BF1511F22E1570029D91D /* Scavenger.h */,
 				145F6874179DF84100D65598 /* Sizes.h */,
 				144F7BFB18BFC517003537F3 /* VMHeap.cpp */,
 				144F7BFC18BFC517003537F3 /* VMHeap.h */,
@@ -265,14 +286,17 @@
 				6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */,
 				6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */,
 				1413E468189EEDE400546D68 /* BAssert.h */,
+				0F5BF1721F23C5710029D91D /* BExport.h */,
 				14C919C818FCC59F0028DB43 /* BPlatform.h */,
 				14D9DB4517F2447100EAAB79 /* FixedVector.h */,
+				0F5BF1461F22A8B10029D91D /* HeapKind.h */,
 				1413E460189DCE1E00546D68 /* Inline.h */,
 				141D9AFF1C8E51C0000ABBA0 /* List.h */,
 				4426E27E1C838EE0008EB042 /* Logging.cpp */,
 				4426E27F1C838EE0008EB042 /* Logging.h */,
 				14C8992A1CC485E70027A057 /* Map.h */,
 				144DCED617A649D90093B2F2 /* Mutex.h */,
+				0F5BF1481F22A8D80029D91D /* PerHeapKind.h */,
 				14446A0717A61FA400F9EA1D /* PerProcess.h */,
 				144469FD17A61F1F00F9EA1D /* PerThread.h */,
 				145F6878179E3A4400D65598 /* Range.h */,
@@ -310,6 +334,8 @@
 			files = (
 				14DD78C518F48D7500950702 /* Algorithm.h in Headers */,
 				14DD789818F48D4A00950702 /* Allocator.h in Headers */,
+				0F5BF1531F22E1570029D91D /* Scavenger.h in Headers */,
+				0F5BF1471F22A8B10029D91D /* HeapKind.h in Headers */,
 				14DD78C618F48D7500950702 /* AsyncTask.h in Headers */,
 				6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */,
 				14DD78C718F48D7500950702 /* BAssert.h in Headers */,
@@ -320,11 +346,13 @@
 				140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */,
 				14DD789918F48D4A00950702 /* Cache.h in Headers */,
 				147DC6E31CA5B70B00724E8D /* Chunk.h in Headers */,
+				0F5BF1731F23C5710029D91D /* BExport.h in Headers */,
 				14DD789A18F48D4A00950702 /* Deallocator.h in Headers */,
 				142B44371E2839E7001DA6E9 /* DebugHeap.h in Headers */,
 				14895D921A3A319C0006235D /* Environment.h in Headers */,
 				14DD78C818F48D7500950702 /* FixedVector.h in Headers */,
 				1400274918F89C1300115C97 /* Heap.h in Headers */,
+				0F5BF1491F22A8D80029D91D /* PerHeapKind.h in Headers */,
 				14DD78C918F48D7500950702 /* Inline.h in Headers */,
 				144C07F51C7B70260051BB6A /* LargeMap.h in Headers */,
 				14C8992D1CC578330027A057 /* LargeRange.h in Headers */,
@@ -336,6 +364,7 @@
 				144BE11F1CA346520099C8C0 /* Object.h in Headers */,
 				14DD789318F48D0F00950702 /* ObjectType.h in Headers */,
 				14DD78CB18F48D7500950702 /* PerProcess.h in Headers */,
+				0F3DA0141F267AB800342C08 /* AllocationKind.h in Headers */,
 				14DD78CC18F48D7500950702 /* PerThread.h in Headers */,
 				14DD78CD18F48D7500950702 /* Range.h in Headers */,
 				148EFAE81D6B953B008E721E /* ScopeExit.h in Headers */,
@@ -344,6 +373,7 @@
 				14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */,
 				143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */,
 				14DD78CE18F48D7500950702 /* Syscall.h in Headers */,
+				0F5BF14D1F22B0C30029D91D /* Gigacage.h in Headers */,
 				14DD78CF18F48D7500950702 /* Vector.h in Headers */,
 				14DD78D018F48D7500950702 /* VMAllocate.h in Headers */,
 				1400274A18F89C2300115C97 /* VMHeap.h in Headers */,
@@ -429,6 +459,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F5BF1521F22E1570029D91D /* Scavenger.cpp in Sources */,
 				14F271C318EA3978008C152F /* Allocator.cpp in Sources */,
 				6599C5CC1EC3F15900A2F7BB /* AvailableMemory.cpp in Sources */,
 				14F271C418EA397B008C152F /* Cache.cpp in Sources */,
@@ -436,6 +467,7 @@
 				142B44361E2839E7001DA6E9 /* DebugHeap.cpp in Sources */,
 				14895D911A3A319C0006235D /* Environment.cpp in Sources */,
 				14F271C718EA3990008C152F /* Heap.cpp in Sources */,
+				0F5BF14F1F22DEAF0029D91D /* Gigacage.cpp in Sources */,
 				144C07F41C7B70260051BB6A /* LargeMap.cpp in Sources */,
 				4426E2801C838EE0008EB042 /* Logging.cpp in Sources */,
 				14F271C818EA3990008C152F /* ObjectType.cpp in Sources */,

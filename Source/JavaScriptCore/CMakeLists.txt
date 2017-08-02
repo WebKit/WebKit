@@ -336,6 +336,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGEpoch.cpp
     dfg/DFGFailedFinalizer.cpp
     dfg/DFGFinalizer.cpp
+    dfg/DFGFixedButterflyAccessUncagingPhase.cpp
     dfg/DFGFixupPhase.cpp
     dfg/DFGFlowIndexing.cpp
     dfg/DFGFlushFormat.cpp
@@ -504,6 +505,7 @@ set(JavaScriptCore_SOURCES
     heap/GCConductor.cpp
     heap/GCLogging.cpp
     heap/GCRequest.cpp
+    heap/GigacageSubspace.cpp
     heap/HandleSet.cpp
     heap/HandleStack.cpp
     heap/Heap.cpp

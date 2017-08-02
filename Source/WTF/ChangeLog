@@ -1,3 +1,38 @@
+2017-08-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Bmalloc and GC should put auxiliaries (butterflies, typed array backing stores) in a gigacage (separate multi-GB VM region)
+        https://bugs.webkit.org/show_bug.cgi?id=174727
+
+        Reviewed by Mark Lam.
+        
+        For the Gigacage project to have minimal impact, we need to have some abstraction that allows code to
+        avoid having to guard itself with #if's. This adds a Gigacage abstraction that overlays the Gigacage
+        namespace from bmalloc, which always lets you call things like Gigacage::caged and Gigacage::tryMalloc.
+        
+        Because of how many places need to possibly allocate in a gigacage, or possibly perform caged accesses,
+        it's better to hide the question of whether or not it's enabled inside this API.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FastMalloc.cpp:
+        * wtf/Gigacage.cpp: Added.
+        (Gigacage::tryMalloc):
+        (Gigacage::tryAllocateVirtualPages):
+        (Gigacage::freeVirtualPages):
+        (Gigacage::tryAlignedMalloc):
+        (Gigacage::alignedFree):
+        (Gigacage::free):
+        * wtf/Gigacage.h: Added.
+        (Gigacage::ensureGigacage):
+        (Gigacage::disableGigacage):
+        (Gigacage::addDisableCallback):
+        (Gigacage::removeDisableCallback):
+        (Gigacage::caged):
+        (Gigacage::isCaged):
+        (Gigacage::tryAlignedMalloc):
+        (Gigacage::alignedFree):
+        (Gigacage::free):
+
 2017-07-31  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r220060.

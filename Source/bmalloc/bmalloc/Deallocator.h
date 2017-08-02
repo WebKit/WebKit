@@ -26,6 +26,7 @@
 #ifndef Deallocator_h
 #define Deallocator_h
 
+#include "BExport.h"
 #include "FixedVector.h"
 #include "SmallPage.h"
 #include <mutex>
@@ -40,7 +41,7 @@ class StaticMutex;
 
 class Deallocator {
 public:
-    Deallocator(Heap*);
+    Deallocator(Heap&);
     ~Deallocator();
 
     void deallocate(void*);
@@ -52,8 +53,9 @@ public:
 
 private:
     bool deallocateFastCase(void*);
-    void deallocateSlowCase(void*);
+    BEXPORT void deallocateSlowCase(void*);
 
+    Heap& m_heap;
     FixedVector<void*, deallocatorLogCapacity> m_objectLog;
     LineCache m_lineCache; // The Heap removes items from this cache.
     DebugHeap* m_debugHeap;

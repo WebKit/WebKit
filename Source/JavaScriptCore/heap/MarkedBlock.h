@@ -199,7 +199,7 @@ public:
         void dumpState(PrintStream&);
         
     private:
-        Handle(Heap&, void*);
+        Handle(Heap&, Subspace*, void*);
         
         enum SweepDestructionMode { BlockHasNoDestructors, BlockHasDestructors, BlockHasDestructorsAndCollectorIsRunning };
         enum ScribbleMode { DontScribble, Scribble };
@@ -218,8 +218,8 @@ public:
         
         void setIsFreeListed();
         
-        MarkedBlock::Handle* m_prev;
-        MarkedBlock::Handle* m_next;
+        MarkedBlock::Handle* m_prev { nullptr };
+        MarkedBlock::Handle* m_next { nullptr };
             
         size_t m_atomsPerCell { std::numeric_limits<size_t>::max() };
         size_t m_endAtom { std::numeric_limits<size_t>::max() }; // This is a fuzzy end. Always test for < m_endAtom.
@@ -228,7 +228,8 @@ public:
             
         AllocatorAttributes m_attributes;
         bool m_isFreeListed { false };
-            
+
+        Subspace* m_subspace { nullptr };
         MarkedAllocator* m_allocator { nullptr };
         size_t m_index { std::numeric_limits<size_t>::max() };
         WeakSet m_weakSet;
@@ -238,7 +239,7 @@ public:
         MarkedBlock* m_block { nullptr };
     };
         
-    static MarkedBlock::Handle* tryCreate(Heap&);
+    static MarkedBlock::Handle* tryCreate(Heap&, Subspace*);
         
     Handle& handle();
         
@@ -393,6 +394,11 @@ inline MarkedBlock* MarkedBlock::blockFor(const void* p)
 inline MarkedAllocator* MarkedBlock::Handle::allocator() const
 {
     return m_allocator;
+}
+
+inline Subspace* MarkedBlock::Handle::subspace() const
+{
+    return m_subspace;
 }
 
 inline Heap* MarkedBlock::Handle::heap() const

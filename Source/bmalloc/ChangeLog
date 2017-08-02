@@ -1,3 +1,134 @@
+2017-08-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Bmalloc and GC should put auxiliaries (butterflies, typed array backing stores) in a gigacage (separate multi-GB VM region)
+        https://bugs.webkit.org/show_bug.cgi?id=174727
+
+        Reviewed by Mark Lam.
+        
+        This adds a mechanism for managing multiple isolated heaps in bmalloc. For now, these isoheaps
+        (isolated heaps) have a very simple relationship with each other and with the rest of bmalloc:
+        
+        - You have to choose how many isoheaps you will have statically. See numHeaps in HeapKind.h.
+        
+        - Because numHeaps is static, each isoheap gets fast thread-local allocation. Basically, we have a
+          Cache for each heap kind.
+        
+        - Each isoheap gets its own Heap.
+        
+        - Each Heap gets a scavenger thread.
+        
+        - Some things, like Zone/VMHeap/Scavenger, are per-process.
+        
+        Most of the per-HeapKind functionality is handled by PerHeapKind<>.
+        
+        This approach is ideal for supporting special per-HeapKind behaviors. For now we have two heaps:
+        the Primary heap for normal malloc and the Gigacage. The gigacage is a 64GB-aligned 64GB virtual
+        region that we now use for variable-length random-access allocations. No Primary allocations will
+        go into the Gigacage.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/AllocationKind.h: Added.
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator):
+        (bmalloc::Allocator::tryAllocate):
+        (bmalloc::Allocator::allocateImpl):
+        (bmalloc::Allocator::reallocate):
+        (bmalloc::Allocator::refillAllocatorSlowCase):
+        (bmalloc::Allocator::allocateLarge):
+        * bmalloc/Allocator.h:
+        * bmalloc/BExport.h: Added.
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::scavenge):
+        (bmalloc::Cache::Cache):
+        (bmalloc::Cache::tryAllocateSlowCaseNullCache):
+        (bmalloc::Cache::allocateSlowCaseNullCache):
+        (bmalloc::Cache::deallocateSlowCaseNullCache):
+        (bmalloc::Cache::reallocateSlowCaseNullCache):
+        (bmalloc::Cache::operator new): Deleted.
+        (bmalloc::Cache::operator delete): Deleted.
+        * bmalloc/Cache.h:
+        (bmalloc::Cache::tryAllocate):
+        (bmalloc::Cache::allocate):
+        (bmalloc::Cache::deallocate):
+        (bmalloc::Cache::reallocate):
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::Deallocator):
+        (bmalloc::Deallocator::scavenge):
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        * bmalloc/Deallocator.h:
+        * bmalloc/Gigacage.cpp: Added.
+        (Gigacage::Callback::Callback):
+        (Gigacage::Callback::function):
+        (Gigacage::Callbacks::Callbacks):
+        (Gigacage::ensureGigacage):
+        (Gigacage::disableGigacage):
+        (Gigacage::addDisableCallback):
+        (Gigacage::removeDisableCallback):
+        * bmalloc/Gigacage.h: Added.
+        (Gigacage::caged):
+        (Gigacage::isCaged):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::usingGigacage):
+        (bmalloc::Heap::concurrentScavenge):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::mutex):
+        (bmalloc::Heap::kind const):
+        (bmalloc::Heap::setScavengerThreadQOSClass): Deleted.
+        * bmalloc/HeapKind.h: Added.
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/ObjectType.h:
+        * bmalloc/PerHeapKind.h: Added.
+        (bmalloc::PerHeapKindBase::PerHeapKindBase):
+        (bmalloc::PerHeapKindBase::size):
+        (bmalloc::PerHeapKindBase::at):
+        (bmalloc::PerHeapKindBase::at const):
+        (bmalloc::PerHeapKindBase::operator[]):
+        (bmalloc::PerHeapKindBase::operator[] const):
+        (bmalloc::StaticPerHeapKind::StaticPerHeapKind):
+        (bmalloc::PerHeapKind::PerHeapKind):
+        (bmalloc::PerHeapKind::~PerHeapKind):
+        * bmalloc/PerThread.h:
+        (bmalloc::PerThread<T>::destructor):
+        (bmalloc::PerThread<T>::getSlowCase):
+        (bmalloc::PerThreadStorage<Cache>::get): Deleted.
+        (bmalloc::PerThreadStorage<Cache>::init): Deleted.
+        * bmalloc/Scavenger.cpp: Added.
+        (bmalloc::Scavenger::Scavenger):
+        (bmalloc::Scavenger::scavenge):
+        * bmalloc/Scavenger.h: Added.
+        (bmalloc::Scavenger::setScavengerThreadQOSClass):
+        (bmalloc::Scavenger::requestedScavengerThreadQOSClass const):
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::VMHeap):
+        (bmalloc::VMHeap::tryAllocateLargeChunk):
+        * bmalloc/VMHeap.h:
+        * bmalloc/Zone.cpp:
+        (bmalloc::Zone::Zone):
+        * bmalloc/Zone.h:
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::tryMalloc):
+        (bmalloc::api::malloc):
+        (bmalloc::api::tryMemalign):
+        (bmalloc::api::memalign):
+        (bmalloc::api::realloc):
+        (bmalloc::api::tryLargeMemalignVirtual):
+        (bmalloc::api::free):
+        (bmalloc::api::freeLargeVirtual):
+        (bmalloc::api::scavengeThisThread):
+        (bmalloc::api::scavenge):
+        (bmalloc::api::isEnabled):
+        (bmalloc::api::setScavengerThreadQOSClass):
+        * bmalloc/mbmalloc.cpp:
+
 2017-08-01  Daewoong Jang  <daewoong.jang@navercorp.com>
 
         Implement __builtin_clzl for MSVC

@@ -1398,7 +1398,8 @@ private:
         case CheckStructure:
         case CheckCell:
         case CreateThis:
-        case GetButterfly: {
+        case GetButterfly:
+        case GetButterflyWithoutCaging: {
             fixEdge<CellUse>(node->child1());
             break;
         }

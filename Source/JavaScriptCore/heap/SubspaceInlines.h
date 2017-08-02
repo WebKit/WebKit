@@ -34,17 +34,28 @@
 namespace JSC {
 
 template<typename Func>
-void Subspace::forEachMarkedBlock(const Func& func)
+void Subspace::forEachAllocator(const Func& func)
 {
     for (MarkedAllocator* allocator = m_firstAllocator; allocator; allocator = allocator->nextAllocatorInSubspace())
-        allocator->forEachBlock(func);
+        func(*allocator);
+}
+
+template<typename Func>
+void Subspace::forEachMarkedBlock(const Func& func)
+{
+    forEachAllocator(
+        [&] (MarkedAllocator& allocator) {
+            allocator.forEachBlock(func);
+        });
 }
 
 template<typename Func>
 void Subspace::forEachNotEmptyMarkedBlock(const Func& func)
 {
-    for (MarkedAllocator* allocator = m_firstAllocator; allocator; allocator = allocator->nextAllocatorInSubspace())
-        allocator->forEachNotEmptyBlock(func);
+    forEachAllocator(
+        [&] (MarkedAllocator& allocator) {
+            allocator.forEachNotEmptyBlock(func);
+        });
 }
 
 template<typename Func>

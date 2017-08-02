@@ -96,6 +96,10 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("ButterflyLoc");
         return;
         
+    case ButterflyWithoutCagingLoc:
+        out.print("ButterflyWithoutCagingLoc");
+        return;
+        
     case CheckTypeInfoFlagsLoc:
         out.print("CheckTypeInfoFlagsLoc");
         return;

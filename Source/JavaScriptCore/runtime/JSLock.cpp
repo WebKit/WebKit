@@ -156,6 +156,8 @@ void JSLock::didAcquireLock()
 
     // Note: everything below must come after addCurrentThread().
     m_vm->traps().notifyGrabAllLocks();
+    
+    m_vm->fireGigacageEnabledIfNecessary();
 
 #if ENABLE(SAMPLING_PROFILER)
     if (SamplingProfiler* samplingProfiler = m_vm->samplingProfiler())

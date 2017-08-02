@@ -86,6 +86,8 @@ private:
     
     uint32_t m_length;
     bool m_locked; // Being locked means that there are multiple references to this object and none of them expect to see the others' modifications. This means that modifications need to make a copy first.
+    // FIXME: Allocate this in the primitive gigacage
+    // https://bugs.webkit.org/show_bug.cgi?id=174921
     std::unique_ptr<ScopeOffset[]> m_arguments;
 };
 

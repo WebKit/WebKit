@@ -1,3 +1,17 @@
+2017-08-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Bmalloc and GC should put auxiliaries (butterflies, typed array backing stores) in a gigacage (separate multi-GB VM region)
+        https://bugs.webkit.org/show_bug.cgi?id=174727
+
+        Reviewed by Mark Lam.
+        
+        The WebProcess should never disable the Gigacage by allocating typed arrays outside the Gigacage. So,
+        we add a callback that crashes the process.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::gigacageDisabled):
+        (WebKit::m_webSQLiteDatabaseTracker):
+
 2017-08-01  Brian Burg  <bburg@apple.com>
 
         Web Automation: add event to notify service when a page's main frame window object has cleared

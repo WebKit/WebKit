@@ -106,7 +106,7 @@ Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, ExecState* exec, uint32_t delt
     }
 
     if (delta) {
-        bool success = memory().grow(newSize);
+        bool success = memory().grow(vm, newSize);
         if (!success) {
             ASSERT(m_memoryBase == memory().memory());
             ASSERT(m_memorySize == memory().size());
@@ -138,7 +138,6 @@ void JSWebAssemblyMemory::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     heap()->reportExtraMemoryAllocated(memory().size());
-    vm.heap.reportWebAssemblyFastMemoriesAllocated(1);
 }
 
 void JSWebAssemblyMemory::destroy(JSCell* cell)

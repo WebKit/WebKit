@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,14 +32,14 @@
 
 namespace bmalloc {
 
-ObjectType objectType(void* object)
+ObjectType objectType(HeapKind kind, void* object)
 {
     if (mightBeLarge(object)) {
         if (!object)
             return ObjectType::Small;
 
-        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-        if (PerProcess<Heap>::getFastCase()->isLarge(lock, object))
+        std::lock_guard<StaticMutex> lock(Heap::mutex());
+        if (PerProcess<PerHeapKind<Heap>>::getFastCase()->at(kind).isLarge(lock, object))
             return ObjectType::Large;
     }
     

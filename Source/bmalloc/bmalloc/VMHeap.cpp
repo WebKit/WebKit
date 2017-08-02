@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,11 @@
 
 namespace bmalloc {
 
-LargeRange VMHeap::tryAllocateLargeChunk(size_t alignment, size_t size)
+VMHeap::VMHeap(std::lock_guard<StaticMutex>&)
+{
+}
+
+LargeRange VMHeap::tryAllocateLargeChunk(size_t alignment, size_t size, AllocationKind allocationKind)
 {
     // We allocate VM in aligned multiples to increase the chances that
     // the OS will provide contiguous ranges that we can merge.
@@ -46,11 +50,14 @@ LargeRange VMHeap::tryAllocateLargeChunk(size_t alignment, size_t size)
     void* memory = tryVMAllocate(alignment, size);
     if (!memory)
         return LargeRange();
+    
+    if (allocationKind == AllocationKind::Virtual)
+        vmDeallocatePhysicalPagesSloppy(memory, size);
 
     Chunk* chunk = static_cast<Chunk*>(memory);
     
 #if BOS(DARWIN)
-    m_zone.addRange(Range(chunk->bytes(), size));
+    PerProcess<Zone>::get()->addRange(Range(chunk->bytes(), size));
 #endif
 
     return LargeRange(chunk->bytes(), size, 0);

@@ -36,6 +36,7 @@
 #include "ExceptionEventLocation.h"
 #include "ExecutableAllocator.h"
 #include "FunctionHasExecutedCache.h"
+#include "GigacageSubspace.h"
 #include "Heap.h"
 #include "Intrinsic.h"
 #include "JITThunks.h"
@@ -286,13 +287,14 @@ private:
 public:
     Heap heap;
     
-    Subspace auxiliarySpace;
+    GigacageSubspace auxiliarySpace;
     
     // Whenever possible, use subspaceFor<CellType>(vm) to get one of these subspaces.
     Subspace cellSpace;
     Subspace destructibleCellSpace;
     JSStringSubspace stringSpace;
     JSDestructibleObjectSubspace destructibleObjectSpace;
+    JSDestructibleObjectSubspace eagerlySweptDestructibleObjectSpace;
     JSSegmentedVariableObjectSubspace segmentedVariableObjectSpace;
 #if ENABLE(WEBASSEMBLY)
     JSWebAssemblyCodeBlockSubspace webAssemblyCodeBlockSpace;
@@ -523,6 +525,14 @@ public:
 
     void* lastStackTop() { return m_lastStackTop; }
     void setLastStackTop(void*);
+    
+    void fireGigacageEnabledIfNecessary()
+    {
+        if (m_needToFireGigacageEnabled) {
+            m_needToFireGigacageEnabled = false;
+            m_gigacageEnabled.fireAll(*this, "Gigacage disabled asynchronously");
+        }
+    }
 
     JSValue hostCallReturnValue;
     unsigned varargsLength;
@@ -624,6 +634,8 @@ public:
     
     // FIXME: Use AtomicString once it got merged with Identifier.
     JS_EXPORT_PRIVATE void addImpureProperty(const String&);
+    
+    InlineWatchpointSet& gigacageEnabled() { return m_gigacageEnabled; }
 
     BuiltinExecutables* builtinExecutables() { return m_builtinExecutables.get(); }
 
@@ -730,6 +742,9 @@ private:
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     void verifyExceptionCheckNeedIsSatisfied(unsigned depth, ExceptionEventLocation&);
 #endif
+    
+    static void gigacageDisabledCallback(void*);
+    void gigacageDisabled();
 
 #if ENABLE(ASSEMBLER)
     bool m_canUseAssembler;
@@ -774,6 +789,8 @@ private:
     std::unique_ptr<TypeProfiler> m_typeProfiler;
     std::unique_ptr<TypeProfilerLog> m_typeProfilerLog;
     unsigned m_typeProfilerEnabledCount;
+    bool m_needToFireGigacageEnabled { false };
+    InlineWatchpointSet m_gigacageEnabled;
     FunctionHasExecutedCache m_functionHasExecutedCache;
     std::unique_ptr<ControlFlowProfiler> m_controlFlowProfiler;
     unsigned m_controlFlowProfilerEnabledCount;

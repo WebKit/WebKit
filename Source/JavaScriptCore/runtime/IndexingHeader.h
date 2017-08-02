@@ -122,6 +122,9 @@ private:
 
     union {
         struct {
+            // FIXME: vectorLength should be least significant, so that it's really hard to craft a pointer by
+            // mucking with the butterfly.
+            // https://bugs.webkit.org/show_bug.cgi?id=174927
             uint32_t publicLength; // The meaning of this field depends on the array type, but for all JSArrays we rely on this being the publicly visible length (array.length).
             uint32_t vectorLength; // The length of the indexed property storage. The actual size of the storage depends on this, and the type.
         } lengths;

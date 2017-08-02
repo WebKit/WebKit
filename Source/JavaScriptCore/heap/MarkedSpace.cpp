@@ -203,13 +203,17 @@ MarkedSpace::MarkedSpace(Heap* heap)
 
 MarkedSpace::~MarkedSpace()
 {
+    ASSERT(!m_blocks.set().size());
+}
+
+void MarkedSpace::freeMemory()
+{
     forEachBlock(
         [&] (MarkedBlock::Handle* block) {
             freeBlock(block);
         });
     for (LargeAllocation* allocation : m_largeAllocations)
         allocation->destroy();
-    ASSERT(!m_blocks.set().size());
 }
 
 void MarkedSpace::lastChanceToFinalize()
@@ -254,11 +258,8 @@ void MarkedSpace::sweepLargeAllocations()
 
 void MarkedSpace::prepareForAllocation()
 {
-    forEachAllocator(
-        [&] (MarkedAllocator& allocator) -> IterationStatus {
-            allocator.prepareForAllocation();
-            return IterationStatus::Continue;
-        });
+    for (Subspace* subspace : m_subspaces)
+        subspace->prepareForAllocation();
 
     m_activeWeakSets.takeFrom(m_newActiveWeakSets);
     
@@ -267,8 +268,6 @@ void MarkedSpace::prepareForAllocation()
     else
         m_largeAllocationsNurseryOffsetForSweep = 0;
     m_largeAllocationsNurseryOffset = m_largeAllocations.size();
-    
-    m_allocatorForEmptyAllocation = m_firstAllocator;
 }
 
 void MarkedSpace::visitWeakSets(SlotVisitor& visitor)
@@ -514,15 +513,6 @@ void MarkedSpace::didAllocateInBlock(MarkedBlock::Handle* block)
     }
 }
 
-MarkedBlock::Handle* MarkedSpace::findEmptyBlockToSteal()
-{
-    for (; m_allocatorForEmptyAllocation; m_allocatorForEmptyAllocation = m_allocatorForEmptyAllocation->nextAllocator()) {
-        if (MarkedBlock::Handle* block = m_allocatorForEmptyAllocation->findEmptyBlockToSteal())
-            return block;
-    }
-    return nullptr;
-}
-
 void MarkedSpace::snapshotUnswept()
 {
     if (m_heap->collectionScope() == CollectionScope::Eden) {
@@ -572,7 +562,8 @@ MarkedAllocator* MarkedSpace::addMarkedAllocator(
     if (!m_firstAllocator) {
         m_firstAllocator = allocator;
         m_lastAllocator = allocator;
-        m_allocatorForEmptyAllocation = allocator;
+        for (Subspace* subspace : m_subspaces)
+            subspace->didCreateFirstAllocator(allocator);
     } else {
         m_lastAllocator->setNextAllocator(allocator);
         m_lastAllocator = allocator;

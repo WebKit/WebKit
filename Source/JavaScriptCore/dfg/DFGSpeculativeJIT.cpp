@@ -7983,6 +7983,9 @@ void SpeculativeJIT::compileGetButterfly(Node* node)
     GPRReg resultGPR = result.gpr();
     
     m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::butterflyOffset()), resultGPR);
+    
+    // FIXME: Implement caging!
+    // https://bugs.webkit.org/show_bug.cgi?id=174918
 
     storageResult(resultGPR, node);
 }

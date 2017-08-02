@@ -167,6 +167,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , destructibleCellSpace("Destructible JSCell", heap, AllocatorAttributes(NeedsDestruction, HeapCell::JSCell))
     , stringSpace("JSString", heap)
     , destructibleObjectSpace("JSDestructibleObject", heap)
+    , eagerlySweptDestructibleObjectSpace("Eagerly Swept JSDestructibleObject", heap)
     , segmentedVariableObjectSpace("JSSegmentedVariableObjectSpace", heap)
 #if ENABLE(WEBASSEMBLY)
     , webAssemblyCodeBlockSpace("JSWebAssemblyCodeBlockSpace", heap)
@@ -207,6 +208,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_codeCache(std::make_unique<CodeCache>())
     , m_builtinExecutables(std::make_unique<BuiltinExecutables>(*this))
     , m_typeProfilerEnabledCount(0)
+    , m_gigacageEnabled(IsWatched)
     , m_controlFlowProfilerEnabledCount(0)
     , m_shadowChicken(std::make_unique<ShadowChicken>())
 {
@@ -284,6 +286,8 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(JIT)
     initializeHostCallReturnValue(); // This is needed to convince the linker not to drop host call return support.
 #endif
+    
+    Gigacage::addDisableCallback(gigacageDisabledCallback, this);
 
     heap.notifyIsSafeToCollect();
     
@@ -338,6 +342,7 @@ VM::VM(VMType vmType, HeapType heapType)
 
 VM::~VM()
 {
+    Gigacage::removeDisableCallback(gigacageDisabledCallback, this);
     promiseDeferredTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)
     if (Wasm::existingWorklistOrNull())
@@ -404,6 +409,23 @@ VM::~VM()
     for (unsigned i = 0; i < scratchBuffers.size(); ++i)
         fastFree(scratchBuffers[i]);
 #endif
+}
+
+void VM::gigacageDisabledCallback(void* argument)
+{
+    static_cast<VM*>(argument)->gigacageDisabled();
+}
+
+void VM::gigacageDisabled()
+{
+    if (m_apiLock->currentThreadIsHoldingLock()) {
+        m_gigacageEnabled.fireAll(*this, "Gigacage disabled");
+        return;
+    }
+ 
+    // This is totally racy, and that's OK. The point is, it's up to the user to ensure that they pass the
+    // uncaged buffer in a nicely synchronized manner.
+    m_needToFireGigacageEnabled = true;
 }
 
 void VM::setLastStackTop(void* lastStackTop)

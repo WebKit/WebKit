@@ -839,6 +839,7 @@ private:
             break;
         }
         case GetButterfly:
+        case GetButterflyWithoutCaging:
         case GetIndexedPropertyStorage:
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage: {

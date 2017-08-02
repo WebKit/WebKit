@@ -78,6 +78,7 @@
 #include "TestRunnerUtils.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
+#include "TypedArrayInlines.h"
 #include "WasmContext.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
@@ -984,6 +985,7 @@ void Element::finishCreation(VM& vm, Root* root)
 }
 
 static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer);
+static RefPtr<Uint8Array> fillBufferWithContentsOfFile(const String& fileName);
 
 class CommandLine;
 class GlobalObject;
@@ -1708,6 +1710,32 @@ static void convertShebangToJSComment(Vector<char>& buffer)
     }
 }
 
+static RefPtr<Uint8Array> fillBufferWithContentsOfFile(FILE* file)
+{
+    fseek(file, 0, SEEK_END);
+    size_t bufferCapacity = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    RefPtr<Uint8Array> result = Uint8Array::create(bufferCapacity);
+    size_t readSize = fread(result->data(), 1, bufferCapacity, file);
+    if (readSize != bufferCapacity)
+        return nullptr;
+    return result;
+}
+
+static RefPtr<Uint8Array> fillBufferWithContentsOfFile(const String& fileName)
+{
+    FILE* f = fopen(fileName.utf8().data(), "rb");
+    if (!f) {
+        fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
+        return nullptr;
+    }
+
+    RefPtr<Uint8Array> result = fillBufferWithContentsOfFile(f);
+    fclose(f);
+
+    return result;
+}
+
 static bool fillBufferWithContentsOfFile(FILE* file, Vector<char>& buffer)
 {
     // We might have injected "use strict"; at the top.
@@ -2276,16 +2304,15 @@ EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
         isBinary = true;
     }
 
-    Vector<char> content;
-    if (!fillBufferWithContentsOfFile(fileName, content))
+    RefPtr<Uint8Array> content = fillBufferWithContentsOfFile(fileName);
+    if (!content)
         return throwVMError(exec, scope, "Could not open file.");
 
     if (!isBinary)
-        return JSValue::encode(jsString(exec, stringFromUTF(content)));
+        return JSValue::encode(jsString(exec, String::fromUTF8WithLatin1Fallback(content->data(), content->length())));
 
     Structure* structure = exec->lexicalGlobalObject()->typedArrayStructure(TypeUint8);
-    auto length = content.size();
-    JSObject* result = createUint8TypedArray(exec, structure, ArrayBuffer::createFromBytes(content.releaseBuffer().leakPtr(), length, [] (void* p) { fastFree(p); }), 0, length);
+    JSObject* result = JSUint8Array::create(vm, structure, WTFMove(content));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(result);
@@ -3775,6 +3802,12 @@ int runJSC(CommandLine options, bool isWorker, const Func& func)
     return result;
 }
 
+static void gigacageDisabled(void*)
+{
+    dataLog("Gigacage disabled! Aborting.\n");
+    UNREACHABLE_FOR_PLATFORM();
+}
+
 int jscmain(int argc, char** argv)
 {
     // Need to override and enable restricted options before we start parsing options below.
@@ -3793,6 +3826,8 @@ int jscmain(int argc, char** argv)
 #if ENABLE(WEBASSEMBLY)
     JSC::Wasm::enableFastMemory();
 #endif
+    if (GIGACAGE_ENABLED)
+        Gigacage::addDisableCallback(gigacageDisabled, nullptr);
 
     int result;
     result = runJSC(

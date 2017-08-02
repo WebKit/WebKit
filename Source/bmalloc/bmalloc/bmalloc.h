@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,65 +25,83 @@
 
 #include "AvailableMemory.h"
 #include "Cache.h"
+#include "Gigacage.h"
 #include "Heap.h"
+#include "PerHeapKind.h"
 #include "PerProcess.h"
+#include "Scavenger.h"
 #include "StaticMutex.h"
 
 namespace bmalloc {
 namespace api {
 
 // Returns null on failure.
-inline void* tryMalloc(size_t size)
+inline void* tryMalloc(size_t size, HeapKind kind = HeapKind::Primary)
 {
-    return Cache::tryAllocate(size);
+    return Cache::tryAllocate(kind, size);
 }
 
 // Crashes on failure.
-inline void* malloc(size_t size)
+inline void* malloc(size_t size, HeapKind kind = HeapKind::Primary)
 {
-    return Cache::allocate(size);
+    return Cache::allocate(kind, size);
 }
 
 // Returns null on failure.
-inline void* tryMemalign(size_t alignment, size_t size)
+inline void* tryMemalign(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary)
 {
-    return Cache::tryAllocate(alignment, size);
+    return Cache::tryAllocate(kind, alignment, size);
 }
 
 // Crashes on failure.
-inline void* memalign(size_t alignment, size_t size)
+inline void* memalign(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary)
 {
-    return Cache::allocate(alignment, size);
+    return Cache::allocate(kind, alignment, size);
 }
 
 // Crashes on failure.
-inline void* realloc(void* object, size_t newSize)
+inline void* realloc(void* object, size_t newSize, HeapKind kind = HeapKind::Primary)
 {
-    return Cache::reallocate(object, newSize);
+    return Cache::reallocate(kind, object, newSize);
 }
 
-inline void free(void* object)
+// Returns null for failure
+inline void* tryLargeMemalignVirtual(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary)
 {
-    Cache::deallocate(object);
+    Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
+    std::lock_guard<StaticMutex> lock(Heap::mutex());
+    return heap.allocateLarge(lock, alignment, size, AllocationKind::Virtual);
+}
+
+inline void free(void* object, HeapKind kind = HeapKind::Primary)
+{
+    Cache::deallocate(kind, object);
+}
+
+inline void freeLargeVirtual(void* object, HeapKind kind = HeapKind::Primary)
+{
+    Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
+    std::lock_guard<StaticMutex> lock(Heap::mutex());
+    heap.deallocateLarge(lock, object, AllocationKind::Virtual);
 }
 
 inline void scavengeThisThread()
 {
-    Cache::scavenge();
+    for (unsigned i = numHeaps; i--;)
+        Cache::scavenge(static_cast<HeapKind>(i));
 }
 
 inline void scavenge()
 {
     scavengeThisThread();
 
-    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-    PerProcess<Heap>::get()->scavenge(lock);
+    PerProcess<Scavenger>::get()->scavenge();
 }
 
-inline bool isEnabled()
+inline bool isEnabled(HeapKind kind = HeapKind::Primary)
 {
-    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
-    return !PerProcess<Heap>::getFastCase()->debugHeap();
+    std::unique_lock<StaticMutex> lock(Heap::mutex());
+    return !PerProcess<PerHeapKind<Heap>>::getFastCase()->at(kind).debugHeap();
 }
     
 inline size_t availableMemory()
@@ -106,8 +124,8 @@ inline double percentAvailableMemoryInUse()
 #if BOS(DARWIN)
 inline void setScavengerThreadQOSClass(qos_class_t overrideClass)
 {
-    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
-    PerProcess<Heap>::getFastCase()->setScavengerThreadQOSClass(overrideClass);
+    std::unique_lock<StaticMutex> lock(Heap::mutex());
+    PerProcess<Scavenger>::get()->setScavengerThreadQOSClass(overrideClass);
 }
 #endif
 

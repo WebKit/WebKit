@@ -43,23 +43,24 @@ const size_t MarkedBlock::blockSize;
 static const bool computeBalance = false;
 static size_t balance;
 
-MarkedBlock::Handle* MarkedBlock::tryCreate(Heap& heap)
+MarkedBlock::Handle* MarkedBlock::tryCreate(Heap& heap, Subspace* subspace)
 {
     if (computeBalance) {
         balance++;
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
-    void* blockSpace = tryFastAlignedMalloc(blockSize, blockSize);
+    void* blockSpace = subspace->tryAllocateAlignedMemory(blockSize, blockSize);
     if (!blockSpace)
         return nullptr;
     if (scribbleFreeCells())
         scribble(blockSpace, blockSize);
-    return new Handle(heap, blockSpace);
+    return new Handle(heap, subspace, blockSpace);
 }
 
-MarkedBlock::Handle::Handle(Heap& heap, void* blockSpace)
-    : m_weakSet(heap.vm(), CellContainer())
+MarkedBlock::Handle::Handle(Heap& heap, Subspace* subspace, void* blockSpace)
+    : m_subspace(subspace)
+    , m_weakSet(heap.vm(), CellContainer())
     , m_newlyAllocatedVersion(MarkedSpace::nullVersion)
 {
     m_block = new (NotNull, blockSpace) MarkedBlock(*heap.vm(), *this);
@@ -72,6 +73,7 @@ MarkedBlock::Handle::Handle(Heap& heap, void* blockSpace)
 MarkedBlock::Handle::~Handle()
 {
     Heap& heap = *this->heap();
+    Subspace* subspace = this->subspace();
     if (computeBalance) {
         balance--;
         if (!(balance % 10))
@@ -79,7 +81,7 @@ MarkedBlock::Handle::~Handle()
     }
     removeFromAllocator();
     m_block->~MarkedBlock();
-    fastAlignedFree(m_block);
+    subspace->freeAlignedMemory(m_block);
     heap.didFreeBlock(blockSize);
 }
 
@@ -332,6 +334,11 @@ void MarkedBlock::Handle::didAddToAllocator(MarkedAllocator* allocator, size_t i
     m_index = index;
     m_allocator = allocator;
     
+    RELEASE_ASSERT(m_subspace->canTradeBlocksWith(allocator->subspace()));
+    RELEASE_ASSERT(allocator->subspace()->canTradeBlocksWith(m_subspace));
+    
+    m_subspace = allocator->subspace();
+    
     size_t cellSize = allocator->cellSize();
     m_atomsPerCell = (cellSize + atomSize - 1) / atomSize;
     m_endAtom = atomsPerBlock - m_atomsPerCell + 1;
@@ -388,11 +395,6 @@ void MarkedBlock::Handle::dumpState(PrintStream& out)
         [&] (FastBitVector& bitvector, const char* name) {
             out.print(comma, name, ":", bitvector[index()] ? "YES" : "no");
         });
-}
-
-Subspace* MarkedBlock::Handle::subspace() const
-{
-    return allocator()->subspace();
 }
 
 void MarkedBlock::Handle::sweep(FreeList* freeList)

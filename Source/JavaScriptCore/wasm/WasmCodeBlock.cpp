@@ -125,8 +125,6 @@ bool CodeBlock::isSafeToRun(MemoryMode memoryMode)
         // Its memory, even if empty, absolutely must also be in Signaling mode
         // because the page protection detects out-of-bounds accesses.
         return memoryMode == Wasm::MemoryMode::Signaling;
-    case Wasm::MemoryMode::NumberOfMemoryModes:
-        break;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return false;

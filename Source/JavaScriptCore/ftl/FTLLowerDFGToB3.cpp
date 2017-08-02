@@ -87,6 +87,7 @@
 #include <atomic>
 #include <unordered_set>
 #include <wtf/Box.h>
+#include <wtf/Gigacage.h>
 
 namespace JSC { namespace FTL {
 
@@ -664,6 +665,7 @@ private:
             compilePutAccessorByVal();
             break;
         case GetButterfly:
+        case GetButterflyWithoutCaging:
             compileGetButterfly();
             break;
         case ConstantStoragePointer:
@@ -3231,7 +3233,10 @@ private:
     
     void compileGetButterfly()
     {
-        setStorage(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSObject_butterfly));
+        LValue butterfly = m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSObject_butterfly);
+        if (m_node->op() != GetButterflyWithoutCaging)
+            butterfly = caged(butterfly);
+        setStorage(butterfly);
     }
 
     void compileConstantStoragePointer()
@@ -3267,7 +3272,7 @@ private:
         }
 
         DFG_ASSERT(m_graph, m_node, isTypedView(m_node->arrayMode().typedArrayType()));
-        setStorage(m_out.loadPtr(cell, m_heaps.JSArrayBufferView_vector));
+        setStorage(caged(m_out.loadPtr(cell, m_heaps.JSArrayBufferView_vector)));
     }
     
     void compileCheckArray()
@@ -3509,6 +3514,8 @@ private:
                     index,
                     m_out.load32NonNegative(base, m_heaps.DirectArguments_length)));
 
+            // FIXME: I guess we need to cage DirectArguments?
+            // https://bugs.webkit.org/show_bug.cgi?id=174920
             TypedPointer address = m_out.baseIndex(
                 m_heaps.DirectArguments_storage, base, m_out.zeroExtPtr(index));
             setJSValue(m_out.load64(address));
@@ -3540,6 +3547,8 @@ private:
             LValue scope = m_out.loadPtr(base, m_heaps.ScopedArguments_scope);
             LValue arguments = m_out.loadPtr(table, m_heaps.ScopedArgumentsTable_arguments);
             
+            // FIXME: I guess we need to cage ScopedArguments?
+            // https://bugs.webkit.org/show_bug.cgi?id=174921
             TypedPointer address = m_out.baseIndex(
                 m_heaps.scopedArgumentsTableArguments, arguments, m_out.zeroExtPtr(index));
             LValue scopeOffset = m_out.load32(address);
@@ -3548,6 +3557,8 @@ private:
                 ExoticObjectMode, noValue(), nullptr,
                 m_out.equal(scopeOffset, m_out.constInt32(ScopeOffset::invalidOffset)));
             
+            // FIXME: I guess we need to cage JSEnvironmentRecord?
+            // https://bugs.webkit.org/show_bug.cgi?id=174922
             address = m_out.baseIndex(
                 m_heaps.JSEnvironmentRecord_variables, scope, m_out.zeroExtPtr(scopeOffset));
             ValueFromBlock namedResult = m_out.anchor(m_out.load64(address));
@@ -3555,6 +3566,8 @@ private:
             
             m_out.appendTo(overflowCase, continuation);
             
+            // FIXME: I guess we need to cage overflow storage?
+            // https://bugs.webkit.org/show_bug.cgi?id=174923
             address = m_out.baseIndex(
                 m_heaps.ScopedArguments_overflowStorage, base,
                 m_out.zeroExtPtr(m_out.sub(index, namedLength)));
@@ -5378,6 +5391,8 @@ private:
             
         m_out.appendTo(is8Bit, is16Bit);
             
+        // FIXME: Need to cage strings!
+        // https://bugs.webkit.org/show_bug.cgi?id=174924
         ValueFromBlock char8Bit = m_out.anchor(
             m_out.load8ZeroExt32(m_out.baseIndex(
                 m_heaps.characters8, storage, m_out.zeroExtPtr(index),
@@ -5479,6 +5494,8 @@ private:
             
         LBasicBlock lastNext = m_out.appendTo(is8Bit, is16Bit);
             
+        // FIXME: need to cage strings!
+        // https://bugs.webkit.org/show_bug.cgi?id=174924
         ValueFromBlock char8Bit = m_out.anchor(
             m_out.load8ZeroExt32(m_out.baseIndex(
                 m_heaps.characters8, storage, m_out.zeroExtPtr(index),
@@ -8075,6 +8092,8 @@ private:
         m_out.appendTo(loopStart, notEmptyValue);
         LValue unmaskedIndex = m_out.phi(Int32, indexStart);
         LValue index = m_out.bitAnd(mask, unmaskedIndex);
+        // FIXME: I think these buffers are caged?
+        // https://bugs.webkit.org/show_bug.cgi?id=174925
         LValue hashMapBucket = m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), buffer, m_out.zeroExt(index, Int64), ScaleEight));
         ValueFromBlock bucketResult = m_out.anchor(hashMapBucket);
         m_out.branch(m_out.equal(hashMapBucket, m_out.constIntPtr(bitwise_cast<intptr_t>(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::emptyValue()))),
@@ -8850,7 +8869,7 @@ private:
             m_out.neg(m_out.sub(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedInlineCapacity))));
         int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
         ValueFromBlock outOfLineResult = m_out.anchor(
-            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), storage, realIndex, ScaleEight, offsetOfFirstProperty)));
+            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), caged(storage), realIndex, ScaleEight, offsetOfFirstProperty)));
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
@@ -10268,6 +10287,8 @@ private:
 
         m_out.appendTo(loopBody, slowPath);
 
+        // FIXME: Strings needs to be caged.
+        // https://bugs.webkit.org/show_bug.cgi?id=174924
         LValue byte = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, buffer, m_out.zeroExtPtr(index)));
         LValue isInvalidAsciiRange = m_out.bitAnd(byte, m_out.constInt32(~0x7F));
         LValue isUpperCase = m_out.belowOrEqual(m_out.sub(byte, m_out.constInt32('A')), m_out.constInt32('Z' - 'A'));
@@ -11591,6 +11612,36 @@ private:
             m_out.jump(performStore);
             m_out.appendTo(performStore, lastNext);
         }
+    }
+    
+    LValue caged(LValue ptr)
+    {
+        if (vm().gigacageEnabled().isStillValid()) {
+            m_graph.watchpoints().addLazily(vm().gigacageEnabled());
+            
+            LValue basePtr = m_out.constIntPtr(g_gigacageBasePtr);
+            LValue mask = m_out.constIntPtr(GIGACAGE_MASK);
+            
+            // We don't have to worry about B3 messing up the bitAnd. Also, we want to get B3's excellent
+            // codegen for 2-operand andq on x86-64.
+            LValue masked = m_out.bitAnd(ptr, mask);
+            
+            // But B3 will currently mess up the code generation of this add. Basically, any offset from what we
+            // compute here will get reassociated and folded with g_gigacageBasePtr. There's a world in which
+            // moveConstants() observes that it needs to reassociate in order to hoist the big constants. But
+            // it's much easier to just block B3's badness here. That's what we do for now.
+            PatchpointValue* patchpoint = m_out.patchpoint(pointerType());
+            patchpoint->appendSomeRegister(basePtr);
+            patchpoint->appendSomeRegister(masked);
+            patchpoint->setGenerator(
+                [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                    jit.addPtr(params[1].gpr(), params[2].gpr(), params[0].gpr());
+                });
+            patchpoint->effects = Effects::none();
+            return patchpoint;
+        }
+        
+        return ptr;
     }
     
     void buildSwitch(SwitchData* data, LType type, LValue switchValue)

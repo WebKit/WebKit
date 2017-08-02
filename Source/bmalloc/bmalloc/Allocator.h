@@ -26,6 +26,7 @@
 #ifndef Allocator_h
 #define Allocator_h
 
+#include "BExport.h"
 #include "BumpAllocator.h"
 #include <array>
 
@@ -39,7 +40,7 @@ class Heap;
 
 class Allocator {
 public:
-    Allocator(Heap*, Deallocator&);
+    Allocator(Heap&, Deallocator&);
     ~Allocator();
 
     void* tryAllocate(size_t);
@@ -54,7 +55,7 @@ private:
     void* allocateImpl(size_t alignment, size_t, bool crashOnFailure);
     
     bool allocateFastCase(size_t, void*&);
-    void* allocateSlowCase(size_t);
+    BEXPORT void* allocateSlowCase(size_t);
     
     void* allocateLogSizeClass(size_t);
     void* allocateLarge(size_t);
@@ -65,6 +66,7 @@ private:
     std::array<BumpAllocator, sizeClassCount> m_bumpAllocators;
     std::array<BumpRangeCache, sizeClassCount> m_bumpRangeCaches;
 
+    Heap& m_heap;
     DebugHeap* m_debugHeap;
     Deallocator& m_deallocator;
 };

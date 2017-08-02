@@ -29,6 +29,7 @@
 #include "JSCInlines.h"
 #include "TypeError.h"
 #include "TypedArrayController.h"
+#include <wtf/Gigacage.h>
 
 namespace JSC {
 
