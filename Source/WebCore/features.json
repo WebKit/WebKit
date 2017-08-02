@@ -14,7 +14,7 @@
     {
         "name": "Beacon API",
         "status": {
-            "status": "Under Consideration",
+            "status": "In Development",
             "enabled-by-default": false
         },
         "url": "https://www.w3.org/TR/beacon/",
@@ -23,9 +23,9 @@
         "category": "webapps",
         "description": "Schedules asynchronous and non-blocking data delivery while the current page is unloading to mitigate resource contention for other time-critical requests.",
         "contact": {
-            "name": "Jonathan Davis",
-            "email": "web-evangelist@apple.com",
-            "twitter": "@jonathandavis"
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
         }
     },
     {
