@@ -1,5 +1,3 @@
-set(WTF_LIBRARY_TYPE STATIC)
-
 find_library(COCOA_LIBRARY Cocoa)
 find_library(COREFOUNDATION_LIBRARY CoreFoundation)
 find_library(READLINE_LIBRARY Readline)
