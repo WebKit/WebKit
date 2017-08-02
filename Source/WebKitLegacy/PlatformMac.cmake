@@ -320,8 +320,6 @@ list(APPEND WebKit_SOURCES
     mac/WebView/WebViewData.mm
 )
 
-set(WebKit_LIBRARY_TYPE SHARED)
-
 set(WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES
     mac/DOM
     mac/DefaultDelegates

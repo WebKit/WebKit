@@ -1,5 +1,3 @@
-set(WebCore_LIBRARY_TYPE SHARED)
-
 if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
 set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
 elif ("${CURRENT_OSX_VERSION}" MATCHES "10.10")
@@ -800,7 +798,6 @@ set(ADDITIONAL_BINDINGS_DEPENDENCIES
     ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
 )
 
-set(WebCoreTestSupport_LIBRARY_TYPE SHARED)
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)
 list(APPEND WebCoreTestSupport_SOURCES
     bindings/js/JSMockContentFilterSettingsCustom.cpp
