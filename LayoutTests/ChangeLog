@@ -1,3 +1,18 @@
+2017-08-02  Matt Lewis  <jlewis3@apple.com>
+
+        Added new expectations folders and moved expectations to correct folders.
+        https://bugs.webkit.org/show_bug.cgi?id=175061
+
+        Unreviewed gardening.
+        * platform/mac-elcapitan-wk2/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-expected.txt.
+        * platform/mac-elcapitan-wk2/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-worker-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-worker-expected.txt.
+        * platform/mac-elcapitan-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any-expected.txt.
+        * platform/mac-elcapitan-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.worker-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.worker-expected.txt.
+        * platform/mac-elcapitan-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any-expected.txt.
+        * platform/mac-elcapitan-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.worker-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.worker-expected.txt.
+        * platform/mac-elcapitan-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any-expected.txt.
+        * platform/mac-elcapitan-wk2/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.worker-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.worker-expected.txt.
+
 2017-08-02  Ms2ger  <Ms2ger@igalia.com>
 
         Remove obsolete expectations for syntax-021.xml.
