@@ -70,7 +70,7 @@ EXPRESSION: inspect(openDatabase("CommandLineAPITestDB", "", "", 1))
       "description": "Database"
     },
     "hints": {
-      "databaseId": "1"
+      "databaseId": "<filtered>"
     }
   }
 }

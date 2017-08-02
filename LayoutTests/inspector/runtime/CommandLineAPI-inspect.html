@@ -8,6 +8,8 @@ function test()
     function payloadJSONFilter(key, value) {
         if (key === "objectId")
             return "<filtered>";
+        if (key === "databaseId")
+            return "<filtered>";
         return value;
     }
 
@@ -29,7 +31,7 @@ function test()
             name, description,
             test(resolve, reject) {
                 evaluateWithCommandLineAPI(expression);
-                ProtocolTest.log("EXPRESSION: " + expression);                
+                ProtocolTest.log("EXPRESSION: " + expression);
                 InspectorProtocol.awaitEvent({event: "Inspector.inspect"}).then((messageObject) => {
                     ProtocolTest.log(JSON.stringify(messageObject, payloadJSONFilter, 2));
                     resolve();
