@@ -1,3 +1,9 @@
+2017-08-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, temporarily skip some HTTPS tests that time out on the bots.
+
+        * TestExpectations:
+
 2017-08-02  Matt Lewis  <jlewis3@apple.com>
 
         Added new expectations folders and moved expectations to correct folders.
