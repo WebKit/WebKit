@@ -28,6 +28,7 @@
 #include "AvailableMemory.h"
 #include "BumpAllocator.h"
 #include "Chunk.h"
+#include "Environment.h"
 #include "Gigacage.h"
 #include "DebugHeap.h"
 #include "PerProcess.h"
@@ -52,7 +53,7 @@ Heap::Heap(HeapKind kind, std::lock_guard<StaticMutex>&)
     initializeLineMetadata();
     initializePageMetadata();
     
-    if (m_environment.isDebugHeapEnabled())
+    if (PerProcess<Environment>::get()->isDebugHeapEnabled())
         m_debugHeap = PerProcess<DebugHeap>::get();
     else {
         Gigacage::ensureGigacage();

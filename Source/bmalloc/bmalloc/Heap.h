@@ -30,7 +30,6 @@
 #include "AsyncTask.h"
 #include "BumpRange.h"
 #include "Chunk.h"
-#include "Environment.h"
 #include "HeapKind.h"
 #include "LargeMap.h"
 #include "LineMetadata.h"
@@ -136,7 +135,6 @@ private:
     
     AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;
 
-    Environment m_environment;
     DebugHeap* m_debugHeap;
 };
 

@@ -3826,7 +3826,7 @@ int jscmain(int argc, char** argv)
 #if ENABLE(WEBASSEMBLY)
     JSC::Wasm::enableFastMemory();
 #endif
-    if (GIGACAGE_ENABLED)
+    if (Gigacage::shouldBeEnabled())
         Gigacage::addDisableCallback(gigacageDisabled, nullptr);
 
     int result;

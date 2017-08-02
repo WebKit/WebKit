@@ -202,7 +202,7 @@ WebProcess::WebProcess()
         parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
     });
 
-    if (GIGACAGE_ENABLED)
+    if (Gigacage::shouldBeEnabled())
         Gigacage::addDisableCallback(gigacageDisabled, nullptr);
 }
 

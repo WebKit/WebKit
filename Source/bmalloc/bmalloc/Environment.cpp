@@ -107,7 +107,7 @@ static bool isSanitizerEnabled()
 #endif
 }
 
-Environment::Environment()
+Environment::Environment(std::lock_guard<StaticMutex>&)
     : m_isDebugHeapEnabled(computeIsDebugHeapEnabled())
 {
 }

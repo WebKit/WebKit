@@ -39,6 +39,7 @@ namespace Gigacage {
 
 inline void ensureGigacage() { }
 inline void disableGigacage() { }
+inline bool shouldBeEnabled() { return false; }
 
 inline void addDisableCallback(void (*)(void*), void*) { }
 inline void removeDisableCallback(void (*)(void*), void*) { }

@@ -25,6 +25,7 @@
 
 #include "Gigacage.h"
 
+#include "Environment.h"
 #include "PerProcess.h"
 #include "VMAllocate.h"
 #include "Vector.h"
@@ -65,6 +66,9 @@ void ensureGigacage()
     std::call_once(
         onceFlag,
         [] {
+            if (!shouldBeEnabled())
+                return;
+            
             void* basePtr = tryVMAllocate(GIGACAGE_SIZE, GIGACAGE_SIZE + GIGACAGE_RUNWAY);
             if (!basePtr)
                 return;
@@ -119,6 +123,11 @@ void removeDisableCallback(void (*function)(void*), void* argument)
             return;
         }
     }
+}
+
+bool shouldBeEnabled()
+{
+    return GIGACAGE_ENABLED && !PerProcess<Environment>::get()->isDebugHeapEnabled();
 }
 
 } // namespace Gigacage

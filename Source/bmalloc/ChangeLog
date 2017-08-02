@@ -1,3 +1,24 @@
+2017-08-02  Filip Pizlo  <fpizlo@apple.com>
+
+        We should be OK with the gigacage being disabled on gmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=175082
+
+        Reviewed by Michael Saboff.
+        
+        This adds Gigacage::shouldBeEnabled(), which returns false when we're using gmalloc or other things
+        that enable DebugHeap.
+
+        * bmalloc/Environment.cpp:
+        (bmalloc::Environment::Environment):
+        * bmalloc/Environment.h:
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        (Gigacage::shouldBeEnabled):
+        * bmalloc/Gigacage.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        * bmalloc/Heap.h:
+
 2017-08-01  Filip Pizlo  <fpizlo@apple.com>
 
         Bmalloc and GC should put auxiliaries (butterflies, typed array backing stores) in a gigacage (separate multi-GB VM region)

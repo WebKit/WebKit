@@ -71,6 +71,8 @@ inline bool isCaged(const void* ptr)
     return caged(ptr) == ptr;
 }
 
+BEXPORT bool shouldBeEnabled();
+
 } // namespace Gigacage
 
 
