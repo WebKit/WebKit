@@ -103,10 +103,18 @@ bool ResourceLoadStatisticsClassifierCocoa::canUseCorePrediction()
 
 const struct svm_model* ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel()
 {
-    static NeverDestroyed<struct svm_model*> corePredictionModel = svm_load_model(storagePath().utf8().data());
+    static std::optional<struct svm_model*> corePredictionModel;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        auto path = storagePath();
+        if (path.isEmpty())
+            return;
 
-    if (corePredictionModel)
-        return corePredictionModel;
+        corePredictionModel = svm_load_model(path.utf8().data());
+    });
+
+    if (corePredictionModel && corePredictionModel.value())
+        return corePredictionModel.value();
 
     WTFLogAlways("ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel(): Couldn't load model file at path %s.", storagePath().utf8().data());
     m_useCorePrediction = false;

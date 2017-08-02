@@ -1,3 +1,16 @@
+2017-08-02  John Wilander  <wilander@apple.com>
+
+        ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel() should check the return value of storagePath()
+        https://bugs.webkit.org/show_bug.cgi?id=175055
+        <rdar://problem/32671352>
+
+        Reviewed by David Kilzer.
+
+        * Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp:
+        (WebKit::ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel):
+            Now uses dispatch_once() instead of NeverDestroyed and checks the
+            return value of storagePath() before using it to load the model.
+
 2017-08-01  Brian Burg  <bburg@apple.com>
 
         HTML file input elements do not support file extensions in the "accept" attribute
