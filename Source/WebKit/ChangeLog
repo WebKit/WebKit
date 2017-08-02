@@ -1,3 +1,29 @@
+2017-08-02  Brian Burg  <bburg@apple.com>
+
+        Web Automation: files selected for upload should be checked against values of the 'accept' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=174803
+        <rdar://problem/33514190>
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use the parsed values of the file input element's "accept" attribute to reject
+        files that don't match the specified values. This is normally done by Safari
+        using NSOpenPanel, but since a real open panel isn't shown during automation,
+        it needs to be done here.
+
+        Support for limiting accepted files by file extensions will be added when the
+        same is implemented in the normal code path for the C and Objective-C APIs.
+
+        This change is covered by internal WebDriver tests that will be rewritten for the
+        public Webdriver W3C test suite someday, when safaridriver runs those tests itself.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::handleRunOpenPanel):
+        Since we already have the proposed files, there's no need to compute a list of
+        supported extensions based on wildcard MIME types. First check the extension,
+        then the inferred MIME type for the extension, and then the wildcard MIME type
+        if the inferred type is not an exact match.
+
 2017-08-02  Tim Horton  <timothy_horton@apple.com>
 
         WKPDFView doesn't respect safe area insets

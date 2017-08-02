@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebAutomationSession.h"
 
+#include "APIArray.h"
 #include "APIAutomationSessionClient.h"
 #include "APIOpenPanelParameters.h"
 #include "AutomationProtocolObjects.h"
@@ -38,6 +39,7 @@
 #include "WebProcessPool.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/URL.h>
 #include <algorithm>
 #include <wtf/HashMap.h>
@@ -525,7 +527,34 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
     String handle = handleForWebPageProxy(page);
     m_domainNotifier->browsingContextCleared(handle);
 }
-    
+
+static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<String>& allowedMIMETypes) {
+    if (!WebCore::fileExists(filename))
+        return false;
+
+    if (allowedMIMETypes.isEmpty())
+        return true;
+
+    // Validate filenames against allowed MIME types before choosing them.
+    // FIXME: validate against allowed file extensions when <https://webkit.org/b/95698> is fixed.
+    String extension = filename.substring(filename.reverseFind('.') + 1);
+    String mappedMIMEType = WebCore::MIMETypeRegistry::getMIMETypeForExtension(extension);
+    if (allowedMIMETypes.contains(mappedMIMEType))
+        return true;
+
+    // Fall back to checking for a MIME type wildcard if an exact match is not found.
+    Vector<String> components;
+    mappedMIMEType.split('/', false, components);
+    if (components.size() != 2)
+        return false;
+
+    String wildcardedMIMEType = makeString(components[0], "/*");
+    if (allowedMIMETypes.contains(wildcardedMIMEType))
+        return true;
+
+    return false;
+}
+
 void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const WebFrameProxy&, const API::OpenPanelParameters& parameters, WebOpenPanelResultListenerProxy& resultListener)
 {
     if (!m_filesToSelectForFileUpload.size()) {
@@ -540,17 +569,20 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
         return;
     }
 
-    // Per §14.3.10.5 in the W3C spec, if at least one file no longer exists, the command should fail.
-    // The REST API service can tell that this failed by checking the "value" attribute of the input element.
+    HashSet<String> allowedMIMETypes;
+    for (auto type : parameters.acceptMIMETypes()->elementsOfType<API::String>())
+        allowedMIMETypes.add(type->string());
+
+    // Per §14.3.10.5 in the W3C spec, if at least one file cannot be accepted, the command should fail.
+    // The REST API service can tell that this failed by checking the "files" attribute of the input element.
     for (const String& filename : m_filesToSelectForFileUpload) {
-        if (!WebCore::fileExists(filename)) {
+        if (!fileCanBeAcceptedForUpload(filename, allowedMIMETypes)) {
             resultListener.cancel();
             m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, true);
             return;
         }
     }
 
-    // FIXME: validate filenames against allowed MIME types before choosing them. <https://webkit.org/b/174803>
     resultListener.chooseFiles(m_filesToSelectForFileUpload);
     m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, false);
 }
