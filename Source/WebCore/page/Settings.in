@@ -294,6 +294,8 @@ langAttributeAwareFormControlUIEnabled initial=false
 
 subresourceIntegrityEnabled initial=true
 
+beaconAPIEnabled initial=false
+
 constantPropertiesEnabled initial=false
 
 viewportFitEnabled initial=false

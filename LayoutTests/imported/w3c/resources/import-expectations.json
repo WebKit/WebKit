@@ -40,6 +40,7 @@
     "web-platform-tests/assumptions": "skip", 
     "web-platform-tests/auxclick": "skip", 
     "web-platform-tests/battery-status": "skip", 
+    "web-platform-tests/beacon": "import", 
     "web-platform-tests/bluetooth": "skip", 
     "web-platform-tests/browser-payment-api": "skip", 
     "web-platform-tests/clear-site-data": "skip", 

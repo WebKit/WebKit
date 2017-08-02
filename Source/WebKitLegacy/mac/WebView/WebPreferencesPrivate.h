@@ -266,6 +266,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)webGL2Enabled;
 - (void)setWebGL2Enabled:(BOOL)enabled;
 
+- (BOOL)beaconAPIEnabled;
+- (void)setBeaconAPIEnabled:(BOOL)enabled;
+
 - (BOOL)forceSoftwareWebGLRendering;
 - (void)setForceSoftwareWebGLRendering:(BOOL)forced;
 

@@ -1,3 +1,51 @@
+2017-08-01  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for navigator.sendBeacon
+        https://bugs.webkit.org/show_bug.cgi?id=175007
+        <rdar://problem/33547728>
+
+        Reviewed by Sam Weinig.
+
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        Rebaseline test now that sendBeacon is exposed on navigator.
+
+        * http/tests/blink/sendbeacon/beacon-cookie-expected.txt: Added.
+        * http/tests/blink/sendbeacon/beacon-cookie.html: Added.
+        * http/tests/blink/sendbeacon/beacon-cross-origin-expected.txt: Added.
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-blob-expected.txt: Added.
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-blob.html: Added.
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-expected.txt: Added.
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect.html: Added.
+        * http/tests/blink/sendbeacon/beacon-cross-origin.html: Added.
+        * http/tests/blink/sendbeacon/beacon-cross-origin.https-expected.txt: Added.
+        * http/tests/blink/sendbeacon/beacon-cross-origin.https.html: Added.
+        * http/tests/blink/sendbeacon/beacon-detached-no-crash-expected.txt: Added.
+        * http/tests/blink/sendbeacon/beacon-detached-no-crash.html: Added.
+        * http/tests/blink/sendbeacon/beacon-same-origin-expected.txt: Added.
+        * http/tests/blink/sendbeacon/beacon-same-origin.html: Added.
+        * http/tests/blink/sendbeacon/connect-src-beacon-allowed-expected.txt: Added.
+        * http/tests/blink/sendbeacon/connect-src-beacon-allowed.html: Added.
+        * http/tests/blink/sendbeacon/resources/check-beacon.php: Added.
+        * http/tests/blink/sendbeacon/resources/save-beacon.php: Added.
+        Import more beacon test coverage from Blink.
+
+        * http/wpt/beacon/connect-src-beacon-blocked.sub-expected.txt: Added.
+        * http/wpt/beacon/connect-src-beacon-blocked.sub.html: Added.
+        Improve test coverage for sendBeacon and CSP.
+
+        * http/wpt/beacon/headers/header-content-type-same-origin-expected.txt: Added.
+        * http/wpt/beacon/headers/header-content-type-same-origin.html: Added.
+        Improve test coverage for sendBeacon with various types of payload. The test is done
+        using same origin as we do not currently support sending some of those payloads cross
+        origin yet.
+
+        * imported/blink/fast/beacon/beacon-basic-expected.txt: Added.
+        * imported/blink/fast/beacon/beacon-basic.html: Added.
+        Import basic Beacon test coverage from Blink.
+
+        * resources/window-postmessage-open-close.html: Added.
+        * tests-options.json:
+
 2017-08-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: simplify WebInspector with WI

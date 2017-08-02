@@ -3360,6 +3360,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     }
 
     settings.setSubresourceIntegrityEnabled(store.getBoolValueForKey(WebPreferencesKey::subresourceIntegrityEnabledKey()));
+    settings.setBeaconAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::beaconAPIEnabledKey()));
 
     platformPreferencesDidChange(store);
 

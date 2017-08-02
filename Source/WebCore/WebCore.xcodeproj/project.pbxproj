@@ -3377,6 +3377,8 @@
 		830A36BD1DAC5FAD006D7D09 /* JSMouseEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 830A36BB1DAC5FA7006D7D09 /* JSMouseEventInit.h */; };
 		83120C701C56F3F6001CB112 /* HTMLDataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831D1F291C56ECA000F5F6C0 /* HTMLDataElement.cpp */; };
 		83120C711C56F3FB001CB112 /* HTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A71C56E83A00F3F0E3 /* HTMLDataElement.h */; };
+		8321507D1F27EA180095B136 /* NavigatorBeacon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8321507A1F27EA150095B136 /* NavigatorBeacon.cpp */; };
+		8321507E1F27EA1B0095B136 /* NavigatorBeacon.h in Headers */ = {isa = PBXBuildFile; fileRef = 8321507B1F27EA150095B136 /* NavigatorBeacon.h */; };
 		832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 832B843319D8E55100B26055 /* SVGAnimateElementBase.h */; };
 		832B843619D8E57400B26055 /* SVGAnimateElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */; };
 		83407FC11E8D9C1700E048D3 /* VisibilityChangeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83407FC01E8D9C1200E048D3 /* VisibilityChangeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11445,6 +11447,9 @@
 		830A36BA1DAC5FA7006D7D09 /* JSMouseEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMouseEventInit.cpp; sourceTree = "<group>"; };
 		830A36BB1DAC5FA7006D7D09 /* JSMouseEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMouseEventInit.h; sourceTree = "<group>"; };
 		831D1F291C56ECA000F5F6C0 /* HTMLDataElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataElement.cpp; sourceTree = "<group>"; };
+		8321507A1F27EA150095B136 /* NavigatorBeacon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorBeacon.cpp; sourceTree = "<group>"; };
+		8321507B1F27EA150095B136 /* NavigatorBeacon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatorBeacon.h; sourceTree = "<group>"; };
+		8321507C1F27EA150095B136 /* NavigatorBeacon.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigatorBeacon.idl; sourceTree = "<group>"; };
 		8329A4171EC25B2B008ED4BE /* DocumentAndElementEventHandlers.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentAndElementEventHandlers.idl; sourceTree = "<group>"; };
 		8329DCC21C7A6AE300730B33 /* HTMLHyperlinkElementUtils.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLHyperlinkElementUtils.idl; sourceTree = "<group>"; };
 		832B843319D8E55100B26055 /* SVGAnimateElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimateElementBase.h; sourceTree = "<group>"; };
@@ -19822,6 +19827,16 @@
 			path = cf;
 			sourceTree = "<group>";
 		};
+		832150791F27E96B0095B136 /* beacon */ = {
+			isa = PBXGroup;
+			children = (
+				8321507A1F27EA150095B136 /* NavigatorBeacon.cpp */,
+				8321507B1F27EA150095B136 /* NavigatorBeacon.h */,
+				8321507C1F27EA150095B136 /* NavigatorBeacon.idl */,
+			);
+			path = beacon;
+			sourceTree = "<group>";
+		};
 		89878576122CA1DA003AABDA /* FileAPI */ = {
 			isa = PBXGroup;
 			children = (
@@ -20612,6 +20627,7 @@
 		971145FE14EF006E00674FD9 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				832150791F27E96B0095B136 /* beacon */,
 				CE26169D187E6554007955F3 /* airplay */,
 				1A58E8611D19D37300C0EA73 /* applepay */,
 				57C7A6881E56946D00C67D71 /* credentials */,
@@ -26492,6 +26508,7 @@
 				FD31608012B026F700C1A359 /* AudioDSPKernel.h in Headers */,
 				FD31608212B026F700C1A359 /* AudioDSPKernelProcessor.h in Headers */,
 				FD31608312B026F700C1A359 /* AudioFileReader.h in Headers */,
+				8321507E1F27EA1B0095B136 /* NavigatorBeacon.h in Headers */,
 				CD5596921475B678001D0BD0 /* AudioFileReaderIOS.h in Headers */,
 				FD3160BF12B0272A00C1A359 /* AudioFileReaderMac.h in Headers */,
 				CD2F4A2418D89F700063746D /* AudioHardwareListener.h in Headers */,
@@ -32042,6 +32059,7 @@
 				07277E5217D018CC0015534D /* JSMediaStreamTrack.cpp in Sources */,
 				415CDAF71E6CE0DE004F11EE /* JSMediaStreamTrackCustom.cpp in Sources */,
 				07277E5417D018CC0015534D /* JSMediaStreamTrackEvent.cpp in Sources */,
+				8321507D1F27EA180095B136 /* NavigatorBeacon.cpp in Sources */,
 				932CC0D41DFFD667004C0F9F /* JSMediaTrackConstraints.cpp in Sources */,
 				0787C4691BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp in Sources */,
 				E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */,

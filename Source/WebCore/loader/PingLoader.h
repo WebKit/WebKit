@@ -32,13 +32,26 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/Ref.h>
+#include <wtf/Variant.h>
+
+namespace JSC {
+
+class ArrayBuffer;
+class ArrayBufferView;
+
+}
 
 namespace WebCore {
 
+class Blob;
+class DOMFormData;
+class Document;
 class FormData;
 class Frame;
 class URL;
+class URLSearchParams;
 class ResourceRequest;
 
 enum class ViolationReportType {
@@ -46,9 +59,12 @@ enum class ViolationReportType {
     XSSAuditor,
 };
 
+using BodyInit = Variant<RefPtr<Blob>, RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<DOMFormData>, RefPtr<URLSearchParams>, String>;
+
 class PingLoader {
 public:
     static void loadImage(Frame&, const URL&);
+    static bool sendBeacon(Frame&, Document&, const URL&, std::optional<BodyInit>&&);
     static void sendPing(Frame&, const URL& pingURL, const URL& destinationURL);
     static void sendViolationReport(Frame&, const URL& reportURL, Ref<FormData>&& report, ViolationReportType);
 

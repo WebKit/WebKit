@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/beacon/resources/beacon.py
 /LayoutTests/imported/w3c/web-platform-tests/beacon/resources/content-type.py
 /LayoutTests/imported/w3c/web-platform-tests/beacon/resources/inspect-header.py

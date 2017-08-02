@@ -625,6 +625,7 @@ public:
         [NSNumber numberWithBool:YES], WebKitShadowDOMEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCustomElementsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitModernMediaControlsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitBeaconAPIEnabledPreferenceKey,
 #if ENABLE(WEBGL2)
         [NSNumber numberWithBool:NO], WebKitWebGL2EnabledPreferenceKey,
 #endif
@@ -2068,6 +2069,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setWebGL2Enabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitWebGL2EnabledPreferenceKey];
+}
+
+- (BOOL)beaconAPIEnabled
+{
+    return [self _boolValueForKey:WebKitBeaconAPIEnabledPreferenceKey];
+}
+
+- (void)setBeaconAPIEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitBeaconAPIEnabledPreferenceKey];
 }
 
 - (BOOL)forceSoftwareWebGLRendering

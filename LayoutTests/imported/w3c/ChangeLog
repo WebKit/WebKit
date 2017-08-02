@@ -1,3 +1,77 @@
+2017-08-01  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for navigator.sendBeacon
+        https://bugs.webkit.org/show_bug.cgi?id=175007
+        <rdar://problem/33547728>
+
+        Reviewed by Sam Weinig.
+
+        Import more beacon web-platform-tests and rebaseline the one we had
+        already imported now that navigator.sendBeacon is exposed.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/beacon/beacon-basic-blob-expected.txt: Added.
+        * web-platform-tests/beacon/beacon-basic-blob.html: Added.
+        * web-platform-tests/beacon/beacon-basic-blobMax-expected.txt: Added.
+        * web-platform-tests/beacon/beacon-basic-blobMax.html: Added.
+        * web-platform-tests/beacon/beacon-basic-buffersource-expected.txt: Added.
+        * web-platform-tests/beacon/beacon-basic-buffersource.html: Added.
+        * web-platform-tests/beacon/beacon-basic-buffersourceMax-expected.txt: Added.
+        * web-platform-tests/beacon/beacon-basic-buffersourceMax.html: Added.
+        * web-platform-tests/beacon/beacon-basic-formdata-expected.txt: Added.
+        * web-platform-tests/beacon/beacon-basic-formdata.html: Added.
+        * web-platform-tests/beacon/beacon-basic-formdataMax-expected.txt: Added.
+        * web-platform-tests/beacon/beacon-basic-formdataMax.html: Added.
+        * web-platform-tests/beacon/beacon-basic-string-expected.txt: Added.
+        * web-platform-tests/beacon/beacon-basic-string.html: Added.
+        * web-platform-tests/beacon/beacon-basic-stringMax-expected.txt: Added.
+        * web-platform-tests/beacon/beacon-basic-stringMax.html: Added.
+        * web-platform-tests/beacon/beacon-common.js: Added.
+        (allTests.forEach):
+        (CreateArrayBufferFromPayload):
+        (CreateEmptyFormDataPayload):
+        (CreateFormDataFromPayload):
+        (initSession.return.add):
+        (initSession):
+        (runTests.):
+        (runTests):
+        (continueAfterSendingBeacon):
+        (waitForResults.):
+        (waitForResults):
+        (runSendInIframeAndNavigateTests.self.buildId):
+        (runSendInIframeAndNavigateTests.window.onmessage):
+        (runSendInIframeAndNavigateTests.self.sendFunc):
+        (runSendInIframeAndNavigateTests.iframe.onload):
+        * web-platform-tests/beacon/beacon-cors.window.js: Added.
+        (false.forEach.self.buildId):
+        (false.forEach.self.buildBaseUrl):
+        (false.forEach.self.buildTargetUrl):
+        (false.forEach):
+        * web-platform-tests/beacon/beacon-error.window.js: Added.
+        (test):
+        * web-platform-tests/beacon/beacon-redirect.window.js: Added.
+        (308.forEach.self.buildId):
+        (308.forEach.self.buildTargetUrl):
+        (308.forEach):
+        * web-platform-tests/beacon/fetch-keepalive-navigate.iFrame.html: Added.
+        * web-platform-tests/beacon/headers/header-content-type-expected.txt:
+        * web-platform-tests/beacon/headers/header-referrer-no-referrer-expected.txt:
+        * web-platform-tests/beacon/headers/header-referrer-no-referrer-when-downgrade.https-expected.txt:
+        * web-platform-tests/beacon/headers/header-referrer-origin-expected.txt:
+        * web-platform-tests/beacon/headers/header-referrer-origin-when-cross-origin-expected.txt:
+        * web-platform-tests/beacon/headers/header-referrer-same-origin-expected.txt:
+        * web-platform-tests/beacon/headers/header-referrer-strict-origin-when-cross-origin.https-expected.txt:
+        * web-platform-tests/beacon/headers/header-referrer-strict-origin.https-expected.txt:
+        * web-platform-tests/beacon/headers/header-referrer-unsafe-url.https-expected.txt:
+        * web-platform-tests/beacon/resources/beacon.py: Added.
+        (build_stash_key):
+        (main):
+        (main.wrap_key):
+        * web-platform-tests/beacon/resources/w3c-import.log:
+        * web-platform-tests/beacon/w3c-import.log: Added.
+        * web-platform-tests/url/failure-expected.txt:
+
 2017-07-30  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove JS builtin bindings for FetchRequest, DOMWindowFetch and WorkerGlobalScopeFetch

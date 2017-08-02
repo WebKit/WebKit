@@ -106,7 +106,7 @@ FAIL Location's href: http://foo:-80/ should throw assert_throws: function "() =
 FAIL window.open(): http://foo:-80/ should throw assert_throws: function "() => self.open(test.input).close()" threw object "TypeError: null is not an object (evaluating 'self.open(test.input).close')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
 PASS URL's href: http:/:@/www.example.com should throw 
 FAIL XHR: http:/:@/www.example.com should throw assert_throws: function "() => client.open("GET", test.input)" did not throw
-PASS sendBeacon(): http:/:@/www.example.com should throw 
+FAIL sendBeacon(): http:/:@/www.example.com should throw assert_throws: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:/:@/www.example.com should throw assert_throws: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:/:@/www.example.com should throw assert_throws: function "() => self.open(test.input).close()" did not throw
 PASS URL's href: http://user@/www.example.com should throw 
@@ -116,12 +116,12 @@ FAIL Location's href: http://user@/www.example.com should throw assert_throws: f
 FAIL window.open(): http://user@/www.example.com should throw assert_throws: function "() => self.open(test.input).close()" threw object "TypeError: null is not an object (evaluating 'self.open(test.input).close')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
 PASS URL's href: http:@/www.example.com should throw 
 FAIL XHR: http:@/www.example.com should throw assert_throws: function "() => client.open("GET", test.input)" did not throw
-PASS sendBeacon(): http:@/www.example.com should throw 
+FAIL sendBeacon(): http:@/www.example.com should throw assert_throws: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:@/www.example.com should throw assert_throws: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:@/www.example.com should throw assert_throws: function "() => self.open(test.input).close()" did not throw
 PASS URL's href: http:/@/www.example.com should throw 
 FAIL XHR: http:/@/www.example.com should throw assert_throws: function "() => client.open("GET", test.input)" did not throw
-PASS sendBeacon(): http:/@/www.example.com should throw 
+FAIL sendBeacon(): http:/@/www.example.com should throw assert_throws: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:/@/www.example.com should throw assert_throws: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:/@/www.example.com should throw assert_throws: function "() => self.open(test.input).close()" did not throw
 PASS URL's href: http://@/www.example.com should throw 
@@ -136,12 +136,12 @@ FAIL Location's href: https:@/www.example.com should throw assert_throws: functi
 FAIL window.open(): https:@/www.example.com should throw assert_throws: function "() => self.open(test.input).close()" threw object "TypeError: null is not an object (evaluating 'self.open(test.input).close')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
 PASS URL's href: http:a:b@/www.example.com should throw 
 FAIL XHR: http:a:b@/www.example.com should throw assert_throws: function "() => client.open("GET", test.input)" did not throw
-PASS sendBeacon(): http:a:b@/www.example.com should throw 
+FAIL sendBeacon(): http:a:b@/www.example.com should throw assert_throws: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:a:b@/www.example.com should throw assert_throws: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:a:b@/www.example.com should throw assert_throws: function "() => self.open(test.input).close()" did not throw
 PASS URL's href: http:/a:b@/www.example.com should throw 
 FAIL XHR: http:/a:b@/www.example.com should throw assert_throws: function "() => client.open("GET", test.input)" did not throw
-PASS sendBeacon(): http:/a:b@/www.example.com should throw 
+FAIL sendBeacon(): http:/a:b@/www.example.com should throw assert_throws: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:/a:b@/www.example.com should throw assert_throws: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:/a:b@/www.example.com should throw assert_throws: function "() => self.open(test.input).close()" did not throw
 PASS URL's href: http://a:b@/www.example.com should throw 
@@ -151,17 +151,17 @@ FAIL Location's href: http://a:b@/www.example.com should throw assert_throws: fu
 FAIL window.open(): http://a:b@/www.example.com should throw assert_throws: function "() => self.open(test.input).close()" threw object "TypeError: null is not an object (evaluating 'self.open(test.input).close')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
 PASS URL's href: http::@/www.example.com should throw 
 FAIL XHR: http::@/www.example.com should throw assert_throws: function "() => client.open("GET", test.input)" did not throw
-PASS sendBeacon(): http::@/www.example.com should throw 
+FAIL sendBeacon(): http::@/www.example.com should throw assert_throws: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http::@/www.example.com should throw assert_throws: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http::@/www.example.com should throw assert_throws: function "() => self.open(test.input).close()" did not throw
 PASS URL's href: http:@:www.example.com should throw 
 FAIL XHR: http:@:www.example.com should throw assert_throws: function "() => client.open("GET", test.input)" did not throw
-PASS sendBeacon(): http:@:www.example.com should throw 
+FAIL sendBeacon(): http:@:www.example.com should throw assert_throws: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:@:www.example.com should throw assert_throws: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:@:www.example.com should throw assert_throws: function "() => self.open(test.input).close()" did not throw
 PASS URL's href: http:/@:www.example.com should throw 
 FAIL XHR: http:/@:www.example.com should throw assert_throws: function "() => client.open("GET", test.input)" did not throw
-PASS sendBeacon(): http:/@:www.example.com should throw 
+FAIL sendBeacon(): http:/@:www.example.com should throw assert_throws: function "() => self.navigator.sendBeacon(test.input)" did not throw
 FAIL Location's href: http:/@:www.example.com should throw assert_throws: function "() => self[0].location = test.input" did not throw
 FAIL window.open(): http:/@:www.example.com should throw assert_throws: function "() => self.open(test.input).close()" did not throw
 PASS URL's href: http://@:www.example.com should throw 

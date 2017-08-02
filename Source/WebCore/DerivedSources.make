@@ -30,6 +30,7 @@ VPATH = \
     $(WebCore) \
     $(WebCore)/Modules/airplay \
     $(WebCore)/Modules/applepay \
+    $(WebCore)/Modules/beacon \
     $(WebCore)/Modules/credentials \
     $(WebCore)/Modules/encryptedmedia \
     $(WebCore)/Modules/encryptedmedia/legacy \
@@ -97,6 +98,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/applepay/ApplePayShippingMethodSelectedEvent.idl \
 	$(WebCore)/Modules/applepay/ApplePayShippingMethodUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayValidateMerchantEvent.idl \
+    $(WebCore)/Modules/beacon/NavigatorBeacon.idl \
     $(WebCore)/Modules/credentials/BasicCredential.idl \
     $(WebCore)/Modules/credentials/CredentialCreationOptions.idl \
     $(WebCore)/Modules/credentials/CredentialData.idl \

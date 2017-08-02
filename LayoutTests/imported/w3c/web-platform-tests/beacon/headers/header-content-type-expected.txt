@@ -1,5 +1,6 @@
+CONSOLE MESSAGE: line 35: This requests requires a CORS preflight but this is not supported yet.
 
-FAIL Test content-type header for a body string navigator.sendBeacon is not a function. (In 'navigator.sendBeacon(testUrl, what)', 'navigator.sendBeacon' is undefined)
-FAIL Test content-type header for a body ArrayBuffer navigator.sendBeacon is not a function. (In 'navigator.sendBeacon(testUrl, what)', 'navigator.sendBeacon' is undefined)
-FAIL Test content-type header for a body FormData navigator.sendBeacon is not a function. (In 'navigator.sendBeacon(testUrl, what)', 'navigator.sendBeacon' is undefined)
+PASS Test content-type header for a body string 
+FAIL Test content-type header for a body ArrayBuffer assert_true: SendBeacon Succeeded expected true got false
+PASS Test content-type header for a body FormData 
 
