@@ -210,6 +210,10 @@ typedef const char* optionString;
     v(double, mediumHeapRAMFraction, 0.5, Normal, nullptr) \
     v(double, mediumHeapGrowthFactor, 1.5, Normal, nullptr) \
     v(double, largeHeapGrowthFactor, 1.24, Normal, nullptr) \
+    v(bool, forceAggressiveGCTrigger, false, Normal, "If true, on iOS, we will use a different formula for proportionalHeapSize().") \
+    v(double, aggressiveGCTriggerMinMultiplier, 1.07, Normal, "This is the minimum we must grow by for proportionalHeapSize() when doing aggressive triggering.") \
+    v(double, aggressiveGCTriggerMaxMultiplier, 2.0, Normal,  "This is the maximum we can grow by for proportionalHeapSize() when doing aggressive triggering.") \
+    v(double, aggressiveGCTriggerScalingValue, 3.5, Normal, "This scales the above formula. A larger number is more aggressive in limiting heap growth. A smaller number is more permissive in allowing heap growth.") \
     v(double, criticalGCMemoryThreshold, 0.80, Normal, "percent memory in use the GC considers critical.  The collector is much more aggressive above this threshold") \
     v(double, minimumMutatorUtilization, 0, Normal, nullptr) \
     v(double, maximumMutatorUtilization, 0.7, Normal, nullptr) \
