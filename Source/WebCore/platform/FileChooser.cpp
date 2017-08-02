@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ void FileChooser::invalidate()
 {
     ASSERT(m_client);
 
-    m_client = 0;
+    m_client = nullptr;
 }
 
 void FileChooser::chooseFile(const String& filename)
@@ -110,13 +110,4 @@ void FileChooser::chooseFiles(const Vector<FileChooserFileInfo>& files)
         m_client->filesChosen(files);
 }
 
-Vector<String> FileChooserSettings::acceptTypes() const
-{
-    Vector<String> acceptTypes;
-    acceptTypes.reserveCapacity(acceptMIMETypes.size() + acceptFileExtensions.size());
-    acceptTypes.appendVector(acceptMIMETypes);
-    acceptTypes.appendVector(acceptFileExtensions);
-    return acceptTypes;
-}
-
-}
+} // namespace WebCore

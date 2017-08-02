@@ -1,3 +1,19 @@
+2017-08-01  Brian Burg  <bburg@apple.com>
+
+        HTML file input elements do not support file extensions in the "accept" attribute
+        https://bugs.webkit.org/show_bug.cgi?id=95698
+        <rdar://problem/12231850>
+
+        Reviewed by Darin Adler.
+
+        Serialize the accepted file extensions so they can be accessed in the UI process.
+
+        * platform/FileChooser.h:
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::invalidate): Modernize.
+        (WebCore::FileChooserSettings::acceptTypes const): Deleted.
+        This is dead code, it was only used by Chromium.
+
 2017-08-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Use LazyNeverDestroyed instead of DEFINE_GLOBAL for QualifiedName

@@ -48,6 +48,11 @@ WKArrayRef WKOpenPanelParametersCopyAcceptedMIMETypes(WKOpenPanelParametersRef p
     return toAPI(&toImpl(parametersRef)->acceptMIMETypes().leakRef());
 }
 
+WKArrayRef WKOpenPanelParametersCopyAcceptedFileExtensions(WKOpenPanelParametersRef parametersRef)
+{
+    return toAPI(&toImpl(parametersRef)->acceptFileExtensions().leakRef());
+}
+
 // Deprecated.
 WKStringRef WKOpenPanelParametersCopyCapture(WKOpenPanelParametersRef)
 {

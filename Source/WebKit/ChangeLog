@@ -1,3 +1,24 @@
+2017-08-01  Brian Burg  <bburg@apple.com>
+
+        HTML file input elements do not support file extensions in the "accept" attribute
+        https://bugs.webkit.org/show_bug.cgi?id=95698
+        <rdar://problem/12231850>
+
+        Reviewed by Darin Adler.
+
+        Plumb accepted file extensions out to the C API.
+        The Cocoa API will be improved in a later patch.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FileChooserSettings>::encode):
+        (IPC::ArgumentCoder<FileChooserSettings>::decode):
+        * UIProcess/API/APIOpenPanelParameters.cpp:
+        (API::OpenPanelParameters::acceptFileExtensions const):
+        * UIProcess/API/APIOpenPanelParameters.h:
+        * UIProcess/API/C/WKOpenPanelParametersRef.cpp:
+        (WKOpenPanelParametersCopyAcceptedFileExtensions):
+        * UIProcess/API/C/WKOpenPanelParametersRef.h:
+
 2017-08-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Use LazyNeverDestroyed instead of DEFINE_GLOBAL for QualifiedName

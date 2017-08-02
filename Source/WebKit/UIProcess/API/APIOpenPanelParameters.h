@@ -40,6 +40,7 @@ public:
 
     bool allowMultipleFiles() const { return m_settings.allowsMultipleFiles; }
     Ref<API::Array> acceptMIMETypes() const;
+    Ref<API::Array> acceptFileExtensions() const;
     Ref<API::Array> selectedFileNames() const;
 #if ENABLE(MEDIA_CAPTURE)
     WebCore::MediaCaptureType mediaCaptureType() const;

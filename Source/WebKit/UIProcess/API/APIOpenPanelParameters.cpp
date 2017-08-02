@@ -54,6 +54,11 @@ Ref<API::Array> OpenPanelParameters::acceptMIMETypes() const
     return API::Array::createStringArray(m_settings.acceptMIMETypes);
 }
 
+Ref<API::Array> OpenPanelParameters::acceptFileExtensions() const
+{
+    return API::Array::createStringArray(m_settings.acceptFileExtensions);
+}
+
 #if ENABLE(MEDIA_CAPTURE)
 WebCore::MediaCaptureType OpenPanelParameters::mediaCaptureType() const
 {
