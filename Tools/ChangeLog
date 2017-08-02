@@ -1,3 +1,24 @@
+2017-08-02  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Allow caller to specify response to unicode encode/decode error in filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=175075
+
+        Reviewed by David Kilzer.
+
+        We have no way of handling text files with illegal unicode characters. Allow the callers of
+        filesystem.read_text_file to specify one of Python 2.7's supported responses ('strict', 'ignore', or
+        'replace'). See https://docs.python.org/2/howto/unicode.html for details on these responses.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.read_text_file): Allow caller to specify unicode error handling.
+        (FileSystem.write_text_file): Ditto.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.read_text_file): Allow caller to specify unicode error handling.
+        (MockFileSystem.write_text_file): Ditto.
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        (RealFileSystemTest.test_read_text_file_unicode_decode_error): Test reading a file with illegal unicode content.
+        (RealFileSystemTest.test_write_text_file_unicode_encode_error): Test writing illegal unicode content to a file.
+
 2017-08-02  Aakash Jain  <aakash_jain@apple.com>
 
         Intermittent exception in buildPageURLForIteration for Buildbot 0.9 dashboard

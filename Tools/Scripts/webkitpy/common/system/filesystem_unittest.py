@@ -202,6 +202,40 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
             if text_path and fs.isfile(text_path):
                 os.remove(text_path)
 
+    def test_read_text_file_unicode_decode_error(self):
+        fs = FileSystem()
+        text_path = None
+        try:
+            text_path = tempfile.mktemp(prefix='write_text_unittest_')
+            fs.write_binary_file(text_path, bytearray(b'\x73\x74\x72\x8b'))
+
+            self.assertRaises(UnicodeDecodeError, fs.read_text_file, text_path)
+            self.assertEqual(u'str\ufffd', fs.read_text_file(text_path, errors='replace'))
+            self.assertEqual('str', fs.read_text_file(text_path, errors='ignore'))
+        finally:
+            if text_path and fs.isfile(text_path):
+                os.remove(text_path)
+
+    def test_write_text_file_unicode_encode_error(self):
+        fs = FileSystem()
+        text_path = None
+        try:
+            text_path = tempfile.mktemp(prefix='write_text_unittest_')
+            bin_path = tempfile.mktemp(prefix='write_bin_unittest_')
+            fs.write_binary_file(bin_path, bytearray(b'\x73\x74\x72\x8b'))
+            data_to_write = fs.read_binary_file(bin_path)
+
+            self.assertRaises(UnicodeDecodeError, fs.write_text_file, text_path, data_to_write)
+            fs.write_text_file(text_path, data_to_write, 'replace')
+            self.assertEqual(u'str\ufffd', fs.read_text_file(text_path))
+            fs.write_text_file(text_path, data_to_write, 'ignore')
+            self.assertEqual('str', fs.read_text_file(text_path))
+        finally:
+            if text_path and fs.isfile(text_path):
+                os.remove(text_path)
+            if bin_path and fs.isfile(bin_path):
+                os.remove(bin_path)
+
     def test_append_to_text_file(self):
         fs = FileSystem()
         text_path = None
