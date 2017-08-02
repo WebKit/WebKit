@@ -1264,6 +1264,11 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
         [_customContentView web_setMinimumSize:self.bounds.size];
         [_customContentView web_setFixedOverlayView:_customContentFixedOverlayView.get()];
+
+        _scrollViewBackgroundColor = WebCore::Color();
+        [_scrollView setContentOffset:[self _adjustedContentOffset:CGPointZero]];
+
+        [self _didChangeAvoidsUnsafeArea:NO];
     } else if (_customContentView) {
         [_customContentView removeFromSuperview];
         _customContentView = nullptr;
@@ -1277,6 +1282,8 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
         [_customContentFixedOverlayView setFrame:self.bounds];
         [self addSubview:_customContentFixedOverlayView.get()];
+
+        [self _didChangeAvoidsUnsafeArea:_page->avoidsUnsafeArea()];
     }
 
     if (self.isFirstResponder) {
@@ -1384,6 +1391,13 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     return result;
 }
 
+- (UIRectEdge)_effectiveObscuredInsetEdgesAffectedBySafeArea
+{
+    if (![self usesStandardContentView])
+        return UIRectEdgeAll;
+    return _obscuredInsetEdgesAffectedBySafeArea;
+}
+
 - (UIEdgeInsets)_computedContentInset
 {
     if (_haveSetObscuredInsets)
@@ -1392,17 +1406,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     UIEdgeInsets insets = [_scrollView contentInset];
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
-    if (self._safeAreaShouldAffectObscuredInsets) {
-        UIEdgeInsets systemInsets = [_scrollView _systemContentInset];
-        if (_obscuredInsetEdgesAffectedBySafeArea & UIRectEdgeTop)
-            insets.top += systemInsets.top;
-        if (_obscuredInsetEdgesAffectedBySafeArea & UIRectEdgeBottom)
-            insets.bottom += systemInsets.bottom;
-        if (_obscuredInsetEdgesAffectedBySafeArea & UIRectEdgeLeft)
-            insets.left += systemInsets.left;
-        if (_obscuredInsetEdgesAffectedBySafeArea & UIRectEdgeRight)
-            insets.right += systemInsets.right;
-    }
+    if (self._safeAreaShouldAffectObscuredInsets)
+        UIEdgeInsetsAdd(insets, [_scrollView _systemContentInset], self._effectiveObscuredInsetEdgesAffectedBySafeArea);
 #endif
 
     return insets;
@@ -4416,13 +4421,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return _page->isShowingNavigationGestureSnapshot();
 }
 
-- (BOOL)_safeAreaShouldAffectObscuredInsets
-{
-    if (!_page)
-        return YES;
-    return _page->avoidsUnsafeArea();
-}
-
 - (_WKLayoutMode)_layoutMode
 {
 #if PLATFORM(MAC)
@@ -4668,6 +4666,15 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _unobscuredSafeAreaInsets = unobscuredSafeAreaInsets;
 
     [self _scheduleVisibleContentRectUpdate];
+}
+
+- (BOOL)_safeAreaShouldAffectObscuredInsets
+{
+    if (![self usesStandardContentView])
+        return NO;
+    if (!_page)
+        return YES;
+    return _page->avoidsUnsafeArea();
 }
 
 - (void)_setInterfaceOrientationOverride:(UIInterfaceOrientation)interfaceOrientation
