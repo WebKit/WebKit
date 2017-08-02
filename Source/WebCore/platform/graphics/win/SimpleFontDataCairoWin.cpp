@@ -109,8 +109,20 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 {
     if (m_platformData.useGDI())
         return boundsForGDIGlyph(glyph);
-    //FIXME: Implement this
-    return FloatRect();
+
+    HWndDC dc(0);
+    SaveDC(dc);
+    auto scaledFont = m_platformData.scaledFont();
+    cairo_win32_scaled_font_select_font(scaledFont, dc);
+
+    GLYPHMETRICS gdiMetrics;
+    static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+    GetGlyphOutline(dc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity);
+
+    cairo_win32_scaled_font_done_font(scaledFont);
+    RestoreDC(dc, -1);
+    return FloatRect(gdiMetrics.gmptGlyphOrigin.x, -gdiMetrics.gmptGlyphOrigin.y,
+        gdiMetrics.gmBlackBoxX + m_syntheticBoldOffset, gdiMetrics.gmBlackBoxY);
 }
     
 float Font::platformWidthForGlyph(Glyph glyph) const

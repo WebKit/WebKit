@@ -1,3 +1,16 @@
+2017-08-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Implement Font::platformBoundsForGlyph
+        https://bugs.webkit.org/show_bug.cgi?id=174813
+
+        Reviewed by Alex Christensen.
+
+        Test: fast/text/emphasis.html
+
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::Font::platformBoundsForGlyph): Implemented by copying
+        the code from Font::boundsForGDIGlyph().
+
 2017-08-01  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r217197): New Yorker website hangs for a long time on load, lots of blank tiles
