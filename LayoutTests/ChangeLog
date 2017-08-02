@@ -1,3 +1,9 @@
+2017-08-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip newly imported WPT that is slow in Debug builds.
+
+        * TestExpectations:
+
 2017-08-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         inspector/runtime/CommandLineAPI-inspect.html is flaky.
