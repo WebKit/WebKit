@@ -216,7 +216,6 @@ mediaSourceEnabled initial=true, conditional=MEDIA_SOURCE
 allowMultiElementImplicitSubmission initial=false
 
 allowsAirPlayForMediaPlayback initial=true, conditional=WIRELESS_PLAYBACK_TARGET
-mediaDocumentEntersFullscreenAutomatically initial=false
 
 shouldConvertPositionStyleOnCopy initial=false
 
