@@ -1,3 +1,53 @@
+2017-08-01  Aakash Jain  <aakash_jain@apple.com>
+
+        Update Bot Watcher's Dashboard for Buildbot 0.9
+        https://bugs.webkit.org/show_bug.cgi?id=174777
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot): Check if USE_BUILDBOT_VERSION_LESS_THAN_09 is passed.
+        (Buildbot.prototype._computeBuilderNameToIDMap): Fetch the builder name to ID mapping from buidbot and store
+        in a dictionary.
+        (Buildbot.prototype.buildPageURLForIteration): Updated URL as per Buildbot 0.9 format. Buildbot 0.9 currently does not support
+        builder name in the build url. See <https://github.com/buildbot/buildbot/issues/3465>.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (isMultiCodebaseGotRevisionProperty): Adapting to new data format.
+        (parseRevisionProperty): Ditto.
+        (BuildbotIteration.prototype.failureLogURL): Return the URL to build page if precise failure url is not available. For
+        Buildbot 0.9, build page URL would be appropriate in most cases as per the new UI.
+        (BuildbotIteration.prototype._parseData): Parsing the data as per new data format. Many variable names and data types
+        have changed in Buildbot 0.9.
+        (BuildbotIteration.prototype._adjustBuildDataForBuildbot09): Adjust the Buildbot 0.8 data to new format.
+        (BuildbotIteration.prototype._updateIfDataAvailable): Update method for Buildbot 0.9 data. We are performing two API calls, 
+        one for build information, another for step information of that build. We need to wait until data from both REST API calls are available.
+        (BuildbotIteration.prototype._deprecatedUpdateWithData): Renamed from _updateWithData, used for Buildbot 0.8 data.
+        (BuildbotIteration.prototype.get buildURL): URL to fetch build information from Buildbot. Also fetches got_revision property.
+        (BuildbotIteration.prototype.get buildStepsURL): URL to fetch the steps information from Buildbot.
+        (BuildbotIteration.prototype.urlFailedToLoad): Callback method to be used when URL fails to load. Made it a separate function now.
+        (BuildbotIteration.prototype.update): Modified to support both Buildbot 0.9 and 0.8 data format.
+        (BuildbotIteration.prototype.actualUpdate): Update method for Buildbot 0.9 data.
+        (BuildbotIteration.prototype.deprecatedUpdate): Update method for Buildbot 0.8 data.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.get baseURL): Updated URL as per Buildbot 0.9 format.
+        (BuildbotQueue.prototype.get allIterationsURL): Ditto.
+        (BuildbotQueue.prototype.get overviewURL): Ditto.
+        (BuildbotQueue.prototype.get buildsURL): URL to fetch builds data in Buildbot 0.9.
+        (BuildbotQueue.prototype.get buildsInfoURL): Returns the appropriate URL to use to fetch builds information from
+        Buildbot 0.8 or 0.9.
+        (BuildbotQueue.prototype.getBuilds): Method compatible with both Buildbot 0.8 and 0.9 to get build information from data
+        fetched from Buildbot. Also, reversing the Buildbot 0.8 data to make it similar to 0.9 data format.
+        (BuildbotQueue.prototype.isBuildComplete): Method compatible with both Buildbot 0.8 and 0.9 to check if the build has completed.
+        (BuildbotQueue.prototype.getIterationID):  Method compatible with both Buildbot 0.8 and 0.9 to get the Iteration ID.
+        (BuildbotQueue.prototype.update): Supports both Buildbot 0.8 and 0.9. Buildbot 0.9 REST API doesn't have cachedBuilds and currentBuilds. 
+        Therefore we are fetching information for fixed number of build. 
+        Also iterating the loop incrementally since the build data is already reverse sorted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTestResults.js:
+        (BuildbotTestResults.prototype._parseResults): Updated as per Buildbot 0.9 format. Note that we do not
+        need to worry about 0.8 or 0.9 data format here, since the data is already converted to 0.9 format.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot): Pass the USE_BUILDBOT_VERSION_LESS_THAN_09 flag.
+
 2017-08-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: simplify WebInspector with WI

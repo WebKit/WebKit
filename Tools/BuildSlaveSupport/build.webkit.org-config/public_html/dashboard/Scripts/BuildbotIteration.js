@@ -97,20 +97,24 @@ BuildbotIteration.Event = {
 // See <http://docs.buildbot.net/0.8.8/manual/cfg-properties.html>.
 function isMultiCodebaseGotRevisionProperty(property)
 {
-    return property[0] === "got_revision" && typeof property[1] === "object";
+    return typeof property[0] === "object";
 }
 
 function parseRevisionProperty(property, key, fallbackKey)
 {
     if (!property)
         return null;
-    var value = property[1];
+    var value = property[0];
 
-    // The property got_revision may have the following forms:
-    //
+    // The property got_revision may have the following forms in Buildbot v0.8:
     // ["got_revision",{"Internal":"1357","WebKitOpenSource":"2468"},"Source"]
     // OR
     // ["got_revision","2468","Source"]
+    //
+    // It may have the following forms in Buildbot v0.9:
+    // [{"Internal":"1357","WebKitOpenSource":"2468"}, "Source"]
+    // OR
+    // ["2468", "Source"]
     if (isMultiCodebaseGotRevisionProperty(property))
         value = (key in value) ? value[key] : value[fallbackKey];
     return value;
@@ -160,6 +164,9 @@ BuildbotIteration.prototype = {
 
         console.assert(this._firstFailedStep);
 
+        if (!this._firstFailedStep.logs)
+            return this.queue.buildbot.buildPageURLForIteration(this);
+
         for (var i = 0; i < this._firstFailedStep.logs.length; ++i) {
             if (this._firstFailedStep.logs[i][0] == kind)
                 return this._firstFailedStep.logs[i][1];
@@ -194,13 +201,12 @@ BuildbotIteration.prototype = {
 
     _parseData: function(data)
     {
+        data = this._adjustBuildDataForBuildbot09(data)
         console.assert(!this.id || this.id === data.number);
         this.id = data.number;
 
         this.revision = {};
-        var revisionProperty = data.properties.findFirst(function(property) {
-            return property[0] === "got_revision";
-        });
+        var revisionProperty = data.properties.got_revision;
         var branches = this.queue.branches;
 
         for (var i = 0; i < branches.length; ++i) {
@@ -239,17 +245,20 @@ BuildbotIteration.prototype = {
         // The changes array is generally meaningful for svn triggered queues (such as builders),
         // but not for internally triggered ones (such as testers), due to coalescing.
         this.changes = [];
+        if (this.queue.buildbot.VERSION_LESS_THAN_09)
+            console.assert(data.sourceStamp || data.sourceStamps)
         if (data.sourceStamp)
             this.changes = sourceStampChanges(data.sourceStamp);
-        else for (var i = 0; i < data.sourceStamps.length; ++i)
-            this.changes = this.changes.concat(sourceStampChanges(data.sourceStamps[i]));
+        else if (data.sourceStamps)
+            for (var i = 0; i < data.sourceStamps.length; ++i)
+                this.changes = this.changes.concat(sourceStampChanges(data.sourceStamps[i]));
 
-        this.startTime = new Date(data.times[0] * 1000);
-        this.endTime = new Date(data.times[1] * 1000);
+        this.startTime = new Date(data.started_at * 1000);
+        this.endTime = new Date(data.complete_at * 1000);
 
         this.failedTestSteps = [];
         data.steps.forEach(function(step) {
-            if (!step.isFinished || step.hidden || !(step.name in BuildbotIteration.TestSteps))
+            if (!step.complete || step.hidden || !(step.name in BuildbotIteration.TestSteps))
                 return;
             var results = new BuildbotTestResults(step);
             if (step.name === "layout-test")
@@ -262,7 +271,16 @@ BuildbotIteration.prototype = {
         }, this);
 
         var masterShellCommandStep = data.steps.findFirst(function(step) { return step.name === "MasterShellCommand"; });
-        this.resultURLs = masterShellCommandStep ? masterShellCommandStep.urls : null;
+        if (masterShellCommandStep && masterShellCommandStep.urls) {
+            // Sample masterShellCommandStep.urls data:
+            // "urls": [
+            //     {
+            //         "name": "view results",
+            //         "url": "/results/Apple Sierra Release WK2 (Tests)/r220013 (3245)/results.html"
+            //     }
+            // ]
+            this.resultURLs = masterShellCommandStep.urls[0];
+        }
         for (var linkName in this.resultURLs) {
             var url = this.resultURLs[linkName];
             if (!url.startsWith("http"))
@@ -271,22 +289,20 @@ BuildbotIteration.prototype = {
 
         this.loaded = true;
 
-        this._firstFailedStep = data.steps.findFirst(function(step) { return !step.hidden && step.results[0] === BuildbotIteration.FAILURE; });
+        this._firstFailedStep = data.steps.findFirst(function(step) { return !step.hidden && step.results === BuildbotIteration.FAILURE; });
 
         console.assert(data.results === null || typeof data.results === "number");
         this._result = data.results;
 
-        this.text = data.text.join(" ");
-
-        if (!data.currentStep)
-            this.finished = true;
+        this.text = data.state_string;
+        this.finished = data.complete;
 
         this._productive = this._finished && this._result !== BuildbotIteration.EXCEPTION && this._result !== BuildbotIteration.RETRY;
         if (this._productive) {
             var finishedAnyProductiveStep = false;
             for (var i = 0; i < data.steps.length; ++i) {
                 var step = data.steps[i];
-                if (!step.isFinished)
+                if (!step.complete)
                     break;
                 if (step.name in BuildbotIteration.ProductiveSteps || step.name in BuildbotIteration.TestSteps) {
                     finishedAnyProductiveStep = true;
@@ -297,7 +313,60 @@ BuildbotIteration.prototype = {
         }
     },
 
-    _updateWithData: function(data)
+    // FIXME: Remove this method after https://bugs.webkit.org/show_bug.cgi?id=175056 is fixed.
+    _adjustBuildDataForBuildbot09: function(data)
+    {
+        if (!this.queue.buildbot.VERSION_LESS_THAN_09)
+            return data;
+
+        data.started_at = data.times[0];
+        data.complete_at = data.times[1];
+        delete data["times"];
+
+        let revisionProperty = data.properties.findFirst((property) => property[0] === "got_revision");
+
+        if (revisionProperty) {
+            // Removing first element from revision property to match with new data format.
+            // Old format: ["got_revision",{"Internal":"1357","WebKitOpenSource":"2468"},"Source"]
+            // New format: [{"Internal":"1357","WebKitOpenSource":"2468"},"Source"]
+            console.assert(revisionProperty[0] === "got_revision")
+            revisionProperty.splice(0, 1);
+        }
+        data.properties.got_revision = revisionProperty;
+
+        for (var i = 0; i < data.steps.length; i++) {
+            data.steps[i].complete = data.steps[i].isFinished;
+            delete data.steps[i]["isFinished"];
+            // Sample state_string: "Exiting early after 20 crashes and 30 timeouts. 31603 tests run. 147 failures 69 new passes".
+            data.steps[i].state_string = data.steps[i].results[1].join(' ');
+            data.steps[i].results = data.steps[i].results[0]; // See URL http://docs.buildbot.net/latest/developer/results.html
+        }
+
+        let masterShellCommandStep = data.steps.findFirst((step) => step.name === "MasterShellCommand");
+        if (masterShellCommandStep)
+            masterShellCommandStep.urls = [masterShellCommandStep.urls];
+
+        data.state_string = data.text.join(" ");
+        delete data["text"];
+
+        data.complete = !data.currentStep;
+        delete data["currentStep"];
+
+        return data;
+    },
+
+    _updateIfDataAvailable: function()
+    {
+        if (!this._steps || !this._buildData)
+            return;
+
+        this.isLoading = false;
+        this._buildData.steps = this._steps;
+
+        this._deprecatedUpdateWithData(this._buildData);
+    },
+
+    _deprecatedUpdateWithData: function(data)
     {
         if (this.loaded && this._finished)
             return;
@@ -308,6 +377,26 @@ BuildbotIteration.prototype = {
         this.queue.updateIterationPosition(this);
 
         this.dispatchEventToListeners(BuildbotIteration.Event.Updated);
+    },
+
+
+    get buildURL()
+    {
+        return this.queue.baseURL + "/builds/" + this.id + "?property=got_revision";
+    },
+
+    get buildStepsURL()
+    {
+        return this.queue.baseURL + "/builds/" + this.id + "/steps";
+    },
+
+    urlFailedToLoad: function(data)
+    {
+        this.isLoading = false;
+        if (data.errorType === JSON.LoadError && data.errorHTTPCode === 401) {
+            this.queue.buildbot.isAuthenticated = false;
+            this.dispatchEventToListeners(BuildbotIteration.Event.UnauthorizedAccess);
+        }
     },
 
     update: function()
@@ -322,22 +411,52 @@ BuildbotIteration.prototype = {
             return;
 
         this.isLoading = true;
+        if (this.queue.buildbot.VERSION_LESS_THAN_09)
+            this.deprecatedUpdate();
+        else
+            this.actualUpdate();
+    },
 
+    actualUpdate: function()
+    {
+        JSON.load(this.buildStepsURL, function(data) {
+            if (!(data.steps instanceof Array))
+                return;
+
+            this._steps = data.steps;
+            this._updateIfDataAvailable();
+        }.bind(this), this.urlFailedToLoad, {withCredentials: this.queue.buildbot.needsAuthentication});
+
+        JSON.load(this.buildURL, function(data) {
+            this.queue.buildbot.isAuthenticated = true;
+            if (!(data.builds instanceof Array))
+                return;
+
+            // Sample data for a single build:
+            // "builds": [
+            //     {
+            //         "builderid": 282,
+            //         "buildid": 5609,
+            //         "complete": true,
+            //         ...
+            //         "workerid": 188
+            //     }
+            // ]
+            this._buildData = data.builds[0];
+            this._updateIfDataAvailable();
+        }.bind(this), this.urlFailedToLoad, {withCredentials: this.queue.buildbot.needsAuthentication});
+    },
+
+    deprecatedUpdate: function()
+    {
         JSON.load(this.queue.baseURL + "/builds/" + this.id, function(data) {
             this.isLoading = false;
             this.queue.buildbot.isAuthenticated = true;
             if (!data || !data.properties)
                 return;
 
-            this._updateWithData(data);
-        }.bind(this),
-        function(data) {
-            this.isLoading = false;
-            if (data.errorType === JSON.LoadError && data.errorHTTPCode === 401) {
-                this.queue.buildbot.isAuthenticated = false;
-                this.dispatchEventToListeners(BuildbotIteration.Event.UnauthorizedAccess);
-            }
-        }.bind(this), {withCredentials: this.queue.buildbot.needsAuthentication});
+            this._deprecatedUpdateWithData(data);
+        }.bind(this), this.urlFailedToLoad, {withCredentials: this.queue.buildbot.needsAuthentication});
     },
 
     loadLayoutTestResults: function(callback)

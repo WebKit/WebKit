@@ -56,7 +56,7 @@ BuildbotTestResults.prototype = {
         this.missingCount = 0;
         this.crashCount = 0;
 
-        if (!testStep.isFinished) {
+        if (!testStep.complete) {
             // The step never even ran, or hasn't finished running.
             this.finished = false;
             return;
@@ -64,13 +64,13 @@ BuildbotTestResults.prototype = {
 
         this.finished = true;
 
-        if (!testStep.results || testStep.results[0] === BuildbotIteration.SUCCESS || testStep.results[0] === BuildbotIteration.WARNINGS) {
+        if (!testStep.results || testStep.results === BuildbotIteration.SUCCESS || testStep.results === BuildbotIteration.WARNINGS) {
             // All tests passed.
             this.allPassed = true;
             return;
         }
 
-        if (/Exiting early/.test(testStep.results[1][0]))
+        if (/Exiting early/.test(testStep.state_string))
             this.tooManyFailures = true;
 
         function resultSummarizer(matchString, sum, outputLine)
@@ -89,14 +89,14 @@ BuildbotTestResults.prototype = {
             return sum + parseInt(match[1], 10);
         }
 
-        this.failureCount = testStep.results[1].reduce(resultSummarizer.bind(null, "fail"), undefined);
-        this.flakeyCount = testStep.results[1].reduce(resultSummarizer.bind(null, "flake"), undefined);
-        this.totalLeakCount = testStep.results[1].reduce(resultSummarizer.bind(null, "total leak"), undefined);
-        this.uniqueLeakCount = testStep.results[1].reduce(resultSummarizer.bind(null, "unique leak"), undefined);
-        this.newPassesCount = testStep.results[1].reduce(resultSummarizer.bind(null, "new pass"), undefined);
-        this.missingCount = testStep.results[1].reduce(resultSummarizer.bind(null, "missing"), undefined);
-        this.crashCount = testStep.results[1].reduce(resultSummarizer.bind(null, "crash"), undefined);
-        this.issueCount = testStep.results[1].reduce(resultSummarizer.bind(null, "issue"), undefined);
+        this.failureCount = resultSummarizer('fail', null, testStep.state_string);
+        this.flakeyCount = resultSummarizer("flake", null, testStep.state_string);
+        this.totalLeakCount = resultSummarizer("total leak", null, testStep.state_string);
+        this.uniqueLeakCount = resultSummarizer("unique leak", null, testStep.state_string);
+        this.newPassesCount = resultSummarizer("new pass", null, testStep.state_string);
+        this.missingCount = resultSummarizer("missing", null, testStep.state_string);
+        this.crashCount = resultSummarizer("crash", null, testStep.state_string);
+        this.issueCount = resultSummarizer("issue", null, testStep.state_string);
 
         if (!this.failureCount && !this.flakyCount && !this.totalLeakCount && !this.uniqueLeakCount && !this.newPassesCount && !this.missingCount) {
             // This step exited with a non-zero exit status, but we didn't find any output about the number of failed tests.

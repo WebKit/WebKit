@@ -89,7 +89,7 @@ WebKitBuildbot = function()
         }}
     };
 
-    Buildbot.call(this, "https://build.webkit.org/", queueInfo);
+    Buildbot.call(this, "https://build.webkit.org/", queueInfo, {"USE_BUILDBOT_VERSION_LESS_THAN_09" : true});
 };
 
 BaseObject.addConstructorFunctions(WebKitBuildbot);

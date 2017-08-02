@@ -71,18 +71,34 @@ BuildbotQueue.prototype = {
 
     get baseURL()
     {
-        return this.buildbot.baseURL + "json/builders/" + encodeURIComponent(this.id);
+        if (this.buildbot.VERSION_LESS_THAN_09)
+            return this.buildbot.baseURL + "json/builders/" + encodeURIComponent(this.id);
+
+        return this.buildbot.baseURL + "api/v2/builders/" + encodeURIComponent(this.id);
     },
 
     get allIterationsURL()
     {
-        // Getting too many builds results in a timeout error, 10000 is OK.
-        return this.buildbot.baseURL + "json/builders/" + encodeURIComponent(this.id) + "/builds/_all/?max=10000";
+        if (this.buildbot.VERSION_LESS_THAN_09)
+            return this.baseURL + "/builds/_all/?max=10000";
+
+        return this.baseURL + "/builds?order=-number";
+    },
+
+    get buildsURL()
+    {
+        // We need to limit the number of builds for which we fetch the info, as it would
+        // impact performance. For each build, we will be subsequently making REST API calls
+        // to fetch detailed build info.
+        return this.baseURL + "/builds?order=-number&limit=20";
     },
 
     get overviewURL()
     {
-        return this.buildbot.baseURL + "builders/" + encodeURIComponent(this.id) + "?numbuilds=50";
+        if (this.buildbot.VERSION_LESS_THAN_09)
+            return this.buildbot.baseURL + "builders/" + encodeURIComponent(this.id) + "?numbuilds=50";
+
+        return this.buildbot.baseURL + "#/builders/" + encodeURIComponent(this.id) + "?numbuilds=50";
     },
 
     get recentFailedIterationCount()
@@ -192,30 +208,63 @@ BuildbotQueue.prototype = {
         }
     },
 
-    update: function()
+    get buildsInfoURL()
     {
-        this._load(this.baseURL, function(data) {
-            if (!(data.cachedBuilds instanceof Array))
-                return;
+        if (this.buildbot.VERSION_LESS_THAN_09)
+            return this.baseURL;
 
+        return this.buildsURL;
+    },
+
+    getBuilds: function(data)
+    {
+        if (this.buildbot.VERSION_LESS_THAN_09)
+            return data.cachedBuilds.reverse();
+
+        return data.builds;
+    },
+
+    isBuildComplete: function(data, index)
+    {
+        if (this.buildbot.VERSION_LESS_THAN_09) {
             var currentBuilds = {};
             if (data.currentBuilds instanceof Array)
                 data.currentBuilds.forEach(function(id) { currentBuilds[id] = true; });
 
-            var loadingStop = Math.max(0, data.cachedBuilds.length - BuildbotQueue.RecentIterationsToLoad);
+            return (!(data.cachedBuilds[index] in currentBuilds));
+        }
+
+        return data.builds[index].complete;
+    },
+
+    getIterationID: function(data, index)
+    {
+        if (this.buildbot.VERSION_LESS_THAN_09)
+            return data.cachedBuilds[index];
+
+        return data.builds[index].number;
+    },
+
+    update: function()
+    {
+        this._load(this.buildsInfoURL, function(data) {
+            var builds = this.getBuilds(data);
+            if (!(builds instanceof Array))
+                return;
 
             var newIterations = [];
 
-            for (var i = data.cachedBuilds.length - 1; i >= 0; --i) {
-                var iteration = this._knownIterations[data.cachedBuilds[i]];
+            for (var i = 0; i < builds.length; ++i) {
+                var iterationID = this.getIterationID(data, i);
+                var iteration = this._knownIterations[iterationID];
                 if (!iteration) {
-                    iteration = new BuildbotIteration(this, data.cachedBuilds[i], !(data.cachedBuilds[i] in currentBuilds));
+                    iteration = new BuildbotIteration(this, iterationID, this.isBuildComplete(data, i));
                     newIterations.push(iteration);
                     this.iterations.push(iteration);
                     this._knownIterations[iteration.id] = iteration;
                 }
 
-                if (i >= loadingStop && (!iteration.finished || !iteration.loaded)) {
+                if (i < BuildbotQueue.RecentIterationsToLoad && (!iteration.finished || !iteration.loaded)) {
                     if (!this._hasLoadedIterationForInOrderResult)
                         iteration.addEventListener(BuildbotIteration.Event.Updated, this._checkForInOrderResult.bind(this));
                     iteration.update();
