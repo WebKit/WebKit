@@ -18,19 +18,11 @@
  */
 
 #include "config.h"
-
-#ifdef SKIP_STATIC_CONSTRUCTORS_ON_GCC
-#define WEBCORE_QUALIFIEDNAME_HIDE_GLOBALS 1
-#else
-#define QNAME_DEFAULT_CONSTRUCTOR
-#endif
-
 #include "QualifiedName.h"
+
 #include "QualifiedNameCache.h"
 #include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/StaticConstructors.h>
 
 namespace WebCore {
 
@@ -45,7 +37,7 @@ QualifiedName::QualifiedNameImpl::~QualifiedNameImpl()
 }
 
 // Global init routines
-DEFINE_GLOBAL(QualifiedName, anyName, nullAtom(), starAtom(), starAtom())
+LazyNeverDestroyed<const QualifiedName> anyName;
 
 void QualifiedName::init()
 {
@@ -53,9 +45,8 @@ void QualifiedName::init()
     if (initialized)
         return;
 
-    // Use placement new to initialize the globals.
     AtomicString::init();
-    new (NotNull, (void*)&anyName) QualifiedName(nullAtom(), starAtom(), starAtom());
+    anyName.construct(nullAtom(), starAtom(), starAtom());
     initialized = true;
 }
 

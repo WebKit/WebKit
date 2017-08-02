@@ -35,6 +35,7 @@
 #include "WebCompiledContentRuleList.h"
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionError.h>
+#include <WebCore/QualifiedName.h>
 #include <string>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
@@ -427,6 +428,7 @@ void ContentRuleListStore::getAvailableContentRuleListIdentifiers(Function<void(
 void ContentRuleListStore::compileContentRuleList(const WTF::String& identifier, WTF::String&& json, Function<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
     AtomicString::init();
+    WebCore::QualifiedName::init();
     m_compileQueue->dispatch([protectedThis = makeRef(*this), identifier = identifier.isolatedCopy(), legacyFilename = m_legacyFilename, json = json.isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
         auto path = constructedPath(storePath, identifier, legacyFilename);
 

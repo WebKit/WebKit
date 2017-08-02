@@ -1,3 +1,24 @@
+2017-08-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Use LazyNeverDestroyed instead of DEFINE_GLOBAL for QualifiedName
+        https://bugs.webkit.org/show_bug.cgi?id=175010
+        <rdar://problem/33647818>
+
+        Reviewed by Alex Christensen.
+
+        No new tests because no behavior change.
+
+        Stop using DEFINE_GLOBAL hack in favor of LazyNeverDestroyed.
+
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::isValidCSSSelector):
+        Call QualifiedName::init().
+        * dom/DOMAllInOne.cpp: Remove the warning. Include QualifiedName.cpp.
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::init): Call LazyNeverDestroyed::construct
+        instead of placement new.
+        * dom/QualifiedName.h: Use LazyNeverDestroyed.
+
 2017-08-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         CFString leak dragging an image - allocation under PlatformPasteboard::writeObjectRepresentations

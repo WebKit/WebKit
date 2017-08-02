@@ -118,9 +118,7 @@
 #include "ProcessingInstruction.cpp"
 #include "ProgressEvent.cpp"
 #include "PseudoElement.cpp"
-// Build error if adding QualifiedName.cpp to DOMAllInOne.cpp
-// https://bugs.webkit.org/show_bug.cgi?id=146586
-// #include "QualifiedName.cpp"
+#include "QualifiedName.cpp"
 #include "RadioButtonGroups.cpp"
 #include "Range.cpp"
 #include "RejectedPromiseTracker.cpp"

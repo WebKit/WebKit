@@ -21,6 +21,7 @@
 #pragma once
 
 #include <wtf/HashTraits.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -96,7 +97,7 @@ public:
 #endif
     
     // Init routine for globals
-    static void init();
+    WEBCORE_EXPORT static void init();
 
 private:
     static QualifiedNameImpl* hashTableDeletedValue() { return RefPtr<QualifiedNameImpl>::hashTableDeletedValue(); }
@@ -104,10 +105,8 @@ private:
     RefPtr<QualifiedNameImpl> m_impl;
 };
 
-#ifndef WEBCORE_QUALIFIEDNAME_HIDE_GLOBALS
-extern const QualifiedName anyName;
+extern LazyNeverDestroyed<const QualifiedName> anyName;
 inline const QualifiedName& anyQName() { return anyName; }
-#endif
 
 const QualifiedName& nullQName();
 
