@@ -1,5 +1,26 @@
 2017-08-02  Filip Pizlo  <fpizlo@apple.com>
 
+        If Gigacage is disabled, bmalloc should service large aligned memory allocation requests through vmAllocate
+        https://bugs.webkit.org/show_bug.cgi?id=175085
+
+        Reviewed by Saam Barati.
+        
+        This fixes a problem where if we used gmalloc, WebAssembly memory allocations would still use
+        bmalloc's large allocator.
+        
+        We want to use the page allocator for those "large" allocations when the Gigacage is disabled.
+
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::DebugHeap::DebugHeap):
+        (bmalloc::DebugHeap::memalignLarge):
+        (bmalloc::DebugHeap::freeLarge):
+        * bmalloc/DebugHeap.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::deallocateLarge):
+
+2017-08-02  Filip Pizlo  <fpizlo@apple.com>
+
         We should be OK with the gigacage being disabled on gmalloc
         https://bugs.webkit.org/show_bug.cgi?id=175082
 

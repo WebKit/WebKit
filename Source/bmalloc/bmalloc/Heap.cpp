@@ -499,7 +499,10 @@ LargeRange Heap::splitAndAllocate(LargeRange& range, size_t alignment, size_t si
 void* Heap::tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t size, AllocationKind allocationKind)
 {
     BASSERT(isPowerOfTwo(alignment));
-
+    
+    if (m_debugHeap)
+        return m_debugHeap->memalignLarge(alignment, size, allocationKind);
+    
     m_isGrowing = true;
     
     size_t roundedSize = size ? roundUpToMultipleOf(largeAlignment, size) : largeAlignment;
@@ -559,6 +562,9 @@ void Heap::shrinkLarge(std::lock_guard<StaticMutex>&, const Range& object, size_
 
 void Heap::deallocateLarge(std::lock_guard<StaticMutex>&, void* object, AllocationKind allocationKind)
 {
+    if (m_debugHeap)
+        return m_debugHeap->freeLarge(object, allocationKind);
+
     size_t size = m_largeAllocated.remove(object);
     m_largeFree.add(LargeRange(object, size, allocationKind == AllocationKind::Physical ? size : 0));
     scheduleScavenger(size);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,8 +24,11 @@
  */
 
 #include "DebugHeap.h"
+
+#include "Algorithm.h"
 #include "BAssert.h"
 #include "BPlatform.h"
+#include "VMAllocate.h"
 #include <cstdlib>
 #include <thread>
 
@@ -35,6 +38,7 @@ namespace bmalloc {
 
 DebugHeap::DebugHeap(std::lock_guard<StaticMutex>&)
     : m_zone(malloc_create_zone(0, 0))
+    , m_pageSize(vmPageSize())
 {
     malloc_set_zone_name(m_zone, "WebKit Using System Malloc");
 }
@@ -107,5 +111,40 @@ void DebugHeap::free(void* object)
 }
     
 #endif
+
+// FIXME: This looks an awful lot like the code in wtf/Gigacage.cpp for large allocation.
+// https://bugs.webkit.org/show_bug.cgi?id=175086
+
+void* DebugHeap::memalignLarge(size_t alignment, size_t size, AllocationKind allocationKind)
+{
+    alignment = roundUpToMultipleOf(m_pageSize, alignment);
+    size = roundUpToMultipleOf(m_pageSize, size);
+    void* result = tryVMAllocate(alignment, size);
+    if (!result)
+        return nullptr;
+    if (allocationKind == AllocationKind::Virtual)
+        vmDeallocatePhysicalPages(result, size);
+    {
+        std::lock_guard<std::mutex> locker(m_lock);
+        m_sizeMap[result] = size;
+    }
+    return result;
+}
+
+void DebugHeap::freeLarge(void* base, AllocationKind)
+{
+    if (!base)
+        return;
+    
+    size_t size;
+    {
+        std::lock_guard<std::mutex> locker(m_lock);
+        size = m_sizeMap[base];
+        size_t numErased = m_sizeMap.erase(base);
+        RELEASE_BASSERT(numErased == 1);
+    }
+    
+    vmDeallocate(base, size);
+}
 
 } // namespace bmalloc
