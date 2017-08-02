@@ -213,6 +213,12 @@ http/tests/download/default-encoding.html
 http/tests/download/inherited-encoding-form-submission-result.html
 http/tests/download/inherited-encoding.html
 
+# Those tests are loaded over HTTPS and pass locally. However, they get an SSL error on the bots and time out.
+webkit.org/b/175076 imported/w3c/web-platform-tests/beacon/headers/header-referrer-no-referrer-when-downgrade.https.html [ Skip ]
+webkit.org/b/175076 imported/w3c/web-platform-tests/beacon/headers/header-referrer-strict-origin-when-cross-origin.https.html [ Skip ]
+webkit.org/b/175076 imported/w3c/web-platform-tests/beacon/headers/header-referrer-strict-origin.https.html [ Skip ]
+webkit.org/b/175076 imported/w3c/web-platform-tests/beacon/headers/header-referrer-unsafe-url.https.html [ Skip ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

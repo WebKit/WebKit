@@ -1,3 +1,12 @@
+2017-08-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip newly imported WPT HTTPS tests on WK2 only.
+
+        The tests seem to work fine on WK1.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2017-08-02  Matt Lewis  <jlewis3@apple.com>
 
         Unmarked imported/w3c/IndexedDB-private-browsing/idbfactory_open.html as flaky.

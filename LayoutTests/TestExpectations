@@ -1363,12 +1363,6 @@ imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.html [ Sk
 imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.https.html [ Skip ]
 
-# Those tests are loaded over HTTPS and pass locally. However, they get an SSL error on the bots and time out.
-webkit.org/b/175076 imported/w3c/web-platform-tests/beacon/headers/header-referrer-no-referrer-when-downgrade.https.html [ Skip ]
-webkit.org/b/175076 imported/w3c/web-platform-tests/beacon/headers/header-referrer-strict-origin-when-cross-origin.https.html [ Skip ]
-webkit.org/b/175076 imported/w3c/web-platform-tests/beacon/headers/header-referrer-strict-origin.https.html [ Skip ]
-webkit.org/b/175076 imported/w3c/web-platform-tests/beacon/headers/header-referrer-unsafe-url.https.html [ Skip ]
-
 ### END OF -disabled tests
 ########################################
 
