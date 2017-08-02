@@ -116,6 +116,12 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     return self;
 }
 
+- (void)dealloc
+{
+    [_suggestedName release];
+    [super dealloc];
+}
+
 - (void)addData:(NSData *)data forType:(NSString *)typeIdentifier
 {
     [_items addObject:[[[WebItemProviderRegistrationInfo alloc] initWithRepresentingObject:nil typeIdentifier:typeIdentifier data:data] autorelease]];

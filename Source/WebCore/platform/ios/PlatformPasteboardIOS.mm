@@ -295,7 +295,7 @@ void PlatformPasteboard::writeObjectRepresentations(const PasteboardImage& paste
     if (pasteboardImage.resourceData && !pasteboardImage.resourceMIMEType.isEmpty()) {
         auto utiOrMIMEType = pasteboardImage.resourceMIMEType.createCFString();
         if (!UTTypeIsDeclared(utiOrMIMEType.get()))
-            utiOrMIMEType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, utiOrMIMEType.get(), nil);
+            utiOrMIMEType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, utiOrMIMEType.get(), nil));
 
         auto imageData = pasteboardImage.resourceData->createNSData();
         [itemsToRegister addData:imageData.get() forType:(NSString *)utiOrMIMEType.get()];

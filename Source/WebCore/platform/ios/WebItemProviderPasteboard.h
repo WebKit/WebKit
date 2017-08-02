@@ -61,7 +61,7 @@ WEBCORE_EXPORT @interface WebItemProviderRegistrationInfoList : NSObject
 - (void)addData:(NSData *)data forType:(NSString *)typeIdentifier;
 
 @property (nonatomic) CGSize estimatedDisplayedSize;
-@property (nonatomic, strong) NSString *suggestedName;
+@property (nonatomic, copy) NSString *suggestedName;
 
 - (NSUInteger)numberOfItems;
 - (nullable WebItemProviderRegistrationInfo *)itemAtIndex:(NSUInteger)index;
