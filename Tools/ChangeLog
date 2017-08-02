@@ -1,3 +1,13 @@
+2017-08-02  Aakash Jain  <aakash_jain@apple.com>
+
+        Intermittent exception in buildPageURLForIteration for Buildbot 0.9 dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=175072
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot): Make sure this._builderNameToIDMap is always defined for Buildbot 0.9.
+
 2017-08-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Remove obsolete code in TestWebKitAPI/CMakeLists.txt

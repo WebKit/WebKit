@@ -44,8 +44,10 @@ Buildbot = function(baseURL, queuesInfo, options)
 
     this.VERSION_LESS_THAN_09 = options && options.USE_BUILDBOT_VERSION_LESS_THAN_09;
 
-    if (!this.VERSION_LESS_THAN_09)
+    if (!this.VERSION_LESS_THAN_09) {
+        this._builderNameToIDMap = {};
         this._computeBuilderNameToIDMap();
+    }
 
     for (var id in queuesInfo) {
         if (queuesInfo[id].combinedQueues) {
@@ -158,7 +160,6 @@ Buildbot.prototype = {
             if (!data || !(data.builders instanceof Array))
                 return;
 
-            this._builderNameToIDMap = {};
             for (var builder of data.builders)
                 this._builderNameToIDMap[builder.name] = builder.builderid;
         }.bind(this));
