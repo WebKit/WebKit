@@ -100,9 +100,10 @@ class TestExpectationsChecker(object):
 
     @staticmethod
     def _should_log_linter_warning(warning, files, cwd, host):
-        # Case 1, the line the warning was tied to is in our patch.
         abs_filename = host.filesystem.join(cwd, warning.filename)
-        if abs_filename in files and (files[abs_filename] is None or warning.line_number in files[abs_filename]):
+
+        # Case 1, the line the warning was tied to is in our patch.
+        if abs_filename in files and files[abs_filename] and warning.line_number in files[abs_filename]:
             return True
 
         for file, lines in warning.related_files.iteritems():
@@ -115,7 +116,7 @@ class TestExpectationsChecker(object):
 
                 # Case 3, a line associated with the warning is in our patch.
                 for line in lines:
-                    if line in files[abs_filename]:
+                    if files[abs_filename] and line in files[abs_filename]:
                         return True
         return False
 

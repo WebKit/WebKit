@@ -1,5 +1,22 @@
 2017-08-02  Jonathan Bedard  <jbedard@apple.com>
 
+        check-webkit-style: deleting lines in a file runs the linter on the whole file
+        https://bugs.webkit.org/show_bug.cgi?id=175078
+
+        Reviewed by David Kilzer.
+
+        Deleting lines in a file should not cause linter errors to be blamed on the patch.
+        <https://bugs.webkit.org/show_bug.cgi?id=86142> is an example of this happening.
+
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker._should_log_linter_warning): Do not log a linter error if the file it is associated with only has deleted lines
+        * Scripts/webkitpy/style/main_unittest.py:
+        (ExpectationLinterInStyleCheckerTest.test_linter_duplicate_line): Added files should have every line number in the file when processing.
+        (ExpectationLinterInStyleCheckerTest.test_linter_duplicate_line_only_deletes): Test case where the file with the linter errors only contained deletes.
+        (ExpectationLinterInStyleCheckerTest.test_linter_added_file_with_error): Added files should have every line number in the file when processing.
+
+2017-08-02  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Allow caller to specify response to unicode encode/decode error in filesystem
         https://bugs.webkit.org/show_bug.cgi?id=175075
 

@@ -130,7 +130,7 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
         scope = OutputCaptureScope()
         with scope:
             file_reader = self._generate_file_reader(host.filesystem)
-            file_reader.process_paths({'/mock-checkout/LayoutTests/TestExpectations'})
+            file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations', line_numbers=[1, 2, 3])
             file_reader.do_association_check('/mock-checkout', host)
         self.assertEqual(
             scope.captured_output,
@@ -162,6 +162,19 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             file_reader.do_association_check('/mock-checkout', host)
         self.assertEqual(scope.captured_output, ('', '', ''))
 
+    def test_linter_duplicate_line_only_deletes(self):
+        files = {
+            '/mock-checkout/LayoutTests/TestExpectations':
+                '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
+        host = self._generate_testing_host(files)
+
+        scope = OutputCaptureScope()
+        with scope:
+            file_reader = self._generate_file_reader(host.filesystem)
+            file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations')
+            file_reader.do_association_check('/mock-checkout', host)
+        self.assertEqual(scope.captured_output, ('', '', ''))
+
     def test_linter_added_file_with_error(self):
         files = {
             '/mock-checkout/LayoutTests/TestExpectations':
@@ -171,7 +184,7 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
         scope = OutputCaptureScope()
         with scope:
             file_reader = self._generate_file_reader(host.filesystem)
-            file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations', line_numbers=None)
+            file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations', line_numbers=[1, 2, 3])
             file_reader.do_association_check('/mock-checkout', host)
         self.assertEqual(scope.captured_output, ('', '', '/mock-checkout/LayoutTests/TestExpectations:3:  Duplicate or ambiguous entry lines LayoutTests/TestExpectations:2 and LayoutTests/TestExpectations:3.  [test/expectations] [5]\n'))
 
