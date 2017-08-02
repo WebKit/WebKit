@@ -1954,6 +1954,4 @@ webkit.org/b/173726 animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/171985 [ Release ] workers/bomb.html [ Pass Timeout ]
 
-# <rdar://problem/33555052>
-imported/w3c/IndexedDB-private-browsing/idbfactory_open.html [ Pass Crash ]
 webkit.org/b/174949 imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Pass Crash ]
