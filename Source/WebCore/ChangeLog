@@ -1,3 +1,26 @@
+2017-08-02  Filip Pizlo  <fpizlo@apple.com>
+
+        GPUBuffer::length() should return the size of the array buffer backing the GPU buffer, not the rounded-up GPU buffer length
+        https://bugs.webkit.org/show_bug.cgi?id=175079
+
+        Reviewed by Simon Fraser.
+
+        This fixes a failure in the GPU.BufferCreate unit test.
+        
+        The problem is that in order to have a Metal buffer wrap memory we allocated, we have to tell Metal
+        that the memory is page-aligned. This means that the Metal buffer reports back a page-aligned size,
+        which is different than what the test expected.
+        
+        It seems that it's most convenient for our GPUBuffer class to return the unaligned length, rather
+        than the aligned length. This is just a simple matter of returning the length from the ArrayBuffer
+        rather than the Metal buffer.
+        
+        This fixes the unit test and is probably more sensible for actual users of this class, since the page
+        alignment of the length is a goofy implementation detail.
+
+        * platform/graphics/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::length const):
+
 2017-08-01  Brian Burg  <bburg@apple.com>
 
         HTML file input elements do not support file extensions in the "accept" attribute

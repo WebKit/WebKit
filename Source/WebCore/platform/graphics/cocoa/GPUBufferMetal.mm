@@ -64,7 +64,7 @@ unsigned long GPUBuffer::length() const
     if (!m_buffer)
         return 0;
 
-    return [m_buffer length];
+    return m_contents->byteLength();
 }
 
 RefPtr<ArrayBuffer> GPUBuffer::contents()
