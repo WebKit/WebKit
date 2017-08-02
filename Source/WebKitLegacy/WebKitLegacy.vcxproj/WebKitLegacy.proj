@@ -74,10 +74,10 @@
     <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\*">
       <Output TaskParameter="Include" ItemName="Bin64Files" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\WebKitLegacy$(DebugSuffix).dll">
+    <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\WebKit$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin32DLLFiles" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\WebKitLegacy$(DebugSuffix).dll">
+    <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\WebKit$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin64DLLFiles" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build64\bin32\*.resources">

@@ -1,3 +1,16 @@
+2017-08-02  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Cherry-pick r220128. rdar://problem/33537767
+
+    2017-08-02  Matthew Hanson  <matthew_hanson@apple.com>
+
+            Build-fix for Windows in Visual Studio after directory rename.
+
+            Reviewed by Per Arne Vollan.
+
+            * WebKitLegacy.vcxproj/WebKitLegacy.proj:
+            We still build WebKit.dll, not WebKitLegacy.dll.
+
 2017-07-17  Konstantin Tokarev  <annulen@yandex.ru>
 
         [CMake] Create targets before WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS is called
