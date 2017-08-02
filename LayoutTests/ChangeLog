@@ -1,3 +1,17 @@
+2017-08-02  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Layout test editing/pasteboard/copy-standalone-image.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=163184
+
+        Unreviewed test gardening.
+
+        Remove obsolete failure expectation for copy-standalone-image.html.
+
+        The bug was fixed in r212428. (The test was also broken by both landings for
+        bug 170956, until r216174 fixed it again.)
+
+        * platform/gtk/TestExpectations:
+
 2017-08-01  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for navigator.sendBeacon

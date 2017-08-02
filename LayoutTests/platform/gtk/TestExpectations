@@ -3157,8 +3157,6 @@ webkit.org/b/161587 css3/font-feature-settings-rendering.html [ ImageOnlyFailure
 webkit.org/b/161588 css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 webkit.org/b/161589 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
-webkit.org/b/163184 editing/pasteboard/copy-standalone-image.html [ ImageOnlyFailure ]
-
 webkit.org/b/163186 editing/pasteboard/onpaste-text-html.html [ Failure ]
 
 # Failing since a new URLParser has been enabled on r207162
