@@ -2618,9 +2618,6 @@ webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [
 
 webkit.org/b/85308 [ Release ] ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 
-# IETC namespace failures
-webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
-
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]

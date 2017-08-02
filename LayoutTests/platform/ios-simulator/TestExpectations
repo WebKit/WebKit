@@ -55,7 +55,6 @@ fast/css/sticky/sticky-top-margins.html [ ImageOnlyFailure ]
 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 fast/css/sticky/sticky-top.html [ ImageOnlyFailure ]
 fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ ImageOnlyFailure ]
-ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 
 media/track/track-in-band-legacy-api.html [ Failure ]
 media/track/video-track-alternate-groups.html [ Failure ]

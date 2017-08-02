@@ -2014,7 +2014,6 @@ ietestcenter/css3/multicolumn/column-width-applies-to-009.htm [ ImageOnlyFailure
 ietestcenter/css3/multicolumn/column-width-applies-to-010.htm [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
-ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 [ Release ] ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 css3/masking/clip-path-inset.html [ ImageOnlyFailure ]
 css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Skip ] #  [ Timeout ]
