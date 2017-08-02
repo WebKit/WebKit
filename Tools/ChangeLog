@@ -1,3 +1,13 @@
+2017-08-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix JSCOnly ARM buildbots after r220047
+        https://bugs.webkit.org/show_bug.cgi?id=174993
+
+        Unreviewed fix after r220087.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (BuildAndRemoteJSCTestsFactory.__init__):
+
 2017-08-01  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for navigator.sendBeacon
