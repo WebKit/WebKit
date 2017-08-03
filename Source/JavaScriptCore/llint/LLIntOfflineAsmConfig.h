@@ -27,6 +27,7 @@
 
 #include "LLIntCommon.h"
 #include <wtf/Assertions.h>
+#include <wtf/Gigacage.h>
 
 #if !ENABLE(JIT)
 #define OFFLINE_ASM_C_LOOP 1
@@ -164,3 +165,5 @@
 #else
 #define OFFLINE_ASM_EXECUTION_TRACING 0
 #endif
+
+#define OFFLINE_ASM_GIGACAGE_ENABLED GIGACAGE_ENABLED

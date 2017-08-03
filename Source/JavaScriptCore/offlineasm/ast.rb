@@ -928,7 +928,7 @@ class Instruction < Node
         when "globalAnnotation"
             $asm.putGlobalAnnotation
         when "emit"
-          $asm.puts "#{operands[0].dump}"
+            $asm.puts "#{operands[0].dump}"
         else
             raise "Unhandled opcode #{opcode} at #{codeOriginString}"
         end

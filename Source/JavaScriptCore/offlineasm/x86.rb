@@ -247,6 +247,12 @@ def x86GPRName(name, kind)
     end
 end
 
+class Node
+    def x86LoadOperand(type, dst)
+        x86Operand(type)
+    end
+end
+
 class RegisterID
     def supports8BitOnX86
         case x86GPR
@@ -456,6 +462,12 @@ class LabelReference
     def x86CallOperand(kind)
         asmLabel
     end
+    def x86LoadOperand(kind, dst)
+        # FIXME: Implement this on platforms that aren't Mach-O.
+        # https://bugs.webkit.org/show_bug.cgi?id=175104
+        $asm.puts "movq #{asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
+        "(#{dst.x86Operand(kind)})"
+    end
 end
 
 class LocalLabelReference
@@ -522,6 +534,10 @@ class Instruction
             result << operands[i].x86Operand(kinds[i])
         }
         result.join(", ")
+    end
+    
+    def x86LoadOperands(srcKind, dstKind)
+        orderOperands(operands[0].x86LoadOperand(srcKind, operands[1]), operands[1].x86Operand(dstKind))
     end
 
     def x86Suffix(kind)
@@ -927,45 +943,51 @@ class Instruction
             handleX86Op("xor#{x86Suffix(:ptr)}", :ptr)
         when "xorq"
             handleX86Op("xor#{x86Suffix(:quad)}", :quad)
-        when "loadi", "storei"
+        when "loadi"
+            $asm.puts "mov#{x86Suffix(:int)} #{x86LoadOperands(:int, :int)}"
+        when "storei"
             $asm.puts "mov#{x86Suffix(:int)} #{x86Operands(:int, :int)}"
         when "loadis"
             if isX64
                 if !isIntelSyntax
-                    $asm.puts "movslq #{x86Operands(:int, :quad)}"
+                    $asm.puts "movslq #{x86LoadOperands(:int, :quad)}"
                 else
-                    $asm.puts "movsxd #{x86Operands(:int, :quad)}"
+                    $asm.puts "movsxd #{x86LoadOperands(:int, :quad)}"
                 end
             else
-                $asm.puts "mov#{x86Suffix(:int)} #{x86Operands(:int, :int)}"
+                $asm.puts "mov#{x86Suffix(:int)} #{x86LoadOperands(:int, :int)}"
             end
-        when "loadp", "storep"
+        when "loadp"
+            $asm.puts "mov#{x86Suffix(:ptr)} #{x86LoadOperands(:ptr, :ptr)}"
+        when "storep"
             $asm.puts "mov#{x86Suffix(:ptr)} #{x86Operands(:ptr, :ptr)}"
-        when "loadq", "storeq"
+        when "loadq"
+            $asm.puts "mov#{x86Suffix(:quad)} #{x86LoadOperands(:quad, :quad)}"
+        when "storeq"
             $asm.puts "mov#{x86Suffix(:quad)} #{x86Operands(:quad, :quad)}"
         when "loadb"
             if !isIntelSyntax
-                $asm.puts "movzbl #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(:int))}"
+                $asm.puts "movzbl #{x86LoadOperands(:byte, :int)}"
             else
-                $asm.puts "movzx #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(:int))}"
+                $asm.puts "movzx #{x86LoadOperands(:byte, :int)}"
             end
         when "loadbs"
             if !isIntelSyntax
-                $asm.puts "movsbl #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(:int))}"
+                $asm.puts "movsbl #{x86LoadOperands(:byte, :int)}"
             else
-                $asm.puts "movsx #{orderOperands(operands[0].x86Operand(:byte), operands[1].x86Operand(:int))}"
+                $asm.puts "movsx #{x86LoadOperands(:byte, :int)}"
             end
         when "loadh"
             if !isIntelSyntax
-                $asm.puts "movzwl #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:int))}"
+                $asm.puts "movzwl #{x86LoadOperands(:half, :int)}"
             else
-                $asm.puts "movzx #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:int))}"
+                $asm.puts "movzx #{x86LoadOperands(:half, :int)}"
             end
         when "loadhs"
             if !isIntelSyntax
-                $asm.puts "movswl #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:int))}"
+                $asm.puts "movswl #{x86LoadOperands(:half, :int)}"
             else
-                $asm.puts "movsx #{orderOperands(operands[0].x86Operand(:half), operands[1].x86Operand(:int))}"
+                $asm.puts "movsx #{x86LoadOperands(:half, :int)}"
             end
         when "storeb"
             $asm.puts "mov#{x86Suffix(:byte)} #{x86Operands(:byte, :byte)}"
