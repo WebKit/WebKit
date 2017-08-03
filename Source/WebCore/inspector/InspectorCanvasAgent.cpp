@@ -46,6 +46,7 @@
 
 #if ENABLE(WEBGL)
 #include "JSWebGLRenderingContext.h"
+#include "WebGLProgram.h"
 #endif
 
 #if ENABLE(WEBGL2)
@@ -94,6 +95,13 @@ void InspectorCanvasAgent::enable(ErrorString&)
 
     for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values())
         m_frontendDispatcher->canvasAdded(inspectorCanvas->buildObjectForCanvas(m_instrumentingAgents));
+
+#if ENABLE(WEBGL)
+    for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
+        auto& inspectorCanvas = inspectorProgram->canvas();
+        m_frontendDispatcher->programCreated(inspectorCanvas.identifier(), inspectorProgram->identifier());
+    }
+#endif
 }
 
 void InspectorCanvasAgent::disable(ErrorString&)
@@ -270,7 +278,7 @@ void InspectorCanvasAgent::frameNavigated(Frame& frame)
     }
 
     Vector<InspectorCanvas*> inspectorCanvases;
-    for (RefPtr<InspectorCanvas>& inspectorCanvas : m_identifierToInspectorCanvas.values()) {
+    for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values()) {
         if (inspectorCanvas->canvas().document().frame() == &frame)
             inspectorCanvases.append(inspectorCanvas.get());
     }
@@ -417,6 +425,34 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(HTMLCanvasElement& canv
     inspectorCanvas->resetRecordingData();
 }
 
+#if ENABLE(WEBGL)
+void InspectorCanvasAgent::didCreateProgram(WebGLRenderingContextBase& context, WebGLProgram& program)
+{
+    auto* inspectorCanvas = findInspectorCanvas(context.canvas());
+    ASSERT(inspectorCanvas);
+    if (!inspectorCanvas)
+        return;
+
+    auto inspectorProgram = InspectorShaderProgram::create(program, *inspectorCanvas);
+    String programIdentifier = inspectorProgram->identifier();
+    m_identifierToInspectorProgram.set(programIdentifier, WTFMove(inspectorProgram));
+
+    if (m_enabled)
+        m_frontendDispatcher->programCreated(inspectorCanvas->identifier(), programIdentifier);
+}
+
+void InspectorCanvasAgent::willDeleteProgram(WebGLProgram& program)
+{
+    auto* inspectorProgram = findInspectorProgram(program);
+    if (!inspectorProgram)
+        return;
+
+    String identifier = unbindProgram(*inspectorProgram);
+    if (m_enabled)
+        m_frontendDispatcher->programDeleted(identifier);
+}
+#endif
+
 void InspectorCanvasAgent::canvasDestroyedTimerFired()
 {
     if (!m_removedCanvasIdentifiers.size())
@@ -448,6 +484,9 @@ void InspectorCanvasAgent::clearCanvasData()
     m_identifierToInspectorCanvas.clear();
     m_canvasToCSSCanvasName.clear();
     m_removedCanvasIdentifiers.clear();
+#if ENABLE(WEBGL)
+    m_identifierToInspectorProgram.clear();
+#endif
 
     if (m_canvasRecordingTimer.isActive())
         m_canvasRecordingTimer.stop();
@@ -459,6 +498,17 @@ void InspectorCanvasAgent::clearCanvasData()
 String InspectorCanvasAgent::unbindCanvas(InspectorCanvas& inspectorCanvas)
 {
     ASSERT(!m_canvasToCSSCanvasName.contains(&inspectorCanvas.canvas()));
+
+#if ENABLE(WEBGL)
+    Vector<InspectorShaderProgram*> programsToRemove;
+    for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
+        if (&inspectorProgram->canvas() == &inspectorCanvas)
+            programsToRemove.append(inspectorProgram.get());
+    }
+
+    for (auto* inspectorProgram : programsToRemove)
+        unbindProgram(*inspectorProgram);
+#endif
 
     String identifier = inspectorCanvas.identifier();
     m_identifierToInspectorCanvas.remove(identifier);
@@ -486,5 +536,38 @@ InspectorCanvas* InspectorCanvasAgent::findInspectorCanvas(HTMLCanvasElement& ca
 
     return nullptr;
 }
+
+#if ENABLE(WEBGL)
+String InspectorCanvasAgent::unbindProgram(InspectorShaderProgram& inspectorProgram)
+{
+    ASSERT(inspectorProgram.context());
+
+    String identifier = inspectorProgram.identifier();
+    m_identifierToInspectorProgram.remove(identifier);
+
+    return identifier;
+}
+
+InspectorShaderProgram* InspectorCanvasAgent::assertInspectorProgram(ErrorString& errorString, const String& identifier)
+{
+    RefPtr<InspectorShaderProgram> inspectorProgram = m_identifierToInspectorProgram.get(identifier);
+    if (!inspectorProgram) {
+        errorString = ASCIILiteral("No shader program for given identifier.");
+        return nullptr;
+    }
+
+    return inspectorProgram.get();
+}
+
+InspectorShaderProgram* InspectorCanvasAgent::findInspectorProgram(WebGLProgram& program)
+{
+    for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
+        if (&inspectorProgram->program() == &program)
+            return inspectorProgram.get();
+    }
+
+    return nullptr;
+}
+#endif
 
 } // namespace WebCore

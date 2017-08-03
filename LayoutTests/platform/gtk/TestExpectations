@@ -591,6 +591,7 @@ webkit.org/b/166536 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/create-context-webgl2.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/requestContent-webgl2.html [ Skip ]
 webkit.org/b/166536 inspector/canvas/resolveCanvasContext-webgl2.html [ Skip ]
+webkit.org/b/166536 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip ]
 
 # These tests reference specific fonts on Mac port.
 Bug(GTK) fast/text/font-weights.html [ WontFix ]

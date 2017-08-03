@@ -9,6 +9,11 @@
             "description": "Unique canvas identifier."
         },
         {
+            "id": "ProgramId",
+            "type": "string",
+            "description": "Unique shader program identifier."
+        },
+        {
             "id": "ContextType",
             "type": "string",
             "enum": ["canvas-2d", "webgl", "webgl2", "webgpu"],
@@ -141,6 +146,19 @@
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" },
                 { "name": "recording", "$ref": "Recording.Recording" }
+            ]
+        },
+        {
+            "name": "programCreated",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
+                { "name": "programId", "$ref": "ProgramId", "description": "Program identifier." }
+            ]
+        },
+        {
+            "name": "programDeleted",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId", "description": "Program identifier." }
             ]
         }
     ]

@@ -1913,6 +1913,8 @@ inspector/canvas/requestContent-webgl.html [ Skip ]
 inspector/canvas/requestContent-webgl2.html [ Skip ]
 inspector/canvas/resolveCanvasContext-webgl.html [ Skip ]
 inspector/canvas/resolveCanvasContext-webgl2.html [ Skip ]
+inspector/canvas/shaderProgram-add-remove-webgl.html [ Skip ]
+inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip ]
 ################################################################################
 #################          End WebGL Issues              #######################
 ################################################################################

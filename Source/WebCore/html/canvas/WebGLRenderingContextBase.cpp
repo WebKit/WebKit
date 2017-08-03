@@ -1502,6 +1502,9 @@ RefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
         return nullptr;
     auto program = WebGLProgram::create(*this);
     addSharedObject(program.get());
+
+    InspectorInstrumentation::didCreateProgram(*this, program.get());
+
     return WTFMove(program);
 }
 
@@ -1572,6 +1575,9 @@ void WebGLRenderingContextBase::deleteFramebuffer(WebGLFramebuffer* framebuffer)
 
 void WebGLRenderingContextBase::deleteProgram(WebGLProgram* program)
 {
+    ASSERT(program);
+    InspectorInstrumentation::willDeleteProgram(*this, *program);
+
     deleteObject(program);
     // We don't reset m_currentProgram to 0 here because the deletion of the
     // current program is delayed.

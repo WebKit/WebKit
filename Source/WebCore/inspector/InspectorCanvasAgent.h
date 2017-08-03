@@ -37,6 +37,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(WEBGL)
+#include "InspectorShaderProgram.h"
+#endif
+
 namespace Inspector {
 class InjectedScriptManager;
 }
@@ -44,7 +48,10 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class CanvasRenderingContext;
+#if ENABLE(WEBGL)
+class WebGLProgram;
 class WebGLRenderingContextBase;
+#endif
 
 typedef String ErrorString;
 
@@ -77,6 +84,10 @@ public:
     void didChangeCanvasMemory(HTMLCanvasElement&);
     void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
     void didFinishRecordingCanvasFrame(HTMLCanvasElement&, bool forceDispatch = false);
+#if ENABLE(WEBGL)
+    void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);
+    void willDeleteProgram(WebGLProgram&);
+#endif
 
     // CanvasObserver
     void canvasChanged(HTMLCanvasElement&, const FloatRect&) override { }
@@ -88,13 +99,19 @@ private:
     void canvasRecordingTimerFired();
     void clearCanvasData();
     String unbindCanvas(InspectorCanvas&);
-    InspectorCanvas* assertInspectorCanvas(ErrorString&, const String&);
+    InspectorCanvas* assertInspectorCanvas(ErrorString&, const String& identifier);
     InspectorCanvas* findInspectorCanvas(HTMLCanvasElement&);
+#if ENABLE(WEBGL)
+    String unbindProgram(InspectorShaderProgram&);
+    InspectorShaderProgram* assertInspectorProgram(ErrorString&, const String& identifier);
+    InspectorShaderProgram* findInspectorProgram(WebGLProgram&);
+
+    HashMap<String, RefPtr<InspectorShaderProgram>> m_identifierToInspectorProgram;
+#endif
 
     std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
-
     HashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
     HashMap<HTMLCanvasElement*, String> m_canvasToCSSCanvasName;
     Vector<String> m_removedCanvasIdentifiers;

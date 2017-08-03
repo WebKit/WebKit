@@ -1,3 +1,63 @@
+2017-08-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Instrument WebGLProgram created/deleted
+        https://bugs.webkit.org/show_bug.cgi?id=175059
+
+        Reviewed by Devin Rousso.
+
+        Tests: inspector/canvas/shaderProgram-add-remove-webgl.html
+               inspector/canvas/shaderProgram-add-remove-webgl2.html
+
+        This patch adds instrumentation to WebGLRenderingContextBase for tracking
+        WebGLPrograms. A new helper class, InspectorShaderProgram, is used by
+        the CanvasAgent to hold related data.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::createProgram):
+        (WebCore::WebGLRenderingContextBase::deleteProgram):
+
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::enable):
+        (WebCore::InspectorCanvasAgent::frameNavigated):
+        (WebCore::InspectorCanvasAgent::didCreateProgram):
+        (WebCore::InspectorCanvasAgent::willDeleteProgram):
+        (WebCore::InspectorCanvasAgent::clearCanvasData):
+        (WebCore::InspectorCanvasAgent::unbindCanvas):
+        (WebCore::InspectorCanvasAgent::unbindProgram):
+        (WebCore::InspectorCanvasAgent::assertInspectorProgram):
+        (WebCore::InspectorCanvasAgent::findInspectorProgram):
+        * inspector/InspectorCanvasAgent.h:
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCreateCSSCanvasImpl):
+        (WebCore::InspectorInstrumentation::didChangeCSSCanvasClientNodesImpl):
+        (WebCore::InspectorInstrumentation::didCreateCanvasRenderingContextImpl):
+        (WebCore::InspectorInstrumentation::didChangeCanvasMemoryImpl):
+        (WebCore::InspectorInstrumentation::recordCanvasActionImpl):
+        (WebCore::InspectorInstrumentation::didFinishRecordingCanvasFrameImpl):
+        (WebCore::InspectorInstrumentation::didCreateProgramImpl):
+        (WebCore::InspectorInstrumentation::willDeleteProgramImpl):
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::recordCanvasActionImpl):
+        (WebCore::InspectorInstrumentation::didCreateCSSCanvas):
+        (WebCore::InspectorInstrumentation::didChangeCSSCanvasClientNodes):
+        (WebCore::InspectorInstrumentation::didCreateCanvasRenderingContext):
+        (WebCore::InspectorInstrumentation::didChangeCanvasMemory):
+        (WebCore::InspectorInstrumentation::recordCanvasAction):
+        (WebCore::InspectorInstrumentation::didFinishRecordingCanvasFrame):
+        (WebCore::InspectorInstrumentation::didCreateProgram):
+        (WebCore::InspectorInstrumentation::willDeleteProgram):
+
+        * inspector/InspectorShaderProgram.cpp: Added.
+        (WebCore::InspectorShaderProgram::create):
+        (WebCore::InspectorShaderProgram::InspectorShaderProgram):
+        (WebCore::InspectorShaderProgram::context const):
+        * inspector/InspectorShaderProgram.h: Added.
+
 2017-08-03  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r220209.

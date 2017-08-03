@@ -978,41 +978,55 @@ void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& in
 }
 #endif
 
-void InspectorInstrumentation::didCreateCSSCanvasImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement, const String& name)
+void InspectorInstrumentation::didCreateCSSCanvasImpl(InstrumentingAgents& instrumentingAgents, HTMLCanvasElement& canvasElement, const String& name)
 {
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->didCreateCSSCanvas(canvasElement, name);
 }
 
-void InspectorInstrumentation::didChangeCSSCanvasClientNodesImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement)
+void InspectorInstrumentation::didChangeCSSCanvasClientNodesImpl(InstrumentingAgents& instrumentingAgents, HTMLCanvasElement& canvasElement)
 {
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->didChangeCSSCanvasClientNodes(canvasElement);
 }
 
-void InspectorInstrumentation::didCreateCanvasRenderingContextImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement)
+void InspectorInstrumentation::didCreateCanvasRenderingContextImpl(InstrumentingAgents& instrumentingAgents, HTMLCanvasElement& canvasElement)
 {
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->didCreateCanvasRenderingContext(canvasElement);
 }
 
-void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement)
+void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents& instrumentingAgents, HTMLCanvasElement& canvasElement)
 {
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->didChangeCanvasMemory(canvasElement);
 }
 
-void InspectorInstrumentation::recordCanvasActionImpl(InstrumentingAgents* instrumentingAgents, CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
+void InspectorInstrumentation::recordCanvasActionImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& canvasRenderingContext, const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->recordCanvasAction(canvasRenderingContext, name, WTFMove(parameters));
 }
 
-void InspectorInstrumentation::didFinishRecordingCanvasFrameImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement, bool forceDispatch)
+void InspectorInstrumentation::didFinishRecordingCanvasFrameImpl(InstrumentingAgents& instrumentingAgents, HTMLCanvasElement& canvasElement, bool forceDispatch)
 {
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->didFinishRecordingCanvasFrame(canvasElement, forceDispatch);
 }
+
+#if ENABLE(WEBGL)
+void InspectorInstrumentation::didCreateProgramImpl(InstrumentingAgents& instrumentingAgents, WebGLRenderingContextBase& context, WebGLProgram& program)
+{
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
+        canvasAgent->didCreateProgram(context, program);
+}
+
+void InspectorInstrumentation::willDeleteProgramImpl(InstrumentingAgents& instrumentingAgents, WebGLProgram& program)
+{
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
+        canvasAgent->willDeleteProgram(program);
+}
+#endif
 
 #if ENABLE(RESOURCE_USAGE)
 void InspectorInstrumentation::didHandleMemoryPressureImpl(InstrumentingAgents& instrumentingAgents, Critical critical)

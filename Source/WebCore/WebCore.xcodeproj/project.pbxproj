@@ -2883,6 +2883,8 @@
 		6A22E8731F1042C400F546C3 /* InspectorCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A22E8721F1042C400F546C3 /* InspectorCanvas.cpp */; };
 		6A32D7CE1A16D8C000412F0B /* InspectorCanvasAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A4B6D6619D225D8006F11D3 /* InspectorCanvasAgent.cpp */; };
 		6A4B6D6519D22519006F11D3 /* InspectorCanvasAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A4B6D6419D22519006F11D3 /* InspectorCanvasAgent.h */; };
+		6A72798B1F16C29C003F39B8 /* InspectorShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A7279881F16C29B003F39B8 /* InspectorShaderProgram.h */; };
+		6A72798C1F16C29C003F39B8 /* InspectorShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6A7279891F16C29B003F39B8 /* InspectorShaderProgram.cpp */; };
 		6B3480940EEF50D400AC1B41 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6B693A2E1C51A82E00B03BEF /* ResourceLoadObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B693A2D1C51A82E00B03BEF /* ResourceLoadObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6B693A341C51A95D00B03BEF /* ResourceLoadObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B693A331C51A95D00B03BEF /* ResourceLoadObserver.cpp */; };
@@ -10711,6 +10713,8 @@
 		6A22E8721F1042C400F546C3 /* InspectorCanvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCanvas.cpp; sourceTree = "<group>"; };
 		6A4B6D6419D22519006F11D3 /* InspectorCanvasAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCanvasAgent.h; sourceTree = "<group>"; };
 		6A4B6D6619D225D8006F11D3 /* InspectorCanvasAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCanvasAgent.cpp; sourceTree = "<group>"; };
+		6A7279881F16C29B003F39B8 /* InspectorShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorShaderProgram.h; sourceTree = "<group>"; };
+		6A7279891F16C29B003F39B8 /* InspectorShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorShaderProgram.cpp; sourceTree = "<group>"; };
 		6B3480920EEF50D400AC1B41 /* NativeImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NativeImage.h; sourceTree = "<group>"; };
 		6B693A2D1C51A82E00B03BEF /* ResourceLoadObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadObserver.h; sourceTree = "<group>"; };
 		6B693A331C51A95D00B03BEF /* ResourceLoadObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadObserver.cpp; sourceTree = "<group>"; };
@@ -17249,6 +17253,8 @@
 				A518225517E2A0D400A9BA1D /* InspectorOverlayPage.js */,
 				4F6FDD621341DEDD001F8EE3 /* InspectorPageAgent.cpp */,
 				4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */,
+				6A7279891F16C29B003F39B8 /* InspectorShaderProgram.cpp */,
+				6A7279881F16C29B003F39B8 /* InspectorShaderProgram.h */,
 				82AB176F125C826700C5069D /* InspectorStyleSheet.cpp */,
 				82AB1770125C826700C5069D /* InspectorStyleSheet.h */,
 				754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */,
@@ -27774,6 +27780,7 @@
 				504AACCE1834455900E3D9BC /* InspectorNodeFinder.h in Headers */,
 				0F03C0751884805500A5F8CA /* InspectorOverlay.h in Headers */,
 				4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */,
+				6A72798B1F16C29C003F39B8 /* InspectorShaderProgram.h in Headers */,
 				82AB1774125C826700C5069D /* InspectorStyleSheet.h in Headers */,
 				754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */,
 				A593CF8B1840535200BFCE27 /* InspectorWebAgentBase.h in Headers */,
@@ -31751,6 +31758,7 @@
 				504AACCD1834455900E3D9BC /* InspectorNodeFinder.cpp in Sources */,
 				7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */,
 				4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */,
+				6A72798C1F16C29C003F39B8 /* InspectorShaderProgram.cpp in Sources */,
 				82AB1773125C826700C5069D /* InspectorStyleSheet.cpp in Sources */,
 				754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */,
 				A54A0C5D1DB6D9C00017A90B /* InspectorWorkerAgent.cpp in Sources */,

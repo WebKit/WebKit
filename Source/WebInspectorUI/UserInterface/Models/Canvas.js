@@ -42,6 +42,8 @@ WI.Canvas = class Canvas extends WI.Object
         this._memoryCost = memoryCost || NaN;
 
         this._cssCanvasClientNodes = null;
+
+        this._nextShaderProgramDisplayNumber = 1;
     }
 
     // Static
@@ -223,6 +225,13 @@ WI.Canvas = class Canvas extends WI.Object
         this._cssCanvasClientNodes = null;
 
         this.dispatchEventToListeners(WI.Canvas.Event.CSSCanvasClientNodesChanged);
+    }
+
+    nextShaderProgramDisplayNumber()
+    {
+        // Called from WI.ShaderProgram.
+
+        return this._nextShaderProgramDisplayNumber++;
     }
 };
 

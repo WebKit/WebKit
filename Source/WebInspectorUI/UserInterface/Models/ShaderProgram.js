@@ -23,42 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CanvasObserver = class CanvasObserver
+WI.ShaderProgram = class ShaderProgram extends WI.Object
 {
-    // Events defined by the "Canvas" domain.
-
-    canvasAdded(canvas)
+    constructor(identifier, canvas)
     {
-        WI.canvasManager.canvasAdded(canvas);
+        super();
+
+        console.assert(identifier);
+        console.assert(canvas instanceof WI.Canvas);
+
+        this._identifier = identifier;
+        this._canvas = canvas;
+        this._uniqueDisplayNumber = canvas.nextShaderProgramDisplayNumber();
     }
 
-    canvasRemoved(canvasId)
-    {
-        WI.canvasManager.canvasRemoved(canvasId);
-    }
+    // Public
 
-    canvasMemoryChanged(canvasId, memoryCost)
-    {
-        WI.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
-    }
+    get identifier() { return this._identifier; }
+    get canvas() { return this._canvas; }
 
-    cssCanvasClientNodesChanged(canvasId)
+    get displayName()
     {
-        WI.canvasManager.cssCanvasClientNodesChanged(canvasId);
+        return WI.UIString("Program %d").format(this._uniqueDisplayNumber);
     }
+};
 
-    recordingFinished(canvasId, recording)
-    {
-        WI.canvasManager.recordingFinished(canvasId, recording);
-    }
-
-    programCreated(canvasId, programId)
-    {
-        WI.canvasManager.programCreated(canvasId, programId);
-    }
-
-    programDeleted(programId)
-    {
-        WI.canvasManager.programDeleted(programId);
-    }
+WI.ShaderProgram.Event = {
+    ProgramLinked: "shader-program-program-linked",
+    ShaderCompiled: "shader-program-shader-compiled",
 };
