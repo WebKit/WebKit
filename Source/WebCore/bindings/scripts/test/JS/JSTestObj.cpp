@@ -1375,7 +1375,7 @@ public:
     static JSTestObjPrototype* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestObjPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestObjPrototype>(vm.heap)) JSTestObjPrototype(vm, globalObject, structure);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm);
         return ptr;
     }
 
@@ -1391,7 +1391,7 @@ private:
     {
     }
 
-    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
+    void finishCreation(JSC::VM&);
 };
 
 using JSTestObjConstructor = JSDOMConstructor<JSTestObj>;
@@ -1874,7 +1874,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
-void JSTestObjPrototype::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
+void JSTestObjPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestObj::info(), JSTestObjPrototypeTableValues, *this);
@@ -1882,62 +1882,62 @@ void JSTestObjPrototype::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledAtRuntimeOperation"), strlen("enabledAtRuntimeOperation"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        JSObject::deleteProperty(this, this->globalObject()->globalExec(), propertyName);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
     if (!(worldForDOMObject(this).someWorld() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledInSpecificWorldWhenRuntimeFeatureEnabled"), strlen("enabledInSpecificWorldWhenRuntimeFeatureEnabled"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        JSObject::deleteProperty(this, this->globalObject()->globalExec(), propertyName);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
     if (!worldForDOMObject(this).someWorld()) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("worldSpecificMethod"), strlen("worldSpecificMethod"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        JSObject::deleteProperty(this, this->globalObject()->globalExec(), propertyName);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("calculateSecretResult"), strlen("calculateSecretResult"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        JSObject::deleteProperty(this, this->globalObject()->globalExec(), propertyName);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("getSecretBoolean"), strlen("getSecretBoolean"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        JSObject::deleteProperty(this, this->globalObject()->globalExec(), propertyName);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #if ENABLE(TEST_FEATURE)
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("testFeatureGetSecretBoolean"), strlen("testFeatureGetSecretBoolean"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        JSObject::deleteProperty(this, this->globalObject()->globalExec(), propertyName);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
 #if ENABLE(TEST_FEATURE)
     if (!(RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled() && RuntimeEnabledFeatures::sharedFeatures().testFeature1Enabled())) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledAtRuntimeAttribute"), strlen("enabledAtRuntimeAttribute"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        JSObject::deleteProperty(this, this->globalObject()->globalExec(), propertyName);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
-    auto* context = globalObject.scriptExecutionContext();
+    auto* context = jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext();
     ASSERT(!context || context->isDocument());
 #if ENABLE(TEST_FEATURE)
     if (!context || !downcast<Document>(*context).settings().testSettingEnabled()) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledBySettingOperation"), strlen("enabledBySettingOperation"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        JSObject::deleteProperty(this, globalObject.globalExec(), propertyName);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
 #if ENABLE(TEST_FEATURE)
     if (!context || !downcast<Document>(*context).settings().testSettingEnabled()) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledBySettingAttribute"), strlen("enabledBySettingAttribute"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        JSObject::deleteProperty(this, globalObject.globalExec(), propertyName);
+        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
     putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().privateMethodPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestObjPrototypeFunctionPrivateMethod), ReadOnly | DontEnum);
     putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().publicAndPrivateMethodPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestObjPrototypeFunctionPublicAndPrivateMethod), ReadOnly | DontEnum);
-    putDirect(vm, vm.propertyNames->iteratorSymbol, this->globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), DontEnum);
+    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), DontEnum);
     addValueIterableMethods(*globalObject(), *this);
     JSObject& unscopables = *constructEmptyObject(globalObject()->globalExec(), globalObject()->nullPrototypeObjectStructure());
     unscopables.putDirect(vm, Identifier::fromString(&vm, "voidMethod"), jsBoolean(true));

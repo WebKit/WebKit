@@ -1674,24 +1674,6 @@ sub NeedsRuntimeCheck
         || $interface->extendedAttributes->{SecureContext};
 }
 
-sub NeedsSettingsCheckForPrototypeProperty
-{
-    my $interface = shift;
-
-    foreach my $operation (@{$interface->operations}) {
-        next if OperationShouldBeOnInstance($interface, $operation);
-
-        return 1 if $operation->extendedAttributes->{EnabledBySetting};
-    }
-
-    foreach my $attribute (@{$interface->attributes}) {
-        next if AttributeShouldBeOnInstance($interface, $attribute);
-        return 1 if $attribute->extendedAttributes->{EnabledBySetting};
-    }
-
-    return 0;
-}
-
 # https://heycam.github.io/webidl/#es-operations
 sub OperationShouldBeOnInstance
 {
@@ -4065,13 +4047,7 @@ sub GenerateImplementation
     }
 
     if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalOrPrimaryGlobalInterface($interface)) {
-        my $needsGlobalObjectInFinishCreation = NeedsSettingsCheckForPrototypeProperty($interface);
-
-        if ($needsGlobalObjectInFinishCreation) {
-            push(@implContent, "void ${className}Prototype::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)\n");
-        } else {
-            push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
-        }
+        push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(vm);\n");
         push(@implContent, "    reifyStaticProperties(vm, ${className}::info(), ${className}PrototypeTableValues, *this);\n");
@@ -4086,7 +4062,7 @@ sub GenerateImplementation
             push(@implContent, "    if (!${runtimeEnableConditionalString}) {\n");
             push(@implContent, "        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
             push(@implContent, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
-            push(@implContent, "        JSObject::deleteProperty(this, this->globalObject()->globalExec(), propertyName);\n");
+            push(@implContent, "        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);\n");
             push(@implContent, "    }\n");
             push(@implContent, "#endif\n") if $conditionalString;
         }
@@ -4095,7 +4071,7 @@ sub GenerateImplementation
         push(@settingsEnabledProperties, @settingsEnabledAttributes);
         if (scalar(@settingsEnabledProperties)) {
             AddToImplIncludes("Settings.h");
-            push(@implContent, "    auto* context = globalObject.scriptExecutionContext();\n");
+            push(@implContent, "    auto* context = jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext();\n");
             push(@implContent, "    ASSERT(!context || context->isDocument());\n");
             
             foreach my $operationOrAttribute (@settingsEnabledProperties) {
@@ -4108,7 +4084,7 @@ sub GenerateImplementation
                 push(@implContent, "    if (!context || !downcast<Document>(*context).settings().${enableFunction}()) {\n");
                 push(@implContent, "        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
                 push(@implContent, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
-                push(@implContent, "        JSObject::deleteProperty(this, globalObject.globalExec(), propertyName);\n");
+                push(@implContent, "        JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);\n");
                 push(@implContent, "    }\n");
 
                 push(@implContent, "#endif\n") if $conditionalString;
@@ -4130,7 +4106,7 @@ sub GenerateImplementation
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);\n");
             } else {
                 AddToImplIncludes("<runtime/ArrayPrototype.h>");
-                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, this->globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), DontEnum);\n");
+                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), DontEnum);\n");
             }
         }
         push(@implContent, "    addValueIterableMethods(*globalObject(), *this);\n") if $interface->iterable and !IsKeyValueIterableInterface($interface);
@@ -6837,8 +6813,6 @@ sub GeneratePrototypeDeclaration
 
     my $prototypeClassName = "${className}Prototype";
 
-    my $needsGlobalObjectInFinishCreation = NeedsSettingsCheckForPrototypeProperty($interface);
-
     my %structureFlags = ();
     push(@$outputArray, "class ${prototypeClassName} : public JSC::JSNonFinalObject {\n");
     push(@$outputArray, "public:\n");
@@ -6847,13 +6821,7 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "    static ${prototypeClassName}* create(JSC::VM& vm, JSDOMGlobalObject* globalObject, JSC::Structure* structure)\n");
     push(@$outputArray, "    {\n");
     push(@$outputArray, "        ${className}Prototype* ptr = new (NotNull, JSC::allocateCell<${className}Prototype>(vm.heap)) ${className}Prototype(vm, globalObject, structure);\n");
-
-    if ($needsGlobalObjectInFinishCreation) {
-        push(@$outputArray, "        ptr->finishCreation(vm, *globalObject);\n");
-    } else {
-        push(@$outputArray, "        ptr->finishCreation(vm);\n");
-    }
-
+    push(@$outputArray, "        ptr->finishCreation(vm);\n");
     push(@$outputArray, "        return ptr;\n");
     push(@$outputArray, "    }\n\n");
 
@@ -6875,11 +6843,7 @@ sub GeneratePrototypeDeclaration
             $structureFlags{"JSC::HasStaticPropertyTable"} = 1;
         } else {
             push(@$outputArray, "\n");
-            if ($needsGlobalObjectInFinishCreation) {
-                push(@$outputArray, "    void finishCreation(JSC::VM&, JSDOMGlobalObject&);\n");
-            } else {
-                push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
-            }
+            push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
         }
     }
 

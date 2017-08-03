@@ -1,3 +1,20 @@
+2017-08-02  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Simplify [EnabledBySettings] extended attribute code to not require passing a global object to finishCreation
+        https://bugs.webkit.org/show_bug.cgi?id=175087
+
+        Reviewed by Chris Dumez.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GeneratePrototypeDeclaration):
+        Remove unnecessary passing of the global object to finishCreation for [EnabledBySettings].
+
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        Update tests.
+
 2017-08-02  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r207155): Unable to switch sheets when previewing Numbers '09 spreadsheets
