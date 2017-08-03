@@ -7039,6 +7039,8 @@ void Document::applyQuickLookSandbox()
     // The sandbox directive is only allowed if the policy is from an HTTP header.
     contentSecurityPolicy()->didReceiveHeader(quickLookCSP, ContentSecurityPolicyHeaderType::Enforce, ContentSecurityPolicy::PolicyFrom::HTTPHeader);
 
+    disableSandboxFlags(SandboxNavigation);
+
     setReferrerPolicy(ReferrerPolicy::Never);
 }
 #endif
