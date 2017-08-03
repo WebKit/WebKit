@@ -29,8 +29,9 @@
 
 @class WKContentView;
 
-@interface WKAirPlayRoutePicker : NSObject
-- (void)showFromView:(WKContentView *)view;
+@interface WKAirPlayRoutePicker : UIView <UIPopoverControllerDelegate>
+- (instancetype)initWithView:(WKContentView *)view;
+- (void)show:(BOOL)hasVideo fromRect:(CGRect)elementRect;
 @end
 
 #endif // PLATFORM(IOS)
