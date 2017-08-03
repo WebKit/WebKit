@@ -689,6 +689,7 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-setRemoteDescription-offer
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure Pass ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-closed-state.html [ Crash ]
+webkit.org/b/79203 fast/mediastream/media-stream-track-source-failure.html [ Failure ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Failure ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout ]
@@ -2216,7 +2217,6 @@ webkit.org/b/174243 fast/images/low-memory-decode.html [ Timeout ]
 
 webkit.org/b/174459 fast/images/async-image-background-image.html [ Timeout ]
 webkit.org/b/174459 fast/images/async-image-body-background-image.html [ Timeout ]
-webkit.org/b/174459 fast/images/async-image-multiple-clients-repaint.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3389,6 +3389,12 @@ webkit.org/b/174461 inspector/canvas/requestContent-2d.html [ Failure ]
 webkit.org/b/174461 inspector/canvas/requestContent-webgl.html [ Failure ]
 
 webkit.org/b/174609 accessibility/presentation-role-iframe.html [ Failure ]
+
+webkit.org/b/175134 fast/text/line-height-minimumFontSize-autosize.html [ Failure ]
+webkit.org/b/175134 fast/text/line-height-minimumFontSize.html [ Failure ]
+webkit.org/b/175134 fast/text/line-height-minimumFontSize-text-zoom.html [ ImageOnlyFailure ]
+webkit.org/b/175134 fast/text/line-height-minimumFontSize-visual.html [ ImageOnlyFailure ]
+webkit.org/b/175134 fast/text/line-height-minimumFontSize-zoom.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

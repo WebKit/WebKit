@@ -16,4 +16,4 @@ layer at (0,0) size 800x600
             text run at (0,17) width 62: "code path"
         RenderText {#text} at (62,17) size 632x17
           text run at (62,17) width 632: " by clicking the X and verifying that the correct caret position (13) is reported to the editing delegate."
-caret: position 13 of child 2 {#text} of body
+caret: position 7 of child 2 {#text} of body
