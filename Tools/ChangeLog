@@ -1,3 +1,13 @@
+2017-08-03  Lucas Forschler  <lforschler@apple.com>
+
+        Enable archive minification on iOS builds
+        https://bugs.webkit.org/show_bug.cgi?id=174718
+        
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (BuildFactory.__init__):
+
 2017-08-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WKE] Pass the --memory-limited option on the GTK and WPE buildbots for the JSC tests.
