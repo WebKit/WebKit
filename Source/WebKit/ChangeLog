@@ -1,3 +1,74 @@
+2017-08-02  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220138. rdar://problem/33692550
+
+    2017-08-02  Tim Horton  <timothy_horton@apple.com>
+
+            WKPDFView doesn't respect safe area insets
+            https://bugs.webkit.org/show_bug.cgi?id=175046
+            <rdar://problem/33558386>
+
+            Reviewed by Wenson Hsieh.
+
+            * Platform/spi/ios/UIKitSPI.h:
+            Add some SPI.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _setHasCustomContentView:loadedMIMEType:]):
+            Drive-by fix two small custom content view issues:
+
+            - Reset _scrollViewBackgroundColor; it is used to early-return from
+            updating the background color if it hasn't changed, but if you go from a
+            site with (for example) a white background, to a PDF, to another site
+            with a white background, we will early-return and not reset the background
+            color from the grey WKPDFView background.
+
+            - When installing a custom content view, scroll to the origin. We miss
+            the usual mechanism for scrolling to the origin when custom content views
+            are installed, so do it here.
+
+            (-[WKWebView _effectiveObscuredInsetEdgesAffectedBySafeArea]):
+            Ignore _obscuredInsetEdgesAffectedBySafeArea for custom content views.
+            This is fairly arbitrary, and we should find a different way to
+            express different edge sets for different kinds of content (perhaps
+            bake this into default viewports?), but for now this works.
+
+            (-[WKWebView _computedContentInset]):
+            Use _effectiveObscuredInsetEdgesAffectedBySafeArea instead of the ivar directly.
+
+            (-[WKWebView _safeAreaShouldAffectObscuredInsets]):
+            Force safe areas to not affect obscured insets for custom content views,
+            so that it's up to every custom content view to take safe areas into
+            account themselves.
+
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            Expose _computedUnobscuredSafeAreaInset for WKPDFView's use.
+
+            * UIProcess/ios/WKPDFView.mm:
+            (-[WKPDFView web_setMinimumSize:]):
+            Avoid rebuilding the WKPDFView if the minimum size didn't change.
+
+            (-[WKPDFView _offsetForPageNumberIndicator]):
+            Take unobscured safe area insets into account when insetting
+            the page number indicator.
+
+            (-[WKPDFView web_computedContentInsetDidChange]):
+            Watch for unobscured safe area inset changes, and apply them to the
+            layout of the WKPDFView.
+
+            (-[WKPDFView _computePageAndDocumentFrames]):
+            Make it possible to only update the WKPDFView's size and position, without
+            rebuilding its subviews, if the width did not change. This prevents lots
+            of flashing of the child UIPDFPageViews when the unobscured safe area
+            insets change dynamically.
+
+            Take the safe area insets into account when determining what width
+            to lay out to.
+
+            (-[WKPDFView _updateDocumentFrame]):
+            Take the safe area insets into account when positioning the WKPDFView
+            inside the WKScrollView.
+
 2017-07-31  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220033. rdar://problem/33619596
