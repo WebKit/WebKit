@@ -13,6 +13,7 @@ set(WTF_HEADERS
     BumpPointerAllocator.h
     ByteOrder.h
     CPUTime.h
+    CagedPtr.h
     ClockType.h
     CompilationThread.h
     Compiler.h

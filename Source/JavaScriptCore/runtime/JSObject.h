@@ -43,6 +43,7 @@
 #include "VM.h"
 #include "JSString.h"
 #include "SparseArrayValueMap.h"
+#include <wtf/CagedPtr.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -254,7 +255,7 @@ public:
     
     bool canGetIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.get();
+        Butterfly* butterfly = m_butterfly.get().getMayBeNull();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -280,7 +281,7 @@ public:
         
     JSValue getIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.get();
+        Butterfly* butterfly = m_butterfly.get().get();
         switch (indexingType()) {
         case ALL_INT32_INDEXING_TYPES:
             return jsNumber(butterfly->contiguous()[i].get().asInt32());
@@ -298,7 +299,7 @@ public:
         
     JSValue tryGetIndexQuickly(unsigned i) const
     {
-        Butterfly* butterfly = m_butterfly.get();
+        Butterfly* butterfly = m_butterfly.get().getMayBeNull();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -352,7 +353,7 @@ public:
         
     bool canSetIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.get();
+        Butterfly* butterfly = m_butterfly.get().getMayBeNull();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -375,7 +376,7 @@ public:
         
     void setIndexQuickly(VM& vm, unsigned i, JSValue v)
     {
-        Butterfly* butterfly = m_butterfly.get();
+        Butterfly* butterfly = m_butterfly.get().get();
         switch (indexingType()) {
         case ALL_INT32_INDEXING_TYPES: {
             ASSERT(i < butterfly->vectorLength());
@@ -435,7 +436,7 @@ public:
     ALWAYS_INLINE void initializeIndex(ObjectInitializationScope& scope, unsigned i, JSValue v, IndexingType indexingType)
     {
         VM& vm = scope.vm();
-        Butterfly* butterfly = m_butterfly.get();
+        Butterfly* butterfly = m_butterfly.get().get();
         switch (indexingType) {
         case ALL_UNDECIDED_INDEXING_TYPES: {
             setIndexQuicklyToUndecided(vm, i, v);
@@ -492,7 +493,7 @@ public:
     // barriers. This implies not having any data format conversions.
     ALWAYS_INLINE void initializeIndexWithoutBarrier(ObjectInitializationScope&, unsigned i, JSValue v, IndexingType indexingType)
     {
-        Butterfly* butterfly = m_butterfly.get();
+        Butterfly* butterfly = m_butterfly.get().get();
         switch (indexingType) {
         case ALL_UNDECIDED_INDEXING_TYPES: {
             RELEASE_ASSERT_NOT_REACHED();
@@ -668,8 +669,8 @@ public:
         return inlineStorageUnsafe();
     }
         
-    const Butterfly* butterfly() const { return m_butterfly.get(); }
-    Butterfly* butterfly() { return m_butterfly.get(); }
+    const Butterfly* butterfly() const { return m_butterfly.get().getMayBeNull(); }
+    Butterfly* butterfly() { return m_butterfly.get().getMayBeNull(); }
     
     ConstPropertyStorage outOfLineStorage() const { return m_butterfly.get()->propertyStorage(); }
     PropertyStorage outOfLineStorage() { return m_butterfly.get()->propertyStorage(); }
@@ -1045,9 +1046,7 @@ private:
     PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
 
 protected:
-    // FIXME: This should do caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175039
-    AuxiliaryBarrier<Butterfly*> m_butterfly;
+    AuxiliaryBarrier<CagedPtr<Butterfly>> m_butterfly;
 #if USE(JSVALUE32_64)
 private:
     uint32_t m_padding;

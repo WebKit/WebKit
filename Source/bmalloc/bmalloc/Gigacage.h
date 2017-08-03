@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BAssert.h"
 #include "BExport.h"
 #include "BPlatform.h"
 #include <inttypes.h>
@@ -58,6 +59,7 @@ BEXPORT void removeDisableCallback(void (*)(void*), void*);
 template<typename T>
 T* caged(T* ptr)
 {
+    BASSERT(ptr);
     void* gigacageBasePtr = g_gigacageBasePtr;
     if (!gigacageBasePtr)
         return ptr;

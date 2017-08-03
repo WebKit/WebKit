@@ -181,9 +181,9 @@
 		0F43D8F01DB5ADDC00108FB6 /* AutomaticThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomaticThread.h; sourceTree = "<group>"; };
 		0F4570421BE5B58F0062A629 /* Dominators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dominators.h; sourceTree = "<group>"; };
 		0F4570441BE834410062A629 /* BubbleSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BubbleSort.h; sourceTree = "<group>"; };
+		0F5BF1651F2317830029D91D /* NaturalLoops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NaturalLoops.h; sourceTree = "<group>"; };
 		0F5BF1741F23D49A0029D91D /* Gigacage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gigacage.cpp; sourceTree = "<group>"; };
 		0F5BF1751F23D49A0029D91D /* Gigacage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gigacage.h; sourceTree = "<group>"; };
-		0F5BF1651F2317830029D91D /* NaturalLoops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NaturalLoops.h; sourceTree = "<group>"; };
 		0F60F32D1DFCBD1B00416D6C /* LockedPrintStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LockedPrintStream.cpp; sourceTree = "<group>"; };
 		0F60F32E1DFCBD1B00416D6C /* LockedPrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockedPrintStream.h; sourceTree = "<group>"; };
 		0F66B2801DC97BAB004A1D3F /* ClockType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockType.cpp; sourceTree = "<group>"; };
@@ -227,6 +227,7 @@
 		0FE4479B1B7AAA03009498EB /* WordLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordLock.h; sourceTree = "<group>"; };
 		0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTask.h; sourceTree = "<group>"; };
 		0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelVectorIterator.h; sourceTree = "<group>"; };
+		0FEC3C4F1F323C6800F59B6C /* CagedPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CagedPtr.h; sourceTree = "<group>"; };
 		0FEC84AE1BD825310080FF74 /* GraphNodeWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphNodeWorklist.h; sourceTree = "<group>"; };
 		0FEC84B01BDACD390080FF74 /* ScopedLambda.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedLambda.h; sourceTree = "<group>"; };
 		0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyPtrSet.h; sourceTree = "<group>"; };
@@ -748,6 +749,7 @@
 				0F4570441BE834410062A629 /* BubbleSort.h */,
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
+				0FEC3C4F1F323C6800F59B6C /* CagedPtr.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
 				0F66B2801DC97BAB004A1D3F /* ClockType.cpp */,
