@@ -1,5 +1,49 @@
 2017-08-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: add stack trace information for each RecordingAction
+        https://bugs.webkit.org/show_bug.cgi?id=174663
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.prototype.swizzle):
+        Add Array type for swizzling array values.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.fromPayload):
+        (WI.RecordingAction.prototype.get trace):
+        (WI.RecordingAction.prototype.swizzle):
+        (WI.RecordingAction.prototype.toJSON):
+
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.js: Added.
+        (WI.RecordingTraceDetailsSidebarPanel):
+        (WI.RecordingTraceDetailsSidebarPanel.disallowInstanceForClass):
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.inspect):
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.set recording):
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.updateActionIndex):
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.css: Added.
+        (.sidebar > .panel.details.recording-trace > .content > .call-frame):
+        (.sidebar > .details.recording-trace > .content > .no-trace-data):
+        (.sidebar > .details.recording-trace > .content > .no-trace-data > .message):
+
+        * UserInterface/Views/RecordingTabContentView.js:
+        (WI.RecordingTabContentView):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement.prototype.populateContextMenu):
+
+        * UserInterface/Views/CallFrameView.css:
+        (.call-frame):
+        (body[dir=ltr] .call-frame .icon):
+        (body[dir=rtl] .call-frame .icon):
+        Apply the same trailing margin for CallFrameView icons as TreeElement.
+
+2017-08-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: add TreeElement virtualization for the Recording tab
         https://bugs.webkit.org/show_bug.cgi?id=174968
 

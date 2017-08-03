@@ -593,6 +593,7 @@ localizedStrings["No Request Headers"] = "No Request Headers";
 localizedStrings["No Response Headers"] = "No Response Headers";
 localizedStrings["No Results Found"] = "No Results Found";
 localizedStrings["No Search Results"] = "No Search Results";
+localizedStrings["No Trace Data"] = "No Trace Data";
 localizedStrings["No Watch Expressions"] = "No Watch Expressions";
 localizedStrings["No matching ARIA role"] = "No matching ARIA role";
 localizedStrings["No preview available"] = "No preview available";

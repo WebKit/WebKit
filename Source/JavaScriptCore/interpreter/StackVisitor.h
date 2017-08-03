@@ -77,7 +77,7 @@ public:
 
         bool isNativeFrame() const { return !codeBlock() && !isWasmFrame(); }
         bool isInlinedFrame() const { return !!inlineCallFrame(); }
-        bool isWasmFrame() const;
+        bool isWasmFrame() const { return m_isWasmFrame; }
         Wasm::IndexOrName const wasmFunctionIndexOrName()
         {
             ASSERT(isWasmFrame());
@@ -88,7 +88,7 @@ public:
         JS_EXPORT_PRIVATE String sourceURL() const;
         JS_EXPORT_PRIVATE String toString() const;
 
-        intptr_t sourceID();
+        JS_EXPORT_PRIVATE intptr_t sourceID();
 
         CodeType codeType() const;
         bool hasLineAndColumnInfo() const;

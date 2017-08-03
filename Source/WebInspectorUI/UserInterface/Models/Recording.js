@@ -129,6 +129,10 @@ WI.Recording = class Recording
             try {
                 let data = this._data[index];
                 switch (type) {
+                case WI.Recording.Swizzle.Array:
+                    if (Array.isArray(data))
+                        this._swizzle[index][type] = data;
+                    break;
                 case WI.Recording.Swizzle.CanvasStyle:
                     if (Array.isArray(data)) {
                         let context = document.createElement("canvas").getContext("2d");
@@ -202,6 +206,7 @@ WI.Recording.Type = {
 };
 
 WI.Recording.Swizzle = {
+    Array: "Array",
     CanvasStyle: "CanvasStyle",
     Element: "Element",
     Image: "Image",

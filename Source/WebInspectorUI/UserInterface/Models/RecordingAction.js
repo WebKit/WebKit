@@ -25,13 +25,15 @@
 
 WI.RecordingAction = class RecordingAction
 {
-    constructor(name, parameters)
+    constructor(name, parameters, trace)
     {
         this._payloadName = name;
         this._payloadParameters = parameters;
+        this._payloadTrace = trace;
 
         this._name = "";
         this._parameters = [];
+        this._trace = [];
 
         this._valid = true;
 
@@ -43,7 +45,7 @@ WI.RecordingAction = class RecordingAction
 
     // Static
 
-    // Payload format: [name, parameters]
+    // Payload format: [name, parameters, trace]
     static fromPayload(payload)
     {
         if (!Array.isArray(payload))
@@ -54,6 +56,9 @@ WI.RecordingAction = class RecordingAction
 
         if (!Array.isArray(payload[1]))
             payload[1] = [];
+
+        if (!Array.isArray(payload[2]))
+            payload[2] = [];
 
         return new WI.RecordingAction(...payload);
     }
@@ -71,6 +76,7 @@ WI.RecordingAction = class RecordingAction
 
     get name() { return this._name; }
     get parameters() { return this._parameters; }
+    get trace() { return this._trace; }
 
     get valid() { return this._valid; }
     set valid(valid) { this._valid = !!valid; }
@@ -95,6 +101,19 @@ WI.RecordingAction = class RecordingAction
 
             return swizzled;
         });
+
+        for (let item of this._payloadTrace) {
+            try {
+                let array = recording.swizzle(item, WI.Recording.Swizzle.Array);
+                let callFrame = WI.CallFrame.fromPayload(WI.mainTarget, {
+                    functionName: recording.swizzle(array[0], WI.Recording.Swizzle.String),
+                    url: recording.swizzle(array[1], WI.Recording.Swizzle.String),
+                    lineNumber: array[2],
+                    columnNumber: array[3],
+                });
+                this._trace.push(callFrame);
+            } catch { }
+        }
 
         this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
         this._isGetter = !this._isFunction && !this._parameters.length;
@@ -130,7 +149,7 @@ WI.RecordingAction = class RecordingAction
 
     toJSON()
     {
-        return [this._payloadName, this._payloadParameters];
+        return [this._payloadName, this._payloadParameters, this._payloadTrace];
     }
 };
 

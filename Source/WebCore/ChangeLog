@@ -1,3 +1,18 @@
+2017-08-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add stack trace information for each RecordingAction
+        https://bugs.webkit.org/show_bug.cgi?id=174663
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests: inspector/canvas/recording-2d.html
+               inspector/model/recording.html
+
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::indexForData):
+        (WebCore::InspectorCanvas::buildAction):
+
 2017-08-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Merge WTFThreadData to Thread::current

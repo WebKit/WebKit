@@ -28,6 +28,7 @@
 #include "CallTracerTypes.h"
 #include <inspector/InspectorProtocolObjects.h>
 #include <inspector/InspectorValues.h>
+#include <inspector/ScriptCallFrame.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -88,6 +89,7 @@ private:
         HTMLVideoElement*,
 #endif
         ImageData*,
+        Inspector::ScriptCallFrame,
         String
     > DuplicateDataVariant;
 

@@ -45,6 +45,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSMainThreadExecState.h"
 #include "Pattern.h"
 #include "SVGPathUtilities.h"
 #include "StringAdaptors.h"
@@ -58,6 +59,8 @@
 #include "WebGPURenderingContext.h"
 #endif
 #include <inspector/IdentifiersFactory.h>
+#include <interpreter/CallFrame.h>
+#include <interpreter/StackVisitor.h>
 
 using namespace Inspector;
 
@@ -276,6 +279,14 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         [&] (const CanvasGradient* canvasGradient) { item = buildArrayForCanvasGradient(*canvasGradient); },
         [&] (const CanvasPattern* canvasPattern) { item = buildArrayForCanvasPattern(*canvasPattern); },
         [&] (const ImageData* imageData) { item = buildArrayForImageData(*imageData); },
+        [&] (const ScriptCallFrame& scriptCallFrame) {
+            auto array = Inspector::Protocol::Array<double>::create();
+            array->addItem(indexForData(scriptCallFrame.functionName()));
+            array->addItem(indexForData(scriptCallFrame.sourceURL()));
+            array->addItem(static_cast<int>(scriptCallFrame.lineNumber()));
+            array->addItem(static_cast<int>(scriptCallFrame.columnNumber()));
+            item = WTFMove(array);
+        },
         [&] (const String& value) { item = InspectorValue::create(value); }
     );
 
@@ -442,6 +453,25 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
         );
     }
     action->addItem(WTFMove(parametersData));
+
+    RefPtr<Inspector::Protocol::Array<double>> trace = Inspector::Protocol::Array<double>::create();
+    if (JSC::CallFrame* callFrame = JSMainThreadExecState::currentState()->vm().topCallFrame) {
+        callFrame->iterate([&] (JSC::StackVisitor& visitor) {
+            // Only skip Native frames if they are the first frame (e.g. CanvasRenderingContext2D.prototype.save).
+            if (!trace->length() && visitor->isNativeFrame())
+                return JSC::StackVisitor::Continue;
+
+            unsigned line = 0;
+            unsigned column = 0;
+            visitor->computeLineAndColumn(line, column);
+
+            ScriptCallFrame scriptCallFrame(visitor->functionName(), visitor->sourceURL(), static_cast<JSC::SourceID>(visitor->sourceID()), line, column);
+            trace->addItem(indexForData(scriptCallFrame));
+
+            return JSC::StackVisitor::Continue;
+        });
+    }
+    action->addItem(WTFMove(trace));
 
     return action;
 }

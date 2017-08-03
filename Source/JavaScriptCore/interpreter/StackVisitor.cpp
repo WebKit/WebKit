@@ -225,11 +225,6 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
 }
 #endif // ENABLE(DFG_JIT)
 
-bool StackVisitor::Frame::isWasmFrame() const
-{
-    return m_isWasmFrame;
-}
-
 StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
 {
     if (isWasmFrame())

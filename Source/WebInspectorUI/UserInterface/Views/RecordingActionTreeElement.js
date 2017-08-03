@@ -174,6 +174,18 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
         contextMenu.appendSeparator();
 
+        let callFrame = this.representedObject.trace[0];
+        if (callFrame) {
+            contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
+                WI.showSourceCodeLocation(callFrame.sourceCodeLocation, {
+                    ignoreNetworkTab: true,
+                    ignoreSearchTab: true,
+                });
+            });
+
+            contextMenu.appendSeparator();
+        }
+
         super.populateContextMenu(contextMenu, event);
     }
 };
