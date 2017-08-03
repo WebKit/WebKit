@@ -54,6 +54,11 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._disclosureButtons = true;
         this._customIndent = false;
 
+        this._virtualizedScrollContainer = null;
+        this._virtualizedTreeItemHeight = NaN;
+        this._virtualizedTopSpacer = null;
+        this._virtualizedBottomSpacer = null;
+
         this._childrenListNode.tabIndex = 0;
         this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bind(this), true);
 
@@ -631,6 +636,93 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         }
 
         return false;
+    }
+
+    get virtualized()
+    {
+        return this._virtualizedScrollContainer && !isNaN(this._virtualizedTreeItemHeight);
+    }
+
+    registerScrollVirtualizer(scrollContainer, treeItemHeight)
+    {
+        console.assert(!isNaN(treeItemHeight));
+
+        this._virtualizedScrollContainer = scrollContainer;
+        this._virtualizedTreeItemHeight = treeItemHeight;
+        this._virtualizedTopSpacer = document.createElement("div");
+        this._virtualizedBottomSpacer = document.createElement("div");
+
+        this._virtualizedScrollContainer.addEventListener("scroll", (event) => {
+            this.updateVirtualizedElements();
+        });
+    }
+
+    updateVirtualizedElements(focusedTreeElement)
+    {
+        if (!this.virtualized)
+            return;
+
+        function walk(parent, callback) {
+            let count = 0;
+            let shouldReturn = false;
+            for (let i = 0; i < parent.children.length; ++i) {
+                if (!parent.children[i].revealed(false))
+                    continue;
+
+                shouldReturn = callback({
+                    parent,
+                    treeElement: parent.children[i],
+                    count,
+                });
+                if (shouldReturn)
+                    break;
+
+                ++count;
+                if (parent.children[i].expanded) {
+                    let result = walk(parent.children[i], callback);
+                    count += result.count;
+                    if (result.shouldReturn)
+                        break;
+                }
+            }
+            return {count, shouldReturn};
+        }
+
+        let numberVisible = Math.ceil(this._virtualizedScrollContainer.offsetHeight / this._virtualizedTreeItemHeight);
+        let extraRows = Math.max(numberVisible * 5, 50);
+        let firstItem = Math.floor(this._virtualizedScrollContainer.scrollTop / this._virtualizedTreeItemHeight) - extraRows;
+        let lastItem = firstItem + numberVisible + (extraRows * 2);
+
+        if (focusedTreeElement && focusedTreeElement.revealed(false)) {
+            let index = walk(this, ({treeElement}) => treeElement === focusedTreeElement).count;
+            if (index < firstItem) {
+                firstItem = index - extraRows;
+                lastItem = index + numberVisible + extraRows;
+            } else if (index > lastItem) {
+                firstItem = index - numberVisible - extraRows;
+                lastItem = index + extraRows;
+            }
+        }
+
+        let totalItems = walk(this, ({parent, treeElement, count}) => {
+            if (count < firstItem || count > lastItem)
+                treeElement.element.remove();
+            else {
+                parent._childrenListNode.appendChild(treeElement.element);
+                if (treeElement._childrenListNode)
+                    parent._childrenListNode.appendChild(treeElement._childrenListNode);
+            }
+            return false;
+        }).count;
+
+        this._virtualizedTopSpacer.style.height = (Math.max(firstItem, 0) * this._virtualizedTreeItemHeight) + "px";
+        this.element.parentNode.insertBefore(this._virtualizedTopSpacer, this.element);
+
+        this._virtualizedBottomSpacer.style.height = (Math.max(totalItems - lastItem, 0) * this._virtualizedTreeItemHeight) + "px";
+        this.element.parentNode.insertBefore(this._virtualizedBottomSpacer, this.element.nextElementSibling);
+
+        if (focusedTreeElement)
+            this._virtualizedScrollContainer.scrollTop = (firstItem + extraRows) * this._virtualizedTreeItemHeight;
     }
 
     // Protected

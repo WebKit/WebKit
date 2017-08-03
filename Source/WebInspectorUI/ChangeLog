@@ -1,3 +1,36 @@
+2017-08-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add TreeElement virtualization for the Recording tab
+        https://bugs.webkit.org/show_bug.cgi?id=174968
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+        (WI.RecordingNavigationSidebarPanel):
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.get virtualized):
+        (WI.TreeOutline.prototype.registerScrollVirtualizer):
+        (WI.TreeOutline.prototype.updateVirtualizedElements.walk):
+        (WI.TreeOutline.prototype.updateVirtualizedElements):
+        Add spacer elements before and after the TreeOutline element that will size to ensure that
+        the TreeOutline node still takes up the same amount of space after some of the TreeElements
+        are removed. Whenever the scroll of the container view changes, recalculate the visible area
+        and add/remove TreeElements based on whether they would be in that. This is only possible if
+        every TreeElement has the same vertical height, which is given when setting up the scroll
+        listener on the container view.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.set hidden):
+        (WI.TreeElement.prototype._attach):
+        (WI.TreeElement.prototype.collapse):
+        (WI.TreeElement.prototype.expand):
+        (WI.TreeElement.prototype.reveal):
+        If the TreeOutline is being virtualized, don't add each TreeElement's node to the DOM. They
+        will be added at the end of the frame (via setTimeout) if they are within the visible + padding
+        area of the TreeOutline.
+
 2017-08-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: simplify WebInspector with WI

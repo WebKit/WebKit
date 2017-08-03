@@ -165,8 +165,11 @@ WI.TreeElement = class TreeElement extends WI.Object
         if (this._childrenListNode)
             this._childrenListNode.hidden = this._hidden;
 
-        if (this.treeOutline)
+        if (this.treeOutline) {
+            this.treeOutline.soon.updateVirtualizedElements(this);
+
             this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementVisibilityDidChange, {element: this});
+        }
     }
 
     get shouldRefreshChildren()
@@ -244,9 +247,16 @@ WI.TreeElement = class TreeElement extends WI.Object
         var nextSibling = null;
         if (this.nextSibling && this.nextSibling._listItemNode && this.nextSibling._listItemNode.parentNode === this.parent._childrenListNode)
             nextSibling = this.nextSibling._listItemNode;
-        this.parent._childrenListNode.insertBefore(this._listItemNode, nextSibling);
-        if (this._childrenListNode)
-            this.parent._childrenListNode.insertBefore(this._childrenListNode, this._listItemNode.nextSibling);
+
+        if (!this.treeOutline || !this.treeOutline.virtualized) {
+            this.parent._childrenListNode.insertBefore(this._listItemNode, nextSibling);
+            if (this._childrenListNode)
+                this.parent._childrenListNode.insertBefore(this._childrenListNode, this._listItemNode.nextSibling);
+        }
+
+        if (this.treeOutline)
+            this.treeOutline.soon.updateVirtualizedElements();
+
         if (this.selected)
             this.select();
         if (this.expanded)
@@ -334,8 +344,11 @@ WI.TreeElement = class TreeElement extends WI.Object
         if (this.oncollapse)
             this.oncollapse(this);
 
-        if (this.treeOutline)
+        if (this.treeOutline) {
+            this.treeOutline.soon.updateVirtualizedElements(this);
+
             this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementDisclosureDidChanged, {element: this});
+        }
     }
 
     collapseRecursively()
@@ -398,8 +411,11 @@ WI.TreeElement = class TreeElement extends WI.Object
         if (this.onexpand)
             this.onexpand(this);
 
-        if (this.treeOutline)
+        if (this.treeOutline) {
+            this.treeOutline.soon.updateVirtualizedElements(this);
+
             this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementDisclosureDidChanged, {element: this});
+        }
     }
 
     expandRecursively(maxDepth)
@@ -445,6 +461,11 @@ WI.TreeElement = class TreeElement extends WI.Object
                 currentAncestor.expand();
             currentAncestor = currentAncestor.parent;
         }
+
+        // This must be called before onreveal, as some subclasses will scrollIntoViewIfNeeded and
+        // we should update the visible elements before attempting to scroll.
+        if (this.treeOutline)
+            this.treeOutline.updateVirtualizedElements(this);
 
         if (this.onreveal)
             this.onreveal(this);

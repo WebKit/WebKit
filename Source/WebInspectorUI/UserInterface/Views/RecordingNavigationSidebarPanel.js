@@ -30,6 +30,7 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
         super("recording", WI.UIString("Recording"));
 
         this.contentTreeOutline.customIndent = true;
+        this.contentTreeOutline.registerScrollVirtualizer(this.contentView.element, 20);
 
         this.filterBar.placeholder = WI.UIString("Filter Actions");
 
