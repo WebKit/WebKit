@@ -3625,6 +3625,9 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
     }
 #endif
 
+    if (m_userHasInteractedWithMediaElement)
+        state |= MediaProducer::HasUserInteractedWithMediaElement;
+
     if (state == m_mediaState)
         return;
 
