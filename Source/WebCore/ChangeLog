@@ -1,5 +1,34 @@
 2017-08-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220112. rdar://problem/33687415
+
+    2017-08-01  Zalan Bujtas  <zalan@apple.com>
+
+            REGRESSION (r217197): New Yorker website hangs for a long time on load, lots of blank tiles
+            https://bugs.webkit.org/show_bug.cgi?id=175009
+            <rdar://problem/33505791>
+
+            Reviewed by Simon Fraser.
+
+            This patch ensures that we report the desktop, non-frame-flattened frame size for media queries in subframes.
+            Some websites don't expect the iframes to be expanded to the size of the content and when the media query
+            callback mutates the content (triggering frame resize), they might end up getting into a never ending layout.
+
+            Test: fast/frames/flattening/media-query-growing-content.html
+
+            * css/MediaQueryEvaluator.cpp:
+            (WebCore::orientationEvaluate):
+            (WebCore::aspectRatioEvaluate):
+            (WebCore::heightEvaluate):
+            (WebCore::widthEvaluate):
+            * page/FrameView.cpp:
+            (WebCore::FrameView::layout):
+            (WebCore::FrameView::layoutSizeForMediaQuery const):
+            (WebCore::FrameView::evaluateMediaQueryList):
+            * page/FrameView.h:
+
+2017-08-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220085. rdar://problem/33687398
 
     2017-07-31  Matt Rajca  <mrajca@apple.com>
