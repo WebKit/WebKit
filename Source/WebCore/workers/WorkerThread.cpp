@@ -216,7 +216,7 @@ void WorkerThread::workerThread()
     // We cannot let any objects survive past thread exit, because no other thread will run GC or otherwise destroy them.
     workerGlobalScopeToDelete = nullptr;
 
-    // Clean up WebCore::ThreadGlobalData before WTF::WTFThreadData goes away!
+    // Clean up WebCore::ThreadGlobalData before WTF::Thread goes away!
     threadGlobalData().destroy();
 
     // The thread object may be already destroyed from notification now, don't try to access "this".

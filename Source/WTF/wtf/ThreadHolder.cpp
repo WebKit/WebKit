@@ -36,11 +36,18 @@
 
 namespace WTF {
 
+#if !HAVE(FAST_TLS)
 ThreadSpecificKey ThreadHolder::m_key = InvalidThreadSpecificKey;
+#endif
 
 ThreadHolder::~ThreadHolder()
 {
     m_thread->didExit();
+}
+
+ThreadHolder& ThreadHolder::initializeCurrent()
+{
+    return initialize(Thread::createCurrentThread());
 }
 
 } // namespace WTF

@@ -28,7 +28,6 @@
 
 #include <wtf/Atomics.h>
 #include <wtf/Compiler.h>
-#include <wtf/Threading.h>
 
 namespace WTF {
 

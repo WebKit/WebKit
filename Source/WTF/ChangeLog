@@ -1,3 +1,80 @@
+2017-08-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Merge WTFThreadData to Thread::current
+        https://bugs.webkit.org/show_bug.cgi?id=174716
+
+        Reviewed by Mark Lam.
+
+        We placed thread specific data in WTFThreadData previously. But now, we have a new good place
+        to put thread specific data: WTF::Thread. Before this patch, WTFThreadData and WTF::Thread
+        sometimes have the completely same fields (m_stack etc.) due to initialization order limitations.
+        This patch merges WTFThreadData to WTF::Thread. We apply WTFThreadData's initialization style
+        to WTF::Thread. So, WTF::Thread's holder now uses fast TLS for darwin environment. Thus,
+        Thread::current() access is now accelerated. And WTF::Thread::current() can be accessed even
+        before calling WTF::initializeThreading.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/LockAlgorithm.h:
+        * wtf/LockAlgorithmInlines.h:
+        * wtf/MainThread.h:
+        * wtf/ParkingLot.cpp:
+        * wtf/StackStats.cpp:
+        (WTF::StackStats::PerThreadStats::PerThreadStats):
+        (WTF::StackStats::CheckPoint::CheckPoint):
+        (WTF::StackStats::CheckPoint::~CheckPoint):
+        (WTF::StackStats::probe):
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+        * wtf/ThreadHolder.cpp:
+        (WTF::ThreadHolder::initializeCurrent):
+        * wtf/ThreadHolder.h:
+        (WTF::ThreadHolder::ThreadHolder):
+        (WTF::ThreadHolder::currentMayBeNull):
+        (WTF::ThreadHolder::current):
+        * wtf/ThreadHolderPthreads.cpp:
+        (WTF::ThreadHolder::initializeKey):
+        (WTF::ThreadHolder::initialize):
+        (WTF::ThreadHolder::destruct):
+        (WTF::ThreadHolder::initializeOnce): Deleted.
+        (WTF::ThreadHolder::current): Deleted.
+        * wtf/ThreadHolderWin.cpp:
+        (WTF::ThreadHolder::initializeKey):
+        (WTF::ThreadHolder::currentDying):
+        (WTF::ThreadHolder::initialize):
+        (WTF::ThreadHolder::initializeOnce): Deleted.
+        (WTF::ThreadHolder::current): Deleted.
+        * wtf/Threading.cpp:
+        (WTF::Thread::initializeInThread):
+        (WTF::Thread::entryPoint):
+        (WTF::Thread::create):
+        (WTF::Thread::didExit):
+        (WTF::initializeThreading):
+        (WTF::Thread::currentMayBeNull): Deleted.
+        * wtf/Threading.h:
+        (WTF::Thread::current):
+        (WTF::Thread::atomicStringTable):
+        (WTF::Thread::setCurrentAtomicStringTable):
+        (WTF::Thread::stackStats):
+        (WTF::Thread::savedStackPointerAtVMEntry):
+        (WTF::Thread::setSavedStackPointerAtVMEntry):
+        (WTF::Thread::savedLastStackTop):
+        (WTF::Thread::setSavedLastStackTop):
+        * wtf/ThreadingPrimitives.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::createCurrentThread):
+        (WTF::Thread::current): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::createCurrentThread):
+        (WTF::Thread::current): Deleted.
+        * wtf/WTFThreadData.cpp: Removed.
+        * wtf/WTFThreadData.h: Removed.
+        * wtf/text/AtomicString.cpp:
+        * wtf/text/AtomicStringImpl.cpp:
+        (WTF::stringTable):
+        * wtf/text/AtomicStringTable.cpp:
+        (WTF::AtomicStringTable::create):
+        * wtf/text/AtomicStringTable.h:
+
 2017-08-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         NeverDestroyed related leaks seen on bots

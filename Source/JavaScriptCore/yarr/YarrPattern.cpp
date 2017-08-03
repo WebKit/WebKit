@@ -32,8 +32,8 @@
 #include "YarrCanonicalize.h"
 #include "YarrParser.h"
 #include <wtf/DataLog.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
-#include <wtf/WTFThreadData.h>
 
 using namespace WTF;
 
@@ -882,7 +882,7 @@ private:
     {
         if (!m_stackLimit)
             return true;
-        ASSERT(wtfThreadData().stack().isGrowingDownward());
+        ASSERT(Thread::current().stack().isGrowingDownward());
         int8_t* curr = reinterpret_cast<int8_t*>(&curr);
         int8_t* limit = reinterpret_cast<int8_t*>(m_stackLimit);
         return curr >= limit;

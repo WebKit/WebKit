@@ -243,11 +243,8 @@ size_t Thread::getRegisters(PlatformRegisters& registers)
     return sizeof(CONTEXT);
 }
 
-Thread& Thread::current()
+Ref<Thread> Thread::createCurrentThread()
 {
-    if (Thread* current = currentMayBeNull())
-        return *current;
-
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
     Ref<Thread> thread = adoptRef(*new Thread());
 
@@ -256,10 +253,9 @@ Thread& Thread::current()
     RELEASE_ASSERT(isSuccessful);
 
     thread->establishPlatformSpecificHandle(handle, currentID());
-    thread->m_stack = StackBounds::currentThreadStackBounds();
-    ThreadHolder::initialize(thread.get());
+    thread->initializeInThread();
     initializeCurrentThreadEvenIfNonWTFCreated();
-    return thread.get();
+    return thread;
 }
 
 ThreadIdentifier Thread::currentID()

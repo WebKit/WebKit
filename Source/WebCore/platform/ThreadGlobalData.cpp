@@ -35,7 +35,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
-#include <wtf/WTFThreadData.h>
 #include <wtf/text/StringImpl.h>
 
 #if PLATFORM(MAC)
@@ -66,7 +65,7 @@ ThreadGlobalData::ThreadGlobalData()
     // any other thread, and is only called once per thread - this makes this a convenient
     // point to call methods that internally perform a one-time initialization that is not
     // threadsafe.
-    wtfThreadData();
+    Thread::current();
     StringImpl::empty();
 }
 

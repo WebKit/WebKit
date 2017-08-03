@@ -45,6 +45,9 @@
 
 namespace WTF {
 
+using ThreadIdentifier = uint32_t;
+using ThreadFunction = void (*)(void* argument);
+
 #if USE(PTHREADS)
 using PlatformThreadHandle = pthread_t;
 using PlatformMutex = pthread_mutex_t;
