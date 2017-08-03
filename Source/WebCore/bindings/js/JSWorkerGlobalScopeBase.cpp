@@ -40,6 +40,10 @@
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/Microtask.h>
 
+#if ENABLE(SERVICE_WORKER)
+#include "JSServiceWorkerGlobalScope.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -138,19 +142,46 @@ JSValue toJS(ExecState*, WorkerGlobalScope& workerGlobalScope)
 JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(VM& vm, JSValue value)
 {
     if (!value.isObject())
-        return 0;
+        return nullptr;
     const ClassInfo* classInfo = asObject(value)->classInfo(vm);
     if (classInfo == JSDedicatedWorkerGlobalScope::info())
         return jsCast<JSDedicatedWorkerGlobalScope*>(asObject(value));
     if (classInfo == JSProxy::info())
         return jsDynamicDowncast<JSDedicatedWorkerGlobalScope*>(vm, jsCast<JSProxy*>(asObject(value))->target());
-    return 0;
+    return nullptr;
 }
-
 
 JSWorkerGlobalScope* toJSWorkerGlobalScope(VM& vm, JSValue value)
 {
-    return toJSDedicatedWorkerGlobalScope(vm, value);
+    if (!value.isObject())
+        return nullptr;
+    const ClassInfo* classInfo = asObject(value)->classInfo(vm);
+    if (classInfo == JSDedicatedWorkerGlobalScope::info())
+        return jsCast<JSDedicatedWorkerGlobalScope*>(asObject(value));
+
+#if ENABLE(SERVICE_WORKER)
+    if (classInfo == JSServiceWorkerGlobalScope::info())
+        return jsCast<JSServiceWorkerGlobalScope*>(asObject(value));
+#endif
+
+    if (classInfo == JSProxy::info())
+        return jsDynamicDowncast<JSWorkerGlobalScope*>(vm, jsCast<JSProxy*>(asObject(value))->target());
+
+    return nullptr;
 }
+
+#if ENABLE(SERVICE_WORKER)
+JSServiceWorkerGlobalScope* toJSServiceWorkerGlobalScope(VM& vm, JSValue value)
+{
+    if (!value.isObject())
+        return nullptr;
+    const ClassInfo* classInfo = asObject(value)->classInfo(vm);
+    if (classInfo == JSServiceWorkerGlobalScope::info())
+        return jsCast<JSServiceWorkerGlobalScope*>(asObject(value));
+    if (classInfo == JSProxy::info())
+        return jsDynamicDowncast<JSServiceWorkerGlobalScope*>(vm, jsCast<JSProxy*>(asObject(value))->target());
+    return nullptr;
+}
+#endif
 
 } // namespace WebCore

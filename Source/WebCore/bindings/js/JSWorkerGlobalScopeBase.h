@@ -29,55 +29,66 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
 
+#if ENABLE(SERVICE_WORKER)
+#include "ServiceWorkerGlobalScope.h"
+#endif
+
 namespace WebCore {
 
-    class JSDedicatedWorkerGlobalScope;
-    class JSWorkerGlobalScope;
-    class WorkerGlobalScope;
+class JSDedicatedWorkerGlobalScope;
+class JSWorkerGlobalScope;
+class WorkerGlobalScope;
 
-    class JSWorkerGlobalScopeBase : public JSDOMGlobalObject {
-        typedef JSDOMGlobalObject Base;
-    public:
-        static void destroy(JSC::JSCell*);
+#if ENABLE(SERVICE_WORKER)
+class JSServiceWorkerGlobalScope;
+#endif
 
-        DECLARE_INFO;
+class JSWorkerGlobalScopeBase : public JSDOMGlobalObject {
+    typedef JSDOMGlobalObject Base;
+public:
+    static void destroy(JSC::JSCell*);
 
-        WorkerGlobalScope& wrapped() const { return *m_wrapped; }
-        JSC::JSProxy* proxy() const { ASSERT(m_proxy); return m_proxy.get(); }
-        ScriptExecutionContext* scriptExecutionContext() const;
+    DECLARE_INFO;
 
-        static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
-        {
-            return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
-        }
+    WorkerGlobalScope& wrapped() const { return *m_wrapped; }
+    JSC::JSProxy* proxy() const { ASSERT(m_proxy); return m_proxy.get(); }
+    ScriptExecutionContext* scriptExecutionContext() const;
 
-        static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    {
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
+    }
 
-        static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
-        static bool shouldInterruptScript(const JSC::JSGlobalObject*);
-        static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
-        static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
-        static void queueTaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
+    static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
 
-    protected:
-        JSWorkerGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkerGlobalScope>&&);
-        void finishCreation(JSC::VM&, JSC::JSProxy*);
+    static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
+    static bool shouldInterruptScript(const JSC::JSGlobalObject*);
+    static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
+    static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
+    static void queueTaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
 
-        static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
+protected:
+    JSWorkerGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkerGlobalScope>&&);
+    void finishCreation(JSC::VM&, JSC::JSProxy*);
 
-    private:
-        RefPtr<WorkerGlobalScope> m_wrapped;
-        JSC::WriteBarrier<JSC::JSProxy> m_proxy;
-    };
+    static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
 
-    // Returns a JSWorkerGlobalScope or jsNull()
-    // Always ignores the execState and passed globalObject, WorkerGlobalScope is itself a globalObject and will always use its own prototype chain.
-    JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, WorkerGlobalScope&);
-    inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, WorkerGlobalScope* scope) { return scope ? toJS(exec, globalObject, *scope) : JSC::jsNull(); }
-    JSC::JSValue toJS(JSC::ExecState*, WorkerGlobalScope&);
-    inline JSC::JSValue toJS(JSC::ExecState* exec, WorkerGlobalScope* scope) { return scope ? toJS(exec, *scope) : JSC::jsNull(); }
+private:
+    RefPtr<WorkerGlobalScope> m_wrapped;
+    JSC::WriteBarrier<JSC::JSProxy> m_proxy;
+};
 
-    JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSC::VM&, JSC::JSValue);
-    JSWorkerGlobalScope* toJSWorkerGlobalScope(JSC::VM&, JSC::JSValue);
+// Returns a JSWorkerGlobalScope or jsNull()
+// Always ignores the execState and passed globalObject, WorkerGlobalScope is itself a globalObject and will always use its own prototype chain.
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, WorkerGlobalScope&);
+inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, WorkerGlobalScope* scope) { return scope ? toJS(exec, globalObject, *scope) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::ExecState*, WorkerGlobalScope&);
+inline JSC::JSValue toJS(JSC::ExecState* exec, WorkerGlobalScope* scope) { return scope ? toJS(exec, *scope) : JSC::jsNull(); }
 
+JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSC::VM&, JSC::JSValue);
+JSWorkerGlobalScope* toJSWorkerGlobalScope(JSC::VM&, JSC::JSValue);
+
+#if ENABLE(SERVICE_WORKER)
+JSServiceWorkerGlobalScope* toJSServiceWorkerGlobalScope(JSC::VM&, JSC::JSValue);
+#endif
 } // namespace WebCore

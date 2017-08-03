@@ -487,16 +487,17 @@
     {
         "name": "Service Workers",
         "status": {
-            "status": "Under Consideration"
+            "status": "In Development"
         },
-        "url": "http://www.w3.org/TR/2015/WD-service-workers-20150625/",
+        "url": "https://w3c.github.io/ServiceWorker/",
+        "webkit-url": "https://webkit.org/b/174541",
         "keywords": ["service workers"],
         "category": "webapps",
         "description": "A method for browsers to run JavaScript in the background to handle network requests and manage cached responses. Service Workers offers a replacement for Application Cache.",
         "contact": {
-            "name": "Jon Davis",
-            "twitter": "@jonathandavis",
-            "email": "web-evangelist@apple.com"
+            "name": "Brady Eidson",
+            "twitter": "@bradeeoh",
+            "email": "beidson@apple.com"
         }
     },
     {

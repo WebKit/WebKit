@@ -31,6 +31,10 @@
 
 namespace WebCore {
 
+#if ENABLE(SERVICE_WORKER)
+class ServiceWorkerContainer;
+#endif
+
 class NavigatorBase : public RefCounted<NavigatorBase> {
 public:
     virtual ~NavigatorBase();
@@ -50,6 +54,10 @@ public:
 
     static String language();
     static Vector<String> languages();
+
+#if ENABLE(SERVICE_WORKER)
+    ServiceWorkerContainer* serviceWorker();
+#endif
 };
 
 } // namespace WebCore

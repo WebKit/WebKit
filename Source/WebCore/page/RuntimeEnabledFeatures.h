@@ -197,6 +197,11 @@ public:
     bool legacyEncryptedMediaAPIEnabled() const { return m_legacyEncryptedMediaAPIEnabled; }
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    bool serviceWorkerEnabled() const { return m_serviceWorkerEnabled; }
+    void setServiceWorkerEnabled(bool isEnabled) { m_serviceWorkerEnabled = isEnabled; }
+#endif
+
 #if ENABLE(VIDEO)
     bool audioEnabled() const;
 #endif
@@ -312,6 +317,10 @@ private:
 
 #if ENABLE(INTERSECTION_OBSERVER)
     bool m_intersectionObserverEnabled { false };
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    bool m_serviceWorkerEnabled { false };
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

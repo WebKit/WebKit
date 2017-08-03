@@ -45,6 +45,7 @@ namespace WebCore {
     macro(DOMNodeRemovedFromDocument) \
     macro(DOMSubtreeModified) \
     macro(abort) \
+    macro(activate) \
     macro(active) \
     macro(addsourcebuffer) \
     macro(addstream) \
@@ -86,6 +87,7 @@ namespace WebCore {
     macro(connectionstatechange) \
     macro(connecting) \
     macro(contextmenu) \
+    macro(controllerchange) \
     macro(copy) \
     macro(cuechange) \
     macro(cut) \
@@ -112,6 +114,7 @@ namespace WebCore {
     macro(enter) \
     macro(error) \
     macro(exit) \
+    macro(fetch) \
     macro(focus) \
     macro(focusin) \
     macro(focusout) \
@@ -131,6 +134,7 @@ namespace WebCore {
     macro(icegatheringstatechange) \
     macro(inactive) \
     macro(input) \
+    macro(install) \
     macro(invalid) \
     macro(keydown) \
     macro(keypress) \
@@ -148,6 +152,7 @@ namespace WebCore {
     macro(loadstart) \
     macro(mark) \
     macro(message) \
+    macro(messageerror) \
     macro(mousedown) \
     macro(mouseenter) \
     macro(mouseleave) \
@@ -237,6 +242,7 @@ namespace WebCore {
     macro(unmute) \
     macro(update) \
     macro(updateend) \
+    macro(updatefound) \
     macro(updateready) \
     macro(updatestart) \
     macro(upgradeneeded) \

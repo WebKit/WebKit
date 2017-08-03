@@ -672,6 +672,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/NavigatorID.idl
     page/NavigatorLanguage.idl
     page/NavigatorOnLine.idl
+    page/NavigatorServiceWorker.idl
     page/Performance.idl
     page/PerformanceEntry.idl
     page/PerformanceMark.idl
@@ -699,6 +700,10 @@ set(WebCore_NON_SVG_IDL_FILES
 
     workers/AbstractWorker.idl
     workers/DedicatedWorkerGlobalScope.idl
+    workers/ServiceWorker.idl
+    workers/ServiceWorkerContainer.idl
+    workers/ServiceWorkerGlobalScope.idl
+    workers/ServiceWorkerRegistration.idl
     workers/Worker.idl
     workers/WorkerGlobalScope.idl
     workers/WorkerLocation.idl
@@ -1227,6 +1232,7 @@ set(WebCore_SOURCES
     bindings/js/JSReadableStreamPrivateConstructors.cpp
     bindings/js/JSReadableStreamSourceCustom.cpp
     bindings/js/JSSVGPathSegCustom.cpp
+    bindings/js/JSServiceWorkerContainerCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSSubtleCryptoCustom.cpp
     bindings/js/JSTextCustom.cpp
@@ -2961,6 +2967,10 @@ set(WebCore_SOURCES
     workers/AbstractWorker.cpp
     workers/DedicatedWorkerGlobalScope.cpp
     workers/DedicatedWorkerThread.cpp
+    workers/ServiceWorker.cpp
+    workers/ServiceWorkerContainer.cpp
+    workers/ServiceWorkerGlobalScope.cpp
+    workers/ServiceWorkerRegistration.cpp
     workers/Worker.cpp
     workers/WorkerConsoleClient.cpp
     workers/WorkerEventQueue.cpp
@@ -3616,6 +3626,7 @@ set(SUPPLEMENTAL_DEPENDENCY_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/supplemental_dep
 set(WINDOW_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWindowConstructors.idl)
 set(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/WorkerGlobalScopeConstructors.idl)
 set(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/DedicatedWorkerGlobalScopeConstructors.idl)
+set(SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/ServiceWorkerGlobalScopeConstructors.idl)
 
 WEBKIT_FRAMEWORK_DECLARE(WebCore)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
@@ -3810,7 +3821,8 @@ GENERATE_BINDINGS(WebCoreBindings
     PP_EXTRA_ARGS
         --windowConstructorsFile ${WINDOW_CONSTRUCTORS_FILE}
         --workerGlobalScopeConstructorsFile ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
-        --dedicatedWorkerGlobalScopeConstructorsFile ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE})
+        --dedicatedWorkerGlobalScopeConstructorsFile ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+        --serviceWorkerGlobalScopeConstructorsFile ${SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE})
 
 GENERATE_BINDINGS(WebCoreTestSupportBindings
     OUTPUT_SOURCE WebCoreTestSupport_SOURCES

@@ -732,6 +732,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_DATA_INTERACTION 0
 #endif
 
+#if !defined(ENABLE_SERVICE_WORKER)
+#define ENABLE_SERVICE_WORKER 1
+#endif
+
 /* Asserts, invariants for macro definitions */
 
 #if ENABLE(VIDEO_TRACK) && !ENABLE(VIDEO)

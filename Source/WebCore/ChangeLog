@@ -1,3 +1,88 @@
+2017-08-03  Brady Eidson  <beidson@apple.com>
+
+        Add SW IDLs and stub out basic functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=175115
+
+        Reviewed by Chris Dumez.
+
+        No new tests (Currently no behavior change).
+
+        Overall note: This feature is EnabledAtRuntime as opposed to EnabledBySetting because
+        the Settings-based code generation is completely broken for non-Document contexts,
+        whereas the RuntimeEnabledFeatures-based generation is not.
+    
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * bindings/scripts/preprocess-idls.pl: Handle the new global scope c'tor file.
+
+        * bindings/js/JSServiceWorkerContainerCustom.cpp: Added.
+        (WebCore::JSServiceWorkerContainer::ready const):
+
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::toJSWorkerGlobalScope): Refactor to handle both types of derived workers.
+        (WebCore::toJSServiceWorkerGlobalScope):
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+
+        * dom/EventNames.h:
+        * dom/EventTargetFactory.in:
+
+        * features.json: Change status of feature.
+
+        * page/Navigator.idl:
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::serviceWorker):
+        * page/NavigatorBase.h:
+        * page/NavigatorServiceWorker.idl: Added.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::serviceWorkerEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setServiceWorkerEnabled):
+
+        * workers/ServiceWorker.cpp: Added.
+        (WebCore::ServiceWorker::postMessage):
+        (WebCore::ServiceWorker::~ServiceWorker):
+        (WebCore::ServiceWorker::scriptURL const):
+        (WebCore::ServiceWorker::state const):
+        (WebCore::ServiceWorker::eventTargetInterface const):
+        (WebCore::ServiceWorker::scriptExecutionContext const):
+        * workers/ServiceWorker.h: Added.
+        * workers/ServiceWorker.idl: Added.
+
+        * workers/ServiceWorkerContainer.cpp: Added.
+        (WebCore::ServiceWorkerContainer::~ServiceWorkerContainer):
+        (WebCore::ServiceWorkerContainer::controller const):
+        (WebCore::ServiceWorkerContainer::ready):
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistrations):
+        (WebCore::ServiceWorkerContainer::startMessages):
+        (WebCore::ServiceWorkerContainer::eventTargetInterface const):
+        (WebCore::ServiceWorkerContainer::scriptExecutionContext const):
+        * workers/ServiceWorkerContainer.h: Added.
+        * workers/ServiceWorkerContainer.idl: Added.
+
+        * workers/ServiceWorkerGlobalScope.cpp: Added.
+        (WebCore::ServiceWorkerGlobalScope::registration):
+        (WebCore::ServiceWorkerGlobalScope::skipWaiting):
+        * workers/ServiceWorkerGlobalScope.h: Added.
+        * workers/ServiceWorkerGlobalScope.idl: Added.
+
+        * workers/ServiceWorkerRegistration.cpp: Added.
+        (WebCore::ServiceWorkerRegistration::~ServiceWorkerRegistration):
+        (WebCore::ServiceWorkerRegistration::installing):
+        (WebCore::ServiceWorkerRegistration::waiting):
+        (WebCore::ServiceWorkerRegistration::active):
+        (WebCore::ServiceWorkerRegistration::scope const):
+        (WebCore::ServiceWorkerRegistration::update):
+        (WebCore::ServiceWorkerRegistration::unregister):
+        (WebCore::ServiceWorkerRegistration::eventTargetInterface const):
+        (WebCore::ServiceWorkerRegistration::scriptExecutionContext const):
+        * workers/ServiceWorkerRegistration.h: Added.
+        * workers/ServiceWorkerRegistration.idl: Added.
+
 2017-08-03  Yoshiaki Jitsukawa  <jitsu@rd.scei.sony.co.jp>
 
         [WebCore] Sort Xcode project files

@@ -123,6 +123,10 @@
     macro(RTCSessionDescription) \
     macro(RTCStatsReport) \
     macro(RTCTrackEvent) \
+    macro(ServiceWorker)\
+    macro(ServiceWorkerContainer)\
+    macro(ServiceWorkerGlobalScope)\
+    macro(ServiceWorkerRegistration)\
     macro(Set)\
     macro(SetIterator)\
     macro(ShadowRoot) \

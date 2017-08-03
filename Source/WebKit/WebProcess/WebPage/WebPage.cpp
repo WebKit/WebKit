@@ -3182,6 +3182,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setImageControlsEnabled(store.getBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey()));
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    RuntimeEnabledFeatures::sharedFeatures().setServiceWorkerEnabled(store.getBoolValueForKey(WebPreferencesKey::serviceWorkersEnabledKey()));
+#endif
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     settings.setAllowsAirPlayForMediaPlayback(store.getBoolValueForKey(WebPreferencesKey::allowsAirPlayForMediaPlaybackKey()));
 #endif
