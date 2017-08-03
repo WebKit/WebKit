@@ -163,15 +163,12 @@ void NetworkRTCProvider::didReceiveNetworkRTCSocketMessage(IPC::Connection& conn
 
 void NetworkRTCProvider::createResolver(uint64_t identifier, const String& address)
 {
-    CFHostRef host = CFHostCreateWithName(kCFAllocatorDefault, address.createCFString().get());
-    ASSERT(host);
-
-    auto resolver = std::make_unique<Resolver>(identifier, *this, host);
+    auto resolver = std::make_unique<Resolver>(identifier, *this, adoptCF(CFHostCreateWithName(kCFAllocatorDefault, address.createCFString().get())));
 
     CFHostClientContext context = { 0, resolver.get(), nullptr, nullptr, nullptr };
-    CFHostSetClient(host, NetworkRTCProvider::resolvedName, &context);
-    CFHostScheduleWithRunLoop(host, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-    Boolean result = CFHostStartInfoResolution(host, kCFHostAddresses, nullptr);
+    CFHostSetClient(resolver->host.get(), NetworkRTCProvider::resolvedName, &context);
+    CFHostScheduleWithRunLoop(resolver->host.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    Boolean result = CFHostStartInfoResolution(resolver->host.get(), kCFHostAddresses, nullptr);
     ASSERT_UNUSED(result, result);
 
     m_resolvers.add(identifier, WTFMove(resolver));
