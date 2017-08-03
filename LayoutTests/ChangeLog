@@ -1,5 +1,26 @@
 2017-08-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220035. rdar://problem/33692157
+
+    2017-07-28  Matt Rajca  <mrajca@apple.com>
+
+            Don't add autoplay restrictions to media elements created in response to user gestures.
+            https://bugs.webkit.org/show_bug.cgi?id=174947
+
+            Reviewed by Eric Carlson.
+
+            Skip the test on iOS because "runWithKeyDown" does not work there.
+
+            Jer: "Turns out the problem with iOS is that the WKTR EventSender is basically unwritten. It
+            doesn't support sending mouse, key, or touch events, so our "do this during a user gesture"
+            helper in video-test.js doesn't work."
+
+            * media/video-create-with-user-gesture-expected.txt: Added.
+            * media/video-create-with-user-gesture.html: Added.
+            * platform/ios/TestExpectations:
+
+2017-08-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220112. rdar://problem/33687415
 
     2017-08-01  Zalan Bujtas  <zalan@apple.com>
