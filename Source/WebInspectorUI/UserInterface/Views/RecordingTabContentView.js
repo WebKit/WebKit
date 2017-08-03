@@ -59,6 +59,11 @@ WI.RecordingTabContentView = class RecordingTabContentView extends WI.ContentBro
         };
     }
 
+    static isTabAllowed()
+    {
+        return !!window.CanvasAgent;
+    }
+
     // Public
 
     get type()
