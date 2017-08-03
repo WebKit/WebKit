@@ -1,5 +1,12 @@
 2017-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=175013
+
+        * wtf/Threading.h:
+
+2017-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Merge ThreadHolder to WTF::Thread itself
         https://bugs.webkit.org/show_bug.cgi?id=175013
 

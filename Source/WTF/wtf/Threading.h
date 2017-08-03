@@ -79,8 +79,8 @@ class Thread : public ThreadSafeRefCounted<Thread> {
 public:
     friend class ThreadGroup;
     friend class AtomicStringTable;
-    friend void initializeThreading();
-    friend int waitForThreadCompletion(ThreadIdentifier);
+    friend WTF_EXPORT_PRIVATE void initializeThreading();
+    friend WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
 
     WTF_EXPORT_PRIVATE ~Thread();
 
