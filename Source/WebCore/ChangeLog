@@ -1,5 +1,26 @@
 2017-08-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220077. rdar://problem/33687398
+
+    2017-07-28  Matt Rajca  <mrajca@apple.com>
+
+            Propagate user gesture tokens when script elements are loaded.
+            https://bugs.webkit.org/show_bug.cgi?id=174959
+
+            Reviewed by Eric Carlson.
+
+            Propagate user gesture tokens when script elements are loaded (i.e. between the time an
+            element is created and its onload handler is invoked).
+
+            * dom/ScriptElement.cpp:
+            (WebCore::ScriptElement::ScriptElement):
+            (WebCore::ScriptElement::dispatchLoadEventRespectingUserGestureIndicator):
+            (WebCore::ScriptElement::executeScriptAndDispatchEvent):
+            (WebCore::ScriptElement::executePendingScript):
+            * dom/ScriptElement.h:
+
+2017-08-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220035. rdar://problem/33687398
 
     2017-07-28  Matt Rajca  <mrajca@apple.com>
