@@ -34,7 +34,6 @@
 #include <wtf/PrintStream.h>
 #include <wtf/RandomNumberSeed.h>
 #include <wtf/ThreadGroup.h>
-#include <wtf/ThreadHolder.h>
 #include <wtf/ThreadMessage.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/text/AtomicStringTable.h>
@@ -113,12 +112,11 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
         MutexLocker locker(context->mutex);
         ASSERT(context->stage == NewThreadContext::Stage::EstablishedHandle);
 
-        // Initialize thread holder with established ID.
-        ThreadHolder::initialize(context->thread.copyRef());
-
         Thread::initializeCurrentThreadInternal(context->name);
         function = WTFMove(context->entryPoint);
         context->thread->initializeInThread();
+
+        Thread::initializeTLS(WTFMove(context->thread));
 
 #if !HAVE(STACK_BOUNDS_FOR_NEW_THREAD)
         // Ack completion of initialization to the creating thread.
@@ -278,13 +276,17 @@ void Thread::dump(PrintStream& out) const
     out.print(m_id);
 }
 
+#if !HAVE(FAST_TLS)
+ThreadSpecificKey Thread::s_key = InvalidThreadSpecificKey;
+#endif
+
 void initializeThreading()
 {
-    static std::once_flag initializeKey;
-    std::call_once(initializeKey, [] {
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
         initializeRandomNumberGenerator();
 #if !HAVE(FAST_TLS)
-        ThreadHolder::initializeKey();
+        Thread::initializeTLSKey();
 #endif
         initializeDates();
         Thread::initializePlatformThreading();

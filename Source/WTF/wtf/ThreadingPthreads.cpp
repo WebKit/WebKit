@@ -41,7 +41,6 @@
 #include <wtf/RawPointer.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadGroup.h>
-#include <wtf/ThreadHolder.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WordLock.h>
 
@@ -294,7 +293,7 @@ int Thread::waitForCompletion()
     ASSERT(joinableState() == Joinable);
 
     // If the thread has already exited, then do nothing. If the thread hasn't exited yet, then just signal that we've already joined on it.
-    // In both cases, ThreadHolder::destruct() will take care of destroying Thread.
+    // In both cases, Thread::destructTLS() will take care of destroying Thread.
     if (!hasExited())
         didJoin();
 
@@ -312,15 +311,15 @@ void Thread::detach()
         didBecomeDetached();
 }
 
-
-Ref<Thread> Thread::createCurrentThread()
+Thread& Thread::initializeCurrentTLS()
 {
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
     Ref<Thread> thread = adoptRef(*new Thread());
     thread->establishPlatformSpecificHandle(pthread_self());
     thread->initializeInThread();
     initializeCurrentThreadEvenIfNonWTFCreated();
-    return thread;
+
+    return initializeTLS(WTFMove(thread));
 }
 
 ThreadIdentifier Thread::currentID()
@@ -464,6 +463,49 @@ void Thread::establishPlatformSpecificHandle(pthread_t handle)
         m_platformThread = pthread_mach_thread_np(handle);
 #endif
     }
+}
+
+#if !HAVE(FAST_TLS)
+void Thread::initializeTLSKey()
+{
+    threadSpecificKeyCreate(&s_key, destructTLS);
+}
+#endif
+
+Thread& Thread::initializeTLS(Ref<Thread>&& thread)
+{
+    // We leak the ref to keep the Thread alive while it is held in TLS. destructTLS will deref it later at thread destruction time.
+    auto& threadInTLS = thread.leakRef();
+#if !HAVE(FAST_TLS)
+    ASSERT(s_key != InvalidThreadSpecificKey);
+    threadSpecificSet(s_key, &threadInTLS);
+#else
+    _pthread_setspecific_direct(WTF_THREAD_DATA_KEY, &threadInTLS);
+    pthread_key_init_np(WTF_THREAD_DATA_KEY, &destructTLS);
+#endif
+    return threadInTLS;
+}
+
+void Thread::destructTLS(void* data)
+{
+    Thread* thread = static_cast<Thread*>(data);
+    ASSERT(thread);
+
+    if (thread->m_isDestroyedOnce) {
+        thread->didExit();
+        thread->deref();
+        return;
+    }
+
+    thread->m_isDestroyedOnce = true;
+    // Re-setting the value for key causes another destructTLS() call after all other thread-specific destructors were called.
+#if !HAVE(FAST_TLS)
+    ASSERT(s_key != InvalidThreadSpecificKey);
+    threadSpecificSet(s_key, thread);
+#else
+    _pthread_setspecific_direct(WTF_THREAD_DATA_KEY, thread);
+    pthread_key_init_np(WTF_THREAD_DATA_KEY, &destructTLS);
+#endif
 }
 
 Mutex::Mutex()

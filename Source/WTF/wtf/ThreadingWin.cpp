@@ -92,11 +92,11 @@
 #include <process.h>
 #include <windows.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/ThreadHolder.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WTF {
@@ -239,7 +239,7 @@ size_t Thread::getRegisters(PlatformRegisters& registers)
     return sizeof(CONTEXT);
 }
 
-Ref<Thread> Thread::createCurrentThread()
+Thread& Thread::initializeCurrentTLS()
 {
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
     Ref<Thread> thread = adoptRef(*new Thread());
@@ -251,7 +251,8 @@ Ref<Thread> Thread::createCurrentThread()
     thread->establishPlatformSpecificHandle(handle, currentID());
     thread->initializeInThread();
     initializeCurrentThreadEvenIfNonWTFCreated();
-    return thread;
+
+    return initializeTLS(WTFMove(thread));
 }
 
 ThreadIdentifier Thread::currentID()
@@ -264,6 +265,105 @@ void Thread::establishPlatformSpecificHandle(HANDLE handle, ThreadIdentifier thr
     std::lock_guard<std::mutex> locker(m_mutex);
     m_handle = handle;
     m_id = threadID;
+}
+
+#define InvalidThread ((Thread*)(0xbbadbeef))
+
+static std::mutex& threadMapMutex()
+{
+    static NeverDestroyed<std::mutex> mutex;
+    return mutex.get();
+}
+
+static HashMap<ThreadIdentifier, Thread*>& threadMap()
+{
+    static NeverDestroyed<HashMap<ThreadIdentifier, Thread*>> map;
+    return map.get();
+}
+
+void Thread::initializeTLSKey()
+{
+    threadMapMutex();
+    threadMap();
+    threadSpecificKeyCreate(&s_key, destructTLS);
+}
+
+Thread* Thread::currentDying()
+{
+    ASSERT(s_key != InvalidThreadSpecificKey);
+    // After FLS is destroyed, this map offers the value until the second thread exit callback is called.
+    std::lock_guard<std::mutex> locker(threadMapMutex());
+    return threadMap().get(currentThread());
+}
+
+// FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
+RefPtr<Thread> Thread::get(ThreadIdentifier id)
+{
+    std::lock_guard<std::mutex> locker(threadMapMutex());
+    Thread* thread = threadMap().get(id);
+    if (thread)
+        return thread;
+    return nullptr;
+}
+
+Thread& Thread::initializeTLS(Ref<Thread>&& thread)
+{
+    ASSERT(s_key != InvalidThreadSpecificKey);
+    // FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
+    auto id = thread->id();
+    // We leak the ref to keep the Thread alive while it is held in TLS. destructTLS will deref it later at thread destruction time.
+    auto& threadInTLS = thread.leakRef();
+    threadSpecificSet(s_key, &threadInTLS);
+    {
+        std::lock_guard<std::mutex> locker(threadMapMutex());
+        threadMap().add(id, &threadInTLS);
+    }
+    return threadInTLS;
+}
+
+void Thread::destructTLS(void* data)
+{
+    if (data == InvalidThread)
+        return;
+
+    Thread* thread = static_cast<Thread*>(data);
+    ASSERT(thread);
+
+    // Delay the deallocation of Thread more.
+    // It defers Thread deallocation after the other ThreadSpecific values are deallocated.
+    static thread_local class ThreadExitCallback {
+    public:
+        ThreadExitCallback(Thread* thread)
+            : m_thread(thread)
+        {
+        }
+
+        ~ThreadExitCallback()
+        {
+            Thread::destructTLS(m_thread);
+        }
+
+    private:
+        Thread* m_thread;
+    } callback(thread);
+
+    if (thread->m_isDestroyedOnce) {
+        {
+            std::lock_guard<std::mutex> locker(threadMapMutex());
+            ASSERT(threadMap().contains(thread->id()));
+            threadMap().remove(thread->id());
+        }
+        thread->didExit();
+        thread->deref();
+
+        // Fill the FLS with the non-nullptr value. While FLS destructor won't be called for that,
+        // non-nullptr value tells us that we already destructed Thread. This allows us to
+        // detect incorrect use of Thread::current() after this point because it will crash.
+        threadSpecificSet(s_key, InvalidThread);
+        return;
+    }
+    threadSpecificSet(s_key, InvalidThread);
+    thread->m_isDestroyedOnce = true;
 }
 
 Mutex::Mutex()
@@ -505,7 +605,7 @@ int waitForThreadCompletion(ThreadIdentifier threadID)
     // it should not be used in new code.
     ASSERT(threadID);
 
-    RefPtr<Thread> thread = ThreadHolder::get(threadID);
+    RefPtr<Thread> thread = Thread::get(threadID);
     if (!thread) {
         LOG_ERROR("ThreadIdentifier %u did not correspond to an active thread when trying to quit", threadID);
         return WAIT_FAILED;

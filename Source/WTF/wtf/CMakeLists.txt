@@ -137,7 +137,6 @@ set(WTF_HEADERS
     SystemFree.h
     SystemTracing.h
     ThreadGroup.h
-    ThreadHolder.cpp
     ThreadMessage.h
     ThreadSafeRefCounted.h
     ThreadSpecific.h
@@ -347,7 +346,6 @@ list(APPEND WTF_LIBRARIES
 if (WIN32)
     list(APPEND WTF_SOURCES
         OSAllocatorWin.cpp
-        ThreadHolderWin.cpp
         ThreadSpecificWin.cpp
         ThreadingWin.cpp
     )
@@ -357,7 +355,6 @@ if (WIN32)
 else ()
     list(APPEND WTF_SOURCES
         OSAllocatorPosix.cpp
-        ThreadHolderPthreads.cpp
         ThreadingPthreads.cpp
     )
 endif ()

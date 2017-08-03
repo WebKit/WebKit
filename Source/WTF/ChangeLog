@@ -1,5 +1,53 @@
 2017-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Merge ThreadHolder to WTF::Thread itself
+        https://bugs.webkit.org/show_bug.cgi?id=175013
+
+        Reviewed by Mark Lam.
+
+        Currently, we store ThreadHolder* to the TLS, and ThreadHolder* holds Ref<Thread>.
+        When we get Thread& from the current thread TLS, we need to dereference the ThreadHolder*.
+        However, ideally, we can store Thread* directly to the current thread TLS.
+        While the ThreadHolder design is beautiful, it's worth optimizing by storing Thread* directly
+        since Thread::current() is so frequently executed.
+
+        This patch merges ThreadHolder to Thread. And we now store Thread* directly in the TLS.
+        When storing it to TLS, we call leakRef() to keep Thread ref count incremented by the TLS.
+        And when destroying the TLS, we call `deref()` to ensure that Thread* is dereferenced from
+        the TLS.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/ThreadHolder.cpp: Removed.
+        * wtf/ThreadHolder.h: Removed.
+        * wtf/ThreadHolderPthreads.cpp: Removed.
+        * wtf/ThreadHolderWin.cpp: Removed.
+        * wtf/Threading.cpp:
+        (WTF::Thread::entryPoint):
+        (WTF::initializeThreading):
+        * wtf/Threading.h:
+        (WTF::Thread::currentMayBeNull):
+        (WTF::Thread::current):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::initializeCurrentTLS):
+        (WTF::Thread::initializeTLSKey):
+        (WTF::Thread::initializeTLS):
+        (WTF::Thread::destructTLS):
+        (WTF::Thread::createCurrentThread): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::initializeCurrentTLS):
+        (WTF::threadMapMutex):
+        (WTF::Thread::initializeTLSKey):
+        (WTF::Thread::currentDying):
+        (WTF::Thread::get):
+        (WTF::Thread::initializeTLS):
+        (WTF::Thread::destructTLS):
+        (WTF::waitForThreadCompletion):
+        (WTF::Thread::createCurrentThread): Deleted.
+
+2017-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [Linux][WTF] Use one global semaphore to notify thread suspend and resume completion
         https://bugs.webkit.org/show_bug.cgi?id=175124
 

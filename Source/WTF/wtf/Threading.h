@@ -35,13 +35,15 @@
 #include <stdint.h>
 #include <wtf/Atomics.h>
 #include <wtf/Expected.h>
+#include <wtf/FastTLS.h>
 #include <wtf/Function.h>
 #include <wtf/PlatformRegisters.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
-#include <wtf/ThreadHolder.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/Vector.h>
 
 #if USE(PTHREADS) && !OS(DARWIN)
@@ -59,14 +61,26 @@ using AtomicStringTableDestructor = void (*)(AtomicStringTable*);
 enum class ThreadGroupAddResult;
 
 class ThreadGroup;
-class ThreadHolder;
 class PrintStream;
+
+// This function can be called from any threads.
+WTF_EXPORT_PRIVATE void initializeThreading();
+
+// FIXME: The following functions remain because they are used from WebKit Windows support library,
+// WebKitQuartzCoreAdditions.dll. When updating the support library, we should use new API instead
+// and the following workaound should be removed. And new code should not use the following APIs.
+// Remove this workaround code when <rdar://problem/31793213> is fixed.
+#if OS(WINDOWS)
+WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
+WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
+#endif
 
 class Thread : public ThreadSafeRefCounted<Thread> {
 public:
     friend class ThreadGroup;
-    friend class ThreadHolder;
     friend class AtomicStringTable;
+    friend void initializeThreading();
+    friend int waitForThreadCompletion(ThreadIdentifier);
 
     WTF_EXPORT_PRIVATE ~Thread();
 
@@ -75,7 +89,7 @@ public:
     WTF_EXPORT_PRIVATE static RefPtr<Thread> create(const char* threadName, Function<void()>&&);
 
     // Returns Thread object.
-    static Thread& current() { return ThreadHolder::current().thread(); }
+    static Thread& current();
 
     // Returns ThreadIdentifier directly. It is useful if the user only cares about identity
     // of threads. At that time, users should know that holding this ThreadIdentifier does not ensure
@@ -192,7 +206,6 @@ public:
 protected:
     Thread() = default;
 
-    static Ref<Thread> createCurrentThread();
     void initializeInThread();
 
     // Internal platform-specific Thread establishment implementation.
@@ -234,12 +247,44 @@ protected:
     ThreadGroupAddResult addToThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup&);
     void removeFromThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup&);
 
+    // The Thread instance is ref'ed and held in thread-specific storage. It will be deref'ed by destructTLS at thread destruction time.
+    // For pthread, it employs pthreads-specific 2-pass destruction to reliably remove Thread.
+    // For Windows, we use thread_local to defer thread TLS destruction. It assumes regular ThreadSpecific
+    // types don't use multiple-pass destruction.
+
+#if !HAVE(FAST_TLS)
+    static WTF_EXPORTDATA ThreadSpecificKey s_key;
+    // One time initialization for this class as a whole.
+    // This method must be called before initializeTLS() and it is not thread-safe.
+    static void initializeTLSKey();
+#endif
+
+    // Creates and puts an instance of Thread into thread-specific storage.
+    static Thread& initializeTLS(Ref<Thread>&&);
+    WTF_EXPORT_PRIVATE static Thread& initializeCurrentTLS();
+
+    // Returns nullptr if thread-specific storage was not initialized.
+    static Thread* currentMayBeNull();
+
+#if OS(WINDOWS)
+    WTF_EXPORT_PRIVATE static Thread* currentDying();
+    static RefPtr<Thread> get(ThreadIdentifier);
+#endif
+
+    // This thread-specific destructor is called 2 times when thread terminates:
+    // - first, when all the other thread-specific destructors are called, it simply remembers it was 'destroyed once'
+    // and (1) re-sets itself into the thread-specific slot or (2) constructs thread local value to call it again later.
+    // - second, after all thread-specific destructors were invoked, it gets called again - this time, we remove the
+    // Thread from the threadMap, completing the cleanup.
+    static void THREAD_SPECIFIC_CALL destructTLS(void* data);
+
     // WordLock & Lock rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.
     std::mutex m_mutex;
     ThreadIdentifier m_id { 0 };
     JoinableState m_joinableState { Joinable };
     bool m_isShuttingDown { false };
     bool m_didExit { false };
+    bool m_isDestroyedOnce { false };
     StackBounds m_stack { StackBounds::emptyBounds() };
     Vector<std::weak_ptr<ThreadGroup>> m_threadGroups;
     PlatformThreadHandle m_handle;
@@ -267,14 +312,36 @@ inline ThreadIdentifier currentThread()
     return Thread::currentID();
 }
 
-// FIXME: The following functions remain because they are used from WebKit Windows support library,
-// WebKitQuartzCoreAdditions.dll. When updating the support library, we should use new API instead
-// and the following workaound should be removed. And new code should not use the following APIs.
-// Remove this workaround code when <rdar://problem/31793213> is fixed.
-#if OS(WINDOWS)
-WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
-WTF_EXPORT_PRIVATE int waitForThreadCompletion(ThreadIdentifier);
+inline Thread* Thread::currentMayBeNull()
+{
+#if !HAVE(FAST_TLS)
+    ASSERT(s_key != InvalidThreadSpecificKey);
+    return static_cast<Thread*>(threadSpecificGet(s_key));
+#else
+    return static_cast<Thread*>(_pthread_getspecific_direct(WTF_THREAD_DATA_KEY));
 #endif
+}
+
+inline Thread& Thread::current()
+{
+    // WRT WebCore:
+    //    Thread::current() is used on main thread before it could possibly be used
+    //    on secondary ones, so there is no need for synchronization here.
+    // WRT JavaScriptCore:
+    //    Thread::initializeTLSKey() is initially called from initializeThreading(), ensuring
+    //    this is initially called in a pthread_once locked context.
+#if !HAVE(FAST_TLS)
+    if (UNLIKELY(Thread::s_key == InvalidThreadSpecificKey))
+        WTF::initializeThreading();
+#endif
+    if (auto* thread = currentMayBeNull())
+        return *thread;
+#if OS(WINDOWS)
+    if (auto* thread = currentDying())
+        return *thread;
+#endif
+    return initializeCurrentTLS();
+}
 
 } // namespace WTF
 
