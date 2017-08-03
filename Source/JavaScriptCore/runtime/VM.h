@@ -221,7 +221,7 @@ struct ScratchBuffer {
     static size_t allocationSize(Checked<size_t> bufferSize) { return (sizeof(ScratchBuffer) + bufferSize).unsafeGet(); }
     void setActiveLength(size_t activeLength) { u.m_activeLength = activeLength; }
     size_t activeLength() const { return u.m_activeLength; };
-    size_t* activeLengthPtr() { return &u.m_activeLength; };
+    size_t* addressOfActiveLength() { return &u.m_activeLength; };
     void* dataBuffer() { return m_buffer; }
 
     union {

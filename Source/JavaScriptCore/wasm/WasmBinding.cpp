@@ -205,7 +205,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJs(VM* vm, Bag<CallLinkInf
         jit.loadPtr(MacroAssembler::Address(MacroAssembler::stackPointerRegister), scratchGPR);
         if (argCount) {
             // The GC should not look at this buffer at all, these aren't JSValues.
-            jit.move(CCallHelpers::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::argumentGPR0);
+            jit.move(CCallHelpers::TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::argumentGPR0);
             jit.storePtr(CCallHelpers::TrustedImmPtr(0), GPRInfo::argumentGPR0);
         }
 

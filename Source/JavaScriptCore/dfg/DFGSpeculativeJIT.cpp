@@ -7229,7 +7229,7 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
 
     {
         GPRTemporary scratch(this);
-        m_jit.move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratch.gpr());
+        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), scratch.gpr());
         m_jit.storePtr(TrustedImmPtr(scratchSize), MacroAssembler::Address(scratch.gpr()));
     }
 
@@ -7242,7 +7242,7 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
     m_jit.exceptionCheck();
     {
         GPRTemporary scratch(this);
-        m_jit.move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratch.gpr());
+        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), scratch.gpr());
         m_jit.storePtr(TrustedImmPtr(0), MacroAssembler::Address(scratch.gpr()));
     }
 
