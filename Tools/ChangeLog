@@ -1,3 +1,17 @@
+2017-08-02  Youenn Fablet  <youenn@apple.com>
+
+        HTTP tests with 'https' suffix are only run over HTTPS for WK2, not WK1
+        https://bugs.webkit.org/show_bug.cgi?id=175089
+
+        Reviewed by Chris Dumez.
+
+        * DumpRenderTree/TestOptions.mm:
+        (TestOptions::TestOptions): Using absolutePath if available.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (computeTestURL): Removing http/tests/ specific URL computation.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._command_from_driver_input): Making webkitpy passing HTTP urls for HTTP served tests to all test runners, including WK1.
+
 2017-08-02  Lucas Forschler  <lforschler@apple.com>
 
         download-built-product should allow for a proxy option
