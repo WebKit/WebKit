@@ -23,6 +23,8 @@
 
 #include "ContainerNode.h"
 #include "LoadableScript.h"
+#include "UserGestureIndicator.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
@@ -91,6 +93,7 @@ private:
     std::optional<ScriptType> determineScriptType(LegacyTypeSupport) const;
     bool ignoresLoadRequest() const;
     bool isScriptForEventSupported() const;
+    void dispatchLoadEventRespectingUserGestureIndicator();
 
     bool requestClassicScript(const String& sourceURL);
     bool requestModuleScript(const TextPosition& scriptStartPosition);
@@ -121,6 +124,9 @@ private:
     String m_characterEncoding;
     String m_fallbackCharacterEncoding;
     RefPtr<LoadableScript> m_loadableScript;
+
+    MonotonicTime m_creationTime;
+    RefPtr<UserGestureToken> m_userGestureToken;
 };
 
 // FIXME: replace with is/downcast<ScriptElement>.

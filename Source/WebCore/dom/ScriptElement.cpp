@@ -56,6 +56,8 @@
 
 namespace WebCore {
 
+static const auto maxUserGesturePropagationTime = 1_s;
+
 ScriptElement::ScriptElement(Element& element, bool parserInserted, bool alreadyStarted)
     : m_element(element)
     , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
@@ -69,6 +71,8 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
     , m_forceAsync(!parserInserted)
     , m_willExecuteInOrder(false)
     , m_isModuleScript(false)
+    , m_creationTime(MonotonicTime::now())
+    , m_userGestureToken(UserGestureIndicator::currentUserGesture())
 {
     if (parserInserted && m_element.document().scriptableDocumentParser() && !m_element.document().isInDocumentWrite())
         m_startLineNumber = m_element.document().scriptableDocumentParser()->textPosition().m_line;
@@ -410,6 +414,17 @@ void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScri
     frame->script().linkAndEvaluateModuleScript(loadableModuleScript);
 }
 
+void ScriptElement::dispatchLoadEventRespectingUserGestureIndicator()
+{
+    if (MonotonicTime::now() - m_creationTime > maxUserGesturePropagationTime) {
+        dispatchLoadEvent();
+        return;
+    }
+
+    UserGestureIndicator indicator(m_userGestureToken);
+    dispatchLoadEvent();
+}
+
 void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript)
 {
     if (std::optional<LoadableScript::Error> error = loadableScript.error()) {
@@ -419,7 +434,7 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
     } else if (!loadableScript.wasCanceled()) {
         ASSERT(!loadableScript.error());
         loadableScript.execute(*this);
-        dispatchLoadEvent();
+        dispatchLoadEventRespectingUserGestureIndicator();
     }
 }
 
@@ -431,7 +446,7 @@ void ScriptElement::executePendingScript(PendingScript& pendingScript)
         ASSERT(!pendingScript.error());
         ASSERT_WITH_MESSAGE(scriptType() == ScriptType::Classic, "Module script always have a loadableScript pointer.");
         executeClassicScript(ScriptSourceCode(scriptContent(), m_element.document().url(), pendingScript.startingPosition(), JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
-        dispatchLoadEvent();
+        dispatchLoadEventRespectingUserGestureIndicator();
     }
 }
 
