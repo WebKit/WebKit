@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(FETCH_API)
-
 #include "ActiveDOMObject.h"
 #include "FetchBody.h"
 #include "FetchHeaders.h"
@@ -110,5 +108,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

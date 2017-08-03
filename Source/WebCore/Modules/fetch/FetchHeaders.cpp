@@ -29,8 +29,6 @@
 #include "config.h"
 #include "FetchHeaders.h"
 
-#if ENABLE(FETCH_API)
-
 #include "HTTPParsers.h"
 
 namespace WebCore {
@@ -215,5 +213,3 @@ FetchHeaders::Iterator::Iterator(FetchHeaders& headers)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

@@ -632,9 +632,8 @@ public:
 #if ENABLE(WEBGPU)
         [NSNumber numberWithBool:NO], WebKitWebGPUEnabledPreferenceKey,
 #endif
-#if ENABLE(FETCH_API)
         [NSNumber numberWithBool:YES], WebKitFetchAPIEnabledPreferenceKey,
-#endif
+
 #if ENABLE(STREAMS_API)
         [NSNumber numberWithBool:NO], WebKitReadableByteStreamAPIEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitWritableStreamAPIEnabledPreferenceKey,

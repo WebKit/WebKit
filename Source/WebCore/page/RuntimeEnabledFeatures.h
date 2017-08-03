@@ -162,10 +162,8 @@ public:
     bool webGPUEnabled() const { return m_isWebGPUEnabled; }
 #endif
 
-#if ENABLE(FETCH_API)
     void setFetchAPIEnabled(bool isEnabled) { m_isFetchAPIEnabled = isEnabled; }
     bool fetchAPIEnabled() const { return m_isFetchAPIEnabled; }
-#endif
     
 #if ENABLE(STREAMS_API)
     void setReadableByteStreamAPIEnabled(bool isEnabled) { m_isReadableByteStreamAPIEnabled = isEnabled; }
@@ -297,9 +295,7 @@ private:
     bool m_isWebGPUEnabled { false };
 #endif
 
-#if ENABLE(FETCH_API)
     bool m_isFetchAPIEnabled { true };
-#endif
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     bool m_isDownloadAttributeEnabled { false };

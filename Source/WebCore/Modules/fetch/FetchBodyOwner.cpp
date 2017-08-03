@@ -29,8 +29,6 @@
 #include "config.h"
 #include "FetchBodyOwner.h"
 
-#if ENABLE(FETCH_API)
-
 #include "FetchLoader.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"
@@ -269,5 +267,3 @@ void FetchBodyOwner::BlobLoader::didFail()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

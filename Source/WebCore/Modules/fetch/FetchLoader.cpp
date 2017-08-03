@@ -29,8 +29,6 @@
 #include "config.h"
 #include "FetchLoader.h"
 
-#if ENABLE(FETCH_API)
-
 #include "BlobURL.h"
 #include "CachedResourceRequestInitiators.h"
 #include "ContentSecurityPolicy.h"
@@ -152,5 +150,3 @@ void FetchLoader::didFail(const ResourceError&)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

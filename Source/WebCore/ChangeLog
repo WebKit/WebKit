@@ -1,3 +1,45 @@
+2017-08-03  Youenn Fablet  <youenn@apple.com>
+
+        Remove FETCH_API compilation guard
+        https://bugs.webkit.org/show_bug.cgi?id=175154
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/fetch/DOMWindowFetch.cpp:
+        * Modules/fetch/DOMWindowFetch.h:
+        * Modules/fetch/DOMWindowFetch.idl:
+        * Modules/fetch/FetchBody.cpp:
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBody.idl:
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        * Modules/fetch/FetchBodyConsumer.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchHeaders.cpp:
+        * Modules/fetch/FetchHeaders.h:
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/fetch/FetchInternals.js:
+        * Modules/fetch/FetchLoader.cpp:
+        * Modules/fetch/FetchLoader.h:
+        * Modules/fetch/FetchLoaderClient.h:
+        * Modules/fetch/FetchRequest.cpp:
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchResponse.cpp:
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/FetchResponse.js:
+        * Modules/fetch/FetchResponseSource.cpp:
+        * Modules/fetch/FetchResponseSource.h:
+        * Modules/fetch/WorkerGlobalScopeFetch.cpp:
+        * Modules/fetch/WorkerGlobalScopeFetch.h:
+        * Modules/fetch/WorkerGlobalScopeFetch.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::fetchAPIEnabled const):
+
 2017-08-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add button to open Inspector^2

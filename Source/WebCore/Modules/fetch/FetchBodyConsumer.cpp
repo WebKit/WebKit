@@ -29,8 +29,6 @@
 #include "config.h"
 #include "FetchBodyConsumer.h"
 
-#if ENABLE(FETCH_API)
-
 #include "JSBlob.h"
 #include "TextResourceDecoder.h"
 
@@ -151,5 +149,3 @@ String FetchBodyConsumer::takeAsText()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

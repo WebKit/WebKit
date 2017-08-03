@@ -29,8 +29,6 @@
 #include "config.h"
 #include "FetchBody.h"
 
-#if ENABLE(FETCH_API)
-
 #include "Document.h"
 #include "FetchBodyOwner.h"
 #include "FetchHeaders.h"
@@ -273,5 +271,3 @@ FetchBody FetchBody::clone() const
 }
 
 }
-
-#endif // ENABLE(FETCH_API)

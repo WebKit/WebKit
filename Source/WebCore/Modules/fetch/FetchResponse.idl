@@ -40,7 +40,6 @@ dictionary FetchResponseInit {
 
 [
     ActiveDOMObject,
-    Conditional=FETCH_API,
     ConstructorCallWith=ScriptExecutionContext,
     EnabledAtRuntime=FetchAPI,
     Exposed=(Window,Worker),

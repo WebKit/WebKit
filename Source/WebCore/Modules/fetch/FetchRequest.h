@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(FETCH_API)
-
 #include "ExceptionOr.h"
 #include "FetchBodyOwner.h"
 #include "FetchOptions.h"
@@ -144,5 +142,3 @@ inline auto FetchRequest::type() const -> Type
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

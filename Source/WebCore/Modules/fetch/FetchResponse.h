@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(FETCH_API)
-
 #include "FetchBodyOwner.h"
 #include "FetchHeaders.h"
 #include "ResourceResponse.h"
@@ -137,5 +135,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(FETCH_API)
-
 #include "DOMFormData.h"
 #include "FetchBodyConsumer.h"
 #include "FormData.h"
@@ -117,5 +115,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

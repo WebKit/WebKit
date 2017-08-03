@@ -1,3 +1,12 @@
+2017-08-03  Youenn Fablet  <youenn@apple.com>
+
+        Remove FETCH_API compilation guard
+        https://bugs.webkit.org/show_bug.cgi?id=175154
+
+        Reviewed by Chris Dumez.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-08-03  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Instrument WebGLProgram created/deleted

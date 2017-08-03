@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(FETCH_API)
-
 #include "FetchRequest.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Forward.h>
@@ -44,5 +42,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(FETCH_API)
-
 #include "ExceptionOr.h"
 #include "HTTPHeaderMap.h"
 #include <wtf/HashTraits.h>
@@ -113,5 +111,3 @@ inline void FetchHeaders::setGuard(Guard guard)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

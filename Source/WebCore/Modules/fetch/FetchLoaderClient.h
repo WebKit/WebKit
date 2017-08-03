@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(FETCH_API)
-
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -49,5 +47,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

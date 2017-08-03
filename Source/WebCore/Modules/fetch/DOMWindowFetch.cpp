@@ -30,8 +30,6 @@
 #include "config.h"
 #include "DOMWindowFetch.h"
 
-#if ENABLE(FETCH_API)
-
 #include "DOMWindow.h"
 #include "Document.h"
 #include "FetchResponse.h"
@@ -56,5 +54,3 @@ void DOMWindowFetch::fetch(DOMWindow& window, FetchRequest::Info&& input, FetchR
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

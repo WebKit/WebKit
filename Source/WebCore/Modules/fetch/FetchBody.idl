@@ -27,7 +27,6 @@
  */
 
 [
-    Conditional=FETCH_API,
     EnabledAtRuntime=FetchAPI,
     Exposed=(Window,Worker),
     InterfaceName=Body,

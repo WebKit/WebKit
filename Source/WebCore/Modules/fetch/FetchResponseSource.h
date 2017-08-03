@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if ENABLE(FETCH_API) && ENABLE(STREAMS_API)
+#if ENABLE(STREAMS_API)
 
 #include "ReadableStreamSource.h"
 
@@ -66,4 +66,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(FETCH_API) && ENABLE(STREAMS_API)
+#endif // ENABLE(STREAMS_API)

@@ -29,8 +29,6 @@
 #include "config.h"
 #include "FetchRequest.h"
 
-#if ENABLE(FETCH_API)
-
 #include "HTTPParsers.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -299,4 +297,3 @@ bool FetchRequest::canSuspendForDocumentSuspension() const
 
 } // namespace WebCore
 
-#endif // ENABLE(FETCH_API)

@@ -29,8 +29,6 @@
 #include "config.h"
 #include "FetchResponse.h"
 
-#if ENABLE(FETCH_API)
-
 #include "FetchRequest.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"
@@ -371,5 +369,3 @@ bool FetchResponse::canSuspendForDocumentSuspension() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)

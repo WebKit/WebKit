@@ -29,8 +29,6 @@
 #include "config.h"
 #include "WorkerGlobalScopeFetch.h"
 
-#if ENABLE(FETCH_API)
-
 #include "FetchResponse.h"
 #include "WorkerGlobalScope.h"
 
@@ -48,5 +46,3 @@ void WorkerGlobalScopeFetch::fetch(WorkerGlobalScope& scope, FetchRequest::Info&
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(FETCH_API)
