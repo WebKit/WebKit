@@ -1,3 +1,20 @@
+2017-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Linux][WTF] Reduce sizeof(WTF::Thread) by using a pointer to PlatformRegisters
+        https://bugs.webkit.org/show_bug.cgi?id=175119
+
+        Reviewed by Carlos Garcia Campos.
+
+        sizeof(PlatformRegisters) is so large. In my Linux box, it is 256. It enlarges the sizeof(WTF::Thread).
+        However, it is not necessary to hold it in WTF::Thread member. Thread's ucontext data and its stack is
+        effective while suspending the thread. So, we can just use the pointer to the PlatformRegister instead
+        of copying it to the member of the WTF::Thread.
+
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::signalHandlerSuspendResume):
+        (WTF::Thread::getRegisters):
+
 2017-08-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for Windows port

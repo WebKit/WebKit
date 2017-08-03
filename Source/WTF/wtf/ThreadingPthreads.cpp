@@ -146,9 +146,10 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
     ASSERT_WITH_MESSAGE(!isOnAlternativeSignalStack(), "Using an alternative signal stack is not supported. Consider disabling the concurrent GC.");
 
 #if HAVE(MACHINE_CONTEXT)
-    thread->m_platformRegisters = registersFromUContext(userContext);
+    thread->m_platformRegisters = &registersFromUContext(userContext);
 #else
-    thread->m_platformRegisters = PlatformRegisters { getApproximateStackPointer() };
+    PlatformRegisters platformRegisters { getApproximateStackPointer() };
+    thread->m_platformRegisters = &platformRegisters;
 #endif
 
     // Allow suspend caller to see that this thread is suspended.
@@ -165,6 +166,8 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
     sigfillset(&blockedSignalSet);
     sigdelset(&blockedSignalSet, SigThreadSuspendResume);
     sigsuspend(&blockedSignalSet);
+
+    thread->m_platformRegisters = nullptr;
 
     // Allow resume caller to see that this thread is resumed.
     sem_post(&thread->m_semaphoreForSuspendResume);
@@ -421,7 +424,8 @@ size_t Thread::getRegisters(PlatformRegisters& registers)
     return metadata.userCount * sizeof(uintptr_t);
 #else
     ASSERT_WITH_MESSAGE(m_suspendCount, "We can get registers only if the thread is suspended.");
-    registers = m_platformRegisters;
+    ASSERT(m_platformRegisters);
+    registers = *m_platformRegisters;
     return sizeof(PlatformRegisters);
 #endif
 }

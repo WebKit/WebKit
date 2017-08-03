@@ -248,7 +248,7 @@ protected:
     mach_port_t m_platformThread;
 #elif USE(PTHREADS)
     sem_t m_semaphoreForSuspendResume;
-    PlatformRegisters m_platformRegisters;
+    PlatformRegisters* m_platformRegisters { nullptr };
     unsigned m_suspendCount { 0 };
     std::atomic<bool> m_suspended { false };
 #endif
