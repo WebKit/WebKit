@@ -157,6 +157,8 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         if (auto* renderer = node.renderer())
             renderTreePosition().invalidateNextSibling(*renderer);
+        else if (is<Element>(node) && downcast<Element>(node).hasDisplayContents())
+            renderTreePosition().invalidateNextSibling();
 
         if (is<Text>(node)) {
             auto& text = downcast<Text>(node);
@@ -170,12 +172,16 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
         auto& element = downcast<Element>(node);
 
         auto* elementUpdate = m_styleUpdate->elementUpdate(element);
-        if (!elementUpdate) {
+
+        // We hop through display: contents elements in findRenderingRoot, so
+        // there may be other updates down the tree.
+        if (!elementUpdate && !element.hasDisplayContents()) {
             it.traverseNextSkippingChildren();
             continue;
         }
 
-        updateElementRenderer(element, *elementUpdate);
+        if (elementUpdate)
+            updateElementRenderer(element, *elementUpdate);
 
         bool mayHaveRenderedDescendants = element.renderer() || (element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent()));
         if (!mayHaveRenderedDescendants) {
@@ -274,8 +280,6 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
             element.resetComputedStyle();
         else
             element.storeDisplayContentsStyle(RenderStyle::clonePtr(*update.style));
-        // Render tree position needs to be recomputed as rendering siblings may be found from the display:contents subtree.
-        renderTreePosition().invalidateNextSibling();
     }
 
     bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents;

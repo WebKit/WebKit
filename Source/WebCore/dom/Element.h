@@ -507,6 +507,8 @@ public:
 
     LayoutRect absoluteEventHandlerBounds(bool& includesFixedPositionElements) override;
 
+    const RenderStyle* existingComputedStyle() const;
+
     void setBeforePseudoElement(Ref<PseudoElement>&&);
     void setAfterPseudoElement(Ref<PseudoElement>&&);
     void clearBeforePseudoElement();
@@ -645,7 +647,6 @@ private:
 
     void removeShadowRoot();
 
-    const RenderStyle* existingComputedStyle();
     const RenderStyle& resolveComputedStyle();
 
     bool rareDataStyleAffectedByEmpty() const;
