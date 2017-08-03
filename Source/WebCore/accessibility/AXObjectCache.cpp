@@ -2160,7 +2160,10 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
     AXObjectCache* cache = domNode->document().axObjectCache();
     RefPtr<AccessibilityObject> obj = cache->getOrCreate(domNode);
 
+    // This memory must be zero'd so instances of TextMarkerData can be tested for byte-equivalence.
     TextMarkerData textMarkerData;
+    memset(&textMarkerData, 0, sizeof(TextMarkerData));
+    
     textMarkerData.axID = obj.get()->axObjectID();
     textMarkerData.node = domNode;
     textMarkerData.offset = deepPos.deprecatedEditingOffset();
@@ -2185,7 +2188,10 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTex
     if (!obj)
         return std::nullopt;
 
+    // This memory must be zero'd so instances of TextMarkerData can be tested for byte-equivalence.
     TextMarkerData textMarkerData;
+    memset(&textMarkerData, 0, sizeof(TextMarkerData));
+    
     textMarkerData.axID = obj.get()->axObjectID();
     textMarkerData.node = &textControl;
 
