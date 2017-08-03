@@ -528,16 +528,23 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
     m_domainNotifier->browsingContextCleared(handle);
 }
 
-static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<String>& allowedMIMETypes) {
+static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<String>& allowedMIMETypes, const HashSet<String>& allowedFileExtensions)
+{
     if (!WebCore::fileExists(filename))
         return false;
 
-    if (allowedMIMETypes.isEmpty())
+    if (allowedMIMETypes.isEmpty() && allowedFileExtensions.isEmpty())
         return true;
 
-    // Validate filenames against allowed MIME types before choosing them.
-    // FIXME: validate against allowed file extensions when <https://webkit.org/b/95698> is fixed.
-    String extension = filename.substring(filename.reverseFind('.') + 1);
+    // We can't infer a MIME type from a file without an extension, just give up.
+    auto dotOffset = filename.reverseFind('.');
+    if (dotOffset == notFound)
+        return false;
+
+    String extension = filename.substring(dotOffset + 1);
+    if (allowedFileExtensions.contains(extension))
+        return true;
+
     String mappedMIMEType = WebCore::MIMETypeRegistry::getMIMETypeForExtension(extension);
     if (allowedMIMETypes.contains(mappedMIMEType))
         return true;
@@ -573,10 +580,14 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
     for (auto type : parameters.acceptMIMETypes()->elementsOfType<API::String>())
         allowedMIMETypes.add(type->string());
 
+    HashSet<String> allowedFileExtensions;
+    for (auto type : parameters.acceptFileExtensions()->elementsOfType<API::String>())
+        allowedFileExtensions.add(type->string());
+
     // Per §14.3.10.5 in the W3C spec, if at least one file cannot be accepted, the command should fail.
     // The REST API service can tell that this failed by checking the "files" attribute of the input element.
     for (const String& filename : m_filesToSelectForFileUpload) {
-        if (!fileCanBeAcceptedForUpload(filename, allowedMIMETypes)) {
+        if (!fileCanBeAcceptedForUpload(filename, allowedMIMETypes, allowedFileExtensions)) {
             resultListener.cancel();
             m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, true);
             return;
