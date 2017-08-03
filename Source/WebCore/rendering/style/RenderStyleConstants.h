@@ -77,7 +77,7 @@ enum StyleDifferenceContextSensitiveProperty {
 // Static pseudo styles. Dynamic ones are produced on the fly.
 enum PseudoId : unsigned char {
     // The order must be NOP ID, public IDs, and then internal IDs.
-    NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION, SCROLLBAR,
+    NOPSEUDO, FIRST_LINE, FIRST_LETTER, MARKER, BEFORE, AFTER, SELECTION, SCROLLBAR,
     // Internal IDs follow:
     SCROLLBAR_THUMB, SCROLLBAR_BUTTON, SCROLLBAR_TRACK, SCROLLBAR_TRACK_PIECE, SCROLLBAR_CORNER, RESIZER,
     AFTER_LAST_INTERNAL_PSEUDOID,

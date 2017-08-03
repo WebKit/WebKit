@@ -39,6 +39,7 @@ enum AddRuleFlags {
     
 enum PropertyWhitelistType {
     PropertyWhitelistNone   = 0,
+    PropertyWhitelistMarker,
     PropertyWhitelistRegion,
 #if ENABLE(VIDEO_TRACK)
     PropertyWhitelistCue

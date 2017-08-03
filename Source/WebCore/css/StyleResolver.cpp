@@ -1473,6 +1473,35 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     return false;
 }
 
+// https://www.w3.org/TR/css-pseudo-4/#marker-pseudo (Editor's Draft, 25 July 2017)
+static inline bool isValidMarkerStyleProperty(CSSPropertyID id)
+{
+    switch (id) {
+    case CSSPropertyColor:
+    case CSSPropertyFontFamily:
+    case CSSPropertyFontFeatureSettings:
+    case CSSPropertyFontSize:
+    case CSSPropertyFontStretch:
+    case CSSPropertyFontStyle:
+    case CSSPropertyFontSynthesis:
+    case CSSPropertyFontVariantAlternates:
+    case CSSPropertyFontVariantCaps:
+    case CSSPropertyFontVariantEastAsian:
+    case CSSPropertyFontVariantLigatures:
+    case CSSPropertyFontVariantNumeric:
+    case CSSPropertyFontVariantPosition:
+    case CSSPropertyFontWeight:
+#if ENABLE(VARIATION_FONTS)
+    case CSSPropertyFontOpticalSizing:
+    case CSSPropertyFontVariationSettings:
+#endif
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
 // http://dev.w3.org/csswg/css3-regions/#the-at-region-style-rule
 // FIXME: Add incremental support for other region styling properties.
 static inline bool isValidRegionStyleProperty(CSSPropertyID id)
@@ -2152,6 +2181,8 @@ void StyleResolver::CascadedProperties::addMatch(const MatchResult& matchResult,
         if (propertyWhitelistType == PropertyWhitelistCue && !isValidCueStyleProperty(propertyID))
             continue;
 #endif
+        if (propertyWhitelistType == PropertyWhitelistMarker && !isValidMarkerStyleProperty(propertyID))
+            continue;
 
         if (shouldApplyPropertyInParseOrder(propertyID))
             setDeferred(propertyID, *current.value(), matchedProperties.linkMatchType, cascadeLevel, matchedProperties.styleScopeOrdinal);

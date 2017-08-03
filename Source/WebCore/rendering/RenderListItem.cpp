@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderListItem.h"
 
+#include "CSSFontSelector.h"
 #include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
@@ -72,6 +73,29 @@ void RenderListItem::willBeDestroyed()
     RenderBlockFlow::willBeDestroyed();
 }
 
+RenderStyle RenderListItem::computeMarkerStyle() const
+{
+    // The marker always inherits from the list item, regardless of where it might end
+    // up (e.g., in some deeply nested line box). See CSS3 spec.
+    // FIXME: The marker should only inherit all font properties and the color property
+    // according to the CSS Pseudo-Elements Module Level 4 spec.
+    //
+    // Although the CSS Pseudo-Elements Module Level 4 spec. saids to add ::marker to the UA sheet
+    // we apply it here as an optimization because it only applies to markers. That is, it does not
+    // apply to all elements.
+    RenderStyle parentStyle = RenderStyle::clone(style());
+    auto fontDescription = style().fontDescription();
+    fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::TabularNumbers);
+    parentStyle.setFontDescription(fontDescription);
+    parentStyle.fontCascade().update(&document().fontSelector());
+
+    if (auto markerStyle = getCachedPseudoStyle(MARKER, &parentStyle))
+        return RenderStyle::clone(*markerStyle);
+    auto markerStyle = RenderStyle::create();
+    markerStyle.inheritFrom(parentStyle);
+    return markerStyle;
+}
+
 void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
@@ -84,17 +108,12 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
         return;
     }
 
-    auto newStyle = RenderStyle::create();
-    // The marker always inherits from the list item, regardless of where it might end
-    // up (e.g., in some deeply nested line box). See CSS3 spec.
-    newStyle.inheritFrom(style());
-    if (!m_marker) {
+    auto newStyle = computeMarkerStyle();
+    if (m_marker)
+        m_marker->setStyle(WTFMove(newStyle));
+    else {
         m_marker = createRenderer<RenderListMarker>(*this, WTFMove(newStyle)).leakPtr();
         m_marker->initializeStyle();
-    } else {
-        // Do not alter our marker's style unless our style has actually changed.
-        if (diff != StyleDifferenceEqual)
-            m_marker->setStyle(WTFMove(newStyle));
     }
 }
 

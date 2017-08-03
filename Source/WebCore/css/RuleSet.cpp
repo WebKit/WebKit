@@ -139,14 +139,14 @@ static inline PropertyWhitelistType determinePropertyWhitelistType(const AddRule
 {
     if (addRuleFlags & RuleIsInRegionRule)
         return PropertyWhitelistRegion;
-#if ENABLE(VIDEO_TRACK)
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
+#if ENABLE(VIDEO_TRACK)
         if (component->match() == CSSSelector::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == TextTrackCue::cueShadowPseudoId()))
             return PropertyWhitelistCue;
-    }
-#else
-    UNUSED_PARAM(selector);
 #endif
+        if (component->match() == CSSSelector::PseudoElement && component->pseudoElementType() == CSSSelector::PseudoElementMarker)
+            return PropertyWhitelistMarker;
+    }
     return PropertyWhitelistNone;
 }
 

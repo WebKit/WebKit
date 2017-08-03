@@ -5,6 +5,7 @@ cue
 #endif
 first-letter
 first-line
+marker
 placeholder, PseudoElementWebKitCustom
 -webkit-input-placeholder, PseudoElementWebKitCustomLegacyPrefixed
 -webkit-resizer

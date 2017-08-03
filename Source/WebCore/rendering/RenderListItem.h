@@ -86,6 +86,8 @@ private:
     void updateValueNow() const;
     void explicitValueChanged();
 
+    RenderStyle computeMarkerStyle() const;
+
     int m_explicitValue;
     RenderListMarker* m_marker;
     mutable int m_value;

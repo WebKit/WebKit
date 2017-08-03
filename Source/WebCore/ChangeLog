@@ -1,3 +1,84 @@
+2017-08-03  Daniel Bates  <dabates@apple.com>
+
+        Support ::marker pseudo-element
+        https://bugs.webkit.org/show_bug.cgi?id=141477
+
+        Reviewed by David Hyatt.
+
+        Implements the ::marker pseudo element as per the CSS Pseudo-Element Module Level 4
+        spec., <https://drafts.csswg.org/css-pseudo-4> (Editor's Draft, 24 July 2017).
+
+        The ::marker pseudo element is a convenience pseudo element that allows a person to
+        style the appearance of a list item marker. For example, to render all list item
+        markers in bolded, blue text you would define a stylesheet with the following content:
+
+        li::marker {
+            color: blue;
+            font-weight: bold;
+        }
+
+        and this could be applied to a page that contains markup of the form:
+
+        <ol>
+            <li>Item 1</li>
+            <li>Item 2</li>
+            ...
+            <li>Item N-1</li>
+            <li>Item N</li>
+        </ol>
+
+        Formerly to the achieve the same effect you would need to use a stylesheet of the form:
+
+        li {
+            color: blue;
+            font-weight: bold;
+        }
+
+        .list-item-content {
+            all: initial;
+        }
+
+        and then write your markup to have the form:
+
+        <ol>
+            <li><span class="list-item-content">Item 1</span></li>
+            <li><span class="list-item-content">Item 2</span></li>
+            ...
+            <li><span class="list-item-content">Item N-1</span></li>
+            <li><span class="list-item-content">Item N</span></li>
+        </ol>
+
+        The ::marker pseudo element only supports stylizing all font properties and the color property
+        of a list item marker.
+
+        Tests: fast/lists/list-marker-with-display.html
+               http/wpt/css/css-pseudo-4/marker-and-other-pseudo-elements.html
+               http/wpt/css/css-pseudo-4/marker-color.html
+               http/wpt/css/css-pseudo-4/marker-font-properties.html
+               http/wpt/css/css-pseudo-4/marker-inherit-values.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId): Return the pseudo id for the ::marker pseudo element.
+        * css/CSSSelector.h: Add enumerator PseudoElementMarker to the pseudo element enum.
+        * css/RuleSet.cpp:
+        (WebCore::determinePropertyWhitelistType): Return whitelist type PropertyWhitelistMarker for ::marker
+        so that we match rules against the acceptable rules for ::marker.
+        * css/RuleSet.h: Add enumerator PropertyWhitelistMarker to the property whitelist type enum.
+        * css/SelectorPseudoElementTypeMap.in: Add "marker" to the list of pseudo element types.
+        * css/StyleResolver.cpp:
+        (WebCore::isValidMarkerStyleProperty): Determines if the specified CSS property is valid inside ::marker.
+        (WebCore::StyleResolver::CascadedProperties::addMatch): Only recognize CSS properties in the content block
+        of ::marker that match the ::marker whitelist policy.
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::computeMarkerStyle): Computes the style object for the list item marker. We
+        apply the user-agent style to the marker here as opposed to defining ::marker in the UA sheet as per
+        the spec. as an optimization to avoid having the style resolver apply the pseudo element to all elements.
+        For now, we always inherit style from the originating element (list item). Added FIXME to selectively
+        inherit styles.
+        (WebCore::RenderListItem::styleDidChange): Always apply the list marker style to the list marker renderer.
+        * rendering/RenderListItem.h:
+        * rendering/style/RenderStyleConstants.h: Add pseudo ID for the ::marker pseudo element.
+
 2017-08-03  Antti Koivisto  <antti@apple.com>
 
         Factor common code in Style::*ChangeInvalidation into helper functions

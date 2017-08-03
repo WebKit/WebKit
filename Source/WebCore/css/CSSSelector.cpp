@@ -275,6 +275,8 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
         return FIRST_LETTER;
     case PseudoElementSelection:
         return SELECTION;
+    case PseudoElementMarker:
+        return MARKER;
     case PseudoElementBefore:
         return BEFORE;
     case PseudoElementAfter:
