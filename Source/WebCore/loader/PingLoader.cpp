@@ -262,11 +262,9 @@ bool PingLoader::sendBeacon(Frame& frame, Document& document, const URL& url, st
     }
 
     FrameLoader::addHTTPOriginIfNeeded(request, sourceOrigin.toString());
-    if (!SecurityPolicy::shouldHideReferrer(url, frame.loader().outgoingReferrer())) {
-        String referrer = SecurityPolicy::generateReferrerHeader(document.referrerPolicy(), url, frame.loader().outgoingReferrer());
-        if (!referrer.isEmpty())
-            request.setHTTPReferrer(referrer);
-    }
+    String referrer = SecurityPolicy::generateReferrerHeader(document.referrerPolicy(), url, frame.loader().outgoingReferrer());
+    if (!referrer.isEmpty())
+        request.setHTTPReferrer(referrer);
 
     request.setAllowCookies(true); // Credentials mode: include.
     startPingLoad(frame, request, ShouldFollowRedirects::Yes);

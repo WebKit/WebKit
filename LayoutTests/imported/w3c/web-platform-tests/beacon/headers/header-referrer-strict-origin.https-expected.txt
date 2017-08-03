@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: line 8: Failed to set referrer policy: The value 'strict-origin' is not one of 'no-referrer', 'origin', 'no-referrer-when-downgrade', or 'unsafe-url'. Defaulting to 'no-referrer'.
 
-FAIL Test referer header https://localhost:9443/beacon/resources/ assert_equals: Correct referrer header result expected "https://localhost:9443/" but got ""
+PASS Test referer header https://localhost:9443/beacon/resources/ 
 PASS Test referer header http://localhost:8800/beacon/resources/ 
 

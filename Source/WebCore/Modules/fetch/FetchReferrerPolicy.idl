@@ -23,4 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum FetchReferrerPolicy { "", "no-referrer",  "no-referrer-when-downgrade", "origin", "origin-when-cross-origin", "unsafe-url" };
+// https://w3c.github.io/webappsec-referrer-policy/#referrer-policy
+enum FetchReferrerPolicy {
+  "",
+  "no-referrer",
+  "no-referrer-when-downgrade",
+  "same-origin",
+  "origin",
+  "strict-origin",
+  "origin-when-cross-origin",
+  "strict-origin-when-cross-origin",
+  "unsafe-url"
+};

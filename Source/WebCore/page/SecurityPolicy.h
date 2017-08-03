@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "ReferrerPolicy.h"
+#include "FetchOptions.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

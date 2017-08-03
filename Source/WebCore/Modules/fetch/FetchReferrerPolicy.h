@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "FetchOptions.h"
+#include "ReferrerPolicy.h"
 
 namespace WebCore {
 
-using FetchReferrerPolicy = FetchOptions::ReferrerPolicy;
+using FetchReferrerPolicy = ReferrerPolicy;
 
 }

@@ -39,7 +39,7 @@ struct FetchRequestInit {
     std::optional<FetchHeaders::Init> headers;
     std::optional<FetchBody::Init> body;
     String referrer;
-    std::optional<FetchOptions::ReferrerPolicy> referrerPolicy;
+    std::optional<ReferrerPolicy> referrerPolicy;
     std::optional<FetchOptions::Mode> mode;
     std::optional<FetchOptions::Credentials> credentials;
     std::optional<FetchOptions::Cache> cache;

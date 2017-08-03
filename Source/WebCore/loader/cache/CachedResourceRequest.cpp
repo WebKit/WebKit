@@ -232,25 +232,12 @@ void CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders(FrameLoader&
         outgoingOrigin = frameLoader.outgoingOrigin();
     }
 
-    // FIXME: Refactor SecurityPolicy::generateReferrerHeader to align with new terminology used in https://w3c.github.io/webappsec-referrer-policy.
     switch (m_options.referrerPolicy) {
-    case FetchOptions::ReferrerPolicy::EmptyString: {
+    case ReferrerPolicy::EmptyString:
         outgoingReferrer = SecurityPolicy::generateReferrerHeader(defaultPolicy, m_resourceRequest.url(), outgoingReferrer);
-        break; }
-    case FetchOptions::ReferrerPolicy::NoReferrerWhenDowngrade:
-        outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Default, m_resourceRequest.url(), outgoingReferrer);
         break;
-    case FetchOptions::ReferrerPolicy::NoReferrer:
-        outgoingReferrer = String();
-        break;
-    case FetchOptions::ReferrerPolicy::Origin:
-        outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Origin, m_resourceRequest.url(), outgoingReferrer);
-        break;
-    case FetchOptions::ReferrerPolicy::OriginWhenCrossOrigin:
-        if (isRequestCrossOrigin(m_origin.get(), m_resourceRequest.url(), m_options))
-            outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Origin, m_resourceRequest.url(), outgoingReferrer);
-        break;
-    case FetchOptions::ReferrerPolicy::UnsafeUrl:
+    default:
+        outgoingReferrer = SecurityPolicy::generateReferrerHeader(m_options.referrerPolicy, m_resourceRequest.url(), outgoingReferrer);
         break;
     };
 

@@ -1,3 +1,63 @@
+2017-08-03  Chris Dumez  <cdumez@apple.com>
+
+        Improve our support for referrer policies
+        https://bugs.webkit.org/show_bug.cgi?id=175069
+        <rdar://problem/33677313>
+
+        Reviewed by Darin Adler.
+
+        Improve our support for referrer policies. In particular, we now support the
+        additional following ones: "same-origin", "origin-when-cross-origin" and
+        "strict-origin-when-cross-origin".
+
+        This is as per the following specification:
+        - https://www.w3.org/TR/referrer-policy/#referrer-policies
+
+        Also refactor the code a bit for clarity: I merged the ReferrerPolicy enum and the
+        FetchOptions::ReferrerPolicy one.
+
+        Tests: http/tests/referrer-policy/origin-when-cross-origin/cross-origin-http-http.html
+               http/tests/referrer-policy/origin-when-cross-origin/cross-origin-http.https.html
+               http/tests/referrer-policy/origin-when-cross-origin/same-origin.html
+               http/tests/referrer-policy/same-origin/cross-origin-http-http.html
+               http/tests/referrer-policy/same-origin/cross-origin-http.https.html
+               http/tests/referrer-policy/same-origin/same-origin.html
+               http/tests/referrer-policy/strict-origin-when-cross-origin/cross-origin-http-http.html
+               http/tests/referrer-policy/strict-origin-when-cross-origin/cross-origin-http.https.html
+               http/tests/referrer-policy/strict-origin-when-cross-origin/same-origin.html
+               http/tests/referrer-policy/strict-origin/cross-origin-http-http.html
+               http/tests/referrer-policy/strict-origin/cross-origin-http.https.html
+               http/tests/referrer-policy/strict-origin/same-origin.html
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::start):
+        * Modules/fetch/FetchReferrerPolicy.h:
+        * Modules/fetch/FetchReferrerPolicy.idl:
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchRequestInit.h:
+        * dom/Document.cpp:
+        (WebCore::Document::processReferrerPolicy):
+        (WebCore::Document::applyQuickLookSandbox):
+        (WebCore::Document::applyContentDispositionAttachmentSandbox):
+        * dom/Document.h:
+        * loader/FetchOptions.h:
+        * loader/FrameNetworkingContext.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendBeacon):
+        Drop explicit call to SecurityPolicy::shouldHideReferrer(). This is already called inside
+        SecurityPolicy::generateReferrerHeader() and used only when needed, depending on the
+        actual referrer policy.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::updateHTTPRequestHeaders):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders):
+        * page/SecurityPolicy.cpp:
+        (WebCore::referrerToOriginString):
+        (WebCore::SecurityPolicy::generateReferrerHeader):
+        * page/SecurityPolicy.h:
+        * platform/ReferrerPolicy.h:
+
 2017-08-03  Daniel Bates  <dabates@apple.com>
 
         Support ::marker pseudo-element

@@ -9,12 +9,12 @@ FAIL Same origin redirection, empty init, strict-origin redirect header  assert_
 PASS Same origin redirection, empty init, strict-origin-when-cross-origin redirect header  
 PASS Same origin redirection, empty redirect header, unsafe-url init  
 PASS Same origin redirection, empty redirect header, no-referrer-when-downgrade init  
-FAIL Same origin redirection, empty redirect header, same-origin init  promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Same origin redirection, empty redirect header, same-origin init  
 PASS Same origin redirection, empty redirect header, origin init  
 PASS Same origin redirection, empty redirect header, origin-when-cross-origin init  
 PASS Same origin redirection, empty redirect header, no-referrer init  
-FAIL Same origin redirection, empty redirect header, strict-origin init  promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Same origin redirection, empty redirect header, strict-origin-when-cross-origin init  promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Same origin redirection, empty redirect header, strict-origin init  
+PASS Same origin redirection, empty redirect header, strict-origin-when-cross-origin init  
 FAIL Cross origin redirection, empty init, unsafe-url redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer.js" but got (object) null
 FAIL Cross origin redirection, empty init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer.js" but got (object) null
 PASS Cross origin redirection, empty init, same-origin redirect header  
@@ -25,10 +25,10 @@ FAIL Cross origin redirection, empty init, strict-origin redirect header  assert
 FAIL Cross origin redirection, empty init, strict-origin-when-cross-origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
 FAIL Cross origin redirection, empty redirect header, unsafe-url init  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer.js" but got (object) null
 FAIL Cross origin redirection, empty redirect header, no-referrer-when-downgrade init  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer.js" but got (object) null
-FAIL Cross origin redirection, empty redirect header, same-origin init  promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Cross origin redirection, empty redirect header, same-origin init  
 FAIL Cross origin redirection, empty redirect header, origin init  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
 FAIL Cross origin redirection, empty redirect header, origin-when-cross-origin init  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
 PASS Cross origin redirection, empty redirect header, no-referrer init  
-FAIL Cross origin redirection, empty redirect header, strict-origin init  promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Cross origin redirection, empty redirect header, strict-origin-when-cross-origin init  promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross origin redirection, empty redirect header, strict-origin init  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+FAIL Cross origin redirection, empty redirect header, strict-origin-when-cross-origin init  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
 

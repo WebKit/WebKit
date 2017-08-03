@@ -53,7 +53,6 @@ public:
     using Destination = FetchOptions::Destination;
     using Mode = FetchOptions::Mode;
     using Redirect = FetchOptions::Redirect;
-    using ReferrerPolicy = FetchOptions::ReferrerPolicy;
     using Type = FetchOptions::Type;
 
     static ExceptionOr<Ref<FetchRequest>> create(ScriptExecutionContext&, Info&&, Init&&);

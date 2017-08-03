@@ -96,7 +96,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
 
     String referrer = request.internalRequestReferrer();
     if (referrer == "no-referrer") {
-        options.referrerPolicy = FetchOptions::ReferrerPolicy::NoReferrer;
+        options.referrerPolicy = ReferrerPolicy::NoReferrer;
         referrer = String();
     } else
         referrer = (referrer == "client") ? context.url().strippedForUseAsReferrer() : URL(context.url(), referrer).strippedForUseAsReferrer();
