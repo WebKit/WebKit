@@ -1,3 +1,16 @@
+2017-08-03  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Skip timezone-dependent Sputnik tests.
+        https://bugs.webkit.org/show_bug.cgi?id=175120
+
+        Unreviewed test gardening.
+
+        These tests are skipped in the platform-neutral TestExpectations file because
+        they only pass in Pacific Time (see bug 42625). There doesn't seem to be a
+        reason for gtk to run them, and they do pass on the buildbot.
+
+        * platform/gtk/TestExpectations:
+
 2017-08-02  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add stack trace information for each RecordingAction
