@@ -45,7 +45,9 @@
 namespace WTF {
 
 class Thread;
-void initializeThreading();
+
+// This function can be called from any threads.
+WTF_EXPORT_PRIVATE void initializeThreading();
 
 // Holds Thread in the thread-specific storage. The destructor of this holder reliably destroy Thread.
 // For pthread, it employs pthreads-specific 2-pass destruction to reliably remove Thread.

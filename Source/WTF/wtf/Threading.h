@@ -264,9 +264,6 @@ protected:
     void* m_savedLastStackTop;
 };
 
-// This function can be called from any threads.
-WTF_EXPORT_PRIVATE void initializeThreading();
-
 inline ThreadIdentifier currentThread()
 {
     return Thread::currentID();

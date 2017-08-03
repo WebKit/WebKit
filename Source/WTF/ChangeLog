@@ -1,5 +1,15 @@
 2017-08-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=174716
+
+        This ugliness will be fixed in https://bugs.webkit.org/show_bug.cgi?id=175013.
+
+        * wtf/ThreadHolder.h:
+        * wtf/Threading.h:
+
+2017-08-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Merge WTFThreadData to Thread::current
         https://bugs.webkit.org/show_bug.cgi?id=174716
 
