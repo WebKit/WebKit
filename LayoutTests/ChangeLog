@@ -1,5 +1,16 @@
 2017-08-03  Ms2ger  <Ms2ger@igalia.com>
 
+        [GTK] Remove obsolete failure expectation for narrow-non-breaking-space.html.
+        https://bugs.webkit.org/show_bug.cgi?id=139493
+
+        Unreviewed test gardening.
+
+        It likely started passing in r205826 due to its change in Font.cpp.
+
+        * platform/gtk/TestExpectations:
+
+2017-08-03  Ms2ger  <Ms2ger@igalia.com>
+
         [GTK] Skip timezone-dependent Sputnik tests.
         https://bugs.webkit.org/show_bug.cgi?id=175120
 

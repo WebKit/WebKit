@@ -2944,8 +2944,6 @@ webkit.org/b/139479 fast/regions/overflow/overflow-region-inline.html [ ImageOnl
 
 webkit.org/b/139492 fast/text/space-width.html [ ImageOnlyFailure ]
 
-webkit.org/b/139493 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
-
 # Missing glyph symbol is not rendered properly.
 webkit.org/b/140252 fast/css/line-height-determined-by-primary-font.html [ Failure ]
 webkit.org/b/140252 fast/ruby/bopomofo-letter-spacing.html [ Failure ]
