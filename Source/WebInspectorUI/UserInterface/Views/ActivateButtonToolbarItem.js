@@ -25,32 +25,8 @@
 
 WI.ActivateButtonToolbarItem = class ActivateButtonToolbarItem extends WI.ActivateButtonNavigationItem
 {
-    constructor(identifier, defaultToolTip, activatedToolTip, label, image, role)
+    constructor(identifier, defaultToolTip, activatedToolTip, image, role)
     {
         super(identifier, defaultToolTip, activatedToolTip, image, 16, 16, role);
-
-        if (typeof label === "string") {
-            this._labelElement = document.createElement("div");
-            this._labelElement.className = WI.ButtonToolbarItem.LabelStyleClassName;
-            this._element.appendChild(this._labelElement);
-
-            this.label = label;
-        }
-    }
-
-    // Public
-
-    get label()
-    {
-        return this._labelElement.textContent;
-    }
-
-    set label(newLabel)
-    {
-        console.assert(newLabel);
-        if (!newLabel || !this._labelElement)
-            return;
-
-        this._labelElement.textContent = newLabel;
     }
 };

@@ -25,34 +25,8 @@
 
 WI.ButtonToolbarItem = class ButtonToolbarItem extends WI.ButtonNavigationItem
 {
-    constructor(identifier, toolTip, label, image, role)
+    constructor(identifier, toolTip, image, role)
     {
         super(identifier, toolTip, image, 16, 16, role);
-
-        if (typeof label === "string") {
-            this._labelElement = document.createElement("div");
-            this._labelElement.className = WI.ButtonToolbarItem.LabelStyleClassName;
-            this._element.appendChild(this._labelElement);
-
-            this.label = label;
-        }
-    }
-
-    // Public
-
-    get label()
-    {
-        return this._labelElement.textContent;
-    }
-
-    set label(newLabel)
-    {
-        console.assert(newLabel);
-        if (!newLabel || !this._labelElement)
-            return;
-
-        this._labelElement.textContent = newLabel;
     }
 };
-
-WI.ButtonToolbarItem.LabelStyleClassName = "label";

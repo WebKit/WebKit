@@ -1,3 +1,36 @@
+2017-08-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add button to open Inspector^2
+        https://bugs.webkit.org/show_bug.cgi?id=175108
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Debug/Bootstrap.js:
+        (updateDebugUI):
+        (WI.runBootstrapOperations):
+
+        * UserInterface/Views/ButtonToolbarItem.js:
+        (WI.ButtonToolbarItem):
+        (WI.ButtonToolbarItem.prototype.get label): Deleted.
+        (WI.ButtonToolbarItem.prototype.set label): Deleted.
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (.toolbar .item.button):
+        (.toolbar .item.button:not(.disabled):active):
+        (.toolbar .item.button:not(.disabled):matches(:focus, .activate.activated)):
+        (.toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated)):
+        (.toolbar .item.button > .glyph):
+        (.toolbar .item.button:not(.disabled):active > .glyph): Deleted.
+        (.toolbar .item.button:not(.disabled):matches(:focus, .activate.activated) > .glyph): Deleted.
+        (.toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated) > .glyph): Deleted.
+        (.toolbar .item.button > .label): Deleted.
+        * UserInterface/Views/ActivateButtonToolbarItem.js:
+        (WI.ActivateButtonToolbarItem):
+        (WI.ActivateButtonToolbarItem.prototype.get label): Deleted.
+        (WI.ActivateButtonToolbarItem.prototype.set label): Deleted.
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        Remove unused `label` parameter from Toolbar objects.
+
 2017-08-03  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Instrument WebGLProgram created/deleted

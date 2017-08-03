@@ -354,18 +354,18 @@ WI.contentLoaded = function()
     this._closeToolbarButton = new WI.ControlToolbarItem("dock-close", WI.UIString("Close"), "Images/Close.svg", 16, 14);
     this._closeToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this.close, this);
 
-    this._undockToolbarButton = new WI.ButtonToolbarItem("undock", WI.UIString("Detach into separate window"), null, "Images/Undock.svg");
+    this._undockToolbarButton = new WI.ButtonToolbarItem("undock", WI.UIString("Detach into separate window"), "Images/Undock.svg");
     this._undockToolbarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
     this._undockToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._undock, this);
 
     let dockImage = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "Images/DockLeft.svg" : "Images/DockRight.svg";
-    this._dockToSideToolbarButton = new WI.ButtonToolbarItem("dock-right", WI.UIString("Dock to side of window"), null, dockImage);
+    this._dockToSideToolbarButton = new WI.ButtonToolbarItem("dock-right", WI.UIString("Dock to side of window"), dockImage);
     this._dockToSideToolbarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
 
     let dockToSideCallback = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? this._dockLeft : this._dockRight;
     this._dockToSideToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, dockToSideCallback, this);
 
-    this._dockBottomToolbarButton = new WI.ButtonToolbarItem("dock-bottom", WI.UIString("Dock to bottom of window"), null, "Images/DockBottom.svg");
+    this._dockBottomToolbarButton = new WI.ButtonToolbarItem("dock-bottom", WI.UIString("Dock to bottom of window"), "Images/DockBottom.svg");
     this._dockBottomToolbarButton.element.classList.add(WI.Popover.IgnoreAutoDismissClassName);
     this._dockBottomToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._dockBottom, this);
 
@@ -377,10 +377,10 @@ WI.contentLoaded = function()
     else
         toolTip = WI.UIString("Reload this page (%s)\nReload ignoring cache (%s)").format(this._reloadPageKeyboardShortcut.displayName, this._reloadPageIgnoringCacheKeyboardShortcut.displayName);
 
-    this._reloadToolbarButton = new WI.ButtonToolbarItem("reload", toolTip, null, "Images/ReloadToolbar.svg");
+    this._reloadToolbarButton = new WI.ButtonToolbarItem("reload", toolTip, "Images/ReloadToolbar.svg");
     this._reloadToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._reloadPageClicked, this);
 
-    this._downloadToolbarButton = new WI.ButtonToolbarItem("download", WI.UIString("Download Web Archive"), null, "Images/DownloadArrow.svg");
+    this._downloadToolbarButton = new WI.ButtonToolbarItem("download", WI.UIString("Download Web Archive"), "Images/DownloadArrow.svg");
     this._downloadToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._downloadWebArchive, this);
 
     this._updateReloadToolbarButton();
@@ -390,14 +390,14 @@ WI.contentLoaded = function()
     if (this.debuggableType === WI.DebuggableType.Web) {
         var toolTip = WI.UIString("Start element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
         var activatedToolTip = WI.UIString("Stop element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
-        this._inspectModeToolbarButton = new WI.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, null, "Images/Crosshair.svg");
+        this._inspectModeToolbarButton = new WI.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, "Images/Crosshair.svg");
         this._inspectModeToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
     }
 
     this._dashboardContainer = new WI.DashboardContainerView;
     this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
 
-    this._searchToolbarItem = new WI.SearchBar("inspector-search", WI.UIString("Search"), null, true);
+    this._searchToolbarItem = new WI.SearchBar("inspector-search", WI.UIString("Search"), true);
     this._searchToolbarItem.addEventListener(WI.SearchBar.Event.TextChanged, this._searchTextDidChange, this);
 
     this.toolbar.addToolbarItem(this._closeToolbarButton, WI.Toolbar.Section.Control);

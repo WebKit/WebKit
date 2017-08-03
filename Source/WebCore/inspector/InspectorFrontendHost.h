@@ -101,6 +101,7 @@ public:
     void unbufferedLog(const String& message);
 
     void beep();
+    void inspectInspector();
 
 private:
 #if ENABLE(CONTEXT_MENUS)

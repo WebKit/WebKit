@@ -40,6 +40,7 @@
 #include "Event.h"
 #include "FocusController.h"
 #include "HitTestResult.h"
+#include "InspectorController.h"
 #include "InspectorFrontendClient.h"
 #include "JSMainThreadExecState.h"
 #include "MainFrame.h"
@@ -415,6 +416,12 @@ void InspectorFrontendHost::unbufferedLog(const String& message)
 void InspectorFrontendHost::beep()
 {
     PAL::systemBeep();
+}
+
+void InspectorFrontendHost::inspectInspector()
+{
+    if (m_frontendPage)
+        m_frontendPage->inspectorController().show();
 }
 
 } // namespace WebCore
