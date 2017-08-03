@@ -50,6 +50,11 @@ public:
         MaybeRelax<T>(new (storagePointer()) T(std::forward<Args>(args)...));
     }
 
+    NeverDestroyed(NeverDestroyed&& other)
+    {
+        MaybeRelax<T>(new (storagePointer()) T(WTFMove(other)));
+    }
+
     operator T&() { return *storagePointer(); }
     T& get() { return *storagePointer(); }
 
