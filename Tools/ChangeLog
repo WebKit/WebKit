@@ -1,3 +1,21 @@
+2017-08-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WKE] Pass the --memory-limited option on the GTK and WPE buildbots for the JSC tests.
+        https://bugs.webkit.org/show_bug.cgi?id=175140
+
+        Reviewed by Alexey Proskuryakov.
+
+        We are having lately issues with JSC tests causing problems on
+        the GTK+ and WPE bots due to the high amount of memory some tests
+        need to run.
+
+        The best thing we can do now is to workaround this by disabling
+        all the tests marked as memoryLimited on the GTK and WPE bots.
+        We may revise this on the future.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests.start):
+
 2017-08-03  Brady Eidson  <beidson@apple.com>
 
         Add SW IDLs and stub out basic functionality.
