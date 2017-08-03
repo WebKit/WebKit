@@ -39,7 +39,8 @@ namespace WebCore {
 
 void JSHTMLTemplateElement::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(root(&wrapped().content()));
+    if (auto* content = wrapped().contentIfAvailable())
+        visitor.addOpaqueRoot(root(content));
 }
 
 } // namespace WebCore

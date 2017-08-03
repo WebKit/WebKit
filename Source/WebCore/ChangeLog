@@ -1,5 +1,25 @@
 2017-08-02  Sam Weinig  <sam@webkit.org>
 
+        Fix crashes in GC creating a document fragment on a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=175111
+
+        Reviewed by Chris Dumez.
+
+        r220095 (https://webkit.org/b/175006) change JSHTMLTemplateElement from using a
+        private name + property to manager the lifetime of the reference DocumentFragment
+        to using the idiomatic visitAdditionalChildren. Unfortunately, the function to access
+        the DocumentFragment lazily creates it. If this lazy creation happens on a GC thread,
+        badness ensues. This introduces an accessor that returns the DocumentFragment if it
+        has been created or null if it has not.
+
+        * bindings/js/JSHTMLTemplateElementCustom.cpp:
+        (WebCore::JSHTMLTemplateElement::visitAdditionalChildren):
+        * html/HTMLTemplateElement.cpp:
+        (WebCore::HTMLTemplateElement::contentIfAvailable):
+        * html/HTMLTemplateElement.h:
+
+2017-08-02  Sam Weinig  <sam@webkit.org>
+
         [WebIDL] Simplify [EnabledBySettings] extended attribute code to not require passing a global object to finishCreation
         https://bugs.webkit.org/show_bug.cgi?id=175087
 

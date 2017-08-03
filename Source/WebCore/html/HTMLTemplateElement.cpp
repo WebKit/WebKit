@@ -56,6 +56,11 @@ Ref<HTMLTemplateElement> HTMLTemplateElement::create(const QualifiedName& tagNam
     return adoptRef(*new HTMLTemplateElement(tagName, document));
 }
 
+DocumentFragment* HTMLTemplateElement::contentIfAvailable() const
+{
+    return m_content.get();
+}
+
 DocumentFragment& HTMLTemplateElement::content() const
 {
     if (!m_content)

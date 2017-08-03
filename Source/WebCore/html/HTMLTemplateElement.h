@@ -43,6 +43,7 @@ public:
     virtual ~HTMLTemplateElement();
 
     DocumentFragment& content() const;
+    DocumentFragment* contentIfAvailable() const;
 
 private:
     HTMLTemplateElement(const QualifiedName&, Document&);
