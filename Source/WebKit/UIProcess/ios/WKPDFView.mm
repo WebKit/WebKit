@@ -111,6 +111,9 @@ typedef struct {
     RetainPtr<UIWKSelectionAssistant> _webSelectionAssistant;
 
     std::unique_ptr<ApplicationStateTracker> _applicationStateTracker;
+
+    UIEdgeInsets _lastUnobscuredSafeAreaInset;
+    CGFloat _lastLayoutWidth;
 }
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView
@@ -205,6 +208,9 @@ static void detachViewForPage(PDFPageInfo& page)
 
 - (void)web_setMinimumSize:(CGSize)size
 {
+    if (CGSizeEqualToSize(size, _minimumSize))
+        return;
+
     _minimumSize = size;
 
     if (_webView._passwordView) {
@@ -297,8 +303,8 @@ static void detachViewForPage(PDFPageInfo& page)
 
 - (CGPoint)_offsetForPageNumberIndicator
 {
-    UIEdgeInsets contentInset = [_webView _computedContentInset];
-    return CGPointMake(contentInset.left, contentInset.top + _overlaidAccessoryViewsInset.height);
+    UIEdgeInsets insets = UIEdgeInsetsAdd(_webView._computedUnobscuredSafeAreaInset, _webView._computedContentInset, UIRectEdgeAll);
+    return CGPointMake(insets.left, insets.top + _overlaidAccessoryViewsInset.height);
 }
 
 - (void)_updatePageNumberIndicator
@@ -324,6 +330,12 @@ static void detachViewForPage(PDFPageInfo& page)
 - (void)web_computedContentInsetDidChange
 {
     [self _updatePageNumberIndicator];
+
+    if (UIEdgeInsetsEqualToEdgeInsets(_webView._computedUnobscuredSafeAreaInset, _lastUnobscuredSafeAreaInset))
+        return;
+
+    [self _computePageAndDocumentFrames];
+    [self _revalidateViews];
 }
 
 - (void)web_setFixedOverlayView:(UIView *)fixedOverlayView
@@ -370,14 +382,27 @@ static void detachViewForPage(PDFPageInfo& page)
 
 - (void)_computePageAndDocumentFrames
 {
+    UIEdgeInsets safeAreaInsets = _webView._computedUnobscuredSafeAreaInset;
+    _lastUnobscuredSafeAreaInset = safeAreaInsets;
+    CGSize minimumSizeRespectingContentInset = CGSizeMake(_minimumSize.width - (safeAreaInsets.left + safeAreaInsets.right), _minimumSize.height - (safeAreaInsets.top + safeAreaInsets.bottom));
+
+    if (!_pages.isEmpty() && _lastLayoutWidth == minimumSizeRespectingContentInset.width) {
+        [self _updateDocumentFrame];
+        return;
+    }
+
     NSUInteger pageCount = [_pdfDocument numberOfPages];
+    if (!pageCount)
+        return;
+    
+    _lastLayoutWidth = minimumSizeRespectingContentInset.width;
     [_pageNumberIndicator setPageCount:pageCount];
     
     [self _clearPages];
 
     _pages.reserveCapacity(pageCount);
 
-    CGRect pageFrame = CGRectMake(0, 0, _minimumSize.width, _minimumSize.height);
+    CGRect pageFrame = CGRectMake(0, 0, minimumSizeRespectingContentInset.width, minimumSizeRespectingContentInset.height);
     for (NSUInteger pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
         UIPDFPage *page = [_pdfDocument pageAtIndex:pageIndex];
         if (!page)
@@ -395,10 +420,21 @@ static void detachViewForPage(PDFPageInfo& page)
         pageFrame.origin.y += pageFrame.size.height - pdfPageMargin;
     }
 
+    [self _updateDocumentFrame];
+}
+
+- (void)_updateDocumentFrame
+{
+    if (_pages.isEmpty())
+        return;
+
+    UIEdgeInsets safeAreaInsets = _webView._computedUnobscuredSafeAreaInset;
     CGFloat scale = _scrollView.zoomScale;
-    CGRect newFrame = [self frame];
-    newFrame.size.width = _minimumSize.width * scale;
-    newFrame.size.height = std::max(pageFrame.origin.y + pdfPageMargin, _minimumSize.height) * scale;
+    CGRect newFrame = CGRectZero;
+    newFrame.origin.x = safeAreaInsets.left;
+    newFrame.origin.y = safeAreaInsets.top;
+    newFrame.size.width = _lastLayoutWidth * scale;
+    newFrame.size.height = std::max((CGRectGetMaxY(_pages.last().frame) + pdfPageMargin) * scale + safeAreaInsets.bottom, _minimumSize.height * scale);
 
     [self setFrame:newFrame];
     [_scrollView setContentSize:newFrame.size];

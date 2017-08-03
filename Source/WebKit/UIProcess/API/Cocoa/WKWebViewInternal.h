@@ -143,6 +143,7 @@ struct PrintInfo;
 
 @property (nonatomic, readonly) BOOL _allowsDoubleTapGestures;
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
+@property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
 #endif
 
 - (WKPageRef)_pageForTesting;
