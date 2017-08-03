@@ -268,7 +268,7 @@
     "web-platform-tests/selectors": "skip", 
     "web-platform-tests/selectors-api": "skip", 
     "web-platform-tests/server-timing": "skip", 
-    "web-platform-tests/service-workers": "skip", 
+    "web-platform-tests/service-workers": "import", 
     "web-platform-tests/shadow-dom": "import", 
     "web-platform-tests/shadow-dom/untriaged": "skip", 
     "web-platform-tests/staticrange": "skip", 

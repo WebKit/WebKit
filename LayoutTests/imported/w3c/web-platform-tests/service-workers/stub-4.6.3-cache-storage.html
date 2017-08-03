@@ -2,7 +2,7 @@
 <html>
 <title>Service Workers: CacheStorage</title>
     <head>
-        <link rel="help" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#cache-storage">
+        <link rel="help" href="https://w3c.github.io/ServiceWorker/#cache-storage">
         <script src="/resources/testharness.js"></script>
         <script src="/resources/testharnessreport.js"></script>
 
@@ -29,22 +29,22 @@ interface CacheStorage {
 };
 
 callback CacheStorageIterationCallback = void (Cache value, DOMString key, CacheStorage map);
-</pre>
+</script>
 
-<!--
+<!-- 
 **Note**:[CacheStorage][1]interface is designed to largely conform
 to[ECMAScript 6 Map objects][2]but entirely async, and with additional
 convenience methods.
 
 [1]: #cache-storage-interface
 [2]: http://goo.gl/gNnDPO
--->
+ -->
 
 
     <script type=text/plain id="untested_idls">
         interface ScalarValueString {};
         interface Cache {};
-    </pre>
+    </script>
 
     <script>
         var idl_array = new IdlArray();

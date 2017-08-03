@@ -1,6 +1,5 @@
 if (self.importScripts) {
     importScripts('/resources/testharness.js');
-    importScripts('../resources/testharness-helpers.js');
     importScripts('../resources/test-helpers.js');
 }
 
@@ -29,12 +28,37 @@ prepopulated_cache_test(simple_entries, function(cache, entries) {
   }, 'Cache.match with Request');
 
 prepopulated_cache_test(simple_entries, function(cache, entries) {
+    var alt_response = new Response('', {status: 201});
+
+    return self.caches.open('second_matching_cache')
+      .then(function(cache) {
+          return cache.put(entries.a.request, alt_response.clone());
+        })
+      .then(function() {
+          return cache.match(entries.a.request);
+        })
+      .then(function(result) {
+          assert_response_equals(
+            result, entries.a.response,
+            'Cache.match should match the first cache.');
+        });
+  }, 'Cache.match with multiple cache hits');
+
+prepopulated_cache_test(simple_entries, function(cache, entries) {
     return cache.match(new Request(entries.a.request.url))
       .then(function(result) {
           assert_response_equals(result, entries.a.response,
                                  'Cache.match should match by Request.');
         });
   }, 'Cache.match with new Request');
+
+prepopulated_cache_test(simple_entries, function(cache, entries) {
+    return cache.match(new Request(entries.a.request.url, {method: 'HEAD'}))
+      .then(function(result) {
+          assert_equals(result, undefined,
+                        'Cache.match should not match HEAD Request.');
+        });
+  }, 'Cache.match with HEAD');
 
 prepopulated_cache_test(simple_entries, function(cache, entries) {
     return cache.match(entries.a.request,
@@ -68,6 +92,56 @@ prepopulated_cache_test(simple_entries, function(cache, entries) {
         });
   },
   'Cache.match with ignoreSearch option (request with search parameter)');
+
+cache_test(function(cache) {
+    var request = new Request('http://example.com/');
+    var head_request = new Request('http://example.com/', {method: 'HEAD'});
+    var response = new Response('foo');
+    return cache.put(request.clone(), response.clone())
+      .then(function() {
+          return cache.match(head_request.clone());
+        })
+      .then(function(result) {
+          assert_equals(
+            result, undefined,
+            'Cache.match should resolve as undefined with a ' +
+            'mismatched method.');
+          return cache.match(head_request.clone(),
+                             {ignoreMethod: true});
+        })
+      .then(function(result) {
+          assert_response_equals(
+            result, response,
+            'Cache.match with ignoreMethod should ignore the ' +
+            'method of request.');
+        });
+  }, 'Cache.match supports ignoreMethod');
+
+cache_test(function(cache) {
+    var vary_request = new Request('http://example.com/c',
+                                   {headers: {'Cookies': 'is-for-cookie'}});
+    var vary_response = new Response('', {headers: {'Vary': 'Cookies'}});
+    var mismatched_vary_request = new Request('http://example.com/c');
+
+    return cache.put(vary_request.clone(), vary_response.clone())
+      .then(function() {
+          return cache.match(mismatched_vary_request.clone());
+        })
+      .then(function(result) {
+          assert_equals(
+            result, undefined,
+            'Cache.match should resolve as undefined with a ' +
+            'mismatched vary.');
+          return cache.match(mismatched_vary_request.clone(),
+                              {ignoreVary: true});
+        })
+      .then(function(result) {
+          assert_response_equals(
+            result, vary_response,
+            'Cache.match with ignoreVary should ignore the ' +
+            'vary of request.');
+        });
+  }, 'Cache.match supports ignoreVary');
 
 prepopulated_cache_test(simple_entries, function(cache, entries) {
     return cache.match(entries.cat.request.url + '#mouse')
@@ -159,6 +233,36 @@ cache_test(function(cache) {
         });
   }, 'Cache.match invoked multiple times for the same Request/Response');
 
+cache_test(function(cache) {
+    var request_url = new URL('../resources/simple.txt', location.href).href;
+    return fetch(request_url)
+      .then(function(fetch_result) {
+          return cache.put(new Request(request_url), fetch_result);
+        })
+      .then(function() {
+          return cache.match(request_url);
+        })
+      .then(function(result) {
+          return result.blob();
+        })
+      .then(function(blob) {
+          var sliced = blob.slice(2,8);
+
+          return new Promise(function (resolve, reject) {
+              var reader = new FileReader();
+              reader.onloadend = function(event) {
+                resolve(event.target.result);
+              };
+              reader.readAsText(sliced);
+            });
+        })
+      .then(function(text) {
+          assert_equals(text, 'simple',
+                        'A Response blob returned by Cache.match should be ' +
+                        'sliceable.' );
+        });
+  }, 'Cache.match blob should be sliceable');
+
 prepopulated_cache_test(simple_entries, function(cache, entries) {
     var request = new Request(entries.a.request.clone(), {method: 'POST'});
     return cache.match(request)
@@ -189,5 +293,29 @@ prepopulated_cache_test(simple_entries, function(cache, entries) {
                   'same properties as a stored network error response.');
         });
   }, 'Cache.match with a network error Response');
+
+cache_test(function(cache) {
+    // This test validates that we can get a Response from the Cache API,
+    // clone it, and read just one side of the clone.  This was previously
+    // bugged in FF for Responses with large bodies.
+    var data = [];
+    data.length = 80 * 1024;
+    data.fill('F');
+    var response;
+    return cache.put('/', new Response(data.toString()))
+      .then(function(result) {
+          return cache.match('/');
+        })
+      .then(function(r) {
+          // Make sure the original response is not GC'd.
+          response = r;
+          // Return only the clone.  We purposefully test that the other
+          // half of the clone does not need to be read here.
+          return response.clone().text();
+        })
+      .then(function(text) {
+          assert_equals(text, data.toString(), 'cloned body text can be read correctly');
+        });
+  }, 'Cache produces large Responses that can be cloned and read correctly.');
 
 done();

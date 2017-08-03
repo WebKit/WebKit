@@ -9,7 +9,6 @@
         "web-platform-tests/html/browsers/history/the-location-interface/non-automated",
         "web-platform-tests/html/tools",
         "web-platform-tests/images",
-        "web-platform-tests/service-workers",
         "web-platform-tests/tools"
     ],
     "files": [

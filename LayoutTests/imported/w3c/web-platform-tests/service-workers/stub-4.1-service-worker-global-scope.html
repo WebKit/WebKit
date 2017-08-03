@@ -2,7 +2,7 @@
 <html>
 <title>Service Workers: ServiceWorkerGlobalScope</title>
     <head>
-        <link rel="help" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#service-worker-global-scope">
+        <link rel="help" href="https://w3c.github.io/ServiceWorker/#service-worker-global-scope">
         <script src="/resources/testharness.js"></script>
         <script src="/resources/testharnessreport.js"></script>
 
@@ -37,9 +37,9 @@ interface ServiceWorkerGlobalScope : WorkerGlobalScope {
 
   // close() method inherited from WorkerGlobalScope is not exposed.
 };
-</pre>
+</script>
 
-<!--
+<!-- 
 The `ServiceWorkerGlobalScope` interface represents the global execution
 context of a Service Worker. `ServiceWorkerGlobalScope` object provides
 generic, event-driven, time-limited script execution contexts that run at an
@@ -48,7 +48,7 @@ alive and killed by their relationship to events, not documents. Any type of
 synchronous requests MUST NOT be initiated inside of a Service Worker.
 
 [1]: #navigator-service-worker-register
--->
+ -->
 
 
     <script type=text/plain id="untested_idls">
@@ -58,7 +58,7 @@ synchronous requests MUST NOT be initiated inside of a Service Worker.
         interface ScalarValueString {};
         interface EventHandler {};
         interface WorkerGlobalScope {};
-    </pre>
+    </script>
 
     <script>
         var idl_array = new IdlArray();

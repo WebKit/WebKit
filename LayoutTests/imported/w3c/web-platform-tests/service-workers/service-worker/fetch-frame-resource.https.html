@@ -3,7 +3,7 @@
 <meta name=timeout content=long>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="resources/get-host-info.sub.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
 <script src="resources/test-helpers.sub.js"></script>
 <body>
 <script>
@@ -110,7 +110,8 @@ async_test(function(t) {
           frame.src =
             scope + '?mode=cors&url=' +
             encodeURIComponent(host_info['HTTPS_REMOTE_ORIGIN'] + path +
-                               '?ACAOrigin=' + host_info['HTTPS_ORIGIN']);
+                               '?ACAOrigin=' + host_info['HTTPS_ORIGIN'] +
+                               '&ACACredentials=true');
           document.body.appendChild(frame);
           return getLoadedFrameAsObject(frame);
         })
@@ -183,7 +184,8 @@ async_test(function(t) {
           var win = window.open(
             scope + '?mode=cors&url=' +
             encodeURIComponent(host_info['HTTPS_REMOTE_ORIGIN'] + path +
-                               '?ACAOrigin=' + host_info['HTTPS_ORIGIN']));
+                               '?ACAOrigin=' + host_info['HTTPS_ORIGIN'] +
+                               '&ACACredentials=true'));
           return getLoadedWindowAsObject(win);
         })
       .then(function(result) {

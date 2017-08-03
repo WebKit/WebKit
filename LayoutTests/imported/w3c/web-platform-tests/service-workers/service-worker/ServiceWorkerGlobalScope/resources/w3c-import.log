@@ -1,7 +1,6 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
-Instead, create a pull request on the W3C CSS or WPT github:
-	https://github.com/w3c/csswg-test
+Instead, create a pull request on the WPT github:
 	https://github.com/w3c/web-platform-tests
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
@@ -16,6 +15,16 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/close-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/error-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/extendable-message-event-constructor-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/extendable-message-event-loopback-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/extendable-message-event-ping-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/extendable-message-event-pong-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/extendable-message-event-utils.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/extendable-message-event-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/postmessage-loopback-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/postmessage-ping-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/postmessage-pong-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/registration-attribute-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/unregister-controlling-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/resources/unregister-worker.js

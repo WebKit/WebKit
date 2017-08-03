@@ -2,7 +2,7 @@
 <html>
 <title>Service Workers: Client</title>
     <head>
-        <link rel="help" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#client">
+        <link rel="help" href="https://w3c.github.io/ServiceWorker/#client">
         <script src="/resources/testharness.js"></script>
         <script src="/resources/testharnessreport.js"></script>
 
@@ -19,9 +19,9 @@ interface Client {
   void postMessage(any message, DOMString targetOrigin,
                    optional sequence<Transferable> transfer);
 };
-</pre>
+</script>
 
-<!--
+<!-- 
 The `Client` interface represents the window or the worker (defined as client)
 that is [controlled][1] by the Service Worker. This object provides a no-op
 constructor. Callers should note that only `Client` objects created by the user
@@ -39,12 +39,12 @@ targetOrigin, transfer)` method of a `[Client][3]`, when called, causes a
 [2]: #get-serviced-method
 [3]: #client-interface
 [4]: http://goo.gl/4SLWiH
--->
+ -->
 
 
     <script type=text/plain id="untested_idls">
         interface Transferable {};
-    </pre>
+    </script>
 
     <script>
         var idl_array = new IdlArray();

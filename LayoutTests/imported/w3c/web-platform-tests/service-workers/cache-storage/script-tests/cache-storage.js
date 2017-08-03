@@ -1,6 +1,5 @@
 if (self.importScripts) {
     importScripts('/resources/testharness.js');
-    importScripts('../resources/testharness-helpers.js');
     importScripts('../resources/test-helpers.js');
 }
 
@@ -17,6 +16,40 @@ promise_test(function(t) {
   }, 'CacheStorage.open');
 
 promise_test(function(t) {
+    var cache_name = 'cache-storage/bar';
+    var first_cache = null;
+    var second_cache = null;
+    return self.caches.open(cache_name)
+      .then(function(cache) {
+          first_cache = cache;
+          return self.caches.delete(cache_name);
+        })
+      .then(function() {
+          return first_cache.add('../resources/simple.txt');
+        })
+      .then(function() {
+          return self.caches.keys();
+        })
+      .then(function(cache_names) {
+          assert_equals(cache_names.indexOf(cache_name), -1);
+          return self.caches.open(cache_name);
+        })
+      .then(function(cache) {
+          second_cache = cache;
+          return second_cache.keys();
+        })
+      .then(function(keys) {
+          assert_equals(keys.length, 0);
+          return first_cache.keys();
+        })
+      .then(function(keys) {
+          assert_equals(keys.length, 1);
+          // Clean up
+          return self.caches.delete(cache_name);
+        });
+  }, 'CacheStorage.delete dooms, but does not delete immediately');
+
+promise_test(function(t) {
     // Note that this test may collide with other tests running in the same
     // origin that also uses an empty cache name.
     var cache_name = '';
@@ -31,9 +64,10 @@ promise_test(function(t) {
   }, 'CacheStorage.open with an empty name');
 
 promise_test(function(t) {
-    return assert_promise_rejects(
-      self.caches.open(),
+    return promise_rejects(
+      t,
       new TypeError(),
+      self.caches.open(),
       'CacheStorage.open should throw TypeError if called with no arguments.');
   }, 'CacheStorage.open with no arguments');
 
@@ -169,20 +203,28 @@ promise_test(function(t) {
   }, 'CacheStorage.delete with nonexistent cache');
 
 promise_test(function(t) {
-    var bad_name = 'unpaired\uD800';
-    var converted_name = 'unpaired\uFFFD'; // Don't create cache with this name.
-    return self.caches.has(converted_name)
+    var unpaired_name = 'unpaired\uD800';
+    var converted_name = 'unpaired\uFFFD';
+
+    // The test assumes that a cache with converted_name does not
+    // exist, but if the implementation fails the test then such
+    // a cache will be created. Start off in a fresh state by
+    // deleting all caches.
+    return delete_all_caches()
+      .then(function() {
+          return self.caches.has(converted_name);
+      })
       .then(function(cache_exists) {
           assert_false(cache_exists,
                        'Test setup failure: cache should not exist');
       })
-      .then(function() { return self.caches.open(bad_name); })
+      .then(function() { return self.caches.open(unpaired_name); })
       .then(function() { return self.caches.keys(); })
       .then(function(keys) {
-          assert_true(keys.indexOf(bad_name) !== -1,
+          assert_true(keys.indexOf(unpaired_name) !== -1,
                       'keys should include cache with bad name');
       })
-      .then(function() { return self.caches.has(bad_name); })
+      .then(function() { return self.caches.has(unpaired_name); })
       .then(function(cache_exists) {
           assert_true(cache_exists,
                       'CacheStorage names should be not be converted.');

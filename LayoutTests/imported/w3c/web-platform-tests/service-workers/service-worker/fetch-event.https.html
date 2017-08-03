@@ -1,11 +1,40 @@
 <!DOCTYPE html>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="resources/get-host-info.sub.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
 <script src="resources/test-helpers.sub.js"></script>
 <body>
 <script>
 var worker = 'resources/fetch-event-test-worker.js';
+
+async_test(function(t) {
+    const scope = 'resources/simple.html?headers';
+    service_worker_unregister_and_register(t, worker, scope)
+      .then(function(reg) {
+          return wait_for_state(t, reg.installing, 'activated');
+        })
+      .then(function() { return with_iframe(scope); })
+      .then(function(frame) {
+          t.add_cleanup(function() { frame.remove(); });
+          const headers = JSON.parse(frame.contentDocument.body.textContent);
+          const header_names = {};
+          for (const [name, value] of headers) {
+            header_names[name] = true;
+          }
+
+          assert_true(
+            header_names.hasOwnProperty('accept'),
+            'request includes "Accept" header as inserted by Fetch'
+          );
+          assert_true(
+            header_names.hasOwnProperty('upgrade-insecure-requests'),
+            'request specifies "Upgrade-Insecure Requests header as inserted by Fetch'
+          );
+
+          return service_worker_unregister_and_done(t, scope);
+        })
+      .catch(unreached_rejection(t));
+  }, 'Service Worker headers in the request of a fetch event');
 
 async_test(function(t) {
     var scope = 'resources/simple.html?string';
@@ -63,171 +92,6 @@ async_test(function(t) {
             frame.contentDocument.body.textContent,
             'Referrer: ' + document.location.href,
             'Service Worker should respond to fetch with the referrer URL');
-          frame.remove();
-          return service_worker_unregister_and_done(t, scope);
-        })
-      .catch(unreached_rejection(t));
-  }, 'Service Worker responds to fetch event with the referrer URL');
-
-function run_referrer_policy_tests(frame, referrer, href, origin) {
-    return frame.contentWindow.fetch('resources/simple.html?referrerFull',
-                                     {method: "GET", referrer: referrer})
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: ' + href + '\n' +
-            'ReferrerPolicy: no-referrer-when-downgrade',
-            'Service Worker should respond to fetch with the referrer URL when a member of RequestInit is present');
-          var http_url = get_host_info()['HTTP_ORIGIN'] + base_path() +
-                         '/resources/simple.html?referrerFull';
-          return frame.contentWindow.fetch(http_url,
-                                           {method: "GET", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: about:client\n' +
-            'ReferrerPolicy: no-referrer-when-downgrade',
-            'Service Worker should respond to fetch with no referrer when a member of RequestInit is present with an HTTP request');
-          return frame.contentWindow.fetch('resources/simple.html?referrerFull',
-                                           {referrerPolicy: "", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: ' + href + '\n' +
-            'ReferrerPolicy: no-referrer-when-downgrade',
-            'Service Worker should respond to fetch with the referrer with ""');
-          var http_url = get_host_info()['HTTP_ORIGIN'] + base_path() +
-                         '/resources/simple.html?referrerFull';
-          return frame.contentWindow.fetch(http_url,
-                                           {referrerPolicy: "", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: about:client\n' +
-            'ReferrerPolicy: no-referrer-when-downgrade',
-            'Service Worker should respond to fetch with no referrer with ""');
-          return frame.contentWindow.fetch('resources/simple.html?referrerFull',
-                                           {referrerPolicy: "origin", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: ' + origin + '/' + '\n' +
-            'ReferrerPolicy: origin',
-            'Service Worker should respond to fetch with the referrer origin with "origin" and a same origin request');
-          var http_url = get_host_info()['HTTP_ORIGIN'] + base_path() +
-                         '/resources/simple.html?referrerFull';
-          return frame.contentWindow.fetch(http_url,
-                                           {referrerPolicy: "origin", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: ' + origin + '/' + '\n' +
-            'ReferrerPolicy: origin',
-            'Service Worker should respond to fetch with the referrer origin with "origin" and a cross origin request');
-          return frame.contentWindow.fetch('resources/simple.html?referrerFull',
-                                           {referrerPolicy: "origin-when-cross-origin", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: ' + href + '\n' +
-            'ReferrerPolicy: origin-when-cross-origin',
-            'Service Worker should respond to fetch with the referrer URL with "origin-when-cross-origin" and a same origin request');
-          var http_url = get_host_info()['HTTP_ORIGIN'] + base_path() +
-                         '/resources/simple.html?referrerFull';
-          return frame.contentWindow.fetch(http_url,
-                                           {referrerPolicy: "origin-when-cross-origin", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: ' + origin + '/' + '\n' +
-            'ReferrerPolicy: origin-when-cross-origin',
-            'Service Worker should respond to fetch with the referrer origin with "origin-when-cross-origin" and a cross origin request');
-          return frame.contentWindow.fetch('resources/simple.html?referrerFull',
-                                           {referrerPolicy: "no-referrer-when-downgrade", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: ' + href + '\n' +
-            'ReferrerPolicy: no-referrer-when-downgrade',
-            'Service Worker should respond to fetch with no referrer with "no-referrer-when-downgrade" and a same origin request');
-          var http_url = get_host_info()['HTTP_ORIGIN'] + base_path() +
-                         '/resources/simple.html?referrerFull';
-          return frame.contentWindow.fetch(http_url,
-                                           {referrerPolicy: "no-referrer-when-downgrade", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: about:client\n' +
-            'ReferrerPolicy: no-referrer-when-downgrade',
-            'Service Worker should respond to fetch with no referrer with "no-referrer-when-downgrade" and an HTTP request');
-          var http_url = get_host_info()['HTTP_ORIGIN'] + base_path() +
-                         '/resources/simple.html?referrerFull';
-          return frame.contentWindow.fetch(http_url, {referrerPolicy: "unsafe-url", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: ' + href + '\n' +
-            'ReferrerPolicy: unsafe-url',
-            'Service Worker should respond to fetch with no referrer with "unsafe-url"');
-          return frame.contentWindow.fetch('resources/simple.html?referrerFull',
-                                           {referrerPolicy: "no-referrer", referrer: referrer});
-        })
-      .then(function(response) { return response.text(); })
-      .then(function(response_text) {
-          assert_equals(
-            response_text,
-            'Referrer: about:client\n' +
-            'ReferrerPolicy: no-referrer',
-            'Service Worker should respond to fetch with no referrer URL with "no-referrer"');
-        });
-}
-
-async_test(function(t) {
-    var scope = 'resources/simple.html?referrerPolicy';
-    var frame;
-    service_worker_unregister_and_register(t, worker, scope)
-      .then(function(reg) {
-          return wait_for_state(t, reg.installing, 'activated');
-        })
-      .then(function() { return with_iframe(scope); })
-      .then(function(f) {
-          frame = f;
-          assert_equals(
-            frame.contentDocument.body.textContent,
-            'ReferrerPolicy: no-referrer-when-downgrade',
-            'Service Worker should respond to fetch with the default referrer policy');
-          // First, run the referrer policy tests without passing a referrer in RequestInit.
-          return run_referrer_policy_tests(frame, undefined, frame.contentDocument.location.href,
-                                           frame.contentDocument.location.origin);
-        })
-      .then(function() {
-          // Now, run the referrer policy tests while passing a referrer in RequestInit.
-          var referrer = get_host_info()['HTTPS_ORIGIN'] + base_path() + 'fake-referrer';
-          return run_referrer_policy_tests(frame, 'fake-referrer', referrer,
-                                           frame.contentDocument.location.origin);
-        })
-      .then(function() {
           frame.remove();
           return service_worker_unregister_and_done(t, scope);
         })
@@ -419,13 +283,13 @@ async_test(function(t) {
       .then(function(frame) {
           assert_equals(
             frame.contentDocument.body.textContent,
-            'Fragment Not Found',
-            'Service worker should not expose URL fragments.');
+            'Fragment Found :' + fragment,
+            'Service worker should expose URL fragments in request.');
           frame.remove();
           return service_worker_unregister_and_done(t, scope);
         })
       .catch(unreached_rejection(t));
-  }, 'Service Worker must not expose FetchEvent URL fragments.');
+  }, 'Service Worker should expose FetchEvent URL fragments.');
 
 async_test(function(t) {
     var scope = 'resources/simple.html?cache';
@@ -460,6 +324,7 @@ async_test(function(t) {
                   .catch(reject);
               });
           });
+          return Promise.all(tests);
         })
       .then(function() {
           return new Promise(function(resolve, reject) {
@@ -532,6 +397,36 @@ async_test(function(t) {
         })
       .catch(unreached_rejection(t));
   }, 'Service Worker should intercept EventSource');
+
+async_test(function(t) {
+    var scope = 'resources/simple.html?integrity';
+    var frame;
+    var integrity_metadata = 'gs0nqru8KbsrIt5YToQqS9fYao4GQJXtcId610g7cCU=';
+
+    service_worker_unregister_and_register(t, worker, scope)
+      .then(function(reg) {
+          return wait_for_state(t, reg.installing, 'activated');
+        })
+      .then(function() { return with_iframe(scope); })
+      .then(function(f) {
+          frame = f;
+          // A request has associated integrity metadata (a string).
+          // Unless stated otherwise, it is the empty string.
+          assert_equals(
+            frame.contentDocument.body.textContent, '');
+
+          return frame.contentWindow.fetch(scope, {'integrity': integrity_metadata});
+        })
+      .then(response => {
+          return response.text();
+        })
+      .then(response_text => {
+          assert_equals(response_text, integrity_metadata, 'integrity');
+          frame.remove();
+          return service_worker_unregister_and_done(t, scope);
+        })
+      .catch(unreached_rejection(t));
+  }, 'Service Worker responds to fetch event with the correct integrity_metadata');
 
 </script>
 </body>

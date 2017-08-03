@@ -2,7 +2,7 @@
 <html>
 <title>Service Workers: InstallPhaseEvent</title>
     <head>
-        <link rel="help" href="https://slightlyoff.github.io/ServiceWorker/spec/service_worker/#install-phase-event">
+        <link rel="help" href="https://w3c.github.io/ServiceWorker/#install-phase-event">
         <script src="/resources/testharness.js"></script>
         <script src="/resources/testharnessreport.js"></script>
 
@@ -16,9 +16,9 @@
 interface InstallPhaseEvent : Event {
   Promise<any> waitUntil(Promise<any> f);
 };
-</pre>
+</script>
 
-<!--
+<!-- 
 Service Workers have two [Lifecycle events][1], `[install][2]` and
 `[activate][3]`. Service Workers use the `[InstallPhaseEvent][4]` interface for
 `[activate][3]` event and the `[InstallEvent][5]` interface, which inherits
@@ -29,12 +29,12 @@ from the `[InstallPhaseEvent][4]` interface, for `[install][2]` event.
 [3]: #activate-event
 [4]: #install-phase-event-interface
 [5]: #install-event-interface
--->
+ -->
 
 
     <script type=text/plain id="untested_idls">
         interface Event {};
-    </pre>
+    </script>
 
     <script>
         var idl_array = new IdlArray();
