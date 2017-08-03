@@ -1,5 +1,28 @@
 2017-08-02  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220144. rdar://problem/33692161
+
+    2017-08-02  Saam Barati  <sbarati@apple.com>
+
+            On memory-constrained iOS devices, reduce the rate at which the JS heap grows before a GC to try to keep more memory available for the system
+            https://bugs.webkit.org/show_bug.cgi?id=175041
+            <rdar://problem/33659370>
+
+            Reviewed by Filip Pizlo.
+
+            The testing I have done shows that this new function is a ~10%
+            progression running JetStream on 1GB iOS devices. I've also tried
+            this on a few > 1GB iOS devices, and the testing shows this is either neutral
+            or a regression. Right now, we'll just enable this for <= 1GB devices
+            since it's a win. In the future, we might want to either look into
+            tweaking these parameters or coming up with a new function for > 1GB
+            devices.
+
+            * heap/Heap.cpp:
+            * runtime/Options.h:
+
+2017-08-02  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220144. rdar://problem/33687404
 
     2017-08-02  Saam Barati  <sbarati@apple.com>
