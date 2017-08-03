@@ -45,7 +45,6 @@
 #include <wtf/Vector.h>
 
 #if USE(PTHREADS) && !OS(DARWIN)
-#include <semaphore.h>
 #include <signal.h>
 #endif
 
@@ -191,7 +190,7 @@ public:
     struct NewThreadContext;
     static void entryPoint(NewThreadContext*);
 protected:
-    Thread();
+    Thread() = default;
 
     static Ref<Thread> createCurrentThread();
     void initializeInThread();
@@ -211,7 +210,7 @@ protected:
 
     static const char* normalizeThreadName(const char* threadName);
 
-    enum JoinableState {
+    enum JoinableState : uint8_t {
         // The default thread state. The thread can be joined on.
         Joinable,
 
@@ -239,15 +238,14 @@ protected:
     std::mutex m_mutex;
     ThreadIdentifier m_id { 0 };
     JoinableState m_joinableState { Joinable };
-    StackBounds m_stack { StackBounds::emptyBounds() };
-    Vector<std::weak_ptr<ThreadGroup>> m_threadGroups;
     bool m_isShuttingDown { false };
     bool m_didExit { false };
+    StackBounds m_stack { StackBounds::emptyBounds() };
+    Vector<std::weak_ptr<ThreadGroup>> m_threadGroups;
     PlatformThreadHandle m_handle;
 #if OS(DARWIN)
     mach_port_t m_platformThread;
 #elif USE(PTHREADS)
-    sem_t m_semaphoreForSuspendResume;
     PlatformRegisters* m_platformRegisters { nullptr };
     unsigned m_suspendCount { 0 };
     std::atomic<bool> m_suspended { false };

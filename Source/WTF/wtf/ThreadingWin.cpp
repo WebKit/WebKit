@@ -103,10 +103,6 @@ namespace WTF {
 
 static StaticLock globalSuspendLock;
 
-Thread::Thread()
-{
-}
-
 Thread::~Thread()
 {
     // It is OK because FLSAlloc's callback will be called even before there are some open handles.

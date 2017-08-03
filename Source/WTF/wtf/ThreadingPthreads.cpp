@@ -37,6 +37,7 @@
 #include <errno.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RawPointer.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadGroup.h>
@@ -56,6 +57,7 @@
 
 #if !OS(DARWIN) && OS(UNIX)
 
+#include <semaphore.h>
 #include <sys/mman.h>
 #include <unistd.h>
 
@@ -75,21 +77,40 @@ namespace WTF {
 
 static StaticLock globalSuspendLock;
 
-Thread::Thread()
-{
-#if !OS(DARWIN)
-    sem_init(&m_semaphoreForSuspendResume, /* Only available in this process. */ 0, /* Initial value for the semaphore. */ 0);
-#endif
-}
-
 Thread::~Thread()
 {
-#if !OS(DARWIN)
-    sem_destroy(&m_semaphoreForSuspendResume);
-#endif
 }
 
 #if !OS(DARWIN)
+class Semaphore {
+    WTF_MAKE_NONCOPYABLE(Semaphore);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit Semaphore(unsigned initialValue)
+    {
+        int sharedBetweenProcesses = 0;
+        sem_init(&m_platformSemaphore, sharedBetweenProcesses, initialValue);
+    }
+
+    ~Semaphore()
+    {
+        sem_destroy(&m_platformSemaphore);
+    }
+
+    void wait()
+    {
+        sem_wait(&m_platformSemaphore);
+    }
+
+    void post()
+    {
+        sem_post(&m_platformSemaphore);
+    }
+
+private:
+    sem_t m_platformSemaphore;
+};
+static LazyNeverDestroyed<Semaphore> globalSemaphoreForSuspendResume;
 
 // We use SIGUSR1 to suspend and resume machine threads in JavaScriptCore.
 static constexpr const int SigThreadSuspendResume = SIGUSR1;
@@ -156,9 +177,9 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
     // sem_post is async-signal-safe function. It means that we can call this from a signal handler.
     // http://pubs.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_04.html#tag_02_04_03
     //
-    // And sem_post emits memory barrier that ensures that suspendedMachineContext is correctly saved.
+    // And sem_post emits memory barrier that ensures that PlatformRegisters are correctly saved.
     // http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_11
-    sem_post(&thread->m_semaphoreForSuspendResume);
+    globalSemaphoreForSuspendResume->post();
 
     // Reaching here, SigThreadSuspendResume is blocked in this handler (this is configured by sigaction's sa_mask).
     // So before calling sigsuspend, SigThreadSuspendResume to this thread is deferred. This ensures that the handler is not executed recursively.
@@ -170,7 +191,7 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
     thread->m_platformRegisters = nullptr;
 
     // Allow resume caller to see that this thread is resumed.
-    sem_post(&thread->m_semaphoreForSuspendResume);
+    globalSemaphoreForSuspendResume->post();
 }
 
 #endif // !OS(DARWIN)
@@ -178,6 +199,8 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
 void Thread::initializePlatformThreading()
 {
 #if !OS(DARWIN)
+    globalSemaphoreForSuspendResume.construct(0);
+
     // Signal handlers are process global configuration.
     // Intentionally block SigThreadSuspendResume in the handler.
     // SigThreadSuspendResume will be allowed in the handler by sigsuspend.
@@ -343,7 +366,7 @@ auto Thread::suspend() -> Expected<void, PlatformSuspendError>
         int result = pthread_kill(m_handle, SigThreadSuspendResume);
         if (result)
             return makeUnexpected(result);
-        sem_wait(&m_semaphoreForSuspendResume);
+        globalSemaphoreForSuspendResume->wait();
         // Release barrier ensures that this operation is always executed after all the above processing is done.
         m_suspended.store(true, std::memory_order_release);
     }
@@ -370,7 +393,7 @@ void Thread::resume()
         targetThread.store(this);
         if (pthread_kill(m_handle, SigThreadSuspendResume) == ESRCH)
             return;
-        sem_wait(&m_semaphoreForSuspendResume);
+        globalSemaphoreForSuspendResume->wait();
         // Release barrier ensures that this operation is always executed after all the above processing is done.
         m_suspended.store(false, std::memory_order_release);
     }
