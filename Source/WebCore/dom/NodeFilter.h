@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 
@@ -31,9 +32,10 @@ namespace WebCore {
 
 class Node;
 
-class NodeFilter : public RefCounted<NodeFilter> {
+class NodeFilter : public RefCounted<NodeFilter>, public ActiveDOMCallback {
 public:
-    virtual ~NodeFilter() { }
+    using ActiveDOMCallback::ActiveDOMCallback;
+
     virtual CallbackResult<unsigned short> acceptNode(Node&) = 0;
 
     /*

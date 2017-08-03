@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -38,9 +39,10 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class StringCallback : public RefCounted<StringCallback> {
+class StringCallback : public RefCounted<StringCallback>, public ActiveDOMCallback {
 public:
-    virtual ~StringCallback() { }
+    using ActiveDOMCallback::ActiveDOMCallback;
+
     virtual CallbackResult<void> handleEvent(const String& data) = 0;
 
     // Helper to post callback task.

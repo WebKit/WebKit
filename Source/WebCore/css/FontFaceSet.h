@@ -84,7 +84,7 @@ private:
         PendingPromise(LoadPromise&&);
 
     public:
-        Vector<RefPtr<FontFace>> faces;
+        Vector<Ref<FontFace>> faces;
         LoadPromise promise;
         bool hasReachedTerminalState { false };
     };

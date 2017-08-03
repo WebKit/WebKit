@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "ActiveDOMCallback.h"
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
 #include "TestCallbackFunctionWithTypedefs.h"
@@ -28,7 +27,7 @@
 
 namespace WebCore {
 
-class JSTestCallbackFunctionWithTypedefs final : public TestCallbackFunctionWithTypedefs, public ActiveDOMCallback {
+class JSTestCallbackFunctionWithTypedefs final : public TestCallbackFunctionWithTypedefs {
 public:
     static Ref<JSTestCallbackFunctionWithTypedefs> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {

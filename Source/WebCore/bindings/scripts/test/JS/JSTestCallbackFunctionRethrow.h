@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "ActiveDOMCallback.h"
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
 #include "TestCallbackFunctionRethrow.h"
@@ -28,7 +27,7 @@
 
 namespace WebCore {
 
-class JSTestCallbackFunctionRethrow final : public TestCallbackFunctionRethrow, public ActiveDOMCallback {
+class JSTestCallbackFunctionRethrow final : public TestCallbackFunctionRethrow {
 public:
     static Ref<JSTestCallbackFunctionRethrow> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {

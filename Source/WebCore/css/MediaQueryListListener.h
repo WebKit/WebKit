@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 
@@ -26,7 +27,7 @@ namespace WebCore {
 
 class MediaQueryList;
 
-class MediaQueryListListener : public RefCounted<MediaQueryListListener> {
+class MediaQueryListListener : public RefCounted<MediaQueryListListener>, public ActiveDOMCallback {
 public:
     enum Type {
         JSMediaQueryListListenerType
@@ -34,13 +35,13 @@ public:
 
     virtual CallbackResult<void> handleEvent(MediaQueryList&) = 0;
     virtual bool operator==(const MediaQueryListListener&) const = 0;
-    virtual ~MediaQueryListListener() { }
 
     Type type() const { return m_type; }
 
 protected:
-    explicit MediaQueryListListener(Type type)
-        : m_type(type)
+    explicit MediaQueryListListener(ScriptExecutionContext* context, Type type)
+        : ActiveDOMCallback(context)
+        , m_type(type)
     {
     }
 

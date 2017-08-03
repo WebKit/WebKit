@@ -39,7 +39,7 @@ using namespace JSC;
     
 namespace WebCore {
 
-JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject* callback, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
+JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject* callback, JSValue thisValue, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
 {
     ASSERT(callback);
 
@@ -79,12 +79,17 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
 
     returnedException = nullptr;
     JSValue result = context->isDocument()
-        ? JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, function, callType, callData, callback, args, returnedException)
-        : JSC::profiledCall(exec, JSC::ProfilingReason::Other, function, callType, callData, callback, args, returnedException);
+        ? JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, function, callType, callData, thisValue, args, returnedException)
+        : JSC::profiledCall(exec, JSC::ProfilingReason::Other, function, callType, callData, thisValue, args, returnedException);
 
     InspectorInstrumentation::didCallFunction(cookie, context);
 
     return result;
+}
+
+void JSCallbackDataWeak::visitJSFunction(JSC::SlotVisitor& vistor)
+{
+    vistor.append(m_callback);
 }
 
 bool JSCallbackDataWeak::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor& visitor)

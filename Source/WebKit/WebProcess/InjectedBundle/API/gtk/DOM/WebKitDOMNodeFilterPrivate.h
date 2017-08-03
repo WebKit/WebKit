@@ -23,12 +23,13 @@
 #include <webkitdom/WebKitDOMNodeFilter.h>
 
 namespace WebCore {
+class Document;
 class NodeFilter;
 }
 
 namespace WebKit {
 WebKitDOMNodeFilter* kit(WebCore::NodeFilter*);
-RefPtr<WebCore::NodeFilter> core(WebKitDOMNodeFilter*);
+RefPtr<WebCore::NodeFilter> core(WebCore::Document*, WebKitDOMNodeFilter*);
 } // namespace WebKit
 
 #endif /* WebKitDOMNodeFilterPrivate_h */

@@ -1,3 +1,15 @@
+2017-08-02  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Convert MutationCallback to be a normal generated callback
+        https://bugs.webkit.org/show_bug.cgi?id=174140
+
+        Reviewed by Darin Adler.
+
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument createNodeIterator:whatToShow:filter:expandEntityReferences:]):
+        (-[DOMDocument createTreeWalker:whatToShow:filter:expandEntityReferences:]):
+        Pass, now necessary, Document to NativeNodeFilter constructor.
+
 2017-08-01  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for navigator.sendBeacon

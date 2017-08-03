@@ -93,6 +93,8 @@ public:
 
     HashSet<Node*> observedNodes() const;
 
+    MutationCallback& callback() const { return m_callback.get(); }
+
     static void enqueueSlotChangeEvent(HTMLSlotElement&);
 
 private:

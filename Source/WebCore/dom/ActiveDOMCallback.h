@@ -32,6 +32,10 @@
 
 #include "ContextDestructionObserver.h"
 
+namespace JSC {
+class SlotVisitor;
+}
+
 namespace WebCore {
 
 class ScriptExecutionContext;
@@ -43,10 +47,12 @@ class ScriptExecutionContext;
 // context thread.
 class ActiveDOMCallback : public ContextDestructionObserver {
 public:
-    ActiveDOMCallback(ScriptExecutionContext* context);
+    ActiveDOMCallback(ScriptExecutionContext*);
     virtual ~ActiveDOMCallback();
 
     WEBCORE_EXPORT bool canInvokeCallback() const;
+    
+    virtual void visitJSFunction(JSC::SlotVisitor&) { }
 };
 
 } // namespace WebCore

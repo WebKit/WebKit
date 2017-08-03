@@ -25,14 +25,16 @@
 
 #pragma once
 
+#include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class VoidCallback : public RefCounted<VoidCallback> {
+class VoidCallback : public RefCounted<VoidCallback>, public ActiveDOMCallback {
 public:
-    virtual ~VoidCallback() { }
+    using ActiveDOMCallback::ActiveDOMCallback;
+
     virtual CallbackResult<void> handleEvent() = 0;
 };
 

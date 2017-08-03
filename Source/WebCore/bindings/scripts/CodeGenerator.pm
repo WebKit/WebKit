@@ -120,6 +120,7 @@ my $idlFiles;
 my $cachedInterfaces = {};
 my $cachedExternalDictionaries = {};
 my $cachedExternalEnumerations = {};
+my $cachedTypes = {};
 
 sub assert
 {
@@ -367,6 +368,20 @@ sub ParseInterface
     }
 
     die("Could NOT find interface definition for $interfaceName in $filename");
+}
+
+sub ParseType
+{
+    my ($object, $typeString) = @_;
+
+    return $cachedTypes->{$typeString} if exists($cachedTypes->{$typeString});
+
+    my $parser = IDLParser->new(1);
+    my $type = $parser->ParseType($typeString, $idlAttributes);
+
+    $cachedTypes->{$typeString} = $type;
+
+    return $type;
 }
 
 # Helpers for all CodeGenerator***.pm modules

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
 #include <wtf/RefCounted.h>
 
@@ -32,9 +33,10 @@ namespace WebCore {
 
 class Geoposition;
 
-class PositionCallback : public RefCounted<PositionCallback> {
+class PositionCallback : public RefCounted<PositionCallback>, public ActiveDOMCallback {
 public:
-    virtual ~PositionCallback() { }
+    using ActiveDOMCallback::ActiveDOMCallback;
+
     virtual CallbackResult<void> handleEvent(Geoposition*) = 0;
 };
 

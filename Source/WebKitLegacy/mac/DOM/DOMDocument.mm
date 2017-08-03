@@ -561,7 +561,7 @@
         raiseTypeErrorException();
     RefPtr<WebCore::NodeFilter> nativeNodeFilter;
     if (filter)
-        nativeNodeFilter = WebCore::NativeNodeFilter::create(WebCore::ObjCNodeFilterCondition::create(filter));
+        nativeNodeFilter = WebCore::NativeNodeFilter::create(IMPL, WebCore::ObjCNodeFilterCondition::create(filter));
     return kit(WTF::getPtr(IMPL->createNodeIterator(*core(root), whatToShow, WTF::getPtr(nativeNodeFilter), expandEntityReferences)));
 }
 
@@ -572,7 +572,7 @@
         raiseTypeErrorException();
     RefPtr<WebCore::NodeFilter> nativeNodeFilter;
     if (filter)
-        nativeNodeFilter = WebCore::NativeNodeFilter::create(WebCore::ObjCNodeFilterCondition::create(filter));
+        nativeNodeFilter = WebCore::NativeNodeFilter::create(IMPL, WebCore::ObjCNodeFilterCondition::create(filter));
     return kit(WTF::getPtr(IMPL->createTreeWalker(*core(root), whatToShow, WTF::getPtr(nativeNodeFilter), expandEntityReferences)));
 }
 

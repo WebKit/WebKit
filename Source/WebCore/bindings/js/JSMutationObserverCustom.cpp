@@ -32,36 +32,16 @@
 #include "config.h"
 #include "JSMutationObserver.h"
 
-#include "JSDOMConstructorBase.h"
-#include "JSMutationCallback.h"
 #include "JSNodeCustom.h"
-#include "MutationObserver.h"
-#include <runtime/Error.h>
-#include <runtime/PrivateName.h>
+#include "MutationCallback.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL constructJSMutationObserver(ExecState& exec)
+void JSMutationObserver::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    VM& vm = exec.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (exec.argumentCount() < 1)
-        return throwVMError(&exec, scope, createNotEnoughArgumentsError(&exec));
-
-    JSObject* object = exec.uncheckedArgument(0).getObject();
-    CallData callData;
-    if (!object || object->methodTable()->getCallData(object, callData) == CallType::None)
-        return throwArgumentTypeError(exec, scope, 0, "callback", "MutationObserver", nullptr, "MutationCallback");
-
-    auto* jsConstructor = jsCast<JSDOMConstructorBase*>(exec.jsCallee());
-    auto callback = JSMutationCallback::create(object, jsConstructor->globalObject());
-    JSObject* jsObserver = asObject(toJSNewlyCreated(&exec, jsConstructor->globalObject(), MutationObserver::create(WTFMove(callback))));
-    PrivateName propertyName;
-    jsObserver->putDirect(vm, propertyName, object);
-    return JSValue::encode(jsObserver);
+    wrapped().callback().visitJSFunction(visitor);
 }
 
 bool JSMutationObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

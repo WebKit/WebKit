@@ -28,15 +28,13 @@
 #include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSArray.h>
-#include <runtime/JSLock.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
 JSTestCallbackFunctionWithTypedefs::JSTestCallbackFunctionWithTypedefs(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackFunctionWithTypedefs()
-    , ActiveDOMCallback(globalObject->scriptExecutionContext())
+    : TestCallbackFunctionWithTypedefs(globalObject->scriptExecutionContext())
     , m_data(new JSCallbackDataStrong(callback, globalObject, this))
 {
 }
@@ -67,12 +65,13 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackFunctionWithT
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLSequence<IDLNullable<IDLLong>>>(state, globalObject, sequenceArg));
     args.append(toJS<IDLLong>(longArg));
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -87,7 +86,6 @@ JSC::JSValue toJS(TestCallbackFunctionWithTypedefs& impl)
         return jsNull();
 
     return static_cast<JSTestCallbackFunctionWithTypedefs&>(impl).callbackData()->callback();
-
 }
 
 } // namespace WebCore

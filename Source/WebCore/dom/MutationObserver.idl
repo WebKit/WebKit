@@ -29,10 +29,11 @@
  */
 
 [
-    CustomConstructor(MutationCallback callback),
+    Constructor(MutationCallback callback),
     CustomIsReachable,
     ImplementationLacksVTable,
     LegacyWindowAlias=WebKitMutationObserver,
+    JSCustomMarkFunction
 ] interface MutationObserver {
     [MayThrowException] void observe(Node target, optional MutationObserverInit options);
     void disconnect();

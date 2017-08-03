@@ -22,33 +22,33 @@
 
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
-#include "TestCallbackFunction.h"
+#include "TestCallbackFunctionWithThisObject.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class JSTestCallbackFunction final : public TestCallbackFunction {
+class JSTestCallbackFunctionWithThisObject final : public TestCallbackFunctionWithThisObject {
 public:
-    static Ref<JSTestCallbackFunction> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallbackFunctionWithThisObject> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(*new JSTestCallbackFunction(callback, globalObject));
+        return adoptRef(*new JSTestCallbackFunctionWithThisObject(callback, globalObject));
     }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    virtual ~JSTestCallbackFunction();
+    virtual ~JSTestCallbackFunctionWithThisObject();
     JSCallbackDataStrong* callbackData() { return m_data; }
 
     // Functions
-    virtual CallbackResult<typename IDLDOMString::ImplementationType> handleEvent(typename IDLLong::ParameterType argument) override;
+    virtual CallbackResult<typename IDLVoid::ImplementationType> handleEvent(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter) override;
 
 private:
-    JSTestCallbackFunction(JSC::JSObject*, JSDOMGlobalObject*);
+    JSTestCallbackFunctionWithThisObject(JSC::JSObject*, JSDOMGlobalObject*);
 
     JSCallbackDataStrong* m_data;
 };
 
-JSC::JSValue toJS(TestCallbackFunction&);
-inline JSC::JSValue toJS(TestCallbackFunction* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
+JSC::JSValue toJS(TestCallbackFunctionWithThisObject&);
+inline JSC::JSValue toJS(TestCallbackFunctionWithThisObject* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }
 
 } // namespace WebCore

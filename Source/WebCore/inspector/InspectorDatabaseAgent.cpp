@@ -66,14 +66,17 @@ void reportTransactionFailed(ExecuteSQLCallback& requestCallback, SQLError& erro
 
 class StatementCallback final : public SQLStatementCallback {
 public:
-    static Ref<StatementCallback> create(Ref<ExecuteSQLCallback>&& requestCallback)
+    static Ref<StatementCallback> create(ScriptExecutionContext* context, Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(*new StatementCallback(WTFMove(requestCallback)));
+        return adoptRef(*new StatementCallback(context, WTFMove(requestCallback)));
     }
 
 private:
-    StatementCallback(Ref<ExecuteSQLCallback>&& requestCallback)
-        : m_requestCallback(WTFMove(requestCallback)) { }
+    StatementCallback(ScriptExecutionContext* context, Ref<ExecuteSQLCallback>&& requestCallback)
+        : SQLStatementCallback(context)
+        , m_requestCallback(WTFMove(requestCallback))
+    {
+    }
 
     CallbackResult<void> handleEvent(SQLTransaction&, SQLResultSet& resultSet) final
     {
@@ -101,14 +104,17 @@ private:
 
 class StatementErrorCallback final : public SQLStatementErrorCallback {
 public:
-    static Ref<StatementErrorCallback> create(Ref<ExecuteSQLCallback>&& requestCallback)
+    static Ref<StatementErrorCallback> create(ScriptExecutionContext* context, Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(*new StatementErrorCallback(WTFMove(requestCallback)));
+        return adoptRef(*new StatementErrorCallback(context, WTFMove(requestCallback)));
     }
 
 private:
-    StatementErrorCallback(Ref<ExecuteSQLCallback>&& requestCallback)
-        : m_requestCallback(WTFMove(requestCallback)) { }
+    StatementErrorCallback(ScriptExecutionContext* context, Ref<ExecuteSQLCallback>&& requestCallback)
+        : SQLStatementErrorCallback(context)
+        , m_requestCallback(WTFMove(requestCallback))
+    {
+    }
 
     CallbackResult<bool> handleEvent(SQLTransaction&, SQLError& error) final
     {
@@ -121,23 +127,26 @@ private:
 
 class TransactionCallback final : public SQLTransactionCallback {
 public:
-    static Ref<TransactionCallback> create(const String& sqlStatement, Ref<ExecuteSQLCallback>&& requestCallback)
+    static Ref<TransactionCallback> create(ScriptExecutionContext* context, const String& sqlStatement, Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(*new TransactionCallback(sqlStatement, WTFMove(requestCallback)));
+        return adoptRef(*new TransactionCallback(context, sqlStatement, WTFMove(requestCallback)));
     }
 
 private:
-    TransactionCallback(const String& sqlStatement, Ref<ExecuteSQLCallback>&& requestCallback)
-        : m_sqlStatement(sqlStatement)
-        , m_requestCallback(WTFMove(requestCallback)) { }
+    TransactionCallback(ScriptExecutionContext* context, const String& sqlStatement, Ref<ExecuteSQLCallback>&& requestCallback)
+        : SQLTransactionCallback(context)
+        , m_sqlStatement(sqlStatement)
+        , m_requestCallback(WTFMove(requestCallback))
+    {
+    }
 
     CallbackResult<void> handleEvent(SQLTransaction& transaction) final
     {
         if (!m_requestCallback->isActive())
             return { };
 
-        Ref<SQLStatementCallback> callback(StatementCallback::create(m_requestCallback.copyRef()));
-        Ref<SQLStatementErrorCallback> errorCallback(StatementErrorCallback::create(m_requestCallback.copyRef()));
+        Ref<SQLStatementCallback> callback(StatementCallback::create(scriptExecutionContext(), m_requestCallback.copyRef()));
+        Ref<SQLStatementErrorCallback> errorCallback(StatementErrorCallback::create(scriptExecutionContext(), m_requestCallback.copyRef()));
         transaction.executeSql(m_sqlStatement, { }, WTFMove(callback), WTFMove(errorCallback));
         return { };
     }
@@ -148,14 +157,17 @@ private:
 
 class TransactionErrorCallback final : public SQLTransactionErrorCallback {
 public:
-    static Ref<TransactionErrorCallback> create(Ref<ExecuteSQLCallback>&& requestCallback)
+    static Ref<TransactionErrorCallback> create(ScriptExecutionContext* context, Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(*new TransactionErrorCallback(WTFMove(requestCallback)));
+        return adoptRef(*new TransactionErrorCallback(context, WTFMove(requestCallback)));
     }
 
 private:
-    TransactionErrorCallback(Ref<ExecuteSQLCallback>&& requestCallback)
-        : m_requestCallback(WTFMove(requestCallback)) { }
+    TransactionErrorCallback(ScriptExecutionContext* context, Ref<ExecuteSQLCallback>&& requestCallback)
+        : SQLTransactionErrorCallback(context)
+        , m_requestCallback(WTFMove(requestCallback))
+    {
+    }
 
     CallbackResult<void> handleEvent(SQLError& error) final
     {
@@ -168,15 +180,18 @@ private:
 
 class TransactionSuccessCallback final : public VoidCallback {
 public:
-    static Ref<TransactionSuccessCallback> create()
+    static Ref<TransactionSuccessCallback> create(ScriptExecutionContext* context)
     {
-        return adoptRef(*new TransactionSuccessCallback());
+        return adoptRef(*new TransactionSuccessCallback(context));
     }
 
     CallbackResult<void> handleEvent() final { return { }; }
 
 private:
-    TransactionSuccessCallback() { }
+    TransactionSuccessCallback(ScriptExecutionContext* context)
+        : VoidCallback(context)
+    {
+    }
 };
 
 } // namespace
@@ -268,9 +283,9 @@ void InspectorDatabaseAgent::executeSQL(ErrorString&, const String& databaseId, 
         return;
     }
 
-    database->transaction(TransactionCallback::create(query, requestCallback.copyRef()),
-        TransactionErrorCallback::create(requestCallback.copyRef()),
-        TransactionSuccessCallback::create());
+    database->transaction(TransactionCallback::create(&database->scriptExecutionContext(), query, requestCallback.copyRef()),
+        TransactionErrorCallback::create(&database->scriptExecutionContext(), requestCallback.copyRef()),
+        TransactionSuccessCallback::create(&database->scriptExecutionContext()));
 }
 
 String InspectorDatabaseAgent::databaseId(Database& database)

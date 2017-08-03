@@ -64,6 +64,9 @@ struct IDLType {
     using ParameterType = T;
     using NullableParameterType = std::optional<ImplementationType>;
 
+    using InnerParameterType = T;
+    using NullableInnerParameterType = std::optional<ImplementationType>;
+
     using NullableType = std::optional<ImplementationType>;
     static NullableType nullValue() { return std::nullopt; }
     static bool isNullValue(const NullableType& value) { return !value; }
@@ -157,6 +160,9 @@ template<typename T> struct IDLWrapper : IDLType<RefPtr<T>> {
     using ParameterType = T&;
     using NullableParameterType = T*;
 
+    using InnerParameterType = Ref<T>;
+    using NullableInnerParameterType = RefPtr<T>;
+
     using NullableType = RefPtr<T>;
     static inline std::nullptr_t nullValue() { return nullptr; }
     template<typename U> static inline bool isNullValue(U&& value) { return !value; }
@@ -180,6 +186,9 @@ template<typename T> struct IDLNullable : IDLType<typename T::NullableType> {
     using ParameterType = typename T::NullableParameterType;
     using NullableParameterType = typename T::NullableParameterType;
 
+    using InnerParameterType = typename T::NullableInnerParameterType;
+    using NullableInnerParameterType = typename T::NullableInnerParameterType;
+
     using NullableType = typename T::NullableType;
     static inline auto nullValue() -> decltype(T::nullValue()) { return T::nullValue(); }
     template<typename U> static inline bool isNullValue(U&& value) { return T::isNullValue(std::forward<U>(value)); }
@@ -189,8 +198,8 @@ template<typename T> struct IDLNullable : IDLType<typename T::NullableType> {
 template<typename T> struct IDLSequence : IDLType<Vector<typename T::ImplementationType>> {
     using InnerType = T;
 
-    using ParameterType = const Vector<typename T::ImplementationType>&;
-    using NullableParameterType = const std::optional<Vector<typename T::ImplementationType>>&;
+    using ParameterType = const Vector<typename T::InnerParameterType>&;
+    using NullableParameterType = const std::optional<Vector<typename T::InnerParameterType>>&;
 };
 
 template<typename T> struct IDLFrozenArray : IDLType<Vector<typename T::ImplementationType>> {

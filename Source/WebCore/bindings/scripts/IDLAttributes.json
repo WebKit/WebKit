@@ -38,6 +38,9 @@
         "CallbackNeedsOperatorEqual": {
             "contextsAllowed": ["callback-function"]
         },
+        "CallbackThisObject": {
+            "contextsAllowed": ["callback-function", "operation"]
+        },
         "CallNamedSetterOnlyForSupportedProperties": {
             "contextsAllowed": ["operation"]
         },

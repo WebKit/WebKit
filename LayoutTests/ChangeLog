@@ -1,3 +1,13 @@
+2017-08-01  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Convert MutationCallback to be a normal generate callback
+        https://bugs.webkit.org/show_bug.cgi?id=174140
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/MutationObserver/mutation-observer-constructor-expected.txt:
+        Update results for standard error messages.
+
 2017-08-03  Chris Dumez  <cdumez@apple.com>
 
         Improve our support for referrer policies

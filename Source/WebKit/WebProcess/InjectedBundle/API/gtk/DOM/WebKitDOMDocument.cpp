@@ -1127,7 +1127,7 @@ WebKitDOMNodeIterator* webkit_dom_document_create_node_iterator(WebKitDOMDocumen
     UNUSED_PARAM(error);
     WebCore::Document* item = WebKit::core(self);
     WebCore::Node* convertedRoot = WebKit::core(root);
-    RefPtr<WebCore::NodeFilter> convertedFilter = WebKit::core(filter);
+    RefPtr<WebCore::NodeFilter> convertedFilter = WebKit::core(item, filter);
     RefPtr<WebCore::NodeIterator> gobjectResult = WTF::getPtr(item->createNodeIterator(*convertedRoot, whatToShow, WTF::getPtr(convertedFilter), expandEntityReferences));
     return WebKit::kit(gobjectResult.get());
 }
@@ -1141,7 +1141,7 @@ WebKitDOMTreeWalker* webkit_dom_document_create_tree_walker(WebKitDOMDocument* s
     UNUSED_PARAM(error);
     WebCore::Document* item = WebKit::core(self);
     WebCore::Node* convertedRoot = WebKit::core(root);
-    RefPtr<WebCore::NodeFilter> convertedFilter = WebKit::core(filter);
+    RefPtr<WebCore::NodeFilter> convertedFilter = WebKit::core(item, filter);
     RefPtr<WebCore::TreeWalker> gobjectResult = WTF::getPtr(item->createTreeWalker(*convertedRoot, whatToShow, WTF::getPtr(convertedFilter), expandEntityReferences));
     return WebKit::kit(gobjectResult.get());
 }

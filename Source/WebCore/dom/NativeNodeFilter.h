@@ -33,15 +33,15 @@ namespace WebCore {
 
 class NativeNodeFilter final : public NodeFilter {
 public:
-    static Ref<NativeNodeFilter> create(Ref<NodeFilterCondition>&& condition)
+    static Ref<NativeNodeFilter> create(ScriptExecutionContext* context, Ref<NodeFilterCondition>&& condition)
     {
-        return adoptRef(*new NativeNodeFilter(WTFMove(condition)));
+        return adoptRef(*new NativeNodeFilter(context, WTFMove(condition)));
     }
 
     CallbackResult<unsigned short> acceptNode(Node&) override;
 
 private:
-    WEBCORE_EXPORT explicit NativeNodeFilter(Ref<NodeFilterCondition>&&);
+    WEBCORE_EXPORT explicit NativeNodeFilter(ScriptExecutionContext*, Ref<NodeFilterCondition>&&);
 
     Ref<NodeFilterCondition> m_condition;
 };

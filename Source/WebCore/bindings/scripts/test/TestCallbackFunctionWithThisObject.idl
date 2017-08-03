@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,22 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "ActiveDOMCallback.h"
-#include "CallbackResult.h"
-#include <wtf/ThreadSafeRefCounted.h>
-
-namespace WebCore {
-
-class SQLTransaction;
-class SQLResultSet;
-
-class SQLStatementCallback : public ThreadSafeRefCounted<SQLStatementCallback>, public ActiveDOMCallback {
-public:
-    using ActiveDOMCallback::ActiveDOMCallback;
-
-    virtual CallbackResult<void> handleEvent(SQLTransaction&, SQLResultSet&) = 0;
-};
-
-} // namespace WebCore
+[
+    CallbackThisObject=TestNode
+] callback TestCallbackFunctionWithThisObject = void (sequence<TestNode> parameter);

@@ -22,7 +22,6 @@
 
 #if ENABLE(TEST_CONDITIONAL)
 
-#include "ActiveDOMCallback.h"
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
 #include "TestVoidCallbackFunction.h"
@@ -30,7 +29,7 @@
 
 namespace WebCore {
 
-class JSTestVoidCallbackFunction final : public TestVoidCallbackFunction, public ActiveDOMCallback {
+class JSTestVoidCallbackFunction final : public TestVoidCallbackFunction {
 public:
     static Ref<JSTestVoidCallbackFunction> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {

@@ -1,3 +1,141 @@
+2017-08-02  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Convert MutationCallback to be a normal generated callback
+        https://bugs.webkit.org/show_bug.cgi?id=174140
+
+        Reviewed by Darin Adler.
+
+        To make this work more nicely, I:
+        - Added the ability to for non-nullable interfaces in sequences to be passed
+          via a Ref<> rather than a RefPtr<> as a parameter to a callback function.
+          (e.g. callback MyCallback = void (sequence<Foo> foos) will now have the 
+          signature, CallbackResult<void> handleEvent(const Vector<Ref<Foo>>&) rather
+          than CallbackResult<void> handleEvent(const Vector<RefPtr<Foo>>&).
+        - Added a new extended attribute for callback functions called [CallbackThisObject=Type]
+          which allows you to specify that the callback needs a this object in addition
+          to its arguments. When specified, the first argument of the C++ implementation
+          function will now correspond to the this object, with the remaining arguments
+          shifted over one.
+        - Converted callback objects to all inherit directly from ActiveDOMCallback rather
+          than having the generated JS callback derived class inherit from it. This allows
+          us to have access to a callback's canInvokeCallback() function anywhere (needed
+          for MutationCallback) as well as giving a place to put an optional virtual 
+          visitJSFunction to allow marking weak callbacks (while not an ideal layering, 
+          this matches what we do in EventListener). This change requires each callback to
+          have a bit more code to import the ActiveDOMCallback's constructor and requires
+          non-JS derived callbacks to pass a ScriptExecutionContext (e.g. the Document).
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSMutationCallback.cpp: Removed.
+        * bindings/js/JSMutationCallback.h: Removed.
+        Remove custom JSMutationCallback.h/cpp
+
+        * Modules/geolocation/PositionCallback.h:
+        * Modules/geolocation/PositionErrorCallback.h:
+        * Modules/notifications/NotificationPermissionCallback.h:
+        * Modules/webaudio/AudioBufferCallback.h:
+        * Modules/webdatabase/DatabaseCallback.h:
+        * Modules/webdatabase/SQLStatementCallback.h:
+        * Modules/webdatabase/SQLStatementErrorCallback.h:
+        * Modules/webdatabase/SQLTransactionCallback.h:
+        * Modules/webdatabase/SQLTransactionErrorCallback.h:
+        * css/MediaQueryListListener.h:
+        * dom/NodeFilter.h:
+        * dom/RequestAnimationFrameCallback.h:
+        * dom/StringCallback.h:
+        * fileapi/BlobCallback.h:
+        * html/VoidCallback.h:
+        * page/IntersectionObserverCallback.h:
+        * page/PerformanceObserverCallback.h:
+        Add ActiveDOMCallback as a base class. Import the ActiveDOMCallback constructor.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::filterDeviceList):
+        (WebCore::MediaDevicesRequest::start):
+        * Modules/mediastream/MediaDevicesRequest.h:
+        Change filterDeviceList to take a Vector of Refs.
+
+        * bindings/IDLTypes.h:
+        Add InnerParameterType and NullableInnerParameterType type hooks
+        and specialize wrappers to use Ref for InnerParameterType, and RefPtr
+        for NullableInnerParameterType.
+
+        * bindings/js/JSCallbackData.cpp:
+        * bindings/js/JSCallbackData.h:
+        Add support for passing a this object and give JSCallbackDataWeak a visitJSFunction
+        to allow marking the underlying function.
+
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::JSMutationObserver::visitAdditionalChildren):
+        (WebCore::constructJSMutationObserver): Deleted.
+        Remove the custom constructor and replace it with a custom visitAdditionalChildren
+        that calls the new ActiveDOMObject's visitJSFunction.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ParseType):
+        Add helper to parse a type and cache the result.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackHeaderContent):
+        (GenerateCallbackImplementationContent):
+        (GetJSCallbackDataType): Deleted.
+        - Add support for [CallbackThisObject]. When [CallbackThisObject] is not specified, use jsUndefined() 
+          as the this object as specified by WebIDL.
+        - Stop inheriting from ActiveDOMCallback now that callbacks need to do this themselves.
+        - Add a visitJSFunction override for weak callback functions which calls into the callback data.
+
+        * bindings/scripts/IDLAttributes.json:
+        Add [CallbackThisObject].
+
+        * bindings/scripts/IDLParser.pm:
+        (ParseType):
+        Add entry point to parse a single type.
+
+        * css/FontFaceSet.h:
+        Use Ref rather than RefPtr for the faces sequence.
+
+        * dom/ActiveDOMCallback.h:
+        (WebCore::ActiveDOMCallback::visitJSFunction):
+        Add an optional visitJSFunction virtual function so that derived classes
+        have a way of marking underlying function objects.
+
+        * dom/MutationCallback.h:
+        Convert to support generation (return a CallbackResult, inherit from ActiveDOMObject).
+
+        * dom/MutationCallback.idl: Added.
+        Added to generate the callback. Uses the new [CallbackThisObject].
+
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::deliver):
+        Switch to call idiomatic handleEvent, and pass *this as the first parameter
+        which will be translated into the this object.
+
+        * dom/MutationObserver.h:
+        (WebCore::MutationObserver::callback):
+        Expose the callback so it can marked during GC.
+
+        * dom/MutationObserver.idl:
+        Remove CustomConstructor and replace it with a custom mark function.
+
+        * dom/NativeNodeFilter.cpp:
+        * dom/NativeNodeFilter.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        Pass now needed ScriptExecutionContext to non-js based callbacks.
+
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionRethrow.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithThisObject.cpp: Added.
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithThisObject.h: Added.
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h:
+        * bindings/scripts/test/JS/JSTestVoidCallbackFunction.cpp:
+        * bindings/scripts/test/TestCallbackFunctionWithThisObject.idl: Added.
+        * bindings/scripts/test/TestCallbackInterface.idl:
+        Add/update tests.
+
 2017-08-03  Jeremy Jones  <jeremyj@apple.com>
 
         Use MPAVRoutingController instead of deprecated versions.

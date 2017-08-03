@@ -28,8 +28,9 @@
 
 namespace WebCore {
 
-NativeNodeFilter::NativeNodeFilter(Ref<NodeFilterCondition>&& condition)
-    : m_condition(WTFMove(condition))
+NativeNodeFilter::NativeNodeFilter(ScriptExecutionContext* context, Ref<NodeFilterCondition>&& condition)
+    : NodeFilter(context)
+    , m_condition(WTFMove(condition))
 {
 }
 

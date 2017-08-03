@@ -35,11 +35,11 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMStringList.h"
 #include "JSTestNode.h"
+#include "JSTestObj.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSCInlines.h>
-#include <runtime/JSLock.h>
 #include <runtime/JSString.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -102,8 +102,7 @@ template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInter
 }
 
 JSTestCallbackInterface::JSTestCallbackInterface(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackInterface()
-    , ActiveDOMCallback(globalObject->scriptExecutionContext())
+    : TestCallbackInterface(globalObject->scriptExecutionContext())
     , m_data(new JSCallbackDataStrong(callback, globalObject, this))
 {
 }
@@ -168,10 +167,11 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithNoParam"), returnedException);
+    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithNoParam"), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -192,11 +192,12 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLFloat32Array>(state, globalObject, arrayParam));
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithArrayParam"), returnedException);
+    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithArrayParam"), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -217,12 +218,13 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(state, globalObject, srzParam));
     args.append(toJS<IDLDOMString>(state, strParam));
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithSerializedScriptValueParam"), returnedException);
+    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithSerializedScriptValueParam"), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -243,11 +245,12 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLInterface<DOMStringList>>(state, globalObject, listParam));
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithStringList"), returnedException);
+    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithStringList"), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -268,11 +271,12 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLBoolean>(boolParam));
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithBoolean"), returnedException);
+    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithBoolean"), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -293,12 +297,13 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLLong>(longParam));
     args.append(toJS<IDLInterface<TestNode>>(state, globalObject, testNodeParam));
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackRequiresThisToPass"), returnedException);
+    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackRequiresThisToPass"), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -319,10 +324,11 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
 
     NakedPtr<JSC::Exception> returnedException;
-    auto jsResult = m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithAReturnValue"), returnedException);
+    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithAReturnValue"), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -346,11 +352,12 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLEnumeration<TestCallbackInterface::Enum>>(state, enumParam));
 
     NakedPtr<JSC::Exception> returnedException;
-    auto jsResult = m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackThatRethrowsExceptions"), returnedException);
+    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackThatRethrowsExceptions"), returnedException);
     if (returnedException) {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
         throwException(&state, throwScope, returnedException);
@@ -372,11 +379,41 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLDictionary<TestCallbackInterface::Dictionary>>(state, globalObject, dictionaryParam));
 
     NakedPtr<JSC::Exception> returnedException;
-    auto jsResult = m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackThatSkipsInvokeCheck"), returnedException);
+    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackThatSkipsInvokeCheck"), returnedException);
+    if (returnedException) {
+        reportException(&state, returnedException);
+        return CallbackResultType::ExceptionThrown;
+     }
+
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto returnValue = convert<IDLDOMString>(state, jsResult);
+    RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
+    return WTFMove(returnValue);
+}
+
+CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterface::callbackWithThisObject(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLInterface<TestObj>::ParameterType testObjParam)
+{
+    if (!canInvokeCallback())
+        return CallbackResultType::UnableToExecute;
+
+    Ref<JSTestCallbackInterface> protectedThis(*this);
+
+    auto& globalObject = *m_data->globalObject();
+    auto& vm = globalObject.vm();
+
+    JSLockHolder lock(vm);
+    auto& state = *globalObject.globalExec();
+    JSValue thisValue = toJS<IDLInterface<TestNode>>(state, globalObject, thisObject);
+    MarkedArgumentBuffer args;
+    args.append(toJS<IDLInterface<TestObj>>(state, globalObject, testObjParam));
+
+    NakedPtr<JSC::Exception> returnedException;
+    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithThisObject"), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -394,7 +431,6 @@ JSC::JSValue toJS(TestCallbackInterface& impl)
         return jsNull();
 
     return static_cast<JSTestCallbackInterface&>(impl).callbackData()->callback();
-
 }
 
 } // namespace WebCore
