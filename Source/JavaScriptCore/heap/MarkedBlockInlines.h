@@ -201,10 +201,11 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
             for (char* cell = payloadBegin; cell < payloadEnd; cell += cellSize)
                 destroy(cell);
         }
-        if (scribbleMode == Scribble)
-            scribble(payloadBegin, payloadEnd - payloadBegin);
-        if (sweepMode == SweepToFreeList)
+        if (sweepMode == SweepToFreeList) {
+            if (scribbleMode == Scribble)
+                scribble(payloadBegin, payloadEnd - payloadBegin);
             freeList->initializeBump(payloadEnd, payloadEnd - payloadBegin);
+        }
         if (false)
             dataLog("Quickly swept block ", RawPointer(this), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), "\n");
         return;
