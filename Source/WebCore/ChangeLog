@@ -1,3 +1,12 @@
+2017-08-03  Yoshiaki Jitsukawa  <jitsu@rd.scei.sony.co.jp>
+
+        [WebCore] Sort Xcode project files
+        https://bugs.webkit.org/show_bug.cgi?id=175121
+
+        Reviewed by Antti Koivisto.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-08-02  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Convert MutationCallback to be a normal generated callback
