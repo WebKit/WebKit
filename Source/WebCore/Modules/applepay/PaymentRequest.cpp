@@ -59,8 +59,6 @@ bool PaymentRequest::isValidSupportedNetwork(unsigned version, const String& sup
         return true;
     if (version >= 2 && supportedNetwork == "jcb")
         return true;
-    if (version >= 3 && supportedNetwork == "carteBancaire")
-        return true;
 
     return false;
 }

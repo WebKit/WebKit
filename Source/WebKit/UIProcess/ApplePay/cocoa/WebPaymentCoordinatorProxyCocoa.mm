@@ -51,7 +51,6 @@ SOFT_LINK_CLASS(PassKit, PKPaymentRequest);
 SOFT_LINK_CLASS(PassKit, PKPaymentSummaryItem);
 SOFT_LINK_CLASS(PassKit, PKShippingMethod);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkAmex, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkCarteBancaire, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkChinaUnionPay, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkDiscover, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkInterac, NSString *);
@@ -437,8 +436,6 @@ static NSString *toSupportedNetwork(const String& supportedNetwork)
 {
     if (supportedNetwork == "amex")
         return getPKPaymentNetworkAmex();
-    if (supportedNetwork == "carteBancaire")
-        return getPKPaymentNetworkCarteBancaire();
     if (supportedNetwork == "chinaUnionPay")
         return getPKPaymentNetworkChinaUnionPay();
     if (supportedNetwork == "discover")
