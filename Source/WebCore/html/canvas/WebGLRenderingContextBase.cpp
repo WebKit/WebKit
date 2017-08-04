@@ -1575,8 +1575,8 @@ void WebGLRenderingContextBase::deleteFramebuffer(WebGLFramebuffer* framebuffer)
 
 void WebGLRenderingContextBase::deleteProgram(WebGLProgram* program)
 {
-    ASSERT(program);
-    InspectorInstrumentation::willDeleteProgram(*this, *program);
+    if (program)
+        InspectorInstrumentation::willDeleteProgram(*this, *program);
 
     deleteObject(program);
     // We don't reset m_currentProgram to 0 here because the deletion of the
