@@ -498,7 +498,6 @@ enum EventThrottlingBehavior {
 
     DOMString resourceLoadStatisticsForOrigin(DOMString domain);
     void setResourceLoadStatisticsEnabled(boolean enable);
-    void setResourceLoadStatisticsShouldThrottleObserverNotifications(boolean enable);
 
     [MayThrowException] void setCanShowModalDialogOverride(boolean allow);
 

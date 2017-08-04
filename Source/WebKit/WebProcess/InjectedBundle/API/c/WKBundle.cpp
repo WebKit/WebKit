@@ -39,6 +39,7 @@
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
 #include <WebCore/DatabaseTracker.h>
+#include <WebCore/ResourceLoadObserver.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -275,4 +276,9 @@ uint64_t WKBundleGetWebNotificationID(WKBundleRef bundleRef, JSContextRef contex
 void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundleRef, WKBundlePageRef pageRef, bool enabled)
 {
     toImpl(bundleRef)->setTabKeyCyclesThroughElements(toImpl(pageRef), enabled);
+}
+
+void WKBundleClearResourceLoadStatistics(WKBundleRef)
+{
+    ResourceLoadObserver::shared().clearState();
 }
