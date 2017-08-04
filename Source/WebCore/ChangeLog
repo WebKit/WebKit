@@ -1,3 +1,20 @@
+2017-08-03  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove LayoutUnit dependency in TextStream
+        https://bugs.webkit.org/show_bug.cgi?id=175110
+
+        Reviewed by Zalan Bujtas.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/LayoutUnit.cpp: Added.
+        (WebCore::operator<<):
+        * platform/LayoutUnit.h:
+        * platform/text/TextStream.cpp:
+        * platform/text/TextStream.h:
+
 2017-08-03  Jeremy Jones  <jeremyj@apple.com>
 
         Improve WebKitLegacy video fullscreen animation begin and end rects.

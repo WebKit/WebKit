@@ -4348,6 +4348,7 @@
 		A31C4E4F16E02AB4002F7957 /* OESTextureHalfFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = A31C4E4E16E02AB4002F7957 /* OESTextureHalfFloat.h */; };
 		A31C4E5216E02B08002F7957 /* JSOESTextureHalfFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A31C4E5116E02B08002F7957 /* JSOESTextureHalfFloat.cpp */; };
 		A31C4E5416E02B40002F7957 /* JSOESTextureHalfFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */; };
+		A36DF6611F33C25C00DC6741 /* LayoutUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3D42A841F33BA3600A64B62 /* LayoutUnit.cpp */; };
 		A3BB59F31457A40D00AC56FE /* DocumentEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3BB59F11457A40D00AC56FE /* DocumentEventQueue.cpp */; };
 		A3BB59F41457A40D00AC56FE /* DocumentEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = A3BB59F21457A40D00AC56FE /* DocumentEventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A3E2643014748991005A8588 /* WorkerEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3E2642E14748991005A8588 /* WorkerEventQueue.cpp */; };
@@ -12615,6 +12616,7 @@
 		A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureHalfFloat.h; sourceTree = "<group>"; };
 		A3BB59F11457A40D00AC56FE /* DocumentEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentEventQueue.cpp; sourceTree = "<group>"; };
 		A3BB59F21457A40D00AC56FE /* DocumentEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentEventQueue.h; sourceTree = "<group>"; };
+		A3D42A841F33BA3600A64B62 /* LayoutUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutUnit.cpp; sourceTree = "<group>"; };
 		A3E2642E14748991005A8588 /* WorkerEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerEventQueue.cpp; sourceTree = "<group>"; };
 		A3E2642F14748991005A8588 /* WorkerEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerEventQueue.h; sourceTree = "<group>"; };
 		A409C982116D0DDD007197BD /* AccessibilityProgressIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityProgressIndicator.cpp; sourceTree = "<group>"; };
@@ -24086,6 +24088,7 @@
 				E15FF7D418C9553800FE4C87 /* KeypressCommand.h */,
 				E18772F0126E2629003DD586 /* Language.cpp */,
 				85EC9AF90A71A2C600EEEAED /* Language.h */,
+				A3D42A841F33BA3600A64B62 /* LayoutUnit.cpp */,
 				141DC0471648348F00371E5A /* LayoutUnit.h */,
 				BCE65BE80EACDF16007E4533 /* Length.cpp */,
 				BCE65BE90EACDF16007E4533 /* Length.h */,
@@ -30984,6 +30987,7 @@
 				E19AC3EE1824DC7900349426 /* CryptoAlgorithmSHA224.cpp in Sources */,
 				E19AC3F01824DC7900349426 /* CryptoAlgorithmSHA256.cpp in Sources */,
 				E19AC3F21824DC7900349426 /* CryptoAlgorithmSHA384.cpp in Sources */,
+				A36DF6611F33C25C00DC6741 /* LayoutUnit.cpp in Sources */,
 				E19AC3F41824DC7900349426 /* CryptoAlgorithmSHA512.cpp in Sources */,
 				E157A8E418173A3A009F821D /* CryptoKey.cpp in Sources */,
 				E125F84D1824289D00D84CD9 /* CryptoKeyAES.cpp in Sources */,

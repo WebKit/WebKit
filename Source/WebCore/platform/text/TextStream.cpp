@@ -26,10 +26,6 @@
 #include "config.h"
 #include "TextStream.h"
 
-#include "FloatPoint.h"
-#include "IntPoint.h"
-#include "LayoutRect.h"
-#include "LayoutUnit.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/WTFString.h>
@@ -133,11 +129,6 @@ TextStream& TextStream::operator<<(const FormatNumberRespectingIntegers& numberT
 
     m_text.appendNumber(static_cast<int>(numberToFormat.value));
     return *this;
-}
-
-TextStream& TextStream::operator<<(LayoutUnit v)
-{
-    return *this << TextStream::FormatNumberRespectingIntegers(v.toFloat());
 }
 
 String TextStream::release()

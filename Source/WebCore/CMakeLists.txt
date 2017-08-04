@@ -2219,6 +2219,7 @@ set(WebCore_SOURCES
     platform/FileSystem.cpp
     platform/GenericTaskQueue.cpp
     platform/Language.cpp
+    platform/LayoutUnit.cpp
     platform/Length.cpp
     platform/LengthBox.cpp
     platform/LengthPoint.cpp

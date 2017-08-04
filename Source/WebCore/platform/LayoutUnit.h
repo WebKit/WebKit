@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayoutUnit_h
-#define LayoutUnit_h
+#pragma once
 
 #include "ValueToString.h"
 #include <limits.h>
@@ -40,6 +39,8 @@
 #include <wtf/SaturatedArithmetic.h>
 
 namespace WebCore {
+
+class TextStream;
 
 #ifdef NDEBUG
 
@@ -775,6 +776,8 @@ inline float& operator/=(float& a, const LayoutUnit& b)
     return a;
 }
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const LayoutUnit&);
+
 inline int roundToInt(LayoutUnit value)
 {
     return value.round();
@@ -830,5 +833,3 @@ struct ValueToString<LayoutUnit> {
 #endif
 
 } // namespace WebCore
-
-#endif // LayoutUnit_h

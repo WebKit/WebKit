@@ -23,15 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextStream_h
-#define TextStream_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-
-class LayoutUnit;
 
 class TextStream {
 public:
@@ -61,7 +58,6 @@ public:
     WEBCORE_EXPORT TextStream& operator<<(long);
     WEBCORE_EXPORT TextStream& operator<<(unsigned long);
     WEBCORE_EXPORT TextStream& operator<<(long long);
-    WEBCORE_EXPORT TextStream& operator<<(LayoutUnit);
 
     WEBCORE_EXPORT TextStream& operator<<(unsigned long long);
     WEBCORE_EXPORT TextStream& operator<<(float);
@@ -137,6 +133,4 @@ TextStream& operator<<(TextStream& ts, const Vector<Item>& vector)
 
 void writeIndent(TextStream&, int indent);
 
-}
-
-#endif
+} // namespace WebCore
