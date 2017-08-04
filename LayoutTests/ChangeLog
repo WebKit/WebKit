@@ -1,5 +1,16 @@
 2017-08-04  Chris Dumez  <cdumez@apple.com>
 
+        Add test coverage for sendBeacon() keepalive flag
+        https://bugs.webkit.org/show_bug.cgi?id=175212
+
+        Reviewed by Youenn Fablet.
+
+        * http/wpt/beacon/keepalive-after-navigation-expected.txt: Added.
+        * http/wpt/beacon/keepalive-after-navigation.html: Added.
+        * http/wpt/beacon/support/sendBeacon-onunload-iframe.html: Added.
+
+2017-08-04  Chris Dumez  <cdumez@apple.com>
+
         [Beacon] Update sendBeacon to use the CachedResourceLoader
         https://bugs.webkit.org/show_bug.cgi?id=175192
         <rdar://problem/33725923>
