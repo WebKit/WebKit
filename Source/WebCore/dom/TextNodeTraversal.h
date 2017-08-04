@@ -56,6 +56,7 @@ Text* nextSibling(const Node&);
 String contentsAsString(const Node&);
 String contentsAsString(const ContainerNode&);
 void appendContents(const ContainerNode&, StringBuilder& result);
+String childTextContent(const ContainerNode&);
 
 }
 

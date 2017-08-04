@@ -1,3 +1,35 @@
+2017-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Match newly-clarified spec on textarea defaultValue/value/child text content
+        https://bugs.webkit.org/show_bug.cgi?id=173878
+
+        Reviewed by Darin Adler.
+
+        Update HTMLTextArea.defaultValue to match align with other browsers and match the
+        latest HTML specification:
+        - https://html.spec.whatwg.org/#dom-textarea-defaultvalue
+
+        The defaultValue getter should return the child text content:
+        - https://dom.spec.whatwg.org/#concept-child-text-content
+        Our code was traversing all Text descendants, not just the children.
+
+        The defaultValue setter should act as the setter of the Element's textContent
+        IDL attribute. Previously, we had a custom logic that was only removing the
+        text children.
+
+        Test: imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/value-defaultValue-textContent.html
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::scriptContent const):
+        * dom/TextNodeTraversal.cpp:
+        (WebCore::TextNodeTraversal::childTextContent):
+        * dom/TextNodeTraversal.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultValue const):
+        (WebCore::HTMLTextAreaElement::setDefaultValue):
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::text const):
+
 2017-08-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderImageResourceStyleImage::image() should return the nullImage() if the image is not available

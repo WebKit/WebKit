@@ -18,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-type.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/value-defaultValue-textContent-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/value-defaultValue-textContent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1a.html

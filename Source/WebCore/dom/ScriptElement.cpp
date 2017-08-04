@@ -461,10 +461,7 @@ bool ScriptElement::isScriptForEventSupported() const
 
 String ScriptElement::scriptContent() const
 {
-    StringBuilder result;
-    for (auto* text = TextNodeTraversal::firstChild(m_element); text; text = TextNodeTraversal::nextSibling(*text))
-        result.append(text->data());
-    return result.toString();
+    return TextNodeTraversal::childTextContent(m_element);
 }
 
 void ScriptElement::ref()

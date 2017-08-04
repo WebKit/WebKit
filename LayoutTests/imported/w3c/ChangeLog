@@ -1,3 +1,15 @@
+2017-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Match newly-clarified spec on textarea defaultValue/value/child text content
+        https://bugs.webkit.org/show_bug.cgi?id=173878
+
+        Reviewed by Darin Adler.
+
+        Re-sync WPT test from upstream and rebaseline to improve test coverage.
+
+        * web-platform-tests/html/semantics/forms/the-textarea-element/value-defaultValue-textContent-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-textarea-element/value-defaultValue-textContent.html:
+
 2017-08-04  Brady Eidson  <beidson@apple.com>
 
         Enable ServiceWorkers at runtime for WebKitTestRunner.

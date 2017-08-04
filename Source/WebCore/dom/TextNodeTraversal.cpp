@@ -54,5 +54,13 @@ String contentsAsString(const Node& root)
     return String();
 }
 
+String childTextContent(const ContainerNode& root)
+{
+    StringBuilder result;
+    for (Text* text = TextNodeTraversal::firstChild(root); text; text = TextNodeTraversal::nextSibling(*text))
+        result.append(text->data());
+    return result.toString();
+}
+
 }
 }
