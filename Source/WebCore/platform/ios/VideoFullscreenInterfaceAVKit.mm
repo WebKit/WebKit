@@ -763,22 +763,12 @@ void VideoFullscreenInterfaceAVKit::exitFullscreen(const WebCore::IntRect& final
     };
 }
 
-@interface UIApplication ()
-- (void)_setStatusBarOrientation:(UIInterfaceOrientation)o;
-@end
-
-@interface UIWindow ()
-- (UIInterfaceOrientation)interfaceOrientation;
-@end
-
 void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::cleanupFullscreen(%p)", this);
     if (m_window) {
         [m_window setHidden:YES];
         [m_window setRootViewController:nil];
-        if (m_parentWindow)
-            [[getUIApplicationClass() sharedApplication] _setStatusBarOrientation:[m_parentWindow interfaceOrientation]];
     }
     
     [m_playerViewController setDelegate:nil];
