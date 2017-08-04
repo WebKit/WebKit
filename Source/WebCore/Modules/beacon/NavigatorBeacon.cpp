@@ -26,13 +26,16 @@
 #include "config.h"
 #include "NavigatorBeacon.h"
 
+#include "CachedResourceLoader.h"
 #include "Document.h"
+#include "FetchRequest.h"
 #include "Navigator.h"
 #include "URL.h"
+#include <runtime/JSCJSValue.h>
 
 namespace WebCore {
 
-ExceptionOr<bool> NavigatorBeacon::sendBeacon(Navigator&, Document& document, const String& url, std::optional<BodyInit>&& data)
+ExceptionOr<bool> NavigatorBeacon::sendBeacon(Navigator&, Document& document, const String& url, std::optional<FetchBody::Init>&& body)
 {
     URL parsedUrl = document.completeURL(url);
 
@@ -43,11 +46,31 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Navigator&, Document& document, co
     if (!parsedUrl.protocolIsInHTTPFamily())
         return Exception { TypeError, ASCIILiteral("Beacons can only be sent over HTTP(S)") };
 
-    auto* frame = document.frame();
-    if (!frame)
+    if (!document.frame())
         return false;
 
-    return PingLoader::sendBeacon(*frame, document, parsedUrl, WTFMove(data));
+    auto& contentSecurityPolicy = *document.contentSecurityPolicy();
+    if (!document.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy.allowConnectToSource(parsedUrl)) {
+        // We simulate a network error so we return true here. This is consistent with Blink.
+        return true;
+    }
+
+    FetchRequestInit init;
+    init.method = ASCIILiteral("POST");
+    init.body = WTFMove(body);
+    init.credentials = FetchOptions::Credentials::Include;
+    init.cache = FetchOptions::Cache::NoCache;
+    init.redirect = FetchOptions::Redirect::Follow;
+    init.keepalive = true;
+    init.window = JSC::jsNull();
+
+    auto fetchRequestResult = FetchRequest::create(document, parsedUrl.string(), WTFMove(init));
+    if (fetchRequestResult.hasException())
+        return fetchRequestResult.releaseException();
+
+    auto fetchRequest = fetchRequestResult.releaseReturnValue();
+    document.cachedResourceLoader().requestBeaconResource({ fetchRequest->internalRequest(), fetchRequest->fetchOptions() });
+    return true;
 }
 
 }

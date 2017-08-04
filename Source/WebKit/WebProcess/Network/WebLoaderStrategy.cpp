@@ -105,6 +105,7 @@ static Seconds maximumBufferingTime(CachedResource* resource)
         return 0_s;
 
     switch (resource->type()) {
+    case CachedResource::Beacon:
     case CachedResource::CSSStyleSheet:
     case CachedResource::Script:
 #if ENABLE(SVG_FONTS)

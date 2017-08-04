@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "PingLoader.h"
+#include "FetchBody.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -36,7 +36,7 @@ class Navigator;
 
 class NavigatorBeacon {
 public:
-    static ExceptionOr<bool> sendBeacon(Navigator&, Document&, const String& url, std::optional<BodyInit>&&);
+    static ExceptionOr<bool> sendBeacon(Navigator&, Document&, const String& url, std::optional<FetchBody::Init>&&);
 };
 
 }

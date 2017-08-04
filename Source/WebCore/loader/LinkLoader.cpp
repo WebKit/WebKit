@@ -162,6 +162,7 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
 #endif
+    case CachedResource::Beacon:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkSubresource:
     case CachedResource::LinkPrefetch:

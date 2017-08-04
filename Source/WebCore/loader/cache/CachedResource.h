@@ -72,6 +72,7 @@ public:
         MediaResource,
         RawResource,
         Icon,
+        Beacon,
         SVGDocumentResource
 #if ENABLE(XSLT)
         , XSLStyleSheet

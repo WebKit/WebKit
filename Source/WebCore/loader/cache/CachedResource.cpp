@@ -88,6 +88,8 @@ ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
 #endif
     case CachedResource::SVGDocumentResource:
         return ResourceLoadPriority::Low;
+    case CachedResource::Beacon:
+        return ResourceLoadPriority::VeryLow;
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return ResourceLoadPriority::VeryLow;
@@ -255,6 +257,12 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         url.setFragmentIdentifier(m_fragmentIdentifierForRequest);
         request.setURL(url);
         m_fragmentIdentifierForRequest = String();
+    }
+
+    // FIXME: We should not special-case Beacon here.
+    if (m_options.keepAlive && type() == CachedResource::Beacon) {
+        platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, m_options.credentials == FetchOptions::Credentials::Include, m_options.redirect == FetchOptions::Redirect::Follow);
+        return;
     }
 
     m_loader = platformStrategies()->loaderStrategy()->loadResource(frame, *this, request, m_options);

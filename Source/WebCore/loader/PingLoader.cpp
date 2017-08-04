@@ -34,21 +34,14 @@
 #include "config.h"
 #include "PingLoader.h"
 
-#include "Blob.h"
 #include "ContentSecurityPolicy.h"
-#include "DOMFormData.h"
 #include "Document.h"
-#include "FormData.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "HTTPHeaderNames.h"
-#include "HTTPHeaderValues.h"
-#include "HTTPParsers.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
 #include "Page.h"
-#include "ParsedContentType.h"
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
@@ -57,11 +50,7 @@
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
-#include "URLSearchParams.h"
 #include "UserContentController.h"
-#include <runtime/ArrayBuffer.h>
-#include <runtime/ArrayBufferView.h>
-#include <runtime/JSCInlines.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -188,87 +177,6 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
         request.setHTTPReferrer(referrer);
 
     startPingLoad(frame, request, ShouldFollowRedirects::No);
-}
-
-bool PingLoader::sendBeacon(Frame& frame, Document& document, const URL& url, std::optional<BodyInit>&& data)
-{
-    ResourceRequest request(url);
-    if (processContentExtensionRulesForLoad(frame, request, ResourceType::Raw))
-        return false;
-
-    auto& contentSecurityPolicy = *document.contentSecurityPolicy();
-    if (!document.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy.allowConnectToSource(url)) {
-        // We simulate a network error so we return true here. This is consistent with Blink.
-        return true;
-    }
-
-    bool noCors = true;
-    request.setHTTPMethod(ASCIILiteral("POST"));
-    // FIXME: We should restrict the size of payloads.
-    if (data) {
-        String mimeType;
-        WTF::switchOn(data.value(),
-            [&] (RefPtr<Blob>& blob) {
-                auto& blobType = blob->type();
-                if (!blobType.isEmpty() && isValidContentType(blobType))
-                    mimeType = blobType;
-                else
-                    mimeType = ASCIILiteral("application/octet-stream");
-                auto formData = FormData::create();
-                formData->appendBlob(blob->url());
-                request.setHTTPBody(WTFMove(formData));
-            },
-            [&] (RefPtr<JSC::ArrayBuffer>& buffer) {
-                mimeType = ASCIILiteral("application/octet-stream");
-                request.setHTTPBody(FormData::create(buffer->data(), buffer->byteLength()));
-            },
-            [&] (RefPtr<JSC::ArrayBufferView>& buffer) {
-                mimeType = ASCIILiteral("application/octet-stream");
-                request.setHTTPBody(FormData::create(buffer->baseAddress(), buffer->byteLength()));
-            },
-            [&] (RefPtr<DOMFormData>& domFormData) {
-                auto formData = FormData::createMultiPart(*domFormData, domFormData->encoding(), &document);
-                formData->generateFiles(&document);
-                mimeType = makeString("multipart/form-data; boundary=", formData->boundary().data());
-                request.setHTTPBody(WTFMove(formData));
-            },
-            [&] (RefPtr<URLSearchParams>& searchParams) {
-                mimeType = HTTPHeaderValues::formURLEncodedContentType();
-                request.setHTTPBody(FormData::create(searchParams->toString().utf8()));
-            },
-            [&] (String& string) {
-                mimeType = HTTPHeaderValues::textPlainContentType();
-                request.setHTTPBody(FormData::create(string.utf8()));
-            }
-        );
-        noCors = false;
-        if (!mimeType.isEmpty()) {
-            // If mimeType value is a CORS-safelisted request-header value for the Content-Type header, set corsMode to "no-cors".
-            if (isCrossOriginSafeRequestHeader(HTTPHeaderName::ContentType, mimeType))
-                noCors = true;
-            request.setHTTPContentType(mimeType);
-        }
-    }
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
-    frame.loader().addExtraFieldsToSubresourceRequest(request);
-
-    auto& sourceOrigin = document.securityOrigin();
-    bool isCrossOriginRequest = !sourceOrigin.canRequest(url);
-
-    // FIXME: We are supposed to do a preflight in this case but this is not supported yet.
-    if (isCrossOriginRequest && !noCors) {
-        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, ASCIILiteral("This requests requires a CORS preflight but this is not supported yet."));
-        return false;
-    }
-
-    FrameLoader::addHTTPOriginIfNeeded(request, sourceOrigin.toString());
-    String referrer = SecurityPolicy::generateReferrerHeader(document.referrerPolicy(), url, frame.loader().outgoingReferrer());
-    if (!referrer.isEmpty())
-        request.setHTTPReferrer(referrer);
-
-    request.setAllowCookies(true); // Credentials mode: include.
-    startPingLoad(frame, request, ShouldFollowRedirects::Yes);
-    return true;
 }
 
 void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, ShouldFollowRedirects shouldFollowRedirects)

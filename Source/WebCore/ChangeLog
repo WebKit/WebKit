@@ -1,3 +1,43 @@
+2017-08-04  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon] Update sendBeacon to use the CachedResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=175192
+        <rdar://problem/33725923>
+
+        Reviewed by Youenn Fablet.
+
+        Update sendBeacon to use the FetchRequest / CachedResourceLoader instead of
+        the PingLoader. This gets us closer to the specification which is based on
+        Fetch and reduces code duplication. This also fixes an issue where our
+        Origin header was not properly set on Beacon resquests.
+
+        In a follow-up, we will implement in CachedResourceLoader Fetch's quota for
+        inflight keepalive requests which is needed to fully support sendBeacon().
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+        * Modules/beacon/NavigatorBeacon.h:
+        * loader/LinkLoader.cpp:
+        (WebCore::createLinkPreloadResourceClient):
+        * loader/PingLoader.cpp:
+        * loader/PingLoader.h:
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::defaultPriorityForResourceType):
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestBeaconResource):
+        (WebCore::contentTypeFromResourceType):
+        (WebCore::CachedResourceLoader::checkInsecureContent const):
+        (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy const):
+        (WebCore::isResourceSuitableForDirectReuse):
+        * loader/cache/CachedResourceLoader.h:
+
 2017-08-04  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Report user interaction immediately, but only when needed

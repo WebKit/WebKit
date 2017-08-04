@@ -77,8 +77,8 @@ function stringToURLSearchParams(input)
 }
 
 testContentTypeHeader("hi!", "text/plain;charset=UTF-8", "string");
-testContentTypeHeader(stringToArrayBufferView("123"), "application/octet-stream", "ArrayBufferView"); // Specification says no content-type but browsers seem to use "application/octet-stream".
-testContentTypeHeader(stringToArrayBuffer("123"), "application/octet-stream", "ArrayBuffer"); // Specification says no content-type but browsers seem to use "application/octet-stream".
+testContentTypeHeader(stringToArrayBufferView("123"), "application/x-www-form-urlencoded", "ArrayBufferView"); // FIXME: It is unclear what the Content-Type should be here or if it should be present at all.
+testContentTypeHeader(stringToArrayBuffer("123"), "application/x-www-form-urlencoded", "ArrayBuffer"); // FIXME: It is unclear what the Content-Type should be here or if it should be present at all.
 testContentTypeHeader(stringToBlob("123"), "text/plain", "Blob");
 testContentTypeHeader(stringToFormData("qwerty"), "multipart/form-data", "FormData");
 testContentTypeHeader(stringToURLSearchParams("key1=value1&key2=value2"), "application/x-www-form-urlencoded;charset=UTF-8", "URLSearchParams");

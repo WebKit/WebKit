@@ -1,6 +1,5 @@
-CONSOLE MESSAGE: line 35: This requests requires a CORS preflight but this is not supported yet.
 
 PASS Test content-type header for a body string 
-FAIL Test content-type header for a body ArrayBuffer assert_true: SendBeacon Succeeded expected true got false
+PASS Test content-type header for a body ArrayBuffer 
 PASS Test content-type header for a body FormData 
 

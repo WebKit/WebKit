@@ -447,6 +447,9 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
 #endif
         resourceType = DiagnosticLoggingKeys::fontKey();
         break;
+    case CachedResource::Beacon:
+        ASSERT_NOT_REACHED();
+        break;
     case CachedResource::MediaResource:
     case CachedResource::Icon:
     case CachedResource::RawResource:
