@@ -40,7 +40,7 @@ MockCDMFactory::MockCDMFactory()
     : m_supportedSessionTypes({ MediaKeySessionType::Temporary, MediaKeySessionType::PersistentUsageRecord, MediaKeySessionType::PersistentLicense })
     , m_weakPtrFactory(this)
 {
-    CDM::registerCDMFactory(*this);
+    CDMFactory::registerFactory(*this);
 }
 
 MockCDMFactory::~MockCDMFactory()
@@ -51,7 +51,7 @@ MockCDMFactory::~MockCDMFactory()
 void MockCDMFactory::unregister()
 {
     if (m_registered) {
-        CDM::unregisterCDMFactory(*this);
+        CDMFactory::unregisterFactory(*this);
         m_registered = false;
     }
 }
@@ -96,7 +96,7 @@ void MockCDMFactory::setSupportedDataTypes(Vector<String>&& types)
         m_supportedDataTypes.append(type);
 }
 
-std::unique_ptr<CDMPrivate> MockCDMFactory::createCDM(CDM&)
+std::unique_ptr<CDMPrivate> MockCDMFactory::createCDM()
 {
     return std::make_unique<MockCDM>(m_weakPtrFactory.createWeakPtr());
 }

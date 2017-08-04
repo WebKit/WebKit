@@ -150,15 +150,6 @@ list(APPEND WebCorePlatformWPE_SOURCES
     platform/wpe/WidgetWPE.cpp
 )
 
-if (ENABLE_ENCRYPTED_MEDIA)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/encryptedmedia/clearkey"
-    )
-    list(APPEND WebCore_SOURCES
-        platform/encryptedmedia/clearkey/CDMClearKey.cpp
-    )
-endif ()
-
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsBase.css
 )

@@ -133,7 +133,13 @@ endif ()
 
 if (ENABLE_ENCRYPTED_MEDIA)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/encryptedmedia/clearkey"
         ${LIBGCRYPT_INCLUDE_DIRS}
+    )
+    list(APPEND WebCore_SOURCES
+        platform/encryptedmedia/clearkey/CDMClearKey.cpp
+
+        platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp
     )
     list(APPEND WebCore_LIBRARIES
         ${LIBGCRYPT_LIBRARIES} -lgpg-error

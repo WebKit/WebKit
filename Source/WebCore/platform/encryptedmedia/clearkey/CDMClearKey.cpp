@@ -31,12 +31,14 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "SharedBuffer.h"
+
 namespace WebCore {
 
 CDMFactoryClearKey::CDMFactoryClearKey() = default;
 CDMFactoryClearKey::~CDMFactoryClearKey() = default;
 
-std::unique_ptr<CDMPrivate> CDMFactoryClearKey::createCDM(CDM&)
+std::unique_ptr<CDMPrivate> CDMFactoryClearKey::createCDM()
 {
     return std::unique_ptr<CDMPrivate>(new CDMPrivateClearKey);
 }

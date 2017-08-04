@@ -1,3 +1,59 @@
+2017-08-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Push CDMFactory into the platform layer
+        https://bugs.webkit.org/show_bug.cgi?id=175129
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This is a follow-up to r219678 that moved the majority of CDM abstraction
+        classes into the platform layer, but missed the CDMFactory class.
+
+        The CDMFactory abstraction is now also placed in the platform layer. Only
+        change to the interface is that the createCDM() method can't accept a CDM
+        object reference anymore since that class is cemented into the WebCore
+        layer, and no current implementation used it anyway.
+
+        Additionally, the static Vector object of registered factories is moved
+        under the CDMFactory class, along with the register and unregister
+        functions. The platformRegisterFactories() function is added to allow for
+        platform-specific factory registrations to occur when the registered
+        factories are queried for the first time. Empty implementation for this
+        function is provided for non-GStreamer platforms, while for GStreamer
+        the implementation is kept in CDMFactoryGStreamer.cpp. It's still empty
+        for now, but it will register the ClearKey factory there in the near
+        future.
+
+        No new tests -- none affected, only refactoring.
+
+        * CMakeLists.txt:
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::createCDMPrivateForKeySystem):
+        (WebCore::CDM::supportsKeySystem):
+        (WebCore::CDM::CDM):
+        (): Deleted.
+        (WebCore::CDM::registerCDMFactory): Deleted.
+        (WebCore::CDM::unregisterCDMFactory): Deleted.
+        * Modules/encryptedmedia/CDM.h:
+        (WebCore::CDMFactory::~CDMFactory): Deleted.
+        * PlatformWPE.cmake:
+        * platform/GStreamer.cmake:
+        * platform/encryptedmedia/CDMFactory.cpp: Added.
+        (WebCore::CDMFactory::registerFactory):
+        (WebCore::CDMFactory::unregisterFactory):
+        (WebCore::CDMFactory::platformRegisterFactories):
+        * platform/encryptedmedia/CDMFactory.h: Added.
+        (WebCore::CDMFactory::~CDMFactory):
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMFactoryClearKey::createCDM):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/encryptedmedia/gstreamer/CDMFactoryGStreamer.cpp: Added.
+        (WebCore::CDMFactory::platformRegisterFactories):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::m_weakPtrFactory):
+        (WebCore::MockCDMFactory::unregister):
+        (WebCore::MockCDMFactory::createCDM):
+        * testing/MockCDMFactory.h:
+
 2017-08-04  Frederic Wang  <fwang@igalia.com>
 
         ScrollingTreeOverflowScrollingNodeIOS uses the wrong fixed position rectangle

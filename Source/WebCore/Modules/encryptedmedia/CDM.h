@@ -42,25 +42,15 @@
 
 namespace WebCore {
 
-class CDM;
+class CDMFactory;
 class CDMInstance;
 class CDMPrivate;
 class Document;
 class ScriptExecutionContext;
 class SharedBuffer;
 
-class CDMFactory {
-public:
-    virtual ~CDMFactory() { };
-    virtual std::unique_ptr<CDMPrivate> createCDM(CDM&) = 0;
-    virtual bool supportsKeySystem(const String&) = 0;
-};
-
 class CDM : public RefCounted<CDM>, private ContextDestructionObserver {
 public:
-    WEBCORE_EXPORT static void registerCDMFactory(CDMFactory&);
-    WEBCORE_EXPORT static void unregisterCDMFactory(CDMFactory&);
-
     static bool supportsKeySystem(const String&);
     static bool isPersistentType(MediaKeySessionType);
 

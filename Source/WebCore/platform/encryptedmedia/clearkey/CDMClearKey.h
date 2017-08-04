@@ -30,7 +30,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDM.h"
+#include "CDMFactory.h"
 #include "CDMInstance.h"
 #include "CDMPrivate.h"
 
@@ -41,7 +41,7 @@ public:
     CDMFactoryClearKey();
     virtual ~CDMFactoryClearKey();
 
-    std::unique_ptr<CDMPrivate> createCDM(CDM&) override;
+    std::unique_ptr<CDMPrivate> createCDM() override;
     bool supportsKeySystem(const String&) override;
 };
 
