@@ -4000,8 +4000,8 @@ static bool isAssistableInputType(InputType type)
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const IntRect&)elementRect
 {
     if (!_airPlayRoutePicker)
-        _airPlayRoutePicker = adoptNS([[WKAirPlayRoutePicker alloc] init]);
-    [_airPlayRoutePicker showFromView:self];
+        _airPlayRoutePicker = adoptNS([[WKAirPlayRoutePicker alloc] initWithView:self]);
+    [_airPlayRoutePicker show:hasVideo fromRect:elementRect];
 }
 
 - (void)_showRunOpenPanel:(API::OpenPanelParameters*)parameters resultListener:(WebOpenPanelResultListenerProxy*)listener

@@ -25,12 +25,13 @@
 
 #if PLATFORM(IOS)
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIPopoverController.h>
 
 @class WKContentView;
 
-@interface WKAirPlayRoutePicker : NSObject
-- (void)showFromView:(WKContentView *)view;
+@interface WKAirPlayRoutePicker : UIView <UIPopoverControllerDelegate>
+- (instancetype)initWithView:(WKContentView *)view;
+- (void)show:(BOOL)hasVideo fromRect:(CGRect)elementRect;
 @end
 
 #endif // PLATFORM(IOS)
