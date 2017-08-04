@@ -402,6 +402,15 @@ webkit.org/b/142726 [ Yosemite ] fast/images/animated-png.html [ Skip ]
 # This test fails every time on El Capitan
 [ ElCapitan ] fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Skip ]
 
+webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-worker.html [ Failure ]
+webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors.html [ Failure ]
+webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.html [ Failure ]
+webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.worker.html [ Failure ]
+webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.html [ Failure ]
+webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.worker.html [ Failure ]
+webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.html [ Failure ]
+webkit.org/b/175061 [ ElCapitan ] imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.worker.html [ Failure ]
+
 ### END OF (3) Unclassified failures
 ########################################
 

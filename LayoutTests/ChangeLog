@@ -1,3 +1,14 @@
+2017-08-04  Chris Dumez  <cdumez@apple.com>
+
+        PROGRESSION? Multiple imported/w3c/web-platform-tests/fetch/api/ test have started to fail.
+        https://bugs.webkit.org/show_bug.cgi?id=175061
+
+        Unreviewed, mark Fetch/Cors tests as failing on wk2 ElCapitan only, as those tests seem to be passing
+        everywhere else.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-08-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r220268.

@@ -1625,12 +1625,3 @@ webkit.org/b/173068 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_get
 
 webkit.org/b/174682 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Failure ]
 
-webkit.org/b/175061 imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-worker.html [ Pass Failure ]
-webkit.org/b/175061 imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors.html [ Pass Failure ]
-webkit.org/b/175061 imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.html [ Pass Failure ]
-webkit.org/b/175061 imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.worker.html [ Pass Failure ]
-webkit.org/b/175061 imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.html [ Pass Failure ]
-webkit.org/b/175061 imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.worker.html [ Pass Failure ]
-webkit.org/b/175061 imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.html [ Pass Failure ]
-webkit.org/b/175061 imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.worker.html [ Pass Failure ]
-
