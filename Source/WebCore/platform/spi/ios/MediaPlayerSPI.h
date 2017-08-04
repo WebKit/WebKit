@@ -33,17 +33,11 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <MediaPlayer/MPAVRoutingController.h>
-#import <MediaPlayer/MPAVRoutingSheet.h>
-#import <MediaPlayer/MPAudioVideoRoutingPopoverController.h>
+#import <MediaPlayer/MPMediaControlsViewController.h>
 
 #else
 
-enum {
-    MPAVItemTypeUnknown = 0,
-    MPAVItemTypeAudio = 1,
-    MPAVItemTypeVideo = 2,
-};
-typedef NSUInteger MPAVItemType;
+NS_ASSUME_NONNULL_BEGIN
 
 enum {
     MPRouteDiscoveryModeDisabled = 0,
@@ -60,33 +54,11 @@ typedef NSInteger MPRouteDiscoveryMode;
 @property (nonatomic, assign) MPRouteDiscoveryMode discoveryMode;
 @end
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-@interface MPAudioVideoRoutingPopoverController : UIPopoverController
-@end
-#pragma clang diagnostic pop
-
-@interface MPAudioVideoRoutingPopoverController ()
-- (id)initWithType:(MPAVItemType)avItemType;
+@interface MPMediaControlsViewController : UIViewController
+@property (nonatomic, copy, nullable) void (^didDismissHandler)(void);
 @end
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-@interface MPAVRoutingSheet : UIView
-@end
-#pragma clang diagnostic pop
-
-@interface MPAVRoutingSheet ()
-@property (nonatomic, assign, setter=setAVItemType:) MPAVItemType avItemType;
-
-@property (nonatomic, assign) BOOL mirroringOnly;
-
-- (id)initWithAVItemType:(MPAVItemType)avItemType;
-
-- (void)showInView:(UIView *)view withCompletionHandler:(void (^)(void))completionHandler;
-
-- (void)dismiss;
-@end
+NS_ASSUME_NONNULL_END
 
 #endif
 
