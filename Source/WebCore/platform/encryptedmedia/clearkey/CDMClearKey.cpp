@@ -31,9 +31,18 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDMKeySystemConfiguration.h"
+#include "CDMRestrictions.h"
+#include "CDMSessionType.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
+
+CDMFactoryClearKey& CDMFactoryClearKey::singleton()
+{
+    static CDMFactoryClearKey s_factory;
+    return s_factory;
+}
 
 CDMFactoryClearKey::CDMFactoryClearKey() = default;
 CDMFactoryClearKey::~CDMFactoryClearKey() = default;
@@ -43,46 +52,73 @@ std::unique_ptr<CDMPrivate> CDMFactoryClearKey::createCDM()
     return std::unique_ptr<CDMPrivate>(new CDMPrivateClearKey);
 }
 
-bool CDMFactoryClearKey::supportsKeySystem(const String&)
+bool CDMFactoryClearKey::supportsKeySystem(const String& keySystem)
 {
-    return false;
+    // `org.w3.clearkey` is the only supported key system.
+    return equalLettersIgnoringASCIICase(keySystem, "org.w3.clearkey");
 }
 
 CDMPrivateClearKey::CDMPrivateClearKey() = default;
 CDMPrivateClearKey::~CDMPrivateClearKey() = default;
 
-bool CDMPrivateClearKey::supportsInitDataType(const AtomicString&) const
+bool CDMPrivateClearKey::supportsInitDataType(const AtomicString& initDataType) const
 {
-    return false;
+    // `keyids` is the only supported init data type.
+    return equalLettersIgnoringASCIICase(initDataType, "keyids");
 }
 
-bool CDMPrivateClearKey::supportsConfiguration(const CDMKeySystemConfiguration&) const
+bool CDMPrivateClearKey::supportsConfiguration(const CDMKeySystemConfiguration& configuration) const
 {
-    return false;
+    // Reject any configuration that marks distinctive identifier or persistent state as required.
+    if (configuration.distinctiveIdentifier == CDMRequirement::Required
+        || configuration.persistentState == CDMRequirement::Required)
+        return false;
+    return true;
 }
 
-bool CDMPrivateClearKey::supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const
+bool CDMPrivateClearKey::supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration& configuration, const CDMRestrictions& restrictions) const
 {
-    return false;
+    // Reject any configuration that marks distincitive identifier as required, or that marks
+    // distinctive identifier as optional even when restrictions mark it as denied.
+    if ((configuration.distinctiveIdentifier == CDMRequirement::Optional && restrictions.distinctiveIdentifierDenied)
+        || configuration.distinctiveIdentifier == CDMRequirement::Required)
+        return false;
+
+    // Ditto for persistent state.
+    if ((configuration.persistentState == CDMRequirement::Optional && restrictions.persistentStateDenied)
+        || configuration.persistentState == CDMRequirement::Required)
+        return false;
+
+    return true;
 }
 
-bool CDMPrivateClearKey::supportsSessionTypeWithConfiguration(CDMSessionType&, const CDMKeySystemConfiguration&) const
+bool CDMPrivateClearKey::supportsSessionTypeWithConfiguration(CDMSessionType& sessionType, const CDMKeySystemConfiguration& configuration) const
 {
-    return false;
+    // Only support the temporary session type.
+    if (sessionType != CDMSessionType::Temporary)
+        return false;
+    return supportsConfiguration(configuration);
 }
 
-bool CDMPrivateClearKey::supportsRobustness(const String&) const
+bool CDMPrivateClearKey::supportsRobustness(const String& robustness) const
 {
-    return false;
+    // Only empty `robustness` string is supported.
+    return robustness.isEmpty();
 }
 
-CDMRequirement CDMPrivateClearKey::distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const
+CDMRequirement CDMPrivateClearKey::distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions& restrictions) const
 {
+    // Distinctive identifier is not allowed if it's been denied, otherwise it's optional.
+    if (restrictions.distinctiveIdentifierDenied)
+        return CDMRequirement::NotAllowed;
     return CDMRequirement::Optional;
 }
 
-CDMRequirement CDMPrivateClearKey::persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const
+CDMRequirement CDMPrivateClearKey::persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions& restrictions) const
 {
+    // Persistent state is not allowed if it's been denied, otherwise it's optional.
+    if (restrictions.persistentStateDenied)
+        return CDMRequirement::NotAllowed;
     return CDMRequirement::Optional;
 }
 

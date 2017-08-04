@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: line 272: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'contentitem.audio')
 
-FAIL Encrypted Media Extensions: setMediaKeys with Clear Key undefined is not an object (evaluating 'contentitem.audio')
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT org.w3.clearkey, setMediaKeys Test timed out
 

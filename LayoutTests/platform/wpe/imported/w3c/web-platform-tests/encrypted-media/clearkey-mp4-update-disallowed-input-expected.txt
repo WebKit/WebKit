@@ -1,3 +1,3 @@
 
-FAIL update() with invalid response (longer than 64Kb characters) should fail. assert_equals: expected "TypeError" but got "NotSupportedError"
+FAIL update() with invalid response (longer than 64Kb characters) should fail. assert_equals: expected "TypeError" but got "NotAllowedError"
 

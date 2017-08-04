@@ -1,3 +1,50 @@
+2017-08-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME][GStreamer] Register ClearKey CDMFactory
+        https://bugs.webkit.org/show_bug.cgi?id=175136
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update WPE baselines for EME ClearKey tests following some advancements in
+        ClearKey support.
+
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-events-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-events-session-closed-event-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-invalid-license-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-immediately-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-playback-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-resetting-src-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-at-same-time-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-to-multiple-video-elements-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeys-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysession-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysystemaccess-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-not-callable-after-createsession-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input-expected.txt:
+
 2017-08-04  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Report user interaction immediately, but only when needed

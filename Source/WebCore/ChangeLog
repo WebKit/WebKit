@@ -1,3 +1,40 @@
+2017-08-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME][GStreamer] Register ClearKey CDMFactory
+        https://bugs.webkit.org/show_bug.cgi?id=175136
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Register the ClearKey CDM factory in CDMFactoryGStreamer. A CDMFactoryClearKey
+        singleton object is introduced and used for that registration.
+
+        The basic CDMFactoryClearKey and CDMPrivateClearKey methods are implemented,
+        marking `org.w3.clearkey` as the supported key system and `keyids` as the
+        supported init data type. Additional logic around key system configurations,
+        distinctive identifiers, persistent state and related restrictions and
+        requirements is implemented.
+
+        This improves the ClearKey EME tests a bit, now progressing to the point of
+        failing with a NotAllowedError exception due to the CDMInstance object failing
+        to properly initialize because of missing implementation.
+
+        No new tests -- relevant tests have underlying baselines updated to reflect
+        changes in behavior.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMFactoryClearKey::singleton):
+        (WebCore::CDMFactoryClearKey::supportsKeySystem):
+        (WebCore::CDMPrivateClearKey::supportsInitDataType const):
+        (WebCore::CDMPrivateClearKey::supportsConfiguration const):
+        (WebCore::CDMPrivateClearKey::supportsConfigurationWithRestrictions const):
+        (WebCore::CDMPrivateClearKey::supportsSessionTypeWithConfiguration const):
+        (WebCore::CDMPrivateClearKey::supportsRobustness const):
+        (WebCore::CDMPrivateClearKey::distinctiveIdentifiersRequirement const):
+        (WebCore::CDMPrivateClearKey::persistentStateRequirement const):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp:
+        (WebCore::CDMFactory::platformRegisterFactories):
+
 2017-08-04  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Report user interaction immediately, but only when needed

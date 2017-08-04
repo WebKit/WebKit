@@ -1,3 +1,3 @@
 
-FAIL org.w3.clearkey, temporary, mp4, playback, setMediaKeys after updating session assert_unreached: NotSupportedError: The operation is not supported. Reached unreachable code
+FAIL org.w3.clearkey, temporary, mp4, playback, setMediaKeys after updating session assert_unreached: NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission. Reached unreachable code
 
