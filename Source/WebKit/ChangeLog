@@ -1,5 +1,46 @@
 2017-08-03  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220185. rdar://problem/33713528
+
+    2017-08-02  Chris Dumez  <cdumez@apple.com>
+
+            NetworkResourceLoader::setDefersLoading() may cause start() to be called multiple times
+            https://bugs.webkit.org/show_bug.cgi?id=175109
+            <rdar://problem/33363169>
+
+            Reviewed by Brady Eidson.
+
+            If NetworkResourceLoader::setDefersLoading(false) is called by the client while m_networkLoad is null
+            then we call NetworkResourceLoader::start() to start the load. This is needed in the case where
+            a NetworkResourceLoader is constructed in deferred mode so that the load can later be started via
+            setDefersLoading(). However, it is possible for setDefersLoading(false) to be called when start()
+            has already been called, which causes start() to be called multiple times and leads to an assertion
+            hit in debug.
+
+            Normally, setDefersLoading(false) returns without calling start() if m_networkLoad is not null. It
+            relies on m_networkLoad being non-null to determine if start() should be called. This is bad because
+            start() checks the disk cache asynchronously *before* calling startNetworkLoad() and initializing
+            m_networkLoad. Therefore, if setDefersLoading(false) is called *while* we are checking the cache,
+            then we will call incorrectly call start() again.
+
+            In the case of the radar, this happens when we:
+            1. Call start() and check the disk cache
+            2. Retrieve a cached redirect from the cache, which causes a WillSendRequest IPC to be sent to the
+               WebProcess
+            3. The WebProcess calls setDefersLoading(true), sends the ContinueWillSendRequest IPC back and
+               then calls setDefersLoading(false)
+
+            The call to continueWillSendRequest() causes us to retrieve the redirected entry from the cache,
+            asynchronously, which will return no entry and start a load.
+            The later call to setDefersLoading(false) causes us to call start() again and we end up back to step 1.
+
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::start):
+            (WebKit::NetworkResourceLoader::setDefersLoading):
+            * NetworkProcess/NetworkResourceLoader.h:
+
+2017-08-03  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219896. rdar://problem/33711000
 
     2017-07-25  Andy Estes  <aestes@apple.com>
