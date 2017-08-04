@@ -31,7 +31,6 @@
 #include "CryptoKeyPair.h"
 #include "GCryptUtilities.h"
 #include "JsonWebKey.h"
-#include "NotImplemented.h"
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
 #include <pal/crypto/tasn1/Utilities.h>
@@ -77,6 +76,7 @@ static size_t curveSize(CryptoKeyEC::NamedCurve curve)
     ASSERT_NOT_REACHED();
     return 0;
 }
+
 static unsigned curveUncompressedFieldElementSize(CryptoKeyEC::NamedCurve curve)
 {
     switch (curve) {

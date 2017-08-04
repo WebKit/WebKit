@@ -1,3 +1,12 @@
+2017-08-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Removing redundant NotImplemented.h header inclusions
+        and cleaning up whitespace issues in libgcrypt-specific CryptoKeyEC
+        and CryptoKeyRSA implementation files.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+
 2017-08-04  Jeremy Jones  <jeremyj@apple.com>
 
         Remove unnecesary call to status bar SPI.

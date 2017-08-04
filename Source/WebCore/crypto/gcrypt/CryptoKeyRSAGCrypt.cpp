@@ -32,7 +32,6 @@
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyPair.h"
 #include "GCryptUtilities.h"
-#include "NotImplemented.h"
 #include "ScriptExecutionContext.h"
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
