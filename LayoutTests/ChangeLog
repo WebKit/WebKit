@@ -1,3 +1,14 @@
+2017-08-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        RenderImageResourceStyleImage::image() should return the nullImage() if the image is not available
+        https://bugs.webkit.org/show_bug.cgi?id=174874
+        <rdar://problem/33530130>
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/image-element-image-content-data-expected.txt: Added.
+        * fast/images/image-element-image-content-data.html: Added.
+
 2017-08-04  Matt Lewis  <jlewis3@apple.com>
 
         Rebaslining fast/text/font-selection-font-loading-api-parse.html for iOS 11.

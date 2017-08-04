@@ -56,17 +56,21 @@ void RenderImageResourceStyleImage::initialize(RenderElement* renderer)
 void RenderImageResourceStyleImage::shutdown()
 {
     ASSERT(m_renderer);
+    image()->stopAnimation();
     m_styleImage->removeClient(m_renderer);
-    if (m_cachedImage) {
-        image()->stopAnimation();
-        m_cachedImage = nullptr;
-    }
+    if (!m_styleImage->isCachedImage() && m_cachedImage)
+        m_cachedImage->removeClient(*m_renderer);
+    m_cachedImage = nullptr;
 }
 
 RefPtr<Image> RenderImageResourceStyleImage::image(const IntSize& size) const
 {
     // Generated content may trigger calls to image() while we're still pending, don't assert but gracefully exit.
-    return !m_styleImage->isPending() ? m_styleImage->image(m_renderer, size) : &Image::nullImage();
+    if (m_styleImage->isPending())
+        return &Image::nullImage();
+    if (auto image = m_styleImage->image(m_renderer, size))
+        return image;
+    return &Image::nullImage();
 }
 
 void RenderImageResourceStyleImage::setContainerSizeForRenderer(const IntSize& size)
