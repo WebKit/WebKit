@@ -336,7 +336,6 @@ webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflectio
 webkit.org/b/154310 [ Debug ] imported/w3c/web-platform-tests/html/dom/reflection-text.html  [ Skip ]
 webkit.org/b/171322 [ Debug ] imported/w3c/web-platform-tests/html/semantics/tabular-data/processing-model-1/span-limits.html [ Skip ]
 webkit.org/b/162517 [ Debug ] imported/w3c/web-platform-tests/html/the-xhtml-syntax/parsing-xhtml-documents/xhtml-mathml-dtd-entity-support.htm [ Skip ]
-webkit.org/b/175007 [ Debug ] imported/w3c/web-platform-tests/beacon/beacon-basic-string.html [ Skip ]
 
 # Tests that are flaky due to console log / error messages
 webkit.org/b/169565 imported/w3c/web-platform-tests/cors/basic.htm [ Failure ]
@@ -1051,6 +1050,11 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.work
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.worker.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Slow ]
+
+# Imported beacon that takes a long time to complete, even in Release.
+webkit.org/b/175007 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-basic-string.html [ Slow ]
+webkit.org/b/175007 [ Debug ] imported/w3c/web-platform-tests/beacon/beacon-basic-string.html [ Skip ]
+
 
 # WebCryptoAPI features that haven't been enabled for current OS
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Skip ]

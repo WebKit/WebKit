@@ -1,3 +1,9 @@
+2017-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Mark beacon-basic-string.html as slow.
+
+        * TestExpectations:
+
 2017-08-04  Brady Eidson  <beidson@apple.com>
 
         Enable ServiceWorkers at runtime for WebKitTestRunner.
