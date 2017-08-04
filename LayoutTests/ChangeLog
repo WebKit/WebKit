@@ -1,3 +1,11 @@
+2017-08-04  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaslining fast/text/font-selection-font-loading-api-parse.html for iOS 11.
+
+        Unreviewed test gardening.
+
+        * platform/ios-11/fast/text/font-selection-font-loading-api-parse-expected.txt:
+
 2017-08-04  Chris Dumez  <cdumez@apple.com>
 
         PROGRESSION? Multiple imported/w3c/web-platform-tests/fetch/api/ test have started to fail.
