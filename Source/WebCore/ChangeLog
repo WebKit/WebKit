@@ -1,5 +1,21 @@
 2017-08-03  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220153. rdar://problem/33711038
+
+    2017-08-02  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] Removing samples when presentation order does not match decode order can cause bad behavior.
+            https://bugs.webkit.org/show_bug.cgi?id=175091
+
+            Reviewed by Eric Carlson.
+
+            Address follow-up comments to r219519.
+
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::removeCodedFrames):
+
+2017-08-03  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219896. rdar://problem/33711000
 
     2017-07-25  Andy Estes  <aestes@apple.com>
