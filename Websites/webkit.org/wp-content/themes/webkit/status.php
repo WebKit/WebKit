@@ -744,6 +744,11 @@ function initializeStatusPage() {
             } else filtersForm.className += " opened";
         });
 
+        var searchTerm = searchTermFromURL();
+        if (searchTerm.length) {
+            inputField.value = searchTerm;
+            inputField.placeholder = '';
+        }
         inputField.addEventListener('input', function() { updateSearch(featuresArray); });
         
 
@@ -815,6 +820,18 @@ function initializeStatusPage() {
         });
         
         return visibleCount;
+    }
+
+    function searchTermFromURL()
+    {
+        var search = window.location.search;
+        var searchRegExp = /\#.*search=([^&]+)/;
+
+        var result;
+        if (result = window.location.href.match(searchRegExp))
+            return decodeURIComponent(result[1]);
+
+        return '';
     }
 
     function isSearchMatch(feature, searchTerm)
@@ -907,7 +924,7 @@ function initializeStatusPage() {
         
         updateSearch(everythingToShow);
 
-        if (window.location.hash) {
+        if (window.location.hash.length) {
             var hash = window.location.hash;
             window.location.hash = ""; // Change hash so navigation takes place
             window.location.hash = hash;
@@ -950,9 +967,12 @@ function initializeStatusPage() {
             appendDelimiter();
             searchString += 'status=' + activeStatusFilters.join(',');
         }
+        
+        if (searchString.length) {
+            var current = window.location.href;
+            window.location.href = current.replace(/\??#(.*)$/, '') + '#' + searchString;
+        }
 
-        var current = window.location.href;
-        window.location.href = current.replace(/#(.*)$/, '') + '#' + searchString;
     }
     
 
