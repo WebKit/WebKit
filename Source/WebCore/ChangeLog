@@ -1,3 +1,25 @@
+2017-08-04  Frederic Wang  <fwang@igalia.com>
+
+        ScrollingTreeOverflowScrollingNodeIOS uses the wrong fixed position rectangle
+        https://bugs.webkit.org/show_bug.cgi?id=175135
+
+        Reviewed by Simon Fraser.
+
+        This patch modifies ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll so
+        that it uses the fixed position rectangle relative of the first frame ancestor instead of
+        the one of the main frame. This makes it consistent with ScrollingTreeFrameScrollingNodeIOS
+        and RenderLayerCompositor. This fixes some flickering issues on iOS.
+
+        Test: fast/scrolling/ios/fixed-inside-overflow-inside-iframe.html
+
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        (WebCore::ScrollingTreeFrameScrollingNode::fixedPositionRect): Helper function to get the
+        fixed position rect to use for that frame.
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::enclosingFrameNode const): Helper function to get the enclosing
+        frame for this scrolling node or null if there is none.
+        * page/scrolling/ScrollingTreeNode.h: Declare enclosingFrameNode.
+
 2017-08-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Removing redundant NotImplemented.h header inclusions

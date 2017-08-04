@@ -30,10 +30,11 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/ScrollingStateOverflowScrollingNode.h>
-#import <WebCore/ScrollingTree.h>
 #import <UIKit/UIPanGestureRecognizer.h>
 #import <UIKit/UIScrollView.h>
+#import <WebCore/ScrollingStateOverflowScrollingNode.h>
+#import <WebCore/ScrollingTree.h>
+#import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SetForScope.h>
 
@@ -272,7 +273,12 @@ void ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll(const Fl
     if (!m_children)
         return;
 
-    FloatRect fixedPositionRect = scrollingTree().fixedPositionRect();
+    FloatRect fixedPositionRect;
+    ScrollingTreeFrameScrollingNode* frameNode = enclosingFrameNode();
+    if (frameNode && frameNode->parent())
+        fixedPositionRect = frameNode->fixedPositionRect();
+    else
+        fixedPositionRect = scrollingTree().fixedPositionRect();
     FloatSize scrollDelta = lastCommittedScrollPosition() - scrollPosition;
 
     for (auto& child : *m_children)

@@ -38,6 +38,7 @@ namespace WebCore {
 
 class ScrollingStateFixedNode;
 class ScrollingStateScrollingNode;
+class ScrollingTreeFrameScrollingNode;
 
 class ScrollingTreeNode : public RefCounted<ScrollingTreeNode> {
 public:
@@ -64,6 +65,8 @@ public:
 
     void appendChild(Ref<ScrollingTreeNode>&&);
     void removeChild(ScrollingTreeNode&);
+
+    WEBCORE_EXPORT ScrollingTreeFrameScrollingNode* enclosingFrameNode() const;
 
     WEBCORE_EXPORT void dump(TextStream&, ScrollingStateTreeAsTextBehavior) const;
 

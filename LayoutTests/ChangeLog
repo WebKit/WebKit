@@ -1,3 +1,20 @@
+2017-08-04  Frederic Wang  <fwang@igalia.com>
+
+        ScrollingTreeOverflowScrollingNodeIOS uses the wrong fixed position rectangle
+        https://bugs.webkit.org/show_bug.cgi?id=175135
+
+        Reviewed by Simon Fraser.
+
+        This patch adds a new test for a position:fixed element inside an overflow node inside an
+        iframe. When scrolling the overflow node, the position of such an element should remain fixed
+        relative to the inner frame. Before that change, ScrollingTreeOverflowScrollingNodeIOS used
+        to take the main frame as a reference instead, causing the element to flicker and even to
+        disappear when the user scrolls that overflow node. We add a reftest to verify that the
+        element is visible and positioned at the correct location when the user scrolls.
+
+        * fast/scrolling/ios/fixed-inside-overflow-inside-iframe-expected.html: Added.
+        * fast/scrolling/ios/fixed-inside-overflow-inside-iframe.html: Added.
+
 2017-08-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Update test expectations and layout test baselines

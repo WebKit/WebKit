@@ -58,6 +58,8 @@ public:
     FloatSize viewToContentsOffset(const FloatPoint& scrollPosition) const;
     FloatRect layoutViewportForScrollPosition(const FloatPoint& visibleContentOrigin, float scale) const;
 
+    FloatRect fixedPositionRect() { return FloatRect(lastCommittedScrollPosition(), scrollableAreaSize()); };
+
 protected:
     ScrollingTreeFrameScrollingNode(ScrollingTree&, ScrollingNodeID);
 
