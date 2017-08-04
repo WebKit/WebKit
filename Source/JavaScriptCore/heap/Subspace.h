@@ -31,6 +31,8 @@
 
 namespace JSC {
 
+class AlignedMemoryAllocator;
+
 // The idea of subspaces is that you can provide some custom behavior for your objects if you
 // allocate them from a custom Subspace in which you override some of the virtual methods. This
 // class is the baseclass of Subspaces and it provides a reasonable default implementation, where
@@ -44,13 +46,14 @@ class Subspace {
     WTF_MAKE_NONCOPYABLE(Subspace);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    JS_EXPORT_PRIVATE Subspace(CString name, Heap&, AllocatorAttributes);
+    JS_EXPORT_PRIVATE Subspace(CString name, Heap&, AllocatorAttributes, AlignedMemoryAllocator*);
     JS_EXPORT_PRIVATE virtual ~Subspace();
     
-    const char *name() const { return m_name.data(); }
+    const char* name() const { return m_name.data(); }
     MarkedSpace& space() const { return m_space; }
     
     const AllocatorAttributes& attributes() const { return m_attributes; }
+    AlignedMemoryAllocator* alignedMemoryAllocator() const { return m_alignedMemoryAllocator; }
     
     // The purpose of overriding this is to specialize the sweep for your destructors. This won't
     // be called for no-destructor blocks. This must call MarkedBlock::finishSweepKnowingSubspace.
@@ -58,10 +61,6 @@ public:
     
     // These get called for large objects.
     virtual void destroy(VM&, JSCell*);
-    
-    virtual bool canTradeBlocksWith(Subspace* other);
-    virtual void* tryAllocateAlignedMemory(size_t alignment, size_t size);
-    virtual void freeAlignedMemory(void*);
     
     MarkedAllocator* tryAllocatorFor(size_t);
     MarkedAllocator* allocatorFor(size_t);
@@ -114,6 +113,8 @@ private:
     
     CString m_name;
     AllocatorAttributes m_attributes;
+    
+    AlignedMemoryAllocator* m_alignedMemoryAllocator;
     
     std::array<MarkedAllocator*, MarkedSpace::numSizeClasses> m_allocatorForSizeStep;
     MarkedAllocator* m_firstAllocator { nullptr };

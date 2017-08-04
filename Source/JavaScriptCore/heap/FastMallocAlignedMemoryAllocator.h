@@ -25,17 +25,23 @@
 
 #pragma once
 
-#include "Subspace.h"
+#include "AlignedMemoryAllocator.h"
 
 namespace JSC {
 
-class JSDestructibleObjectSubspace : public Subspace {
+class FastMallocAlignedMemoryAllocator : public AlignedMemoryAllocator {
 public:
-    JS_EXPORT_PRIVATE JSDestructibleObjectSubspace(CString name, Heap&, AlignedMemoryAllocator*);
-    JS_EXPORT_PRIVATE virtual ~JSDestructibleObjectSubspace();
+    JS_EXPORT_PRIVATE static FastMallocAlignedMemoryAllocator& instance();
+
+    ~FastMallocAlignedMemoryAllocator();
     
-    void finishSweep(MarkedBlock::Handle&, FreeList*) override;
-    void destroy(VM&, JSCell*) override;
+    void* tryAllocateAlignedMemory(size_t alignment, size_t size) override;
+    void freeAlignedMemory(void*) override;
+    
+    void dump(PrintStream&) const override;
+
+private:
+    FastMallocAlignedMemoryAllocator();
 };
 
 } // namespace JSC

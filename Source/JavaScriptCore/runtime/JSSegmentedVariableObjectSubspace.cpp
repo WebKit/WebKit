@@ -43,8 +43,8 @@ struct DestroyFunc {
 
 } // anonymous namespace
 
-JSSegmentedVariableObjectSubspace::JSSegmentedVariableObjectSubspace(CString name, Heap& heap)
-    : Subspace(name, heap, AllocatorAttributes(NeedsDestruction, HeapCell::JSCell))
+JSSegmentedVariableObjectSubspace::JSSegmentedVariableObjectSubspace(CString name, Heap& heap, AlignedMemoryAllocator* allocator)
+    : Subspace(name, heap, AllocatorAttributes(NeedsDestruction, HeapCell::JSCell), allocator)
 {
 }
 

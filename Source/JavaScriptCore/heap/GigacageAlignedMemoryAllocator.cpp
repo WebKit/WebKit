@@ -23,20 +23,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "GigacageAlignedMemoryAllocator.h"
 
-#include "Subspace.h"
+#include <mutex>
+#include <wtf/Gigacage.h>
 
 namespace JSC {
 
-class JSDestructibleObjectSubspace : public Subspace {
-public:
-    JS_EXPORT_PRIVATE JSDestructibleObjectSubspace(CString name, Heap&, AlignedMemoryAllocator*);
-    JS_EXPORT_PRIVATE virtual ~JSDestructibleObjectSubspace();
-    
-    void finishSweep(MarkedBlock::Handle&, FreeList*) override;
-    void destroy(VM&, JSCell*) override;
-};
+GigacageAlignedMemoryAllocator& GigacageAlignedMemoryAllocator::instance()
+{
+    static GigacageAlignedMemoryAllocator* result;
+    static std::once_flag onceFlag;
+    std::call_once(
+        onceFlag,
+        [] {
+            result = new GigacageAlignedMemoryAllocator();
+        });
+    return *result;
+}
+
+GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator()
+{
+}
+
+GigacageAlignedMemoryAllocator::~GigacageAlignedMemoryAllocator()
+{
+}
+
+void* GigacageAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size_t size)
+{
+    return Gigacage::tryAlignedMalloc(alignment, size);
+}
+
+void GigacageAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
+{
+    Gigacage::alignedFree(basePtr);
+}
+
+void GigacageAlignedMemoryAllocator::dump(PrintStream& out) const
+{
+    out.print("Gigacage");
+}
 
 } // namespace JSC
 

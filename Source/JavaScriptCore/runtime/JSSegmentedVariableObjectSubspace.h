@@ -31,7 +31,7 @@ namespace JSC {
 
 class JSSegmentedVariableObjectSubspace : public Subspace {
 public:
-    JS_EXPORT_PRIVATE JSSegmentedVariableObjectSubspace(CString name, Heap&);
+    JS_EXPORT_PRIVATE JSSegmentedVariableObjectSubspace(CString name, Heap&, AlignedMemoryAllocator*);
     JS_EXPORT_PRIVATE virtual ~JSSegmentedVariableObjectSubspace();
     
     void finishSweep(MarkedBlock::Handle&, FreeList*) override;

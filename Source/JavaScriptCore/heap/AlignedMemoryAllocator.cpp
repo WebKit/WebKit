@@ -23,20 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "AlignedMemoryAllocator.h"
 
-#include "Subspace.h"
+namespace JSC { 
 
-namespace JSC {
+AlignedMemoryAllocator::AlignedMemoryAllocator()
+{
+}
 
-class JSDestructibleObjectSubspace : public Subspace {
-public:
-    JS_EXPORT_PRIVATE JSDestructibleObjectSubspace(CString name, Heap&, AlignedMemoryAllocator*);
-    JS_EXPORT_PRIVATE virtual ~JSDestructibleObjectSubspace();
-    
-    void finishSweep(MarkedBlock::Handle&, FreeList*) override;
-    void destroy(VM&, JSCell*) override;
-};
+AlignedMemoryAllocator::~AlignedMemoryAllocator()
+{
+}
 
 } // namespace JSC
+
 

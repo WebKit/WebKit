@@ -25,18 +25,22 @@
 
 #pragma once
 
-#include "Subspace.h"
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-class JSDestructibleObjectSubspace : public Subspace {
+class AlignedMemoryAllocator {
+    WTF_MAKE_NONCOPYABLE(AlignedMemoryAllocator);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    JS_EXPORT_PRIVATE JSDestructibleObjectSubspace(CString name, Heap&, AlignedMemoryAllocator*);
-    JS_EXPORT_PRIVATE virtual ~JSDestructibleObjectSubspace();
+    AlignedMemoryAllocator();
+    virtual ~AlignedMemoryAllocator();
     
-    void finishSweep(MarkedBlock::Handle&, FreeList*) override;
-    void destroy(VM&, JSCell*) override;
+    virtual void* tryAllocateAlignedMemory(size_t alignment, size_t size) = 0;
+    virtual void freeAlignedMemory(void*) = 0;
+    
+    virtual void dump(PrintStream&) const = 0;
 };
 
-} // namespace JSC
+} // namespace WTF
 

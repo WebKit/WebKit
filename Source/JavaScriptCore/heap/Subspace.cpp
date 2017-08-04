@@ -54,10 +54,11 @@ struct DestroyFunc {
 
 } // anonymous namespace
 
-Subspace::Subspace(CString name, Heap& heap, AllocatorAttributes attributes)
+Subspace::Subspace(CString name, Heap& heap, AllocatorAttributes attributes, AlignedMemoryAllocator* alignedMemoryAllocator)
     : m_space(heap.objectSpace())
     , m_name(name)
     , m_attributes(attributes)
+    , m_alignedMemoryAllocator(alignedMemoryAllocator)
     , m_allocatorForEmptyAllocation(m_space.firstAllocator())
 {
     // It's remotely possible that we're GCing right now even if the client is careful to only
@@ -86,23 +87,6 @@ void Subspace::finishSweep(MarkedBlock::Handle& block, FreeList* freeList)
 void Subspace::destroy(VM& vm, JSCell* cell)
 {
     DestroyFunc()(vm, cell);
-}
-
-bool Subspace::canTradeBlocksWith(Subspace*)
-{
-    return true;
-}
-
-void* Subspace::tryAllocateAlignedMemory(size_t alignment, size_t size)
-{
-    void* result = tryFastAlignedMalloc(alignment, size);
-    return result;
-}
-
-void Subspace::freeAlignedMemory(void* basePtr)
-{
-    fastAlignedFree(basePtr);
-    WTF::compilerFence();
 }
 
 // The reason why we distinguish between allocate and tryAllocate is to minimize the number of
@@ -167,9 +151,7 @@ MarkedBlock::Handle* Subspace::findEmptyBlockToSteal()
 {
     for (; m_allocatorForEmptyAllocation; m_allocatorForEmptyAllocation = m_allocatorForEmptyAllocation->nextAllocator()) {
         Subspace* otherSubspace = m_allocatorForEmptyAllocation->subspace();
-        if (!canTradeBlocksWith(otherSubspace))
-            continue;
-        if (!otherSubspace->canTradeBlocksWith(this))
+        if (otherSubspace->alignedMemoryAllocator() != alignedMemoryAllocator())
             continue;
         
         if (MarkedBlock::Handle* block = m_allocatorForEmptyAllocation->findEmptyBlockToSteal())

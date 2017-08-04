@@ -36,7 +36,6 @@
 #include "ExceptionEventLocation.h"
 #include "ExecutableAllocator.h"
 #include "FunctionHasExecutedCache.h"
-#include "GigacageSubspace.h"
 #include "Heap.h"
 #include "Intrinsic.h"
 #include "JITThunks.h"
@@ -286,7 +285,7 @@ private:
 public:
     Heap heap;
     
-    GigacageSubspace auxiliarySpace;
+    Subspace auxiliarySpace;
     
     // Whenever possible, use subspaceFor<CellType>(vm) to get one of these subspaces.
     Subspace cellSpace;

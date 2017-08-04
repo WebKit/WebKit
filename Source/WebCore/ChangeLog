@@ -1,3 +1,18 @@
+2017-08-03  Filip Pizlo  <fpizlo@apple.com>
+
+        The allocator used to allocate memory for MarkedBlocks and LargeAllocations should not be the Subspace itself
+        https://bugs.webkit.org/show_bug.cgi?id=175141
+
+        Reviewed by Mark Lam.
+
+        No new tests because no new behavior.
+        
+        Just adapting to an API change.
+
+        * ForwardingHeaders/heap/FastMallocAlignedMemoryAllocator.h: Added.
+        * bindings/js/WebCoreJSClientData.cpp:
+        (WebCore::JSVMClientData::JSVMClientData):
+
 2017-08-04  Chris Dumez  <cdumez@apple.com>
 
         Match newly-clarified spec on textarea defaultValue/value/child text content

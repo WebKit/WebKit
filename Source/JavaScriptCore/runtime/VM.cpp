@@ -44,10 +44,12 @@
 #include "EvalCodeBlock.h"
 #include "Exception.h"
 #include "FTLThunks.h"
+#include "FastMallocAlignedMemoryAllocator.h"
 #include "FunctionCodeBlock.h"
 #include "FunctionConstructor.h"
 #include "GCActivityCallback.h"
 #include "GetterSetter.h"
+#include "GigacageAlignedMemoryAllocator.h"
 #include "HasOwnPropertyCache.h"
 #include "Heap.h"
 #include "HeapIterationScope.h"
@@ -161,15 +163,15 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_runLoop(CFRunLoopGetCurrent())
 #endif // USE(CF)
     , heap(this, heapType)
-    , auxiliarySpace("Auxiliary", heap, AllocatorAttributes(DoesNotNeedDestruction, HeapCell::Auxiliary))
-    , cellSpace("JSCell", heap, AllocatorAttributes(DoesNotNeedDestruction, HeapCell::JSCell))
-    , destructibleCellSpace("Destructible JSCell", heap, AllocatorAttributes(NeedsDestruction, HeapCell::JSCell))
-    , stringSpace("JSString", heap)
-    , destructibleObjectSpace("JSDestructibleObject", heap)
-    , eagerlySweptDestructibleObjectSpace("Eagerly Swept JSDestructibleObject", heap)
-    , segmentedVariableObjectSpace("JSSegmentedVariableObjectSpace", heap)
+    , auxiliarySpace("Auxiliary", heap, AllocatorAttributes(DoesNotNeedDestruction, HeapCell::Auxiliary), &GigacageAlignedMemoryAllocator::instance())
+    , cellSpace("JSCell", heap, AllocatorAttributes(DoesNotNeedDestruction, HeapCell::JSCell), &FastMallocAlignedMemoryAllocator::instance())
+    , destructibleCellSpace("Destructible JSCell", heap, AllocatorAttributes(NeedsDestruction, HeapCell::JSCell), &FastMallocAlignedMemoryAllocator::instance())
+    , stringSpace("JSString", heap, &FastMallocAlignedMemoryAllocator::instance())
+    , destructibleObjectSpace("JSDestructibleObject", heap, &FastMallocAlignedMemoryAllocator::instance())
+    , eagerlySweptDestructibleObjectSpace("Eagerly Swept JSDestructibleObject", heap, &FastMallocAlignedMemoryAllocator::instance())
+    , segmentedVariableObjectSpace("JSSegmentedVariableObjectSpace", heap, &FastMallocAlignedMemoryAllocator::instance())
 #if ENABLE(WEBASSEMBLY)
-    , webAssemblyCodeBlockSpace("JSWebAssemblyCodeBlockSpace", heap)
+    , webAssemblyCodeBlockSpace("JSWebAssemblyCodeBlockSpace", heap, &FastMallocAlignedMemoryAllocator::instance())
 #endif
     , vmType(vmType)
     , clientData(0)

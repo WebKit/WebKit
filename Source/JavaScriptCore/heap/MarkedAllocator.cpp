@@ -104,8 +104,7 @@ void* MarkedAllocator::tryAllocateWithoutCollecting()
     
     if (Options::stealEmptyBlocksFromOtherAllocators()) {
         if (MarkedBlock::Handle* block = m_subspace->findEmptyBlockToSteal()) {
-            RELEASE_ASSERT(block->subspace()->canTradeBlocksWith(m_subspace));
-            RELEASE_ASSERT(m_subspace->canTradeBlocksWith(block->subspace()));
+            RELEASE_ASSERT(block->alignedMemoryAllocator() == m_subspace->alignedMemoryAllocator());
             
             block->sweep(nullptr);
             
@@ -243,7 +242,7 @@ MarkedBlock::Handle* MarkedAllocator::tryAllocateBlock()
 {
     SuperSamplerScope superSamplerScope(false);
     
-    MarkedBlock::Handle* handle = MarkedBlock::tryCreate(*m_heap, subspace());
+    MarkedBlock::Handle* handle = MarkedBlock::tryCreate(*m_heap, subspace()->alignedMemoryAllocator());
     if (!handle)
         return nullptr;
     

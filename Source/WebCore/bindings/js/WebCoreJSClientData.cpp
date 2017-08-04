@@ -27,6 +27,7 @@
 #include "WebCoreJSClientData.h"
 
 #include "JSDOMBinding.h"
+#include <heap/FastMallocAlignedMemoryAllocator.h>
 #include <heap/HeapInlines.h>
 #include <heap/MarkingConstraint.h>
 #include <heap/MarkedAllocatorInlines.h>
@@ -43,8 +44,8 @@ namespace WebCore {
 JSVMClientData::JSVMClientData(VM& vm)
     : m_builtinFunctions(vm)
     , m_builtinNames(&vm)
-    , m_outputConstraintSpace("WebCore Wrapper w/ Output Constraint", vm.heap)
-    , m_globalObjectOutputConstraintSpace("WebCore Global Object w/ Output Constraint", vm.heap)
+    , m_outputConstraintSpace("WebCore Wrapper w/ Output Constraint", vm.heap, &FastMallocAlignedMemoryAllocator::instance())
+    , m_globalObjectOutputConstraintSpace("WebCore Global Object w/ Output Constraint", vm.heap, &FastMallocAlignedMemoryAllocator::instance())
 {
 }
 

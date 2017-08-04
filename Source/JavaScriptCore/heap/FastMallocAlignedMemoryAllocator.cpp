@@ -24,37 +24,46 @@
  */
 
 #include "config.h"
-#include "GigacageSubspace.h"
+#include "FastMallocAlignedMemoryAllocator.h"
 
-#include <wtf/Gigacage.h>
+#include <mutex>
+#include <wtf/FastMalloc.h>
 
 namespace JSC {
 
-GigacageSubspace::GigacageSubspace(CString name, Heap& heap, AllocatorAttributes attributes)
-    : Subspace(name, heap, attributes)
+FastMallocAlignedMemoryAllocator& FastMallocAlignedMemoryAllocator::instance()
 {
-    Gigacage::ensureGigacage();
+    static FastMallocAlignedMemoryAllocator* result;
+    static std::once_flag onceFlag;
+    std::call_once(
+        onceFlag,
+        [] {
+            result = new FastMallocAlignedMemoryAllocator();
+        });
+    return *result;
 }
 
-GigacageSubspace::~GigacageSubspace()
+FastMallocAlignedMemoryAllocator::FastMallocAlignedMemoryAllocator()
 {
 }
 
-void* GigacageSubspace::tryAllocateAlignedMemory(size_t alignment, size_t size)
+FastMallocAlignedMemoryAllocator::~FastMallocAlignedMemoryAllocator()
 {
-    void* result = Gigacage::tryAlignedMalloc(alignment, size);
-    return result;
 }
 
-void GigacageSubspace::freeAlignedMemory(void* basePtr)
+void* FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size_t size)
 {
-    Gigacage::alignedFree(basePtr);
-    WTF::compilerFence();
+    return tryFastAlignedMalloc(alignment, size);
 }
 
-bool GigacageSubspace::canTradeBlocksWith(Subspace* other)
+void FastMallocAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
 {
-    return this == other;
+    fastAlignedFree(basePtr);
+}
+
+void FastMallocAlignedMemoryAllocator::dump(PrintStream& out) const
+{
+    out.print("FastMalloc");
 }
 
 } // namespace JSC

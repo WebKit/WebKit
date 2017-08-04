@@ -1,3 +1,84 @@
+2017-08-03  Filip Pizlo  <fpizlo@apple.com>
+
+        The allocator used to allocate memory for MarkedBlocks and LargeAllocations should not be the Subspace itself
+        https://bugs.webkit.org/show_bug.cgi?id=175141
+
+        Reviewed by Mark Lam.
+        
+        To make it easier to have multiple gigacages and maybe even fancier methods of allocating, this
+        decouples the allocator used to allocate memory from the GC Subspace. This means we no longer have
+        to create a new Subspace subclass to allocate memory a different way. Instead, the allocator is now
+        determined by the AlignedMemoryAllocator object.
+        
+        This also simplifies trading of blocks. Before, Subspaces had to determine if other Subspaces could
+        trade blocks with them using canTradeBlocksWith(). This makes it difficult for two different
+        Subspaces that both use the same underlying allocator to realize that they can trade blocks with
+        each other. Now, you just need to ask the block being stolen and the subspace doing the stealing if
+        they use the same AlignedMemoryAllocator.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/AlignedMemoryAllocator.cpp: Added.
+        (JSC::AlignedMemoryAllocator::AlignedMemoryAllocator):
+        (JSC::AlignedMemoryAllocator::~AlignedMemoryAllocator):
+        * heap/AlignedMemoryAllocator.h: Added.
+        * heap/FastMallocAlignedMemoryAllocator.cpp: Added.
+        (JSC::FastMallocAlignedMemoryAllocator::singleton):
+        (JSC::FastMallocAlignedMemoryAllocator::FastMallocAlignedMemoryAllocator):
+        (JSC::FastMallocAlignedMemoryAllocator::~FastMallocAlignedMemoryAllocator):
+        (JSC::FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::FastMallocAlignedMemoryAllocator::freeAlignedMemory):
+        (JSC::FastMallocAlignedMemoryAllocator::dump const):
+        * heap/FastMallocAlignedMemoryAllocator.h: Added.
+        * heap/GigacageAlignedMemoryAllocator.cpp: Added.
+        (JSC::GigacageAlignedMemoryAllocator::singleton):
+        (JSC::GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator):
+        (JSC::GigacageAlignedMemoryAllocator::~GigacageAlignedMemoryAllocator):
+        (JSC::GigacageAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::GigacageAlignedMemoryAllocator::freeAlignedMemory):
+        (JSC::GigacageAlignedMemoryAllocator::dump const):
+        * heap/GigacageAlignedMemoryAllocator.h: Added.
+        * heap/GigacageSubspace.cpp: Removed.
+        * heap/GigacageSubspace.h: Removed.
+        * heap/LargeAllocation.cpp:
+        (JSC::LargeAllocation::tryCreate):
+        (JSC::LargeAllocation::destroy):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateWithoutCollecting):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::tryCreate):
+        (JSC::MarkedBlock::Handle::Handle):
+        (JSC::MarkedBlock::Handle::~Handle):
+        (JSC::MarkedBlock::Handle::didAddToAllocator):
+        (JSC::MarkedBlock::Handle::subspace const):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::alignedMemoryAllocator const):
+        (JSC::MarkedBlock::Handle::subspace const): Deleted.
+        * heap/Subspace.cpp:
+        (JSC::Subspace::Subspace):
+        (JSC::Subspace::findEmptyBlockToSteal):
+        (JSC::Subspace::canTradeBlocksWith): Deleted.
+        (JSC::Subspace::tryAllocateAlignedMemory): Deleted.
+        (JSC::Subspace::freeAlignedMemory): Deleted.
+        * heap/Subspace.h:
+        (JSC::Subspace::name const):
+        (JSC::Subspace::alignedMemoryAllocator const):
+        * runtime/JSDestructibleObjectSubspace.cpp:
+        (JSC::JSDestructibleObjectSubspace::JSDestructibleObjectSubspace):
+        * runtime/JSDestructibleObjectSubspace.h:
+        * runtime/JSSegmentedVariableObjectSubspace.cpp:
+        (JSC::JSSegmentedVariableObjectSubspace::JSSegmentedVariableObjectSubspace):
+        * runtime/JSSegmentedVariableObjectSubspace.h:
+        * runtime/JSStringSubspace.cpp:
+        (JSC::JSStringSubspace::JSStringSubspace):
+        * runtime/JSStringSubspace.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/js/JSWebAssemblyCodeBlockSubspace.cpp:
+        (JSC::JSWebAssemblyCodeBlockSubspace::JSWebAssemblyCodeBlockSubspace):
+        * wasm/js/JSWebAssemblyCodeBlockSubspace.h:
+
 2017-08-04  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         [ESNext] Async iteration - update feature.json

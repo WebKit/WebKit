@@ -31,7 +31,7 @@ namespace JSC {
 
 class JSStringSubspace : public Subspace {
 public:
-    JS_EXPORT_PRIVATE JSStringSubspace(CString name, Heap&);
+    JS_EXPORT_PRIVATE JSStringSubspace(CString name, Heap&, AlignedMemoryAllocator*);
     JS_EXPORT_PRIVATE virtual ~JSStringSubspace();
     
     void finishSweep(MarkedBlock::Handle&, FreeList*) override;

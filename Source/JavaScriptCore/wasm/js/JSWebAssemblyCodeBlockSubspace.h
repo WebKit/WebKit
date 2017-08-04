@@ -33,7 +33,7 @@ namespace JSC {
 
 class JSWebAssemblyCodeBlockSubspace : public Subspace {
 public:
-    JSWebAssemblyCodeBlockSubspace(CString name, Heap&);
+    JSWebAssemblyCodeBlockSubspace(CString name, Heap&, AlignedMemoryAllocator*);
     virtual ~JSWebAssemblyCodeBlockSubspace();
     
     void finishSweep(MarkedBlock::Handle&, FreeList*) override;

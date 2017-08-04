@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LargeAllocation.h"
 
+#include "AlignedMemoryAllocator.h"
 #include "Heap.h"
 #include "JSCInlines.h"
 #include "Operations.h"
@@ -34,7 +35,7 @@ namespace JSC {
 
 LargeAllocation* LargeAllocation::tryCreate(Heap& heap, size_t size, Subspace* subspace)
 {
-    void* space = subspace->tryAllocateAlignedMemory(alignment, headerSize() + size);
+    void* space = subspace->alignedMemoryAllocator()->tryAllocateAlignedMemory(alignment, headerSize() + size);
     if (!space)
         return nullptr;
     if (scribbleFreeCells())
@@ -106,9 +107,9 @@ void LargeAllocation::sweep()
 
 void LargeAllocation::destroy()
 {
-    Subspace* subspace = m_subspace;
+    AlignedMemoryAllocator* allocator = m_subspace->alignedMemoryAllocator();
     this->~LargeAllocation();
-    subspace->freeAlignedMemory(this);
+    allocator->freeAlignedMemory(this);
 }
 
 void LargeAllocation::dump(PrintStream& out) const

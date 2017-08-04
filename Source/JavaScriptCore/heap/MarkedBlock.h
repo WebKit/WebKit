@@ -32,7 +32,8 @@
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
-    
+
+class AlignedMemoryAllocator;    
 class FreeList;
 class Heap;
 class JSCell;
@@ -110,6 +111,7 @@ public:
 
         MarkedAllocator* allocator() const;
         Subspace* subspace() const;
+        AlignedMemoryAllocator* alignedMemoryAllocator() const;
         Heap* heap() const;
         inline MarkedSpace* space() const;
         VM* vm() const;
@@ -199,7 +201,7 @@ public:
         void dumpState(PrintStream&);
         
     private:
-        Handle(Heap&, Subspace*, void*);
+        Handle(Heap&, AlignedMemoryAllocator*, void*);
         
         enum SweepDestructionMode { BlockHasNoDestructors, BlockHasDestructors, BlockHasDestructorsAndCollectorIsRunning };
         enum ScribbleMode { DontScribble, Scribble };
@@ -229,7 +231,7 @@ public:
         AllocatorAttributes m_attributes;
         bool m_isFreeListed { false };
 
-        Subspace* m_subspace { nullptr };
+        AlignedMemoryAllocator* m_alignedMemoryAllocator { nullptr };
         MarkedAllocator* m_allocator { nullptr };
         size_t m_index { std::numeric_limits<size_t>::max() };
         WeakSet m_weakSet;
@@ -239,7 +241,7 @@ public:
         MarkedBlock* m_block { nullptr };
     };
         
-    static MarkedBlock::Handle* tryCreate(Heap&, Subspace*);
+    static MarkedBlock::Handle* tryCreate(Heap&, AlignedMemoryAllocator*);
         
     Handle& handle();
         
@@ -396,9 +398,9 @@ inline MarkedAllocator* MarkedBlock::Handle::allocator() const
     return m_allocator;
 }
 
-inline Subspace* MarkedBlock::Handle::subspace() const
+inline AlignedMemoryAllocator* MarkedBlock::Handle::alignedMemoryAllocator() const
 {
-    return m_subspace;
+    return m_alignedMemoryAllocator;
 }
 
 inline Heap* MarkedBlock::Handle::heap() const

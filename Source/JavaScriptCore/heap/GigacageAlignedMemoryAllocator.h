@@ -25,20 +25,26 @@
 
 #pragma once
 
-#include "Subspace.h"
-#include <wtf/Gigacage.h>
+#include "AlignedMemoryAllocator.h"
 
 namespace JSC {
 
-// We use a GigacageSubspace for the auxiliary space.
-class GigacageSubspace : public Subspace {
+class GigacageAlignedMemoryAllocator : public AlignedMemoryAllocator {
 public:
-    GigacageSubspace(CString name, Heap&, AllocatorAttributes);
-    ~GigacageSubspace();
+    // FIXME: This shouldn't be a singleton. There should be different instances for primaries, JSValues,
+    // and other things.
+    // https://bugs.webkit.org/show_bug.cgi?id=174919
+    static GigacageAlignedMemoryAllocator& instance();
+
+    ~GigacageAlignedMemoryAllocator();
     
-    bool canTradeBlocksWith(Subspace* other) override;
     void* tryAllocateAlignedMemory(size_t alignment, size_t size) override;
     void freeAlignedMemory(void*) override;
+    
+    void dump(PrintStream&) const override;
+
+private:
+    GigacageAlignedMemoryAllocator();
 };
 
 } // namespace JSC
