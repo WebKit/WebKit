@@ -56,8 +56,7 @@ typedef (Blob or BufferSource or DOMFormData or URLSearchParams or USVString) Bo
     readonly attribute FetchRequestCache cache;
     readonly attribute FetchRequestRedirect redirect;
     readonly attribute DOMString integrity;
-    // FIXME: Add support for keepalive.
-    // readonly attribute boolean keepalive;
+    readonly attribute boolean keepalive;
 
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchRequest clone();
 };

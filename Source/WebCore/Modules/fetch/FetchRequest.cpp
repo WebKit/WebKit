@@ -104,6 +104,9 @@ static std::optional<Exception> buildOptions(FetchRequest::InternalRequest& requ
     if (!init.integrity.isNull())
         request.options.integrity = init.integrity;
 
+    if (init.keepalive && init.keepalive.value())
+        request.options.keepAlive = true;
+
     if (!init.method.isNull()) {
         if (auto exception = setMethod(request.request, init.method))
             return exception;

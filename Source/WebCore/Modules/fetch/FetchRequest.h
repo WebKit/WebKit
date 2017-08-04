@@ -67,6 +67,7 @@ public:
     Credentials credentials() const;
     Cache cache() const;
     Redirect redirect() const;
+    bool keepalive() const { return m_internalRequest.options.keepAlive; };
 
     const String& integrity() const { return m_internalRequest.options.integrity; }
 

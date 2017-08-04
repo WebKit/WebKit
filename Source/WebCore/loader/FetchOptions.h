@@ -55,6 +55,8 @@ struct FetchOptions {
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
 
     String integrity;
+
+    bool keepAlive { false };
 };
 
 } // namespace WebCore
