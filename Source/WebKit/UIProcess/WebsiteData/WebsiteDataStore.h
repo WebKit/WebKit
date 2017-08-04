@@ -39,7 +39,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
-#include <WebCore/CFNetworkSPI.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 namespace WebCore {

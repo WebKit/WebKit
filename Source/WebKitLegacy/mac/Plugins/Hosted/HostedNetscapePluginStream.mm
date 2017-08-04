@@ -37,7 +37,6 @@
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebResourceLoadScheduler.h"
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
@@ -46,6 +45,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/WebCoreURLResponse.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RefCountedLeakCounter.h>
 
 using namespace WebCore;

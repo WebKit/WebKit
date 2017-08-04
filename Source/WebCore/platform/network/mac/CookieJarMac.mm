@@ -26,9 +26,9 @@
 #import "config.h"
 #import "PlatformCookieJar.h"
 
-#import "CFNetworkSPI.h"
 #import "NetworkStorageSession.h"
 #import "WebCoreSystemInterface.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
 #if !USE(CFURLCONNECTION)

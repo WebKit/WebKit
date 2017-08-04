@@ -29,7 +29,7 @@
 #include <wtf/RetainPtr.h>
 
 #if USE(CFURLCONNECTION)
-#include "CFNetworkSPI.h"
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 OBJC_CLASS NSURLResponse;

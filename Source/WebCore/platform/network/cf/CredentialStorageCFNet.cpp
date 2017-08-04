@@ -29,9 +29,9 @@
 #if USE(CFURLCONNECTION)
 
 #include "AuthenticationCF.h"
-#include "CFNetworkSPI.h"
 #include "Credential.h"
 #include "ProtectionSpace.h"
+#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(COCOA)

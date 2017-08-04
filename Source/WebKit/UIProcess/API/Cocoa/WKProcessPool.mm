@@ -45,9 +45,9 @@
 #import "_WKAutomationSessionInternal.h"
 #import "_WKDownloadDelegate.h"
 #import "_WKProcessPoolConfigurationInternal.h"
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/PluginData.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)

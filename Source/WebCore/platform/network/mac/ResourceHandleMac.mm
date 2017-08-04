@@ -28,10 +28,9 @@
 
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
-#import "CFNetworkSPI.h"
+#import "CachedResourceLoader.h"
 #import "CookieStorage.h"
 #import "CredentialStorage.h"
-#import "CachedResourceLoader.h"
 #import "FormDataStreamMac.h"
 #import "Frame.h"
 #import "FrameLoader.h"
@@ -45,11 +44,12 @@
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
 #import "SubresourceLoader.h"
+#import "SynchronousLoaderClient.h"
 #import "WebCoreResourceHandleAsDelegate.h"
 #import "WebCoreResourceHandleAsOperationQueueDelegate.h"
-#import "SynchronousLoaderClient.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreURLResponse.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Ref.h>
 #import <wtf/SchedulePair.h>
@@ -67,7 +67,6 @@ CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
 #endif // USE(CFURLCONNECTION)
 
 #if PLATFORM(IOS)
-#import "CFNetworkSPI.h"
 #import "RuntimeApplicationChecks.h"
 #import "WebCoreThreadRun.h"
 #endif

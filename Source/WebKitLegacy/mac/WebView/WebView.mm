@@ -123,7 +123,6 @@
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/BackForwardController.h>
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/CSSAnimationController.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
@@ -211,6 +210,7 @@
 #import <bindings/ScriptValue.h>
 #import <mach-o/dyld.h>
 #import <objc/runtime.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <runtime/ArrayPrototype.h>
 #import <runtime/CatchScope.h>
 #import <runtime/DateInstance.h>

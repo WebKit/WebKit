@@ -31,10 +31,10 @@
 #include "NetworkProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
-#include <WebCore/CFNetworkSPI.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/URL.h>
 #include <dlfcn.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>

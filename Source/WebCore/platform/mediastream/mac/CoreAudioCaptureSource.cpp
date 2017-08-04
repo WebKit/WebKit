@@ -36,7 +36,6 @@
 #include "CoreAudioCaptureDevice.h"
 #include "CoreAudioCaptureDeviceManager.h"
 #include "CoreAudioCaptureSourceIOS.h"
-#include "CoreAudioSPI.h"
 #include "Logging.h"
 #include "MediaTimeAVFoundation.h"
 #include "Timer.h"
@@ -45,11 +44,11 @@
 #include <AudioUnit/AudioUnit.h>
 #include <CoreMedia/CMSync.h>
 #include <mach/mach_time.h>
+#include <pal/spi/cf/CoreAudioSPI.h>
 #include <sys/time.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include "CoreMediaSoftLink.h"
-
 
 namespace WebCore {
 

@@ -1,3 +1,18 @@
+2017-08-03  Yoshiaki Jitsukawa  <jitsu@rd.scei.sony.co.jp>
+
+        [PAL] Move spi/cf directory into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=175057
+
+        Reviewed by Antti Koivisto.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cf/CFLocaleSPI.h: Renamed from Source/WebCore/platform/spi/cf/CFLocaleSPI.h.
+        * pal/spi/cf/CFNetworkConnectionCacheSPI.h: Renamed from Source/WebCore/platform/spi/cf/CFNetworkConnectionCacheSPI.h.
+        * pal/spi/cf/CFNetworkSPI.h: Renamed from Source/WebCore/platform/spi/cf/CFNetworkSPI.h.
+        * pal/spi/cf/CFUtilitiesSPI.h: Renamed from Source/WebCore/platform/spi/cf/CFUtilitiesSPI.h.
+        * pal/spi/cf/CoreAudioSPI.h: Renamed from Source/WebCore/platform/spi/cf/CoreAudioSPI.h.
+        * pal/spi/cf/CoreMediaSPI.h: Renamed from Source/WebCore/platform/spi/cf/CoreMediaSPI.h.
+
 2017-08-03  Youenn Fablet  <youenn@apple.com>
 
         Remove FETCH_API compilation guard

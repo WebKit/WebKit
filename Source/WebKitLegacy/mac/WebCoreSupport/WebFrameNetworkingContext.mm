@@ -27,7 +27,6 @@
 
 #import "WebFrameInternal.h"
 #import "WebViewPrivate.h"
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/NetworkStorageSession.h>
@@ -35,6 +34,7 @@
 #import <WebCore/ResourceError.h>
 #import <WebCore/SessionID.h>
 #import <WebCore/Settings.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 #if PLATFORM(IOS)
 #import <WebCore/WebCoreThread.h>

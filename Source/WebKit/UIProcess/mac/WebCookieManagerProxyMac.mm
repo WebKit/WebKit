@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebCookieManagerProxy.h"
 
-#import <WebCore/CFNetworkSPI.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebKit {
 

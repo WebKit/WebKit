@@ -29,8 +29,8 @@
 #if PLATFORM(MAC)
 
 #import "BlacklistUpdater.h"
-#import "CFUtilitiesSPI.h"
 #import <OpenGL/OpenGL.h>
+#import <pal/spi/cf/CFUtilitiesSPI.h>
 
 namespace WebCore {
 

@@ -28,13 +28,13 @@
 
 #if USE(CFURLCONNECTION)
 
-#include "CFNetworkSPI.h"
 #include "Cookie.h"
 #include "NetworkStorageSession.h"
 #include "NotImplemented.h"
 #include "URL.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/text/WTFString.h>
 

@@ -32,11 +32,11 @@
 #import "CookieStorageUtilsCF.h"
 #import "SandboxInitializationParameters.h"
 #import "WebKitSystemInterface.h"
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
 #import <mach/task.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <pwd.h>
 #import <stdlib.h>
 #import <sysexits.h>

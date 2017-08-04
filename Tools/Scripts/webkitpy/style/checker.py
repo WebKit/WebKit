@@ -235,6 +235,10 @@ _PATH_RULES_SPECIFIER = [
     ([# On some systems the trailing CR is causing parser failure.
       os.path.join('Source', 'JavaScriptCore', 'parser', 'Keywords.table')],
      ["+whitespace/carriage_return"]),
+
+    ([# Some SPI headers have identifier names with underscores.
+      os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi')],
+     ["-readability/naming/underscores"]),
 ]
 
 

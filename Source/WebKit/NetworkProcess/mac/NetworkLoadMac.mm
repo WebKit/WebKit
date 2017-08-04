@@ -28,8 +28,8 @@
 
 #if !USE(NETWORK_SESSION)
 
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/ResourceHandle.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebKit {
 

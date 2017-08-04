@@ -28,7 +28,7 @@
 
 #if USE(CFURLCONNECTION)
 
-#include "CFNetworkSPI.h"
+#include <pal/spi/cf/CFNetworkSPI.h>
 
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"

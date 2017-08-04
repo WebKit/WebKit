@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/CFNetworkSPI.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 

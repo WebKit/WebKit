@@ -31,8 +31,8 @@
 
 #if !USE(CFURLCONNECTION)
 
-#import "CFNetworkSPI.h"
 #import "FormDataStreamCFNet.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebCore {
 

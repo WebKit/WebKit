@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CFLocaleSPI_h
-#define CFLocaleSPI_h
+#pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -39,5 +38,3 @@ WTF_EXTERN_C_BEGIN
 Boolean CFLocaleGetLanguageRegionEncodingForLocaleIdentifier(CFStringRef locale, LangCode*, RegionCode*, ScriptCode*, CFStringEncoding*);
 
 WTF_EXTERN_C_END
-
-#endif

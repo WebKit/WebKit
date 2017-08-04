@@ -30,9 +30,9 @@
 #import "StorageManager.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataStoreParameters.h"
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/NeverDestroyed.h>
 
 #if PLATFORM(IOS)

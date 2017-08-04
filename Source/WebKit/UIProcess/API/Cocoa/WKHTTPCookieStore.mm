@@ -30,9 +30,9 @@
 
 #import "HTTPCookieAcceptPolicy.h"
 #import "WeakObjCPtr.h"
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Cookie.h>
 #import <WebCore/URL.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 

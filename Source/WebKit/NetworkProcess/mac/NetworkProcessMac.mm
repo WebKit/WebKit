@@ -36,12 +36,12 @@
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
 #import "StringUtilities.h"
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 #import <notify.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <sysexits.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/text/WTFString.h>

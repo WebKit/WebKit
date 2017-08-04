@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CFNetworkSPI.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceRequestBase.h"
+#include <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebCore {
 

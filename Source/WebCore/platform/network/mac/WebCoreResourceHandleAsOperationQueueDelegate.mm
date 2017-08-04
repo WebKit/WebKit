@@ -30,7 +30,6 @@
 
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
-#import "CFNetworkSPI.h"
 #import "Logging.h"
 #import "ResourceHandle.h"
 #import "ResourceHandleClient.h"
@@ -38,6 +37,7 @@
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
 #import "WebCoreURLResponse.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/MainThread.h>
 
 using namespace WebCore;

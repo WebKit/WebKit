@@ -30,7 +30,6 @@
 
 #include "AuthenticationCF.h"
 #include "AuthenticationChallenge.h"
-#include "CFNetworkSPI.h"
 #include "Logging.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
@@ -38,6 +37,7 @@
 #include "SharedBuffer.h"
 #include "WebCoreSystemInterface.h"
 #include "WebCoreURLResponse.h"
+#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

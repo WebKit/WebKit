@@ -28,8 +28,8 @@
 
 #import "config.h"
 #import "WebCoreNSStringExtras.h"
-#import "CFLocaleSPI.h"
 
+#import <pal/spi/cf/CFLocaleSPI.h>
 #import <wtf/RetainPtr.h>
 
 BOOL stringIsCaseInsensitiveEqualToString(NSString *first, NSString *second)

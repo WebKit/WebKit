@@ -28,10 +28,10 @@
 
 #if USE(CFURLCONNECTION)
 
-#include "CFNetworkSPI.h"
 #include "FormDataStreamCFNet.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
+#include <pal/spi/cf/CFNetworkSPI.h>
 
 #if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"

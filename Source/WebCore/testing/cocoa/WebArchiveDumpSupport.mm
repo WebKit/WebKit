@@ -26,10 +26,10 @@
 #import "config.h"
 #import "WebArchiveDumpSupport.h"
 
-#import "CFNetworkSPI.h"
 #import "MIMETypeRegistry.h"
 #import <CFNetwork/CFHTTPMessage.h>
 #import <CFNetwork/CFNetwork.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>

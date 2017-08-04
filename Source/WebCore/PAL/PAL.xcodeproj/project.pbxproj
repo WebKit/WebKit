@@ -22,6 +22,12 @@
 
 /* Begin PBXBuildFile section */
 		0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */; };
+		0C2DA06D1F33CA8400DBC317 /* CFLocaleSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA0671F33CA8400DBC317 /* CFLocaleSPI.h */; };
+		0C2DA06E1F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA0681F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h */; };
+		0C2DA06F1F33CA8400DBC317 /* CFNetworkSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA0691F33CA8400DBC317 /* CFNetworkSPI.h */; };
+		0C2DA0701F33CA8400DBC317 /* CFUtilitiesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA06A1F33CA8400DBC317 /* CFUtilitiesSPI.h */; };
+		0C2DA0711F33CA8400DBC317 /* CoreAudioSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA06B1F33CA8400DBC317 /* CoreAudioSPI.h */; };
+		0C2DA0721F33CA8400DBC317 /* CoreMediaSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA06C1F33CA8400DBC317 /* CoreMediaSPI.h */; };
 		1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0521E31C44100725F18 /* CryptoDigest.h */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
 		1C09D0581E31C57E00725F18 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
@@ -45,6 +51,12 @@
 
 /* Begin PBXFileReference section */
 		0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportMacros.h; sourceTree = "<group>"; };
+		0C2DA0671F33CA8400DBC317 /* CFLocaleSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFLocaleSPI.h; path = spi/cf/CFLocaleSPI.h; sourceTree = "<group>"; };
+		0C2DA0681F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFNetworkConnectionCacheSPI.h; path = spi/cf/CFNetworkConnectionCacheSPI.h; sourceTree = "<group>"; };
+		0C2DA0691F33CA8400DBC317 /* CFNetworkSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFNetworkSPI.h; path = spi/cf/CFNetworkSPI.h; sourceTree = "<group>"; };
+		0C2DA06A1F33CA8400DBC317 /* CFUtilitiesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFUtilitiesSPI.h; path = spi/cf/CFUtilitiesSPI.h; sourceTree = "<group>"; };
+		0C2DA06B1F33CA8400DBC317 /* CoreAudioSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreAudioSPI.h; path = spi/cf/CoreAudioSPI.h; sourceTree = "<group>"; };
+		0C2DA06C1F33CA8400DBC317 /* CoreMediaSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreMediaSPI.h; path = spi/cf/CoreMediaSPI.h; sourceTree = "<group>"; };
 		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C09D0521E31C44100725F18 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoDigest.h; sourceTree = "<group>"; };
 		1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoDigestCommonCrypto.cpp; path = commoncrypto/CryptoDigestCommonCrypto.cpp; sourceTree = "<group>"; };
@@ -74,6 +86,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C2DA0651F33CA3300DBC317 /* spi */ = {
+			isa = PBXGroup;
+			children = (
+				0C2DA0661F33CA3A00DBC317 /* cf */,
+			);
+			name = spi;
+			sourceTree = "<group>";
+		};
+		0C2DA0661F33CA3A00DBC317 /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				0C2DA0671F33CA8400DBC317 /* CFLocaleSPI.h */,
+				0C2DA0681F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h */,
+				0C2DA0691F33CA8400DBC317 /* CFNetworkSPI.h */,
+				0C2DA06A1F33CA8400DBC317 /* CFUtilitiesSPI.h */,
+				0C2DA06B1F33CA8400DBC317 /* CoreAudioSPI.h */,
+				0C2DA06C1F33CA8400DBC317 /* CoreMediaSPI.h */,
+			);
+			name = cf;
+			sourceTree = "<group>";
+		};
 		1C09D0341E31C32800725F18 = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				1C09D0511E31C41200725F18 /* crypto */,
+				0C2DA0651F33CA3300DBC317 /* spi */,
 				A3788E9F1F05B7CE00679425 /* system */,
 				A30D411D1F0DD0AC00B71954 /* text */,
 				0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */,
@@ -176,7 +210,13 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C2DA06D1F33CA8400DBC317 /* CFLocaleSPI.h in Headers */,
+				0C2DA06E1F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h in Headers */,
+				0C2DA06F1F33CA8400DBC317 /* CFNetworkSPI.h in Headers */,
+				0C2DA0701F33CA8400DBC317 /* CFUtilitiesSPI.h in Headers */,
 				1C09D0581E31C57E00725F18 /* config.h in Headers */,
+				0C2DA0711F33CA8400DBC317 /* CoreAudioSPI.h in Headers */,
+				0C2DA0721F33CA8400DBC317 /* CoreMediaSPI.h in Headers */,
 				1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */,
 				0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */,
 				A30D41211F0DD0EA00B71954 /* KillRing.h in Headers */,

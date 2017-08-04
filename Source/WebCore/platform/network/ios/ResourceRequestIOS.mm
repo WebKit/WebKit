@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS)
 
-#import "CFNetworkSPI.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebCore {
 

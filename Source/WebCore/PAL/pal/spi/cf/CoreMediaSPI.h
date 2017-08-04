@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CoreMediaSPI_h
-#define CoreMediaSPI_h
+#pragma once
 
 #include <CoreMedia/CoreMedia.h>
 
@@ -63,5 +62,3 @@ typedef struct {
 WTF_EXTERN_C_END
 #endif
 #endif // PLATFORM(WIN)
-
-#endif // CoreMediaSPI_h

@@ -59,7 +59,7 @@ extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 #endif
 
 #if PLATFORM(COCOA)
-#import <CFNetworkSPI.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 namespace WebCore {

@@ -29,10 +29,10 @@
 #include "config.h"
 #include "ResourceLoader.h"
 
-#include "CFNetworkSPI.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "SharedBuffer.h"
+#include <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebCore {
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CFNetworkSPI.h"
+#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>

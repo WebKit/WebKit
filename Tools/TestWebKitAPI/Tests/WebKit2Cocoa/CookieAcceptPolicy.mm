@@ -26,11 +26,11 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
-#import <WebCore/CFNetworkSPI.h>
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED

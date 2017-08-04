@@ -31,7 +31,7 @@
 #include <WebCore/SecurityOrigin.h>
 
 #if PLATFORM(COCOA)
-#import <WebCore/CFNetworkSPI.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 static String displayNameForLocalFiles()

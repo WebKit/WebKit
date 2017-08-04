@@ -32,7 +32,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
-#include "CFNetworkSPI.h"
+#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/RetainPtr.h>
 #endif
 

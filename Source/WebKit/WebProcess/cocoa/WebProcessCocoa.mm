@@ -30,7 +30,6 @@
 #import "LegacyCustomProtocolManager.h"
 #import "Logging.h"
 #import "ObjCObjectGraph.h"
-#import <runtime/ConfigFile.h>
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
@@ -48,7 +47,6 @@
 #import "WebsiteDataStoreParameters.h"
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AXObjectCache.h>
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/CPUMonitor.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/FontCache.h>
@@ -65,6 +63,8 @@
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
+#import <runtime/ConfigFile.h>
 #import <stdio.h>
 
 #if PLATFORM(IOS)

@@ -28,11 +28,11 @@
 
 #if PLATFORM(COCOA)
 
-#import "CFNetworkSPI.h"
 #import "HTTPParsers.h"
 #import "WebCoreURLResponse.h"
 #import <Foundation/Foundation.h>
 #import <limits>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/AutodrainedPool.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>

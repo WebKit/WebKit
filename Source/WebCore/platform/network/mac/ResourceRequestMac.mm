@@ -28,8 +28,8 @@
 
 #if PLATFORM(MAC)
 
-#import "CFNetworkSPI.h"
 #import <Foundation/Foundation.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebCore {
 

@@ -38,7 +38,6 @@
 #import "NetworkProcess.h"
 #import "SessionTracker.h"
 #import <Foundation/NSURLSession.h>
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Credential.h>
 #import <WebCore/FormDataStreamMac.h>
 #import <WebCore/FrameLoaderTypes.h>
@@ -50,6 +49,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/URL.h>
 #import <WebCore/WebCoreURLResponse.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 

@@ -27,8 +27,8 @@
 
 #pragma once
 
-#include "CFNetworkConnectionCacheSPI.h"
 #include <CFNetwork/CFNetwork.h>
+#include <pal/spi/cf/CFNetworkConnectionCacheSPI.h>
 
 #if PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
 

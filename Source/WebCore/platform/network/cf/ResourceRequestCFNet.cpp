@@ -26,9 +26,9 @@
 #include "config.h"
 #include "ResourceRequestCFNet.h"
 
-#include "CFNetworkSPI.h"
 #include "HTTPHeaderNames.h"
 #include "ResourceRequest.h"
+#include <pal/spi/cf/CFNetworkSPI.h>
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 #include "PublicSuffix.h"

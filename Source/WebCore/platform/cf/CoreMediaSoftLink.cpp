@@ -27,7 +27,7 @@
 #if USE(AVFOUNDATION)
 // FIXME: Should be USE(COREMEDIA), but this isn't currently defined on Windows.
 
-#include "CoreMediaSPI.h"
+#include <pal/spi/cf/CoreMediaSPI.h>
 #include <wtf/SoftLinking.h>
 
 #if PLATFORM(COCOA)

@@ -32,7 +32,6 @@
 #import "NetworkSessionCocoa.h"
 #import "SandboxExtension.h"
 #import "SessionTracker.h"
-#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PublicSuffix.h>
 #import <WebCore/ResourceRequestCFNet.h>
@@ -40,6 +39,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {

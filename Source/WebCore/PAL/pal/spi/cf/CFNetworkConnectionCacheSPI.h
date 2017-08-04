@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CFNetworkConnectionCacheSPI_h
-#define CFNetworkConnectionCacheSPI_h
+#pragma once
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <CFNetwork/CFNetworkConnectionCachePriv.h>
@@ -43,5 +42,3 @@ int _CFNetworkHTTPConnectionCacheGetLimit(HTTPConnectionCacheLimitKeys);
 void _CFNetworkHTTPConnectionCacheSetLimit(HTTPConnectionCacheLimitKeys, int);
 
 WTF_EXTERN_C_END
-
-#endif // CFNetworkConnectionCacheSPI_h

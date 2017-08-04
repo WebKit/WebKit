@@ -26,10 +26,10 @@
 #import "config.h"
 #import "NetworkStorageSession.h"
 
-#import "CFNetworkSPI.h"
 #import "Cookie.h"
 #import "CookieStorageObserver.h"
 #import "URL.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
