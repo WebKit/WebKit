@@ -33,6 +33,7 @@ namespace WebCore {
 class InspectorCanvas;
 class WebGLProgram;
 class WebGLRenderingContextBase;
+class WebGLShader;
 
 typedef String ErrorString;
 
@@ -44,6 +45,7 @@ public:
     InspectorCanvas& canvas() const { return m_canvas; }
     WebGLRenderingContextBase* context() const;
     WebGLProgram& program() const { return m_program; }
+    WebGLShader* shaderForType(const String&);
 
     ~InspectorShaderProgram() { }
 

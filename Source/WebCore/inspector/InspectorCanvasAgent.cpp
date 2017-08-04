@@ -47,6 +47,7 @@
 #if ENABLE(WEBGL)
 #include "JSWebGLRenderingContext.h"
 #include "WebGLProgram.h"
+#include "WebGLShader.h"
 #endif
 
 #if ENABLE(WEBGL2)
@@ -268,6 +269,28 @@ void InspectorCanvasAgent::cancelRecording(ErrorString& errorString, const Strin
     }
 
     didFinishRecordingCanvasFrame(inspectorCanvas->canvas(), true);
+}
+
+void InspectorCanvasAgent::requestShaderSource(ErrorString& errorString, const String& programId, const String& shaderType, String* content)
+{
+#if ENABLE(WEBGL)
+    auto* inspectorProgram = assertInspectorProgram(errorString, programId);
+    if (!inspectorProgram)
+        return;
+
+    auto* shader = inspectorProgram->shaderForType(shaderType);
+    if (!shader) {
+        errorString = ASCIILiteral("No shader for given type.");
+        return;
+    }
+
+    *content = shader->getSource();
+#else
+    UNUSED_PARAM(programId);
+    UNUSED_PARAM(shaderType);
+    UNUSED_PARAM(content);
+    errorString = ASCIILiteral("WebGL is not supported.");
+#endif
 }
 
 void InspectorCanvasAgent::frameNavigated(Frame& frame)

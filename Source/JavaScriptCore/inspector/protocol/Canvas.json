@@ -20,6 +20,12 @@
             "description": "The type of rendering context backing the canvas element."
         },
         {
+            "id": "ShaderType",
+            "type": "string",
+            "enum": ["fragment", "vertex"],
+            "description": "Shader type. WebGL supports vertex and fragment shaders."
+        },
+        {
             "id": "ContextAttributes",
             "type": "object",
             "description": "WebGL drawing surface attributes.",
@@ -112,6 +118,17 @@
             "description": "Cancels a requested recording for the given canvas.",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" }
+            ]
+        },
+        {
+            "name": "requestShaderSource",
+            "description": "",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "shaderType", "$ref": "ShaderType" }
+            ],
+            "returns": [
+                { "name": "content", "type": "string" }
             ]
         }
     ],

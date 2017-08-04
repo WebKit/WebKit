@@ -118,4 +118,5 @@ WI.Collection = class Collection extends WI.Object
     Script: (object) => object instanceof WI.Script,
     CSSStyleSheet: (object) => object instanceof WI.CSSStyleSheet,
     Canvas: (object) => object instanceof WI.Canvas,
+    ShaderProgram: (object) => object instanceof WI.ShaderProgram,
 };

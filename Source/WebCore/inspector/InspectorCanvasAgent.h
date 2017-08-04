@@ -75,6 +75,7 @@ public:
     void resolveCanvasContext(ErrorString&, const String& canvasId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) override;
     void requestRecording(ErrorString&, const String& canvasId, const bool* const singleFrame, const int* const memoryLimit) override;
     void cancelRecording(ErrorString&, const String& canvasId) override;
+    void requestShaderSource(ErrorString&, const String& programId, const String& shaderType, String*) override;
 
     // InspectorInstrumentation
     void frameNavigated(Frame&);

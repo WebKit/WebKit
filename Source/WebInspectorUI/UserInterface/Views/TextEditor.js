@@ -64,6 +64,7 @@ WI.TextEditor = class TextEditor extends WI.View
             this._codeMirror.setOption("showWhitespaceCharacters", WI.settings.showWhitespaceCharacters.value);
         });
 
+        this._codeMirror.on("focus", this._editorFocused.bind(this));
         this._codeMirror.on("change", this._contentChanged.bind(this));
         this._codeMirror.on("gutterClick", this._gutterMouseDown.bind(this));
         this._codeMirror.on("gutterContextMenu", this._gutterContextMenu.bind(this));
@@ -970,6 +971,11 @@ WI.TextEditor = class TextEditor extends WI.View
         return !this._codeMirror.isClean();
     }
 
+    _editorFocused(codeMirror)
+    {
+        this.dispatchEventToListeners(WI.TextEditor.Event.Focused);
+    }
+
     _contentChanged(codeMirror, change)
     {
         if (this._ignoreCodeMirrorContentDidChangeEvent > 0)
@@ -1656,6 +1662,7 @@ WI.TextEditor.NumberOfFindsPerSearchBatch = 10;
 WI.TextEditor.HighlightAnimationDuration = 2000;
 
 WI.TextEditor.Event = {
+    Focused: "text-editor-focused",
     ExecutionLineNumberDidChange: "text-editor-execution-line-number-did-change",
     NumberOfSearchResultsDidChange: "text-editor-number-of-search-results-did-change",
     ContentDidChange: "text-editor-content-did-change",

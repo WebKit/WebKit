@@ -1,3 +1,21 @@
+2017-08-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add source view for WebGL shader programs
+        https://bugs.webkit.org/show_bug.cgi?id=138593
+        <rdar://problem/18936194>
+
+        Reviewed by Matt Baker.
+
+        * inspector/canvas/requestShaderSource-expected.txt: Added.
+        * inspector/canvas/requestShaderSource.html: Added.
+
+        * inspector/canvas/resources/shaderProgram-utilities.js:
+        (linkProgram):
+        (linkProgram.typeForScript):
+        (linkProgram.createShaderFromScript):
+
+        * platform/win/TestExpectations:
+
 2017-08-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderImageResourceStyleImage::image() should return the nullImage() if the image is not available

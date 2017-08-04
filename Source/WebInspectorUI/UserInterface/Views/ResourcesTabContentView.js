@@ -70,6 +70,7 @@ WI.ResourcesTabContentView = class ResourcesTabContentView extends WI.ContentBro
             || representedObject instanceof WI.CSSStyleSheet
             || representedObject instanceof WI.ContentFlow
             || representedObject instanceof WI.Canvas
+            || representedObject instanceof WI.ShaderProgram
             || representedObject instanceof WI.Collection;
     }
 };

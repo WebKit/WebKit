@@ -1070,7 +1070,8 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
         || representedObject instanceof WI.Resource
         || representedObject instanceof WI.Script
         || representedObject instanceof WI.CSSStyleSheet
-        || representedObject instanceof WI.Canvas)
+        || representedObject instanceof WI.Canvas
+        || representedObject instanceof WI.ShaderProgram)
         return WI.ResourcesTabContentView;
 
     // FIXME: Move Content Flows to the Elements tab?

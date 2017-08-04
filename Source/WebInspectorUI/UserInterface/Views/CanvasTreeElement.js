@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CanvasTreeElement = class CanvasTreeElement extends WI.GeneralTreeElement
+WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
 {
     constructor(representedObject)
     {
@@ -31,6 +31,8 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.GeneralTreeElement
 
         const subtitle = null;
         super(["canvas", representedObject.contextType], representedObject.displayName, subtitle, representedObject);
+
+        this.registerFolderizeSettings("shader-programs", WI.UIString("Shader Programs"), this.representedObject.shaderProgramCollection, WI.ShaderProgramTreeElement);
     }
 
     // Protected
@@ -39,8 +41,36 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.GeneralTreeElement
     {
         super.onattach();
 
+        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemAdded, this._shaderProgramAdded, this);
+        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._shaderProgramRemoved, this);
+
         this.element.addEventListener("mouseover", this._handleMouseOver.bind(this));
         this.element.addEventListener("mouseout", this._handleMouseOut.bind(this));
+
+        this.onpopulate();
+    }
+
+    ondetach()
+    {
+        this.representedObject.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemAdded, this._shaderProgramAdded, this);
+        this.representedObject.shaderProgramCollection.removeEventListener(WI.Collection.Event.ItemRemoved, this._shaderProgramRemoved, this);
+
+        super.ondetach();
+    }
+
+    onpopulate()
+    {
+        super.onpopulate();
+
+        if (this.children.length && !this.shouldRefreshChildren)
+            return;
+
+        this.shouldRefreshChildren = false;
+
+        this.removeChildren();
+
+        for (let program of this.representedObject.shaderProgramCollection.items)
+            this.addChildForRepresentedObject(program);
     }
 
     populateContextMenu(contextMenu, event)
@@ -62,6 +92,16 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.GeneralTreeElement
     }
 
     // Private
+
+    _shaderProgramAdded(event)
+    {
+        this.addRepresentedObjectToNewChildQueue(event.data.item);
+    }
+
+    _shaderProgramRemoved(event)
+    {
+        this.removeChildForRepresentedObject(event.data.item);
+    }
 
     _handleMouseOver(event)
     {

@@ -42,6 +42,7 @@ WI.Canvas = class Canvas extends WI.Object
         this._memoryCost = memoryCost || NaN;
 
         this._cssCanvasClientNodes = null;
+        this._shaderProgramCollection = new WI.Collection(WI.Collection.TypeVerifier.ShaderProgram);
 
         this._nextShaderProgramDisplayNumber = 1;
     }
@@ -105,6 +106,7 @@ WI.Canvas = class Canvas extends WI.Object
     get frame() { return this._frame; }
     get cssCanvasName() { return this._cssCanvasName; }
     get contextAttributes() { return this._contextAttributes; }
+    get shaderProgramCollection() { return this._shaderProgramCollection; }
 
     get memoryCost()
     {

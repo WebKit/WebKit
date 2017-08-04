@@ -60,6 +60,9 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.Canvas)
             return new WI.CanvasContentView(representedObject, extraArguments);
 
+        if (representedObject instanceof WI.ShaderProgram)
+            return new WI.ShaderProgramContentView(representedObject, extraArguments);
+
         if (representedObject instanceof WI.TimelineRecording)
             return new WI.TimelineRecordingContentView(representedObject, extraArguments);
 
@@ -246,6 +249,8 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.CSSStyleSheet)
             return true;
         if (representedObject instanceof WI.Canvas)
+            return true;
+        if (representedObject instanceof WI.ShaderProgram)
             return true;
         if (representedObject instanceof WI.TimelineRecording)
             return true;

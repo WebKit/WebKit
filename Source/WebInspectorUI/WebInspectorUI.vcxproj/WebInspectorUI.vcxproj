@@ -414,6 +414,7 @@
     <None Include="..\UserInterface\EventListenerSectionGroup.js" />
     <None Include="..\UserInterface\ExecutionContext.js" />
     <None Include="..\UserInterface\ExecutionContextList.js" />
+    <None Include="..\UserInterface\External\CodeMirror\clike.js" />
     <None Include="..\UserInterface\External\CodeMirror\clojure.js" />
     <None Include="..\UserInterface\External\CodeMirror\closebrackets.js" />
     <None Include="..\UserInterface\External\CodeMirror\codemirror.css" />

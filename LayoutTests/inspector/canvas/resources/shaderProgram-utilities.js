@@ -6,6 +6,29 @@ function createProgram(contextType) {
     program = context.createProgram();
 }
 
+function linkProgram(vertexShaderIdentifier, fragmentShaderIdentifier) {
+    function typeForScript(script) {
+        if (script.type === "x-shader/x-vertex")
+            return context.VERTEX_SHADER;
+        if (script.type === "x-shader/x-fragment")
+            return context.FRAGMENT_SHADER;
+
+        console.assert(false, "Unexpected script x-shader type: " + script.type);
+    }
+
+    function createShaderFromScript(scriptIdentifier) {
+        let script = document.getElementById(scriptIdentifier);
+        let shader = context.createShader(typeForScript(script));
+        context.attachShader(program, shader);
+        context.shaderSource(shader, script.text);
+        context.compileShader(shader);
+    }
+
+    createShaderFromScript(vertexShaderIdentifier);
+    createShaderFromScript(fragmentShaderIdentifier);
+    context.linkProgram(program);
+}
+
 function deleteProgram() {
     context.deleteProgram(program);
     program = null;

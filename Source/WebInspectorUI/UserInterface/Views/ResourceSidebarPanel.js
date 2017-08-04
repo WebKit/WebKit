@@ -238,7 +238,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
             if (treeElement instanceof WI.ScriptTreeElement)
                 return selectedScopeBarItem[WI.ResourceSidebarPanel.ResourceTypeSymbol] === WI.Resource.Type.Script;
 
-            if (treeElement instanceof WI.CanvasTreeElement)
+            if (treeElement instanceof WI.CanvasTreeElement || treeElement instanceof WI.ShaderProgramTreeElement)
                 return selectedScopeBarItem[WI.ResourceSidebarPanel.ResourceTypeSymbol] === WI.Canvas.ResourceSidebarType;
 
             if (treeElement instanceof WI.CSSStyleSheetTreeElement)
@@ -468,7 +468,8 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
             || treeElement instanceof WI.ScriptTreeElement
             || treeElement instanceof WI.CSSStyleSheetTreeElement
             || treeElement instanceof WI.ContentFlowTreeElement
-            || treeElement instanceof WI.CanvasTreeElement) {
+            || treeElement instanceof WI.CanvasTreeElement
+            || treeElement instanceof WI.ShaderProgramTreeElement) {
             const cookie = null;
             const options = {
                 ignoreNetworkTab: true,

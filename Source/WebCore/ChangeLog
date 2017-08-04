@@ -1,3 +1,21 @@
+2017-08-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add source view for WebGL shader programs
+        https://bugs.webkit.org/show_bug.cgi?id=138593
+        <rdar://problem/18936194>
+
+        Reviewed by Matt Baker.
+
+        Test: inspector/canvas/requestShaderSource.html
+
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::requestShaderSource):
+
+        * inspector/InspectorShaderProgram.h:
+        * inspector/InspectorShaderProgram.cpp:
+        (WebCore::InspectorShaderProgram::shaderForType):
+
 2017-08-04  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r220288.

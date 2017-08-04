@@ -33,7 +33,6 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
         this._canvasIdentifierMap = new Map;
         this._shaderProgramIdentifierMap = new Map;
-        this._canvasShaderProgramMap = new Map;
 
         if (window.CanvasAgent)
             CanvasAgent.enable();
@@ -74,12 +73,9 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         if (!canvas)
             return;
 
-        let programs = this._canvasShaderProgramMap.take(canvas);
-        if (programs) {
-            for (let program of programs) {
-                this._shaderProgramIdentifierMap.delete(program.identifier);
-                this._dispatchShaderProgramRemoved(program);
-            }
+        for (let program of canvas.shaderProgramCollection.items) {
+            this._shaderProgramIdentifierMap.delete(program.identifier);
+            this._dispatchShaderProgramRemoved(program);
         }
 
         canvas.frame.canvasCollection.remove(canvas);
@@ -140,13 +136,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         let program = new WI.ShaderProgram(programIdentifier, canvas);
         this._shaderProgramIdentifierMap.set(program.identifier, program);
 
-        let programs = this._canvasShaderProgramMap.get(canvas);
-        if (!programs) {
-            programs = [];
-            this._canvasShaderProgramMap.set(canvas, programs);
-        }
-
-        programs.push(program);
+        canvas.shaderProgramCollection.add(program);
 
         this.dispatchEventToListeners(WI.CanvasManager.Event.ShaderProgramAdded, {program});
     }
@@ -160,12 +150,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         if (!program)
             return;
 
-        let programs = this._canvasShaderProgramMap.get(program.canvas);
-
-        programs.remove(program);
-
-        if (!programs.length)
-            this._canvasShaderProgramMap.delete(program.canvas);
+        program.canvas.shaderProgramCollection.remove(program);
 
         this._dispatchShaderProgramRemoved(program);
     }
@@ -181,7 +166,6 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         WI.Canvas.resetUniqueDisplayNameNumbers();
 
         this._shaderProgramIdentifierMap.clear();
-        this._canvasShaderProgramMap.clear();
 
         if (this._canvasIdentifierMap.size) {
             this._canvasIdentifierMap.clear();

@@ -46,6 +46,35 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
     {
         return WI.UIString("Program %d").format(this._uniqueDisplayNumber);
     }
+
+    requestVertexShaderSource(callback)
+    {
+        this._requestShaderSource(CanvasAgent.ShaderType.Vertex, callback);
+    }
+
+    requestFragmentShaderSource(callback)
+    {
+        this._requestShaderSource(CanvasAgent.ShaderType.Fragment, callback);
+    }
+
+    // Private
+
+    _requestShaderSource(shaderType, callback)
+    {
+        CanvasAgent.requestShaderSource(this._identifier, shaderType, (error, content) => {
+            if (error) {
+                callback(null);
+                return;
+            }
+
+            callback(content);
+        });
+    }
+};
+
+WI.ShaderProgram.ShaderType = {
+    Fragment: "shader-type-fragment",
+    Vertex: "shader-type-vertex",
 };
 
 WI.ShaderProgram.Event = {

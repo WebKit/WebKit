@@ -26,10 +26,13 @@
 #include "config.h"
 #include "InspectorShaderProgram.h"
 
+#include "GraphicsContext3D.h"
+#include "GraphicsTypes3D.h"
 #include "HTMLCanvasElement.h"
 #include "InspectorCanvas.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderingContextBase.h"
+#include "WebGLShader.h"
 #include <inspector/IdentifiersFactory.h>
 
 using namespace Inspector;
@@ -53,6 +56,19 @@ WebGLRenderingContextBase* InspectorShaderProgram::context() const
     auto* context = m_canvas.canvas().renderingContext();
     ASSERT(context && is<WebGLRenderingContextBase>(context));
     return downcast<WebGLRenderingContextBase>(context);
+}
+
+WebGLShader* InspectorShaderProgram::shaderForType(const String& protocolType)
+{
+    GC3Denum shaderType;
+    if (protocolType == "vertex")
+        shaderType = GraphicsContext3D::VERTEX_SHADER;
+    else if (protocolType == "fragment")
+        shaderType = GraphicsContext3D::FRAGMENT_SHADER;
+    else
+        return nullptr;
+
+    return m_program.getAttachedShader(shaderType);
 }
 
 } // namespace WebCore

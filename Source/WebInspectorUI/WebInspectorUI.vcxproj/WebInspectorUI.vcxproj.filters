@@ -1065,6 +1065,9 @@
     <None Include="..\UserInterface\WebInspector.js">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\External\CodeMirror\clike.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
     <None Include="..\UserInterface\External\CodeMirror\clojure.js">
       <Filter>UserInterface\External\CodeMirror</Filter>
     </None>

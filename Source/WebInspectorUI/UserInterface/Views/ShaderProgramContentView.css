@@ -1,0 +1,62 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.content-view.shader-program > .text-editor.shader {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    --border-start-style: 1px solid lightgrey;;
+}
+
+body[dir=ltr] .content-view.shader-program > .text-editor.shader.vertex,
+body[dir=rtl] .content-view.shader-program > .text-editor.shader.fragment {
+    width: calc(50% - 1px);
+    left: 0;
+}
+
+body[dir=ltr] .content-view.shader-program > .text-editor.shader.fragment,
+body[dir=rtl] .content-view.shader-program > .text-editor.shader.vertex {
+    width: calc(50% + 1px);
+    right: 0;
+}
+
+body[dir=ltr] .content-view.shader-program > .text-editor.shader + .text-editor.shader {
+    border-left: var(--border-start-style);
+}
+
+body[dir=rtl] .content-view.shader-program > .text-editor.shader + .text-editor.shader {
+    border-right: var(--border-start-style);
+}
+
+.content-view.shader-program > .text-editor.shader > .type-title {
+    padding: 2px 4px;
+    background-color: hsl(0, 0%, 95%);
+    border-bottom: 1px solid lightgrey;
+}
+
+.content-view.shader-program > .text-editor.shader > .CodeMirror {
+    top: 18px;
+}
