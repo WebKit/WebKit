@@ -1,3 +1,19 @@
+2017-08-04  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Test gardening around MOUSE_CURSOR_SCALE.
+        https://bugs.webkit.org/show_bug.cgi?id=109469
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Remove obsolete expectation for cursor-parsing-image-set.html; it may have
+        started passing in r209396.
+
+        Mark mouse-cursor-image-set.html as failing rather than using an incorrect
+        -expected file.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/mouse-cursor-image-set-expected.txt: Removed.
+
 2017-08-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening. Update test expectations and layout test baselines
