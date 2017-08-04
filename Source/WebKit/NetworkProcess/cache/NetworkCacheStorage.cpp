@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,13 +53,16 @@ static double computeRecordWorth(FileTimes);
 struct Storage::ReadOperation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ReadOperation(const Key& key, RetrieveCompletionHandler&& completionHandler)
-        : key(key)
+    ReadOperation(Storage& storage, const Key& key, RetrieveCompletionHandler&& completionHandler)
+        : storage(storage)
+        , key(key)
         , completionHandler(WTFMove(completionHandler))
     { }
 
     void cancel();
     bool finish();
+
+    Ref<Storage> storage;
 
     const Key key;
     const RetrieveCompletionHandler completionHandler;
@@ -99,11 +102,13 @@ bool Storage::ReadOperation::finish()
 struct Storage::WriteOperation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WriteOperation(const Record& record, MappedBodyHandler&& mappedBodyHandler)
-        : record(record)
+    WriteOperation(Storage& storage, const Record& record, MappedBodyHandler&& mappedBodyHandler)
+        : storage(storage)
+        , record(record)
         , mappedBodyHandler(WTFMove(mappedBodyHandler))
     { }
-    
+    Ref<Storage> storage;
+
     const Record record;
     const MappedBodyHandler mappedBodyHandler;
 
@@ -113,11 +118,13 @@ public:
 struct Storage::TraverseOperation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TraverseOperation(const String& type, TraverseFlags flags, TraverseHandler&& handler)
-        : type(type)
+    TraverseOperation(Storage& storage, const String& type, TraverseFlags flags, TraverseHandler&& handler)
+        : storage(storage)
+        , type(type)
         , flags(flags)
         , handler(WTFMove(handler))
     { }
+    Ref<Storage> storage;
 
     const String type;
     const TraverseFlags flags;
@@ -149,7 +156,7 @@ static String makeSaltFilePath(const String& baseDirectoryPath)
     return WebCore::pathByAppendingComponent(makeVersionedDirectoryPath(baseDirectoryPath), saltFileName);
 }
 
-std::unique_ptr<Storage> Storage::open(const String& cachePath, Mode mode)
+RefPtr<Storage> Storage::open(const String& cachePath, Mode mode)
 {
     ASSERT(RunLoop::isMain());
 
@@ -158,7 +165,7 @@ std::unique_ptr<Storage> Storage::open(const String& cachePath, Mode mode)
     auto salt = readOrMakeSalt(makeSaltFilePath(cachePath));
     if (!salt)
         return nullptr;
-    return std::unique_ptr<Storage>(new Storage(cachePath, mode, *salt));
+    return adoptRef(new Storage(cachePath, mode, *salt));
 }
 
 void traverseRecordsFiles(const String& recordsPath, const String& expectedType, const RecordFileTraverseFunction& function)
@@ -226,6 +233,12 @@ Storage::Storage(const String& baseDirectoryPath, Mode mode, Salt salt)
 
 Storage::~Storage()
 {
+    ASSERT(RunLoop::isMain());
+    ASSERT(m_activeReadOperations.isEmpty());
+    ASSERT(m_activeWriteOperations.isEmpty());
+    ASSERT(m_activeTraverseOperations.isEmpty());
+    ASSERT(!m_synchronizationInProgress);
+    ASSERT(!m_shrinkInProgress);
 }
 
 String Storage::basePath() const
@@ -258,7 +271,7 @@ void Storage::synchronize()
 
     LOG(NetworkCacheStorage, "(NetworkProcess) synchronizing cache");
 
-    backgroundIOQueue().dispatch([this] {
+    backgroundIOQueue().dispatch([this, protectedThis = makeRef(*this)] () mutable {
         auto recordFilter = std::make_unique<ContentsFilter>();
         auto blobFilter = std::make_unique<ContentsFilter>();
         size_t recordsSize = 0;
@@ -309,6 +322,8 @@ void Storage::synchronize()
         deleteEmptyRecordsDirectories(recordsPath());
 
         LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed size=%zu count=%u", recordsSize, count);
+
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
@@ -554,8 +569,9 @@ void Storage::remove(const Key& key)
 
     removeFromPendingWriteOperations(key);
 
-    serialBackgroundIOQueue().dispatch([this, key] {
+    serialBackgroundIOQueue().dispatch([this, protectedThis = makeRef(*this), key] () mutable {
         deleteFiles(key);
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
@@ -573,12 +589,14 @@ void Storage::remove(const Vector<Key>& keys, Function<void ()>&& completionHand
         keysToRemove.uncheckedAppend(key);
     }
 
-    serialBackgroundIOQueue().dispatch([this, keysToRemove = WTFMove(keysToRemove), completionHandler = WTFMove(completionHandler)] () mutable {
+    serialBackgroundIOQueue().dispatch([this, protectedThis = makeRef(*this), keysToRemove = WTFMove(keysToRemove), completionHandler = WTFMove(completionHandler)] () mutable {
         for (auto& key : keysToRemove)
             deleteFiles(key);
 
-        if (completionHandler)
-            RunLoop::main().dispatch(WTFMove(completionHandler));
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
+            if (completionHandler)
+                completionHandler();
+        });
     });
 }
 
@@ -805,7 +823,7 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
     if (retrieveFromMemory(m_activeWriteOperations, key, completionHandler))
         return;
 
-    auto readOperation = std::make_unique<ReadOperation>(key, WTFMove(completionHandler));
+    auto readOperation = std::make_unique<ReadOperation>(*this, key, WTFMove(completionHandler));
     m_pendingReadOperationsByPriority[priority].prepend(WTFMove(readOperation));
     dispatchPendingReadOperations();
 }
@@ -818,7 +836,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
     if (!m_capacity)
         return;
 
-    auto writeOperation = std::make_unique<WriteOperation>(record, WTFMove(mappedBodyHandler));
+    auto writeOperation = std::make_unique<WriteOperation>(*this, record, WTFMove(mappedBodyHandler));
     m_pendingWriteOperations.prepend(WTFMove(writeOperation));
 
     // Add key to the filter already here as we do lookups from the pending operations too.
@@ -840,7 +858,7 @@ void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&
     ASSERT(traverseHandler);
     // Avoid non-thread safe Function copies.
 
-    auto traverseOperationPtr = std::make_unique<TraverseOperation>(type, flags, WTFMove(traverseHandler));
+    auto traverseOperationPtr = std::make_unique<TraverseOperation>(*this, type, flags, WTFMove(traverseHandler));
     auto& traverseOperation = *traverseOperationPtr;
     m_activeTraverseOperations.add(WTFMove(traverseOperationPtr));
 
@@ -936,7 +954,7 @@ void Storage::clear(const String& type, std::chrono::system_clock::time_point mo
         m_blobFilter->clear();
     m_approximateRecordsSize = 0;
 
-    ioQueue().dispatch([this, modifiedSinceTime, completionHandler = WTFMove(completionHandler), type = type.isolatedCopy()] () mutable {
+    ioQueue().dispatch([this, protectedThis = makeRef(*this), modifiedSinceTime, completionHandler = WTFMove(completionHandler), type = type.isolatedCopy()] () mutable {
         auto recordsPath = this->recordsPath();
         traverseRecordsFiles(recordsPath, type, [modifiedSinceTime](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             auto filePath = WebCore::pathByAppendingComponent(recordDirectoryPath, fileName);
@@ -953,11 +971,10 @@ void Storage::clear(const String& type, std::chrono::system_clock::time_point mo
         // This cleans unreferenced blobs.
         m_blobStorage.synchronize();
 
-        if (completionHandler) {
-            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] {
+            if (completionHandler)
                 completionHandler();
-            });
-        }
+        });
     });
 }
 
@@ -1019,7 +1036,7 @@ void Storage::shrink()
 
     LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache approximateSize=%zu capacity=%zu", approximateSize(), m_capacity);
 
-    backgroundIOQueue().dispatch([this] {
+    backgroundIOQueue().dispatch([this, protectedThis = makeRef(*this)] () mutable {
         auto recordsPath = this->recordsPath();
         String anyType;
         traverseRecordsFiles(recordsPath, anyType, [this](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
@@ -1043,7 +1060,7 @@ void Storage::shrink()
             }
         });
 
-        RunLoop::main().dispatch([this] {
+        RunLoop::main().dispatch([this, protectedThis = WTFMove(protectedThis)] {
             m_shrinkInProgress = false;
             // We could synchronize during the shrink traversal. However this is fast and it is better to have just one code path.
             synchronize();
@@ -1055,7 +1072,7 @@ void Storage::shrink()
 
 void Storage::deleteOldVersions()
 {
-    backgroundIOQueue().dispatch([this] {
+    backgroundIOQueue().dispatch([this, protectedThis = makeRef(*this)] () mutable {
         auto cachePath = basePath();
         traverseDirectory(cachePath, [&cachePath](const String& subdirName, DirectoryEntryType type) {
             if (type != DirectoryEntryType::Directory)
@@ -1079,6 +1096,8 @@ void Storage::deleteOldVersions()
 
             deleteDirectoryRecursively(oldVersionPath);
         });
+
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 

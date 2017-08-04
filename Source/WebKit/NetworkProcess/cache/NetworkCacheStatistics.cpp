@@ -74,16 +74,17 @@ static bool executeSQLStatement(WebCore::SQLiteStatement& statement)
     return true;
 }
 
-std::unique_ptr<Statistics> Statistics::open(const String& cachePath)
+std::unique_ptr<Statistics> Statistics::open(Cache& cache, const String& cachePath)
 {
     ASSERT(RunLoop::isMain());
 
     String databasePath = WebCore::pathByAppendingComponent(cachePath, StatisticsDatabaseName);
-    return std::make_unique<Statistics>(databasePath);
+    return std::make_unique<Statistics>(cache, databasePath);
 }
 
-Statistics::Statistics(const String& databasePath)
-    : m_serialBackgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Statistics.Background", WorkQueue::Type::Serial, WorkQueue::QOS::Background))
+Statistics::Statistics(Cache& cache, const String& databasePath)
+    : m_cache(cache)
+    , m_serialBackgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Statistics.Background", WorkQueue::Type::Serial, WorkQueue::QOS::Background))
     , m_writeTimer(*this, &Statistics::writeTimerFired)
 {
     initialize(databasePath);
@@ -95,7 +96,7 @@ void Statistics::initialize(const String& databasePath)
 
     auto startTime = std::chrono::system_clock::now();
 
-    serialBackgroundIOQueue().dispatch([this, databasePath = databasePath.isolatedCopy(), networkCachePath = singleton().recordsPath().isolatedCopy(), startTime] {
+    serialBackgroundIOQueue().dispatch([this, databasePath = databasePath.isolatedCopy(), networkCachePath = m_cache.recordsPath(), startTime] {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
 
         if (!WebCore::makeAllDirectories(WebCore::directoryName(databasePath)))
@@ -178,7 +179,7 @@ void Statistics::shrinkIfNeeded()
 
     clear();
 
-    serialBackgroundIOQueue().dispatch([this, networkCachePath = singleton().recordsPath().isolatedCopy()] {
+    serialBackgroundIOQueue().dispatch([this, networkCachePath = m_cache.recordsPath()] {
         bootstrapFromNetworkCache(networkCachePath);
         LOG(NetworkCache, "(NetworkProcess) statistics cache shrink completed m_approximateEntryCount=%lu", static_cast<size_t>(m_approximateEntryCount));
     });

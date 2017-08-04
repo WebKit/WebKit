@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkCacheStorage_h
-#define NetworkCacheStorage_h
+#pragma once
 
 #if ENABLE(NETWORK_CACHE)
 
@@ -45,11 +44,10 @@ namespace NetworkCache {
 
 class IOChannel;
 
-class Storage {
-    WTF_MAKE_NONCOPYABLE(Storage);
+class Storage : public ThreadSafeRefCounted<Storage> {
 public:
     enum class Mode { Normal, Testing };
-    static std::unique_ptr<Storage> open(const String& cachePath, Mode);
+    static RefPtr<Storage> open(const String& cachePath, Mode);
 
     struct Record {
         WTF_MAKE_FAST_ALLOCATED;
@@ -192,5 +190,4 @@ void traverseRecordsFiles(const String& recordsPath, const String& type, const R
 
 }
 }
-#endif
 #endif

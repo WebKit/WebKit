@@ -41,8 +41,9 @@ namespace NetworkCache {
 
 using namespace WebCore;
 
-SpeculativeLoad::SpeculativeLoad(const GlobalFrameID& frameID, const ResourceRequest& request, std::unique_ptr<NetworkCache::Entry> cacheEntryForValidation, RevalidationCompletionHandler&& completionHandler)
-    : m_frameID(frameID)
+SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& frameID, const ResourceRequest& request, std::unique_ptr<NetworkCache::Entry> cacheEntryForValidation, RevalidationCompletionHandler&& completionHandler)
+    : m_cache(cache)
+    , m_frameID(frameID)
     , m_completionHandler(WTFMove(completionHandler))
     , m_originalRequest(request)
     , m_bufferedDataForCache(SharedBuffer::create())
@@ -71,10 +72,10 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
 {
     LOG(NetworkCacheSpeculativePreloading, "Speculative redirect %s -> %s", request.url().string().utf8().data(), redirectRequest.url().string().utf8().data());
 
-    m_cacheEntry = NetworkCache::singleton().storeRedirect(request, redirectResponse, redirectRequest);
+    m_cacheEntry = m_cache->storeRedirect(request, redirectResponse, redirectRequest);
     // Create a synthetic cache entry if we can't store.
     if (!m_cacheEntry)
-        m_cacheEntry = NetworkCache::singleton().makeRedirectEntry(request, redirectResponse, redirectRequest);
+        m_cacheEntry = m_cache->makeRedirectEntry(request, redirectResponse, redirectRequest);
 
     // Don't follow the redirect. The redirect target will be registered for speculative load when it is loaded.
     didComplete();
@@ -89,7 +90,7 @@ auto SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse) ->
 
     bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
     if (validationSucceeded && m_cacheEntry)
-        m_cacheEntry = NetworkCache::singleton().update(m_originalRequest, m_frameID, *m_cacheEntry, m_response);
+        m_cacheEntry = m_cache->update(m_originalRequest, m_frameID, *m_cacheEntry, m_response);
     else
         m_cacheEntry = nullptr;
 
@@ -115,10 +116,10 @@ void SpeculativeLoad::didFinishLoading(const WebCore::NetworkLoadMetrics&)
     if (m_didComplete)
         return;
     if (!m_cacheEntry && m_bufferedDataForCache) {
-        m_cacheEntry = NetworkCache::singleton().store(m_originalRequest, m_response, m_bufferedDataForCache.copyRef(), [](auto& mappedBody) { });
+        m_cacheEntry = m_cache->store(m_originalRequest, m_response, m_bufferedDataForCache.copyRef(), [](auto& mappedBody) { });
         // Create a synthetic cache entry if we can't store.
         if (!m_cacheEntry && isStatusCodeCacheableByDefault(m_response.httpStatusCode()))
-            m_cacheEntry = NetworkCache::singleton().makeEntry(m_originalRequest, m_response, WTFMove(m_bufferedDataForCache));
+            m_cacheEntry = m_cache->makeEntry(m_originalRequest, m_response, WTFMove(m_bufferedDataForCache));
     }
 
     didComplete();

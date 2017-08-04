@@ -1,3 +1,115 @@
+2017-08-04  Antti Koivisto  <antti@apple.com>
+
+        Network cache should be usable as non-singleton
+        https://bugs.webkit.org/show_bug.cgi?id=175139
+
+        Reviewed by Sam Weinig.
+
+        We might want to use it as a non-singleton in the future (for example as a backend for the cache API).
+
+        This patch makes NetworkCache::Cache and NetworkCache::Storage refcounted objects and takes
+        care to ref them properly during asynchronous operations.
+
+        The patch doesn't actually create any non-shared instances, it just adds the capability.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::storeDerivedDataToCache):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        (WebKit::clearDiskCacheEntries):
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::cache):
+
+            Move the shared cache instance to the network process singleton.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+
+            Include shared cache as a reffed member for non-ephemeral instances.
+
+        (WebKit::NetworkResourceLoader::canUseCache const):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::open):
+
+            Open now returns null if it fails.
+            Add RegisterNotify option to set up notify trigger for the shared instance.
+
+        (WebKit::NetworkCache::Cache::Cache):
+        (WebKit::NetworkCache::Cache::~Cache):
+
+            Add destructor.
+
+        (WebKit::NetworkCache::dumpFileChanged):
+        (WebKit::NetworkCache::Cache::setCapacity):
+        (WebKit::NetworkCache::Cache::retrieve):
+
+            Protect the cache instance during asynchronous operations.
+
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::storeRedirect):
+        (WebKit::NetworkCache::Cache::remove):
+        (WebKit::NetworkCache::Cache::traverse):
+        (WebKit::NetworkCache::Cache::dumpContentsToFile):
+        (WebKit::NetworkCache::Cache::clear):
+        (WebKit::NetworkCache::Cache::recordsPath const):
+        (WebKit::NetworkCache::Cache::retrieveData):
+        (WebKit::NetworkCache::Cache::storeData):
+        (WebKit::NetworkCache::singleton): Deleted.
+        (WebKit::NetworkCache::Cache::initialize): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+        (WebKit::NetworkCache::Cache::canUseSharedMemoryForBodyData const):
+        (WebKit::NetworkCache::Cache::isEnabled const): Deleted.
+
+            Remove isEnabled() state as a cache object now always represents an enabled cache.
+
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::initializeShareableResourceHandleFromStorageRecord const):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+        (WebKit::NetworkCache::SpeculativeLoad::didReceiveResponse):
+        (WebKit::NetworkCache::SpeculativeLoad::didFinishLoading):
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::initialize):
+        (WebKit::NetworkCache::Statistics::shrinkIfNeeded):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::ReadOperation::ReadOperation):
+        (WebKit::NetworkCache::Storage::WriteOperation::WriteOperation):
+        (WebKit::NetworkCache::Storage::TraverseOperation::TraverseOperation):
+
+            Operations now ref the storage. They are already deleted in the main thread so
+            proper destruction is taken care of.
+
+        (WebKit::NetworkCache::Storage::open):
+        (WebKit::NetworkCache::Storage::~Storage):
+        (WebKit::NetworkCache::Storage::synchronize):
+
+            This and other asynchronous methods now protect the Storage instance.
+
+        (WebKit::NetworkCache::Storage::remove):
+        (WebKit::NetworkCache::Storage::retrieve):
+        (WebKit::NetworkCache::Storage::store):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::Storage::clear):
+        (WebKit::NetworkCache::Storage::shrink):
+        (WebKit::NetworkCache::Storage::deleteOldVersions):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        (WebKit::NetworkProcess::clearDiskCache):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        (WebKit::NetworkProcess::clearDiskCache):
+
 2017-08-04  Frederic Wang  <fwang@igalia.com>
 
         ScrollingTreeOverflowScrollingNodeIOS uses the wrong fixed position rectangle

@@ -52,6 +52,7 @@ public:
     static void setSourceApplicationBundleIdentifier(const String&);
     static void setSourceApplicationSecondaryIdentifier(const String&);
     static void setAllowsCellularAccess(bool);
+    static void setUsesNetworkCache(bool);
 #if PLATFORM(IOS)
     static void setCTDataConnectionServiceType(const String&);
 #endif

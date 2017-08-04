@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkCache_h
-#define NetworkCache_h
+#pragma once
 
 #if ENABLE(NETWORK_CACHE)
 
@@ -49,8 +48,6 @@ namespace NetworkCache {
 class Cache;
 class SpeculativeLoadManager;
 class Statistics;
-
-Cache& singleton();
 
 struct MappedBody {
 #if ENABLE(SHAREABLE_RESOURCE)
@@ -91,22 +88,20 @@ enum class UseDecision {
 
 using GlobalFrameID = std::pair<uint64_t /*webPageID*/, uint64_t /*webFrameID*/>;
 
-class Cache {
-    WTF_MAKE_NONCOPYABLE(Cache);
-    friend class WTF::NeverDestroyed<Cache>;
+class Cache : public RefCounted<Cache> {
 public:
     enum class Option {
         EfficacyLogging = 1 << 0,
         // In testing mode we try to eliminate sources of randomness. Cache does not shrink and there are no read timeouts.
         TestingMode = 1 << 1,
+        RegisterNotify = 1 << 2,
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-        SpeculativeRevalidation = 1 << 2,
+        SpeculativeRevalidation = 1 << 3,
 #endif
     };
-    bool initialize(const String& cachePath, OptionSet<Option>);
-    void setCapacity(size_t);
+    static RefPtr<Cache> open(const String& cachePath, OptionSet<Option>);
 
-    bool isEnabled() const { return !!m_storage; }
+    void setCapacity(size_t);
 
     // Completion handler may get called back synchronously on failure.
     void retrieve(const WebCore::ResourceRequest&, const GlobalFrameID&, Function<void (std::unique_ptr<Entry>)>&&);
@@ -135,22 +130,24 @@ public:
     void dumpContentsToFile();
 
     String recordsPath() const;
-    bool canUseSharedMemoryForBodyData() const { return m_storage && m_storage->canUseSharedMemoryForBodyData(); }
+    bool canUseSharedMemoryForBodyData() const { return m_storage->canUseSharedMemoryForBodyData(); }
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     SpeculativeLoadManager* speculativeLoadManager() { return m_speculativeLoadManager.get(); }
 #endif
 
+    ~Cache();
+
 private:
-    Cache() = default;
-    ~Cache() = delete;
+    Cache(Ref<Storage>&&, OptionSet<Option> options);
 
     Key makeCacheKey(const WebCore::ResourceRequest&);
 
     String dumpFilePath() const;
     void deleteDumpFile();
 
-    std::unique_ptr<Storage> m_storage;
+    Ref<Storage> m_storage;
+
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     std::unique_ptr<WebCore::LowPowerModeNotifier> m_lowPowerModeNotifier;
     std::unique_ptr<SpeculativeLoadManager> m_speculativeLoadManager;
@@ -162,5 +159,4 @@ private:
 
 }
 }
-#endif
 #endif

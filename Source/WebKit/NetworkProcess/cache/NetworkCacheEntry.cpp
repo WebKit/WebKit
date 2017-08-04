@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "NetworkCacheCoders.h"
+#include "NetworkProcess.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/StringBuilder.h>
@@ -146,7 +147,8 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
 #if ENABLE(SHAREABLE_RESOURCE)
 void Entry::initializeShareableResourceHandleFromStorageRecord() const
 {
-    if (!NetworkCache::singleton().canUseSharedMemoryForBodyData())
+    auto* cache = NetworkProcess::singleton().cache();
+    if (!cache || !cache->canUseSharedMemoryForBodyData())
         return;
 
     auto sharedMemory = m_sourceStorageRecord.body.tryCreateSharedMemory();

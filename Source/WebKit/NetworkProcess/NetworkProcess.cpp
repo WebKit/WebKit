@@ -328,9 +328,9 @@ void NetworkProcess::updateCookiePartitioningForTopPrivatelyOwnedDomains(const V
 static void fetchDiskCacheEntries(SessionID sessionID, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void (Vector<WebsiteData::Entry>)>&& completionHandler)
 {
 #if ENABLE(NETWORK_CACHE)
-    if (NetworkCache::singleton().isEnabled()) {
+    if (auto* cache = NetworkProcess::singleton().cache()) {
         HashMap<SecurityOriginData, uint64_t> originsAndSizes;
-        NetworkCache::singleton().traverse([fetchOptions, completionHandler = WTFMove(completionHandler), originsAndSizes = WTFMove(originsAndSizes)](auto* traversalEntry) mutable {
+        cache->traverse([fetchOptions, completionHandler = WTFMove(completionHandler), originsAndSizes = WTFMove(originsAndSizes)](auto* traversalEntry) mutable {
             if (!traversalEntry) {
                 Vector<WebsiteData::Entry> entries;
 
@@ -436,20 +436,20 @@ void NetworkProcess::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDat
 static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, Function<void ()>&& completionHandler)
 {
 #if ENABLE(NETWORK_CACHE)
-    if (NetworkCache::singleton().isEnabled()) {
+    if (auto* cache = NetworkProcess::singleton().cache()) {
         HashSet<RefPtr<SecurityOrigin>> originsToDelete;
         for (auto& origin : origins)
             originsToDelete.add(origin.securityOrigin());
 
         Vector<NetworkCache::Key> cacheKeysToDelete;
-        NetworkCache::singleton().traverse([completionHandler = WTFMove(completionHandler), originsToDelete = WTFMove(originsToDelete), cacheKeysToDelete = WTFMove(cacheKeysToDelete)](auto* traversalEntry) mutable {
+        cache->traverse([cache, completionHandler = WTFMove(completionHandler), originsToDelete = WTFMove(originsToDelete), cacheKeysToDelete = WTFMove(cacheKeysToDelete)](auto* traversalEntry) mutable {
             if (traversalEntry) {
                 if (originsToDelete.contains(SecurityOrigin::create(traversalEntry->entry.response().url())))
                     cacheKeysToDelete.append(traversalEntry->entry.key());
                 return;
             }
 
-            NetworkCache::singleton().remove(cacheKeysToDelete, WTFMove(completionHandler));
+            cache->remove(cacheKeysToDelete, WTFMove(completionHandler));
             return;
         });
 
@@ -575,9 +575,8 @@ void NetworkProcess::setCacheModel(uint32_t cm)
         urlCacheDiskCapacity = m_diskCacheSizeOverride;
 
 #if ENABLE(NETWORK_CACHE)
-    auto& networkCache = NetworkCache::singleton();
-    if (networkCache.isEnabled()) {
-        networkCache.setCapacity(urlCacheDiskCapacity);
+    if (m_cache) {
+        m_cache->setCapacity(urlCacheDiskCapacity);
         return;
     }
 #endif

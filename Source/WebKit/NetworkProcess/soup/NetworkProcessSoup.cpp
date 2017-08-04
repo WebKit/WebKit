@@ -112,7 +112,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     SoupNetworkSession::clearOldSoupCache(WebCore::directoryName(m_diskCacheDirectory));
 
-    OptionSet<NetworkCache::Cache::Option> cacheOptions;
+    OptionSet<NetworkCache::Cache::Option> cacheOptions { NetworkCache::Cache::Option::RegisterNotify };
     if (parameters.shouldEnableNetworkCacheEfficacyLogging)
         cacheOptions |= NetworkCache::Cache::Option::EfficacyLogging;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
@@ -120,7 +120,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
         cacheOptions |= NetworkCache::Cache::Option::SpeculativeRevalidation;
 #endif
 
-    NetworkCache::singleton().initialize(m_diskCacheDirectory, cacheOptions);
+    m_cache = NetworkCache::Cache::open(m_diskCacheDirectory, cacheOptions);
 
     if (!parameters.cookiePersistentStoragePath.isEmpty()) {
         supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
@@ -158,7 +158,9 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
 
 void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler)
 {
-    NetworkCache::singleton().clear(modifiedSince, WTFMove(completionHandler));
+    if (!m_cache)
+        return;
+    m_cache->clear(modifiedSince, WTFMove(completionHandler));
 }
 
 void NetworkProcess::platformTerminate()

@@ -245,8 +245,9 @@ private:
     bool m_didRetrieveExistingEntry { false };
 };
 
-SpeculativeLoadManager::SpeculativeLoadManager(Storage& storage)
-    : m_storage(storage)
+SpeculativeLoadManager::SpeculativeLoadManager(Cache& cache, Storage& storage)
+    : m_cache(cache)
+    , m_storage(storage)
 {
 }
 
@@ -466,7 +467,7 @@ void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subres
 
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Speculatively revalidating '%s':", key.identifier().utf8().data());
 
-    auto revalidator = std::make_unique<SpeculativeLoad>(frameID, revalidationRequest, WTFMove(entry), [this, key, revalidationRequest, frameID](std::unique_ptr<Entry> revalidatedEntry) {
+    auto revalidator = std::make_unique<SpeculativeLoad>(m_cache, frameID, revalidationRequest, WTFMove(entry), [this, key, revalidationRequest, frameID](std::unique_ptr<Entry> revalidatedEntry) {
         ASSERT(!revalidatedEntry || !revalidatedEntry->needsValidation());
         ASSERT(!revalidatedEntry || revalidatedEntry->key() == key);
 

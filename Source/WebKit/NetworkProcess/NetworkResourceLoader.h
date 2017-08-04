@@ -160,6 +160,7 @@ private:
 
     WebCore::Timer m_bufferingTimer;
 #if ENABLE(NETWORK_CACHE)
+    RefPtr<NetworkCache::Cache> m_cache;
     RefPtr<WebCore::SharedBuffer> m_bufferedDataForCache;
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForValidation;
     bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };

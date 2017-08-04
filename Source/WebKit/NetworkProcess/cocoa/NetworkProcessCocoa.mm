@@ -84,6 +84,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     NetworkSessionCocoa::setSourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier);
     NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier);
     NetworkSessionCocoa::setAllowsCellularAccess(parameters.allowsCellularAccess);
+    NetworkSessionCocoa::setUsesNetworkCache(parameters.shouldEnableNetworkCache);
 #if PLATFORM(IOS)
     NetworkSessionCocoa::setCTDataConnectionServiceType(parameters.ctDataConnectionServiceType);
 #endif
@@ -108,7 +109,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
 #if ENABLE(NETWORK_CACHE)
         if (parameters.shouldEnableNetworkCache) {
-            OptionSet<NetworkCache::Cache::Option> cacheOptions;
+            OptionSet<NetworkCache::Cache::Option> cacheOptions { NetworkCache::Cache::Option::RegisterNotify };
             if (parameters.shouldEnableNetworkCacheEfficacyLogging)
                 cacheOptions |= NetworkCache::Cache::Option::EfficacyLogging;
             if (parameters.shouldUseTestingNetworkSession)
@@ -117,7 +118,10 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
             if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
                 cacheOptions |= NetworkCache::Cache::Option::SpeculativeRevalidation;
 #endif
-            if (NetworkCache::singleton().initialize(m_diskCacheDirectory, cacheOptions)) {
+            m_cache = NetworkCache::Cache::open(m_diskCacheDirectory, cacheOptions);
+
+            if (m_cache) {
+                // Disable NSURLCache.
                 auto urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));
                 [NSURLCache setSharedURLCache:urlCache.get()];
                 return;
@@ -187,16 +191,18 @@ void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifi
         m_clearCacheDispatchGroup = dispatch_group_create();
 
 #if ENABLE(NETWORK_CACHE)
-    auto group = m_clearCacheDispatchGroup;
-    dispatch_group_async(group, dispatch_get_main_queue(), BlockPtr<void()>::fromCallable([group, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
-        NetworkCache::singleton().clear(modifiedSince, [group, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
-            // FIXME: Probably not necessary.
-            clearNSURLCache(group, modifiedSince, WTFMove(completionHandler));
-        });
-    }).get());
-#else
-    clearNSURLCache(m_clearCacheDispatchGroup, modifiedSince, WTFMove(completionHandler));
+    if (auto* cache = NetworkProcess::singleton().cache()) {
+        auto group = m_clearCacheDispatchGroup;
+        dispatch_group_async(group, dispatch_get_main_queue(), BlockPtr<void()>::fromCallable([cache, group, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
+            cache->clear(modifiedSince, [group, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
+                // FIXME: Probably not necessary.
+                clearNSURLCache(group, modifiedSince, WTFMove(completionHandler));
+            });
+        }).get());
+        return;
+    }
 #endif
+    clearNSURLCache(m_clearCacheDispatchGroup, modifiedSince, WTFMove(completionHandler));
 }
 
 void NetworkProcess::setCookieStoragePartitioningEnabled(bool enabled)

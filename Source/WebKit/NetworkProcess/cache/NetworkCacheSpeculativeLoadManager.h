@@ -46,7 +46,7 @@ class SubresourcesEntry;
 class SpeculativeLoadManager {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit SpeculativeLoadManager(Storage&);
+    explicit SpeculativeLoadManager(Cache&, Storage&);
     ~SpeculativeLoadManager();
 
     void registerLoad(const GlobalFrameID&, const WebCore::ResourceRequest&, const Key& resourceKey);
@@ -70,6 +70,7 @@ private:
     static bool canUsePreloadedEntry(const PreloadedEntry&, const WebCore::ResourceRequest& actualRequest);
     static bool canUsePendingPreload(const SpeculativeLoad&, const WebCore::ResourceRequest& actualRequest);
 
+    Cache& m_cache;
     Storage& m_storage;
 
     class PendingFrameLoad;

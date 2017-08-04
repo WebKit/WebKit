@@ -86,6 +86,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     , m_connection(connection)
     , m_defersLoading(parameters.defersLoading)
     , m_bufferingTimer(*this, &NetworkResourceLoader::bufferingTimerFired)
+    , m_cache(sessionID().isEphemeral() ? nullptr : NetworkProcess::singleton().cache())
 {
     ASSERT(RunLoop::isMain());
     // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.
@@ -121,10 +122,10 @@ NetworkResourceLoader::~NetworkResourceLoader()
 #if ENABLE(NETWORK_CACHE)
 bool NetworkResourceLoader::canUseCache(const ResourceRequest& request) const
 {
-    if (!NetworkCache::singleton().isEnabled())
+    if (!m_cache)
         return false;
-    if (sessionID().isEphemeral())
-        return false;
+    ASSERT(!sessionID().isEphemeral());
+
     if (!request.url().protocolIsInHTTPFamily())
         return false;
     if (originalRequest().cachePolicy() == WebCore::DoNotUseAnyCache)
@@ -181,7 +182,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     ASSERT(canUseCache(request));
 
     RefPtr<NetworkResourceLoader> loader(this);
-    NetworkCache::singleton().retrieve(request, { m_parameters.webPageID, m_parameters.webFrameID }, [this, loader = WTFMove(loader), request](auto entry) {
+    m_cache->retrieve(request, { m_parameters.webPageID, m_parameters.webFrameID }, [this, loader = WTFMove(loader), request](auto entry) {
         if (loader->hasOneRef()) {
             // The loader has been aborted and is only held alive by this lambda.
             return;
@@ -307,7 +308,7 @@ void NetworkResourceLoader::abort()
         if (canUseCache(m_networkLoad->currentRequest())) {
             // We might already have used data from this incomplete load. Ensure older versions don't remain in the cache after cancel.
             if (!m_response.isNull())
-                NetworkCache::singleton().remove(m_networkLoad->currentRequest());
+                m_cache->remove(m_networkLoad->currentRequest());
         }
 #endif
         m_networkLoad->cancel();
@@ -334,7 +335,7 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     if (m_cacheEntryForValidation) {
         bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
         if (validationSucceeded) {
-            m_cacheEntryForValidation = NetworkCache::singleton().update(originalRequest(), { m_parameters.webPageID, m_parameters.webFrameID }, *m_cacheEntryForValidation, m_response);
+            m_cacheEntryForValidation = m_cache->update(originalRequest(), { m_parameters.webPageID, m_parameters.webFrameID }, *m_cacheEntryForValidation, m_response);
             // If the request was conditional then this revalidation was not triggered by the network cache and we pass the 304 response to WebCore.
             if (originalRequest().isConditional())
                 m_cacheEntryForValidation = nullptr;
@@ -470,7 +471,7 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 
 #if ENABLE(NETWORK_CACHE)
     if (canUseCachedRedirect(request))
-        NetworkCache::singleton().storeRedirect(request, redirectResponse, redirectRequest);
+        m_cache->storeRedirect(request, redirectResponse, redirectRequest);
 #else
     UNUSED_PARAM(request);
 #endif
@@ -559,7 +560,7 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     if (!m_bufferedDataForCache)
         return;
 
-    NetworkCache::singleton().store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader = makeRef(*this)](auto& mappedBody) mutable {
+    m_cache->store(m_networkLoad->currentRequest(), m_response, WTFMove(m_bufferedDataForCache), [loader = makeRef(*this)](auto& mappedBody) mutable {
 #if ENABLE(SHAREABLE_RESOURCE)
         if (mappedBody.shareableResourceHandle.isNull())
             return;
@@ -588,7 +589,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 
         for (auto& type : m_parameters.derivedCachedDataTypesToRetrieve) {
             NetworkCache::DataKey key { originalRequest().cachePartition(), type, bodyHash };
-            NetworkCache::singleton().retrieveData(key, [loader = makeRef(*this), entryPtr, type, retrieveCount] (const uint8_t* data, size_t size) mutable {
+            m_cache->retrieveData(key, [loader = makeRef(*this), entryPtr, type, retrieveCount] (const uint8_t* data, size_t size) mutable {
                 loader->m_retrievedDerivedDataCount++;
                 bool retrievedAll = loader->m_retrievedDerivedDataCount == retrieveCount;
                 std::unique_ptr<NetworkCache::Entry> entry(retrievedAll ? entryPtr : nullptr);

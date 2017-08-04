@@ -43,8 +43,8 @@ namespace NetworkCache {
 
 class Statistics {
 public:
-    static std::unique_ptr<Statistics> open(const String& cachePath);
-    explicit Statistics(const String& databasePath);
+    static std::unique_ptr<Statistics> open(Cache&, const String& cachePath);
+    explicit Statistics(Cache&, const String& databasePath);
 
     void clear();
 
@@ -76,6 +76,8 @@ private:
         bool needUncachedReason;
         RequestedCompletionHandler completionHandler;
     };
+
+    Cache& m_cache;
 
     std::atomic<size_t> m_approximateEntryCount { 0 };
 

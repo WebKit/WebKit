@@ -79,7 +79,8 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     if (resourceCachesToClear == InMemoryResourceCachesOnly)
         return;
 #if ENABLE(NETWORK_CACHE)
-    NetworkCache::singleton().clear();
+    if (m_cache)
+        m_cache->clear();
 #endif
 }
 
