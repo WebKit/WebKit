@@ -7,8 +7,6 @@ from osx_browser_driver import OSXBrowserDriver
 
 
 _log = logging.getLogger(__name__)
-window_size_arg = '--window-size={width},{height}'.format(width=int(OSXBrowserDriver._screen_size().width), height=int(OSXBrowserDriver._screen_size().height))
-args = ['--args', '--homepage', window_size_arg]
 
 class OSXChromeDriver(OSXBrowserDriver):
     process_name = 'Google Chrome'
@@ -16,7 +14,7 @@ class OSXChromeDriver(OSXBrowserDriver):
     app_name = 'Google Chrome.app'
 
     def launch_url(self, url, options, browser_build_path):
-        args_with_url = self._insert_url(args, 2, url)
+        args_with_url = self._insert_url(create_args(), 2, url)
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
     def launch_driver(self, url, options, browser_build_path):
@@ -38,7 +36,7 @@ class OSXChromeCanaryDriver(OSXBrowserDriver):
     app_name = 'Google Chrome Canary.app'
 
     def launch_url(self, url, options, browser_build_path):
-        args_with_url = self._insert_url(args, 2, url)
+        args_with_url = self._insert_url(create_args(), 2, url)
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
     def launch_driver(self, url, options, browser_build_path):
@@ -55,11 +53,20 @@ class OSXChromeCanaryDriver(OSXBrowserDriver):
         return driver
 
 
+def create_args():
+    args = ['--args', '--homepage', create_window_size_arg()]
+    return args
+
 def create_chrome_options():
     from webkitpy.thirdparty.autoinstalled.selenium.webdriver.chrome.options import Options
     chrome_options = Options()
     chrome_options.add_argument("--disable-web-security")
     chrome_options.add_argument("--user-data-dir")
     chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument(window_size_arg)
+    chrome_options.add_argument(create_window_size_arg())
     return chrome_options
+
+
+def create_window_size_arg():
+    window_size_arg = '--window-size={width},{height}'.format(width=int(OSXBrowserDriver._screen_size().width), height=int(OSXBrowserDriver._screen_size().height))
+    return window_size_arg

@@ -8,8 +8,6 @@ from osx_browser_driver import OSXBrowserDriver
 
 _log = logging.getLogger(__name__)
 
-args = ['--args', '-width', str(int(OSXBrowserDriver._screen_size().width)), '-height', str(int(OSXBrowserDriver._screen_size().height))]
-
 
 class OSXFirefoxDriver(OSXBrowserDriver):
     process_name = 'firefox'
@@ -17,7 +15,7 @@ class OSXFirefoxDriver(OSXBrowserDriver):
     app_name = 'Firefox.app'
 
     def launch_url(self, url, options, browser_build_path):
-        args_with_url = self._insert_url(args, 0, url)
+        args_with_url = self._insert_url(create_args(), 0, url)
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
     def launch_driver(self, url, options, browser_build_path):
@@ -40,7 +38,7 @@ class OSXFirefoxNightlyDriver(OSXBrowserDriver):
     app_name = 'FirefoxNightly.app'
 
     def launch_url(self, url, options, browser_build_path):
-        args_with_url = self._insert_url(args, 0, url)
+        args_with_url = self._insert_url(create_args(), 0, url)
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
     def launch_driver(self, url, options, browser_build_path):
@@ -56,3 +54,8 @@ class OSXFirefoxNightlyDriver(OSXBrowserDriver):
         driver = webdriver.Firefox(firefox_options=firefox_options, executable_path=driver_executable)
         self._launch_webdriver(url=url, driver=driver)
         return driver
+
+
+def create_args():
+    args = ['--args', '-width', str(int(OSXBrowserDriver._screen_size().width)), '-height', str(int(OSXBrowserDriver._screen_size().height))]
+    return args
