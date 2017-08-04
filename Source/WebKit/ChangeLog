@@ -1,3 +1,20 @@
+2017-08-03  Chris Dumez  <cdumez@apple.com>
+
+        Multiple Layout tests from web-platform-tests/beacon/ are timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=175076
+        <rdar://problem/33704752>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::completeAuthenticationChallenge):
+        In the NETWORK_SESSION code path, we did not ask the client about server trust evaluation
+        when the clientCredentialPolicy was CannotAskClientForCredentials. This is because the
+        same delegate is used for HTTP authentication and server trust evaluation in the
+        NETWORK_SESSION code path. To align both code paths, we now ask the client about server
+        trust evaluation even if the policy CannotAskClientForCredentials. This allows WKTR
+        to trust certificates for localhost / 127.0.0.1 unconditionally and consistently.
+
 2017-08-03  Yoshiaki Jitsukawa  <jitsu@rd.scei.sony.co.jp>
 
         [PAL] Move spi/cf directory into PAL

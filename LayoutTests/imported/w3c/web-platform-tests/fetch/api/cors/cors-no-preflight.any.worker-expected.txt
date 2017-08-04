@@ -2,8 +2,8 @@
 PASS Cross domain basic usage [GET] 
 PASS Same domain different port [GET] 
 PASS Cross domain different port [GET] 
-FAIL Cross domain different protocol [GET] promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Same domain different protocol different port [GET] promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Cross domain different protocol [GET] 
+PASS Same domain different protocol different port [GET] 
 PASS Cross domain [POST] 
 PASS Cross domain [HEAD] 
 PASS Cross domain [GET] [Accept: */*] 

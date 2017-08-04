@@ -337,7 +337,8 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
 
 void NetworkLoad::completeAuthenticationChallenge(ChallengeCompletionHandler&& completionHandler)
 {
-    if (m_parameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials) {
+    bool isServerTrustEvaluation = m_challenge->protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+    if (m_parameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials && !isServerTrustEvaluation) {
         completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
         return;
     }
