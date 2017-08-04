@@ -1,3 +1,54 @@
+2017-08-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyEC PKCS#8 imports
+        https://bugs.webkit.org/show_bug.cgi?id=173647
+
+        Reviewed by Jiewen Tan.
+
+        No new tests -- affected tests are now passing and are unskipped.
+
+        Implement libgcrypt-based support for PKCS#8 imports of EC keys.
+
+        Existing libtasn1 utilities are used to achieve this. First, the provided key data
+        is decoded against the PrivateKeyInfo ASN.1 definition. First, the version member
+        of that structure is validated, followed by the algorithm member. The latter is
+        also properly tested depending on this being an import of an ECDSA or ECDH key.
+
+        Data of the parameters member is decoded against the ECParameters ASN.1 definition,
+        and the namedCurve object identifier is validated, making sure it represents a
+        valid EC curve and that this curve maches the one specified for the import
+        operation.
+
+        Data of the privateKey member is decoded against the ECPrivateKey ASN.1 definition.
+        The version member of that structure is properly validated. The optional parameters
+        member of that structure is already decoded against the ECParameters ASN.1
+        definition. If present, it is checked to contain a valid EC curve identifier that
+        matches the specified curve.
+
+        The optional publicKey member of the ECPrivateKey structure is validated, testing
+        that its data matches in size an uncompressed EC point, and that the first byte
+        of this data is 0x04, as expected for an uncompressed EC point.
+
+        What's left is the private key data on the initial ECPrivateKey structure. That
+        data is retrieved and validated, making sure its size matches the size of the
+        specified curve. The `private-key` s-expression is then constructed, embedding
+        the curve name and the validated private key data. This s-expression is then used
+        to construct an EC context.
+
+        If the optional publicKey data was provided, it's used to set the `q` parameter
+        for this EC context. Otherwise, the value for `q` is computed on-the-fly for the
+        specified EC and the provided private key. The `q` point is then tested through
+        the gcry_mpi_ec_curve_point() function, making sure that the derived point is
+        indeed located on the given EC.
+
+        Finally, with the private key properly validated, a new CryptoKeyEC object is
+        constructed, using the `private-key` s-expression and the parameters that were
+        specified for this import operation.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::CryptoKeyEC::platformImportPkcs8):
+        * crypto/gcrypt/GCryptUtilities.h:
+
 2017-08-03  Chris Dumez  <cdumez@apple.com>
 
         Fix parsing of <meta http-equiv=refresh> to allow time starting with a '.' without a leading 0

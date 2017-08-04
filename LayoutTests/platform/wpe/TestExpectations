@@ -647,12 +647,6 @@ webkit.org/b/133122 crypto/subtle/aes-cfb-import-key-unwrap-raw-key.html [ Skip 
 webkit.org/b/133122 crypto/subtle/aes-cfb-import-key-wrap-jwk-key.html [ Skip ]
 webkit.org/b/133122 crypto/subtle/aes-cfb-import-key-wrap-raw-key.html [ Skip ]
 webkit.org/b/133122 crypto/subtle/aes-cfb-import-raw-key.html [ Skip ]
-webkit.org/b/133122 crypto/subtle/ecdh-import-pkcs8-key-p256.html [ Skip ]
-webkit.org/b/133122 crypto/subtle/ecdh-import-pkcs8-key-p384.html [ Skip ]
-webkit.org/b/133122 crypto/subtle/ecdsa-import-pkcs8-key.html [ Skip ]
-webkit.org/b/133122 crypto/subtle/ec-import-pkcs8-key-export-jwk-key.html [ Skip ]
-webkit.org/b/133122 crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p256.html [ Skip ]
-webkit.org/b/133122 crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p384.html [ Skip ]
 webkit.org/b/133122 crypto/subtle/rsa-indexeddb-non-exportable-private.html [ Skip ]
 webkit.org/b/133122 crypto/subtle/rsa-indexeddb-non-exportable.html [ Skip ]
 webkit.org/b/133122 crypto/subtle/rsa-indexeddb-private.html [ Skip ]
@@ -661,7 +655,6 @@ webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-decrypt.html [ Skip
 webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-encrypt.html [ Skip ]
 webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-unwrap-key.html [ Skip ]
 webkit.org/b/133122 crypto/workers/subtle/aes-cfb-import-key-wrap-key.html [ Skip ]
-webkit.org/b/133122 crypto/workers/subtle/ec-import-pkcs8-key.html [ Skip ]
 webkit.org/b/133122 crypto/workers/subtle/ec-postMessage-worker.html [ Skip ]
 
 imported/w3c/web-platform-tests/WebCryptoAPI [ Pass Slow ]
@@ -683,6 +676,10 @@ webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapK
 webkit.org/b/133122 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html [ Failure ]
 
 # RSA-PSS tests are for now skipped on all ports, so we for now explicitly enable the passing ones here.
+crypto/subtle/ecdh-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Pass ]
+crypto/subtle/ecdh-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html [ Pass ]
+crypto/subtle/ecdsa-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Pass ]
+crypto/subtle/ecdsa-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]

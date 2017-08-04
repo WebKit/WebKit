@@ -1,3 +1,13 @@
+2017-08-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyEC PKCS#8 imports
+        https://bugs.webkit.org/show_bug.cgi?id=173647
+
+        Reviewed by Jiewen Tan.
+
+        * platform/wpe/TestExpectations:
+        Unskip passing Web Crypto tests that cover PKCS#8 imports of EC keys.
+
 2017-08-03  Chris Dumez  <cdumez@apple.com>
 
         Fix parsing of <meta http-equiv=refresh> to allow time starting with a '.' without a leading 0

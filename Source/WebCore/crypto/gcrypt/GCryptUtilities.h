@@ -50,6 +50,7 @@ static const std::array<uint8_t, 22> s_RSASSA_PSSIdentifier { { "1.2.840.113549.
 
 static const std::array<uint8_t, 2> s_asn1NullValue { { 0x05, 0x00 } };
 static const std::array<uint8_t, 1> s_asn1Version0 { { 0x00 } };
+static const std::array<uint8_t, 1> s_asn1Version1 { { 0x01 } };
 
 static const std::array<uint8_t, 1> s_ecUncompressedFormatLeadingByte { { 0x04 } };
 

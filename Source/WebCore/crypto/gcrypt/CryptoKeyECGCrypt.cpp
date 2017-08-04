@@ -335,11 +335,149 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
     return create(identifier, curve, CryptoKeyType::Public, platformKey.release(), extractable, usages);
 }
 
-RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    notImplemented();
+    // Decode the `PrivateKeyInfo` structure using the provided key data.
+    PAL::TASN1::Structure pkcs8;
+    if (!PAL::TASN1::decodeStructure(&pkcs8, "WebCrypto.PrivateKeyInfo", keyData))
+        return nullptr;
 
-    return nullptr;
+    // Validate `version`.
+    {
+        auto version = PAL::TASN1::elementData(pkcs8, "version");
+        if (!version)
+            return nullptr;
+
+        if (!CryptoConstants::matches(version->data(), version->size(), CryptoConstants::s_asn1Version0))
+            return nullptr;
+    }
+
+    // Validate `privateKeyAlgorithm.algorithm`.
+    {
+        auto algorithm = PAL::TASN1::elementData(pkcs8, "privateKeyAlgorithm.algorithm");
+        if (!algorithm)
+            return nullptr;
+
+        if (!supportedAlgorithmIdentifier(identifier, *algorithm))
+            return nullptr;
+    }
+
+    // Validate `privateKeyAlgorithm.parameters` and therein embedded `ECParameters`.
+    {
+        auto parameters = PAL::TASN1::elementData(pkcs8, "privateKeyAlgorithm.parameters");
+        if (!parameters)
+            return nullptr;
+
+        PAL::TASN1::Structure ecParameters;
+        if (!PAL::TASN1::decodeStructure(&ecParameters, "WebCrypto.ECParameters", *parameters))
+            return nullptr;
+
+        auto namedCurve = PAL::TASN1::elementData(ecParameters, "namedCurve");
+        if (!namedCurve)
+            return nullptr;
+
+        auto parameterCurve = curveForIdentifier(*namedCurve);
+        if (!parameterCurve || *parameterCurve != curve)
+            return nullptr;
+    }
+
+    // Decode the `ECPrivateKey` structure using the `privateKey` data.
+    PAL::TASN1::Structure ecPrivateKey;
+    {
+        auto privateKey = PAL::TASN1::elementData(pkcs8, "privateKey");
+        if (!privateKey)
+            return nullptr;
+
+        if (!PAL::TASN1::decodeStructure(&ecPrivateKey, "WebCrypto.ECPrivateKey", *privateKey))
+            return nullptr;
+    }
+
+    // Validate `privateKey.version`.
+    {
+        auto version = PAL::TASN1::elementData(ecPrivateKey, "version");
+        if (!version)
+            return nullptr;
+
+        if (!CryptoConstants::matches(version->data(), version->size(), CryptoConstants::s_asn1Version1))
+            return nullptr;
+    }
+
+    // Validate `privateKey.parameters.namedCurve`, if any.
+    {
+        auto namedCurve = PAL::TASN1::elementData(ecPrivateKey, "parameters.namedCurve");
+        if (namedCurve) {
+            auto parameterCurve = curveForIdentifier(*namedCurve);
+            if (!parameterCurve || *parameterCurve != curve)
+                return nullptr;
+        }
+    }
+
+    // Validate `privateKey.publicKey`, if any, and scan the data into an MPI.
+    PAL::GCrypt::Handle<gcry_mpi_t> publicKeyMPI;
+    {
+        auto publicKey = PAL::TASN1::elementData(ecPrivateKey, "publicKey");
+        if (publicKey) {
+            if (publicKey->size() != curveUncompressedPointSize(curve)
+                || !CryptoConstants::matches(publicKey->data(), 1, CryptoConstants::s_ecUncompressedFormatLeadingByte))
+                return nullptr;
+
+            gcry_error_t error = gcry_mpi_scan(&publicKeyMPI, GCRYMPI_FMT_USG, publicKey->data(), publicKey->size(), nullptr);
+            if (error != GPG_ERR_NO_ERROR) {
+                PAL::GCrypt::logError(error);
+                return nullptr;
+            }
+        }
+    }
+
+    // Retrieve the `privateKey.privateKey` data and embed it into the `private-key` s-expression.
+    PAL::GCrypt::Handle<gcry_sexp_t> platformKey;
+    {
+        auto privateKey = PAL::TASN1::elementData(ecPrivateKey, "privateKey");
+        if (!privateKey)
+            return nullptr;
+
+        // Validate the size of `privateKey`, making sure it fits the size of the specified EC curve.
+        if (privateKey->size() * 8 != curveSize(curve))
+            return nullptr;
+
+        // Construct the `private-key` expression that will also be used for the EC context.
+        gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, "(private-key(ecc(curve %s)(d %b)))",
+            curveName(curve), privateKey->size(), privateKey->data());
+        if (error != GPG_ERR_NO_ERROR) {
+            PAL::GCrypt::logError(error);
+            return nullptr;
+        }
+
+        // Create an EC context for the specified curve.
+        PAL::GCrypt::Handle<gcry_ctx_t> context;
+        error = gcry_mpi_ec_new(&context, platformKey, nullptr);
+        if (error != GPG_ERR_NO_ERROR) {
+            PAL::GCrypt::logError(error);
+            return nullptr;
+        }
+
+        // Set the 'q' value on the EC context if public key data was provided through the import.
+        if (publicKeyMPI) {
+            error = gcry_mpi_ec_set_mpi("q", publicKeyMPI, context);
+            if (error != GPG_ERR_NO_ERROR) {
+                PAL::GCrypt::logError(error);
+                return nullptr;
+            }
+        }
+
+        // Retrieve the `q` point. If the public key was provided through the PKCS#8 import, that
+        // key value will be retrieved as an gcry_mpi_point_t. Otherwise, the `q` point value will
+        // be computed on-the-fly by libgcrypt for the specified elliptic curve.
+        PAL::GCrypt::Handle<gcry_mpi_point_t> point(gcry_mpi_ec_get_point("q", context, 1));
+        if (!point)
+            return nullptr;
+
+        // Bail if the retrieved `q` MPI point is not on the specified EC curve.
+        if (!gcry_mpi_ec_curve_point(point, context))
+            return nullptr;
+    }
+
+    return create(identifier, curve, CryptoKeyType::Private, platformKey.release(), extractable, usages);
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
