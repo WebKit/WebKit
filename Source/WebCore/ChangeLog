@@ -1,3 +1,21 @@
+2017-08-03  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219896. rdar://problem/33711000
+
+    2017-07-25  Andy Estes  <aestes@apple.com>
+
+            [Apple Pay] Add "carteBancaire" as a supported payment network
+            https://bugs.webkit.org/show_bug.cgi?id=174841
+            <rdar://problem/31935596>
+
+            Reviewed by Alex Christensen.
+
+            Tests: http/tests/ssl/applepay/ApplePaySession.html
+                   http/tests/ssl/applepay/ApplePaySessionV3.html
+
+            * Modules/applepay/PaymentRequest.cpp:
+            (WebCore::PaymentRequest::isValidSupportedNetwork):
+
 2017-08-02  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220112. rdar://problem/33687415
