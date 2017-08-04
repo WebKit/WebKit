@@ -1,3 +1,15 @@
+2017-08-04  Lucas Forschler  <lforschler@apple.com>
+
+        minification logic is not implemented for ios builds
+        <rdar://problem/33726561>
+
+        Reviewed by Dean Johnson
+
+        * BuildSlaveSupport/built-product-archive:
+        (minifyDirectory): refactor minifySource -> minifyDirectory
+        (archiveBuiltProduct): add ios minification logic
+        (minifySource): Deleted.
+
 2017-08-04  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r220271.
