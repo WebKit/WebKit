@@ -103,7 +103,6 @@
 #include "ScheduledAction.cpp"
 #include "ScriptCachedFrameData.cpp"
 #include "ScriptController.cpp"
-#include "ScriptGlobalObject.cpp"
 #include "ScriptModuleLoader.cpp"
 #include "ScriptState.cpp"
 #include "SerializedScriptValue.cpp"

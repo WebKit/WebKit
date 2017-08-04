@@ -45,7 +45,6 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "ScriptController.h"
-#include "ScriptGlobalObject.h"
 #include "ScriptState.h"
 #include "Settings.h"
 #include "Timer.h"
@@ -152,7 +151,7 @@ void InspectorFrontendClientLocal::windowObjectCleared()
         m_frontendHost->disconnectClient();
     
     m_frontendHost = InspectorFrontendHost::create(this, m_frontendPage);
-    ScriptGlobalObject::set(*execStateFromPage(debuggerWorld(), m_frontendPage), "InspectorFrontendHost", *m_frontendHost);
+    m_frontendHost->addSelfToGlobalObjectInWorld(debuggerWorld());
 }
 
 void InspectorFrontendClientLocal::frontendLoaded()

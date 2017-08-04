@@ -1259,7 +1259,6 @@ set(WebCore_SOURCES
     bindings/js/ScheduledAction.cpp
     bindings/js/ScriptCachedFrameData.cpp
     bindings/js/ScriptController.cpp
-    bindings/js/ScriptGlobalObject.cpp
     bindings/js/ScriptModuleLoader.cpp
     bindings/js/ScriptState.cpp
     bindings/js/StructuredClone.cpp
