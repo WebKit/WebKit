@@ -493,8 +493,8 @@ enum EventThrottlingBehavior {
 
     void setShowAllPlugins(boolean showAll);
 
-    [Conditional=STREAMS_API, CallWith=ScriptState] any cloneArrayBuffer(any buffer, any srcByteOffset, any byteLength);
-    [Conditional=STREAMS_API, CallWith=ScriptState] boolean isReadableStreamDisturbed(any stream);
+    [CallWith=ScriptState] any cloneArrayBuffer(any buffer, any srcByteOffset, any byteLength);
+    [CallWith=ScriptState] boolean isReadableStreamDisturbed(any stream);
 
     DOMString resourceLoadStatisticsForOrigin(DOMString domain);
     void setResourceLoadStatisticsEnabled(boolean enable);

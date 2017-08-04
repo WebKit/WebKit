@@ -18,8 +18,6 @@
 
 #pragma once
 
-#if ENABLE(STREAMS_API)
-
 namespace JSC {
 class JSObject;
 class VM;
@@ -37,5 +35,3 @@ JSC::JSObject* createReadableStreamBYOBReaderPrivateConstructor(JSC::VM&, JSDOMG
 JSC::JSObject* createReadableStreamBYOBRequestPrivateConstructor(JSC::VM&, JSDOMGlobalObject&);
 
 } // namespace WebCore
-
-#endif // ENABLE(STREAMS_API)

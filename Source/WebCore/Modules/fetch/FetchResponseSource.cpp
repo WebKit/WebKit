@@ -29,8 +29,6 @@
 #include "config.h"
 #include "FetchResponseSource.h"
 
-#if ENABLE(STREAMS_API)
-
 #include "FetchResponse.h"
 
 namespace WebCore {
@@ -83,5 +81,3 @@ void FetchResponseSource::error(const String& value)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(STREAMS_API)

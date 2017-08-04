@@ -1,3 +1,69 @@
+2017-08-04  Youenn Fablet  <youenn@apple.com>
+
+        Remove STREAMS_API compilation guard
+        https://bugs.webkit.org/show_bug.cgi?id=175165
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::consumeAsStream):
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::isDisturbedOrLocked const):
+        (WebCore::FetchBodyOwner::blobLoadingSucceeded):
+        (WebCore::FetchBodyOwner::blobLoadingFailed):
+        (WebCore::FetchBodyOwner::blobChunk):
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didSucceed):
+        (WebCore::FetchResponse::BodyLoader::didFail):
+        (WebCore::FetchResponse::BodyLoader::didReceiveData):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/FetchResponse.js:
+        (initializeFetchResponse):
+        * Modules/fetch/FetchResponseSource.cpp:
+        * Modules/fetch/FetchResponseSource.h:
+        * Modules/streams/ByteLengthQueuingStrategy.idl:
+        * Modules/streams/ByteLengthQueuingStrategy.js:
+        * Modules/streams/CountQueuingStrategy.idl:
+        * Modules/streams/CountQueuingStrategy.js:
+        * Modules/streams/ReadableByteStreamController.idl:
+        * Modules/streams/ReadableByteStreamController.js:
+        * Modules/streams/ReadableByteStreamInternals.js:
+        * Modules/streams/ReadableStream.idl:
+        * Modules/streams/ReadableStream.js:
+        * Modules/streams/ReadableStreamBYOBReader.idl:
+        * Modules/streams/ReadableStreamBYOBReader.js:
+        * Modules/streams/ReadableStreamBYOBRequest.idl:
+        * Modules/streams/ReadableStreamBYOBRequest.js:
+        * Modules/streams/ReadableStreamDefaultController.idl:
+        * Modules/streams/ReadableStreamDefaultController.js:
+        * Modules/streams/ReadableStreamDefaultReader.idl:
+        * Modules/streams/ReadableStreamDefaultReader.js:
+        * Modules/streams/ReadableStreamInternals.js:
+        * Modules/streams/ReadableStreamSource.h:
+        * Modules/streams/ReadableStreamSource.idl:
+        * Modules/streams/StreamInternals.js:
+        * Modules/streams/WritableStream.idl:
+        * Modules/streams/WritableStream.js:
+        * Modules/streams/WritableStreamInternals.js:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::isReadableByteStreamAPIEnabled):
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/JSReadableStreamPrivateConstructors.cpp:
+        * bindings/js/JSReadableStreamPrivateConstructors.h:
+        * bindings/js/JSReadableStreamSourceCustom.cpp:
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        * bindings/js/ReadableStreamDefaultController.h:
+        * page/RuntimeEnabledFeatures.h:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-08-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME][GStreamer] Register ClearKey CDMFactory

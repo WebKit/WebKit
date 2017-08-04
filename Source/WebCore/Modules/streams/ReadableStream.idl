@@ -28,7 +28,6 @@
  */
 
 [
-    Conditional=STREAMS_API,
     Constructor(optional any underlyingSource, optional any options),
     Exposed=(Window,Worker),
     JSBuiltin,

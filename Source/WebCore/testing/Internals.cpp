@@ -3798,8 +3798,6 @@ void Internals::setShowAllPlugins(bool show)
     page->setShowAllPlugins(show);
 }
 
-#if ENABLE(STREAMS_API)
-
 bool Internals::isReadableStreamDisturbed(JSC::ExecState& state, JSValue stream)
 {
     JSGlobalObject* globalObject = state.vmEntryGlobalObject();
@@ -3845,8 +3843,6 @@ JSValue Internals::cloneArrayBuffer(JSC::ExecState& state, JSValue buffer, JSVal
 
     return JSC::call(&state, function, callType, callData, JSC::jsUndefined(), arguments);
 }
-
-#endif
 
 String Internals::resourceLoadStatisticsForOrigin(const String& origin)
 {

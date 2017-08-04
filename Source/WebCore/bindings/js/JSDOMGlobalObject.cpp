@@ -109,18 +109,15 @@ EncodedJSValue JSC_HOST_CALL isWebRTCLegacyAPIEnabled(ExecState*)
 }
 #endif
 
-#if ENABLE(STREAMS_API)
 EncodedJSValue JSC_HOST_CALL isReadableByteStreamAPIEnabled(ExecState*)
 {
     return JSValue::encode(jsBoolean(RuntimeEnabledFeatures::sharedFeatures().readableByteStreamAPIEnabled()));
 }
-#endif
 
 void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 {
     m_builtinInternalFunctions.initialize(*this);
 
-#if ENABLE(STREAMS_API)
     JSObject* privateReadableStreamDefaultControllerConstructor = createReadableStreamDefaultControllerPrivateConstructor(vm, *this);
     JSObject* privateReadableByteStreamControllerConstructor = createReadableByteStreamControllerPrivateConstructor(vm, *this);
     JSObject* privateReadableStreamBYOBRequestConstructor = createReadableStreamBYOBRequestPrivateConstructor(vm, *this);
@@ -141,7 +138,7 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         constructors(locker).add(privateReadableStreamDefaultReaderConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamDefaultReaderConstructor);
         constructors(locker).add(privateReadableStreamBYOBReaderConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamBYOBReaderConstructor);
     }
-#endif
+
     JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
     JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().makeThisTypeErrorPrivateName(),
@@ -155,7 +152,6 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().structuredCloneArrayBufferViewPrivateName(),
             JSFunction::create(vm, this, 1, String(), structuredCloneArrayBufferView), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(vm.propertyNames->builtinNames().ArrayBufferPrivateName(), getDirect(vm, vm.propertyNames->ArrayBuffer), DontDelete | ReadOnly),
-#if ENABLE(STREAMS_API)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamClosingPrivateName(), jsNumber(2), DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamErroredPrivateName(), jsNumber(3), DontDelete | ReadOnly),
@@ -168,7 +164,6 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamDefaultReaderPrivateName(), privateReadableStreamDefaultReaderConstructor, DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().ReadableStreamBYOBReaderPrivateName(), privateReadableStreamBYOBReaderConstructor, DontDelete | ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().readableByteStreamAPIEnabledPrivateName(), JSFunction::create(vm, this, 0, String(), isReadableByteStreamAPIEnabled), DontDelete | ReadOnly),
-#endif
 #if ENABLE(WEB_RTC)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().webRTCLegacyAPIEnabledPrivateName(), JSFunction::create(vm, this, 0, String(), isWebRTCLegacyAPIEnabled), DontDelete | ReadOnly),
 #endif

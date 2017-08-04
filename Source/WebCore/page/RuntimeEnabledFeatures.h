@@ -165,13 +165,11 @@ public:
     void setFetchAPIEnabled(bool isEnabled) { m_isFetchAPIEnabled = isEnabled; }
     bool fetchAPIEnabled() const { return m_isFetchAPIEnabled; }
     
-#if ENABLE(STREAMS_API)
     void setReadableByteStreamAPIEnabled(bool isEnabled) { m_isReadableByteStreamAPIEnabled = isEnabled; }
     bool readableByteStreamAPIEnabled() const { return m_isReadableByteStreamAPIEnabled; }
     void setWritableStreamAPIEnabled(bool isEnabled) { m_isWritableStreamAPIEnabled = isEnabled; }
     bool writableStreamAPIEnabled() const { return m_isWritableStreamAPIEnabled; }
-#endif
-    
+
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     void setDownloadAttributeEnabled(bool isEnabled) { m_isDownloadAttributeEnabled = isEnabled; }
     bool downloadAttributeEnabled() const { return m_isDownloadAttributeEnabled; }
@@ -276,10 +274,8 @@ private:
     bool m_areAnimationTriggersEnabled { false };
 #endif
 
-#if ENABLE(STREAMS_API)
     bool m_isReadableByteStreamAPIEnabled { false };
     bool m_isWritableStreamAPIEnabled { false };
-#endif
 
 #if ENABLE(WEB_ANIMATIONS)
     bool m_areWebAnimationsEnabled { false };

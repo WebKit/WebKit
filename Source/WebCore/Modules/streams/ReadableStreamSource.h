@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(STREAMS_API)
-
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamDefaultController.h"
 #include <wtf/Optional.h>
@@ -117,5 +115,3 @@ inline void ReadableStreamSource::clean()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(STREAMS_API)

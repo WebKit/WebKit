@@ -27,7 +27,6 @@
  */
 
 [
-    Conditional=STREAMS_API,
     CustomConstructor(ReadableByteStreamController controller, TypedArray view),
     Exposed=(Window,Worker),
     JSBuiltin,

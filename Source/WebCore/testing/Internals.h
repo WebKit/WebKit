@@ -540,10 +540,8 @@ public:
     String resourceLoadStatisticsForOrigin(const String& origin);
     void setResourceLoadStatisticsEnabled(bool);
 
-#if ENABLE(STREAMS_API)
     bool isReadableStreamDisturbed(JSC::ExecState&, JSC::JSValue);
     JSC::JSValue cloneArrayBuffer(JSC::ExecState&, JSC::JSValue, JSC::JSValue, JSC::JSValue);
-#endif
 
     String composedTreeAsText(Node&);
 
