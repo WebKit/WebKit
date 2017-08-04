@@ -28,6 +28,7 @@
  */
 
 [
+    Conditional=STREAMS_API,
     Constructor,
     EnabledAtRuntime=WritableStreamAPI,
     JSBuiltin

@@ -28,6 +28,7 @@
  */
 
 [
+    Conditional=STREAMS_API,
     CustomConstructor(ReadableStream stream),
     Exposed=(Window,Worker),
     JSBuiltin,

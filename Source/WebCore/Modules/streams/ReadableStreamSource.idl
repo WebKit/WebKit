@@ -28,6 +28,7 @@
 
 [
     NoInterfaceObject,
+    Conditional=STREAMS_API,
     SkipVTableValidation
 ] interface ReadableStreamSource {
     [Custom] Promise<void> start(ReadableStreamDefaultController controller);

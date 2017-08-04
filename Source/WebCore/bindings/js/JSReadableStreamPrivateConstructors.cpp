@@ -20,6 +20,8 @@
 #include "config.h"
 #include "JSReadableStreamPrivateConstructors.h"
 
+#if ENABLE(STREAMS_API)
+
 #include "JSDOMBuiltinConstructor.h"
 #include "JSReadableByteStreamController.h"
 #include "JSReadableStream.h"
@@ -171,3 +173,5 @@ JSObject* createReadableStreamBYOBRequestPrivateConstructor(VM& vm, JSDOMGlobalO
 }
 
 } // namespace WebCore
+
+#endif

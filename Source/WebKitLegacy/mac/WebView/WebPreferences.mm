@@ -634,8 +634,10 @@ public:
 #endif
         [NSNumber numberWithBool:YES], WebKitFetchAPIEnabledPreferenceKey,
 
+#if ENABLE(STREAMS_API)
         [NSNumber numberWithBool:NO], WebKitReadableByteStreamAPIEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitWritableStreamAPIEnabledPreferenceKey,
+#endif
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
         [NSNumber numberWithBool:NO], WebKitDownloadAttributeEnabledPreferenceKey,
 #endif

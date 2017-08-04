@@ -98,7 +98,9 @@ protected:
     std::optional<FetchBody> m_body;
     String m_contentType;
     bool m_isDisturbed { false };
+#if ENABLE(STREAMS_API)
     RefPtr<FetchResponseSource> m_readableStreamSource;
+#endif
     Ref<FetchHeaders> m_headers;
 
 private:

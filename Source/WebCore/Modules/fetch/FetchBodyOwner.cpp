@@ -63,8 +63,10 @@ bool FetchBodyOwner::isDisturbedOrLocked() const
     if (m_isDisturbed)
         return true;
 
+#if ENABLE(STREAMS_API)
     if (m_readableStreamSource && m_readableStreamSource->isReadableStreamLocked())
         return true;
+#endif
 
     return false;
 }
@@ -208,10 +210,12 @@ void FetchBodyOwner::finishBlobLoading()
 void FetchBodyOwner::blobLoadingSucceeded()
 {
     ASSERT(!isBodyNull());
+#if ENABLE(STREAMS_API)
     if (m_readableStreamSource) {
         m_readableStreamSource->close();
         m_readableStreamSource = nullptr;
     }
+#endif
     m_body->loadingSucceeded();
     finishBlobLoading();
 }
@@ -219,11 +223,13 @@ void FetchBodyOwner::blobLoadingSucceeded()
 void FetchBodyOwner::blobLoadingFailed()
 {
     ASSERT(!isBodyNull());
+#if ENABLE(STREAMS_API)
     if (m_readableStreamSource) {
         if (!m_readableStreamSource->isCancelling())
             m_readableStreamSource->error(ASCIILiteral("Blob loading failed"));
         m_readableStreamSource = nullptr;
     } else
+#endif
         m_body->loadingFailed();
 
     finishBlobLoading();
@@ -232,9 +238,14 @@ void FetchBodyOwner::blobLoadingFailed()
 void FetchBodyOwner::blobChunk(const char* data, size_t size)
 {
     ASSERT(data);
+#if ENABLE(STREAMS_API)
     ASSERT(m_readableStreamSource);
     if (!m_readableStreamSource->enqueue(ArrayBuffer::tryCreate(data, size)))
         stop();
+#else
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(size);
+#endif
 }
 
 FetchBodyOwner::BlobLoader::BlobLoader(FetchBodyOwner& owner)

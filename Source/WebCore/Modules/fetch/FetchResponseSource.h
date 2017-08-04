@@ -28,6 +28,8 @@
 
 #pragma once
 
+#if ENABLE(STREAMS_API)
+
 #include "ReadableStreamSource.h"
 
 namespace JSC {
@@ -63,3 +65,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(STREAMS_API)

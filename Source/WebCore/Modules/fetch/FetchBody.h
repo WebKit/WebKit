@@ -49,7 +49,9 @@ public:
     void text(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void formData(FetchBodyOwner&, Ref<DeferredPromise>&& promise) { promise.get().reject(NotSupportedError); }
 
+#if ENABLE(STREAMS_API)
     void consumeAsStream(FetchBodyOwner&, FetchResponseSource&);
+#endif
 
     bool isBlob() const { return WTF::holds_alternative<Ref<const Blob>>(m_data); }
     bool isFormData() const { return WTF::holds_alternative<Ref<FormData>>(m_data); }

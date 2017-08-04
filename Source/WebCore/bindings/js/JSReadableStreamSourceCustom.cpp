@@ -29,6 +29,8 @@
 #include "config.h"
 #include "JSReadableStreamSource.h"
 
+#if ENABLE(STREAMS_API)
+
 using namespace JSC;
 
 namespace WebCore {
@@ -62,3 +64,5 @@ JSValue JSReadableStreamSource::controller(ExecState&) const
 }
 
 }
+
+#endif // ENABLE(STREAMS_API)

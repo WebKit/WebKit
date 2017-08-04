@@ -127,8 +127,10 @@ void FetchResponse::BodyLoader::didSucceed()
     ASSERT(m_response.hasPendingActivity());
     m_response.m_body->loadingSucceeded();
 
+#if ENABLE(STREAMS_API)
     if (m_response.m_readableStreamSource && !m_response.body().consumer().hasData())
         m_response.closeStream();
+#endif
 
     if (m_loader->isStarted()) {
         Ref<FetchResponse> protector(m_response);
@@ -142,11 +144,13 @@ void FetchResponse::BodyLoader::didFail()
     if (m_promise)
         std::exchange(m_promise, std::nullopt)->reject(TypeError);
 
+#if ENABLE(STREAMS_API)
     if (m_response.m_readableStreamSource) {
         if (!m_response.m_readableStreamSource->isCancelling())
             m_response.m_readableStreamSource->error(ASCIILiteral("Loading failed"));
         m_response.m_readableStreamSource = nullptr;
     }
+#endif
 
     // Check whether didFail is called as part of FetchLoader::start.
     if (m_loader->isStarted()) {
@@ -180,6 +184,7 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
 
 void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
 {
+#if ENABLE(STREAMS_API)
     ASSERT(m_response.m_readableStreamSource);
     auto& source = *m_response.m_readableStreamSource;
 
@@ -197,6 +202,10 @@ void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
         return;
     }
     source.resolvePullPromise();
+#else
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(size);
+#endif
 }
 
 bool FetchResponse::BodyLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
@@ -242,6 +251,7 @@ void FetchResponse::consume(unsigned type, Ref<DeferredPromise>&& wrapper)
     }
 }
 
+#if ENABLE(STREAMS_API)
 void FetchResponse::startConsumingStream(unsigned type)
 {
     m_isDisturbed = true;
@@ -334,6 +344,8 @@ void FetchResponse::cancel()
     m_isDisturbed = true;
     stop();
 }
+
+#endif
 
 void FetchResponse::stop()
 {
