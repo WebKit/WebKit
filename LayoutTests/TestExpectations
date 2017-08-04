@@ -1051,9 +1051,8 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Slow ]
 
-# Imported beacon that takes a long time to complete, even in Release.
-webkit.org/b/175007 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-basic-string.html [ Slow ]
-webkit.org/b/175007 [ Debug ] imported/w3c/web-platform-tests/beacon/beacon-basic-string.html [ Skip ]
+# Imported Beacon test that is flaky because its last check is very slow.
+webkit.org/b/175202 imported/w3c/web-platform-tests/beacon/beacon-basic-string.html [ Pass Failure ]
 
 
 # WebCryptoAPI features that haven't been enabled for current OS
