@@ -1,3 +1,18 @@
+2017-08-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: capture async stack trace when workers/main context posts a message
+        https://bugs.webkit.org/show_bug.cgi?id=167084
+        <rdar://problem/30033673>
+
+        Reviewed by Brian Burg.
+
+        Add a test to check for asynchronous stack trace data when the debugger
+        pauses inside a MessageEvent handler.
+
+        * inspector/debugger/async-stack-trace-expected.txt:
+        * inspector/debugger/async-stack-trace.html:
+        * inspector/debugger/resources/postMessage-echo.html: Added.
+
 2017-08-04  Chris Dumez  <cdumez@apple.com>
 
         LayoutTest imported/w3c/web-platform-tests/beacon/beacon-basic-string.html is a flaky failure (harness timeout)
