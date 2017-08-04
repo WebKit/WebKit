@@ -95,7 +95,7 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     
-    patchBuffer.link(functionCall, compileOSRExit);
+    patchBuffer.link(functionCall, OSRExit::compileOSRExit);
     
     return FINALIZE_CODE(patchBuffer, ("DFG OSR exit generation thunk"));
 }

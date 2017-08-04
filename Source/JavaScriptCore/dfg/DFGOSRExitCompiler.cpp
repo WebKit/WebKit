@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@
 
 namespace JSC { namespace DFG {
 
-void OSRExitCompiler::emitRestoreArguments(const Operands<ValueRecovery>& operands)
+void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecovery>& operands)
 {
     HashMap<MinifiedID, int> alreadyAllocatedArguments; // Maps phantom arguments node ID to operand.
     for (size_t index = 0; index < operands.size(); ++index) {
@@ -55,13 +55,13 @@ void OSRExitCompiler::emitRestoreArguments(const Operands<ValueRecovery>& operan
         auto iter = alreadyAllocatedArguments.find(id);
         if (iter != alreadyAllocatedArguments.end()) {
             JSValueRegs regs = JSValueRegs::withTwoAvailableRegs(GPRInfo::regT0, GPRInfo::regT1);
-            m_jit.loadValue(CCallHelpers::addressFor(iter->value), regs);
-            m_jit.storeValue(regs, CCallHelpers::addressFor(operand));
+            jit.loadValue(CCallHelpers::addressFor(iter->value), regs);
+            jit.storeValue(regs, CCallHelpers::addressFor(operand));
             continue;
         }
         
         InlineCallFrame* inlineCallFrame =
-            m_jit.codeBlock()->jitCode()->dfg()->minifiedDFG.at(id)->inlineCallFrame();
+            jit.codeBlock()->jitCode()->dfg()->minifiedDFG.at(id)->inlineCallFrame();
 
         int stackOffset;
         if (inlineCallFrame)
@@ -70,48 +70,46 @@ void OSRExitCompiler::emitRestoreArguments(const Operands<ValueRecovery>& operan
             stackOffset = 0;
         
         if (!inlineCallFrame || inlineCallFrame->isClosureCall) {
-            m_jit.loadPtr(
+            jit.loadPtr(
                 AssemblyHelpers::addressFor(stackOffset + CallFrameSlot::callee),
                 GPRInfo::regT0);
         } else {
-            m_jit.move(
+            jit.move(
                 AssemblyHelpers::TrustedImmPtr(inlineCallFrame->calleeRecovery.constant().asCell()),
                 GPRInfo::regT0);
         }
         
         if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
-            m_jit.load32(
+            jit.load32(
                 AssemblyHelpers::payloadFor(stackOffset + CallFrameSlot::argumentCount),
                 GPRInfo::regT1);
         } else {
-            m_jit.move(
+            jit.move(
                 AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()),
                 GPRInfo::regT1);
         }
         
-        m_jit.setupArgumentsWithExecState(
+        jit.setupArgumentsWithExecState(
             AssemblyHelpers::TrustedImmPtr(inlineCallFrame), GPRInfo::regT0, GPRInfo::regT1);
         switch (recovery.technique()) {
         case DirectArgumentsThatWereNotCreated:
-            m_jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(operationCreateDirectArgumentsDuringExit)), GPRInfo::nonArgGPR0);
+            jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(operationCreateDirectArgumentsDuringExit)), GPRInfo::nonArgGPR0);
             break;
         case ClonedArgumentsThatWereNotCreated:
-            m_jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(operationCreateClonedArgumentsDuringExit)), GPRInfo::nonArgGPR0);
+            jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(operationCreateClonedArgumentsDuringExit)), GPRInfo::nonArgGPR0);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        m_jit.call(GPRInfo::nonArgGPR0);
-        m_jit.storeCell(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(operand));
+        jit.call(GPRInfo::nonArgGPR0);
+        jit.storeCell(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(operand));
         
         alreadyAllocatedArguments.add(id, operand);
     }
 }
 
-extern "C" {
-
-void compileOSRExit(ExecState* exec)
+void OSRExit::compileOSRExit(ExecState* exec)
 {
     VM* vm = &exec->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
@@ -148,7 +146,6 @@ void compileOSRExit(ExecState* exec)
 
     {
         CCallHelpers jit(codeBlock);
-        OSRExitCompiler exitCompiler(jit);
 
         if (exit.m_kind == GenericUnwind) {
             // We are acting as a defacto op_catch because we arrive here from genericUnwind().
@@ -172,8 +169,8 @@ void compileOSRExit(ExecState* exec)
             jit.add64(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(profilerExit->counterAddress()));
         }
 
-        exitCompiler.compileExit(*vm, exit, operands, recovery);
-        
+        compileExit(jit, *vm, exit, operands, recovery);
+
         LinkBuffer patchBuffer(jit, codeBlock);
         exit.m_code = FINALIZE_CODE_IF(
             shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseDFGOSRExit(),
@@ -188,8 +185,6 @@ void compileOSRExit(ExecState* exec)
     
     vm->osrExitJumpDestination = exit.m_code.code().executableAddress();
 }
-
-} // extern "C"
 
 } } // namespace JSC::DFG
 

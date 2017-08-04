@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,14 @@
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "MethodOfGettingAValueProfile.h"
+#include "Operands.h"
+#include "ValueRecovery.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class CCallHelpers;
+
+namespace DFG {
 
 class SpeculativeJIT;
 struct BasicBlock;
@@ -92,6 +98,8 @@ private:
 struct OSRExit : public OSRExitBase {
     OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = UINT_MAX);
 
+    static void JIT_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
+
     unsigned m_patchableCodeOffset { 0 };
     
     MacroAssemblerCodeRef m_code;
@@ -111,6 +119,10 @@ struct OSRExit : public OSRExitBase {
     {
         OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromDFG);
     }
+
+private:
+    static void compileExit(CCallHelpers&, VM&, const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
+    static void emitRestoreArguments(CCallHelpers&, const Operands<ValueRecovery>&);
 };
 
 struct SpeculationFailureDebugInfo {

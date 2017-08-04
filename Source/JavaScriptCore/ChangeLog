@@ -1,3 +1,40 @@
+2017-08-04  Mark Lam  <mark.lam@apple.com>
+
+        Move DFG::OSRExitCompiler methods into DFG::OSRExit [step 1].
+        https://bugs.webkit.org/show_bug.cgi?id=175208
+        <rdar://problem/33732402>
+
+        Reviewed by Saam Barati.
+
+        This will minimize the code diff and make it easier to review the patch for
+        https://bugs.webkit.org/show_bug.cgi?id=175144 later.  We'll do this patch in 3
+        steps:
+
+        1. Do the code changes to move methods into OSRExit.
+        2. Copy the 64-bit and common methods into DFGOSRExit.cpp, and delete the unused DFGOSRExitCompiler files.
+        3. Merge the 32-bit OSRExitCompiler methods into the 64-bit version, and delete DFGOSRExitCompiler32_64.cpp.
+
+        Splitting this refactoring into these 3 steps also makes it easier to review this
+        patch and understand what is being changed.
+
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitCompiler.cpp:
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        (JSC::DFG::OSRExit::compileOSRExit):
+        (JSC::DFG::OSRExitCompiler::emitRestoreArguments): Deleted.
+        (): Deleted.
+        * dfg/DFGOSRExitCompiler.h:
+        (JSC::DFG::OSRExitCompiler::OSRExitCompiler): Deleted.
+        (): Deleted.
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        (JSC::DFG::OSRExitCompiler::compileExit): Deleted.
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        (JSC::DFG::OSRExitCompiler::compileExit): Deleted.
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+
 2017-08-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add source view for WebGL shader programs

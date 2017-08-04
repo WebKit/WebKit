@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,32 +30,5 @@
 #include "CCallHelpers.h"
 #include "DFGOSRExit.h"
 #include "Operands.h"
-
-namespace JSC {
-
-class ExecState;
-
-namespace DFG {
-
-class OSRExitCompiler {
-public:
-    OSRExitCompiler(CCallHelpers& jit)
-        : m_jit(jit)
-    {
-    }
-    
-    void compileExit(VM&, const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
-
-private:
-    void emitRestoreArguments(const Operands<ValueRecovery>&);
-    
-    CCallHelpers& m_jit;
-};
-
-extern "C" {
-void JIT_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
-}
-
-} } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

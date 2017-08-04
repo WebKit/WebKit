@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,16 +36,16 @@
 
 namespace JSC { namespace DFG {
 
-void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
+void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
 {
     // Pro-forma stuff.
     if (Options::printEachOSRExit()) {
         SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
-        debugInfo->codeBlock = m_jit.codeBlock();
+        debugInfo->codeBlock = jit.codeBlock();
         debugInfo->kind = exit.m_kind;
         debugInfo->bytecodeOffset = exit.m_codeOrigin.bytecodeIndex;
         
-        m_jit.debugCall(vm, debugOperationPrintSpeculationFailure, debugInfo);
+        jit.debugCall(vm, debugOperationPrintSpeculationFailure, debugInfo);
     }
 
     // Perform speculation recovery. This only comes into play when an operation
@@ -54,11 +54,11 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
     if (recovery) {
         switch (recovery->type()) {
         case SpeculativeAdd:
-            m_jit.sub32(recovery->src(), recovery->dest());
+            jit.sub32(recovery->src(), recovery->dest());
             break;
 
         case SpeculativeAddImmediate:
-            m_jit.sub32(AssemblyHelpers::Imm32(recovery->immediate()), recovery->dest());
+            jit.sub32(AssemblyHelpers::Imm32(recovery->immediate()), recovery->dest());
             break;
             
         case BooleanSpeculationCheck:
@@ -87,7 +87,7 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
             // the cell check would have already happened.
             
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
-            if (ArrayProfile* arrayProfile = m_jit.baselineCodeBlockFor(codeOrigin)->getArrayProfile(codeOrigin.bytecodeIndex)) {
+            if (ArrayProfile* arrayProfile = jit.baselineCodeBlockFor(codeOrigin)->getArrayProfile(codeOrigin.bytecodeIndex)) {
                 GPRReg usedRegister1;
                 GPRReg usedRegister2;
                 if (exit.m_jsValueSource.isAddress()) {
@@ -106,25 +106,25 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
                 scratch1 = AssemblyHelpers::selectScratchGPR(usedRegister1, usedRegister2);
                 scratch2 = AssemblyHelpers::selectScratchGPR(usedRegister1, usedRegister2, scratch1);
                 
-                m_jit.push(scratch1);
-                m_jit.push(scratch2);
+                jit.push(scratch1);
+                jit.push(scratch2);
                 
                 GPRReg value;
                 if (exit.m_jsValueSource.isAddress()) {
                     value = scratch1;
-                    m_jit.loadPtr(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), value);
+                    jit.loadPtr(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), value);
                 } else
                     value = exit.m_jsValueSource.payloadGPR();
                 
-                m_jit.loadPtr(AssemblyHelpers::Address(value, JSCell::structureIDOffset()), scratch1);
-                m_jit.storePtr(scratch1, arrayProfile->addressOfLastSeenStructureID());
-                m_jit.load8(AssemblyHelpers::Address(scratch1, Structure::indexingTypeIncludingHistoryOffset()), scratch1);
-                m_jit.move(AssemblyHelpers::TrustedImm32(1), scratch2);
-                m_jit.lshift32(scratch1, scratch2);
-                m_jit.or32(scratch2, AssemblyHelpers::AbsoluteAddress(arrayProfile->addressOfArrayModes()));
+                jit.loadPtr(AssemblyHelpers::Address(value, JSCell::structureIDOffset()), scratch1);
+                jit.storePtr(scratch1, arrayProfile->addressOfLastSeenStructureID());
+                jit.load8(AssemblyHelpers::Address(scratch1, Structure::indexingTypeIncludingHistoryOffset()), scratch1);
+                jit.move(AssemblyHelpers::TrustedImm32(1), scratch2);
+                jit.lshift32(scratch1, scratch2);
+                jit.or32(scratch2, AssemblyHelpers::AbsoluteAddress(arrayProfile->addressOfArrayModes()));
                 
-                m_jit.pop(scratch2);
-                m_jit.pop(scratch1);
+                jit.pop(scratch2);
+                jit.pop(scratch1);
             }
         }
         
@@ -133,25 +133,25 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
                 // Save a register so we can use it.
                 GPRReg scratchPayload = AssemblyHelpers::selectScratchGPR(exit.m_jsValueSource.base());
                 GPRReg scratchTag = AssemblyHelpers::selectScratchGPR(exit.m_jsValueSource.base(), scratchPayload);
-                m_jit.pushToSave(scratchPayload);
-                m_jit.pushToSave(scratchTag);
+                jit.pushToSave(scratchPayload);
+                jit.pushToSave(scratchTag);
 
                 JSValueRegs scratch(scratchTag, scratchPayload);
                 
-                m_jit.loadValue(exit.m_jsValueSource.asAddress(), scratch);
-                profile.emitReportValue(m_jit, scratch);
+                jit.loadValue(exit.m_jsValueSource.asAddress(), scratch);
+                profile.emitReportValue(jit, scratch);
                 
-                m_jit.popToRestore(scratchTag);
-                m_jit.popToRestore(scratchPayload);
+                jit.popToRestore(scratchTag);
+                jit.popToRestore(scratchPayload);
             } else if (exit.m_jsValueSource.hasKnownTag()) {
                 GPRReg scratchTag = AssemblyHelpers::selectScratchGPR(exit.m_jsValueSource.payloadGPR());
-                m_jit.pushToSave(scratchTag);
-                m_jit.move(AssemblyHelpers::TrustedImm32(exit.m_jsValueSource.tag()), scratchTag);
+                jit.pushToSave(scratchTag);
+                jit.move(AssemblyHelpers::TrustedImm32(exit.m_jsValueSource.tag()), scratchTag);
                 JSValueRegs value(scratchTag, exit.m_jsValueSource.payloadGPR());
-                profile.emitReportValue(m_jit, value);
-                m_jit.popToRestore(scratchTag);
+                profile.emitReportValue(jit, value);
+                jit.popToRestore(scratchTag);
             } else
-                profile.emitReportValue(m_jit, exit.m_jsValueSource.regs());
+                profile.emitReportValue(jit, exit.m_jsValueSource.regs());
         }
     }
     
@@ -170,16 +170,16 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
         case UnboxedInt32InGPR:
         case UnboxedBooleanInGPR:
         case UnboxedCellInGPR:
-            m_jit.store32(
+            jit.store32(
                 recovery.gpr(),
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
             break;
             
         case InPair:
-            m_jit.store32(
+            jit.store32(
                 recovery.tagGPR(),
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
-            m_jit.store32(
+            jit.store32(
                 recovery.payloadGPR(),
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
             break;
@@ -199,8 +199,8 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
         switch (recovery.technique()) {
         case UnboxedDoubleInFPR:
         case InFPR:
-            m_jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT0);
-            m_jit.storeDouble(recovery.fpr(), MacroAssembler::Address(GPRInfo::regT0));
+            jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT0);
+            jit.storeDouble(recovery.fpr(), MacroAssembler::Address(GPRInfo::regT0));
             break;
             
         default:
@@ -223,16 +223,16 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
         case DoubleDisplacedInJSStack:
         case CellDisplacedInJSStack:
         case BooleanDisplacedInJSStack:
-            m_jit.load32(
+            jit.load32(
                 AssemblyHelpers::tagFor(recovery.virtualRegister()),
                 GPRInfo::regT0);
-            m_jit.load32(
+            jit.load32(
                 AssemblyHelpers::payloadFor(recovery.virtualRegister()),
                 GPRInfo::regT1);
-            m_jit.store32(
+            jit.store32(
                 GPRInfo::regT0,
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
-            m_jit.store32(
+            jit.store32(
                 GPRInfo::regT1,
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
             break;
@@ -245,17 +245,17 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
     // Need to ensure that the stack pointer accounts for the worst-case stack usage at exit. This
     // could toast some stack that the DFG used. We need to do it before storing to stack offsets
     // used by baseline.
-    m_jit.addPtr(
+    jit.addPtr(
         CCallHelpers::TrustedImm32(
-            -m_jit.codeBlock()->jitCode()->dfgCommon()->requiredRegisterCountForExit * sizeof(Register)),
+            -jit.codeBlock()->jitCode()->dfgCommon()->requiredRegisterCountForExit * sizeof(Register)),
         CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
     
     // Restore the DFG callee saves and then save the ones the baseline JIT uses.
-    m_jit.emitRestoreCalleeSaves();
-    m_jit.emitSaveCalleeSavesFor(m_jit.baselineCodeBlock());
+    jit.emitRestoreCalleeSaves();
+    jit.emitSaveCalleeSavesFor(jit.baselineCodeBlock());
 
     if (exit.isExceptionHandler())
-        m_jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm);
+        jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm);
 
     // Do all data format conversions and store the results into the stack.
     
@@ -263,7 +263,7 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
         const ValueRecovery& recovery = operands[index];
         VirtualRegister reg = operands.virtualRegisterForIndex(index);
 
-        if (reg.isLocal() && reg.toLocal() < static_cast<int>(m_jit.baselineCodeBlock()->calleeSaveSpaceAsVirtualRegisters()))
+        if (reg.isLocal() && reg.toLocal() < static_cast<int>(jit.baselineCodeBlock()->calleeSaveSpaceAsVirtualRegisters()))
             continue;
 
         int operand = reg.offset();
@@ -272,72 +272,72 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
         case InPair:
         case DisplacedInJSStack:
         case InFPR:
-            m_jit.load32(
+            jit.load32(
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag,
                 GPRInfo::regT0);
-            m_jit.load32(
+            jit.load32(
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload,
                 GPRInfo::regT1);
-            m_jit.store32(
+            jit.store32(
                 GPRInfo::regT0,
                 AssemblyHelpers::tagFor(operand));
-            m_jit.store32(
+            jit.store32(
                 GPRInfo::regT1,
                 AssemblyHelpers::payloadFor(operand));
             break;
             
         case UnboxedDoubleInFPR:
         case DoubleDisplacedInJSStack:
-            m_jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT0);
-            m_jit.loadDouble(MacroAssembler::Address(GPRInfo::regT0), FPRInfo::fpRegT0);
-            m_jit.purifyNaN(FPRInfo::fpRegT0);
-            m_jit.storeDouble(FPRInfo::fpRegT0, AssemblyHelpers::addressFor(operand));
+            jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT0);
+            jit.loadDouble(MacroAssembler::Address(GPRInfo::regT0), FPRInfo::fpRegT0);
+            jit.purifyNaN(FPRInfo::fpRegT0);
+            jit.storeDouble(FPRInfo::fpRegT0, AssemblyHelpers::addressFor(operand));
             break;
 
         case UnboxedInt32InGPR:
         case Int32DisplacedInJSStack:
-            m_jit.load32(
+            jit.load32(
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload,
                 GPRInfo::regT0);
-            m_jit.store32(
+            jit.store32(
                 AssemblyHelpers::TrustedImm32(JSValue::Int32Tag),
                 AssemblyHelpers::tagFor(operand));
-            m_jit.store32(
+            jit.store32(
                 GPRInfo::regT0,
                 AssemblyHelpers::payloadFor(operand));
             break;
             
         case UnboxedCellInGPR:
         case CellDisplacedInJSStack:
-            m_jit.load32(
+            jit.load32(
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload,
                 GPRInfo::regT0);
-            m_jit.store32(
+            jit.store32(
                 AssemblyHelpers::TrustedImm32(JSValue::CellTag),
                 AssemblyHelpers::tagFor(operand));
-            m_jit.store32(
+            jit.store32(
                 GPRInfo::regT0,
                 AssemblyHelpers::payloadFor(operand));
             break;
             
         case UnboxedBooleanInGPR:
         case BooleanDisplacedInJSStack:
-            m_jit.load32(
+            jit.load32(
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload,
                 GPRInfo::regT0);
-            m_jit.store32(
+            jit.store32(
                 AssemblyHelpers::TrustedImm32(JSValue::BooleanTag),
                 AssemblyHelpers::tagFor(operand));
-            m_jit.store32(
+            jit.store32(
                 GPRInfo::regT0,
                 AssemblyHelpers::payloadFor(operand));
             break;
             
         case Constant:
-            m_jit.store32(
+            jit.store32(
                 AssemblyHelpers::TrustedImm32(recovery.constant().tag()),
                 AssemblyHelpers::tagFor(operand));
-            m_jit.store32(
+            jit.store32(
                 AssemblyHelpers::TrustedImm32(recovery.constant().payload()),
                 AssemblyHelpers::payloadFor(operand));
             break;
@@ -358,7 +358,7 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
     // Note that we also roughly assume that the arguments might still be materialized outside of its
     // inline call frame scope - but for now the DFG wouldn't do that.
     
-    emitRestoreArguments(operands);
+    emitRestoreArguments(jit, operands);
 
     // Adjust the old JIT's execute counter. Since we are exiting OSR, we know
     // that all new calls into this code will go to the new JIT, so the execute
@@ -396,14 +396,14 @@ void OSRExitCompiler::compileExit(VM& vm, const OSRExit& exit, const Operands<Va
     // counter to 0; otherwise we set the counter to
     // counterValueForOptimizeAfterWarmUp().
     
-    handleExitCounts(m_jit, exit);
+    handleExitCounts(jit, exit);
     
     // Reify inlined call frames.
     
-    reifyInlinedCallFrames(m_jit, exit);
+    reifyInlinedCallFrames(jit, exit);
     
     // And finish.
-    adjustAndJumpToTarget(vm, m_jit, exit);
+    adjustAndJumpToTarget(vm, jit, exit);
 }
 
 } } // namespace JSC::DFG
