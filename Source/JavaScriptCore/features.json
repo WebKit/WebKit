@@ -96,6 +96,23 @@
         "specification": "ES6"
     },
     {
+        "name": "Async Iteration",
+        "status": {
+            "status": "In development",
+            "enabled-by-default": false
+        },
+        "url": "https://tc39.github.io/proposal-async-iteration/",
+        "documentation-url": "http://2ality.com/2016/10/asynchronous-iteration.html",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=166693",
+        "description": "This feature adds syntactic support for asynchronous iteration using the AsyncIterable and AsyncIterator protocols. It introduces a new IterationStatement, for-await-of, and adds syntax for creating async generator functions and methods.",
+        "specification": "ESNext",
+        "contact": {
+            "name": "Oleksandr Skachkov",
+            "twitter": "@alSkachkov",
+            "email": "gskachkov@gmail.com"
+        }
+    },
+    {
         "name": "Block Scoping",
         "status": {
             "status": "Supported",
