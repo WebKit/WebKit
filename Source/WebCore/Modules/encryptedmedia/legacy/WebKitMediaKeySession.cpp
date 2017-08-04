@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "FileSystem.h"
+#include "Page.h"
 #include "SecurityOriginData.h"
 #include "Settings.h"
 #include "WebKitMediaKeyError.h"
@@ -220,6 +221,10 @@ String WebKitMediaKeySession::mediaKeysStorageDirectory() const
 {
     auto* document = downcast<Document>(scriptExecutionContext());
     if (!document)
+        return emptyString();
+
+    auto* page = document->page();
+    if (!page || page->usesEphemeralSession())
         return emptyString();
 
     auto storageDirectory = document->settings().mediaKeysStorageDirectory();
