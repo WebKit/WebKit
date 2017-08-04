@@ -1,3 +1,14 @@
+2017-08-04  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        [EsNext] Async iteration - Add feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=166694
+
+        Reviewed by Yusuke Suzuki.
+
+        Add feature flag to JSC to switch on/off Async Iterator
+
+        * runtime/Options.h:
+
 2017-08-03  Brian Burg  <bburg@apple.com>
 
         Remove ENABLE(WEB_SOCKET) guards
