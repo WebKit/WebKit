@@ -60,6 +60,12 @@ def parse_args():
     return args
 
 
+def run_benchmark_plan(args, plan):
+    benchmark_runner_class = benchmark_runner_subclasses[args.driver]
+    runner = benchmark_runner_class(plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser, args.scale_unit, args.device_id)
+    runner.execute()
+
+
 def start(args):
     if args.json_file:
         results_json = json.load(open(args.json_file, 'r'))
@@ -83,8 +89,7 @@ def start(args):
                 continue
             _log.info('Starting benchmark plan: %s' % plan)
             try:
-                runner = BenchmarkRunner(plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser, args.scale_unit, args.device_id)
-                runner.execute()
+                run_benchmark_plan(args, plan)
                 _log.info('Finished benchmark plan: %s' % plan)
             except KeyboardInterrupt:
                 raise
@@ -94,9 +99,7 @@ def start(args):
         if failed:
             _log.error('The following benchmark plans have failed: %s' % failed)
         return len(failed)
-    benchmark_runner_class = benchmark_runner_subclasses[args.driver]
-    runner = benchmark_runner_class(args.plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser, args.scale_unit, args.device_id)
-    runner.execute()
+    run_benchmark_plan(args, args.plan)
 
 
 def format_logger(logger):

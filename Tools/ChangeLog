@@ -1,3 +1,21 @@
+2017-08-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r219857): run-benchmark --allplans broken
+        https://bugs.webkit.org/show_bug.cgi?id=175186
+
+        Reviewed by Saam Barati.
+
+        r219857 forgot to update also the calls to BenchmarkRunner() that
+        is done when the script is run with --allplans.
+
+        To fix this (and avoid future issues like this), let's factorize
+        the calls to the benchhmark runner in a run_benchmark_plan()
+        function.
+
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (run_benchmark_plan):
+        (start):
+
 2017-08-04  Aakash Jain  <aakash_jain@apple.com>
 
         Dashboard bubbles sometimes show failure count instead of crash count
