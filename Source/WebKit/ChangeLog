@@ -1,3 +1,17 @@
+2017-08-04  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Report user interaction immediately, but only when needed
+        https://bugs.webkit.org/show_bug.cgi?id=175090
+        <rdar://problem/33685546>
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleClearResourceLoadStatistics):
+            Test infrastructure. Ends up calling
+            WebCore::ResourceLoadObserver::clearState().
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+
 2017-08-04  Antti Koivisto  <antti@apple.com>
 
         Network cache should be usable as non-singleton

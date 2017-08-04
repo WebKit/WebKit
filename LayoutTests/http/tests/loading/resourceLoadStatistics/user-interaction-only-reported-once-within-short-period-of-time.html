@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+    description("Tests that user interaction is not reported repeatedly within a short period of time.");
+    jsTestIsAsync = true;
+
+    const topFrameOrigin = "http://127.0.0.1:8000";
+    const subFrameOrigin = "http://localhost:8000";
+
+    function activateElement(elementId) {
+        var element = document.getElementById(elementId);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY);
+    }
+
+    function firstInteraction() {
+        if (testRunner) {
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+            testRunner.installStatisticsDidScanDataRecordsCallback(secondInteraction);
+
+            shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
+            shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
+        }
+
+        activateElement("testFrame");
+    }
+
+    function secondInteraction() {
+        if (testRunner) {
+            testRunner.installStatisticsDidScanDataRecordsCallback(finishTest);
+
+            shouldBeTrue("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
+            shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
+
+            testRunner.setStatisticsHasHadUserInteraction(topFrameOrigin, false);
+            shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
+        }
+
+        activateElement("testFrame");
+
+        if (testRunner)
+            testRunner.statisticsProcessStatisticsAndDataRecords();
+    }
+
+    function finishTest() {
+        shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
+        shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
+
+        finishJSTest();
+    }
+
+    onload = function() {
+        if (internals)
+            internals.setResourceLoadStatisticsEnabled(true);
+
+        shouldBe("document.location.origin", "topFrameOrigin");
+
+        firstInteraction();
+    };
+</script>
+<iframe id="testFrame" src="http://localhost:8000/loading/resourceLoadStatistics/resources/dummy.html"></iframe>
+</body>
+</html>
