@@ -360,26 +360,35 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
     while (position < end && isHTMLSpace(*position))
         ++position;
 
+    unsigned time = 0;
+
     const CharacterType* numberStart = position;
     while (position < end && isASCIIDigit(*position))
         ++position;
 
-    auto optionalNumber = parseHTMLNonNegativeInteger(StringView(numberStart, position - numberStart));
-    if (!optionalNumber)
-        return false;
+    StringView timeString(numberStart, position - numberStart);
+    if (timeString.isEmpty()) {
+        if (position >= end || *position != '.')
+            return false;
+    } else {
+        auto optionalNumber = parseHTMLNonNegativeInteger(timeString);
+        if (!optionalNumber)
+            return false;
+        time = optionalNumber.value();
+    }
 
     while (position < end && (isASCIIDigit(*position) || *position == '.'))
         ++position;
 
     if (position == end) {
-        parsedDelay = optionalNumber.value();
+        parsedDelay = time;
         return true;
     }
 
     if (*position != ';' && *position != ',' && !isHTMLSpace(*position))
         return false;
 
-    parsedDelay = optionalNumber.value();
+    parsedDelay = time;
 
     while (position < end && isHTMLSpace(*position))
         ++position;

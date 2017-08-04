@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 42: TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
-
-FAIL When moving between documents, must refresh the original document TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
-

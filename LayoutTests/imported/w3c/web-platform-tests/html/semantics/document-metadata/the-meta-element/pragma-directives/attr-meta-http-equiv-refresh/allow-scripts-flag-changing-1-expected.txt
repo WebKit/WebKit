@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 47: TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
+CONSOLE MESSAGE: line 2566: Error: assert_unreached: The iframe from which the meta came from must not refresh Reached unreachable code
 
-FAIL Meta refresh is blocked by the allow-scripts sandbox flag at its creation time, not when refresh comes due TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
+FAIL Meta refresh is blocked by the allow-scripts sandbox flag at its creation time, not when refresh comes due Error: assert_unreached: The iframe from which the meta came from must not refresh Reached unreachable code
 

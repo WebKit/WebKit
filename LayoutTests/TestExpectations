@@ -299,6 +299,10 @@ imported/w3c/web-platform-tests/IndexedDB/clone-before-keypath-eval.html [ Pass 
 imported/w3c/web-platform-tests/IndexedDB/bindings-inject-key.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/dangling-markup-mitigation.tentative.html [ Pass Failure ]
 
+# Those WPT tests are flaky when failing.
+imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-1.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-2.html [ Pass Failure ]
+
 # css alignment tests
 webkit.org/b/172711 css3/parse-alignment-of-root-elements.html [ Failure ]
 

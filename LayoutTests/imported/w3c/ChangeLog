@@ -1,5 +1,25 @@
 2017-08-03  Chris Dumez  <cdumez@apple.com>
 
+        Fix parsing of <meta http-equiv=refresh> to allow time starting with a '.' without a leading 0
+        https://bugs.webkit.org/show_bug.cgi?id=175132
+
+        Reviewed by Darin Adler.
+
+        Re-sync WPT tests from upstream c8bf1bbe9296. This extends test coverage.
+
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-1-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-2-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/moving-documents-expected.txt: Removed.
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/remove-from-document-expected.txt: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/remove-from-document.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/moving-documents.html.
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/support/refresh.sub.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/support/w3c-import.log:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/w3c-import.log:
+
+2017-08-03  Chris Dumez  <cdumez@apple.com>
+
         Multiple Layout tests from web-platform-tests/beacon/ are timing out.
         https://bugs.webkit.org/show_bug.cgi?id=175076
         <rdar://problem/33704752>
