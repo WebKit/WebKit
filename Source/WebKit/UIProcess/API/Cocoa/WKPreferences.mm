@@ -597,7 +597,7 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setEnumeratingAllNetworkInterfacesEnabled(enabled);
 }
 
-- (BOOL)_iceCandidateFiltertingEnabled
+- (BOOL)_iceCandidateFilteringEnabled
 {
     return _preferences->iceCandidateFilteringEnabled();
 }
