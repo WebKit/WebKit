@@ -201,6 +201,13 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
 
         if (WI.frameResourceManager.mainFrame)
             this._mainFrameMainResourceDidChange(WI.frameResourceManager.mainFrame);
+
+        for (let script of WI.debuggerManager.knownNonResourceScripts) {
+            this._addScript(script);
+
+            if (script.sourceMaps.length && WI.debuggableType === WI.DebuggableType.JavaScript)
+                this.contentTreeOutline.disclosureButtons = true;
+        }
     }
 
     hasCustomFilters()
@@ -298,8 +305,11 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
 
     _scriptWasAdded(event)
     {
-        var script = event.data.script;
+        this._addScript(event.data.script);
+    }
 
+    _addScript(script)
+    {
         // We don't add scripts without URLs here. Those scripts can quickly clutter the interface and
         // are usually more transient. They will get added if/when they need to be shown in a content view.
         if (!script.url && !script.sourceURL)

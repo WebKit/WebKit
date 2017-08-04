@@ -1,3 +1,20 @@
+2017-08-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspector: Scripts sometimes do not show in resources tab
+        https://bugs.webkit.org/show_bug.cgi?id=175153
+        <rdar://problem/33708683>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel.prototype.initialLayout):
+        When the ResourceSidebar is lazily created, be sure to add any scripts
+        to the sidebar that are not backed by Resources.
+
+        (WI.ResourceSidebarPanel.prototype._scriptWasAdded):
+        (WI.ResourceSidebarPanel.prototype._addScript):
+        Extract so it can be used outside of an event handler.
+
 2017-08-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add button to open Inspector^2
