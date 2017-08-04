@@ -1425,6 +1425,11 @@
 		9955A6F51C7986E000EB6A93 /* AutomationBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F11C79866400EB6A93 /* AutomationBackendDispatchers.h */; };
 		9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6F21C79866400EB6A93 /* AutomationProtocolObjects.cpp */; };
 		9955A6F71C7986E500EB6A93 /* AutomationProtocolObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */; };
+		99B750F21F33ED5B00C1CFB5 /* ElementAttribute.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657341F323CBF00944F9C /* ElementAttribute.js */; };
+		99B750F31F33ED5B00C1CFB5 /* ElementDisplayed.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657331F323CBF00944F9C /* ElementDisplayed.js */; };
+		99B750F41F33ED5B00C1CFB5 /* FindNodes.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657311F323CBF00944F9C /* FindNodes.js */; };
+		99B750F51F33ED5B00C1CFB5 /* FormElementClear.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657321F323CBF00944F9C /* FormElementClear.js */; };
+		99B750F61F33ED5B00C1CFB5 /* FormSubmit.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657351F323CBF00944F9C /* FormSubmit.js */; };
 		99C3AE241DAD8E3700AF5C16 /* WebAutomationSessionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C3AE231DAD8E3400AF5C16 /* WebAutomationSessionMac.mm */; };
 		99C3AE271DAD948900AF5C16 /* WebAutomationSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C3AE261DAD948500AF5C16 /* WebAutomationSessionCocoa.mm */; };
 		99C3AE2D1DADA6AD00AF5C16 /* WebAutomationSessionMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C3AE2C1DADA6A700AF5C16 /* WebAutomationSessionMacros.h */; };
@@ -2182,6 +2187,21 @@
 				7CB16FF41724BA30007A0A95 /* com.oracle.java.JavaAppletPlugin.sb in Copy Plug-in Sandbox Profiles */,
 			);
 			name = "Copy Plug-in Sandbox Profiles";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		99B750F11F33ED3600C1CFB5 /* Copy WebDriver Atoms */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = PrivateHeaders/atoms;
+			dstSubfolderSpec = 1;
+			files = (
+				99B750F21F33ED5B00C1CFB5 /* ElementAttribute.js in Copy WebDriver Atoms */,
+				99B750F31F33ED5B00C1CFB5 /* ElementDisplayed.js in Copy WebDriver Atoms */,
+				99B750F41F33ED5B00C1CFB5 /* FindNodes.js in Copy WebDriver Atoms */,
+				99B750F51F33ED5B00C1CFB5 /* FormElementClear.js in Copy WebDriver Atoms */,
+				99B750F61F33ED5B00C1CFB5 /* FormSubmit.js in Copy WebDriver Atoms */,
+			);
+			name = "Copy WebDriver Atoms";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A7AADA1519395CC3003EA1C7 /* CopyFiles */ = {
@@ -3701,6 +3721,11 @@
 		93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKHitTestResult.h; sourceTree = "<group>"; };
 		93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSnapshotConfiguration.h; sourceTree = "<group>"; };
 		93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSnapshotConfiguration.mm; sourceTree = "<group>"; };
+		990657311F323CBF00944F9C /* FindNodes.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FindNodes.js; sourceTree = "<group>"; };
+		990657321F323CBF00944F9C /* FormElementClear.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FormElementClear.js; sourceTree = "<group>"; };
+		990657331F323CBF00944F9C /* ElementDisplayed.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ElementDisplayed.js; sourceTree = "<group>"; };
+		990657341F323CBF00944F9C /* ElementAttribute.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ElementAttribute.js; sourceTree = "<group>"; };
+		990657351F323CBF00944F9C /* FormSubmit.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FormSubmit.js; sourceTree = "<group>"; };
 		990D28A71C6404B000986977 /* _WKAutomationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationSession.h; sourceTree = "<group>"; };
 		990D28A81C6404B000986977 /* _WKAutomationSessionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationSessionDelegate.h; sourceTree = "<group>"; };
 		990D28AD1C65190400986977 /* _WKAutomationSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAutomationSession.mm; sourceTree = "<group>"; };
@@ -4745,7 +4770,7 @@
 				37E83D401B37D27B002079EE /* SandboxProfiles.xcconfig */,
 				A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */,
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
-				A7BD9863194653D400D35698 /* Storage-iOS.entitlements */,
+				A7BD9863194653D400D35698 /* Databases-iOS.entitlements */,
 				51A60B29180CCD9000F3BF50 /* StorageService.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
 				7C0BB9A818DCDE890006C086 /* WebContent-iOS.entitlements */,
@@ -6444,6 +6469,18 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		990657301F323CAE00944F9C /* atoms */ = {
+			isa = PBXGroup;
+			children = (
+				990657341F323CBF00944F9C /* ElementAttribute.js */,
+				990657331F323CBF00944F9C /* ElementDisplayed.js */,
+				990657311F323CBF00944F9C /* FindNodes.js */,
+				990657321F323CBF00944F9C /* FormElementClear.js */,
+				990657351F323CBF00944F9C /* FormSubmit.js */,
+			);
+			path = atoms;
+			sourceTree = "<group>";
+		};
 		9946EF821E7B023D00541E79 /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -6455,6 +6492,7 @@
 		9955A6E81C79809000EB6A93 /* Automation */ = {
 			isa = PBXGroup;
 			children = (
+				990657301F323CAE00944F9C /* atoms */,
 				99C3AE251DAD946700AF5C16 /* cocoa */,
 				9946EF821E7B023D00541E79 /* ios */,
 				99C3AE221DAD8E1400AF5C16 /* mac */,
@@ -9238,6 +9276,7 @@
 				7CB16FEE1724BA05007A0A95 /* Copy Plug-in Sandbox Profiles */,
 				37E531011B2391090074F0DF /* Copy iOS Sandbox Profiles for Manual Sandboxing */,
 				1A07D2F71919B36500ECDA16 /* Copy Message Generation Scripts */,
+				99B750F11F33ED3600C1CFB5 /* Copy WebDriver Atoms */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
 				5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */,
