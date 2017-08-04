@@ -246,6 +246,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     UIEdgeInsets _unobscuredSafeAreaInsets;
     BOOL _haveSetUnobscuredSafeAreaInsets;
+    BOOL _avoidsUnsafeArea;
     UIRectEdge _obscuredInsetEdgesAffectedBySafeArea;
 
     UIInterfaceOrientation _interfaceOrientationOverride;
@@ -523,6 +524,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
+    _avoidsUnsafeArea = YES;
     [self _updateScrollViewInsetAdjustmentBehavior];
 
     [self addSubview:_scrollView.get()];
@@ -1268,7 +1270,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         _scrollViewBackgroundColor = WebCore::Color();
         [_scrollView setContentOffset:[self _adjustedContentOffset:CGPointZero]];
 
-        [self _didChangeAvoidsUnsafeArea:NO];
+        [self _setAvoidsUnsafeArea:NO];
     } else if (_customContentView) {
         [_customContentView removeFromSuperview];
         _customContentView = nullptr;
@@ -1282,8 +1284,6 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
         [_customContentFixedOverlayView setFrame:self.bounds];
         [self addSubview:_customContentFixedOverlayView.get()];
-
-        [self _didChangeAvoidsUnsafeArea:_page->avoidsUnsafeArea()];
     }
 
     if (self.isFirstResponder) {
@@ -1407,7 +1407,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     if (self._safeAreaShouldAffectObscuredInsets)
-        UIEdgeInsetsAdd(insets, [_scrollView _systemContentInset], self._effectiveObscuredInsetEdgesAffectedBySafeArea);
+        insets = UIEdgeInsetsAdd(insets, [_scrollView _systemContentInset], self._effectiveObscuredInsetEdgesAffectedBySafeArea);
 #endif
 
     return insets;
@@ -1461,6 +1461,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _firstPaintAfterCommitLoadTransactionID = 0;
     _firstTransactionIDAfterPageRestore = 0;
     _resizeAnimationTransformTransactionID = std::nullopt;
+
+    _avoidsUnsafeArea = YES;
 }
 
 - (void)_didCommitLoadForMainFrame
@@ -1559,6 +1561,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         [_contentView _setDoubleTapGesturesEnabled:self._allowsDoubleTapGestures];
 
     [self _updateScrollViewBackground];
+    [self _setAvoidsUnsafeArea:layerTreeTransaction.avoidsUnsafeArea()];
 
     if (_gestureController)
         _gestureController->setRenderTreeSize(layerTreeTransaction.renderTreeSize());
@@ -2717,8 +2720,13 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 #endif
 }
 
-- (void)_didChangeAvoidsUnsafeArea:(BOOL)avoidsUnsafeArea
+- (void)_setAvoidsUnsafeArea:(BOOL)avoidsUnsafeArea
 {
+    if (_avoidsUnsafeArea == avoidsUnsafeArea)
+        return;
+
+    _avoidsUnsafeArea = avoidsUnsafeArea;
+
     [self _updateScrollViewInsetAdjustmentBehavior];
     [self _scheduleVisibleContentRectUpdate];
 
@@ -4672,9 +4680,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 {
     if (![self usesStandardContentView])
         return NO;
-    if (!_page)
-        return YES;
-    return _page->avoidsUnsafeArea();
+    return _avoidsUnsafeArea;
 }
 
 - (void)_setInterfaceOrientationOverride:(UIInterfaceOrientation)interfaceOrientation

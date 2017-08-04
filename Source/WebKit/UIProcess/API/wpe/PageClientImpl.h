@@ -117,8 +117,6 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
-    void didChangeAvoidsUnsafeArea(bool) override { }
-
     JSGlobalContextRef javascriptGlobalContext() override;
 
     WKWPE::View& m_view;
