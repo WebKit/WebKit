@@ -57,6 +57,7 @@ class Options(object):
     request_commit = make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Request that the patch be added to the commit queue after review.")
     review = make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review.")
     reviewer = make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER.")
+    sort_xcode_project = make_option("--no-sort-xcode-project", action="store_false", dest="sort_xcode_project", default=True, help="Don't sort modified xcode projects.")
     suggest_reviewers = make_option("--suggest-reviewers", action="store_true", default=False, help="Offer to CC appropriate reviewers.")
     test = make_option("--test", action="store_true", dest="test", default=False, help="Run run-webkit-tests before committing.")
     iterate_on_new_tests = make_option("--iterate-on-new-tests", action="store", type="int", dest="iterate_on_new_tests", default=0, help="Run run-webkit-tests on new tests only before committing, iterating a given number of time.")

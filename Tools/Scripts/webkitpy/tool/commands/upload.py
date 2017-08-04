@@ -257,6 +257,7 @@ class Prepare(AbstractSequencedCommand):
     steps = [
         steps.PromptForBugOrTitle,
         steps.CreateBug,
+        steps.SortXcodeProjectFiles,
         steps.PrepareChangeLog,
     ]
 
@@ -275,6 +276,7 @@ class Upload(AbstractPatchUploadingCommand):
         steps.CheckStyle,
         steps.PromptForBugOrTitle,
         steps.CreateBug,
+        steps.SortXcodeProjectFiles,
         steps.PrepareChangeLog,
         steps.EditChangeLog,
         steps.ConfirmDiff,
