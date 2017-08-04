@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEB_SOCKETS)
-
 #include "WorkerThreadableWebSocketChannel.h"
 
 #include "Blob.h"
@@ -587,5 +584,3 @@ void WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_SOCKETS)

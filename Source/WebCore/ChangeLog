@@ -1,3 +1,63 @@
+2017-08-03  Brian Burg  <bburg@apple.com>
+
+        Remove ENABLE(WEB_SOCKET) guards
+        https://bugs.webkit.org/show_bug.cgi?id=167044
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WebSocket.cpp:
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocket.idl:
+        * Modules/websockets/WebSocketChannel.cpp:
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WebSocketChannelClient.h:
+        * Modules/websockets/WebSocketDeflateFramer.cpp:
+        * Modules/websockets/WebSocketDeflateFramer.h:
+        * Modules/websockets/WebSocketDeflater.cpp:
+        * Modules/websockets/WebSocketDeflater.h:
+        * Modules/websockets/WebSocketExtensionDispatcher.cpp:
+        * Modules/websockets/WebSocketExtensionDispatcher.h:
+        * Modules/websockets/WebSocketExtensionParser.cpp:
+        * Modules/websockets/WebSocketExtensionParser.h:
+        * Modules/websockets/WebSocketExtensionProcessor.h:
+        * Modules/websockets/WebSocketFrame.cpp:
+        * Modules/websockets/WebSocketFrame.h:
+        * Modules/websockets/WebSocketHandshake.cpp:
+        * Modules/websockets/WebSocketHandshake.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::idbConnectionProxy):
+        (WebCore::Document::socketProvider):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didSendWebSocketFrameImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didSendWebSocketFrame):
+        * inspector/InspectorNetworkAgent.cpp:
+        * inspector/InspectorNetworkAgent.h:
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::webSocketEnabled const):
+        * page/RuntimeEnabledFeatures.h:
+        * page/SocketProvider.cpp:
+        * page/SocketProvider.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::socketProvider):
+        * workers/WorkerThread.h:
+
 2017-08-03  Don Olmstead  <don.olmstead@sony.com>
 
         Remove LayoutUnit dependency in TextStream

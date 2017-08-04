@@ -135,10 +135,7 @@ private:
     EventTarget* errorEventTarget() final;
     WorkerEventQueue& eventQueue() const final;
     String resourceRequestIdentifier() const final { return m_identifier; }
-
-#if ENABLE(WEB_SOCKETS)
     SocketProvider* socketProvider() final;
-#endif
 
     bool shouldBypassMainWorldContentSecurityPolicy() const final { return m_shouldBypassMainWorldContentSecurityPolicy; }
     bool isJSExecutionForbidden() const final;
@@ -178,9 +175,7 @@ private:
     RefPtr<IDBClient::IDBConnectionProxy> m_connectionProxy;
 #endif
 
-#if ENABLE(WEB_SOCKETS)
     RefPtr<SocketProvider> m_socketProvider;
-#endif
 
     RefPtr<Performance> m_performance;
     mutable RefPtr<Crypto> m_crypto;

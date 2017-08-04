@@ -90,9 +90,7 @@ public:
 #if ENABLE(INDEXED_DATABASE)
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
 #endif
-#if ENABLE(WEB_SOCKETS)
     virtual SocketProvider* socketProvider() = 0;
-#endif
 
     virtual String resourceRequestIdentifier() const { return String(); };
 

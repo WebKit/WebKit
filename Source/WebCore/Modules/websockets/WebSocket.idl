@@ -31,7 +31,6 @@
 
 [
     ActiveDOMObject,
-    Conditional=WEB_SOCKETS,
     Constructor(USVString url, optional sequence<DOMString> protocols = []),
     Constructor(USVString url, DOMString protocol),
     ConstructorMayThrowException,

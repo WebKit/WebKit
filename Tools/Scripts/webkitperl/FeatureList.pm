@@ -134,9 +134,6 @@ my (
     $webAssemblySupport,
     $webAudioSupport,
     $webRTCSupport,
-    $webReplaySupport,
-    $webSocketsSupport,
-    $webTimingSupport,
     $writableStreamAPISupport,
     $webglSupport,
     $webgl2Support,
@@ -385,9 +382,6 @@ my @features = (
 
     { option => "web-rtc", desc => "Toggle WebRTC support",
       define => "ENABLE_WEB_RTC", default => (isAppleCocoaWebKit() || isIOSWebKit() || isGtk()), value => \$webRTCSupport },
-
-    { option => "web-sockets", desc => "Toggle Web Sockets support",
-      define => "ENABLE_WEB_SOCKETS", default => 1, value => \$webSocketsSupport },
 
     { option => "webassembly", desc => "Toggle WebAssembly support",
       define => "ENABLE_WEBASSEMBLY", default => ((isARM64() || isX86_64()) && (isGtk() || isJSCOnly() || isWPE())) , value => \$webAssemblySupport },

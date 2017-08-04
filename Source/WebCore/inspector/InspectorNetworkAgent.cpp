@@ -601,8 +601,6 @@ RefPtr<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInit
         .release();
 }
 
-#if ENABLE(WEB_SOCKETS)
-
 void InspectorNetworkAgent::didCreateWebSocket(unsigned long identifier, const URL& requestURL)
 {
     m_frontendDispatcher->webSocketCreated(IdentifiersFactory::requestId(identifier), requestURL.string());
@@ -657,8 +655,6 @@ void InspectorNetworkAgent::didReceiveWebSocketFrameError(unsigned long identifi
 {
     m_frontendDispatcher->webSocketFrameError(IdentifiersFactory::requestId(identifier), timestamp(), errorMessage);
 }
-
-#endif // ENABLE(WEB_SOCKETS)
 
 void InspectorNetworkAgent::enable(ErrorString&)
 {
@@ -790,8 +786,6 @@ void InspectorNetworkAgent::loadResource(ErrorString& errorString, const String&
     inspectorThreadableLoaderClient->setLoader(WTFMove(loader));
 }
 
-#if ENABLE(WEB_SOCKETS)
-
 WebSocket* InspectorNetworkAgent::webSocketForRequestId(const String& requestId)
 {
     LockHolder lock(WebSocket::allActiveWebSocketsMutex());
@@ -850,8 +844,6 @@ void InspectorNetworkAgent::resolveWebSocket(ErrorString& errorString, const Str
     String objectGroupName = objectGroup ? *objectGroup : String();
     result = injectedScript.wrapObject(webSocketAsScriptValue(state, webSocket), objectGroupName);
 }
-
-#endif // ENABLE(WEB_SOCKETS)
 
 static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(const String& requestId, const String& frameId, const String& url, int matchesCount)
 {

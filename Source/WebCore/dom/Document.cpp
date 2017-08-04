@@ -501,9 +501,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_fontSelector(CSSFontSelector::create(*this))
     , m_didAssociateFormControlsTimer(*this, &Document::didAssociateFormControlsTimerFired)
     , m_cookieCacheExpiryTimer(*this, &Document::invalidateDOMCookieCache)
-#if ENABLE(WEB_SOCKETS)
     , m_socketProvider(page() ? &page()->socketProvider() : nullptr)
-#endif
     , m_isSynthesized(constructionFlags & Synthesized)
     , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
     , m_orientationNotifier(currentOrientation(frame))
@@ -3058,7 +3056,6 @@ void Document::disableWebAssembly(const String& errorMessage)
 }
 
 #if ENABLE(INDEXED_DATABASE)
-
 IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
 {
     if (!m_idbConnectionProxy) {
@@ -3069,17 +3066,12 @@ IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
     }
     return m_idbConnectionProxy.get();
 }
-
 #endif
-
-#if ENABLE(WEB_SOCKETS)
 
 SocketProvider* Document::socketProvider()
 {
     return m_socketProvider.get();
 }
-
-#endif
     
 bool Document::canNavigate(Frame* targetFrame)
 {

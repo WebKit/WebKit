@@ -59,11 +59,9 @@ bool RuntimeEnabledFeatures::audioEnabled() const
 }
 #endif
 
-#if ENABLE(WEB_SOCKETS)
 bool RuntimeEnabledFeatures::webSocketEnabled() const
 {
     return WebSocket::isAvailable();
 }
-#endif
 
 } // namespace WebCore

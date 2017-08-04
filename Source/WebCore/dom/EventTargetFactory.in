@@ -40,7 +40,7 @@ TextTrackList conditional=VIDEO_TRACK
 VideoTrackList conditional=VIDEO_TRACK
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 WebKitNamedFlow
-WebSocket conditional=WEB_SOCKETS
+WebSocket
 Worker
 XMLHttpRequest
 XMLHttpRequestUpload

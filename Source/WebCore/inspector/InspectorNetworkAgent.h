@@ -57,11 +57,9 @@ class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
 class URL;
-
-#if ENABLE(WEB_SOCKETS)
 class WebSocket;
+
 struct WebSocketFrame;
-#endif
 
 typedef String ErrorString;
 
@@ -89,7 +87,6 @@ public:
     void didLoadXHRSynchronously();
     void didReceiveScriptResponse(unsigned long identifier);
     void willDestroyCachedResource(CachedResource&);
-#if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const URL& requestURL);
     void willSendWebSocketHandshakeRequest(unsigned long identifier, const ResourceRequest&);
     void didReceiveWebSocketHandshakeResponse(unsigned long identifier, const ResourceResponse&);
@@ -97,7 +94,6 @@ public:
     void didReceiveWebSocketFrame(unsigned long identifier, const WebSocketFrame&);
     void didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame&);
     void didReceiveWebSocketFrameError(unsigned long identifier, const String&);
-#endif
     void mainFrameNavigated(DocumentLoader&);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
     void didScheduleStyleRecalculation(Document&);
@@ -114,16 +110,12 @@ public:
     void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) override;
     void setResourceCachingDisabled(ErrorString&, bool disabled) override;
     void loadResource(ErrorString&, const String& frameId, const String& url, Ref<LoadResourceCallback>&&) override;
-#if ENABLE(WEB_SOCKETS)
     void resolveWebSocket(ErrorString&, const String& requestId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) override;
-#endif
 
 private:
     void enable();
 
-#if ENABLE(WEB_SOCKETS)
     WebSocket* webSocketForRequestId(const String& requestId);
-#endif
 
     Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const NetworkLoadMetrics&, ResourceLoader&);
     Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics&);

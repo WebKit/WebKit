@@ -204,9 +204,7 @@ public:
     bool audioEnabled() const;
 #endif
 
-#if ENABLE(WEB_SOCKETS)
     bool webSocketEnabled() const;
-#endif
 
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 

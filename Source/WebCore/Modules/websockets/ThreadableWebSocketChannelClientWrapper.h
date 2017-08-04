@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_SOCKETS)
-
 #include "ScriptExecutionContext.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannelClient.h"
@@ -107,5 +105,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_SOCKETS)

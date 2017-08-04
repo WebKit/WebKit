@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_SOCKETS)
-
 #include "FileReaderLoaderClient.h"
 #include "SocketStreamHandleClient.h"
 #include "ThreadableWebSocketChannel.h"
@@ -232,5 +230,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebSocketChannel)
     static bool isType(const WebCore::ThreadableWebSocketChannel& threadableWebSocketChannel) { return threadableWebSocketChannel.isWebSocketChannel(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(WEB_SOCKETS)

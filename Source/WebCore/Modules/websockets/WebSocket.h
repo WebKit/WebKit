@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_SOCKETS)
-
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
@@ -151,5 +149,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_SOCKETS)

@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_SOCKETS)
-
 #include "URL.h"
 #include "ResourceResponse.h"
 #include "WebSocketExtensionDispatcher.h"
@@ -116,5 +114,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_SOCKETS)

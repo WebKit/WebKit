@@ -30,12 +30,9 @@
 
 #pragma once
 
-#if ENABLE(WEB_SOCKETS)
-
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannelClient.h"
 #include "WorkerGlobalScope.h"
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -172,5 +169,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_SOCKETS)

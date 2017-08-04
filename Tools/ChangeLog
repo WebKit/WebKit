@@ -1,3 +1,13 @@
+2017-08-03  Brian Burg  <bburg@apple.com>
+
+        Remove ENABLE(WEB_SOCKET) guards
+        https://bugs.webkit.org/show_bug.cgi?id=167044
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2017-08-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r219850): run-benchmark script broken on Linux

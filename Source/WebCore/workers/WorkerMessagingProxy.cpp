@@ -84,11 +84,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     IDBClient::IDBConnectionProxy* proxy = nullptr;
 #endif
 
-#if ENABLE(WEB_SOCKETS)
     SocketProvider* socketProvider = document.socketProvider();
-#else
-    SocketProvider* socketProvider = nullptr;
-#endif
 
     auto thread = DedicatedWorkerThread::create(scriptURL, identifier, userAgent, sourceCode, *this, *this, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, document.topOrigin(), timeOrigin, proxy, socketProvider, runtimeFlags);
 

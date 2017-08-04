@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SocketProvider.h"
 
-#if ENABLE(WEB_SOCKETS)
-
 #include "SocketStreamHandleImpl.h"
 
 namespace WebCore {
@@ -38,5 +36,3 @@ Ref<SocketStreamHandle> SocketProvider::createSocketStreamHandle(const URL& url,
 }
     
 }
-
-#endif // ENABLE(WEB_SOCKETS)

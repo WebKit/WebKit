@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEB_SOCKETS)
-
 #include "WebSocketChannel.h"
 
 #include "Blob.h"
@@ -846,6 +843,4 @@ WebSocketHandshake::Mode WebSocketChannel::handshakeMode() const
     return m_handshake->mode();
 }
 
-}  // namespace WebCore
-
-#endif  // ENABLE(WEB_SOCKETS)
+} // namespace WebCore

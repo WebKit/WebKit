@@ -30,11 +30,7 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEB_SOCKETS)
-
 #include "WebSocketHandshake.h"
-#include "WebSocket.h"
 
 #include "Cookie.h"
 #include "CookieJar.h"
@@ -42,11 +38,12 @@
 #include "HTTPHeaderMap.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
-#include "URL.h"
 #include "Logging.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "URL.h"
+#include "WebSocket.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MD5.h>
@@ -615,5 +612,3 @@ bool WebSocketHandshake::checkResponseHeaders()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_SOCKETS)

@@ -30,9 +30,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEB_SOCKETS)
-
 #include "WebSocket.h"
 
 #include "Blob.h"
@@ -683,6 +680,4 @@ void WebSocket::dispatchOrQueueEvent(Ref<Event>&& event)
         dispatchEvent(event);
 }
 
-}  // namespace WebCore
-
-#endif
+} // namespace WebCore

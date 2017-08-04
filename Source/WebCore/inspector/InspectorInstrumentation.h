@@ -220,7 +220,6 @@ public:
     static void workerStarted(ScriptExecutionContext&, WorkerInspectorProxy*, const URL&);
     static void workerTerminated(ScriptExecutionContext&, WorkerInspectorProxy*);
 
-#if ENABLE(WEB_SOCKETS)
     static void didCreateWebSocket(Document*, unsigned long identifier, const URL& requestURL);
     static void willSendWebSocketHandshakeRequest(Document*, unsigned long identifier, const ResourceRequest&);
     static void didReceiveWebSocketHandshakeResponse(Document*, unsigned long identifier, const ResourceResponse&);
@@ -228,7 +227,6 @@ public:
     static void didReceiveWebSocketFrame(Document*, unsigned long identifier, const WebSocketFrame&);
     static void didSendWebSocketFrame(Document*, unsigned long identifier, const WebSocketFrame&);
     static void didReceiveWebSocketFrameError(Document*, unsigned long identifier, const String& errorMessage);
-#endif
 
 #if ENABLE(RESOURCE_USAGE)
     static void didHandleMemoryPressure(Page&, Critical);
@@ -384,7 +382,6 @@ private:
     static void workerStartedImpl(InstrumentingAgents&, WorkerInspectorProxy*, const URL&);
     static void workerTerminatedImpl(InstrumentingAgents&, WorkerInspectorProxy*);
 
-#if ENABLE(WEB_SOCKETS)
     static void didCreateWebSocketImpl(InstrumentingAgents&, unsigned long identifier, const URL& requestURL);
     static void willSendWebSocketHandshakeRequestImpl(InstrumentingAgents&, unsigned long identifier, const ResourceRequest&);
     static void didReceiveWebSocketHandshakeResponseImpl(InstrumentingAgents&, unsigned long identifier, const ResourceResponse&);
@@ -392,7 +389,6 @@ private:
     static void didReceiveWebSocketFrameImpl(InstrumentingAgents&, unsigned long identifier, const WebSocketFrame&);
     static void didSendWebSocketFrameImpl(InstrumentingAgents&, unsigned long identifier, const WebSocketFrame&);
     static void didReceiveWebSocketFrameErrorImpl(InstrumentingAgents&, unsigned long identifier, const String&);
-#endif
 
 #if ENABLE(RESOURCE_USAGE)
     static void didHandleMemoryPressureImpl(InstrumentingAgents&, Critical);
@@ -1052,7 +1048,6 @@ inline void InspectorInstrumentation::workerTerminated(ScriptExecutionContext& c
         workerTerminatedImpl(*instrumentingAgents, proxy);
 }
 
-#if ENABLE(WEB_SOCKETS)
 inline void InspectorInstrumentation::didCreateWebSocket(Document* document, unsigned long identifier, const URL& requestURL)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
@@ -1101,7 +1096,6 @@ inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, 
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         didSendWebSocketFrameImpl(*instrumentingAgents, identifier, frame);
 }
-#endif // ENABLE(WEB_SOCKETS)
 
 #if ENABLE(RESOURCE_USAGE)
 inline void InspectorInstrumentation::didHandleMemoryPressure(Page& page, Critical critical)

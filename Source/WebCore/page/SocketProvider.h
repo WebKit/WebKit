@@ -39,9 +39,7 @@ class URL;
 class WEBCORE_EXPORT SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
 public:
     static Ref<SocketProvider> create() { return adoptRef(*new SocketProvider); }
-#if ENABLE(WEB_SOCKETS)
     virtual Ref<SocketStreamHandle> createSocketStreamHandle(const URL&, SocketStreamHandleClient&, SessionID, const String& credentialPartition);
-#endif
     virtual ~SocketProvider() { };
 };
 

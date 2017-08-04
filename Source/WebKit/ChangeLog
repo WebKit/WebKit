@@ -1,3 +1,14 @@
+2017-08-03  Brian Burg  <bburg@apple.com>
+
+        Remove ENABLE(WEB_SOCKET) guards
+        https://bugs.webkit.org/show_bug.cgi?id=167044
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/Network/WebSocketProvider.cpp:
+        * WebProcess/Network/WebSocketProvider.h:
+
 2017-08-03  Chris Dumez  <cdumez@apple.com>
 
         Multiple Layout tests from web-platform-tests/beacon/ are timing out.

@@ -65,16 +65,11 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, c
 #if ENABLE(INDEXED_DATABASE)
     , m_connectionProxy(connectionProxy)
 #endif
-#if ENABLE(WEB_SOCKETS)
     , m_socketProvider(socketProvider)
-#endif
     , m_performance(Performance::create(*this, timeOrigin))
 {
 #if !ENABLE(INDEXED_DATABASE)
     UNUSED_PARAM(connectionProxy);
-#endif
-#if !ENABLE(WEB_SOCKETS)
-    UNUSED_PARAM(socketProvider);
 #endif
 
     auto origin = SecurityOrigin::create(url);
@@ -145,14 +140,10 @@ void WorkerGlobalScope::disableWebAssembly(const String& errorMessage)
     m_script->disableWebAssembly(errorMessage);
 }
 
-#if ENABLE(WEB_SOCKETS)
-
 SocketProvider* WorkerGlobalScope::socketProvider()
 {
     return m_socketProvider.get();
 }
-
-#endif
 
 #if ENABLE(INDEXED_DATABASE)
 

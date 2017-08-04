@@ -931,7 +931,6 @@ void InspectorInstrumentation::workerTerminatedImpl(InstrumentingAgents& instrum
         workerAgent->workerTerminated(proxy);
 }
 
-#if ENABLE(WEB_SOCKETS)
 void InspectorInstrumentation::didCreateWebSocketImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const URL& requestURL)
 {
     if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
@@ -976,7 +975,6 @@ void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& in
     if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
         networkAgent->didSendWebSocketFrame(identifier, frame);
 }
-#endif
 
 void InspectorInstrumentation::didCreateCSSCanvasImpl(InstrumentingAgents& instrumentingAgents, HTMLCanvasElement& canvasElement, const String& name)
 {
