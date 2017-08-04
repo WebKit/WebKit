@@ -1,3 +1,25 @@
+2017-08-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening. Update test expectations and layout test baselines
+        for Web Crypto tests now that the implementation is complete.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/import_export: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker-expected.txt: Added.
+
 2017-08-04  Frederic Wang  <fwang@igalia.com>
 
         ScrollingTreeOverflowScrollingNodeIOS uses the wrong fixed position rectangle
