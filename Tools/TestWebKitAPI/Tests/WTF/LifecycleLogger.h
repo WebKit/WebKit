@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,15 +29,18 @@
 
 namespace TestWebKitAPI {
 
-struct RefLogger {
-    RefLogger(const char* name);
-    void ref();
-    void deref();
-    const char& name;
-};
+struct LifecycleLogger {
+    LifecycleLogger();
+    LifecycleLogger(const char* name);
+    LifecycleLogger(const LifecycleLogger&);
+    LifecycleLogger(LifecycleLogger&&);
+    LifecycleLogger& operator=(const LifecycleLogger&);
+    LifecycleLogger& operator=(LifecycleLogger&&);
+    ~LifecycleLogger();
 
-struct DerivedRefLogger : RefLogger {
-    DerivedRefLogger(const char* name);
+    void setName(const char*);
+
+    const char* name { "<default>" };
 };
 
 }

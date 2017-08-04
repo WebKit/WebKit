@@ -28,19 +28,6 @@
 
 namespace TestWebKitAPI {
 
-std::ostringstream& log()
-{
-    static std::ostringstream log;
-    return log;
-}
-
-std::string takeLogStr()
-{
-    std::string string = log().str();
-    log().str("");
-    return string;
-}
-
 RefLogger::RefLogger(const char* name)
     : name { *name }
 {

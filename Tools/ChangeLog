@@ -1,3 +1,38 @@
+2017-08-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add tests for NeverDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=175146
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        New files and sort.
+
+        * TestWebKitAPI/Tests/WTF/Logger.h:
+        * TestWebKitAPI/Tests/WTF/Logger.cpp:
+        (TestWebKitAPI::log):
+        (TestWebKitAPI::takeLogStr):
+        * TestWebKitAPI/Tests/WTF/RefLogger.h:
+        * TestWebKitAPI/Tests/WTF/RefLogger.cpp:
+        (TestWebKitAPI::log): Deleted.
+        (TestWebKitAPI::takeLogStr): Deleted.
+        Extract log() / takeLogStr() from RefLogger to a general Logger.h/cpp.
+
+        * TestWebKitAPI/Tests/WTF/LifecycleLogger.h:
+        * TestWebKitAPI/Tests/WTF/LifecycleLogger.cpp: Added.
+        (TestWebKitAPI::LifecycleLogger::LifecycleLogger):
+        (TestWebKitAPI::LifecycleLogger::operator=):
+        (TestWebKitAPI::LifecycleLogger::~LifecycleLogger):
+        (TestWebKitAPI::LifecycleLogger::setName):
+        (TestWebKitAPI::TEST):
+        Add a class that logs construction / assignment / modifications.
+
+        * TestWebKitAPI/Tests/WTF/NeverDestroyed.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::list):
+        Test construction behavior is as expected both directly and using makeNeverDestroyed.
+
 2017-08-04  Lucas Forschler  <lforschler@apple.com>
 
         minification logic is not implemented for ios builds

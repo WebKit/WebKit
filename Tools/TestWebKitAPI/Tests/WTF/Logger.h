@@ -25,19 +25,10 @@
 
 #pragma once
 
-#include "Logger.h"
-
 namespace TestWebKitAPI {
 
-struct RefLogger {
-    RefLogger(const char* name);
-    void ref();
-    void deref();
-    const char& name;
-};
+std::ostringstream& log();
 
-struct DerivedRefLogger : RefLogger {
-    DerivedRefLogger(const char* name);
-};
+std::string takeLogStr();
 
 }

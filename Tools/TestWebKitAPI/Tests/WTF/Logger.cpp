@@ -23,21 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#include "config.h"
 #include "Logger.h"
 
 namespace TestWebKitAPI {
 
-struct RefLogger {
-    RefLogger(const char* name);
-    void ref();
-    void deref();
-    const char& name;
-};
+std::ostringstream& log()
+{
+    static std::ostringstream log;
+    return log;
+}
 
-struct DerivedRefLogger : RefLogger {
-    DerivedRefLogger(const char* name);
-};
+std::string takeLogStr()
+{
+    std::string string = log().str();
+    log().str("");
+    return string;
+}
 
 }
