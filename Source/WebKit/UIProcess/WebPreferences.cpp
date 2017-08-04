@@ -294,14 +294,6 @@ void WebPreferences::enableAllExperimentalFeatures()
     FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(SET_FEATURE_ENABLED)
 
 #undef SET_FEATURE_ENABLED
-
-#if ENABLE(SERVICE_WORKER)
-    // FIXME: The ServiceWorker interfaces are only stubbed out and entirely inert.
-    // Enabling the feature would cause significant, unecessary churn in layout test results.
-    // That'd be especially wasteful since we're going to reimport the SW tests imminently (https://bugs.webkit.org/show_bug.cgi?id=175053)
-    // Revisit this soon in a separate patch.
-    setServiceWorkersEnabled(false);
-#endif
 }
 
 bool WebPreferences::anyPagesAreUsingPrivateBrowsing()

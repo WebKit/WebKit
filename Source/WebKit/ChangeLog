@@ -1,3 +1,13 @@
+2017-08-04  Brady Eidson  <beidson@apple.com>
+
+        Enable ServiceWorkers at runtime for WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=175174
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::enableAllExperimentalFeatures):
+
 2017-08-04  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Report user interaction immediately, but only when needed
