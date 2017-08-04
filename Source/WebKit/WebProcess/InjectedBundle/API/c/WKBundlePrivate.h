@@ -91,8 +91,6 @@ WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);
 
 WK_EXPORT void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundle, WKBundlePageRef page, bool enabled);
 
-WK_EXPORT void WKBundleClearResourceLoadStatistics(WKBundleRef);
-
 #ifdef __cplusplus
 }
 #endif

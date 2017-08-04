@@ -99,6 +99,19 @@ static bool areDomainsAssociated(Page* page, const String& firstDomain, const St
     return firstMetaDomainIdentifier == metaDomainIdentifiers.get().get(secondDomain);
 }
 
+void ResourceLoadObserver::setShouldThrottleObserverNotifications(bool shouldThrottle)
+{
+    m_shouldThrottleNotifications = shouldThrottle;
+
+    if (!m_notificationTimer.isActive())
+        return;
+
+    // If we change the notification state, we need to restart any notifications
+    // so they will be on the right schedule.
+    m_notificationTimer.stop();
+    scheduleNotificationIfNeeded();
+}
+
 void ResourceLoadObserver::setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&& notificationCallback)
 {
     ASSERT(!m_notificationCallback);
@@ -106,7 +119,7 @@ void ResourceLoadObserver::setNotificationCallback(WTF::Function<void (Vector<Re
 }
 
 ResourceLoadObserver::ResourceLoadObserver()
-    : m_notificationTimer(*this, &ResourceLoadObserver::notifyObserver)
+    : m_notificationTimer(*this, &ResourceLoadObserver::notificationTimerFired)
 {
 }
 
@@ -267,20 +280,16 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    auto domain = primaryDomain(url);
+    auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
     auto newTime = reduceToHourlyTimeResolution(WallTime::now());
-    auto lastReportedUserInteraction = m_lastReportedUserInteractionMap.get(domain);
-    if (newTime == lastReportedUserInteraction)
+    if (newTime == statistics.mostRecentUserInteractionTime)
         return;
 
-    m_lastReportedUserInteractionMap.set(domain, newTime);
-
-    auto& statistics = ensureResourceStatisticsForPrimaryDomain(domain);
     statistics.hadUserInteraction = true;
     statistics.lastSeen = newTime;
     statistics.mostRecentUserInteractionTime = newTime;
 
-    notifyObserver();
+    scheduleNotificationIfNeeded();
 }
 
 ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
@@ -300,13 +309,12 @@ void ResourceLoadObserver::scheduleNotificationIfNeeded()
     }
 
     if (!m_notificationTimer.isActive())
-        m_notificationTimer.startOneShot(minimumNotificationInterval);
+        m_notificationTimer.startOneShot(m_shouldThrottleNotifications ? minimumNotificationInterval : 0_s);
 }
 
-void ResourceLoadObserver::notifyObserver()
+void ResourceLoadObserver::notificationTimerFired()
 {
     ASSERT(m_notificationCallback);
-    m_notificationTimer.stop();
     m_notificationCallback(takeStatistics());
 }
 
@@ -329,12 +337,6 @@ Vector<ResourceLoadStatistics> ResourceLoadObserver::takeStatistics()
     m_resourceStatisticsMap.clear();
 
     return statistics;
-}
-
-void ResourceLoadObserver::clearState()
-{
-    m_resourceStatisticsMap.clear();
-    m_lastReportedUserInteractionMap.clear();
 }
 
 } // namespace WebCore

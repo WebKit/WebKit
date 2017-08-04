@@ -539,6 +539,7 @@ public:
 
     String resourceLoadStatisticsForOrigin(const String& origin);
     void setResourceLoadStatisticsEnabled(bool);
+    void setResourceLoadStatisticsShouldThrottleObserverNotifications(bool);
 
     bool isReadableStreamDisturbed(JSC::ExecState&, JSC::JSValue);
     JSC::JSValue cloneArrayBuffer(JSC::ExecState&, JSC::JSValue, JSC::JSValue, JSC::JSValue);

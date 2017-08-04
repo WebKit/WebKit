@@ -468,6 +468,8 @@ void Internals::resetToConsistentState(Page& page)
 #if USE(LIBWEBRTC)
     WebCore::useRealRTCPeerConnectionFactory();
 #endif
+    
+    ResourceLoadObserver::shared().setShouldThrottleObserverNotifications(true);
 }
 
 Internals::Internals(Document& document)
@@ -3854,6 +3856,11 @@ void Internals::setResourceLoadStatisticsEnabled(bool enable)
     Settings::setResourceLoadStatisticsEnabled(enable);
 }
 
+void Internals::setResourceLoadStatisticsShouldThrottleObserverNotifications(bool enable)
+{
+    ResourceLoadObserver::shared().setShouldThrottleObserverNotifications(enable);
+}
+    
 String Internals::composedTreeAsText(Node& node)
 {
     if (!is<ContainerNode>(node))
