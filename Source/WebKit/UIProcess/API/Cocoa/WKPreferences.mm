@@ -577,6 +577,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setMockCaptureDevicesEnabled(enabled);
 }
 
+- (BOOL)_mockCaptureDevicesPromptEnabled
+{
+    return _preferences->mockCaptureDevicesPromptEnabled();
+}
+
+- (void)_setMockCaptureDevicesPromptEnabled:(BOOL)enabled
+{
+    _preferences->setMockCaptureDevicesPromptEnabled(enabled);
+}
+
 - (BOOL)_mediaCaptureRequiresSecureConnection
 {
     return _preferences->mediaCaptureRequiresSecureConnection();
