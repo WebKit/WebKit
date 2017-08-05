@@ -541,11 +541,17 @@ static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<Str
     if (dotOffset == notFound)
         return false;
 
-    String extension = filename.substring(dotOffset + 1);
+    String extension = filename.substring(dotOffset + 1).convertToASCIILowercase();
+    if (extension.isEmpty())
+        return false;
+
     if (allowedFileExtensions.contains(extension))
         return true;
 
-    String mappedMIMEType = WebCore::MIMETypeRegistry::getMIMETypeForExtension(extension);
+    String mappedMIMEType = WebCore::MIMETypeRegistry::getMIMETypeForExtension(extension).convertToASCIILowercase();
+    if (mappedMIMEType.isEmpty())
+        return false;
+    
     if (allowedMIMETypes.contains(mappedMIMEType))
         return true;
 
@@ -577,12 +583,18 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
     }
 
     HashSet<String> allowedMIMETypes;
-    for (auto type : parameters.acceptMIMETypes()->elementsOfType<API::String>())
+    auto acceptMIMETypes = parameters.acceptMIMETypes();
+    for (auto type : acceptMIMETypes->elementsOfType<API::String>())
         allowedMIMETypes.add(type->string());
 
     HashSet<String> allowedFileExtensions;
-    for (auto type : parameters.acceptFileExtensions()->elementsOfType<API::String>())
-        allowedFileExtensions.add(type->string());
+    auto acceptFileExtensions = parameters.acceptFileExtensions();
+    for (auto type : acceptFileExtensions->elementsOfType<API::String>()) {
+        // WebCore vends extensions with leading periods. Strip these to simplify matching later.
+        String extension = type->string();
+        ASSERT(extension.characterAt(0) == '.');
+        allowedFileExtensions.add(extension.substring(1));
+    }
 
     // Per §14.3.10.5 in the W3C spec, if at least one file cannot be accepted, the command should fail.
     // The REST API service can tell that this failed by checking the "files" attribute of the input element.
