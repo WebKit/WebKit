@@ -1,3 +1,22 @@
+2017-08-05  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Add Cache and CacheStorage IDL definitions
+        https://bugs.webkit.org/show_bug.cgi?id=175201
+        <rdar://problem/33738001>
+
+        Unreviewed.
+        Rebasing test expectations after http://trac.webkit.org/changeset/220310.
+
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-delete.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-keys.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-matchAll.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-put.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-keys.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage.https-expected.txt:
+
 2017-08-04  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Add Cache and CacheStorage IDL definitions

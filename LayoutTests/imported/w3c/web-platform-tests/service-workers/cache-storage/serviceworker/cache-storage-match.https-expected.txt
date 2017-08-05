@@ -1,3 +1,3 @@
 
-FAIL CacheStorage.match null is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+FAIL CacheStorage.match assert_unreached: unregister should not fail: ServiceWorkerContainer method 'getRegistration' not yet implemented Reached unreachable code
 
