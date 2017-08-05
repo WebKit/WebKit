@@ -32,12 +32,16 @@
 namespace WebCore {
 
 class DeferredPromise;
-class Frame;
+class NavigatorBase;
 class ServiceWorker;
 
 class ServiceWorkerContainer final : public EventTargetWithInlineData {
 public:
-    static Ref<ServiceWorkerContainer> create(Frame& frame) { return adoptRef(*new ServiceWorkerContainer(frame)); }
+    static std::unique_ptr<ServiceWorkerContainer> create(NavigatorBase& navigator)
+    {
+        return std::make_unique<ServiceWorkerContainer>(navigator);
+    }
+    explicit ServiceWorkerContainer(NavigatorBase&);
     virtual ~ServiceWorkerContainer() = default;
 
     struct RegistrationOptions {
@@ -54,12 +58,12 @@ public:
     void startMessages();
 
 private:
-    explicit ServiceWorkerContainer(Frame&);
-
     virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
+    void refEventTarget() final;
+    void derefEventTarget() final;
+
+    NavigatorBase& m_navigator;
 };
 
 } // namespace WebCore

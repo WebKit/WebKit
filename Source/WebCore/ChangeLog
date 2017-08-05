@@ -1,3 +1,25 @@
+2017-08-04  Brady Eidson  <beidson@apple.com>
+
+        Have navigator.serviceWorker() actually return a ServiceWorkerContainer object.
+        https://bugs.webkit.org/show_bug.cgi?id=175215
+
+        Reviewed by Youenn Fablet.
+
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::serviceWorker): Actually create and remember an object.
+        * page/NavigatorBase.h:
+
+        * workers/ServiceWorkerContainer.cpp:
+        (WebCore::rejectLater): Asynchronously reject the given promise with an error message.
+        (WebCore::ServiceWorkerContainer::ServiceWorkerContainer):
+        (WebCore::ServiceWorkerContainer::refEventTarget): Ref the underlying Navigator.
+        (WebCore::ServiceWorkerContainer::derefEventTarget): Deref the underlying Navigator.
+        (WebCore::ServiceWorkerContainer::ready): rejectLater the promise.
+        (WebCore::ServiceWorkerContainer::addRegistration): Ditto.
+        (WebCore::ServiceWorkerContainer::getRegistration): Ditto.
+        (WebCore::ServiceWorkerContainer::getRegistrations): Ditto.
+        * workers/ServiceWorkerContainer.h:
+
 2017-08-04  Chris Dumez  <cdumez@apple.com>
 
         [Beacon] Update sendBeacon to use the CachedResourceLoader

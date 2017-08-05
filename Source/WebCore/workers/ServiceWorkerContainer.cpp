@@ -28,28 +28,57 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "Exception.h"
+#include "JSDOMPromiseDeferred.h"
+#include "NavigatorBase.h"
+#include <wtf/RunLoop.h>
+
 namespace WebCore {
 
+static void rejectLater(Ref<DeferredPromise>&& promise, const String& methodName)
+{
+    RunLoop::current().dispatch([promise = WTFMove(promise), methodName] {
+        promise->reject(Exception(UnknownError, makeString("ServiceWorkerContainer method '", methodName, "' not yet implemented")));
+    });
+}
+
+ServiceWorkerContainer::ServiceWorkerContainer(NavigatorBase& navigator)
+    : m_navigator(navigator)
+{
+}
+void ServiceWorkerContainer::refEventTarget()
+{
+    m_navigator.ref();
+}
+
+void ServiceWorkerContainer::derefEventTarget()
+{
+    m_navigator.deref();
+}
 
 ServiceWorker* ServiceWorkerContainer::controller() const
 {
     return nullptr;
 }
 
-void ServiceWorkerContainer::ready(Ref<DeferredPromise>&&)
+void ServiceWorkerContainer::ready(Ref<DeferredPromise>&& promise)
 {
+    rejectLater(WTFMove(promise), "ready");
 }
 
-void ServiceWorkerContainer::addRegistration(const String&, const RegistrationOptions&, Ref<DeferredPromise>&&)
+void ServiceWorkerContainer::addRegistration(const String&, const RegistrationOptions&, Ref<DeferredPromise>&& promise)
 {
+    rejectLater(WTFMove(promise), "addRegistration");
 }
 
-void ServiceWorkerContainer::getRegistration(const String&, Ref<DeferredPromise>&&)
+void ServiceWorkerContainer::getRegistration(const String&, Ref<DeferredPromise>&& promise)
 {
+    rejectLater(WTFMove(promise), "getRegistration");
 }
 
-void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&&)
+void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 {
+    rejectLater(WTFMove(promise), "getRegistrations");
 }
 
 void ServiceWorkerContainer::startMessages()

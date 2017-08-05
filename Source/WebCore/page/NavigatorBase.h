@@ -25,15 +25,12 @@
 
 #pragma once
 
+#include "ServiceWorkerContainer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-#if ENABLE(SERVICE_WORKER)
-class ServiceWorkerContainer;
-#endif
 
 class NavigatorBase : public RefCounted<NavigatorBase> {
 public:
@@ -56,7 +53,11 @@ public:
     static Vector<String> languages();
 
 #if ENABLE(SERVICE_WORKER)
+public:
     ServiceWorkerContainer* serviceWorker();
+
+private:
+    std::unique_ptr<ServiceWorkerContainer> m_serviceWorkerContainer;
 #endif
 };
 

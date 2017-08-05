@@ -148,7 +148,10 @@ Vector<String> NavigatorBase::languages()
 #if ENABLE(SERVICE_WORKER)
 ServiceWorkerContainer* NavigatorBase::serviceWorker()
 {
-    return nullptr;
+    if (!m_serviceWorkerContainer)
+        m_serviceWorkerContainer = ServiceWorkerContainer::create(*this);
+
+    return m_serviceWorkerContainer.get();
 }
 #endif
 
