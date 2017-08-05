@@ -277,6 +277,17 @@ static std::optional<Timeouts> deserializeTimeouts(InspectorObject& timeoutsObje
     return timeouts;
 }
 
+static std::optional<PageLoadStrategy> deserializePageLoadStrategy(const String& pageLoadStrategy)
+{
+    if (pageLoadStrategy == "none")
+        return PageLoadStrategy::None;
+    if (pageLoadStrategy == "normal")
+        return PageLoadStrategy::Normal;
+    if (pageLoadStrategy == "eager")
+        return PageLoadStrategy::Eager;
+    return std::nullopt;
+}
+
 void WebDriverService::parseCapabilities(const InspectorObject& matchedCapabilities, Capabilities& capabilities) const
 {
     // Matched capabilities have already been validated.
@@ -295,6 +306,9 @@ void WebDriverService::parseCapabilities(const InspectorObject& matchedCapabilit
     RefPtr<InspectorObject> timeouts;
     if (matchedCapabilities.getObject(ASCIILiteral("timeouts"), timeouts))
         capabilities.timeouts = deserializeTimeouts(*timeouts);
+    String pageLoadStrategy;
+    if (matchedCapabilities.getString(ASCIILiteral("pageLoadStrategy"), pageLoadStrategy))
+        capabilities.pageLoadStrategy = deserializePageLoadStrategy(pageLoadStrategy);
     platformParseCapabilities(matchedCapabilities, capabilities);
 }
 
@@ -336,9 +350,8 @@ RefPtr<InspectorObject> WebDriverService::validatedCapabilities(const InspectorO
             result->setString(it->key, stringValue);
         } else if (it->key == "pageLoadStrategy") {
             String pageLoadStrategy;
-            if (!it->value->asString(pageLoadStrategy))
+            if (!it->value->asString(pageLoadStrategy) || !deserializePageLoadStrategy(pageLoadStrategy))
                 return nullptr;
-            // FIXME: implement pageLoadStrategy.
             result->setString(it->key, pageLoadStrategy);
         } else if (it->key == "proxy") {
             // FIXME: implement proxy support.
@@ -559,6 +572,19 @@ void WebDriverService::newSession(RefPtr<InspectorObject>&& parameters, Function
                 if (capabilities.timeouts.value().implicit)
                     timeoutsObject->setInteger(ASCIILiteral("implicit"), capabilities.timeouts.value().implicit.value().millisecondsAs<int>());
                 capabilitiesObject->setObject(ASCIILiteral("timeouts"), WTFMove(timeoutsObject));
+            }
+            if (capabilities.pageLoadStrategy) {
+                switch (capabilities.pageLoadStrategy.value()) {
+                case PageLoadStrategy::None:
+                    capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "none");
+                    break;
+                case PageLoadStrategy::Normal:
+                    capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "normal");
+                    break;
+                case PageLoadStrategy::Eager:
+                    capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "eager");
+                    break;
+                }
             }
             resultObject->setObject(ASCIILiteral("value"), WTFMove(capabilitiesObject));
             completionHandler(CommandResult::success(WTFMove(resultObject)));

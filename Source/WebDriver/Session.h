@@ -101,6 +101,8 @@ private:
     void switchToTopLevelBrowsingContext(std::optional<String>);
     void switchToBrowsingContext(std::optional<String>);
 
+    std::optional<String> pageLoadStrategyString() const;
+
     RefPtr<Inspector::InspectorObject> createElement(RefPtr<Inspector::InspectorValue>&&);
     RefPtr<Inspector::InspectorObject> createElement(const String& elementID);
     RefPtr<Inspector::InspectorObject> extractElement(Inspector::InspectorValue&);

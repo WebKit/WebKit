@@ -1,5 +1,36 @@
 2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: Implement page load strategy
+        https://bugs.webkit.org/show_bug.cgi?id=175183
+
+        Reviewed by Brian Burg.
+
+        Split pending navigation maps into normal and eager, and use one or the other depending on the received page
+        load strategy. We need to keep different maps for every page load strategy because every command could use a
+        different strategy.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::waitForNavigationToComplete): Extract page load strategy from parameter and pass
+        it to waitForNavigationToCompleteOnPage() and waitForNavigationToCompleteOnFrame().
+        (WebKit::WebAutomationSession::waitForNavigationToCompleteOnPage): Return early if page load strategy is
+        none. Otherwise at the pening callback to the normal or eager map depeding on the page load straegy.
+        (WebKit::WebAutomationSession::waitForNavigationToCompleteOnFrame): Ditto.
+        (WebKit::respondToPendingNavigationCallbacksWithTimeout): Helper to send pening navigation callback in case of
+        timeout failure.
+        (WebKit::WebAutomationSession::loadTimerFired): Call finishPendingNavigationsWithTimeoutFailure() with all the maps.
+        (WebKit::WebAutomationSession::navigateBrowsingContext): Extract page load strategy from parameter and pass it
+        to waitForNavigationToCompleteOnPage().
+        (WebKit::WebAutomationSession::goBackInBrowsingContext): Ditto.
+        (WebKit::WebAutomationSession::goForwardInBrowsingContext): Ditto.
+        (WebKit::WebAutomationSession::reloadBrowsingContext): Ditto.
+        (WebKit::WebAutomationSession::navigationOccurredForFrame): Use the normal maps.
+        (WebKit::WebAutomationSession::documentLoadedForFrame): Stop timeout timer and dispatch eager pending navigations.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame): Notify the automation session.
+
+2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: use in-view center point for clicks instead of bounding box center point
         https://bugs.webkit.org/show_bug.cgi?id=174863
 

@@ -102,6 +102,23 @@ void Session::switchToBrowsingContext(std::optional<String> browsingContext)
         m_currentBrowsingContext = browsingContext;
 }
 
+std::optional<String> Session::pageLoadStrategyString() const
+{
+    if (!capabilities().pageLoadStrategy)
+        return std::nullopt;
+
+    switch (capabilities().pageLoadStrategy.value()) {
+    case PageLoadStrategy::None:
+        return String("None");
+    case PageLoadStrategy::Normal:
+        return String("Normal");
+    case PageLoadStrategy::Eager:
+        return String("Eager");
+    }
+
+    return std::nullopt;
+}
+
 void Session::createTopLevelBrowsingContext(Function<void (CommandResult&&)>&& completionHandler)
 {
     ASSERT(!m_toplevelBrowsingContext.value());
@@ -134,6 +151,8 @@ void Session::go(const String& url, Function<void (CommandResult&&)>&& completio
     parameters->setString(ASCIILiteral("url"), url);
     if (m_timeouts.pageLoad)
         parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
+    if (auto pageLoadStrategy = pageLoadStrategyString())
+        parameters->setString(ASCIILiteral("pageLoadStrategy"), pageLoadStrategy.value());
     m_host->sendCommandToBackend(ASCIILiteral("navigateBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -183,6 +202,8 @@ void Session::back(Function<void (CommandResult&&)>&& completionHandler)
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
     if (m_timeouts.pageLoad)
         parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
+    if (auto pageLoadStrategy = pageLoadStrategyString())
+        parameters->setString(ASCIILiteral("pageLoadStrategy"), pageLoadStrategy.value());
     m_host->sendCommandToBackend(ASCIILiteral("goBackInBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -204,6 +225,8 @@ void Session::forward(Function<void (CommandResult&&)>&& completionHandler)
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
     if (m_timeouts.pageLoad)
         parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
+    if (auto pageLoadStrategy = pageLoadStrategyString())
+        parameters->setString(ASCIILiteral("pageLoadStrategy"), pageLoadStrategy.value());
     m_host->sendCommandToBackend(ASCIILiteral("goForwardInBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -225,6 +248,8 @@ void Session::refresh(Function<void (CommandResult&&)>&& completionHandler)
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
     if (m_timeouts.pageLoad)
         parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
+    if (auto pageLoadStrategy = pageLoadStrategyString())
+        parameters->setString(ASCIILiteral("pageLoadStrategy"), pageLoadStrategy.value());
     m_host->sendCommandToBackend(ASCIILiteral("reloadBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -981,6 +1006,8 @@ void Session::waitForNavigationToComplete(Function<void (CommandResult&&)>&& com
         parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
     if (m_timeouts.pageLoad)
         parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
+    if (auto pageLoadStrategy = pageLoadStrategyString())
+        parameters->setString(ASCIILiteral("pageLoadStrategy"), pageLoadStrategy.value());
     m_host->sendCommandToBackend(ASCIILiteral("waitForNavigationToComplete"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             auto result = CommandResult::fail(WTFMove(response.responseObject));

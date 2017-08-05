@@ -38,12 +38,19 @@ struct Timeouts {
     std::optional<Seconds> implicit;
 };
 
+enum class PageLoadStrategy {
+    None,
+    Normal,
+    Eager
+};
+
 struct Capabilities {
     std::optional<String> browserName;
     std::optional<String> browserVersion;
     std::optional<String> platformName;
     std::optional<bool> acceptInsecureCerts;
     std::optional<Timeouts> timeouts;
+    std::optional<PageLoadStrategy> pageLoadStrategy;
 #if PLATFORM(GTK)
     std::optional<String> browserBinary;
     std::optional<Vector<String>> browserArguments;
