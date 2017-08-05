@@ -122,6 +122,8 @@ unsigned CommandResult::httpStatusCode() const
     // §6.6 Handling Errors.
     // https://www.w3.org/TR/webdriver/#handling-errors
     switch (m_errorCode.value()) {
+    case ErrorCode::ElementClickIntercepted:
+    case ErrorCode::ElementNotInteractable:
     case ErrorCode::InvalidArgument:
     case ErrorCode::InvalidElementState:
     case ErrorCode::InvalidSelector:
@@ -152,6 +154,10 @@ String CommandResult::errorString() const
     ASSERT(isError());
 
     switch (m_errorCode.value()) {
+    case ErrorCode::ElementClickIntercepted:
+        return ASCIILiteral("element click intercepted");
+    case ErrorCode::ElementNotInteractable:
+        return ASCIILiteral("element not interactable");
     case ErrorCode::InvalidArgument:
         return ASCIILiteral("invalid argument");
     case ErrorCode::InvalidElementState:

@@ -580,7 +580,7 @@ String Session::extractElementID(InspectorValue& value)
     return elementID;
 }
 
-void Session::computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption> options, Function<void (std::optional<Rect>&&, RefPtr<InspectorObject>&&)>&& completionHandler)
+void Session::computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption> options, Function<void (std::optional<Rect>&&, std::optional<Point>&&, bool, RefPtr<InspectorObject>&&)>&& completionHandler)
 {
     ASSERT(m_toplevelBrowsingContext.value());
 
@@ -592,12 +592,12 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
     parameters->setBoolean(ASCIILiteral("useViewportCoordinates"), options.contains(ElementLayoutOption::UseViewportCoordinates));
     m_host->sendCommandToBackend(ASCIILiteral("computeElementLayout"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
         if (response.isError || !response.responseObject) {
-            completionHandler(std::nullopt, WTFMove(response.responseObject));
+            completionHandler(std::nullopt, std::nullopt, false, WTFMove(response.responseObject));
             return;
         }
         RefPtr<InspectorObject> rectObject;
         if (!response.responseObject->getObject(ASCIILiteral("rect"), rectObject)) {
-            completionHandler(std::nullopt, nullptr);
+            completionHandler(std::nullopt, std::nullopt, false, nullptr);
             return;
         }
         std::optional<int> elementX;
@@ -611,7 +611,7 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
             }
         }
         if (!elementX || !elementY) {
-            completionHandler(std::nullopt, nullptr);
+            completionHandler(std::nullopt, std::nullopt, false, nullptr);
             return;
         }
         std::optional<int> elementWidth;
@@ -625,11 +625,29 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
             }
         }
         if (!elementWidth || !elementHeight) {
-            completionHandler(std::nullopt, nullptr);
+            completionHandler(std::nullopt, std::nullopt, false, nullptr);
             return;
         }
         Rect rect = { { elementX.value(), elementY.value() }, { elementWidth.value(), elementHeight.value() } };
-        completionHandler(rect, nullptr);
+
+        bool isObscured;
+        if (!response.responseObject->getBoolean(ASCIILiteral("isObscured"), isObscured)) {
+            completionHandler(std::nullopt, std::nullopt, false, nullptr);
+            return;
+        }
+        RefPtr<InspectorObject> inViewCenterPointObject;
+        if (!response.responseObject->getObject(ASCIILiteral("inViewCenterPoint"), inViewCenterPointObject)) {
+            completionHandler(rect, std::nullopt, isObscured, nullptr);
+            return;
+        }
+        int inViewCenterPointX, inViewCenterPointY;
+        if (!inViewCenterPointObject->getInteger(ASCIILiteral("x"), inViewCenterPointX)
+            || !inViewCenterPointObject->getInteger(ASCIILiteral("y"), inViewCenterPointY)) {
+            completionHandler(std::nullopt, std::nullopt, isObscured, nullptr);
+            return;
+        }
+        Point inViewCenterPoint = { inViewCenterPointX, inViewCenterPointY };
+        completionHandler(rect, inViewCenterPoint, isObscured, nullptr);
     });
 }
 
@@ -830,7 +848,7 @@ void Session::getElementRect(const String& elementID, Function<void (CommandResu
         return;
     }
 
-    computeElementLayout(elementID, { }, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, RefPtr<InspectorObject>&& error) {
+    computeElementLayout(elementID, { }, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, std::optional<Point>&&, bool, RefPtr<InspectorObject>&& error) {
         if (!rect || error) {
             completionHandler(CommandResult::fail(WTFMove(error)));
             return;
@@ -987,15 +1005,21 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
 
     OptionSet<ElementLayoutOption> options = ElementLayoutOption::ScrollIntoViewIfNeeded;
     options |= ElementLayoutOption::UseViewportCoordinates;
-    computeElementLayout(elementID, options, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, RefPtr<InspectorObject>&& error) mutable {
+    computeElementLayout(elementID, options, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, std::optional<Point>&& inViewCenter, bool isObscured, RefPtr<InspectorObject>&& error) mutable {
         if (!rect || error) {
             completionHandler(CommandResult::fail(WTFMove(error)));
             return;
         }
+        if (isObscured) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementClickIntercepted));
+            return;
+        }
+        if (!inViewCenter) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::ElementNotInteractable));
+            return;
+        }
 
-        // FIXME: the center of the bounding box is not always part of the element.
-        performMouseInteraction(rect.value().origin.x + rect.value().size.width / 2, rect.value().origin.y + rect.value().size.height / 2,
-            MouseButton::Left, MouseInteraction::SingleClick, WTFMove(completionHandler));
+        performMouseInteraction(inViewCenter.value().x, inViewCenter.value().y, MouseButton::Left, MouseInteraction::SingleClick, WTFMove(completionHandler));
 
         waitForNavigationToComplete(WTFMove(completionHandler));
     });

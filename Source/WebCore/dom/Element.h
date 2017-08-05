@@ -175,7 +175,7 @@ public:
 
     FloatRect boundingClientRect();
 
-    Ref<DOMRectList> getClientRects();
+    WEBCORE_EXPORT Ref<DOMRectList> getClientRects();
     Ref<DOMRect> getBoundingClientRect();
 
     // Returns the absolute bounding box translated into client coordinates.

@@ -68,7 +68,7 @@ public:
 
     static FloatPoint zero() { return FloatPoint(); }
 
-    static FloatPoint narrowPrecision(double x, double y);
+    WEBCORE_EXPORT static FloatPoint narrowPrecision(double x, double y);
 
     float x() const { return m_x; }
     float y() const { return m_y; }

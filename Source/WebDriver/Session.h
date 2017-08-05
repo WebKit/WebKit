@@ -133,7 +133,7 @@ private:
         ScrollIntoViewIfNeeded = 1 << 0,
         UseViewportCoordinates = 1 << 1,
     };
-    void computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption>, Function<void (std::optional<Rect>&&, RefPtr<Inspector::InspectorObject>&&)>&&);
+    void computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption>, Function<void (std::optional<Rect>&&, std::optional<Point>&&, bool, RefPtr<Inspector::InspectorObject>&&)>&&);
 
     enum class MouseButton { None, Left, Middle, Right };
     enum class MouseInteraction { Move, Down, Up, SingleClick, DoubleClick };

@@ -4951,6 +4951,12 @@ FloatPoint FrameView::documentToClientPoint(FloatPoint p) const
     return p;
 }
 
+FloatPoint FrameView::clientToDocumentPoint(FloatPoint point) const
+{
+    point.move(-documentToClientOffset());
+    return point;
+}
+
 FloatRect FrameView::layoutViewportToAbsoluteRect(FloatRect rect) const
 {
     ASSERT(frame().settings().visualViewportEnabled());

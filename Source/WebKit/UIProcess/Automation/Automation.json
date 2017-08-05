@@ -422,7 +422,9 @@
                 { "name": "useViewportCoordinates", "optional": true, "type": "boolean", "description": "If the result coordinates should be represented as viewport coordinates or not. Defaults to false, which means coordinates should be represented as page coordinates." }
             ],
             "returns": [
-                { "name": "rect", "$ref": "Rect", "description": "The layout rect for the requested element. Specified in page or viewport coordinates based on the useViewportCoordinates parameter." }
+                { "name": "rect", "$ref": "Rect", "description": "The layout rect for the requested element. Specified in page or viewport coordinates based on the useViewportCoordinates parameter." },
+                { "name": "inViewCenterPoint", "optional": true, "$ref": "Point", "description": "The in-view center point for the requested element. Specified in page or viewport coordinates based on the useViewportCoordinates parameter." },
+                { "name": "isObscured", "type": "boolean", "description": "If the in-view center point of the requested element is obscured by another element." }
             ],
             "async": true
         },

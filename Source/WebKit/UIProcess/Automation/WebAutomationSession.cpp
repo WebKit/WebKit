@@ -743,7 +743,7 @@ void WebAutomationSession::computeElementLayout(Inspector::ErrorString& errorStr
     page->process().send(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->pageID(), frameID.value(), nodeHandle, scrollIntoViewIfNeeded, useViewportCoordinates, callbackID), 0);
 }
 
-void WebAutomationSession::didComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, const String& errorType)
+void WebAutomationSession::didComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, std::optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured, const String& errorType)
 {
     auto callback = m_computeElementLayoutCallbacks.take(callbackID);
     if (!callback)
@@ -769,7 +769,17 @@ void WebAutomationSession::didComputeElementLayout(uint64_t callbackID, WebCore:
         .setSize(WTFMove(sizeObject))
         .release();
 
-    callback->sendSuccess(WTFMove(rectObject));
+    if (!inViewCenterPoint) {
+        callback->sendSuccess(WTFMove(rectObject), nullptr, isObscured);
+        return;
+    }
+
+    auto inViewCenterPointObject = Inspector::Protocol::Automation::Point::create()
+        .setX(inViewCenterPoint.value().x())
+        .setY(inViewCenterPoint.value().y())
+        .release();
+
+    callback->sendSuccess(WTFMove(rectObject), WTFMove(inViewCenterPointObject), isObscured);
 }
 
 void WebAutomationSession::isShowingJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle, bool* result)

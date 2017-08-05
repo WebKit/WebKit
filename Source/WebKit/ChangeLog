@@ -1,3 +1,24 @@
+2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: use in-view center point for clicks instead of bounding box center point
+        https://bugs.webkit.org/show_bug.cgi?id=174863
+
+        Reviewed by Simon Fraser.
+
+        Change computeElementLayout to also return the in-view center point and whether it's obscured by another
+        element.
+
+        * UIProcess/Automation/Automation.json: Add optional inViewCenterPoint to the result and isObscured.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::didComputeElementLayout): Handle inViewCenterPoint and isObscured.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.messages.in:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::elementInViewClientCenterPoint): Get the client in-view center point and whether it's obscured
+        according to the spec.
+        (WebKit::WebAutomationSessionProxy::computeElementLayout): Pass inViewCenterPoint and isObscured to
+        DidComputeElementLayout message.
+
 2017-08-05  Brian Burg  <bburg@apple.com>
 
         Web Automation: files selected for upload should be matched against 'accept' attribute values case-insensitively

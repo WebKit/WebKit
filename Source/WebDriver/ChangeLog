@@ -1,3 +1,25 @@
+2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: use in-view center point for clicks instead of bounding box center point
+        https://bugs.webkit.org/show_bug.cgi?id=174863
+
+        Reviewed by Simon Fraser.
+
+        The center of the element bounding box is not always part of the element, like in multiline links, for example.
+
+        11.1 Element Interactability.
+        https://www.w3.org/TR/webdriver/#dfn-in-view-center-point
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::httpStatusCode): Add ElementClickIntercepted and ElementNotInteractable errors.
+        (WebDriver::CommandResult::errorString): Ditto.
+        * CommandResult.h: Ditto.
+        * Session.cpp:
+        (WebDriver::Session::computeElementLayout): Get the in-view center point and isObscured from the result too.
+        (WebDriver::Session::getElementRect): Ignore in-view center point and isObscured.
+        (WebDriver::Session::elementClick): Fail in case the element is not interactable or is obscured.
+        * Session.h:
+
 2017-08-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] WebKitFS.cmake depends on options set in Option cmake files that are included later

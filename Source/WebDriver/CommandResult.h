@@ -39,6 +39,8 @@ public:
     // §6.6 Handling Errors.
     // https://www.w3.org/TR/webdriver/#handling-errors
     enum class ErrorCode {
+        ElementClickIntercepted,
+        ElementNotInteractable,
         InvalidArgument,
         InvalidElementState,
         InvalidSelector,
