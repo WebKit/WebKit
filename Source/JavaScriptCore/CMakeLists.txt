@@ -376,7 +376,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGOSREntry.cpp
     dfg/DFGOSREntrypointCreationPhase.cpp
     dfg/DFGOSRExit.cpp
-    dfg/DFGOSRExit32_64.cpp
     dfg/DFGOSRExitBase.cpp
     dfg/DFGOSRExitCompilerCommon.cpp
     dfg/DFGOSRExitFuzz.cpp

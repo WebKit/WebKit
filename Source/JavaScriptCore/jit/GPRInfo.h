@@ -139,7 +139,9 @@ public:
         ASSERT(!isAddress());
         return m_base;
     }
-    
+
+    GPRReg payloadGPR() const { return gpr(); }
+
     JSValueRegs regs() const
     {
         return JSValueRegs(gpr());

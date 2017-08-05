@@ -1,3 +1,22 @@
+2017-08-05  Mark Lam  <mark.lam@apple.com>
+
+        Move DFG::OSRExitCompiler methods into DFG::OSRExit [step 3].
+        https://bugs.webkit.org/show_bug.cgi?id=175228
+        <rdar://problem/33735737>
+
+        Reviewed by Saam Barati.
+
+        Merge the 32-bit OSRExit::compileExit() method into the 64-bit version, and
+        delete OSRExit32_64.cpp.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOSRExit32_64.cpp: Removed.
+        * jit/GPRInfo.h:
+        (JSC::JSValueSource::payloadGPR const):
+
 2017-08-04  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Add Cache and CacheStorage IDL definitions
