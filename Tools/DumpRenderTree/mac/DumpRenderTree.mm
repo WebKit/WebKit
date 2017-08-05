@@ -853,6 +853,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     // FIXME: AsyncFrameScrollingEnabled
     [preferences setWebRTCLegacyAPIEnabled:YES];
     [preferences setCredentialManagementEnabled:YES];
+    [preferences setCacheAPIEnabled:NO];
     [preferences setReadableByteStreamAPIEnabled:YES];
     [preferences setWritableStreamAPIEnabled:YES];
 }
@@ -966,6 +967,8 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setModernMediaControlsEnabled:YES];
     [preferences setResourceTimingEnabled:YES];
     [preferences setUserTimingEnabled:YES];
+
+    [preferences setCacheAPIEnabled:NO];
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];

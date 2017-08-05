@@ -17,6 +17,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/beacon"
     "${WEBCORE_DIR}/Modules/applepay"
+    "${WEBCORE_DIR}/Modules/cache"
     "${WEBCORE_DIR}/Modules/credentials"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
     "${WEBCORE_DIR}/Modules/encryptedmedia/legacy"
@@ -148,6 +149,7 @@ set(WebCore_IDL_INCLUDES
     xml
 
     Modules/airplay
+    Modules/cache
     Modules/credentials
     Modules/encryptedmedia/legacy
     Modules/fetch
@@ -177,6 +179,12 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
 
     Modules/beacon/NavigatorBeacon.idl
+
+    Modules/cache/Cache.idl
+    Modules/cache/CacheQueryOptions.idl
+    Modules/cache/CacheStorage.idl
+    Modules/cache/DOMWindowCaches.idl
+    Modules/cache/WorkerGlobalScopeCaches.idl
 
     Modules/credentials/BasicCredential.idl
     Modules/credentials/CredentialCreationOptions.idl
@@ -880,6 +888,11 @@ set(WebCore_SOURCES
     Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 
     Modules/beacon/NavigatorBeacon.cpp
+
+    Modules/cache/Cache.cpp
+    Modules/cache/CacheStorage.cpp
+    Modules/cache/DOMWindowCaches.cpp
+    Modules/cache/WorkerGlobalScopeCaches.cpp
 
     Modules/credentials/BasicCredential.cpp
     Modules/credentials/CredentialsContainer.cpp

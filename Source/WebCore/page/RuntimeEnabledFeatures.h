@@ -162,6 +162,9 @@ public:
     bool webGPUEnabled() const { return m_isWebGPUEnabled; }
 #endif
 
+    void setCacheAPIEnabled(bool isEnabled) { m_isCacheAPIEnabled = isEnabled; }
+    bool cacheAPIEnabled() const { return m_isCacheAPIEnabled; }
+
     void setFetchAPIEnabled(bool isEnabled) { m_isFetchAPIEnabled = isEnabled; }
     bool fetchAPIEnabled() const { return m_isFetchAPIEnabled; }
     
@@ -293,6 +296,7 @@ private:
     bool m_isWebGPUEnabled { false };
 #endif
 
+    bool m_isCacheAPIEnabled { false };
     bool m_isFetchAPIEnabled { true };
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)

@@ -185,6 +185,9 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled(enabled);
 #endif
 
+    if (preference == "WebKitCacheAPIEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setCacheAPIEnabled(enabled);
+
 #if ENABLE(STREAMS_API)
     if (preference == "WebKitReadableByteStreamAPIEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setReadableByteStreamAPIEnabled(enabled);

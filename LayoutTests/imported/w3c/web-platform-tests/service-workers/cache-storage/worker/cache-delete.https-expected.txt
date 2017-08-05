@@ -1,0 +1,10 @@
+
+FAIL Cache.delete with no arguments promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.delete called with a string URL promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.delete called with a Request object promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.delete called with a HEAD request promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.delete supports ignoreVary promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.delete with a non-existent entry promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.delete with ignoreSearch option (request with search parameters) promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.delete with ignoreSearch option (when it is specified as false) promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+

@@ -1,0 +1,28 @@
+
+PASS Cache interface: existence and properties of interface object 
+PASS Cache interface object length 
+PASS Cache interface object name 
+PASS Cache interface: existence and properties of interface prototype object 
+PASS Cache interface: existence and properties of interface prototype object's "constructor" property 
+PASS Cache interface: operation match(RequestInfo,CacheQueryOptions) 
+PASS Cache interface: operation matchAll(RequestInfo,CacheQueryOptions) 
+PASS Cache interface: operation add(RequestInfo) 
+PASS Cache interface: operation addAll([object Object]) 
+PASS Cache interface: operation put(RequestInfo,Response) 
+PASS Cache interface: operation delete(RequestInfo,CacheQueryOptions) 
+PASS Cache interface: operation keys(RequestInfo,CacheQueryOptions) 
+FAIL Cache interface: throw new Error ('No object defined for the Cache interface') must inherit property "match" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: calling match(RequestInfo,CacheQueryOptions) on throw new Error ('No object defined for the Cache interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: throw new Error ('No object defined for the Cache interface') must inherit property "matchAll" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: calling matchAll(RequestInfo,CacheQueryOptions) on throw new Error ('No object defined for the Cache interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: throw new Error ('No object defined for the Cache interface') must inherit property "add" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: calling add(RequestInfo) on throw new Error ('No object defined for the Cache interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: throw new Error ('No object defined for the Cache interface') must inherit property "addAll" with the proper type (3) assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: calling addAll([object Object]) on throw new Error ('No object defined for the Cache interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: throw new Error ('No object defined for the Cache interface') must inherit property "put" with the proper type (4) assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: calling put(RequestInfo,Response) on throw new Error ('No object defined for the Cache interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: throw new Error ('No object defined for the Cache interface') must inherit property "delete" with the proper type (5) assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: calling delete(RequestInfo,CacheQueryOptions) on throw new Error ('No object defined for the Cache interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: throw new Error ('No object defined for the Cache interface') must inherit property "keys" with the proper type (6) assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+FAIL Cache interface: calling keys(RequestInfo,CacheQueryOptions) on throw new Error ('No object defined for the Cache interface') with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "Error: No object defined for the Cache interface"
+

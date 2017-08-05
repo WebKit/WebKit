@@ -1,0 +1,16 @@
+
+FAIL Cache.matchAll with no matching entries promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll with URL promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll with Request promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll with new Request promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll with HEAD promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll with ignoreSearch option (request with no search parameters) promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll with ignoreSearch option (request with search parameters) promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll supports ignoreMethod promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll supports ignoreVary promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll with URL containing fragment promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll with string fragment "http" as query promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll without parameters promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll with responses containing "Vary" header promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+FAIL Cache.matchAll with multiple vary pairs promise_test: Unhandled rejection with value: object "TypeError: Not implemented"
+

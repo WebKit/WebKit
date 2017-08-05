@@ -115,8 +115,12 @@ imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.https.html [
 imported/w3c/web-platform-tests/secure-contexts/shared-worker-insecure-first.https.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https.html [ Skip ]
 
-# Service Workers are unsupported        
+# Skip service worker tests until the implementation is more actionnable
 imported/w3c/web-platform-tests/service-workers [ Skip ]
+imported/w3c/web-platform-tests/service-workers/stub-4.6.2-cache.html [ Pass ]
+imported/w3c/web-platform-tests/service-workers/stub-4.6.3-cache-storage.html [ Pass ]
+imported/w3c/web-platform-tests/service-workers/cache-storage [ Pass ]
+imported/w3c/web-platform-tests/service-workers/cache-storage/window [ Pass Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.

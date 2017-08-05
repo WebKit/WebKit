@@ -632,6 +632,7 @@ public:
 #if ENABLE(WEBGPU)
         [NSNumber numberWithBool:NO], WebKitWebGPUEnabledPreferenceKey,
 #endif
+        [NSNumber numberWithBool:NO], WebKitCacheAPIEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitFetchAPIEnabledPreferenceKey,
 
 #if ENABLE(STREAMS_API)
@@ -2981,6 +2982,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCustomElementsEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCustomElementsEnabledPreferenceKey];
+}
+
+- (BOOL)cacheAPIEnabled
+{
+    return [self _boolValueForKey:WebKitCacheAPIEnabledPreferenceKey];
+}
+
+- (void)setCacheAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitCacheAPIEnabledPreferenceKey];
 }
 
 - (BOOL)fetchAPIEnabled

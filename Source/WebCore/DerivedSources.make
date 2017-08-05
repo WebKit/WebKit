@@ -31,6 +31,7 @@ VPATH = \
     $(WebCore)/Modules/airplay \
     $(WebCore)/Modules/applepay \
     $(WebCore)/Modules/beacon \
+    $(WebCore)/Modules/cache \
     $(WebCore)/Modules/credentials \
     $(WebCore)/Modules/encryptedmedia \
     $(WebCore)/Modules/encryptedmedia/legacy \
@@ -59,7 +60,6 @@ VPATH = \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/editing \
-    $(WebCore)/fetch \
     $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/html/canvas \
@@ -99,6 +99,11 @@ JS_BINDING_IDLS = \
 	$(WebCore)/Modules/applepay/ApplePayShippingMethodUpdate.idl \
     $(WebCore)/Modules/applepay/ApplePayValidateMerchantEvent.idl \
     $(WebCore)/Modules/beacon/NavigatorBeacon.idl \
+    $(WebCore)/Modules/cache/DOMWindowCaches.idl \
+    $(WebCore)/Modules/cache/Cache.idl \
+    $(WebCore)/Modules/cache/CacheQueryOptions.idl \
+    $(WebCore)/Modules/cache/CacheStorage.idl \
+    $(WebCore)/Modules/cache/WorkerGlobalScopeCaches.idl \
     $(WebCore)/Modules/credentials/BasicCredential.idl \
     $(WebCore)/Modules/credentials/CredentialCreationOptions.idl \
     $(WebCore)/Modules/credentials/CredentialData.idl \

@@ -94,6 +94,9 @@ fast/mediastream
 http/tests/media/media-stream
 http/tests/ssl/media-stream
 
+# No service worker implementation for WK1
+imported/w3c/web-platform-tests/service-workers [ Skip ]
+
 # Skip WebRTC for now in WK1
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]

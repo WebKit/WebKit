@@ -102,6 +102,7 @@ public:
     void setModernMediaControlsEnabled(bool);
     void setWebGL2Enabled(bool);
     void setWebGPUEnabled(bool);
+    void setCacheAPIEnabled(bool);
     void setWritableStreamAPIEnabled(bool);
     void setReadableByteStreamAPIEnabled(bool);
 

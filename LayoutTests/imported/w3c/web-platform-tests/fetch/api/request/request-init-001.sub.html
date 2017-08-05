@@ -55,7 +55,7 @@
       var credentials = {"givenValues" : ["omit", "same-origin", "include"],
                           "expectedValues" : ["omit", "same-origin", "include"]
       };
-      var caches = {"givenValues" : [ "default", "no-store", "reload", "no-cache", "force-cache"],
+      var cacheModes = {"givenValues" : [ "default", "no-store", "reload", "no-cache", "force-cache"],
                     "expectedValues" : [ "default", "no-store", "reload", "no-cache", "force-cache"]
       };
       var redirects = {"givenValues" : ["follow", "error", "manual"],
@@ -75,7 +75,7 @@
                              "referrerPolicy" : referrerPolicies,
                              "mode" : modes,
                              "credentials" : credentials,
-                             "cache" : caches,
+                             "cache" : cacheModes,
                              "redirect" : redirects,
                              "integrity" : integrities,
                              "window" : windows

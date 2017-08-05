@@ -3302,6 +3302,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setServiceControlsEnabled(store.getBoolValueForKey(WebPreferencesKey::serviceControlsEnabledKey()));
 #endif
 
+    RuntimeEnabledFeatures::sharedFeatures().setCacheAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::cacheAPIEnabledKey()));
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::fetchAPIEnabledKey()));
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)

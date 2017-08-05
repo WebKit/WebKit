@@ -171,6 +171,7 @@
 #define WebKitMediaKeysStorageDirectoryKey @"WebKitMediaKeysStorageDirectory"
 #define WebKitShadowDOMEnabledPreferenceKey @"WebKitShadowDOMEnabled"
 #define WebKitCustomElementsEnabledPreferenceKey @"WebKitCustomElementsEnabled"
+#define WebKitCacheAPIEnabledPreferenceKey @"WebKitCacheAPIEnabled"
 #define WebKitFetchAPIEnabledPreferenceKey @"WebKitFetchAPIEnabled"
 #define WebKitWritableStreamAPIEnabledPreferenceKey @"WebKitWritableStreamAPIEnabled"
 #define WebKitReadableByteStreamAPIEnabledPreferenceKey @"WebKitReadableByteStreamAPIEnabled"
