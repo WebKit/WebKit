@@ -82,6 +82,7 @@ ResourceResponseBase::CrossThreadData ResourceResponseBase::crossThreadData() co
     data.httpHeaderFields = httpHeaderFields().isolatedCopy();
     data.networkLoadMetrics = m_networkLoadMetrics.isolatedCopy();
     data.type = m_type;
+    data.tainting = m_tainting;
     data.isRedirected = m_isRedirected;
 
     return data;
@@ -103,16 +104,26 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     response.m_httpHeaderFields = WTFMove(data.httpHeaderFields);
     response.m_networkLoadMetrics = data.networkLoadMetrics;
     response.m_type = data.type;
+    response.m_tainting = data.tainting;
     response.m_isRedirected = data.isRedirected;
 
     return response;
 }
 
-ResourceResponse ResourceResponseBase::filterResponse(const ResourceResponse& response, ResourceResponse::Tainting tainting)
+ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response)
 {
-    if (tainting == ResourceResponse::Tainting::Opaque) {
+    if (response.tainting() == Tainting::Opaque) {
         ResourceResponse opaqueResponse;
-        opaqueResponse.setType(ResourceResponse::Type::Opaque);
+        opaqueResponse.setTainting(Tainting::Opaque);
+        opaqueResponse.setType(Type::Opaque);
+        return opaqueResponse;
+    }
+
+    if (response.tainting() == Tainting::Opaqueredirect) {
+        ResourceResponse opaqueResponse;
+        opaqueResponse.setTainting(Tainting::Opaqueredirect);
+        opaqueResponse.setType(Type::Opaqueredirect);
+        opaqueResponse.setURL(response.url());
         return opaqueResponse;
     }
 
@@ -120,15 +131,15 @@ ResourceResponse ResourceResponseBase::filterResponse(const ResourceResponse& re
     // Let's initialize filteredResponse to remove some header fields.
     filteredResponse.lazyInit(AllFields);
 
-    if (tainting == ResourceResponse::Tainting::Basic) {
-        filteredResponse.setType(ResourceResponse::Type::Basic);
+    if (response.tainting() == Tainting::Basic) {
+        filteredResponse.setType(Type::Basic);
         filteredResponse.m_httpHeaderFields.remove(HTTPHeaderName::SetCookie);
         filteredResponse.m_httpHeaderFields.remove(HTTPHeaderName::SetCookie2);
         return filteredResponse;
     }
 
-    ASSERT(tainting == ResourceResponse::Tainting::Cors);
-    filteredResponse.setType(ResourceResponse::Type::Cors);
+    ASSERT(response.tainting() == Tainting::Cors);
+    filteredResponse.setType(Type::Cors);
 
     HTTPHeaderSet accessControlExposeHeaderSet;
     parseAccessControlExposeHeadersAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders), accessControlExposeHeaderSet);

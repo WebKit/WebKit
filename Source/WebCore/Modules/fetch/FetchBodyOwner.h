@@ -66,6 +66,7 @@ protected:
     void extractBody(ScriptExecutionContext&, FetchBody::Init&&);
     void updateContentType();
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
+    void consumeNullBody(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
 
     void setBody(FetchBody&& body) { m_body = WTFMove(body); }
 

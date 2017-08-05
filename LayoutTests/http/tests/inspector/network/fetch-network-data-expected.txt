@@ -12,9 +12,10 @@ PASS: Should be able to see X-Custom-Header.
 
 -- Running test case: Network.Fetch.ModeNoCORS.CrossOrigin
 PASS: Resource should be Fetch type.
-PASS: Resource should have failed to load.
-PASS: Load should have failed.
-PASS: Load should have canceled.
+PASS: Resource should have loaded successfully.
+PASS: MIMEType should be 'application/json'.
+PASS: Status code should be 200.
+PASS: Should be able to see X-Custom-Header.
 
 -- Running test case: Network.Fetch.ModeCORS.SameOrigin
 PASS: Resource should be Fetch type.

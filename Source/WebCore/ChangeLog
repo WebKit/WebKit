@@ -1,3 +1,54 @@
+2017-08-05  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Response should keep all ResourceResponse information
+        https://bugs.webkit.org/show_bug.cgi?id=175099
+
+        Reviewed by Sam Weinig.
+
+        No change of behavior, covered by existing tests.
+
+        Disabling filtering of resource response at DocumentThreadableLoader for fetch API and doing the filtering at FetchResponse level.
+        This requires passing the tainting parameter to FetchResponse. For that purpose, we store the tainting on the ResourceResponse itself.
+        This allows mimicking the concept of internal response from the fetch spec.
+        This might be useful for future developments related to caching the responses.
+
+        The body is now also stored in FetchResponse so a flag is added to ensure we only expose the body if allowed.
+
+        Changing storage of opaque redirect information to keep the redirection information in the response.
+
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::blob):
+        (WebCore::FetchBodyOwner::consumeNullBody):
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::start):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didReceiveResponse):
+        (WebCore::FetchResponse::consume):
+        (WebCore::FetchResponse::consumeBodyAsStream):
+        (WebCore::FetchResponse::createReadableStreamSource):
+        * Modules/fetch/FetchResponse.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::responseReceived):
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::setBodyDataFrom):
+        (WebCore::CachedResource::setResponse):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::crossThreadData const):
+        (WebCore::ResourceResponseBase::fromCrossThreadData):
+        (WebCore::ResourceResponseBase::filter):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::setTainting):
+        (WebCore::ResourceResponseBase::tainting const):
+        (WebCore::ResourceResponseBase::encode const):
+        (WebCore::ResourceResponseBase::decode):
+
 2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: use in-view center point for clicks instead of bounding box center point

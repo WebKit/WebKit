@@ -130,6 +130,7 @@ private:
     ResourceResponse m_response;
     std::optional<BodyLoader> m_bodyLoader;
     mutable String m_responseURL;
+    bool m_shouldExposeBody { true };
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::ArrayBuffer  };
 };

@@ -88,7 +88,7 @@ namespace WebCore {
         void finishedTimingForWorkerLoad(const ResourceTiming&);
         void notifyFinished(CachedResource&) override;
 
-        void didReceiveResponse(unsigned long identifier, const ResourceResponse&, ResourceResponse::Tainting);
+        void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
         void didReceiveData(unsigned long identifier, const char* data, int dataLength);
         void didFinishLoading(unsigned long identifier);
         void didFail(unsigned long identifier, const ResourceError&);

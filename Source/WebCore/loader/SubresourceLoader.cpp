@@ -187,10 +187,11 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
                 return;
             }
 
-            ResourceResponse opaqueRedirectedResponse;
-            opaqueRedirectedResponse.setURL(redirectResponse.url());
+            ResourceResponse opaqueRedirectedResponse = redirectResponse;
             opaqueRedirectedResponse.setType(ResourceResponse::Type::Opaqueredirect);
+            opaqueRedirectedResponse.setTainting(ResourceResponse::Tainting::Opaqueredirect);
             m_resource->responseReceived(opaqueRedirectedResponse);
+
             NetworkLoadMetrics emptyMetrics;
             didFinishLoading(emptyMetrics);
             return;

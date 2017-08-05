@@ -1,3 +1,15 @@
+2017-08-05  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Response should keep all ResourceResponse information
+        https://bugs.webkit.org/show_bug.cgi?id=175099
+
+        Reviewed by Sam Weinig.
+
+        Updating test now that we are no longer cancelling the load in case of opaque responses.
+
+        * http/tests/inspector/network/fetch-network-data-expected.txt:
+        * http/tests/inspector/network/fetch-network-data.html:
+
 2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         getClientRects doesn't work with list box option elements

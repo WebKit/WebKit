@@ -175,8 +175,10 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
 {
     ASSERT(m_promise);
 
-    m_response.m_response = resourceResponse;
-    m_response.m_headers->filterAndFill(resourceResponse.httpHeaderFields(), FetchHeaders::Guard::Response);
+    m_response.m_response = ResourceResponseBase::filter(resourceResponse);
+    m_response.m_shouldExposeBody = resourceResponse.tainting() != ResourceResponse::Tainting::Opaque;
+
+    m_response.m_headers->filterAndFill(m_response.m_response.httpHeaderFields(), FetchHeaders::Guard::Response);
     m_response.updateContentType();
 
     std::exchange(m_promise, std::nullopt)->resolve(m_response);
@@ -227,6 +229,11 @@ void FetchResponse::consume(unsigned type, Ref<DeferredPromise>&& wrapper)
     ASSERT(type <= static_cast<unsigned>(FetchBodyConsumer::Type::Text));
     auto consumerType = static_cast<FetchBodyConsumer::Type>(type);
 
+    if (!m_shouldExposeBody) {
+        consumeNullBody(consumerType, WTFMove(wrapper));
+        return;
+    }
+
     if (isLoading()) {
         consumeOnceLoadingFinished(consumerType, WTFMove(wrapper));
         return;
@@ -273,6 +280,7 @@ void FetchResponse::finishConsumingStream(Ref<DeferredPromise>&& promise)
 
 void FetchResponse::consumeBodyAsStream()
 {
+    ASSERT(m_shouldExposeBody);
     ASSERT(m_readableStreamSource);
     m_isDisturbed = true;
     if (!isLoading()) {
@@ -326,7 +334,7 @@ ReadableStreamSource* FetchResponse::createReadableStreamSource()
     ASSERT(!m_readableStreamSource);
     ASSERT(!m_isDisturbed);
 
-    if (isBodyNull())
+    if (isBodyNull() || !m_shouldExposeBody)
         return nullptr;
 
     m_readableStreamSource = adoptRef(*new FetchResponseSource(*this));

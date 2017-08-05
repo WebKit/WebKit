@@ -52,9 +52,10 @@ function test()
         name: "Network.Fetch.ModeNoCORS.CrossOrigin",
         description: "Same Origin 'no-cors' fetch => type 'opaque'. Produces an opaque failure.",
         expression: `fetch("http://localhost:8000/inspector/network/resources/cors-data.pl", {mode: "no-cors"})`,
-        failedHandler(resource) {
-            InspectorTest.expectThat(resource.failed, "Load should have failed.");
-            InspectorTest.expectThat(resource.canceled, "Load should have canceled.");
+        loadedHandler(resource) {
+            InspectorTest.expectEqual(resource.mimeType, "application/json", "MIMEType should be 'application/json'.");
+            InspectorTest.expectEqual(resource.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(resource.responseHeaders["X-Custom-Header"], "Custom-Header-Value", "Should be able to see X-Custom-Header.");
         }
     });
 
