@@ -1,3 +1,23 @@
+2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        getClientRects doesn't work with list box option elements
+        https://bugs.webkit.org/show_bug.cgi?id=175016
+
+        Reviewed by Darin Adler.
+
+        Since HTMLOptionElement and HTMLOptGroupElement don't have a renderer, we are always returning an empty list
+        from getClientRects. This is working fine in both chromium and firefox, option elements return its own bounding
+        box and group elements return the bounding box of the group label and all its children items.
+
+        Test: fast/dom/HTMLSelectElement/listbox-items-client-rects.html
+
+        * dom/Element.cpp:
+        (WebCore::listBoxElementBoundingBox): Helper function to return the bounding box of a HTMLOptionElement or
+        HTMLOptGroupElement element.
+        (WebCore::Element::getClientRects): Use listBoxElementBoundingBox() in case of HTMLOptionElement or
+        HTMLOptGroupElement.
+        (WebCore::Element::boundingClientRect): Ditto.
+
 2017-08-04  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Add Cache and CacheStorage IDL definitions

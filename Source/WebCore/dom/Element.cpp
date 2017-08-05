@@ -61,7 +61,10 @@
 #include "HTMLLabelElement.h"
 #include "HTMLNameCollection.h"
 #include "HTMLObjectElement.h"
+#include "HTMLOptGroupElement.h"
+#include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLSelectElement.h"
 #include "HTMLTemplateElement.h"
 #include "IdChangeInvalidation.h"
 #include "IdTargetObserverRegistry.h"
@@ -78,6 +81,7 @@
 #include "PointerLockController.h"
 #include "RenderFlowThread.h"
 #include "RenderLayer.h"
+#include "RenderListBox.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderTheme.h"
@@ -1145,20 +1149,66 @@ LayoutRect Element::absoluteEventHandlerBounds(bool& includesFixedPositionElemen
     return absoluteEventBoundsOfElementAndDescendants(includesFixedPositionElements);
 }
 
+static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(Element& element)
+{
+    HTMLSelectElement* selectElement;
+    bool isGroup;
+    if (is<HTMLOptionElement>(element)) {
+        selectElement = downcast<HTMLOptionElement>(element).ownerSelectElement();
+        isGroup = false;
+    } else if (is<HTMLOptGroupElement>(element)) {
+        selectElement = downcast<HTMLOptGroupElement>(element).ownerSelectElement();
+        isGroup = true;
+    } else
+        return std::nullopt;
+
+    if (!selectElement || !selectElement->renderer() || !is<RenderListBox>(selectElement->renderer()))
+        return std::nullopt;
+
+    auto& renderer = downcast<RenderListBox>(*selectElement->renderer());
+    std::optional<LayoutRect> boundingBox;
+    int optionIndex = 0;
+    for (auto* item : selectElement->listItems()) {
+        if (item == &element) {
+            LayoutPoint additionOffset;
+            boundingBox = renderer.itemBoundingBoxRect(additionOffset, optionIndex);
+            if (!isGroup)
+                break;
+        } else if (isGroup && boundingBox) {
+            if (item->parentNode() != &element)
+                break;
+            LayoutPoint additionOffset;
+            boundingBox->setHeight(boundingBox->height() + renderer.itemBoundingBoxRect(additionOffset, optionIndex).height());
+        }
+        ++optionIndex;
+    }
+
+    if (!boundingBox)
+        return std::nullopt;
+
+    return std::pair<RenderObject*, LayoutRect> { &renderer, boundingBox.value() };
+}
+
 Ref<DOMRectList> Element::getClientRects()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    RenderBoxModelObject* renderBoxModelObject = this->renderBoxModelObject();
-    if (!renderBoxModelObject)
-        return DOMRectList::create();
+    RenderObject* renderer = this->renderer();
+    Vector<FloatQuad> quads;
+
+    if (auto pair = listBoxElementBoundingBox(*this)) {
+        renderer = pair.value().first;
+        quads.append(renderer->localToAbsoluteQuad(FloatQuad { pair.value().second }));
+    } else if (auto* renderBoxModelObject = this->renderBoxModelObject())
+        renderBoxModelObject->absoluteQuads(quads);
 
     // FIXME: Handle SVG elements.
     // FIXME: Handle table/inline-table with a caption.
 
-    Vector<FloatQuad> quads;
-    renderBoxModelObject->absoluteQuads(quads);
-    document().convertAbsoluteToClientQuads(quads, renderBoxModelObject->style());
+    if (quads.isEmpty())
+        return DOMRectList::create();
+
+    document().convertAbsoluteToClientQuads(quads, renderer->style());
     return DOMRectList::create(quads);
 }
 
@@ -1166,18 +1216,19 @@ FloatRect Element::boundingClientRect()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
+    RenderObject* renderer = this->renderer();
     Vector<FloatQuad> quads;
-    if (isSVGElement() && renderer() && !renderer()->isSVGRoot()) {
+    if (isSVGElement() && renderer && !renderer->isSVGRoot()) {
         // Get the bounding rectangle from the SVG model.
         SVGElement& svgElement = downcast<SVGElement>(*this);
         FloatRect localRect;
         if (svgElement.getBoundingBox(localRect))
-            quads.append(renderer()->localToAbsoluteQuad(localRect));
-    } else {
-        // Get the bounding rectangle from the box model.
-        if (renderBoxModelObject())
-            renderBoxModelObject()->absoluteQuads(quads);
-    }
+            quads.append(renderer->localToAbsoluteQuad(localRect));
+    } else if (auto pair = listBoxElementBoundingBox(*this)) {
+        renderer = pair.value().first;
+        quads.append(renderer->localToAbsoluteQuad(FloatQuad { pair.value().second }));
+    } else if (auto* renderBoxModelObject = this->renderBoxModelObject())
+        renderBoxModelObject->absoluteQuads(quads);
 
     if (quads.isEmpty())
         return { };
@@ -1186,7 +1237,7 @@ FloatRect Element::boundingClientRect()
     for (size_t i = 1; i < quads.size(); ++i)
         result.unite(quads[i].boundingBox());
 
-    document().convertAbsoluteToClientRect(result, renderer()->style());
+    document().convertAbsoluteToClientRect(result, renderer->style());
     return result;
 }
 

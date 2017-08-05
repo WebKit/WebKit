@@ -1,0 +1,119 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+    select {
+        width: 100px;
+        height: 150px;
+        padding: 0px;
+        outline: 1px;
+    }
+    select::-webkit-scrollbar { display: none; }
+</style>
+<div id="testArea">
+    <select id="list" multiple>
+      <optgroup id="group" label="Group">
+        <option id="option1">Option 1</option>
+        <option id="option2">Option 2</option>
+      </optgroup>
+      <option id="option3">Option 3</option>
+    </select>
+    <br><br>
+</div>
+<div id="console"></div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var list = document.getElementById('list');
+    var listBoundingBox = list.getBoundingClientRect();
+    var listBoundingBoxes = list.getClientRects();
+
+    shouldBe("listBoundingBoxes.length", "1");
+    shouldBe("listBoundingBoxes[0].left", "listBoundingBox.left");
+    shouldBe("listBoundingBoxes[0].right", "listBoundingBox.right");
+    shouldBe("listBoundingBoxes[0].top", "listBoundingBox.top");
+    shouldBe("listBoundingBoxes[0].bottom", "listBoundingBox.bottom");
+    shouldBe("listBoundingBoxes[0].width", "listBoundingBox.width");
+    shouldBe("listBoundingBoxes[0].height", "listBoundingBox.height");
+
+    var group = document.getElementById('group')
+    var groupBoundingBox = group.getBoundingClientRect();
+    var groupBoundingBoxes = group.getClientRects();
+
+    shouldBe("groupBoundingBoxes.length", "1");
+    shouldBe("groupBoundingBoxes[0].left", "groupBoundingBox.left");
+    shouldBe("groupBoundingBoxes[0].right", "groupBoundingBox.right");
+    shouldBe("groupBoundingBoxes[0].top", "groupBoundingBox.top");
+    shouldBe("groupBoundingBoxes[0].bottom", "groupBoundingBox.bottom");
+    shouldBe("groupBoundingBoxes[0].width", "groupBoundingBox.width");
+    shouldBe("groupBoundingBoxes[0].height", "groupBoundingBox.height");
+
+    var option1 = document.getElementById('option1');
+    var option1BoundingBox = option1.getBoundingClientRect();
+    var option1BoundingBoxes = option1.getClientRects();
+
+    shouldBe("option1BoundingBoxes.length", "1");
+    shouldBe("option1BoundingBoxes[0].left", "option1BoundingBox.left");
+    shouldBe("option1BoundingBoxes[0].right", "option1BoundingBox.right");
+    shouldBe("option1BoundingBoxes[0].top", "option1BoundingBox.top");
+    shouldBe("option1BoundingBoxes[0].bottom", "option1BoundingBox.bottom");
+    shouldBe("option1BoundingBoxes[0].width", "option1BoundingBox.width");
+    shouldBe("option1BoundingBoxes[0].height", "option1BoundingBox.height");
+
+    var option2 = document.getElementById('option2');
+    var option2BoundingBox = option2.getBoundingClientRect();
+    var option2BoundingBoxes = option2.getClientRects();
+
+    shouldBe("option2BoundingBoxes.length", "1");
+    shouldBe("option2BoundingBoxes[0].left", "option2BoundingBox.left");
+    shouldBe("option2BoundingBoxes[0].right", "option2BoundingBox.right");
+    shouldBe("option2BoundingBoxes[0].top", "option2BoundingBox.top");
+    shouldBe("option2BoundingBoxes[0].bottom", "option2BoundingBox.bottom");
+    shouldBe("option2BoundingBoxes[0].width", "option2BoundingBox.width");
+    shouldBe("option2BoundingBoxes[0].height", "option2BoundingBox.height");
+
+    var option3 = document.getElementById('option3');
+    var option3BoundingBox = option3.getBoundingClientRect();
+    var option3BoundingBoxes = option3.getClientRects();
+
+    shouldBe("option3BoundingBoxes.length", "1");
+    shouldBe("option3BoundingBoxes[0].left", "option3BoundingBox.left");
+    shouldBe("option3BoundingBoxes[0].right", "option3BoundingBox.right");
+    shouldBe("option3BoundingBoxes[0].top", "option3BoundingBox.top");
+    shouldBe("option3BoundingBoxes[0].bottom", "option3BoundingBox.bottom");
+    shouldBe("option3BoundingBoxes[0].width", "option3BoundingBox.width");
+    shouldBe("option3BoundingBoxes[0].height", "option3BoundingBox.height");
+
+    var border = 1;
+    var optionHeight = option1BoundingBox.height;
+
+    shouldBe("groupBoundingBox.left", "listBoundingBox.left + border");
+    shouldBe("groupBoundingBox.top", "listBoundingBox.top + border");
+    shouldBe("groupBoundingBox.right", "listBoundingBox.right - border");
+    shouldBe("groupBoundingBox.bottom", "groupBoundingBox.top + 3 * optionHeight");
+    shouldBe("groupBoundingBox.width", "listBoundingBox.width - 2 * border");
+    shouldBe("groupBoundingBox.height", "3 * optionHeight");
+
+    shouldBe("option1BoundingBox.left", "listBoundingBox.left + border");
+    shouldBe("option1BoundingBox.top", "listBoundingBox.top + border + optionHeight");
+    shouldBe("option1BoundingBox.right", "listBoundingBox.right - border");
+    shouldBe("option1BoundingBox.bottom", "option1BoundingBox.top + option1BoundingBox.height");
+    shouldBe("option1BoundingBox.width", "listBoundingBox.width - 2 * border");
+
+    shouldBe("option2BoundingBox.left", "listBoundingBox.left + border");
+    shouldBe("option2BoundingBox.top", "listBoundingBox.top + border + 2 * optionHeight");
+    shouldBe("option2BoundingBox.right", "listBoundingBox.right - border");
+    shouldBe("option2BoundingBox.bottom", "option2BoundingBox.top + option2BoundingBox.height");
+    shouldBe("option2BoundingBox.width", "listBoundingBox.width - 2 * border");
+
+    shouldBe("option3BoundingBox.left", "listBoundingBox.left + border");
+    shouldBe("option3BoundingBox.top", "listBoundingBox.top + border + 3 * optionHeight");
+    shouldBe("option3BoundingBox.right", "listBoundingBox.right - border");
+    shouldBe("option3BoundingBox.bottom", "option3BoundingBox.top + option3BoundingBox.height");
+    shouldBe("option3BoundingBox.width", "listBoundingBox.width - 2 * border");
+
+    if (window.testRunner) {
+        var area = document.getElementById('testArea');
+        area.parentNode.removeChild(area);
+    }
+</script>
+<script src="../../../resources/js-test-post.js"></script>
