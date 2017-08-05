@@ -150,13 +150,13 @@ _PATH_RULES_SPECIFIER = [
 
     ([# The GTK+ and WPE APIs use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
-      os.path.join('Source', 'WebKit2', 'Shared', 'API', 'glib'),
-      os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'glib'),
-      os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk'),
-      os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'wpe'),
-      os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'glib'),
-      os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk'),
-      os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'wpe')],
+      os.path.join('Source', 'WebKit', 'Shared', 'API', 'glib'),
+      os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'glib'),
+      os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk'),
+      os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe'),
+      os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'glib'),
+      os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'gtk'),
+      os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe')],
      ["-readability/enum_casing"]),
 
     ([# To use GStreamer GL without conflicts of GL symbols,
@@ -178,19 +178,19 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/parameter_name",
       "-whitespace/parens"]),
 
-    # WebKit2 rules:
-    # WebKit2 and certain directories have idiosyncracies.
+    # WebKit rules:
+    # WebKit and certain directories have idiosyncracies.
     ([# NPAPI has function names with underscores.
-      os.path.join('Source', 'WebKit2', 'WebProcess', 'Plugins', 'Netscape')],
+      os.path.join('Source', 'WebKit', 'WebProcess', 'Plugins', 'Netscape')],
      ["-readability/naming"]),
-    ([# The WebKit2 C API has names with underscores and whitespace-aligned
+    ([# The WebKit C API has names with underscores and whitespace-aligned
       # struct members. Also, we allow unnecessary parameter names in
-      # WebKit2 APIs because we're matching CF's header style.
+      # WebKit APIs because we're matching CF's header style.
       # Additionally, we use word which starts with non-capital letter 'k'
       # for types of enums.
-      os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'C'),
-      os.path.join('Source', 'WebKit2', 'Shared', 'API', 'c'),
-      os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'c')],
+      os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'C'),
+      os.path.join('Source', 'WebKit', 'Shared', 'API', 'c'),
+      os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'c')],
      ["-readability/enum_casing",
       "-readability/naming",
       "-readability/parameter_name",
@@ -343,7 +343,7 @@ _SKIPPED_FILES_WITHOUT_WARNING = [
     # ICU headers are imported.
     os.path.join('Source', 'JavaScriptCore', 'icu'),
     os.path.join('Source', 'WebCore', 'icu'),
-    os.path.join('Source', 'WebKit', 'mac', 'icu'),
+    os.path.join('Source', 'WebKitLegacy', 'mac', 'icu'),
     os.path.join('Source', 'WTF', 'icu'),
     ]
 
