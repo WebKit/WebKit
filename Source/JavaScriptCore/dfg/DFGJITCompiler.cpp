@@ -33,7 +33,7 @@
 #include "DFGInlineCacheWrapperInlines.h"
 #include "DFGJITCode.h"
 #include "DFGJITFinalizer.h"
-#include "DFGOSRExitCompiler.h"
+#include "DFGOSRExit.h"
 #include "DFGOperations.h"
 #include "DFGRegisterBank.h"
 #include "DFGSlowPathGenerator.h"

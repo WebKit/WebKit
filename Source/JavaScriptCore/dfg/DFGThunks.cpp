@@ -29,8 +29,8 @@
 #if ENABLE(DFG_JIT)
 
 #include "CCallHelpers.h"
-#include "DFGOSRExitCompiler.h"
 #include "DFGJITCode.h"
+#include "DFGOSRExit.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "LinkBuffer.h"

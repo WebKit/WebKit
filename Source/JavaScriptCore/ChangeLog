@@ -1,3 +1,39 @@
+2017-08-04  Mark Lam  <mark.lam@apple.com>
+
+        Move DFG::OSRExitCompiler methods into DFG::OSRExit [step 2].
+        https://bugs.webkit.org/show_bug.cgi?id=175214
+        <rdar://problem/33733308>
+
+        Rubber-stamped by Michael Saboff.
+
+        Copy the 64-bit and common methods into DFGOSRExit.cpp, and delete the unused
+        DFGOSRExitCompiler files.
+
+        Also renamed DFGOSRExitCompiler32_64.cpp to DFGOSRExit32_64.cpp.
+
+        Also move debugOperationPrintSpeculationFailure() into DFGOSRExit.cpp.  It's only
+        used by compileOSRExit(), and will be changed to not be a DFG operation function
+        when we use JIT probes for DFG OSR exits later in
+        https://bugs.webkit.org/show_bug.cgi?id=175144.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGJITCompiler.cpp:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        (JSC::DFG::OSRExit::compileOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        (JSC::DFG::OSRExit::debugOperationPrintSpeculationFailure):
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExit32_64.cpp: Copied from Source/JavaScriptCore/dfg/DFGOSRExitCompiler32_64.cpp.
+        * dfg/DFGOSRExitCompiler.cpp: Removed.
+        * dfg/DFGOSRExitCompiler.h: Removed.
+        * dfg/DFGOSRExitCompiler32_64.cpp: Removed.
+        * dfg/DFGOSRExitCompiler64.cpp: Removed.
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGThunks.cpp:
+
 2017-08-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: capture async stack trace when workers/main context posts a message

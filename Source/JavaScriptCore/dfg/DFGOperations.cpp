@@ -2199,44 +2199,6 @@ void JIT_OPERATION operationProcessTypeProfilerLogDFG(ExecState* exec)
     vm.typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside DFG."));
 }
 
-void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* debugInfoRaw, void* scratch)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
-    CodeBlock* codeBlock = debugInfo->codeBlock;
-    CodeBlock* alternative = codeBlock->alternative();
-    dataLog("Speculation failure in ", *codeBlock);
-    dataLog(" @ exit #", vm->osrExitIndex, " (bc#", debugInfo->bytecodeOffset, ", ", exitKindToString(debugInfo->kind), ") with ");
-    if (alternative) {
-        dataLog(
-            "executeCounter = ", alternative->jitExecuteCounter(),
-            ", reoptimizationRetryCounter = ", alternative->reoptimizationRetryCounter(),
-            ", optimizationDelayCounter = ", alternative->optimizationDelayCounter());
-    } else
-        dataLog("no alternative code block (i.e. we've been jettisoned)");
-    dataLog(", osrExitCounter = ", codeBlock->osrExitCounter(), "\n");
-    dataLog("    GPRs at time of exit:");
-    char* scratchPointer = static_cast<char*>(scratch);
-    for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
-        GPRReg gpr = GPRInfo::toRegister(i);
-        dataLog(" ", GPRInfo::debugName(gpr), ":", RawPointer(*reinterpret_cast_ptr<void**>(scratchPointer)));
-        scratchPointer += sizeof(EncodedJSValue);
-    }
-    dataLog("\n");
-    dataLog("    FPRs at time of exit:");
-    for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
-        FPRReg fpr = FPRInfo::toRegister(i);
-        dataLog(" ", FPRInfo::debugName(fpr), ":");
-        uint64_t bits = *reinterpret_cast_ptr<uint64_t*>(scratchPointer);
-        double value = *reinterpret_cast_ptr<double*>(scratchPointer);
-        dataLogF("%llx:%lf", static_cast<long long>(bits), value);
-        scratchPointer += sizeof(EncodedJSValue);
-    }
-    dataLog("\n");
-}
-
 EncodedJSValue JIT_OPERATION operationResolveScopeForHoistingFuncDeclInEval(ExecState* exec, JSScope* scope, UniquedStringImpl* impl)
 {
     VM& vm = exec->vm();

@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "DFGOSRExitCompiler.h"
+#include "DFGOSRExit.h"
 
 #if ENABLE(DFG_JIT) && USE(JSVALUE32_64)
 
-#include "DFGOperations.h"
 #include "DFGOSRExitCompilerCommon.h"
+#include "DFGOperations.h"
 #include "DFGSpeculativeJIT.h"
 #include "JSCInlines.h"
 #include <wtf/DataLog.h>

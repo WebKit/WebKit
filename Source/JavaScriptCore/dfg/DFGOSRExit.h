@@ -123,6 +123,7 @@ struct OSRExit : public OSRExitBase {
 private:
     static void compileExit(CCallHelpers&, VM&, const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
     static void emitRestoreArguments(CCallHelpers&, const Operands<ValueRecovery>&);
+    static void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*, void*) WTF_INTERNAL;
 };
 
 struct SpeculationFailureDebugInfo {

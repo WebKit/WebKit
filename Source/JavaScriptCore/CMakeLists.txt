@@ -376,10 +376,8 @@ set(JavaScriptCore_SOURCES
     dfg/DFGOSREntry.cpp
     dfg/DFGOSREntrypointCreationPhase.cpp
     dfg/DFGOSRExit.cpp
+    dfg/DFGOSRExit32_64.cpp
     dfg/DFGOSRExitBase.cpp
-    dfg/DFGOSRExitCompiler.cpp
-    dfg/DFGOSRExitCompiler32_64.cpp
-    dfg/DFGOSRExitCompiler64.cpp
     dfg/DFGOSRExitCompilerCommon.cpp
     dfg/DFGOSRExitFuzz.cpp
     dfg/DFGOSRExitJumpPlaceholder.cpp
