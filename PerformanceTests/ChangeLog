@@ -1,3 +1,62 @@
+2017-08-04  Michael Saboff  <msaboff@apple.com>
+
+        Create a new JavaScript RegExp benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=175225
+
+        Reviewed by JF Bastien.
+
+        This is a new benchmark for Regular Expressions.  It borrows regex-dna from
+        SunSpider, the regexp test from Octane2, the BASIC parser from ARES-6/Basic,
+        and adds a new flight planner benchmark that uses RegExp's for textual parsing.
+
+        There needs to be some additions and changes to some of the textual content.
+        This includes adding more BASIC programs to the Basic test and increasing 
+        keyword usage in the Flight Planner to increase the 16-bit coverage.
+        
+        The intent is to grow this benchmark by adding a JavaScript implementation of the 
+        offline assembler lexer and parser as well as adding some targeted micro benchmark
+        tests.
+
+        * RexBench: Added.
+        * RexBench/Basic: Added.
+        * RexBench/Basic/ast.js: Added.
+        * RexBench/Basic/basic.js: Added.
+        * RexBench/Basic/benchmark.js: Added.
+        * RexBench/Basic/caseless_map.js: Added.
+        * RexBench/Basic/lexer.js: Added.
+        * RexBench/Basic/number.js: Added.
+        * RexBench/Basic/parser.js: Added.
+        * RexBench/Basic/random.js: Added.
+        * RexBench/Basic/state.js: Added.
+        * RexBench/Basic/stress-test.js: Added.
+        * RexBench/Basic/util.js: Added.
+        * RexBench/FlightPlanner: Added.
+        * RexBench/FlightPlanner/airways.js: Added.
+        * RexBench/FlightPlanner/benchmark.js: Added.
+        * RexBench/FlightPlanner/convert-nfdc.py: Added.
+        * RexBench/FlightPlanner/expectations.js: Added.
+        * RexBench/FlightPlanner/flight_planner.js: Added.
+        * RexBench/FlightPlanner/use_unicode.js: Added.
+        * RexBench/FlightPlanner/waypoints.js: Added.
+        * RexBench/Octane2: Added.
+        * RexBench/Octane2/base.js: Added.
+        * RexBench/Octane2/regexp.js: Added.
+        * RexBench/SunSpider: Added.
+        * RexBench/SunSpider/regex-dna.js: Added.
+        * RexBench/about.html: Added.
+        * RexBench/basic_benchmark.js: Added.
+        * RexBench/cli.js: Added.
+        * RexBench/driver.js: Added.
+        * RexBench/flightplan_benchmark.js: Added.
+        * RexBench/flightplan_unicode_benchmark.js: Added.
+        * RexBench/glue.js: Added.
+        * RexBench/index.html: Added.
+        * RexBench/octane2_benchmark.js: Added.
+        * RexBench/results.js: Added.
+        * RexBench/stats.js: Added.
+        * RexBench/styles.css: Added.
+        * RexBench/sunspider_benchmark.js: Added.
+
 2017-07-31  Mathias Bynens  <mathias@qiwi.be>
 
         Speedometer 2.0: Remove <base> from Angular 4 test
