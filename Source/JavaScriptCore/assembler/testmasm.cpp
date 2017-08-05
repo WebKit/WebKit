@@ -66,7 +66,7 @@ template<typename T> T nextID(T id) { return static_cast<T>(id + 1); }
 #define testWord32(x) (TESTWORD32 + static_cast<uint32_t>(x))
 #define testWord64(x) (TESTWORD64 + static_cast<uint64_t>(x))
 
-#if ENABLE(JSVALUE64)
+#if USE(JSVALUE64)
 #define testWord(x) testWord64(x)
 #else
 #define testWord(x) testWord32(x)
@@ -156,11 +156,11 @@ void testProbeReadsArgumentRegisters()
     compileAndRun<void>([&] (CCallHelpers& jit) {
         jit.emitFunctionPrologue();
 
-        jit.move(CCallHelpers::TrustedImm32(testWord(0)), GPRInfo::argumentGPR0);
+        jit.move(CCallHelpers::TrustedImm32(testWord32(0)), GPRInfo::argumentGPR0);
         jit.convertInt32ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT0);
-        jit.move(CCallHelpers::TrustedImm32(testWord(1)), GPRInfo::argumentGPR0);
+        jit.move(CCallHelpers::TrustedImm32(testWord32(1)), GPRInfo::argumentGPR0);
         jit.convertInt32ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT1);
-#if ENABLE(JSVALUE64)
+#if USE(JSVALUE64)
         jit.move(CCallHelpers::TrustedImm64(testWord(0)), GPRInfo::argumentGPR0);
         jit.move(CCallHelpers::TrustedImm64(testWord(1)), GPRInfo::argumentGPR1);
         jit.move(CCallHelpers::TrustedImm64(testWord(2)), GPRInfo::argumentGPR2);
@@ -198,7 +198,7 @@ void testProbeWritesArgumentRegisters()
         jit.emitFunctionPrologue();
 
         // Pre-initialize with non-expected values.
-#if ENABLE(JSVALUE64)
+#if USE(JSVALUE64)
         jit.move(CCallHelpers::TrustedImm64(0), GPRInfo::argumentGPR0);
         jit.move(CCallHelpers::TrustedImm64(0), GPRInfo::argumentGPR1);
         jit.move(CCallHelpers::TrustedImm64(0), GPRInfo::argumentGPR2);

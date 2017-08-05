@@ -1,5 +1,17 @@
 2017-08-04  Mark Lam  <mark.lam@apple.com>
 
+        Fix typo in testmasm.cpp: ENABLE(JSVALUE64) should be USE(JSVALUE64).
+        https://bugs.webkit.org/show_bug.cgi?id=175230
+        <rdar://problem/33735857>
+
+        Reviewed by Saam Barati.
+
+        * assembler/testmasm.cpp:
+        (JSC::testProbeReadsArgumentRegisters):
+        (JSC::testProbeWritesArgumentRegisters):
+
+2017-08-04  Mark Lam  <mark.lam@apple.com>
+
         Move DFG::OSRExitCompiler methods into DFG::OSRExit [step 2].
         https://bugs.webkit.org/show_bug.cgi?id=175214
         <rdar://problem/33733308>
