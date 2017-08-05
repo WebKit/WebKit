@@ -1,5 +1,46 @@
 2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: properly handle capabilities and process firstMatch too
+        https://bugs.webkit.org/show_bug.cgi?id=174618
+
+        Reviewed by Brian Burg.
+
+        Implement processing of capabilities following the spec. This patch adds validation, merging and matching of
+        capabilities.
+
+        7.2 Processing Capabilities.
+        https://w3c.github.io/webdriver/webdriver-spec.html#processing-capabilities
+
+        * Capabilities.h: Make all capabilities optional and move Timeouts struct here.
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::deserializeTimeouts): Helper to extract timeouts from JSON object.
+        (WebDriver::WebDriverService::parseCapabilities const): At this point capabilities have already been validated,
+        so we just need to get them without checking the value type.
+        (WebDriver::WebDriverService::validatedCapabilities const): Validate the given capabilities, ensuring types of
+        values are the expected one.
+        (WebDriver::WebDriverService::mergeCapabilities const): Merge the alwaysMatch and firstMatch capabilities into a
+        single object ensuring that the same capability is not in both.
+        (WebDriver::WebDriverService::matchCapabilities const): Try to match the merged capabilities againt the platform
+        expected capabilities.
+        (WebDriver::WebDriverService::processCapabilities const): Validate, merge and match the capabilities.
+        (WebDriver::WebDriverService::newSession): Use processCapabilities(). Also initialize the timeouts from
+        capabilities and add all capabilities to the command result.
+        (WebDriver::WebDriverService::setTimeouts): Use deserializeTimeouts().
+        * WebDriverService.h:
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::launchBrowser): Updated to properly access the capabilities that are now optional.
+        (WebDriver::SessionHost::startAutomationSession): Add FIXME.
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformCapabilities): Return the Capabilities with the known required ones filled.
+        (WebDriver::WebDriverService::platformValidateCapability const): Validate webkitgtk:browserOptions.
+        (WebDriver::WebDriverService::platformMatchCapability const): This does nothing for now.
+        (WebDriver::WebDriverService::platformCompareBrowserVersions): Compare the given browser versions.
+        (WebDriver::WebDriverService::platformParseCapabilities const): Updated now that capabilites have already been
+        validated before.
+
+2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: use in-view center point for clicks instead of bounding box center point
         https://bugs.webkit.org/show_bug.cgi?id=174863
 

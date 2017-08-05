@@ -34,51 +34,137 @@ using namespace Inspector;
 
 namespace WebDriver {
 
-bool WebDriverService::platformParseCapabilities(InspectorObject& desiredCapabilities, Capabilities& capabilities, Function<void (CommandResult&&)>& completionHandler)
+Capabilities WebDriverService::platformCapabilities()
 {
-    RefPtr<InspectorValue> value;
+    Capabilities capabilities;
+    capabilities.platformName = String("linux");
+    capabilities.acceptInsecureCerts = false;
+    return capabilities;
+}
+
+bool WebDriverService::platformValidateCapability(const String& name, const RefPtr<InspectorValue>& value) const
+{
+    if (name != "webkitgtk:browserOptions")
+        return true;
+
     RefPtr<InspectorObject> browserOptions;
-    if (desiredCapabilities.getValue(ASCIILiteral("webkitgtk:browserOptions"), value) && !value->asObject(browserOptions)) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("webkitgtk:browserOptions is invalid in capabilities")));
+    if (!value->asObject(browserOptions))
         return false;
-    }
-    if (browserOptions->isNull()) {
-        capabilities.browserBinary = LIBEXECDIR "/webkit2gtk-" WEBKITGTK_API_VERSION_STRING "/MiniBrowser";
-        capabilities.browserArguments = { ASCIILiteral("--automation") };
+
+    if (browserOptions->isNull())
         return true;
-    }
 
-    if (!browserOptions->getString(ASCIILiteral("binary"), capabilities.browserBinary)) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("binary parameter is invalid or missing in webkitgtk:browserOptions")));
+    // If browser options are provided, binary is required.
+    String binary;
+    if (!browserOptions->getString(ASCIILiteral("binary"), binary))
         return false;
-    }
 
+    RefPtr<InspectorValue> useOverlayScrollbarsValue;
+    bool useOverlayScrollbars;
+    if (browserOptions->getValue(ASCIILiteral("useOverlayScrollbars"), useOverlayScrollbarsValue) && !useOverlayScrollbarsValue->asBoolean(useOverlayScrollbars))
+        return false;
+
+    RefPtr<InspectorValue> browserArgumentsValue;
     RefPtr<InspectorArray> browserArguments;
-    if (browserOptions->getValue(ASCIILiteral("args"), value) && !value->asArray(browserArguments)) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("args parameter is invalid in webkitgtk:browserOptions")));
+    if (browserOptions->getValue(ASCIILiteral("args"), browserArgumentsValue) && !browserArgumentsValue->asArray(browserArguments))
         return false;
-    }
+
     unsigned browserArgumentsLength = browserArguments->length();
-    if (!browserArgumentsLength)
-        return true;
-    capabilities.browserArguments.reserveInitialCapacity(browserArgumentsLength);
     for (unsigned i = 0; i < browserArgumentsLength; ++i) {
         RefPtr<InspectorValue> value = browserArguments->get(i);
         String argument;
-        if (!value->asString(argument)) {
-            capabilities.browserArguments.clear();
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Failed to extract arguments from webkitgtk:browserOptions::args")));
+        if (!value->asString(argument))
             return false;
-        }
-        capabilities.browserArguments.uncheckedAppend(WTFMove(argument));
     }
 
-    if (browserOptions->getValue(ASCIILiteral("useOverlayScrollbars"), value) && !value->asBoolean(capabilities.useOverlayScrollbars)) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("useOverlayScrollbars parameter is invalid in webkitgtk:browserOptions")));
+    return true;
+}
+
+std::optional<String> WebDriverService::platformMatchCapability(const String&, const RefPtr<InspectorValue>&) const
+{
+    return std::nullopt;
+}
+
+static bool parseVersion(const String& version, uint64_t& major, uint64_t& minor, uint64_t& micro)
+{
+    major = minor = micro = 0;
+
+    Vector<String> tokens;
+    version.split(".", false, tokens);
+    bool ok;
+    switch (tokens.size()) {
+    case 3:
+        micro = tokens[2].toInt64(&ok);
+        if (!ok)
+            return false;
+        FALLTHROUGH;
+    case 2:
+        minor = tokens[1].toInt64(&ok);
+        if (!ok)
+            return false;
+        FALLTHROUGH;
+    case 1:
+        major = tokens[0].toInt64(&ok);
+        if (!ok)
+            return false;
+        break;
+    default:
         return false;
     }
 
     return true;
+}
+
+bool WebDriverService::platformCompareBrowserVersions(const String& requiredVersion, const String& proposedVersion)
+{
+    // We require clients to use format major.micro.minor as version string.
+    uint64_t requiredMajor, requiredMinor, requiredMicro;
+    if (!parseVersion(requiredVersion, requiredMajor, requiredMinor, requiredMicro))
+        return false;
+
+    uint64_t proposedMajor, proposedMinor, proposedMicro;
+    if (!parseVersion(proposedVersion, proposedMajor, proposedMinor, proposedMicro))
+        return false;
+
+    return proposedMajor > requiredMajor
+        || (proposedMajor == requiredMajor && proposedMinor > requiredMinor)
+        || (proposedMajor == requiredMajor && proposedMinor == requiredMinor && proposedMicro >= requiredMicro);
+}
+
+void WebDriverService::platformParseCapabilities(const InspectorObject& matchedCapabilities, Capabilities& capabilities) const
+{
+    RefPtr<InspectorObject> browserOptions;
+    if (!matchedCapabilities.getObject(ASCIILiteral("webkitgtk:browserOptions"), browserOptions)) {
+        capabilities.browserBinary = String(LIBEXECDIR "/webkit2gtk-" WEBKITGTK_API_VERSION_STRING "/MiniBrowser");
+        capabilities.browserArguments = Vector<String> { ASCIILiteral("--automation") };
+        capabilities.useOverlayScrollbars = true;
+        return;
+    }
+
+    String browserBinary;
+    browserOptions->getString(ASCIILiteral("binary"), browserBinary);
+    ASSERT(!browserBinary.isNull());
+    capabilities.browserBinary = browserBinary;
+
+    capabilities.browserArguments = Vector<String>();
+    RefPtr<InspectorArray> browserArguments;
+    if (browserOptions->getArray(ASCIILiteral("args"), browserArguments)) {
+        unsigned browserArgumentsLength = browserArguments->length();
+        capabilities.browserArguments->reserveInitialCapacity(browserArgumentsLength);
+        for (unsigned i = 0; i < browserArgumentsLength; ++i) {
+            RefPtr<InspectorValue> value = browserArguments->get(i);
+            String argument;
+            value->asString(argument);
+            ASSERT(!argument.isNull());
+            capabilities.browserArguments->uncheckedAppend(WTFMove(argument));
+        }
+    }
+
+    bool useOverlayScrollbars;
+    if (browserOptions->getBoolean(ASCIILiteral("useOverlayScrollbars"), useOverlayScrollbars))
+        capabilities.useOverlayScrollbars = useOverlayScrollbars;
+    else
+        capabilities.useOverlayScrollbars = true;
 }
 
 } // namespace WebDriver

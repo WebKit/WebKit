@@ -135,13 +135,14 @@ void SessionHost::launchBrowser(Function<void (Succeeded)>&& completionHandler)
     GUniquePtr<char> inspectorAddress(g_strdup_printf("127.0.0.1:%u", port));
     g_subprocess_launcher_setenv(launcher.get(), "WEBKIT_INSPECTOR_SERVER", inspectorAddress.get(), TRUE);
 #if PLATFORM(GTK)
-    g_subprocess_launcher_setenv(launcher.get(), "GTK_OVERLAY_SCROLLING", m_capabilities.useOverlayScrollbars ? "1" : "0", TRUE);
+    g_subprocess_launcher_setenv(launcher.get(), "GTK_OVERLAY_SCROLLING", m_capabilities.useOverlayScrollbars.value() ? "1" : "0", TRUE);
 #endif
 
-    GUniquePtr<char*> args(g_new0(char*, m_capabilities.browserArguments.size() + 2));
-    args.get()[0] = g_strdup(m_capabilities.browserBinary.utf8().data());
-    for (unsigned i = 0; i < m_capabilities.browserArguments.size(); ++i)
-        args.get()[i + 1] = g_strdup(m_capabilities.browserArguments[i].utf8().data());
+    const auto& browserArguments = m_capabilities.browserArguments.value();
+    GUniquePtr<char*> args(g_new0(char*, browserArguments.size() + 2));
+    args.get()[0] = g_strdup(m_capabilities.browserBinary.value().utf8().data());
+    for (unsigned i = 0; i < browserArguments.size(); ++i)
+        args.get()[i + 1] = g_strdup(browserArguments[i].utf8().data());
 
     m_browser = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), args.get(), nullptr));
     g_subprocess_wait_async(m_browser.get(), m_cancellable.get(), [](GObject* browser, GAsyncResult* result, gpointer userData) {
@@ -223,6 +224,7 @@ void SessionHost::startAutomationSession(const String& sessionID, Function<void 
 {
     ASSERT(m_dbusConnection);
     ASSERT(!m_startSessionCompletionHandler);
+    // FIXME: Make StartAutomationSession return browser information and we use it to match capabilities.
     m_startSessionCompletionHandler = WTFMove(completionHandler);
     g_dbus_connection_call(m_dbusConnection.get(), nullptr,
         INSPECTOR_DBUS_OBJECT_PATH,

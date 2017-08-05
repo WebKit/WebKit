@@ -25,11 +25,11 @@
 
 #pragma once
 
+#include "Capabilities.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,7 +41,6 @@ class InspectorValue;
 
 namespace WebDriver {
 
-class Capabilities;
 class CommandResult;
 class SessionHost;
 
@@ -59,12 +58,6 @@ public:
     enum class FindElementsMode { Single, Multiple };
     enum class ExecuteScriptMode { Sync, Async };
     enum class Timeout { Script, PageLoad, Implicit };
-
-    struct Timeouts {
-        std::optional<Seconds> script;
-        std::optional<Seconds> pageLoad;
-        std::optional<Seconds> implicit;
-    };
 
     void waitForNavigationToComplete(Function<void (CommandResult&&)>&&);
     void createTopLevelBrowsingContext(Function<void (CommandResult&&)>&&);

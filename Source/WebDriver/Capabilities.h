@@ -26,19 +26,28 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebDriver {
 
+struct Timeouts {
+    std::optional<Seconds> script;
+    std::optional<Seconds> pageLoad;
+    std::optional<Seconds> implicit;
+};
+
 struct Capabilities {
-    String browserName;
-    String browserVersion;
-    String platform;
+    std::optional<String> browserName;
+    std::optional<String> browserVersion;
+    std::optional<String> platformName;
+    std::optional<bool> acceptInsecureCerts;
+    std::optional<Timeouts> timeouts;
 #if PLATFORM(GTK)
-    String browserBinary;
-    Vector<String> browserArguments;
-    bool useOverlayScrollbars { true };
+    std::optional<String> browserBinary;
+    std::optional<Vector<String>> browserArguments;
+    std::optional<bool> useOverlayScrollbars;
 #endif
 };
 
