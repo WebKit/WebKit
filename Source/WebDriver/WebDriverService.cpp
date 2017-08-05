@@ -319,7 +319,7 @@ RefPtr<InspectorObject> WebDriverService::validatedCapabilities(const InspectorO
 {
     // §7.2 Processing Capabilities.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-validate-capabilities
-    auto result = InspectorObject::create();
+    RefPtr<InspectorObject> result = InspectorObject::create();
     auto end = capabilities.end();
     for (auto it = capabilities.begin(); it != end; ++it) {
         if (it->value->isNull())
@@ -366,7 +366,7 @@ RefPtr<InspectorObject> WebDriverService::mergeCapabilities(const InspectorObjec
 {
     // §7.2 Processing Capabilities.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-merging-capabilities
-    auto result = InspectorObject::create();
+    RefPtr<InspectorObject> result = InspectorObject::create();
     auto requiredEnd = requiredCapabilities.end();
     for (auto it = requiredCapabilities.begin(); it != requiredEnd; ++it)
         result->setValue(it->key, RefPtr<InspectorValue>(it->value));
