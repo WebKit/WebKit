@@ -225,6 +225,10 @@ public:
     void setSourceParseMode(SourceParseMode mode)
     {
         switch (mode) {
+        case SourceParseMode::AsyncGeneratorBodyMode:
+            setIsAsyncFunctionBody();
+            setIsGenerator();
+            break;
         case SourceParseMode::AsyncArrowFunctionBodyMode:
             setIsAsyncArrowFunctionBody();
             break;
@@ -242,6 +246,12 @@ public:
             setIsGeneratorFunction();
             break;
 
+        case SourceParseMode::AsyncGeneratorWrapperMethodMode:
+        case SourceParseMode::AsyncGeneratorWrapperFunctionMode:
+            setIsAsyncFunction();
+            setIsGeneratorFunction();
+            break;
+    
         case SourceParseMode::NormalFunctionMode:
         case SourceParseMode::GetterMode:
         case SourceParseMode::SetterMode:
@@ -1495,6 +1505,7 @@ private:
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
     template <class TreeBuilder> TreeSourceElements parseGeneratorFunctionSourceElements(TreeBuilder&, const Identifier& name, SourceElementsMode);
     template <class TreeBuilder> TreeSourceElements parseAsyncFunctionSourceElements(TreeBuilder&, SourceParseMode, bool isArrowFunctionBodyExpression, SourceElementsMode);
+    template <class TreeBuilder> TreeSourceElements parseAsyncGeneratorFunctionSourceElements(TreeBuilder&, SourceParseMode, bool isArrowFunctionBodyExpression, SourceElementsMode);
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
     enum class ExportType { Exported, NotExported };
@@ -1541,7 +1552,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeArguments parseArguments(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseArgument(TreeBuilder&, ArgumentType&);
     template <class TreeBuilder> TreeProperty parseProperty(TreeBuilder&, bool strict);
-    template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName, bool isGenerator, bool isAsyncMethod);
+    template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName, SourceParseMode);
     template <class TreeBuilder> TreeProperty parseGetterSetter(TreeBuilder&, bool strict, PropertyNode::Type, unsigned getterOrSetterStartOffset, ConstructorKind, bool isClassProperty, bool isStaticMethod);
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, SyntaxChecker&, const JSTokenLocation&, int, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, SuperBinding, FunctionBodyType, unsigned, SourceParseMode);
     template <class TreeBuilder> ALWAYS_INLINE bool parseFormalParameters(TreeBuilder&, TreeFormalParameterList, bool isArrowFunction, bool isMethod, unsigned&);

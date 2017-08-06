@@ -1,3 +1,48 @@
+2017-08-06  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        [ESNext] Async iteration - Implement Async Generator - parser
+        https://bugs.webkit.org/show_bug.cgi?id=175210
+
+        Reviewed by Yusuke Suzuki.
+
+        Current implementation is draft version of Async Iteration. 
+        Link to spec https://tc39.github.io/proposal-async-iteration/
+
+        Current patch implement only parser part of the Async generator
+        Runtime part will be in next ptches
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionMetadata):
+        * parser/Parser.cpp:
+        (JSC::getAsynFunctionBodyParseMode):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseAsyncFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseAsyncGeneratorFunctionSourceElements):
+        (JSC::stringArticleForFunctionMode):
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parseAsyncFunctionExpression):
+        * parser/Parser.h:
+        (JSC::Scope::setSourceParseMode):
+        * parser/ParserModes.h:
+        (JSC::isFunctionParseMode):
+        (JSC::isAsyncFunctionParseMode):
+        (JSC::isAsyncArrowFunctionParseMode):
+        (JSC::isAsyncGeneratorFunctionParseMode):
+        (JSC::isAsyncFunctionOrAsyncGeneratorWrapperParseMode):
+        (JSC::isAsyncFunctionWrapperParseMode):
+        (JSC::isAsyncFunctionBodyParseMode):
+        (JSC::isGeneratorMethodParseMode):
+        (JSC::isAsyncMethodParseMode):
+        (JSC::isAsyncGeneratorMethodParseMode):
+        (JSC::isMethodParseMode):
+        (JSC::isGeneratorOrAsyncFunctionBodyParseMode):
+        (JSC::isGeneratorOrAsyncFunctionWrapperParseMode):
+
 2017-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r219895-219897): Number of leaks on Open Source went from 9240 to 235983 and is now at 302372
