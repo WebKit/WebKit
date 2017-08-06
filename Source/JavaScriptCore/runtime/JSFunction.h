@@ -190,7 +190,9 @@ private:
 
     enum class LazyPropertyType { NotLazyProperty, IsLazyProperty };
     LazyPropertyType reifyLazyPropertyIfNeeded(VM&, ExecState*, PropertyName);
-    LazyPropertyType reifyBoundNameIfNeeded(VM&, ExecState*, PropertyName);
+    LazyPropertyType reifyLazyPropertyForHostOrBuiltinIfNeeded(VM&, ExecState*, PropertyName);
+    LazyPropertyType reifyLazyLengthIfNeeded(VM&, ExecState*, PropertyName);
+    LazyPropertyType reifyLazyBoundNameIfNeeded(VM&, ExecState*, PropertyName);
 
     friend class LLIntOffsetsExtractor;
 

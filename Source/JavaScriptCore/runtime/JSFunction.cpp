@@ -105,7 +105,6 @@ JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* execut
 {
     JSFunction* function = create(vm, executable, globalObject);
     function->putDirect(vm, vm.propertyNames->name, jsString(&vm, executable->name().string()), ReadOnly | DontEnum);
-    function->putDirect(vm, vm.propertyNames->length, jsNumber(executable->parameterCount()), ReadOnly | DontEnum);
     return function;
 }
 
@@ -113,7 +112,6 @@ JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* execut
 {
     JSFunction* function = create(vm, executable, globalObject);
     function->putDirect(vm, vm.propertyNames->name, jsString(&vm, name), ReadOnly | DontEnum);
-    function->putDirect(vm, vm.propertyNames->length, jsNumber(executable->parameterCount()), ReadOnly | DontEnum);
     return function;
 }
 
@@ -350,7 +348,7 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     VM& vm = exec->vm();
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (thisObject->isHostOrBuiltinFunction()) {
-        thisObject->reifyBoundNameIfNeeded(vm, exec, propertyName);
+        thisObject->reifyLazyPropertyForHostOrBuiltinIfNeeded(vm, exec, propertyName);
         return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
     }
 
@@ -402,21 +400,27 @@ void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, 
 {
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     VM& vm = exec->vm();
-    if (!thisObject->isHostOrBuiltinFunction() && mode.includeDontEnumProperties()) {
-        // Make sure prototype has been reified.
-        PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
-        thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, vm.propertyNames->prototype, slot);
+    if (mode.includeDontEnumProperties()) {
+        if (!thisObject->isHostOrBuiltinFunction()) {
+            // Make sure prototype has been reified.
+            PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
+            thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, vm.propertyNames->prototype, slot);
 
-        if (thisObject->jsExecutable()->hasCallerAndArgumentsProperties()) {
-            propertyNames.add(vm.propertyNames->arguments);
-            propertyNames.add(vm.propertyNames->caller);
+            if (thisObject->jsExecutable()->hasCallerAndArgumentsProperties()) {
+                propertyNames.add(vm.propertyNames->arguments);
+                propertyNames.add(vm.propertyNames->caller);
+            }
+            if (!thisObject->hasReifiedLength())
+                propertyNames.add(vm.propertyNames->length);
+            if (!thisObject->hasReifiedName())
+                propertyNames.add(vm.propertyNames->name);
+        } else {
+            if (thisObject->isBuiltinFunction() && !thisObject->hasReifiedLength())
+                propertyNames.add(vm.propertyNames->length);
+            if (thisObject->inherits(vm, JSBoundFunction::info()) && !thisObject->hasReifiedName())
+                propertyNames.add(vm.propertyNames->name);
         }
-        if (!thisObject->hasReifiedLength())
-            propertyNames.add(vm.propertyNames->length);
-        if (!thisObject->hasReifiedName())
-            propertyNames.add(vm.propertyNames->name);
-    } else if (thisObject->isHostOrBuiltinFunction() && mode.includeDontEnumProperties() && thisObject->inherits(vm, JSBoundFunction::info()) && !thisObject->hasReifiedName())
-        propertyNames.add(exec->vm().propertyNames->name);
+    }
     Base::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
@@ -433,7 +437,7 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
     }
 
     if (thisObject->isHostOrBuiltinFunction()) {
-        LazyPropertyType propType = thisObject->reifyBoundNameIfNeeded(vm, exec, propertyName);
+        LazyPropertyType propType = thisObject->reifyLazyPropertyForHostOrBuiltinIfNeeded(vm, exec, propertyName);
         if (propType == LazyPropertyType::IsLazyProperty)
             slot.disableCaching();
         scope.release();
@@ -475,12 +479,12 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
 
 bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
+    VM& vm = exec->vm();
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostOrBuiltinFunction())
-        thisObject->reifyBoundNameIfNeeded(exec->vm(), exec, propertyName);
-    else if (exec->vm().deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable) {
+        thisObject->reifyLazyPropertyForHostOrBuiltinIfNeeded(vm, exec, propertyName);
+    else if (vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable) {
         // For non-host functions, don't let these properties by deleted - except by DefineOwnProperty.
-        VM& vm = exec->vm();
         FunctionExecutable* executable = thisObject->jsExecutable();
         
         if (propertyName == exec->propertyNames().caller || propertyName == exec->propertyNames().arguments)
@@ -502,7 +506,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
 
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (thisObject->isHostOrBuiltinFunction()) {
-        thisObject->reifyBoundNameIfNeeded(vm, exec, propertyName);
+        thisObject->reifyLazyPropertyForHostOrBuiltinIfNeeded(vm, exec, propertyName);
         scope.release();
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
     }
@@ -680,11 +684,9 @@ void JSFunction::reifyName(VM& vm, ExecState* exec, String name)
 
 JSFunction::LazyPropertyType JSFunction::reifyLazyPropertyIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
 {
-    if (propertyName == vm.propertyNames->length) {
-        if (!hasReifiedLength())
-            reifyLength(vm);
+    if (reifyLazyLengthIfNeeded(vm, exec, propertyName) == LazyPropertyType::IsLazyProperty)
         return LazyPropertyType::IsLazyProperty;
-    } else if (propertyName == vm.propertyNames->name) {
+    if (propertyName == vm.propertyNames->name) {
         if (!hasReifiedName())
             reifyName(vm, exec);
         return LazyPropertyType::IsLazyProperty;
@@ -692,7 +694,27 @@ JSFunction::LazyPropertyType JSFunction::reifyLazyPropertyIfNeeded(VM& vm, ExecS
     return LazyPropertyType::NotLazyProperty;
 }
 
-JSFunction::LazyPropertyType JSFunction::reifyBoundNameIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
+JSFunction::LazyPropertyType JSFunction::reifyLazyPropertyForHostOrBuiltinIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
+{
+    ASSERT(isHostOrBuiltinFunction());
+    if (isBuiltinFunction()) {
+        if (reifyLazyLengthIfNeeded(vm, exec, propertyName) == LazyPropertyType::IsLazyProperty)
+            return LazyPropertyType::IsLazyProperty;
+    }
+    return reifyLazyBoundNameIfNeeded(vm, exec, propertyName);
+}
+
+JSFunction::LazyPropertyType JSFunction::reifyLazyLengthIfNeeded(VM& vm, ExecState*, PropertyName propertyName)
+{
+    if (propertyName == vm.propertyNames->length) {
+        if (!hasReifiedLength())
+            reifyLength(vm);
+        return LazyPropertyType::IsLazyProperty;
+    }
+    return LazyPropertyType::NotLazyProperty;
+}
+
+JSFunction::LazyPropertyType JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
 {
     const Identifier& nameIdent = vm.propertyNames->name;
     if (propertyName != nameIdent)
