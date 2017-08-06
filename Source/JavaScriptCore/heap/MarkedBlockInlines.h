@@ -223,7 +223,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     auto handleDeadCell = [&] (size_t i) {
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&block.atoms()[i]);
 
-        if (destructionMode != BlockHasNoDestructors && emptyMode == NotEmpty)
+        if (destructionMode != BlockHasNoDestructors)
             destroy(cell);
 
         if (sweepMode == SweepToFreeList) {

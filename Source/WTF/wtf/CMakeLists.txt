@@ -110,6 +110,7 @@ set(WTF_HEADERS
     Range.h
     RangeSet.h
     RawPointer.h
+    ReadWriteLock.h
     RecursiveLockAdapter.h
     RedBlackTree.h
     Ref.h
@@ -241,6 +242,7 @@ set(WTF_SOURCES
     RAMSize.cpp
     RandomDevice.cpp
     RandomNumber.cpp
+    ReadWriteLock.cpp
     RefCountedLeakCounter.cpp
     RunLoop.cpp
     SHA1.cpp

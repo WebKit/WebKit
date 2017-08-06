@@ -1,3 +1,37 @@
+2017-08-05  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r219895-219897): Number of leaks on Open Source went from 9240 to 235983 and is now at 302372
+        https://bugs.webkit.org/show_bug.cgi?id=175083
+
+        Reviewed by Oliver Hunt.
+        
+        Adds a classic ReadWriteLock class. I wrote my own because I can never remember if the pthread one is
+        guaranted to bias in favor of writers or not.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Condition.h:
+        (WTF::ConditionBase::construct):
+        (WTF::Condition::Condition):
+        * wtf/Lock.h:
+        (WTF::LockBase::construct):
+        (WTF::Lock::Lock):
+        * wtf/ReadWriteLock.cpp: Added.
+        (WTF::ReadWriteLockBase::construct):
+        (WTF::ReadWriteLockBase::readLock):
+        (WTF::ReadWriteLockBase::readUnlock):
+        (WTF::ReadWriteLockBase::writeLock):
+        (WTF::ReadWriteLockBase::writeUnlock):
+        * wtf/ReadWriteLock.h: Added.
+        (WTF::ReadWriteLockBase::ReadLock::tryLock):
+        (WTF::ReadWriteLockBase::ReadLock::lock):
+        (WTF::ReadWriteLockBase::ReadLock::unlock):
+        (WTF::ReadWriteLockBase::WriteLock::tryLock):
+        (WTF::ReadWriteLockBase::WriteLock::lock):
+        (WTF::ReadWriteLockBase::WriteLock::unlock):
+        (WTF::ReadWriteLockBase::read):
+        (WTF::ReadWriteLockBase::write):
+        (WTF::ReadWriteLock::ReadWriteLock):
+
 2017-08-04  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r220271.

@@ -50,6 +50,11 @@ struct ConditionBase {
     // are unlikely to be affected by the cost of conversions, it is better to use MonotonicTime.
     typedef ParkingLot::Time Time;
     
+    void construct()
+    {
+        m_hasWaiters.store(false);
+    }
+    
     // Wait on a parking queue while releasing the given lock. It will unlock the lock just before
     // parking, and relock it upon wakeup. Returns true if we woke up due to some call to
     // notifyOne() or notifyAll(). Returns false if we woke up due to a timeout. Note that this form
@@ -168,7 +173,7 @@ struct ConditionBase {
         ParkingLot::unparkAll(&m_hasWaiters);
     }
     
-protected:
+private:
     Atomic<bool> m_hasWaiters;
 };
 
@@ -177,7 +182,7 @@ class Condition : public ConditionBase {
 public:
     Condition()
     {
-        m_hasWaiters.store(false);
+        construct();
     }
 };
 

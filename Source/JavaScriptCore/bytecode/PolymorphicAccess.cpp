@@ -38,6 +38,7 @@
 #include "LinkBuffer.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"
+#include "SuperSampler.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 

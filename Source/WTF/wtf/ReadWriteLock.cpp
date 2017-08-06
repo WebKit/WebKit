@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,47 +24,53 @@
  */
 
 #include "config.h"
-#include "HeapCell.h"
+#include "ReadWriteLock.h"
 
-#include "HeapCellInlines.h"
-#include "MarkedBlockInlines.h"
-#include <wtf/PrintStream.h>
-
-namespace JSC {
-
-bool HeapCell::isLive()
-{
-    if (isLargeAllocation())
-        return largeAllocation().isLive();
-    auto& markedBlockHandle = markedBlock().handle();
-    if (markedBlockHandle.isFreeListed())
-        return !markedBlockHandle.isFreeListedCell(this);
-    return markedBlockHandle.isLive(this);
-}
-
-#if !COMPILER(GCC_OR_CLANG)
-void HeapCell::use() const
-{
-}
-#endif
-
-} // namespace JSC
+#include <wtf/Locker.h>
 
 namespace WTF {
 
-using namespace JSC;
-
-void printInternal(PrintStream& out, HeapCell::Kind kind)
+void ReadWriteLockBase::construct()
 {
-    switch (kind) {
-    case HeapCell::JSCell:
-        out.print("JSCell");
-        return;
-    case HeapCell::Auxiliary:
-        out.print("Auxiliary");
-        return;
+    m_lock.construct();
+    m_cond.construct();
+    m_isWriteLocked = false;
+    m_numReaders = 0;
+    m_numWaitingWriters = 0;
+}
+
+void ReadWriteLockBase::readLock()
+{
+    auto locker = holdLock(m_lock);
+    while (m_isWriteLocked || m_numWaitingWriters)
+        m_cond.wait(m_lock);
+    m_numReaders++;
+}
+
+void ReadWriteLockBase::readUnlock()
+{
+    auto locker = holdLock(m_lock);
+    m_numReaders--;
+    if (!m_numReaders)
+        m_cond.notifyAll();
+}
+
+void ReadWriteLockBase::writeLock()
+{
+    auto locker = holdLock(m_lock);
+    while (m_isWriteLocked || m_numReaders) {
+        m_numWaitingWriters++;
+        m_cond.wait(m_lock);
+        m_numWaitingWriters--;
     }
-    RELEASE_ASSERT_NOT_REACHED();
+    m_isWriteLocked = true;
+}
+
+void ReadWriteLockBase::writeUnlock()
+{
+    auto locker = holdLock(m_lock);
+    m_isWriteLocked = false;
+    m_cond.notifyAll();
 }
 
 } // namespace WTF

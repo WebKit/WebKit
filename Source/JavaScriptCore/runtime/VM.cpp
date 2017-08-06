@@ -101,6 +101,7 @@
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include "StructureInlines.h"
+#include "TestRunnerUtils.h"
 #include "ThunkGenerators.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
@@ -113,6 +114,7 @@
 #include "WeakMapData.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/ProcessID.h>
+#include <wtf/ReadWriteLock.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
@@ -341,8 +343,17 @@ VM::VM(VMType vmType, HeapType heapType)
     VMInspector::instance().add(this);
 }
 
+static StaticReadWriteLock s_destructionLock;
+
+void waitForVMDestruction()
+{
+    auto locker = holdLock(s_destructionLock.write());
+}
+
 VM::~VM()
 {
+    auto destructionLocker = holdLock(s_destructionLock.read());
+    
     Gigacage::removeDisableCallback(gigacageDisabledCallback, this);
     promiseDeferredTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)

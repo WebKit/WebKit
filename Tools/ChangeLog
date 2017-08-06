@@ -1,3 +1,17 @@
+2017-08-05  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r219895-219897): Number of leaks on Open Source went from 9240 to 235983 and is now at 302372
+        https://bugs.webkit.org/show_bug.cgi?id=175083
+
+        Reviewed by Oliver Hunt.
+        
+        Leaks results are super confusing if leaks runs while some VMs are destructing. This calls a new SPI
+        to wait for VM destructions to finish before running the next test. This makes it easier to 
+        understand leaks results from workers tests, and leads to fewer reported leaks.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+
 2017-08-05  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         check-webkit-style: fix path-specific rules for WebKit2 rename

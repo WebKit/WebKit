@@ -52,6 +52,11 @@ typedef LockAlgorithm<uint8_t, 1, 2> DefaultLockAlgorithm;
 // This is a struct without a constructor or destructor so that it can be statically initialized.
 // Use Lock in instance variables.
 struct LockBase {
+    void construct()
+    {
+        m_byte.store(0, std::memory_order_relaxed);
+    }
+    
     void lock()
     {
         if (UNLIKELY(!DefaultLockAlgorithm::lockFastAssumingZero(m_byte)))
@@ -110,7 +115,7 @@ struct LockBase {
         return isHeld();
     }
 
-protected:
+private:
     friend struct TestWebKitAPI::LockInspector;
     
     static const uint8_t isHeldBit = 1;
@@ -136,7 +141,7 @@ class Lock : public LockBase {
 public:
     Lock()
     {
-        m_byte.store(0, std::memory_order_relaxed);
+        construct();
     }
 };
 

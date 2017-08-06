@@ -28,20 +28,9 @@
 #include "CellContainer.h"
 #include "HeapCell.h"
 #include "LargeAllocation.h"
-#include "MarkedBlockInlines.h"
 #include "VM.h"
 
 namespace JSC {
-
-ALWAYS_INLINE bool HeapCell::isLive()
-{
-    if (isLargeAllocation())
-        return largeAllocation().isLive();
-    auto& markedBlockHandle = markedBlock().handle();
-    if (markedBlockHandle.isFreeListed())
-        return !markedBlockHandle.isFreeListedCell(this);
-    return markedBlockHandle.isLive(this);
-}
 
 ALWAYS_INLINE bool HeapCell::isLargeAllocation() const
 {
