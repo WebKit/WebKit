@@ -1,3 +1,10 @@
+2017-08-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, try to fix Windows build.
+
+        * wtf/Gigacage.cpp:
+        * wtf/Gigacage.h:
+
 2017-08-06  Filip Pizlo  <fpizlo@apple.com>
 
         Primitive auxiliaries and JSValue auxiliaries should have separate gigacages

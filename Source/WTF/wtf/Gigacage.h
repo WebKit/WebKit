@@ -32,7 +32,7 @@
 #define GIGACAGE_ENABLED 0
 
 extern "C" {
-extern WTF_EXPORTDATA void* const g_gigacageBasePtr;
+extern WTF_EXPORTDATA void* g_gigacageBasePtr;
 }
 
 namespace Gigacage {

@@ -33,7 +33,7 @@
 #if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
 
 extern "C" {
-void* const g_gigacageBasePtr;
+void* g_gigacageBasePtr;
 }
 
 namespace Gigacage {
