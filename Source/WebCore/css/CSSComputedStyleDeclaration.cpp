@@ -3341,6 +3341,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                 list->append(cssValuePool.createValue(style->textEmphasisMark()));
                 return WTFMove(list);
             }
+            RELEASE_ASSERT_NOT_REACHED();
         case CSSPropertyTextIndent: {
             // If CSS3_TEXT is disabled or text-indent has only one value(<length> | <percentage>),
             // getPropertyCSSValue() returns CSSValue.

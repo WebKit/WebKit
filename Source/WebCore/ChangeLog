@@ -1,3 +1,16 @@
+2017-08-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wimplicit-fallthrough warning in ComputedStyleExtractor::propertyValue
+        https://bugs.webkit.org/show_bug.cgi?id=174469
+        <rdar://problem/33311638>
+
+        Reviewed by Simon Fraser.
+
+        Add a RELEASE_ASSERT_NOT_REACHED to silence this warning.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+
 2017-08-06  Filip Pizlo  <fpizlo@apple.com>
 
         Primitive auxiliaries and JSValue auxiliaries should have separate gigacages
