@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CookieJarCurl.h"
 #include "URL.h"
 
 #include <wtf/Lock.h>
@@ -117,6 +118,7 @@ public:
     // Cookie
     const char* getCookieJarFileName() const { return m_cookieJarFileName.data(); }
     void setCookieJarFileName(const char* cookieJarFileName) { m_cookieJarFileName = CString(cookieJarFileName); }
+    CookieJarCurl& cookieJar() { return *m_cookieJar; }
 
     // Certificate
     const char* getCertificatePath() const { return m_certificatePath.data(); }
@@ -137,6 +139,7 @@ private:
     CString m_cookieJarFileName;
     CString m_certificatePath;
     CurlShareHandle m_shareHandle;
+    std::unique_ptr<CookieJarCurl> m_cookieJar;
     bool m_ignoreSSLErrors { false };
 
     CurlContext();

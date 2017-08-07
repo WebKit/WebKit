@@ -106,6 +106,7 @@ const char* const CurlContext::errorDomain = "CurlErrorDomain";
 CurlContext::CurlContext()
 : m_cookieJarFileName { cookieJarPath() }
 , m_certificatePath { certificatePath() }
+, m_cookieJar { std::make_unique<CookieJarCurlFileSystem>() }
 {
     initCookieSession();
 

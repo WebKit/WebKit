@@ -1,3 +1,36 @@
+2017-08-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Add abstraction layer of cookie jar implementation for Curl port
+        https://bugs.webkit.org/show_bug.cgi?id=174943
+
+        Reviewed by Brent Fulgham.
+
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::CookieJarCurlFileSystem::setCookiesFromDOM):
+        (WebCore::CookieJarCurlFileSystem::cookiesForDOM):
+        (WebCore::CookieJarCurlFileSystem::cookieRequestHeaderFieldValue):
+        (WebCore::CookieJarCurlFileSystem::cookiesEnabled):
+        (WebCore::CookieJarCurlFileSystem::getRawCookies):
+        (WebCore::CookieJarCurlFileSystem::deleteCookie):
+        (WebCore::CookieJarCurlFileSystem::getHostnamesWithCookies):
+        (WebCore::CookieJarCurlFileSystem::deleteCookiesForHostnames):
+        (WebCore::CookieJarCurlFileSystem::deleteAllCookies):
+        (WebCore::CookieJarCurlFileSystem::deleteAllCookiesModifiedSince):
+        (WebCore::cookiesForDOM):
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostnames):
+        (WebCore::deleteAllCookies):
+        (WebCore::deleteAllCookiesModifiedSince):
+        * platform/network/curl/CookieJarCurl.h: Added.
+        * platform/network/curl/CurlContext.cpp:
+        * platform/network/curl/CurlContext.h:
+        (WebCore::CurlContext::cookieJar):
+
 2017-08-07  Brady Eidson  <beidson@apple.com>
 
         Implement most of ServiceWorkerContainer::addRegistration.
