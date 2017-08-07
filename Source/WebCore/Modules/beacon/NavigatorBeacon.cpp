@@ -28,10 +28,10 @@
 
 #include "CachedResourceLoader.h"
 #include "Document.h"
-#include "FetchRequest.h"
+#include "FetchBody.h"
+#include "HTTPParsers.h"
 #include "Navigator.h"
 #include "URL.h"
-#include <runtime/JSCJSValue.h>
 
 namespace WebCore {
 
@@ -55,21 +55,25 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Navigator&, Document& document, co
         return true;
     }
 
-    FetchRequestInit init;
-    init.method = ASCIILiteral("POST");
-    init.body = WTFMove(body);
-    init.credentials = FetchOptions::Credentials::Include;
-    init.cache = FetchOptions::Cache::NoCache;
-    init.redirect = FetchOptions::Redirect::Follow;
-    init.keepalive = true;
-    init.window = JSC::jsNull();
+    ResourceRequest request(parsedUrl);
+    request.setHTTPMethod(ASCIILiteral("POST"));
 
-    auto fetchRequestResult = FetchRequest::create(document, parsedUrl.string(), WTFMove(init));
-    if (fetchRequestResult.hasException())
-        return fetchRequestResult.releaseException();
-
-    auto fetchRequest = fetchRequestResult.releaseReturnValue();
-    document.cachedResourceLoader().requestBeaconResource({ fetchRequest->internalRequest(), fetchRequest->fetchOptions() });
+    FetchOptions options;
+    options.credentials = FetchOptions::Credentials::Include;
+    options.cache = FetchOptions::Cache::NoCache;
+    options.keepAlive = true;
+    if (body) {
+        options.mode = FetchOptions::Mode::Cors;
+        String mimeType;
+        auto fetchBody = FetchBody::extract(document, WTFMove(body.value()), mimeType);
+        request.setHTTPBody(fetchBody.bodyForInternalRequest(document));
+        if (!mimeType.isEmpty()) {
+            request.setHTTPContentType(mimeType);
+            if (isCrossOriginSafeRequestHeader(HTTPHeaderName::ContentType, mimeType))
+                options.mode = FetchOptions::Mode::NoCors;
+        }
+    }
+    document.cachedResourceLoader().requestBeaconResource({ WTFMove(request), options });
     return true;
 }
 

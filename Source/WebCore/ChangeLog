@@ -1,3 +1,17 @@
+2017-08-07  Chris Dumez  <cdumez@apple.com>
+
+        Update sendBeacon() to rely on FetchBody instead of the whole FetchRequest
+        https://bugs.webkit.org/show_bug.cgi?id=175280
+
+        Reviewed by Youenn Fablet.
+
+        Update sendBeacon() to rely on FetchBody instead of the whole FetchRequest. FetchBody
+        for data extraction is really the only thing we need at the moment.
+        The new code also properly sets the CORS mode, which will be needed for Bug 175264.
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+
 2017-08-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         -Wimplicit-fallthrough warning in ComputedStyleExtractor::propertyValue
