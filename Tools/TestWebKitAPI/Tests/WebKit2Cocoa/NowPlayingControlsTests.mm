@@ -185,7 +185,8 @@ TEST(NowPlayingControlsTests, NowPlayingControlsClearInfoAfterSessionIsNoLongerV
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS)
-TEST(NowPlayingControlsTests, NowPlayingControlsIOS)
+// FIXME: Re-enable this test once <webkit.org/b/175204> is resolved.
+TEST(NowPlayingControlsTests, DISABLED_NowPlayingControlsIOS)
 {
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
     configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;

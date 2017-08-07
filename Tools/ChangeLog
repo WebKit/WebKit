@@ -1,3 +1,12 @@
+2017-08-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable API test NowPlayingControlsTests.NowPlayingControlsIOS.
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/NowPlayingControlsTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r219895-219897): Number of leaks on Open Source went from 9240 to 235983 and is now at 302372
