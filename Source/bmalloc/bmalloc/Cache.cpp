@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "BInline.h"
 #include "Cache.h"
 #include "Heap.h"
-#include "Inline.h"
 #include "PerProcess.h"
 
 namespace bmalloc {
@@ -46,27 +46,27 @@ Cache::Cache(HeapKind heapKind)
 {
 }
 
-NO_INLINE void* Cache::tryAllocateSlowCaseNullCache(HeapKind heapKind, size_t size)
+BNO_INLINE void* Cache::tryAllocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(heapKind).allocator().tryAllocate(size);
 }
 
-NO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t size)
+BNO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(heapKind).allocator().allocate(size);
 }
 
-NO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t alignment, size_t size)
+BNO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t alignment, size_t size)
 {
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(heapKind).allocator().allocate(alignment, size);
 }
 
-NO_INLINE void Cache::deallocateSlowCaseNullCache(HeapKind heapKind, void* object)
+BNO_INLINE void Cache::deallocateSlowCaseNullCache(HeapKind heapKind, void* object)
 {
     PerThread<PerHeapKind<Cache>>::getSlowCase()->at(heapKind).deallocator().deallocate(object);
 }
 
-NO_INLINE void* Cache::reallocateSlowCaseNullCache(HeapKind heapKind, void* object, size_t newSize)
+BNO_INLINE void* Cache::reallocateSlowCaseNullCache(HeapKind heapKind, void* object, size_t newSize)
 {
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(heapKind).allocator().reallocate(object, newSize);
 }

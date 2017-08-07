@@ -1,3 +1,17 @@
+2017-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Primitive auxiliaries and JSValue auxiliaries should have separate gigacages
+        https://bugs.webkit.org/show_bug.cgi?id=174919
+
+        Reviewed by Keith Miller.
+        
+        The disable callback is all about the primitive gigacage.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::primitiveGigacageDisabled):
+        (WebKit::m_webSQLiteDatabaseTracker):
+        (WebKit::gigacageDisabled): Deleted.
+
 2017-08-07  Brian Burg  <bburg@apple.com>
 
         Remove CANVAS_PATH compilation guard

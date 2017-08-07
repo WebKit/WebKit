@@ -31,17 +31,13 @@ namespace JSC {
 
 class FastMallocAlignedMemoryAllocator : public AlignedMemoryAllocator {
 public:
-    JS_EXPORT_PRIVATE static FastMallocAlignedMemoryAllocator& instance();
-
+    FastMallocAlignedMemoryAllocator();
     ~FastMallocAlignedMemoryAllocator();
     
     void* tryAllocateAlignedMemory(size_t alignment, size_t size) override;
     void freeAlignedMemory(void*) override;
     
     void dump(PrintStream&) const override;
-
-private:
-    FastMallocAlignedMemoryAllocator();
 };
 
 } // namespace JSC

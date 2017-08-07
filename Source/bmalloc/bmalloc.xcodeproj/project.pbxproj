@@ -51,7 +51,7 @@
 		14DD78C618F48D7500950702 /* AsyncTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F65218BA88A00076FA3F /* AsyncTask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78C718F48D7500950702 /* BAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E468189EEDE400546D68 /* BAssert.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78C818F48D7500950702 /* FixedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D9DB4517F2447100EAAB79 /* FixedVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14DD78C918F48D7500950702 /* Inline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E460189DCE1E00546D68 /* Inline.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78C918F48D7500950702 /* BInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E460189DCE1E00546D68 /* BInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CA18F48D7500950702 /* Mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 144DCED617A649D90093B2F2 /* Mutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CB18F48D7500950702 /* PerProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 14446A0717A61FA400F9EA1D /* PerProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CC18F48D7500950702 /* PerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 144469FD17A61F1F00F9EA1D /* PerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -94,7 +94,7 @@
 		140FA00219CE429C00FFD3C8 /* BumpRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BumpRange.h; path = bmalloc/BumpRange.h; sourceTree = "<group>"; };
 		140FA00419CE4B6800FFD3C8 /* LineMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LineMetadata.h; path = bmalloc/LineMetadata.h; sourceTree = "<group>"; };
 		14105E8318E14374003A106E /* ObjectType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectType.cpp; path = bmalloc/ObjectType.cpp; sourceTree = "<group>"; };
-		1413E460189DCE1E00546D68 /* Inline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Inline.h; path = bmalloc/Inline.h; sourceTree = "<group>"; };
+		1413E460189DCE1E00546D68 /* BInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BInline.h; path = bmalloc/BInline.h; sourceTree = "<group>"; };
 		1413E462189DE1CD00546D68 /* BumpAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BumpAllocator.h; path = bmalloc/BumpAllocator.h; sourceTree = "<group>"; };
 		1413E468189EEDE400546D68 /* BAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAssert.h; path = bmalloc/BAssert.h; sourceTree = "<group>"; };
 		1417F64F18B7280C0076FA3F /* Syscall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Syscall.h; path = bmalloc/Syscall.h; sourceTree = "<group>"; };
@@ -287,10 +287,10 @@
 				6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */,
 				1413E468189EEDE400546D68 /* BAssert.h */,
 				0F5BF1721F23C5710029D91D /* BExport.h */,
+				1413E460189DCE1E00546D68 /* BInline.h */,
 				14C919C818FCC59F0028DB43 /* BPlatform.h */,
 				14D9DB4517F2447100EAAB79 /* FixedVector.h */,
 				0F5BF1461F22A8B10029D91D /* HeapKind.h */,
-				1413E460189DCE1E00546D68 /* Inline.h */,
 				141D9AFF1C8E51C0000ABBA0 /* List.h */,
 				4426E27E1C838EE0008EB042 /* Logging.cpp */,
 				4426E27F1C838EE0008EB042 /* Logging.h */,
@@ -353,7 +353,7 @@
 				14DD78C818F48D7500950702 /* FixedVector.h in Headers */,
 				1400274918F89C1300115C97 /* Heap.h in Headers */,
 				0F5BF1491F22A8D80029D91D /* PerHeapKind.h in Headers */,
-				14DD78C918F48D7500950702 /* Inline.h in Headers */,
+				14DD78C918F48D7500950702 /* BInline.h in Headers */,
 				144C07F51C7B70260051BB6A /* LargeMap.h in Headers */,
 				14C8992D1CC578330027A057 /* LargeRange.h in Headers */,
 				140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */,

@@ -26,8 +26,8 @@
 #ifndef PerThread_h
 #define PerThread_h
 
+#include "BInline.h"
 #include "BPlatform.h"
-#include "Inline.h"
 #include "PerHeapKind.h"
 #include "VMAllocate.h"
 #include <mutex>
@@ -115,7 +115,7 @@ template<typename T> std::once_flag PerThreadStorage<T>::s_onceFlag;
 #endif
 
 template<typename T>
-INLINE T* PerThread<T>::getFastCase()
+BINLINE T* PerThread<T>::getFastCase()
 {
     return static_cast<T*>(PerThreadStorage<T>::get());
 }

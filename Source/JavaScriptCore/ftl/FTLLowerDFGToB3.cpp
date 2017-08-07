@@ -3235,7 +3235,7 @@ private:
     {
         LValue butterfly = m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSObject_butterfly);
         if (m_node->op() != GetButterflyWithoutCaging)
-            butterfly = caged(butterfly);
+            butterfly = caged(Gigacage::JSValue, butterfly);
         setStorage(butterfly);
     }
 
@@ -3272,7 +3272,7 @@ private:
         }
 
         DFG_ASSERT(m_graph, m_node, isTypedView(m_node->arrayMode().typedArrayType()));
-        setStorage(caged(m_out.loadPtr(cell, m_heaps.JSArrayBufferView_vector)));
+        setStorage(caged(Gigacage::Primitive, m_out.loadPtr(cell, m_heaps.JSArrayBufferView_vector)));
     }
     
     void compileCheckArray()
@@ -5040,7 +5040,7 @@ private:
                     m_out.constIntPtr(~static_cast<intptr_t>(7)));
             }
         
-            LValue allocator = allocatorForSize(vm().auxiliarySpace, byteSize, slowCase);
+            LValue allocator = allocatorForSize(vm().primitiveGigacageAuxiliarySpace, byteSize, slowCase);
             LValue storage = allocateHeapCell(allocator, slowCase);
             
             splatWords(
@@ -8869,7 +8869,7 @@ private:
             m_out.neg(m_out.sub(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedInlineCapacity))));
         int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
         ValueFromBlock outOfLineResult = m_out.anchor(
-            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), caged(storage), realIndex, ScaleEight, offsetOfFirstProperty)));
+            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), caged(Gigacage::JSValue, storage), realIndex, ScaleEight, offsetOfFirstProperty)));
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
@@ -9049,7 +9049,7 @@ private:
                 ValueFromBlock noButterfly = m_out.anchor(m_out.intPtrZero);
                 
                 LValue startOfStorage = allocateHeapCell(
-                    allocatorForSize(vm().auxiliarySpace, butterflySize, slowPath),
+                    allocatorForSize(vm().jsValueGigacageAuxiliarySpace, butterflySize, slowPath),
                     slowPath);
 
                 LValue fastButterflyValue = m_out.add(
@@ -10005,7 +10005,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
 
         size_t sizeInBytes = sizeInValues * sizeof(JSValue);
-        MarkedAllocator* allocator = vm().auxiliarySpace.allocatorFor(sizeInBytes);
+        MarkedAllocator* allocator = vm().jsValueGigacageAuxiliarySpace.allocatorFor(sizeInBytes);
         LValue startOfStorage = allocateHeapCell(m_out.constIntPtr(allocator), slowPath);
         ValueFromBlock fastButterfly = m_out.anchor(
             m_out.add(m_out.constIntPtr(sizeInBytes + sizeof(IndexingHeader)), startOfStorage));
@@ -11233,7 +11233,7 @@ private:
         LValue butterflySize = m_out.add(
             payloadSize, m_out.constIntPtr(sizeof(IndexingHeader)));
             
-        LValue allocator = allocatorForSize(vm().auxiliarySpace, butterflySize, failCase);
+        LValue allocator = allocatorForSize(vm().jsValueGigacageAuxiliarySpace, butterflySize, failCase);
         LValue startOfStorage = allocateHeapCell(allocator, failCase);
             
         LValue butterfly = m_out.add(startOfStorage, m_out.constIntPtr(sizeof(IndexingHeader)));
@@ -11614,34 +11614,35 @@ private:
         }
     }
     
-    LValue caged(LValue ptr)
+    LValue caged(Gigacage::Kind kind, LValue ptr)
     {
-        if (vm().gigacageEnabled().isStillValid()) {
-            m_graph.watchpoints().addLazily(vm().gigacageEnabled());
-            
-            LValue basePtr = m_out.constIntPtr(g_gigacageBasePtr);
-            LValue mask = m_out.constIntPtr(GIGACAGE_MASK);
-            
-            // We don't have to worry about B3 messing up the bitAnd. Also, we want to get B3's excellent
-            // codegen for 2-operand andq on x86-64.
-            LValue masked = m_out.bitAnd(ptr, mask);
-            
-            // But B3 will currently mess up the code generation of this add. Basically, any offset from what we
-            // compute here will get reassociated and folded with g_gigacageBasePtr. There's a world in which
-            // moveConstants() observes that it needs to reassociate in order to hoist the big constants. But
-            // it's much easier to just block B3's badness here. That's what we do for now.
-            PatchpointValue* patchpoint = m_out.patchpoint(pointerType());
-            patchpoint->appendSomeRegister(basePtr);
-            patchpoint->appendSomeRegister(masked);
-            patchpoint->setGenerator(
-                [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                    jit.addPtr(params[1].gpr(), params[2].gpr(), params[0].gpr());
-                });
-            patchpoint->effects = Effects::none();
-            return patchpoint;
+        if (kind == Gigacage::Primitive) {
+            if (vm().primitiveGigacageEnabled().isStillValid())
+                m_graph.watchpoints().addLazily(vm().primitiveGigacageEnabled());
+            else
+                return ptr;
         }
         
-        return ptr;
+        LValue basePtr = m_out.constIntPtr(Gigacage::basePtr(kind));
+        LValue mask = m_out.constIntPtr(GIGACAGE_MASK);
+        
+        // We don't have to worry about B3 messing up the bitAnd. Also, we want to get B3's excellent
+        // codegen for 2-operand andq on x86-64.
+        LValue masked = m_out.bitAnd(ptr, mask);
+        
+        // But B3 will currently mess up the code generation of this add. Basically, any offset from what we
+        // compute here will get reassociated and folded with Gigacage::basePtr. There's a world in which
+        // moveConstants() observes that it needs to reassociate in order to hoist the big constants. But
+        // it's much easier to just block B3's badness here. That's what we do for now.
+        PatchpointValue* patchpoint = m_out.patchpoint(pointerType());
+        patchpoint->appendSomeRegister(basePtr);
+        patchpoint->appendSomeRegister(masked);
+        patchpoint->setGenerator(
+            [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                jit.addPtr(params[1].gpr(), params[2].gpr(), params[0].gpr());
+            });
+        patchpoint->effects = Effects::none();
+        return patchpoint;
     }
     
     void buildSwitch(SwitchData* data, LType type, LValue switchValue)

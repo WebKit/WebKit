@@ -1,3 +1,20 @@
+2017-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Primitive auxiliaries and JSValue auxiliaries should have separate gigacages
+        https://bugs.webkit.org/show_bug.cgi?id=174919
+
+        Reviewed by Keith Miller.
+
+        No new tests because no change in behavior.
+        
+        Adapting to API changes - we now specify the AlignedMemoryAllocator differently and we need to be
+        specific about which Gigacage we're using.
+
+        * bindings/js/WebCoreJSClientData.cpp:
+        (WebCore::JSVMClientData::JSVMClientData):
+        * platform/graphics/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::GPUBuffer):
+
 2017-08-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Add abstraction layer of cookie jar implementation for Curl port

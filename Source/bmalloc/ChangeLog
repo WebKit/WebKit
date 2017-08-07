@@ -1,3 +1,68 @@
+2017-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Primitive auxiliaries and JSValue auxiliaries should have separate gigacages
+        https://bugs.webkit.org/show_bug.cgi?id=174919
+
+        Reviewed by Keith Miller.
+        
+        This introduces two kinds of Gigacage, Primitive and JSValue. This translates to two kinds of
+        HeapKind, PrimitiveGigacage and JSValueGigacage.
+        
+        The new support functionality required turning Inline.h into BInline.h, and INLINE into BINLINE, and
+        NO_INLINE into BNO_INLINE.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::refillAllocatorSlowCase):
+        (bmalloc::Allocator::refillAllocator):
+        (bmalloc::Allocator::allocateLarge):
+        (bmalloc::Allocator::allocateLogSizeClass):
+        * bmalloc/AsyncTask.h:
+        * bmalloc/BInline.h: Copied from Source/bmalloc/bmalloc/Inline.h.
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::tryAllocateSlowCaseNullCache):
+        (bmalloc::Cache::allocateSlowCaseNullCache):
+        (bmalloc::Cache::deallocateSlowCaseNullCache):
+        (bmalloc::Cache::reallocateSlowCaseNullCache):
+        * bmalloc/Deallocator.cpp:
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::PrimitiveDisableCallbacks::PrimitiveDisableCallbacks):
+        (Gigacage::ensureGigacage):
+        (Gigacage::disablePrimitiveGigacage):
+        (Gigacage::addPrimitiveDisableCallback):
+        (Gigacage::removePrimitiveDisableCallback):
+        (Gigacage::Callbacks::Callbacks): Deleted.
+        (Gigacage::disableGigacage): Deleted.
+        (Gigacage::addDisableCallback): Deleted.
+        (Gigacage::removeDisableCallback): Deleted.
+        * bmalloc/Gigacage.h:
+        (Gigacage::name):
+        (Gigacage::basePtr):
+        (Gigacage::forEachKind):
+        (Gigacage::caged):
+        (Gigacage::isCaged):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::usingGigacage):
+        (bmalloc::Heap::gigacageBasePtr):
+        * bmalloc/Heap.h:
+        * bmalloc/HeapKind.h:
+        (bmalloc::isGigacage):
+        (bmalloc::gigacageKind):
+        (bmalloc::heapKind):
+        * bmalloc/Inline.h: Removed.
+        * bmalloc/Map.h:
+        * bmalloc/PerProcess.h:
+        (bmalloc::PerProcess<T>::getFastCase):
+        (bmalloc::PerProcess<T>::get):
+        (bmalloc::PerProcess<T>::getSlowCase):
+        * bmalloc/PerThread.h:
+        (bmalloc::PerThread<T>::getFastCase):
+        * bmalloc/Vector.h:
+        (bmalloc::Vector<T>::push):
+        (bmalloc::Vector<T>::shrinkCapacity):
+        (bmalloc::Vector<T>::growCapacity):
+
 2017-08-02  Filip Pizlo  <fpizlo@apple.com>
 
         If Gigacage is disabled, bmalloc should service large aligned memory allocation requests through vmAllocate

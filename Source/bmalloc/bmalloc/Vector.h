@@ -26,7 +26,7 @@
 #ifndef Vector_h
 #define Vector_h
 
-#include "Inline.h"
+#include "BInline.h"
 #include "VMAllocate.h"
 #include <cstddef>
 #include <cstring>
@@ -119,7 +119,7 @@ inline T& Vector<T>::operator[](size_t i)
 }
 
 template<typename T>
-INLINE void Vector<T>::push(const T& value)
+BINLINE void Vector<T>::push(const T& value)
 {
     if (m_size == m_capacity)
         growCapacity();
@@ -212,14 +212,14 @@ void Vector<T>::reallocateBuffer(size_t newCapacity)
 }
 
 template<typename T>
-NO_INLINE void Vector<T>::shrinkCapacity()
+BNO_INLINE void Vector<T>::shrinkCapacity()
 {
     size_t newCapacity = max(initialCapacity(), m_capacity / shrinkFactor);
     reallocateBuffer(newCapacity);
 }
 
 template<typename T>
-NO_INLINE void Vector<T>::growCapacity()
+BNO_INLINE void Vector<T>::growCapacity()
 {
     size_t newCapacity = max(initialCapacity(), m_size * growFactor);
     reallocateBuffer(newCapacity);

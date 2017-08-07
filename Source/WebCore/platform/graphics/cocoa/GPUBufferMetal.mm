@@ -45,11 +45,11 @@ GPUBuffer::GPUBuffer(GPUDevice* device, ArrayBufferView* data)
     
     size_t pageSize = WTF::pageSize();
     size_t pageAlignedSize = roundUpToMultipleOf(pageSize, data->byteLength());
-    void* pageAlignedCopy = Gigacage::tryAlignedMalloc(pageSize, pageAlignedSize);
+    void* pageAlignedCopy = Gigacage::tryAlignedMalloc(Gigacage::Primitive, pageSize, pageAlignedSize);
     if (!pageAlignedCopy)
         return;
     memcpy(pageAlignedCopy, data->baseAddress(), data->byteLength());
-    m_contents = ArrayBuffer::createFromBytes(pageAlignedCopy, data->byteLength(), [] (void* ptr) { Gigacage::alignedFree(ptr); });
+    m_contents = ArrayBuffer::createFromBytes(pageAlignedCopy, data->byteLength(), [] (void* ptr) { Gigacage::alignedFree(Gigacage::Primitive, ptr); });
     m_contents->ref();
     ArrayBuffer* capturedContents = m_contents.get();
     m_buffer = adoptNS((MTLBuffer *)[device->platformDevice() newBufferWithBytesNoCopy:m_contents->data() length:pageAlignedSize options:MTLResourceOptionCPUCacheModeDefault deallocator:^(void*, NSUInteger) { capturedContents->deref(); }]);

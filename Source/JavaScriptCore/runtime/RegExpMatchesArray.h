@@ -41,7 +41,7 @@ ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializa
 
     JSGlobalObject* globalObject = structure->globalObject();
     bool createUninitialized = globalObject->isOriginalArrayStructure(structure);
-    void* temp = vm.auxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)));
+    void* temp = vm.jsValueGigacageAuxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)));
     if (UNLIKELY(!temp))
         return nullptr;
     Butterfly* butterfly = Butterfly::fromBase(temp, 0, structure->outOfLineCapacity());

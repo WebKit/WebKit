@@ -149,7 +149,7 @@ void Allocator::scavenge()
     }
 }
 
-NO_INLINE void Allocator::refillAllocatorSlowCase(BumpAllocator& allocator, size_t sizeClass)
+BNO_INLINE void Allocator::refillAllocatorSlowCase(BumpAllocator& allocator, size_t sizeClass)
 {
     BumpRangeCache& bumpRangeCache = m_bumpRangeCaches[sizeClass];
 
@@ -158,7 +158,7 @@ NO_INLINE void Allocator::refillAllocatorSlowCase(BumpAllocator& allocator, size
     m_heap.allocateSmallBumpRanges(lock, sizeClass, allocator, bumpRangeCache, m_deallocator.lineCache(lock));
 }
 
-INLINE void Allocator::refillAllocator(BumpAllocator& allocator, size_t sizeClass)
+BINLINE void Allocator::refillAllocator(BumpAllocator& allocator, size_t sizeClass)
 {
     BumpRangeCache& bumpRangeCache = m_bumpRangeCaches[sizeClass];
     if (!bumpRangeCache.size())
@@ -166,13 +166,13 @@ INLINE void Allocator::refillAllocator(BumpAllocator& allocator, size_t sizeClas
     return allocator.refill(bumpRangeCache.pop());
 }
 
-NO_INLINE void* Allocator::allocateLarge(size_t size)
+BNO_INLINE void* Allocator::allocateLarge(size_t size)
 {
     std::lock_guard<StaticMutex> lock(Heap::mutex());
     return m_heap.allocateLarge(lock, alignment, size);
 }
 
-NO_INLINE void* Allocator::allocateLogSizeClass(size_t size)
+BNO_INLINE void* Allocator::allocateLogSizeClass(size_t size)
 {
     size_t sizeClass = bmalloc::sizeClass(size);
     BumpAllocator& allocator = m_bumpAllocators[sizeClass];

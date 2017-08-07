@@ -109,7 +109,7 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
     m_jit.move(TrustedImmPtr(0), storageGPR);
     
     if (size) {
-        if (MarkedAllocator* allocator = m_jit.vm()->auxiliarySpace.allocatorFor(size)) {
+        if (MarkedAllocator* allocator = m_jit.vm()->jsValueGigacageAuxiliarySpace.allocatorFor(size)) {
             m_jit.move(TrustedImmPtr(allocator), scratchGPR);
             m_jit.emitAllocate(storageGPR, allocator, scratchGPR, scratch2GPR, slowCases);
             
@@ -7868,7 +7868,7 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
     
     size_t size = initialOutOfLineCapacity * sizeof(JSValue);
 
-    MarkedAllocator* allocator = m_jit.vm()->auxiliarySpace.allocatorFor(size);
+    MarkedAllocator* allocator = m_jit.vm()->jsValueGigacageAuxiliarySpace.allocatorFor(size);
 
     if (!allocator || node->transition()->previous->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
@@ -7913,7 +7913,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
     size_t newSize = oldSize * outOfLineGrowthFactor;
     ASSERT(newSize == node->transition()->next->outOfLineCapacity() * sizeof(JSValue));
     
-    MarkedAllocator* allocator = m_jit.vm()->auxiliarySpace.allocatorFor(newSize);
+    MarkedAllocator* allocator = m_jit.vm()->jsValueGigacageAuxiliarySpace.allocatorFor(newSize);
 
     if (!allocator || node->transition()->previous->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
@@ -8494,7 +8494,7 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
         m_jit.and32(TrustedImm32(~7), scratchGPR);
     }
     m_jit.emitAllocateVariableSized(
-        storageGPR, m_jit.vm()->auxiliarySpace, scratchGPR, scratchGPR,
+        storageGPR, m_jit.vm()->primitiveGigacageAuxiliarySpace, scratchGPR, scratchGPR,
         scratchGPR2, slowCases);
     
     MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, sizeGPR);
@@ -10112,7 +10112,7 @@ void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeG
     m_jit.lshift32(TrustedImm32(3), scratch1);
     m_jit.add32(TrustedImm32(sizeof(IndexingHeader)), scratch1, scratch2);
     m_jit.emitAllocateVariableSized(
-        storageResultGPR, m_jit.vm()->auxiliarySpace, scratch2, scratch1, scratch3, slowCases);
+        storageResultGPR, m_jit.vm()->jsValueGigacageAuxiliarySpace, scratch2, scratch1, scratch3, slowCases);
     m_jit.addPtr(TrustedImm32(sizeof(IndexingHeader)), storageResultGPR);
 
     m_jit.store32(sizeGPR, MacroAssembler::Address(storageResultGPR, Butterfly::offsetOfPublicLength()));

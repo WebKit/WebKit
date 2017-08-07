@@ -3802,9 +3802,9 @@ int runJSC(CommandLine options, bool isWorker, const Func& func)
     return result;
 }
 
-static void gigacageDisabled(void*)
+static void primitiveGigacageDisabled(void*)
 {
-    dataLog("Gigacage disabled! Aborting.\n");
+    dataLog("Primitive gigacage disabled! Aborting.\n");
     UNREACHABLE_FOR_PLATFORM();
 }
 
@@ -3827,7 +3827,7 @@ int jscmain(int argc, char** argv)
     JSC::Wasm::enableFastMemory();
 #endif
     if (Gigacage::shouldBeEnabled())
-        Gigacage::addDisableCallback(gigacageDisabled, nullptr);
+        Gigacage::addPrimitiveDisableCallback(primitiveGigacageDisabled, nullptr);
 
     int result;
     result = runJSC(

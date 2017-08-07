@@ -261,7 +261,7 @@ void GenericArguments<Type>::initModifiedArgumentsDescriptor(VM& vm, unsigned ar
     RELEASE_ASSERT(!m_modifiedArgumentsDescriptor);
 
     if (argsLength) {
-        void* backingStore = vm.auxiliarySpace.tryAllocate(WTF::roundUpToMultipleOf<8>(argsLength));
+        void* backingStore = vm.gigacageAuxiliarySpace(m_modifiedArgumentsDescriptor.kind).tryAllocate(WTF::roundUpToMultipleOf<8>(argsLength));
         RELEASE_ASSERT(backingStore);
         bool* modifiedArguments = static_cast<bool*>(backingStore);
         m_modifiedArgumentsDescriptor.set(vm, this, modifiedArguments);
@@ -282,7 +282,7 @@ void GenericArguments<Type>::setModifiedArgumentDescriptor(VM& vm, unsigned inde
 {
     initModifiedArgumentsDescriptorIfNecessary(vm, length);
     if (index < length)
-        m_modifiedArgumentsDescriptor.get()[index] = true;
+        m_modifiedArgumentsDescriptor[index] = true;
 }
 
 template<typename Type>
@@ -291,7 +291,7 @@ bool GenericArguments<Type>::isModifiedArgumentDescriptor(unsigned index, unsign
     if (!m_modifiedArgumentsDescriptor)
         return false;
     if (index < length)
-        return m_modifiedArgumentsDescriptor.get()[index];
+        return m_modifiedArgumentsDescriptor[index];
     return false;
 }
 

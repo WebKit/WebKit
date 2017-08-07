@@ -106,7 +106,7 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
     size_t size = static_cast<size_t>(numElements) * static_cast<size_t>(elementByteSize);
     if (!size)
         size = 1; // Make sure malloc actually allocates something, but not too much. We use null to mean that the buffer is neutered.
-    m_data = Gigacage::tryMalloc(size);
+    m_data = Gigacage::tryMalloc(Gigacage::Primitive, size);
     if (!m_data) {
         reset();
         return;
@@ -116,7 +116,7 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
         memset(m_data, 0, size);
 
     m_sizeInBytes = numElements * elementByteSize;
-    m_destructor = [] (void* p) { Gigacage::free(p); };
+    m_destructor = [] (void* p) { Gigacage::free(Gigacage::Primitive, p); };
 }
 
 void ArrayBufferContents::makeShared()
@@ -187,7 +187,7 @@ Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents&& contents)
 //   from the cage.
 Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLength)
 {
-    return createFromBytes(data, byteLength, [] (void* p) { Gigacage::free(p); });
+    return createFromBytes(data, byteLength, [] (void* p) { Gigacage::free(Gigacage::Primitive, p); });
 }
 
 // FIXME: We cannot use this except if the memory comes from the cage.
@@ -198,8 +198,8 @@ Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLengt
 // - WebAssembly. Wasm should allocate from the cage.
 Ref<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, unsigned byteLength, ArrayBufferDestructorFunction&& destructor)
 {
-    if (data && byteLength && !Gigacage::isCaged(data))
-        Gigacage::disableGigacage();
+    if (data && byteLength && !Gigacage::isCaged(Gigacage::Primitive, data))
+        Gigacage::disablePrimitiveGigacage();
     
     ArrayBufferContents contents(const_cast<void*>(data), byteLength, WTFMove(destructor));
     return create(WTFMove(contents));

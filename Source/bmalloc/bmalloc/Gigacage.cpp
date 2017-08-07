@@ -34,7 +34,8 @@
 
 // FIXME: Ask dyld to put this in its own page, and mprotect the page after we ensure the gigacage.
 // https://bugs.webkit.org/show_bug.cgi?id=174972
-void* g_gigacageBasePtr;
+void* g_primitiveGigacageBasePtr;
+void* g_jsValueGigacageBasePtr;
 
 using namespace bmalloc;
 
@@ -53,8 +54,8 @@ struct Callback {
     void* argument { nullptr };
 };
 
-struct Callbacks {
-    Callbacks(std::lock_guard<StaticMutex>&) { }
+struct PrimitiveDisableCallbacks {
+    PrimitiveDisableCallbacks(std::lock_guard<StaticMutex>&) { }
     
     Vector<Callback> callbacks;
 };
@@ -69,52 +70,57 @@ void ensureGigacage()
             if (!shouldBeEnabled())
                 return;
             
-            void* basePtr = tryVMAllocate(GIGACAGE_SIZE, GIGACAGE_SIZE + GIGACAGE_RUNWAY);
-            if (!basePtr)
-                return;
-            
-            vmDeallocatePhysicalPages(basePtr, GIGACAGE_SIZE + GIGACAGE_RUNWAY);
-            
-            g_gigacageBasePtr = basePtr;
+            forEachKind(
+                [&] (Kind kind) {
+                    // FIXME: Randomize where this goes.
+                    // https://bugs.webkit.org/show_bug.cgi?id=175245
+                    basePtr(kind) = tryVMAllocate(GIGACAGE_SIZE, GIGACAGE_SIZE + GIGACAGE_RUNWAY);
+                    if (!basePtr(kind)) {
+                        fprintf(stderr, "FATAL: Could not allocate %s gigacage.\n", name(kind));
+                        BCRASH();
+                    }
+                    
+                    vmDeallocatePhysicalPages(basePtr(kind), GIGACAGE_SIZE + GIGACAGE_RUNWAY);
+                });
         });
 #endif // GIGACAGE_ENABLED
 }
 
-void disableGigacage()
+void disablePrimitiveGigacage()
 {
     ensureGigacage();
-    if (!g_gigacageBasePtr) {
+    if (!g_primitiveGigacageBasePtr) {
         // It was never enabled. That means that we never even saved any callbacks. Or, we had already disabled
         // it before, and already called the callbacks.
         return;
     }
     
-    Callbacks& callbacks = *PerProcess<Callbacks>::get();
-    std::unique_lock<StaticMutex> lock(PerProcess<Callbacks>::mutex());
+    PrimitiveDisableCallbacks& callbacks = *PerProcess<PrimitiveDisableCallbacks>::get();
+    std::unique_lock<StaticMutex> lock(PerProcess<PrimitiveDisableCallbacks>::mutex());
     for (Callback& callback : callbacks.callbacks)
         callback.function(callback.argument);
     callbacks.callbacks.shrink(0);
-    g_gigacageBasePtr = nullptr;
+    g_primitiveGigacageBasePtr = nullptr;
 }
 
-void addDisableCallback(void (*function)(void*), void* argument)
+void addPrimitiveDisableCallback(void (*function)(void*), void* argument)
 {
     ensureGigacage();
-    if (!g_gigacageBasePtr) {
+    if (!g_primitiveGigacageBasePtr) {
         // It was already disabled or we were never able to enable it.
         function(argument);
         return;
     }
     
-    Callbacks& callbacks = *PerProcess<Callbacks>::get();
-    std::unique_lock<StaticMutex> lock(PerProcess<Callbacks>::mutex());
+    PrimitiveDisableCallbacks& callbacks = *PerProcess<PrimitiveDisableCallbacks>::get();
+    std::unique_lock<StaticMutex> lock(PerProcess<PrimitiveDisableCallbacks>::mutex());
     callbacks.callbacks.push(Callback(function, argument));
 }
 
-void removeDisableCallback(void (*function)(void*), void* argument)
+void removePrimitiveDisableCallback(void (*function)(void*), void* argument)
 {
-    Callbacks& callbacks = *PerProcess<Callbacks>::get();
-    std::unique_lock<StaticMutex> lock(PerProcess<Callbacks>::mutex());
+    PrimitiveDisableCallbacks& callbacks = *PerProcess<PrimitiveDisableCallbacks>::get();
+    std::unique_lock<StaticMutex> lock(PerProcess<PrimitiveDisableCallbacks>::mutex());
     for (size_t i = 0; i < callbacks.callbacks.size(); ++i) {
         if (callbacks.callbacks[i].function == function
             && callbacks.callbacks[i].argument == argument) {

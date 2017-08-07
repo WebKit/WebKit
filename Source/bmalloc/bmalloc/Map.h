@@ -26,7 +26,7 @@
 #ifndef Map_h
 #define Map_h
 
-#include "Inline.h"
+#include "BInline.h"
 #include "Sizes.h"
 #include "Vector.h"
 

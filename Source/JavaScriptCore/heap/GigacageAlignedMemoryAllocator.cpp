@@ -26,24 +26,10 @@
 #include "config.h"
 #include "GigacageAlignedMemoryAllocator.h"
 
-#include <mutex>
-#include <wtf/Gigacage.h>
-
 namespace JSC {
 
-GigacageAlignedMemoryAllocator& GigacageAlignedMemoryAllocator::instance()
-{
-    static GigacageAlignedMemoryAllocator* result;
-    static std::once_flag onceFlag;
-    std::call_once(
-        onceFlag,
-        [] {
-            result = new GigacageAlignedMemoryAllocator();
-        });
-    return *result;
-}
-
-GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator()
+GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator(Gigacage::Kind kind)
+    : m_kind(kind)
 {
 }
 
@@ -53,17 +39,17 @@ GigacageAlignedMemoryAllocator::~GigacageAlignedMemoryAllocator()
 
 void* GigacageAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size_t size)
 {
-    return Gigacage::tryAlignedMalloc(alignment, size);
+    return Gigacage::tryAlignedMalloc(m_kind, alignment, size);
 }
 
 void GigacageAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
 {
-    Gigacage::alignedFree(basePtr);
+    Gigacage::alignedFree(m_kind, basePtr);
 }
 
 void GigacageAlignedMemoryAllocator::dump(PrintStream& out) const
 {
-    out.print("Gigacage");
+    out.print(Gigacage::name(m_kind), "Gigacage");
 }
 
 } // namespace JSC

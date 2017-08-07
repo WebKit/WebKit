@@ -62,7 +62,7 @@ ALWAYS_INLINE unsigned Butterfly::optimalContiguousVectorLength(Structure* struc
 inline Butterfly* Butterfly::createUninitialized(VM& vm, JSCell*, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes)
 {
     size_t size = totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
-    void* base = vm.auxiliarySpace.allocate(size);
+    void* base = vm.jsValueGigacageAuxiliarySpace.allocate(size);
     Butterfly* result = fromBase(base, preCapacity, propertyCapacity);
     return result;
 }
@@ -70,7 +70,7 @@ inline Butterfly* Butterfly::createUninitialized(VM& vm, JSCell*, size_t preCapa
 inline Butterfly* Butterfly::tryCreate(VM& vm, JSCell*, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, const IndexingHeader& indexingHeader, size_t indexingPayloadSizeInBytes)
 {
     size_t size = totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
-    void* base = vm.auxiliarySpace.tryAllocate(size);
+    void* base = vm.jsValueGigacageAuxiliarySpace.tryAllocate(size);
     if (!base)
         return nullptr;
     Butterfly* result = fromBase(base, preCapacity, propertyCapacity);
@@ -148,7 +148,7 @@ inline Butterfly* Butterfly::growArrayRight(
     void* theBase = base(0, propertyCapacity);
     size_t oldSize = totalSize(0, propertyCapacity, hadIndexingHeader, oldIndexingPayloadSizeInBytes);
     size_t newSize = totalSize(0, propertyCapacity, true, newIndexingPayloadSizeInBytes);
-    void* newBase = vm.auxiliarySpace.tryAllocate(newSize);
+    void* newBase = vm.jsValueGigacageAuxiliarySpace.tryAllocate(newSize);
     if (!newBase)
         return nullptr;
     // FIXME: This probably shouldn't be a memcpy.

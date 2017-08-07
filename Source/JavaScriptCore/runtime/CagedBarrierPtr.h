@@ -25,59 +25,67 @@
 
 #pragma once
 
-#include <wtf/Gigacage.h>
+#include "AuxiliaryBarrier.h"
+#include <wtf/CagedPtr.h>
 
-namespace WTF {
+namespace JSC {
+
+class JSCell;
+class VM;
+
+// This is a convenient combo of AuxiliaryBarrier and CagedPtr.
 
 template<Gigacage::Kind passedKind, typename T>
-class CagedPtr {
+class CagedBarrierPtr {
 public:
     static constexpr Gigacage::Kind kind = passedKind;
+    typedef T Type;
     
-    CagedPtr(T* ptr = nullptr)
-        : m_ptr(ptr)
+    CagedBarrierPtr() { }
+    
+    template<typename U>
+    CagedBarrierPtr(VM& vm, JSCell* cell, U&& value)
     {
+        m_barrier.set(vm, cell, std::forward<U>(value));
     }
     
-    T* get() const
+    void clear() { m_barrier.clear(); }
+    
+    template<typename U>
+    void set(VM& vm, JSCell* cell, U&& value)
     {
-        ASSERT(m_ptr);
-        return Gigacage::caged(kind, m_ptr);
+        m_barrier.set(vm, cell, std::forward<U>(value));
     }
     
-    T* getMayBeNull() const
-    {
-        if (!m_ptr)
-            return nullptr;
-        return get();
-    }
+    T* get() const { return m_barrier.get().get(); }
+    T* getMayBeNull() const { return m_barrier.get().getMayBeNull(); }
     
-    bool operator==(const CagedPtr& other) const
+    bool operator==(const CagedBarrierPtr& other) const
     {
         return getMayBeNull() == other.getMayBeNull();
     }
     
-    bool operator!=(const CagedPtr& other) const
+    bool operator!=(const CagedBarrierPtr& other) const
     {
         return !(*this == other);
     }
     
     explicit operator bool() const
     {
-        return *this != CagedPtr();
+        return *this != CagedBarrierPtr();
     }
+    
+    template<typename U>
+    void setWithoutBarrier(U&& value) { m_barrier.setWithoutBarrier(std::forward<U>(value)); }
     
     T& operator*() const { return *get(); }
     T* operator->() const { return get(); }
-
+    
     template<typename IndexType>
     T& operator[](IndexType index) const { return get()[index]; }
     
 private:
-    T* m_ptr;
+    AuxiliaryBarrier<CagedPtr<kind, T>> m_barrier;
 };
 
-} // namespace WTF
-
-using WTF::CagedPtr;
-
+} // namespace JSC

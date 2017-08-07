@@ -89,6 +89,7 @@ private:
     ~Heap() = delete;
     
     bool usingGigacage();
+    void* gigacageBasePtr(); // May crash if !usingGigacage().
     
     void initializeLineMetadata();
     void initializePageMetadata();

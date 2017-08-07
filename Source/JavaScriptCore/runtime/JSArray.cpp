@@ -81,7 +81,7 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
             || hasContiguous(indexingType));
 
         unsigned vectorLength = Butterfly::optimalContiguousVectorLength(structure, initialLength);
-        void* temp = vm.auxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)));
+        void* temp = vm.jsValueGigacageAuxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)));
         if (UNLIKELY(!temp))
             return nullptr;
         butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
@@ -98,7 +98,7 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
     } else {
         static const unsigned indexBias = 0;
         unsigned vectorLength = ArrayStorage::optimalVectorLength(indexBias, structure, initialLength);
-        void* temp = vm.auxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(indexBias, outOfLineStorage, true, ArrayStorage::sizeFor(vectorLength)));
+        void* temp = vm.jsValueGigacageAuxiliarySpace.tryAllocate(deferralContext, Butterfly::totalSize(indexBias, outOfLineStorage, true, ArrayStorage::sizeFor(vectorLength)));
         if (UNLIKELY(!temp))
             return nullptr;
         butterfly = Butterfly::fromBase(temp, indexBias, outOfLineStorage);
@@ -360,7 +360,7 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
         allocatedNewStorage = false;
     } else {
         size_t newSize = Butterfly::totalSize(0, propertyCapacity, true, ArrayStorage::sizeFor(desiredCapacity));
-        newAllocBase = vm.auxiliarySpace.tryAllocate(newSize);
+        newAllocBase = vm.jsValueGigacageAuxiliarySpace.tryAllocate(newSize);
         if (!newAllocBase)
             return false;
         newStorageCapacity = desiredCapacity;
@@ -550,7 +550,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Butterfly* butterfly = m_butterfly.get().getMayBeNull();
+    Butterfly* butterfly = m_butterfly.getMayBeNull();
     switch (indexingType()) {
     case ArrayClass:
         if (!newLength)
@@ -620,7 +620,7 @@ JSValue JSArray::pop(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Butterfly* butterfly = m_butterfly.get().getMayBeNull();
+    Butterfly* butterfly = m_butterfly.getMayBeNull();
     
     switch (indexingType()) {
     case ArrayClass:
@@ -722,7 +722,7 @@ void JSArray::push(ExecState* exec, JSValue value)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Butterfly* butterfly = m_butterfly.get().getMayBeNull();
+    Butterfly* butterfly = m_butterfly.getMayBeNull();
     
     switch (indexingType()) {
     case ArrayClass: {
@@ -890,9 +890,9 @@ JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count
 
         auto& resultButterfly = *resultArray->butterfly();
         if (arrayType == ArrayWithDouble)
-            memcpy(resultButterfly.contiguousDouble().data(), m_butterfly.get()->contiguousDouble().data() + startIndex, sizeof(JSValue) * count);
+            memcpy(resultButterfly.contiguousDouble().data(), m_butterfly->contiguousDouble().data() + startIndex, sizeof(JSValue) * count);
         else
-            memcpy(resultButterfly.contiguous().data(), m_butterfly.get()->contiguous().data() + startIndex, sizeof(JSValue) * count);
+            memcpy(resultButterfly.contiguous().data(), m_butterfly->contiguous().data() + startIndex, sizeof(JSValue) * count);
         resultButterfly.setPublicLength(count);
 
         return resultArray;
@@ -970,7 +970,7 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
         // Adjust the Butterfly and the index bias. We only need to do this here because we're changing
         // the start of the Butterfly, which needs to point at the first indexed property in the used
         // portion of the vector.
-        Butterfly* butterfly = m_butterfly.get()->shift(structure(), count);
+        Butterfly* butterfly = m_butterfly->shift(structure(), count);
         setButterfly(vm, butterfly);
         storage = butterfly->arrayStorage();
         storage->m_indexBias += count;
@@ -1015,7 +1015,7 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned& startInde
     VM& vm = exec->vm();
     RELEASE_ASSERT(count > 0);
 
-    Butterfly* butterfly = m_butterfly.get().getMayBeNull();
+    Butterfly* butterfly = m_butterfly.getMayBeNull();
     
     switch (indexingType()) {
     case ArrayClass:
@@ -1171,7 +1171,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Butterfly* butterfly = m_butterfly.get().getMayBeNull();
+    Butterfly* butterfly = m_butterfly.getMayBeNull();
     
     switch (indexingType()) {
     case ArrayClass:
@@ -1194,7 +1194,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
             throwOutOfMemoryError(exec, scope);
             return false;
         }
-        butterfly = m_butterfly.get().getMayBeNull();
+        butterfly = m_butterfly.getMayBeNull();
 
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
@@ -1238,7 +1238,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
             throwOutOfMemoryError(exec, scope);
             return false;
         }
-        butterfly = m_butterfly.get().getMayBeNull();
+        butterfly = m_butterfly.getMayBeNull();
         
         // We have to check for holes before we start moving things around so that we don't get halfway 
         // through shifting and then realize we should have been in ArrayStorage mode.
@@ -1281,7 +1281,7 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
     unsigned vectorEnd;
     WriteBarrier<Unknown>* vector;
 
-    Butterfly* butterfly = m_butterfly.get().getMayBeNull();
+    Butterfly* butterfly = m_butterfly.getMayBeNull();
     
     switch (indexingType()) {
     case ArrayClass:
@@ -1354,7 +1354,7 @@ void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest,
     // FIXME: What prevents this from being called with a RuntimeArray? The length function will always return 0 in that case.
     ASSERT(length == this->length());
 
-    Butterfly* butterfly = m_butterfly.get().getMayBeNull();
+    Butterfly* butterfly = m_butterfly.getMayBeNull();
     switch (indexingType()) {
     case ArrayClass:
         return;

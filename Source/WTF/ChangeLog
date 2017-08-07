@@ -1,3 +1,39 @@
+2017-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Primitive auxiliaries and JSValue auxiliaries should have separate gigacages
+        https://bugs.webkit.org/show_bug.cgi?id=174919
+
+        Reviewed by Keith Miller.
+        
+        This mirrors the changes from bmalloc/Gigacage.h.
+        
+        Also it teaches CagedPtr how to reason about multiple gigacages.
+
+        * wtf/CagedPtr.h:
+        (WTF::CagedPtr::get const):
+        (WTF::CagedPtr::operator[] const):
+        * wtf/Gigacage.cpp:
+        (Gigacage::tryMalloc):
+        (Gigacage::tryAllocateVirtualPages):
+        (Gigacage::freeVirtualPages):
+        (Gigacage::tryAlignedMalloc):
+        (Gigacage::alignedFree):
+        (Gigacage::free):
+        * wtf/Gigacage.h:
+        (Gigacage::disablePrimitiveGigacage):
+        (Gigacage::addPrimitiveDisableCallback):
+        (Gigacage::removePrimitiveDisableCallback):
+        (Gigacage::name):
+        (Gigacage::basePtr):
+        (Gigacage::caged):
+        (Gigacage::isCaged):
+        (Gigacage::tryAlignedMalloc):
+        (Gigacage::alignedFree):
+        (Gigacage::free):
+        (Gigacage::disableGigacage): Deleted.
+        (Gigacage::addDisableCallback): Deleted.
+        (Gigacage::removeDisableCallback): Deleted.
+
 2017-08-07  Brian Burg  <bburg@apple.com>
 
         Remove CANVAS_PATH compilation guard

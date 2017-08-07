@@ -36,6 +36,8 @@ class VM;
 template<typename T>
 class AuxiliaryBarrier {
 public:
+    typedef T Type;
+    
     AuxiliaryBarrier(): m_value() { }
     
     template<typename U>

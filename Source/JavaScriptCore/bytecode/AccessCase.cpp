@@ -858,7 +858,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             size_t newSize = newStructure()->outOfLineCapacity() * sizeof(JSValue);
 
             if (allocatingInline) {
-                MarkedAllocator* allocator = vm.auxiliarySpace.allocatorFor(newSize);
+                MarkedAllocator* allocator = vm.jsValueGigacageAuxiliarySpace.allocatorFor(newSize);
 
                 if (!allocator) {
                     // Yuck, this case would suck!

@@ -100,7 +100,7 @@ public:
             if (m_memories.size() >= m_maxCount)
                 return MemoryResult(nullptr, MemoryResult::SyncGCAndRetry);
             
-            void* result = Gigacage::tryAllocateVirtualPages(Memory::fastMappedBytes());
+            void* result = Gigacage::tryAllocateVirtualPages(Gigacage::Primitive, Memory::fastMappedBytes());
             if (!result)
                 return MemoryResult(nullptr, MemoryResult::SyncGCAndRetry);
             
@@ -121,7 +121,7 @@ public:
     {
         {
             auto holder = holdLock(m_lock);
-            Gigacage::freeVirtualPages(basePtr, Memory::fastMappedBytes());
+            Gigacage::freeVirtualPages(Gigacage::Primitive, basePtr, Memory::fastMappedBytes());
             m_memories.removeFirst(basePtr);
         }
         
@@ -312,7 +312,7 @@ RefPtr<Memory> Memory::create(VM& vm, PageCount initial, PageCount maximum)
     if (!initialBytes)
         return adoptRef(new Memory(initial, maximum));
     
-    void* slowMemory = Gigacage::tryAlignedMalloc(WTF::pageSize(), initialBytes);
+    void* slowMemory = Gigacage::tryAlignedMalloc(Gigacage::Primitive, WTF::pageSize(), initialBytes);
     if (!slowMemory) {
         memoryManager().freePhysicalBytes(initialBytes);
         return nullptr;
@@ -331,7 +331,7 @@ Memory::~Memory()
             memoryManager().freeVirtualPages(m_memory);
             break;
         case MemoryMode::BoundsChecking:
-            Gigacage::alignedFree(m_memory);
+            Gigacage::alignedFree(Gigacage::Primitive, m_memory);
             break;
         }
     }
@@ -378,13 +378,13 @@ bool Memory::grow(VM& vm, PageCount newSize)
     case MemoryMode::BoundsChecking: {
         RELEASE_ASSERT(maximum().bytes() != 0);
         
-        void* newMemory = Gigacage::tryAlignedMalloc(WTF::pageSize(), desiredSize);
+        void* newMemory = Gigacage::tryAlignedMalloc(Gigacage::Primitive, WTF::pageSize(), desiredSize);
         if (!newMemory)
             return false;
         memcpy(newMemory, m_memory, m_size);
         memset(static_cast<char*>(newMemory) + m_size, 0, desiredSize - m_size);
         if (m_memory)
-            Gigacage::alignedFree(m_memory);
+            Gigacage::alignedFree(Gigacage::Primitive, m_memory);
         m_memory = newMemory;
         m_mappedCapacity = desiredSize;
         m_size = desiredSize;

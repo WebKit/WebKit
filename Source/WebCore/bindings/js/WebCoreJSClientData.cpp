@@ -44,8 +44,8 @@ namespace WebCore {
 JSVMClientData::JSVMClientData(VM& vm)
     : m_builtinFunctions(vm)
     , m_builtinNames(&vm)
-    , m_outputConstraintSpace("WebCore Wrapper w/ Output Constraint", vm.heap, &FastMallocAlignedMemoryAllocator::instance())
-    , m_globalObjectOutputConstraintSpace("WebCore Global Object w/ Output Constraint", vm.heap, &FastMallocAlignedMemoryAllocator::instance())
+    , m_outputConstraintSpace("WebCore Wrapper w/ Output Constraint", vm.heap, vm.fastMallocAllocator.get())
+    , m_globalObjectOutputConstraintSpace("WebCore Global Object w/ Output Constraint", vm.heap, vm.fastMallocAllocator.get())
 {
 }
 

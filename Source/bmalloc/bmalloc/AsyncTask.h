@@ -27,7 +27,7 @@
 #define AsyncTask_h
 
 #include "BAssert.h"
-#include "Inline.h"
+#include "BInline.h"
 #include "Mutex.h"
 #include "Sizes.h"
 #include <atomic>

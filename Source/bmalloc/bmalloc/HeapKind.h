@@ -25,14 +25,59 @@
 
 #pragma once
 
+#include "BAssert.h"
+#include "BInline.h"
+#include "Gigacage.h"
+
 namespace bmalloc {
 
 enum class HeapKind {
     Primary,
-    Gigacage
+    PrimitiveGigacage,
+    JSValueGigacage
 };
 
-static constexpr unsigned numHeaps = 2;
+static constexpr unsigned numHeaps = 3;
+
+BINLINE bool isGigacage(HeapKind heapKind)
+{
+    switch (heapKind) {
+    case HeapKind::Primary:
+        return false;
+    case HeapKind::PrimitiveGigacage:
+    case HeapKind::JSValueGigacage:
+        return true;
+    }
+    BCRASH();
+    return false;
+}
+
+BINLINE Gigacage::Kind gigacageKind(HeapKind kind)
+{
+    switch (kind) {
+    case HeapKind::Primary:
+        BCRASH();
+        return Gigacage::Primitive;
+    case HeapKind::PrimitiveGigacage:
+        return Gigacage::Primitive;
+    case HeapKind::JSValueGigacage:
+        return Gigacage::JSValue;
+    }
+    BCRASH();
+    return Gigacage::Primitive;
+}
+
+BINLINE HeapKind heapKind(Gigacage::Kind kind)
+{
+    switch (kind) {
+    case Gigacage::Primitive:
+        return HeapKind::PrimitiveGigacage;
+    case Gigacage::JSValue:
+        return HeapKind::JSValueGigacage;
+    }
+    BCRASH();
+    return HeapKind::Primary;
+}
 
 } // namespace bmalloc
 

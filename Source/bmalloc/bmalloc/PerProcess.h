@@ -26,7 +26,7 @@
 #ifndef PerProcess_h
 #define PerProcess_h
 
-#include "Inline.h"
+#include "BInline.h"
 #include "Sizes.h"
 #include "StaticMutex.h"
 #include <mutex>
@@ -71,13 +71,13 @@ private:
 };
 
 template<typename T>
-INLINE T* PerProcess<T>::getFastCase()
+BINLINE T* PerProcess<T>::getFastCase()
 {
     return s_object.load(std::memory_order_consume);
 }
 
 template<typename T>
-INLINE T* PerProcess<T>::get()
+BINLINE T* PerProcess<T>::get()
 {
     T* object = getFastCase();
     if (!object)
@@ -86,7 +86,7 @@ INLINE T* PerProcess<T>::get()
 }
 
 template<typename T>
-NO_INLINE T* PerProcess<T>::getSlowCase()
+BNO_INLINE T* PerProcess<T>::getSlowCase()
 {
     std::lock_guard<StaticMutex> lock(s_mutex);
     if (!s_object.load(std::memory_order_consume)) {

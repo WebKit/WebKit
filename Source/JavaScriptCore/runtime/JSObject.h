@@ -24,9 +24,9 @@
 
 #include "ArrayConventions.h"
 #include "ArrayStorage.h"
-#include "AuxiliaryBarrier.h"
 #include "Butterfly.h"
 #include "CPU.h"
+#include "CagedBarrierPtr.h"
 #include "CallFrame.h"
 #include "ClassInfo.h"
 #include "CustomGetterSetter.h"
@@ -43,7 +43,6 @@
 #include "VM.h"
 #include "JSString.h"
 #include "SparseArrayValueMap.h"
-#include <wtf/CagedPtr.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -178,14 +177,14 @@ public:
     {
         if (!hasIndexedProperties(indexingType()))
             return 0;
-        return m_butterfly.get()->publicLength();
+        return m_butterfly->publicLength();
     }
         
     unsigned getVectorLength()
     {
         if (!hasIndexedProperties(indexingType()))
             return 0;
-        return m_butterfly.get()->vectorLength();
+        return m_butterfly->vectorLength();
     }
     
     static bool putInlineForJSObject(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
@@ -221,7 +220,7 @@ public:
             case ALL_DOUBLE_INDEXING_TYPES:
             case ALL_CONTIGUOUS_INDEXING_TYPES:
             case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-                return propertyName < m_butterfly.get()->vectorLength();
+                return propertyName < m_butterfly->vectorLength();
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 return false;
@@ -255,7 +254,7 @@ public:
     
     bool canGetIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.get().getMayBeNull();
+        Butterfly* butterfly = m_butterfly.getMayBeNull();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -281,7 +280,7 @@ public:
         
     JSValue getIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.get().get();
+        Butterfly* butterfly = m_butterfly.get();
         switch (indexingType()) {
         case ALL_INT32_INDEXING_TYPES:
             return jsNumber(butterfly->contiguous()[i].get().asInt32());
@@ -299,7 +298,7 @@ public:
         
     JSValue tryGetIndexQuickly(unsigned i) const
     {
-        Butterfly* butterfly = m_butterfly.get().getMayBeNull();
+        Butterfly* butterfly = m_butterfly.getMayBeNull();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -353,7 +352,7 @@ public:
         
     bool canSetIndexQuickly(unsigned i)
     {
-        Butterfly* butterfly = m_butterfly.get().getMayBeNull();
+        Butterfly* butterfly = m_butterfly.getMayBeNull();
         switch (indexingType()) {
         case ALL_BLANK_INDEXING_TYPES:
         case ALL_UNDECIDED_INDEXING_TYPES:
@@ -376,7 +375,7 @@ public:
         
     void setIndexQuickly(VM& vm, unsigned i, JSValue v)
     {
-        Butterfly* butterfly = m_butterfly.get().get();
+        Butterfly* butterfly = m_butterfly.get();
         switch (indexingType()) {
         case ALL_INT32_INDEXING_TYPES: {
             ASSERT(i < butterfly->vectorLength());
@@ -436,7 +435,7 @@ public:
     ALWAYS_INLINE void initializeIndex(ObjectInitializationScope& scope, unsigned i, JSValue v, IndexingType indexingType)
     {
         VM& vm = scope.vm();
-        Butterfly* butterfly = m_butterfly.get().get();
+        Butterfly* butterfly = m_butterfly.get();
         switch (indexingType) {
         case ALL_UNDECIDED_INDEXING_TYPES: {
             setIndexQuicklyToUndecided(vm, i, v);
@@ -493,7 +492,7 @@ public:
     // barriers. This implies not having any data format conversions.
     ALWAYS_INLINE void initializeIndexWithoutBarrier(ObjectInitializationScope&, unsigned i, JSValue v, IndexingType indexingType)
     {
-        Butterfly* butterfly = m_butterfly.get().get();
+        Butterfly* butterfly = m_butterfly.get();
         switch (indexingType) {
         case ALL_UNDECIDED_INDEXING_TYPES: {
             RELEASE_ASSERT_NOT_REACHED();
@@ -542,7 +541,7 @@ public:
         case ALL_CONTIGUOUS_INDEXING_TYPES:
             return false;
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return !!m_butterfly.get()->arrayStorage()->m_sparseMap;
+            return !!m_butterfly->arrayStorage()->m_sparseMap;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return false;
@@ -559,7 +558,7 @@ public:
         case ALL_CONTIGUOUS_INDEXING_TYPES:
             return false;
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return m_butterfly.get()->arrayStorage()->inSparseMode();
+            return m_butterfly->arrayStorage()->inSparseMode();
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return false;
@@ -669,11 +668,11 @@ public:
         return inlineStorageUnsafe();
     }
         
-    const Butterfly* butterfly() const { return m_butterfly.get().getMayBeNull(); }
-    Butterfly* butterfly() { return m_butterfly.get().getMayBeNull(); }
+    const Butterfly* butterfly() const { return m_butterfly.getMayBeNull(); }
+    Butterfly* butterfly() { return m_butterfly.getMayBeNull(); }
     
-    ConstPropertyStorage outOfLineStorage() const { return m_butterfly.get()->propertyStorage(); }
-    PropertyStorage outOfLineStorage() { return m_butterfly.get()->propertyStorage(); }
+    ConstPropertyStorage outOfLineStorage() const { return m_butterfly->propertyStorage(); }
+    PropertyStorage outOfLineStorage() { return m_butterfly->propertyStorage(); }
 
     const WriteBarrierBase<Unknown>* locationForOffset(PropertyOffset offset) const
     {
@@ -807,7 +806,7 @@ public:
     ContiguousJSValues ensureInt32(VM& vm)
     {
         if (LIKELY(hasInt32(indexingType())))
-            return m_butterfly.get()->contiguousInt32();
+            return m_butterfly->contiguousInt32();
             
         return ensureInt32Slow(vm);
     }
@@ -819,7 +818,7 @@ public:
     ContiguousDoubles ensureDouble(VM& vm)
     {
         if (LIKELY(hasDouble(indexingType())))
-            return m_butterfly.get()->contiguousDouble();
+            return m_butterfly->contiguousDouble();
             
         return ensureDoubleSlow(vm);
     }
@@ -829,7 +828,7 @@ public:
     ContiguousJSValues ensureContiguous(VM& vm)
     {
         if (LIKELY(hasContiguous(indexingType())))
-            return m_butterfly.get()->contiguous();
+            return m_butterfly->contiguous();
             
         return ensureContiguousSlow(vm);
     }
@@ -841,7 +840,7 @@ public:
     ArrayStorage* ensureArrayStorage(VM& vm)
     {
         if (LIKELY(hasAnyArrayStorage(indexingType())))
-            return m_butterfly.get()->arrayStorage();
+            return m_butterfly->arrayStorage();
 
         return ensureArrayStorageSlow(vm);
     }
@@ -893,7 +892,7 @@ protected:
     ArrayStorage* arrayStorage()
     {
         ASSERT(hasAnyArrayStorage(indexingType()));
-        return m_butterfly.get()->arrayStorage();
+        return m_butterfly->arrayStorage();
     }
         
     // Call this if you want to predicate some actions on whether or not the
@@ -902,7 +901,7 @@ protected:
     {
         switch (indexingType()) {
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return m_butterfly.get()->arrayStorage();
+            return m_butterfly->arrayStorage();
                 
         default:
             return 0;
@@ -968,13 +967,13 @@ protected:
         ASSERT(length <= MAX_STORAGE_VECTOR_LENGTH);
         ASSERT(hasContiguous(indexingType()) || hasInt32(indexingType()) || hasDouble(indexingType()) || hasUndecided(indexingType()));
 
-        if (m_butterfly.get()->vectorLength() < length) {
+        if (m_butterfly->vectorLength() < length) {
             if (!ensureLengthSlow(vm, length))
                 return false;
         }
             
-        if (m_butterfly.get()->publicLength() < length)
-            m_butterfly.get()->setPublicLength(length);
+        if (m_butterfly->publicLength() < length)
+            m_butterfly->setPublicLength(length);
         return true;
     }
         
@@ -1046,7 +1045,7 @@ private:
     PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
 
 protected:
-    AuxiliaryBarrier<CagedPtr<Butterfly>> m_butterfly;
+    CagedBarrierPtr<Gigacage::JSValue, Butterfly> m_butterfly;
 #if USE(JSVALUE32_64)
 private:
     uint32_t m_padding;

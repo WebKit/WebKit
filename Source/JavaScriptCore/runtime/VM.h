@@ -62,6 +62,7 @@
 #include <wtf/Deque.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
+#include <wtf/Gigacage.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/StackBounds.h>
@@ -95,6 +96,8 @@ class DOMAttributeGetterSetter;
 class ExecState;
 class Exception;
 class ExceptionScope;
+class FastMallocAlignedMemoryAllocator;
+class GigacageAlignedMemoryAllocator;
 class HandleStack;
 class TypeProfiler;
 class TypeProfilerLog;
@@ -285,7 +288,30 @@ private:
 public:
     Heap heap;
     
-    Subspace auxiliarySpace;
+    std::unique_ptr<FastMallocAlignedMemoryAllocator> fastMallocAllocator;
+    std::unique_ptr<GigacageAlignedMemoryAllocator> primitiveGigacageAllocator;
+    std::unique_ptr<GigacageAlignedMemoryAllocator> jsValueGigacageAllocator;
+    
+    Subspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.
+    Subspace jsValueGigacageAuxiliarySpace; // Butterflies, arrays of JSValues, etc go here.
+
+    // We make cross-cutting assumptions about typed arrays being in the primitive Gigacage and butterflies
+    // being in the JSValue gigacage. For some types, it's super obvious where they should go, and so we
+    // can hardcode that fact. But sometimes it's not clear, so we abstract it by having a Gigacage::Kind
+    // constant somewhere.
+    // FIXME: Maybe it would be better if everyone abstracted this?
+    // https://bugs.webkit.org/show_bug.cgi?id=175248
+    ALWAYS_INLINE Subspace& gigacageAuxiliarySpace(Gigacage::Kind kind)
+    {
+        switch (kind) {
+        case Gigacage::Primitive:
+            return primitiveGigacageAuxiliarySpace;
+        case Gigacage::JSValue:
+            return jsValueGigacageAuxiliarySpace;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return primitiveGigacageAuxiliarySpace;
+    }
     
     // Whenever possible, use subspaceFor<CellType>(vm) to get one of these subspaces.
     Subspace cellSpace;
@@ -524,11 +550,11 @@ public:
     void* lastStackTop() { return m_lastStackTop; }
     void setLastStackTop(void*);
     
-    void fireGigacageEnabledIfNecessary()
+    void firePrimitiveGigacageEnabledIfNecessary()
     {
-        if (m_needToFireGigacageEnabled) {
-            m_needToFireGigacageEnabled = false;
-            m_gigacageEnabled.fireAll(*this, "Gigacage disabled asynchronously");
+        if (m_needToFirePrimitiveGigacageEnabled) {
+            m_needToFirePrimitiveGigacageEnabled = false;
+            m_primitiveGigacageEnabled.fireAll(*this, "Primitive gigacage disabled asynchronously");
         }
     }
 
@@ -633,7 +659,7 @@ public:
     // FIXME: Use AtomicString once it got merged with Identifier.
     JS_EXPORT_PRIVATE void addImpureProperty(const String&);
     
-    InlineWatchpointSet& gigacageEnabled() { return m_gigacageEnabled; }
+    InlineWatchpointSet& primitiveGigacageEnabled() { return m_primitiveGigacageEnabled; }
 
     BuiltinExecutables* builtinExecutables() { return m_builtinExecutables.get(); }
 
@@ -741,8 +767,8 @@ private:
     void verifyExceptionCheckNeedIsSatisfied(unsigned depth, ExceptionEventLocation&);
 #endif
     
-    static void gigacageDisabledCallback(void*);
-    void gigacageDisabled();
+    static void primitiveGigacageDisabledCallback(void*);
+    void primitiveGigacageDisabled();
 
 #if ENABLE(ASSEMBLER)
     bool m_canUseAssembler;
@@ -787,8 +813,8 @@ private:
     std::unique_ptr<TypeProfiler> m_typeProfiler;
     std::unique_ptr<TypeProfilerLog> m_typeProfilerLog;
     unsigned m_typeProfilerEnabledCount;
-    bool m_needToFireGigacageEnabled { false };
-    InlineWatchpointSet m_gigacageEnabled;
+    bool m_needToFirePrimitiveGigacageEnabled { false };
+    InlineWatchpointSet m_primitiveGigacageEnabled;
     FunctionHasExecutedCache m_functionHasExecutedCache;
     std::unique_ptr<ControlFlowProfiler> m_controlFlowProfiler;
     unsigned m_controlFlowProfilerEnabledCount;

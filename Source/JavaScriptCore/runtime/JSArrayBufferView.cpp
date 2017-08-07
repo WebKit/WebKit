@@ -66,7 +66,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
         void* temp;
         size_t size = sizeOf(length, elementSize);
         if (size) {
-            temp = vm.auxiliarySpace.tryAllocate(nullptr, size);
+            temp = vm.primitiveGigacageAuxiliarySpace.tryAllocate(nullptr, size);
             if (!temp)
                 return;
         } else
@@ -90,7 +90,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
         return;
     
     size_t size = static_cast<size_t>(length) * static_cast<size_t>(elementSize);
-    m_vector = Gigacage::tryMalloc(size);
+    m_vector = Gigacage::tryMalloc(Gigacage::Primitive, size);
     if (!m_vector)
         return;
     if (mode == ZeroFill)
@@ -192,7 +192,7 @@ void JSArrayBufferView::finalize(JSCell* cell)
     JSArrayBufferView* thisObject = static_cast<JSArrayBufferView*>(cell);
     ASSERT(thisObject->m_mode == OversizeTypedArray || thisObject->m_mode == WastefulTypedArray);
     if (thisObject->m_mode == OversizeTypedArray)
-        Gigacage::free(thisObject->m_vector.get());
+        Gigacage::free(Gigacage::Primitive, thisObject->m_vector.get());
 }
 
 JSArrayBuffer* JSArrayBufferView::unsharedJSBuffer(ExecState* exec)

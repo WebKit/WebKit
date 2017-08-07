@@ -26,16 +26,13 @@
 #pragma once
 
 #include "AlignedMemoryAllocator.h"
+#include <wtf/Gigacage.h>
 
 namespace JSC {
 
 class GigacageAlignedMemoryAllocator : public AlignedMemoryAllocator {
 public:
-    // FIXME: This shouldn't be a singleton. There should be different instances for primaries, JSValues,
-    // and other things.
-    // https://bugs.webkit.org/show_bug.cgi?id=174919
-    static GigacageAlignedMemoryAllocator& instance();
-
+    GigacageAlignedMemoryAllocator(Gigacage::Kind);
     ~GigacageAlignedMemoryAllocator();
     
     void* tryAllocateAlignedMemory(size_t alignment, size_t size) override;
@@ -44,7 +41,7 @@ public:
     void dump(PrintStream&) const override;
 
 private:
-    GigacageAlignedMemoryAllocator();
+    Gigacage::Kind m_kind;
 };
 
 } // namespace JSC

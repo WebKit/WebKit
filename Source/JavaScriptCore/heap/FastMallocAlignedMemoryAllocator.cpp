@@ -31,18 +31,6 @@
 
 namespace JSC {
 
-FastMallocAlignedMemoryAllocator& FastMallocAlignedMemoryAllocator::instance()
-{
-    static FastMallocAlignedMemoryAllocator* result;
-    static std::once_flag onceFlag;
-    std::call_once(
-        onceFlag,
-        [] {
-            result = new FastMallocAlignedMemoryAllocator();
-        });
-    return *result;
-}
-
 FastMallocAlignedMemoryAllocator::FastMallocAlignedMemoryAllocator()
 {
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,10 @@
 
 #pragma once
 
-#include "AuxiliaryBarrier.h"
+#include "CagedBarrierPtr.h"
 #include "DirectArgumentsOffset.h"
 #include "GenericArguments.h"
+#include <wtf/CagedPtr.h>
 
 namespace JSC {
 
@@ -73,7 +74,7 @@ public:
     
     bool isMappedArgument(uint32_t i) const
     {
-        return i < m_length && (!m_mappedArguments || !m_mappedArguments.get()[i]);
+        return i < m_length && (!m_mappedArguments || !m_mappedArguments[i]);
     }
 
     bool isMappedArgumentInDFG(uint32_t i) const
@@ -164,7 +165,7 @@ private:
     WriteBarrier<JSFunction> m_callee;
     uint32_t m_length; // Always the actual length of captured arguments and never what was stored into the length property.
     uint32_t m_minCapacity; // The max of this and length determines the capacity of this object. It may be the actual capacity, or maybe something smaller. We arrange it this way to be kind to the JITs.
-    AuxiliaryBarrier<bool*> m_mappedArguments; // If non-null, it means that length, callee, and caller are fully materialized properties.
+    CagedBarrierPtr<Gigacage::Primitive, bool> m_mappedArguments; // If non-null, it means that length, callee, and caller are fully materialized properties.
 };
 
 } // namespace JSC

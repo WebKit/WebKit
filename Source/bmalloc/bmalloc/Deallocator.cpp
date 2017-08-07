@@ -24,11 +24,11 @@
  */
 
 #include "BAssert.h"
+#include "BInline.h"
 #include "Chunk.h"
 #include "Deallocator.h"
 #include "DebugHeap.h"
 #include "Heap.h"
-#include "Inline.h"
 #include "Object.h"
 #include "PerProcess.h"
 #include <algorithm>

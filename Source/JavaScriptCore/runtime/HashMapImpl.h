@@ -188,7 +188,7 @@ public:
     {
         auto scope = DECLARE_THROW_SCOPE(vm);
         size_t allocationSize = HashMapBuffer::allocationSize(capacity);
-        void* data = vm.auxiliarySpace.tryAllocate(allocationSize);
+        void* data = vm.jsValueGigacageAuxiliarySpace.tryAllocate(allocationSize);
         if (!data) {
             throwOutOfMemoryError(exec, scope);
             return nullptr;
@@ -302,7 +302,7 @@ public:
 
     ALWAYS_INLINE HashMapBucketType** buffer() const
     {
-        return m_buffer.get()->buffer();
+        return m_buffer->buffer();
     }
 
     void finishCreation(ExecState* exec, VM& vm)
@@ -591,7 +591,7 @@ private:
             makeAndSetNewBuffer(exec, vm);
             RETURN_IF_EXCEPTION(scope, void());
         } else {
-            m_buffer.get()->reset(m_capacity);
+            m_buffer->reset(m_capacity);
             assertBufferIsEmpty();
         }
 
@@ -655,7 +655,7 @@ private:
 
     WriteBarrier<HashMapBucketType> m_head;
     WriteBarrier<HashMapBucketType> m_tail;
-    AuxiliaryBarrier<HashMapBufferType*> m_buffer;
+    CagedBarrierPtr<Gigacage::JSValue, HashMapBufferType> m_buffer;
     uint32_t m_keyCount;
     uint32_t m_deleteCount;
     uint32_t m_capacity;

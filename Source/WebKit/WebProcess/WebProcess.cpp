@@ -146,7 +146,7 @@ static const Seconds nonVisibleProcessCleanupDelay { 10_s };
 
 namespace WebKit {
 
-static void gigacageDisabled(void*)
+static void primitiveGigacageDisabled(void*)
 {
     UNREACHABLE_FOR_PLATFORM();
 }
@@ -203,7 +203,7 @@ WebProcess::WebProcess()
     });
 
     if (Gigacage::shouldBeEnabled())
-        Gigacage::addDisableCallback(gigacageDisabled, nullptr);
+        Gigacage::addPrimitiveDisableCallback(primitiveGigacageDisabled, nullptr);
 }
 
 WebProcess::~WebProcess()

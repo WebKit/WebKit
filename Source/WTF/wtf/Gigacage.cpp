@@ -33,12 +33,12 @@
 #if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
 
 extern "C" {
-const void* g_gigacageBasePtr;
+void* const g_gigacageBasePtr;
 }
 
 namespace Gigacage {
 
-void* tryMalloc(size_t size)
+void* tryMalloc(Kind, size_t size)
 {
     auto result = tryFastMalloc(size);
     void* realResult;
@@ -47,12 +47,12 @@ void* tryMalloc(size_t size)
     return nullptr;
 }
 
-void* tryAllocateVirtualPages(size_t size)
+void* tryAllocateVirtualPages(Kind, size_t size)
 {
     return OSAllocator::reserveUncommitted(size);
 }
 
-void freeVirtualPages(void* basePtr, size_t size)
+void freeVirtualPages(Kind, void* basePtr, size_t size)
 {
     OSAllocator::releaseDecommitted(basePtr, size);
 }
@@ -67,42 +67,51 @@ namespace Gigacage {
 // and stay scrambled except just before use.
 // https://bugs.webkit.org/show_bug.cgi?id=175035
 
-void* tryAlignedMalloc(size_t alignment, size_t size)
+void* tryAlignedMalloc(Kind kind, size_t alignment, size_t size)
 {
-    void* result = bmalloc::api::tryMemalign(alignment, size, bmalloc::HeapKind::Gigacage);
+    void* result = bmalloc::api::tryMemalign(alignment, size, bmalloc::heapKind(kind));
     WTF::compilerFence();
     return result;
 }
 
-void alignedFree(void* p)
+void alignedFree(Kind kind, void* p)
 {
-    bmalloc::api::free(p, bmalloc::HeapKind::Gigacage);
+    if (!p)
+        return;
+    RELEASE_ASSERT(isCaged(kind, p));
+    bmalloc::api::free(p, bmalloc::heapKind(kind));
     WTF::compilerFence();
 }
 
-void* tryMalloc(size_t size)
+void* tryMalloc(Kind kind, size_t size)
 {
-    void* result = bmalloc::api::tryMalloc(size, bmalloc::HeapKind::Gigacage);
-    WTF::compilerFence();
-    return result;
-}
-
-void free(void* p)
-{
-    bmalloc::api::free(p, bmalloc::HeapKind::Gigacage);
-    WTF::compilerFence();
-}
-
-void* tryAllocateVirtualPages(size_t size)
-{
-    void* result = bmalloc::api::tryLargeMemalignVirtual(WTF::pageSize(), size, bmalloc::HeapKind::Gigacage);
+    void* result = bmalloc::api::tryMalloc(size, bmalloc::heapKind(kind));
     WTF::compilerFence();
     return result;
 }
 
-void freeVirtualPages(void* basePtr, size_t)
+void free(Kind kind, void* p)
 {
-    bmalloc::api::freeLargeVirtual(basePtr, bmalloc::HeapKind::Gigacage);
+    if (!p)
+        return;
+    RELEASE_ASSERT(isCaged(kind, p));
+    bmalloc::api::free(p, bmalloc::heapKind(kind));
+    WTF::compilerFence();
+}
+
+void* tryAllocateVirtualPages(Kind kind, size_t size)
+{
+    void* result = bmalloc::api::tryLargeMemalignVirtual(WTF::pageSize(), size, bmalloc::heapKind(kind));
+    WTF::compilerFence();
+    return result;
+}
+
+void freeVirtualPages(Kind kind, void* basePtr, size_t)
+{
+    if (!basePtr)
+        return;
+    RELEASE_ASSERT(isCaged(kind, basePtr));
+    bmalloc::api::freeLargeVirtual(basePtr, bmalloc::heapKind(kind));
     WTF::compilerFence();
 }
 

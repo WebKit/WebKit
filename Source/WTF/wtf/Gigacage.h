@@ -32,30 +32,52 @@
 #define GIGACAGE_ENABLED 0
 
 extern "C" {
-extern WTF_EXPORTDATA const void* g_gigacageBasePtr;
+extern WTF_EXPORTDATA void* const g_gigacageBasePtr;
 }
 
 namespace Gigacage {
 
+enum Kind {
+    Primitive,
+    JSValue
+};
+
 inline void ensureGigacage() { }
-inline void disableGigacage() { }
+inline void disablePrimitiveGigacage() { }
 inline bool shouldBeEnabled() { return false; }
 
-inline void addDisableCallback(void (*)(void*), void*) { }
-inline void removeDisableCallback(void (*)(void*), void*) { }
+inline void addPrimitiveDisableCallback(void (*)(void*), void*) { }
+inline void removePrimitiveDisableCallback(void (*)(void*), void*) { }
+
+ALWAYS_INLINE const char* name(Kind kind)
+{
+    switch (kind) {
+    case Primitive:
+        return "Primitive";
+    case JSValue:
+        return "JSValue";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+ALWAYS_INLINE void* basePtr(Kind)
+{
+    return g_gigacageBasePtr;
+}
 
 template<typename T>
-inline T* caged(T* ptr) { return ptr; }
+inline T* caged(Kind, T* ptr) { return ptr; }
 
-inline bool isCaged(const void*) { return false; }
+inline bool isCaged(Kind, const void*) { return false; }
 
-inline void* tryAlignedMalloc(size_t alignment, size_t size) { return tryFastAlignedMalloc(alignment, size); }
-inline void alignedFree(void* p) { fastAlignedFree(p); }
-WTF_EXPORT_PRIVATE void* tryMalloc(size_t size);
-inline void free(void* p) { fastFree(p); }
+inline void* tryAlignedMalloc(Kind, size_t alignment, size_t size) { return tryFastAlignedMalloc(alignment, size); }
+inline void alignedFree(Kind, void* p) { fastAlignedFree(p); }
+WTF_EXPORT_PRIVATE void* tryMalloc(Kind, size_t size);
+inline void free(Kind, void* p) { fastFree(p); }
 
-WTF_EXPORT_PRIVATE void* tryAllocateVirtualPages(size_t size);
-WTF_EXPORT_PRIVATE void freeVirtualPages(void* basePtr, size_t size);
+WTF_EXPORT_PRIVATE void* tryAllocateVirtualPages(Kind, size_t size);
+WTF_EXPORT_PRIVATE void freeVirtualPages(Kind, void* basePtr, size_t size);
 
 } // namespace Gigacage
 #else
@@ -63,13 +85,13 @@ WTF_EXPORT_PRIVATE void freeVirtualPages(void* basePtr, size_t size);
 
 namespace Gigacage {
 
-WTF_EXPORT_PRIVATE void* tryAlignedMalloc(size_t alignment, size_t size);
-WTF_EXPORT_PRIVATE void alignedFree(void*);
-WTF_EXPORT_PRIVATE void* tryMalloc(size_t);
-WTF_EXPORT_PRIVATE void free(void*);
+WTF_EXPORT_PRIVATE void* tryAlignedMalloc(Kind, size_t alignment, size_t size);
+WTF_EXPORT_PRIVATE void alignedFree(Kind, void*);
+WTF_EXPORT_PRIVATE void* tryMalloc(Kind, size_t);
+WTF_EXPORT_PRIVATE void free(Kind, void*);
 
-WTF_EXPORT_PRIVATE void* tryAllocateVirtualPages(size_t size);
-WTF_EXPORT_PRIVATE void freeVirtualPages(void* basePtr, size_t size);
+WTF_EXPORT_PRIVATE void* tryAllocateVirtualPages(Kind, size_t size);
+WTF_EXPORT_PRIVATE void freeVirtualPages(Kind, void* basePtr, size_t size);
 
 } // namespace Gigacage
 #endif

@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Inline_h
-#define Inline_h
+#ifndef BInline_h
+#define BInline_h
 
-#define INLINE __attribute__((always_inline)) inline
+#define BINLINE __attribute__((always_inline)) inline
 
-#define NO_INLINE __attribute__((noinline))
+#define BNO_INLINE __attribute__((noinline))
 
-#endif // Inline_h
+#endif // BInline_h

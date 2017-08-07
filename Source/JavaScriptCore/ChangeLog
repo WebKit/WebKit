@@ -1,3 +1,192 @@
+2017-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Primitive auxiliaries and JSValue auxiliaries should have separate gigacages
+        https://bugs.webkit.org/show_bug.cgi?id=174919
+
+        Reviewed by Keith Miller.
+        
+        This adapts JSC to there being two gigacages.
+        
+        To make matters simpler, this turns AlignedMemoryAllocators into per-VM instances rather than
+        singletons. I don't think we were gaining anything by making them be singletons.
+        
+        This makes it easy to teach GigacageAlignedMemoryAllocator that there are multiple kinds of
+        gigacages. We'll have one of those allocators per cage.
+        
+        From there, this change teaches everyone who previously knew about cages that there are two cages.
+        This means having to specify either Gigacage::Primitive or Gigacage::JSValue. In most places, this is
+        easy: typed arrays are Primitive and butterflies are JSValue. But there are a few places where it's
+        not so obvious, so this change introduces some helpers to make it easy to define what cage you want
+        to use in one place and refer to it abstractly. We do this in DirectArguments and GenericArguments.h
+        
+        A lot of the magic of this change is due to CagedBarrierPtr, which combines AuxiliaryBarrier and
+        CagedPtr. This removes one layer of "get()" calls from a bunch of places.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        (JSC::DFG::SpeculativeJIT::emitAllocateButterfly):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetButterfly):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetDirectPname):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        * heap/FastMallocAlignedMemoryAllocator.cpp:
+        (JSC::FastMallocAlignedMemoryAllocator::instance): Deleted.
+        * heap/FastMallocAlignedMemoryAllocator.h:
+        * heap/GigacageAlignedMemoryAllocator.cpp:
+        (JSC::GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator):
+        (JSC::GigacageAlignedMemoryAllocator::tryAllocateAlignedMemory):
+        (JSC::GigacageAlignedMemoryAllocator::freeAlignedMemory):
+        (JSC::GigacageAlignedMemoryAllocator::dump const):
+        (JSC::GigacageAlignedMemoryAllocator::instance): Deleted.
+        * heap/GigacageAlignedMemoryAllocator.h:
+        * jsc.cpp:
+        (primitiveGigacageDisabled):
+        (jscmain):
+        (gigacageDisabled): Deleted.
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBuffer::createAdopted):
+        (JSC::ArrayBuffer::createFromBytes):
+        * runtime/AuxiliaryBarrier.h:
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::tryCreate):
+        (JSC::Butterfly::growArrayRight):
+        * runtime/CagedBarrierPtr.h: Added.
+        (JSC::CagedBarrierPtr::CagedBarrierPtr):
+        (JSC::CagedBarrierPtr::clear):
+        (JSC::CagedBarrierPtr::set):
+        (JSC::CagedBarrierPtr::get const):
+        (JSC::CagedBarrierPtr::getMayBeNull const):
+        (JSC::CagedBarrierPtr::operator== const):
+        (JSC::CagedBarrierPtr::operator!= const):
+        (JSC::CagedBarrierPtr::operator bool const):
+        (JSC::CagedBarrierPtr::setWithoutBarrier):
+        (JSC::CagedBarrierPtr::operator* const):
+        (JSC::CagedBarrierPtr::operator-> const):
+        (JSC::CagedBarrierPtr::operator[] const):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::overrideThings):
+        (JSC::DirectArguments::unmapArgument):
+        * runtime/DirectArguments.h:
+        (JSC::DirectArguments::isMappedArgument const):
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptor):
+        (JSC::GenericArguments<Type>::setModifiedArgumentDescriptor):
+        (JSC::GenericArguments<Type>::isModifiedArgumentDescriptor):
+        * runtime/HashMapImpl.cpp:
+        (JSC::HashMapImpl<HashMapBucket>::visitChildren):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBuffer::create):
+        (JSC::HashMapImpl::buffer const):
+        (JSC::HashMapImpl::rehash):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::fastSlice):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArray.h:
+        (JSC::JSArray::tryCreate):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        (JSC::JSArrayBufferView::finalize):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::heapSnapshot):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::enterDictionaryIndexingMode):
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::constructConvertedArrayStorageWithoutCopyingElements):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToContiguous):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::setIndexQuicklyToUndecided):
+        (JSC::JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::putIndexedDescriptor):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::putDirectIndexSlowOrBeyondVectorLength):
+        (JSC::JSObject::getNewVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+        (JSC::JSObject::allocateMoreOutOfLineStorage):
+        (JSC::JSObject::getEnumerableLength):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getArrayLength const):
+        (JSC::JSObject::getVectorLength):
+        (JSC::JSObject::putDirectIndex):
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly const):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::initializeIndexWithoutBarrier):
+        (JSC::JSObject::hasSparseMap):
+        (JSC::JSObject::inSparseIndexingMode):
+        (JSC::JSObject::butterfly const):
+        (JSC::JSObject::butterfly):
+        (JSC::JSObject::outOfLineStorage const):
+        (JSC::JSObject::outOfLineStorage):
+        (JSC::JSObject::ensureInt32):
+        (JSC::JSObject::ensureDouble):
+        (JSC::JSObject::ensureContiguous):
+        (JSC::JSObject::ensureArrayStorage):
+        (JSC::JSObject::arrayStorage):
+        (JSC::JSObject::arrayStorageOrNull):
+        (JSC::JSObject::ensureLength):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        (JSC::VM::primitiveGigacageDisabledCallback):
+        (JSC::VM::primitiveGigacageDisabled):
+        (JSC::VM::gigacageDisabledCallback): Deleted.
+        (JSC::VM::gigacageDisabled): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::gigacageAuxiliarySpace):
+        (JSC::VM::firePrimitiveGigacageEnabledIfNecessary):
+        (JSC::VM::primitiveGigacageEnabled):
+        (JSC::VM::fireGigacageEnabledIfNecessary): Deleted.
+        (JSC::VM::gigacageEnabled): Deleted.
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::create):
+        (JSC::Wasm::Memory::~Memory):
+        (JSC::Wasm::Memory::grow):
+
 2017-08-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r220144.
