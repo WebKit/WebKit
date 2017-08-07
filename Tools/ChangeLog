@@ -1,3 +1,17 @@
+2017-08-07  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        check-webkit-style: NS_ERROR_ENUM and NS_OPTIONS should not be handled as function definitions.
+        https://bugs.webkit.org/show_bug.cgi?id=175286
+
+        Reviewed by Myles C. Maxfield.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_braces):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_braces.NS_ERROR_ENUM):
+        (WebKitStyleTest.test_braces):
+        (WebKitStyleTest.test_braces.NS_OPTIONS):
+
 2017-08-07  Brian Burg  <bburg@apple.com>
 
         Remove CANVAS_PATH compilation guard
