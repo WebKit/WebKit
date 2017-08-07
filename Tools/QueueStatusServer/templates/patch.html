@@ -7,7 +7,7 @@
 <body>
 <h1>
   Patch {{ attachment_id|force_escape|webkit_attachment_id|safe }} (Bug {{ bug_id|force_escape|webkit_bug_id|safe }})
-</h1>{% for queue_name, statuses in queue_status.items %}
+</h1>{% for queue_name, statuses in queue_status %}
 <div class="status-details">
   <h2>{{ queue_name }}</h2>
   <ul>{% for status in statuses %}

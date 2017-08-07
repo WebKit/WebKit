@@ -44,7 +44,7 @@ class Patch(webapp.RequestHandler):
             per_queue_statuses = queue_status.get(status.queue_name, [])
             per_queue_statuses.append(status)
             queue_status[status.queue_name] = per_queue_statuses
-
+        queue_status = sorted(queue_status.items())
         template_values = {
             "attachment_id" : attachment_id,
             "bug_id" : bug_id,

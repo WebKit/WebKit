@@ -1,3 +1,15 @@
+2017-08-07  obinna obike  <oobike@apple.com>
+
+        Sorted EWS Queues on Patch page
+        https://bugs.webkit.org/show_bug.cgi?id=173667
+
+        Reviewed by Aakash Jain.
+
+        * QueueStatusServer/handlers/patch.py:
+        (Patch.get): Sorted queue_status.
+        * QueueStatusServer/templates/patch.html:
+        Changed queue_status.items to queue_status because it's a list.
+
 2017-08-07  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         check-webkit-style: NS_ERROR_ENUM and NS_OPTIONS should not be handled as function definitions.
