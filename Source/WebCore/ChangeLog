@@ -1,3 +1,28 @@
+2017-08-07  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220247. rdar://problem/33754440
+
+    2017-08-03  Jer Noble  <jer.noble@apple.com>
+
+            [EME][Mac] SecureStop left on disk in Private Browsing mode.
+            https://bugs.webkit.org/show_bug.cgi?id=175162
+
+            Reviewed by Eric Carlson.
+
+            Return an empty string from mediaKeysStorageDirectory() when the page indicates that storage should
+            be ephemeral(). Previously, an empty string in this case would be treated as an error. Instead, treat
+            an empty string as valid, and do not try to store or retrieve session information to disk in that case.
+
+            * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+            (WebCore::WebKitMediaKeySession::mediaKeysStorageDirectory const):
+            * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+            (WebCore::CDMSessionAVContentKeySession::releaseKeys):
+            (WebCore::CDMSessionAVContentKeySession::update):
+            (WebCore::CDMSessionAVContentKeySession::generateKeyReleaseMessage):
+            (WebCore::CDMSessionAVContentKeySession::contentKeySession):
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::CDMSessionMediaSourceAVFObjC::storagePath const):
+
 2017-08-04  Jason Marcell  <jmarcell@apple.com>
 
         Revert r219896. rdar://problem/33711000

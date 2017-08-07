@@ -98,7 +98,14 @@ void CDMSessionMediaSourceAVFObjC::removeSourceBuffer(SourceBufferPrivateAVFObjC
 
 String CDMSessionMediaSourceAVFObjC::storagePath() const
 {
-    return m_client ? pathByAppendingComponent(m_client->mediaKeysStorageDirectory(), "SecureStop.plist") : emptyString();
+    if (!m_client)
+        return emptyString();
+
+    String storageDirectory = m_client->mediaKeysStorageDirectory();
+    if (storageDirectory.isEmpty())
+        return emptyString();
+
+    return pathByAppendingComponent(storageDirectory, "SecureStop.plist");
 }
 
 }
