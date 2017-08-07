@@ -1,3 +1,17 @@
+2017-08-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r220299.
+
+        This change caused LayoutTest inspector/dom-debugger/dom-
+        breakpoints.html to fail.
+
+        Reverted changeset:
+
+        "Web Inspector: capture async stack trace when workers/main
+        context posts a message"
+        https://bugs.webkit.org/show_bug.cgi?id=167084
+        http://trac.webkit.org/changeset/220299
+
 2017-08-07  Ms2ger  <Ms2ger@igalia.com>
 
         Remove obsolete failure expectations for wpt browsers tests.

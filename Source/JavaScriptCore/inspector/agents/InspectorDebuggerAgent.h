@@ -94,7 +94,6 @@ public:
     enum class AsyncCallType {
         DOMTimer,
         EventListener,
-        PostMessage,
         RequestAnimationFrame,
     };
 

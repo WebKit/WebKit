@@ -50,23 +50,6 @@ function testAddEventListener() {
     document.body.click();
 }
 
-function testPostMessage(targetOrigin = "*") {
-    let childFrame = document.getElementById("postMessageTestFrame");
-    childFrame.contentWindow.postMessage("<message>", targetOrigin);
-
-    window.addEventListener("message", function postMessageFired() {
-        window.removeEventListener("message", postMessageFired);
-        pauseThenFinishTest();
-    });
-}
-
-function testFailPostMessage() {
-    testPostMessage("http://example.com");
-    setTimeout(() => {
-        TestPage.dispatchEventToFrontend("AfterTestFunction");
-    }, 0);
-}
-
 function recursiveCallThenTest(testFunction, depth) {
     if (depth) {
         recursiveCallThenTest(testFunction, depth - 1);
@@ -96,17 +79,16 @@ function test()
             name: `CheckAsyncStackTrace.${name}`,
             test(resolve, reject) {
                 let pauseCount = 0;
-                function debuggerPaused() {
+                function handlePaused() {
                     InspectorTest.log(`PAUSE #${++pauseCount}`);
                     logActiveStackTrace();
                     WI.debuggerManager.resume();
                 }
 
-                WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, debuggerPaused);
+                WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, handlePaused);
 
-                InspectorTest.awaitEvent("AfterTestFunction")
-                .then(() => {
-                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, debuggerPaused);
+                InspectorTest.singleFireEventListener("AfterTestFunction", () => {
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, handlePaused);
                     resolve();
                 });
 
@@ -121,29 +103,6 @@ function test()
     addSimpleTestCase("ChainedRequestAnimationFrame", "testChainedRequestAnimationFrame()");
     addSimpleTestCase("ReferenceCounting", "testReferenceCounting()");
     addSimpleTestCase("AddEventListener", "testAddEventListener()");
-    addSimpleTestCase("PostMessage", "testPostMessage()");
-
-    suite.addTestCase({
-        name: "ShouldNotPauseForFailedPostMessage",
-        test(resolve, reject) {
-            function debuggerPaused() {
-                WI.debuggerManager.resume();
-                InspectorTest.fail("Should not pause.");
-                reject();
-            }
-
-            WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, debuggerPaused);
-
-            InspectorTest.awaitEvent("AfterTestFunction")
-            .then(() => {
-                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, debuggerPaused);
-                InspectorTest.pass("Should not pause for failed post message.");
-                resolve();
-            });
-
-            InspectorTest.evaluateInPage("testFailPostMessage()");
-        }
-    });
 
     function setup(resolve) {
         InspectorTest.log("Save DebuggerManager.asyncStackTraceDepth");
@@ -231,6 +190,5 @@ function test()
 </head>
 <body onload="runTest()">
 <p>Tests for async stack traces.</p>
-<iframe id="postMessageTestFrame" src="resources/postMessage-echo.html"></iframe>
 </body>
 </html>

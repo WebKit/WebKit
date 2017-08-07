@@ -36,6 +36,18 @@ function test()
         resolve();
     }
 
+    function awaitEvaluateInPage(expression) {
+        return new Promise((resolve, reject) => {
+            InspectorTest.log("Wait for evaluate in page to return.");
+            InspectorTest.evaluateInPage(expression, (error) => {
+                if (error)
+                    reject(error);
+
+                resolve();
+            });
+        });
+    }
+
     function rejectOnPause() {
         return new Promise((resolve, reject) => {
             WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused)

@@ -45,7 +45,6 @@
 #include "PageScriptDebugServer.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"
-#include "Timer.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/ScriptCallStack.h>
@@ -100,9 +99,7 @@ String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
 void PageDebuggerAgent::didClearAsyncStackTraceData()
 {
     m_registeredEventListeners.clear();
-    m_postMessageTimers.clear();
     m_nextEventListenerIdentifier = 1;
-    m_nextPostMessageIdentifier = 1;
 }
 
 void PageDebuggerAgent::muteConsole()
@@ -228,53 +225,6 @@ void PageDebuggerAgent::willFireAnimationFrame(int callbackId)
 void PageDebuggerAgent::didCancelAnimationFrame(int callbackId)
 {
     didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
-}
-
-void PageDebuggerAgent::didPostMessage(const TimerBase& timer, JSC::ExecState& state)
-{
-    if (!breakpointsActive())
-        return;
-
-    if (m_postMessageTimers.contains(&timer)) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    int postMessageIdentifier = m_nextPostMessageIdentifier++;
-    m_postMessageTimers.set(&timer, postMessageIdentifier);
-
-    didScheduleAsyncCall(&state, InspectorDebuggerAgent::AsyncCallType::PostMessage, postMessageIdentifier, true);
-}
-
-void PageDebuggerAgent::didFailPostMessage(const TimerBase& timer)
-{
-    auto it = m_postMessageTimers.find(&timer);
-    if (it == m_postMessageTimers.end())
-        return;
-
-    didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::PostMessage, it->value);
-
-    m_postMessageTimers.remove(it);
-}
-
-void PageDebuggerAgent::willDispatchPostMessage(const TimerBase& timer)
-{
-    auto it = m_postMessageTimers.find(&timer);
-    if (it == m_postMessageTimers.end())
-        return;
-
-    willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::PostMessage, it->value);
-}
-
-void PageDebuggerAgent::didDispatchPostMessage(const TimerBase& timer)
-{
-    auto it = m_postMessageTimers.find(&timer);
-    if (it == m_postMessageTimers.end())
-        return;
-
-    didDispatchAsyncCall();
-
-    m_postMessageTimers.remove(it);
 }
 
 } // namespace WebCore

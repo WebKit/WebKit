@@ -85,7 +85,6 @@ class ResourceResponse;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class ShadowRoot;
-class TimerBase;
 class URL;
 #if ENABLE(WEBGL)
 class WebGLProgram;
@@ -136,11 +135,6 @@ public:
     static void willSendXMLHttpRequest(ScriptExecutionContext*, const String& url);
     static void didInstallTimer(ScriptExecutionContext&, int timerId, Seconds timeout, bool singleShot);
     static void didRemoveTimer(ScriptExecutionContext&, int timerId);
-
-    static void didPostMessage(Frame&, TimerBase&, JSC::ExecState&);
-    static void didFailPostMessage(Frame&, TimerBase&);
-    static void willDispatchPostMessage(Frame&, TimerBase&);
-    static void didDispatchPostMessage(Frame&, TimerBase&);
 
     static InspectorInstrumentationCookie willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine);
     static void didCallFunction(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
@@ -307,11 +301,6 @@ private:
     static void willSendXMLHttpRequestImpl(InstrumentingAgents&, const String& url);
     static void didInstallTimerImpl(InstrumentingAgents&, int timerId, Seconds timeout, bool singleShot, ScriptExecutionContext&);
     static void didRemoveTimerImpl(InstrumentingAgents&, int timerId, ScriptExecutionContext&);
-
-    static void didPostMessageImpl(InstrumentingAgents&, const TimerBase&, JSC::ExecState&);
-    static void didFailPostMessageImpl(InstrumentingAgents&, const TimerBase&);
-    static void willDispatchPostMessageImpl(InstrumentingAgents&, const TimerBase&);
-    static void didDispatchPostMessageImpl(InstrumentingAgents&, const TimerBase&);
 
     static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents&, const String& scriptName, int scriptLine, ScriptExecutionContext*);
     static void didCallFunctionImpl(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
@@ -678,34 +667,6 @@ inline void InspectorInstrumentation::willRemoveEventListener(EventTarget& targe
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(target.scriptExecutionContext()))
         willRemoveEventListenerImpl(*instrumentingAgents, target, eventType, listener, capture);
-}
-
-inline void InspectorInstrumentation::didPostMessage(Frame& frame, TimerBase& timer, JSC::ExecState& state)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didPostMessageImpl(*instrumentingAgents, timer, state);
-}
-
-inline void InspectorInstrumentation::didFailPostMessage(Frame& frame, TimerBase& timer)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didFailPostMessageImpl(*instrumentingAgents, timer);
-}
-
-inline void InspectorInstrumentation::willDispatchPostMessage(Frame& frame, TimerBase& timer)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        willDispatchPostMessageImpl(*instrumentingAgents, timer);
-}
-
-inline void InspectorInstrumentation::didDispatchPostMessage(Frame& frame, TimerBase& timer)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didDispatchPostMessageImpl(*instrumentingAgents, timer);
 }
 
 inline InspectorInstrumentationCookie InspectorInstrumentation::willCallFunction(ScriptExecutionContext* context, const String& scriptName, int scriptLine)
