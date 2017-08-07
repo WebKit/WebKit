@@ -127,7 +127,6 @@ class LandCowhand(AbstractSequencedCommand):
     name = "land-cowhand"
     help_text = "Prepares a ChangeLog and lands the current working directory diff."
     steps = [
-        steps.SortXcodeProjectFiles,
         steps.PrepareChangeLog,
         steps.EditChangeLog,
         steps.CheckStyle,

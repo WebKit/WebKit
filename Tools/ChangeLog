@@ -1,3 +1,15 @@
+2017-08-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r220295.
+
+        This change introduced 4 errors in webkitpy tests.
+
+        Reverted changeset:
+
+        "[XCode] webkit-patch should run sort-Xcode-project-file"
+        https://bugs.webkit.org/show_bug.cgi?id=174036
+        http://trac.webkit.org/changeset/220295
+
 2017-08-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable API test NowPlayingControlsTests.NowPlayingControlsIOS.

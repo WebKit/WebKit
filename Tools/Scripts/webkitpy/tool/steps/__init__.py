@@ -59,7 +59,6 @@ from webkitpy.tool.steps.promptforbugortitle import PromptForBugOrTitle
 from webkitpy.tool.steps.reopenbugafterrollout import ReopenBugAfterRollout
 from webkitpy.tool.steps.revertrevision import RevertRevision
 from webkitpy.tool.steps.runtests import RunTests
-from webkitpy.tool.steps.sortxcodeprojectfiles import SortXcodeProjectFiles
 from webkitpy.tool.steps.suggestreviewers import SuggestReviewers
 from webkitpy.tool.steps.update import Update
 from webkitpy.tool.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
