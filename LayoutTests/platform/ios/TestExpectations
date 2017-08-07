@@ -2868,3 +2868,4 @@ webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip 
 
 webkit.org/b/174120 http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Skip ]
 
+webkit.org/b/175273 imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html [ Failure ]
