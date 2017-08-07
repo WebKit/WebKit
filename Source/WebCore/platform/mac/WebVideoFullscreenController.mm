@@ -233,22 +233,24 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 // MARK: -
 // MARK: Exposed Interface
 
-static void constrainFrameToRatioOfFrame(NSRect *frameToConstrain, const NSRect *frame)
+static NSRect frameExpandedToRatioOfFrame(NSRect frameToExpand, NSRect frame)
 {
     // Keep a constrained aspect ratio for the destination window
-    CGFloat originalRatio = frame->size.width / frame->size.height;
-    CGFloat newRatio = frameToConstrain->size.width / frameToConstrain->size.height;
+    NSRect result = frameToExpand;
+    CGFloat newRatio = frame.size.width / frame.size.height;
+    CGFloat originalRatio = frameToExpand.size.width / frameToExpand.size.height;
     if (newRatio > originalRatio) {
-        CGFloat newWidth = originalRatio * frameToConstrain->size.height;
-        CGFloat diff = frameToConstrain->size.width - newWidth;
-        frameToConstrain->size.width = newWidth;
-        frameToConstrain->origin.x += diff / 2;
+        CGFloat newWidth = newRatio * frameToExpand.size.height;
+        CGFloat diff = newWidth - frameToExpand.size.width;
+        result.size.width = newWidth;
+        result.origin.x -= diff / 2;
     } else {
-        CGFloat newHeight = frameToConstrain->size.width / originalRatio;
-        CGFloat diff = frameToConstrain->size.height - newHeight;
-        frameToConstrain->size.height = newHeight;
-        frameToConstrain->origin.y += diff / 2;
-    }    
+        CGFloat newHeight = frameToExpand.size.width / newRatio;
+        CGFloat diff = newHeight - frameToExpand.size.height;
+        result.size.height = newHeight;
+        result.origin.y -= diff / 2;
+    }
+    return result;
 }
 
 static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
@@ -277,9 +279,8 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     if (!screen)
         screen = [NSScreen mainScreen];
 
-    NSRect frame = [self videoElementRect];
     NSRect endFrame = [screen frame];
-    constrainFrameToRatioOfFrame(&endFrame, &frame);
+    NSRect frame = frameExpandedToRatioOfFrame([self videoElementRect], endFrame);
 
     // Create a black window if needed
     if (!_backgroundFullscreenWindow)
@@ -316,8 +317,11 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     // If our owner releases us we could crash if this is not the case.
     // Balanced in windowDidExitFullscreen
     [self retain];    
-    
-    [[self fullscreenWindow] animateFromRect:[[self window] frame] toRect:endFrame withSubAnimation:_fadeAnimation controllerAction:@selector(windowDidExitFullscreen)];
+
+    NSRect startFrame = [[self window] frame];
+    endFrame = frameExpandedToRatioOfFrame(endFrame, startFrame);
+
+    [[self fullscreenWindow] animateFromRect:startFrame toRect:endFrame withSubAnimation:_fadeAnimation controllerAction:@selector(windowDidExitFullscreen)];
 }
 
 - (void)applicationDidChangeScreenParameters:(NSNotification*)notification
@@ -504,7 +508,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     if (!wasAnimating) {
         // We'll downscale the window during the animation based on the higher resolution rect
         BOOL higherResolutionIsEndRect = startRect.size.width < endRect.size.width && startRect.size.height < endRect.size.height;
-        [self setFrame:higherResolutionIsEndRect ? endRect : startRect display:NO];        
+        [self setFrame:higherResolutionIsEndRect ? endRect : startRect display:NO];
     }
     
     ASSERT(!_fullscreenAnimation);
