@@ -1,3 +1,15 @@
+2017-08-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE][CMake] Only pass pkg-config CFLAGS from (E)GL when not using libepoxy.
+        https://bugs.webkit.org/show_bug.cgi?id=175125
+
+        Reviewed by Michael Catanzaro.
+
+        No change of behavior, covered by existing tests.
+
+        * CMakeLists.txt: Instead of negating 3 times the use of libepoxy
+        move the logic for (E)GL detection inside an else() block.
+
 2017-08-07  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r219121): Airmail 3 prints header part only.
