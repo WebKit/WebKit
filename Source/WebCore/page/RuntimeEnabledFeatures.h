@@ -207,6 +207,9 @@ public:
     bool audioEnabled() const;
 #endif
 
+    void setInspectorAdditionsEnabled(bool isEnabled) { m_inspectorAdditionsEnabled = isEnabled; }
+    bool inspectorAdditionsEnabled() const { return m_inspectorAdditionsEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -318,6 +321,8 @@ private:
 #if ENABLE(SERVICE_WORKER)
     bool m_serviceWorkerEnabled { false };
 #endif
+
+    bool m_inspectorAdditionsEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

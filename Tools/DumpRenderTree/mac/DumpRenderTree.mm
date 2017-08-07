@@ -982,6 +982,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.modernMediaControlsEnabled = options.enableModernMediaControls;
     preferences.credentialManagementEnabled = options.enableCredentialManagement;
     preferences.isSecureContextAttributeEnabled = options.enableIsSecureContextAttribute;
+    preferences.inspectorAdditionsEnabled = options.enableInspectorAdditions;
 }
 
 // Called once on DumpRenderTree startup.

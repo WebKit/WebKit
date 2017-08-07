@@ -1,3 +1,38 @@
+2017-08-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Preview Canvas path when viewing a recording
+        https://bugs.webkit.org/show_bug.cgi?id=174967
+
+        Reviewed by Brian Burg.
+
+        Tests: fast/canvas/2d.currentPoint.html
+               fast/canvas/2d.getPath.modification.html
+               fast/canvas/2d.getPath.newobject.html
+               fast/canvas/2d.setPath.html
+
+        * html/canvas/CanvasPath.idl:
+        * html/canvas/CanvasPath.h:
+        * html/canvas/CanvasPath.cpp:
+        (WebCore::CanvasPath::currentX const):
+        (WebCore::CanvasPath::currentY const):
+
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setPath):
+        (WebCore::CanvasRenderingContext2D::getPath const):
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setInspectorAdditionsEnabled):
+        (WebCore::RuntimeEnabledFeatures::inspectorAdditionsEnabled const):
+        Add runtime flag for added IDL items above so that they are only usable within the inspector
+        process. The runtime flag is not enabled from anywhere else as of now.
+
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildInitialState):
+        Send current path as part of the InitialState.
+        Drive-by: deduplicate more string values.
+
 2017-08-07  Chris Dumez  <cdumez@apple.com>
 
         Update sendBeacon() to rely on FetchBody instead of the whole FetchRequest

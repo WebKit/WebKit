@@ -509,6 +509,10 @@ WK_EXPORT WKStringRef WKPreferencesCopyMediaContentTypesRequiringHardwareSupport
 WK_EXPORT void WKPreferencesSetIsSecureContextAttributeEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetIsSecureContextAttributeEnabled(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetInspectorAdditionsEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetInspectorAdditionsEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

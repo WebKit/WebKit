@@ -189,6 +189,9 @@ typedef (HTMLImageElement or HTMLCanvasElement) CanvasImageSource;
     attribute boolean imageSmoothingEnabled;
     [ImplementedAs=imageSmoothingEnabled] attribute boolean webkitImageSmoothingEnabled;
     attribute ImageSmoothingQuality imageSmoothingQuality;
+
+    [EnabledAtRuntime=InspectorAdditions] void setPath(DOMPath path);
+    [EnabledAtRuntime=InspectorAdditions, NewObject] DOMPath getPath();
 };
 
 CanvasRenderingContext2D implements CanvasPath;

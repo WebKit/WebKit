@@ -1823,3 +1823,12 @@ void WKPreferencesSetAllowMediaContentTypesRequiringHardwareSupportAsFallback(WK
     return toImpl(preferencesRef)->setAllowMediaContentTypesRequiringHardwareSupportAsFallback(allow);
 }
 
+void WKPreferencesSetInspectorAdditionsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setInspectorAdditionsEnabled(flag);
+}
+
+bool WKPreferencesGetInspectorAdditionsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->inspectorAdditionsEnabled();
+}

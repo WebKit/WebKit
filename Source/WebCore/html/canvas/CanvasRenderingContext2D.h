@@ -226,6 +226,9 @@ public:
     ImageSmoothingQuality imageSmoothingQuality() const;
     void setImageSmoothingQuality(ImageSmoothingQuality);
 
+    void setPath(DOMPath&);
+    Ref<DOMPath> getPath() const;
+
     bool usesDisplayListDrawing() const { return m_usesDisplayListDrawing; };
     void setUsesDisplayListDrawing(bool flag) { m_usesDisplayListDrawing = flag; };
 

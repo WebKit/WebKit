@@ -37,6 +37,9 @@ function load() {
 
     document.body.appendChild(canvas);
 
+    ctx.save();
+    ctx.save(); // This matches the `restore` call in `performActions`.
+
     runTest();
 }
 
@@ -47,9 +50,25 @@ function ignoreException(f){
 }
 
 let timeoutID = NaN;
+let restoreCalled = false;
 
 function cancelActions() {
+    if (!isNaN(timeoutID)) {
+        ctx.restore();
+        if (!restoreCalled)
+            ctx.restore();
+    }
+
     clearTimeout(timeoutID);
+    timeoutID = NaN;
+
+    ctx.save();
+    ctx.save();
+    ctx.resetTransform();
+    ctx.beginPath();
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    restoreCalled = false;
 }
 
 function performActions() {
@@ -233,6 +252,8 @@ function performActions() {
         },
         () => {
             ctx.restore();
+
+            restoreCalled = true;
         },
         () => {
             ctx.rotate(1);

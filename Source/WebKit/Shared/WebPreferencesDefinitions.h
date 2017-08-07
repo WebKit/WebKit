@@ -291,6 +291,7 @@
     macro(UserTimingEnabled, userTimingEnabled, Bool, bool, true, "User Timing", "Enable UserTiming API") \
     macro(LegacyEncryptedMediaAPIEnabled, legacyEncryptedMediaAPIEnabled, Bool, bool, DEFAULT_LEGACY_ENCRYPTED_MEDIA_API_ENABLED, "Enable Legacy EME API", "Enable legacy EME API") \
     macro(AllowMediaContentTypesRequiringHardwareSupportAsFallback, allowMediaContentTypesRequiringHardwareSupportAsFallback, Bool, bool, DEFAULT_ALLOW_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT_AS_FALLBACK, "Allow Media Content Types Requirining Hardware As Fallback", "Allow Media Content Types Requirining Hardware As Fallback") \
+    macro(InspectorAdditionsEnabled, inspectorAdditionsEnabled, Bool, bool, false, "Web Inspector Additions", "Enable additional page APIs used by the Web Inspector frontend page") \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

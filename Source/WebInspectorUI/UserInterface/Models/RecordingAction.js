@@ -40,7 +40,7 @@ WI.RecordingAction = class RecordingAction
         this._isFunction = false;
         this._isGetter = false;
         this._isVisual = false;
-        this._stateModifiers = [];
+        this._stateModifiers = new Set;
     }
 
     // Static
@@ -69,7 +69,7 @@ WI.RecordingAction = class RecordingAction
         if (!functionNames)
             return false;
 
-        return functionNames.includes(name);
+        return functionNames.has(name);
     }
 
     // Public
@@ -119,14 +119,14 @@ WI.RecordingAction = class RecordingAction
         this._isGetter = !this._isFunction && !this._parameters.length;
 
         let visualNames = WI.RecordingAction._visualNames[recording.type];
-        this._isVisual = visualNames ? visualNames.includes(this._name) : false;
+        this._isVisual = visualNames ? visualNames.has(this._name) : false;
 
-        this._stateModifiers = [this._name];
+        this._stateModifiers = new Set([this._name]);
         let stateModifiers = WI.RecordingAction._stateModifiers[recording.type];
         if (stateModifiers) {
-            let modifiedByAction = stateModifiers[this._name];
-            if (modifiedByAction)
-                this._stateModifiers = this._stateModifiers.concat(modifiedByAction);
+            let modifiedByAction = stateModifiers[this._name] || [];
+            for (let item of modifiedByAction)
+                this._stateModifiers.add(item);
         }
     }
 
@@ -296,7 +296,7 @@ WI.RecordingAction = class RecordingAction
 }
 
 WI.RecordingAction._functionNames = {
-    [WI.Recording.Type.Canvas2D]: [
+    [WI.Recording.Type.Canvas2D]: new Set([
         "arc",
         "arcTo",
         "beginPath",
@@ -355,11 +355,11 @@ WI.RecordingAction._functionNames = {
         "translate",
         "webkitGetImageDataHD",
         "webkitPutImageDataHD",
-    ],
+    ]),
 };
 
 WI.RecordingAction._visualNames = {
-    [WI.Recording.Type.Canvas2D]: [
+    [WI.Recording.Type.Canvas2D]: new Set([
         "clearRect",
         "drawFocusIfNeeded",
         "drawImage",
@@ -372,7 +372,7 @@ WI.RecordingAction._visualNames = {
         "strokeRect",
         "strokeText",
         "webkitPutImageDataHD",
-    ],
+    ]),
 };
 
 WI.RecordingAction._stateModifiers = {

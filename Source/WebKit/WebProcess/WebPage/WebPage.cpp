@@ -3384,6 +3384,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RuntimeEnabledFeatures::sharedFeatures().setLegacyEncryptedMediaAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::legacyEncryptedMediaAPIEnabledKey()));
 #endif
+
+    RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(store.getBoolValueForKey(WebPreferencesKey::inspectorAdditionsEnabledKey()));
 }
 
 #if ENABLE(DATA_DETECTION)

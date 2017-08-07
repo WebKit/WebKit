@@ -1,3 +1,23 @@
+2017-08-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Preview Canvas path when viewing a recording
+        https://bugs.webkit.org/show_bug.cgi?id=174967
+
+        Reviewed by Brian Burg.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetInspectorAdditionsEnabled):
+        (WKPreferencesGetInspectorAdditionsEnabled):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Add plumbing for new InspectorAdditions runtime flag.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::WebInspectorUI):
+        Enable InspectorAdditions by default in the WebInspector page.
+
 2017-08-07  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT should do caging

@@ -121,6 +121,7 @@ WI.settings = {
     stylesSelectOnFirstClick: new WI.Setting("styles-select-on-first-click", true),
     showScopeChainOnPause: new WI.Setting("show-scope-chain-sidebar", true),
     showImageGrid: new WI.Setting("show-image-grid", false),
+    showCanvasPath: new WI.Setting("show-canvas-path", false),
 
     // Experimental
     experimentalShowCanvasContextsInResources: new WI.Setting("experimental-show-canvas-contexts-in-resources", false),

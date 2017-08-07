@@ -338,15 +338,15 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
 
         attributes->setArray(ASCIILiteral("setTransform"), buildArrayForAffineTransform(state.transform));
         attributes->setDouble(ASCIILiteral("globalAlpha"), context2d->globalAlpha());
-        attributes->setString(ASCIILiteral("globalCompositeOperation"), context2d->globalCompositeOperation());
+        attributes->setInteger(ASCIILiteral("globalCompositeOperation"), indexForData(context2d->globalCompositeOperation()));
         attributes->setDouble(ASCIILiteral("lineWidth"), context2d->lineWidth());
-        attributes->setString(ASCIILiteral("lineCap"), context2d->lineCap());
-        attributes->setString(ASCIILiteral("lineJoin"), context2d->lineJoin());
+        attributes->setInteger(ASCIILiteral("lineCap"), indexForData(context2d->lineCap()));
+        attributes->setInteger(ASCIILiteral("lineJoin"), indexForData(context2d->lineJoin()));
         attributes->setDouble(ASCIILiteral("miterLimit"), context2d->miterLimit());
         attributes->setDouble(ASCIILiteral("shadowOffsetX"), context2d->shadowOffsetX());
         attributes->setDouble(ASCIILiteral("shadowOffsetY"), context2d->shadowOffsetY());
         attributes->setDouble(ASCIILiteral("shadowBlur"), context2d->shadowBlur());
-        attributes->setString(ASCIILiteral("shadowColor"), context2d->shadowColor());
+        attributes->setInteger(ASCIILiteral("shadowColor"), indexForData(context2d->shadowColor()));
 
         // The parameter to `setLineDash` is itself an array, so we need to wrap the parameters
         // list in an array to allow spreading.
@@ -355,10 +355,10 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
         attributes->setArray(ASCIILiteral("setLineDash"), WTFMove(setLineDash));
 
         attributes->setDouble(ASCIILiteral("lineDashOffset"), context2d->lineDashOffset());
-        attributes->setString(ASCIILiteral("font"), context2d->font());
-        attributes->setString(ASCIILiteral("textAlign"), context2d->textAlign());
-        attributes->setString(ASCIILiteral("textBaseline"), context2d->textBaseline());
-        attributes->setString(ASCIILiteral("direction"), context2d->direction());
+        attributes->setInteger(ASCIILiteral("font"), indexForData(context2d->font()));
+        attributes->setInteger(ASCIILiteral("textAlign"), indexForData(context2d->textAlign()));
+        attributes->setInteger(ASCIILiteral("textBaseline"), indexForData(context2d->textBaseline()));
+        attributes->setInteger(ASCIILiteral("direction"), indexForData(context2d->direction()));
 
         int strokeStyleIndex;
         if (CanvasGradient* canvasGradient = state.strokeStyle.canvasGradient())
@@ -379,7 +379,11 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
         attributes->setInteger(ASCIILiteral("fillStyle"), fillStyleIndex);
 
         attributes->setBoolean(ASCIILiteral("imageSmoothingEnabled"), context2d->imageSmoothingEnabled());
-        attributes->setString(ASCIILiteral("imageSmoothingQuality"), CanvasRenderingContext2D::stringForImageSmoothingQuality(context2d->imageSmoothingQuality()));
+        attributes->setInteger(ASCIILiteral("imageSmoothingQuality"), indexForData(CanvasRenderingContext2D::stringForImageSmoothingQuality(context2d->imageSmoothingQuality())));
+
+        auto setPath = Inspector::Protocol::Array<InspectorValue>::create();
+        setPath->addItem(indexForData(buildStringFromPath(context2d->getPath()->path())));
+        attributes->setArray(ASCIILiteral("setPath"), WTFMove(setPath));
     }
 
     // <https://webkit.org/b/174483> Web Inspector: Record actions performed on WebGLRenderingContext

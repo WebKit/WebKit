@@ -98,32 +98,37 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
         if (!context)
             return;
 
-        let state = {
-            direction: context.direction,
-            fillStyle: context.fillStyle,
-            font: context.font,
-            globalAlpha: context.globalAlpha,
-            globalCompositeOperation: context.globalCompositeOperation,
-            imageSmoothingEnabled: context.imageSmoothingEnabled,
-            imageSmoothingQuality: context.imageSmoothingQuality,
-            lineCap: context.lineCap,
-            lineDash: context.getLineDash(),
-            lineDashOffset: context.lineDashOffset,
-            lineJoin: context.lineJoin,
-            lineWidth: context.lineWidth,
-            miterLimit: context.miterLimit,
-            shadowBlur: context.shadowBlur,
-            shadowColor: context.shadowColor,
-            shadowOffsetX: context.shadowOffsetX,
-            shadowOffsetY: context.shadowOffsetY,
-            strokeStyle: context.strokeStyle,
-            textAlign: context.textAlign,
-            textBaseline: context.textBaseline,
-            transform: context.getTransform(),
-            webkitImageSmoothingEnabled: context.webkitImageSmoothingEnabled,
-            webkitLineDash: context.webkitLineDash,
-            webkitLineDashOffset: context.webkitLineDashOffset,
-        };
+        let state = {};
+
+        if (WI.RecordingContentView.supportsCanvasPathDebugging()) {
+            state.currentX = context.currentX;
+            state.currentY = context.currentY;
+        }
+
+        state.direction = context.direction;
+        state.fillStyle = context.fillStyle;
+        state.font = context.font;
+        state.globalAlpha = context.globalAlpha;
+        state.globalCompositeOperation = context.globalCompositeOperation;
+        state.imageSmoothingEnabled = context.imageSmoothingEnabled;
+        state.imageSmoothingQuality = context.imageSmoothingQuality;
+        state.lineCap = context.lineCap;
+        state.lineDash = context.getLineDash();
+        state.lineDashOffset = context.lineDashOffset;
+        state.lineJoin = context.lineJoin;
+        state.lineWidth = context.lineWidth;
+        state.miterLimit = context.miterLimit;
+        state.shadowBlur = context.shadowBlur;
+        state.shadowColor = context.shadowColor;
+        state.shadowOffsetX = context.shadowOffsetX;
+        state.shadowOffsetY = context.shadowOffsetY;
+        state.strokeStyle = context.strokeStyle;
+        state.textAlign = context.textAlign;
+        state.textBaseline = context.textBaseline;
+        state.transform = context.getTransform();
+        state.webkitImageSmoothingEnabled = context.webkitImageSmoothingEnabled;
+        state.webkitLineDash = context.webkitLineDash;
+        state.webkitLineDashOffset = context.webkitLineDashOffset;
 
         let action = this._recording.actions[this._index];
         for (let name in state) {
@@ -147,7 +152,7 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
             }
 
             let classNames = [];
-            if (!action.isGetter && action.stateModifiers.includes(name))
+            if (!action.isGetter && action.stateModifiers.has(name))
                 classNames.push("modified");
             if (name.startsWith("webkit"))
                 classNames.push("non-standard");

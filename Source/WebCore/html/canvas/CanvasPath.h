@@ -47,6 +47,9 @@ public:
     ExceptionOr<void> ellipse(float x, float y, float radiusX, float radiusY, float rotation, float startAngle, float endAngled, bool anticlockwise);
     void rect(float x, float y, float width, float height);
 
+    float currentX() const;
+    float currentY() const;
+
 protected:
     CanvasPath() { }
     CanvasPath(const Path& path)

@@ -48,6 +48,7 @@ struct TestOptions {
     bool enablePointerLock { false };
     bool enableCredentialManagement { false };
     bool enableIsSecureContextAttribute { true };
+    bool enableInspectorAdditions { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
@@ -69,7 +70,8 @@ struct TestOptions {
             || enableModernMediaControls != options.enableModernMediaControls
             || enablePointerLock != options.enablePointerLock
             || enableCredentialManagement != options.enableCredentialManagement
-            || enableIsSecureContextAttribute != options.enableIsSecureContextAttribute)
+            || enableIsSecureContextAttribute != options.enableIsSecureContextAttribute
+            || enableInspectorAdditions != options.enableInspectorAdditions)
             return false;
 
         return true;

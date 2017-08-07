@@ -234,4 +234,15 @@ void CanvasPath::rect(float x, float y, float width, float height)
 
     m_path.addRect(FloatRect(x, y, width, height));
 }
+
+float CanvasPath::currentX() const
+{
+    return m_path.currentPoint().x();
+}
+
+float CanvasPath::currentY() const
+{
+    return m_path.currentPoint().y();
+}
+
 }

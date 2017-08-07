@@ -34,6 +34,7 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 
 using namespace WebCore;
 
@@ -48,6 +49,7 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
     : m_page(page)
     , m_frontendAPIDispatcher(page)
 {
+    RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(true);
 }
 
 void WebInspectorUI::establishConnection(IPC::Attachment encodedConnectionIdentifier, uint64_t inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)

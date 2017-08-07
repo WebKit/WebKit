@@ -92,6 +92,8 @@ TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
             this->layerBackedWebView = parseBooleanTestHeaderValue(value);
         else if (key == "enableIsSecureContextAttribute")
             this->enableIsSecureContextAttribute = parseBooleanTestHeaderValue(value);
+        else if (key == "enableInspectorAdditions")
+            this->enableInspectorAdditions = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

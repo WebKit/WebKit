@@ -3038,6 +3038,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setLegacyEncryptedMediaAPIEnabled(preferences.legacyEncryptedMediaAPIEnabled);
 #endif
 
+    RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(preferences.inspectorAdditionsEnabled);
+
     settings.setAllowMediaContentTypesRequiringHardwareSupportAsFallback(preferences.allowMediaContentTypesRequiringHardwareSupportAsFallback);
 
     NSTimeInterval timeout = [preferences incrementalRenderingSuppressionTimeoutInSeconds];

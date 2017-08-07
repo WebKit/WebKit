@@ -2654,4 +2654,14 @@ void CanvasRenderingContext2D::setImageSmoothingEnabled(bool enabled)
         c->setImageInterpolationQuality(enabled ? smoothingToInterpolationQuality(state().imageSmoothingQuality) : InterpolationNone);
 }
 
+void CanvasRenderingContext2D::setPath(DOMPath& path)
+{
+    m_path = path.path();
+}
+
+Ref<DOMPath> CanvasRenderingContext2D::getPath() const
+{
+    return DOMPath::create(m_path);
+}
+
 } // namespace WebCore

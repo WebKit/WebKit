@@ -728,6 +728,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     
     WKPreferencesSetLargeImageAsyncDecodingEnabled(preferences, false);
 
+    WKPreferencesSetInspectorAdditionsEnabled(preferences, options.enableInspectorAdditions);
+
     platformResetPreferencesToConsistentValues();
 }
 
@@ -1021,6 +1023,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableCredentialManagement = parseBooleanTestHeaderValue(value);
         if (key == "enableIsSecureContextAttribute")
             testOptions.enableIsSecureContextAttribute = parseBooleanTestHeaderValue(value);
+        if (key == "enableInspectorAdditions")
+            testOptions.enableInspectorAdditions = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

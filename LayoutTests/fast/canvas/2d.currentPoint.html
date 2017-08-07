@@ -1,0 +1,53 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableInspectorAdditions=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("The test to ensure that currentX/currentY of Path2D works as expected.");
+
+var ctx = document.createElement("canvas").getContext("2d");
+
+function shouldHaveCurrentPointEqualTo(x, y) {
+    shouldEvaluateTo("ctx.currentX", x);
+    shouldEvaluateTo("ctx.currentY", y);
+}
+
+shouldHaveCurrentPointEqualTo(0, 0);
+
+ctx.moveTo(1, 2);
+shouldHaveCurrentPointEqualTo(1, 2);
+
+ctx.lineTo(3, 4);
+shouldHaveCurrentPointEqualTo(3, 4);
+
+ctx.quadraticCurveTo(5, 6, 7, 8);
+shouldHaveCurrentPointEqualTo(7, 8);
+
+ctx.bezierCurveTo(9, 10, 11, 12, 13, 14);
+shouldHaveCurrentPointEqualTo(13, 14);
+
+ctx.arcTo(15, 16, 17, 18, 19);
+shouldHaveCurrentPointEqualTo(15, 16);
+
+ctx.closePath();
+shouldHaveCurrentPointEqualTo(1, 2);
+
+ctx.rect(20, 21, 1, 1);
+shouldHaveCurrentPointEqualTo(20, 21);
+
+ctx.arc(22, 23, 1, 0, 2 * Math.PI);
+shouldHaveCurrentPointEqualTo(23, 23);
+
+ctx.ellipse(24, 25, 1, 1, 0, 0, 2 * Math.PI);
+shouldHaveCurrentPointEqualTo(25, 25);
+
+ctx.beginPath();
+shouldHaveCurrentPointEqualTo(0, 0);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+
