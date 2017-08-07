@@ -770,7 +770,7 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
 
         auto removePresentationStart = trackBuffer.samples.presentationOrder().findSampleContainingOrAfterPresentationTime(start);
         auto removePresentationEnd = trackBuffer.samples.presentationOrder().findSampleStartingAfterPresentationTime(end);
-        if (start == end)
+        if (removePresentationStart == removePresentationEnd)
             continue;
 
         // 3.3 Remove all media data, from this track buffer, that contain starting timestamps greater than or equal to
