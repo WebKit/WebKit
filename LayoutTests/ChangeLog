@@ -1,3 +1,12 @@
+2017-08-07  Matt Lewis  <jlewis3@apple.com>
+
+        Changed expectations for webrtc/video-rotation.html.
+        https://bugs.webkit.org/show_bug.cgi?id=175305
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-08-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Preview Canvas path when viewing a recording
