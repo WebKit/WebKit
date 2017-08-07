@@ -1,3 +1,16 @@
+2017-08-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Use Visual Studio 2017 if installed.
+        https://bugs.webkit.org/show_bug.cgi?id=175188
+
+        Reviewed by Sam Weinig.
+
+        If installed, use VS2017 to build WebKit. If not, fall back to VS2015.
+
+        * Scripts/webkitdirs.pm:
+        (visualStudioInstallDir):
+        (msBuildInstallDir):
+
 2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API to provide browser information required by automation
