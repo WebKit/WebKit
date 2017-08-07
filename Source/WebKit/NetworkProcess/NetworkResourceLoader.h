@@ -151,6 +151,7 @@ private:
     std::unique_ptr<SynchronousLoadData> m_synchronousLoadData;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_fileReferences;
 
+    bool m_wasStarted { false };
     bool m_didConsumeSandboxExtensions { false };
     bool m_defersLoading { false };
     size_t m_numBytesReceived { 0 };
