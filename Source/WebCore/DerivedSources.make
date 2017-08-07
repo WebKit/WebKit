@@ -838,9 +838,11 @@ JS_BINDING_IDLS = \
     $(WebCore)/workers/ServiceWorkerContainer.idl \
     $(WebCore)/workers/ServiceWorkerGlobalScope.idl \
     $(WebCore)/workers/ServiceWorkerRegistration.idl \
+    $(WebCore)/workers/ServiceWorkerUpdateViaCache.idl \
     $(WebCore)/workers/Worker.idl \
     $(WebCore)/workers/WorkerGlobalScope.idl \
     $(WebCore)/workers/WorkerLocation.idl \
+    $(WebCore)/workers/WorkerType.idl \
     $(WebCore)/xml/DOMParser.idl \
     $(WebCore)/xml/XMLHttpRequest.idl \
     $(WebCore)/xml/XMLHttpRequestEventTarget.idl \

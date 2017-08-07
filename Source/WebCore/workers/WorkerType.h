@@ -25,51 +25,11 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
-#include "ActiveDOMObject.h"
-#include "EventTarget.h"
-
 namespace WebCore {
 
-class DeferredPromise;
-class NavigatorBase;
-class ServiceWorker;
-
-enum class ServiceWorkerUpdateViaCache;
-enum class WorkerType;
-
-class ServiceWorkerContainer final : public EventTargetWithInlineData, public ActiveDOMObject {
-public:
-    ServiceWorkerContainer(ScriptExecutionContext&, NavigatorBase&);
-    virtual ~ServiceWorkerContainer() = default;
-
-    struct RegistrationOptions {
-        String scope;
-        WorkerType type;
-        ServiceWorkerUpdateViaCache updateViaCache;
-    };
-
-    ServiceWorker* controller() const;
-
-    void ready(Ref<DeferredPromise>&&);
-    void addRegistration(const String& scriptURL, const RegistrationOptions&, Ref<DeferredPromise>&&);
-    void getRegistration(const String& url, Ref<DeferredPromise>&&);
-    void getRegistrations(Ref<DeferredPromise>&&);
-
-    void startMessages();
-
-private:
-    const char* activeDOMObjectName() const final;
-    bool canSuspendForDocumentSuspension() const final;
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-    EventTargetInterface eventTargetInterface() const final { return ServiceWorkerContainerEventTargetInterfaceType; }
-    void refEventTarget() final;
-    void derefEventTarget() final;
-
-    NavigatorBase& m_navigator;
+enum class WorkerType {
+    Classic,
+    Module,
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

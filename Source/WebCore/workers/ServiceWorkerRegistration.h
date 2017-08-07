@@ -37,6 +37,12 @@ class ServiceWorker;
 
 class ServiceWorkerRegistration final : public EventTargetWithInlineData {
 public:
+    enum class UpdateViaCache {
+        Imports,
+        All,
+        None,
+    };
+
     static Ref<ServiceWorkerRegistration> create(Frame& frame) { return adoptRef(*new ServiceWorkerRegistration(frame)); }
     virtual ~ServiceWorkerRegistration() = default;
 
@@ -45,6 +51,7 @@ public:
     ServiceWorker* active();
 
     const String& scope() const;
+    UpdateViaCache updateViaCache() const;
 
     void update(Ref<DeferredPromise>&&);
     void unregister(Ref<DeferredPromise>&&);

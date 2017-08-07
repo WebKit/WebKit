@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 153: TypeError: undefined is not an object (evaluating 'registration.unregister')
 
-FAIL CacheStorage assert_unreached: unregister should not fail: ServiceWorkerContainer method 'getRegistration' not yet implemented Reached unreachable code
+FAIL CacheStorage assert_unreached: unregister should not fail: serviceWorker.getRegistration() is not yet implemented Reached unreachable code
 

@@ -29,8 +29,9 @@
 
 namespace WebCore {
 
-WorkerNavigator::WorkerNavigator(const String& userAgent)
-    : m_userAgent(userAgent)
+WorkerNavigator::WorkerNavigator(ScriptExecutionContext& context, const String& userAgent)
+    : NavigatorBase(context)
+    , m_userAgent(userAgent)
 {
 }
 

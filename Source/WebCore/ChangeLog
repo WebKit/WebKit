@@ -1,3 +1,77 @@
+2017-08-07  Brady Eidson  <beidson@apple.com>
+
+        Implement most of ServiceWorkerContainer::addRegistration.
+        https://bugs.webkit.org/show_bug.cgi?id=175237
+
+        Reviewed by Andy Estes.
+
+        No new tests (Covered by changes to existing tests).
+
+        There's still so much supporting infrastructure to add with these early patches
+        that I'm still moving them in baby steps for now, hence not implementing
+        register() all in one shot.
+        
+        Things will start moving very quickly once we no longer need to add lots of new
+        primitives in each change.
+        
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::navigator const):
+        
+        * page/Navigator.cpp:
+        (WebCore::Navigator::Navigator): Make the constructor take a ScriptExecutionContext for 
+          creation of objects where its import (e.g. ServiceWorkerContainer).
+        * page/Navigator.h:
+
+        * page/WorkerNavigator.cpp:
+        (WebCore::WorkerNavigator::WorkerNavigator): Ditto.
+        * page/WorkerNavigator.h:
+
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::NavigatorBase): Create the ServiceWorkerContainer upfront with
+          the passed-in ScriptExecutionContext.
+        (WebCore::NavigatorBase::serviceWorker):
+        * page/NavigatorBase.h:
+        
+        Make ServiceWorkerContainer into an ActiveDOMObject. This will eventually be necessary for
+        Document suspension reasons, but is also necessary because it also needs to be a
+        ContextDestructionObserver (which ActiveDOMObject is):
+        * workers/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ServiceWorkerContainer):
+        (WebCore::ServiceWorkerContainer::ready):
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistrations):
+        (WebCore::ServiceWorkerContainer::activeDOMObjectName const):
+        (WebCore::ServiceWorkerContainer::canSuspendForDocumentSuspension const):
+        (WebCore::rejectLater): Deleted.
+        (WebCore::ServiceWorkerContainer::eventTargetInterface const): Deleted.
+        (WebCore::ServiceWorkerContainer::scriptExecutionContext const): Deleted.
+        * workers/ServiceWorkerContainer.h:
+        * workers/ServiceWorkerContainer.idl:
+
+        Add updateViaCache, etc:
+        * workers/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::updateViaCache const):
+        (WebCore::ServiceWorkerRegistration::update):
+        (WebCore::ServiceWorkerRegistration::unregister):
+        * workers/ServiceWorkerRegistration.h:
+        * workers/ServiceWorkerRegistration.idl:
+
+        * workers/ServiceWorkerUpdateViaCache.h: Copied from Source/WebCore/workers/ServiceWorkerRegistration.idl.
+        * workers/ServiceWorkerUpdateViaCache.idl: Copied from Source/WebCore/workers/ServiceWorkerRegistration.idl.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::navigator):
+        (WebCore::WorkerGlobalScope::navigator const): Deleted.
+        * workers/WorkerGlobalScope.h:
+
+        * workers/WorkerType.h: Copied from Source/WebCore/workers/ServiceWorkerRegistration.idl.
+        * workers/WorkerType.idl: Copied from Source/WebCore/workers/ServiceWorkerRegistration.idl.
+
 2017-08-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r220299.

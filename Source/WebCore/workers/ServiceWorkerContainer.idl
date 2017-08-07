@@ -49,8 +49,6 @@
 
 dictionary RegistrationOptions {
     USVString scope;
-
-    // FIXME: Add these back after first round of IDL stubbing.
-    // WorkerType type = "classic";
-    // ServiceWorkerUpdateViaCache updateViaCache = "imports";
+    WorkerType type = "classic";
+    ServiceWorkerUpdateViaCache updateViaCache = "imports";
 };

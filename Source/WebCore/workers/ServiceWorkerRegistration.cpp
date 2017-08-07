@@ -50,12 +50,19 @@ const String& ServiceWorkerRegistration::scope() const
     return emptyString();
 }
 
-void ServiceWorkerRegistration::update(Ref<DeferredPromise>&&)
+ServiceWorkerRegistration::UpdateViaCache ServiceWorkerRegistration::updateViaCache() const
 {
+    return UpdateViaCache::Imports;
 }
 
-void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&&)
+void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
 {
+    promise->reject(Exception(UnknownError, ASCIILiteral("ServiceWorkerRegistration::update not yet implemented")));
+}
+
+void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
+{
+    promise->reject(Exception(UnknownError, ASCIILiteral("ServiceWorkerRegistration::unregister not yet implemented")));
 }
 
 EventTargetInterface ServiceWorkerRegistration::eventTargetInterface() const

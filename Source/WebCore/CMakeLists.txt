@@ -712,9 +712,11 @@ set(WebCore_NON_SVG_IDL_FILES
     workers/ServiceWorkerContainer.idl
     workers/ServiceWorkerGlobalScope.idl
     workers/ServiceWorkerRegistration.idl
+    workers/ServiceWorkerUpdateViaCache.idl
     workers/Worker.idl
     workers/WorkerGlobalScope.idl
     workers/WorkerLocation.idl
+    workers/WorkerType.idl
 
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl

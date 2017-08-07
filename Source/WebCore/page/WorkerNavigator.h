@@ -33,12 +33,12 @@ namespace WebCore {
 
 class WorkerNavigator final : public NavigatorBase, public Supplementable<WorkerNavigator> {
 public:
-    static Ref<WorkerNavigator> create(const String& userAgent) { return adoptRef(*new WorkerNavigator(userAgent)); }
+    static Ref<WorkerNavigator> create(ScriptExecutionContext& context, const String& userAgent) { return adoptRef(*new WorkerNavigator(context, userAgent)); }
 
     String userAgent() const final;
 
 private:
-    explicit WorkerNavigator(const String&);
+    explicit WorkerNavigator(ScriptExecutionContext&, const String&);
 
     String m_userAgent;
 };

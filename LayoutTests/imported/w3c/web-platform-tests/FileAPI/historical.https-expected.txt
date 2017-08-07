@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 153: TypeError: undefined is not an object (evaluating 'registration.unregister')
 
 PASS "toNativeLineEndings" should not be supported 
 FAIL "FileError" should not be supported assert_false: expected false got true
@@ -6,5 +7,5 @@ PASS Blob should not support slice prefixed
 PASS BlobBuilder should not be supported. 
 PASS createFor method should not be supported 
 PASS Blob.close() should not be supported 
-FAIL Service worker test setup assert_unreached: unregister should not fail: ServiceWorkerContainer method 'getRegistration' not yet implemented Reached unreachable code
+FAIL Service worker test setup assert_unreached: unregister should not fail: serviceWorker.getRegistration() is not yet implemented Reached unreachable code
 

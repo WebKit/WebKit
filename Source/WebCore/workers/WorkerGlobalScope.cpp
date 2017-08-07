@@ -190,10 +190,10 @@ void WorkerGlobalScope::close()
     } });
 }
 
-WorkerNavigator& WorkerGlobalScope::navigator() const
+WorkerNavigator& WorkerGlobalScope::navigator()
 {
     if (!m_navigator)
-        m_navigator = WorkerNavigator::create(m_userAgent);
+        m_navigator = WorkerNavigator::create(*this, m_userAgent);
     return *m_navigator;
 }
 

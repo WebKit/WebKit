@@ -43,8 +43,9 @@ using namespace WTF;
 
 namespace WebCore {
 
-Navigator::Navigator(Frame& frame)
-    : DOMWindowProperty(&frame)
+Navigator::Navigator(ScriptExecutionContext& context, Frame& frame)
+    : NavigatorBase(context)
+    , DOMWindowProperty(&frame)
 {
 }
 

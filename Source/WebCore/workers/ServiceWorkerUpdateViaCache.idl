@@ -23,30 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: The spec IDL exposes this on Worker in addition to Window.
-// We don't currently support nested workers.
-
-[
-    SecureContext,
-    Exposed=(Window),
-    Conditional=SERVICE_WORKER,
-    EnabledAtRuntime=ServiceWorker
-] interface ServiceWorkerRegistration : EventTarget {
-    readonly attribute ServiceWorker? installing;
-    readonly attribute ServiceWorker? waiting;
-    readonly attribute ServiceWorker? active;
-
-    readonly attribute USVString scope;
-    readonly attribute ServiceWorkerUpdateViaCache updateViaCache;
-
-    [NewObject] Promise<void> update();
-    [NewObject] Promise<boolean> unregister();
-
-    // event
-    attribute EventHandler onupdatefound;
-};
-
-enum ServiceWorkerUpdateViaCache {
+[Conditional=SERVICE_WORKER] enum ServiceWorkerUpdateViaCache {
     "imports",
     "all",
     "none"

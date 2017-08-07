@@ -81,7 +81,7 @@ public:
     void close();
 
     virtual ExceptionOr<void> importScripts(const Vector<String>& urls);
-    WorkerNavigator& navigator() const;
+    WorkerNavigator& navigator();
 
     ExceptionOr<int> setTimeout(JSC::ExecState&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearTimeout(int timeoutId);

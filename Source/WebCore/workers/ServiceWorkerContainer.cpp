@@ -31,20 +31,17 @@
 #include "Exception.h"
 #include "JSDOMPromiseDeferred.h"
 #include "NavigatorBase.h"
+#include "ScriptExecutionContext.h"
+#include "URL.h"
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-static void rejectLater(Ref<DeferredPromise>&& promise, const String& methodName)
+ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext& context, NavigatorBase& navigator)
+    : ActiveDOMObject(&context)
+    , m_navigator(navigator)
 {
-    RunLoop::current().dispatch([promise = WTFMove(promise), methodName] {
-        promise->reject(Exception(UnknownError, makeString("ServiceWorkerContainer method '", methodName, "' not yet implemented")));
-    });
-}
-
-ServiceWorkerContainer::ServiceWorkerContainer(NavigatorBase& navigator)
-    : m_navigator(navigator)
-{
+    suspendIfNeeded();
 }
 void ServiceWorkerContainer::refEventTarget()
 {
@@ -63,36 +60,71 @@ ServiceWorker* ServiceWorkerContainer::controller() const
 
 void ServiceWorkerContainer::ready(Ref<DeferredPromise>&& promise)
 {
-    rejectLater(WTFMove(promise), "ready");
+    promise->reject(Exception { UnknownError, ASCIILiteral("serviceWorker.ready() is not yet implemented") });
 }
 
-void ServiceWorkerContainer::addRegistration(const String&, const RegistrationOptions&, Ref<DeferredPromise>&& promise)
+void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, const RegistrationOptions& options, Ref<DeferredPromise>&& promise)
 {
-    rejectLater(WTFMove(promise), "addRegistration");
+    auto* context = scriptExecutionContext();
+    if (!context) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (relativeScriptURL.isEmpty()) {
+        promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() cannot be called with an empty script URL") });
+        return;
+    }
+
+    auto scriptURL = context->completeURL(relativeScriptURL);
+    if (!scriptURL.isValid()) {
+        promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a valid relative script URL") });
+        return;
+    }
+
+    // FIXME: The spec disallows scripts outside of HTTP(S), but we'll likely support app custom URL schemes in WebKit.
+    if (!scriptURL.protocolIsInHTTPFamily()) {
+        promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS") });
+        return;
+    }
+
+    String path = scriptURL.path();
+    if (path.containsIgnoringASCIICase("%2f") || path.containsIgnoringASCIICase("%5c")) {
+        promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a script URL whose path does not contain '%%2f' or '%%5c'") });
+        return;
+    }
+
+    String scope = options.scope.isEmpty() ? ASCIILiteral("./") : options.scope;
+    auto scopeURL = context->completeURL(scope);
+
+    // FIXME: At this point, create a Register job and add it to the job queue
+    UNUSED_PARAM(scopeURL);
+
+    promise->reject(Exception { UnknownError, ASCIILiteral("serviceWorker.register() is not yet implemented") });
 }
 
 void ServiceWorkerContainer::getRegistration(const String&, Ref<DeferredPromise>&& promise)
 {
-    rejectLater(WTFMove(promise), "getRegistration");
+    promise->reject(Exception { UnknownError, ASCIILiteral("serviceWorker.getRegistration() is not yet implemented") });
 }
 
 void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 {
-    rejectLater(WTFMove(promise), "getRegistrations");
+    promise->reject(Exception { UnknownError, ASCIILiteral("serviceWorker.getRegistrations() is not yet implemented") });
 }
 
 void ServiceWorkerContainer::startMessages()
 {
 }
 
-EventTargetInterface ServiceWorkerContainer::eventTargetInterface() const
+const char* ServiceWorkerContainer::activeDOMObjectName() const
 {
-    return ServiceWorkerContainerEventTargetInterfaceType;
+    return "ServiceWorkerContainer";
 }
 
-ScriptExecutionContext* ServiceWorkerContainer::scriptExecutionContext() const
+bool ServiceWorkerContainer::canSuspendForDocumentSuspension() const
 {
-    return nullptr;
+    return true;
 }
 
 } // namespace WebCore

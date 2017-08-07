@@ -786,8 +786,12 @@ Navigator* DOMWindow::navigator() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
-    if (!m_navigator)
-        m_navigator = Navigator::create(*m_frame);
+
+    if (!m_navigator) {
+        ASSERT(scriptExecutionContext());
+        m_navigator = Navigator::create(*scriptExecutionContext(), *m_frame);
+    }
+
     return m_navigator.get();
 }
 
