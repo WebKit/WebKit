@@ -207,8 +207,6 @@ public:
     bool audioEnabled() const;
 #endif
 
-    bool webSocketEnabled() const;
-
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:

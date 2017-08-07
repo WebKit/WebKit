@@ -52,9 +52,6 @@ class ThreadableWebSocketChannel;
 
 class WebSocket final : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, private WebSocketChannelClient {
 public:
-    static void setIsAvailable(bool);
-    static bool isAvailable();
-
     static const char* subprotocolSeparator();
 
     static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url);
