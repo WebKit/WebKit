@@ -161,6 +161,9 @@ void NetworkResourceLoader::start()
         return;
     }
 
+    ASSERT(!m_wasStarted);
+    m_wasStarted = true;
+
 #if ENABLE(NETWORK_CACHE)
     if (canUseCache(originalRequest())) {
         RELEASE_LOG_IF_ALLOWED("start: Checking cache for resource (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
@@ -266,10 +269,10 @@ void NetworkResourceLoader::setDefersLoading(bool defers)
         return;
     }
 
-    if (!m_defersLoading)
+    if (!m_defersLoading && !m_wasStarted)
         start();
     else
-        RELEASE_LOG_IF_ALLOWED("setDefersLoading: defers = TRUE, but nothing to stop (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
+        RELEASE_LOG_IF_ALLOWED("setDefersLoading: defers = %d, but nothing to do (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_defersLoading, m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
 }
 
 void NetworkResourceLoader::cleanup()
