@@ -1,5 +1,38 @@
 2017-08-07  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220163. rdar://problem/33711032
+
+    2017-08-02  Andy Estes  <aestes@apple.com>
+
+            REGRESSION (r207155): Unable to switch sheets when previewing Numbers '09 spreadsheets
+            https://bugs.webkit.org/show_bug.cgi?id=175098
+            <rdar://problem/31416763>
+
+            Reviewed by Daniel Bates.
+
+            r207155 enabled sandboxing on the frame displaying a QuickLook preview. This restricted
+            frames within the sandbox from navigating their sandboxed siblings or ancestors, which
+            breaks the functionality of multi-sheet Numbers '09 spreadsheet previews. These previews
+            contain a frameset with a table of contents frame and a content frame, and the table of
+            contents frame needs to be able to navigate the content frame when the sheet selection
+            changes.
+
+            Fix this by disabling the SandboxNavigation flag in the QuickLook sandbox. Frames within the
+            sandbox will be able to navigate each other, but will not be able to navigate the top frame
+            (due to SandboxTopNavigation still being enabled), nor will they be able to navigate any
+            other ancestor frame outside the sandbox (due to QuickLook previews being in a different
+            origin than the hosting frame). These two cases are covered by existing tests.
+
+            Test: quicklook/multi-sheet-numbers-09.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::applyQuickLookSandbox): Added a call to
+            disableSandboxFlags(SandboxNavigation) after applying the content security policy.
+            * dom/SecurityContext.h:
+            (WebCore::SecurityContext::disableSandboxFlags): Defined disableSandboxFlags().
+
+2017-08-07  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220153. rdar://problem/33711047
 
     2017-08-02  Jer Noble  <jer.noble@apple.com>

@@ -1,0 +1,19 @@
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
+
+--------
+Frame: 'navPane'
+--------
+ First
+  Second
+  Third
+
+--------
+Frame: 'sheetPane'
+--------
+PASS
+This tests that different sheets can be selected by tapping on their names in the table of contents. The test passes if the second sheet is selected and “PASS” is displayed.
