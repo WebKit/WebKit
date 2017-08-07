@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SessionHost.h"
 
+#include "WebDriverService.h"
 #include <gio/gio.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -220,11 +221,31 @@ void SessionHost::setupConnection(GRefPtr<GDBusConnection>&& connection, Functio
     completionHandler(Succeeded::Yes);
 }
 
-void SessionHost::startAutomationSession(const String& sessionID, Function<void ()>&& completionHandler)
+std::optional<String> SessionHost::matchCapabilities(GVariant* capabilities)
+{
+    const char* browserName;
+    const char* browserVersion;
+    g_variant_get(capabilities, "(&s&s)", &browserName, &browserVersion);
+
+    if (m_capabilities.browserName) {
+        if (m_capabilities.browserName.value() != browserName)
+            return makeString("expected browserName ", m_capabilities.browserName.value(), " but got ", browserName);
+    } else
+        m_capabilities.browserName = String(browserName);
+
+    if (m_capabilities.browserVersion) {
+        if (!WebDriverService::platformCompareBrowserVersions(m_capabilities.browserVersion.value(), browserVersion))
+            return makeString("requested browserVersion is ", m_capabilities.browserVersion.value(), " but actual version is ", browserVersion);
+    } else
+        m_capabilities.browserVersion = String(browserVersion);
+
+    return std::nullopt;
+}
+
+void SessionHost::startAutomationSession(const String& sessionID, Function<void (std::optional<String>)>&& completionHandler)
 {
     ASSERT(m_dbusConnection);
     ASSERT(!m_startSessionCompletionHandler);
-    // FIXME: Make StartAutomationSession return browser information and we use it to match capabilities.
     m_startSessionCompletionHandler = WTFMove(completionHandler);
     g_dbus_connection_call(m_dbusConnection.get(), nullptr,
         INSPECTOR_DBUS_OBJECT_PATH,
@@ -232,7 +253,27 @@ void SessionHost::startAutomationSession(const String& sessionID, Function<void 
         "StartAutomationSession",
         g_variant_new("(s)", sessionID.utf8().data()),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-        -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+        -1, m_cancellable.get(), [](GObject* source, GAsyncResult* result, gpointer userData) {
+            GUniqueOutPtr<GError> error;
+            GRefPtr<GVariant> resultVariant = adoptGRef(g_dbus_connection_call_finish(G_DBUS_CONNECTION(source), result, &error.outPtr()));
+            if (!resultVariant && g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+                return;
+
+            auto sessionHost = static_cast<SessionHost*>(userData);
+            if (!resultVariant) {
+                auto completionHandler = std::exchange(sessionHost->m_startSessionCompletionHandler, nullptr);
+                completionHandler(String("Failed to start automation session"));
+                return;
+            }
+
+            auto errorString = sessionHost->matchCapabilities(resultVariant.get());
+            if (errorString) {
+                auto completionHandler = std::exchange(sessionHost->m_startSessionCompletionHandler, nullptr);
+                completionHandler(errorString);
+                return;
+            }
+        }, this
+    );
 }
 
 void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetList)
@@ -255,6 +296,11 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
         return;
     }
 
+    if (!m_startSessionCompletionHandler) {
+        // Session creation was already rejected.
+        return;
+    }
+
     m_connectionID = connectionID;
     g_dbus_connection_call(m_dbusConnection.get(), nullptr,
         INSPECTOR_DBUS_OBJECT_PATH,
@@ -265,7 +311,7 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
         -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
 
     auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
-    startSessionCompletionHandler();
+    startSessionCompletionHandler(std::nullopt);
 }
 
 void SessionHost::sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message)

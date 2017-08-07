@@ -1,3 +1,22 @@
+2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to provide browser information required by automation
+        https://bugs.webkit.org/show_bug.cgi?id=175130
+
+        Reviewed by Brian Burg.
+
+        Add browserName and browserVersion to RemoteInspector::Client::Capabilities and virtual methods to the Client to
+        get them.
+
+        * inspector/remote/RemoteInspector.cpp:
+        (Inspector::RemoteInspector::updateClientCapabilities): Update also browserName and browserVersion.
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::requestAutomationSession): Call updateClientCapabilities() after the session is
+        requested to ensure they are updated before StartAutomationSession reply is sent.
+        * inspector/remote/glib/RemoteInspectorServer.cpp: Add browserName and browserVersion as return values of
+        StartAutomationSession mesasage.
+
 2017-08-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Promise resolve and reject function should have length = 1

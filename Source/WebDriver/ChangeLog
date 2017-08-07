@@ -1,5 +1,24 @@
 2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Add API to provide browser information required by automation
+        https://bugs.webkit.org/show_bug.cgi?id=175130
+
+        Reviewed by Brian Burg.
+
+        * Session.cpp:
+        (WebDriver::Session::createTopLevelBrowsingContext): Check if startAutomationSession and complete the command
+        with error in that case.
+        * SessionHost.h:
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::matchCapabilities): Match the capabilities that are known only after the browser has
+        been launched.
+        (WebDriver::SessionHost::startAutomationSession): Handle the StartAutomationSession response, extracting the
+        capabilities and calling matchCapabilities() to match them.
+        (WebDriver::SessionHost::setTargetList): Return early if the session was rejected before due to invalid
+        capabilities.
+
+2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: Implement page load strategy
         https://bugs.webkit.org/show_bug.cgi?id=175183
 

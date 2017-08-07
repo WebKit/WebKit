@@ -133,7 +133,9 @@ void RemoteInspector::updateClientCapabilities()
         m_clientCapabilities = std::nullopt;
     else {
         RemoteInspector::Client::Capabilities updatedCapabilities = {
-            m_client->remoteAutomationAllowed() // remoteAutomationAllowed
+            m_client->remoteAutomationAllowed(),
+            m_client->browserName(),
+            m_client->browserVersion()
         };
 
         m_clientCapabilities = updatedCapabilities;

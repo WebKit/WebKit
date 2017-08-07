@@ -355,6 +355,7 @@ void RemoteInspector::requestAutomationSession(const char* sessionID)
         return;
 
     m_client->requestAutomationSession(String::fromUTF8(sessionID));
+    updateClientCapabilities();
 }
 
 } // namespace Inspector

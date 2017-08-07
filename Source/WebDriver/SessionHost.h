@@ -56,7 +56,7 @@ public:
 
     enum class Succeeded { No, Yes };
     void connectToBrowser(Function<void (Succeeded)>&&);
-    void startAutomationSession(const String& sessionID, Function<void ()>&&);
+    void startAutomationSession(const String& sessionID, Function<void (std::optional<String>)>&&);
 
     struct CommandResponse {
         RefPtr<Inspector::InspectorObject> responseObject;
@@ -80,6 +80,7 @@ private:
     static const GDBusInterfaceVTable s_interfaceVTable;
     void launchBrowser(Function<void (Succeeded)>&&);
     void connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&&);
+    std::optional<String> matchCapabilities(GVariant*);
     void setupConnection(GRefPtr<GDBusConnection>&&, Function<void (Succeeded)>&&);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message);
@@ -94,7 +95,7 @@ private:
     long m_closeMessageID { 0 };
 
 #if USE(GLIB)
-    Function<void ()> m_startSessionCompletionHandler;
+    Function<void (std::optional<String>)> m_startSessionCompletionHandler;
     GRefPtr<GSubprocess> m_browser;
     GRefPtr<GDBusConnection> m_dbusConnection;
     GRefPtr<GCancellable> m_cancellable;

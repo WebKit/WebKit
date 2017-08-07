@@ -214,12 +214,28 @@ public:
 private:
     bool remoteAutomationAllowed() const override { return true; }
 
+    String browserName() const override
+    {
+        if (!m_webContext->priv->automationSession)
+            return { };
+
+        return webkitAutomationSessionGetBrowserName(m_webContext->priv->automationSession.get());
+    }
+
+    String browserVersion() const override
+    {
+        if (!m_webContext->priv->automationSession)
+            return { };
+
+        return webkitAutomationSessionGetBrowserVersion(m_webContext->priv->automationSession.get());
+    }
+
     void requestAutomationSession(const String& sessionIdentifier) override
     {
         ASSERT(!m_webContext->priv->automationSession);
         m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(sessionIdentifier.utf8().data()));
-        m_webContext->priv->processPool->setAutomationSession(&webkitAutomationSessionGetSession(m_webContext->priv->automationSession.get()));
         g_signal_emit(m_webContext, signals[AUTOMATION_STARTED], 0, m_webContext->priv->automationSession.get());
+        m_webContext->priv->processPool->setAutomationSession(&webkitAutomationSessionGetSession(m_webContext->priv->automationSession.get()));
     }
 
     WebKitWebContext* m_webContext;

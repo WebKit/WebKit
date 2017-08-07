@@ -79,6 +79,8 @@ static const char introspectionXML[] =
     "    </method>"
     "    <method name='StartAutomationSession'>"
     "      <arg type='s' name='sessionID' direction='in'/>"
+    "      <arg type='s' name='browserName' direction='out'/>"
+    "      <arg type='s' name='browserVersion' direction='out'/>"
     "    </method>"
     "  </interface>"
     "</node>";
@@ -121,7 +123,10 @@ const GDBusInterfaceVTable RemoteInspectorServer::s_interfaceVTable = {
             const char* sessionID;
             g_variant_get(parameters, "(&s)", &sessionID);
             inspectorServer->startAutomationSession(connection, sessionID);
-            g_dbus_method_invocation_return_value(invocation, nullptr);
+            auto capabilities = RemoteInspector::singleton().clientCapabilities();
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(ss)",
+                capabilities ? capabilities->browserName.utf8().data() : "",
+                capabilities ? capabilities->browserVersion.utf8().data() : ""));
         } else
             g_dbus_method_invocation_return_value(invocation, nullptr);
     },

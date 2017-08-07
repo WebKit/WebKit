@@ -27,6 +27,7 @@
 
 #define __WEBKIT_H_INSIDE__
 
+#include <wpe/WebKitApplicationInfo.h>
 #include <wpe/WebKitAuthenticationRequest.h>
 #include <wpe/WebKitAutomationSession.h>
 #include <wpe/WebKitBackForwardList.h>

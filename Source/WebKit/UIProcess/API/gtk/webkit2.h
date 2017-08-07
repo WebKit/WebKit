@@ -27,6 +27,7 @@
 
 #define __WEBKIT2_H_INSIDE__
 
+#include <webkit2/WebKitApplicationInfo.h>
 #include <webkit2/WebKitAuthenticationRequest.h>
 #include <webkit2/WebKitAutomationSession.h>
 #include <webkit2/WebKitBackForwardList.h>

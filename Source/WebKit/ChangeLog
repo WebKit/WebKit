@@ -1,3 +1,45 @@
+2017-08-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to provide browser information required by automation
+        https://bugs.webkit.org/show_bug.cgi?id=175130
+
+        Reviewed by Michael Catanzaro.
+
+        When a new automation session is started, the web driver receives some required capabilities from the client,
+        like browser name and version. The session should be rejected if those required capabilities don't match with
+        the actual browser that is launched. We don't know that information in WebKit, so we need to add API so that
+        users can provide it when a new session request is made. This patch adds boxed object WebKitApplicationInfo that
+        can be used to set the application name and version. This object can be set to a WebKitAutomationSession when
+        WebKitWebContext::automation-started signal is emitted.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * UIProcess/API/glib/WebKitApplicationInfo.cpp: Added.
+        (webkit_application_info_new):
+        (webkit_application_info_ref):
+        (webkit_application_info_unref):
+        (webkit_application_info_set_name):
+        (webkit_application_info_get_name):
+        (webkit_application_info_set_version):
+        (webkit_application_info_get_version):
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        (webkitAutomationSessionDispose):
+        (webkit_automation_session_class_init):
+        (webkitAutomationSessionGetBrowserName):
+        (webkitAutomationSessionGetBrowserVersion):
+        (webkit_automation_session_set_application_info):
+        (webkit_automation_session_get_application_info):
+        * UIProcess/API/glib/WebKitAutomationSessionPrivate.h:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        * UIProcess/API/gtk/WebKitApplicationInfo.h: Added.
+        * UIProcess/API/gtk/WebKitAutomationSession.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/webkit2.h:
+        * UIProcess/API/wpe/WebKitApplicationInfo.h: Added.
+        * UIProcess/API/wpe/WebKitAutomationSession.h:
+        * UIProcess/API/wpe/webkit.h:
+
 2017-08-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] CFLAGS from pkg-config for (E)GL are not passed to WebKit

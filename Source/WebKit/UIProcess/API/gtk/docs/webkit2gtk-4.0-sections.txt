@@ -1358,6 +1358,8 @@ WEBKIT_TYPE_NETWORK_NETWORK_PROXY_SETTINGS
 <FILE>WebKitAutomationSession</FILE>
 WebKitAutomationSession
 webkit_automation_session_get_id
+webkit_automation_session_set_application_info
+webkit_automation_session_get_application_info
 
 <SUBSECTION Private>
 WebKitAutomationSessionPrivate
@@ -1371,6 +1373,24 @@ WEBKIT_IS_AUTOMATION_SESSION
 WEBKIT_AUTOMATION_SESSION_CLASS
 WEBKIT_IS_AUTOMATION_SESSION_CLASS
 WEBKIT_AUTOMATION_SESSION_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>WebKitApplicationInfo</FILE>
+WebKitApplicationInfo
+webkit_application_info_new
+webkit_application_info_ref
+webkit_application_info_unref
+webkit_application_info_set_name
+webkit_application_info_get_name
+webkit_application_info_set_version
+webkit_application_info_get_version
+
+<SUBSECTION Private>
+webkit_application_info_get_type
+
+<SUBSECTION Standard>
+WEBKIT_TYPE_APPLICATION_INFO
 </SECTION>
 
 <SECTION>

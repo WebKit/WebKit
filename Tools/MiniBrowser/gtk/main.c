@@ -458,6 +458,11 @@ static GtkWidget *createWebViewForAutomationCallback(WebKitAutomationSession* se
 
 static void automationStartedCallback(WebKitWebContext *webContext, WebKitAutomationSession *session)
 {
+    WebKitApplicationInfo *info = webkit_application_info_new();
+    webkit_application_info_set_version(info, WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION);
+    webkit_automation_session_set_application_info(session, info);
+    webkit_application_info_unref(info);
+
     g_signal_connect(session, "create-web-view", G_CALLBACK(createWebViewForAutomationCallback), NULL);
 }
 

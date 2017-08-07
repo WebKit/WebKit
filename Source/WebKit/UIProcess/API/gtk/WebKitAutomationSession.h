@@ -25,6 +25,7 @@
 #define WebKitAutomationSession_h
 
 #include <glib-object.h>
+#include <webkit2/WebKitApplicationInfo.h>
 #include <webkit2/WebKitDefines.h>
 
 G_BEGIN_DECLS
@@ -56,10 +57,17 @@ struct _WebKitAutomationSessionClass {
 };
 
 WEBKIT_API GType
-webkit_automation_session_get_type (void);
+webkit_automation_session_get_type             (void);
 
 WEBKIT_API const char *
-webkit_automation_session_get_id   (WebKitAutomationSession *session);
+webkit_automation_session_get_id               (WebKitAutomationSession *session);
+
+WEBKIT_API void
+webkit_automation_session_set_application_info (WebKitAutomationSession *session,
+                                                WebKitApplicationInfo   *info);
+
+WEBKIT_API WebKitApplicationInfo *
+webkit_automation_session_get_application_info (WebKitAutomationSession *session);
 
 G_END_DECLS
 

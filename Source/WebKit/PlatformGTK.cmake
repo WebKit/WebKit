@@ -117,6 +117,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/gtk/WKView.cpp
 
     UIProcess/API/glib/IconDatabase.cpp
+    UIProcess/API/glib/WebKitApplicationInfo.cpp
     UIProcess/API/glib/WebKitAuthenticationRequest.cpp
     UIProcess/API/glib/WebKitAutomationSession.cpp
     UIProcess/API/glib/WebKitBackForwardList.cpp
@@ -417,6 +418,7 @@ endif ()
 set(WebKit2GTK_INSTALLED_HEADERS
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitVersion.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitApplicationInfo.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitAuthenticationRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitAutocleanups.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitAutomationSession.h

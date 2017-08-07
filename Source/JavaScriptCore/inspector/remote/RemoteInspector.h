@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
 #include "RemoteInspectorXPCConnection.h"
@@ -66,10 +67,14 @@ public:
     public:
         struct Capabilities {
             bool remoteAutomationAllowed : 1;
+            String browserName;
+            String browserVersion;
         };
 
         virtual ~Client() { }
         virtual bool remoteAutomationAllowed() const = 0;
+        virtual String browserName() const { return { }; }
+        virtual String browserVersion() const { return { }; }
         virtual void requestAutomationSession(const String& sessionIdentifier) = 0;
     };
 
@@ -85,6 +90,7 @@ public:
     RemoteInspector::Client* client() const { return m_client; }
     void setClient(RemoteInspector::Client*);
     void clientCapabilitiesDidChange();
+    std::optional<RemoteInspector::Client::Capabilities> clientCapabilities() const { return m_clientCapabilities; }
 
     void setupFailed(unsigned targetIdentifier);
     void setupCompleted(unsigned targetIdentifier);

@@ -24,3 +24,5 @@
 
 WebKitAutomationSession* webkitAutomationSessionCreate(const char* sessionID);
 WebKit::WebAutomationSession& webkitAutomationSessionGetSession(WebKitAutomationSession*);
+String webkitAutomationSessionGetBrowserName(WebKitAutomationSession*);
+String webkitAutomationSessionGetBrowserVersion(WebKitAutomationSession*);
