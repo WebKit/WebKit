@@ -1,5 +1,14 @@
 2017-08-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline js/dom/global-constructors-attributes.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
+2017-08-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r220299.
 
         This change caused LayoutTest inspector/dom-debugger/dom-
