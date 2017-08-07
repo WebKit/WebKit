@@ -50,7 +50,6 @@ public:
         return create(path);
     }
 
-#if ENABLE(CANVAS_PATH)
     void addPath(const DOMPath* path) { addPath(path, AffineTransform()); }
     void addPath(const DOMPath* path, SVGMatrix& matrix) { addPath(path, matrix.propertyReference()); }
     void addPath(const DOMPath* path, const AffineTransform& transform)
@@ -59,7 +58,6 @@ public:
             return;
         m_path.addPath(path->path(), transform);
     }
-#endif
 
     const Path& path() const { return m_path; }
 

@@ -52,7 +52,6 @@ my (
     $accelerated2DCanvasSupport,
     $allInOneBuild,
     $attachmentElementSupport,
-    $canvasPathSupport,
     $canvasProxySupport,
     $channelMessagingSupport,
     $css3TextSupport,
@@ -154,9 +153,6 @@ my @features = (
 
     { option => "attachment-element", desc => "Toggle Attachment Element support",
       define => "ENABLE_ATTACHMENT_ELEMENT", default => 0, value => \$attachmentElementSupport },
-
-    { option => "canvas-path", desc => "Toggle Canvas Path support",
-      define => "ENABLE_CANVAS_PATH", default => 1, value => \$canvasPathSupport },
 
     { option => "canvas-proxy", desc => "Toggle CanvasProxy support",
       define => "ENABLE_CANVAS_PROXY", default => 0, value => \$canvasProxySupport },

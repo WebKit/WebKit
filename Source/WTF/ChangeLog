@@ -1,3 +1,12 @@
+2017-08-07  Brian Burg  <bburg@apple.com>
+
+        Remove CANVAS_PATH compilation guard
+        https://bugs.webkit.org/show_bug.cgi?id=175207
+
+        Reviewed by Sam Weinig.
+
+        * wtf/FeatureDefines.h:
+
 2017-08-05  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r219895-219897): Number of leaks on Open Source went from 9240 to 235983 and is now at 302372

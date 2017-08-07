@@ -34,9 +34,9 @@
     InterfaceName=Path2D,
 ] interface DOMPath {
     // FIXME: This should be:
-    // [Conditional=CANVAS_PATH] void addPath(DOMPath path, optional SVGMatrix transform);
-    [Conditional=CANVAS_PATH] void addPath(DOMPath? path);
-    [Conditional=CANVAS_PATH] void addPath(DOMPath? path, SVGMatrix transform);
+    // void addPath(DOMPath path, optional SVGMatrix transform);
+    void addPath(DOMPath? path);
+    void addPath(DOMPath? path, SVGMatrix transform);
 };
 
 DOMPath implements CanvasPath;

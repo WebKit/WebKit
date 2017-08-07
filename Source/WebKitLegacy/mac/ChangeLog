@@ -1,3 +1,12 @@
+2017-08-07  Brian Burg  <bburg@apple.com>
+
+        Remove CANVAS_PATH compilation guard
+        https://bugs.webkit.org/show_bug.cgi?id=175207
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-08-04  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Add Cache and CacheStorage IDL definitions
