@@ -198,7 +198,7 @@ Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLengt
 // - WebAssembly. Wasm should allocate from the cage.
 Ref<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, unsigned byteLength, ArrayBufferDestructorFunction&& destructor)
 {
-    if (!Gigacage::isCaged(data) && data && byteLength)
+    if (data && byteLength && !Gigacage::isCaged(data))
         Gigacage::disableGigacage();
     
     ArrayBufferContents contents(const_cast<void*>(data), byteLength, WTFMove(destructor));
