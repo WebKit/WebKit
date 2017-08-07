@@ -94,6 +94,11 @@ strong {
 em {
     font-weight: 200;
 }
+sup {
+    vertical-align: super;
+    font-size: smaller;
+    line-height: 1;
+}
 code {
     font-family: Menlo, monospace;
     background: #f2f2f2;
