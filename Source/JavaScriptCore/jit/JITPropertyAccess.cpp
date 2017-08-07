@@ -172,9 +172,8 @@ JIT::JumpList JIT::emitDoubleLoad(Instruction*, PatchableJump& badType)
     JumpList slowCases;
     
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(DoubleShape));
-    // FIXME: Should do caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175037
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
+    cage(Gigacage::JSValue, regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
     loadDouble(BaseIndex(regT2, regT1, TimesEight), fpRegT0);
     slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
@@ -187,9 +186,8 @@ JIT::JumpList JIT::emitContiguousLoad(Instruction*, PatchableJump& badType, Inde
     JumpList slowCases;
     
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(expectedShape));
-    // FIXME: Should do caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175037
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
+    cage(Gigacage::JSValue, regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
     load64(BaseIndex(regT2, regT1, TimesEight), regT0);
     slowCases.append(branchTest64(Zero, regT0));
@@ -204,9 +202,8 @@ JIT::JumpList JIT::emitArrayStorageLoad(Instruction*, PatchableJump& badType)
     add32(TrustedImm32(-ArrayStorageShape), regT2, regT3);
     badType = patchableBranch32(Above, regT3, TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape));
 
-    // FIXME: Should do caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175037
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
+    cage(Gigacage::JSValue, regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
 
     load64(BaseIndex(regT2, regT1, TimesEight, ArrayStorage::vectorOffset()), regT0);
@@ -353,9 +350,8 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
 
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(indexingShape));
     
-    // FIXME: Should do caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175037
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
+    cage(Gigacage::JSValue, regT2);
     Jump outOfBounds = branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength()));
 
     Label storeResult = label();
@@ -410,9 +406,8 @@ JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, Pat
     JumpList slowCases;
     
     badType = patchableBranch32(NotEqual, regT2, TrustedImm32(ArrayStorageShape));
-    // FIXME: Should do caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175037
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
+    cage(Gigacage::JSValue, regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
 
     Jump empty = branchTest64(Zero, BaseIndex(regT2, regT1, TimesEight, ArrayStorage::vectorOffset()));
@@ -923,9 +918,8 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
                 abortWithReason(JITOffsetIsNotOutOfLine);
                 isOutOfLine.link(this);
             }
-            // FIXME: Should do caging.
-            // https://bugs.webkit.org/show_bug.cgi?id=175037
             loadPtr(Address(base, JSObject::butterflyOffset()), scratch);
+            cage(Gigacage::JSValue, scratch);
             neg32(offset);
             signExtend32ToPtr(offset, offset);
             load64(BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), result);
@@ -1066,9 +1060,8 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
             emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection.
             emitGetVirtualRegister(value, regT2);
             
-            // FIXME: Should do caging.
-            // https://bugs.webkit.org/show_bug.cgi?id=175037
             loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
+            cage(Gigacage::JSValue, regT0);
             loadPtr(operandSlot, regT1);
             negPtr(regT1);
             storePtr(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
@@ -1576,12 +1569,14 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badTyp
     RegisterID property = regT1;
     RegisterID resultPayload = regT0;
     RegisterID scratch = regT3;
+    RegisterID scratch2 = regT4;
 #else
     RegisterID base = regT0;
     RegisterID property = regT2;
     RegisterID resultPayload = regT0;
     RegisterID resultTag = regT1;
     RegisterID scratch = regT3;
+    RegisterID scratch2 = regT4;
 #endif
     
     JumpList slowCases;
@@ -1589,9 +1584,8 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badTyp
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(typeForTypedArrayType(type)));
     slowCases.append(branch32(AboveOrEqual, property, Address(base, JSArrayBufferView::offsetOfLength())));
-    // FIXME: Should do caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175037
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
+    cageConditionally(Gigacage::Primitive, scratch, scratch2);
     
     switch (elementSize(type)) {
     case 1:
@@ -1649,12 +1643,14 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badT
     RegisterID property = regT1;
     RegisterID resultPayload = regT0;
     RegisterID scratch = regT3;
+    RegisterID scratch2 = regT4;
 #else
     RegisterID base = regT0;
     RegisterID property = regT2;
     RegisterID resultPayload = regT0;
     RegisterID resultTag = regT1;
     RegisterID scratch = regT3;
+    RegisterID scratch2 = regT4;
 #endif
     
     JumpList slowCases;
@@ -1662,9 +1658,8 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badT
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(typeForTypedArrayType(type)));
     slowCases.append(branch32(AboveOrEqual, property, Address(base, JSArrayBufferView::offsetOfLength())));
-    // FIXME: Should do caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175037
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
+    cageConditionally(Gigacage::Primitive, scratch, scratch2);
     
     switch (elementSize(type)) {
     case 4:
@@ -1705,11 +1700,13 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, Pa
     RegisterID property = regT1;
     RegisterID earlyScratch = regT3;
     RegisterID lateScratch = regT2;
+    RegisterID lateScratch2 = regT4;
 #else
     RegisterID base = regT0;
     RegisterID property = regT2;
     RegisterID earlyScratch = regT3;
     RegisterID lateScratch = regT1;
+    RegisterID lateScratch2 = regT4;
 #endif
     
     JumpList slowCases;
@@ -1731,9 +1728,8 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, Pa
     
     // We would be loading this into base as in get_by_val, except that the slow
     // path expects the base to be unclobbered.
-    // FIXME: Should do caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175037
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), lateScratch);
+    cageConditionally(Gigacage::Primitive, lateScratch, lateScratch2);
     
     if (isClamped(type)) {
         ASSERT(elementSize(type) == 1);
@@ -1777,11 +1773,13 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, 
     RegisterID property = regT1;
     RegisterID earlyScratch = regT3;
     RegisterID lateScratch = regT2;
+    RegisterID lateScratch2 = regT4;
 #else
     RegisterID base = regT0;
     RegisterID property = regT2;
     RegisterID earlyScratch = regT3;
     RegisterID lateScratch = regT1;
+    RegisterID lateScratch2 = regT4;
 #endif
     
     JumpList slowCases;
@@ -1816,9 +1814,8 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, 
     
     // We would be loading this into base as in get_by_val, except that the slow
     // path expects the base to be unclobbered.
-    // FIXME: Should do caging.
-    // https://bugs.webkit.org/show_bug.cgi?id=175037
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), lateScratch);
+    cageConditionally(Gigacage::Primitive, lateScratch, lateScratch2);
     
     switch (elementSize(type)) {
     case 4:

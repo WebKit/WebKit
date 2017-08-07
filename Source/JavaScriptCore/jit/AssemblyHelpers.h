@@ -1311,6 +1311,41 @@ public:
         ok.link(this);
     }
     
+    void cage(Gigacage::Kind kind, GPRReg storage)
+    {
+#if GIGACAGE_ENABLED
+        if (!Gigacage::shouldBeEnabled())
+            return;
+        
+        andPtr(TrustedImmPtr(static_cast<size_t>(GIGACAGE_MASK)), storage);
+        addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
+#else
+        UNUSED_PARAM(kind);
+        UNUSED_PARAM(storage);
+#endif
+    }
+    
+    void cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg scratch)
+    {
+#if GIGACAGE_ENABLED
+        if (!Gigacage::shouldBeEnabled())
+            return;
+        
+        if (kind != Gigacage::Primitive || Gigacage::isDisablingPrimitiveGigacageDisabled())
+            return cage(kind, storage);
+        
+        loadPtr(Gigacage::basePtr(kind), scratch);
+        Jump done = branchTestPtr(Zero, scratch);
+        andPtr(TrustedImmPtr(static_cast<size_t>(GIGACAGE_MASK)), storage);
+        addPtr(scratch, storage);
+        done.link(this);
+#else
+        UNUSED_PARAM(kind);
+        UNUSED_PARAM(storage);
+        UNUSED_PARAM(scratch);
+#endif
+    }
+    
     void storeButterfly(VM& vm, GPRReg butterfly, GPRReg object)
     {
         if (isX86()) {

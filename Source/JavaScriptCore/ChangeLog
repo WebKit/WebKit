@@ -1,3 +1,35 @@
+2017-08-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT should do caging
+        https://bugs.webkit.org/show_bug.cgi?id=175037
+
+        Reviewed by Mark Lam.
+        
+        Adds a AssemblyHelpers::cage and cageConditionally. Uses it in the baseline JIT.
+        
+        Also modifies FTL caging to be more defensive when caging is disabled.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cage):
+        (JSC::AssemblyHelpers::cageConditionally):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDoubleLoad):
+        (JSC::JIT::emitContiguousLoad):
+        (JSC::JIT::emitArrayStorageLoad):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jsc.cpp:
+        (jscmain):
+        (primitiveGigacageDisabled): Deleted.
+
 2017-08-06  Filip Pizlo  <fpizlo@apple.com>
 
         Primitive auxiliaries and JSValue auxiliaries should have separate gigacages
