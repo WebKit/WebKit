@@ -46,6 +46,7 @@ public:
         InvalidSelector,
         InvalidSessionID,
         JavascriptError,
+        NoSuchAlert,
         NoSuchElement,
         NoSuchFrame,
         NoSuchWindow,

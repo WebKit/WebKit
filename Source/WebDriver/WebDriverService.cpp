@@ -151,6 +151,11 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Post, "/session/$sessionId/execute/sync", &WebDriverService::executeScript },
     { HTTPMethod::Post, "/session/$sessionId/execute/async", &WebDriverService::executeAsyncScript },
 
+    { HTTPMethod::Post, "/session/$sessionId/alert/dismiss", &WebDriverService::dismissAlert },
+    { HTTPMethod::Post, "/session/$sessionId/alert/accept", &WebDriverService::acceptAlert },
+    { HTTPMethod::Get, "/session/$sessionId/alert/text", &WebDriverService::getAlertText },
+    { HTTPMethod::Post, "/session/$sessionId/alert/text", &WebDriverService::sendAlertText },
+
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/displayed", &WebDriverService::isElementDisplayed },
 };
 
@@ -1225,6 +1230,80 @@ void WebDriverService::executeAsyncScript(RefPtr<InspectorObject>&& parameters, 
             return;
         }
         session->executeScript(script, WTFMove(arguments), Session::ExecuteScriptMode::Async, WTFMove(completionHandler));
+    });
+}
+
+void WebDriverService::dismissAlert(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §18.1 Dismiss Alert.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#dismiss-alert
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->dismissAlert(WTFMove(completionHandler));
+    });
+}
+
+void WebDriverService::acceptAlert(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §18.2 Accept Alert.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#accept-alert
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->acceptAlert(WTFMove(completionHandler));
+    });
+}
+
+void WebDriverService::getAlertText(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §18.3 Get Alert Text.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#get-alert-text
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->getAlertText(WTFMove(completionHandler));
+    });
+}
+
+void WebDriverService::sendAlertText(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §18.4 Send Alert Text.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#send-alert-text
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    String text;
+    if (!parameters->getString(ASCIILiteral("text"), text)) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        return;
+    }
+
+    session->waitForNavigationToComplete([session, text = WTFMove(text), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->sendAlertText(text, WTFMove(completionHandler));
     });
 }
 

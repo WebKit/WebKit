@@ -102,6 +102,8 @@ CommandResult::CommandResult(RefPtr<InspectorValue>&& result, std::optional<Erro
             m_errorCode = ErrorCode::InvalidSelector;
         else if (errorName == "Timeout")
             m_errorCode = ErrorCode::Timeout;
+        else if (errorName == "NoJavaScriptDialog")
+            m_errorCode = ErrorCode::NoSuchAlert;
 
         break;
     }
@@ -127,6 +129,7 @@ unsigned CommandResult::httpStatusCode() const
     case ErrorCode::InvalidArgument:
     case ErrorCode::InvalidElementState:
     case ErrorCode::InvalidSelector:
+    case ErrorCode::NoSuchAlert:
     case ErrorCode::NoSuchElement:
     case ErrorCode::NoSuchFrame:
     case ErrorCode::NoSuchWindow:
@@ -168,6 +171,8 @@ String CommandResult::errorString() const
         return ASCIILiteral("invalid session id");
     case ErrorCode::JavascriptError:
         return ASCIILiteral("javascript error");
+    case ErrorCode::NoSuchAlert:
+        return ASCIILiteral("no such alert");
     case ErrorCode::NoSuchElement:
         return ASCIILiteral("no such element");
     case ErrorCode::NoSuchFrame:

@@ -101,6 +101,10 @@ private:
     void elementSubmit(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void executeScript(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void executeAsyncScript(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void dismissAlert(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void acceptAlert(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getAlertText(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void sendAlertText(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
 
     static Capabilities platformCapabilities();
     RefPtr<Inspector::InspectorObject> processCapabilities(const Inspector::InspectorObject&, Function<void (CommandResult&&)>&) const;

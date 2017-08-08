@@ -94,6 +94,10 @@ public:
     void elementSendKeys(const String& elementID, Vector<String>&& keys, Function<void (CommandResult&&)>&&);
     void elementSubmit(const String& elementID, Function<void (CommandResult&&)>&&);
     void executeScript(const String& script, RefPtr<Inspector::InspectorArray>&& arguments, ExecuteScriptMode, Function<void (CommandResult&&)>&&);
+    void dismissAlert(Function<void (CommandResult&&)>&&);
+    void acceptAlert(Function<void (CommandResult&&)>&&);
+    void getAlertText(Function<void (CommandResult&&)>&&);
+    void sendAlertText(const String&, Function<void (CommandResult&&)>&&);
 
 private:
     Session(std::unique_ptr<SessionHost>&&);

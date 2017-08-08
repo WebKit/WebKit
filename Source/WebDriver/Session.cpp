@@ -1463,4 +1463,82 @@ void Session::performKeyboardInteractions(Vector<KeyboardInteraction>&& interact
     });
 }
 
+void Session::dismissAlert(Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
+    m_host->sendCommandToBackend(ASCIILiteral("dismissCurrentJavaScriptDialog"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (response.isError) {
+            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+            return;
+        }
+        completionHandler(CommandResult::success());
+    });
+}
+
+void Session::acceptAlert(Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
+    m_host->sendCommandToBackend(ASCIILiteral("acceptCurrentJavaScriptDialog"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (response.isError) {
+            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+            return;
+        }
+        completionHandler(CommandResult::success());
+    });
+}
+
+void Session::getAlertText(Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
+    m_host->sendCommandToBackend(ASCIILiteral("messageOfCurrentJavaScriptDialog"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (response.isError || !response.responseObject) {
+            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+            return;
+        }
+        String valueString;
+        if (!response.responseObject->getString(ASCIILiteral("message"), valueString)) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+            return;
+        }
+        completionHandler(CommandResult::success(InspectorValue::create(valueString)));
+    });
+}
+
+void Session::sendAlertText(const String& text, Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
+    parameters->setString(ASCIILiteral("userInput"), text);
+    m_host->sendCommandToBackend(ASCIILiteral("setUserInputForCurrentJavaScriptPrompt"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (response.isError) {
+            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+            return;
+        }
+        completionHandler(CommandResult::success());
+    });
+}
+
 } // namespace WebDriver
