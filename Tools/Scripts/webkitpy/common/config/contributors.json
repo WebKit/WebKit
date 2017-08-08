@@ -381,6 +381,16 @@
       ],
       "status" : "reviewer"
    },
+   "Alicia Boya Garcia" : {
+      "emails" : [
+         "aboya@igalia.com",
+         "ntrrgc@gmail.com"
+      ],
+      "nicks" : [
+         "ntrrgc",
+         "aboya"
+      ]
+   },
    "Allan Sandfeld Jensen" : {
       "emails" : [
          "allan.jensen@digia.com",
