@@ -1,5 +1,15 @@
 2017-08-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed. Follow-up to r220392 that fixes build on configurations
+        that disable USE(GSTREAMER_GL).
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        When creating the BitmapTextureGL object, also provide an initialized
+        TextureMapperContextAttributes object.
+
+2017-08-08  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Group GL header file inclusions in a single header file
         https://bugs.webkit.org/show_bug.cgi?id=175313
 

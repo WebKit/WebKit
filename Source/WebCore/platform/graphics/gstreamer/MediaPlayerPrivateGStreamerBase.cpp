@@ -101,6 +101,7 @@
 #if USE(TEXTURE_MAPPER_GL)
 #include "BitmapTextureGL.h"
 #include "BitmapTexturePool.h"
+#include "TextureMapperContextAttributes.h"
 #include "TextureMapperGL.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
@@ -611,7 +612,10 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
         if (UNLIKELY(!m_context3D))
             m_context3D = GraphicsContext3D::create(GraphicsContext3DAttributes(), nullptr, GraphicsContext3D::RenderToCurrentGLContext);
 
-        auto texture = BitmapTextureGL::create(*m_context3D);
+        TextureMapperContextAttributes contextAttributes;
+        contextAttributes.initialize();
+
+        auto texture = BitmapTextureGL::create(contextAttributes, *m_context3D);
         texture->reset(size, GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
         buffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
     }
