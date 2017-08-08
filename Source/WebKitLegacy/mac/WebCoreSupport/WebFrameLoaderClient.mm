@@ -54,6 +54,7 @@
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
+#import "WebKitVersionChecks.h"
 #import "WebNSURLExtras.h"
 #import "WebNavigationData.h"
 #import "WebNetscapePluginPackage.h"
@@ -142,7 +143,6 @@
 #import <WebCore/WAKScrollView.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThreadMessage.h>
-#import "WebKitVersionChecks.h"
 #import "WebMailDelegate.h"
 #import "WebUIKitDelegate.h"
 #endif
@@ -2279,6 +2279,15 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
     auto* frame = core(m_webFrame.get());
     DocumentLoader* documentLoader = frame->loader().documentLoader();
     ASSERT(documentLoader);
+
+#if PLATFORM(MAC)
+    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_DEFAULT_ICON_LOADING)) {
+        for (auto& icon : icons)
+            documentLoader->didGetLoadDecisionForIcon(false, icon.second, 0);
+
+        return;
+    }
+#endif
 
     bool disallowedDueToImageLoadSettings = false;
     if (!frame->settings().loadsImagesAutomatically() && !frame->settings().loadsSiteIconsIgnoringImageLoadingSetting())
