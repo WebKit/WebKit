@@ -508,6 +508,12 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
     draw(rect, matrix, program.get(), GraphicsContext3D::TRIANGLE_FAN, flags);
 }
 
+void TextureMapperGL::clearColor(const Color& color)
+{
+    m_context3D->clearColor(color.red() / 255.0f, color.green() / 255.0f, color.blue() / 255.0f, color.alpha() / 255.0f);
+    m_context3D->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+}
+
 void TextureMapperGL::drawEdgeTriangles(TextureMapperShaderProgram& program)
 {
     const GC3Dfloat left = 0;

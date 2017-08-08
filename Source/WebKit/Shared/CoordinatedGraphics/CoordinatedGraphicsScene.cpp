@@ -106,11 +106,8 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
             backgroundColor.green(), backgroundColor.blue(),
             backgroundColor.alpha() * opacity);
         m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), Color(rgba));
-    } else {
-        GraphicsContext3D* context = static_cast<TextureMapperGL*>(m_textureMapper.get())->graphicsContext3D();
-        context->clearColor(m_viewBackgroundColor.red() / 255.0f, m_viewBackgroundColor.green() / 255.0f, m_viewBackgroundColor.blue() / 255.0f, m_viewBackgroundColor.alpha() / 255.0f);
-        context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
-    }
+    } else
+        m_textureMapper->clearColor(m_viewBackgroundColor);
 
     if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != matrix) {
         currentRootLayer->setOpacity(opacity);

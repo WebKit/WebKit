@@ -1,3 +1,20 @@
+2017-08-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Don't expose GraphicsContext3D object
+        https://bugs.webkit.org/show_bug.cgi?id=175310
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the GraphicsContext3D getter from the TextureMapperGL class. Instead,
+        the clearColor() method is added that's to be used by the CoordinatedGraphicsScene
+        class which was accessing the GraphicsContext3D object for this purpose.
+
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::clearColor):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (WebCore::TextureMapperGL::graphicsContext3D const): Deleted.
+
 2017-08-07  Simon Fraser  <simon.fraser@apple.com>
 
         RenderStyle:diff() was inadvertently doing deep compares of StyleRareNonInheritedData etc
