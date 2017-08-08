@@ -1,3 +1,21 @@
+2017-08-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Implement the HTML5 same-origin restriction specification
+        https://bugs.webkit.org/show_bug.cgi?id=175226
+        <rdar://problem/11079948>
+
+        Reviewed by Chris Dumez.
+
+        Follow the algorithms defined in the HTML5 specification for relaxing
+        the same-origin restriction. We were missing a few steps related to
+        checking for public suffix and presence of a browsing context.
+
+        Tested by new TestWebKitAPI tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::domainIsRegisterable): Added helper function.
+        (WebCore::Document::setDomain):
+
 2017-08-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Preview Canvas path when viewing a recording

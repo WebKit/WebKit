@@ -62,6 +62,94 @@ TEST_F(PublicSuffix, IsPublicSuffix)
     EXPECT_TRUE(isPublicSuffix(utf16String(u"\u6803\u6728.jp")));
     EXPECT_FALSE(isPublicSuffix(""));
     EXPECT_FALSE(isPublicSuffix("åäö"));
+
+    // UK
+    EXPECT_TRUE(isPublicSuffix("uk"));
+    EXPECT_FALSE(isPublicSuffix("webkit.uk"));
+    EXPECT_TRUE(isPublicSuffix("co.uk"));
+    EXPECT_FALSE(isPublicSuffix("company.co.uk"));
+
+    // Note: These tests are based on the Public Domain TLD test suite
+    // https://raw.githubusercontent.com/publicsuffix/list/master/tests/test_psl.txt
+    //
+    // That file states:
+    //     Any copyright is dedicated to the Public Domain.
+    //     https://creativecommons.org/publicdomain/zero/1.0/
+
+    // null input.
+    EXPECT_FALSE(isPublicSuffix(""));
+    // Mixed case.
+    EXPECT_TRUE(isPublicSuffix("COM"));
+    EXPECT_FALSE(isPublicSuffix("example.COM"));
+    EXPECT_FALSE(isPublicSuffix("WwW.example.COM"));
+    // Unlisted TLD.
+    EXPECT_FALSE(isPublicSuffix("example"));
+    EXPECT_FALSE(isPublicSuffix("example.example"));
+    EXPECT_FALSE(isPublicSuffix("b.example.example"));
+    EXPECT_FALSE(isPublicSuffix("a.b.example.example"));
+    // TLD with only 1 rule.
+    EXPECT_TRUE(isPublicSuffix("biz"));
+    EXPECT_FALSE(isPublicSuffix("domain.biz"));
+    EXPECT_FALSE(isPublicSuffix("b.domain.biz"));
+    EXPECT_FALSE(isPublicSuffix("a.b.domain.biz"));
+    // TLD with some 2-level rules.
+    EXPECT_FALSE(isPublicSuffix("example.com"));
+    EXPECT_FALSE(isPublicSuffix("b.example.com"));
+    EXPECT_FALSE(isPublicSuffix("a.b.example.com"));
+    EXPECT_TRUE(isPublicSuffix("uk.com"));
+    EXPECT_FALSE(isPublicSuffix("example.uk.com"));
+    EXPECT_FALSE(isPublicSuffix("b.example.uk.com"));
+    EXPECT_FALSE(isPublicSuffix("a.b.example.uk.com"));
+    EXPECT_FALSE(isPublicSuffix("test.ac"));
+    // TLD with only 1 (wildcard) rule.
+    EXPECT_TRUE(isPublicSuffix("mm"));
+    EXPECT_TRUE(isPublicSuffix("c.mm"));
+    EXPECT_FALSE(isPublicSuffix("b.c.mm"));
+    EXPECT_FALSE(isPublicSuffix("a.b.c.mm"));
+    // More complex TLD.
+    EXPECT_TRUE(isPublicSuffix("jp"));
+    EXPECT_FALSE(isPublicSuffix("test.jp"));
+    EXPECT_FALSE(isPublicSuffix("www.test.jp"));
+    EXPECT_TRUE(isPublicSuffix("ac.jp"));
+    EXPECT_FALSE(isPublicSuffix("test.ac.jp"));
+    EXPECT_FALSE(isPublicSuffix("www.test.ac.jp"));
+    EXPECT_TRUE(isPublicSuffix("kyoto.jp"));
+    EXPECT_FALSE(isPublicSuffix("test.kyoto.jp"));
+    EXPECT_TRUE(isPublicSuffix("ide.kyoto.jp"));
+    EXPECT_FALSE(isPublicSuffix("b.ide.kyoto.jp"));
+    EXPECT_FALSE(isPublicSuffix("a.b.ide.kyoto.jp"));
+    EXPECT_TRUE(isPublicSuffix("c.kobe.jp"));
+    EXPECT_FALSE(isPublicSuffix("b.c.kobe.jp"));
+    EXPECT_FALSE(isPublicSuffix("a.b.c.kobe.jp"));
+    EXPECT_FALSE(isPublicSuffix("city.kobe.jp"));
+    EXPECT_FALSE(isPublicSuffix("www.city.kobe.jp"));
+    // TLD with a wildcard rule and exceptions.
+    EXPECT_TRUE(isPublicSuffix("ck"));
+    EXPECT_TRUE(isPublicSuffix("test.ck"));
+    EXPECT_FALSE(isPublicSuffix("b.test.ck"));
+    EXPECT_FALSE(isPublicSuffix("a.b.test.ck"));
+    EXPECT_FALSE(isPublicSuffix("www.ck"));
+    EXPECT_FALSE(isPublicSuffix("www.www.ck"));
+    // US K12.
+    EXPECT_TRUE(isPublicSuffix("us"));
+    EXPECT_FALSE(isPublicSuffix("test.us"));
+    EXPECT_FALSE(isPublicSuffix("www.test.us"));
+    EXPECT_TRUE(isPublicSuffix("ak.us"));
+    EXPECT_FALSE(isPublicSuffix("test.ak.us"));
+    EXPECT_FALSE(isPublicSuffix("www.test.ak.us"));
+    EXPECT_TRUE(isPublicSuffix("k12.ak.us"));
+    EXPECT_FALSE(isPublicSuffix("test.k12.ak.us"));
+    EXPECT_FALSE(isPublicSuffix("www.test.k12.ak.us"));
+    // IDN labels (punycoded)
+    EXPECT_FALSE(isPublicSuffix("xn--85x722f.com.cn"));
+    EXPECT_FALSE(isPublicSuffix("xn--85x722f.xn--55qx5d.cn"));
+    EXPECT_FALSE(isPublicSuffix("www.xn--85x722f.xn--55qx5d.cn"));
+    EXPECT_FALSE(isPublicSuffix("shishi.xn--55qx5d.cn"));
+    EXPECT_TRUE(isPublicSuffix("xn--55qx5d.cn"));
+    EXPECT_FALSE(isPublicSuffix("xn--85x722f.xn--fiqs8s"));
+    EXPECT_FALSE(isPublicSuffix("www.xn--85x722f.xn--fiqs8s"));
+    EXPECT_FALSE(isPublicSuffix("shishi.xn--fiqs8s"));
+    EXPECT_TRUE(isPublicSuffix("xn--fiqs8s"));
 }
 
 TEST_F(PublicSuffix, TopPrivatelyControlledDomain)

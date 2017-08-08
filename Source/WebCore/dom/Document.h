@@ -1468,6 +1468,8 @@ private:
 
     void platformSuspendOrStopActiveDOMObjects();
 
+    bool domainIsRegisterable(const String&) const;
+
     const Ref<Settings> m_settings;
 
     std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;

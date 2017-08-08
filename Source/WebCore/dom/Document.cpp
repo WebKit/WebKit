@@ -140,6 +140,7 @@
 #include "PointerLockController.h"
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
+#include "PublicSuffix.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RenderChildIterator.h"
 #include "RenderLayerCompositor.h"
@@ -4438,44 +4439,63 @@ String Document::domain() const
     return securityOrigin().domain();
 }
 
-ExceptionOr<void> Document::setDomain(const String& newDomain)
+bool Document::domainIsRegisterable(const String& newDomain) const
 {
-    if (SchemeRegistry::isDomainRelaxationForbiddenForURLScheme(securityOrigin().protocol()))
-        return Exception { SecurityError };
+    if (newDomain.isEmpty())
+        return false;
 
-    // Both NS and IE specify that changing the domain is only allowed when
-    // the new domain is a suffix of the old domain.
+    const String& effectiveDomain = domain();
 
-    // FIXME: We should add logging indicating why a domain was not allowed.
-
-    String oldDomain = domain();
-
-    // If the new domain is the same as the old domain, still call
-    // securityOrigin().setDomainForDOM. This will change the
+    // If the new domain is the same as the old domain, return true so that
+    // we still call securityOrigin().setDomainForDOM. This will change the
     // security check behavior. For example, if a page loaded on port 8000
     // assigns its current domain using document.domain, the page will
     // allow other pages loaded on different ports in the same domain that
     // have also assigned to access this page.
-    if (equalIgnoringASCIICase(oldDomain, newDomain)) {
-        securityOrigin().setDomainFromDOM(newDomain);
-        return { };
-    }
+    if (equalIgnoringASCIICase(effectiveDomain, newDomain))
+        return true;
 
     // e.g. newDomain = webkit.org (10) and domain() = www.webkit.org (14)
-    unsigned oldLength = oldDomain.length();
+    unsigned oldLength = effectiveDomain.length();
     unsigned newLength = newDomain.length();
     if (newLength >= oldLength)
-        return Exception { SecurityError };
+        return false;
 
     auto ipAddressSetting = settings().treatIPAddressAsDomain() ? OriginAccessEntry::TreatIPAddressAsDomain : OriginAccessEntry::TreatIPAddressAsIPAddress;
     OriginAccessEntry accessEntry { securityOrigin().protocol(), newDomain, OriginAccessEntry::AllowSubdomains, ipAddressSetting };
     if (!accessEntry.matchesOrigin(securityOrigin()))
+        return false;
+
+    if (effectiveDomain[oldLength - newLength - 1] != '.')
+        return false;
+    if (StringView { effectiveDomain }.substring(oldLength - newLength) != newDomain)
+        return false;
+
+    auto potentialPublicSuffix = newDomain;
+    if (potentialPublicSuffix.startsWith('.'))
+        potentialPublicSuffix.remove(0, 1);
+
+    return !isPublicSuffix(potentialPublicSuffix);
+}
+
+ExceptionOr<void> Document::setDomain(const String& newDomain)
+{
+    if (!frame())
+        return Exception { SecurityError, "A browsing context is required to set a domain." };
+
+    if (SchemeRegistry::isDomainRelaxationForbiddenForURLScheme(securityOrigin().protocol()))
         return Exception { SecurityError };
 
-    if (oldDomain[oldLength - newLength - 1] != '.')
-        return Exception { SecurityError };
-    if (StringView { oldDomain }.substring(oldLength - newLength) != newDomain)
-        return Exception { SecurityError };
+    // FIXME(175281): Check for 'document.domain' sandbox flag and return an exception if present.
+
+    // FIXME: We should add logging indicating why a domain was not allowed.
+
+    const String& effectiveDomain = domain();
+    if (effectiveDomain.isEmpty())
+        return Exception { SecurityError, "The document has a null effectiveDomain." };
+
+    if (!domainIsRegisterable(newDomain))
+        return Exception { SecurityError, "Attempted to use a non-registrable domain." };
 
     securityOrigin().setDomainFromDOM(newDomain);
     return { };
