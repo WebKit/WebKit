@@ -115,6 +115,32 @@ static inline bool parseSimpleLength(const CharacterType* characters, unsigned l
     return true;
 }
 
+template <typename CharacterType>
+static inline bool parseSimpleAngle(const CharacterType* characters, unsigned length, CSSPrimitiveValue::UnitType& unit, double& number)
+{
+    // Just support deg and rad for now.
+    if (length < 4)
+        return false;
+
+    if ((characters[length - 3] | 0x20) == 'd' && (characters[length - 2] | 0x20) == 'e' && (characters[length - 1] | 0x20) == 'g') {
+        length -= 3;
+        unit = CSSPrimitiveValue::UnitType::CSS_DEG;
+    } else if ((characters[length - 3] | 0x20) == 'r' && (characters[length - 2] | 0x20) == 'a' && (characters[length - 1] | 0x20) == 'd') {
+        length -= 3;
+        unit = CSSPrimitiveValue::UnitType::CSS_RAD;
+    } else
+        return false;
+
+    // We rely on charactersToDouble for validation as well. The function
+    // will set "ok" to "false" if the entire passed-in character range does
+    // not represent a double.
+    bool ok;
+    number = charactersToDouble(characters, length, &ok);
+    if (!ok)
+        return false;
+    return true;
+}
+
 static RefPtr<CSSValue> parseSimpleLengthValue(CSSPropertyID propertyId, const String& string, CSSParserMode cssParserMode)
 {
     ASSERT(!string.isEmpty());
@@ -1050,6 +1076,27 @@ static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsi
 }
 
 template <typename CharType>
+static bool parseTransformAngleArgument(CharType*& pos, CharType* end, CSSFunctionValue* transformValue)
+{
+    size_t delimiter = WTF::find(pos, end - pos, ')');
+    if (delimiter == notFound)
+        return false;
+
+    unsigned argumentLength = static_cast<unsigned>(delimiter);
+    CSSPrimitiveValue::UnitType unit = CSSPrimitiveValue::UnitType::CSS_NUMBER;
+    double number;
+    if (!parseSimpleAngle(pos, argumentLength, unit, number))
+        return false;
+    if (!number && unit == CSSPrimitiveValue::CSS_NUMBER)
+        unit = CSSPrimitiveValue::UnitType::CSS_DEG;
+
+    transformValue->append(CSSPrimitiveValue::create(number, unit));
+    pos += argumentLength + 1;
+
+    return true;
+}
+
+template <typename CharType>
 static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSFunctionValue* transformValue)
 {
     while (expectedCount) {
@@ -1105,9 +1152,9 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
             transformType = CSSValueTranslate3d;
             expectedArgumentCount = 3;
             argumentStart = 12;
-        } else {
+        } else
             return nullptr;
-        }
+
         pos += argumentStart;
         RefPtr<CSSFunctionValue> transformValue = CSSFunctionValue::create(transformType);
         if (!parseTransformTranslateArguments(pos, end, expectedArgumentCount, transformValue.get()))
@@ -1150,6 +1197,32 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
         return transformValue;
     }
 
+    const bool isRotate = toASCIILower(pos[0]) == 'r'
+        && toASCIILower(pos[1]) == 'o'
+        && toASCIILower(pos[2]) == 't'
+        && toASCIILower(pos[3]) == 'a'
+        && toASCIILower(pos[4]) == 't'
+        && toASCIILower(pos[5]) == 'e';
+
+    if (isRotate) {
+        CSSValueID transformType;
+        unsigned argumentStart = 7;
+        CharType c6 = toASCIILower(pos[6]);
+        if (c6 == '(') {
+            transformType = CSSValueRotate;
+        } else if (c6 == 'z' && pos[7] == '(') {
+            transformType = CSSValueRotateZ;
+            argumentStart = 8;
+        } else
+            return nullptr;
+
+        pos += argumentStart;
+        RefPtr<CSSFunctionValue> transformValue = CSSFunctionValue::create(transformType);
+        if (!parseTransformAngleArgument(pos, end, transformValue.get()))
+            return nullptr;
+        return transformValue;
+    }
+
     return nullptr;
 }
 
@@ -1187,6 +1260,16 @@ static bool transformCanLikelyUseFastPath(const CharType* chars, unsigned length
                 return false;
             i += 7;
             break;
+        case 'r':
+            // rotate.
+            if (toASCIILower(chars[i + 5]) != 'e')
+                return false;
+            i += 6;
+            // rotateZ
+            if (toASCIILower(chars[i + 6]) == 'z')
+                ++i;
+            break;
+
         default:
             // All other things, ex. rotate.
             return false;

@@ -1,5 +1,21 @@
 2017-08-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Add a fast path for rotate() and rotateZ() transform parsing
+        https://bugs.webkit.org/show_bug.cgi?id=175308
+
+        Reviewed by Zalan Bujtas.
+
+        Fast paths only existed for translate-related functions, matrix3d() and scale3d(). Add
+        rotate() and rotateX(), which gives a small boost to one of the MotionMark tests.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseSimpleAngle):
+        (WebCore::parseTransformAngleArgument):
+        (WebCore::parseSimpleTransformValue):
+        (WebCore::transformCanLikelyUseFastPath):
+
+2017-08-07  Simon Fraser  <simon.fraser@apple.com>
+
         Re-order the tests in RenderLayerCompositor::requiresCompositingLayer() for performance
         https://bugs.webkit.org/show_bug.cgi?id=175306
 
