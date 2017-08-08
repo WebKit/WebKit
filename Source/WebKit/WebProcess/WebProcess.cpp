@@ -146,6 +146,11 @@ static const Seconds nonVisibleProcessCleanupDelay { 10_s };
 
 namespace WebKit {
 
+static void primitiveGigacageDisabled(void*)
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
 WebProcess& WebProcess::singleton()
 {
     static WebProcess& process = *new WebProcess;
@@ -197,7 +202,8 @@ WebProcess::WebProcess()
         parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
     });
 
-    Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled();
+    if (Gigacage::shouldBeEnabled())
+        Gigacage::addPrimitiveDisableCallback(primitiveGigacageDisabled, nullptr);
 }
 
 WebProcess::~WebProcess()

@@ -49,12 +49,6 @@ inline bool shouldBeEnabled() { return false; }
 inline void addPrimitiveDisableCallback(void (*)(void*), void*) { }
 inline void removePrimitiveDisableCallback(void (*)(void*), void*) { }
 
-inline void disableDisablingPrimitiveGigacageIfShouldBeEnabled() { }
-
-inline bool isDisablingPrimitiveGigacageDisabled() { return false; }
-inline bool isPrimitiveGigacagePermanentlyEnabled() { return false; }
-inline bool canPrimitiveGigacageBeDisabled() { return true; }
-
 ALWAYS_INLINE const char* name(Kind kind)
 {
     switch (kind) {

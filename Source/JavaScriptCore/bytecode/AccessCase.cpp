@@ -527,8 +527,6 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 jit.loadPtr(
                     CCallHelpers::Address(baseForAccessGPR, JSObject::butterflyOffset()),
                     loadedValueGPR);
-                // FIXME: Do caging!
-                // https://bugs.webkit.org/show_bug.cgi?id=175295
                 storageGPR = loadedValueGPR;
             }
 
@@ -879,8 +877,6 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                     // already had out-of-line property storage).
 
                     jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR3);
-                    // FIXME: Do caging!
-                    // https://bugs.webkit.org/show_bug.cgi?id=175295
 
                     // We have scratchGPR = new storage, scratchGPR3 = old storage,
                     // scratchGPR2 = available
@@ -959,11 +955,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                     JSObject::offsetOfInlineStorage() +
                     offsetInInlineStorage(m_offset) * sizeof(JSValue)));
         } else {
-            if (!allocating) {
+            if (!allocating)
                 jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
-                // FIXME: Do caging!
-                // https://bugs.webkit.org/show_bug.cgi?id=175295
-            }
             jit.storeValue(
                 valueRegs,
                 CCallHelpers::Address(scratchGPR, offsetInButterfly(m_offset) * sizeof(JSValue)));
@@ -999,8 +992,6 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         
     case ArrayLength: {
         jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
-        // FIXME: Do caging!
-        // https://bugs.webkit.org/show_bug.cgi?id=175295
         jit.load32(CCallHelpers::Address(scratchGPR, ArrayStorage::lengthOffset()), scratchGPR);
         state.failAndIgnore.append(
             jit.branch32(CCallHelpers::LessThan, scratchGPR, CCallHelpers::TrustedImm32(0)));

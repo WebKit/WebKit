@@ -63,12 +63,6 @@ BEXPORT void disablePrimitiveGigacage();
 BEXPORT void addPrimitiveDisableCallback(void (*)(void*), void*);
 BEXPORT void removePrimitiveDisableCallback(void (*)(void*), void*);
 
-BEXPORT void disableDisablingPrimitiveGigacageIfShouldBeEnabled();
-
-BEXPORT bool isDisablingPrimitiveGigacageDisabled();
-inline bool isPrimitiveGigacagePermanentlyEnabled() { return isDisablingPrimitiveGigacageDisabled(); }
-inline bool canPrimitiveGigacageBeDisabled() { return !isDisablingPrimitiveGigacageDisabled(); }
-
 BINLINE const char* name(Kind kind)
 {
     switch (kind) {
