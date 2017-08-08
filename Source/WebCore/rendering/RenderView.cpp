@@ -341,7 +341,8 @@ void RenderView::layout()
         m_pageLogicalSize = { };
 
     if (shouldUsePrintingLayout()) {
-        ASSERT(m_pageLogicalSize);
+        if (!m_pageLogicalSize)
+            m_pageLogicalSize = LayoutSize(logicalWidth(), 0);
         m_minPreferredLogicalWidth = m_pageLogicalSize->width();
         m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
     }

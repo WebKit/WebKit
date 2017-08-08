@@ -1,5 +1,29 @@
 2017-08-07  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220333. rdar://problem/33601173
+
+    2017-08-07  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r219121): Airmail 3 prints header part only.
+            https://bugs.webkit.org/show_bug.cgi?id=175258
+            <rdar://problem/33601173>
+
+            Reviewed by Andreas Kling.
+
+            When a WK1 WebViw is printed via AppKit view hierarchy it won't explictly set the page width
+            but uses the existing width. r219121 assumes that all printing code paths set the page width.
+
+            No test, there appears to be no good way to test AppKit printing behaviors without adding complicated
+            new testing infrastructure.
+
+            * rendering/RenderView.cpp:
+            (WebCore::RenderView::layout):
+
+                If we are in printing layout and don't have page width set yet then use the current view width.
+                This matches the behavior prior r219121.
+
+2017-08-07  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220248. rdar://problem/33754446
 
     2017-08-03  Jeremy Jones  <jeremyj@apple.com>
