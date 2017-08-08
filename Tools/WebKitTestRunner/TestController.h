@@ -175,6 +175,7 @@ public:
     void setStatisticsPruneEntriesDownTo(unsigned);
     void statisticsClearInMemoryAndPersistentStore();
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
+    void statisticsClearThroughWebsiteDataRemoval();
     void statisticsResetToConsistentState();
 
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }

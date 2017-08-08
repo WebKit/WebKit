@@ -379,6 +379,8 @@ public:
     void setStatisticsPruneEntriesDownTo(unsigned);
     void statisticsClearInMemoryAndPersistentStore();
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours);
+    void statisticsClearThroughWebsiteDataRemoval(JSValueRef callback);
+    void statisticsCallClearThroughWebsiteDataRemovalCallback();
     void statisticsResetToConsistentState();
 
     // Open panel

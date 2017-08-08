@@ -371,6 +371,16 @@ void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:hours];
 }
 
+void TestController::statisticsClearThroughWebsiteDataRemoval()
+{
+#if WK_API_ENABLED
+    auto types = adoptNS([[NSSet alloc] initWithObjects:_WKWebsiteDataTypeResourceLoadStatistics, nil]);
+    [globalWebViewConfiguration.websiteDataStore removeDataOfTypes:types.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
+        m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
+    }];
+#endif
+}
+
 void TestController::statisticsResetToConsistentState()
 {
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsResetToConsistentState];

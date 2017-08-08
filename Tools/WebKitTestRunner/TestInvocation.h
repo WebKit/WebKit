@@ -71,6 +71,8 @@ public:
 
     void notifyDownloadDone();
 
+    void didClearStatisticsThroughWebsiteDataRemoval();
+
     void didRemoveAllSessionCredentials();
     
 private:

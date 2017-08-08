@@ -2357,6 +2357,10 @@ void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours
 {
 }
 
+void TestController::statisticsClearThroughWebsiteDataRemoval()
+{
+}
+
 void TestController::statisticsResetToConsistentState()
 {
 }

@@ -821,6 +821,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
             m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince, WebResourceLoadStatisticsStore::ShouldGrandfather::No);
         else
             m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince, WebResourceLoadStatisticsStore::ShouldGrandfather::Yes);
+
+        clearResourceLoadStatisticsInWebProcesses();
     }
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
@@ -1099,6 +1101,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(WebResourceLoadStatisticsStore::ShouldGrandfather::No);
         else
             m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(WebResourceLoadStatisticsStore::ShouldGrandfather::Yes);
+
+        clearResourceLoadStatisticsInWebProcesses();
     }
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
@@ -1313,6 +1317,15 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
 
     for (auto& processPool : processPools())
         processPool->setResourceLoadStatisticsEnabled(true);
+}
+
+void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses()
+{
+    if (!resourceLoadStatisticsEnabled())
+        return;
+
+    for (auto& processPool : processPools())
+        processPool->clearResourceLoadStatistics();
 }
 
 StorageProcessCreationParameters WebsiteDataStore::storageProcessParameters()

@@ -1451,6 +1451,11 @@ void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)
     WebCore::Settings::setResourceLoadStatisticsEnabled(enabled);
 }
 
+void WebProcess::clearResourceLoadStatistics()
+{
+    ResourceLoadObserver::shared().clearState();
+}
+
 RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
 {
     struct Transformer final : UserData::Transformer {
