@@ -1,5 +1,33 @@
 2017-08-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GStreamer] Don't use GraphicsContext3D in VideoTextureCoperGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=174774
+
+        Reviewed by Carlos Garcia Campos.
+
+        VideoTextureCoperGStreamer class creates a new GraphicsContext3D internally
+        that's used to render to whichever OpenGL context is current. Such usage
+        doesn't add anything to the user since there's no underlying offscreen-based
+        OpenGL context created, and instead all GraphicsContext3D calls are directly
+        translated to usual OpenGL API calls. We should avoid using GraphicsContext3D
+        in such cases and instead use direct OpenGL API calls.
+
+        This patch achieves that for the VideoTextureCoperGStreamer class. A
+        GraphicsContext3D object is still created because it's needed to construct an
+        instance of the TextureMapperShaderProgram class, but this will be removed as
+        soon as TextureMapperShaderProgram drops the GraphicsContext3D dependence.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp:
+        (WebCore::VideoTextureCopierGStreamer::VideoTextureCopierGStreamer):
+        (WebCore::VideoTextureCopierGStreamer::~VideoTextureCopierGStreamer):
+        (WebCore::VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture):
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.h:
+        (WebCore::VideoTextureCopierGStreamer::resultTexture):
+
+2017-08-08  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Drop GC3D* type usage from TextureMapperPlatformLayer{Buffer,Proxy}
         https://bugs.webkit.org/show_bug.cgi?id=175314
 
