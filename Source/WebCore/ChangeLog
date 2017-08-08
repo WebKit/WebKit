@@ -1,3 +1,13 @@
+2017-08-08  Ms2ger  <Ms2ger@igalia.com>
+
+        Unreviewed. Correct the function name in a debug message.
+        https://bugs.webkit.org/show_bug.cgi?id=175262
+
+        No new tests: debug logs are not tested.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::applicationDidBecomeActive const):
+
 2017-08-08  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix after r220376.

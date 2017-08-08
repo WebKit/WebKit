@@ -307,7 +307,7 @@ void PlatformMediaSessionManager::applicationWillBecomeInactive() const
 
 void PlatformMediaSessionManager::applicationDidBecomeActive() const
 {
-    LOG(Media, "PlatformMediaSessionManager::applicationDidBecomeInactive");
+    LOG(Media, "PlatformMediaSessionManager::applicationDidBecomeActive");
 
     Vector<PlatformMediaSession*> sessions = m_sessions;
     forEachSession([&] (PlatformMediaSession& session, size_t) {
