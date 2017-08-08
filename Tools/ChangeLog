@@ -1,3 +1,23 @@
+2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mac WK2] WebViewImpl should hold a weak pointer to its WKWebView or WKView
+        https://bugs.webkit.org/show_bug.cgi?id=175302
+        <rdar://problem/33762116>
+
+        Reviewed by Tim Horton.
+
+        Adds a new unit test checking that delayed event processing in text input context does not cause unwanted behaviors.
+        See WebKit ChangeLog for more details.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/TestWebKitAPI/mac/AppKitSPI.h: Renamed from Tools/TestWebKitAPI/Tests/TestWebKitAPI/mac/NSTextInputClientSPI.h.
+        * TestWebKitAPI/Tests/mac/WKWebViewMacEditingTests.mm: Renamed from Tools/TestWebKitAPI/Tests/mac/WKWebViewSelectionTests.mm.
+        (-[SlowTextInputContext handleEventByInputMethod:completionHandler:]):
+        (-[SlowTextInputContext handleEvent:completionHandler:]):
+        (-[SlowInputWebView inputContext]):
+        (-[SlowInputWebView _web_superInputContext]):
+        (TEST):
+
 2017-08-08  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Clear web processes' state on history removal

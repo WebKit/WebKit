@@ -27,11 +27,62 @@
 
 #if WK_API_ENABLED && PLATFORM(MAC)
 
-#import "NSTextInputClientSPI.h"
+#import "AppKitSPI.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <wtf/BlockPtr.h>
+#import <wtf/RetainPtr.h>
 
-TEST(WKWebViewSelectionTests, DoubleClickDoesNotSelectTrailingSpace)
+@interface SlowTextInputContext : NSTextInputContext
+@property (nonatomic) BlockPtr<void()> handledInputMethodEventBlock;
+@end
+
+@implementation SlowTextInputContext
+
+- (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler
+{
+    [super handleEventByInputMethod:event completionHandler:^(BOOL handled) {
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            completionHandler(handled);
+            if (_handledInputMethodEventBlock)
+                _handledInputMethodEventBlock();
+        });
+    }];
+}
+
+- (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler
+{
+    [super handleEvent:event completionHandler:^(BOOL handled) {
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            completionHandler(handled);
+        });
+    }];
+}
+
+@end
+
+@interface SlowInputWebView : TestWKWebView {
+    RetainPtr<SlowTextInputContext> _slowInputContext;
+}
+@end
+
+@implementation SlowInputWebView
+
+- (NSTextInputContext *)inputContext
+{
+    return self._web_superInputContext;
+}
+
+- (SlowTextInputContext *)_web_superInputContext
+{
+    if (!_slowInputContext)
+        _slowInputContext = adoptNS([[SlowTextInputContext alloc] initWithClient:(id<NSTextInputClient>)self]);
+    return _slowInputContext.get();
+}
+
+@end
+
+TEST(WKWebViewMacEditingTests, DoubleClickDoesNotSelectTrailingSpace)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView synchronouslyLoadTestPageNamed:@"double-click-does-not-select-trailing-space"];
@@ -47,7 +98,7 @@ TEST(WKWebViewSelectionTests, DoubleClickDoesNotSelectTrailingSpace)
     EXPECT_STREQ("Hello", selectedText.UTF8String);
 }
 
-TEST(WKWebViewSelectionTests, DoNotCrashWhenCallingTextInputClientMethodsWhileDeallocatingView)
+TEST(WKWebViewMacEditingTests, DoNotCrashWhenCallingTextInputClientMethodsWhileDeallocatingView)
 {
     NSString *textContent = @"This test should not cause us to dereference null.";
 
@@ -63,6 +114,25 @@ TEST(WKWebViewSelectionTests, DoNotCrashWhenCallingTextInputClientMethodsWhileDe
     }];
 
     EXPECT_WK_STREQ(textContent, [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(WKWebViewMacEditingTests, DoNotCrashWhenInterpretingKeyEventWhileDeallocatingView)
+{
+    __block bool isDone = false;
+
+    @autoreleasepool {
+        SlowInputWebView *webView = [[[SlowInputWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)] autorelease];
+        [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<body contenteditable>Hello world</body>"]];
+        [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+        [webView removeFromSuperview];
+        [webView typeCharacter:'a'];
+
+        webView._web_superInputContext.handledInputMethodEventBlock = ^() {
+            isDone = true;
+        };
+    }
+
+    TestWebKitAPI::Util::run(&isDone);
 }
 
 #endif // WK_API_ENABLED && PLATFORM(MAC)

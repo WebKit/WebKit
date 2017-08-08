@@ -28,6 +28,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSTextInputClient_Private.h>
+#import <AppKit/NSTextInputContext_Private.h>
 
 #else
 
@@ -35,6 +36,11 @@
 - (void)selectedRangeWithCompletionHandler:(void(^)(NSRange selectedRange))completionHandler;
 - (void)markedRangeWithCompletionHandler:(void(^)(NSRange markedRange))completionHandler;
 - (void)hasMarkedTextWithCompletionHandler:(void(^)(BOOL hasMarkedText))completionHandler;
+@end
+
+@interface NSTextInputContext (WebKitSupport)
+- (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
+- (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
 @end
 
 #endif

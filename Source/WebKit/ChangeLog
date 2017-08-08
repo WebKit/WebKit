@@ -1,3 +1,93 @@
+2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mac WK2] WebViewImpl should hold a weak pointer to its WKWebView or WKView
+        https://bugs.webkit.org/show_bug.cgi?id=175302
+        <rdar://problem/33762116>
+
+        Reviewed by Tim Horton.
+
+        Refactor WebViewImpl's m_view from a raw pointer to a WeakObjCPtr to ensure that it is automatically cleared out
+        when the WKWebView or WKView are destroyed, and also changes several places where we implicitly block capture
+        the WebViewImpl to only capture a WeakPtr to the WebViewImpl. Most of the changes here are boilerplate
+        adjustments for how m_view is now a weak pointer.
+
+        Test: WKWebViewMacEditingTests.DoNotCrashWhenInterpretingKeyEventWhileDeallocatingView.
+
+        * Shared/mac/WeakObjCPtr.h:
+        (WebKit::WeakObjCPtr::operator ValueType * const):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateTouchBar):
+        (WebKit::WebViewImpl::updateMediaTouchBar):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::~WebViewImpl):
+        (WebKit::WebViewImpl::window):
+        (WebKit::WebViewImpl::resignFirstResponder):
+        (WebKit::WebViewImpl::isFocused const):
+        (WebKit::WebViewImpl::renewGState):
+        (WebKit::WebViewImpl::setFrameAndScrollBy):
+        (WebKit::WebViewImpl::updateWindowAndViewFrames):
+        (WebKit::WebViewImpl::updateLayer):
+        (WebKit::WebViewImpl::printOperationWithPrintInfo):
+        (WebKit::WebViewImpl::updateContentInsetsIfAutomatic):
+        (WebKit::WebViewImpl::setLayoutMode):
+        (WebKit::WebViewImpl::intrinsicDeviceScaleFactor const):
+        (WebKit::WebViewImpl::windowDidBecomeKey):
+        (WebKit::WebViewImpl::windowDidResignKey):
+        (WebKit::WebViewImpl::windowDidChangeScreen):
+        (WebKit::WebViewImpl::mightBeginDragWhileInactive):
+        (WebKit::WebViewImpl::acceptsFirstMouse):
+        (WebKit::WebViewImpl::shouldDelayWindowOrderingForEvent):
+        (WebKit::WebViewImpl::windowResizeMouseLocationIsInVisibleScrollerThumb):
+        (WebKit::WebViewImpl::viewWillMoveToWindow):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        (WebKit::WebViewImpl::viewDidChangeBackingProperties):
+        (WebKit::WebViewImpl::hitTest):
+        (WebKit::WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent):
+        (WebKit::WebViewImpl::colorSpace):
+        (WebKit::WebViewImpl::prepareForMoveToWindow):
+        (WebKit::WebViewImpl::notifyInputContextAboutDiscardedComposition):
+        (WebKit::WebViewImpl::pressureChangeWithEvent):
+        (WebKit::WebViewImpl::fullScreenWindowController):
+        (WebKit::WebViewImpl::executeSavedCommandBySelector):
+        (WebKit::WebViewImpl::validRequestorForSendAndReturnTypes):
+        (WebKit::WebViewImpl::handleRequestedCandidates):
+        (WebKit::WebViewImpl::preferencesDidChange):
+        (WebKit::WebViewImpl::setTextIndicator):
+        (WebKit::WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly):
+        (WebKit::WebViewImpl::accessibilityRegisterUIProcessTokens):
+        (WebKit::WebViewImpl::sendToolTipMouseExited):
+        (WebKit::WebViewImpl::sendToolTipMouseEntered):
+        (WebKit::WebViewImpl::toolTipChanged):
+        (WebKit::WebViewImpl::setAcceleratedCompositingRootLayer):
+        (WebKit::WebViewImpl::updateThumbnailViewLayer):
+        (WebKit::WebViewImpl::setInspectorAttachmentView):
+        (WebKit::WebViewImpl::inspectorAttachmentView):
+        (WebKit::WebViewImpl::draggedImage):
+        (WebKit::WebViewImpl::draggingEntered):
+        (WebKit::WebViewImpl::draggingUpdated):
+        (WebKit::WebViewImpl::draggingExited):
+        (WebKit::WebViewImpl::performDragOperation):
+        (WebKit::WebViewImpl::hitTestForDragTypes):
+        (WebKit::WebViewImpl::startWindowDrag):
+        (WebKit::WebViewImpl::dragImageForView):
+        (WebKit::WebViewImpl::setPromisedDataForImage):
+        (WebKit::WebViewImpl::setPromisedDataForAttachment):
+        (WebKit::WebViewImpl::takeViewSnapshot):
+        (WebKit::WebViewImpl::scrollWheel):
+        (WebKit::WebViewImpl::magnifyWithEvent):
+        (WebKit::WebViewImpl::rotateWithEvent):
+        (WebKit::WebViewImpl::doneWithKeyEvent):
+        (WebKit::WebViewImpl::interpretKeyEvent):
+        (WebKit::WebViewImpl::firstRectForCharacterRange):
+        (WebKit::WebViewImpl::characterIndexForPoint):
+        (WebKit::WebViewImpl::performKeyEquivalent):
+        (WebKit::WebViewImpl::keyUp):
+        (WebKit::WebViewImpl::keyDown):
+        (WebKit::WebViewImpl::mouseMoved):
+        (WebKit::WebViewImpl::windowIsFrontWindowUnderMouse):
+        (WebKit::WebViewImpl::userInterfaceLayoutDirection):
+
 2017-08-08  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT should do caging

@@ -95,6 +95,8 @@ public:
         return static_cast<ValueType *>(objc_loadWeak(const_cast<id*>(&m_weakReference)));
     }
 
+    explicit operator ValueType *() const { return getAutoreleased(); }
+
 private:
     id m_weakReference;
 };
