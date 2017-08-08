@@ -102,8 +102,6 @@
 #define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT 1
 #endif
 
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-
 #endif /* COMPILER(GCC) */
 
 /* COMPILER(MINGW) - MinGW GCC */

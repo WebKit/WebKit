@@ -272,7 +272,6 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
     # for the plugin process.
     add_library(WebCorePlatformGTK2 ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOURCES})
     add_dependencies(WebCorePlatformGTK2 WebCore)
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebCorePlatformGTK2)
     set_property(TARGET WebCorePlatformGTK2
         APPEND
         PROPERTY COMPILE_DEFINITIONS GTK_API_VERSION_2=1
@@ -303,7 +302,6 @@ endif ()
 
 add_library(WebCorePlatformGTK ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOURCES})
 add_dependencies(WebCorePlatformGTK WebCore)
-WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebCorePlatformGTK)
 target_include_directories(WebCorePlatformGTK PRIVATE
     ${WebCore_INCLUDE_DIRECTORIES}
 )

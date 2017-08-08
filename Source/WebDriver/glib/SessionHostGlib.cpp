@@ -62,7 +62,7 @@ static const char introspectionXML[] =
 
 const GDBusInterfaceVTable SessionHost::s_interfaceVTable = {
     // method_call
-    [](GDBusConnection* connection, const gchar* sender, const gchar* objectPath, const gchar* interfaceName, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
+    [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
         auto* sessionHost = static_cast<SessionHost*>(userData);
         if (!g_strcmp0(methodName, "SetTargetList")) {
             guint64 connectionID;
@@ -94,6 +94,8 @@ const GDBusInterfaceVTable SessionHost::s_interfaceVTable = {
     nullptr,
     // set_property
     nullptr,
+    // padding
+    nullptr
 };
 
 void SessionHost::connectToBrowser(Function<void (Succeeded)>&& completionHandler)

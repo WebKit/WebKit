@@ -112,7 +112,7 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
         arguments[0] = toJS(jsContext, WTF::getPtr(WTR::AccessibilityUIElement::create(accessible)));
         arguments[1] = notificationNameArgument;
         size_t numOfExtraArgs = extraArgs.size();
-        for (int i = 0; i < numOfExtraArgs; i++)
+        for (size_t i = 0; i < numOfExtraArgs; i++)
             arguments[i + 2] = extraArgs[i];
         if (elementNotificationHandler != notificationHandlers.end()) {
             // Listener for one element. As arguments, it gets the notification name
@@ -256,7 +256,7 @@ bool AccessibilityNotificationHandler::disconnectAccessibilityCallbacks()
         return false;
 
     // AtkObject signals.
-    for (int i = 0; i < listenerIds.size(); i++) {
+    for (size_t i = 0; i < listenerIds.size(); i++) {
         ASSERT(listenerIds[i]);
         atk_remove_global_event_listener(listenerIds[i]);
     }

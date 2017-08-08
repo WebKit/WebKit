@@ -1066,6 +1066,10 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
     add_dependencies(WebKitPluginProcess2 WebKit2)
 
     install(TARGETS WebKitPluginProcess2 DESTINATION "${LIBEXEC_INSTALL_DIR}")
+
+    if (COMPILER_IS_GCC_OR_CLANG)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitPluginProcess2 -Wno-unused-parameter)
+    endif ()
 endif () # ENABLE_PLUGIN_PROCESS_GTK2
 
 # GTK3 PluginProcess
@@ -1089,6 +1093,10 @@ include_directories(
 add_library(webkit2gtkinjectedbundle MODULE "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/glib/WebKitInjectedBundleMain.cpp")
 add_webkit2_prefix_header(webkit2gtkinjectedbundle)
 target_link_libraries(webkit2gtkinjectedbundle WebKit2)
+
+if (COMPILER_IS_GCC_OR_CLANG)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(webkit2gtkinjectedbundle -Wno-unused-parameter)
+endif ()
 
 # Add ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} to LD_LIBRARY_PATH or DYLD_LIBRARY_PATH
 if (APPLE)

@@ -505,7 +505,7 @@ void EventSenderProxy::addTouchPoint(int x, int y)
 
 void EventSenderProxy::updateTouchPoint(int index, int x, int y)
 {
-    ASSERT(index >= 0 && index < m_touchEvents.size());
+    ASSERT(index >= 0 && static_cast<size_t>(index) < m_touchEvents.size());
 
     const auto& event = m_touchEvents[index];
     ASSERT(event);
@@ -551,7 +551,7 @@ void EventSenderProxy::clearTouchPoints()
 
 void EventSenderProxy::releaseTouchPoint(int index)
 {
-    ASSERT(index >= 0 && index < m_touchEvents.size());
+    ASSERT(index >= 0 && static_cast<size_t>(index) < m_touchEvents.size());
 
     const auto& event = m_touchEvents[index];
     event->type = GDK_TOUCH_END;

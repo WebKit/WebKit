@@ -55,7 +55,5 @@ endif ()
 add_library(TestNetscapePlugIn SHARED ${WebKitTestNetscapePlugIn_SOURCES})
 target_link_libraries(TestNetscapePlugIn ${WebKitTestNetscapePlugIn_LIBRARIES})
 set_target_properties(TestNetscapePlugIn PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins)
-WEBKIT_SET_EXTRA_COMPILER_FLAGS(TestNetscapePlugIn)
 
-# Suppress unused parameter warnings for sources in WebKit2.
-WEBKIT_ADD_TARGET_PROPERTIES(TestNetscapePlugIn COMPILE_FLAGS "-Wno-unused-parameter")
+WEBKIT_ADD_TARGET_CXX_FLAGS(TestNetscapePlugIn -Wno-unused-parameter)

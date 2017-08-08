@@ -4020,7 +4020,7 @@ endif ()
 # See https://bugs.webkit.org/show_bug.cgi?id=146440
 string(TOLOWER ${CMAKE_HOST_SYSTEM_PROCESSOR} LOWERCASE_CMAKE_HOST_SYSTEM_PROCESSOR)
 if (CMAKE_COMPILER_IS_GNUCXX AND "${LOWERCASE_CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(i[3-6]86|x86)$")
-    WEBKIT_ADD_TARGET_PROPERTIES(WebCore COMPILE_FLAGS "-fno-tree-sra")
+    WEBKIT_ADD_TARGET_CXX_FLAGS(WebCore -fno-tree-sra)
 endif ()
 
 if (MSVC)
@@ -4042,11 +4042,6 @@ endif ()
 if (ENABLE_GRAPHICS_CONTEXT_3D AND NOT WIN32)
     add_library(ANGLESupport STATIC ${ANGLESupport_SOURCES})
 
-    # Suppress null conversion warnings for sources in Source/ThirdParty/ANGLE
-    if (COMPILER_IS_CLANG)
-        WEBKIT_ADD_TARGET_PROPERTIES(ANGLESupport COMPILE_FLAGS "-Wno-null-conversion")
-    endif ()
-
     # Enable the ESSL and GLSL translators.
     set_property(TARGET ANGLESupport
         PROPERTY COMPILE_DEFINITIONS
@@ -4062,7 +4057,14 @@ if (ENABLE_GRAPHICS_CONTEXT_3D AND NOT WIN32)
         "${THIRDPARTY_DIR}/ANGLE/src/common/third_party/numerics"
     )
     list(APPEND WebCore_LIBRARIES ANGLESupport)
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(ANGLESupport IGNORECXX_WARNINGS)
+
+    if (COMPILER_IS_GCC_OR_CLANG)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(ANGLESupport -Wno-implicit-fallthrough
+                                                 -Wno-null-conversion
+                                                 -Wno-suggest-attribute=format
+                                                 -Wno-unused-function
+                                                 -Wno-unused-parameter)
+    endif ()
 endif ()
 
 target_link_libraries(WebCore ${WebCore_LIBRARIES})

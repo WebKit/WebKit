@@ -467,6 +467,8 @@ void TestRunner::setUseDashboardCompatibilityMode(bool enabled)
 #if ENABLE(DASHBOARD_SUPPORT)
     auto& injectedBundle = InjectedBundle::singleton();
     WKBundleSetUseDashboardCompatibilityMode(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
+#else
+    UNUSED_PARAM(enabled);
 #endif
 }
     

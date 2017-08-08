@@ -156,3 +156,13 @@ list(APPEND TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/glib/GUniquePtr.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/glib/WorkQueueGLib.cpp
 )
+
+if (COMPILER_IS_GCC_OR_CLANG)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit2 -Wno-sign-compare
+                                            -Wno-undef
+                                            -Wno-unused-parameter)
+
+    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebCore -Wno-sign-compare
+                                            -Wno-undef
+                                            -Wno-unused-parameter)
+endif ()

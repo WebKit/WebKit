@@ -1134,6 +1134,10 @@ static bool globalContextNameTest()
     return result;
 }
 
+#if COMPILER(GCC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
 static void checkConstnessInJSObjectNames()
 {
     JSStaticFunction fun;
@@ -1141,6 +1145,9 @@ static void checkConstnessInJSObjectNames()
     JSStaticValue val;
     val.name = "something";
 }
+#if COMPILER(GCC)
+#pragma GCC diagnostic pop
+#endif
 
 #ifdef __cplusplus
 extern "C" {

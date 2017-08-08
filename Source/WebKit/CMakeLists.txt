@@ -880,11 +880,6 @@ if (COMPILER_IS_GCC_OR_CLANG AND NOT APPLE)
     target_link_libraries(WebKit2 -Wl,--start-group WebCore WebCoreDerivedSources -Wl,--end-group)
 endif ()
 
-# Suppress unused parameter warnings for sources in WebKit2.
-if (COMPILER_IS_GCC_OR_CLANG)
-    WEBKIT_ADD_TARGET_PROPERTIES(WebKit2 COMPILE_FLAGS "-Wno-unused-parameter")
-endif ()
-
 if (WebKit2_VERSION_SCRIPT)
     WEBKIT_ADD_TARGET_PROPERTIES(WebKit2 LINK_FLAGS "${WebKit2_VERSION_SCRIPT}")
 endif ()
@@ -911,9 +906,20 @@ if (NOT "${PORT}" STREQUAL "Mac")
     target_link_libraries(StorageProcess ${StorageProcess_LIBRARIES})
     install(TARGETS StorageProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
 
+    if (COMPILER_IS_GCC_OR_CLANG)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(StorageProcess -Wno-unused-parameter)
+    endif ()
+
     if (WebKit2_StorageProcess_OUTPUT_NAME)
         set_target_properties(StorageProcess PROPERTIES OUTPUT_NAME ${WebKit2_StorageProcess_OUTPUT_NAME})
     endif ()
+endif ()
+
+# Suppress unused parameter warnings for sources in WebKit2.
+if (COMPILER_IS_GCC_OR_CLANG)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit2 -Wno-unused-parameter)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(WebProcess -Wno-unused-parameter)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(NetworkProcess -Wno-unused-parameter)
 endif ()
 
 if (ENABLE_PLUGIN_PROCESS AND NOT "${PORT}" STREQUAL "Mac")
@@ -922,6 +928,10 @@ if (ENABLE_PLUGIN_PROCESS AND NOT "${PORT}" STREQUAL "Mac")
     add_webkit2_prefix_header(PluginProcess)
     target_link_libraries(PluginProcess ${PluginProcess_LIBRARIES})
     install(TARGETS PluginProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
+
+    if (COMPILER_IS_GCC_OR_CLANG)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(PluginProcess -Wno-unused-parameter)
+    endif ()
 
     if (WebKit2_PluginProcess_OUTPUT_NAME)
       set_target_properties(PluginProcess PROPERTIES OUTPUT_NAME ${WebKit2_PluginProcess_OUTPUT_NAME})

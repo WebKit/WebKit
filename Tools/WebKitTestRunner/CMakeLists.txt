@@ -116,6 +116,11 @@ add_executable(WebKitTestRunner ${WebKitTestRunner_SOURCES})
 target_link_libraries(WebKitTestRunner ${WebKitTestRunner_LIBRARIES})
 add_dependencies(WebKitTestRunner WebKitTestRunnerBindings)
 
+if (COMPILER_IS_GCC_OR_CLANG)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(TestRunnerInjectedBundle -Wno-unused-parameter)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitTestRunner -Wno-unused-parameter)
+endif ()
+
 if (NOT APPLE)
     add_dependencies(WebKit2 ${ForwardingHeadersForWebKitTestRunner_NAME})
 endif ()

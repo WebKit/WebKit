@@ -290,7 +290,7 @@ static void emitFormControlsAssociated(GDBusConnection* connection, const char* 
 static void formControlsAssociatedCallback(WebKitWebPage* webPage, GPtrArray* formElements, WebKitWebExtension* extension)
 {
     GString* formIdsBuilder = g_string_new(nullptr);
-    for (int i = 0; i < formElements->len; ++i) {
+    for (guint i = 0; i < formElements->len; ++i) {
         g_assert(WEBKIT_DOM_IS_ELEMENT(g_ptr_array_index(formElements, i)));
         auto domElement = WEBKIT_DOM_ELEMENT(g_ptr_array_index(formElements, i));
         GUniquePtr<char> elementID(webkit_dom_element_get_id(domElement));

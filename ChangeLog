@@ -1,3 +1,45 @@
+2017-08-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Properly test if compiler supports compiler flags
+        https://bugs.webkit.org/show_bug.cgi?id=174490
+
+        Reviewed by Konstantin Tokarev.
+
+        This turned out to be a massive pain. I didn't want to merely check options before using
+        them: I also wanted to organize the code to avoid setting similar flags in different places.
+        Right now we set a bunch of global flags in OptionsCommon.cmake, and a bunch more flags in
+        WEBKIT_SET_EXTRA_COMPILER_FLAGS on a per-target basis.
+
+        Setting flags per-target seems better in general, e.g. because it makes it very easy to
+        disable warnings for particular ThirdParty targets. But it turns out that all the flags set
+        on a per-target basis get passed to both the C compiler and the C++ compiler, so it's
+        impossible to pass C++-only flags there. That's terrible. It's possible to make the flags
+        language-conditional using generator expressions, but that doesn't work for the Visual
+        Studio backend, so we would have to drop support for that (not going to happen). The CMake
+        documentation suggests that C and C++ files ought to be built in separate targets to avoid
+        this. It's a mess, basically.
+
+        So I've wound up removing WEBKIT_SET_EXTRA_COMPILER_FLAGS and adding most of those flags to
+        CMAKE_C_FLAGS and CMAKE_CXX_FLAGS instead. Really the only disadvantage of this is we now
+        have to suppress individual warnings when building ANGLESupport in WebCore. That's not the
+        end of the world. The only remaining useful feature of WEBKIT_SET_EXTRA_COMPILER_FLAGS was
+        to add -fPIC to static library targets, but turns out CMake does that for us if we just set
+        the variable CMAKE_POSITION_INDEPENDENT_CODE, so we can get rid of it completely.
+
+        Of course there are also macros for setting target-specific compiler flags, which we
+        frequently need in order to suppress specific warnings, particularly warnings coming from
+        third-party libraries like ANGLE and gtest. But remember the footgun: these macros will test
+        the flag against only one compiler, but must work with both C and C++ compilers unless the
+        build target exclusively contains targets built with just one of those compilers. Yuck.
+
+        * CMakeLists.txt:
+        * Source/CMakeLists.txt:
+        * Source/PlatformGTK.cmake:
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/WebKitCommon.cmake:
+        * Source/cmake/WebKitCompilerFlags.cmake: Added.
+        * Source/cmake/WebKitMacros.cmake:
+
 2017-08-07  Brian Burg  <bburg@apple.com>
 
         Remove CANVAS_PATH compilation guard

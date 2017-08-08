@@ -43,29 +43,3 @@ if (ENABLE_WEBDRIVER)
 endif ()
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
-
-# -----------------------------------------------------------------------------
-# Set compiler flags for all targets
-# -----------------------------------------------------------------------------
-if (NOT USE_SYSTEM_MALLOC)
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(bmalloc ${ADDITIONAL_COMPILER_FLAGS})
-endif ()
-WEBKIT_SET_EXTRA_COMPILER_FLAGS(WTF ${ADDITIONAL_COMPILER_FLAGS})
-WEBKIT_SET_EXTRA_COMPILER_FLAGS(JavaScriptCore ${ADDITIONAL_COMPILER_FLAGS})
-
-if (ENABLE_WEBCORE)
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(PAL ${ADDITIONAL_COMPILER_FLAGS})
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebCoreTestSupport ${ADDITIONAL_COMPILER_FLAGS})
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebCore ${ADDITIONAL_COMPILER_FLAGS})
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebCoreDerivedSources ${ADDITIONAL_COMPILER_FLAGS})
-endif ()
-
-if (ENABLE_WEBKIT_LEGACY)
-    # FIXME: Rename this target to WebKitLegacy.
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebKit ${ADDITIONAL_COMPILER_FLAGS})
-endif ()
-
-if (ENABLE_WEBKIT)
-    # FIXME: Rename this target to WebKit.
-    WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebKit2 ${ADDITIONAL_COMPILER_FLAGS})
-endif ()

@@ -1415,7 +1415,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
     StringBuilder builder;
     builder.append("AXHelp: ");
 
-    for (int targetCount = 0; targetCount < targetList->len; targetCount++) {
+    for (guint targetCount = 0; targetCount < targetList->len; targetCount++) {
         if (AtkObject* target = static_cast<AtkObject*>(g_ptr_array_index(targetList, targetCount))) {
             GUniquePtr<gchar> text(atk_text_get_text(ATK_TEXT(target), 0, -1));
             if (targetCount)
@@ -1756,7 +1756,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsign
     AtkAttributeSet* attributeSet;
     AtkText* text = ATK_TEXT(m_element.get());
     gint start = 0, end = 0;
-    for (int i = location; i < location + length; i = end) {
+    for (unsigned i = location; i < location + length; i = end) {
         AtkAttributeSet* attributeSet = atk_text_get_run_attributes(text, i, &start, &end);
         GUniquePtr<gchar> substring(replaceCharactersForResults(atk_text_get_text(text, start, end)));
         builder.append(String::format("\n\tRange attributes for '%s':\n\t\t", substring.get()));

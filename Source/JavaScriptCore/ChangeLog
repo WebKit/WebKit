@@ -1,3 +1,16 @@
+2017-08-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Properly test if compiler supports compiler flags
+        https://bugs.webkit.org/show_bug.cgi?id=174490
+
+        Reviewed by Konstantin Tokarev.
+
+        * API/tests/PingPongStackOverflowTest.cpp:
+        (testPingPongStackOverflow):
+        * API/tests/testapi.c:
+        * b3/testb3.cpp:
+        (JSC::B3::testPatchpointLotsOfLateAnys):
+
 2017-08-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [Linux] Clear WasmMemory with madvice instead of memset

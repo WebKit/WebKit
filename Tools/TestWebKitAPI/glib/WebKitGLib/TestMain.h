@@ -56,15 +56,13 @@
 #define MAKE_GLIB_TEST_FIXTURE_WITH_SETUP_TEARDOWN(ClassName, setup, teardown) \
     static void setUp(ClassName* fixture, gconstpointer data) \
     { \
-        if (setup) \
-            setup(); \
+        setup(); \
         new (fixture) ClassName; \
     } \
     static void tearDown(ClassName* fixture, gconstpointer data) \
     { \
         fixture->~ClassName(); \
-        if (teardown) \
-            teardown(); \
+        teardown(); \
     } \
     static void add(const char* suiteName, const char* testName, void (*testFunc)(ClassName*, const void*)) \
     { \
@@ -173,6 +171,7 @@ public:
             return resourcesDir.get();
         }
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     void addLogFatalFlag(unsigned flag)

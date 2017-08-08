@@ -151,6 +151,13 @@ if (ENABLE_WEBKIT)
 
     target_link_libraries(TestWebKitAPIInjectedBundle ${TestWebKitAPI_LIBRARIES})
     add_dependencies(TestWebKitAPIInjectedBundle WTF ${ForwardingHeadersForTestWebKitAPI_NAME})
+
+    if (COMPILER_IS_GCC_OR_CLANG)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIInjectedBundle -Wno-dangling-else
+                                                                -Wno-sign-compare
+                                                                -Wno-undef
+                                                                -Wno-unused-parameter)
+    endif ()
 endif ()
 
 if (WIN32)
@@ -186,6 +193,13 @@ set_target_properties(TestWTF PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF}
 )
 
+if (COMPILER_IS_GCC_OR_CLANG)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWTF -Wno-dangling-else
+                                        -Wno-sign-compare
+                                        -Wno-undef
+                                        -Wno-unused-parameter)
+endif ()
+
 if (ENABLE_WEBKIT)
     add_library(TestWebKitAPIBase
         ${test_main_SOURCES}
@@ -198,4 +212,10 @@ if (ENABLE_WEBKIT)
     target_link_libraries(TestWebKitAPIBase JavaScriptCore WTF WebKit2 gtest)
 
     add_dependencies(TestWebKitAPIBase WebKit2 ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
+
+    if (COMPILER_IS_GCC_OR_CLANG)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIBase -Wno-sign-compare
+                                                      -Wno-undef
+                                                      -Wno-unused-parameter)
+    endif ()
 endif ()

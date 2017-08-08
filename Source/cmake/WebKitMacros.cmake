@@ -176,46 +176,6 @@ macro(WEBKIT_DEBUG_DUMP_VARIABLES)
     endforeach ()
 endmacro()
 
-# Sets extra compile flags for a target, depending on the compiler being used.
-# Currently, only GCC is supported.
-macro(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
-    set(options ENABLE_WERROR IGNORECXX_WARNINGS)
-    CMAKE_PARSE_ARGUMENTS("OPTION" "${options}" "" "" ${ARGN})
-    if (COMPILER_IS_GCC_OR_CLANG)
-        get_target_property(OLD_COMPILE_FLAGS ${_target} COMPILE_FLAGS)
-        if (${OLD_COMPILE_FLAGS} STREQUAL "OLD_COMPILE_FLAGS-NOTFOUND")
-            set(OLD_COMPILE_FLAGS "")
-        endif ()
-
-        if (NOT WIN32)
-            get_target_property(TARGET_TYPE ${_target} TYPE)
-            if (${TARGET_TYPE} STREQUAL "STATIC_LIBRARY") # -fPIC is automatically added to shared libraries
-                set(OLD_COMPILE_FLAGS "-fPIC ${OLD_COMPILE_FLAGS}")
-            endif ()
-        endif ()
-
-        # Suppress -Wparentheses-equality warning of Clang
-        if (COMPILER_IS_CLANG)
-            set(OLD_COMPILE_FLAGS "-Wno-parentheses-equality ${OLD_COMPILE_FLAGS}")
-        endif ()
-
-        # Enable warnings by default
-        if (NOT ${OPTION_IGNORECXX_WARNINGS})
-            set(OLD_COMPILE_FLAGS "-Wall -Wextra -Wcast-align -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wundef -Wwrite-strings ${OLD_COMPILE_FLAGS}")
-        endif ()
-
-        # Enable errors on warning
-        if (OPTION_ENABLE_WERROR)
-            set(OLD_COMPILE_FLAGS "-Werror ${OLD_COMPILE_FLAGS}")
-        endif ()
-
-        set_target_properties(${_target} PROPERTIES
-            COMPILE_FLAGS "${OLD_COMPILE_FLAGS}")
-
-        unset(OLD_COMPILE_FLAGS)
-    endif ()
-endmacro()
-
 # Append the given flag to the target property.
 # Builds on top of get_target_property() and set_target_properties()
 macro(WEBKIT_ADD_TARGET_PROPERTIES _target _property _flags)

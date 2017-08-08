@@ -35,6 +35,9 @@ endif ()
 include_directories(${GTEST_INCLUDE_DIRECTORIES})
 add_definitions(-DGTEST_HAS_RTTI=0)
 
+WEBKIT_ADD_TARGET_CXX_FLAGS(gtest -Wno-undef
+                                  -Wno-suggest-attribute=format)
+
 # FIXME: This works around compatibility problems in the old version of the third-pary
 # googletest source code checkout. It should be removed once we upgrade to a newer version.
 if (COMPILER_IS_CLANG)

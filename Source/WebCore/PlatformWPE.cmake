@@ -193,7 +193,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 
 add_library(WebCorePlatformWPE ${WebCore_LIBRARY_TYPE} ${WebCorePlatformWPE_SOURCES})
 add_dependencies(WebCorePlatformWPE WebCore)
-WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebCorePlatformWPE)
 target_include_directories(WebCorePlatformWPE PRIVATE
     ${WebCore_INCLUDE_DIRECTORIES}
 )

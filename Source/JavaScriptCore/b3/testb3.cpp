@@ -8481,7 +8481,7 @@ void testPatchpointLotsOfLateAnys()
         });
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);
 
-    CHECK(compileAndRun<int>(proc) == (things.size() * (things.size() - 1)) / 2);
+    CHECK(static_cast<size_t>(compileAndRun<int>(proc)) == (things.size() * (things.size() - 1)) / 2);
 }
 
 void testPatchpointAnyImm(ValueRep rep)

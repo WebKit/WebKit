@@ -53,7 +53,7 @@ static void printUsageStatement(const char* programName)
 int WebDriverService::run(int argc, char** argv)
 {
     String portString;
-    for (unsigned i = 1 ; i < argc; ++i) {
+    for (int i = 1 ; i < argc; ++i) {
         const char* arg = argv[i];
         if (!strcmp(arg, "-h") || !strcmp(arg, "--help")) {
             printUsageStatement(argv[0]);

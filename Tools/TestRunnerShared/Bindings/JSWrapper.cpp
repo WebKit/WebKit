@@ -61,7 +61,7 @@ static JSWrappable* unwrapObject(JSObjectRef object)
     return wrappable;
 }
 
-void JSWrapper::initialize(JSContextRef ctx, JSObjectRef object)
+void JSWrapper::initialize(JSContextRef, JSObjectRef object)
 {
     JSWrappable* wrappable = unwrapObject(object);
     if (!wrappable)

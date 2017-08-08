@@ -23,7 +23,6 @@
 #include "WebViewTest.h"
 #include <wtf/glib/GRefPtr.h>
 
-static const char* webExtensionsUserData = "Web Extensions user data";
 static WebKitTestBus* bus;
 static GUniquePtr<char> scriptDialogResult;
 

@@ -19,8 +19,8 @@ set(XDGMIME_SOURCES
 include_directories("${XDGMIME_INCLUDE_DIRECTORIES}")
 add_definitions(-DXDG_PREFIX=_wk_xdg)
 add_library(xdgmime STATIC ${XDGMIME_SOURCES})
-WEBKIT_SET_EXTRA_COMPILER_FLAGS(xdgmime)
 
 if (COMPILER_IS_GCC_OR_CLANG)
-    WEBKIT_ADD_TARGET_PROPERTIES(xdgmime COMPILE_FLAGS "-Wno-sign-compare -Wno-unused-parameter")
+    WEBKIT_ADD_TARGET_C_FLAGS(xdgmime -Wno-sign-compare
+                                      -Wno-unused-parameter)
 endif ()
