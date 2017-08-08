@@ -1,3 +1,11 @@
+2017-08-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix Ubuntu LTS build
+        https://bugs.webkit.org/show_bug.cgi?id=174490
+
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        * inspector/remote/glib/RemoteInspectorServer.cpp:
+
 2017-08-08  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT should do caging

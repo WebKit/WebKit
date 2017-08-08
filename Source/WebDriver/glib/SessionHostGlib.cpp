@@ -95,7 +95,7 @@ const GDBusInterfaceVTable SessionHost::s_interfaceVTable = {
     // set_property
     nullptr,
     // padding
-    nullptr
+    { 0 }
 };
 
 void SessionHost::connectToBrowser(Function<void (Succeeded)>&& completionHandler)

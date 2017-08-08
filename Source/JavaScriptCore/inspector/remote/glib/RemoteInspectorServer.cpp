@@ -135,7 +135,7 @@ const GDBusInterfaceVTable RemoteInspectorServer::s_interfaceVTable = {
     // set_property
     nullptr,
     // padding
-    nullptr
+    { 0 }
 };
 
 RemoteInspectorServer& RemoteInspectorServer::singleton()

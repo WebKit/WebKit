@@ -1,3 +1,10 @@
+2017-08-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix Ubuntu LTS build
+        https://bugs.webkit.org/show_bug.cgi?id=174490
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+
 2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mac WK2] WebViewImpl should hold a weak pointer to its WKWebView or WKView

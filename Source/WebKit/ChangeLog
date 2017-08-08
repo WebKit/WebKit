@@ -1,3 +1,11 @@
+2017-08-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix Ubuntu LTS build
+        https://bugs.webkit.org/show_bug.cgi?id=174490
+
+        * UIProcess/glib/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::RemoteInspectorClient):
+
 2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the Mac debug build after r220418.

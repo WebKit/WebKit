@@ -149,7 +149,7 @@ const GDBusInterfaceVTable RemoteInspectorClient::s_interfaceVTable = {
     // set_property
     nullptr,
     // padding
-    nullptr
+    { 0 }
 };
 
 RemoteInspectorClient::RemoteInspectorClient(const char* address, unsigned port, RemoteInspectorObserver& observer)

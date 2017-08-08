@@ -151,7 +151,7 @@ const GDBusInterfaceVTable RemoteInspector::s_interfaceVTable = {
     // set_property
     nullptr,
     // padding
-    nullptr
+    { 0 }
 };
 
 void RemoteInspector::setupConnection(GRefPtr<GDBusConnection>&& connection)
