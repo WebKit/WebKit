@@ -255,6 +255,21 @@ Memory::Memory(void* memory, PageCount initial, PageCount maximum, size_t mapped
     dataLogLnIf(verbose, "Memory::Memory allocating ", *this);
 }
 
+static void commitZeroPages(void* startAddress, size_t sizeInBytes)
+{
+    bool writable = true;
+    bool executable = false;
+#if OS(LINUX)
+    // In Linux, MADV_DONTNEED clears backing pages with zero. Be Careful that MADV_DONTNEED shows different semantics in different OSes.
+    // For example, FreeBSD does not clear backing pages immediately.
+    while (madvise(startAddress, sizeInBytes, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
+    OSAllocator::commit(startAddress, sizeInBytes, writable, executable);
+#else
+    OSAllocator::commit(startAddress, sizeInBytes, writable, executable);
+    memset(startAddress, 0, sizeInBytes);
+#endif
+}
+
 RefPtr<Memory> Memory::create(VM& vm, PageCount initial, PageCount maximum)
 {
     ASSERT(initial);
@@ -293,16 +308,14 @@ RefPtr<Memory> Memory::create(VM& vm, PageCount initial, PageCount maximum)
     }
     
     if (fastMemory) {
-        bool writable = true;
-        bool executable = false;
-        OSAllocator::commit(fastMemory, initialBytes, writable, executable);
         
         if (mprotect(fastMemory + initialBytes, Memory::fastMappedBytes() - initialBytes, PROT_NONE)) {
             dataLog("mprotect failed: ", strerror(errno), "\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
+
+        commitZeroPages(fastMemory, initialBytes);
         
-        memset(fastMemory, 0, initialBytes);
         return adoptRef(new Memory(fastMemory, initial, maximum, Memory::fastMappedBytes(), MemoryMode::Signaling));
     }
     
@@ -400,7 +413,7 @@ bool Memory::grow(VM& vm, PageCount newSize)
             dataLogLnIf(verbose, "Memory::grow in-place failed ", *this);
             return false;
         }
-        memset(startAddress, 0, extraBytes);
+        commitZeroPages(startAddress, extraBytes);
         m_size = desiredSize;
         return true;
     } }

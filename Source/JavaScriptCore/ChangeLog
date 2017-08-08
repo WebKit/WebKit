@@ -1,3 +1,22 @@
+2017-08-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Linux] Clear WasmMemory with madvice instead of memset
+        https://bugs.webkit.org/show_bug.cgi?id=175150
+
+        Reviewed by Filip Pizlo.
+
+        In Linux, zeroing pages with memset populates backing store.
+        Instead, we should use madvise with MADV_DONTNEED. It discards
+        pages. And if you access these pages, on-demand-zero-pages will
+        be shown.
+
+        We also commit grown pages in all OSes.
+
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::commitZeroPages):
+        (JSC::Wasm::Memory::create):
+        (JSC::Wasm::Memory::grow):
+
 2017-08-07  Robin Morisset  <rmorisset@apple.com>
 
         GetOwnProperty of TypedArray indexed fields is wrongly configurable
