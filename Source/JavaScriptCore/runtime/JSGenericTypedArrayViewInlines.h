@@ -458,7 +458,7 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
     if (!thisObject->canGetIndexQuickly(propertyName))
         return false;
     
-    slot.setValue(thisObject, None, thisObject->getIndexQuickly(propertyName));
+    slot.setValue(thisObject, DontDelete, thisObject->getIndexQuickly(propertyName));
     return true;
 }
 
