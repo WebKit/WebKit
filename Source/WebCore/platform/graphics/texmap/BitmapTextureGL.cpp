@@ -288,7 +288,7 @@ void BitmapTextureGL::clearIfNeeded()
         return;
 
     m_clipStack.reset(IntRect(IntPoint::zero(), m_textureSize), ClipStack::YAxisMode::Default);
-    m_clipStack.applyIfNeeded(*m_context3D);
+    m_clipStack.applyIfNeeded();
     m_context3D->clearColor(0, 0, 0, 0);
     m_context3D->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
     m_shouldClear = false;
@@ -312,7 +312,7 @@ void BitmapTextureGL::bindAsSurface(GraphicsContext3D* context3D)
     context3D->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     context3D->viewport(0, 0, m_textureSize.width(), m_textureSize.height());
     clearIfNeeded();
-    m_clipStack.apply(*m_context3D);
+    m_clipStack.apply();
 }
 
 BitmapTextureGL::~BitmapTextureGL()

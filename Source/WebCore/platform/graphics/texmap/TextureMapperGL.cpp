@@ -653,7 +653,7 @@ void TextureMapperGL::bindDefaultSurface()
     auto& viewport = data().viewport;
     data().projectionMatrix = createProjectionMatrix(IntSize(viewport[2], viewport[3]), data().PaintFlags & PaintingMirrored);
     m_context3D->viewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-    m_clipStack.apply(*m_context3D);
+    m_clipStack.apply();
     data().currentSurface = nullptr;
 }
 
@@ -689,7 +689,7 @@ bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatr
         return false;
 
     clipStack().intersect(rect);
-    clipStack().applyIfNeeded(*m_context3D);
+    clipStack().applyIfNeeded();
     return true;
 }
 
@@ -744,13 +744,13 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     // Increase stencilIndex and apply stencil testing.
     clipStack().setStencilIndex(stencilIndex * 2);
-    clipStack().applyIfNeeded(*m_context3D);
+    clipStack().applyIfNeeded();
 }
 
 void TextureMapperGL::endClip()
 {
     clipStack().pop();
-    clipStack().applyIfNeeded(*m_context3D);
+    clipStack().applyIfNeeded();
 }
 
 IntRect TextureMapperGL::clipBounds()

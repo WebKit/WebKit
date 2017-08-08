@@ -1,3 +1,36 @@
+2017-08-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Don't use GraphicsContext3D in ClipStack
+        https://bugs.webkit.org/show_bug.cgi?id=174776
+
+        Reviewed by Carlos Garcia Campos.
+
+        Any GraphicsContext3D object that's passed to ClipStack methods is of the
+        render-to-current-context nature, meaning there's no internally owned GL
+        context that has to be properly handled and all calls are simply passed to
+        OpenGL APIs. We should drop such (non-)usage of GraphicsContext3D in favor
+        of direct OpenGL API invocations.
+
+        This patch covers TextureMapper's ClipStack. Call sites to the apply() and
+        applyIfNeeded() are modified to not pass a reference to any
+        GraphicsContext3D object. Internally, OpenGL API entrypoints and constants
+        are used instead of GraphicsContext3D invocations.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::clearIfNeeded):
+        (WebCore::BitmapTextureGL::bindAsSurface):
+        * platform/graphics/texmap/ClipStack.cpp:
+        (WebCore::ClipStack::apply):
+        (WebCore::ClipStack::applyIfNeeded):
+        * platform/graphics/texmap/ClipStack.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::bindDefaultSurface):
+        (WebCore::TextureMapperGL::beginScissorClip):
+        (WebCore::TextureMapperGL::beginClip):
+        (WebCore::TextureMapperGL::endClip):
+
 2017-08-08  Javier Fernandez  <jfernandez@igalia.com>
 
         Not possible to remove the 'li' element inside the table cell
