@@ -1,3 +1,13 @@
+2017-08-08  Matt Lewis  <jlewis3@apple.com>
+
+        Skipping imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html
+        <rdar://problem/33555052>
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-highsierra/TestExpectations:
+
 2017-08-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip plugins/crash-restoring-plugin-page-from-page-cache.html on macOS debug.
