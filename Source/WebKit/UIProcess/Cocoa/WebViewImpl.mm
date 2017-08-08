@@ -2223,7 +2223,7 @@ void WebViewImpl::prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<v
         if (!weakThis)
             return;
 
-        ASSERT(weakThis->[m_view window] == weakThis->m_targetWindowForMovePreparation);
+        ASSERT([weakThis->m_view window] == weakThis->m_targetWindowForMovePreparation);
         weakThis->m_targetWindowForMovePreparation = nil;
     });
 

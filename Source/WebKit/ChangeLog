@@ -1,5 +1,12 @@
 2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix the Mac debug build after r220418.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::prepareForMoveToWindow):
+
+2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Mac WK2] WebViewImpl should hold a weak pointer to its WKWebView or WKView
         https://bugs.webkit.org/show_bug.cgi?id=175302
         <rdar://problem/33762116>
