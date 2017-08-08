@@ -23,29 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "TextureMapperContextAttributes.h"
+#pragma once
 
-#if USE(TEXTURE_MAPPER_GL)
-
-#include "TextureMapperGLHeaders.h"
-#include <wtf/text/WTFString.h>
-
-namespace WebCore {
-
-void TextureMapperContextAttributes::initialize()
-{
-#if USE(OPENGL_ES_2)
-    isGLES2Compliant = true;
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#elif USE(OPENGL_ES_2)
+#include <GLES2/gl2.h>
+#else
+#include "OpenGLShims.h"
 #endif
-
-    String extensionsString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
-
-    supportsNPOTTextures = !isGLES2Compliant || extensionsString.contains(ASCIILiteral("GL_OES_texture_npot"));
-    supportsBGRA8888 = extensionsString.contains(ASCIILiteral("GL_EXT_texture_format_BGRA8888"));
-    supportsUnpackSubimage = !isGLES2Compliant || extensionsString.contains(ASCIILiteral("GL_EXT_unpack_subimage"));
-}
-
-} // namespace WebCore
-
-#endif // USE(TEXTURE_MAPPER_GL)

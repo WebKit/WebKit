@@ -1,3 +1,21 @@
+2017-08-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Group GL header file inclusions in a single header file
+        https://bugs.webkit.org/show_bug.cgi?id=175313
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a helper header file to the TextureMapper subsystem that includes
+        the OpenGL headers, properly addressing the build configuration to
+        include headers as provided by either libepoxy, the OpenGL ES library,
+        or the OpenGL library.
+
+        TextureMapperContextAttributes implementation file is the only one
+        that can leverage the header at the moment, but more will follow.
+
+        * platform/graphics/texmap/TextureMapperContextAttributes.cpp:
+        * platform/graphics/texmap/TextureMapperGLHeaders.h: Copied from Source/WebCore/platform/graphics/texmap/TextureMapperContextAttributes.cpp.
+
 2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] WKWebView schedules nonstop layout after pressing cmb+b,i,u inside a contenteditable div
