@@ -4475,7 +4475,11 @@ bool Document::domainIsRegisterable(const String& newDomain) const
     if (potentialPublicSuffix.startsWith('.'))
         potentialPublicSuffix.remove(0, 1);
 
+#if ENABLE(PUBLIC_SUFFIX_LIST)
     return !isPublicSuffix(potentialPublicSuffix);
+#else
+    return true;
+#endif
 }
 
 ExceptionOr<void> Document::setDomain(const String& newDomain)
