@@ -49,7 +49,7 @@ RenderLayer::FilterInfo* RenderLayer::FilterInfo::getIfExists(const RenderLayer&
 {
     ASSERT(layer.m_hasFilterInfo == map().contains(&layer));
 
-    return layer.m_hasFilterInfo ? map().get(&layer) : 0;
+    return layer.m_hasFilterInfo ? map().get(&layer) : nullptr;
 }
 
 RenderLayer::FilterInfo& RenderLayer::FilterInfo::get(RenderLayer& layer)
@@ -67,9 +67,11 @@ RenderLayer::FilterInfo& RenderLayer::FilterInfo::get(RenderLayer& layer)
 void RenderLayer::FilterInfo::remove(RenderLayer& layer)
 {
     ASSERT(layer.m_hasFilterInfo == map().contains(&layer));
+    if (!layer.m_hasFilterInfo)
+        return;
 
-    if (map().remove(&layer))
-        layer.m_hasFilterInfo = false;
+    map().remove(&layer);
+    layer.m_hasFilterInfo = false;
 }
 
 RenderLayer::FilterInfo::FilterInfo(RenderLayer& layer)
