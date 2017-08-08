@@ -1,3 +1,14 @@
+2017-08-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test results fix after r220376.
+
+        Rebaseline for new SecurityException message text.
+
+        * fast/dom/Document/invalid-domain-change-throws-exception-expected.txt:
+        * http/tests/dom/document-attributes-null-handling-expected.txt:
+        * http/tests/security/set-domain-remove-subdomain-for-ip-address-expected.txt:
+        * http/tests/security/xss-DENIED-invalid-domain-change-expected.txt:
+
 2017-08-08  Javier Fernandez  <jfernandez@igalia.com>
 
         Not possible to remove the 'li' element inside the table cell

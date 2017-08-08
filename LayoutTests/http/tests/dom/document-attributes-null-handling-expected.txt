@@ -18,7 +18,7 @@ PASS document.title is "null"
 
 * domain attribute
 PASS document.domain is "127.0.0.1"
-PASS document.domain = null threw exception SecurityError: The operation is insecure..
+PASS document.domain = null threw exception SecurityError: Attempted to use a non-registrable domain..
 PASS document.domain is "127.0.0.1"
 PASS successfullyParsed is true
 
