@@ -4487,10 +4487,11 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
     if (!frame())
         return Exception { SecurityError, "A browsing context is required to set a domain." };
 
+    if (isSandboxed(SandboxDocumentDomain))
+        return Exception { SecurityError, "Assignment is forbidden for sandboxed iframes." };
+
     if (SchemeRegistry::isDomainRelaxationForbiddenForURLScheme(securityOrigin().protocol()))
         return Exception { SecurityError };
-
-    // FIXME(175281): Check for 'document.domain' sandbox flag and return an exception if present.
 
     // FIXME: We should add logging indicating why a domain was not allowed.
 

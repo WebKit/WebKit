@@ -1,3 +1,21 @@
+2017-08-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Sandbox flags do not support document.domain control
+        https://bugs.webkit.org/show_bug.cgi?id=175281
+        <rdar://problem/33778936>
+
+        Reviewed by Chris Dumez.
+
+        Update the 'setDomain' logic to honor the sandbox properties as defined in the current
+        HTML5 specification. This brings us in line with how Chrome and other browsers have
+        worked for some time.
+
+        Test: fast/frames/sandboxed-iframe-domain.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDomain): Add check for sandbox flag (with appropriate error message)
+        * dom/SecurityContext.h:
+
 2017-08-08  Jeremy Jones  <jeremyj@apple.com>
 
         Change fast seek logic to prevent ping-ponging.

@@ -1,3 +1,15 @@
+2017-08-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Sandbox flags do not support document.domain control
+        https://bugs.webkit.org/show_bug.cgi?id=175281
+        <rdar://problem/33778936>
+
+        Reviewed by Chris Dumez.
+
+        * fast/frames/resources/sandboxed-iframe-set-domain.html: Added.
+        * fast/frames/sandboxed-iframe-domain.html: Added.
+        * fast/frames/sandboxed-iframe-domain-expected.txt: Added.
+
 2017-08-08  Matt Lewis  <jlewis3@apple.com>
 
         Skipping imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html
