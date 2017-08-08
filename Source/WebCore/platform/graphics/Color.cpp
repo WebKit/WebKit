@@ -307,12 +307,6 @@ Color::Color(float r, float g, float b, float a, ColorSpace colorSpace)
     ASSERT(isExtended());
 }
 
-Color::~Color()
-{
-    if (isExtended())
-        m_colorData.extendedColor->deref();
-}
-
 Color& Color::operator=(const Color& other)
 {
     if (*this == other)
@@ -663,11 +657,6 @@ TextStream& operator<<(TextStream& ts, const Color& color)
 void Color::tagAsValid()
 {
     m_colorData.rgbaAndFlags |= validRGBAColor;
-}
-
-bool Color::isExtended() const
-{
-    return !(m_colorData.rgbaAndFlags & invalidRGBAColor);
 }
 
 ExtendedColor& Color::asExtended() const

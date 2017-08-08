@@ -28,7 +28,7 @@ struct LengthSize {
     Length height;
 };
 
-inline bool operator==(const LengthSize& a, const LengthSize& b)
+ALWAYS_INLINE bool operator==(const LengthSize& a, const LengthSize& b)
 {
     return a.width == b.width && a.height == b.height;
 }

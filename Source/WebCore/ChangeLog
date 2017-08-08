@@ -1,3 +1,25 @@
+2017-08-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Inline ~Color and Color::isExtended()
+        https://bugs.webkit.org/show_bug.cgi?id=175293
+
+        Reviewed by Zalan Bujtas.
+
+        The Color destructor and Color::isExtended() show up on profiles, so inline them.
+        Before r207265 the destructor was inlined.
+        
+        Also make sure that LengthSize::operator== is inlined, which it was not (according
+        to profiles).
+
+        * platform/LengthSize.h:
+        (WebCore::operator==):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::~Color): Deleted.
+        (WebCore::Color::isExtended const): Deleted.
+        * platform/graphics/Color.h:
+        (WebCore::Color::~Color):
+        (WebCore::Color::isExtended const):
+
 2017-08-04  Brent Fulgham  <bfulgham@apple.com>
 
         Implement the HTML5 same-origin restriction specification
