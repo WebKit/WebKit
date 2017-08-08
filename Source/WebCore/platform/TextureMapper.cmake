@@ -17,6 +17,7 @@ if (USE_TEXTURE_MAPPER_GL)
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/BitmapTextureGL.cpp
         platform/graphics/texmap/ClipStack.cpp
+        platform/graphics/texmap/TextureMapperContextAttributes.cpp
         platform/graphics/texmap/TextureMapperGL.cpp
         platform/graphics/texmap/TextureMapperShaderProgram.cpp
     )

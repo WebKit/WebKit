@@ -28,6 +28,7 @@
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
 #include "TextureMapper.h"
+#include "TextureMapperContextAttributes.h"
 #include "TransformationMatrix.h"
 
 namespace WebCore {
@@ -90,6 +91,8 @@ private:
     void bindDefaultSurface();
     ClipStack& clipStack();
     inline TextureMapperGLData& data() { return *m_data; }
+
+    TextureMapperContextAttributes m_contextAttributes;
     RefPtr<GraphicsContext3D> m_context3D;
     TextureMapperGLData* m_data;
     ClipStack m_clipStack;

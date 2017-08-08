@@ -57,8 +57,9 @@ BitmapTextureGL* toBitmapTextureGL(BitmapTexture* texture)
     return static_cast<BitmapTextureGL*>(texture);
 }
 
-BitmapTextureGL::BitmapTextureGL(RefPtr<GraphicsContext3D>&& context3D, const Flags flags, GC3Dint internalFormat)
-    : m_context3D(WTFMove(context3D))
+BitmapTextureGL::BitmapTextureGL(const TextureMapperContextAttributes& contextAttributes, RefPtr<GraphicsContext3D>&& context3D, const Flags flags, GC3Dint internalFormat)
+    : m_contextAttributes(contextAttributes)
+    , m_context3D(WTFMove(context3D))
 {
     if (internalFormat != GraphicsContext3D::DONT_CARE) {
         m_internalFormat = m_format = internalFormat;
@@ -72,8 +73,8 @@ BitmapTextureGL::BitmapTextureGL(RefPtr<GraphicsContext3D>&& context3D, const Fl
         // internal and external formats need to be BGRA
         m_internalFormat = GraphicsContext3D::RGBA;
         m_format = GraphicsContext3D::BGRA;
-        if (m_context3D->isGLES2Compliant()) {
-            if (m_context3D->getExtensions().supports("GL_EXT_texture_format_BGRA8888"))
+        if (m_contextAttributes.isGLES2Compliant) {
+            if (m_contextAttributes.supportsBGRA8888)
                 m_internalFormat = GraphicsContext3D::BGRA;
             else
                 m_format = GraphicsContext3D::RGBA;
@@ -89,16 +90,6 @@ static void swizzleBGRAToRGBA(uint32_t* data, const IntRect& rect, int stride = 
         for (int x = rect.x(); x < rect.maxX(); ++x)
             p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
     }
-}
-
-static bool driverSupportsSubImage(GraphicsContext3D* context)
-{
-    if (context->isGLES2Compliant()) {
-        static bool supportsSubImage = context->getExtensions().supports("GL_EXT_unpack_subimage");
-        return supportsSubImage;
-    }
-
-    return true;
 }
 
 void BitmapTextureGL::didReset()
@@ -122,9 +113,12 @@ void BitmapTextureGL::didReset()
 
 void BitmapTextureGL::updateContentsNoSwizzle(const void* srcData, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine, unsigned bytesPerPixel, Platform3DObject glFormat)
 {
-    m_context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, m_id);
     // For ES drivers that don't support sub-images.
-    if (driverSupportsSubImage(m_context3D.get())) {
+    bool contextSupportsUnpackSubimage = m_contextAttributes.supportsUnpackSubimage;
+
+    m_context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, m_id);
+
+    if (contextSupportsUnpackSubimage) {
         // Use the OpenGL sub-image extension, now that we know it's available.
         m_context3D->pixelStorei(GraphicsContext3D::UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel);
         m_context3D->pixelStorei(GraphicsContext3D::UNPACK_SKIP_ROWS, sourceOffset.y());
@@ -133,8 +127,7 @@ void BitmapTextureGL::updateContentsNoSwizzle(const void* srcData, const IntRect
 
     m_context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, m_type, srcData);
 
-    // For ES drivers that don't support sub-images.
-    if (driverSupportsSubImage(m_context3D.get())) {
+    if (contextSupportsUnpackSubimage) {
         m_context3D->pixelStorei(GraphicsContext3D::UNPACK_ROW_LENGTH, 0);
         m_context3D->pixelStorei(GraphicsContext3D::UNPACK_SKIP_ROWS, 0);
         m_context3D->pixelStorei(GraphicsContext3D::UNPACK_SKIP_PIXELS, 0);
@@ -151,7 +144,7 @@ void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetR
     IntPoint adjustedSourceOffset = sourceOffset;
 
     // Texture upload requires subimage buffer if driver doesn't support subimage and we don't have full image upload.
-    bool requireSubImageBuffer = !driverSupportsSubImage(m_context3D.get())
+    bool requireSubImageBuffer = !m_contextAttributes.supportsUnpackSubimage
         && !(bytesPerLine == static_cast<int>(targetRect.width() * bytesPerPixel) && adjustedSourceOffset == IntPoint::zero());
 
     // prepare temporaryData if necessary

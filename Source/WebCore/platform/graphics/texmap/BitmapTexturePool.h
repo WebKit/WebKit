@@ -28,6 +28,7 @@
 #define BitmapTexturePool_h
 
 #include "BitmapTexture.h"
+#include "TextureMapperContextAttributes.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RunLoop.h>
 
@@ -45,7 +46,7 @@ class BitmapTexturePool {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 #if USE(TEXTURE_MAPPER_GL)
-    explicit BitmapTexturePool(RefPtr<GraphicsContext3D>&&);
+    explicit BitmapTexturePool(const TextureMapperContextAttributes&, RefPtr<GraphicsContext3D>&&);
 #endif
 
     RefPtr<BitmapTexture> acquireTexture(const IntSize&, const BitmapTexture::Flags);
@@ -68,6 +69,7 @@ private:
     RefPtr<BitmapTexture> createTexture(const BitmapTexture::Flags);
 
 #if USE(TEXTURE_MAPPER_GL)
+    TextureMapperContextAttributes m_contextAttributes;
     RefPtr<GraphicsContext3D> m_context3D;
 #endif
 
