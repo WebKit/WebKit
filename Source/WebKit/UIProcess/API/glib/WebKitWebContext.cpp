@@ -233,7 +233,7 @@ private:
     void requestAutomationSession(const String& sessionIdentifier) override
     {
         ASSERT(!m_webContext->priv->automationSession);
-        m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(sessionIdentifier.utf8().data()));
+        m_webContext->priv->automationSession = adoptGRef(webkitAutomationSessionCreate(m_webContext, sessionIdentifier.utf8().data()));
         g_signal_emit(m_webContext, signals[AUTOMATION_STARTED], 0, m_webContext->priv->automationSession.get());
         m_webContext->priv->processPool->setAutomationSession(&webkitAutomationSessionGetSession(m_webContext->priv->automationSession.get()));
     }

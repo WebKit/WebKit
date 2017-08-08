@@ -1,3 +1,12 @@
+2017-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement JavaScript dialog methods of API::AutomationSessionClient
+        https://bugs.webkit.org/show_bug.cgi?id=175259
+
+        Reviewed by Michael Catanzaro.
+
+        * POTFILES.in: Add WebKitScriptDialogGtk.cpp.
+
 2017-07-13  Matthew Hanson  <matthew_hanson@apple.com>
 
         Fix the cMake builds (GTK and WPE.)

@@ -183,6 +183,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitPrintCustomWidget.cpp
     UIProcess/API/gtk/WebKitPrintOperation.cpp
     UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp
+    UIProcess/API/gtk/WebKitScriptDialogGtk.cpp
     UIProcess/API/gtk/WebKitVersion.cpp
     UIProcess/API/gtk/WebKitVersion.h.in
     UIProcess/API/gtk/WebKitWebInspector.cpp

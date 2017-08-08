@@ -1,3 +1,49 @@
+2017-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement JavaScript dialog methods of API::AutomationSessionClient
+        https://bugs.webkit.org/show_bug.cgi?id=175259
+
+        Reviewed by Michael Catanzaro.
+
+        Move the default implementation of WebKitScriptDialog from WebKitWebView platform specific files to their own
+        files. Implement all JavaScript dialog methods of API::AutomationSessionClient in WebKitAutomationSession. For
+        now it only works when the user doesn't override WebKitWebView::script-dialog signal and default implementation
+        is used.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * PlatformWPE.cmake: Ditto.
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        (webkitAutomationSessionCreate): Pass the WebKitWebContext to the constructor and keep a pointer to it in session.
+        * UIProcess/API/glib/WebKitAutomationSessionPrivate.h:
+        * UIProcess/API/glib/WebKitScriptDialogPrivate.h:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewRunJavaScriptAlert): Set the currently script dialog for the scope of the function.
+        (webkitWebViewRunJavaScriptConfirm): Ditto.
+        (webkitWebViewRunJavaScriptPrompt): Ditto.
+        (webkitWebViewRunJavaScriptBeforeUnloadConfirm): Ditto.
+        (webkitWebViewIsShowingScriptDialog): Ask current dialog if there's one.
+        (webkitWebViewGetCurrentScriptDialogMessage): Ditto.
+        (webkitWebViewSetCurrentScriptDialogUserInput): Ditto.
+        (webkitWebViewAcceptCurrentScriptDialog): Ditto.
+        (webkitWebViewDismissCurrentScriptDialog): Ditto.
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitScriptDialogGtk.cpp: Added.
+        (webkitWebViewCreateJavaScriptDialog): Moved from WebKitWebViewGtk.cpp.
+        (webkitScriptDialogRun): Run the dialog, this code is moved from WebKitWebViewGtk.cpp.
+        (webkitScriptDialogIsRunning): Return true if the script dialog has a native dialog running.
+        (webkitScriptDialogAccept): Send Ok or Close response to the native dialog depending on the dialog type.
+        (webkitScriptDialogDismiss): Send Close response to the native dialog.
+        (webkitScriptDialogSetUserInput): Set the given text on the prompt dialog entry.
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (webkitWebViewScriptDialog): Simply call webkitScriptDialogRun() now.
+        * UIProcess/API/wpe/WebKitScriptDialogWPE.cpp: Copied from Source/WebKit/UIProcess/API/glib/WebKitAutomationSessionPrivate.h.
+        (webkitScriptDialogRun):
+        (webkitScriptDialogIsRunning):
+        (webkitScriptDialogAccept):
+        (webkitScriptDialogDismiss):
+        (webkitScriptDialogSetUserInput):
+
 2017-08-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Preview Canvas path when viewing a recording

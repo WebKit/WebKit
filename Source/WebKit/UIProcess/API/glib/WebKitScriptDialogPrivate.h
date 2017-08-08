@@ -17,11 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitScriptDialogPrivate_h
-#define WebKitScriptDialogPrivate_h
+#pragma once
 
 #include "WebKitScriptDialog.h"
+#include "WebKitWebView.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 struct _WebKitScriptDialog {
     _WebKitScriptDialog(unsigned type, const CString& message)
@@ -55,6 +56,14 @@ struct _WebKitScriptDialog {
 
     bool confirmed;
     CString text;
+
+#if PLATFORM(GTK)
+    GtkWidget* nativeDialog { nullptr };
+#endif
 };
 
-#endif // WebKitScriptDialogPrivate_h
+void webkitScriptDialogRun(WebKitScriptDialog*, WebKitWebView*);
+bool webkitScriptDialogIsRunning(WebKitScriptDialog*);
+void webkitScriptDialogAccept(WebKitScriptDialog*);
+void webkitScriptDialogDismiss(WebKitScriptDialog*);
+void webkitScriptDialogSetUserInput(WebKitScriptDialog*, const String&);

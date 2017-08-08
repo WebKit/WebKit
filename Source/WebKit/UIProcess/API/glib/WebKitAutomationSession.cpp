@@ -23,6 +23,7 @@
 #include "APIAutomationSessionClient.h"
 #include "WebKitApplicationInfo.h"
 #include "WebKitAutomationSessionPrivate.h"
+#include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
@@ -60,6 +61,7 @@ enum {
 struct _WebKitAutomationSessionPrivate {
     RefPtr<WebAutomationSession> session;
     WebKitApplicationInfo* applicationInfo;
+    WebKitWebContext* webContext;
     CString id;
 };
 
@@ -88,6 +90,46 @@ private:
             return nullptr;
 
         return &webkitWebViewGetPage(webView);
+    }
+
+    bool isShowingJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy& page) override
+    {
+        auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page);
+        if (!webView)
+            return false;
+        return webkitWebViewIsShowingScriptDialog(webView);
+    }
+
+    void dismissCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy& page) override
+    {
+        auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page);
+        if (!webView)
+            return;
+        webkitWebViewDismissCurrentScriptDialog(webView);
+    }
+
+    void acceptCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy& page) override
+    {
+        auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page);
+        if (!webView)
+            return;
+        webkitWebViewAcceptCurrentScriptDialog(webView);
+    }
+
+    String messageOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy& page) override
+    {
+        auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page);
+        if (!webView)
+            return { };
+        return webkitWebViewGetCurrentScriptDialogMessage(webView);
+    }
+
+    void setUserInputForCurrentJavaScriptPromptOnPage(WebAutomationSession&, WebPageProxy& page, const String& userInput) override
+    {
+        auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page);
+        if (!webView)
+            return;
+        webkitWebViewSetCurrentScriptDialogUserInput(webView, userInput);
     }
 
     WebKitAutomationSession* m_session;
@@ -192,9 +234,11 @@ static void webkit_automation_session_class_init(WebKitAutomationSessionClass* s
         G_TYPE_NONE);
 }
 
-WebKitAutomationSession* webkitAutomationSessionCreate(const char* sessionID)
+WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webContext, const char* sessionID)
 {
-    return WEBKIT_AUTOMATION_SESSION(g_object_new(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID, nullptr));
+    auto* session = WEBKIT_AUTOMATION_SESSION(g_object_new(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID, nullptr));
+    session->priv->webContext = webContext;
+    return session;
 }
 
 WebAutomationSession& webkitAutomationSessionGetSession(WebKitAutomationSession* session)

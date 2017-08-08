@@ -66,6 +66,7 @@
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/RefPtrCairo.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/SetForScope.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -218,6 +219,8 @@ struct _WebKitWebViewPrivate {
 
     GRefPtr<WebKitWebResource> mainResource;
     LoadingResourcesMap loadingResourcesMap;
+
+    WebKitScriptDialog* currentScriptDialog;
 
 #if PLATFORM(GTK)
     GRefPtr<WebKitWebInspector> inspector;
@@ -2008,6 +2011,7 @@ void webkitWebViewClosePage(WebKitWebView* webView)
 void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const CString& message)
 {
     WebKitScriptDialog dialog(WEBKIT_SCRIPT_DIALOG_ALERT, message);
+    SetForScope<WebKitScriptDialog*> change(webView->priv->currentScriptDialog, &dialog);
     gboolean returnValue;
     g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, &dialog, &returnValue);
 }
@@ -2015,6 +2019,7 @@ void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const CString& mess
 bool webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const CString& message)
 {
     WebKitScriptDialog dialog(WEBKIT_SCRIPT_DIALOG_CONFIRM, message);
+    SetForScope<WebKitScriptDialog*> change(webView->priv->currentScriptDialog, &dialog);
     gboolean returnValue;
     g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, &dialog, &returnValue);
     return dialog.confirmed;
@@ -2023,6 +2028,7 @@ bool webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const CString& me
 CString webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CString& message, const CString& defaultText)
 {
     WebKitScriptDialog dialog(WEBKIT_SCRIPT_DIALOG_PROMPT, message, defaultText);
+    SetForScope<WebKitScriptDialog*> change(webView->priv->currentScriptDialog, &dialog);
     gboolean returnValue;
     g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, &dialog, &returnValue);
     return dialog.text;
@@ -2031,9 +2037,57 @@ CString webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CString& 
 bool webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView* webView, const CString& message)
 {
     WebKitScriptDialog dialog(WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM, message);
+    SetForScope<WebKitScriptDialog*> change(webView->priv->currentScriptDialog, &dialog);
     gboolean returnValue;
     g_signal_emit(webView, signals[SCRIPT_DIALOG], 0, &dialog, &returnValue);
     return dialog.confirmed;
+}
+
+bool webkitWebViewIsShowingScriptDialog(WebKitWebView* webView)
+{
+    if (!webView->priv->currentScriptDialog)
+        return false;
+
+    // FIXME: Add API to ask the user in case default implementation is not being used.
+    return webkitScriptDialogIsRunning(webView->priv->currentScriptDialog);
+}
+
+String webkitWebViewGetCurrentScriptDialogMessage(WebKitWebView* webView)
+{
+    if (!webView->priv->currentScriptDialog)
+        return { };
+
+    return String::fromUTF8(webView->priv->currentScriptDialog->message);
+}
+
+void webkitWebViewSetCurrentScriptDialogUserInput(WebKitWebView* webView, const String& userInput)
+{
+    if (!webView->priv->currentScriptDialog)
+        return;
+
+    // FIXME: Add API to ask the user in case default implementation is not being used.
+    if (webkitScriptDialogIsRunning(webView->priv->currentScriptDialog))
+        webkitScriptDialogSetUserInput(webView->priv->currentScriptDialog, userInput);
+}
+
+void webkitWebViewAcceptCurrentScriptDialog(WebKitWebView* webView)
+{
+    if (!webView->priv->currentScriptDialog)
+        return;
+
+    // FIXME: Add API to ask the user in case default implementation is not being used.
+    if (webkitScriptDialogIsRunning(webView->priv->currentScriptDialog))
+        webkitScriptDialogAccept(webView->priv->currentScriptDialog);
+}
+
+void webkitWebViewDismissCurrentScriptDialog(WebKitWebView* webView)
+{
+    if (!webView->priv->currentScriptDialog)
+        return;
+
+    // FIXME: Add API to ask the user in case default implementation is not being used.
+    if (webkitScriptDialogIsRunning(webView->priv->currentScriptDialog))
+        webkitScriptDialogDismiss(webView->priv->currentScriptDialog);
 }
 
 void webkitWebViewMakePolicyDecision(WebKitWebView* webView, WebKitPolicyDecisionType type, WebKitPolicyDecision* decision)

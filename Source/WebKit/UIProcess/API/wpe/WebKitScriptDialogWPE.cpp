@@ -17,13 +17,28 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#pragma once
+#include "config.h"
+#include "WebKitScriptDialog.h"
 
-#include "WebAutomationSession.h"
-#include "WebKitAutomationSession.h"
-#include "WebKitWebContext.h"
+#include "WebKitScriptDialogPrivate.h"
 
-WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext*, const char* sessionID);
-WebKit::WebAutomationSession& webkitAutomationSessionGetSession(WebKitAutomationSession*);
-String webkitAutomationSessionGetBrowserName(WebKitAutomationSession*);
-String webkitAutomationSessionGetBrowserVersion(WebKitAutomationSession*);
+void webkitScriptDialogRun(WebKitScriptDialog*, WebKitWebView*)
+{
+}
+
+bool webkitScriptDialogIsRunning(WebKitScriptDialog*)
+{
+    return false;
+}
+
+void webkitScriptDialogAccept(WebKitScriptDialog*)
+{
+}
+
+void webkitScriptDialogDismiss(WebKitScriptDialog*)
+{
+}
+
+void webkitScriptDialogSetUserInput(WebKitScriptDialog*, const String&)
+{
+}
