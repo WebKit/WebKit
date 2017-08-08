@@ -3802,12 +3802,6 @@ int runJSC(CommandLine options, bool isWorker, const Func& func)
     return result;
 }
 
-static void primitiveGigacageDisabled(void*)
-{
-    dataLog("Primitive gigacage disabled! Aborting.\n");
-    UNREACHABLE_FOR_PLATFORM();
-}
-
 int jscmain(int argc, char** argv)
 {
     // Need to override and enable restricted options before we start parsing options below.
@@ -3826,8 +3820,7 @@ int jscmain(int argc, char** argv)
 #if ENABLE(WEBASSEMBLY)
     JSC::Wasm::enableFastMemory();
 #endif
-    if (Gigacage::shouldBeEnabled())
-        Gigacage::addPrimitiveDisableCallback(primitiveGigacageDisabled, nullptr);
+    Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled();
 
     int result;
     result = runJSC(

@@ -11616,7 +11616,10 @@ private:
     
     LValue caged(Gigacage::Kind kind, LValue ptr)
     {
-        if (kind == Gigacage::Primitive) {
+        if (!Gigacage::shouldBeEnabled())
+            return ptr;
+        
+        if (kind == Gigacage::Primitive && Gigacage::canPrimitiveGigacageBeDisabled()) {
             if (vm().primitiveGigacageEnabled().isStillValid())
                 m_graph.watchpoints().addLazily(vm().primitiveGigacageEnabled());
             else

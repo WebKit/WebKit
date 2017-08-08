@@ -41,6 +41,8 @@ using namespace bmalloc;
 
 namespace Gigacage {
 
+static bool s_isDisablingPrimitiveGigacageDisabled;
+
 struct Callback {
     Callback() { }
     
@@ -129,6 +131,27 @@ void removePrimitiveDisableCallback(void (*function)(void*), void* argument)
             return;
         }
     }
+}
+
+static void primitiveGigacageDisabled(void*)
+{
+    static bool s_false;
+    fprintf(stderr, "FATAL: Primitive gigacage disabled, but we don't want that in this process.\n");
+    if (!s_false)
+        BCRASH();
+}
+
+void disableDisablingPrimitiveGigacageIfShouldBeEnabled()
+{
+    if (shouldBeEnabled()) {
+        addPrimitiveDisableCallback(primitiveGigacageDisabled, nullptr);
+        s_isDisablingPrimitiveGigacageDisabled = true;
+    }
+}
+
+bool isDisablingPrimitiveGigacageDisabled()
+{
+    return s_isDisablingPrimitiveGigacageDisabled;
 }
 
 bool shouldBeEnabled()
