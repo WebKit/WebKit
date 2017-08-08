@@ -107,6 +107,9 @@ private:
 
     std::optional<String> pageLoadStrategyString() const;
 
+    void handleUserPrompts(Function<void (CommandResult&&)>&&);
+    void reportUnexpectedAlertOpen(Function<void (CommandResult&&)>&&);
+
     RefPtr<Inspector::InspectorObject> createElement(RefPtr<Inspector::InspectorValue>&&);
     RefPtr<Inspector::InspectorObject> createElement(const String& elementID);
     RefPtr<Inspector::InspectorObject> extractElement(Inspector::InspectorValue&);

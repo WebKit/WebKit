@@ -1,5 +1,54 @@
 2017-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: implement unhandled prompt behavior
+        https://bugs.webkit.org/show_bug.cgi?id=175184
+
+        Reviewed by Brian Burg.
+
+        Handle user prompts before running some of the commands according to the specification.
+
+        * Capabilities.h: Add UnhandledPromptBehavior capability.
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::httpStatusCode const): Add UnexpectedAlertOpen error.
+        (WebDriver::CommandResult::errorString const): Ditto.
+        * CommandResult.h:
+        (WebDriver::CommandResult::setAdditonalErrorData): New method to set an additional data object that will be sent
+        as part of the result error message.
+        (WebDriver::CommandResult::additionalErrorData const): Return the additional data object.
+        * Session.cpp:
+        (WebDriver::Session::handleUserPrompts): Check if there's an active JavaScript dialog and deal with it depeding
+        on the unhandled prompt behavior.
+        (WebDriver::Session::reportUnexpectedAlertOpen): Generate an error message with UnexpectedAlertOpen error and
+        including the alert text as additional error data.
+        (WebDriver::Session::go): Handle user prompts before running the command.
+        (WebDriver::Session::getCurrentURL): Ditto.
+        (WebDriver::Session::back): Ditto.
+        (WebDriver::Session::forward): Ditto.
+        (WebDriver::Session::refresh): Ditto.
+        (WebDriver::Session::getTitle): Ditto.
+        (WebDriver::Session::closeWindow): Ditto.
+        (WebDriver::Session::switchToFrame): Ditto.
+        (WebDriver::Session::switchToParentFrame): Ditto.
+        (WebDriver::Session::isElementSelected): Ditto.
+        (WebDriver::Session::getElementText): Ditto.
+        (WebDriver::Session::getElementTagName): Ditto.
+        (WebDriver::Session::getElementRect): Ditto.
+        (WebDriver::Session::isElementEnabled): Ditto.
+        (WebDriver::Session::isElementDisplayed): Ditto.
+        (WebDriver::Session::getElementAttribute): Ditto.
+        (WebDriver::Session::elementSendKeys): Ditto.
+        (WebDriver::Session::elementSubmit): Ditto.
+        (WebDriver::Session::executeScript): Ditto.
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::sendResponse const): Send data object as part of the result error message if present.
+        (WebDriver::deserializeUnhandledPromptBehavior):
+        (WebDriver::WebDriverService::parseCapabilities const):
+        (WebDriver::WebDriverService::validatedCapabilities const):
+        (WebDriver::WebDriverService::newSession):
+
+2017-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: implement user prompt commands
         https://bugs.webkit.org/show_bug.cgi?id=174614
 

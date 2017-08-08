@@ -44,6 +44,12 @@ enum class PageLoadStrategy {
     Eager
 };
 
+enum class UnhandledPromptBehavior {
+    Dismiss,
+    Accept,
+    Ignore
+};
+
 struct Capabilities {
     std::optional<String> browserName;
     std::optional<String> browserVersion;
@@ -51,6 +57,7 @@ struct Capabilities {
     std::optional<bool> acceptInsecureCerts;
     std::optional<Timeouts> timeouts;
     std::optional<PageLoadStrategy> pageLoadStrategy;
+    std::optional<UnhandledPromptBehavior> unhandledPromptBehavior;
 #if PLATFORM(GTK)
     std::optional<String> browserBinary;
     std::optional<Vector<String>> browserArguments;

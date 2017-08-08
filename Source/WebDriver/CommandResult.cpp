@@ -143,6 +143,7 @@ unsigned CommandResult::httpStatusCode() const
         return 408;
     case ErrorCode::JavascriptError:
     case ErrorCode::SessionNotCreated:
+    case ErrorCode::UnexpectedAlertOpen:
     case ErrorCode::UnknownError:
     case ErrorCode::UnsupportedOperation:
         return 500;
@@ -187,6 +188,8 @@ String CommandResult::errorString() const
         return ASCIILiteral("stale element reference");
     case ErrorCode::Timeout:
         return ASCIILiteral("timeout");
+    case ErrorCode::UnexpectedAlertOpen:
+        return ASCIILiteral("unexpected alert open");
     case ErrorCode::UnknownCommand:
         return ASCIILiteral("unknown command");
     case ErrorCode::UnknownError:

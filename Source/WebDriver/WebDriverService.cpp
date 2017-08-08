@@ -248,6 +248,8 @@ void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&
         responseObject->setString(ASCIILiteral("error"), result.errorString());
         responseObject->setString(ASCIILiteral("message"), result.errorMessage().value_or(emptyString()));
         responseObject->setString(ASCIILiteral("stacktrace"), emptyString());
+        if (auto& additionalData = result.additionalErrorData())
+            responseObject->setObject(ASCIILiteral("data"), RefPtr<InspectorObject> { additionalData });
     } else {
         responseObject = InspectorObject::create();
         auto resultValue = result.result();
@@ -293,6 +295,17 @@ static std::optional<PageLoadStrategy> deserializePageLoadStrategy(const String&
     return std::nullopt;
 }
 
+static std::optional<UnhandledPromptBehavior> deserializeUnhandledPromptBehavior(const String& unhandledPromptBehavior)
+{
+    if (unhandledPromptBehavior == "dismiss")
+        return UnhandledPromptBehavior::Dismiss;
+    if (unhandledPromptBehavior == "accept")
+        return UnhandledPromptBehavior::Accept;
+    if (unhandledPromptBehavior == "ignore")
+        return UnhandledPromptBehavior::Ignore;
+    return std::nullopt;
+}
+
 void WebDriverService::parseCapabilities(const InspectorObject& matchedCapabilities, Capabilities& capabilities) const
 {
     // Matched capabilities have already been validated.
@@ -314,6 +327,9 @@ void WebDriverService::parseCapabilities(const InspectorObject& matchedCapabilit
     String pageLoadStrategy;
     if (matchedCapabilities.getString(ASCIILiteral("pageLoadStrategy"), pageLoadStrategy))
         capabilities.pageLoadStrategy = deserializePageLoadStrategy(pageLoadStrategy);
+    String unhandledPromptBehavior;
+    if (matchedCapabilities.getString(ASCIILiteral("unhandledPromptBehavior"), unhandledPromptBehavior))
+        capabilities.unhandledPromptBehavior = deserializeUnhandledPromptBehavior(unhandledPromptBehavior);
     platformParseCapabilities(matchedCapabilities, capabilities);
 }
 
@@ -367,9 +383,8 @@ RefPtr<InspectorObject> WebDriverService::validatedCapabilities(const InspectorO
             result->setValue(it->key, RefPtr<InspectorValue>(it->value));
         } else if (it->key == "unhandledPromptBehavior") {
             String unhandledPromptBehavior;
-            if (!it->value->asString(unhandledPromptBehavior))
+            if (!it->value->asString(unhandledPromptBehavior) || !deserializeUnhandledPromptBehavior(unhandledPromptBehavior))
                 return nullptr;
-            // FIXME: implement prompts support.
             result->setString(it->key, unhandledPromptBehavior);
         } else if (it->key.find(":") != notFound) {
             if (!platformValidateCapability(it->key, it->value))
@@ -588,6 +603,19 @@ void WebDriverService::newSession(RefPtr<InspectorObject>&& parameters, Function
                     break;
                 case PageLoadStrategy::Eager:
                     capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "eager");
+                    break;
+                }
+            }
+            if (capabilities.unhandledPromptBehavior) {
+                switch (capabilities.unhandledPromptBehavior.value()) {
+                case UnhandledPromptBehavior::Dismiss:
+                    capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "dismiss");
+                    break;
+                case UnhandledPromptBehavior::Accept:
+                    capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "accept");
+                    break;
+                case UnhandledPromptBehavior::Ignore:
+                    capabilitiesObject->setString(ASCIILiteral("unhandledPromptBehavior"), "ignore");
                     break;
                 }
             }
