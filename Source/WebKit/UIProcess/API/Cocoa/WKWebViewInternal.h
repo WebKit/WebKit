@@ -119,6 +119,8 @@ struct PrintInfo;
 - (void)_showPasswordViewWithDocumentName:(NSString *)documentName passwordHandler:(void (^)(NSString *))passwordHandler;
 - (void)_hidePasswordView;
 
+- (void)_didChangeEditorState;
+
 - (void)_addShortcut:(id)sender;
 - (void)_arrowKey:(id)sender;
 - (void)_define:(id)sender;

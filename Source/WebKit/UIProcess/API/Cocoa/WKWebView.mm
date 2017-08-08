@@ -1085,6 +1085,47 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
     _page->setViewportSizeForCSSViewportUnits(viewportSizeForViewportUnits);
 }
 
+static NSTextAlignment nsTextAlignment(WebKit::TextAlignment alignment)
+{
+    switch (alignment) {
+    case WebKit::NoAlignment:
+        return NSTextAlignmentNatural;
+    case WebKit::LeftAlignment:
+        return NSTextAlignmentLeft;
+    case WebKit::RightAlignment:
+        return NSTextAlignmentRight;
+    case WebKit::CenterAlignment:
+        return NSTextAlignmentCenter;
+    case WebKit::JustifiedAlignment:
+        return NSTextAlignmentJustified;
+    }
+    ASSERT_NOT_REACHED();
+    return NSTextAlignmentNatural;
+}
+
+static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::EditorState& state)
+{
+    if (state.isMissingPostLayoutData)
+        return @{ @"post-layout-data" : @NO };
+
+    auto& postLayoutData = state.postLayoutData();
+    return @{
+        @"post-layout-data" : @YES,
+        @"bold": postLayoutData.typingAttributes & WebKit::AttributeBold ? @YES : @NO,
+        @"italic": postLayoutData.typingAttributes & WebKit::AttributeItalics ? @YES : @NO,
+        @"underline": postLayoutData.typingAttributes & WebKit::AttributeUnderline ? @YES : @NO,
+        @"text-alignment": @(nsTextAlignment(static_cast<WebKit::TextAlignment>(postLayoutData.textAlignment))),
+        @"text-color": (NSString *)postLayoutData.textColor.cssText()
+    };
+}
+
+- (void)_didChangeEditorState
+{
+    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:editorStateDidChange:)])
+        [uiDelegate _webView:self editorStateDidChange:dictionaryRepresentationForEditorState(_page->editorState())];
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)
@@ -3639,6 +3680,11 @@ WEBCORE_COMMAND(yankAndSelect)
     _impl->dismissContentRelativeChildWindowsWithAnimationFromViewOnly(withAnimation);
 }
 
+- (void)_web_editorStateDidChange
+{
+    [self _didChangeEditorState];
+}
+
 - (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event
 {
     _impl->gestureEventWasNotHandledByWebCoreFromViewOnly(event);
@@ -5653,6 +5699,13 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (void)_disableBackForwardSnapshotVolatilityForTesting
 {
     WebKit::ViewSnapshotStore::singleton().setDisableSnapshotVolatilityForTesting(true);
+}
+
+- (void)_executeEditCommand:(NSString *)command argument:(NSString *)argument completion:(void (^)(BOOL))completion
+{
+    _page->executeEditCommand(command, argument, [capturedCompletionBlock = makeBlockPtr(completion)](WebKit::CallbackBase::Error error) {
+        capturedCompletionBlock(error == WebKit::CallbackBase::Error::None);
+    });
 }
 
 #if PLATFORM(IOS)

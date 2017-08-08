@@ -2245,14 +2245,6 @@ void WebPage::applyAutocorrection(const String& correction, const String& origin
     send(Messages::WebPageProxy::StringCallback(correctionApplied ? correction : String(), callbackID));
 }
 
-void WebPage::executeEditCommandWithCallback(const String& commandName, CallbackID callbackID)
-{
-    executeEditCommand(commandName, String());
-    if (commandName == "toggleBold" || commandName == "toggleItalic" || commandName == "toggleUnderline")
-        send(Messages::WebPageProxy::EditorStateChanged(editorState()));
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
-}
-
 Seconds WebPage::eventThrottlingDelay() const
 {
     auto behaviorOverride = m_page->eventThrottlingBehaviorOverride();

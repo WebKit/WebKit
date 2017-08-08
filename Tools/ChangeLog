@@ -1,3 +1,55 @@
+2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] WKWebView schedules nonstop layout after pressing cmb+b,i,u inside a contenteditable div
+        https://bugs.webkit.org/show_bug.cgi?id=175116
+        <rdar://problem/28279301>
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        Introduces new testing infrastructure and API tests to test EditorState updates in the UI process. The new
+        EditorStateTests run on both iOS and Mac.
+
+        * TestWebKitAPI/EditingTestHarness.h: Added.
+        * TestWebKitAPI/EditingTestHarness.mm: Added.
+
+        EditingTestHarness is a helper object that API tests may use to apply editing commands and store EditorState
+        history. This test harness adds sugaring around various editing commands, and simplifies the process of checking
+        the state of the latest observed EditorState.
+
+        (-[EditingTestHarness initWithWebView:]):
+        (-[EditingTestHarness dealloc]):
+        (-[EditingTestHarness webView]):
+        (-[EditingTestHarness latestEditorState]):
+        (-[EditingTestHarness editorStateHistory]):
+        (-[EditingTestHarness insertText:andExpectEditorStateWith:]):
+        (-[EditingTestHarness insertHTML:andExpectEditorStateWith:]):
+        (-[EditingTestHarness selectAllAndExpectEditorStateWith:]):
+        (-[EditingTestHarness moveBackwardAndExpectEditorStateWith:]):
+        (-[EditingTestHarness moveWordBackwardAndExpectEditorStateWith:]):
+        (-[EditingTestHarness toggleBold]):
+        (-[EditingTestHarness toggleItalic]):
+        (-[EditingTestHarness toggleUnderline]):
+        (-[EditingTestHarness setForegroundColor:]):
+        (-[EditingTestHarness alignJustifiedAndExpectEditorStateWith:]):
+        (-[EditingTestHarness alignLeftAndExpectEditorStateWith:]):
+        (-[EditingTestHarness alignCenterAndExpectEditorStateWith:]):
+        (-[EditingTestHarness alignRightAndExpectEditorStateWith:]):
+        (-[EditingTestHarness insertParagraphAndExpectEditorStateWith:]):
+        (-[EditingTestHarness deleteBackwardAndExpectEditorStateWith:]):
+        (-[EditingTestHarness _execCommand:argument:expectEntries:]):
+
+        Dispatches an editing command to the web process, and blocks until a response is received. If an expected
+        entries dictionary is given, this will additionally verify that the latest EditorState contains all the expected
+        keys and values.
+
+        (-[EditingTestHarness latestEditorStateContains:]):
+        (-[EditingTestHarness _webView:editorStateDidChange:]):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/EditorStateTests.mm: Added.
+        (TestWebKitAPI::setUpEditorStateTestHarness):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/editor-state-test-harness.html: Added.
+
 2017-08-04  Brent Fulgham  <bfulgham@apple.com>
 
         Prevent domain from being set to a TLD

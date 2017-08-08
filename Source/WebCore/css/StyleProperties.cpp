@@ -31,6 +31,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "Color.h"
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertyShorthand.h"
@@ -237,6 +238,22 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     default:
         return String();
     }
+}
+
+std::optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) const
+{
+    auto colorValue = getPropertyCSSValue(property);
+    if (!is<CSSPrimitiveValue>(colorValue.get()))
+        return std::nullopt;
+
+    auto& primitiveColor = downcast<CSSPrimitiveValue>(*colorValue);
+    return primitiveColor.isRGBColor() ? primitiveColor.color() : CSSParser::parseColor(colorValue->cssText());
+}
+
+CSSValueID StyleProperties::propertyAsValueID(CSSPropertyID property) const
+{
+    auto cssValue = getPropertyCSSValue(property);
+    return is<CSSPrimitiveValue>(cssValue.get()) ? downcast<CSSPrimitiveValue>(*cssValue).valueID() : CSSValueInvalid;
 }
 
 String StyleProperties::getCustomPropertyValue(const String& propertyName) const

@@ -1029,6 +1029,10 @@ Some other editing-related methods still unimplemented:
     [self _dismissContentRelativeChildWindowsWithAnimation:withAnimation];
 }
 
+- (void)_web_editorStateDidChange
+{
+}
+
 - (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event
 {
     [self _gestureEventWasNotHandledByWebCore:event];

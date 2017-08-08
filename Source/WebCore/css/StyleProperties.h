@@ -36,6 +36,7 @@ namespace WebCore {
 class CSSDeferredParser;
 class CSSStyleDeclaration;
 class CachedResource;
+class Color;
 class ImmutableStyleProperties;
 class URL;
 class MutableStyleProperties;
@@ -112,6 +113,10 @@ public:
 
     WEBCORE_EXPORT RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     WEBCORE_EXPORT String getPropertyValue(CSSPropertyID) const;
+
+    WEBCORE_EXPORT std::optional<Color> propertyAsColor(CSSPropertyID) const;
+    WEBCORE_EXPORT CSSValueID propertyAsValueID(CSSPropertyID) const;
+
     bool propertyIsImportant(CSSPropertyID) const;
     String getPropertyShorthand(CSSPropertyID) const;
     bool isPropertyImplicit(CSSPropertyID) const;
