@@ -28,7 +28,7 @@
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
-#include "GraphicsTypes3D.h"
+#include "TextureMapperGLHeaders.h"
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
@@ -62,7 +62,7 @@ public:
     // the implementation of TextureMapperPlatformLayerProxyProvider should
     // aquire / release the lock explicitly to use below methods.
     Lock& lock() { return m_lock; }
-    std::unique_ptr<TextureMapperPlatformLayerBuffer> getAvailableBuffer(const IntSize&, GC3Dint internalFormat);
+    std::unique_ptr<TextureMapperPlatformLayerBuffer> getAvailableBuffer(const IntSize&, GLint internalFormat);
     void pushNextBuffer(std::unique_ptr<TextureMapperPlatformLayerBuffer>);
     bool isActive();
 

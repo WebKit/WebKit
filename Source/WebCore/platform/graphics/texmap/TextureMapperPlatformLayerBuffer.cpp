@@ -38,7 +38,7 @@ TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(RefPtr<Bitmap
 {
 }
 
-TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize& size, TextureMapperGL::Flags flags, GC3Dint internalFormat)
+TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize& size, TextureMapperGL::Flags flags, GLint internalFormat)
     : m_textureID(textureID)
     , m_size(size)
     , m_internalFormat(internalFormat)
@@ -47,9 +47,9 @@ TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(GLuint textur
 {
 }
 
-bool TextureMapperPlatformLayerBuffer::canReuseWithoutReset(const IntSize& size, GC3Dint internalFormat)
+bool TextureMapperPlatformLayerBuffer::canReuseWithoutReset(const IntSize& size, GLint internalFormat)
 {
-    return m_texture && (m_texture->size() == size) && (static_cast<BitmapTextureGL*>(m_texture.get())->internalFormat() == internalFormat || internalFormat == GraphicsContext3D::DONT_CARE);
+    return m_texture && (m_texture->size() == size) && (static_cast<BitmapTextureGL*>(m_texture.get())->internalFormat() == internalFormat || internalFormat == GL_DONT_CARE);
 }
 
 std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerBuffer::clone(TextureMapperGL& texmapGL)

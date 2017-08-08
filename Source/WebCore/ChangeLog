@@ -1,5 +1,26 @@
 2017-08-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] Drop GC3D* type usage from TextureMapperPlatformLayer{Buffer,Proxy}
+        https://bugs.webkit.org/show_bug.cgi?id=175314
+
+        Reviewed by Carlos Garcia Campos.
+
+        Switch to using OpenGL types in the TextureMapperPlatformLayerBuffer and
+        TextureMapperPlatformLayerProxy classes, instead of the equivalent GC3D*
+        types provided in the GraphicsTypes3D.h header.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        (WebCore::TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer):
+        (WebCore::TextureMapperPlatformLayerBuffer::canReuseWithoutReset):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::getAvailableBuffer):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h:
+
+2017-08-08  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Don't use GraphicsContext3D in ClipStack
         https://bugs.webkit.org/show_bug.cgi?id=174776
 
