@@ -1627,3 +1627,5 @@ webkit.org/b/174682 media/modern-media-controls/scrubber-support/scrubber-suppor
 
 webkit.org/b/175102 [ ElCapitan ] workers/wasm-hashset-many.html [ Skip ]
 webkit.org/b/175102 [ ElCapitan ] workers/wasm-hashset-many-2.html [ Skip ]
+
+webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
