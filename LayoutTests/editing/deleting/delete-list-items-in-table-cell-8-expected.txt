@@ -1,0 +1,27 @@
+When deleting the last ordered list item in a table cell, which entire content is a contenteditable area, we must delete the whole ordered list:
+
+Before:
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         <div>
+|           contenteditable="true"
+|           <ol>
+|             <li>
+|               id="li"
+|               <#selection-caret>
+|               <br>
+
+After:
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         <div>
+|           contenteditable="true"
+|           <div>
+|             <#selection-caret>
+|             <br>

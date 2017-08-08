@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="container"><table border="1"><tr><td contenteditable="true"><ol><li id="li"><br></li></ol></td></tr></table></div>
+    <script src="../../resources/dump-as-markup.js"></script>
+    <script>
+        Markup.description('When deleting the last ordered list item in a table cell, that it is the root editable element, we must delete the whole ordered list:');
+
+        getSelection().collapse(document.getElementById("li"), 0);
+        Markup.dump('container', 'Before');
+
+        document.execCommand("Delete");
+        Markup.dump('container', 'After');
+    </script>
+</body>
+</html>

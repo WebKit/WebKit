@@ -1,3 +1,29 @@
+2017-08-08  Javier Fernandez  <jfernandez@igalia.com>
+
+        Not possible to remove the 'li' element inside the table cell
+        https://bugs.webkit.org/show_bug.cgi?id=173148
+
+        Reviewed by Ryosuke Niwa.
+
+        Regression tests for different scenarios of list items removal.
+
+        * editing/deleting/delete-list-items-in-table-cell-1-expected.txt: Added.
+        * editing/deleting/delete-list-items-in-table-cell-1.html: Added.
+        * editing/deleting/delete-list-items-in-table-cell-2-expected.txt: Added.
+        * editing/deleting/delete-list-items-in-table-cell-2.html: Added.
+        * editing/deleting/delete-list-items-in-table-cell-3-expected.txt: Added.
+        * editing/deleting/delete-list-items-in-table-cell-3.html: Added.
+        * editing/deleting/delete-list-items-in-table-cell-4-expected.txt: Added.
+        * editing/deleting/delete-list-items-in-table-cell-4.html: Added.
+        * editing/deleting/delete-list-items-in-table-cell-5-expected.txt: Added.
+        * editing/deleting/delete-list-items-in-table-cell-5.html: Added.
+        * editing/deleting/delete-list-items-in-table-cell-6-expected.txt: Added.
+        * editing/deleting/delete-list-items-in-table-cell-6.html: Added.
+        * editing/deleting/delete-list-items-in-table-cell-7-expected.txt: Added.
+        * editing/deleting/delete-list-items-in-table-cell-7.html: Added.
+        * editing/deleting/delete-list-items-in-table-cell-8-expected.txt: Added.
+        * editing/deleting/delete-list-items-in-table-cell-8.html: Added.
+
 2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] WKWebView schedules nonstop layout after pressing cmb+b,i,u inside a contenteditable div
