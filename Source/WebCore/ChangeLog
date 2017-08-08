@@ -1,5 +1,27 @@
 2017-08-07  Simon Fraser  <simon.fraser@apple.com>
 
+        RenderStyle:diff() was inadvertently doing deep compares of StyleRareNonInheritedData etc
+        https://bugs.webkit.org/show_bug.cgi?id=175304
+
+        Reviewed by Tim Horton.
+
+        r210758 changed DataRef::get() from returning a pointer to a reference. This caused all the places
+        in RenderStyle::diff() and related functions, where we intended to do a quick pointer comparison,
+        to doing deep compares via operator!=. This made the code slightly slower.
+
+        Fix by exposing ptr() on DataRef and using it wherever we wish to do pointer comparison.
+
+        * rendering/style/DataRef.h:
+        (WebCore::DataRef::ptr const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::inheritedDataShared const):
+        (WebCore::RenderStyle::changeAffectsVisualOverflow const):
+        (WebCore::RenderStyle::changeRequiresLayout const):
+        (WebCore::RenderStyle::changeRequiresRecompositeLayer const):
+        (WebCore::RenderStyle::listStyleImage const): Expand the function onto multiple lines.
+
+2017-08-07  Simon Fraser  <simon.fraser@apple.com>
+
         Add a fast path for rotate() and rotateZ() transform parsing
         https://bugs.webkit.org/show_bug.cgi?id=175308
 

@@ -55,6 +55,11 @@ public:
         return m_data;
     }
 
+    const T* ptr() const
+    {
+        return m_data.ptr();
+    }
+
     const T& get() const
     {
         return m_data;
