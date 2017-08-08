@@ -28,14 +28,15 @@
         function seek1()
         {
             testExpected('video.currentTime.toFixed(1)', 2.5);
-            consoleWrite('Test that fastSeek() past the currentTime will not result in a seek before the currentTime:');
+            consoleWrite('Test that fastSeek() past the currentTime will not result in a seek before the currentTime or past the seek time:');
             waitForEventOnce('timeupdate', seek2);
             run('video.fastSeek(2.6)');
         }
 
         function seek2()
         {
-            testExpected('video.currentTime', 2.6, '>=');
+            testExpected('video.currentTime', 2.6, '<=');
+            testExpected('video.currentTime', 2.5, '>=');
             consoleWrite('Seek before the 4th sync sample:');
             waitForEventOnce('timeupdate', seek3);
             run('video.currentTime = 2.3');
@@ -44,7 +45,7 @@
         function seek3()
         {
             testExpected('video.currentTime.toFixed(1)', 2.3);
-            consoleWrite('Test that fastSeek() before the currentTime will not result in a seek past the currentTime:');
+            consoleWrite('Test that fastSeek() before the currentTime will not result in a seek past the seek time:');
             waitForEventOnce('timeupdate', seek4);
             run('video.fastSeek(2.2)');
         }

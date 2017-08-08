@@ -59,7 +59,7 @@
     function seeked1() {
         testExpected('video.currentTime.toFixed(1)', 1);
         waitForEventOnce('seeked', seeked2);
-        run('video.fastSeek(2)');
+        run('video.fastSeek(5)');
     }
 
     function seeked2() {

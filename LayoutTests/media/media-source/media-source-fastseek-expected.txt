@@ -11,7 +11,7 @@ RUN(source.endOfStream())
 RUN(video.currentTime = 1)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '1') OK
-RUN(video.fastSeek(2))
+RUN(video.fastSeek(5))
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '4') OK
 RUN(video.currentTime = 3)

@@ -2627,11 +2627,10 @@ void HTMLMediaElement::fastSeek(const MediaTime& time)
     // position. Similarly, if the new playback position before this step is after current playback position,
     // then the adjusted new playback position must also be after the current playback position.
     refreshCachedTime();
-    MediaTime delta = time - currentMediaTime();
-    MediaTime negativeTolerance = delta >= MediaTime::zeroTime() ? delta : MediaTime::positiveInfiniteTime();
-    MediaTime positiveTolerance = delta < MediaTime::zeroTime() ? -delta : MediaTime::positiveInfiniteTime();
 
-    seekWithTolerance(time, negativeTolerance, positiveTolerance, true);
+    MediaTime delta = time - currentMediaTime();
+    MediaTime negativeTolerance = delta < MediaTime::zeroTime() ? MediaTime::positiveInfiniteTime() : delta;
+    seekWithTolerance(time, negativeTolerance, MediaTime::zeroTime(), true);
 }
 
 void HTMLMediaElement::seek(const MediaTime& time)
