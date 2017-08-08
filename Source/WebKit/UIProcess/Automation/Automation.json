@@ -58,7 +58,8 @@
                 "NotImplemented",
                 "MissingParameter",
                 "InvalidParameter",
-                "InvalidSelector"
+                "InvalidSelector",
+                "ElementNotInteractable"
             ]
         },
         {

@@ -37,6 +37,13 @@ namespace API {
 
 class AutomationSessionClient {
 public:
+    enum class JavaScriptDialogType {
+        Alert,
+        Confirm,
+        Prompt,
+        BeforeUnloadConfirm
+    };
+
     virtual ~AutomationSessionClient() { }
 
     virtual String sessionIdentifier() const { return String(); }
@@ -47,6 +54,7 @@ public:
     virtual void acceptCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { }
     virtual String messageOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return String(); }
     virtual void setUserInputForCurrentJavaScriptPromptOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, const String&) { }
+    virtual std::optional<JavaScriptDialogType> typeOfCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return std::nullopt; }
 };
 
 } // namespace API

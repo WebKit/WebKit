@@ -2090,6 +2090,14 @@ void webkitWebViewDismissCurrentScriptDialog(WebKitWebView* webView)
         webkitScriptDialogDismiss(webView->priv->currentScriptDialog);
 }
 
+std::optional<WebKitScriptDialogType> webkitWebViewGetCurrentScriptDialogType(WebKitWebView* webView)
+{
+    if (!webView->priv->currentScriptDialog)
+        return std::nullopt;
+
+    return static_cast<WebKitScriptDialogType>(webView->priv->currentScriptDialog->type);
+}
+
 void webkitWebViewMakePolicyDecision(WebKitWebView* webView, WebKitPolicyDecisionType type, WebKitPolicyDecision* decision)
 {
     gboolean returnValue;

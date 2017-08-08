@@ -1,3 +1,34 @@
+2017-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Automation: setUserInputForCurrentJavaScriptPrompt should fail if current dialog is not a prompt
+        https://bugs.webkit.org/show_bug.cgi?id=175261
+
+        Reviewed by Brian Burg.
+
+        According to the spec, send alert text command should fail if the current dialog is not a prompt. This patch
+        adds JavaScriptDialogType enum to API::AutomationSessionClient and a new virtual method to ask the client about
+        the type of the current dialog. WebAutomationSession::setUserInputForCurrentJavaScriptPrompt() uses the new
+        client method to check the type of the current dialog and fail in case it's not a prompt. Cocoa needs an
+        implementation, for now it always returns Prompt as the type to keep compatibility.
+
+        18.4 Send Alert Text.
+        https://w3c.github.io/webdriver/webdriver-spec.html#send-alert-text
+
+        This fixes selenium test testSettingTheValueOfAnAlertThrows.
+
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage):
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewGetCurrentScriptDialogType):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::setUserInputForCurrentJavaScriptPrompt):
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage):
+
 2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] WKWebView schedules nonstop layout after pressing cmb+b,i,u inside a contenteditable div

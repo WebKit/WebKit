@@ -919,6 +919,24 @@ void WebAutomationSession::setUserInputForCurrentJavaScriptPrompt(Inspector::Err
     if (!m_client->isShowingJavaScriptDialogOnPage(*this, *page))
         FAIL_WITH_PREDEFINED_ERROR(NoJavaScriptDialog);
 
+    // §18.4 Send Alert Text.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#send-alert-text
+    // 3. Run the substeps of the first matching current user prompt:
+    auto scriptDialogType = m_client->typeOfCurrentJavaScriptDialogOnPage(*this, *page);
+    ASSERT(scriptDialogType);
+    switch (scriptDialogType.value()) {
+    case API::AutomationSessionClient::JavaScriptDialogType::Alert:
+    case API::AutomationSessionClient::JavaScriptDialogType::Confirm:
+        // Return error with error code element not interactable.
+        FAIL_WITH_PREDEFINED_ERROR(ElementNotInteractable);
+    case API::AutomationSessionClient::JavaScriptDialogType::Prompt:
+        // Do nothing.
+        break;
+    case API::AutomationSessionClient::JavaScriptDialogType::BeforeUnloadConfirm:
+        // Return error with error code unsupported operation.
+        FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
+    }
+
     m_client->setUserInputForCurrentJavaScriptPromptOnPage(*this, *page, promptValue);
 }
 

@@ -123,6 +123,13 @@ void AutomationSessionClient::setUserInputForCurrentJavaScriptPromptOnPage(WebAu
         [m_delegate.get() _automationSession:wrapper(session) setUserInput:value forCurrentJavaScriptDialogOnPage:toAPI(&page)];
 }
 
+std::optional<API::AutomationSessionClient::JavaScriptDialogType> AutomationSessionClient::typeOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&)
+{
+    // FIXME: Implement it. This is only used in WebAutomationSession::setUserInputForCurrentJavaScriptPrompt() so for now we return
+    // always Prompt type for compatibility.
+    return API::AutomationSessionClient::JavaScriptDialogType::Prompt;
+}
+
 } // namespace WebKit
 
 #endif // WK_API_ENABLED

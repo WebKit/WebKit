@@ -88,6 +88,8 @@ CommandResult::CommandResult(RefPtr<InspectorValue>&& result, std::optional<Erro
             m_errorCode = ErrorCode::NoSuchFrame;
         else if (errorName == "NotImplemented")
             m_errorCode = ErrorCode::UnsupportedOperation;
+        else if (errorName == "ElementNotInteractable")
+            m_errorCode = ErrorCode::ElementNotInteractable;
         else if (errorName == "JavaScriptError")
             m_errorCode = ErrorCode::JavascriptError;
         else if (errorName == "JavaScriptTimeout")

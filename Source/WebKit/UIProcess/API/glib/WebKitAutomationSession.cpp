@@ -132,6 +132,29 @@ private:
         webkitWebViewSetCurrentScriptDialogUserInput(webView, userInput);
     }
 
+    std::optional<API::AutomationSessionClient::JavaScriptDialogType> typeOfCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy& page) override
+    {
+        auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page);
+        if (!webView)
+            return std::nullopt;
+        auto dialogType = webkitWebViewGetCurrentScriptDialogType(webView);
+        if (!dialogType)
+            return std::nullopt;
+        switch (dialogType.value()) {
+        case WEBKIT_SCRIPT_DIALOG_ALERT:
+            return API::AutomationSessionClient::JavaScriptDialogType::Alert;
+        case WEBKIT_SCRIPT_DIALOG_CONFIRM:
+            return API::AutomationSessionClient::JavaScriptDialogType::Confirm;
+        case WEBKIT_SCRIPT_DIALOG_PROMPT:
+            return API::AutomationSessionClient::JavaScriptDialogType::Prompt;
+        case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:
+            return API::AutomationSessionClient::JavaScriptDialogType::BeforeUnloadConfirm;
+        }
+
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
     WebKitAutomationSession* m_session;
 };
 
