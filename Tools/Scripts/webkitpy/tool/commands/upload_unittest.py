@@ -103,11 +103,15 @@ MOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_rev
         self.assert_execute_outputs(LandSafely(), [50000], expected_logs=expected_logs)
 
     def test_prepare_diff_with_arg(self):
-        self.assert_execute_outputs(Prepare(), [50000])
+        options = MockOptions()
+        options.sort_xcode_project = False
+        self.assert_execute_outputs(Prepare(), [50000], options=options)
 
     def test_prepare(self):
+        options = MockOptions()
+        options.sort_xcode_project = False
         expected_logs = "MOCK create_bug\nbug_title: Mock user response\nbug_description: Mock user response\ncomponent: MOCK component\ncc: MOCK cc\n"
-        self.assert_execute_outputs(Prepare(), [], expected_logs=expected_logs)
+        self.assert_execute_outputs(Prepare(), [], expected_logs=expected_logs, options=options)
 
     def test_upload(self):
         options = MockOptions()
@@ -119,6 +123,7 @@ MOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_rev
         options.non_interactive = False
         options.request_commit = False
         options.review = True
+        options.sort_xcode_project = False
         options.suggest_reviewers = False
         expected_logs = """MOCK: user.open_url: file://...
 Was that diff correct?

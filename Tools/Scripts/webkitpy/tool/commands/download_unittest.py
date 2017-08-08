@@ -90,6 +90,7 @@ class DownloadCommandsTest(CommandsTest):
         options.architecture = 'MOCK ARCH'
         options.iterate_on_new_tests = 0
         options.group = None
+        options.sort_xcode_project = False
         return options
 
     def test_build(self):
