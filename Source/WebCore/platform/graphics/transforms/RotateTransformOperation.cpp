@@ -43,7 +43,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         return *this;
     
     if (blendToIdentity)
-        return RotateTransformOperation::create(m_x, m_y, m_z, m_angle - m_angle * progress, m_type);
+        return RotateTransformOperation::create(m_x, m_y, m_z, m_angle - m_angle * progress, type());
     
     const RotateTransformOperation* fromOp = downcast<RotateTransformOperation>(from);
     
@@ -55,7 +55,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         return RotateTransformOperation::create(fromOp ? fromOp->m_x : m_x, 
                                                 fromOp ? fromOp->m_y : m_y, 
                                                 fromOp ? fromOp->m_z : m_z, 
-                                                WebCore::blend(fromAngle, m_angle, progress), m_type);
+                                                WebCore::blend(fromAngle, m_angle, progress), type());
     }
 
     const RotateTransformOperation* toOp = this;

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Matrix3DTransformOperation_h
-#define Matrix3DTransformOperation_h
+#pragma once
 
 #include "TransformOperation.h"
 #include <wtf/Ref.h>
@@ -49,9 +48,6 @@ private:
     bool isIdentity() const override { return m_matrix.isIdentity(); }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
-    OperationType type() const override { return MATRIX_3D; }
-    bool isSameType(const TransformOperation& o) const override { return o.type() == MATRIX_3D; }
-
     bool operator==(const TransformOperation&) const override;
 
     bool apply(TransformationMatrix& transform, const FloatSize&) const override
@@ -65,8 +61,9 @@ private:
     void dump(TextStream&) const final;
 
     Matrix3DTransformOperation(const TransformationMatrix& mat)
+        : TransformOperation(MATRIX_3D)
+        , m_matrix(mat)
     {
-        m_matrix = mat;
     }
 
     TransformationMatrix m_matrix;
@@ -75,5 +72,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::Matrix3DTransformOperation, type() == WebCore::TransformOperation::MATRIX_3D)
-
-#endif // Matrix3DTransformOperation_h

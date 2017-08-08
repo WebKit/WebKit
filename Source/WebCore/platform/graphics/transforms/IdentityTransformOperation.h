@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005-2008, 2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef IdentityTransformOperation_h
-#define IdentityTransformOperation_h
+#pragma once
 
 #include "TransformOperation.h"
 #include <wtf/Ref.h>
@@ -44,8 +43,6 @@ public:
 
 private:
     bool isIdentity() const override { return true; }
-    OperationType type() const override { return IDENTITY; }
-    bool isSameType(const TransformOperation& o) const override { return o.type() == IDENTITY; }
 
     bool operator==(const TransformOperation& o) const override
     {
@@ -65,13 +62,11 @@ private:
     void dump(TextStream&) const final;
 
     IdentityTransformOperation()
+        : TransformOperation(IDENTITY)
     {
     }
-
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::IdentityTransformOperation, type() == WebCore::TransformOperation::IDENTITY)
-
-#endif // IdentityTransformOperation_h

@@ -1,5 +1,38 @@
 2017-08-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Make TransformOperation::type() non-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=175297
+
+        Reviewed by Sam Weinig.
+
+        Store the OperationType in the base class so that type() and isSameType() can
+        be non-virtual.
+
+        Small perf win on some benchmarks.
+
+        * platform/graphics/transforms/IdentityTransformOperation.h:
+        * platform/graphics/transforms/Matrix3DTransformOperation.h:
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        * platform/graphics/transforms/PerspectiveTransformOperation.h:
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::RotateTransformOperation::blend):
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        * platform/graphics/transforms/ScaleTransformOperation.cpp:
+        (WebCore::ScaleTransformOperation::blend):
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        * platform/graphics/transforms/SkewTransformOperation.cpp:
+        (WebCore::SkewTransformOperation::blend):
+        * platform/graphics/transforms/SkewTransformOperation.h:
+        * platform/graphics/transforms/TransformOperation.h:
+        (WebCore::TransformOperation::TransformOperation):
+        (WebCore::TransformOperation::type const):
+        (WebCore::TransformOperation::isSameType const):
+        * platform/graphics/transforms/TranslateTransformOperation.cpp:
+        (WebCore::TranslateTransformOperation::blend):
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+
+2017-08-07  Simon Fraser  <simon.fraser@apple.com>
+
         Inline ~Color and Color::isExtended()
         https://bugs.webkit.org/show_bug.cgi?id=175293
 

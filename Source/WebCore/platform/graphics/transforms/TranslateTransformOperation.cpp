@@ -42,13 +42,13 @@ Ref<TransformOperation> TranslateTransformOperation::blend(const TransformOperat
 
     Length zeroLength(0, Fixed);
     if (blendToIdentity)
-        return TranslateTransformOperation::create(WebCore::blend(m_x, zeroLength, progress), WebCore::blend(m_y, zeroLength, progress), WebCore::blend(m_z, zeroLength, progress), m_type);
+        return TranslateTransformOperation::create(WebCore::blend(m_x, zeroLength, progress), WebCore::blend(m_y, zeroLength, progress), WebCore::blend(m_z, zeroLength, progress), type());
 
     const TranslateTransformOperation* fromOp = downcast<TranslateTransformOperation>(from);
     Length fromX = fromOp ? fromOp->m_x : zeroLength;
     Length fromY = fromOp ? fromOp->m_y : zeroLength;
     Length fromZ = fromOp ? fromOp->m_z : zeroLength;
-    return TranslateTransformOperation::create(WebCore::blend(fromX, x(), progress), WebCore::blend(fromY, y(), progress), WebCore::blend(fromZ, z(), progress), m_type);
+    return TranslateTransformOperation::create(WebCore::blend(fromX, x(), progress), WebCore::blend(fromY, y(), progress), WebCore::blend(fromZ, z(), progress), type());
 }
 
 void TranslateTransformOperation::dump(TextStream& ts) const

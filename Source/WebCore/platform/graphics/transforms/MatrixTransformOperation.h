@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005-2008, 2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef MatrixTransformOperation_h
-#define MatrixTransformOperation_h
+#pragma once
 
 #include "TransformOperation.h"
 #include "TransformationMatrix.h"
@@ -54,9 +53,6 @@ private:
     bool isIdentity() const override { return m_a == 1 && m_b == 0 && m_c == 0 && m_d == 1 && m_e == 0 && m_f == 0; }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
-    OperationType type() const override { return MATRIX; }
-    bool isSameType(const TransformOperation& o) const override { return o.type() == MATRIX; }
-
     bool operator==(const TransformOperation&) const override;
 
     bool apply(TransformationMatrix& transform, const FloatSize&) const override
@@ -71,7 +67,8 @@ private:
     void dump(TextStream&) const final;
 
     MatrixTransformOperation(double a, double b, double c, double d, double e, double f)
-        : m_a(a)
+        : TransformOperation(MATRIX)
+        , m_a(a)
         , m_b(b)
         , m_c(c)
         , m_d(d)
@@ -81,7 +78,8 @@ private:
     }
 
     MatrixTransformOperation(const TransformationMatrix& t)
-        : m_a(t.a())
+        : TransformOperation(MATRIX)
+        , m_a(t.a())
         , m_b(t.b())
         , m_c(t.c())
         , m_d(t.d())
@@ -101,5 +99,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::MatrixTransformOperation, type() == WebCore::TransformOperation::MATRIX)
-
-#endif // MatrixTransformOperation_h

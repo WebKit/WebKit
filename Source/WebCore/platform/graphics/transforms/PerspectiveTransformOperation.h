@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PerspectiveTransformOperation_h
-#define PerspectiveTransformOperation_h
+#pragma once
 
 #include "Length.h"
 #include "LengthFunctions.h"
@@ -51,9 +50,6 @@ private:
     bool isIdentity() const override { return !floatValueForLength(m_p, 1); }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
-    OperationType type() const override { return PERSPECTIVE; }
-    bool isSameType(const TransformOperation& o) const override { return o.type() == PERSPECTIVE; }
-
     bool operator==(const TransformOperation&) const override;
 
     bool apply(TransformationMatrix& transform, const FloatSize&) const override
@@ -67,7 +63,8 @@ private:
     void dump(TextStream&) const final;
 
     PerspectiveTransformOperation(const Length& p)
-        : m_p(p)
+        : TransformOperation(PERSPECTIVE)
+        , m_p(p)
     {
         ASSERT(p.isFixed());
     }
@@ -78,5 +75,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::PerspectiveTransformOperation, type() == WebCore::TransformOperation::PERSPECTIVE)
-
-#endif // PerspectiveTransformOperation_h

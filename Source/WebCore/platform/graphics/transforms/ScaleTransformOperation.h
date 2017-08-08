@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005-2008, 2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef ScaleTransformOperation_h
-#define ScaleTransformOperation_h
+#pragma once
 
 #include "TransformOperation.h"
 #include <wtf/Ref.h>
@@ -44,7 +43,7 @@ public:
 
     Ref<TransformOperation> clone() const override
     {
-        return adoptRef(*new ScaleTransformOperation(m_x, m_y, m_z, m_type));
+        return adoptRef(*new ScaleTransformOperation(m_x, m_y, m_z, type()));
     }
 
     double x() const { return m_x; }
@@ -54,9 +53,6 @@ public:
 private:
     bool isIdentity() const override { return m_x == 1 &&  m_y == 1 &&  m_z == 1; }
     bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
-
-    OperationType type() const override { return m_type; }
-    bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }
 
     bool operator==(const TransformOperation&) const override;
 
@@ -71,10 +67,10 @@ private:
     void dump(TextStream&) const final;
 
     ScaleTransformOperation(double sx, double sy, double sz, OperationType type)
-        : m_x(sx)
+        : TransformOperation(type)
+        , m_x(sx)
         , m_y(sy)
         , m_z(sz)
-        , m_type(type)
     {
         ASSERT(isScaleTransformOperationType());
     }
@@ -82,11 +78,8 @@ private:
     double m_x;
     double m_y;
     double m_z;
-    OperationType m_type;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(WebCore::ScaleTransformOperation, isScaleTransformOperationType())
-
-#endif // ScaleTransformOperation_h

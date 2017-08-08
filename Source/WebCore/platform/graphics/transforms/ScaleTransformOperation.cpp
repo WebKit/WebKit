@@ -43,7 +43,7 @@ Ref<TransformOperation> ScaleTransformOperation::blend(const TransformOperation*
     if (blendToIdentity)
         return ScaleTransformOperation::create(WebCore::blend(m_x, 1.0, progress),
                                                WebCore::blend(m_y, 1.0, progress),
-                                               WebCore::blend(m_z, 1.0, progress), m_type);
+                                               WebCore::blend(m_z, 1.0, progress), type());
     
     const ScaleTransformOperation* fromOp = downcast<ScaleTransformOperation>(from);
     double fromX = fromOp ? fromOp->m_x : 1.0;
@@ -51,7 +51,7 @@ Ref<TransformOperation> ScaleTransformOperation::blend(const TransformOperation*
     double fromZ = fromOp ? fromOp->m_z : 1.0;
     return ScaleTransformOperation::create(WebCore::blend(fromX, m_x, progress),
                                            WebCore::blend(fromY, m_y, progress),
-                                           WebCore::blend(fromZ, m_z, progress), m_type);
+                                           WebCore::blend(fromZ, m_z, progress), type());
 }
 
 void ScaleTransformOperation::dump(TextStream& ts) const
