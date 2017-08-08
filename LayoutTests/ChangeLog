@@ -1,3 +1,11 @@
+2017-08-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Fix baseline for http/tests/security/set-domain-remove-subdomain-for-ip-address.html.
+
+        Unreviewed test gardening.
+
+        * http/tests/security/set-domain-remove-subdomain-for-ip-address-expected.txt:
+
 2017-08-08  Matt Lewis  <jlewis3@apple.com>
 
         Fixed rebaselined expectations for js/dom/global-constructors-attributes.html.
