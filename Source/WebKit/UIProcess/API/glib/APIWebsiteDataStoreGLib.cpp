@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2015-2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,17 @@
 
 #include <WebCore/FileSystem.h>
 
+#if PLATFORM(GTK)
+#define BASE_DIRECTORY "webkitgtk"
+#elif PLATFORM(WPE)
+#define BASE_DIRECTORY "wpe"
+#endif
+
 namespace API {
 
 String WebsiteDataStore::defaultApplicationCacheDirectory()
 {
-    return cacheDirectoryFileSystemRepresentation("webkitgtk" G_DIR_SEPARATOR_S "applications");
+    return cacheDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "applications");
 }
 
 // FIXME: The other directories in this file are shared between all applications using WebKitGTK+.
@@ -44,27 +50,27 @@ String WebsiteDataStore::defaultNetworkCacheDirectory()
 
 String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
 {
-    return websiteDataDirectoryFileSystemRepresentation("webkitgtk" G_DIR_SEPARATOR_S "databases" G_DIR_SEPARATOR_S "indexeddb");
+    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "databases" G_DIR_SEPARATOR_S "indexeddb");
 }
 
 String WebsiteDataStore::defaultLocalStorageDirectory()
 {
-    return websiteDataDirectoryFileSystemRepresentation("webkitgtk" G_DIR_SEPARATOR_S "localstorage");
+    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "localstorage");
 }
 
 String WebsiteDataStore::defaultMediaKeysStorageDirectory()
 {
-    return websiteDataDirectoryFileSystemRepresentation("webkitgtk" G_DIR_SEPARATOR_S "mediakeys");
+    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "mediakeys");
 }
 
 String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
-    return websiteDataDirectoryFileSystemRepresentation("webkitgtk" G_DIR_SEPARATOR_S "databases");
+    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "databases");
 }
 
 String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
 {
-    return websiteDataDirectoryFileSystemRepresentation("webkitgtk" G_DIR_SEPARATOR_S "ResourceLoadStatistics");
+    return websiteDataDirectoryFileSystemRepresentation(BASE_DIRECTORY G_DIR_SEPARATOR_S "ResourceLoadStatistics");
 }
 
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)

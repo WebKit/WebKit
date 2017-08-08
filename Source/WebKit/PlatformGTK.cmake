@@ -116,6 +116,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/gtk/WKTextCheckerGtk.cpp
     UIProcess/API/C/gtk/WKView.cpp
 
+    UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp
     UIProcess/API/glib/IconDatabase.cpp
     UIProcess/API/glib/WebKitApplicationInfo.cpp
     UIProcess/API/glib/WebKitAuthenticationRequest.cpp
@@ -172,7 +173,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/glib/WebKitWebsiteDataManager.cpp
     UIProcess/API/glib/WebKitWindowProperties.cpp
 
-    UIProcess/API/gtk/APIWebsiteDataStoreGtk.cpp
     UIProcess/API/gtk/PageClientImpl.cpp
     UIProcess/API/gtk/WebKitAuthenticationDialog.cpp
     UIProcess/API/gtk/WebKitColorChooser.cpp

@@ -1,3 +1,24 @@
+2017-08-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Implement WebsiteDataStore::defaultApplicationCacheDirectory() and friends
+        https://bugs.webkit.org/show_bug.cgi?id=175322
+
+        Reviewed by Carlos Garcia Campos.
+
+        This makes WPE use the same implementation as the GTK+ port, with a preprocessor switch to choose the name of
+        the base directory inside the user XDG cache directory.
+
+        * PlatformGTK.cmake: Add APIWebsiteDataStoreGLib.cpp to the build sources and remove APIWebsiteDataStoreGtk.cpp.
+        * PlatformWPE.cmake: Add APIWebsiteDataStoreGLib.cpp to the built sources.
+        * UIProcess/API/APIWebsiteDataStore.cpp: Remove now dead code.
+        * UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp: Renamed from Source/WebKit/UIProcess/API/gtk/APIWebsiteDataStoreGtk.cpp.
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::defaultLocalStorageDirectory):
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory):
+
 2017-08-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r220368.

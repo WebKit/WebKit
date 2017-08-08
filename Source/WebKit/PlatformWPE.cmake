@@ -131,6 +131,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/wpe/WKView.cpp
 
+    UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp
     UIProcess/API/glib/IconDatabase.cpp
     UIProcess/API/glib/WebKitApplicationInfo.cpp
     UIProcess/API/glib/WebKitAuthenticationRequest.cpp
