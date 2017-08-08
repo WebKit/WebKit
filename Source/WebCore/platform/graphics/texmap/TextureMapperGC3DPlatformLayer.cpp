@@ -33,6 +33,7 @@
 #include "BitmapTextureGL.h"
 #include "GLContext.h"
 #include "TextureMapperPlatformLayerBuffer.h"
+#include "TextureMapperPlatformLayerProxy.h"
 
 namespace WebCore {
 

@@ -35,8 +35,8 @@
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
 
-#if USE(TEXTURE_MAPPER)
-#include "TextureMapperPlatformLayerProxy.h"
+#if USE(TEXTURE_MAPPER_GL)
+#include "TextureMapperPlatformLayerProxyProvider.h"
 #endif
 
 typedef struct _GstStreamVolume GstStreamVolume;
@@ -53,6 +53,10 @@ class GraphicsContext3D;
 class IntSize;
 class IntRect;
 class VideoTextureCopierGStreamer;
+
+#if USE(TEXTURE_MAPPER_GL)
+class TextureMapperPlatformLayerProxy;
+#endif
 
 void registerWebKitGStreamerElements();
 
@@ -145,8 +149,8 @@ protected:
 
 #if USE(TEXTURE_MAPPER_GL)
     void updateTexture(BitmapTextureGL&, GstVideoInfo&);
-    RefPtr<TextureMapperPlatformLayerProxy> proxy() const override { return m_platformLayerProxy.copyRef(); }
-    void swapBuffersIfNeeded() override { };
+    RefPtr<TextureMapperPlatformLayerProxy> proxy() const;
+    void swapBuffersIfNeeded() override;
     void pushTextureToCompositor();
 #endif
 

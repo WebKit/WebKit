@@ -35,12 +35,13 @@
 #include "PlatformLayer.h"
 #include "TextureMapper.h"
 #include "TextureMapperPlatformLayer.h"
-#include "TextureMapperPlatformLayerProxy.h"
+#include "TextureMapperPlatformLayerProxyProvider.h"
 #endif
 
 namespace WebCore {
 
 class IntSize;
+class TextureMapperPlatformLayerProxy;
 
 class ImageBufferData
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -61,7 +62,7 @@ public:
     void createCairoGLSurface();
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    RefPtr<TextureMapperPlatformLayerProxy> proxy() const override { return m_platformLayerProxy.copyRef(); }
+    RefPtr<TextureMapperPlatformLayerProxy> proxy() const;
     void swapBuffersIfNeeded() override;
     void createCompositorBuffer();
 

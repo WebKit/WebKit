@@ -132,6 +132,11 @@ void ImageBufferData::createCompositorBuffer()
     cairo_set_antialias(m_compositorCr.get(), CAIRO_ANTIALIAS_NONE);
 }
 
+RefPtr<TextureMapperPlatformLayerProxy> ImageBufferData::proxy() const
+{
+    return m_platformLayerProxy.copyRef();
+}
+
 void ImageBufferData::swapBuffersIfNeeded()
 {
     GLContext* previousActiveContext = GLContext::current();

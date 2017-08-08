@@ -31,6 +31,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerFactory.h"
 #include "ScrollableArea.h"
+#include "TextureMapperPlatformLayerProxyProvider.h"
 #include <wtf/CurrentTime.h>
 #ifndef NDEBUG
 #include <wtf/SetForScope.h>

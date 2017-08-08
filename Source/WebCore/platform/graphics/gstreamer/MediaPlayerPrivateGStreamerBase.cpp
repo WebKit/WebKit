@@ -104,6 +104,7 @@
 #include "TextureMapperContextAttributes.h"
 #include "TextureMapperGL.h"
 #include "TextureMapperPlatformLayerBuffer.h"
+#include "TextureMapperPlatformLayerProxy.h"
 #if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
 #include <cairo-gl.h>
 #endif
@@ -561,9 +562,16 @@ void MediaPlayerPrivateGStreamerBase::updateTexture(BitmapTextureGL& texture, Gs
     texture.updateContents(srcData, WebCore::IntRect(0, 0, GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo)), WebCore::IntPoint(0, 0), stride, BitmapTexture::UpdateCannotModifyOriginalImageData);
     gst_video_frame_unmap(&videoFrame);
 }
-#endif
 
-#if USE(TEXTURE_MAPPER_GL)
+RefPtr<TextureMapperPlatformLayerProxy> MediaPlayerPrivateGStreamerBase::proxy() const
+{
+    return m_platformLayerProxy.copyRef();
+}
+
+void MediaPlayerPrivateGStreamerBase::swapBuffersIfNeeded()
+{
+}
+
 void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
 {
 #if !USE(GSTREAMER_GL)

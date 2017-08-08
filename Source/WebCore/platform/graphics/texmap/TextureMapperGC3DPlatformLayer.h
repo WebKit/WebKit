@@ -24,7 +24,7 @@
 #include "GraphicsContext3D.h"
 #include "PlatformLayer.h"
 #include "TextureMapperPlatformLayer.h"
-#include "TextureMapperPlatformLayerProxy.h"
+#include "TextureMapperPlatformLayerProxyProvider.h"
 
 namespace WebCore {
 

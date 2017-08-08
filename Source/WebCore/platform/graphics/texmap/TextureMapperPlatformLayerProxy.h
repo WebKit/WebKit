@@ -44,14 +44,7 @@ namespace WebCore {
 class IntSize;
 class TextureMapperGL;
 class TextureMapperLayer;
-class TextureMapperPlatformLayerProxy;
 class TextureMapperPlatformLayerBuffer;
-
-class TextureMapperPlatformLayerProxyProvider {
-public:
-    virtual RefPtr<TextureMapperPlatformLayerProxy> proxy() const = 0;
-    virtual void swapBuffersIfNeeded() = 0;
-};
 
 class TextureMapperPlatformLayerProxy : public ThreadSafeRefCounted<TextureMapperPlatformLayerProxy> {
     WTF_MAKE_FAST_ALLOCATED();
