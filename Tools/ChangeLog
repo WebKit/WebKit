@@ -1,3 +1,13 @@
+2017-08-08  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Separate jsc stress test script writer from run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=175216
+
+        Reviewed by Mark Lam.
+
+        * Scripts/run-jsc-stress-tests:
+        * Scripts/webkitruby/jsc-stress-test-writer-default.rb: Added.
+
 2017-08-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix Ubuntu LTS build
