@@ -1,3 +1,13 @@
+2017-08-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip failing JSC tests stress/regress-169783.js and wasm.yaml/wasm/stress/oom.js.
+        https://bugs.webkit.org/show_bug.cgi?id=175255
+
+        Unreviewed test gardening.
+
+        * stress/regress-169783.js:
+        * wasm/stress/oom.js:
+
 2017-08-09  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         REGRESSION: 2 test262/test/language/statements/async-function failures
