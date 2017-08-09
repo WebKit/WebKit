@@ -4883,7 +4883,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
             failWithMessage("Cannot parse subexpression of ", operatorString(true, lastOperator), "operator");
         failWithMessage("Cannot parse member expression");
     }
-    if (UNLIKELY(lastOperator && context.isNewTarget(expr)))
+    if (UNLIKELY(isUpdateOp(static_cast<JSTokenType>(lastOperator)) && context.isNewTarget(expr)))
         internalFailWithMessage(false, "new.target can't come after a prefix operator");
     bool isEvalOrArguments = false;
     if (strictMode() && !m_syntaxAlreadyValidated) {

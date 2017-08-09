@@ -16,6 +16,6 @@ function testSyntaxError(script, message) {
 testSyntaxError(`
 function f()
 {
-    ({v = (typeof new.target)} = {})
+    ({v = (++new.target)} = {})
 }
 `, `SyntaxError: Unexpected token '='. Expected a ':' following the property name 'v'.`);

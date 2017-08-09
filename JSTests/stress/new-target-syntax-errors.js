@@ -88,6 +88,14 @@ for (let operator of prePostFixOperators) {
     shouldNotBeSyntaxError(functionBody);
 }
 
+let otherUnaryOperators = ["!", "~", "+", "-", "typeof ", "void ", "delete "];
+for (let operator of otherUnaryOperators) {
+    function strict(body) { return `"use strict" ${body}`; }
+    let functionBody = `${operator}new.target`;
+    shouldNotBeSyntaxError(functionBody);
+    shouldNotBeSyntaxError(strict(functionBody));
+}
+
 shouldBeSyntaxError(`({foo: new.target} = {foo:20})`);
 
 // Scripts - 15.1.1 Static Semantics: Early Errors
