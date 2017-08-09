@@ -46,7 +46,7 @@ public:
 
     JSC::JSValue promise(JSC::ExecState&, JSDOMGlobalObject&);
 
-    void reset();
+    void clear();
 
     bool isFulfilled() const;
 
@@ -70,7 +70,7 @@ public:
 
     JSC::JSValue promise(JSC::ExecState&, JSDOMGlobalObject&);
 
-    void reset();
+    void clear();
 
     bool isFulfilled() const;
 
@@ -82,6 +82,10 @@ private:
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
+// Instead of storing the value of the resolution directly, DOMPromiseProxyWithResolveCallback
+// allows the owner to specify callback to be called when the resolved value is needed. This is
+// needed to avoid reference cycles when the resolved value is the owner, such as is the case with
+// FontFace and FontFaceSet.
 template<typename IDLType>
 class DOMPromiseProxyWithResolveCallback {
 public:
@@ -99,7 +103,7 @@ public:
 
     JSC::JSValue promise(JSC::ExecState&, JSDOMGlobalObject&);
 
-    void reset();
+    void clear();
 
     bool isFulfilled() const;
 
@@ -143,7 +147,7 @@ inline JSC::JSValue DOMPromiseProxy<IDLType>::promise(JSC::ExecState& state, JSD
 }
 
 template<typename IDLType>
-inline void DOMPromiseProxy<IDLType>::reset()
+inline void DOMPromiseProxy<IDLType>::clear()
 {
     m_valueOrException = std::nullopt;
     m_deferredPromises.clear();
@@ -212,7 +216,7 @@ inline JSC::JSValue DOMPromiseProxy<IDLVoid>::promise(JSC::ExecState& state, JSD
     return result;
 }
 
-inline void DOMPromiseProxy<IDLVoid>::reset()
+inline void DOMPromiseProxy<IDLVoid>::clear()
 {
     m_valueOrException = std::nullopt;
     m_deferredPromises.clear();
@@ -280,7 +284,7 @@ inline JSC::JSValue DOMPromiseProxyWithResolveCallback<IDLType>::promise(JSC::Ex
 }
 
 template<typename IDLType>
-inline void DOMPromiseProxyWithResolveCallback<IDLType>::reset()
+inline void DOMPromiseProxyWithResolveCallback<IDLType>::clear()
 {
     m_valueOrException = std::nullopt;
     m_deferredPromises.clear();

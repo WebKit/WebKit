@@ -189,14 +189,12 @@ bool FontFaceSet::canSuspendForDocumentSuspension() const
 void FontFaceSet::startedLoading()
 {
     // FIXME: Fire a "loading" event asynchronously.
-    m_isReady = false;
-    m_readyPromise.reset();
+    m_readyPromise.clear();
 }
 
 void FontFaceSet::completedLoading()
 {
     m_readyPromise.resolve(*this);
-    m_isReady = true;
 }
 
 void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
