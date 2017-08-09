@@ -1,3 +1,56 @@
+2017-08-08  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220289. rdar://problem/33789082
+
+    2017-08-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            RenderImageResourceStyleImage::image() should return the nullImage() if the image is not available
+            https://bugs.webkit.org/show_bug.cgi?id=174874
+            <rdar://problem/33530130>
+
+            Reviewed by Simon Fraser.
+
+            If an <img> element has a non-CachedImage content data, e.g. -webkit-named-image,
+            RenderImageResourceStyleImage will be created and  attached to the RenderImage.
+            RenderImageResourceStyleImage::m_cachedImage will be set to null at the
+            beginning because the m_styleImage->isCachedImage() is false in this case.
+            When ImageLoader finishes loading the url of the src attribute,
+            RenderImageResource::setCachedImage() will be called to set m_cachedImage.
+
+            A crash will happen when the RenderImage is destroyed. Destroying the
+            RenderImage calls RenderImageResourceStyleImage::shutdown() which checks
+            m_cachedImage and finds it not null, so it calls RenderImageResourceStyleImage::image()
+            which ends up calling CSSNamedImageValue::image() which returns a null pointer
+            because the size is empty. RenderImageResourceStyleImage::shutdown() calls
+            image()->stopAnimation() without checking the return value of image().
+
+            Another crash will happen later when deleting the CachedImage from the memory
+            cache if CachedImage::canDestroyDecodedData() is called because the client
+            it gets from m_clients is a freed pointer. This happens because RenderImageResourceStyleImage
+            has m_styleImage of type StyleGeneratedImage but its m_cachedImage is set
+            by RenderImageResource::setCachedImage(). When RenderImageResourceStyleImage::shutdown()
+            is called, it calls  StyleGeneratedImage::removeClient() which does not
+            know anything about RenderImageResourceStyleImage::m_cachedImage. So we
+            end up having a freed pointer in the m_clients of the CachedImage.
+
+            Test: fast/images/image-element-image-content-data.html
+
+            * rendering/RenderImageResourceStyleImage.cpp:
+            (WebCore::RenderImageResourceStyleImage::shutdown):  Revert back the changes
+            of r208511 in this function. Add a call to image()->stopAnimation() without
+            checking the return of image() since it will return the nullImage() if
+            the image not available. There is no need to check m_cachedImage before
+            calling image() because image() does not check or access m_cachedImage.
+
+            If m_styleImage is not a CachedStyleImage but m_cachedImage is not null,
+            we need to remove m_renderer from the set of the clients of this m_cachedImage.
+
+            (WebCore::RenderImageResourceStyleImage::image const): The base class method
+            RenderImageResource::image() returns the nullImage() if the image not
+            available. This is because CachedImage::imageForRenderer() returns
+            the nullImage() if the image is not available; see CachedImage.h. We should
+            do the same for the derived class for consistency.
+
 2017-08-07  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220333. rdar://problem/33601173
