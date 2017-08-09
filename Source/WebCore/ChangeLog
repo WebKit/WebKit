@@ -3,7 +3,7 @@
         WTF::Function does not allow for reference / non-default constructible return types
         https://bugs.webkit.org/show_bug.cgi?id=175244
 
-        Reviewed by Sam Weinig.
+        Reviewed by Chris Dumez.
 
         * bindings/js/JSCustomElementInterface.h:
         (WebCore::JSCustomElementInterface::invokeCallback):
