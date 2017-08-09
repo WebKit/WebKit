@@ -793,3 +793,6 @@ media/encrypted-media/encrypted-media-v2-syntax.html [ Skip ]
 
 # No support for resource load statistics in test controller.
 webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Timeout Failure ]
+
+webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
+webkit.org/b/175380 scrollbars/scrollbar-iframe-click-does-not-blur-content.html [ ImageOnlyFailure ]

@@ -87,7 +87,10 @@ function parseClipPath(s)
     var pathMatch;
     if (pathMatch = s.match(/path\(((evenodd|nonzero), ?)?\'(.+)\'\)/))
         return extractPathValues(pathMatch[pathMatch.length - 1]);
-    
+
+    if (pathMatch = s.match(/path\(((evenodd|nonzero), ?)?\"(.+)\"\)/))
+        return extractPathValues(pathMatch[pathMatch.length - 1]);
+
     // FIXME: This only matches a subset of the shape syntax, and the polygon expects 4 points.
     var patterns = [
         /inset\(([\d.]+)\w+ ([\d.]+)\w+\)/,
