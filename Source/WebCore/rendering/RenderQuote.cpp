@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Nokia Inc.  All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,33 +44,25 @@ RenderQuote::~RenderQuote()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderQuote::willBeDestroyed()
-{
-    detachQuote();
-
-    ASSERT(!m_isAttached);
-    ASSERT(!m_next);
-    ASSERT(!m_previous);
-
-    RenderInline::willBeDestroyed();
-}
-
 void RenderQuote::insertedIntoTree()
 {
     RenderInline::insertedIntoTree();
-    attachQuote();
+    view().registerQuote(*this);
 }
 
 void RenderQuote::willBeRemovedFromTree()
 {
+    view().unregisterQuote(*this);
     RenderInline::willBeRemovedFromTree();
-    detachQuote();
 }
 
 void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderInline::styleDidChange(diff, oldStyle);
-    updateText();
+    if (diff >= StyleDifferenceLayout) {
+        m_needsTextUpdate = true;
+        view().setHasSpecialRendererNeedingUpdate();
+    }
 }
 
 const unsigned maxDistinctQuoteCharacters = 16;
@@ -355,14 +347,15 @@ static RenderTextFragment* quoteTextRenderer(RenderObject* lastChild)
     return downcast<RenderTextFragment>(lastChild);
 }
 
-void RenderQuote::updateText()
+void RenderQuote::updateTextRenderer()
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(document().inRenderTreeUpdate());
+    ASSERT_WITH_SECURITY_IMPLICATION(!view().renderTreeIsBeingMutatedInternally());
+
     String text = computeText();
     if (m_text == text)
         return;
     m_text = text;
-    // Start from the end of the child list because, if we've had a first-letter
-    // renderer inserted then the remaining text will be at the end.
     if (auto* renderText = quoteTextRenderer(lastChild())) {
         renderText->setContentString(m_text);
         renderText->dirtyLineBoxes(false);
@@ -395,105 +388,25 @@ String RenderQuote::computeText() const
     return emptyString();
 }
 
-void RenderQuote::attachQuote()
+void RenderQuote::updateRenderers(const RenderView& view)
 {
-    if (view().renderTreeIsBeingMutatedInternally())
-        return;
-
-    ASSERT(!m_isAttached);
-    ASSERT(!m_next);
-    ASSERT(!m_previous);
-    ASSERT(isRooted());
-
-    // Optimize case where this is the first quote in a RenderView by not searching for predecessors in that case.
-    if (view().renderQuoteHead()) {
-        for (RenderObject* predecessor = previousInPreOrder(); predecessor; predecessor = predecessor->previousInPreOrder()) {
-            // Skip unattached predecessors to avoid having stale m_previous pointers
-            // if the previous node is never attached and is then destroyed.
-            if (!is<RenderQuote>(*predecessor) || !downcast<RenderQuote>(*predecessor).m_isAttached)
-                continue;
-            m_previous = downcast<RenderQuote>(predecessor);
-            m_next = m_previous->m_next;
-            m_previous->m_next = this;
-            if (m_next)
-                m_next->m_previous = this;
-            break;
-        }
-    }
-
-    if (!m_previous) {
-        m_next = view().renderQuoteHead();
-        view().setRenderQuoteHead(this);
-        if (m_next)
-            m_next->m_previous = this;
-    }
-
-    m_isAttached = true;
-
-    for (RenderQuote* quote = this; quote; quote = quote->m_next)
-        quote->updateDepth();
-
-    ASSERT(!m_next || m_next->m_isAttached);
-    ASSERT(!m_next || m_next->m_previous == this);
-    ASSERT(!m_previous || m_previous->m_isAttached);
-    ASSERT(!m_previous || m_previous->m_next == this);
-}
-
-void RenderQuote::detachQuote()
-{
-    if (view().renderTreeIsBeingMutatedInternally())
-        return;
-
-    ASSERT(!m_next || m_next->m_isAttached);
-    ASSERT(!m_previous || m_previous->m_isAttached);
-    if (!m_isAttached)
-        return;
-    if (m_previous)
-        m_previous->m_next = m_next;
-    else
-        view().setRenderQuoteHead(m_next);
-    if (m_next)
-        m_next->m_previous = m_previous;
-    if (!renderTreeBeingDestroyed()) {
-        for (RenderQuote* quote = m_next; quote; quote = quote->m_next)
-            quote->updateDepth();
-    }
-    m_isAttached = false;
-    m_next = 0;
-    m_previous = 0;
-}
-
-void RenderQuote::updateDepth()
-{
-    ASSERT(m_isAttached);
-    int depth = 0;
-    if (m_previous) {
-        depth = m_previous->m_depth;
-        if (depth < 0)
+    int depth = -1;
+    for (auto* quote : view.quotes()) {
+        bool isOpen = quote->m_type == OPEN_QUOTE || quote->m_type == NO_OPEN_QUOTE;
+        if (!isOpen)
+            --depth;
+        else if (depth < 0)
             depth = 0;
-        switch (m_previous->m_type) {
-        case OPEN_QUOTE:
-        case NO_OPEN_QUOTE:
-            depth++;
-            break;
-        case CLOSE_QUOTE:
-        case NO_CLOSE_QUOTE:
-            break;
+
+        if (quote->m_depth != depth || quote->m_needsTextUpdate) {
+            quote->m_depth = depth;
+            quote->m_needsTextUpdate = false;
+            quote->updateTextRenderer();
         }
+
+        if (isOpen)
+            ++depth;
     }
-    switch (m_type) {
-    case OPEN_QUOTE:
-    case NO_OPEN_QUOTE:
-        break;
-    case CLOSE_QUOTE:
-    case NO_CLOSE_QUOTE:
-        depth--;
-        break;
-    }
-    if (m_depth == depth)
-        return;
-    m_depth = depth;
-    updateText();
 }
 
 } // namespace WebCore

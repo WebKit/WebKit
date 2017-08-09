@@ -51,6 +51,7 @@ public:
     RenderDescendantIteratorAdapter(RenderElement& root);
     RenderDescendantIterator<T> begin();
     RenderDescendantIterator<T> end();
+    RenderDescendantIterator<T> at(T&);
 
 private:
     RenderElement& m_root;
@@ -62,6 +63,7 @@ public:
     RenderDescendantConstIteratorAdapter(const RenderElement& root);
     RenderDescendantConstIterator<T> begin() const;
     RenderDescendantConstIterator<T> end() const;
+    RenderDescendantConstIterator<T> at(const T&) const;
 
 private:
     const RenderElement& m_root;
@@ -130,6 +132,12 @@ inline RenderDescendantIterator<T> RenderDescendantIteratorAdapter<T>::end()
     return RenderDescendantIterator<T>(m_root);
 }
 
+template <typename T>
+inline RenderDescendantIterator<T> RenderDescendantIteratorAdapter<T>::at(T& current)
+{
+    return RenderDescendantIterator<T>(m_root, &current);
+}
+
 // RenderDescendantConstIteratorAdapter
 
 template <typename T>
@@ -148,6 +156,12 @@ template <typename T>
 inline RenderDescendantConstIterator<T> RenderDescendantConstIteratorAdapter<T>::end() const
 {
     return RenderDescendantConstIterator<T>(m_root);
+}
+
+template <typename T>
+inline RenderDescendantConstIterator<T> RenderDescendantConstIteratorAdapter<T>::at(const T& current) const
+{
+    return RenderDescendantConstIterator<T>(m_root, &current);
 }
 
 // Standalone functions

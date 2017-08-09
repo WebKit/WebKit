@@ -1,3 +1,70 @@
+2017-08-09  Antti Koivisto  <antti@apple.com>
+
+        RenderQuote should not mutate render tree
+        https://bugs.webkit.org/show_bug.cgi?id=175328
+
+        Reviewed by Zalan Bujtas.
+
+        RenderQuote text renderers are currently created and deleted in a quirky fashion using a linked list.
+        This patch moves to a simpler model that guarantees the mutations are always done in controlled fashion
+        during render tree update.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateTextRenderer):
+
+            Move text renderer updating to Document so we can set the inRenderTreeUpdate bit for it too.
+
+        * dom/Document.h:
+        * dom/Text.cpp:
+        (WebCore::Text::updateRendererAfterContentChange):
+        * rendering/RenderDescendantIterator.h:
+        (WebCore::RenderDescendantIteratorAdapter<T>::at):
+        (WebCore::RenderDescendantConstIteratorAdapter<T>::at const):
+
+            Add at() function for starting iteration from a specified renderer.
+
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::insertedIntoTree):
+        (WebCore::RenderQuote::willBeRemovedFromTree):
+
+            Register and unregister quotes to RenderView.
+            Don't do any mutations.
+
+        (WebCore::RenderQuote::styleDidChange):
+
+            Invalidate the text renderer but don't mutate it.
+
+        (WebCore::RenderQuote::updateTextRenderer):
+        (WebCore::RenderQuote::computeText const):
+        (WebCore::RenderQuote::updateRenderers):
+
+            Compute depth of all render quotes and update the text renderer as needed.
+
+        (WebCore::RenderQuote::willBeDestroyed): Deleted.
+        (WebCore::RenderQuote::attachQuote): Deleted.
+        (WebCore::RenderQuote::detachQuote): Deleted.
+        (WebCore::RenderQuote::updateDepth): Deleted.
+
+            Get rid of the linked list.
+
+        * rendering/RenderQuote.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::registerQuote):
+        (WebCore::RenderView::unregisterQuote):
+
+            Maintain a render tree order ListHashSet of RenderQuotes.
+
+        (WebCore::RenderView::updateSpecialRenderers):
+
+            Add a function for making additional render tree mutations at the end of a render tree update.
+            Currently this just invokes RenderQuote::updateRenderers.
+
+        * rendering/RenderView.h:
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::commit):
+
+            Call RenderView::updateSpecialRenderers after committing all other changes.
+
 2017-08-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [Soup] Incorrect conversion in msToSoupDate()

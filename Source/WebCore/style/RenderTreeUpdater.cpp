@@ -124,6 +124,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
     for (auto* root : findRenderingRoots(*m_styleUpdate))
         updateRenderTree(*root);
 
+    m_document.renderView()->updateSpecialRenderers();
+
     m_styleUpdate = nullptr;
 }
 

@@ -26,7 +26,6 @@
 #include "RenderCombineText.h"
 #include "RenderSVGInlineText.h"
 #include "RenderText.h"
-#include "RenderTreeUpdater.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "ScopedEventQueue.h"
@@ -218,11 +217,7 @@ void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsig
     if (styleValidity() >= Style::Validity::SubtreeAndRenderersInvalid)
         return;
 
-    auto textUpdate = std::make_unique<Style::Update>(document());
-    textUpdate->addText(*this);
-
-    RenderTreeUpdater renderTreeUpdater(document());
-    renderTreeUpdater.commit(WTFMove(textUpdate));
+    document().updateTextRenderer(*this);
 
     if (auto* renderer = this->renderer())
         renderer->setTextWithOffset(data(), offsetOfReplacedData, lengthOfReplacedData);

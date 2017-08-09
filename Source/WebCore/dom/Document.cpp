@@ -1868,6 +1868,18 @@ void Document::resolveStyle(ResolveStyleType type)
     // FIXME: Ideally we would ASSERT(!needsStyleRecalc()) here but we have some cases where it is not true.
 }
 
+void Document::updateTextRenderer(Text& text)
+{
+    ASSERT(!m_inRenderTreeUpdate);
+    SetForScope<bool> inRenderTreeUpdate(m_inRenderTreeUpdate, true);
+
+    auto textUpdate = std::make_unique<Style::Update>(*this);
+    textUpdate->addText(text);
+
+    RenderTreeUpdater renderTreeUpdater(*this);
+    renderTreeUpdater.commit(WTFMove(textUpdate));
+}
+
 bool Document::needsStyleRecalc() const
 {
     if (pageCacheState() != NotInPageCache)

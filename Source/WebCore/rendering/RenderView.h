@@ -29,6 +29,7 @@
 #include "SelectionSubtreeRoot.h"
 #include <memory>
 #include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "SelectionRectGatherer.h"
@@ -195,9 +196,13 @@ public:
 
     IntSize viewportSizeForCSSViewportUnits() const;
 
-    void setRenderQuoteHead(RenderQuote* head) { m_renderQuoteHead = head; }
-    RenderQuote* renderQuoteHead() const { return m_renderQuoteHead; }
-    
+    void registerQuote(RenderQuote&);
+    void unregisterQuote(RenderQuote&);
+    const ListHashSet<RenderQuote*>& quotes() const { return m_quotes; }
+
+    void setHasSpecialRendererNeedingUpdate() { m_hasSpecialRendererNeedingUpdate = true; }
+    void updateSpecialRenderers();
+
     // FIXME: see class RenderTreeInternalMutation below.
     bool renderTreeIsBeingMutatedInternally() const { return !!m_renderTreeInternalMutationCounter; }
 
@@ -371,7 +376,9 @@ private:
     std::unique_ptr<RenderLayerCompositor> m_compositor;
     std::unique_ptr<FlowThreadController> m_flowThreadController;
 
-    RenderQuote* m_renderQuoteHead { nullptr };
+    ListHashSet<RenderQuote*> m_quotes;
+    bool m_hasSpecialRendererNeedingUpdate { false };
+
     unsigned m_renderCounterCount { 0 };
     unsigned m_renderTreeInternalMutationCounter { 0 };
 

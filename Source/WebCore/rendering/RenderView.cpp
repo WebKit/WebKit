@@ -38,6 +38,7 @@
 #include "ImageQualityController.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "RenderDescendantIterator.h"
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
@@ -47,6 +48,7 @@
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderNamedFlowThread.h"
+#include "RenderQuote.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
 #include "ScrollbarTheme.h"
@@ -1520,6 +1522,48 @@ unsigned RenderView::pageCount() const
         return multiColumnFlowThread()->firstMultiColumnSet()->columnCount();
 
     return 0;
+}
+
+void RenderView::registerQuote(RenderQuote& quote)
+{
+    ASSERT(!m_quotes.contains(&quote));
+
+    setHasSpecialRendererNeedingUpdate();
+
+    if (m_quotes.isEmpty()) {
+        m_quotes.add(&quote);
+        return;
+    }
+    auto quoteRenderers = descendantsOfType<RenderQuote>(*this);
+    auto it = quoteRenderers.at(quote);
+    if (++it == quoteRenderers.end()) {
+        m_quotes.add(&quote);
+        return;
+    }
+    auto& nextQuote = *it;
+    ASSERT(m_quotes.contains(&nextQuote));
+    m_quotes.insertBefore(&nextQuote, &quote);
+}
+
+void RenderView::unregisterQuote(RenderQuote& quote)
+{
+    ASSERT(m_quotes.contains(&quote));
+
+    setHasSpecialRendererNeedingUpdate();
+
+    m_quotes.remove(&quote);
+}
+
+void RenderView::updateSpecialRenderers()
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(document().inRenderTreeUpdate());
+    ASSERT_WITH_SECURITY_IMPLICATION(!renderTreeIsBeingMutatedInternally());
+
+    if (!m_hasSpecialRendererNeedingUpdate)
+        return;
+    m_hasSpecialRendererNeedingUpdate = false;
+
+    RenderQuote::updateRenderers(*this);
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
