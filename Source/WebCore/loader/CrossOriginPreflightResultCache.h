@@ -46,9 +46,9 @@ public:
     {
     }
 
-    bool parse(const ResourceResponse&, String& errorDescription);
-    bool allowsCrossOriginMethod(const String&, String& errorDescription) const;
-    bool allowsCrossOriginHeaders(const HTTPHeaderMap&, String& errorDescription) const;
+    WEBCORE_EXPORT bool parse(const ResourceResponse&, String& errorDescription);
+    WEBCORE_EXPORT bool allowsCrossOriginMethod(const String&, String& errorDescription) const;
+    WEBCORE_EXPORT bool allowsCrossOriginHeaders(const HTTPHeaderMap&, String& errorDescription) const;
     bool allowsRequest(StoredCredentials, const String& method, const HTTPHeaderMap& requestHeaders) const;
 
 private:
@@ -67,8 +67,8 @@ class CrossOriginPreflightResultCache {
 public:
     WEBCORE_EXPORT static CrossOriginPreflightResultCache& singleton();
 
-    void appendEntry(const String& origin, const URL&, std::unique_ptr<CrossOriginPreflightResultCacheItem>);
-    bool canSkipPreflight(const String& origin, const URL&, StoredCredentials, const String& method, const HTTPHeaderMap& requestHeaders);
+    WEBCORE_EXPORT void appendEntry(const String& origin, const URL&, std::unique_ptr<CrossOriginPreflightResultCacheItem>);
+    WEBCORE_EXPORT bool canSkipPreflight(const String& origin, const URL&, StoredCredentials, const String& method, const HTTPHeaderMap& requestHeaders);
 
     WEBCORE_EXPORT void empty();
 

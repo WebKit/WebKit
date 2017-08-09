@@ -60,27 +60,14 @@ CrossOriginPreflightChecker::~CrossOriginPreflightChecker()
 
 void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLoader& loader, ResourceRequest&& request, unsigned long identifier, const ResourceResponse& response)
 {
+    String errorDescription;
+    if (!WebCore::validatePreflightResponse(request, response, loader.options().allowCredentials, loader.securityOrigin(), errorDescription)) {
+        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), errorDescription, ResourceError::Type::AccessControl));
+        return;
+    }
+
     Frame* frame = loader.document().frame();
     ASSERT(frame);
-
-    if (!response.isSuccessful()) {
-        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl));
-        return;
-    }
-
-    String description;
-    if (!passesAccessControlCheck(response, loader.options().allowCredentials, loader.securityOrigin(), description)) {
-        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), description, ResourceError::Type::AccessControl));
-        return;
-    }
-
-    auto result = std::make_unique<CrossOriginPreflightResultCacheItem>(loader.options().allowCredentials);
-    if (!result->parse(response, description)
-        || !result->allowsCrossOriginMethod(request.httpMethod(), description)
-        || !result->allowsCrossOriginHeaders(request.httpHeaderFields(), description)) {
-        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), description, ResourceError::Type::AccessControl));
-        return;
-    }
 
     // FIXME: <https://webkit.org/b/164889> Web Inspector: Show Preflight Request information in inspector
     // This is only showing success preflight requests and responses but we should show network events
@@ -89,7 +76,6 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     InspectorInstrumentation::didReceiveResourceResponse(*frame, identifier, frame->loader().documentLoader(), response, nullptr);
     InspectorInstrumentation::didFinishLoading(frame, frame->loader().documentLoader(), identifier, emptyMetrics, nullptr);
 
-    CrossOriginPreflightResultCache::singleton().appendEntry(loader.securityOrigin().toString(), request.url(), WTFMove(result));
     loader.preflightSuccess(WTFMove(request));
 }
 

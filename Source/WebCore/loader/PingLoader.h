@@ -41,6 +41,7 @@ class FormData;
 class Frame;
 class URL;
 class ResourceRequest;
+class SecurityOrigin;
 
 enum class ViolationReportType {
     ContentSecurityPolicy,
@@ -55,7 +56,7 @@ public:
 
 private:
     enum class ShouldFollowRedirects { No, Yes };
-    static void startPingLoad(Frame&, ResourceRequest&, ShouldFollowRedirects);
+    static void startPingLoad(Frame&, ResourceRequest&, SecurityOrigin& sourceOrigin, ShouldFollowRedirects);
 };
 
 } // namespace WebCore

@@ -100,6 +100,7 @@ set(WebKit2_SOURCES
 
     NetworkProcess/FileAPI/NetworkBlobRegistry.cpp
 
+    NetworkProcess/NetworkCORSPreflightChecker.cpp
     NetworkProcess/NetworkConnectionToWebProcess.cpp
     NetworkProcess/NetworkDataTask.cpp
     NetworkProcess/NetworkDataTaskBlob.cpp
@@ -111,6 +112,7 @@ set(WebKit2_SOURCES
     NetworkProcess/NetworkResourceLoader.cpp
     NetworkProcess/NetworkSession.cpp
     NetworkProcess/NetworkSocketStream.cpp
+    NetworkProcess/PingLoad.cpp
 
     NetworkProcess/cache/NetworkCache.cpp
     NetworkProcess/cache/NetworkCacheBlobStorage.cpp

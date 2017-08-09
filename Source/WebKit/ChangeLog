@@ -1,3 +1,66 @@
+2017-08-08  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon] Add support for CORS-preflighting for WK2 / NETWORK_SESSION
+        https://bugs.webkit.org/show_bug.cgi?id=175264
+        <rdar://problem/33547793>
+
+        Reviewed by Youenn Fablet.
+
+        Implement CORS-preflighting for beacons with a payload that has a non
+        safelisted MIME type, as per:
+        - https://w3c.github.io/beacon/#privacy
+        - https://www.w3.org/TR/beacon/#sec-processing-model
+
+        CORS-preflighting is completely handled on Network Process side because
+        a beacon request can outlive its page and therefore its WebContent
+        process. This requires us to pass a little more information to the
+        Network process, in particular the source origin and the corsMode.
+
+        The current implementation does not currently deal with CORS preflights
+        needed upon a redirect. This will be added in a follow-up.
+
+        * CMakeLists.txt:
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp: Added.
+        (WebKit::NetworkCORSPreflightChecker::NetworkCORSPreflightChecker):
+        (WebKit::NetworkCORSPreflightChecker::~NetworkCORSPreflightChecker):
+        (WebKit::NetworkCORSPreflightChecker::startPreflight):
+        (WebKit::NetworkCORSPreflightChecker::willPerformHTTPRedirection):
+        (WebKit::NetworkCORSPreflightChecker::didReceiveChallenge):
+        (WebKit::NetworkCORSPreflightChecker::didReceiveResponseNetworkSession):
+        (WebKit::NetworkCORSPreflightChecker::didReceiveData):
+        (WebKit::NetworkCORSPreflightChecker::didCompleteWithError):
+        (WebKit::NetworkCORSPreflightChecker::didSendData):
+        (WebKit::NetworkCORSPreflightChecker::wasBlocked):
+        (WebKit::NetworkCORSPreflightChecker::cannotShowURL):
+        * NetworkProcess/NetworkCORSPreflightChecker.h: Added.
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/PingLoad.cpp: Added.
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::~PingLoad):
+        (WebKit::PingLoad::startNetworkLoad):
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        (WebKit::PingLoad::didReceiveChallenge):
+        (WebKit::PingLoad::didReceiveResponseNetworkSession):
+        (WebKit::PingLoad::didReceiveData):
+        (WebKit::PingLoad::didCompleteWithError):
+        (WebKit::PingLoad::didSendData):
+        (WebKit::PingLoad::wasBlocked):
+        (WebKit::PingLoad::cannotShowURL):
+        (WebKit::PingLoad::timeoutTimerFired):
+        (WebKit::PingLoad::needsCORSPreflight const):
+        (WebKit::PingLoad::doCORSPreflight):
+        * NetworkProcess/PingLoad.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::createPingHandle):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2017-08-08  Megan Gardner  <megan_gardner@apple.com>
 
         Remove old and unused pointIsInAssistedNode definition

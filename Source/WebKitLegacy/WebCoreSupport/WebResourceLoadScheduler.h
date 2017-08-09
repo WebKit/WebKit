@@ -37,6 +37,11 @@
 
 class WebResourceLoadScheduler;
 
+namespace WebCore {
+struct FetchOptions;
+class SecurityOrigin;
+}
+
 WebResourceLoadScheduler& webResourceLoadScheduler();
 
 class WebResourceLoadScheduler : public WebCore::LoaderStrategy {
@@ -54,7 +59,7 @@ public:
     void suspendPendingRequests() override;
     void resumePendingRequests() override;
 
-    void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, bool shouldUseCredentialStorage, bool shouldFollowRedirects) override;
+    void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, Ref<WebCore::SecurityOrigin>&& sourceOrigin, const WebCore::FetchOptions&) override;
 
     void storeDerivedDataToCache(const SHA1::Digest&, const String&, const String&, WebCore::SharedBuffer&) override { }
 

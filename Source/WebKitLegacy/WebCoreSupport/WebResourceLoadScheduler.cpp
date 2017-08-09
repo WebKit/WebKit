@@ -26,6 +26,7 @@
 
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/FetchOptions.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
@@ -362,9 +363,9 @@ bool WebResourceLoadScheduler::HostInformation::limitRequests(ResourceLoadPriori
     return m_requestsLoading.size() >= (webResourceLoadScheduler().isSerialLoadingEnabled() ? 1 : m_maxRequestsInFlight);
 }
 
-void WebResourceLoadScheduler::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, bool shouldUseCredentialStorage, bool shouldFollowRedirects)
+void WebResourceLoadScheduler::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, Ref<SecurityOrigin>&&, const FetchOptions& options)
 {
     // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingHandle(networkingContext, request, shouldUseCredentialStorage, PingHandle::UsesAsyncCallbacks::No, shouldFollowRedirects);
+    new PingHandle(networkingContext, request, options.credentials != FetchOptions::Credentials::Omit, PingHandle::UsesAsyncCallbacks::No, options.redirect == FetchOptions::Redirect::Follow);
 }
 

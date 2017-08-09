@@ -261,7 +261,8 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 
     // FIXME: We should not special-case Beacon here.
     if (m_options.keepAlive && type() == CachedResource::Beacon) {
-        platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, m_options.credentials == FetchOptions::Credentials::Include, m_options.redirect == FetchOptions::Redirect::Follow);
+        ASSERT(m_origin);
+        platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, *m_origin, m_options);
         return;
     }
 

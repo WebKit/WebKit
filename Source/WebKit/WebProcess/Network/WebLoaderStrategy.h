@@ -31,6 +31,10 @@
 #include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
 
+namespace WebCore {
+struct FetchOptions;
+}
+
 namespace WebKit {
 
 class NetworkProcessConnection;
@@ -55,7 +59,7 @@ public:
     void suspendPendingRequests() override;
     void resumePendingRequests() override;
 
-    void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, bool shouldUseCredentialStorage, bool shouldFollowRedirects) override;
+    void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, Ref<WebCore::SecurityOrigin>&& sourceOrigin, const WebCore::FetchOptions&) override;
 
     void storeDerivedDataToCache(const SHA1::Digest& bodyHash, const String& type, const String& partition, WebCore::SharedBuffer&) override;
 

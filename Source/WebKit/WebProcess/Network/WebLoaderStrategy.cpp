@@ -50,12 +50,14 @@
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/FetchOptions.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoader.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SubresourceLoader.h>
@@ -383,7 +385,7 @@ void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, un
     }
 }
 
-void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, bool shouldUseCredentialStorage, bool shouldFollowRedirects)
+void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, Ref<SecurityOrigin>&& sourceOrigin, const FetchOptions& options)
 {
     // It's possible that call to createPingHandle might be made during initial empty Document creation before a NetworkingContext exists.
     // It is not clear that we should send ping loads during that process anyways.
@@ -397,9 +399,11 @@ void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, R
     
     NetworkResourceLoadParameters loadParameters;
     loadParameters.request = request;
+    loadParameters.sourceOrigin = WTFMove(sourceOrigin);
     loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
-    loadParameters.allowStoredCredentials = shouldUseCredentialStorage ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-    loadParameters.shouldFollowRedirects = shouldFollowRedirects;
+    loadParameters.allowStoredCredentials = options.credentials == FetchOptions::Credentials::Omit ? DoNotAllowStoredCredentials : AllowStoredCredentials;
+    loadParameters.mode = options.mode;
+    loadParameters.shouldFollowRedirects = options.redirect == FetchOptions::Redirect::Follow;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = networkingContext->shouldClearReferrerOnHTTPSToHTTPRedirect();
 
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing(loadParameters), 0);

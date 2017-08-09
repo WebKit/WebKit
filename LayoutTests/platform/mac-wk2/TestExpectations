@@ -722,6 +722,10 @@ webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbi
 
 webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getAllKeys.html [ Pass Failure ]
 
+
+# CORS-preflighting for Beacon is not supported on WK2 for non NETWORK_SESSION code path.
+webkit.org/b/175330 [ ElCapitan ] http/wpt/beacon/cors/ [ Skip ]
+
 webkit.org/b/172201 webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
 
 webkit.org/b/167757 workers/bomb.html [ Pass Timeout ]

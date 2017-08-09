@@ -29,6 +29,7 @@
 #include "ArgumentCoders.h"
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/SecurityOriginData.h>
 
 using namespace WebCore;
 
@@ -81,6 +82,11 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << needsCertificateInfo;
     encoder << maximumBufferingTime;
     encoder << derivedCachedDataTypesToRetrieve;
+
+    encoder << static_cast<bool>(sourceOrigin);
+    if (sourceOrigin)
+        encoder << SecurityOriginData::fromSecurityOrigin(*sourceOrigin);
+    encoder.encodeEnum(mode);
 }
 
 bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourceLoadParameters& result)
@@ -143,6 +149,19 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(result.maximumBufferingTime))
         return false;
     if (!decoder.decode(result.derivedCachedDataTypesToRetrieve))
+        return false;
+
+    bool hasSourceOrigin;
+    if (!decoder.decode(hasSourceOrigin))
+        return false;
+    if (hasSourceOrigin) {
+        SecurityOriginData sourceOriginData;
+        if (!decoder.decode(sourceOriginData))
+            return false;
+        ASSERT(!sourceOriginData.isEmpty());
+        result.sourceOrigin = sourceOriginData.securityOrigin();
+    }
+    if (!decoder.decodeEnum(result.mode))
         return false;
 
     return true;

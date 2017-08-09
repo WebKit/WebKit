@@ -103,7 +103,7 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
         request.setHTTPReferrer(referrer);
     frame.loader().addExtraFieldsToSubresourceRequest(request);
 
-    startPingLoad(frame, request, ShouldFollowRedirects::Yes);
+    startPingLoad(frame, request, document.securityOrigin(), ShouldFollowRedirects::Yes);
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
@@ -139,7 +139,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
         }
     }
 
-    startPingLoad(frame, request, ShouldFollowRedirects::Yes);
+    startPingLoad(frame, request, sourceOrigin, ShouldFollowRedirects::Yes);
 }
 
 void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<FormData>&& report, ViolationReportType reportType)
@@ -176,10 +176,10 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 
-    startPingLoad(frame, request, ShouldFollowRedirects::No);
+    startPingLoad(frame, request, document.securityOrigin(), ShouldFollowRedirects::No);
 }
 
-void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, ShouldFollowRedirects shouldFollowRedirects)
+void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, SecurityOrigin& sourceOrigin, ShouldFollowRedirects shouldFollowRedirects)
 {
     unsigned long identifier = frame.page()->progress().createUniqueIdentifier();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
@@ -188,10 +188,13 @@ void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, ShouldFol
     // with the provisional DocumentLoader if there is a provisional
     // DocumentLoader.
     bool shouldUseCredentialStorage = frame.loader().client().shouldUseCredentialStorage(frame.loader().activeDocumentLoader(), identifier);
+    FetchOptions options;
+    options.credentials = shouldUseCredentialStorage ? FetchOptions::Credentials::Include : FetchOptions::Credentials::Omit;
+    options.redirect = shouldFollowRedirects == ShouldFollowRedirects::Yes ? FetchOptions::Redirect::Follow : FetchOptions::Redirect::Error;
 
     InspectorInstrumentation::continueAfterPingLoader(frame, identifier, frame.loader().activeDocumentLoader(), request, ResourceResponse());
 
-    platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, shouldUseCredentialStorage, shouldFollowRedirects == ShouldFollowRedirects::Yes);
+    platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, sourceOrigin, options);
 }
 
 }

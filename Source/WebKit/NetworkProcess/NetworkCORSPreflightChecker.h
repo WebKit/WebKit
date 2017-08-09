@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,19 +28,36 @@
 #if USE(NETWORK_SESSION)
 
 #include "NetworkDataTask.h"
-#include "NetworkResourceLoadParameters.h"
+#include <WebCore/ResourceHandleTypes.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/SessionID.h>
+#include <wtf/Function.h>
+
+namespace WebCore {
+class SecurityOrigin;
+}
 
 namespace WebKit {
 
-class NetworkCORSPreflightChecker;
-
-class PingLoad final : private NetworkDataTaskClient {
+class NetworkCORSPreflightChecker final : private NetworkDataTaskClient  {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit PingLoad(NetworkResourceLoadParameters&&);
-    
-private:
-    ~PingLoad();
+    struct Parameters {
+        WebCore::ResourceRequest originalRequest;
+        Ref<WebCore::SecurityOrigin> sourceOrigin;
+        WebCore::SessionID sessionID;
+        WebCore::StoredCredentials allowStoredCredentials;
+    };
+    enum class Result { Success, Failure };
+    using CompletionCallback = WTF::Function<void(Result)>;
 
+    NetworkCORSPreflightChecker(Parameters&&, CompletionCallback&&);
+    ~NetworkCORSPreflightChecker();
+
+    void startPreflight();
+
+private:
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&) final;
     void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) final;
@@ -49,18 +66,13 @@ private:
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) final;
     void wasBlocked() final;
     void cannotShowURL() final;
-    void timeoutTimerFired();
 
-    void startNetworkLoad();
-    bool needsCORSPreflight(const WebCore::ResourceRequest&) const;
-    void doCORSPreflight(const WebCore::ResourceRequest&);
-    
-    NetworkResourceLoadParameters m_parameters;
+    Parameters m_parameters;
+    WebCore::ResourceResponse m_response;
+    CompletionCallback m_completionCallback;
     RefPtr<NetworkDataTask> m_task;
-    WebCore::Timer m_timeoutTimer;
-    std::unique_ptr<NetworkCORSPreflightChecker> m_corsPreflightChecker;
 };
 
-}
+} // namespace WebKit
 
 #endif // USE(NETWORK_SESSION)

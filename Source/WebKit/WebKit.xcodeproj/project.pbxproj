@@ -902,11 +902,14 @@
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
 		41FAF5F91E3C1025001AE678 /* LibWebRTCResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FAF5F71E3C0B47001AE678 /* LibWebRTCResolver.cpp */; };
 		4450AEC01DC3FAE5009943F2 /* SharedMemoryCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */; };
+		462107D81F38DBDB00DD7810 /* PingLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 462107D71F38DBD300DD7810 /* PingLoad.cpp */; };
 		463FD4801EB9459600A2982C /* WKProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */; };
 		465250E61ECF52DC002025CB /* WebKit2InitializeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */; };
 		46A2B6081E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */; };
 		46A2B6091E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */; };
+		46DF063B1F3905F8001980BB /* NetworkCORSPreflightChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46DF06391F3905E5001980BB /* NetworkCORSPreflightChecker.cpp */; };
+		46DF063C1F3905F8001980BB /* NetworkCORSPreflightChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */; };
 		4A3CC18A19B063E700D14AEF /* UserMediaPermissionRequestManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F3919AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.cpp */; };
 		4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3A19AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.h */; };
 		4A3CC18C19B0641500D14AEF /* UserMediaPermissionRequestProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F3B19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.cpp */; };
@@ -3149,11 +3152,14 @@
 		41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCResolver.h; path = Network/webrtc/LibWebRTCResolver.h; sourceTree = "<group>"; };
 		41FAF5F71E3C0B47001AE678 /* LibWebRTCResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCResolver.cpp; path = Network/webrtc/LibWebRTCResolver.cpp; sourceTree = "<group>"; };
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedMemoryCocoa.cpp; path = cocoa/SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
+		462107D71F38DBD300DD7810 /* PingLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PingLoad.cpp; path = NetworkProcess/PingLoad.cpp; sourceTree = "<group>"; };
 		463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessTerminationReason.h; sourceTree = "<group>"; };
 		463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessTerminationReason.h; sourceTree = "<group>"; };
 		465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKit2InitializeCocoa.mm; sourceTree = "<group>"; };
 		46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundProcessResponsivenessTimer.cpp; sourceTree = "<group>"; };
 		46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundProcessResponsivenessTimer.h; sourceTree = "<group>"; };
+		46DF06391F3905E5001980BB /* NetworkCORSPreflightChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkCORSPreflightChecker.cpp; path = NetworkProcess/NetworkCORSPreflightChecker.cpp; sourceTree = "<group>"; };
+		46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkCORSPreflightChecker.h; path = NetworkProcess/NetworkCORSPreflightChecker.h; sourceTree = "<group>"; };
 		4A410F3519AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserMediaPermissionRequest.cpp; sourceTree = "<group>"; };
 		4A410F3619AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserMediaPermissionRequest.h; sourceTree = "<group>"; };
 		4A410F3919AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMediaPermissionRequestManagerProxy.cpp; sourceTree = "<group>"; };
@@ -5955,6 +5961,8 @@
 				2DA944BB188511DD00ED86DB /* ios */,
 				510CC7DC16138E2900D03ED3 /* mac */,
 				413075971DE84ED70039EC69 /* webrtc */,
+				46DF06391F3905E5001980BB /* NetworkCORSPreflightChecker.cpp */,
+				46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */,
 				513A16491630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp */,
 				513A164A1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h */,
 				513A164B1630A9BF005D7D22 /* NetworkConnectionToWebProcess.messages.in */,
@@ -5984,6 +5992,7 @@
 				5C0B177D1E7C886700E9123C /* NetworkSocketStream.cpp */,
 				5C0B177E1E7C886700E9123C /* NetworkSocketStream.h */,
 				5C0B177F1E7C886700E9123C /* NetworkSocketStream.messages.in */,
+				462107D71F38DBD300DD7810 /* PingLoad.cpp */,
 				5CE85B1F1C88E6430070BFCE /* PingLoad.h */,
 				E1B78470163F24690007B692 /* RemoteNetworkingContext.h */,
 			);
@@ -8578,6 +8587,7 @@
 				1AF1AC6C1651759E00C17D7F /* RemoteLayerTreeTransaction.h in Headers */,
 				E1B78471163F24690007B692 /* RemoteNetworkingContext.h in Headers */,
 				1A5704FC1BE1751100874AF1 /* RemoteObjectInvocation.h in Headers */,
+				46DF063C1F3905F8001980BB /* NetworkCORSPreflightChecker.h in Headers */,
 				1AC1338018590AE400F3EC05 /* RemoteObjectRegistry.h in Headers */,
 				1AC1338618590C4600F3EC05 /* RemoteObjectRegistryMessages.h in Headers */,
 				0F594790187B3B3A00437857 /* RemoteScrollingCoordinator.h in Headers */,
@@ -9860,6 +9870,7 @@
 				BCEE966C112FAF57006BCC24 /* Attachment.cpp in Sources */,
 				E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */,
 				512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */,
+				46DF063B1F3905F8001980BB /* NetworkCORSPreflightChecker.cpp in Sources */,
 				512F589812A8838800629530 /* AuthenticationDecisionListener.cpp in Sources */,
 				518E8EF816B2091C00E91429 /* AuthenticationManager.cpp in Sources */,
 				518E8EFB16B2091C00E91429 /* AuthenticationManager.mac.mm in Sources */,
@@ -10200,6 +10211,7 @@
 				51E35209180F5D6B00E53BE9 /* StorageServiceEntryPoint.mm in Sources */,
 				51E35200180F5D0F00E53BE9 /* StorageToWebProcessConnection.cpp in Sources */,
 				5118E9AC1F295977003EF9F5 /* StorageToWebProcessConnectionMessageReceiver.cpp in Sources */,
+				462107D81F38DBDB00DD7810 /* PingLoad.cpp in Sources */,
 				1AE00D6B18327C1200087DD7 /* StringReference.cpp in Sources */,
 				296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */,
 				1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */,

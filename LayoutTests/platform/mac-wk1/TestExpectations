@@ -360,6 +360,9 @@ css3/viewport-percentage-lengths/vh-auto-size.html [ Skip ]
 
 webkit.org/b/170877 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-reserved-words.html [ Pass Timeout ]
 
+# CORS-preflighting for Beacon is not supported on WK1.
+webkit.org/b/175330 http/wpt/beacon/cors/ [ Skip ]
+
 # This was a WK2-only fix.
 http/tests/css/filters-on-iframes.html [ Skip ]
 
