@@ -1,3 +1,9 @@
+2017-08-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.17.90 release.
+
+        * gtk/NEWS: Add release notes for 2.17.90.
+
 2017-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, rolling out r220393.

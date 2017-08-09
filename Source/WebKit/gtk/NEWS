@@ -1,3 +1,16 @@
+==================
+WebKitGTK+ 2.17.90
+==================
+
+What's new in WebKitGTK+ 2.17.90?
+
+  - WebCrypto API support is now enabled by default.
+  - Add API to provide browser information required by automation.
+  - Fix the expiration date of manually added cookies.
+  - Add support for alerts in WebDriver.
+  - WebKitDatabaseProcess binary has been renamed to WebKitStorageProcess.
+  - Fix several crashes and rendering issues.
+
 =================
 WebKitGTK+ 2.17.5
 =================
