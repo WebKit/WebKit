@@ -202,6 +202,10 @@ void HTMLTrackElement::loadTimerFired()
         return;
     }
 
+    // When src attribute is changed we need to flush all collected track data
+    if (m_track)
+        m_track->removeAllCues();
+
     track().scheduleLoad(url);
 }
 
