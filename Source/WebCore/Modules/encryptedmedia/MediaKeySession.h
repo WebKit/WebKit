@@ -32,10 +32,10 @@
 
 #include "ActiveDOMObject.h"
 #include "CDMInstance.h"
+#include "DOMPromiseProxy.h"
 #include "EventTarget.h"
 #include "GenericEventQueue.h"
 #include "GenericTaskQueue.h"
-#include "JSDOMPromiseDeferred.h"
 #include "MediaKeyMessageType.h"
 #include "MediaKeySessionType.h"
 #include "MediaKeyStatus.h"
@@ -70,8 +70,8 @@ public:
     void close(Ref<DeferredPromise>&&);
     void remove(Ref<DeferredPromise>&&);
 
-    using ClosedPromise = DOMPromiseDeferred<void>;
-    void registerClosedPromise(ClosedPromise&&);
+    using ClosedPromise = DOMPromiseProxy<IDLVoid>;
+    ClosedPromise& closed() { return m_closedPromise; }
 
     const Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>>& statuses() const { return m_statuses; }
 
@@ -96,7 +96,7 @@ private:
 
     String m_sessionId;
     double m_expiration;
-    std::optional<ClosedPromise> m_closedPromise;
+    ClosedPromise m_closedPromise;
     Ref<MediaKeyStatusMap> m_keyStatuses;
     bool m_closed { false };
     bool m_uninitialized { true };

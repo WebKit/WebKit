@@ -51,6 +51,7 @@ Ref<FontFaceSet> FontFaceSet::create(Document& document, CSSFontFaceSet& backing
 FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& initialFaces)
     : ActiveDOMObject(&document)
     , m_backing(CSSFontFaceSet::create())
+    , m_readyPromise(*this, &FontFaceSet::readyPromiseResolve)
 {
     m_backing->addClient(*this);
     for (auto& face : initialFaces)
@@ -60,7 +61,9 @@ FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& ini
 FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
     : ActiveDOMObject(&document)
     , m_backing(backing)
+    , m_readyPromise(*this, &FontFaceSet::readyPromiseResolve)
 {
+    m_readyPromise.resolve(*this);
     m_backing->addClient(*this);
 }
 
@@ -165,16 +168,6 @@ ExceptionOr<bool> FontFaceSet::check(const String& family, const String& text)
 {
     return m_backing->check(family, text);
 }
-
-void FontFaceSet::registerReady(ReadyPromise&& promise)
-{
-    ASSERT(!m_promise);
-    if (m_isReady) {
-        promise.resolve(*this);
-        return;
-    }
-    m_promise = WTFMove(promise);
-}
     
 auto FontFaceSet::status() const -> LoadStatus
 {
@@ -197,12 +190,12 @@ void FontFaceSet::startedLoading()
 {
     // FIXME: Fire a "loading" event asynchronously.
     m_isReady = false;
+    m_readyPromise.reset();
 }
 
 void FontFaceSet::completedLoading()
 {
-    if (m_promise)
-        std::exchange(m_promise, std::nullopt)->resolve(*this);
+    m_readyPromise.resolve(*this);
     m_isReady = true;
 }
 
@@ -231,6 +224,11 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
     }
 
     m_pendingPromises.remove(iterator);
+}
+
+RefPtr<FontFaceSet> FontFaceSet::readyPromiseResolve()
+{
+    return this;
 }
 
 }

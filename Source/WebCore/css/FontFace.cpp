@@ -122,6 +122,7 @@ Ref<FontFace> FontFace::create(CSSFontFace& face)
 FontFace::FontFace(CSSFontSelector& fontSelector)
     : m_weakPtrFactory(this)
     , m_backing(CSSFontFace::create(&fontSelector, nullptr, this))
+    , m_loadedPromise(*this, &FontFace::loadedPromiseResolve)
 {
     m_backing->addClient(*this);
 }
@@ -129,6 +130,7 @@ FontFace::FontFace(CSSFontSelector& fontSelector)
 FontFace::FontFace(CSSFontFace& face)
     : m_weakPtrFactory(this)
     , m_backing(face)
+    , m_loadedPromise(*this, &FontFace::loadedPromiseResolve)
 {
     m_backing->addClient(*this);
 }
@@ -421,13 +423,17 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
     case CSSFontFace::Status::TimedOut:
         break;
     case CSSFontFace::Status::Success:
-        if (m_promise)
-            std::exchange(m_promise, std::nullopt)->resolve(*this);
+        // FIXME: This check should not be needed, but because FontFace's are sometimes adopted after they have already
+        // gone through a load cycle, we can sometimes come back through here and try to resolve the promise again.  
+        if (!m_loadedPromise.isFulfilled())
+            m_loadedPromise.resolve(*this);
         deref();
         return;
     case CSSFontFace::Status::Failure:
-        if (m_promise)
-            std::exchange(m_promise, std::nullopt)->reject(NetworkError);
+        // FIXME: This check should not be needed, but because FontFace's are sometimes adopted after they have already
+        // gone through a load cycle, we can sometimes come back through here and try to resolve the promise again.  
+        if (!m_loadedPromise.isFulfilled())
+            m_loadedPromise.reject(Exception { NetworkError });
         deref();
         return;
     case CSSFontFace::Status::Pending:
@@ -436,27 +442,15 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
     }
 }
 
-void FontFace::registerLoaded(Promise&& promise)
-{
-    ASSERT(!m_promise);
-    switch (m_backing->status()) {
-    case CSSFontFace::Status::Loading:
-    case CSSFontFace::Status::Pending:
-        m_promise = WTFMove(promise);
-        return;
-    case CSSFontFace::Status::Success:
-        promise.resolve(*this);
-        return;
-    case CSSFontFace::Status::TimedOut:
-    case CSSFontFace::Status::Failure:
-        promise.reject(NetworkError);
-        return;
-    }
-}
-
-void FontFace::load()
+auto FontFace::load() -> LoadedPromise&
 {
     m_backing->load();
+    return m_loadedPromise;
+}
+
+RefPtr<FontFace> FontFace::loadedPromiseResolve()
+{
+    return this;
 }
 
 }

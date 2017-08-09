@@ -1181,8 +1181,6 @@ set(WebCore_SOURCES
     bindings/js/JSDOMConvertWebGL.cpp
     bindings/js/JSDOMIterator.cpp
     bindings/js/JSDeprecatedCSSOMValueCustom.cpp
-    bindings/js/JSFontFaceCustom.cpp
-    bindings/js/JSFontFaceSetCustom.cpp
     bindings/js/JSCallbackData.cpp
     bindings/js/JSCanvasRenderingContext2DCustom.cpp
     bindings/js/JSCryptoAlgorithmBuilder.cpp
@@ -1232,7 +1230,6 @@ set(WebCore_SOURCES
     bindings/js/JSLazyEventListener.cpp
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp
-    bindings/js/JSMediaKeySessionCustom.cpp
     bindings/js/JSMediaStreamTrackCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
@@ -1247,7 +1244,6 @@ set(WebCore_SOURCES
     bindings/js/JSReadableStreamPrivateConstructors.cpp
     bindings/js/JSReadableStreamSourceCustom.cpp
     bindings/js/JSSVGPathSegCustom.cpp
-    bindings/js/JSServiceWorkerContainerCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSSubtleCryptoCustom.cpp
     bindings/js/JSTextCustom.cpp
@@ -1260,7 +1256,6 @@ set(WebCore_SOURCES
     bindings/js/JSVideoTrackListCustom.cpp
     bindings/js/JSWebGL2RenderingContextCustom.cpp
     bindings/js/JSWebGLRenderingContextCustom.cpp
-    bindings/js/JSWebGPUCommandBufferCustom.cpp
     bindings/js/JSWebGPURenderPassAttachmentDescriptorCustom.cpp
     bindings/js/JSWebGPURenderingContextCustom.cpp
     bindings/js/JSWebKitSubtleCryptoCustom.cpp

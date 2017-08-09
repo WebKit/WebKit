@@ -1,3 +1,148 @@
+2017-08-08  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for Promise<> attributes
+        https://bugs.webkit.org/show_bug.cgi?id=175246
+
+        Reviewed by Yusuke Suzuki.
+
+        Introduces and adopts DOMPromiseProxy, a new class for binding promises in a more
+        straightforward and safe (from a wrapper world perspective) way.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSFontFaceCustom.cpp: Removed.
+        * bindings/js/JSFontFaceSetCustom.cpp: Removed.
+        * bindings/js/JSMediaKeySessionCustom.cpp: Removed.
+        * bindings/js/JSServiceWorkerContainerCustom.cpp: Removed.
+        * bindings/js/JSWebGPUCommandBufferCustom.cpp: Removed.
+
+            Remove custom bindings only needed for promise attributes. Add DOMPromiseProxy.h
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::sessionClosed):
+        (WebCore::MediaKeySession::registerClosedPromise): Deleted.
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+
+            Replace custom promise code using the registerPromise idiom with DOMPromiseProxy.
+
+        * bindings/IDLTypes.h:
+
+            Add StorageType type alias to allow specifying a specific form for storage. This allows
+            use to use Ref<> for interfaces in DOMPromiseProxy.
+
+        (WebCore::IDLWrapper::convertToParameterType):
+            
+            Also add convertToParameterType, an annoying hack to workaround the fact WTF::Function
+            can't return references / no
+
+        * bindings/js/DOMPromiseProxy.h: Added.
+        (WebCore::DOMPromiseProxy<IDLType>):
+        
+            DOMPromiseProxy is a new class (set of classes) to represent promises that works with the 
+            standard toJS<> / JSDOMConvert infrastructure used by the bindings generator. From the
+            implementation perspective, it is similar to DOMPromiseDeferred, but instead of receiving
+            one as a parameter, you can initialize it directly in your constructor and start using it.
+
+            From the bindings perspective, a DOMPromiseProxy can be converted into a JS Promise by calling
+            its promise function, which will either create a new promise, or return a cached one.
+
+            To make this work, DOMPromiseProxy maintains a Vector of DeferredPromises that hold onto those
+            actualized promises. The reason it has a Vector, is that we need one DeferredPromises per
+            DOMWrapperWorld, just like we need one wrapper for an interface per DOMWrapperWorld in the 
+            wrapper cache. In most cases, only the normal world will be in play, so the Vector has an inline
+            capacity of one.
+            
+            In addition, DOMPromiseProxy maintains a Variant of either an Exception or the result value type.
+            This allows the DOMPromiseProxy to be resolved or rejected at anytime. Then, when the bindings
+            request the promise, the stored result / exception can be resolved / rejected into the promise.
+
+        (WebCore::DOMPromiseProxy<IDLVoid>):
+
+            For void promises, we need slightly different semantics (resolve takes no parameters, Value is
+            a bit indicating resolved state), so it is specialized.
+
+        (WebCore::DOMPromiseProxyWithResolveCallback<IDLType>):
+
+            In addition to the void specialization, we have DOMPromiseProxyWithResolveCallback. Instead of
+            storing the value of the resolution directly, this specialization allows the owner to specify
+            callback to be called when the resolved value is needed. This is needed to avoid reference
+            cycles when the resolved value is the owner such as is the case with FontFace and FontFaceSet.
+
+        * bindings/js/JSDOMConvertPromise.h:
+        (WebCore::JSConverter<IDLPromise<T>>::convert):
+        Add converter that calls through to the DOMPromiseProxy function promise.
+
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::callFunction):
+        (WebCore::DeferredPromise::reject):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::DeferredPromise::create):
+        (WebCore::DeferredPromise::DeferredPromise):
+
+            Add a new create function for DeferredPromise that creates the JSPromiseDeferred for you.
+            Also adds a mode to DeferredPromise to allow keeping the promise after resolution. Maintain
+            the old behavior as the default.
+
+            Change reject to take an Exception as sink rather than an r-value, to allow DOMPromiseProxy
+            to copy a Exception into multiple DeferredPromises. For callers already moving into reject,
+            this should be no change.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        (GenerateParametersCheck):
+        (GenerateImplementationFunctionCall):
+        (NativeToJSValueDOMConvertNeedsState):
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+
+            Add support DOMPromiseProxy. For now, this means a new extended attribute, [PromiseProxy],
+            but once I convert all the existing promises over to using DOMPromiseProxy, it will be removed.
+            
+            Also specify the right #includes for promises and necessary parameters for conversion.
+
+        * bindings/scripts/IDLAttributes.json:
+        
+            Add [PromiseProxy], a temporary extended attribute for using DOMPromiseProxy.
+
+        * css/FontFace.cpp:
+        * css/FontFace.h:
+        * css/FontFace.idl:
+        * css/FontFaceSet.cpp:
+        * css/FontFaceSet.h:
+        * css/FontFaceSet.idl:
+
+            Replace custom promise code using the registerPromise idiom with DOMPromiseProxyWithResolveCallback.
+            The callback is necessary for these two classes since the value the resolve is themselves, and using
+            a normal resolve would create a cycle.
+
+        * html/canvas/WebGPUCommandBuffer.cpp:
+        * html/canvas/WebGPUCommandBuffer.h:
+        * html/canvas/WebGPUCommandBuffer.idl:
+        * platform/graphics/cocoa/GPUCommandBufferMetal.mm:
+        * platform/graphics/gpu/GPUCommandBuffer.cpp:
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+
+            Replace custom promise code using the registerPromise idiom with DOMPromiseProxy.
+
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::NavigatorBase):
+        * page/NavigatorBase.h:
+
+            Forward declare ServiceWorkerContainer and add an explicit constructor to allow
+            removing #include of ServiceWorkerContainer.h in the header, avoiding an #include cycle.
+
+        * workers/ServiceWorkerContainer.cpp:
+        * workers/ServiceWorkerContainer.h:
+        * workers/ServiceWorkerContainer.idl:
+
+            Replace custom promise code using the registerPromise idiom with DOMPromiseProxy.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        * bindings/scripts/test/TestObj.idl:
+
+            Add / update tests.
+
 2017-08-08  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Merge of dataRecordsRemoved should use std::max()

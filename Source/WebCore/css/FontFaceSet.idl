@@ -50,6 +50,6 @@ enum FontFaceSetLoadStatus {
     Promise<sequence<FontFace>> load(DOMString font, optional DOMString text = " ");
     [MayThrowException] boolean check(DOMString font, optional DOMString text = " ");
 
-    [CustomGetter, CachedAttribute] readonly attribute Promise<FontFaceSet> ready;
+    readonly attribute Promise<FontFaceSet> ready;
     readonly attribute FontFaceSetLoadStatus status;
 };

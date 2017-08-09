@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "DOMPromiseProxy.h"
 #include "WebGPUObject.h"
 
 #include <wtf/Vector.h>
@@ -54,6 +55,8 @@ public:
     RefPtr<WebGPUComputeCommandEncoder> createComputeCommandEncoder();
 
     GPUCommandBuffer* commandBuffer() { return m_commandBuffer.get(); }
+
+    DOMPromiseProxy<IDLVoid>& completed();
 
 private:
     WebGPUCommandBuffer(WebGPURenderingContext*, WebGPUCommandQueue*);

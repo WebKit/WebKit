@@ -65,7 +65,8 @@ void DeferredPromise::callFunction(ExecState& exec, JSValue function, JSValue re
     // In practice, the only exception we should ever see here is the TerminatedExecutionException.
     ASSERT_UNUSED(scope, !scope.exception() || isTerminatedExecutionException(vm, scope.exception()));
 
-    clear();
+    if (m_mode == Mode::ClearPromiseOnResolve)
+        clear();
 }
 
 void DeferredPromise::reject()
@@ -92,7 +93,7 @@ void DeferredPromise::reject(std::nullptr_t)
     reject(state, JSC::jsNull());
 }
 
-void DeferredPromise::reject(Exception&& exception)
+void DeferredPromise::reject(Exception exception)
 {
     if (isSuspended())
         return;

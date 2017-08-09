@@ -28,11 +28,10 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] interface WebGPUCommandBuffer {
-
     WebGPURenderCommandEncoder createRenderCommandEncoderWithDescriptor(WebGPURenderPassDescriptor descriptor);
     WebGPUComputeCommandEncoder createComputeCommandEncoder();
     void commit();
     void presentDrawable(WebGPUDrawable drawable);
-    [CachedAttribute, CustomGetter] readonly attribute Promise<void> completed;
+    readonly attribute Promise<void> completed;
 
 };

@@ -386,7 +386,7 @@ sub AddToIncludesForIDLType
     }
 
     if ($codeGenerator->IsPromiseType($type)) {
-        AddToIncludes("JSDOMPromise.h", $includesRef, $conditional);
+        AddToIncludes("DOMPromiseProxy.h", $includesRef, $conditional);
         AddToIncludes("JSDOMConvertPromise.h", $includesRef, $conditional);
 
         AddToIncludesForIDLType(@{$type->subtypes}[0], $includesRef, $conditional);
@@ -5622,7 +5622,7 @@ sub GenerateParametersCheck
         $argumentIndex++;
     }
 
-    push(@arguments, "WTFMove(promise)") if $operation->type && $codeGenerator->IsPromiseType($operation->type);
+    push(@arguments, "WTFMove(promise)") if $operation->type && $codeGenerator->IsPromiseType($operation->type) && !$operation->extendedAttributes->{PromiseProxy};
 
     my $functionString = "$functionName(" . join(", ", @arguments) . ")";
     $functionString = "propagateException(*state, throwScope, $functionString)" if NeedsExplicitPropagateExceptionCall($operation);
@@ -6063,7 +6063,7 @@ sub GenerateImplementationFunctionCall
     if (OperationHasForcedReturnValue($operation)) {
         push(@$outputArray, $indent . "$functionString;\n");
         push(@$outputArray, $indent . "return JSValue::encode(returnValue);\n");
-    } elsif ($operation->type->name eq "void" || $codeGenerator->IsPromiseType($operation->type)) {
+    } elsif ($operation->type->name eq "void" || ($codeGenerator->IsPromiseType($operation->type) && !$operation->extendedAttributes->{PromiseProxy})) {
         push(@$outputArray, $indent . "$functionString;\n");
         push(@$outputArray, $indent . "return JSValue::encode(jsUndefined());\n");
     } else {
@@ -6457,6 +6457,7 @@ sub NativeToJSValueDOMConvertNeedsState
     return 1 if $codeGenerator->IsDictionaryType($type);
     return 1 if $codeGenerator->IsInterfaceType($type);
     return 1 if $codeGenerator->IsBufferSourceType($type);
+    return 1 if $codeGenerator->IsPromiseType($type);
     return 1 if $type->name eq "Date";
     return 1 if $type->name eq "JSON";
     return 1 if $type->name eq "SerializedScriptValue";
@@ -6488,6 +6489,7 @@ sub NativeToJSValueDOMConvertNeedsGlobalObject
     return 1 if $codeGenerator->IsDictionaryType($type);
     return 1 if $codeGenerator->IsInterfaceType($type);
     return 1 if $codeGenerator->IsBufferSourceType($type);
+    return 1 if $codeGenerator->IsPromiseType($type);
     return 1 if $type->name eq "SerializedScriptValue";
     return 1 if $type->name eq "XPathNSResolver";
 

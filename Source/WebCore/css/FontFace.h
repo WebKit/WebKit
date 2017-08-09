@@ -27,7 +27,7 @@
 
 #include "CSSFontFace.h"
 #include "CSSPropertyNames.h"
-#include "JSDOMPromiseDeferred.h"
+#include "DOMPromiseProxy.h"
 #include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
@@ -73,13 +73,11 @@ public:
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     LoadStatus status() const;
 
-    using Promise = DOMPromiseDeferred<IDLInterface<FontFace>>;
-    std::optional<Promise>& promise() { return m_promise; }
-    void registerLoaded(Promise&&);
+    using LoadedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<FontFace>>;
+    LoadedPromise& loaded() { return m_loadedPromise; }
+    LoadedPromise& load();
 
     void adopt(CSSFontFace&);
-
-    void load();
 
     CSSFontFace& backing() { return m_backing; }
 
@@ -96,9 +94,11 @@ private:
     explicit FontFace(CSSFontSelector&);
     explicit FontFace(CSSFontFace&);
 
+    RefPtr<FontFace> loadedPromiseResolve();
+
     WeakPtrFactory<FontFace> m_weakPtrFactory;
     Ref<CSSFontFace> m_backing;
-    std::optional<Promise> m_promise;
+    LoadedPromise m_loadedPromise;
 };
 
 }

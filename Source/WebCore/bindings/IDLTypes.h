@@ -60,6 +60,7 @@ class WebGLExtension;
 template<typename T>
 struct IDLType {
     using ImplementationType = T;
+    using StorageType = T;
 
     using ParameterType = T;
     using NullableParameterType = std::optional<ImplementationType>;
@@ -157,6 +158,8 @@ struct IDLObject : IDLType<JSC::Strong<JSC::JSObject>> {
 template<typename T> struct IDLWrapper : IDLType<RefPtr<T>> {
     using RawType = T;
 
+    using StorageType = Ref<T>;
+
     using ParameterType = T&;
     using NullableParameterType = T*;
 
@@ -167,6 +170,8 @@ template<typename T> struct IDLWrapper : IDLType<RefPtr<T>> {
     static inline std::nullptr_t nullValue() { return nullptr; }
     template<typename U> static inline bool isNullValue(U&& value) { return !value; }
     template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
+
+    static ParameterType convertToParameterType(RefPtr<T> value) { ASSERT(value); return *value.get(); }
 };
 
 template<typename T> struct IDLInterface : IDLWrapper<T> { };

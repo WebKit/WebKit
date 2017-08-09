@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestPromiseRejectionEvent.h"
 
+#include "DOMPromiseProxy.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
@@ -30,7 +31,7 @@
 #include "JSDOMConvertPromise.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
-#include "JSDOMPromise.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDOMWrapperCache.h"
 #include <runtime/JSCInlines.h>
 #include <wtf/GetPtr.h>
@@ -230,7 +231,7 @@ static inline JSValue jsTestPromiseRejectionEventPromiseGetter(ExecState& state,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLPromise<IDLAny>>(impl.promise());
+    JSValue result = toJS<IDLPromise<IDLAny>>(state, *thisObject.globalObject(), impl.promise());
     return result;
 }
 

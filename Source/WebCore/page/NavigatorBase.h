@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ServiceWorkerContainer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
@@ -34,6 +33,7 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
+class ServiceWorkerContainer;
 
 class NavigatorBase : public RefCounted<NavigatorBase> {
 public:

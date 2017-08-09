@@ -29,6 +29,7 @@
 
 #include "Language.h"
 #include "NetworkStateNotifier.h"
+#include "ServiceWorkerContainer.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NumberOfCores.h>

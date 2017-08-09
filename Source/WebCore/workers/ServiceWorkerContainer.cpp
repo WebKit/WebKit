@@ -42,7 +42,10 @@ ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext& context, 
     , m_navigator(navigator)
 {
     suspendIfNeeded();
+
+    m_readyPromise.reject(Exception { UnknownError, ASCIILiteral("serviceWorker.ready() is not yet implemented") });
 }
+
 void ServiceWorkerContainer::refEventTarget()
 {
     m_navigator.ref();
@@ -56,11 +59,6 @@ void ServiceWorkerContainer::derefEventTarget()
 ServiceWorker* ServiceWorkerContainer::controller() const
 {
     return nullptr;
-}
-
-void ServiceWorkerContainer::ready(Ref<DeferredPromise>&& promise)
-{
-    promise->reject(Exception { UnknownError, ASCIILiteral("serviceWorker.ready() is not yet implemented") });
 }
 
 void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, const RegistrationOptions& options, Ref<DeferredPromise>&& promise)

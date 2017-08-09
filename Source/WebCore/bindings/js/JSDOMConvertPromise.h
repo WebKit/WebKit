@@ -59,14 +59,18 @@ template<typename T> struct Converter<IDLPromise<T>> : DefaultConverter<IDLPromi
 };
 
 template<typename T> struct JSConverter<IDLPromise<T>> {
-    static constexpr bool needsState = false;
-    static constexpr bool needsGlobalObject = false;
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
 
-    static JSC::JSValue convert(JSC::JSPromise& promise)
+    static JSC::JSValue convert(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromise& promise)
     {
-        // The result of converting an IDL promise type value to an ECMAScript value is the Promise value
-        // that represents a reference to the same object that the IDL promise type represents.
         return &promise;
+    }
+
+    template<template<typename> class U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U<T>& promiseProxy)
+    {
+        return promiseProxy.promise(state, globalObject);
     }
 };
 

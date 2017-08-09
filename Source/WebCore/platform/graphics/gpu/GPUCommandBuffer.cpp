@@ -64,8 +64,9 @@ void GPUCommandBuffer::presentDrawable(GPUDrawable*)
 {
 }
 
-void GPUCommandBuffer::completed(Ref<DeferredPromise>&&);
+DOMPromiseProxy<IDLVoid>& GPUCommandBuffer::completed();
 {
+    return m_completedPromise;
 }
 #endif
 

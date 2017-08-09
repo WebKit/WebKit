@@ -88,6 +88,11 @@ RefPtr<WebGPUComputeCommandEncoder> WebGPUCommandBuffer::createComputeCommandEnc
     return commandEncoder;
 }
 
+DOMPromiseProxy<IDLVoid>& WebGPUCommandBuffer::completed()
+{
+    return m_commandBuffer->completed();
+}
+
 } // namespace WebCore
 
 #endif

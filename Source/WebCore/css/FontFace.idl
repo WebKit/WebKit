@@ -56,6 +56,6 @@ dictionary FontFaceDescriptors {
 
     readonly attribute FontFaceLoadStatus status;
 
-    [Custom, ReturnsOwnPromise] Promise<FontFace> load();
-    [CachedAttribute, CustomGetter] readonly attribute Promise<FontFace> loaded;
+    [ReturnsOwnPromise, PromiseProxy] Promise<FontFace> load();
+    readonly attribute Promise<FontFace> loaded;
 };

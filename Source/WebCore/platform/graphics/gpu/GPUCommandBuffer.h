@@ -28,8 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-#include "JSDOMPromiseDeferred.h"
-
+#include "DOMPromiseProxy.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -56,7 +55,7 @@ public:
 
     WEBCORE_EXPORT RefPtr<GPURenderCommandEncoder> createRenderCommandEncoder(GPURenderPassDescriptor*);
     WEBCORE_EXPORT RefPtr<GPUComputeCommandEncoder> createComputeCommandEncoder();
-    WEBCORE_EXPORT void completed(Ref<DeferredPromise>&&);
+    WEBCORE_EXPORT DOMPromiseProxy<IDLVoid>& completed();
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT MTLCommandBuffer *platformCommandBuffer();
@@ -68,6 +67,8 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<MTLCommandBuffer> m_commandBuffer;
 #endif
+
+    DOMPromiseProxy<IDLVoid> m_completedPromise;
 };
     
 } // namespace WebCore

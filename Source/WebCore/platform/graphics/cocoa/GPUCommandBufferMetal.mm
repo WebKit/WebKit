@@ -34,6 +34,7 @@
 #import "Logging.h"
 
 #import <Metal/Metal.h>
+#import <wtf/BlockPtr.h>
 
 namespace WebCore {
 
@@ -69,18 +70,18 @@ void GPUCommandBuffer::commit()
     [m_commandBuffer commit];
 }
 
-void GPUCommandBuffer::completed(Ref<DeferredPromise>&& passedPromise)
+DOMPromiseProxy<IDLVoid>& GPUCommandBuffer::completed()
 {
     if (!m_commandBuffer)
-        return;
+        return m_completedPromise;
 
-    RefPtr<DeferredPromise> promise(WTFMove(passedPromise));
-
-    [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
-        callOnMainThread([promise] {
-            promise->resolve();
+    [m_commandBuffer addCompletedHandler:BlockPtr<void (id<MTLCommandBuffer>)>::fromCallable([this, protectedThis = makeRef(*this)] (id<MTLCommandBuffer>) {
+        callOnMainThread([this, protectedThis = makeRef(*this)] {
+            this->m_completedPromise.resolve();
         });
-    }];
+    }).get()];
+    
+    return m_completedPromise;
 }
 
 } // namespace WebCore

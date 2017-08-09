@@ -28,7 +28,9 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ActiveDOMObject.h"
+#include "DOMPromiseProxy.h"
 #include "EventTarget.h"
+#include "ServiceWorkerRegistration.h"
 
 namespace WebCore {
 
@@ -52,7 +54,9 @@ public:
 
     ServiceWorker* controller() const;
 
-    void ready(Ref<DeferredPromise>&&);
+    using ReadyPromise = DOMPromiseProxy<IDLInterface<ServiceWorkerRegistration>>;
+    ReadyPromise& ready() { return m_readyPromise; }
+
     void addRegistration(const String& scriptURL, const RegistrationOptions&, Ref<DeferredPromise>&&);
     void getRegistration(const String& url, Ref<DeferredPromise>&&);
     void getRegistrations(Ref<DeferredPromise>&&);
@@ -66,6 +70,8 @@ private:
     EventTargetInterface eventTargetInterface() const final { return ServiceWorkerContainerEventTargetInterfaceType; }
     void refEventTarget() final;
     void derefEventTarget() final;
+
+    ReadyPromise m_readyPromise;
 
     NavigatorBase& m_navigator;
 };

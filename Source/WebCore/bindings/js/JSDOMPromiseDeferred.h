@@ -34,9 +34,22 @@ namespace WebCore {
 
 class DeferredPromise : public DOMGuarded<JSC::JSPromiseDeferred> {
 public:
-    static Ref<DeferredPromise> create(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred)
+    enum class Mode {
+        ClearPromiseOnResolve,
+        RetainPromiseOnResolve
+    };
+
+    static RefPtr<DeferredPromise> create(JSC::ExecState& state, JSDOMGlobalObject& globalObject, Mode mode = Mode::ClearPromiseOnResolve)
     {
-        return adoptRef(*new DeferredPromise(globalObject, deferred));
+        auto* promiseDeferred = JSC::JSPromiseDeferred::create(&state, &globalObject);
+        if (!promiseDeferred)
+            return nullptr;
+        return adoptRef(new DeferredPromise(globalObject, *promiseDeferred, mode));
+    }
+
+    static Ref<DeferredPromise> create(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred, Mode mode = Mode::ClearPromiseOnResolve)
+    {
+        return adoptRef(*new DeferredPromise(globalObject, deferred, mode));
     }
 
     template<class IDLType>
@@ -88,7 +101,7 @@ public:
 
     void reject();
     void reject(std::nullptr_t);
-    void reject(Exception&&);
+    void reject(Exception);
     WEBCORE_EXPORT void reject(ExceptionCode, const String& = { });
     void reject(const JSC::PrivateName&);
 
@@ -119,8 +132,9 @@ public:
     JSC::JSValue promise() const;
 
 private:
-    DeferredPromise(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred)
+    DeferredPromise(JSDOMGlobalObject& globalObject, JSC::JSPromiseDeferred& deferred, Mode mode)
         : DOMGuarded<JSC::JSPromiseDeferred>(globalObject, deferred)
+        , m_mode(mode)
     {
     }
 
@@ -129,6 +143,8 @@ private:
     WEBCORE_EXPORT void callFunction(JSC::ExecState&, JSC::JSValue function, JSC::JSValue resolution);
     void resolve(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, deferred()->resolve(), resolution); }
     void reject(JSC::ExecState& state, JSC::JSValue resolution) { callFunction(state, deferred()->reject(), resolution); }
+
+    Mode m_mode;
 };
 
 class DOMPromiseDeferredBase {

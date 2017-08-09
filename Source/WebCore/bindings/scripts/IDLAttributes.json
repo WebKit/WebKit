@@ -359,6 +359,9 @@
         "PrivateIdentifier": {
             "contextsAllowed": ["interface", "attribute", "operation"]
         },
+        "PromiseProxy": {
+            "contextsAllowed": ["operation"]
+        },
         "PublicIdentifier": {
             "contextsAllowed": ["interface", "attribute", "operation"]
         },

@@ -27,6 +27,7 @@
 
 #include "ActiveDOMObject.h"
 #include "CSSFontFaceSet.h"
+#include "DOMPromiseProxy.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
 
@@ -53,8 +54,8 @@ public:
     enum class LoadStatus { Loading, Loaded };
     LoadStatus status() const;
 
-    using ReadyPromise = DOMPromiseDeferred<IDLInterface<FontFaceSet>>;
-    void registerReady(ReadyPromise&&);
+    using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<FontFaceSet>>;
+    ReadyPromise& ready() { return m_readyPromise; }
 
     CSSFontFaceSet& backing() { return m_backing; }
 
@@ -107,9 +108,11 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    RefPtr<FontFaceSet> readyPromiseResolve();
+
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
-    std::optional<ReadyPromise> m_promise;
+    ReadyPromise m_readyPromise;
     bool m_isReady { true };
 };
 

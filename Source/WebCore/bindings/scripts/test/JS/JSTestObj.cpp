@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestObj.h"
 
+#include "DOMPromiseProxy.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "EventNames.h"
@@ -40,6 +41,7 @@
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertObject.h"
+#include "JSDOMConvertPromise.h"
 #include "JSDOMConvertRecord.h"
 #include "JSDOMConvertSequences.h"
 #include "JSDOMConvertSerializedScriptValue.h"
@@ -1145,6 +1147,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseF
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestCustomPromiseFunction(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticCustomPromiseFunction(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestReturnsOwnPromiseAndPromiseProxyFunction(JSC::ExecState*);
 #if ENABLE(CONDITION1) || ENABLE(CONDITION2)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalOverload(JSC::ExecState*);
 #endif
@@ -1352,6 +1355,8 @@ bool setJSTestObjNullableStringValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::
 JSC::EncodedJSValue jsTestObjAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjAttributeWithReservedEnumType(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjAttributeWithReservedEnumType(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjTestReadOnlyVoidPromiseAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestObjTestReadOnlyPromiseAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjPutForwardsAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjPutForwardsAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjPutForwardsNullableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -1658,6 +1663,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "nullableStringValue", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableStringValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjNullableStringValue) } },
     { "attribute", ReadOnly | CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "attributeWithReservedEnumType", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithReservedEnumType), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithReservedEnumType) } },
+    { "testReadOnlyVoidPromiseAttribute", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestReadOnlyVoidPromiseAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "testReadOnlyPromiseAttribute", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestReadOnlyPromiseAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "putForwardsAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjPutForwardsAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjPutForwardsAttribute) } },
     { "putForwardsNullableAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjPutForwardsNullableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjPutForwardsNullableAttribute) } },
     { "stringifierAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringifierAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringifierAttribute) } },
@@ -1839,6 +1846,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "testPromiseOverloadedFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseOverloadedFunction), (intptr_t) (1) } },
     { "testCustomPromiseFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestCustomPromiseFunction), (intptr_t) (0) } },
     { "testCustomReturnsOwnPromiseFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunction), (intptr_t) (0) } },
+    { "testReturnsOwnPromiseAndPromiseProxyFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestReturnsOwnPromiseAndPromiseProxyFunction), (intptr_t) (0) } },
 #if ENABLE(CONDITION1) || ENABLE(CONDITION2)
     { "conditionalOverload", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalOverload), (intptr_t) (1) } },
 #else
@@ -4760,6 +4768,34 @@ static inline bool setJSTestObjAttributeWithReservedEnumTypeSetter(ExecState& st
 bool setJSTestObjAttributeWithReservedEnumType(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjAttributeWithReservedEnumTypeSetter>(*state, thisValue, encodedValue, "attributeWithReservedEnumType");
+}
+
+static inline JSValue jsTestObjTestReadOnlyVoidPromiseAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLPromise<IDLVoid>>(state, *thisObject.globalObject(), impl.testReadOnlyVoidPromiseAttribute());
+    return result;
+}
+
+EncodedJSValue jsTestObjTestReadOnlyVoidPromiseAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObjTestReadOnlyVoidPromiseAttributeGetter, CastedThisErrorBehavior::RejectPromise>(*state, thisValue, "testReadOnlyVoidPromiseAttribute");
+}
+
+static inline JSValue jsTestObjTestReadOnlyPromiseAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLPromise<IDLInterface<TestNode>>>(state, *thisObject.globalObject(), impl.testReadOnlyPromiseAttribute());
+    return result;
+}
+
+EncodedJSValue jsTestObjTestReadOnlyPromiseAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObjTestReadOnlyPromiseAttributeGetter, CastedThisErrorBehavior::RejectPromise>(*state, thisValue, "testReadOnlyPromiseAttribute");
 }
 
 static inline JSValue jsTestObjPutForwardsAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
@@ -7795,6 +7831,19 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestCustomReturnsOwn
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunction(ExecState* state)
 {
     return IDLOperationReturningPromise<JSTestObj>::callReturningOwnPromise<jsTestObjPrototypeFunctionTestCustomReturnsOwnPromiseFunctionBody>(*state, "testCustomReturnsOwnPromiseFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestReturnsOwnPromiseAndPromiseProxyFunctionBody(JSC::ExecState* state, typename IDLOperationReturningPromise<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    return JSValue::encode(toJS<IDLPromise<IDLVoid>>(*state, *castedThis->globalObject(), impl.testReturnsOwnPromiseAndPromiseProxyFunction()));
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestReturnsOwnPromiseAndPromiseProxyFunction(ExecState* state)
+{
+    return IDLOperationReturningPromise<JSTestObj>::callReturningOwnPromise<jsTestObjPrototypeFunctionTestReturnsOwnPromiseAndPromiseProxyFunctionBody>(*state, "testReturnsOwnPromiseAndPromiseProxyFunction");
 }
 
 #if ENABLE(CONDITION1)

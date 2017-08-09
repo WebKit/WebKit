@@ -577,16 +577,6 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
     // 5. Return promise.
 }
 
-void MediaKeySession::registerClosedPromise(ClosedPromise&& promise)
-{
-    ASSERT(!m_closedPromise);
-    if (m_closed) {
-        promise.resolve();
-        return;
-    }
-    m_closedPromise = WTFMove(promise);
-}
-
 void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const SharedBuffer& message)
 {
     // 6.4.1 Queue a "message" Event
@@ -679,8 +669,7 @@ void MediaKeySession::sessionClosed()
 
     // 5. Let promise be the closed attribute of the session.
     // 6. Resolve promise.
-    if (m_closedPromise)
-        m_closedPromise->resolve();
+    m_closedPromise.resolve();
 }
 
 bool MediaKeySession::hasPendingActivity() const

@@ -408,8 +408,8 @@ enum TestConfidence { "high", "kinda-low" };
     attribute _optional                attributeWithReservedEnumType;
     void _any(unrestricted float a, long b);
 
-    // FIXME: Add support for Promise attributes.
-    // readonly attribute Promise<void> testReadOnlyPromiseAttribute;
+    readonly attribute Promise<void> testReadOnlyVoidPromiseAttribute;
+    readonly attribute Promise<TestNode> testReadOnlyPromiseAttribute;
     
     // Promise function
     Promise<void> testPromiseFunction();
@@ -423,6 +423,7 @@ enum TestConfidence { "high", "kinda-low" };
     [Custom] Promise<void> testCustomPromiseFunction();
     [Custom] static Promise<void> testStaticCustomPromiseFunction();
     [Custom, ReturnsOwnPromise] Promise<void> testCustomReturnsOwnPromiseFunction();
+    [ReturnsOwnPromise, PromiseProxy] Promise<void> testReturnsOwnPromiseAndPromiseProxyFunction();
 
     // PutForwards
     [PutForwards=name] readonly attribute TestNode putForwardsAttribute;
