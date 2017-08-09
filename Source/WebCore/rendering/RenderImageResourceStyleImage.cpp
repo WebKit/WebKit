@@ -57,6 +57,8 @@ void RenderImageResourceStyleImage::shutdown()
     ASSERT(m_renderer);
     image()->stopAnimation();
     m_styleImage->removeClient(m_renderer);
+    if (!m_styleImage->isCachedImage() && m_cachedImage)
+        m_cachedImage->removeClient(*m_renderer);
     m_cachedImage = nullptr;
 }
 
