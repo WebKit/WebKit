@@ -294,7 +294,10 @@ static SoupDate* msToSoupDate(double ms)
     int year = msToYear(ms);
     int dayOfYear = dayInYear(ms, year);
     bool leapYear = isLeapYear(year);
-    return soup_date_new(year, monthFromDayInYear(dayOfYear, leapYear), dayInMonthFromDayInYear(dayOfYear, leapYear), msToHours(ms), msToMinutes(ms), static_cast<int>(ms / 1000) % 60);
+
+    // monthFromDayInYear() returns a value in the [0,11] range, while soup_date_new() expects
+    // a value in the [1,12] range, meaning we have to manually adjust the month value.
+    return soup_date_new(year, monthFromDayInYear(dayOfYear, leapYear) + 1, dayInMonthFromDayInYear(dayOfYear, leapYear), msToHours(ms), msToMinutes(ms), static_cast<int>(ms / 1000) % 60);
 }
 
 static SoupCookie* toSoupCookie(const Cookie& cookie)
