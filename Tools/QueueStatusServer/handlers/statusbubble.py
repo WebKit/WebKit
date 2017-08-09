@@ -113,6 +113,7 @@ class StatusBubble(webapp.RequestHandler):
         bubble = {
             "name": queue.short_name().lower(),
             "attachment_id": attachment.id,
+            "queue_name": queue.name(),
         }
         # 10 recent statuses is enough to always include a resultative one, if there were any at all.
         statuses = QueueStatus.all().filter('queue_name =', queue.name()).filter('active_patch_id =', attachment.id).order('-date').fetch(limit=10)

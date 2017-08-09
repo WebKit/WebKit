@@ -64,6 +64,7 @@ routes = [
     ('/gc', GC),
     ('/sync-queue-logs', SyncQueueLogs),
     (r'/patch-status/(.*)/(.*)', PatchStatus),
+    (r'/patch/(.*)/(.*)', Patch),
     (r'/patch/(.*)', Patch),
     ('/submit-to-ews', SubmitToEWS),
     (r'/results/(.*)', ShowResults),

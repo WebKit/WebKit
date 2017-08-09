@@ -1,3 +1,23 @@
+2017-08-08  obinna obike  <oobike@apple.com>
+
+        Created Individual EWS Pages
+        https://bugs.webkit.org/show_bug.cgi?id=174477
+
+        Reviewed by Aakash Jain.
+
+        Created individual pages for each EWS. Changed the link within each status bubble
+        to go directly to the individual EWS page. Also added a link to original status page showing all EWSes.
+
+        * QueueStatusServer/handlers/patch.py:
+        (Patch.get): Handles the case for individual ews queue as well as for all EWS queues.
+        * QueueStatusServer/handlers/statusbubble.py:
+        (StatusBubble._build_bubble): Updated url for specific EWS.
+        * QueueStatusServer/main.py: Added a link to the individual ews in the routes dictionary.
+        * QueueStatusServer/templates/patch.html: Added a link to go directly to the page with
+        all ews queues.
+        * QueueStatusServer/templates/statusbubble.html: If you click on a statusbubble it
+        takes you directly to the individual ews page.
+
 2017-08-08  Stephan Szabo  <stephan.szabo@sony.com>
 
         Separate jsc stress test script writer from run-jsc-stress-tests

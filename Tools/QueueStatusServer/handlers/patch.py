@@ -33,7 +33,7 @@ from model.queuestatus import QueueStatus
 
 
 class Patch(webapp.RequestHandler):
-    def get(self, attachment_id_string):
+    def get(self, attachment_id_string, queue_name=None):
         attachment_id = int(attachment_id_string)
         statuses = QueueStatus.all().filter("active_patch_id =", attachment_id).order("-date")
 
@@ -41,9 +41,10 @@ class Patch(webapp.RequestHandler):
         queue_status = {}
         for status in statuses:
             bug_id = status.active_bug_id # Should be the same for every status.
-            per_queue_statuses = queue_status.get(status.queue_name, [])
-            per_queue_statuses.append(status)
-            queue_status[status.queue_name] = per_queue_statuses
+            if status.queue_name == queue_name or queue_name is None:
+                per_queue_statuses = queue_status.get(status.queue_name, [])
+                per_queue_statuses.append(status)
+                queue_status[status.queue_name] = per_queue_statuses
         queue_status = sorted(queue_status.items())
         template_values = {
             "attachment_id" : attachment_id,
