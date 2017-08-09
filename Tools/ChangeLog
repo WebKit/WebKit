@@ -1,3 +1,54 @@
+2017-08-09  Jonathan Bedard  <jbedard@apple.com>
+
+        Allow nested timeouts in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=175390
+        <rdar://problem/33803003>
+
+        Reviewed by David Kilzer.
+
+        We need to be able to nest timeouts in webkitpy. In particular, we have a few cases where functions
+        which use timeouts also call the executive. For on-device testing, we need to have timeouts inside
+        the executive to detect and recover from any issues connecting with devices.
+
+        * Scripts/webkitpy/benchmark_runner/utils.py:
+        (TimeoutError): Deleted.
+        (timeout): Deleted.
+        * Scripts/webkitpy/common/timeout_context.py: Added.
+        (Timeout): A timeout context designed to be nested.
+        (Timeout.TimeoutData): The data required to construct an alarm for a given timeout.
+        (Timeout.TimeoutData.__init__):
+        (Timeout.default_handler): Timeout handler used if none is specified.
+        (Timeout.current): Access data about the most urgent timeout.
+        (Timeout.__init__): Construct a Timeout object with seconds and an optional handler.
+        (Timeout._bind_timeout_data_to_alarm): Given data about a timeout, initialize an alarm for that timeout.
+        (Timeout.__enter__): Un-bind all alarms. Add data for this timeout to the ordered list and bind the most
+        urgent timeout data.
+        (Timeout.__exit__): Un-bind all alarms. Remove data for this timeout from the ordered list and bind the
+        most urgent timeout data, if such data exists.
+        * Scripts/webkitpy/common/timeout_context_unittest.py: Added.
+        (TimeoutContextTests):
+        (TimeoutContextTests.test_current_timeout): Test that accessing the nearest timeout works as expected.
+        (TimeoutContextTests.test_invalid_timeout): Test a timeout of 0.
+        (TimeoutContextTests.test_timeout_data): Confirm that timeouts are constructed correctly.
+        (TimeoutContextTests.test_nested_inner_precedence): Check that a more urgent inner timeout takes precedence
+        over a less urgent outer timeout.
+        (TimeoutContextTests.test_nested_outer_precedence): Check that a more urgent outer timeout takes precedence
+        over a less urgent inner timeout.
+        (TimeoutContextTests.test_no_timeout): Test a block of code without a timeout.
+        (TimeoutContextTests.test_basic_timeout): Test a block of code expected to timeout.
+        (TimeoutContextTests.test_exception_constructor_timeout): Test a timeout where the handler is an exception.
+        (TimeoutContextTests.test_nested_inner_timeout): Confirm that a more urgent inner timeout is triggered.
+        (TimeoutContextTests.test_nested_outer_timeout): Confirm that a more urgent outer timeout is triggered.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess._start): Use Timeout class.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.launch_app._log_debug_error): Use Timeout class.
+        (SimulatedDevice.launch_app): Ditto.
+        (SimulatedDevice.launch_app._install_timeout): Deleted.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator.wait_until_device_is_booted):Use Timeout class.
+        (Simulator.wait_until_device_is_in_state): Ditto.
+
 2017-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] ENABLE_DRAG_SUPPORT should be turned off for iOS 10 and enabled by default

@@ -22,11 +22,10 @@
 
 
 import os
-import signal
 import time
 
+from webkitpy.common.timeout_context import Timeout
 from webkitpy.port.server_process import ServerProcess
-
 
 class SimulatorProcess(ServerProcess):
 
@@ -95,30 +94,24 @@ class SimulatorProcess(ServerProcess):
         self._target_host.listening_socket.listen(3)
         self._pid = self._target_host.launch_app(self._bundle_id, self._cmd[1:], env=self._env)
 
-        def handler(signum, frame):
-            assert signum == signal.SIGALRM
-            raise RuntimeError('Timed out waiting for pid {} to connect at port {}'.format(self._pid, self._target_host.listening_port()))
-        signal.signal(signal.SIGALRM, handler)
-        signal.alarm(6)  # In seconds
-
-        stdin = None
-        stdout = None
-        stderr = None
-        try:
-            # This order matches the client side connections in Tools/TestRunnerShared/IOSLayoutTestCommunication.cpp setUpIOSLayoutTestCommunication()
-            stdin = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'w')
-            stdout = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
-            stderr = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
-        except:
-            # We set self._proc as _reset() and _kill() depend on it.
-            self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
-            if self._proc.poll() is not None:
+        with Timeout(6, RuntimeError('Timed out waiting for pid {} to connect at port {}'.format(self._pid, self._target_host.listening_port()))):
+            stdin = None
+            stdout = None
+            stderr = None
+            try:
+                # This order matches the client side connections in Tools/TestRunnerShared/IOSLayoutTestCommunication.cpp setUpIOSLayoutTestCommunication()
+                stdin = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'w')
+                stdout = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
+                stderr = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
+            except:
+                # We set self._proc as _reset() and _kill() depend on it.
+                self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
+                if self._proc.poll() is not None:
+                    self._reset()
+                    raise Exception('App {} with pid {} crashed before stdin could be attached'.format(os.path.basename(self._cmd[0]), self._pid))
+                self._kill()
                 self._reset()
-                raise Exception('App {} with pid {} crashed before stdin could be attached'.format(os.path.basename(self._cmd[0]), self._pid))
-            self._kill()
-            self._reset()
-            raise
-        signal.alarm(0)  # Cancel alarm
+                raise
 
         self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
 

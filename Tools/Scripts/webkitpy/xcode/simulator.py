@@ -28,7 +28,7 @@ import re
 import subprocess
 import time
 
-from webkitpy.benchmark_runner.utils import timeout
+from webkitpy.common.timeout_context import Timeout
 from webkitpy.common.host import Host
 
 _log = logging.getLogger(__name__)
@@ -242,7 +242,7 @@ class Simulator(object):
     @staticmethod
     def wait_until_device_is_booted(udid, timeout_seconds=60 * 15):
         Simulator.wait_until_device_is_in_state(udid, Simulator.DeviceState.BOOTED, timeout_seconds)
-        with timeout(seconds=timeout_seconds):
+        with Timeout(seconds=timeout_seconds):
             while True:
                 try:
                     state = subprocess.check_output(['xcrun', 'simctl', 'spawn', udid, 'launchctl', 'print', 'system']).strip()
@@ -260,7 +260,7 @@ class Simulator(object):
     @staticmethod
     def wait_until_device_is_in_state(udid, wait_until_state, timeout_seconds=60 * 15):
         _log.debug('waiting for device %s to enter state %s with timeout %s', udid, Simulator.device_state_description(wait_until_state), timeout_seconds)
-        with timeout(seconds=timeout_seconds):
+        with Timeout(seconds=timeout_seconds):
             device_state = Simulator.device_state(udid)
             while (device_state != wait_until_state):
                 device_state = Simulator.device_state(udid)
