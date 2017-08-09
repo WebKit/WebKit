@@ -7,3 +7,6 @@ http/tests/loading/resourceLoadStatistics/partitioned-cookies-with-and-without-u
 http/tests/loading/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass ]
 http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html [ Pass ]
 http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout.html [ Pass ]
+
+# <rdar://problem/33555759>
+http/tests/media/video-buffered-range-contains-currentTime.html [ Pass ImageOnlyFailure ]
