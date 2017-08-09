@@ -1,3 +1,13 @@
+2017-08-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations: Stop skipping the whole fast/
+        directory and then unskipping specific subdirectories since
+        that overrides any expectations coming from the generic WK2
+        TestExpectations file. Specific subdirectories that we haven't
+        yet generated results for are now skipped instead.
+
 2017-08-09  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] [WPE] Update expectations for global-constructors-attributes.html.
