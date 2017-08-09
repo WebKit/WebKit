@@ -193,10 +193,7 @@ function testSyntaxError(script, message) {
 
     testSyntaxError(`var asyncArrowFn = async() => await;`);
 
-    testSyntax(`var asyncFn = async function*() {}`);
-    testSyntax(`async function* asyncGenerator() {}`);
     testSyntaxError(`var O = { *async asyncGeneratorMethod() {} };`);
-    testSyntax(`var O = { async *asyncGeneratorMethod() {} };`);
     testSyntaxError(`var O = { async asyncGeneratorMethod*() {} };`);
 
     testSyntaxError(`var asyncFn = async function(x = await 1) { return x; }`);

@@ -448,7 +448,7 @@ typedef const char* optionString;
     \
     v(bool, useWebAssembly, true, Normal, "Expose the WebAssembly global object.") \
     \
-    v(bool, useAsyncIterator, true, Normal, "Allow to use Async Iterator in JS.") \
+    v(bool, useAsyncIterator, false, Normal, "Allow to use Async Iterator in JS.") \
     \
     v(bool, failToCompileWebAssemblyCode, false, Normal, "If true, no Wasm::Plan will sucessfully compile a function.") \
     v(size, webAssemblyPartialCompileLimit, 5000, Normal, "Limit on the number of bytes a Wasm::Plan::compile should attempt before checking for other work.") \
