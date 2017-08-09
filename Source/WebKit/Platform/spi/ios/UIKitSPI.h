@@ -603,7 +603,9 @@ typedef NS_ENUM(NSInteger, UIWKHandlePosition) {
 - (BOOL)hasMarkedText;
 
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 110000
 - (BOOL)pointIsInAssistedNode:(CGPoint)point;
+#endif
 - (NSArray *)webSelectionRects;
 - (void)_cancelLongPressGestureRecognizer;
 

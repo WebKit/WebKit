@@ -1501,12 +1501,13 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
     return _positionInformation.isNearMarkedText;
 }
-
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 110000
 - (BOOL)pointIsInAssistedNode:(CGPoint)point
 {
     // This method is still implemented for backwards compatibility with older UIKit versions.
     return [self textInteractionGesture:UIWKGestureLoupe shouldBeginAtPoint:point];
 }
+#endif
 
 - (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point
 {
