@@ -52,8 +52,9 @@ public:
 
     Out operator()(In... in) const
     {
-        ASSERT(m_callableWrapper);
-        return m_callableWrapper->call(std::forward<In>(in)...);
+        if (m_callableWrapper)
+            return m_callableWrapper->call(std::forward<In>(in)...);
+        return Out();
     }
 
     explicit operator bool() const { return !!m_callableWrapper; }

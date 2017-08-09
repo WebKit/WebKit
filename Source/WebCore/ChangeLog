@@ -1,3 +1,16 @@
+2017-08-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r220457.
+
+        This change introduced API test failures.
+
+        Reverted changeset:
+
+        "WTF::Function does not allow for reference / non-default
+        constructible return types"
+        https://bugs.webkit.org/show_bug.cgi?id=175244
+        http://trac.webkit.org/changeset/220457
+
 2017-08-09  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Fix build after rev 220399

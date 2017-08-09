@@ -132,7 +132,7 @@ void ArrayBufferContents::transferTo(ArrayBufferContents& other)
     other.m_sizeInBytes = m_sizeInBytes;
     other.m_destructor = WTFMove(m_destructor);
     other.m_shared = m_shared;
-    reset();
+    clear();
 }
 
 void ArrayBufferContents::copyTo(ArrayBufferContents& other)
