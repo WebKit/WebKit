@@ -1,3 +1,23 @@
+2017-08-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220346. rdar://problem/33805219
+
+    2017-08-07  Commit Queue  <commit-queue@webkit.org>
+
+            Unreviewed, rolling out r220144.
+            https://bugs.webkit.org/show_bug.cgi?id=175276
+
+            "It did not actually speed things up in the way I expected"
+            (Requested by saamyjoon on #webkit).
+
+            Reverted changeset:
+
+            "On memory-constrained iOS devices, reduce the rate at which
+            the JS heap grows before a GC to try to keep more memory
+            available for the system"
+            https://bugs.webkit.org/show_bug.cgi?id=175041
+            http://trac.webkit.org/changeset/220144
+
 2017-08-02  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220144. rdar://problem/33687404
