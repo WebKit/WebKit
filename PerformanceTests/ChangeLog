@@ -1,3 +1,57 @@
+2017-08-09  Michael Saboff  <msaboff@apple.com>
+
+        Rex Bench doesn't work from the command line
+        https://bugs.webkit.org/show_bug.cgi?id=175349
+
+        Reviewed by Saam Barati.
+
+        Fixed cli.js to have the same set of benchmarks and .js files as the web
+        page driver.
+
+        Refactored the way benchmarks are run using a new Benchmark base class.  That
+        class will run the benchmark as well.  Eliminated the various runBenchmark()
+        functions that were used for individual tests.  This refactoring was threaded
+        into the web page driver as well.  Changed the iteration counts on many of the
+        individual benchmarks.  Also changed the inner loop count for the flight
+        planner test.
+
+        Eliminated Octane2/base.js as it isn't needed to run Octane2/RegExp with the 
+        new test harness.  Eliminated other dead code in Octane2/regexp.js.
+
+        * RexBench/Basic/benchmark.js:
+        (BasicBenchmark):
+        (BasicBenchmark.prototype.runIteration): Deleted.
+        (runBenchmark): Deleted.
+        * RexBench/FlightPlanner/benchmark.js:
+        (FlightPlannerBenchmark):
+        (FlightPlannerBenchmark.prototype.runOnce):
+        (this.performance.performance.now.currentTime): Deleted.
+        (else.this.preciseTime.currentTime): Deleted.
+        (else.currentTime): Deleted.
+        (FlightPlannerBenchmark.prototype.runIteration): Deleted.
+        (FlightPlannerBenchmark.prototype.checkResults): Deleted.
+        (runBenchmark): Deleted.
+        * RexBench/Octane2/base.js: Removed.
+        * RexBench/Octane2/regexp.js:
+        * RexBench/basic_benchmark.js:
+        * RexBench/benchmark.js: Added.
+        (this.performance.performance.now.currentTime):
+        (else.this.preciseTime.currentTime):
+        (else.currentTime):
+        (Benchmark):
+        (Benchmark.prototype.runIterations):
+        (Benchmark.prototype.setup):
+        (Benchmark.prototype.runOnce):
+        (Benchmark.prototype.validate):
+        (Benchmark.prototype.tearDown):
+        * RexBench/cli.js:
+        * RexBench/flightplan_benchmark.js:
+        * RexBench/flightplan_unicode_benchmark.js:
+        * RexBench/octane2_benchmark.js:
+        * RexBench/stats.js:
+        (Stats.prototype.toString.return.span.0.span.span):
+        * RexBench/sunspider_benchmark.js:
+
 2017-08-07  Michael Saboff  <msaboff@apple.com>
 
         Use more accurate Russian keywords for RexBench/FlightPlanner Unicode mode

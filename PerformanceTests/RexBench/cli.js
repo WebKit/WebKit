@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+"use strict";
+
 const isInBrowser = false;
 
 function makeBenchmarkRunner(sources, benchmarkConstructor, numIterations = 200) {
@@ -34,12 +36,8 @@ function makeBenchmarkRunner(sources, benchmarkConstructor, numIterations = 200)
         this.results = [];
         var benchmark = new ${benchmarkConstructor}();
         var numIterations = ${numIterations};
-        for (var i = 0; i < numIterations; ++i) {
-            var before = currentTime();
-            benchmark.runIteration();
-            var after = currentTime();
-            results.push(after - before);
-        }
+    
+        benchmark.runIterations(numIterations, this.results);
     `;
     return function doRun() {
         let globalObjectOfScript = runString(source);
@@ -51,8 +49,11 @@ function makeBenchmarkRunner(sources, benchmarkConstructor, numIterations = 200)
 load("driver.js");
 load("results.js");
 load("stats.js");
+load("sunspider_benchmark.js");
+load("octane2_benchmark.js");
 load("basic_benchmark.js");
 load("flightplan_benchmark.js");
+load("flightplan_unicode_benchmark.js");
 load("glue.js");
 
 driver.start(6);

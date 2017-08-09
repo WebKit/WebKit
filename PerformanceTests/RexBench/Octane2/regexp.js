@@ -36,12 +36,6 @@
 // affect how the regexps match their input.  Finally the strings are
 // scrambled to exercise the regexp engine on different input strings.
 
-
-var RegExpSuite = new BenchmarkSuite('RegExp', [910985], [
-  new Benchmark("RegExp", true, false, 
-    RegExpRun, RegExpSetup, RegExpTearDown, null, 16)
-]);
-
 var regExpBenchmark = null;
 
 function RegExpSetup() {

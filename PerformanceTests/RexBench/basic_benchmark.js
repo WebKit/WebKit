@@ -25,7 +25,7 @@
 "use strict";
 
 const BasicBenchmarkCode = String.raw`
-<script src="current_time.js"></script>
+<script src="benchmark.js"></script>
 <script src="Basic/ast.js"></script>
 <script src="Basic/basic.js"></script>
 <script src="Basic/caseless_map.js"></script>
@@ -36,15 +36,11 @@ const BasicBenchmarkCode = String.raw`
 <script src="Basic/state.js"></script>
 <script src="Basic/benchmark.js"></script>
 <script>
+"use strict";
 var results = [];
 var benchmark = new BasicBenchmark();
 var numIterations = 200;
-for (var i = 0; i < numIterations; ++i) {
-    var before = currentTime();
-    benchmark.runIteration();
-    var after = currentTime();
-    results.push(after - before);
-}
+benchmark.runIterations(numIterations, results);
 reportResult(results);
 </script>`;
 
@@ -52,7 +48,7 @@ reportResult(results);
 let runBasicBenchmark = null;
 if (!isInBrowser) {
     let sources = [
-        "current_time.js"
+        "benchmark.js"
         , "Basic/ast.js"
         , "Basic/basic.js"
         , "Basic/caseless_map.js"
@@ -64,7 +60,7 @@ if (!isInBrowser) {
         , "Basic/benchmark.js"
     ];
 
-    runBasicBenchmark = makeBenchmarkRunner(sources, "BasicBenchmark");
+    runBasicBenchmark = makeBenchmarkRunner(sources, "BasicBenchmark", 200);
 }
 
 const BasicBenchmarkRunner = {

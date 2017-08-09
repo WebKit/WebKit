@@ -25,18 +25,15 @@
 "use strict";
 
 const RegexDNABenchmarkCode = String.raw`
-<script src="current_time.js"></script>
+<script src="benchmark.js"></script>
 <script src="SunSpider/regex-dna.js"></script>
+<script src="SunSpider/benchmark.js"></script>
 <script>
+"use strict";
 var results = [];
-var numIterations = 20;
-for (var i = 0; i < numIterations; ++i) {
-    var before = currentTime();
-    runOnce();
-    var after = currentTime();
-    checkResult();
-    results.push(after - before);
-}
+var benchmark = new RegexDNABenchmark();
+var numIterations = 100;
+benchmark.runIterations(numIterations, results);
 reportResult(results);
 </script>`;
 
@@ -44,11 +41,12 @@ reportResult(results);
 let runRegexDNABenchmark = null;
 if (!isInBrowser) {
     let sources = [
-        "current_time.js"
+        "benchmark.js"
         , "SunSpider/regex-dna.js"
+        , "SunSpider/benchmark.js"
     ];
 
-    runRegexDNABenchmark = makeBenchmarkRunner(sources, "RegexDNABenchmark");
+    runRegexDNABenchmark = makeBenchmarkRunner(sources, "RegexDNABenchmark", 100);
 }
 
 const RegexDNABenchmarkRunner = {

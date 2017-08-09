@@ -24,13 +24,13 @@
  */
 "use strict";
 
-class BasicBenchmark {
+class BasicBenchmark extends Benchmark {
     constructor(verbose = 0)
     {
-        this._verbose = verbose;
+        super(verbose);
     }
     
-    runIteration()
+    runOnce()
     {
         prepare("10 print \"hello, world!\"\n20 end");
         prepare("10 let x = 0\n20 let x = x + 1\n30 print x\n40 if x < 10 then 20\n50 end");
@@ -39,20 +39,4 @@ class BasicBenchmark {
     for (let i = 0; i < 100; ++i)
         prepare("10 dim a(2000)\n20 for i = 2 to 2000\n30 let a(i) = 1\n40 next i\n50 for i = 2 to sqr(2000)\n60 if a(i) = 0 then 100\n70 for j = i ^ 2 to 2000 step i\n80 let a(j) = 0\n90 next j\n100 next i\n110 for i = 2 to 2000\n120 if a(i) = 0 then 140\n130 print i\n140 next i\n150 end\n");
     }
-}
-    
-function runBenchmark()
-{
-    const verbose = 0;
-    const numIterations = 150;
-    
-    let before = currentTime();
-    
-    let benchmark = new Benchmark(verbose);
-    
-    for (let iteration = 0; iteration < numIterations; ++iteration)
-        benchmark.runIteration();
-    
-    let after = currentTime();
-    return after - before;
 }

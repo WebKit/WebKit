@@ -25,21 +25,15 @@
 "use strict";
 
 const Octane2RegExpBenchmarkCode = String.raw`
-<script src="current_time.js"></script>
-<script src="Octane2/base.js"></script>
+<script src="benchmark.js"></script>
 <script src="Octane2/regexp.js"></script>
+<script src="Octane2/benchmark.js"></script>
 <script>
+"use script";      
 var results = [];
-var numIterations = 40;
-BenchmarkSuite.ResetRNG();
-RegExpSetup();
-for (var i = 0; i < numIterations; ++i) {
-    var before = currentTime();
-    RegExpRun();
-    var after = currentTime();
-    results.push(after - before);
-}
-RegExpTearDown();
+var numIterations = 100;
+var benchmark = new Octane2RegExpBenchmark();
+benchmark.runIterations(numIterations, results);
 reportResult(results);
 </script>`;
 
@@ -47,16 +41,16 @@ reportResult(results);
 let runOctane2RegExpBenchmark = null;
 if (!isInBrowser) {
     let sources = [
-        "current_time.js"
-        , "Octane2/base.js"
+        "benchmark.js"
         , "Octane2/regexp.js"
+        , "Octane2/benchmark.js"
     ];
 
-    runOctaneRegExpBenchmark = makeBenchmarkRunner(sources, "Octane2RegExpBenchmark");
+    runOctane2RegExpBenchmark = makeBenchmarkRunner(sources, "Octane2RegExpBenchmark", 100);
 }
 
 const Octane2RegExpBenchmarkRunner = {
-    name: "Flight Planner",
+    name: "Octane2 RegExp",
     code: Octane2RegExpBenchmarkCode,
     run: runOctane2RegExpBenchmark,
     cells: {}

@@ -25,21 +25,18 @@
 "use strict";
 
 const FlightPlannerBenchmarkCode = String.raw`
+<script src="benchmark.js"></script>
 <script src="FlightPlanner/airways.js"></script>
 <script src="FlightPlanner/waypoints.js"></script>
 <script src="FlightPlanner/flight_planner.js"></script>
 <script src="FlightPlanner/expectations.js"></script>
 <script src="FlightPlanner/benchmark.js"></script>
 <script>
+"use strict";
 var results = [];
 var benchmark = new FlightPlannerBenchmark();
 var numIterations = 200;
-for (var i = 0; i < numIterations; ++i) {
-    var before = currentTime();
-    benchmark.runIteration();
-    var after = currentTime();
-    results.push(after - before);
-}
+benchmark.runIterations(numIterations, results);
 reportResult(results);
 </script>`;
 
@@ -47,14 +44,15 @@ reportResult(results);
 let runFlightPlannerBenchmark = null;
 if (!isInBrowser) {
     let sources = [
-        "FlightPlanner/airways.js"
+        "benchmark.js"
+        , "FlightPlanner/airways.js"
         , "FlightPlanner/waypoints.js"
         , "FlightPlanner/flight_planner.js"
         , "FlightPlanner/expectations.js"
         , "FlightPlanner/benchmark.js"
     ];
 
-    runFlightPlannerBenchmark = makeBenchmarkRunner(sources, "FlightPlannerBenchmark");
+    runFlightPlannerBenchmark = makeBenchmarkRunner(sources, "FlightPlannerBenchmark", 200);
 }
 
 const FlightPlannerBenchmarkRunner = {

@@ -24,29 +24,48 @@
  */
 "use strict";
 
-class FlightPlannerBenchmark extends Benchmark {
+let currentTime;
+if (this.performance && performance.now)
+    currentTime = function() { return performance.now() };
+else if (this.preciseTime)
+    currentTime = function() { return preciseTime() * 1000; };
+else
+    currentTime = function() { return +new Date(); };
+
+class Benchmark {
     constructor(verbose = 0)
     {
-        super(verbose);
+        this._verbose = verbose;
+    }
+
+    runIterations(numIterations, results)
+    {
+        this.setup();
+
+        for (let iteration = 0; iteration < numIterations; ++iteration) {
+            let before = currentTime();
+            this.runOnce();
+            let after = currentTime();
+            results.push(after - before);
+        }
+
+        this.validate();
+        this.tearDown();
+    }
+    
+    setup()
+    {
     }
 
     runOnce()
     {
-        for (let i = 0; i < 5; i++) {
-            setupUserWaypoints();
-
-            for (let flightPlan of expectedFlightPlans) {
-                flightPlan.reset();
-                flightPlan.resolveRoute();
-            }
-        }
     }
 
     validate()
     {
-        for (let flightPlan of expectedFlightPlans) {
-            flightPlan.calculate();
-            flightPlan.checkExpectations();
-        }
+    }
+
+    tearDown()
+    {
     }
 }
