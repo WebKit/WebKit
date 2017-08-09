@@ -1,5 +1,23 @@
 2017-08-09  Michael Saboff  <msaboff@apple.com>
 
+        Unreviewed build fix.
+
+        Added missing files.
+
+        * RexBench/Octane2/benchmark.js: Added.
+        (Octane2RegExpBenchmark):
+        (Octane2RegExpBenchmark.prototype.setup.):
+        (Octane2RegExpBenchmark.prototype.setup.Math.random):
+        (Octane2RegExpBenchmark.prototype.setup):
+        (Octane2RegExpBenchmark.prototype.runOnce):
+        (Octane2RegExpBenchmark.prototype.tearDown):
+        * RexBench/SunSpider/benchmark.js: Added.
+        (RegexDNABenchmark):
+        (RegexDNABenchmark.prototype.runOnce):
+        (RegexDNABenchmark.prototype.validate):
+
+2017-08-09  Michael Saboff  <msaboff@apple.com>
+
         Rex Bench doesn't work from the command line
         https://bugs.webkit.org/show_bug.cgi?id=175349
 
