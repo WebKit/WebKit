@@ -226,7 +226,7 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
     
     // Prevalent resource stats
     isPrevalentResource |= other.isPrevalentResource;
-    dataRecordsRemoved += other.dataRecordsRemoved;
+    dataRecordsRemoved = std::max(dataRecordsRemoved, other.dataRecordsRemoved);
     
     // In-memory only
     isMarkedForCookiePartitioning |= other.isMarkedForCookiePartitioning;
