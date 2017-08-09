@@ -1,3 +1,19 @@
+2017-08-08  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220429. rdar://problem/33789343
+
+    2017-08-08  Brady Eidson  <beidson@apple.com>
+
+            Don't enable default icon loading in WK1 for apps linked against old SDKs.
+            <rdar://problem/33724060> and https://bugs.webkit.org/show_bug.cgi?id=175342
+
+            Reviewed by Andy Estes.
+
+            * Misc/WebKitVersionChecks.h:
+            * WebCoreSupport/WebFrameLoaderClient.mm:
+            (WebFrameLoaderClient::getLoadDecisionForIcons): Don't do any icon loading unless
+              the app is linked against new WebKit with the new behavior.
+
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219876. rdar://problem/33523847
