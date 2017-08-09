@@ -310,7 +310,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_layerListMutationAllowed(true)
 #endif
     , m_hasFilterInfo(false)
-    , m_hasComputedRepaintRect(false)
 #if ENABLE(CSS_COMPOSITING)
     , m_blendMode(BlendModeNormal)
     , m_hasNotIsolatedCompositedBlendingDescendants(false)
@@ -516,23 +515,29 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
         ASSERT(!renderer().view().layoutStateEnabled());
 
         RenderLayerModelObject* repaintContainer = renderer().containerForRepaint();
-        LayoutRect oldRepaintRect = m_repaintRect;
-        LayoutRect oldOutlineBox = m_outlineBox;
+        
+        auto hadRepaintLayoutRects = renderer().hasRepaintLayoutRects();
+        RepaintLayoutRects oldRects = hadRepaintLayoutRects ? renderer().repaintLayoutRects() : RepaintLayoutRects();
         computeRepaintRects(repaintContainer, geometryMap);
-
+        
+        auto hasRepaintLayoutRects = renderer().hasRepaintLayoutRects();
+        RepaintLayoutRects newRects = hasRepaintLayoutRects ? renderer().repaintLayoutRects() : RepaintLayoutRects();
         // FIXME: Should ASSERT that value calculated for m_outlineBox using the cached offset is the same
         // as the value not using the cached offset, but we can't due to https://bugs.webkit.org/show_bug.cgi?id=37048
-        if ((flags & CheckForRepaint) && m_hasComputedRepaintRect) {
+        if ((flags & CheckForRepaint) && hasRepaintLayoutRects) {
             if (!renderer().view().printing()) {
                 bool didRepaint = false;
                 if (m_repaintStatus & NeedsFullRepaint) {
-                    renderer().repaintUsingContainer(repaintContainer, oldRepaintRect);
-                    if (m_repaintRect != oldRepaintRect) {
-                        renderer().repaintUsingContainer(repaintContainer, m_repaintRect);
+                    if (hadRepaintLayoutRects)
+                        renderer().repaintUsingContainer(repaintContainer, oldRects.m_repaintRect);
+                    if (!hadRepaintLayoutRects || newRects.m_repaintRect != oldRects.m_repaintRect) {
+                        renderer().repaintUsingContainer(repaintContainer, newRects.m_repaintRect);
                         didRepaint = true;
                     }
                 } else if (shouldRepaintAfterLayout()) {
-                    renderer().repaintAfterLayoutIfNeeded(repaintContainer, oldRepaintRect, oldOutlineBox, &m_repaintRect, &m_outlineBox);
+                    // FIXME: We will convert this to just take the old and new RepaintLayoutRects once
+                    // we change other callers to use RepaintLayoutRects.
+                    renderer().repaintAfterLayoutIfNeeded(repaintContainer, oldRects.m_repaintRect, oldRects.m_outlineBox, &newRects.m_repaintRect, &newRects.m_outlineBox);
                     didRepaint = true;
                 }
 
@@ -601,7 +606,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
 
 LayoutRect RenderLayer::repaintRectIncludingNonCompositingDescendants() const
 {
-    LayoutRect repaintRect = m_repaintRect;
+    LayoutRect repaintRect = renderer().repaintLayoutRects().m_repaintRect;
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
         // Don't include repaint rects for composited child layers; they will paint themselves and have a different origin.
         if (child->isComposited())
@@ -797,17 +802,8 @@ void RenderLayer::updateDescendantsAreContiguousInStackingOrderRecursive(const H
 void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* geometryMap)
 {
     ASSERT(!m_visibleContentStatusDirty);
-
-    if (!isSelfPaintingLayer()) {
-        clearRepaintRects();
-        return;
-    }
-    
-    m_hasComputedRepaintRect = true;
-    m_repaintRect = renderer().clippedOverflowRectForRepaint(repaintContainer);
-    m_outlineBox = renderer().outlineBoundsForRepaint(repaintContainer, geometryMap);
+    renderer().computeRepaintLayoutRects(repaintContainer, geometryMap);
 }
-
 
 void RenderLayer::computeRepaintRectsIncludingDescendants()
 {
@@ -824,9 +820,7 @@ void RenderLayer::clearRepaintRects()
 {
     ASSERT(!m_visibleContentStatusDirty);
 
-    m_hasComputedRepaintRect = false;
-    m_repaintRect = LayoutRect();
-    m_outlineBox = LayoutRect();
+    renderer().clearRepaintLayoutRects();
 }
 
 void RenderLayer::updateLayerPositionsAfterDocumentScroll()
@@ -889,8 +883,8 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
             computeRepaintRects(renderer().containerForRepaint(), geometryMap);
     } else {
         // Check that our cached rects are correct.
-        ASSERT(!m_hasComputedRepaintRect || (m_repaintRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint())));
-        ASSERT(!m_hasComputedRepaintRect || m_outlineBox == renderer().outlineBoundsForRepaint(renderer().containerForRepaint()));
+        ASSERT(!renderer().hasRepaintLayoutRects() || renderer().repaintLayoutRects().m_repaintRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint()));
+        ASSERT(!renderer().hasRepaintLayoutRects() || renderer().repaintLayoutRects().m_outlineBox == renderer().outlineBoundsForRepaint(renderer().containerForRepaint()));
     }
     
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
@@ -2440,7 +2434,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
     // The caret rect needs to be invalidated after scrolling
     frame.selection().setCaretRectNeedsUpdate();
     
-    LayoutRect rectForRepaint = m_hasComputedRepaintRect ? m_repaintRect : renderer().clippedOverflowRectForRepaint(repaintContainer);
+    LayoutRect rectForRepaint = renderer().hasRepaintLayoutRects() ? renderer().repaintLayoutRects().m_repaintRect : renderer().clippedOverflowRectForRepaint(repaintContainer);
 
     FloatQuad quadForFakeMouseMoveEvent = FloatQuad(rectForRepaint);
     if (repaintContainer)

@@ -581,8 +581,7 @@ public:
     LayoutRect calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutSize& offsetFromRoot, CalculateLayerBoundsFlags = DefaultCalculateLayerBoundsFlags) const;
     
     // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
-    bool hasComputedRepaintRect() const { return m_hasComputedRepaintRect; }
-    LayoutRect repaintRect() const { ASSERT(hasComputedRepaintRect()); return m_repaintRect; }
+    bool hasComputedRepaintRects() const { return renderer().hasRepaintLayoutRects(); }
     LayoutRect repaintRectIncludingNonCompositingDescendants() const;
 
     void setRepaintStatus(RepaintStatus status) { m_repaintStatus = status; }
@@ -1115,8 +1114,6 @@ private:
 #endif
 
     bool m_hasFilterInfo : 1;
-    
-    bool m_hasComputedRepaintRect : 1;
 
 #if ENABLE(CSS_COMPOSITING)
     unsigned m_blendMode : 5;
@@ -1132,9 +1129,6 @@ private:
     RenderLayer* m_next;
     RenderLayer* m_first;
     RenderLayer* m_last;
-
-    LayoutRect m_repaintRect; // Cached repaint rects. Used by layout.
-    LayoutRect m_outlineBox;
 
     // Our current relative position offset.
     LayoutSize m_offsetForInFlowPosition;
