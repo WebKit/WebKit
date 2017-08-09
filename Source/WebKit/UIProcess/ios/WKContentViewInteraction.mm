@@ -3572,7 +3572,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 {
     [self beginSelectionChange];
     RetainPtr<WKContentView> view = self;
-    _page->executeEditCommand(commandName, { }, [view](WebKit::CallbackBase::Error) {
+    _page->executeEditCommand(commandName, [view](WebKit::CallbackBase::Error) {
         [view endSelectionChange];
     });
 }
@@ -3924,8 +3924,6 @@ static bool isAssistableInputType(InputType type)
     // to wait to paint the selection.
     if (_usingGestureForSelection)
         [self _updateChangedSelection];
-
-    [_webView _didChangeEditorState];
 }
 
 - (void)selectWordForReplacement

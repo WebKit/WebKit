@@ -64,6 +64,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,238) size 784x58 [border: (2px solid #0000FF)]
         RenderText {#text} at (14,15) size 36x28
           text run at (14,15) width 36: "xxx"
+      RenderBlock (anonymous) at (0,320) size 784x0
       RenderBlock {P} at (0,320) size 784x58 [border: (2px solid #0000FF)]
         RenderBR {BR} at (14,15) size 0x28 [bgcolor=#008000]
       RenderBlock {P} at (0,402) size 784x58 [border: (2px solid #0000FF)]

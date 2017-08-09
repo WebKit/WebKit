@@ -1642,17 +1642,6 @@ void WebPageProxy::setMaintainsInactiveSelection(bool newValue)
 {
     m_maintainsInactiveSelection = newValue;
 }
-
-void WebPageProxy::executeEditCommand(const String& commandName, const String& argument, WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
-{
-    if (!isValid()) {
-        callbackFunction(CallbackBase::Error::Unknown);
-        return;
-    }
-
-    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::ExecuteEditCommandWithCallback(commandName, argument, callbackID), m_pageID);
-}
     
 void WebPageProxy::executeEditCommand(const String& commandName, const String& argument)
 {

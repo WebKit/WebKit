@@ -662,9 +662,6 @@
 		F41AB9AA1EF4696B0083FA08 /* textarea-to-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F41AB9951EF4692C0083FA08 /* textarea-to-input.html */; };
 		F42DA5161D8CEFE400336F40 /* large-input-field-focus-onload.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F42DA5151D8CEFDB00336F40 /* large-input-field-focus-onload.html */; };
 		F4451C761EB8FD890020C5DA /* two-paragraph-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4451C751EB8FD7C0020C5DA /* two-paragraph-contenteditable.html */; };
-		F44D06451F395C26001A0E29 /* editor-state-test-harness.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */; };
-		F44D06471F39627A001A0E29 /* EditorStateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44D06461F395C4D001A0E29 /* EditorStateTests.mm */; };
-		F44D064A1F3962F2001A0E29 /* EditingTestHarness.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44D06491F3962E3001A0E29 /* EditingTestHarness.mm */; };
 		F4538EF71E8473E600B5C953 /* large-red-square.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4538EF01E846B4100B5C953 /* large-red-square.png */; };
 		F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45B63FA1F197F33009D38B9 /* image-map.html */; };
 		F45B63FE1F19D410009D38B9 /* ActionSheetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */; };
@@ -817,7 +814,6 @@
 				F4D5E4E81F0C5D38008C1A49 /* dragstart-clear-selection.html in Copy Resources */,
 				A155022C1E050D0300A24C57 /* duplicate-completion-handler-calls.html in Copy Resources */,
 				9984FACE1CFFB090008D198C /* editable-body.html in Copy Resources */,
-				F44D06451F395C26001A0E29 /* editor-state-test-harness.html in Copy Resources */,
 				51C8E1A91F27F49600BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist in Copy Resources */,
 				A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */,
 				F4C2AB221DD6D95E00E06D5B /* enormous-video-with-sound.html in Copy Resources */,
@@ -1676,10 +1672,6 @@
 		F41AB99E1EF4692C0083FA08 /* div-and-large-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "div-and-large-image.html"; sourceTree = "<group>"; };
 		F42DA5151D8CEFDB00336F40 /* large-input-field-focus-onload.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "large-input-field-focus-onload.html"; path = "Tests/WebKit2Cocoa/large-input-field-focus-onload.html"; sourceTree = SOURCE_ROOT; };
 		F4451C751EB8FD7C0020C5DA /* two-paragraph-contenteditable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "two-paragraph-contenteditable.html"; sourceTree = "<group>"; };
-		F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "editor-state-test-harness.html"; sourceTree = "<group>"; };
-		F44D06461F395C4D001A0E29 /* EditorStateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorStateTests.mm; sourceTree = "<group>"; };
-		F44D06481F3962E3001A0E29 /* EditingTestHarness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingTestHarness.h; sourceTree = "<group>"; };
-		F44D06491F3962E3001A0E29 /* EditingTestHarness.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditingTestHarness.mm; sourceTree = "<group>"; };
 		F4538EF01E846B4100B5C953 /* large-red-square.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "large-red-square.png"; sourceTree = "<group>"; };
 		F45B63FA1F197F33009D38B9 /* image-map.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "image-map.html"; sourceTree = "<group>"; };
 		F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionSheetTests.mm; sourceTree = "<group>"; };
@@ -1819,8 +1811,6 @@
 			isa = PBXGroup;
 			children = (
 				A13EBB441B87332B00097110 /* WebProcessPlugIn */,
-				F44D06481F3962E3001A0E29 /* EditingTestHarness.h */,
-				F44D06491F3962E3001A0E29 /* EditingTestHarness.mm */,
 				5C726D6D1D3EE06800C5E1A1 /* InstanceMethodSwizzler.h */,
 				5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */,
 				0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */,
@@ -1890,7 +1880,6 @@
 				2DC60E221E79F88C00FA6C7D /* DoAfterNextPresentationUpdateAfterCrash.mm */,
 				A1A4FE5D18DD3DB700B5EA8A /* Download.mm */,
 				A15502281E05020B00A24C57 /* DuplicateCompletionHandlerCalls.mm */,
-				F44D06461F395C4D001A0E29 /* EditorStateTests.mm */,
 				2D8104CB1BEC13E70020DA46 /* FindInPage.mm */,
 				2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */,
 				CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */,
@@ -2124,7 +2113,6 @@
 				F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */,
 				A155022B1E050BC500A24C57 /* duplicate-completion-handler-calls.html */,
 				9984FACD1CFFB038008D198C /* editable-body.html */,
-				F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */,
 				51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */,
 				F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */,
 				F407FE381F1D0DE60017CF25 /* enormous.svg */,
@@ -3110,9 +3098,7 @@
 				A155022A1E05020B00A24C57 /* DuplicateCompletionHandlerCalls.mm in Sources */,
 				7CCE7EBE1A411A7E00447C4C /* DynamicDeviceScaleFactor.mm in Sources */,
 				5C0BF8921DD599B600B00328 /* EarlyKVOCrash.mm in Sources */,
-				F44D064A1F3962F2001A0E29 /* EditingTestHarness.mm in Sources */,
 				7CCE7EE01A411A9A00447C4C /* EditorCommands.mm in Sources */,
-				F44D06471F39627A001A0E29 /* EditorStateTests.mm in Sources */,
 				7CCE7EBF1A411A7E00447C4C /* ElementAtPointInWebFrame.mm in Sources */,
 				07492B3B1DF8B14C00633DE1 /* EnumerateMediaDevices.cpp in Sources */,
 				448D7E471EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp in Sources */,

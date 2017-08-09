@@ -1413,11 +1413,6 @@ int EditingStyle::legacyFontSize(Document* document) const
         m_shouldUseFixedDefaultFontSize, AlwaysUseLegacyFontSize);
 }
 
-bool EditingStyle::hasStyle(CSSPropertyID propertyID, const String& value)
-{
-    return EditingStyle::create(propertyID, value)->triStateOfStyle(this) != FalseTriState;
-}
-
 RefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelection& selection, bool shouldUseBackgroundColorInEffect)
 {
     if (selection.isNone())

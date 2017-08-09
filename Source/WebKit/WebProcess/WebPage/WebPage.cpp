@@ -861,55 +861,63 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
     if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::Yes && result.isContentEditable) {
         auto& postLayoutData = result.postLayoutData();
         if (!selection.isNone()) {
-            if (auto editingStyle = EditingStyle::styleAtSelectionStart(selection)) {
-                if (editingStyle->hasStyle(CSSPropertyFontWeight, "bold"))
+            Node* nodeToRemove;
+            if (auto* style = Editor::styleForSelectionStart(&frame, nodeToRemove)) {
+                if (isFontWeightBold(style->fontCascade().weight()))
                     postLayoutData.typingAttributes |= AttributeBold;
-
-                if (editingStyle->hasStyle(CSSPropertyFontStyle, "italic") || editingStyle->hasStyle(CSSPropertyFontStyle, "oblique"))
+                if (isItalic(style->fontCascade().italic()))
                     postLayoutData.typingAttributes |= AttributeItalics;
 
-                if (editingStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"))
+                RefPtr<EditingStyle> typingStyle = frame.selection().typingStyle();
+                if (typingStyle && typingStyle->style()) {
+                    String value = typingStyle->style()->getPropertyValue(CSSPropertyWebkitTextDecorationsInEffect);
+                if (value.contains("underline"))
                     postLayoutData.typingAttributes |= AttributeUnderline;
-
-                if (auto* styleProperties = editingStyle->style()) {
-                    bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyDirection) == CSSValueLtr;
-                    switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign)) {
-                    case CSSValueRight:
-                    case CSSValueWebkitRight:
-                        postLayoutData.textAlignment = RightAlignment;
-                        break;
-                    case CSSValueLeft:
-                    case CSSValueWebkitLeft:
-                        postLayoutData.textAlignment = LeftAlignment;
-                        break;
-                    case CSSValueCenter:
-                    case CSSValueWebkitCenter:
-                        postLayoutData.textAlignment = CenterAlignment;
-                        break;
-                    case CSSValueJustify:
-                        postLayoutData.textAlignment = JustifiedAlignment;
-                        break;
-                    case CSSValueStart:
-                        postLayoutData.textAlignment = isLeftToRight ? LeftAlignment : RightAlignment;
-                        break;
-                    case CSSValueEnd:
-                        postLayoutData.textAlignment = isLeftToRight ? RightAlignment : LeftAlignment;
-                        break;
-                    default:
-                        break;
-                    }
-                    if (auto textColor = styleProperties->propertyAsColor(CSSPropertyColor))
-                        postLayoutData.textColor = *textColor;
+                } else {
+                    if (style->textDecorationsInEffect() & TextDecorationUnderline)
+                        postLayoutData.typingAttributes |= AttributeUnderline;
                 }
-            }
 
-            if (auto* enclosingListElement = enclosingList(selection.start().containerNode())) {
-                if (is<HTMLUListElement>(*enclosingListElement))
-                    postLayoutData.enclosingListType = UnorderedList;
-                else if (is<HTMLOListElement>(*enclosingListElement))
-                    postLayoutData.enclosingListType = OrderedList;
-                else
-                    ASSERT_NOT_REACHED();
+                if (style->visitedDependentColor(CSSPropertyColor).isValid())
+                    postLayoutData.textColor = style->visitedDependentColor(CSSPropertyColor);
+
+                switch (style->textAlign()) {
+                case RIGHT:
+                case WEBKIT_RIGHT:
+                    postLayoutData.textAlignment = RightAlignment;
+                    break;
+                case LEFT:
+                case WEBKIT_LEFT:
+                    postLayoutData.textAlignment = LeftAlignment;
+                    break;
+                case CENTER:
+                case WEBKIT_CENTER:
+                    postLayoutData.textAlignment = CenterAlignment;
+                    break;
+                case JUSTIFY:
+                    postLayoutData.textAlignment = JustifiedAlignment;
+                    break;
+                case TASTART:
+                    postLayoutData.textAlignment = style->isLeftToRightDirection() ? LeftAlignment : RightAlignment;
+                    break;
+                case TAEND:
+                    postLayoutData.textAlignment = style->isLeftToRightDirection() ? RightAlignment : LeftAlignment;
+                    break;
+                }
+                
+                HTMLElement* enclosingListElement = enclosingList(selection.start().deprecatedNode());
+                if (enclosingListElement) {
+                    if (is<HTMLUListElement>(*enclosingListElement))
+                        postLayoutData.enclosingListType = UnorderedList;
+                    else if (is<HTMLOListElement>(*enclosingListElement))
+                        postLayoutData.enclosingListType = OrderedList;
+                    else
+                        ASSERT_NOT_REACHED();
+                } else
+                    postLayoutData.enclosingListType = NoList;
+
+                if (nodeToRemove)
+                    nodeToRemove->remove();
             }
         }
     }
@@ -920,21 +928,6 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
     m_lastEditorStateWasContentEditable = result.isContentEditable ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
 
     return result;
-}
-
-static bool shouldEnsureEditorStateUpdateAfterExecutingCommand(const String& commandName)
-{
-    // These commands will always ensure an EditorState update in the UI process.
-    // FIXME: This logic was moved here from iOS platform-specific code; we should investigate whether this makes sense for all platforms.
-    return commandName == "toggleBold" || commandName == "toggleItalic" || commandName == "toggleUnderline";
-}
-
-void WebPage::executeEditCommandWithCallback(const String& commandName, const String& argument, CallbackID callbackID)
-{
-    executeEditCommand(commandName, argument);
-    if (shouldEnsureEditorStateUpdateAfterExecutingCommand(commandName))
-        send(Messages::WebPageProxy::EditorStateChanged(editorState()));
-    send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
 void WebPage::updateEditorStateAfterLayoutIfEditabilityChanged()

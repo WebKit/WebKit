@@ -2610,8 +2610,6 @@ void WebViewImpl::selectionDidChange()
     if (!m_page->editorState().isMissingPostLayoutData)
         requestCandidatesForSelectionIfNeeded();
 #endif
-
-    [m_view _web_editorStateDidChange];
 }
 
 void WebViewImpl::didBecomeEditable()

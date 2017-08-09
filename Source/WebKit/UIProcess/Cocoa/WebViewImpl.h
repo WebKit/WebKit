@@ -86,7 +86,6 @@ OBJC_CLASS WebPlaybackControlsManager;
 
 - (void)_web_dismissContentRelativeChildWindows;
 - (void)_web_dismissContentRelativeChildWindowsWithAnimation:(BOOL)animate;
-- (void)_web_editorStateDidChange;
 
 - (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
 
