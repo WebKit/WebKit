@@ -42,10 +42,10 @@
     {
         "name": "CSS Font Display",
         "status": {
-            "status": "Under Consideration",
+            "status": "In Development",
             "enabled-by-default": false
         },
-        "url": "https://tabatkins.github.io/specs/css-font-display/",
+        "url": "https://drafts.csswg.org/css-fonts-4/#font-display-desc",
         "keywords": ["css font display", "font display", "font-display", "css font rendering controls", "font rendering controls"],
         "category": "css",
         "description": "Allows content to specify what is shown during font loading.",
