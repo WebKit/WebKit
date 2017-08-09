@@ -149,10 +149,6 @@ TEST(WTF_Function, Basics)
     EXPECT_TRUE(static_cast<bool>(a));
     EXPECT_EQ(1U, a());
 
-    a = nullptr;
-    EXPECT_FALSE(static_cast<bool>(a));
-    EXPECT_EQ(0U, a());
-
     a = MoveOnly { 2 };
     EXPECT_TRUE(static_cast<bool>(a));
     EXPECT_EQ(2U, a());
@@ -175,10 +171,6 @@ TEST(WTF_Function, Basics)
     EXPECT_EQ(3U, b());
     EXPECT_FALSE(static_cast<bool>(c));
     EXPECT_EQ(0U, c());
-
-    Function<unsigned()> d = nullptr;
-    EXPECT_FALSE(static_cast<bool>(d));
-    EXPECT_EQ(0U, d());
 }
 
 struct FunctionDestructionChecker {
@@ -218,15 +210,6 @@ TEST(WTF_Function, AssignBeforeDestroy)
     EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
     EXPECT_TRUE(FunctionDestructionChecker::functionAsBool.value());
     EXPECT_EQ(1U, FunctionDestructionChecker::functionResult.value());
-    FunctionDestructionChecker::functionAsBool = std::nullopt;
-    FunctionDestructionChecker::functionResult = std::nullopt;
-
-    a = FunctionDestructionChecker(a);
-    a = nullptr;
-    EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionAsBool));
-    EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
-    EXPECT_FALSE(FunctionDestructionChecker::functionAsBool.value());
-    EXPECT_EQ(0U, FunctionDestructionChecker::functionResult.value());
     FunctionDestructionChecker::functionAsBool = std::nullopt;
     FunctionDestructionChecker::functionResult = std::nullopt;
 
