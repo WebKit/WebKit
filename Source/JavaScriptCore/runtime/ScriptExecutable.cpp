@@ -187,6 +187,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         auto codeBlock = EvalCodeBlock::create(vm,
             executable, executable->m_unlinkedEvalCodeBlock.get(), scope,
             executable->source().provider());
+        ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
             exception = throwException(
                 exec, throwScope,
@@ -204,6 +205,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         auto codeBlock = ProgramCodeBlock::create(vm,
             executable, executable->m_unlinkedProgramCodeBlock.get(), scope,
             executable->source().provider(), startColumn());
+        ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
             exception = throwException(
                 exec, throwScope,
@@ -221,6 +223,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         auto codeBlock = ModuleProgramCodeBlock::create(vm,
             executable, executable->m_unlinkedModuleProgramCodeBlock.get(), scope,
             executable->source().provider(), startColumn());
+        ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
             exception = throwException(
                 exec, throwScope,
@@ -251,6 +254,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         return nullptr;
     }
 
+    throwScope.release();
     return FunctionCodeBlock::create(vm, executable, unlinkedCodeBlock, scope, 
         source().provider(), source().startOffset(), startColumn());
 }
