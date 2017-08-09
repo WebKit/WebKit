@@ -1,3 +1,38 @@
+2017-08-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: Add pre-populated data to spreadsheet-style view
+        https://bugs.webkit.org/show_bug.cgi?id=174838
+        <rdar://problem/33523220>
+
+        Reviewed by Matt Baker.
+
+        This patch adds static content to the experimental RulesStyleSpreadsheetDetailsPanel.
+        The static content will be replaced with actual data in the follow up patches.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/RulesStyleSpreadsheetDetailsPanel.css: Added.
+        (.style-spreadsheet .style-rule):
+        (.style-spreadsheet .selector-line):
+        (.style-spreadsheet .selector):
+        (.style-spreadsheet :matches(.selector .matched, .selector:focus)):
+        (.style-spreadsheet .name):
+        (.style-spreadsheet .value):
+        (.style-spreadsheet :matches(.selector, .name, .value)):
+        (.style-spreadsheet :matches(.selector, .name, .value):focus):
+        (.style-spreadsheet .selector-inline):
+        (.style-spreadsheet .property):
+        (.style-spreadsheet .property-disabled,):
+        (.style-spreadsheet .property-disabled :matches(.name, .value)):
+        (.style-spreadsheet .styles-source):
+        (.style-spreadsheet :matches(a, .node-link)):
+        (.style-spreadsheet :matches(a, .node-link):hover):
+        (.style-spreadsheet .inherited):
+        (.style-spreadsheet .declarations):
+        (.style-spreadsheet input[type="checkbox"]):
+        (.style-spreadsheet input[type="checkbox"]:not(:checked)):
+        (.style-spreadsheet .declarations:hover input[type="checkbox"]):
+        * UserInterface/Views/RulesStyleSpreadsheetDetailsPanel.js:
+
 2017-08-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: support editing WebGL shaders

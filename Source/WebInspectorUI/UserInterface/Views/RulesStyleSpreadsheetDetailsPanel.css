@@ -1,0 +1,133 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.style-spreadsheet .style-rule {
+    font-family: Menlo, monospace;
+    -webkit-user-select: text;
+    padding: 4px 6px;
+    margin: 0;
+
+    color: hsl(0, 0%, 70%);
+    background: white;
+    border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.2);
+}
+
+.style-spreadsheet .selector-line {
+    float: left;
+}
+
+.style-spreadsheet .selector {
+    color: hsl(0, 0%, 50%);
+    word-wrap: break-word;
+}
+
+.style-spreadsheet :matches(.selector .matched, .selector:focus) {
+    color: black;
+}
+
+.style-spreadsheet .name {
+    color: var(--syntax-highlight-boolean-color);
+}
+
+.style-spreadsheet .value {
+    color: black;
+}
+
+.style-spreadsheet :matches(.selector, .name, .value) {
+    -webkit-user-modify: read-write-plaintext-only;
+}
+
+.style-spreadsheet :matches(.selector, .name, .value):focus {
+    outline: 1px solid white;
+    box-shadow: 0 1px 2px 1px hsla(0, 0%, 0%, 0.6);
+}
+
+.style-spreadsheet .selector-inline {
+    -webkit-user-modify: read-only;
+    color: hsl(0, 0%, 50%);
+    font: 12px sans-serif;
+}
+
+.style-spreadsheet .property {
+    padding-left: 16px;
+}
+
+.style-spreadsheet .property-disabled,
+.style-spreadsheet .property-disabled * {
+    color: hsl(119, 100%, 22%);
+}
+
+.style-spreadsheet .property-disabled :matches(.name, .value) {
+    -webkit-user-modify: read-only;
+}
+
+.style-spreadsheet .styles-source {
+    float: right;
+    font: 11px sans-serif;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    margin-top: -1px;
+}
+
+.style-spreadsheet :matches(a, .node-link) {
+    color: hsl(0, 0%, 50%);
+}
+
+.style-spreadsheet :matches(a, .node-link):hover {
+    color: hsl(0, 0%, 33%);
+}
+
+.style-spreadsheet .inherited {
+    color: hsl(0, 0%, 60%);
+    text-shadow: white 0 1px 0;
+    padding: 4px 6px;
+    border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.2);
+}
+
+.style-spreadsheet .declarations {
+    clear: left;
+    position: relative;
+}
+
+.style-spreadsheet input[type="checkbox"] {
+    visibility: hidden;
+
+    position: absolute;
+    left: 0;
+
+    height: 11px;
+    margin: 0;
+}
+
+.style-spreadsheet input[type="checkbox"]:not(:checked) {
+    visibility: visible;
+}
+
+.style-spreadsheet .declarations:hover input[type="checkbox"] {
+    visibility: visible;
+}
