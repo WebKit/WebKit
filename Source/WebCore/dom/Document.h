@@ -649,6 +649,7 @@ public:
 
     WEBCORE_EXPORT URL completeURL(const String&) const final;
     URL completeURL(const String&, const URL& baseURLOverride) const;
+    SessionID sessionID() const final;
 
     String userAgent(const URL&) const final;
 

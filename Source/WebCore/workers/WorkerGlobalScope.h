@@ -29,6 +29,7 @@
 #include "Base64Utilities.h"
 #include "EventTarget.h"
 #include "ScriptExecutionContext.h"
+#include "SessionID.h"
 #include "Supplementable.h"
 #include "URL.h"
 #include "WorkerEventQueue.h"
@@ -107,7 +108,7 @@ public:
     void removeAllEventListeners() final;
 
 protected:
-    WorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    WorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, WorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, SessionID);
 
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
@@ -129,6 +130,7 @@ private:
 
     ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerGlobalScope*>(this); }
     URL completeURL(const String&) const final;
+    SessionID sessionID() const final { return m_sessionID; }
     String userAgent(const URL&) const final;
     void disableEval(const String& errorMessage) final;
     void disableWebAssembly(const String& errorMessage) final;
@@ -179,6 +181,8 @@ private:
 
     RefPtr<Performance> m_performance;
     mutable RefPtr<Crypto> m_crypto;
+
+    SessionID m_sessionID;
 };
 
 } // namespace WebCore

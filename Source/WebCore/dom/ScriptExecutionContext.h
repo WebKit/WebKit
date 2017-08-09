@@ -61,6 +61,7 @@ class PublicURLManager;
 class RejectedPromiseTracker;
 class ResourceRequest;
 class SecurityOrigin;
+class SessionID;
 class SocketProvider;
 class URL;
 
@@ -81,6 +82,7 @@ public:
 
     virtual const URL& url() const = 0;
     virtual URL completeURL(const String& url) const = 0;
+    virtual SessionID sessionID() const = 0;
 
     virtual String userAgent(const URL&) const = 0;
 

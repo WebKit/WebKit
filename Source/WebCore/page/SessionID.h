@@ -65,6 +65,8 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, SessionID&);
 
+    SessionID isolatedCopy() const;
+
 private:
     explicit SessionID(uint64_t sessionID)
         : m_sessionID(sessionID)

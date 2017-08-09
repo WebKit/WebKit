@@ -166,11 +166,14 @@ void Worker::didReceiveResponse(unsigned long identifier, const ResourceResponse
 
 void Worker::notifyFinished()
 {
-    if (m_scriptLoader->failed())
+    auto* context = scriptExecutionContext();
+    SessionID sessionID = context ? context->sessionID() : SessionID();
+
+    if (m_scriptLoader->failed() || !sessionID.isValid())
         dispatchEvent(Event::create(eventNames().errorEvent, false, true));
     else {
         const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : scriptExecutionContext()->contentSecurityPolicy()->responseHeaders();
-        m_contextProxy.startWorkerGlobalScope(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_workerCreationTime, m_runtimeFlags);
+        m_contextProxy.startWorkerGlobalScope(m_scriptLoader->url(), scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_workerCreationTime, m_runtimeFlags, sessionID);
         InspectorInstrumentation::scriptImported(*scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
     }
     m_scriptLoader = nullptr;

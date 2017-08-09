@@ -55,5 +55,9 @@ void SessionID::enableGenerationProtection()
     generationProtectionEnabled = true;
 }
 
+SessionID SessionID::isolatedCopy() const
+{
+    return SessionID { m_sessionID };
+}
 
 } // namespace WebCore

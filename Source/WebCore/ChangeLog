@@ -1,3 +1,54 @@
+2017-08-09  Brady Eidson  <beidson@apple.com>
+
+        Teach ScriptExecutionContexts about their SessionID.
+        https://bugs.webkit.org/show_bug.cgi?id=175391
+
+        Reviewed by Andy Estes.
+
+        No new tests (No current change in behavior).
+
+        Turns out that Workers need to know their SessionID for future feature development.
+        So let's teach it to them.
+
+        * dom/ScriptExecutionContext.h: Expose a pure virtual SessionID accessor.
+
+        * dom/Document.cpp:
+        (WebCore::Document::sessionID const):
+        * dom/Document.h:
+
+        * page/SessionID.cpp:
+        (WebCore::SessionID::isolatedCopy const):
+        * page/SessionID.h:
+
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        * workers/DedicatedWorkerGlobalScope.h:
+
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h:
+
+        * workers/WorkerGlobalScopeProxy.h:
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+
 2017-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] ENABLE_DRAG_SUPPORT should be turned off for iOS 10 and enabled by default

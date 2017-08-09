@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-DedicatedWorkerThread::DedicatedWorkerThread(const URL& url, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
-    : WorkerThread(url, identifier, userAgent, sourceCode, workerLoaderProxy, workerObjectProxy, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin, timeOrigin, connectionProxy, socketProvider, runtimeFlags)
+DedicatedWorkerThread::DedicatedWorkerThread(const URL& url, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags, SessionID sessionID)
+    : WorkerThread(url, identifier, userAgent, sourceCode, workerLoaderProxy, workerObjectProxy, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin, timeOrigin, connectionProxy, socketProvider, runtimeFlags, sessionID)
     , m_workerObjectProxy(workerObjectProxy)
 {
 }
@@ -48,9 +48,9 @@ DedicatedWorkerThread::~DedicatedWorkerThread()
 {
 }
 
-Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin)
+Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, SessionID sessionID)
 {
-    return DedicatedWorkerGlobalScope::create(url, identifier, userAgent, *this, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, idbConnectionProxy(), socketProvider());
+    return DedicatedWorkerGlobalScope::create(url, identifier, userAgent, *this, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, idbConnectionProxy(), socketProvider(), sessionID);
 }
 
 void DedicatedWorkerThread::runEventLoop()
