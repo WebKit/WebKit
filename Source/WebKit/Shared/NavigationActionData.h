@@ -49,6 +49,7 @@ struct NavigationActionData {
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     WTF::String downloadAttribute;
     WebCore::FloatPoint clickLocationInRootViewCoordinates;
+    bool isRedirect { false };
 };
 
 }
