@@ -1,3 +1,29 @@
+2017-08-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220456. rdar://problem/33805190
+
+    2017-08-09  Andy Estes  <aestes@apple.com>
+
+            [QuickLook] Use case-insensitive comparison of preview MIME types
+            https://bugs.webkit.org/show_bug.cgi?id=175350
+            <rdar://problem/33761159>
+
+            Reviewed by Brady Eidson.
+
+            MIME types are case-insensitive, but PreviewLoader was using a case-sensitive comparison to
+            determine if a MIME type was supported by QLPreviewConverter. As a result we would fail to
+            preview Excel macro-enabled workbooks, since CFNetwork would sniff a MIME type of
+            "application/vnd.ms-excel.sheet.macroEnabled.12" but QuickLook contained
+            "application/vnd.ms-excel.sheet.macroenabled.12" in its set of supported MIME type strings.
+
+            Fix this by copying the QuickLook supported MIME type set into a HashSet using
+            ASCIICaseInsensitiveHash and using that HashSet for MIME type checks.
+
+            Test: quicklook/excel-macro-enabled.html
+
+            * loader/ios/PreviewLoader.mm:
+            (WebCore::PreviewLoader::shouldCreateForMIMEType):
+
 2017-08-08  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220289. rdar://problem/33789085
