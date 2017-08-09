@@ -21,7 +21,7 @@ function pollResult(test, id) {
   return new Promise(resolve => {
     step_timeout(test.step_func(() => {
       fetch(checkUrl).then(response => {
-        response.text().then(body => {
+        response.json().then(body => {
           resolve(body);
         });
       });
@@ -46,8 +46,7 @@ function testCORSPreflightSuccessWithCookie(what) {
   promise_test(function(test) {
     return fetchCORSCookie(testBase, "testCookie", "/").then(() => {
       assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
-      return pollResult(test, id).then(json => {
-        result = JSON.parse(json);
+      return pollResult(test, id).then(result => {
         assert_equals(result['preflight'], 1, "Received preflight")
         assert_equals(result['preflight_cookie_header'], "", "Preflight cookie header")
         assert_equals(result['beacon'], 1, "Received beacon")

@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>SendBeacon CORS preflight test</title>
+    <title>SendBeacon CORS preflight on redirect test</title>
     <script src=/resources/testharness.js></script>
     <script src=/resources/testharnessreport.js></script>
   </head>
@@ -26,10 +26,13 @@ function pollResult(test, id) {
   });
 }
 
-function testCORSPreflightSuccess(what) {
+function testCORSPreflightRedirectSuccess(what) {
   var testBase = get_host_info().HTTP_REMOTE_ORIGIN + RESOURCES_DIR;
   var id = self.token();
-  var testUrl = testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+  var target = encodeURIComponent(testBase + "beacon-preflight.py?allowCors=0&cmd=put&id=" + id);
+
+  // 307 & 308 redirections are the only ones that maintain the POST method.
+  var testUrl = RESOURCES_DIR + "redirect.py?redirect_status=307&location=" + target;
 
   promise_test(function(test) {
     assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
@@ -37,27 +40,13 @@ function testCORSPreflightSuccess(what) {
       assert_equals(result['preflight'], 1, "Received preflight")
       assert_equals(result['preflight_referer'], document.URL, "Preflight referer header")
       assert_equals(result['preflight_requested_method'], "POST", "Preflight requested method")
-      let requested_headers = result['preflight_requested_headers'].toLowerCase()
-      assert_false(requested_headers.includes("content-type"), "Content-Type header is not requested")
-      assert_true(requested_headers.includes("referer"), "Referer header is requested")
-      assert_true(requested_headers.includes("origin"), "Origin header is requested")
-      assert_equals(result['beacon'], 1, "Received beacon")
+      assert_equals(result['beacon'], 0, "Did not receive beacon")
     });
-  }, "CORS preflight success test");
+  }, "CORS preflight failure test");
 }
 
-function stringToArrayBufferView(input) {
-  var buffer = new ArrayBuffer(input.length * 2);
-  var view = new Uint16Array(buffer);
-
-  // dumbly copy over the bytes
-  for (var i = 0, len = input.length; i < len; i++) {
-    view[i] = input.charCodeAt(i);
-  }
-  return view;
-}
-
-testCORSPreflightSuccess(stringToArrayBufferView("123"));
+let blob = new Blob(["123"], {type: "application/octet-stream"});
+testCORSPreflightRedirectSuccess(blob);
     </script>
   </body>
 </html>

@@ -54,6 +54,7 @@ public:
 
     NetworkCORSPreflightChecker(Parameters&&, CompletionCallback&&);
     ~NetworkCORSPreflightChecker();
+    const WebCore::ResourceRequest& originalRequest() const { return m_parameters.originalRequest; }
 
     void startPreflight();
 

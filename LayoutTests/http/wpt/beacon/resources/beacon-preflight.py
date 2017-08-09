@@ -35,11 +35,13 @@ def main(request, response):
       stashed_data['preflight_requested_headers'] = request.headers.get("Access-Control-Request-Headers", "")
       stashed_data['preflight_cookie_header'] = request.headers.get("Cookie", "");
       stashed_data['preflight_referer'] = request.headers.get("Referer", "")
+      stashed_data['preflight_origin'] = request.headers.get("Origin", "")
       request.server.stash.put(test_id, stashed_data)
       return respondToCORSPreflight(request, response)
     elif request.method == "POST":
       stashed_data['beacon'] = 1;
       stashed_data['beacon_cookie_header'] = request.headers.get("Cookie", "")
+      stashed_data['beacon_origin'] = request.headers.get("Origin", "")
       request.server.stash.put(test_id, stashed_data)
     return [("Content-Type", "text/plain")], ""
   

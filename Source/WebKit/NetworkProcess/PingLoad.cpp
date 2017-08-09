@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "NetworkCORSPreflightChecker.h"
 #include "SessionTracker.h"
+#include <WebCore/CrossOriginAccessControl.h>
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_parameters.sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - PingLoad::" fmt, this, ##__VA_ARGS__)
 
@@ -42,6 +43,7 @@ using namespace WebCore;
 PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters)
     : m_parameters(WTFMove(parameters))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
+    , m_isSameOriginRequest(securityOrigin().canRequest(m_parameters.request.url()))
 {
     // If the server never responds, this object will hang around forever.
     // Set a very generous timeout, just in case.
@@ -50,11 +52,14 @@ PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters)
     if (needsCORSPreflight(m_parameters.request))
         doCORSPreflight(m_parameters.request);
     else
-        startNetworkLoad();
+        loadRequest(m_parameters.request);
 }
 
 PingLoad::~PingLoad()
 {
+    if (m_redirectHandler)
+        m_redirectHandler({ });
+
     if (m_task) {
         ASSERT(m_task->client() == this);
         m_task->clearClient();
@@ -62,22 +67,53 @@ PingLoad::~PingLoad()
     }
 }
 
-void PingLoad::startNetworkLoad()
+void PingLoad::loadRequest(const ResourceRequest& request)
 {
     RELEASE_LOG_IF_ALLOWED("startNetworkLoad");
     if (auto* networkSession = SessionTracker::networkSession(m_parameters.sessionID)) {
-        m_task = NetworkDataTask::create(*networkSession, *this, m_parameters);
+        auto loadParameters = m_parameters;
+        loadParameters.request = request;
+        m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
         m_task->resume();
     } else
         ASSERT_NOT_REACHED();
 }
 
-void PingLoad::willPerformHTTPRedirection(ResourceResponse&&, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
+SecurityOrigin& PingLoad::securityOrigin() const
 {
-    RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection");
-    // FIXME: Do a CORS preflight if necessary.
+    return m_origin ? *m_origin : *m_parameters.sourceOrigin;
+}
+
+void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
+{
+    RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection - shouldFollowRedirects? %d", m_parameters.shouldFollowRedirects);
+    if (!m_parameters.shouldFollowRedirects) {
+        completionHandler({ });
+        return;
+    }
+    // FIXME: Do CSP check.
     // FIXME: We should ensure the number of redirects does not exceed 20.
-    completionHandler(m_parameters.shouldFollowRedirects ? request : ResourceRequest());
+    if (!needsCORSPreflight(request)) {
+        completionHandler(request);
+        return;
+    }
+    RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection - Redirect requires a CORS preflight");
+
+    // Use a unique origin for subsequent loads if needed.
+    // https://fetch.spec.whatwg.org/#concept-http-redirect-fetch (Step 10).
+    ASSERT(m_parameters.mode == FetchOptions::Mode::Cors);
+    if (!securityOrigin().canRequest(redirectResponse.url()) && !protocolHostAndPortAreEqual(redirectResponse.url(), request.url())) {
+        if (!m_origin || !m_origin->isUnique())
+            m_origin = SecurityOrigin::createUnique();
+    }
+
+    m_isSameOriginRequest = false;
+    m_redirectHandler = WTFMove(completionHandler);
+
+    // Let's fetch the request with the original headers (equivalent to request cloning specified by fetch algorithm).
+    request.setHTTPHeaderFields(m_parameters.request.httpHeaderFields());
+
+    doCORSPreflight(request);
 }
 
 void PingLoad::didReceiveChallenge(const AuthenticationChallenge&, ChallengeCompletionHandler&& completionHandler)
@@ -87,9 +123,9 @@ void PingLoad::didReceiveChallenge(const AuthenticationChallenge&, ChallengeComp
     delete this;
 }
 
-void PingLoad::didReceiveResponseNetworkSession(ResourceResponse&&, ResponseCompletionHandler&& completionHandler)
+void PingLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED("didReceiveResponseNetworkSession");
+    RELEASE_LOG_IF_ALLOWED("didReceiveResponseNetworkSession - httpStatusCode: %d", response.httpStatusCode());
     completionHandler(PolicyAction::PolicyIgnore);
     delete this;
 }
@@ -133,30 +169,33 @@ void PingLoad::timeoutTimerFired()
 
 bool PingLoad::needsCORSPreflight(const ResourceRequest& request) const
 {
-    if (m_parameters.mode == FetchOptions::Mode::Cors) {
-        ASSERT(m_parameters.sourceOrigin);
-        return !m_parameters.sourceOrigin->canRequest(request.url());
-    }
-    return false;
+    if (m_parameters.mode == FetchOptions::Mode::NoCors)
+        return false;
+
+    return !m_isSameOriginRequest || !securityOrigin().canRequest(request.url());
 }
 
 void PingLoad::doCORSPreflight(const ResourceRequest& request)
 {
     RELEASE_LOG_IF_ALLOWED("doCORSPreflight");
     ASSERT(!m_corsPreflightChecker);
-    ASSERT(m_parameters.sourceOrigin);
 
     NetworkCORSPreflightChecker::Parameters parameters = {
         request,
-        *m_parameters.sourceOrigin,
+        securityOrigin(),
         m_parameters.sessionID,
         m_parameters.allowStoredCredentials
     };
     m_corsPreflightChecker = std::make_unique<NetworkCORSPreflightChecker>(WTFMove(parameters), [this](NetworkCORSPreflightChecker::Result result) {
-        RELEASE_LOG_IF_ALLOWED("doCORSPreflight complete, success: %d", result == NetworkCORSPreflightChecker::Result::Success);
+        RELEASE_LOG_IF_ALLOWED("doCORSPreflight complete, success: %d forRedirect? %d", result == NetworkCORSPreflightChecker::Result::Success, !!m_redirectHandler);
+        auto corsPreflightChecker = WTFMove(m_corsPreflightChecker);
         if (result == NetworkCORSPreflightChecker::Result::Success) {
-            m_corsPreflightChecker = nullptr;
-            startNetworkLoad();
+            ResourceRequest actualRequest = corsPreflightChecker->originalRequest();
+            updateRequestForAccessControl(actualRequest, securityOrigin(), m_parameters.allowStoredCredentials);
+            if (auto redirectHandler = std::exchange(m_redirectHandler, nullptr))
+                redirectHandler(actualRequest);
+            else
+                loadRequest(actualRequest);
         } else
             delete this;
     });

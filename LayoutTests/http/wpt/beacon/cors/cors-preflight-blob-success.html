@@ -18,7 +18,7 @@ function pollResult(test, id) {
   return new Promise(resolve => {
     step_timeout(test.step_func(() => {
       fetch(checkUrl).then(response => {
-        response.text().then(body => {
+        response.json().then(body => {
           resolve(body);
         });
       });
@@ -33,8 +33,7 @@ function testCORSPreflightSuccess(what) {
 
   promise_test(function(test) {
     assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
-    return pollResult(test, id) .then(json => {
-      result = JSON.parse(json);
+    return pollResult(test, id) .then(result => {
       assert_equals(result['preflight'], 1, "Received preflight")
       assert_equals(result['preflight_referer'], document.URL, "Preflight referer header")
       assert_equals(result['preflight_requested_method'], "POST", "Preflight requested method")

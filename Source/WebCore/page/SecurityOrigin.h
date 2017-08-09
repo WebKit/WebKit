@@ -50,7 +50,7 @@ public:
     };
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const URL&);
-    static Ref<SecurityOrigin> createUnique();
+    WEBCORE_EXPORT static Ref<SecurityOrigin> createUnique();
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, std::optional<uint16_t> port);

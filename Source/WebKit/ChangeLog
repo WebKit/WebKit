@@ -1,3 +1,26 @@
+2017-08-09  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon][NetworkSession] Support CORS-preflighting on redirects
+        https://bugs.webkit.org/show_bug.cgi?id=175386
+        <rdar://problem/33801370>
+
+        Reviewed by Youenn Fablet.
+
+        Add support to Beacon for doing CORS-preflighting upon redirect to a different
+        domain.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::~PingLoad):
+        (WebKit::PingLoad::loadRequest):
+        (WebKit::PingLoad::securityOrigin const):
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        (WebKit::PingLoad::didReceiveResponseNetworkSession):
+        (WebKit::PingLoad::needsCORSPreflight const):
+        (WebKit::PingLoad::doCORSPreflight):
+        * NetworkProcess/PingLoad.h:
+
 2017-08-09  Jeremy Jones  <jeremyj@apple.com>
 
         Use MPAVRoutingController instead of deprecated versions.

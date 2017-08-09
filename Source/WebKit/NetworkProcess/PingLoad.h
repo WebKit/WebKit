@@ -51,14 +51,19 @@ private:
     void cannotShowURL() final;
     void timeoutTimerFired();
 
-    void startNetworkLoad();
+    void loadRequest(const WebCore::ResourceRequest&);
     bool needsCORSPreflight(const WebCore::ResourceRequest&) const;
     void doCORSPreflight(const WebCore::ResourceRequest&);
+
+    WebCore::SecurityOrigin& securityOrigin() const;
     
     NetworkResourceLoadParameters m_parameters;
     RefPtr<NetworkDataTask> m_task;
     WebCore::Timer m_timeoutTimer;
     std::unique_ptr<NetworkCORSPreflightChecker> m_corsPreflightChecker;
+    RefPtr<WebCore::SecurityOrigin> m_origin;
+    bool m_isSameOriginRequest;
+    RedirectCompletionHandler m_redirectHandler;
 };
 
 }

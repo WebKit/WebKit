@@ -1,3 +1,20 @@
+2017-08-09  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon][NetworkSession] Support CORS-preflighting on redirects
+        https://bugs.webkit.org/show_bug.cgi?id=175386
+        <rdar://problem/33801370>
+
+        Reviewed by Youenn Fablet.
+
+        Export a couple of WebCore symbols so I can use them in WebKit2.
+
+        Tests: http/wpt/beacon/cors/cors-preflight-redirect-failure.html
+               http/wpt/beacon/cors/cors-preflight-redirect-from-crossorigin-to-sameorigin.html
+               http/wpt/beacon/cors/cors-preflight-redirect-success.html
+
+        * loader/CrossOriginAccessControl.h:
+        * page/SecurityOrigin.h:
+
 2017-08-09  Jeremy Jones  <jeremyj@apple.com>
 
         Use MPAVRoutingController instead of deprecated versions.
