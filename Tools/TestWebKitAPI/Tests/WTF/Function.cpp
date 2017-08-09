@@ -140,9 +140,6 @@ TEST(WTF_Function, assignNullReEntersAssignLamda)
 TEST(WTF_Function, Basics)
 {
     Function<unsigned()> a;
-    EXPECT_FALSE(static_cast<bool>(a));
-    EXPECT_EQ(0U, a());
-
     a = [] {
         return 1U;
     };
