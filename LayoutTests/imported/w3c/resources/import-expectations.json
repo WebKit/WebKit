@@ -64,6 +64,7 @@
     "web-platform-tests/css/css-grid-1": "import", 
     "web-platform-tests/css/css-scoping-1": "import", 
     "web-platform-tests/css/css-shapes-1": "import", 
+    "web-platform-tests/css/css-ui-3": "import", 
     "web-platform-tests/css/geometry-1/": "import", 
     "web-platform-tests/css/reference": "import", 
     "web-platform-tests/css/selectors4": "import", 

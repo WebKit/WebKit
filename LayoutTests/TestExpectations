@@ -122,6 +122,12 @@ imported/w3c/web-platform-tests/service-workers/stub-4.6.3-cache-storage.html [ 
 imported/w3c/web-platform-tests/service-workers/cache-storage [ Pass ]
 imported/w3c/web-platform-tests/service-workers/cache-storage/window [ Pass Failure ]
 
+
+# textarea.animate is not supported
+imported/w3c/web-platform-tests/css/css-ui-3/caret-color-018.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-ui-3/caret-color-019.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-ui-3/caret-color-020.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1408,3 +1414,42 @@ webkit.org/b/172609 fetch/closing-while-fetching-blob.html [ Skip ]
 webkit.org/b/172514 [ Debug ] imported/w3c/web-platform-tests/innerText/getter.html [ Skip ]
 
 webkit.org/b/173333 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Skip ]
+
+webkit.org/b/175291 imported/w3c/web-platform-tests/css/css-ui-3/outline-018.html [ Skip ]
+
+webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui-3/box-sizing-014.html [ ImageOnlyFailure ]
+webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui-3/box-sizing-015.html [ ImageOnlyFailure ]
+webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui-3/box-sizing-016.html [ ImageOnlyFailure ]
+webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui-3/box-sizing-018.html [ ImageOnlyFailure ]
+webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui-3/box-sizing-019.html [ ImageOnlyFailure ]
+webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui-3/box-sizing-024.html [ ImageOnlyFailure ]
+webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui-3/box-sizing-025.html [ ImageOnlyFailure ]
+webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui-3/box-sizing-026.html [ ImageOnlyFailure ]
+
+webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-005.html [ ImageOnlyFailure ]
+webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-007.html [ ImageOnlyFailure ]
+webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-013.html [ ImageOnlyFailure ]
+webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-014.html [ ImageOnlyFailure ]
+webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-015.html [ ImageOnlyFailure ]
+webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-016.html [ ImageOnlyFailure ]
+webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-019.html [ ImageOnlyFailure ]
+webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-005.html [ ImageOnlyFailure ]
+
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-001.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-002.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-003.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-004.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-005.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-006.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-007.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-008.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-009.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-010.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-011.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-012.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-013.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-014.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-015.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-016.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-017.html [ Failure ]
+webkit.org/b/166572 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-021.html [ Failure ]
