@@ -228,6 +228,7 @@ public:
 
     void lineWidth(GC3Dfloat);
     void linkProgram(WebGLProgram*);
+    bool linkProgramWithoutInvalidatingAttribLocations(WebGLProgram*);
     void pixelStorei(GC3Denum pname, GC3Dint param);
     void polygonOffset(GC3Dfloat factor, GC3Dfloat units);
     void readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, ArrayBufferView& pixels);

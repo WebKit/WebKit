@@ -2836,17 +2836,26 @@ void WebGLRenderingContextBase::lineWidth(GC3Dfloat width)
 
 void WebGLRenderingContextBase::linkProgram(WebGLProgram* program)
 {
-    if (isContextLostOrPending() || !validateWebGLObject("linkProgram", program))
+    if (!linkProgramWithoutInvalidatingAttribLocations(program))
         return;
+
+    program->increaseLinkCount();
+}
+
+bool WebGLRenderingContextBase::linkProgramWithoutInvalidatingAttribLocations(WebGLProgram* program)
+{
+    if (isContextLostOrPending() || !validateWebGLObject("linkProgram", program))
+        return false;
+
     WebGLShader* vertexShader = program->getAttachedShader(GraphicsContext3D::VERTEX_SHADER);
     WebGLShader* fragmentShader = program->getAttachedShader(GraphicsContext3D::FRAGMENT_SHADER);
     if (!vertexShader || !vertexShader->isValid() || !fragmentShader || !fragmentShader->isValid() || !m_context->precisionsMatch(objectOrZero(vertexShader), objectOrZero(fragmentShader)) || !m_context->checkVaryingsPacking(objectOrZero(vertexShader), objectOrZero(fragmentShader))) {
         program->setLinkStatus(false);
-        return;
+        return false;
     }
 
     m_context->linkProgram(objectOrZero(program));
-    program->increaseLinkCount();
+    return true;
 }
 
 void WebGLRenderingContextBase::pixelStorei(GC3Denum pname, GC3Dint param)

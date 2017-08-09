@@ -57,6 +57,16 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         this._requestShaderSource(CanvasAgent.ShaderType.Fragment, callback);
     }
 
+    updateVertexShader(source)
+    {
+        this._updateShader(CanvasAgent.ShaderType.Vertex, source);
+    }
+
+    updateFragmentShader(source)
+    {
+        this._updateShader(CanvasAgent.ShaderType.Fragment, source);
+    }
+
     // Private
 
     _requestShaderSource(shaderType, callback)
@@ -68,6 +78,13 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
             }
 
             callback(content);
+        });
+    }
+
+    _updateShader(shaderType, source)
+    {
+        CanvasAgent.updateShader(this._identifier, shaderType, source, (error) => {
+            console.assert(!error, error);
         });
     }
 };

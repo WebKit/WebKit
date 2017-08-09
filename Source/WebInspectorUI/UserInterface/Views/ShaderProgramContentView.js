@@ -35,8 +35,10 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
 
         let createEditor = (shaderType) => {
             let textEditor = new WI.TextEditor;
+            textEditor.readOnly = false;
             textEditor.addEventListener(WI.TextEditor.Event.Focused, this._editorFocused, this);
             textEditor.addEventListener(WI.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
+            textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, this.debounce(250)._contentDidChange, this);
             textEditor.element.classList.add("shader");
 
             let shaderTypeContainer = textEditor.element.insertAdjacentElement("afterbegin", document.createElement("div"));
@@ -193,5 +195,13 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
     _numberOfSearchResultsDidChange(event)
     {
         this.dispatchEventToListeners(WI.ContentView.Event.NumberOfSearchResultsDidChange);
+    }
+
+    _contentDidChange(event)
+    {
+        if (event.target === this._vertexEditor)
+            this.representedObject.updateVertexShader(this._vertexEditor.string);
+        else if (event.target === this._fragmentEditor)
+            this.representedObject.updateFragmentShader(this._fragmentEditor.string);
     }
 };

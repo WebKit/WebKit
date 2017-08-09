@@ -122,13 +122,22 @@
         },
         {
             "name": "requestShaderSource",
-            "description": "",
+            "description": "Requests the source of the shader of the given type from the program with the given id.",
             "parameters": [
                 { "name": "programId", "$ref": "ProgramId" },
                 { "name": "shaderType", "$ref": "ShaderType" }
             ],
             "returns": [
                 { "name": "content", "type": "string" }
+            ]
+        },
+        {
+            "name": "updateShader",
+            "description": "Compiles and links the shader with identifier and type with the given source code.",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "shaderType", "$ref": "ShaderType" },
+                { "name": "source", "type": "string" }
             ]
         }
     ],

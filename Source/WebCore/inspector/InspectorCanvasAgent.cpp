@@ -293,6 +293,37 @@ void InspectorCanvasAgent::requestShaderSource(ErrorString& errorString, const S
 #endif
 }
 
+void InspectorCanvasAgent::updateShader(ErrorString& errorString, const String& programId, const String& shaderType, const String& source)
+{
+#if ENABLE(WEBGL)
+    auto* inspectorProgram = assertInspectorProgram(errorString, programId);
+    if (!inspectorProgram)
+        return;
+
+    auto* shader = inspectorProgram->shaderForType(shaderType);
+    if (!shader) {
+        errorString = ASCIILiteral("No shader for given type.");
+        return;
+    }
+
+    WebGLRenderingContextBase* contextWebGL = inspectorProgram->context();
+    contextWebGL->shaderSource(shader, source);
+    contextWebGL->compileShader(shader);
+
+    if (!shader->isValid()) {
+        errorString = ASCIILiteral("Shader compilation failed.");
+        return;
+    }
+
+    contextWebGL->linkProgramWithoutInvalidatingAttribLocations(&inspectorProgram->program());
+#else
+    UNUSED_PARAM(programId);
+    UNUSED_PARAM(shaderType);
+    UNUSED_PARAM(source);
+    errorString = ASCIILiteral("WebGL is not supported.");
+#endif
+}
+
 void InspectorCanvasAgent::frameNavigated(Frame& frame)
 {
     if (frame.isMainFrame()) {
