@@ -55,6 +55,12 @@ struct ElementUpdate {
 };
 
 struct TextUpdate {
+    TextUpdate() = default;
+    TextUpdate(unsigned offset, unsigned length)
+        : offset(offset)
+        , length(length)
+    { }
+
     unsigned offset { 0 };
     unsigned length { std::numeric_limits<unsigned>::max() };
 };
