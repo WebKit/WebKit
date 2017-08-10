@@ -406,7 +406,7 @@ void TreeResolver::resolveComposedTree()
         if (is<Text>(node)) {
             auto& text = downcast<Text>(node);
             if (text.styleValidity() >= Validity::SubtreeAndRenderersInvalid && parent.change != Detach)
-                m_update->addText(text, parent.element);
+                m_update->addText(text, parent.element, { });
 
             text.setHasValidStyle();
             it.traverseNextSkippingChildren();

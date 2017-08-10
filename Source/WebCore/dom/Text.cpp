@@ -217,10 +217,7 @@ void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsig
     if (styleValidity() >= Style::Validity::SubtreeAndRenderersInvalid)
         return;
 
-    document().updateTextRenderer(*this);
-
-    if (auto* renderer = this->renderer())
-        renderer->setTextWithOffset(data(), offsetOfReplacedData, lengthOfReplacedData);
+    document().updateTextRenderer(*this, offsetOfReplacedData, lengthOfReplacedData);
 }
 
 #if ENABLE(TREE_DEBUGGING)

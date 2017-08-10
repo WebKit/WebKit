@@ -57,9 +57,12 @@ ElementUpdate* Update::elementUpdate(const Element& element)
     return &it->value;
 }
 
-bool Update::textUpdate(const Text& text) const
+const TextUpdate* Update::textUpdate(const Text& text) const
 {
-    return m_texts.contains(&text);
+    auto it = m_texts.find(&text);
+    if (it == m_texts.end())
+        return nullptr;
+    return &it->value;
 }
 
 const RenderStyle* Update::elementStyle(const Element& element) const
@@ -91,18 +94,18 @@ void Update::addElement(Element& element, Element* parent, ElementUpdate&& eleme
     m_elements.add(&element, WTFMove(elementUpdate));
 }
 
-void Update::addText(Text& text, Element* parent)
+void Update::addText(Text& text, Element* parent, TextUpdate&& textUpdate)
 {
     ASSERT(!m_texts.contains(&text));
     ASSERT(composedTreeAncestors(text).first() == parent);
 
     addPossibleRoot(parent);
-    m_texts.add(&text);
+    m_texts.add(&text, WTFMove(textUpdate));
 }
 
-void Update::addText(Text& text)
+void Update::addText(Text& text, TextUpdate&& textUpdate)
 {
-    addText(text, composedTreeAncestors(text).first());
+    addText(text, composedTreeAncestors(text).first(), WTFMove(textUpdate));
 }
 
 void Update::addPossibleRoot(Element* element)

@@ -52,7 +52,7 @@ public:
 
 private:
     void updateRenderTree(ContainerNode& root);
-    void updateTextRenderer(Text&);
+    void updateTextRenderer(Text&, const Style::TextUpdate*);
     void updateElementRenderer(Element&, const Style::ElementUpdate&);
     void createRenderer(Element&, RenderStyle&&);
     void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node&);
