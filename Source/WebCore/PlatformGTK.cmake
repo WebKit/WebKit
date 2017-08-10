@@ -3,7 +3,6 @@ include(platform/FreeType.cmake)
 include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
-include(platform/Linux.cmake)
 
 if (USE_TEXTURE_MAPPER)
     include(platform/TextureMapper.cmake)
@@ -17,9 +16,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/atk"
     "${WEBCORE_DIR}/editing/atk"
     "${WEBCORE_DIR}/page/gtk"
-    "${WEBCORE_DIR}/platform/gamepad"
-    "${WEBCORE_DIR}/platform/gamepad/deprecated"
-    "${WEBCORE_DIR}/platform/gamepad/glib"
     "${WEBCORE_DIR}/platform/geoclue"
     "${WEBCORE_DIR}/platform/gtk"
     "${WEBCORE_DIR}/platform/graphics/egl"
@@ -68,8 +64,6 @@ list(APPEND WebCore_SOURCES
     platform/UserAgentQuirks.cpp
 
     platform/audio/glib/AudioBusGLib.cpp
-
-    platform/gamepad/glib/GamepadsGlib.cpp
 
     platform/geoclue/GeolocationProviderGeoclue.cpp
 
@@ -213,7 +207,6 @@ list(APPEND WebCore_LIBRARIES
     ${GLIB_GMODULE_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
     ${GLIB_LIBRARIES}
-    ${GUDEV_LIBRARIES}
     ${LIBSECRET_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
     ${LIBTASN1_LIBRARIES}
@@ -239,7 +232,6 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${GEOCLUE_INCLUDE_DIRS}
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
-    ${GUDEV_INCLUDE_DIRS}
     ${LIBSECRET_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
     ${LIBTASN1_INCLUDE_DIRS}

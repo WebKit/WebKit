@@ -234,13 +234,6 @@ if (USE_LIBSECRET)
     endif ()
 endif ()
 
-if (ENABLE_GAMEPAD_DEPRECATED)
-    find_package(GUdev)
-    if (NOT GUDEV_FOUND)
-        message(FATAL_ERROR "GUdev is needed for ENABLE_GAMEPAD_DEPRECATED")
-    endif ()
-endif ()
-
 if (ENABLE_GEOLOCATION)
     find_package(GeoClue2 2.1.5)
     if (NOT GEOCLUE2_FOUND)

@@ -3,7 +3,6 @@ include(platform/FreeType.cmake)
 include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
-include(platform/Linux.cmake)
 include(platform/TextureMapper.cmake)
 
 # Allow building ANGLE on platforms that don't provide X11 headers.
