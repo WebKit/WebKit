@@ -65,8 +65,8 @@ class ContentSecurityPolicy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ContentSecurityPolicy(ScriptExecutionContext&);
-    explicit ContentSecurityPolicy(const SecurityOrigin&, const Frame* = nullptr);
-    ~ContentSecurityPolicy();
+    WEBCORE_EXPORT explicit ContentSecurityPolicy(const SecurityOrigin&, const Frame* = nullptr);
+    WEBCORE_EXPORT ~ContentSecurityPolicy();
 
     void copyStateFrom(const ContentSecurityPolicy*);
     void copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy&);
@@ -79,9 +79,9 @@ public:
         HTTPHeader,
         Inherited,
     };
-    ContentSecurityPolicyResponseHeaders responseHeaders() const;
+    WEBCORE_EXPORT ContentSecurityPolicyResponseHeaders responseHeaders() const;
     enum ReportParsingErrors { No, Yes };
-    void didReceiveHeaders(const ContentSecurityPolicyResponseHeaders&, ReportParsingErrors = ReportParsingErrors::Yes);
+    WEBCORE_EXPORT void didReceiveHeaders(const ContentSecurityPolicyResponseHeaders&, ReportParsingErrors = ReportParsingErrors::Yes);
     void didReceiveHeader(const String&, ContentSecurityPolicyHeaderType, ContentSecurityPolicy::PolicyFrom);
 
     bool allowScriptWithNonce(const String& nonce, bool overrideContentSecurityPolicy = false) const;
@@ -107,7 +107,7 @@ public:
 
     bool allowChildFrameFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
     bool allowChildContextFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
-    bool allowConnectToSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
+    WEBCORE_EXPORT bool allowConnectToSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
     bool allowFormAction(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
 
     bool allowObjectFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No) const;
@@ -216,6 +216,7 @@ private:
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineScripts;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;
     HashSet<RefPtr<SecurityOrigin>> m_insecureNavigationRequestsToUpgrade;
+    mutable std::optional<ContentSecurityPolicyResponseHeaders> m_cachedResponseHeaders;
 };
 
 }

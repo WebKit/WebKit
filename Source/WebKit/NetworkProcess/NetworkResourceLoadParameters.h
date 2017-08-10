@@ -28,6 +28,7 @@
 
 #include "NetworkLoadParameters.h"
 #include "SandboxExtension.h"
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -57,6 +58,7 @@ public:
     Vector<String> derivedCachedDataTypesToRetrieve;
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WebCore::FetchOptions::Mode mode;
+    std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
 };
 
 } // namespace WebKit

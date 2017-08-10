@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "NetworkCORSPreflightChecker.h"
 #include "SessionTracker.h"
+#include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CrossOriginAccessControl.h>
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_parameters.sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - PingLoad::" fmt, this, ##__VA_ARGS__)
@@ -91,8 +92,17 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
         completionHandler({ });
         return;
     }
-    // FIXME: Do CSP check.
+
+    if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
+        if (!contentSecurityPolicy->allowConnectToSource(request.url(), redirectResponse.isNull() ? ContentSecurityPolicy::RedirectResponseReceived::No : ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
+            RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection - Redirect was blocked by CSP");
+            completionHandler({ });
+            return;
+        }
+    }
+
     // FIXME: We should ensure the number of redirects does not exceed 20.
+
     if (!needsCORSPreflight(request)) {
         completionHandler(request);
         return;
@@ -173,6 +183,15 @@ bool PingLoad::needsCORSPreflight(const ResourceRequest& request) const
         return false;
 
     return !m_isSameOriginRequest || !securityOrigin().canRequest(request.url());
+}
+
+ContentSecurityPolicy* PingLoad::contentSecurityPolicy() const
+{
+    if (!m_contentSecurityPolicy && m_parameters.cspResponseHeaders) {
+        m_contentSecurityPolicy = std::make_unique<ContentSecurityPolicy>(*m_parameters.sourceOrigin);
+        m_contentSecurityPolicy->didReceiveHeaders(*m_parameters.cspResponseHeaders, ContentSecurityPolicy::ReportParsingErrors::No);
+    }
+    return m_contentSecurityPolicy.get();
 }
 
 void PingLoad::doCORSPreflight(const ResourceRequest& request)

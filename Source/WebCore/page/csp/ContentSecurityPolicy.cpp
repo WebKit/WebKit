@@ -164,11 +164,14 @@ void ContentSecurityPolicy::didCreateWindowProxy(JSDOMWindowProxy& windowProxy) 
 
 ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() const
 {
-    ContentSecurityPolicyResponseHeaders result;
-    result.m_headers.reserveInitialCapacity(m_policies.size());
-    for (auto& policy : m_policies)
-        result.m_headers.uncheckedAppend({ policy->header(), policy->headerType() });
-    return result;
+    if (!m_cachedResponseHeaders) {
+        ContentSecurityPolicyResponseHeaders result;
+        result.m_headers.reserveInitialCapacity(m_policies.size());
+        for (auto& policy : m_policies)
+            result.m_headers.uncheckedAppend({ policy->header(), policy->headerType() });
+        m_cachedResponseHeaders = WTFMove(result);
+    }
+    return *m_cachedResponseHeaders;
 }
 
 void ContentSecurityPolicy::didReceiveHeaders(const ContentSecurityPolicyResponseHeaders& headers, ReportParsingErrors reportParsingErrors)
@@ -187,6 +190,8 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
         ASSERT(m_policies.isEmpty());
         m_hasAPIPolicy = true;
     }
+
+    m_cachedResponseHeaders = std::nullopt;
 
     // RFC2616, section 4.2 specifies that headers appearing multiple times can
     // be combined with a comma. Walk the header string, and parse each comma

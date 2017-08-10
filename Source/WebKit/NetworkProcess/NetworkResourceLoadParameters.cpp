@@ -87,6 +87,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     if (sourceOrigin)
         encoder << SecurityOriginData::fromSecurityOrigin(*sourceOrigin);
     encoder.encodeEnum(mode);
+    encoder << cspResponseHeaders;
 }
 
 bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourceLoadParameters& result)
@@ -162,6 +163,8 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
         result.sourceOrigin = sourceOriginData.securityOrigin();
     }
     if (!decoder.decodeEnum(result.mode))
+        return false;
+    if (!decoder.decode(result.cspResponseHeaders))
         return false;
 
     return true;

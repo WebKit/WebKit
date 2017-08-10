@@ -41,29 +41,29 @@ class NetworkProcessConnection;
 class WebURLSchemeTaskProxy;
 typedef uint64_t ResourceLoadIdentifier;
 
-class WebLoaderStrategy : public WebCore::LoaderStrategy {
+class WebLoaderStrategy final : public WebCore::LoaderStrategy {
     WTF_MAKE_NONCOPYABLE(WebLoaderStrategy); WTF_MAKE_FAST_ALLOCATED;
 public:
     WebLoaderStrategy();
-    ~WebLoaderStrategy() override;
+    ~WebLoaderStrategy() final;
     
-    RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame&, WebCore::CachedResource&, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
-    void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) override;
+    RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame&, WebCore::CachedResource&, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) final;
+    void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) final;
 
-    void remove(WebCore::ResourceLoader*) override;
-    void setDefersLoading(WebCore::ResourceLoader*, bool) override;
-    void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) override;
+    void remove(WebCore::ResourceLoader*) final;
+    void setDefersLoading(WebCore::ResourceLoader*, bool) final;
+    void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) final;
     
-    void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority) override;
+    void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority) final;
 
-    void suspendPendingRequests() override;
-    void resumePendingRequests() override;
+    void suspendPendingRequests() final;
+    void resumePendingRequests() final;
 
-    void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, Ref<WebCore::SecurityOrigin>&& sourceOrigin, const WebCore::FetchOptions&) override;
+    void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, Ref<WebCore::SecurityOrigin>&& sourceOrigin, WebCore::ContentSecurityPolicy*, const WebCore::FetchOptions&) final;
 
-    void storeDerivedDataToCache(const SHA1::Digest& bodyHash, const String& type, const String& partition, WebCore::SharedBuffer&) override;
+    void storeDerivedDataToCache(const SHA1::Digest& bodyHash, const String& type, const String& partition, WebCore::SharedBuffer&) final;
 
-    void setCaptureExtraNetworkLoadMetricsEnabled(bool) override;
+    void setCaptureExtraNetworkLoadMetricsEnabled(bool) final;
 
     WebResourceLoader* webResourceLoaderForIdentifier(ResourceLoadIdentifier identifier) const { return m_webResourceLoaders.get(identifier); }
     RefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame&, WebCore::NetscapePlugInStreamLoaderClient&, const WebCore::ResourceRequest&);

@@ -30,6 +30,10 @@
 #include "NetworkDataTask.h"
 #include "NetworkResourceLoadParameters.h"
 
+namespace WebCore {
+class ContentSecurityPolicy;
+}
+
 namespace WebKit {
 
 class NetworkCORSPreflightChecker;
@@ -40,6 +44,8 @@ public:
     
 private:
     ~PingLoad();
+
+    WebCore::ContentSecurityPolicy* contentSecurityPolicy() const;
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&) final;
@@ -64,6 +70,7 @@ private:
     RefPtr<WebCore::SecurityOrigin> m_origin;
     bool m_isSameOriginRequest;
     RedirectCompletionHandler m_redirectHandler;
+    mutable std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;
 };
 
 }

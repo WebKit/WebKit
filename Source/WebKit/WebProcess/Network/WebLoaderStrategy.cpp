@@ -46,6 +46,7 @@
 #include "WebURLSchemeTaskProxy.h"
 #include <WebCore/ApplicationCacheHost.h>
 #include <WebCore/CachedResource.h>
+#include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/Document.h>
@@ -385,7 +386,7 @@ void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, un
     }
 }
 
-void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, Ref<SecurityOrigin>&& sourceOrigin, const FetchOptions& options)
+void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy* contentSecurityPolicy, const FetchOptions& options)
 {
     // It's possible that call to createPingHandle might be made during initial empty Document creation before a NetworkingContext exists.
     // It is not clear that we should send ping loads during that process anyways.
@@ -405,6 +406,8 @@ void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, R
     loadParameters.mode = options.mode;
     loadParameters.shouldFollowRedirects = options.redirect == FetchOptions::Redirect::Follow;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = networkingContext->shouldClearReferrerOnHTTPSToHTTPRedirect();
+    if (contentSecurityPolicy)
+        loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
 
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing(loadParameters), 0);
 }

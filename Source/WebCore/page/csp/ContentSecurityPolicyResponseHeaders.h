@@ -42,16 +42,48 @@ enum class ContentSecurityPolicyHeaderType {
 
 class ContentSecurityPolicyResponseHeaders {
 public:
+    ContentSecurityPolicyResponseHeaders() = default;
     explicit ContentSecurityPolicyResponseHeaders(const ResourceResponse&);
 
     ContentSecurityPolicyResponseHeaders isolatedCopy() const;
 
+    template <class Encoder> void encode(Encoder&) const;
+    template <class Decoder> static bool decode(Decoder&, ContentSecurityPolicyResponseHeaders&);
+
 private:
     friend class ContentSecurityPolicy;
 
-    ContentSecurityPolicyResponseHeaders() = default;
-
     Vector<std::pair<String, ContentSecurityPolicyHeaderType>> m_headers;
 };
+
+template <class Encoder>
+void ContentSecurityPolicyResponseHeaders::encode(Encoder& encoder) const
+{
+    encoder << static_cast<uint64_t>(m_headers.size());
+    for (auto& pair : m_headers) {
+        encoder << pair.first;
+        encoder.encodeEnum(pair.second);
+    }
+}
+
+template <class Decoder>
+bool ContentSecurityPolicyResponseHeaders::decode(Decoder& decoder, ContentSecurityPolicyResponseHeaders& headers)
+{
+    uint64_t headersSize;
+    if (!decoder.decode(headersSize))
+        return false;
+    headers.m_headers.reserveCapacity(static_cast<size_t>(headersSize));
+    for (size_t i = 0; i < headersSize; ++i) {
+        String header;
+        if (!decoder.decode(header))
+            return false;
+        ContentSecurityPolicyHeaderType headerType;
+        if (!decoder.decodeEnum(headerType))
+            return false;
+        headers.m_headers.append(std::make_pair(header, headerType));
+    }
+
+    return true;
+}
 
 } // namespace WebCore

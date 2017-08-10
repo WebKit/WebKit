@@ -1,3 +1,18 @@
+2017-08-10  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon] Do connect-src CSP check on redirects as well
+        https://bugs.webkit.org/show_bug.cgi?id=175410
+        <rdar://problem/33815470>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/wpt/beacon/connect-src-beacon-redirect-allowed.sub-expected.txt: Added.
+        * http/wpt/beacon/connect-src-beacon-redirect-allowed.sub.html: Added.
+        * http/wpt/beacon/connect-src-beacon-redirect-blocked.sub-expected.txt: Added.
+        * http/wpt/beacon/connect-src-beacon-redirect-blocked.sub.html: Added.
+
 2017-08-10  Jonathan Bedard  <jbedard@apple.com>
 
         Mark webgl/webgl-box-shadow.html and webgl/webgl-border.html as failing for ios-device.
