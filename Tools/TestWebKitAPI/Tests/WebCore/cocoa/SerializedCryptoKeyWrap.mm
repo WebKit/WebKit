@@ -30,9 +30,6 @@
 
 namespace TestWebKitAPI {
 
-// TODO: We should enable the following tests on iOS simulator once <rdar://problem/28534666> is fixed.
-// A seperate bug is filed about this: <rdar://problem/28507240>.
-#if !PLATFORM(IOS)
 class SerializedCryptoKeyWrapTest : public testing::Test {
 public:
     virtual void SetUp()
@@ -96,6 +93,5 @@ TEST_F(SerializedCryptoKeyWrapTest, SerializedCryptoKeyWrapUnwrap)
     EXPECT_TRUE(WebCore::unwrapSerializedCryptoKey(masterKey, wrappedKey, unwrappedKey));
     EXPECT_TRUE(unwrappedKey == cryptoKey);
 }
-#endif
 
 } // namespace TestWebKitAPI

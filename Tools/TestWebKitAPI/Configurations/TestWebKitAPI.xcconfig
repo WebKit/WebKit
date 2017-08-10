@@ -35,3 +35,5 @@ OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Cocoa -framework Carbon;
 OTHER_LDFLAGS_PLATFORM[sdk=iphone*] = -framework WebCore -framework CoreGraphics -framework UIKit -framework MobileCoreServices;
 
 LD_RUNPATH_SEARCH_PATHS = "@loader_path";
+
+CODE_SIGN_ENTITLEMENTS[sdk=iphone*] = Configurations/TestWebKitAPI-iOS.entitlements;
