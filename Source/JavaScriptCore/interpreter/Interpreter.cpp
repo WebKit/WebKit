@@ -322,7 +322,7 @@ Interpreter::Interpreter(VM& vm)
 {
 #if !ASSERT_DISABLED
     static std::once_flag assertOnceKey;
-    std::call_once(assertOnceKey, [this] {
+    std::call_once(assertOnceKey, [] {
         for (unsigned i = 0; i < NUMBER_OF_BYTECODE_IDS; ++i) {
             OpcodeID opcodeID = static_cast<OpcodeID>(i);
             RELEASE_ASSERT(getOpcodeID(getOpcode(opcodeID)) == opcodeID);
