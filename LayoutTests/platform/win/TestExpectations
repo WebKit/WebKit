@@ -4047,8 +4047,11 @@ svg/animations/animated-svg-image-outside-viewport-paused.html [ Skip ]
 # This test requires Skia, which isn't available on Windows.
 webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
 
-# CORS-preflighting for Beacon is not supported on WK1.
-webkit.org/b/175330 http/wpt/beacon/cors/ [ Skip ]
+# Beacon is not supported on WK1.
+http/tests/blink/sendbeacon/ [ Skip ]
+http/wpt/beacon/ [ Skip ]
+imported/blink/fast/beacon/ [ Skip ]
+imported/w3c/web-platform-tests/beacon/ [ Skip ]
 
 # Async image tests are currently failing on Windows.
 webkit.org/b/174653 fast/images/async-image-background-image-repeated.html [ Timeout ]

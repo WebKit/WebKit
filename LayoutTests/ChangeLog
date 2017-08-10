@@ -1,5 +1,22 @@
 2017-08-09  Chris Dumez  <cdumez@apple.com>
 
+        Disable Beacon API on WK1 DRT and WK2 when not using NETWORK_SESSION
+        https://bugs.webkit.org/show_bug.cgi?id=175401
+
+        Reviewed by Brady Eidson.
+
+        * platform/mac-elcapitan-wk2/fast/dom/navigator-detached-no-crash-expected.txt: Copied from LayoutTests/platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt.
+        * platform/mac-elcapitan-wk2/imported/w3c/web-platform-tests/url/failure-expected.txt: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/url/failure-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/win/fast/dom/navigator-detached-no-crash-expected.txt: Copied from LayoutTests/platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt.
+        * platform/win/imported/w3c/web-platform-tests/url/failure-expected.txt: Added.
+
+2017-08-09  Chris Dumez  <cdumez@apple.com>
+
         [Beacon][NetworkSession] Support CORS-preflighting on redirects
         https://bugs.webkit.org/show_bug.cgi?id=175386
         <rdar://problem/33801370>

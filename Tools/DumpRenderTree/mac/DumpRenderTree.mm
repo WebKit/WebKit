@@ -847,7 +847,6 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setMediaPreloadingEnabled:YES];
     // FIXME: InputEvents
     [preferences setWebAnimationsEnabled:YES];
-    [preferences setBeaconAPIEnabled:YES];
     [preferences setWebGL2Enabled:YES];
     [preferences setWebGPUEnabled:YES];
     // FIXME: AsyncFrameScrollingEnabled

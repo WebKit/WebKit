@@ -2982,8 +2982,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setViewportFitEnabled([preferences viewportFitEnabled]);
     settings.setConstantPropertiesEnabled([preferences constantPropertiesEnabled]);
 
-    settings.setBeaconAPIEnabled([preferences beaconAPIEnabled]);
-
 #if ENABLE(GAMEPAD)
     RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled([preferences gamepadsEnabled]);
 #endif
