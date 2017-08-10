@@ -1,3 +1,15 @@
+2017-08-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Remove support for geoclue1
+        https://bugs.webkit.org/show_bug.cgi?id=164205
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformGTK.cmake:
+        * platform/geoclue/GeolocationProviderGeoclue.h:
+        * platform/geoclue/GeolocationProviderGeoclue1.cpp: Removed.
+        * platform/geoclue/GeolocationProviderGeoclue2.cpp: Removed.
+
 2017-08-09  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [PAL] Move spi/cocoa and spi/cg directories into PAL

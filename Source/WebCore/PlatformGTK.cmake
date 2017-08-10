@@ -71,8 +71,7 @@ list(APPEND WebCore_SOURCES
 
     platform/gamepad/glib/GamepadsGlib.cpp
 
-    platform/geoclue/GeolocationProviderGeoclue1.cpp
-    platform/geoclue/GeolocationProviderGeoclue2.cpp
+    platform/geoclue/GeolocationProviderGeoclue.cpp
 
     platform/glib/EventLoopGlib.cpp
     platform/glib/FileSystemGlib.cpp
@@ -181,7 +180,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
     rendering/RenderThemeGtk.cpp
 )
 
-if (USE_GEOCLUE2)
+if (ENABLE_GEOLOCATION)
     list(APPEND WebCore_DERIVED_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c
     )

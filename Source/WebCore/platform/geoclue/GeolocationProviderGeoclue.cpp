@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GeolocationProviderGeoclue.h"
 
-#if ENABLE(GEOLOCATION) && USE(GEOCLUE2)
+#if ENABLE(GEOLOCATION)
 
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -204,4 +204,4 @@ void GeolocationProviderGeoclue::updateClientRequirements()
     geoclue_client_set_requested_accuracy_level(m_clientProxy.get(), accuracyLevel);
 }
 
-#endif // ENABLE(GEOLOCATION) && USE(GEOCLUE2)
+#endif // ENABLE(GEOLOCATION)

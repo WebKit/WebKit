@@ -1,5 +1,15 @@
 2017-08-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Remove support for geoclue1
+        https://bugs.webkit.org/show_bug.cgi?id=164205
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/FindGeoClue.cmake: Removed.
+        * Source/cmake/OptionsGTK.cmake:
+
+2017-08-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Remove unused find modules
         https://bugs.webkit.org/show_bug.cgi?id=175363
 
