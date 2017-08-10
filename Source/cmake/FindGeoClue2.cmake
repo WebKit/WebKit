@@ -2,8 +2,6 @@
 # Once done, this will define
 #
 #  GEOCLUE2_FOUND - system has GeoClue 2.
-#  GEOCLUE2_INCLUDE_DIRS - the GeoClue 2. include directories
-#  GEOCLUE2_LIBRARIES - link these to use GeoClue 2.
 #
 # Copyright (C) 2012 Raphael Kubo da Costa <rakuco@webkit.org>
 # Copyright (C) 2013, 2014 Igalia S.L.
