@@ -109,7 +109,6 @@ function installDependenciesWithApt {
         libfaad-dev \
         libffi-dev \
         $(aptIfElse libgcrypt20-dev libgcrypt11-dev) \
-        $(aptIfElse libgeoclue-2-dev libgeoclue-dev) \
         libgirepository1.0-dev \
         libgl1-mesa-dev \
         libgl1-mesa-glx \
