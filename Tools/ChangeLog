@@ -1,3 +1,19 @@
+2017-08-10  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] With Xcode 9 developer beta, everything rebuilds when switching between command-line and IDE
+        https://bugs.webkit.org/show_bug.cgi?id=173223
+
+        Reviewed by Tim Horton.
+
+        The rebuilds were happening due to a difference in the compiler options that the IDE and
+        xcodebuild were specifying. Only the IDE was passing the -index-store-path option. To make
+        xcodebuild pass that option, too, set INDEX_ENABLE_DATA_STORE to YES and
+        INDEX_DATA_STORE_DIR to the Index Datastore path specified in Xcode Locations preferences >
+        Advanced when a Custom Absolute path is selected.
+
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+
 2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Run more WTF tests

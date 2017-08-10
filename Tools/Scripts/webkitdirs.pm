@@ -230,6 +230,7 @@ sub determineBaseProductDir
     determineSourceDir();
 
     my $setSharedPrecompsDir;
+    my $indexDataStoreDir;
     $baseProductDir = $ENV{"WEBKIT_OUTPUTDIR"};
 
     if (!defined($baseProductDir) and isAppleCocoaWebKit()) {
@@ -247,7 +248,10 @@ sub determineBaseProductDir
         if ($buildLocationStyle eq "Custom") {
             my $buildLocationType = join '', readXcodeUserDefault("IDECustomBuildLocationType");
             # FIXME: Read CustomBuildIntermediatesPath and set OBJROOT accordingly.
-            $baseProductDir = readXcodeUserDefault("IDECustomBuildProductsPath") if $buildLocationType eq "Absolute";
+            if ($buildLocationType eq "Absolute") {
+                $baseProductDir = readXcodeUserDefault("IDECustomBuildProductsPath");
+                $indexDataStoreDir = readXcodeUserDefault("IDECustomIndexStorePath");
+            }
         }
 
         # DeterminedByTargets corresponds to a setting of "Legacy" in Xcode.
@@ -280,6 +284,7 @@ sub determineBaseProductDir
         die "Can't handle Xcode product directory with a variable in it.\n" if $baseProductDir =~ /\$/;
         @baseProductDirOption = ("SYMROOT=$baseProductDir", "OBJROOT=$baseProductDir");
         push(@baseProductDirOption, "SHARED_PRECOMPS_DIR=${baseProductDir}/PrecompiledHeaders") if $setSharedPrecompsDir;
+        push(@baseProductDirOption, "INDEX_ENABLE_DATA_STORE=YES", "INDEX_DATA_STORE_DIR=${indexDataStoreDir}") if $indexDataStoreDir;
     }
 
     if (isCygwin()) {
