@@ -33,8 +33,6 @@
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/StringHash.h>
 
-using WTF::ThreadSpecific;
-
 namespace JSC {
 
 Ref<StringImpl> Identifier::add(VM* vm, const char* c)

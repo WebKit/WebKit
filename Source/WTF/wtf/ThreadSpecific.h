@@ -82,10 +82,6 @@ public:
     operator T*();
     T& operator*();
 
-#if USE(WEB_THREAD)
-    void replace(T*);
-#endif
-
 private:
     // Not implemented. It's technically possible to destroy a thread specific key, but one would need
     // to make sure that all values have been destroyed already (usually, that all threads that used it
@@ -93,18 +89,37 @@ private:
     // a destructor defined can be confusing, given that it has such strong pre-requisites to work correctly.
     ~ThreadSpecific();
 
-    T* get();
-    void set(T*);
-    void static THREAD_SPECIFIC_CALL destroy(void* ptr);
-
     struct Data {
         WTF_MAKE_NONCOPYABLE(Data);
+        WTF_MAKE_FAST_ALLOCATED;
     public:
-        Data(T* value, ThreadSpecific<T, canBeGCThread>* owner) : value(value), owner(owner) {}
+        using PointerType = typename std::remove_const<T>::type*;
 
-        T* value;
+        Data(ThreadSpecific<T, canBeGCThread>* owner)
+            : owner(owner)
+        {
+            // Set up thread-specific value's memory pointer before invoking constructor, in case any function it calls
+            // needs to access the value, to avoid recursion.
+            owner->setInTLS(this);
+            new (NotNull, storagePointer()) T;
+        }
+
+        ~Data()
+        {
+            storagePointer()->~T();
+            owner->setInTLS(nullptr);
+        }
+
+        PointerType storagePointer() const { return const_cast<PointerType>(reinterpret_cast<const T*>(&m_storage)); }
+
+        typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
         ThreadSpecific<T, canBeGCThread>* owner;
     };
+
+    T* get();
+    T* set();
+    void setInTLS(Data*);
+    void static THREAD_SPECIFIC_CALL destroy(void* ptr);
 
 #if USE(PTHREADS)
     pthread_key_t m_key;
@@ -156,17 +171,14 @@ inline T* ThreadSpecific<T, canBeGCThread>::get()
 {
     Data* data = static_cast<Data*>(pthread_getspecific(m_key));
     if (data)
-        return data->value;
-    RELEASE_ASSERT(canBeGCThread == CanBeGCThread::True || !mayBeGCThread());
+        return data->storagePointer();
     return nullptr;
 }
 
 template<typename T, CanBeGCThread canBeGCThread>
-inline void ThreadSpecific<T, canBeGCThread>::set(T* ptr)
+inline void ThreadSpecific<T, canBeGCThread>::setInTLS(Data* data)
 {
-    RELEASE_ASSERT(canBeGCThread == CanBeGCThread::True || !mayBeGCThread());
-    ASSERT(!get());
-    pthread_setspecific(m_key, new Data(ptr, this));
+    pthread_setspecific(m_key, data);
 }
 
 #elif OS(WINDOWS)
@@ -232,17 +244,13 @@ inline T* ThreadSpecific<T, canBeGCThread>::get()
 {
     Data* data = static_cast<Data*>(FlsGetValue(flsKeys()[m_index]));
     if (data)
-        return data->value;
-    RELEASE_ASSERT(canBeGCThread == CanBeGCThread::True || !mayBeGCThread());
+        return data->storagePointer();
     return nullptr;
 }
 
 template<typename T, CanBeGCThread canBeGCThread>
-inline void ThreadSpecific<T, canBeGCThread>::set(T* ptr)
+inline void ThreadSpecific<T, canBeGCThread>::setInTLS(Data* data)
 {
-    RELEASE_ASSERT(canBeGCThread == CanBeGCThread::True || !mayBeGCThread());
-    ASSERT(!get());
-    Data* data = new Data(ptr, this);
     FlsSetValue(flsKeys()[m_index], data);
 }
 
@@ -261,18 +269,17 @@ inline void THREAD_SPECIFIC_CALL ThreadSpecific<T, canBeGCThread>::destroy(void*
     pthread_setspecific(data->owner->m_key, ptr);
 #endif
 
-    data->value->~T();
-    fastFree(data->value);
-
-#if USE(PTHREADS)
-    pthread_setspecific(data->owner->m_key, 0);
-#elif OS(WINDOWS)
-    FlsSetValue(flsKeys()[data->owner->m_index], 0);
-#else
-#error ThreadSpecific is not implemented for this platform.
-#endif
-
     delete data;
+}
+
+template<typename T, CanBeGCThread canBeGCThread>
+inline T* ThreadSpecific<T, canBeGCThread>::set()
+{
+    RELEASE_ASSERT(canBeGCThread == CanBeGCThread::True || !mayBeGCThread());
+    ASSERT(!get());
+    Data* data = new Data(this); // Data will set itself into TLS.
+    ASSERT(get() == data->storagePointer());
+    return data->storagePointer();
 }
 
 template<typename T, CanBeGCThread canBeGCThread>
@@ -284,15 +291,9 @@ inline bool ThreadSpecific<T, canBeGCThread>::isSet()
 template<typename T, CanBeGCThread canBeGCThread>
 inline ThreadSpecific<T, canBeGCThread>::operator T*()
 {
-    T* ptr = static_cast<T*>(get());
-    if (!ptr) {
-        // Set up thread-specific value's memory pointer before invoking constructor, in case any function it calls
-        // needs to access the value, to avoid recursion.
-        ptr = static_cast<T*>(fastZeroedMalloc(sizeof(T)));
-        set(ptr);
-        new (NotNull, ptr) T;
-    }
-    return ptr;
+    if (T* ptr = get())
+        return ptr;
+    return set();
 }
 
 template<typename T, CanBeGCThread canBeGCThread>
@@ -307,19 +308,8 @@ inline T& ThreadSpecific<T, canBeGCThread>::operator*()
     return *operator T*();
 }
 
-#if USE(WEB_THREAD)
-template<typename T, CanBeGCThread canBeGCThread>
-inline void ThreadSpecific<T, canBeGCThread>::replace(T* newPtr)
-{
-    ASSERT(newPtr);
-    Data* data = static_cast<Data*>(pthread_getspecific(m_key));
-    ASSERT(data);
-    data->value->~T();
-    fastFree(data->value);
-    data->value = newPtr;
-}
-#endif
-
 } // namespace WTF
+
+using WTF::ThreadSpecific;
 
 #endif // WTF_ThreadSpecific_h
