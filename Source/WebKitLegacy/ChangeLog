@@ -1,3 +1,20 @@
+2017-08-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220205. rdar://problem/33810980
+
+    2017-08-03  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] WebKit COM header file is not placed in the correct location.
+            https://bugs.webkit.org/show_bug.cgi?id=175101
+
+            Reviewed by Brent Fulgham.
+
+            After the transition to WebKitLegacy, the generated WebKit header files should still
+            be placed in the WebKit folder, so WebKit clients will find the header files in the
+            same place.
+
+            * WebKitLegacy.vcxproj/WebKitLegacy.proj:
+
 2017-08-02  Matthew Hanson  <matthew_hanson@apple.com>
 
         Cherry-pick r219602. rdar://problem/33537767
