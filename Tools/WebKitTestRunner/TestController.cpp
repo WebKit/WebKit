@@ -890,7 +890,7 @@ const char* TestController::databaseProcessName()
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
     return "com.apple.WebKit.Databases";
 #elif PLATFORM(COCOA)
-    return "com.apple.WebKit.Databases.Development";
+    return "com.apple.WebKit.Storage.Development";
 #else
     return "DatabaseProcess";
 #endif

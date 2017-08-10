@@ -1,3 +1,35 @@
+2017-08-09  Andy Estes  <aestes@apple.com>
+
+        Part 3 of: Rename DatabaseProcess to StorageProcess
+        https://bugs.webkit.org/show_bug.cgi?id=175034
+
+        Reviewed by Brady Eidson.
+
+        We tried renaming com.apple.WebKit.Databases to com.apple.WebKit.Storage in r219986, but
+        this prevented trunk WebKit from running on iOS 11 devices. This is because launchd keeps a
+        codesigned cache of XPC services, and refuses to launch services that aren't in the cache.
+
+        It's not possibe for us to rebuild the cache with the new service name (only Apple's
+        production build system can do this), and disabling the cache or opting WebKit's XPC
+        services out of the cache might have a negative impact on our performance testing.
+
+        For now we'll retain the name "com.apple.WebKit.Databases" on iOS 11 devices to work around
+        this issue. If we find a way to allow the new service to run without impacting performance,
+        we can revert this change.
+
+        We will rename the service to "com.apple.WebKit.Storage" on macOS and iOS Simulator, and in
+        a follow-up patch we'll use the new service name on post-iOS 11 device builds.
+
+        * Configurations/BaseTarget.xcconfig: Defined WK_STORAGE_SERVICE_PRODUCT_NAME to be
+        com.apple.WebKit.Databases by default, and overrode it to com.apple.WebKit.Storage on macOS
+        and iOS Simulator.
+        * Configurations/StorageService.xcconfig: Changed PRODUCT_NAME to $(WK_STORAGE_SERVICE_PRODUCT_NAME).
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName): Changed to return "com.apple.WebKit.Storage" on macOS and
+        iOS Simulator platforms.
+        * WebKit.xcodeproj/project.pbxproj: Updated the "Copy XPC services for engineering builds"
+        build phase to use WK_STORAGE_SERVICE_PRODUCT_NAME.
+
 2017-08-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r220466, r220477, and r220487.
