@@ -1,3 +1,24 @@
+2017-08-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220459. rdar://problem/33820790
+
+    2017-08-09  Daniel Bates  <dabates@apple.com>
+
+            REGRESSION (r219013): OAuth flows are broken when redirecting back to application after authentication
+            https://bugs.webkit.org/show_bug.cgi?id=175247
+            <rdar://problem/33679804>
+
+            Reviewed by Brady Eidson.
+
+            Plumb knowledge of whether a navigation was in response to receiving a redirect response.
+            We do not actually make use of this knowledge in WebKitLegacy because we do not know of any
+            clients that need to make use of this information at this time. If such a needs comes up
+            then we can expose API/SPI similar to what we do for WebKit.
+
+            * WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+            * WebCoreSupport/WebFrameLoaderClient.h:
+
 2017-07-26  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219876. rdar://problem/33523847
