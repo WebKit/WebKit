@@ -1390,7 +1390,7 @@ webkit.org/b/170355 [ Debug ] fast/mediastream/MediaStream-page-muted.html [ Pas
 # Only relevant on Mac-WK2
 compositing/tiling/non-visible-window-tile-coverage.html [ Skip ]
 
-webkit.org/b/170698 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html [ Failure ]
+webkit.org/b/170698 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html [ Skip ]
 
 webkit.org/b/170699 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure ]
 

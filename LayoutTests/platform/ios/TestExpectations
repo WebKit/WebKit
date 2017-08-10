@@ -2872,3 +2872,5 @@ webkit.org/b/175273 imported/w3c/web-platform-tests/html/browsers/windows/norefe
 
 webkit.org/b/175353 imported/w3c/web-platform-tests/css/css-ui-3/outline-004.html [ ImageOnlyFailure ]
 webkit.org/b/175353 imported/w3c/web-platform-tests/css/css-ui-3/outline-style-014.html [ ImageOnlyFailure ]
+
+webkit.org/b/170698 [ Release ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html [ Pass Failure ]

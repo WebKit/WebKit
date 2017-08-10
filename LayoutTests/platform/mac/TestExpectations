@@ -1626,3 +1626,5 @@ webkit.org/b/175102 [ ElCapitan ] workers/wasm-hashset-many.html [ Skip ]
 webkit.org/b/175102 [ ElCapitan ] workers/wasm-hashset-many-2.html [ Skip ]
 
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
+
+webkit.org/b/170698 [ Release ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html [ Pass Failure ]

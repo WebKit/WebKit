@@ -1,3 +1,14 @@
+2017-08-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html.
+        https://bugs.webkit.org/show_bug.cgi?id=170698
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Skip test on debug because it times out on every run.
+        * platform/ios/TestExpectations: Mark as flaky on Release.
+        * platform/mac/TestExpectations: Ditto.
+
 2017-08-10  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of several tests failing at r220516.
