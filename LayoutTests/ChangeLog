@@ -1,3 +1,13 @@
+2017-08-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviwed test gardening. rdar://problem/33789505
+
+        * imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_long_empty.https-expected.txt:
+        * imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_empty.https-expected.txt:
+        * platform/mac-highsierra/http/tests/cookies/js-get-and-set-http-only-cookie-expected.txt: Added.
+        * platform/mac-highsierra/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_long_empty.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_long_empty.https-expected.txt.
+        * platform/mac-highsierra/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_empty.https-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_empty.https-expected.txt.
+
 2017-08-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviwed test gardening. rdar://problem/33789505
