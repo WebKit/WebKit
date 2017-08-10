@@ -48,6 +48,9 @@ typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
 
 @class _WKExperimentalFeature;
 
+@interface WKPreferences () <NSCopying>
+@end
+
 @interface WKPreferences (WKPrivate)
 
 // FIXME: This property should not have the verb "is" in it.

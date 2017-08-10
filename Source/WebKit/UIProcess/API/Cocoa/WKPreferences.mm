@@ -88,6 +88,11 @@
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    return wrapper(_preferences->copy().leakRef());
+}
+
 - (CGFloat)minimumFontSize
 {
     return _preferences->minimumFontSize();
