@@ -1,3 +1,47 @@
+2017-08-10  Mark Lam  <mark.lam@apple.com>
+
+        Apply the UNLIKELY macro to some unlikely things.
+        https://bugs.webkit.org/show_bug.cgi?id=175440
+        <rdar://problem/33834767>
+
+        Reviewed by Yusuke Suzuki.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::jettison):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::disassemble):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileOSRExit):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeCommon):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::link):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2017-08-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] ThreadSpecific should not introduce additional indirection

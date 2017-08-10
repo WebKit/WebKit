@@ -68,7 +68,8 @@ void link(State& state)
     CCallHelpers::Address frame = CCallHelpers::Address(
         CCallHelpers::stackPointerRegister, -static_cast<int32_t>(AssemblyHelpers::prologueStackPointerDelta()));
     
-    if (Profiler::Compilation* compilation = graph.compilation()) {
+    Profiler::Compilation* compilation = graph.compilation();
+    if (UNLIKELY(compilation)) {
         compilation->addDescription(
             Profiler::OriginStack(),
             toCString("Generated FTL JIT code for ", CodeBlockWithJITType(codeBlock, JITCode::FTLJIT), ", instruction count = ", graph.m_codeBlock->instructionCount(), ":\n"));

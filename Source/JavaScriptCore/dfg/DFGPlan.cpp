@@ -144,7 +144,7 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     , mode(mode)
     , osrEntryBytecodeIndex(osrEntryBytecodeIndex)
     , mustHandleValues(mustHandleValues)
-    , compilation(vm->m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(vm->m_perBytecodeProfiler->ensureBytecodesFor(codeBlock), profilerCompilationKindForMode(mode))) : 0)
+    , compilation(UNLIKELY(vm->m_perBytecodeProfiler) ? adoptRef(new Profiler::Compilation(vm->m_perBytecodeProfiler->ensureBytecodesFor(codeBlock), profilerCompilationKindForMode(mode))) : nullptr)
     , inlineCallFrames(adoptRef(new InlineCallFrameSet()))
     , identifiers(codeBlock)
     , weakReferences(codeBlock)

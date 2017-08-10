@@ -243,7 +243,7 @@ void JIT::privateCompileMainPass()
         
         OpcodeID opcodeID = Interpreter::getOpcodeID(currentInstruction->u.opcode);
 
-        if (m_compilation) {
+        if (UNLIKELY(m_compilation)) {
             add64(
                 TrustedImm32(1),
                 AbsoluteAddress(m_compilation->executionCounterFor(Profiler::OriginStack(Profiler::Origin(
@@ -611,9 +611,9 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         break;
     }
 
-    if (Options::dumpDisassembly() || (m_vm->m_perBytecodeProfiler && Options::disassembleBaselineForProfiler()))
+    if (UNLIKELY(Options::dumpDisassembly() || (m_vm->m_perBytecodeProfiler && Options::disassembleBaselineForProfiler())))
         m_disassembler = std::make_unique<JITDisassembler>(m_codeBlock);
-    if (m_vm->m_perBytecodeProfiler) {
+    if (UNLIKELY(m_vm->m_perBytecodeProfiler)) {
         m_compilation = adoptRef(
             new Profiler::Compilation(
                 m_vm->m_perBytecodeProfiler->ensureBytecodesFor(m_codeBlock),
@@ -841,7 +841,7 @@ CompilationResult JIT::link()
         m_disassembler->dump(patchBuffer);
         patchBuffer.didAlreadyDisassemble();
     }
-    if (m_compilation) {
+    if (UNLIKELY(m_compilation)) {
         if (Options::disassembleBaselineForProfiler())
             m_disassembler->reportToProfiler(m_compilation.get(), patchBuffer);
         m_vm->m_perBytecodeProfiler->addCompilation(m_codeBlock, *m_compilation);

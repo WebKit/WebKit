@@ -300,7 +300,7 @@ VM::VM(VMType vmType, HeapType heapType)
     
     LLInt::Data::performAssertions(*this);
     
-    if (Options::useProfiler()) {
+    if (UNLIKELY(Options::useProfiler())) {
         m_perBytecodeProfiler = std::make_unique<Profiler::Database>(*this);
 
         StringPrintStream pathOut;

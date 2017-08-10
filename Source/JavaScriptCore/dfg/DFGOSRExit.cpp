@@ -196,7 +196,7 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
 
         jit.jitAssertHasValidCallFrame();
 
-        if (vm->m_perBytecodeProfiler && codeBlock->jitCode()->dfgCommon()->compilation) {
+        if (UNLIKELY(vm->m_perBytecodeProfiler && codeBlock->jitCode()->dfgCommon()->compilation)) {
             Profiler::Database& database = *vm->m_perBytecodeProfiler;
             Profiler::Compilation* compilation = codeBlock->jitCode()->dfgCommon()->compilation.get();
 

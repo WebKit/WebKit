@@ -151,13 +151,14 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         RELEASE_ASSERT(genericCodeBlock->ownerExecutable() == this);
         RELEASE_ASSERT(JITCode::isExecutableScript(genericCodeBlock->jitType()));
         
-        if (Options::verboseOSR())
+        if (UNLIKELY(Options::verboseOSR()))
             dataLog("Installing ", *genericCodeBlock, "\n");
         
-        if (vm.m_perBytecodeProfiler)
+        if (UNLIKELY(vm.m_perBytecodeProfiler))
             vm.m_perBytecodeProfiler->ensureBytecodesFor(genericCodeBlock);
         
-        if (Debugger* debugger = genericCodeBlock->globalObject()->debugger())
+        Debugger* debugger = genericCodeBlock->globalObject()->debugger();
+        if (UNLIKELY(debugger))
             debugger->registerCodeBlock(genericCodeBlock);
     }
 

@@ -248,7 +248,7 @@ static void compileStub(
     jit.popToRestore(GPRInfo::regT0);
     jit.checkStackPointerAlignment();
     
-    if (vm->m_perBytecodeProfiler && jitCode->dfgCommon()->compilation) {
+    if (UNLIKELY(vm->m_perBytecodeProfiler && jitCode->dfgCommon()->compilation)) {
         Profiler::Database& database = *vm->m_perBytecodeProfiler;
         Profiler::Compilation* compilation = jitCode->dfgCommon()->compilation.get();
         
