@@ -390,3 +390,5 @@ webkit.org/b/173432 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/impo
 
 # requires wk2 speculative tiling
 fast/images/low-memory-decode.html [ Skip ]
+
+http/tests/workers/service [ Skip ]

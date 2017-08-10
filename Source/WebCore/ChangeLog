@@ -1,3 +1,53 @@
+2017-08-10  Brady Eidson  <beidson@apple.com>
+
+        Add ServiceWorkerJob.
+        https://bugs.webkit.org/show_bug.cgi?id=175241
+
+        Reviewed by Tim Horton.
+
+        Test: http/tests/workers/service/basic-register.html
+
+        This patch does a few things:
+        - Adds the spec concept of a ServiceWorkerJob (in the WebProcess, at least)
+        - Adds a ServiceWorkerProvider interface for WebKit to implement
+        - Actually creates a job for service worker registration and "schedules" it,
+          though it always immediately errors out the promise.
+
+        Actually queuing jobs and executing asynchronously is coming up soon.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * dom/Document.cpp:
+        (WebCore::Document::sessionID const):
+        * dom/Document.h:
+
+        * workers/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::~ServiceWorkerContainer):
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::scheduleJob):
+        (WebCore::ServiceWorkerContainer::jobDidFinish):
+        * workers/ServiceWorkerContainer.h:
+
+        * workers/ServiceWorkerJob.cpp: Added.
+        (WebCore::ServiceWorkerJob::ServiceWorkerJob):
+        (WebCore::ServiceWorkerJob::~ServiceWorkerJob):
+        (WebCore::ServiceWorkerJob::failedWithException):
+        * workers/ServiceWorkerJob.h: Copied from Source/WebCore/workers/ServiceWorkerContainer.h.
+        (WebCore::ServiceWorkerJob::createRegisterJob):
+        (WebCore::ServiceWorkerJob::identifier const):
+
+        * workers/ServiceWorkerJobClient.h: Added.
+        (WebCore::ServiceWorkerJobClient::~ServiceWorkerJobClient):
+
+        * workers/ServiceWorkerProvider.cpp: Added.
+        (WebCore::ServiceWorkerProvider::singleton):
+        (WebCore::ServiceWorkerProvider::setSharedProvider):
+        * workers/ServiceWorkerProvider.h: Added.
+        * workers/ServiceWorkerRegistrationOptions.h: Copied from Source/WebCore/workers/ServiceWorkerContainer.h.
+        * workers/ServiceWorkerRegistrationParameters.cpp: Added.
+        * workers/ServiceWorkerRegistrationParameters.h: Added.
+
 2017-08-10  Tim Horton  <timothy_horton@apple.com>
 
         Remove some unused lambda captures so that WebKit builds with -Wunused-lambda-capture

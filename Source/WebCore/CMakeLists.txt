@@ -2979,7 +2979,10 @@ set(WebCore_SOURCES
     workers/ServiceWorker.cpp
     workers/ServiceWorkerContainer.cpp
     workers/ServiceWorkerGlobalScope.cpp
+    workers/ServiceWorkerJob.cpp
+    workers/ServiceWorkerProvider.cpp
     workers/ServiceWorkerRegistration.cpp
+    workers/ServiceWorkerRegistrationParameters.cpp
     workers/Worker.cpp
     workers/WorkerConsoleClient.cpp
     workers/WorkerEventQueue.cpp

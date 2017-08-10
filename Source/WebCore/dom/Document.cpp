@@ -4688,8 +4688,13 @@ URL Document::completeURL(const String& url) const
 
 SessionID Document::sessionID() const
 {
-    auto* page = this->page();
-    return page ? page->sessionID() : SessionID();
+    if (m_sessionID.isValid())
+        return m_sessionID;
+
+    if (auto* page = this->page())
+        m_sessionID = page->sessionID();
+
+    return m_sessionID;
 }
 
 void Document::setPageCacheState(PageCacheState state)

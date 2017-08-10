@@ -1,3 +1,19 @@
+2017-08-10  Brady Eidson  <beidson@apple.com>
+
+        Add ServiceWorkerJob.
+        https://bugs.webkit.org/show_bug.cgi?id=175241
+
+        Reviewed by Tim Horton.
+
+        Verifies that the "serviceWorker.register()" job we currently schedule fails as expected.
+
+        * http/tests/workers/service/basic-register-expected.txt: Added.
+        * http/tests/workers/service/basic-register.html: Added.
+        * http/tests/workers/service/resources/basic-register.js: Added.
+        * http/tests/workers/service/resources/empty-worker.js: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2017-08-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r220463.

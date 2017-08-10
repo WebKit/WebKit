@@ -2167,6 +2167,13 @@
 		510D4A37103165EE0049EA54 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A31103165EE0049EA54 /* SocketStreamHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5110FCFC1E03641D006F8D0B /* IDBCursorRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 5110FCFB1E0362A5006F8D0B /* IDBCursorRecord.h */; };
+		511CA6791F3904B10019E074 /* ServiceWorkerProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511CA6771F3904AA0019E074 /* ServiceWorkerProvider.cpp */; };
+		511CA67A1F3904B10019E074 /* ServiceWorkerProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 511CA6781F3904AA0019E074 /* ServiceWorkerProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		511CA67D1F3905A60019E074 /* ServiceWorkerJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511CA67C1F3905710019E074 /* ServiceWorkerJob.cpp */; };
+		511CA67E1F3905A60019E074 /* ServiceWorkerJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 511CA67B1F3905710019E074 /* ServiceWorkerJob.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		511CA6801F39331F0019E074 /* ServiceWorkerJobClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 511CA67F1F39331B0019E074 /* ServiceWorkerJobClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		511CA6831F3A3CD90019E074 /* ServiceWorkerRegistrationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511CA6821F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.cpp */; };
+		511CA6841F3A3CD90019E074 /* ServiceWorkerRegistrationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 511CA6811F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		511EC1271C50AACA0032F983 /* IDBSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EC1251C50AA570032F983 /* IDBSerialization.cpp */; };
 		511EC1281C50AACA0032F983 /* IDBSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 511EC1261C50AA570032F983 /* IDBSerialization.h */; };
 		511EC12B1C50ABBF0032F983 /* SQLiteIDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EC1291C50ABBA0032F983 /* SQLiteIDBTransaction.cpp */; };
@@ -2311,7 +2318,7 @@
 		5182C23E1F313A090059BA7C /* ServiceWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182C23C1F3139FC0059BA7C /* ServiceWorker.cpp */; };
 		5182C23F1F313A090059BA7C /* ServiceWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182C23B1F3139FC0059BA7C /* ServiceWorker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5182C2401F313A090059BA7C /* ServiceWorkerContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182C2381F3139FC0059BA7C /* ServiceWorkerContainer.cpp */; };
-		5182C2411F313A090059BA7C /* ServiceWorkerContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182C2331F3139FC0059BA7C /* ServiceWorkerContainer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5182C2411F313A090059BA7C /* ServiceWorkerContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182C2331F3139FC0059BA7C /* ServiceWorkerContainer.h */; };
 		5182C2421F313A090059BA7C /* ServiceWorkerGlobalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182C2361F3139FC0059BA7C /* ServiceWorkerGlobalScope.cpp */; };
 		5182C2431F313A090059BA7C /* ServiceWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182C23A1F3139FC0059BA7C /* ServiceWorkerGlobalScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5182C2441F313A090059BA7C /* ServiceWorkerRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182C2341F3139FC0059BA7C /* ServiceWorkerRegistration.cpp */; };
@@ -2416,6 +2423,7 @@
 		51BA4ACB1BBC5BD900DF3D6D /* MemoryIDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA4AC91BBC5B9E00DF3D6D /* MemoryIDBBackingStore.h */; };
 		51BA4ACC1BBC5BDD00DF3D6D /* IDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA4AC71BBC5AD600DF3D6D /* IDBBackingStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE37DE0DAEE00E001085FC /* StorageArea.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51BEB6391F3B94B0005029B9 /* ServiceWorkerRegistrationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BEB6381F3B94AB005029B9 /* ServiceWorkerRegistrationOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C0AA380F2AA10A001648C2 /* CachedFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */; };
 		51C61B0A1DE536E7008A212D /* ScrollingMomentumCalculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C61B081DE536E7008A212D /* ScrollingMomentumCalculator.cpp */; };
@@ -9883,6 +9891,13 @@
 		510D4A31103165EE0049EA54 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandle.h; sourceTree = "<group>"; };
 		510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandleClient.h; sourceTree = "<group>"; };
 		5110FCFB1E0362A5006F8D0B /* IDBCursorRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorRecord.h; sourceTree = "<group>"; };
+		511CA6771F3904AA0019E074 /* ServiceWorkerProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerProvider.cpp; sourceTree = "<group>"; };
+		511CA6781F3904AA0019E074 /* ServiceWorkerProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerProvider.h; sourceTree = "<group>"; };
+		511CA67B1F3905710019E074 /* ServiceWorkerJob.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerJob.h; sourceTree = "<group>"; };
+		511CA67C1F3905710019E074 /* ServiceWorkerJob.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerJob.cpp; sourceTree = "<group>"; };
+		511CA67F1F39331B0019E074 /* ServiceWorkerJobClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerJobClient.h; sourceTree = "<group>"; };
+		511CA6811F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistrationParameters.h; sourceTree = "<group>"; };
+		511CA6821F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerRegistrationParameters.cpp; sourceTree = "<group>"; };
 		511EC1251C50AA570032F983 /* IDBSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSerialization.cpp; sourceTree = "<group>"; };
 		511EC1261C50AA570032F983 /* IDBSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBSerialization.h; sourceTree = "<group>"; };
 		511EC1291C50ABBA0032F983 /* SQLiteIDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteIDBTransaction.cpp; sourceTree = "<group>"; };
@@ -10133,6 +10148,7 @@
 		51BA4AC81BBC5B9E00DF3D6D /* MemoryIDBBackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryIDBBackingStore.cpp; sourceTree = "<group>"; };
 		51BA4AC91BBC5B9E00DF3D6D /* MemoryIDBBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryIDBBackingStore.h; sourceTree = "<group>"; };
 		51BE37DE0DAEE00E001085FC /* StorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
+		51BEB6381F3B94AB005029B9 /* ServiceWorkerRegistrationOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistrationOptions.h; sourceTree = "<group>"; };
 		51C0AA380F2AA10A001648C2 /* CachedFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFrame.h; sourceTree = "<group>"; };
 		51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedFrame.cpp; sourceTree = "<group>"; };
 		51C61B081DE536E7008A212D /* ScrollingMomentumCalculator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingMomentumCalculator.cpp; sourceTree = "<group>"; };
@@ -17497,9 +17513,17 @@
 				5182C2361F3139FC0059BA7C /* ServiceWorkerGlobalScope.cpp */,
 				5182C23A1F3139FC0059BA7C /* ServiceWorkerGlobalScope.h */,
 				5182C2391F3139FC0059BA7C /* ServiceWorkerGlobalScope.idl */,
+				511CA67C1F3905710019E074 /* ServiceWorkerJob.cpp */,
+				511CA67B1F3905710019E074 /* ServiceWorkerJob.h */,
+				511CA67F1F39331B0019E074 /* ServiceWorkerJobClient.h */,
+				511CA6771F3904AA0019E074 /* ServiceWorkerProvider.cpp */,
+				511CA6781F3904AA0019E074 /* ServiceWorkerProvider.h */,
 				5182C2341F3139FC0059BA7C /* ServiceWorkerRegistration.cpp */,
 				5182C2371F3139FC0059BA7C /* ServiceWorkerRegistration.h */,
 				5182C2321F3139FC0059BA7C /* ServiceWorkerRegistration.idl */,
+				51BEB6381F3B94AB005029B9 /* ServiceWorkerRegistrationOptions.h */,
+				511CA6821F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.cpp */,
+				511CA6811F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.h */,
 				51F174FD1F35898800C74950 /* ServiceWorkerUpdateViaCache.h */,
 				51F174FB1F3588D700C74950 /* ServiceWorkerUpdateViaCache.idl */,
 				2E4346330F546A8200B0F1BA /* Worker.cpp */,
@@ -26740,6 +26764,7 @@
 				A584FE2C1863870F00843B10 /* CommandLineAPIModule.h in Headers */,
 				A584FE2618637DAB00843B10 /* CommandLineAPIModuleSource.h in Headers */,
 				6550B6A2099DF0270090D781 /* Comment.h in Headers */,
+				511CA67E1F3905A60019E074 /* ServiceWorkerJob.h in Headers */,
 				57E664FC1E73703300765536 /* CommonCryptoDERUtilities.h in Headers */,
 				E1FE137518402A6700892F13 /* CommonCryptoUtilities.h in Headers */,
 				0F60F32B1DFBB10700416D6C /* CommonVM.h in Headers */,
@@ -27457,6 +27482,7 @@
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
 				977B3867122883E900B81FF8 /* HTMLDocumentParser.h in Headers */,
 				93F198E608245E59001E9ABC /* HTMLElement.h in Headers */,
+				51BEB6391F3B94B0005029B9 /* ServiceWorkerRegistrationOptions.h in Headers */,
 				A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */,
 				977B37241228721700B81FF8 /* HTMLElementStack.h in Headers */,
 				B562DB6017D3CD630010AF96 /* HTMLElementTypeHelpers.h in Headers */,
@@ -28711,6 +28737,7 @@
 				07EE76EC1BE96DB000F89133 /* MockRealtimeVideoSource.h in Headers */,
 				07EE76EF1BEA619800F89133 /* MockRealtimeVideoSourceMac.h in Headers */,
 				CDF2B0171820540700F2B424 /* MockSourceBufferPrivate.h in Headers */,
+				511CA6801F39331F0019E074 /* ServiceWorkerJobClient.h in Headers */,
 				CDF2B0191820540700F2B424 /* MockTracks.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */,
 				709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */,
@@ -29023,6 +29050,7 @@
 				07C1C0E51BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h in Headers */,
 				41103AAC1E39791000769F03 /* RealtimeOutgoingAudioSource.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
+				511CA6841F3A3CD90019E074 /* ServiceWorkerRegistrationParameters.h in Headers */,
 				FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,
 				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
@@ -29700,6 +29728,7 @@
 				83C1D42F178D5AB500141E68 /* SVGPathSegLinetoAbs.h in Headers */,
 				B2227A780D00BF220071B782 /* SVGPathSegLinetoHorizontal.h in Headers */,
 				83C1D430178D5AB500141E68 /* SVGPathSegLinetoHorizontalAbs.h in Headers */,
+				511CA67A1F3904B10019E074 /* ServiceWorkerProvider.h in Headers */,
 				83C1D431178D5AB500141E68 /* SVGPathSegLinetoHorizontalRel.h in Headers */,
 				83C1D432178D5AB500141E68 /* SVGPathSegLinetoRel.h in Headers */,
 				B2227A7D0D00BF220071B782 /* SVGPathSegLinetoVertical.h in Headers */,
@@ -31416,6 +31445,7 @@
 				51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */,
 				5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */,
 				4969B0F213D0B33F00DF3521 /* HitTestingTransformState.cpp in Sources */,
+				511CA6831F3A3CD90019E074 /* ServiceWorkerRegistrationParameters.cpp in Sources */,
 				2D8287F616E4A0380086BD00 /* HitTestLocation.cpp in Sources */,
 				9307F1D70AF2D59000DBA31A /* HitTestResult.cpp in Sources */,
 				FD31609812B026F700C1A359 /* HRTFDatabase.cpp in Sources */,
@@ -32480,6 +32510,7 @@
 				E1C8BE5D0E8BD15A0064CB7D /* JSWorker.cpp in Sources */,
 				E182568F0EF2B02D00933242 /* JSWorkerGlobalScope.cpp in Sources */,
 				E1C36D340EB0A094007410BC /* JSWorkerGlobalScopeBase.cpp in Sources */,
+				511CA6791F3904B10019E074 /* ServiceWorkerProvider.cpp in Sources */,
 				E18258AC0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp in Sources */,
 				E1C362F00EAF2AA9007410BC /* JSWorkerLocation.cpp in Sources */,
 				E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */,
@@ -33025,6 +33056,7 @@
 				A8DF4AE80980C42C0052981B /* RenderTableCol.cpp in Sources */,
 				A8DF4AF00980C42C0052981B /* RenderTableRow.cpp in Sources */,
 				A8DF4AED0980C42C0052981B /* RenderTableSection.cpp in Sources */,
+				511CA67D1F3905A60019E074 /* ServiceWorkerJob.cpp in Sources */,
 				BCEA488B097D93020094C9E4 /* RenderText.cpp in Sources */,
 				AB67D1A8097F3AE300F9392E /* RenderTextControl.cpp in Sources */,
 				083DAEA60F01A7FB00342754 /* RenderTextControlMultiLine.cpp in Sources */,

@@ -45,6 +45,7 @@
 #include "Region.h"
 #include "RenderPtr.h"
 #include "ScriptExecutionContext.h"
+#include "SessionID.h"
 #include "StringWithDirection.h"
 #include "Supplementable.h"
 #include "TextResourceDecoder.h"
@@ -1820,6 +1821,7 @@ private:
 #endif
 
     OrientationNotifier m_orientationNotifier;
+    mutable SessionID m_sessionID;
 
     static bool hasEverCreatedAnAXObjectCache;
 };

@@ -4072,3 +4072,4 @@ imported/w3c/web-platform-tests/cors/simple-requests.htm [ Slow ]
 imported/w3c/web-platform-tests/fetch/api/basic/accept-header.any.html [ Slow ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.html [ Slow ]
 
+http/tests/workers/service [ Skip ]

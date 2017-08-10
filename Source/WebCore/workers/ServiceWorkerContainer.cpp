@@ -32,6 +32,10 @@
 #include "JSDOMPromiseDeferred.h"
 #include "NavigatorBase.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
+#include "ServiceWorkerJob.h"
+#include "ServiceWorkerProvider.h"
+#include "ServiceWorkerRegistrationParameters.h"
 #include "URL.h"
 #include <wtf/RunLoop.h>
 
@@ -44,6 +48,13 @@ ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext& context, 
     suspendIfNeeded();
 
     m_readyPromise.reject(Exception { UnknownError, ASCIILiteral("serviceWorker.ready() is not yet implemented") });
+}
+
+ServiceWorkerContainer::~ServiceWorkerContainer()
+{
+#ifndef NDEBUG
+    ASSERT(m_creationThread == currentThread());
+#endif
 }
 
 void ServiceWorkerContainer::refEventTarget()
@@ -64,7 +75,7 @@ ServiceWorker* ServiceWorkerContainer::controller() const
 void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, const RegistrationOptions& options, Ref<DeferredPromise>&& promise)
 {
     auto* context = scriptExecutionContext();
-    if (!context) {
+    if (!context || !context->sessionID().isValid()) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -74,31 +85,44 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    auto scriptURL = context->completeURL(relativeScriptURL);
-    if (!scriptURL.isValid()) {
+    ServiceWorkerRegistrationParameters parameters;
+    parameters.scriptURL = context->completeURL(relativeScriptURL);
+    if (!parameters.scriptURL.isValid()) {
         promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a valid relative script URL") });
         return;
     }
 
     // FIXME: The spec disallows scripts outside of HTTP(S), but we'll likely support app custom URL schemes in WebKit.
-    if (!scriptURL.protocolIsInHTTPFamily()) {
+    if (!parameters.scriptURL.protocolIsInHTTPFamily()) {
         promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS") });
         return;
     }
 
-    String path = scriptURL.path();
+    String path = parameters.scriptURL.path();
     if (path.containsIgnoringASCIICase("%2f") || path.containsIgnoringASCIICase("%5c")) {
         promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a script URL whose path does not contain '%%2f' or '%%5c'") });
         return;
     }
 
     String scope = options.scope.isEmpty() ? ASCIILiteral("./") : options.scope;
-    auto scopeURL = context->completeURL(scope);
+    if (!scope.isEmpty())
+        parameters.scopeURL = context->completeURL(scope);
 
-    // FIXME: At this point, create a Register job and add it to the job queue
-    UNUSED_PARAM(scopeURL);
+    parameters.sessionID = context->sessionID();
+    parameters.clientCreationURL = context->url();
+    parameters.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
+    parameters.options = options;
 
-    promise->reject(Exception { UnknownError, ASCIILiteral("serviceWorker.register() is not yet implemented") });
+    scheduleJob(ServiceWorkerJob::createRegisterJob(*this, WTFMove(promise), WTFMove(parameters)));
+}
+
+void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
+{
+    ServiceWorkerJob& rawJob = job.get();
+    auto result = m_jobMap.add(rawJob.identifier(), WTFMove(job));
+    ASSERT_UNUSED(result, result.isNewEntry);
+
+    ServiceWorkerProvider::singleton().scheduleJob(rawJob);
 }
 
 void ServiceWorkerContainer::getRegistration(const String&, Ref<DeferredPromise>&& promise)
@@ -113,6 +137,12 @@ void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 
 void ServiceWorkerContainer::startMessages()
 {
+}
+
+void ServiceWorkerContainer::jobDidFinish(ServiceWorkerJob& job)
+{
+    auto taken = m_jobMap.take(job.identifier());
+    ASSERT_UNUSED(taken, taken.get() == &job);
 }
 
 const char* ServiceWorkerContainer::activeDOMObjectName() const

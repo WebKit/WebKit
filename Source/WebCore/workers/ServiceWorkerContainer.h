@@ -30,7 +30,11 @@
 #include "ActiveDOMObject.h"
 #include "DOMPromiseProxy.h"
 #include "EventTarget.h"
+#include "ServiceWorkerJobClient.h"
 #include "ServiceWorkerRegistration.h"
+#include "ServiceWorkerRegistrationOptions.h"
+#include "SessionID.h"
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -41,16 +45,12 @@ class ServiceWorker;
 enum class ServiceWorkerUpdateViaCache;
 enum class WorkerType;
 
-class ServiceWorkerContainer final : public EventTargetWithInlineData, public ActiveDOMObject {
+class ServiceWorkerContainer final : public EventTargetWithInlineData, public ActiveDOMObject, public ServiceWorkerJobClient {
 public:
     ServiceWorkerContainer(ScriptExecutionContext&, NavigatorBase&);
-    virtual ~ServiceWorkerContainer() = default;
+    ~ServiceWorkerContainer();
 
-    struct RegistrationOptions {
-        String scope;
-        WorkerType type;
-        ServiceWorkerUpdateViaCache updateViaCache;
-    };
+    typedef WebCore::RegistrationOptions RegistrationOptions;
 
     ServiceWorker* controller() const;
 
@@ -63,7 +63,13 @@ public:
 
     void startMessages();
 
+    void ref() final { refEventTarget(); }
+    void deref() final { derefEventTarget(); }
+
 private:
+    void scheduleJob(Ref<ServiceWorkerJob>&&);
+    void jobDidFinish(ServiceWorkerJob&) final;
+
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -74,6 +80,12 @@ private:
     ReadyPromise m_readyPromise;
 
     NavigatorBase& m_navigator;
+
+    HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_jobMap;
+
+#ifndef NDEBUG
+    ThreadIdentifier m_creationThread { currentThread() };
+#endif
 };
 
 } // namespace WebCore
