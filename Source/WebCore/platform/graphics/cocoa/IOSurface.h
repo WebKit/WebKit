@@ -30,10 +30,13 @@
 #include "GraphicsContext.h"
 #include "IntSize.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class MachSendRight;
-class TextStream;
 
 class IOSurface final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -119,7 +122,7 @@ private:
     RetainPtr<IOSurfaceRef> m_surface;
 };
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const WebCore::IOSurface&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::IOSurface&);
 
 } // namespace WebCore
 

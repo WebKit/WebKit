@@ -26,10 +26,10 @@
 #include "config.h"
 #include "ViewportConfiguration.h"
 
-#include "TextStream.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS)
 #include "PlatformScreen.h"

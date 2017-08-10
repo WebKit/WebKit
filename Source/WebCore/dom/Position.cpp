@@ -48,11 +48,11 @@
 #include "RuntimeEnabledFeatures.h"
 #include "Text.h"
 #include "TextIterator.h"
-#include "TextStream.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(TREE_DEBUGGING)

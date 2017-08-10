@@ -27,7 +27,7 @@
 #include "Pattern.h"
 #include "RenderTreeAsText.h"
 #include "SVGRenderingContext.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

@@ -50,9 +50,9 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/TextStream.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
+#import <wtf/text/TextStream.h>
 
 #if USE(QUICK_LOOK)
 #import "APILoaderClient.h"

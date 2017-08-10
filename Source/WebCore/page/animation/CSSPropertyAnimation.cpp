@@ -54,7 +54,6 @@
 #include "StyleGeneratedImage.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
-#include "TextStream.h"
 #include <algorithm>
 #include <memory>
 #include <wtf/MathExtras.h>
@@ -62,6 +61,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

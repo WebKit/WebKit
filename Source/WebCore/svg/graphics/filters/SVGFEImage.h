@@ -43,7 +43,7 @@ public:
 
     FilterEffectType filterEffectType() const final { return FilterEffectTypeImage; }
 
-    TextStream& externalRepresentation(TextStream&, int indention) const final;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const final;
     
 private:
     virtual ~FEImage() { }

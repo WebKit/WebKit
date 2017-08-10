@@ -138,9 +138,9 @@ private:
     AnimationType m_type;
 };
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, PlatformCAAnimation::AnimationType);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, PlatformCAAnimation::FillModeType);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, PlatformCAAnimation::ValueFunctionType);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformCAAnimation::AnimationType);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformCAAnimation::FillModeType);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformCAAnimation::ValueFunctionType);
 
 } // namespace WebCore
 

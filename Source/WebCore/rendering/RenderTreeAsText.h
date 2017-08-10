@@ -27,12 +27,15 @@
 
 #include <wtf/Forward.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class Element;
 class Frame;
 class RenderObject;
-class TextStream;
 
 enum RenderAsTextBehaviorFlags {
     RenderAsTextBehaviorNormal          = 0,
@@ -53,15 +56,15 @@ typedef unsigned RenderAsTextBehavior;
 // You don't need pageWidthInPixels if you don't specify RenderAsTextInPrintingMode.
 WEBCORE_EXPORT String externalRepresentation(Frame*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 WEBCORE_EXPORT String externalRepresentation(Element*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
-void write(TextStream&, const RenderObject&, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
-void writeDebugInfo(TextStream&, const RenderObject&, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
+void write(WTF::TextStream&, const RenderObject&, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
+void writeDebugInfo(WTF::TextStream&, const RenderObject&, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 
 class RenderTreeAsText {
 // FIXME: This is a cheesy hack to allow easy access to RenderStyle colors.  It won't be needed if we convert
 // it to use visitedDependentColor instead. (This just involves rebaselining many results though, so for now it's
 // not being done).
 public:
-    static void writeRenderObject(TextStream&, const RenderObject&, RenderAsTextBehavior);
+    static void writeRenderObject(WTF::TextStream&, const RenderObject&, RenderAsTextBehavior);
 };
 
 // Helper function shared with SVGRenderTreeAsText

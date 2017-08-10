@@ -68,9 +68,9 @@
 #include "ShadowRoot.h"
 #include "SimpleLineLayoutResolver.h"
 #include "StyleProperties.h"
-#include "TextStream.h"
 #include <wtf/HexNumber.h>
 #include <wtf/Vector.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(MAC)

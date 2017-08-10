@@ -54,9 +54,9 @@
 #include "SVGSVGElement.h"
 #include "Settings.h"
 #include "SocketProvider.h"
-#include "TextStream.h"
 #include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
+#include <wtf/text/TextStream.h>
 
 #if USE(DIRECT2D)
 #include "COMPtr.h"

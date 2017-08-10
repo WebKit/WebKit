@@ -51,10 +51,13 @@ struct D2D_SIZE_F;
 typedef D2D_SIZE_F D2D1_SIZE_F;
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class IntSize;
-class TextStream;
 
 class FloatSize {
 public:
@@ -244,7 +247,7 @@ inline IntPoint flooredIntPoint(const FloatSize& p)
     return IntPoint(clampToInteger(floorf(p.width())), clampToInteger(floorf(p.height())));
 }
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatSize&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatSize&);
 
 } // namespace WebCore
 

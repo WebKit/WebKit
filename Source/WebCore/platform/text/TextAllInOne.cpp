@@ -36,4 +36,3 @@
 #include "TextEncoding.cpp"
 #include "TextEncodingDetectorICU.cpp"
 #include "TextEncodingRegistry.cpp"
-#include "TextStream.cpp"

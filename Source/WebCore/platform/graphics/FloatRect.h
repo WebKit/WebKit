@@ -49,11 +49,14 @@ struct D2D_RECT_F;
 typedef D2D_RECT_F D2D1_RECT_F;
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class IntRect;
 class IntPoint;
-class TextStream;
 
 class FloatRect {
 public:
@@ -260,7 +263,7 @@ WEBCORE_EXPORT FloatRect encloseRectToDevicePixels(const FloatRect&, float devic
 WEBCORE_EXPORT IntRect enclosingIntRect(const FloatRect&);
 WEBCORE_EXPORT IntRect roundedIntRect(const FloatRect&);
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatRect&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatRect&);
 
 }
 

@@ -41,12 +41,12 @@
 #include "Pattern.h"
 #include "ShadowBlur.h"
 #include "SubimageCacheWithTimer.h"
-#include "TextStream.h"
 #include "Timer.h"
 #include "URL.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/TextStream.h>
 
 #if PLATFORM(COCOA)
 #include "WebCoreSystemInterface.h"

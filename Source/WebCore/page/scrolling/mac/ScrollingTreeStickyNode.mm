@@ -33,8 +33,8 @@
 #include "ScrollingTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
-#include "TextStream.h"
 #include <QuartzCore/CALayer.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

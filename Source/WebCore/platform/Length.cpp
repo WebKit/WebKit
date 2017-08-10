@@ -26,13 +26,14 @@
 #include "Length.h"
 
 #include "CalculationValue.h"
-#include "TextStream.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
+#include <wtf/MallocPtr.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/TextStream.h>
 
 using namespace WTF;
 

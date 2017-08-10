@@ -38,9 +38,11 @@
 #include <wtf/MathExtras.h>
 #include <wtf/SaturatedArithmetic.h>
 
-namespace WebCore {
-
+namespace WTF {
 class TextStream;
+}
+
+namespace WebCore {
 
 #ifdef NDEBUG
 
@@ -776,7 +778,7 @@ inline float& operator/=(float& a, const LayoutUnit& b)
     return a;
 }
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const LayoutUnit&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const LayoutUnit&);
 
 inline int roundToInt(LayoutUnit value)
 {

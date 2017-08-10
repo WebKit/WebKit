@@ -36,7 +36,6 @@
 #include "InlineTextBoxStyle.h"
 #include "Page.h"
 #include "PaintInfo.h"
-#include "RenderedDocumentMarker.h"
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
 #include "RenderLineBreak.h"
@@ -44,13 +43,14 @@
 #include "RenderRubyText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "RenderedDocumentMarker.h"
 #include "Text.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
-#include "TextStream.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

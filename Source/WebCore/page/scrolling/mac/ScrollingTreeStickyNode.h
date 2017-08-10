@@ -49,7 +49,7 @@ private:
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta) override;
 
-    void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
     StickyPositionViewportConstraints m_constraints;
     RetainPtr<CALayer> m_layer;

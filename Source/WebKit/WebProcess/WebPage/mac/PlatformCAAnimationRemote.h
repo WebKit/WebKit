@@ -35,7 +35,7 @@ class Encoder;
 class Decoder;
 };
 
-namespace WebCore {
+namespace WTF {
 class TextStream;
 };
 
@@ -301,8 +301,8 @@ private:
     Properties m_properties;
 };
 
-WebCore::TextStream& operator<<(WebCore::TextStream&, const PlatformCAAnimationRemote::KeyframeValue&);
-WebCore::TextStream& operator<<(WebCore::TextStream&, const PlatformCAAnimationRemote::Properties&);
+WTF::TextStream& operator<<(WTF::TextStream&, const PlatformCAAnimationRemote::KeyframeValue&);
+WTF::TextStream& operator<<(WTF::TextStream&, const PlatformCAAnimationRemote::Properties&);
 
 } // namespace WebKit
 

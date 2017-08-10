@@ -32,9 +32,9 @@
 #import "WebCoreArgumentCoders.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/LengthFunctions.h>
-#import <WebCore/TextStream.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/text/CString.h>
+#import <wtf/text/TextStream.h>
 
 using namespace WebCore;
 

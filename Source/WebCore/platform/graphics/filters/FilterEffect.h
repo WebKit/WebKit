@@ -31,12 +31,15 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class Filter;
 class FilterEffect;
 class ImageBuffer;
-class TextStream;
 
 typedef Vector<RefPtr<FilterEffect>> FilterEffectVector;
 
@@ -117,7 +120,7 @@ public:
 
     virtual FilterEffectType filterEffectType() const { return FilterEffectTypeUnknown; }
 
-    virtual TextStream& externalRepresentation(TextStream&, int indention = 0) const;
+    virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention = 0) const;
 
 public:
     // The following functions are SVG specific and will move to RenderSVGResourceFilterPrimitive.

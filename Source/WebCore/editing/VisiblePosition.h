@@ -28,6 +28,10 @@
 #include "EditingBoundary.h"
 #include "Position.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 // VisiblePosition default affinity is downstream because
@@ -45,7 +49,6 @@ namespace WebCore {
 
 class InlineBox;
 class Node;
-class TextStream;
 
 class VisiblePosition {
 public:
@@ -162,8 +165,8 @@ WEBCORE_EXPORT Element* enclosingBlockFlowElement(const VisiblePosition&);
 bool isFirstVisiblePositionInNode(const VisiblePosition&, const Node*);
 bool isLastVisiblePositionInNode(const VisiblePosition&, const Node*);
 
-TextStream& operator<<(TextStream&, EAffinity);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const VisiblePosition&);
+WTF::TextStream& operator<<(WTF::TextStream&, EAffinity);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisiblePosition&);
 
 } // namespace WebCore
 

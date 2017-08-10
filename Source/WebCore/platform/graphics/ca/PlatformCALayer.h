@@ -293,8 +293,8 @@ protected:
     PlatformCALayerClient* m_owner;
 };
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, PlatformCALayer::LayerType);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, PlatformCALayer::FilterType);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformCALayer::LayerType);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformCALayer::FilterType);
 
 } // namespace WebCore
 

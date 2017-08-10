@@ -40,9 +40,12 @@
 #include "GraphicsContextPlatformPrivateCG.h"
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
-class TextStream;
 struct ImagePaintingOptions;
 
 namespace DisplayList {
@@ -316,7 +319,7 @@ public:
 
     static void applyState(GraphicsContext&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
 
-    static void dumpStateChanges(TextStream&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
+    static void dumpStateChanges(WTF::TextStream&, const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
 private:
     SetState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
         : Item(ItemType::SetState)
@@ -1314,7 +1317,7 @@ private:
     float m_scaleFactor;
 };
 
-TextStream& operator<<(TextStream&, const Item&);
+WTF::TextStream& operator<<(WTF::TextStream&, const Item&);
 
 } // namespace DisplayList
 } // namespace WebCore

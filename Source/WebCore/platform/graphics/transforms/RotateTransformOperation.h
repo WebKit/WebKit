@@ -65,7 +65,7 @@ private:
 
     Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
-    void dump(TextStream&) const final;
+    void dump(WTF::TextStream&) const final;
 
     RotateTransformOperation(double x, double y, double z, double angle, OperationType type)
         : TransformOperation(type)

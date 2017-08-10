@@ -24,8 +24,8 @@
 
 #include "IdentityTransformOperation.h"
 #include "Matrix3DTransformOperation.h"
-#include "TextStream.h"
 #include <algorithm>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

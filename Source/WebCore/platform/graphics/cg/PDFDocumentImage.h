@@ -77,7 +77,7 @@ private:
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const override { return false; }
 
-    void dump(TextStream&) const override;
+    void dump(WTF::TextStream&) const override;
 
     void createPDFDocument();
     void computeBoundsForCurrentPage();

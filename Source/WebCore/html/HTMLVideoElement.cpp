@@ -43,7 +43,7 @@
 #include "RenderVideo.h"
 #include "ScriptController.h"
 #include "Settings.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 #include "VideoFullscreenModel.h"

@@ -22,8 +22,8 @@
 #include "config.h"
 #include "MatrixTransformOperation.h"
 
-#include "TextStream.h"
 #include <algorithm>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

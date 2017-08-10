@@ -43,9 +43,11 @@
 
 #pragma once
 
-namespace WebCore {
-    
+namespace WTF {
 class TextStream;
+}
+
+namespace WebCore {
 
 struct ScrollAlignment {
 
@@ -78,7 +80,7 @@ struct ScrollAlignment {
     Behavior m_rectPartial;
 };
     
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollAlignment::Behavior);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ScrollAlignment&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollAlignment::Behavior);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ScrollAlignment&);
 
 }; // namespace WebCore

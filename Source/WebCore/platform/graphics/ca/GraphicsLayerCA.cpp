@@ -42,7 +42,6 @@
 #include "PlatformScreen.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
-#include "TextStream.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
@@ -53,6 +52,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)

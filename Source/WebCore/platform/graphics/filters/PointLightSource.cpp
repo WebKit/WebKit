@@ -31,7 +31,7 @@
 #include "config.h"
 #include "PointLightSource.h"
 
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

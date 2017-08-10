@@ -29,6 +29,10 @@
 #include "WindRule.h"
 #include <wtf/Forward.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 enum CompositeOperator {
@@ -115,12 +119,11 @@ bool parseTextAlign(const String&, TextAlign&);
 String textBaselineName(TextBaseline);
 bool parseTextBaseline(const String&, TextBaseline&);
 
-class TextStream;
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, BlendMode);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, CompositeOperator);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, WindRule);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, LineCap);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, LineJoin);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, BlendMode);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, CompositeOperator);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WindRule);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineCap);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineJoin);
 
 } // namespace WebCore
 

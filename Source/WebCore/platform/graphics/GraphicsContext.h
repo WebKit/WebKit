@@ -238,13 +238,13 @@ struct GraphicsContextStateChange {
     void accumulate(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
     void apply(GraphicsContext&) const;
     
-    void dump(TextStream&) const;
+    void dump(WTF::TextStream&) const;
 
     GraphicsContextState m_state;
     GraphicsContextState::StateChangeFlags m_changeFlags { GraphicsContextState::NoChange };
 };
 
-TextStream& operator<<(TextStream&, const GraphicsContextStateChange&);
+WTF::TextStream& operator<<(WTF::TextStream&, const GraphicsContextStateChange&);
 
 
 class GraphicsContext {

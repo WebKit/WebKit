@@ -94,7 +94,7 @@ private:
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
 
-    void dump(TextStream&) const final;
+    void dump(WTF::TextStream&) const final;
 
     SVGImage(ImageObserver&, const URL&);
     ImageDrawResult draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) final;

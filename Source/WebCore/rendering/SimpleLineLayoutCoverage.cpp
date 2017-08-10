@@ -33,7 +33,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "SimpleLineLayout.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace SimpleLineLayout {

@@ -28,7 +28,7 @@
 
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/LengthBox.h>
-#include <WebCore/TextStream.h>
+#include <wtf/text/TextStream.h>
 
 using namespace WebCore;
 

@@ -27,6 +27,10 @@
 #include "FloatPoint3D.h"
 #include <wtf/RefCounted.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 enum LightType {
@@ -34,8 +38,6 @@ enum LightType {
     LS_POINT,
     LS_SPOT
 };
-
-class TextStream;
 
 class LightSource : public RefCounted<LightSource> {
 public:
@@ -65,7 +67,7 @@ public:
     virtual ~LightSource() { }
 
     LightType type() const { return m_type; }
-    virtual TextStream& externalRepresentation(TextStream&) const = 0;
+    virtual WTF::TextStream& externalRepresentation(WTF::TextStream&) const = 0;
 
     virtual void initPaintingData(PaintingData&) = 0;
     // z is a float number, since it is the alpha value scaled by a user

@@ -30,7 +30,7 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
 
 static const size_t printBufferSize = 100; // large enough for any integer or floating point value in string format, including trailing null character
 
@@ -172,7 +172,7 @@ void TextStream::nextLine()
 void TextStream::writeIndent()
 {
     if (m_multiLineMode)
-        WebCore::writeIndent(*this, m_indent);
+        WTF::writeIndent(*this, m_indent);
 }
 
 void writeIndent(TextStream& ts, int indent)

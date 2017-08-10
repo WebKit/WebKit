@@ -128,7 +128,7 @@ private:
     int m_pageNumber;
 };
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, SelectionRect);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, SelectionRect);
 
 } // namespace WebCore
 

@@ -48,7 +48,7 @@ public:
     static IntSize calculateKernelSize(const Filter&, const FloatPoint& stdDeviation);
     static IntSize calculateUnscaledKernelSize(const FloatPoint& stdDeviation);
 
-    TextStream& externalRepresentation(TextStream&, int indention) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
 private:
     static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs

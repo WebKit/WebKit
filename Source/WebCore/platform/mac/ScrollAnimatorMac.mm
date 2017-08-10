@@ -39,9 +39,9 @@
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarThemeMac.h"
-#include "TextStream.h"
 #include "WebCoreSystemInterface.h"
 #include <wtf/BlockObjCExceptions.h>
+#include <wtf/text/TextStream.h>
 
 using namespace WebCore;
 

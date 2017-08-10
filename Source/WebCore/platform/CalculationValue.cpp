@@ -31,10 +31,10 @@
 
 #include "config.h"
 #include "CalculationValue.h"
-#include "LengthFunctions.h"
-#include "TextStream.h"
 
+#include "LengthFunctions.h"
 #include <limits>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

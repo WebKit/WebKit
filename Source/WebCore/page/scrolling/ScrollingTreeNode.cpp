@@ -30,7 +30,7 @@
 
 #include "ScrollingStateTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

@@ -131,7 +131,7 @@ public:
 #endif
     void setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
 
-    void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
 private:
     ScrollingStateFrameScrollingNode(ScrollingStateTree&, ScrollingNodeID);

@@ -28,7 +28,7 @@
 
 #include "FloatSize.h"
 #include "Logging.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 #if PLATFORM(MAC)
 #include "WheelEventDeltaFilterMac.h"

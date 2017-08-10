@@ -76,9 +76,9 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
-#include "HitTestingTransformState.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "HitTestingTransformState.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "NoEventDispatchAssertion.h"
@@ -121,13 +121,13 @@
 #include "SourceGraphic.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
-#include "TextStream.h"
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
 #include "WheelEventTestTrigger.h"
 #include <stdio.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/TextStream.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
 #include "AxisScrollSnapOffsets.h"

@@ -42,7 +42,7 @@ public:
     
     void determineAbsolutePaintRect() override;
 
-    TextStream& externalRepresentation(TextStream&, int indention) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
 private:
     FEOffset(Filter&, float dx, float dy);

@@ -102,7 +102,6 @@
 #import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/SchemeRegistry.h>
 #import <WebCore/Settings.h>
-#import <WebCore/TextStream.h>
 #import <WebCore/ValidationBubble.h>
 #import <WebCore/ViewportArguments.h>
 #import <WebCore/WritingMode.h>
@@ -114,6 +113,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
 #import <wtf/spi/darwin/dyldSPI.h>
+#import <wtf/text/TextStream.h>
 
 #if ENABLE(DATA_DETECTION)
 #import "WKDataDetectorTypesInternal.h"

@@ -34,10 +34,13 @@
 #include "IntSize.h"
 #include "LayoutUnit.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class LayoutPoint;
-class TextStream;
 
 enum AspectRatioFit {
     AspectRatioFitShrink,
@@ -190,7 +193,7 @@ inline FloatSize floorSizeToDevicePixels(const LayoutSize& size, float pixelSnap
     return FloatSize(floorToDevicePixel(size.width(), pixelSnappingFactor), floorToDevicePixel(size.height(), pixelSnappingFactor));
 }
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const LayoutSize&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const LayoutSize&);
 
 } // namespace WebCore
 

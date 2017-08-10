@@ -29,7 +29,7 @@
 #include "DisplayListItems.h"
 #include "GraphicsContext.h"
 #include "Logging.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace DisplayList {

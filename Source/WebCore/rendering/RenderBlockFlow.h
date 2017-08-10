@@ -372,7 +372,7 @@ public:
     void ensureLineBoxes();
 
 #if ENABLE(TREE_DEBUGGING)
-    void outputLineTreeAndMark(TextStream&, const InlineBox* markedBox, int depth) const;
+    void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const;
 #endif
 
     // Returns the logicalOffset at the top of the next page. If the offset passed in is already at the top of the current page,

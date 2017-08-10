@@ -31,12 +31,12 @@
 #include "Element.h"
 #include "HTMLInputElement.h"
 #include "TextIterator.h"
-#include "TextStream.h"
 #include "VisibleUnits.h"
 #include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

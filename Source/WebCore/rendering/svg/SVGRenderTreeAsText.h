@@ -26,7 +26,7 @@
 #pragma once
 
 #include "RenderTreeAsText.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -48,21 +48,21 @@ class AffineTransform;
 class SVGUnitTypes;
 
 // functions used by the main RenderTreeAsText code
-void write(TextStream&, const RenderSVGShape&, int indent, RenderAsTextBehavior);
-void write(TextStream&, const RenderSVGRoot&, int indent, RenderAsTextBehavior);
-void writeSVGGradientStop(TextStream&, const RenderSVGGradientStop&, int indent, RenderAsTextBehavior);
-void writeSVGResourceContainer(TextStream&, const RenderSVGResourceContainer&, int indent, RenderAsTextBehavior);
-void writeSVGContainer(TextStream&, const RenderSVGContainer&, int indent, RenderAsTextBehavior);
-void writeSVGImage(TextStream&, const RenderSVGImage&, int indent, RenderAsTextBehavior);
-void writeSVGInlineText(TextStream&, const RenderSVGInlineText&, int indent, RenderAsTextBehavior);
-void writeSVGText(TextStream&, const RenderSVGText&, int indent, RenderAsTextBehavior);
-void writeResources(TextStream&, const RenderObject&, int indent, RenderAsTextBehavior);
+void write(WTF::TextStream&, const RenderSVGShape&, int indent, RenderAsTextBehavior);
+void write(WTF::TextStream&, const RenderSVGRoot&, int indent, RenderAsTextBehavior);
+void writeSVGGradientStop(WTF::TextStream&, const RenderSVGGradientStop&, int indent, RenderAsTextBehavior);
+void writeSVGResourceContainer(WTF::TextStream&, const RenderSVGResourceContainer&, int indent, RenderAsTextBehavior);
+void writeSVGContainer(WTF::TextStream&, const RenderSVGContainer&, int indent, RenderAsTextBehavior);
+void writeSVGImage(WTF::TextStream&, const RenderSVGImage&, int indent, RenderAsTextBehavior);
+void writeSVGInlineText(WTF::TextStream&, const RenderSVGInlineText&, int indent, RenderAsTextBehavior);
+void writeSVGText(WTF::TextStream&, const RenderSVGText&, int indent, RenderAsTextBehavior);
+void writeResources(WTF::TextStream&, const RenderObject&, int indent, RenderAsTextBehavior);
 
 // helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
 // these could be defined in separate namespace to avoid matching these generic signatures unintentionally.
 
 template<typename Item>
-TextStream& operator<<(TextStream& ts, const Vector<Item*>& v)
+WTF::TextStream& operator<<(WTF::TextStream& ts, const Vector<Item*>& v)
 {
     ts << "[";
 
@@ -77,7 +77,7 @@ TextStream& operator<<(TextStream& ts, const Vector<Item*>& v)
 }
 
 template<typename Pointer>
-TextStream& operator<<(TextStream& ts, Pointer* t)
+WTF::TextStream& operator<<(WTF::TextStream& ts, Pointer* t)
 {
     ts << reinterpret_cast<intptr_t>(t);
     return ts;

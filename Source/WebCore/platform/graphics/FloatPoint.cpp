@@ -30,10 +30,10 @@
 #include "AffineTransform.h"
 #include "FloatConversion.h"
 #include "IntPoint.h"
-#include "TextStream.h"
 #include "TransformationMatrix.h"
 #include <limits>
 #include <math.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

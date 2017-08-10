@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LayoutUnit.h"
 
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

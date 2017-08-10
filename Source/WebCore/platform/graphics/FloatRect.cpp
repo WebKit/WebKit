@@ -29,10 +29,10 @@
 
 #include "FloatConversion.h"
 #include "IntRect.h"
-#include "TextStream.h"
 #include <algorithm>
 #include <math.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

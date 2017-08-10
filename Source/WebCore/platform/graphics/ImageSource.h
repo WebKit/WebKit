@@ -31,10 +31,10 @@
 #include "ImageOrientation.h"
 #include "IntPoint.h"
 #include "NativeImage.h"
-#include "TextStream.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -112,7 +112,7 @@ public:
     NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
 
 private:
-    void dump(TextStream&);
+    void dump(WTF::TextStream&);
 
     void setDecoderTargetContext(const GraphicsContext*);
 

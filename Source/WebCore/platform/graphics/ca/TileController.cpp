@@ -32,11 +32,11 @@
 #include "Logging.h"
 #include "PlatformCALayer.h"
 #include "Region.h"
-#include "TextStream.h"
 #include "TileCoverageMap.h"
 #include "TileGrid.h"
 #include <utility>
 #include <wtf/MainThread.h>
+#include <wtf/text/TextStream.h>
 
 #if USE(IOSURFACE)
 #include "IOSurface.h"

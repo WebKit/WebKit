@@ -5270,8 +5270,6 @@
 		B2C3DA470D006C1D00EF6F26 /* TextEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA170D006C1D00EF6F26 /* TextEncoding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA480D006C1D00EF6F26 /* TextEncodingRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA180D006C1D00EF6F26 /* TextEncodingRegistry.cpp */; };
 		B2C3DA490D006C1D00EF6F26 /* TextEncodingRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA190D006C1D00EF6F26 /* TextEncodingRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA4A0D006C1D00EF6F26 /* TextStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */; };
-		B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA1B0D006C1D00EF6F26 /* TextStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA600D006CD600EF6F26 /* FontCascade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA4F0D006CD600EF6F26 /* FontCascade.cpp */; };
 		B2C3DA610D006CD600EF6F26 /* FontCascade.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA500D006CD600EF6F26 /* FontCascade.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA510D006CD600EF6F26 /* FontCache.cpp */; };
@@ -13759,8 +13757,6 @@
 		B2C3DA170D006C1D00EF6F26 /* TextEncoding.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextEncoding.h; sourceTree = "<group>"; };
 		B2C3DA180D006C1D00EF6F26 /* TextEncodingRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingRegistry.cpp; sourceTree = "<group>"; };
 		B2C3DA190D006C1D00EF6F26 /* TextEncodingRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextEncodingRegistry.h; sourceTree = "<group>"; };
-		B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextStream.cpp; sourceTree = "<group>"; };
-		B2C3DA1B0D006C1D00EF6F26 /* TextStream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextStream.h; sourceTree = "<group>"; };
 		B2C3DA4F0D006CD600EF6F26 /* FontCascade.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontCascade.cpp; sourceTree = "<group>"; };
 		B2C3DA500D006CD600EF6F26 /* FontCascade.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCascade.h; sourceTree = "<group>"; };
 		B2C3DA510D006CD600EF6F26 /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
@@ -23474,8 +23470,6 @@
 				B2C3DA180D006C1D00EF6F26 /* TextEncodingRegistry.cpp */,
 				B2C3DA190D006C1D00EF6F26 /* TextEncodingRegistry.h */,
 				B2C3DA150D006C1D00EF6F26 /* TextFlags.h */,
-				B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */,
-				B2C3DA1B0D006C1D00EF6F26 /* TextStream.h */,
 				A863E2001343412000274926 /* UnicodeBidi.h */,
 				14476AA715DC4BB100305DB2 /* WritingMode.h */,
 			);
@@ -29978,7 +29972,6 @@
 				93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */,
 				A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */,
 				448B1B7A0F3A2F9B0047A9E2 /* TextSizeAdjustment.h in Headers */,
-				B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */,
 				9759E94014EF1CF80026A2DD /* TextTrack.h in Headers */,
 				9759E94314EF1CF80026A2DD /* TextTrackCue.h in Headers */,
 				071A9EC3168FBC55002629F9 /* TextTrackCueGeneric.h in Headers */,
@@ -33702,7 +33695,6 @@
 				E4C91A101802343900A17F6D /* TextPaintStyle.cpp in Sources */,
 				93F19A9D08245E59001E9ABC /* TextResourceDecoder.cpp in Sources */,
 				376DCCE113B4F966002EBEFC /* TextRun.cpp in Sources */,
-				B2C3DA4A0D006C1D00EF6F26 /* TextStream.cpp in Sources */,
 				9759E93F14EF1CF80026A2DD /* TextTrack.cpp in Sources */,
 				9759E94214EF1CF80026A2DD /* TextTrackCue.cpp in Sources */,
 				071A9EC2168FBC43002629F9 /* TextTrackCueGeneric.cpp in Sources */,

@@ -186,6 +186,7 @@ set(WTF_HEADERS
     text/SymbolRegistry.h
     text/TextBreakIterator.h
     text/TextBreakIteratorInternalICU.h
+    text/TextStream.h
     text/UniquedStringImpl.h
     text/WTFString.h
 
@@ -286,6 +287,7 @@ set(WTF_SOURCES
     text/SymbolImpl.cpp
     text/SymbolRegistry.cpp
     text/TextBreakIterator.cpp
+    text/TextStream.cpp
     text/WTFString.cpp
 
     text/icu/UTextProvider.cpp

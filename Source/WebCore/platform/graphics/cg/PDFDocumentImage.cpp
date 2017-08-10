@@ -40,13 +40,13 @@
 #include "Length.h"
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
-#include "TextStream.h"
 #include <CoreGraphics/CGContext.h>
 #include <CoreGraphics/CGPDFDocument.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RAMSize.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/TextStream.h>
 
 #if !PLATFORM(COCOA)
 #include "ImageSourceCG.h"

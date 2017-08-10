@@ -1861,12 +1861,12 @@ FloatRect Range::absoluteBoundingRect(RespectClippingForTextRects respectClippin
     return boundingRect(CoordinateSpace::Absolute, respectClippingForTextRects);
 }
 
-TextStream& operator<<(TextStream& ts, const RangeBoundaryPoint& r)
+WTF::TextStream& operator<<(WTF::TextStream& ts, const RangeBoundaryPoint& r)
 {
     return ts << r.toPosition();
 }
     
-TextStream& operator<<(TextStream& ts, const Range& r)
+WTF::TextStream& operator<<(WTF::TextStream& ts, const Range& r)
 {
     return ts << "Range: " << "start: " << r.startPosition() << " end: " << r.endPosition();
 }

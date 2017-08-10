@@ -34,11 +34,14 @@
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class GraphicsLayer;
 class ScrollingStateTree;
-class TextStream;
 
 // Used to allow ScrollingStateNodes to refer to layers in various contexts:
 // a) Async scrolling, main thread: ScrollingStateNode holds onto a GraphicsLayer, and uses m_layerID
@@ -237,10 +240,10 @@ public:
 protected:
     ScrollingStateNode(const ScrollingStateNode&, ScrollingStateTree&);
 
-    virtual void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const;
+    virtual void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
     
 private:
-    void dump(TextStream&, ScrollingStateTreeAsTextBehavior) const;
+    void dump(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
 
     const ScrollingNodeType m_nodeType;
     ScrollingNodeID m_nodeID;

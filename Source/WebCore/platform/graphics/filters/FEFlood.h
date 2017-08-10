@@ -50,7 +50,7 @@ public:
 
     void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
-    TextStream& externalRepresentation(TextStream&, int indention) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
 private:
     FEFlood(Filter&, const Color&, float);

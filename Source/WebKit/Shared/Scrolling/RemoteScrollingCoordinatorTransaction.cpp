@@ -34,9 +34,9 @@
 #include <WebCore/ScrollingStateOverflowScrollingNode.h>
 #include <WebCore/ScrollingStateStickyNode.h>
 #include <WebCore/ScrollingStateTree.h>
-#include <WebCore/TextStream.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/TextStream.h>
 
 using namespace WebCore;
 

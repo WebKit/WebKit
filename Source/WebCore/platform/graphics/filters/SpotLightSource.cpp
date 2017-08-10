@@ -32,7 +32,7 @@
 #include "config.h"
 #include "SpotLightSource.h"
 
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

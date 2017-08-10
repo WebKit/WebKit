@@ -27,10 +27,10 @@
 #include "FloatConversion.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "TextStream.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

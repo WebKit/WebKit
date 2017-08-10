@@ -38,7 +38,7 @@ public:
 
     FilterEffectType filterEffectType() const override { return FilterEffectTypeTile; }
 
-    TextStream& externalRepresentation(TextStream&, int indention) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
 private:
     FETile(Filter&);

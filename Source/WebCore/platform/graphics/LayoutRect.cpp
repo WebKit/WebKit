@@ -31,8 +31,8 @@
 #include "config.h"
 #include "LayoutRect.h"
 
-#include "TextStream.h"
 #include <algorithm>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

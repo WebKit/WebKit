@@ -191,7 +191,7 @@ inline float calcBorderRadiiConstraintScaleFor(const FloatRect& rect, const Floa
     return factor;
 }
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatRoundedRect&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatRoundedRect&);
 
 } // namespace WebCore
 

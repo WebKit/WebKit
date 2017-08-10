@@ -24,9 +24,9 @@
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "ShadowBlur.h"
-#include "TextStream.h"
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
     

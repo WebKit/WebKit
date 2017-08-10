@@ -54,7 +54,7 @@ public:
     void initPaintingData(PaintingData&) override;
     void updatePaintingData(PaintingData&, int x, int y, float z) override;
 
-    TextStream& externalRepresentation(TextStream&) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 
 private:
     SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& direction,

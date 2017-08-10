@@ -56,9 +56,11 @@ typedef struct _GdkRGBA GdkRGBA;
 #endif
 #endif
 
-namespace WebCore {
-
+namespace WTF {
 class TextStream;
+}
+
+namespace WebCore {
 
 typedef unsigned RGBA32; // Deprecated: Type for an RGBA quadruplet. Use RGBA class instead.
 
@@ -432,7 +434,7 @@ inline void Color::setRGB(RGBA32 rgb)
     tagAsValid();
 }
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Color&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 
 inline bool Color::isBlackColor(const Color& color)
 {

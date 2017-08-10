@@ -44,12 +44,15 @@
 #include "GraphicsTypes.h"
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class GraphicsContext;
 class GraphicsLayerFactory;
 class Image;
-class TextStream;
 class TiledBacking;
 class TimingFunction;
 class TransformationMatrix;
@@ -477,7 +480,7 @@ public:
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
     CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
 
-    void dumpLayer(TextStream&, int indent = 0, LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
+    void dumpLayer(WTF::TextStream&, int indent = 0, LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
 
     virtual void setShowDebugBorder(bool show) { m_showDebugBorder = show; }
     bool isShowingDebugBorder() const { return m_showDebugBorder; }
@@ -606,8 +609,8 @@ protected:
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }
     virtual void setReplicatedLayer(GraphicsLayer* layer) { m_replicatedLayer = layer; }
 
-    void dumpProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const;
-    virtual void dumpAdditionalProperties(TextStream&, int /*indent*/, LayerTreeAsTextBehavior) const { }
+    void dumpProperties(WTF::TextStream&, int indent, LayerTreeAsTextBehavior) const;
+    virtual void dumpAdditionalProperties(WTF::TextStream&, int /*indent*/, LayerTreeAsTextBehavior) const { }
 
     WEBCORE_EXPORT virtual void getDebugBorderInfo(Color&, float& width) const;
 
@@ -690,8 +693,8 @@ protected:
 #endif
 };
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Vector<GraphicsLayer::PlatformLayerID>&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const GraphicsLayer::CustomAppearance&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Vector<GraphicsLayer::PlatformLayerID>&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const GraphicsLayer::CustomAppearance&);
 
 } // namespace WebCore
 

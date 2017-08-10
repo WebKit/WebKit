@@ -181,7 +181,7 @@ public:
     virtual bool notSolidColor() { return true; }
 #endif
 
-    virtual void dump(TextStream&) const;
+    virtual void dump(WTF::TextStream&) const;
 
 protected:
     Image(ImageObserver* = nullptr);
@@ -204,7 +204,7 @@ private:
     Timer m_animationStartTimer;
 };
 
-TextStream& operator<<(TextStream&, const Image&);
+WTF::TextStream& operator<<(WTF::TextStream&, const Image&);
 
 } // namespace WebCore
 

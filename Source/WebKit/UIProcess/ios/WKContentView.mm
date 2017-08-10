@@ -60,9 +60,9 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/QuartzCoreSPI.h>
-#import <WebCore/TextStream.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/TextStream.h>
 
 using namespace WebCore;
 using namespace WebKit;

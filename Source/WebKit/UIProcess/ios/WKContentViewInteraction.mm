@@ -77,7 +77,6 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/TextIndicator.h>
-#import <WebCore/TextStream.h>
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <WebCore/WebEvent.h>
@@ -86,6 +85,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/text/TextStream.h>
 
 #if ENABLE(DRAG_SUPPORT)
 #import <WebCore/DragData.h>
@@ -166,7 +166,7 @@ inline bool operator!=(const WKSelectionDrawingInfo& a, const WKSelectionDrawing
     return !(a == b);
 }
 
-static WebCore::TextStream& operator<<(WebCore::TextStream& stream, WKSelectionDrawingInfo::SelectionType type)
+static TextStream& operator<<(TextStream& stream, WKSelectionDrawingInfo::SelectionType type)
 {
     switch (type) {
     case WKSelectionDrawingInfo::SelectionType::None: stream << "none"; break;
@@ -177,7 +177,7 @@ static WebCore::TextStream& operator<<(WebCore::TextStream& stream, WKSelectionD
     return stream;
 }
 
-WebCore::TextStream& operator<<(WebCore::TextStream& stream, const WKSelectionDrawingInfo& info)
+TextStream& operator<<(TextStream& stream, const WKSelectionDrawingInfo& info)
 {
     TextStream::GroupScope group(stream);
     stream.dumpProperty("type", info.type);

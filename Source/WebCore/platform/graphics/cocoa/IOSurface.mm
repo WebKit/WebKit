@@ -36,9 +36,9 @@
 #import "ImageBufferDataCG.h"
 #import "Logging.h"
 #import "MachSendRight.h"
-#import "TextStream.h"
 #import <wtf/Assertions.h>
 #import <wtf/MathExtras.h>
+#import <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS)
 // Move this into the SPI header once it's possible to put inside the APPLE_INTERNAL_SDK block.

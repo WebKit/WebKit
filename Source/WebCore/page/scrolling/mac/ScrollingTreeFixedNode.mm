@@ -31,8 +31,8 @@
 #include "Logging.h"
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingTree.h"
-#include "TextStream.h"
 #include <QuartzCore/CALayer.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

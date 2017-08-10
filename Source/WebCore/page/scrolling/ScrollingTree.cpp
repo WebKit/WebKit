@@ -36,8 +36,8 @@
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
 #include "ScrollingTreeScrollingNode.h"
-#include "TextStream.h"
 #include <wtf/SetForScope.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

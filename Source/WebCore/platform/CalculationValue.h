@@ -36,9 +36,11 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-
+namespace WTF {
 class TextStream;
+}
+
+namespace WebCore {
 
 enum CalcOperator {
     CalcAdd = '+',
@@ -65,7 +67,7 @@ public:
 
     virtual float evaluate(float maxValue) const = 0;
     virtual bool operator==(const CalcExpressionNode&) const = 0;
-    virtual void dump(TextStream&) const = 0;
+    virtual void dump(WTF::TextStream&) const = 0;
 
 private:
     CalcExpressionNodeType m_type;
@@ -80,7 +82,7 @@ public:
 private:
     float evaluate(float) const override;
     bool operator==(const CalcExpressionNode&) const override;
-    void dump(TextStream&) const override;
+    void dump(WTF::TextStream&) const override;
 
     float m_value;
 };
@@ -94,7 +96,7 @@ public:
 private:
     float evaluate(float maxValue) const override;
     bool operator==(const CalcExpressionNode&) const override;
-    void dump(TextStream&) const override;
+    void dump(WTF::TextStream&) const override;
 
     Length m_length;
 };
@@ -110,7 +112,7 @@ public:
 private:
     float evaluate(float maxValue) const override;
     bool operator==(const CalcExpressionNode&) const override;
-    void dump(TextStream&) const override;
+    void dump(WTF::TextStream&) const override;
 
     std::unique_ptr<CalcExpressionNode> m_leftSide;
     std::unique_ptr<CalcExpressionNode> m_rightSide;
@@ -128,7 +130,7 @@ public:
 private:
     float evaluate(float maxValue) const override;
     bool operator==(const CalcExpressionNode&) const override;
-    void dump(TextStream&) const override;
+    void dump(WTF::TextStream&) const override;
 
     Length m_from;
     Length m_to;
@@ -238,9 +240,9 @@ inline const CalcExpressionBlendLength& toCalcExpressionBlendLength(const CalcEx
     return static_cast<const CalcExpressionBlendLength&>(value);
 }
 
-TextStream& operator<<(TextStream&, const CalculationValue&);
-TextStream& operator<<(TextStream&, const CalcExpressionNode&);
-TextStream& operator<<(TextStream&, CalcOperator);
+WTF::TextStream& operator<<(WTF::TextStream&, const CalculationValue&);
+WTF::TextStream& operator<<(WTF::TextStream&, const CalcExpressionNode&);
+WTF::TextStream& operator<<(WTF::TextStream&, CalcOperator);
 
 } // namespace WebCore
 
