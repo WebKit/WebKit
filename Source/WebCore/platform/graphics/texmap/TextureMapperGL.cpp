@@ -664,7 +664,7 @@ void TextureMapperGL::bindSurface(BitmapTexture *surface)
         return;
     }
 
-    static_cast<BitmapTextureGL*>(surface)->bindAsSurface(m_context3D.get());
+    static_cast<BitmapTextureGL*>(surface)->bindAsSurface();
     data().projectionMatrix = createProjectionMatrix(surface->size(), true /* mirrored */);
     data().currentSurface = surface;
 }
@@ -760,7 +760,7 @@ IntRect TextureMapperGL::clipBounds()
 
 Ref<BitmapTexture> TextureMapperGL::createTexture(GC3Dint internalFormat)
 {
-    return BitmapTextureGL::create(m_contextAttributes, *m_context3D, internalFormat);
+    return BitmapTextureGL::create(m_contextAttributes, internalFormat);
 }
 
 std::unique_ptr<TextureMapper> TextureMapper::platformCreateAccelerated()
