@@ -142,7 +142,7 @@ template<typename T>
 int identifierForStyleProperty(T& style, CSSPropertyID propertyID)
 {
     RefPtr<CSSValue> value = extractPropertyValue(style, propertyID);
-    if (propertyID == CSSPropertyFontStyle && is<CSSFontStyleValue>(value.get()) && downcast<CSSFontStyleValue>(value.get())->isItalic())
+    if (propertyID == CSSPropertyFontStyle && is<CSSFontStyleValue>(value.get()) && downcast<CSSFontStyleValue>(value.get())->isItalicOrOblique())
         return CSSValueItalic;
     if (!is<CSSPrimitiveValue>(value.get()))
         return 0;
