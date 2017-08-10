@@ -99,6 +99,8 @@ class PlaybackSessionManager : public RefCounted<PlaybackSessionManager>, privat
 public:
     static Ref<PlaybackSessionManager> create(WebPage&);
     virtual ~PlaybackSessionManager();
+    
+    void invalidate();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

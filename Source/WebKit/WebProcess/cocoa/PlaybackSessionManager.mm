@@ -184,7 +184,15 @@ PlaybackSessionManager::~PlaybackSessionManager()
     m_mediaElements.clear();
     m_clientCounts.clear();
 
+    if (m_page)
+        WebProcess::singleton().removeMessageReceiver(Messages::PlaybackSessionManager::messageReceiverName(), m_page->pageID());
+}
+
+void PlaybackSessionManager::invalidate()
+{
+    ASSERT(m_page);
     WebProcess::singleton().removeMessageReceiver(Messages::PlaybackSessionManager::messageReceiverName(), m_page->pageID());
+    m_page = nullptr;
 }
 
 PlaybackSessionManager::ModelInterfaceTuple PlaybackSessionManager::createModelAndInterface(uint64_t contextId)

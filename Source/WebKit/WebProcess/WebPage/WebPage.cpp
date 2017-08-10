@@ -673,6 +673,9 @@ WebPage::~WebPage()
 #endif
     
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    if (m_playbackSessionManager)
+        m_playbackSessionManager->invalidate();
+
     if (m_videoFullscreenManager)
         m_videoFullscreenManager->invalidate();
 #endif
