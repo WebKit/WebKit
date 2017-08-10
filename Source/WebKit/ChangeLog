@@ -1,3 +1,14 @@
+2017-08-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Fix iOS simulator build after change "[WTF] Move TextStream into WTF"
+        https://bugs.webkit.org/show_bug.cgi?id=175211
+
+        Reviewed by Myles C. Maxfield.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scrollByContentOffset:]):
+        (-[WKWebView _navigationGestureDidBegin]):
+
 2017-08-10  Chris Dumez  <cdumez@apple.com>
 
         [Beacon] Do connect-src CSP check on redirects as well

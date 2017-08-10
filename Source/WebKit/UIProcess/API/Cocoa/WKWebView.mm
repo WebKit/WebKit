@@ -1865,7 +1865,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
     [_contentView willStartZoomOrScroll];
 
-    LOG_WITH_STREAM(VisibleRects, stream << "_scrollByContentOffset: scrolling to " << boundedOffset);
+    LOG_WITH_STREAM(VisibleRects, stream << "_scrollByContentOffset: scrolling to " << WebCore::FloatPoint(boundedOffset));
 
     [_scrollView setContentOffset:boundedOffset animated:YES];
 }
@@ -2679,7 +2679,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     _frozenVisibleContentRect = [self convertRect:fullViewRect toView:_contentView.get()];
     _frozenUnobscuredContentRect = [self convertRect:unobscuredRect toView:_contentView.get()];
 
-    LOG_WITH_STREAM(VisibleRects, stream << "_navigationGestureDidBegin: freezing visibleContentRect " << _frozenVisibleContentRect.value() << " UnobscuredContentRect " << _frozenUnobscuredContentRect.value());
+    LOG_WITH_STREAM(VisibleRects, stream << "_navigationGestureDidBegin: freezing visibleContentRect " << WebCore::FloatRect(_frozenVisibleContentRect.value()) << " UnobscuredContentRect " << WebCore::FloatRect(_frozenUnobscuredContentRect.value()));
 }
 
 - (void)_navigationGestureDidEnd
