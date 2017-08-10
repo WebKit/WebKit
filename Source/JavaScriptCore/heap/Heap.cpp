@@ -71,7 +71,6 @@
 #include <algorithm>
 #if PLATFORM(IOS)
 #include <bmalloc/bmalloc.h>
-#include <sys/sysctl.h>
 #endif
 #include <wtf/CurrentTime.h>
 #include <wtf/ListDump.h>
@@ -116,39 +115,9 @@ size_t minHeapSize(HeapType heapType, size_t ramSize)
     return Options::smallHeapSize();
 }
 
-#if PLATFORM(IOS)
-static bool useAggressiveGCTrigger()
-{
-    static bool useAggressiveGCTrigger;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        useAggressiveGCTrigger = false;
-
-        if (Options::forceAggressiveGCTrigger()) {
-            useAggressiveGCTrigger = true;
-            return;
-        }
-
-        uint64_t memSizeInBytes;
-        size_t sizeofMemSize = sizeof(memSizeInBytes);
-        if (sysctlbyname("hw.memsize", &memSizeInBytes, &sizeofMemSize, nullptr, 0))
-            return;
-        useAggressiveGCTrigger = memSizeInBytes <= 1 * GB;
-    });
-
-    return useAggressiveGCTrigger;
-}
-#endif
-
 size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
 {
 #if PLATFORM(IOS)
-    if (useAggressiveGCTrigger()) {
-        double memoryUsed = bmalloc::api::percentAvailableMemoryInUse();
-        double result = ((1 - memoryUsed) / Options::aggressiveGCTriggerScalingValue()) + 1;
-        return heapSize * std::max(std::min(result, Options::aggressiveGCTriggerMaxMultiplier()), Options::aggressiveGCTriggerMinMultiplier());
-    }
-
     size_t memoryFootprint = bmalloc::api::memoryFootprint();
     if (memoryFootprint < ramSize * Options::smallHeapRAMFraction())
         return Options::smallHeapGrowthFactor() * heapSize;
