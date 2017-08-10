@@ -1,3 +1,18 @@
+2017-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crashes in WebCore::PasteboardHelper::fillSelectionData when source file of drag is unavailable
+        https://bugs.webkit.org/show_bug.cgi?id=174161
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In r219385 we changed the early return in fillSelectionData() to check the selection data length instead of the
+        data pointer. However, the gtk_selection_data_get_length() can return -1, so we need to check also if the value
+        less than 0. The case of setting an empty string could be valid depending on the target type, so it's better to
+        return early only when data lenght is less than 0 and handle the 0 length case in each target.
+
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::fillSelectionData):
+
 2017-08-10  Antti Koivisto  <antti@apple.com>
 
         Text renderer updates should be done by RenderTreeUpdater
