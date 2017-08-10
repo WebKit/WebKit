@@ -46,6 +46,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(shouldOpenExternalURLsPolicy);
     encoder << downloadAttribute;
     encoder << clickLocationInRootViewCoordinates;
+    encoder << isRedirect;
 }
 
 bool NavigationActionData::decode(IPC::Decoder& decoder, NavigationActionData& result)
@@ -67,6 +68,8 @@ bool NavigationActionData::decode(IPC::Decoder& decoder, NavigationActionData& r
     if (!decoder.decode(result.downloadAttribute))
         return false;
     if (!decoder.decode(result.clickLocationInRootViewCoordinates))
+        return false;
+    if (!decoder.decode(result.isRedirect))
         return false;
 
     return true;

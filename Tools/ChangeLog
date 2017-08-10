@@ -1,3 +1,23 @@
+2017-08-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220459. rdar://problem/33820786
+
+    2017-08-09  Daniel Bates  <dabates@apple.com>
+
+            REGRESSION (r219013): OAuth flows are broken when redirecting back to application after authentication
+            https://bugs.webkit.org/show_bug.cgi?id=175247
+            <rdar://problem/33679804>
+
+            Reviewed by Brady Eidson.
+
+            Add tests for redirects.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/DecidePolicyForNavigationAction.mm:
+            (TEST):
+            * TestWebKitAPI/cocoa/TestProtocol.mm:
+            (createRedirectURL):
+            (-[TestProtocol startLoading]):
+
 2017-07-31  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220033. rdar://problem/33619596

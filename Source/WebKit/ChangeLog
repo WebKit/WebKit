@@ -1,3 +1,33 @@
+2017-08-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220459. rdar://problem/33820786
+
+    2017-08-09  Daniel Bates  <dabates@apple.com>
+
+            REGRESSION (r219013): OAuth flows are broken when redirecting back to application after authentication
+            https://bugs.webkit.org/show_bug.cgi?id=175247
+            <rdar://problem/33679804>
+
+            Reviewed by Brady Eidson.
+
+            Add SPI WKNavigationAction._isRedirect to query whether the navigation was in response to receiving
+            a redirect response. The majority of the WebKit change is plumbing this knowledge through to connect
+            it with the SPI.
+
+            * Shared/NavigationActionData.cpp:
+            (WebKit::NavigationActionData::encode const):
+            (WebKit::NavigationActionData::decode):
+            Encode and decode the boolean NavigationActionData::isRedirect.
+            * Shared/NavigationActionData.h:
+            * UIProcess/API/APINavigationAction.h:
+            * UIProcess/API/Cocoa/WKNavigationAction.mm:
+            (-[WKNavigationAction _isRedirect]): Added.
+            * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Set NavigationActionData::isRedirect
+            depending on whether the navigation is in response to receiving a redirect response.
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2017-08-07  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220273. rdar://problem/33732754
