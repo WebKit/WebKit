@@ -1,3 +1,11 @@
+2017-08-10  Lucas Forschler  <lforschler@apple.com>
+
+        Fix duplicated code in r220534.
+
+        Unreviewed cleanup.
+
+        * Scripts/bisect-builds:
+
 2017-08-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Enable SerializedCryptoKeyWrapTest in iOS
