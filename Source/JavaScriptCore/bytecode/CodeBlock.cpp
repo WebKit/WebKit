@@ -877,12 +877,13 @@ void CodeBlock::setConstantIdentifierSetRegisters(VM& vm, const Vector<ConstantI
     ExecState* exec = globalObject->globalExec();
 
     for (const auto& entry : constants) {
+        const IdentifierSet& set = entry.first;
+
         Structure* setStructure = globalObject->setStructure();
         RETURN_IF_EXCEPTION(scope, void());
-        JSSet* jsSet = JSSet::create(exec, vm, setStructure);
+        JSSet* jsSet = JSSet::create(exec, vm, setStructure, set.size());
         RETURN_IF_EXCEPTION(scope, void());
 
-        const IdentifierSet& set = entry.first;
         for (auto setEntry : set) {
             JSString* jsString = jsOwnedString(&vm, setEntry.get()); 
             jsSet->add(exec, jsString);

@@ -300,6 +300,16 @@ public:
     {
     }
 
+    HashMapImpl(VM& vm, Structure* structure, uint32_t sizeHint)
+        : Base(vm, structure)
+        , m_keyCount(0)
+        , m_deleteCount(0)
+    {
+        uint32_t capacity = ((Checked<uint32_t>(sizeHint) * 2) + 1).unsafeGet();
+        capacity = std::max<uint32_t>(WTF::roundUpToPowerOfTwo(capacity), 4U);
+        m_capacity = capacity;
+    }
+
     ALWAYS_INLINE HashMapBucketType** buffer() const
     {
         return m_buffer->buffer();
