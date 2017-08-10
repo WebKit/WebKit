@@ -147,7 +147,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
 
     m_delegateIsDecidingNavigationPolicy = true;
     m_suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
-    m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, formState, [this](PolicyAction action) {
+    m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, didReceiveRedirectResponse, formState, [this](PolicyAction action) {
         continueAfterNavigationPolicy(action);
     });
     m_delegateIsDecidingNavigationPolicy = false;
