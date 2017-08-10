@@ -27,6 +27,7 @@
 
 #include "Compiler.h"
 #include <algorithm>
+#include <limits.h>
 
 // This file contains a bunch of helper functions for decoding LEB numbers.
 // See https://en.wikipedia.org/wiki/LEB128 for more information about the
