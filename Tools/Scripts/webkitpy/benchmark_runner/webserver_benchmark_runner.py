@@ -6,7 +6,7 @@ import urlparse
 
 from benchmark_runner import BenchmarkRunner
 from http_server_driver.http_server_driver_factory import HTTPServerDriverFactory
-from utils import timeout
+from webkitpy.common.timeout_context import Timeout
 
 
 _log = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
             self._http_server_driver.serve(web_root)
             url = urlparse.urljoin(self._http_server_driver.base_url(), self._plan_name + '/' + test_file)
             self._browser_driver.launch_url(url, self._plan['options'], self._build_dir)
-            with timeout(self._plan['timeout']):
+            with Timeout(self._plan['timeout']):
                 result = self._get_result(url)
         finally:
             self._browser_driver.close_browsers()

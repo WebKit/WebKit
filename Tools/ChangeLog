@@ -1,3 +1,16 @@
+2017-08-09  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix run-benchmark after r220483.
+        https://bugs.webkit.org/show_bug.cgi?id=175415
+        <rdar://problem/33803003>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update run-benchmark script to adapt new Timeout implementation introduced in r220483.
+
+        * Scripts/webkitpy/benchmark_runner/webserver_benchmark_runner.py:
+        (WebServerBenchmarkRunner._run_one_test):
+
 2017-08-09  Chris Dumez  <cdumez@apple.com>
 
         Disable Beacon API on WK1 DRT and WK2 when not using NETWORK_SESSION
