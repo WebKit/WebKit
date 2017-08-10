@@ -1,5 +1,33 @@
 2017-08-10  Lucas Forschler  <lforschler@apple.com>
 
+        Write a tool to bisect WebKit builds
+        https://bugs.webkit.org/show_bug.cgi?id=174596
+
+        Reviewed by Dean Johnson and Kocsen Chung.
+
+        * Scripts/bisect-builds: Added.
+        (bisect_builds): main bisection algorithm
+        (download_archive):download an archive from S3 using existing tools
+        (extract_archive):extract an archive using existing tools
+        (find_le):Find rightmost value less than or equal to x
+        (find_ge):Find leftmost item greater than or equal to x
+        (get_api_url):generate url for the rest api/database
+        (get_indices_from_revisions):convert revisions to list indexes for bisection
+        (get_sorted_revisions):retrieve sorted revision list
+        (get_s3_location_for_revision):calculate the S3 archive storage location
+        (parse_args):parse command line arguments
+        (pick_next_build):compute the next build to bisect
+        (prompt_did_reproduce):prompt user for direction for bisection
+        (set_webkit_output_dir):set the folder for bisected builds to avoid overwriting engineering build output
+        (test_archive):Platform specific logic to test downloaded archive
+        (minified_platforms):return a list of minified platforms in the database
+        (unminified_platforms):return a list of full platforms in the database
+        (is_supported_platform):check if platform is supported
+        (validate_options):validate command line options
+        (main):
+
+2017-08-10  Lucas Forschler  <lforschler@apple.com>
+
         Remove bisect-builds script.
         https://bugs.webkit.org/show_bug.cgi?id=175433
         
