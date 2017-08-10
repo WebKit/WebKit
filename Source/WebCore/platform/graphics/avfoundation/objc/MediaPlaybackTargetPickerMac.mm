@@ -30,10 +30,10 @@
 
 #import "Logging.h"
 #import <WebCore/AVFoundationSPI.h>
-#import <WebCore/AVKitSPI.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/MediaPlaybackTargetMac.h>
 #import <objc/runtime.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/SoftLinking.h>
 

@@ -44,11 +44,11 @@
 #import <WebCore/InspectorController.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/PageOverlayController.h>
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SystemTracing.h>
 
 using namespace WebCore;

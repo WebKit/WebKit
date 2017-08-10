@@ -30,7 +30,7 @@
 
 #import "WebPageProxy.h"
 #import "WebPaymentCoordinatorProxyCocoa.h"
-#import <WebCore/PassKitSPI.h>
+#import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
 

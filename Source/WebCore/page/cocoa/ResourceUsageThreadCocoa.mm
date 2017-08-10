@@ -28,11 +28,11 @@
 
 #if ENABLE(RESOURCE_USAGE)
 
-#include "MachVMSPI.h"
 #include <JavaScriptCore/GCActivityCallback.h>
 #include <heap/Heap.h>
 #include <mach/mach.h>
 #include <mach/vm_statistics.h>
+#include <pal/spi/cocoa/MachVMSPI.h>
 #include <runtime/VM.h>
 
 namespace WebCore {

@@ -30,7 +30,7 @@
 
 #import "UIKitSPI.h"
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/QuartzCoreSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 

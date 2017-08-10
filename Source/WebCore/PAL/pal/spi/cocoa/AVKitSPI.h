@@ -183,7 +183,7 @@ typedef AVFunctionBarMediaSelectionOption AVTouchBarMediaSelectionOption;
 
 NS_ASSUME_NONNULL_BEGIN
 
-__attribute__((availability(macosx,obsoleted=10.13))) @protocol AVFunctionBarPlaybackControlsControlling <NSObject>;
+__attribute__((availability(macosx, obsoleted = 10.13))) @protocol AVFunctionBarPlaybackControlsControlling <NSObject>;
 @property (readonly) NSTimeInterval contentDuration;
 @property (readonly, nullable) AVValueTiming *timing;
 @property (readonly, getter=isSeeking) BOOL seeking;
@@ -193,14 +193,14 @@ __attribute__((availability(macosx,obsoleted=10.13))) @protocol AVFunctionBarPla
 @property (readonly) BOOL hasEnabledVideo;
 @end
 
-__attribute__((availability(macosx,obsoleted=10.13))) @interface AVFunctionBarPlaybackControlsProvider : NSResponder
+__attribute__((availability(macosx, obsoleted = 10.13))) @interface AVFunctionBarPlaybackControlsProvider : NSResponder
 @property (strong, readonly, nullable) NSTouchBar *touchBar;
 @property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
 @end
 
 @class AVThumbnail;
 
-__attribute__((availability(macosx,obsoleted=10.13))) @interface AVFunctionBarScrubber : NSView
+__attribute__((availability(macosx, obsoleted = 10.13))) @interface AVFunctionBarScrubber : NSView
 @property (assign, nullable) id<AVFunctionBarPlaybackControlsControlling> playbackControlsController;
 @end
 
@@ -209,7 +209,7 @@ __attribute__((availability(macosx,obsoleted=10.13))) @interface AVFunctionBarSc
 @protocol AVTouchBarPlaybackControlsControlling <NSObject>
 @property (readonly) NSTimeInterval contentDuration;
 @property (readonly, nullable) AVValueTiming *timing;
-@property (readonly, getter = isSeeking) BOOL seeking;
+@property (readonly, getter=isSeeking) BOOL seeking;
 @property (readonly) NSTimeInterval seekToTime;
 - (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)toleranceBefore toleranceAfter:(NSTimeInterval)toleranceAfter;
 @property (readonly) BOOL hasEnabledAudio;

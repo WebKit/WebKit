@@ -26,8 +26,8 @@
 #include "config.h"
 #include "FontCache.h"
 
-#include "CoreTextSPI.h"
 #include "Font.h"
+#include <pal/spi/cocoa/CoreTextSPI.h>
 
 #include <CoreText/SFNTLayoutTypes.h>
 

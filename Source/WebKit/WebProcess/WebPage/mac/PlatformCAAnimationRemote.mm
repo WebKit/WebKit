@@ -33,8 +33,8 @@
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
 #import <WebCore/PlatformCAFilters.h>
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/TimingFunction.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>

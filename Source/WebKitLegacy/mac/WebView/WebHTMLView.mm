@@ -108,7 +108,6 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/NSSpellCheckerSPI.h>
-#import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/NSViewSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/PrintContext.h>
@@ -132,6 +131,7 @@
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
 #import <limits>
+#import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>

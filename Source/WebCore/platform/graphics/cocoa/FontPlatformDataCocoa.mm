@@ -24,14 +24,14 @@
 #import "config.h"
 #import "FontPlatformData.h"
 
-#import "CoreTextSPI.h"
 #import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
+#import <pal/spi/cocoa/CoreTextSPI.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
-#import "CoreGraphicsSPI.h"
 #import <CoreText/CoreText.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
 namespace WebCore {

@@ -28,10 +28,10 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "PassKitSPI.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "TranslateTransformOperation.h"
+#include <pal/spi/cocoa/PassKitSPI.h>
 #include <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)

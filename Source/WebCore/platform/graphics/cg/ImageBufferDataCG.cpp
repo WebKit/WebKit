@@ -42,8 +42,8 @@
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 #include "IOSurface.h"
-#include "IOSurfaceSPI.h"
 #include <dispatch/dispatch.h>
+#include <pal/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
 // CA uses ARGB32 for textures and ARGB32 -> ARGB32 resampling is optimized.

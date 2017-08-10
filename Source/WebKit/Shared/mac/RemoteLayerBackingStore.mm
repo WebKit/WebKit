@@ -37,8 +37,8 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformCALayerClient.h>
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WebLayer.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 #if USE(IOSURFACE)
 #import <mach/mach_port.h>

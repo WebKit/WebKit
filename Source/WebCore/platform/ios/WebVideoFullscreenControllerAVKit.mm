@@ -33,7 +33,6 @@
 #import "MediaSelectionOption.h"
 #import "PlaybackSessionInterfaceAVKit.h"
 #import "PlaybackSessionModelMediaElement.h"
-#import "QuartzCoreSPI.h"
 #import "TimeRanges.h"
 #import "VideoFullscreenChangeObserver.h"
 #import "VideoFullscreenInterfaceAVKit.h"
@@ -44,6 +43,7 @@
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/RenderVideo.h>
 #import <WebCore/WebCoreThreadRun.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)

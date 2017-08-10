@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #import <Foundation/NSObject.h>
 
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)

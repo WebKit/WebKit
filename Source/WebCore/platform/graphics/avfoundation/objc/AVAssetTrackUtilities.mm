@@ -29,8 +29,8 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #import "FourCC.h"
-#import "IOPSLibSPI.h"
 #import <AVFoundation/AVAssetTrack.h>
+#import <pal/spi/cocoa/IOPSLibSPI.h>
 
 #import "CoreMediaSoftLink.h"
 #import "VideoToolboxSoftLink.h"

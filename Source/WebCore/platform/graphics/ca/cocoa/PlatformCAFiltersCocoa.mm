@@ -29,8 +29,8 @@
 #import "FloatConversion.h"
 #import "LengthFunctions.h" // This is a layering violation.
 #import "PlatformCALayerCocoa.h"
-#import "QuartzCoreSPI.h"
 #import <QuartzCore/QuartzCore.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
 using namespace WebCore;

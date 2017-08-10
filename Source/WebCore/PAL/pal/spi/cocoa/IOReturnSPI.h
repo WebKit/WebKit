@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PthreadSPI_h
-#define PthreadSPI_h
+#pragma once
 
-#include <pthread.h>
+#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
-WTF_EXTERN_C_BEGIN
+#include <IOKit/IOReturn.h>
 
-int pthread_set_fixedpriority_self(void);
+#else
 
-WTF_EXTERN_C_END
+#include <mach/kern_return.h>
 
-#endif // PthreadSPI_h
+typedef kern_return_t IOReturn;
+
+#define kIOReturnSuccess KERN_SUCCESS
+
+#endif

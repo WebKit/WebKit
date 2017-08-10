@@ -26,9 +26,9 @@
 #include "config.h"
 #include "FontDescription.h"
 
-#include "CoreTextSPI.h"
 #include "FontCache.h"
 #include "FontFamilySpecificationCoreText.h"
+#include <pal/spi/cocoa/CoreTextSPI.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/text/AtomicString.h>

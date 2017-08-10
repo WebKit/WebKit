@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MachVMSPI_h
-#define MachVMSPI_h
+#pragma once
 
 #include <mach/boolean.h>
 #include <mach/kern_return.h>
@@ -39,13 +38,11 @@ WTF_EXTERN_C_BEGIN
 kern_return_t mach_vm_allocate(vm_map_t target, mach_vm_address_t*, mach_vm_size_t, int flags);
 kern_return_t mach_vm_deallocate(vm_map_t target, mach_vm_address_t, mach_vm_size_t);
 kern_return_t mach_vm_map(vm_map_t targetTask, mach_vm_address_t*, mach_vm_size_t, mach_vm_offset_t mask, int flags,
-                                   mem_entry_name_port_t, memory_object_offset_t, boolean_t copy, vm_prot_t currentProtection, vm_prot_t maximumProtection, vm_inherit_t);
+    mem_entry_name_port_t, memory_object_offset_t, boolean_t copy, vm_prot_t currentProtection, vm_prot_t maximumProtection, vm_inherit_t);
 kern_return_t mach_vm_protect(vm_map_t targetTask, mach_vm_address_t, mach_vm_size_t, boolean_t setMaximum, vm_prot_t newProtection);
 kern_return_t mach_vm_region(vm_map_t targetTask, mach_vm_address_t*, mach_vm_size_t*, vm_region_flavor_t, vm_region_info_t,
-                                      mach_msg_type_number_t* infoCount, mach_port_t* objectName);
+    mach_msg_type_number_t* infoCount, mach_port_t* objectName);
 kern_return_t mach_vm_region_recurse(vm_map_t targetTask, mach_vm_address_t*, mach_vm_size_t*, uint32_t* depth, vm_region_recurse_info_t, mach_msg_type_number_t* infoCount);
 kern_return_t mach_vm_purgable_control(vm_map_t target, mach_vm_address_t, vm_purgable_t control, int* state);
 
 WTF_EXTERN_C_END
-
-#endif // MachVMSPI_h

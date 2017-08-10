@@ -29,11 +29,11 @@
 
 #if PLATFORM(IOS)
 
-#import "CoreGraphicsSPI.h"
 #import "FontCascade.h"
 #import "PlatformScreen.h"
 #import "WebCoreThreadInternal.h"
 #import <ImageIO/ImageIO.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/StdLibExtras.h>
 
 using namespace WebCore;

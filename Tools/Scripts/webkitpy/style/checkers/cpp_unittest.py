@@ -4492,6 +4492,18 @@ class WebKitStyleTest(CppStyleTestBase):
             '}\n',
             'This { should be at the end of the previous line  [whitespace/braces] [4]')
         self.assert_multi_line_lint(
+            'typedef CF_OPTIONS(NSInteger, type)\n'
+            '{\n'
+            '    0,\n'
+            '    1\n'
+            '};',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'typedef CF_OPTIONS(NSInteger, type) {\n'
+            '    0,\n'
+            '    1\n'
+            '};', '')
+        self.assert_multi_line_lint(
             'typedef NS_ENUM(NSInteger, type)\n'
             '{\n'
             '    0,\n'

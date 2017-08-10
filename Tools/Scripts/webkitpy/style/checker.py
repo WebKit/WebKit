@@ -236,6 +236,15 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'JavaScriptCore', 'parser', 'Keywords.table')],
      ["+whitespace/carriage_return"]),
 
+    ([# DataDetectorsCoreSPI.h declares enum bitfields as CFIndex.
+      os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi', 'cocoa', 'DataDetectorsCoreSPI.h')],
+     ["-runtime/enum_bitfields"]),
+
+    ([# PassKitSPI.h imports "PassKit.h" at two lines depending on the build configuration,
+      # which causes a false positive error.
+      os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi', 'cocoa', 'PassKitSPI.h')],
+     ["-build/include"]),
+
     ([# Some SPI headers have identifier names with underscores.
       os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi')],
      ["-readability/naming/underscores"]),

@@ -44,11 +44,11 @@
 #import "HTMLImageElement.h"
 #import "HTMLSpanElement.h"
 #import "LegacyWebArchive.h"
-#import "NSAttributedStringSPI.h"
 #import "Pasteboard.h"
 #import "RenderElement.h"
 #import "RenderStyle.h"
 #import "Text.h"
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SoftLinking.h>
 

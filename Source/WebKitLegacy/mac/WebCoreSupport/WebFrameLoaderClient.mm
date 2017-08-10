@@ -105,8 +105,6 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/MouseEvent.h>
-#import <WebCore/NSURLDownloadSPI.h>
-#import <WebCore/NSURLFileTypeMappingsSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/PluginBlacklist.h>
 #import <WebCore/PluginViewBase.h>
@@ -125,6 +123,8 @@
 #import <WebKitLegacy/DOMElement.h>
 #import <WebKitLegacy/DOMHTMLFormElement.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/cocoa/NSURLDownloadSPI.h>
+#import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
@@ -148,9 +148,9 @@
 #endif
 
 #if USE(QUICK_LOOK)
-#import <WebCore/NSFileManagerSPI.h>
 #import <WebCore/PreviewLoaderClient.h>
 #import <WebCore/QuickLook.h>
+#import <pal/spi/cocoa/NSFileManagerSPI.h>
 #endif
 
 #if HAVE(APP_LINKS)

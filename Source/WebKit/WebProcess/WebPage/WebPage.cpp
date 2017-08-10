@@ -234,8 +234,8 @@
 #if PLATFORM(IOS)
 #include "RemoteLayerTreeDrawingArea.h"
 #include <CoreGraphics/CoreGraphics.h>
-#include <WebCore/CoreTextSPI.h>
 #include <WebCore/Icon.h>
+#include <pal/spi/cocoa/CoreTextSPI.h>
 #endif
 
 #ifndef NDEBUG

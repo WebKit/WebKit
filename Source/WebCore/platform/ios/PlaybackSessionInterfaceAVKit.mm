@@ -30,13 +30,13 @@
 #if PLATFORM(IOS)
 #if HAVE(AVKIT)
 
-#import "AVKitSPI.h"
 #import "Logging.h"
 #import "MediaSelectionOption.h"
 #import "PlaybackSessionModel.h"
 #import "TimeRanges.h"
 #import "WebAVPlayerController.h"
 #import <AVFoundation/AVTime.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>

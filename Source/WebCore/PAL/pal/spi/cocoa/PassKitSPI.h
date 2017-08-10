@@ -67,7 +67,7 @@ typedef NS_OPTIONS(NSUInteger, PKAddressField) {
     PKAddressFieldPhone = 1UL << 1,
     PKAddressFieldEmail = 1UL << 2,
     PKAddressFieldName = 1UL << 3,
-    PKAddressFieldAll = (PKAddressFieldPostalAddress|PKAddressFieldPhone|PKAddressFieldEmail|PKAddressFieldName)
+    PKAddressFieldAll = (PKAddressFieldPostalAddress | PKAddressFieldPhone | PKAddressFieldEmail | PKAddressFieldName)
 };
 
 typedef NS_OPTIONS(NSUInteger, PKMerchantCapability) {

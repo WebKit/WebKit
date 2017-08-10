@@ -32,7 +32,6 @@
 #import "CSSPrimitiveValue.h"
 #import "CSSToLengthConversionData.h"
 #import "CSSValueKeywords.h"
-#import "CoreTextSPI.h"
 #import "DateComponents.h"
 #import "Document.h"
 #import "File.h"
@@ -70,6 +69,7 @@
 #import "WebCoreThreadRun.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <objc/runtime.h>
+#import <pal/spi/cocoa/CoreTextSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RefPtr.h>
 #import <wtf/SoftLinking.h>

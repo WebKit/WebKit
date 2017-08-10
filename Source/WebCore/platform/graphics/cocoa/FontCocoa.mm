@@ -28,8 +28,6 @@
 #import "Font.h"
 
 #import "Color.h"
-#import "CoreGraphicsSPI.h"
-#import "CoreTextSPI.h"
 #import "FloatRect.h"
 #import "FontCache.h"
 #import "FontCascade.h"
@@ -38,6 +36,8 @@
 #import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
 #import <float.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/CoreTextSPI.h>
 #import <unicode/uchar.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>

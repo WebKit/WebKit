@@ -31,7 +31,7 @@
 #import "WebPageProxy.h"
 #import "WebViewImpl.h"
 #import <WebCore/MachSendRight.h>
-#import <WebCore/QuartzCoreSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 using namespace WebCore;
 using namespace WebKit;

@@ -32,13 +32,13 @@
 #import "LengthFunctions.h"
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
-#import "QuartzCoreSPI.h"
 #import "ScrollbarThemeMac.h"
 #import "TileController.h"
 #import "TiledBacking.h"
 #import "WebActionDisablingCALayerDelegate.h"
 #import "WebCoreCALayerExtras.h"
 #import "WebGLLayer.h"
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SoftLinking.h>
 #if ENABLE(WEBGPU)
 #import "WebGPULayer.h"

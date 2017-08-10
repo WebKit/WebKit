@@ -28,9 +28,9 @@
 #if ENABLE(VIDEO)
 
 #import "FloatConversion.h"
-#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCoreSystemInterface.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 
 using namespace WebCore;
 

@@ -23,14 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CoreGraphicsSPI_h
-#define CoreGraphicsSPI_h
+#pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CoreGraphics.h>
 
 #if USE(IOSURFACE)
-#include "IOSurfaceSPI.h"
+#include <pal/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -216,7 +215,7 @@ void CGFontCacheSetMaxSize(CGFontCache*, size_t);
 
 #if PLATFORM(MAC)
 CGSConnectionID CGSMainConnectionID(void);
-CFArrayRef CGSHWCaptureWindowList(CGSConnectionID cid, CGSWindowIDList windowList, CGSWindowCount windowCount, CGSWindowCaptureOptions options);
+CFArrayRef CGSHWCaptureWindowList(CGSConnectionID, CGSWindowIDList windowList, CGSWindowCount, CGSWindowCaptureOptions);
 CGError CGSSetConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CFTypeRef value);
 CGError CGSCopyConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CFTypeRef *value);
 CGError CGSGetScreenRectForWindow(CGSConnectionID, CGSWindowID, CGRect *);
@@ -225,5 +224,3 @@ bool ColorSyncProfileIsWideGamut(ColorSyncProfileRef);
 #endif
 
 WTF_EXTERN_C_END
-
-#endif // CoreGraphicsSPI_h

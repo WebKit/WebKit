@@ -31,7 +31,7 @@
 #import "WebDelegateImplementationCaching.h"
 #import "WebUIDelegate.h"
 #if HAVE(TOUCH_BAR)
-#import <WebCore/AVKitSPI.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 #import <WebCore/AlternativeTextClient.h>
 #import <WebCore/LayerFlushScheduler.h>

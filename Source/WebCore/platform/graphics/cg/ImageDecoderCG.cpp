@@ -28,7 +28,6 @@
 
 #if USE(CG)
 
-#include "ImageIOSPI.h"
 #include "ImageOrientation.h"
 #include "ImageSourceCG.h"
 #include "IntPoint.h"
@@ -36,12 +35,13 @@
 #include "Logging.h"
 #include "SharedBuffer.h"
 #include "UTIRegistry.h"
+#include <pal/spi/cg/ImageIOSPI.h>
 
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
 #else
-#include "CoreGraphicsSPI.h"
 #include <ImageIO/ImageIO.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
 namespace WebCore {

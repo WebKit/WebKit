@@ -107,12 +107,12 @@
 #import "UIKitSPI.h"
 #import "UIKitTestSPI.h"
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/CoreGraphicsSPI.h>
 #import <WebKit/WAKWindow.h>
 #import <WebKit/WebCoreThread.h>
 #import <WebKit/WebCoreThreadRun.h>
 #import <WebKit/WebDOMOperations.h>
 #import <fcntl.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
 extern "C" {

@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CoreTextSPI_h
-#define CoreTextSPI_h
+#pragma once
 
-#include "CoreGraphicsSPI.h"
 #include <CoreText/CoreText.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -42,14 +41,12 @@ enum {
     kCTFontUIFontSystemUltraLight = 104,
 };
 
-typedef CF_OPTIONS(uint32_t, CTFontTransformOptions)
-{
+typedef CF_OPTIONS(uint32_t, CTFontTransformOptions) {
     kCTFontTransformApplyShaping = (1 << 0),
     kCTFontTransformApplyPositioning = (1 << 1)
 };
 
-typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions)
-{
+typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions) {
     kCTFontDescriptorOptionSystemUIFont = 1 << 1,
     kCTFontDescriptorOptionPreferAppleSystemFont = kCTFontOptionsPreferSystemFont
 };
@@ -71,10 +68,10 @@ extern const CFStringRef kCTFontPostScriptNameAttribute;
 
 bool CTFontTransformGlyphs(CTFontRef, CGGlyph glyphs[], CGSize advances[], CFIndex count, CTFontTransformOptions);
 
-CGSize CTRunGetInitialAdvance(CTRunRef run);
-CTLineRef CTLineCreateWithUniCharProvider(CTUniCharProviderCallback provide, CTUniCharDisposeCallback dispose, void* refCon);
+CGSize CTRunGetInitialAdvance(CTRunRef);
+CTLineRef CTLineCreateWithUniCharProvider(CTUniCharProviderCallback, CTUniCharDisposeCallback, void* refCon);
 void CTRunGetBaseAdvancesAndOrigins(CTRunRef, CFRange, CGSize baseAdvances[], CGPoint origins[]);
-CTTypesetterRef CTTypesetterCreateWithUniCharProviderAndOptions(CTUniCharProviderCallback provide, CTUniCharDisposeCallback dispose, void* refCon, CFDictionaryRef options);
+CTTypesetterRef CTTypesetterCreateWithUniCharProviderAndOptions(CTUniCharProviderCallback, CTUniCharDisposeCallback, void* refCon, CFDictionaryRef options);
 bool CTFontGetVerticalGlyphsForCharacters(CTFontRef, const UniChar characters[], CGGlyph glyphs[], CFIndex count);
 void CTFontGetUnsummedAdvancesForGlyphsAndStyle(CTFontRef, CTFontOrientation, CGFontRenderingStyle, const CGGlyph[], CGSize advances[], CFIndex count);
 
@@ -130,10 +127,8 @@ extern const CFStringRef kCTUIFontTextStyleTitle3;
 extern const CFStringRef kCTUIFontTextStyleTitle4;
 CTFontDescriptorRef CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(CTFontRef currentFont, const UTF16Char* characters, CFIndex length, CFStringRef language, CFIndex* coveredLength);
 
-__attribute__((availability(macosx,obsoleted=10.13))) __attribute__((availability(ios,obsoleted=11.0))) CTFontRef CTFontCreatePhysicalFontForCharactersWithLanguage(CTFontRef, const UTF16Char* characters, CFIndex length, CFStringRef language, CFIndex* coveredLength);
+__attribute__((availability(macosx, obsoleted = 10.13))) __attribute__((availability(ios, obsoleted = 11.0))) CTFontRef CTFontCreatePhysicalFontForCharactersWithLanguage(CTFontRef, const UTF16Char* characters, CFIndex length, CFStringRef language, CFIndex* coveredLength);
 bool CTFontIsAppleColorEmoji(CTFontRef);
 CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFIndex *coveredLength);
 
 WTF_EXTERN_C_END
-
-#endif

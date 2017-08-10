@@ -29,7 +29,7 @@
 
 #if ENABLE(DATA_DETECTION)
 
-#import <WebCore/DataDetectorsCoreSPI.h>
+#import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)

@@ -134,13 +134,13 @@
 #import "WKWebViewContentProviderRegistry.h"
 #import "_WKWebViewPrintFormatter.h"
 #import <UIKit/UIApplication.h>
-#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/InspectorOverlay.h>
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/ScrollableArea.h>
 #import <WebCore/WebBackgroundTaskController.h>
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 #if __has_include(<AccessibilitySupport.h>)
 #include <AccessibilitySupport.h>

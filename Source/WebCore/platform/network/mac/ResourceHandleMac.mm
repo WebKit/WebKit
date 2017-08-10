@@ -37,7 +37,6 @@
 #import "HTTPHeaderNames.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
-#import "NSURLConnectionSPI.h"
 #import "NetworkStorageSession.h"
 #import "NetworkingContext.h"
 #import "ResourceError.h"
@@ -50,6 +49,7 @@
 #import "WebCoreSystemInterface.h"
 #import "WebCoreURLResponse.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Ref.h>
 #import <wtf/SchedulePair.h>

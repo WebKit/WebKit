@@ -26,11 +26,11 @@
 #import "config.h"
 #import "ProcessLauncher.h"
 
-#import <WebCore/ServersSPI.h>
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <mach/machine.h>
+#import <pal/spi/cocoa/ServersSPI.h>
 #import <spawn.h>
 #import <sys/param.h>
 #import <sys/stat.h>

@@ -28,15 +28,15 @@
 
 #import "WebKitNSStringExtras.h"
 
-#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/FontCascade.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/TextRun.h>
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <WebKitLegacy/WebNSFileManagerExtras.h>
 #import <WebKitLegacy/WebNSObjectExtras.h>
-#import <unicode/uchar.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <sys/param.h>
+#import <unicode/uchar.h>
 
 #if PLATFORM(IOS)
 #import <WebKitLegacy/DOM.h>

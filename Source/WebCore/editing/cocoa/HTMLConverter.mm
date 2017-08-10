@@ -54,7 +54,6 @@
 #import "HTMLTableCellElement.h"
 #import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
-#import "NSAttributedStringSPI.h"
 #import "RGBColor.h"
 #import "RenderImage.h"
 #import "RenderText.h"
@@ -62,6 +61,7 @@
 #import "StyledElement.h"
 #import "TextIterator.h"
 #import <objc/runtime.h>
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/ASCIICType.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>

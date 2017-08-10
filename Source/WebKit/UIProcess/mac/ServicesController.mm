@@ -30,9 +30,9 @@
 
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
-#import <WebCore/NSExtensionSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSSharingServiceSPI.h>
+#import <pal/spi/cocoa/NSExtensionSPI.h>
 #import <wtf/NeverDestroyed.h>
 
 namespace WebKit {

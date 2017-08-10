@@ -44,8 +44,8 @@
 #import <Cocoa/Cocoa.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/NSEventSPI.h>
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 using namespace WebCore;
 

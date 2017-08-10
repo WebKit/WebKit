@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
-#import "AVKitSPI.h"
 #import "IntRect.h"
 #import "MediaSelectionOption.h"
 #import "MediaTimeAVFoundation.h"
@@ -36,6 +35,7 @@
 #import "TimeRanges.h"
 #import "WebPlaybackControlsManager.h"
 #import <AVFoundation/AVTime.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 
 #import "CoreMediaSoftLink.h"
 

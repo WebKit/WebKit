@@ -30,7 +30,6 @@
 
 #if HAVE(AVKIT)
 
-#import "AVKitSPI.h"
 #import "GeometryUtilities.h"
 #import "Logging.h"
 #import "PlaybackSessionInterfaceAVKit.h"
@@ -44,6 +43,7 @@
 #import <UIKit/UIKit.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>

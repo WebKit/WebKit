@@ -28,15 +28,15 @@
 
 #if PLATFORM(IOS)
 
-#include "CoreGraphicsSPI.h"
 #include "LegacyTileGridTile.h"
 #include "LegacyTileLayer.h"
 #include "LegacyTileLayerPool.h"
-#include "QuartzCoreSPI.h"
 #include "SystemMemory.h"
 #include "WAKWindow.h"
 #include <algorithm>
 #include <functional>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <pal/spi/cocoa/QuartzCoreSPI.h>
 #include <wtf/MemoryPressureHandler.h>
 
 namespace WebCore {

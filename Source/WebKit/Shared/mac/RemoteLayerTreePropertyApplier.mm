@@ -31,8 +31,8 @@
 #import "RemoteLayerTreeHost.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/PlatformCAFilters.h>
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/ScrollbarThemeMac.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
 #if PLATFORM(IOS)

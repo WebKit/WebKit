@@ -29,8 +29,8 @@
 #if ENABLE(APPLE_PAY)
 
 #import "ApplePayPaymentContact.h"
-#import "PassKitSPI.h"
 #import <Contacts/Contacts.h>
+#import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 

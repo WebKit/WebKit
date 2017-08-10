@@ -25,7 +25,7 @@
 
 #if PLATFORM(IOS) && HAVE(AVKIT)
 
-#import "AVKitSPI.h"
+#import <pal/spi/cocoa/AVKitSPI.h>
 
 namespace WebCore {
 class PlaybackSessionModel;

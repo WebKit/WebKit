@@ -28,7 +28,7 @@
 
 #if PLATFORM(MAC)
 
-#include <WebCore/CoreGraphicsSPI.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebKit {

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkLoadMetrics.h"
 
-#import <WebCore/NSURLConnectionSPI.h>
+#import <pal/spi/cocoa/NSURLConnectionSPI.h>
 
 namespace WebCore {
 

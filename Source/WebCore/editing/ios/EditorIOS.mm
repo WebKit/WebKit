@@ -49,7 +49,6 @@
 #import "HTMLParserIdioms.h"
 #import "HTMLTextAreaElement.h"
 #import "LegacyWebArchive.h"
-#import "NSAttributedStringSPI.h"
 #import "NodeTraversal.h"
 #import "Page.h"
 #import "Pasteboard.h"
@@ -62,6 +61,7 @@
 #import "WAKAppKitStubs.h"
 #import "markup.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 

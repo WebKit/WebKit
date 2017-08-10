@@ -29,10 +29,10 @@
 #if USE(QUICK_LOOK)
 
 #import "FileSystemIOS.h"
-#import "NSFileManagerSPI.h"
 #import "PreviewConverter.h"
 #import "ResourceRequest.h"
 #import "SchemeRegistry.h"
+#import <pal/spi/cocoa/NSFileManagerSPI.h>
 #import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 

@@ -32,10 +32,10 @@
 #import "ImageBuffer.h"
 #import "LengthSize.h"
 #import "LocalCurrentGraphicsContext.h"
-#import "NSButtonCellSPI.h"
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
 #import <Carbon/Carbon.h>
+#import <pal/spi/cocoa/NSButtonCellSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>

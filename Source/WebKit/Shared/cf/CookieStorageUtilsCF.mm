@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CookieStorageUtilsCF.h"
 
-#include <WebCore/NSURLConnectionSPI.h>
+#include <pal/spi/cocoa/NSURLConnectionSPI.h>
 
 namespace WebKit {
 

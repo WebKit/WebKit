@@ -42,7 +42,7 @@
 #import "WebProcessPool.h"
 #import "WebViewImpl.h"
 #import "_WKLinkIconParametersInternal.h"
-#import <WebCore/AVKitSPI.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/BlockPtr.h>
 
 using namespace WebKit;

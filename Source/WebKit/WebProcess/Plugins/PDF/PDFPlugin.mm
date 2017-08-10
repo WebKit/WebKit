@@ -54,7 +54,6 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/Chrome.h>
-#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentLoader.h>
@@ -81,6 +80,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/WheelEventTestTrigger.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/UUID.h>
 

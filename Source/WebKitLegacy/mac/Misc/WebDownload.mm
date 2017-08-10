@@ -33,9 +33,9 @@
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/Credential.h>
 #import <WebCore/CredentialStorage.h>
-#import <WebCore/NSURLDownloadSPI.h>
 #import <WebCore/ProtectionSpace.h>
 #import <WebKitLegacy/WebPanelAuthenticationHandler.h>
+#import <pal/spi/cocoa/NSURLDownloadSPI.h>
 #import <wtf/Assertions.h>
 
 #import "WebTypesInternal.h"

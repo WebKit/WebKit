@@ -29,8 +29,6 @@
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 #import "BitmapImage.h"
-#import "CoreGraphicsSPI.h"
-#import "CoreTextSPI.h"
 #import "Element.h"
 #import "FloatRoundedRect.h"
 #import "FontCascade.h"
@@ -38,11 +36,13 @@
 #import "FontSelector.h"
 #import "GraphicsContext.h"
 #import "Image.h"
-#import "LinkPresentationSPI.h"
 #import "StringTruncator.h"
 #import "TextIndicator.h"
 #import "TextRun.h"
 #import "URL.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/CoreTextSPI.h>
+#import <pal/spi/cocoa/LinkPresentationSPI.h>
 #import <wtf/SoftLinking.h>
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300

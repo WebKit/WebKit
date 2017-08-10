@@ -37,9 +37,9 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformLayer.h>
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 #if PLATFORM(IOS)
 #import <UIKit/UIView.h>

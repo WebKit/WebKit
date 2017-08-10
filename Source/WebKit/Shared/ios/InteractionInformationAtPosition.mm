@@ -28,7 +28,7 @@
 
 #import "ArgumentCodersCF.h"
 #import "WebCoreArgumentCoders.h"
-#import <WebCore/DataDetectorsCoreSPI.h>
+#import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsCore)

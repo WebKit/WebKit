@@ -37,8 +37,8 @@
 #import "WebFramePrivate.h"
 #import "WebHTMLView.h"
 #import "WebView.h"
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/WAKWindow.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #endif
 
 using namespace WebCore;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IOReturnSPI_h
-#define IOReturnSPI_h
+#pragma once
 
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
-#include <IOKit/IOReturn.h>
+#include <IOKit/IOTypes.h>
 
 #else
 
-#include <mach/kern_return.h>
+enum {
+    kIOWriteCombineCache = 4,
+};
 
-typedef kern_return_t IOReturn;
-
-#define kIOReturnSuccess KERN_SUCCESS
+enum {
+    kIOMapCacheShift = 8,
+    kIOMapWriteCombineCache = kIOWriteCombineCache << kIOMapCacheShift,
+};
 
 #endif
-
-#endif // IOReturnSPI_h

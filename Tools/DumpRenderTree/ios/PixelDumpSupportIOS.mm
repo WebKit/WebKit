@@ -38,12 +38,12 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformScreen.h>
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebKit/WebCoreThread.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>

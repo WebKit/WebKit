@@ -34,10 +34,10 @@
 #include "LegacyTileLayer.h"
 #include "LegacyTileLayerPool.h"
 #include "PlatformScreen.h"
-#include "QuartzCoreSPI.h"
 #include "WAKWindow.h"
 #include <algorithm>
 #include <functional>
+#include <pal/spi/cocoa/QuartzCoreSPI.h>
 
 namespace WebCore {
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "CookieStorageObserver.h"
 
-#import "NSURLConnectionSPI.h"
+#import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #import <wtf/MainThread.h>
 
 @interface WebNSHTTPCookieStorageInternal : NSObject {

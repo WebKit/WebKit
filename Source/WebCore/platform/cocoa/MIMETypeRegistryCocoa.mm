@@ -27,7 +27,7 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
-#include "NSURLFileTypeMappingsSPI.h"
+#include <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 
 namespace WebCore {
 

@@ -27,8 +27,8 @@
 
 #if ENABLE(APPLE_PAY)
 
-#import <WebCore/PassKitSPI.h>
 #import <WebCore/PaymentHeaders.h>
+#import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/BlockPtr.h>
 
 namespace WebCore {

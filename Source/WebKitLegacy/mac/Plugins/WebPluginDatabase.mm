@@ -40,10 +40,10 @@
 #import "WebNetscapePluginPackage.h"
 #import "WebPluginController.h"
 #import "WebPluginPackage.h"
-#import "WebViewPrivate.h"
 #import "WebViewInternal.h"
-#import <WebCore/NSURLFileTypeMappingsSPI.h>
+#import "WebViewPrivate.h"
 #import <WebKitSystemInterface.h>
+#import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <wtf/Assertions.h>
 
 #if PLATFORM(IOS)

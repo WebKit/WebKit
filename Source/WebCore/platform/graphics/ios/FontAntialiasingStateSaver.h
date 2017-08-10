@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS)
 
-#import "CoreGraphicsSPI.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 
 namespace WebCore {
 

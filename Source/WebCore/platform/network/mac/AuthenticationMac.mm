@@ -33,7 +33,7 @@
 #import <Foundation/NSURLProtectionSpace.h>
 
 #if USE(CFURLCONNECTION)
-#import "CFNSURLConnectionSPI.h"
+#import <pal/spi/cocoa/CFNSURLConnectionSPI.h>
 #endif
 
 using namespace WebCore;

@@ -52,7 +52,7 @@
 #endif
 
 #if USE(CG)
-#include "CoreGraphicsSPI.h"
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
 #if USE(DIRECT2D)

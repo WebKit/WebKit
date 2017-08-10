@@ -28,19 +28,19 @@
 
 #if PLATFORM(IOS)
 
-#include <CoreText/CoreText.h>
 #include "FontAntialiasingStateSaver.h"
 #include "LegacyTileGrid.h"
 #include "LegacyTileGridTile.h"
 #include "LegacyTileLayer.h"
 #include "LegacyTileLayerPool.h"
 #include "Logging.h"
-#include "QuartzCoreSPI.h"
 #include "SystemMemory.h"
 #include "WAKWindow.h"
 #include "WKGraphics.h"
 #include "WebCoreSystemInterface.h"
 #include "WebCoreThreadRun.h"
+#include <CoreText/CoreText.h>
+#include <pal/spi/cocoa/QuartzCoreSPI.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/RAMSize.h>

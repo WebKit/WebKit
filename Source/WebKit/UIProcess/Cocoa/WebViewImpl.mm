@@ -68,11 +68,9 @@
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
 #import <HIToolbox/CarbonEventsCore.h>
-#import <WebCore/AVKitSPI.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ActivityState.h>
 #import <WebCore/ColorMac.h>
-#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragData.h>
@@ -84,7 +82,6 @@
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <WebCore/NSSpellCheckerSPI.h>
 #import <WebCore/NSTextFinderSPI.h>
-#import <WebCore/NSTouchBarSPI.h>
 #import <WebCore/NSWindowSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -96,6 +93,9 @@
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <WebCore/WebPlaybackControlsManager.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
+#import <pal/spi/cocoa/NSTouchBarSPI.h>
 #import <sys/stat.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SetForScope.h>

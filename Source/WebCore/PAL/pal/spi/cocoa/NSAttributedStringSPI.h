@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NSAttributedStringSPI_h
-#define NSAttributedStringSPI_h
+#pragma once
 
 #import <wtf/SoftLinking.h>
 
@@ -118,7 +117,5 @@ static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
 - (NSData *)RTFDFromRange:(NSRange)range documentAttributes:(NSDictionary *)dict;
 - (BOOL)containsAttachments;
 @end
-
-#endif
 
 #endif

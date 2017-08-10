@@ -30,10 +30,10 @@
 
 #import "WebPaymentCoordinatorProxy.h"
 #import "WebProcessPool.h"
-#import <WebCore/PassKitSPI.h>
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentHeaders.h>
 #import <WebCore/URL.h>
+#import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>

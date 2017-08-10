@@ -35,7 +35,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <WebCore/MachSendRight.h>
-#import <WebCore/QuartzCoreSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 
 using namespace IPC;

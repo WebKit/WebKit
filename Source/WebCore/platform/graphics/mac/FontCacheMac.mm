@@ -30,11 +30,11 @@
 #import "config.h"
 #import "FontCache.h"
 
-#import "CoreGraphicsSPI.h"
-#import "CoreTextSPI.h"
 #import "Font.h"
 #import "FontCascade.h"
 #import "FontPlatformData.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/CoreTextSPI.h>
 
 #if PLATFORM(MAC)
 #import "NSFontSPI.h"

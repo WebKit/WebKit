@@ -28,9 +28,9 @@
 
 #import "FloatConversion.h"
 #import "PlatformCAFilters.h"
-#import "QuartzCoreSPI.h"
 #import "TimingFunction.h"
 #import <QuartzCore/QuartzCore.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;

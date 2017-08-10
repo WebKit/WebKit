@@ -25,7 +25,7 @@
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
-#import <WebCore/AVKitSPI.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 

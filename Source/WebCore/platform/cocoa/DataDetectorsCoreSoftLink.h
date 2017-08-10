@@ -27,7 +27,7 @@
 
 #if ENABLE(DATA_DETECTION)
 
-#include "DataDetectorsCoreSPI.h"
+#include <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #include <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS)

@@ -24,7 +24,7 @@
  */
 
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/IOSurfaceSPI.h>
+#import <pal/spi/cocoa/IOSurfaceSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 

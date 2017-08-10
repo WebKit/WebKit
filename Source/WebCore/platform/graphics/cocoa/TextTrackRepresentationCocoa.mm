@@ -32,12 +32,12 @@
 #include "GraphicsContextCG.h"
 #include "IntRect.h"
 
-#import "QuartzCoreSPI.h"
-
 #if PLATFORM(IOS)
 #include "WebCoreThread.h"
 #include "WebCoreThreadRun.h"
 #endif
+
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 using namespace WebCore;
 

@@ -28,7 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#import "PassKitSPI.h"
+#import <pal/spi/cocoa/PassKitSPI.h>
 #import <runtime/JSONObject.h>
 #import <wtf/SoftLinking.h>
 

@@ -34,9 +34,9 @@
 #include "WeakObjCPtr.h"
 #include "WebPageProxy.h"
 #include "_WKOverlayScrollbarStyle.h"
-#include <WebCore/AVKitSPI.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <pal/spi/cocoa/AVKitSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>

@@ -28,15 +28,15 @@
 
 #if !USE(NETWORK_SESSION)
 
+#import "DataReference.h"
+#import "WebPage.h"
 #import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/AuthenticationMac.h>
-#import <WebCore/NSURLDownloadSPI.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceHandleClient.h>
 #import <WebCore/ResourceResponse.h>
-#import "DataReference.h"
-#import "WebPage.h"
+#import <pal/spi/cocoa/NSURLDownloadSPI.h>
 
 #if USE(CFURLCONNECTION)
 

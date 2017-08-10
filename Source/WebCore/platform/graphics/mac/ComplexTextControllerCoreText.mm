@@ -25,11 +25,11 @@
 #include "config.h"
 #include "ComplexTextController.h"
 
-#include "CoreTextSPI.h"
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "TextRun.h"
 #include "WebCoreSystemInterface.h"
+#include <pal/spi/cocoa/CoreTextSPI.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/WeakPtr.h>
 

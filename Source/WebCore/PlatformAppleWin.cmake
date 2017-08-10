@@ -11,8 +11,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/ca/win"
     "${WEBCORE_DIR}/platform/graphics/cg"
     "${WEBCORE_DIR}/platform/network/cf"
-    "${WEBCORE_DIR}/platform/spi/cf"
-    "${WEBCORE_DIR}/platform/spi/cg"
 )
 
 if (${USE_DIRECT2D})
@@ -26,7 +24,6 @@ else ()
         "${WEBCORE_DIR}/platform/graphics/ca"
         "${WEBCORE_DIR}/platform/graphics/ca/win"
         "${WEBCORE_DIR}/platform/graphics/cg"
-        "${WEBCORE_DIR}/platform/spi/cg"
     )
 endif ()
 
@@ -155,8 +152,6 @@ endif ()
 
 list(APPEND WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform/network/cf
-
-    platform/spi/cf
 )
 
 if (${USE_DIRECT2D})
@@ -171,7 +166,5 @@ else ()
         platform/graphics/ca/win
 
         platform/network/cf
-
-        platform/spi/cg
     )
 endif ()

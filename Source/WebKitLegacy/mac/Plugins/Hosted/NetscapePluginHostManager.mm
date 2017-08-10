@@ -32,9 +32,9 @@
 #import "WebKitSystemInterface.h"
 #import "WebLocalizableStringsInternal.h"
 #import "WebNetscapePluginPackage.h"
-#import <WebCore/ServersSPI.h>
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <mach/mach_port.h>
+#import <pal/spi/cocoa/ServersSPI.h>
 #import <spawn.h>
 #import <wtf/Assertions.h>
 #import <wtf/NeverDestroyed.h>

@@ -43,7 +43,7 @@
 #import "WebProcessProxy.h"
 #import <UIKit/UIScreenEdgePanGestureRecognizer.h>
 #import <WebCore/IOSurface.h>
-#import <WebCore/QuartzCoreSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 using namespace WebCore;
 

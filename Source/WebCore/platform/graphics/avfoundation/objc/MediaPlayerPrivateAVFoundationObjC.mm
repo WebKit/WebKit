@@ -39,7 +39,6 @@
 #import "Cookie.h"
 #import "Extensions3D.h"
 #import "FloatConversion.h"
-#import "FloatConversion.h"
 #import "GraphicsContext.h"
 #import "GraphicsContext3D.h"
 #import "GraphicsContextCG.h"
@@ -54,7 +53,6 @@
 #import "OutOfBandTextTrackPrivateAVF.h"
 #import "PixelBufferConformerCV.h"
 #import "PlatformTimeRanges.h"
-#import "QuartzCoreSPI.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformRepresentationMac.h"
 #import "Settings.h"
@@ -71,6 +69,7 @@
 #import <functional>
 #import <map>
 #import <objc/runtime.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <runtime/DataView.h>
 #import <runtime/JSCInlines.h>
 #import <runtime/TypedArrayInlines.h>
@@ -118,7 +117,7 @@
 #endif
 
 #if USE(CFURLCONNECTION)
-#include "CFNSURLConnectionSPI.h"
+#include <pal/spi/cocoa/CFNSURLConnectionSPI.h>
 #endif
 
 #import "CoreVideoSoftLink.h"

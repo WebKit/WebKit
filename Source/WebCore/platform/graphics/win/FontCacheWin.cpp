@@ -42,9 +42,9 @@
 #include <wtf/win/GDIObject.h>
 
 #if USE(CG)
-#include "CoreGraphicsSPI.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 
 #if USE(DIRECT2D)

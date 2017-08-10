@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ServersSPI_h
-#define ServersSPI_h
+#pragma once
 
-#include <mach/message.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
-#include <servers/bootstrap.h>
+#include <IOKit/pwr_mgt/IOPMLib.h>
 
 #else
 
-typedef char name_t[128];
+#include <pal/spi/cocoa/IOReturnSPI.h>
 
-#endif
+typedef uint32_t IOPMAssertionID;
 
-#if USE(APPLE_INTERNAL_SDK)
+WTF_EXTERN_C_BEGIN
 
-#include <bootstrap_priv.h>
+const CFStringRef kIOPMAssertionTypePreventUserIdleDisplaySleep = CFSTR("PreventUserIdleDisplaySleep");
+const CFStringRef kIOPMAssertionTypePreventUserIdleSystemSleep = CFSTR("PreventUserIdleSystemSleep");
+
+WTF_EXTERN_C_END
 
 #endif
 
 WTF_EXTERN_C_BEGIN
 
-kern_return_t bootstrap_look_up(mach_port_t, const name_t serviceName, mach_port_t *);
-kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t flags);
+IOReturn IOPMAssertionCreateWithDescription(CFStringRef assertionType, CFStringRef name, CFStringRef details, CFStringRef humanReadableReason,
+    CFStringRef localizationBundlePath, CFTimeInterval timeout, CFStringRef timeoutAction, IOPMAssertionID *);
+IOReturn IOPMAssertionRelease(IOPMAssertionID);
 
 WTF_EXTERN_C_END
-
-#endif // ServersSPI_h

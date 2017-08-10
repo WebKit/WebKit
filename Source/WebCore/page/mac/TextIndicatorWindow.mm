@@ -28,13 +28,13 @@
 
 #if PLATFORM(MAC)
 
-#import "CoreGraphicsSPI.h"
 #import "GeometryUtilities.h"
 #import "GraphicsContext.h"
 #import "PathUtilities.h"
-#import "QuartzCoreSPI.h"
 #import "TextIndicator.h"
 #import "WebActionDisablingCALayerDelegate.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 const CFTimeInterval bounceAnimationDuration = 0.12;
 const CFTimeInterval bounceWithCrossfadeAnimationDuration = 0.3;

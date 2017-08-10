@@ -30,13 +30,13 @@
 
 #import "ContentFilterUnblockHandler.h"
 #import "Logging.h"
-#import "NEFilterSourceSPI.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
 #import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
 #import "URL.h"
 #import <objc/runtime.h>
+#import <pal/spi/cocoa/NEFilterSourceSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);

@@ -49,7 +49,6 @@
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
@@ -57,6 +56,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MainThread.h>
 
 #if ENABLE(ASYNC_SCROLLING)

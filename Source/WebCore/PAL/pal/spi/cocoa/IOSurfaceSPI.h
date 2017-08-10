@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IOSurfaceSPI_h
-#define IOSurfaceSPI_h
+#pragma once
 
 #if !PLATFORM(IOS_SIMULATOR)
 
@@ -34,10 +33,10 @@
 
 #else
 
-#include "IOReturnSPI.h"
-#include "IOTypesSPI.h"
 #include <CoreFoundation/CFBase.h>
 #include <mach/mach_port.h>
+#include <pal/spi/cocoa/IOReturnSPI.h>
+#include <pal/spi/cocoa/IOTypesSPI.h>
 
 typedef struct __IOSurface *IOSurfaceRef;
 
@@ -126,8 +125,8 @@ typedef struct __IOSurfaceAccelerator *IOSurfaceAcceleratorRef;
 
 WTF_EXTERN_C_BEGIN
 
-IOReturn IOSurfaceAcceleratorCreate(CFAllocatorRef allocator, CFDictionaryRef properties, IOSurfaceAcceleratorRef* acceleratorOut);
-CFRunLoopSourceRef IOSurfaceAcceleratorGetRunLoopSource(IOSurfaceAcceleratorRef accelerator);
+IOReturn IOSurfaceAcceleratorCreate(CFAllocatorRef, CFDictionaryRef properties, IOSurfaceAcceleratorRef* acceleratorOut);
+CFRunLoopSourceRef IOSurfaceAcceleratorGetRunLoopSource(IOSurfaceAcceleratorRef);
 
 typedef void (*IOSurfaceAcceleratorCompletionCallback)(void* completionRefCon, IOReturn status, void* completionRefCon2);
 
@@ -137,7 +136,7 @@ typedef struct IOSurfaceAcceleratorCompletion {
     void* completionRefCon2;
 } IOSurfaceAcceleratorCompletion;
 
-IOReturn IOSurfaceAcceleratorTransformSurface(IOSurfaceAcceleratorRef accelerator, IOSurfaceRef sourceBuffer, IOSurfaceRef destinationBuffer, CFDictionaryRef options, void* pCropRectangles, IOSurfaceAcceleratorCompletion* pCompletion, void* pSwap, uint32_t* pCommandID);
+IOReturn IOSurfaceAcceleratorTransformSurface(IOSurfaceAcceleratorRef, IOSurfaceRef sourceBuffer, IOSurfaceRef destinationBuffer, CFDictionaryRef options, void* pCropRectangles, IOSurfaceAcceleratorCompletion* pCompletion, void* pSwap, uint32_t* pCommandID);
 
 WTF_EXTERN_C_END
 
@@ -145,5 +144,3 @@ WTF_EXTERN_C_END
 #endif // PLATFORM(IOS)
 
 #endif // !PLATFORM(IOS_SIMULATOR)
-
-#endif // IOSurfaceSPI_h

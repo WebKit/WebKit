@@ -26,11 +26,11 @@
 #import "config.h"
 #import "PlatformScreen.h"
 
-#import "CoreGraphicsSPI.h"
 #import "FloatRect.h"
 #import "FrameView.h"
 #import "HostWindow.h"
 #import <ColorSync/ColorSync.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 
 extern "C" {
 bool CGDisplayUsesInvertedPolarity(void);

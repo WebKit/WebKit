@@ -29,8 +29,8 @@
 #if ENABLE(APPLE_PAY)
 
 #import "DataReference.h"
-#import <WebCore/PassKitSPI.h>
 #import <WebCore/PaymentAuthorizationStatus.h>
+#import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)

@@ -28,14 +28,14 @@
 
 #if USE(IOSURFACE)
 
-#import "CoreGraphicsSPI.h"
 #import "GraphicsContextCG.h"
 #import "IOSurfacePool.h"
-#import "IOSurfaceSPI.h"
 #import "ImageBuffer.h"
 #import "ImageBufferDataCG.h"
 #import "Logging.h"
 #import "MachSendRight.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/IOSurfaceSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MathExtras.h>
 #import <wtf/text/TextStream.h>

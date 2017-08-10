@@ -30,12 +30,12 @@
 #import "LegacyCustomProtocolManagerMessages.h"
 #import "NetworkProcess.h"
 #import <Foundation/NSURLSession.h>
-#import <WebCore/NSURLConnectionSPI.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/TextEncoding.h>
 #import <WebCore/URL.h>
+#import <pal/spi/cocoa/NSURLConnectionSPI.h>
 
 using namespace WebKit;
 

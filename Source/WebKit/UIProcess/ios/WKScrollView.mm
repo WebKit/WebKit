@@ -30,7 +30,7 @@
 
 #import "WKWebViewInternal.h"
 #import "WeakObjCPtr.h"
-#import <WebCore/CoreGraphicsSPI.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 
 using namespace WebKit;
 

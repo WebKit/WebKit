@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IOTypesSPI_h
-#define IOTypesSPI_h
+#pragma once
+
+#include <mach/message.h>
 
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
-#include <IOKit/IOTypes.h>
+#include <servers/bootstrap.h>
 
 #else
 
-enum {
-    kIOWriteCombineCache = 4,
-};
-
-enum {
-    kIOMapCacheShift = 8,
-    kIOMapWriteCombineCache = kIOWriteCombineCache << kIOMapCacheShift,
-};
+typedef char name_t[128];
 
 #endif
 
-#endif // IOTypesSPI_h
+#if USE(APPLE_INTERNAL_SDK)
+
+#include <bootstrap_priv.h>
+
+#endif
+
+WTF_EXTERN_C_BEGIN
+
+kern_return_t bootstrap_look_up(mach_port_t, const name_t serviceName, mach_port_t *);
+kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t flags);
+
+WTF_EXTERN_C_END

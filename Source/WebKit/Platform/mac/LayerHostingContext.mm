@@ -27,8 +27,8 @@
 #import "LayerHostingContext.h"
 
 #import <WebCore/MachSendRight.h>
-#import <WebCore/QuartzCoreSPI.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 using namespace WebCore;
 

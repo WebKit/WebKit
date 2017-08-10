@@ -27,7 +27,7 @@
 
 #import "WebNSStringExtrasIOS.h"
 #import "WebNSURLExtras.h"
-#import <WebCore/NSStringSPI.h>
+#import <pal/spi/cocoa/NSStringSPI.h>
 
 @implementation NSString (WebNSStringExtrasIOS)
 

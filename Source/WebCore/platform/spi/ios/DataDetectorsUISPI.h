@@ -35,7 +35,7 @@
 
 #else
 
-#import <WebCore/DataDetectorsCoreSPI.h>
+#import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 
 @interface DDAction : NSObject
 @end
