@@ -1,3 +1,12 @@
+2017-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-fallback-font-family.html is failing on perf bots
+        https://bugs.webkit.org/show_bug.cgi?id=174989
+
+        Unreviewed.
+
+        * Layout/resources/font-fallback-font-family.html:
+
 2017-08-09  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix.
