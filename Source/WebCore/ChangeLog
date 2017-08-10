@@ -1,5 +1,41 @@
 2017-08-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r220459. rdar://problem/33820787
+
+    2017-08-09  Daniel Bates  <dabates@apple.com>
+
+            REGRESSION (r219013): OAuth flows are broken when redirecting back to application after authentication
+            https://bugs.webkit.org/show_bug.cgi?id=175247
+            <rdar://problem/33679804>
+
+            Reviewed by Brady Eidson.
+
+            Add SPI so that Safari can differentiate between a form submission and a redirected form submission
+            and have PolicyCheck notify the frame loader client if the navigation was in response to receiving a
+            redirect response. This is the WebKit portion to fix an issue when a native app makes use of an OAuth
+            OAuth flow that bounces to Safari for user login and then bounce back to the app. Microsoft Graph's
+            OAuth flow is one example.
+
+            Safari was differentiating between a form submission and a redirected form submission based on the
+            nullity of WKNavigationAction.sourceFrame because in both cases the navigation type was WKNavigationTypeFormSubmitted.
+            The navigation type is the same for both navigations because WebKit always used the navigation
+            action from the original request for the redirect request when the original request redirected.
+            Prior to r219013, WKNavigationAction.sourceFrame would be nil for a form submission that redirects.
+            Following r219013, WKNavigationAction.sourceFrame is non-nil unless the navigation was initiated by
+            API. In particular, WKNavigationAction.sourceFrame is non-nil for the redirect navigation corresponding
+            to a form submission that redirects.
+
+            * loader/EmptyClients.cpp:
+            (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+            * loader/FrameLoaderClient.h:
+            Have dispatchDecidePolicyForNavigationAction() take a boolean as to whether the navigation was in
+            response to receiving a redirect response.
+            * loader/PolicyChecker.cpp:
+            (WebCore::PolicyChecker::checkNavigationPolicy): Notify the frame loader client whether the navigation
+            is in response to receiving a redirect response.
+
+2017-08-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r220456. rdar://problem/33805190
 
     2017-08-09  Andy Estes  <aestes@apple.com>

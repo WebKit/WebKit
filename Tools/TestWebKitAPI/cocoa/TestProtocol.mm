@@ -72,17 +72,29 @@ static NSString *testScheme;
     testScheme = nil;
 }
 
+static NSURL *createRedirectURL(NSString *query)
+{
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", testScheme, query]];
+}
+
 - (void)startLoading
 {
     NSURL *requestURL = self.request.URL;
     EXPECT_TRUE([requestURL.scheme isEqualToString:testScheme]);
 
+    if ([requestURL.host isEqualToString:@"307-redirect"]) {
+        RetainPtr<NSHTTPURLResponse> response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:307 HTTPVersion:@"HTTP/1.1" headerFields:@{@"Content-Type" : @"text/html"}]);
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:createRedirectURL(requestURL.query)];
+        request.HTTPMethod = self.request.HTTPMethod;
+        [self.client URLProtocol:self wasRedirectedToRequest:request redirectResponse:response.get()];
+        return;
+    }
+
     NSData *data = [@"PASS" dataUsingEncoding:NSASCIIStringEncoding];
     RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]);
 
     if ([requestURL.host isEqualToString:@"redirect"]) {
-        NSURL *redirectURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", testScheme, requestURL.query]];
-        [self.client URLProtocol:self wasRedirectedToRequest:[NSURLRequest requestWithURL:redirectURL] redirectResponse:response.get()];
+        [self.client URLProtocol:self wasRedirectedToRequest:[NSURLRequest requestWithURL:createRedirectURL(requestURL.query)] redirectResponse:response.get()];
         return;
     }
 

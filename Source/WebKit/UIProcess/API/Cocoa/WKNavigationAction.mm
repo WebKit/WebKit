@@ -231,6 +231,11 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
     return nil;
 }
 
+- (BOOL)_isRedirect
+{
+    return _navigationAction->isRedirect();
+}
+
 @end
 
 #endif
