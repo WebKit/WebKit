@@ -1,3 +1,14 @@
+2017-08-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Add three.js in preparation for layer visualization.
+        https://bugs.webkit.org/show_bug.cgi?id=174798
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/External/three.js/LICENSE: Added.
+        * UserInterface/External/three.js/OrbitControls.js: Added.
+        * UserInterface/External/three.js/three.js: Added.
+
 2017-08-09  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: Add pre-populated data to spreadsheet-style view
