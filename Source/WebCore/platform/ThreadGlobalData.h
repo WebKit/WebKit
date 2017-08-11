@@ -27,6 +27,7 @@
 #ifndef ThreadGlobalData_h
 #define ThreadGlobalData_h
 
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -39,7 +40,11 @@ namespace WebCore {
     struct ICUConverterWrapper;
     struct TECConverterWrapper;
 
+#if USE(WEB_THREAD)
+    class ThreadGlobalData : public ThreadSafeRefCounted<ThreadGlobalData> {
+#else
     class ThreadGlobalData {
+#endif
         WTF_MAKE_NONCOPYABLE(ThreadGlobalData);
         WTF_MAKE_FAST_ALLOCATED;
     public:

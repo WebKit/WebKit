@@ -81,7 +81,7 @@ void ThreadGlobalData::destroy()
 }
 
 #if USE(WEB_THREAD)
-static ThreadSpecific<std::unique_ptr<ThreadGlobalData>>* staticData { nullptr };
+static ThreadSpecific<RefPtr<ThreadGlobalData>>* staticData { nullptr };
 static ThreadGlobalData* sharedMainThreadStaticData { nullptr };
 
 void ThreadGlobalData::setWebCoreThreadData()
@@ -90,11 +90,7 @@ void ThreadGlobalData::setWebCoreThreadData()
     ASSERT(&threadGlobalData() != sharedMainThreadStaticData);
 
     // Set WebThread's ThreadGlobalData object to be the same as the main UI thread.
-    // The web thread never finishes, and we expect the main thread to also never finish.
-    // Hence, it is safe to store the same ThreadGlobalData pointer in a thread specific std::unique_ptr.
-    // FIXME: Make ThreadGlobalData RefCounted for web thread.
-    // https://bugs.webkit.org/show_bug.cgi?id=175439
-    (**staticData).reset(sharedMainThreadStaticData);
+    **staticData = adoptRef(sharedMainThreadStaticData);
 
     ASSERT(&threadGlobalData() == sharedMainThreadStaticData);
 }
@@ -102,20 +98,22 @@ void ThreadGlobalData::setWebCoreThreadData()
 ThreadGlobalData& threadGlobalData()
 {
     if (UNLIKELY(!staticData)) {
-        staticData = new ThreadSpecific<std::unique_ptr<ThreadGlobalData>>;
+        staticData = new ThreadSpecific<RefPtr<ThreadGlobalData>>;
         auto& result = **staticData;
         ASSERT(!result);
-        result.reset(new ThreadGlobalData());
+        result = adoptRef(new ThreadGlobalData);
         // WebThread and main UI thread need to share the same object. Save it in a static
         // here, the WebThread will pick it up in setWebCoreThreadData().
-        if (pthread_main_np())
+        if (pthread_main_np()) {
             sharedMainThreadStaticData = result.get();
+            result->ref();
+        }
         return *result;
     }
 
     auto& result = **staticData;
     if (!result)
-        result.reset(new ThreadGlobalData());
+        result = adoptRef(new ThreadGlobalData);
     return *result;
 }
 
