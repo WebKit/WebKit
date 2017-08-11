@@ -56,7 +56,7 @@ SVGRenderingContext::~SVGRenderingContext()
     if (m_renderingFlags & EndFilterLayer) {
         ASSERT(m_filter);
         GraphicsContext* contextPtr = &m_paintInfo->context();
-        m_filter->postApplyResource(*m_renderer, contextPtr, RenderSVGResourceMode::ApplyToDefault, 0, 0);
+        m_filter->postApplyResource(*m_renderer, contextPtr, RenderSVGResourceMode::ApplyToDefault, nullptr, nullptr);
         m_paintInfo->setContext(*m_savedContext);
         m_paintInfo->rect = m_savedPaintRect;
     }
@@ -81,7 +81,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
 
     m_renderer = &renderer;
     m_paintInfo = &paintInfo;
-    m_filter = 0;
+    m_filter = nullptr;
 
     // We need to save / restore the context even if the initialization failed.
     if (needsGraphicsContextSave == SaveGraphicsContext) {

@@ -34,7 +34,6 @@ namespace WebCore {
 
 RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element, RenderStyle&& style)
     : RenderSVGResourceContainer(element, WTFMove(style))
-    , m_shouldCollectPatternAttributes(true)
 {
 }
 
