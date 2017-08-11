@@ -84,7 +84,7 @@ function validateAndNormalizeQueuingStrategy(size, highWaterMark)
     const normalizedStrategy = { };
 
     normalizedStrategy.size = size;
-    normalizedStrategy.highWaterMark = @Number(highWaterMark);
+    normalizedStrategy.highWaterMark = @toNumber(highWaterMark);
 
     if (@isNaN(normalizedStrategy.highWaterMark) || normalizedStrategy.highWaterMark < 0)
         @throwRangeError("highWaterMark value is negative or not a number");
@@ -112,7 +112,7 @@ function enqueueValueWithSize(queue, value, size)
 {
     "use strict";
 
-    size = @Number(size);
+    size = @toNumber(size);
     if (!@isFinite(size) || size < 0)
         @throwRangeError("size has an incorrect value");
     queue.content.@push({ value: value, size: size });

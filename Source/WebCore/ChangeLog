@@ -1,3 +1,20 @@
+2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use @toNumber in builtins
+        https://bugs.webkit.org/show_bug.cgi?id=172692
+
+        Reviewed by Sam Weinig.
+
+        Use @toNumber bytecode intrinsic. It emits op_to_number, which efficiently converts
+        a given argument to a number.
+
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (privateInitializeReadableByteStreamController):
+        (readableByteStreamControllerRespond):
+        * Modules/streams/StreamInternals.js:
+        (validateAndNormalizeQueuingStrategy):
+        (enqueueValueWithSize):
+
 2017-08-10  Nan Wang  <n_wang@apple.com>
 
         AX: crash at WebCore::AccessibilityObject::supportsARIALiveRegion() const + 24
