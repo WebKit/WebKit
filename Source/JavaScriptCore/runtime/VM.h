@@ -315,6 +315,7 @@ public:
     
     // Whenever possible, use subspaceFor<CellType>(vm) to get one of these subspaces.
     Subspace cellSpace;
+    Subspace jsValueGigacageCellSpace;
     Subspace destructibleCellSpace;
     JSStringSubspace stringSpace;
     JSDestructibleObjectSubspace destructibleObjectSpace;

@@ -1511,6 +1511,7 @@ JIT::JumpList JIT::emitDirectArgumentsGetByVal(Instruction*, PatchableJump& badT
     slowCases.append(branchTestPtr(NonZero, Address(base, DirectArguments::offsetOfMappedArguments())));
     
     zeroExtend32ToPtr(property, scratch);
+    cage(Gigacage::JSValue, base);
     loadValue(BaseIndex(base, scratch, TimesEight, DirectArguments::storageOffset()), result);
     
     return slowCases;

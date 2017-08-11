@@ -46,6 +46,13 @@ private:
     DirectArguments(VM&, Structure*, unsigned length, unsigned capacity);
     
 public:
+    template<typename CellType>
+    static Subspace* subspaceFor(VM& vm)
+    {
+        RELEASE_ASSERT(!CellType::needsDestruction);
+        return &vm.jsValueGigacageCellSpace;
+    }
+
     // Creates an arguments object but leaves it uninitialized. This is dangerous if we GC right
     // after allocation.
     static DirectArguments* createUninitialized(VM&, Structure*, unsigned length, unsigned capacity);
@@ -157,7 +164,7 @@ public:
 private:
     WriteBarrier<Unknown>* storage()
     {
-        return bitwise_cast<WriteBarrier<Unknown>*>(bitwise_cast<char*>(this) + storageOffset());
+        return bitwise_cast<WriteBarrier<Unknown>*>(bitwise_cast<char*>(Gigacage::caged(Gigacage::JSValue, this)) + storageOffset());
     }
     
     unsigned mappedArgumentsSize();

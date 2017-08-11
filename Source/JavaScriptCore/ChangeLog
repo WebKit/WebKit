@@ -1,5 +1,30 @@
 2017-08-11  Filip Pizlo  <fpizlo@apple.com>
 
+        DirectArguments should be in the JSValue gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=174920
+
+        Reviewed by Michael Saboff.
+        
+        This puts DirectArguments in a new subspace for cells that want to be in the JSValue gigacage. All
+        indexed accesses to DirectArguments now do caging. get_from_arguments/put_to_arguments are exempted
+        because they always operate on a DirectArguments that is pointed to directly from the stack, they are
+        required to use fixed offsets, and you can only store JSValues.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDirectArgumentsGetByVal):
+        * runtime/DirectArguments.h:
+        (JSC::DirectArguments::subspaceFor):
+        (JSC::DirectArguments::storage):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
+2017-08-11  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, add a FIXME.
 
         * ftl/FTLLowerDFGToB3.cpp:

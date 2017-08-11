@@ -3516,10 +3516,8 @@ private:
                     index,
                     m_out.load32NonNegative(base, m_heaps.DirectArguments_length)));
 
-            // FIXME: I guess we need to cage DirectArguments?
-            // https://bugs.webkit.org/show_bug.cgi?id=174920
             TypedPointer address = m_out.baseIndex(
-                m_heaps.DirectArguments_storage, base, m_out.zeroExtPtr(index));
+                m_heaps.DirectArguments_storage, caged(Gigacage::JSValue, base), m_out.zeroExtPtr(index));
             setJSValue(m_out.load64(address));
             return;
         }

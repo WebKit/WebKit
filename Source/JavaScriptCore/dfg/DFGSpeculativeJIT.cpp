@@ -6246,6 +6246,8 @@ void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node)
             MacroAssembler::AboveOrEqual, propertyReg,
             MacroAssembler::Address(baseReg, DirectArguments::offsetOfLength())));
     
+    m_jit.cage(Gigacage::JSValue, baseReg);
+    
     m_jit.loadValue(
         MacroAssembler::BaseIndex(
             baseReg, propertyReg, MacroAssembler::TimesEight, DirectArguments::storageOffset()),
