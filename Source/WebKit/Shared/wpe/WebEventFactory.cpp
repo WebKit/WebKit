@@ -59,7 +59,7 @@ static String singleCharacterStringForKeyEvent(struct wpe_input_keyboard_event* 
     glong length;
     GUniquePtr<gunichar2> uchar16(g_ucs4_to_utf16(&event->unicode, 1, 0, &length, nullptr));
     if (uchar16)
-        return String(uchar16.get());
+        return String(reinterpret_cast<UChar*>(uchar16.get()), length);
     return String();
 }
 
