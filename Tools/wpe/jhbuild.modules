@@ -3,6 +3,8 @@
 <?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
 <moduleset>
 
+  <include href="../gstreamer/jhbuild.modules"/>
+
   <metamodule id="webkitwpe-testing-dependencies">
     <dependencies>
       <dep package="glib"/>
@@ -15,11 +17,7 @@
       <dep package="harfbuzz"/>
       <dep package="xkbcommon"/>
       <dep package="wayland"/>
-      <dep package="gstreamer"/>
-      <dep package="gst-plugins-base"/>
-      <dep package="gst-plugins-good"/>
-      <dep package="gst-plugins-bad"/>
-      <dep package="gst-libav"/>
+      <dep package="webkit-gstreamer-testing-dependencies"/>
       <dep package="wpe"/>
       <dep package="wpe-mesa"/>
       <dep package="libgpg-error"/>
@@ -44,8 +42,6 @@
       href="https://github.com"/>
   <repository type="tarball" name="github-tarball"
       href="https://github.com/"/>
-  <repository type="tarball" name="gstreamer"
-      href="http://gstreamer.freedesktop.org/src/"/>
   <repository type="tarball" name="xkbcommon.org"
       href="http://xkbcommon.org"/>
   <repository type="tarball" name="savannah.gnu.org"
@@ -168,69 +164,6 @@
     <branch module="releases/wayland-1.9.0.tar.xz" version="1.9.0"
             repo="wayland.freedesktop.org"
             hash="sha256:9c8770720aa0034479735f58a4dc4ca9b172ecfede28f5134312e135b7301efa"/>
-  </autotools>
-
-  <autotools id="orc" autogenargs="--disable-gtk-doc" autogen-sh="configure">
-    <branch module="orc/orc-0.4.17.tar.gz" version="0.4.17"
-            repo="gstreamer"
-            hash="sha256:4fc7cca48c59fff23afee78fb642cdbde001f56401c8f47b95a16578d1d5d7e8"
-            md5sum="af1bf3dab9e69f3c36f389285e2a12a1"/>
-  </autotools>
-
-  <autotools id="gstreamer" autogen-sh="configure" autogenargs="--disable-gtk-doc">
-    <dependencies>
-      <dep package="orc"/>
-    </dependencies>
-    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.10.5"
-            repo="gstreamer"
-            hash="sha256:bc06243600817f637029da29d089d5908d1d266542f68bf6626a10c5f05f1f1d">
-      <patch file="gstreamer-0001-protection-added-function-to-filter-system-ids.patch" strip="1"/>
-    </branch>
-  </autotools>
-
-  <autotools id="gst-plugins-base"
-             autogen-sh="configure"
-             autogenargs="--disable-examples --disable-gtk-doc">
-    <dependencies>
-      <dep package="gstreamer"/>
-    </dependencies>
-    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.10.5"
-            repo="gstreamer"
-            hash="sha256:1c401a79bd1e4521c6ef1b66579bddedd9136e164e54792aab4bfcf3485bf9a7"/>
-  </autotools>
-
-  <autotools id="gst-plugins-good" autogen-sh="configure" autogenargs="--disable-examples --disable-soup --disable-gtk-doc">
-    <dependencies>
-      <dep package="gst-plugins-base"/>
-    </dependencies>
-
-    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.10.5"
-            repo="gstreamer"
-            hash="sha256:be053f6ed716eeb517cec148cec637cdce571c6e04d5c21409e2876fb76c7639">
-      <patch file="gst-plugins-good-0003-rtpbin-receive-bundle-support.patch" strip="1"/>
-      <patch file="gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch" strip="1"/>
-      <patch file="gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch" strip="1"/>
-      <patch file="gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch" strip="1"/>
-    </branch>
-  </autotools>
-
-  <autotools id="gst-plugins-bad" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc --disable-introspection">
-    <dependencies>
-      <dep package="gst-plugins-base"/>
-    </dependencies>
-    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.10.5"
-            repo="gstreamer"
-            hash="sha256:c5806040bb83b43be86ce592e6a19c5d83d7776f7d9f434eb4b911c4efff3573">
-    </branch>
-  </autotools>
-
-  <autotools id="gst-libav" autogen-sh="configure" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
-    <dependencies>
-      <dep package="gst-plugins-base"/>
-    </dependencies>
-    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.10.5"
-            repo="gstreamer"
-            hash="sha256:e4d2f315f478d47281fbfdfbd590a63d23704ca37911d7142d5992616f4b28d3"/>
   </autotools>
 
   <cmake id="wpe">

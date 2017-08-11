@@ -3,6 +3,8 @@
 <?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
 <moduleset>
 
+  <include href="../gstreamer/jhbuild.modules"/>
+
   <metamodule id="webkitgtk-testing-dependencies">
     <dependencies>
       <dep package="cairo"/>
@@ -21,11 +23,7 @@
       <dep package="icu"/>
       <dep package="libsoup"/>
       <dep package="atk"/>
-      <dep package="gstreamer"/>
-      <dep package="gst-plugins-base"/>
-      <dep package="gst-plugins-good"/>
-      <dep package="gst-plugins-bad"/>
-      <dep package="gst-libav"/>
+      <dep package="webkit-gstreamer-testing-dependencies"/>
       <dep package="openwebrtc"/>
       <dep package="pango"/>
       <dep package="llvm"/>
@@ -64,8 +62,6 @@
       href="http://xorg.freedesktop.org"/>
   <repository type="tarball" name="xmlsoft.org"
       href="http://xmlsoft.org"/>
-  <repository type="tarball" name="gstreamer"
-      href="http://gstreamer.freedesktop.org/src/"/>
   <repository type="tarball" name="savannah.gnu.org"
       href="http://download.savannah.gnu.org/releases/"/>
   <repository type="git" name="freedesktop-git"
@@ -80,8 +76,6 @@
       href="http://llvm.org"/>
   <repository type="tarball" name="webkitgtk-jhbuild-mirror"
       href="http://webkitgtk.org/jhbuild_mirror/"/>
-  <repository type="tarball" name="downloads.webmproject.org"
-      href="http://downloads.webmproject.org/releases/webm/"/>
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
 
@@ -310,75 +304,6 @@
             md5sum="9c0cfef285d5c4a5c80d00904ddab380"/>
   </autotools>
 
-  <autotools id="gstreamer" autogen-sh="configure" autogenargs="--disable-gtk-doc">
-    <if condition-set="macos">
-      <autogenargs value="--disable-introspection"/>
-    </if>
-    <dependencies>
-      <dep package="orc"/>
-    </dependencies>
-    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.10.5"
-            repo="gstreamer"
-            hash="sha256:bc06243600817f637029da29d089d5908d1d266542f68bf6626a10c5f05f1f1d">
-      <patch file="gstreamer-0001-protection-added-function-to-filter-system-ids.patch" strip="1"/>
-    </branch>
-  </autotools>
-
-  <autotools id="gst-plugins-base"
-             autogen-sh="configure"
-             autogenargs="--disable-examples --disable-gtk-doc">
-    <if condition-set="macos">
-      <autogenargs value="--disable-introspection"/>
-    </if>
-    <dependencies>
-      <dep package="gstreamer"/>
-    </dependencies>
-    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.10.5"
-            repo="gstreamer"
-            hash="sha256:1c401a79bd1e4521c6ef1b66579bddedd9136e164e54792aab4bfcf3485bf9a7"/>
-  </autotools>
-
-  <autotools id="gst-plugins-good" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc">
-    <if condition-set="macos">
-      <autogenargs value="--disable-introspection"/>
-    </if>
-    <dependencies>
-      <dep package="gst-plugins-base"/>
-      <dep package="libvpx"/>
-    </dependencies>
-
-    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.10.5"
-            repo="gstreamer"
-            hash="sha256:be053f6ed716eeb517cec148cec637cdce571c6e04d5c21409e2876fb76c7639">
-      <patch file="gst-plugins-good-0003-rtpbin-receive-bundle-support.patch" strip="1"/>
-      <patch file="gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch" strip="1"/>
-      <patch file="gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch" strip="1"/>
-      <patch file="gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch" strip="1"/>
-    </branch>
-  </autotools>
-
-  <autotools id="gst-plugins-bad" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc">
-    <if condition-set="macos">
-      <autogenargs value="--disable-introspection"/>
-    </if>
-    <dependencies>
-      <dep package="gst-plugins-base"/>
-      <dep package="openh264"/>
-    </dependencies>
-    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.10.5"
-            repo="gstreamer"
-            hash="sha256:c5806040bb83b43be86ce592e6a19c5d83d7776f7d9f434eb4b911c4efff3573"/>
-  </autotools>
-
-  <autotools id="gst-libav" autogen-sh="configure" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
-    <dependencies>
-      <dep package="gst-plugins-base"/>
-    </dependencies>
-    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.10.5"
-            repo="gstreamer"
-            hash="sha256:e4d2f315f478d47281fbfdfbd590a63d23704ca37911d7142d5992616f4b28d3"/>
-  </autotools>
-
   <autotools id="xserver" autogenargs="--disable-xinerama --enable-glx --enable-composite --disable-xorg --disable-dmx --disable-xnest --disable-xquartz --disable-xwin --disable-xephyr --disable-xfake --disable-xfbdev --disable-install-setuid --disable-unit-tests --disable-present --enable-unix-transport --enable-tcp-transport --disable-local-transport --with-xkb-path=/usr/share/X11/xkb --with-xkb-output=/var/lib/xkb --with-xkb-bin-directory=/usr/bin --without-dtrace">
     <dependencies>
       <dep package="pixman"/>
@@ -464,21 +389,6 @@
 
   <autotools id="libusrsctp" supports-non-srcdir-builds="no" autogen-sh="./bootstrap; ./configure --disable-warnings-as-errors">
     <branch repo="github.com" module="sctplab/usrsctp.git" checkoutdir="usrsctp" tag="078ff3252f73327e0ac11d6fd5eff62011f6646e"/>
-  </autotools>
-
-  <autotools id="openh264" supports-non-srcdir-builds="no" autogen-sh="pseudo-configure">
-    <branch module="cisco/openh264/archive/v${version}.tar.gz" version="1.5.0"
-            checkoutdir="openh264-${version}" repo="github-tarball">
-      <patch file="openh264-configure.patch" strip="0"/>
-    </branch>
-  </autotools>
-
-  <autotools id="libvpx"
-    autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --enable-pic --as=yasm --disable-unit-tests --size-limit=16384x16384 --enable-postproc --enable-multi-res-encoding --enable-temporal-denoising --enable-vp9-temporal-denoising --enable-vp9-postproc --enable-shared">
-    <branch version="1.6.0"
-            module="libvpx-${version}.tar.bz2"
-            repo="downloads.webmproject.org"
-            hash="sha256:d0afbb5eb1ecae68f8d578abace160a97e2e8a230e3028cf4db115d59a695aad"/>
   </autotools>
 
    <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" supports-non-srcdir-builds="no" autogen-sh="./autogen.sh; ./configure">

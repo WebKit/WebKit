@@ -1,3 +1,33 @@
+2017-08-11  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][GTK][WPE] Unify GStreamer JHBuild moduleset for both GTK+ and WPE
+        https://bugs.webkit.org/show_bug.cgi?id=175428
+
+        Both ports share the GStreamer code as multimedia backend and till
+        not so long they were using different versions. Now they do use
+        the same versions and it does not make any sense anymore (and
+        neither had sense before) to have differences in the modulesets.
+
+        In this patch I created a GStreamer moduleset and referenced it
+        from both GTK+'s and WPE's. GStreamer patches were also moved there.
+
+        Reviewed by Žan Doberšek.
+
+        * gstreamer/jhbuild.modules: Added.
+        * gstreamer/patches/gst-plugins-good-0003-rtpbin-receive-bundle-support.patch: Renamed from Tools/gtk/patches/gst-plugins-good-0003-rtpbin-receive-bundle-support.patch.
+        * gstreamer/patches/gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch: Renamed from Tools/gtk/patches/gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch.
+        * gstreamer/patches/gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch: Renamed from Tools/gtk/patches/gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch.
+        * gstreamer/patches/gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch: Renamed from Tools/gtk/patches/gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch.
+        * gstreamer/patches/gstreamer-0001-protection-added-function-to-filter-system-ids.patch: Renamed from Tools/gtk/patches/gstreamer-0001-protection-added-function-to-filter-system-ids.patch.
+        * gstreamer/patches/openh264-configure.patch: Renamed from Tools/gtk/patches/openh264-configure.patch.
+        * gtk/jhbuild.modules:
+        * wpe/jhbuild.modules:
+        * wpe/patches/gst-plugins-good-0003-rtpbin-receive-bundle-support.patch: Removed.
+        * wpe/patches/gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch: Removed.
+        * wpe/patches/gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch: Removed.
+        * wpe/patches/gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch: Removed.
+        * wpe/patches/gstreamer-0001-protection-added-function-to-filter-system-ids.patch: Removed.
+
 2017-08-10  Don Olmstead  <don.olmstead@sony.com>
 
         Unreviewed, adding Ross Kirsling to contributors.json
