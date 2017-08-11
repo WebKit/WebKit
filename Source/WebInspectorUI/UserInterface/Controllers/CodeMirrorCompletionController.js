@@ -251,6 +251,14 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         container.classList.add(WI.CodeMirrorCompletionController.CompletionHintStyleClassName);
         container.textContent = text;
 
+        container.addEventListener("mousedown", (event) => {
+            event.preventDefault();
+            this._commitCompletionHint();
+
+            // The clicked hint marker causes the editor to loose focus. Restore it so the user can keep typing.
+            setTimeout(() => { this._codeMirror.focus() }, 0);
+        });
+
         this._completionHintMarker = this._codeMirror.setUniqueBookmark(position, {widget: container, insertLeft: true});
     }
 
