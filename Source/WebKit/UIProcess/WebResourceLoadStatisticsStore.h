@@ -163,7 +163,7 @@ private:
         std::optional<Seconds> timeToLiveUserInteraction;
         Seconds timeToLiveCookiePartitionFree { 24_h };
         Seconds minimumTimeBetweenDataRecordsRemoval { 1_h };
-        Seconds grandfatheringTime { 1_h };
+        Seconds grandfatheringTime { 72_h };
         bool shouldNotifyPagesWhenDataRecordsWereScanned { false };
         bool shouldClassifyResourcesBeforeDataRecordsRemoval { true };
         bool shouldSubmitTelemetry { true };
