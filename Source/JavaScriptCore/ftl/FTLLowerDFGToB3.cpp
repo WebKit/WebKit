@@ -11639,6 +11639,8 @@ private:
         // compute here will get reassociated and folded with Gigacage::basePtr. There's a world in which
         // moveConstants() observes that it needs to reassociate in order to hoist the big constants. But
         // it's much easier to just block B3's badness here. That's what we do for now.
+        // FIXME: It would be better if we didn't have to do this hack.
+        // https://bugs.webkit.org/show_bug.cgi?id=175483
         PatchpointValue* patchpoint = m_out.patchpoint(pointerType());
         patchpoint->appendSomeRegister(basePtr);
         patchpoint->appendSomeRegister(masked);
