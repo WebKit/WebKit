@@ -24,7 +24,6 @@
 #include "config.h"
 #include "RenderBlockFlow.h"
 
-#include "AXObjectCache.h"
 #include "Editor.h"
 #include "FloatingObjects.h"
 #include "Frame.h"
@@ -2353,9 +2352,6 @@ FloatingObject* RenderBlockFlow::insertFloatingObject(RenderBox& floatBox)
     }
 
     setLogicalWidthForFloat(*floatingObject, logicalWidthForChild(floatBox) + marginStartForChild(floatBox) + marginEndForChild(floatBox));
-    
-    if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->childrenChanged(this);
 
     return m_floatingObjects->add(WTFMove(floatingObject));
 }
@@ -2393,9 +2389,6 @@ void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)
                 markLinesDirtyInBlockRange(0, logicalBottom);
             }
             m_floatingObjects->remove(&floatingObject);
-            
-            if (AXObjectCache* cache = document().existingAXObjectCache())
-                cache->childrenChanged(this);
         }
     }
 }
