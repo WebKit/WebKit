@@ -25,7 +25,7 @@ MAJOR_VERSION = 604;
 MINOR_VERSION = 1;
 TINY_VERSION = 38;
 MICRO_VERSION = 1;
-NANO_VERSION = 5;
+NANO_VERSION = 6;
 FULL_VERSION = $(MAJOR_VERSION).$(MINOR_VERSION).$(TINY_VERSION).$(MICRO_VERSION).$(NANO_VERSION);
 
 // The bundle version and short version string are set based on the current build configuration, see below.
