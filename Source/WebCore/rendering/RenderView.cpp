@@ -1524,48 +1524,6 @@ unsigned RenderView::pageCount() const
     return 0;
 }
 
-void RenderView::registerQuote(RenderQuote& quote)
-{
-    ASSERT(!m_quotes.contains(&quote));
-
-    setHasSpecialRendererNeedingUpdate();
-
-    if (m_quotes.isEmpty()) {
-        m_quotes.add(&quote);
-        return;
-    }
-    auto quoteRenderers = descendantsOfType<RenderQuote>(*this);
-    auto it = quoteRenderers.at(quote);
-    if (++it == quoteRenderers.end()) {
-        m_quotes.add(&quote);
-        return;
-    }
-    auto& nextQuote = *it;
-    ASSERT(m_quotes.contains(&nextQuote));
-    m_quotes.insertBefore(&nextQuote, &quote);
-}
-
-void RenderView::unregisterQuote(RenderQuote& quote)
-{
-    ASSERT(m_quotes.contains(&quote));
-
-    setHasSpecialRendererNeedingUpdate();
-
-    m_quotes.remove(&quote);
-}
-
-void RenderView::updateSpecialRenderers()
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(document().inRenderTreeUpdate());
-    ASSERT_WITH_SECURITY_IMPLICATION(!renderTreeIsBeingMutatedInternally());
-
-    if (!m_hasSpecialRendererNeedingUpdate)
-        return;
-    m_hasSpecialRendererNeedingUpdate = false;
-
-    RenderQuote::updateRenderers(*this);
-}
-
 #if ENABLE(CSS_SCROLL_SNAP)
 void RenderView::registerBoxWithScrollSnapPositions(const RenderBox& box)
 {

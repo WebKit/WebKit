@@ -47,12 +47,12 @@ RenderQuote::~RenderQuote()
 void RenderQuote::insertedIntoTree()
 {
     RenderInline::insertedIntoTree();
-    view().registerQuote(*this);
+    view().setHasQuotesNeedingUpdate(true);
 }
 
 void RenderQuote::willBeRemovedFromTree()
 {
-    view().unregisterQuote(*this);
+    view().setHasQuotesNeedingUpdate(true);
     RenderInline::willBeRemovedFromTree();
 }
 
@@ -61,7 +61,7 @@ void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     RenderInline::styleDidChange(diff, oldStyle);
     if (diff >= StyleDifferenceLayout) {
         m_needsTextUpdate = true;
-        view().setHasSpecialRendererNeedingUpdate();
+        view().setHasQuotesNeedingUpdate(true);
     }
 }
 
@@ -388,25 +388,44 @@ String RenderQuote::computeText() const
     return emptyString();
 }
 
-void RenderQuote::updateRenderers(const RenderView& view)
+bool RenderQuote::isOpen() const
 {
+    switch (m_type) {
+    case OPEN_QUOTE:
+    case NO_OPEN_QUOTE:
+        return true;
+    case CLOSE_QUOTE:
+    case NO_CLOSE_QUOTE:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void RenderQuote::updateRenderer(RenderQuote* previousQuote)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(document().inRenderTreeUpdate());
+    ASSERT_WITH_SECURITY_IMPLICATION(!view().renderTreeIsBeingMutatedInternally());
+    ASSERT_WITH_SECURITY_IMPLICATION(!view().layoutState());
+
     int depth = -1;
-    for (auto* quote : view.quotes()) {
-        bool isOpen = quote->m_type == OPEN_QUOTE || quote->m_type == NO_OPEN_QUOTE;
-        if (!isOpen)
-            --depth;
-        else if (depth < 0)
-            depth = 0;
-
-        if (quote->m_depth != depth || quote->m_needsTextUpdate) {
-            quote->m_depth = depth;
-            quote->m_needsTextUpdate = false;
-            quote->updateTextRenderer();
-        }
-
-        if (isOpen)
+    if (previousQuote) {
+        depth = previousQuote->m_depth;
+        if (previousQuote->isOpen())
             ++depth;
     }
+
+    if (!isOpen())
+        --depth;
+    else if (depth < 0)
+        depth = 0;
+
+    if (m_depth == depth && !m_needsTextUpdate)
+        return;
+
+    m_depth = depth;
+    m_needsTextUpdate = false;
+    updateTextRenderer();
 }
 
 } // namespace WebCore

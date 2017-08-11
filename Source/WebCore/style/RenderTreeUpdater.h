@@ -37,6 +37,7 @@ class ContainerNode;
 class Document;
 class Element;
 class Node;
+class RenderQuote;
 class RenderStyle;
 class Text;
 
@@ -73,12 +74,15 @@ private:
     void popParent();
     void popParentsToDepth(unsigned depth);
 
+    void updateQuotesUpTo(RenderQuote*);
+
     Document& m_document;
     std::unique_ptr<const Style::Update> m_styleUpdate;
 
     Vector<Parent> m_parentStack;
 
     HashSet<Text*> m_invalidatedWhitespaceOnlyTextSiblings;
+    RenderQuote* m_previousUpdatedQuote { nullptr };
 };
 
 } // namespace WebCore
