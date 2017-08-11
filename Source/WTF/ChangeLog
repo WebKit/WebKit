@@ -1,5 +1,11 @@
 2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, attempt to fix build failure with VC2017
+
+        * wtf/PriorityQueue.h:
+
+2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Run more WTF tests
         https://bugs.webkit.org/show_bug.cgi?id=174970
 

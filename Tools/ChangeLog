@@ -1,5 +1,12 @@
 2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, attempt to fix build failure with VC2017
+
+        * TestWebKitAPI/Tests/WTF/PriorityQueue.cpp:
+        (TEST):
+
+2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, suppress warnings on GCC
 
         * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
