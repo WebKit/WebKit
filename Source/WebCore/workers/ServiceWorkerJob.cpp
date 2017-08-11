@@ -54,8 +54,10 @@ void ServiceWorkerJob::failedWithException(Exception&& exception)
 
     ASSERT(!m_completed);
     m_promise->reject(WTFMove(exception));
-    m_client->jobDidFinish(*this);
     m_completed = true;
+
+    // Can cause this to be deleted.
+    m_client->jobDidFinish(*this);
 }
 
 } // namespace WebCore
