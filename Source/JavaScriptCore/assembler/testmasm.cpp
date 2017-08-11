@@ -85,7 +85,6 @@ template<typename T> T nextID(T id) { return static_cast<T>(id + 1); }
 #define CHECK_DOUBLE_BITWISE_EQ(a, b) \
     CHECK(bitwise_cast<uint64_t>(a) == bitwise_cast<uint64_t>(a))
 
-#if ENABLE(MASM_PROBE)
 bool isPC(MacroAssembler::RegisterID id)
 {
 #if CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
@@ -116,7 +115,6 @@ bool isSpecialGPR(MacroAssembler::RegisterID id)
 #endif
     return false;
 }
-#endif // ENABLE(MASM_PROBE)
 
 MacroAssemblerCodeRef compile(Generator&& generate)
 {
@@ -149,7 +147,6 @@ void testSimple()
     }) == 42);
 }
 
-#if ENABLE(MASM_PROBE)
 void testProbeReadsArgumentRegisters()
 {
     bool probeWasCalled = false;
@@ -493,7 +490,6 @@ void testProbeModifiesProgramCounter()
     CHECK(probeCallCount == 2);
     CHECK(continuationWasReached);
 }
-#endif // ENABLE(MASM_PROBE)
 
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
@@ -519,14 +515,12 @@ void run(const char* filter)
 
     RUN(testSimple());
 
-#if ENABLE(MASM_PROBE)
     RUN(testProbeReadsArgumentRegisters());
     RUN(testProbeWritesArgumentRegisters());
     RUN(testProbePreservesGPRS());
     RUN(testProbeModifiesStackPointerToInsideProbeContextOnStack());
     RUN(testProbeModifiesStackPointerToNBytesBelowSP());
     RUN(testProbeModifiesProgramCounter());
-#endif
 
     if (tasks.isEmpty())
         usage();

@@ -1,3 +1,23 @@
+2017-08-10  Mark Lam  <mark.lam@apple.com>
+
+        Make the MASM_PROBE mechanism mandatory for DFG and FTL builds.
+        https://bugs.webkit.org/show_bug.cgi?id=175446
+        <rdar://problem/33836545>
+
+        Reviewed by Saam Barati.
+
+        This is needed in order to support https://bugs.webkit.org/show_bug.cgi?id=174645.
+        One consequence of this is that the DFG will now be disabled for the MIPS and
+        Windows ports. See:
+            https://bugs.webkit.org/show_bug.cgi?id=175447
+            https://bugs.webkit.org/show_bug.cgi?id=175449
+
+        Also, we should only ENABLE_SIGNAL_BASED_VM_TRAPS if the DFG is enabled.  It was
+        never meaningful to use SIGNAL_BASED_VM_TRAPS with the baseline JIT anyway.  This
+        is a mis-configuration error that is now fixed.
+
+        * wtf/Platform.h:
+
 2017-08-10  Brady Eidson  <beidson@apple.com>
 
         Rename the source files for the WTF persistent coders.

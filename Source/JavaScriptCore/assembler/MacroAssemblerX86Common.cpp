@@ -32,8 +32,6 @@
 
 namespace JSC {
 
-#if ENABLE(MASM_PROBE)
-
 extern "C" void ctiMasmProbeTrampoline();
 
 #if COMPILER(GCC_OR_CLANG)
@@ -524,6 +522,13 @@ asm (
 
 #endif // COMPILER(GCC_OR_CLANG)
 
+#if OS(WINDOWS)
+extern "C" NO_RETURN_DUE_TO_ASSERT void ctiMasmProbeTrampoline()
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+#endif // OS(WINDOWS)
+
 // What code is emitted for the probe?
 // ==================================
 // We want to keep the size of the emitted probe invocation code as compact as
@@ -574,8 +579,6 @@ void MacroAssembler::probe(ProbeFunction function, void* arg)
     move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), RegisterID::eax);
     call(RegisterID::eax);
 }
-
-#endif // ENABLE(MASM_PROBE)
 
 #if CPU(X86) && !OS(MAC_OS_X)
 MacroAssemblerX86Common::SSE2CheckState MacroAssemblerX86Common::s_sse2CheckState = NotCheckedSSE2;

@@ -1824,7 +1824,6 @@ public:
         urshift32(src, trustedImm32ForShift(amount), dest);
     }
 
-#if ENABLE(MASM_PROBE)
     struct CPUState;
 
     // This function emits code to preserve the CPUState (e.g. registers),
@@ -1848,18 +1847,14 @@ public:
     void probe(ProbeFunction, void* arg);
 
     JS_EXPORT_PRIVATE void probe(std::function<void(ProbeContext*)>);
-#endif // ENABLE(MASM_PROBE)
 
     // Let's you print from your JIT generated code.
-    // This only works if ENABLE(MASM_PROBE). Otherwise, print() is a no-op.
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.
     template<typename... Arguments>
     void print(Arguments&&... args);
 
     void print(Printer::PrintRecordList*);
 };
-
-#if ENABLE(MASM_PROBE)
 
 struct MacroAssembler::CPUState {
     static inline const char* gprName(RegisterID id) { return MacroAssembler::gprName(id); }
@@ -1963,7 +1958,6 @@ struct ProbeContext {
     void*& fp() { return cpu.fp(); }
     void*& sp() { return cpu.sp(); }
 };
-#endif // ENABLE(MASM_PROBE)
     
 } // namespace JSC
 

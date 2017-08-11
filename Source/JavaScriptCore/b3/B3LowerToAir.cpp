@@ -1149,7 +1149,6 @@ private:
         return Air::Oops;
     }
 
-#if ENABLE(MASM_PROBE)
     template<typename... Arguments>
     void print(Arguments&&... arguments)
     {
@@ -1166,10 +1165,6 @@ private:
         Printer::appendAirArgs(inst, std::forward<Arguments>(arguments)...);
         append(WTFMove(inst));
     }
-#else
-    template<typename... Arguments>
-    void print(Arguments&&...) { }
-#endif // ENABLE(MASM_PROBE)
 
     template<typename... Arguments>
     void append(Air::Kind kind, Arguments&&... arguments)

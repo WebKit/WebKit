@@ -770,17 +770,23 @@
 
 #if !defined(ENABLE_DFG_JIT) && ENABLE(JIT)
 /* Enable the DFG JIT on X86 and X86_64. */
-#if (CPU(X86) || CPU(X86_64)) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(WINDOWS) || OS(HURD))
+#if (CPU(X86) || CPU(X86_64)) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD))
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARMv7.  Only tested on iOS and Qt/GTK+ Linux. */
 #if (CPU(ARM_THUMB2) || CPU(ARM64)) && (PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(WPE))
 #define ENABLE_DFG_JIT 1
 #endif
-/* Enable the DFG JIT on ARM and MIPS. */
-#if CPU(ARM_TRADITIONAL) || CPU(MIPS)
+/* Enable the DFG JIT on ARM. */
+#if CPU(ARM_TRADITIONAL)
 #define ENABLE_DFG_JIT 1
 #endif
+/* FIXME: MIPS cannot enable the DFG until it has support for MacroAssembler::probe().
+   https://bugs.webkit.org/show_bug.cgi?id=175447
+*/
+/* FIXME: Windows cannot enable the DFG until it has support for MacroAssembler::probe().
+   https://bugs.webkit.org/show_bug.cgi?id=175449
+*/
 #endif
 
 /* Concurrent JS only works on 64-bit platforms because it requires that
@@ -799,19 +805,23 @@
 #define ENABLE_FAST_TLS_JIT 1
 #endif
 
-/* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */
-#if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY)
-#define ENABLE_B3_JIT 1
-#endif
-
 /* If the baseline jit is not available, then disable upper tiers as well: */
 #if !ENABLE(JIT)
 #undef ENABLE_DFG_JIT
 #undef ENABLE_FTL_JIT
-#undef ENABLE_B3_JIT
 #define ENABLE_DFG_JIT 0
 #define ENABLE_FTL_JIT 0
-#define ENABLE_B3_JIT 0
+#endif
+
+/* If the DFG jit is not available, then disable upper tiers as well: */
+#if !ENABLE(DFG_JIT)
+#undef ENABLE_FTL_JIT
+#define ENABLE_FTL_JIT 0
+#endif
+
+/* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */
+#if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY)
+#define ENABLE_B3_JIT 1
 #endif
 
 /* The SamplingProfiler is the probabilistic and low-overhead profiler used by
@@ -948,14 +958,6 @@
 #endif
 #endif
 
-/* Enable the following if you want to use the MacroAssembler::probe() facility
-   to do JIT debugging. */
-#if (CPU(X86) || CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && PLATFORM(IOS))) && ENABLE(JIT) && OS(DARWIN)
-#define ENABLE_MASM_PROBE 1
-#else
-#define ENABLE_MASM_PROBE 0
-#endif
-
 #ifndef ENABLE_EXCEPTION_SCOPE_VERIFICATION
 #ifdef NDEBUG
 #define ENABLE_EXCEPTION_SCOPE_VERIFICATION 0
@@ -964,7 +966,7 @@
 #endif
 #endif
 
-#if ENABLE(JIT) && HAVE(MACHINE_CONTEXT) && (CPU(X86) || CPU(X86_64) || CPU(ARM64))
+#if ENABLE(DFG_JIT) && HAVE(MACHINE_CONTEXT) && (CPU(X86) || CPU(X86_64) || CPU(ARM64))
 #define ENABLE_SIGNAL_BASED_VM_TRAPS 1
 #endif
 

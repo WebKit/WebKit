@@ -43,10 +43,8 @@ namespace JSC {
 
 #if ENABLE(ASSEMBLER)
 
-#if ENABLE(MASM_PROBE)
 struct ProbeContext;
 typedef void (*ProbeFunction)(struct ProbeContext*);
-#endif
     
 class AllowMacroScratchRegisterUsage;
 class DisallowMacroScratchRegisterUsage;

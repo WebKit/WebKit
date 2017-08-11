@@ -26,7 +26,6 @@
 #pragma once
 
 #if ENABLE(B3_JIT)
-#if ENABLE(MASM_PROBE)
 
 #include "AirInst.h"
 #include "AirSpecial.h"
@@ -129,5 +128,4 @@ private:
 
 } } } // namespace JSC::B3::Air
 
-#endif // ENABLE(MASM_PROBE)
 #endif // ENABLE(B3_JIT)
