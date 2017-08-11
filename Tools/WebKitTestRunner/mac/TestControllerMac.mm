@@ -66,6 +66,8 @@ void TestController::platformInitialize()
 {
     poseAsClass("WebKitTestRunnerPasteboard", "NSPasteboard");
     poseAsClass("WebKitTestRunnerEvent", "NSEvent");
+    
+    cocoaPlatformInitialize();
 
     [NSSound _setAlertType:0];
 

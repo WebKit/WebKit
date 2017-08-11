@@ -93,6 +93,20 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
 #endif
 }
 
+void TestController::cocoaPlatformInitialize()
+{
+    const char* dumpRenderTreeTemp = libraryPathForTesting();
+    if (!dumpRenderTreeTemp)
+        return;
+
+    String resourceLoadStatisticsFolder = String(dumpRenderTreeTemp) + '/' + "ResourceLoadStatistics";
+    [[NSFileManager defaultManager] createDirectoryAtPath:resourceLoadStatisticsFolder withIntermediateDirectories:NO attributes:nil error: nil];
+    String fullBrowsingSessionResourceLog = resourceLoadStatisticsFolder + '/' + "full_browsing_session_resourceLog.plist";
+    NSDictionary *resourceLogPlist = [[NSDictionary alloc] initWithObjectsAndKeys: [NSNumber numberWithInt:1], @"version", nil];
+    if (![resourceLogPlist writeToFile:fullBrowsingSessionResourceLog atomically:YES])
+        WTFCrash();
+}
+
 WKContextRef TestController::platformContext()
 {
 #if WK_API_ENABLED

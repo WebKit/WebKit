@@ -204,6 +204,7 @@ private:
     void platformResetPreferencesToConsistentValues();
     void platformResetStateToConsistentValues();
 #if PLATFORM(COCOA)
+    void cocoaPlatformInitialize();
     void cocoaResetStateToConsistentValues();
 #endif
     void platformConfigureViewForTest(const TestInvocation&);

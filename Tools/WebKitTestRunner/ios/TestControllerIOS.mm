@@ -51,6 +51,8 @@ void TestController::notifyDone()
 void TestController::platformInitialize()
 {
     setUpIOSLayoutTestCommunication();
+    cocoaPlatformInitialize();
+
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [[UIScreen mainScreen] _setScale:2.0];
 }

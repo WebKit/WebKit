@@ -1,3 +1,24 @@
+2017-08-11  Jonathan Bedard  <jbedard@apple.com>
+
+        Create mock ITP data in testing to prevent grandfathering
+        https://bugs.webkit.org/show_bug.cgi?id=174720
+        <rdar://problem/33457779>
+
+        Reviewed by Brent Fulgham.
+
+        We don't need to be triggering grandfathering when each test runner starts. On Mac,
+        this may launch plugins which can cause layout tests to fail later if the test
+        runner does not shut-down before the plugins unload.
+
+        * WebKitTestRunner/TestController.h: Add declaration of cocoaPlatformInitialize.
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaPlatformInitialize): Write the minimum data required to
+        prevent grandfathering from being triggered.
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformInitialize): Call cocoaPlatformInitialize.
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformInitialize): Ditto.
+
 2017-08-11  Sam Weinig  <sam@webkit.org>
 
         WTF::Function does not allow for reference / non-default constructible return types
