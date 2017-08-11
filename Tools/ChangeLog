@@ -2,6 +2,16 @@
 
         Create mock ITP data in testing to prevent grandfathering
         https://bugs.webkit.org/show_bug.cgi?id=174720
+
+        Unreviewed follow-up fix for r220604.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaPlatformInitialize): Release resourceLogPlist.
+
+2017-08-11  Jonathan Bedard  <jbedard@apple.com>
+
+        Create mock ITP data in testing to prevent grandfathering
+        https://bugs.webkit.org/show_bug.cgi?id=174720
         <rdar://problem/33457779>
 
         Reviewed by Brent Fulgham.

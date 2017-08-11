@@ -105,6 +105,7 @@ void TestController::cocoaPlatformInitialize()
     NSDictionary *resourceLogPlist = [[NSDictionary alloc] initWithObjectsAndKeys: [NSNumber numberWithInt:1], @"version", nil];
     if (![resourceLogPlist writeToFile:fullBrowsingSessionResourceLog atomically:YES])
         WTFCrash();
+    [resourceLogPlist release];
 }
 
 WKContextRef TestController::platformContext()
