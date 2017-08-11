@@ -1,3 +1,24 @@
+2017-08-11  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build with modern Clang's -Wexpansion-to-defined
+        https://bugs.webkit.org/show_bug.cgi?id=175467
+        <rdar://problem/33667497>
+
+        Reviewed by Simon Fraser.
+
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+        Avoid object-like macros that expand to include defined(), because this
+        behaves inconsistently between different compilers (though in ways
+        that don't matter for these particular defines, which aren't used on MSVC),
+        and Clang has added a warning for it.
+
+        Move ENABLE_WEBASSEMBLY to Platform.h since it depends on things that
+        are defined there and can't be evaluated at time-of-use because of the
+        aforementioned new rules. Previously, there was a cycle between
+        ENABLE_WEBASSEMBLY and ENABLE_B3_JIT -- break that so that it just
+        goes FTL_JIT->B3_JIT->WASM instead.
+
 2017-08-10  Sam Weinig  <sam@webkit.org>
 
         WTF::Function does not allow for reference / non-default constructible return types

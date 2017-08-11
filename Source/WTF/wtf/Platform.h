@@ -820,8 +820,16 @@
 #endif
 
 /* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */
-#if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY)
+#if ENABLE(FTL_JIT)
 #define ENABLE_B3_JIT 1
+#endif
+
+#if !defined(ENABLE_WEBASSEMBLY)
+#if ENABLE(B3_JIT) && PLATFORM(COCOA)
+#define ENABLE_WEBASSEMBLY 1
+#else
+#define ENABLE_WEBASSEMBLY 0
+#endif
 #endif
 
 /* The SamplingProfiler is the probabilistic and low-overhead profiler used by
