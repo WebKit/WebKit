@@ -162,7 +162,7 @@ asm (
     HIDE_SYMBOL(ctiMasmProbeTrampoline) "\n"
     SYMBOL_STRING(ctiMasmProbeTrampoline) ":" "\n"
 
-    "pushfd" "\n"
+    "pushfl" "\n"
 
     // MacroAssemblerX86Common::probe() has already generated code to store some values.
     // Together with the eflags pushed above, the top of stack now looks like
@@ -315,7 +315,7 @@ asm (
     "movl %ecx, %esp" "\n"
 
     // Do the remaining restoration by popping off the restore area.
-    "popfd" "\n"
+    "popfl" "\n"
     "popl %eax" "\n"
     "popl %ecx" "\n"
     "popl %ebp" "\n"
