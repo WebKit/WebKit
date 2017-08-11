@@ -937,17 +937,17 @@ webkit.org/b/84357 media/audio-repaint.html [ Failure ]
 
 webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]
 webkit.org/b/121992 media/media-volume-slider-rendered-normal.html [ Timeout Failure ]
-webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Timeout Failure ]
-webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click.html [ Timeout Failure ]
-webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Timeout Failure ]
+webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Skip ]
+webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click.html [ Skip ]
+webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Skip ]
 
 # REGRESSION(r156546): 6 media tests broken (122021)
 webkit.org/b/122021 media/track/track-cue-mutable-text.html [ Pass Failure ]
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Timeout ]
 webkit.org/b/122021 media/track/track-in-band-mode.html [ Failure ]
-webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Timeout ]
-webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
-webkit.org/b/116266 media/video-controls-toggling.html [ Timeout ]
+webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Skip ]
+webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Skip ]
+webkit.org/b/116266 media/video-controls-toggling.html [ Skip ]
 
 webkit.org/b/163231 [ ElCapitan+ ] media/controls/airplay-picker.html [ Pass Failure ]
 
