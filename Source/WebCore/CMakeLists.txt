@@ -4035,6 +4035,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D AND NOT WIN32)
 
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(ANGLESupport -Wno-implicit-fallthrough
+                                                 -Wno-inconsistent-missing-override
                                                  -Wno-null-conversion
                                                  -Wno-suggest-attribute=format
                                                  -Wno-unused-function
