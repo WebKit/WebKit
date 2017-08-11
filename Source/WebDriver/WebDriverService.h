@@ -38,7 +38,7 @@ class InspectorObject;
 
 namespace WebDriver {
 
-class Capabilities;
+struct Capabilities;
 class CommandResult;
 class Session;
 

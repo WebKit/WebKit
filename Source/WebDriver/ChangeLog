@@ -1,3 +1,12 @@
+2017-08-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Fix build warning in WebDriverService.h
+        https://bugs.webkit.org/show_bug.cgi?id=166682
+
+        Unreviewed build fix.
+
+        * WebDriverService.h: Fixes the warning: class 'Capabilities' was previously declared as a struct [-Wmismatched-tags]
+
 2017-08-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix Ubuntu LTS build
