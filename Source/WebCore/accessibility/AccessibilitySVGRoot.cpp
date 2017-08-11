@@ -35,7 +35,6 @@ namespace WebCore {
 
 AccessibilitySVGRoot::AccessibilitySVGRoot(RenderObject* renderer)
     : AccessibilitySVGElement(renderer)
-    , m_parent(nullptr)
 {
 }
 
@@ -47,13 +46,21 @@ Ref<AccessibilitySVGRoot> AccessibilitySVGRoot::create(RenderObject* renderer)
 {
     return adoptRef(*new AccessibilitySVGRoot(renderer));
 }
+
+void AccessibilitySVGRoot::setParent(AccessibilityRenderObject *parent)
+{
+    if (parent)
+        m_parent = parent->createWeakPtr();
+    else
+        m_parent = nullptr;
+}
     
 AccessibilityObject* AccessibilitySVGRoot::parentObject() const
 {
     // If a parent was set because this is a remote SVG resource, use that
     // but otherwise, we should rely on the standard render tree for the parent.
     if (m_parent)
-        return m_parent;
+        return m_parent.get();
     
     return AccessibilitySVGElement::parentObject();
 }

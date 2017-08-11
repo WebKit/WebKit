@@ -31,6 +31,7 @@
 #include "AccessibilityNodeObject.h"
 #include "LayoutRect.h"
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
     
@@ -198,6 +199,8 @@ public:
     AccessibilityRole roleValueForMSAA() const override;
 
     String passwordFieldValue() const override;
+    
+    WeakPtr<AccessibilityRenderObject> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
 protected:
     explicit AccessibilityRenderObject(RenderObject*);
@@ -217,6 +220,7 @@ protected:
     RenderObject* m_renderer;
 
 private:
+    WeakPtrFactory<AccessibilityRenderObject> m_weakPtrFactory;
     bool isAccessibilityRenderObject() const final { return true; }
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
