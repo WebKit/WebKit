@@ -32,4 +32,5 @@ find_package(PkgConfig)
 pkg_check_modules(LIBXKBCOMMON xkbcommon)
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(LIBXKBCOMMON DEFAULT_MSG LIBXKBCOMMON_FOUND)
+find_package_handle_standard_args(Libxkbcommon REQUIRED_VARS LIBXKBCOMMON_FOUND
+                                  FOUND_VAR LIBXKBCOMMON_FOUND)

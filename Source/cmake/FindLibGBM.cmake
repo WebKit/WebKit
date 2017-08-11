@@ -41,6 +41,7 @@ find_library(LIBGBM_LIBRARIES
 )
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(LIBGBM DEFAULT_MSG LIBGBM_LIBRARIES)
+find_package_handle_standard_args(LibGBM REQUIRED_VARS LIBGBM_LIBRARIES
+                                  FOUND_VAR LIBGBM_FOUND)
 
 mark_as_advanced(LIBGBM_INCLUDE_DIRS LIBGBM_LIBRARIES)

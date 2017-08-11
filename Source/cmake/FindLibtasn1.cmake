@@ -42,6 +42,7 @@ find_library(LIBTASN1_LIBRARIES
 )
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(LIBTASN1 DEFAULT_MSG LIBTASN1_LIBRARIES)
+find_package_handle_standard_args(Libtasn1 REQUIRED_VARS LIBTASN1_LIBRARIES
+                                  FOUND_VAR LIBTASN1_FOUND)
 
 mark_as_advanced(LIBTASN1_INCLUDE_DIRS LIBTASN1_LIBRARIES)
