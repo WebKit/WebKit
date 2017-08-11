@@ -3557,10 +3557,9 @@ private:
                 ExoticObjectMode, noValue(), nullptr,
                 m_out.equal(scopeOffset, m_out.constInt32(ScopeOffset::invalidOffset)));
             
-            // FIXME: I guess we need to cage JSEnvironmentRecord?
-            // https://bugs.webkit.org/show_bug.cgi?id=174922
             address = m_out.baseIndex(
-                m_heaps.JSEnvironmentRecord_variables, scope, m_out.zeroExtPtr(scopeOffset));
+                m_heaps.JSEnvironmentRecord_variables, caged(Gigacage::JSValue, scope),
+                m_out.zeroExtPtr(scopeOffset));
             ValueFromBlock namedResult = m_out.anchor(m_out.load64(address));
             m_out.jump(continuation);
             

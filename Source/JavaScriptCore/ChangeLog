@@ -1,5 +1,25 @@
 2017-08-11  Filip Pizlo  <fpizlo@apple.com>
 
+        JSLexicalEnvironment needs to be in the JSValue gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=174922
+
+        Reviewed by Michael Saboff.
+        
+        We can sorta random access the JSLexicalEnvironment. So, we put it in the JSValue gigacage and make
+        the only random accesses use pointer caging.
+        
+        We don't need to do anything to normal lexical environment accesses.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        * runtime/JSEnvironmentRecord.h:
+        (JSC::JSEnvironmentRecord::subspaceFor):
+        (JSC::JSEnvironmentRecord::variables):
+
+2017-08-11  Filip Pizlo  <fpizlo@apple.com>
+
         DirectArguments should be in the JSValue gigacage
         https://bugs.webkit.org/show_bug.cgi?id=174920
 

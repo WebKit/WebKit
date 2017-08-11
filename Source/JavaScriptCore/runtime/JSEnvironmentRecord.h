@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,17 +36,26 @@ namespace JSC {
 
 class LLIntOffsetsExtractor;
 
+// FIXME: Merge this with JSLexicalEnvironment, since that's the only subclass.
+// https://bugs.webkit.org/show_bug.cgi?id=175492
 class JSEnvironmentRecord : public JSSymbolTableObject {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
 
 public:
+    template<typename CellType>
+    static Subspace* subspaceFor(VM& vm)
+    {
+        RELEASE_ASSERT(!CellType::needsDestruction);
+        return &vm.jsValueGigacageCellSpace;
+    }
+
     typedef JSSymbolTableObject Base;
     static const unsigned StructureFlags = Base::StructureFlags;
 
     WriteBarrierBase<Unknown>* variables()
     {
-        return bitwise_cast<WriteBarrierBase<Unknown>*>(bitwise_cast<char*>(this) + offsetOfVariables());
+        return bitwise_cast<WriteBarrierBase<Unknown>*>(bitwise_cast<char*>(Gigacage::caged(Gigacage::JSValue, this)) + offsetOfVariables());
     }
     
     bool isValidScopeOffset(ScopeOffset offset)

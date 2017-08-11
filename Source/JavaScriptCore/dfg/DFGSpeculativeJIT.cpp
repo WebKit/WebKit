@@ -6311,6 +6311,8 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
         m_jit.branch32(
             MacroAssembler::Equal, scratchReg, TrustedImm32(ScopeOffset::invalidOffset)));
     
+    m_jit.cage(Gigacage::JSValue, scratch2Reg);
+    
     m_jit.loadValue(
         MacroAssembler::BaseIndex(
             scratch2Reg, propertyReg, MacroAssembler::TimesEight,
