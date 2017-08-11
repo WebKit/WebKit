@@ -38,19 +38,23 @@
 
     description("Make sure that when performing a press, we target the deepest descendant, but also one that is an Element at the least.");
 
+    document.getElementById("link").addEventListener("click", pressedLink);
+    document.getElementById("button").addEventListener("click", pressedButton);
     function startTest() {
        accessibilityController.accessibleElementById("link").press();
-       setTimeout(function() {
-           debug("\nNow pressing on button\n");
-           accessibilityController.accessibleElementById("button").press();
-           setTimeout(function() {
-               finishJSTest();
-           }, 10);
-       }, 10);
     }
 
     if (window.accessibilityController) {
        window.jsTestIsAsync = true;
+    }
+    
+    function pressedLink() {
+        debug("\nNow pressing on button\n");
+        accessibilityController.accessibleElementById("button").press();
+    }
+    
+    function pressedButton() {
+        finishJSTest();
     }
 
 </script>
