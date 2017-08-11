@@ -1,3 +1,46 @@
+2017-08-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r220555.
+
+    2017-08-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed test gardening for High Sierra.
+
+            * platform/mac-highsierra/css1/basic/inheritance-expected.txt: Added.
+            * platform/mac-highsierra/css2.1/t0602-c13-inh-underlin-00-e-expected.txt: Added.
+            * platform/mac-highsierra/css2.1/t0805-c5522-brdr-02-e-expected.txt: Added.
+            * platform/mac-highsierra/css3/selectors3/html/css3-modsel-18-expected.txt: Added.
+            * platform/mac-highsierra/css3/selectors3/xhtml/css3-modsel-18-expected.txt: Added.
+            * platform/mac-highsierra/css3/selectors3/xml/css3-modsel-18-expected.txt: Added.
+            * platform/mac-highsierra/fast/block/basic/001-expected.txt: Added.
+            * platform/mac-highsierra/fast/css-generated-content/initial-letter-basic-expected.txt: Added.
+            * platform/mac-highsierra/fast/css-generated-content/initial-letter-border-padding-expected.txt: Added.
+            * platform/mac-highsierra/fast/css-generated-content/initial-letter-raised-expected.txt: Added.
+            * platform/mac-highsierra/fast/css-generated-content/initial-letter-sunken-expected.txt: Added.
+            * platform/mac-highsierra/fast/css/css3-nth-child-expected.txt: Added.
+            * platform/mac-highsierra/fast/css/text-overflow-input-expected.txt: Added.
+            * platform/mac-highsierra/fast/dom/34176-expected.txt: Added.
+            * platform/mac-highsierra/fast/dom/clone-node-dynamic-style-expected.txt: Added.
+            * platform/mac-highsierra/fast/forms/basic-inputs-expected.txt: Added.
+            * platform/mac-highsierra/fast/forms/input-value-expected.txt: Added.
+            * platform/mac-highsierra/fast/forms/plaintext-mode-2-expected.txt: Added.
+            * platform/mac-highsierra/fast/invalid/003-expected.txt: Added.
+            * platform/mac-highsierra/fast/invalid/004-expected.txt: Added.
+            * platform/mac-highsierra/fast/invalid/nestedh3s-expected.txt: Added.
+            * platform/mac-highsierra/fast/selectors/018-expected.txt: Added.
+            * platform/mac-highsierra/fast/table/frame-and-rules-expected.txt: Added.
+            * platform/mac-highsierra/fast/text/atsui-multiple-renderers-expected.txt: Added.
+            * platform/mac-highsierra/fast/text/bidi-embedding-pop-and-push-same-expected.txt: Added.
+            * platform/mac-highsierra/fast/text/font-weights-expected.txt: Added.
+            * platform/mac-highsierra/fast/text/font-weights-zh-expected.txt: Added.
+            * platform/mac-highsierra/fast/text/indic-expected.txt: Added.
+            * platform/mac-highsierra/fast/text/international/complex-character-based-fallback-expected.txt:
+            * platform/mac-highsierra/svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt: Added.
+            * platform/mac-highsierra/svg/W3C-SVG-1.1/struct-use-01-t-expected.txt: Added.
+            * platform/mac-highsierra/svg/batik/text/textStyles-expected.txt: Added.
+            * platform/mac-highsierra/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt: Added.
+            * platform/mac-highsierra/tables/mozilla/other/wa_table_tr_align-expected.txt: Added.
+
 2017-08-11  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220551. rdar://problem/33594320
