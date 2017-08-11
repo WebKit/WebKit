@@ -30,7 +30,7 @@
 
 #include "NetworkCacheData.h"
 #include <wtf/SHA1.h>
-#include <wtf/persistence/Coder.h>
+#include <wtf/persistence/PersistentCoder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

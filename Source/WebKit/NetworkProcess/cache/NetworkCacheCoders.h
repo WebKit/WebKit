@@ -35,9 +35,9 @@
 #include <wtf/HashSet.h>
 #include <wtf/SHA1.h>
 #include <wtf/Vector.h>
-#include <wtf/persistence/Coders.h>
-#include <wtf/persistence/Decoder.h>
-#include <wtf/persistence/Encoder.h>
+#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WTF {
 namespace Persistence {

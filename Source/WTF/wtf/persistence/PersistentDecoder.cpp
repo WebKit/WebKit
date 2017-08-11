@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "Decoder.h"
+#include "PersistentDecoder.h"
 
-#include <wtf/persistence/Encoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WTF {
 namespace Persistence {

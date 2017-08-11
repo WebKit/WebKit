@@ -27,7 +27,7 @@
 
 #include <wtf/SHA1.h>
 #include <wtf/Vector.h>
-#include <wtf/persistence/Coder.h>
+#include <wtf/persistence/PersistentCoder.h>
 
 namespace WTF {
 namespace Persistence {

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Encoder.h"
+#include "PersistentEncoder.h"
 
 #include "SHA1.h"
 
