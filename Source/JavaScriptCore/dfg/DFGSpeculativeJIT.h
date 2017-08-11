@@ -3045,6 +3045,8 @@ public:
     template<bool strict>
     GPRReg fillSpeculateInt32Internal(Edge, DataFormat& returnFormat);
     
+    void cageTypedArrayStorage(GPRReg);
+    
     // It is possible, during speculative generation, to reach a situation in which we
     // can statically determine a speculation will fail (for example, when two nodes
     // will make conflicting speculations about the same operand). In such cases this

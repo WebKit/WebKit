@@ -1,3 +1,28 @@
+2017-08-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should do caging
+        https://bugs.webkit.org/show_bug.cgi?id=174918
+
+        Reviewed by Saam Barati.
+        
+        Adds the appropriate cage() calls to the DFG, including a cageTypedArrayStorage() helper that does
+        the conditional caging with a watchpoint.
+        
+        This might be a 1% SunSpider slow-down, but it's not clear.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        (JSC::DFG::SpeculativeJIT::compileCreateRest):
+        (JSC::DFG::SpeculativeJIT::compileSpread):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::compileGetButterfly):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2017-08-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for x86 GTK port

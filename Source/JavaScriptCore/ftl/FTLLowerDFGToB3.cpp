@@ -3309,6 +3309,8 @@ private:
 
         m_out.appendTo(wastefulCase, continuation);
 
+        // FIXME: This needs to do caging.
+        // https://bugs.webkit.org/show_bug.cgi?id=175366
         LValue vectorPtr = m_out.loadPtr(basePtr, m_heaps.JSArrayBufferView_vector);
         LValue butterflyPtr = m_out.loadPtr(basePtr, m_heaps.JSObject_butterfly);
         LValue arrayBufferPtr = m_out.loadPtr(butterflyPtr, m_heaps.Butterfly_arrayBuffer);
