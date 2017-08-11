@@ -1,10 +1,10 @@
 PASS document.body.scrollTop became different from 0
 PASS document.getElementById('touches').textContent is "1"
-FAIL document.getElementById('touches').textContent should be 1. Was 2.
-FAIL document.getElementById('touches').textContent should be 2. Was 3.
+PASS document.getElementById('touches').textContent is "1"
+PASS document.getElementById('touches').textContent is "2"
 PASS successfullyParsed is true
 
 TEST COMPLETE
 To manually test, swipe down to scroll in the document. The touch count should update to 1. Tap anywhere to stop scrolling while decelerating. The touch count should remain at 1. Then tap again in the document. The touch count should be 2.
 
-The touch count is: 3
+The touch count is: 2
