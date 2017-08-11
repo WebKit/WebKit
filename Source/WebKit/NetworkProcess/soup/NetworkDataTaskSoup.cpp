@@ -445,7 +445,12 @@ void NetworkDataTaskSoup::applyAuthenticationToRequest(ResourceRequest& request)
 void NetworkDataTaskSoup::authenticateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying, NetworkDataTaskSoup* task)
 {
     ASSERT(session == static_cast<NetworkSessionSoup&>(task->m_session.get()).soupSession());
-    if (soupMessage != task->m_soupMessage.get())
+
+    // We don't return early here in case the given soupMessage is different to m_soupMessage when
+    // it's proxy authentication and the request URL is HTTPS, because in that case libsoup uses a
+    // tunnel internally and the SoupMessage used for the authentication is the tunneling one.
+    // See https://bugs.webkit.org/show_bug.cgi?id=175378.
+    if (soupMessage != task->m_soupMessage.get() && (soupMessage->status_code != SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED || !task->m_currentRequest.url().protocolIs("https")))
         return;
 
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
@@ -487,7 +492,7 @@ void NetworkDataTaskSoup::authenticate(AuthenticationChallenge&& challenge)
         }
     }
 
-    soup_session_pause_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), m_soupMessage.get());
+    soup_session_pause_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), challenge.soupMessage());
 
     // We could also do this before we even start the request, but that would be at the expense
     // of all request latency, versus a one-time latency for the small subset of requests that
@@ -541,7 +546,7 @@ void NetworkDataTaskSoup::continueAuthenticate(AuthenticationChallenge&& challen
             soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
         }
 
-        soup_session_unpause_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), m_soupMessage.get());
+        soup_session_unpause_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), challenge.soupMessage());
     });
 }
 

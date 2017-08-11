@@ -72,6 +72,7 @@ AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, SoupA
         retrying ? 1 : 0, // previousFailureCount
         soupMessage, // failureResponse
         ResourceError::authenticationError(soupMessage))
+    , m_soupMessage(soupMessage)
     , m_soupAuth(soupAuth)
     , m_authenticationClient(client)
 {
@@ -79,7 +80,7 @@ AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, SoupA
 
 bool AuthenticationChallenge::platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
 {
-    return a.soupAuth() == b.soupAuth();
+    return a.soupMessage() == b.soupMessage() && a.soupAuth() == b.soupAuth();
 }
 
 } // namespace WebCore
