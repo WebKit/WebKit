@@ -109,6 +109,7 @@ using namespace HTMLNames;
 AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
     : AccessibilityNodeObject(renderer->node())
     , m_renderer(renderer)
+    , m_weakPtrFactory(this)
 {
 #ifndef NDEBUG
     m_renderer->setHasAXObject(true);
