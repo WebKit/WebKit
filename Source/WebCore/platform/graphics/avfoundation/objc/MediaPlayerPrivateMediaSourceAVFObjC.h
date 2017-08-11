@@ -71,8 +71,12 @@ public:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     void addAudioRenderer(AVSampleBufferAudioRenderer*);
     void removeAudioRenderer(AVSampleBufferAudioRenderer*);
+#pragma clang diagnostic pop
 
     MediaPlayer::NetworkState networkState() const override;
     MediaPlayer::ReadyState readyState() const override;
@@ -85,7 +89,11 @@ public:
     void setLoadingProgresssed(bool flag) { m_loadingProgressed = flag; }
     void setHasAvailableVideoFrame(bool);
     bool hasAvailableVideoFrame() const override;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     void setHasAvailableAudioSample(AVSampleBufferAudioRenderer*, bool);
+#pragma clang diagnostic pop
     bool allRenderersHaveAvailableSamples() const { return m_allRenderersHaveAvailableSamples; }
     void updateAllRenderersHaveAvailableSamples();
     void durationChanged();
@@ -252,8 +260,12 @@ private:
     struct AudioRendererProperties {
         bool hasAudibleSample { false };
     };
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     HashMap<RetainPtr<AVSampleBufferAudioRenderer>, AudioRendererProperties> m_sampleBufferAudioRendererMap;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
+#pragma clang diagnostic pop
     RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
     RetainPtr<AVStreamSession> m_streamSession;

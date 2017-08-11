@@ -1,3 +1,26 @@
+2017-08-10  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building for macOS 10.12 with the macOS 10.13 SDK.
+
+        Suppressed the unguarded-availability-new warning around uses of AVSampleBufferAudioRenderer
+        and AVSampleBufferRenderSynchronizer. Even though the 10.13 SDK declares them as available
+        starting in that release, they have been available as SPI earlier.
+
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableAudioSample):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVSampleBufferErrorListener beginObservingRenderer:]):
+        (-[WebAVSampleBufferErrorListener stopObservingRenderer:]):
+        (-[WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        (WebCore::SourceBufferPrivateAVFObjC::rendererDidReceiveError):
+        (WebCore::SourceBufferPrivateAVFObjC::flush):
+
 2017-08-10  Brady Eidson  <beidson@apple.com>
 
         Rename the source files for the WTF persistent coders.
