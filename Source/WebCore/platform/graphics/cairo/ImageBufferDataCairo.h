@@ -62,7 +62,7 @@ public:
     void createCairoGLSurface();
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    RefPtr<TextureMapperPlatformLayerProxy> proxy() const;
+    RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
     void swapBuffersIfNeeded() override;
     void createCompositorBuffer();
 
