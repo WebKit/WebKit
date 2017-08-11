@@ -1,3 +1,9 @@
+2017-08-10  Dan Bernstein  <mitz@apple.com>
+
+        Restored svn:ignore values that went missing when the project got renamed.
+
+        * WebKit.xcodeproj: Added property svn:ignore.
+
 2017-08-10  Brady Eidson  <beidson@apple.com>
 
         Rename the source files for the WTF persistent coders.

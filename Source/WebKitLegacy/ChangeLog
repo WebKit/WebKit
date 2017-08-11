@@ -1,3 +1,9 @@
+2017-08-10  Dan Bernstein  <mitz@apple.com>
+
+        Restored svn:ignore values that went missing when the project got renamed.
+
+        * WebKitLegacy.xcodeproj: Added property svn:ignore.
+
 2017-08-10  Chris Dumez  <cdumez@apple.com>
 
         [Beacon] Do connect-src CSP check on redirects as well
