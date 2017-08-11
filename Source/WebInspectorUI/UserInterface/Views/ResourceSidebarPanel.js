@@ -31,8 +31,6 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
 
         this.contentBrowser = contentBrowser;
 
-        this.filterBar.placeholder = WI.UIString("Filter Resource List");
-
         this._navigationBar = new WI.NavigationBar;
         this.addSubview(this._navigationBar);
 

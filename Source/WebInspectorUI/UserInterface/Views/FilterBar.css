@@ -82,10 +82,9 @@ body[dir=rtl] .filter-bar > .navigation-bar > .item {
     width: 13px;
     height: 13px;
 
-    margin-left: 6px;
-    margin-right: 6px;
+    margin: 4px 4px 3px 3px;
 
-    vertical-align: bottom;
+    align-self: center;
 
     background-image: url(../Images/FilterFieldGlyph.svg);
 

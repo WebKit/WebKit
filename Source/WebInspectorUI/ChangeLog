@@ -1,3 +1,43 @@
+2017-08-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: Update the filter icon to match Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=175458
+        <rdar://problem/33838660>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Images/FilterFieldGlyph.svg:
+        Half-pixel transform is necessary for a cleaner rasterisation.
+
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > input[type="search"]::-webkit-search-decoration):        
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter):
+        ::-webkit-search-decoration is a flexbox item. Remove `vertical-align: bottom`,
+        since it didn't do anything for it.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.css:
+        * UserInterface/Views/FilterBar.js:
+        (WI.FilterBar):        
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WI.CSSStyleDetailsSidebarPanel.prototype.initialLayout):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WI.NetworkSidebarPanel):
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+        (WI.RecordingNavigationSidebarPanel):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel):
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WI.StorageSidebarPanel):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        * Localizations/en.lproj/localizedStrings.js:        
+        Replace placeholder text for all filter fields with "Filter".
+
 2017-08-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Add three.js in preparation for layer visualization.

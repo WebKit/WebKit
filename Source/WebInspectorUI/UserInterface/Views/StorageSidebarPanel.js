@@ -31,8 +31,6 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
 
         this.contentBrowser = contentBrowser;
 
-        this.filterBar.placeholder = WI.UIString("Filter Storage List");
-
         this._navigationBar = new WI.NavigationBar;
         this.addSubview(this._navigationBar);
 

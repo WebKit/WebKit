@@ -25,8 +25,8 @@
 
 .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter {
     position: relative;
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
 }
 
 body[dir=ltr] .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter {

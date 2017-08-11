@@ -33,8 +33,6 @@ WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarP
 
         this.contentBrowser = contentBrowser;
 
-        this.filterBar.placeholder = WI.UIString("Filter Resource List");
-
         this.contentTreeOutline.element.classList.add("network-grid");
         this.contentTreeOutline.disclosureButtons = false;
     }

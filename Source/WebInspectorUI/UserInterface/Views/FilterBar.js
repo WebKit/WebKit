@@ -39,6 +39,7 @@ WI.FilterBar = class FilterBar extends WI.Object
 
         this._inputField = document.createElement("input");
         this._inputField.type = "search";
+        this._inputField.placeholder = WI.UIString("Filter");
         this._inputField.spellcheck = false;
         this._inputField.incremental = true;
         this._inputField.addEventListener("search", this._handleFilterChanged.bind(this), false);

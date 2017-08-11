@@ -59,7 +59,6 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         const fixed = true;
         this._findBanner = new WI.FindBanner(this, "console-find-banner", fixed);
-        this._findBanner.inputField.placeholder = WI.UIString("Filter Console Log");
         this._findBanner.targetElement = this.element;
 
         this._currentSearchQuery = "";

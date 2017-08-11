@@ -179,7 +179,6 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
         newRuleButton.addEventListener("contextmenu", this._newRuleButtonContextMenu.bind(this));
 
         this._filterBar = new WI.FilterBar;
-        this._filterBar.placeholder = WI.UIString("Filter Styles");
         this._filterBar.addEventListener(WI.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
         optionsContainer.appendChild(this._filterBar.element);
 

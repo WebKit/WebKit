@@ -45,8 +45,6 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         this._inputElement.setAttribute("placeholder", WI.UIString("Search Resource Content"));
         searchElement.appendChild(this._inputElement);
 
-        this.filterBar.placeholder = WI.UIString("Filter Search Results");
-
         this._searchQuerySetting = new WI.Setting("search-sidebar-query", "");
         this._inputElement.value = this._searchQuerySetting.value;
 
