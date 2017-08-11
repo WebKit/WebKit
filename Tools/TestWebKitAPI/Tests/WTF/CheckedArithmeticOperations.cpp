@@ -169,14 +169,8 @@ public:
         Checked<type, OverflowCrashLogger> nvalue; // to hold a not overflowed value.
         Checked<type, OverflowCrashLogger> ovalue; // to hold an overflowed value.
 
-#if COMPILER(GCC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#endif
         bool unused;
-#if COMPILER(GCC)
-#pragma GCC diagnostic pop
-#endif
+        UNUSED_PARAM(unused);
 
         _value = 75;
         type _largeValue = 100;

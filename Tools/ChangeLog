@@ -1,3 +1,10 @@
+2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, suppress warnings on GCC
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI::CheckedArithmeticTester::run):
+
 2017-08-10  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] With Xcode 9 developer beta, everything rebuilds when switching between command-line and IDE
