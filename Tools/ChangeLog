@@ -1,3 +1,9 @@
+2017-08-10  Don Olmstead  <don.olmstead@sony.com>
+
+        Unreviewed, adding Ross Kirsling to contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, attempt to fix build failure with VC2017
