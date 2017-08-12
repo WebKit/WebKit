@@ -28,10 +28,10 @@
 
 #include "PODInterval.h"
 #include "PODRedBlackTree.h"
-#include "ValueToString.h"
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <wtf/text/ValueToString.h>
 
 namespace WebCore {
 
@@ -234,17 +234,21 @@ private:
     }
 };
 
+} // namespace WebCore
+
 #ifndef NDEBUG
+namespace WTF {
+
 // Support for printing PODIntervals at the PODRedBlackTree level.
 template<class T, class UserData>
-struct ValueToString<PODInterval<T, UserData>> {
-    static String string(const PODInterval<T, UserData>& interval)
+struct ValueToString<WebCore::PODInterval<T, UserData>> {
+    static String string(const WebCore::PODInterval<T, UserData>& interval)
     {
         return interval.toString();
     }
 };
-#endif
 
-} // namespace WebCore
+} // namespace WTF
+#endif
 
 #endif // PODIntervalTree_h

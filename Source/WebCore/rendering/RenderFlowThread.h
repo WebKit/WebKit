@@ -369,13 +369,17 @@ protected:
     bool m_layersToRegionMappingsDirty : 1;
 };
 
+} // namespace WebCore
+
 // This structure is used by PODIntervalTree for debugging.
 #ifndef NDEBUG
-template <> struct ValueToString<RenderRegion*> {
-    static String string(const RenderRegion* value) { return String::format("%p", value); }
-};
-#endif
+namespace WTF {
 
-} // namespace WebCore
+template <> struct ValueToString<WebCore::RenderRegion*> {
+    static String string(const WebCore::RenderRegion* value) { return String::format("%p", value); }
+};
+
+} // namespace WTF
+#endif
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFlowThread, isRenderFlowThread())

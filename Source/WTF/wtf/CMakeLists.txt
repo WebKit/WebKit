@@ -188,6 +188,7 @@ set(WTF_HEADERS
     text/TextBreakIteratorInternalICU.h
     text/TextStream.h
     text/UniquedStringImpl.h
+    text/ValueToString.h
     text/WTFString.h
 
     text/icu/UTextProvider.h

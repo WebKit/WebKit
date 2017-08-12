@@ -131,13 +131,17 @@ private:
     const FloatPolygon* m_polygon;
 };
 
+} // namespace WebCore
+
 // This structure is used by PODIntervalTree for debugging.
 #ifndef NDEBUG
-template<> struct ValueToString<FloatPolygonEdge*> {
-    static String string(const FloatPolygonEdge* edge) { return String::format("%p (%f,%f %f,%f)", edge, edge->vertex1().x(), edge->vertex1().y(), edge->vertex2().x(), edge->vertex2().y()); }
-};
-#endif
+namespace WTF {
 
-} // namespace WebCore
+template<> struct ValueToString<WebCore::FloatPolygonEdge*> {
+    static String string(const WebCore::FloatPolygonEdge* edge) { return String::format("%p (%f,%f %f,%f)", edge, edge->vertex1().x(), edge->vertex1().y(), edge->vertex2().x(), edge->vertex2().y()); }
+};
+
+}
+#endif
 
 #endif // FloatPolygon_h

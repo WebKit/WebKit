@@ -173,14 +173,18 @@ private:
     const RenderBlockFlow& m_renderer;
 };
 
+} // namespace WebCore
+
 #ifndef NDEBUG
+namespace WTF {
+
 // This helper is used by PODIntervalTree for debugging purposes.
-template<> struct ValueToString<FloatingObject*> {
-    static String string(const FloatingObject* floatingObject)
+template<> struct ValueToString<WebCore::FloatingObject*> {
+    static String string(const WebCore::FloatingObject* floatingObject)
     {
         return String::format("%p (%ix%i %ix%i)", floatingObject, floatingObject->frameRect().x().toInt(), floatingObject->frameRect().y().toInt(), floatingObject->frameRect().maxX().toInt(), floatingObject->frameRect().maxY().toInt());
     }
 };
-#endif
 
-} // namespace WebCore
+} // namespace WTF
+#endif

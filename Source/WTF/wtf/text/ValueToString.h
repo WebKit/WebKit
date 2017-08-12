@@ -12,7 +12,7 @@
  *    copyright notice, this list of conditions and the following
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -27,14 +27,13 @@
  * SUCH DAMAGE.
  */
 
-#ifndef ValueToString_h
-#define ValueToString_h
+#pragma once
 
 #ifndef NDEBUG
 
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
 
 template<class T>
 struct ValueToString;
@@ -54,9 +53,8 @@ struct ValueToString<double> {
     static String string(const double value) { return String::number(value); }
 };
 
-};
+} // namespace WTF
+
+using WTF::ValueToString;
 
 #endif
-
-#endif
-
