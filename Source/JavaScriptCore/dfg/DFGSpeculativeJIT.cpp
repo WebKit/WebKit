@@ -6325,6 +6325,8 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
     m_jit.sub32(propertyReg, scratch2Reg);
     m_jit.neg32(scratch2Reg);
     
+    m_jit.cage(Gigacage::JSValue, baseReg);
+    
     m_jit.loadValue(
         MacroAssembler::BaseIndex(
             baseReg, scratch2Reg, MacroAssembler::TimesEight,

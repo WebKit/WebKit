@@ -1551,6 +1551,7 @@ JIT::JumpList JIT::emitScopedArgumentsGetByVal(Instruction*, PatchableJump& badT
     overflowCase.link(this);
     sub32(property, scratch2);
     neg32(scratch2);
+    cage(Gigacage::JSValue, base);
     loadValue(BaseIndex(base, scratch2, TimesEight, ScopedArguments::overflowStorageOffset()), result);
     slowCases.append(branchIfEmpty(result));
     done.link(this);

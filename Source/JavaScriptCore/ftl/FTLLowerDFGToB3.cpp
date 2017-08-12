@@ -3565,10 +3565,8 @@ private:
             
             m_out.appendTo(overflowCase, continuation);
             
-            // FIXME: I guess we need to cage overflow storage?
-            // https://bugs.webkit.org/show_bug.cgi?id=174923
             address = m_out.baseIndex(
-                m_heaps.ScopedArguments_overflowStorage, base,
+                m_heaps.ScopedArguments_overflowStorage, caged(Gigacage::JSValue, base),
                 m_out.zeroExtPtr(m_out.sub(index, namedLength)));
             LValue overflowValue = m_out.load64(address);
             speculate(ExoticObjectMode, noValue(), nullptr, m_out.isZero64(overflowValue));

@@ -42,6 +42,13 @@ private:
     void finishCreation(VM&, JSFunction* callee, ScopedArgumentsTable*, JSLexicalEnvironment*);
 
 public:
+    template<typename CellType>
+    static Subspace* subspaceFor(VM& vm)
+    {
+        RELEASE_ASSERT(!CellType::needsDestruction);
+        return &vm.jsValueGigacageCellSpace;
+    }
+
     // Creates an arguments object but leaves it uninitialized. This is dangerous if we GC right
     // after allocation.
     static ScopedArguments* createUninitialized(VM&, Structure*, JSFunction* callee, ScopedArgumentsTable*, JSLexicalEnvironment*, unsigned totalLength);
@@ -154,9 +161,8 @@ private:
     WriteBarrier<Unknown>* overflowStorage() const
     {
         return bitwise_cast<WriteBarrier<Unknown>*>(
-            bitwise_cast<char*>(this) + overflowStorageOffset());
+            bitwise_cast<char*>(Gigacage::caged(Gigacage::JSValue, this)) + overflowStorageOffset());
     }
-    
     
     bool m_overrodeThings; // True if length, callee, and caller are fully materialized in the object.
     unsigned m_totalLength; // The length of declared plus overflow arguments.
