@@ -259,14 +259,23 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         m_fragmentIdentifierForRequest = String();
     }
 
-    // FIXME: We should not special-case Beacon here.
-    if (m_options.keepAlive && type() == CachedResource::Beacon) {
+    if (m_options.keepAlive) {
+        if (!cachedResourceLoader.keepaliveRequestTracker().tryRegisterRequest(*this)) {
+            setResourceError({ errorDomainWebKitInternal, 0, request.url(), ASCIILiteral("Reached maximum amount of queued data of 64Kb for keepalive requests") });
+            failBeforeStarting();
+            return;
+        }
+        // FIXME: We should not special-case Beacon here.
+        if (type() == CachedResource::Beacon) {
         ASSERT(m_origin);
-        // Beacon is not exposed to workers so it is safe to rely on the document here.
-        auto* document = cachedResourceLoader.document();
-        auto* contentSecurityPolicy = document && !document->shouldBypassMainWorldContentSecurityPolicy() ? document->contentSecurityPolicy() : nullptr;
-        platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, *m_origin, contentSecurityPolicy, m_options);
-        return;
+            // Beacon is not exposed to workers so it is safe to rely on the document here.
+            auto* document = cachedResourceLoader.document();
+            auto* contentSecurityPolicy = document && !document->shouldBypassMainWorldContentSecurityPolicy() ? document->contentSecurityPolicy() : nullptr;
+            platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, *m_origin, contentSecurityPolicy, m_options);
+            // FIXME: We currently do not get notified when ping loads finish so we treat them as finishing right away.
+            finishLoading(nullptr);
+            return;
+        }
     }
 
     m_loader = platformStrategies()->loaderStrategy()->loadResource(frame, *this, request, m_options);

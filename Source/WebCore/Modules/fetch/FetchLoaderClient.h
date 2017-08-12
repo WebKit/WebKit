@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class ResourceError;
 class ResourceResponse;
 
 class FetchLoaderClient {
@@ -43,7 +44,7 @@ public:
     virtual void didReceiveData(const char*, size_t) { }
 
     virtual void didSucceed() = 0;
-    virtual void didFail() = 0;
+    virtual void didFail(const ResourceError&) = 0;
 };
 
 } // namespace WebCore

@@ -1,3 +1,23 @@
+2017-08-11  Chris Dumez  <cdumez@apple.com>
+
+        Implement quota limitation for keepalive Fetch requests
+        https://bugs.webkit.org/show_bug.cgi?id=175482
+
+        Reviewed by Sam Weinig and Youenn Fablet.
+
+        * web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any.worker-expected.txt:
+        * web-platform-tests/fetch/http-cache/cc-request-expected.txt:
+        Rebaseline tests now that we provide a more helpful error message when rejecting
+        the fetch() promise.
+
+        * web-platform-tests/fetch/api/request/request-keepalive-quota-expected.txt:
+        Rebaseline test for keepalive Fetch requests quota which is now passing.
+
 2017-08-09  Chris Dumez  <cdumez@apple.com>
 
         Import beacon/headers/header-content-type.html from upstream WPT

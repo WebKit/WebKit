@@ -33,6 +33,7 @@
 #include "FormDataList.h"
 #include "Page.h"
 #include "TextEncoding.h"
+#include "ThreadableBlobRegistry.h"
 
 namespace WebCore {
 
@@ -124,6 +125,26 @@ Ref<FormData> FormData::isolatedCopy() const
     return formData;
 }
 
+uint64_t FormDataElement::lengthInBytes() const
+{
+    switch (m_type) {
+    case Type::Data:
+        return m_data.size();
+    case Type::EncodedFile: {
+        if (m_fileLength != BlobDataItem::toEndOfFile)
+            return m_fileLength;
+        long long fileSize;
+        if (getFileSize(m_shouldGenerateFile ? m_generatedFilename : m_filename, fileSize))
+            return fileSize;
+        return 0;
+    }
+    case Type::EncodedBlob:
+        return blobRegistry().blobSize(m_url);
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 FormDataElement FormDataElement::isolatedCopy() const
 {
     switch (m_type) {
@@ -146,16 +167,19 @@ void FormData::appendData(const void* data, size_t size)
 void FormData::appendFile(const String& filename, bool shouldGenerateFile)
 {
     m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, invalidFileTime(), shouldGenerateFile));
+    m_lengthInBytes = std::nullopt;
 }
 
 void FormData::appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile)
 {
     m_elements.append(FormDataElement(filename, start, length, expectedModificationTime, shouldGenerateFile));
+    m_lengthInBytes = std::nullopt;
 }
 
 void FormData::appendBlob(const URL& blobURL)
 {
     m_elements.append(FormDataElement(blobURL));
+    m_lengthInBytes = std::nullopt;
 }
 
 void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncoding& encoding, bool isMultiPartForm, Document* document, EncodingType encodingType)
@@ -244,6 +268,7 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
 
 char* FormData::expandDataStore(size_t size)
 {
+    m_lengthInBytes = std::nullopt;
     if (m_elements.isEmpty() || m_elements.last().m_type != FormDataElement::Type::Data)
         m_elements.append(FormDataElement());
     FormDataElement& e = m_elements.last();
@@ -384,6 +409,17 @@ void FormData::removeGeneratedFilesIfNeeded()
             element.m_ownsGeneratedFile = false;
         }
     }
+}
+
+uint64_t FormData::lengthInBytes() const
+{
+    if (!m_lengthInBytes) {
+        uint64_t length = 0;
+        for (auto& element : m_elements)
+            length += element.lengthInBytes();
+        m_lengthInBytes = length;
+    }
+    return *m_lengthInBytes;
 }
 
 } // namespace WebCore
