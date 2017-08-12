@@ -1,3 +1,52 @@
+2017-08-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace DATA_TRANSFER_ITEMS by a runtime flag and add a stub implementation
+        https://bugs.webkit.org/show_bug.cgi?id=175474
+        <rdar://problem/33844628>
+
+        Reviewed by Wenson Hsieh.
+
+        Replaced the build flag by a runtime flag and added a stub implementation for DataTransferItemList
+        and DataTransferItem to make it compile. DataTransferItemList is created lazily by DataTransfer.items,
+        and its lifetime is tied to DataTransfer by forwarding ref and deref.
+
+        See https://html.spec.whatwg.org/multipage/dnd.html#the-datatransferitemlist-interface
+
+        Tests: editing/pasteboard/datatransfer-idl.html
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::items): Added. Create DataTransferItemList lazily
+        * dom/DataTransfer.h:
+        * dom/DataTransfer.idl:
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::DataTransferItem): Added a stub implementation.
+        (WebCore::DataTransferItem::~DataTransferItem): Ditto.
+        (WebCore::DataTransferItem::getAsString const): Ditto.
+        (WebCore::DataTransferItem::getAsFile const): Ditto.
+        * dom/DataTransferItem.h:
+        (WebCore::DataTransferItemList): Devirtualized functions.
+        (WebCore::DataTransferItemList::kind const):
+        (WebCore::DataTransferItemList::type const):
+        * dom/DataTransferItem.idl:
+        * dom/DataTransferItemList.cpp: Added.
+        (WebCore::DataTransferItemList::length const): Added a stub implementation.
+        (WebCore::DataTransferItemList::item): Ditto.
+        (WebCore::DataTransferItemList::add): Ditto.
+        (WebCore::DataTransferItemList::remove): Ditto.
+        (WebCore::DataTransferItemList::clear): Ditto.
+        * dom/DataTransferItemList.h:
+        (WebCore::DataTransferItemList::DataTransferItemList):
+        (WebCore::DataTransferItemList::~DataTransferItemList): Deleted.
+        (WebCore::DataTransferItemList::ref): Forwards to DataTransfer's ref.
+        (WebCore::DataTransferItemList::deref): Ditto.
+        * dom/DataTransferItemList.idl: Updated to match the latest specification.
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setDataTransferItemsEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::dataTransferItemsEnabled const): Added.
+
 2017-08-11  Brady Eidson  <beidson@apple.com>
 
         Move files inside WebCore/workers to WebCore/workers/service.

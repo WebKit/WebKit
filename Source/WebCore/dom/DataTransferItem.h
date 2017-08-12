@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,10 +31,9 @@
 
 #pragma once
 
-#if ENABLE(DATA_TRANSFER_ITEMS)
-
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -42,18 +42,17 @@ class StringCallback;
 
 class DataTransferItem : public RefCounted<DataTransferItem> {
 public:
-    virtual ~DataTransferItem() { }
+    DataTransferItem();
+    ~DataTransferItem();
 
-    static const char kindString[];
-    static const char kindFile[];
+    const AtomicString& kind() const { return m_kind; }
+    const AtomicString& type() const { return m_type; }
+    void getAsString(RefPtr<StringCallback>&&) const;
+    RefPtr<Blob> getAsFile() const;
 
-    virtual String kind() const = 0;
-    virtual String type() const = 0;
-
-    virtual void getAsString(RefPtr<StringCallback>&&) const = 0;
-    virtual RefPtr<Blob> getAsFile() const = 0;
+private:
+    AtomicString m_kind;
+    AtomicString m_type;
 };
 
-} // namespace WebCore
-
-#endif // ENABLE(DATA_TRANSFER_ITEMS)
+}

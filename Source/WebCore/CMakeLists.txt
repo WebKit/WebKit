@@ -1527,6 +1527,7 @@ set(WebCore_SOURCES
     dom/DOMStringList.cpp
     dom/DataTransfer.cpp
     dom/DataTransferItem.cpp
+    dom/DataTransferItemList.cpp
     dom/DatasetDOMStringMap.cpp
     dom/DecodedDataDocumentParser.cpp
     dom/DeviceMotionController.cpp

@@ -534,6 +534,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setCustomElementsEnabled:(BOOL)flag;
 - (BOOL)customElementsEnabled;
 
+- (void)setDataTransferItemsEnabled:(BOOL)flag;
+- (BOOL)dataTransferItemsEnabled;
+
 - (BOOL)cacheAPIEnabled;
 - (void)setCacheAPIEnabled:(BOOL)enabled;
 

@@ -28,6 +28,7 @@
 
 #include "CachedImage.h"
 #include "CachedImageClient.h"
+#include "DataTransferItemList.h"
 #include "DragData.h"
 #include "Editor.h"
 #include "FileList.h"
@@ -143,6 +144,13 @@ void DataTransfer::setData(const String& type, const String& data)
 #endif
 
     m_pasteboard->writeString(type, data);
+}
+
+DataTransferItemList& DataTransfer::items()
+{
+    if (!m_itemList)
+        m_itemList = std::make_unique<DataTransferItemList>(*this);
+    return *m_itemList;
 }
 
 Vector<String> DataTransfer::types() const

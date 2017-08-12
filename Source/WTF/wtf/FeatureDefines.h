@@ -400,10 +400,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_DATALIST_ELEMENT 0
 #endif
 
-#if !defined(ENABLE_DATA_TRANSFER_ITEMS)
-#define ENABLE_DATA_TRANSFER_ITEMS 0
-#endif
-
 #if !defined(ENABLE_DEVICE_ORIENTATION)
 #define ENABLE_DEVICE_ORIENTATION 0
 #endif

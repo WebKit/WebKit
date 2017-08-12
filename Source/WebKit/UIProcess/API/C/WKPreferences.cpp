@@ -1649,6 +1649,16 @@ bool WKPreferencesGetDisplayContentsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->displayContentsEnabled();
 }
 
+void WKPreferencesSetDataTransferItemsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setDataTransferItemsEnabled(flag);
+}
+
+bool WKPreferencesGetDataTransferItemsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->dataTransferItemsEnabled();
+}
+
 void WKPreferencesSetDownloadAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setDownloadAttributeEnabled(flag);

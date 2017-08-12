@@ -3319,8 +3319,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     // Experimental Features.
 
     RuntimeEnabledFeatures::sharedFeatures().setCSSGridLayoutEnabled(store.getBoolValueForKey(WebPreferencesKey::cssGridLayoutEnabledKey()));
-
+    
     RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(store.getBoolValueForKey(WebPreferencesKey::customElementsEnabledKey()));
+
+    RuntimeEnabledFeatures::sharedFeatures().setDataTransferItemsEnabled(store.getBoolValueForKey(WebPreferencesKey::dataTransferItemsEnabledKey()));
 
 #if ENABLE(WEBGL2)
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(store.getBoolValueForKey(WebPreferencesKey::webGL2EnabledKey()));

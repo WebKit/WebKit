@@ -624,6 +624,7 @@ public:
 #endif
         [NSNumber numberWithBool:YES], WebKitShadowDOMEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCustomElementsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitDataTransferItemsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitModernMediaControlsEnabledPreferenceKey,
 #if ENABLE(WEBGL2)
         [NSNumber numberWithBool:NO], WebKitWebGL2EnabledPreferenceKey,
@@ -2972,6 +2973,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCustomElementsEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitCustomElementsEnabledPreferenceKey];
+}
+
+- (BOOL)dataTransferItemsEnabled
+{
+    return [self _boolValueForKey:WebKitDataTransferItemsEnabledPreferenceKey];
+}
+
+- (void)setDataTransferItemsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitDataTransferItemsEnabledPreferenceKey];
 }
 
 - (BOOL)cacheAPIEnabled

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,15 +31,18 @@
 
 [
     NoInterfaceObject,
-    Conditional=DATA_TRANSFER_ITEMS,
+    EnabledAtRuntime=DataTransferItems,
     JSGenerateToNativeObject,
+    JSGenerateToJSObject,
     ImplementationLacksVTable,
 ] interface DataTransferItemList {
     readonly attribute long length;
     getter DataTransferItem item(unsigned long index);
 
-    void clear();
+    [MayThrowException] void add(optional DOMString data = "undefined", optional DOMString type = "undefined");
     void add(File? file);
 
-    [MayThrowException] void add(optional DOMString data = "undefined", optional DOMString type = "undefined");
+    void remove(unsigned long index);
+
+    void clear();
 };

@@ -1,3 +1,22 @@
+2017-08-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace DATA_TRANSFER_ITEMS by a runtime flag and add a stub implementation
+        https://bugs.webkit.org/show_bug.cgi?id=175474
+        <rdar://problem/33844628>
+
+        Reviewed by Wenson Hsieh.
+
+        Replaced the build flag by a runtime flag and disabled the feature by default.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetDataTransferItemsEnabled): Added to be used by WebKitTestRunner.
+        (WKPreferencesGetDataTransferItemsEnabled): Ditto.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-08-10  Sam Weinig  <sam@webkit.org>
 
         WTF::Function does not allow for reference / non-default constructible return types

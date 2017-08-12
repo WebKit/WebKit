@@ -951,6 +951,8 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setShadowDOMEnabled:YES];
     [preferences setCustomElementsEnabled:YES];
 
+    [preferences setDataTransferItemsEnabled:YES];
+
     [preferences setWebGL2Enabled:YES];
     [preferences setWebGPUEnabled:YES];
 

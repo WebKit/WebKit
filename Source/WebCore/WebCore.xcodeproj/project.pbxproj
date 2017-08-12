@@ -4215,6 +4215,11 @@
 		9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A528E8217D7F52F00AA9518 /* FloatingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9AB1F38018E2489A00534743 /* CSSToLengthConversionData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB1F37E18E2489A00534743 /* CSSToLengthConversionData.h */; };
 		9AB1F38118E2489A00534743 /* CSSToLengthConversionData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AB1F37F18E2489A00534743 /* CSSToLengthConversionData.cpp */; };
+		9B098BD81F3D60DC002DD562 /* DataTransferItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B098BD51F3D6033002DD562 /* DataTransferItem.cpp */; };
+		9B098BE21F3D68AF002DD562 /* JSDataTransferItemList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B098BDF1F3D673D002DD562 /* JSDataTransferItemList.cpp */; };
+		9B098BE41F3D68B3002DD562 /* JSDataTransferItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B098BDD1F3D673D002DD562 /* JSDataTransferItem.cpp */; };
+		9B098BE91F3D6B11002DD562 /* JSStringCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B098BE61F3D6AF6002DD562 /* JSStringCallback.cpp */; };
+		9B13257D1F3D2ABA00DAAB69 /* DataTransferItemList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B13257B1F3D2ABA00DAAB69 /* DataTransferItemList.cpp */; };
 		9B24DE8E15194B9500C59C27 /* HTMLBDIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */; };
 		9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2D8A7814997CCF00ECEF3E /* UndoStep.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B32CDA913DF7FA900F34D13 /* RenderedPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B32CDA713DF7FA900F34D13 /* RenderedPosition.h */; };
@@ -12485,7 +12490,15 @@
 		9B03D8061BB3110D00B764DA /* JSDOMBindingInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMBindingInternalsBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764E8 /* WritableStreamBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritableStreamBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764E9 /* WritableStreamInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritableStreamInternalsBuiltins.h; sourceTree = "<group>"; };
+		9B098BD51F3D6033002DD562 /* DataTransferItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataTransferItem.cpp; sourceTree = "<group>"; };
+		9B098BDD1F3D673D002DD562 /* JSDataTransferItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataTransferItem.cpp; sourceTree = "<group>"; };
+		9B098BDE1F3D673D002DD562 /* JSDataTransferItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataTransferItem.h; sourceTree = "<group>"; };
+		9B098BDF1F3D673D002DD562 /* JSDataTransferItemList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataTransferItemList.cpp; sourceTree = "<group>"; };
+		9B098BE01F3D673D002DD562 /* JSDataTransferItemList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataTransferItemList.h; sourceTree = "<group>"; };
+		9B098BE61F3D6AF6002DD562 /* JSStringCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSStringCallback.cpp; path = JSStringCallback.cpp; sourceTree = "<group>"; };
+		9B098BE71F3D6AF6002DD562 /* JSStringCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSStringCallback.h; path = JSStringCallback.h; sourceTree = "<group>"; };
 		9B0FE8731D9E02DF004A8ACB /* DocumentOrShadowRoot.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentOrShadowRoot.idl; sourceTree = "<group>"; };
+		9B13257B1F3D2ABA00DAAB69 /* DataTransferItemList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataTransferItemList.cpp; sourceTree = "<group>"; };
 		9B19B67E1B964E5200348745 /* ShadowRoot.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShadowRoot.idl; sourceTree = "<group>"; };
 		9B1AB0791648C69D0051F3F2 /* HTMLFormControlsCollection.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLFormControlsCollection.idl; sourceTree = "<group>"; };
 		9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLBDIElement.h; sourceTree = "<group>"; };
@@ -22101,6 +22114,10 @@
 				9BE6710A1D5AEB0400345514 /* JSCustomElementRegistry.h */,
 				BCA83E4D0D7CE1E9003421A8 /* JSDataTransfer.cpp */,
 				BCA83E4E0D7CE1E9003421A8 /* JSDataTransfer.h */,
+				9B098BDD1F3D673D002DD562 /* JSDataTransferItem.cpp */,
+				9B098BDE1F3D673D002DD562 /* JSDataTransferItem.h */,
+				9B098BDF1F3D673D002DD562 /* JSDataTransferItemList.cpp */,
+				9B098BE01F3D673D002DD562 /* JSDataTransferItemList.h */,
 				31FB1A63120A5D3F00DC02A0 /* JSDeviceMotionEvent.cpp */,
 				31FB1A64120A5D3F00DC02A0 /* JSDeviceMotionEvent.h */,
 				59A86005119DAF7F00DEF1EF /* JSDeviceOrientationEvent.cpp */,
@@ -22163,6 +22180,8 @@
 				9B6BC9611B975966005AE1F0 /* JSShadowRoot.h */,
 				46DFF4991DC261F900B80B48 /* JSShadowRootMode.cpp */,
 				46DFF49A1DC261F900B80B48 /* JSShadowRootMode.h */,
+				9B098BE61F3D6AF6002DD562 /* JSStringCallback.cpp */,
+				9B098BE71F3D6AF6002DD562 /* JSStringCallback.h */,
 				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
 				65DF31F009D1CC60000BE325 /* JSText.h */,
 				D7613AC214753E5600DB8606 /* JSWebKitNamedFlow.cpp */,
@@ -25688,8 +25707,10 @@
 				85031B280A44EFC700F992E0 /* DataTransfer.h */,
 				BCA83E360D7CDC4E003421A8 /* DataTransfer.idl */,
 				4B8AF4A90B1CE02B00687690 /* DataTransferAccessPolicy.h */,
+				9B098BD51F3D6033002DD562 /* DataTransferItem.cpp */,
 				81AC5997131636E60009A7E0 /* DataTransferItem.h */,
 				81AC5AE81316392E0009A7E0 /* DataTransferItem.idl */,
+				9B13257B1F3D2ABA00DAAB69 /* DataTransferItemList.cpp */,
 				81AC5998131636E60009A7E0 /* DataTransferItemList.h */,
 				81AC5AE91316392E0009A7E0 /* DataTransferItemList.idl */,
 				2D90660C0665D937006B6F1A /* DataTransferMac.mm */,
@@ -31152,6 +31173,8 @@
 				7C7941E41C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm in Sources */,
 				BC64641D11D7F416006455B0 /* DatasetDOMStringMap.cpp in Sources */,
 				A784941B0B5FE507001E237A /* DataTransfer.cpp in Sources */,
+				9B098BD81F3D60DC002DD562 /* DataTransferItem.cpp in Sources */,
+				9B13257D1F3D2ABA00DAAB69 /* DataTransferItemList.cpp in Sources */,
 				93F19AFF08245E59001E9ABC /* DataTransferMac.mm in Sources */,
 				E4A007851B820ED3002C5A6E /* DataURLDecoder.cpp in Sources */,
 				A5732B0A136A161D005C8D7C /* DateComponents.cpp in Sources */,
@@ -31916,6 +31939,8 @@
 				B59DD69A119029E5007E9684 /* JSDatabaseCallback.cpp in Sources */,
 				BE61039D18A9D65200DD50D7 /* JSDataCue.cpp in Sources */,
 				BCA83E4F0D7CE1E9003421A8 /* JSDataTransfer.cpp in Sources */,
+				9B098BE41F3D68B3002DD562 /* JSDataTransferItem.cpp in Sources */,
+				9B098BE21F3D68AF002DD562 /* JSDataTransferItemList.cpp in Sources */,
 				4162A4571011464700DFF3ED /* JSDedicatedWorkerGlobalScope.cpp in Sources */,
 				FDA15ED112B03F94003A583A /* JSDelayNode.cpp in Sources */,
 				9479492F1E0459EB00018D85 /* JSDeprecatedCSSOMCounter.cpp in Sources */,
@@ -32335,6 +32360,7 @@
 				A86629D409DA2B48009633A7 /* JSStaticRange.cpp in Sources */,
 				51E3F9D60DA05E1D00250911 /* JSStorage.cpp in Sources */,
 				51E0BAEA0DA55D4A00A9E417 /* JSStorageEvent.cpp in Sources */,
+				9B098BE91F3D6B11002DD562 /* JSStringCallback.cpp in Sources */,
 				0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */,
 				BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */,
 				BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */,

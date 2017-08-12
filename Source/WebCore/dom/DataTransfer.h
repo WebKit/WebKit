@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CachedImage;
+class DataTransferItemList;
 class DragData;
 class DragImageLoader;
 class Element;
@@ -51,6 +52,7 @@ public:
     String effectAllowed() const;
     void setEffectAllowed(const String&);
 
+    DataTransferItemList& items();
     Vector<String> types() const;
 
     FileList& files() const;
@@ -99,6 +101,7 @@ private:
 
     DataTransferAccessPolicy m_policy;
     std::unique_ptr<Pasteboard> m_pasteboard;
+    std::unique_ptr<DataTransferItemList> m_itemList;
 
     mutable RefPtr<FileList> m_fileList;
 

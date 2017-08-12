@@ -73,6 +73,9 @@ public:
     void setCustomElementsEnabled(bool areEnabled) { m_areCustomElementsEnabled = areEnabled; }
     bool customElementsEnabled() const { return m_areCustomElementsEnabled; }
 
+    void setDataTransferItemsEnabled(bool areEnabled) { m_areDataTransferItemsEnabled = areEnabled; }
+    bool dataTransferItemsEnabled() const { return m_areDataTransferItemsEnabled; }
+
     void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
     bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
 
@@ -228,6 +231,7 @@ private:
     bool m_isDisplayContentsEnabled { false };
     bool m_isShadowDOMEnabled { true };
     bool m_areCustomElementsEnabled { true };
+    bool m_areDataTransferItemsEnabled { false };
     bool m_inputEventsEnabled { true };
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,7 +31,7 @@
 
 [
     NoInterfaceObject,
-    Conditional=DATA_TRANSFER_ITEMS,
+    EnabledAtRuntime=DataTransferItems,
     ImplementationLacksVTable,
 ] interface DataTransferItem {
     readonly attribute DOMString kind;

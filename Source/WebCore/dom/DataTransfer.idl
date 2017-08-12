@@ -33,7 +33,7 @@
     attribute DOMString effectAllowed;
 
     // FIXME: items should use [SameObject] once that is supported.
-    [Conditional=DATA_TRANSFER_ITEMS] readonly attribute DataTransferItemList items;
+    [EnabledAtRuntime=DataTransferItems] readonly attribute DataTransferItemList items;
 
     void setDragImage(Element? image, long x, long y); // FIXME: Element argument is not nullable in the HTML standard.
 

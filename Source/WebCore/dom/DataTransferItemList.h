@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,29 +31,37 @@
 
 #pragma once
 
-#if ENABLE(DATA_TRANSFER_ITEMS)
-
-#include "DataTransferItem.h"
+#include "DataTransfer.h"
+#include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class DataTransferItem;
 class File;
 
-// FIXME: Unclear why this need to be an abstract base class.
-class DataTransferItemList : public RefCounted<DataTransferItemList> {
+class DataTransferItemList {
+    WTF_MAKE_NONCOPYABLE(DataTransferItemList); WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~DataTransferItemList() { }
+    DataTransferItemList(DataTransfer& dataTransfer)
+        : m_dataTransfer(dataTransfer)
+    {
+    }
 
-    virtual unsigned length() const = 0;
-    virtual DataTransferItem* item(unsigned index) = 0;
-    virtual ExceptionOr<void> deleteItem(unsigned index) = 0;
-    virtual void clear() = 0;
-    virtual ExceptionOr<void> add(const String& data, const String& type) = 0;
-    virtual void add(RefPtr<File>&&) = 0;
+    // DataTransfer owns DataTransferItemList, and DataTransfer is kept alive as long as DataTransferItemList is alive.
+    void ref() { m_dataTransfer.ref(); }
+    void deref() { m_dataTransfer.deref(); }
+
+    unsigned length() const;
+    RefPtr<DataTransferItem> item(unsigned index);
+    ExceptionOr<void> add(const String& data, const String& type);
+    void add(RefPtr<File>&&);
+    void remove(unsigned index);
+    void clear();
+
+private:
+    DataTransfer& m_dataTransfer;
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DATA_TRANSFER_ITEMS)

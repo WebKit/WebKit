@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,13 +32,26 @@
 #include "config.h"
 #include "DataTransferItem.h"
 
-#if ENABLE(DATA_TRANSFER_ITEMS)
+#include "Blob.h"
+#include "StringCallback.h"
 
 namespace WebCore {
 
-const char DataTransferItem::kindString[] = "string";
-const char DataTransferItem::kindFile[] = "file";
+DataTransferItem::DataTransferItem()
+{
+}
+
+DataTransferItem::~DataTransferItem()
+{
+}
+
+void DataTransferItem::getAsString(RefPtr<StringCallback>&&) const
+{
+}
+
+RefPtr<Blob> DataTransferItem::getAsFile() const
+{
+    return nullptr;
+}
 
 } // namespace WebCore
-
-#endif // ENABLE(DATA_TRANSFER_ITEMS)
