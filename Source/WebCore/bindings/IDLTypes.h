@@ -170,8 +170,6 @@ template<typename T> struct IDLWrapper : IDLType<RefPtr<T>> {
     static inline std::nullptr_t nullValue() { return nullptr; }
     template<typename U> static inline bool isNullValue(U&& value) { return !value; }
     template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
-
-    static ParameterType convertToParameterType(RefPtr<T> value) { ASSERT(value); return *value.get(); }
 };
 
 template<typename T> struct IDLInterface : IDLWrapper<T> { };
