@@ -1,3 +1,37 @@
+2017-08-11  Brady Eidson  <beidson@apple.com>
+
+        Move files inside WebCore/workers to WebCore/workers/service.
+        https://bugs.webkit.org/show_bug.cgi?id=175495
+
+        Rubberstamped by Tim Horton.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * workers/service/ServiceWorker.cpp: Renamed from Source/WebCore/workers/ServiceWorker.cpp.
+        * workers/service/ServiceWorker.h: Renamed from Source/WebCore/workers/ServiceWorker.h.
+        * workers/service/ServiceWorker.idl: Renamed from Source/WebCore/workers/ServiceWorker.idl.
+        * workers/service/ServiceWorkerContainer.cpp: Renamed from Source/WebCore/workers/ServiceWorkerContainer.cpp.
+        * workers/service/ServiceWorkerContainer.h: Renamed from Source/WebCore/workers/ServiceWorkerContainer.h.
+        * workers/service/ServiceWorkerContainer.idl: Renamed from Source/WebCore/workers/ServiceWorkerContainer.idl.
+        * workers/service/ServiceWorkerGlobalScope.cpp: Renamed from Source/WebCore/workers/ServiceWorkerGlobalScope.cpp.
+        * workers/service/ServiceWorkerGlobalScope.h: Renamed from Source/WebCore/workers/ServiceWorkerGlobalScope.h.
+        * workers/service/ServiceWorkerGlobalScope.idl: Renamed from Source/WebCore/workers/ServiceWorkerGlobalScope.idl.
+        * workers/service/ServiceWorkerJob.cpp: Renamed from Source/WebCore/workers/ServiceWorkerJob.cpp.
+        * workers/service/ServiceWorkerJob.h: Renamed from Source/WebCore/workers/ServiceWorkerJob.h.
+        * workers/service/ServiceWorkerJobClient.h: Renamed from Source/WebCore/workers/ServiceWorkerJobClient.h.
+        * workers/service/ServiceWorkerProvider.cpp: Renamed from Source/WebCore/workers/ServiceWorkerProvider.cpp.
+        * workers/service/ServiceWorkerProvider.h: Renamed from Source/WebCore/workers/ServiceWorkerProvider.h.
+        * workers/service/ServiceWorkerRegistration.cpp: Renamed from Source/WebCore/workers/ServiceWorkerRegistration.cpp.
+        * workers/service/ServiceWorkerRegistration.h: Renamed from Source/WebCore/workers/ServiceWorkerRegistration.h.
+        * workers/service/ServiceWorkerRegistration.idl: Renamed from Source/WebCore/workers/ServiceWorkerRegistration.idl.
+        * workers/service/ServiceWorkerRegistrationOptions.h: Renamed from Source/WebCore/workers/ServiceWorkerRegistrationOptions.h.
+        * workers/service/ServiceWorkerRegistrationParameters.cpp: Renamed from Source/WebCore/workers/ServiceWorkerRegistrationParameters.cpp.
+        * workers/service/ServiceWorkerRegistrationParameters.h: Renamed from Source/WebCore/workers/ServiceWorkerRegistrationParameters.h.
+        * workers/service/ServiceWorkerUpdateViaCache.h: Renamed from Source/WebCore/workers/ServiceWorkerUpdateViaCache.h.
+        * workers/service/ServiceWorkerUpdateViaCache.idl: Renamed from Source/WebCore/workers/ServiceWorkerUpdateViaCache.idl.
+
 2017-08-11  Chris Dumez  <cdumez@apple.com>
 
         Implement quota limitation for keepalive Fetch requests

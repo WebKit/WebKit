@@ -2167,13 +2167,6 @@
 		510D4A37103165EE0049EA54 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A31103165EE0049EA54 /* SocketStreamHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5110FCFC1E03641D006F8D0B /* IDBCursorRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 5110FCFB1E0362A5006F8D0B /* IDBCursorRecord.h */; };
-		511CA6791F3904B10019E074 /* ServiceWorkerProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511CA6771F3904AA0019E074 /* ServiceWorkerProvider.cpp */; };
-		511CA67A1F3904B10019E074 /* ServiceWorkerProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 511CA6781F3904AA0019E074 /* ServiceWorkerProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		511CA67D1F3905A60019E074 /* ServiceWorkerJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511CA67C1F3905710019E074 /* ServiceWorkerJob.cpp */; };
-		511CA67E1F3905A60019E074 /* ServiceWorkerJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 511CA67B1F3905710019E074 /* ServiceWorkerJob.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		511CA6801F39331F0019E074 /* ServiceWorkerJobClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 511CA67F1F39331B0019E074 /* ServiceWorkerJobClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		511CA6831F3A3CD90019E074 /* ServiceWorkerRegistrationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511CA6821F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.cpp */; };
-		511CA6841F3A3CD90019E074 /* ServiceWorkerRegistrationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 511CA6811F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		511EC1271C50AACA0032F983 /* IDBSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EC1251C50AA570032F983 /* IDBSerialization.cpp */; };
 		511EC1281C50AACA0032F983 /* IDBSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 511EC1261C50AA570032F983 /* IDBSerialization.h */; };
 		511EC12B1C50ABBF0032F983 /* SQLiteIDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EC1291C50ABBA0032F983 /* SQLiteIDBTransaction.cpp */; };
@@ -2315,14 +2308,6 @@
 		517DEEE51DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517DEEE31DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm */; };
 		517DEEE81DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */; };
-		5182C23E1F313A090059BA7C /* ServiceWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182C23C1F3139FC0059BA7C /* ServiceWorker.cpp */; };
-		5182C23F1F313A090059BA7C /* ServiceWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182C23B1F3139FC0059BA7C /* ServiceWorker.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5182C2401F313A090059BA7C /* ServiceWorkerContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182C2381F3139FC0059BA7C /* ServiceWorkerContainer.cpp */; };
-		5182C2411F313A090059BA7C /* ServiceWorkerContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182C2331F3139FC0059BA7C /* ServiceWorkerContainer.h */; };
-		5182C2421F313A090059BA7C /* ServiceWorkerGlobalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182C2361F3139FC0059BA7C /* ServiceWorkerGlobalScope.cpp */; };
-		5182C2431F313A090059BA7C /* ServiceWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182C23A1F3139FC0059BA7C /* ServiceWorkerGlobalScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5182C2441F313A090059BA7C /* ServiceWorkerRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182C2341F3139FC0059BA7C /* ServiceWorkerRegistration.cpp */; };
-		5182C2451F313A090059BA7C /* ServiceWorkerRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182C2371F3139FC0059BA7C /* ServiceWorkerRegistration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5182C2551F3143CD0059BA7C /* JSServiceWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182C2531F3142500059BA7C /* JSServiceWorker.cpp */; };
 		5182C2561F3143CD0059BA7C /* JSServiceWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182C2521F3142500059BA7C /* JSServiceWorker.h */; };
 		5182C2571F3143CD0059BA7C /* JSServiceWorkerContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182C2511F3142500059BA7C /* JSServiceWorkerContainer.cpp */; };
@@ -2423,7 +2408,6 @@
 		51BA4ACB1BBC5BD900DF3D6D /* MemoryIDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA4AC91BBC5B9E00DF3D6D /* MemoryIDBBackingStore.h */; };
 		51BA4ACC1BBC5BDD00DF3D6D /* IDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA4AC71BBC5AD600DF3D6D /* IDBBackingStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE37DE0DAEE00E001085FC /* StorageArea.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51BEB6391F3B94B0005029B9 /* ServiceWorkerRegistrationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BEB6381F3B94AB005029B9 /* ServiceWorkerRegistrationOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C0AA380F2AA10A001648C2 /* CachedFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */; };
 		51C61B0A1DE536E7008A212D /* ScrollingMomentumCalculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C61B081DE536E7008A212D /* ScrollingMomentumCalculator.cpp */; };
@@ -2465,11 +2449,27 @@
 		51EEAA731BEFFAB100218008 /* IndexValueEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */; };
 		51EEAA741BEFFAB100218008 /* IndexValueEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EEAA721BEFFA7900218008 /* IndexValueEntry.h */; };
 		51F174FE1F35899200C74950 /* WorkerType.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F174FC1F35898800C74950 /* WorkerType.h */; };
-		51F174FF1F35899700C74950 /* ServiceWorkerUpdateViaCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F174FD1F35898800C74950 /* ServiceWorkerUpdateViaCache.h */; };
 		51F175021F358B3B00C74950 /* JSServiceWorkerUpdateViaCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175001F358B3600C74950 /* JSServiceWorkerUpdateViaCache.cpp */; };
 		51F175031F358B3B00C74950 /* JSServiceWorkerUpdateViaCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175011F358B3600C74950 /* JSServiceWorkerUpdateViaCache.h */; };
 		51F175061F358BF700C74950 /* JSWorkerType.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175051F358BDE00C74950 /* JSWorkerType.h */; };
 		51F175071F358BF900C74950 /* JSWorkerType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175041F358BDE00C74950 /* JSWorkerType.cpp */; };
+		51F1755C1F3EBC8300C74950 /* ServiceWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F1755B1F3EBC0C00C74950 /* ServiceWorker.cpp */; };
+		51F1755D1F3EBC8300C74950 /* ServiceWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F1755A1F3EBC0C00C74950 /* ServiceWorker.h */; };
+		51F1755E1F3EBC8300C74950 /* ServiceWorkerContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175581F3EBC0C00C74950 /* ServiceWorkerContainer.cpp */; };
+		51F1755F1F3EBC8300C74950 /* ServiceWorkerContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175571F3EBC0C00C74950 /* ServiceWorkerContainer.h */; };
+		51F175601F3EBC8300C74950 /* ServiceWorkerGlobalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175551F3EBC0C00C74950 /* ServiceWorkerGlobalScope.cpp */; };
+		51F175611F3EBC8300C74950 /* ServiceWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175541F3EBC0C00C74950 /* ServiceWorkerGlobalScope.h */; };
+		51F175621F3EBC8300C74950 /* ServiceWorkerJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175521F3EBC0C00C74950 /* ServiceWorkerJob.cpp */; };
+		51F175631F3EBC8300C74950 /* ServiceWorkerJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175511F3EBC0C00C74950 /* ServiceWorkerJob.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F175641F3EBC8300C74950 /* ServiceWorkerJobClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175501F3EBC0C00C74950 /* ServiceWorkerJobClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F175651F3EBC8300C74950 /* ServiceWorkerProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F1754F1F3EBC0C00C74950 /* ServiceWorkerProvider.cpp */; };
+		51F175661F3EBC8300C74950 /* ServiceWorkerProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F1754E1F3EBC0C00C74950 /* ServiceWorkerProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F175671F3EBC8300C74950 /* ServiceWorkerRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F1754D1F3EBC0C00C74950 /* ServiceWorkerRegistration.cpp */; };
+		51F175681F3EBC8300C74950 /* ServiceWorkerRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F1754C1F3EBC0C00C74950 /* ServiceWorkerRegistration.h */; };
+		51F175691F3EBC8300C74950 /* ServiceWorkerRegistrationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F1754A1F3EBC0C00C74950 /* ServiceWorkerRegistrationOptions.h */; };
+		51F1756A1F3EBC8300C74950 /* ServiceWorkerRegistrationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175491F3EBC0C00C74950 /* ServiceWorkerRegistrationParameters.cpp */; };
+		51F1756B1F3EBC8300C74950 /* ServiceWorkerRegistrationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175481F3EBC0C00C74950 /* ServiceWorkerRegistrationParameters.h */; };
+		51F1756C1F3EBC8300C74950 /* ServiceWorkerUpdateViaCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175471F3EBC0C00C74950 /* ServiceWorkerUpdateViaCache.h */; };
 		51F798EF1BE880E7008AE491 /* IDBIndexInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F798EB1BE880D3008AE491 /* IDBIndexInfo.cpp */; };
 		51F798F01BE880E7008AE491 /* IDBIndexInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F798EC1BE880D3008AE491 /* IDBIndexInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F886C01F32923100C193EF /* JSNavigatorServiceWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F886BF1F32920700C193EF /* JSNavigatorServiceWorker.h */; };
@@ -9907,13 +9907,6 @@
 		510D4A31103165EE0049EA54 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandle.h; sourceTree = "<group>"; };
 		510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandleClient.h; sourceTree = "<group>"; };
 		5110FCFB1E0362A5006F8D0B /* IDBCursorRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorRecord.h; sourceTree = "<group>"; };
-		511CA6771F3904AA0019E074 /* ServiceWorkerProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerProvider.cpp; sourceTree = "<group>"; };
-		511CA6781F3904AA0019E074 /* ServiceWorkerProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerProvider.h; sourceTree = "<group>"; };
-		511CA67B1F3905710019E074 /* ServiceWorkerJob.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerJob.h; sourceTree = "<group>"; };
-		511CA67C1F3905710019E074 /* ServiceWorkerJob.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerJob.cpp; sourceTree = "<group>"; };
-		511CA67F1F39331B0019E074 /* ServiceWorkerJobClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerJobClient.h; sourceTree = "<group>"; };
-		511CA6811F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistrationParameters.h; sourceTree = "<group>"; };
-		511CA6821F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerRegistrationParameters.cpp; sourceTree = "<group>"; };
 		511EC1251C50AA570032F983 /* IDBSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSerialization.cpp; sourceTree = "<group>"; };
 		511EC1261C50AA570032F983 /* IDBSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBSerialization.h; sourceTree = "<group>"; };
 		511EC1291C50ABBA0032F983 /* SQLiteIDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteIDBTransaction.cpp; sourceTree = "<group>"; };
@@ -10087,18 +10080,6 @@
 		517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingMomentumCalculatorMac.h; sourceTree = "<group>"; };
 		517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtension.cpp; sourceTree = "<group>"; };
 		517FBA18151AA71B00B57959 /* DOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowExtension.h; sourceTree = "<group>"; };
-		5182C2311F3139FC0059BA7C /* ServiceWorker.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceWorker.idl; sourceTree = "<group>"; };
-		5182C2321F3139FC0059BA7C /* ServiceWorkerRegistration.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceWorkerRegistration.idl; sourceTree = "<group>"; };
-		5182C2331F3139FC0059BA7C /* ServiceWorkerContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerContainer.h; sourceTree = "<group>"; };
-		5182C2341F3139FC0059BA7C /* ServiceWorkerRegistration.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerRegistration.cpp; sourceTree = "<group>"; };
-		5182C2351F3139FC0059BA7C /* ServiceWorkerContainer.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceWorkerContainer.idl; sourceTree = "<group>"; };
-		5182C2361F3139FC0059BA7C /* ServiceWorkerGlobalScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerGlobalScope.cpp; sourceTree = "<group>"; };
-		5182C2371F3139FC0059BA7C /* ServiceWorkerRegistration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistration.h; sourceTree = "<group>"; };
-		5182C2381F3139FC0059BA7C /* ServiceWorkerContainer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerContainer.cpp; sourceTree = "<group>"; };
-		5182C2391F3139FC0059BA7C /* ServiceWorkerGlobalScope.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ServiceWorkerGlobalScope.idl; sourceTree = "<group>"; };
-		5182C23A1F3139FC0059BA7C /* ServiceWorkerGlobalScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerGlobalScope.h; sourceTree = "<group>"; };
-		5182C23B1F3139FC0059BA7C /* ServiceWorker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorker.h; sourceTree = "<group>"; };
-		5182C23C1F3139FC0059BA7C /* ServiceWorker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorker.cpp; sourceTree = "<group>"; };
 		5182C24B1F313AE00059BA7C /* NavigatorServiceWorker.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigatorServiceWorker.idl; sourceTree = "<group>"; };
 		5182C24D1F3142500059BA7C /* JSServiceWorkerGlobalScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSServiceWorkerGlobalScope.h; path = WebCore/JSServiceWorkerGlobalScope.h; sourceTree = "<group>"; };
 		5182C24E1F3142500059BA7C /* JSServiceWorkerGlobalScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JSServiceWorkerGlobalScope.cpp; path = WebCore/JSServiceWorkerGlobalScope.cpp; sourceTree = "<group>"; };
@@ -10164,7 +10145,6 @@
 		51BA4AC81BBC5B9E00DF3D6D /* MemoryIDBBackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryIDBBackingStore.cpp; sourceTree = "<group>"; };
 		51BA4AC91BBC5B9E00DF3D6D /* MemoryIDBBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryIDBBackingStore.h; sourceTree = "<group>"; };
 		51BE37DE0DAEE00E001085FC /* StorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
-		51BEB6381F3B94AB005029B9 /* ServiceWorkerRegistrationOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistrationOptions.h; sourceTree = "<group>"; };
 		51C0AA380F2AA10A001648C2 /* CachedFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFrame.h; sourceTree = "<group>"; };
 		51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedFrame.cpp; sourceTree = "<group>"; };
 		51C61B081DE536E7008A212D /* ScrollingMomentumCalculator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingMomentumCalculator.cpp; sourceTree = "<group>"; };
@@ -10237,13 +10217,33 @@
 		51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexValueEntry.cpp; sourceTree = "<group>"; };
 		51EEAA721BEFFA7900218008 /* IndexValueEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexValueEntry.h; sourceTree = "<group>"; };
 		51F174FA1F3588D700C74950 /* WorkerType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerType.idl; sourceTree = "<group>"; };
-		51F174FB1F3588D700C74950 /* ServiceWorkerUpdateViaCache.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ServiceWorkerUpdateViaCache.idl; sourceTree = "<group>"; };
 		51F174FC1F35898800C74950 /* WorkerType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerType.h; sourceTree = "<group>"; };
-		51F174FD1F35898800C74950 /* ServiceWorkerUpdateViaCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerUpdateViaCache.h; sourceTree = "<group>"; };
 		51F175001F358B3600C74950 /* JSServiceWorkerUpdateViaCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSServiceWorkerUpdateViaCache.cpp; path = WebCore/JSServiceWorkerUpdateViaCache.cpp; sourceTree = "<group>"; };
 		51F175011F358B3600C74950 /* JSServiceWorkerUpdateViaCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSServiceWorkerUpdateViaCache.h; path = WebCore/JSServiceWorkerUpdateViaCache.h; sourceTree = "<group>"; };
 		51F175041F358BDE00C74950 /* JSWorkerType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerType.cpp; sourceTree = "<group>"; };
 		51F175051F358BDE00C74950 /* JSWorkerType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerType.h; sourceTree = "<group>"; };
+		51F175461F3EBC0C00C74950 /* ServiceWorkerUpdateViaCache.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ServiceWorkerUpdateViaCache.idl; sourceTree = "<group>"; };
+		51F175471F3EBC0C00C74950 /* ServiceWorkerUpdateViaCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerUpdateViaCache.h; sourceTree = "<group>"; };
+		51F175481F3EBC0C00C74950 /* ServiceWorkerRegistrationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistrationParameters.h; sourceTree = "<group>"; };
+		51F175491F3EBC0C00C74950 /* ServiceWorkerRegistrationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerRegistrationParameters.cpp; sourceTree = "<group>"; };
+		51F1754A1F3EBC0C00C74950 /* ServiceWorkerRegistrationOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistrationOptions.h; sourceTree = "<group>"; };
+		51F1754B1F3EBC0C00C74950 /* ServiceWorkerRegistration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ServiceWorkerRegistration.idl; sourceTree = "<group>"; };
+		51F1754C1F3EBC0C00C74950 /* ServiceWorkerRegistration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistration.h; sourceTree = "<group>"; };
+		51F1754D1F3EBC0C00C74950 /* ServiceWorkerRegistration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerRegistration.cpp; sourceTree = "<group>"; };
+		51F1754E1F3EBC0C00C74950 /* ServiceWorkerProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerProvider.h; sourceTree = "<group>"; };
+		51F1754F1F3EBC0C00C74950 /* ServiceWorkerProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerProvider.cpp; sourceTree = "<group>"; };
+		51F175501F3EBC0C00C74950 /* ServiceWorkerJobClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerJobClient.h; sourceTree = "<group>"; };
+		51F175511F3EBC0C00C74950 /* ServiceWorkerJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerJob.h; sourceTree = "<group>"; };
+		51F175521F3EBC0C00C74950 /* ServiceWorkerJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerJob.cpp; sourceTree = "<group>"; };
+		51F175531F3EBC0C00C74950 /* ServiceWorkerGlobalScope.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ServiceWorkerGlobalScope.idl; sourceTree = "<group>"; };
+		51F175541F3EBC0C00C74950 /* ServiceWorkerGlobalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerGlobalScope.h; sourceTree = "<group>"; };
+		51F175551F3EBC0C00C74950 /* ServiceWorkerGlobalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerGlobalScope.cpp; sourceTree = "<group>"; };
+		51F175561F3EBC0C00C74950 /* ServiceWorkerContainer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ServiceWorkerContainer.idl; sourceTree = "<group>"; };
+		51F175571F3EBC0C00C74950 /* ServiceWorkerContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerContainer.h; sourceTree = "<group>"; };
+		51F175581F3EBC0C00C74950 /* ServiceWorkerContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerContainer.cpp; sourceTree = "<group>"; };
+		51F175591F3EBC0C00C74950 /* ServiceWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ServiceWorker.idl; sourceTree = "<group>"; };
+		51F1755A1F3EBC0C00C74950 /* ServiceWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorker.h; sourceTree = "<group>"; };
+		51F1755B1F3EBC0C00C74950 /* ServiceWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorker.cpp; sourceTree = "<group>"; };
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F798EB1BE880D3008AE491 /* IDBIndexInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexInfo.cpp; sourceTree = "<group>"; };
@@ -17534,6 +17534,7 @@
 		2E4346310F546A6800B0F1BA /* workers */ = {
 			isa = PBXGroup;
 			children = (
+				51F175441F3EBBF200C74950 /* service */,
 				41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */,
 				41E1B1CB0FF5986900576B3B /* AbstractWorker.h */,
 				41E1B1CC0FF5986900576B3B /* AbstractWorker.idl */,
@@ -17542,28 +17543,6 @@
 				4162A44F101145AE00DFF3ED /* DedicatedWorkerGlobalScope.idl */,
 				41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */,
 				41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */,
-				5182C23C1F3139FC0059BA7C /* ServiceWorker.cpp */,
-				5182C23B1F3139FC0059BA7C /* ServiceWorker.h */,
-				5182C2311F3139FC0059BA7C /* ServiceWorker.idl */,
-				5182C2381F3139FC0059BA7C /* ServiceWorkerContainer.cpp */,
-				5182C2331F3139FC0059BA7C /* ServiceWorkerContainer.h */,
-				5182C2351F3139FC0059BA7C /* ServiceWorkerContainer.idl */,
-				5182C2361F3139FC0059BA7C /* ServiceWorkerGlobalScope.cpp */,
-				5182C23A1F3139FC0059BA7C /* ServiceWorkerGlobalScope.h */,
-				5182C2391F3139FC0059BA7C /* ServiceWorkerGlobalScope.idl */,
-				511CA67C1F3905710019E074 /* ServiceWorkerJob.cpp */,
-				511CA67B1F3905710019E074 /* ServiceWorkerJob.h */,
-				511CA67F1F39331B0019E074 /* ServiceWorkerJobClient.h */,
-				511CA6771F3904AA0019E074 /* ServiceWorkerProvider.cpp */,
-				511CA6781F3904AA0019E074 /* ServiceWorkerProvider.h */,
-				5182C2341F3139FC0059BA7C /* ServiceWorkerRegistration.cpp */,
-				5182C2371F3139FC0059BA7C /* ServiceWorkerRegistration.h */,
-				5182C2321F3139FC0059BA7C /* ServiceWorkerRegistration.idl */,
-				51BEB6381F3B94AB005029B9 /* ServiceWorkerRegistrationOptions.h */,
-				511CA6821F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.cpp */,
-				511CA6811F3A3CD50019E074 /* ServiceWorkerRegistrationParameters.h */,
-				51F174FD1F35898800C74950 /* ServiceWorkerUpdateViaCache.h */,
-				51F174FB1F3588D700C74950 /* ServiceWorkerUpdateViaCache.idl */,
 				2E4346330F546A8200B0F1BA /* Worker.cpp */,
 				2E4346340F546A8200B0F1BA /* Worker.h */,
 				2E4346350F546A8200B0F1BA /* Worker.idl */,
@@ -18707,6 +18686,35 @@
 				510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */,
 			);
 			path = mac;
+			sourceTree = "<group>";
+		};
+		51F175441F3EBBF200C74950 /* service */ = {
+			isa = PBXGroup;
+			children = (
+				51F1755B1F3EBC0C00C74950 /* ServiceWorker.cpp */,
+				51F1755A1F3EBC0C00C74950 /* ServiceWorker.h */,
+				51F175591F3EBC0C00C74950 /* ServiceWorker.idl */,
+				51F175581F3EBC0C00C74950 /* ServiceWorkerContainer.cpp */,
+				51F175571F3EBC0C00C74950 /* ServiceWorkerContainer.h */,
+				51F175561F3EBC0C00C74950 /* ServiceWorkerContainer.idl */,
+				51F175551F3EBC0C00C74950 /* ServiceWorkerGlobalScope.cpp */,
+				51F175541F3EBC0C00C74950 /* ServiceWorkerGlobalScope.h */,
+				51F175531F3EBC0C00C74950 /* ServiceWorkerGlobalScope.idl */,
+				51F175521F3EBC0C00C74950 /* ServiceWorkerJob.cpp */,
+				51F175511F3EBC0C00C74950 /* ServiceWorkerJob.h */,
+				51F175501F3EBC0C00C74950 /* ServiceWorkerJobClient.h */,
+				51F1754F1F3EBC0C00C74950 /* ServiceWorkerProvider.cpp */,
+				51F1754E1F3EBC0C00C74950 /* ServiceWorkerProvider.h */,
+				51F1754D1F3EBC0C00C74950 /* ServiceWorkerRegistration.cpp */,
+				51F1754C1F3EBC0C00C74950 /* ServiceWorkerRegistration.h */,
+				51F1754B1F3EBC0C00C74950 /* ServiceWorkerRegistration.idl */,
+				51F1754A1F3EBC0C00C74950 /* ServiceWorkerRegistrationOptions.h */,
+				51F175491F3EBC0C00C74950 /* ServiceWorkerRegistrationParameters.cpp */,
+				51F175481F3EBC0C00C74950 /* ServiceWorkerRegistrationParameters.h */,
+				51F175471F3EBC0C00C74950 /* ServiceWorkerUpdateViaCache.h */,
+				51F175461F3EBC0C00C74950 /* ServiceWorkerUpdateViaCache.idl */,
+			);
+			path = service;
 			sourceTree = "<group>";
 		};
 		57C7A6881E56946D00C67D71 /* credentials */ = {
@@ -26534,6 +26542,7 @@
 				29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */,
 				29A812360FBB9C1D00510293 /* AccessibilityObject.h in Headers */,
 				A409C985116D0DDD007197BD /* AccessibilityProgressIndicator.h in Headers */,
+				51F175641F3EBC8300C74950 /* ServiceWorkerJobClient.h in Headers */,
 				29A812390FBB9C1D00510293 /* AccessibilityRenderObject.h in Headers */,
 				93C4F6EB1108F9A50099D0DB /* AccessibilityScrollbar.h in Headers */,
 				29489FC712C00F0300D83F0F /* AccessibilityScrollView.h in Headers */,
@@ -26820,6 +26829,7 @@
 				BCDD454E1236C95C009A7985 /* ColumnInfo.h in Headers */,
 				43EDD67F1B485DBF00640E75 /* CombinedFiltersAlphabet.h in Headers */,
 				26E944D91AC4B2DD007B85B5 /* CombinedURLFilters.h in Headers */,
+				51F175691F3EBC8300C74950 /* ServiceWorkerRegistrationOptions.h in Headers */,
 				A584FE351864D5AF00843B10 /* CommandLineAPIHost.h in Headers */,
 				A584FE2C1863870F00843B10 /* CommandLineAPIModule.h in Headers */,
 				A584FE2618637DAB00843B10 /* CommandLineAPIModuleSource.h in Headers */,
@@ -27161,6 +27171,7 @@
 				8372DB311A6780A800C697C5 /* DiagnosticLoggingResultType.h in Headers */,
 				CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */,
 				CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */,
+				51F175631F3EBC8300C74950 /* ServiceWorkerJob.h in Headers */,
 				D0BD4F5D1408850F006839B6 /* DictationCommandIOS.h in Headers */,
 				937FF3D51A1012D6008EBA31 /* DictionaryLookup.h in Headers */,
 				2D5646B01B8F8493003C4994 /* DictionaryPopupInfo.h in Headers */,
@@ -27214,6 +27225,7 @@
 				A9C6E4E80D745E18006442E9 /* DOMMimeTypeArray.h in Headers */,
 				52B6C9C315E3F4DF00690B05 /* DOMNamedFlowCollection.h in Headers */,
 				1ACE53E80A8D18E70022947D /* DOMParser.h in Headers */,
+				51F1755F1F3EBC8300C74950 /* ServiceWorkerContainer.h in Headers */,
 				7A54881714E432A1006AE05A /* DOMPatchSupport.h in Headers */,
 				FB91392416AE4C17001FE682 /* DOMPath.h in Headers */,
 				A9C6E4EC0D745E2B006442E9 /* DOMPlugin.h in Headers */,
@@ -28292,6 +28304,7 @@
 				5E2C43741BCF0D750001E2BC /* JSRTCRtpSender.h in Headers */,
 				5E2C43721BCF0D750001E2BD /* JSRTCRtpTransceiver.h in Headers */,
 				316DCB221E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.h in Headers */,
+				51F1756C1F3EBC8300C74950 /* ServiceWorkerUpdateViaCache.h in Headers */,
 				07969DBC17D14151007FF842 /* JSRTCSessionDescription.h in Headers */,
 				316DCB501E7910A6001B5F87 /* JSRTCSignalingState.h in Headers */,
 				07969DC217D14151007FF842 /* JSRTCStatsReport.h in Headers */,
@@ -28377,6 +28390,7 @@
 				B2FA3D810AB75A6F000E5AC4 /* JSSVGFEFuncRElement.h in Headers */,
 				B2FA3D830AB75A6F000E5AC4 /* JSSVGFEGaussianBlurElement.h in Headers */,
 				B2FA3D850AB75A6F000E5AC4 /* JSSVGFEImageElement.h in Headers */,
+				51F175681F3EBC8300C74950 /* ServiceWorkerRegistration.h in Headers */,
 				B2FA3D870AB75A6F000E5AC4 /* JSSVGFEMergeElement.h in Headers */,
 				B2FA3D890AB75A6F000E5AC4 /* JSSVGFEMergeNodeElement.h in Headers */,
 				84224184107E77F400766A87 /* JSSVGFEMorphologyElement.h in Headers */,
@@ -28650,6 +28664,7 @@
 				A516E8B7136E04DB0076C3C0 /* LocalizedDateCache.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
+				51F175611F3EBC8300C74950 /* ServiceWorkerGlobalScope.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
 				9BA273F4172206BB0097CE47 /* LogicalSelectionOffsetCaches.h in Headers */,
 				0FDCD7F31D47E655009F08BC /* LogInitialization.h in Headers */,
@@ -29017,6 +29032,7 @@
 				935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */,
 				0562F9611573F88F0031CA16 /* PlatformLayer.h in Headers */,
 				F544F78915CFB2A800AF33A8 /* PlatformLocale.h in Headers */,
+				51F1755D1F3EBC8300C74950 /* ServiceWorker.h in Headers */,
 				CEEFCD7C19DB33DC003876D7 /* PlatformMediaResourceLoader.h in Headers */,
 				070E09191875EEFC003A1D3C /* PlatformMediaSession.h in Headers */,
 				07F944161864D046005D31CB /* PlatformMediaSessionManager.h in Headers */,
@@ -29391,6 +29407,7 @@
 				CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */,
 				0F1774801378B772009DA76A /* ScrollAnimatorIOS.h in Headers */,
 				BCAE1FA712939DB7004CB026 /* ScrollAnimatorMac.h in Headers */,
+				51F1756B1F3EBC8300C74950 /* ServiceWorkerRegistrationParameters.h in Headers */,
 				5CB37FFF1C62D2A100F20188 /* ScrollAnimatorMock.h in Headers */,
 				93F199B808245E59001E9ABC /* Scrollbar.h in Headers */,
 				BC8B854B0E7C7F5600AB6984 /* ScrollbarTheme.h in Headers */,
@@ -29458,14 +29475,6 @@
 				A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */,
 				516F7F6D1C31E39A00F111DC /* ServerOpenDBRequest.h in Headers */,
 				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,
-				5182C23F1F313A090059BA7C /* ServiceWorker.h in Headers */,
-				5182C2411F313A090059BA7C /* ServiceWorkerContainer.h in Headers */,
-				5182C2431F313A090059BA7C /* ServiceWorkerGlobalScope.h in Headers */,
-				511CA67E1F3905A60019E074 /* ServiceWorkerJob.h in Headers */,
-				511CA6801F39331F0019E074 /* ServiceWorkerJobClient.h in Headers */,
-				511CA67A1F3904B10019E074 /* ServiceWorkerProvider.h in Headers */,
-				5182C2451F313A090059BA7C /* ServiceWorkerRegistration.h in Headers */,
-				51F174FF1F35899700C74950 /* ServiceWorkerUpdateViaCache.h in Headers */,
 				756B2CE118B7101600FECFAA /* SessionID.h in Headers */,
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
@@ -29978,6 +29987,7 @@
 				2D7ED0AB1BAE99170043B3E5 /* TimerEventBasedMock.h in Headers */,
 				49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */,
 				0F54DD081881D5F5003EEDBB /* Touch.h in Headers */,
+				51F175661F3EBC8300C74950 /* ServiceWorkerProvider.h in Headers */,
 				0F54DD091881D5F5003EEDBB /* TouchEvent.h in Headers */,
 				0F54DD0A1881D5F5003EEDBB /* TouchList.h in Headers */,
 				070334D71459FFD5008D8D45 /* TrackBase.h in Headers */,
@@ -31185,6 +31195,7 @@
 				CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */,
 				CECADFC8153778FF00E37068 /* DictationCommand.cpp in Sources */,
 				D0BD4F5C1408850F006839B6 /* DictationCommandIOS.cpp in Sources */,
+				51F1756A1F3EBC8300C74950 /* ServiceWorkerRegistrationParameters.cpp in Sources */,
 				937FF3D71A10131B008EBA31 /* DictionaryLookup.mm in Sources */,
 				FDAF19981513D131008DB0C3 /* DirectConvolver.cpp in Sources */,
 				7E4DE10D198B10B60051CB02 /* DiskCacheMonitorCocoa.mm in Sources */,
@@ -31696,6 +31707,7 @@
 				A77979190D6B9D0C003851B9 /* ImageData.cpp in Sources */,
 				555B87EC1CAAF0AB00349425 /* ImageDecoderCG.cpp in Sources */,
 				97205AB51239291000B17380 /* ImageDocument.cpp in Sources */,
+				51F1755C1F3EBC8300C74950 /* ServiceWorker.cpp in Sources */,
 				5576A5641D88A70800CCC04C /* ImageFrame.cpp in Sources */,
 				5597F8261D91C3130066BC21 /* ImageFrameCache.cpp in Sources */,
 				F55B3DC11251F12D003EF269 /* ImageInputType.cpp in Sources */,
@@ -32068,6 +32080,7 @@
 				1AE2AA2E0A1CDAB400B42B25 /* JSHTMLHeadingElement.cpp in Sources */,
 				1AE2AA300A1CDAB400B42B25 /* JSHTMLHRElement.cpp in Sources */,
 				1A85B18F0A1B18A200D8C87C /* JSHTMLHtmlElement.cpp in Sources */,
+				51F175621F3EBC8300C74950 /* ServiceWorkerJob.cpp in Sources */,
 				BC4918C80BFEA050009D6316 /* JSHTMLIFrameElement.cpp in Sources */,
 				1AE2AA970A1CDD2D00B42B25 /* JSHTMLImageElement.cpp in Sources */,
 				A80E7E980A1A83E3007FB8C5 /* JSHTMLInputElement.cpp in Sources */,
@@ -33065,6 +33078,7 @@
 				0FD308D5117D168500A791F7 /* RenderIFrame.cpp in Sources */,
 				BCEA4875097D93020094C9E4 /* RenderImage.cpp in Sources */,
 				08F2F0091213E61700DCEC48 /* RenderImageResource.cpp in Sources */,
+				51F175671F3EBC8300C74950 /* ServiceWorkerRegistration.cpp in Sources */,
 				08641D4712142F7D008DE9F6 /* RenderImageResourceStyleImage.cpp in Sources */,
 				BCEA4877097D93020094C9E4 /* RenderInline.cpp in Sources */,
 				BCEA4879097D93020094C9E4 /* RenderLayer.cpp in Sources */,
@@ -33109,6 +33123,7 @@
 				BCE93F471517C6D5008CCF74 /* RenderRegionSet.cpp in Sources */,
 				A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */,
 				BCA846D60DC67A350026C309 /* RenderReplica.cpp in Sources */,
+				51F1755E1F3EBC8300C74950 /* ServiceWorkerContainer.cpp in Sources */,
 				1479FAED109AE37500DED655 /* RenderRuby.cpp in Sources */,
 				1479FAEF109AE37500DED655 /* RenderRubyBase.cpp in Sources */,
 				1479FAF1109AE37500DED655 /* RenderRubyRun.cpp in Sources */,
@@ -33311,13 +33326,6 @@
 				A75E497710752ACB00C9B896 /* SerializedScriptValue.cpp in Sources */,
 				516F7F6E1C31E39C00F111DC /* ServerOpenDBRequest.cpp in Sources */,
 				2D93AEE419DF5641002A86C3 /* ServicesOverlayController.mm in Sources */,
-				5182C23E1F313A090059BA7C /* ServiceWorker.cpp in Sources */,
-				5182C2401F313A090059BA7C /* ServiceWorkerContainer.cpp in Sources */,
-				5182C2421F313A090059BA7C /* ServiceWorkerGlobalScope.cpp in Sources */,
-				511CA67D1F3905A60019E074 /* ServiceWorkerJob.cpp in Sources */,
-				511CA6791F3904B10019E074 /* ServiceWorkerProvider.cpp in Sources */,
-				5182C2441F313A090059BA7C /* ServiceWorkerRegistration.cpp in Sources */,
-				511CA6831F3A3CD90019E074 /* ServiceWorkerRegistrationParameters.cpp in Sources */,
 				511F7D441EB1C39100E47B83 /* SessionID.cpp in Sources */,
 				93309E0F099E64920056E581 /* SetNodeAttributeCommand.cpp in Sources */,
 				B8DBDB4B130B0F8A00F5CDB1 /* SetSelectionCommand.cpp in Sources */,
@@ -33595,6 +33603,7 @@
 				BC22747A0E8366E200E7F975 /* SVGRenderStyleDefs.cpp in Sources */,
 				B2227AA20D00BF220071B782 /* SVGScriptElement.cpp in Sources */,
 				B2227AA50D00BF220071B782 /* SVGSetElement.cpp in Sources */,
+				51F175601F3EBC8300C74950 /* ServiceWorkerGlobalScope.cpp in Sources */,
 				E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */,
 				B2227AA80D00BF220071B782 /* SVGStopElement.cpp in Sources */,
 				7C39C3761DDBB90D00FEFB29 /* SVGStringListValues.cpp in Sources */,
@@ -33696,6 +33705,7 @@
 				7AA3A699194A64E7001CBD24 /* TileController.cpp in Sources */,
 				1F72BF0A187FD4490009BCB3 /* TileControllerMemoryHandlerIOS.cpp in Sources */,
 				7AA3A6A3194B5C22001CBD24 /* TileCoverageMap.cpp in Sources */,
+				51F175651F3EBC8300C74950 /* ServiceWorkerProvider.cpp in Sources */,
 				7AA3A69B194A64E7001CBD24 /* TileGrid.cpp in Sources */,
 				498770F21242C535002226BA /* TilingData.cpp in Sources */,
 				F55B3DDB1251F12D003EF269 /* TimeInputType.cpp in Sources */,

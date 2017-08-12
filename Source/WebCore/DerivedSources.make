@@ -74,6 +74,7 @@ VPATH = \
     $(WebCore)/storage \
     $(WebCore)/xml \
     $(WebCore)/workers \
+    $(WebCore)/workers/service \
     $(WebCore)/svg \
     $(WebCore)/testing \
     $(WebCore)/websockets \
@@ -841,15 +842,15 @@ JS_BINDING_IDLS = \
     $(WebCore)/testing/TypeConversions.idl \
     $(WebCore)/workers/AbstractWorker.idl \
     $(WebCore)/workers/DedicatedWorkerGlobalScope.idl \
-    $(WebCore)/workers/ServiceWorker.idl \
-    $(WebCore)/workers/ServiceWorkerContainer.idl \
-    $(WebCore)/workers/ServiceWorkerGlobalScope.idl \
-    $(WebCore)/workers/ServiceWorkerRegistration.idl \
-    $(WebCore)/workers/ServiceWorkerUpdateViaCache.idl \
     $(WebCore)/workers/Worker.idl \
     $(WebCore)/workers/WorkerGlobalScope.idl \
     $(WebCore)/workers/WorkerLocation.idl \
     $(WebCore)/workers/WorkerType.idl \
+    $(WebCore)/workers/service/ServiceWorker.idl \
+    $(WebCore)/workers/service/ServiceWorkerContainer.idl \
+    $(WebCore)/workers/service/ServiceWorkerGlobalScope.idl \
+    $(WebCore)/workers/service/ServiceWorkerRegistration.idl \
+    $(WebCore)/workers/service/ServiceWorkerUpdateViaCache.idl \
     $(WebCore)/xml/DOMParser.idl \
     $(WebCore)/xml/XMLHttpRequest.idl \
     $(WebCore)/xml/XMLHttpRequestEventTarget.idl \

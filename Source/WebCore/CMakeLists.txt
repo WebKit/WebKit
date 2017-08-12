@@ -121,6 +121,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/svg/properties"
     "${WEBCORE_DIR}/websockets"
     "${WEBCORE_DIR}/workers"
+    "${WEBCORE_DIR}/workers/service"
     "${WEBCORE_DIR}/xml"
     "${WEBCORE_DIR}/xml/parser"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
@@ -713,15 +714,16 @@ set(WebCore_NON_SVG_IDL_FILES
 
     workers/AbstractWorker.idl
     workers/DedicatedWorkerGlobalScope.idl
-    workers/ServiceWorker.idl
-    workers/ServiceWorkerContainer.idl
-    workers/ServiceWorkerGlobalScope.idl
-    workers/ServiceWorkerRegistration.idl
-    workers/ServiceWorkerUpdateViaCache.idl
     workers/Worker.idl
     workers/WorkerGlobalScope.idl
     workers/WorkerLocation.idl
     workers/WorkerType.idl
+
+    workers/service/ServiceWorker.idl
+    workers/service/ServiceWorkerContainer.idl
+    workers/service/ServiceWorkerGlobalScope.idl
+    workers/service/ServiceWorkerRegistration.idl
+    workers/service/ServiceWorkerUpdateViaCache.idl
 
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
@@ -2982,13 +2984,6 @@ set(WebCore_SOURCES
     workers/AbstractWorker.cpp
     workers/DedicatedWorkerGlobalScope.cpp
     workers/DedicatedWorkerThread.cpp
-    workers/ServiceWorker.cpp
-    workers/ServiceWorkerContainer.cpp
-    workers/ServiceWorkerGlobalScope.cpp
-    workers/ServiceWorkerJob.cpp
-    workers/ServiceWorkerProvider.cpp
-    workers/ServiceWorkerRegistration.cpp
-    workers/ServiceWorkerRegistrationParameters.cpp
     workers/Worker.cpp
     workers/WorkerConsoleClient.cpp
     workers/WorkerEventQueue.cpp
@@ -2999,6 +2994,14 @@ set(WebCore_SOURCES
     workers/WorkerRunLoop.cpp
     workers/WorkerScriptLoader.cpp
     workers/WorkerThread.cpp
+
+    workers/service/ServiceWorker.cpp
+    workers/service/ServiceWorkerContainer.cpp
+    workers/service/ServiceWorkerGlobalScope.cpp
+    workers/service/ServiceWorkerJob.cpp
+    workers/service/ServiceWorkerProvider.cpp
+    workers/service/ServiceWorkerRegistration.cpp
+    workers/service/ServiceWorkerRegistrationParameters.cpp
 
     xml/DOMParser.cpp
     xml/NativeXPathNSResolver.cpp
