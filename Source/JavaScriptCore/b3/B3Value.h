@@ -328,6 +328,7 @@ private:
                 badKind(kind, numArgs);
             break;
         case Identity:
+        case Opaque:
         case Neg:
         case Clz:
         case Abs:

@@ -43,6 +43,11 @@ enum Opcode : int16_t {
     
     // Polymorphic identity, usable with any value type.
     Identity,
+        
+    // This is an identity, but we prohibit the compiler from realizing this until the bitter end. This can
+    // be used to block reassociation and other compiler reasoning, if we find that it's wrong or
+    // unprofitable and we need an escape hatch.
+    Opaque,
 
     // Constants. Use the ConstValue* classes. Constants exist in the control flow, so that we can
     // reason about where we would construct them. Large constants are expensive to create.
@@ -258,7 +263,7 @@ enum Opcode : int16_t {
     // of transformation or analysis that relies on the insight that Depend is really zero is unsound,
     // because it unlocks reordering of users of @result and @phantom.
     //
-    // On X86, this is lowered to a load-load fence and @result uses @phantom directly.
+    // On X86, this is lowered to a load-load fence and @result folds to zero.
     //
     // On ARM, this is lowered as if like:
     //

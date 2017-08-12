@@ -485,6 +485,15 @@ private:
     void reduceValueStrength()
     {
         switch (m_value->opcode()) {
+        case Opaque:
+            // Turn this: Opaque(Opaque(value))
+            // Into this: Opaque(value)
+            if (m_value->child(0)->opcode() == Opaque) {
+                replaceWithIdentity(m_value->child(0));
+                break;
+            }
+            break;
+            
         case Add:
             handleCommutativity();
             

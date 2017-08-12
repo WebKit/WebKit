@@ -216,6 +216,12 @@
         to an Identity by doing convertToIdentity(otherValue).  If the value is Void,
         convertToIdentity() converts it to a Nop instead.</dd>
 
+      <dt>T Opaque(T)</dt>
+      <dd>Returns the passed value.  May be used for any type except Void.  This opcode is provided as a hack
+        for avoiding B3 optimizations that the client finds unprofitable.  B3 treats Opaque as an identity
+        only during instruction selection.  All prior optimizations (including all B3 IR optimizations) do
+        not know what Opaque does, other than Opaque(x) == Opaque(x) and Opaque(Opaque(x)) == Opaque(x).</dd>
+
       <dt>Int32 Const32(constant)</dt>
       <dd>32-bit integer constant.  Must use the Const32Value class, which has space for the
         int32_t constant.</dd>

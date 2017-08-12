@@ -106,6 +106,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Identity:
         out.print("Identity");
         return;
+    case Opaque:
+        out.print("Opaque");
+        return;
     case Const32:
         out.print("Const32");
         return;

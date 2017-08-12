@@ -11626,25 +11626,21 @@ private:
         LValue basePtr = m_out.constIntPtr(Gigacage::basePtr(kind));
         LValue mask = m_out.constIntPtr(GIGACAGE_MASK);
         
-        // We don't have to worry about B3 messing up the bitAnd. Also, we want to get B3's excellent
-        // codegen for 2-operand andq on x86-64.
         LValue masked = m_out.bitAnd(ptr, mask);
-        
-        // But B3 will currently mess up the code generation of this add. Basically, any offset from what we
-        // compute here will get reassociated and folded with Gigacage::basePtr. There's a world in which
-        // moveConstants() observes that it needs to reassociate in order to hoist the big constants. But
-        // it's much easier to just block B3's badness here. That's what we do for now.
-        // FIXME: It would be better if we didn't have to do this hack.
-        // https://bugs.webkit.org/show_bug.cgi?id=175483
-        PatchpointValue* patchpoint = m_out.patchpoint(pointerType());
-        patchpoint->appendSomeRegister(basePtr);
-        patchpoint->appendSomeRegister(masked);
-        patchpoint->setGenerator(
-            [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                jit.addPtr(params[1].gpr(), params[2].gpr(), params[0].gpr());
-            });
-        patchpoint->effects = Effects::none();
-        return patchpoint;
+        LValue result = m_out.add(masked, basePtr);
+
+        // Make sure that B3 doesn't try to do smart reassociation of these pointer bits.
+        // FIXME: In an ideal world, B3 would not do harmful reassociations, and if it did, it would be able
+        // to undo them during constant hoisting and regalloc. As it stands, if you remove this then Octane
+        // gets 1.6% slower and Kraken gets 5% slower. It's all because the basePtr, which is a constant,
+        // gets reassociated out of the add above and into the address arithmetic. This disables hoisting of
+        // the basePtr constant. Hoisting that constant is worth a lot more perf than the reassociation. One
+        // way to make this all work happily is to combine offset legalization with constant hoisting, and
+        // then teach it reassociation. So, Add(Add(a, b), const) where a is loop-invariant while b isn't
+        // will turn into Add(Add(a, const), b) by the constant hoister. We would have to teach B3 to do this
+        // and possibly other smart things if we want to be able to remove this opaque.
+        // https://bugs.webkit.org/show_bug.cgi?id=175493
+        return m_out.opaque(result);
     }
     
     void buildSwitch(SwitchData* data, LType type, LValue switchValue)

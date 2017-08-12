@@ -151,6 +151,8 @@ public:
     void addIncomingToPhi(LValue phi, ValueFromBlock);
     template<typename... Params>
     void addIncomingToPhi(LValue phi, ValueFromBlock, Params... theRest);
+    
+    LValue opaque(LValue);
 
     LValue add(LValue, LValue);
     LValue sub(LValue, LValue);

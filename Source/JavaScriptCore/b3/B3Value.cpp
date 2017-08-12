@@ -546,6 +546,7 @@ Effects Value::effects() const
     switch (opcode()) {
     case Nop:
     case Identity:
+    case Opaque:
     case Const32:
     case Const64:
     case ConstDouble:
@@ -700,10 +701,13 @@ Effects Value::effects() const
 
 ValueKey Value::key() const
 {
+    // NOTE: Except for exotic things like CheckAdd and friends, we want every case here to have a
+    // corresponding case in ValueKey::materialize().
     switch (opcode()) {
     case FramePointer:
         return ValueKey(kind(), type());
     case Identity:
+    case Opaque:
     case Abs:
     case Ceil:
     case Floor:
@@ -794,6 +798,7 @@ bool Value::isFree() const
     case ConstDouble:
     case ConstFloat:
     case Identity:
+    case Opaque:
     case Nop:
         return true;
     default:
@@ -809,6 +814,7 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
 {
     switch (kind.opcode()) {
     case Identity:
+    case Opaque:
     case Add:
     case Sub:
     case Mul:

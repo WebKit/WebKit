@@ -1,5 +1,62 @@
 2017-08-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Caging shouldn't have to use a patchpoint for adding
+        https://bugs.webkit.org/show_bug.cgi?id=175483
+
+        Reviewed by Mark Lam.
+
+        Caging involves doing a Add(ptr, largeConstant). All of B3's heuristics for how to deal with
+        constants and associative operations dictate that you always want to sink constants. For example,
+        Add(Add(a, constant), b) always becomes Add(Add(a, b), constant). This is profitable because in
+        typical code, it reveals downstream optimizations. But it's terrible in the case of caging, because
+        we want the large constant (which is shared by all caging operations) to be hoisted. Reassociating to
+        sink constants obscures the constant in this case. Currently, moveConstants is not smart enough to
+        reassociate, so instead of sinking largeConstant, it tries (and often fails) to sink some other
+        constants instead. Without some hacks, this is a 5% Kraken regression and a 1.6% Octane regression.
+        It's not clear that moveConstants could ever be smart enough to rematerialize that constant and then
+        hoist it - that would require quite a bit of algebraic reasoning. But the only case we know of where
+        our current constant reassociation heuristics are wrong is caging. So, we can get away with some
+        hacks for just stopping B3's reassociation only in this specific case.
+        
+        Previously, we achieved this by concealing the Add(ptr, largeConstant) inside a patchpoint. That's
+        OK, but patchpoints are expensive. They require a SharedTask instance. They require callbacks from
+        the backend, including during register allocation. And they cannot be CSE'd. We do want B3 to know
+        that if we cage the same pointer in two places, both places will compute the same value.
+        
+        This patch improves the situation by introducing the Opaque opcode. This is handled by LowerToAir as
+        if it was Identity, but all prior phases treat it as an unknown pure unary idempotent operation. I.e.
+        they know that Opaque(x) == Opaque(x) and that Opaque(Opaque(x)) == Opaque(x). But they don't know
+        that Opaque(x) == x until LowerToAir. So, you can use Opaque exactly when you know that B3 will mess
+        up your code but Air won't. (Currently we know of no cases where Air messes things up on a large
+        enough scale to warrant new opcodes.)
+        
+        This change is perf-neutral, but may start to help as I add more uses of caged() in the FTL. It also
+        makes the code a bit less ugly.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::shouldCopyPropagate):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects const):
+        (JSC::B3::Value::key const):
+        (JSC::B3::Value::isFree const):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h:
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::materialize const):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::opaque):
+        * ftl/FTLOutput.h:
+
+2017-08-11  Filip Pizlo  <fpizlo@apple.com>
+
         ScopedArguments overflow storage needs to be in the JSValue gigacage
         https://bugs.webkit.org/show_bug.cgi?id=174923
 

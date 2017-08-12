@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,11 +56,20 @@ void ValueKey::dump(PrintStream& out) const
 
 Value* ValueKey::materialize(Procedure& proc, Origin origin) const
 {
+    // NOTE: We sometimes cannot return a Value* for some key, like for Check and friends. That's because
+    // though those nodes have side exit effects. It would be weird to materialize anything that has a side
+    // exit. We can't possibly know enough about a side exit to know where it would be safe to emit one.
     switch (opcode()) {
     case FramePointer:
         return proc.add<Value>(kind(), type(), origin);
     case Identity:
+    case Opaque:
+    case Abs:
+    case Floor:
+    case Ceil:
     case Sqrt:
+    case Neg:
+    case Depend:
     case SExt8:
     case SExt16:
     case SExt32:
@@ -71,7 +80,6 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case IToF:
     case FloatToDouble:
     case DoubleToFloat:
-    case Check:
         return proc.add<Value>(kind(), type(), origin, child(proc, 0));
     case Add:
     case Sub:
@@ -96,6 +104,7 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case Below:
     case AboveEqual:
     case BelowEqual:
+    case EqualOrUnordered:
         return proc.add<Value>(kind(), type(), origin, child(proc, 0), child(proc, 1));
     case Select:
         return proc.add<Value>(kind(), type(), origin, child(proc, 0), child(proc, 1), child(proc, 2));

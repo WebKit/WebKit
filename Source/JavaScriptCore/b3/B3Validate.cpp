@@ -139,6 +139,7 @@ public:
                 VALIDATE(value->type() == Void, ("At ", *value));
                 break;
             case Identity:
+            case Opaque:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->type() == value->child(0)->type(), ("At ", *value));
