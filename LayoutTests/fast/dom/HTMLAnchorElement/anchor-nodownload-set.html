@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script type='text/javascript'>
+<script>
 if (window.testRunner) {
   testRunner.dumpAsText();
-  testRunner.waitUntilDone();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.waitUntilDownloadFinished();
 }
 </script>
 </head>
@@ -24,7 +25,7 @@ function click(elmt)
 
 function runTest()
 {
-    var string = "<!doctype html><html><head><title>Title</title><script>if (window.testRunner) testRunner.dumpAsText(); </" + "script></head><body>PASS</body><script>if (window.testRunner) testRunner.notifyDone();</scr" + "ipt></html>";
+    var string = "<!doctype html><html><head><title>Title</title><script>if (window.testRunner) testRunner.dumpAsText(); </" + "script></head><body>FAIL</body><script>if (window.testRunner) testRunner.notifyDone();</scr" + "ipt></html>";
     var blob = new Blob([string], {type: "text/html"});
     var link = document.getElementById("blob-url");
     link.href = window.URL.createObjectURL(blob);

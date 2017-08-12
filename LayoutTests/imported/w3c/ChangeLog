@@ -1,3 +1,15 @@
+2017-08-12  Chris Dumez  <cdumez@apple.com>
+
+        Address flakiness related to download tests
+        https://bugs.webkit.org/show_bug.cgi?id=175338
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several WPT tests now that download callbacks are no longer logged.
+
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click-expected.txt:
+        * web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-expected.txt:
+
 2017-08-11  Chris Dumez  <cdumez@apple.com>
 
         Implement quota limitation for keepalive Fetch requests

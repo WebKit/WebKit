@@ -31,10 +31,13 @@ interface TestRunner {
     void dumpChildFramesAsText();
     void waitForPolicyDelegate();
     void waitUntilDone();
-    void waitUntilDownloadFinished();
     void notifyDone();
     double preciseTime();
     readonly attribute double timeout;
+
+    // Downloads.
+    void waitUntilDownloadFinished();
+    void setShouldLogDownloadCallbacks(boolean value);
 
     // Other dumping.
     void dumpBackForwardList();

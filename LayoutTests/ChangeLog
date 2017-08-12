@@ -1,3 +1,36 @@
+2017-08-12  Chris Dumez  <cdumez@apple.com>
+
+        Address flakiness related to download tests
+        https://bugs.webkit.org/show_bug.cgi?id=175338
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        Unmark several download tests as flaky.
+
+        * fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html:
+        * fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html:
+        * fast/dom/HTMLAnchorElement/anchor-download.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html:
+        * fast/dom/HTMLAnchorElement/anchor-file-blob-download.html:
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set.html:
+        * http/tests/download/anchor-download-attribute-content-disposition.html:
+        * http/tests/download/anchor-download-no-extension.html:
+        * http/tests/download/anchor-download-no-value.html:
+        * http/tests/download/area-download-expected.txt:
+        * http/tests/download/area-download.html:
+        * http/tests/security/anchor-download-allow-blob-expected.txt:
+        * http/tests/security/anchor-download-allow-blob.html:
+        * http/tests/security/anchor-download-allow-data-expected.txt:
+        * http/tests/security/anchor-download-allow-data.html:
+        * http/tests/security/anchor-download-allow-sameorigin.html:
+        Update download tests to explicitly enable download callbacks logging.
+
 2017-08-11  Chris Dumez  <cdumez@apple.com>
 
         Implement quota limitation for keepalive Fetch requests

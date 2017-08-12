@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script type='text/javascript'>
+<script>
 if (window.testRunner) {
   testRunner.dumpAsText();
-  testRunner.waitUntilDone();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.waitUntilDownloadFinished();
 }
 </script>
 </head>
@@ -36,9 +37,6 @@ function runTest()
         link.click();
     }
     userClick(button);
-    setTimeout(function() {
-        testRunner.notifyDone();
-    }, 100);
 }
 runTest();
 </script>

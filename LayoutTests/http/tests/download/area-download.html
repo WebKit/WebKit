@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="/js-test-resources/js-test-pre.js"></script>
 <script>
-    if (window.testRunner)
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setShouldLogDownloadCallbacks(true);
         testRunner.waitUntilDownloadFinished();
+    }
 </script>
 </head>
 <body>
@@ -14,7 +16,6 @@
 </map>
 <p>Tests that the download attribute on area elements is working.</p>
 <p>The suggested filename at the top should be foo.pdf.</p>
-<div id="console"></div>
 <script>
     function click(elmt)
     {
@@ -35,6 +36,5 @@
         runTest();
     }
 </script>
-<script src="/js-test-resources/js-test-post.js"></script>
 </body>
 </html>
