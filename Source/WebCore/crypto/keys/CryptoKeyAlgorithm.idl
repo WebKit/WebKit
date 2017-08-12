@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(SUBTLE_CRYPTO)
-
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
-namespace JSC {
-class ExecState;
-class JSObject;
-}
-
-namespace WebCore {
-
-class JSCryptoAlgorithmBuilder {
-    WTF_MAKE_NONCOPYABLE(JSCryptoAlgorithmBuilder);
-public:
-    JSCryptoAlgorithmBuilder(JSC::ExecState*);
-    virtual ~JSCryptoAlgorithmBuilder();
-
-    JSC::JSObject* result() const { return m_dictionary; }
-
-    void add(const char*, unsigned);
-    void add(const char*, const String&);
-    void add(const char*, const Vector<uint8_t>&);
-    void add(const char*, const JSCryptoAlgorithmBuilder&);
-
-private:
-    JSC::ExecState* m_exec;
-    JSC::JSObject* m_dictionary;
+[
+    Conditional=SUBTLE_CRYPTO,
+    JSGenerateToJSObject
+] dictionary CryptoKeyAlgorithm {
+    required DOMString name;
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(SUBTLE_CRYPTO)

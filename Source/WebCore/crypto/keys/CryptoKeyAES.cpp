@@ -38,6 +38,14 @@
 
 namespace WebCore {
 
+CryptoAesKeyAlgorithm AesKeyAlgorithm::dictionary() const
+{
+    CryptoAesKeyAlgorithm result;
+    result.name = this->name();
+    result.length = this->length();
+    return result;
+}
+
 static inline bool lengthIsValid(size_t length)
 {
     return (length == CryptoKeyAES::s_length128) || (length == CryptoKeyAES::s_length192) || (length == CryptoKeyAES::s_length256);

@@ -35,6 +35,14 @@
 
 namespace WebCore {
 
+CryptoEcKeyAlgorithm EcKeyAlgorithm::dictionary() const
+{
+    CryptoEcKeyAlgorithm result;
+    result.name = this->name();
+    result.namedCurve = this->namedCurve();
+    return result;
+}
+
 static const char* const P256 = "P-256";
 static const char* const P384 = "P-384";
 

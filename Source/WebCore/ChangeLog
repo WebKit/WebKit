@@ -1,3 +1,50 @@
+2017-08-11  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Replace JSCryptoKeyCustom and JSCryptoAlgorithmBuilder with generated code
+        https://bugs.webkit.org/show_bug.cgi?id=175457
+
+        Reviewed by Chris Dumez.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCryptoAlgorithmBuilder.cpp: Removed.
+        * bindings/js/JSCryptoAlgorithmBuilder.h: Removed.
+        * bindings/js/JSCryptoKeyCustom.cpp: Removed.
+
+            Remove JSCryptoAlgorithmBuilder and JSCryptoKeyCustom, add KeyAlgorithm
+            IDLs and headers.
+
+        * crypto/CryptoKey.cpp:
+        * crypto/CryptoKey.h:
+        * crypto/CryptoKey.idl:
+        
+            Replace custom algorithm attribute with a union of the supported key algorithms.
+        
+        * crypto/keys/CryptoAesKeyAlgorithm.h: Added.
+        * crypto/keys/CryptoAesKeyAlgorithm.idl: Added.
+        * crypto/keys/CryptoEcKeyAlgorithm.h: Added.
+        * crypto/keys/CryptoEcKeyAlgorithm.idl: Added.
+        * crypto/keys/CryptoHmacKeyAlgorithm.h: Added.
+        * crypto/keys/CryptoHmacKeyAlgorithm.idl: Added.
+        * crypto/keys/CryptoKeyAlgorithm.h: Added.
+        * crypto/keys/CryptoKeyAlgorithm.idl: Added.
+        * crypto/keys/CryptoRsaHashedKeyAlgorithm.h: Added.
+        * crypto/keys/CryptoRsaHashedKeyAlgorithm.idl: Added.
+        * crypto/keys/CryptoRsaKeyAlgorithm.h: Added.
+        * crypto/keys/CryptoRsaKeyAlgorithm.idl: Added.
+
+            Add IDLs and headers fo the supported key algorithms.
+
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyEC.h:
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/keys/CryptoKeyRaw.h:
+
+            Give each of the existing KeyAlgorithm subclasses a dictionary() function
+            that returns the populated corresponding spec'd dictionary.
+
 2017-08-11  Simon Fraser  <simon.fraser@apple.com>
 
         Some RenderSVGResource cleanup

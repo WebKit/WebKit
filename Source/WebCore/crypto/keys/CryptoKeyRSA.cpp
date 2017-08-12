@@ -28,11 +28,33 @@
 
 #include "CryptoKeyDataRSAComponents.h"
 #include "JsonWebKey.h"
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <heap/HeapInlines.h>
 #include <wtf/text/Base64.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
+
+CryptoRsaKeyAlgorithm RsaKeyAlgorithm::dictionary() const
+{
+    CryptoRsaKeyAlgorithm result;
+    result.name = this->name();
+    result.modulusLength = this->modulusLength();
+    result.publicExponent = Uint8Array::create(this->publicExponent().data(), this->publicExponent().size());
+    return result;
+}
+
+CryptoRsaHashedKeyAlgorithm RsaHashedKeyAlgorithm::dictionary() const
+{
+    CryptoRsaHashedKeyAlgorithm result;
+    result.name = this->name();
+    result.modulusLength = this->modulusLength();
+    result.publicExponent = Uint8Array::create(this->publicExponent().data(), this->publicExponent().size());
+    result.hash.name = this->hash();
+    return result;
+}
 
 RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm, std::optional<CryptoAlgorithmIdentifier> hash, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {

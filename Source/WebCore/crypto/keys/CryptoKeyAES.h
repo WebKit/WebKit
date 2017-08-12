@@ -49,6 +49,8 @@ public:
 
     KeyAlgorithmClass keyAlgorithmClass() const final { return KeyAlgorithmClass::AES; }
 
+    CryptoAesKeyAlgorithm dictionary() const;
+
     size_t length() const { return m_length; }
 
 private:

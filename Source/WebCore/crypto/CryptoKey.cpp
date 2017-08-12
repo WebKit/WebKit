@@ -29,6 +29,11 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmRegistry.h"
+#include "CryptoKeyAES.h"
+#include "CryptoKeyEC.h"
+#include "CryptoKeyHMAC.h"
+#include "CryptoKeyRSA.h"
+#include "CryptoKeyRaw.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebCore {
@@ -43,6 +48,25 @@ CryptoKey::CryptoKey(CryptoAlgorithmIdentifier algorithmIdentifier, Type type, b
 
 CryptoKey::~CryptoKey()
 {
+}
+
+auto CryptoKey::algorithm() const -> AlgorithmVariant
+{
+    std::unique_ptr<KeyAlgorithm> algorithm = buildAlgorithm();
+    switch (algorithm->keyAlgorithmClass()) {
+    case KeyAlgorithmClass::AES:
+        return downcast<AesKeyAlgorithm>(*algorithm).dictionary();
+    case KeyAlgorithmClass::EC:
+        return downcast<EcKeyAlgorithm>(*algorithm).dictionary();
+    case KeyAlgorithmClass::HMAC:
+        return downcast<HmacKeyAlgorithm>(*algorithm).dictionary();
+    case KeyAlgorithmClass::HRSA:
+        return downcast<RsaHashedKeyAlgorithm>(*algorithm).dictionary();
+    case KeyAlgorithmClass::RSA:
+        return downcast<RsaKeyAlgorithm>(*algorithm).dictionary();
+    case KeyAlgorithmClass::Raw:
+        return downcast<RawKeyAlgorithm>(*algorithm).dictionary();
+    }
 }
 
 auto CryptoKey::usages() const -> Vector<CryptoKeyUsage>

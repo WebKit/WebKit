@@ -52,6 +52,8 @@ public:
     const String& hash() const { return m_hash; }
     size_t length() const { return m_length; }
 
+    CryptoHmacKeyAlgorithm dictionary() const;
+
 private:
     String m_hash;
     size_t m_length;
