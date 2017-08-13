@@ -1,3 +1,12 @@
+2017-08-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        ARM_TRADITIONAL: static assertion failed: ProbeContext_size_matches_ctiMasmProbeTrampoline
+        https://bugs.webkit.org/show_bug.cgi?id=175513
+
+        Reviewed by Mark Lam.
+
+        * assembler/MacroAssemblerARM.cpp: Added d16-d31 FP registers too.
+
 2017-08-12  Filip Pizlo  <fpizlo@apple.com>
 
         FTL's compileGetTypedArrayByteOffset needs to do caging
