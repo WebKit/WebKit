@@ -74,6 +74,7 @@ list(APPEND WebCore_SOURCES
     platform/glib/MainThreadSharedTimerGLib.cpp
     platform/glib/SSLKeyGeneratorGLib.cpp
     platform/glib/SharedBufferGlib.cpp
+    platform/glib/UserAgentGLib.cpp
 
     platform/graphics/GLContext.cpp
     platform/graphics/GraphicsContext3DPrivate.cpp
@@ -105,7 +106,6 @@ list(APPEND WebCore_SOURCES
     platform/gtk/PasteboardGtk.cpp
     platform/gtk/ScrollAnimatorGtk.cpp
     platform/gtk/SelectionData.cpp
-    platform/gtk/UserAgentGtk.cpp
 
     platform/network/soup/AuthenticationChallengeSoup.cpp
     platform/network/soup/CertificateInfo.cpp

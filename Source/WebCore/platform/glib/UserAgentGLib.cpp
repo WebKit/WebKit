@@ -72,7 +72,7 @@ static const String platformVersionForUAString()
 
 static const char* versionForUAString()
 {
-    return USER_AGENT_GTK_MAJOR_VERSION "." USER_AGENT_GTK_MINOR_VERSION;
+    return USER_AGENT_GLIB_MAJOR_VERSION "." USER_AGENT_GLIB_MINOR_VERSION;
 }
 
 static String buildUserAgentString(const UserAgentQuirks& quirks)

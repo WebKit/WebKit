@@ -66,6 +66,7 @@ list(APPEND WebCore_SOURCES
     platform/Cursor.cpp
     platform/PlatformStrategies.cpp
     platform/Theme.cpp
+    platform/UserAgentQuirks.cpp
 
     platform/audio/glib/AudioBusGLib.cpp
 
@@ -76,6 +77,7 @@ list(APPEND WebCore_SOURCES
     platform/glib/MainThreadSharedTimerGLib.cpp
     platform/glib/SSLKeyGeneratorGLib.cpp
     platform/glib/SharedBufferGlib.cpp
+    platform/glib/UserAgentGLib.cpp
 
     platform/graphics/GLContext.cpp
     platform/graphics/GraphicsContext3DPrivate.cpp

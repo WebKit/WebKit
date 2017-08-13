@@ -1,3 +1,15 @@
+2017-08-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Implement WebCore::standardUserAgent()
+        https://bugs.webkit.org/show_bug.cgi?id=175507
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Implement missing User-Agent handling for the WPE port by sharing the code with the GTK+ port.
+
+        * Source/cmake/OptionsGTK.cmake: Rename "GTK" with "GLIB" in UA version macros.
+        * Source/cmake/OptionsWPE.cmake: Add UA version macros.
+
 2017-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace DATA_TRANSFER_ITEMS by a runtime flag and add a stub implementation

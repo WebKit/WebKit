@@ -2850,7 +2850,6 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-#if PLATFORM(GTK)
     WebKitSettingsPrivate* priv = settings->priv;
     CString newUserAgent = (!userAgent || !strlen(userAgent)) ? WebCore::standardUserAgent("").utf8() : userAgent;
     if (newUserAgent == priv->userAgent)
@@ -2858,9 +2857,6 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
 
     priv->userAgent = newUserAgent;
     g_object_notify(G_OBJECT(settings), "user-agent");
-#elif PLATFORM(WPE)
-    // FIXME: WPE should implement WebCore::standardUserAgent.
-#endif
 }
 
 /**
@@ -2877,12 +2873,8 @@ void webkit_settings_set_user_agent_with_application_details(WebKitSettings* set
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-#if PLATFORM(GTK)
     CString newUserAgent = WebCore::standardUserAgent(String::fromUTF8(applicationName), String::fromUTF8(applicationVersion)).utf8();
     webkit_settings_set_user_agent(settings, newUserAgent.data());
-#elif PLATFORM(WPE)
-    // FIXME: WPE should implement WebCore::standardUserAgent.
-#endif
 }
 
 /**
