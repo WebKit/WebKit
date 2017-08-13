@@ -6198,6 +6198,8 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     cageTypedArrayStorage(vectorGPR);
     nullVector.link(&m_jit);
     m_jit.loadPtr(MacroAssembler::Address(dataGPR, Butterfly::offsetOfArrayBuffer()), dataGPR);
+    // FIXME: This needs caging.
+    // https://bugs.webkit.org/show_bug.cgi?id=175515
     m_jit.loadPtr(MacroAssembler::Address(dataGPR, ArrayBuffer::offsetOfData()), dataGPR);
     m_jit.subPtr(dataGPR, vectorGPR);
     

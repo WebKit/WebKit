@@ -147,6 +147,8 @@ protected:
     }
 
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
+    // FIXME: This should be CagedPtr<>.
+    // https://bugs.webkit.org/show_bug.cgi?id=175515
     void* m_baseAddress;
 
     unsigned m_byteOffset : 31;

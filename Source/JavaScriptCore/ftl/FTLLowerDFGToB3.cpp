@@ -3309,11 +3309,13 @@ private:
 
         m_out.appendTo(wastefulCase, continuation);
 
-        // FIXME: This needs to do caging.
-        // https://bugs.webkit.org/show_bug.cgi?id=175366
-        LValue vectorPtr = m_out.loadPtr(basePtr, m_heaps.JSArrayBufferView_vector);
-        LValue butterflyPtr = m_out.loadPtr(basePtr, m_heaps.JSObject_butterfly);
+        LValue vectorPtr = cagedMayBeNull(
+            Gigacage::Primitive,
+            m_out.loadPtr(basePtr, m_heaps.JSArrayBufferView_vector));
+        LValue butterflyPtr = caged(Gigacage::JSValue, m_out.loadPtr(basePtr, m_heaps.JSObject_butterfly));
         LValue arrayBufferPtr = m_out.loadPtr(butterflyPtr, m_heaps.Butterfly_arrayBuffer);
+        // FIXME: This needs caging.
+        // https://bugs.webkit.org/show_bug.cgi?id=175515
         LValue dataPtr = m_out.loadPtr(arrayBufferPtr, m_heaps.ArrayBuffer_data);
 
         ValueFromBlock wastefulOut = m_out.anchor(m_out.sub(vectorPtr, dataPtr));
@@ -11641,6 +11643,24 @@ private:
         // and possibly other smart things if we want to be able to remove this opaque.
         // https://bugs.webkit.org/show_bug.cgi?id=175493
         return m_out.opaque(result);
+    }
+    
+    LValue cagedMayBeNull(Gigacage::Kind kind, LValue ptr)
+    {
+        LBasicBlock notNull = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(notNull);
+        
+        ValueFromBlock nullResult = m_out.anchor(ptr);
+        m_out.branch(ptr, unsure(notNull), unsure(continuation));
+        
+        m_out.appendTo(notNull, continuation);
+        ValueFromBlock notNullResult = m_out.anchor(caged(kind, ptr));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(pointerType(), nullResult, notNullResult);
     }
     
     void buildSwitch(SwitchData* data, LType type, LValue switchValue)

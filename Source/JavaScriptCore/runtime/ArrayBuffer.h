@@ -50,6 +50,8 @@ public:
     void* data() const { return m_data; }
     
 private:
+    // FIXME: This should be CagedPtr<>.
+    // https://bugs.webkit.org/show_bug.cgi?id=175515
     void* m_data;
     ArrayBufferDestructorFunction m_destructor;
 };
@@ -95,6 +97,8 @@ private:
 
     ArrayBufferDestructorFunction m_destructor;
     RefPtr<SharedArrayBufferContents> m_shared;
+    // FIXME: This should be CagedPtr<>.
+    // https://bugs.webkit.org/show_bug.cgi?id=175515
     void* m_data;
     unsigned m_sizeInBytes;
 };

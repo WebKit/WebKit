@@ -140,6 +140,8 @@ protected:
         
     private:
         Structure* m_structure;
+        // FIXME: This should be CagedPtr<>.
+        // https://bugs.webkit.org/show_bug.cgi?id=175515
         void* m_vector;
         uint32_t m_length;
         TypedArrayMode m_mode;
@@ -190,6 +192,8 @@ protected:
 
     static String toStringName(const JSObject*, ExecState*);
 
+    // FIXME: This should be CagedBarrierPtr<>.
+    // https://bugs.webkit.org/show_bug.cgi?id=175515
     AuxiliaryBarrier<void*> m_vector;
     uint32_t m_length;
     TypedArrayMode m_mode;
