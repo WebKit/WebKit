@@ -70,6 +70,7 @@ set(JavaScriptCore_SOURCES
     assembler/LinkBuffer.cpp
     assembler/MacroAssembler.cpp
     assembler/MacroAssemblerARM.cpp
+    assembler/MacroAssemblerARM64.cpp
     assembler/MacroAssemblerARMv7.cpp
     assembler/MacroAssemblerCodeRef.cpp
     assembler/MacroAssemblerPrinter.cpp

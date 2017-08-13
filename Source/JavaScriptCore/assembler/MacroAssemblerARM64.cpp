@@ -275,6 +275,8 @@ static_assert(!(sizeof(OutgoingProbeRecord) & 0xf), "IncomingProbeStack must be 
 #define STATE_PC_CHANGED 1
 static_assert(STATE_PC_NOT_CHANGED != STATE_PC_CHANGED, "STATE_PC_NOT_CHANGED and STATE_PC_CHANGED should not be equal");
 
+// We use x29 and x30 instead of fp and lr because GCC's inline assembler does not recognize fp and lr.
+// See https://bugs.webkit.org/show_bug.cgi?id=175512 for details.
 asm (
     ".text" "\n"
     ".balign 16" "\n"
@@ -314,14 +316,14 @@ asm (
     "stp       x22, x23, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X22_OFFSET) "]" "\n"
     "stp       x24, x25, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X24_OFFSET) "]" "\n"
     "stp       x4, x5, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X26_OFFSET) "]" "\n" // Store saved r26 and r27 (preloaded into x4 and x5 above).
-    "stp       x28, fp, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X28_OFFSET) "]" "\n"
+    "stp       x28, x29, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X28_OFFSET) "]" "\n"
     "stp       x6, x7, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n" // Save values lr and sp (preloaded into x6 and x7 above).
 
     "str       x6, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_LR_OFFSET) "]" "\n" // Save a duplicate copy of lr (in x6).
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n" // Save a duplicate copy of return pc (in lr).
+    "str       x30, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n" // Save a duplicate copy of return pc (in lr).
 
-    "add       lr, lr, #" STRINGIZE_VALUE_OF(2 * PTR_SIZE) "\n" // The PC after the probe is at 2 instructions past the return point.
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
+    "add       x30, x30, #" STRINGIZE_VALUE_OF(2 * PTR_SIZE) "\n" // The PC after the probe is at 2 instructions past the return point.
+    "str       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
 
     "stp       x0, x1, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_NZCV_OFFSET) "]" "\n" // Store nzcv and fpsr (preloaded into x0 and x1 above).
 
@@ -396,7 +398,7 @@ asm (
 
     // Remaining registers to restore are: fpsr, nzcv, x27, x28, fp, lr, sp, and pc.
 
-    "mov       lr, #" STRINGIZE_VALUE_OF(STATE_PC_NOT_CHANGED) "\n"
+    "mov       x30, #" STRINGIZE_VALUE_OF(STATE_PC_NOT_CHANGED) "\n"
 
     // The only way to set the pc on ARM64 (from user space) is via an indirect branch
     // or a ret, which means we'll need a free register to do so. For our purposes, lr
@@ -420,11 +422,11 @@ asm (
     "cmp       x27, x28" "\n"
     "bne     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineError) "\n"
 
-    "mov       lr, #" STRINGIZE_VALUE_OF(STATE_PC_CHANGED) "\n"
+    "mov       x30, #" STRINGIZE_VALUE_OF(STATE_PC_CHANGED) "\n"
 
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePrepareOutgoingRecords) ":" "\n"
 
-    "ldr       fp, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n" // Preload the probe return site pc.
+    "ldr       x29, [sp, #" STRINGIZE_VALUE_OF(SAVED_PROBE_RETURN_PC_OFFSET) "]" "\n" // Preload the probe return site pc.
 
     // The probe handler may have moved the sp. For the return process, we may need
     // space for 2 OutgoingProbeRecords below the final sp value. We need to make
@@ -455,22 +457,22 @@ asm (
     "mov       sp, x28" "\n" // sp now points to the new ProbeContext in the safe area.
 
     // Copy the relevant restore data to the new ProbeContext*.
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X0_OFFSET) "]" "\n" // Stash the pc changed state away so that we can use lr.
+    "str       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X0_OFFSET) "]" "\n" // Stash the pc changed state away so that we can use lr.
 
-    "ldp       x28, lr, [x27, #" STRINGIZE_VALUE_OF(PROBE_CPU_X27_OFFSET) "]" "\n" // copy x27 and x28.
-    "stp       x28, lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X27_OFFSET) "]" "\n"
-    "ldp       x28, lr, [x27, #" STRINGIZE_VALUE_OF(PROBE_CPU_FP_OFFSET) "]" "\n" // copy fp and lr.
-    "stp       x28, lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_FP_OFFSET) "]" "\n"
-    "ldp       x28, lr, [x27, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n" // copy sp and pc.
-    "stp       x28, lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
-    "ldp       x28, lr, [x27, #" STRINGIZE_VALUE_OF(PROBE_CPU_NZCV_OFFSET) "]" "\n" // copy nzcv and fpsr.
-    "stp       x28, lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_NZCV_OFFSET) "]" "\n"
+    "ldp       x28, x30, [x27, #" STRINGIZE_VALUE_OF(PROBE_CPU_X27_OFFSET) "]" "\n" // copy x27 and x28.
+    "stp       x28, x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X27_OFFSET) "]" "\n"
+    "ldp       x28, x30, [x27, #" STRINGIZE_VALUE_OF(PROBE_CPU_FP_OFFSET) "]" "\n" // copy fp and lr.
+    "stp       x28, x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_FP_OFFSET) "]" "\n"
+    "ldp       x28, x30, [x27, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n" // copy sp and pc.
+    "stp       x28, x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
+    "ldp       x28, x30, [x27, #" STRINGIZE_VALUE_OF(PROBE_CPU_NZCV_OFFSET) "]" "\n" // copy nzcv and fpsr.
+    "stp       x28, x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_NZCV_OFFSET) "]" "\n"
 
-    "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X0_OFFSET) "]" "\n" // Retrieve the stashed the pc changed state.
+    "ldr       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X0_OFFSET) "]" "\n" // Retrieve the stashed the pc changed state.
 
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolineFillOutgoingProbeRecords) ":" "\n"
 
-    "cbnz       lr, " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineEnd) "\n" // Skip lr restoration setup if state (in lr) == STATE_PC_CHANGED.
+    "cbnz       x30, " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineEnd) "\n" // Skip lr restoration setup if state (in lr) == STATE_PC_CHANGED.
 
     // In order to restore lr, we need to do the restoration at the probe return site.
     // The probe return site expects sp to be pointing at an OutgoingProbeRecord such that
@@ -481,37 +483,37 @@ asm (
     // this probe.
 
     // Fill in the OutgoingProbeStack for the probe return site.
-    "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
-    "sub       lr, lr, #" STRINGIZE_VALUE_OF(OUT_SIZE) "\n"
+    "ldr       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
+    "sub       x30, x30, #" STRINGIZE_VALUE_OF(OUT_SIZE) "\n"
 
     "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
-    "str       x27, [lr, #" STRINGIZE_VALUE_OF(OUT_LR_OFFSET) "]" "\n"
+    "str       x27, [x30, #" STRINGIZE_VALUE_OF(OUT_LR_OFFSET) "]" "\n"
 
     // Set up the sp and pc values so that ctiMasmProbeTrampolineEnd will return to the probe return site.
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
-    "str       fp, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n" // Store the probe return site pc (preloaded into fp above).
+    "str       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
+    "str       x29, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n" // Store the probe return site pc (preloaded into fp above).
 
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
 
     // Fill in the OutgoingProbeStack.
-    "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
-    "sub       lr, lr, #" STRINGIZE_VALUE_OF(OUT_SIZE) "\n"
+    "ldr       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
+    "sub       x30, x30, #" STRINGIZE_VALUE_OF(OUT_SIZE) "\n"
 
     "ldp       x27, x28, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_NZCV_OFFSET) "]" "\n"
-    "stp       x27, x28, [lr, #" STRINGIZE_VALUE_OF(OUT_NZCV_OFFSET) "]" "\n"
+    "stp       x27, x28, [x30, #" STRINGIZE_VALUE_OF(OUT_NZCV_OFFSET) "]" "\n"
     "ldp       x27, x28, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_X27_OFFSET) "]" "\n"
-    "stp       x27, x28, [lr, #" STRINGIZE_VALUE_OF(OUT_X27_OFFSET) "]" "\n"
+    "stp       x27, x28, [x30, #" STRINGIZE_VALUE_OF(OUT_X27_OFFSET) "]" "\n"
     "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_FP_OFFSET) "]" "\n"
     "ldr       x28, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
-    "stp       x27, x28, [lr, #" STRINGIZE_VALUE_OF(OUT_FP_OFFSET) "]" "\n"
-    "mov       sp, lr" "\n"
+    "stp       x27, x28, [x30, #" STRINGIZE_VALUE_OF(OUT_FP_OFFSET) "]" "\n"
+    "mov       sp, x30" "\n"
 
     // Restore the remaining registers and pop the OutgoingProbeStack.
     "ldp       x27, x28, [sp], #" STRINGIZE_VALUE_OF(2 * PTR_SIZE) "\n"
     "msr       nzcv, x27" "\n"
     "msr       fpsr, x28" "\n"
     "ldp       x27, x28, [sp], #" STRINGIZE_VALUE_OF(2 * PTR_SIZE) "\n"
-    "ldp       fp, lr, [sp], #" STRINGIZE_VALUE_OF(2 * PTR_SIZE) "\n"
+    "ldp       x29, x30, [sp], #" STRINGIZE_VALUE_OF(2 * PTR_SIZE) "\n"
     "ret" "\n"
 
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolineError) ":" "\n"
