@@ -822,8 +822,8 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     if (!resource)
         return nullptr;
 
-    if (forPreload == ForPreload::No && resource->loader() && resource->resourceRequest().ignoreForRequestCount()) {
-        resource->resourceRequest().setIgnoreForRequestCount(false);
+    if (forPreload == ForPreload::No && resource->loader() && resource->ignoreForRequestCount()) {
+        resource->setIgnoreForRequestCount(false);
         incrementRequestCount(*resource);
     }
 

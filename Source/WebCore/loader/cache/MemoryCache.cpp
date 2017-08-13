@@ -217,11 +217,10 @@ bool MemoryCache::addImageToCache(NativeImagePtr&& image, const URL& url, const 
     if (!bitmapImage)
         return false;
 
-    auto cachedImage = std::make_unique<CachedImage>(url, bitmapImage.get(), sessionID);
+    auto cachedImage = std::make_unique<CachedImage>(url, bitmapImage.get(), sessionID, domainForCachePartition);
 
     cachedImage->addClient(dummyCachedImageClient());
     cachedImage->setDecodedSize(bitmapImage->decodedSize());
-    cachedImage->resourceRequest().setDomainForCachePartition(domainForCachePartition);
 
     return add(*cachedImage.release());
 }

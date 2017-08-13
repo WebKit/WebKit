@@ -50,7 +50,7 @@ public:
     CachedImage(CachedResourceRequest&&, SessionID);
     CachedImage(Image*, SessionID);
     // Constructor to use for manually cached images.
-    CachedImage(const URL&, Image*, SessionID);
+    CachedImage(const URL&, Image*, SessionID, const String& domainForCachePartition);
     virtual ~CachedImage();
 
     WEBCORE_EXPORT Image* image(); // Returns the nullImage() if the image is not available yet.
