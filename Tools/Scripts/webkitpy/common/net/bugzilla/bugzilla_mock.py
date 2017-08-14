@@ -461,6 +461,7 @@ class MockBugzilla(object):
             _log.info("-- Begin comment --")
             _log.info(comment_text)
             _log.info("-- End comment --")
+        return '10001'
 
     def add_cc_to_bug(self, bug_id, ccs):
         pass

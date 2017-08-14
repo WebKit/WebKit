@@ -1,3 +1,50 @@
+2017-08-14  Daniel Bates  <dabates@apple.com>
+
+        webkit-patch: Passing --no-review should submit patch to EWS by default
+        https://bugs.webkit.org/show_bug.cgi?id=148899
+
+        Reviewed by David Kilzer.
+
+        Make "webkit-patch upload --no-review" and "webkit-patch post-commits --no-review" submit
+        the patch(es) for EWS analysis by default. Add a new optional command line argument, --no-ews,
+        to these commands to not submit a non-reviewed patch(es) for EWS analysis.
+
+        Frequently I want to post a draft of a patch without review to have the EWS bots process
+        it to catch build and test breakage before I clean it up and post it for formal review.
+        Currently this requires using "webkit-patch upload --no-review --open-bug" to upload the
+        patch and open the bug in Safari so that I can click the Submit for EWS analysis button.
+        We should teach "webkit-patch upload" and "webkit-patch post-commits" how to do this.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla._parse_attachment_id_from_add_patch_to_bug_response): Add helper function to
+        parse the attachment id from the response page after adding an attachment to the bug.
+        (Bugzilla.add_patch_to_bug): Modified to parse and return the attachment id from the
+        HTTP response after uploading the patch.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzilla.add_patch_to_bug): Return a dummy attachment id for testing purposes.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        (test__parse_attachment_id_from_add_patch_to_bug_response): Added.
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (Upload): Add step SubmitToEWS to the list of steps when uploading a patch. 
+        (PostCommits.__init__): Add --no-ews option to the list of applicable option flags for
+        this command.
+        (PostCommits.execute): Submit the patch to EWS, if applicable.
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        (test_upload): Set options.ews to False as the upload command expects this option
+        to be specified.
+        (test_upload_with_no_review_and_ews): Added.
+        * Scripts/webkitpy/tool/steps/__init__.py: Import module SubmitToEWS.
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options): Added command line option --no-ews (defaults: False - submit to EWS).
+        * Scripts/webkitpy/tool/steps/postdiff.py:
+        (PostDiff.options): Add --no-ews option to the list of applicable option flags for
+        this command.
+        (PostDiff.run): Submit the patch to EWS, if applicable.
+        * Scripts/webkitpy/tool/steps/submittoews.py: Added.
+        (SubmitToEWS):
+        (SubmitToEWS.options): Return an empty array as we this step does not have any command line options.
+        (SubmitToEWS.run): Submit the specified attachment ids for EWS analysis.
+
 2017-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable two flaky VideoControlsManager API tests.

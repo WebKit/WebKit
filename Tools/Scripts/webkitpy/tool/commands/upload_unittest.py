@@ -123,6 +123,7 @@ MOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_rev
         options.non_interactive = False
         options.request_commit = False
         options.review = True
+        options.submit_to_ews = False
         options.sort_xcode_project = False
         options.suggest_reviewers = False
         expected_logs = """MOCK: user.open_url: file://...
@@ -131,6 +132,29 @@ Obsoleting 2 old patches on bug 50000
 MOCK reassign_bug: bug_id=50000, assignee=None
 MOCK add_patch_to_bug: bug_id=50000, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
 MOCK: user.open_url: http://example.com/50000
+"""
+        self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
+
+    def test_upload_with_no_review_and_ews(self):
+        options = MockOptions()
+        options.cc = None
+        options.check_style = True
+        options.check_style_filter = None
+        options.comment = None
+        options.description = 'MOCK description'
+        options.non_interactive = False
+        options.request_commit = False
+        options.review = False
+        options.ews = True
+        options.sort_xcode_project = False
+        options.suggest_reviewers = False
+        expected_logs = """MOCK: user.open_url: file://...
+Was that diff correct?
+Obsoleting 2 old patches on bug 50000
+MOCK reassign_bug: bug_id=50000, assignee=None
+MOCK add_patch_to_bug: bug_id=50000, description=MOCK description, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=False
+MOCK: user.open_url: http://example.com/50000
+MOCK: submit_to_ews: 10001
 """
         self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
 

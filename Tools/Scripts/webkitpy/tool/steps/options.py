@@ -45,6 +45,7 @@ class Options(object):
     confirm = make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Skip confirmation steps.")
     description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment")
     email = make_option("--email", action="store", type="string", dest="email", help="Email address to use in ChangeLogs.")
+    ews = make_option('--no-ews', action='store_false', dest='ews', default=True, help='Do not submit the patch to EWS for analysis (only applies when using --no-review).')
     force_clean = make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)")
     git_commit = make_option("-g", "--git-commit", action="store", dest="git_commit", help="Operate on a local commit. If a range, the commits are squashed into one. <ref>.... includes the working copy changes. UPSTREAM can be used for the upstream/tracking branch.")
     group = make_option("--group", action="store", dest="group", default=None, help="")

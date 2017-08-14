@@ -620,6 +620,14 @@ class Bugzilla(object):
             self.browser['comment'] = comment_text
         self.browser.submit()
 
+    @staticmethod
+    def _parse_attachment_id_from_add_patch_to_bug_response(response_html):
+        match = re.search('<title>Attachment (?P<attachment_id>\d+) added to Bug \d+</title>', response_html)
+        if match:
+            return match.group('attachment_id')
+        _log.warning('Unable to parse attachment id')
+        return None
+
     # FIXME: The arguments to this function should be simplified and then
     # this should be merged into add_attachment_to_bug
     def add_patch_to_bug(self,
@@ -652,7 +660,8 @@ class Bugzilla(object):
         if comment_text:
             _log.info(comment_text)
             self.browser['comment'] = comment_text
-        self.browser.submit()
+        response = self.browser.submit()
+        return self._parse_attachment_id_from_add_patch_to_bug_response(response.read())
 
     # FIXME: There has to be a more concise way to write this method.
     def _check_create_bug_response(self, response_html):
