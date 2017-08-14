@@ -62,7 +62,7 @@ void PlatformMediaSessionManager::updateSessionState()
 
     bool hasWebAudioType = false;
     bool hasAudibleAudioOrVideoMediaType = false;
-    bool hasAudioCapture = anyOfSessions([this, &hasWebAudioType, &hasAudibleAudioOrVideoMediaType] (PlatformMediaSession& session, size_t) mutable {
+    bool hasAudioCapture = anyOfSessions([&hasWebAudioType, &hasAudibleAudioOrVideoMediaType] (PlatformMediaSession& session, size_t) mutable {
         auto type = session.mediaType();
         if (type == PlatformMediaSession::WebAudio)
             hasWebAudioType = true;

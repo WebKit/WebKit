@@ -224,6 +224,9 @@ void WebCoreDecompressionSession::decompressionOutputCallback(void* decompressio
 
 void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef rawImageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration)
 {
+    UNUSED_PARAM(status);
+    UNUSED_PARAM(infoFlags);
+
     CMVideoFormatDescriptionRef rawImageBufferDescription = nullptr;
     if (noErr != CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, rawImageBuffer, &rawImageBufferDescription))
         return;
@@ -240,8 +243,7 @@ void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSS
         return;
     RefPtr<WebCoreDecompressionSession> protectedThis { this };
     RetainPtr<CMSampleBufferRef> imageSampleBuffer = adoptCF(rawImageSampleBuffer);
-    dispatch_async(m_enqueingQueue.get(), [protectedThis, status, imageSampleBuffer, infoFlags, displaying] {
-        UNUSED_PARAM(infoFlags);
+    dispatch_async(m_enqueingQueue.get(), [protectedThis, imageSampleBuffer, displaying] {
         protectedThis->enqueueDecodedSample(imageSampleBuffer.get(), displaying);
     });
 }
