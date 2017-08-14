@@ -1,3 +1,14 @@
+2017-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Addressing post-review comments after r219173.
+        https://bugs.webkit.org/show_bug.cgi?id=174149
+
+        Unreviewed.
+
+        * css/CSSFontStyleValue.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::identifierForStyleProperty):
+
 2017-08-10  Antti Koivisto  <antti@apple.com>
 
         Try to fix windows build.

@@ -46,7 +46,7 @@ public:
 
     bool equals(const CSSFontStyleValue&) const;
 
-    bool isItalic() const
+    bool isItalicOrOblique() const
     {
         if (!obliqueValue) {
             auto valueID = fontStyleValue->valueID();
