@@ -81,6 +81,8 @@ ScrollAnimationKinetic::PerAxisData::PerAxisData(double lower, double upper, dou
 
 bool ScrollAnimationKinetic::PerAxisData::animateScroll(Seconds timeDelta)
 {
+    auto lastPosition = m_position;
+    auto lastTime = m_elapsedTime;
     m_elapsedTime += timeDelta;
 
     double exponentialPart = exp(-decelFriction * m_elapsedTime.value());
@@ -93,7 +95,7 @@ bool ScrollAnimationKinetic::PerAxisData::animateScroll(Seconds timeDelta)
     } else if (m_position > m_upper) {
         m_position = m_upper;
         m_velocity = 0;
-    } else if (fabs(m_velocity) < 1) {
+    } else if (fabs(m_velocity) < 1 || (lastTime && fabs(m_position - lastPosition) < 1)) {
         m_position = round(m_position);
         m_velocity = 0;
     }
