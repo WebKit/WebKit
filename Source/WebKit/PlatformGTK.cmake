@@ -858,8 +858,6 @@ list(APPEND WebKit2_LIBRARIES
 )
 endif ()
 
-ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKit2_LIBRARIES)
-
 # To generate WebKitEnumTypes.h we want to use all installed headers, except WebKitEnumTypes.h itself.
 set(WebKit2GTK_ENUM_GENERATION_HEADERS ${WebKit2GTK_INSTALLED_HEADERS})
 list(REMOVE_ITEM WebKit2GTK_ENUM_GENERATION_HEADERS ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h)
