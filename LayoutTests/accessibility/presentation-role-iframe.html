@@ -30,26 +30,40 @@ var test1Ran = false;
 var test2Ran = false;
 var test3Ran = false;
 
+var test1Log; 
+var test2Log; 
+var test3Log;
+
 // Run the test for a iframe that has presentation role and one that does not.
 // The children should be different.
 function runTest(testNumber)
 {
   if (window.accessibilityController) {
     var content = accessibilityController.accessibleElementById("content" + testNumber);
-    debug(testNumber + ". Content child: " + content.childAtIndex(0).role);
-    debug(testNumber + ". Content grand child: " + content.childAtIndex(0).childAtIndex(0).role);
     if (testNumber == 1) {
          test1Ran = true;
+         test1Log = testLog(content, testNumber);
     } else if (testNumber == 2) {
          test2Ran = true;
+         test2Log = testLog(content, testNumber);
     } else if (testNumber == 3) {
          test3Ran = true;
+         test3Log = testLog(content, testNumber);
     }
 
     if (test3Ran && test2Ran && test1Ran) {
+        debug(test1Log);
+        debug(test2Log);
+        debug(test3Log);
         finishJSTest();
     }
   }
+}
+
+function testLog(content, testNumber) {
+    var result = testNumber + ". Content child: " + content.childAtIndex(0).role;
+    result += "\n" + testNumber + ". Content grand child: " + content.childAtIndex(0).childAtIndex(0).role;
+    return result;
 }
 </script>
 
