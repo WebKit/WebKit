@@ -25,12 +25,11 @@
 
 #pragma once
 
-#include "Exception.h"
+#include "ExceptionOr.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Function.h>
 #include <wtf/Optional.h>
-#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -39,7 +38,6 @@ template<typename IDLType>
 class DOMPromiseProxy {
 public:
     using Value = typename IDLType::StorageType;
-    using ValueOrException = Variant<Value, Exception>;
 
     DOMPromiseProxy() = default;
     ~DOMPromiseProxy() = default;
@@ -55,16 +53,13 @@ public:
     void reject(Exception);
     
 private:
-    std::optional<ValueOrException> m_valueOrException;
+    std::optional<ExceptionOr<Value>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
 template<>
 class DOMPromiseProxy<IDLVoid> {
 public:
-    using Value = bool;
-    using ValueOrException = Variant<Value, Exception>;
-
     DOMPromiseProxy() = default;
     ~DOMPromiseProxy() = default;
 
@@ -78,7 +73,7 @@ public:
     void reject(Exception);
 
 private:
-    std::optional<ValueOrException> m_valueOrException;
+    std::optional<ExceptionOr<void>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
@@ -89,15 +84,10 @@ private:
 template<typename IDLType>
 class DOMPromiseProxyWithResolveCallback {
 public:
-    using Value = bool;
-    using ValueOrException = Variant<Value, Exception>;
-    // FIXME: This should return a IDLType::ParameterType, but WTF::Function does
-    //        not support returning references / non-default initializable types.
-    //        See https://webkit.org/b/175244.
-    using ResolveCallback = WTF::Function<typename IDLType::ImplementationType ()>;
+    using ResolveCallback = WTF::Function<typename IDLType::ParameterType ()>;
 
     template <typename Class, typename BaseClass>
-    DOMPromiseProxyWithResolveCallback(Class&, typename IDLType::ImplementationType (BaseClass::*)());
+    DOMPromiseProxyWithResolveCallback(Class&, typename IDLType::ParameterType (BaseClass::*)());
     DOMPromiseProxyWithResolveCallback(ResolveCallback&&);
     ~DOMPromiseProxyWithResolveCallback() = default;
 
@@ -113,8 +103,7 @@ public:
     
 private:
     ResolveCallback m_resolveCallback;
-
-    std::optional<ValueOrException> m_valueOrException;
+    std::optional<ExceptionOr<void>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
@@ -135,10 +124,10 @@ inline JSC::JSValue DOMPromiseProxy<IDLType>::promise(JSC::ExecState& state, JSD
         return JSC::jsUndefined();
 
     if (m_valueOrException) {
-        if (WTF::holds_alternative<Value>(*m_valueOrException))
-            deferredPromise->template resolve<IDLType>(WTF::get<Value>(*m_valueOrException));
+        if (m_valueOrException->hasException())
+            deferredPromise->reject(m_valueOrException->exception());
         else
-            deferredPromise->reject(WTF::get<Exception>(*m_valueOrException));
+            deferredPromise->template resolve<IDLType>(m_valueOrException->returnValue());
     }
 
     auto result = deferredPromise->promise();
@@ -164,9 +153,9 @@ inline void DOMPromiseProxy<IDLType>::resolve(typename IDLType::ParameterType va
 {
     ASSERT(!m_valueOrException);
 
-    m_valueOrException = ValueOrException { std::forward<typename IDLType::ParameterType>(value) };
+    m_valueOrException = ExceptionOr<Value> { std::forward<typename IDLType::ParameterType>(value) };
     for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->template resolve<IDLType>(WTF::get<Value>(*m_valueOrException));
+        deferredPromise->template resolve<IDLType>(m_valueOrException->returnValue());
 }
 
 template<typename IDLType>
@@ -174,9 +163,9 @@ inline void DOMPromiseProxy<IDLType>::resolveWithNewlyCreated(typename IDLType::
 {
     ASSERT(!m_valueOrException);
 
-    m_valueOrException = ValueOrException { std::forward<typename IDLType::ParameterType>(value) };
+    m_valueOrException = ExceptionOr<Value> { std::forward<typename IDLType::ParameterType>(value) };
     for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->template resolveWithNewlyCreated<IDLType>(WTF::get<Value>(*m_valueOrException));
+        deferredPromise->template resolveWithNewlyCreated<IDLType>(m_valueOrException->returnValue());
 }
 
 template<typename IDLType>
@@ -184,9 +173,9 @@ inline void DOMPromiseProxy<IDLType>::reject(Exception exception)
 {
     ASSERT(!m_valueOrException);
 
-    m_valueOrException = ValueOrException { WTFMove(exception) };
+    m_valueOrException = ExceptionOr<Value> { WTFMove(exception) };
     for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->reject(WTF::get<Exception>(*m_valueOrException));
+        deferredPromise->reject(m_valueOrException->exception());
 }
 
 
@@ -205,10 +194,10 @@ inline JSC::JSValue DOMPromiseProxy<IDLVoid>::promise(JSC::ExecState& state, JSD
         return JSC::jsUndefined();
 
     if (m_valueOrException) {
-        if (WTF::holds_alternative<Value>(*m_valueOrException))
-            deferredPromise->resolve();
+        if (m_valueOrException->hasException())
+            deferredPromise->reject(m_valueOrException->exception());
         else
-            deferredPromise->reject(WTF::get<Exception>(*m_valueOrException));
+            deferredPromise->resolve();
     }
 
     auto result = deferredPromise->promise();
@@ -230,7 +219,7 @@ inline bool DOMPromiseProxy<IDLVoid>::isFulfilled() const
 inline void DOMPromiseProxy<IDLVoid>::resolve()
 {
     ASSERT(!m_valueOrException);
-    m_valueOrException = ValueOrException { true };
+    m_valueOrException = ExceptionOr<void> { };
     for (auto& deferredPromise : m_deferredPromises)
         deferredPromise->resolve();
 }
@@ -238,16 +227,16 @@ inline void DOMPromiseProxy<IDLVoid>::resolve()
 inline void DOMPromiseProxy<IDLVoid>::reject(Exception exception)
 {
     ASSERT(!m_valueOrException);
-    m_valueOrException = ValueOrException { WTFMove(exception) };
+    m_valueOrException = ExceptionOr<void> { WTFMove(exception) };
     for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->reject(WTF::get<Exception>(*m_valueOrException));
+        deferredPromise->reject(m_valueOrException->exception());
 }
 
 // MARK: - DOMPromiseProxyWithResolveCallback<IDLType> implementation
 
 template<typename IDLType>
 template <typename Class, typename BaseClass>
-inline DOMPromiseProxyWithResolveCallback<IDLType>::DOMPromiseProxyWithResolveCallback(Class& object, typename IDLType::ImplementationType (BaseClass::*function)())
+inline DOMPromiseProxyWithResolveCallback<IDLType>::DOMPromiseProxyWithResolveCallback(Class& object, typename IDLType::ParameterType (BaseClass::*function)())
     : m_resolveCallback(std::bind(function, &object))
 {
 }
@@ -272,10 +261,10 @@ inline JSC::JSValue DOMPromiseProxyWithResolveCallback<IDLType>::promise(JSC::Ex
         return JSC::jsUndefined();
 
     if (m_valueOrException) {
-        if (WTF::holds_alternative<Value>(*m_valueOrException))
-            deferredPromise->template resolve<IDLType>(IDLType::convertToParameterType(m_resolveCallback()));
+        if (m_valueOrException->hasException())
+            deferredPromise->reject(m_valueOrException->exception());
         else
-            deferredPromise->reject(WTF::get<Exception>(*m_valueOrException));
+            deferredPromise->template resolve<IDLType>(m_resolveCallback());
     }
 
     auto result = deferredPromise->promise();
@@ -301,7 +290,7 @@ inline void DOMPromiseProxyWithResolveCallback<IDLType>::resolve(typename IDLTyp
 {
     ASSERT(!m_valueOrException);
 
-    m_valueOrException = ValueOrException { true };
+    m_valueOrException = ExceptionOr<void> { };
     for (auto& deferredPromise : m_deferredPromises)
         deferredPromise->template resolve<IDLType>(value);
 }
@@ -311,7 +300,7 @@ inline void DOMPromiseProxyWithResolveCallback<IDLType>::resolveWithNewlyCreated
 {
     ASSERT(!m_valueOrException);
 
-    m_valueOrException = ValueOrException { true };
+    m_valueOrException = ExceptionOr<void> { };
     for (auto& deferredPromise : m_deferredPromises)
         deferredPromise->template resolveWithNewlyCreated<IDLType>(value);
 }
@@ -321,9 +310,9 @@ inline void DOMPromiseProxyWithResolveCallback<IDLType>::reject(Exception except
 {
     ASSERT(!m_valueOrException);
 
-    m_valueOrException = ValueOrException { WTFMove(exception) };
+    m_valueOrException = ExceptionOr<void> { WTFMove(exception) };
     for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->reject(WTF::get<Exception>(*m_valueOrException));
+        deferredPromise->reject(m_valueOrException->exception());
 }
 
 }

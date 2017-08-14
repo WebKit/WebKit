@@ -224,9 +224,9 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
     m_pendingPromises.remove(iterator);
 }
 
-RefPtr<FontFaceSet> FontFaceSet::readyPromiseResolve()
+FontFaceSet& FontFaceSet::readyPromiseResolve()
 {
-    return this;
+    return *this;
 }
 
 }

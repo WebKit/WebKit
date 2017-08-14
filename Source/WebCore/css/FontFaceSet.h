@@ -108,7 +108,8 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    RefPtr<FontFaceSet> readyPromiseResolve();
+    // Callback for ReadyPromise.
+    FontFaceSet& readyPromiseResolve();
 
     Ref<CSSFontFaceSet> m_backing;
     HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;

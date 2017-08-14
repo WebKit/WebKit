@@ -94,7 +94,8 @@ private:
     explicit FontFace(CSSFontSelector&);
     explicit FontFace(CSSFontFace&);
 
-    RefPtr<FontFace> loadedPromiseResolve();
+    // Callback for LoadedPromise.
+    FontFace& loadedPromiseResolve();
 
     WeakPtrFactory<FontFace> m_weakPtrFactory;
     Ref<CSSFontFace> m_backing;

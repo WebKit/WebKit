@@ -448,9 +448,9 @@ auto FontFace::load() -> LoadedPromise&
     return m_loadedPromise;
 }
 
-RefPtr<FontFace> FontFace::loadedPromiseResolve()
+FontFace& FontFace::loadedPromiseResolve()
 {
-    return this;
+    return *this;
 }
 
 }
