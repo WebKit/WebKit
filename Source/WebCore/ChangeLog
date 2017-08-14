@@ -1,3 +1,12 @@
+2017-08-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Overriden virtual function not marked “override” in ImageBufferDataCairo.h
+        https://bugs.webkit.org/show_bug.cgi?id=175476
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/cairo/ImageBufferDataCairo.h: Add missing "override" qualifier.
+
 2017-08-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Soup] Cannot access HTTPS sites using a HTTP proxy that requires authentication
