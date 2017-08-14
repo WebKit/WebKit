@@ -63,6 +63,7 @@ public:
         ASSERT(m_path);
         return *m_path;
     }
+    void clearPath() { m_path = nullptr; }
 
 protected:
     void element() const = delete;
