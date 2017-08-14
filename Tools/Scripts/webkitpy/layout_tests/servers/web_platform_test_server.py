@@ -88,8 +88,6 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
             self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
         self._servers_file = self._filesystem.join(self._runtime_path, '%s_servers.json' % (self._name))
 
-        self._stdout_data = None
-        self._stderr_data = None
         self._filesystem = port_obj.host.filesystem
         self._layout_root = port_obj.layout_tests_dir()
         self._doc_root = self._filesystem.join(self._layout_root, doc_root(port_obj))
@@ -143,18 +141,13 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
             self._filesystem.remove(config_wpt_filename)
 
     def _prepare_config(self):
-        if self._filesystem.exists(self._output_dir):
-            self._output_log_path = self._filesystem.join(self._output_dir, self._log_file_name)
-            self._wsout = self._filesystem.open_text_file_for_writing(self._output_log_path)
+        self._filesystem.maybe_make_directory(self._output_dir)
+        self._output_log_path = self._filesystem.join(self._output_dir, self._log_file_name)
+        self._wsout = self._filesystem.open_text_file_for_writing(self._output_log_path)
         self._copy_webkit_test_files()
 
     def _spawn_process(self):
-        self._stdout_data = None
-        self._stderr_data = None
-        if self._wsout:
-            self._process = self._executive.popen(self._start_cmd, cwd=self._doc_root_path, shell=False, stdin=self._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
-        else:
-            self._process = self._executive.popen(self._start_cmd, cwd=self._doc_root_path, shell=False, stdin=self._executive.PIPE, stdout=self._executive.PIPE, stderr=self._executive.STDOUT)
+        self._process = self._executive.popen(self._start_cmd, cwd=self._doc_root_path, shell=False, stdin=self._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
         self._filesystem.write_text_file(self._pid_file, str(self._process.pid))
 
         # Wait a second for the server to actually start so that tests do not start until server is running.
@@ -194,7 +187,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._clean_webkit_test_files()
 
         if self._process:
-            (self._stdout_data, self._stderr_data) = self._process.communicate(input='\n')
+            self._process.communicate(input='\n')
         if self._wsout:
             self._wsout.close()
             self._wsout = None

@@ -1,3 +1,19 @@
+2017-08-14  Youenn Fablet  <youenn@apple.com>
+
+        WPT server should be able to do logging even if its output folder is not created at launch time
+        https://bugs.webkit.org/show_bug.cgi?id=175543
+
+        Reviewed by Alexey Proskuryakov.
+
+        Removing no longer used stdout/stderr member variables.
+        Creating if needed the output folder so that we can create WPT server output log folder at WPT server launch time.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer.__init__):
+        (WebPlatformTestServer._prepare_config):
+        (WebPlatformTestServer._spawn_process):
+        (WebPlatformTestServer._stop_running_server):
+
 2017-08-14  Daniel Bates  <dabates@apple.com>
 
         webkit-patch: Passing --no-review should submit patch to EWS by default
