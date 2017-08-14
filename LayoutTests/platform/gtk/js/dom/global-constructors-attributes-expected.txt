@@ -223,6 +223,16 @@ PASS Object.getOwnPropertyDescriptor(global, 'CSSValueList').hasOwnProperty('get
 PASS Object.getOwnPropertyDescriptor(global, 'CSSValueList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSValueList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSValueList').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'Cache').value is Cache
+PASS Object.getOwnPropertyDescriptor(global, 'Cache').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Cache').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'Cache').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'Cache').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'CacheStorage').value is CacheStorage
+PASS Object.getOwnPropertyDescriptor(global, 'CacheStorage').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CacheStorage').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CacheStorage').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'CacheStorage').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CanvasCaptureMediaStreamTrack').value is CanvasCaptureMediaStreamTrack
 PASS Object.getOwnPropertyDescriptor(global, 'CanvasCaptureMediaStreamTrack').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CanvasCaptureMediaStreamTrack').hasOwnProperty('set') is false
