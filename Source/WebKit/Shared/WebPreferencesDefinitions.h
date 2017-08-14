@@ -366,7 +366,7 @@
     macro(LinkPreloadEnabled, linkPreloadEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Link Preload", "Link preload support") \
     macro(WebRTCLegacyAPIDisabled, webRTCLegacyAPIDisabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Remove Legacy WebRTC API", "Remove Legacy WebRTC API") \
     macro(IsSecureContextAttributeEnabled, isSecureContextAttributeEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Secure Contexts API", "Enable Secure Contexts API") \
-    macro(ServiceWorkersEnabled, serviceWorkersEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "ServiceWorkers", "Enable ServiceWorkers") \
+    macro(ServiceWorkersEnabled, serviceWorkersEnabled, Bool, bool, false, "ServiceWorkers", "Enable ServiceWorkers") \
     macro(CacheAPIEnabled, cacheAPIEnabled, Bool, bool, false, "Cache API", "Enable Cache API") \
     macro(SubresourceIntegrityEnabled, subresourceIntegrityEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "SubresourceIntegrity", "Enable SubresourceIntegrity") \
     macro(ViewportFitEnabled, viewportFitEnabled, Bool, bool, true, "Viewport Fit", "Enable viewport-fit viewport parameter") \
