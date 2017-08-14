@@ -31,11 +31,12 @@ public:
     RenderQuote(Document&, RenderStyle&&, QuoteType);
     virtual ~RenderQuote();
 
-    static void updateRenderers(const RenderView&);
+    void updateRenderer(RenderQuote* previousQuote);
 
 private:
     const char* renderName() const override { return "RenderQuote"; }
     bool isQuote() const override { return true; }
+    bool isOpen() const;
     void styleDidChange(StyleDifference, const RenderStyle*) override;
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;

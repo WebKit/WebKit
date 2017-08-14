@@ -1,3 +1,49 @@
+2017-08-11  Antti Koivisto  <antti@apple.com>
+
+        Remove RenderQuote collection from RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=175479
+
+        Reviewed by Andreas Kling.
+
+        We can do it well enough without maintaining this pointer structure.
+
+        Global updating doesn't work well with future direction for first-letter and similar anyway.
+        We need to update quote immediately when updating its style.
+
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::insertedIntoTree):
+        (WebCore::RenderQuote::willBeRemovedFromTree):
+
+            Just tell the view that there are renderers to update.
+
+        (WebCore::RenderQuote::styleDidChange):
+        (WebCore::RenderQuote::isOpen const):
+        (WebCore::RenderQuote::updateRenderer):
+        (WebCore::RenderQuote::updateRenderers): Deleted.
+
+            Update single renderer only. RenderTreeUpdater provides the previous renderer to compute the depth.
+
+        * rendering/RenderQuote.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::registerQuote): Deleted.
+        (WebCore::RenderView::unregisterQuote): Deleted.
+        (WebCore::RenderView::updateSpecialRenderers): Deleted.
+
+            Remove the quote list.
+
+        * rendering/RenderView.h:
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::commit):
+
+            Ensure that all quotes are updated.
+
+        (WebCore::RenderTreeUpdater::updateBeforeOrAfterPseudoElement):
+        (WebCore::RenderTreeUpdater::updateQuotesUpTo):
+
+            Traverse render tree to find quotes to update starting from the previous updated quote.
+
+        * style/RenderTreeUpdater.h:
+
 2017-08-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Overriden virtual function not marked “override” in ImageBufferDataCairo.h

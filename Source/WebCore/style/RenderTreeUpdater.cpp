@@ -37,8 +37,10 @@
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "PseudoElement.h"
+#include "RenderDescendantIterator.h"
 #include "RenderFullScreen.h"
 #include "RenderNamedFlowThread.h"
+#include "RenderQuote.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
 #include <wtf/SystemTracing.h>
@@ -124,7 +126,11 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
     for (auto* root : findRenderingRoots(*m_styleUpdate))
         updateRenderTree(*root);
 
-    m_document.renderView()->updateSpecialRenderers();
+    if (m_document.renderView()->hasQuotesNeedingUpdate()) {
+        updateQuotesUpTo(nullptr);
+        m_previousUpdatedQuote = nullptr;
+        m_document.renderView()->setHasQuotesNeedingUpdate(false);
+    }
 
     m_styleUpdate = nullptr;
 }
@@ -542,10 +548,19 @@ void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, Pseud
 
     updateElementRenderer(*pseudoElement, elementUpdate);
 
+    auto* pseudoRenderer = pseudoElement->renderer();
+    if (!pseudoRenderer)
+        return;
+
     if (elementUpdate.change == Style::Detach)
         pseudoElement->didAttachRenderers();
     else
         pseudoElement->didRecalcStyle(elementUpdate.change);
+
+    if (m_document.renderView()->hasQuotesNeedingUpdate()) {
+        for (auto& child : descendantsOfType<RenderQuote>(*pseudoRenderer))
+            updateQuotesUpTo(&child);
+    }
 }
 
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType)
@@ -601,6 +616,22 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
         return;
     renderer->destroyAndCleanupAnonymousWrappers();
     text.setRenderer(nullptr);
+}
+
+void RenderTreeUpdater::updateQuotesUpTo(RenderQuote* lastQuote)
+{
+    auto quoteRenderers = descendantsOfType<RenderQuote>(*m_document.renderView());
+    auto it = m_previousUpdatedQuote ? ++quoteRenderers.at(*m_previousUpdatedQuote) : quoteRenderers.begin();
+    auto end = quoteRenderers.end();
+    for (; it != end; ++it) {
+        auto& quote = *it;
+        // Quote character depends on quote depth so we chain the updates.
+        quote.updateRenderer(m_previousUpdatedQuote);
+        m_previousUpdatedQuote = &quote;
+        if (&quote == lastQuote)
+            return;
+    }
+    ASSERT(!lastQuote);
 }
 
 #if PLATFORM(IOS)
