@@ -97,8 +97,12 @@ class DarwinPort(ApplePort):
     def _merge_crash_logs(self, logs, new_logs, crashed_processes):
         for test, crash_log in new_logs.iteritems():
             try:
-                process_name = test.split("-")[0]
-                pid = int(test.split("-")[1])
+                if test.split('-')[0] == 'Sandbox':
+                    process_name = test.split('-')[1]
+                    pid = int(test.split('-')[2])
+                else:
+                    process_name = test.split('-')[0]
+                    pid = int(test.split('-')[1])
             except IndexError:
                 continue
             if not any(entry[1] == process_name and entry[2] == pid for entry in crashed_processes):

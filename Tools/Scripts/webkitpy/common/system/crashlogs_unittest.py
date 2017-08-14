@@ -73,6 +73,46 @@ Serial ATA Device: OPTIARC DVD RW AD-5670S
 """.format(process_name=process_name, pid=pid)
 
 
+def make_mock_sandbox_report_darwin(process_name, pid):
+    return """Incident Identifier: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+CrashReporter Key:   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Report Type:         187
+Sandbox Violation:   Sandbox: {process_name}({pid})
+
+{process_name}[{pid}] sandboxed.
+size = 2513
+container = <none>
+sb_refcount = 2
+profile = {process_name}
+profile_refcount = 5
+profile variables:
+    HOME -> 1
+    FRONT_USER_HOME -> 0
+    PROCESS_TEMP_DIR -> 2
+
+Process:         {process_name} [{pid}]
+Path:            /some/path/{process_name}
+Load Address:    0x100c98000
+Identifier:      {process_name}
+Version:         xxxx.x.x (xxxx)
+Code Type:       arm64 (Native)
+Parent Process:  launchd.development [1]
+User ID:         xxx
+
+Date/Time:       2017-08-09 13:46:21.203 PDT
+OS Version:      iOS 10.0 (14xxxx)
+Report Version:  104
+
+Thread 0 (id: xxxxxx):
+0   libsystem_kernel.dylib        	0x0000000182a91dbc
+1   libsystem_pthread.dylib       	0x0000000182ba2fb0
+2   libsystem_pthread.dylib       	0x0000000182ba2c30
+
+Binary Images:
+       0x182a70000 -        0x182a97fff  libsystem_kernel.dylib arm64 <1e5e0578f0db37e7bfa493945180cfcd> /usr/lib/system/libsystem_kernel.dylib
+""".format(process_name=process_name, pid=pid)
+
+
 def make_mock_crash_report_win(process_name, pid):
     return """Opened log file 'C:\Projects\WebKit\OpenSource\WebKitBuild\Release\bin32\layout-test-results\CrashLog_1d58_2013-06-03_12-21-20-110.txt'
 0:000> .srcpath "C:\Projects\WebKit\OpenSource"
@@ -243,14 +283,16 @@ class CrashLogsTest(unittest.TestCase):
             return
 
         self.older_mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28528)
+        self.sandbox_crash_report = make_mock_sandbox_report_darwin('DumpRenderTree', 28530)
         self.mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28530)
         self.newer_mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28529)
         self.other_process_mock_crash_report = make_mock_crash_report_darwin('FooProcess', 28527)
         self.misformatted_mock_crash_report = 'Junk that should not appear in a crash report' + make_mock_crash_report_darwin('DumpRenderTree', 28526)[200:]
         self.files = {}
-        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150716_quadzen.crash'] = self.older_mock_crash_report
-        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150717_quadzen_1.crash'] = self.older_mock_crash_report
-        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150718_quadzen_2.crash'] = self.older_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150715_quadzen.crash'] = self.older_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150716_quadzen_1.crash'] = self.older_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150717_quadzen_2.crash'] = self.older_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150718_quadzen.crash'] = self.sandbox_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash'] = self.mock_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150720_quadzen.crash'] = self.newer_mock_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150721_quadzen.crash'] = None
@@ -269,11 +311,12 @@ class CrashLogsTest(unittest.TestCase):
 
         crash_logs = self.create_crash_logs_darwin()
         all_logs = crash_logs.find_all_logs()
-        self.assertEqual(len(all_logs), 7)
+        self.assertEqual(len(all_logs), 8)
 
         for test, crash_log in all_logs.iteritems():
             self.assertTrue(crash_log in self.files.values())
-            self.assertTrue(test == "Unknown" or int(test.split("-")[1]) in range(28527, 28531))
+            if test.split('-')[0] != 'Sandbox':
+                self.assertTrue(test == "Unknown" or int(test.split("-")[1]) in range(28527, 28531))
 
     def test_duplicate_log_darwin(self):
         if not SystemHost().platform.is_mac():
@@ -281,7 +324,7 @@ class CrashLogsTest(unittest.TestCase):
 
         crash_logs = self.create_crash_logs_darwin()
         all_logs = crash_logs.find_all_logs()
-        expected_logs = ['DumpRenderTree-28528', 'DumpRenderTree-28528-1', 'DumpRenderTree-28528-2',
+        expected_logs = ['DumpRenderTree-28528', 'DumpRenderTree-28528-1', 'DumpRenderTree-28528-2', 'Sandbox-DumpRenderTree-28530',
                          'DumpRenderTree-28529', 'DumpRenderTree-28530', 'FooProcess-28527', 'Unknown']
 
         for log in expected_logs:

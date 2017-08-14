@@ -62,10 +62,13 @@ class CrashLogs(object):
         contents = self._host.symbolicate_crash_log_if_needed(path)
         if not contents:
             return (None, None, None)
+        is_sandbox_violation = False
         for line in contents.splitlines():
+            if line.startswith('Sandbox Violation:'):
+                is_sandbox_violation = True
             match = CrashLogs.DARWIN_PROCESS_REGEX.match(line)
             if match:
-                return (match.group('process_name'), int(match.group('pid')), contents)
+                return (('Sandbox-' if is_sandbox_violation else '') + match.group('process_name'), int(match.group('pid')), contents)
         return (None, None, contents)
 
     def _find_newest_log_darwin(self, process_name, pid, include_errors, newer_than):
@@ -163,8 +166,8 @@ class CrashLogs(object):
 
                     # Processes can remain running after Sandbox violations, which generate crash logs.
                     # This means that we can have mutliple crash logs attributed to the same process.
-                    # The unique_name must be named in the format PROCESS_NAME-PID-#, where '-#' is optional.
-                    # This is because of how DarwinPort._merge_crash_logs parses the crash name.
+                    # The unique_name must be named in the format PROCESS_NAME-PID-# or Sandbox-PROCESS_NAME-PID-#,
+                    # where '-#' is optional. This is because of how DarwinPort._merge_crash_logs parses the crash name.
                     count = 1
                     unique_name = result_name
                     while unique_name in crash_logs:
