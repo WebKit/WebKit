@@ -1,3 +1,10 @@
+2017-08-10  Antti Koivisto  <antti@apple.com>
+
+        Try to fix windows build.
+
+        * style/StyleUpdate.h:
+        (WebCore::Style::TextUpdate::TextUpdate):
+
 2017-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crashes in WebCore::PasteboardHelper::fillSelectionData when source file of drag is unavailable
