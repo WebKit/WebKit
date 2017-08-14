@@ -113,7 +113,6 @@ public:
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return false; }
 
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
-    ResourceRequest& resourceRequest() { return m_resourceRequest; }
     const URL& url() const { return m_resourceRequest.url();}
     const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
     SessionID sessionID() const { return m_sessionID; }
@@ -164,9 +163,11 @@ public:
     bool isImage() const { return type() == ImageResource; }
     // FIXME: CachedRawResource could be a main resource, an audio/video resource, or a raw XHR/icon resource.
     bool isMainOrMediaOrIconOrRawResource() const { return type() == MainResource || type() == MediaResource || type() == Icon || type() == RawResource; }
+
+    // Whether this request should impact request counting and delay window.onload.
     bool ignoreForRequestCount() const
     {
-        return m_resourceRequest.ignoreForRequestCount()
+        return m_ignoreForRequestCount
             || type() == MainResource
 #if ENABLE(LINK_PREFETCH)
             || type() == LinkPrefetch
@@ -175,6 +176,8 @@ public:
             || type() == Icon
             || type() == RawResource;
     }
+
+    void setIgnoreForRequestCount(bool ignoreForRequestCount) { m_ignoreForRequestCount = ignoreForRequestCount; }
 
     unsigned accessCount() const { return m_accessCount; }
     void increaseAccessCount() { m_accessCount++; }
@@ -370,6 +373,7 @@ private:
     Vector<std::pair<String, String>> m_varyingHeaderValues;
 
     unsigned long m_identifierForLoadWithoutResourceLoader { 0 };
+    bool m_ignoreForRequestCount { false };
 };
 
 class CachedResource::Callback {

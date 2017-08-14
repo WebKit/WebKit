@@ -1,3 +1,33 @@
+2017-08-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop non-const getter for CachedResource::resourceRequest()
+        https://bugs.webkit.org/show_bug.cgi?id=175524
+
+        Reviewed by Youenn Fablet.
+
+        Drop non-const getter for CachedResource::resourceRequest(). It would be unsafe to modify the request of a CachedResource
+        after it has been cached. Exposing such a getter is therefore a footgun.
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preloadIfNeeded):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::resourceRequest const):
+        (WebCore::CachedResource::ignoreForRequestCount const):
+        (WebCore::CachedResource::setIgnoreForRequestCount):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::ignoreForRequestCount const):
+        (WebCore::CachedResourceRequest::setIgnoreForRequestCount):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::addImageToCache):
+        * platform/network/ResourceRequestBase.h:
+
 2017-08-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Implement WebCore::standardUserAgent()

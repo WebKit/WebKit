@@ -148,10 +148,6 @@ public:
     bool hiddenFromInspector() const { return m_hiddenFromInspector; }
     void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
 
-    // Whether this request should impact request counting and delay window.onload.
-    bool ignoreForRequestCount() const { return m_ignoreForRequestCount; }
-    void setIgnoreForRequestCount(bool ignoreForRequestCount) { m_ignoreForRequestCount = ignoreForRequestCount; }
-
     enum class Requester { Unspecified, Main, XHR, Fetch, Media };
     Requester requester() const { return m_requester; }
     void setRequester(Requester requester) { m_requester = requester; }
@@ -222,7 +218,6 @@ protected:
     mutable bool m_resourceRequestBodyUpdated { false };
     mutable bool m_platformRequestBodyUpdated { false };
     bool m_hiddenFromInspector { false };
-    bool m_ignoreForRequestCount { false };
     ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
     Requester m_requester { Requester::Unspecified };
     String m_initiatorIdentifier;

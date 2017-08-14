@@ -128,6 +128,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
     , m_isLinkPreload(request.isLinkPreload())
     , m_hasUnknownEncoding(request.isLinkPreload())
     , m_type(type)
+    , m_ignoreForRequestCount(request.ignoreForRequestCount())
 {
     ASSERT(sessionID.isValid());
 

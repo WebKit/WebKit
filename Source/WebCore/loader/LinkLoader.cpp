@@ -223,10 +223,9 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
     if (!isSupportedType(type.value(), mimeType))
         return nullptr;
 
-    ResourceRequest resourceRequest(document.completeURL(href));
-    resourceRequest.setIgnoreForRequestCount(true);
-    CachedResourceRequest linkRequest(WTFMove(resourceRequest), CachedResourceLoader::defaultCachedResourceOptions(), CachedResource::defaultPriorityForResourceType(type.value()));
+    CachedResourceRequest linkRequest(document.completeURL(href), CachedResourceLoader::defaultCachedResourceOptions(), CachedResource::defaultPriorityForResourceType(type.value()));
     linkRequest.setInitiator("link");
+    linkRequest.setIgnoreForRequestCount(true);
     linkRequest.setIsLinkPreload();
 
     linkRequest.setAsPotentiallyCrossOrigin(crossOriginMode, document);
