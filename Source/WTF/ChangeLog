@@ -1,3 +1,14 @@
+2017-08-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [WTF] Move ValueToString into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=175469
+
+        Reviewed by Sam Weinig.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/ValueToString.h: Renamed from Source/WebCore/platform/ValueToString.h.
+
 2017-08-10  Sam Weinig  <sam@webkit.org>
 
         WTF::Function does not allow for reference / non-default constructible return types

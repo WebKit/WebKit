@@ -1099,22 +1099,27 @@ private:
 #endif
 };
 
+} // namespace WebCore
+
 #if ENABLE(VIDEO_TRACK) && !defined(NDEBUG)
+namespace WTF {
 
 // Template specialization required by PodIntervalTree in debug mode.
-template <> struct ValueToString<TextTrackCue*> {
-    static String string(TextTrackCue* const& cue)
+template <> struct ValueToString<WebCore::TextTrackCue*> {
+    static String string(WebCore::TextTrackCue* const& cue)
     {
         String text;
         if (cue->isRenderable())
-            text = toVTTCue(cue)->text();
+            text = WebCore::toVTTCue(cue)->text();
         return String::format("%p id=%s interval=%s-->%s cue=%s)", cue, cue->id().utf8().data(), toString(cue->startTime()).utf8().data(), toString(cue->endTime()).utf8().data(), text.utf8().data());
     }
 };
 
+} // namespace WTF
 #endif
 
 #ifndef NDEBUG
+namespace WTF {
 
 template<> struct ValueToString<MediaTime> {
     static String string(const MediaTime& time)
@@ -1123,9 +1128,8 @@ template<> struct ValueToString<MediaTime> {
     }
 };
 
+} // namespace WTF
 #endif
-
-} // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLMediaElement)
     static bool isType(const WebCore::Element& element) { return element.isMediaElement(); }

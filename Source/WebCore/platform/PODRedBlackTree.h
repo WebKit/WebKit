@@ -72,9 +72,9 @@
 #ifndef PODRedBlackTree_h
 #define PODRedBlackTree_h
 
-#include "ValueToString.h"
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/ValueToString.h>
 #ifndef NDEBUG
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
