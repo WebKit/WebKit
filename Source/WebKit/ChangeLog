@@ -1,5 +1,19 @@
 2017-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [Soup] Do not spawn the network process to setup cookie persistent storage
+        https://bugs.webkit.org/show_bug.cgi?id=175424
+
+        Reviewed by Sergio Villar Senin.
+
+        The persistent storage configuration is saved and passed to network process as creation parameters, so we don't
+        need to spawn the network process to configure it, when it's created eventually it will use the configuration.
+
+        * UIProcess/soup/WebCookieManagerProxySoup.cpp:
+        (WebKit::WebCookieManagerProxy::setCookiePersistentStorage): Use sendToNetworkingProcess() instead of
+        endToNetworkingProcessRelaunchingIfNecessary().
+
+2017-08-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Assertion failure in TimerBase inside WebCore::IconRecord::setImageData
         https://bugs.webkit.org/show_bug.cgi?id=173866
         <rdar://problem/33122050>
