@@ -1,5 +1,12 @@
 2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, suppress warnings on GCC
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI::CheckedArithmeticTester::run):
+
+2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Run more WTF tests
         https://bugs.webkit.org/show_bug.cgi?id=174970
 
