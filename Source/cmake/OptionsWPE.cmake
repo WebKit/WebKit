@@ -126,8 +126,8 @@ endif ()
 add_definitions(-DBUILDING_WPE__=1)
 add_definitions(-DGETTEXT_PACKAGE="WPE")
 add_definitions(-DDATA_DIR="${CMAKE_INSTALL_DATADIR}")
-add_definitions(-DUSER_AGENT_GLIB_MAJOR_VERSION="601")
-add_definitions(-DUSER_AGENT_GLIB_MINOR_VERSION="1")
+add_definitions(-DUSER_AGENT_MAJOR_VERSION="601")
+add_definitions(-DUSER_AGENT_MINOR_VERSION="1")
 
 set(USE_UDIS86 1)
 
