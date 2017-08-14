@@ -53,8 +53,11 @@ bool ThreadedDisplayRefreshMonitor::requestRefreshCallback()
     LockHolder locker(mutex());
     setIsScheduled(true);
 
+    // Only request an update in case we're not currently handling the display
+    // refresh notifications under ThreadedDisplayRefreshMonitor::displayRefreshCallback().
+    // Any such schedule request is handled in that method after the notifications.
     if (isPreviousFrameDone())
-        m_compositor->coordinateUpdateCompletionWithClient();
+        m_compositor->requestDisplayRefreshMonitorUpdate();
 
     return true;
 }
@@ -80,7 +83,7 @@ void ThreadedDisplayRefreshMonitor::invalidate()
 
 void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
 {
-    bool shouldHandleDisplayRefreshNotification = false;
+    bool shouldHandleDisplayRefreshNotification { false };
     {
         LockHolder locker(mutex());
         shouldHandleDisplayRefreshNotification = isScheduled() && isPreviousFrameDone();
@@ -91,12 +94,18 @@ void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
     if (shouldHandleDisplayRefreshNotification)
         DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread(this);
 
-    if (m_compositor) {
-        m_compositor->renderNextFrameIfNeeded();
-        m_compositor->completeCoordinatedUpdateIfNeeded();
-        if (isScheduled())
-            m_compositor->coordinateUpdateCompletionWithClient();
+    // Retrieve the scheduled status for this DisplayRefreshMonitor.
+    bool hasBeenRescheduled { false };
+    {
+        LockHolder locker(mutex());
+        hasBeenRescheduled = isScheduled();
     }
+
+    // Notify the compositor about the completed DisplayRefreshMonitor update, passing
+    // along information about any schedule request that might have occurred during
+    // the notification handling.
+    if (m_compositor)
+        m_compositor->handleDisplayRefreshMonitorUpdate(hasBeenRescheduled);
 }
 
 } // namespace WebKit

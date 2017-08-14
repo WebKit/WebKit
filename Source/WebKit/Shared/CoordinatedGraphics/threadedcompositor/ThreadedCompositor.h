@@ -88,9 +88,8 @@ public:
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<WebCore::DisplayRefreshMonitor> displayRefreshMonitor(WebCore::PlatformDisplayID);
-    void renderNextFrameIfNeeded();
-    void completeCoordinatedUpdateIfNeeded();
-    void coordinateUpdateCompletionWithClient();
+    void requestDisplayRefreshMonitorUpdate();
+    void handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled);
 #endif
 
     void frameComplete();
@@ -126,14 +125,14 @@ private:
         float scaleFactor { 1 };
         bool drawsBackground { true };
         bool needsResize { false };
+
+        bool clientRendersNextFrame { false };
+        bool coordinateUpdateCompletionWithClient { false };
     } m_attributes;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     Ref<ThreadedDisplayRefreshMonitor> m_displayRefreshMonitor;
 #endif
-
-    Atomic<bool> m_clientRendersNextFrame;
-    Atomic<bool> m_coordinateUpdateCompletionWithClient;
 };
 
 } // namespace WebKit

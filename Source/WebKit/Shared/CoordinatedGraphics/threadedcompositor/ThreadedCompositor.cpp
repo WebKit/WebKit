@@ -68,9 +68,6 @@ ThreadedCompositor::ThreadedCompositor(Client& client, WebPage& webPage, const I
         m_attributes.needsResize = !viewportSize.isEmpty();
     }
 
-    m_clientRendersNextFrame.store(false);
-    m_coordinateUpdateCompletionWithClient.store(false);
-
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene = adoptRef(new CoordinatedGraphicsScene(this));
         m_nativeSurfaceHandle = m_client.nativeSurfaceHandleForCompositing();
@@ -246,14 +243,37 @@ void ThreadedCompositor::renderLayerTree()
 
 void ThreadedCompositor::sceneUpdateFinished()
 {
-    bool shouldDispatchDisplayRefreshCallback = m_clientRendersNextFrame.load()
-        || m_displayRefreshMonitor->requiresDisplayRefreshCallback();
-    bool shouldCoordinateUpdateCompletionWithClient = m_coordinateUpdateCompletionWithClient.load();
+    // The composition has finished. Now we have to determine how to manage
+    // the scene update completion.
 
+    // The DisplayRefreshMonitor will be used to dispatch a callback on the client thread if:
+    //  - clientRendersNextFrame is true (i.e. client has to be notified about the finished update), or
+    //  - a DisplayRefreshMonitor callback was requested from the Web engine
+    bool shouldDispatchDisplayRefreshCallback { false };
+
+    // If coordinateUpdateCompletionWithClient is true, the scene update completion has to be
+    // delayed until the DisplayRefreshMonitor callback.
+    bool shouldCoordinateUpdateCompletionWithClient { false };
+
+    {
+        LockHolder locker(m_attributes.lock);
+        shouldDispatchDisplayRefreshCallback = m_attributes.clientRendersNextFrame
+            || m_displayRefreshMonitor->requiresDisplayRefreshCallback();
+        shouldCoordinateUpdateCompletionWithClient = m_attributes.coordinateUpdateCompletionWithClient;
+    }
+
+    LockHolder stateLocker(m_compositingRunLoop->stateLock());
+
+    // Schedule the DisplayRefreshMonitor callback, if necessary.
     if (shouldDispatchDisplayRefreshCallback)
         m_displayRefreshMonitor->dispatchDisplayRefreshCallback();
+
+    // Mark the scene update as completed if no coordination is required and if not in a forced repaint.
     if (!shouldCoordinateUpdateCompletionWithClient && !m_inForceRepaint)
-        m_compositingRunLoop->updateCompleted();
+        m_compositingRunLoop->updateCompleted(stateLocker);
+
+    // Independent of the scene update, the composition itself is now completed.
+    m_compositingRunLoop->compositionCompleted(stateLocker);
 }
 
 void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
@@ -262,15 +282,19 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
     m_scene->appendUpdate([this, scene = makeRef(*m_scene), state] {
         scene->commitSceneState(state);
 
-        m_clientRendersNextFrame.store(true);
+        LockHolder locker(m_attributes.lock);
+
+        // Client has to be notified upon finishing this scene update.
+        m_attributes.clientRendersNextFrame = true;
+
+        // Coordinate scene update completion with the client in case of changed or updated platform layers.
         // Do not change m_coordinateUpdateCompletionWithClient while in force repaint.
-        if (m_inForceRepaint)
-            return;
-        bool coordinateUpdate = std::any_of(state.layersToUpdate.begin(), state.layersToUpdate.end(),
+        bool coordinateUpdate = !m_inForceRepaint && std::any_of(state.layersToUpdate.begin(), state.layersToUpdate.end(),
             [](const std::pair<CoordinatedLayerID, CoordinatedGraphicsLayerState>& it) {
                 return it.second.platformLayerChanged || it.second.platformLayerUpdated;
             });
-        m_coordinateUpdateCompletionWithClient.store(coordinateUpdate);
+
+        m_attributes.coordinateUpdateCompletionWithClient |= coordinateUpdate;
     });
 
     m_compositingRunLoop->scheduleUpdate();
@@ -291,23 +315,56 @@ RefPtr<WebCore::DisplayRefreshMonitor> ThreadedCompositor::displayRefreshMonitor
     return m_displayRefreshMonitor.copyRef();
 }
 
-void ThreadedCompositor::renderNextFrameIfNeeded()
+void ThreadedCompositor::requestDisplayRefreshMonitorUpdate()
 {
-    if (m_clientRendersNextFrame.compareExchangeStrong(true, false))
-        m_scene->renderNextFrame();
+    // This is invoked by ThreadedDisplayRefreshMonitor when a fresh update is required.
+
+    LockHolder stateLocker(m_compositingRunLoop->stateLock());
+    {
+        // coordinateUpdateCompletionWithClient is set to true in order to delay the scene update
+        // completion until the DisplayRefreshMonitor is fired on the main thread after the composition
+        // is completed.
+        LockHolder locker(m_attributes.lock);
+        m_attributes.coordinateUpdateCompletionWithClient = true;
+    }
+    m_compositingRunLoop->scheduleUpdate(stateLocker);
 }
 
-void ThreadedCompositor::completeCoordinatedUpdateIfNeeded()
+void ThreadedCompositor::handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled)
 {
-    if (m_coordinateUpdateCompletionWithClient.compareExchangeStrong(true, false))
-        m_compositingRunLoop->updateCompleted();
-}
+    // Retrieve the clientRendersNextFrame and coordinateUpdateCompletionWithClient.
+    bool clientRendersNextFrame { false };
+    bool coordinateUpdateCompletionWithClient { false };
+    {
+        LockHolder locker(m_attributes.lock);
+        clientRendersNextFrame = std::exchange(m_attributes.clientRendersNextFrame, false);
+        coordinateUpdateCompletionWithClient = std::exchange(m_attributes.coordinateUpdateCompletionWithClient, false);
+    }
 
-void ThreadedCompositor::coordinateUpdateCompletionWithClient()
-{
-    m_coordinateUpdateCompletionWithClient.store(true);
-    if (!m_compositingRunLoop->isActive())
-        m_compositingRunLoop->scheduleUpdate();
+    // If clientRendersNextFrame is true, the client is finally notified about the scene update nearing
+    // completion. The client will use this opportunity to clean up resources as appropriate. It can also
+    // perform any layer flush that was requested during the composition, or by any DisplayRefreshMonitor
+    // notifications that have been handled at this point.
+    if (clientRendersNextFrame)
+        m_client.renderNextFrame();
+
+    LockHolder stateLocker(m_compositingRunLoop->stateLock());
+
+    // If required, mark the current scene update as completed. CompositingRunLoop will take care of
+    // scheduling a new update in case an update was marked as pending due to previous layer flushes
+    // or DisplayRefreshMonitor notifications.
+    if (coordinateUpdateCompletionWithClient)
+        m_compositingRunLoop->updateCompleted(stateLocker);
+
+    // If the DisplayRefreshMonitor was scheduled again, we immediately demand the update completion
+    // coordination (like we do in requestDisplayRefreshMonitorUpdate()) and request an update.
+    if (hasBeenRescheduled) {
+        {
+            LockHolder locker(m_attributes.lock);
+            m_attributes.coordinateUpdateCompletionWithClient = true;
+        }
+        m_compositingRunLoop->scheduleUpdate(stateLocker);
+    }
 }
 #endif
 
