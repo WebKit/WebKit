@@ -1,3 +1,20 @@
+2017-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] stop kinetic scrolling when a zero movement is reached
+        https://bugs.webkit.org/show_bug.cgi?id=175468
+
+        Reviewed by Michael Catanzaro.
+
+        This is GTK+ change by Christian Hergert.
+        https://git.gnome.org/browse/gtk+/commit/?h=gtk-3-22&id=4f63d839550f7a9038b391e7d3e1e6fc8bdfafa6
+
+        When the kinetic scrolling reduces its speed, there can be multiple frames where the movement is zero pixels,
+        followed by a 1 pixel movement later on. This causes a "jitter" right at the end of the scroll which makes it
+        feel less quality than other platforms. Instead, we should just clamp it as soon as we get a zero movement.
+
+        * platform/ScrollAnimationKinetic.cpp:
+        (WebCore::ScrollAnimationKinetic::PerAxisData::animateScroll):
+
 2017-08-13  Chris Dumez  <cdumez@apple.com>
 
         Drop non-const getter for CachedResource::resourceRequest()
