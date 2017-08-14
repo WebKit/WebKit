@@ -139,19 +139,18 @@ static RefPtr<cairo_surface_t> getIconSurfaceSynchronously(WebKitFaviconDatabase
 
     // The exact size we pass is irrelevant to the iconDatabase code.
     // We must pass something greater than 0x0 to get an icon.
-    WebCore::Image* iconImage = database->priv->iconDatabase->synchronousIconForPageURL(pageURL, WebCore::IntSize(1, 1));
-    if (!iconImage) {
+    auto iconData = database->priv->iconDatabase->synchronousIconForPageURL(pageURL, WebCore::IntSize(1, 1));
+    if (iconData.second == IconDatabase::IsKnownIcon::No) {
         g_set_error(error, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN, _("Unknown favicon for page %s"), pageURL.utf8().data());
         return nullptr;
     }
 
-    RefPtr<cairo_surface_t> surface = iconImage->nativeImageForCurrentFrame();
-    if (!surface) {
+    if (!iconData.first) {
         g_set_error(error, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND, _("Page %s does not have a favicon"), pageURL.utf8().data());
         return nullptr;
     }
 
-    return surface;
+    return iconData.first;
 }
 
 static void deletePendingIconRequests(WebKitFaviconDatabase* database, PendingIconRequestVector* requests, const String& pageURL)

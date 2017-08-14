@@ -37,7 +37,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class Image;
 class SharedBuffer;
 }
 
@@ -59,10 +58,6 @@ class IconDatabase {
     WTF_MAKE_FAST_ALLOCATED;
 
 private:
-    enum ImageDataStatus {
-        ImageDataStatusPresent, ImageDataStatusMissing, ImageDataStatusUnknown
-    };
-
     class IconSnapshot {
     public:
         IconSnapshot() = default;
@@ -95,11 +90,9 @@ private:
         void setTimestamp(time_t stamp) { m_stamp = stamp; }
 
         void setImageData(RefPtr<WebCore::SharedBuffer>&&);
-        WebCore::Image* image(const WebCore::IntSize&);
+        WebCore::NativeImagePtr image(const WebCore::IntSize&);
 
         String iconURL() { return m_iconURL; }
-
-        void loadImageFromResource(const char*);
 
         enum class ImageDataStatus { Present, Missing, Unknown };
         ImageDataStatus imageDataStatus();
@@ -113,7 +106,8 @@ private:
 
         String m_iconURL;
         time_t m_stamp { 0 };
-        RefPtr<WebCore::Image> m_image;
+        RefPtr<WebCore::SharedBuffer> m_imageData;
+        WebCore::NativeImagePtr m_image;
 
         HashSet<String> m_retainingPageURLs;
 
@@ -197,7 +191,8 @@ public:
     void setIconDataForIconURL(RefPtr<WebCore::SharedBuffer>&&, const String& iconURL);
     void setIconURLForPageURL(const String& iconURL, const String& pageURL);
 
-    WebCore::Image* synchronousIconForPageURL(const String&, const WebCore::IntSize&);
+    enum class IsKnownIcon { No, Yes };
+    std::pair<WebCore::NativeImagePtr, IsKnownIcon> synchronousIconForPageURL(const String&, const WebCore::IntSize&);
     String synchronousIconURLForPageURL(const String&);
     bool synchronousIconDataKnownForIconURL(const String&);
     IconLoadDecision synchronousLoadDecisionForIconURL(const String&);
