@@ -1,3 +1,18 @@
+2017-08-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Implement WebCore::standardUserAgent()
+        https://bugs.webkit.org/show_bug.cgi?id=175507
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Implement missing User-Agent handling for the WPE port by sharing the code with the GTK+ port.
+
+        * UIProcess/API/glib/WebKitSettings.cpp: Remove preprocessor conditionals for the WPE port.
+        (webkit_settings_set_user_agent):
+        (webkit_settings_set_user_agent_with_application_details):
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::standardUserAgent): Remove hardcoded value and make use of WebCore::standardUserAgent().
+
 2017-08-10  Sam Weinig  <sam@webkit.org>
 
         WTF::Function does not allow for reference / non-default constructible return types
