@@ -622,6 +622,8 @@ webrtc [ Pass ]
 webrtc/libwebrtc [ Skip ]
 # Some WebRTC features like datachannel are still not implemented
 webrtc/audio-replace-track.html [ Failure ]
+webrtc/audio-muted-stats.html [ Failure ]
+webrtc/audio-muted-stats2.html [ Failure ]
 webrtc/captureCanvas-webrtc.html [ Failure ]
 webrtc/clone-audio-track.html [ Failure ]
 webrtc/closing-peerconnection.html [ Timeout ]
@@ -1198,6 +1200,42 @@ fast/scrolling/scrolling-tree-includes-frame.html [ Skip ]
 
 # This test assumes that color on sliders is not reversed for RTL, so failing is good.
 fast/forms/range/input-appearance-range-rtl.html [ Failure ]
+
+# Service-workers implementation is not complete yet
+webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer-service-worker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-service-worker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-service-worker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/byte-length-queuing-strategy.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/count-queuing-strategy.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/close-propagation-backward.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/close-propagation-forward.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/flow-control.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/general.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/multiple-propagation.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/pipe-through.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/piping/transform-streams.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/brand-checks.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/cancel.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/default-reader.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/general.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/pipe-through.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/readable-stream-reader.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/tee.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/templated.serviceworker.https.html [ Failure ]
+webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.serviceworker.https.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -3362,6 +3400,15 @@ webkit.org/b/175134 fast/text/line-height-minimumFontSize.html [ Failure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-text-zoom.html [ ImageOnlyFailure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-visual.html [ ImageOnlyFailure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-zoom.html [ ImageOnlyFailure ]
+
+webkit.org/b/175418 accessibility/add-children-pseudo-element.html [ Failure ]
+
+webkit.org/b/175420 fullscreen/requestFullscreen-escape-key.html [ Failure ]
+
+webkit.org/b/175421 printing/width-overflow.html [ Failure ]
+
+webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failure ]
+webkit.org/b/175422 imported/w3c/web-platform-tests/beacon/headers/header-content-type.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

@@ -1,3 +1,9 @@
+2017-08-10  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations of several tests failing at r220516.
+
+        * platform/gtk/TestExpectations:
+
 2017-08-09  Nan Wang  <n_wang@apple.com>
 
         LayoutTest accessibility/presentation-role-iframe.html is a flaky failure
