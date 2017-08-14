@@ -1124,6 +1124,23 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
     unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
 
+void SpeculativeJIT::compilePushWithScope(Node* node)
+{
+    JSValueOperand scopeObject(this, node->child1());
+    SpeculateCellOperand currentScope(this, node->child2());
+    JSValueRegs scopeObjectRegs = scopeObject.jsValueRegs();
+    GPRReg currentScopeGPR = currentScope.gpr();
+
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    
+    flushRegisters();
+    callOperation(operationPushWithScope, resultGPR, currentScopeGPR, scopeObjectRegs);
+    m_jit.exceptionCheck();
+    
+    cellResult(resultGPR, node);
+}
+
 bool SpeculativeJIT::nonSpeculativeCompare(Node* node, MacroAssembler::RelationalCondition cond, S_JITOperation_EJJ helperFunction)
 {
     unsigned branchIndexInBlock = detectPeepHoleBranch();

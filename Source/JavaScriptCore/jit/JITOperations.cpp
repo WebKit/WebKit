@@ -57,6 +57,7 @@
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
 #include "JSPropertyNameEnumerator.h"
+#include "JSWithScope.h"
 #include "ModuleProgramCodeBlock.h"
 #include "ObjectConstructor.h"
 #include "PolymorphicAccess.h"
@@ -1993,6 +1994,20 @@ size_t JIT_OPERATION operationDeleteByVal(ExecState* exec, EncodedJSValue encode
     if (!couldDelete && exec->codeBlock()->isStrictMode())
         throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
     return couldDelete;
+}
+
+JSCell* JIT_OPERATION operationPushWithScope(ExecState* exec, JSCell* currentScopeCell, EncodedJSValue scopeObjectValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* newScope = JSValue::decode(scopeObjectValue).toObject(exec);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    JSScope* currentScope = jsCast<JSScope*>(currentScopeCell);
+
+    return JSWithScope::create(vm, exec->lexicalGlobalObject(), newScope, currentScope);
 }
 
 EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedProto)

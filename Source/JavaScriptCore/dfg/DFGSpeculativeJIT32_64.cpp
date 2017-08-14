@@ -5017,6 +5017,11 @@ void SpeculativeJIT::compile(Node* node)
         compileCreateActivation(node);
         break;
     }
+
+    case PushWithScope: {
+        compilePushWithScope(node);
+        break;
+    }
         
     case CreateDirectArguments: {
         compileCreateDirectArguments(node);

@@ -1,3 +1,40 @@
+2017-08-14  Robin Morisset  <rmorisset@apple.com>
+
+        Support the 'with' keyword in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=175470
+
+        Reviewed by Saam Barati.
+
+        Not particularly optimized at the moment, the goal is just to avoid
+        the DFG bailing out of any function with this keyword.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePushWithScope):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2017-08-14  Mark Lam  <mark.lam@apple.com>
 
         Add some convenience utility accessor methods to MacroAssembler::CPUState.

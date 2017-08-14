@@ -478,7 +478,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(HeapObjectCount);
         return;
     }
-        
+
     case CreateDirectArguments:
     case CreateScopedArguments:
     case CreateClonedArguments:
@@ -604,6 +604,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PutDynamicVar:
     case ResolveScopeForHoistingFuncDeclInEval:
     case ResolveScope:
+    case PushWithScope:
         read(World);
         write(Heap);
         return;

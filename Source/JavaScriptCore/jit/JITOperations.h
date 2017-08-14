@@ -212,6 +212,7 @@ typedef JSCell* (JIT_OPERATION *C_JITOperation_EStZZ)(ExecState*, Structure*, in
 typedef JSCell* (JIT_OPERATION *C_JITOperation_EZ)(ExecState*, int32_t);
 typedef JSCell* (JIT_OPERATION *C_JITOperation_EJscI)(ExecState*, JSScope*, UniquedStringImpl*);
 typedef JSCell* (JIT_OPERATION *C_JITOperation_ECJZ)(ExecState*, JSCell*, EncodedJSValue, int32_t);
+typedef JSCell* (JIT_OPERATION *C_JITOperation_ECJ)(ExecState*, JSCell*, EncodedJSValue);
 typedef double (JIT_OPERATION *D_JITOperation_D)(double);
 typedef double (JIT_OPERATION *D_JITOperation_G)(JSGlobalObject*);
 typedef double (JIT_OPERATION *D_JITOperation_DD)(double, double);
@@ -418,6 +419,7 @@ EncodedJSValue JIT_OPERATION operationDeleteByIdJSResult(ExecState*, EncodedJSVa
 size_t JIT_OPERATION operationDeleteById(ExecState*, EncodedJSValue base, UniquedStringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationDeleteByValJSResult(ExecState*, EncodedJSValue base, EncodedJSValue target) WTF_INTERNAL;
 size_t JIT_OPERATION operationDeleteByVal(ExecState*, EncodedJSValue base, EncodedJSValue target) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationPushWithScope(ExecState*, JSCell* currentScopeCell, EncodedJSValue scopeObject) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationGetPNames(ExecState*, JSObject*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState*, EncodedJSValue, EncodedJSValue proto) WTF_INTERNAL;
 int32_t JIT_OPERATION operationSizeFrameForForwardArguments(ExecState*, EncodedJSValue arguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset) WTF_INTERNAL;

@@ -294,6 +294,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case MakeRope:
     case In:
     case HasOwnProperty:
+    case PushWithScope:
     case CreateActivation:
     case CreateDirectArguments:
     case CreateScopedArguments:

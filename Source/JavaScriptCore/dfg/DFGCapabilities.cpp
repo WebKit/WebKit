@@ -245,6 +245,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_new_async_func_exp:
     case op_set_function_name:
     case op_create_lexical_environment:
+    case op_push_with_scope:
     case op_get_parent_scope:
     case op_catch:
     case op_create_rest:

@@ -2062,6 +2062,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case PushWithScope:
+        clobberWorld(node->origin.semantic, clobberLimit);
+
+        // We don't use the more precise withScopeStructure() here because it is a LazyProperty and may not yet be allocated.
+        forNode(node).setType(m_graph, SpecObjectOther);
+        break;
+
     case CreateActivation:
     case MaterializeCreateActivation:
         forNode(node).set(

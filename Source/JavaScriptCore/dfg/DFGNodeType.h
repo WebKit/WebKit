@@ -359,6 +359,7 @@ namespace JSC { namespace DFG {
     macro(HasOwnProperty, NodeResultBoolean) \
     \
     macro(CreateActivation, NodeResultJS) \
+    macro(PushWithScope, NodeResultJS | NodeMustGenerate) \
     \
     macro(CreateDirectArguments, NodeResultJS) \
     macro(PhantomDirectArguments, NodeResultJS | NodeMustGenerate) \

@@ -895,6 +895,7 @@ private:
             break;
         }
             
+        case PushWithScope:
         case CreateActivation: {
             setPrediction(SpecObjectOther);
             break;

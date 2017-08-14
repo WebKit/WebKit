@@ -1717,6 +1717,12 @@ private:
             break;
         }
 
+        case PushWithScope: {
+            // Child2 is always the current scope, which is guaranteed to be an object.
+            fixEdge<KnownCellUse>(node->child2());
+            break;
+        }
+
         case SetFunctionName: {
             // The first child is guaranteed to be a cell because op_set_function_name is only used
             // on a newly instantiated function object (the first child).

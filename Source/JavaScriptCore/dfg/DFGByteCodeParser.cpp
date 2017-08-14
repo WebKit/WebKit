@@ -5639,6 +5639,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_create_lexical_environment);
         }
 
+        case op_push_with_scope: {
+            Node* scopeObject = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* currentScope = get(VirtualRegister(currentInstruction[3].u.operand));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(PushWithScope, scopeObject, currentScope));
+            NEXT_OPCODE(op_push_with_scope);
+        }
+
         case op_get_parent_scope: {
             Node* currentScope = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* newScope = addToGraph(SkipScope, currentScope);
