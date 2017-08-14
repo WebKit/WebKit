@@ -1,3 +1,21 @@
+2017-08-09  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] Create JSSet constructor that accepts it's size as parameter
+        https://bugs.webkit.org/show_bug.cgi?id=173297
+
+        Reviewed by Saam Barati.
+
+        This patch is adding a new constructor to JSSet that gives its
+        expected initial size. It is important to avoid re-hashing and mutiple
+        allocations when we know the final size of JSSet, such as in
+        CodeBlock::setConstantIdentifierSetRegisters.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setConstantIdentifierSetRegisters):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapImpl::HashMapImpl):
+        * runtime/JSSet.h:
+
 2017-08-09  Caitlin Potter  <caitp@igalia.com>
 
         Early error on ANY operator before new.target

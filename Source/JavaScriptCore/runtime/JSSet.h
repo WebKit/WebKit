@@ -47,7 +47,12 @@ public:
 
     static JSSet* create(ExecState* exec, VM& vm, Structure* structure)
     {
-        JSSet* instance = new (NotNull, allocateCell<JSSet>(vm.heap)) JSSet(vm, structure);
+        return create(exec, vm, structure, 0);
+    }
+
+    static JSSet* create(ExecState* exec, VM& vm, Structure* structure, uint32_t size)
+    {
+        JSSet* instance = new (NotNull, allocateCell<JSSet>(vm.heap)) JSSet(vm, structure, size);
         instance->finishCreation(exec, vm);
         return instance;
     }
@@ -59,6 +64,11 @@ public:
 private:
     JSSet(VM& vm, Structure* structure)
         : Base(vm, structure)
+    {
+    }
+
+    JSSet(VM& vm, Structure* structure, uint32_t sizeHint)
+        : Base(vm, structure, sizeHint)
     {
     }
 
