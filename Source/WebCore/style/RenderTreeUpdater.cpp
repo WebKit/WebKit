@@ -164,8 +164,9 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         if (is<Text>(node)) {
             auto& text = downcast<Text>(node);
-            if (parent().styleChange == Style::Detach || m_styleUpdate->textUpdate(text) || m_invalidatedWhitespaceOnlyTextSiblings.contains(&text))
-                updateTextRenderer(text);
+            auto* textUpdate = m_styleUpdate->textUpdate(text);
+            if (parent().styleChange == Style::Detach || textUpdate || m_invalidatedWhitespaceOnlyTextSiblings.contains(&text))
+                updateTextRenderer(text, textUpdate);
 
             it.traverseNextSkippingChildren();
             continue;
@@ -443,13 +444,16 @@ static void createTextRenderer(Text& textNode, RenderTreePosition& renderTreePos
     renderTreePosition.insert(*newRenderer.leakPtr());
 }
 
-void RenderTreeUpdater::updateTextRenderer(Text& text)
+void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate)
 {
-    bool hasRenderer = text.renderer();
+    auto* existingRenderer = text.renderer();
     bool needsRenderer = textRendererIsNeeded(text, renderTreePosition());
-    if (hasRenderer) {
-        if (needsRenderer)
+    if (existingRenderer) {
+        if (needsRenderer) {
+            if (textUpdate)
+                existingRenderer->setTextWithOffset(text.data(), textUpdate->offset, textUpdate->length);
             return;
+        }
         tearDownRenderer(text);
         invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(text);
         return;

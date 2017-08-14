@@ -1,3 +1,41 @@
+2017-08-10  Antti Koivisto  <antti@apple.com>
+
+        Text renderer updates should be done by RenderTreeUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=175417
+
+        Reviewed by Andreas Kling.
+
+        All render tree mutations should be done by RenderTreeUpdater. Currently
+        Text::updateRendererAfterContentChange calls RenderText::setTextWithOffset directly.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateTextRenderer):
+
+            Add range argument.
+
+        * dom/Document.h:
+        * dom/Text.cpp:
+        (WebCore::Text::updateRendererAfterContentChange):
+
+            Remove call to setTextWithOffset and pass the range to updateTextRenderer
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+        (WebCore::RenderTreeUpdater::updateTextRenderer):
+
+            Call setTextWithOffset here.
+
+        * style/RenderTreeUpdater.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        * style/StyleUpdate.cpp:
+        (WebCore::Style::Update::textUpdate const):
+        (WebCore::Style::Update::addText):
+
+            Add TextUpdate struct similar to ElementUpdate to pass the range to the RenderTreeUpdater.
+
+        * style/StyleUpdate.h:
+
 2017-08-09  Don Olmstead  <don.olmstead@sony.com>
 
         [WTF] Move TextStream into WTF
