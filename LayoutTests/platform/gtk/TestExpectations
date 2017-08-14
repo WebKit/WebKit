@@ -1896,9 +1896,6 @@ webkit.org/b/174353 media/video-restricted-invisible-autoplay-not-allowed.html [
 
 webkit.org/b/174354 imported/w3c/IndexedDB-private-browsing/idbfactory_open.html [ Crash Pass ]
 
-webkit.org/b/175478 compositing/images/positioned-image-content-rect.html [ Pass ImageOnlyFailure ]
-webkit.org/b/175478 compositing/images/truncated-direct-png-image.html [ Pass ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3413,13 +3410,6 @@ webkit.org/b/175421 printing/width-overflow.html [ Failure ]
 
 webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failure ]
 webkit.org/b/175422 imported/w3c/web-platform-tests/beacon/headers/header-content-type.html [ Failure ]
-
-webkit.org/b/175478 compositing/contents-opaque/opaque-with-clip-path.html [ ImageOnlyFailure ]
-webkit.org/b/175478 compositing/masks/compositing-clip-path-and-mask.html [ ImageOnlyFailure ]
-webkit.org/b/175478 compositing/masks/compositing-clip-path.html [ ImageOnlyFailure ]
-webkit.org/b/175478 compositing/masks/compositing-clip-path-origin.html [ ImageOnlyFailure ]
-webkit.org/b/175478 compositing/masks/reference-clip-path-on-composited.html [ ImageOnlyFailure ]
-webkit.org/b/175478 css3/filters/animation-from-initial-values-with-color-matrix.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
