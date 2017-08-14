@@ -1,3 +1,10 @@
+2017-08-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed fix after r220622 to address crashes on iOS.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::finishLoading):
+
 2017-08-14  Antti Koivisto  <antti@apple.com>
 
         Factor text autosizing into a class
