@@ -72,9 +72,6 @@
 
 .completion-suggestions-container:not(:active) > .item.selected,
 .completion-suggestions-container > .item:active {
-    box-shadow: inset hsl(207, 54%, 57%) 0 1px 0;
-    background: linear-gradient(to bottom, hsl(207, 57%, 63%), hsl(207, 66%, 42%));
-
+    background-color: var(--selected-background-color);
     color: white;
-    text-shadow: hsl(209, 41%, 34%) 0 1px 0;
 }

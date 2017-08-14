@@ -52,13 +52,15 @@
     --button-background-color: white;
     --button-background-color-pressed: hsl(0, 0%, 85%);
 
-    --panel-background-color: hsl(0, 0%, 94%);
+    --panel-background-color: hsl(0, 0%, 93%);
     --panel-background-color-light: hsl(0, 0%, 96%);
 
     --console-secondary-text-color: hsla(0, 0%, 0%, 0.33);
     --console-prompt-min-height: 30px;
 
-    --text-color-gray-medium: hsl(0, 0%, 50%);
+    --sidebar-no-results-message-font-size: 16px;
+
+    --text-color-gray-medium: hsl(0, 0%, 52%);
     --error-text-color: hsl(0, 86%, 47%);
 
     --value-changed-highlight: hsla(83, 100%, 48%, 0.4);

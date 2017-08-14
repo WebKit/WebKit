@@ -55,7 +55,6 @@
 
 .sidebar > .panel.details.css-style > .content > .pseudo-classes > .group > label {
     color: hsl(0, 0%, 37%);
-    text-shadow: white 0 1px 0;
 
     margin: 0 5px;
     min-width: 55px;

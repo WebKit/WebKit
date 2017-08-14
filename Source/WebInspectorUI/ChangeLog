@@ -1,3 +1,44 @@
+2017-08-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Remove text-shadow and gradient backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=175430
+
+        Reviewed by Brian Burg.
+
+        Inspector should more closely match flat system look. Remove text-shadow
+        embossing and replace linear gradients in popover backgrounds and selected
+        tree item background color.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .pseudo-classes > .group > label):
+        * UserInterface/Views/CompletionSuggestionsView.css:
+        (.completion-suggestions-container:not(:active) > .item.selected,):
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (.toolbar .dashboard.debugger):
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        (.hierarchical-path-component > .title):
+        * UserInterface/Views/Main.css:
+        (.bouncy-highlight):
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation > .content .empty-content-placeholder > .message):
+        * UserInterface/Views/Popover.js:
+        (WI.Popover.prototype._drawBackground):
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.css:
+        (.sidebar > .details.recording-trace > .content > .no-trace-data > .message):
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .rules .label):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results > .no-filter-results-message):
+        (@media (-webkit-min-device-pixel-ratio: 2)): Deleted.
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label.filter-matching-label,): Deleted.
+        * UserInterface/Views/RulesStyleSpreadsheetDetailsPanel.css:
+        (.style-spreadsheet .inherited):
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.tree-outline.timeline-data-grid .item:hover):
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WI.TimelineDataGrid.prototype._createPopoverContent):
+        * UserInterface/Views/Variables.css:
+        (:root):
+
 2017-08-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Clicking on suggestion hint should apply it, not dismiss

@@ -24,13 +24,9 @@
  */
 
 .tree-outline.timeline-data-grid .item:hover {
+    border-radius: 3px;
     color: white;
-    border-radius: 4px;
-    box-shadow: inset hsl(207, 54%, 57%) 0 1px 0;
-    background: linear-gradient(to bottom, hsl(207, 57%, 63%), hsl(207, 66%, 42%));
-    background-origin: padding-box;
-    background-clip: padding-box;
-    text-shadow: hsl(209, 41%, 34%) 0 1px 0;
+    background-color: var(--selected-background-color);
 }
 
 .tree-outline.timeline-data-grid .item:hover .subtitle {

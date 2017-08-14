@@ -29,7 +29,6 @@
 
 .sidebar > .panel.details.css-style .rules .label {
     color: hsl(0, 0%, 60%);
-    text-shadow: white 0 1px 0;
     padding: 0 8px;
 }
 
@@ -83,18 +82,7 @@
 }
 
 .sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results > .no-filter-results-message {
-    font-size: 13px;
-    color: white;
-    background-color: hsla(0, 0%, 0%, 0.15);
-    text-shadow: hsla(0, 0%, 0%, 0.2) 0 1px 0;
-    box-shadow: inset hsla(0, 0%, 0%, 0.2) 0 1px 0, hsla(0, 0%, 100%, 0.4) 0 1px 0;
-    border-radius: 6px;
     padding: 5px 15px 6px;
-}
-
-@media (-webkit-min-device-pixel-ratio: 2) {
-    .sidebar > .panel.details.css-style > .content.filter-in-progress > .rules .label.filter-matching-label,
-    .no-filter-results-message {
-        border-width: 0.5px !important;
-    }
+    font-size: var(--sidebar-no-results-message-font-size);
+    color: var(--text-color-gray-medium);
 }

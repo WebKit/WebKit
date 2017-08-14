@@ -422,11 +422,8 @@ WI.Popover = class Popover extends WI.Object
         this._drawFrame(ctx, bounds, this._edge, this._anchorPoint);
         ctx.clip();
 
-        // Gradient fill, top-to-bottom.
-        var fillGradient = ctx.createLinearGradient(0, 0, 0, height);
-        fillGradient.addColorStop(0, "rgba(255, 255, 255, 0.95)");
-        fillGradient.addColorStop(1, "rgba(235, 235, 235, 0.95)");
-        ctx.fillStyle = fillGradient;
+        // Panel background color fill.
+        ctx.fillStyle = "rgb(236, 236, 236)";
         ctx.fillRect(0, 0, width, height);
 
         // Stroke.

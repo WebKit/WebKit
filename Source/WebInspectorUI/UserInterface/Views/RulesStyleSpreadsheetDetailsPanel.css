@@ -104,7 +104,6 @@
 
 .style-spreadsheet .inherited {
     color: hsl(0, 0%, 60%);
-    text-shadow: white 0 1px 0;
     padding: 4px 6px;
     border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.2);
 }

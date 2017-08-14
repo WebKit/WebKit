@@ -502,8 +502,7 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
             this._popoverCallStackTreeOutline.appendChild(callFrameTreeElement);
         }
 
-        var content = document.createElement("div");
-        content.className = "timeline-data-grid-popover";
+        let content = document.createElement("div");
         content.appendChild(this._popoverCallStackTreeOutline.element);
         return content;
     }

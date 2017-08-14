@@ -326,10 +326,8 @@ body[dir=rtl] .go-to-arrow {
     z-index: var(--z-index-highlight);
 
     box-shadow: inset hsl(50, 91%, 76%) 0 -1px 0, hsl(52, 56%, 60%) 0 1px 1px, hsla(0, 0%, 0%, 0.33) 0 1px 2px 1px;
-    text-shadow: white 0 0 2px;
 
-    background: linear-gradient(to bottom, hsl(54, 93%, 70%), hsl(50, 84%, 67%));
-    border-radius: 7px;
+    background-color: hsl(54, 93%, 70%);
 
     padding: 2px 4px;
     margin-top: -2px;
