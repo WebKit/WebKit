@@ -55,14 +55,11 @@ ExceptionOr<Node*> TreeWalker::parentNode()
         if (!node)
             return nullptr;
 
-        auto callbackResult = acceptNode(*node);
-        if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-            return Exception { ExistingExceptionError };
+        auto filterResult = acceptNode(*node);
+        if (filterResult.hasException())
+            return filterResult.releaseException();
 
-        ASSERT(callbackResult.type() == CallbackResultType::Success);
-
-        auto acceptNodeResult = callbackResult.releaseReturnValue();
-        if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
+        if (filterResult.returnValue() == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.releaseNonNull());
     }
     return nullptr;
@@ -71,14 +68,11 @@ ExceptionOr<Node*> TreeWalker::parentNode()
 ExceptionOr<Node*> TreeWalker::firstChild()
 {
     for (RefPtr<Node> node = m_current->firstChild(); node; ) {
-        auto callbackResult = acceptNode(*node);
-        if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-            return Exception { ExistingExceptionError };
+        auto filterResult = acceptNode(*node);
+        if (filterResult.hasException())
+            return filterResult.releaseException();
 
-        ASSERT(callbackResult.type() == CallbackResultType::Success);
-
-        auto acceptNodeResult = callbackResult.releaseReturnValue();
-        switch (acceptNodeResult) {
+        switch (filterResult.returnValue()) {
             case NodeFilter::FILTER_ACCEPT:
                 m_current = node.releaseNonNull();
                 return m_current.ptr();
@@ -108,14 +102,11 @@ ExceptionOr<Node*> TreeWalker::firstChild()
 ExceptionOr<Node*> TreeWalker::lastChild()
 {
     for (RefPtr<Node> node = m_current->lastChild(); node; ) {
-        auto callbackResult = acceptNode(*node);
-        if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-            return Exception { ExistingExceptionError };
+        auto filterResult = acceptNode(*node);
+        if (filterResult.hasException())
+            return filterResult.releaseException();
 
-        ASSERT(callbackResult.type() == CallbackResultType::Success);
-
-        auto acceptNodeResult = callbackResult.releaseReturnValue();
-        switch (acceptNodeResult) {
+        switch (filterResult.returnValue()) {
             case NodeFilter::FILTER_ACCEPT:
                 m_current = node.releaseNonNull();
                 return m_current.ptr();
@@ -151,34 +142,28 @@ template<TreeWalker::SiblingTraversalType type> ExceptionOr<Node*> TreeWalker::t
     auto isNext = type == SiblingTraversalType::Next;
     while (true) {
         for (RefPtr<Node> sibling = isNext ? node->nextSibling() : node->previousSibling(); sibling; ) {
-            auto callbackResult = acceptNode(*sibling);
-            if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-                return Exception { ExistingExceptionError };
+            auto filterResult = acceptNode(*sibling);
+            if (filterResult.hasException())
+                return filterResult.releaseException();
 
-            ASSERT(callbackResult.type() == CallbackResultType::Success);
-
-            auto acceptNodeResult = callbackResult.releaseReturnValue();
-            if (acceptNodeResult == NodeFilter::FILTER_ACCEPT) {
+            if (filterResult.returnValue() == NodeFilter::FILTER_ACCEPT) {
                 m_current = sibling.releaseNonNull();
                 return m_current.ptr();
             }
             node = sibling;
             sibling = isNext ? sibling->firstChild() : sibling->lastChild();
-            if (acceptNodeResult == NodeFilter::FILTER_REJECT || !sibling)
+            if (filterResult.returnValue() == NodeFilter::FILTER_REJECT || !sibling)
                 sibling = isNext ? node->nextSibling() : node->previousSibling();
         }
         node = node->parentNode();
         if (!node || node == &root())
             return nullptr;
 
-        auto callbackResult = acceptNode(*node);
-        if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-            return Exception { ExistingExceptionError };
+        auto filterResult = acceptNode(*node);
+        if (filterResult.hasException())
+            return filterResult.releaseException();
 
-        ASSERT(callbackResult.type() == CallbackResultType::Success);
-
-        auto acceptNodeResult = callbackResult.releaseReturnValue();
-        if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
+        if (filterResult.returnValue() == NodeFilter::FILTER_ACCEPT)
             return nullptr;
     }
 }
@@ -200,25 +185,21 @@ ExceptionOr<Node*> TreeWalker::previousNode()
         while (Node* previousSibling = node->previousSibling()) {
             node = previousSibling;
 
-            auto callbackResult = acceptNode(*node);
-            if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-                return Exception { ExistingExceptionError };
+            auto filterResult = acceptNode(*node);
+            if (filterResult.hasException())
+                return filterResult.releaseException();
 
-            ASSERT(callbackResult.type() == CallbackResultType::Success);
-
-            auto acceptNodeResult = callbackResult.releaseReturnValue();
+            auto acceptNodeResult = filterResult.returnValue();
             if (acceptNodeResult == NodeFilter::FILTER_REJECT)
                 continue;
             while (Node* lastChild = node->lastChild()) {
                 node = lastChild;
 
-                auto callbackResult = acceptNode(*node);
-                if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-                    return Exception { ExistingExceptionError };
+                auto filterResult = acceptNode(*node);
+                if (filterResult.hasException())
+                    return filterResult.releaseException();
 
-                ASSERT(callbackResult.type() == CallbackResultType::Success);
-
-                acceptNodeResult = callbackResult.releaseReturnValue();
+                acceptNodeResult = filterResult.returnValue();
                 if (acceptNodeResult == NodeFilter::FILTER_REJECT)
                     break;
             }
@@ -234,14 +215,11 @@ ExceptionOr<Node*> TreeWalker::previousNode()
             return nullptr;
         node = parent;
 
-        auto callbackResult = acceptNode(*node);
-        if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-            return Exception { ExistingExceptionError };
+        auto filterResult = acceptNode(*node);
+        if (filterResult.hasException())
+            return filterResult.releaseException();
 
-        ASSERT(callbackResult.type() == CallbackResultType::Success);
-
-        auto acceptNodeResult = callbackResult.releaseReturnValue();
-        if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
+        if (filterResult.returnValue() == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.releaseNonNull());
     }
     return nullptr;
@@ -254,31 +232,25 @@ Children:
     while (Node* firstChild = node->firstChild()) {
         node = firstChild;
 
-        auto callbackResult = acceptNode(*node);
-        if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-            return Exception { ExistingExceptionError };
+        auto filterResult = acceptNode(*node);
+        if (filterResult.hasException())
+            return filterResult.releaseException();
 
-        ASSERT(callbackResult.type() == CallbackResultType::Success);
-
-        auto acceptNodeResult = callbackResult.releaseReturnValue();
-        if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
+        if (filterResult.releaseReturnValue() == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.releaseNonNull());
-        if (acceptNodeResult == NodeFilter::FILTER_REJECT)
+        if (filterResult.returnValue() == NodeFilter::FILTER_REJECT)
             break;
     }
     while (Node* nextSibling = NodeTraversal::nextSkippingChildren(*node, &root())) {
         node = nextSibling;
 
-        auto callbackResult = acceptNode(*node);
-        if (callbackResult.type() == CallbackResultType::ExceptionThrown)
-            return Exception { ExistingExceptionError };
+        auto filterResult = acceptNode(*node);
+        if (filterResult.hasException())
+            return filterResult.releaseException();
 
-        ASSERT(callbackResult.type() == CallbackResultType::Success);
-
-        auto acceptNodeResult = callbackResult.releaseReturnValue();
-        if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
+        if (filterResult.returnValue() == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.releaseNonNull());
-        if (acceptNodeResult == NodeFilter::FILTER_SKIP)
+        if (filterResult.returnValue() == NodeFilter::FILTER_SKIP)
             goto Children;
     }
     return nullptr;

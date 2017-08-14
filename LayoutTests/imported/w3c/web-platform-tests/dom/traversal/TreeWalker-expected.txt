@@ -1,4 +1,5 @@
 
+PASS Recursive filters need to throw 
 PASS document.createTreeWalker(paras[0], 0, null) 
 PASS document.createTreeWalker(paras[0], 0, (function(node) { return true })) 
 PASS document.createTreeWalker(paras[0], 0, (function(node) { return false })) 

@@ -1,3 +1,35 @@
+2017-08-09  Chris Dumez  <cdumez@apple.com>
+
+        Reinstate active flag for iterators
+        https://bugs.webkit.org/show_bug.cgi?id=175312
+
+        Reviewed by Sam Weinig.
+
+        NodeIterator / TreeWalker should no longer allow recursive filters
+        after the following change to the DOM specification:
+        - https://github.com/whatwg/dom/pull/359
+
+        This patch aligns our behavior with the latest specification.
+
+        No new tests, updated existing tests.
+
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::nextNode):
+        (WebCore::NodeIterator::previousNode):
+        Note that we now also call m_candidateNode.clear() before returning an
+        exception. This was a pre-existing bug that we failed to do so in the
+        exception case but it became more obvious after this change now that
+        we throw. This was causing traversal/moz-bug559526.html to fail
+        otherwise (the filter was called one too many times). The test case
+        is passing in Firefox (The filter is called 4 times and they throw
+        each time).
+
+        * dom/Traversal.cpp:
+        (WebCore::NodeIteratorBase::NodeIteratorBase):
+        (WebCore::NodeIteratorBase::acceptNode):
+        * dom/Traversal.h:
+        * dom/TreeWalker.cpp:
+
 2017-08-09  Antti Koivisto  <antti@apple.com>
 
         RenderQuote should not mutate render tree
