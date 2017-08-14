@@ -1,3 +1,24 @@
+2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Run more WTF tests
+        https://bugs.webkit.org/show_bug.cgi?id=174970
+
+        Reviewed by Michael Catanzaro.
+
+        Some of WTF tests are not executed in non Apple ports while they are generic ones.
+        This patch adds these tests to non-Apple port TestWebKitAPI.
+        Currently, we do not add Signals.cpp since it depends on signal functionality.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/PriorityQueue.cpp:
+        (isHigherPriority):
+        (TEST):
+        * TestWebKitAPI/Tests/WTF/Signals.cpp: Copied from Tools/TestWebKitAPI/Tests/WTF/ThreadMessages.cpp.
+        (TEST):
+        * TestWebKitAPI/Tests/WTF/ThreadMessages.cpp:
+        (TEST):
+
 2017-08-10  Tim Horton  <timothy_horton@apple.com>
 
         Remove some unused lambda captures so that WebKit builds with -Wunused-lambda-capture

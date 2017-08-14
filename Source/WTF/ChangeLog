@@ -1,3 +1,14 @@
+2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Run more WTF tests
+        https://bugs.webkit.org/show_bug.cgi?id=174970
+
+        Reviewed by Michael Catanzaro.
+
+        CHAR_BIT is not defined.
+
+        * wtf/LEBDecoder.h:
+
 2017-08-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] ThreadSpecific should not introduce additional indirection

@@ -42,10 +42,10 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/AtomicString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/BloomFilter.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/CrossThreadTask.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CheckedArithmeticOperations.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Condition.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/CrossThreadTask.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/DateMath.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Deque.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/EnumTraits.cpp
@@ -55,6 +55,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashMap.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/IntegerToStringConversion.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/LEBDecoder.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/LifecycleLogger.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ListHashSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Lock.cpp
@@ -68,6 +69,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Optional.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/OptionSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ParkingLot.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/PriorityQueue.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RedBlackTree.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Ref.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RefCounter.cpp
@@ -79,12 +81,15 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ScopedLambda.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/SetForScope.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringBuilder.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/StringConcatenate.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringHasher.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringImpl.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringOperators.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringView.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/SynchronizedFixedQueue.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/TextBreakIterator.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ThreadGroup.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/ThreadMessages.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Time.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/UniqueRef.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Variant.cpp
