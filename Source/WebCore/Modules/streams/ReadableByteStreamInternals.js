@@ -64,14 +64,14 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
     this.@started = false;
     this.@closeRequested = false;
 
-    let hwm = @Number(highWaterMark);
+    let hwm = @toNumber(highWaterMark);
     if (@isNaN(hwm) || hwm < 0)
         @throwRangeError("highWaterMark value is negative or not a number");
     this.@strategyHWM = hwm;
 
     let autoAllocateChunkSize = underlyingByteSource.autoAllocateChunkSize;
     if (autoAllocateChunkSize !== @undefined) {
-        autoAllocateChunkSize = @Number(autoAllocateChunkSize);
+        autoAllocateChunkSize = @toNumber(autoAllocateChunkSize);
         if (autoAllocateChunkSize <= 0 || autoAllocateChunkSize === @Number.POSITIVE_INFINITY || autoAllocateChunkSize === @Number.NEGATIVE_INFINITY)
             @throwRangeError("autoAllocateChunkSize value is negative or equal to positive or negative infinity");
     }
@@ -393,7 +393,7 @@ function readableByteStreamControllerRespond(controller, bytesWritten)
 {
     "use strict";
 
-    bytesWritten = @Number(bytesWritten);
+    bytesWritten = @toNumber(bytesWritten);
 
     if (@isNaN(bytesWritten) || bytesWritten === @Number.POSITIVE_INFINITY || bytesWritten < 0 )
         @throwRangeError("bytesWritten has an incorrect value");
