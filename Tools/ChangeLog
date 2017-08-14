@@ -1,3 +1,15 @@
+2017-08-14  Chris Dumez  <cdumez@apple.com>
+
+        Address flakiness related to download tests
+        https://bugs.webkit.org/show_bug.cgi?id=175338
+        <rdar://problem/33865119>
+
+        Unreviewed, forgot in r220626 to reset m_shouldLogDownloadCallbacks to false
+        between tests.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2017-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace DATA_TRANSFER_ITEMS by a runtime flag and add a stub implementation

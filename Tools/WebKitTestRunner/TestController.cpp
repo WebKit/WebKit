@@ -823,6 +823,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
 
     m_shouldBlockAllPlugins = false;
 
+    m_shouldLogDownloadCallbacks = false;
     m_shouldLogHistoryClientCallbacks = false;
     m_shouldLogCanAuthenticateAgainstProtectionSpace = false;
 
