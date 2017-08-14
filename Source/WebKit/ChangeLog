@@ -1,3 +1,16 @@
+2017-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Crash in IconDatabase::IconRecord::setImageData()
+        https://bugs.webkit.org/show_bug.cgi?id=175527
+
+        Reviewed by Žan Doberšek.
+
+        The problem is that when setImageData() is called from IconDatabase::readFromDatabase() the shared buffer might
+        be nullptr, because getImageDataForIconURLFromSQLDatabase() returns nullptr if the icon data is not in the database.
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::IconRecord::setImageData): Return early if passed in buffer is nullptr.
+
 2017-08-13  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Composition underline color is always black

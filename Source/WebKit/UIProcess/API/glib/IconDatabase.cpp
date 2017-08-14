@@ -120,7 +120,7 @@ void IconDatabase::IconRecord::setImageData(RefPtr<SharedBuffer>&& data)
     m_imageData = WTFMove(data);
     m_image = nullptr;
 
-    if (!m_imageData->size()) {
+    if (!m_imageData || !m_imageData->size()) {
         m_imageData = nullptr;
         return;
     }
