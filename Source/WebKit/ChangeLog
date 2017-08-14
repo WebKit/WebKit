@@ -1,3 +1,37 @@
+2017-08-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Simplify CoordinatedGraphicsScene state updates
+        https://bugs.webkit.org/show_bug.cgi?id=175528
+
+        Reviewed by Carlos Garcia Campos.
+
+        Hold the information about state updates in ThreadedCompositor, in the
+        m_attributes struct. This way we don't need to store the updates in
+        functors and accumulate them in the CoordinatedGraphicsScene class, but
+        instead just apply any pending state update or atlas removal before the
+        scene is rendered.
+
+        This removes the need to update the CoordinatedGraphicsScene object from
+        the main thread with data that ultimately has to be handled on the
+        composition thread. Similarly, when updating CoordinatedGraphicsScene, we
+        only need to synchronize on the m_attributes lock object once in order to
+        retrieve the scene update information, instead of having each functor do
+        that repeatedly.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::applyStateChanges):
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        (WebKit::CoordinatedGraphicsScene::detach):
+        (WebKit::CoordinatedGraphicsScene::setActive):
+        (WebKit::CoordinatedGraphicsScene::syncRemoteContent): Deleted.
+        (WebKit::CoordinatedGraphicsScene::appendUpdate): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        (WebKit::ThreadedCompositor::updateSceneState):
+        (WebKit::ThreadedCompositor::releaseUpdateAtlases):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2017-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Avoid emitting WebKitFaviconDatabase::favicon-changed multiple times while setting an icon
