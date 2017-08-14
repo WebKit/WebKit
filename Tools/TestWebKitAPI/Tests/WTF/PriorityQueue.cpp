@@ -76,7 +76,7 @@ TEST(WTF_PriorityQueue, Basic)
 TEST(WTF_PriorityQueue, CustomPriorityFunction)
 {
     const unsigned numElements = 10;
-    PriorityQueue<unsigned, isGreaterThan<unsigned>> queue;
+    PriorityQueue<unsigned, &isGreaterThan<unsigned>> queue;
 
     EXPECT_EQ(0_z, queue.size());
     EXPECT_TRUE(queue.isEmpty());
@@ -106,7 +106,7 @@ struct CompareMove {
 
 TEST(WTF_PriorityQueue, MoveOnly)
 {
-    PriorityQueue<MoveOnly, CompareMove<isLessThan<unsigned>>::compare> queue;
+    PriorityQueue<MoveOnly, &CompareMove<&isLessThan<unsigned>>::compare> queue;
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
@@ -123,7 +123,7 @@ TEST(WTF_PriorityQueue, MoveOnly)
 
 TEST(WTF_PriorityQueue, DecreaseKey)
 {
-    PriorityQueue<MoveOnly, CompareMove<isLessThan<unsigned>>::compare> queue;
+    PriorityQueue<MoveOnly, &CompareMove<&isLessThan<unsigned>>::compare> queue;
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
@@ -149,7 +149,7 @@ TEST(WTF_PriorityQueue, DecreaseKey)
 
 TEST(WTF_PriorityQueue, IncreaseKey)
 {
-    PriorityQueue<MoveOnly, CompareMove<isGreaterThan<unsigned>>::compare> queue;
+    PriorityQueue<MoveOnly, &CompareMove<&isGreaterThan<unsigned>>::compare> queue;
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
@@ -175,7 +175,7 @@ TEST(WTF_PriorityQueue, IncreaseKey)
 
 TEST(WTF_PriorityQueue, Iteration)
 {
-    PriorityQueue<MoveOnly, CompareMove<isGreaterThan<unsigned>>::compare> queue;
+    PriorityQueue<MoveOnly, &CompareMove<&isGreaterThan<unsigned>>::compare> queue;
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;

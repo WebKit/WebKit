@@ -37,7 +37,7 @@ namespace WTF {
 // 2) You can iterate the elements.
 // 3) It has in-place decrease/increaseKey methods, although they are still O(n) rather than O(log(n)).
 
-template<typename T, bool (*isHigherPriority)(const T&, const T&) = isLessThan<T>, size_t inlineCapacity = 0>
+template<typename T, bool (*isHigherPriority)(const T&, const T&) = &isLessThan<T>, size_t inlineCapacity = 0>
 class PriorityQueue {
     using BufferType = Vector<T, inlineCapacity>;
     using const_iterator = typename BufferType::const_iterator;
