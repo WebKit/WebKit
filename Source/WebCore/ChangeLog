@@ -1,3 +1,16 @@
+2017-08-10  Sam Weinig  <sam@webkit.org>
+
+        WTF::Function does not allow for reference / non-default constructible return types
+        https://bugs.webkit.org/show_bug.cgi?id=175244
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSCustomElementInterface.h:
+        (WebCore::JSCustomElementInterface::invokeCallback):
+        Update the default value for the addArguments parameter to be an empty lambda, rather than
+        default initialization, which leads to a null WTF::Function. This allows us to remove support
+        for calling null WTF::Function. No change in behavior.
+
 2017-08-11  Antti Koivisto  <antti@apple.com>
 
         Remove RenderQuote collection from RenderView
