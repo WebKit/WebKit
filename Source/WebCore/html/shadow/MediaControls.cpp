@@ -412,6 +412,12 @@ void MediaControls::textTrackPreferencesChanged()
         m_textDisplayContainer->updateSizes(true);
 }
 
+void MediaControls::clearTextDisplayContainer()
+{
+    if (m_textDisplayContainer)
+        m_textDisplayContainer->removeChildren();
+}
+
 #endif
 
 void MediaControls::setSliderVolume()

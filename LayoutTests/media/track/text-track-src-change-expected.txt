@@ -1,0 +1,14 @@
+Tests Track 'src' changing handling
+
+
+
+*** Testing Track 'src' changing
+EXPECTED (cues.length == '4') OK
+
+*** Changing 'src' attribute...
+EXPECTED (cues.length == '100') OK
+
+*** Changing back 'src' attribute...
+EXPECTED (cues.length == '4') OK
+END OF TEST
+

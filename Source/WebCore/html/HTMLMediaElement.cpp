@@ -1855,6 +1855,15 @@ bool HTMLMediaElement::textTracksAreReady() const
 
 void HTMLMediaElement::textTrackReadyStateChanged(TextTrack* track)
 {
+    if (track->readinessState() != TextTrack::Loading
+        && track->mode() != TextTrack::Mode::Disabled) {
+        // The display trees exist as long as the track is active, in this case,
+        // and if the same track is loaded again (for example if the src attribute was changed),
+        // cues can be accumulated with the old ones, that's why they needs to be flushed
+        if (hasMediaControls())
+            mediaControls()->clearTextDisplayContainer();
+        updateTextTrackDisplay();
+    }
     if (m_player && m_textTracksWhenResourceSelectionBegan.contains(track)) {
         if (track->readinessState() != TextTrack::Loading)
             setReadyState(m_player->readyState());

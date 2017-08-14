@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            var stage = 0; 
+
+            function trackLoaded()
+            {
+                var testTrack = document.getElementById('testTrack');
+                switch (stage) {
+                    case 0:
+                        consoleWrite("<br>*** Testing Track 'src' changing");
+                        cues = testTrack.track.cues;
+                        testExpected("cues.length", 4);
+                        consoleWrite("<br>*** Changing 'src' attribute...");
+                        ++stage;
+                        testTrack.src = "captions-webvtt/captions-long.vtt";
+                        break;
+                    case 1:
+                        cues = testTrack.track.cues;
+                        testExpected("cues.length", 100);
+                        consoleWrite("<br>*** Changing back 'src' attribute...");
+                        ++stage;
+                        testTrack.src = "captions-webvtt/tc013-settings.vtt";
+                        break;
+                    case 2:
+                        cues = testTrack.track.cues;
+                        testExpected("cues.length", 4);
+                        endTest();
+                        break;
+                }
+            }
+
+            setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body>
+        <p>Tests Track 'src' changing handling</p>
+        <video>
+            <track id="testTrack" src="captions-webvtt/tc013-settings.vtt" kind="captions" onload="trackLoaded()" default>
+        </video>
+    </body>
+</html>
