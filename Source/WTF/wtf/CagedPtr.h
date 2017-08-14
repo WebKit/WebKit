@@ -73,7 +73,7 @@ public:
     template<typename IndexType>
     T& operator[](IndexType index) const { return get()[index]; }
     
-private:
+protected:
     T* m_ptr;
 };
 

@@ -102,3 +102,13 @@ WTF_EXPORT_PRIVATE void freeVirtualPages(Kind, void* basePtr, size_t size);
 } // namespace Gigacage
 #endif
 
+namespace Gigacage {
+
+WTF_EXPORT_PRIVATE void* tryMallocArray(Kind, size_t numElements, size_t elementSize);
+
+WTF_EXPORT_PRIVATE void* malloc(Kind, size_t);
+WTF_EXPORT_PRIVATE void* mallocArray(Kind, size_t numElements, size_t elementSize);
+
+} // namespace Gigacage
+
+

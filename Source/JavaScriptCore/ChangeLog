@@ -1,3 +1,23 @@
+2017-08-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Put the ScopedArgumentsTable's ScopeOffset array in some gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=174921
+
+        Reviewed by Mark Lam.
+        
+        Uses CagedUniquePtr<> to cage the ScopeOffset array.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitScopedArgumentsGetByVal):
+        * runtime/ScopedArgumentsTable.cpp:
+        (JSC::ScopedArgumentsTable::create):
+        (JSC::ScopedArgumentsTable::setLength):
+        * runtime/ScopedArgumentsTable.h:
+
 2017-08-14  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix Windows build.

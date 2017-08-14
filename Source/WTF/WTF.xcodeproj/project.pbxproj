@@ -183,6 +183,7 @@
 		0F5BF1651F2317830029D91D /* NaturalLoops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NaturalLoops.h; sourceTree = "<group>"; };
 		0F5BF1741F23D49A0029D91D /* Gigacage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gigacage.cpp; sourceTree = "<group>"; };
 		0F5BF1751F23D49A0029D91D /* Gigacage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gigacage.h; sourceTree = "<group>"; };
+		0F5F3D681F3FEBA600B115A2 /* CagedUniquePtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CagedUniquePtr.h; sourceTree = "<group>"; };
 		0F60F32D1DFCBD1B00416D6C /* LockedPrintStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LockedPrintStream.cpp; sourceTree = "<group>"; };
 		0F60F32E1DFCBD1B00416D6C /* LockedPrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockedPrintStream.h; sourceTree = "<group>"; };
 		0F66B2801DC97BAB004A1D3F /* ClockType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockType.cpp; sourceTree = "<group>"; };
@@ -749,6 +750,7 @@
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
 				0FEC3C4F1F323C6800F59B6C /* CagedPtr.h */,
+				0F5F3D681F3FEBA600B115A2 /* CagedUniquePtr.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
 				0F66B2801DC97BAB004A1D3F /* ClockType.cpp */,

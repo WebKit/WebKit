@@ -1544,6 +1544,7 @@ JIT::JumpList JIT::emitScopedArgumentsGetByVal(Instruction*, PatchableJump& badT
     Jump overflowCase = branch32(AboveOrEqual, property, scratch2);
     loadPtr(Address(base, ScopedArguments::offsetOfScope()), scratch2);
     loadPtr(Address(scratch, ScopedArgumentsTable::offsetOfArguments()), scratch);
+    cage(ScopedArgumentsTable::ArgumentsPtr::kind, scratch);
     load32(BaseIndex(scratch, property, TimesFour), scratch);
     slowCases.append(branch32(Equal, scratch, TrustedImm32(ScopeOffset::invalidOffset)));
     loadValue(BaseIndex(scratch2, scratch, TimesEight, JSEnvironmentRecord::offsetOfVariables()), result);

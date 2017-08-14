@@ -14,6 +14,7 @@ set(WTF_HEADERS
     ByteOrder.h
     CPUTime.h
     CagedPtr.h
+    CagedUniquePtr.h
     ClockType.h
     CompilationThread.h
     Compiler.h

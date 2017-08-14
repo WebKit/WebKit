@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ ScopedArgumentsTable* ScopedArgumentsTable::create(VM& vm, uint32_t length)
 {
     ScopedArgumentsTable* result = create(vm);
     result->m_length = length;
-    result->m_arguments = std::make_unique<ScopeOffset[]>(length);
+    result->m_arguments = ArgumentsPtr::create(length);
     return result;
 }
 
@@ -75,7 +75,7 @@ ScopedArgumentsTable* ScopedArgumentsTable::clone(VM& vm)
 ScopedArgumentsTable* ScopedArgumentsTable::setLength(VM& vm, uint32_t newLength)
 {
     if (LIKELY(!m_locked)) {
-        std::unique_ptr<ScopeOffset[]> newArguments = std::make_unique<ScopeOffset[]>(newLength);
+        ArgumentsPtr newArguments = ArgumentsPtr::create(newLength);
         for (unsigned i = std::min(m_length, newLength); i--;)
             newArguments[i] = m_arguments[i];
         m_length = newLength;

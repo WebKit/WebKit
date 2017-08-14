@@ -6304,6 +6304,7 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
     m_jit.loadPtr(
         MacroAssembler::Address(scratchReg, ScopedArgumentsTable::offsetOfArguments()),
         scratchReg);
+    m_jit.cage(ScopedArgumentsTable::ArgumentsPtr::kind, scratchReg);
     m_jit.load32(
         MacroAssembler::BaseIndex(scratchReg, propertyReg, MacroAssembler::TimesFour),
         scratchReg);

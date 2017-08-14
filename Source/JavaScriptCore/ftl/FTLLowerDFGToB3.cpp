@@ -3547,10 +3547,10 @@ private:
             LBasicBlock lastNext = m_out.appendTo(namedCase, overflowCase);
             
             LValue scope = m_out.loadPtr(base, m_heaps.ScopedArguments_scope);
-            LValue arguments = m_out.loadPtr(table, m_heaps.ScopedArgumentsTable_arguments);
+            LValue arguments = caged(
+                ScopedArgumentsTable::ArgumentsPtr::kind,
+                m_out.loadPtr(table, m_heaps.ScopedArgumentsTable_arguments));
             
-            // FIXME: I guess we need to cage ScopedArguments?
-            // https://bugs.webkit.org/show_bug.cgi?id=174921
             TypedPointer address = m_out.baseIndex(
                 m_heaps.scopedArgumentsTableArguments, arguments, m_out.zeroExtPtr(index));
             LValue scopeOffset = m_out.load32(address);

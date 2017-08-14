@@ -1,3 +1,58 @@
+2017-08-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Put the ScopedArgumentsTable's ScopeOffset array in some gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=174921
+
+        Reviewed by Mark Lam.
+        
+        If you want to std::unique_ptr a class that knows that it should be in the Gigacage, then we
+        would create the Gigacage equivalent of WTF_MAKE_FAST_ALLOCATED and it would just work.
+        
+        But this does not work if we want to std::unique_ptr a primitive type. So, this patch adds a
+        solution for this problem: CagedUniquePtr<>. This will handle allocation
+        (CagedUniquePtr<>::create()) and deallocation (in the style of std::unique_ptr). It has three
+        variants:
+        
+        - Non-array types.
+        - Arrays that don't have destructors.
+        - Arrays that have destructors.
+        
+        Just like std::unique_ptr, the array case is triggered by saying "[]" at the end of the type.
+        
+        Unlike std::unique_ptr and most other smart pointers, the whole point of this smart pointer is
+        to dictate where the thing you're pointing at is allocated. For this reason, it has to know how
+        to do things like the array destructor protocol. So it creates its own: the CagedUniquePtr for
+        arrays with destructors is a fat pointer that remembers the length of the array.
+        
+        CagedUniquePtr<> makes it impossible to leak/release the pointer. This is stricter than what
+        std::unique_ptr does, and is probably appropriate for all of the places where we would use this
+        type.
+        
+        So far, we only use it for ScopedArgumentsTable::m_arguments, but I suspect that it will be
+        useful in other places.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CagedUniquePtr.h: Added.
+        (WTF::CagedUniquePtr::CagedUniquePtr):
+        (WTF::CagedUniquePtr::create):
+        (WTF::CagedUniquePtr::operator=):
+        (WTF::CagedUniquePtr::~CagedUniquePtr):
+        (WTF::CagedUniquePtr::get const):
+        (WTF::CagedUniquePtr::getMayBeNull const):
+        (WTF::CagedUniquePtr::operator== const):
+        (WTF::CagedUniquePtr::operator!= const):
+        (WTF::CagedUniquePtr::operator bool const):
+        (WTF::CagedUniquePtr::operator* const):
+        (WTF::CagedUniquePtr::operator-> const):
+        (WTF::CagedUniquePtr::operator[] const):
+        (WTF::CagedUniquePtr::destroy):
+        * wtf/Gigacage.cpp:
+        (Gigacage::tryMallocArray):
+        (Gigacage::malloc):
+        (Gigacage::mallocArray):
+        * wtf/Gigacage.h:
+
 2017-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace DATA_TRANSFER_ITEMS by a runtime flag and add a stub implementation
