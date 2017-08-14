@@ -1,5 +1,35 @@
 2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Make ThreadGlobalData RefCounted for web thread
+        https://bugs.webkit.org/show_bug.cgi?id=175439
+
+        Reviewed by Mark Lam.
+
+        When the web thread is enabled, we share ThreadGlobalData between the web thread and the main thread.
+        The problem happens when the main thread is dying. It could start deallocating TLS and the web
+        thread may see the destructed ThreadGlobalData.
+
+        Even though, the current implementation is safe because the main thread do not perform TLS deallocation
+        in the Darwin environment. But this is not true in Windows. And we should not rely on this condition
+        that depends on the platforms.
+
+        In this patch, we make ThreadGlobalData ThreadSafeRefCounted. This type verbosely describes that
+        ThreadGlobalData could be shared between threads when the web thread enabled. And make the life time
+        management simple instead of relying on the platform dependent TLS implementation.
+
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::setWebCoreThreadData):
+        (WebCore::threadGlobalData):
+        * platform/ThreadGlobalData.h:
+        (WebCore::ThreadGlobalData::cachedResourceRequestInitiators): Deleted.
+        (WebCore::ThreadGlobalData::eventNames): Deleted.
+        (WebCore::ThreadGlobalData::threadTimers): Deleted.
+        (WebCore::ThreadGlobalData::qualifiedNameCache): Deleted.
+        (WebCore::ThreadGlobalData::cachedConverterICU): Deleted.
+        (WebCore::ThreadGlobalData::cachedConverterTEC): Deleted.
+
+2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Use @toNumber in builtins
         https://bugs.webkit.org/show_bug.cgi?id=172692
 
