@@ -298,7 +298,6 @@ void PlatformMediaSessionManager::applicationWillBecomeInactive() const
 {
     LOG(Media, "PlatformMediaSessionManager::applicationWillBecomeInactive");
 
-    Vector<PlatformMediaSession*> sessions = m_sessions;
     forEachSession([&] (PlatformMediaSession& session, size_t) {
         if (m_restrictions[session.mediaType()] & InactiveProcessPlaybackRestricted)
             session.beginInterruption(PlatformMediaSession::ProcessInactive);
@@ -309,7 +308,6 @@ void PlatformMediaSessionManager::applicationDidBecomeActive() const
 {
     LOG(Media, "PlatformMediaSessionManager::applicationDidBecomeActive");
 
-    Vector<PlatformMediaSession*> sessions = m_sessions;
     forEachSession([&] (PlatformMediaSession& session, size_t) {
         if (m_restrictions[session.mediaType()] & InactiveProcessPlaybackRestricted)
             session.endInterruption(PlatformMediaSession::MayResumePlaying);
@@ -324,8 +322,7 @@ void PlatformMediaSessionManager::applicationDidEnterBackground(bool suspendedUn
         return;
 
     m_isApplicationInBackground = true;
-    
-    Vector<PlatformMediaSession*> sessions = m_sessions;
+
     forEachSession([&] (PlatformMediaSession& session, size_t) {
         if (suspendedUnderLock && m_restrictions[session.mediaType()] & SuspendedUnderLockPlaybackRestricted)
             session.beginInterruption(PlatformMediaSession::SuspendedUnderLock);
@@ -343,7 +340,6 @@ void PlatformMediaSessionManager::applicationWillEnterForeground(bool suspendedU
 
     m_isApplicationInBackground = false;
 
-    Vector<PlatformMediaSession*> sessions = m_sessions;
     forEachSession([&] (PlatformMediaSession& session, size_t) {
         if ((suspendedUnderLock && m_restrictions[session.mediaType()] & SuspendedUnderLockPlaybackRestricted) || m_restrictions[session.mediaType()] & BackgroundProcessPlaybackRestricted)
             session.endInterruption(PlatformMediaSession::MayResumePlaying);
