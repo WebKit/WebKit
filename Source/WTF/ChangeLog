@@ -1,3 +1,41 @@
+2017-08-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] ThreadSpecific should not introduce additional indirection
+        https://bugs.webkit.org/show_bug.cgi?id=175187
+
+        Reviewed by Mark Lam.
+
+        ThreadSpecific sets Data* to the TLS. And Data holds T*, which
+        is fast allocated actual data. But ideally, we should store T
+        instance directly in Data instead of introducing an additional
+        indirection.
+
+        This patch adds storage in Data in order to embed the instance of T. The constructor
+        for Data will invoke the constructor for T on the embedded storage. We also drop
+        ThreadSpecific::replace which is only used by the web thread to set its thread specific
+        ThreadGlobalData to the one shared from the main thread. The existing implementation
+        relies on the main thread and the web thread never exiting in order for the shared
+        ThreadGlobalData to stay alive. We can achieve the same semantics by using a
+        ThreadSpecific<std::unique_ptr<T>> to hold the ThreadGlobalData instance instead.
+
+        * wtf/ThreadSpecific.h:
+        (WTF::ThreadSpecific::Data::construct):
+        (WTF::ThreadSpecific::Data::Data):
+        We make it fast allocated since we previously allocated ThreadSpecific T data by fastMalloc.
+
+        (WTF::ThreadSpecific::Data::~Data):
+        (WTF::ThreadSpecific::Data::storagePointer const):
+        (WTF::canBeGCThread>::get):
+        We also drop RELEASE_ASSERT from ::get(). We already inserted this assert to setAndConstruct(),
+        so when creating the member to this TLS, we execute this release assert. So it is
+        not necessary to execute this assertion every time we get data from this TLS.
+
+        (WTF::canBeGCThread>::set):
+        (WTF::canBeGCThread>::destroy):
+        (WTF::canBeGCThread>::setAndConstruct):
+        (WTF::T):
+        (WTF::canBeGCThread>::replace): Deleted.
+
 2017-08-09  Don Olmstead  <don.olmstead@sony.com>
 
         [WTF] Move TextStream into WTF

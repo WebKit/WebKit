@@ -29,9 +29,6 @@
 
 #include <wtf/text/StringHash.h>
 
-#include <wtf/ThreadSpecific.h>
-using WTF::ThreadSpecific;
-
 namespace WebCore {
 
     class QualifiedNameCache;
@@ -44,6 +41,7 @@ namespace WebCore {
 
     class ThreadGlobalData {
         WTF_MAKE_NONCOPYABLE(ThreadGlobalData);
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         WEBCORE_EXPORT ThreadGlobalData();
         WEBCORE_EXPORT ~ThreadGlobalData();
@@ -80,10 +78,6 @@ namespace WebCore {
         std::unique_ptr<TECConverterWrapper> m_cachedConverterTEC;
 #endif
 
-        WEBCORE_EXPORT static ThreadSpecific<ThreadGlobalData>* staticData;
-#if USE(WEB_THREAD)
-        WEBCORE_EXPORT static ThreadGlobalData* sharedMainThreadStaticData;
-#endif
         WEBCORE_EXPORT friend ThreadGlobalData& threadGlobalData();
     };
 
