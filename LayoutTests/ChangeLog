@@ -1,5 +1,21 @@
 2017-08-14  Ms2ger  <Ms2ger@igalia.com>
 
+        GTK-focused gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=175529
+
+        Unreviewed test gardening.
+
+        * http/wpt/css/css-pseudo-4/marker-font-properties-expected.html: Set line-height for more reliable rendering.
+        * http/wpt/css/css-pseudo-4/marker-font-properties.html: Set line-height for more reliable rendering.
+        * media/video-fullscreen-restriction-removed-expected.txt: DOMException's toString was changed in r219663; rebaseline. (The test is marked as flaky on mac.)
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/dom/document-attributes-null-handling-expected.txt: SecurityError got a new message in r220376; rebaseline.
+        * platform/gtk/imported/w3c/web-platform-tests/FileAPI/historical.https-expected.txt: Added: GTK does not yet enable the in-progress ServiceWorker implementation.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt: TypeError got a new message in r220622; rebaseline.
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt: Added: TypeError uses a different message on GTK.
+
+2017-08-14  Ms2ger  <Ms2ger@igalia.com>
+
         [GTK] Update some test expectations.
         https://bugs.webkit.org/show_bug.cgi?id=175480
 
