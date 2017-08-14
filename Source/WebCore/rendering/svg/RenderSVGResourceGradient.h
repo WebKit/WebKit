@@ -65,13 +65,14 @@ protected:
     GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType) const;
 
 private:
-    bool m_shouldCollectGradientAttributes : 1;
     HashMap<RenderObject*, std::unique_ptr<GradientData>> m_gradientMap;
 
 #if USE(CG)
-    GraphicsContext* m_savedContext;
+    GraphicsContext* m_savedContext { nullptr };
     std::unique_ptr<ImageBuffer> m_imageBuffer;
 #endif
+
+    bool m_shouldCollectGradientAttributes { true };
 };
 
 } // namespace WebCore

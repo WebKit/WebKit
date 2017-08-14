@@ -32,10 +32,6 @@ namespace WebCore {
 
 RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement& node, RenderStyle&& style)
     : RenderSVGResourceContainer(node, WTFMove(style))
-    , m_shouldCollectGradientAttributes(true)
-#if USE(CG)
-    , m_savedContext(0)
-#endif
 {
 }
 
@@ -200,7 +196,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
         if (m_savedContext && (gradientData = m_gradientMap.get(&renderer))) {
             // Restore on-screen drawing context
             context = m_savedContext;
-            m_savedContext = 0;
+            m_savedContext = nullptr;
 
             AffineTransform gradientTransform;
             calculateGradientTransform(gradientTransform);
