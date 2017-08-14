@@ -1,3 +1,14 @@
+2017-08-14  Daniel Bates  <dabates@apple.com>
+
+        [css-ui] Implement caret-color support
+        https://bugs.webkit.org/show_bug.cgi?id=166572
+        <rdar://problem/33852589>
+
+        Update GTK expected results following r220706.
+
+        * platform/gtk/editing/style/5065910-expected.txt:
+        * platform/gtk/editing/style/5084241-expected.txt:
+
 2017-08-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rollout r220622 & r220696
