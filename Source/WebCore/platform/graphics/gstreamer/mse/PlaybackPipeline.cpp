@@ -488,6 +488,7 @@ void PlaybackPipeline::enqueueSample(Ref<MediaSample>&& mediaSample)
         GST_TIME_ARGS(WebCore::toGstClockTime(mediaSample->presentationTime().toDouble())),
         GST_TIME_ARGS(WebCore::toGstClockTime(mediaSample->duration().toDouble())));
 
+    WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(m_webKitMediaSrc.get()));
     Stream* stream = getStreamByTrackId(m_webKitMediaSrc.get(), trackId);
 
     if (!stream) {
