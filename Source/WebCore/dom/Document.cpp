@@ -427,20 +427,6 @@ static void printNavigationErrorMessage(Frame* frame, const URL& activeURL, cons
     frame->document()->domWindow()->printErrorMessage(message);
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
-
-void TextAutoSizingTraits::constructDeletedValue(TextAutoSizingKey& slot)
-{
-    new (NotNull, &slot) TextAutoSizingKey(TextAutoSizingKey::Deleted);
-}
-
-bool TextAutoSizingTraits::isDeletedValue(const TextAutoSizingKey& value)
-{
-    return value.isDeleted();
-}
-
-#endif
-
 uint64_t Document::s_globalTreeVersion = 0;
 
 HashSet<Document*>& Document::allDocuments()
@@ -2264,8 +2250,7 @@ void Document::destroyRenderTree()
     Node::setRenderer(nullptr);
 
 #if ENABLE(TEXT_AUTOSIZING)
-    // Do this before the arena is cleared, which is needed to deref the RenderStyle on TextAutoSizingKey.
-    m_textAutoSizedNodes.clear();
+    m_textAutoSizing = nullptr;
 #endif
 
     if (view())
@@ -5547,28 +5532,12 @@ HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
-
-void Document::addAutoSizedNode(Text& node, float candidateSize)
+TextAutoSizing& Document::textAutoSizing()
 {
-    LOG(TextAutosizing, " addAutoSizedNode %p candidateSize=%f", &node, candidateSize);
-    auto addResult = m_textAutoSizedNodes.add<TextAutoSizingHashTranslator>(node.renderer()->style(), nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = std::make_unique<TextAutoSizingValue>();
-    addResult.iterator->value->addTextNode(node, candidateSize);
+    if (!m_textAutoSizing)
+        m_textAutoSizing = std::make_unique<TextAutoSizing>();
+    return *m_textAutoSizing;
 }
-
-void Document::updateAutoSizedNodes()
-{
-    m_textAutoSizedNodes.removeIf([](auto& keyAndValue) {
-        return keyAndValue.value->adjustTextNodeSizes() == TextAutoSizingValue::StillHasNodes::No;
-    });
-}
-    
-void Document::clearAutoSizedNodes()
-{
-    m_textAutoSizedNodes.clear();
-}
-
 #endif // ENABLE(TEXT_AUTOSIZING)
 
 void Document::initDNSPrefetch()

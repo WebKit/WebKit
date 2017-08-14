@@ -28,6 +28,7 @@
 #if ENABLE(TEXT_AUTOSIZING)
 
 #include "RenderStyle.h"
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -105,6 +106,25 @@ private:
     void reset();
 
     HashSet<RefPtr<Text>> m_autoSizedNodes;
+};
+
+struct TextAutoSizingTraits : WTF::GenericHashTraits<TextAutoSizingKey> {
+    static const bool emptyValueIsZero = true;
+    static void constructDeletedValue(TextAutoSizingKey& slot) { new (NotNull, &slot) TextAutoSizingKey(TextAutoSizingKey::Deleted); }
+    static bool isDeletedValue(const TextAutoSizingKey& value) { return value.isDeleted(); }
+};
+
+class TextAutoSizing {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    TextAutoSizing() = default;
+
+    void addTextNode(Text&, float size);
+    void updateRenderTree();
+    void reset();
+
+private:
+    HashMap<TextAutoSizingKey, std::unique_ptr<TextAutoSizingValue>, TextAutoSizingHash, TextAutoSizingTraits> m_textNodes;
 };
 
 } // namespace WebCore

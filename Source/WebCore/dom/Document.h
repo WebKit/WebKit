@@ -206,15 +206,7 @@ class DeviceOrientationController;
 #endif
 
 #if ENABLE(TEXT_AUTOSIZING)
-struct TextAutoSizingHash;
-class TextAutoSizingKey;
-class TextAutoSizingValue;
-
-struct TextAutoSizingTraits : WTF::GenericHashTraits<TextAutoSizingKey> {
-    static const bool emptyValueIsZero = true;
-    static void constructDeletedValue(TextAutoSizingKey& slot);
-    static bool isDeletedValue(const TextAutoSizingKey& value);
-};
+class TextAutoSizing;
 #endif
 
 #if ENABLE(MEDIA_SESSION)
@@ -1360,6 +1352,10 @@ public:
     // Per https://html.spec.whatwg.org/multipage/obsolete.html#dom-document-releaseevents, this method does nothing.
     void releaseEvents() { }
 
+#if ENABLE(TEXT_AUTOSIZING)
+    TextAutoSizing& textAutoSizing();
+#endif
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1663,14 +1659,7 @@ private:
     Vector<Task> m_pendingTasks;
 
 #if ENABLE(TEXT_AUTOSIZING)
-public:
-    void addAutoSizedNode(Text&, float size);
-    void updateAutoSizedNodes();
-    void clearAutoSizedNodes();
-
-private:
-    using TextAutoSizingMap = HashMap<TextAutoSizingKey, std::unique_ptr<TextAutoSizingValue>, TextAutoSizingHash, TextAutoSizingTraits>;
-    TextAutoSizingMap m_textAutoSizedNodes;
+    std::unique_ptr<TextAutoSizing> m_textAutoSizing;
 #endif
 
     Timer m_visualUpdatesSuppressionTimer;

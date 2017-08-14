@@ -680,7 +680,7 @@ static inline float computeLineHeightMultiplierDueToFontSize(const Document& doc
                 // that the minimum font size is the only thing affecting the computed font size.
 
                 // This calculation matches the line-height computed size calculation in
-                // TextAutoSizingValue::adjustTextNodeSizes().
+                // TextAutoSizing::Value::adjustTextNodeSizes().
                 auto scaleChange = minimumFontSize / specifiedFontSize;
                 return scaleChange;
             }

@@ -215,6 +215,27 @@ void TextAutoSizingValue::reset()
     }
 }
 
+void TextAutoSizing::addTextNode(Text& node, float candidateSize)
+{
+    LOG(TextAutosizing, " addAutoSizedNode %p candidateSize=%f", &node, candidateSize);
+    auto addResult = m_textNodes.add<TextAutoSizingHashTranslator>(node.renderer()->style(), nullptr);
+    if (addResult.isNewEntry)
+        addResult.iterator->value = std::make_unique<TextAutoSizingValue>();
+    addResult.iterator->value->addTextNode(node, candidateSize);
+}
+
+void TextAutoSizing::updateRenderTree()
+{
+    m_textNodes.removeIf([](auto& keyAndValue) {
+        return keyAndValue.value->adjustTextNodeSizes() == TextAutoSizingValue::StillHasNodes::No;
+    });
+}
+
+void TextAutoSizing::reset()
+{
+    m_textNodes.clear();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(TEXT_AUTOSIZING)
