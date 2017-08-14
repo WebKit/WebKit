@@ -302,7 +302,7 @@ private:
     void invalidateCachedColumnOffsets();
 
     RenderBlock* firstLineBlock() const final;
-    void updateFirstLetter(RenderTreeMutationIsAllowed = RenderTreeMutationIsAllowed::Yes) final;
+    void updateFirstLetter() final;
     
     void updateLogicalWidth() final;
 

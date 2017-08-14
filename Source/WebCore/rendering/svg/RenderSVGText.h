@@ -91,7 +91,7 @@ private:
     std::unique_ptr<RootInlineBox> createRootInlineBox() override;
 
     RenderBlock* firstLineBlock() const override;
-    void updateFirstLetter(RenderTreeMutationIsAllowed = RenderTreeMutationIsAllowed::Yes) override;
+    void updateFirstLetter() override;
 
     bool shouldHandleSubtreeMutations() const;
 

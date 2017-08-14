@@ -232,7 +232,11 @@ void RenderTreeUpdater::popParent()
     if (parent.element) {
         updateBeforeOrAfterPseudoElement(*parent.element, AFTER);
 
-        if (parent.element->hasCustomStyleResolveCallbacks() && parent.styleChange == Style::Detach && parent.element->renderer())
+        auto* renderer = parent.element->renderer();
+        if (is<RenderBlock>(renderer))
+            downcast<RenderBlock>(*renderer).updateFirstLetter();
+
+        if (parent.element->hasCustomStyleResolveCallbacks() && parent.styleChange == Style::Detach && renderer)
             parent.element->didAttachRenderers();
     }
     m_parentStack.removeLast();

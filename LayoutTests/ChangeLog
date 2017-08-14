@@ -1,3 +1,22 @@
+2017-08-14  Antti Koivisto  <antti@apple.com>
+
+        [Render Tree Mutation] First letter should not mutate the render tree while in layout.
+        https://bugs.webkit.org/show_bug.cgi?id=163848
+        <rdar://problem/33402718>
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/text-autosizing/ios/first-letter-expected.html: Added.
+
+            Turn into reftest for easier debugging and robustness.
+
+        * imported/blink/fast/css/first-letter-range-insert-expected.txt:
+
+            This is crash-or-assert test and the output change here doesn't matter.
+
+        * platform/ios/fast/text-autosizing/ios/first-letter-expected.txt: Removed.
+        * platform/mac/fast/text-autosizing/ios/first-letter-expected.txt: Removed.
+
 2017-08-13  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Composition underline color is always black

@@ -101,7 +101,7 @@ RenderBlock* RenderRubyRun::firstLineBlock() const
     return 0;
 }
 
-void RenderRubyRun::updateFirstLetter(RenderTreeMutationIsAllowed)
+void RenderRubyRun::updateFirstLetter()
 {
 }
 

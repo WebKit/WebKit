@@ -260,7 +260,6 @@ void RenderTableCell::setCellLogicalWidth(LayoutUnit tableLayoutLogicalWidth)
 void RenderTableCell::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
-    updateFirstLetter();
 
     int oldCellBaseline = cellBaselinePosition();
     layoutBlock(cellWidthChanged());

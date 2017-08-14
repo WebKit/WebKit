@@ -1,3 +1,42 @@
+2017-08-14  Antti Koivisto  <antti@apple.com>
+
+        [Render Tree Mutation] First letter should not mutate the render tree while in layout.
+        https://bugs.webkit.org/show_bug.cgi?id=163848
+
+        Reviewed by Zalan Bujtas.
+
+        RenderBlock::updateFirstLetter shouldn't be called during layout. Instead it should
+        be invoked by the RenderTreeUpdater.
+
+        With this future patches can move updateFirstLetter() and the related functions
+        completely out of the render tree.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layout):
+
+            No more updateFirstLetter calls during layout...
+
+        (WebCore::RenderBlock::computePreferredLogicalWidths):
+
+            ...or preferred width computation.
+
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderBlock.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::updateFirstLetter):
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateFirstLetter):
+        * rendering/RenderTable.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::updateFirstLetter):
+        * rendering/svg/RenderSVGText.h:
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::popParent):
+
+            Call updateFirstLetter when closing the element. All of of descedant renderers are known here
+            so this can be resolved correctly.
+
 2017-08-13  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Composition underline color is always black
