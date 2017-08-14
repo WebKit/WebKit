@@ -1,3 +1,14 @@
+2017-08-10  Mark Lam  <mark.lam@apple.com>
+
+        Apply the UNLIKELY macro to some unlikely things.
+        https://bugs.webkit.org/show_bug.cgi?id=175440
+        <rdar://problem/33834767>
+
+        Reviewed by Yusuke Suzuki.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getBytecodeProfile):
+
 2017-08-10  Tim Horton  <timothy_horton@apple.com>
 
         Remove some unused lambda captures so that WebKit builds with -Wunused-lambda-capture

@@ -56,7 +56,7 @@ JITCompiler::JITCompiler(Graph& dfg)
     , m_blockHeads(dfg.numBlocks())
     , m_pcToCodeOriginMapBuilder(dfg.m_vm)
 {
-    if (shouldDumpDisassembly() || m_graph.m_vm.m_perBytecodeProfiler)
+    if (UNLIKELY(shouldDumpDisassembly() || m_graph.m_vm.m_perBytecodeProfiler))
         m_disassembler = std::make_unique<Disassembler>(dfg);
 #if ENABLE(FTL_JIT)
     m_jitCode->tierUpInLoopHierarchy = WTFMove(m_graph.m_plan.tierUpInLoopHierarchy);
@@ -72,7 +72,7 @@ JITCompiler::~JITCompiler()
 void JITCompiler::linkOSRExits()
 {
     ASSERT(m_jitCode->osrExit.size() == m_exitCompilationInfo.size());
-    if (m_graph.compilation()) {
+    if (UNLIKELY(m_graph.compilation())) {
         for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
             OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
             Vector<Label> labels;
@@ -317,7 +317,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         }
     }
     
-    if (m_graph.compilation()) {
+    if (UNLIKELY(m_graph.compilation())) {
         ASSERT(m_exitSiteLabels.size() == m_jitCode->osrExit.size());
         for (unsigned i = 0; i < m_exitSiteLabels.size(); ++i) {
             Vector<Label>& labels = m_exitSiteLabels[i];
@@ -528,7 +528,7 @@ void JITCompiler::disassemble(LinkBuffer& linkBuffer)
         linkBuffer.didAlreadyDisassemble();
     }
     
-    if (m_graph.m_plan.compilation)
+    if (UNLIKELY(m_graph.m_plan.compilation))
         m_disassembler->reportToProfiler(m_graph.m_plan.compilation.get(), linkBuffer);
 }
 

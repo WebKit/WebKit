@@ -5703,7 +5703,7 @@ void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, Fram
 
 void WebPage::getBytecodeProfile(CallbackID callbackID)
 {
-    if (!commonVM().m_perBytecodeProfiler) {
+    if (LIKELY(!commonVM().m_perBytecodeProfiler)) {
         send(Messages::WebPageProxy::StringCallback(String(), callbackID));
         return;
     }

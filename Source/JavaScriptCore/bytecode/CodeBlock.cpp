@@ -839,7 +839,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
 CodeBlock::~CodeBlock()
 {
-    if (m_vm->m_perBytecodeProfiler)
+    if (UNLIKELY(m_vm->m_perBytecodeProfiler))
         m_vm->m_perBytecodeProfiler->notifyDestruction(this);
 
     if (unlinkedCodeBlock()->didOptimize() == MixedTriState)
@@ -1917,7 +1917,8 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 
 #if ENABLE(DFG_JIT)
     if (reason != Profiler::JettisonDueToOldAge) {
-        if (Profiler::Compilation* compilation = jitCode()->dfgCommon()->compilation.get())
+        Profiler::Compilation* compilation = jitCode()->dfgCommon()->compilation.get();
+        if (UNLIKELY(compilation))
             compilation->setJettisonReason(reason, detail);
         
         // This accomplishes (1), and does its own book-keeping about whether it has already happened.

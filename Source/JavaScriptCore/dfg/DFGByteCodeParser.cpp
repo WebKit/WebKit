@@ -1316,7 +1316,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
     unsigned nextOffset = m_currentIndex + instructionSize;
     
     if (handleInlining(callTarget, result, callLinkStatus, registerOffset, virtualRegisterForArgument(0, registerOffset), VirtualRegister(), 0, argumentCountIncludingThis, nextOffset, op, kind, prediction)) {
-        if (m_graph.compilation())
+        if (UNLIKELY(m_graph.compilation()))
             m_graph.compilation()->noticeInlinedCall();
         return NonTerminal;
     }
@@ -1354,7 +1354,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(Instruction* pc, N
     
     if (callLinkStatus.canOptimize()
         && handleInlining(callTarget, result, callLinkStatus, firstFreeReg, VirtualRegister(thisReg), VirtualRegister(arguments), firstVarArgOffset, 0, m_currentIndex + OPCODE_LENGTH(op_call_varargs), op, InlineCallFrame::varargsKindFor(callMode), prediction)) {
-        if (m_graph.compilation())
+        if (UNLIKELY(m_graph.compilation()))
             m_graph.compilation()->noticeInlinedCall();
         return NonTerminal;
     }
@@ -3717,7 +3717,7 @@ void ByteCodeParser::handleGetById(
 
     if (getById != TryGetById && getByIdStatus.isModuleNamespace()) {
         if (handleModuleNamespaceLoad(destinationOperand, prediction, base, getByIdStatus)) {
-            if (m_graph.compilation())
+            if (UNLIKELY(m_graph.compilation()))
                 m_graph.compilation()->noticeInlinedGetById();
             return;
         }
@@ -3731,7 +3731,7 @@ void ByteCodeParser::handleGetById(
         GetByIdVariant variant = getByIdStatus[0];
         ASSERT(variant.domAttribute());
         if (handleDOMJITGetter(destinationOperand, variant, base, identifierNumber, prediction)) {
-            if (m_graph.compilation())
+            if (UNLIKELY(m_graph.compilation()))
                 m_graph.compilation()->noticeInlinedGetById();
             return;
         }
@@ -3782,7 +3782,7 @@ void ByteCodeParser::handleGetById(
             cases.append(MultiGetByOffsetCase(*m_graph.addStructureSet(variant.structureSet()), method));
         }
 
-        if (m_graph.compilation())
+        if (UNLIKELY(m_graph.compilation()))
             m_graph.compilation()->noticeInlinedGetById();
     
         // 2) Emit a MultiGetByOffset
@@ -3804,7 +3804,7 @@ void ByteCodeParser::handleGetById(
         return;
     }
 
-    if (m_graph.compilation())
+    if (UNLIKELY(m_graph.compilation()))
         m_graph.compilation()->noticeInlinedGetById();
 
     ASSERT(type == AccessType::Get || !variant.callLinkStatus());
@@ -3903,7 +3903,7 @@ void ByteCodeParser::handlePutById(
             }
         }
         
-        if (m_graph.compilation())
+        if (UNLIKELY(m_graph.compilation()))
             m_graph.compilation()->noticeInlinedPutById();
 
         for (const PutByIdVariant& variant : putByIdStatus.variants()) {
@@ -3927,7 +3927,7 @@ void ByteCodeParser::handlePutById(
     switch (variant.kind()) {
     case PutByIdVariant::Replace: {
         store(base, identifierNumber, variant, value);
-        if (m_graph.compilation())
+        if (UNLIKELY(m_graph.compilation()))
             m_graph.compilation()->noticeInlinedPutById();
         return;
     }
@@ -3994,7 +3994,7 @@ void ByteCodeParser::handlePutById(
         // https://bugs.webkit.org/show_bug.cgi?id=142924.
         addToGraph(PutStructure, OpInfo(transition), base);
 
-        if (m_graph.compilation())
+        if (UNLIKELY(m_graph.compilation()))
             m_graph.compilation()->noticeInlinedPutById();
         return;
     }
@@ -4124,7 +4124,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         if (Options::verboseDFGByteCodeParsing())
             dataLog("    parsing ", currentCodeOrigin(), ": ", opcodeID, "\n");
         
-        if (m_graph.compilation()) {
+        if (UNLIKELY(m_graph.compilation())) {
             addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
                 Profiler::OriginStack(*m_vm->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
         }
@@ -6061,7 +6061,7 @@ void ByteCodeParser::parseCodeBlock()
     
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     
-    if (m_graph.compilation()) {
+    if (UNLIKELY(m_graph.compilation())) {
         m_graph.compilation()->addProfiledBytecodes(
             *m_vm->m_perBytecodeProfiler, m_inlineStackTop->m_profiledBlock);
     }
