@@ -118,7 +118,7 @@ private:
     private:
         // FetchLoaderClient API
         void didSucceed() final;
-        void didFail(const ResourceError&) final;
+        void didFail() final;
         void didReceiveResponse(const ResourceResponse&) final;
         void didReceiveData(const char*, size_t) final;
 

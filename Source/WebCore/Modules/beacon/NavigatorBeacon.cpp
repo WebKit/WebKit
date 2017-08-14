@@ -73,12 +73,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Navigator&, Document& document, co
                 options.mode = FetchOptions::Mode::NoCors;
         }
     }
-    ResourceError error;
-    if (!document.cachedResourceLoader().requestBeaconResource({ WTFMove(request), options }, &error)) {
-        if (!error.isNull())
-            document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, error.localizedDescription());
-        return false;
-    }
+    document.cachedResourceLoader().requestBeaconResource({ WTFMove(request), options });
     return true;
 }
 

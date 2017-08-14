@@ -103,12 +103,13 @@ static CachedResource* createResource(CachedResource::Type type, CachedResourceR
 #endif
     case CachedResource::FontResource:
         return new CachedFont(WTFMove(request), sessionID);
-    case CachedResource::Beacon:
     case CachedResource::MediaResource:
     case CachedResource::RawResource:
     case CachedResource::Icon:
     case CachedResource::MainResource:
         return new CachedRawResource(WTFMove(request), type, sessionID);
+    case CachedResource::Beacon:
+        return new CachedResource(WTFMove(request), CachedResource::Beacon, sessionID);
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
         return new CachedXSLStyleSheet(WTFMove(request), sessionID);
@@ -181,7 +182,7 @@ SessionID CachedResourceLoader::sessionID() const
     return sessionID;
 }
 
-CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResourceRequest&& request)
 {
     if (Frame* frame = this->frame()) {
         if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None) {
@@ -195,33 +196,33 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResou
     }
 
     auto defer = clientDefersImage(request.resourceRequest().url()) ? DeferOption::DeferredByClient : DeferOption::NoDefer;
-    return downcast<CachedImage>(requestResource(CachedResource::ImageResource, WTFMove(request), error, ForPreload::No, defer).get());
+    return downcast<CachedImage>(requestResource(CachedResource::ImageResource, WTFMove(request), ForPreload::No, defer).get());
 }
 
-CachedResourceHandle<CachedFont> CachedResourceLoader::requestFont(CachedResourceRequest&& request, bool isSVG, ResourceError* error)
+CachedResourceHandle<CachedFont> CachedResourceLoader::requestFont(CachedResourceRequest&& request, bool isSVG)
 {
 #if ENABLE(SVG_FONTS)
     if (isSVG)
-        return downcast<CachedSVGFont>(requestResource(CachedResource::SVGFontResource, WTFMove(request), error).get());
+        return downcast<CachedSVGFont>(requestResource(CachedResource::SVGFontResource, WTFMove(request)).get());
 #else
     UNUSED_PARAM(isSVG);
 #endif
-    return downcast<CachedFont>(requestResource(CachedResource::FontResource, WTFMove(request), error).get());
+    return downcast<CachedFont>(requestResource(CachedResource::FontResource, WTFMove(request)).get());
 }
 
 #if ENABLE(VIDEO_TRACK)
-CachedResourceHandle<CachedTextTrack> CachedResourceLoader::requestTextTrack(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedTextTrack> CachedResourceLoader::requestTextTrack(CachedResourceRequest&& request)
 {
-    return downcast<CachedTextTrack>(requestResource(CachedResource::TextTrackResource, WTFMove(request), error).get());
+    return downcast<CachedTextTrack>(requestResource(CachedResource::TextTrackResource, WTFMove(request)).get());
 }
 #endif
 
-CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestCSSStyleSheet(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestCSSStyleSheet(CachedResourceRequest&& request)
 {
-    return downcast<CachedCSSStyleSheet>(requestResource(CachedResource::CSSStyleSheet, WTFMove(request), error).get());
+    return downcast<CachedCSSStyleSheet>(requestResource(CachedResource::CSSStyleSheet, WTFMove(request)).get());
 }
 
-CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSStyleSheet(CachedResourceRequest&& request, ResourceError*)
+CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSStyleSheet(CachedResourceRequest&& request)
 {
     ASSERT(document());
     request.setDomainForCachePartition(*document());
@@ -247,55 +248,55 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
     return userSheet;
 }
 
-CachedResourceHandle<CachedScript> CachedResourceLoader::requestScript(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedScript> CachedResourceLoader::requestScript(CachedResourceRequest&& request)
 {
-    return downcast<CachedScript>(requestResource(CachedResource::Script, WTFMove(request), error).get());
+    return downcast<CachedScript>(requestResource(CachedResource::Script, WTFMove(request)).get());
 }
 
 #if ENABLE(XSLT)
-CachedResourceHandle<CachedXSLStyleSheet> CachedResourceLoader::requestXSLStyleSheet(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedXSLStyleSheet> CachedResourceLoader::requestXSLStyleSheet(CachedResourceRequest&& request)
 {
-    return downcast<CachedXSLStyleSheet>(requestResource(CachedResource::XSLStyleSheet, WTFMove(request), error).get());
+    return downcast<CachedXSLStyleSheet>(requestResource(CachedResource::XSLStyleSheet, WTFMove(request)).get());
 }
 #endif
 
-CachedResourceHandle<CachedSVGDocument> CachedResourceLoader::requestSVGDocument(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedSVGDocument> CachedResourceLoader::requestSVGDocument(CachedResourceRequest&& request)
 {
-    return downcast<CachedSVGDocument>(requestResource(CachedResource::SVGDocumentResource, WTFMove(request), error).get());
+    return downcast<CachedSVGDocument>(requestResource(CachedResource::SVGDocumentResource, WTFMove(request)).get());
 }
 
 #if ENABLE(LINK_PREFETCH)
-CachedResourceHandle<CachedResource> CachedResourceLoader::requestLinkResource(CachedResource::Type type, CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedResource> CachedResourceLoader::requestLinkResource(CachedResource::Type type, CachedResourceRequest&& request)
 {
     ASSERT(frame());
     ASSERT(type == CachedResource::LinkPrefetch || type == CachedResource::LinkSubresource);
-    return requestResource(type, WTFMove(request), error);
+    return requestResource(type, WTFMove(request));
 }
 #endif
 
-CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMedia(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMedia(CachedResourceRequest&& request)
 {
-    return downcast<CachedRawResource>(requestResource(CachedResource::MediaResource, WTFMove(request), error).get());
+    return downcast<CachedRawResource>(requestResource(CachedResource::MediaResource, WTFMove(request)).get());
 }
 
-CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestIcon(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestIcon(CachedResourceRequest&& request)
 {
-    return downcast<CachedRawResource>(requestResource(CachedResource::Icon, WTFMove(request), error).get());
+    return downcast<CachedRawResource>(requestResource(CachedResource::Icon, WTFMove(request)).get());
 }
 
-CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestRawResource(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestRawResource(CachedResourceRequest&& request)
 {
-    return downcast<CachedRawResource>(requestResource(CachedResource::RawResource, WTFMove(request), error).get());
+    return downcast<CachedRawResource>(requestResource(CachedResource::RawResource, WTFMove(request)).get());
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::requestBeaconResource(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedResource> CachedResourceLoader::requestBeaconResource(CachedResourceRequest&& request)
 {
-    return requestResource(CachedResource::Beacon, WTFMove(request), error).get();
+    return requestResource(CachedResource::Beacon, WTFMove(request)).get();
 }
 
-CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMainResource(CachedResourceRequest&& request, ResourceError* error)
+CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMainResource(CachedResourceRequest&& request)
 {
-    return downcast<CachedRawResource>(requestResource(CachedResource::MainResource, WTFMove(request), error).get());
+    return downcast<CachedRawResource>(requestResource(CachedResource::MainResource, WTFMove(request)).get());
 }
 
 static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResource::Type type)
@@ -688,7 +689,7 @@ void CachedResourceLoader::updateHTTPRequestHeaders(CachedResource::Type type, C
     request.updateAccordingCacheMode();
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ResourceError* error, ForPreload forPreload, DeferOption defer)
+CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, DeferOption defer)
 {
     if (Document* document = this->document())
         request.upgradeInsecureRequestIfNeeded(*document);
@@ -699,8 +700,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 
     if (!url.isValid()) {
         RELEASE_LOG_IF_ALLOWED("requestResource: URL is invalid (frame = %p)", frame());
-        if (error)
-            *error = { errorDomainWebKitInternal, 0, url, ASCIILiteral("URL is invalid") };
         return nullptr;
     }
 
@@ -709,8 +708,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     // We are passing url as well as request, as request url may contain a fragment identifier.
     if (!canRequest(type, url, request, forPreload)) {
         RELEASE_LOG_IF_ALLOWED("requestResource: Not allowed to request resource (frame = %p)", frame());
-        if (error)
-            *error = { errorDomainWebKitInternal, 0, url, ASCIILiteral("Not allowed to request resource"), ResourceError::Type::AccessControl };
         return nullptr;
     }
 
@@ -728,8 +725,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
                 resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, resourceRequest.url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
                 return resource;
             }
-            if (error)
-                *error = { errorDomainWebKitInternal, 0, url, ASCIILiteral("Resource blocked by content blocker"), ResourceError::Type::AccessControl };
             return nullptr;
         }
         if (blockedStatus.madeHTTPS
@@ -834,8 +829,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         if (resource->errorOccurred()) {
             if (resource->allowsCaching() && resource->inCache())
                 memoryCache.remove(*resource);
-            if (error)
-                *error = resource->resourceError();
             return nullptr;
         }
     }
@@ -1252,7 +1245,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::preload(CachedResourc
     if (request.charset().isEmpty() && (type == CachedResource::Script || type == CachedResource::CSSStyleSheet))
         request.setCharset(m_document->charset());
 
-    CachedResourceHandle<CachedResource> resource = requestResource(type, WTFMove(request), nullptr, ForPreload::Yes);
+    CachedResourceHandle<CachedResource> resource = requestResource(type, WTFMove(request), ForPreload::Yes);
     if (resource && (!m_preloads || !m_preloads->contains(resource.get()))) {
         // Fonts need special treatment since just creating the resource doesn't trigger a load.
         if (type == CachedResource::FontResource)

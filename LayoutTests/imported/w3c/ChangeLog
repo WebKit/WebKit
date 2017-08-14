@@ -1,3 +1,22 @@
+2017-08-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rollout r220622 & r220696
+        https://bugs.webkit.org/show_bug.cgi?id=175482
+        <rdar://problem/33860695>
+
+        Seems to have caused failures on iOS.
+
+        * web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count-worker-expected.txt:
+        * web-platform-tests/fetch/api/request/request-keepalive-quota-expected.txt:
+        * web-platform-tests/fetch/http-cache/cc-request-expected.txt:
+
 2017-08-12  Chris Dumez  <cdumez@apple.com>
 
         Address flakiness related to download tests

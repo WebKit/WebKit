@@ -1,3 +1,62 @@
+2017-08-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rollout r220622 & r220696
+        https://bugs.webkit.org/show_bug.cgi?id=175482
+        <rdar://problem/33860695>
+
+        Seems to have caused failures on iOS.
+
+        * CMakeLists.txt:
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::BlobLoader::didReceiveResponse):
+        (WebCore::FetchBodyOwner::BlobLoader::didFail):
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::start):
+        (WebCore::FetchLoader::didFail):
+        * Modules/fetch/FetchLoaderClient.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didFail):
+        * Modules/fetch/FetchResponse.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::finishLoading):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isMainOrMediaOrIconOrRawResource const):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestFont):
+        (WebCore::CachedResourceLoader::requestTextTrack):
+        (WebCore::CachedResourceLoader::requestCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestScript):
+        (WebCore::CachedResourceLoader::requestXSLStyleSheet):
+        (WebCore::CachedResourceLoader::requestSVGDocument):
+        (WebCore::CachedResourceLoader::requestLinkResource):
+        (WebCore::CachedResourceLoader::requestMedia):
+        (WebCore::CachedResourceLoader::requestIcon):
+        (WebCore::CachedResourceLoader::requestRawResource):
+        (WebCore::CachedResourceLoader::requestBeaconResource):
+        (WebCore::CachedResourceLoader::requestMainResource):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::preload):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/KeepaliveRequestTracker.cpp: Removed.
+        * loader/cache/KeepaliveRequestTracker.h: Removed.
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendFile):
+        (WebCore::FormData::appendFileRange):
+        (WebCore::FormData::appendBlob):
+        (WebCore::FormData::expandDataStore):
+        * platform/network/FormData.h:
+
 2017-08-14  Daniel Bates  <dabates@apple.com>
 
         [css-ui] Implement caret-color support

@@ -35,7 +35,6 @@
 #include "FetchBody.h"
 #include "FetchLoaderClient.h"
 #include "FetchRequest.h"
-#include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -49,7 +48,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const Blob& blob)
 {
     auto urlForReading = BlobURL::createPublicURL(context.securityOrigin());
     if (urlForReading.isEmpty()) {
-        m_client.didFail({ errorDomainWebKitInternal, 0, URL(), ASCIILiteral("Could not create URL for Blob") });
+        m_client.didFail();
         return;
     }
 
@@ -89,7 +88,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     contentSecurityPolicy.upgradeInsecureRequestIfNeeded(fetchRequest, ContentSecurityPolicy::InsecureRequestType::Load);
 
     if (!context.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy.allowConnectToSource(fetchRequest.url())) {
-        m_client.didFail({ errorDomainWebKitInternal, 0, fetchRequest.url(), ASCIILiteral("Not allowed by ContentSecurityPolicy"), ResourceError::Type::AccessControl });
+        m_client.didFail();
         return;
     }
 
@@ -145,9 +144,9 @@ void FetchLoader::didFinishLoading(unsigned long)
     m_client.didSucceed();
 }
 
-void FetchLoader::didFail(const ResourceError& error)
+void FetchLoader::didFail(const ResourceError&)
 {
-    m_client.didFail(error);
+    m_client.didFail();
 }
 
 } // namespace WebCore

@@ -69,8 +69,6 @@ public:
     {
     }
 
-    uint64_t lengthInBytes() const;
-
     FormDataElement isolatedCopy() const;
 
     template<typename Encoder>
@@ -256,13 +254,12 @@ public:
         return FormURLEncoded;
     }
 
-    uint64_t lengthInBytes() const;
-
 private:
     FormData();
     FormData(const FormData&);
 
     void appendKeyValuePairItems(const FormDataList&, const TextEncoding&, bool isMultiPartForm, Document*, EncodingType = FormURLEncoded);
+
     bool hasGeneratedFiles() const;
     bool hasOwnedGeneratedFiles() const;
 
@@ -272,7 +269,6 @@ private:
     bool m_alwaysStream { false };
     Vector<char> m_boundary;
     bool m_containsPasswordData { false };
-    mutable std::optional<uint64_t> m_lengthInBytes;
 };
 
 inline bool operator==(const FormData& a, const FormData& b)

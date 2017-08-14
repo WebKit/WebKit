@@ -88,7 +88,7 @@ private:
         // FetchLoaderClient API
         void didReceiveResponse(const ResourceResponse&) final;
         void didReceiveData(const char* data, size_t size) final { owner.blobChunk(data, size); }
-        void didFail(const ResourceError&) final;
+        void didFail() final;
         void didSucceed() final { owner.blobLoadingSucceeded(); }
 
         FetchBodyOwner& owner;

@@ -32,7 +32,6 @@
 #include "FetchLoader.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"
-#include "ResourceError.h"
 #include "ResourceResponse.h"
 
 namespace WebCore {
@@ -278,10 +277,10 @@ FetchBodyOwner::BlobLoader::BlobLoader(FetchBodyOwner& owner)
 void FetchBodyOwner::BlobLoader::didReceiveResponse(const ResourceResponse& response)
 {
     if (response.httpStatusCode() != 200)
-        didFail({ });
+        didFail();
 }
 
-void FetchBodyOwner::BlobLoader::didFail(const ResourceError&)
+void FetchBodyOwner::BlobLoader::didFail()
 {
     // didFail might be called within FetchLoader::start call.
     if (loader->isStarted())
