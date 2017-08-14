@@ -1485,7 +1485,7 @@ RenderBlock* RenderTable::firstLineBlock() const
     return nullptr;
 }
 
-void RenderTable::updateFirstLetter(RenderTreeMutationIsAllowed)
+void RenderTable::updateFirstLetter()
 {
 }
 

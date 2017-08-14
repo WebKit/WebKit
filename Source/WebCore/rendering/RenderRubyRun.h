@@ -60,7 +60,7 @@ public:
     void removeChild(RenderObject&) override;
 
     RenderBlock* firstLineBlock() const override;
-    void updateFirstLetter(RenderTreeMutationIsAllowed = RenderTreeMutationIsAllowed::Yes) override;
+    void updateFirstLetter() override;
 
     void getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, float& startOverhang, float& endOverhang) const;
 

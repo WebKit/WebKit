@@ -32,8 +32,10 @@
 #include "Document.h"
 #include "FontCascade.h"
 #include "Logging.h"
+#include "RenderBlock.h"
 #include "RenderListMarker.h"
 #include "RenderText.h"
+#include "RenderTextFragment.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -153,6 +155,17 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         newParentStyle.setFontDescription(fontDescription);
         newParentStyle.fontCascade().update(&node->document().fontSelector());
         parentRenderer->setStyle(WTFMove(newParentStyle));
+    }
+
+    // FIXME: All render tree mutations should be done via RenderTreeUpdater.
+    for (auto& node : m_autoSizedNodes) {
+        auto& textRenderer = *node->renderer();
+        if (!is<RenderTextFragment>(textRenderer))
+            continue;
+        auto* block = downcast<RenderTextFragment>(textRenderer).blockForAccompanyingFirstLetter();
+        if (!block)
+            continue;
+        block->updateFirstLetter();
     }
 
     return stillHasNodes;
