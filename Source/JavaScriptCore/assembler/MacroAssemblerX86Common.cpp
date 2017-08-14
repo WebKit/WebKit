@@ -523,9 +523,12 @@ asm (
 #endif // COMPILER(GCC_OR_CLANG)
 
 #if OS(WINDOWS)
-extern "C" NO_RETURN_DUE_TO_ASSERT void ctiMasmProbeTrampoline()
+static bool booleanTrueForAvoidingNoReturnDeclaration() { return true; }
+
+extern "C" void ctiMasmProbeTrampoline()
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    if (booleanTrueForAvoidingNoReturnDeclaration())
+        RELEASE_ASSERT_NOT_REACHED();
 }
 #endif // OS(WINDOWS)
 
