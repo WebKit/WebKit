@@ -4,7 +4,9 @@ Deleting 'W' in blue color and then inserting 'O'. The following markup should s
 | "H "
 | <font>
 |   color="#0000ff"
-|   "O<#selection-caret>"
+|   <span>
+|     style="caret-color: rgb(0, 0, 255);"
+|     "O<#selection-caret>"
 
 Deleting the blue colored text and the preceding space and then inserting 'W'. 'W' should be not be in blue color in the following markup:
 | "HW<#selection-caret>"

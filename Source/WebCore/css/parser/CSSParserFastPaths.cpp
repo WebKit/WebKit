@@ -1317,11 +1317,22 @@ static RefPtr<CSSValue> parseSimpleTransform(CSSPropertyID propertyID, const Str
     return parseSimpleTransformList(string.characters16(), string.length());
 }
 
+static RefPtr<CSSValue> parseCaretColor(const String& string, CSSParserMode parserMode)
+{
+    ASSERT(!string.isEmpty());
+    CSSValueID valueID = cssValueKeywordID(string);
+    if (valueID == CSSValueAuto)
+        return CSSValuePool::singleton().createIdentifierValue(valueID);
+    return CSSParserFastPaths::parseColor(string, parserMode);
+}
+
 RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, const String& string, CSSParserMode parserMode)
 {
     RefPtr<CSSValue> result = parseSimpleLengthValue(propertyID, string, parserMode);
     if (result)
         return result;
+    if (propertyID == CSSPropertyCaretColor)
+        return parseCaretColor(string, parserMode);
     if (isColorPropertyID(propertyID))
         return parseColor(string, parserMode);
     result = parseKeywordValue(propertyID, string, parserMode);

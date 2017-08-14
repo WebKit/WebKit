@@ -1,3 +1,43 @@
+2017-08-14  Daniel Bates  <dabates@apple.com>
+
+        [css-ui] Implement caret-color support
+        https://bugs.webkit.org/show_bug.cgi?id=166572
+        <rdar://problem/33852589>
+
+        Reviewed by David Hyatt.
+
+        Add reference tests to ensure that we do not regress CSS property caret-color.
+
+        * TestExpectations: Unskip Web Platform Tests that now pass.
+        * editing/deleting/maintain-style-after-delete-expected.txt: Updated expected result.
+        * editing/inserting/insert-paragraph-with-font-and-background-color-expected.txt: Ditto.
+        * editing/pasteboard/do-not-copy-unnecessary-styles-2-expected.txt: Ditto.
+        * editing/pasteboard/onpaste-text-html-expected.txt: Ditto.
+        * editing/pasteboard/preserve-caret-color-expected.txt: Added.
+        * editing/pasteboard/preserve-caret-color.html: Added.
+        * editing/pasteboard/preserve-underline-color-expected.txt:
+        * fast/css/caret-color-auto-expected.html: Added.
+        * fast/css/caret-color-auto.html: Added.
+        * fast/css/caret-color-expected.html: Added.
+        * fast/css/caret-color-fallback-to-color-expected.html: Added.
+        * fast/css/caret-color-fallback-to-color.html: Added.
+        * fast/css/caret-color-inherit-expected.html: Added.
+        * fast/css/caret-color-inherit.html: Added.
+        * fast/css/caret-color-span-inside-editable-parent-expected.html: Added.
+        * fast/css/caret-color-span-inside-editable-parent.html: Added.
+        * fast/css/caret-color.html: Added.
+        * fast/events/before-input-events-prevent-drag-and-drop-expected.txt: Updated expected result.
+        * fast/events/input-events-paste-rich-datatransfer-expected.txt: Ditto.
+        * fast/events/ondrop-text-html-expected.txt: Ditto.
+        * fast/history/visited-link-caret-color-expected.html: Added.
+        * fast/history/visited-link-caret-color.html: Added.
+        * platform/ios/TestExpectations: Skip the tests on iOS as iOS does not enable
+        ENABLE(TEXT_CARET). UIKit renders the text insertion caret on iOS.
+        * platform/mac/editing/style/5065910-expected.txt: Updated expected result.
+        * platform/mac/editing/style/5084241-expected.png: Ditto.
+        * platform/mac/editing/style/5084241-expected.txt: Ditto.
+        * platform/ios-wk2/editing/style/5084241-expected.txt: Ditto.
+
 2017-08-14  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r220517-r220521) [GTK] Various compositing tests fail

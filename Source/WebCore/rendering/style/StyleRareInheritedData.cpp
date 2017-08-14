@@ -38,7 +38,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     void* styleImage;
     Color firstColor;
     float firstFloat;
-    Color colors[7];
+    Color colors[9];
     void* ownPtrs[1];
     AtomicString atomicStrings[5];
     void* refPtrs[2];
@@ -160,6 +160,8 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , visitedLinkTextStrokeColor(o.visitedLinkTextStrokeColor)
     , visitedLinkTextFillColor(o.visitedLinkTextFillColor)
     , visitedLinkTextEmphasisColor(o.visitedLinkTextEmphasisColor)
+    , caretColor(o.caretColor)
+    , visitedLinkCaretColor(o.visitedLinkCaretColor)
     , textShadow(o.textShadow ? std::make_unique<ShadowData>(*o.textShadow) : nullptr)
     , cursorData(o.cursorData)
     , indent(o.indent)
@@ -261,6 +263,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && visitedLinkTextStrokeColor == o.visitedLinkTextStrokeColor
         && visitedLinkTextFillColor == o.visitedLinkTextFillColor
         && visitedLinkTextEmphasisColor == o.visitedLinkTextEmphasisColor
+        && caretColor == o.caretColor
+        && visitedLinkCaretColor == o.visitedLinkCaretColor
 #if ENABLE(TOUCH_EVENTS)
         && tapHighlightColor == o.tapHighlightColor
 #endif

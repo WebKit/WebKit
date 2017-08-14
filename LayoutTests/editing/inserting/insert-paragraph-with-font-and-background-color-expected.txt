@@ -15,7 +15,7 @@ The style and the font should be preserved in new line of text - the "Bar" shoul
 |   <font>
 |     color="#1b6f11"
 |     <span>
-|       style="background-color: rgb(191, 35, 28);"
+|       style="caret-color: rgb(27, 111, 17); background-color: rgb(191, 35, 28);"
 |       "Bar<#selection-caret>"
 |       <br>
 |   <br>

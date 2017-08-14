@@ -1,3 +1,70 @@
+2017-08-14  Daniel Bates  <dabates@apple.com>
+
+        [css-ui] Implement caret-color support
+        https://bugs.webkit.org/show_bug.cgi?id=166572
+        <rdar://problem/33852589>
+
+        Reviewed by David Hyatt.
+
+        Add support for the CSS property caret-color as per <https://www.w3.org/TR/css-ui-3/#caret-color> (02 March 2017).
+        The property caret-color specifies the color of the text insertion caret in an editable element,
+        say an HTML textarea element.
+
+        Unlike other CSS color properties caret-color can have value "auto" and this is its initial
+        value. Internally we treat value "auto" as an invalid caret color to simplify the code.
+
+        Tests: editing/pasteboard/preserve-caret-color.html
+               fast/css/caret-color-auto.html
+               fast/css/caret-color-fallback-to-color.html
+               fast/css/caret-color-inherit.html
+               fast/css/caret-color-span-inside-editable-parent.html
+               fast/css/caret-color.html
+               fast/history/visited-link-caret-color.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSProperties.json: Add property caret-color. We represent the initial  "auto" Also, fix up
+        wording in a comment while I am here.
+        * css/StyleResolver.cpp:
+        (WebCore::isValidVisitedLinkProperty): Add caret-color to the list of properties that can be
+        applied to visited hyperlinks.
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseCaretColor): Added.
+        (WebCore::CSSParserFastPaths::maybeParseValue): Unlike other CSS color properties caret-color
+        can be defined to be "auto". We explicitly check if the property is caret-color and use
+        parseCaretColor() to parse its value.
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeCaretColor): Added.
+        (WebCore::CSSPropertyParser::parseSingleValue): Similar to the change to CSSParserFastPaths::maybeParseValue()
+        use a dedicated code path to parse caret-color.
+        * editing/EditingStyle.cpp: Preserve caret-color during editing operations.
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::paintCaret const): Modified code to query property caret-color instead of
+        color for the color of the text insertion caret. Always honor the caret-color of the editable
+        element if it is valid color. Note that "caret-color: auto" is treated as an invalid color
+        internally. A caret-color can have an invalid color if its inherits from the CSS color property
+        with an invalid color. If caret-color is a valid color then we take it to be the color of the
+        text insertion caret. Otherwise, we do what we do today and use a heuristic to determine the
+        color of the text-insertion caret.
+        (WebCore::disappearsIntoBackground): Deleted; moved logic into CaretBase::paintCaret().
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap): Add property wrapper
+        to support animating caret-color.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline const): Modified to consider
+        changes to caret color.
+        (WebCore::RenderStyle::colorIncludingFallback const): Modified to compute the appropriate
+        color for property caret-color with respect to an unvisited or visited link.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setCaretColor): Added.
+        (WebCore::RenderStyle::setVisitedLinkCaretColor): Added.
+        (WebCore::RenderStyle::caretColor const): Added.
+        (WebCore::RenderStyle::visitedLinkCaretColor const): Added.
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData): Modified to consider caret color.
+        (WebCore::StyleRareInheritedData::operator== const): Ditto.
+        * rendering/style/StyleRareInheritedData.h:
+
 2017-08-14  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r220517-r220521) [GTK] Various compositing tests fail

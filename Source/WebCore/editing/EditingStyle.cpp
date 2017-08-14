@@ -58,6 +58,7 @@ namespace WebCore {
 // Editing style properties must be preserved during editing operation.
 // e.g. when a user inserts a new paragraph, all properties listed here must be copied to the new paragraph.
 static const CSSPropertyID editingProperties[] = {
+    CSSPropertyCaretColor,
     CSSPropertyColor,
     CSSPropertyFontFamily,
     CSSPropertyFontSize,

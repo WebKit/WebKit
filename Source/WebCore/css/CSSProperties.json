@@ -89,7 +89,7 @@
         "StyleResolver::applyPropertyToRegularStyle() returns true.",
         "",
         "* no-default-color:",
-        "Should only with used with \"VisitedLinkColorSupport\". It indicates that for",
+        "Should only be used with \"VisitedLinkColorSupport\". It indicates that when",
         "setting the inherited value, it will not fallback to using the parent's",
         "\"color\" property if the inherited color is invalid.",
         "",
@@ -170,6 +170,17 @@
         "to true is chosen for code generation."
     ],
     "properties": {
+        "caret-color" : {
+            "inherited": true,
+            "codegen-properties": {
+                "initial": "invalidColor",
+                "visited-link-color-support": true
+            },
+            "specification": {
+                "category": "css-ui",
+                "url": "https://drafts.csswg.org/css-ui-3/#propdef-caret-color"
+            }
+        },
         "color": {
             "inherited": true,
             "codegen-properties": {

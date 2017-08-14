@@ -66,7 +66,10 @@ public:
     
     Color visitedLinkTextStrokeColor;
     Color visitedLinkTextFillColor;
-    Color visitedLinkTextEmphasisColor;    
+    Color visitedLinkTextEmphasisColor;
+
+    Color caretColor;
+    Color visitedLinkCaretColor;
 
     std::unique_ptr<ShadowData> textShadow; // Our text shadow information for shadowed text drawing.
     

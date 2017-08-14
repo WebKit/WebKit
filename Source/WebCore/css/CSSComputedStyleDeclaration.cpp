@@ -137,6 +137,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyBoxShadow,
     CSSPropertyBoxSizing,
     CSSPropertyCaptionSide,
+    CSSPropertyCaretColor,
     CSSPropertyClear,
     CSSPropertyClip,
     CSSPropertyColor,
@@ -2891,6 +2892,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return valueForShadow(style->boxShadow(), propertyID, *style);
         case CSSPropertyCaptionSide:
             return cssValuePool.createValue(style->captionSide());
+        case CSSPropertyCaretColor:
+            return m_allowVisitedStyle ? cssValuePool.createColorValue(style->visitedDependentColor(CSSPropertyCaretColor)) : currentColorOrValidColor(style, style->caretColor());
         case CSSPropertyClear:
             return cssValuePool.createValue(style->clear());
         case CSSPropertyColor:

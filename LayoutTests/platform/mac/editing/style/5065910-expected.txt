@@ -12,13 +12,14 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 151x18
               text run at (0,0) width 151: "This text should be red."
         RenderBlock {DIV} at (0,18) size 784x18
-          RenderInline {FONT} at (0,0) size 127x18 [color=#0000FF]
-            RenderText {#text} at (0,0) size 127x18
-              text run at (0,0) width 127: "This text should be "
-          RenderInline {FONT} at (0,0) size 240x18 [color=#008000]
-            RenderText {#text} at (126,0) size 240x18
-              text run at (126,0) width 240: "a combination of green and blue, not "
-          RenderInline {FONT} at (0,0) size 25x18 [color=#0000FF]
-            RenderText {#text} at (365,0) size 25x18
-              text run at (365,0) width 25: "red."
-caret: position 37 of child 0 {#text} of child 1 {FONT} of child 1 {DIV} of child 2 {DIV} of body
+          RenderInline {SPAN} at (0,0) size 390x18
+            RenderInline {FONT} at (0,0) size 127x18 [color=#0000FF]
+              RenderText {#text} at (0,0) size 127x18
+                text run at (0,0) width 127: "This text should be "
+            RenderInline {FONT} at (0,0) size 240x18 [color=#008000]
+              RenderText {#text} at (126,0) size 240x18
+                text run at (126,0) width 240: "a combination of green and blue, not "
+            RenderInline {FONT} at (0,0) size 25x18 [color=#0000FF]
+              RenderText {#text} at (365,0) size 25x18
+                text run at (365,0) width 25: "red."
+caret: position 37 of child 0 {#text} of child 1 {FONT} of child 0 {SPAN} of child 1 {DIV} of child 2 {DIV} of body
