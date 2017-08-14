@@ -1,3 +1,22 @@
+2017-08-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Soup] Cannot access HTTPS sites using a HTTP proxy that requires authentication
+        https://bugs.webkit.org/show_bug.cgi?id=175378
+
+        Reviewed by Sergio Villar Senin.
+
+        Bring back part of the code removed in r206732, to keep a reference to the SoupMessage in the
+        AuthenticationChallenge since it can be different to the resource message.
+
+        * platform/network/soup/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge): Deleted.
+        (WebCore::AuthenticationChallenge::authenticationClient const): Deleted.
+        (WebCore::AuthenticationChallenge::soupAuth const): Deleted.
+        (WebCore::AuthenticationChallenge::setProposedCredential): Deleted.
+        * platform/network/soup/AuthenticationChallengeSoup.cpp:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::platformCompare):
+
 2017-08-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Make ThreadGlobalData RefCounted for web thread
