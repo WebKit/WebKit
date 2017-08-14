@@ -56,6 +56,8 @@ function go() {
     logAndShouldNotThrow("request = validRequest(); request.supportedCountries = [];", "new ApplePaySession(3, request)");
     logAndShouldNotThrow("request = validRequest(); request.supportedCountries = ['US'];", "new ApplePaySession(3, request)");
     logAndShouldNotThrow("request = validRequest(); request.supportedCountries = ['US', 'US'];", "new ApplePaySession(3, request)");
+    logAndShouldNotThrow("request = validRequest(); request.requiredBillingContactFields = ['phoneticName'];", "new ApplePaySession(3, request)")
+    logAndShouldNotThrow("request = validRequest(); request.requiredShippingContactFields = ['phoneticName'];", "new ApplePaySession(3, request)")
     debug("");
 
     document.querySelector("button").remove();

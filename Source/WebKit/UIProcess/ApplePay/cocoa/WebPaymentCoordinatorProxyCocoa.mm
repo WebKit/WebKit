@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,6 +77,7 @@ SOFT_LINK_CONSTANT(PassKit, PKContactFieldPostalAddress, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKContactFieldEmailAddress, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKContactFieldPhoneNumber, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKContactFieldName, NSString *);
+SOFT_LINK_CONSTANT(PassKit, PKContactFieldPhoneticName, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentErrorContactFieldUserInfoKey, NSString *);
 SOFT_LINK_CONSTANT(PassKit, PKPaymentErrorPostalAddressUserInfoKey, NSString *);
 #endif
@@ -362,6 +363,8 @@ static RetainPtr<NSSet> toPKContactFields(const WebCore::PaymentRequest::Contact
         result.append(getPKContactFieldEmailAddress());
     if (contactFields.name)
         result.append(getPKContactFieldName());
+    if (contactFields.phoneticName)
+        result.append(getPKContactFieldPhoneticName());
 
     return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
 }
@@ -636,6 +639,10 @@ static RetainPtr<NSError> toNSError(const WebCore::PaymentError& error)
 
         case WebCore::PaymentError::ContactField::Name:
             pkContactField = getPKContactFieldName();
+            break;
+
+        case WebCore::PaymentError::ContactField::PhoneticName:
+            pkContactField = getPKContactFieldPhoneticName();
             break;
 
         case WebCore::PaymentError::ContactField::PostalAddress:

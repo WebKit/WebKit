@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,14 +48,36 @@ SOFT_LINK_CLASS(PassKit, PKContact)
 
 namespace WebCore {
 
-static RetainPtr<PKContact> convert(const ApplePayPaymentContact& contact)
+static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentContact& contact)
 {
     auto result = adoptNS([allocPKContactInstance() init]);
 
-    if (!contact.familyName.isEmpty() || !contact.givenName.isEmpty()) {
+    NSString *familyName = nil;
+    NSString *phoneticFamilyName = nil;
+    if (!contact.familyName.isEmpty()) {
+        familyName = contact.familyName;
+        if (version >= 3 && !contact.phoneticFamilyName.isEmpty())
+            phoneticFamilyName = contact.phoneticFamilyName;
+    }
+
+    NSString *givenName = nil;
+    NSString *phoneticGivenName = nil;
+    if (!contact.givenName.isEmpty()) {
+        givenName = contact.givenName;
+        if (version >= 3 && !contact.phoneticGivenName.isEmpty())
+            phoneticGivenName = contact.phoneticGivenName;
+    }
+
+    if (familyName || givenName) {
         auto name = adoptNS([[NSPersonNameComponents alloc] init]);
-        [name setFamilyName:contact.familyName];
-        [name setGivenName:contact.givenName];
+        [name setFamilyName:familyName];
+        [name setGivenName:givenName];
+        if (phoneticFamilyName || phoneticGivenName) {
+            auto phoneticName = adoptNS([[NSPersonNameComponents alloc] init]);
+            [phoneticName setFamilyName:phoneticFamilyName];
+            [phoneticName setGivenName:phoneticGivenName];
+            [name setPhoneticRepresentation:phoneticName.get()];
+        }
         [result setName:name.get()];
     }
 
@@ -74,7 +96,7 @@ static RetainPtr<PKContact> convert(const ApplePayPaymentContact& contact)
             if (i != contact.addressLines->size() - 1)
                 builder.append('\n');
         }
-        
+
         // FIXME: StringBuilder should hava a toNSString() function to avoid the extra String allocation.
         [address setStreet:builder.toString()];
 
@@ -101,36 +123,35 @@ static ApplePayPaymentContact convert(PKContact *contact)
 
     ApplePayPaymentContact result;
 
-    if (contact.phoneNumber)
-        result.phoneNumber = contact.phoneNumber.stringValue;
-    if (contact.emailAddress)
-        result.emailAddress = contact.emailAddress;
-    if (contact.name.givenName)
-        result.givenName = contact.name.givenName;
-    if (contact.name.familyName)
-        result.familyName = contact.name.familyName;
-    if (contact.postalAddress.street.length) {
+    result.phoneNumber = contact.phoneNumber.stringValue;
+    result.emailAddress = contact.emailAddress;
+
+    NSPersonNameComponents *name = contact.name;
+    result.givenName = name.givenName;
+    result.familyName = name.familyName;
+
+    NSPersonNameComponents *phoneticName = name.phoneticRepresentation;
+    result.phoneticGivenName = phoneticName.givenName;
+    result.phoneticFamilyName = phoneticName.familyName;
+
+    CNPostalAddress *postalAddress = contact.postalAddress;
+    if (postalAddress.street.length) {
         Vector<String> addressLines;
-        String(contact.postalAddress.street).split("\n", addressLines);
+        String(postalAddress.street).split("\n", addressLines);
         result.addressLines = WTFMove(addressLines);
     }
-    if (contact.postalAddress.city)
-        result.locality = contact.postalAddress.city;
-    if (contact.postalAddress.postalCode)
-        result.postalCode = contact.postalAddress.postalCode;
-    if (contact.postalAddress.state)
-        result.administrativeArea = contact.postalAddress.state;
-    if (contact.postalAddress.country)
-        result.country = contact.postalAddress.country;
-    if (contact.postalAddress.ISOCountryCode)
-        result.countryCode = contact.postalAddress.ISOCountryCode;
+    result.locality = postalAddress.city;
+    result.postalCode = postalAddress.postalCode;
+    result.administrativeArea = postalAddress.state;
+    result.country = postalAddress.country;
+    result.countryCode = postalAddress.ISOCountryCode;
 
     return result;
 }
 
-PaymentContact PaymentContact::fromApplePayPaymentContact(const ApplePayPaymentContact& contact)
+PaymentContact PaymentContact::fromApplePayPaymentContact(unsigned version, const ApplePayPaymentContact& contact)
 {
-    return PaymentContact(convert(contact).get());
+    return PaymentContact(convert(version, contact).get());
 }
 
 ApplePayPaymentContact PaymentContact::toApplePayPaymentContact() const
