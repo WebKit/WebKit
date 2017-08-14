@@ -52,7 +52,7 @@ public:
 
     void dump() override;
 
-    TextStream& externalRepresentation(TextStream&, int indention) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
 private:
     FEDiffuseLighting(Filter&, const Color&, float, float, float, float, Ref<LightSource>&&);

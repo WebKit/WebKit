@@ -50,11 +50,14 @@ namespace API {
 class OpenPanelParameters;
 }
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 class Color;
 class FloatQuad;
 class IntSize;
-class TextStream;
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -150,7 +153,7 @@ struct WKSelectionDrawingInfo {
     Vector<WebCore::SelectionRect> selectionRects;
 };
 
-WebCore::TextStream& operator<<(WebCore::TextStream&, const WKSelectionDrawingInfo&);
+WTF::TextStream& operator<<(WTF::TextStream&, const WKSelectionDrawingInfo&);
 
 struct WKAutoCorrectionData {
     String fontName;

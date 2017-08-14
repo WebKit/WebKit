@@ -89,6 +89,19 @@ TextStream& operator<<(TextStream& ts, TextStreamSeparator& sep)
     return ts;
 }
 
+static TextStream& operator<<(TextStream& ts, const DashArray& a)
+{
+    ts << "{";
+    DashArray::const_iterator end = a.end();
+    for (DashArray::const_iterator it = a.begin(); it != end; ++it) {
+        if (it != a.begin())
+            ts << ", ";
+        ts << *it;
+    }
+    ts << "}";
+    return ts;
+}
+
 template<typename ValueType>
 static void writeNameValuePair(TextStream& ts, const char* name, ValueType value)
 {
@@ -123,20 +136,6 @@ static TextStream& operator<<(TextStream& ts, const SVGUnitTypes::SVGUnitType& u
 static TextStream& operator<<(TextStream& ts, const SVGMarkerUnitsType& markerUnit)
 {
     ts << SVGPropertyTraits<SVGMarkerUnitsType>::toString(markerUnit);
-    return ts;
-}
-
-// FIXME: Maybe this should be in KCanvasRenderingStyle.cpp
-static TextStream& operator<<(TextStream& ts, const DashArray& a)
-{
-    ts << "{";
-    DashArray::const_iterator end = a.end();
-    for (DashArray::const_iterator it = a.begin(); it != end; ++it) {
-        if (it != a.begin())
-            ts << ", ";
-        ts << *it;
-    }
-    ts << "}";
     return ts;
 }
 

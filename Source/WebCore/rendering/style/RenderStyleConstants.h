@@ -27,9 +27,11 @@
 
 #include <initializer_list>
 
-namespace WebCore {
-
+namespace WTF {
 class TextStream;
+}
+
+namespace WebCore {
 
 static const size_t PrintColorAdjustBits = 1;
 enum PrintColorAdjust {
@@ -727,12 +729,12 @@ enum class ApplePayButtonType {
 };
 #endif
 
-TextStream& operator<<(TextStream&, EFillSizeType);
-TextStream& operator<<(TextStream&, EFillAttachment);
-TextStream& operator<<(TextStream&, EFillBox);
-TextStream& operator<<(TextStream&, EFillRepeat);
-TextStream& operator<<(TextStream&, EMaskSourceType);
-TextStream& operator<<(TextStream&, Edge);
+WTF::TextStream& operator<<(WTF::TextStream&, EFillSizeType);
+WTF::TextStream& operator<<(WTF::TextStream&, EFillAttachment);
+WTF::TextStream& operator<<(WTF::TextStream&, EFillBox);
+WTF::TextStream& operator<<(WTF::TextStream&, EFillRepeat);
+WTF::TextStream& operator<<(WTF::TextStream&, EMaskSourceType);
+WTF::TextStream& operator<<(WTF::TextStream&, Edge);
 
 // These are all minimized combinations of paint-order.
 enum class PaintOrder {

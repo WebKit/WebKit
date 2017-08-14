@@ -69,7 +69,7 @@ private:
 
     Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
-    void dump(TextStream&) const final;
+    void dump(WTF::TextStream&) const final;
 
     TranslateTransformOperation(const Length& tx, const Length& ty, const Length& tz, OperationType type)
         : TransformOperation(type)

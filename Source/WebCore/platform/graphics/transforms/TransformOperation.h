@@ -108,14 +108,14 @@ public:
         return type() == TRANSLATE_X || type() == TRANSLATE_Y || type() == TRANSLATE_Z || type() == TRANSLATE || type() == TRANSLATE_3D;
     }
     
-    virtual void dump(TextStream&) const = 0;
+    virtual void dump(WTF::TextStream&) const = 0;
 
 private:
     OperationType m_type;
 };
 
-TextStream& operator<<(TextStream&, TransformOperation::OperationType);
-TextStream& operator<<(TextStream&, const TransformOperation&);
+WTF::TextStream& operator<<(WTF::TextStream&, TransformOperation::OperationType);
+WTF::TextStream& operator<<(WTF::TextStream&, const TransformOperation&);
 
 } // namespace WebCore
 

@@ -23,9 +23,9 @@
 #include "RotateTransformOperation.h"
 
 #include "AnimationUtilities.h"
-#include "TextStream.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

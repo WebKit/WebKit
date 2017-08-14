@@ -32,16 +32,16 @@
 #include "config.h"
 #include "ScrollableArea.h"
 
+#include "FloatPoint.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "FloatPoint.h"
 #include "LayoutRect.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 #include "ScrollAnimatorMock.h"
 #include "ScrollbarTheme.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

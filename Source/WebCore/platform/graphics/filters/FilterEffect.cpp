@@ -26,10 +26,10 @@
 
 #include "Filter.h"
 #include "ImageBuffer.h"
-#include "TextStream.h"
 #include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint8ClampedArray.h>
+#include <wtf/text/TextStream.h>
 
 #if HAVE(ARM_NEON_INTRINSICS)
 #include <arm_neon.h>

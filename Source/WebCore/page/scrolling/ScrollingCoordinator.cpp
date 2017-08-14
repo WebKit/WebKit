@@ -40,9 +40,9 @@
 #include "RenderView.h"
 #include "ScrollAnimator.h"
 #include "Settings.h"
-#include "TextStream.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 #if USE(COORDINATED_GRAPHICS)
 #include "ScrollingCoordinatorCoordinatedGraphics.h"

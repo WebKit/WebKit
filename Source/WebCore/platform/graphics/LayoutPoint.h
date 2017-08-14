@@ -230,7 +230,7 @@ inline FloatSize snapSizeToDevicePixel(const LayoutSize& size, const LayoutPoint
     return FloatSize(snap(size.width(), location.x()), snap(size.height(), location.y()));
 }
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const LayoutPoint&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const LayoutPoint&);
 
 } // namespace WebCore
 

@@ -29,16 +29,16 @@
 #import "ArgumentCoders.h"
 #import "RemoteLayerTreeHost.h"
 #import "WebCoreArgumentCoders.h"
+#import <QuartzCore/QuartzCore.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/QuartzCoreSPI.h>
-#import <WebCore/TextStream.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
-#import <QuartzCore/QuartzCore.h>
+#import <wtf/text/TextStream.h>
 
 using namespace WTF;
 using namespace WebCore;

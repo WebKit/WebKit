@@ -30,12 +30,14 @@
 #include "ViewportArguments.h"
 #include <wtf/Noncopyable.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 static const double forceAlwaysUserScalableMaximumScale = 5.0;
 static const double forceAlwaysUserScalableMinimumScale = 1.0;
-
-class TextStream;
 
 class ViewportConfiguration {
     WTF_MAKE_NONCOPYABLE(ViewportConfiguration); WTF_MAKE_FAST_ALLOCATED;
@@ -116,6 +118,6 @@ private:
     bool m_forceAlwaysUserScalable;
 };
 
-TextStream& operator<<(TextStream&, const ViewportConfiguration::Parameters&);
+WTF::TextStream& operator<<(WTF::TextStream&, const ViewportConfiguration::Parameters&);
 
 } // namespace WebCore

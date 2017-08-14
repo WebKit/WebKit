@@ -205,9 +205,9 @@ public:
     void showRenderTreeForThis() const;
     void showLineTreeForThis() const;
 
-    void outputRenderObject(TextStream&, bool mark, int depth) const;
-    void outputRenderSubTreeAndMark(TextStream&, const RenderObject* markedObject, int depth) const;
-    void outputRegionsInformation(TextStream&) const;
+    void outputRenderObject(WTF::TextStream&, bool mark, int depth) const;
+    void outputRenderSubTreeAndMark(WTF::TextStream&, const RenderObject* markedObject, int depth) const;
+    void outputRegionsInformation(WTF::TextStream&) const;
 #endif
 
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }

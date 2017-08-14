@@ -34,9 +34,9 @@
 #include "FloatRoundedRect.h"
 #include "PathTraversalState.h"
 #include "RoundedRect.h"
-#include "TextStream.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

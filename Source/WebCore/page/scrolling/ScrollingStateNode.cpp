@@ -30,7 +30,7 @@
 
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingStateTree.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 #include <wtf/text/WTFString.h>
 

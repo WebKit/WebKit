@@ -27,8 +27,8 @@
 #include "PerspectiveTransformOperation.h"
 
 #include "AnimationUtilities.h"
-#include "TextStream.h"
 #include <wtf/MathExtras.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

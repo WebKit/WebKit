@@ -59,7 +59,7 @@ private:
         return *this;
     }
 
-    void dump(TextStream&) const final;
+    void dump(WTF::TextStream&) const final;
 
     IdentityTransformOperation()
         : TransformOperation(IDENTITY)

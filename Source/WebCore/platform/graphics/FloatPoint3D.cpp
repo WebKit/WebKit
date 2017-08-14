@@ -22,8 +22,8 @@
 #include "config.h"
 #include "FloatPoint3D.h"
 
-#include "TextStream.h"
 #include <math.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

@@ -93,7 +93,7 @@ void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& d
     m_cachedImageBuffer->drawPattern(destContext, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, compositeOp, blendMode);
 }
 
-void GradientImage::dump(TextStream& ts) const
+void GradientImage::dump(WTF::TextStream& ts) const
 {
     GeneratedImage::dump(ts);
     // FIXME: dump the gradient.

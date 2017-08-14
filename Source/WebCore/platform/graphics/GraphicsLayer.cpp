@@ -32,11 +32,11 @@
 #include "GraphicsContext.h"
 #include "LayoutRect.h"
 #include "RotateTransformOperation.h"
-#include "TextStream.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 #ifndef NDEBUG

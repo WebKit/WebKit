@@ -28,8 +28,8 @@
 #include "config.h"
 #include "GraphicsTypes.h"
 
-#include "TextStream.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

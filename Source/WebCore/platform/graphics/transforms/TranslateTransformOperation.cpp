@@ -23,7 +23,7 @@
 #include "TranslateTransformOperation.h"
 
 #include "FloatConversion.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

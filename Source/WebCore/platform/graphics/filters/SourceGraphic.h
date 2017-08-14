@@ -39,7 +39,7 @@ public:
 
     FilterEffectType filterEffectType() const override { return FilterEffectTypeSourceInput; }
 
-    TextStream& externalRepresentation(TextStream&, int indention) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
 private:
     SourceGraphic(Filter& filter)

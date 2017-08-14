@@ -43,7 +43,7 @@ public:
     void platformApplySoftware() override;
     void dump() override;
 
-    TextStream& externalRepresentation(TextStream&, int indention) const override;
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, int indention) const override;
 
 private:
     FEBlend(Filter&, BlendMode);

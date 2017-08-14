@@ -29,9 +29,9 @@
 
 #include "FloatConversion.h"
 #include "IntSize.h"
-#include "TextStream.h"
 #include <limits>
 #include <math.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

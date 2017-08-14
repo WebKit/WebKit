@@ -34,11 +34,11 @@
 #include "Length.h"
 #include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
-#include "TextStream.h"
 #include "URL.h"
 #include <math.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/TextStream.h>
 
 #if USE(CG)
 #include <CoreFoundation/CoreFoundation.h>

@@ -157,7 +157,7 @@ public:
 using LayoutBoxExtent = BoxExtent<LayoutUnit>;
 using FloatBoxExtent = BoxExtent<float>;
 
-TextStream& operator<<(TextStream&, const LengthBox&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatBoxExtent&);
+WTF::TextStream& operator<<(WTF::TextStream&, const LengthBox&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatBoxExtent&);
 
 } // namespace WebCore

@@ -27,7 +27,7 @@
 #include "IntPoint.h"
 
 #include "FloatPoint.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

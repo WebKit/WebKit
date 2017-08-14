@@ -197,7 +197,7 @@ private:
     bool canDestroyDecodedData();
     void setCurrentFrameDecodingStatusIfNecessary(DecodingStatus);
     bool isBitmapImage() const override { return true; }
-    void dump(TextStream&) const override;
+    void dump(WTF::TextStream&) const override;
 
     // Animated images over a certain size are considered large enough that we'll only hang on to one frame at a time.
     static const unsigned LargeAnimationCutoff = 30 * 1014 * 1024;

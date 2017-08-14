@@ -214,7 +214,7 @@ private:
     mutable unsigned m_clipMax : 2; // EFillBox, maximum m_clip value from this to bottom layer
 };
 
-TextStream& operator<<(TextStream&, FillSize);
-TextStream& operator<<(TextStream&, const FillLayer&);
+WTF::TextStream& operator<<(WTF::TextStream&, FillSize);
+WTF::TextStream& operator<<(WTF::TextStream&, const FillLayer&);
 
 } // namespace WebCore

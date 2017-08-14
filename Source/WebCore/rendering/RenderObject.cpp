@@ -55,7 +55,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowFragment.h"
-#include "RenderNamedFlowThread.h" 
+#include "RenderNamedFlowThread.h"
 #include "RenderRuby.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
@@ -69,11 +69,11 @@
 #include "RenderWidget.h"
 #include "SVGRenderSupport.h"
 #include "StyleResolver.h"
-#include "TextStream.h"
 #include "TransformState.h"
 #include <algorithm>
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>
+#include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS)
 #include "SelectionRect.h"

@@ -46,7 +46,7 @@
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 #if ENABLE(TREE_DEBUGGING)
 #include <stdio.h>

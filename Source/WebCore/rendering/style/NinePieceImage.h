@@ -209,6 +209,6 @@ private:
     DataRef<Data> m_data;
 };
 
-TextStream& operator<<(TextStream&, const NinePieceImage&);
+WTF::TextStream& operator<<(WTF::TextStream&, const NinePieceImage&);
 
 } // namespace WebCore

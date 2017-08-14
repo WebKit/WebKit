@@ -35,11 +35,11 @@
 #import "PlatformWheelEvent.h"
 #import "ScrollableArea.h"
 #import "ScrollingCoordinator.h"
-#import "ScrollingTree.h"
 #import "ScrollingStateTree.h"
-#import "TextStream.h"
+#import "ScrollingTree.h"
 #import "TileController.h"
 #import "WebLayer.h"
+#import <wtf/text/TextStream.h>
 
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/CurrentTime.h>

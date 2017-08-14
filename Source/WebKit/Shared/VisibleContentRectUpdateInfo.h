@@ -35,7 +35,7 @@ class Decoder;
 class Encoder;
 }
 
-namespace WebCore {
+namespace WTF {
 class TextStream;
 }
 
@@ -133,6 +133,6 @@ inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleConte
         && a.enclosedInScrollableAncestorView() == b.enclosedInScrollableAncestorView();
 }
 
-WebCore::TextStream& operator<<(WebCore::TextStream&, const VisibleContentRectUpdateInfo&);
+WTF::TextStream& operator<<(WTF::TextStream&, const VisibleContentRectUpdateInfo&);
 
 } // namespace WebKit

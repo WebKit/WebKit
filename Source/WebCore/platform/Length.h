@@ -30,6 +30,10 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 enum LengthType {
@@ -46,7 +50,6 @@ enum ValueRange {
 };
 
 class CalculationValue;
-class TextStream;
 
 struct Length {
     WTF_MAKE_FAST_ALLOCATED;
@@ -417,7 +420,7 @@ inline bool Length::isFitContent() const
 
 Length convertTo100PercentMinusLength(const Length&);
 
-TextStream& operator<<(TextStream&, Length);
+WTF::TextStream& operator<<(WTF::TextStream&, Length);
 
 } // namespace WebCore
 

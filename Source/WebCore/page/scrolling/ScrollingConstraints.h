@@ -195,7 +195,7 @@ private:
     FloatPoint m_layerPositionAtLastLayout;
 };
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FixedPositionViewportConstraints&);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StickyPositionViewportConstraints&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FixedPositionViewportConstraints&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const StickyPositionViewportConstraints&);
 
 } // namespace WebCore

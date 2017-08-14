@@ -51,13 +51,16 @@ struct D2D_POINT_2F;
 typedef D2D_POINT_2F D2D1_POINT_2F;
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class AffineTransform;
 class TransformationMatrix;
 class IntPoint;
 class IntSize;
-class TextStream;
 
 class FloatPoint {
 public:
@@ -294,7 +297,7 @@ inline bool areEssentiallyEqual(const FloatPoint& a, const FloatPoint& b)
     return WTF::areEssentiallyEqual(a.x(), b.x()) && WTF::areEssentiallyEqual(a.y(), b.y());
 }
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatPoint&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatPoint&);
 
 }
 

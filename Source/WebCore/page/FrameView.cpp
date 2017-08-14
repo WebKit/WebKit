@@ -92,9 +92,9 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "TextResourceDecoder.h"
-#include "TextStream.h"
 #include "TiledBacking.h"
 #include "WheelEventTestTrigger.h"
+#include <wtf/text/TextStream.h>
 
 #include <wtf/CurrentTime.h>
 #include <wtf/MemoryPressureHandler.h>

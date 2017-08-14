@@ -1735,7 +1735,7 @@ const char* InlineFlowBox::boxName() const
     return "InlineFlowBox";
 }
 
-void InlineFlowBox::outputLineTreeAndMark(TextStream& stream, const InlineBox* markedBox, int depth) const
+void InlineFlowBox::outputLineTreeAndMark(WTF::TextStream& stream, const InlineBox* markedBox, int depth) const
 {
     InlineBox::outputLineTreeAndMark(stream, markedBox, depth);
     for (const InlineBox* box = firstChild(); box; box = box->nextOnLine())

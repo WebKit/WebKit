@@ -1,3 +1,24 @@
+2017-08-09  Don Olmstead  <don.olmstead@sony.com>
+
+        [WTF] Move TextStream into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=175211
+
+        Reviewed by Myles C. Maxfield.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        * Shared/VisibleContentRectUpdateInfo.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (WebKit::operator<<):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+
 2017-08-09  Brady Eidson  <beidson@apple.com>
 
         ServiceWorker experimental feature should not be on by default (definitely not ready).

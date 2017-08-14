@@ -46,8 +46,8 @@
 #include "ScrollingStateStickyNode.h"
 #include "ScrollingStateTree.h"
 #include "Settings.h"
-#include "TextStream.h"
 #include "WheelEventTestTrigger.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

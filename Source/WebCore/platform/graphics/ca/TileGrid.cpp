@@ -33,10 +33,10 @@
 #include "LayerPool.h"
 #include "Logging.h"
 #include "PlatformCALayer.h"
-#include "TextStream.h"
 #include "TileController.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS)
 #include "TileControllerMemoryHandlerIOS.h"

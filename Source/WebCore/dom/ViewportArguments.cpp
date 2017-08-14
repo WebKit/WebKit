@@ -33,7 +33,7 @@
 #include "IntSize.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

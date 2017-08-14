@@ -32,7 +32,7 @@
 #else
 
 #define LOG_WITH_STREAM(channel, commands) do { \
-        WebCore::TextStream stream(WebCore::TextStream::LineMode::SingleLine); \
+        WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
         commands; \
         WTFLog(&JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), "%s", stream.release().utf8().data()); \
     } while (0)

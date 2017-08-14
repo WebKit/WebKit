@@ -344,7 +344,7 @@ private:
     Color m_color;
 };
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FilterOperation&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterOperation&);
 
 } // namespace WebCore
 

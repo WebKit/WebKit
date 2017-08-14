@@ -28,12 +28,14 @@
 #include <wtf/Forward.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebCore {
+namespace WTF {
 
 class TextStream {
 public:
     struct FormatNumberRespectingIntegers {
-        FormatNumberRespectingIntegers(double number) : value(number) { }
+        FormatNumberRespectingIntegers(double number)
+            : value(number) { }
+
         double value;
     };
     
@@ -52,21 +54,21 @@ public:
     {
     }
 
-    WEBCORE_EXPORT TextStream& operator<<(bool);
-    WEBCORE_EXPORT TextStream& operator<<(int);
-    WEBCORE_EXPORT TextStream& operator<<(unsigned);
-    WEBCORE_EXPORT TextStream& operator<<(long);
-    WEBCORE_EXPORT TextStream& operator<<(unsigned long);
-    WEBCORE_EXPORT TextStream& operator<<(long long);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(bool);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(int);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(unsigned);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(long);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(unsigned long);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(long long);
 
-    WEBCORE_EXPORT TextStream& operator<<(unsigned long long);
-    WEBCORE_EXPORT TextStream& operator<<(float);
-    WEBCORE_EXPORT TextStream& operator<<(double);
-    WEBCORE_EXPORT TextStream& operator<<(const char*);
-    WEBCORE_EXPORT TextStream& operator<<(const void*);
-    WEBCORE_EXPORT TextStream& operator<<(const String&);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(unsigned long long);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(float);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(double);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const char*);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const void*);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const String&);
     // Deprecated. Use the NumberRespectingIntegers FormattingFlag instead.
-    WEBCORE_EXPORT TextStream& operator<<(const FormatNumberRespectingIntegers&);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const FormatNumberRespectingIntegers&);
 
     FormattingFlags formattingFlags() const { return m_formattingFlags; }
     void setFormattingFlags(FormattingFlags flags) { m_formattingFlags = flags; }
@@ -82,16 +84,16 @@ public:
         ts.endGroup();
     }
 
-    WEBCORE_EXPORT String release();
+    WTF_EXPORT_PRIVATE String release();
     
-    WEBCORE_EXPORT void startGroup();
-    WEBCORE_EXPORT void endGroup();
-    WEBCORE_EXPORT void nextLine(); // Output newline and indent.
+    WTF_EXPORT_PRIVATE void startGroup();
+    WTF_EXPORT_PRIVATE void endGroup();
+    WTF_EXPORT_PRIVATE void nextLine(); // Output newline and indent.
 
     void increaseIndent(int amount = 1) { m_indent += amount; }
     void decreaseIndent(int amount = 1) { m_indent -= amount; ASSERT(m_indent >= 0); }
 
-    WEBCORE_EXPORT void writeIndent();
+    WTF_EXPORT_PRIVATE void writeIndent();
 
     class GroupScope {
     public:
@@ -131,6 +133,8 @@ TextStream& operator<<(TextStream& ts, const Vector<Item>& vector)
     return ts << "]";
 }
 
-void writeIndent(TextStream&, int indent);
+WTF_EXPORT_PRIVATE void writeIndent(TextStream&, int indent);
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::TextStream;

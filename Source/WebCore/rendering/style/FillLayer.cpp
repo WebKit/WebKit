@@ -22,8 +22,8 @@
 #include "config.h"
 #include "FillLayer.h"
 
-#include "TextStream.h"
 #include <wtf/PointerComparison.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

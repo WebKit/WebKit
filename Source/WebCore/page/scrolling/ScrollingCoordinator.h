@@ -45,6 +45,10 @@
 #include "AxisScrollSnapOffsets.h"
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 typedef unsigned SynchronousScrollingReasons;
@@ -68,7 +72,6 @@ class GraphicsLayer;
 class Page;
 class Region;
 class ScrollableArea;
-class TextStream;
 class ViewportConstraints;
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -247,10 +250,10 @@ private:
     bool m_forceSynchronousScrollLayerPositionUpdates { false };
 };
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollableAreaParameters);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollingNodeType);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollingLayerPositionAction);
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, ViewportRectStability);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollableAreaParameters);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollingNodeType);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollingLayerPositionAction);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ViewportRectStability);
 
 } // namespace WebCore
 

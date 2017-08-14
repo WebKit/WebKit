@@ -27,9 +27,9 @@
 #include "GraphicsContext.h"
 #include "LengthFunctions.h"
 #include "RenderStyle.h"
-#include "TextStream.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PointerComparison.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

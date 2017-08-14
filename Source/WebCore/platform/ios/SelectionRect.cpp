@@ -25,7 +25,8 @@
 
 #include "config.h"
 #include "SelectionRect.h"
-#include "TextStream.h"
+
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -116,7 +117,7 @@ TextStream& operator<<(TextStream& stream, SelectionRect rect)
 
     if (rect.isHorizontal())
         stream.dumpProperty("is horizontal", true);
-    
+
     if (rect.isInFixedPosition())
         stream.dumpProperty("is in fixed position", true);
 

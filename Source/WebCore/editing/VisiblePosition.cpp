@@ -39,10 +39,10 @@
 #include "RenderBlock.h"
 #include "RootInlineBox.h"
 #include "Text.h"
-#include "TextStream.h"
 #include "VisibleUnits.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

@@ -27,7 +27,7 @@
 #include "config.h"
 #include "FontTaggedSettings.h"
 
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 #include <wtf/text/AtomicStringHash.h>
 

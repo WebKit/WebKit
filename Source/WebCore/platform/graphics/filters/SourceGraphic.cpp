@@ -22,9 +22,9 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "TextStream.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

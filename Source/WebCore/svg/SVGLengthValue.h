@@ -150,6 +150,6 @@ template<> struct SVGPropertyTraits<SVGLengthValue> {
     static String toString(const SVGLengthValue& type) { return type.valueAsString(); }
 };
 
-TextStream& operator<<(TextStream&, const SVGLengthValue&);
+WTF::TextStream& operator<<(WTF::TextStream&, const SVGLengthValue&);
 
 } // namespace WebCore

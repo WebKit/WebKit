@@ -31,6 +31,10 @@
 #include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class CSSComputedStyleDeclaration;
@@ -41,7 +45,6 @@ class Range;
 class RenderElement;
 class RenderObject;
 class Text;
-class TextStream;
 
 enum PositionMoveType {
     CodePoint,       // Move by a single code point.
@@ -327,7 +330,7 @@ inline bool offsetIsBeforeLastNodeOffset(int offset, Node* anchorNode)
     return offset < currentOffset;
 }
 
-TextStream& operator<<(TextStream&, const Position&);
+WTF::TextStream& operator<<(WTF::TextStream&, const Position&);
 
 } // namespace WebCore
 

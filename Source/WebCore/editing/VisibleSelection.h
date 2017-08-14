@@ -153,7 +153,7 @@ inline bool operator!=(const VisibleSelection& a, const VisibleSelection& b)
     return !(a == b);
 }
     
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const VisibleSelection&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisibleSelection&);
 
 } // namespace WebCore
 

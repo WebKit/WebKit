@@ -47,7 +47,7 @@ protected:
 
 private:
     bool isNamedImageGeneratedImage() const override { return true; }
-    void dump(TextStream&) const override;
+    void dump(WTF::TextStream&) const override;
 
     String m_name;
 };

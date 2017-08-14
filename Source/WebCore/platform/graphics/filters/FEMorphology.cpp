@@ -25,7 +25,7 @@
 #include "FEMorphology.h"
 
 #include "Filter.h"
-#include "TextStream.h"
+#include <wtf/text/TextStream.h>
 
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/ParallelJobs.h>

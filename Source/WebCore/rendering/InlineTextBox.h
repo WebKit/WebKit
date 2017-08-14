@@ -97,7 +97,7 @@ public:
     virtual void dirtyOwnLineBoxes() { dirtyLineBoxes(); }
 
 #if ENABLE(TREE_DEBUGGING)
-    void outputLineBox(TextStream&, bool mark, int depth) const final;
+    void outputLineBox(WTF::TextStream&, bool mark, int depth) const final;
     const char* boxName() const final;
 #endif
 
