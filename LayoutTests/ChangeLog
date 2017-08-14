@@ -1,5 +1,17 @@
 2017-08-10  Nan Wang  <n_wang@apple.com>
 
+        Layout test accessibility/press-target-uses-text-descendant-node.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=175272
+        <rdar://problem/33756962>
+
+        Since accessibilityPress is async, we shouldn't rely on the timeout.
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/press-target-uses-text-descendant-node.html:
+
+2017-08-10  Nan Wang  <n_wang@apple.com>
+
         AX: crash at WebCore::AccessibilityObject::supportsARIALiveRegion() const + 24
         https://bugs.webkit.org/show_bug.cgi?id=175340
         <rdar://problem/33782159>
