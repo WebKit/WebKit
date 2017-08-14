@@ -218,6 +218,7 @@ ALWAYS_INLINE bool JSObject::putInlineForJSObject(JSCell* cell, ExecState* exec,
         return true;
     }
 
+    scope.release();
     return thisObject->putInlineSlow(exec, propertyName, value, slot);
 }
 
