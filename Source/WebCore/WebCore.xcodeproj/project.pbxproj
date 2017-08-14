@@ -3267,6 +3267,24 @@
 		7C93F34A1AA6BA5E00A98BAB /* CompiledContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C93F34D1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C93F34B1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp */; };
 		7C93F34E1AA6BF0700A98BAB /* ContentExtensionCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F34C1AA6BF0700A98BAB /* ContentExtensionCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C9ACA921F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA8F1F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h */; };
+		7C9ACA981F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA961F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h */; };
+		7C9ACA9C1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA9A1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.h */; };
+		7C9ACAA01F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACA9E1F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.h */; };
+		7C9ACAA41F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAA21F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.h */; };
+		7C9ACAA81F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAA61F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.h */; };
+		7C9ACAB71F3CF1AE00F3AA09 /* JSCryptoAesKeyAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9ACAB61F3CDC4700F3AA09 /* JSCryptoAesKeyAlgorithm.cpp */; };
+		7C9ACAB81F3CF1AE00F3AA09 /* JSCryptoAesKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAAA1F3CDB6300F3AA09 /* JSCryptoAesKeyAlgorithm.h */; };
+		7C9ACAB91F3CF1AE00F3AA09 /* JSCryptoEcKeyAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9ACAAD1F3CDB9E00F3AA09 /* JSCryptoEcKeyAlgorithm.cpp */; };
+		7C9ACABA1F3CF1AE00F3AA09 /* JSCryptoEcKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAAC1F3CDB9D00F3AA09 /* JSCryptoEcKeyAlgorithm.h */; };
+		7C9ACABB1F3CF1AE00F3AA09 /* JSCryptoHmacKeyAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9ACAAE1F3CDB9F00F3AA09 /* JSCryptoHmacKeyAlgorithm.cpp */; };
+		7C9ACABC1F3CF1AE00F3AA09 /* JSCryptoHmacKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAAF1F3CDB9F00F3AA09 /* JSCryptoHmacKeyAlgorithm.h */; };
+		7C9ACABD1F3CF1AE00F3AA09 /* JSCryptoKeyAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9ACAB01F3CDBA000F3AA09 /* JSCryptoKeyAlgorithm.cpp */; };
+		7C9ACABE1F3CF1AF00F3AA09 /* JSCryptoKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAB11F3CDBA100F3AA09 /* JSCryptoKeyAlgorithm.h */; };
+		7C9ACABF1F3CF1AF00F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9ACAB41F3CDC0100F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.cpp */; };
+		7C9ACAC01F3CF1AF00F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAB51F3CDC0200F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.h */; };
+		7C9ACAC11F3CF1AF00F3AA09 /* JSCryptoRsaKeyAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9ACAB21F3CDC0000F3AA09 /* JSCryptoRsaKeyAlgorithm.cpp */; };
+		7C9ACAC21F3CF1AF00F3AA09 /* JSCryptoRsaKeyAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9ACAB31F3CDC0100F3AA09 /* JSCryptoRsaKeyAlgorithm.h */; };
 		7C9DBFED1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9DBFEB1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp */; };
 		7C9DBFEE1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */; };
 		7CB5CA3F1E525C7100FAEF13 /* MediaQueryExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5CA3D1E525C6C00FAEF13 /* MediaQueryExpression.cpp */; };
@@ -6548,9 +6566,6 @@
 		E157A8E11817331C009F821D /* JSCryptoKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E157A8DF1817331C009F821D /* JSCryptoKey.h */; };
 		E157A8E418173A3A009F821D /* CryptoKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E157A8E218173A3A009F821D /* CryptoKey.cpp */; };
 		E157A8E518173A3A009F821D /* CryptoKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E157A8E318173A3A009F821D /* CryptoKey.h */; };
-		E157A8E818184C67009F821D /* JSCryptoKeyCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */; };
-		E157A8F018185425009F821D /* JSCryptoAlgorithmBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E157A8EE18185425009F821D /* JSCryptoAlgorithmBuilder.cpp */; };
-		E157A8F118185425009F821D /* JSCryptoAlgorithmBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E157A8EF18185425009F821D /* JSCryptoAlgorithmBuilder.h */; };
 		E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E15A36D61104572000B7B639 /* XMLNSNames.h */; };
 		E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15A36D81104572700B7B639 /* XMLNSNames.cpp */; };
 		E15FF7D518C9553800FE4C87 /* KeypressCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E15FF7D418C9553800FE4C87 /* KeypressCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11363,6 +11378,30 @@
 		7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompiledContentExtension.h; sourceTree = "<group>"; };
 		7C93F34B1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionCompiler.cpp; sourceTree = "<group>"; };
 		7C93F34C1AA6BF0700A98BAB /* ContentExtensionCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionCompiler.h; sourceTree = "<group>"; };
+		7C9ACA8F1F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACA911F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoKeyAlgorithm.idl; sourceTree = "<group>"; };
+		7C9ACA961F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoAesKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACA971F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoAesKeyAlgorithm.idl; sourceTree = "<group>"; };
+		7C9ACA9A1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoEcKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACA9B1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoEcKeyAlgorithm.idl; sourceTree = "<group>"; };
+		7C9ACA9E1F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoHmacKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACA9F1F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoHmacKeyAlgorithm.idl; sourceTree = "<group>"; };
+		7C9ACAA21F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoRsaKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACAA31F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoRsaKeyAlgorithm.idl; sourceTree = "<group>"; };
+		7C9ACAA61F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoRsaHashedKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACAA71F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoRsaHashedKeyAlgorithm.idl; sourceTree = "<group>"; };
+		7C9ACAAA1F3CDB6300F3AA09 /* JSCryptoAesKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCryptoAesKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACAAC1F3CDB9D00F3AA09 /* JSCryptoEcKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCryptoEcKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACAAD1F3CDB9E00F3AA09 /* JSCryptoEcKeyAlgorithm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoEcKeyAlgorithm.cpp; sourceTree = "<group>"; };
+		7C9ACAAE1F3CDB9F00F3AA09 /* JSCryptoHmacKeyAlgorithm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoHmacKeyAlgorithm.cpp; sourceTree = "<group>"; };
+		7C9ACAAF1F3CDB9F00F3AA09 /* JSCryptoHmacKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCryptoHmacKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACAB01F3CDBA000F3AA09 /* JSCryptoKeyAlgorithm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyAlgorithm.cpp; sourceTree = "<group>"; };
+		7C9ACAB11F3CDBA100F3AA09 /* JSCryptoKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCryptoKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACAB21F3CDC0000F3AA09 /* JSCryptoRsaKeyAlgorithm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoRsaKeyAlgorithm.cpp; sourceTree = "<group>"; };
+		7C9ACAB31F3CDC0100F3AA09 /* JSCryptoRsaKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCryptoRsaKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACAB41F3CDC0100F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoRsaHashedKeyAlgorithm.cpp; sourceTree = "<group>"; };
+		7C9ACAB51F3CDC0200F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCryptoRsaHashedKeyAlgorithm.h; sourceTree = "<group>"; };
+		7C9ACAB61F3CDC4700F3AA09 /* JSCryptoAesKeyAlgorithm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoAesKeyAlgorithm.cpp; sourceTree = "<group>"; };
 		7C9DBFEA1A9C489F000D6B25 /* HTMLAttachmentElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLAttachmentElement.idl; sourceTree = "<group>"; };
 		7C9DBFEB1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAttachmentElement.cpp; sourceTree = "<group>"; };
 		7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAttachmentElement.h; sourceTree = "<group>"; };
@@ -15159,9 +15198,6 @@
 		E157A8DF1817331C009F821D /* JSCryptoKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoKey.h; sourceTree = "<group>"; };
 		E157A8E218173A3A009F821D /* CryptoKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKey.cpp; sourceTree = "<group>"; };
 		E157A8E318173A3A009F821D /* CryptoKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKey.h; sourceTree = "<group>"; };
-		E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyCustom.cpp; sourceTree = "<group>"; };
-		E157A8EE18185425009F821D /* JSCryptoAlgorithmBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoAlgorithmBuilder.cpp; sourceTree = "<group>"; };
-		E157A8EF18185425009F821D /* JSCryptoAlgorithmBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoAlgorithmBuilder.h; sourceTree = "<group>"; };
 		E15A36D61104572000B7B639 /* XMLNSNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLNSNames.h; sourceTree = "<group>"; };
 		E15A36D81104572700B7B639 /* XMLNSNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLNSNames.cpp; sourceTree = "<group>"; };
 		E15FF7D418C9553800FE4C87 /* KeypressCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeypressCommand.h; sourceTree = "<group>"; };
@@ -18646,12 +18682,12 @@
 				5182C2521F3142500059BA7C /* JSServiceWorker.h */,
 				5182C2511F3142500059BA7C /* JSServiceWorkerContainer.cpp */,
 				5182C2541F3142500059BA7C /* JSServiceWorkerContainer.h */,
-				51F175001F358B3600C74950 /* JSServiceWorkerUpdateViaCache.cpp */,
-				51F175011F358B3600C74950 /* JSServiceWorkerUpdateViaCache.h */,
 				5182C24E1F3142500059BA7C /* JSServiceWorkerGlobalScope.cpp */,
 				5182C24D1F3142500059BA7C /* JSServiceWorkerGlobalScope.h */,
 				5182C24F1F3142500059BA7C /* JSServiceWorkerRegistration.cpp */,
 				5182C2501F3142500059BA7C /* JSServiceWorkerRegistration.h */,
+				51F175001F358B3600C74950 /* JSServiceWorkerUpdateViaCache.cpp */,
+				51F175011F358B3600C74950 /* JSServiceWorkerUpdateViaCache.h */,
 			);
 			name = ServiceWorkers;
 			path = DerivedSources;
@@ -23622,8 +23658,6 @@
 				1432E8460C51493800B1500F /* GCController.h */,
 				C585A66011D4FAC5004C3E4B /* IDBBindingUtilities.cpp */,
 				C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */,
-				E157A8EE18185425009F821D /* JSCryptoAlgorithmBuilder.cpp */,
-				E157A8EF18185425009F821D /* JSCryptoAlgorithmBuilder.h */,
 				E1C657101815F9DD00256CDD /* JSCryptoAlgorithmDictionary.cpp */,
 				E1C657111815F9DD00256CDD /* JSCryptoAlgorithmDictionary.h */,
 				E125F84F18283A5600D84CD9 /* JSCryptoKeySerializationJWK.cpp */,
@@ -23712,7 +23746,6 @@
 			children = (
 				7CD3441B1F32DE30000DCD49 /* Cached Attributes w/ Invalidation */,
 				7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */,
-				E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */,
 				9BC5F9DF1D5AAF6A002B749D /* JSCustomElementRegistryCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
@@ -24649,8 +24682,16 @@
 		E19DA29D181995CE00088BC8 /* keys */ = {
 			isa = PBXGroup;
 			children = (
+				7C9ACA961F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h */,
+				7C9ACA971F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.idl */,
+				7C9ACA9A1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.h */,
+				7C9ACA9B1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.idl */,
+				7C9ACA9E1F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.h */,
+				7C9ACA9F1F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.idl */,
 				E125F84B1824289D00D84CD9 /* CryptoKeyAES.cpp */,
 				E125F84C1824289D00D84CD9 /* CryptoKeyAES.h */,
+				7C9ACA8F1F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h */,
+				7C9ACA911F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.idl */,
 				E125F861182C303A00D84CD9 /* CryptoKeyDataOctetSequence.cpp */,
 				E125F862182C303A00D84CD9 /* CryptoKeyDataOctetSequence.h */,
 				E1C266DC18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp */,
@@ -24665,6 +24706,10 @@
 				E164FAA218315BF400DB4E61 /* CryptoKeyRSA.h */,
 				E125F857182C1AA600D84CD9 /* CryptoKeySerializationRaw.cpp */,
 				E125F858182C1AA600D84CD9 /* CryptoKeySerializationRaw.h */,
+				7C9ACAA61F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.h */,
+				7C9ACAA71F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.idl */,
+				7C9ACAA21F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.h */,
+				7C9ACAA31F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.idl */,
 			);
 			path = keys;
 			sourceTree = "<group>";
@@ -24872,14 +24917,26 @@
 				57B5F80B1E5D22DA00F34F90 /* JSAesGcmParams.h */,
 				576814421E70CB1000E77754 /* JSAesKeyParams.cpp */,
 				576814431E70CB1000E77754 /* JSAesKeyParams.h */,
+				7C9ACAB61F3CDC4700F3AA09 /* JSCryptoAesKeyAlgorithm.cpp */,
+				7C9ACAAA1F3CDB6300F3AA09 /* JSCryptoAesKeyAlgorithm.h */,
 				5739E1301DAC7FD100E14383 /* JSCryptoAlgorithmParameters.cpp */,
 				5739E12E1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h */,
+				7C9ACAAD1F3CDB9E00F3AA09 /* JSCryptoEcKeyAlgorithm.cpp */,
+				7C9ACAAC1F3CDB9D00F3AA09 /* JSCryptoEcKeyAlgorithm.h */,
+				7C9ACAAE1F3CDB9F00F3AA09 /* JSCryptoHmacKeyAlgorithm.cpp */,
+				7C9ACAAF1F3CDB9F00F3AA09 /* JSCryptoHmacKeyAlgorithm.h */,
 				E157A8DE1817331C009F821D /* JSCryptoKey.cpp */,
 				E157A8DF1817331C009F821D /* JSCryptoKey.h */,
+				7C9ACAB01F3CDBA000F3AA09 /* JSCryptoKeyAlgorithm.cpp */,
+				7C9ACAB11F3CDBA100F3AA09 /* JSCryptoKeyAlgorithm.h */,
 				E1F80B8B183172B5007885C3 /* JSCryptoKeyPair.cpp */,
 				E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */,
 				57D0018E1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp */,
 				57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */,
+				7C9ACAB41F3CDC0100F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.cpp */,
+				7C9ACAB51F3CDC0200F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.h */,
+				7C9ACAB21F3CDC0000F3AA09 /* JSCryptoRsaKeyAlgorithm.cpp */,
+				7C9ACAB31F3CDC0100F3AA09 /* JSCryptoRsaKeyAlgorithm.h */,
 				5768143D1E709C3600E77754 /* JSEcdhKeyDeriveParams.cpp */,
 				5768143E1E709C3600E77754 /* JSEcdhKeyDeriveParams.h */,
 				57EEAA521EA001B100701124 /* JSEcdsaParams.cpp */,
@@ -26929,6 +26986,7 @@
 				E1C415DA0F655D6F0092D2FB /* CrossOriginPreflightResultCache.h in Headers */,
 				E169803D1133542D00894115 /* CRuntimeObject.h in Headers */,
 				975CA28B130365F800E99AD9 /* Crypto.h in Headers */,
+				7C9ACA981F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h in Headers */,
 				E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */,
 				E125F8421824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h in Headers */,
 				571252691E524EB1008FF369 /* CryptoAlgorithmAES_CFB.h in Headers */,
@@ -26976,8 +27034,11 @@
 				E19AC3F31824DC7900349426 /* CryptoAlgorithmSHA384.h in Headers */,
 				E19AC3F51824DC7900349426 /* CryptoAlgorithmSHA512.h in Headers */,
 				5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */,
+				7C9ACA9C1F3CCDF200F3AA09 /* CryptoEcKeyAlgorithm.h in Headers */,
+				7C9ACAA01F3CCE3000F3AA09 /* CryptoHmacKeyAlgorithm.h in Headers */,
 				E157A8E518173A3A009F821D /* CryptoKey.h in Headers */,
 				E125F84E1824289D00D84CD9 /* CryptoKeyAES.h in Headers */,
+				7C9ACA921F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h in Headers */,
 				E125F85E182C2DF600D84CD9 /* CryptoKeyData.h in Headers */,
 				E125F864182C303A00D84CD9 /* CryptoKeyDataOctetSequence.h in Headers */,
 				E1C266DF18319F31003F8B33 /* CryptoKeyDataRSAComponents.h in Headers */,
@@ -26990,6 +27051,8 @@
 				E125F85A182C1AA600D84CD9 /* CryptoKeySerializationRaw.h in Headers */,
 				E19727161820549E00592D51 /* CryptoKeyType.h in Headers */,
 				E172AF70180F289500FBADB9 /* CryptoKeyUsage.h in Headers */,
+				7C9ACAA81F3CCEB400F3AA09 /* CryptoRsaHashedKeyAlgorithm.h in Headers */,
+				7C9ACAA41F3CCE6900F3AA09 /* CryptoRsaKeyAlgorithm.h in Headers */,
 				316FE1140E6E1DA700BF6088 /* CSSAnimationController.h in Headers */,
 				0F15DA8A0F3AAEE70000CE47 /* CSSAnimationControllerPrivate.h in Headers */,
 				31BC742E1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h in Headers */,
@@ -27483,7 +27546,6 @@
 				316BDBF71E762AD500DE0D5A /* GPUDepthStencilDescriptor.h in Headers */,
 				316BDBF01E76292000DE0D5A /* GPUDepthStencilState.h in Headers */,
 				316BDB861E6E0A2700DE0D5A /* GPUDevice.h in Headers */,
-				51F174FE1F35899200C74950 /* WorkerType.h in Headers */,
 				316BDBCD1E75F18400DE0D5A /* GPUDrawable.h in Headers */,
 				316BDBFB1E762D0400DE0D5A /* GPUEnums.h in Headers */,
 				316BDB951E70C89700DE0D5A /* GPUFunction.h in Headers */,
@@ -27571,7 +27633,6 @@
 				A871D45C0A127CBC00B12A68 /* HTMLEmbedElement.h in Headers */,
 				977B386A122883E900B81FF8 /* HTMLEntityParser.h in Headers */,
 				977B386C122883E900B81FF8 /* HTMLEntitySearch.h in Headers */,
-				51F174FF1F35899700C74950 /* ServiceWorkerUpdateViaCache.h in Headers */,
 				977B386D122883E900B81FF8 /* HTMLEntityTable.h in Headers */,
 				A81369D4097374F600D74463 /* HTMLFieldSetElement.h in Headers */,
 				A8CFF7A60A156978000A4234 /* HTMLFontElement.h in Headers */,
@@ -27905,14 +27966,19 @@
 				77D5101C1ED722BF00DA4C87 /* JSCredentialsContainer.h in Headers */,
 				77D510021ED4F71800DA4C87 /* JSCredentialUserData.h in Headers */,
 				975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */,
-				E157A8F118185425009F821D /* JSCryptoAlgorithmBuilder.h in Headers */,
+				7C9ACAB81F3CF1AE00F3AA09 /* JSCryptoAesKeyAlgorithm.h in Headers */,
 				E1C657131815F9DD00256CDD /* JSCryptoAlgorithmDictionary.h in Headers */,
 				5739E12F1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h in Headers */,
+				7C9ACABA1F3CF1AE00F3AA09 /* JSCryptoEcKeyAlgorithm.h in Headers */,
+				7C9ACABC1F3CF1AE00F3AA09 /* JSCryptoHmacKeyAlgorithm.h in Headers */,
 				E157A8E11817331C009F821D /* JSCryptoKey.h in Headers */,
+				7C9ACABE1F3CF1AF00F3AA09 /* JSCryptoKeyAlgorithm.h in Headers */,
 				E1F80B8E183172B5007885C3 /* JSCryptoKeyPair.h in Headers */,
 				E125F85218283A5600D84CD9 /* JSCryptoKeySerializationJWK.h in Headers */,
 				57D0018D1DD5413200ED19D9 /* JSCryptoKeyUsage.h in Headers */,
 				E125F83E182411E700D84CD9 /* JSCryptoOperationData.h in Headers */,
+				7C9ACAC01F3CF1AF00F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.h in Headers */,
+				7C9ACAC21F3CF1AF00F3AA09 /* JSCryptoRsaKeyAlgorithm.h in Headers */,
 				BC46C1FD0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h in Headers */,
 				BC46C1FF0C0DDC8F0020CFC3 /* JSCSSImportRule.h in Headers */,
 				316FE0720E6CCBEE00BF6088 /* JSCSSKeyframeRule.h in Headers */,
@@ -28324,6 +28390,7 @@
 				5182C2581F3143CD0059BA7C /* JSServiceWorkerContainer.h in Headers */,
 				5182C25A1F3143CD0059BA7C /* JSServiceWorkerGlobalScope.h in Headers */,
 				5182C25C1F3143CD0059BA7C /* JSServiceWorkerRegistration.h in Headers */,
+				51F175031F358B3B00C74950 /* JSServiceWorkerUpdateViaCache.h in Headers */,
 				9BDA64D81B975CF2009C4387 /* JSShadowRoot.h in Headers */,
 				46DFF49C1DC2620B00B80B48 /* JSShadowRootMode.h in Headers */,
 				CD9DE17B17AAC75B00EA386D /* JSSourceBuffer.h in Headers */,
@@ -28523,7 +28590,6 @@
 				6E3FAD3914733F4000E42306 /* JSWebGLCompressedTextureS3TC.h in Headers */,
 				6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */,
 				BC2CBF4E140F1ABD003879BE /* JSWebGLContextEvent.h in Headers */,
-				51F175061F358BF700C74950 /* JSWorkerType.h in Headers */,
 				6E3FAD3914733F4011E42307 /* JSWebGLDebugRendererInfo.h in Headers */,
 				6E3FAD3914733F4022E42307 /* JSWebGLDebugShaders.h in Headers */,
 				6E3FAD3914733F4000E42307 /* JSWebGLDepthTexture.h in Headers */,
@@ -28581,6 +28647,7 @@
 				E1C36D350EB0A094007410BC /* JSWorkerGlobalScopeBase.h in Headers */,
 				E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */,
 				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
+				51F175061F358BF700C74950 /* JSWorkerType.h in Headers */,
 				7C4C96DD1AD4483500365A60 /* JSWritableStream.h in Headers */,
 				8358CB701C53277500E0C2D8 /* JSXMLDocument.h in Headers */,
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,
@@ -28804,7 +28871,6 @@
 				413E00791DB0E4F2002341D2 /* MemoryRelease.h in Headers */,
 				93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */,
 				E1ADECCE0E76AD8B004A1A5E /* MessageChannel.h in Headers */,
-				51F175031F358B3B00C74950 /* JSServiceWorkerUpdateViaCache.h in Headers */,
 				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,
 				E1ADECBF0E76ACF1004A1A5E /* MessagePort.h in Headers */,
 				41BF700C0FE86F49005E8DEC /* MessagePortChannel.h in Headers */,
@@ -29499,6 +29565,7 @@
 				5182C2411F313A090059BA7C /* ServiceWorkerContainer.h in Headers */,
 				5182C2431F313A090059BA7C /* ServiceWorkerGlobalScope.h in Headers */,
 				5182C2451F313A090059BA7C /* ServiceWorkerRegistration.h in Headers */,
+				51F174FF1F35899700C74950 /* ServiceWorkerUpdateViaCache.h in Headers */,
 				756B2CE118B7101600FECFAA /* SessionID.h in Headers */,
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
@@ -30305,6 +30372,7 @@
 				0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */,
 				97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */,
 				A54A0C681DB807D90017A90B /* WorkerToPageFrontendChannel.h in Headers */,
+				51F174FE1F35899200C74950 /* WorkerType.h in Headers */,
 				93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */,
 				416E6FE91BBD12E5000A6053 /* WritableStreamBuiltins.h in Headers */,
 				416E6FE81BBD12DF000A6053 /* WritableStreamInternalsBuiltins.h in Headers */,
@@ -31899,15 +31967,19 @@
 				77D5101D1ED722C300DA4C87 /* JSCredentialsContainer.cpp in Sources */,
 				77D510031ED4F71B00DA4C87 /* JSCredentialUserData.cpp in Sources */,
 				975CA2A11303679D00E99AD9 /* JSCrypto.cpp in Sources */,
-				E157A8F018185425009F821D /* JSCryptoAlgorithmBuilder.cpp in Sources */,
+				7C9ACAB71F3CF1AE00F3AA09 /* JSCryptoAesKeyAlgorithm.cpp in Sources */,
 				E1C657121815F9DD00256CDD /* JSCryptoAlgorithmDictionary.cpp in Sources */,
 				5739E1311DAC7FD100E14383 /* JSCryptoAlgorithmParameters.cpp in Sources */,
+				7C9ACAB91F3CF1AE00F3AA09 /* JSCryptoEcKeyAlgorithm.cpp in Sources */,
+				7C9ACABB1F3CF1AE00F3AA09 /* JSCryptoHmacKeyAlgorithm.cpp in Sources */,
 				E157A8E01817331C009F821D /* JSCryptoKey.cpp in Sources */,
-				E157A8E818184C67009F821D /* JSCryptoKeyCustom.cpp in Sources */,
+				7C9ACABD1F3CF1AE00F3AA09 /* JSCryptoKeyAlgorithm.cpp in Sources */,
 				E1F80B8D183172B5007885C3 /* JSCryptoKeyPair.cpp in Sources */,
 				E125F85118283A5600D84CD9 /* JSCryptoKeySerializationJWK.cpp in Sources */,
 				57D0018F1DD5415300ED19D9 /* JSCryptoKeyUsage.cpp in Sources */,
 				E125F83D182411E700D84CD9 /* JSCryptoOperationData.cpp in Sources */,
+				7C9ACABF1F3CF1AF00F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.cpp in Sources */,
+				7C9ACAC11F3CF1AF00F3AA09 /* JSCryptoRsaKeyAlgorithm.cpp in Sources */,
 				BC46C1FC0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp in Sources */,
 				BC46C1FE0C0DDC8F0020CFC3 /* JSCSSImportRule.cpp in Sources */,
 				316FE0710E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp in Sources */,
@@ -32176,7 +32248,6 @@
 				12A253E01C8FFF6600C22295 /* JSKeyframeEffect.cpp in Sources */,
 				935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */,
 				BCE1C43B0D9830D3003B02F2 /* JSLocation.cpp in Sources */,
-				51F175071F358BF900C74950 /* JSWorkerType.cpp in Sources */,
 				BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */,
 				93A8061F1E03B585008A1F26 /* JSLongRange.cpp in Sources */,
 				8FAC774D119872CB0015AE94 /* JSMainThreadExecState.cpp in Sources */,
@@ -32333,6 +32404,7 @@
 				5182C2571F3143CD0059BA7C /* JSServiceWorkerContainer.cpp in Sources */,
 				5182C2591F3143CD0059BA7C /* JSServiceWorkerGlobalScope.cpp in Sources */,
 				5182C25B1F3143CD0059BA7C /* JSServiceWorkerRegistration.cpp in Sources */,
+				51F175021F358B3B00C74950 /* JSServiceWorkerUpdateViaCache.cpp in Sources */,
 				9BDA64D71B975CE5009C4387 /* JSShadowRoot.cpp in Sources */,
 				46DFF49B1DC2620B00B80B48 /* JSShadowRootMode.cpp in Sources */,
 				CD9DE17A17AAC75B00EA386D /* JSSourceBuffer.cpp in Sources */,
@@ -32615,6 +32687,7 @@
 				E18258AC0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp in Sources */,
 				E1C362F00EAF2AA9007410BC /* JSWorkerLocation.cpp in Sources */,
 				E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */,
+				51F175071F358BF900C74950 /* JSWorkerType.cpp in Sources */,
 				7C4C96DC1AD4483500365A60 /* JSWritableStream.cpp in Sources */,
 				8358CB6F1C53277200E0C2D8 /* JSXMLDocument.cpp in Sources */,
 				83A4A9F91CE7FD8100709B00 /* JSXMLDocumentCustom.cpp in Sources */,
@@ -33812,7 +33885,6 @@
 				7AF9B20218CFB2DF00C64BEF /* VTTRegion.cpp in Sources */,
 				7AF9B20518CFB2DF00C64BEF /* VTTRegionList.cpp in Sources */,
 				7A93868518DCC14500B8263D /* VTTScanner.cpp in Sources */,
-				51F175021F358B3B00C74950 /* JSServiceWorkerUpdateViaCache.cpp in Sources */,
 				A14832B1187F61E100DA63A6 /* WAKAppKitStubs.m in Sources */,
 				A14832B3187F629100DA63A6 /* WAKClipView.m in Sources */,
 				A14832B5187F62FC00DA63A6 /* WAKResponder.m in Sources */,

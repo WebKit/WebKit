@@ -23,40 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CryptoKeyRaw.h"
+typedef Uint8Array BigInteger;
 
-#if ENABLE(SUBTLE_CRYPTO)
-
-#include "CryptoAlgorithmRegistry.h"
-#include "CryptoKeyDataOctetSequence.h"
-
-namespace WebCore {
-
-CryptoKeyAlgorithm RawKeyAlgorithm::dictionary() const
-{
-    CryptoKeyAlgorithm result;
-    result.name = this->name();
-    return result;
-}
-
-CryptoKeyRaw::CryptoKeyRaw(CryptoAlgorithmIdentifier identifier, Vector<uint8_t>&& keyData, CryptoKeyUsageBitmap usages)
-    : CryptoKey(identifier, CryptoKeyType::Secret, false, usages)
-    , m_key(WTFMove(keyData))
-{
-}
-
-std::unique_ptr<KeyAlgorithm> CryptoKeyRaw::buildAlgorithm() const
-{
-    return std::make_unique<RawKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()));
-}
-
-std::unique_ptr<CryptoKeyData> CryptoKeyRaw::exportData() const
-{
-
-    return std::make_unique<CryptoKeyDataOctetSequence>(m_key);
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(SUBTLE_CRYPTO)
+[
+    Conditional=SUBTLE_CRYPTO,
+    JSGenerateToJSObject
+] dictionary CryptoRsaKeyAlgorithm : CryptoKeyAlgorithm {
+    // The length, in bits, of the RSA modulus
+    required unsigned long modulusLength;
+    // The RSA public exponent
+    required BigInteger publicExponent;
+};

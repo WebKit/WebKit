@@ -38,6 +38,15 @@
 
 namespace WebCore {
 
+CryptoHmacKeyAlgorithm HmacKeyAlgorithm::dictionary() const
+{
+    CryptoHmacKeyAlgorithm result;
+    result.name = this->name();
+    result.hash.name = this->hash();
+    result.length = this->length();
+    return result;
+}
+
 static size_t getKeyLengthFromHash(CryptoAlgorithmIdentifier hash)
 {
     switch (hash) {

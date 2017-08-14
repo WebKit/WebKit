@@ -59,6 +59,8 @@ public:
 
     const String& namedCurve() const { return m_curve; }
 
+    CryptoEcKeyAlgorithm dictionary() const;
+
 private:
     String m_curve;
 };

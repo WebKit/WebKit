@@ -56,6 +56,7 @@ VPATH = \
     $(WebCore)/animation \
     $(WebCore)/bindings/js \
     $(WebCore)/crypto \
+    $(WebCore)/crypto/keys \
     $(WebCore)/crypto/parameters \
     $(WebCore)/css \
     $(WebCore)/dom \
@@ -305,6 +306,12 @@ JS_BINDING_IDLS = \
     $(WebCore)/crypto/RsaOtherPrimesInfo.idl \
     $(WebCore)/crypto/SubtleCrypto.idl \
     $(WebCore)/crypto/WebKitSubtleCrypto.idl \
+    $(WebCore)/crypto/keys/CryptoAesKeyAlgorithm.idl \
+    $(WebCore)/crypto/keys/CryptoEcKeyAlgorithm.idl \
+    $(WebCore)/crypto/keys/CryptoHmacKeyAlgorithm.idl \
+    $(WebCore)/crypto/keys/CryptoKeyAlgorithm.idl \
+    $(WebCore)/crypto/keys/CryptoRsaHashedKeyAlgorithm.idl \
+    $(WebCore)/crypto/keys/CryptoRsaKeyAlgorithm.idl \
     $(WebCore)/crypto/parameters/AesCbcCfbParams.idl \
     $(WebCore)/crypto/parameters/AesCtrParams.idl \
     $(WebCore)/crypto/parameters/AesGcmParams.idl \

@@ -39,6 +39,8 @@ public:
     }
 
     KeyAlgorithmClass keyAlgorithmClass() const override { return KeyAlgorithmClass::Raw; }
+    
+    CryptoKeyAlgorithm dictionary() const;
 };
 
 class CryptoKeyRaw final : public CryptoKey {
