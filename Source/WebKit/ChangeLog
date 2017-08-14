@@ -1,3 +1,26 @@
+2017-08-13  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Composition underline color is always black
+        https://bugs.webkit.org/show_bug.cgi?id=174675
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch uses the current color of the text instead of black
+        for the composition underline marker.
+        This makes it visible in the case we have a black/dark background.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::extractUnderlines): If NSUnderlineColorAttributeName
+        is not present use text color for composition underline.
+        (WebKit::WebViewImpl::setMarkedText): Use text color
+        for composition underline in the plain text case.
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::handleKeyboardEventWithCompositionResults):
+        Use text color for composition underline.
+        (WebKit::InputMethodFilter::updatePreedit): Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setCompositionForTesting): Ditto.
+
 2017-08-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Implement WebCore::standardUserAgent()

@@ -1,3 +1,19 @@
+2017-08-13  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Composition underline color is always black
+        https://bugs.webkit.org/show_bug.cgi?id=174675
+
+        Reviewed by Ryosuke Niwa.
+
+        Added new test to check that the composition underline
+        is using the text color.
+        The test hides the text and the caret, so it only shows
+        the composition underline and checks against an -expected-mismatch
+        that the color of the composition marker is different.
+
+        * editing/composition-underline-color-expected-mismatch.html: Added.
+        * editing/composition-underline-color.html: Added.
+
 2017-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Replace DATA_TRANSFER_ITEMS by a runtime flag and add a stub implementation
