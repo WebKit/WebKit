@@ -74,6 +74,7 @@
 #include "ShadowRoot.h"
 #include "StylePendingResources.h"
 #include "StyleResolver.h"
+#include "TextAutoSizing.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
 
@@ -2314,7 +2315,7 @@ void RenderElement::adjustComputedFontSizesOnBlocks(float size, float visibleWid
     }
 
     // Remove style from auto-sizing table that are no longer valid.
-    document->updateAutoSizedNodes();
+    document->textAutoSizing().updateRenderTree();
 }
 
 void RenderElement::resetTextAutosizing()
@@ -2325,7 +2326,7 @@ void RenderElement::resetTextAutosizing()
 
     LOG(TextAutosizing, "RenderElement::resetTextAutosizing()");
 
-    document->clearAutoSizedNodes();
+    document->textAutoSizing().reset();
 
     Vector<int> depthStack;
     int currentDepth = 0;

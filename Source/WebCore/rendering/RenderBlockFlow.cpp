@@ -53,6 +53,7 @@
 #include "Settings.h"
 #include "SimpleLineLayoutFunctions.h"
 #include "SimpleLineLayoutPagination.h"
+#include "TextAutoSizing.h"
 #include "VerticalPositionCache.h"
 #include "VisiblePosition.h"
 
@@ -3906,7 +3907,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
             float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(specifiedSize) : textMultiplier(specifiedSize);
             float candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
             if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
-                document().addAutoSizedNode(*text.textNode(), candidateNewSize);
+                document().textAutoSizing().addTextNode(*text.textNode(), candidateNewSize);
         }
 
         descendant = RenderObjectTraversal::nextSkippingChildren(text, this);

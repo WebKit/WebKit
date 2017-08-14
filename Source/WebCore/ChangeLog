@@ -1,5 +1,38 @@
 2017-08-14  Antti Koivisto  <antti@apple.com>
 
+        Factor text autosizing into a class
+        https://bugs.webkit.org/show_bug.cgi?id=175530
+
+        Reviewed by Andreas Kling.
+
+        Move the remaining parts out of Document.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::computeLineHeightMultiplierDueToFontSize):
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+        (WebCore::Document::textAutoSizing):
+        (WebCore::TextAutoSizingTraits::constructDeletedValue): Deleted.
+        (WebCore::TextAutoSizingTraits::isDeletedValue): Deleted.
+        (WebCore::Document::addAutoSizedNode): Deleted.
+        (WebCore::Document::updateAutoSizedNodes): Deleted.
+        (WebCore::Document::clearAutoSizedNodes): Deleted.
+        * dom/Document.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustComputedFontSizes):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::adjustComputedFontSizesOnBlocks):
+        (WebCore::RenderElement::resetTextAutosizing):
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingTraits::constructDeletedValue):
+        (WebCore::TextAutoSizingTraits::isDeletedValue):
+        (WebCore::TextAutoSizing::addTextNode):
+        (WebCore::TextAutoSizing::updateRenderTree):
+        (WebCore::TextAutoSizing::reset):
+        * rendering/TextAutoSizing.h:
+
+2017-08-14  Antti Koivisto  <antti@apple.com>
+
         [Render Tree Mutation] First letter should not mutate the render tree while in layout.
         https://bugs.webkit.org/show_bug.cgi?id=163848
 
