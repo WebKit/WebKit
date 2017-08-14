@@ -4265,9 +4265,12 @@ static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedStrin
 
         if (NSNumber *style = [attrs objectForKey:NSUnderlineStyleAttributeName]) {
             WebCore::Color color = WebCore::Color::black;
-            if (NSColor *colorAttr = [attrs objectForKey:NSUnderlineColorAttributeName])
+            WebCore::CompositionUnderlineColor compositionUnderlineColor = WebCore::CompositionUnderlineColor::TextColor;
+            if (NSColor *colorAttr = [attrs objectForKey:NSUnderlineColorAttributeName]) {
                 color = WebCore::colorFromNSColor(colorAttr);
-            result.append(WebCore::CompositionUnderline(range.location, NSMaxRange(range), color, style.intValue > 1));
+                compositionUnderlineColor = WebCore::CompositionUnderlineColor::GivenColor;
+            }
+            result.append(WebCore::CompositionUnderline(range.location, NSMaxRange(range), compositionUnderlineColor, color, style.intValue > 1));
         }
         
         i = range.location + range.length;
@@ -4599,8 +4602,10 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
         // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
         text = [string string];
         underlines = extractUnderlines(string);
-    } else
+    } else {
         text = string;
+        underlines.append(WebCore::CompositionUnderline(0, [text length], WebCore::CompositionUnderlineColor::TextColor, WebCore::Color::black, false));
+    }
 
     if (inSecureInputState()) {
         // In password fields, we only allow ASCII dead keys, and don't allow inline input, matching NSSecureTextInputField.

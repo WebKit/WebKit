@@ -1,3 +1,16 @@
+2017-08-13  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Composition underline color is always black
+        https://bugs.webkit.org/show_bug.cgi?id=174675
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView/WebHTMLView.mm:
+        (extractUnderlines): If NSUnderlineColorAttributeName
+        is not present use text color for composition underline.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Use text color
+        for composition underline in the plain text case.
+
 2017-08-08  Brady Eidson  <beidson@apple.com>
 
         Don't enable default icon loading in WK1 for apps linked against old SDKs.

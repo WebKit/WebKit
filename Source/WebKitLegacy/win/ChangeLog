@@ -1,3 +1,14 @@
+2017-08-13  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Composition underline color is always black
+        https://bugs.webkit.org/show_bug.cgi?id=174675
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView.cpp:
+        (WebView::setCompositionForTesting): Use text color for
+        composition underline.
+
 2017-07-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Async image decoding for large images should be disabled after the first time a tile is painted

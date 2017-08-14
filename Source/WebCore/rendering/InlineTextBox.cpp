@@ -1007,7 +1007,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext& context, const Fl
     start += 1;
     width -= 2;
 
-    context.setStrokeColor(underline.color);
+    context.setStrokeColor(underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? renderer().style().visitedDependentColor(CSSPropertyWebkitTextFillColor) : underline.color);
     context.setStrokeThickness(lineThickness);
     context.drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, renderer().document().printing());
 }

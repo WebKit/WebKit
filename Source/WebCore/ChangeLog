@@ -1,3 +1,23 @@
+2017-08-13  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Composition underline color is always black
+        https://bugs.webkit.org/show_bug.cgi?id=174675
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch uses the current color of the text instead of black
+        for the composition underline marker.
+        This makes it visible in the case we have a black/dark background.
+
+        Test: editing/composition-underline-color.html
+
+        * editing/CompositionUnderline.h:
+        (WebCore::CompositionUnderline::CompositionUnderline):
+        Added new attribute compositionUnderlineColor.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintCompositionUnderline):
+        Use the text color if compositionUnderlineColor is TextColor.
+
 2017-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] stop kinetic scrolling when a zero movement is reached

@@ -153,7 +153,7 @@ void InputMethodFilter::handleKeyboardEventWithCompositionResults(GdkEventKey* e
         m_page->confirmComposition(m_confirmedComposition, -1, 0);
 
     if (resultsToSend & Preedit && !m_preedit.isNull()) {
-        m_page->setComposition(m_preedit, Vector<CompositionUnderline>{ CompositionUnderline(0, m_preedit.length(), Color(1, 1, 1), false) },
+        m_page->setComposition(m_preedit, Vector<CompositionUnderline> { CompositionUnderline(0, m_preedit.length(), CompositionUnderlineColor::TextColor, Color(Color::black), false) },
             m_cursorOffset, m_cursorOffset, 0 /* replacement start */, 0 /* replacement end */);
     }
 }
@@ -260,7 +260,7 @@ void InputMethodFilter::updatePreedit()
     }
 #endif
     // FIXME: We should parse the PangoAttrList that we get from the IM context here.
-    m_page->setComposition(m_preedit, Vector<CompositionUnderline>{ CompositionUnderline(0, m_preedit.length(), Color(1, 1, 1), false) },
+    m_page->setComposition(m_preedit, Vector<CompositionUnderline> { CompositionUnderline(0, m_preedit.length(), CompositionUnderlineColor::TextColor, Color(Color::black), false) },
         m_cursorOffset, m_cursorOffset, 0 /* replacement start */, 0 /* replacement end */);
     m_preeditChanged = false;
 }

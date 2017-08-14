@@ -4669,7 +4669,7 @@ void WebPage::setCompositionForTesting(const String& compositionString, uint64_t
         return;
 
     Vector<CompositionUnderline> underlines;
-    underlines.append(CompositionUnderline(0, compositionString.length(), Color(Color::black), false));
+    underlines.append(CompositionUnderline(0, compositionString.length(), CompositionUnderlineColor::TextColor, Color(Color::black), false));
     frame.editor().setComposition(compositionString, underlines, from, from + length);
 }
 

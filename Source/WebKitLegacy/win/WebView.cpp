@@ -7564,7 +7564,7 @@ HRESULT WebView::setCompositionForTesting(_In_ BSTR composition, UINT from, UINT
     String compositionStr = toString(composition);
 
     Vector<CompositionUnderline> underlines;
-    underlines.append(CompositionUnderline(0, compositionStr.length(), Color(Color::black), false));
+    underlines.append(CompositionUnderline(0, compositionStr.length(), CompositionUnderlineColor::TextColor, Color(Color::black), false));
     frame.editor().setComposition(compositionStr, underlines, from, from + length);
 
     return S_OK;

@@ -1,3 +1,19 @@
+2017-08-13  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Composition underline color is always black
+        https://bugs.webkit.org/show_bug.cgi?id=174675
+
+        Reviewed by Ryosuke Niwa.
+
+        Added new test to check that the composition underline
+        is using the text color.
+        The test hides the text and the caret, so it only shows
+        the composition underline and checks against an -expected-mismatch
+        that the color of the composition marker is different.
+
+        * editing/composition-underline-color-expected-mismatch.html: Added.
+        * editing/composition-underline-color.html: Added.
+
 2017-08-10  Nan Wang  <n_wang@apple.com>
 
         Layout test accessibility/press-target-uses-text-descendant-node.html is flaky.
