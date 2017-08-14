@@ -154,7 +154,8 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosWithAudio)
     EXPECT_FALSE([webView _hasActiveVideoForControlsManager]);
 }
 
-TEST(VideoControlsManager, VideoControlsManagerMultipleVideosWithAudioAndAutoplay)
+// FIXME: Re-enable this test once <webkit.org/b/175143> is resolved.
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosWithAudioAndAutoplay)
 {
     RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
@@ -431,7 +432,8 @@ TEST(VideoControlsManager, VideoControlsManagerLongSkinnyVideoInWideMainFrame)
     [webView expectControlsManager:NO afterReceivingMessage:@"playing"];
 }
 
-TEST(VideoControlsManager, VideoControlsManagerWideMediumSizedVideoInWideMainFrame)
+// FIXME: Re-enable this test once <webkit.org/b/175329> is resolved.
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerWideMediumSizedVideoInWideMainFrame)
 {
     RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1600, 800));
 

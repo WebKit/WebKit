@@ -1,3 +1,12 @@
+2017-08-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable two flaky VideoControlsManager API tests.
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+
 2017-08-14  Tim Horton  <timothy_horton@apple.com>
 
         Only create directory and sandbox extension handle for storage directories if they are set
