@@ -1,4 +1,4 @@
-//@ if $buildType == "debug" then runFTLNoCJIT("--maxSingleAllocationSize=10000000") else skip end
+//@ skip
 
 function test(a) {
     var x = [1337, ...a, ...a, ...a, ...a, ...a];

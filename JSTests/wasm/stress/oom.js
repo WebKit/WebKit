@@ -1,5 +1,5 @@
 // We don't need N versions of this simultaneously filling up RAM.
-//@ if $hostOS == "linux" then skip else runDefault end
+//@ skip
 
 const verbose = false;
 
