@@ -1,3 +1,36 @@
+2017-08-14  Mark Lam  <mark.lam@apple.com>
+
+        Add some convenience utility accessor methods to MacroAssembler::CPUState.
+        https://bugs.webkit.org/show_bug.cgi?id=175549
+        <rdar://problem/33884868>
+
+        Reviewed by Saam Barati.
+
+        Previously, in order to read ProbeContext CPUState registers, we used to need to
+        do it this way:
+
+            ExecState* exec = reinterpret_cast<ExecState*>(cpu.fp());
+            uint32_t i32 = static_cast<uint32_t>(cpu.gpr(GPRInfo::regT0));
+            void* p = reinterpret_cast<void*>(cpu.gpr(GPRInfo::regT1));
+            uint64_t u64 = bitwise_cast<uint64_t>(cpu.fpr(FPRInfo::fpRegT0));
+
+        With this patch, we can now read them this way instead:
+        
+            ExecState* exec = cpu.fp<ExecState*>();
+            uint32_t i32 = cpu.gpr<uint32_t>(GPRInfo::regT0);
+            void* p = cpu.gpr<void*>(GPRInfo::regT1);
+            uint64_t u64 = cpu.fpr<uint64_t>(FPRInfo::fpRegT0);
+
+        * assembler/MacroAssembler.h:
+        (JSC:: const):
+        (JSC::MacroAssembler::CPUState::fpr const):
+        (JSC::MacroAssembler::CPUState::pc const):
+        (JSC::MacroAssembler::CPUState::fp const):
+        (JSC::MacroAssembler::CPUState::sp const):
+        (JSC::ProbeContext::pc):
+        (JSC::ProbeContext::fp):
+        (JSC::ProbeContext::sp):
+
 2017-08-12  Filip Pizlo  <fpizlo@apple.com>
 
         Put the ScopedArgumentsTable's ScopeOffset array in some gigacage
