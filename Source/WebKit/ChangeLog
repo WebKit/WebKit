@@ -1,5 +1,22 @@
 2017-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Avoid emitting WebKitFaviconDatabase::favicon-changed multiple times while setting an icon
+        https://bugs.webkit.org/show_bug.cgi?id=175531
+
+        Reviewed by Michael Catanzaro.
+
+        When webkitFaviconDatabaseSetIconForPageURL() is called, both setIconURLForPageURL() and setIconDataForIconURL()
+        might notify the client, which ends up emitting the WebKitFaviconDatabase::favicon-changed signal and calling
+        webkitFaviconDatabaseSetIconURLForPageURL(). Both things are already done by
+        webkitFaviconDatabaseSetIconForPageURL() itself, so we can just ignore the client notification while setting a
+        new icon.
+
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        (webkitFaviconDatabaseSetIconURLForPageURL): Return early if isSettingIcon is true.
+        (webkitFaviconDatabaseSetIconForPageURL): Set isSettingIcon to true for the scope.
+
+2017-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Crash in IconDatabase::IconRecord::setImageData()
         https://bugs.webkit.org/show_bug.cgi?id=175527
 
