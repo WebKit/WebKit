@@ -1437,3 +1437,5 @@ webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-015.htm
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-016.html [ ImageOnlyFailure ]
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-019.html [ ImageOnlyFailure ]
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-005.html [ ImageOnlyFailure ]
+
+webkit.org/b/175597 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Failure ]
