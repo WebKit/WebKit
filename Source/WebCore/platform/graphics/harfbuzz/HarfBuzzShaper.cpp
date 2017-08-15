@@ -160,6 +160,33 @@ float HarfBuzzShaper::HarfBuzzRun::xPositionForOffset(unsigned offset)
     return position;
 }
 
+static void normalizeCharacters(const TextRun& run, UChar* destination, unsigned length)
+{
+    unsigned position = 0;
+    bool error = false;
+    const UChar* source;
+    String stringFor8BitRun;
+    if (run.is8Bit()) {
+        stringFor8BitRun = String::make16BitFrom8BitSource(run.characters8(), run.length());
+        source = stringFor8BitRun.characters16();
+    } else
+        source = run.characters16();
+
+    while (position < length) {
+        UChar32 character;
+        unsigned nextPosition = position;
+        U16_NEXT(source, nextPosition, length, character);
+        // Don't normalize tabs as they are not treated as spaces for word-end.
+        if (FontCascade::treatAsSpace(character) && character != '\t')
+            character = ' ';
+        else if (FontCascade::treatAsZeroWidthSpaceInComplexScript(character))
+            character = zeroWidthSpace;
+        U16_APPEND(destination, position, length, character, error);
+        ASSERT_UNUSED(error, !error);
+        position = nextPosition;
+    }
+}
+
 HarfBuzzShaper::HarfBuzzShaper(const FontCascade* font, const TextRun& run)
     : m_font(font)
     , m_normalizedBufferLength(0)
@@ -170,7 +197,9 @@ HarfBuzzShaper::HarfBuzzShaper(const FontCascade* font, const TextRun& run)
     , m_padError(0)
     , m_letterSpacing(font->letterSpacing())
 {
-    setNormalizedBuffer();
+    m_normalizedBuffer = std::make_unique<UChar[]>(m_run.length() + 1);
+    m_normalizedBufferLength = m_run.length();
+    normalizeCharacters(m_run, m_normalizedBuffer.get(), m_normalizedBufferLength);
     setPadding(m_run.expansion());
     setFontFeatures();
 }
