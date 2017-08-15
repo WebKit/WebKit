@@ -1,3 +1,19 @@
+2017-08-15  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Cherry-pick r220722. rdar://problem/33890575
+
+    2017-08-14  Andy Estes  <aestes@apple.com>
+
+            REGRESSION (r220456): Crash in PreviewLoader::shouldCreateForMIMEType() when a ResourceResponse has a null MIME type
+            https://bugs.webkit.org/show_bug.cgi?id=175548
+            <rdar://problem/33866206>
+
+            Reviewed by Brady Eidson.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebCore/ios/PreviewLoader.cpp: Added.
+            (TestWebKitAPI::TEST): Added an API test for PreviewLoader::shouldCreateForMIMEType().
+
 2017-08-09  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220459. rdar://problem/33820787

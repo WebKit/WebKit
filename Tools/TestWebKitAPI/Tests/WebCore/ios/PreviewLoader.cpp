@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
 
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
+#if PLATFORM(IOS)
 
-OBJC_CLASS WebPreviewLoader;
+#include <WebCore/PreviewLoader.h>
+#include <wtf/text/WTFString.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-class PreviewLoaderClient;
-class ResourceLoader;
-class ResourceResponse;
-class SharedBuffer;
+namespace TestWebKitAPI {
 
-class PreviewLoader {
-    WTF_MAKE_NONCOPYABLE(PreviewLoader);
-public:
-    WEBCORE_EXPORT static bool shouldCreateForMIMEType(const String&);
-    static std::unique_ptr<PreviewLoader> create(ResourceLoader&, const ResourceResponse&);
-    ~PreviewLoader();
+TEST(QuickLook, ShouldCreateForMIMEType)
+{
+    // FIXME: Expand this to cover all the MIME types we expect to support.
+    EXPECT_FALSE(PreviewLoader::shouldCreateForMIMEType(String()));
+    EXPECT_FALSE(PreviewLoader::shouldCreateForMIMEType(emptyString()));
+    EXPECT_TRUE(PreviewLoader::shouldCreateForMIMEType(ASCIILiteral("application/vnd.ms-excel.sheet.macroEnabled.12")));
+}
 
-    bool didReceiveData(const char* data, unsigned length);
-    bool didReceiveBuffer(const SharedBuffer&);
-    bool didFinishLoading();
-    void didFail();
+} // namespace TestWebKitAPI
 
-    WEBCORE_EXPORT static void setClientForTesting(RefPtr<PreviewLoaderClient>&&);
-
-private:
-    friend std::unique_ptr<PreviewLoader> std::make_unique<PreviewLoader>(ResourceLoader&, const ResourceResponse&);
-    PreviewLoader(ResourceLoader&, const ResourceResponse&);
-
-    RetainPtr<WebPreviewLoader> m_previewLoader;
-    bool m_finishedLoadingDataIntoConverter { false };
-};
-
-} // namespace WebCore
+#endif // PLATFORM(IOS)
