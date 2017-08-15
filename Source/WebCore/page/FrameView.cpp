@@ -1369,8 +1369,9 @@ void FrameView::layout(bool allowSubtree)
             document.styleScope().didChangeStyleSheetEnvironment();
             // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
             InspectorInstrumentation::mediaQueryResultChanged(document);
-        } else
-            document.evaluateMediaQueryList();
+        }
+        
+        document.evaluateMediaQueryList();
 
         // If there is any pagination to apply, it will affect the RenderView's style, so we should
         // take care of that now.
