@@ -216,8 +216,7 @@ public:
     bool shouldUpdate() const;
 
     WEBCORE_EXPORT void adjustViewSize();
-    IntSize layoutSizeForMediaQuery() const;
-
+    
     WEBCORE_EXPORT void setViewportSizeForCSSViewportUnits(IntSize);
     IntSize viewportSizeForCSSViewportUnits() const;
     
@@ -882,8 +881,6 @@ private:
     int m_autoSizeFixedMinimumHeight;
     // The intrinsic content size decided by autosizing.
     IntSize m_autoSizeContentSize;
-    // Report the first computed frame view size to media queries.
-    std::optional<IntSize> m_frameFlatteningViewSizeForMediaQuery;
 
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreas;
     std::unique_ptr<ViewportConstrainedObjectSet> m_viewportConstrainedObjects;

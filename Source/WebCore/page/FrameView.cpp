@@ -1316,8 +1316,6 @@ void FrameView::layout(bool allowSubtree)
     bool inChildFrameLayoutWithFrameFlattening = isInChildFrameWithFrameFlattening();
 
     if (inChildFrameLayoutWithFrameFlattening) {
-        if (!m_frameFlatteningViewSizeForMediaQuery)
-            m_frameFlatteningViewSizeForMediaQuery = ScrollView::layoutSize();
         startLayoutAtMainFrameViewIfNeeded(allowSubtree);
         RenderElement* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
         if (!root || !root->needsLayout())
@@ -1372,10 +1370,13 @@ void FrameView::layout(bool allowSubtree)
             // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
             InspectorInstrumentation::mediaQueryResultChanged(document);
         }
+        
         document.evaluateMediaQueryList();
+
         // If there is any pagination to apply, it will affect the RenderView's style, so we should
         // take care of that now.
         applyPaginationToViewport();
+
         // Always ensure our style info is up-to-date. This can happen in situations where
         // the layout beats any sort of style recalc update that needs to occur.
         document.updateStyleIfNeeded();
@@ -5385,10 +5386,5 @@ bool FrameView::shouldPlaceBlockDirectionScrollbarOnLeft() const
 {
     return renderView() && renderView()->shouldPlaceBlockDirectionScrollbarOnLeft();
 }
-
-IntSize FrameView::layoutSizeForMediaQuery() const
-{
-    return m_frameFlatteningViewSizeForMediaQuery.value_or(ScrollView::layoutSize());
-}
-
+    
 } // namespace WebCore
