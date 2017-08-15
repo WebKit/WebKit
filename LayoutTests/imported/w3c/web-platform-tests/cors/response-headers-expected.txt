@@ -17,19 +17,19 @@ Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-he
 Response headers
 
 
-FAIL getResponseHeader: Expose Access-Control-Expose-Headers (x-custom-header-comma) The operation was aborted.
-FAIL getResponseHeader: Expose second Access-Control-Expose-Headers (x-second-expose) The operation was aborted.
-FAIL getResponseHeader: Don't trim whitespace The operation was aborted.
-FAIL getResponseHeader: x-custom-header bytes The operation was aborted.
-FAIL getResponseHeader: Exposed server field readable (Date) The operation was aborted.
-FAIL getResponseHeader: Cache-Control: readable by default The operation was aborted.
-FAIL getResponseHeader: Content-Language: readable by default The operation was aborted.
-FAIL getResponseHeader: Expires: readable by default The operation was aborted.
-FAIL getResponseHeader: Last-Modified: readable by default The operation was aborted.
-FAIL getResponseHeader: Pragma: readable by default The operation was aborted.
-FAIL getResponseHeader: Server: unreadable by default The operation was aborted.
-FAIL getResponseHeader: X-Powered-By: unreadable by default The operation was aborted.
+FAIL getResponseHeader: Expose Access-Control-Expose-Headers (x-custom-header-comma)  A network error occurred.
+FAIL getResponseHeader: Expose second Access-Control-Expose-Headers (x-second-expose)  A network error occurred.
+FAIL getResponseHeader: Don't trim whitespace  A network error occurred.
+FAIL getResponseHeader: x-custom-header bytes  A network error occurred.
+FAIL getResponseHeader: Exposed server field readable (Date)  A network error occurred.
+FAIL getResponseHeader: Cache-Control: readable by default  A network error occurred.
+FAIL getResponseHeader: Content-Language: readable by default  A network error occurred.
+FAIL getResponseHeader: Expires: readable by default  A network error occurred.
+FAIL getResponseHeader: Last-Modified: readable by default  A network error occurred.
+FAIL getResponseHeader: Pragma: readable by default  A network error occurred.
+FAIL getResponseHeader: Server: unreadable by default  A network error occurred.
+FAIL getResponseHeader: X-Powered-By: unreadable by default  A network error occurred.
 FAIL getResponseHeader: Combined testing of cors response headers assert_equals: x-custom-header expected (string) "test, test" but got (object) null
-FAIL getResponse: don't expose x-nonexposed The operation was aborted.
-FAIL getAllResponseHeaders: don't expose x-nonexposed The operation was aborted.
+FAIL getResponse: don't expose x-nonexposed  A network error occurred.
+FAIL getAllResponseHeaders: don't expose x-nonexposed  A network error occurred.
 

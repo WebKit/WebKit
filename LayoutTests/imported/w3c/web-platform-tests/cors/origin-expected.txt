@@ -61,62 +61,62 @@ Access-Control-Allow-Origin handling
 
 Harness Error (FAIL), message = 1 duplicate test name: "Disallow origin: localhost:8800"
 
-FAIL Allow origin: * The operation was aborted.
-FAIL Allow origin: _*__ The operation was aborted.
-FAIL Allow origin: [tab]* The operation was aborted.
-FAIL Allow origin: http://localhost:8800 The operation was aborted.
-FAIL Allow origin: _http://localhost:8800 The operation was aborted.
-FAIL Allow origin: _http://localhost:8800___[tab]_ The operation was aborted.
-FAIL Allow origin: [tab]http://localhost:8800 The operation was aborted.
-FAIL Disallow origin: http://www1.localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: //localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: ://localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: ftp://localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http:://localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http:/localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http:localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800? assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800/ assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800 / assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800# assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800%23 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800:80 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800, * assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800\0 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: HTTP://LOCALHOST:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: HTTP://localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: - assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: ** assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: \0* assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: *\0 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: '*' assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: "*" assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: * * assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: * null assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: *http://* assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: *http://localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: * http://localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: *, http://localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: \0http://localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: null http://localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://example.net assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: null assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: null * assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin:  assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800/cors/origin.htm assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800/cors/ assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://www1.localhost:8800/cors/ assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: .localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: *.localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://.localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow origin: http://*.localhost:8800 assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow multiple headers (, *) assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow multiple headers (*, ) assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow multiple headers (*, *) assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow multiple headers (, http://localhost:8800) assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow multiple headers (*, http://localhost:8800) assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
-FAIL Disallow multiple headers (http://localhost:8800, http://localhost:8800) assert_throws: send function "function () { client.send() }" threw object "AbortError: The operation was aborted." that is not a DOMException NetworkError: property "code" is equal to 20, expected 19
+FAIL Allow origin: *  A network error occurred.
+FAIL Allow origin: _*__  A network error occurred.
+FAIL Allow origin: [tab]*  A network error occurred.
+FAIL Allow origin: http://localhost:8800  A network error occurred.
+FAIL Allow origin: _http://localhost:8800  A network error occurred.
+FAIL Allow origin: _http://localhost:8800___[tab]_  A network error occurred.
+FAIL Allow origin: [tab]http://localhost:8800  A network error occurred.
+PASS Disallow origin: http://www1.localhost:8800 
+PASS Disallow origin: //localhost:8800 
+PASS Disallow origin: ://localhost:8800 
+PASS Disallow origin: ftp://localhost:8800 
+PASS Disallow origin: http:://localhost:8800 
+PASS Disallow origin: http:/localhost:8800 
+PASS Disallow origin: http:localhost:8800 
+PASS Disallow origin: localhost:8800 
+PASS Disallow origin: http://localhost:8800? 
+PASS Disallow origin: http://localhost:8800/ 
+PASS Disallow origin: http://localhost:8800 / 
+PASS Disallow origin: http://localhost:8800# 
+PASS Disallow origin: http://localhost:8800%23 
+PASS Disallow origin: http://localhost:8800:80 
+PASS Disallow origin: http://localhost:8800, * 
+PASS Disallow origin: http://localhost:8800\0 
+PASS Disallow origin: HTTP://LOCALHOST:8800 
+PASS Disallow origin: HTTP://localhost:8800 
+PASS Disallow origin: - 
+PASS Disallow origin: ** 
+PASS Disallow origin: \0* 
+PASS Disallow origin: *\0 
+PASS Disallow origin: '*' 
+PASS Disallow origin: "*" 
+PASS Disallow origin: * * 
+PASS Disallow origin: * null 
+PASS Disallow origin: *http://* 
+PASS Disallow origin: *http://localhost:8800 
+PASS Disallow origin: * http://localhost:8800 
+PASS Disallow origin: *, http://localhost:8800 
+PASS Disallow origin: \0http://localhost:8800 
+PASS Disallow origin: null http://localhost:8800 
+PASS Disallow origin: http://example.net 
+PASS Disallow origin: null 
+PASS Disallow origin: null * 
+PASS Disallow origin:  
+PASS Disallow origin: http://localhost:8800/cors/origin.htm 
+PASS Disallow origin: http://localhost:8800/cors/ 
+PASS Disallow origin: http://www1.localhost:8800/cors/ 
+PASS Disallow origin: localhost:8800 
+PASS Disallow origin: .localhost:8800 
+PASS Disallow origin: *.localhost:8800 
+PASS Disallow origin: http://localhost:8800 
+PASS Disallow origin: http://.localhost:8800 
+PASS Disallow origin: http://*.localhost:8800 
+PASS Disallow multiple headers (, *) 
+PASS Disallow multiple headers (*, ) 
+PASS Disallow multiple headers (*, *) 
+PASS Disallow multiple headers (, http://localhost:8800) 
+PASS Disallow multiple headers (*, http://localhost:8800) 
+PASS Disallow multiple headers (http://localhost:8800, http://localhost:8800) 
 

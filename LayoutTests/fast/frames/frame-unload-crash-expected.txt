@@ -1,5 +1,4 @@
 frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)
-CONSOLE MESSAGE: line 13: XMLHttpRequest cannot load frame-unload-crash-2.html due to access control checks.
 This is a test for bug 25136: CRASH in DocumentLoader::removeSubresourceLoader due to null m_frame. If successful, PASS should be printed below.
 
 PASS
