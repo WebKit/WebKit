@@ -208,9 +208,6 @@ void ThreadedCompositor::renderLayerTree()
     float scaleFactor;
     bool drawsBackground;
     bool needsResize;
-    Vector<WebCore::CoordinatedGraphicsState> states;
-    Vector<uint32_t> atlasesToRemove;
-
     {
         LockHolder locker(m_attributes.lock);
         viewportSize = m_attributes.viewportSize;
@@ -218,25 +215,6 @@ void ThreadedCompositor::renderLayerTree()
         scaleFactor = m_attributes.scaleFactor;
         drawsBackground = m_attributes.drawsBackground;
         needsResize = m_attributes.needsResize;
-
-        states = WTFMove(m_attributes.states);
-        atlasesToRemove = WTFMove(m_attributes.atlasesToRemove);
-
-        if (!states.isEmpty()) {
-            // Client has to be notified upon finishing this scene update.
-            m_attributes.clientRendersNextFrame = true;
-
-            // Coordinate scene update completion with the client in case of changed or updated platform layers.
-            // But do not change coordinateUpdateCompletionWithClient while in force repaint because that
-            // demands immediate scene update completion regardless of platform layers.
-            if (!m_inForceRepaint) {
-                bool coordinateUpdate = false;
-                for (auto& state : states)
-                    coordinateUpdate |= std::any_of(state.layersToUpdate.begin(), state.layersToUpdate.end(),
-                        [](auto& it) { return it.second.platformLayerChanged || it.second.platformLayerUpdated; });
-                m_attributes.coordinateUpdateCompletionWithClient = coordinateUpdate;
-            }
-        }
 
         // Reset the needsResize attribute to false.
         m_attributes.needsResize = false;
@@ -254,8 +232,6 @@ void ThreadedCompositor::renderLayerTree()
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    m_scene->applyStateChanges(states);
-    m_scene->releaseUpdateAtlases(atlasesToRemove);
     m_scene->paintToCurrentGLContext(viewportTransform, 1, FloatRect { FloatPoint { }, viewportSize },
         Color::transparent, !drawsBackground, scrollPosition, m_paintFlags);
 
@@ -302,15 +278,34 @@ void ThreadedCompositor::sceneUpdateFinished()
 
 void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 {
-    LockHolder locker(m_attributes.lock);
-    m_attributes.states.append(state);
+    ASSERT(RunLoop::isMain());
+    m_scene->appendUpdate([this, scene = makeRef(*m_scene), state] {
+        scene->commitSceneState(state);
+
+        LockHolder locker(m_attributes.lock);
+
+        // Client has to be notified upon finishing this scene update.
+        m_attributes.clientRendersNextFrame = true;
+
+        // Coordinate scene update completion with the client in case of changed or updated platform layers.
+        // Do not change m_coordinateUpdateCompletionWithClient while in force repaint.
+        bool coordinateUpdate = !m_inForceRepaint && std::any_of(state.layersToUpdate.begin(), state.layersToUpdate.end(),
+            [](const std::pair<CoordinatedLayerID, CoordinatedGraphicsLayerState>& it) {
+                return it.second.platformLayerChanged || it.second.platformLayerUpdated;
+            });
+
+        m_attributes.coordinateUpdateCompletionWithClient |= coordinateUpdate;
+    });
+
     m_compositingRunLoop->scheduleUpdate();
 }
 
 void ThreadedCompositor::releaseUpdateAtlases(Vector<uint32_t>&& atlasesToRemove)
 {
-    LockHolder locker(m_attributes.lock);
-    m_attributes.atlasesToRemove.appendVector(atlasesToRemove);
+    ASSERT(RunLoop::isMain());
+    m_scene->appendUpdate([scene = makeRef(*m_scene), atlasesToRemove = WTFMove(atlasesToRemove)] {
+        scene->releaseUpdateAtlases(atlasesToRemove);
+    });
     m_compositingRunLoop->scheduleUpdate();
 }
 
