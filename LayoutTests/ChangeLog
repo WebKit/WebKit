@@ -1,3 +1,18 @@
+2017-08-15  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r217197. rdar://problem/33890650
+
+    2017-05-21  Antti Koivisto  <antti@apple.com>
+
+            matchMedia('print').addListener() fires in WK1 but never in WK2 when printing (breaks printing Google maps, QuickLooks)
+            https://bugs.webkit.org/show_bug.cgi?id=172361
+            <rdar://problem/28777408>
+
+            Reviewed by Sam Weinig.
+
+            * fast/media/matchMedia-print-expected.txt: Added.
+            * fast/media/matchMedia-print.html: Added.
+
 2017-08-14  Jason Marcell  <jmarcell@apple.com>
 
         Revert r217197. rdar://problem/33890650
