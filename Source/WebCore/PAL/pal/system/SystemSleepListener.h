@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,26 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+namespace PAL {
 
-#include "SleepDisabler.h"
-
-namespace WebCore {
-
-class SleepDisablerCocoa : public SleepDisabler {
+class SystemSleepListener {
 public:
-    SleepDisablerCocoa(const char*, Type);
-    virtual ~SleepDisablerCocoa();
+    class Client {
+    public:
+        virtual ~Client() { }
+        virtual void systemWillSleep() = 0;
+        virtual void systemDidWake() = 0;
+    };
 
-private:
-    uint32_t m_sleepAssertion;
+    static std::unique_ptr<SystemSleepListener> create(Client&);
+    virtual ~SystemSleepListener() { }
+
+    Client& client() { return m_client; }
+
+protected:
+    SystemSleepListener(Client&);
+
+    Client& m_client;
 };
 
-}
-
-#endif // PLATFORM(COCOA)
+} // namespace PAL

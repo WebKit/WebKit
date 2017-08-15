@@ -316,7 +316,6 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/ScrollSnapAnimatorState.mm
     platform/cocoa/SearchPopupMenuCocoa.mm
     platform/cocoa/SharedBufferCocoa.mm
-    platform/cocoa/SleepDisablerCocoa.cpp
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
     platform/cocoa/ThemeCocoa.mm
@@ -503,7 +502,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/SerializedPlatformRepresentationMac.mm
     platform/mac/StringUtilities.mm
     platform/mac/SuddenTermination.mm
-    platform/mac/SystemSleepListenerMac.mm
     platform/mac/ThemeMac.mm
     platform/mac/ThreadCheck.mm
     platform/mac/URLMac.mm
@@ -726,7 +724,6 @@ set(WebCore_FORWARDING_HEADERS_FILES
     loader/mac/LoaderNSURLExtras.h
 
     platform/PlatformExportMacros.h
-    platform/SleepDisabler.h
 
     platform/audio/AudioHardwareListener.h
 

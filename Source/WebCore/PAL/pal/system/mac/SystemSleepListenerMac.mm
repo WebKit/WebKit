@@ -23,21 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SystemSleepListener.h"
+#import "config.h"
+#import "SystemSleepListenerMac.h"
 
-namespace WebCore {
+#if PLATFORM(MAC)
 
-#if !PLATFORM(MAC)
+#import <AppKit/AppKit.h>
+#import <wtf/MainThread.h>
+
+namespace PAL {
+
 std::unique_ptr<SystemSleepListener> SystemSleepListener::create(Client& client)
 {
-    return std::unique_ptr<SystemSleepListener>(new SystemSleepListener(client));
+    return std::unique_ptr<SystemSleepListener>(new SystemSleepListenerMac(client));
 }
-#endif
 
-SystemSleepListener::SystemSleepListener(Client& client)
-    : m_client(client)
+SystemSleepListenerMac::SystemSleepListenerMac(Client& client)
+    : SystemSleepListener(client)
+    , m_weakPtrFactory(this)
+    , m_sleepObserver(nil)
+    , m_wakeObserver(nil)
 {
+    NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
+    NSOperationQueue *queue = [NSOperationQueue mainQueue];
+
+    auto weakThis = m_weakPtrFactory.createWeakPtr();
+
+    m_sleepObserver = [center addObserverForName:NSWorkspaceWillSleepNotification object:nil queue:queue usingBlock:^(NSNotification *) {
+        callOnMainThread([weakThis] {
+            if (weakThis)
+                weakThis->m_client.systemWillSleep();
+        });
+    }];
+
+    m_wakeObserver = [center addObserverForName:NSWorkspaceDidWakeNotification object:nil queue:queue usingBlock:^(NSNotification *) {
+        callOnMainThread([weakThis] {
+            if (weakThis)
+                weakThis->m_client.systemDidWake();
+        });
+    }];
 }
 
+SystemSleepListenerMac::~SystemSleepListenerMac()
+{
+    NSNotificationCenter* center = [[NSWorkspace sharedWorkspace] notificationCenter];
+    [center removeObserver:m_sleepObserver];
+    [center removeObserver:m_wakeObserver];
 }
+
+} // namespace PAL
+
+#endif // PLATFORM(MAC)

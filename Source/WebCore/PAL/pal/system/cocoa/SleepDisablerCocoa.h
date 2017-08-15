@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SleepDisablerCocoa.h"
+#pragma once
 
 #if PLATFORM(COCOA)
 
-#include <pal/spi/cocoa/IOPMLibSPI.h>
-#include <wtf/RetainPtr.h>
+#include <pal/system/SleepDisabler.h>
 
-namespace WebCore {
+namespace PAL {
 
-std::unique_ptr<SleepDisabler> SleepDisabler::create(const char* reason, Type type)
-{
-    return std::unique_ptr<SleepDisabler>(new SleepDisablerCocoa(reason, type));
-}
+class SleepDisablerCocoa : public SleepDisabler {
+public:
+    SleepDisablerCocoa(const char*, Type);
+    virtual ~SleepDisablerCocoa();
 
-SleepDisablerCocoa::SleepDisablerCocoa(const char* reason, Type type)
-    : SleepDisabler(reason, type)
-    , m_sleepAssertion(0)
-{
-    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
+private:
+    uint32_t m_sleepAssertion;
+};
 
-    CFStringRef assertionType;
-    switch (type) {
-    case Type::Display:
-        assertionType = kIOPMAssertionTypePreventUserIdleDisplaySleep;
-        break;
-    case Type::System:
-        assertionType = kIOPMAssertionTypePreventUserIdleSystemSleep;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        assertionType = nullptr;
-        break;
-    }
-    IOPMAssertionCreateWithDescription(assertionType, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_sleepAssertion);
-}
-
-SleepDisablerCocoa::~SleepDisablerCocoa()
-{
-    IOPMAssertionRelease(m_sleepAssertion);
-}
-
-}
+} // namespace PAL
 
 #endif // PLATFORM(COCOA)

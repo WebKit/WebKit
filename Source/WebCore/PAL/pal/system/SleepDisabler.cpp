@@ -20,27 +20,28 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SleepDisabler.h"
 
-namespace WebCore {
+namespace PAL {
 
-class SleepDisabler {
-public:
-    enum class Type {
-        System,
-        Display,
-    };
-    static std::unique_ptr<SleepDisabler> create(const char*, Type);
-    WEBCORE_EXPORT virtual ~SleepDisabler();
-
-    Type type() const { return m_type; }
-
-protected:
-    WEBCORE_EXPORT SleepDisabler(const char*, Type);
-    Type m_type;
-};
-
+#if !PLATFORM(COCOA)
+std::unique_ptr<SleepDisabler> SleepDisabler::create(const char* reason, Type type)
+{
+    return std::unique_ptr<SleepDisabler>(new SleepDisabler(reason, type));
 }
+#endif // !PLATFORM(COCOA)
+
+SleepDisabler::SleepDisabler(const char*, Type type)
+    : m_type(type)
+{
+}
+
+SleepDisabler::~SleepDisabler()
+{
+}
+
+} // namespace PAL

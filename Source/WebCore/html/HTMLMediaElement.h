@@ -59,6 +59,10 @@
 #include <wtf/StringPrintStream.h>
 #endif
 
+namespace PAL {
+class SleepDisabler;
+}
+
 namespace WebCore {
 
 class AudioSourceProvider;
@@ -67,7 +71,6 @@ class AudioTrackPrivate;
 class Blob;
 class DOMError;
 class DeferredPromise;
-class SleepDisabler;
 class Event;
 class HTMLSourceElement;
 class HTMLTrackElement;
@@ -1064,7 +1067,7 @@ private:
     friend class MediaController;
     RefPtr<MediaController> m_mediaController;
 
-    std::unique_ptr<SleepDisabler> m_sleepDisabler;
+    std::unique_ptr<PAL::SleepDisabler> m_sleepDisabler;
 
     WeakPtr<const MediaResourceLoader> m_lastMediaResourceLoaderForTesting;
 

@@ -2740,8 +2740,6 @@
 		5D5975B419635F1100D00878 /* SystemVersion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D5975B219635F1100D00878 /* SystemVersion.mm */; };
 		5D5975B71963637B00D00878 /* UserAgent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D5975B61963637B00D00878 /* UserAgent.mm */; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
-		5D8C4DBF1428222C0026CE72 /* SleepDisablerCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8C4DBD1428222C0026CE72 /* SleepDisablerCocoa.cpp */; };
-		5D8C4DC01428222C0026CE72 /* SleepDisablerCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D8C4DBE1428222C0026CE72 /* SleepDisablerCocoa.h */; };
 		5D925B670F64D4DD00B847F0 /* ScrollAlignment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D925B650F64D4DD00B847F0 /* ScrollAlignment.cpp */; };
 		5D925B680F64D4DD00B847F0 /* ScrollAlignment.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D925B660F64D4DD00B847F0 /* ScrollAlignment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5DA5E0FC102B953800088CF9 /* JSWebSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */; };
@@ -6163,8 +6161,6 @@
 		CD4BE52A1CE136EF009D87DA /* GenericTaskQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4BE5291CE13425009D87DA /* GenericTaskQueue.cpp */; };
 		CD5209E41B0BD8380077184E /* MediaPlayerEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5209E31B0BD8380077184E /* MediaPlayerEnums.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5209E61B0BD9E10077184E /* HTMLMediaElementEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5209E51B0BD9E10077184E /* HTMLMediaElementEnums.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD52481A18E200ED0008A07D /* SleepDisabler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD52481818E200ED0008A07D /* SleepDisabler.cpp */; };
-		CD52481B18E200ED0008A07D /* SleepDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = CD52481918E200ED0008A07D /* SleepDisabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD525BA31EE0B10700788DF5 /* FourCC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD525BA11EE0B10700788DF5 /* FourCC.cpp */; };
 		CD525BA41EE0B10700788DF5 /* FourCC.h in Headers */ = {isa = PBXBuildFile; fileRef = CD525BA21EE0B10700788DF5 /* FourCC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5393D1175E018600C07123 /* JSMemoryInfo.cpp */; };
@@ -6227,10 +6223,6 @@
 		CD9DE17D17AAC75B00EA386D /* JSSourceBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DE17917AAC75B00EA386D /* JSSourceBufferList.h */; };
 		CD9DE18117AAD6A400EA386D /* DOMURLMediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9DE17E17AAD64E00EA386D /* DOMURLMediaSource.cpp */; };
 		CD9DE18217AAD6A400EA386D /* DOMURLMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DE17F17AAD64E00EA386D /* DOMURLMediaSource.h */; };
-		CDA07FBD18E0A16A004699FA /* SystemSleepListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA07FBB18E0A16A004699FA /* SystemSleepListener.cpp */; };
-		CDA07FBE18E0A16A004699FA /* SystemSleepListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA07FBC18E0A16A004699FA /* SystemSleepListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CDA07FC118E0A22B004699FA /* SystemSleepListenerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA07FBF18E0A22B004699FA /* SystemSleepListenerMac.mm */; };
-		CDA07FC218E0A22B004699FA /* SystemSleepListenerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA07FC018E0A22B004699FA /* SystemSleepListenerMac.h */; };
 		CDA29A091CBD99F400901CCF /* PlaybackSessionInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A081CBD99F400901CCF /* PlaybackSessionInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA29A0B1CBD9A7400901CCF /* PlaybackSessionModel.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A0A1CBD9A7400901CCF /* PlaybackSessionModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA29A0E1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A0C1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.mm */; };
@@ -10565,8 +10557,6 @@
 		5D5975B119635F1100D00878 /* SystemVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemVersion.h; sourceTree = "<group>"; };
 		5D5975B219635F1100D00878 /* SystemVersion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemVersion.mm; sourceTree = "<group>"; };
 		5D5975B61963637B00D00878 /* UserAgent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserAgent.mm; sourceTree = "<group>"; };
-		5D8C4DBD1428222C0026CE72 /* SleepDisablerCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SleepDisablerCocoa.cpp; sourceTree = "<group>"; };
-		5D8C4DBE1428222C0026CE72 /* SleepDisablerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SleepDisablerCocoa.h; sourceTree = "<group>"; };
 		5D925B650F64D4DD00B847F0 /* ScrollAlignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAlignment.cpp; sourceTree = "<group>"; };
 		5D925B660F64D4DD00B847F0 /* ScrollAlignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAlignment.h; sourceTree = "<group>"; };
 		5DA5E0FA102B953800088CF9 /* JSWebSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebSocket.cpp; sourceTree = "<group>"; };
@@ -14729,8 +14719,6 @@
 		CD4E0AFA11F7BC27009D3811 /* fullscreen.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = fullscreen.css; sourceTree = "<group>"; };
 		CD5209E31B0BD8380077184E /* MediaPlayerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerEnums.h; sourceTree = "<group>"; };
 		CD5209E51B0BD9E10077184E /* HTMLMediaElementEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMediaElementEnums.h; sourceTree = "<group>"; };
-		CD52481818E200ED0008A07D /* SleepDisabler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SleepDisabler.cpp; sourceTree = "<group>"; };
-		CD52481918E200ED0008A07D /* SleepDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SleepDisabler.h; sourceTree = "<group>"; };
 		CD525BA11EE0B10700788DF5 /* FourCC.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FourCC.cpp; sourceTree = "<group>"; };
 		CD525BA21EE0B10700788DF5 /* FourCC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FourCC.h; sourceTree = "<group>"; };
 		CD5393CB175DCCE600C07123 /* MemoryInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInfo.h; sourceTree = "<group>"; };
@@ -14801,10 +14789,6 @@
 		CD9DE17E17AAD64E00EA386D /* DOMURLMediaSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMURLMediaSource.cpp; sourceTree = "<group>"; };
 		CD9DE17F17AAD64E00EA386D /* DOMURLMediaSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMURLMediaSource.h; sourceTree = "<group>"; };
 		CD9DE18017AAD64E00EA386D /* DOMURLMediaSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMURLMediaSource.idl; sourceTree = "<group>"; };
-		CDA07FBB18E0A16A004699FA /* SystemSleepListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemSleepListener.cpp; sourceTree = "<group>"; };
-		CDA07FBC18E0A16A004699FA /* SystemSleepListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSleepListener.h; sourceTree = "<group>"; };
-		CDA07FBF18E0A22B004699FA /* SystemSleepListenerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemSleepListenerMac.mm; sourceTree = "<group>"; };
-		CDA07FC018E0A22B004699FA /* SystemSleepListenerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSleepListenerMac.h; sourceTree = "<group>"; };
 		CDA29A081CBD99F400901CCF /* PlaybackSessionInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionInterface.h; sourceTree = "<group>"; };
 		CDA29A0A1CBD9A7400901CCF /* PlaybackSessionModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionModel.h; sourceTree = "<group>"; };
 		CDA29A0C1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionModelMediaElement.mm; sourceTree = "<group>"; };
@@ -19202,8 +19186,6 @@
 				ECA680C61E67724500731D20 /* StringUtilities.h */,
 				ECA680C81E67730B00731D20 /* StringUtilities.mm */,
 				93B2D8170F9920EE006AE6B2 /* SuddenTermination.mm */,
-				CDA07FC018E0A22B004699FA /* SystemSleepListenerMac.h */,
-				CDA07FBF18E0A22B004699FA /* SystemSleepListenerMac.mm */,
 				BCE659E50EA92FB2007E4533 /* ThemeMac.h */,
 				BCE659E80EA92FFA007E4533 /* ThemeMac.mm */,
 				51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */,
@@ -21301,8 +21283,6 @@
 				0E7058F31BC5CCD70045A507 /* SearchPopupMenuCocoa.h */,
 				0E7058ED1BC5BC190045A507 /* SearchPopupMenuCocoa.mm */,
 				1A4A95510B4EDCFF002D8C3C /* SharedBufferCocoa.mm */,
-				5D8C4DBD1428222C0026CE72 /* SleepDisablerCocoa.cpp */,
-				5D8C4DBE1428222C0026CE72 /* SleepDisablerCocoa.h */,
 				5D5975B119635F1100D00878 /* SystemVersion.h */,
 				5D5975B219635F1100D00878 /* SystemVersion.mm */,
 				7CC564B918BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp */,
@@ -24216,15 +24196,11 @@
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
-				CD52481818E200ED0008A07D /* SleepDisabler.cpp */,
-				CD52481918E200ED0008A07D /* SleepDisabler.h */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
 				F433E9041DBBDBC200EF0D14 /* StaticPasteboard.cpp */,
 				F433E9021DBBDBA200EF0D14 /* StaticPasteboard.h */,
 				93B2D8150F9920D2006AE6B2 /* SuddenTermination.h */,
 				97627B9714FB5424002CDCA1 /* Supplementable.h */,
-				CDA07FBB18E0A16A004699FA /* SystemSleepListener.cpp */,
-				CDA07FBC18E0A16A004699FA /* SystemSleepListener.h */,
 				7CC564B618BABEA6001B9652 /* TelephoneNumberDetector.h */,
 				BCE65D310EAD1211007E4533 /* Theme.cpp */,
 				BCE658FE0EA9248A007E4533 /* Theme.h */,
@@ -29544,8 +29520,6 @@
 				9444CBD61D860C8B0073A074 /* SizesAttributeParser.h in Headers */,
 				9444CBD41D860C8B0073A074 /* SizesCalcParser.h in Headers */,
 				49E911CD0EF86D47009D0CAF /* SkewTransformOperation.h in Headers */,
-				CD52481B18E200ED0008A07D /* SleepDisabler.h in Headers */,
-				5D8C4DC01428222C0026CE72 /* SleepDisablerCocoa.h in Headers */,
 				4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */,
 				9B532EA41BA928570038A827 /* SlotAssignment.h in Headers */,
 				4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */,
@@ -29936,8 +29910,6 @@
 				E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */,
 				26FAE4CF1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h in Headers */,
 				0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */,
-				CDA07FBE18E0A16A004699FA /* SystemSleepListener.h in Headers */,
-				CDA07FC218E0A22B004699FA /* SystemSleepListenerMac.h in Headers */,
 				5D5975B319635F1100D00878 /* SystemVersion.h in Headers */,
 				A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */,
 				463EB6231B8789E00096ED51 /* TagCollection.h in Headers */,
@@ -33408,8 +33380,6 @@
 				9444CBD51D860C8B0073A074 /* SizesAttributeParser.cpp in Sources */,
 				9444CBD31D860C8B0073A074 /* SizesCalcParser.cpp in Sources */,
 				49E911CC0EF86D47009D0CAF /* SkewTransformOperation.cpp in Sources */,
-				CD52481A18E200ED0008A07D /* SleepDisabler.cpp in Sources */,
-				5D8C4DBF1428222C0026CE72 /* SleepDisablerCocoa.cpp in Sources */,
 				4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */,
 				9B532EA31BA928570038A827 /* SlotAssignment.cpp in Sources */,
 				4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */,
@@ -33689,8 +33659,6 @@
 				442ABCD617D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp in Sources */,
 				26FAE4CE1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp in Sources */,
 				E45390AE0EAFF4B5003695C8 /* SystemMemoryIOS.cpp in Sources */,
-				CDA07FBD18E0A16A004699FA /* SystemSleepListener.cpp in Sources */,
-				CDA07FC118E0A22B004699FA /* SystemSleepListenerMac.mm in Sources */,
 				5D5975B419635F1100D00878 /* SystemVersion.mm in Sources */,
 				463EB6221B8789E00096ED51 /* TagCollection.cpp in Sources */,
 				F55B3DD51251F12D003EF269 /* TelephoneInputType.cpp in Sources */,

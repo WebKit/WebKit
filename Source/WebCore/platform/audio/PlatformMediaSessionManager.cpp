@@ -58,7 +58,7 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
 #endif // !PLATFORM(COCOA)
 
 PlatformMediaSessionManager::PlatformMediaSessionManager()
-    : m_systemSleepListener(SystemSleepListener::create(*this))
+    : m_systemSleepListener(PAL::SystemSleepListener::create(*this))
 {
     resetRestrictions();
 }

@@ -1,4 +1,6 @@
 set(PAL_SOURCES
+    system/SleepDisabler.cpp
+    system/SystemSleepListener.cpp
 )
 
 set(PAL_INCLUDE_DIRECTORIES

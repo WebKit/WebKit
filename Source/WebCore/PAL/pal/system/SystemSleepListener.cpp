@@ -23,32 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SystemSleepListenerMac_h
-#define SystemSleepListenerMac_h
-
-#if PLATFORM(MAC)
-
+#include "config.h"
 #include "SystemSleepListener.h"
 
-#include <wtf/WeakPtr.h>
+namespace PAL {
 
-namespace WebCore {
+#if !PLATFORM(MAC)
+std::unique_ptr<SystemSleepListener> SystemSleepListener::create(Client& client)
+{
+    return std::unique_ptr<SystemSleepListener>(new SystemSleepListener(client));
+}
+#endif
 
-class SystemSleepListenerMac : public SystemSleepListener {
-    WTF_MAKE_FAST_ALLOCATED;
-protected:
-    SystemSleepListenerMac(Client&);
-    virtual ~SystemSleepListenerMac();
-
-    friend std::unique_ptr<SystemSleepListener> SystemSleepListener::create(Client&);
-
-    WeakPtrFactory<SystemSleepListenerMac> m_weakPtrFactory;
-    id m_sleepObserver;
-    id m_wakeObserver;
-};
-
+SystemSleepListener::SystemSleepListener(Client& client)
+    : m_client(client)
+{
 }
 
-#endif // PLATFORM(MAC)
-
-#endif // SystemSleepListenerMac_h
+} // namespace PAL

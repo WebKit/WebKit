@@ -40,9 +40,9 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/SleepDisabler.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
+#import <pal/system/SleepDisabler.h>
 #import <wtf/BlockObjCExceptions.h>
 
 using namespace WebKit;

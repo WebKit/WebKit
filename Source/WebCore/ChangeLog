@@ -1,3 +1,22 @@
+2017-08-15  Don Olmstead  <don.olmstead@sony.com>
+
+        [PAL] Move Sleep classes into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=175456
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        * platform/audio/PlatformMediaSessionManager.h:
+        * platform/mac/WebVideoFullscreenController.h:
+        * platform/mac/WebVideoFullscreenController.mm:
+
 2017-08-15  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Adding generic support for CacheStorage and Cache methods

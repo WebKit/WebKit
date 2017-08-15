@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/Platform.h>
+#include "config.h"
+#include "SleepDisablerCocoa.h"
 
-#if PLATFORM(MAC) && ENABLE(VIDEO)
+#if PLATFORM(COCOA)
 
-#import <AppKit/NSWindowController.h>
-#import <AppKit/NSScreen.h>
-#import <wtf/RefPtr.h>
+#include <pal/spi/cocoa/IOPMLibSPI.h>
+#include <wtf/RetainPtr.h>
 
 namespace PAL {
-class SleepDisabler;
+
+std::unique_ptr<SleepDisabler> SleepDisabler::create(const char* reason, Type type)
+{
+    return std::unique_ptr<SleepDisabler>(new SleepDisablerCocoa(reason, type));
 }
 
-namespace WebCore {
-class HTMLVideoElement;
+SleepDisablerCocoa::SleepDisablerCocoa(const char* reason, Type type)
+    : SleepDisabler(reason, type)
+    , m_sleepAssertion(0)
+{
+    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
+
+    CFStringRef assertionType;
+    switch (type) {
+    case Type::Display:
+        assertionType = kIOPMAssertionTypePreventUserIdleDisplaySleep;
+        break;
+    case Type::System:
+        assertionType = kIOPMAssertionTypePreventUserIdleSystemSleep;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        assertionType = nullptr;
+        break;
+    }
+    IOPMAssertionCreateWithDescription(assertionType, reasonCF.get(), nullptr, nullptr, nullptr, 0, nullptr, &m_sleepAssertion);
 }
 
-@protocol WebVideoFullscreenControllerDelegate;
-@class WebVideoFullscreenHUDWindowController;
-@class WebWindowFadeAnimation;
-@class CALayer;
-
-WEBCORE_EXPORT @interface WebVideoFullscreenController : NSWindowController {
-@private
-    RefPtr<WebCore::HTMLVideoElement> _videoElement; // (retain)
-    id <WebVideoFullscreenControllerDelegate> _delegate; // (assign)
-
-    NSWindow *_backgroundFullscreenWindow; // (retain)
-    WebVideoFullscreenHUDWindowController *_hudController; // (retain)
-
-    WebWindowFadeAnimation *_fadeAnimation; // (retain)
-
-    BOOL _isEndingFullscreen;
-    BOOL _forceDisableAnimation;
-
-    std::unique_ptr<PAL::SleepDisabler> _displaySleepDisabler;
+SleepDisablerCocoa::~SleepDisablerCocoa()
+{
+    IOPMAssertionRelease(m_sleepAssertion);
 }
 
-- (id <WebVideoFullscreenControllerDelegate>)delegate;
-- (void)setDelegate:(id <WebVideoFullscreenControllerDelegate>)delegate;
+} // namespace PAL
 
-- (void)setupVideoOverlay:(CALayer*)layer;
-- (void)setVideoElement:(WebCore::HTMLVideoElement*)videoElement;
-- (WebCore::HTMLVideoElement*)videoElement;
-
-- (void)enterFullscreen:(NSScreen *)screen;
-- (void)exitFullscreen;
-
-@end
-
-#endif
+#endif // PLATFORM(COCOA)

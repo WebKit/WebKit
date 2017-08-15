@@ -33,7 +33,6 @@
 @class WebWindowScaleAnimation;
 @class WebView;
 namespace WebCore {
-class SleepDisabler;
 class Element;
 class RenderBox;
 class EventListener;
