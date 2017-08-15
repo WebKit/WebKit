@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 14: Reached maximum amount of queued data of 64Kb for keepalive requests
+
+PASS Beacon with a body above the Quota Limit should fail. 
+FAIL Multiple Beacons Quota Limit assert_false: Second beacon should not be sent because we reached the quota expected false got true
+

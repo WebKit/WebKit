@@ -1,3 +1,23 @@
+2017-08-15  Chris Dumez  <cdumez@apple.com>
+
+        Implement quota limitation for keepalive Fetch requests
+        https://bugs.webkit.org/show_bug.cgi?id=175482
+
+        Reviewed by Sam Weinig and Youenn Fablet.
+
+        * fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt:
+        * http/tests/contentextensions/async-xhr-onerror-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-xhr-in-main-frame-expected.txt:
+        Rebaseline a few tests now that we provide a more helpful error message when an XHR is failing synchronously.
+
+        * http/wpt/beacon/beacon-quota-expected.txt: Added.
+        * http/wpt/beacon/beacon-quota.html: Added.
+        Add layout test coverage for keepalive Fetch requests quota in the context of sendBeacon().
+        The second part of the test is still failing because WebCore does not currently know when
+        ping loads (e.g. beacon loads) complete. This will be addressed via Bug 175443.
+
 2017-08-15  Darin Adler  <darin@apple.com>
 
         REGRESSION(r220052): http/tests/appcache/deferred-events-delete-while-raising-timer.html is crashing.

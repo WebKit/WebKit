@@ -162,7 +162,7 @@ public:
 
     bool isImage() const { return type() == ImageResource; }
     // FIXME: CachedRawResource could be a main resource, an audio/video resource, or a raw XHR/icon resource.
-    bool isMainOrMediaOrIconOrRawResource() const { return type() == MainResource || type() == MediaResource || type() == Icon || type() == RawResource; }
+    bool isMainOrMediaOrIconOrRawResource() const { return type() == MainResource || type() == MediaResource || type() == Icon || type() == RawResource || type() == Beacon; }
 
     // Whether this request should impact request counting and delay window.onload.
     bool ignoreForRequestCount() const

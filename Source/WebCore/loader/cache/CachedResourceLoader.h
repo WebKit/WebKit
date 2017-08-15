@@ -30,6 +30,7 @@
 #include "CachedResourceHandle.h"
 #include "CachedResourceRequest.h"
 #include "ContentSecurityPolicy.h"
+#include "KeepaliveRequestTracker.h"
 #include "ResourceTimingInformation.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
@@ -71,25 +72,25 @@ public:
     static Ref<CachedResourceLoader> create(DocumentLoader* documentLoader) { return adoptRef(*new CachedResourceLoader(documentLoader)); }
     ~CachedResourceLoader();
 
-    CachedResourceHandle<CachedImage> requestImage(CachedResourceRequest&&);
-    CachedResourceHandle<CachedCSSStyleSheet> requestCSSStyleSheet(CachedResourceRequest&&);
-    CachedResourceHandle<CachedCSSStyleSheet> requestUserCSSStyleSheet(CachedResourceRequest&&);
-    CachedResourceHandle<CachedScript> requestScript(CachedResourceRequest&&);
-    CachedResourceHandle<CachedFont> requestFont(CachedResourceRequest&&, bool isSVG);
-    CachedResourceHandle<CachedRawResource> requestMedia(CachedResourceRequest&&);
-    CachedResourceHandle<CachedRawResource> requestIcon(CachedResourceRequest&&);
-    CachedResourceHandle<CachedResource> requestBeaconResource(CachedResourceRequest&&);
-    CachedResourceHandle<CachedRawResource> requestRawResource(CachedResourceRequest&&);
-    CachedResourceHandle<CachedRawResource> requestMainResource(CachedResourceRequest&&);
-    CachedResourceHandle<CachedSVGDocument> requestSVGDocument(CachedResourceRequest&&);
+    CachedResourceHandle<CachedImage> requestImage(CachedResourceRequest&&, ResourceError* = nullptr);
+    CachedResourceHandle<CachedCSSStyleSheet> requestCSSStyleSheet(CachedResourceRequest&&, ResourceError* = nullptr);
+    CachedResourceHandle<CachedCSSStyleSheet> requestUserCSSStyleSheet(CachedResourceRequest&&, ResourceError* = nullptr);
+    CachedResourceHandle<CachedScript> requestScript(CachedResourceRequest&&, ResourceError* = nullptr);
+    CachedResourceHandle<CachedFont> requestFont(CachedResourceRequest&&, bool isSVG, ResourceError* = nullptr);
+    CachedResourceHandle<CachedRawResource> requestMedia(CachedResourceRequest&&, ResourceError* = nullptr);
+    CachedResourceHandle<CachedRawResource> requestIcon(CachedResourceRequest&&, ResourceError* = nullptr);
+    CachedResourceHandle<CachedResource> requestBeaconResource(CachedResourceRequest&&, ResourceError* = nullptr);
+    CachedResourceHandle<CachedRawResource> requestRawResource(CachedResourceRequest&&, ResourceError* = nullptr);
+    CachedResourceHandle<CachedRawResource> requestMainResource(CachedResourceRequest&&, ResourceError* = nullptr);
+    CachedResourceHandle<CachedSVGDocument> requestSVGDocument(CachedResourceRequest&&, ResourceError* = nullptr);
 #if ENABLE(XSLT)
-    CachedResourceHandle<CachedXSLStyleSheet> requestXSLStyleSheet(CachedResourceRequest&&);
+    CachedResourceHandle<CachedXSLStyleSheet> requestXSLStyleSheet(CachedResourceRequest&&, ResourceError* = nullptr);
 #endif
 #if ENABLE(LINK_PREFETCH)
-    CachedResourceHandle<CachedResource> requestLinkResource(CachedResource::Type, CachedResourceRequest&&);
+    CachedResourceHandle<CachedResource> requestLinkResource(CachedResource::Type, CachedResourceRequest&&, ResourceError* = nullptr);
 #endif
 #if ENABLE(VIDEO_TRACK)
-    CachedResourceHandle<CachedTextTrack> requestTextTrack(CachedResourceRequest&&);
+    CachedResourceHandle<CachedTextTrack> requestTextTrack(CachedResourceRequest&&, ResourceError* = nullptr);
 #endif
 
     // Logs an access denied message to the console for the specified URL.
@@ -146,13 +147,15 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
+    KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker; }
+
 private:
     explicit CachedResourceLoader(DocumentLoader*);
 
     enum class ForPreload { Yes, No };
     enum class DeferOption { NoDefer, DeferredByClient };
 
-    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&&, ForPreload = ForPreload::No, DeferOption = DeferOption::NoDefer);
+    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&&, ResourceError* = nullptr, ForPreload = ForPreload::No, DeferOption = DeferOption::NoDefer);
     CachedResourceHandle<CachedResource> revalidateResource(CachedResourceRequest&&, CachedResource&);
     CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&&);
 
@@ -193,6 +196,7 @@ private:
     Timer m_garbageCollectDocumentResourcesTimer;
 
     ResourceTimingInformation m_resourceTimingInfo;
+    KeepaliveRequestTracker m_keepaliveRequestTracker;
 
     // 29 bits left
     bool m_autoLoadImages : 1;

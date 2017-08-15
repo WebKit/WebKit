@@ -33,6 +33,7 @@
 #include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "JSFetchResponse.h"
+#include "ResourceError.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -138,11 +139,11 @@ void FetchResponse::BodyLoader::didSucceed()
     }
 }
 
-void FetchResponse::BodyLoader::didFail()
+void FetchResponse::BodyLoader::didFail(const ResourceError& error)
 {
     ASSERT(m_response.hasPendingActivity());
     if (m_promise)
-        std::exchange(m_promise, std::nullopt)->reject(TypeError);
+        std::exchange(m_promise, std::nullopt)->reject(Exception { TypeError, String(error.localizedDescription()) });
 
 #if ENABLE(STREAMS_API)
     if (m_response.m_readableStreamSource) {

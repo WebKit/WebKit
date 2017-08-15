@@ -93,7 +93,7 @@ void CachedRawResource::finishLoading(SharedBuffer* data)
     }
 
 #if USE(QUICK_LOOK)
-    m_allowEncodedDataReplacement = !m_loader->isQuickLookResource();
+    m_allowEncodedDataReplacement = m_loader && !m_loader->isQuickLookResource();
 #endif
 
     CachedResource::finishLoading(data);

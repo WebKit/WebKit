@@ -1,3 +1,76 @@
+2017-08-15  Chris Dumez  <cdumez@apple.com>
+
+        Implement quota limitation for keepalive Fetch requests
+        https://bugs.webkit.org/show_bug.cgi?id=175482
+
+        Reviewed by Sam Weinig and Youenn Fablet.
+
+        Implement quota limitation for keepalive Fetch requests as per:
+        - https://fetch.spec.whatwg.org/#http-network-or-cache-fetch (Step 9)
+
+        This partly works for Beacon as well, meaning that no Beacon with a body
+        over 64Kb can be sent. However, we don't keep track about wether or not
+        beacon loads are inflight or not.
+
+        Also update CachedResourceLoader::requestResource() so that the caller
+        can get a ResourceError when it returns null. This is useful for both
+        Fetch and Beacon to return better error messages.
+
+        Test: http/wpt/beacon/beacon-quota.html
+
+        * CMakeLists.txt:
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::BlobLoader::didReceiveResponse):
+        (WebCore::FetchBodyOwner::BlobLoader::didFail):
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::start):
+        (WebCore::FetchLoader::didFail):
+        * Modules/fetch/FetchLoaderClient.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didFail):
+        * Modules/fetch/FetchResponse.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isMainOrMediaOrIconOrRawResource const):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestFont):
+        (WebCore::CachedResourceLoader::requestTextTrack):
+        (WebCore::CachedResourceLoader::requestCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestScript):
+        (WebCore::CachedResourceLoader::requestXSLStyleSheet):
+        (WebCore::CachedResourceLoader::requestSVGDocument):
+        (WebCore::CachedResourceLoader::requestLinkResource):
+        (WebCore::CachedResourceLoader::requestMedia):
+        (WebCore::CachedResourceLoader::requestIcon):
+        (WebCore::CachedResourceLoader::requestRawResource):
+        (WebCore::CachedResourceLoader::requestBeaconResource):
+        (WebCore::CachedResourceLoader::requestMainResource):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::preload):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/KeepaliveRequestTracker.cpp: Added.
+        (WebCore::KeepaliveRequestTracker::~KeepaliveRequestTracker):
+        (WebCore::KeepaliveRequestTracker::canLoadRequest):
+        (WebCore::KeepaliveRequestTracker::registerRequest):
+        (WebCore::KeepaliveRequestTracker::responseReceived):
+        (WebCore::KeepaliveRequestTracker::notifyFinished):
+        (WebCore::KeepaliveRequestTracker::unregisterRequest):
+        * loader/cache/KeepaliveRequestTracker.h: Added.
+        * platform/network/FormData.cpp:
+        (WebCore::FormDataElement::lengthInBytes const):
+        (WebCore::FormData::lengthInBytes const):
+        * platform/network/FormData.h:
+
 2017-08-15  Darin Adler  <darin@apple.com>
 
         REGRESSION(r220052): http/tests/appcache/deferred-events-delete-while-raising-timer.html is crashing.

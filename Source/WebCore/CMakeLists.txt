@@ -2070,6 +2070,7 @@ set(WebCore_SOURCES
     loader/cache/CachedSVGFont.cpp
     loader/cache/CachedScript.cpp
     loader/cache/CachedXSLStyleSheet.cpp
+    loader/cache/KeepaliveRequestTracker.cpp
     loader/cache/MemoryCache.cpp
 
     loader/icon/IconLoader.cpp

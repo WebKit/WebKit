@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    // We should expect 64KiB of rolling quota for any type of keep-alive request sent.
+    var expectedQuota = 65536;
+
+    function createPayload(payloadSize)
+    {
+        return new Blob(["*".repeat(payloadSize)]);
+    }
+
+    test(function() {
+        assert_false(navigator.sendBeacon("/", createPayload(expectedQuota + 1)));
+    }, "Beacon with a body above the Quota Limit should fail.");
+
+    test(function() {
+        assert_true(navigator.sendBeacon("/", createPayload(expectedQuota)), "Beacon with a body at the Quota Limit should succeed.");
+        assert_false(navigator.sendBeacon("/", createPayload(1)), "Second beacon should not be sent because we reached the quota");
+    }, "Multiple Beacons Quota Limit");
+</script>
