@@ -392,3 +392,5 @@ webkit.org/b/173432 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/impo
 fast/images/low-memory-decode.html [ Skip ]
 
 http/tests/workers/service [ Skip ]
+
+webkit.org/b/175345 fast/images/animated-gif-scrolling-crash.html [ Pass Timeout ]
