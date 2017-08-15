@@ -1,3 +1,30 @@
+2017-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: handle click events on option elements
+        https://bugs.webkit.org/show_bug.cgi?id=174710
+        <rdar://problem/33459305>
+
+        Reviewed by Brian Burg.
+
+        Option elements are considered as a special case by the specification. When clicking an option element, we
+        should get its container and use it when scrolling into view and calculating in-view center point instead of the
+        option element itself. Then, we should not emulate a click, but change the selected status of the option element
+        like if it were done by a user action, firing the corresponding events. Now we check whether the element is an
+        option to call selectOptionElement() or performMouseInteraction().
+
+        This fixes more than 20 selenium tests.
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::CommandResult): Handle ElementNotSelectable protocol error.
+        (WebDriver::CommandResult::httpStatusCode const): Add ElementNotSelectable.
+        (WebDriver::CommandResult::errorString const): Ditto.
+        * CommandResult.h:
+        * Session.cpp:
+        (WebDriver::Session::selectOptionElement): Ask automation to select the given option element.
+        (WebDriver::Session::elementClick): Call selectOptionElement() or performMouseInteraction() depending on whether
+        the element is an option or not.
+        * Session.h:
+
 2017-08-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Fix build warning in WebDriverService.h

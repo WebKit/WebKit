@@ -845,6 +845,37 @@ void WebAutomationSession::didComputeElementLayout(uint64_t callbackID, WebCore:
     callback->sendSuccess(WTFMove(rectObject), WTFMove(inViewCenterPointObject), isObscured);
 }
 
+void WebAutomationSession::selectOptionElement(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String& frameHandle, const String& nodeHandle, Ref<SelectOptionElementCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+
+    std::optional<uint64_t> frameID = webFrameIDForHandle(frameHandle);
+    if (!frameID)
+        FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
+
+    uint64_t callbackID = m_nextSelectOptionElementCallbackID++;
+    m_selectOptionElementCallbacks.set(callbackID, WTFMove(callback));
+
+    page->process().send(Messages::WebAutomationSessionProxy::SelectOptionElement(page->pageID(), frameID.value(), nodeHandle, callbackID), 0);
+}
+
+void WebAutomationSession::didSelectOptionElement(uint64_t callbackID, const String& errorType)
+{
+    auto callback = m_selectOptionElementCallbacks.take(callbackID);
+    if (!callback)
+        return;
+
+    if (!errorType.isEmpty()) {
+        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(errorType));
+        return;
+    }
+
+    callback->sendSuccess();
+}
+
+
 void WebAutomationSession::isShowingJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle, bool* result)
 {
     ASSERT(m_client);

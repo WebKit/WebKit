@@ -137,6 +137,8 @@ private:
     };
     void computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption>, Function<void (std::optional<Rect>&&, std::optional<Point>&&, bool, RefPtr<Inspector::InspectorObject>&&)>&&);
 
+    void selectOptionElement(const String& elementID, Function<void (CommandResult&&)>&&);
+
     enum class MouseButton { None, Left, Middle, Right };
     enum class MouseInteraction { Move, Down, Up, SingleClick, DoubleClick };
     void performMouseInteraction(int x, int y, MouseButton, MouseInteraction, Function<void (CommandResult&&)>&&);
