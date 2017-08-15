@@ -46,7 +46,6 @@ public:
     static String deniedByClientKey();
     static String deviceMotionKey();
     static String deviceOrientationKey();
-    static String deviceProximityKey();
     static String diskCacheKey();
     static String diskCacheAfterValidationKey();
     static String documentLoaderStoppingKey();

@@ -40,7 +40,6 @@ inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
 
 # Encrypted Media Extensions are not enabled
 media/encrypted-media/
-fast/events/constructors/device-proximity-event-constructor.html
 
 # FIXME: <rdar://problem/6512037> LayoutTests: Enable printing tests once printing is supported on iOS
 printing
@@ -88,7 +87,6 @@ fast/mediastream
 fast/speechsynthesis
 gamepad
 mhtml
-proximity
 
 # ENABLE(MEDIA_CAPTURE) is not enabled
 fast/forms/file/file-input-capture.html

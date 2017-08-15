@@ -705,12 +705,6 @@ webkit.org/b/173257 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass
 # Canvas captureStream support is not implemented
 webkit.org/b/169811 fast/mediacapturefromelement [ Skip ]
 
-# Proximity Events is not supported.
-webkit.org/b/99060 proximity [ Failure ]
-webkit.org/b/99060 proximity/event-after-navigation.html [ Timeout ]
-webkit.org/b/99060 proximity/no-page-cache.html [ Timeout ]
-webkit.org/b/99060 fast/events/constructors/device-proximity-event-constructor.html [ Failure ]
-
 # Requires Resolution Media Query support
 webkit.org/b/100137 fast/media/mq-resolution.html [ Failure ]
 webkit.org/b/100137 fast/media/mq-resolution-dpi-dpcm-warning.html [ Failure ]

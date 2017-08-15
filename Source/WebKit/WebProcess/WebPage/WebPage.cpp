@@ -212,10 +212,6 @@
 #include <WebCore/PointerLockController.h>
 #endif
 
-#if ENABLE(PROXIMITY_EVENTS)
-#include "WebDeviceProximityClient.h"
-#endif
-
 #if PLATFORM(COCOA)
 #include "PDFPlugin.h"
 #include "PlaybackSessionManager.h"
@@ -433,9 +429,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
 #if ENABLE(NOTIFICATIONS)
     WebCore::provideNotification(m_page.get(), new WebNotificationClient(this));
-#endif
-#if ENABLE(PROXIMITY_EVENTS)
-    WebCore::provideDeviceProximityTo(m_page.get(), new WebDeviceProximityClient(this));
 #endif
 #if ENABLE(MEDIA_STREAM)
     WebCore::provideUserMediaTo(m_page.get(), new WebUserMediaClient(*this));

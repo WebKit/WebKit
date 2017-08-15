@@ -286,8 +286,6 @@ public:
     ExceptionOr<bool> areSVGAnimationsPaused() const;
     ExceptionOr<double> svgAnimationsInterval(SVGSVGElement&) const;
 
-    ExceptionOr<void> setDeviceProximity(const String& eventType, double value, double min, double max);
-
     enum {
         // Values need to be kept in sync with Internals.idl.
         LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1,
