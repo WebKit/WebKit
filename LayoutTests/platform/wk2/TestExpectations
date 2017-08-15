@@ -679,7 +679,7 @@ http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-mixed-s
 http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-sub-frame-under-top-frame-origins.html [ Pass ]
 http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-under-top-frame-origins.html [ Pass ]
 http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to.html [ Pass ]
-http/tests/loading/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
+webkit.org/b/175263 http/tests/loading/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass Timeout ]
 webkit.org/b/172452 http/tests/loading/resourceLoadStatistics/grandfathering.html [ Pass Failure Timeout ]
 webkit.org/b/173499 http/tests/loading/resourceLoadStatistics/telemetry-generation.html [ Pass Failure ]
 http/tests/loading/resourceLoadStatistics/prune-statistics.html [ Pass ]
