@@ -1,3 +1,11 @@
+2017-08-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline editing/mac/input/firstrectforcharacterrange-styled.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra/editing/mac/input/firstrectforcharacterrange-styled-expected.txt: Added.
+
 2017-08-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Parse font-display
