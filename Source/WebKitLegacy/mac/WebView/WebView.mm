@@ -124,6 +124,7 @@
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/CSSAnimationController.h>
+#import <WebCore/CacheStorageProvider.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DatabaseManager.h>
@@ -1413,7 +1414,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     PageConfiguration pageConfiguration(
         makeUniqueRef<WebEditorClient>(self),
         SocketProvider::create(),
-        makeUniqueRef<WebCore::LibWebRTCProvider>()
+        makeUniqueRef<WebCore::LibWebRTCProvider>(),
+        WebCore::CacheStorageProvider::create()
     );
 #if !PLATFORM(IOS)
     pageConfiguration.chromeClient = new WebChromeClient(self);
@@ -1676,7 +1678,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     PageConfiguration pageConfiguration(
         makeUniqueRef<WebEditorClient>(self),
         SocketProvider::create(),
-        makeUniqueRef<WebCore::LibWebRTCProvider>()
+        makeUniqueRef<WebCore::LibWebRTCProvider>(),
+        WebCore::CacheStorageProvider::create()
     );
     pageConfiguration.chromeClient = new WebChromeClientIOS(self);
 #if ENABLE(DRAG_SUPPORT)

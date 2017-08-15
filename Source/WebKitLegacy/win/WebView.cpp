@@ -84,6 +84,7 @@
 #include <WebCore/BString.h>
 #include <WebCore/BackForwardController.h>
 #include <WebCore/BitmapInfo.h>
+#include <WebCore/CacheStorageProvider.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
@@ -3102,7 +3103,8 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
     PageConfiguration configuration(
         makeUniqueRef<WebEditorClient>(this),
         SocketProvider::create(),
-        makeUniqueRef<LibWebRTCProvider>()
+        makeUniqueRef<LibWebRTCProvider>(),
+        WebCore::CacheStorageProvider::create()
     );
     configuration.backForwardClient = BackForwardList::create();
     configuration.chromeClient = new WebChromeClient(this);

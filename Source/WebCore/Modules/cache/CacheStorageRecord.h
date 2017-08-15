@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef (FetchRequest or USVString) RequestInfo;
+#pragma once
 
-[
-    SecureContext,
-    Exposed=(Window,Worker),
-    EnabledAtRuntime=CacheAPI,
-] interface Cache {
-    [NewObject] Promise<any> match(RequestInfo request, optional CacheQueryOptions options);
-    [NewObject] Promise<sequence<FetchResponse>> matchAll(optional RequestInfo request, optional CacheQueryOptions options);
-    [NewObject] Promise<void> add(RequestInfo request);
-    [NewObject] Promise<void> addAll(sequence<RequestInfo> requests);
-    [NewObject] Promise<void> put(RequestInfo request, FetchResponse response);
-    [NewObject, ImplementedAs=remove] Promise<boolean> delete(RequestInfo request, optional CacheQueryOptions options);
-    [NewObject] Promise<sequence<Request>> keys(optional RequestInfo request, optional CacheQueryOptions options);
+#include "FetchRequest.h"
+#include "FetchResponse.h"
+
+namespace WebCore {
+
+struct CacheStorageRecord {
+    uint64_t identifier;
+
+    Ref<FetchRequest> request;
+    Ref<FetchResponse> response;
 };
+
+} // namespace WebCore

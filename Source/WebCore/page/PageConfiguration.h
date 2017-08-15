@@ -34,6 +34,7 @@ namespace WebCore {
 class AlternativeTextClient;
 class ApplicationCacheStorage;
 class BackForwardClient;
+class CacheStorageProvider;
 class ChromeClient;
 class ContextMenuClient;
 class DatabaseProvider;
@@ -58,7 +59,7 @@ class WebGLStateTracker;
 class PageConfiguration {
     WTF_MAKE_NONCOPYABLE(PageConfiguration); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT PageConfiguration(UniqueRef<EditorClient>&&, Ref<SocketProvider>&&, UniqueRef<LibWebRTCProvider>&&);
+    WEBCORE_EXPORT PageConfiguration(UniqueRef<EditorClient>&&, Ref<SocketProvider>&&, UniqueRef<LibWebRTCProvider>&&, Ref<CacheStorageProvider>&&);
     WEBCORE_EXPORT ~PageConfiguration();
 
     AlternativeTextClient* alternativeTextClient { nullptr };
@@ -87,6 +88,7 @@ public:
 
     RefPtr<ApplicationCacheStorage> applicationCacheStorage;
     RefPtr<DatabaseProvider> databaseProvider;
+    Ref<CacheStorageProvider> cacheStorageProvider;
     RefPtr<PluginInfoProvider> pluginInfoProvider;
     RefPtr<StorageNamespaceProvider> storageNamespaceProvider;
     RefPtr<UserContentProvider> userContentProvider;

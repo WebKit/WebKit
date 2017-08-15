@@ -81,7 +81,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     options.dataBufferingPolicy = DoNotBufferData;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
 
-    ResourceRequest fetchRequest = request.internalRequest();
+    ResourceRequest fetchRequest = request.resourceRequest();
 
     ASSERT(context.contentSecurityPolicy());
     auto& contentSecurityPolicy = *context.contentSecurityPolicy();

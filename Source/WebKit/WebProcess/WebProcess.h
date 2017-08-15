@@ -80,6 +80,7 @@ class ObjCObjectGraph;
 class UserData;
 class WaylandCompositorDisplay;
 class WebAutomationSessionProxy;
+class WebCacheStorageProvider;
 class WebConnectionToUIProcess;
 class WebFrame;
 class WebLoaderStrategy;
@@ -221,6 +222,8 @@ public:
     void prefetchDNS(const String&);
 
     WebAutomationSessionProxy* automationSessionProxy() { return m_automationSessionProxy.get(); }
+
+    WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
 
 private:
     WebProcess();
@@ -374,6 +377,8 @@ private:
     void ensureNetworkProcessConnection();
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
     WebLoaderStrategy& m_webLoaderStrategy;
+
+    Ref<WebCacheStorageProvider> m_cacheStorageProvider;
 
 #if USE(LIBWEBRTC)
     std::unique_ptr<LibWebRTCNetwork> m_libWebRTCNetwork;

@@ -68,6 +68,7 @@
 #include "WebAlternativeTextClient.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListProxy.h"
+#include "WebCacheStorageProvider.h"
 #include "WebChromeClient.h"
 #include "WebColorChooser.h"
 #include "WebContextMenu.h"
@@ -367,7 +368,8 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     PageConfiguration pageConfiguration(
         makeUniqueRef<WebEditorClient>(this),
         WebSocketProvider::create(),
-        makeUniqueRef<WebKit::LibWebRTCProvider>()
+        makeUniqueRef<WebKit::LibWebRTCProvider>(),
+        WebProcess::singleton().cacheStorageProvider()
     );
     pageConfiguration.chromeClient = new WebChromeClient(*this);
 #if ENABLE(CONTEXT_MENUS)

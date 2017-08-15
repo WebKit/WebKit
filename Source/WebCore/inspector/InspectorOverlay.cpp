@@ -29,6 +29,7 @@
 #include "config.h"
 #include "InspectorOverlay.h"
 
+#include "CacheStorageProvider.h"
 #include "DocumentLoader.h"
 #include "EditorClient.h"
 #include "Element.h"
@@ -865,7 +866,8 @@ Page* InspectorOverlay::overlayPage()
     PageConfiguration pageConfiguration(
         createEmptyEditorClient(),
         SocketProvider::create(),
-        makeUniqueRef<LibWebRTCProvider>()
+        makeUniqueRef<LibWebRTCProvider>(),
+        CacheStorageProvider::create()
     );
     fillWithEmptyClients(pageConfiguration);
     m_overlayPage = std::make_unique<Page>(WTFMove(pageConfiguration));

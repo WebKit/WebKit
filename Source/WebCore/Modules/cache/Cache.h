@@ -25,36 +25,60 @@
 
 #pragma once
 
-#include "FetchRequest.h"
+#include "ActiveDOMObject.h"
+#include "CacheStorageConnection.h"
+#include "CacheStorageRecord.h"
 
 namespace WebCore {
 
-class FetchResponse;
+class ScriptExecutionContext;
 
-struct CacheQueryOptions;
-
-class Cache : public RefCounted<Cache> {
+class Cache final : public RefCounted<Cache>, public ActiveDOMObject {
 public:
-    static Ref<Cache> create(String&& name) { return adoptRef(*new Cache(WTFMove(name))); }
+    static Ref<Cache> create(ScriptExecutionContext& context, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&& connection) { return adoptRef(*new Cache(context, WTFMove(name), identifier, WTFMove(connection))); }
+    ~Cache();
 
     using RequestInfo = FetchRequest::Info;
 
-    using MatchAllPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<FetchResponse>>>;
     using KeysPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<FetchRequest>>>;
 
-    void match(RequestInfo&&, std::optional<CacheQueryOptions>&&, Ref<DeferredPromise>&&);
-    void matchAll(std::optional<RequestInfo>&&, std::optional<CacheQueryOptions>&&, MatchAllPromise&&);
+    void match(RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
+    void matchAll(std::optional<RequestInfo>&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
     void add(RequestInfo&&, DOMPromiseDeferred<void>&&);
 
     void addAll(Vector<RequestInfo>&&, DOMPromiseDeferred<void>&&);
     void put(RequestInfo&&, Ref<FetchResponse>&&, DOMPromiseDeferred<void>&&);
-    void remove(RequestInfo&&, std::optional<CacheQueryOptions>&&, DOMPromiseDeferred<IDLBoolean>&&);
-    void keys(std::optional<RequestInfo>&&, std::optional<CacheQueryOptions>&&, KeysPromise&&);
+    void remove(RequestInfo&&, CacheQueryOptions&&, DOMPromiseDeferred<IDLBoolean>&&);
+    void keys(std::optional<RequestInfo>&&, CacheQueryOptions&&, KeysPromise&&);
+
+    const String& name() const { return m_name; }
+    uint64_t identifier() const { return m_identifier; }
 
 private:
-    explicit Cache(String&& name) : m_name(WTFMove(name)) { }
+    Cache(ScriptExecutionContext&, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&&);
+
+    enum class MatchType { All, OnlyFirst };
+    void doMatch(std::optional<RequestInfo>&&, CacheQueryOptions&&, Ref<DeferredPromise>&&, MatchType);
+
+    // ActiveDOMObject
+    void stop() final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+
+    void retrieveRecords(WTF::Function<void()>&&);
+    Vector<CacheStorageRecord> queryCacheWithTargetStorage(const FetchRequest&, const CacheQueryOptions&, const Vector<CacheStorageRecord>&);
+    void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, WTF::Function<void(const Vector<CacheStorageRecord>&)>&&);
+    void batchDeleteOperation(const FetchRequest&, CacheQueryOptions&&, WTF::Function<void(bool didRemoval, CacheStorageConnection::Error)>&&);
+    void batchPutOperation(const FetchRequest&, FetchResponse&, WTF::Function<void(CacheStorageConnection::Error)>&&);
+
+    void updateRecords(Vector<CacheStorageConnection::Record>&&);
 
     String m_name;
+    uint64_t m_identifier;
+    Ref<CacheStorageConnection> m_connection;
+
+    Vector<CacheStorageRecord> m_records;
+    bool m_isStopped { false };
 };
 
 } // namespace WebCore

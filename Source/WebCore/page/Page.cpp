@@ -26,6 +26,7 @@
 #include "BackForwardClient.h"
 #include "BackForwardController.h"
 #include "CSSAnimationController.h"
+#include "CacheStorageProvider.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ConstantPropertyMap.h"
@@ -222,6 +223,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
     , m_socketProvider(WTFMove(pageConfiguration.socketProvider))
     , m_applicationCacheStorage(*WTFMove(pageConfiguration.applicationCacheStorage))
+    , m_cacheStorageProvider(WTFMove(pageConfiguration.cacheStorageProvider))
     , m_databaseProvider(*WTFMove(pageConfiguration.databaseProvider))
     , m_pluginInfoProvider(*WTFMove(pageConfiguration.pluginInfoProvider))
     , m_storageNamespaceProvider(*WTFMove(pageConfiguration.storageNamespaceProvider))

@@ -57,6 +57,8 @@ public:
 
     bool isActive() const { return !!m_blobLoader; }
 
+    bool isReadableStreamBody() const { return m_body && m_body->isReadableStream(); }
+
 protected:
     const FetchBody& body() const { return *m_body; }
     FetchBody& body() { return *m_body; }

@@ -53,11 +53,19 @@ public:
     using Redirect = FetchOptions::Redirect;
     using Type = FetchOptions::Type;
 
+    struct InternalRequest {
+        ResourceRequest request;
+        FetchOptions options;
+        String referrer;
+    };
+
     static ExceptionOr<Ref<FetchRequest>> create(ScriptExecutionContext&, Info&&, Init&&);
+    static Ref<FetchRequest> create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, InternalRequest&& request) { return adoptRef(*new FetchRequest(context, WTFMove(body), WTFMove(headers), WTFMove(request))); }
 
     const String& method() const { return m_internalRequest.request.httpMethod(); }
-    const String& url() const;
+    const String& urlString() const;
     FetchHeaders& headers() { return m_headers.get(); }
+    const FetchHeaders& headers() const { return m_headers.get(); }
 
     Type type() const;
     Destination destination() const;
@@ -73,17 +81,13 @@ public:
 
     ExceptionOr<Ref<FetchRequest>> clone(ScriptExecutionContext&);
 
-    struct InternalRequest {
-        ResourceRequest request;
-        FetchOptions options;
-        String referrer;
-    };
-
     const FetchOptions& fetchOptions() const { return m_internalRequest.options; }
-    ResourceRequest internalRequest() const;
+    const ResourceRequest& internalRequest() const { return m_internalRequest.request; }
+    const String& internalRequestReferrer() const { return m_internalRequest.referrer; }
+    const URL& url() const { return m_internalRequest.request.url(); }
     bool isBodyReadableStream() const { return !isBodyNull() && body().isReadableStream(); }
 
-    const String& internalRequestReferrer() const { return m_internalRequest.referrer; }
+    ResourceRequest resourceRequest() const;
 
 private:
     FetchRequest(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, InternalRequest&&);

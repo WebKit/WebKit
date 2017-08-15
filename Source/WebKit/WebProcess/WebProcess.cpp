@@ -44,6 +44,7 @@
 #include "StatisticsData.h"
 #include "UserData.h"
 #include "WebAutomationSessionProxy.h"
+#include "WebCacheStorageProvider.h"
 #include "WebConnectionToUIProcess.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
@@ -160,6 +161,7 @@ WebProcess::WebProcess()
 #endif
     , m_webInspectorInterruptDispatcher(WebInspectorInterruptDispatcher::create())
     , m_webLoaderStrategy(*new WebLoaderStrategy)
+    , m_cacheStorageProvider(WebCacheStorageProvider::create())
     , m_dnsPrefetchHystereris([this](HysteresisState state) { if (state == HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())

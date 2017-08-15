@@ -34,7 +34,10 @@ class WorkerGlobalScope;
 
 class WorkerGlobalScopeCaches : public Supplement<WorkerGlobalScope> {
 public:
-    WorkerGlobalScopeCaches() = default;
+    explicit WorkerGlobalScopeCaches(WorkerGlobalScope& scope)
+        : m_scope(scope)
+    {
+    }
 
     static CacheStorage* caches(WorkerGlobalScope&);
 
@@ -43,6 +46,7 @@ private:
     static const char* supplementName();
     CacheStorage* caches() const;
 
+    WorkerGlobalScope& m_scope;
     mutable RefPtr<CacheStorage> m_caches;
 };
 

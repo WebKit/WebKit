@@ -891,6 +891,7 @@
 		413075B21DE85F580039EC69 /* LibWebRTCSocketFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A61DE85EE70039EC69 /* LibWebRTCSocketFactory.h */; };
 		413075B31DE85F580039EC69 /* LibWebRTCProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 413075A71DE85EE70039EC69 /* LibWebRTCProvider.cpp */; };
 		413075B41DE85F580039EC69 /* LibWebRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A81DE85EE70039EC69 /* LibWebRTCProvider.h */; };
+		41D129DA1F3D101800D15E47 /* WebCacheStorageProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */; };
 		41DC45961E3D6E2200B11F51 /* NetworkRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */; };
 		41DC45971E3D6E2200B11F51 /* NetworkRTCProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41DC45951E3D6E1E00B11F51 /* NetworkRTCProvider.cpp */; };
 		41DC459B1E3DBB2800B11F51 /* LibWebRTCSocketClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41DC45991E3DBB2400B11F51 /* LibWebRTCSocketClient.cpp */; };
@@ -3142,6 +3143,7 @@
 		413075A71DE85EE70039EC69 /* LibWebRTCProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = LibWebRTCProvider.cpp; path = Network/webrtc/LibWebRTCProvider.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		413075A81DE85EE70039EC69 /* LibWebRTCProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = LibWebRTCProvider.h; path = Network/webrtc/LibWebRTCProvider.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		41AC86811E042E5300303074 /* WebRTCResolver.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; name = WebRTCResolver.messages.in; path = Network/webrtc/WebRTCResolver.messages.in; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = "<none>"; };
+		41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageProvider.h; sourceTree = "<group>"; };
 		41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCProvider.h; path = NetworkProcess/webrtc/NetworkRTCProvider.h; sourceTree = "<group>"; };
 		41DC45951E3D6E1E00B11F51 /* NetworkRTCProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkRTCProvider.cpp; path = NetworkProcess/webrtc/NetworkRTCProvider.cpp; sourceTree = "<group>"; };
 		41DC45981E3D6ED600B11F51 /* NetworkRTCProvider.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NetworkRTCProvider.messages.in; path = NetworkProcess/webrtc/NetworkRTCProvider.messages.in; sourceTree = "<group>"; };
@@ -5912,6 +5914,14 @@
 			name = webrtc;
 			sourceTree = "<group>";
 		};
+		41D129D81F3D101400D15E47 /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+				41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */,
+			);
+			path = Cache;
+			sourceTree = "<group>";
+		};
 		4450AEBE1DC3FAAC009943F2 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -6592,6 +6602,7 @@
 			children = (
 				1AB1F7701D1B2F5D007C9BD1 /* ApplePay */,
 				1C0A19431C8FF1A800FE0EBB /* Automation */,
+				41D129D81F3D101400D15E47 /* Cache */,
 				7C6E70F818B2D47E00F24E2E /* cocoa */,
 				3309344B1315B93A0097A7BC /* Cookies */,
 				512A9754180DF9270039A149 /* Databases */,
@@ -8689,6 +8700,7 @@
 				BC72BA1E11E64907001EB4EA /* WebBackForwardList.h in Headers */,
 				518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */,
 				BC72B9FB11E6476B001EB4EA /* WebBackForwardListProxy.h in Headers */,
+				41D129DA1F3D101800D15E47 /* WebCacheStorageProvider.h in Headers */,
 				BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */,
 				BC032D7510F4378D0058C15A /* WebChromeClient.h in Headers */,
 				3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */,
@@ -8831,7 +8843,6 @@
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
 				1A1E093418861D3800D2DC49 /* WebProgressTrackerClient.h in Headers */,
 				512F589D12A8838800629530 /* WebProtectionSpace.h in Headers */,
-				51BEB62C1F3A5AD7005029B9 /* WebServiceWorkerProvider.h in Headers */,
 				37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */,
 				3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */,
 				510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */,
@@ -8843,6 +8854,7 @@
 				41DC459F1E3DBDA500B11F51 /* WebRTCSocket.h in Headers */,
 				7C361D731927FA360036A59D /* WebScriptMessageHandler.h in Headers */,
 				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
+				51BEB62C1F3A5AD7005029B9 /* WebServiceWorkerProvider.h in Headers */,
 				1A4832D71A9CDF96008B4DFE /* WebsiteData.h in Headers */,
 				1A4832D11A9BDC2F008B4DFE /* WebsiteDataRecord.h in Headers */,
 				1A53C2AA1A325730004E8C70 /* WebsiteDataStore.h in Headers */,
@@ -10371,7 +10383,6 @@
 				2DA944A11884E4F000ED86DB /* WebIOSEventFactory.mm in Sources */,
 				C0337DD3127A2A0E008FF4F4 /* WebKeyboardEvent.cpp in Sources */,
 				1A6280F31919982A006AD9F9 /* WebKit.m in Sources */,
-				51BEB62B1F3A5AD7005029B9 /* WebServiceWorkerProvider.cpp in Sources */,
 				BC9BA5041697C45300E44616 /* WebKit2Initialize.cpp in Sources */,
 				465250E61ECF52DC002025CB /* WebKit2InitializeCocoa.mm in Sources */,
 				51FB08FF1639DE1A00EC324A /* WebLoaderStrategy.cpp in Sources */,
@@ -10469,6 +10480,7 @@
 				51F060E11654318500F3281C /* WebRTCSocketMessageReceiver.cpp in Sources */,
 				7C361D721927FA360036A59D /* WebScriptMessageHandler.cpp in Sources */,
 				D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */,
+				51BEB62B1F3A5AD7005029B9 /* WebServiceWorkerProvider.cpp in Sources */,
 				1A4832D61A9CDF96008B4DFE /* WebsiteData.cpp in Sources */,
 				1A4832D91A9D1FD2008B4DFE /* WebsiteDataRecord.cpp in Sources */,
 				1A53C2A91A32572B004E8C70 /* WebsiteDataStore.cpp in Sources */,

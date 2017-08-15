@@ -52,6 +52,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/ApplePay"
     "${WEBKIT2_DIR}/WebProcess/ApplicationCache"
     "${WEBKIT2_DIR}/WebProcess/Automation"
+    "${WEBKIT2_DIR}/WebProcess/Cache"
     "${WEBKIT2_DIR}/WebProcess/Cookies"
     "${WEBKIT2_DIR}/WebProcess/Databases"
     "${WEBKIT2_DIR}/WebProcess/Databases/IndexedDB"

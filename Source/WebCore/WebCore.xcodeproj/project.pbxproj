@@ -1784,6 +1784,14 @@
 		41CF8BE71D46226700707DC9 /* FetchBodyConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41CF8BE41D46222000707DC9 /* FetchBodyConsumer.cpp */; };
 		41D015CA0F4B5C71004A662F /* ContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D015C80F4B5C71004A662F /* ContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D015C90F4B5C71004A662F /* ContentType.cpp */; };
+		41D129CE1F3D0EF600D15E47 /* WorkerGlobalScopeCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB278D1F34C28200795487 /* WorkerGlobalScopeCaches.h */; };
+		41D129CF1F3D0EFE00D15E47 /* CacheStorageConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D129C91F3D0EE300D15E47 /* CacheStorageConnection.cpp */; };
+		41D129D01F3D0F0500D15E47 /* CacheQueryOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB279B1F34CEF000795487 /* CacheQueryOptions.h */; };
+		41D129D11F3D0F0E00D15E47 /* DOMWindowCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FB278C1F34C28200795487 /* DOMWindowCaches.h */; };
+		41D129D21F3D0F1200D15E47 /* CacheStorageRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129CA1F3D0EE300D15E47 /* CacheStorageRecord.h */; };
+		41D129D31F3D0F1600D15E47 /* CacheStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41D129D51F3D0F6900D15E47 /* CacheStorageProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129D41F3D0F6600D15E47 /* CacheStorageProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41D129DB1F3D143800D15E47 /* FetchHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F54F831C50C4F600338488 /* FetchHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41DEFCB51E56C1BD000D9E5F /* JSDOMMapLike.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41DEFCB31E56C1B9000D9E5F /* JSDOMMapLike.cpp */; };
 		41DEFCB61E56C1BD000D9E5F /* JSDOMMapLike.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */; };
 		41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41E1B1CA0FF5986900576B3B /* AbstractWorker.cpp */; };
@@ -9462,6 +9470,10 @@
 		41CF8BE61D46222C00707DC9 /* FetchInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FetchInternals.js; sourceTree = "<group>"; };
 		41D015C80F4B5C71004A662F /* ContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentType.h; sourceTree = "<group>"; };
 		41D015C90F4B5C71004A662F /* ContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentType.cpp; sourceTree = "<group>"; };
+		41D129C91F3D0EE300D15E47 /* CacheStorageConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageConnection.cpp; sourceTree = "<group>"; };
+		41D129CA1F3D0EE300D15E47 /* CacheStorageRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageRecord.h; sourceTree = "<group>"; };
+		41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageConnection.h; sourceTree = "<group>"; };
+		41D129D41F3D0F6600D15E47 /* CacheStorageProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageProvider.h; sourceTree = "<group>"; };
 		41D51BB21E4E2E8100131A5B /* LibWebRTCAudioFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCAudioFormat.h; path = libwebrtc/LibWebRTCAudioFormat.h; sourceTree = "<group>"; };
 		41DEFCB21E56C1B9000D9E5F /* JSDOMBindingInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSDOMBindingInternals.js; sourceTree = "<group>"; };
 		41DEFCB31E56C1B9000D9E5F /* JSDOMMapLike.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMapLike.cpp; sourceTree = "<group>"; };
@@ -17667,6 +17679,9 @@
 				41380C211F34368D00155FDA /* CacheStorage.cpp */,
 				41380C221F34369000155FDA /* CacheStorage.h */,
 				41380C241F34369700155FDA /* CacheStorage.idl */,
+				41D129C91F3D0EE300D15E47 /* CacheStorageConnection.cpp */,
+				41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */,
+				41D129CA1F3D0EE300D15E47 /* CacheStorageRecord.h */,
 				41FB278E1F34C28200795487 /* DOMWindowCaches.cpp */,
 				41FB278C1F34C28200795487 /* DOMWindowCaches.h */,
 				41380C2B1F343E2F00155FDA /* DOMWindowCaches.idl */,
@@ -19265,6 +19280,7 @@
 				BC124EE60C2641CD009E2349 /* BarProp.idl */,
 				460BB6131D0A1BEC00221812 /* Base64Utilities.cpp */,
 				460BB6141D0A1BEC00221812 /* Base64Utilities.h */,
+				41D129D41F3D0F6600D15E47 /* CacheStorageProvider.h */,
 				072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */,
 				079D0867162F20E800DB8658 /* CaptionUserPreferences.h */,
 				079D086A162F21F900DB8658 /* CaptionUserPreferencesMediaAF.cpp */,
@@ -26776,7 +26792,11 @@
 				0753860314489E9800B78452 /* CachedTextTrack.h in Headers */,
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
+				41D129D01F3D0F0500D15E47 /* CacheQueryOptions.h in Headers */,
 				41380C291F3436AC00155FDA /* CacheStorage.h in Headers */,
+				41D129D31F3D0F1600D15E47 /* CacheStorageConnection.h in Headers */,
+				41D129D51F3D0F6900D15E47 /* CacheStorageProvider.h in Headers */,
+				41D129D21F3D0F1200D15E47 /* CacheStorageRecord.h in Headers */,
 				E43AF8E71AC5B7EC00CA717E /* CacheValidation.h in Headers */,
 				49AE2D97134EE5F90072920A /* CalculationValue.h in Headers */,
 				7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */,
@@ -27254,6 +27274,7 @@
 				2E37DFDB12DBAFB800A6B233 /* DOMURL.h in Headers */,
 				CD9DE18217AAD6A400EA386D /* DOMURLMediaSource.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
+				41D129D11F3D0F0E00D15E47 /* DOMWindowCaches.h in Headers */,
 				51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */,
 				5185FC751BB4C4E80012898F /* DOMWindowIndexedDatabase.h in Headers */,
 				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
@@ -27349,6 +27370,7 @@
 				84730D851248F0B300D3A9C9 /* FEMorphology.h in Headers */,
 				84730D871248F0B300D3A9C9 /* FEOffset.h in Headers */,
 				84730D891248F0B300D3A9C9 /* FESpecularLighting.h in Headers */,
+				41D129DB1F3D143800D15E47 /* FetchHeaders.h in Headers */,
 				416E6FE81BBD12DF000A6023 /* FetchInternalsBuiltins.h in Headers */,
 				41AD753A1CEF6BD100A31486 /* FetchOptions.h in Headers */,
 				7CE1914D1F2A9AFB00272F78 /* FetchReferrerPolicy.h in Headers */,
@@ -30275,6 +30297,7 @@
 				A52A68661DBD4B5D0083373F /* WorkerDebuggerAgent.h in Headers */,
 				A3E2643114748991005A8588 /* WorkerEventQueue.h in Headers */,
 				2E4346490F546A8200B0F1BA /* WorkerGlobalScope.h in Headers */,
+				41D129CE1F3D0EF600D15E47 /* WorkerGlobalScopeCaches.h in Headers */,
 				5185FCB41BB4C4E80012898F /* WorkerGlobalScopeIndexedDatabase.h in Headers */,
 				2E43464B0F546A8200B0F1BA /* WorkerGlobalScopeProxy.h in Headers */,
 				A54A0C621DB7F8C10017A90B /* WorkerInspectorController.h in Headers */,
@@ -30887,6 +30910,7 @@
 				0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */,
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
 				41380C281F3436AC00155FDA /* CacheStorage.cpp in Sources */,
+				41D129CF1F3D0EFE00D15E47 /* CacheStorageConnection.cpp in Sources */,
 				E43AF8E61AC5B7E800CA717E /* CacheValidation.cpp in Sources */,
 				49AE2D96134EE5F90072920A /* CalculationValue.cpp in Sources */,
 				952076041F2675FE007D2AAB /* CallTracer.cpp in Sources */,

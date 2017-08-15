@@ -1,3 +1,143 @@
+2017-08-15  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Adding generic support for CacheStorage and Cache methods
+        https://bugs.webkit.org/show_bug.cgi?id=175455
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing tests.
+
+        Adding a CacheStorageProvider abstraction that creates a CacheStorageConnection.
+        The CacheStorageProvider is accessed from the page for Document calls.
+        The CacheStorageConnection is responsible to implement the read/write operations on the cache database.
+        At the moment, it does nothing but return not implemented errors.
+
+        Implementing CacheStorage APIs and Cache APIs based on the CacheStorageConnection except for Cache add and addAll which will be implemented later on.
+        CacheStoragConnection is responsible to read/write CacheStorage list of caches and each individual cache.
+        The CacheStorageConnection is a generic connection and not tied to any document/context.
+        CacheStorage objects are manipulated by providing to the connection the origin of the context.
+        CacheStorage are global to all contexts with the same origin.
+        Cache objects are manipulated by an ID that is given initially by the CacheStorageEngine when opening the Cache object.
+
+        Adding various accessors and constructors for Fetch constructs as needed by the Cache API implementation.
+
+        * Modules/cache/Cache.cpp:
+        (WebCore::Cache::Cache):
+        (WebCore::Cache::~Cache):
+        The CacheStorageConnection is a generic connection and not tied to any document/context.
+        (WebCore::Cache::match): Implementation of https://www.w3.org/TR/service-workers-1/#cache-match.
+        Redirect to matchAll as per spec.
+        (WebCore::Cache::matchAll): Implementation of https://www.w3.org/TR/service-workers-1/#cache-matchAll.
+        Checks for request as per spec. Then either refresh the request to response map and return all responses.
+        Or call the query cache algorithm and return copies of the responses (using clone).
+        (WebCore::Cache::put):
+        Check the request and response as per spec.
+        Add temporary rejection cases (being loaded responses, responses with ReadableStream) as there is no support for them right now.
+        Call the batch put operation.
+        (WebCore::Cache::remove):
+        Check the request and response as per spec.
+        Call the batch delete operation.
+        (WebCore::Cache::keys):
+        Refresh the request to response map and return corresponding requests.
+        Making sure to reuse the same request objects as per spec.
+        As per spec, the request to response map is ordered. We implement it as a Vector.
+        (WebCore::Cache::refreshRequestToResponseMap):
+        Use the cache storage connection to get an up-to-date list of cached records.
+        (WebCore::Cache::queryCacheMatch):
+        Implements the match algorithm defined in https://www.w3.org/TR/service-workers-1/#query-cache-algorithm.
+        This is split for queryCache as cache storage engine will need to use it when implementing the delete operation.
+        (WebCore::Cache::queryCache):
+        Full implementation of https://www.w3.org/TR/service-workers-1/#query-cache-algorithm with no targetStorage argument.
+        (WebCore::Cache::queryCacheWithTargetStorage):
+        Full implementation of https://www.w3.org/TR/service-workers-1/#query-cache-algorithm with a provided targetStorage argument.
+        (WebCore::Cache::batchDeleteOperation):
+        Implementation of https://www.w3.org/TR/service-workers-1/#batch-cache-operations-algorithm but dedicated to a delete operation.
+        Delete operation are always done one at a time.
+        (WebCore::Cache::batchPutOperation):
+        Implementation of https://www.w3.org/TR/service-workers-1/#batch-cache-operations-algorithm dedicated to a put operation.
+        Put operation takes one record for put but can take several records in the case of addAll, hence the current design.
+        (WebCore::Cache::updateRequestToResponseMap):
+        Update the cache request to response map based on the records retrieved from the cache storage connection.
+        * Modules/cache/Cache.h:
+        (WebCore::Cache::create):
+        (WebCore::Cache::name const):
+        * Modules/cache/Cache.idl:
+        * Modules/cache/CacheStorage.cpp:
+        (WebCore::CacheStorage::origin const):
+        Computing the cache origin that is passed to the CacheStorageConnection.
+        (WebCore::CacheStorage::has):
+        Implementation of https://www.w3.org/TR/service-workers-1/#cache-storage-has.
+        Call the cache storage connection to refresh its cache map.
+        Then use it to check whether a cache exists.
+        (WebCore::CacheStorage::refreshCacheMap):
+        Use the cache storage connection to get the list of existing caches.
+        (WebCore::CacheStorage::open):
+        Implementation of https://www.w3.org/TR/service-workers-1/#cache-storage-open.
+        Refreshing the cache map so as to return a pre-existing cache if any.
+        (WebCore::CacheStorage::remove):
+        Implementation of https://www.w3.org/TR/service-workers-1/#cache-storage-delete-method.
+        Refreshing the cache map so as to do nothing if there is no cache to remove.
+        (WebCore::CacheStorage::keys):
+        Implementation of https://www.w3.org/TR/service-workers-1/#cache-storage-keys-method.
+        Refreshing the cache map and returnin its keys.
+        As per spec, the cache map is ordered. We implement it as a Vector.
+        (WebCore::CacheStorage::cacheMap):
+        Get the list of cache objects, used as a private accessor for JS built-ins.
+        * Modules/cache/CacheStorage.h:
+        (WebCore::CacheStorage::create):
+        (WebCore::CacheStorage::CacheStorage):
+        * Modules/cache/CacheStorageConnection.cpp: Added.
+        (WebCore::CacheStorageConnection::exceptionFromError):
+        * Modules/cache/CacheStorageConnection.h: Added.
+        Makes the link between Web facing Cache API and the cache storage engine.
+        Envisioned implementation are:
+        - One main thread connection used by all documents in the given process.
+        - One connection per worker that forwards the calls to the main thread and use the main thread connection afterwards.
+        (WebCore::CacheStorageConnection::create):
+        (WebCore::CacheStorageConnection::open):
+        (WebCore::CacheStorageConnection::remove):
+        (WebCore::CacheStorageConnection::refreshCacheMap):
+        (WebCore::CacheStorageConnection::refreshRequestToResponseMap):
+        (WebCore::CacheStorageConnection::batchDeleteOperation):
+        (WebCore::CacheStorageConnection::batchPutOperation):
+        * Modules/cache/CacheStorageRecord.h: Added. A fetch record from the Web facing cache API perspective.
+        * Modules/cache/DOMWindowCaches.cpp:
+        (WebCore::DOMWindowCaches::caches const):
+        * Modules/cache/WorkerGlobalScopeCaches.cpp:
+        (WebCore::WorkerGlobalScopeCaches::from):
+        (WebCore::WorkerGlobalScopeCaches::caches const):
+        * Modules/cache/WorkerGlobalScopeCaches.h:
+        (WebCore::WorkerGlobalScopeCaches::WorkerGlobalScopeCaches):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::isReadableStreamBody const): Added getter as it is used by cache API.
+        * Modules/fetch/FetchHeaders.h:
+        (WebCore::FetchHeaders::create): Add another create as used by the cache API.
+        (WebCore::FetchHeaders::guard const): Added getter and IPC serializer as this is something that will be stored by the cache engine.
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::start):
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::buildOptions): In case FetchRequest::create is called from C++, there is no need to set init.window to a null value.
+        Add a check so that no value at all is the same as a null/undefined value.
+        (WebCore::FetchRequest::resourceRequest const):
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchResponse.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::overlayPage):
+        * page/CacheStorageProvider.h: Added.
+        Interface to create main thread cache storage connection for the given page.
+        There will be one provider for each process.
+        Passing a sessionID so that we will create a connection per session.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::cacheStorageProvider):
+        * page/PageConfiguration.cpp:
+        (WebCore::PageConfiguration::PageConfiguration):
+        * page/PageConfiguration.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2017-08-15  Chris Dumez  <cdumez@apple.com>
 
         Implement quota limitation for keepalive Fetch requests

@@ -26,31 +26,146 @@
 #include "config.h"
 #include "CacheStorage.h"
 
+#include "CacheQueryOptions.h"
+#include "JSCache.h"
+#include "ScriptExecutionContext.h"
+
 namespace WebCore {
 
-void CacheStorage::match(RequestInfo&&, std::optional<CacheQueryOptions>&&, Ref<DeferredPromise>&& promise)
+CacheStorage::CacheStorage(ScriptExecutionContext& context, Ref<CacheStorageConnection>&& connection)
+    : ActiveDOMObject(&context)
+    , m_connection(WTFMove(connection))
 {
-    promise->reject(Exception { TypeError, ASCIILiteral("Not implemented")});
+    suspendIfNeeded();
 }
 
-void CacheStorage::has(const String&, DOMPromiseDeferred<IDLBoolean>&& promise)
+String CacheStorage::origin() const
 {
-    promise.reject(Exception { TypeError, ASCIILiteral("Not implemented")});
+    // FIXME: Do we really need to check for origin being null?
+    auto* origin = scriptExecutionContext() ? scriptExecutionContext()->securityOrigin() : nullptr;
+    return origin ? origin->toString() : String();
 }
 
-void CacheStorage::open(const String&, DOMPromiseDeferred<IDLInterface<Cache>>&& promise)
+void CacheStorage::match(Cache::RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&& promise)
 {
-    promise.reject(Exception { TypeError, ASCIILiteral("Not implemented")});
+    promise->reject(Exception { NotSupportedError, ASCIILiteral("Not implemented")});
 }
 
-void CacheStorage::remove(const String&, DOMPromiseDeferred<IDLBoolean>&& promise)
+void CacheStorage::has(const String& name, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    promise.reject(Exception { TypeError, ASCIILiteral("Not implemented")});
+    retrieveCaches([this, name, promise = WTFMove(promise)]() mutable {
+        promise.resolve(m_caches.findMatching([&](auto& item) { return item->name() == name; }) != notFound);
+    });
+}
+
+void CacheStorage::retrieveCaches(WTF::Function<void()>&& callback)
+{
+    String origin = this->origin();
+    if (origin.isNull())
+        return;
+
+    setPendingActivity(this);
+    m_connection->retrieveCaches(origin, [this, callback = WTFMove(callback)](Vector<CacheStorageConnection::CacheInfo>&& cachesInfo) {
+        if (!m_isStopped) {
+            ASSERT(scriptExecutionContext());
+            m_caches.removeAllMatching([&](auto& cache) {
+                return cachesInfo.findMatching([&](const auto& info) { return info.identifier == cache->identifier(); }) == notFound;
+            });
+            for (auto& info : cachesInfo) {
+                if (m_caches.findMatching([&](const auto& cache) { return info.identifier == cache->identifier(); }) == notFound)
+                    m_caches.append(Cache::create(*scriptExecutionContext(), WTFMove(info.name), info.identifier, m_connection.copyRef()));
+            }
+
+            std::sort(m_caches.begin(), m_caches.end(), [&](auto& a, auto& b) {
+                return a->identifier() < b->identifier();
+            });
+
+            callback();
+        }
+        unsetPendingActivity(this);
+    });
+}
+
+void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<Cache>>&& promise)
+{
+    retrieveCaches([this, name, promise = WTFMove(promise)]() mutable {
+        auto position = m_caches.findMatching([&](auto& item) { return item->name() == name; });
+        if (position != notFound) {
+            auto& cache = m_caches[position];
+            promise.resolve(Cache::create(*scriptExecutionContext(), String { cache->name() }, cache->identifier(), m_connection.copyRef()));
+            return;
+        }
+
+        String origin = this->origin();
+        ASSERT(!origin.isNull());
+
+        setPendingActivity(this);
+        m_connection->open(origin, name, [this, name, promise = WTFMove(promise)](uint64_t cacheIdentifier, CacheStorageConnection::Error error) mutable {
+            if (!m_isStopped) {
+                if (error != CacheStorageConnection::Error::None)
+                    promise.reject(CacheStorageConnection::exceptionFromError(error));
+                else {
+                    auto cache = Cache::create(*scriptExecutionContext(), String { name }, cacheIdentifier, m_connection.copyRef());
+                    promise.resolve(cache);
+                    m_caches.append(WTFMove(cache));
+                }
+            }
+            unsetPendingActivity(this);
+        });
+    });
+}
+
+void CacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    retrieveCaches([this, name, promise = WTFMove(promise)]() mutable {
+        auto position = m_caches.findMatching([&](auto& item) { return item->name() == name; });
+        if (position == notFound) {
+            promise.resolve(false);
+            return;
+        }
+
+        String origin = this->origin();
+        ASSERT(!origin.isNull());
+
+        setPendingActivity(this);
+        m_connection->remove(m_caches[position]->identifier(), [this, name, promise = WTFMove(promise)](uint64_t cacheIdentifier, CacheStorageConnection::Error error) mutable {
+            UNUSED_PARAM(cacheIdentifier);
+            if (!m_isStopped) {
+                if (error != CacheStorageConnection::Error::None)
+                    promise.reject(CacheStorageConnection::exceptionFromError(error));
+                else
+                    promise.resolve(true);
+            }
+            unsetPendingActivity(this);
+        });
+        m_caches.remove(position);
+    });
 }
 
 void CacheStorage::keys(KeysPromise&& promise)
 {
-    promise.reject(Exception { TypeError, ASCIILiteral("Not implemented")});
+    retrieveCaches([this, promise = WTFMove(promise)]() mutable {
+        Vector<String> keys;
+        keys.reserveInitialCapacity(m_caches.size());
+        for (auto& cache : m_caches)
+            keys.uncheckedAppend(cache->name());
+        promise.resolve(keys);
+    });
+}
+
+void CacheStorage::stop()
+{
+    m_isStopped = true;
+}
+
+const char* CacheStorage::activeDOMObjectName() const
+{
+    return "CacheStorage";
+}
+
+bool CacheStorage::canSuspendForDocumentSuspension() const
+{
+    return !hasPendingActivity();
 }
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 
 #include "ExceptionOr.h"
 #include "HTTPHeaderMap.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -49,7 +50,7 @@ public:
     using Init = Variant<Vector<Vector<String>>, Vector<WTF::KeyValuePair<String, String>>>;
     static ExceptionOr<Ref<FetchHeaders>> create(std::optional<Init>&&);
 
-    static Ref<FetchHeaders> create(Guard guard = Guard::None) { return adoptRef(*new FetchHeaders { guard }); }
+    static Ref<FetchHeaders> create(Guard guard = Guard::None, HTTPHeaderMap&& headers = { }) { return adoptRef(*new FetchHeaders { guard, WTFMove(headers) }); }
     static Ref<FetchHeaders> create(const FetchHeaders& headers) { return adoptRef(*new FetchHeaders { headers }); }
 
     ExceptionOr<void> append(const String& name, const String& value);
@@ -82,9 +83,10 @@ public:
     const HTTPHeaderMap& internalHeaders() const { return m_headers; }
 
     void setGuard(Guard);
+    Guard guard() const { return m_guard; }
 
 private:
-    explicit FetchHeaders(Guard guard, HTTPHeaderMap&& headers = { });
+    FetchHeaders(Guard, HTTPHeaderMap&&);
     FetchHeaders(const FetchHeaders&);
 
     Guard m_guard;
@@ -111,3 +113,18 @@ inline void FetchHeaders::setGuard(Guard guard)
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::FetchHeaders::Guard> {
+    using values = EnumValues<
+    WebCore::FetchHeaders::Guard,
+    WebCore::FetchHeaders::Guard::None,
+    WebCore::FetchHeaders::Guard::Immutable,
+    WebCore::FetchHeaders::Guard::Request,
+    WebCore::FetchHeaders::Guard::RequestNoCors,
+    WebCore::FetchHeaders::Guard::Response
+    >;
+};
+
+}

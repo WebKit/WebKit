@@ -29,7 +29,6 @@ typedef (FetchRequest or USVString) RequestInfo;
     SecureContext,
     Exposed=(Window,Worker),
     EnabledAtRuntime=CacheAPI,
-    ImplementationLacksVTable,
 ] interface CacheStorage {
     [NewObject] Promise<any> match(RequestInfo request, optional CacheQueryOptions options);
     [NewObject] Promise<boolean> has(DOMString cacheName);

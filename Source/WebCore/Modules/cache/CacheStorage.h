@@ -25,29 +25,39 @@
 
 #pragma once
 
+#include "Cache.h"
+#include "CacheStorageConnection.h"
 #include "FetchRequest.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class Cache;
-
-struct CacheQueryOptions;
-
-class CacheStorage : public RefCounted<CacheStorage> {
+class CacheStorage : public RefCounted<CacheStorage>, public ActiveDOMObject {
 public:
-    static Ref<CacheStorage> create() { return adoptRef(*new CacheStorage()); }
+    static Ref<CacheStorage> create(ScriptExecutionContext& context, Ref<CacheStorageConnection>&& connection) { return adoptRef(*new CacheStorage(context, WTFMove(connection))); }
 
-    using RequestInfo = FetchRequest::Info;
     using KeysPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
 
-    void match(RequestInfo&&, std::optional<CacheQueryOptions>&&, Ref<DeferredPromise>&&);
+    void match(Cache::RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
     void has(const String&, DOMPromiseDeferred<IDLBoolean>&&);
     void open(const String&, DOMPromiseDeferred<IDLInterface<Cache>>&&);
     void remove(const String&, DOMPromiseDeferred<IDLBoolean>&&);
     void keys(KeysPromise&&);
 
 private:
-    CacheStorage() = default;
+    CacheStorage(ScriptExecutionContext&, Ref<CacheStorageConnection>&&);
+
+    // ActiveDOMObject
+    void stop() final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+
+    void retrieveCaches(WTF::Function<void()>&&);
+    String origin() const;
+
+    Vector<Ref<Cache>> m_caches;
+    Ref<CacheStorageConnection> m_connection;
+    bool m_isStopped { false };
 };
 
 } // namespace WebCore

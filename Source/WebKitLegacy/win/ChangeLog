@@ -1,3 +1,13 @@
+2017-08-15  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Adding generic support for CacheStorage and Cache methods
+        https://bugs.webkit.org/show_bug.cgi?id=175455
+
+        Reviewed by Chris Dumez.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2017-08-13  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Composition underline color is always black

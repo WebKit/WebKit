@@ -57,6 +57,8 @@ public:
     static Ref<FetchResponse> error(ScriptExecutionContext&);
     static ExceptionOr<Ref<FetchResponse>> redirect(ScriptExecutionContext&, const String& url, int status);
 
+    static Ref<FetchResponse> create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response) { return adoptRef(*new FetchResponse(context, WTFMove(body), WTFMove(headers), WTFMove(response))); }
+
     using FetchPromise = DOMPromiseDeferred<IDLInterface<FetchResponse>>;
     static void fetch(ScriptExecutionContext&, FetchRequest&, FetchPromise&&);
 
@@ -78,6 +80,7 @@ public:
     bool ok() const { return m_response.isSuccessful(); }
     const String& statusText() const { return m_response.httpStatusText(); }
 
+    const FetchHeaders& headers() const { return m_headers; }
     FetchHeaders& headers() { return m_headers; }
     Ref<FetchResponse> cloneForJS();
 
@@ -89,6 +92,8 @@ public:
 #endif
 
     bool isLoading() const { return !!m_bodyLoader; }
+
+    const ResourceResponse& resourceResponse() const { return m_response; }
 
 private:
     FetchResponse(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);

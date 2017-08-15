@@ -74,7 +74,7 @@ static std::optional<Exception> setReferrer(FetchRequest::InternalRequest& reque
 
 static std::optional<Exception> buildOptions(FetchRequest::InternalRequest& request, ScriptExecutionContext& context, const FetchRequest::Init& init)
 {
-    if (!init.window.isUndefinedOrNull())
+    if (!init.window.isUndefinedOrNull() && !init.window.isEmpty())
         return Exception { TypeError, ASCIILiteral("Window can only be null.") };
 
     if (!init.referrer.isNull()) {
@@ -257,14 +257,14 @@ String FetchRequest::referrer() const
     return m_internalRequest.referrer;
 }
 
-const String& FetchRequest::url() const
+const String& FetchRequest::urlString() const
 {
     if (m_requestURL.isNull())
         m_requestURL = m_internalRequest.request.url().serialize();
     return m_requestURL;
 }
 
-ResourceRequest FetchRequest::internalRequest() const
+ResourceRequest FetchRequest::resourceRequest() const
 {
     ASSERT(scriptExecutionContext());
 

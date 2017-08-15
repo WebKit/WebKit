@@ -27,7 +27,11 @@
 #include "DOMWindowCaches.h"
 
 #include "CacheStorage.h"
+#include "CacheStorageProvider.h"
 #include "DOMWindow.h"
+#include "Document.h"
+#include "Frame.h"
+#include "Page.h"
 
 namespace WebCore {
 
@@ -54,13 +58,18 @@ DOMWindowCaches* DOMWindowCaches::from(DOMWindow* window)
 
 CacheStorage* DOMWindowCaches::caches(DOMWindow& window)
 {
+    if (!window.isCurrentlyDisplayedInFrame())
+        return nullptr;
+
     return DOMWindowCaches::from(&window)->caches();
 }
 
 CacheStorage* DOMWindowCaches::caches() const
 {
-    if (!m_caches && frame())
-        m_caches = CacheStorage::create();
+    ASSERT(frame());
+    ASSERT(frame()->document());
+    if (!m_caches && frame()->page())
+        m_caches = CacheStorage::create(*frame()->document(), frame()->page()->cacheStorageProvider().createCacheStorageConnection(frame()->page()->sessionID()));
     return m_caches.get();
 }
 

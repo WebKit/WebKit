@@ -77,6 +77,7 @@ class AlternativeTextClient;
 class ApplicationCacheStorage;
 class BackForwardController;
 class BackForwardClient;
+class CacheStorageProvider;
 class Chrome;
 class ChromeClient;
 class Color;
@@ -495,6 +496,7 @@ public:
 
     ApplicationCacheStorage& applicationCacheStorage() { return m_applicationCacheStorage; }
     DatabaseProvider& databaseProvider() { return m_databaseProvider; }
+    CacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider; }
     SocketProvider& socketProvider() { return m_socketProvider; }
 
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
@@ -765,6 +767,7 @@ private:
 
     Ref<SocketProvider> m_socketProvider;
     Ref<ApplicationCacheStorage> m_applicationCacheStorage;
+    Ref<CacheStorageProvider> m_cacheStorageProvider;
     Ref<DatabaseProvider> m_databaseProvider;
     Ref<PluginInfoProvider> m_pluginInfoProvider;
     Ref<StorageNamespaceProvider> m_storageNamespaceProvider;

@@ -1,3 +1,19 @@
+2017-08-15  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Adding generic support for CacheStorage and Cache methods
+        https://bugs.webkit.org/show_bug.cgi?id=175455
+
+        Reviewed by Chris Dumez.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Cache/WebCacheStorageProvider.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::cacheStorageProvider):
+
 2017-08-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r220700.
