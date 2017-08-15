@@ -210,6 +210,9 @@ bool PreviewLoader::shouldCreateForMIMEType(const String& mimeType)
             supportedMIMETypes.get().add(mimeType);
     });
 
+    if (mimeType.isNull())
+        return false;
+
     return supportedMIMETypes.get().contains(mimeType);
 }
 
