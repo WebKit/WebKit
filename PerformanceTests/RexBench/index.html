@@ -115,6 +115,31 @@
             </div>
         </div>
 
+        <div class="offline assembler test">
+            <h2 id="OfflineAssemblerMessage">Offline Assembler</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="OfflineAssemblerFirstIteration">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iteratons</label>
+                <span id="OfflineAssemblerAverageWorstCase">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="OfflineAssemblerSteadyState">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
         <div class="flight planner test">
             <h2 id="FlightPlannerMessage">Flight Planner</h2> 
             
@@ -172,6 +197,7 @@
     <script src="sunspider_benchmark.js"></script>
     <script src="octane2_benchmark.js"></script>
     <script src="basic_benchmark.js"></script>
+    <script src="offline_assembler_benchmark.js"></script>
     <script src="flightplan_benchmark.js"></script>
     <script src="flightplan_unicode_benchmark.js"></script>
     <script src="glue.js"></script>

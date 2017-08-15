@@ -22,39 +22,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
 "use strict";
 
-const isInBrowser = false;
-
-function makeBenchmarkRunner(sources, benchmarkConstructor, numIterations = 200) {
-    let source = "'use strict';"
-    for (let file of sources) {
-        source += readFile(file);
+class File
+{
+    constructor (fileName, data)
+    {
+        this.fileName = fileName;
+        this.data = data;
+        if (File.directory[fileName])
+            throw "Creating file named " + fileName + " that already exists";
+        File.directory[fileName] = this;
     }
-    source += `
-        this.results = [];
-        var benchmark = new ${benchmarkConstructor}();
-        var numIterations = ${numIterations};
-    
-        benchmark.runIterations(numIterations, this.results);
-    `;
-    return function doRun() {
-        let globalObjectOfScript = runString(source);
-        let results = globalObjectOfScript.results;
-        reportResult(results);
+
+    static open(fileName)
+    {
+        return this.directory[fileName];
+    }
+
+    read()
+    {
+        return this.data;
     }
 }
 
-load("driver.js");
-load("results.js");
-load("stats.js");
-load("sunspider_benchmark.js");
-load("octane2_benchmark.js");
-load("basic_benchmark.js");
-load("offline_assembler_benchmark.js");
-load("flightplan_benchmark.js");
-load("flightplan_unicode_benchmark.js");
-load("glue.js");
-
-driver.start(6);
+File.directory = {};

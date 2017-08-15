@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,39 +22,65 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
 "use strict";
 
-const isInBrowser = false;
+const gprs =
+    [
+     "t0",
+     "t1",
+     "t2",
+     "t3",
+     "t4",
+     "t5",
+     "cfr",
+     "a0",
+     "a1",
+     "a2",
+     "a3",
+     "r0",
+     "r1",
+     "sp",
+     "lr",
+     "pc",
+     // 64-bit only registers:
+     "csr0",
+     "csr1",
+     "csr2",
+     "csr3",
+     "csr4",
+     "csr5",
+     "csr6",
+     "csr7",
+     "csr8",
+     "csr9"
+    ]
 
-function makeBenchmarkRunner(sources, benchmarkConstructor, numIterations = 200) {
-    let source = "'use strict';"
-    for (let file of sources) {
-        source += readFile(file);
-    }
-    source += `
-        this.results = [];
-        var benchmark = new ${benchmarkConstructor}();
-        var numIterations = ${numIterations};
-    
-        benchmark.runIterations(numIterations, this.results);
-    `;
-    return function doRun() {
-        let globalObjectOfScript = runString(source);
-        let results = globalObjectOfScript.results;
-        reportResult(results);
-    }
-}
+const fprs =
+    [
+     "ft0",
+     "ft1",
+     "ft2",
+     "ft3",
+     "ft4",
+     "ft5",
+     "fa0",
+     "fa1",
+     "fa2",
+     "fa3",
+     "csfr0",
+     "csfr1",
+     "csfr2",
+     "csfr3",
+     "csfr4",
+     "csfr5",
+     "csfr6",
+     "csfr7",
+     "fr"
+    ]
 
-load("driver.js");
-load("results.js");
-load("stats.js");
-load("sunspider_benchmark.js");
-load("octane2_benchmark.js");
-load("basic_benchmark.js");
-load("offline_assembler_benchmark.js");
-load("flightplan_benchmark.js");
-load("flightplan_unicode_benchmark.js");
-load("glue.js");
+const registers = gprs.concat(fprs);
 
-driver.start(6);
+var gprPattern = new RegExp("^((" + gprs.join(")|(") + "))$");
+var fprPattern = new RegExp("^((" + fprs.join(")|(") + "))$");
+
+var registerPattern = new RegExp("^((" + registers.join(")|(") + "))$");

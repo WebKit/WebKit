@@ -1,3 +1,68 @@
+2017-08-15  Michael Saboff  <msaboff@apple.com>
+
+        Add Offline Assembler parsing test to RexBench
+        https://bugs.webkit.org/show_bug.cgi?id=175581
+
+        Reviewed by Saam Barati.
+
+        This is a port of the JavaScriptCore offline assmebler's lexer, parser, AST and
+        supporting code from Ruby to JavaScript turned into a benchmark.  The benchmark
+        timing includes parsing through AST.  The validation processing time is not
+        part of the benchmark measurement.
+
+        The input data is the current tip of tree LLInt .asm source files.  Those file
+        were converted to JavaScript using the python script, convert_asm_to_js.py.
+        There is also a new JavaScript file, generate_expected.js, to create the
+        expected output JavaScript file.
+
+        * RexBench/OfflineAssembler: Added.
+        * RexBench/OfflineAssembler/ast.js: Added.
+        * RexBench/OfflineAssembler/instructions.js: Added.
+        * RexBench/OfflineAssembler/parser.js: Added.
+        * RexBench/OfflineAssembler/registers.js: Added.
+        These are JavaScript translation of the Ruby Offline Assembler.  Code not
+        needed for the benchmark was not translated and therefore missing.
+
+        * RexBench/OfflineAssembler/InitBytecodes.asm: Added.
+        * RexBench/OfflineAssembler/InitBytecodes.js: Added.
+        * RexBench/OfflineAssembler/LowLevelInterpreter.asm: Added.
+        * RexBench/OfflineAssembler/LowLevelInterpreter.js: Added.
+        * RexBench/OfflineAssembler/LowLevelInterpreter32_64.asm: Added.
+        * RexBench/OfflineAssembler/LowLevelInterpreter32_64.js: Added.
+        * RexBench/OfflineAssembler/LowLevelInterpreter64.asm: Added.
+        * RexBench/OfflineAssembler/LowLevelInterpreter64.js: Added.
+        Copies of the current LLInt source and conversion to JavaScript.
+
+        * RexBench/OfflineAssembler/file.js: Added.
+        (File):
+        (File.open):
+        (File.prototype.read):
+        Mock File class used to simulate filesystem access.
+
+        * RexBench/OfflineAssembler/expected.js: Added.
+        Expected output of the AST dumped and split into individual lines.
+
+        * RexBench/OfflineAssembler/benchmark.js: Added.
+        (OfflineAssemblerBenchmark):
+        (OfflineAssemblerBenchmark.prototype.runOnce):
+        (OfflineAssemblerBenchmark.prototype.validate):
+        Benchmark sub class for this test.
+
+        * RexBench/OfflineAssembler/convert_asm_to_js.py: Added.
+        (convertFile):
+        Converts .asm into .js files compatible to the benchmark.
+
+        * RexBench/OfflineAssembler/generate_expected.js: Added.
+        Converts AST output into the expected file format.
+
+        * RexBench/about.html: Added description of this sub-benchmark test.
+
+        * RexBench/cli.js:
+        * RexBench/glue.js:
+        * RexBench/index.html:
+        * RexBench/offline_assembler_benchmark.js: Added.
+        Updates to add this sub-benchmark.
+
 2017-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-fallback-font-family.html is failing on perf bots
