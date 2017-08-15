@@ -161,5 +161,4 @@ platform/ios/ios/fast/text/opticalFontWithWeight.html [ Failure ]
 webgl/1.0.2/conformance/textures/gl-teximage.html [ Failure ]
 fast/canvas/webgl/gl-teximage.html [ Failure ]
 fast/text/international/complex-character-based-fallback.html [ Failure ]
-fast/events/ios/before-input-events-prevent-candidate-insertion.html [ Timeout ]
 
