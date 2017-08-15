@@ -1,3 +1,65 @@
+2017-08-15  Keith Miller  <keith_miller@apple.com>
+
+        Enable named offsets into JSC bytecodes
+        https://bugs.webkit.org/show_bug.cgi?id=175561
+
+        Reviewed by Mark Lam.
+
+        This patch adds the ability to add named offsets into JSC's
+        bytecodes.  In the bytecode json file, instead of listing a
+        length, you can now list a set of names and their types. Each
+        opcode with an offsets property will have a struct named after the
+        opcode by in our C++ naming style. For example,
+        op_overrides_has_instance would become OpOverridesHasInstance. The
+        struct has the same memory layout as the instruction list has but
+        comes with handy named accessors.
+
+        As a first cut I converted the various instanceof bytecodes to use
+        named offsets.
+
+        As an example op_overrides_has_instance produces the following struct:
+
+        struct OpOverridesHasInstance {
+        public:
+            Opcode& opcode() { return *reinterpret_cast<Opcode*>(&m_opcode); }
+            const Opcode& opcode() const { return *reinterpret_cast<const Opcode*>(&m_opcode); }
+            int& dst() { return *reinterpret_cast<int*>(&m_dst); }
+            const int& dst() const { return *reinterpret_cast<const int*>(&m_dst); }
+            int& constructor() { return *reinterpret_cast<int*>(&m_constructor); }
+            const int& constructor() const { return *reinterpret_cast<const int*>(&m_constructor); }
+            int& hasInstanceValue() { return *reinterpret_cast<int*>(&m_hasInstanceValue); }
+            const int& hasInstanceValue() const { return *reinterpret_cast<const int*>(&m_hasInstanceValue); }
+
+        private:
+            friend class LLIntOffsetsExtractor;
+            std::aligned_storage<sizeof(Opcode), sizeof(Instruction)>::type m_opcode;
+            std::aligned_storage<sizeof(int), sizeof(Instruction)>::type m_dst;
+            std::aligned_storage<sizeof(int), sizeof(Instruction)>::type m_constructor;
+            std::aligned_storage<sizeof(int), sizeof(Instruction)>::type m_hasInstanceValue;
+        };
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * generate-bytecode-files:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2017-08-15  Mark Lam  <mark.lam@apple.com>
 
         Update testmasm to use new CPUState APIs.

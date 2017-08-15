@@ -29,6 +29,7 @@
 #include "JIT.h"
 
 #include "BasicBlockLocation.h"
+#include "BytecodeStructs.h"
 #include "Exception.h"
 #include "Heap.h"
 #include "InterpreterInlines.h"
@@ -112,9 +113,10 @@ void JIT::emitSlow_op_new_object(Instruction* currentInstruction, Vector<SlowCas
 
 void JIT::emit_op_overrides_has_instance(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
-    int constructor = currentInstruction[2].u.operand;
-    int hasInstanceValue = currentInstruction[3].u.operand;
+    auto bytecode = reinterpret_cast<OpOverridesHasInstance*>(currentInstruction);
+    int dst = bytecode->dst();
+    int constructor = bytecode->constructor();
+    int hasInstanceValue = bytecode->hasInstanceValue();
 
     emitGetVirtualRegister(hasInstanceValue, regT0);
 
@@ -137,9 +139,10 @@ void JIT::emit_op_overrides_has_instance(Instruction* currentInstruction)
 
 void JIT::emit_op_instanceof(Instruction* currentInstruction)
 {
-    int dst = currentInstruction[1].u.operand;
-    int value = currentInstruction[2].u.operand;
-    int proto = currentInstruction[3].u.operand;
+    auto bytecode = reinterpret_cast<OpInstanceof*>(currentInstruction);
+    int dst = bytecode->dst();
+    int value = bytecode->value();
+    int proto = bytecode->prototype();
 
     // Load the operands (baseVal, proto, and value respectively) into registers.
     // We use regT0 for baseVal since we will be done with this first, and we can then use it for the result.
@@ -860,9 +863,10 @@ void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = currentInstruction[1].u.operand;
-    int value = currentInstruction[2].u.operand;
-    int proto = currentInstruction[3].u.operand;
+    auto bytecode = reinterpret_cast<OpInstanceof*>(currentInstruction);
+    int dst = bytecode->dst();
+    int value = bytecode->value();
+    int proto = bytecode->prototype();
 
     linkSlowCaseIfNotJSCell(iter, value);
     linkSlowCaseIfNotJSCell(iter, proto);
@@ -875,10 +879,11 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
 
 void JIT::emitSlow_op_instanceof_custom(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = currentInstruction[1].u.operand;
-    int value = currentInstruction[2].u.operand;
-    int constructor = currentInstruction[3].u.operand;
-    int hasInstanceValue = currentInstruction[4].u.operand;
+    auto bytecode = reinterpret_cast<OpInstanceofCustom*>(currentInstruction);
+    int dst = bytecode->dst();
+    int value = bytecode->value();
+    int constructor = bytecode->constructor();
+    int hasInstanceValue = bytecode->hasInstanceValue();
 
     linkSlowCase(iter);
     emitGetVirtualRegister(value, regT0);

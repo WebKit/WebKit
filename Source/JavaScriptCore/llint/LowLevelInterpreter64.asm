@@ -1090,16 +1090,16 @@ _llint_op_bitor:
 
 _llint_op_overrides_has_instance:
     traceExecution()
-    loadisFromInstruction(1, t3)
+    loadisFromStruct(OpOverridesHasInstance::m_dst, t3)
 
-    loadisFromInstruction(3, t1)
+    loadisFromStruct(OpOverridesHasInstance::m_hasInstanceValue, t1)
     loadConstantOrVariable(t1, t0)
     loadp CodeBlock[cfr], t2
     loadp CodeBlock::m_globalObject[t2], t2
     loadp JSGlobalObject::m_functionProtoHasInstanceSymbolFunction[t2], t2
     bqneq t0, t2, .opOverridesHasInstanceNotDefaultSymbol
 
-    loadisFromInstruction(2, t1)
+    loadisFromStruct(OpOverridesHasInstance::m_constructor, t1)
     loadConstantOrVariable(t1, t0)
     tbz JSCell::m_flags[t0], ImplementsDefaultHasInstance, t1
     orq ValueFalse, t1

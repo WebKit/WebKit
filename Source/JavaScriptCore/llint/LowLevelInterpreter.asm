@@ -293,13 +293,29 @@ if JSVALUE64
     macro loadpFromInstruction(offset, dest)
         loadp offset * 8[PB, PC, 8], dest
     end
-    
+
+    macro loadisFromStruct(offset, dest)
+        loadis offset[PB, PC, 8], dest
+    end
+
+    macro loadpFromStruct(offset, dest)
+        loadp offset[PB, PC, 8], dest
+    end
+
     macro storeisToInstruction(value, offset)
         storei value, offset * 8[PB, PC, 8]
     end
 
     macro storepToInstruction(value, offset)
         storep value, offset * 8[PB, PC, 8]
+    end
+
+    macro storeisFromStruct(value, offset)
+        storei value, offset[PB, PC, 8]
+    end
+
+    macro storepFromStruct(value, offset)
+        storep value, offset[PB, PC, 8]
     end
 
 else
@@ -314,6 +330,18 @@ else
 
     macro storeisToInstruction(value, offset)
         storei value, offset * 4[PC]
+    end
+
+    macro loadisFromStruct(offset, dest)
+        loadis offset[PC], dest
+    end
+
+    macro loadpFromStruct(offset, dest)
+        loadp offset[PC], dest
+    end
+
+    macro storeisToStruct(value, offset)
+        storei value, offset[PC]
     end
 end
 

@@ -52,6 +52,7 @@ endif
 all : \
     udis86_itab.h \
     Bytecodes.h \
+    BytecodeStructs.h \
     CombinedDomains.json \
     InitBytecodes.asm \
     InjectedScriptSource.h \
@@ -204,6 +205,9 @@ udis86_itab.h: $(JavaScriptCore)/disassembler/udis86/ud_itab.py $(JavaScriptCore
 
 Bytecodes.h: $(JavaScriptCore)/generate-bytecode-files $(JavaScriptCore)/bytecode/BytecodeList.json
 	$(PYTHON) $(JavaScriptCore)/generate-bytecode-files --bytecodes_h Bytecodes.h $(JavaScriptCore)/bytecode/BytecodeList.json
+
+BytecodeStructs.h: $(JavaScriptCore)/generate-bytecode-files $(JavaScriptCore)/bytecode/BytecodeList.json
+	$(PYTHON) $(JavaScriptCore)/generate-bytecode-files --bytecode_structs_h BytecodeStructs.h $(JavaScriptCore)/bytecode/BytecodeList.json
 
 InitBytecodes.asm: $(JavaScriptCore)/generate-bytecode-files $(JavaScriptCore)/bytecode/BytecodeList.json
 	$(PYTHON) $(JavaScriptCore)/generate-bytecode-files --init_bytecodes_asm InitBytecodes.asm $(JavaScriptCore)/bytecode/BytecodeList.json

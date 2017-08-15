@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "ArrayProfile.h"
+#include "BytecodeStructs.h"
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"
 #include "DirectArguments.h"

@@ -1185,11 +1185,11 @@ _llint_op_bitor:
 _llint_op_overrides_has_instance:
     traceExecution()
 
-    loadisFromInstruction(1, t3)
+    loadisFromStruct(OpOverridesHasInstance::m_dst, t3)
     storei BooleanTag, TagOffset[cfr, t3, 8]
 
     # First check if hasInstanceValue is the one on Function.prototype[Symbol.hasInstance]
-    loadisFromInstruction(3, t0)
+    loadisFromStruct(OpOverridesHasInstance::m_hasInstanceValue, t0)
     loadConstantOrVariablePayload(t0, CellTag, t2, .opOverrideshasInstanceValueNotCell)
     loadConstantOrVariable(t0, t1, t2)
     bineq t1, CellTag, .opOverrideshasInstanceValueNotCell
@@ -1201,7 +1201,7 @@ _llint_op_overrides_has_instance:
     bineq t1, t2, .opOverrideshasInstanceValueNotDefault
 
     # We know the constructor is a cell.
-    loadisFromInstruction(2, t0)
+    loadisFromStruct(OpOverridesHasInstance::m_constructor, t0)
     loadConstantOrVariablePayloadUnchecked(t0, t1)
     tbz JSCell::m_flags[t1], ImplementsDefaultHasInstance, t0
     storei t0, PayloadOffset[cfr, t3, 8]

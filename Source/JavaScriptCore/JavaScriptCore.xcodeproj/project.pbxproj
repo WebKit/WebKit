@@ -5309,9 +5309,9 @@
 				0F6183431C45F62A0072450B /* testair */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				0FEC85AD1BDB5CF10080FF74 /* testb3 */,
+				FE533CAC1F217DB40016A1FE /* testmasm */,
 				6511230514046A4C002B101D /* testRegExp */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
-				FE533CAC1F217DB40016A1FE /* testmasm */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6664,9 +6664,6 @@
 				52678F901A04177C006A306D /* ControlFlowProfiler.h */,
 				2A111243192FCE79005EE18D /* CustomGetterSetter.cpp */,
 				2A111244192FCE79005EE18D /* CustomGetterSetter.h */,
-				E31618101EC5FE080006A218 /* DOMAnnotation.h */,
-				E31618111EC5FE080006A218 /* DOMAttributeGetterSetter.cpp */,
-				E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */,
 				0F2B66B017B6B5AB00A7AE3F /* DataView.cpp */,
 				0F2B66B117B6B5AB00A7AE3F /* DataView.h */,
 				BCD203450E17135E002C7E82 /* DateConstructor.cpp */,
@@ -6688,6 +6685,9 @@
 				FE54DEFE1E8D742800A892C5 /* DisallowScope.h */,
 				FE54DEFC1E8C6DFF00A892C5 /* DisallowVMReentry.cpp */,
 				FE54DEFA1E8C6D7200A892C5 /* DisallowVMReentry.h */,
+				E31618101EC5FE080006A218 /* DOMAnnotation.h */,
+				E31618111EC5FE080006A218 /* DOMAttributeGetterSetter.cpp */,
+				E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */,
 				A70447EB17A0BD7000F5898E /* DumpContext.cpp */,
 				A70447EC17A0BD7000F5898E /* DumpContext.h */,
 				FE318FDD1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.cpp */,
@@ -7676,8 +7676,8 @@
 				86C568DF11A213EE0007F7F0 /* MIPSAssembler.h */,
 				FE63DD551EA9BC5D00103A69 /* Printer.cpp */,
 				FE63DD531EA9B60E00103A69 /* Printer.h */,
-				9688CB140ED12B4E001D649F /* X86Assembler.h */,
 				FE533CA01F217C310016A1FE /* testmasm.cpp */,
+				9688CB140ED12B4E001D649F /* X86Assembler.h */,
 			);
 			path = assembler;
 			sourceTree = "<group>";
@@ -8062,8 +8062,8 @@
 				DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */,
 				A7D801A11880D66E0026C39B /* BuiltinExecutables.cpp */,
 				A7D801A21880D66E0026C39B /* BuiltinExecutables.h */,
-				A75EE9B018AAB7E200AAD043 /* BuiltinNames.h */,
 				E380D66B1F19249D00A59095 /* BuiltinNames.cpp */,
+				A75EE9B018AAB7E200AAD043 /* BuiltinNames.h */,
 				41DEA1311B9F3154006D65DD /* BuiltinUtils.h */,
 				A1FE1EB01C2C537E00A289FF /* DatePrototype.js */,
 				A7A979C418BE8D9E002C3733 /* FunctionPrototype.js */,
@@ -8292,6 +8292,7 @@
 				0FE0E4AE1C24C94A002E17B6 /* AirTmpWidth.h in Headers */,
 				0F3730931C0D67EE00052BFA /* AirUseCounts.h in Headers */,
 				0FEC85911BDACDC70080FF74 /* AirValidate.h in Headers */,
+				0FEC3C531F33A41600F59B6C /* AlignedMemoryAllocator.h in Headers */,
 				0FA7620B1DB959F900B7A2FD /* AllocatingScope.h in Headers */,
 				0F96303A1D4192C8005609D9 /* AllocatorAttributes.h in Headers */,
 				0F3730911C0CD70C00052BFA /* AllowMacroScratchRegisterUsage.h in Headers */,
@@ -8335,6 +8336,8 @@
 				0F38D2A31D44196D00680499 /* AuxiliaryBarrierInlines.h in Headers */,
 				0FEC84FF1BDACDAC0080FF74 /* B3ArgumentRegValue.h in Headers */,
 				0F2C63B71E6343ED00C13839 /* B3AtomicValue.h in Headers */,
+				0F5BF1671F23A0980029D91D /* B3BackwardsCFG.h in Headers */,
+				0F5BF16B1F23A0C10029D91D /* B3BackwardsDominators.h in Headers */,
 				0F2C63B01E60AE4300C13839 /* B3Bank.h in Headers */,
 				0FEC85011BDACDAC0080FF74 /* B3BasicBlock.h in Headers */,
 				0FEC85021BDACDAC0080FF74 /* B3BasicBlockInlines.h in Headers */,
@@ -8365,6 +8368,7 @@
 				0F6B8AD91C4EDDA200969052 /* B3DuplicateTails.h in Headers */,
 				0FEC85C11BE167A00080FF74 /* B3Effects.h in Headers */,
 				0F725CA81C503DED00AD943A /* B3EliminateCommonSubexpressions.h in Headers */,
+				0F5BF1711F23A5A10029D91D /* B3EnsureLoopPreHeaders.h in Headers */,
 				0F6971EA1D92F42400BA02A5 /* B3FenceValue.h in Headers */,
 				0F6B8AE51C4EFE1700969052 /* B3FixSSA.h in Headers */,
 				0F725CB01C506D3B00AD943A /* B3FoldPathConstants.h in Headers */,
@@ -8374,6 +8378,7 @@
 				0F2C63B81E6343F700C13839 /* B3GenericBlockInsertionSet.h in Headers */,
 				0FEC851A1BDACDAC0080FF74 /* B3GenericFrequentedBlock.h in Headers */,
 				0FEC85C31BE167A00080FF74 /* B3HeapRange.h in Headers */,
+				0F5BF1641F2317120029D91D /* B3HoistLoopInvariantValues.h in Headers */,
 				DC69B99D1D15F914002E3C00 /* B3InferSwitches.h in Headers */,
 				0FEC85BA1BE1462F0080FF74 /* B3InsertionSet.h in Headers */,
 				0FEC85BB1BE1462F0080FF74 /* B3InsertionSetInlines.h in Headers */,
@@ -8387,6 +8392,7 @@
 				0F2C63C41E69EF9400C13839 /* B3MemoryValueInlines.h in Headers */,
 				0F338E101BF0276C0013C88F /* B3MoveConstants.h in Headers */,
 				0F2C63C21E664A5C00C13839 /* B3NativeTraits.h in Headers */,
+				0F5BF1691F23A0AA0029D91D /* B3NaturalLoops.h in Headers */,
 				0F338E111BF0276C0013C88F /* B3OpaqueByproduct.h in Headers */,
 				0F338E131BF0276C0013C88F /* B3OpaqueByproducts.h in Headers */,
 				0FEC85221BDACDAC0080FF74 /* B3Opcode.h in Headers */,
@@ -8470,6 +8476,7 @@
 				0F885E111849A3BE00F1E3FA /* BytecodeUseDef.h in Headers */,
 				0F8023EA1613832B00A0BA45 /* ByValInfo.h in Headers */,
 				65B8392E1BACAD360044E824 /* CachedRecovery.h in Headers */,
+				0FEC3C601F379F5300F59B6C /* CagedBarrierPtr.h in Headers */,
 				BC18C3ED0E16F5CD00B34460 /* CallData.h in Headers */,
 				0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */,
 				796DAA2B1E89CCD6005DF24A /* CalleeBits.h in Headers */,
@@ -8505,7 +8512,6 @@
 				0F0B83A714BCF50700885B4F /* CodeType.h in Headers */,
 				0FD0E5F21E46C8AF0006AB08 /* CollectingScope.h in Headers */,
 				0FA762051DB9242900B7A2FD /* CollectionScope.h in Headers */,
-				0FD9EA891F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.h in Headers */,
 				0FD0E5E91E43D3490006AB08 /* CollectorPhase.h in Headers */,
 				A53243981856A489002ED692 /* CombinedDomains.json in Headers */,
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,
@@ -8558,7 +8564,6 @@
 				0FBB73BB1DEF8645002C009E /* DeleteAllCodeEffort.h in Headers */,
 				0F96303C1D4192CD005609D9 /* DestructionMode.h in Headers */,
 				A77A423E17A0BBFD00A8DB81 /* DFGAbstractHeap.h in Headers */,
-				0F5BF1691F23A0AA0029D91D /* B3NaturalLoops.h in Headers */,
 				A704D90317A0BAA8006BA554 /* DFGAbstractInterpreter.h in Headers */,
 				A704D90417A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h in Headers */,
 				0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */,
@@ -8626,6 +8631,7 @@
 				A78A9775179738B8009DF744 /* DFGFailedFinalizer.h in Headers */,
 				A7BFF3C0179868940002F462 /* DFGFiltrationResult.h in Headers */,
 				A78A9777179738B8009DF744 /* DFGFinalizer.h in Headers */,
+				0FD9EA891F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.h in Headers */,
 				0F2BDC16151C5D4F00CD8910 /* DFGFixupPhase.h in Headers */,
 				0F2017801DCADC3500EA5950 /* DFGFlowIndexing.h in Headers */,
 				0F2017821DCADD4200EA5950 /* DFGFlowMap.h in Headers */,
@@ -8642,7 +8648,6 @@
 				0FB14E2318130955009B6B4D /* DFGInlineCacheWrapperInlines.h in Headers */,
 				A704D90617A0BAA8006BA554 /* DFGInPlaceAbstractState.h in Headers */,
 				0F2BDC21151E803B00CD8910 /* DFGInsertionSet.h in Headers */,
-				0FEC3C601F379F5300F59B6C /* CagedBarrierPtr.h in Headers */,
 				0F300B7C18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h in Headers */,
 				0F898F321B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.h in Headers */,
 				0FC97F3E18202119002C9B26 /* DFGInvalidationPointInjectionPhase.h in Headers */,
@@ -8743,13 +8748,14 @@
 				0F1FB3971E1AF7E300A9BE50 /* DFGWorklistInlines.h in Headers */,
 				0FE050181AA9091100D33B33 /* DirectArguments.h in Headers */,
 				0FE050161AA9091100D33B33 /* DirectArgumentsOffset.h in Headers */,
-				0F5BF1711F23A5A10029D91D /* B3EnsureLoopPreHeaders.h in Headers */,
 				969A07980ED1D3AE00F1F681 /* DirectEvalCodeCache.h in Headers */,
 				14386A751DD69895008652C4 /* DirectEvalExecutable.h in Headers */,
 				0F37308F1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h in Headers */,
 				FE54DEFF1E8D76FA00A892C5 /* DisallowScope.h in Headers */,
 				FE54DEFB1E8C6D8800A892C5 /* DisallowVMReentry.h in Headers */,
 				0FF42731158EBD54004CB9FF /* Disassembler.h in Headers */,
+				E31618131EC5FE170006A218 /* DOMAnnotation.h in Headers */,
+				E31618151EC5FE270006A218 /* DOMAttributeGetterSetter.h in Headers */,
 				E35CA1561DBC3A5F00F83516 /* DOMJITAbstractHeap.h in Headers */,
 				E3555B8A1DAE03A500F36921 /* DOMJITCallDOMGetterSnippet.h in Headers */,
 				E3C79CAB1DB9A4DC00D1ECA4 /* DOMJITEffect.h in Headers */,
@@ -8782,6 +8788,7 @@
 				0F3AC754188E5EC80032029F /* ExitingJITType.h in Headers */,
 				0FB105861675481200F8AB6E /* ExitKind.h in Headers */,
 				0F0B83AB14BCF5BB00885B4F /* ExpressionRangeInfo.h in Headers */,
+				0FEC3C571F33A45300F59B6C /* FastMallocAlignedMemoryAllocator.h in Headers */,
 				A7A8AF3817ADB5F3005AB174 /* Float32Array.h in Headers */,
 				A7A8AF3917ADB5F3005AB174 /* Float64Array.h in Headers */,
 				0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */,
@@ -8875,7 +8882,6 @@
 				A5EA710319F6DE6F0098F5EC /* generate_objc_backend_dispatcher_header.py in Headers */,
 				A5EA710419F6DE720098F5EC /* generate_objc_backend_dispatcher_implementation.py in Headers */,
 				A5EA710519F6DE740098F5EC /* generate_objc_configuration_header.py in Headers */,
-				E31618151EC5FE270006A218 /* DOMAttributeGetterSetter.h in Headers */,
 				A5EA710619F6DE760098F5EC /* generate_objc_configuration_implementation.py in Headers */,
 				A5EA710819F6DE7A0098F5EC /* generate_objc_frontend_dispatcher_implementation.py in Headers */,
 				A5EA710919F6DE7C0098F5EC /* generate_objc_header.py in Headers */,
@@ -8898,6 +8904,7 @@
 				0F0332C418B01763005F979A /* GetByIdVariant.h in Headers */,
 				7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */,
 				534E03581E53BF2F00213F64 /* GetterSetterAccessCase.h in Headers */,
+				0FEC3C5B1F33A48900F59B6C /* GigacageAlignedMemoryAllocator.h in Headers */,
 				14AD910E1DCA92940014F9FE /* GlobalCodeBlock.h in Headers */,
 				0F24E54417EA9F5900ABB217 /* GPRInfo.h in Headers */,
 				142E3134134FF0A600AFADB5 /* Handle.h in Headers */,
@@ -8929,12 +8936,10 @@
 				A5FD0076189B038C00633231 /* IdentifiersFactory.h in Headers */,
 				C25F8BCE157544A900245B71 /* IncrementalSweeper.h in Headers */,
 				0FB7F39915ED8E4600F167B2 /* IndexingHeader.h in Headers */,
-				0F5BF16B1F23A0C10029D91D /* B3BackwardsDominators.h in Headers */,
 				0FB7F39A15ED8E4600F167B2 /* IndexingHeaderInlines.h in Headers */,
 				0FB7F39B15ED8E4600F167B2 /* IndexingType.h in Headers */,
 				14386A791DD6989C008652C4 /* IndirectEvalExecutable.h in Headers */,
 				0F0A75231B94BFA900110660 /* InferredType.h in Headers */,
-				0F5BF1671F23A0980029D91D /* B3BackwardsCFG.h in Headers */,
 				0FFC92121B94D4DF0071DD66 /* InferredTypeTable.h in Headers */,
 				0FF8BDEB1AD4CF7100DFE884 /* InferredValue.h in Headers */,
 				BC18C4100E16F5CD00B34460 /* InitializeThreading.h in Headers */,
@@ -8963,7 +8968,6 @@
 				99F1A7011B98FBEC00463B26 /* InspectorFrontendRouter.h in Headers */,
 				A5339EC61BB399A60054F005 /* InspectorHeapAgent.h in Headers */,
 				E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */,
-				E31618131EC5FE170006A218 /* DOMAnnotation.h in Headers */,
 				E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */,
 				A532438C18568335002ED692 /* InspectorProtocolObjects.h in Headers */,
 				A55D93AC18514F7900400DED /* InspectorProtocolTypes.h in Headers */,
@@ -9138,7 +9142,6 @@
 				7C184E2317BEE240007CB63A /* JSPromiseConstructor.h in Headers */,
 				996B731E1BDA08EF00331B84 /* JSPromiseConstructor.lut.h in Headers */,
 				7C008CDB187124BB00955C24 /* JSPromiseDeferred.h in Headers */,
-				0FEC3C571F33A45300F59B6C /* FastMallocAlignedMemoryAllocator.h in Headers */,
 				7C184E1F17BEE22E007CB63A /* JSPromisePrototype.h in Headers */,
 				996B731F1BDA08EF00331B84 /* JSPromisePrototype.lut.h in Headers */,
 				2A05ABD61961DF2400341750 /* JSPropertyNameEnumerator.h in Headers */,
@@ -9240,7 +9243,6 @@
 				86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */,
 				86D3B2C610156BDE002865E7 /* MacroAssemblerARM.h in Headers */,
 				A1A009C01831A22D00CF8711 /* MacroAssemblerARM64.h in Headers */,
-				0F5BF1641F2317120029D91D /* B3HoistLoopInvariantValues.h in Headers */,
 				86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */,
 				863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */,
 				E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */,
@@ -9251,7 +9253,6 @@
 				860161E60F3A83C100F84710 /* MacroAssemblerX86Common.h in Headers */,
 				A5EF13F91F073204000F0442 /* make-js-file-arrays.py in Headers */,
 				A700873A17CBE85300C3E643 /* MapConstructor.h in Headers */,
-				0FEC3C531F33A41600F59B6C /* AlignedMemoryAllocator.h in Headers */,
 				A74DEF94182D991400522C22 /* MapIteratorPrototype.h in Headers */,
 				A700873E17CBE8D300C3E643 /* MapPrototype.h in Headers */,
 				C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */,
@@ -9572,7 +9573,6 @@
 				AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */,
 				53E9E0AC1EAE83DF00FEE251 /* WasmMachineThreads.h in Headers */,
 				535557141D9D9EA5006D583B /* WasmMemory.h in Headers */,
-				0FEC3C5B1F33A48900F59B6C /* GigacageAlignedMemoryAllocator.h in Headers */,
 				79B759751DFA4C600052174C /* WasmMemoryInformation.h in Headers */,
 				790081391E95A8EC0052D7CD /* WasmModule.h in Headers */,
 				53E777E41E92E265007CBEC4 /* WasmModuleInformation.h in Headers */,
@@ -10213,6 +10213,7 @@
 				0FEC858D1BDACDC70080FF74 /* AirTmp.cpp in Sources */,
 				0FE0E4AD1C24C94A002E17B6 /* AirTmpWidth.cpp in Sources */,
 				0FEC85901BDACDC70080FF74 /* AirValidate.cpp in Sources */,
+				0FEC3C521F33A41600F59B6C /* AlignedMemoryAllocator.cpp in Sources */,
 				0F9630391D4192C6005609D9 /* AllocatorAttributes.cpp in Sources */,
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
 				79A228351D35D71E00D8E067 /* ArithProfile.cpp in Sources */,
@@ -10257,11 +10258,13 @@
 				0F6B8AD81C4EDDA200969052 /* B3DuplicateTails.cpp in Sources */,
 				0FEC85C51BE16F5A0080FF74 /* B3Effects.cpp in Sources */,
 				0F725CA71C503DED00AD943A /* B3EliminateCommonSubexpressions.cpp in Sources */,
+				0F5BF1701F23A5A10029D91D /* B3EnsureLoopPreHeaders.cpp in Sources */,
 				0F6971EB1D92F42D00BA02A5 /* B3FenceValue.cpp in Sources */,
 				0F6B8AE41C4EFE1700969052 /* B3FixSSA.cpp in Sources */,
 				0F725CAF1C506D3B00AD943A /* B3FoldPathConstants.cpp in Sources */,
 				0FEC85151BDACDAC0080FF74 /* B3FrequencyClass.cpp in Sources */,
 				0FEC85181BDACDAC0080FF74 /* B3Generate.cpp in Sources */,
+				0F5BF1631F2317120029D91D /* B3HoistLoopInvariantValues.cpp in Sources */,
 				DC69B99C1D15F912002E3C00 /* B3InferSwitches.cpp in Sources */,
 				0FEC85B91BE1462F0080FF74 /* B3InsertionSet.cpp in Sources */,
 				0FDF67D31D9C6D2A001B9825 /* B3Kind.cpp in Sources */,
@@ -10313,6 +10316,7 @@
 				14280865107EC11A0013E7B2 /* BooleanPrototype.cpp in Sources */,
 				DE26E9071CB5DEFB00D2BE82 /* BuiltinExecutableCreator.cpp in Sources */,
 				A7D801A41880D66E0026C39B /* BuiltinExecutables.cpp in Sources */,
+				E380D66C1F1924A800A59095 /* BuiltinNames.cpp in Sources */,
 				9EA5C7A1190F084200508EBE /* BundlePath.mm in Sources */,
 				C2FCAE1017A9C24E0034C735 /* BytecodeBasicBlock.cpp in Sources */,
 				E3D877731E65C09E00BE945A /* BytecodeDumper.cpp in Sources */,
@@ -10328,7 +10332,6 @@
 				62EC9BB61B7EB07C00303AD1 /* CallFrameShuffleData.cpp in Sources */,
 				62D755D61B84FB46001801FA /* CallFrameShuffler.cpp in Sources */,
 				62D755D51B84FB40001801FA /* CallFrameShuffler32_64.cpp in Sources */,
-				0FEC3C561F33A45300F59B6C /* FastMallocAlignedMemoryAllocator.cpp in Sources */,
 				62D755D41B84FB3D001801FA /* CallFrameShuffler64.cpp in Sources */,
 				0F0B83B014BCF71600885B4F /* CallLinkInfo.cpp in Sources */,
 				0F93329D14CA7DC30085F3C6 /* CallLinkStatus.cpp in Sources */,
@@ -10411,7 +10414,6 @@
 				0FF0F19D16B72A08005DF95B /* DFGCommon.cpp in Sources */,
 				0FEA0A31170D40BF00BB722C /* DFGCommonData.cpp in Sources */,
 				0F38B01717CFE75500B144D3 /* DFGCompilationKey.cpp in Sources */,
-				E31618141EC5FE220006A218 /* DOMAttributeGetterSetter.cpp in Sources */,
 				0F38B01917CFE75500B144D3 /* DFGCompilationMode.cpp in Sources */,
 				0F3B3A1A153E68F2003ED0FF /* DFGConstantFoldingPhase.cpp in Sources */,
 				0FED67B91B26256D0066CE15 /* DFGConstantHoistingPhase.cpp in Sources */,
@@ -10431,6 +10433,7 @@
 				0FBC0AE71496C7C400D4FBDD /* DFGExitProfile.cpp in Sources */,
 				A78A9774179738B8009DF744 /* DFGFailedFinalizer.cpp in Sources */,
 				A78A9776179738B8009DF744 /* DFGFinalizer.cpp in Sources */,
+				0FD9EA881F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.cpp in Sources */,
 				0F2BDC15151C5D4D00CD8910 /* DFGFixupPhase.cpp in Sources */,
 				0F20177F1DCADC3300EA5950 /* DFGFlowIndexing.cpp in Sources */,
 				0F9D339617FFC4E60073C2BC /* DFGFlushedAt.cpp in Sources */,
@@ -10467,7 +10470,6 @@
 				0F2017861DCAE14C00EA5950 /* DFGNodeFlowProjection.cpp in Sources */,
 				0F5D085D1B8CF99D001143B4 /* DFGNodeOrigin.cpp in Sources */,
 				0F2B9CE619D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.cpp in Sources */,
-				0FD9EA881F29162C00F32BEE /* DFGFixedButterflyAccessUncagingPhase.cpp in Sources */,
 				0F2B9CE819D0BA7D00B1D1B5 /* DFGObjectMaterializationData.cpp in Sources */,
 				86EC9DCF1328DF82002B2AD7 /* DFGOperations.cpp in Sources */,
 				A7D89CFD17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.cpp in Sources */,
@@ -10530,6 +10532,7 @@
 				14386A741DD69895008652C4 /* DirectEvalExecutable.cpp in Sources */,
 				FE54DEFD1E8C6E3700A892C5 /* DisallowVMReentry.cpp in Sources */,
 				0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */,
+				E31618141EC5FE220006A218 /* DOMAttributeGetterSetter.cpp in Sources */,
 				E35CA1551DBC3A5F00F83516 /* DOMJITAbstractHeap.cpp in Sources */,
 				E35CA1531DBC3A5C00F83516 /* DOMJITHeapRange.cpp in Sources */,
 				A70447ED17A0BD7000F5898E /* DumpContext.cpp in Sources */,
@@ -10554,6 +10557,7 @@
 				0F56A1D515001CF4002992B1 /* ExecutionCounter.cpp in Sources */,
 				0F0332C018ADFAE1005F979A /* ExitingJITType.cpp in Sources */,
 				0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */,
+				0FEC3C561F33A45300F59B6C /* FastMallocAlignedMemoryAllocator.cpp in Sources */,
 				0F5513A81D5A68CD00C32BD8 /* FreeList.cpp in Sources */,
 				0FEA0A1C1708B00700BB722C /* FTLAbstractHeap.cpp in Sources */,
 				0FEA0A1E1708B00700BB722C /* FTLAbstractHeapRepository.cpp in Sources */,
@@ -10604,7 +10608,6 @@
 				2AACE63C18CA5A0300ED0191 /* GCActivityCallback.cpp in Sources */,
 				0F766D2F15A8DCE0008F363E /* GCAwareJITStubRoutine.cpp in Sources */,
 				0FD0E5EC1E43D3530006AB08 /* GCConductor.cpp in Sources */,
-				E380D66C1F1924A800A59095 /* BuiltinNames.cpp in Sources */,
 				2ADFA26318EF3540004F9FCC /* GCLogging.cpp in Sources */,
 				0F9715301EB28BEB00A1645D /* GCRequest.cpp in Sources */,
 				70B791941C024A28002481E2 /* GeneratorFunctionConstructor.cpp in Sources */,
@@ -10614,6 +10617,7 @@
 				0F0332C318B01763005F979A /* GetByIdVariant.cpp in Sources */,
 				14280855107EC0E70013E7B2 /* GetterSetter.cpp in Sources */,
 				53B0BE341E561AC900A8FC29 /* GetterSetterAccessCase.cpp in Sources */,
+				0FEC3C5A1F33A48900F59B6C /* GigacageAlignedMemoryAllocator.cpp in Sources */,
 				0F93274D1C1F66AA00CF6564 /* GPRInfo.cpp in Sources */,
 				142E3135134FF0A600AFADB5 /* HandleSet.cpp in Sources */,
 				142E3137134FF0A600AFADB5 /* HandleStack.cpp in Sources */,
@@ -10758,7 +10762,6 @@
 				A503FA1B188E0FB000110F14 /* JSJavaScriptCallFrame.cpp in Sources */,
 				A503FA1D188E0FB000110F14 /* JSJavaScriptCallFramePrototype.cpp in Sources */,
 				7013CA8B1B491A9400CAE613 /* JSJob.cpp in Sources */,
-				0FEC3C521F33A41600F59B6C /* AlignedMemoryAllocator.cpp in Sources */,
 				140B7D1D0DC69AF7009C42B8 /* JSLexicalEnvironment.cpp in Sources */,
 				14280875107EC13E0013E7B2 /* JSLock.cpp in Sources */,
 				C25D709B16DE99F400FCA6BC /* JSManagedValue.mm in Sources */,
@@ -10821,7 +10824,6 @@
 				AD2FCBE81DB58DAD00B3E736 /* JSWebAssemblyRuntimeError.cpp in Sources */,
 				AD2FCBEA1DB58DAD00B3E736 /* JSWebAssemblyTable.cpp in Sources */,
 				1442566115EDE98D0066A49B /* JSWithScope.cpp in Sources */,
-				0F5BF1631F2317120029D91D /* B3HoistLoopInvariantValues.cpp in Sources */,
 				86E3C618167BABEE006D760A /* JSWrapperMap.mm in Sources */,
 				14280870107EC1340013E7B2 /* JSWrapperObject.cpp in Sources */,
 				BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */,
@@ -10888,7 +10890,6 @@
 				0FD3E40B1B618B6600C80E1E /* ObjectPropertyConditionSet.cpp in Sources */,
 				14469DE6107EC7E700650446 /* ObjectPrototype.cpp in Sources */,
 				E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */,
-				0F5BF1701F23A5A10029D91D /* B3EnsureLoopPreHeaders.cpp in Sources */,
 				969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */,
 				14280850107EC0D70013E7B2 /* Operations.cpp in Sources */,
 				0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */,
@@ -11076,7 +11077,6 @@
 				AD7438C11E0457AA00FD0C2A /* WasmSignature.cpp in Sources */,
 				5250D2D11E8DA05A0029A932 /* WasmThunks.cpp in Sources */,
 				53FF7F9B1DBFD2B900A26CCC /* WasmValidate.cpp in Sources */,
-				0FEC3C5A1F33A48900F59B6C /* GigacageAlignedMemoryAllocator.cpp in Sources */,
 				530FB3041E7A1146003C19DD /* WasmWorklist.cpp in Sources */,
 				FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */,
 				0F919D2515853CE0004A4E7D /* Watchpoint.cpp in Sources */,
@@ -11343,6 +11343,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
+					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
+					"$(inherited)",
+				);
 			};
 			name = Debug;
 		};
@@ -11350,6 +11355,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
+					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
+					"$(inherited)",
+				);
 			};
 			name = Release;
 		};
@@ -11357,6 +11367,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
+					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
+					"$(inherited)",
+				);
 			};
 			name = Profiling;
 		};
@@ -11364,6 +11379,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"",
+					"\"$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders\"",
+					"$(inherited)",
+				);
 			};
 			name = Production;
 		};

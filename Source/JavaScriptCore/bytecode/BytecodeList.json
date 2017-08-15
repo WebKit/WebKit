@@ -1,7 +1,7 @@
 [
     {
-        "section" : "Bytecodes", "emitInHFile" : true, "emitInASMFile" : true, "emitOpcodeIDStringValuesInHFile" : true,
-        "macroNameComponent" : "BYTECODE", "asmPrefix" : "llint_", 
+        "section" : "Bytecodes", "emitInHFile" : true, "emitInStructsFile" : true, "emitInASMFile" : true,
+        "emitOpcodeIDStringValuesInHFile" : true, "macroNameComponent" : "BYTECODE", "asmPrefix" : "llint_",
         "bytecodes" : [
             { "name" : "op_enter", "length" : 1 },
             { "name" : "op_get_scope", "length" : 2 },
@@ -50,10 +50,20 @@
             { "name" : "op_bitand", "length" : 5 },
             { "name" : "op_bitxor", "length" : 5 },
             { "name" : "op_bitor", "length" : 5 },
-            { "name" : "op_overrides_has_instance", "length" : 4 },
             { "name" : "op_identity_with_profile", "length" : 4 },
-            { "name" : "op_instanceof", "length" : 4 },
-            { "name" : "op_instanceof_custom", "length" : 5 },
+            { "name" : "op_overrides_has_instance", "offsets" :
+                       [{"dst" : "int"},
+                        {"constructor" : "int"},
+                        {"hasInstanceValue" : "int"}] },
+            { "name" : "op_instanceof", "offsets" :
+                       [{"dst" : "int"},
+                        {"value" : "int"},
+                        {"prototype" : "int"}] },
+            { "name" : "op_instanceof_custom", "offsets" :
+                       [{"dst" : "int"},
+                        {"value" : "int"},
+                        {"constructor" : "int"},
+                        {"hasInstanceValue" : "int"}] },
             { "name" : "op_typeof", "length" : 3 },
             { "name" : "op_is_empty", "length" : 3 },
             { "name" : "op_is_undefined", "length" : 3 },
@@ -160,8 +170,8 @@
         ]
     },
     {
-        "section" : "CLoopHelpers", "emitInHFile" : true, "emitInASMFile" : false, "emitOpcodeIDStringValuesInHFile" : false, "defaultLength" : 1,
-        "macroNameComponent" : "CLOOP_BYTECODE_HELPER",
+        "section" : "CLoopHelpers", "emitInHFile" : true, "emitInStructsFile" : false, "emitInASMFile" : false,
+        "emitOpcodeIDStringValuesInHFile" : false, "defaultLength" : 1, "macroNameComponent" : "CLOOP_BYTECODE_HELPER",
         "bytecodes" : [
             { "name" : "llint_entry" },
             { "name" : "getHostCallReturnValue" },
@@ -183,8 +193,8 @@
         ]
     },
     {
-        "section" : "NativeHelpers", "emitInHFile" : true, "emitInASMFile" : true, "emitOpcodeIDStringValuesInHFile" : false, "defaultLength" : 1,
-        "macroNameComponent" : "BYTECODE_HELPER",
+        "section" : "NativeHelpers", "emitInHFile" : true, "emitInStructsFile" : false, "emitInASMFile" : true,
+        "emitOpcodeIDStringValuesInHFile" : false, "defaultLength" : 1, "macroNameComponent" : "BYTECODE_HELPER",
         "bytecodes" : [
             { "name" : "llint_program_prologue" },
             { "name" : "llint_eval_prologue" },
