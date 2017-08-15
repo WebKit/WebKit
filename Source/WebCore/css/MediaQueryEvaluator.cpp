@@ -601,35 +601,6 @@ static bool transform3dEvaluate(CSSValue* value, const CSSToLengthConversionData
 #endif
 }
 
-#if ENABLE(VIEW_MODE_CSS_MEDIA)
-
-static bool viewModeEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
-{
-    if (!value)
-        return true;
-
-    auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
-
-    switch (frame.page()->viewMode()) {
-    case Page::ViewModeWindowed:
-        return keyword == CSSValueWindowed;
-    case Page::ViewModeFloating:
-        return keyword == CSSValueFloating;
-    case Page::ViewModeFullscreen:
-        return keyword == CSSValueFullscreen;
-    case Page::ViewModeMaximized:
-        return keyword == CSSValueMaximized;
-    case Page::ViewModeMinimized:
-        return keyword == CSSValueMinimized;
-    default:
-        break;
-    }
-
-    return false;
-}
-
-#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
-
 static bool videoPlayableInlineEvaluate(CSSValue*, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
 {
     return frame.settings().allowsInlineMediaPlayback();

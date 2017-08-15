@@ -775,7 +775,6 @@ fast/loader/document-with-fragment-url-2.html
 fast/loader/document-with-fragment-url-3.html
 fast/loader/document-with-fragment-url-4.html
 fast/loader/fragment-after-redirect-gets-back-entry.html
-fast/media/media-query-list-04.html
 fast/replaced/no-focus-ring-embed.html
 fast/replaced/no-focus-ring-iframe.html
 fast/replaced/no-focus-ring-object.html

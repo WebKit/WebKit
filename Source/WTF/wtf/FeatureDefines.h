@@ -148,10 +148,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_WEB_ARCHIVE 1
 #endif
 
-#if !defined(ENABLE_VIEW_MODE_CSS_MEDIA)
-#define ENABLE_VIEW_MODE_CSS_MEDIA 0
-#endif
-
 #if !defined(ENABLE_WEBGL)
 #define ENABLE_WEBGL 1
 #endif
@@ -201,10 +197,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #if !defined(ENABLE_VIDEO_TRACK)
 #define ENABLE_VIDEO_TRACK 1
 #endif
-#endif
-
-#if !defined(ENABLE_VIEW_MODE_CSS_MEDIA)
-#define ENABLE_VIEW_MODE_CSS_MEDIA 0
 #endif
 
 #if !defined(ENABLE_WEB_ARCHIVE)
@@ -298,10 +290,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_WEB_ARCHIVE)
 #define ENABLE_WEB_ARCHIVE 1
-#endif
-
-#if !defined(ENABLE_VIEW_MODE_CSS_MEDIA)
-#define ENABLE_VIEW_MODE_CSS_MEDIA 0
 #endif
 
 #if !defined(ENABLE_WEBGL)
@@ -662,10 +650,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_DATACUE_VALUE)
 #define ENABLE_DATACUE_VALUE 0
-#endif
-
-#if !defined(ENABLE_VIEW_MODE_CSS_MEDIA)
-#define ENABLE_VIEW_MODE_CSS_MEDIA 1
 #endif
 
 #if !defined(ENABLE_WEBGL)

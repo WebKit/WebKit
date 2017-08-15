@@ -991,15 +991,6 @@ geometricPrecision
 economy
 exact
 
-#if defined(ENABLE_VIEW_MODE_CSS_MEDIA) && ENABLE_VIEW_MODE_CSS_MEDIA
-// (-webkit-view-mode:) media feature:
-floating
-fullscreen
-maximized
-minimized
-windowed
-#endif // ENABLE_VIEW_MODE_CSS_MEDIA
-
 // -webkit-hyphenate-limit-lines
 no-limit
 

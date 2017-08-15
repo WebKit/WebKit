@@ -251,21 +251,6 @@ public:
 
     Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
 
-#if ENABLE(VIEW_MODE_CSS_MEDIA)
-    enum ViewMode {
-        ViewModeInvalid,
-        ViewModeWindowed,
-        ViewModeFloating,
-        ViewModeFullscreen,
-        ViewModeMaximized,
-        ViewModeMinimized
-    };
-    static ViewMode stringToViewMode(const String&);
-
-    ViewMode viewMode() const { return m_viewMode; }
-    WEBCORE_EXPORT void setViewMode(ViewMode);
-#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
-
     void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
     bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
 
@@ -735,10 +720,6 @@ private:
 
     RefPtr<StorageNamespace> m_sessionStorage;
     RefPtr<StorageNamespace> m_ephemeralLocalStorage;
-
-#if ENABLE(VIEW_MODE_CSS_MEDIA)
-    ViewMode m_viewMode { ViewModeWindowed };
-#endif
 
     TimerThrottlingState m_timerThrottlingState { TimerThrottlingState::Disabled };
     MonotonicTime m_timerThrottlingStateLastChangedTime;
