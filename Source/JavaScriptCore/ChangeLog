@@ -1,3 +1,32 @@
+2017-08-15  Mark Lam  <mark.lam@apple.com>
+
+        Update testmasm to use new CPUState APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=175573
+
+        Reviewed by Keith Miller.
+
+        1. Applied convenience CPUState accessors to minimize casting.
+        2. Converted the CHECK macro to CHECK_EQ to get more friendly failure debugging
+           messages.
+        3. Removed the CHECK_DOUBLE_BITWISE_EQ macro.  We can just use CHECK_EQ now since
+           casting is (mostly) no longer an issue.
+        4. Replaced the use of testDoubleWord(id) with bitwise_cast<double>(testWord64(id))
+           to make it clear that we're comparing against the bit values of testWord64(id).
+        5. Added a "Completed N tests" message at the end of running all tests.
+           This makes it easy to tell at a glance that testmasm completed successfully
+           versus when it crashed midway in a test.  The number of tests also serves as
+           a quick checksum to confirm that we ran the number of tests we expected.
+
+        * assembler/testmasm.cpp:
+        (WTF::printInternal):
+        (JSC::testSimple):
+        (JSC::testProbeReadsArgumentRegisters):
+        (JSC::testProbeWritesArgumentRegisters):
+        (JSC::testProbePreservesGPRS):
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::testProbeModifiesProgramCounter):
+        (JSC::run):
+
 2017-08-14  Keith Miller  <keith_miller@apple.com>
 
         Add testing tool to lie to the DFG about profiles
