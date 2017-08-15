@@ -260,7 +260,7 @@ BuildbotIteration.prototype = {
         data.steps.forEach(function(step) {
             if (!step.complete || step.hidden || !(step.name in BuildbotIteration.TestSteps))
                 return;
-            var results = new BuildbotTestResults(step);
+            var results = new BuildbotTestResults(step, this._stdioURLForStep(step));
             if (step.name === "layout-test")
                 this.layoutTestResults = results;
             else if (/(?=.*test)(?=.*jsc)/.test(step.name))
@@ -311,6 +311,21 @@ BuildbotIteration.prototype = {
             }
             this._productive = finishedAnyProductiveStep;
         }
+    },
+
+    _stdioURLForStep: function(step)
+    {
+        if (this.queue.buildbot.VERSION_LESS_THAN_09) {
+            try {
+                return step.logs[0][1];
+            } catch (ex) {
+                return;
+            }
+        }
+
+        // FIXME: Update this logic after <https://github.com/buildbot/buildbot/issues/3465> is fixed. Buildbot 0.9 does
+        // not provide a URL to stdio for a build step in the REST API, so we are manually constructing the url here.
+        return this.queue.buildbot.buildPageURLForIteration(this) + "/steps/" + step.number + "/logs/stdio";
     },
 
     // FIXME: Remove this method after https://bugs.webkit.org/show_bug.cgi?id=175056 is fixed.
