@@ -60,6 +60,7 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_get_scope:
     case op_to_this:
     case op_check_tdz:
+    case op_identity_with_profile:
     case op_profile_type:
     case op_throw:
     case op_end:
@@ -423,6 +424,7 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_instanceof_custom:
     case op_get_by_val:
     case op_typeof:
+    case op_identity_with_profile:
     case op_is_empty:
     case op_is_undefined:
     case op_is_boolean:

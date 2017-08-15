@@ -498,4 +498,7 @@ SpeculatedType typeOfDoublePow(SpeculatedType, SpeculatedType);
 SpeculatedType typeOfDoubleBinaryOp(SpeculatedType, SpeculatedType);
 SpeculatedType typeOfDoubleUnaryOp(SpeculatedType);
 
+// This is mostly for debugging so we can fill profiles from strings.
+SpeculatedType speculationFromString(const char*);
+
 } // namespace JSC

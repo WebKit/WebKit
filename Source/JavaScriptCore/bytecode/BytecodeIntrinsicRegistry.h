@@ -41,6 +41,7 @@ class Identifier;
     macro(argument) \
     macro(argumentCount) \
     macro(assert) \
+    macro(idWithProfile) \
     macro(isObject) \
     macro(isJSArray) \
     macro(isProxyObject) \

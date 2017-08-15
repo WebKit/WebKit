@@ -988,6 +988,11 @@ private:
             break;
         }
 
+        case IdentityWithProfile: {
+            setPrediction(m_currentNode->getForcedPrediction());
+            break;
+        }
+
         case GetLocal:
         case SetLocal:
         case UInt32ToNumber:

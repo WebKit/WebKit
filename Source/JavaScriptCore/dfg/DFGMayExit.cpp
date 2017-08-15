@@ -58,6 +58,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case Phantom:
     case Check:
     case Identity:
+    case IdentityWithProfile:
     case GetLocal:
     case LoopHint:
     case Phi:

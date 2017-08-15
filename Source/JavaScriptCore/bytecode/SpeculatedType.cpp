@@ -659,5 +659,122 @@ SpeculatedType typeOfDoubleUnaryOp(SpeculatedType value)
     return polluteDouble(value);
 }
 
+SpeculatedType speculationFromString(const char* speculation)
+{
+    if (!strncmp(speculation, "SpecNone", strlen("SpecNone")))
+        return SpecNone;
+    if (!strncmp(speculation, "SpecFinalObject", strlen("SpecFinalObject")))
+        return SpecFinalObject;
+    if (!strncmp(speculation, "SpecArray", strlen("SpecArray")))
+        return SpecArray;
+    if (!strncmp(speculation, "SpecFunction", strlen("SpecFunction")))
+        return SpecFunction;
+    if (!strncmp(speculation, "SpecInt8Array", strlen("SpecInt8Array")))
+        return SpecInt8Array;
+    if (!strncmp(speculation, "SpecInt16Array", strlen("SpecInt16Array")))
+        return SpecInt16Array;
+    if (!strncmp(speculation, "SpecInt32Array", strlen("SpecInt32Array")))
+        return SpecInt32Array;
+    if (!strncmp(speculation, "SpecUint8Array", strlen("SpecUint8Array")))
+        return SpecUint8Array;
+    if (!strncmp(speculation, "SpecUint8ClampedArray", strlen("SpecUint8ClampedArray")))
+        return SpecUint8ClampedArray;
+    if (!strncmp(speculation, "SpecUint16Array", strlen("SpecUint16Array")))
+        return SpecUint16Array;
+    if (!strncmp(speculation, "SpecUint32Array", strlen("SpecUint32Array")))
+        return SpecUint32Array;
+    if (!strncmp(speculation, "SpecFloat32Array", strlen("SpecFloat32Array")))
+        return SpecFloat32Array;
+    if (!strncmp(speculation, "SpecFloat64Array", strlen("SpecFloat64Array")))
+        return SpecFloat64Array;
+    if (!strncmp(speculation, "SpecTypedArrayView", strlen("SpecTypedArrayView")))
+        return SpecTypedArrayView;
+    if (!strncmp(speculation, "SpecDirectArguments", strlen("SpecDirectArguments")))
+        return SpecDirectArguments;
+    if (!strncmp(speculation, "SpecScopedArguments", strlen("SpecScopedArguments")))
+        return SpecScopedArguments;
+    if (!strncmp(speculation, "SpecStringObject", strlen("SpecStringObject")))
+        return SpecStringObject;
+    if (!strncmp(speculation, "SpecRegExpObject", strlen("SpecRegExpObject")))
+        return SpecRegExpObject;
+    if (!strncmp(speculation, "SpecMapObject", strlen("SpecMapObject")))
+        return SpecMapObject;
+    if (!strncmp(speculation, "SpecSetObject", strlen("SpecSetObject")))
+        return SpecSetObject;
+    if (!strncmp(speculation, "SpecProxyObject", strlen("SpecProxyObject")))
+        return SpecProxyObject;
+    if (!strncmp(speculation, "SpecDerivedArray", strlen("SpecDerivedArray")))
+        return SpecDerivedArray;
+    if (!strncmp(speculation, "SpecObjectOther", strlen("SpecObjectOther")))
+        return SpecObjectOther;
+    if (!strncmp(speculation, "SpecObject", strlen("SpecObject")))
+        return SpecObject;
+    if (!strncmp(speculation, "SpecStringIdent", strlen("SpecStringIdent")))
+        return SpecStringIdent;
+    if (!strncmp(speculation, "SpecStringVar", strlen("SpecStringVar")))
+        return SpecStringVar;
+    if (!strncmp(speculation, "SpecString", strlen("SpecString")))
+        return SpecString;
+    if (!strncmp(speculation, "SpecSymbol", strlen("SpecSymbol")))
+        return SpecSymbol;
+    if (!strncmp(speculation, "SpecCellOther", strlen("SpecCellOther")))
+        return SpecCellOther;
+    if (!strncmp(speculation, "SpecCell", strlen("SpecCell")))
+        return SpecCell;
+    if (!strncmp(speculation, "SpecBoolInt32", strlen("SpecBoolInt32")))
+        return SpecBoolInt32;
+    if (!strncmp(speculation, "SpecNonBoolInt32", strlen("SpecNonBoolInt32")))
+        return SpecNonBoolInt32;
+    if (!strncmp(speculation, "SpecInt32Only", strlen("SpecInt32Only")))
+        return SpecInt32Only;
+    if (!strncmp(speculation, "SpecInt52Only", strlen("SpecInt52Only")))
+        return SpecInt52Only;
+    if (!strncmp(speculation, "SpecAnyInt", strlen("SpecAnyInt")))
+        return SpecAnyInt;
+    if (!strncmp(speculation, "SpecAnyIntAsDouble", strlen("SpecAnyIntAsDouble")))
+        return SpecAnyIntAsDouble;
+    if (!strncmp(speculation, "SpecNonIntAsDouble", strlen("SpecNonIntAsDouble")))
+        return SpecNonIntAsDouble;
+    if (!strncmp(speculation, "SpecDoubleReal", strlen("SpecDoubleReal")))
+        return SpecDoubleReal;
+    if (!strncmp(speculation, "SpecDoublePureNaN", strlen("SpecDoublePureNaN")))
+        return SpecDoublePureNaN;
+    if (!strncmp(speculation, "SpecDoubleImpureNaN", strlen("SpecDoubleImpureNaN")))
+        return SpecDoubleImpureNaN;
+    if (!strncmp(speculation, "SpecDoubleNaN", strlen("SpecDoubleNaN")))
+        return SpecDoubleNaN;
+    if (!strncmp(speculation, "SpecBytecodeDouble", strlen("SpecBytecodeDouble")))
+        return SpecBytecodeDouble;
+    if (!strncmp(speculation, "SpecFullDouble", strlen("SpecFullDouble")))
+        return SpecFullDouble;
+    if (!strncmp(speculation, "SpecBytecodeRealNumber", strlen("SpecBytecodeRealNumber")))
+        return SpecBytecodeRealNumber;
+    if (!strncmp(speculation, "SpecFullRealNumber", strlen("SpecFullRealNumber")))
+        return SpecFullRealNumber;
+    if (!strncmp(speculation, "SpecBytecodeNumber", strlen("SpecBytecodeNumber")))
+        return SpecBytecodeNumber;
+    if (!strncmp(speculation, "SpecFullNumber", strlen("SpecFullNumber")))
+        return SpecFullNumber;
+    if (!strncmp(speculation, "SpecBoolean", strlen("SpecBoolean")))
+        return SpecBoolean;
+    if (!strncmp(speculation, "SpecOther", strlen("SpecOther")))
+        return SpecOther;
+    if (!strncmp(speculation, "SpecMisc", strlen("SpecMisc")))
+        return SpecMisc;
+    if (!strncmp(speculation, "SpecHeapTop", strlen("SpecHeapTop")))
+        return SpecHeapTop;
+    if (!strncmp(speculation, "SpecPrimitive", strlen("SpecPrimitive")))
+        return SpecPrimitive;
+    if (!strncmp(speculation, "SpecEmpty", strlen("SpecEmpty")))
+        return SpecEmpty;
+    if (!strncmp(speculation, "SpecBytecodeTop", strlen("SpecBytecodeTop")))
+        return SpecBytecodeTop;
+    if (!strncmp(speculation, "SpecFullTop", strlen("SpecFullTop")))
+        return SpecFullTop;
+    if (!strncmp(speculation, "SpecCellCheck", strlen("SpecCellCheck")))
+        return SpecCellCheck;
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC
 

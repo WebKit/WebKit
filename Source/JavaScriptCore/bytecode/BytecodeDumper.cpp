@@ -1569,6 +1569,14 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         out.printf("%s, %d", registerName(condition).data(), line);
         break;
     }
+    case op_identity_with_profile: {
+        int r0 = (++it)->u.operand;
+        ++it; // Profile top half
+        ++it; // Profile bottom half
+        printLocationAndOp(out, location, it, "identity_with_profile");
+        out.printf("%s", registerName(r0).data());
+        break;
+    }
     case op_unreachable: {
         printLocationAndOp(out, location, it, "unreachable");
         break;

@@ -1573,7 +1573,7 @@ private:
             // fixup rules for them.
             DFG_CRASH(m_graph, node, "Unexpected node during fixup");
             break;
-        
+
         case PutGlobalVariable: {
             fixEdge<CellUse>(node->child1());
             speculateForBarrier(node->child2());
@@ -1926,6 +1926,11 @@ private:
             if (node->child2())
                 fixEdge<Int32Use>(node->child2());
 
+            break;
+        }
+
+        case IdentityWithProfile: {
+            node->clearFlags(NodeMustGenerate);
             break;
         }
 

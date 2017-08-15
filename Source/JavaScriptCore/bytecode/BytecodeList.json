@@ -51,6 +51,7 @@
             { "name" : "op_bitxor", "length" : 5 },
             { "name" : "op_bitor", "length" : 5 },
             { "name" : "op_overrides_has_instance", "length" : 4 },
+            { "name" : "op_identity_with_profile", "length" : 4 },
             { "name" : "op_instanceof", "length" : 4 },
             { "name" : "op_instanceof_custom", "length" : 5 },
             { "name" : "op_typeof", "length" : 3 },

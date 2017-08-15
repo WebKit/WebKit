@@ -1535,6 +1535,12 @@ public:
         ASSERT(hasHeapPrediction());
         m_opInfo2 = prediction;
     }
+
+    SpeculatedType getForcedPrediction()
+    {
+        ASSERT(op() == IdentityWithProfile);
+        return m_opInfo.as<SpeculatedType>();
+    }
     
     bool hasCellOperand()
     {

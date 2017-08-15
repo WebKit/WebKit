@@ -2974,6 +2974,15 @@ RegisterID* BytecodeGenerator::emitAssert(RegisterID* condition, int line)
     return condition;
 }
 
+RegisterID* BytecodeGenerator::emitIdWithProfile(RegisterID* src, SpeculatedType profile)
+{
+    emitOpcode(op_identity_with_profile);
+    instructions().append(src->index());
+    instructions().append(static_cast<uint32_t>(profile >> 32));
+    instructions().append(static_cast<uint32_t>(profile));
+    return src;
+}
+
 void BytecodeGenerator::emitUnreachable()
 {
     emitOpcode(op_unreachable);

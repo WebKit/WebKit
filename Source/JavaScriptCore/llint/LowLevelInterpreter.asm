@@ -1723,6 +1723,11 @@ _llint_op_assert:
     dispatch(constexpr op_assert_length)
 
 
+_llint_op_identity_with_profile:
+    traceExecution()
+    dispatch(constexpr op_identity_with_profile_length)
+
+
 _llint_op_unreachable:
     traceExecution()
     callOpcodeSlowPath(_slow_path_unreachable)

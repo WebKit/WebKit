@@ -4459,6 +4459,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_overrides_has_instance);
         }
 
+        case op_identity_with_profile: {
+            Node* src = get(VirtualRegister(currentInstruction[1].u.operand));
+            SpeculatedType speculation = static_cast<SpeculatedType>(currentInstruction[2].u.operand) << 32 | static_cast<SpeculatedType>(currentInstruction[3].u.operand);
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(IdentityWithProfile, OpInfo(speculation), src));
+            NEXT_OPCODE(op_identity_with_profile);
+        }
+
         case op_instanceof: {
             Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* prototype = get(VirtualRegister(currentInstruction[3].u.operand));

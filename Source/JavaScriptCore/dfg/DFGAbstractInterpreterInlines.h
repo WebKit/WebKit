@@ -199,7 +199,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         break;
     }
-        
+
+    case IdentityWithProfile:
     case Identity: {
         forNode(node) = forNode(node->child1());
         if (forNode(node).value())

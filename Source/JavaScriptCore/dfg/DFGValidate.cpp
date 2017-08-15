@@ -222,6 +222,7 @@ public:
                  
                 switch (node->op()) {
                 case Identity:
+                case IdentityWithProfile:
                     VALIDATE((node), canonicalResultRepresentation(node->result()) == canonicalResultRepresentation(node->child1()->result()));
                     break;
                 case SetLocal:

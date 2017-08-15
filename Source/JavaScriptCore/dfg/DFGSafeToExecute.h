@@ -143,6 +143,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case Int52Constant:
     case LazyJSConstant:
     case Identity:
+    case IdentityWithProfile:
     case ToThis:
     case CreateThis:
     case GetCallee:

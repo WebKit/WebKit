@@ -137,6 +137,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case Identity:
+    case IdentityWithProfile:
     case Phantom:
     case Check:
     case ExtractOSREntryLocal:
