@@ -1516,9 +1516,6 @@ webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-stream
 
 webkit.org/b/172469 [ ElCapitan ] imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Timeout ]
 
-# This test tests a feature that only exists on iOS.
-webkit.org/b/172737 fast/text/accessibility-bold-system-font-2.html [ ImageOnlyFailure ]
-
 # The modern-media-controls tests are disabled due to past flakiness and some major code changes.
 # As a result, a host of tests need to be updated and being turned on selectively here.
 media/modern-media-controls/airplay-button [ Pass ]
@@ -1615,3 +1612,6 @@ webkit.org/b/175102 [ ElCapitan ] workers/wasm-hashset-many-2.html [ Skip ]
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
 
 webkit.org/b/170698 [ Release ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html [ Pass Failure ]
+
+# This test is specific to Core Text.
+fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]

@@ -128,6 +128,12 @@ imported/w3c/web-platform-tests/css/css-ui-3/caret-color-018.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-019.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-ui-3/caret-color-020.html [ Skip ]
 
+# This test tests a feature that only exists on iOS.
+fast/text/accessibility-bold-system-font-2.html [ Skip ]
+
+# This test is specific to Core Text.
+fast/text/font-lookup-dot-prefix-case-sensitive.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
