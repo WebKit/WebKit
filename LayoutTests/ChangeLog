@@ -1,5 +1,11 @@
 2017-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed test gardening, remove unneeded expected.txt file.
+
+        * platform/mac-highsierra/http/tests/cookies/js-get-and-set-http-only-cookie-expected.txt: Removed.
+
+2017-08-14  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r220727.
 
     2017-08-14  Ryan Haddad  <ryanhaddad@apple.com>
