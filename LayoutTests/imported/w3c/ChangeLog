@@ -1,3 +1,19 @@
+2017-08-15  Youenn Fablet  <youenn@apple.com>
+
+        WPT harness errors on leaks bot
+        https://bugs.webkit.org/show_bug.cgi?id=175269
+
+        Reviewed by Alexey Proskuryakov.
+
+        To try debugging these errors, let's check whether the WPT server is
+        sending back resources of the expected size.
+
+        * web-platform-tests/tools/wptserve/wptserve/response.py:
+        (Response.write_content):
+        (ResponseWriter.write_content):
+        (ResponseWriter.write):
+        (ResponseWriter.write_content_file):
+
 2017-08-15  Chris Dumez  <cdumez@apple.com>
 
         Implement quota limitation for keepalive Fetch requests
