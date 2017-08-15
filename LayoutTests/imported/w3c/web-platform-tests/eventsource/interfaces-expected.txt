@@ -1,0 +1,53 @@
+CONSOLE MESSAGE: line 251: callback not yet supported
+Blocked access to external URL http://foo/
+CONSOLE MESSAGE: EventSource cannot load http://foo/. 
+EventSource IDL tests
+
+
+PASS EventTarget interface: existence and properties of interface object 
+PASS EventTarget interface object length 
+PASS EventTarget interface object name 
+PASS EventTarget interface: existence and properties of interface prototype object 
+PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property 
+PASS EventTarget interface: operation addEventListener(DOMString,EventListener,[object Object],[object Object]) 
+PASS EventTarget interface: operation removeEventListener(DOMString,EventListener,[object Object],[object Object]) 
+PASS EventTarget interface: operation dispatchEvent(Event) 
+PASS EventListener interface: existence and properties of interface object 
+PASS EventListener interface: existence and properties of interface prototype object 
+PASS EventListener interface: existence and properties of interface prototype object's "constructor" property 
+PASS EventListener interface: operation handleEvent(Event) 
+PASS EventSource interface: existence and properties of interface object 
+PASS EventSource interface object length 
+PASS EventSource interface object name 
+PASS EventSource interface: existence and properties of interface prototype object 
+PASS EventSource interface: existence and properties of interface prototype object's "constructor" property 
+PASS EventSource interface: attribute url 
+PASS EventSource interface: attribute withCredentials 
+PASS EventSource interface: constant CONNECTING on interface object 
+PASS EventSource interface: constant CONNECTING on interface prototype object 
+PASS EventSource interface: constant OPEN on interface object 
+PASS EventSource interface: constant OPEN on interface prototype object 
+PASS EventSource interface: constant CLOSED on interface object 
+PASS EventSource interface: constant CLOSED on interface prototype object 
+PASS EventSource interface: attribute readyState 
+PASS EventSource interface: attribute onopen 
+PASS EventSource interface: attribute onmessage 
+PASS EventSource interface: attribute onerror 
+PASS EventSource interface: operation close() 
+PASS EventSource interface: new EventSource("http://foo") must inherit property "url" with the proper type (0) 
+PASS EventSource interface: new EventSource("http://foo") must inherit property "withCredentials" with the proper type (1) 
+PASS EventSource interface: new EventSource("http://foo") must inherit property "CONNECTING" with the proper type (2) 
+PASS EventSource interface: new EventSource("http://foo") must inherit property "OPEN" with the proper type (3) 
+PASS EventSource interface: new EventSource("http://foo") must inherit property "CLOSED" with the proper type (4) 
+PASS EventSource interface: new EventSource("http://foo") must inherit property "readyState" with the proper type (5) 
+PASS EventSource interface: new EventSource("http://foo") must inherit property "onopen" with the proper type (6) 
+PASS EventSource interface: new EventSource("http://foo") must inherit property "onmessage" with the proper type (7) 
+PASS EventSource interface: new EventSource("http://foo") must inherit property "onerror" with the proper type (8) 
+PASS EventSource interface: new EventSource("http://foo") must inherit property "close" with the proper type (9) 
+PASS EventTarget interface: new EventSource("http://foo") must inherit property "addEventListener" with the proper type (0) 
+PASS EventTarget interface: calling addEventListener(DOMString,EventListener,[object Object],[object Object]) on new EventSource("http://foo") with too few arguments must throw TypeError 
+PASS EventTarget interface: new EventSource("http://foo") must inherit property "removeEventListener" with the proper type (1) 
+PASS EventTarget interface: calling removeEventListener(DOMString,EventListener,[object Object],[object Object]) on new EventSource("http://foo") with too few arguments must throw TypeError 
+PASS EventTarget interface: new EventSource("http://foo") must inherit property "dispatchEvent" with the proper type (2) 
+PASS EventTarget interface: calling dispatchEvent(Event) on new EventSource("http://foo") with too few arguments must throw TypeError 
+

@@ -1,5 +1,137 @@
 2017-08-14  Chris Dumez  <cdumez@apple.com>
 
+        Import eventsource Web-Platform-Tests
+        https://bugs.webkit.org/show_bug.cgi?id=175556
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/eventsource/OWNERS: Added.
+        * web-platform-tests/eventsource/README.md: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-close-expected.txt: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-close.htm: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-constructor-url-bogus-expected.txt: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-constructor-url-bogus.htm: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-eventtarget.worker-expected.txt: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-eventtarget.worker.html: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-eventtarget.worker.js: Added.
+        (async_test):
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-onmesage-expected.txt: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-onmesage.htm: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-onopen-expected.txt: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-onopen.htm: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-prototype-expected.txt: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-prototype.htm: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-url-expected.txt: Added.
+        * web-platform-tests/eventsource/dedicated-worker/eventsource-url.htm: Added.
+        * web-platform-tests/eventsource/dedicated-worker/w3c-import.log: Added.
+        * web-platform-tests/eventsource/event-data-expected.txt: Added.
+        * web-platform-tests/eventsource/event-data.html: Added.
+        * web-platform-tests/eventsource/eventsource-close-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-close.htm: Added.
+        * web-platform-tests/eventsource/eventsource-constructor-document-domain-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-constructor-document-domain.htm: Added.
+        * web-platform-tests/eventsource/eventsource-constructor-non-same-origin-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-constructor-non-same-origin.htm: Added.
+        * web-platform-tests/eventsource/eventsource-constructor-stringify-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-constructor-stringify.htm: Added.
+        * web-platform-tests/eventsource/eventsource-constructor-url-bogus-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-constructor-url-bogus.htm: Added.
+        * web-platform-tests/eventsource/eventsource-constructor-url-multi-window-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-constructor-url-multi-window.htm: Added.
+        * web-platform-tests/eventsource/eventsource-eventtarget-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-eventtarget.htm: Added.
+        * web-platform-tests/eventsource/eventsource-onmessage-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-onmessage-realm-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-onmessage-realm-support.htm: Added.
+        * web-platform-tests/eventsource/eventsource-onmessage-realm.htm: Added.
+        * web-platform-tests/eventsource/eventsource-onmessage-trusted-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-onmessage-trusted.htm: Added.
+        * web-platform-tests/eventsource/eventsource-onmessage.htm: Added.
+        * web-platform-tests/eventsource/eventsource-onopen-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-onopen.htm: Added.
+        * web-platform-tests/eventsource/eventsource-prototype-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-prototype.htm: Added.
+        * web-platform-tests/eventsource/eventsource-reconnect-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-reconnect.htm: Added.
+        * web-platform-tests/eventsource/eventsource-url-expected.txt: Added.
+        * web-platform-tests/eventsource/eventsource-url.htm: Added.
+        * web-platform-tests/eventsource/format-bom-2-expected.txt: Added.
+        * web-platform-tests/eventsource/format-bom-2.htm: Added.
+        * web-platform-tests/eventsource/format-bom-expected.txt: Added.
+        * web-platform-tests/eventsource/format-bom.htm: Added.
+        * web-platform-tests/eventsource/format-comments-expected.txt: Added.
+        * web-platform-tests/eventsource/format-comments.htm: Added.
+        * web-platform-tests/eventsource/format-data-before-final-empty-line-expected.txt: Added.
+        * web-platform-tests/eventsource/format-data-before-final-empty-line.htm: Added.
+        * web-platform-tests/eventsource/format-field-data-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-data.htm: Added.
+        * web-platform-tests/eventsource/format-field-event-empty-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-event-empty.htm: Added.
+        * web-platform-tests/eventsource/format-field-event-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-event.htm: Added.
+        * web-platform-tests/eventsource/format-field-id-2-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-id-2.htm: Added.
+        * web-platform-tests/eventsource/format-field-id-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-id.htm: Added.
+        * web-platform-tests/eventsource/format-field-parsing-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-parsing.htm: Added.
+        * web-platform-tests/eventsource/format-field-retry-bogus-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-retry-bogus.htm: Added.
+        * web-platform-tests/eventsource/format-field-retry-empty-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-retry-empty.htm: Added.
+        * web-platform-tests/eventsource/format-field-retry-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-retry.htm: Added.
+        * web-platform-tests/eventsource/format-field-unknown-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-unknown.htm: Added.
+        * web-platform-tests/eventsource/format-leading-space-expected.txt: Added.
+        * web-platform-tests/eventsource/format-leading-space.htm: Added.
+        * web-platform-tests/eventsource/format-mime-bogus-expected.txt: Added.
+        * web-platform-tests/eventsource/format-mime-bogus.htm: Added.
+        * web-platform-tests/eventsource/format-mime-trailing-semicolon-expected.txt: Added.
+        * web-platform-tests/eventsource/format-mime-trailing-semicolon.htm: Added.
+        * web-platform-tests/eventsource/format-mime-valid-bogus-expected.txt: Added.
+        * web-platform-tests/eventsource/format-mime-valid-bogus.htm: Added.
+        * web-platform-tests/eventsource/format-newlines-expected.txt: Added.
+        * web-platform-tests/eventsource/format-newlines.htm: Added.
+        * web-platform-tests/eventsource/format-null-character-expected.txt: Added.
+        * web-platform-tests/eventsource/format-null-character.html: Added.
+        * web-platform-tests/eventsource/format-utf-8-expected.txt: Added.
+        * web-platform-tests/eventsource/format-utf-8.htm: Added.
+        * web-platform-tests/eventsource/interfaces-expected.txt: Added.
+        * web-platform-tests/eventsource/interfaces.html: Added.
+        * web-platform-tests/eventsource/request-accept-expected.txt: Added.
+        * web-platform-tests/eventsource/request-accept.htm: Added.
+        * web-platform-tests/eventsource/request-redirect-expected.txt: Added.
+        * web-platform-tests/eventsource/request-redirect.htm: Added.
+        * web-platform-tests/eventsource/request-status-error-expected.txt: Added.
+        * web-platform-tests/eventsource/request-status-error.htm: Added.
+        * web-platform-tests/eventsource/resources/accept.event_stream: Added.
+        * web-platform-tests/eventsource/resources/cache-control.event_stream: Added.
+        * web-platform-tests/eventsource/resources/cors-cookie.py: Added.
+        (main):
+        * web-platform-tests/eventsource/resources/cors.py: Added.
+        (run_other):
+        (main):
+        * web-platform-tests/eventsource/resources/init.htm: Added.
+        * web-platform-tests/eventsource/resources/last-event-id.py: Added.
+        (main):
+        * web-platform-tests/eventsource/resources/message.py: Added.
+        (main):
+        * web-platform-tests/eventsource/resources/message2.py: Added.
+        (main):
+        * web-platform-tests/eventsource/resources/reconnect-fail.py: Added.
+        (main):
+        * web-platform-tests/eventsource/resources/status-error.py: Added.
+        (main):
+        * web-platform-tests/eventsource/resources/status-reconnect.py: Added.
+        (main):
+        * web-platform-tests/eventsource/resources/w3c-import.log: Added.
+        * web-platform-tests/eventsource/w3c-import.log: Added.
+
+2017-08-14  Chris Dumez  <cdumez@apple.com>
+
         XHR should only fire an abort event if the cancellation was requested by the client
         https://bugs.webkit.org/show_bug.cgi?id=175546
 

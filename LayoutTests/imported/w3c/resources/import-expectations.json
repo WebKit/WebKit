@@ -127,7 +127,7 @@
     "web-platform-tests/encoding": "skip", 
     "web-platform-tests/encrypted-media": "import", 
     "web-platform-tests/encrypted-media/Google": "skip", 
-    "web-platform-tests/eventsource": "skip", 
+    "web-platform-tests/eventsource": "import", 
     "web-platform-tests/ext-xhtml-pubid": "skip", 
     "web-platform-tests/fetch": "import", 
     "web-platform-tests/fullscreen": "skip", 

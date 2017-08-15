@@ -272,6 +272,7 @@
         "web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.xht",
         "web-platform-tests/dom/nodes/getElementsByClassNameFrame.htm",
         "web-platform-tests/dom/ranges/Range-test-iframe.html",
+        "web-platform-tests/eventsource/eventsource-onmessage-realm-support.htm",
         "web-platform-tests/fetch/api/request/multi-globals/current/current.html",
         "web-platform-tests/fetch/api/request/multi-globals/incumbent/incumbent.html",
         "web-platform-tests/fetch/api/response/multi-globals/current/current.html",

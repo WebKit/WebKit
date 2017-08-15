@@ -1,0 +1,16 @@
+Blocked access to external URL http://example.not/
+CONSOLE MESSAGE: EventSource cannot load http://example.not/. 
+Blocked access to external URL https://example.not/test
+CONSOLE MESSAGE: EventSource cannot load https://example.not/test. 
+CONSOLE MESSAGE: EventSource cannot load ftp://example.not/. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load about:blank. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load mailto:whatwg@awesome.example. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load javascript:alert('FAIL'). Cross origin requests are only supported for HTTP.
+
+PASS EventSource: constructor (act as if there is a network error) (http://example.not/) 
+PASS EventSource: constructor (act as if there is a network error) (https://example.not/test) 
+PASS EventSource: constructor (act as if there is a network error) (ftp://example.not/) 
+PASS EventSource: constructor (act as if there is a network error) (about:blank) 
+PASS EventSource: constructor (act as if there is a network error) (mailto:whatwg@awesome.example) 
+PASS EventSource: constructor (act as if there is a network error) (javascript:alert('FAIL')) 
+
