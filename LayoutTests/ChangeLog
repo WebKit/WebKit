@@ -1,5 +1,17 @@
 2017-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r220727.
+
+    2017-08-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaseline editing/mac/input/firstrectforcharacterrange-styled.html.
+
+            Unreviewed test gardening.
+
+            * platform/mac-highsierra/editing/mac/input/firstrectforcharacterrange-styled-expected.txt: Added.
+
+2017-08-14  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r220474.
 
     2017-08-09  Matt Lewis  <jlewis3@apple.com>
