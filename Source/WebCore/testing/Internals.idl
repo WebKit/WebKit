@@ -323,7 +323,6 @@ enum EventThrottlingBehavior {
 
     [MayThrowException] void setUseFixedLayout(boolean useFixedLayout);
     [MayThrowException] void setFixedLayoutSize(long width, long height);
-    void setPrinting(long width, long height);
 
     [MayThrowException] void setViewExposedRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
 

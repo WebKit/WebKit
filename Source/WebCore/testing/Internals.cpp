@@ -375,12 +375,6 @@ static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerType
     return true;
 }
 
-static std::unique_ptr<PrintContext>& printContextForTesting()
-{
-    static NeverDestroyed<std::unique_ptr<PrintContext>> context;
-    return context;
-}
-
 const char* Internals::internalsId = "internals";
 
 Ref<Internals> Internals::create(Document& document)
@@ -463,8 +457,6 @@ void Internals::resetToConsistentState(Page& page)
     MockPreviewLoaderClient::singleton().setPassword("");
     PreviewLoader::setClientForTesting(nullptr);
 #endif
-
-    printContextForTesting() = nullptr;
 
 #if USE(LIBWEBRTC)
     WebCore::useRealRTCPeerConnectionFactory();
@@ -2609,12 +2601,6 @@ ExceptionOr<void> Internals::setViewExposedRect(float x, float y, float width, f
 
     document->view()->setViewExposedRect(FloatRect(x, y, width, height));
     return { };
-}
-
-void Internals::setPrinting(int width, int height)
-{
-    printContextForTesting() = std::make_unique<PrintContext>(frame());
-    printContextForTesting()->begin(width, height);
 }
 
 void Internals::setHeaderHeight(float height)
