@@ -4,7 +4,7 @@ PASS basic with dispatchEvent()
 PASS basic with wrong event class 
 PASS look at parents only when event bubbles 
 FAIL look at parents when event bubbles assert_true: expected true got false
-FAIL pick the first with activation behavior <input type=checkbox> assert_true: child pre-click must be triggered expected true got false
+PASS pick the first with activation behavior <input type=checkbox> 
 PASS pick the first with activation behavior <a href> 
 PASS event state during post-click handling 
 PASS redispatch during post-click handling 

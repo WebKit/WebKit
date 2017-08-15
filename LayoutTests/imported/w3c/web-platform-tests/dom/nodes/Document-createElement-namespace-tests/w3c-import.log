@@ -26,6 +26,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_xhtml.svg
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_xhtml.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.svg
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests/generate.py
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests/mathml.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace-tests/mathml.svg

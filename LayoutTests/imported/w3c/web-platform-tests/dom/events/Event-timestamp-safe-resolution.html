@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script type="text/javascript">
+'use strict';
+
+test(function() {
+    let e1 = new MouseEvent('test1');
+    let e2 = new MouseEvent('test2');
+
+    while (e1.timeStamp == e2.timeStamp)
+        e2 = new MouseEvent('test2');
+
+    let expectedResolutionMilliseconds = 0.005;
+    let integerMultipleOfResolution = (e2.timeStamp - e1.timeStamp) / expectedResolutionMilliseconds;
+    let shouldBeNearZeroOrOne = integerMultipleOfResolution % 1;
+    assert_true(shouldBeNearZeroOrOne < 1e-10 || Math.abs(shouldBeNearZeroOrOne - 1) < 1e-10);
+}, 'Event timestamp should not have a resolution better that 5 microseconds');
+</script>

@@ -1,3 +1,79 @@
+2017-08-15  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync DOM Web-Platform-Tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=175588
+
+        Reviewed by Youenn Fablet.
+
+        Re-sync DOM Web-Platform-Tests from upstream b5129e92ce.
+
+        * web-platform-tests/dom/abort/event.any-expected.txt: Added.
+        * web-platform-tests/dom/abort/event.any.html: Added.
+        * web-platform-tests/dom/abort/event.any.js: Added.
+        * web-platform-tests/dom/abort/event.any.worker-expected.txt: Added.
+        * web-platform-tests/dom/abort/event.any.worker.html: Added.
+        * web-platform-tests/dom/abort/w3c-import.log: Added.
+        * web-platform-tests/dom/events/Event-dispatch-click-expected.txt:
+        * web-platform-tests/dom/events/Event-dispatch-click.html:
+        * web-platform-tests/dom/events/Event-timestamp-high-resolution-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-timestamp-high-resolution.html: Added.
+        * web-platform-tests/dom/events/Event-timestamp-safe-resolution-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-timestamp-safe-resolution.html: Added.
+        * web-platform-tests/dom/events/EventTarget-constructible.any-expected.txt: Added.
+        * web-platform-tests/dom/events/EventTarget-constructible.any.html: Added.
+        * web-platform-tests/dom/events/EventTarget-constructible.any.js: Added.
+        (test.listener):
+        (test):
+        (test.prototype.on):
+        (test.prototype.off):
+        (test.prototype.dispatch):
+        * web-platform-tests/dom/events/EventTarget-constructible.any.worker-expected.txt: Added.
+        * web-platform-tests/dom/events/EventTarget-constructible.any.worker.html: Added.
+        * web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+        * web-platform-tests/dom/events/w3c-import.log:
+        * web-platform-tests/dom/interface-objects-expected.txt:
+        * web-platform-tests/dom/interface-objects.html:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces.html:
+        * web-platform-tests/dom/nodes/Document-constructor-svg.svg: Removed.
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01-expected.txt: Removed.
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01.html: Removed.
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02-expected.txt:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/w3c-import.log:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/w3c-import.log:
+        * web-platform-tests/dom/nodes/Document-createEvent-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createEvent.html:
+        * web-platform-tests/dom/nodes/Document-createEvent.js:
+        * web-platform-tests/dom/nodes/Element-classlist-expected.txt:
+        * web-platform-tests/dom/nodes/Element-classlist.html:
+        * web-platform-tests/dom/nodes/Element-matches-init.js: Copied from LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Element-matches.html.
+        (init):
+        * web-platform-tests/dom/nodes/Element-matches.html:
+        * web-platform-tests/dom/nodes/Element-webkitMatchesSelector.html:
+        * web-platform-tests/dom/nodes/Node-cloneNode-expected.txt:
+        * web-platform-tests/dom/nodes/Node-cloneNode.html:
+        * web-platform-tests/dom/nodes/w3c-import.log:
+        * web-platform-tests/interfaces/OWNERS: Added.
+        * web-platform-tests/interfaces/clipboard.idl: Added.
+        * web-platform-tests/interfaces/cssom.idl: Added.
+        * web-platform-tests/interfaces/dedicated-workers.idl: Added.
+        * web-platform-tests/interfaces/dom.idl: Added.
+        * web-platform-tests/interfaces/fullscreen.idl: Added.
+        * web-platform-tests/interfaces/geometry.idl: Added.
+        * web-platform-tests/interfaces/html.idl: Added.
+        * web-platform-tests/interfaces/mediacapture-main.idl: Added.
+        * web-platform-tests/interfaces/remoteplayback.idl: Added.
+        * web-platform-tests/interfaces/touchevents.idl: Added.
+        * web-platform-tests/interfaces/uievents.idl: Added.
+        * web-platform-tests/interfaces/web-share.idl: Added.
+        * web-platform-tests/interfaces/webrtc-pc.idl: Added.
+        * web-platform-tests/interfaces/webusb.idl: Added.
+
 2017-08-15  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Adding generic support for CacheStorage and Cache methods

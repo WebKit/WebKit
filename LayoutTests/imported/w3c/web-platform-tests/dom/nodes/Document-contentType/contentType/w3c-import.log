@@ -16,7 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_bmp.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_css.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_gif.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_html.html

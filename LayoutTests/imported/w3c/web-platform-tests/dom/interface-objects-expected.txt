@@ -3,6 +3,8 @@ PASS Interface objects properties should not be Enumerable
 PASS Should be able to delete Event. 
 PASS Should be able to delete CustomEvent. 
 PASS Should be able to delete EventTarget. 
+FAIL Should be able to delete AbortController. assert_true: Interface should exist. expected true got false
+FAIL Should be able to delete AbortSignal. assert_true: Interface should exist. expected true got false
 PASS Should be able to delete Node. 
 PASS Should be able to delete Document. 
 PASS Should be able to delete DOMImplementation. 

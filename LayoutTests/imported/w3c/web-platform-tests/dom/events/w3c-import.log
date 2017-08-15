@@ -43,6 +43,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-initEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-propagation.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-subclasses-constructors.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-safe-resolution.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-type-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-type.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-handleEvent.html
@@ -54,6 +56,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListener-invoke-legacy.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventListenerOptions-capture.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-addEventListener.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-constructible.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-returnvalue.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-removeEventListener.html
