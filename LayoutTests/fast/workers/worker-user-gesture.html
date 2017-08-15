@@ -18,12 +18,13 @@ function doUserGesture() {
     let inputElement = document.getElementById("testButton");
     let centerX = inputElement.offsetLeft + inputElement.offsetWidth / 2;
     let centerY = inputElement.offsetTop + inputElement.offsetHeight / 2;
-    UIHelper.activateAt(centerX, centerY);
-    if (++gestureCount == 10) {
-        finishJSTest();
-        return;
-    }
-    setTimeout(doUserGesture, 0);
+    UIHelper.activateAt(centerX, centerY).then(function() {
+        if (++gestureCount == 10) {
+            finishJSTest();
+            return;
+        }
+        setTimeout(doUserGesture, 0);
+    });
 }
 
 setTimeout(doUserGesture, 0);
