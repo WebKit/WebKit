@@ -1,5 +1,17 @@
 2017-08-14  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove ENABLE(REQUEST_AUTOCOMPLETE) code, which was disabled everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=175504
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didRequestAutocomplete): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2017-08-14  Simon Fraser  <simon.fraser@apple.com>
+
         Remove ENABLE_VIEW_MODE_CSS_MEDIA and related code
         https://bugs.webkit.org/show_bug.cgi?id=175557
 

@@ -179,16 +179,6 @@
     return IMPL->checkValidity();
 }
 
-
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-- (void)requestAutocomplete
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->requestAutocomplete();
-}
-
-#endif
-
 @end
 
 DOMHTMLFormElement *kit(WebCore::HTMLFormElement* value)

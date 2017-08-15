@@ -1779,14 +1779,6 @@ void WebFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblo
 
 #endif
 
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-
-void WebFrameLoaderClient::didRequestAutocomplete(Ref<WebCore::FormState>&&)
-{
-}
-
-#endif
-
 void WebFrameLoaderClient::prefetchDNS(const String& hostname)
 {
     WebProcess::singleton().prefetchDNS(hostname);

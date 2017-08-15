@@ -234,10 +234,6 @@ private:
 
     Ref<WebCore::FrameNetworkingContext> createNetworkingContext() final;
 
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-    void didRequestAutocomplete(Ref<WebCore::FormState>&&) final { }
-#endif
-
     bool shouldPaintBrokenImage(const WebCore::URL&) const final;
 
 #if USE(QUICK_LOOK)
