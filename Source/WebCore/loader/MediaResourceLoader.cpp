@@ -82,7 +82,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
     if (m_mediaElement)
         cacheRequest.setInitiator(*m_mediaElement.get());
 
-    CachedResourceHandle<CachedRawResource> resource = m_document->cachedResourceLoader().requestMedia(WTFMove(cacheRequest));
+    auto resource = m_document->cachedResourceLoader().requestMedia(WTFMove(cacheRequest)).valueOr(nullptr);
     if (!resource)
         return nullptr;
 

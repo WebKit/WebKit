@@ -574,7 +574,7 @@ void SVGUseElement::updateExternalDocument()
         options.mode = FetchOptions::Mode::SameOrigin;
         CachedResourceRequest request { ResourceRequest { externalDocumentURL }, options };
         request.setInitiator(*this);
-        m_externalDocument = document().cachedResourceLoader().requestSVGDocument(WTFMove(request));
+        m_externalDocument = document().cachedResourceLoader().requestSVGDocument(WTFMove(request)).valueOr(nullptr);
         if (m_externalDocument)
             m_externalDocument->addClient(*this);
     }

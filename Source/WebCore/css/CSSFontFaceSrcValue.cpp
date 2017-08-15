@@ -101,7 +101,7 @@ CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document, bool isSVG, bool
 
     CachedResourceRequest request(ResourceRequest(document->completeURL(m_resource)), options);
     request.setInitiator(cachedResourceRequestInitiators().css);
-    m_cachedFont = document->cachedResourceLoader().requestFont(WTFMove(request), isSVG);
+    m_cachedFont = document->cachedResourceLoader().requestFont(WTFMove(request), isSVG).valueOr(nullptr);
     return m_cachedFont.get();
 }
 

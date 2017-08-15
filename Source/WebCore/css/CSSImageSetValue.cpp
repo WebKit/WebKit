@@ -105,7 +105,7 @@ std::pair<CachedImage*, float> CSSImageSetValue::loadBestFitImage(CachedResource
         if (options.mode == FetchOptions::Mode::Cors)
             request.updateForAccessControl(*document);
 
-        m_cachedImage = loader.requestImage(WTFMove(request));
+        m_cachedImage = loader.requestImage(WTFMove(request)).valueOr(nullptr);
         m_bestFitImageScaleFactor = image.scaleFactor;
     }
     return { m_cachedImage.get(), m_bestFitImageScaleFactor };

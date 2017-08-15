@@ -77,7 +77,7 @@ void WebCoreAVCFResourceLoader::startLoading()
     CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::DisallowCaching));
 
     CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader();
-    m_resource = loader ? loader->requestRawResource(WTFMove(request)) : 0;
+    m_resource = loader ? loader->requestRawResource(WTFMove(request)).valueOr(nullptr) : nullptr;
     if (m_resource)
         m_resource->addClient(*this);
     else {

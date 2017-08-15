@@ -313,7 +313,7 @@ void HTMLLinkElement::process()
         request.setAsPotentiallyCrossOrigin(crossOrigin(), document());
 
         ASSERT_WITH_SECURITY_IMPLICATION(!m_cachedSheet);
-        m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request));
+        m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request)).valueOr(nullptr);
 
         if (m_cachedSheet)
             m_cachedSheet->addClient(*this);

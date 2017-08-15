@@ -75,11 +75,12 @@ void IconLoader::startLoading()
 
     request.setInitiator(cachedResourceRequestInitiators().icon);
 
-    m_resource = frame->document()->cachedResourceLoader().requestIcon(WTFMove(request));
+    auto cachedResource = frame->document()->cachedResourceLoader().requestIcon(WTFMove(request));
+    m_resource = cachedResource.valueOr(nullptr);
     if (m_resource)
         m_resource->addClient(*this);
     else
-        LOG_ERROR("Failed to start load for icon at url %s", resourceRequestURL.string().ascii().data());
+        LOG_ERROR("Failed to start load for icon at url %s (error: %s)", resourceRequestURL.string().ascii().data(), cachedResource.error().localizedDescription().utf8().data());
 }
 
 void IconLoader::stopLoading()

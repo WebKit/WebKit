@@ -73,13 +73,12 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Navigator&, Document& document, co
                 options.mode = FetchOptions::Mode::NoCors;
         }
     }
-    ResourceError error;
-    if (!document.cachedResourceLoader().requestBeaconResource({ WTFMove(request), options }, &error)) {
-        if (!error.isNull())
-            document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, error.localizedDescription());
-        return false;
-    }
-    return true;
+    auto cachedResource = document.cachedResourceLoader().requestBeaconResource({ WTFMove(request), options });
+    if (cachedResource)
+        return true;
+
+    document.addConsoleMessage(MessageSource::Network, MessageLevel::Error, cachedResource.error().localizedDescription());
+    return false;
 }
 
 }

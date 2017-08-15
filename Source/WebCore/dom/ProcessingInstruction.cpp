@@ -162,14 +162,14 @@ void ProcessingInstruction::checkStyleSheet()
             if (m_isXSL) {
                 auto options = CachedResourceLoader::defaultCachedResourceOptions();
                 options.mode = FetchOptions::Mode::SameOrigin;
-                m_cachedSheet = document().cachedResourceLoader().requestXSLStyleSheet({ResourceRequest(document().completeURL(href)), options});
+                m_cachedSheet = document().cachedResourceLoader().requestXSLStyleSheet({ResourceRequest(document().completeURL(href)), options}).valueOr(nullptr);
             } else
 #endif
             {
                 String charset = attrs.get("charset");
                 CachedResourceRequest request(document().completeURL(href), CachedResourceLoader::defaultCachedResourceOptions(), std::nullopt, charset.isEmpty() ? document().charset() : WTFMove(charset));
 
-                m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request));
+                m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request)).valueOr(nullptr);
             }
             if (m_cachedSheet)
                 m_cachedSheet->addClient(*this);

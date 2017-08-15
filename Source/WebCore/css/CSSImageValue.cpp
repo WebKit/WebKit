@@ -74,7 +74,7 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
             ASSERT(loader.document());
             request.updateForAccessControl(*loader.document());
         }
-        m_cachedImage = loader.requestImage(WTFMove(request));
+        m_cachedImage = loader.requestImage(WTFMove(request)).valueOr(nullptr);
     }
     return m_cachedImage.get();
 }

@@ -190,7 +190,7 @@ public:
     void didReachLayoutMilestone(LayoutMilestones);
     void didFirstLayout();
 
-    void loadedResourceFromMemoryCache(CachedResource*, ResourceRequest& newRequest);
+    void loadedResourceFromMemoryCache(CachedResource&, ResourceRequest& newRequest, ResourceError&);
     void tellClientAboutPastMemoryCacheLoads();
 
     void checkLoadComplete();
