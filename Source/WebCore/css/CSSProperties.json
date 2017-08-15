@@ -407,8 +407,8 @@
                 "enable-if": "ENABLE_VARIATION_FONTS"
             },
             "specification": {
-                "category": "css-fonts",
-                "url": "https://drafts.csswg.org/css-fonts-4/#low-level-font-variation-settings-control-the-font-variation-settings-property"
+                "category": "css-fonts-4",
+                "url": "https://drafts.csswg.org/css-fonts-4/#font-variation-settings-def"
             }
         },
         "-webkit-font-kerning": {
@@ -567,8 +567,8 @@
                 "enable-if": "ENABLE_VARIATION_FONTS"
             },
             "specification": {
-                "category": "css-fonts",
-                "url": "https://drafts.csswg.org/css-fonts-4/#optical-sizing-control-the-font-optical-sizing-property"
+                "category": "css-fonts-4",
+                "url": "https://drafts.csswg.org/css-fonts-4/#font-optical-sizing-def"
             }
         },
         "font": {
@@ -3550,6 +3550,22 @@
                 "category": "css-fonts",
                 "url": "https://www.w3.org/TR/css-fonts-3/#descdef-unicode-range"
             }
+        },
+        "font-display": {
+            "codegen-properties": {
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-fonts-4",
+                "url": "https://drafts.csswg.org/css-fonts-4/#font-display-desc"
+            },
+            "values": [
+                "auto",
+                "block",
+                "swap",
+                "fallback",
+                "optional"
+            ]
         },
         "vector-effect": {
             "values": [
@@ -6751,6 +6767,11 @@
             "shortname": "CSS Fonts",
             "longname": "CSS Fonts Module",
             "url": "https://www.w3.org/TR/css-fonts-3/"
+        },
+        "css-fonts-4": {
+            "shortname": "CSS Fonts Level 4",
+            "longname": "CSS Fonts Module Level 4",
+            "url": "https://drafts.csswg.org/css-fonts-4"
         },
         "css-grid": {
             "shortname": "CSS Grid Layout",

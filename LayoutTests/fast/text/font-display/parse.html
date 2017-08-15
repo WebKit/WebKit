@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style id="style">
+@font-face {
+    font-family: "Test0";
+    src: local("Times");
+    font-display: garbage;
+}
+@font-face {
+    font-family: "Test1";
+    src: local("Times");
+}
+@font-face {
+    font-family: "Test2";
+    src: local("Times");
+    font-display: block swap;
+}
+@font-face {
+    font-family: "Test3";
+    src: local("Times");
+    font-display: auto;
+}
+@font-face {
+    font-family: "Test4";
+    src: local("Times");
+    font-display: block;
+}
+@font-face {
+    font-family: "Test5";
+    src: local("Times");
+    font-display: swap;
+}
+@font-face {
+    font-family: "Test6";
+    src: local("Times");
+    font-display: fallback;
+}
+@font-face {
+    font-family: "Test7";
+    src: local("Times");
+    font-display: optional;
+}
+@font-face {
+    font-family: "Test8";
+    src: local("Times");
+    font-display: ;
+}
+</style>
+</head>
+<body>
+<div id="test9" style="font-display: block"></div>
+<script>
+description("This test makes sure that the font-display descriptor in @font-face is appropriately parsed.");
+
+var sheet = document.getElementById("style").sheet;
+shouldBeEqualToString("sheet.rules[0].style.getPropertyValue('font-display')", "");
+shouldBeEqualToString("sheet.rules[1].style.getPropertyValue('font-display')", "");
+shouldBeEqualToString("sheet.rules[2].style.getPropertyValue('font-display')", "");
+shouldBeEqualToString("sheet.rules[3].style.getPropertyValue('font-display')", "auto");
+shouldBeEqualToString("sheet.rules[4].style.getPropertyValue('font-display')", "block");
+shouldBeEqualToString("sheet.rules[5].style.getPropertyValue('font-display')", "swap");
+shouldBeEqualToString("sheet.rules[6].style.getPropertyValue('font-display')", "fallback");
+shouldBeEqualToString("sheet.rules[7].style.getPropertyValue('font-display')", "optional");
+shouldBeEqualToString("sheet.rules[8].style.getPropertyValue('font-display')", "");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test9')).getPropertyValue('font-display')", "");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

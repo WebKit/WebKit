@@ -5697,4 +5697,57 @@ template<> inline CSSPrimitiveValue::operator FontOpticalSizing() const
     return FontOpticalSizing::Enabled;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontLoadingBehavior behavior)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (behavior) {
+    case FontLoadingBehavior::Auto:
+        m_value.valueID = CSSValueAuto;
+        break;
+    case FontLoadingBehavior::Block:
+        m_value.valueID = CSSValueBlock;
+        break;
+    case FontLoadingBehavior::Swap:
+        m_value.valueID = CSSValueSwap;
+        break;
+    case FontLoadingBehavior::Fallback:
+        m_value.valueID = CSSValueFallback;
+        break;
+    case FontLoadingBehavior::Optional:
+        m_value.valueID = CSSValueOptional;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator FontLoadingBehavior() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueAuto:
+        return FontLoadingBehavior::Auto;
+    case CSSValueBlock:
+        return FontLoadingBehavior::Block;
+    case CSSValueSwap:
+        return FontLoadingBehavior::Swap;
+    case CSSValueFallback:
+        return FontLoadingBehavior::Fallback;
+    case CSSValueOptional:
+        return FontLoadingBehavior::Optional;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return FontLoadingBehavior::Auto;
+}
+
+/*
+enum class FontLoadingBehavior {
+    Auto, Block, Swap, Fallback, Optional
+};
+*/
+
 }

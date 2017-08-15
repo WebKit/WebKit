@@ -4018,6 +4018,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         /* Unimplemented @font-face properties */
         case CSSPropertySrc:
         case CSSPropertyUnicodeRange:
+        case CSSPropertyFontDisplay:
             break;
 
         /* Other unimplemented properties */

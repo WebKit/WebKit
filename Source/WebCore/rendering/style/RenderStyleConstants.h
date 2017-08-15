@@ -753,6 +753,10 @@ enum class PaintType {
     Markers
 };
 
+enum class FontLoadingBehavior {
+    Auto, Block, Swap, Fallback, Optional
+};
+
 extern const float defaultMiterLimit;
 
 } // namespace WebCore

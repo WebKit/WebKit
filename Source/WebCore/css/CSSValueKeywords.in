@@ -1347,3 +1347,10 @@ no-preference
 // auto-repeat
 auto-fill
 auto-fit
+
+// font-display
+// auto
+// block
+swap
+fallback
+optional

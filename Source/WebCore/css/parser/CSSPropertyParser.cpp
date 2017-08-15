@@ -4304,6 +4304,11 @@ static RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange& ran
     return values;
 }
 
+static RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange& range)
+{
+    return consumeIdent<CSSValueAuto, CSSValueBlock, CSSValueSwap, CSSValueFallback, CSSValueOptional>(range);
+}
+
 static RefPtr<CSSValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     String url = consumeUrlAsStringView(range).toString();
@@ -4376,6 +4381,9 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
         break;
     case CSSPropertyUnicodeRange:
         parsedValue = consumeFontFaceUnicodeRange(m_range);
+        break;
+    case CSSPropertyFontDisplay:
+        parsedValue = consumeFontFaceFontDisplay(m_range);
         break;
     case CSSPropertyFontWeight:
 #if ENABLE(VARIATION_FONTS)

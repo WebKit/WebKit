@@ -164,6 +164,7 @@ bool CSSProperty::isDescriptorOnly(CSSPropertyID propertyID)
 #endif
     case CSSPropertySrc:
     case CSSPropertyUnicodeRange:
+    case CSSPropertyFontDisplay:
         return true;
     default:
         return false;
