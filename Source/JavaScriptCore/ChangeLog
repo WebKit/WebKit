@@ -1,5 +1,25 @@
 2017-08-15  Keith Miller  <keith_miller@apple.com>
 
+        JSC named bytecode offsets should use references rather than pointers
+        https://bugs.webkit.org/show_bug.cgi?id=175601
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+
+2017-08-15  Keith Miller  <keith_miller@apple.com>
+
         Enable named offsets into JSC bytecodes
         https://bugs.webkit.org/show_bug.cgi?id=175561
 

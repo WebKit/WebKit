@@ -4451,13 +4451,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_overrides_has_instance: {
-            auto bytecode = reinterpret_cast<OpOverridesHasInstance*>(currentInstruction);
+            auto& bytecode = *reinterpret_cast<OpOverridesHasInstance*>(currentInstruction);
             JSFunction* defaultHasInstanceSymbolFunction = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin())->functionProtoHasInstanceSymbolFunction();
 
-            Node* constructor = get(VirtualRegister(bytecode->constructor()));
-            Node* hasInstanceValue = get(VirtualRegister(bytecode->hasInstanceValue()));
+            Node* constructor = get(VirtualRegister(bytecode.constructor()));
+            Node* hasInstanceValue = get(VirtualRegister(bytecode.hasInstanceValue()));
 
-            set(VirtualRegister(bytecode->dst()), addToGraph(OverridesHasInstance, OpInfo(m_graph.freeze(defaultHasInstanceSymbolFunction)), constructor, hasInstanceValue));
+            set(VirtualRegister(bytecode.dst()), addToGraph(OverridesHasInstance, OpInfo(m_graph.freeze(defaultHasInstanceSymbolFunction)), constructor, hasInstanceValue));
             NEXT_OPCODE(op_overrides_has_instance);
         }
 
@@ -4469,19 +4469,19 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_instanceof: {
-            auto bytecode = reinterpret_cast<OpInstanceof*>(currentInstruction);
-            Node* value = get(VirtualRegister(bytecode->value()));
-            Node* prototype = get(VirtualRegister(bytecode->prototype()));
-            set(VirtualRegister(bytecode->dst()), addToGraph(InstanceOf, value, prototype));
+            auto& bytecode = *reinterpret_cast<OpInstanceof*>(currentInstruction);
+            Node* value = get(VirtualRegister(bytecode.value()));
+            Node* prototype = get(VirtualRegister(bytecode.prototype()));
+            set(VirtualRegister(bytecode.dst()), addToGraph(InstanceOf, value, prototype));
             NEXT_OPCODE(op_instanceof);
         }
 
         case op_instanceof_custom: {
-            auto bytecode = reinterpret_cast<OpInstanceofCustom*>(currentInstruction);
-            Node* value = get(VirtualRegister(bytecode->value()));
-            Node* constructor = get(VirtualRegister(bytecode->constructor()));
-            Node* hasInstanceValue = get(VirtualRegister(bytecode->hasInstanceValue()));
-            set(VirtualRegister(bytecode->dst()), addToGraph(InstanceOfCustom, value, constructor, hasInstanceValue));
+            auto& bytecode = *reinterpret_cast<OpInstanceofCustom*>(currentInstruction);
+            Node* value = get(VirtualRegister(bytecode.value()));
+            Node* constructor = get(VirtualRegister(bytecode.constructor()));
+            Node* hasInstanceValue = get(VirtualRegister(bytecode.hasInstanceValue()));
+            set(VirtualRegister(bytecode.dst()), addToGraph(InstanceOfCustom, value, constructor, hasInstanceValue));
             NEXT_OPCODE(op_instanceof_custom);
         }
         case op_is_empty: {
