@@ -350,7 +350,6 @@ public:
     ExceptionOr<void> setUseFixedLayout(bool);
     ExceptionOr<void> setFixedLayoutSize(int width, int height);
     ExceptionOr<void> setViewExposedRect(float left, float top, float width, float height);
-    void setPrinting(int width, int height);
 
     void setHeaderHeight(float);
     void setFooterHeight(float);
