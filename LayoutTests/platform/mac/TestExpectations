@@ -1615,3 +1615,5 @@ webkit.org/b/170698 [ Release ] imported/w3c/web-platform-tests/IndexedDB/interl
 
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
+
+webkit.org/b/175592 fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Pass Timeout ]
