@@ -1,3 +1,19 @@
+2017-08-15  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Ensure ResourceResponse is not null when redirected/tainting/type fields are set
+        https://bugs.webkit.org/show_bug.cgi?id=175538
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+        This change ensures that response type is preserved when encoding/decoding ResourceResponse, in particular the error type.
+        This will allow Cache API to preserve responses when reading them from a different process.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::setType):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::setType):
+
 2017-08-15  Chris Dumez  <cdumez@apple.com>
 
         Update CachedResourceLoader::requestResource() to return a WTF::Expected
