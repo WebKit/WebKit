@@ -251,6 +251,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_KEYBOARD_CODE_ATTRIBUTE 1
 #endif
 
+#if !defined(ENABLE_PAYMENT_REQUEST)
+#define ENABLE_PAYMENT_REQUEST 1
+#endif
+
 #endif /* PLATFORM(COCOA) */
 
 #if !PLATFORM(COCOA)
@@ -574,6 +578,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #if !defined(ENABLE_PAN_SCROLLING)
 #define ENABLE_PAN_SCROLLING 1
 #endif
+#endif
+
+#if !defined(ENABLE_PAYMENT_REQUEST)
+#define ENABLE_PAYMENT_REQUEST 0
 #endif
 
 #if !defined(ENABLE_POINTER_LOCK)

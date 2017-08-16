@@ -517,6 +517,10 @@ WK_EXPORT bool WKPreferencesGetIsSecureContextAttributeEnabled(WKPreferencesRef)
 WK_EXPORT void WKPreferencesSetInspectorAdditionsEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetInspectorAdditionsEnabled(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetPaymentRequestEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetPaymentRequestEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

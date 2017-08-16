@@ -365,6 +365,7 @@
     macro(DisplayContentsEnabled, displayContentsEnabled, Bool, bool, false, "CSS display: contents", "Enable CSS display: contents support") \
     macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \
     macro(LinkPreloadEnabled, linkPreloadEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Link Preload", "Link preload support") \
+    macro(PaymentRequestEnabled, paymentRequestEnabled, Bool, bool, false, "Payment Request", "W3C Payment Request API") \
     macro(WebRTCLegacyAPIDisabled, webRTCLegacyAPIDisabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Remove Legacy WebRTC API", "Remove Legacy WebRTC API") \
     macro(IsSecureContextAttributeEnabled, isSecureContextAttributeEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Secure Contexts API", "Enable Secure Contexts API") \
     macro(ServiceWorkersEnabled, serviceWorkersEnabled, Bool, bool, false, "ServiceWorkers", "Enable ServiceWorkers") \

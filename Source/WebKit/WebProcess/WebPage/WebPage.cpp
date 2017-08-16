@@ -3368,6 +3368,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setBeaconAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::beaconAPIEnabledKey()));
 #endif
 
+#if ENABLE(PAYMENT_REQUEST)
+    settings.setPaymentRequestEnabled(store.getBoolValueForKey(WebPreferencesKey::paymentRequestEnabledKey()));
+#endif
+
     platformPreferencesDidChange(store);
 
     if (m_drawingArea)
