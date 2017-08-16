@@ -1,3 +1,51 @@
+2017-08-15  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220286. rdar://problem/33904738
+
+    2017-08-04  Tim Horton  <timothy_horton@apple.com>
+
+            viewport-fit changes during animated resize can cause layout size to get stuck
+            https://bugs.webkit.org/show_bug.cgi?id=175169
+            <rdar://problem/33684697>
+
+            Reviewed by Simon Fraser.
+
+            If we get a commit that changes viewport-fit state while an animated
+            resize is underway, and that change causes the client to push a new
+            minimumLayoutSizeOverride, the new size will be lost forever, and we
+            will get stuck laying out at the wrong size.
+
+            This is because we unconditionally apply avoidsUnsafeArea for every commit,
+            while most other changes that come in from a commit are ignored if we're
+            inside animated resize. To fix, also ignore avoidsUnsafeArea changes during
+            animated resize, by moving the code that keeps track of it into WKWebView
+            like all of the rest, and read it out of the commit in didCommitLayerTree
+            *after* the animated-resize early-return.
+
+            Also, fix the associated layout tests by adding a missing assignment
+            in _computedContentInset, which was broken in r220138.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _initializeWithConfiguration:]):
+            (-[WKWebView _setHasCustomContentView:loadedMIMEType:]):
+            (-[WKWebView _processDidExit]):
+            (-[WKWebView _didCommitLayerTree:]):
+            (-[WKWebView _setAvoidsUnsafeArea:]):
+            (-[WKWebView _safeAreaShouldAffectObscuredInsets]):
+            (-[WKWebView _didChangeAvoidsUnsafeArea:]): Deleted.
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::resetState):
+            (WebKit::WebPageProxy::setAvoidsUnsafeArea): Deleted.
+            * UIProcess/WebPageProxy.h:
+            (WebKit::WebPageProxy::avoidsUnsafeArea const): Deleted.
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::didChangeAvoidsUnsafeArea): Deleted.
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::didCommitLayerTree):
+
 2017-08-13  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220571. rdar://problem/33829966

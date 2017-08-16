@@ -826,11 +826,6 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 }
 #endif
 
-void PageClientImpl::didChangeAvoidsUnsafeArea(bool avoidsUnsafeArea)
-{
-    [m_webView _didChangeAvoidsUnsafeArea:avoidsUnsafeArea];
-}
-
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

@@ -5498,8 +5498,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if ENABLE(POINTER_LOCK)
     requestPointerUnlock();
 #endif
-
-    m_avoidsUnsafeArea = true;
 }
 
 void WebPageProxy::resetStateAfterProcessExited()
@@ -6932,16 +6930,6 @@ void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskId
     ASSERT(iterator != m_urlSchemeHandlersByIdentifier.end());
 
     iterator->value->stopTask(*this, taskIdentifier);
-}
-
-void WebPageProxy::setAvoidsUnsafeArea(bool avoidsUnsafeArea)
-{
-    if (m_avoidsUnsafeArea == avoidsUnsafeArea)
-        return;
-
-    m_avoidsUnsafeArea = avoidsUnsafeArea;
-
-    m_pageClient.didChangeAvoidsUnsafeArea(avoidsUnsafeArea);
 }
 
 } // namespace WebKit

@@ -146,8 +146,6 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return WebCore::UserInterfaceLayoutDirection::LTR; }
 
-    void didChangeAvoidsUnsafeArea(bool) override { }
-
     JSGlobalContextRef javascriptGlobalContext() override;
 
     // Members of PageClientImpl class
