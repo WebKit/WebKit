@@ -1,3 +1,40 @@
+2017-08-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: capture async stack trace when workers/main context posts a message
+        https://bugs.webkit.org/show_bug.cgi?id=167084
+        <rdar://problem/30033673>
+
+        Reviewed by Brian Burg.
+
+        Add instrumentation to DOMWindow to support showing asynchronous
+        stack traces when the debugger pauses in a MessageEvent handler.
+
+        Test: inspector/debugger/async-stack-trace.html
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didPostMessageImpl):
+        (WebCore::InspectorInstrumentation::didFailPostMessageImpl):
+        (WebCore::InspectorInstrumentation::willDispatchPostMessageImpl):
+        (WebCore::InspectorInstrumentation::didDispatchPostMessageImpl):
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didPostMessage):
+        (WebCore::InspectorInstrumentation::didFailPostMessage):
+        (WebCore::InspectorInstrumentation::willDispatchPostMessage):
+        (WebCore::InspectorInstrumentation::didDispatchPostMessage):
+
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::didClearAsyncStackTraceData):
+        (WebCore::PageDebuggerAgent::didPostMessage):
+        (WebCore::PageDebuggerAgent::didFailPostMessage):
+        (WebCore::PageDebuggerAgent::willDispatchPostMessage):
+        (WebCore::PageDebuggerAgent::didDispatchPostMessage):
+        * inspector/PageDebuggerAgent.h:
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        (WebCore::DOMWindow::postMessageTimerFired):
+
 2017-08-16  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix the build

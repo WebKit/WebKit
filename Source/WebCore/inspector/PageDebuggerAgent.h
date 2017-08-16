@@ -42,6 +42,7 @@ class InspectorOverlay;
 class InspectorPageAgent;
 class Page;
 class RegisteredEventListener;
+class TimerBase;
 
 class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
@@ -63,6 +64,11 @@ public:
     void didAddEventListener(EventTarget&, const AtomicString& eventType);
     void willRemoveEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     void willHandleEvent(const RegisteredEventListener&);
+
+    void didPostMessage(const TimerBase&, JSC::ExecState&);
+    void didFailPostMessage(const TimerBase&);
+    void willDispatchPostMessage(const TimerBase&);
+    void didDispatchPostMessage(const TimerBase&);
 
 protected:
     void enable() override;
@@ -87,7 +93,9 @@ private:
     InspectorOverlay* m_overlay { nullptr };
 
     HashMap<const RegisteredEventListener*, int> m_registeredEventListeners;
+    HashMap<const TimerBase*, int> m_postMessageTimers;
     int m_nextEventListenerIdentifier { 1 };
+    int m_nextPostMessageIdentifier { 1 };
 };
 
 } // namespace WebCore

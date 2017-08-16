@@ -1,4 +1,7 @@
+CONSOLE MESSAGE: line 55: Unable to post message to http://example.com. Recipient has origin .
+
 Tests for async stack traces.
+
 
 
 == Running test suite: AsyncStackTrace
@@ -76,6 +79,21 @@ ASYNC CALL STACK:
 4: --- addEventListener ---
 5: [F] testAddEventListener
 6: [P] Global Code
+
+-- Running test case: CheckAsyncStackTrace.PostMessage
+PAUSE #1
+CALL STACK:
+0: [F] pauseThenFinishTest
+1: [F] postMessageFired
+ASYNC CALL STACK:
+2: --- postMessage ---
+3: [F] messageReceived
+4: --- postMessage ---
+5: [F] testPostMessage
+6: [P] Global Code
+
+-- Running test case: ShouldNotPauseForFailedPostMessage
+PASS: Should not pause for failed post message.
 -- Running test setup.
 Save DebuggerManager.asyncStackTraceDepth
 
