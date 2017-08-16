@@ -104,6 +104,8 @@ private:
 
     void switchToTopLevelBrowsingContext(std::optional<String>);
     void switchToBrowsingContext(std::optional<String>);
+    void closeTopLevelBrowsingContext(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&&);
+    void closeAllToplevelBrowsingContexts(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&&);
 
     std::optional<String> pageLoadStrategyString() const;
 

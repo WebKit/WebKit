@@ -103,6 +103,11 @@ void SessionHost::connectToBrowser(Function<void (Succeeded)>&& completionHandle
     launchBrowser(WTFMove(completionHandler));
 }
 
+bool SessionHost::isConnected() const
+{
+    return !!m_browser;
+}
+
 struct ConnectToBrowserAsyncData {
     ConnectToBrowserAsyncData(SessionHost* sessionHost, GUniquePtr<char>&& dbusAddress, GCancellable* cancellable, Function<void (SessionHost::Succeeded)>&& completionHandler)
         : sessionHost(sessionHost)
@@ -195,6 +200,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
 
 void SessionHost::dbusConnectionClosedCallback(SessionHost* sessionHost)
 {
+    sessionHost->m_browser = nullptr;
     sessionHost->inspectorDisconnected();
 }
 

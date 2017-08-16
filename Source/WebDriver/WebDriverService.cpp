@@ -95,13 +95,9 @@ int WebDriverService::run(int argc, char** argv)
 
     RunLoop::run();
 
-    return EXIT_SUCCESS;
-}
-
-void WebDriverService::quit()
-{
     m_server.disconnect();
-    RunLoop::main().stop();
+
+    return EXIT_SUCCESS;
 }
 
 const WebDriverService::Command WebDriverService::s_commands[] = {
@@ -637,14 +633,15 @@ void WebDriverService::deleteSession(RefPtr<InspectorObject>&& parameters, Funct
 
     auto session = m_sessions.take(sessionID);
     if (!session) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidSessionID));
+        completionHandler(CommandResult::success());
         return;
     }
 
-    if (m_activeSession == session.get())
-        m_activeSession = nullptr;
-
-    session->close(WTFMove(completionHandler));
+    session->close([this, session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (m_activeSession == session.get())
+            m_activeSession = nullptr;
+        completionHandler(WTFMove(result));
+    });
 }
 
 void WebDriverService::setTimeouts(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -838,8 +835,24 @@ void WebDriverService::closeWindow(RefPtr<InspectorObject>&& parameters, Functio
 {
     // §10.2 Close Window.
     // https://www.w3.org/TR/webdriver/#close-window
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
-        session->closeWindow(WTFMove(completionHandler));
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->closeWindow([this, session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+
+        RefPtr<InspectorArray> handles;
+        if (result.result()->asArray(handles) && !handles->length()) {
+            m_sessions.remove(session->id());
+            if (m_activeSession == session.get())
+                m_activeSession = nullptr;
+        }
+        completionHandler(WTFMove(result));
+    });
 }
 
 void WebDriverService::switchToWindow(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)

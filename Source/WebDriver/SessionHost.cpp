@@ -35,13 +35,13 @@ namespace WebDriver {
 
 void SessionHost::inspectorDisconnected()
 {
-    if (!m_closeMessageID)
-        return;
-
-    // Closing the browsing context made the browser quit.
-    auto responseHandler = m_commandRequests.take(m_closeMessageID);
-    m_closeMessageID = 0;
-    responseHandler({ });
+    // Browser closed or crashed, finish all pending commands with error.
+    Vector<long> messages;
+    copyKeysToVector(m_commandRequests, messages);
+    for (auto messageID : messages) {
+        auto responseHandler = m_commandRequests.take(messageID);
+        responseHandler({ nullptr, true });
+    }
 }
 
 long SessionHost::sendCommandToBackend(const String& command, RefPtr<InspectorObject>&& parameters, Function<void (CommandResponse&&)>&& responseHandler)
@@ -49,8 +49,6 @@ long SessionHost::sendCommandToBackend(const String& command, RefPtr<InspectorOb
     static long lastSequenceID = 0;
     long sequenceID = ++lastSequenceID;
     m_commandRequests.add(sequenceID, WTFMove(responseHandler));
-    if (command == "closeBrowsingContext")
-        m_closeMessageID = sequenceID;
     StringBuilder messageBuilder;
     messageBuilder.appendLiteral("{\"id\":");
     messageBuilder.appendNumber(sequenceID);
@@ -80,9 +78,6 @@ void SessionHost::dispatchMessage(const String& message)
     long sequenceID;
     if (!messageObject->getInteger(ASCIILiteral("id"), sequenceID))
         return;
-
-    if (m_closeMessageID == sequenceID)
-        m_closeMessageID = 0;
 
     auto responseHandler = m_commandRequests.take(sequenceID);
     ASSERT(responseHandler);

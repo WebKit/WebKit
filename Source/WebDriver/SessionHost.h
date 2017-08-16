@@ -52,6 +52,8 @@ public:
     }
     ~SessionHost();
 
+    bool isConnected() const;
+
     const Capabilities& capabilities() const { return m_capabilities; }
 
     enum class Succeeded { No, Yes };
@@ -92,7 +94,6 @@ private:
     Target m_target;
 
     HashMap<long, Function<void (CommandResponse&&)>> m_commandRequests;
-    long m_closeMessageID { 0 };
 
 #if USE(GLIB)
     Function<void (std::optional<String>)> m_startSessionCompletionHandler;

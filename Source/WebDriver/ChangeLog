@@ -1,3 +1,40 @@
+2017-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: fix return value of close window command
+        https://bugs.webkit.org/show_bug.cgi?id=174861
+
+        Reviewed by Brian Burg.
+
+        We are currently returning null, but we should return the list of window handles, and try to close the session
+        if there aren't more window handles.
+
+        10.2 Close Window
+        https://w3c.github.io/webdriver/webdriver-spec.html#close-window
+
+        3. If there are no more open top-level browsing contexts, then try to close the session.
+        4. Return the result of running the remote end steps for the Get Window Handles command.
+
+        * Session.cpp:
+        (WebDriver::Session::closeAllToplevelBrowsingContexts): Helper function to close the given toplevel browsing
+        context and the next one if there are more.
+        (WebDriver::Session::close): Call closeAllToplevelBrowsingContexts() to delete all toplevel browsing contexts of
+        the session.
+        (WebDriver::Session::closeTopLevelBrowsingContext): Close the given toplevel browsing context and call
+        getWindowHandles() when done.
+        (WebDriver::Session::closeWindow): Call closeTopLevelBrowsingContext() passing the current toplevel browsing context.
+        (WebDriver::Session::getWindowHandles): Remove the early return, this command doesn't depend on a current
+        toplevel browsing context.
+        * Session.h:
+        * SessionHost.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::run): Disconnect the server when main loop quits.
+        (WebDriver::WebDriverService::deleteSession): Do not fail if the given session is not active.
+        (WebDriver::WebDriverService::closeWindow): Remove the session if the closed window was the last one.
+        * WebDriverService.h: Remove unused quit() method.
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::isConnected): Return whether host is connected to a browser instance.
+        (WebDriver::SessionHost::dbusConnectionClosedCallback): Delete m_browser.
+
 2017-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle click events on option elements

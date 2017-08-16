@@ -57,6 +57,26 @@ const Capabilities& Session::capabilities() const
     return m_host->capabilities();
 }
 
+void Session::closeAllToplevelBrowsingContexts(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&& completionHandler)
+{
+    closeTopLevelBrowsingContext(toplevelBrowsingContext, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        RefPtr<InspectorArray> handles;
+        if (result.result()->asArray(handles) && handles->length()) {
+            auto handleValue = handles->get(0);
+            String handle;
+            if (handleValue->asString(handle)) {
+                closeAllToplevelBrowsingContexts(handle, WTFMove(completionHandler));
+                return;
+            }
+        }
+        completionHandler(CommandResult::success());
+    });
+}
+
 void Session::close(Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {
@@ -64,16 +84,8 @@ void Session::close(Function<void (CommandResult&&)>&& completionHandler)
         return;
     }
 
-    RefPtr<InspectorObject> parameters = InspectorObject::create();
-    parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
-    m_host->sendCommandToBackend(ASCIILiteral("closeBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
-        if (response.isError) {
-            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
-            return;
-        }
-        switchToTopLevelBrowsingContext(std::nullopt);
-        completionHandler(CommandResult::success());
-    });
+    auto toplevelBrowsingContext = std::exchange(m_toplevelBrowsingContext, std::nullopt);
+    closeAllToplevelBrowsingContexts(toplevelBrowsingContext.value(), WTFMove(completionHandler));
 }
 
 void Session::setTimeouts(const Timeouts& timeouts, Function<void (CommandResult&&)>&& completionHandler)
@@ -426,6 +438,32 @@ void Session::getWindowHandle(Function<void (CommandResult&&)>&& completionHandl
     });
 }
 
+void Session::closeTopLevelBrowsingContext(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&& completionHandler)
+{
+    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    parameters->setString(ASCIILiteral("handle"), toplevelBrowsingContext);
+    m_host->sendCommandToBackend(ASCIILiteral("closeBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+        if (!m_host->isConnected()) {
+            // Closing the browsing context made the browser quit.
+            completionHandler(CommandResult::success(InspectorArray::create()));
+            return;
+        }
+        if (response.isError) {
+            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+            return;
+        }
+
+        getWindowHandles([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) {
+            if (!m_host->isConnected()) {
+                // Closing the browsing context made the browser quit.
+                completionHandler(CommandResult::success(InspectorArray::create()));
+                return;
+            }
+            completionHandler(WTFMove(result));
+        });
+    });
+}
+
 void Session::closeWindow(Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {
@@ -438,7 +476,8 @@ void Session::closeWindow(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(WTFMove(result));
             return;
         }
-        close(WTFMove(completionHandler));
+        auto toplevelBrowsingContext = std::exchange(m_toplevelBrowsingContext, std::nullopt);
+        closeTopLevelBrowsingContext(toplevelBrowsingContext.value(), WTFMove(completionHandler));
     });
 }
 
@@ -458,11 +497,6 @@ void Session::switchToWindow(const String& windowHandle, Function<void (CommandR
 
 void Session::getWindowHandles(Function<void (CommandResult&&)>&& completionHandler)
 {
-    if (!m_toplevelBrowsingContext) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
-        return;
-    }
-
     m_host->sendCommandToBackend(ASCIILiteral("getBrowsingContexts"), InspectorObject::create(), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError || !response.responseObject) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
