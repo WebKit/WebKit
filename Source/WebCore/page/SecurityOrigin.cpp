@@ -101,6 +101,7 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
 
 static bool isLoopbackIPAddress(const URL& url)
 {
+    // The IPv6 loopback address is 0:0:0:0:0:0:0:1, which compresses to ::1.
     ASSERT(url.isValid());
     auto host = url.host();
     if (host == "[::1]")
@@ -130,11 +131,7 @@ static bool shouldTreatAsPotentionallyTrustworthy(const URL& url)
     if (SchemeRegistry::shouldTreatURLSchemeAsSecure(url.protocol().toStringWithoutCopying()))
         return true;
 
-    if (isLoopbackIPAddress(url))
-        return true;
-
-    // FIXME: Ensure that localhost resolves to the loopback address.
-    if (equalLettersIgnoringASCIICase(url.host(), "localhost"))
+    if (SecurityOrigin::isLocalHostOrLoopbackIPAddress(url))
         return true;
 
     if (SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toStringWithoutCopying()))
@@ -585,6 +582,18 @@ URL SecurityOrigin::urlWithUniqueSecurityOrigin()
     ASSERT(isMainThread());
     static NeverDestroyed<URL> uniqueSecurityOriginURL(ParsedURLString, MAKE_STATIC_STRING_IMPL("data:,"));
     return uniqueSecurityOriginURL;
+}
+
+bool SecurityOrigin::isLocalHostOrLoopbackIPAddress(const URL& url)
+{
+    if (isLoopbackIPAddress(url))
+        return true;
+
+    // FIXME: Ensure that localhost resolves to the loopback address.
+    if (equalLettersIgnoringASCIICase(url.host(), "localhost"))
+        return true;
+
+    return false;
 }
 
 } // namespace WebCore

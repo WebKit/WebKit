@@ -202,6 +202,8 @@ public:
 
     bool isPotentionallyTrustworthy() const { return m_isPotentionallyTrustworthy; }
 
+    static bool isLocalHostOrLoopbackIPAddress(const URL&);
+
 private:
     SecurityOrigin();
     explicit SecurityOrigin(const URL&);

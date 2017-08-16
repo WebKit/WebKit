@@ -1,3 +1,16 @@
+2017-08-16  Eric Carlson  <eric.carlson@apple.com>
+
+        Consider allow gUM to be called from localhost without https
+        https://bugs.webkit.org/show_bug.cgi?id=173457
+        <rdar://problem/33900527>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/media/media-stream/get-user-media-localhost-expected.txt: Added.
+        * http/tests/media/media-stream/get-user-media-localhost.html: Added.
+        * http/tests/media/media-stream/get-user-media-loopback-ip-expected.txt: Added.
+        * http/tests/media/media-stream/get-user-media-loopback-ip.html: Added.
+
 2017-08-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip workers/wasm-hashset-many.html and workers/wasm-hashset-many-2.html

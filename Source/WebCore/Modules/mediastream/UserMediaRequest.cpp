@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@
 #include "MainFrame.h"
 #include "MediaConstraints.h"
 #include "RealtimeMediaSourceCenter.h"
+#include "SchemeRegistry.h"
 #include "Settings.h"
 #include "UserMediaController.h"
 
@@ -94,7 +95,7 @@ SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
 static bool isSecure(DocumentLoader& documentLoader)
 {
     auto& response = documentLoader.response();
-    return response.url().protocolIs("https")
+    return SchemeRegistry::shouldTreatURLSchemeAsSecure(response.url().protocol().toStringWithoutCopying())
         && response.certificateInfo()
         && !response.certificateInfo()->containsNonRootSHA1SignedCertificate();
 }
@@ -102,7 +103,8 @@ static bool isSecure(DocumentLoader& documentLoader)
 static bool canCallGetUserMedia(Document& document, String& errorMessage)
 {
     bool requiresSecureConnection = document.settings().mediaCaptureRequiresSecureConnection();
-    if (requiresSecureConnection && !isSecure(*document.loader())) {
+    auto& documentLoader = *document.loader();
+    if (requiresSecureConnection && !isSecure(documentLoader) && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(documentLoader.response().url())) {
         errorMessage = "Trying to call getUserMedia from an insecure document.";
         return false;
     }

@@ -1,3 +1,26 @@
+2017-08-16  Eric Carlson  <eric.carlson@apple.com>
+
+        Consider allow gUM to be called from localhost without https
+        https://bugs.webkit.org/show_bug.cgi?id=173457
+        <rdar://problem/33900527>
+
+        Reviewed by Youenn Fablet.
+
+        Tests: http/tests/media/media-stream/get-user-media-localhost.html
+               http/tests/media/media-stream/get-user-media-loopback-ip.html
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::isSecure): Call SchemeRegistry::shouldTreatURLSchemeAsSecure instead of looking for
+        the string 'https'.
+        (WebCore::canCallGetUserMedia): Allow localhost or loopback address.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::isLoopbackIPAddress): Add a comment.
+        (WebCore::shouldTreatAsPotentionallyTrustworthy): Move tests for localhost and loopback address
+        to isLocalHostOrLoopbackIPAddress, call it.
+        (WebCore::SecurityOrigin::isLocalHostOrLoopbackIPAddress): 
+        * page/SecurityOrigin.h:
+
 2017-08-16  Chris Dumez  <cdumez@apple.com>
 
         EventSource: ignore IDs with U+0000
