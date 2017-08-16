@@ -27,6 +27,8 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -35,7 +37,7 @@ namespace WebCore {
 String logLevelString();
 bool isLogChannelEnabled(const String& name);
 WEBCORE_EXPORT void setLogChannelToAccumulate(const String& name);
-WEBCORE_EXPORT void initializeLogChannelsIfNecessary();
+WEBCORE_EXPORT void initializeLogChannelsIfNecessary(std::optional<String> = std::nullopt);
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 

@@ -66,6 +66,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << containerTemporaryDirectoryExtensionHandle;
 #endif
     encoder << mediaKeyStorageDirectory;
+    encoder << webCoreLoggingChannels;
     encoder << mediaKeyStorageDirectoryExtensionHandle;
 #if ENABLE(MEDIA_STREAM)
     encoder << audioCaptureExtensionHandle;
@@ -186,6 +187,8 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
 #endif
     if (!decoder.decode(parameters.mediaKeyStorageDirectory))
+        return false;
+    if (!decoder.decode(parameters.webCoreLoggingChannels))
         return false;
     if (!decoder.decode(parameters.mediaKeyStorageDirectoryExtensionHandle))
         return false;

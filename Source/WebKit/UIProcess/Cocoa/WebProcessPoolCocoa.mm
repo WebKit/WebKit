@@ -256,6 +256,10 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
         isSafari = true;
 #endif
 
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    parameters.webCoreLoggingChannels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreLogging"];
+#endif
+
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
     if (isSafari && !parameters.shouldCaptureAudioInUIProcess && mediaDevicesEnabled)
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);

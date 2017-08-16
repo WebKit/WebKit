@@ -69,14 +69,15 @@ void setLogChannelToAccumulate(const String& name)
     logChannelsNeedInitialization = true;
 }
 
-void initializeLogChannelsIfNecessary()
+void initializeLogChannelsIfNecessary(std::optional<String> logChannelString)
 {
-    if (!logChannelsNeedInitialization)
+    if (!logChannelsNeedInitialization && !logChannelString)
         return;
 
     logChannelsNeedInitialization = false;
 
-    WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, logLevelString().utf8().data());
+    String enabledChannelsString = logChannelString ? logChannelString.value() : logLevelString();
+    WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, enabledChannelsString.utf8().data());
 }
 
 #ifndef NDEBUG

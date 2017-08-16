@@ -1,3 +1,24 @@
+2017-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow WebCore logging channels to be set from the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=175608
+
+        Reviewed by Tim Horton.
+
+        The UI process can now read the "WebCoreLogging" default, and pass it to the web process
+        via WebProcessCreationParameters, where WebProcess::platformInitializeWebProcess() uses
+        it to set up WebCore logging channels. Note that these will override channels read from
+        the web process user defaults domain (but those are hard to set anyway).
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2017-08-15  Don Olmstead  <don.olmstead@sony.com>
 
         [PAL] Move Sleep classes into PAL
