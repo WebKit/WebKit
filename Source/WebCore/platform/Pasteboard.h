@@ -211,7 +211,7 @@ public:
     explicit Pasteboard(long changeCount);
 
     static NSArray *supportedWebContentPasteboardTypes();
-    static String resourceMIMEType(const NSString *mimeType);
+    static String resourceMIMEType(NSString *mimeType);
 #endif
 
 #if PLATFORM(COCOA)

@@ -2420,14 +2420,13 @@ static RefPtr<Icon> iconForAttachment(const RenderAttachment& attachment)
             if (auto icon = Icon::createIconForUTI("public.directory"))
                 return icon;
         } else {
-            auto attachmentTypeCF = attachmentType.createCFString();
-            RetainPtr<CFStringRef> UTI;
-            if (isDeclaredUTI(attachmentTypeCF.get()))
-                UTI = attachmentTypeCF;
+            String UTI;
+            if (isDeclaredUTI(attachmentType))
+                UTI = attachmentType;
             else
-                UTI = UTIFromMIMEType(attachmentTypeCF.get());
+                UTI = UTIFromMIMEType(attachmentType);
 
-            if (auto icon = Icon::createIconForUTI(UTI.get()))
+            if (auto icon = Icon::createIconForUTI(UTI))
                 return icon;
         }
     }

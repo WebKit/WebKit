@@ -293,12 +293,12 @@ void PlatformPasteboard::writeObjectRepresentations(const PasteboardImage& paste
         [itemsToRegister addData:data[i]->createNSData().get() forType:types[i]];
 
     if (pasteboardImage.resourceData && !pasteboardImage.resourceMIMEType.isEmpty()) {
-        auto utiOrMIMEType = pasteboardImage.resourceMIMEType.createCFString();
-        if (!UTTypeIsDeclared(utiOrMIMEType.get()))
-            utiOrMIMEType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, utiOrMIMEType.get(), nil));
+        auto utiOrMIMEType = pasteboardImage.resourceMIMEType;
+        if (!isDeclaredUTI(utiOrMIMEType))
+            utiOrMIMEType = UTIFromMIMEType(utiOrMIMEType);
 
         auto imageData = pasteboardImage.resourceData->createNSData();
-        [itemsToRegister addData:imageData.get() forType:(NSString *)utiOrMIMEType.get()];
+        [itemsToRegister addData:imageData.get() forType:(NSString *)utiOrMIMEType];
         [itemsToRegister setEstimatedDisplayedSize:pasteboardImage.imageSize];
         [itemsToRegister setSuggestedName:pasteboardImage.suggestedName];
     }

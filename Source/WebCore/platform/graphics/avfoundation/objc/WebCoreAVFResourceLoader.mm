@@ -119,7 +119,7 @@ void WebCoreAVFResourceLoader::responseReceived(CachedResource& resource, const 
     }
 
     if (AVAssetResourceLoadingContentInformationRequest* contentInfo = [m_avRequest.get() contentInformationRequest]) {
-        String uti = UTIFromMIMEType(response.mimeType().createCFString().get()).get();
+        String uti = UTIFromMIMEType(response.mimeType());
 
         [contentInfo setContentType:uti];
 

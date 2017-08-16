@@ -58,6 +58,7 @@
 #import "StyleProperties.h"
 #import "Text.h"
 #import "TypingCommand.h"
+#import "UTIUtilities.h"
 #import "WAKAppKitStubs.h"
 #import "markup.h"
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -332,9 +333,9 @@ bool Editor::WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const Strin
     RetainPtr<CFStringRef> stringType = type.createCFString();
     RetainPtr<NSString> filenameExtension = adoptNS((NSString *)UTTypeCopyPreferredTagWithClass(stringType.get(), kUTTagClassFilenameExtension));
     NSString *relativeURLPart = [@"image" stringByAppendingString:filenameExtension.get()];
-    RetainPtr<NSString> mimeType = adoptNS((NSString *)UTTypeCopyPreferredTagWithClass(stringType.get(), kUTTagClassMIMEType));
+    String mimeType = MIMETypeFromUTI(type);
 
-    addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(WTFMove(buffer), URL::fakeURLWithRelativePart(relativeURLPart), mimeType.get(), emptyString(), emptyString())));
+    addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(WTFMove(buffer), URL::fakeURLWithRelativePart(relativeURLPart), mimeType, emptyString(), emptyString())));
     return fragment;
 }
 

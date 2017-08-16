@@ -303,13 +303,15 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
                 CFMutableStringRef mutableExtension = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, extension.get());
                 CFStringLowercase(mutableExtension, NULL);
                 extension = adoptCF(mutableExtension);
-                result = (CFStringRef) CFDictionaryGetValue(extensionMap, extension.get());
+                result = (CFStringRef)CFDictionaryGetValue(extensionMap, extension.get());
                 
                 if (!result) {
                     // If the Gatekeeper-based map doesn't have a MIME type, we'll try to figure out what it should be by
                     // looking up the file extension in the UTI maps.
                     RetainPtr<CFStringRef> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension.get(), 0));
-                    result = mimeTypeFromUTITree(uti.get());
+                    String MIMEType = MIMETypeFromUTITree(uti.get());
+                    if (!MIMEType.isEmpty())
+                        result = MIMEType.createCFString();
                 }
             }
         }

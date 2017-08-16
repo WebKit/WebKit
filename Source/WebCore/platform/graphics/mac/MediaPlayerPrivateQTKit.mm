@@ -39,6 +39,7 @@
 #import "QTKitSPI.h"
 #import "SecurityOrigin.h"
 #import "URL.h"
+#import "UTIUtilities.h"
 #import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -1243,11 +1244,11 @@ static HashSet<String, ASCIICaseInsensitiveHash> createFileTypesSet(NSArray *fil
         auto uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL));
         if (!uti)
             continue;
-        auto mime = adoptCF(UTTypeCopyPreferredTagWithClass(uti.get(), kUTTagClassMIMEType));
-        if (shouldRejectMIMEType(mime.get()))
+        auto mime = MIMETypeFromUTI(uti.get());
+        if (shouldRejectMIMEType(mime))
             continue;
-        if (mime)
-            set.add(mime.get());
+        if (!mime.isEmpty())
+            set.add(mime);
 
         // -movieFileTypes: returns both file extensions and OSTypes. The later are surrounded by single
         // quotes, eg. 'MooV', so don't bother looking at those.

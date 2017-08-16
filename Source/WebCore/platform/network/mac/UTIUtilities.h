@@ -26,12 +26,14 @@
 #ifndef UTIUtilities_h
 #define UTIUtilities_h
 
+#import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebCore {
-RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti);
-RetainPtr<CFStringRef> UTIFromMIMEType(CFStringRef mime);
-bool isDeclaredUTI(CFStringRef UTI);
+String MIMETypeFromUTI(const String&);
+String MIMETypeFromUTITree(const String&);
+String UTIFromMIMEType(const String&);
+bool isDeclaredUTI(const String&);
 }
 
 #endif // UTIUtilities_h

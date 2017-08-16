@@ -47,6 +47,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
+#include "UTIUtilities.h"
 #include "WebCoreSystemInterface.h"
 #endif
 
@@ -447,10 +448,11 @@ static inline CFStringRef jpegUTI()
     return kUTTypeJPEG;
 }
     
-static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
+static RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String& mimeType)
 {
+    // FIXME: Why doesn't iOS use the CoreServices version?
 #if PLATFORM(MAC)
-    return adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString().get(), 0));
+    return UTIFromMIMEType(mimeType).createCFString();
 #else
     ASSERT(isMainThread()); // It is unclear if CFSTR is threadsafe.
 
@@ -532,7 +534,7 @@ RetainPtr<CFDataRef> ImageBuffer::toCFData(const String& mimeType, std::optional
     if (context().isAcceleratedContext())
         flushContext();
 
-    auto uti = utiFromMIMEType(mimeType);
+    auto uti = utiFromImageBufferMIMEType(mimeType);
     ASSERT(uti);
 
     RetainPtr<CGImageRef> image;
@@ -574,7 +576,7 @@ static RetainPtr<CFDataRef> cfData(const ImageData& source, const String& mimeTy
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    auto uti = utiFromMIMEType(mimeType);
+    auto uti = utiFromImageBufferMIMEType(mimeType);
     ASSERT(uti);
 
     CGImageAlphaInfo dataAlphaInfo = kCGImageAlphaLast;

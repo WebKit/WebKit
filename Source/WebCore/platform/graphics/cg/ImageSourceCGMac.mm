@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ImageSourceCG.h"
 
+#import "UTIUtilities.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -37,7 +38,7 @@ namespace WebCore {
 
 String MIMETypeForImageSourceType(const String& uti)
 {
-    return adoptCF(UTTypeCopyPreferredTagWithClass(uti.createCFString().get(), kUTTagClassMIMEType)).get();
+    return MIMETypeFromUTI(uti);
 }
 
 String preferredExtensionForImageSourceType(const String& uti)

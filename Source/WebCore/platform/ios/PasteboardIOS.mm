@@ -48,6 +48,7 @@
 #import "SharedBuffer.h"
 #import "Text.h"
 #import "URL.h"
+#import "UTIUtilities.h"
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -142,9 +143,9 @@ void Pasteboard::write(const PasteboardWebContent& content)
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(content, m_pasteboardName);
 }
 
-String Pasteboard::resourceMIMEType(const NSString *mimeType)
+String Pasteboard::resourceMIMEType(NSString *mimeType)
 {
-    return String(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (CFStringRef)mimeType, NULL)).get());
+    return UTIFromMIMEType(mimeType);
 }
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)

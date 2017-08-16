@@ -47,6 +47,7 @@
 #import "RenderImage.h"
 #import "Text.h"
 #import "URL.h"
+#import "UTIUtilities.h"
 #import "WebCoreNSStringExtras.h"
 #import "WebCoreSystemInterface.h"
 #import "WebNSAttributedStringExtras.h"
@@ -482,8 +483,9 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
     if (lowercasedType == "text/rtf" || lowercasedType == "public.rtf" || lowercasedType == "com.apple.traditional-mac-plain-text")
         return String();
 
-    if (auto utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, lowercasedType.createCFString().get(), NULL))) {
-        if (auto pbType = adoptCF(UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassNSPboardType)))
+    auto utiType = UTIFromMIMEType(lowercasedType);
+    if (!utiType.isEmpty()) {
+        if (auto pbType = adoptCF(UTTypeCopyPreferredTagWithClass(utiType.createCFString().get(), kUTTagClassNSPboardType)))
             return pbType.get();
     }
 

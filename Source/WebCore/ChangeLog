@@ -1,3 +1,81 @@
+2017-08-16  Tim Horton  <timothy_horton@apple.com>
+
+        2-3% of main thread time under UTTypeCreatePreferredIdentifierForTag on wunderground map
+        https://bugs.webkit.org/show_bug.cgi?id=175618
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a perf win.
+
+        UTTypeCreatePreferredIdentifierForTag is fairly expensive, and is called
+        under every toDataURL, which the Wunderground wundermap does a /lot/.
+
+        Keep a 16-item LRU cache of MIMEType->UTI mappings.
+
+        Also, make other callers of UTTypeCreatePreferredIdentifierForTag use
+        the UTIUtilities version so they can share in the caching.
+
+        Also, as a drive-by, add and make other callers use mimeTypeFromUTI too,
+        and make the UTIUtilities operate on Strings for a slightly more WebCore-y feel.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::WebContentReader::readImage):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::createFileTypesSet):
+        * platform/graphics/cg/ImageSourceCGMac.mm:
+        (WebCore::MIMETypeForImageSourceType):
+        Adopt newly-added MIMETypeFromUTI().
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::utiFromImageBufferMIMEType):
+        (WebCore::ImageBuffer::toCFData const):
+        (WebCore::cfData):
+        (WebCore::utiFromMIMEType): Deleted.
+        Adopt UTIFromMIMEType, and rename the local helper that does something
+        different (a small static map) on iOS and Windows to not have an overlapping name.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::resourceMIMEType):
+        (WebCore::utiTypeFromCocoaType):
+        Adopt UTIFromMIMEType().
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::writeObjectRepresentations):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::cocoaTypeFromHTMLClipboardType):
+        Adopt isDeclaredUTI and UTIFromMIMEType().
+
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::responseReceived):
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        (WebCore::adjustMIMETypeIfNecessary):
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::adjustMIMETypeIfNecessary):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::iconForAttachment):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::iconForAttachment):
+        Deal with the fact that UTI utilities deal in Strings now.
+
+        * platform/network/mac/UTIUtilities.h:
+        * platform/network/mac/UTIUtilities.mm:
+        (WebCore::MIMETypeFromUTI):
+        Added. This doesn't crawl up the UTI tree if the first conversion fails,
+        which is what most of the existing code does. It's possible we want to
+        use MIMETypeFromUTITree's logic everywhere, but I didn't want to change
+        that in this patch.
+
+        (WebCore::MIMETypeFromUTITree):
+        (WebCore::isDeclaredUTI):
+        Take and return strings.
+
+        (WebCore::UTIFromMIMETypeCachePolicy::createValueForKey):
+        (WebCore::UTIFromMIMEType):
+        Add the aforementioned cache.
+
 2017-08-16  Simon Fraser  <simon.fraser@apple.com>
 
         Make RenderLayer and RenderLayerBacking TextStream-loggable, and clean up compositing logging
