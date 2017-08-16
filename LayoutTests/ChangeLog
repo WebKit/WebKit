@@ -1,3 +1,12 @@
+2017-08-15  Matt Lewis  <jlewis3@apple.com>
+
+        Skipped media/modern-media-controls/time-labels-support/elapsed-time.html.
+        <rdar://problem/33731086>
+
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra/TestExpectations:
+
 2017-08-15  JF Bastien  <jfbastien@apple.com>
 
         LayoutTests: test that an XMLHttpRequest with Content-Encoding: gzip is properly decompressed

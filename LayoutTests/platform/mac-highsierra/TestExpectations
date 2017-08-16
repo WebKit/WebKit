@@ -136,3 +136,6 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html 
 
 # <rdar://problem/33555052>
 imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Skip ]
+
+# <rdar://problem/33731086>
+media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
