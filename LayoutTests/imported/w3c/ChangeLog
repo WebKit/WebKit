@@ -1,3 +1,19 @@
+2017-08-16  Chris Dumez  <cdumez@apple.com>
+
+        EventSource: ignore IDs with U+0000
+        https://bugs.webkit.org/show_bug.cgi?id=175178
+
+        Reviewed by Darin Adler.
+
+        Import WPT test coverage from:
+        - https://github.com/w3c/web-platform-tests/pull/6584
+
+        * web-platform-tests/eventsource/format-field-id-null-expected.txt: Added.
+        * web-platform-tests/eventsource/format-field-id-null.htm: Added.
+        * web-platform-tests/eventsource/resources/last-event-id.py:
+        (main):
+        * web-platform-tests/eventsource/w3c-import.log:
+
 2017-08-15  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Import test suite from web-platform-tests

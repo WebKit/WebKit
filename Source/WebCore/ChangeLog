@@ -1,3 +1,18 @@
+2017-08-16  Chris Dumez  <cdumez@apple.com>
+
+        EventSource: ignore IDs with U+0000
+        https://bugs.webkit.org/show_bug.cgi?id=175178
+
+        Reviewed by Darin Adler.
+
+        EventSource: ignore IDs with U+0000 as per:
+        https://github.com/whatwg/html/pull/2849
+
+        Test: imported/w3c/web-platform-tests/eventsource/format-field-id-null.htm
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::parseEventStreamLine):
+
 2017-08-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [HarfBuzz] Decomposed Vietnamese characters are rendered incorrectly

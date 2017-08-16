@@ -42,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-event-empty.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-event.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id-2.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id-null.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-parsing.htm
 /LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-retry-bogus.htm

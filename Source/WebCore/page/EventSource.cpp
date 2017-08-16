@@ -345,9 +345,11 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
         m_data.append('\n');
     } else if (field == "event")
         m_eventName = { &m_receiveBuffer[position], valueLength };
-    else if (field == "id")
-        m_currentlyParsedEventId = { &m_receiveBuffer[position], valueLength };
-    else if (field == "retry") {
+    else if (field == "id") {
+        StringView parsedEventId = { &m_receiveBuffer[position], valueLength };
+        if (!parsedEventId.contains('\0'))
+            m_currentlyParsedEventId = parsedEventId.toString();
+    } else if (field == "retry") {
         if (!valueLength)
             m_reconnectDelay = defaultReconnectDelay;
         else {
