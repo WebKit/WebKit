@@ -75,7 +75,7 @@ protected:
     void notifyFlushRequired() override { scheduleLayerFlush(); };
     void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
     void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) override;
-    void releaseUpdateAtlases(Vector<uint32_t>&&) override { };
+    void releaseUpdateAtlases(const Vector<uint32_t>&) override { };
 
 private:
     void layerFlushTimerFired();
