@@ -62,10 +62,16 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, Stri
 
     if (WTF::holds_alternative<RefPtr<ArrayBuffer>>(value)) {
         Ref<const ArrayBuffer> buffer = WTF::get<RefPtr<ArrayBuffer>>(value).releaseNonNull();
+        // FIXME: We should not set a Content-Type here but we need to do this until all network stacks
+        // support sending no Content-Type header (<dar://problem/33906567).
+        contentType = HTTPHeaderValues::octetStreamContentType();
         return FetchBody(WTFMove(buffer));
     }
     if (WTF::holds_alternative<RefPtr<ArrayBufferView>>(value)) {
         Ref<const ArrayBufferView> buffer = WTF::get<RefPtr<ArrayBufferView>>(value).releaseNonNull();
+        // FIXME: We should not set a Content-Type here but we need to do this until all network stacks
+        // support sending no Content-Type header (<dar://problem/33906567).
+        contentType = HTTPHeaderValues::octetStreamContentType();
         return FetchBody(WTFMove(buffer));
     }
 
