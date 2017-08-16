@@ -1,0 +1,4 @@
+
+
+FAIL Test for PaymentRequest identifier usage undefined is not a constructor (evaluating 'new window[0].PaymentRequest([{supportedMethods: ['foo']}], {id: 'my_payment_id', total: {label: 'label', amount: {currency: 'USD', value: '5.00'}}})')
+

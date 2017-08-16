@@ -1,3 +1,70 @@
+2017-08-15  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Import test suite from web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=175612
+        <rdar://problem/33906070>
+
+        Reviewed by Tim Horton.
+
+        Imported the payment-request test suite using import-w3c-tests. Generated failing expected
+        results for each test and skipped 5 tests that currently time out.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/payment-request/OWNERS: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/active-document-cross-origin.https.sub-expected.txt: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/active-document-cross-origin.https.sub.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/active-document-same-origin.https-expected.txt: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/active-document-same-origin.https.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-cross-origin-bc-containers.https-expected.txt: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-same-origin-bc-containers.https-expected.txt: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-same-origin-bc-containers.https.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/basic.https-expected.txt: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/basic.https.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/common.sub.js: Added.
+        (window.onmessage):
+        (string_appeared_here.forEach):
+        * web-platform-tests/payment-request/allowpaymentrequest/echo-PaymentRequest.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/no-attribute-cross-origin-bc-containers.https-expected.txt: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/no-attribute-cross-origin-bc-containers.https.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/no-attribute-same-origin-bc-containers.https-expected.txt: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/no-attribute-same-origin-bc-containers.https.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/removing-allowpaymentrequest.https.sub-expected.txt: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/removing-allowpaymentrequest.https.sub.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub-expected.txt: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest.https.sub-expected.txt: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest.https.sub.html: Added.
+        * web-platform-tests/payment-request/allowpaymentrequest/w3c-import.log: Added.
+        * web-platform-tests/payment-request/historical.https-expected.txt: Added.
+        * web-platform-tests/payment-request/historical.https.html: Added.
+        * web-platform-tests/payment-request/interfaces.https-expected.txt: Added.
+        * web-platform-tests/payment-request/interfaces.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-abort-method.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-abort-method.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-canmakepayment-method.https.http: Added.
+        * web-platform-tests/payment-request/payment-request-constructor-crash.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-constructor-crash.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-constructor.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-constructor.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-id.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-id.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-in-iframe-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-in-iframe.html: Added.
+        * web-platform-tests/payment-request/payment-request-onshippingaddresschange-attribute.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-onshippingaddresschange-attribute.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-onshippingoptionchange-attribute.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-onshippingoptionchange-attribute.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-response-id.html: Added.
+        * web-platform-tests/payment-request/payment-request-show-method.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-show-method.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-update-event-constructor.http-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-update-event-constructor.http.html: Added.
+        * web-platform-tests/payment-request/payment-request-update-event-constructor.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-update-event-constructor.https.html: Added.
+        * web-platform-tests/payment-request/w3c-import.log: Added.
+
 2017-08-15  Chris Dumez  <cdumez@apple.com>
 
         Fetch / Beacon: Use "application/octet-stream" Content-Type for payloads of type ArrayBuffer / ArrayBufferView

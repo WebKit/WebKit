@@ -1,0 +1,7 @@
+
+
+FAIL Test for PaymentRequest in an iframe (see also
+https://github.com/w3c/browser-payment-api/issues/2) assert_throws: If the browsing context of the script calling the constructor is not a top-level browsing context, then throw a SecurityError. function "function () {
+        new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'label', amount: {currency: 'USD', value: '5.00'}}});
+    }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("SecurityError")
+

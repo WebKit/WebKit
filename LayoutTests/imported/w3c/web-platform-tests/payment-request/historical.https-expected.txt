@@ -1,0 +1,8 @@
+
+FAIL paymentRequestID in PaymentRequest undefined is not an object (evaluating 'window[interf].prototype')
+FAIL paymentRequestID in PaymentResponse undefined is not an object (evaluating 'window[interf].prototype')
+FAIL careOf in PaymentAddress undefined is not an object (evaluating 'window[interf].prototype')
+FAIL totalAmount in PaymentResponse undefined is not an object (evaluating 'window[interf].prototype')
+FAIL paymentRequestId in PaymentRequest undefined is not an object (evaluating 'window[interf].prototype')
+FAIL paymentRequestId in PaymentResponse undefined is not an object (evaluating 'window[interf].prototype')
+

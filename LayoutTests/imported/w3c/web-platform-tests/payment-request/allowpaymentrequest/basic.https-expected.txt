@@ -1,0 +1,4 @@
+
+
+FAIL PaymentRequest <iframe allowpaymentrequest> basic undefined is not a constructor (evaluating 'new window[0].PaymentRequest(...paymentArgs)')
+

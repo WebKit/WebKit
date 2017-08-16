@@ -527,6 +527,8 @@
         "web-platform-tests/html/the-xhtml-syntax/parsing-xhtml-documents/xhtml-mathml-dtd-entity-support.htm",
         "web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-frame.html",
         "web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe.html",
+        "web-platform-tests/payment-request/allowpaymentrequest/echo-PaymentRequest.html",
+        "web-platform-tests/payment-request/payment-request-response-id.html",
         "web-platform-tests/resource-timing/iframe-setdomain.sub.html",
         "web-platform-tests/secure-contexts/postMessage-helper.html",
         "web-platform-tests/secure-contexts/postMessage-helper.https.html",

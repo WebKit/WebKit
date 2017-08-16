@@ -1,0 +1,5 @@
+
+FAIL onshippingoptionchange attribute is a generic handler for "shippingoptionchange" Can't find variable: PaymentRequest
+FAIL onshippingoptionchange attribute is a handler for PaymentRequestUpdateEvent Can't find variable: PaymentRequest
+FAIL onshippingoptionchange attribute and listeners both work Can't find variable: PaymentRequest
+

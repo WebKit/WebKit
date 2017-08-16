@@ -1,0 +1,5 @@
+
+FAIL PaymentRequestUpdateEvent constructor throws in a non-secure context assert_throws: function "() => {
+    new PaymentRequestUpdateEvent("test");
+  }" threw object "ReferenceError: Can't find variable: PaymentRequestUpdateEvent" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+
