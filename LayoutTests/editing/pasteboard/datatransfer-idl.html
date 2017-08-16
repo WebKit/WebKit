@@ -39,7 +39,7 @@ interface DataTransferItemList {
 interface DataTransferItem {
     readonly attribute DOMString kind;
     readonly attribute DOMString type;
-    void getAsString(FunctionStringCallback? _callback);
+    void getAsString(FunctionStringCallback? callback);
     File? getAsFile();
 };
 
@@ -48,13 +48,11 @@ callback FunctionStringCallback = void (DOMString data);
 <script>
 var idlsArray = new IdlArray();
 var idl = document.getElementById("datatransfer-idl").textContent
-    + document.getElementById("datatransferitemlist-idl").textContent;
+    + document.getElementById("datatransferitemlist-idl").textContent
     + document.getElementById("datatransferitem-idl").textContent;
 
 idlsArray.add_idls(idl);
 idlsArray.add_untested_idls("interface Element {};");
-//idlsArray.add_untested_idls("interface ReadableStream {};");
-//idlsArray.add_objects({ Response: ['new Response()'] });
 idlsArray.test();
 </script>
 </body>

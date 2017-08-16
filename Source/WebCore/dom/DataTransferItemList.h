@@ -32,16 +32,17 @@
 #pragma once
 
 #include "DataTransfer.h"
+#include "DataTransferItem.h"
 #include "ExceptionOr.h"
+#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class DataTransferItem;
 class File;
 
-class DataTransferItemList {
+class DataTransferItemList : public ScriptWrappable {
     WTF_MAKE_NONCOPYABLE(DataTransferItemList); WTF_MAKE_FAST_ALLOCATED;
 public:
     DataTransferItemList(DataTransfer& dataTransfer)
@@ -61,7 +62,10 @@ public:
     void clear();
 
 private:
+    Vector<std::unique_ptr<DataTransferItem>>& ensureItems() const;
+
     DataTransfer& m_dataTransfer;
+    mutable std::optional<Vector<std::unique_ptr<DataTransferItem>>> m_items;
 };
 
 } // namespace WebCore

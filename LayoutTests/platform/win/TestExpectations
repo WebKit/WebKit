@@ -121,6 +121,7 @@ svg/custom/svg-allowed-in-dashboard-object.html [ Skip ]
 fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 
 # TODO Drag & Drop doesn't work correctly in DRT <rdar://5621244>
+editing/pasteboard/datatransfer-items-drop-plaintext-file.html
 fast/events/drop-handler-should-not-stop-navigate.html [ Skip ]
 fast/events/drag-in-frames.html [ Skip ]
 fast/events/drag-to-navigate.html [ Skip ]

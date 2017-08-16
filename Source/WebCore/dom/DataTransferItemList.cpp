@@ -27,17 +27,21 @@
 #include "DataTransferItemList.h"
 
 #include "DataTransferItem.h"
+#include "FileList.h"
 
 namespace WebCore {
 
 unsigned DataTransferItemList::length() const
 {
-    return 0;
+    return ensureItems().size();
 }
 
-RefPtr<DataTransferItem> DataTransferItemList::item(unsigned)
+RefPtr<DataTransferItem> DataTransferItemList::item(unsigned index)
 {
-    return nullptr;
+    auto& items = ensureItems();
+    if (items.size() <= index)
+        return nullptr;
+    return items[index].get();
 }
 
 ExceptionOr<void> DataTransferItemList::add(const String&, const String&)
@@ -55,6 +59,37 @@ void DataTransferItemList::remove(unsigned)
 
 void DataTransferItemList::clear()
 {
+}
+
+// FIXME: DataTransfer should filter types itself.
+static bool isSupportedType(const String& type)
+{
+    return equalIgnoringASCIICase(type, "text/plain");
+}
+
+Vector<std::unique_ptr<DataTransferItem>>& DataTransferItemList::ensureItems() const
+{
+    if (m_items)
+        return *m_items;
+
+    Vector<std::unique_ptr<DataTransferItem>> items;
+    for (String& type : m_dataTransfer.types()) {
+        if (isSupportedType(type))
+            items.append(std::make_unique<DataTransferItem>(m_dataTransfer, type));
+    }
+
+    FileList& files = m_dataTransfer.files();
+    for (unsigned i = 0, length = files.length(); i < length; ++i) {
+        File& file = *files.item(i);
+        String type = File::contentTypeForFile(file.path());
+        if (isSupportedType(type))
+            items.append(std::make_unique<DataTransferItem>(m_dataTransfer, type, file));
+    }
+
+
+    m_items = WTFMove(items);
+
+    return *m_items;
 }
 
 }

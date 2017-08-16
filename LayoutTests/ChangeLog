@@ -1,3 +1,33 @@
+2017-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make DataTransferItemList work with plain text entries
+        https://bugs.webkit.org/show_bug.cgi?id=175596
+
+        Reviewed by Wenson Hsieh.
+
+        Rebaselined the tests and added two regression tests for pasting plain text and dropping a plain text file.
+
+        Unfortunately, dropping a file is only supported by DumpRenderTree on Mac :( so it's disabled elsewhere.
+
+        * editing/pasteboard/datatransfer-idl-expected.txt: Rebaselined now that NoInterfaceObject has been dropped from
+        DataTransferItem.idl and DataTransferItemList.idl as expected.
+        * editing/pasteboard/datatransfer-idl.html: Fixed the bug that it wasn't testing IDL for DataTransferItem.
+        * editing/pasteboard/datatransfer-items-drop-plaintext-file-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-drop-plaintext-file.html: Added.
+        * editing/pasteboard/datatransfer-items-paste-plaintext-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-paste-plaintext.html: Added.
+        * editing/resources/text-pasteboard-data.txt: Added.
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/ios/TestExpectations:
+        * platform/mac-elcapitan-wk2/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-highsierra-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-highsierra/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+
 2017-08-15  Chris Dumez  <cdumez@apple.com>
 
         Fetch / Beacon: Use "application/octet-stream" Content-Type for payloads of type ArrayBuffer / ArrayBufferView

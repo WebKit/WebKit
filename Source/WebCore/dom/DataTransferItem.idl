@@ -30,14 +30,13 @@
  */
 
 [
-    NoInterfaceObject,
     EnabledAtRuntime=DataTransferItems,
     ImplementationLacksVTable,
 ] interface DataTransferItem {
     readonly attribute DOMString kind;
     readonly attribute DOMString type;
 
-    void getAsString(optional StringCallback? callback);
-    Blob getAsFile();
+    [CallWith=ScriptExecutionContext] void getAsString(StringCallback? callback);
+    File getAsFile();
 };
 

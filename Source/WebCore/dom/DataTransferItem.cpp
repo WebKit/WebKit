@@ -32,12 +32,22 @@
 #include "config.h"
 #include "DataTransferItem.h"
 
-#include "Blob.h"
+#include "File.h"
+#include "ScriptExecutionContext.h"
 #include "StringCallback.h"
 
 namespace WebCore {
 
-DataTransferItem::DataTransferItem()
+DataTransferItem::DataTransferItem(DataTransfer& dataTransfer, const String& type)
+    : m_dataTransfer(dataTransfer)
+    , m_type(type)
+{
+}
+
+DataTransferItem::DataTransferItem(DataTransfer& dataTransfer, const String& type, Ref<File>&& file)
+    : m_dataTransfer(dataTransfer)
+    , m_type(type)
+    , m_file(WTFMove(file))
 {
 }
 
@@ -45,13 +55,25 @@ DataTransferItem::~DataTransferItem()
 {
 }
 
-void DataTransferItem::getAsString(RefPtr<StringCallback>&&) const
+String DataTransferItem::kind() const
 {
+    return m_file ? ASCIILiteral("file") : ASCIILiteral("string");
 }
 
-RefPtr<Blob> DataTransferItem::getAsFile() const
+void DataTransferItem::getAsString(ScriptExecutionContext& context, RefPtr<StringCallback>&& callback) const
 {
-    return nullptr;
+    if (!callback || !m_dataTransfer.canReadData() || m_file)
+        return;
+
+    // FIXME: Make this async.
+    callback->scheduleCallback(context, m_dataTransfer.getData(m_type));
+}
+
+RefPtr<File> DataTransferItem::getAsFile() const
+{
+    if (!m_dataTransfer.canReadData())
+        return nullptr;
+    return m_file.copyRef();
 }
 
 } // namespace WebCore

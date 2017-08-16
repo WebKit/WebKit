@@ -393,6 +393,16 @@ PASS Object.getOwnPropertyDescriptor(global, 'DataTransfer').hasOwnProperty('get
 PASS Object.getOwnPropertyDescriptor(global, 'DataTransfer').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DataTransfer').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'DataTransfer').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransferItem').value is DataTransferItem
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransferItem').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransferItem').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransferItem').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransferItem').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransferItemList').value is DataTransferItemList
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransferItemList').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransferItemList').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransferItemList').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'DataTransferItemList').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'DataView').value is DataView
 PASS Object.getOwnPropertyDescriptor(global, 'DataView').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DataView').hasOwnProperty('set') is false

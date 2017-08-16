@@ -30,7 +30,6 @@
  */
 
 [
-    NoInterfaceObject,
     EnabledAtRuntime=DataTransferItems,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,

@@ -235,6 +235,8 @@ fast/dom/DeviceOrientation
 fast/canvas/canvas-toDataURL-webp.html
 
 # Drag-and-drop is not supported:
+editing/pasteboard/datatransfer-items-drop-plaintext-file.html
+editing/pasteboard/datatransfer-items-paste-plaintext.html
 editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard.html
 fast/events/bogus-dropEffect-effectAllowed.html
 fast/events/clear-drag-state.html

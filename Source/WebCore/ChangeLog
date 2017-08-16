@@ -1,3 +1,41 @@
+2017-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make DataTransferItemList work with plain text entries
+        https://bugs.webkit.org/show_bug.cgi?id=175596
+
+        Reviewed by Wenson Hsieh.
+
+        Added the basic machinery to get the list of plain text items to DataTransferItemList and DataTransferItem.
+
+        Each DataTransferItem now depends on DataTransfer so it does ref-forwarding like DataTransferItemList to make
+        DataTransfer alive as long as any DataTransferItem is alive.
+
+        Specifications: https://html.spec.whatwg.org/multipage/dnd.html#the-datatransferitem-interface
+                        https://html.spec.whatwg.org/multipage/dnd.html#the-datatransferitemlist-interface
+
+        Tests: editing/pasteboard/datatransfer-items-drop-plaintext-file.html
+               editing/pasteboard/datatransfer-items-paste-plaintext.html
+
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::DataTransferItem): Added two variants one for plain text and another one for a file.
+        (WebCore::DataTransferItem::kind const): Rewritten.
+        (WebCore::DataTransferItem::getAsString const): Implemented.
+        (WebCore::DataTransferItem::getAsFile const): Implemented.
+        * dom/DataTransferItem.h:
+        (WebCore::DataTransferItem::ref): Added.
+        (WebCore::DataTransferItem::deref): Added.
+        (WebCore::DataTransferItem::type const): Returns String instead of AtomicString.
+        (WebCore::DataTransferItem::kind const): Moved to cpp.
+        * dom/DataTransferItem.idl: Removed NoInterfaceObject since the interface object should exist on DOMWindow.
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::length): Implemented.
+        (WebCore::DataTransferItemList::item): Ditto.
+        (WebCore::isSupportedType): Added. For now, we only support text/plain.
+        (WebCore::DataTransferItemList::ensureItems): Added. Constructs the list of DataTransferItems.
+        * dom/DataTransferItemList.h:
+        (DataTransferItemList): Added m_items. The list is filled lazily by ensureItems.
+        * dom/DataTransferItemList.idl: Removed NoInterfaceObject since the interface object should exist on DOMWindow.
+
 2017-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ScrollView::clipsRepaints() which was only used by Chromium
