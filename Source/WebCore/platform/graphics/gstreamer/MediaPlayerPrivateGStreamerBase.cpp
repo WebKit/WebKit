@@ -111,6 +111,7 @@
 #endif // USE(TEXTURE_MAPPER_GL)
 
 #if ENABLE(ENCRYPTED_MEDIA)
+#include "GStreamerEMEUtilities.h"
 #include "SharedBuffer.h"
 #include "WebKitClearKeyDecryptorGStreamer.h"
 #endif
@@ -1048,8 +1049,7 @@ bool MediaPlayerPrivateGStreamerBase::supportsKeySystem(const String& keySystem,
     bool result = false;
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    if (equalLettersIgnoringASCIICase(keySystem, "org.w3.clearkey"))
-        result = true;
+    result = GStreamerEMEUtilities::isClearKeyKeySystem(keySystem);
 #endif
 
     GST_DEBUG("checking for KeySystem support with %s and type %s: %s", keySystem.utf8().data(), mimeType.utf8().data(), boolForPrinting(result));

@@ -25,9 +25,6 @@
 
 #include "WebKitCommonEncryptionDecryptorGStreamer.h"
 
-#define CLEAR_KEY_PROTECTION_SYSTEM_UUID "58147ec8-0423-4659-92e6-f52c5ce8c3cc"
-#define CLEAR_KEY_PROTECTION_SYSTEM_ID "org.w3.clearkey"
-
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_MEDIA_CK_DECRYPT          (webkit_media_clear_key_decrypt_get_type())

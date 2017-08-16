@@ -25,6 +25,7 @@
 #if ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
+#include "GStreamerEMEUtilities.h"
 #include <gcrypt.h>
 #include <gst/base/gstbytereader.h>
 #include <wtf/RunLoop.h>
@@ -54,8 +55,8 @@ GST_DEBUG_CATEGORY_STATIC(webkit_media_clear_key_decrypt_debug_category);
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS("application/x-cenc, original-media-type=(string)video/x-h264, protection-system=(string)" CLEAR_KEY_PROTECTION_SYSTEM_UUID "; "
-    "application/x-cenc, original-media-type=(string)audio/mpeg, protection-system=(string)" CLEAR_KEY_PROTECTION_SYSTEM_UUID));
+    GST_STATIC_CAPS("application/x-cenc, original-media-type=(string)video/x-h264, protection-system=(string)" WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID "; "
+    "application/x-cenc, original-media-type=(string)audio/mpeg, protection-system=(string)" WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID));
 
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
     GST_PAD_SRC,
@@ -84,7 +85,7 @@ static void webkit_media_clear_key_decrypt_class_init(WebKitMediaClearKeyDecrypt
         "webkitclearkey", 0, "ClearKey decryptor");
 
     WebKitMediaCommonEncryptionDecryptClass* cencClass = WEBKIT_MEDIA_CENC_DECRYPT_CLASS(klass);
-    cencClass->protectionSystemId = CLEAR_KEY_PROTECTION_SYSTEM_UUID;
+    cencClass->protectionSystemId = WebCore::GStreamerEMEUtilities::s_ClearKeyUUID;
     cencClass->handleKeyResponse = GST_DEBUG_FUNCPTR(webKitMediaClearKeyDecryptorHandleKeyResponse);
     cencClass->setupCipher = GST_DEBUG_FUNCPTR(webKitMediaClearKeyDecryptorSetupCipher);
     cencClass->decrypt = GST_DEBUG_FUNCPTR(webKitMediaClearKeyDecryptorDecrypt);

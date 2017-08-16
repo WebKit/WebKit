@@ -1,3 +1,25 @@
+2017-08-16  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] Rework handling key systems and UUIDs
+        https://bugs.webkit.org/show_bug.cgi?id=175567
+
+        Reviewed by Žan Doberšek.
+
+        The UUIDs and key system strings were moved to the
+        GStreamerEMEUtilities class because so far they were managed by
+        the decryptors and that was ugly.
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::supportsKeySystem):
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp: Added.
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h: Added.
+        (WebCore::GStreamerEMEUtilities::isClearKeyKeySystem):
+        (WebCore::GStreamerEMEUtilities::keySystemToUuid):
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webkit_media_clear_key_decrypt_class_init):
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.h:
+
 2017-08-16  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Add an ENABLE flag and an experimental feature preference
