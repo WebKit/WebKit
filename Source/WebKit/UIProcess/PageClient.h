@@ -384,8 +384,6 @@ public:
     virtual void didChangeDataInteractionCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) = 0;
 #endif
 
-    virtual void didChangeAvoidsUnsafeArea(bool avoidsUnsafeArea) = 0;
-
 #if PLATFORM(GTK) || PLATFORM(WPE)
     virtual JSGlobalContextRef javascriptGlobalContext() { return nullptr; }
 #endif
