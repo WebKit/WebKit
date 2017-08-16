@@ -1,3 +1,9 @@
+2017-08-16  Timothy Horton  <timothy_horton@apple.com>
+
+        Try to fix the build
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+
 2017-08-16  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix after r220812

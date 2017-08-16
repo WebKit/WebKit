@@ -31,6 +31,7 @@
 #import "Pasteboard.h"
 #import "SharedBuffer.h"
 #import "URL.h"
+#import "UTIUtilities.h"
 #import "WebItemProviderPasteboard.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIImage.h>
