@@ -192,11 +192,6 @@ void ScrollView::setPaintsEntireContents(bool paintsEntireContents)
     m_paintsEntireContents = paintsEntireContents;
 }
 
-void ScrollView::setClipsRepaints(bool clipsRepaints)
-{
-    m_clipsRepaints = clipsRepaints;
-}
-
 void ScrollView::setDelegatesScrolling(bool delegatesScrolling)
 {
     if (m_delegatesScrolling == delegatesScrolling)
@@ -1071,7 +1066,7 @@ void ScrollView::positionScrollbarLayers()
 void ScrollView::repaintContentRectangle(const IntRect& rect)
 {
     IntRect paintRect = rect;
-    if (clipsRepaints() && !paintsEntireContents())
+    if (!paintsEntireContents())
         paintRect.intersect(visibleContentRect(LegacyIOSDocumentVisibleRect));
     if (paintRect.isEmpty())
         return;

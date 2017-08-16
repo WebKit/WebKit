@@ -2309,7 +2309,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         // FIXME: use pixel snapping instead of enclosing when ScrollView has finished transitioning from IntRect to Float/LayoutRect.
         IntRect updateRect = enclosingIntRect(layer->repaintRectIncludingNonCompositingDescendants());
         updateRect = contentsToRootView(updateRect);
-        if (!isCompositedContentLayer && clipsRepaints())
+        if (!isCompositedContentLayer)
             updateRect.intersect(rectToScroll);
         if (!updateRect.isEmpty())
             regionToUpdate.unite(updateRect);
@@ -2329,8 +2329,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
             renderView()->layer()->setBackingNeedsRepaintInRect(updateRect);
             continue;
         }
-        if (clipsRepaints())
-            updateRect.intersect(rectToScroll);
+        updateRect.intersect(rectToScroll);
         frame().page()->chrome().invalidateContentsAndRootView(updateRect);
     }
 
