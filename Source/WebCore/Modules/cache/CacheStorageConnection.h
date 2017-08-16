@@ -30,6 +30,7 @@
 #include "FetchOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -68,20 +69,46 @@ public:
     };
 
     using OpenRemoveCallback = WTF::Function<void(uint64_t, Error)>;
-    using CacheMapCallback = WTF::Function<void(Vector<CacheInfo>&&)>;
+    using CachesCallback = WTF::Function<void(Vector<CacheInfo>&&)>;
     using RecordsCallback = WTF::Function<void(Vector<Record>&&)>;
     using BatchOperationCallback = WTF::Function<void(Vector<uint64_t>&&, Error)>;
 
-    virtual void open(const String& /* origin */, const String& /* cacheName */, OpenRemoveCallback&& callback) { callback(0, Error::NotImplemented); }
-    virtual void remove(uint64_t /* cacheIdentifier */, OpenRemoveCallback&& callback) { callback(0, Error::NotImplemented); }
-    virtual void retrieveCaches(const String& /* origin */, CacheMapCallback&& callback) { callback({ }); }
+    void open(const String& /* origin */, const String& /* cacheName */, OpenRemoveCallback&&);
+    void remove(uint64_t /* cacheIdentifier */, OpenRemoveCallback&&);
+    void retrieveCaches(const String& /* origin */, CachesCallback&&);
 
-    virtual void retrieveRecords(uint64_t /* cacheIdentifier */, RecordsCallback&& callback) { callback({ }); }
-    virtual void batchDeleteOperation(uint64_t /* cacheIdentifier */, const ResourceRequest&, CacheQueryOptions&&, BatchOperationCallback&& callback) { callback({ }, Error::NotImplemented); }
-    virtual void batchPutOperation(uint64_t /* cacheIdentifier */, Vector<Record>&&, BatchOperationCallback&& callback) { callback({ }, Error::NotImplemented); }
+    void retrieveRecords(uint64_t /* cacheIdentifier */, RecordsCallback&&);
+    void batchDeleteOperation(uint64_t /* cacheIdentifier */, const ResourceRequest&, CacheQueryOptions&&, BatchOperationCallback&&);
+    void batchPutOperation(uint64_t /* cacheIdentifier */, Vector<Record>&&, BatchOperationCallback&&);
 
 protected:
     CacheStorageConnection() =  default;
+
+    void openCompleted(uint64_t identifier, uint64_t cacheIdentifier, Error error) { openOrRemoveCompleted(identifier, cacheIdentifier, error); }
+    void removeCompleted(uint64_t identifier, uint64_t cacheIdentifier, Error error) { openOrRemoveCompleted(identifier, cacheIdentifier, error); }
+    WEBCORE_EXPORT void updateCaches(uint64_t requestIdentifier, Vector<CacheInfo>&&);
+
+    WEBCORE_EXPORT void updateRecords(uint64_t requestIdentifier, Vector<Record>&&);
+    WEBCORE_EXPORT void deleteRecordsCompleted(uint64_t requestIdentifier, Vector<uint64_t>&&, Error);
+    WEBCORE_EXPORT void putRecordsCompleted(uint64_t requestIdentifier, Vector<uint64_t>&&, Error);
+
+private:
+    virtual void doOpen(uint64_t requestIdentifier, const String& /* origin */, const String& /* cacheName */) { openCompleted(requestIdentifier, 0, Error::NotImplemented); }
+    virtual void doRemove(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */) { removeCompleted(requestIdentifier, 0, Error::NotImplemented); }
+    virtual void doRetrieveCaches(uint64_t requestIdentifier, const String& /* origin */) { updateCaches(requestIdentifier, { }); }
+
+    virtual void doRetrieveRecords(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */) { updateRecords(requestIdentifier, { }); }
+    virtual void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */, const ResourceRequest&, CacheQueryOptions&&) { deleteRecordsCompleted(requestIdentifier, { }, Error::NotImplemented); }
+    virtual void doBatchPutOperation(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */, Vector<Record>&&) { putRecordsCompleted(requestIdentifier, { }, Error::NotImplemented); }
+
+    WEBCORE_EXPORT void openOrRemoveCompleted(uint64_t requestIdentifier, uint64_t cacheIdentifier, Error);
+
+    HashMap<uint64_t, OpenRemoveCallback> m_openAndRemoveCachePendingRequests;
+    HashMap<uint64_t, CachesCallback> m_retrieveCachesPendingRequests;
+    HashMap<uint64_t, RecordsCallback> m_retrieveRecordsPendingRequests;
+    HashMap<uint64_t, BatchOperationCallback> m_batchDeleteAndPutPendingRequests;
+
+    uint64_t m_lastRequestIdentifier { 0 };
 };
 
 } // namespace WebCore

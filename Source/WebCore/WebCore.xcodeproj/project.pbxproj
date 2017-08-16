@@ -1770,6 +1770,8 @@
 		41A1B01D1E54239E007F3769 /* JSDOMGuardedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41A1B01B1E542396007F3769 /* JSDOMGuardedObject.cpp */; };
 		41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */; };
 		41A3D58F101C152D00316D07 /* DedicatedWorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */; };
+		41A7D3521F438D16008988DE /* WorkerCacheStorageConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41A7D34F1F438D10008988DE /* WorkerCacheStorageConnection.cpp */; };
+		41A7D3531F438D16008988DE /* WorkerCacheStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A7D3501F438D10008988DE /* WorkerCacheStorageConnection.h */; };
 		41ABE67B1D0580DB006D862D /* CrossOriginPreflightChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41ABE67A1D0580D5006D862D /* CrossOriginPreflightChecker.h */; };
 		41ABE67C1D0580E0006D862D /* CrossOriginPreflightChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41ABE6791D0580D5006D862D /* CrossOriginPreflightChecker.cpp */; };
 		41AD753A1CEF6BD100A31486 /* FetchOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 41AD75391CEF6BCE00A31486 /* FetchOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9434,6 +9436,8 @@
 		41A48A9D1E8312EB00D2AC2D /* RTCPeerConnectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPeerConnectionState.h; sourceTree = "<group>"; };
 		41A48AA71E84AEEC00D2AC2D /* RTCRtpParameters.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCRtpParameters.idl; sourceTree = "<group>"; };
 		41A48AA81E84AF1D00D2AC2D /* RTCRtpParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpParameters.h; sourceTree = "<group>"; };
+		41A7D34F1F438D10008988DE /* WorkerCacheStorageConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerCacheStorageConnection.cpp; sourceTree = "<group>"; };
+		41A7D3501F438D10008988DE /* WorkerCacheStorageConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerCacheStorageConnection.h; sourceTree = "<group>"; };
 		41ABE6791D0580D5006D862D /* CrossOriginPreflightChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossOriginPreflightChecker.cpp; sourceTree = "<group>"; };
 		41ABE67A1D0580D5006D862D /* CrossOriginPreflightChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossOriginPreflightChecker.h; sourceTree = "<group>"; };
 		41AD75391CEF6BCE00A31486 /* FetchOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchOptions.h; sourceTree = "<group>"; };
@@ -17653,6 +17657,8 @@
 				41FB278E1F34C28200795487 /* DOMWindowCaches.cpp */,
 				41FB278C1F34C28200795487 /* DOMWindowCaches.h */,
 				41380C2B1F343E2F00155FDA /* DOMWindowCaches.idl */,
+				41A7D34F1F438D10008988DE /* WorkerCacheStorageConnection.cpp */,
+				41A7D3501F438D10008988DE /* WorkerCacheStorageConnection.h */,
 				41FB278F1F34C28200795487 /* WorkerGlobalScopeCaches.cpp */,
 				41FB278D1F34C28200795487 /* WorkerGlobalScopeCaches.h */,
 				41380C2A1F343E2F00155FDA /* WorkerGlobalScopeCaches.idl */,
@@ -30215,6 +30221,7 @@
 				A14832C6187F668F00DA63A6 /* WKViewPrivate.h in Headers */,
 				379919971200DDF400EA041C /* WOFFFileFormat.h in Headers */,
 				2E4346460F546A8200B0F1BA /* Worker.h in Headers */,
+				41A7D3531F438D16008988DE /* WorkerCacheStorageConnection.h in Headers */,
 				A52A68621DBB0F630083373F /* WorkerConsoleAgent.h in Headers */,
 				A55639D11C6F09E300806D8E /* WorkerConsoleClient.h in Headers */,
 				A52A68661DBD4B5D0083373F /* WorkerDebuggerAgent.h in Headers */,
@@ -31852,7 +31859,6 @@
 				E125F83D182411E700D84CD9 /* JSCryptoOperationData.cpp in Sources */,
 				7C9ACABF1F3CF1AF00F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.cpp in Sources */,
 				7C9ACAC11F3CF1AF00F3AA09 /* JSCryptoRsaKeyAlgorithm.cpp in Sources */,
-				E48284081F44594C00863AC3 /* RenderTreeUpdaterFirstLetter.cpp in Sources */,
 				BC46C1FC0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp in Sources */,
 				BC46C1FE0C0DDC8F0020CFC3 /* JSCSSImportRule.cpp in Sources */,
 				316FE0710E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp in Sources */,
@@ -33120,6 +33126,7 @@
 				93F19AD508245E59001E9ABC /* RenderTreeAsText.cpp in Sources */,
 				5824ABAA1AE849C8009074B7 /* RenderTreePosition.cpp in Sources */,
 				E461802B1C8A06D90026C02C /* RenderTreeUpdater.cpp in Sources */,
+				E48284081F44594C00863AC3 /* RenderTreeUpdaterFirstLetter.cpp in Sources */,
 				E44614510CD68A3500FADA75 /* RenderVideo.cpp in Sources */,
 				BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */,
 				BE20507D18A458BF0080647E /* RenderVTTCue.cpp in Sources */,
@@ -33929,6 +33936,7 @@
 				A14832C5187F668300DA63A6 /* WKView.mm in Sources */,
 				379919961200DDF400EA041C /* WOFFFileFormat.cpp in Sources */,
 				2E4346450F546A8200B0F1BA /* Worker.cpp in Sources */,
+				41A7D3521F438D16008988DE /* WorkerCacheStorageConnection.cpp in Sources */,
 				A52A68611DBB0F630083373F /* WorkerConsoleAgent.cpp in Sources */,
 				A55639D21C6F09E700806D8E /* WorkerConsoleClient.cpp in Sources */,
 				A52A68651DBD4B5D0083373F /* WorkerDebuggerAgent.cpp in Sources */,

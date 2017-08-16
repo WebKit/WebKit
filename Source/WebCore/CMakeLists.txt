@@ -898,6 +898,7 @@ set(WebCore_SOURCES
     Modules/cache/CacheStorage.cpp
     Modules/cache/CacheStorageConnection.cpp
     Modules/cache/DOMWindowCaches.cpp
+    Modules/cache/WorkerCacheStorageConnection.cpp
     Modules/cache/WorkerGlobalScopeCaches.cpp
 
     Modules/credentials/BasicCredential.cpp

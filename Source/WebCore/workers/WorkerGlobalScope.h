@@ -27,11 +27,13 @@
 #pragma once
 
 #include "Base64Utilities.h"
+#include "CacheStorageConnection.h"
 #include "EventTarget.h"
 #include "ScriptExecutionContext.h"
 #include "SessionID.h"
 #include "Supplementable.h"
 #include "URL.h"
+#include "WorkerCacheStorageConnection.h"
 #include "WorkerEventQueue.h"
 #include "WorkerScriptController.h"
 #include <inspector/ConsoleMessage.h>
@@ -65,6 +67,8 @@ public:
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
     void stopIndexedDatabase();
 #endif
+
+    CacheStorageConnection& cacheStorageConnection();
 
     WorkerScriptController* script() { return m_script.get(); }
     void clearScript() { m_script = nullptr; }
@@ -183,6 +187,7 @@ private:
     mutable RefPtr<Crypto> m_crypto;
 
     SessionID m_sessionID;
+    RefPtr<WorkerCacheStorageConnection> m_cacheStorageConnection;
 };
 
 } // namespace WebCore

@@ -386,4 +386,11 @@ Performance& WorkerGlobalScope::performance() const
     return *m_performance;
 }
 
+CacheStorageConnection& WorkerGlobalScope::cacheStorageConnection()
+{
+    if (!m_cacheStorageConnection)
+        m_cacheStorageConnection = WorkerCacheStorageConnection::create(*this);
+    return *m_cacheStorageConnection;
+}
+
 } // namespace WebCore

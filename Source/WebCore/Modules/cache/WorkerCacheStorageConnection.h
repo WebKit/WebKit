@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
@@ -25,27 +26,35 @@
 
 #pragma once
 
-#include <wtf/text/WTFString.h>
+#include "CacheStorageConnection.h"
 
 namespace WebCore {
 
-struct CacheQueryOptions {
-    CacheQueryOptions() = default;
-    CacheQueryOptions(bool ignoreSearch, bool ignoreMethod, bool ignoreVary, String cacheName);
-    CacheQueryOptions isolatedCopy() const { return { ignoreSearch, ignoreMethod, ignoreVary, cacheName.isolatedCopy() }; }
+class WorkerGlobalScope;
+class WorkerLoaderProxy;
 
-    bool ignoreSearch { false };
-    bool ignoreMethod { false };
-    bool ignoreVary { false };
-    String cacheName;
+class WorkerCacheStorageConnection final : public CacheStorageConnection {
+public:
+    static Ref<WorkerCacheStorageConnection> create(WorkerGlobalScope&);
+    ~WorkerCacheStorageConnection();
+
+private:
+    explicit WorkerCacheStorageConnection(WorkerGlobalScope&);
+
+    // WebCore::CacheStorageConnection
+    void doOpen(uint64_t requestIdentifier, const String& /* origin */, const String& /* cacheName */) final;
+    void doRemove(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */) final;
+    void doRetrieveCaches(uint64_t requestIdentifier, const String& /* origin */) final;
+
+    void doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier) final;
+    void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&) final;
+    void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<Record>&&) final;
+
+    WorkerGlobalScope& m_scope;
+    WorkerLoaderProxy& m_proxy;
+    String m_taskMode;
+
+    RefPtr<CacheStorageConnection> m_mainThreadConnection;
 };
-
-inline CacheQueryOptions::CacheQueryOptions(bool ignoreSearch, bool ignoreMethod, bool ignoreVary, String cacheName)
-    : ignoreSearch(ignoreSearch)
-    , ignoreMethod(ignoreMethod)
-    , ignoreVary(ignoreVary)
-    , cacheName(cacheName.isolatedCopy())
-{
-}
 
 } // namespace WebCore

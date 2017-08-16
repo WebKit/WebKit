@@ -55,7 +55,7 @@ CacheStorage* WorkerGlobalScopeCaches::caches(WorkerGlobalScope& scope)
 CacheStorage* WorkerGlobalScopeCaches::caches() const
 {
     if (!m_caches)
-        m_caches = CacheStorage::create(m_scope, CacheStorageConnection::create());
+        m_caches = CacheStorage::create(m_scope, m_scope.cacheStorageConnection());
     return m_caches.get();
 }
 

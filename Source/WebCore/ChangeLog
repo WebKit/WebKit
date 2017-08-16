@@ -1,3 +1,61 @@
+2017-08-16  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Implement Worker connection to the Cache storage engine
+        https://bugs.webkit.org/show_bug.cgi?id=175599
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing tests.
+
+        Adding a WorkerCacheStorageConnection to connect workers Cache/CacheStorage
+        to the cache storage engine.
+        WorkerCacheStorageConnection does this by hopping to the main thread to call the document cache storage connection to do the actual job.
+        Doing some CacheStorageConnection refactoring to share code with WK2 implementation of the cache storage connection. 
+
+        * Modules/cache/CacheQueryOptions.h:
+        (WebCore::CacheQueryOptions::isolatedCopy const):
+        * Modules/cache/CacheStorageConnection.cpp:
+        (WebCore::CacheStorageConnection::open):
+        (WebCore::CacheStorageConnection::remove):
+        (WebCore::CacheStorageConnection::retrieveCaches):
+        (WebCore::CacheStorageConnection::retrieveRecords):
+        (WebCore::CacheStorageConnection::batchDeleteOperation):
+        (WebCore::CacheStorageConnection::batchPutOperation):
+        (WebCore::CacheStorageConnection::openOrRemoveCompleted):
+        (WebCore::CacheStorageConnection::updateCaches):
+        (WebCore::CacheStorageConnection::updateRecords):
+        (WebCore::CacheStorageConnection::removeRecordsCompleted):
+        (WebCore::CacheStorageConnection::putRecordsCompleted):
+        * Modules/cache/CacheStorageConnection.h:
+        (WebCore::CacheStorageConnection::openCompleted):
+        (WebCore::CacheStorageConnection::removeCompleted):
+        (WebCore::CacheStorageConnection::doOpen):
+        (WebCore::CacheStorageConnection::doRemove):
+        (WebCore::CacheStorageConnection::doRetrieveCaches):
+        (WebCore::CacheStorageConnection::doRetrieveRecords):
+        (WebCore::CacheStorageConnection::doBatchDeleteOperation):
+        (WebCore::CacheStorageConnection::doBatchPutOperation):
+        * Modules/cache/WorkerCacheStorageConnection.cpp: Added.
+        (WebCore::toCrossThreadRecordData):
+        (WebCore::fromCrossThreadRecordData):
+        (WebCore::WorkerCacheStorageConnection::create):
+        (WebCore::WorkerCacheStorageConnection::WorkerCacheStorageConnection):
+        (WebCore::WorkerCacheStorageConnection::doOpen):
+        (WebCore::WorkerCacheStorageConnection::doRemove):
+        (WebCore::WorkerCacheStorageConnection::doRetrieveCaches):
+        (WebCore::WorkerCacheStorageConnection::doRetrieveRecords):
+        (WebCore::WorkerCacheStorageConnection::doBatchDeleteOperation):
+        (WebCore::WorkerCacheStorageConnection::doBatchPutOperation):
+        * Modules/cache/WorkerCacheStorageConnection.h: Added.
+        * Modules/cache/WorkerGlobalScopeCaches.cpp:
+        (WebCore::WorkerGlobalScopeCaches::caches const):
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FetchOptions.h:
+        (WebCore::FetchOptions::isolatedCopy const):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::cacheStorageConnection):
+        * workers/WorkerGlobalScope.h:
+
 2017-08-16  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [PAL] Move spi/ios and spi/win directories into PAL

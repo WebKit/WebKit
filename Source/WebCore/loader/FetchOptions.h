@@ -35,28 +35,38 @@ namespace WebCore {
 
 struct FetchOptions {
     enum class Type { EmptyString, Audio, Font, Image, Script, Style, Track, Video };
-    Type type { Type::EmptyString };
-
     enum class Destination { EmptyString, Document, Sharedworker, Subresource, Unknown, Worker };
-    Destination destination { Destination::EmptyString };
-
     enum class Mode { Navigate, SameOrigin, NoCors, Cors };
-    Mode mode { Mode::NoCors };
-
     enum class Credentials { Omit, SameOrigin, Include };
-    Credentials credentials { Credentials::Omit };
-
     enum class Cache { Default, NoStore, Reload, NoCache, ForceCache, OnlyIfCached };
-    Cache cache { Cache::Default };
-
     enum class Redirect { Follow, Error, Manual };
+
+    FetchOptions() = default;
+    FetchOptions(Type, Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, String&&, bool);
+    FetchOptions isolatedCopy() const { return { type, destination, mode, credentials, cache, redirect, referrerPolicy, integrity.isolatedCopy(), keepAlive }; }
+
+    Type type { Type::EmptyString };
+    Destination destination { Destination::EmptyString };
+    Mode mode { Mode::NoCors };
+    Credentials credentials { Credentials::Omit };
+    Cache cache { Cache::Default };
     Redirect redirect { Redirect::Follow };
-
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
-
     String integrity;
-
     bool keepAlive { false };
 };
+
+inline FetchOptions::FetchOptions(Type type, Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive)
+    : type(type)
+    , destination(destination)
+    , mode(mode)
+    , credentials(credentials)
+    , cache(cache)
+    , redirect(redirect)
+    , referrerPolicy(referrerPolicy)
+    , integrity(WTFMove(integrity))
+    , keepAlive(keepAlive)
+{
+}
 
 } // namespace WebCore
