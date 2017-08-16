@@ -474,6 +474,8 @@ void AcceleratedDrawingArea::attachViewOverlayGraphicsLayer(Frame* frame, Graphi
 
     if (m_layerTreeHost)
         m_layerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
+    else if (m_previousLayerTreeHost)
+        m_previousLayerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
 }
 
 } // namespace WebKit
