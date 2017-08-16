@@ -38,7 +38,7 @@ function testCORSPreflightSuccess(what) {
       assert_equals(result['preflight_referer'], document.URL, "Preflight referer header")
       assert_equals(result['preflight_requested_method'], "POST", "Preflight requested method")
       let requested_headers = result['preflight_requested_headers'].toLowerCase()
-      assert_false(requested_headers.includes("content-type"), "Content-Type header is not requested")
+      assert_true(requested_headers.includes("content-type"), "Content-Type header is requested")
       assert_true(requested_headers.includes("referer"), "Referer header is requested")
       assert_true(requested_headers.includes("origin"), "Origin header is requested")
       assert_equals(result['beacon'], 1, "Received beacon")

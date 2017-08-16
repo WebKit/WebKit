@@ -1,3 +1,11 @@
+2017-08-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline a few tests after r220779.
+
+        * http/tests/blink/sendbeacon/beacon-same-origin-expected.txt:
+        * http/wpt/beacon/cors/cors-preflight-arraybufferview-failure.html:
+        * http/wpt/beacon/cors/cors-preflight-arraybufferview-success.html:
+
 2017-08-15  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Import test suite from web-platform-tests
