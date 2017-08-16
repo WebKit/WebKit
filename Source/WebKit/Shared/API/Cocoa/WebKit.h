@@ -44,6 +44,7 @@
 #import <WebKit/WKScriptMessage.h>
 #import <WebKit/WKScriptMessageHandler.h>
 #import <WebKit/WKSecurityOrigin.h>
+#import <WebKit/WKSnapshotConfiguration.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKURLSchemeTask.h>
