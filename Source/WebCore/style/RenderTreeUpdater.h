@@ -51,6 +51,8 @@ public:
     static void tearDownRenderers(Element&, TeardownType = TeardownType::Normal);
     static void tearDownRenderer(Text&);
 
+    class FirstLetter;
+
 private:
     void updateRenderTree(ContainerNode& root);
     void updateTextRenderer(Text&, const Style::TextUpdate*);

@@ -36,6 +36,7 @@
 #include "RenderListMarker.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
+#include "RenderTreeUpdaterFirstLetter.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -157,7 +158,6 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         parentRenderer->setStyle(WTFMove(newParentStyle));
     }
 
-    // FIXME: All render tree mutations should be done via RenderTreeUpdater.
     for (auto& node : m_autoSizedNodes) {
         auto& textRenderer = *node->renderer();
         if (!is<RenderTextFragment>(textRenderer))
@@ -165,7 +165,8 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         auto* block = downcast<RenderTextFragment>(textRenderer).blockForAccompanyingFirstLetter();
         if (!block)
             continue;
-        block->updateFirstLetter();
+        // FIXME: All render tree mutations should be done by RenderTreeUpdater commit.
+        RenderTreeUpdater::FirstLetter::update(*block);
     }
 
     return stillHasNodes;

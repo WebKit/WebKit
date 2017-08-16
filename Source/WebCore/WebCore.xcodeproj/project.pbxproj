@@ -6799,6 +6799,7 @@
 		E47E276516036ED200EE2AFB /* ExtensionStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E47E276816036EDC00EE2AFB /* ExtensionStyleSheets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */; };
 		E48137B91DB3B526005C59BF /* StyleValidity.h in Headers */ = {isa = PBXBuildFile; fileRef = E48137B81DB3B526005C59BF /* StyleValidity.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E48284081F44594C00863AC3 /* RenderTreeUpdaterFirstLetter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48284061F44594B00863AC3 /* RenderTreeUpdaterFirstLetter.cpp */; };
 		E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */; };
 		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12490,8 +12491,8 @@
 		9B098BDE1F3D673D002DD562 /* JSDataTransferItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataTransferItem.h; sourceTree = "<group>"; };
 		9B098BDF1F3D673D002DD562 /* JSDataTransferItemList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataTransferItemList.cpp; sourceTree = "<group>"; };
 		9B098BE01F3D673D002DD562 /* JSDataTransferItemList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataTransferItemList.h; sourceTree = "<group>"; };
-		9B098BE61F3D6AF6002DD562 /* JSStringCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSStringCallback.cpp; path = JSStringCallback.cpp; sourceTree = "<group>"; };
-		9B098BE71F3D6AF6002DD562 /* JSStringCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSStringCallback.h; path = JSStringCallback.h; sourceTree = "<group>"; };
+		9B098BE61F3D6AF6002DD562 /* JSStringCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringCallback.cpp; sourceTree = "<group>"; };
+		9B098BE71F3D6AF6002DD562 /* JSStringCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringCallback.h; sourceTree = "<group>"; };
 		9B0FE8731D9E02DF004A8ACB /* DocumentOrShadowRoot.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentOrShadowRoot.idl; sourceTree = "<group>"; };
 		9B13257B1F3D2ABA00DAAB69 /* DataTransferItemList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataTransferItemList.cpp; sourceTree = "<group>"; };
 		9B19B67E1B964E5200348745 /* ShadowRoot.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShadowRoot.idl; sourceTree = "<group>"; };
@@ -15420,6 +15421,8 @@
 		E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionStyleSheets.h; sourceTree = "<group>"; };
 		E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionStyleSheets.cpp; sourceTree = "<group>"; };
 		E48137B81DB3B526005C59BF /* StyleValidity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleValidity.h; sourceTree = "<group>"; };
+		E48284061F44594B00863AC3 /* RenderTreeUpdaterFirstLetter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterFirstLetter.cpp; sourceTree = "<group>"; };
+		E48284091F44595600863AC3 /* RenderTreeUpdaterFirstLetter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterFirstLetter.h; sourceTree = "<group>"; };
 		E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayout.cpp; sourceTree = "<group>"; };
 		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
 		E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushThrottleState.h; sourceTree = "<group>"; };
@@ -24950,6 +24953,8 @@
 				5824ABA91AE849C8009074B7 /* RenderTreePosition.h */,
 				E461802A1C8A06D90026C02C /* RenderTreeUpdater.cpp */,
 				E46180281C8A06CD0026C02C /* RenderTreeUpdater.h */,
+				E48284061F44594B00863AC3 /* RenderTreeUpdaterFirstLetter.cpp */,
+				E48284091F44595600863AC3 /* RenderTreeUpdaterFirstLetter.h */,
 				E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */,
 				E401E0A31C3C0B8300F34D10 /* StyleChange.h */,
 				E4D58EB617B4ED8900CBDCA8 /* StyleFontSizeFunctions.cpp */,
@@ -29473,23 +29478,15 @@
 				516F7F6D1C31E39A00F111DC /* ServerOpenDBRequest.h in Headers */,
 				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,
 				51F1755D1F3EBC8300C74950 /* ServiceWorker.h in Headers */,
-				5182C23F1F313A090059BA7C /* ServiceWorker.h in Headers */,
 				51F1755F1F3EBC8300C74950 /* ServiceWorkerContainer.h in Headers */,
-				5182C2411F313A090059BA7C /* ServiceWorkerContainer.h in Headers */,
 				51F175611F3EBC8300C74950 /* ServiceWorkerGlobalScope.h in Headers */,
-				5182C2431F313A090059BA7C /* ServiceWorkerGlobalScope.h in Headers */,
 				51F175631F3EBC8300C74950 /* ServiceWorkerJob.h in Headers */,
-				511CA67E1F3905A60019E074 /* ServiceWorkerJob.h in Headers */,
 				51F175641F3EBC8300C74950 /* ServiceWorkerJobClient.h in Headers */,
-				511CA6801F39331F0019E074 /* ServiceWorkerJobClient.h in Headers */,
-				511CA67A1F3904B10019E074 /* ServiceWorkerProvider.h in Headers */,
 				51F175661F3EBC8300C74950 /* ServiceWorkerProvider.h in Headers */,
 				51F175681F3EBC8300C74950 /* ServiceWorkerRegistration.h in Headers */,
-				5182C2451F313A090059BA7C /* ServiceWorkerRegistration.h in Headers */,
 				51F175691F3EBC8300C74950 /* ServiceWorkerRegistrationOptions.h in Headers */,
 				51F1756B1F3EBC8300C74950 /* ServiceWorkerRegistrationParameters.h in Headers */,
 				51F1756C1F3EBC8300C74950 /* ServiceWorkerUpdateViaCache.h in Headers */,
-				51F174FF1F35899700C74950 /* ServiceWorkerUpdateViaCache.h in Headers */,
 				756B2CE118B7101600FECFAA /* SessionID.h in Headers */,
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
@@ -31901,6 +31898,7 @@
 				E125F83D182411E700D84CD9 /* JSCryptoOperationData.cpp in Sources */,
 				7C9ACABF1F3CF1AF00F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.cpp in Sources */,
 				7C9ACAC11F3CF1AF00F3AA09 /* JSCryptoRsaKeyAlgorithm.cpp in Sources */,
+				E48284081F44594C00863AC3 /* RenderTreeUpdaterFirstLetter.cpp in Sources */,
 				BC46C1FC0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp in Sources */,
 				BC46C1FE0C0DDC8F0020CFC3 /* JSCSSImportRule.cpp in Sources */,
 				316FE0710E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp in Sources */,
@@ -33338,19 +33336,12 @@
 				516F7F6E1C31E39C00F111DC /* ServerOpenDBRequest.cpp in Sources */,
 				2D93AEE419DF5641002A86C3 /* ServicesOverlayController.mm in Sources */,
 				51F1755C1F3EBC8300C74950 /* ServiceWorker.cpp in Sources */,
-				5182C23E1F313A090059BA7C /* ServiceWorker.cpp in Sources */,
 				51F1755E1F3EBC8300C74950 /* ServiceWorkerContainer.cpp in Sources */,
-				5182C2401F313A090059BA7C /* ServiceWorkerContainer.cpp in Sources */,
-				5182C2421F313A090059BA7C /* ServiceWorkerGlobalScope.cpp in Sources */,
 				51F175601F3EBC8300C74950 /* ServiceWorkerGlobalScope.cpp in Sources */,
 				51F175621F3EBC8300C74950 /* ServiceWorkerJob.cpp in Sources */,
-				511CA67D1F3905A60019E074 /* ServiceWorkerJob.cpp in Sources */,
-				511CA6791F3904B10019E074 /* ServiceWorkerProvider.cpp in Sources */,
 				51F175651F3EBC8300C74950 /* ServiceWorkerProvider.cpp in Sources */,
 				51F175671F3EBC8300C74950 /* ServiceWorkerRegistration.cpp in Sources */,
-				5182C2441F313A090059BA7C /* ServiceWorkerRegistration.cpp in Sources */,
 				51F1756A1F3EBC8300C74950 /* ServiceWorkerRegistrationParameters.cpp in Sources */,
-				511CA6831F3A3CD90019E074 /* ServiceWorkerRegistrationParameters.cpp in Sources */,
 				511F7D441EB1C39100E47B83 /* SessionID.cpp in Sources */,
 				93309E0F099E64920056E581 /* SetNodeAttributeCommand.cpp in Sources */,
 				B8DBDB4B130B0F8A00F5CDB1 /* SetSelectionCommand.cpp in Sources */,
