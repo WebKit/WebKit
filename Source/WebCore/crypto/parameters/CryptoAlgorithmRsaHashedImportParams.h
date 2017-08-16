@@ -26,7 +26,9 @@
 #pragma once
 
 #include "CryptoAlgorithmParameters.h"
-#include <runtime/JSCJSValue.h>
+#include <heap/Strong.h>
+#include <runtime/JSObject.h>
+#include <wtf/Variant.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -35,7 +37,7 @@ namespace WebCore {
 class CryptoAlgorithmRsaHashedImportParams final : public CryptoAlgorithmParameters {
 public:
     // FIXME: Consider merging hash and hashIdentifier.
-    JSC::JSValue hash;
+    Variant<JSC::Strong<JSC::JSObject>, String> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
 
     Class parametersClass() const final { return Class::RsaHashedImportParams; }

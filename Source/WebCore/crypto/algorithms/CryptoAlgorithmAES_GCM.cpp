@@ -143,7 +143,7 @@ void CryptoAlgorithmAES_GCM::generateKey(const CryptoAlgorithmParameters& parame
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmAES_GCM::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAES_GCM::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     ASSERT(parameters);
     if (usagesAreInvalidForCryptoAlgorithmAES_GCM(usages)) {
@@ -153,10 +153,10 @@ void CryptoAlgorithmAES_GCM::importKey(SubtleCrypto::KeyFormat format, KeyData&&
 
     RefPtr<CryptoKeyAES> result;
     switch (format) {
-    case SubtleCrypto::KeyFormat::Raw:
+    case CryptoKeyFormat::Raw:
         result = CryptoKeyAES::importRaw(parameters->identifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
-    case SubtleCrypto::KeyFormat::Jwk: {
+    case CryptoKeyFormat::Jwk: {
         auto checkAlgCallback = [](size_t length, const String& alg) -> bool {
             switch (length) {
             case CryptoKeyAES::s_length128:
@@ -183,7 +183,7 @@ void CryptoAlgorithmAES_GCM::importKey(SubtleCrypto::KeyFormat format, KeyData&&
     callback(*result);
 }
 
-void CryptoAlgorithmAES_GCM::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmAES_GCM::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
@@ -194,10 +194,10 @@ void CryptoAlgorithmAES_GCM::exportKey(SubtleCrypto::KeyFormat format, Ref<Crypt
 
     KeyData result;
     switch (format) {
-    case SubtleCrypto::KeyFormat::Raw:
+    case CryptoKeyFormat::Raw:
         result = Vector<uint8_t>(aesKey.key());
         break;
-    case SubtleCrypto::KeyFormat::Jwk: {
+    case CryptoKeyFormat::Jwk: {
         JsonWebKey jwk = aesKey.exportJwk();
         switch (aesKey.key().size() * 8) {
         case CryptoKeyAES::s_length128:

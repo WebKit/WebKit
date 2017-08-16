@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (object or DOMString) HashAlgorithmIdentifier;
+
 // This is a unified dictionary for HmacImportParams and HmacKeyGenParams.
 // https://www.w3.org/TR/WebCryptoAPI/#hmac-importparams, and
 // https://www.w3.org/TR/WebCryptoAPI/#hmac-keygen-params
@@ -31,7 +33,7 @@
     ImplementedAs=CryptoAlgorithmHmacKeyParams
 ] dictionary HmacKeyParams : CryptoAlgorithmParameters {
     // The inner hash function to use.
-    required any hash;
+    required HashAlgorithmIdentifier hash;
     // The length (in bits) of the key to generate. If unspecified, the
     // recommended length will be used, which is the size of the associated hash function's block
     // size.

@@ -87,14 +87,14 @@ void CryptoAlgorithmECDSA::generateKey(const CryptoAlgorithmParameters& paramete
     callback(WTFMove(pair));
 }
 
-void CryptoAlgorithmECDSA::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     ASSERT(parameters);
     const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(*parameters);
 
     RefPtr<CryptoKeyEC> result;
     switch (format) {
-    case SubtleCrypto::KeyFormat::Jwk: {
+    case CryptoKeyFormat::Jwk: {
         JsonWebKey key = WTFMove(WTF::get<JsonWebKey>(data));
 
         if (usages && ((!key.d.isNull() && (usages ^ CryptoKeyUsageSign)) || (key.d.isNull() && (usages ^ CryptoKeyUsageVerify)))) {
@@ -119,21 +119,21 @@ void CryptoAlgorithmECDSA::importKey(SubtleCrypto::KeyFormat format, KeyData&& d
         result = CryptoKeyEC::importJwk(ecParameters.identifier, ecParameters.namedCurve, WTFMove(key), extractable, usages);
         break;
     }
-    case SubtleCrypto::KeyFormat::Raw:
+    case CryptoKeyFormat::Raw:
         if (usages && (usages ^ CryptoKeyUsageVerify)) {
             exceptionCallback(SyntaxError);
             return;
         }
         result = CryptoKeyEC::importRaw(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
-    case SubtleCrypto::KeyFormat::Spki:
+    case CryptoKeyFormat::Spki:
         if (usages && (usages ^ CryptoKeyUsageVerify)) {
             exceptionCallback(SyntaxError);
             return;
         }
         result = CryptoKeyEC::importSpki(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
-    case SubtleCrypto::KeyFormat::Pkcs8:
+    case CryptoKeyFormat::Pkcs8:
         if (usages && (usages ^ CryptoKeyUsageSign)) {
             exceptionCallback(SyntaxError);
             return;
@@ -149,7 +149,7 @@ void CryptoAlgorithmECDSA::importKey(SubtleCrypto::KeyFormat format, KeyData&& d
     callback(*result);
 }
 
-void CryptoAlgorithmECDSA::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmECDSA::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     const auto& ecKey = downcast<CryptoKeyEC>(key.get());
 
@@ -160,10 +160,10 @@ void CryptoAlgorithmECDSA::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoK
 
     KeyData result;
     switch (format) {
-    case SubtleCrypto::KeyFormat::Jwk:
+    case CryptoKeyFormat::Jwk:
         result = ecKey.exportJwk();
         break;
-    case SubtleCrypto::KeyFormat::Raw: {
+    case CryptoKeyFormat::Raw: {
         auto raw = ecKey.exportRaw();
         if (raw.hasException()) {
             exceptionCallback(raw.releaseException().code());
@@ -172,7 +172,7 @@ void CryptoAlgorithmECDSA::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoK
         result = raw.releaseReturnValue();
         break;
     }
-    case SubtleCrypto::KeyFormat::Spki: {
+    case CryptoKeyFormat::Spki: {
         auto spki = ecKey.exportSpki();
         if (spki.hasException()) {
             exceptionCallback(spki.releaseException().code());
@@ -181,7 +181,7 @@ void CryptoAlgorithmECDSA::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoK
         result = spki.releaseReturnValue();
         break;
     }
-    case SubtleCrypto::KeyFormat::Pkcs8: {
+    case CryptoKeyFormat::Pkcs8: {
         auto pkcs8 = ecKey.exportPkcs8();
         if (pkcs8.hasException()) {
             exceptionCallback(pkcs8.releaseException().code());

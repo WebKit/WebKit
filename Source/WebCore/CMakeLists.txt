@@ -1245,7 +1245,6 @@ set(WebCore_SOURCES
     bindings/js/JSReadableStreamSourceCustom.cpp
     bindings/js/JSSVGPathSegCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
-    bindings/js/JSSubtleCryptoCustom.cpp
     bindings/js/JSTextCustom.cpp
     bindings/js/JSTextTrackCueCustom.cpp
     bindings/js/JSTextTrackCustom.cpp

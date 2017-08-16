@@ -115,14 +115,14 @@ void CryptoAlgorithmECDH::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&
     platformDeriveBits(WTFMove(baseKey), ecParameters.publicKey.releaseNonNull(), length, WTFMove(unifiedCallback), context, workQueue);
 }
 
-void CryptoAlgorithmECDH::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmECDH::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     ASSERT(parameters);
     const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(*parameters);
 
     RefPtr<CryptoKeyEC> result;
     switch (format) {
-    case SubtleCrypto::KeyFormat::Jwk: {
+    case CryptoKeyFormat::Jwk: {
         JsonWebKey key = WTFMove(WTF::get<JsonWebKey>(data));
 
         bool isUsagesAllowed = false;
@@ -145,21 +145,21 @@ void CryptoAlgorithmECDH::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
         result = CryptoKeyEC::importJwk(ecParameters.identifier, ecParameters.namedCurve, WTFMove(key), extractable, usages);
         break;
     }
-    case SubtleCrypto::KeyFormat::Raw:
+    case CryptoKeyFormat::Raw:
         if (usages) {
             exceptionCallback(SyntaxError);
             return;
         }
         result = CryptoKeyEC::importRaw(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
-    case SubtleCrypto::KeyFormat::Spki:
+    case CryptoKeyFormat::Spki:
         if (usages) {
             exceptionCallback(SyntaxError);
             return;
         }
         result = CryptoKeyEC::importSpki(ecParameters.identifier, ecParameters.namedCurve, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
-    case SubtleCrypto::KeyFormat::Pkcs8:
+    case CryptoKeyFormat::Pkcs8:
         if (usages && (usages ^ CryptoKeyUsageDeriveKey) && (usages ^ CryptoKeyUsageDeriveBits) && (usages ^ (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits))) {
             exceptionCallback(SyntaxError);
             return;
@@ -175,7 +175,7 @@ void CryptoAlgorithmECDH::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
     callback(*result);
 }
 
-void CryptoAlgorithmECDH::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmECDH::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     const auto& ecKey = downcast<CryptoKeyEC>(key.get());
 
@@ -186,10 +186,10 @@ void CryptoAlgorithmECDH::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKe
 
     KeyData result;
     switch (format) {
-    case SubtleCrypto::KeyFormat::Jwk:
+    case CryptoKeyFormat::Jwk:
         result = ecKey.exportJwk();
         break;
-    case SubtleCrypto::KeyFormat::Raw: {
+    case CryptoKeyFormat::Raw: {
         auto raw = ecKey.exportRaw();
         if (raw.hasException()) {
             exceptionCallback(raw.releaseException().code());
@@ -198,7 +198,7 @@ void CryptoAlgorithmECDH::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKe
         result = raw.releaseReturnValue();
         break;
     }
-    case SubtleCrypto::KeyFormat::Spki: {
+    case CryptoKeyFormat::Spki: {
         auto spki = ecKey.exportSpki();
         if (spki.hasException()) {
             exceptionCallback(spki.releaseException().code());
@@ -207,7 +207,7 @@ void CryptoAlgorithmECDH::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKe
         result = spki.releaseReturnValue();
         break;
     }
-    case SubtleCrypto::KeyFormat::Pkcs8: {
+    case CryptoKeyFormat::Pkcs8: {
         auto pkcs8 = ecKey.exportPkcs8();
         if (pkcs8.hasException()) {
             exceptionCallback(pkcs8.releaseException().code());

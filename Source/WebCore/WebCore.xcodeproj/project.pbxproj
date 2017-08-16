@@ -2592,7 +2592,6 @@
 		57957CB21E972645008072AB /* CryptoAlgorithmHkdfParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57957CAF1E972645008072AB /* CryptoAlgorithmHkdfParams.h */; };
 		57957CB61E972C78008072AB /* JSHkdfParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57957CB41E972C78008072AB /* JSHkdfParams.cpp */; };
 		57957CB71E972C78008072AB /* JSHkdfParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57957CB51E972C78008072AB /* JSHkdfParams.h */; };
-		57A9C88E1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */; };
 		57B5F7D81E57D3C900F34F90 /* CredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7D71E57D3C900F34F90 /* CredentialData.h */; };
 		57B5F7E61E57DBE000F34F90 /* JSCredentialData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57B5F7E41E57DBE000F34F90 /* JSCredentialData.cpp */; };
 		57B5F7E71E57DBE000F34F90 /* JSCredentialData.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B5F7E51E57DBE000F34F90 /* JSCredentialData.h */; };
@@ -10373,7 +10372,6 @@
 		57957CB01E972645008072AB /* HkdfParams.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HkdfParams.idl; sourceTree = "<group>"; };
 		57957CB41E972C78008072AB /* JSHkdfParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHkdfParams.cpp; sourceTree = "<group>"; };
 		57957CB51E972C78008072AB /* JSHkdfParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHkdfParams.h; sourceTree = "<group>"; };
-		57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCryptoCustom.cpp; sourceTree = "<group>"; };
 		57B5F7D61E57D36A00F34F90 /* CredentialData.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CredentialData.idl; sourceTree = "<group>"; };
 		57B5F7D71E57D3C900F34F90 /* CredentialData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialData.h; sourceTree = "<group>"; };
 		57B5F7E41E57DBE000F34F90 /* JSCredentialData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCredentialData.cpp; sourceTree = "<group>"; };
@@ -11370,6 +11368,7 @@
 		7C9ACAB41F3CDC0100F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoRsaHashedKeyAlgorithm.cpp; sourceTree = "<group>"; };
 		7C9ACAB51F3CDC0200F3AA09 /* JSCryptoRsaHashedKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCryptoRsaHashedKeyAlgorithm.h; sourceTree = "<group>"; };
 		7C9ACAB61F3CDC4700F3AA09 /* JSCryptoAesKeyAlgorithm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoAesKeyAlgorithm.cpp; sourceTree = "<group>"; };
+		7C9ACAC91F40B96A00F3AA09 /* CryptoKeyFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoKeyFormat.h; sourceTree = "<group>"; };
 		7C9DBFEA1A9C489F000D6B25 /* HTMLAttachmentElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLAttachmentElement.idl; sourceTree = "<group>"; };
 		7C9DBFEB1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAttachmentElement.cpp; sourceTree = "<group>"; };
 		7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAttachmentElement.h; sourceTree = "<group>"; };
@@ -23662,7 +23661,6 @@
 				BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
-				57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */,
 				E1FF8F661807460800132674 /* JSWebKitSubtleCryptoCustom.cpp */,
 			);
 			name = Custom;
@@ -24790,6 +24788,7 @@
 				E157A8E318173A3A009F821D /* CryptoKey.h */,
 				E157A8DC18172C2C009F821D /* CryptoKey.idl */,
 				E125F85D182C2DF600D84CD9 /* CryptoKeyData.h */,
+				7C9ACAC91F40B96A00F3AA09 /* CryptoKeyFormat.h */,
 				E1F80B8618317252007885C3 /* CryptoKeyPair.h */,
 				E1F80B8418317247007885C3 /* CryptoKeyPair.idl */,
 				E125F855182C0F8300D84CD9 /* CryptoKeySerialization.h */,
@@ -32311,7 +32310,6 @@
 				BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */,
 				A84EBD840CB8C97700079609 /* JSStyleSheetList.cpp in Sources */,
 				571F218B1DA57C7B005C9EFD /* JSSubtleCrypto.cpp in Sources */,
-				57A9C88E1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp in Sources */,
 				B20111070AB7740500DB0E68 /* JSSVGAElement.cpp in Sources */,
 				24D9129113CA951E00D21915 /* JSSVGAltGlyphDefElement.cpp in Sources */,
 				6515EC910D9723FF0063D49A /* JSSVGAltGlyphElement.cpp in Sources */,

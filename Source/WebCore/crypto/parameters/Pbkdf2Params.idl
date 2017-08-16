@@ -23,11 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (object or DOMString) HashAlgorithmIdentifier;
+
 [
     Conditional=SUBTLE_CRYPTO,
     ImplementedAs=CryptoAlgorithmPbkdf2Params,
 ] dictionary Pbkdf2Params : CryptoAlgorithmParameters {
     required BufferSource salt;
     required [EnforceRange] unsigned long iterations;
-    required any hash;
+    required HashAlgorithmIdentifier hash;
 };

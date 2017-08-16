@@ -65,12 +65,12 @@ void CryptoAlgorithm::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&&, R
     exceptionCallback(NotSupportedError);
 }
 
-void CryptoAlgorithm::importKey(SubtleCrypto::KeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithm::importKey(CryptoKeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&& exceptionCallback)
 {
     exceptionCallback(NotSupportedError);
 }
 
-void CryptoAlgorithm::exportKey(SubtleCrypto::KeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithm::exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&& exceptionCallback)
 {
     exceptionCallback(NotSupportedError);
 }

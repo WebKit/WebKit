@@ -1,3 +1,129 @@
+2017-08-16  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove the need for JSSubtleCryptoCustom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=175526
+
+        Reviewed by Chris Dumez.
+
+        - Generates bindings for all of SubtleCrypto except AlgorithmIdentifier normalization, 
+          which is defined in the WebCrypto spec to happen after normal IDL operations.
+        - Adds initial support for IDL object types in unions (some, unneeded at the moment,
+          edge cases remain).
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSubtleCryptoCustom.cpp: Removed.
+
+            Remove JSSubtleCryptoCustom.cpp, added CryptoKeyFormat.h
+
+        * bindings/js/JSDOMConvertObject.h:
+
+            Add needed, when included in generated code, #include of StrongInlines.h
+
+        * bindings/js/JSDOMConvertUnion.h:
+        
+            Add initial support for object (needed for AlgorithmIdentifier which is 
+            (object or DOMString)). Remaining support will be handled by https://webkit.org/b/175616
+
+            Also add remaining spec comments while in the area.
+
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::reject):
+
+            Add support for the special ExistingExceptionError error code. Capturing
+            the current exception and using it as the rejection value.
+
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::~SubtleCrypto):
+        (WebCore::toHashIdentifier):
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        (WebCore::toCryptoKeyUsageBitmap):
+        (WebCore::rejectWithException):
+        (WebCore::normalizeJsonWebKey):
+        (WebCore::toKeyData):
+        (WebCore::copyToVector):
+        (WebCore::isSupportedExportKey):
+        (WebCore::SubtleCrypto::encrypt):
+        (WebCore::SubtleCrypto::decrypt):
+        (WebCore::SubtleCrypto::sign):
+        (WebCore::SubtleCrypto::verify):
+        (WebCore::SubtleCrypto::digest):
+        (WebCore::SubtleCrypto::generateKey):
+        (WebCore::SubtleCrypto::deriveKey):
+        (WebCore::SubtleCrypto::deriveBits):
+        (WebCore::SubtleCrypto::importKey):
+        (WebCore::SubtleCrypto::exportKey):
+        (WebCore::SubtleCrypto::wrapKey):
+        (WebCore::SubtleCrypto::unwrapKey):
+        * crypto/SubtleCrypto.h:
+        * crypto/SubtleCrypto.idl:
+
+            Moves implementation from JSSubtleCryptoCustom.cpp -> here. Important changes that come
+            with that are:
+            - All parameters are now converted / type checked for us.
+            - Rather than throwing exceptions and expecting the bindings layer to convert
+              them to promise rejections, all rejections are now explicitly made.
+            - Algorithms are no longer checked for being supported twice, once in normalizeCryptoAlgorithmParameters
+              and then again in the operation. We instead rely on normalizeCryptoAlgorithmParameters to return
+              an Exception if its not supported.
+            - Shaves 251 lines off the file.
+
+        * crypto/CryptoKeyFormat.h: Added.
+
+            Add new header for unified key format enum. (For bindings purposes, SubtleCrypto
+            re aliases it to SubtleCrypto::KeyFormat).
+
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        * crypto/CryptoAlgorithm.cpp:
+        * crypto/CryptoAlgorithm.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CFB.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_CFB.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CTR.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_CTR.h:
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/algorithms/CryptoAlgorithmECDH.cpp:
+        * crypto/algorithms/CryptoAlgorithmECDH.h:
+        * crypto/algorithms/CryptoAlgorithmECDSA.cpp:
+        * crypto/algorithms/CryptoAlgorithmECDSA.h:
+        * crypto/algorithms/CryptoAlgorithmHKDF.cpp:
+        * crypto/algorithms/CryptoAlgorithmHKDF.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmPBKDF2.cpp:
+        * crypto/algorithms/CryptoAlgorithmPBKDF2.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_PSS.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSA_PSS.h:
+
+            Use CryptoKeyFormat enum directly, rather than SubtleCrypto::KeyFormat,
+            to allow not including SubtleCrypto.h.
+
+        * crypto/parameters/CryptoAlgorithmEcdsaParams.h:
+        * crypto/parameters/CryptoAlgorithmHkdfParams.h:
+        * crypto/parameters/CryptoAlgorithmHmacKeyParams.h:
+        * crypto/parameters/CryptoAlgorithmPbkdf2Params.h:
+        * crypto/parameters/CryptoAlgorithmRsaHashedImportParams.h:
+        * crypto/parameters/CryptoAlgorithmRsaHashedKeyGenParams.h:
+        * crypto/parameters/EcdsaParams.idl:
+        * crypto/parameters/HkdfParams.idl:
+        * crypto/parameters/HmacKeyParams.idl:
+        * crypto/parameters/Pbkdf2Params.idl:
+        * crypto/parameters/RsaHashedImportParams.idl:
+        * crypto/parameters/RsaHashedKeyGenParams.idl:
+
+            Update IDLs and implementations to use the correct definition of HashAlgorithmIdentifier,
+            which is (object or DOMString), now that it is supported.
+
 2017-08-16  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Implement Worker connection to the Cache storage engine

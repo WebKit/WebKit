@@ -25,22 +25,23 @@
 
 enum KeyFormat { "raw", "spki", "pkcs8", "jwk" };
 
+typedef (object or DOMString) AlgorithmIdentifier;
+
 [
     Conditional=SUBTLE_CRYPTO,
     Exposed=(Window,Worker),
     GenerateIsReachable=ImplScriptExecutionContext,
 ] interface SubtleCrypto {
-    [Custom] Promise<any> encrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
-    [Custom] Promise<any> decrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
-    [Custom] Promise<any> sign(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
-    [Custom] Promise<any> verify(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource signature, BufferSource data);
-    [Custom] Promise<any> digest(AlgorithmIdentifier algorithm, BufferSource data);
-    [Custom] Promise<any> deriveKey(AlgorithmIdentifier algorithm, CryptoKey baseKey, AlgorithmIdentifier derivedKeyType, boolean extractable, sequence<KeyUsage> keyUsages);
-    [Custom] Promise<ArrayBuffer> deriveBits(AlgorithmIdentifier algorithm, CryptoKey baseKey, unsigned long length);
-    // FIXME: Should this return a Promise<(CryptoKey or CryptoKeyPair)>?
-    [Custom] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
-    [Custom] Promise<CryptoKey> importKey(KeyFormat format, (BufferSource or JsonWebKey) keyData, AlgorithmIdentifier algorithm, boolen extractable, sequence<CryptoKeyUsage> keyUsages);
-    [Custom] Promise<any> exportKey(KeyFormat format, CryptoKey key);
-    [Custom] Promise<any> wrapKey(KeyFormat format, CryptoKey key, CryptoKey wrappingKey, AlgorithmIdentifier wrapAlgorithm);
-    [Custom] Promise<CryptoKey> unwrapKey(KeyFormat format, BufferSource wrappedKey, CryptoKey unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier unwrappedKeyAlgorithm, boolean extractable, sequence<KeyUsage> keyUsages);
+    [CallWith=ScriptState] Promise<any> encrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
+    [CallWith=ScriptState] Promise<any> decrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
+    [CallWith=ScriptState] Promise<any> sign(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
+    [CallWith=ScriptState] Promise<any> verify(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource signature, BufferSource data);
+    [CallWith=ScriptState] Promise<any> digest(AlgorithmIdentifier algorithm, BufferSource data);
+    [CallWith=ScriptState] Promise<any> generateKey(AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
+    [CallWith=ScriptState] Promise<any> deriveKey(AlgorithmIdentifier algorithm, CryptoKey baseKey, AlgorithmIdentifier derivedKeyType, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
+    [CallWith=ScriptState] Promise<ArrayBuffer> deriveBits(AlgorithmIdentifier algorithm, CryptoKey baseKey, unsigned long length);
+    [CallWith=ScriptState] Promise<CryptoKey> importKey(KeyFormat format, (BufferSource or JsonWebKey) keyData, AlgorithmIdentifier algorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
+    Promise<any> exportKey(KeyFormat format, CryptoKey key);
+    [CallWith=ScriptState] Promise<any> wrapKey(KeyFormat format, CryptoKey key, CryptoKey wrappingKey, AlgorithmIdentifier wrapAlgorithm);
+    [CallWith=ScriptState] Promise<CryptoKey> unwrapKey(KeyFormat format, BufferSource wrappedKey, CryptoKey unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier unwrappedKeyAlgorithm, boolean extractable, sequence<CryptoKeyUsage> keyUsages);
 };

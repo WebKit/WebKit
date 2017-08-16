@@ -151,7 +151,13 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
     static constexpr bool hasRecordType = numberOfRecordTypes != 0;
     using RecordType = ConditionalFront<RecordTypeList, hasRecordType>;
 
-    static constexpr bool hasObjectType = (numberOfSequenceTypes + numberOfFrozenArrayTypes + numberOfDictionaryTypes + numberOfRecordTypes) > 0;
+    using ObjectTypeList = brigand::filter<TypeList, std::is_same<IDLObject, brigand::_1>>;
+    static constexpr size_t numberOfObjectTypes = brigand::size<ObjectTypeList>::value;
+    static_assert(numberOfObjectTypes == 0 || numberOfObjectTypes == 1, "There can be 0 or 1 object types in an IDLUnion.");
+    static constexpr bool hasObjectType = numberOfObjectTypes != 0;
+    using ObjectType = ConditionalFront<ObjectTypeList, hasObjectType>;
+
+    static constexpr bool hasAnyObjectType = (numberOfSequenceTypes + numberOfFrozenArrayTypes + numberOfDictionaryTypes + numberOfRecordTypes + numberOfObjectTypes) > 0;
 
     using InterfaceTypeList = brigand::filter<TypeList, IsIDLInterface<brigand::_1>>;
     using TypedArrayTypeList = brigand::filter<TypeList, IsIDLTypedArray<brigand::_1>>;
@@ -204,36 +210,52 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             if (returnValue)
                 return WTFMove(returnValue.value());
         }
-        
+
         // FIXME: Add support for steps 5 & 6.
+        //
+        // 5. If V is a DOMException platform object, then:
+        //     1. If types includes DOMException or Error, then return the result of converting V to that type.
+        //     2 If types includes object, then return the IDL value that is a reference to the object V.
+        //
+        // 6. If Type(V) is Object and V has an [[ErrorData]] internal slot), then:
+        //     1. If types includes Error, then return the result of converting V to Error.
+        //     2. If types includes object, then return the IDL value that is a reference to the object V.
+
 
         // 7. If Type(V) is Object and V has an [[ArrayBufferData]] internal slot, then:
         //     1. If types includes ArrayBuffer, then return the result of converting V to ArrayBuffer.
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
-        //         (FIXME: Add support for object and step 7.2)
         constexpr bool hasArrayBufferType = brigand::any<TypeList, std::is_same<IDLArrayBuffer, brigand::_1>>::value;
-        if (hasArrayBufferType) {
+        if (hasArrayBufferType || hasObjectType) {
             auto arrayBuffer = JSC::JSArrayBuffer::toWrapped(vm, value);
-            if (arrayBuffer)
-                return std::move<WTF::CheckMoveParameter>(ConditionalReturner<ReturnType, hasArrayBufferType>::get(WTFMove(arrayBuffer)).value());
+            if (arrayBuffer) {
+                if (hasArrayBufferType)
+                    return std::move<WTF::CheckMoveParameter>(ConditionalReturner<ReturnType, hasArrayBufferType>::get(WTFMove(arrayBuffer)).value());
+                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value());
+            }
         }
 
         constexpr bool hasArrayBufferViewType = brigand::any<TypeList, std::is_same<IDLArrayBufferView, brigand::_1>>::value;
-        if (hasArrayBufferViewType) {
+        if (hasArrayBufferViewType || hasObjectType) {
             auto arrayBufferView = JSC::JSArrayBufferView::toWrapped(vm, value);
-            if (arrayBufferView)
-                return std::move<WTF::CheckMoveParameter>(ConditionalReturner<ReturnType, hasArrayBufferViewType>::get(WTFMove(arrayBufferView)).value());
+            if (arrayBufferView) {
+                if (hasArrayBufferViewType)
+                    return std::move<WTF::CheckMoveParameter>(ConditionalReturner<ReturnType, hasArrayBufferViewType>::get(WTFMove(arrayBufferView)).value());
+                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value());
+            }
         }
 
         // 8. If Type(V) is Object and V has a [[DataView]] internal slot, then:
         //     1. If types includes DataView, then return the result of converting V to DataView.
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
-        //         (FIXME: Add support for object and step 8.2)
         constexpr bool hasDataViewType = brigand::any<TypeList, std::is_same<IDLDataView, brigand::_1>>::value;
-        if (hasDataViewType) {
+        if (hasDataViewType || hasObjectType) {
             auto dataView = JSC::JSDataView::toWrapped(vm, value);
-            if (dataView)
-                return std::move<WTF::CheckMoveParameter>(ConditionalReturner<ReturnType, hasDataViewType>::get(WTFMove(dataView)).value());
+            if (dataView) {
+                if (hasDataViewType)
+                    return std::move<WTF::CheckMoveParameter>(ConditionalReturner<ReturnType, hasDataViewType>::get(WTFMove(dataView)).value());
+                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value());
+            }
         }
 
         // 9. If Type(V) is Object and V has a [[TypedArrayName]] internal slot, then:
@@ -263,9 +285,13 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         }
 
         // FIXME: Add support for step 10.
+        //
+        // 10. If IsCallable(V) is true, then:
+        //     1. If types includes a callback function type, then return the result of converting V to that callback function type.
+        //     2. If types includes object, then return the IDL value that is a reference to the object V.
 
         // 11. If V is any kind of object, then:
-        if (hasObjectType) {
+        if (hasAnyObjectType) {
             if (value.isCell()) {
                 JSC::JSCell* cell = value.asCell();
                 if (cell->isObject()) {
@@ -308,8 +334,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
 
                     //     5. If types includes a callback interface type, then return the result of converting V to that interface type.
                     //         (FIXME: Add support for callback interface type and step 12.5)
+
                     //     6. If types includes object, then return the IDL value that is a reference to the object V.
-                    //         (FIXME: Add support for object and step 12.6)
+                    if (hasObjectType)
+                        return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value());
                 }
             }
         }

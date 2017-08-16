@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,17 @@
 
 #pragma once
 
-#include "CryptoAlgorithmRsaKeyGenParams.h"
-#include <heap/Strong.h>
-#include <runtime/JSObject.h>
-#include <wtf/Variant.h>
-
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmRsaHashedKeyGenParams final : public CryptoAlgorithmRsaKeyGenParams {
-public:
-    // FIXME: Consider merging hash and hashIdentifier.
-    Variant<JSC::Strong<JSC::JSObject>, String> hash;
-    CryptoAlgorithmIdentifier hashIdentifier;
-
-    Class parametersClass() const final { return Class::RsaHashedKeyGenParams; }
+enum class CryptoKeyFormat {
+    Raw,
+    Spki,
+    Pkcs8,
+    Jwk
 };
 
-} // namespace WebCore
+}
 
-SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(RsaHashedKeyGenParams)
-
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif

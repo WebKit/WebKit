@@ -27,7 +27,8 @@
 
 #include "BufferSource.h"
 #include "CryptoAlgorithmParameters.h"
-#include <runtime/JSCJSValue.h>
+#include <heap/Strong.h>
+#include <runtime/JSObject.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
@@ -39,7 +40,7 @@ public:
     BufferSource salt;
     unsigned long iterations;
     // FIXME: Consider merging hash and hashIdentifier.
-    JSC::JSValue hash;
+    Variant<JSC::Strong<JSC::JSObject>, String> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
 
     const Vector<uint8_t>& saltVector()

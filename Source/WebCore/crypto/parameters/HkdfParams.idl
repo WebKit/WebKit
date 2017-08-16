@@ -23,12 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (object or DOMString) HashAlgorithmIdentifier;
+
 [
     Conditional=SUBTLE_CRYPTO,
     ImplementedAs=CryptoAlgorithmHkdfParams,
 ] dictionary HkdfParams : CryptoAlgorithmParameters {
     // The algorithm to use with HMAC (e.g.: SHA-256)
-    required any hash;
+    required HashAlgorithmIdentifier hash;
     // A bit string that corresponds to the salt used in the extract step.
     required BufferSource salt;
     // A bit string that corresponds to the context and application specific context for the derived keying material.

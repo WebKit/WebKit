@@ -103,6 +103,18 @@ void DeferredPromise::reject(Exception exception)
     auto& state = *m_globalObject->globalExec();
     JSC::JSLockHolder locker(&state);
 
+    if (exception.code() == ExistingExceptionError) {
+        auto scope = DECLARE_CATCH_SCOPE(state.vm());
+
+        ASSERT(scope.exception());
+
+        auto error = scope.exception()->value();
+        scope.clearException();
+
+        reject<IDLAny>(error);
+        return;
+    }
+
     auto scope = DECLARE_THROW_SCOPE(state.vm());
     auto error = createDOMException(state, WTFMove(exception));
     if (UNLIKELY(scope.exception())) {
@@ -122,6 +134,18 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message)
     ASSERT(m_globalObject);
     auto& state = *m_globalObject->globalExec();
     JSC::JSLockHolder locker(&state);
+
+    if (ec == ExistingExceptionError) {
+        auto scope = DECLARE_CATCH_SCOPE(state.vm());
+
+        ASSERT(scope.exception());
+
+        auto error = scope.exception()->value();
+        scope.clearException();
+
+        reject<IDLAny>(error);
+        return;
+    }
 
     auto scope = DECLARE_THROW_SCOPE(state.vm());
     auto error = createDOMException(&state, ec, message);

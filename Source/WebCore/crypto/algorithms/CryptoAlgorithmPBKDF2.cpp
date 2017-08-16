@@ -52,9 +52,9 @@ void CryptoAlgorithmPBKDF2::deriveBits(std::unique_ptr<CryptoAlgorithmParameters
     platformDeriveBits(WTFMove(parameters), WTFMove(baseKey), length, WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
 }
 
-void CryptoAlgorithmPBKDF2::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmPBKDF2::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    if (format != SubtleCrypto::KeyFormat::Raw) {
+    if (format != CryptoKeyFormat::Raw) {
         exceptionCallback(NotSupportedError);
         return;
     }

@@ -102,7 +102,7 @@ void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameter
     callback(WTFMove(result));
 }
 
-void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmHMAC::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     ASSERT(parameters);
     const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyParams>(*parameters);
@@ -114,10 +114,10 @@ void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
 
     RefPtr<CryptoKeyHMAC> result;
     switch (format) {
-    case SubtleCrypto::KeyFormat::Raw:
+    case CryptoKeyFormat::Raw:
         result = CryptoKeyHMAC::importRaw(hmacParameters.length.value_or(0), hmacParameters.hashIdentifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
-    case SubtleCrypto::KeyFormat::Jwk: {
+    case CryptoKeyFormat::Jwk: {
         auto checkAlgCallback = [](CryptoAlgorithmIdentifier hash, const String& alg) -> bool {
             switch (hash) {
             case CryptoAlgorithmIdentifier::SHA_1:
@@ -150,7 +150,7 @@ void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& da
     callback(*result);
 }
 
-void CryptoAlgorithmHMAC::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
+void CryptoAlgorithmHMAC::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key, KeyDataCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     const auto& hmacKey = downcast<CryptoKeyHMAC>(key.get());
 
@@ -161,10 +161,10 @@ void CryptoAlgorithmHMAC::exportKey(SubtleCrypto::KeyFormat format, Ref<CryptoKe
 
     KeyData result;
     switch (format) {
-    case SubtleCrypto::KeyFormat::Raw:
+    case CryptoKeyFormat::Raw:
         result = Vector<uint8_t>(hmacKey.key());
         break;
-    case SubtleCrypto::KeyFormat::Jwk: {
+    case CryptoKeyFormat::Jwk: {
         JsonWebKey jwk = hmacKey.exportJwk();
         switch (hmacKey.hashAlgorithmIdentifier()) {
         case CryptoAlgorithmIdentifier::SHA_1:

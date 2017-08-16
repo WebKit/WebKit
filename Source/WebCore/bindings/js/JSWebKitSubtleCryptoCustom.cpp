@@ -33,6 +33,7 @@
 #include "CryptoAlgorithmParametersDeprecated.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyData.h"
+#include "CryptoKeyFormat.h"
 #include "CryptoKeySerializationRaw.h"
 #include "Document.h"
 #include "JSCryptoAlgorithmDictionary.h"
@@ -46,20 +47,6 @@
 using namespace JSC;
 
 namespace WebCore {
-
-enum class CryptoKeyFormat {
-    // An unformatted sequence of bytes. Intended for secret keys.
-    Raw,
-
-    // The DER encoding of the PrivateKeyInfo structure from RFC 5208.
-    PKCS8,
-
-    // The DER encoding of the SubjectPublicKeyInfo structure from RFC 5280.
-    SPKI,
-
-    // The key is represented as JSON according to the JSON Web Key format.
-    JWK
-};
 
 static RefPtr<CryptoAlgorithm> createAlgorithmFromJSValue(ExecState& state, ThrowScope& scope, JSValue value)
 {
@@ -81,11 +68,11 @@ static CryptoKeyFormat cryptoKeyFormatFromJSValue(ExecState& state, ThrowScope& 
     if (keyFormatString == "raw")
         return CryptoKeyFormat::Raw;
     if (keyFormatString == "pkcs8")
-        return CryptoKeyFormat::PKCS8;
+        return CryptoKeyFormat::Pkcs8;
     if (keyFormatString == "spki")
-        return CryptoKeyFormat::SPKI;
+        return CryptoKeyFormat::Spki;
     if (keyFormatString == "jwk")
-        return CryptoKeyFormat::JWK;
+        return CryptoKeyFormat::Jwk;
 
     throwTypeError(&state, scope, ASCIILiteral("Unknown key format"));
     return { };
@@ -399,7 +386,7 @@ static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperati
     case CryptoKeyFormat::Raw:
         keySerialization = CryptoKeySerializationRaw::create(data);
         break;
-    case CryptoKeyFormat::JWK: {
+    case CryptoKeyFormat::Jwk: {
         String jwkString = String::fromUTF8(data.first, data.second);
         if (jwkString.isNull()) {
             throwTypeError(&state, scope, ASCIILiteral("JWK JSON serialization is not valid UTF-8"));
@@ -511,7 +498,7 @@ static void exportKey(ExecState& state, CryptoKeyFormat keyFormat, const CryptoK
             failureCallback();
         break;
     }
-    case CryptoKeyFormat::JWK: {
+    case CryptoKeyFormat::Jwk: {
         String result = JSCryptoKeySerializationJWK::serialize(&state, key);
         RETURN_IF_EXCEPTION(scope, void());
         CString utf8String = result.utf8(StrictConversion);

@@ -25,22 +25,54 @@
 
 #pragma once
 
+#if ENABLE(SUBTLE_CRYPTO)
+
 #include "ContextDestructionObserver.h"
+#include "CryptoKeyFormat.h"
+#include <heap/Strong.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Variant.h>
 #include <wtf/WorkQueue.h>
 
-#if ENABLE(SUBTLE_CRYPTO)
+namespace JSC {
+class ArrayBufferView;
+class ArrayBuffer;
+class ExecState;
+}
 
 namespace WebCore {
 
+struct JsonWebKey;
+
+class BufferSource;
+class CryptoKey;
+class DeferredPromise;
+
+enum class CryptoKeyUsage;
+
 class SubtleCrypto : public ContextDestructionObserver, public RefCounted<SubtleCrypto> {
 public:
-    enum class KeyFormat { Raw, Spki, Pkcs8, Jwk };
-
     static Ref<SubtleCrypto> create(ScriptExecutionContext& context) { return adoptRef(*new SubtleCrypto(context)); }
+    ~SubtleCrypto();
 
-    WorkQueue& workQueue() { return m_workQueue.get(); };
+    using KeyFormat = CryptoKeyFormat;
+
+    using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, String>;
+    using KeyDataVariant = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, JsonWebKey>;
+
+    void encrypt(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& data, Ref<DeferredPromise>&&);
+    void decrypt(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& data, Ref<DeferredPromise>&&);
+    void sign(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& data, Ref<DeferredPromise>&&);
+    void verify(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey&, BufferSource&& signature, BufferSource&& data, Ref<DeferredPromise>&&);
+    void digest(JSC::ExecState&, AlgorithmIdentifier&&, BufferSource&& data, Ref<DeferredPromise>&&);
+    void generateKey(JSC::ExecState&, AlgorithmIdentifier&&, bool extractable, Vector<CryptoKeyUsage>&& keyUsages, Ref<DeferredPromise>&&);
+    void deriveKey(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey& baseKey, AlgorithmIdentifier&& derivedKeyType, bool extractable, Vector<CryptoKeyUsage>&&, Ref<DeferredPromise>&&);
+    void deriveBits(JSC::ExecState&, AlgorithmIdentifier&&, CryptoKey& baseKey, unsigned length, Ref<DeferredPromise>&&);
+    void importKey(JSC::ExecState&, KeyFormat, KeyDataVariant&&, AlgorithmIdentifier&&, bool extractable, Vector<CryptoKeyUsage>&&, Ref<DeferredPromise>&&);
+    void exportKey(KeyFormat, CryptoKey&, Ref<DeferredPromise>&&);
+    void wrapKey(JSC::ExecState&, KeyFormat, CryptoKey&, CryptoKey& wrappingKey, AlgorithmIdentifier&& wrapAlgorithm, Ref<DeferredPromise>&&);
+    void unwrapKey(JSC::ExecState&, KeyFormat, BufferSource&& wrappedKey, CryptoKey& unwrappingKey, AlgorithmIdentifier&& unwrapAlgorithm, AlgorithmIdentifier&& unwrappedKeyAlgorithm, bool extractable, Vector<CryptoKeyUsage>&&, Ref<DeferredPromise>&&);
 
 private:
     SubtleCrypto(ScriptExecutionContext&);
