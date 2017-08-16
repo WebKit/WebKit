@@ -35,6 +35,7 @@
 #include "InputTypeNames.h"
 #include "LinkLoader.h"
 #include "LinkRelAttribute.h"
+#include "Logging.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "RenderView.h"
@@ -215,6 +216,7 @@ private:
                 m_mediaAttribute = attributeValue;
                 auto mediaSet = MediaQuerySet::create(attributeValue);
                 auto* documentElement = document.documentElement();
+                LOG(MediaQueries, "HTMLPreloadScanner %p processAttribute evaluating media queries", this);
                 m_mediaMatched = MediaQueryEvaluator { document.printing() ? "print" : "screen", document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());
             }
             break;

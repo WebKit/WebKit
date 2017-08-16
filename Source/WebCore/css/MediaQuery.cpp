@@ -30,6 +30,7 @@
 #include "MediaQuery.h"
 
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -104,6 +105,12 @@ const String& MediaQuery::cssText() const
     if (m_serializationCache.isNull())
         m_serializationCache = serialize();
     return m_serializationCache;
+}
+
+TextStream& operator<<(TextStream& ts, const MediaQuery& query)
+{
+    ts << query.cssText();
+    return ts;
 }
 
 } //namespace

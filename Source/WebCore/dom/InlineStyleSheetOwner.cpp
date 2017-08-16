@@ -23,6 +23,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Element.h"
+#include "Logging.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "ScriptableDocumentParser.h"
@@ -174,6 +175,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     MediaQueryEvaluator screenEval(ASCIILiteral("screen"), true);
     MediaQueryEvaluator printEval(ASCIILiteral("print"), true);
+    LOG(MediaQueries, "InlineStyleSheetOwner::createSheet evaluating queries");
     if (!screenEval.evaluate(*mediaQueries) && !printEval.evaluate(*mediaQueries))
         return;
 

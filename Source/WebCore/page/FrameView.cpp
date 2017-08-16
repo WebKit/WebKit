@@ -1316,8 +1316,10 @@ void FrameView::layout(bool allowSubtree)
     bool inChildFrameLayoutWithFrameFlattening = isInChildFrameWithFrameFlattening();
 
     if (inChildFrameLayoutWithFrameFlattening) {
-        if (!m_frameFlatteningViewSizeForMediaQuery)
+        if (!m_frameFlatteningViewSizeForMediaQuery) {
+            LOG_WITH_STREAM(MediaQueries, stream << "FrameView " << this << " snapshotting size " <<  ScrollView::layoutSize() << " for media queries");
             m_frameFlatteningViewSizeForMediaQuery = ScrollView::layoutSize();
+        }
         startLayoutAtMainFrameViewIfNeeded(allowSubtree);
         RenderElement* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
         if (!root || !root->needsLayout())

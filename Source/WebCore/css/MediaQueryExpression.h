@@ -31,6 +31,10 @@
 #include "CSSValue.h"
 #include <memory>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class MediaQueryExpression {
@@ -74,5 +78,7 @@ inline bool MediaQueryExpression::isValid() const
 {
     return m_isValid;
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, const MediaQueryExpression&);
 
 } // namespace

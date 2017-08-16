@@ -41,6 +41,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/TextStream.h>
 
 // FIXME: This file makes too much use of the + operator on String.
 // We either have to optimize that operator so it doesn't involve
@@ -1334,4 +1335,10 @@ URL URL::fileURLWithFileSystemPath(const String& filePath)
     return URL(URL(), "file:///" + filePath);
 }
 
+TextStream& operator<<(TextStream& ts, const URL& url)
+{
+    ts << url.string();
+    return ts;
 }
+
+} // namespace WebCore

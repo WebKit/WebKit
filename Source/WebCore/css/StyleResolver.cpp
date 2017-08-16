@@ -67,6 +67,7 @@
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "LinkHash.h"
+#include "Logging.h"
 #include "MathMLElement.h"
 #include "MathMLNames.h"
 #include "MediaList.h"
@@ -1872,6 +1873,7 @@ void StyleResolver::addViewportDependentMediaQueryResult(const MediaQueryExpress
 
 bool StyleResolver::hasMediaQueriesAffectedByViewportChange() const
 {
+    LOG(MediaQueries, "StyleResolver::hasMediaQueriesAffectedByViewportChange evaluating queries");
     for (auto& result : m_viewportDependentMediaQueryResults) {
         if (m_mediaQueryEvaluator.evaluate(result.expression) != result.result)
             return true;
@@ -1886,6 +1888,7 @@ void StyleResolver::addAccessibilitySettingsDependentMediaQueryResult(const Medi
 
 bool StyleResolver::hasMediaQueriesAffectedByAccessibilitySettingsChange() const
 {
+    LOG(MediaQueries, "StyleResolver::hasMediaQueriesAffectedByAccessibilitySettingsChange evaluating queries");
     for (auto& result : m_accessibilitySettingsDependentMediaQueryResults) {
         if (m_mediaQueryEvaluator.evaluate(result.expression) != result.result)
             return true;

@@ -32,6 +32,7 @@
 #include "CSSParserToken.h"
 #include "CSSPrimitiveValue.h"
 #include "MediaFeatureNames.h"
+#include <wtf/text/TextStream.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -224,5 +225,12 @@ String MediaQueryExpression::serialize() const
     m_serializationCache = result.toString();
     return m_serializationCache;
 }
+
+TextStream& operator<<(TextStream& ts, const MediaQueryExpression& expression)
+{
+    ts << expression.serialize();
+    return ts;
+}
+
 
 } // namespace

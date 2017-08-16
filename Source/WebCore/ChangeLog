@@ -1,3 +1,61 @@
+2017-08-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a log channel for media queries
+        https://bugs.webkit.org/show_bug.cgi?id=175591
+
+        Reviewed by Zalan Bujtas.
+
+        Add a "MediaQueries" log channel which logs data about media query evaluation.
+
+        * css/MediaList.cpp:
+        (WebCore::MediaQuerySet::MediaQuerySet):
+        (WebCore::operator<<):
+        * css/MediaList.h:
+        * css/MediaQuery.cpp:
+        (WebCore::operator<<):
+        * css/MediaQuery.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::operator<<):
+        (WebCore::MediaQueryEvaluator::evaluate const):
+        (WebCore::aspectRatioValueAsString):
+        (WebCore::orientationEvaluate):
+        (WebCore::aspectRatioEvaluate):
+        (WebCore::deviceAspectRatioEvaluate):
+        (WebCore::evaluateResolution):
+        (WebCore::deviceHeightEvaluate):
+        (WebCore::deviceWidthEvaluate):
+        (WebCore::heightEvaluate):
+        (WebCore::widthEvaluate):
+        * css/MediaQueryExpression.cpp:
+        (WebCore::operator<<):
+        * css/MediaQueryExpression.h:
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::styleResolverChanged):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::hasMediaQueriesAffectedByViewportChange const):
+        (WebCore::StyleResolver::hasMediaQueriesAffectedByAccessibilitySettingsChange const):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::viewportChangeAffectedPicture const):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * platform/Logging.cpp:
+        (WebCore::initializeLogChannelsIfNecessary):
+        * platform/Logging.h:
+        * platform/URL.cpp:
+        (WebCore::isSchemeFirstChar):
+        (WebCore::operator<<):
+        * platform/URL.h:
+
 2017-08-16  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove the need for JSSubtleCryptoCustom.cpp

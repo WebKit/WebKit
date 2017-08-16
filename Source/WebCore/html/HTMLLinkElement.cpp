@@ -44,6 +44,7 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "Logging.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "MouseEvent.h"
@@ -287,6 +288,7 @@ void HTMLLinkElement::process()
             if (document().hasLivingRenderTree())
                 documentStyle = Style::resolveForDocument(document());
             auto media = MediaQuerySet::create(m_media);
+            LOG(MediaQueries, "HTMLLinkElement::process evaluating queries");
             mediaQueryMatches = MediaQueryEvaluator { document().frame()->view()->mediaType(), document(), documentStyle ? &*documentStyle : nullptr }.evaluate(media.get());
         }
 

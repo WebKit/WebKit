@@ -33,6 +33,7 @@
 #include "HTMLPictureElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
+#include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
@@ -169,6 +170,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         auto* documentElement = document().documentElement();
         MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
         auto* queries = source.parsedMediaAttribute();
+        LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
         auto evaluation = !queries || evaluator.evaluate(*queries, picture->viewportDependentResults());
         if (picture->hasViewportDependentResults())
             document().addViewportDependentPicture(*picture);

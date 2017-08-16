@@ -4296,6 +4296,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
                 LOG(Media, "HTMLMediaElement::selectNextSourceChild(%p) - 'media' is %s", this, source->attributeWithoutSynchronization(mediaAttr).string().utf8().data());
 #endif
             auto* renderer = this->renderer();
+            LOG(MediaQueries, "HTMLMediaElement %p selectNextSourceChild evaluating media queries", this);
             if (!MediaQueryEvaluator { "screen", document(), renderer ? &renderer->style() : nullptr }.evaluate(*media))
                 goto CheckAgain;
         }

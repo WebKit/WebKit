@@ -61,4 +61,6 @@ private:
     mutable String m_serializationCache;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, const MediaQuery&);
+
 } // namespace

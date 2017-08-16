@@ -25,6 +25,10 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class CSSParser;
@@ -66,7 +70,7 @@ private:
     WEBCORE_EXPORT MediaQuerySet(const String& mediaQuery);
     MediaQuerySet(const MediaQuerySet&);
 
-    signed m_lastLine;
+    int m_lastLine { 0 };
     Vector<MediaQuery> m_queries;
 };
 
@@ -120,5 +124,8 @@ inline void reportMediaQueryWarningIfNeeded(Document*, const MediaQuerySet*)
 }
 
 #endif
+
+WTF::TextStream& operator<<(WTF::TextStream&, const MediaQuerySet&);
+WTF::TextStream& operator<<(WTF::TextStream&, const MediaList&);
 
 } // namespace

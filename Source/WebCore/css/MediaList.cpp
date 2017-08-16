@@ -29,6 +29,7 @@
 #include "MediaQueryParser.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -69,7 +70,6 @@ Ref<MediaQuerySet> MediaQuerySet::create(const String& mediaString)
 }
 
 MediaQuerySet::MediaQuerySet()
-    : m_lastLine(0)
 {
 }
 
@@ -277,4 +277,17 @@ void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* me
 
 #endif
 
+TextStream& operator<<(TextStream& ts, const MediaQuerySet& querySet)
+{
+    ts << querySet.mediaText();
+    return ts;
 }
+
+TextStream& operator<<(TextStream& ts, const MediaList& mediaList)
+{
+    ts << mediaList.mediaText();
+    return ts;
+}
+
+} // namespace WebCore
+

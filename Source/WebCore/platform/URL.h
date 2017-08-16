@@ -42,6 +42,10 @@ typedef const struct __CFURL* CFURLRef;
 OBJC_CLASS NSURL;
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class TextEncoding;
@@ -440,6 +444,8 @@ inline unsigned URL::pathAfterLastSlash() const
 {
     return m_pathAfterLastSlash;
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, const URL&);
 
 } // namespace WebCore
 
