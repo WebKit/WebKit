@@ -1,3 +1,22 @@
+2017-08-15  Robin Morisset  <rmorisset@apple.com>
+
+        We are too conservative about the effects of PushWithScope
+        https://bugs.webkit.org/show_bug.cgi?id=175584
+
+        Reviewed by Saam Barati.
+
+        PushWithScope converts its argument to an object (this can throw a type error,
+        but has no other observable effect), and allocates a new scope, that it then
+        makes the new current scope. We were a bit too
+        conservative in saying that it clobbers the world.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
 2017-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make DataTransferItemList work with plain text entries

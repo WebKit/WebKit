@@ -471,6 +471,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(SideState);
         return;
 
+    case PushWithScope: {
+        read(World);
+        write(HeapObjectCount);
+        return;
+    }
+
     case CreateActivation: {
         SymbolTable* table = node->castOperand<SymbolTable*>();
         if (table->singletonScope()->isStillValid())
@@ -605,7 +611,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PutDynamicVar:
     case ResolveScopeForHoistingFuncDeclInEval:
     case ResolveScope:
-    case PushWithScope:
         read(World);
         write(Heap);
         return;
