@@ -49,11 +49,11 @@
 #endif
 
 #if PLATFORM(IOS)
-#import <WebCore/GraphicsServicesSPI.h> // for GSCurrentEventTimestamp()
+#import <UIKit/UIKit.h>
 #import <WebKit/KeyEventCodesIOS.h>
 #import <WebKit/WAKWindow.h>
 #import <WebKit/WebEvent.h>
-#import <UIKit/UIKit.h>
+#import <pal/spi/ios/GraphicsServicesSPI.h> // for GSCurrentEventTimestamp()
 #endif
 
 #if !PLATFORM(IOS)

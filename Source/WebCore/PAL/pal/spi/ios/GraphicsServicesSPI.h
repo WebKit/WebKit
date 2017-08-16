@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LaunchServicesSPI_h
-#define LaunchServicesSPI_h
+#pragma once
 
-#import <Foundation/Foundation.h>
+#import <wtf/Platform.h>
+
+#if PLATFORM(IOS)
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <MobileCoreServices/LSAppLinkPriv.h>
+#import <GraphicsServices/GraphicsServices.h>
 
 #endif
 
-@class LSAppLink;
-typedef void (^LSAppLinkCompletionHandler)(LSAppLink *appLink, NSError *error);
-typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
+WTF_EXTERN_C_BEGIN
 
-#if !USE(APPLE_INTERNAL_SDK)
+void GSInitialize(void);
+uint64_t GSCurrentEventTimestamp(void);
+CFStringRef GSSystemRootDirectory(void);
+void GSFontInitialize(void);
+void GSFontPurgeFontCache(void);
 
-@interface LSResourceProxy : NSObject <NSCopying, NSSecureCoding>
-@end
-
-@interface LSBundleProxy : LSResourceProxy <NSSecureCoding>
-@end
-
-@interface LSApplicationProxy : LSBundleProxy <NSSecureCoding>
-- (NSString *)localizedNameForContext:(NSString *)context;
-@end
-
-@interface LSAppLink : NSObject <NSSecureCoding>
-@end
-
-@interface LSAppLink ()
-+ (void)getAppLinkWithURL:(NSURL *)aURL completionHandler:(LSAppLinkCompletionHandler)completionHandler;
-+ (void)openWithURL:(NSURL *)aURL completionHandler:(LSAppLinkOpenCompletionHandler)completionHandler;
-- (void)openInWebBrowser:(BOOL)inWebBrowser setAppropriateOpenStrategyAndWebBrowserState:(NSDictionary<NSString *, id> *)state completionHandler:(LSAppLinkOpenCompletionHandler)completionHandler;
-@property (readonly, strong) LSApplicationProxy *targetApplicationProxy;
-@end
+WTF_EXTERN_C_END
 
 #endif
-
-#endif // LaunchServicesSPI_h

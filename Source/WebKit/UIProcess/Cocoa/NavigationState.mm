@@ -71,7 +71,7 @@
 #import <wtf/NeverDestroyed.h>
 
 #if HAVE(APP_LINKS)
-#import <WebCore/LaunchServicesSPI.h>
+#import <pal/spi/ios/LaunchServicesSPI.h>
 #endif
 
 #if USE(QUICK_LOOK)

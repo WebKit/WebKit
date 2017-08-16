@@ -41,7 +41,7 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS)
-#include <WebCore/SQLite3SPI.h>
+#include <pal/spi/ios/SQLite3SPI.h>
 #endif
 
 using namespace WebCore;

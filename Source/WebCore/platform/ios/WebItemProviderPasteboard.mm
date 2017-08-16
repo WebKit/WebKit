@@ -28,13 +28,13 @@
 
 #if ENABLE(DATA_INTERACTION)
 
-#import "UIKitSPI.h"
 #import <Foundation/NSProgress.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 #import <WebCore/FileSystemIOS.h>
 #import <WebCore/Pasteboard.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,57 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GraphicsServicesSPI_h
-#define GraphicsServicesSPI_h
+#pragma once
 
 #import <wtf/Platform.h>
 
 #if PLATFORM(IOS)
 
+#include <CoreFoundation/CoreFoundation.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <GraphicsServices/GraphicsServices.h>
+#include <MobileGestalt.h>
+
+#else
+
+static const CFStringRef kMGQAppleInternalInstallCapability = CFSTR("apple-internal-install");
+static const CFStringRef kMGQMainScreenPitch = CFSTR("main-screen-pitch");
+static const CFStringRef kMGQMainScreenScale = CFSTR("main-screen-scale");
+static const CFStringRef kMGQiPadCapability = CFSTR("ipad");
+static const CFStringRef kMGQDeviceName = CFSTR("DeviceName");
+static const CFStringRef kMGQDeviceClassNumber = CFSTR("DeviceClassNumber");
+static const CFStringRef kMGQHasExtendedColorDisplay = CFSTR("HasExtendedColorDisplay");
+
+typedef enum {
+    MGDeviceClassInvalid = -1,
+    /* 0 is intentionally not in this enum */
+    MGDeviceClassiPhone  = 1,
+    MGDeviceClassiPod    = 2,
+    MGDeviceClassiPad    = 3,
+    MGDeviceClassAppleTV = 4,
+    /* 5 is intentionally not in this enum */
+    MGDeviceClassWatch   = 6,
+} MGDeviceClass;
 
 #endif
 
 WTF_EXTERN_C_BEGIN
 
-void GSInitialize(void);
-uint64_t GSCurrentEventTimestamp(void);
-CFStringRef GSSystemRootDirectory(void);
-void GSFontInitialize(void);
-void GSFontPurgeFontCache(void);
+CFTypeRef MGCopyAnswer(CFStringRef question, CFDictionaryRef options);
+
+#ifndef MGGetBoolAnswer
+bool MGGetBoolAnswer(CFStringRef question);
+#endif
+
+#ifndef MGGetSInt32Answer
+SInt32 MGGetSInt32Answer(CFStringRef question, SInt32 defaultValue);
+#endif
+
+#ifndef MGGetFloat32Answer
+Float32 MGGetFloat32Answer(CFStringRef question, Float32 defaultValue);
+#endif
 
 WTF_EXTERN_C_END
 
 #endif
-
-#endif // GraphicsServicesSPI_h

@@ -35,8 +35,8 @@
 #import "PreviewConverter.h"
 #import "PreviewLoaderClient.h"
 #import "QuickLook.h"
-#import "QuickLookSPI.h"
 #import "ResourceLoader.h"
+#import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;

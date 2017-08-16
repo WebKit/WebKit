@@ -27,10 +27,10 @@
 #import "UserAgent.h"
 
 #import "Device.h"
-#import "MobileGestaltSPI.h"
 #import "SystemVersion.h"
-#import "UIKitSPI.h"
 #import "WebCoreSystemInterface.h"
+#import <pal/spi/ios/MobileGestaltSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 

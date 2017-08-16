@@ -31,8 +31,8 @@
 #import "XPCServiceEntryPoint.h"
 
 #if PLATFORM(IOS)
-#import <WebCore/GraphicsServicesSPI.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
+#import <pal/spi/ios/GraphicsServicesSPI.h>
 #endif
 
 using namespace WebCore;

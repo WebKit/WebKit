@@ -30,7 +30,7 @@
 
 #if PLATFORM(IOS)
 #include "Device.h"
-#include "UIKitSPI.h"
+#include <pal/spi/ios/UIKitSPI.h>
 #include <wtf/SoftLinking.h>
 #endif
 

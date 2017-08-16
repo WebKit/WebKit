@@ -29,7 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "UIKitSPI.h"
-#import <WebCore/MediaPlayerSPI.h>
+#import <pal/spi/ios/MediaPlayerSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 

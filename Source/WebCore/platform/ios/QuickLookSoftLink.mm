@@ -26,7 +26,7 @@
 
 #if USE(QUICK_LOOK)
 
-#import "QuickLookSPI.h"
+#import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, QuickLook)

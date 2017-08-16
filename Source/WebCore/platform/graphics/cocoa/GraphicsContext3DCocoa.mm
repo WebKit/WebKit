@@ -48,11 +48,11 @@
 #import <wtf/text/CString.h>
 
 #if PLATFORM(IOS)
-#import "OpenGLESSPI.h"
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/EAGLDrawable.h>
 #import <OpenGLES/ES2/glext.h>
 #import <QuartzCore/QuartzCore.h>
+#import <pal/spi/ios/OpenGLESSPI.h>
 #else
 #import <IOKit/IOKitLib.h>
 #import <OpenGL/CGLRenderers.h>

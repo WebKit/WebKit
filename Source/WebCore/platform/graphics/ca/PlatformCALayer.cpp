@@ -37,7 +37,7 @@
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(WIN)
-#include "CoreTextSPIWin.h"
+#include <pal/spi/win/CoreTextSPIWin.h>
 #endif
 
 namespace WebCore {

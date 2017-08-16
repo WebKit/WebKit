@@ -24,7 +24,7 @@
 
 #if USE(QUICK_LOOK)
 
-#include "QuickLookSPI.h"
+#include <pal/spi/ios/QuickLookSPI.h>
 #include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, QuickLook)

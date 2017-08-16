@@ -70,7 +70,7 @@
 
 #if PLATFORM(IOS)
 #import "CelestialSPI.h"
-#import <WebCore/GraphicsServicesSPI.h>
+#import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/SoftLinking.h>
 #endif
 

@@ -32,11 +32,11 @@
 #import "FrameView.h"
 #import "HostWindow.h"
 #import "IntRect.h"
-#import "MobileGestaltSPI.h"
-#import "UIKitSPI.h"
 #import "WAKWindow.h"
 #import "WebCoreSystemInterface.h"
 #import "Widget.h"
+#import <pal/spi/ios/MobileGestaltSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, UIKit)

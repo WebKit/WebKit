@@ -30,12 +30,12 @@
 #import "Image.h"
 #import "Pasteboard.h"
 #import "SharedBuffer.h"
-#import "UIKitSPI.h"
 #import "URL.h"
 #import "WebItemProviderPasteboard.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIPasteboard.h>
+#import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)

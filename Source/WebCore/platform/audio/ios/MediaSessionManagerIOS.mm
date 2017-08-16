@@ -30,7 +30,6 @@
 
 #import "Logging.h"
 #import "MediaPlayer.h"
-#import "MediaPlayerSPI.h"
 #import "PlatformMediaSession.h"
 #import "SystemMemory.h"
 #import "WebCoreThreadRun.h"
@@ -40,6 +39,7 @@
 #import <MediaPlayer/MPVolumeView.h>
 #import <UIKit/UIApplication.h>
 #import <objc/runtime.h>
+#import <pal/spi/ios/MediaPlayerSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RetainPtr.h>

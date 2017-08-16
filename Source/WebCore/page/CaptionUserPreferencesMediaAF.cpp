@@ -33,7 +33,7 @@
 
 #include "AudioTrackList.h"
 #if PLATFORM(WIN)
-#include "CoreTextSPIWin.h"
+#include <pal/spi/win/CoreTextSPIWin.h>
 #endif
 #include "FloatConversion.h"
 #include "HTMLMediaElement.h"

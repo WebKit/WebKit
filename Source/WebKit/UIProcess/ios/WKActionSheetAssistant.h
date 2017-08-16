@@ -28,7 +28,7 @@
 #import "GestureTypes.h"
 #import "WKActionSheet.h"
 #import <UIKit/UIPopoverController.h>
-#import <WebCore/DataDetectorsUISPI.h>
+#import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebKit {

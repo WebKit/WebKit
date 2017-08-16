@@ -1,3 +1,12 @@
+2017-08-16  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [PAL] Move spi/ios and spi/win directories into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=175171
+
+        Reviewed by Antti Koivisto.
+
+        * Storage/StorageTracker.cpp:
+
 2017-08-10  Dan Bernstein  <mitz@apple.com>
 
         Restored svn:ignore values that went missing when the project got renamed.

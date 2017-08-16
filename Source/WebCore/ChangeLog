@@ -1,3 +1,36 @@
+2017-08-16  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [PAL] Move spi/ios and spi/win directories into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=175171
+
+        Reviewed by Antti Koivisto.
+
+        * PlatformWin.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/cocoa/DataDetection.mm:
+        * loader/ios/PreviewLoader.mm:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        * page/cocoa/SettingsCocoa.mm:
+        * page/ios/UserAgentIOS.mm:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        * platform/graphics/opentype/OpenTypeCG.h:
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        * platform/graphics/win/SimpleFontDataDirect2D.cpp:
+        * platform/ios/Device.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        * platform/ios/PlatformScreenIOS.mm:
+        * platform/ios/QuickLookSoftLink.h:
+        * platform/ios/QuickLookSoftLink.mm:
+        * platform/ios/ValidationBubbleIOS.mm:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        * platform/network/ios/PreviewConverter.mm:
+        * platform/sql/SQLiteFileSystem.cpp:
+        * rendering/RenderThemeIOS.mm:
+
 2017-08-16  Tim Horton  <timothy_horton@apple.com>
 
         2-3% of main thread time under UTTypeCreatePreferredIdentifierForTag on wunderground map

@@ -39,7 +39,7 @@
 #import <wtf/MathExtras.h>
 
 #if ENABLE(LETTERPRESS)
-#import "CoreUISPI.h"
+#import <pal/spi/ios/CoreUISPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(CoreUI)

@@ -27,10 +27,10 @@
 #include "MemoryRelease.h"
 
 #import "GCController.h"
-#import "GraphicsServicesSPI.h"
 #import "IOSurfacePool.h"
 #import "LayerPool.h"
 #import <notify.h>
+#import <pal/spi/ios/GraphicsServicesSPI.h>
 
 #if PLATFORM(IOS)
 #import "LegacyTileCache.h"

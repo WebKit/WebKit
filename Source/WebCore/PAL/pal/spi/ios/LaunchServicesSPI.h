@@ -23,27 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Device_h
-#define Device_h
+#pragma once
 
-#if PLATFORM(IOS)
+#import <Foundation/Foundation.h>
 
-#include <pal/spi/ios/MobileGestaltSPI.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-namespace WTF {
-class String;
-}
+#import <MobileCoreServices/LSAppLinkPriv.h>
 
-namespace WebCore {
+#endif
 
-WEBCORE_EXPORT MGDeviceClass deviceClass();
-const WTF::String& deviceName();
+@class LSAppLink;
+typedef void (^LSAppLinkCompletionHandler)(LSAppLink *appLink, NSError *error);
+typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 
-// FIXME: Isn't this the same as deviceClass() == MGDeviceClassiPad?
-bool deviceHasIPadCapability();
+#if !USE(APPLE_INTERNAL_SDK)
 
-}
+@interface LSResourceProxy : NSObject <NSCopying, NSSecureCoding>
+@end
 
-#endif // PLATFORM(IOS)
+@interface LSBundleProxy : LSResourceProxy <NSSecureCoding>
+@end
 
-#endif // Device_h
+@interface LSApplicationProxy : LSBundleProxy <NSSecureCoding>
+- (NSString *)localizedNameForContext:(NSString *)context;
+@end
+
+@interface LSAppLink : NSObject <NSSecureCoding>
+@end
+
+@interface LSAppLink ()
++ (void)getAppLinkWithURL:(NSURL *)aURL completionHandler:(LSAppLinkCompletionHandler)completionHandler;
++ (void)openWithURL:(NSURL *)aURL completionHandler:(LSAppLinkOpenCompletionHandler)completionHandler;
+- (void)openInWebBrowser:(BOOL)inWebBrowser setAppropriateOpenStrategyAndWebBrowserState:(NSDictionary<NSString *, id> *)state completionHandler:(LSAppLinkOpenCompletionHandler)completionHandler;
+@property (readonly, strong) LSApplicationProxy *targetApplicationProxy;
+@end
+
+#endif
