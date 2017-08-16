@@ -1842,6 +1842,37 @@ public:
     // The ProbeContext is stack allocated and is only valid for the duration
     // of the call to the user probe function.
     //
+    // The probe function may choose to move the stack pointer (in any direction).
+    // To do this, the probe function needs to set the new sp value in the CPUState.
+    //
+    // The probe function may also choose to fill stack space with some values.
+    // To do this, the probe function must first:
+    // 1. Set the new sp value in the ProbeContext's CPUState.
+    // 2. Set the ProbeContext's initializeStackFunction to a ProbeFunction callback
+    //    which will do the work of filling in the stack values after the probe
+    //    trampoline has adjusted the machine stack pointer.
+    // 3. Set the ProbeContext's initializeStackArgs to any value that the client wants
+    //    to pass to the initializeStackFunction callback.
+    // 4. Return from the probe function.
+    //
+    // Upon returning from the probe function, the probe trampoline will adjust the
+    // the stack pointer based on the sp value in CPUState. If initializeStackFunction
+    // is not set, the probe trampoline will restore registers and return to its caller.
+    //
+    // If initializeStackFunction is set, the trampoline will move the ProbeContext
+    // beyond the range of the stack pointer i.e. it will place the new ProbeContext at
+    // an address lower than where CPUState.sp() points. This ensures that the
+    // ProbeContext will not be trashed by the initializeStackFunction when it writes to
+    // the stack. Then, the trampoline will call back to the initializeStackFunction
+    // ProbeFunction to let it fill in the stack values as desired. The
+    // initializeStackFunction ProbeFunction will be passed the moved ProbeContext at
+    // the new location.
+    //
+    // initializeStackFunction may now write to the stack at addresses greater or
+    // equal to CPUState.sp(), but not below that. initializeStackFunction is also
+    // not allowed to change CPUState.sp(). If the initializeStackFunction does not
+    // abide by these rules, then behavior is undefined, and bad things may happen.
+    //
     // Note: this version of probe() should be implemented by the target specific
     // MacroAssembler.
     void probe(ProbeFunction, void* arg);
@@ -1995,6 +2026,8 @@ struct ProbeContext {
 
     ProbeFunction probeFunction;
     void* arg;
+    ProbeFunction initializeStackFunction;
+    void* initializeStackArg;
     CPUState cpu;
 
     // Convenience methods:

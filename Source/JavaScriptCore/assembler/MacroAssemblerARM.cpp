@@ -99,15 +99,17 @@ void MacroAssemblerARM::load32WithUnalignedHalfWords(BaseIndex address, Register
 extern "C" void ctiMasmProbeTrampoline();
 
 #if COMPILER(GCC_OR_CLANG)
-    
+
 // The following are offsets for ProbeContext fields accessed
 // by the ctiMasmProbeTrampoline stub.
 
 #define PTR_SIZE 4
 #define PROBE_PROBE_FUNCTION_OFFSET (0 * PTR_SIZE)
 #define PROBE_ARG_OFFSET (1 * PTR_SIZE)
+#define PROBE_INIT_STACK_FUNCTION_OFFSET (2 * PTR_SIZE)
+#define PROBE_INIT_STACK_ARG_OFFSET (3 * PTR_SIZE)
 
-#define PROBE_FIRST_GPREG_OFFSET (2 * PTR_SIZE)
+#define PROBE_FIRST_GPREG_OFFSET (4 * PTR_SIZE)
 
 #define GPREG_SIZE 4
 #define PROBE_CPU_R0_OFFSET (PROBE_FIRST_GPREG_OFFSET + (0 * GPREG_SIZE))
@@ -167,13 +169,16 @@ extern "C" void ctiMasmProbeTrampoline();
 #define PROBE_CPU_D31_OFFSET (PROBE_FIRST_FPREG_OFFSET + (31 * FPREG_SIZE))
 
 #define PROBE_SIZE (PROBE_FIRST_FPREG_OFFSET + (32 * FPREG_SIZE))
-#define PROBE_ALIGNED_SIZE (PROBE_SIZE)
+
+#define OUT_SIZE GPREG_SIZE
 
 // These ASSERTs remind you that if you change the layout of ProbeContext,
 // you need to change ctiMasmProbeTrampoline offsets above to match.
 #define PROBE_OFFSETOF(x) offsetof(struct ProbeContext, x)
 COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeContext_probeFunction_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg) == PROBE_ARG_OFFSET, ProbeContext_arg_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(initializeStackFunction) == PROBE_INIT_STACK_FUNCTION_OFFSET, ProbeContext_initializeStackFunction_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(initializeStackArg) == PROBE_INIT_STACK_ARG_OFFSET, ProbeContext_initializeStackArg_offset_matches_ctiMasmProbeTrampoline);
 
 COMPILE_ASSERT(!(PROBE_CPU_R0_OFFSET & 0x3), ProbeContext_cpu_r0_offset_should_be_4_byte_aligned);
 
@@ -197,7 +202,7 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::pc]) == PROBE_CPU_PC_OFFSET
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.sprs[ARMRegisters::apsr]) == PROBE_CPU_APSR_OFFSET, ProbeContext_cpu_apsr_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.sprs[ARMRegisters::fpscr]) == PROBE_CPU_FPSCR_OFFSET, ProbeContext_cpu_fpscr_offset_matches_ctiMasmProbeTrampoline);
 
-COMPILE_ASSERT(!(PROBE_CPU_D0_OFFSET & 0xf), ProbeContext_cpu_d0_offset_should_be_16_byte_aligned);
+COMPILE_ASSERT(!(PROBE_CPU_D0_OFFSET & 0x7), ProbeContext_cpu_d0_offset_should_be_8_byte_aligned);
 
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d0]) == PROBE_CPU_D0_OFFSET, ProbeContext_cpu_d0_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d1]) == PROBE_CPU_D1_OFFSET, ProbeContext_cpu_d1_offset_matches_ctiMasmProbeTrampoline);
@@ -233,7 +238,6 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d30]) == PROBE_CPU_D30_OFFS
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d31]) == PROBE_CPU_D31_OFFSET, ProbeContext_cpu_d31_offset_matches_ctiMasmProbeTrampoline);
 
 COMPILE_ASSERT(sizeof(ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(!(PROBE_ALIGNED_SIZE & 0xf), ProbeContext_aligned_size_offset_should_be_16_byte_aligned);
 #undef PROBE_OFFSETOF
 
 asm (
@@ -254,11 +258,11 @@ asm (
 
     "mov       ip, sp" "\n"
     "mov       r3, sp" "\n"
-    "sub       r3, r3, #" STRINGIZE_VALUE_OF(PROBE_ALIGNED_SIZE) "\n"
+    "sub       r3, r3, #" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) "\n"
 
     // The ARM EABI specifies that the stack needs to be 16 byte aligned.
     "bic       r3, r3, #0xf" "\n"
-    "mov       sp, r3" "\n"
+    "mov       sp, r3" "\n" // Set the sp to protect the ProbeContext from interrupts before we initialize it.
 
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
     "add       lr, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R0_OFFSET) "\n"
@@ -284,14 +288,58 @@ asm (
     "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
 
     "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_D0_OFFSET) "\n"
-    "vstmia.64 ip, { d0-d15 }" "\n"
-    "vstmia.64 ip, { d16-d31 }" "\n"
+    "vstmia.64 ip!, { d0-d15 }" "\n"
+    "vstmia.64 ip!, { d16-d31 }" "\n"
 
     "mov       fp, sp" "\n" // Save the ProbeContext*.
+
+    // Initialize ProbeContext::initializeStackFunction to zero.
+    "mov       r0, #0" "\n"
+    "str       r0, [fp, #" STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "]" "\n"
 
     "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "]" "\n"
     "mov       r0, sp" "\n" // the ProbeContext* arg.
     "blx       ip" "\n"
+
+    // Make sure the ProbeContext is entirely below the result stack pointer so
+    // that register values are still preserved when we call the initializeStack
+    // function.
+    "ldr       r1, [fp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n" // Result sp.
+    "add       r2, fp, #" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) "\n" // End of ProveContext + buffer.
+    "cmp       r1, r2" "\n"
+    "bge     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeContextIsSafe) "\n"
+
+    // Allocate a safe place on the stack below the result stack pointer to stash the ProbeContext.
+    "sub       r1, r1, #" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) "\n"
+    "bic       r1, r1, #0xf" "\n" // The ARM EABI specifies that the stack needs to be 16 byte aligned.
+    "mov       sp, r1" "\n" // Set the new sp to protect that memory from interrupts before we copy the ProbeContext.
+
+    // Copy the ProbeContext to the safe place.
+    // Note: we have to copy from low address to higher address because we're moving the
+    // ProbeContext to a lower address.
+    "mov       r5, fp" "\n"
+    "mov       r6, r1" "\n"
+    "add       r7, fp, #" STRINGIZE_VALUE_OF(PROBE_SIZE) "\n"
+
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoop) ":" "\n"
+    "ldr       r3, [r5], #4" "\n"
+    "ldr       r4, [r5], #4" "\n"
+    "str       r3, [r6], #4" "\n"
+    "str       r4, [r6], #4" "\n"
+    "cmp       r5, r7" "\n"
+    "blt     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoop) "\n"
+
+    "mov       fp, r1" "\n"
+
+    // Call initializeStackFunction if present.
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeContextIsSafe) ":" "\n"
+    "ldr       r2, [fp, #" STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "]" "\n"
+    "cbz       r2, " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) "\n"
+
+    "mov       r0, fp" "\n" // Set the ProbeContext* arg.
+    "blx       r2" "\n" // Call the initializeStackFunction (loaded into r2 above).
+
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) ":" "\n"
 
     "mov       sp, fp" "\n"
 
@@ -307,82 +355,13 @@ asm (
     "vmsr      FPSCR, ip" "\n"
 
     // There are 5 more registers left to restore: ip, sp, lr, pc, and apsr.
-    // There are 2 issues that complicate the restoration of these last few
-    // registers:
-    //
-    // 1. Normal ARM calling convention relies on moving lr to pc to return to
-    //    the caller. In our case, the address to return to is specified by
-    //    ProbeContext.cpu.pc. And at that moment, we won't have any available
-    //    scratch registers to hold the return address (lr needs to hold
-    //    ProbeContext.cpu.lr, not the return address).
-    //
-    //    The solution is to store the return address on the stack and load the
-    //     pc from there.
-    //
-    // 2. Issue 1 means we will need to write to the stack location at
-    //    ProbeContext.cpu.gprs[sp] - PTR_SIZE. But if the user probe function had
-    //    modified the value of ProbeContext.cpu.gprs[sp] to point in the range between
-    //    &ProbeContext.cpu.gprs[ip] thru &ProbeContext.cpu.sprs[aspr], then the action
-    //    for Issue 1 may trash the values to be restored before we can restore them.
-    //
-    //    The solution is to check if ProbeContext.cpu.gprs[sp] contains a value in
-    //    the undesirable range. If so, we copy the remaining ProbeContext
-    //    register data to a safe area first, and restore the remaining register
-    //    from this new safe area.
-
-    // The restore area for the pc will be located at 1 word below the resultant sp.
-    // All restore values are located at offset <= PROBE_CPU_APSR_OFFSET. Hence,
-    // we need to make sure that resultant sp > offset of apsr + 1.
-    "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_APSR_OFFSET + PTR_SIZE) "\n"
-    "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
-    "cmp       lr, ip" "\n"
-    "bgt     " SYMBOL_STRING(ctiMasmProbeTrampolineEnd) "\n"
-
-    // Getting here means that the restore area will overlap the ProbeContext data
-    // that we will need to get the restoration values from. So, let's move that
-    // data to a safe place before we start writing into the restore area.
-    // Let's locate the "safe area" at 2x sizeof(ProbeContext) below where the
-    // restore area. This ensures that:
-    // 1. The safe area does not overlap the restore area.
-    // 2. The safe area does not overlap the ProbeContext.
-    //    This makes it so that we can use memcpy (does not require memmove) semantics
-    //    to copy the restore values to the safe area.
-    
-    // lr already contains [sp, #STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET)].
-    "sub       lr, lr, #(2 * " STRINGIZE_VALUE_OF(PROBE_ALIGNED_SIZE) ")" "\n"
-
-    "mov       ip, sp" "\n" // Save the original ProbeContext*.
-
-    // Make sure the stack pointer points to the safe area. This ensures that the
-    // safe area is protected from interrupt handlers overwriting it.
-    "mov       sp, lr" "\n" // sp now points to the new ProbeContext in the safe area.
-
-    "mov       lr, ip" "\n" // Use lr as the old ProbeContext*.
-
-    // Copy the restore data to the new ProbeContext*.
-    "ldr       ip, [lr, #" STRINGIZE_VALUE_OF(PROBE_CPU_IP_OFFSET) "]" "\n"
-    "str       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_IP_OFFSET) "]" "\n"
-    "ldr       ip, [lr, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
-    "str       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
-    "ldr       ip, [lr, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
-    "str       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
-    "ldr       ip, [lr, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
-    "str       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
-    "ldr       ip, [lr, #" STRINGIZE_VALUE_OF(PROBE_CPU_APSR_OFFSET) "]" "\n"
-    "str       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_APSR_OFFSET) "]" "\n"
-
-    // ctiMasmProbeTrampolineEnd expects lr to contain the sp value to be restored.
-    // Since we used it as scratch above, let's restore it.
-    "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
-
-    SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
 
     // Set up the restore area for sp and pc.
-    // lr already contains [sp, #STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET)].
+    "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
 
     // Push the pc on to the restore area.
     "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
-    "sub       lr, lr, #" STRINGIZE_VALUE_OF(PTR_SIZE) "\n"
+    "sub       lr, lr, #" STRINGIZE_VALUE_OF(OUT_SIZE) "\n"
     "str       ip, [lr]" "\n"
     // Point sp to the restore area.
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"

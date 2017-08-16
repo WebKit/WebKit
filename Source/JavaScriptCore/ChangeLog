@@ -1,3 +1,76 @@
+2017-08-16  Mark Lam  <mark.lam@apple.com>
+
+        Enhance MacroAssembler::probe() to support an initializeStackFunction callback.
+        https://bugs.webkit.org/show_bug.cgi?id=175617
+        <rdar://problem/33912104>
+
+        Reviewed by JF Bastien.
+
+        This patch adds a new feature to MacroAssembler::probe() where the probe function
+        can provide a ProbeFunction callback to fill in stack values after the stack
+        pointer has been adjusted.  The probe function can use this feature as follows:
+
+        1. Set the new sp value in the ProbeContext's CPUState.
+
+        2. Set the ProbeContext's initializeStackFunction to a ProbeFunction callback
+           which will do the work of filling in the stack values after the probe
+           trampoline has adjusted the machine stack pointer.
+
+        3. Set the ProbeContext's initializeStackArgs to any value that the client wants
+           to pass to the initializeStackFunction callback.
+
+        4. Return from the probe function.
+
+        Upon returning from the probe function, the probe trampoline will adjust the
+        the stack pointer based on the sp value in CPUState.  If initializeStackFunction
+        is not set, the probe trampoline will restore registers and return to its caller.
+
+        If initializeStackFunction is set, the trampoline will move the ProbeContext
+        beyond the range of the stack pointer i.e. it will place the new ProbeContext at
+        an address lower than where CPUState.sp() points.  This ensures that the
+        ProbeContext will not be trashed by the initializeStackFunction when it writes to
+        the stack.  Then, the trampoline will call back to the initializeStackFunction
+        ProbeFunction to let it fill in the stack values as desired.  The
+        initializeStackFunction ProbeFunction will be passed the moved ProbeContext at
+        the new location.
+
+        initializeStackFunction may now write to the stack at addresses greater or
+        equal to CPUState.sp(), but not below that.  initializeStackFunction is also
+        not allowed to change CPUState.sp().  If the initializeStackFunction does not
+        abide by these rules, then behavior is undefined, and bad things may happen.
+
+        For future reference, some implementation details that this patch needed to
+        be mindful of:
+
+        1. When the probe trampoline allocates stack space for the ProbeContext, it
+           should include OUT_SIZE as well.  This ensures that it doesn't have to move
+           the ProbeContext on exit if the probe function didn't change the sp.
+
+        2. If the trampoline has to move the ProbeContext, it needs to point the machine
+           sp to new ProbeContext first before copying over the ProbeContext data.  This
+           protects the new ProbeContext from possibly being trashed by interrupts.
+
+        3. When computing the new address of ProbeContext to move to, we need to make
+           sure that it is properly aligned in accordance with stack ABI requirements
+           (just like we did when we allocated the ProbeContext on entry to the
+           probe trampoline).
+
+        4. When copying the ProbeContext to its new location, the trampoline should
+           always copy words from low addresses to high addresses.  This is because if
+           we're moving the ProbeContext, we'll always be moving it to a lower address.
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.cpp:
+        * assembler/MacroAssemblerARM64.cpp:
+        * assembler/MacroAssemblerARMv7.cpp:
+        * assembler/MacroAssemblerX86Common.cpp:
+        * assembler/testmasm.cpp:
+        (JSC::testProbePreservesGPRS):
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::fillStack):
+        (JSC::testProbeModifiesStackWithCallback):
+        (JSC::run):
+
 2017-08-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix JSCOnly ARM buildbots after r220047 and r220184
