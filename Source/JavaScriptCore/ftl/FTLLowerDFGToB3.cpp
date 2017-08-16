@@ -739,6 +739,9 @@ private:
         case CreateActivation:
             compileCreateActivation();
             break;
+        case PushWithScope:
+            compilePushWithScope();
+            break;
         case NewFunction:
         case NewGeneratorFunction:
         case NewAsyncFunction:
@@ -4262,7 +4265,17 @@ private:
             return;
         }
     }
-    
+
+    void compilePushWithScope()
+    {
+        LValue parentScope = lowCell(m_node->child1());
+        LValue object = lowJSValue(m_node->child2());
+
+        LValue result = vmCall(Int64, m_out.operation(operationPushWithScope), m_callFrame, parentScope, object);
+
+        setJSValue(result);
+    }
+
     void compileCreateActivation()
     {
         LValue scope = lowCell(m_node->child1());

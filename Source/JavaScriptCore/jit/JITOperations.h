@@ -419,7 +419,7 @@ EncodedJSValue JIT_OPERATION operationDeleteByIdJSResult(ExecState*, EncodedJSVa
 size_t JIT_OPERATION operationDeleteById(ExecState*, EncodedJSValue base, UniquedStringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationDeleteByValJSResult(ExecState*, EncodedJSValue base, EncodedJSValue target) WTF_INTERNAL;
 size_t JIT_OPERATION operationDeleteByVal(ExecState*, EncodedJSValue base, EncodedJSValue target) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationPushWithScope(ExecState*, JSCell* currentScopeCell, EncodedJSValue scopeObject) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationPushWithScope(ExecState*, JSCell* currentScopeCell, EncodedJSValue object) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationGetPNames(ExecState*, JSObject*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState*, EncodedJSValue, EncodedJSValue proto) WTF_INTERNAL;
 int32_t JIT_OPERATION operationSizeFrameForForwardArguments(ExecState*, EncodedJSValue arguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset) WTF_INTERNAL;

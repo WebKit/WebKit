@@ -123,7 +123,7 @@ JSValue evaluateWithScopeExtension(ExecState* exec, const SourceCode& source, JS
 
     if (scopeExtensionObject) {
         JSScope* ignoredPreviousScope = globalObject->globalScope();
-        globalObject->setGlobalScopeExtension(JSWithScope::create(exec->vm(), globalObject, scopeExtensionObject, ignoredPreviousScope));
+        globalObject->setGlobalScopeExtension(JSWithScope::create(exec->vm(), globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 
     JSValue returnValue = JSC::evaluate(globalObject->globalExec(), source, globalObject, returnedException);

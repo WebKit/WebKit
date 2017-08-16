@@ -1,3 +1,15 @@
+2017-08-15  Robin Morisset  <rmorisset@apple.com>
+
+        Change the order of arguments of JSWithScope::create() for consistency
+        https://bugs.webkit.org/show_bug.cgi?id=175585
+
+        Reviewed by Saam Barati.
+
+        No change of behavior.
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::JSHTMLElement::pushEventHandlerScope const):
+
 2017-08-15  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Ensure ResourceResponse is not null when redirected/tainting/type fields are set

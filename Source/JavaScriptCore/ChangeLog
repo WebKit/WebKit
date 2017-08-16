@@ -1,3 +1,39 @@
+2017-08-15  Robin Morisset  <rmorisset@apple.com>
+
+        Support the 'with' keyword in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=175585
+
+        Reviewed by Saam Barati.
+
+        Also makes sure that the order of arguments of PushWithScope, op_push_with_scope, JSWithScope::create()
+        and so on is consistent (always parentScope first, the new scopeObject second). We used to go from one
+        to the other at different step which was quite confusing. I picked this order for consistency with CreateActivation
+        that takes its parentScope argument first.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePushWithScope):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePushWithScope):
+        * jit/JITOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/Completion.cpp:
+        (JSC::evaluateWithScopeExtension):
+        * runtime/JSWithScope.cpp:
+        (JSC::JSWithScope::create):
+        * runtime/JSWithScope.h:
+
 2017-08-15  Saam Barati  <sbarati@apple.com>
 
         Make VM::scratchBufferForSize thread safe

@@ -5651,9 +5651,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_push_with_scope: {
-            Node* scopeObject = get(VirtualRegister(currentInstruction[2].u.operand));
-            Node* currentScope = get(VirtualRegister(currentInstruction[3].u.operand));
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(PushWithScope, scopeObject, currentScope));
+            Node* currentScope = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* object = get(VirtualRegister(currentInstruction[3].u.operand));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(PushWithScope, currentScope, object));
             NEXT_OPCODE(op_push_with_scope);
         }
 

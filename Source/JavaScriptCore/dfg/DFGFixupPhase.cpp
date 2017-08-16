@@ -1710,16 +1710,11 @@ private:
 
         case CreateScopedArguments:
         case CreateActivation:
+        case PushWithScope:
         case NewFunction:
         case NewGeneratorFunction:
         case NewAsyncFunction: {
             fixEdge<CellUse>(node->child1());
-            break;
-        }
-
-        case PushWithScope: {
-            // Child2 is always the current scope, which is guaranteed to be an object.
-            fixEdge<KnownCellUse>(node->child2());
             break;
         }
 

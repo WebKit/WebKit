@@ -1126,16 +1126,17 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
 
 void SpeculativeJIT::compilePushWithScope(Node* node)
 {
-    JSValueOperand scopeObject(this, node->child1());
-    SpeculateCellOperand currentScope(this, node->child2());
-    JSValueRegs scopeObjectRegs = scopeObject.jsValueRegs();
+    SpeculateCellOperand currentScope(this, node->child1());
     GPRReg currentScopeGPR = currentScope.gpr();
+
+    JSValueOperand object(this, node->child2());
+    JSValueRegs objectRegs = object.jsValueRegs();
 
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     
     flushRegisters();
-    callOperation(operationPushWithScope, resultGPR, currentScopeGPR, scopeObjectRegs);
+    callOperation(operationPushWithScope, resultGPR, currentScopeGPR, objectRegs);
     m_jit.exceptionCheck();
     
     cellResult(resultGPR, node);

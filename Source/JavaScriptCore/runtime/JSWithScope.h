@@ -33,7 +33,7 @@ class JSWithScope : public JSScope {
 public:
     typedef JSScope Base;
 
-    JS_EXPORT_PRIVATE static JSWithScope* create(VM&, JSGlobalObject*, JSObject*, JSScope* next);
+    JS_EXPORT_PRIVATE static JSWithScope* create(VM&, JSGlobalObject*, JSScope* next, JSObject*);
 
     JSObject* object() { return m_object.get(); }
 

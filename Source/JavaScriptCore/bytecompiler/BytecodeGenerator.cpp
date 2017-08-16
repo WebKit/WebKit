@@ -3766,8 +3766,8 @@ RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* objectScope)
 
     emitOpcode(op_push_with_scope);
     instructions().append(newScope->index());
-    instructions().append(objectScope->index());
     instructions().append(scopeRegister()->index());
+    instructions().append(objectScope->index());
 
     emitMove(scopeRegister(), newScope);
     m_lexicalScopeStack.append({ nullptr, newScope, true, 0 });

@@ -255,7 +255,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
     JSGlobalObject* globalObject = callFrame->vmEntryGlobalObject();
     if (scopeExtensionObject) {
         JSScope* ignoredPreviousScope = globalObject->globalScope();
-        globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, scopeExtensionObject, ignoredPreviousScope));
+        globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 
     JSValue thisValue = this->thisValue();

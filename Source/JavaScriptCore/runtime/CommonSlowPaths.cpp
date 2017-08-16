@@ -814,12 +814,12 @@ SLOW_PATH_DECL(slow_path_create_lexical_environment)
 SLOW_PATH_DECL(slow_path_push_with_scope)
 {
     BEGIN();
-    JSObject* newScope = OP_C(2).jsValue().toObject(exec);
+    JSObject* newScope = OP_C(3).jsValue().toObject(exec);
     CHECK_EXCEPTION();
 
-    int scopeReg = pc[3].u.operand;
+    int scopeReg = pc[2].u.operand;
     JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
-    RETURN(JSWithScope::create(vm, exec->lexicalGlobalObject(), newScope, currentScope));
+    RETURN(JSWithScope::create(vm, exec->lexicalGlobalObject(), currentScope, newScope));
 }
 
 SLOW_PATH_DECL(slow_path_resolve_scope_for_hoisting_func_decl_in_eval)

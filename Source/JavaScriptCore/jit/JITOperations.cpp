@@ -1996,18 +1996,18 @@ size_t JIT_OPERATION operationDeleteByVal(ExecState* exec, EncodedJSValue encode
     return couldDelete;
 }
 
-JSCell* JIT_OPERATION operationPushWithScope(ExecState* exec, JSCell* currentScopeCell, EncodedJSValue scopeObjectValue)
+JSCell* JIT_OPERATION operationPushWithScope(ExecState* exec, JSCell* currentScopeCell, EncodedJSValue objectValue)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* newScope = JSValue::decode(scopeObjectValue).toObject(exec);
+    JSObject* object = JSValue::decode(objectValue).toObject(exec);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSScope* currentScope = jsCast<JSScope*>(currentScopeCell);
 
-    return JSWithScope::create(vm, exec->lexicalGlobalObject(), newScope, currentScope);
+    return JSWithScope::create(vm, exec->lexicalGlobalObject(), currentScope, object);
 }
 
 EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedProto)

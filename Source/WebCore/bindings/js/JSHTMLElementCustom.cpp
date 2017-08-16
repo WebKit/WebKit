@@ -120,14 +120,14 @@ JSScope* JSHTMLElement::pushEventHandlerScope(ExecState* exec, JSScope* scope) c
     VM& vm = exec->vm();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     
-    scope = JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), element.document())), scope);
+    scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(exec, globalObject(), element.document())));
 
     // The form is next, searched before the document, but after the element itself.
     if (HTMLFormElement* form = element.form())
-        scope = JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), *form)), scope);
+        scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(exec, globalObject(), *form)));
 
     // The element is on top, searched first.
-    return JSWithScope::create(vm, lexicalGlobalObject, asObject(toJS(exec, globalObject(), element)), scope);
+    return JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(exec, globalObject(), element)));
 }
 
 } // namespace WebCore

@@ -1,3 +1,18 @@
+2017-08-15  Robin Morisset  <rmorisset@apple.com>
+
+        Support the 'with' keyword in FTL.
+        https://bugs.webkit.org/show_bug.cgi?id=175585
+
+        Reviewed by Saam Barati.
+
+        Also improve the JSTest/stress/with.js file to test
+        what happens when non-objects are passed to with.
+
+        * stress/with.js:
+        (foo):
+        (i.catch):
+        (i.with): Deleted.
+
 2017-08-14  Keith Miller  <keith_miller@apple.com>
 
         Add testing tool to lie to the DFG about profiles
