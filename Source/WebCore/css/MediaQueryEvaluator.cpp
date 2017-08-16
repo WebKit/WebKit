@@ -58,6 +58,7 @@ namespace WebCore {
 
 enum MediaFeaturePrefix { MinPrefix, MaxPrefix, NoPrefix };
 
+#ifndef LOG_DISABLED
 static TextStream& operator<<(TextStream& ts, MediaFeaturePrefix op)
 {
     switch (op) {
@@ -67,6 +68,7 @@ static TextStream& operator<<(TextStream& ts, MediaFeaturePrefix op)
     }
     return ts;
 }
+#endif
 
 typedef bool (*MediaQueryFunction)(CSSValue*, const CSSToLengthConversionData&, Frame&, MediaFeaturePrefix);
 typedef HashMap<AtomicStringImpl*, MediaQueryFunction> MediaQueryFunctionMap;
