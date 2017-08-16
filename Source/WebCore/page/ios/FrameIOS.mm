@@ -718,7 +718,7 @@ void Frame::viewportOffsetChanged(ViewportOffsetChangeType changeType)
 
     if (changeType == CompletedScrollOffset) {
         if (RenderView* root = contentRenderer())
-            root->compositor().updateCompositingLayers(CompositingUpdateOnScroll);
+            root->compositor().updateCompositingLayers(CompositingUpdateType::OnScroll);
     }
 }
 

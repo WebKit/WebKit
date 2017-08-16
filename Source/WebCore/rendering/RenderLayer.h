@@ -52,6 +52,10 @@
 #include "ScrollableArea.h"
 #include <memory>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class ClipRects;
@@ -1233,6 +1237,8 @@ private:
 void makeMatrixRenderable(TransformationMatrix&, bool has3DRendering);
 
 bool compositedWithOwnBackingStore(const RenderLayer&);
+
+WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayer&);
 
 } // namespace WebCore
 

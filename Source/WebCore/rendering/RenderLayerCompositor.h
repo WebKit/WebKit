@@ -47,12 +47,12 @@ class TiledBacking;
 
 typedef unsigned LayerTreeFlags;
 
-enum CompositingUpdateType {
-    CompositingUpdateAfterStyleChange,
-    CompositingUpdateAfterLayout,
-    CompositingUpdateOnHitTest,
-    CompositingUpdateOnScroll,
-    CompositingUpdateOnCompositedScroll
+enum class CompositingUpdateType {
+    AfterStyleChange,
+    AfterLayout,
+    OnHitTest,
+    OnScroll,
+    OnCompositedScroll
 };
 
 enum class CompositingReason {
@@ -572,5 +572,7 @@ private:
 };
 
 void paintScrollbar(Scrollbar*, GraphicsContext&, const IntRect& clip);
+
+WTF::TextStream& operator<<(WTF::TextStream&, CompositingUpdateType);
 
 } // namespace WebCore
