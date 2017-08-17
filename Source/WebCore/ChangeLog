@@ -1,3 +1,53 @@
+2017-08-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Drop GraphicsContext3D usage from BitmapTextureGL
+        https://bugs.webkit.org/show_bug.cgi?id=175317
+
+        Reviewed by Carlos Garcia Campos.
+
+        Have BitmapTextureGL use direct OpenGL API entrypoints and constants
+        instead of leveraging the GraphicsContext3D class. Any GraphicsContext3D
+        object passed to BitmapTextureGL would assume rendering to the GL context
+        that's current on that thread, translating method invocations to the
+        OpenGL API. We can do this by ourselves and benefit by avoiding allocating
+        GraphicsContext3D resources like the ANGLE compiler that are by most useful
+        for WebGL.
+
+        BitmapTextureGL::create() call sites are adjusted to stop passing a
+        GraphicsContext3D reference. BitmapTextureGL::bindAsSurface() doesn't need
+        a replacement for the passed-in GraphicsContext3D object since that object
+        originated from the TextureMapperGL instance, whose GraphicsContext3D is by
+        default of the render-to-current-context nature. Other changes are direct
+        translations of GraphicsContext3D methods to OpenGL API calls, or of
+        GraphicsContext3D values to OpenGL API constants.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        Also remove an unnecessary GraphicsContext.h header inclusion.
+        (WebCore::BitmapTextureGL::BitmapTextureGL):
+        (WebCore::BitmapTextureGL::didReset):
+        (WebCore::BitmapTextureGL::updateContentsNoSwizzle):
+        (WebCore::BitmapTextureGL::updateContents):
+        (WebCore::BitmapTextureGL::initializeStencil):
+        (WebCore::BitmapTextureGL::initializeDepthBuffer):
+        (WebCore::BitmapTextureGL::clearIfNeeded):
+        (WebCore::BitmapTextureGL::createFboIfNeeded):
+        (WebCore::BitmapTextureGL::bindAsSurface):
+        (WebCore::BitmapTextureGL::~BitmapTextureGL):
+        (WebCore::BitmapTextureGL::copyFromExternalTexture):
+        * platform/graphics/texmap/BitmapTextureGL.h:
+        (WebCore::BitmapTextureGL::create):
+        (WebCore::BitmapTextureGL::textureTarget const):
+        (WebCore::BitmapTextureGL::internalFormat const):
+        * platform/graphics/texmap/BitmapTexturePool.cpp:
+        (WebCore::BitmapTexturePool::createTexture):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::bindSurface):
+        (WebCore::TextureMapperGL::createTexture):
+
 2017-08-14  Antti Koivisto  <antti@apple.com>
 
         Factor text autosizing into a class

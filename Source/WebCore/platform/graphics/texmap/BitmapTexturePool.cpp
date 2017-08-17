@@ -94,7 +94,7 @@ void BitmapTexturePool::releaseUnusedTexturesTimerFired()
 RefPtr<BitmapTexture> BitmapTexturePool::createTexture(const BitmapTexture::Flags flags)
 {
 #if USE(TEXTURE_MAPPER_GL)
-    return BitmapTextureGL::create(m_contextAttributes, *m_context3D, flags);
+    return BitmapTextureGL::create(m_contextAttributes, flags);
 #else
     UNUSED_PARAM(flags);
     return nullptr;

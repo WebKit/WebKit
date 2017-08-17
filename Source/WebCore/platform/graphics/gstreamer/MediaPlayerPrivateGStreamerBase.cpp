@@ -623,7 +623,7 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
         TextureMapperContextAttributes contextAttributes;
         contextAttributes.initialize();
 
-        auto texture = BitmapTextureGL::create(contextAttributes, *m_context3D);
+        auto texture = BitmapTextureGL::create(contextAttributes);
         texture->reset(size, GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
         buffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
     }
