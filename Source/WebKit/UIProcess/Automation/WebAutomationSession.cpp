@@ -409,6 +409,14 @@ void WebAutomationSession::waitForNavigationToComplete(Inspector::ErrorString& e
         FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'pageLoadStrategy' is invalid.");
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
+    // If page is loading and there's an active JavaScript dialog is probably because the
+    // dialog was started in an onload handler, so in case of normal page load strategy the
+    // load will not finish until the dialog is dismissed. Instead of waiting for the timeout,
+    // we return without waiting since we know it will timeout for sure. We want to check
+    // arguments first, though.
+    bool shouldTimeoutDueToUnexpectedAlert = pageLoadStrategy.value() == Inspector::Protocol::Automation::PageLoadStrategy::Normal
+        && page->pageLoadState().isLoading() && m_client->isShowingJavaScriptDialogOnPage(*this, *page);
+
     if (optionalFrameHandle && !optionalFrameHandle->isEmpty()) {
         std::optional<uint64_t> frameID = webFrameIDForHandle(*optionalFrameHandle);
         if (!frameID)
@@ -416,9 +424,21 @@ void WebAutomationSession::waitForNavigationToComplete(Inspector::ErrorString& e
         WebFrameProxy* frame = page->process().webFrame(frameID.value());
         if (!frame)
             FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
-        waitForNavigationToCompleteOnFrame(*frame, pageLoadStrategy.value(), pageLoadTimeout, WTFMove(callback));
-    } else
-        waitForNavigationToCompleteOnPage(*page, pageLoadStrategy.value(), pageLoadTimeout, WTFMove(callback));
+        if (!shouldTimeoutDueToUnexpectedAlert)
+            waitForNavigationToCompleteOnFrame(*frame, pageLoadStrategy.value(), pageLoadTimeout, WTFMove(callback));
+    } else {
+        if (!shouldTimeoutDueToUnexpectedAlert)
+            waitForNavigationToCompleteOnPage(*page, pageLoadStrategy.value(), pageLoadTimeout, WTFMove(callback));
+    }
+
+    if (shouldTimeoutDueToUnexpectedAlert) {
+        // §9 Navigation.
+        // 7. If the previous step completed by the session page load timeout being reached and the browser does not
+        // have an active user prompt, return error with error code timeout.
+        // 8. Return success with data null.
+        // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-wait-for-navigation-to-complete
+        callback->sendSuccess();
+    }
 }
 
 void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page, Inspector::Protocol::Automation::PageLoadStrategy loadStrategy, Seconds timeout, Ref<Inspector::BackendDispatcher::CallbackBase>&& callback)
@@ -463,20 +483,61 @@ void WebAutomationSession::waitForNavigationToCompleteOnFrame(WebFrameProxy& fra
     }
 }
 
-static void respondToPendingNavigationCallbacksWithTimeout(HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>>& map)
+void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>>& map)
 {
+    Inspector::ErrorString timeoutError = STRING_FOR_PREDEFINED_ERROR_NAME(Timeout);
     for (auto id : map.keys()) {
+        auto page = WebProcessProxy::webPage(id);
         auto callback = map.take(id);
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
+        if (page && m_client->isShowingJavaScriptDialogOnPage(*this, *page))
+            callback->sendSuccess(InspectorObject::create());
+        else
+            callback->sendFailure(timeoutError);
+    }
+}
+
+static WebPageProxy* findPageForFrameID(const WebProcessPool& processPool, uint64_t frameID)
+{
+    for (auto& process : processPool.processes()) {
+        if (auto* frame = process->webFrame(frameID))
+            return frame->page();
+    }
+    return nullptr;
+}
+
+void WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>>& map)
+{
+    Inspector::ErrorString timeoutError = STRING_FOR_PREDEFINED_ERROR_NAME(Timeout);
+    for (auto id : map.keys()) {
+        auto* page = findPageForFrameID(*m_processPool, id);
+        auto callback = map.take(id);
+        if (page && m_client->isShowingJavaScriptDialogOnPage(*this, *page))
+            callback->sendSuccess(InspectorObject::create());
+        else
+            callback->sendFailure(timeoutError);
     }
 }
 
 void WebAutomationSession::loadTimerFired()
 {
-    respondToPendingNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame);
-    respondToPendingNavigationCallbacksWithTimeout(m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame);
-    respondToPendingNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
-    respondToPendingNavigationCallbacksWithTimeout(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage);
+    respondToPendingFrameNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame);
+    respondToPendingFrameNavigationCallbacksWithTimeout(m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame);
+    respondToPendingPageNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
+    respondToPendingPageNavigationCallbacksWithTimeout(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage);
+}
+
+void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
+{
+    // Wait until the next run loop iteration to give time for the client to show the dialog,
+    // then check if page is loading and the dialog is still present. The dialog will block the
+    // load in case of normal strategy, so we want to dispatch all pending navigation callbacks.
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), page = makeRef(page)] {
+        if (!page->isValid() || !page->pageLoadState().isLoading() || !m_client || !m_client->isShowingJavaScriptDialogOnPage(*this, page))
+            return;
+
+        respondToPendingFrameNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame);
+        respondToPendingPageNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
+    });
 }
 
 void WebAutomationSession::navigateBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const String& url, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<NavigateBrowsingContextCallback>&& callback)

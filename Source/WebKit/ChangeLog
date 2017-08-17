@@ -1,3 +1,40 @@
+2017-08-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: timeout when JavaScript alert is shown in onload handler
+        https://bugs.webkit.org/show_bug.cgi?id=175315
+        <rdar://problem/33788294>
+
+        Reviewed by Brian Burg.
+
+        When a JavaScript alert is shown in an onload handler, the alert prevents the load from finishing in case of
+        normal page load strategy, so navigation commands or any other command for which we wait for navigation to
+        complete end up timing out. There are two selenium tests covering this that are currently timing out:
+        testShouldHandleAlertOnPageLoad and testShouldHandleAlertOnPageLoadUsingGet. The spec says that in case of page
+        load timeout we should only fail with timeout error when there isn't an active alert dialog. If the next command
+        expects an alert it will just work, otherwise it will fail with UnexpectedAlertOpen error when trying to handle
+        user prompts.
+
+        9 Navigation.
+        https://w3c.github.io/webdriver/webdriver-spec.html#dfn-wait-for-navigation-to-complete
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::waitForNavigationToComplete): Do not wait for the timeout when the page is
+        loading and there's an active alert in case of normal page load strategy.
+        (WebKit::WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout): Respond with timeout unless
+        the page is showing a JavaScript dialog.
+        (WebKit::WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout): Ditto.
+        (WebKit::WebAutomationSession::loadTimerFired): Use respondToPendingPageNavigationCallbacksWithTimeout() and
+        respondToPendingFrameNavigationCallbacksWithTimeout().
+        (WebKit::WebAutomationSession::willShowJavaScriptDialog): The page is about to show a JavaScript dialog, so
+        we wait until the next run loop iteration to give time for the client to show the dialog, then check if page is
+        loading and the dialog is still present. If that's the case we finish all normal strategy pending navigations.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptAlert): If controlled by automation, notify the session.
+        (WebKit::WebPageProxy::runJavaScriptConfirm): Ditto.
+        (WebKit::WebPageProxy::runJavaScriptPrompt): Ditto.
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel): Ditto.
+
 2017-08-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle click events on option elements
