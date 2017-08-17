@@ -1,3 +1,21 @@
+2017-08-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        The none smooth stroke applied to an SVG shape breaks its hit testing
+        https://bugs.webkit.org/show_bug.cgi?id=175506
+
+        Reviewed by Simon Fraser.
+
+        Clear RenderSVGShape::m_path when calling RenderSVGRect::updateShapeFromElement().
+        The m_path will be recalculated when RenderSVGShape::updateShapeFromElement()
+        is called from RenderSVGRect::shapeDependentStrokeContains().
+
+        Test: svg/stroke/stroke-linejoin-click.html
+
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::updateShapeFromElement):
+        * rendering/svg/RenderSVGShape.h:
+        (WebCore::RenderSVGShape::clearPath):
+
 2017-08-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ build fix for ENABLE_GLES2=ON.
