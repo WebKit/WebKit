@@ -117,6 +117,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("Cac
 
 CachedResource::CachedResource(CachedResourceRequest&& request, Type type, SessionID sessionID)
     : m_resourceRequest(request.releaseResourceRequest())
+    , m_originalRequestHeaders(request.releaseOriginalRequestHeaders())
     , m_options(request.options())
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
@@ -272,7 +273,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
             // Beacon is not exposed to workers so it is safe to rely on the document here.
             auto* document = cachedResourceLoader.document();
             auto* contentSecurityPolicy = document && !document->shouldBypassMainWorldContentSecurityPolicy() ? document->contentSecurityPolicy() : nullptr;
-            platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, *m_origin, contentSecurityPolicy, m_options);
+            platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, HTTPHeaderMap(m_originalRequestHeaders), *m_origin, contentSecurityPolicy, m_options);
             // FIXME: We currently do not get notified when ping loads finish so we treat them as finishing right away.
             finishLoading(nullptr);
             return;

@@ -32,6 +32,7 @@
 
 namespace WebCore {
 class ContentSecurityPolicy;
+class URL;
 }
 
 namespace WebKit {
@@ -57,11 +58,15 @@ private:
     void cannotShowURL() final;
     void timeoutTimerFired();
 
-    void loadRequest(const WebCore::ResourceRequest&);
-    bool needsCORSPreflight(const WebCore::ResourceRequest&) const;
-    void doCORSPreflight(const WebCore::ResourceRequest&);
+    void loadRequest(WebCore::ResourceRequest&&);
+    bool isAllowedRedirect(const WebCore::URL&) const;
+    void makeCrossOriginAccessRequest(WebCore::ResourceRequest&&);
+    void makeSimpleCrossOriginAccessRequest(WebCore::ResourceRequest&&);
+    void makeCrossOriginAccessRequestWithPreflight(WebCore::ResourceRequest&&);
+    void preflightSuccess(WebCore::ResourceRequest&&);
 
     WebCore::SecurityOrigin& securityOrigin() const;
+    const WebCore::HTTPHeaderMap& originalRequestHeaders() const; // Needed for CORS checks.
     
     NetworkResourceLoadParameters m_parameters;
     RefPtr<NetworkDataTask> m_task;
@@ -69,6 +74,7 @@ private:
     std::unique_ptr<NetworkCORSPreflightChecker> m_corsPreflightChecker;
     RefPtr<WebCore::SecurityOrigin> m_origin;
     bool m_isSameOriginRequest;
+    bool m_isSimpleRequest { true };
     RedirectCompletionHandler m_redirectHandler;
     mutable std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;
 };

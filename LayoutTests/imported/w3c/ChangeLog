@@ -1,5 +1,19 @@
 2017-08-16  Chris Dumez  <cdumez@apple.com>
 
+        Cross origin Beacon requests with a ArrayBuffer / ArrayBufferView payload should not do a CORS preflight
+        https://bugs.webkit.org/show_bug.cgi?id=175628
+        <rdar://problem/33919278>
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline a few web-platform-tests due to revert of r220779.
+
+        * web-platform-tests/beacon/headers/header-content-type-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt:
+
+2017-08-16  Chris Dumez  <cdumez@apple.com>
+
         EventSource: ignore IDs with U+0000
         https://bugs.webkit.org/show_bug.cgi?id=175178
 

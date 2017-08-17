@@ -33,7 +33,6 @@
 #include "NetworkLoadParameters.h"
 #include "SessionTracker.h"
 #include <WebCore/CrossOriginAccessControl.h>
-#include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/SecurityOrigin.h>
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_parameters.sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkCORSPreflightChecker::" fmt, this, ##__VA_ARGS__)
@@ -60,11 +59,6 @@ NetworkCORSPreflightChecker::~NetworkCORSPreflightChecker()
 void NetworkCORSPreflightChecker::startPreflight()
 {
     RELEASE_LOG_IF_ALLOWED("startPreflight");
-    if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(m_parameters.sourceOrigin->toString(), m_parameters.originalRequest.url(), m_parameters.allowStoredCredentials, m_parameters.originalRequest.httpMethod(), m_parameters.originalRequest.httpHeaderFields())) {
-        RELEASE_LOG_IF_ALLOWED("startPreflight - preflight can be skipped thanks to cached result");
-        m_completionCallback(Result::Success);
-        return;
-    }
 
     NetworkLoadParameters loadParameters;
     loadParameters.sessionID = m_parameters.sessionID;

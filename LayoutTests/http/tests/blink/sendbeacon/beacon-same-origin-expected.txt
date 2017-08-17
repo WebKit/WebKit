@@ -16,7 +16,7 @@ PASS
 Sending beacon with type: [object Uint32Array]
 PASS navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload); is true
 PASS Beacon sent successfully
-PASS Content-Type: application/octet-stream
+PASS Content-Type: application/x-www-form-urlencoded
 PASS Origin: http://127.0.0.1:8000
 PASS Referer: http://127.0.0.1:8000/blink/sendbeacon/beacon-same-origin.html
 PASS Request-Method: POST

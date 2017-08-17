@@ -44,12 +44,6 @@ const String& formURLEncodedContentType()
     return contentType;
 }
 
-const String& octetStreamContentType()
-{
-    static NeverDestroyed<const String> contentType(MAKE_STATIC_STRING_IMPL("application/octet-stream"));
-    return contentType;
-}
-
 const String& noCache()
 {
     static NeverDestroyed<const String> value(MAKE_STATIC_STRING_IMPL("no-cache"));

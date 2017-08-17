@@ -1,3 +1,40 @@
+2017-08-16  Chris Dumez  <cdumez@apple.com>
+
+        Cross origin Beacon requests with a ArrayBuffer / ArrayBufferView payload should not do a CORS preflight
+        https://bugs.webkit.org/show_bug.cgi?id=175628
+        <rdar://problem/33919278>
+
+        Reviewed by Geoffrey Garen.
+
+        Cross origin Beacon requests with a ArrayBuffer / ArrayBufferView payload should not do a CORS preflight.
+        To achieve this, the following changes were made:
+        1. Revert r220779 which caused us to use a non CORS-safelisted Content-Type header for such payload
+        2. Teach PingLoad how to deal with "simple" cross origin requests (i.e. Don't assume we need a CORS
+           preflight merely because the fetch mode is set to "cors").
+
+        Test: http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract):
+        * loader/CrossOriginAccessControl.h:
+        * loader/LoaderStrategy.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        (WebCore::PingLoader::startPingLoad):
+        * loader/PingLoader.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::CachedResourceRequest):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::releaseOriginalRequestHeaders):
+        * platform/network/HTTPHeaderValues.cpp:
+        * platform/network/HTTPHeaderValues.h:
+
 2017-08-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: capture async stack trace when workers/main context posts a message

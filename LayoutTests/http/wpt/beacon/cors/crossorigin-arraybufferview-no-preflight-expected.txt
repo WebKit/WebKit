@@ -1,0 +1,3 @@
+
+PASS Should send beacon with no CORS preflight 
+

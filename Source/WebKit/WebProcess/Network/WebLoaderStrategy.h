@@ -59,7 +59,7 @@ public:
     void suspendPendingRequests() final;
     void resumePendingRequests() final;
 
-    void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, Ref<WebCore::SecurityOrigin>&& sourceOrigin, WebCore::ContentSecurityPolicy*, const WebCore::FetchOptions&) final;
+    void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, WebCore::HTTPHeaderMap&& originalRequestHeaders, Ref<WebCore::SecurityOrigin>&& sourceOrigin, WebCore::ContentSecurityPolicy*, const WebCore::FetchOptions&) final;
 
     void storeDerivedDataToCache(const SHA1::Digest& bodyHash, const String& type, const String& partition, WebCore::SharedBuffer&) final;
 

@@ -1,3 +1,27 @@
+2017-08-16  Chris Dumez  <cdumez@apple.com>
+
+        Cross origin Beacon requests with a ArrayBuffer / ArrayBufferView payload should not do a CORS preflight
+        https://bugs.webkit.org/show_bug.cgi?id=175628
+        <rdar://problem/33919278>
+
+        Reviewed by Geoffrey Garen.
+
+        * http/tests/blink/sendbeacon/beacon-same-origin-expected.txt:
+        * http/wpt/fetch/fetch-request-arraybuffer-content-type-expected.txt:
+        * http/wpt/fetch/fetch-request-arraybuffer-content-type.html:
+        Rebaseline test due to revert of r220779.
+
+        * http/wpt/beacon/cors/cors-preflight-arraybufferview-failure-expected.txt: Removed.
+        * http/wpt/beacon/cors/cors-preflight-arraybufferview-failure.html: Removed.
+        Drop outdated test. CORS preflight failure is still covered by the corresponding Blob payload test.
+
+        * http/wpt/beacon/cors/cors-preflight-arraybufferview-success-expected.txt: Removed.
+        * http/wpt/beacon/cors/cors-preflight-arraybufferview-success.html: Removed.
+        * http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight-expected.txt: Added.
+        * http/wpt/beacon/cors/crossorigin-arraybufferview-no-preflight.html: Added.
+        Rename and update test so that it checks that we no longer do a CORS preflight for cross origin
+        beacons that have an ArrayBuffer payload.
+
 2017-08-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: capture async stack trace when workers/main context posts a message

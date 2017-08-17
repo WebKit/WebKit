@@ -32,7 +32,6 @@ namespace HTTPHeaderValues {
 
 const String& textPlainContentType();
 const String& formURLEncodedContentType();
-const String& octetStreamContentType();
 const String& noCache();
 const String& maxAge0();
 }

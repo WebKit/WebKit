@@ -37,7 +37,7 @@ class ResourceResponse;
 class SecurityOrigin;
 class URL;
 
-bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
+WEBCORE_EXPORT bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
 bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);
 
 WEBCORE_EXPORT void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin&, StoredCredentials);

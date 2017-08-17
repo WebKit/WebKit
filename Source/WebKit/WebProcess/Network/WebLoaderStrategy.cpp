@@ -386,7 +386,7 @@ void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, un
     }
 }
 
-void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy* contentSecurityPolicy, const FetchOptions& options)
+void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, HTTPHeaderMap&& originalRequestHeaders, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy* contentSecurityPolicy, const FetchOptions& options)
 {
     // It's possible that call to createPingHandle might be made during initial empty Document creation before a NetworkingContext exists.
     // It is not clear that we should send ping loads during that process anyways.
@@ -400,6 +400,7 @@ void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, R
     
     NetworkResourceLoadParameters loadParameters;
     loadParameters.request = request;
+    loadParameters.originalRequestHeaders = WTFMove(originalRequestHeaders);
     loadParameters.sourceOrigin = WTFMove(sourceOrigin);
     loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
     loadParameters.allowStoredCredentials = options.credentials == FetchOptions::Credentials::Omit ? DoNotAllowStoredCredentials : AllowStoredCredentials;
@@ -409,7 +410,7 @@ void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, R
     if (contentSecurityPolicy)
         loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
 
-    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing(loadParameters), 0);
+    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing(WTFMove(loadParameters)), 0);
 }
 
 void WebLoaderStrategy::storeDerivedDataToCache(const SHA1::Digest& bodyHash, const String& type, const String& partition, WebCore::SharedBuffer& data)
