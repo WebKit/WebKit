@@ -898,8 +898,8 @@ namespace JSC {
         void popStructureForInScope(RegisterID* local);
         void invalidateForInContextForLocal(RegisterID* local);
 
-        RefPtr<LabelScope> breakTarget(const Identifier&);
-        RefPtr<LabelScope> continueTarget(const Identifier&);
+        LabelScope* breakTarget(const Identifier&);
+        LabelScope* continueTarget(const Identifier&);
 
         void beginSwitch(RegisterID*, SwitchInfo::SwitchType);
         void endSwitch(uint32_t clauseCount, const Vector<Ref<Label>, 8>&, ExpressionNode**, Label& defaultLabel, int32_t min, int32_t range);

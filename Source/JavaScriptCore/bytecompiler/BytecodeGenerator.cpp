@@ -70,13 +70,13 @@ static inline void shrinkToFit(T& segmentedVector)
         segmentedVector.removeLast();
 }
 
-void Label::setLocation(unsigned location)
+void Label::setLocation(BytecodeGenerator& generator, unsigned location)
 {
     m_location = location;
     
     unsigned size = m_unresolvedJumps.size();
     for (unsigned i = 0; i < size; ++i)
-        m_generator.instructions()[m_unresolvedJumps[i].second].u.operand = m_location - m_unresolvedJumps[i].first;
+        generator.instructions()[m_unresolvedJumps[i].second].u.operand = m_location - m_unresolvedJumps[i].first;
 }
 
 void Variable::dump(PrintStream& out) const
@@ -1228,7 +1228,7 @@ Ref<Label> BytecodeGenerator::newLabel()
     shrinkToFit(m_labels);
 
     // Allocate new label ID.
-    m_labels.append(*this);
+    m_labels.append();
     return m_labels.last();
 }
 
@@ -1242,7 +1242,7 @@ Ref<Label> BytecodeGenerator::newEmittedLabel()
 void BytecodeGenerator::emitLabel(Label& l0)
 {
     unsigned newLabelIndex = instructions().size();
-    l0.setLocation(newLabelIndex);
+    l0.setLocation(*this, newLabelIndex);
 
     if (m_codeBlock->numberOfJumpTargets()) {
         unsigned lastLabelIndex = m_codeBlock->lastJumpTarget();
@@ -3836,8 +3836,6 @@ void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()
 
 FinallyContext* BytecodeGenerator::pushFinallyControlFlowScope(Label& finallyLabel)
 {
-    shrinkToFit(m_labelScopes);
-
     ControlFlowScope scope(ControlFlowScope::Finally, currentLexicalScopeIndex(), FinallyContext(m_currentFinallyContext, finallyLabel));
     m_controlFlowScopeStack.append(WTFMove(scope));
 
@@ -3857,7 +3855,7 @@ FinallyContext BytecodeGenerator::popFinallyControlFlowScope()
     return m_controlFlowScopeStack.takeLast().finallyContext;
 }
 
-RefPtr<LabelScope> BytecodeGenerator::breakTarget(const Identifier& name)
+LabelScope* BytecodeGenerator::breakTarget(const Identifier& name)
 {
     shrinkToFit(m_labelScopes);
 
@@ -3884,7 +3882,7 @@ RefPtr<LabelScope> BytecodeGenerator::breakTarget(const Identifier& name)
     return nullptr;
 }
 
-RefPtr<LabelScope> BytecodeGenerator::continueTarget(const Identifier& name)
+LabelScope* BytecodeGenerator::continueTarget(const Identifier& name)
 {
     shrinkToFit(m_labelScopes);
 
@@ -4371,12 +4369,15 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             emitJump(loopStart.get());
         }
 
-        emitLabel(scope->breakTarget());
+        bool breakLabelIsBound = scope->breakTargetMayBeBound();
+        if (breakLabelIsBound)
+            emitLabel(scope->breakTarget());
+        popFinallyControlFlowScope();
+        if (breakLabelIsBound) {
+            // IteratorClose sequence for break-ed control flow.
+            emitIteratorClose(iterator.get(), node);
+        }
     }
-
-    // IteratorClose sequence for break-ed control flow.
-    popFinallyControlFlowScope();
-    emitIteratorClose(iterator.get(), node);
     emitLabel(loopDone.get());
 }
 

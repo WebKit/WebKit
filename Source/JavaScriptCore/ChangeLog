@@ -1,3 +1,40 @@
+2017-08-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Avoid code bloating for iteration if block does not have "break"
+        https://bugs.webkit.org/show_bug.cgi?id=173228
+
+        Reviewed by Keith Miller.
+
+        Currently, we always emit code for breaked path when emitting for-of iteration.
+        But we can know that this breaked path can be used when emitting the bytecode.
+
+        This patch adds LabelScope::breakTargetMayBeBound(), which returns true if
+        the break label may be bound. We emit a breaked path only when it returns
+        true. This reduces bytecode bloating when using for-of iteration.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::Label::setLocation):
+        (JSC::BytecodeGenerator::newLabel):
+        (JSC::BytecodeGenerator::emitLabel):
+        (JSC::BytecodeGenerator::pushFinallyControlFlowScope):
+        (JSC::BytecodeGenerator::breakTarget):
+        (JSC::BytecodeGenerator::continueTarget):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/Label.h:
+        (JSC::Label::bind const):
+        (JSC::Label::hasOneRef const):
+        (JSC::Label::isBound const):
+        (JSC::Label::Label): Deleted.
+        * bytecompiler/LabelScope.h:
+        (JSC::LabelScope::hasOneRef const):
+        (JSC::LabelScope::breakTargetMayBeBound const):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ContinueNode::trivialTarget):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::trivialTarget):
+        (JSC::BreakNode::emitBytecode):
+
 2017-08-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         ARM build fix after r220807 and r220834.

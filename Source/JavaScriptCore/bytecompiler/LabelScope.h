@@ -63,6 +63,16 @@ public:
         ASSERT(m_refCount >= 0);
     }
     int refCount() const { return m_refCount; }
+    bool hasOneRef() const { return m_refCount == 1; }
+
+    bool breakTargetMayBeBound() const
+    {
+        if (!hasOneRef())
+            return true;
+        if (!m_breakTarget->hasOneRef())
+            return true;
+        return m_breakTarget->isBound();
+    }
 
 private:
     int m_refCount;

@@ -40,17 +40,13 @@ namespace JSC {
     class Label {
     WTF_MAKE_NONCOPYABLE(Label);
     public:
-        explicit Label(BytecodeGenerator& generator)
-            : m_refCount(0)
-            , m_location(invalidLocation)
-            , m_generator(generator)
-        {
-        }
+        Label() = default;
 
-        void setLocation(unsigned);
+        void setLocation(BytecodeGenerator&, unsigned);
 
         int bind(int opcode, int offset) const
         {
+            m_bound = true;
             if (m_location == invalidLocation) {
                 m_unresolvedJumps.append(std::make_pair(opcode, offset));
                 return 0;
@@ -65,6 +61,7 @@ namespace JSC {
             ASSERT(m_refCount >= 0);
         }
         int refCount() const { return m_refCount; }
+        bool hasOneRef() const { return m_refCount == 1; }
 
         bool isForward() const { return m_location == invalidLocation; }
         
@@ -74,14 +71,16 @@ namespace JSC {
             return bind(0, 0);
         }
 
+        bool isBound() const { return m_bound; }
+
     private:
         typedef Vector<std::pair<int, int>, 8> JumpVector;
 
         static const unsigned invalidLocation = UINT_MAX;
 
-        int m_refCount;
-        unsigned m_location;
-        BytecodeGenerator& m_generator;
+        int m_refCount { 0 };
+        unsigned m_location { invalidLocation };
+        mutable bool m_bound { false };
         mutable JumpVector m_unresolvedJumps;
     };
 
