@@ -3,21 +3,21 @@ Testing that the DOMTreeManager.getNodeContentFlowInfo returns the containing re
 
 Selector: #flow
 Region flow name: none
-Content flow name: flow
-Regions count: 2
-Regions: div#region1.region, div#region2.region
+Content flow name: none
+Regions count: N/A
+Regions: N/A
 
 Selector: .contentNode1
 Region flow name: none
-Content flow name: flow
-Regions count: 1
-Regions: div#region1.region
+Content flow name: none
+Regions count: N/A
+Regions: N/A
 
 Selector: .contentNode2
 Region flow name: none
-Content flow name: flow
-Regions count: 2
-Regions: div#region1.region, div#region2.region
+Content flow name: none
+Regions count: N/A
+Regions: N/A
 
 Selector: body
 Region flow name: none
@@ -26,13 +26,13 @@ Regions count: N/A
 Regions: N/A
 
 Selector: #region1
-Region flow name: flow
+Region flow name: none
 Content flow name: none
 Regions count: N/A
 Regions: N/A
 
 Selector: #region2
-Region flow name: flow
+Region flow name: none
 Content flow name: none
 Regions count: N/A
 Regions: N/A

@@ -2553,11 +2553,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSMatrix').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSMatrix').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSMatrix').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSMatrix').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSRegionRule').value is WebKitCSSRegionRule
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSRegionRule').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSRegionRule').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSRegionRule').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSRegionRule').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyError').value is WebKitMediaKeyError
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyError').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyError').hasOwnProperty('set') is false

@@ -1,5 +1,14 @@
 2017-08-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline two tests after r220870.
+
+        Unreviewed test gardening.
+
+        * inspector/dom/content-node-region-info-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+
+2017-08-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark inspector/canvas/context-attributes.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=173931
 
