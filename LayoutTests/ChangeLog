@@ -1,5 +1,13 @@
 2017-08-17  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline js/dom/global-constructors-attributes.html for Sierra.
+
+        Unreviewed test gardening.
+
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
+2017-08-17  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline two tests after r220870.
 
         Unreviewed test gardening.
