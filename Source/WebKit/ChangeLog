@@ -1,3 +1,16 @@
+2017-08-17  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r220601): Crash under ProcessAssertion::markAsInvalidated()
+        https://bugs.webkit.org/show_bug.cgi?id=175685
+        <rdar://problem/33868623>
+
+        Reviewed by Sam Weinig.
+
+        After r220601, it is no longer safe to call a default-initialized WTF::Function.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::markAsInvalidated):
+
 2017-08-17  Andreas Kling  <akling@apple.com>
 
         Disable CSS regions at compile time

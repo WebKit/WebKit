@@ -203,7 +203,8 @@ void ProcessAssertion::markAsInvalidated()
     ASSERT(RunLoop::isMain());
 
     m_validity = Validity::No;
-    m_invalidationCallback();
+    if (m_invalidationCallback)
+        m_invalidationCallback();
 }
 
 void ProcessAssertion::setState(AssertionState assertionState)
