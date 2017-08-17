@@ -542,10 +542,4 @@ RenderBlock* RenderSVGText::firstLineBlock() const
     return 0;
 }
 
-// Fix for <rdar://problem/8048875>. We should not render :first-letter CSS Style
-// in a SVG text element context.
-void RenderSVGText::updateFirstLetter()
-{
-}
-
 }

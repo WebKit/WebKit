@@ -1485,10 +1485,6 @@ RenderBlock* RenderTable::firstLineBlock() const
     return nullptr;
 }
 
-void RenderTable::updateFirstLetter()
-{
-}
-
 int RenderTable::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     return valueOrCompute(firstLineBaseline(), [&] {

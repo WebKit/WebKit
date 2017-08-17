@@ -2795,6 +2795,7 @@ set(WebCore_SOURCES
     style/InlineTextBoxStyle.cpp
     style/RenderTreePosition.cpp
     style/RenderTreeUpdater.cpp
+    style/RenderTreeUpdaterFirstLetter.cpp
     style/StyleChange.cpp
     style/StyleFontSizeFunctions.cpp
     style/StyleInvalidator.cpp

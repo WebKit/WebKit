@@ -1,3 +1,51 @@
+2017-08-16  Antti Koivisto  <antti@apple.com>
+
+        Move first-letter renderer mutation code out of RenderBlock and into RenderTreeUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=175627
+
+        Reviewed by Andreas Kling.
+
+        Render tree should not mutate itself. We already fixed this for first-letter, supporting code
+        can now move to RenderTreeUpdater too.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlock.cpp:
+        (WebCore::styleForFirstLetter): Deleted.
+        (WebCore::isPunctuationForFirstLetter): Deleted.
+        (WebCore::shouldSkipForFirstLetter): Deleted.
+        (WebCore::RenderBlock::updateFirstLetterStyle): Deleted.
+        (WebCore::RenderBlock::createFirstLetterRenderer): Deleted.
+        (WebCore::RenderBlock::updateFirstLetter): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::updateFirstLetter): Deleted.
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateFirstLetter): Deleted.
+        * rendering/RenderTable.h:
+
+            Virtual overrides just disabled first letter for some RenderBlock subclasses. This is now achieved via
+            supportsFirstLetter test in the first letter updater.
+
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingValue::adjustTextNodeSizes):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::updateFirstLetter): Deleted.
+        * rendering/svg/RenderSVGText.h:
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::popParent):
+        * style/RenderTreeUpdater.h:
+        * style/RenderTreeUpdaterFirstLetter.cpp: Added.
+        (WebCore::styleForFirstLetter):
+        (WebCore::isPunctuationForFirstLetter):
+        (WebCore::shouldSkipForFirstLetter):
+        (WebCore::updateFirstLetterStyle):
+        (WebCore::createFirstLetterRenderer):
+        (WebCore::supportsFirstLetter):
+        (WebCore::RenderTreeUpdater::FirstLetter::update):
+        * style/RenderTreeUpdaterFirstLetter.h: Added.
+
 2017-08-15  Darin Adler  <darin@apple.com>
 
         REGRESSION(r220052): http/tests/appcache/deferred-events-delete-while-raising-timer.html is crashing.
