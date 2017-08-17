@@ -1,3 +1,9 @@
+2017-08-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Make the test work with the latest versions of node modules.
+
+        * server-tests/privileged-api-upload-file-tests.js:
+
 2017-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. Fixed a typo. task.id() isn't a thing in this function.

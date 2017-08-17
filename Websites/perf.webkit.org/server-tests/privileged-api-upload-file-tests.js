@@ -156,7 +156,7 @@ describe('/privileged-api/upload-file', function () {
     it('should pick up at most two file extensions', () => {
         const db = TestServer.database();
         const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
-        return TemporaryFile.makeTemporaryFileOfSizeInMB('some.other.tar.gz', limitInMB).then((stream) => {
+        return TemporaryFile.makeTemporaryFileOfSizeInMB('some.other.tar.gz5', limitInMB).then((stream) => {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then(() => {
             return db.selectAll('uploaded_files', 'id');
@@ -164,8 +164,8 @@ describe('/privileged-api/upload-file', function () {
             assert.equal(rows.length, 1);
             assert.equal(rows[0].size, limitInMB * 1024 * 1024);
             assert.equal(rows[0].mime, 'application/octet-stream');
-            assert.equal(rows[0].filename, 'some.other.tar.gz');
-            assert.equal(rows[0].extension, '.tar.gz');
+            assert.equal(rows[0].filename, 'some.other.tar.gz5');
+            assert.equal(rows[0].extension, '.tar.gz5');
             assert.equal(rows[0].sha256, '5256ec18f11624025905d057d6befb03d77b243511ac5f77ed5e0221ce6d84b5');
         });
     });
