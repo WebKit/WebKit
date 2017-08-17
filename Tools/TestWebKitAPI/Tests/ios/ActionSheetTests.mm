@@ -30,32 +30,25 @@
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import "UIKitSPI.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKActivatedElementInfo.h>
+#import <WebKit/_WKElementAction.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
 @interface ActionSheetObserver : NSObject<WKUIDelegatePrivate>
-@property (nonatomic) BOOL presentedActionSheet;
+@property (nonatomic) BlockPtr<NSArray *(_WKActivatedElementInfo *, NSArray *)> presentationHandler;
 @end
 
 @implementation ActionSheetObserver
 
-- (BOOL)waitForActionSheetAfterBlock:(dispatch_block_t)block
+- (NSArray *)_webView:(WKWebView *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray<_WKElementAction *> *)defaultActions
 {
-    _presentedActionSheet = NO;
-    block();
-    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
-        if (_presentedActionSheet)
-            break;
-    }
-    return _presentedActionSheet;
-}
-
-- (NSArray *)_webView:(ActionSheetObserver *)webView actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(NSArray<_WKElementAction *> *)defaultActions
-{
-    _presentedActionSheet = YES;
-    return defaultActions;
+    return _presentationHandler ? _presentationHandler(element, defaultActions) : defaultActions;
 }
 
 @end
@@ -87,11 +80,99 @@ TEST(ActionSheetTests, ImageMapDoesNotDestroySelection)
     [webView stringByEvaluatingJavaScript:@"selectTextNode(h1.childNodes[0])"];
 
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
-    [observer waitForActionSheetAfterBlock:^() {
-        [webView _simulateLongPressActionAtLocation:CGPointMake(200, 200)];
+
+    __block bool done = false;
+    [observer setPresentationHandler:^(_WKActivatedElementInfo *element, NSArray *actions) {
+        done = true;
+        return actions;
     }];
+    [webView _simulateLongPressActionAtLocation:CGPointMake(200, 200)];
+    TestWebKitAPI::Util::run(&done);
+
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
 }
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+
+static void presentActionSheetAndChooseAction(WKWebView *webView, ActionSheetObserver *observer, CGPoint location, _WKElementActionType actionType)
+{
+    __block RetainPtr<_WKElementAction> copyAction;
+    __block RetainPtr<_WKActivatedElementInfo> copyElement;
+    __block bool done = false;
+    [observer setPresentationHandler:^(_WKActivatedElementInfo *element, NSArray *actions) {
+        copyElement = element;
+        for (_WKElementAction *action in actions) {
+            if (action.type == actionType)
+                copyAction = action;
+        }
+        done = true;
+        return @[ copyAction.get() ];
+    }];
+    [webView _simulateLongPressActionAtLocation:location];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE(!!copyAction);
+    EXPECT_TRUE(!!copyElement);
+    [copyAction runActionWithElementInfo:copyElement.get()];
+}
+
+TEST(ActionSheetTests, CopyImageElementWithHREF)
+{
+    UIApplicationInitialize();
+    [UIPasteboard generalPasteboard].items = @[ ];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto observer = adoptNS([[ActionSheetObserver alloc] init]);
+    [webView setUIDelegate:observer.get()];
+    [webView synchronouslyLoadTestPageNamed:@"image-in-link-and-input"];
+
+    presentActionSheetAndChooseAction(webView.get(), observer.get(), CGPointMake(100, 50), _WKElementActionTypeCopy);
+
+    __block bool done = false;
+    [webView _doAfterNextPresentationUpdate:^() {
+        NSArray <NSString *> *pasteboardTypes = [[UIPasteboard generalPasteboard] pasteboardTypes];
+        EXPECT_EQ(2UL, pasteboardTypes.count);
+        EXPECT_WK_STREQ((NSString *)kUTTypePNG, pasteboardTypes.firstObject);
+        EXPECT_WK_STREQ((NSString *)kUTTypeURL, pasteboardTypes.lastObject);
+        NSArray <NSItemProvider *> *itemProviders = [[UIPasteboard generalPasteboard] itemProviders];
+        EXPECT_EQ(1UL, itemProviders.count);
+        NSItemProvider *itemProvider = itemProviders.firstObject;
+        EXPECT_EQ(2UL, itemProvider.registeredTypeIdentifiers.count);
+        EXPECT_WK_STREQ((NSString *)kUTTypePNG, itemProvider.registeredTypeIdentifiers.firstObject);
+        EXPECT_WK_STREQ((NSString *)kUTTypeURL, itemProvider.registeredTypeIdentifiers.lastObject);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(ActionSheetTests, CopyImageElementWithoutHREF)
+{
+    UIApplicationInitialize();
+    [UIPasteboard generalPasteboard].items = @[ ];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto observer = adoptNS([[ActionSheetObserver alloc] init]);
+    [webView setUIDelegate:observer.get()];
+    [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
+
+    presentActionSheetAndChooseAction(webView.get(), observer.get(), CGPointMake(100, 100), _WKElementActionTypeCopy);
+
+    __block bool done = false;
+    [webView _doAfterNextPresentationUpdate:^() {
+        NSArray <NSString *> *pasteboardTypes = [[UIPasteboard generalPasteboard] pasteboardTypes];
+        EXPECT_EQ(1UL, pasteboardTypes.count);
+        EXPECT_WK_STREQ((NSString *)kUTTypePNG, pasteboardTypes.firstObject);
+        NSArray <NSItemProvider *> *itemProviders = [[UIPasteboard generalPasteboard] itemProviders];
+        EXPECT_EQ(1UL, itemProviders.count);
+        NSItemProvider *itemProvider = itemProviders.firstObject;
+        EXPECT_EQ(1UL, itemProvider.registeredTypeIdentifiers.count);
+        EXPECT_WK_STREQ((NSString *)kUTTypePNG, itemProvider.registeredTypeIdentifiers.firstObject);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+#endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 
 } // namespace TestWebKitAPI
 

@@ -32,6 +32,7 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UIKit/NSItemProvider+UIKitAdditions.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -131,16 +132,16 @@ static void checkTypeIdentifierIsRegisteredAtIndex(DataInteractionSimulator *sim
 static void checkEstimatedSize(DataInteractionSimulator *simulator, CGSize estimatedSize)
 {
     UIItemProvider *sourceItemProvider = [simulator sourceItemProviders].firstObject;
-    EXPECT_EQ(estimatedSize.width, sourceItemProvider.estimatedDisplayedSize.width);
-    EXPECT_EQ(estimatedSize.height, sourceItemProvider.estimatedDisplayedSize.height);
+    EXPECT_EQ(estimatedSize.width, sourceItemProvider.preferredPresentationSize.width);
+    EXPECT_EQ(estimatedSize.height, sourceItemProvider.preferredPresentationSize.height);
 }
 
 static void checkSuggestedNameAndEstimatedSize(DataInteractionSimulator *simulator, NSString *suggestedName, CGSize estimatedSize)
 {
     UIItemProvider *sourceItemProvider = [simulator sourceItemProviders].firstObject;
     EXPECT_WK_STREQ(suggestedName.UTF8String, sourceItemProvider.suggestedName.UTF8String);
-    EXPECT_EQ(estimatedSize.width, sourceItemProvider.estimatedDisplayedSize.width);
-    EXPECT_EQ(estimatedSize.height, sourceItemProvider.estimatedDisplayedSize.height);
+    EXPECT_EQ(estimatedSize.width, sourceItemProvider.preferredPresentationSize.width);
+    EXPECT_EQ(estimatedSize.height, sourceItemProvider.preferredPresentationSize.height);
 }
 
 static void checkStringArraysAreEqual(NSArray<NSString *> *expected, NSArray<NSString *> *observed)

@@ -41,10 +41,6 @@
 @property (nonatomic, copy, setter=_setTitle:) NSString *_title;
 @end
 
-@interface UIItemProvider : NSItemProvider
-@property (nonatomic) CGSize estimatedDisplayedSize;
-@end
-
 #define UIItemProviderRepresentationOptionsVisibilityAll NSItemProviderRepresentationVisibilityAll
 
 @protocol UIItemProviderReading <NSItemProviderReading>

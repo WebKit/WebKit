@@ -23,42 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#if PLATFORM(IOS)
 
-#if TARGET_OS_IPHONE
+#if USE(APPLE_INTERNAL_SDK)
 
-NS_ASSUME_NONNULL_BEGIN
+#import <UIKit/UIApplication_Private.h>
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
-@class WebItemProviderRegistrationInfoList;
+#else
+
+WTF_EXTERN_C_BEGIN
+
+void UIApplicationInitialize(void);
+
+WTF_EXTERN_C_END
+
 #endif
 
-@protocol AbstractPasteboard <NSObject>
-@required
-
-@property (readonly, nonatomic) NSInteger numberOfItems;
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
-@property (nonatomic, copy, nullable) NSArray<__kindof NSItemProvider *> *itemProviders;
-#endif
-
-- (NSArray<NSString *> *)pasteboardTypes;
-- (NSArray *)dataForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
-- (NSArray *)valuesForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
-- (NSInteger)changeCount;
-
-@optional
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
-- (void)setRegistrationInfoLists:(NSArray <WebItemProviderRegistrationInfoList *> *)info;
-#endif
-- (void)setItems:(NSArray<NSDictionary *> *)items;
-- (NSArray<NSString *> *)pasteboardTypesByFidelityForItemAtIndex:(NSUInteger)index;
-@property (readonly, nonatomic) NSInteger numberOfFiles;
-@property (readonly, nonatomic) NSArray<NSURL *> *fileURLsForDataInteraction;
-- (void)updateSupportedTypeIdentifiers:(NSArray<NSString *> *)types;
-
-@end
-
-NS_ASSUME_NONNULL_END
-
-#endif // TARGET_OS_IPHONE
+#endif // PLATFORM(IOS)

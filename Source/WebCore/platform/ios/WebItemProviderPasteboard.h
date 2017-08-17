@@ -60,8 +60,9 @@ WEBCORE_EXPORT @interface WebItemProviderRegistrationInfoList : NSObject
 - (void)addRepresentingObject:(id <UIItemProviderWriting>)object;
 - (void)addData:(NSData *)data forType:(NSString *)typeIdentifier;
 
-@property (nonatomic) CGSize estimatedDisplayedSize;
+@property (nonatomic) CGSize preferredPresentationSize;
 @property (nonatomic, copy) NSString *suggestedName;
+@property (nonatomic, readonly, nullable) UIItemProvider *itemProvider;
 
 - (NSUInteger)numberOfItems;
 - (nullable WebItemProviderRegistrationInfo *)itemAtIndex:(NSUInteger)index;

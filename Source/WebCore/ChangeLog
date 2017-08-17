@@ -1,3 +1,65 @@
+2017-08-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Respect type fidelities when copying image elements to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=175638
+        <rdar://problem/26556043>
+
+        Reviewed by Ryosuke Niwa.
+
+        Ensures that we respect type fidelities when copying on iOS, by unifying pasteboard writing codepaths across
+        dragging and copying. When dragging and copying, we now generate and set UIItemProviders on the UIPasteboard.
+
+        Tests: ActionSheetTests.CopyImageElementWithHREF
+               ActionSheetTests.CopyImageElementWithoutHREF
+
+        * platform/PlatformPasteboard.h:
+
+        Remove all variants of the writeObjectRepresentations helper method. Now that both paths for writing to the
+        pasteboard are unified, it's no longer useful to separate out item-provider-based pasteboard logic.
+
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+
+        Replaces -setItemsUsingRegistrationInfoLists: with -setRegistrationInfoLists:. Rather than have a helper that
+        both sets up item providers and item registration lists, split this functionality out into two setters. This is
+        because UIPasteboard does not need to know about the registration info lists used to set up the item providers
+        in the first place, but internal drag-and-drop clients require this information immediately when starting a drag
+        in order to construct custom drag previews.
+
+        (WebCore::richTextRepresentationsForPasteboardWebContent):
+        (WebCore::registerItemToPasteboard):
+
+        Add a new helper to register item providers to the pasteboard, given an WebItemProviderRegistrationInfoList.
+
+        (WebCore::PlatformPasteboard::write):
+        (WebCore::PlatformPasteboard::writeObjectRepresentations): Deleted.
+
+        Refactors PlatformPasteboard::write to always generate and set item providers, unless we're building for an SDK
+        prior to iOS 11. For images, strings and URLs, we can simply transition to using the new item-provider-based
+        codepaths used for drag and drop. For web content, we add two additional UTIs that were present when copying,
+        but not when dragging: flat RTFD and a string constant used to indicate to UIKit that the pasteboard contains
+        rich text.
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderRegistrationInfoList init]):
+        (-[WebItemProviderRegistrationInfoList addData:forType:]):
+        (-[WebItemProviderRegistrationInfoList addRepresentingObject:]):
+        (-[WebItemProviderRegistrationInfoList numberOfItems]):
+        (-[WebItemProviderRegistrationInfoList itemAtIndex:]):
+        (-[WebItemProviderRegistrationInfoList itemProvider]):
+        (-[WebItemProviderRegistrationInfoList description]):
+
+        Make some small tweaks in WebItemProviderPasteboard (and related classes):
+        1. Transition to preferredPresentationSize from estimatedDisplayedSize, which is now deprecated.
+        2. Remove calls to -initWithItemProviderData:typeIdentifier:error:, which is deprecated.
+        3. Rename _items to _representations to better reflect the role of WebItemProviderRegistrationInfo.
+        4. Implement -description for WebItemProviderRegistrationInfoList for debugging purposes.
+
+        (-[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:]):
+        (-[WebItemProviderPasteboard setRegistrationInfoLists:]):
+        (-[WebItemProviderPasteboard setItemsUsingRegistrationInfoLists:]): Deleted.
+
 2017-08-17  Youenn Fablet  <youenn@apple.com>
 
         Add a DOMPromiseDeferred method to handle ExceptionOr<> results

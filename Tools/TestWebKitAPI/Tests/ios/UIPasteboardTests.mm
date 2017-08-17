@@ -29,14 +29,12 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import "UIKitSPI.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIPasteboard.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK(UIKit, UIApplicationInitialize, void, (void), ())
 
 namespace TestWebKitAPI {
 
@@ -69,9 +67,7 @@ TEST(UIPasteboardTests, CopyPlainTextWritesConcreteTypes)
     [webView stringByEvaluatingJavaScript:@"document.execCommand('copy')"];
 
     auto utf8Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(kUTTypeUTF8PlainText) encoding:NSUTF8StringEncoding]);
-    auto utf16Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(kUTTypeUTF16PlainText) encoding:NSUTF16StringEncoding]);
     EXPECT_WK_STREQ("Hello world", [utf8Result UTF8String]);
-    EXPECT_WK_STREQ("Hello world", [utf16Result UTF8String]);
 }
 
 TEST(UIPasteboardTests, CopyRichTextWritesConcreteTypes)
@@ -81,9 +77,7 @@ TEST(UIPasteboardTests, CopyRichTextWritesConcreteTypes)
     [webView stringByEvaluatingJavaScript:@"document.execCommand('copy')"];
 
     auto utf8Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(kUTTypeUTF8PlainText) encoding:NSUTF8StringEncoding]);
-    auto utf16Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(kUTTypeUTF16PlainText) encoding:NSUTF16StringEncoding]);
     EXPECT_WK_STREQ("Hello world", [utf8Result UTF8String]);
-    EXPECT_WK_STREQ("Hello world", [utf16Result UTF8String]);
 }
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000

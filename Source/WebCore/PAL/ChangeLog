@@ -1,3 +1,15 @@
+2017-08-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Respect type fidelities when copying image elements to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=175638
+        <rdar://problem/26556043>
+
+        Reviewed by Ryosuke Niwa.
+
+        Replace -estimatedDisplayedSize with its non-deprecated counterpart, -preferredPresentationSize.
+
+        * pal/spi/ios/UIKitSPI.h:
+
 2017-08-17  Don Olmstead  <don.olmstead@sony.com>
 
         [PAL] Move SessionID into PAL

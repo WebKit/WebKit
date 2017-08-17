@@ -1,3 +1,25 @@
+2017-08-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Respect type fidelities when copying image elements to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=175638
+        <rdar://problem/26556043>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, we treat the case when copying an image enclosed by a link by only writing a URL to the pasteboard.
+        This patch tweaks logic in WebPage::performActionOnElement to write both an image and a link to the pasteboard
+        if the hit-tested image element is enclosed by an anchor.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::containingLinkElement):
+
+        Tweak this helper to be more restrictive when finding an enclosing 'link' -- only return an element if isLink()
+        is true, and it is an HTMLAnchorElement. Currently, the isLink() also matches HTMLLinkElements, but this isn't
+        the intention here.
+
+        (WebKit::WebPage::performActionOnElement):
+
 2017-08-17  Jacobo Aragunde Pérez  <jaragunde@igalia.com>
 
         [WPE][GTK] Ensure proper casting of data in gvariants

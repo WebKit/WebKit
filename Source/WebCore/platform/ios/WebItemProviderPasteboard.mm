@@ -28,8 +28,10 @@
 
 #if ENABLE(DATA_INTERACTION)
 
+#import <Foundation/NSItemProvider.h>
 #import <Foundation/NSProgress.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UIKit/NSItemProvider+UIKitAdditions.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 #import <WebCore/FileSystemIOS.h>
@@ -44,12 +46,6 @@ SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CLASS(UIKit, UIImage)
 SOFT_LINK_CLASS(UIKit, UIItemProvider)
-
-// FIXME: Remove once +objectWithItemProviderData:typeIdentifier:error: is available in the public SDK.
-@interface NSObject (Foundation_NSItemProvider_Staging)
-+ (id <NSItemProviderReading>)objectWithItemProviderData:(NSData *)data typeIdentifier:(NSString *)typeIdentifier error:(NSError **)outError;
-- (id <NSItemProviderReading>)initWithItemProviderData:(NSData *)data typeIdentifier:(NSString *)typeIdentifier error:(NSError **)outError;
-@end
 
 using namespace WebCore;
 
@@ -100,7 +96,7 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
 
 @interface WebItemProviderRegistrationInfoList ()
 {
-    RetainPtr<NSMutableArray> _items;
+    RetainPtr<NSMutableArray> _representations;
 }
 @end
 
@@ -109,8 +105,8 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
 - (instancetype)init
 {
     if (self = [super init]) {
-        _items = adoptNS([[NSMutableArray alloc] init]);
-        _estimatedDisplayedSize = CGSizeZero;
+        _representations = adoptNS([[NSMutableArray alloc] init]);
+        _preferredPresentationSize = CGSizeZero;
     }
 
     return self;
@@ -124,18 +120,18 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
 
 - (void)addData:(NSData *)data forType:(NSString *)typeIdentifier
 {
-    [_items addObject:[[[WebItemProviderRegistrationInfo alloc] initWithRepresentingObject:nil typeIdentifier:typeIdentifier data:data] autorelease]];
+    [_representations addObject:[[[WebItemProviderRegistrationInfo alloc] initWithRepresentingObject:nil typeIdentifier:typeIdentifier data:data] autorelease]];
 }
 
 - (void)addRepresentingObject:(id <UIItemProviderWriting>)object
 {
     ASSERT([object conformsToProtocol:@protocol(UIItemProviderWriting)]);
-    [_items addObject:[[[WebItemProviderRegistrationInfo alloc] initWithRepresentingObject:object typeIdentifier:nil data:nil] autorelease]];
+    [_representations addObject:[[[WebItemProviderRegistrationInfo alloc] initWithRepresentingObject:object typeIdentifier:nil data:nil] autorelease]];
 }
 
 - (NSUInteger)numberOfItems
 {
-    return [_items count];
+    return [_representations count];
 }
 
 - (WebItemProviderRegistrationInfo *)itemAtIndex:(NSUInteger)index
@@ -143,13 +139,56 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     if (index >= self.numberOfItems)
         return nil;
 
-    return [_items objectAtIndex:index];
+    return [_representations objectAtIndex:index];
 }
 
 - (void)enumerateItems:(void (^)(WebItemProviderRegistrationInfo *, NSUInteger))block
 {
     for (NSUInteger index = 0; index < self.numberOfItems; ++index)
         block([self itemAtIndex:index], index);
+}
+
+- (UIItemProvider *)itemProvider
+{
+    if (!self.numberOfItems)
+        return nil;
+
+    auto itemProvider = adoptNS([allocUIItemProviderInstance() init]);
+    for (WebItemProviderRegistrationInfo *representation in _representations.get()) {
+        if (representation.representingObject) {
+            [itemProvider registerObject:representation.representingObject visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+            continue;
+        }
+
+        if (!representation.typeIdentifier.length || !representation.data.length)
+            continue;
+
+        RetainPtr<NSData> itemData = representation.data;
+        [itemProvider registerDataRepresentationForTypeIdentifier:representation.typeIdentifier visibility:UIItemProviderRepresentationOptionsVisibilityAll loadHandler:[itemData] (ItemProviderDataLoadCompletionHandler completionHandler) -> NSProgress * {
+            completionHandler(itemData.get(), nil);
+            return nil;
+        }];
+    }
+    [itemProvider setPreferredPresentationSize:self.preferredPresentationSize];
+    [itemProvider setSuggestedName:self.suggestedName];
+    return itemProvider.autorelease();
+}
+
+- (NSString *)description
+{
+    __block NSMutableString *description = [NSMutableString string];
+    [description appendFormat:@"<%@: %p", [self class], self];
+    [self enumerateItems:^(WebItemProviderRegistrationInfo *item, NSUInteger index) {
+        if (index)
+            [description appendString:@","];
+
+        if (item.representingObject)
+            [description appendFormat:@" (%@: %p)", [item.representingObject class], item.representingObject];
+        else
+            [description appendFormat:@" ('%@' => %tu bytes)", item.typeIdentifier, item.data.length];
+    }];
+    [description appendString:@">"];
+    return description;
 }
 
 @end
@@ -251,41 +290,6 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     return [_itemProviders count];
 }
 
-- (void)setItemsUsingRegistrationInfoLists:(NSArray<WebItemProviderRegistrationInfoList *> *)itemLists
-{
-    NSMutableArray *providers = [NSMutableArray array];
-    for (WebItemProviderRegistrationInfoList *itemList in itemLists) {
-        if (!itemList.numberOfItems)
-            continue;
-
-        auto itemProvider = adoptNS([allocUIItemProviderInstance() init]);
-        [itemList enumerateItems:[itemProvider] (WebItemProviderRegistrationInfo *item, NSUInteger) {
-            if (item.representingObject) {
-                [itemProvider registerObject:item.representingObject visibility:UIItemProviderRepresentationOptionsVisibilityAll];
-                return;
-            }
-
-            if (!item.typeIdentifier.length || !item.data.length)
-                return;
-
-            RetainPtr<NSData> itemData = item.data;
-            [itemProvider registerDataRepresentationForTypeIdentifier:item.typeIdentifier visibility:UIItemProviderRepresentationOptionsVisibilityAll loadHandler:[itemData] (ItemProviderDataLoadCompletionHandler completionHandler) -> NSProgress * {
-                completionHandler(itemData.get(), nil);
-                return nil;
-            }];
-        }];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [itemProvider setEstimatedDisplayedSize:itemList.estimatedDisplayedSize];
-#pragma clang diagnostic pop
-        [itemProvider setSuggestedName:itemList.suggestedName];
-        [providers addObject:itemProvider.get()];
-    }
-
-    self.itemProviders = providers;
-    _registrationInfoLists = itemLists;
-}
-
 - (NSData *)_preLoadedDataConformingToType:(NSString *)typeIdentifier forItemProviderAtIndex:(NSUInteger)index
 {
     if ([_typeToFileURLMaps count] != [_itemProviders count]) {
@@ -364,13 +368,8 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
         if (!preloadedData)
             return;
 
-        if ([readableClass respondsToSelector:@selector(objectWithItemProviderData:typeIdentifier:error:)]) {
-            if (id <NSItemProviderReading> readObject = [readableClass objectWithItemProviderData:preloadedData typeIdentifier:(NSString *)typeIdentifierToLoad error:nil])
-                [values addObject:readObject];
-        } else {
-            if (auto readObject = adoptNS([[readableClass alloc] initWithItemProviderData:preloadedData typeIdentifier:(NSString *)typeIdentifierToLoad error:nil]))
-                [values addObject:readObject.get()];
-        }
+        if (id <NSItemProviderReading> readObject = [readableClass objectWithItemProviderData:preloadedData typeIdentifier:(NSString *)typeIdentifierToLoad error:nil])
+            [values addObject:readObject];
     }];
 
     return values.autorelease();
@@ -544,6 +543,11 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
 - (void)enumerateItemProvidersWithBlock:(void (^)(UIItemProvider *itemProvider, NSUInteger index, BOOL *stop))block
 {
     [_itemProviders enumerateObjectsUsingBlock:block];
+}
+
+- (void)setRegistrationInfoLists:(NSArray <WebItemProviderRegistrationInfoList *> *)infoLists
+{
+    _registrationInfoLists = infoLists;
 }
 
 @end

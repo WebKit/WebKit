@@ -95,7 +95,7 @@ NS_ASSUME_NONNULL_END
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIItemProvider : NSItemProvider
-@property (nonatomic) CGSize estimatedDisplayedSize;
+@property (nonatomic) CGSize preferredPresentationSize;
 @end
 
 #define UIItemProviderRepresentationOptionsVisibilityAll NSItemProviderRepresentationVisibilityAll

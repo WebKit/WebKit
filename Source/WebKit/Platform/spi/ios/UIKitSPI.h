@@ -876,7 +876,7 @@ typedef enum {
 #if ENABLE(DRAG_SUPPORT)
 
 @interface UIItemProvider : NSItemProvider
-@property (nonatomic) CGSize estimatedDisplayedSize;
+@property (nonatomic) CGSize preferredPresentationSize;
 @end
 
 WTF_EXTERN_C_BEGIN
