@@ -36,7 +36,7 @@
 #include <WebCore/ActivityState.h>
 #include <WebCore/HysteresisActivity.h>
 #include <WebCore/Timer.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

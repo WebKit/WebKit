@@ -28,7 +28,7 @@
 #define RemoteNetworkingContext_h
 
 #include <WebCore/NetworkingContext.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 namespace WebKit {
 

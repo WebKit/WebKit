@@ -28,7 +28,7 @@
 #include "Connection.h"
 #include "MessageSender.h"
 
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {

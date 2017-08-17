@@ -34,7 +34,7 @@
 #include "WebProcess.h"
 #include <WebCore/SocketStreamError.h>
 #include <WebCore/SocketStreamHandleClient.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;

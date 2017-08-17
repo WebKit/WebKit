@@ -27,7 +27,7 @@
 
 #if USE(NETWORK_SESSION)
 
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>

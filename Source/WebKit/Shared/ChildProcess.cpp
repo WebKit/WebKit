@@ -28,7 +28,7 @@
 
 #include "Logging.h"
 #include "SandboxInitializationParameters.h"
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <unistd.h>
 
 namespace WebKit {

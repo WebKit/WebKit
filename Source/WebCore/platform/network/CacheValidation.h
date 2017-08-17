@@ -27,7 +27,7 @@
 
 #include "PlatformExportMacros.h"
 #include <chrono>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

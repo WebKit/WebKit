@@ -28,7 +28,7 @@
 
 #include "APIHTTPCookieStore.h"
 #include "WebsiteDataStore.h"
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/text/WTFString.h>
 
 namespace API {

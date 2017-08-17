@@ -38,7 +38,7 @@
 #include "ViewportArguments.h"
 #include "WheelEventTestTrigger.h"
 #include <memory>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>

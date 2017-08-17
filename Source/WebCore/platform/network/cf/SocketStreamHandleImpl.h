@@ -32,7 +32,7 @@
 #pragma once
 
 #include "SocketStreamHandle.h"
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StreamBuffer.h>
 

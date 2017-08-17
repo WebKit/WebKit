@@ -33,7 +33,7 @@
 #include "WebProcess.h"
 #include <WebCore/URL.h>
 #include <dlfcn.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>

@@ -1,3 +1,64 @@
+2017-08-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [PAL] Relocate SessionID to root
+        https://bugs.webkit.org/show_bug.cgi?id=175684
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkLoad.cpp:
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSocketStream.h:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        * Scripts/webkit/messages.py:
+        (forward_declarations_and_headers.templates): Deleted.
+        (class_template_headers.template): Deleted.
+        * Shared/ChildProcess.cpp:
+        * Shared/SessionTracker.h:
+        * Shared/Storage/StorageProcessCreationParameters.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/WebsiteDataStoreParameters.h:
+        * Shared/mac/CookieStorageShim.mm:
+        * StorageProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * StorageProcess/StorageProcess.cpp:
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageToWebProcessConnection.h:
+        * UIProcess/API/APIPageConfiguration.h:
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/glib/WebKitCookieManager.cpp:
+        * UIProcess/Plugins/PlugInAutoStartProvider.h:
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        * WebProcess/Network/WebSocketStream.cpp:
+        * WebProcess/Network/WebSocketStream.h:
+        * WebProcess/Storage/WebToStorageProcessConnection.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlugInClient.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebProcess.h:
+
 2017-08-17  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r220601): Crash under ProcessAssertion::markAsInvalidated()

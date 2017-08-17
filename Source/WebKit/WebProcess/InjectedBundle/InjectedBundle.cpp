@@ -75,7 +75,7 @@
 #include <WebCore/UserGestureIndicator.h>
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 #if ENABLE(NOTIFICATIONS)
 #include "WebNotificationManager.h"

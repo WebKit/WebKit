@@ -61,7 +61,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SubresourceLoader.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/text/CString.h>
 
 #if USE(QUICK_LOOK)

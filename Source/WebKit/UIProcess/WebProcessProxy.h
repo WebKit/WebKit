@@ -40,7 +40,7 @@
 #include "WebProcessProxyMessages.h"
 #include <WebCore/LinkHash.h>
 #include <memory>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

@@ -29,7 +29,7 @@
 #include "MessageSender.h"
 #include <WebCore/SocketStreamHandleClient.h>
 #include <WebCore/SocketStreamHandleImpl.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 namespace IPC {
 class Connection;

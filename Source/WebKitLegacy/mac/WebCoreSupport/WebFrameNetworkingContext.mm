@@ -33,7 +33,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/Settings.h>
-#import <pal/identifier/SessionID.h>
+#import <pal/SessionID.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 
 #if PLATFORM(IOS)

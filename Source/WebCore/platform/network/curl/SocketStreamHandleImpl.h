@@ -38,7 +38,7 @@
 #endif
 
 #include <curl/curl.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>

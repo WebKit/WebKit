@@ -27,7 +27,7 @@
 #include "NativeImage.h"
 #include "SecurityOriginHash.h"
 #include "Timer.h"
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>

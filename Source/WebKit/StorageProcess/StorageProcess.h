@@ -30,7 +30,7 @@
 #include <WebCore/IDBBackingStore.h>
 #include <WebCore/IDBServer.h>
 #include <WebCore/UniqueIDBDatabase.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 

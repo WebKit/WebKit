@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CredentialStorage.h"
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>

@@ -32,7 +32,7 @@
 #include "WebCoreCrossThreadCopier.h"
 
 #include "ThreadSafeDataBuffer.h"
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 namespace WTF {
 

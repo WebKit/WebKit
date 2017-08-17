@@ -53,7 +53,7 @@
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
 #include <memory>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>

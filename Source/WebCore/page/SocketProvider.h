@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 

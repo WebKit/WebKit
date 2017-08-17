@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NetworkStorageSession.h"
 
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

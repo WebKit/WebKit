@@ -192,7 +192,7 @@
 #include <WebCore/WebGLStateTracker.h>
 #include <WebCore/markup.h>
 #include <bindings/ScriptValue.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <profiler/ProfilerDatabase.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValue.h>

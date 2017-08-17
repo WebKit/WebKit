@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

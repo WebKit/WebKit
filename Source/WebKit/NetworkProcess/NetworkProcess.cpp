@@ -63,7 +63,7 @@
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/Settings.h>
 #include <WebCore/URLParser.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>

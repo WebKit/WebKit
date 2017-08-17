@@ -30,7 +30,7 @@
 #include "MessageSender.h"
 #include "SandboxExtension.h"
 #include <WebCore/IDBConnectionToServer.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 namespace WebKit {
 

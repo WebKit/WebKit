@@ -29,7 +29,7 @@
 #include "Connection.h"
 #include "MessageSender.h"
 #include "WebIDBConnectionToServer.h"
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/RefCounted.h>
 
 namespace PAL {

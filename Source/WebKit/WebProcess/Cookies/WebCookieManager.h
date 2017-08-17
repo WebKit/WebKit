@@ -32,7 +32,7 @@
 #include "OptionalCallbackID.h"
 #include "WebProcessSupplement.h"
 #include <chrono>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <stdint.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

@@ -45,7 +45,7 @@
 #include "WebContextConnectionClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/LinkHash.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

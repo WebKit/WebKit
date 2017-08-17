@@ -27,7 +27,7 @@
 #define WebPlugInClient_h
 
 #include <WebCore/PlugInClient.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 namespace WebKit {
 

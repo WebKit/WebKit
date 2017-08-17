@@ -69,7 +69,7 @@
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/CString.h>

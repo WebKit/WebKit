@@ -42,7 +42,7 @@
 #include <WebCore/CachedResource.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/SharedBuffer.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 using namespace WebCore;
 

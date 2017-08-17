@@ -35,7 +35,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SoupNetworkSession.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 using namespace WebCore;
 

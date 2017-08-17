@@ -88,7 +88,7 @@
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
 #include <limits>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <pal/system/SleepDisabler.h>
 #include <runtime/Uint8Array.h>
 #include <wtf/Algorithms.h>

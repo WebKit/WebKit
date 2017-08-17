@@ -30,7 +30,7 @@
 #include "MessageReceiver.h"
 #include "WebContextSupplement.h"
 #include "WebCookieManagerProxyClient.h"
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

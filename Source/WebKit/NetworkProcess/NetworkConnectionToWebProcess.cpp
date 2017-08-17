@@ -51,7 +51,7 @@
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 #if USE(NETWORK_SESSION)
 #include "PingLoad.h"

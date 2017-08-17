@@ -31,7 +31,7 @@
 #include <WebCore/ResourceHandleTypes.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Function.h>
 
 namespace WebCore {

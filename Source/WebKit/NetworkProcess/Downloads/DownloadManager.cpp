@@ -33,7 +33,7 @@
 #include "PendingDownload.h"
 #include "SessionTracker.h"
 #include <WebCore/NotImplemented.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace WebCore;

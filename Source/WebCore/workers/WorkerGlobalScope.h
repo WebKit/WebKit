@@ -37,7 +37,7 @@
 #include "WorkerScriptController.h"
 #include <inspector/ConsoleMessage.h>
 #include <memory>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 namespace WebCore {
 

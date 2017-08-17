@@ -36,7 +36,7 @@
 
 #if USE(SOUP)
 
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/StreamBuffer.h>
 #include <wtf/glib/GRefPtr.h>
 

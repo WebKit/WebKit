@@ -71,7 +71,7 @@
 #include "SubresourceLoader.h"
 #include "UserContentController.h"
 #include "UserStyleSheet.h"
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

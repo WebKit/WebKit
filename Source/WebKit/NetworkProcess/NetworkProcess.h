@@ -31,7 +31,7 @@
 #include "MessageReceiverMap.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <memory>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>

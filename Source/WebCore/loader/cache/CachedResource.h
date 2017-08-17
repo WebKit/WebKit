@@ -31,7 +31,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "Timer.h"
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 #include <time.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>

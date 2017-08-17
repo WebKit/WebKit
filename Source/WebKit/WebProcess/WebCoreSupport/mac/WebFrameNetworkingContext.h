@@ -29,7 +29,7 @@
 #include "HTTPCookieAcceptPolicy.h"
 #include "WebFrame.h"
 #include <WebCore/FrameNetworkingContext.h>
-#include <pal/identifier/SessionID.h>
+#include <pal/SessionID.h>
 
 namespace WebKit {
 
