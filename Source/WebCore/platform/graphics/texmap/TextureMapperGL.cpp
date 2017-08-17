@@ -172,7 +172,7 @@ TextureMapperGL::TextureMapperGL()
 
     m_data = new TextureMapperGLData(*m_context3D);
 #if USE(TEXTURE_MAPPER_GL)
-    m_texturePool = std::make_unique<BitmapTexturePool>(m_contextAttributes, m_context3D.copyRef());
+    m_texturePool = std::make_unique<BitmapTexturePool>(m_contextAttributes);
 #endif
 }
 
