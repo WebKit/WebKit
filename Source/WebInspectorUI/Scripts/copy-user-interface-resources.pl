@@ -144,10 +144,12 @@ my $workersDir = File::Spec->catdir($targetResourcePath, 'Workers');
 my $codeMirrorPath = File::Spec->catdir($uiRoot, 'External', 'CodeMirror');
 my $esprimaPath = File::Spec->catdir($uiRoot, 'External', 'Esprima');
 my $eslintPath = File::Spec->catdir($uiRoot, 'External', 'ESLint');
+my $threejsPath = File::Spec->catdir($uiRoot, 'External', 'three.js');
 
 my $codeMirrorLicense = readLicenseFile(File::Spec->catfile($codeMirrorPath, 'LICENSE'));
 my $esprimaLicense = readLicenseFile(File::Spec->catfile($esprimaPath, 'LICENSE'));
 my $eslintLicense = readLicenseFile(File::Spec->catfile($eslintPath, 'LICENSE'));
+my $threejsLicense = readLicenseFile(File::Spec->catfile($threejsPath, 'LICENSE'));
 make_path($protocolDir, $targetResourcePath);
 
 # Copy over dynamically loaded files from other frameworks, even if we aren't combining resources.
@@ -218,6 +220,15 @@ if ($shouldCombineMain) {
        '--output-dir', $derivedSourcesDir,
        '--output-script-name', 'ESLint.js');
 
+    # Combine the three.js JavaScript files in Production builds into a single file (Three.js).
+    system($perl, $combineResourcesCmd,
+       '--input-dir', 'External/three.js',
+       '--input-html', $derivedSourcesMainHTML,
+       '--input-html-dir', $uiRoot,
+       '--derived-sources-dir', $derivedSourcesDir,
+       '--output-dir', $derivedSourcesDir,
+       '--output-script-name', 'Three.js');
+
     # Remove console.assert calls from the Main.js file.
     my $derivedSourcesMainJS = File::Spec->catfile($derivedSourcesDir, 'Main.js');
     system($perl, File::Spec->catfile($scriptsRoot, 'remove-console-asserts.pl'),
@@ -258,6 +269,10 @@ if ($shouldCombineMain) {
     my $targetESLintJS = File::Spec->catfile($targetResourcePath, 'ESLint.js');
     seedFile($targetESLintJS, $eslintLicense);
 
+    # Export the license into Three.js.
+    my $targetThreejsJS = File::Spec->catfile($targetResourcePath, 'Three.js');
+    seedFile($targetThreejsJS, $threejsLicense);
+
     # Minify the Main.js and Main.css files, with Main.js appending to the license that was exported above.
     my $jsMinScript = File::Spec->catfile($sharedScriptsRoot, 'jsmin.py');
     my $cssMinScript = File::Spec->catfile($sharedScriptsRoot, 'cssmin.py');
@@ -277,6 +292,10 @@ if ($shouldCombineMain) {
     # Minify the ESLint.js file, appending to the license that was exported above.
     my $derivedSourcesESLintJS = File::Spec->catfile($derivedSourcesDir, 'ESLint.js');
     system(qq("$python" "$jsMinScript" < "$derivedSourcesESLintJS" >> "$targetESLintJS")) and die "Failed to minify $derivedSourcesESLintJS: $!";
+
+    # Minify the Three.js file, appending to the license that was exported above.
+    my $derivedSourcesThreejsJS = File::Spec->catfile($derivedSourcesDir, 'Three.js');
+    system(qq("$python" "$jsMinScript" < "$derivedSourcesThreejsJS" >> "$targetThreejsJS")) and die "Failed to minify $derivedSourcesThreejsJS: $!";
 
     # Copy over Main.html and the Images directory.
     copy($derivedSourcesMainHTML, File::Spec->catfile($targetResourcePath, 'Main.html'));
