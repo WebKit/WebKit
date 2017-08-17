@@ -42,8 +42,12 @@ void PlatformMediaSessionManager::updateSessionState()
 {
     LOG(Media, "PlatformMediaSessionManager::updateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(PlatformMediaSession::Video), count(PlatformMediaSession::Audio), count(PlatformMediaSession::WebAudio));
 
-    if (has(PlatformMediaSession::WebAudio) || has(PlatformMediaSession::MediaStreamCapturingAudio))
+    if (has(PlatformMediaSession::WebAudio))
         AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
+    // In case of audio capture, we want to grab 20 ms chunks to limit the latency so that it is not noticeable by users
+    // while having a large enough buffer so that the audio rendering remains stable, hence a computation based on sample rate.
+    else if (has(PlatformMediaSession::MediaStreamCapturingAudio))
+        AudioSession::sharedSession().setPreferredBufferSize(AudioSession::sharedSession().sampleRate() / 50);
     else if ((has(PlatformMediaSession::Video) || has(PlatformMediaSession::Audio)) && Settings::lowPowerVideoAudioBufferSizeEnabled()) {
         // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
         // causes media LayoutTests to fail on 10.8.
