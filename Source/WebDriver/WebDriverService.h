@@ -48,7 +48,6 @@ public:
     ~WebDriverService() = default;
 
     int run(int argc, char** argv);
-    void quit();
 
     static bool platformCompareBrowserVersions(const String&, const String&);
 
