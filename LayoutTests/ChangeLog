@@ -1,5 +1,16 @@
 2017-08-17  Ms2ger  <Ms2ger@gmail.com>
 
+        REGRESSION(r220751): [GTK] Layout Test imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=175641
+
+        Unreviewed test gardening.
+
+        Correct the error message in scheme-about.any-expected.txt.
+
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt:
+
+2017-08-17  Ms2ger  <Ms2ger@gmail.com>
+
         [GTK] Unreviewed test gardening
         https://bugs.webkit.org/show_bug.cgi?id=175664
 
