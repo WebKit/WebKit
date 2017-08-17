@@ -2,22 +2,22 @@
 
 The WebKit performane dashboard is a website to track various performance metrics of WebKit: https://perf.webkit.org/
 
-## Checking Out the Code and Installing Required Applications
+## 1. Checking Out the Code and Installing Required Applications
 
 The instructions assume you're using macOS as the host server and installing this application at `/Volumes/Data/perf.webkit.org`.
 
 You can choose between using Server.app or install the required tools separately.
 
-1. Install Server.app (if you don't want to use Server.app, install PostgreSQL: http://www.postgresql.org/download/macosx/)
+1. Install Server.app but do **NOT** launch/open it. (if you don't want to use Server.app, install PostgreSQL: http://www.postgresql.org/download/macosx/)
 2. Install node.
 3. Install Xcode with command line tools (only needed for svn)
 4. `svn co https://svn.webkit.org/repository/webkit/trunk/Websites/perf.webkit.org /Volumes/Data/perf.webkit.org`
 5. Inside `/Volumes/Data/perf.webkit.org`, run `npm install pg` and `mkdir -m 755 public/data/`
 
-## Testing Local UI Changes with Production Data
+## 2. Testing Local UI Changes with Production Data
 
 The front end has the capability to pull data from a production server without replicating the database locally on OS X Yosemite and later.
-To use this feature, modify `config.json`'s `remoteServer` entry so that "remoteServer.url" points to your production server,
+To use this feature to test local UI changes, modify `config.json`'s `remoteServer` entry so that "remoteServer.url" points to your production server,
 and "remoteServer.basicAuth" specifies the username and the password that is used by the production sever.
 
 Remove "basicAuth" entry for production servers that doesn't require a basic authentication (e.g. perf.webkit.org).
@@ -37,7 +37,7 @@ Then run `tools/remote-cache-server.py start`. This launches a httpd server on p
 The script caches remote server's responses under `public/data/remote-cache` and never revalidates them (to allow offline work).
 If you needed the latest content, delete caches stored in this directory by running `tools/remote-cache-server.py reset`.
 
-## Running Tests
+## 3. Running Tests
 
 There are three kinds of tests in directories of the same name: `unit-tests`, `server tests`, and `browser-tests`.
 
@@ -45,10 +45,12 @@ There are three kinds of tests in directories of the same name: `unit-tests`, `s
  - `server-tests`: Server tests use a real Apache server in accordance with `testServer` in `config.json` and a Postgres database by the name of `testDatabaseName` specified in `config.json`. They're functional tests and may test both the backend database schema, PHP, and corresponding front-end code although many of them directly queries and modifies the database.
  - `browser-tests`: These are tests to be ran inside a Web browser, and tests v3 UI's interaction with browser's DOM API.
 
-To run `unit-tests` and `server-tests`, simply run `./tools/run-tests.py` after installing dependencies and configuring the PostgreSQL.
+To run `unit-tests` and `server-tests`, simply run `./tools/run-tests.py` after installing dependencies (1) and configuring the PostgreSQL (4).
+If you've previously setup a remote cache server (3), then you have to stop the server before running the tests.
+
 To run `browser-tests`, open `browser-tests/index.html` inside a Web browser.
 
-## Configuring PostgreSQL
+## 4. Configuring PostgreSQL
 
 Run the following command to setup a Postgres server at `/Volumes/Data/perf.webkit.org/PostgresSQL` (or wherever you'd prefer):
 `python ./tools/setup-database.py /Volumes/Data/perf.webkit.org/PostgresSQL`
@@ -76,17 +78,10 @@ Use `pg_dump` and `pg_restore` to backup and restore the database. If you're rep
 - Making an abridged backup without `run_iterations` table: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost webkit-perf-db --format=directory --jobs=4 --no-owner --compress=7 --exclude-table=run_iterations --file=<path to backup directory>`
 
 - Restoring the database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_restore --format=directory --jobs=4 --no-owner --host localhost --username=webkit-perf-db-user --dbname=webkit-perf-db <path to backup directory>`
-    
-## Configuring Apache
 
-### Instructions if you're using Server.app
+## 5. Configuring Apache
 
- - Enable PHP web applications
- - Go to Server Website / Store Site Files In, change it to `/Volumes/Data/perf.webkit.org/public/`
- - Go to Server Website / Edit advanced settings, enable Allow overrides using .htaccess files
- - httpd config file is located at `/Library/Server/Web/Config/apache2/sites/0000_any_80.conf` (and/or 0000_any_`PORT#`.conf)
-
-### Instructions if you're not using Server.app
+### Instructions if you've never launched Server.app as instructed
 
  - Edit `/private/etc/apache2/httpd.conf`
 
@@ -99,6 +94,13 @@ Use `pg_dump` and `pg_restore` to backup and restore the database. If you're rep
     `sudo cp /Applications/Server.app/Contents/ServerRoot/etc/php.ini /etc/`
  - In El Capitan and later, you may need to comment out the `LockFile` directive in `/private/etc/apache2/extra/httpd-mpm.conf`
    as the directive has been superseded by `Mutex` directive.
+
+### Instructions if you've accidentally launched Server.app
+
+ - Enable PHP web applications
+ - Go to Server Website / Store Site Files In, change it to `/Volumes/Data/perf.webkit.org/public/`
+ - Go to Server Website / Edit advanced settings, enable Allow overrides using .htaccess files
+ - httpd config file is located at `/Library/Server/Web/Config/apache2/sites/0000_any_80.conf` (and/or 0000_any_`PORT#`.conf)
 
 ### Starting Apache
 
@@ -149,7 +151,7 @@ AuthUserFile "<Realm>"
 Require valid-user
 ```
 
-## Concepts
+## 6. Concepts
 
  - **Test** - A test is a collection of metrics such as frame rate and malloced bytes. It can have a children and a parent and form a tree of tests.
  - **Metric** - A specific metric of a test such as frame rate, runs per second, and time. The list of supported metrics are:
@@ -180,7 +182,7 @@ Require valid-user
 
 See [init-database.sql](init-database.sql) for the complete database schema.
 
-## Data Models for Test Results
+## 7. Data Models for Test Results
 
 In the performance dashboard, each test can have a parent test or arbitrary many child tests or subtests. Each test can then have multiple metrics to measure a specific unit'ed value. For example, Speedometer benchmark has the top level score, which is computed by the total time of running subtests. As such, the top level test has two metrics: *Score* and *Time* which is the aggregated total sum of *Time* metrics of the subtests:
 
@@ -219,7 +221,7 @@ Each *test run* are related to one another via *builds* which is uniquely identi
    + Iteration 2: 395
    + ...
 
-## Reporting Results
+## 8. Reporting Results
 
 To submit a new *build*, or a set of data points to an instance of the performance dashboard, you need to do the following:
 
