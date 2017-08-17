@@ -942,6 +942,9 @@ void AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread(GstPad* demuxerS
 
             gst_element_sync_state_with_parent(m_appsink.get());
             gst_element_sync_state_with_parent(m_decryptor.get());
+
+            if (m_pendingDecryptionStructure)
+                dispatchPendingDecryptionStructure();
         } else {
 #endif
             gst_pad_link(demuxerSrcPad, appsinkSinkPad.get());
@@ -1046,6 +1049,35 @@ void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad* dem
 #endif
         gst_element_unlink(m_demux.get(), m_appsink.get());
 }
+
+#if ENABLE(ENCRYPTED_MEDIA)
+void AppendPipeline::dispatchPendingDecryptionStructure()
+{
+    ASSERT(m_decryptor);
+    ASSERT(m_pendingDecryptionStructure);
+    ASSERT(m_appendState == KeyNegotiation);
+    GST_TRACE("dispatching key to append pipeline %p", this);
+
+    // Release the m_pendingDecryptionStructure object since
+    // gst_event_new_custom() takes over ownership of it.
+    gst_element_send_event(m_pipeline.get(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB, m_pendingDecryptionStructure.release()));
+
+    setAppendState(AppendState::Ongoing);
+}
+
+void AppendPipeline::dispatchDecryptionStructure(GUniquePtr<GstStructure>&& structure)
+{
+    if (m_appendState == AppendState::KeyNegotiation) {
+        GST_TRACE("append pipeline %p in key negotiation", this);
+        m_pendingDecryptionStructure = WTFMove(structure);
+        if (m_decryptor)
+            dispatchPendingDecryptionStructure();
+        else
+            GST_TRACE("no decryptor yet, waiting for it");
+    } else
+        GST_TRACE("append pipeline %p not in key negotiation", this);
+}
+#endif
 
 static void appendPipelineAppsinkCapsChanged(GObject* appsinkPad, GParamSpec*, AppendPipeline* appendPipeline)
 {

@@ -1,5 +1,28 @@
 2017-08-17  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GStreamer] AppendPipeline: support dispatch of decryption-specific GstStructure into the pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=175668
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add the AppendPipeline::dispatchDecryptionStructure() method. Callers can
+        pass in a GstStructure object that contains all the information the
+        decryption elements in the pipeline will require to properly decrypt the
+        content. In case the decryptor element isn't available yet, the
+        GstStructure is stored and dispatched when that element becomes available.
+
+        The dispatch itself simply creates a new custom GstEvent that adopts the
+        given GstStructure object, sends that into the pipeline element, and
+        shifts the state to 'ongoing'.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread):
+        (WebCore::AppendPipeline::dispatchPendingDecryptionStructure):
+        (WebCore::AppendPipeline::dispatchDecryptionStructure):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h: Remove a redundant private: label.
+
+2017-08-17  Zan Dobersek  <zdobersek@igalia.com>
+
         [GStreamer] GstStructure shouldn't be handled through GRefPtr
         https://bugs.webkit.org/show_bug.cgi?id=175673
 
