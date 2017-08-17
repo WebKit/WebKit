@@ -1,3 +1,12 @@
+2017-08-17  Matt Lewis  <jlewis3@apple.com>
+
+        Changed expectations to include release for memory/memory-pressure-simulation.html.
+        https://bugs.webkit.org/show_bug.cgi?id=170629
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-08-17  Andreas Kling  <akling@apple.com>
 
         Disable CSS regions at compile time
