@@ -1,5 +1,13 @@
 2017-08-16  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Correct a typo in a test name.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2017-08-16  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline crypto/subtle/rsa-generate-key-malformed-parameters.html after r220811.
 
         Unreviewed test gardening.
