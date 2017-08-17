@@ -2861,3 +2861,9 @@ webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip 
 webkit.org/b/174120 http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Skip ]
 
 webkit.org/b/175273 imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html [ Failure ]
+
+# This test tests a feature that only exists on iOS.
+fast/text/accessibility-bold-system-font-2.html [ Pass ]
+
+# This test is specific to Core Text.
+fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]

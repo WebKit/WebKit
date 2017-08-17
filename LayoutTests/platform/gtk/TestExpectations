@@ -71,12 +71,12 @@ editing/pasteboard/gtk [ Pass ]
 # Tests that are now failing because of the switch to ThreadedCompositor.
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Tests that require new results.
+# 1. TESTS THAT REQUIRE NEW RESULTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Expected failures
+# 2. EXPECTED FAILURES
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # This test assumes we cannot play RTSP, but we can.
@@ -231,7 +231,8 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/SourceBuffer-ab
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/interfaces.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Failure ]
+# See also bug #175578 
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Crash Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Failure ]
@@ -431,8 +432,10 @@ webkit.org/b/169918 compositing/tiling/tiled-layer-resize.html [ Failure ]
 webkit.org/b/169918 compositing/tiling/tiled-mask-inwindow.html [ Failure ]
 webkit.org/b/169918 compositing/tiling/tiled-reflection-inwindow.html [ Failure ]
 webkit.org/b/169918 compositing/tiling/transform-origin-tiled.html [ Failure ]
-webkit.org/b/169918 compositing/video/video-object-fit.html [ Failure ]
-webkit.org/b/169918 compositing/video/video-object-position.html [ Failure ]
+# See also bug #175574
+webkit.org/b/169918 compositing/video/video-object-fit.html [ Failure Crash ]
+# See also bug #175575
+webkit.org/b/169918 compositing/video/video-object-position.html [ Failure Crash ]
 webkit.org/b/169918 compositing/visibility/visibility-on-distant-descendant.html [ Failure Pass ]
 webkit.org/b/169918 compositing/visibility/visibility-image-layers.html [ Failure Pass ]
 webkit.org/b/169918 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
@@ -1197,6 +1200,7 @@ fast/scrolling/scrolling-tree-includes-frame.html [ Skip ]
 fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 
 # Service-workers implementation is not complete yet
+webkit.org/b/175419 http/tests/workers/service [ Skip ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/service-workers/cache-storage [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
@@ -1237,7 +1241,7 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-stream
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Crashing tests
+# 3. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/86443 [ Debug ] plugins/npruntime/delete-plugin-within-invoke.html [ Crash ]
@@ -1329,12 +1333,14 @@ webkit.org/b/172955 media/video-preload.html [ Crash Pass ]
 
 webkit.org/b/173916 webaudio/silent-audio-interrupted-in-background.html [ Skip ]
 
+webkit.org/b/175577 fast/css/tagname-and-namespace-case-sensitivity-xml-in-html.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Flaky tests
+# 4. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/55126 media/video-aspect-ratio.html [ Failure Crash Timeout Pass ]
@@ -1896,7 +1902,7 @@ webkit.org/b/174354 imported/w3c/IndexedDB-private-browsing/idbfactory_open.html
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Slow tests
+# 5. SLOW TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # These tests are slow due to the implementation of EventSender.leapForward.
@@ -2012,7 +2018,7 @@ webkit.org/b/111647 [ Debug ] sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html [ Sl
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Tests timing out
+# 6. TESTS TIMING OUT
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/46644 fast/text/large-text-composed-char-dos.html [ Timeout ]
@@ -2222,7 +2228,7 @@ webkit.org/b/174459 fast/images/async-image-body-background-image.html [ ImageOn
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Tests with architecture-specific results
+# 7. TESTS WITH ARCHITECTURE-SPECIFIC RESULTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # Fail on 32-bit release builders
@@ -2275,7 +2281,7 @@ webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Tests that regressed after WebKit2 switch
+# 8. WEBKIT2 REGRESSIONS
 #////////////////////////////////////////////////////////////////////////////////////////
 #
 # [GTK] Drag and drop can't be tested with WebKitTestRunner
@@ -2466,7 +2472,7 @@ webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure P
 webkit.org/b/145253 http/tests/appcache/different-https-origin-resource-main.html  [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Tests failing
+# 9. TESTS FAILING
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
@@ -3397,12 +3403,16 @@ webkit.org/b/175421 printing/width-overflow.html [ Failure ]
 webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failure ]
 webkit.org/b/175422 imported/w3c/web-platform-tests/beacon/headers/header-content-type.html [ Failure ]
 
+webkit.org/b/175582 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.worker.html [ Failure ]
+
+webkit.org/b/175586 imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub.htm [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Tests passing
+# 10. TESTS PASSING
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # These tests are passing on GTK+ but they do not in the Apple ports
@@ -3471,7 +3481,7 @@ fast/text/emoji-gender.html [ Pass ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
-# Tests failing due to switch to THREADED COMPOSITOR
+# 11. THREADED COMPOSITOR FAILURES
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/160119 accessibility/media-element.html [ Timeout Crash Pass Failure ]

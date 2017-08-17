@@ -1,3 +1,16 @@
+2017-08-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/input-events-paste-rich-datatransfer-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/eventsource/format-field-id-2-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/eventsource/format-field-id-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/eventsource/format-mime-bogus-expected.txt: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-08-14  Chris Dumez  <cdumez@apple.com>
 
         XHR should only fire an abort event if the cancellation was requested by the client

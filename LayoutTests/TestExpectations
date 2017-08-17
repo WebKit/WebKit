@@ -122,6 +122,12 @@ imported/w3c/web-platform-tests/service-workers/stub-4.6.3-cache-storage.html [ 
 imported/w3c/web-platform-tests/service-workers/cache-storage [ Pass ]
 imported/w3c/web-platform-tests/service-workers/cache-storage/window [ Pass Failure ]
 
+# This test tests a feature that only exists on iOS.
+fast/text/accessibility-bold-system-font-2.html [ Skip ]
+
+# This test is specific to Core Text.
+fast/text/font-lookup-dot-prefix-case-sensitive.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
