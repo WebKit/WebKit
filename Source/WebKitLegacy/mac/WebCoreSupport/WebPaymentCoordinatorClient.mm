@@ -62,7 +62,7 @@ void WebPaymentCoordinatorClient::openPaymentSetup(const String&, const String&,
     });
 }
 
-bool WebPaymentCoordinatorClient::showPaymentUI(const WebCore::URL&, const Vector<WebCore::URL>&, const WebCore::PaymentRequest&)
+bool WebPaymentCoordinatorClient::showPaymentUI(const WebCore::URL&, const Vector<WebCore::URL>&, const WebCore::ApplePaySessionPaymentRequest&)
 {
     return false;
 }

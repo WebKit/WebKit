@@ -27,15 +27,15 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePaySessionPaymentRequest.h"
 #include "ExceptionOr.h"
-#include "PaymentRequest.h"
 
 namespace WebCore {
 
 class PaymentRequestValidator {
 public:
-    static ExceptionOr<void> validate(const PaymentRequest&);
-    static ExceptionOr<void> validateTotal(const PaymentRequest::LineItem&);
+    static ExceptionOr<void> validate(const ApplePaySessionPaymentRequest&);
+    static ExceptionOr<void> validateTotal(const ApplePaySessionPaymentRequest::LineItem&);
 };
 
 }

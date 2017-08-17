@@ -65,7 +65,7 @@ void PaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, cons
     m_client.openPaymentSetup(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
-bool PaymentCoordinator::beginPaymentSession(ApplePaySession& paymentSession, const URL& originatingURL, const Vector<URL>& linkIconURLs, const PaymentRequest& paymentRequest)
+bool PaymentCoordinator::beginPaymentSession(ApplePaySession& paymentSession, const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest& paymentRequest)
 {
     ASSERT(!m_activeSession);
 
@@ -163,7 +163,7 @@ void PaymentCoordinator::didSelectPaymentMethod(const PaymentMethod& paymentMeth
     m_activeSession->didSelectPaymentMethod(paymentMethod);
 }
 
-void PaymentCoordinator::didSelectShippingMethod(const PaymentRequest::ShippingMethod& shippingMethod)
+void PaymentCoordinator::didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
     if (!m_activeSession) {
         // It's possible that the payment has been aborted already.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PaymentRequest.h"
+#include "ApplePaySessionPaymentRequest.h"
 
 #if ENABLE(APPLE_PAY)
 
@@ -33,15 +33,15 @@
 
 namespace WebCore {
 
-PaymentRequest::PaymentRequest()
+ApplePaySessionPaymentRequest::ApplePaySessionPaymentRequest()
 {
 }
 
-PaymentRequest::~PaymentRequest()
+ApplePaySessionPaymentRequest::~ApplePaySessionPaymentRequest()
 {
 }
 
-bool PaymentRequest::isValidSupportedNetwork(unsigned version, const String& supportedNetwork)
+bool ApplePaySessionPaymentRequest::isValidSupportedNetwork(unsigned version, const String& supportedNetwork)
 {
     if (supportedNetwork == "amex")
         return true;

@@ -87,7 +87,7 @@ void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifi
     });
 }
 
-void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::PaymentRequest& paymentRequest, bool& result)
+void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, bool& result)
 {
     // FIXME: Make this a message check.
     ASSERT(canBegin());
@@ -234,7 +234,7 @@ void WebPaymentCoordinatorProxy::didAuthorizePayment(const WebCore::Payment& pay
     m_webPageProxy.send(Messages::WebPaymentCoordinator::DidAuthorizePayment(payment));
 }
 
-void WebPaymentCoordinatorProxy::didSelectShippingMethod(const WebCore::PaymentRequest::ShippingMethod& shippingMethod)
+void WebPaymentCoordinatorProxy::didSelectShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
     ASSERT(m_state == State::Active);
 

@@ -37,10 +37,10 @@ namespace WebCore {
 
 enum class PaymentAuthorizationStatus;
 
-class PaymentRequest {
+class ApplePaySessionPaymentRequest {
 public:
-    WEBCORE_EXPORT PaymentRequest();
-    WEBCORE_EXPORT ~PaymentRequest();
+    WEBCORE_EXPORT ApplePaySessionPaymentRequest();
+    WEBCORE_EXPORT ~ApplePaySessionPaymentRequest();
 
     const String& countryCode() const { return m_countryCode; }
     void setCountryCode(const String& countryCode) { m_countryCode = countryCode; }
@@ -122,8 +122,8 @@ public:
     void setTotal(const LineItem& total) { m_total = total; }
 
     struct TotalAndLineItems {
-        PaymentRequest::LineItem total;
-        Vector<PaymentRequest::LineItem> lineItems;
+        ApplePaySessionPaymentRequest::LineItem total;
+        Vector<ApplePaySessionPaymentRequest::LineItem> lineItems;
     };
 
     const String& applicationData() const { return m_applicationData; }
@@ -188,18 +188,18 @@ struct PaymentAuthorizationResult {
 };
 
 struct PaymentMethodUpdate {
-    PaymentRequest::TotalAndLineItems newTotalAndLineItems;
+    ApplePaySessionPaymentRequest::TotalAndLineItems newTotalAndLineItems;
 };
 
 struct ShippingContactUpdate {
     Vector<PaymentError> errors;
 
-    Vector<PaymentRequest::ShippingMethod> newShippingMethods;
-    PaymentRequest::TotalAndLineItems newTotalAndLineItems;
+    Vector<ApplePaySessionPaymentRequest::ShippingMethod> newShippingMethods;
+    ApplePaySessionPaymentRequest::TotalAndLineItems newTotalAndLineItems;
 };
 
 struct ShippingMethodUpdate {
-    PaymentRequest::TotalAndLineItems newTotalAndLineItems;
+    ApplePaySessionPaymentRequest::TotalAndLineItems newTotalAndLineItems;
 };
 
 WEBCORE_EXPORT bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>&);

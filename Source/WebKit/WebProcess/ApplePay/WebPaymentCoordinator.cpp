@@ -103,7 +103,7 @@ void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, c
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::OpenPaymentSetup(merchantIdentifier, domainName, replyID));
 }
 
-bool WebPaymentCoordinator::showPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::PaymentRequest& paymentRequest)
+bool WebPaymentCoordinator::showPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
     Vector<String> linkIconURLStrings;
     for (const auto& linkIconURL : linkIconURLs)
@@ -166,7 +166,7 @@ void WebPaymentCoordinator::didAuthorizePayment(const WebCore::Payment& payment)
     paymentCoordinator().didAuthorizePayment(payment);
 }
 
-void WebPaymentCoordinator::didSelectShippingMethod(const WebCore::PaymentRequest::ShippingMethod& shippingMethod)
+void WebPaymentCoordinator::didSelectShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
     paymentCoordinator().didSelectShippingMethod(shippingMethod);
 }

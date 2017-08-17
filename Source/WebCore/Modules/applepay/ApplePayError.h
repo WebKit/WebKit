@@ -27,7 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "PaymentRequest.h"
+#include "ApplePaySessionPaymentRequest.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

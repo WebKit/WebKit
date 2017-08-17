@@ -28,7 +28,7 @@ messages -> WebPaymentCoordinator {
 
     ValidateMerchant(String validationURLString)
     DidAuthorizePayment(WebCore::Payment payment)
-    DidSelectShippingMethod(WebCore::PaymentRequest::ShippingMethod shippingMethod)
+    DidSelectShippingMethod(WebCore::ApplePaySessionPaymentRequest::ShippingMethod shippingMethod)
     DidSelectShippingContact(WebCore::PaymentContact shippingContact)
     DidSelectPaymentMethod(WebCore::PaymentMethod paymentMethod)
     DidCancelPaymentSession()

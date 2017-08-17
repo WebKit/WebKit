@@ -57,7 +57,7 @@ private:
     bool canMakePayments() override;
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) override;
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) override;
-    bool showPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::PaymentRequest&) override;
+    bool showPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&) override;
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&) override;
     void completeShippingMethodSelection(std::optional<WebCore::ShippingMethodUpdate>&&) override;
     void completeShippingContactSelection(std::optional<WebCore::ShippingContactUpdate>&&) override;
@@ -75,7 +75,7 @@ private:
     // Message handlers.
     void validateMerchant(const String& validationURLString);
     void didAuthorizePayment(const WebCore::Payment&);
-    void didSelectShippingMethod(const WebCore::PaymentRequest::ShippingMethod&);
+    void didSelectShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
     void didSelectShippingContact(const WebCore::PaymentContact&);
     void didSelectPaymentMethod(const WebCore::PaymentMethod&);
     void didCancelPaymentSession();

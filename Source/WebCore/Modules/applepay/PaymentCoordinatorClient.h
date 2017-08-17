@@ -27,7 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "PaymentRequest.h"
+#include "ApplePaySessionPaymentRequest.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 
@@ -47,7 +47,7 @@ public:
     virtual void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) = 0;
     virtual void openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) = 0;
 
-    virtual bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const PaymentRequest&) = 0;
+    virtual bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest&) = 0;
     virtual void completeMerchantValidation(const PaymentMerchantSession&) = 0;
     virtual void completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&&) = 0;
     virtual void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&) = 0;

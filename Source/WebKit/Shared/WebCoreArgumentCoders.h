@@ -592,34 +592,34 @@ template<> struct ArgumentCoder<WebCore::PaymentMethodUpdate> {
     static bool decode(Decoder&, WebCore::PaymentMethodUpdate&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentRequest> {
-    static void encode(Encoder&, const WebCore::PaymentRequest&);
-    static bool decode(Decoder&, WebCore::PaymentRequest&);
+template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest> {
+    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest&);
+    static bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentRequest::ContactFields> {
-    static void encode(Encoder&, const WebCore::PaymentRequest::ContactFields&);
-    static bool decode(Decoder&, WebCore::PaymentRequest::ContactFields&);
+template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::ContactFields> {
+    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::ContactFields&);
+    static bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::ContactFields&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentRequest::LineItem> {
-    static void encode(Encoder&, const WebCore::PaymentRequest::LineItem&);
-    static bool decode(Decoder&, WebCore::PaymentRequest::LineItem&);
+template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::LineItem> {
+    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::LineItem&);
+    static bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::LineItem&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentRequest::MerchantCapabilities> {
-    static void encode(Encoder&, const WebCore::PaymentRequest::MerchantCapabilities&);
-    static bool decode(Decoder&, WebCore::PaymentRequest::MerchantCapabilities&);
+template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities> {
+    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
+    static bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentRequest::ShippingMethod> {
-    static void encode(Encoder&, const WebCore::PaymentRequest::ShippingMethod&);
-    static bool decode(Decoder&, WebCore::PaymentRequest::ShippingMethod&);
+template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::ShippingMethod> {
+    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
+    static bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
 };
 
-template<> struct ArgumentCoder<WebCore::PaymentRequest::TotalAndLineItems> {
-    static void encode(Encoder&, const WebCore::PaymentRequest::TotalAndLineItems&);
-    static bool decode(Decoder&, WebCore::PaymentRequest::TotalAndLineItems&);
+template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems> {
+    static void encode(Encoder&, const WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems&);
+    static bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems&);
 };
 
 template<> struct ArgumentCoder<WebCore::ShippingContactUpdate> {

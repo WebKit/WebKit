@@ -90,11 +90,11 @@ public:
     ExceptionOr<void> completePaymentMethodSelection(ApplePayLineItem&& newTotal, Vector<ApplePayLineItem>&& newLineItems);
     ExceptionOr<void> completePayment(unsigned short status);
 
-    const PaymentRequest& paymentRequest() const { return m_paymentRequest; }
+    const ApplePaySessionPaymentRequest& paymentRequest() const { return m_paymentRequest; }
 
     void validateMerchant(const URL&);
     void didAuthorizePayment(const Payment&);
-    void didSelectShippingMethod(const PaymentRequest::ShippingMethod&);
+    void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&);
     void didSelectShippingContact(const PaymentContact&);
     void didSelectPaymentMethod(const PaymentMethod&);
     void didCancelPaymentSession();
@@ -103,7 +103,7 @@ public:
     using RefCounted<ApplePaySession>::deref;
 
 private:
-    ApplePaySession(Document&, PaymentRequest&&);
+    ApplePaySession(Document&, ApplePaySessionPaymentRequest&&);
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const override;
@@ -151,7 +151,7 @@ private:
         ValidationComplete,
     } m_merchantValidationState { MerchantValidationState::Idle };
 
-    const PaymentRequest m_paymentRequest;
+    const ApplePaySessionPaymentRequest m_paymentRequest;
 };
 
 }

@@ -483,7 +483,7 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
     bool canMakePayments() final { return false; }
     void canMakePaymentsWithActiveCard(const String&, const String&, WTF::Function<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)] { completionHandler(false); }); }
     void openPaymentSetup(const String&, const String&, WTF::Function<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)] { completionHandler(false); }); }
-    bool showPaymentUI(const URL&, const Vector<URL>&, const PaymentRequest&) final { return false; }
+    bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final { return false; }
     void completeMerchantValidation(const PaymentMerchantSession&) final { }
     void completeShippingMethodSelection(std::optional<ShippingMethodUpdate>&&) final { }
     void completeShippingContactSelection(std::optional<ShippingContactUpdate>&&) final { }

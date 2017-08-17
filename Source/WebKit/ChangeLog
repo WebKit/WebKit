@@ -1,3 +1,65 @@
+2017-08-16  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Rename PaymentRequest to ApplePaySessionPaymentRequest
+        https://bugs.webkit.org/show_bug.cgi?id=175648
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest>::encode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::encode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::encode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::encode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::encode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::encode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode):
+        (IPC::ArgumentCoder<PaymentRequest>::encode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest>::decode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::ContactFields>::encode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::ContactFields>::decode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::LineItem>::encode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::LineItem>::decode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::MerchantCapabilities>::encode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::MerchantCapabilities>::decode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::ShippingMethod>::encode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::ShippingMethod>::decode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::TotalAndLineItems>::encode): Deleted.
+        (IPC::ArgumentCoder<PaymentRequest::TotalAndLineItems>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        (WebKit::WebPaymentCoordinatorProxy::didSelectShippingMethod):
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (toShippingMethod):
+        (WebKit::toPKContactFields):
+        (WebKit::toPKAddressField):
+        (WebKit::toPKPaymentSummaryItemType):
+        (WebKit::toPKPaymentSummaryItem):
+        (WebKit::toPKPaymentSummaryItems):
+        (WebKit::toPKMerchantCapabilities):
+        (WebKit::toPKShippingType):
+        (WebKit::toPKShippingMethod):
+        (WebKit::toPKPaymentRequest):
+        * UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::showPaymentUI):
+        (WebKit::WebPaymentCoordinator::didSelectShippingMethod):
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/ApplePay/WebPaymentCoordinator.messages.in:
+
 2017-08-16  Chris Dumez  <cdumez@apple.com>
 
         Cross origin Beacon requests with a ArrayBuffer / ArrayBufferView payload should not do a CORS preflight

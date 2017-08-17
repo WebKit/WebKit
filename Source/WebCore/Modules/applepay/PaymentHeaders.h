@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include "ApplePaySessionPaymentRequest.h"
 #include "Payment.h"
 #include "PaymentContact.h"
 #include "PaymentMerchantSession.h"
 #include "PaymentMethod.h"
-#include "PaymentRequest.h"
 

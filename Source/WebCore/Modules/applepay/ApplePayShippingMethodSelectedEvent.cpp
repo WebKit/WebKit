@@ -46,7 +46,7 @@ static inline String convert(int64_t amount)
     return amountString.toString();
 }
 
-static inline ApplePayShippingMethod convert(const PaymentRequest::ShippingMethod& shippingMethod)
+static inline ApplePayShippingMethod convert(const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
     ApplePayShippingMethod convertedMethod;
     convertedMethod.label = shippingMethod.label;
@@ -57,7 +57,7 @@ static inline ApplePayShippingMethod convert(const PaymentRequest::ShippingMetho
     return convertedMethod; 
 }
 
-ApplePayShippingMethodSelectedEvent::ApplePayShippingMethodSelectedEvent(const AtomicString& type, const PaymentRequest::ShippingMethod& shippingMethod)
+ApplePayShippingMethodSelectedEvent::ApplePayShippingMethodSelectedEvent(const AtomicString& type, const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
     : Event(type, false, false)
     , m_shippingMethod(convert(shippingMethod))
 {

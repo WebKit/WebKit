@@ -233,7 +233,7 @@ bool ArgumentCoder<WebCore::PaymentMethodUpdate>::decode(Decoder& decoder, WebCo
     return true;
 }
 
-void ArgumentCoder<PaymentRequest>::encode(Encoder& encoder, const PaymentRequest& request)
+void ArgumentCoder<ApplePaySessionPaymentRequest>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest& request)
 {
     encoder << request.countryCode();
     encoder << request.currencyCode();
@@ -251,7 +251,7 @@ void ArgumentCoder<PaymentRequest>::encode(Encoder& encoder, const PaymentReques
     encoder << request.supportedCountries();
 }
 
-bool ArgumentCoder<PaymentRequest>::decode(Decoder& decoder, PaymentRequest& request)
+bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, ApplePaySessionPaymentRequest& request)
 {
     String countryCode;
     if (!decoder.decode(countryCode))
@@ -263,7 +263,7 @@ bool ArgumentCoder<PaymentRequest>::decode(Decoder& decoder, PaymentRequest& req
         return false;
     request.setCurrencyCode(currencyCode);
 
-    PaymentRequest::ContactFields requiredBillingContactFields;
+    ApplePaySessionPaymentRequest::ContactFields requiredBillingContactFields;
     if (!decoder.decode((requiredBillingContactFields)))
         return false;
     request.setRequiredBillingContactFields(requiredBillingContactFields);
@@ -273,7 +273,7 @@ bool ArgumentCoder<PaymentRequest>::decode(Decoder& decoder, PaymentRequest& req
         return false;
     request.setBillingContact(billingContact);
 
-    PaymentRequest::ContactFields requiredShippingContactFields;
+    ApplePaySessionPaymentRequest::ContactFields requiredShippingContactFields;
     if (!decoder.decode((requiredShippingContactFields)))
         return false;
     request.setRequiredShippingContactFields(requiredShippingContactFields);
@@ -283,7 +283,7 @@ bool ArgumentCoder<PaymentRequest>::decode(Decoder& decoder, PaymentRequest& req
         return false;
     request.setShippingContact(shippingContact);
 
-    PaymentRequest::MerchantCapabilities merchantCapabilities;
+    ApplePaySessionPaymentRequest::MerchantCapabilities merchantCapabilities;
     if (!decoder.decode(merchantCapabilities))
         return false;
     request.setMerchantCapabilities(merchantCapabilities);
@@ -293,22 +293,22 @@ bool ArgumentCoder<PaymentRequest>::decode(Decoder& decoder, PaymentRequest& req
         return false;
     request.setSupportedNetworks(supportedNetworks);
 
-    PaymentRequest::ShippingType shippingType;
+    ApplePaySessionPaymentRequest::ShippingType shippingType;
     if (!decoder.decodeEnum(shippingType))
         return false;
     request.setShippingType(shippingType);
 
-    Vector<PaymentRequest::ShippingMethod> shippingMethods;
+    Vector<ApplePaySessionPaymentRequest::ShippingMethod> shippingMethods;
     if (!decoder.decode(shippingMethods))
         return false;
     request.setShippingMethods(shippingMethods);
 
-    Vector<PaymentRequest::LineItem> lineItems;
+    Vector<ApplePaySessionPaymentRequest::LineItem> lineItems;
     if (!decoder.decode(lineItems))
         return false;
     request.setLineItems(lineItems);
 
-    PaymentRequest::LineItem total;
+    ApplePaySessionPaymentRequest::LineItem total;
     if (!decoder.decode(total))
         return false;
     request.setTotal(total);
@@ -326,7 +326,7 @@ bool ArgumentCoder<PaymentRequest>::decode(Decoder& decoder, PaymentRequest& req
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::ContactFields>::encode(Encoder& encoder, const PaymentRequest::ContactFields& contactFields)
+void ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::ContactFields& contactFields)
 {
     encoder << contactFields.postalAddress;
     encoder << contactFields.phone;
@@ -334,7 +334,7 @@ void ArgumentCoder<PaymentRequest::ContactFields>::encode(Encoder& encoder, cons
     encoder << contactFields.name;
 }
 
-bool ArgumentCoder<PaymentRequest::ContactFields>::decode(Decoder& decoder, PaymentRequest::ContactFields& contactFields)
+bool ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::ContactFields& contactFields)
 {
     if (!decoder.decode(contactFields.postalAddress))
         return false;
@@ -348,14 +348,14 @@ bool ArgumentCoder<PaymentRequest::ContactFields>::decode(Decoder& decoder, Paym
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::LineItem>::encode(Encoder& encoder, const PaymentRequest::LineItem& lineItem)
+void ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::LineItem& lineItem)
 {
     encoder.encodeEnum(lineItem.type);
     encoder << lineItem.label;
     encoder << lineItem.amount;
 }
 
-bool ArgumentCoder<PaymentRequest::LineItem>::decode(Decoder& decoder, PaymentRequest::LineItem& lineItem)
+bool ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::LineItem& lineItem)
 {
     if (!decoder.decodeEnum(lineItem.type))
         return false;
@@ -367,7 +367,7 @@ bool ArgumentCoder<PaymentRequest::LineItem>::decode(Decoder& decoder, PaymentRe
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::MerchantCapabilities>::encode(Encoder& encoder, const PaymentRequest::MerchantCapabilities& merchantCapabilities)
+void ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     encoder << merchantCapabilities.supports3DS;
     encoder << merchantCapabilities.supportsEMV;
@@ -375,7 +375,7 @@ void ArgumentCoder<PaymentRequest::MerchantCapabilities>::encode(Encoder& encode
     encoder << merchantCapabilities.supportsDebit;
 }
 
-bool ArgumentCoder<PaymentRequest::MerchantCapabilities>::decode(Decoder& decoder, PaymentRequest::MerchantCapabilities& merchantCapabilities)
+bool ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     if (!decoder.decode(merchantCapabilities.supports3DS))
         return false;
@@ -389,7 +389,7 @@ bool ArgumentCoder<PaymentRequest::MerchantCapabilities>::decode(Decoder& decode
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::ShippingMethod>::encode(Encoder& encoder, const PaymentRequest::ShippingMethod& shippingMethod)
+void ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
     encoder << shippingMethod.label;
     encoder << shippingMethod.detail;
@@ -397,7 +397,7 @@ void ArgumentCoder<PaymentRequest::ShippingMethod>::encode(Encoder& encoder, con
     encoder << shippingMethod.identifier;
 }
 
-bool ArgumentCoder<PaymentRequest::ShippingMethod>::decode(Decoder& decoder, PaymentRequest::ShippingMethod& shippingMethod)
+bool ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
     if (!decoder.decode(shippingMethod.label))
         return false;
@@ -410,13 +410,13 @@ bool ArgumentCoder<PaymentRequest::ShippingMethod>::decode(Decoder& decoder, Pay
     return true;
 }
 
-void ArgumentCoder<PaymentRequest::TotalAndLineItems>::encode(Encoder& encoder, const PaymentRequest::TotalAndLineItems& totalAndLineItems)
+void ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
 {
     encoder << totalAndLineItems.total;
     encoder << totalAndLineItems.lineItems;
 }
 
-bool ArgumentCoder<PaymentRequest::TotalAndLineItems>::decode(Decoder& decoder, PaymentRequest::TotalAndLineItems& totalAndLineItems)
+bool ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
 {
     if (!decoder.decode(totalAndLineItems.total))
         return false;

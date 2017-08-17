@@ -143,11 +143,11 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, PassKit, PKCanMakePaymentsWithMer
     }];
 }
 
-static WebCore::PaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod *shippingMethod)
+static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod *shippingMethod)
 {
     ASSERT(shippingMethod);
 
-    WebCore::PaymentRequest::ShippingMethod result;
+    WebCore::ApplePaySessionPaymentRequest::ShippingMethod result;
     result.label = shippingMethod.label;
     result.detail = shippingMethod.detail;
     result.amount = [shippingMethod.amount decimalNumberByMultiplyingByPowerOf10:2].integerValue;
@@ -351,7 +351,7 @@ void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchant
 }
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-static RetainPtr<NSSet> toPKContactFields(const WebCore::PaymentRequest::ContactFields& contactFields)
+static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentRequest::ContactFields& contactFields)
 {
     Vector<NSString *> result;
 
@@ -369,7 +369,7 @@ static RetainPtr<NSSet> toPKContactFields(const WebCore::PaymentRequest::Contact
     return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
 }
 #else
-static PKAddressField toPKAddressField(const WebCore::PaymentRequest::ContactFields& contactFields)
+static PKAddressField toPKAddressField(const WebCore::ApplePaySessionPaymentRequest::ContactFields& contactFields)
 {
     PKAddressField result = 0;
 
@@ -386,13 +386,13 @@ static PKAddressField toPKAddressField(const WebCore::PaymentRequest::ContactFie
 }
 #endif
 
-static PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::PaymentRequest::LineItem::Type type)
+static PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::ApplePaySessionPaymentRequest::LineItem::Type type)
 {
     switch (type) {
-    case WebCore::PaymentRequest::LineItem::Type::Final:
+    case WebCore::ApplePaySessionPaymentRequest::LineItem::Type::Final:
         return PKPaymentSummaryItemTypeFinal;
 
-    case WebCore::PaymentRequest::LineItem::Type::Pending:
+    case WebCore::ApplePaySessionPaymentRequest::LineItem::Type::Pending:
         return PKPaymentSummaryItemTypePending;
     }
 }
@@ -402,12 +402,12 @@ static RetainPtr<NSDecimalNumber> toDecimalNumber(int64_t value)
     return adoptNS([[NSDecimalNumber alloc] initWithMantissa:llabs(value) exponent:-2 isNegative:value < 0]);
 }
 
-static RetainPtr<PKPaymentSummaryItem> toPKPaymentSummaryItem(const WebCore::PaymentRequest::LineItem& lineItem)
+static RetainPtr<PKPaymentSummaryItem> toPKPaymentSummaryItem(const WebCore::ApplePaySessionPaymentRequest::LineItem& lineItem)
 {
     return [getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount.value_or(0)).get() type:toPKPaymentSummaryItemType(lineItem.type)];
 }
 
-static RetainPtr<NSArray> toPKPaymentSummaryItems(const WebCore::PaymentRequest::TotalAndLineItems& totalAndLineItems)
+static RetainPtr<NSArray> toPKPaymentSummaryItems(const WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
 {
     auto paymentSummaryItems = adoptNS([[NSMutableArray alloc] init]);
     for (auto& lineItem : totalAndLineItems.lineItems) {
@@ -421,7 +421,7 @@ static RetainPtr<NSArray> toPKPaymentSummaryItems(const WebCore::PaymentRequest:
     return paymentSummaryItems;
 }
 
-static PKMerchantCapability toPKMerchantCapabilities(const WebCore::PaymentRequest::MerchantCapabilities& merchantCapabilities)
+static PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     PKMerchantCapability result = 0;
     if (merchantCapabilities.supports3DS)
@@ -472,24 +472,24 @@ static RetainPtr<NSArray> toSupportedNetworks(const Vector<String>& supportedNet
     return result;
 }
 
-static PKShippingType toPKShippingType(WebCore::PaymentRequest::ShippingType shippingType)
+static PKShippingType toPKShippingType(WebCore::ApplePaySessionPaymentRequest::ShippingType shippingType)
 {
     switch (shippingType) {
-    case WebCore::PaymentRequest::ShippingType::Shipping:
+    case WebCore::ApplePaySessionPaymentRequest::ShippingType::Shipping:
         return PKShippingTypeShipping;
 
-    case WebCore::PaymentRequest::ShippingType::Delivery:
+    case WebCore::ApplePaySessionPaymentRequest::ShippingType::Delivery:
         return PKShippingTypeDelivery;
 
-    case WebCore::PaymentRequest::ShippingType::StorePickup:
+    case WebCore::ApplePaySessionPaymentRequest::ShippingType::StorePickup:
         return PKShippingTypeStorePickup;
 
-    case WebCore::PaymentRequest::ShippingType::ServicePickup:
+    case WebCore::ApplePaySessionPaymentRequest::ShippingType::ServicePickup:
         return PKShippingTypeServicePickup;
     }
 }
 
-static RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::PaymentRequest::ShippingMethod& shippingMethod)
+static RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
     RetainPtr<PKShippingMethod> result = [getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount).get()];
     [result setIdentifier:shippingMethod.identifier];
@@ -512,7 +512,7 @@ static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 }
 #endif
 
-RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::PaymentRequest& paymentRequest)
+RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
     auto result = adoptNS([allocPKPaymentRequestInstance() init]);
 

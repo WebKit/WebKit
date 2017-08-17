@@ -39,7 +39,7 @@ namespace WebKit {
 class WebPageProxy;
 class WebPaymentCoordinatorProxy;
 
-RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy&, const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::PaymentRequest&);
+RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy&, const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
 
 }
 

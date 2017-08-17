@@ -27,12 +27,12 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "PaymentRequest.h"
+#include "ApplePaySessionPaymentRequest.h"
 
 namespace WebCore {
 
 struct ApplePayLineItem {
-    using Type = PaymentRequest::LineItem::Type;
+    using Type = ApplePaySessionPaymentRequest::LineItem::Type;
 
     Type type { Type::Final };
     String label;
