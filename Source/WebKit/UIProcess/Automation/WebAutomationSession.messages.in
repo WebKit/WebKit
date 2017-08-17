@@ -28,6 +28,8 @@ messages -> WebAutomationSession {
 
     DidComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, std::optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured, String errorType)
 
+    DidSelectOptionElement(uint64_t callbackID, String errorType)
+
     DidTakeScreenshot(uint64_t callbackID, WebKit::ShareableBitmap::Handle imageDataHandle, String errorType)
 
     DidGetCookiesForFrame(uint64_t callbackID, Vector<WebCore::Cookie> cookies, String errorType)

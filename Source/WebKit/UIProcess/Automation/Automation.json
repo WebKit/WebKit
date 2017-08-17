@@ -59,7 +59,8 @@
                 "MissingParameter",
                 "InvalidParameter",
                 "InvalidSelector",
-                "ElementNotInteractable"
+                "ElementNotInteractable",
+                "ElementNotSelectable"
             ]
         },
         {
@@ -426,6 +427,16 @@
                 { "name": "rect", "$ref": "Rect", "description": "The layout rect for the requested element. Specified in page or viewport coordinates based on the useViewportCoordinates parameter." },
                 { "name": "inViewCenterPoint", "optional": true, "$ref": "Point", "description": "The in-view center point for the requested element. Specified in page or viewport coordinates based on the useViewportCoordinates parameter." },
                 { "name": "isObscured", "type": "boolean", "description": "If the in-view center point of the requested element is obscured by another element." }
+            ],
+            "async": true
+        },
+        {
+            "name": "selectOptionElement",
+            "description": "Selects the given option element. In case of container with multiple options enabled, the element selectedness is toggled.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "description": "The handle for the frame that contains the element." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to use." }
             ],
             "async": true
         },

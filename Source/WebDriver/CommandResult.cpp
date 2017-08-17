@@ -106,6 +106,8 @@ CommandResult::CommandResult(RefPtr<InspectorValue>&& result, std::optional<Erro
             m_errorCode = ErrorCode::Timeout;
         else if (errorName == "NoJavaScriptDialog")
             m_errorCode = ErrorCode::NoSuchAlert;
+        else if (errorName == "ElementNotSelectable")
+            m_errorCode = ErrorCode::ElementNotSelectable;
 
         break;
     }
@@ -127,6 +129,7 @@ unsigned CommandResult::httpStatusCode() const
     // https://www.w3.org/TR/webdriver/#handling-errors
     switch (m_errorCode.value()) {
     case ErrorCode::ElementClickIntercepted:
+    case ErrorCode::ElementNotSelectable:
     case ErrorCode::ElementNotInteractable:
     case ErrorCode::InvalidArgument:
     case ErrorCode::InvalidElementState:
@@ -162,6 +165,8 @@ String CommandResult::errorString() const
     switch (m_errorCode.value()) {
     case ErrorCode::ElementClickIntercepted:
         return ASCIILiteral("element click intercepted");
+    case ErrorCode::ElementNotSelectable:
+        return ASCIILiteral("element not selectable");
     case ErrorCode::ElementNotInteractable:
         return ASCIILiteral("element not interactable");
     case ErrorCode::InvalidArgument:
