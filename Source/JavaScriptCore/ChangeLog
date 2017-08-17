@@ -1,3 +1,12 @@
+2017-08-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        ARM build fix after r220807 and r220834.
+        https://bugs.webkit.org/show_bug.cgi?id=175617
+
+        Unreviewed typo fix.
+
+        * assembler/MacroAssemblerARM.cpp:
+
 2017-08-17  Mark Lam  <mark.lam@apple.com>
 
         Gardening: build fix for ARM_TRADITIONAL after r220807.

@@ -337,7 +337,7 @@ asm (
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeContextIsSafe) ":" "\n"
     "ldr       r2, [fp, #" STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "]" "\n"
     "cmp       r2, #0" "\n"
-    "beq       r2, " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) "\n"
+    "beq     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) "\n"
 
     "mov       r0, fp" "\n" // Set the ProbeContext* arg.
     "blx       r2" "\n" // Call the initializeStackFunction (loaded into r2 above).
