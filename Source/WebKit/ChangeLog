@@ -1,3 +1,14 @@
+2017-08-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix typo: setUpInectedBundleClient
+        https://bugs.webkit.org/show_bug.cgi?id=175655
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (setUpInjectedBundleClient):
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+
 2017-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add NTLM authentication enabled API

@@ -99,7 +99,7 @@ static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const voi
     return 0;
 }
 
-static void setUpInectedBundleClient(WKProcessGroup *processGroup, WKContextRef contextRef)
+static void setUpInjectedBundleClient(WKProcessGroup *processGroup, WKContextRef contextRef)
 {
     WKContextInjectedBundleClientV1 injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
@@ -196,7 +196,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     _processPool = WebProcessPool::create(configuration);
 
     setUpConnectionClient(self, toAPI(_processPool.get()));
-    setUpInectedBundleClient(self, toAPI(_processPool.get()));
+    setUpInjectedBundleClient(self, toAPI(_processPool.get()));
     setUpHistoryClient(self, toAPI(_processPool.get()));
 
     return self;
