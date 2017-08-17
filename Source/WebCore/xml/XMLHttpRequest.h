@@ -217,6 +217,7 @@ private:
     bool m_uploadComplete { false };
 
     bool m_sameOriginRequest { true };
+    bool m_wasAbortedByClient { false };
 
     // Used for progress event tracking.
     long long m_receivedLength { 0 };

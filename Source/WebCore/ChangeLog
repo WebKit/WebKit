@@ -1,3 +1,26 @@
+2017-08-14  Chris Dumez  <cdumez@apple.com>
+
+        XHR should only fire an abort event if the cancellation was requested by the client
+        https://bugs.webkit.org/show_bug.cgi?id=175546
+
+        Reviewed by Youenn Fablet.
+
+        XHR should only fire an abort event if the cancellation was requested by the client, otherwise it should fire an error event.
+        Blink and Gecko already match the specification.
+
+        Specification:
+        - https://xhr.spec.whatwg.org/#handle-errors
+        - https://xhr.spec.whatwg.org/#the-abort()-method
+
+        Test: http/tests/navigation/page-cache-xhr-in-pagehide.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::abortError):
+        (WebCore::XMLHttpRequest::didFail):
+        * xml/XMLHttpRequest.h:
+
 2017-08-14  Simon Fraser  <simon.fraser@apple.com>
 
         Remove Proximity Events and related code

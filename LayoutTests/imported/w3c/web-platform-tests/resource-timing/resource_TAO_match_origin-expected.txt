@@ -1,5 +1,5 @@
 Blocked access to external URL http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=match_origin
-CONSOLE MESSAGE: line 13: AbortError: The operation was aborted.
+CONSOLE MESSAGE: line 13: NetworkError:  A network error occurred.
 Description
 
 This test validates that for a cross origin resource, the timing allow check algorithm will pass when the Timing-Allow-Origin header value list contains a case-sensitive match for the value of the origin of the current document.

@@ -410,6 +410,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     m_error = false;
     m_sendFlag = false;
     m_uploadComplete = false;
+    m_wasAbortedByClient = false;
 
     // clear stuff from possible previous load
     clearResponse();
@@ -778,6 +779,7 @@ void XMLHttpRequest::abort()
     // internalAbort() calls dropProtection(), which may release the last reference.
     Ref<XMLHttpRequest> protectedThis(*this);
 
+    m_wasAbortedByClient = true;
     if (!internalAbort())
         return;
 
@@ -872,6 +874,7 @@ void XMLHttpRequest::networkErrorTimerFired()
     
 void XMLHttpRequest::abortError()
 {
+    ASSERT(m_wasAbortedByClient);
     genericError();
     dispatchErrorEvents(eventNames().abortEvent);
 }
@@ -1003,7 +1006,8 @@ void XMLHttpRequest::didFail(const ResourceError& error)
     if (m_error)
         return;
 
-    if (error.isCancellation()) {
+    // The XHR specification says we should only fire an abort event if the cancelation was requested by the client.
+    if (m_wasAbortedByClient && error.isCancellation()) {
         m_exceptionCode = AbortError;
         abortError();
         return;

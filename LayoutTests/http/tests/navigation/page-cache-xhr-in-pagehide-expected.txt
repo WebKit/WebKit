@@ -1,14 +1,15 @@
+CONSOLE MESSAGE: line 35: XMLHttpRequest cannot load http://127.0.0.1:8000/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain due to access control checks.
 Tests that a page with a loading XMLHttpRequest goes into the page cache.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 pageshow - not from cache
-PASS Executed the XHR error handler before entering PageCache
-PASS xhr.status is 0
 pagehide - entering cache
 pageshow - from cache
 PASS Page did enter and was restored from the page cache
+PASS Executed the XHR error handler after restoring from PageCache
+PASS xhr.status is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

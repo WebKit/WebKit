@@ -17,7 +17,6 @@ window.addEventListener("pageshow", function(event) {
     if (event.persisted) {
         testPassed("Page did enter and was restored from the page cache");
         restoredFromPageCache = true;
-        setTimeout(finishJSTest, 0);
     }
 }, false);
 
@@ -27,6 +26,13 @@ window.addEventListener("pagehide", function(event) {
         testFailed("Page did not enter the page cache.");
         finishJSTest();
     }
+    xhr = new XMLHttpRequest();
+    xhr.onload = xhrLoaded;
+    xhr.onabort = xhrAbort;
+    xhr.onerror = xhrError;
+    // Slow loading XHR (3-second stall).
+    xhr.open("GET", "/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain", true);
+    xhr.send();
 }, false);
 
 function xhrLoaded()
@@ -41,24 +47,15 @@ function xhrAbort() {
 }
 
 function xhrError() {
-    if (restoredFromPageCache) {
-        testFailed("Executed the XHR error handler after restoring from PageCache");
-        return;
-    }
-
-    testPassed("Executed the XHR error handler before entering PageCache");
+    if (restoredFromPageCache)
+    	testPassed("Executed the XHR error handler after restoring from PageCache");
+    else
+        testFailed("Executed the XHR error handler before entering PageCache");
     shouldBe("xhr.status", "0");
+    finishJSTest();
 }
 
 window.addEventListener('load', function() {
-    xhr = new XMLHttpRequest();
-    xhr.onload = xhrLoaded;
-    xhr.onabort = xhrAbort;
-    xhr.onerror = xhrError;
-    // Slow loading XHR (3-second stall).
-    xhr.open("GET", "/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain", true);
-    xhr.send();
-
     // This needs to happen in a setTimeout because a navigation inside the onload handler would
     // not create a history entry.
     setTimeout(function() {

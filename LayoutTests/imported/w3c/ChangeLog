@@ -1,3 +1,29 @@
+2017-08-14  Chris Dumez  <cdumez@apple.com>
+
+        XHR should only fire an abort event if the cancellation was requested by the client
+        https://bugs.webkit.org/show_bug.cgi?id=175546
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline several WPT tests now that a different error is sometimes used and that
+        more checks are passing.
+
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-4-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt:
+        * web-platform-tests/cors/allow-headers-expected.txt:
+        * web-platform-tests/cors/origin-expected.txt:
+        * web-platform-tests/cors/request-headers-expected.txt:
+        * web-platform-tests/cors/response-headers-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_match_origin-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_match_wildcard-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_multi-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_null-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_origin-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_origin_uppercase-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_space-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_wildcard-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_zero-expected.txt:
+
 2017-08-09  Chris Dumez  <cdumez@apple.com>
 
         Reinstate active flag for iterators
