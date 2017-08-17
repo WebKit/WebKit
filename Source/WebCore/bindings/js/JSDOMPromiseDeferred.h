@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"
 #include <runtime/CatchScope.h>
@@ -211,6 +212,15 @@ public:
     { 
         m_promiseDeferred->resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
     }
+
+    void settle(ExceptionOr<typename IDLType::ParameterType>&& result)
+    {
+        if (result.hasException()) {
+            reject(result.releaseException());
+            return;
+        }
+        resolve(result.releaseReturnValue());
+    }
 };
 
 template<> class DOMPromiseDeferred<void> : public DOMPromiseDeferredBase {
@@ -223,6 +233,15 @@ public:
     void resolve()
     { 
         m_promiseDeferred->resolve();
+    }
+
+    void settle(ExceptionOr<void>&& result)
+    {
+        if (result.hasException()) {
+            reject(result.releaseException());
+            return;
+        }
+        resolve();
     }
 };
 

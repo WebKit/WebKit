@@ -47,9 +47,16 @@ public:
         NotImplemented,
     };
 
-    WEBCORE_EXPORT static bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse&, const CacheQueryOptions&);
+    static ExceptionOr<void> errorToException(Error);
+    template<typename T> static ExceptionOr<T> exceptionOrResult(T&& value, Error error)
+    {
+        auto result = errorToException(error);
+        if (result.hasException())
+            return result.releaseException();
+        return std::forward<T>(value);
+    }
 
-    static Exception exceptionFromError(Error);
+    WEBCORE_EXPORT static bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse&, const CacheQueryOptions&);
 
     struct Record {
         uint64_t identifier;

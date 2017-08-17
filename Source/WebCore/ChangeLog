@@ -1,3 +1,35 @@
+2017-08-17  Youenn Fablet  <youenn@apple.com>
+
+        Add a DOMPromiseDeferred method to handle ExceptionOr<> results
+        https://bugs.webkit.org/show_bug.cgi?id=175603
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        Introduce DOMPromiseDeferred::settle to reject/resolve a promise with an ExceptionOr<>.
+        Making batchPutOperation/batchDeleteOperation take a Function with an ExceptionOr<>.
+        Using DOMPromiseDeferred::settle in Cache put/remove.
+        Updated CacheStorageConnection to create ExceptionOr<> from CacheStorageConnection::Error.
+
+        * Modules/cache/Cache.cpp:
+        (WebCore::Cache::put):
+        (WebCore::Cache::remove):
+        (WebCore::Cache::batchDeleteOperation):
+        (WebCore::Cache::batchPutOperation):
+        * Modules/cache/Cache.h:
+        * Modules/cache/CacheStorage.cpp:
+        (WebCore::CacheStorage::open):
+        (WebCore::CacheStorage::remove):
+        * Modules/cache/CacheStorageConnection.cpp:
+        (WebCore::CacheStorageConnection::errorToException):
+        * Modules/cache/CacheStorageConnection.h:
+        (WebCore::CacheStorageConnection::errorToException):
+        (WebCore::CacheStorageConnection::exceptionOrResult):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::DOMPromiseDeferred::settle):
+        (WebCore::DOMPromiseDeferred<void>::settle):
+
 2017-08-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] AppendPipeline: support dispatch of decryption-specific GstStructure into the pipeline

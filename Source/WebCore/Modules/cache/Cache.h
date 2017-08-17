@@ -68,8 +68,8 @@ private:
     void retrieveRecords(WTF::Function<void()>&&);
     Vector<CacheStorageRecord> queryCacheWithTargetStorage(const FetchRequest&, const CacheQueryOptions&, const Vector<CacheStorageRecord>&);
     void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, WTF::Function<void(const Vector<CacheStorageRecord>&)>&&);
-    void batchDeleteOperation(const FetchRequest&, CacheQueryOptions&&, WTF::Function<void(bool didRemoval, CacheStorageConnection::Error)>&&);
-    void batchPutOperation(const FetchRequest&, FetchResponse&, WTF::Function<void(CacheStorageConnection::Error)>&&);
+    void batchDeleteOperation(const FetchRequest&, CacheQueryOptions&&, WTF::Function<void(ExceptionOr<bool>&&)>&&);
+    void batchPutOperation(const FetchRequest&, FetchResponse&, WTF::Function<void(ExceptionOr<void>&&)>&&);
 
     void updateRecords(Vector<CacheStorageConnection::Record>&&);
 

@@ -172,12 +172,8 @@ void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDef
         return;
     }
 
-    batchPutOperation(*request, response.get(), [promise = WTFMove(promise)](CacheStorageConnection::Error error) mutable {
-        if (error != CacheStorageConnection::Error::None) {
-            promise.reject(CacheStorageConnection::exceptionFromError(error));
-            return;
-        }
-        promise.resolve();
+    batchPutOperation(*request, response.get(), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
+        promise.settle(WTFMove(result));
     });
 }
 
@@ -196,12 +192,8 @@ void Cache::remove(RequestInfo&& info, CacheQueryOptions&& options, DOMPromiseDe
         request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { }).releaseReturnValue();
     }
 
-    batchDeleteOperation(*request, WTFMove(options), [promise = WTFMove(promise)](bool didDelete, CacheStorageConnection::Error error) mutable {
-        if (error !=  CacheStorageConnection::Error::None) {
-            promise.reject(CacheStorageConnection::exceptionFromError(error));
-            return;
-        }
-        promise.resolve(didDelete);
+    batchDeleteOperation(*request, WTFMove(options), [promise = WTFMove(promise)](ExceptionOr<bool>&& result) mutable {
+        promise.settle(WTFMove(result));
     });
 }
 
@@ -280,16 +272,13 @@ Vector<CacheStorageRecord> Cache::queryCacheWithTargetStorage(const FetchRequest
     return records;
 }
 
-void Cache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&& options, WTF::Function<void(bool didRemoval, CacheStorageConnection::Error error)>&& callback)
+void Cache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<bool>&&)>&& callback)
 {
     setPendingActivity(this);
     m_connection->batchDeleteOperation(m_identifier, request.internalRequest(), WTFMove(options), [this, callback = WTFMove(callback)](Vector<uint64_t>&& records, CacheStorageConnection::Error error) {
-        if (!m_isStopped) {
-            if (error == CacheStorageConnection::Error::None)
-                m_records.removeAllMatching([&](const auto& item) { return records.contains(item.identifier); });
+        if (!m_isStopped)
+            callback(CacheStorageConnection::exceptionOrResult(!records.isEmpty(), error));
 
-            callback(!records.isEmpty(), error);
-        }
         unsetPendingActivity(this);
     });
 }
@@ -310,7 +299,7 @@ static inline CacheStorageConnection::Record toConnectionRecord(const FetchReque
     };
 }
 
-void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& response, WTF::Function<void(CacheStorageConnection::Error)>&& callback)
+void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& response, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
 {
     Vector<CacheStorageConnection::Record> records;
     records.append(toConnectionRecord(request, response));
@@ -318,7 +307,7 @@ void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& respon
     setPendingActivity(this);
     m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, callback = WTFMove(callback)](Vector<uint64_t>&&, CacheStorageConnection::Error error) {
         if (!m_isStopped)
-            callback(error);
+            callback(CacheStorageConnection::errorToException(error));
 
         unsetPendingActivity(this);
     });

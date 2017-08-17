@@ -102,8 +102,9 @@ void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<Cach
         setPendingActivity(this);
         m_connection->open(origin, name, [this, name, promise = WTFMove(promise)](uint64_t cacheIdentifier, CacheStorageConnection::Error error) mutable {
             if (!m_isStopped) {
-                if (error != CacheStorageConnection::Error::None)
-                    promise.reject(CacheStorageConnection::exceptionFromError(error));
+                auto result = CacheStorageConnection::errorToException(error);
+                if (result.hasException())
+                    promise.reject(result.releaseException());
                 else {
                     auto cache = Cache::create(*scriptExecutionContext(), String { name }, cacheIdentifier, m_connection.copyRef());
                     promise.resolve(cache);
@@ -130,12 +131,9 @@ void CacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&& p
         setPendingActivity(this);
         m_connection->remove(m_caches[position]->identifier(), [this, name, promise = WTFMove(promise)](uint64_t cacheIdentifier, CacheStorageConnection::Error error) mutable {
             UNUSED_PARAM(cacheIdentifier);
-            if (!m_isStopped) {
-                if (error != CacheStorageConnection::Error::None)
-                    promise.reject(CacheStorageConnection::exceptionFromError(error));
-                else
-                    promise.resolve(true);
-            }
+            if (!m_isStopped)
+                promise.settle(CacheStorageConnection::exceptionOrResult(true, error));
+
             unsetPendingActivity(this);
         });
         m_caches.remove(position);
