@@ -222,12 +222,13 @@ void NetworkConnectionToWebProcess::performSynchronousLoad(const NetworkResource
     loader->start();
 }
 
-void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loadParameters)
+void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loadParameters, HTTPHeaderMap&& originalRequestHeaders)
 {
 #if USE(NETWORK_SESSION)
     // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingLoad(WTFMove(loadParameters));
+    new PingLoad(WTFMove(loadParameters), WTFMove(originalRequestHeaders));
 #else
+    UNUSED_PARAM(originalRequestHeaders);
     RefPtr<NetworkingContext> context = RemoteNetworkingContext::create(loadParameters.sessionID, loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.

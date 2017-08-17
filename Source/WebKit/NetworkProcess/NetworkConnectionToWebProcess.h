@@ -36,6 +36,7 @@
 
 namespace WebCore {
 class BlobDataFileReference;
+class HTTPHeaderMap;
 class ResourceRequest;
 }
 
@@ -82,7 +83,7 @@ private:
 
     void scheduleResourceLoad(const NetworkResourceLoadParameters&);
     void performSynchronousLoad(const NetworkResourceLoadParameters&, Ref<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
-    void loadPing(NetworkResourceLoadParameters&&);
+    void loadPing(NetworkResourceLoadParameters&&, WebCore::HTTPHeaderMap&& originalRequestHeaders);
     void prefetchDNS(const String&);
 
     void removeLoadIdentifier(ResourceLoadIdentifier);

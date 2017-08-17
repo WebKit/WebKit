@@ -118,6 +118,8 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
     Type type() const { return m_type; }
 
+    static bool shouldUsePingLoad(Type type) { return type == Type::Beacon; }
+
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
     void setLoadPriority(const std::optional<ResourceLoadPriority>&);
 
@@ -279,6 +281,8 @@ public:
     unsigned long identifierForLoadWithoutResourceLoader() const { return m_identifierForLoadWithoutResourceLoader; }
     static ResourceLoadPriority defaultPriorityForResourceType(Type);
 
+    void setOriginalRequestHeaders(std::optional<HTTPHeaderMap>&& originalRequestHeaders) { m_originalRequestHeaders = WTFMove(originalRequestHeaders); }
+
 protected:
     // CachedResource constructor that may be used when the CachedResource can already be filled with response data.
     CachedResource(const URL&, Type, PAL::SessionID);
@@ -294,7 +298,7 @@ protected:
     // FIXME: Make the rest of these data members private and use functions in derived classes instead.
     HashCountedSet<CachedResourceClient*> m_clients;
     ResourceRequest m_resourceRequest;
-    HTTPHeaderMap m_originalRequestHeaders;
+    std::optional<HTTPHeaderMap> m_originalRequestHeaders; // Needed by Ping loads.
     RefPtr<SubresourceLoader> m_loader;
     ResourceLoaderOptions m_options;
     ResourceResponse m_response;

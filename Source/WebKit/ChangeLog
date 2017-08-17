@@ -1,3 +1,32 @@
+2017-08-17  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r220817): We should only copy the original request headers for Ping loads
+        https://bugs.webkit.org/show_bug.cgi?id=175679
+
+        Reviewed by Youenn Fablet.
+
+        For performance reason, we should only copy the original request headers for Ping loads
+        (Beacon at the moment), not for all CachedResourceRequests.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        (WebKit::PingLoad::makeCrossOriginAccessRequest):
+        (WebKit::PingLoad::makeSimpleCrossOriginAccessRequest):
+        (WebKit::PingLoad::originalRequestHeaders const): Deleted.
+        * NetworkProcess/PingLoad.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::createPingHandle):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2017-08-17  Don Olmstead  <don.olmstead@sony.com>
 
         [PAL] Relocate SessionID to root

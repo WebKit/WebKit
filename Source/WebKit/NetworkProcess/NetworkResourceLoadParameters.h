@@ -30,7 +30,6 @@
 #include "SandboxExtension.h"
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/FetchOptions.h>
-#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
@@ -60,7 +59,6 @@ public:
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WebCore::FetchOptions::Mode mode;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
-    std::optional<WebCore::HTTPHeaderMap> originalRequestHeaders;
 };
 
 } // namespace WebKit

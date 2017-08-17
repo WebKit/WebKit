@@ -51,7 +51,6 @@ public:
     CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, std::optional<ResourceLoadPriority> = std::nullopt, String&& charset = String());
 
     ResourceRequest&& releaseResourceRequest() { return WTFMove(m_resourceRequest); }
-    HTTPHeaderMap&& releaseOriginalRequestHeaders() { return WTFMove(m_originalRequestHeaders); }
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
     const String& charset() const { return m_charset; }
     void setCharset(const String& charset) { m_charset = charset; }
@@ -95,7 +94,6 @@ public:
 
 private:
     ResourceRequest m_resourceRequest;
-    HTTPHeaderMap m_originalRequestHeaders;
     String m_charset;
     ResourceLoaderOptions m_options;
     std::optional<ResourceLoadPriority> m_priority;

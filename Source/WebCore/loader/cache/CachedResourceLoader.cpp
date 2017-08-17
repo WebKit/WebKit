@@ -698,6 +698,10 @@ void CachedResourceLoader::updateHTTPRequestHeaders(CachedResource::Type type, C
 
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, DeferOption defer)
 {
+    std::optional<HTTPHeaderMap> originalRequestHeaders;
+    if (CachedResource::shouldUsePingLoad(type))
+        originalRequestHeaders = request.resourceRequest().httpHeaderFields();
+
     if (Document* document = this->document())
         request.upgradeInsecureRequestIfNeeded(*document);
 
@@ -822,6 +826,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         break;
     }
     ASSERT(resource);
+    resource->setOriginalRequestHeaders(WTFMove(originalRequestHeaders));
 
     if (forPreload == ForPreload::No && resource->loader() && resource->ignoreForRequestCount()) {
         resource->setIgnoreForRequestCount(false);

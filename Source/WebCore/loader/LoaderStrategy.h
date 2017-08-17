@@ -64,7 +64,7 @@ public:
     virtual void suspendPendingRequests() = 0;
     virtual void resumePendingRequests() = 0;
 
-    virtual void createPingHandle(NetworkingContext*, ResourceRequest&, HTTPHeaderMap&& originalRequestHeaders, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy*, const FetchOptions&) = 0;
+    virtual void createPingHandle(NetworkingContext*, ResourceRequest&, const HTTPHeaderMap& originalRequestHeaders, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy*, const FetchOptions&) = 0;
 
     virtual void storeDerivedDataToCache(const SHA1::Digest& bodyKey, const String& type, const String& partition, WebCore::SharedBuffer&) = 0;
 

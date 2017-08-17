@@ -32,6 +32,7 @@
 
 namespace WebCore {
 class ContentSecurityPolicy;
+class HTTPHeaderMap;
 class URL;
 }
 
@@ -41,7 +42,7 @@ class NetworkCORSPreflightChecker;
 
 class PingLoad final : private NetworkDataTaskClient {
 public:
-    explicit PingLoad(NetworkResourceLoadParameters&&);
+    PingLoad(NetworkResourceLoadParameters&&, WebCore::HTTPHeaderMap&& originalRequestHeaders);
     
 private:
     ~PingLoad();
@@ -66,9 +67,9 @@ private:
     void preflightSuccess(WebCore::ResourceRequest&&);
 
     WebCore::SecurityOrigin& securityOrigin() const;
-    const WebCore::HTTPHeaderMap& originalRequestHeaders() const; // Needed for CORS checks.
     
     NetworkResourceLoadParameters m_parameters;
+    WebCore::HTTPHeaderMap m_originalRequestHeaders; // Needed for CORS checks.
     RefPtr<NetworkDataTask> m_task;
     WebCore::Timer m_timeoutTimer;
     std::unique_ptr<NetworkCORSPreflightChecker> m_corsPreflightChecker;

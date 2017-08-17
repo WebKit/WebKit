@@ -42,13 +42,13 @@ namespace WebKit {
 
 using namespace WebCore;
 
-PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters)
+PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, HTTPHeaderMap&& originalRequestHeaders)
     : m_parameters(WTFMove(parameters))
+    , m_originalRequestHeaders(WTFMove(originalRequestHeaders))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
     , m_isSameOriginRequest(securityOrigin().canRequest(m_parameters.request.url()))
 {
     ASSERT(m_parameters.sourceOrigin);
-    ASSERT(m_parameters.originalRequestHeaders);
 
     // If the server never responds, this object will hang around forever.
     // Set a very generous timeout, just in case.
@@ -91,11 +91,6 @@ SecurityOrigin& PingLoad::securityOrigin() const
     return m_origin ? *m_origin : *m_parameters.sourceOrigin;
 }
 
-const HTTPHeaderMap& PingLoad::originalRequestHeaders() const
-{
-    return *m_parameters.originalRequestHeaders;
-}
-
 void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection - shouldFollowRedirects? %d", m_parameters.shouldFollowRedirects);
@@ -132,7 +127,7 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
     }
 
     // Except in case where preflight is needed, loading should be able to continue on its own.
-    if (m_isSimpleRequest && isSimpleCrossOriginAccessRequest(request.httpMethod(), originalRequestHeaders())) {
+    if (m_isSimpleRequest && isSimpleCrossOriginAccessRequest(request.httpMethod(), m_originalRequestHeaders)) {
         completionHandler(WTFMove(request));
         return;
     }
@@ -219,13 +214,13 @@ void PingLoad::makeCrossOriginAccessRequest(ResourceRequest&& request)
     ASSERT(m_parameters.mode == FetchOptions::Mode::Cors);
     RELEASE_LOG_IF_ALLOWED("makeCrossOriginAccessRequest");
 
-    if (isSimpleCrossOriginAccessRequest(request.httpMethod(), originalRequestHeaders())) {
+    if (isSimpleCrossOriginAccessRequest(request.httpMethod(), m_originalRequestHeaders)) {
         makeSimpleCrossOriginAccessRequest(WTFMove(request));
         return;
     }
 
     m_isSimpleRequest = false;
-    if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(securityOrigin().toString(), request.url(), m_parameters.allowStoredCredentials, request.httpMethod(), originalRequestHeaders())) {
+    if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(securityOrigin().toString(), request.url(), m_parameters.allowStoredCredentials, request.httpMethod(), m_originalRequestHeaders)) {
         RELEASE_LOG_IF_ALLOWED("makeCrossOriginAccessRequest - preflight can be skipped thanks to cached result");
         preflightSuccess(WTFMove(request));
     } else
@@ -234,7 +229,7 @@ void PingLoad::makeCrossOriginAccessRequest(ResourceRequest&& request)
 
 void PingLoad::makeSimpleCrossOriginAccessRequest(ResourceRequest&& request)
 {
-    ASSERT(isSimpleCrossOriginAccessRequest(request.httpMethod(), originalRequestHeaders()));
+    ASSERT(isSimpleCrossOriginAccessRequest(request.httpMethod(), m_originalRequestHeaders));
     RELEASE_LOG_IF_ALLOWED("makeSimpleCrossOriginAccessRequest");
 
     if (!request.url().protocolIsInHTTPFamily()) {
