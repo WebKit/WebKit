@@ -118,6 +118,8 @@ void DataTransfer::clearData(const String& type)
         m_pasteboard->clear();
     else
         m_pasteboard->clear(type);
+    if (m_itemList)
+        m_itemList->didClearStringData(type);
 }
 
 String DataTransfer::getData(const String& type) const
@@ -144,6 +146,8 @@ void DataTransfer::setData(const String& type, const String& data)
 #endif
 
     m_pasteboard->writeString(type, data);
+    if (m_itemList)
+        m_itemList->didSetStringData(type);
 }
 
 DataTransferItemList& DataTransfer::items()

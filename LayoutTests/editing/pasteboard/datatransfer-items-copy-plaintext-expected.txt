@@ -1,0 +1,43 @@
+This tests copying plain text using dataTransfer.items. To manually test, click on "Copy text" and paste (Command+V on Mac Control+V elsewhere).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS clipboardData.items.length is 0
+PASS clipboardData.setData("text/plain", "rock"); clipboardData.items.length is 1
+PASS initialItem = clipboardData.items[0]; initialItem.kind is "string"
+PASS initialItem.type is "text/plain"
+PASS initialItem.getAsFile() is null
+PASS initialItem.getAsString(checkContent(1, "rock")) is undefined
+PASS clipboardData.items.add("paper", "text/plain") threw exception NotSupportedError: The operation is not supported..
+PASS clipboardData.items[0] is initialItem
+PASS clipboardData.clearData(); clipboardData.items.length is 0
+PASS clipboardData.items.add("scissors", "text/plain"); clipboardData.items.length is 1
+PASS clipboardData.items[0] is not initialItem
+PASS initialItem.kind is "string"
+PASS initialItem.type is ""
+PASS initialItem.getAsFile() is null
+PASS initialItem.getAsString(() => testFailed("getAsString should exit immeidately if item is disabled")) is undefined
+PASS clipboardData.getData("text/plain") is "scissors"
+PASS clipboardData.items[0].kind is "string"
+PASS clipboardData.items[0].type is "text/plain"
+PASS clipboardData.items[0].getAsFile() is null
+PASS clipboardData.items[0].getAsString(checkContent(2, "scissors")) is undefined
+PASS clipboardData.items.clear(); clipboardData.items.length is 0
+PASS clipboardData.getData("text/plain") is ""
+PASS clipboardData.items.add("WebKit", "text/plain"); clipboardData.items.length is 1
+PASS clipboardData.items[0].kind is "string"
+PASS clipboardData.items[0].type is "text/plain"
+PASS clipboardData.items[0].getAsFile() is null
+PASS clipboardData.items[0].getAsString(checkContent(3, "WebKit")) is undefined
+PASS clipboardData.items.remove(1) threw exception IndexSizeError: The index is not in the allowed range..
+PASS clipboardData.items.length is 1
+PASS clipboardData.items.remove(0); clipboardData.items.length is 0
+PASS clipboardData.getData("text/plain") is ""
+PASS actualContent1 is "rock"
+PASS actualContent2 is "scissors"
+PASS actualContent3 is "WebKit"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,17 @@
+2017-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for mutating clipboard data via DataTransferItemList
+        https://bugs.webkit.org/show_bug.cgi?id=175639
+
+        Reviewed by Wenson Hsieh.
+
+        Rebaselined the IDL test which now passes all test cases, and added a regression test for mutating clipboard data
+        via dataTransfer.items and methods on dataTransfer for plaintext.
+
+        * editing/pasteboard/datatransfer-idl-expected.txt:
+        * editing/pasteboard/datatransfer-items-copy-plaintext-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-copy-plaintext.html: Added.
+
 2017-08-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark fullscreen/full-screen-iframe-legacy.html as flaky on Sierra WK1.

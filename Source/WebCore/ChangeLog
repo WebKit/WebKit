@@ -1,3 +1,62 @@
+2017-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for mutating clipboard data via DataTransferItemList
+        https://bugs.webkit.org/show_bug.cgi?id=175639
+
+        Reviewed by Wenson Hsieh.
+
+        Added the support for adding plaintext data via dataTransfer.items.add, clearing data via clear,
+        and removing an entry via remove. When DataTransferItem is removed from DataTransferItemList,
+        we must put into the disabled mode.
+
+        To support the removal of DataTransferItem, this patch replaces a reference to DataTransfer by
+        a WeakPtr to DataTransferItemList, and stops forwarding ref from DataTransferItem to DataTransfer.
+        This means that DataTransfer can now be GC'ed before DataTransferItem is GC'ed.
+
+        Because the identify and the order of DataTransferItems need to be preserved, we can't simply
+        re-popluate m_itemList in DataTransferItemList. Instead, whenever the clipboard content is mutated,
+        we make the parallel modifications to m_itemList. This includes changes made via DataTransfer
+        methods such as setData and clearData.
+
+        Test: editing/pasteboard/datatransfer-items-copy-plaintext.html
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::clearData): Invoke didClearStringData when m_itemList exists.
+        (WebCore::DataTransfer::setData): Ditto.
+        (WebCore::DataTransfer::createForInputEvent):
+        (WebCore::DataTransfer::createForDrag):
+        (WebCore::DataTransfer::createForDrop):
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::create):
+        (WebCore::DataTransferItem::DataTransferItem):
+        (WebCore::DataTransferItem::clearListAndPutIntoDisabledMode): Added.
+        (WebCore::DataTransferItem::type const): Moved from the header.
+        (WebCore::DataTransferItem::getAsString const):
+        (WebCore::DataTransferItem::getAsFile const):
+        * dom/DataTransferItem.h:
+        (WebCore::DataTransferItem::ref): Deleted.
+        (WebCore::DataTransferItem::deref): Deleted.
+        (WebCore::DataTransferItem::isFile const): Added.
+        (WebCore::DataTransferItem::type const): Move to the cpp file.
+        * dom/DataTransferItemList.cpp:
+        (WebCore::isSupportedType): Moved.
+        (WebCore::DataTransferItemList::DataTransferItemList): Moved from the header.
+        (WebCore::DataTransferItemList::~DataTransferItemList): Added.
+        (WebCore::DataTransferItemList::item):
+        (WebCore::DataTransferItemList::add): Implemented the variant to add string data.
+        (WebCore::DataTransferItemList::remove): Implemented. For now, we don't have to deal with removing
+        a file since a writable dataTransfer never contains a File object.
+        (WebCore::DataTransferItemList::clear): Implemented.
+        (WebCore::DataTransferItemList::ensureItems const):
+        (WebCore::removeStringItemOfLowercasedType): Added.
+        (WebCore::DataTransferItemList::didClearStringData): Called when dataTransfer.clear is called.
+        (WebCore::DataTransferItemList::didSetStringData): Ditto for 
+        * dom/DataTransferItemList.h:
+        (WebCore::DataTransferItemList): Added a WeakPtrFactory. Also use a vector of Ref<DataTransferItem>
+        instead of unique_ptr<DataTransferItem> since DataTransferItem can outlive DataTransferItemList.
+        (WebCore::DataTransferItemList::dataTransfer): Added.
+        * dom/DataTransferItemList.idl:
+
 2017-08-16  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Rename PaymentRequest to ApplePaySessionPaymentRequest

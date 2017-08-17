@@ -32,40 +32,46 @@
 #pragma once
 
 #include "DataTransfer.h"
-#include "DataTransferItem.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class DataTransferItem;
 class File;
 
 class DataTransferItemList : public ScriptWrappable {
     WTF_MAKE_NONCOPYABLE(DataTransferItemList); WTF_MAKE_FAST_ALLOCATED;
 public:
-    DataTransferItemList(DataTransfer& dataTransfer)
-        : m_dataTransfer(dataTransfer)
-    {
-    }
+    DataTransferItemList(DataTransfer&);
+    ~DataTransferItemList();
 
     // DataTransfer owns DataTransferItemList, and DataTransfer is kept alive as long as DataTransferItemList is alive.
     void ref() { m_dataTransfer.ref(); }
     void deref() { m_dataTransfer.deref(); }
+    DataTransfer& dataTransfer() { return m_dataTransfer; }
 
+    // DOM API
     unsigned length() const;
     RefPtr<DataTransferItem> item(unsigned index);
-    ExceptionOr<void> add(const String& data, const String& type);
-    void add(RefPtr<File>&&);
-    void remove(unsigned index);
+    ExceptionOr<RefPtr<DataTransferItem>> add(const String& data, const String& type);
+    RefPtr<DataTransferItem> add(Ref<File>&&);
+    ExceptionOr<void> remove(unsigned index);
     void clear();
 
-private:
-    Vector<std::unique_ptr<DataTransferItem>>& ensureItems() const;
+    void didClearStringData(const String& type);
+    void didSetStringData(const String& type);
 
+private:
+    Vector<Ref<DataTransferItem>>& ensureItems() const;
+
+    WeakPtrFactory<DataTransferItemList> m_weakPtrFactory;
     DataTransfer& m_dataTransfer;
-    mutable std::optional<Vector<std::unique_ptr<DataTransferItem>>> m_items;
+    mutable std::optional<Vector<Ref<DataTransferItem>>> m_items;
 };
 
 } // namespace WebCore

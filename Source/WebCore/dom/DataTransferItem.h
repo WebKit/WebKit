@@ -35,32 +35,38 @@
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
+class DataTransferListItem;
 class File;
 class ScriptExecutionContext;
 class StringCallback;
 
-class DataTransferItem : public ScriptWrappable {
-    WTF_MAKE_NONCOPYABLE(DataTransferItem); WTF_MAKE_FAST_ALLOCATED;
+class DataTransferItem : public RefCounted<DataTransferItem> {
 public:
-    DataTransferItem(DataTransfer&, const String&);
-    DataTransferItem(DataTransfer&, const String&, Ref<File>&&);
+    static Ref<DataTransferItem> create(WeakPtr<DataTransferItemList>&&, const String&);
+    static Ref<DataTransferItem> create(WeakPtr<DataTransferItemList>&&, const String&, Ref<File>&&);
+
     ~DataTransferItem();
 
-    // DataTransfer owns DataTransferItem, and DataTransfer is kept alive as long as DataTransferItem is alive.
-    void ref() { m_dataTransfer.ref(); }
-    void deref() { m_dataTransfer.deref(); }
+    void clearListAndPutIntoDisabledMode();
 
+    bool isFile() const { return m_file; }
     String kind() const;
-    const String& type() const { return m_type; }
+    String type() const;
     void getAsString(ScriptExecutionContext&, RefPtr<StringCallback>&&) const;
     RefPtr<File> getAsFile() const;
 
 private:
-    DataTransfer& m_dataTransfer;
+    DataTransferItem(WeakPtr<DataTransferItemList>&&, const String&);
+    DataTransferItem(WeakPtr<DataTransferItemList>&&, const String&, Ref<File>&&);
+
+    bool isInDisabledMode() const { return !m_list; }
+
+    WeakPtr<DataTransferItemList> m_list;
     const String m_type;
     RefPtr<File> m_file;
 };

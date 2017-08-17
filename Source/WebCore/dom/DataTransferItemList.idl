@@ -38,10 +38,10 @@
     readonly attribute long length;
     getter DataTransferItem item(unsigned long index);
 
-    [MayThrowException] void add(optional DOMString data = "undefined", optional DOMString type = "undefined");
-    void add(File? file);
+    [MayThrowException] DataTransferItem? add(DOMString data, DOMString type);
+    DataTransferItem? add(File file);
 
-    void remove(unsigned long index);
+    [MayThrowException] void remove(unsigned long index);
 
     void clear();
 };
