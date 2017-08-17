@@ -472,6 +472,7 @@ FilterEffectRenderer* RenderLayer::filterRenderer() const
 
 void RenderLayer::updateLayerPositionsAfterLayout(const RenderLayer* rootLayer, UpdateLayerPositionsFlags flags)
 {
+    LOG(Compositing, "RenderLayer %p updateLayerPositionsAfterLayout", this);
     RenderGeometryMap geometryMap(UseTransforms);
     if (this != rootLayer)
         geometryMap.pushMappingsToAncestor(parent(), nullptr);
@@ -2594,9 +2595,9 @@ void RenderLayer::updateCompositingLayersAfterScroll()
         // repositioning, so update compositing layers from there.
         if (RenderLayer* compositingAncestor = stackingContainer()->enclosingCompositingLayer()) {
             if (usesCompositedScrolling() && !hasOutOfFlowPositionedDescendant())
-                compositor().updateCompositingLayers(CompositingUpdateOnCompositedScroll, compositingAncestor);
+                compositor().updateCompositingLayers(CompositingUpdateType::OnCompositedScroll, compositingAncestor);
             else
-                compositor().updateCompositingLayers(CompositingUpdateOnScroll, compositingAncestor);
+                compositor().updateCompositingLayers(CompositingUpdateType::OnScroll, compositingAncestor);
         }
     }
 }
@@ -6491,7 +6492,7 @@ void RenderLayer::updateCompositingAndLayerListsIfNeeded()
 {
     if (compositor().inCompositingMode()) {
         if (isDirtyStackingContainer() || m_normalFlowListDirty)
-            compositor().updateCompositingLayers(CompositingUpdateOnHitTest, this);
+            compositor().updateCompositingLayers(CompositingUpdateType::OnHitTest, this);
         return;
     }
 
@@ -7233,6 +7234,24 @@ RenderLayer* RenderLayer::hitTestFlowThreadIfRegionForFragments(const LayerFragm
 RenderNamedFlowFragment* RenderLayer::currentRenderNamedFlowFragment() const
 {
     return renderer().currentRenderNamedFlowFragment();
+}
+
+TextStream& operator<<(TextStream& ts, const RenderLayer& layer)
+{
+    ts << "RenderLayer " << &layer << " " << layer.size();
+    if (layer.transform())
+        ts << " has transform";
+    if (layer.hasFilter())
+        ts << " has filter";
+    if (layer.hasBackdropFilter())
+        ts << " has backdrop filter";
+    if (layer.hasBlendMode())
+        ts << " has blend mode";
+    if (layer.isolatesBlending())
+        ts << " isolates blending";
+    if (layer.isComposited())
+        ts << " " << *layer.backing();
+    return ts;
 }
 
 } // namespace WebCore

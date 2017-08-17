@@ -65,6 +65,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TiledBacking.h"
+#include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS)
 #include "RuntimeApplicationChecks.h"
@@ -634,6 +635,8 @@ void RenderLayerBacking::updateAfterWidgetResize()
 
 void RenderLayerBacking::updateAfterLayout(UpdateAfterLayoutFlags flags)
 {
+    LOG(Compositing, "RenderLayerBacking %p updateAfterLayout (layer %p)", this, &m_owningLayer);
+
     if (!compositor().compositingLayersNeedRebuild()) {
         // Calling updateGeometry() here gives incorrect results, because the
         // position of this layer's GraphicsLayer depends on the position of our compositing
@@ -940,6 +943,8 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(RenderLayer* compo
 
 void RenderLayerBacking::updateGeometry()
 {
+    LOG_WITH_STREAM(Compositing, stream << "updateGeometry " << m_owningLayer);
+
     // If we haven't built z-order lists yet, wait until later.
     if (m_owningLayer.isStackingContainer() && m_owningLayer.m_zOrderListsDirty)
         return;
@@ -3039,6 +3044,25 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
         backingMemory += m_layerForScrollCorner->backingStoreMemoryEstimate();
     
     return backingMemory;
+}
+
+TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
+{
+    ts << "RenderLayerBacking " << &backing << " bounds " << backing.compositedBounds();
+
+    if (backing.isMainFrameLayerWithTiledBacking())
+        ts << " main tiled backing";
+    if (backing.paintsIntoWindow())
+        ts << " paintsIntoWindow";
+    if (backing.paintsIntoCompositedAncestor())
+        ts << " paintsIntoCompositedAncestor";
+
+    ts << " primary layer ID " << backing.graphicsLayer()->primaryLayerID();
+    if (auto nodeID = backing.scrollingNodeIDForRole(ViewportConstrained))
+        ts << " viewport constrained scrolling node " << nodeID;
+    if (auto nodeID = backing.scrollingNodeIDForRole(Scrolling))
+        ts << " scrolling node " << nodeID;
+    return ts;
 }
 
 } // namespace WebCore

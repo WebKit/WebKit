@@ -1,3 +1,38 @@
+2017-08-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make RenderLayer and RenderLayerBacking TextStream-loggable, and clean up compositing logging
+        https://bugs.webkit.org/show_bug.cgi?id=175634
+
+        Reviewed by Zalan Bujtas.
+
+        Add operator<<(TextStream&) for RenderLayer and RenderLayer backing, and use them for compositing logging.
+
+        Convert CompositingUpdateType to an enum class.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateCompositingLayersAfterLayout):
+        (WebCore::FrameView::updateCompositingLayersAfterScrolling):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::viewportOffsetChanged):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositionsAfterLayout):
+        (WebCore::RenderLayer::updateCompositingLayersAfterScroll):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::operator<<):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didRecalcStyleWithNoPendingLayout):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::updateCompositingLayersTimerFired):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        (WebCore::operator<<):
+        * rendering/RenderLayerCompositor.h:
+
 2017-08-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [HarfBuzz] Decomposed Vietnamese characters are rendered incorrectly

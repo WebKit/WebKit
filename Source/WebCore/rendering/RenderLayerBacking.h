@@ -398,4 +398,6 @@ enum CanvasCompositingStrategy {
 };
 CanvasCompositingStrategy canvasCompositingStrategy(const RenderObject&);
 
+WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayerBacking&);
+
 } // namespace WebCore
