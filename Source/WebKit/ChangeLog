@@ -1,5 +1,17 @@
 2017-08-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] WebKitAutomationSession should set session client to nullptr on dispose
+        https://bugs.webkit.org/show_bug.cgi?id=175564
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        WebAutomationSession expects its client to be nullptr in the destructor.
+
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        (webkitAutomationSessionDispose):
+
+2017-08-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: timeout when JavaScript alert is shown in onload handler
         https://bugs.webkit.org/show_bug.cgi?id=175315
         <rdar://problem/33788294>

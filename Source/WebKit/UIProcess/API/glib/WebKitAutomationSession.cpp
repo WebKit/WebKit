@@ -199,6 +199,8 @@ static void webkitAutomationSessionDispose(GObject* object)
 {
     WebKitAutomationSession* session = WEBKIT_AUTOMATION_SESSION(object);
 
+    session->priv->session->setClient(nullptr);
+
     if (session->priv->applicationInfo) {
         webkit_application_info_unref(session->priv->applicationInfo);
         session->priv->applicationInfo = nullptr;
