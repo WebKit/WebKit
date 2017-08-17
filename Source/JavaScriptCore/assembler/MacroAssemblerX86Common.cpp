@@ -32,6 +32,8 @@
 
 namespace JSC {
 
+#if ENABLE(MASM_PROBE)
+
 extern "C" void ctiMasmProbeTrampoline();
 
 #if COMPILER(GCC_OR_CLANG)
@@ -575,6 +577,7 @@ void MacroAssembler::probe(ProbeFunction function, void* arg)
     move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), RegisterID::eax);
     call(RegisterID::eax);
 }
+#endif // ENABLE(MASM_PROBE)
 
 #if CPU(X86) && !OS(MAC_OS_X)
 MacroAssemblerX86Common::SSE2CheckState MacroAssemblerX86Common::s_sse2CheckState = NotCheckedSSE2;

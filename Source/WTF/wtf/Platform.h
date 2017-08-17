@@ -805,8 +805,25 @@
 #define ENABLE_FAST_TLS_JIT 1
 #endif
 
-/* If the baseline jit is not available, then disable upper tiers as well: */
-#if !ENABLE(JIT)
+#if CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64) || CPU(ARM_TRADITIONAL)
+#define ENABLE_MASM_PROBE 1
+#else
+#define ENABLE_MASM_PROBE 0
+#endif
+
+#if OS(WINDOW)
+#undef ENABLE_MASM_PROBE
+#define ENABLE_MASM_PROBE 0
+#endif
+#if PLATFORM(GTK) && CPU(ARM_THUMB2)
+/* FIXME: https://bugs.webkit.org/show_bug.cgi?id=175514 */
+#undef ENABLE_MASM_PROBE
+#define ENABLE_MASM_PROBE 0
+#endif
+
+/* If the baseline jit is not available, then disable upper tiers as well.
+   The MacroAssembler::probe() is also required for supporting the upper tiers. */
+#if !ENABLE(JIT) || !ENABLE(MASM_PROBE)
 #undef ENABLE_DFG_JIT
 #undef ENABLE_FTL_JIT
 #define ENABLE_DFG_JIT 0

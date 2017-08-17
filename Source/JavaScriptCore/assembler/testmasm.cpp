@@ -50,6 +50,7 @@ static void usage()
 
 #if ENABLE(JIT)
 
+#if ENABLE(MASM_PROBE)
 namespace WTF {
 
 static void printInternal(PrintStream& out, void* value)
@@ -58,12 +59,15 @@ static void printInternal(PrintStream& out, void* value)
 }
 
 } // namespace WTF
+#endif // ENABLE(MASM_PROBE)
 
 using namespace JSC;
 
 namespace {
 
+#if ENABLE(MASM_PROBE)
 using CPUState = MacroAssembler::CPUState;
+#endif
 
 StaticLock crashLock;
 
@@ -93,6 +97,7 @@ template<typename T> T nextID(T id) { return static_cast<T>(id + 1); }
         CRASH();                                                        \
     } while (false)
 
+#if ENABLE(MASM_PROBE)
 bool isPC(MacroAssembler::RegisterID id)
 {
 #if CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
@@ -123,6 +128,7 @@ bool isSpecialGPR(MacroAssembler::RegisterID id)
 #endif
     return false;
 }
+#endif // ENABLE(MASM_PROBE)
 
 MacroAssemblerCodeRef compile(Generator&& generate)
 {
@@ -155,6 +161,7 @@ void testSimple()
     }), 42);
 }
 
+#if ENABLE(MASM_PROBE)
 void testProbeReadsArgumentRegisters()
 {
     bool probeWasCalled = false;
@@ -661,6 +668,7 @@ void testProbeModifiesStackWithCallback()
 
     CHECK_EQ(probeCallCount, 3);
 }
+#endif // ENABLE(MASM_PROBE)
 
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
@@ -688,6 +696,7 @@ void run(const char* filter)
 
     RUN(testSimple());
 
+#if ENABLE(MASM_PROBE)
     RUN(testProbeReadsArgumentRegisters());
     RUN(testProbeWritesArgumentRegisters());
     RUN(testProbePreservesGPRS());
@@ -695,6 +704,7 @@ void run(const char* filter)
     RUN(testProbeModifiesStackPointerToNBytesBelowSP());
     RUN(testProbeModifiesProgramCounter());
     RUN(testProbeModifiesStackWithCallback());
+#endif // ENABLE(MASM_PROBE)
 
     if (tasks.isEmpty())
         usage();

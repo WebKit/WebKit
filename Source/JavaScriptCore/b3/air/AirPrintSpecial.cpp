@@ -27,6 +27,7 @@
 #include "AirPrintSpecial.h"
 
 #if ENABLE(B3_JIT)
+#if ENABLE(MASM_PROBE)
 
 #include "MacroAssemblerPrinter.h"
 
@@ -124,4 +125,5 @@ NO_RETURN void printAirArg(PrintStream&, Context&)
 
 } // namespace JSC
 
+#endif // ENABLE(MASM_PROBE)
 #endif // ENABLE(B3_JIT)

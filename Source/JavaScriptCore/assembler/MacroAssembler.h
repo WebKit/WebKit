@@ -1824,6 +1824,7 @@ public:
         urshift32(src, trustedImm32ForShift(amount), dest);
     }
 
+#if ENABLE(MASM_PROBE)
     struct CPUState;
 
     // This function emits code to preserve the CPUState (e.g. registers),
@@ -1885,8 +1886,10 @@ public:
     void print(Arguments&&... args);
 
     void print(Printer::PrintRecordList*);
+#endif // ENABLE(MASM_PROBE)
 };
 
+#if ENABLE(MASM_PROBE)
 struct MacroAssembler::CPUState {
     static inline const char* gprName(RegisterID id) { return MacroAssembler::gprName(id); }
     static inline const char* sprName(SPRegisterID id) { return MacroAssembler::sprName(id); }
@@ -2046,7 +2049,8 @@ struct ProbeContext {
     template<typename T> T fp() { return cpu.fp<T>(); }
     template<typename T> T sp() { return cpu.sp<T>(); }
 };
-    
+#endif // ENABLE(MASM_PROBE)
+
 } // namespace JSC
 
 namespace WTF {

@@ -32,6 +32,8 @@
 
 namespace JSC {
 
+#if ENABLE(MASM_PROBE)
+
 extern "C" void ctiMasmProbeTrampoline();
 
 #if COMPILER(GCC_OR_CLANG)
@@ -336,6 +338,7 @@ void MacroAssembler::probe(ProbeFunction function, void* arg)
     move(trustedImm32FromPtr(ctiMasmProbeTrampoline), RegisterID::ip);
     m_assembler.blx(RegisterID::ip);
 }
+#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 

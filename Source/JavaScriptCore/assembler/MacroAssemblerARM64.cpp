@@ -32,6 +32,8 @@
 
 namespace JSC {
 
+#if ENABLE(MASM_PROBE)
+
 extern "C" void ctiMasmProbeTrampoline();
 
 using namespace ARM64Registers;
@@ -555,6 +557,8 @@ void MacroAssembler::probe(ProbeFunction function, void* arg)
     load64(Address(sp, offsetof(OutgoingProbeRecord, lr)), lr);
     add64(TrustedImm32(sizeof(OutgoingProbeRecord)), sp);
 }
+
+#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 

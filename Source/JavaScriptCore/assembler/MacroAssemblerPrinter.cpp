@@ -27,6 +27,7 @@
 #include "MacroAssemblerPrinter.h"
 
 #if ENABLE(ASSEMBLER)
+#if ENABLE(MASM_PROBE)
 
 #include "MacroAssembler.h"
 #include <inttypes.h>
@@ -184,4 +185,5 @@ void printCallback(ProbeContext* probeContext)
 } // namespace Printer
 } // namespace JSC
 
+#endif // ENABLE(MASM_PROBE)
 #endif // ENABLE(ASSEMBLER)

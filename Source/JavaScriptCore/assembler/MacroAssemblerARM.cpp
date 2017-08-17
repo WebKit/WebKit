@@ -96,6 +96,8 @@ void MacroAssemblerARM::load32WithUnalignedHalfWords(BaseIndex address, Register
 }
 #endif // CPU(ARMV5_OR_LOWER)
 
+#if ENABLE(MASM_PROBE)
+
 extern "C" void ctiMasmProbeTrampoline();
 
 #if COMPILER(GCC_OR_CLANG)
@@ -393,6 +395,7 @@ void MacroAssembler::probe(ProbeFunction function, void* arg)
     m_assembler.blx(RegisterID::S0);
 
 }
+#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 
