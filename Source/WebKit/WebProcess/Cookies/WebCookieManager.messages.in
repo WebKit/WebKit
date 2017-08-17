@@ -24,22 +24,22 @@
  */
  
  messages -> WebCookieManager {
-    void GetHostnamesWithCookies(WebCore::SessionID sessionID, WebKit::CallbackID callbackID)
-    void DeleteCookiesForHostname(WebCore::SessionID sessionID, String hostname)
-    void DeleteAllCookies(WebCore::SessionID sessionID)
+    void GetHostnamesWithCookies(PAL::SessionID sessionID, WebKit::CallbackID callbackID)
+    void DeleteCookiesForHostname(PAL::SessionID sessionID, String hostname)
+    void DeleteAllCookies(PAL::SessionID sessionID)
 
-    void SetCookie(WebCore::SessionID sessionID, struct WebCore::Cookie cookie, WebKit::CallbackID callbackID)
-    void SetCookies(WebCore::SessionID sessionID, Vector<WebCore::Cookie> cookies, WebCore::URL url, WebCore::URL mainDocumentURL, WebKit::CallbackID callbackID)
-    void GetAllCookies(WebCore::SessionID sessionID, WebKit::CallbackID callbackID)
-    void GetCookies(WebCore::SessionID sessionID, WebCore::URL url, WebKit::CallbackID callbackID)
-    void DeleteCookie(WebCore::SessionID sessionID, struct WebCore::Cookie cookie, WebKit::CallbackID callbackID)
-    void DeleteAllCookiesModifiedSince(WebCore::SessionID sessionID, std::chrono::system_clock::time_point time, WebKit::CallbackID callbackID)
+    void SetCookie(PAL::SessionID sessionID, struct WebCore::Cookie cookie, WebKit::CallbackID callbackID)
+    void SetCookies(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookies, WebCore::URL url, WebCore::URL mainDocumentURL, WebKit::CallbackID callbackID)
+    void GetAllCookies(PAL::SessionID sessionID, WebKit::CallbackID callbackID)
+    void GetCookies(PAL::SessionID sessionID, WebCore::URL url, WebKit::CallbackID callbackID)
+    void DeleteCookie(PAL::SessionID sessionID, struct WebCore::Cookie cookie, WebKit::CallbackID callbackID)
+    void DeleteAllCookiesModifiedSince(PAL::SessionID sessionID, std::chrono::system_clock::time_point time, WebKit::CallbackID callbackID)
 
     void SetHTTPCookieAcceptPolicy(uint32_t policy, WebKit::OptionalCallbackID callbackID)
     void GetHTTPCookieAcceptPolicy(WebKit::CallbackID callbackID)
     
-    void StartObservingCookieChanges(WebCore::SessionID sessionID)
-    void StopObservingCookieChanges(WebCore::SessionID sessionID)
+    void StartObservingCookieChanges(PAL::SessionID sessionID)
+    void StopObservingCookieChanges(PAL::SessionID sessionID)
 
 #if USE(SOUP)
     SetCookiePersistentStorage(String storagePath, uint32_t storageType)

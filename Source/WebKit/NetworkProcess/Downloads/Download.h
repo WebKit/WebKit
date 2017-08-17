@@ -32,8 +32,8 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/SessionID.h>
 #include <memory>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 
@@ -76,9 +76,9 @@ class Download : public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download); WTF_MAKE_FAST_ALLOCATED;
 public:
 #if USE(NETWORK_SESSION)
-    Download(DownloadManager&, DownloadID, NetworkDataTask&, const WebCore::SessionID& sessionID, const String& suggestedFilename = { });
+    Download(DownloadManager&, DownloadID, NetworkDataTask&, const PAL::SessionID& sessionID, const String& suggestedFilename = { });
 #if PLATFORM(COCOA)
-    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, const WebCore::SessionID& sessionID, const String& suggestedFilename = { });
+    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, const PAL::SessionID& sessionID, const String& suggestedFilename = { });
 #endif
 #else
     Download(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
@@ -143,7 +143,7 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDownloadTask> m_downloadTask;
 #endif
-    WebCore::SessionID m_sessionID;
+    PAL::SessionID m_sessionID;
 #else // USE(NETWORK_SESSION)
     WebCore::ResourceRequest m_request;
     String m_responseMIMEType;

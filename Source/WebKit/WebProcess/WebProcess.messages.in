@@ -47,14 +47,14 @@ messages -> WebProcess LegacyReceiver {
 
     ClearCachedCredentials()
 
-    EnsurePrivateBrowsingSession(WebCore::SessionID sessionID)
+    EnsurePrivateBrowsingSession(PAL::SessionID sessionID)
     AddWebsiteDataStore(struct WebKit::WebsiteDataStoreParameters websiteDataStoreParameters);
-    DestroySession(WebCore::SessionID sessionID)
+    DestroySession(PAL::SessionID sessionID)
 
     # Plug-ins.
-    DidAddPlugInAutoStartOriginHash(uint32_t hash, double expirationTime, WebCore::SessionID sessionID)
+    DidAddPlugInAutoStartOriginHash(uint32_t hash, double expirationTime, PAL::SessionID sessionID)
     ResetPlugInAutoStartOriginDefaultHashes(HashMap<uint32_t,double> hashes)
-    ResetPlugInAutoStartOriginHashes(HashMap<WebCore::SessionID, HashMap<uint32_t,double>> hashes)
+    ResetPlugInAutoStartOriginHashes(HashMap<PAL::SessionID, HashMap<uint32_t,double>> hashes)
     SetPluginLoadClientPolicy(uint8_t policy, String host, String bundleIdentifier, String versionString)
     ResetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, uint8_t>>> pluginLoadClientPolicies)
     ClearPluginClientPolicies()
@@ -77,9 +77,9 @@ messages -> WebProcess LegacyReceiver {
 
     ReleasePageCache()
 
-    FetchWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData)
-    DeleteWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince) -> ()
-    DeleteWebsiteDataForOrigins(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> ()
+    FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData)
+    DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince) -> ()
+    DeleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> ()
 
     SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
     SetProcessSuppressionEnabled(bool flag)

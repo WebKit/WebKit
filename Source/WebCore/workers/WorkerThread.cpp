@@ -72,7 +72,7 @@ unsigned WorkerThread::workerThreadCount()
 struct WorkerThreadStartupData {
     WTF_MAKE_NONCOPYABLE(WorkerThreadStartupData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerThreadStartupData(const URL& scriptURL, const String& identifier, const String& userAgent, const String& sourceCode, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, SessionID);
+    WorkerThreadStartupData(const URL& scriptURL, const String& identifier, const String& userAgent, const String& sourceCode, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, PAL::SessionID);
 
     URL m_scriptURL;
     String m_identifier;
@@ -83,10 +83,10 @@ public:
     bool m_shouldBypassMainWorldContentSecurityPolicy;
     Ref<SecurityOrigin> m_topOrigin;
     MonotonicTime m_timeOrigin;
-    SessionID m_sessionID;
+    PAL::SessionID m_sessionID;
 };
 
-WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const String& identifier, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, SessionID sessionID)
+WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const String& identifier, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, PAL::SessionID sessionID)
     : m_scriptURL(scriptURL.isolatedCopy())
     , m_identifier(identifier.isolatedCopy())
     , m_userAgent(userAgent.isolatedCopy())
@@ -100,7 +100,7 @@ WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const Str
 {
 }
 
-WorkerThread::WorkerThread(const URL& scriptURL, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags, SessionID sessionID)
+WorkerThread::WorkerThread(const URL& scriptURL, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags, PAL::SessionID sessionID)
     : m_workerLoaderProxy(workerLoaderProxy)
     , m_workerReportingProxy(workerReportingProxy)
     , m_runtimeFlags(runtimeFlags)

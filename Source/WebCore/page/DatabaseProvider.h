@@ -27,9 +27,11 @@
 
 #include <wtf/RefCounted.h>
 
-namespace WebCore {
-
+namespace PAL {
 class SessionID;
+}
+
+namespace WebCore {
 
 namespace IDBClient {
 class IDBConnectionToServer;
@@ -40,7 +42,7 @@ public:
     virtual ~DatabaseProvider();
 
 #if ENABLE(INDEXED_DATABASE)
-    virtual IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const SessionID&) = 0;
+    virtual IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) = 0;
 #endif
 };
 

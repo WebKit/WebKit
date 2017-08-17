@@ -33,7 +33,7 @@ class TextResourceDecoder;
 
 class CachedScript final : public CachedResource {
 public:
-    CachedScript(CachedResourceRequest&&, SessionID);
+    CachedScript(CachedResourceRequest&&, PAL::SessionID);
     virtual ~CachedScript();
 
     StringView script();

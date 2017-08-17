@@ -191,7 +191,7 @@
         return nullptr;
     
     WebCore::ResourceRequest request(url);
-    WebCore::CachedResource* cachedResource = WebCore::MemoryCache::singleton().resourceForRequest(request, WebCore::SessionID::defaultSessionID());
+    WebCore::CachedResource* cachedResource = WebCore::MemoryCache::singleton().resourceForRequest(request, PAL::SessionID::defaultSessionID());
     if (!is<WebCore::CachedImage>(cachedResource))
         return nullptr;
     WebCore::CachedImage& cachedImage = downcast<WebCore::CachedImage>(*cachedResource);

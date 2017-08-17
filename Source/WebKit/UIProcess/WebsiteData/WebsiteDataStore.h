@@ -29,7 +29,7 @@
 #include <WebCore/Cookie.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
@@ -81,13 +81,13 @@ public:
         String cookieStorageFile;
     };
     static Ref<WebsiteDataStore> createNonPersistent();
-    static Ref<WebsiteDataStore> create(Configuration, WebCore::SessionID);
+    static Ref<WebsiteDataStore> create(Configuration, PAL::SessionID);
     virtual ~WebsiteDataStore();
 
     uint64_t identifier() const { return m_identifier; }
 
     bool isPersistent() const { return !m_sessionID.isEphemeral(); }
-    WebCore::SessionID sessionID() const { return m_sessionID; }
+    PAL::SessionID sessionID() const { return m_sessionID; }
 
     bool resourceLoadStatisticsEnabled() const;
     void setResourceLoadStatisticsEnabled(bool);
@@ -131,8 +131,8 @@ public:
     void enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback);
 
 private:
-    explicit WebsiteDataStore(WebCore::SessionID);
-    explicit WebsiteDataStore(Configuration, WebCore::SessionID);
+    explicit WebsiteDataStore(PAL::SessionID);
+    explicit WebsiteDataStore(Configuration, PAL::SessionID);
 
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
@@ -159,7 +159,7 @@ private:
     static void removeMediaKeys(const String& mediaKeysStorageDirectory, const HashSet<WebCore::SecurityOriginData>&);
 
     const uint64_t m_identifier;
-    const WebCore::SessionID m_sessionID;
+    const PAL::SessionID m_sessionID;
 
     const Configuration m_configuration;
     Configuration m_resolvedConfiguration;

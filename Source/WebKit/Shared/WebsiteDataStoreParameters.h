@@ -27,7 +27,7 @@
 
 #include "SandboxExtension.h"
 #include <WebCore/Cookie.h>
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,7 +46,7 @@ struct WebsiteDataStoreParameters {
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, WebsiteDataStoreParameters&);
 
-    WebCore::SessionID sessionID;
+    PAL::SessionID sessionID;
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
     SandboxExtension::Handle cookieStoragePathExtensionHandle;
     Vector<WebCore::Cookie> pendingCookies;

@@ -28,7 +28,7 @@
 
 #include <wtf/MainThread.h>
 
-namespace WebCore {
+namespace PAL {
 
 static uint64_t currentPersistentID = SessionID::DefaultSessionID;
 static uint64_t currentEphemeralID = SessionID::LegacyPrivateSessionID;
@@ -60,4 +60,4 @@ SessionID SessionID::isolatedCopy() const
     return SessionID { m_sessionID };
 }
 
-} // namespace WebCore
+} // namespace PAL

@@ -63,7 +63,7 @@ static void wssSocketClientEventCallback(GSocketClient*, GSocketClientEvent even
     g_signal_connect(connection, "accept-certificate", G_CALLBACK(wssConnectionAcceptCertificateCallback), nullptr);
 }
 
-Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, SocketStreamHandleClient& client, SessionID, const String&, SourceApplicationAuditToken&&)
+Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&)
 {
     Ref<SocketStreamHandleImpl> socket = adoptRef(*new SocketStreamHandleImpl(url, client));
 

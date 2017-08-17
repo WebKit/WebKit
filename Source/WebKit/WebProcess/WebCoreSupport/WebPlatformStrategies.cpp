@@ -59,10 +59,10 @@
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/ResourceError.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/StorageNamespace.h>
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/URL.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Atomics.h>
 
 #if PLATFORM(MAC)
@@ -135,7 +135,7 @@ String WebPlatformStrategies::cookieRequestHeaderFieldValue(const NetworkStorage
     return cookieRequestHeaderFieldValue(session.sessionID(), firstParty, url);
 }
 
-String WebPlatformStrategies::cookieRequestHeaderFieldValue(SessionID sessionID, const URL& firstParty, const URL& url)
+String WebPlatformStrategies::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const URL& url)
 {
     String result;
     if (!WebProcess::singleton().networkConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(sessionID, firstParty, url), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(result), 0))

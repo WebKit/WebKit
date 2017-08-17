@@ -23,7 +23,7 @@
 messages -> StorageToWebProcessConnection LegacyReceiver {
 #if ENABLE(INDEXED_DATABASE)
     # Creates a connection for communication with a WebProcess
-    EstablishIDBConnectionToServer(WebCore::SessionID sessionID) -> (uint64_t serverConnectionIdentifier)
+    EstablishIDBConnectionToServer(PAL::SessionID sessionID) -> (uint64_t serverConnectionIdentifier)
     RemoveIDBConnectionToServer(uint64_t serverConnectionIdentifier)
 #endif
 }

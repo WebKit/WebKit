@@ -69,7 +69,7 @@ static RetainPtr<CFURLStorageSessionRef> createCFStorageSessionForIdentifier(CFS
     return storageSession;
 }
 
-NetworkStorageSession::NetworkStorageSession(SessionID sessionID, RetainPtr<CFURLStorageSessionRef>&& platformSession, RetainPtr<CFHTTPCookieStorageRef>&& platformCookieStorage)
+NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, RetainPtr<CFURLStorageSessionRef>&& platformSession, RetainPtr<CFHTTPCookieStorageRef>&& platformCookieStorage)
     : m_sessionID(sessionID)
     , m_platformSession(WTFMove(platformSession))
 {
@@ -99,23 +99,23 @@ void NetworkStorageSession::switchToNewTestingSession()
     if (session)
         cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, session.get()));
 
-    defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
+    defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
 }
 
 NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 {
     if (!defaultNetworkStorageSession())
-        defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), nullptr, nullptr);
+        defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID(), nullptr, nullptr);
     return *defaultNetworkStorageSession();
 }
 
-void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID sessionID, const String& identifierBase)
+void NetworkStorageSession::ensurePrivateBrowsingSession(PAL::SessionID sessionID, const String& identifierBase)
 {
     ASSERT(sessionID.isEphemeral());
     ensureSession(sessionID, identifierBase);
 }
 
-void NetworkStorageSession::ensureSession(SessionID sessionID, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&& cookieStorage)
+void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&& cookieStorage)
 {
     auto addResult = globalSessionMap().add(sessionID, nullptr);
     if (!addResult.isNewEntry)
@@ -139,7 +139,7 @@ void NetworkStorageSession::ensureSession(SessionID sessionID, const String& ide
     addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
 }
 
-void NetworkStorageSession::ensureSession(SessionID sessionID, const String& identifierBase)
+void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String& identifierBase)
 {
     ensureSession(sessionID, identifierBase, nullptr);
 }

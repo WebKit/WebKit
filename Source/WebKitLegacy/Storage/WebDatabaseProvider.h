@@ -41,7 +41,7 @@ public:
     virtual ~WebDatabaseProvider();
 
 #if ENABLE(INDEXED_DATABASE)
-    WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const WebCore::SessionID&) override;
+    WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) override;
 
     void deleteAllDatabases();
 #endif

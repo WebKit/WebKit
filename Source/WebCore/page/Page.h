@@ -32,13 +32,13 @@
 #include "RTCController.h"
 #include "Region.h"
 #include "ScrollTypes.h"
-#include "SessionID.h"
 #include "Supplementable.h"
 #include "Timer.h"
 #include "UserInterfaceLayoutDirection.h"
 #include "ViewportArguments.h"
 #include "WheelEventTestTrigger.h"
 #include <memory>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -510,8 +510,8 @@ public:
     VisitedLinkStore& visitedLinkStore();
     WEBCORE_EXPORT void setVisitedLinkStore(Ref<VisitedLinkStore>&&);
 
-    WEBCORE_EXPORT SessionID sessionID() const;
-    WEBCORE_EXPORT void setSessionID(SessionID);
+    WEBCORE_EXPORT PAL::SessionID sessionID() const;
+    WEBCORE_EXPORT void setSessionID(PAL::SessionID);
     WEBCORE_EXPORT void enableLegacyPrivateBrowsing(bool privateBrowsingEnabled);
     bool usesEphemeralSession() const { return m_sessionID.isEphemeral(); }
 
@@ -781,7 +781,7 @@ private:
     std::unique_ptr<ResourceUsageOverlay> m_resourceUsageOverlay;
 #endif
 
-    SessionID m_sessionID;
+    PAL::SessionID m_sessionID;
 
     bool m_isClosing { false };
 

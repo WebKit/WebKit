@@ -1,4 +1,5 @@
 set(PAL_SOURCES
+    identifier/SessionID.cpp
     system/SleepDisabler.cpp
     system/SystemSleepListener.cpp
 )
@@ -10,6 +11,7 @@ set(PAL_INCLUDE_DIRECTORIES
 set(PAL_PRIVATE_INCLUDE_DIRECTORIES
     "${PAL_DIR}/pal"
     "${PAL_DIR}/pal/crypto"
+    "${PAL_DIR}/pal/identifier"
     "${PAL_DIR}/pal/system"
     "${PAL_DIR}/pal/text"
 )

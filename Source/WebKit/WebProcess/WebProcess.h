@@ -35,8 +35,8 @@
 #include "WebInspectorInterruptDispatcher.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/HysteresisActivity.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/Timer.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -56,13 +56,16 @@ namespace API {
 class Object;
 }
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 class ApplicationCacheStorage;
 class CPUMonitor;
 class CertificateInfo;
 class PageGroup;
 class ResourceRequest;
-class SessionID;
 class UserGestureToken;
 struct PluginInfo;
 struct SecurityOriginData;
@@ -126,8 +129,8 @@ public:
 #endif
 
     bool shouldPlugInAutoStartFromOrigin(WebPage&, const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
-    void plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID);
-    void plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID);
+    void plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, PAL::SessionID);
+    void plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, PAL::SessionID);
     void setPluginLoadClientPolicy(uint8_t policy, const String& host, const String& bundleIdentifier, const String& versionString);
     void resetPluginLoadClientPolicies(const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>&);
     void clearPluginClientPolicies();
@@ -170,10 +173,10 @@ public:
 
     void setCacheModel(uint32_t);
 
-    void ensurePrivateBrowsingSession(WebCore::SessionID);
+    void ensurePrivateBrowsingSession(PAL::SessionID);
     void ensureLegacyPrivateBrowsingSessionInNetworkProcess();
     void addWebsiteDataStore(WebsiteDataStoreParameters&&);
-    void destroySession(WebCore::SessionID);
+    void destroySession(PAL::SessionID);
 
     void pageDidEnterWindow(uint64_t pageID);
     void pageWillLeaveWindow(uint64_t pageID);
@@ -262,10 +265,10 @@ private:
     void userPreferredLanguagesChanged(const Vector<String>&) const;
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 
-    bool isPlugInAutoStartOriginHash(unsigned plugInOriginHash, WebCore::SessionID);
-    void didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime, WebCore::SessionID);
+    bool isPlugInAutoStartOriginHash(unsigned plugInOriginHash, PAL::SessionID);
+    void didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime, PAL::SessionID);
     void resetPlugInAutoStartOriginDefaultHashes(const HashMap<unsigned, double>& hashes);
-    void resetPlugInAutoStartOriginHashes(const HashMap<WebCore::SessionID, HashMap<unsigned, double>>& hashes);
+    void resetPlugInAutoStartOriginHashes(const HashMap<PAL::SessionID, HashMap<unsigned, double>>& hashes);
 
     void platformSetCacheModel(CacheModel);
 
@@ -293,9 +296,9 @@ private:
 
     void releasePageCache();
 
-    void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, WebsiteData&);
-    void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince);
-    void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins);
+    void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WebsiteData&);
+    void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince);
+    void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins);
 
     void setMemoryCacheDisabled(bool);
 
@@ -355,7 +358,7 @@ private:
 #endif
     RefPtr<WebInspectorInterruptDispatcher> m_webInspectorInterruptDispatcher;
 
-    HashMap<WebCore::SessionID, HashMap<unsigned, double>> m_plugInAutoStartOriginHashes;
+    HashMap<PAL::SessionID, HashMap<unsigned, double>> m_plugInAutoStartOriginHashes;
     HashSet<String> m_plugInAutoStartOrigins;
 
     bool m_hasSetCacheModel { false };

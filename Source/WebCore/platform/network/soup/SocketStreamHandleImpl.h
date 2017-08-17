@@ -36,7 +36,7 @@
 
 #if USE(SOUP)
 
-#include "SessionID.h"
+#include <pal/identifier/SessionID.h>
 #include <wtf/StreamBuffer.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -47,7 +47,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl final : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL&, SocketStreamHandleClient&, SessionID, const String&, SourceApplicationAuditToken&&);
+    static Ref<SocketStreamHandleImpl> create(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String&, SourceApplicationAuditToken&&);
     static Ref<SocketStreamHandle> create(GSocketConnection*, SocketStreamHandleClient&);
 
     virtual ~SocketStreamHandleImpl();

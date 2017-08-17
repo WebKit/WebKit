@@ -64,7 +64,7 @@ extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 
 namespace WebCore {
 
-SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData)
+SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData)
     : SocketStreamHandle(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)

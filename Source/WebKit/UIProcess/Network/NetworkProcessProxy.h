@@ -35,6 +35,10 @@
 #include <memory>
 #include <wtf/Deque.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 class AuthenticationChallenge;
 class ProtectionSpace;
@@ -42,7 +46,6 @@ class ResourceRequest;
 enum class ShouldSample;
 class SecurityOrigin;
 struct SecurityOriginData;
-class SessionID;
 }
 
 namespace WebKit {
@@ -64,9 +67,9 @@ public:
 
     DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&);
 
-    void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, WTF::Function<void(WebsiteData)>&& completionHandler);
-    void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void()>&& completionHandler);
-    void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebKit::WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, WTF::Function<void()>&& completionHandler);
+    void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, WTF::Function<void(WebsiteData)>&& completionHandler);
+    void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void()>&& completionHandler);
+    void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebKit::WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, WTF::Function<void()>&& completionHandler);
 
 #if PLATFORM(COCOA)
     void setProcessSuppressionEnabled(bool);

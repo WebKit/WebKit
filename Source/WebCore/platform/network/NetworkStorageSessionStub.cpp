@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-NetworkStorageSession::NetworkStorageSession(SessionID sessionID, NetworkingContext* context)
+NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, NetworkingContext* context)
     : m_sessionID(sessionID)
     , m_context(context)
 {
@@ -49,12 +49,12 @@ NetworkingContext* NetworkStorageSession::context() const
     return m_context.get();
 }
 
-void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID, const String&)
+void NetworkStorageSession::ensurePrivateBrowsingSession(PAL::SessionID, const String&)
 {
     ASSERT_NOT_REACHED();
 }
 
-void NetworkStorageSession::ensureSession(SessionID, const String&)
+void NetworkStorageSession::ensureSession(PAL::SessionID, const String&)
 {
     ASSERT_NOT_REACHED();
 }
@@ -68,7 +68,7 @@ static std::unique_ptr<NetworkStorageSession>& defaultSession()
 NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 {
     if (!defaultSession())
-        defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), nullptr);
+        defaultSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID(), nullptr);
     return *defaultSession();
 }
 

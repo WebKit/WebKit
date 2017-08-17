@@ -66,12 +66,12 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
-#include "SessionID.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
 #include "SubresourceLoader.h"
 #include "UserContentController.h"
 #include "UserStyleSheet.h"
+#include <pal/identifier/SessionID.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -94,7 +94,7 @@ static inline ResourceErrorOr<CachedResourceHandle<T>> castCachedResourceTo(Reso
     return makeUnexpected(cachedResource.error());
 }
 
-static CachedResource* createResource(CachedResource::Type type, CachedResourceRequest&& request, SessionID sessionID)
+static CachedResource* createResource(CachedResource::Type type, CachedResourceRequest&& request, PAL::SessionID sessionID)
 {
     switch (type) {
     case CachedResource::ImageResource:
@@ -179,9 +179,9 @@ Frame* CachedResourceLoader::frame() const
     return m_documentLoader ? m_documentLoader->frame() : nullptr;
 }
 
-SessionID CachedResourceLoader::sessionID() const
+PAL::SessionID CachedResourceLoader::sessionID() const
 {
-    SessionID sessionID = SessionID::defaultSessionID();
+    PAL::SessionID sessionID = PAL::SessionID::defaultSessionID();
 
     if (Frame* f = frame())
         sessionID = f->page()->sessionID();

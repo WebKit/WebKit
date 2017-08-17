@@ -30,7 +30,7 @@
 #include "MessageReceiver.h"
 #include "WebContextSupplement.h"
 #include "WebCookieManagerProxyClient.h"
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -64,27 +64,27 @@ public:
 
     void initializeClient(const WKCookieManagerClientBase*);
     
-    void getHostnamesWithCookies(WebCore::SessionID, Function<void (API::Array*, CallbackBase::Error)>&&);
-    void deleteCookie(WebCore::SessionID, const WebCore::Cookie&, Function<void (CallbackBase::Error)>&&);
-    void deleteCookiesForHostname(WebCore::SessionID, const String& hostname);
-    void deleteAllCookies(WebCore::SessionID);
-    void deleteAllCookiesModifiedSince(WebCore::SessionID, std::chrono::system_clock::time_point, Function<void (CallbackBase::Error)>&&);
+    void getHostnamesWithCookies(PAL::SessionID, Function<void (API::Array*, CallbackBase::Error)>&&);
+    void deleteCookie(PAL::SessionID, const WebCore::Cookie&, Function<void (CallbackBase::Error)>&&);
+    void deleteCookiesForHostname(PAL::SessionID, const String& hostname);
+    void deleteAllCookies(PAL::SessionID);
+    void deleteAllCookiesModifiedSince(PAL::SessionID, std::chrono::system_clock::time_point, Function<void (CallbackBase::Error)>&&);
 
-    void setCookie(WebCore::SessionID, const WebCore::Cookie&, Function<void (CallbackBase::Error)>&&);
-    void setCookies(WebCore::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL, Function<void (CallbackBase::Error)>&&);
+    void setCookie(PAL::SessionID, const WebCore::Cookie&, Function<void (CallbackBase::Error)>&&);
+    void setCookies(PAL::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL, Function<void (CallbackBase::Error)>&&);
 
-    void getAllCookies(WebCore::SessionID, Function<void (const Vector<WebCore::Cookie>&, CallbackBase::Error)>&& completionHandler);
-    void getCookies(WebCore::SessionID, const WebCore::URL&, Function<void (const Vector<WebCore::Cookie>&, CallbackBase::Error)>&& completionHandler);
+    void getAllCookies(PAL::SessionID, Function<void (const Vector<WebCore::Cookie>&, CallbackBase::Error)>&& completionHandler);
+    void getCookies(PAL::SessionID, const WebCore::URL&, Function<void (const Vector<WebCore::Cookie>&, CallbackBase::Error)>&& completionHandler);
 
-    void setHTTPCookieAcceptPolicy(WebCore::SessionID, HTTPCookieAcceptPolicy, Function<void (CallbackBase::Error)>&&);
-    void getHTTPCookieAcceptPolicy(WebCore::SessionID, Function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>&&);
+    void setHTTPCookieAcceptPolicy(PAL::SessionID, HTTPCookieAcceptPolicy, Function<void (CallbackBase::Error)>&&);
+    void getHTTPCookieAcceptPolicy(PAL::SessionID, Function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)>&&);
 
     void setCookieStoragePartitioningEnabled(bool);
 
-    void startObservingCookieChanges(WebCore::SessionID);
-    void stopObservingCookieChanges(WebCore::SessionID);
+    void startObservingCookieChanges(PAL::SessionID);
+    void stopObservingCookieChanges(PAL::SessionID);
 
-    void setCookieObserverCallback(WebCore::SessionID, WTF::Function<void ()>&&);
+    void setCookieObserverCallback(PAL::SessionID, WTF::Function<void ()>&&);
 
     class Observer {
     public:
@@ -93,8 +93,8 @@ public:
         virtual void managerDestroyed() = 0;
     };
 
-    void registerObserver(WebCore::SessionID, Observer&);
-    void unregisterObserver(WebCore::SessionID, Observer&);
+    void registerObserver(PAL::SessionID, Observer&);
+    void unregisterObserver(PAL::SessionID, Observer&);
 
 #if USE(SOUP)
     void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
@@ -115,7 +115,7 @@ private:
     void didGetCookies(const Vector<WebCore::Cookie>&, WebKit::CallbackID);
     void didDeleteCookies(WebKit::CallbackID);
 
-    void cookiesDidChange(WebCore::SessionID);
+    void cookiesDidChange(PAL::SessionID);
 
     // WebContextSupplement
     void processPoolDestroyed() override;
@@ -133,8 +133,8 @@ private:
 
     CallbackMap m_callbacks;
 
-    HashMap<WebCore::SessionID, WTF::Function<void ()>> m_legacyCookieObservers;
-    HashMap<WebCore::SessionID, HashSet<Observer*>> m_cookieObservers;
+    HashMap<PAL::SessionID, WTF::Function<void ()>> m_legacyCookieObservers;
+    HashMap<PAL::SessionID, HashSet<Observer*>> m_cookieObservers;
 
     WebCookieManagerProxyClient m_client;
 

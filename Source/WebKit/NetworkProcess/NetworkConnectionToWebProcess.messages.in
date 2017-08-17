@@ -29,15 +29,15 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     SetDefersLoading(uint64_t resourceLoadIdentifier, bool defers)
     PrefetchDNS(String hostname)
 
-    StartDownload(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedName)
-    ConvertMainResourceLoadToDownload(WebCore::SessionID sessionID, uint64_t mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)
+    StartDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedName)
+    ConvertMainResourceLoadToDownload(PAL::SessionID sessionID, uint64_t mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)
 
-    CookiesForDOM(WebCore::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (String result)
-    SetCookiesFromDOM(WebCore::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url, String cookieString)
-    CookiesEnabled(WebCore::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (bool enabled)
-    CookieRequestHeaderFieldValue(WebCore::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (String result)
-    GetRawCookies(WebCore::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (Vector<WebCore::Cookie> cookies)
-    DeleteCookie(WebCore::SessionID sessionID, WebCore::URL url, String cookieName)
+    CookiesForDOM(PAL::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (String result)
+    SetCookiesFromDOM(PAL::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url, String cookieString)
+    CookiesEnabled(PAL::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (bool enabled)
+    CookieRequestHeaderFieldValue(PAL::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (String result)
+    GetRawCookies(PAL::SessionID sessionID, WebCore::URL firstParty, WebCore::URL url) -> (Vector<WebCore::Cookie> cookies)
+    DeleteCookie(PAL::SessionID sessionID, WebCore::URL url, String cookieName)
 
     RegisterFileBlobURL(WebCore::URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
     RegisterBlobURL(WebCore::URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
@@ -53,7 +53,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
-    CreateSocketStream(WebCore::URL url, WebCore::SessionID sessionID, String cachePartition, uint64_t identifier)
+    CreateSocketStream(WebCore::URL url, PAL::SessionID sessionID, String cachePartition, uint64_t identifier)
 
     EnsureLegacyPrivateBrowsingSession()
 }

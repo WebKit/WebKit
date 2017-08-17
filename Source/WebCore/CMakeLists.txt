@@ -2158,7 +2158,6 @@ set(WebCore_SOURCES
     page/SecurityOrigin.cpp
     page/SecurityOriginData.cpp
     page/SecurityPolicy.cpp
-    page/SessionID.cpp
     page/Settings.cpp
     page/SocketProvider.cpp
     page/SpatialNavigation.cpp

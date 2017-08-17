@@ -33,7 +33,7 @@ class SubresourceLoader;
 
 class CachedRawResource final : public CachedResource {
 public:
-    CachedRawResource(CachedResourceRequest&&, Type, SessionID);
+    CachedRawResource(CachedResourceRequest&&, Type, PAL::SessionID);
 
     // FIXME: AssociatedURLLoader shouldn't be a DocumentThreadableLoader and therefore shouldn't
     // use CachedRawResource. However, it is, and it needs to be able to defer loading.

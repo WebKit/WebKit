@@ -167,7 +167,7 @@ void Worker::didReceiveResponse(unsigned long identifier, const ResourceResponse
 void Worker::notifyFinished()
 {
     auto* context = scriptExecutionContext();
-    SessionID sessionID = context ? context->sessionID() : SessionID();
+    PAL::SessionID sessionID = context ? context->sessionID() : PAL::SessionID();
 
     if (m_scriptLoader->failed() || !sessionID.isValid())
         dispatchEvent(Event::create(eventNames().errorEvent, false, true));

@@ -115,7 +115,7 @@ static Seconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Ty
 
 DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
-CachedResource::CachedResource(CachedResourceRequest&& request, Type type, SessionID sessionID)
+CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::SessionID sessionID)
     : m_resourceRequest(request.releaseResourceRequest())
     , m_originalRequestHeaders(request.releaseOriginalRequestHeaders())
     , m_options(request.options())
@@ -146,7 +146,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
 }
 
 // FIXME: For this constructor, we should probably mandate that the URL has no fragment identifier.
-CachedResource::CachedResource(const URL& url, Type type, SessionID sessionID)
+CachedResource::CachedResource(const URL& url, Type type, PAL::SessionID sessionID)
     : m_resourceRequest(url)
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)

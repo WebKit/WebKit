@@ -36,7 +36,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NetworkSessionSoup::NetworkSessionSoup(SessionID sessionID)
+NetworkSessionSoup::NetworkSessionSoup(PAL::SessionID sessionID)
     : NetworkSession(sessionID)
 {
     networkStorageSession().setCookieObserverHandler([this] {

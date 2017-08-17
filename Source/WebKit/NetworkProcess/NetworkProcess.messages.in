@@ -38,14 +38,14 @@ messages -> NetworkProcess LegacyReceiver {
 
     EnsurePrivateBrowsingSession(struct WebKit::WebsiteDataStoreParameters websiteDataStoreParameters)
     AddWebsiteDataStore(struct WebKit::WebsiteDataStoreParameters websiteDataStoreParameters);
-    DestroySession(WebCore::SessionID sessionID)
+    DestroySession(PAL::SessionID sessionID)
 
-    FetchWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions, uint64_t callbackID)
-    DeleteWebsiteData(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
-    DeleteWebsiteDataForOrigins(WebCore::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins, Vector<String> cookieHostNames, uint64_t callbackID)
+    FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions, uint64_t callbackID)
+    DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+    DeleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins, Vector<String> cookieHostNames, uint64_t callbackID)
 
-    DownloadRequest(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedFilename)
-    ResumeDownload(WebCore::SessionID sessionID, WebKit::DownloadID downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    DownloadRequest(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedFilename)
+    ResumeDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     CancelDownload(WebKit::DownloadID downloadID)
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

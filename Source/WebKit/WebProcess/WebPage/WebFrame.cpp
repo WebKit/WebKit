@@ -264,11 +264,11 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request, const Stri
     m_policyDownloadID = { };
 
     auto& webProcess = WebProcess::singleton();
-    SessionID sessionID = page() ? page()->sessionID() : SessionID::defaultSessionID();
+    PAL::SessionID sessionID = page() ? page()->sessionID() : PAL::SessionID::defaultSessionID();
     webProcess.networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::StartDownload(sessionID, policyDownloadID, request, suggestedName), 0);
 }
 
-void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response)
+void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response)
 {
     ASSERT(m_policyDownloadID.downloadID());
 

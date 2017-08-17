@@ -47,7 +47,7 @@ using namespace WebCore;
 
 namespace WebKit {
     
-void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
+void WebFrameNetworkingContext::ensurePrivateBrowsingSession(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isEphemeral());
 

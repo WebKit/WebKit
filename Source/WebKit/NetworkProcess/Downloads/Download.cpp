@@ -45,7 +45,7 @@ using namespace WebCore;
 namespace WebKit {
 
 #if USE(NETWORK_SESSION)
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, const SessionID& sessionID, const String& suggestedName)
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NetworkDataTask& download, const PAL::SessionID& sessionID, const String& suggestedName)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
     , m_download(&download)
@@ -57,7 +57,7 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, Netw
     m_downloadManager.didCreateDownload();
 }
 #if PLATFORM(COCOA)
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, const SessionID& sessionID, const String& suggestedName)
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, const PAL::SessionID& sessionID, const String& suggestedName)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
     , m_downloadTask(download)

@@ -71,11 +71,11 @@
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
+#include <pal/identifier/SessionID.h>
 
 #if ENABLE(NOTIFICATIONS)
 #include "WebNotificationManager.h"
@@ -319,9 +319,9 @@ void InjectedBundle::setPrivateBrowsingEnabled(WebPageGroupProxy* pageGroup, boo
 {
     if (enabled) {
         WebProcess::singleton().ensureLegacyPrivateBrowsingSessionInNetworkProcess();
-        WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID());
+        WebFrameNetworkingContext::ensurePrivateBrowsingSession(PAL::SessionID::legacyPrivateSessionID());
     } else
-        SessionTracker::destroySession(SessionID::legacyPrivateSessionID());
+        SessionTracker::destroySession(PAL::SessionID::legacyPrivateSessionID());
 
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)

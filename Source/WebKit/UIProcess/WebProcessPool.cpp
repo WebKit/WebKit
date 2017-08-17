@@ -76,8 +76,8 @@
 #include <WebCore/LinkHash.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/URLParser.h>
+#include <pal/identifier/SessionID.h>
 #include <runtime/JSCInlines.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -584,15 +584,15 @@ void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool private
 {
     if (networkProcess()) {
         if (privateBrowsingEnabled)
-            networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession({SessionID::legacyPrivateSessionID(), { }, { }, { }}), 0);
+            networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession({PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }}), 0);
         else
-            networkProcess()->send(Messages::NetworkProcess::DestroySession(SessionID::legacyPrivateSessionID()), 0);
+            networkProcess()->send(Messages::NetworkProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()), 0);
     }
 
     if (privateBrowsingEnabled)
-        sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()));
+        sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession(PAL::SessionID::legacyPrivateSessionID()));
     else
-        sendToAllProcesses(Messages::WebProcess::DestroySession(SessionID::legacyPrivateSessionID()));
+        sendToAllProcesses(Messages::WebProcess::DestroySession(PAL::SessionID::legacyPrivateSessionID()));
 }
 
 void (*s_invalidMessageCallback)(WKStringRef messageName);
@@ -774,7 +774,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
 #endif
 
     if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
-        process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(SessionID::legacyPrivateSessionID()), 0);
+        process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(PAL::SessionID::legacyPrivateSessionID()), 0);
 
     if (m_automationSession)
         process->send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
@@ -926,7 +926,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     if (!pageConfiguration->websiteDataStore()) {
         ASSERT(!pageConfiguration->sessionID().isValid());
         pageConfiguration->setWebsiteDataStore(m_websiteDataStore.ptr());
-        pageConfiguration->setSessionID(pageConfiguration->preferences()->privateBrowsingEnabled() ? SessionID::legacyPrivateSessionID() : m_websiteDataStore->websiteDataStore().sessionID());
+        pageConfiguration->setSessionID(pageConfiguration->preferences()->privateBrowsingEnabled() ? PAL::SessionID::legacyPrivateSessionID() : m_websiteDataStore->websiteDataStore().sessionID());
     }
 
     RefPtr<WebProcessProxy> process;
@@ -954,7 +954,7 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
         ASSERT(page.websiteDataStore().parameters().sessionID == sessionID);
         sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(page.websiteDataStore().parameters()));
         page.process().send(Messages::WebProcess::EnsurePrivateBrowsingSession(sessionID), 0);
-    } else if (sessionID != SessionID::defaultSessionID()) {
+    } else if (sessionID != PAL::SessionID::defaultSessionID()) {
         sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()));
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
 
@@ -978,10 +978,10 @@ void WebProcessPool::pageRemovedFromProcess(WebPageProxy& page)
     if (iterator->value.isEmpty()) {
         m_sessionToPagesMap.remove(iterator);
 
-        if (sessionID == SessionID::defaultSessionID())
+        if (sessionID == PAL::SessionID::defaultSessionID())
             return;
 
-        // The last user of this non-default SessionID is gone, so clean it up in the child processes.
+        // The last user of this non-default PAL::SessionID is gone, so clean it up in the child processes.
         if (networkProcess())
             networkProcess()->send(Messages::NetworkProcess::DestroySession(sessionID), 0);
         page.process().send(Messages::WebProcess::DestroySession(sessionID), 0);
@@ -991,7 +991,7 @@ void WebProcessPool::pageRemovedFromProcess(WebPageProxy& page)
 DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const ResourceRequest& request, const String& suggestedFilename)
 {
     DownloadProxy* downloadProxy = createDownloadProxy(request);
-    SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : SessionID::defaultSessionID();
+    PAL::SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : PAL::SessionID::defaultSessionID();
 
     if (initiatingPage)
         initiatingPage->handleDownloadRequest(downloadProxy);
@@ -1021,7 +1021,7 @@ DownloadProxy* WebProcessPool::resumeDownload(const API::Data* resumeData, const
 
     if (networkProcess()) {
         // FIXME: If we started a download in an ephemeral session and that session still exists, we should find a way to use that same session.
-        networkProcess()->send(Messages::NetworkProcess::ResumeDownload(SessionID::defaultSessionID(), downloadProxy->downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
+        networkProcess()->send(Messages::NetworkProcess::ResumeDownload(PAL::SessionID::defaultSessionID(), downloadProxy->downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
         return downloadProxy;
     }
 
@@ -1534,12 +1534,12 @@ void WebProcessPool::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
     sendToAllProcesses(Messages::WebProcess::SetJavaScriptGarbageCollectorTimerEnabled(flag));
 }
 
-void WebProcessPool::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, SessionID sessionID)
+void WebProcessPool::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, PAL::SessionID sessionID)
 {
     m_plugInAutoStartProvider.addAutoStartOriginHash(pageOrigin, plugInOriginHash, sessionID);
 }
 
-void WebProcessPool::plugInDidReceiveUserInteraction(unsigned plugInOriginHash, SessionID sessionID)
+void WebProcessPool::plugInDidReceiveUserInteraction(unsigned plugInOriginHash, PAL::SessionID sessionID)
 {
     m_plugInAutoStartProvider.didReceiveUserInteraction(plugInOriginHash, sessionID);
 }

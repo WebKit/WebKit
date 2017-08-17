@@ -45,12 +45,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<WebIDBConnectionToClient> WebIDBConnectionToClient::create(StorageToWebProcessConnection& connection, uint64_t serverConnectionIdentifier, WebCore::SessionID sessionID)
+Ref<WebIDBConnectionToClient> WebIDBConnectionToClient::create(StorageToWebProcessConnection& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
 {
     return adoptRef(*new WebIDBConnectionToClient(connection, serverConnectionIdentifier, sessionID));
 }
 
-WebIDBConnectionToClient::WebIDBConnectionToClient(StorageToWebProcessConnection& connection, uint64_t serverConnectionIdentifier, WebCore::SessionID sessionID)
+WebIDBConnectionToClient::WebIDBConnectionToClient(StorageToWebProcessConnection& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
     : m_connection(connection)
     , m_identifier(serverConnectionIdentifier)
     , m_sessionID(sessionID)

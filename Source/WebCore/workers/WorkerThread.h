@@ -31,13 +31,16 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class ContentSecurityPolicyResponseHeaders;
 class URL;
 class NotificationClient;
 class SecurityOrigin;
-class SessionID;
 class SocketProvider;
 class WorkerGlobalScope;
 class WorkerLoaderProxy;
@@ -81,10 +84,10 @@ public:
     JSC::RuntimeFlags runtimeFlags() const { return m_runtimeFlags; }
 
 protected:
-    WorkerThread(const URL&, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags, SessionID);
+    WorkerThread(const URL&, const String& identifier, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags, PAL::SessionID);
 
     // Factory method for creating a new worker context for the thread.
-    virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, SessionID) = 0;
+    virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& identifier, const String& userAgent, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID) = 0;
 
     // Executes the event loop for the worker thread. Derived classes can override to perform actions before/after entering the event loop.
     virtual void runEventLoop();

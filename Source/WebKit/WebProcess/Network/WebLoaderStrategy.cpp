@@ -59,9 +59,9 @@
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/SecurityOrigin.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SubresourceLoader.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/text/CString.h>
 
 #if USE(QUICK_LOOK)
@@ -222,7 +222,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     loadParameters.identifier = identifier;
     loadParameters.webPageID = webPage ? webPage->pageID() : 0;
     loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
-    loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
+    loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.request = resourceLoader.request();
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
     loadParameters.allowStoredCredentials = allowStoredCredentials;
@@ -366,7 +366,7 @@ void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, un
     loadParameters.identifier = resourceLoadIdentifier;
     loadParameters.webPageID = webPage ? webPage->pageID() : 0;
     loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
-    loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
+    loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = SniffContent;
     loadParameters.allowStoredCredentials = storedCredentials;
@@ -402,7 +402,7 @@ void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, R
     loadParameters.request = request;
     loadParameters.originalRequestHeaders = WTFMove(originalRequestHeaders);
     loadParameters.sourceOrigin = WTFMove(sourceOrigin);
-    loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
+    loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.allowStoredCredentials = options.credentials == FetchOptions::Credentials::Omit ? DoNotAllowStoredCredentials : AllowStoredCredentials;
     loadParameters.mode = options.mode;
     loadParameters.shouldFollowRedirects = options.redirect == FetchOptions::Redirect::Follow;

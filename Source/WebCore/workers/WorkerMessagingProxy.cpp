@@ -70,7 +70,7 @@ WorkerMessagingProxy::~WorkerMessagingProxy()
         || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && currentThread() == downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().threadID()));
 }
 
-void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, JSC::RuntimeFlags runtimeFlags, SessionID sessionID)
+void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, JSC::RuntimeFlags runtimeFlags, PAL::SessionID sessionID)
 {
     // FIXME: This need to be revisited when we support nested worker one day
     ASSERT(m_scriptExecutionContext);

@@ -2193,7 +2193,6 @@
 		511EF2CA17F0FD3500E4FA16 /* JSIDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2B417F0FC4800E4FA16 /* JSIDBTransaction.cpp */; };
 		511EF2CB17F0FD3500E4FA16 /* JSIDBVersionChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 269239911505E1AA009E57FC /* JSIDBVersionChangeEvent.cpp */; };
 		511EF2D117F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */; };
-		511F7D441EB1C39100E47B83 /* SessionID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F7D431EB1C38900E47B83 /* SessionID.cpp */; };
 		5120BBAE1F1CE8CE00EFEBF1 /* CookieStorageObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5120BBAC1F1CE77000EFEBF1 /* CookieStorageObserver.mm */; };
 		5120BBAF1F1CECE700EFEBF1 /* CookieStorageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5120BBAD1F1CE77000EFEBF1 /* CookieStorageObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512BDB4A1C456FF5006494DF /* SQLiteIDBBackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512BDB481C456FAB006494DF /* SQLiteIDBBackingStore.cpp */; };
@@ -2999,7 +2998,6 @@
 		754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */; };
 		7553CFE8108F473F00EA281E /* TimelineRecordFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */; };
 		7553CFE9108F473F00EA281E /* TimelineRecordFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */; };
-		756B2CE118B7101600FECFAA /* SessionID.h in Headers */ = {isa = PBXBuildFile; fileRef = 756B2CE018B7101600FECFAA /* SessionID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75793E830D0CE0B3007FC0AC /* MessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */; };
 		75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793E810D0CE0B3007FC0AC /* MessageEvent.h */; };
 		75793EC80D0CE72D007FC0AC /* JSMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793EC60D0CE72D007FC0AC /* JSMessageEvent.cpp */; };
@@ -9927,7 +9925,6 @@
 		511EF2B317F0FC4800E4FA16 /* JSIDBRequest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBRequest.cpp; sourceTree = "<group>"; };
 		511EF2B417F0FC4800E4FA16 /* JSIDBTransaction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBTransaction.cpp; sourceTree = "<group>"; };
 		511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBObjectStoreCustom.cpp; sourceTree = "<group>"; };
-		511F7D431EB1C38900E47B83 /* SessionID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionID.cpp; sourceTree = "<group>"; };
 		511FAEA91BDC989A00B4AFE4 /* ThreadSafeDataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSafeDataBuffer.h; sourceTree = "<group>"; };
 		5120BBAC1F1CE77000EFEBF1 /* CookieStorageObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageObserver.mm; sourceTree = "<group>"; };
 		5120BBAD1F1CE77000EFEBF1 /* CookieStorageObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieStorageObserver.h; sourceTree = "<group>"; };
@@ -11019,7 +11016,6 @@
 		754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTimelineAgent.cpp; sourceTree = "<group>"; };
 		7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineRecordFactory.h; sourceTree = "<group>"; };
 		7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineRecordFactory.cpp; sourceTree = "<group>"; };
-		756B2CE018B7101600FECFAA /* SessionID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionID.h; sourceTree = "<group>"; };
 		75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MessageEvent.cpp; sourceTree = "<group>"; };
 		75793E810D0CE0B3007FC0AC /* MessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MessageEvent.h; sourceTree = "<group>"; };
 		75793E820D0CE0B3007FC0AC /* MessageEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = MessageEvent.idl; sourceTree = "<group>"; };
@@ -19429,8 +19425,6 @@
 				BCD0E0F90E972C3500265DEA /* SecurityOriginHash.h */,
 				974D2DA2146A535D00D51F8B /* SecurityPolicy.cpp */,
 				974D2DA3146A535D00D51F8B /* SecurityPolicy.h */,
-				511F7D431EB1C38900E47B83 /* SessionID.cpp */,
-				756B2CE018B7101600FECFAA /* SessionID.h */,
 				14C9A5E90B3D105F005A0232 /* Settings.cpp */,
 				F587863A02DE3A1401EA4122 /* Settings.h */,
 				BC59DEF8169DEDC30016AC34 /* Settings.in */,
@@ -29448,7 +29442,6 @@
 				51F175691F3EBC8300C74950 /* ServiceWorkerRegistrationOptions.h in Headers */,
 				51F1756B1F3EBC8300C74950 /* ServiceWorkerRegistrationParameters.h in Headers */,
 				51F1756C1F3EBC8300C74950 /* ServiceWorkerUpdateViaCache.h in Headers */,
-				756B2CE118B7101600FECFAA /* SessionID.h in Headers */,
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
 				93F1994F08245E59001E9ABC /* Settings.h in Headers */,
@@ -33301,7 +33294,6 @@
 				51F175651F3EBC8300C74950 /* ServiceWorkerProvider.cpp in Sources */,
 				51F175671F3EBC8300C74950 /* ServiceWorkerRegistration.cpp in Sources */,
 				51F1756A1F3EBC8300C74950 /* ServiceWorkerRegistrationParameters.cpp in Sources */,
-				511F7D441EB1C39100E47B83 /* SessionID.cpp in Sources */,
 				93309E0F099E64920056E581 /* SetNodeAttributeCommand.cpp in Sources */,
 				B8DBDB4B130B0F8A00F5CDB1 /* SetSelectionCommand.cpp in Sources */,
 				14C9A5EA0B3D105F005A0232 /* Settings.cpp in Sources */,

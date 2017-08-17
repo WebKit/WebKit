@@ -38,6 +38,10 @@
 @class WebHistoryItem;
 @class WebResource;
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 class AuthenticationChallenge;
 class CachedFrame;
@@ -45,7 +49,6 @@ class HistoryItem;
 class ProtectionSpace;
 class ResourceLoader;
 class ResourceRequest;
-class SessionID;
 }
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
@@ -71,7 +74,7 @@ private:
     void detachedFromParent2() final;
     void detachedFromParent3() final;
 
-    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, WebCore::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
+    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, PAL::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
 
     void assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&) final;
 

@@ -37,8 +37,8 @@
 #include <winsock2.h>
 #endif
 
-#include "SessionID.h"
 #include <curl/curl.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
@@ -51,7 +51,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, SessionID, const String&, SourceApplicationAuditToken&&) { return adoptRef(*new SocketStreamHandleImpl(url, client)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&) { return adoptRef(*new SocketStreamHandleImpl(url, client)); }
 
     virtual ~SocketStreamHandleImpl();
 

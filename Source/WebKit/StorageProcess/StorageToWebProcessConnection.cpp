@@ -105,7 +105,7 @@ static uint64_t generateConnectionToServerIdentifier()
     return ++identifier;
 }
 
-void StorageToWebProcessConnection::establishIDBConnectionToServer(WebCore::SessionID sessionID, uint64_t& serverConnectionIdentifier)
+void StorageToWebProcessConnection::establishIDBConnectionToServer(PAL::SessionID sessionID, uint64_t& serverConnectionIdentifier)
 {
     serverConnectionIdentifier = generateConnectionToServerIdentifier();
     LOG(IndexedDB, "StorageToWebProcessConnection::establishIDBConnectionToServer - %" PRIu64, serverConnectionIdentifier);

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ResourceRequest.h"
-#include "SessionID.h"
+#include <pal/identifier/SessionID.h>
 
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 
@@ -36,19 +36,19 @@ class SharedBuffer;
 
 class DiskCacheMonitor {
 public:
-    static void monitorFileBackingStoreCreation(const ResourceRequest&, SessionID, CFCachedURLResponseRef);
+    static void monitorFileBackingStoreCreation(const ResourceRequest&, PAL::SessionID, CFCachedURLResponseRef);
     static RefPtr<SharedBuffer> tryGetFileBackedSharedBufferFromCFURLCachedResponse(CFCachedURLResponseRef);
 
 private:
-    DiskCacheMonitor(const ResourceRequest&, SessionID, CFCachedURLResponseRef);
+    DiskCacheMonitor(const ResourceRequest&, PAL::SessionID, CFCachedURLResponseRef);
 
     void resourceBecameFileBacked(SharedBuffer&);
 
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
-    SessionID sessionID() const { return m_sessionID; }
+    PAL::SessionID sessionID() const { return m_sessionID; }
 
     ResourceRequest m_resourceRequest;
-    SessionID m_sessionID;
+    PAL::SessionID m_sessionID;
 };
 
 } // namespace WebKit

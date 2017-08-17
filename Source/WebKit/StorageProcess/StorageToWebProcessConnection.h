@@ -28,7 +28,7 @@
 #include "Connection.h"
 #include "MessageSender.h"
 
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
@@ -59,7 +59,7 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     // Messages handlers (Modern IDB)
-    void establishIDBConnectionToServer(WebCore::SessionID, uint64_t& serverConnectionIdentifier);
+    void establishIDBConnectionToServer(PAL::SessionID, uint64_t& serverConnectionIdentifier);
     void removeIDBConnectionToServer(uint64_t serverConnectionIdentifier);
 
     HashMap<uint64_t, RefPtr<WebIDBConnectionToClient>> m_webIDBConnections;

@@ -29,7 +29,7 @@
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
 #include "UserData.h"
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
@@ -155,7 +155,7 @@ struct WebProcessCreationParameters {
     HashMap<String, bool> notificationPermissions;
 #endif
 
-    HashMap<WebCore::SessionID, HashMap<unsigned, double>> plugInAutoStartOriginHashes;
+    HashMap<PAL::SessionID, HashMap<unsigned, double>> plugInAutoStartOriginHashes;
     Vector<String> plugInAutoStartOrigins;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

@@ -41,8 +41,8 @@
 #include "WebSocketStreamMessages.h"
 #include <WebCore/CachedResource.h>
 #include <WebCore/MemoryCache.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/SharedBuffer.h>
+#include <pal/identifier/SessionID.h>
 
 using namespace WebCore;
 
@@ -129,7 +129,7 @@ void NetworkProcessConnection::didWriteBlobsToTemporaryFiles(uint64_t requestIde
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)
-void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle, SessionID sessionID)
+void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle, PAL::SessionID sessionID)
 {
     CachedResource* resource = MemoryCache::singleton().resourceForRequest(request, sessionID);
     if (!resource)

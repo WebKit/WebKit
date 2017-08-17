@@ -150,17 +150,17 @@ void PageConfiguration::setWebsiteDataStore(API::WebsiteDataStore* websiteDataSt
     if (m_websiteDataStore)
         m_sessionID = m_websiteDataStore->websiteDataStore().sessionID();
     else
-        m_sessionID = WebCore::SessionID();
+        m_sessionID = PAL::SessionID();
 }
 
-WebCore::SessionID PageConfiguration::sessionID()
+PAL::SessionID PageConfiguration::sessionID()
 {
-    ASSERT(!m_websiteDataStore || m_websiteDataStore->websiteDataStore().sessionID() == m_sessionID || m_sessionID == SessionID::legacyPrivateSessionID());
+    ASSERT(!m_websiteDataStore || m_websiteDataStore->websiteDataStore().sessionID() == m_sessionID || m_sessionID == PAL::SessionID::legacyPrivateSessionID());
 
     return m_sessionID;
 }
 
-void PageConfiguration::setSessionID(WebCore::SessionID sessionID)
+void PageConfiguration::setSessionID(PAL::SessionID sessionID)
 {
     m_sessionID = sessionID;
 }

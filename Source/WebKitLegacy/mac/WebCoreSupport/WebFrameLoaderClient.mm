@@ -286,7 +286,7 @@ void WebFrameLoaderClient::detachedFromParent3()
     m_webFrame->_private->webFrameView = nil;
 }
 
-void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, SessionID, const ResourceRequest& request, const ResourceResponse& response)
+void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, PAL::SessionID, const ResourceRequest& request, const ResourceResponse& response)
 {
     WebView *webView = getWebView(m_webFrame.get());
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();

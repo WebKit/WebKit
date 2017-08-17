@@ -45,7 +45,7 @@
 #include "WebContextConnectionClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/LinkHash.h>
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -456,8 +456,8 @@ private:
     void unregisterNotificationObservers();
 #endif
 
-    void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, WebCore::SessionID);
-    void plugInDidReceiveUserInteraction(unsigned plugInOriginHash, WebCore::SessionID);
+    void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, PAL::SessionID);
+    void plugInDidReceiveUserInteraction(unsigned plugInOriginHash, PAL::SessionID);
 
     void setAnyPageGroupMightHavePrivateBrowsingEnabled(bool);
 
@@ -607,7 +607,7 @@ private:
     };
     Paths m_resolvedPaths;
 
-    HashMap<WebCore::SessionID, HashSet<WebPageProxy*>> m_sessionToPagesMap;
+    HashMap<PAL::SessionID, HashSet<WebPageProxy*>> m_sessionToPagesMap;
 };
 
 template<typename T>

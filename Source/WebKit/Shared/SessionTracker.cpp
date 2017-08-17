@@ -56,29 +56,29 @@ void SessionTracker::setIdentifierBase(const String& identifier)
 }
 
 #if USE(NETWORK_SESSION)
-static HashMap<SessionID, RefPtr<NetworkSession>>& staticSessionMap()
+static HashMap<PAL::SessionID, RefPtr<NetworkSession>>& staticSessionMap()
 {
     ASSERT(RunLoop::isMain());
 
-    static NeverDestroyed<HashMap<SessionID, RefPtr<NetworkSession>>> map;
+    static NeverDestroyed<HashMap<PAL::SessionID, RefPtr<NetworkSession>>> map;
     return map;
 }
 
-NetworkSession* SessionTracker::networkSession(SessionID sessionID)
+NetworkSession* SessionTracker::networkSession(PAL::SessionID sessionID)
 {
-    if (sessionID == SessionID::defaultSessionID())
+    if (sessionID == PAL::SessionID::defaultSessionID())
         return &NetworkSession::defaultSession();
     return staticSessionMap().get(sessionID);
 }
 
-void SessionTracker::setSession(SessionID sessionID, Ref<NetworkSession>&& session)
+void SessionTracker::setSession(PAL::SessionID sessionID, Ref<NetworkSession>&& session)
 {
-    ASSERT(sessionID != SessionID::defaultSessionID());
+    ASSERT(sessionID != PAL::SessionID::defaultSessionID());
     staticSessionMap().set(sessionID, WTFMove(session));
 }
 #endif
 
-void SessionTracker::destroySession(SessionID sessionID)
+void SessionTracker::destroySession(PAL::SessionID sessionID)
 {
     ASSERT(RunLoop::isMain());
 #if USE(NETWORK_SESSION)

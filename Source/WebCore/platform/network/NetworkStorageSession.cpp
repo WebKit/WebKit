@@ -26,27 +26,27 @@
 #include "config.h"
 #include "NetworkStorageSession.h"
 
-#include "SessionID.h"
+#include <pal/identifier/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-HashMap<SessionID, std::unique_ptr<NetworkStorageSession>>& NetworkStorageSession::globalSessionMap()
+HashMap<PAL::SessionID, std::unique_ptr<NetworkStorageSession>>& NetworkStorageSession::globalSessionMap()
 {
-    static NeverDestroyed<HashMap<SessionID, std::unique_ptr<NetworkStorageSession>>> map;
+    static NeverDestroyed<HashMap<PAL::SessionID, std::unique_ptr<NetworkStorageSession>>> map;
     return map;
 }
 
-NetworkStorageSession* NetworkStorageSession::storageSession(SessionID sessionID)
+NetworkStorageSession* NetworkStorageSession::storageSession(PAL::SessionID sessionID)
 {
-    if (sessionID == SessionID::defaultSessionID())
+    if (sessionID == PAL::SessionID::defaultSessionID())
         return &defaultStorageSession();
     return globalSessionMap().get(sessionID);
 }
 
-void NetworkStorageSession::destroySession(SessionID sessionID)
+void NetworkStorageSession::destroySession(PAL::SessionID sessionID)
 {
-    ASSERT(sessionID != SessionID::defaultSessionID());
+    ASSERT(sessionID != PAL::SessionID::defaultSessionID());
     globalSessionMap().remove(sessionID);
 }
 

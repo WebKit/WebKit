@@ -57,6 +57,10 @@ OBJC_CLASS NSDictionary;
 OBJC_CLASS NSView;
 #endif
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class AuthenticationChallenge;
@@ -90,7 +94,6 @@ class ResourceHandle;
 class ResourceRequest;
 class ResourceResponse;
 class SecurityOrigin;
-class SessionID;
 class SharedBuffer;
 class SubstituteData;
 class URL;
@@ -273,7 +276,7 @@ public:
     virtual void dispatchDidBecomeFrameset(bool) = 0; // Can change due to navigation or DOM modification.
 
     virtual bool canCachePage() const = 0;
-    virtual void convertMainResourceLoadToDownload(DocumentLoader*, SessionID, const ResourceRequest&, const ResourceResponse&) = 0;
+    virtual void convertMainResourceLoadToDownload(DocumentLoader*, PAL::SessionID, const ResourceRequest&, const ResourceResponse&) = 0;
 
     virtual RefPtr<Frame> createFrame(const URL&, const String& name, HTMLFrameOwnerElement&, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) = 0;
     virtual RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) = 0;

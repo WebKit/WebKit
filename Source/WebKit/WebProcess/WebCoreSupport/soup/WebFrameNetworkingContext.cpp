@@ -33,15 +33,15 @@
 #include "WebPage.h"
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SoupNetworkSession.h>
+#include <pal/identifier/SessionID.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
+void WebFrameNetworkingContext::ensurePrivateBrowsingSession(PAL::SessionID sessionID)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(sessionID.isEphemeral());

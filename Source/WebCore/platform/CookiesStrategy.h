@@ -26,7 +26,7 @@
 #ifndef CookiesStrategy_h
 #define CookiesStrategy_h
 
-#include "SessionID.h"
+#include <pal/identifier/SessionID.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +42,7 @@ public:
     virtual void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String& cookieString) = 0;
     virtual bool cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&) = 0;
     virtual String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&) = 0;
-    virtual String cookieRequestHeaderFieldValue(SessionID, const URL& firstParty, const URL&) = 0;
+    virtual String cookieRequestHeaderFieldValue(PAL::SessionID, const URL& firstParty, const URL&) = 0;
     virtual bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&) = 0;
     virtual void deleteCookie(const NetworkStorageSession&, const URL&, const String& cookieName) = 0;
 

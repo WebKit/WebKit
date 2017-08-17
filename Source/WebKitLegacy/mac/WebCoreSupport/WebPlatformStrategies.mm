@@ -93,7 +93,7 @@ String WebPlatformStrategies::cookieRequestHeaderFieldValue(const NetworkStorage
     return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url);
 }
 
-String WebPlatformStrategies::cookieRequestHeaderFieldValue(SessionID sessionID, const URL& firstParty, const URL& url)
+String WebPlatformStrategies::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const URL& url)
 {
     auto& session = sessionID.isEphemeral() ? WebFrameNetworkingContext::ensurePrivateBrowsingSession() : NetworkStorageSession::defaultStorageSession();
     return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url);

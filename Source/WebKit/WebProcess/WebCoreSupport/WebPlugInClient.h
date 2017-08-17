@@ -27,7 +27,7 @@
 #define WebPlugInClient_h
 
 #include <WebCore/PlugInClient.h>
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 
 namespace WebKit {
 
@@ -41,7 +41,7 @@ public:
 private:
     void pageDestroyed() override;
     bool shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) override;
-    void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID) override;
+    void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, PAL::SessionID) override;
 
     WebPage& m_webPage;
 };

@@ -29,5 +29,5 @@ messages -> WebCookieManagerProxy {
     DidSetCookies(WebKit::CallbackID callbackID);
     DidGetCookies(Vector<WebCore::Cookie> cookies, WebKit::CallbackID callbackID);
 
-    CookiesDidChange(WebCore::SessionID sessionID)
+    CookiesDidChange(PAL::SessionID sessionID)
 }

@@ -44,6 +44,10 @@ class MonotonicTime;
 class Seconds;
 }
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 class AffineTransform;
 class AuthenticationChallenge;
@@ -78,7 +82,6 @@ class Region;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
-class SessionID;
 class SpringTimingFunction;
 class StepsTimingFunction;
 class StickyPositionViewportConstraints;

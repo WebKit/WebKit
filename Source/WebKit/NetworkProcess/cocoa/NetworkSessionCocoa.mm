@@ -455,7 +455,7 @@ static LegacyCustomProtocolManager* legacyCustomProtocolManager;
 static bool sessionsCreated = false;
 #endif
 
-static NSURLSessionConfiguration *configurationForSessionID(const WebCore::SessionID& session)
+static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID& session)
 {
     if (session.isEphemeral()) {
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
@@ -533,7 +533,7 @@ void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
 }
 #endif
 
-Ref<NetworkSession> NetworkSessionCocoa::create(WebCore::SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
+Ref<NetworkSession> NetworkSessionCocoa::create(PAL::SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
 {
     return adoptRef(*new NetworkSessionCocoa(sessionID, customProtocolManager));
 }
@@ -541,11 +541,11 @@ Ref<NetworkSession> NetworkSessionCocoa::create(WebCore::SessionID sessionID, Le
 NetworkSession& NetworkSessionCocoa::defaultSession()
 {
     ASSERT(RunLoop::isMain());
-    static NetworkSession* session = &NetworkSessionCocoa::create(WebCore::SessionID::defaultSessionID(), legacyCustomProtocolManager).leakRef();
+    static NetworkSession* session = &NetworkSessionCocoa::create(PAL::SessionID::defaultSessionID(), legacyCustomProtocolManager).leakRef();
     return *session;
 }
 
-NetworkSessionCocoa::NetworkSessionCocoa(WebCore::SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
+NetworkSessionCocoa::NetworkSessionCocoa(PAL::SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
     : NetworkSession(sessionID)
 {
     relaxAdoptionRequirement();

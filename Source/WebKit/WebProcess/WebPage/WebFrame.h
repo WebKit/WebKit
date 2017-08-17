@@ -42,13 +42,16 @@ namespace API {
 class Array;
 }
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 class CertificateInfo;
 class Frame;
 class HTMLFrameOwnerElement;
 class IntPoint;
 class IntRect;
-class SessionID;
 class URL;
 }
 
@@ -84,7 +87,7 @@ public:
     void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, DownloadID);
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });
-    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, WebCore::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, PAL::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     String source() const;
     String contentsAsString() const;

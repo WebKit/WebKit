@@ -35,7 +35,7 @@
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOrigin.h>
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Seconds.h>
 
 namespace IPC {

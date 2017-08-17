@@ -193,7 +193,7 @@ WebProcess::WebProcess()
     addSupplement<UserMediaCaptureManager>();
 #endif
 
-    m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
+    m_plugInAutoStartOriginHashes.add(PAL::SessionID::defaultSessionID(), HashMap<unsigned, double>());
 
     ResourceLoadObserver::shared().setNotificationCallback([this] (Vector<ResourceLoadStatistics>&& statistics) {
         ASSERT(!statistics.isEmpty());
@@ -503,7 +503,7 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
     m_fullKeyboardAccessEnabled = fullKeyboardAccessEnabled;
 }
 
-void WebProcess::ensurePrivateBrowsingSession(SessionID sessionID)
+void WebProcess::ensurePrivateBrowsingSession(PAL::SessionID sessionID)
 {
     WebFrameNetworkingContext::ensurePrivateBrowsingSession(sessionID);
 }
@@ -513,7 +513,7 @@ void WebProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)
     WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WTFMove(parameters));
 }
 
-void WebProcess::destroySession(SessionID sessionID)
+void WebProcess::destroySession(PAL::SessionID sessionID)
 {
     SessionTracker::destroySession(sessionID);
 }
@@ -800,9 +800,9 @@ static unsigned hashForPlugInOrigin(const String& pageOrigin, const String& plug
     return hasher.hash();
 }
 
-bool WebProcess::isPlugInAutoStartOriginHash(unsigned plugInOriginHash, SessionID sessionID)
+bool WebProcess::isPlugInAutoStartOriginHash(unsigned plugInOriginHash, PAL::SessionID sessionID)
 {
-    HashMap<WebCore::SessionID, HashMap<unsigned, double>>::const_iterator sessionIterator = m_plugInAutoStartOriginHashes.find(sessionID);
+    HashMap<PAL::SessionID, HashMap<unsigned, double>>::const_iterator sessionIterator = m_plugInAutoStartOriginHashes.find(sessionID);
     HashMap<unsigned, double>::const_iterator it;
     bool contains = false;
 
@@ -811,7 +811,7 @@ bool WebProcess::isPlugInAutoStartOriginHash(unsigned plugInOriginHash, SessionI
         contains = it != sessionIterator->value.end();
     }
     if (!contains) {
-        sessionIterator = m_plugInAutoStartOriginHashes.find(SessionID::defaultSessionID());
+        sessionIterator = m_plugInAutoStartOriginHashes.find(PAL::SessionID::defaultSessionID());
         it = sessionIterator->value.find(plugInOriginHash);
         if (it == sessionIterator->value.end())
             return false;
@@ -836,7 +836,7 @@ bool WebProcess::shouldPlugInAutoStartFromOrigin(WebPage& webPage, const String&
     return isPlugInAutoStartOriginHash(hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType), webPage.sessionID());
 }
 
-void WebProcess::plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, SessionID sessionID)
+void WebProcess::plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, PAL::SessionID sessionID)
 {
     if (pageOrigin.isEmpty()) {
         LOG(Plugins, "Not adding empty page origin");
@@ -858,7 +858,7 @@ void WebProcess::plugInDidStartFromOrigin(const String& pageOrigin, const String
     parentProcessConnection()->send(Messages::WebProcessPool::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash, sessionID), 0);
 }
 
-void WebProcess::didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime, SessionID sessionID)
+void WebProcess::didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime, PAL::SessionID sessionID)
 {
     // When called, some web process (which also might be this one) added the origin for auto-starting,
     // or received user interaction.
@@ -869,15 +869,15 @@ void WebProcess::didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, doub
 void WebProcess::resetPlugInAutoStartOriginDefaultHashes(const HashMap<unsigned, double>& hashes)
 {
     m_plugInAutoStartOriginHashes.clear();
-    m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>()).iterator->value.swap(const_cast<HashMap<unsigned, double>&>(hashes));
+    m_plugInAutoStartOriginHashes.add(PAL::SessionID::defaultSessionID(), HashMap<unsigned, double>()).iterator->value.swap(const_cast<HashMap<unsigned, double>&>(hashes));
 }
 
-void WebProcess::resetPlugInAutoStartOriginHashes(const HashMap<SessionID, HashMap<unsigned, double>>& hashes)
+void WebProcess::resetPlugInAutoStartOriginHashes(const HashMap<PAL::SessionID, HashMap<unsigned, double>>& hashes)
 {
-    m_plugInAutoStartOriginHashes.swap(const_cast<HashMap<SessionID, HashMap<unsigned, double>>&>(hashes));
+    m_plugInAutoStartOriginHashes.swap(const_cast<HashMap<PAL::SessionID, HashMap<unsigned, double>>&>(hashes));
 }
 
-void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, SessionID sessionID)
+void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, PAL::SessionID sessionID)
 {
     if (pageOrigin.isEmpty())
         return;
@@ -886,7 +886,7 @@ void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const
     if (!plugInOriginHash)
         return;
 
-    HashMap<WebCore::SessionID, HashMap<unsigned, double>>::const_iterator sessionIterator = m_plugInAutoStartOriginHashes.find(sessionID);
+    HashMap<PAL::SessionID, HashMap<unsigned, double>>::const_iterator sessionIterator = m_plugInAutoStartOriginHashes.find(sessionID);
     HashMap<unsigned, double>::const_iterator it;
     bool contains = false;
     if (sessionIterator != m_plugInAutoStartOriginHashes.end()) {
@@ -894,7 +894,7 @@ void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const
         contains = it != sessionIterator->value.end();
     }
     if (!contains) {
-        sessionIterator = m_plugInAutoStartOriginHashes.find(SessionID::defaultSessionID());
+        sessionIterator = m_plugInAutoStartOriginHashes.find(PAL::SessionID::defaultSessionID());
         it = sessionIterator->value.find(plugInOriginHash);
         if (it == sessionIterator->value.end())
             return;
@@ -1232,7 +1232,7 @@ void WebProcess::releasePageCache()
     PageCache::singleton().pruneToSizeNow(0, PruningReason::MemoryPressure);
 }
 
-void WebProcess::fetchWebsiteData(WebCore::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WebsiteData& websiteData)
+void WebProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WebsiteData& websiteData)
 {
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
         for (auto& origin : MemoryCache::singleton().originsWithCache(sessionID))
@@ -1245,7 +1245,7 @@ void WebProcess::fetchWebsiteData(WebCore::SessionID sessionID, OptionSet<Websit
     }
 }
 
-void WebProcess::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince)
+void WebProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince)
 {
     UNUSED_PARAM(modifiedSince);
 
@@ -1262,7 +1262,7 @@ void WebProcess::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDataTyp
     }
 }
 
-void WebProcess::deleteWebsiteDataForOrigins(WebCore::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& originDatas)
+void WebProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& originDatas)
 {
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
         HashSet<RefPtr<SecurityOrigin>> origins;

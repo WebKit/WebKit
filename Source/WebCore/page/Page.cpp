@@ -229,7 +229,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_storageNamespaceProvider(*WTFMove(pageConfiguration.storageNamespaceProvider))
     , m_userContentProvider(*WTFMove(pageConfiguration.userContentProvider))
     , m_visitedLinkStore(*WTFMove(pageConfiguration.visitedLinkStore))
-    , m_sessionID(SessionID::defaultSessionID())
+    , m_sessionID(PAL::SessionID::defaultSessionID())
     , m_isUtilityPage(isUtilityPageChromeClient(chrome().client()))
     , m_performanceMonitor(isUtilityPage() ? nullptr : std::make_unique<PerformanceMonitor>(*this))
     , m_lowPowerModeNotifier(std::make_unique<LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) { handleLowModePowerChange(isLowPowerModeEnabled); }))
@@ -1428,9 +1428,9 @@ void Page::storageBlockingStateChanged()
 void Page::enableLegacyPrivateBrowsing(bool privateBrowsingEnabled)
 {
     // Don't allow changing the legacy private browsing state if we have set a session ID.
-    ASSERT(m_sessionID == SessionID::defaultSessionID() || m_sessionID == SessionID::legacyPrivateSessionID());
+    ASSERT(m_sessionID == PAL::SessionID::defaultSessionID() || m_sessionID == PAL::SessionID::legacyPrivateSessionID());
 
-    setSessionID(privateBrowsingEnabled ? SessionID::legacyPrivateSessionID() : SessionID::defaultSessionID());
+    setSessionID(privateBrowsingEnabled ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID());
 }
 
 void Page::updateIsPlayingMedia(uint64_t sourceElementID)
@@ -2105,12 +2105,12 @@ void Page::setVisitedLinkStore(Ref<VisitedLinkStore>&& visitedLinkStore)
     invalidateStylesForAllLinks();
 }
 
-SessionID Page::sessionID() const
+PAL::SessionID Page::sessionID() const
 {
     return m_sessionID;
 }
 
-void Page::setSessionID(SessionID sessionID)
+void Page::setSessionID(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
 

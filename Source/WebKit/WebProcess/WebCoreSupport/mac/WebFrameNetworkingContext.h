@@ -29,7 +29,7 @@
 #include "HTTPCookieAcceptPolicy.h"
 #include "WebFrame.h"
 #include <WebCore/FrameNetworkingContext.h>
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 
 namespace WebKit {
 
@@ -43,7 +43,7 @@ public:
     }
 
     // FIXME: remove platform-specific code and use SessionTracker
-    static void ensurePrivateBrowsingSession(WebCore::SessionID);
+    static void ensurePrivateBrowsingSession(PAL::SessionID);
     static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
 
     static void setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy);

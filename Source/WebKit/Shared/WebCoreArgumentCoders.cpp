@@ -61,7 +61,6 @@
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/SearchPopupMenu.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TimingFunction.h>
@@ -70,6 +69,7 @@
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/CString.h>

@@ -110,7 +110,7 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
 #if ENABLE(INDEXED_DATABASE)
-    IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const SessionID&) final
+    IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) final
     {
         static auto& sharedConnection = InProcessIDBServer::create().leakRef();
         return sharedConnection.connectionToServer();
@@ -293,7 +293,7 @@ class EmptyFrameLoaderClient final : public FrameLoaderClient {
     void detachedFromParent2() final { }
     void detachedFromParent3() final { }
 
-    void convertMainResourceLoadToDownload(DocumentLoader*, SessionID, const ResourceRequest&, const ResourceResponse&) final { }
+    void convertMainResourceLoadToDownload(DocumentLoader*, PAL::SessionID, const ResourceRequest&, const ResourceResponse&) final { }
 
     void assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&) final { }
     bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) final { return false; }

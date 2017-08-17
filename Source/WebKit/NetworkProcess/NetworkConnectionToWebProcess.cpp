@@ -51,7 +51,7 @@
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 
 #if USE(NETWORK_SESSION)
 #include "PingLoad.h"
@@ -173,7 +173,7 @@ void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, I
 {
 }
 
-void NetworkConnectionToWebProcess::createSocketStream(URL&& url, SessionID sessionID, String cachePartition, uint64_t identifier)
+void NetworkConnectionToWebProcess::createSocketStream(URL&& url, PAL::SessionID sessionID, String cachePartition, uint64_t identifier)
 {
     ASSERT(!m_networkSocketStreams.contains(identifier));
     WebCore::SourceApplicationAuditToken token = { };
@@ -263,10 +263,10 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
     NetworkProcess::singleton().prefetchDNS(hostname);
 }
 
-static NetworkStorageSession& storageSession(SessionID sessionID)
+static NetworkStorageSession& storageSession(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
-    if (sessionID != SessionID::defaultSessionID()) {
+    if (sessionID != PAL::SessionID::defaultSessionID()) {
         if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
             return *storageSession;
 
@@ -277,12 +277,12 @@ static NetworkStorageSession& storageSession(SessionID sessionID)
     return NetworkStorageSession::defaultStorageSession();
 }
 
-void NetworkConnectionToWebProcess::startDownload(SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
+void NetworkConnectionToWebProcess::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
 {
     NetworkProcess::singleton().downloadManager().startDownload(this, sessionID, downloadID, request, suggestedName);
 }
 
-void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(SessionID sessionID, uint64_t mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
+void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(PAL::SessionID sessionID, uint64_t mainResourceLoadIdentifier, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
 {
     auto& networkProcess = NetworkProcess::singleton();
     if (!mainResourceLoadIdentifier) {
@@ -299,32 +299,32 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(SessionID 
     loader->convertToDownload(downloadID, request, response);
 }
 
-void NetworkConnectionToWebProcess::cookiesForDOM(SessionID sessionID, const URL& firstParty, const URL& url, String& result)
+void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, const URL& firstParty, const URL& url, String& result)
 {
     result = WebCore::cookiesForDOM(storageSession(sessionID), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::setCookiesFromDOM(SessionID sessionID, const URL& firstParty, const URL& url, const String& cookieString)
+void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, const URL& firstParty, const URL& url, const String& cookieString)
 {
     WebCore::setCookiesFromDOM(storageSession(sessionID), firstParty, url, cookieString);
 }
 
-void NetworkConnectionToWebProcess::cookiesEnabled(SessionID sessionID, const URL& firstParty, const URL& url, bool& result)
+void NetworkConnectionToWebProcess::cookiesEnabled(PAL::SessionID sessionID, const URL& firstParty, const URL& url, bool& result)
 {
     result = WebCore::cookiesEnabled(storageSession(sessionID), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(SessionID sessionID, const URL& firstParty, const URL& url, String& result)
+void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const URL& url, String& result)
 {
     result = WebCore::cookieRequestHeaderFieldValue(storageSession(sessionID), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::getRawCookies(SessionID sessionID, const URL& firstParty, const URL& url, Vector<Cookie>& result)
+void NetworkConnectionToWebProcess::getRawCookies(PAL::SessionID sessionID, const URL& firstParty, const URL& url, Vector<Cookie>& result)
 {
     WebCore::getRawCookies(storageSession(sessionID), firstParty, url, result);
 }
 
-void NetworkConnectionToWebProcess::deleteCookie(SessionID sessionID, const URL& url, const String& cookieName)
+void NetworkConnectionToWebProcess::deleteCookie(PAL::SessionID sessionID, const URL& url, const String& cookieName)
 {
     WebCore::deleteCookie(storageSession(sessionID), url, cookieName);
 }
@@ -420,7 +420,7 @@ void NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled(boo
 
 void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
 {
-    NetworkProcess::singleton().ensurePrivateBrowsingSession({SessionID::legacyPrivateSessionID(), { }, { }, { }});
+    NetworkProcess::singleton().ensurePrivateBrowsingSession({PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }});
 }
 
 } // namespace WebKit

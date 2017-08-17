@@ -35,7 +35,7 @@ class SVGFontFaceElement;
 
 class CachedSVGFont final : public CachedFont {
 public:
-    CachedSVGFont(CachedResourceRequest&&, SessionID);
+    CachedSVGFont(CachedResourceRequest&&, PAL::SessionID);
 
     bool ensureCustomFontData(const AtomicString& remoteURI) override;
 

@@ -33,7 +33,7 @@ namespace WebKit {
 
 class NetworkSessionSoup final : public NetworkSession {
 public:
-    static Ref<NetworkSession> create(WebCore::SessionID sessionID)
+    static Ref<NetworkSession> create(PAL::SessionID sessionID)
     {
         return adoptRef(*new NetworkSessionSoup(sessionID));
     }
@@ -42,7 +42,7 @@ public:
     SoupSession* soupSession() const;
 
 private:
-    NetworkSessionSoup(WebCore::SessionID);
+    NetworkSessionSoup(PAL::SessionID);
 
     void clearCredentials() override;
 };

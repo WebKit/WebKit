@@ -247,7 +247,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
     
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
 
-    HashSet<WebCore::SessionID> visitedSessionIDs;
+    HashSet<PAL::SessionID> visitedSessionIDs;
     for (auto& page : globalPageMap()) {
         auto& dataStore = page.value->websiteDataStore();
         if (!dataStore.isPersistent() || visitedSessionIDs.contains(dataStore.sessionID()))
@@ -309,7 +309,7 @@ void WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<Web
     
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
     
-    HashSet<WebCore::SessionID> visitedSessionIDs;
+    HashSet<PAL::SessionID> visitedSessionIDs;
     for (auto& page : globalPageMap()) {
         auto& dataStore = page.value->websiteDataStore();
         if (!dataStore.isPersistent() || visitedSessionIDs.contains(dataStore.sessionID()))
@@ -834,7 +834,7 @@ void WebProcessProxy::windowServerConnectionStateChanged()
         page->activityStateDidChange(ActivityState::IsVisuallyIdle);
 }
 
-void WebProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, Function<void(WebsiteData)>&& completionHandler)
+void WebProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, Function<void(WebsiteData)>&& completionHandler)
 {
     ASSERT(canSendMessage());
 
@@ -852,7 +852,7 @@ void WebProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDat
     });
 }
 
-void WebProcessProxy::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, Function<void()>&& completionHandler)
+void WebProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, Function<void()>&& completionHandler)
 {
     ASSERT(canSendMessage());
 
@@ -865,7 +865,7 @@ void WebProcessProxy::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDa
     });
 }
 
-void WebProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, const Vector<WebCore::SecurityOriginData>& origins, Function<void()>&& completionHandler)
+void WebProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, const Vector<WebCore::SecurityOriginData>& origins, Function<void()>&& completionHandler)
 {
     ASSERT(canSendMessage());
 

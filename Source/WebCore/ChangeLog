@@ -1,3 +1,212 @@
+2017-08-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [PAL] Move SessionID into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=174192
+
+        Reviewed by Antti Koivisto.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::sessionID const):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::elementWithID):
+        (WebCore::HTMLMediaElement::finishParsingChildren):
+        (WebCore::HTMLMediaElement::scheduleEvent):
+        (WebCore::HTMLMediaElement::canPlayType const):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::textTracksAreReady const):
+        (WebCore::HTMLMediaElement::textTrackModeChanged):
+        (WebCore::HTMLMediaElement::noneSupported):
+        (WebCore::HTMLMediaElement::mediaLoadingFailedFatally):
+        (WebCore::HTMLMediaElement::mediaLoadingFailed):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::addPlayedRange):
+        (WebCore::HTMLMediaElement::seekTask):
+        (WebCore::HTMLMediaElement::refreshCachedTime const):
+        (WebCore::HTMLMediaElement::currentMediaTime const):
+        (WebCore::HTMLMediaElement::setWebkitPreservesPitch):
+        (WebCore::HTMLMediaElement::ended const):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::togglePlayState):
+        (WebCore::HTMLMediaElement::beginScrubbing):
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTextTrack):
+        (WebCore::HTMLMediaElement::didAddTextTrack):
+        (WebCore::HTMLMediaElement::didRemoveTextTrack):
+        (WebCore::controllerJSValue):
+        (WebCore::HTMLMediaElement::configureTextTracks):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        (WebCore::HTMLMediaElement::sourceWasAdded):
+        (WebCore::HTMLMediaElement::sourceWasRemoved):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::potentiallyPlaying const):
+        (WebCore::HTMLMediaElement::endedPlayback const):
+        (WebCore::HTMLMediaElement::stoppedDueToErrors const):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        (WebCore::HTMLMediaElement::canSuspendForDocumentSuspension const):
+        (WebCore::HTMLMediaElement::addEventListener):
+        (WebCore::HTMLMediaElement::isFullscreen const):
+        (WebCore::HTMLMediaElement::toggleStandardFullscreenState):
+        (WebCore::HTMLMediaElement::waitForPreparedForInlineThen):
+        (WebCore::HTMLMediaElement::setVideoFullscreenLayer):
+        (WebCore::HTMLMediaElement::updateTextTrackDisplay):
+        (WebCore::HTMLMediaElement::mediaControls const):
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay):
+        (WebCore::HTMLMediaElement::setMediaGroup):
+        (WebCore::HTMLMediaElement::setControllerForBindings):
+        (WebCore::HTMLMediaElement::isBlockedOnMediaController const):
+        (WebCore::HTMLMediaElement::prepareMediaFragmentURI):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLMediaElement::fileSize const):
+        (WebCore::HTMLMediaElement::mediaSessionTitle const):
+        (WebCore::needsSeekingSupportQuirk):
+        (WebCore::HTMLMediaElement::supportsSeeking const):
+        (WebCore::HTMLMediaElement::doesHaveAttribute const):
+        (WebCore::HTMLMediaElement::isVideoTooSmallForInlinePlayback):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        * loader/EmptyClients.cpp:
+        * loader/FrameLoaderClient.h:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::CachedFont):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::sessionID const):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::sessionID const):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::CachedSVGDocument):
+        * loader/cache/CachedSVGDocument.h:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::CachedSVGFont):
+        * loader/cache/CachedSVGFont.h:
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::CachedTextTrack):
+        * loader/cache/CachedTextTrack.h:
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        * loader/cache/CachedXSLStyleSheet.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::sessionResourceMap const):
+        (WebCore::MemoryCache::ensureSessionResourceMap):
+        (WebCore::MemoryCache::resourceForRequest):
+        (WebCore::MemoryCache::addImageToCache):
+        (WebCore::MemoryCache::removeImageFromCache):
+        (WebCore::MemoryCache::forEachSessionResource):
+        (WebCore::MemoryCache::removeResourcesWithOrigins):
+        (WebCore::MemoryCache::originsWithCache const):
+        (WebCore::MemoryCache::evictResources):
+        * loader/cache/MemoryCache.h:
+        * loader/cocoa/DiskCacheMonitorCocoa.h:
+        (WebCore::DiskCacheMonitor::sessionID const):
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        (WebCore::DiskCacheMonitor::monitorFileBackingStoreCreation):
+        (WebCore::DiskCacheMonitor::DiskCacheMonitor):
+        * page/CacheStorageProvider.h:
+        * page/DatabaseProvider.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::enableLegacyPrivateBrowsing):
+        (WebCore::Page::sessionID const):
+        (WebCore::Page::setSessionID):
+        * page/Page.h:
+        * page/PlugInClient.h:
+        * page/SocketProvider.cpp:
+        (WebCore::SocketProvider::createSocketStreamHandle):
+        * page/SocketProvider.h:
+        * platform/CookiesStrategy.h:
+        * platform/WebCoreCrossThreadCopier.cpp:
+        (WTF::PAL::SessionID>::copy):
+        (WTF::WebCore::SessionID>::copy): Deleted.
+        * platform/WebCoreCrossThreadCopier.h:
+        * platform/network/CacheValidation.cpp:
+        (WebCore::headerValueForVary):
+        (WebCore::collectVaryingRequestHeaders):
+        (WebCore::verifyVaryingRequestHeaders):
+        * platform/network/CacheValidation.h:
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::globalSessionMap):
+        (WebCore::NetworkStorageSession::storageSession):
+        (WebCore::NetworkStorageSession::destroySession):
+        * platform/network/NetworkStorageSession.h:
+        (WebCore::NetworkStorageSession::sessionID const):
+        * platform/network/NetworkStorageSessionStub.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::ensurePrivateBrowsingSession):
+        (WebCore::NetworkStorageSession::ensureSession):
+        (WebCore::NetworkStorageSession::defaultStorageSession):
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::switchToNewTestingSession):
+        (WebCore::NetworkStorageSession::defaultStorageSession):
+        (WebCore::NetworkStorageSession::ensurePrivateBrowsingSession):
+        (WebCore::NetworkStorageSession::ensureSession):
+        * platform/network/cf/SocketStreamHandleImpl.h:
+        (WebCore::SocketStreamHandleImpl::create):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::SocketStreamHandleImpl):
+        * platform/network/curl/SocketStreamHandleImpl.h:
+        (WebCore::SocketStreamHandleImpl::create):
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::defaultStorageSession):
+        (WebCore::NetworkStorageSession::ensurePrivateBrowsingSession):
+        (WebCore::NetworkStorageSession::ensureSession):
+        (WebCore::NetworkStorageSession::switchToNewTestingSession):
+        * platform/network/soup/SocketStreamHandleImpl.h:
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        (WebCore::SocketStreamHandleImpl::create):
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread):
+        * workers/WorkerThread.h:
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerRegistrationParameters.h:
+
 2017-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add NTLM authentication enabled API

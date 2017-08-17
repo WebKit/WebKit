@@ -28,7 +28,7 @@
 
 #include "APIObject.h"
 #include "WebPreferencesStore.h"
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 
@@ -81,8 +81,8 @@ public:
     void setWebsiteDataStore(WebsiteDataStore*);
 
     // FIXME: Once PageConfigurations *always* have a data store, get rid of the separate sessionID.
-    WebCore::SessionID sessionID();
-    void setSessionID(WebCore::SessionID);
+    PAL::SessionID sessionID();
+    void setSessionID(PAL::SessionID);
 
     bool treatsSHA1SignedCertificatesAsInsecure() { return m_treatsSHA1SignedCertificatesAsInsecure; }
     void setTreatsSHA1SignedCertificatesAsInsecure(bool treatsSHA1SignedCertificatesAsInsecure) { m_treatsSHA1SignedCertificatesAsInsecure = treatsSHA1SignedCertificatesAsInsecure; } 
@@ -119,7 +119,7 @@ private:
     RefPtr<WebsiteDataStore> m_websiteDataStore;
     // FIXME: We currently have to pass the session ID separately here to support the legacy private browsing session.
     // Once we get rid of it we should get rid of this configuration parameter as well.
-    WebCore::SessionID m_sessionID;
+    PAL::SessionID m_sessionID;
 
     bool m_treatsSHA1SignedCertificatesAsInsecure = true;
 #if PLATFORM(IOS)

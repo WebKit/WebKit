@@ -27,9 +27,9 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include <WebCore/SessionID.h>
 #include <WebCore/SocketStreamHandleClient.h>
 #include <WebCore/SocketStreamHandleImpl.h>
+#include <pal/identifier/SessionID.h>
 
 namespace IPC {
 class Connection;
@@ -46,7 +46,7 @@ namespace WebKit {
 
 class NetworkSocketStream : public RefCounted<NetworkSocketStream>, public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::SocketStreamHandleClient {
 public:
-    static Ref<NetworkSocketStream> create(WebCore::URL&&, WebCore::SessionID, const String& credentialPartition, uint64_t, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
+    static Ref<NetworkSocketStream> create(WebCore::URL&&, PAL::SessionID, const String& credentialPartition, uint64_t, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
     ~NetworkSocketStream();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -66,7 +66,7 @@ private:
     IPC::Connection* messageSenderConnection() final;
     uint64_t messageSenderDestinationID() final;
 
-    NetworkSocketStream(WebCore::URL&&, WebCore::SessionID, const String& credentialPartition, uint64_t, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
+    NetworkSocketStream(WebCore::URL&&, PAL::SessionID, const String& credentialPartition, uint64_t, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
 
     uint64_t m_identifier;
     IPC::Connection& m_connection;

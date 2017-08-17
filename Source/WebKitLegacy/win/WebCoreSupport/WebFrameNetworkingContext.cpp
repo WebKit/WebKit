@@ -53,7 +53,7 @@ void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(WebKitCookie
     if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage())
         CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
 
-    if (auto privateSession = NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID()))
+    if (auto privateSession = NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID()))
         CFHTTPCookieStorageSetCookieAcceptPolicy(privateSession->cookieStorage().get(), policy);
 }
 #endif
@@ -70,7 +70,7 @@ NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 #if USE(CFURLCONNECTION)
     ASSERT(isMainThread());
 
-    if (auto privateSession = NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID()))
+    if (auto privateSession = NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID()))
         return *privateSession;
 
     String base;
@@ -81,17 +81,17 @@ NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
     } else
         base = identifierBase();
 
-    NetworkStorageSession::ensurePrivateBrowsingSession(SessionID::legacyPrivateSessionID(), base);
+    NetworkStorageSession::ensurePrivateBrowsingSession(PAL::SessionID::legacyPrivateSessionID(), base);
 
 #endif
-    return *NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID());
+    return *NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID());
 }
 
 void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
 {
     ASSERT(isMainThread());
 
-    NetworkStorageSession::destroySession(SessionID::legacyPrivateSessionID());
+    NetworkStorageSession::destroySession(PAL::SessionID::legacyPrivateSessionID());
 }
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
@@ -104,7 +104,7 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
     ASSERT(isMainThread());
 
     if (frame() && frame()->page()->usesEphemeralSession())
-        return *NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID());
+        return *NetworkStorageSession::storageSession(PAL::SessionID::legacyPrivateSessionID());
 
     return NetworkStorageSession::defaultStorageSession();
 }

@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CachedTextTrack final : public CachedResource {
 public:
-    CachedTextTrack(CachedResourceRequest&&, SessionID);
+    CachedTextTrack(CachedResourceRequest&&, PAL::SessionID);
 
 private:
     bool mayTryReplaceEncodedData() const override { return true; }

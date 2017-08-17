@@ -31,9 +31,9 @@
 #include "NetworkProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
-#include <WebCore/SessionID.h>
 #include <WebCore/URL.h>
 #include <dlfcn.h>
+#include <pal/identifier/SessionID.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
@@ -57,7 +57,7 @@ static CFDictionaryRef webKitCookieStorageCopyRequestHeaderFieldsForURL(CFHTTPCo
 {
     String cookies;
     URL firstPartyForCookiesURL;
-    if (!WebProcess::singleton().networkConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(SessionID::defaultSessionID(), firstPartyForCookiesURL, inRequestURL), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookies), 0))
+    if (!WebProcess::singleton().networkConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(PAL::SessionID::defaultSessionID(), firstPartyForCookiesURL, inRequestURL), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookies), 0))
         return 0;
 
     if (cookies.isNull())

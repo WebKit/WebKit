@@ -29,7 +29,7 @@
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 
 namespace WebKit {
 
@@ -37,7 +37,7 @@ class NetworkLoadParameters {
 public:
     uint64_t webPageID { 0 };
     uint64_t webFrameID { 0 };
-    WebCore::SessionID sessionID { WebCore::SessionID::emptySessionID() };
+    PAL::SessionID sessionID { PAL::SessionID::emptySessionID() };
     WebCore::ResourceRequest request;
     WebCore::ContentSniffingPolicy contentSniffingPolicy { WebCore::SniffContent };
     WebCore::StoredCredentials allowStoredCredentials { WebCore::DoNotAllowStoredCredentials };

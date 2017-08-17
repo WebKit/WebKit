@@ -121,7 +121,7 @@ public:
     Document* document() const { return m_document; } // Can be null
     void setDocument(Document* document) { m_document = document; }
     void clearDocumentLoader() { m_documentLoader = nullptr; }
-    SessionID sessionID() const;
+    PAL::SessionID sessionID() const;
 
     void removeCachedResource(CachedResource&);
 

@@ -120,7 +120,7 @@ void WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
     if (Frame* frame = m_document->frame()) {
         ref();
         Page* page = frame->page();
-        SessionID sessionID = page ? page->sessionID() : SessionID::defaultSessionID();
+        PAL::SessionID sessionID = page ? page->sessionID() : PAL::SessionID::defaultSessionID();
         String partition = m_document->topDocument().securityOrigin().domainForCachePartition();
         m_handle = m_socketProvider->createSocketStreamHandle(m_handshake->url(), *this, sessionID, partition);
     }

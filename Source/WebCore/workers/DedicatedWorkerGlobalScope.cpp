@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-Ref<DedicatedWorkerGlobalScope> DedicatedWorkerGlobalScope::create(const URL& url, const String& identifier, const String& userAgent, DedicatedWorkerThread& thread, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, SessionID sessionID)
+Ref<DedicatedWorkerGlobalScope> DedicatedWorkerGlobalScope::create(const URL& url, const String& identifier, const String& userAgent, DedicatedWorkerThread& thread, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
 {
     auto context = adoptRef(*new DedicatedWorkerGlobalScope(url, identifier, userAgent, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID));
     if (!shouldBypassMainWorldContentSecurityPolicy)
@@ -49,7 +49,7 @@ Ref<DedicatedWorkerGlobalScope> DedicatedWorkerGlobalScope::create(const URL& ur
     return context;
 }
 
-DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, DedicatedWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, SessionID sessionID)
+DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, DedicatedWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
     : WorkerGlobalScope(url, identifier, userAgent, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID)
 {
 }

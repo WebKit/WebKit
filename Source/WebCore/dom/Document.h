@@ -45,7 +45,6 @@
 #include "Region.h"
 #include "RenderPtr.h"
 #include "ScriptExecutionContext.h"
-#include "SessionID.h"
 #include "StringWithDirection.h"
 #include "Supplementable.h"
 #include "TextResourceDecoder.h"
@@ -54,6 +53,7 @@
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
 #include <memory>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
@@ -642,7 +642,7 @@ public:
 
     WEBCORE_EXPORT URL completeURL(const String&) const final;
     URL completeURL(const String&, const URL& baseURLOverride) const;
-    SessionID sessionID() const final;
+    PAL::SessionID sessionID() const final;
 
     String userAgent(const URL&) const final;
 
@@ -1810,7 +1810,7 @@ private:
 #endif
 
     OrientationNotifier m_orientationNotifier;
-    mutable SessionID m_sessionID;
+    mutable PAL::SessionID m_sessionID;
 
     static bool hasEverCreatedAnAXObjectCache;
 };

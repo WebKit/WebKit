@@ -44,17 +44,17 @@ void WKCookieManagerSetClient(WKCookieManagerRef cookieManagerRef, const WKCooki
 
 void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef cookieManagerRef, void* context, WKCookieManagerGetCookieHostnamesFunction callback)
 {
-    toImpl(cookieManagerRef)->getHostnamesWithCookies(WebCore::SessionID::defaultSessionID(), toGenericCallbackFunction(context, callback));
+    toImpl(cookieManagerRef)->getHostnamesWithCookies(PAL::SessionID::defaultSessionID(), toGenericCallbackFunction(context, callback));
 }
 
 void WKCookieManagerDeleteCookiesForHostname(WKCookieManagerRef cookieManagerRef, WKStringRef hostname)
 {
-    toImpl(cookieManagerRef)->deleteCookiesForHostname(WebCore::SessionID::defaultSessionID(), toImpl(hostname)->string());
+    toImpl(cookieManagerRef)->deleteCookiesForHostname(PAL::SessionID::defaultSessionID(), toImpl(hostname)->string());
 }
 
 void WKCookieManagerDeleteAllCookies(WKCookieManagerRef cookieManagerRef)
 {
-    toImpl(cookieManagerRef)->deleteAllCookies(WebCore::SessionID::defaultSessionID());
+    toImpl(cookieManagerRef)->deleteAllCookies(PAL::SessionID::defaultSessionID());
 }
 
 void WKCookieManagerDeleteAllCookiesModifiedAfterDate(WKCookieManagerRef cookieManagerRef, double date)
@@ -62,17 +62,17 @@ void WKCookieManagerDeleteAllCookiesModifiedAfterDate(WKCookieManagerRef cookieM
     using namespace std::chrono;
 
     auto time = system_clock::time_point(duration_cast<system_clock::duration>(duration<double>(date)));
-    toImpl(cookieManagerRef)->deleteAllCookiesModifiedSince(WebCore::SessionID::defaultSessionID(), time, [](CallbackBase::Error){});
+    toImpl(cookieManagerRef)->deleteAllCookiesModifiedSince(PAL::SessionID::defaultSessionID(), time, [](CallbackBase::Error){});
 }
 
 void WKCookieManagerSetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, WKHTTPCookieAcceptPolicy policy)
 {
-    toImpl(cookieManager)->setHTTPCookieAcceptPolicy(WebCore::SessionID::defaultSessionID(), toHTTPCookieAcceptPolicy(policy), [](CallbackBase::Error){});
+    toImpl(cookieManager)->setHTTPCookieAcceptPolicy(PAL::SessionID::defaultSessionID(), toHTTPCookieAcceptPolicy(policy), [](CallbackBase::Error){});
 }
 
 void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, void* context, WKCookieManagerGetHTTPCookieAcceptPolicyFunction callback)
 {
-    toImpl(cookieManager)->getHTTPCookieAcceptPolicy(WebCore::SessionID::defaultSessionID(), toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(context, callback));
+    toImpl(cookieManager)->getHTTPCookieAcceptPolicy(PAL::SessionID::defaultSessionID(), toGenericCallbackFunction<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy>(context, callback));
 }
 
 void WKCookieManagerSetCookieStoragePartitioningEnabled(WKCookieManagerRef cookieManager, bool enabled)
@@ -82,10 +82,10 @@ void WKCookieManagerSetCookieStoragePartitioningEnabled(WKCookieManagerRef cooki
 
 void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef cookieManager)
 {
-    toImpl(cookieManager)->startObservingCookieChanges(WebCore::SessionID::defaultSessionID());
+    toImpl(cookieManager)->startObservingCookieChanges(PAL::SessionID::defaultSessionID());
 }
 
 void WKCookieManagerStopObservingCookieChanges(WKCookieManagerRef cookieManager)
 {
-    toImpl(cookieManager)->stopObservingCookieChanges(WebCore::SessionID::defaultSessionID());
+    toImpl(cookieManager)->stopObservingCookieChanges(PAL::SessionID::defaultSessionID());
 }

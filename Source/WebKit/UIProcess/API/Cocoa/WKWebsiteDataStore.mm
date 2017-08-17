@@ -190,7 +190,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (configuration._cookieStorageFile)
         config.cookieStorageFile = configuration._cookieStorageFile.path;
 
-    API::Object::constructInWrapper<API::WebsiteDataStore>(self, config, WebCore::SessionID::generatePersistentSessionID());
+    API::Object::constructInWrapper<API::WebsiteDataStore>(self, config, PAL::SessionID::generatePersistentSessionID());
 
     return self;
 }

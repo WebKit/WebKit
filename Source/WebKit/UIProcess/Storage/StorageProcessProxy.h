@@ -31,9 +31,12 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 class SecurityOrigin;
-class SessionID;
 struct SecurityOriginData;
 }
 
@@ -48,9 +51,9 @@ public:
     static Ref<StorageProcessProxy> create(WebProcessPool*);
     ~StorageProcessProxy();
 
-    void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, WTF::Function<void(WebsiteData)>&& completionHandler);
-    void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void()>&& completionHandler);
-    void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, WTF::Function<void()>&& completionHandler);
+    void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WTF::Function<void(WebsiteData)>&& completionHandler);
+    void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void()>&& completionHandler);
+    void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, WTF::Function<void()>&& completionHandler);
 
     void getStorageProcessConnection(Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
 

@@ -28,7 +28,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 
-namespace WebCore {
+namespace PAL {
 
 class SessionID {
 public:
@@ -53,9 +53,9 @@ public:
     bool isValid() const { return m_sessionID != HashTableEmptyValueID && m_sessionID != HashTableDeletedValueID; }
     bool isEphemeral() const { return m_sessionID & EphemeralSessionMask && m_sessionID != HashTableDeletedValueID; }
 
-    WEBCORE_EXPORT static SessionID generateEphemeralSessionID();
-    WEBCORE_EXPORT static SessionID generatePersistentSessionID();
-    WEBCORE_EXPORT static void enableGenerationProtection();
+    PAL_EXPORT static SessionID generateEphemeralSessionID();
+    PAL_EXPORT static SessionID generatePersistentSessionID();
+    PAL_EXPORT static void enableGenerationProtection();
 
     uint64_t sessionID() const { return m_sessionID; }
     bool operator==(SessionID sessionID) const { return m_sessionID == sessionID.m_sessionID; }
@@ -93,22 +93,22 @@ bool SessionID::decode(Decoder& decoder, SessionID& sessionID)
     return true;
 }
 
-} // namespace WebCore
+} // namespace PAL
 
 namespace WTF {
 
 struct SessionIDHash {
-    static unsigned hash(const WebCore::SessionID& p) { return intHash(p.sessionID()); }
-    static bool equal(const WebCore::SessionID& a, const WebCore::SessionID& b) { return a == b; }
+    static unsigned hash(const PAL::SessionID& p) { return intHash(p.sessionID()); }
+    static bool equal(const PAL::SessionID& a, const PAL::SessionID& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
-template<> struct HashTraits<WebCore::SessionID> : GenericHashTraits<WebCore::SessionID> {
-    static WebCore::SessionID emptyValue() { return WebCore::SessionID::emptySessionID(); }
+template<> struct HashTraits<PAL::SessionID> : GenericHashTraits<PAL::SessionID> {
+    static PAL::SessionID emptyValue() { return PAL::SessionID::emptySessionID(); }
 
-    static void constructDeletedValue(WebCore::SessionID& slot) { slot = WebCore::SessionID::hashTableDeletedValue(); }
-    static bool isDeletedValue(const WebCore::SessionID& slot) { return slot == WebCore::SessionID::hashTableDeletedValue(); }
+    static void constructDeletedValue(PAL::SessionID& slot) { slot = PAL::SessionID::hashTableDeletedValue(); }
+    static bool isDeletedValue(const PAL::SessionID& slot) { return slot == PAL::SessionID::hashTableDeletedValue(); }
 };
-template<> struct DefaultHash<WebCore::SessionID> {
+template<> struct DefaultHash<PAL::SessionID> {
     typedef SessionIDHash Hash;
 };
 

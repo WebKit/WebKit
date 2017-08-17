@@ -61,9 +61,9 @@
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <WebCore/URLParser.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
@@ -237,7 +237,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     // FIXME: instead of handling this here, a message should be sent later (scales to multiple sessions)
     if (parameters.privateBrowsingEnabled)
-        RemoteNetworkingContext::ensurePrivateBrowsingSession({SessionID::legacyPrivateSessionID(), { }, { }, { }});
+        RemoteNetworkingContext::ensurePrivateBrowsingSession({PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }});
 
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
@@ -298,7 +298,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
     RemoteNetworkingContext::ensureWebsiteDataStoreSession(WTFMove(parameters));
 }
 
-void NetworkProcess::destroySession(SessionID sessionID)
+void NetworkProcess::destroySession(PAL::SessionID sessionID)
 {
     SessionTracker::destroySession(sessionID);
 }
@@ -325,7 +325,7 @@ void NetworkProcess::updateCookiePartitioningForTopPrivatelyOwnedDomains(const V
 }
 #endif
 
-static void fetchDiskCacheEntries(SessionID sessionID, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void (Vector<WebsiteData::Entry>)>&& completionHandler)
+static void fetchDiskCacheEntries(PAL::SessionID sessionID, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void (Vector<WebsiteData::Entry>)>&& completionHandler)
 {
 #if ENABLE(NETWORK_CACHE)
     if (auto* cache = NetworkProcess::singleton().cache()) {
@@ -360,7 +360,7 @@ static void fetchDiskCacheEntries(SessionID sessionID, OptionSet<WebsiteDataFetc
     });
 }
 
-void NetworkProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, uint64_t callbackID)
+void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, uint64_t callbackID)
 {
     struct CallbackAggregator final : public RefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void (WebsiteData)>&& completionHandler)
@@ -402,7 +402,7 @@ void NetworkProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteData
     }
 }
 
-void NetworkProcess::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
@@ -460,7 +460,7 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, Fun
     RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
-void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID)
+void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID)
 {
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
@@ -479,12 +479,12 @@ void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet<
     completionHandler();
 }
 
-void NetworkProcess::downloadRequest(SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedFilename)
+void NetworkProcess::downloadRequest(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedFilename)
 {
     downloadManager().startDownload(nullptr, sessionID, downloadID, request, suggestedFilename);
 }
 
-void NetworkProcess::resumeDownload(SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, const WebKit::SandboxExtension::Handle& sandboxExtensionHandle)
+void NetworkProcess::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, const WebKit::SandboxExtension::Handle& sandboxExtensionHandle)
 {
     downloadManager().resumeDownload(sessionID, downloadID, resumeData, path, sandboxExtensionHandle);
 }

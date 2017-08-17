@@ -177,7 +177,6 @@
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SerializedScriptValue.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/SharedBuffer.h>
@@ -193,6 +192,7 @@
 #include <WebCore/WebGLStateTracker.h>
 #include <WebCore/markup.h>
 #include <bindings/ScriptValue.h>
+#include <pal/identifier/SessionID.h>
 #include <profiler/ProfilerDatabase.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValue.h>
@@ -2714,7 +2714,7 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
         pluginView->setLayerHostingMode(m_layerHostingMode);
 }
 
-void WebPage::setSessionID(SessionID sessionID)
+void WebPage::setSessionID(PAL::SessionID sessionID)
 {
     if (sessionID.isEphemeral())
         WebProcess::singleton().ensurePrivateBrowsingSession(sessionID);
@@ -3049,9 +3049,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setFrameFlattening(static_cast<WebCore::FrameFlattening>(store.getUInt32ValueForKey(WebPreferencesKey::frameFlatteningKey())));
     settings.setAsyncFrameScrollingEnabled(store.getBoolValueForKey(WebPreferencesKey::asyncFrameScrollingEnabledKey()));
     if (store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()) && !usesEphemeralSession())
-        setSessionID(SessionID::legacyPrivateSessionID());
-    else if (!store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()) && sessionID() == SessionID::legacyPrivateSessionID())
-        setSessionID(SessionID::defaultSessionID());
+        setSessionID(PAL::SessionID::legacyPrivateSessionID());
+    else if (!store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()) && sessionID() == PAL::SessionID::legacyPrivateSessionID())
+        setSessionID(PAL::SessionID::defaultSessionID());
     settings.setDeveloperExtrasEnabled(store.getBoolValueForKey(WebPreferencesKey::developerExtrasEnabledKey()));
     settings.setJavaScriptRuntimeFlags(RuntimeFlags(store.getUInt32ValueForKey(WebPreferencesKey::javaScriptRuntimeFlagsKey())));
     settings.setTextAreasAreResizable(store.getBoolValueForKey(WebPreferencesKey::textAreasAreResizableKey()));

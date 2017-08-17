@@ -33,7 +33,7 @@
 #include "PendingDownload.h"
 #include "SessionTracker.h"
 #include <WebCore/NotImplemented.h>
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace WebCore;
@@ -45,7 +45,7 @@ DownloadManager::DownloadManager(Client& client)
 {
 }
 
-void DownloadManager::startDownload(NetworkConnectionToWebProcess* connection, SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
+void DownloadManager::startDownload(NetworkConnectionToWebProcess* connection, PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const String& suggestedName)
 {
 #if USE(NETWORK_SESSION)
     auto* networkSession = SessionTracker::networkSession(sessionID);
@@ -162,7 +162,7 @@ void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downlo
 #endif
 }
 
-void DownloadManager::resumeDownload(SessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
+void DownloadManager::resumeDownload(PAL::SessionID, DownloadID downloadID, const IPC::DataReference& resumeData, const String& path, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
 #if USE(NETWORK_SESSION)
     notImplemented();

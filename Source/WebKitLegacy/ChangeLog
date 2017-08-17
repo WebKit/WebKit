@@ -1,3 +1,14 @@
+2017-08-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [PAL] Move SessionID into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=174192
+
+        Reviewed by Antti Koivisto.
+
+        * Storage/WebDatabaseProvider.cpp:
+        (WebDatabaseProvider::idbConnectionToServerForSession):
+        * Storage/WebDatabaseProvider.h:
+
 2017-08-16  Chris Dumez  <cdumez@apple.com>
 
         Cross origin Beacon requests with a ArrayBuffer / ArrayBufferView payload should not do a CORS preflight

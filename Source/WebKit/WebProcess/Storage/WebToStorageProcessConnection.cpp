@@ -77,7 +77,7 @@ void WebToStorageProcessConnection::didReceiveInvalidMessage(IPC::Connection&, I
 }
 
 #if ENABLE(INDEXED_DATABASE)
-WebIDBConnectionToServer& WebToStorageProcessConnection::idbConnectionToServerForSession(const SessionID& sessionID)
+WebIDBConnectionToServer& WebToStorageProcessConnection::idbConnectionToServerForSession(const PAL::SessionID& sessionID)
 {
     auto result = m_webIDBConnectionsBySession.add(sessionID, nullptr);
     if (result.isNewEntry) {

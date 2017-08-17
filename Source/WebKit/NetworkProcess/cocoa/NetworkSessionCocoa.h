@@ -42,7 +42,7 @@ namespace WebKit {
 class NetworkSessionCocoa final : public NetworkSession {
     friend class NetworkDataTaskCocoa;
 public:
-    static Ref<NetworkSession> create(WebCore::SessionID, LegacyCustomProtocolManager*);
+    static Ref<NetworkSession> create(PAL::SessionID, LegacyCustomProtocolManager*);
     static NetworkSession& defaultSession();
     ~NetworkSessionCocoa();
 
@@ -64,7 +64,7 @@ public:
     DownloadID takeDownloadID(NetworkDataTaskCocoa::TaskIdentifier);
 
 private:
-    NetworkSessionCocoa(WebCore::SessionID, LegacyCustomProtocolManager*);
+    NetworkSessionCocoa(PAL::SessionID, LegacyCustomProtocolManager*);
 
     void invalidateAndCancel() override;
     void clearCredentials() override;

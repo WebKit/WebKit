@@ -31,12 +31,12 @@
 #include "config.h"
 #include "WebCoreCrossThreadCopier.h"
 
-#include "SessionID.h"
 #include "ThreadSafeDataBuffer.h"
+#include <pal/identifier/SessionID.h>
 
 namespace WTF {
 
-CrossThreadCopierBase<false, false, WebCore::SessionID>::Type CrossThreadCopierBase<false, false, WebCore::SessionID>::copy(const WebCore::SessionID& sessionID)
+CrossThreadCopierBase<false, false, PAL::SessionID>::Type CrossThreadCopierBase<false, false, PAL::SessionID>::copy(const PAL::SessionID& sessionID)
 {
     return sessionID;
 }

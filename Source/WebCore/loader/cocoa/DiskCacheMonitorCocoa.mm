@@ -51,7 +51,7 @@ RefPtr<SharedBuffer> DiskCacheMonitor::tryGetFileBackedSharedBufferFromCFURLCach
     return SharedBuffer::create(data);
 }
 
-void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest& request, SessionID sessionID, CFCachedURLResponseRef cachedResponse)
+void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest& request, PAL::SessionID sessionID, CFCachedURLResponseRef cachedResponse)
 {
     if (!cachedResponse)
         return;
@@ -60,7 +60,7 @@ void DiskCacheMonitor::monitorFileBackingStoreCreation(const ResourceRequest& re
     new DiskCacheMonitor(request, sessionID, cachedResponse); // Balanced by delete and unique_ptr in the blocks set up in the constructor, one of which is guaranteed to run.
 }
 
-DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, SessionID sessionID, CFCachedURLResponseRef cachedResponse)
+DiskCacheMonitor::DiskCacheMonitor(const ResourceRequest& request, PAL::SessionID sessionID, CFCachedURLResponseRef cachedResponse)
     : m_resourceRequest(request)
     , m_sessionID(sessionID)
 {

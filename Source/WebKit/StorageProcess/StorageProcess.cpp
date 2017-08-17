@@ -35,8 +35,8 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/TextEncoding.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/MainThread.h>
 
@@ -89,7 +89,7 @@ void StorageProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
 }
 
 #if ENABLE(INDEXED_DATABASE)
-IDBServer::IDBServer& StorageProcess::idbServer(SessionID sessionID)
+IDBServer::IDBServer& StorageProcess::idbServer(PAL::SessionID sessionID)
 {
     auto addResult = m_idbServers.add(sessionID, nullptr);
     if (!addResult.isNewEntry) {
@@ -98,8 +98,8 @@ IDBServer::IDBServer& StorageProcess::idbServer(SessionID sessionID)
     }
 
     auto path = m_idbDatabasePaths.get(sessionID);
-    // There should already be a registered path for this SessionID.
-    // If there's not, then where did this SessionID come from?
+    // There should already be a registered path for this PAL::SessionID.
+    // If there's not, then where did this PAL::SessionID come from?
     ASSERT(!path.isEmpty());
 
     addResult.iterator->value = IDBServer::IDBServer::create(path, StorageProcess::singleton());
@@ -181,7 +181,7 @@ void StorageProcess::createStorageToWebProcessConnection()
 #endif
 }
 
-void StorageProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID)
+void StorageProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID)
 {
 #if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID](const WebsiteData& websiteData) {
@@ -209,7 +209,7 @@ void StorageProcess::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteData
 #endif
 }
 
-void StorageProcess::deleteWebsiteData(WebCore::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
 #if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID]() {
@@ -225,7 +225,7 @@ void StorageProcess::deleteWebsiteData(WebCore::SessionID sessionID, OptionSet<W
 #endif
 }
 
-void StorageProcess::deleteWebsiteDataForOrigins(WebCore::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& securityOriginDatas, uint64_t callbackID)
+void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& securityOriginDatas, uint64_t callbackID)
 {
 #if ENABLE(INDEXED_DATABASE)
     auto completionHandler = [this, callbackID]() {

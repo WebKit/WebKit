@@ -4671,7 +4671,7 @@ URL Document::completeURL(const String& url) const
     return completeURL(url, m_baseURL);
 }
 
-SessionID Document::sessionID() const
+PAL::SessionID Document::sessionID() const
 {
     if (m_sessionID.isValid())
         return m_sessionID;

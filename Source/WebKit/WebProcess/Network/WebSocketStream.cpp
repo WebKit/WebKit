@@ -32,9 +32,9 @@
 #include "NetworkSocketStreamMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
-#include <WebCore/SessionID.h>
 #include <WebCore/SocketStreamError.h>
 #include <WebCore/SocketStreamHandleClient.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -65,12 +65,12 @@ void WebSocketStream::networkProcessCrashed()
     globalWebSocketStreamMap().clear();
 }
 
-Ref<WebSocketStream> WebSocketStream::create(const URL& url, SocketStreamHandleClient& client, SessionID sessionID, const String& credentialPartition)
+Ref<WebSocketStream> WebSocketStream::create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition)
 {
     return adoptRef(*new WebSocketStream(url, client, sessionID, credentialPartition));
 }
 
-WebSocketStream::WebSocketStream(const WebCore::URL& url, WebCore::SocketStreamHandleClient& client, WebCore::SessionID sessionID, const String& cachePartition)
+WebSocketStream::WebSocketStream(const WebCore::URL& url, WebCore::SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& cachePartition)
     : SocketStreamHandle(url, client)
     , m_identifier(nextAvailableIdentifier++)
     , m_client(client)

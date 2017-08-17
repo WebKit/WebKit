@@ -35,8 +35,8 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/SharedBuffer.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/MainThread.h>
 #include <wtf/Seconds.h>
 

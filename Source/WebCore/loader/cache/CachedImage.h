@@ -47,10 +47,10 @@ class CachedImage final : public CachedResource {
     friend class MemoryCache;
 
 public:
-    CachedImage(CachedResourceRequest&&, SessionID);
-    CachedImage(Image*, SessionID);
+    CachedImage(CachedResourceRequest&&, PAL::SessionID);
+    CachedImage(Image*, PAL::SessionID);
     // Constructor to use for manually cached images.
-    CachedImage(const URL&, Image*, SessionID, const String& domainForCachePartition);
+    CachedImage(const URL&, Image*, PAL::SessionID, const String& domainForCachePartition);
     virtual ~CachedImage();
 
     WEBCORE_EXPORT Image* image(); // Returns the nullImage() if the image is not available yet.
@@ -90,7 +90,7 @@ public:
 private:
     void clear();
 
-    CachedImage(CachedImage&, const ResourceRequest&, SessionID);
+    CachedImage(CachedImage&, const ResourceRequest&, PAL::SessionID);
 
     void setBodyDataFrom(const CachedResource&) final;
 

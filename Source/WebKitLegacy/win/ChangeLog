@@ -1,3 +1,22 @@
+2017-08-17  Don Olmstead  <don.olmstead@sony.com>
+
+        [PAL] Move SessionID into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=174192
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        (WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts):
+        (WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        (WebFrameNetworkingContext::destroyPrivateBrowsingSession):
+        (WebFrameNetworkingContext::storageSession const):
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2017-08-15  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Adding generic support for CacheStorage and Cache methods

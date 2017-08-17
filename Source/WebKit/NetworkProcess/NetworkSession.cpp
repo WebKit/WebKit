@@ -45,7 +45,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<NetworkSession> NetworkSession::create(SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
+Ref<NetworkSession> NetworkSession::create(PAL::SessionID sessionID, LegacyCustomProtocolManager* customProtocolManager)
 {
 #if PLATFORM(COCOA)
     return NetworkSessionCocoa::create(sessionID, customProtocolManager);
@@ -62,7 +62,7 @@ NetworkSession& NetworkSession::defaultSession()
     return NetworkSessionCocoa::defaultSession();
 #else
     ASSERT(RunLoop::isMain());
-    static NetworkSession* session = &NetworkSession::create(SessionID::defaultSessionID()).leakRef();
+    static NetworkSession* session = &NetworkSession::create(PAL::SessionID::defaultSessionID()).leakRef();
     return *session;
 #endif
 }
@@ -74,7 +74,7 @@ NetworkStorageSession& NetworkSession::networkStorageSession() const
     return *storageSession;
 }
 
-NetworkSession::NetworkSession(SessionID sessionID)
+NetworkSession::NetworkSession(PAL::SessionID sessionID)
     : m_sessionID(sessionID)
 {
 }

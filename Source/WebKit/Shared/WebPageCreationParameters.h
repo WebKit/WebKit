@@ -41,8 +41,8 @@
 #include <WebCore/MediaProducer.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -88,7 +88,7 @@ struct WebPageCreationParameters {
     String userAgent;
 
     Vector<BackForwardListItemState> itemStates;
-    WebCore::SessionID sessionID;
+    PAL::SessionID sessionID;
     uint64_t highestUsedBackForwardItemID;
 
     uint64_t userContentControllerID;

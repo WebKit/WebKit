@@ -45,7 +45,7 @@ typedef FontTaggedSettings<int> FontFeatureSettings;
 
 class CachedFont : public CachedResource {
 public:
-    CachedFont(CachedResourceRequest&&, SessionID, Type = FontResource);
+    CachedFont(CachedResourceRequest&&, PAL::SessionID, Type = FontResource);
     virtual ~CachedFont();
 
     void beginLoadIfNeeded(CachedResourceLoader&);

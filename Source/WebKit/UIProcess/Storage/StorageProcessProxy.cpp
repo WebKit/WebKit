@@ -83,7 +83,7 @@ void StorageProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::De
     }
 }
 
-void StorageProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, WTF::Function<void (WebsiteData)>&& completionHandler)
+void StorageProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, WTF::Function<void (WebsiteData)>&& completionHandler)
 {
     ASSERT(canSendMessage());
 
@@ -93,7 +93,7 @@ void StorageProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<Websit
     send(Messages::StorageProcess::FetchWebsiteData(sessionID, dataTypes, callbackID), 0);
 }
 
-void StorageProcessProxy::deleteWebsiteData(WebCore::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void ()>&& completionHandler)
+void StorageProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void ()>&& completionHandler)
 {
     auto callbackID = generateCallbackID();
 
@@ -101,7 +101,7 @@ void StorageProcessProxy::deleteWebsiteData(WebCore::SessionID sessionID, Option
     send(Messages::StorageProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince, callbackID), 0);
 }
 
-void StorageProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, const Vector<WebCore::SecurityOriginData>& origins, WTF::Function<void()>&& completionHandler)
+void StorageProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, const Vector<WebCore::SecurityOriginData>& origins, WTF::Function<void()>&& completionHandler)
 {
     ASSERT(canSendMessage());
 

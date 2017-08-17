@@ -27,7 +27,7 @@
 
 #include <WebCore/FrameLoaderClient.h>
 
-namespace WebCore {
+namespace PAL {
 class SessionID;
 }
 
@@ -196,7 +196,7 @@ private:
     void dispatchDidBecomeFrameset(bool) final;
 
     bool canCachePage() const final;
-    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, WebCore::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
+    void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, PAL::SessionID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
 
     RefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const String& name, WebCore::HTMLFrameOwnerElement&, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) final;
 

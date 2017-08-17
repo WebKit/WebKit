@@ -31,7 +31,7 @@
 #include <WebCore/ResourceHandleTypes.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Function.h>
 
 namespace WebCore {
@@ -46,7 +46,7 @@ public:
     struct Parameters {
         WebCore::ResourceRequest originalRequest;
         Ref<WebCore::SecurityOrigin> sourceOrigin;
-        WebCore::SessionID sessionID;
+        PAL::SessionID sessionID;
         WebCore::StoredCredentials allowStoredCredentials;
     };
     enum class Result { Success, Failure };

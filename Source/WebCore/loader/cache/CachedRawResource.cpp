@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type, SessionID sessionID)
+CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type, PAL::SessionID sessionID)
     : CachedResource(WTFMove(request), type, sessionID)
     , m_identifier(0)
     , m_allowEncodedDataReplacement(true)

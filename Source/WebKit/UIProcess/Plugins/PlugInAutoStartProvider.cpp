@@ -42,8 +42,8 @@ namespace WebKit {
 PlugInAutoStartProvider::PlugInAutoStartProvider(WebProcessPool* processPool)
     : m_processPool(processPool)
 {
-    m_hashToOriginMap.add(SessionID::defaultSessionID(), HashMap<unsigned, String>());
-    m_autoStartTable.add(SessionID::defaultSessionID(), AutoStartTable());
+    m_hashToOriginMap.add(PAL::SessionID::defaultSessionID(), HashMap<unsigned, String>());
+    m_autoStartTable.add(PAL::SessionID::defaultSessionID(), AutoStartTable());
 }
 
 static double expirationTimeFromNow()
@@ -51,14 +51,14 @@ static double expirationTimeFromNow()
     return currentTime() + plugInAutoStartExpirationTimeThreshold;
 }
 
-void PlugInAutoStartProvider::addAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, SessionID sessionID)
+void PlugInAutoStartProvider::addAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, PAL::SessionID sessionID)
 {
     auto sessionIterator = m_hashToOriginMap.find(sessionID);
     if (sessionIterator == m_hashToOriginMap.end()) {
-        if (m_hashToOriginMap.get(SessionID::defaultSessionID()).contains(plugInOriginHash))
+        if (m_hashToOriginMap.get(PAL::SessionID::defaultSessionID()).contains(plugInOriginHash))
             return;
         sessionIterator = m_hashToOriginMap.set(sessionID, HashMap<unsigned, String>()).iterator;
-    } else if (sessionIterator->value.contains(plugInOriginHash) || m_hashToOriginMap.get(SessionID::defaultSessionID()).contains(plugInOriginHash))
+    } else if (sessionIterator->value.contains(plugInOriginHash) || m_hashToOriginMap.get(PAL::SessionID::defaultSessionID()).contains(plugInOriginHash))
         return;
 
     AutoStartTable::iterator it = m_autoStartTable.add(sessionID, AutoStartTable()).iterator->value.add(pageOrigin, PlugInAutoStartOriginMap()).iterator;
@@ -92,7 +92,7 @@ Ref<API::Dictionary> PlugInAutoStartProvider::autoStartOriginsTableCopy() const
     API::Dictionary::MapType map;
 
     double now = currentTime();
-    for (const auto& stringOriginHash : m_autoStartTable.get(SessionID::defaultSessionID())) {
+    for (const auto& stringOriginHash : m_autoStartTable.get(PAL::SessionID::defaultSessionID())) {
         API::Dictionary::MapType hashMap;
         for (const auto& originHash : stringOriginHash.value) {
             if (now <= originHash.value)
@@ -127,8 +127,8 @@ void PlugInAutoStartProvider::setAutoStartOriginsTableWithItemsPassingTest(API::
     m_hashToOriginMap.clear();
     m_autoStartTable.clear();
     HashMap<unsigned, double> hashMap;
-    HashMap<unsigned, String>& hashToOriginMap = m_hashToOriginMap.add(SessionID::defaultSessionID(), HashMap<unsigned, String>()).iterator->value;
-    AutoStartTable& ast = m_autoStartTable.add(SessionID::defaultSessionID(), AutoStartTable()).iterator->value;
+    HashMap<unsigned, String>& hashToOriginMap = m_hashToOriginMap.add(PAL::SessionID::defaultSessionID(), HashMap<unsigned, String>()).iterator->value;
+    AutoStartTable& ast = m_autoStartTable.add(PAL::SessionID::defaultSessionID(), AutoStartTable()).iterator->value;
 
     for (auto& strDict : table.map()) {
         PlugInAutoStartOriginMap hashes;
@@ -164,9 +164,9 @@ void PlugInAutoStartProvider::setAutoStartOriginsArray(API::Array& originList)
         m_autoStartOrigins.append(string->string());
 }
 
-void PlugInAutoStartProvider::didReceiveUserInteraction(unsigned plugInOriginHash, SessionID sessionID)
+void PlugInAutoStartProvider::didReceiveUserInteraction(unsigned plugInOriginHash, PAL::SessionID sessionID)
 {
-    HashMap<WebCore::SessionID, HashMap<unsigned, String>>::const_iterator sessionIterator = m_hashToOriginMap.find(sessionID);
+    HashMap<PAL::SessionID, HashMap<unsigned, String>>::const_iterator sessionIterator = m_hashToOriginMap.find(sessionID);
     HashMap<unsigned, String>::const_iterator it;
     bool contains = false;
     if (sessionIterator != m_hashToOriginMap.end()) {
@@ -174,7 +174,7 @@ void PlugInAutoStartProvider::didReceiveUserInteraction(unsigned plugInOriginHas
         contains = it != sessionIterator->value.end();
     }
     if (!contains) {
-        sessionIterator = m_hashToOriginMap.find(SessionID::defaultSessionID());
+        sessionIterator = m_hashToOriginMap.find(PAL::SessionID::defaultSessionID());
         it = sessionIterator->value.find(plugInOriginHash);
         if (it == sessionIterator->value.end()) {
             ASSERT_NOT_REACHED();

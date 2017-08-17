@@ -32,7 +32,7 @@
 #include "NetworkCache.h"
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/RunLoop.h>
 
@@ -52,7 +52,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& frameID, con
     ASSERT(!m_cacheEntry || m_cacheEntry->needsValidation());
 
     NetworkLoadParameters parameters;
-    parameters.sessionID = SessionID::defaultSessionID();
+    parameters.sessionID = PAL::SessionID::defaultSessionID();
     parameters.allowStoredCredentials = AllowStoredCredentials;
     parameters.contentSniffingPolicy = DoNotSniffContent;
     parameters.request = m_originalRequest;

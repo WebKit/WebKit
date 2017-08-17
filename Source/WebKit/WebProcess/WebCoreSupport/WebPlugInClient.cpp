@@ -53,7 +53,7 @@ bool WebPlugInClient::shouldAutoStartFromOrigin(const String& pageOrigin, const 
     return WebProcess::singleton().shouldPlugInAutoStartFromOrigin(m_webPage, pageOrigin, pluginOrigin, mimeType);
 }
 
-void WebPlugInClient::didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID sessionID)
+void WebPlugInClient::didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, PAL::SessionID sessionID)
 {
     WebProcess::singleton().plugInDidStartFromOrigin(pageOrigin, pluginOrigin, mimeType, sessionID);
 }

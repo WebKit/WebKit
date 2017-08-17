@@ -29,8 +29,8 @@
 #include "SandboxExtension.h"
 #include <WebCore/IDBBackingStore.h>
 #include <WebCore/IDBServer.h>
-#include <WebCore/SessionID.h>
 #include <WebCore/UniqueIDBDatabase.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 
@@ -56,7 +56,7 @@ public:
     ~StorageProcess();
 
 #if ENABLE(INDEXED_DATABASE)
-    WebCore::IDBServer::IDBServer& idbServer(WebCore::SessionID);
+    WebCore::IDBServer::IDBServer& idbServer(PAL::SessionID);
 #endif
 
     WorkQueue& queue() { return m_queue.get(); }
@@ -92,9 +92,9 @@ private:
     void initializeWebsiteDataStore(const StorageProcessCreationParameters&);
     void createStorageToWebProcessConnection();
 
-    void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID);
-    void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
-    void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& origins, uint64_t callbackID);
+    void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID);
+    void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
+    void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& origins, uint64_t callbackID);
 #if ENABLE(SANDBOX_EXTENSIONS)
     void grantSandboxExtensionsForBlobs(const Vector<String>& paths, const SandboxExtension::HandleArray&);
     void didGetSandboxExtensionsForBlobFiles(uint64_t requestID, SandboxExtension::HandleArray&&);
@@ -113,8 +113,8 @@ private:
     Ref<WorkQueue> m_queue;
 
 #if ENABLE(INDEXED_DATABASE)
-    HashMap<WebCore::SessionID, String> m_idbDatabasePaths;
-    HashMap<WebCore::SessionID, RefPtr<WebCore::IDBServer::IDBServer>> m_idbServers;
+    HashMap<PAL::SessionID, String> m_idbDatabasePaths;
+    HashMap<PAL::SessionID, RefPtr<WebCore::IDBServer::IDBServer>> m_idbServers;
 #endif
     HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
     HashMap<uint64_t, WTF::Function<void (SandboxExtension::HandleArray&&)>> m_sandboxExtensionForBlobsCompletionHandlers;

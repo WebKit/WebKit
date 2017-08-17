@@ -28,7 +28,7 @@
 
 #include "WebProcess.h"
 #include "WebToStorageProcessConnection.h"
-#include <WebCore/SessionID.h>
+#include <pal/identifier/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -69,7 +69,7 @@ WebDatabaseProvider::~WebDatabaseProvider()
 
 #if ENABLE(INDEXED_DATABASE)
 
-WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(const WebCore::SessionID& sessionID)
+WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(const PAL::SessionID& sessionID)
 {
     if (sessionID.isEphemeral()) {
         auto result = m_idbEphemeralConnectionMap.add(sessionID.sessionID(), nullptr);

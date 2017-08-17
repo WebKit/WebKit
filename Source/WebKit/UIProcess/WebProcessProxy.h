@@ -39,8 +39,8 @@
 #include "WebConnectionToWebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/LinkHash.h>
-#include <WebCore/SessionID.h>
 #include <memory>
+#include <pal/identifier/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -138,9 +138,9 @@ public:
     void didSaveToPageCache();
     void releasePageCache();
 
-    void fetchWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, Function<void(WebsiteData)>&& completionHandler);
-    void deleteWebsiteData(WebCore::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, Function<void()>&& completionHandler);
-    void deleteWebsiteDataForOrigins(WebCore::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, Function<void()>&& completionHandler);
+    void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, Function<void(WebsiteData)>&& completionHandler);
+    void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, std::chrono::system_clock::time_point modifiedSince, Function<void()>&& completionHandler);
+    void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, Function<void()>&& completionHandler);
     static void deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPages, Function<void (const HashSet<String>&)>&& completionHandler);
     static void topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, Function<void(HashSet<String>&&)>&& completionHandler);
     static void notifyPageStatisticsAndDataRecordsProcessed();
