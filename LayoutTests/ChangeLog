@@ -1,3 +1,25 @@
+2017-08-17  Andreas Kling  <akling@apple.com>
+
+        Disable CSS regions at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=175630
+
+        Reviewed by Antti Koivisto.
+
+        Skip tests that are entirely about regions, and tweak logic
+        and/or expectations for tests that test regions in addition to
+        other things.
+
+        * TestExpectations:
+        * fast/css/will-change/resources/will-change-stacking-helper.js:
+        * fast/dom/collection-iterators-expected.txt:
+        * fast/dom/collection-iterators.html:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/ios/fast/dom/collection-iterators-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/wpe/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2017-08-17  Antti Koivisto  <antti@apple.com>
 
         RenderListItem - Avoid render tree mutation during layout

@@ -24,7 +24,6 @@ var willChangeValues = [
     { 'property' : '-webkit-mask-box-image', 'stacking' : true },
     { 'property' : '-webkit-transform', 'stacking' : true },
     { 'property' : '-webkit-transform-style', 'stacking' : true },
-    { 'property' : '-webkit-flow-from', 'stacking' : true },
 ];
 
 function makeStackingElement(stackingProperty, value)

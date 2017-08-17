@@ -50,7 +50,6 @@ PASS a["dataset"] is [object DOMStringMap]
 PASS a["clientWidth"] is 0
 PASS a["scrollWidth"] is 0
 PASS a["attributes"] is [object NamedNodeMap]
-PASS a["webkitRegionOverset"] is undefined
 PASS a["ALLOW_KEYBOARD_INPUT"] is 1
 PASS a["offsetWidth"] is 39
 PASS a["classList"] is 

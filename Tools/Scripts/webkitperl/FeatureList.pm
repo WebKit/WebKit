@@ -179,7 +179,7 @@ my @features = (
       define => "ENABLE_CSS_IMAGE_SET", default => (isGtk() || isWPE()), value => \$cssImageSetSupport },
 
     { option => "css-regions", desc => "Toggle CSS Regions support",
-      define => "ENABLE_CSS_REGIONS", default => 1, value => \$cssRegionsSupport },
+      define => "ENABLE_CSS_REGIONS", default => 0, value => \$cssRegionsSupport },
 
     { option => "css-shapes", desc => "Toggle CSS Shapes support",
       define => "ENABLE_CSS_SHAPES", default => 1, value => \$cssShapesSupport },

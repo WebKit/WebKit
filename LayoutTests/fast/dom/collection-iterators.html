@@ -45,7 +45,6 @@ checkHasIterator("CSSRuleList", window.getMatchedCSSRules(document.body));
 checkHasIterator("CSSStyleDeclaration", window.getComputedStyle(document.body));
 checkHasIterator("CSSValueList", window.getComputedStyle(document.body).getPropertyCSSValue('background-position'));
 checkHasIterator("MimeTypeArray", navigator.mimeTypes);
-checkHasIterator("WebKitNamedFlowCollection", document.webkitGetNamedFlows());
 if (navigator.plugins.length)
     checkHasIterator("Plugin", navigator.plugins[0]);
 checkHasIterator("PluginArray", navigator.plugins);
