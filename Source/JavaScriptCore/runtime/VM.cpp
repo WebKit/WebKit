@@ -193,7 +193,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , symbolImplToSymbolMap(*this)
     , prototypeMap(*this)
     , interpreter(0)
-    , sizeOfLastScratchBuffer(0)
     , entryScope(0)
     , m_regExpCache(new RegExpCache(this))
 #if ENABLE(REGEXP_TRACING)
@@ -422,8 +421,8 @@ VM::~VM()
 #endif
 
 #if ENABLE(DFG_JIT)
-    for (unsigned i = 0; i < scratchBuffers.size(); ++i)
-        fastFree(scratchBuffers[i]);
+    for (unsigned i = 0; i < m_scratchBuffers.size(); ++i)
+        fastFree(m_scratchBuffers[i]);
 #endif
 }
 
@@ -745,7 +744,8 @@ inline void VM::updateStackLimits()
 #if ENABLE(DFG_JIT)
 void VM::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
 {
-    for (auto* scratchBuffer : scratchBuffers) {
+    auto lock = holdLock(m_scratchBufferLock);
+    for (auto* scratchBuffer : m_scratchBuffers) {
         if (scratchBuffer->activeLength()) {
             void* bufferStart = scratchBuffer->dataBuffer();
             conservativeRoots.add(bufferStart, static_cast<void*>(static_cast<char*>(bufferStart) + scratchBuffer->activeLength()));
@@ -1006,5 +1006,28 @@ void VM::setRunLoop(CFRunLoopRef runLoop)
         timer->setRunLoop(runLoop);
 }
 #endif // USE(CF)
+
+ScratchBuffer* VM::scratchBufferForSize(size_t size)
+{
+    if (!size)
+        return nullptr;
+
+    auto locker = holdLock(m_scratchBufferLock);
+
+    if (size > m_sizeOfLastScratchBuffer) {
+        // Protect against a N^2 memory usage pathology by ensuring
+        // that at worst, we get a geometric series, meaning that the
+        // total memory usage is somewhere around
+        // max(scratch buffer size) * 4.
+        m_sizeOfLastScratchBuffer = size * 2;
+
+        ScratchBuffer* newBuffer = ScratchBuffer::create(m_sizeOfLastScratchBuffer);
+        RELEASE_ASSERT(newBuffer);
+        m_scratchBuffers.append(newBuffer);
+    }
+
+    ScratchBuffer* result = m_scratchBuffers.last();
+    return result;
+}
 
 } // namespace JSC

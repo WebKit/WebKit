@@ -566,32 +566,12 @@ public:
     Instruction* targetInterpreterPCForThrow;
     uint32_t osrExitIndex;
     void* osrExitJumpDestination;
-    Vector<ScratchBuffer*> scratchBuffers;
-    size_t sizeOfLastScratchBuffer;
-
     bool isExecutingInRegExpJIT { false };
 
-    ScratchBuffer* scratchBufferForSize(size_t size)
-    {
-        if (!size)
-            return 0;
-
-        if (size > sizeOfLastScratchBuffer) {
-            // Protect against a N^2 memory usage pathology by ensuring
-            // that at worst, we get a geometric series, meaning that the
-            // total memory usage is somewhere around
-            // max(scratch buffer size) * 4.
-            sizeOfLastScratchBuffer = size * 2;
-
-            ScratchBuffer* newBuffer = ScratchBuffer::create(sizeOfLastScratchBuffer);
-            RELEASE_ASSERT(newBuffer);
-            scratchBuffers.append(newBuffer);
-        }
-
-        ScratchBuffer* result = scratchBuffers.last();
-        result->setActiveLength(0);
-        return result;
-    }
+    // The threading protocol here is as follows:
+    // - You can call scratchBufferForSize from any thread.
+    // - You can only set the ScratchBuffer's activeLength from the main thread.
+    ScratchBuffer* scratchBufferForSize(size_t size);
 
     EncodedJSValue* exceptionFuzzingBuffer(size_t size)
     {
@@ -814,6 +794,9 @@ private:
     std::unique_ptr<TypeProfilerLog> m_typeProfilerLog;
     unsigned m_typeProfilerEnabledCount;
     bool m_needToFirePrimitiveGigacageEnabled { false };
+    Lock m_scratchBufferLock;
+    Vector<ScratchBuffer*> m_scratchBuffers;
+    size_t m_sizeOfLastScratchBuffer { 0 };
     InlineWatchpointSet m_primitiveGigacageEnabled;
     FunctionHasExecutedCache m_functionHasExecutedCache;
     std::unique_ptr<ControlFlowProfiler> m_controlFlowProfiler;
