@@ -67,6 +67,8 @@ auto CryptoKey::algorithm() const -> AlgorithmVariant
     case KeyAlgorithmClass::Raw:
         return downcast<RawKeyAlgorithm>(*algorithm).dictionary();
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 auto CryptoKey::usages() const -> Vector<CryptoKeyUsage>

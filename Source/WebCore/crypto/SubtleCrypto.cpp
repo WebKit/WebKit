@@ -394,6 +394,8 @@ static CryptoKeyUsageBitmap toCryptoKeyUsageBitmap(CryptoKeyUsage usage)
     case CryptoKeyUsage::UnwrapKey:
         return CryptoKeyUsageUnwrapKey;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static CryptoKeyUsageBitmap toCryptoKeyUsageBitmap(const Vector<CryptoKeyUsage>& usages)
@@ -476,6 +478,8 @@ static std::optional<KeyData> toKeyData(SubtleCrypto::KeyFormat format, SubtleCr
             }
         );
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static Vector<uint8_t> copyToVector(BufferSource&& data)
