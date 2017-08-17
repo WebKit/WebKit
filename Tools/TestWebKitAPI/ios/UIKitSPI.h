@@ -25,7 +25,7 @@
 
 #if PLATFORM(IOS)
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 
 #import <UIKit/UIApplication_Private.h>
 

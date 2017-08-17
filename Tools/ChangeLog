@@ -1,5 +1,15 @@
 2017-08-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, try to fix the internal iOS 10 build after r220865.
+
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+        On the iOS 10 SDK, UIApplication_Private.h cannot be imported in the simulator. Simply fall back to using the
+        extern declaration when building for pre-iOS 11; once the bots stop building for iOS 10, we can safely remove
+        this compiler guard.
+
+2017-08-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Respect type fidelities when copying image elements to the pasteboard
         https://bugs.webkit.org/show_bug.cgi?id=175638
         <rdar://problem/26556043>
