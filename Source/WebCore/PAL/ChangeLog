@@ -1,3 +1,14 @@
+2017-08-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove ENABLE_VIEW_MODE_CSS_MEDIA and related code
+        https://bugs.webkit.org/show_bug.cgi?id=175557
+
+        Reviewed by Jon Lee.
+
+        No port cares about the ENABLE(VIEW_MODE_CSS_MEDIA) feature, so remove it.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-08-07  Brian Burg  <bburg@apple.com>
 
         Remove CANVAS_PATH compilation guard

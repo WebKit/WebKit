@@ -2066,8 +2066,6 @@ webkit.org/b/122571 [ Debug ] inspector/unit-tests/test-harness-trivially-works.
 
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
 
-Bug(GTK) fast/media/media-query-list-04.html [ Timeout ]
-
 webkit.org/b/132128 fast/text/international/embed-bidi-style-in-isolate-crash.html [ Timeout Pass ]
 
 webkit.org/b/132266 js/slow-stress/emscripten-memops.html [ Timeout Pass ]
@@ -2458,13 +2456,6 @@ Bug(GTK) fast/forms/file/input-file-value.html [ Failure ]
 Bug(GTK) fast/forms/search-event-delay.html [ Failure ]
 
 Bug(GTK) fast/forms/select/popup-closes-on-blur.html [ Failure ]
-
-Bug(GTK) fast/media/media-query-list-02.html [ Failure ]
-Bug(GTK) fast/media/media-query-list-03.html [ Failure ]
-Bug(GTK) fast/media/media-query-list-05.html [ Failure ]
-Bug(GTK) fast/media/media-query-list-06.html [ Failure ]
-
-Bug(GTK) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
 
 # Shared workers disabled with the Network Process
 webkit.org/b/139357 fast/workers/worker-crash-with-invalid-location.html [ Skip ]

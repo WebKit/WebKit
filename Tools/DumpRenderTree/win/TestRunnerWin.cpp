@@ -834,11 +834,6 @@ void TestRunner::setValueForUser(JSContextRef context, JSValueRef element, JSStr
     domInputElement->setValueForUser(valueBSTR);
 }
 
-void TestRunner::setViewModeMediaFeature(JSStringRef mode)
-{
-    // FIXME: implement
-}
-
 void TestRunner::dispatchPendingLoadRequests()
 {
     COMPtr<IWebView> webView;

@@ -120,7 +120,6 @@ public:
     void setUserStyleSheetEnabled(bool flag);
     void setUserStyleSheetLocation(JSStringRef path);
     void setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value);
-    void setViewModeMediaFeature(JSStringRef);
     void setXSSAuditorEnabled(bool flag);
     void setSpatialNavigationEnabled(bool);
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);

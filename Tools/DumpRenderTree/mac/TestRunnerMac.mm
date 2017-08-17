@@ -575,11 +575,6 @@ void TestRunner::setValueForUser(JSContextRef context, JSValueRef nodeObject, JS
     [(DOMHTMLInputElement *)element setValueForUser:(NSString *)valueCF.get()];
 }
 
-void TestRunner::setViewModeMediaFeature(JSStringRef mode)
-{
-    // FIXME: implement
-}
-
 void TestRunner::dispatchPendingLoadRequests()
 {
     [[mainFrame webView] _dispatchPendingLoadRequests];

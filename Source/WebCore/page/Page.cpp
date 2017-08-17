@@ -435,45 +435,6 @@ Ref<DOMRectList> Page::passiveTouchEventListenerRects()
     return DOMRectList::create(quads);
 }
 
-#if ENABLE(VIEW_MODE_CSS_MEDIA)
-struct ViewModeInfo {
-    const char* name;
-    Page::ViewMode type;
-};
-static const int viewModeMapSize = 5;
-static const ViewModeInfo viewModeMap[viewModeMapSize] = {
-    {"windowed", Page::ViewModeWindowed},
-    {"floating", Page::ViewModeFloating},
-    {"fullscreen", Page::ViewModeFullscreen},
-    {"maximized", Page::ViewModeMaximized},
-    {"minimized", Page::ViewModeMinimized}
-};
-
-Page::ViewMode Page::stringToViewMode(const String& text)
-{
-    for (auto& mode : viewModeMap) {
-        if (text == mode.name)
-            return mode.type;
-    }
-    return Page::ViewModeInvalid;
-}
-
-void Page::setViewMode(ViewMode viewMode)
-{
-    if (viewMode == m_viewMode || viewMode == ViewModeInvalid)
-        return;
-
-    m_viewMode = viewMode;
-
-
-    if (m_mainFrame->view())
-        m_mainFrame->view()->forceLayout();
-
-    if (m_mainFrame->document())
-        m_mainFrame->document()->styleScope().didChangeStyleSheetEnvironment();
-}
-#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
-
 bool Page::openedByDOM() const
 {
     return m_openedByDOM;

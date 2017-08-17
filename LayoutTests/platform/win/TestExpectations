@@ -805,14 +805,6 @@ webkit.org/b/33954 http/tests/media/video-cookie.html [ Skip ]
 #webkit.org/b/34447 [ Release ] http/tests/media/video-referer.html [ Failure ]
 webkit.org/b/34447 [ Debug ] http/tests/media/video-referer.html [ Skip ] # Crashing
 
-# DumpRenderTree requires testRunner.setViewModeMediaFeature()
-#fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
-#fast/media/media-query-list-02.html [ Failure ]
-#fast/media/media-query-list-03.html [ Failure ]
-#fast/media/media-query-list-04.html [ Failure ]
-#fast/media/media-query-list-05.html [ Failure ]
-#fast/media/media-query-list-06.html [ Failure ]
-
 webkit.org/b/38376 media/media-document-audio-size.html [ Skip ]
 
 # Media Stream API is not yet enabled.

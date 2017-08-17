@@ -23,11 +23,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicString.h>
 
-#if ENABLE(VIEW_MODE_CSS_MEDIA)
-#define CSS_MEDIAQUERY_VIEW_MODE(macro) macro(viewMode, "-webkit-view-mode")
-#else
 #define CSS_MEDIAQUERY_VIEW_MODE(macro)
-#endif
 
 #define CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(macro) \
     macro(animation, "-webkit-animation") \
