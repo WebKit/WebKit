@@ -48,26 +48,41 @@ public:
     void performTask(Function<void ()>&&);
     void performTaskSync(Function<void ()>&&);
 
-    bool isActive();
+    Lock& stateLock() { return m_state.lock; }
+
     void scheduleUpdate();
+    void scheduleUpdate(LockHolder&);
     void stopUpdates();
 
-    void updateCompleted();
+    void compositionCompleted(LockHolder&);
+    void updateCompleted(LockHolder&);
 
 private:
-    enum class UpdateState {
-        Completed,
+    enum class CompositionState {
+        Idle,
         InProgress,
-        PendingAfterCompletion,
+    };
+    enum class UpdateState {
+        Idle,
+        Scheduled,
+        InProgress,
+        PendingCompletion,
     };
 
     void updateTimerFired();
 
     RunLoop::Timer<CompositingRunLoop> m_updateTimer;
     Function<void ()> m_updateFunction;
-    Atomic<UpdateState> m_updateState;
     Lock m_dispatchSyncConditionMutex;
     Condition m_dispatchSyncCondition;
+
+
+    struct {
+        Lock lock;
+        CompositionState composition { CompositionState::Idle };
+        UpdateState update { UpdateState::Idle };
+        bool pendingUpdate { false };
+    } m_state;
 };
 
 } // namespace WebKit

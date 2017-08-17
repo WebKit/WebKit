@@ -1,3 +1,52 @@
+2017-08-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [ThreadedCompositor] Improve composition and update state handling
+        https://bugs.webkit.org/show_bug.cgi?id=172448
+
+        Reviewed by Carlos Garcia Campos.
+
+        In the ThreadedCompositor and related classes, we now track composition
+        and scene update states separately. This enables properly piping in the
+        DisplayRefreshMonitor object, leveraging it for both display refresh
+        notifications and signalling to the client that the scene update is
+        completed.
+
+        In CompositingRunLoop, two separate states are now used, one for
+        compositing and the other for scene update. Access to both should be done
+        while the related Lock object is held. The pending update state is also
+        tracked in order to schedule any required updates as soon as the current
+        state update is completed.
+
+        In ThreadedCompositor, the information about client notification and
+        update completion coordination is now also kept under a Lock object,
+        moving away from atomics. DisplayRefreshMonitor can now utilize just
+        two methods in order to either schedule an update or report that update
+        as finished.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::CompositingRunLoop):
+        (WebKit::CompositingRunLoop::scheduleUpdate):
+        (WebKit::CompositingRunLoop::stopUpdates):
+        (WebKit::CompositingRunLoop::compositionCompleted):
+        (WebKit::CompositingRunLoop::updateCompleted):
+        (WebKit::CompositingRunLoop::updateTimerFired):
+        (WebKit::CompositingRunLoop::isActive): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        (WebKit::CompositingRunLoop::stateLock):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::m_displayRefreshMonitor):
+        (WebKit::ThreadedCompositor::sceneUpdateFinished):
+        (WebKit::ThreadedCompositor::updateSceneState):
+        (WebKit::ThreadedCompositor::requestDisplayRefreshMonitorUpdate):
+        (WebKit::ThreadedCompositor::handleDisplayRefreshMonitorUpdate):
+        (WebKit::ThreadedCompositor::renderNextFrameIfNeeded): Deleted.
+        (WebKit::ThreadedCompositor::completeCoordinatedUpdateIfNeeded): Deleted.
+        (WebKit::ThreadedCompositor::coordinateUpdateCompletionWithClient): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::requestRefreshCallback):
+        (WebKit::ThreadedDisplayRefreshMonitor::displayRefreshCallback):
+
 2017-08-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] WebKitAutomationSession should set session client to nullptr on dispose
