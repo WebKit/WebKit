@@ -2499,13 +2499,13 @@ void FrameLoader::closeAndRemoveChild(Frame& child)
 // Called every time a resource is completely loaded or an error is received.
 void FrameLoader::checkLoadComplete()
 {
-    ASSERT(m_client.hasWebView());
-    
     m_shouldCallCheckLoadComplete = false;
 
     if (!m_frame.page())
         return;
 
+    ASSERT(m_client.hasWebView());
+    
     // FIXME: Always traversing the entire frame tree is a bit inefficient, but 
     // is currently needed in order to null out the previous history item for all frames.
     Vector<Ref<Frame>, 16> frames;

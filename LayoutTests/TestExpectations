@@ -699,7 +699,6 @@ webkit.org/b/141267 http/tests/misc/detached-frame-console.html [ Pass Failure ]
 # Aborting application cache abort tests are intrinsically flaky.
 webkit.org/b/87633 http/tests/appcache/abort-cache-onchecking-manifest-404.html [ Pass Failure ]
 webkit.org/b/87633 http/tests/appcache/abort-cache-ondownloading-resource-404.html [ Pass Failure ]
-webkit.org/b/175107 http/tests/appcache/deferred-events-delete-while-raising-timer.html [ Pass Failure Crash ]
 webkit.org/b/87633 http/tests/appcache/deferred-events-delete-while-raising.html [ Pass Failure ]
 webkit.org/b/87633 http/tests/appcache/deferred-events.html [ Pass Failure ]
 
