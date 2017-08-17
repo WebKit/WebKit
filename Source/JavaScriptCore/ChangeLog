@@ -1,3 +1,12 @@
+2017-08-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix JSCOnly ARM buildbots after r220047 and r220184
+        https://bugs.webkit.org/show_bug.cgi?id=174993
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * CMakeLists.txt: Generate only one backend on Linux to save build time.
+
 2017-08-15  Saam Barati  <sbarati@apple.com>
 
         Make VM::scratchBufferForSize thread safe

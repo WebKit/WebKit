@@ -1158,11 +1158,31 @@ list(APPEND JavaScriptCore_HEADERS
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h
 )
 
+if ((${CMAKE_SYSTEM_NAME} STREQUAL "Linux"))
+    if (WTF_CPU_X86)
+        set(OFFLINE_ASM_BACKEND "X86")
+    elseif (WTF_CPU_X86_64)
+        set(OFFLINE_ASM_BACKEND "X86_64")
+    elseif (WTF_CPU_ARM64)
+        set(OFFLINE_ASM_BACKEND "ARM64")
+    elseif (ARM_THUMB2_DETECTED)
+        set(OFFLINE_ASM_BACKEND "ARMv7")
+    elseif (ARM_TRADITIONAL_DETECTED)
+        set(OFFLINE_ASM_BACKEND "ARMv7_TRADITIONAL")
+    elseif (WTF_CPU_MIPS)
+        set(OFFLINE_ASM_BACKEND "MIPS")
+    endif ()
+
+    if (NOT ENABLE_JIT)
+        set(OFFLINE_ASM_BACKEND "C_LOOP")
+    endif ()
+endif ()
+
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb
     DEPENDS ${LLINT_ASM} ${OFFLINE_ASM} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h
+    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h ${OFFLINE_ASM_BACKEND}
     VERBATIM)
 
 # We add the header files directly to the ADD_EXECUTABLE call instead of setting the
