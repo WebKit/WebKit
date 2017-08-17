@@ -89,6 +89,8 @@ extern "C" void ctiMasmProbeTrampoline();
 #define PROBE_CPU_D13_OFFSET (PROBE_FIRST_FPREG_OFFSET + (13 * FPREG_SIZE))
 #define PROBE_CPU_D14_OFFSET (PROBE_FIRST_FPREG_OFFSET + (14 * FPREG_SIZE))
 #define PROBE_CPU_D15_OFFSET (PROBE_FIRST_FPREG_OFFSET + (15 * FPREG_SIZE))
+
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
 #define PROBE_CPU_D16_OFFSET (PROBE_FIRST_FPREG_OFFSET + (16 * FPREG_SIZE))
 #define PROBE_CPU_D17_OFFSET (PROBE_FIRST_FPREG_OFFSET + (17 * FPREG_SIZE))
 #define PROBE_CPU_D18_OFFSET (PROBE_FIRST_FPREG_OFFSET + (18 * FPREG_SIZE))
@@ -107,6 +109,9 @@ extern "C" void ctiMasmProbeTrampoline();
 #define PROBE_CPU_D31_OFFSET (PROBE_FIRST_FPREG_OFFSET + (31 * FPREG_SIZE))
 
 #define PROBE_SIZE (PROBE_FIRST_FPREG_OFFSET + (32 * FPREG_SIZE))
+#else
+#define PROBE_SIZE (PROBE_FIRST_FPREG_OFFSET + (16 * FPREG_SIZE))
+#endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
 
 #define OUT_SIZE GPREG_SIZE
 
@@ -159,6 +164,7 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d13]) == PROBE_CPU_D13_OFFS
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d14]) == PROBE_CPU_D14_OFFSET, ProbeContext_cpu_d14_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d15]) == PROBE_CPU_D15_OFFSET, ProbeContext_cpu_d15_offset_matches_ctiMasmProbeTrampoline);
 
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d16]) == PROBE_CPU_D16_OFFSET, ProbeContext_cpu_d16_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d17]) == PROBE_CPU_D17_OFFSET, ProbeContext_cpu_d17_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d18]) == PROBE_CPU_D18_OFFSET, ProbeContext_cpu_d18_offset_matches_ctiMasmProbeTrampoline);
@@ -175,10 +181,11 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d28]) == PROBE_CPU_D28_OFFS
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d29]) == PROBE_CPU_D29_OFFSET, ProbeContext_cpu_d29_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d30]) == PROBE_CPU_D30_OFFSET, ProbeContext_cpu_d30_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d31]) == PROBE_CPU_D31_OFFSET, ProbeContext_cpu_d31_offset_matches_ctiMasmProbeTrampoline);
+#endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
 
 COMPILE_ASSERT(sizeof(ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
 #undef PROBE_OFFSETOF
-    
+
 asm (
     ".text" "\n"
     ".align 2" "\n"
@@ -230,8 +237,9 @@ asm (
 
     "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_D0_OFFSET) "\n"
     "vstmia.64 ip!, { d0-d15 }" "\n"
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
     "vstmia.64 ip!, { d16-d31 }" "\n"
-
+#endif
     "mov       fp, sp" "\n" // Save the ProbeContext*.
 
     // Initialize ProbeContext::initializeStackFunction to zero.
@@ -289,9 +297,14 @@ asm (
     // To enable probes to modify register state, we copy all registers
     // out of the ProbeContext before returning.
 
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
     "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_D31_OFFSET + FPREG_SIZE) "\n"
     "vldmdb.64 ip!, { d16-d31 }" "\n"
     "vldmdb.64 ip!, { d0-d15 }" "\n"
+#else
+    "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_D15_OFFSET + FPREG_SIZE) "\n"
+    "vldmdb.64 ip!, { d0-d15 }" "\n"
+#endif
 
     "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R11_OFFSET + GPREG_SIZE) "\n"
     "ldmdb     ip, { r0-r11 }" "\n"

@@ -87,6 +87,7 @@ namespace JSC {
             d13,
             d14,
             d15,
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
             d16,
             d17,
             d18,
@@ -103,6 +104,7 @@ namespace JSC {
             d29,
             d30,
             d31,
+#endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
 
             // Pseudonyms for some of the registers.
             SD0 = d7, /* Same as thumb assembler. */
@@ -134,7 +136,11 @@ namespace JSC {
         static constexpr unsigned numberOfSPRegisters() { return lastSPRegister() - firstSPRegister() + 1; }
 
         static constexpr FPRegisterID firstFPRegister() { return ARMRegisters::d0; }
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
         static constexpr FPRegisterID lastFPRegister() { return ARMRegisters::d31; }
+#else
+        static constexpr FPRegisterID lastFPRegister() { return ARMRegisters::d15; }
+#endif
         static constexpr unsigned numberOfFPRegisters() { return lastFPRegister() - firstFPRegister() + 1; }
 
         static const char* gprName(RegisterID id)
@@ -166,10 +172,12 @@ namespace JSC {
                 "d4", "d5", "d6", "d7",
                 "d8", "d9", "d10", "d11",
                 "d12", "d13", "d14", "d15",
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
                 "d16", "d17", "d18", "d19",
                 "d20", "d21", "d22", "d23",
                 "d24", "d25", "d26", "d27",
                 "d28", "d29", "d30", "d31"
+#endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
             };
             return nameForRegister[id];
         }

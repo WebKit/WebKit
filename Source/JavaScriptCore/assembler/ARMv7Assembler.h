@@ -123,6 +123,7 @@ namespace ARMRegisters {
         d13,
         d14,
         d15,
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
         d16,
         d17,
         d18,
@@ -139,8 +140,10 @@ namespace ARMRegisters {
         d29,
         d30,
         d31,
+#endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
     } FPDoubleRegisterID;
 
+#if CPU(ARM_NEON)
     typedef enum {
         q0,
         q1,
@@ -158,23 +161,8 @@ namespace ARMRegisters {
         q13,
         q14,
         q15,
-        q16,
-        q17,
-        q18,
-        q19,
-        q20,
-        q21,
-        q22,
-        q23,
-        q24,
-        q25,
-        q26,
-        q27,
-        q28,
-        q29,
-        q30,
-        q31,
     } FPQuadRegisterID;
+#endif // CPU(ARM_NEON)
 
     inline FPSingleRegisterID asSingle(FPDoubleRegisterID reg)
     {
@@ -433,7 +421,9 @@ public:
     typedef ARMRegisters::RegisterID RegisterID;
     typedef ARMRegisters::FPSingleRegisterID FPSingleRegisterID;
     typedef ARMRegisters::FPDoubleRegisterID FPDoubleRegisterID;
+#if CPU(ARM_NEON)
     typedef ARMRegisters::FPQuadRegisterID FPQuadRegisterID;
+#endif
     typedef ARMRegisters::SPRegisterID SPRegisterID;
     typedef FPDoubleRegisterID FPRegisterID;
     
@@ -446,7 +436,11 @@ public:
     static constexpr unsigned numberOfSPRegisters() { return lastSPRegister() - firstSPRegister() + 1; }
 
     static constexpr FPRegisterID firstFPRegister() { return ARMRegisters::d0; }
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
     static constexpr FPRegisterID lastFPRegister() { return ARMRegisters::d31; }
+#else
+    static constexpr FPRegisterID lastFPRegister() { return ARMRegisters::d15; }
+#endif
     static constexpr unsigned numberOfFPRegisters() { return lastFPRegister() - firstFPRegister() + 1; }
 
     static const char* gprName(RegisterID id)
@@ -478,10 +472,12 @@ public:
             "d4", "d5", "d6", "d7",
             "d8", "d9", "d10", "d11",
             "d12", "d13", "d14", "d15",
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
             "d16", "d17", "d18", "d19",
             "d20", "d21", "d22", "d23",
             "d24", "d25", "d26", "d27",
             "d28", "d29", "d30", "d31"
+#endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
         };
         return nameForRegister[id];
     }

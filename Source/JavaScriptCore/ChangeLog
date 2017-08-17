@@ -1,3 +1,24 @@
+2017-08-17  Mark Lam  <mark.lam@apple.com>
+
+        Only use 16 VFP registers if !CPU(ARM_NEON).
+        https://bugs.webkit.org/show_bug.cgi?id=175514
+
+        Reviewed by JF Bastien.
+
+        Deleted q16-q31 FPQuadRegisterID enums in ARMv7Assembler.h.  The NEON spec
+        says that there are only 16 128-bit NEON registers.  This change is merely to
+        correct the code documentation of these registers.  The FPQuadRegisterID are
+        currently unused.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::lastFPRegister):
+        (JSC::ARMAssembler::fprName):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::lastFPRegister):
+        (JSC::ARMv7Assembler::fprName):
+        * assembler/MacroAssemblerARM.cpp:
+        * assembler/MacroAssemblerARMv7.cpp:
+
 2017-08-17  Andreas Kling  <akling@apple.com>
 
         Disable CSS regions at compile time
