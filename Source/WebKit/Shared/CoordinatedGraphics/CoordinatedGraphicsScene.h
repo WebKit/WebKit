@@ -68,9 +68,10 @@ class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphics
 public:
     explicit CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*);
     virtual ~CoordinatedGraphicsScene();
+
+    void applyStateChanges(const Vector<WebCore::CoordinatedGraphicsState>&);
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, const WebCore::Color& backgroundColor, bool drawsBackground, const WebCore::FloatPoint&, WebCore::TextureMapper::PaintFlags = 0);
     void detach();
-    void appendUpdate(Function<void()>&&);
 
     WebCore::TextureMapperLayer* findScrollableContentsLayerAt(const WebCore::FloatPoint&);
 
@@ -124,7 +125,6 @@ private:
     WebCore::TextureMapperLayer* getLayerByIDIfExists(WebCore::CoordinatedLayerID);
     WebCore::TextureMapperLayer* rootLayer() { return m_rootLayer.get(); }
 
-    void syncRemoteContent();
     void adjustPositionForFixedLayers(const WebCore::FloatPoint& contentPosition);
 
     void dispatchOnMainThread(Function<void()>&&);
@@ -148,10 +148,6 @@ private:
     void onNewBufferAvailable() override;
     WebCore::TextureMapperGL* texmapGL() override;
 #endif
-
-    // Render queue can be accessed ony from main thread or updatePaintNode call stack!
-    Vector<Function<void()>> m_renderQueue;
-    Lock m_renderQueueMutex;
 
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
 

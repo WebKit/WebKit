@@ -138,7 +138,8 @@ bool CompositingCoordinator::flushPendingLayerChanges()
         m_client.commitSceneState(m_state);
 
         if (!m_atlasesToRemove.isEmpty())
-            m_client.releaseUpdateAtlases(WTFMove(m_atlasesToRemove));
+            m_client.releaseUpdateAtlases(m_atlasesToRemove);
+        m_atlasesToRemove.clear();
 
         clearPendingStateChanges();
         m_shouldSyncFrame = false;
@@ -442,7 +443,8 @@ void CompositingCoordinator::releaseAtlases(ReleaseAtlasPolicy policy)
         m_releaseInactiveAtlasesTimer.stop();
 
     if (!m_atlasesToRemove.isEmpty())
-        m_client.releaseUpdateAtlases(WTFMove(m_atlasesToRemove));
+        m_client.releaseUpdateAtlases(m_atlasesToRemove);
+    m_atlasesToRemove.clear();
 }
 
 void CompositingCoordinator::clearUpdateAtlases()
@@ -454,7 +456,8 @@ void CompositingCoordinator::clearUpdateAtlases()
     m_updateAtlases.clear();
 
     if (!m_atlasesToRemove.isEmpty())
-        m_client.releaseUpdateAtlases(WTFMove(m_atlasesToRemove));
+        m_client.releaseUpdateAtlases(m_atlasesToRemove);
+    m_atlasesToRemove.clear();
 }
 
 } // namespace WebKit

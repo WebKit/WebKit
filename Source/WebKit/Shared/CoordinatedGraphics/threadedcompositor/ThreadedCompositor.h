@@ -29,6 +29,7 @@
 
 #include "CompositingRunLoop.h"
 #include "CoordinatedGraphicsScene.h"
+#include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/TextureMapper.h>
@@ -40,10 +41,6 @@
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 #include <WebCore/DisplayRefreshMonitor.h>
 #endif
-
-namespace WebCore {
-struct CoordinatedGraphicsState;
-}
 
 namespace WebKit {
 
@@ -80,7 +77,7 @@ public:
     void setDrawsBackground(bool);
 
     void updateSceneState(const WebCore::CoordinatedGraphicsState&);
-    void releaseUpdateAtlases(Vector<uint32_t>&&);
+    void releaseUpdateAtlases(const Vector<uint32_t>&);
 
     void invalidate();
 
@@ -125,6 +122,9 @@ private:
         float scaleFactor { 1 };
         bool drawsBackground { true };
         bool needsResize { false };
+
+        Vector<WebCore::CoordinatedGraphicsState> states;
+        Vector<uint32_t> atlasesToRemove;
 
         bool clientRendersNextFrame { false };
         bool coordinateUpdateCompletionWithClient { false };

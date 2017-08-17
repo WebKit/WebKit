@@ -60,7 +60,7 @@ public:
         virtual void notifyFlushRequired() = 0;
         virtual void commitSceneState(const WebCore::CoordinatedGraphicsState&) = 0;
         virtual void paintLayerContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::IntRect& clipRect) = 0;
-        virtual void releaseUpdateAtlases(Vector<uint32_t>&&) = 0;
+        virtual void releaseUpdateAtlases(const Vector<uint32_t>&) = 0;
     };
 
     CompositingCoordinator(WebCore::Page*, CompositingCoordinator::Client&);
