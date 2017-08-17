@@ -750,3 +750,6 @@ webkit.org/b/175270 [ Debug ] plugins/crash-restoring-plugin-page-from-page-cach
 
 # CSS Regions are being phased out.
 tiled-drawing/scrolling/non-fast-region/wheel-handler-in-region.html [ Skip ]
+
+webkit.org/b/175341 accessibility/mac/select-element-selection-with-optgroups.html [ Pass Failure ]
+
