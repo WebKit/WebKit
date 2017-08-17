@@ -1,3 +1,17 @@
+2017-08-16  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Crash of WebProcess with on-demand AC
+        https://bugs.webkit.org/show_bug.cgi?id=171161
+
+        Reviewed by Carlos Garcia Campos.
+
+        Set the viewOverlayRootLayer to the previous layerTreeHost if it exists. This avoids a
+        crash when reusing the previous layerTreeHost, because it would keep a reference to an
+        already destroyed viewOverlayRootLayer.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::attachViewOverlayGraphicsLayer):
+
 2017-08-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Simplify CoordinatedGraphicsScene state updates
