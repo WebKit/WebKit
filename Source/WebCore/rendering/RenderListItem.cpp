@@ -96,27 +96,6 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     return markerStyle;
 }
 
-void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderBlockFlow::styleDidChange(diff, oldStyle);
-
-    if (style().listStyleType() == NoneListStyle && (!style().listStyleImage() || style().listStyleImage()->errorOccurred())) {
-        if (m_marker) {
-            m_marker->destroy();
-            ASSERT(!m_marker);
-        }
-        return;
-    }
-
-    auto newStyle = computeMarkerStyle();
-    if (m_marker)
-        m_marker->setStyle(WTFMove(newStyle));
-    else {
-        m_marker = createRenderer<RenderListMarker>(*this, WTFMove(newStyle)).leakPtr();
-        m_marker->initializeStyle();
-    }
-}
-
 void RenderListItem::insertedIntoTree()
 {
     RenderBlockFlow::insertedIntoTree();
@@ -293,16 +272,25 @@ static RenderObject* firstNonMarkerChild(RenderBlock& parent)
     return child;
 }
 
-void RenderListItem::insertOrMoveMarkerRendererIfNeeded()
+void RenderListItem::updateMarkerRenderer()
 {
-    // Sanity check the location of our marker.
-    if (!m_marker)
-        return;
+    ASSERT_WITH_SECURITY_IMPLICATION(!view().layoutState());
 
-    // FIXME: Do not even try to reposition the marker when we are not in layout
-    // until after we fixed webkit.org/b/163789.
-    if (!view().frameView().isInRenderTreeLayout())
+    if (style().listStyleType() == NoneListStyle && (!style().listStyleImage() || style().listStyleImage()->errorOccurred())) {
+        if (m_marker) {
+            m_marker->destroy();
+            ASSERT(!m_marker);
+        }
         return;
+    }
+
+    auto newStyle = computeMarkerStyle();
+    if (m_marker)
+        m_marker->setStyle(WTFMove(newStyle));
+    else {
+        m_marker = createRenderer<RenderListMarker>(*this, WTFMove(newStyle)).leakPtr();
+        m_marker->initializeStyle();
+    }
 
     RenderElement* currentParent = m_marker->parent();
     RenderBlock* newParent = getParentOfFirstLineBox(*this, *m_marker);
@@ -320,30 +308,19 @@ void RenderListItem::insertOrMoveMarkerRendererIfNeeded()
     }
 
     if (newParent != currentParent) {
-        // Removing and adding the marker can trigger repainting in
-        // containers other than ourselves, so we need to disable LayoutState.
-        LayoutStateDisabler layoutStateDisabler(view());
-        // Mark the parent dirty so that when the marker gets inserted into the tree
-        // and dirties ancestors, it stops at the parent.
-        newParent->setChildNeedsLayout(MarkOnlyThis);
-        m_marker->setNeedsLayout(MarkOnlyThis);
-
         m_marker->removeFromParent();
         newParent->addChild(m_marker, firstNonMarkerChild(*newParent));
-        m_marker->updateMarginsAndContent();
         // If current parent is an anonymous block that has lost all its children, destroy it.
         if (currentParent && currentParent->isAnonymousBlock() && !currentParent->firstChild() && !downcast<RenderBlock>(*currentParent).continuation())
             currentParent->destroy();
     }
-
 }
 
 void RenderListItem::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
-    ASSERT(needsLayout()); 
+    ASSERT(needsLayout());
 
-    insertOrMoveMarkerRendererIfNeeded();
 #if !ASSERT_DISABLED
     SetForScope<bool> inListItemLayout(m_inLayout, true);
 #endif
@@ -358,14 +335,10 @@ void RenderListItem::addOverflowFromChildren()
 
 void RenderListItem::computePreferredLogicalWidths()
 {
-#ifndef NDEBUG
-    // FIXME: We shouldn't be modifying the tree in computePreferredLogicalWidths.
-    // Instead, we should insert the marker soon after the tree construction.
-    // This is similar case to RenderCounter::computePreferredLogicalWidths()
-    // See https://bugs.webkit.org/show_bug.cgi?id=104829
-    SetLayoutNeededForbiddenScope layoutForbiddenScope(this, false);
-#endif
-    insertOrMoveMarkerRendererIfNeeded();
+    // FIXME: RenderListMarker::updateMargins() mutates margin style which affects preferred widths.
+    if (m_marker && m_marker->preferredLogicalWidthsDirty())
+        m_marker->updateMarginsAndContent();
+
     RenderBlockFlow::computePreferredLogicalWidths();
 }
 

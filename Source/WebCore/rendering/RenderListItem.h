@@ -56,6 +56,8 @@ public:
 
     void didDestroyListMarker() { m_marker = nullptr; }
 
+    void updateMarkerRenderer();
+
 #if !ASSERT_DISABLED
     bool inLayout() const { return m_inLayout; }
 #endif
@@ -76,12 +78,9 @@ private:
 
     void positionListMarker();
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-
     void addOverflowFromChildren() override;
     void computePreferredLogicalWidths() override;
 
-    void insertOrMoveMarkerRendererIfNeeded();
     inline int calcValue() const;
     void updateValueNow() const;
     void explicitValueChanged();

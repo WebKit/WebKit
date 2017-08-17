@@ -39,6 +39,7 @@
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
 #include "RenderFullScreen.h"
+#include "RenderListItem.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderQuote.h"
 #include "RenderTreeUpdaterFirstLetter.h"
@@ -233,12 +234,15 @@ void RenderTreeUpdater::popParent()
     if (parent.element) {
         updateBeforeOrAfterPseudoElement(*parent.element, AFTER);
 
-        auto* renderer = parent.element->renderer();
-        if (is<RenderBlock>(renderer))
-            FirstLetter::update(downcast<RenderBlock>(*renderer));
+        if (auto* renderer = parent.element->renderer()) {
+            if (is<RenderBlock>(*renderer))
+                FirstLetter::update(downcast<RenderBlock>(*renderer));
+            if (is<RenderListItem>(*renderer))
+                downcast<RenderListItem>(*renderer).updateMarkerRenderer();
 
-        if (parent.element->hasCustomStyleResolveCallbacks() && parent.styleChange == Style::Detach && renderer)
-            parent.element->didAttachRenderers();
+            if (parent.element->hasCustomStyleResolveCallbacks() && parent.styleChange == Style::Detach)
+                parent.element->didAttachRenderers();
+        }
     }
     m_parentStack.removeLast();
 }
@@ -566,6 +570,8 @@ void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, Pseud
         for (auto& child : descendantsOfType<RenderQuote>(*pseudoRenderer))
             updateQuotesUpTo(&child);
     }
+    if (is<RenderListItem>(*pseudoRenderer))
+        downcast<RenderListItem>(*pseudoRenderer).updateMarkerRenderer();
 }
 
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType)

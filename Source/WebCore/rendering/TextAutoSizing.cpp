@@ -33,6 +33,7 @@
 #include "FontCascade.h"
 #include "Logging.h"
 #include "RenderBlock.h"
+#include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
@@ -156,6 +157,9 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         newParentStyle.setFontDescription(fontDescription);
         newParentStyle.fontCascade().update(&node->document().fontSelector());
         parentRenderer->setStyle(WTFMove(newParentStyle));
+
+        if (is<RenderListItem>(*parentRenderer))
+            downcast<RenderListItem>(*parentRenderer).updateMarkerRenderer();
     }
 
     for (auto& node : m_autoSizedNodes) {
