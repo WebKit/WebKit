@@ -239,10 +239,6 @@ private:
 
     Ref<WebCore::FrameNetworkingContext> createNetworkingContext() final;
 
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-    void didRequestAutocomplete(Ref<WebCore::FormState>&&) final;
-#endif
-
     void forcePageTransitionIfNeeded() final;
 
 #if USE(QUICK_LOOK)

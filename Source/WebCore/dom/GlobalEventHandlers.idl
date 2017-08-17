@@ -32,8 +32,6 @@
     // are not yet implemented.
 
     attribute EventHandler onabort;
-    [Conditional=REQUEST_AUTOCOMPLETE] attribute EventHandler onautocomplete;
-    [Conditional=REQUEST_AUTOCOMPLETE] attribute EventHandler onautocompleteerror;
     attribute EventHandler onblur;
     // attribute EventHandler oncancel;
     attribute EventHandler oncanplay;

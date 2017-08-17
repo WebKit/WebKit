@@ -439,10 +439,6 @@ class EmptyFrameLoaderClient final : public FrameLoaderClient {
 
     Ref<FrameNetworkingContext> createNetworkingContext() final;
 
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-    void didRequestAutocomplete(Ref<FormState>&&) final { }
-#endif
-
     bool isEmptyFrameLoaderClient() final { return true; }
     void prefetchDNS(const String&) final { }
 

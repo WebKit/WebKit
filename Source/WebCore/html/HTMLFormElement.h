@@ -111,18 +111,6 @@ public:
     WEBCORE_EXPORT bool checkValidity();
     bool reportValidity();
 
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-    enum class AutocompleteResult {
-        Success,
-        ErrorDisabled,
-        ErrorCancel,
-        ErrorInvalid,
-    };
-
-    void requestAutocomplete();
-    void finishRequestAutocomplete(AutocompleteResult);
-#endif
-
     RadioButtonGroups& radioButtonGroups() { return m_radioButtonGroups; }
 
     const Vector<FormAssociatedElement*>& associatedElements() const { return m_associatedElements; }
@@ -194,13 +182,6 @@ private:
     bool m_isInResetFunction { false };
 
     bool m_wasDemoted { false };
-
-#if ENABLE(REQUEST_AUTOCOMPLETE)
-    void requestAutocompleteTimerFired();
-
-    Vector<RefPtr<Event>> m_pendingAutocompleteEvents;
-    Timer m_requestAutocompleteTimer;
-#endif
 };
 
 } // namespace WebCore
