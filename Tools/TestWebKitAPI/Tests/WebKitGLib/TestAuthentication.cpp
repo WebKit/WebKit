@@ -252,6 +252,16 @@ static void testWebViewAuthenticationEmptyRealm(AuthenticationTest* test, gconst
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, authExpectedSuccessTitle);
 }
 
+static void testWebViewAuthenticationNTLM(AuthenticationTest* test, gconstpointer)
+{
+    // NTML is disabled by default.
+    g_assert(!webkit_web_context_get_ntlm_authentication_enabled(test->m_webContext.get()));
+    webkit_web_context_set_ntlm_authentication_enabled(test->m_webContext.get(), TRUE);
+    g_assert(webkit_web_context_get_ntlm_authentication_enabled(test->m_webContext.get()));
+
+    // FIXME: can we test NTLM authentication?
+}
+
 class Tunnel {
 public:
     Tunnel(SoupServer* server, SoupMessage* message)
@@ -418,6 +428,7 @@ void beforeAll()
     AuthenticationTest::add("WebKitWebView", "authentication-no-credential", testWebViewAuthenticationNoCredential);
     AuthenticationTest::add("WebKitWebView", "authentication-storage", testWebViewAuthenticationStorage);
     AuthenticationTest::add("WebKitWebView", "authentication-empty-realm", testWebViewAuthenticationEmptyRealm);
+    AuthenticationTest::add("WebKitWebView", "authentication-ntlm", testWebViewAuthenticationNTLM);
     ProxyAuthenticationTest::add("WebKitWebView", "authentication-proxy", testWebViewAuthenticationProxy);
     ProxyAuthenticationTest::add("WebKitWebView", "authentication-proxy-https", testWebViewAuthenticationProxyHTTPS);
 }

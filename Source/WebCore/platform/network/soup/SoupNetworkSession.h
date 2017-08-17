@@ -70,6 +70,9 @@ public:
     static void setCustomProtocolRequestType(GType);
     void setupCustomProtocols();
 
+    static void setInitialNTLMAuthenticationEnabled(bool);
+    void setNTLMAuthenticationEnabled(bool);
+
 private:
     void setupLogger();
 

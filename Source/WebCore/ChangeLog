@@ -1,3 +1,18 @@
+2017-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add NTLM authentication enabled API
+        https://bugs.webkit.org/show_bug.cgi?id=122952
+
+        Reviewed by Michael Catanzaro.
+
+        Add/remove NTLM feature to/from soup session depending on whether the feature is enabled or disabled.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+        (WebCore::SoupNetworkSession::setInitialNTLMAuthenticationEnabled):
+        (WebCore::SoupNetworkSession::setNTLMAuthenticationEnabled):
+        * platform/network/soup/SoupNetworkSession.h:
+
 2017-08-16  Simon Fraser  <simon.fraser@apple.com>
 
         Make RenderLayer and RenderLayerBacking TextStream-loggable, and clean up compositing logging
