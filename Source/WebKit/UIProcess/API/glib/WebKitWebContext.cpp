@@ -1546,6 +1546,41 @@ void webkit_web_context_initialize_notification_permissions(WebKitWebContext* co
     context->priv->notificationProvider->setNotificationPermissions(WTFMove(map));
 }
 
+/**
+ * webkit_web_context_get_ntlm_authentication_enabled:
+ * @context: a #WebKitWebContext
+ *
+ * Get whether NTLM authentication is currently enabled. By default, the feature
+ * is disabled, and you need to call webkit_web_context_set_ntlm_authentication_enabled()
+ * to enable it.
+ *
+ * Returns: %TRUE if NTLM authentication is enabled, or %FALSE otherwise.
+ *
+ * Since: 2.18
+ */
+gboolean webkit_web_context_get_ntlm_authentication_enabled(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), FALSE);
+
+    return context->priv->processPool->ntlmAuthenticationEnabled();
+}
+
+/**
+ * webkit_web_context_set_ntlm_authentication_enabled:
+ * @context: a #WebKitWebContext
+ * @enabled: Value to be set
+ *
+ * Enable or disable NTLM authentication.
+ *
+ * Since: 2.18
+ */
+void webkit_web_context_set_ntlm_authentication_enabled(WebKitWebContext* context, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+
+    return context->priv->processPool->setNTLMAuthenticationEnabled(enabled);
+}
+
 void webkitWebContextInitializeNotificationPermissions(WebKitWebContext* context)
 {
     g_signal_emit(context, signals[INITIALIZE_NOTIFICATION_PERMISSIONS], 0);

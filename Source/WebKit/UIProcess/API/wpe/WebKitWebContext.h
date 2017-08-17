@@ -306,6 +306,13 @@ webkit_web_context_initialize_notification_permissions
                                                      GList                         *allowed_origins,
                                                      GList                         *disallowed_origins);
 
+WEBKIT_API gboolean
+webkit_web_context_get_ntlm_authentication_enabled  (WebKitWebContext              *context);
+
+WEBKIT_API void
+webkit_web_context_set_ntlm_authentication_enabled  (WebKitWebContext              *context,
+                                                     gboolean                       enabled);
+
 G_END_DECLS
 
 #endif
