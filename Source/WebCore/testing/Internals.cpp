@@ -162,10 +162,6 @@
 #include "ColorChooser.h"
 #endif
 
-#if ENABLE(PROXIMITY_EVENTS)
-#include "DeviceProximityController.h"
-#endif
-
 #if ENABLE(MOUSE_CURSOR_SCALE)
 #include <wtf/dtoa.h>
 #endif
@@ -1927,22 +1923,6 @@ String Internals::parserMetaData(JSC::JSValue code)
     result.appendLiteral(" }");
 
     return result.toString();
-}
-
-ExceptionOr<void> Internals::setDeviceProximity(const String&, double value, double min, double max)
-{
-    Document* document = contextDocument();
-    if (!document || !document->page())
-        return Exception { InvalidAccessError };
-
-#if ENABLE(PROXIMITY_EVENTS)
-    DeviceProximityController::from(document->page())->didChangeDeviceProximity(value, min, max);
-#else
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(min);
-    UNUSED_PARAM(max);
-#endif
-    return { };
 }
 
 void Internals::updateEditorUINowIfScheduled()

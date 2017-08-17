@@ -264,7 +264,6 @@ namespace WebCore {
     macro(webkitTransitionEnd) \
     macro(webkitbeginfullscreen) \
     macro(webkitcurrentplaybacktargetiswirelesschanged) \
-    macro(webkitdeviceproximity) \
     macro(webkitendfullscreen) \
     macro(webkitfullscreenchange) \
     macro(webkitfullscreenerror) \

@@ -453,11 +453,6 @@ String DiagnosticLoggingKeys::deviceOrientationKey()
     return ASCIILiteral("deviceOrientation");
 }
 
-String DiagnosticLoggingKeys::deviceProximityKey()
-{
-    return ASCIILiteral("deviceProximity");
-}
-
 String DiagnosticLoggingKeys::diskCacheKey()
 {
     return ASCIILiteral("diskCache");

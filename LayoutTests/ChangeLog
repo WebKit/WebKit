@@ -1,5 +1,47 @@
 2017-08-14  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove Proximity Events and related code
+        https://bugs.webkit.org/show_bug.cgi?id=175545
+
+        Reviewed by Daniel Bates.
+
+        No platform enables Proximity Events, so remove code inside ENABLE(PROXIMITY_EVENTS)
+        and other related code.
+
+        * fast/events/constructors/device-proximity-event-constructor-expected.txt: Removed.
+        * fast/events/constructors/device-proximity-event-constructor.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * proximity/add-listener-from-callback-expected.txt: Removed.
+        * proximity/add-listener-from-callback.html: Removed.
+        * proximity/basic-operation-expected.txt: Removed.
+        * proximity/basic-operation.html: Removed.
+        * proximity/check-event-deviceproximity-expected.txt: Removed.
+        * proximity/check-event-deviceproximity.html: Removed.
+        * proximity/create-event-deviceproximity-expected.txt: Removed.
+        * proximity/create-event-deviceproximity.html: Removed.
+        * proximity/create-event-expected.txt: Removed.
+        * proximity/create-event.html: Removed.
+        * proximity/event-after-navigation-expected.txt: Removed.
+        * proximity/event-after-navigation.html: Removed.
+        * proximity/multiple-frames-expected.txt: Removed.
+        * proximity/multiple-frames.html: Removed.
+        * proximity/no-page-cache-expected.txt: Removed.
+        * proximity/no-page-cache.html: Removed.
+        * proximity/optional-event-properties-expected.txt: Removed.
+        * proximity/optional-event-properties.html: Removed.
+        * proximity/resources/cached-page-1.html: Removed.
+        * proximity/resources/cached-page-2.html: Removed.
+        * proximity/resources/event-after-navigation-new.html: Removed.
+        * proximity/updates-expected.txt: Removed.
+        * proximity/updates.html: Removed.
+        * proximity/window-property-expected.txt: Removed.
+        * proximity/window-property.html: Removed.
+
+2017-08-14  Simon Fraser  <simon.fraser@apple.com>
+
         Remove ENABLE_VIEW_MODE_CSS_MEDIA and related code
         https://bugs.webkit.org/show_bug.cgi?id=175557
 

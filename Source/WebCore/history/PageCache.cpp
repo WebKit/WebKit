@@ -54,10 +54,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-#if ENABLE(PROXIMITY_EVENTS)
-#include "DeviceProximityController.h"
-#endif
-
 namespace WebCore {
 
 #define PCLOG(...) LOG(PageCache, "%*s%s", indentLevel*4, "", makeString(__VA_ARGS__).utf8().data())
@@ -209,13 +205,7 @@ static bool canCachePage(Page& page)
         isCacheable = false;
     }
 #endif
-#if ENABLE(PROXIMITY_EVENTS)
-    if (DeviceProximityController::isActiveAt(page)) {
-        PCLOG("   -Page is using DeviceProximity");
-        logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, deviceProximityKey);
-        isCacheable = false;
-    }
-#endif
+
     FrameLoadType loadType = page.mainFrame().loader().loadType();
     switch (loadType) {
     case FrameLoadType::Reload:

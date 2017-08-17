@@ -530,7 +530,6 @@ set(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebChromeClient.cpp
     WebProcess/WebCoreSupport/WebColorChooser.cpp
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp
-    WebProcess/WebCoreSupport/WebDeviceProximityClient.cpp
     WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp
     WebProcess/WebCoreSupport/WebDragClient.cpp
     WebProcess/WebCoreSupport/WebEditorClient.cpp

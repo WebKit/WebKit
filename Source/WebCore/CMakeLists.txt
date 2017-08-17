@@ -34,7 +34,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
     "${WEBCORE_DIR}/Modules/notifications"
     "${WEBCORE_DIR}/Modules/plugins"
-    "${WEBCORE_DIR}/Modules/proximity"
     "${WEBCORE_DIR}/Modules/quota"
     "${WEBCORE_DIR}/Modules/speech"
     "${WEBCORE_DIR}/Modules/streams"
@@ -158,7 +157,6 @@ set(WebCore_IDL_INCLUDES
     Modules/mediasession
     Modules/mediastream
     Modules/notifications
-    Modules/proximity
     Modules/quota
     Modules/speech
     Modules/streams
@@ -296,8 +294,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/notifications/Notification.idl
     Modules/notifications/NotificationPermission.idl
     Modules/notifications/NotificationPermissionCallback.idl
-
-    Modules/proximity/DeviceProximityEvent.idl
 
     Modules/speech/DOMWindowSpeechSynthesis.idl
     Modules/speech/SpeechSynthesis.idl
@@ -1039,9 +1035,6 @@ set(WebCore_SOURCES
 
     Modules/notifications/Notification.cpp
     Modules/notifications/NotificationController.cpp
-
-    Modules/proximity/DeviceProximityController.cpp
-    Modules/proximity/DeviceProximityEvent.cpp
 
     Modules/speech/DOMWindowSpeechSynthesis.cpp
     Modules/speech/SpeechSynthesis.cpp

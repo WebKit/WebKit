@@ -148,9 +148,6 @@
 #include "JSDeviceMotionEvent.h"
 #include "JSDeviceOrientationEvent.cpp"
 #endif
-#if ENABLE(PROXIMITY_EVENTS)
-#include "JSDeviceProximityEvent.cpp"
-#endif
 #include "JSDocument.cpp"
 #include "JSDocumentFragment.cpp"
 #include "JSDocumentType.cpp"

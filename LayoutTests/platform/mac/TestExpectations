@@ -270,10 +270,6 @@ webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure
 # <rdar://problem/11059777>
 webkit.org/b/81289 canvas/philip/tests/2d.line.cap.round.html [ Failure ]
 
-# Proximity Events are not supported.
-proximity
-fast/events/constructors/device-proximity-event-constructor.html
-
 webkit.org/b/81410 scrollbars/scrollbar-middleclick-nopaste.html
 
 # Has failed since its introduction in r105826.

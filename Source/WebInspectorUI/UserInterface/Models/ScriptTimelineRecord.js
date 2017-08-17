@@ -331,7 +331,6 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         nameMap.set("webkitaddsourcebuffer", "Add Source Buffer");
         nameMap.set("webkitbeginfullscreen", "Begin Full Screen");
         nameMap.set("webkitcurrentplaybacktargetiswirelesschanged", "Current Playback Target Is Wireless Changed");
-        nameMap.set("webkitdeviceproximity", "Device Proximity");
         nameMap.set("webkitendfullscreen", "End Full Screen");
         nameMap.set("webkitfullscreenchange", "Full Screen Change");
         nameMap.set("webkitfullscreenerror", "Full Screen Error");

@@ -531,10 +531,6 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Skip ]
 pointer-lock/ [ Skip ]
 http/tests/pointer-lock/ [ Skip ]
 
-# Proximity Events is not supported.
-proximity/ [ Skip ]
-fast/events/constructors/device-proximity-event-constructor.html
-
 # TODO Fail until SUBPIXEL_LAYOUT is enabled
 webkit.org/b/85532 fast/sub-pixel [ Skip ]
 
