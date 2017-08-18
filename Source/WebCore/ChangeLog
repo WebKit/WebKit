@@ -1,3 +1,38 @@
+2017-08-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto][Mac] Replace CCECCryptorGetKeyComponents with CCECCryptorExportKey for exporting ECC JWKs
+        https://bugs.webkit.org/show_bug.cgi?id=175657
+        <rdar://problem/33797150>
+
+        Reviewed by Brent Fulgham.
+
+        CCECCryptorGetKeyComponents returns components in unpadded formats. In some minor cases, the ECC components
+        do need padding. Therefore, we occasionally see some corrupted outputs in JWKs. To overcome that, this patch
+        replaces CCECCryptorGetKeyComponents with CCECCryptorExportKey which does padding all the time.
+
+        In the meantime, this patch also makes export* methods return OperationError if any error occur in the
+        underlying operations though very unlikely.
+
+        Test: crypto/subtle/ecdsa-generate-export-import-jwk-sign-verify.html
+
+        * crypto/algorithms/CryptoAlgorithmECDH.cpp:
+        (WebCore::CryptoAlgorithmECDH::exportKey):
+        * crypto/algorithms/CryptoAlgorithmECDSA.cpp:
+        (WebCore::CryptoAlgorithmECDSA::exportKey):
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::CryptoKeyEC::platformAddFieldElements const):
+        * crypto/keys/CryptoKeyEC.cpp:
+        (WebCore::CryptoKeyEC::exportRaw const):
+        (WebCore::CryptoKeyEC::exportJwk const):
+        (WebCore::CryptoKeyEC::exportSpki const):
+        (WebCore::CryptoKeyEC::exportPkcs8 const):
+        * crypto/keys/CryptoKeyEC.h:
+        * crypto/mac/CryptoKeyECMac.cpp:
+        (WebCore::CryptoKeyEC::platformExportRaw const):
+        (WebCore::CryptoKeyEC::platformAddFieldElements const):
+        (WebCore::CryptoKeyEC::platformExportSpki const):
+        (WebCore::CryptoKeyEC::platformExportPkcs8 const):
+
 2017-08-18  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] accessibility/heading-crash-after-hidden.html is a flaky crash.

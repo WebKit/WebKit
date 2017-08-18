@@ -186,9 +186,15 @@ void CryptoAlgorithmECDH::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key
 
     KeyData result;
     switch (format) {
-    case CryptoKeyFormat::Jwk:
-        result = ecKey.exportJwk();
+    case CryptoKeyFormat::Jwk: {
+        auto jwk = ecKey.exportJwk();
+        if (jwk.hasException()) {
+            exceptionCallback(jwk.releaseException().code());
+            return;
+        }
+        result = jwk.releaseReturnValue();
         break;
+    }
     case CryptoKeyFormat::Raw: {
         auto raw = ecKey.exportRaw();
         if (raw.hasException()) {

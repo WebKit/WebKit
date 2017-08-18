@@ -500,13 +500,13 @@ Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
     return WTFMove(q.value());
 }
 
-void CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
+bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
 {
     PAL::GCrypt::Handle<gcry_ctx_t> context;
     gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey, nullptr);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return;
+        return false;
     }
 
     unsigned uncompressedFieldElementSize = curveUncompressedFieldElementSize(m_curve);
@@ -533,6 +533,8 @@ void CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
                 jwk.d = base64URLEncode(*d);
         }
     }
+
+    return true;
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportSpki() const

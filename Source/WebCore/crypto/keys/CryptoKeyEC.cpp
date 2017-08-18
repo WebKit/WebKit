@@ -143,10 +143,13 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportRaw() const
     if (type() != CryptoKey::Type::Public)
         return Exception { InvalidAccessError };
 
-    return platformExportRaw();
+    auto&& result = platformExportRaw();
+    if (result.isEmpty())
+        return Exception { OperationError };
+    return WTFMove(result);
 }
 
-JsonWebKey CryptoKeyEC::exportJwk() const
+ExceptionOr<JsonWebKey> CryptoKeyEC::exportJwk() const
 {
     JsonWebKey result;
     result.kty = "EC";
@@ -160,8 +163,9 @@ JsonWebKey CryptoKeyEC::exportJwk() const
     }
     result.key_ops = usages();
     result.ext = extractable();
-    platformAddFieldElements(result);
-    return result;
+    if (!platformAddFieldElements(result))
+        return Exception { OperationError };
+    return WTFMove(result);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportSpki() const
@@ -169,7 +173,10 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportSpki() const
     if (type() != CryptoKey::Type::Public)
         return Exception { InvalidAccessError };
 
-    return platformExportSpki();
+    auto&& result = platformExportSpki();
+    if (result.isEmpty())
+        return Exception { OperationError };
+    return WTFMove(result);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportPkcs8() const
@@ -177,7 +184,10 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportPkcs8() const
     if (type() != CryptoKey::Type::Private)
         return Exception { InvalidAccessError };
 
-    return platformExportPkcs8();
+    auto&& result = platformExportPkcs8();
+    if (result.isEmpty())
+        return Exception { OperationError };
+    return WTFMove(result);
 }
 
 String CryptoKeyEC::namedCurveString() const

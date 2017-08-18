@@ -86,7 +86,7 @@ public:
     static RefPtr<CryptoKeyEC> importPkcs8(CryptoAlgorithmIdentifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
 
     ExceptionOr<Vector<uint8_t>> exportRaw() const;
-    JsonWebKey exportJwk() const;
+    ExceptionOr<JsonWebKey> exportJwk() const;
     ExceptionOr<Vector<uint8_t>> exportSpki() const;
     ExceptionOr<Vector<uint8_t>> exportPkcs8() const;
 
@@ -111,7 +111,7 @@ private:
     static RefPtr<CryptoKeyEC> platformImportSpki(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyEC> platformImportPkcs8(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
     Vector<uint8_t> platformExportRaw() const;
-    void platformAddFieldElements(JsonWebKey&) const;
+    bool platformAddFieldElements(JsonWebKey&) const;
     Vector<uint8_t> platformExportSpki() const;
     Vector<uint8_t> platformExportPkcs8() const;
 
