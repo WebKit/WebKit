@@ -187,14 +187,16 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
         return nullptr;
 
     ASSERT(target.type() == RemoteInspectionTarget::Type::Web || target.type() == RemoteInspectionTarget::Type::JavaScript);
-    return g_variant_new("(tsssb)", target.targetIdentifier(), target.type() == RemoteInspectionTarget::Type::Web ? "Web" : "JavaScript",
+    return g_variant_new("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
+        target.type() == RemoteInspectionTarget::Type::Web ? "Web" : "JavaScript",
         target.name().utf8().data(), target.type() == RemoteInspectionTarget::Type::Web ? target.url().utf8().data() : "null",
         target.hasLocalDebugger());
 }
 
 TargetListing RemoteInspector::listingForAutomationTarget(const RemoteAutomationTarget& target) const
 {
-    return g_variant_new("(tsssb)", target.targetIdentifier(), "Automation", target.name().utf8().data(), "null", target.isPaired());
+    return g_variant_new("(tsssb)", static_cast<guint64>(target.targetIdentifier()),
+        "Automation", target.name().utf8().data(), "null", target.isPaired());
 }
 
 void RemoteInspector::pushListingsNow()
@@ -274,7 +276,7 @@ void RemoteInspector::sendMessageToRemote(unsigned targetIdentifier, const Strin
 
     g_dbus_connection_call(m_dbusConnection.get(), nullptr,
         INSPECTOR_DBUS_OBJECT_PATH, INSPECTOR_DBUS_INTERFACE, "SendMessageToFrontend",
-        g_variant_new("(ts)", targetIdentifier, message.utf8().data()),
+        g_variant_new("(ts)", static_cast<guint64>(targetIdentifier), message.utf8().data()),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
         -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
 }
