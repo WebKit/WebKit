@@ -1,5 +1,27 @@
 2017-08-18  Ms2ger  <Ms2ger@gmail.com>
 
+        [GTK] Remove some obsolete expected failures.
+        https://bugs.webkit.org/show_bug.cgi?id=175674
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+          - imported/w3c/web-platform-tests/IndexedDB/keyorder.htm: passing since r204279.
+          - imported/w3c/web-platform-tests/resource-timing/rt-cors.html: passing since r212944 and r212993.
+          - imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html: passing since r212944 and r212993.
+          - imported/w3c/web-platform-tests/webrtc/getstats.html: passing since test update and rebaseline in r217225.
+          - mathml/opentype/large-operators-displaystyle-dynamic.html: used to be flaky, seems to be passing consistently now.
+          - media/media-fullscreen-return-to-inline.html: likely passing since r218270.
+          - media/video-fast-seek.html: passing since r207879-r207894.
+          - platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll.html: passing since r205075.
+          - security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html: flaky.
+          - storage/indexeddb/cursor-key-order.html: likely passing since r209135.
+          - svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg: flaky.
+          - svg/repaint/add-outline-property-on-root.html: passing since r211277
+          - svg/repaint/remove-outline-property-on-root.html: passing since r211277
+
+2017-08-18  Ms2ger  <Ms2ger@gmail.com>
+
         [GTK] Show controls if a video element isn't allowed to play inline.
         https://bugs.webkit.org/show_bug.cgi?id=141705
 

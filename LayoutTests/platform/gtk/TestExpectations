@@ -664,7 +664,6 @@ imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createAnswer.html [ Fai
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html [ Failure ]
 http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Timeout ]
@@ -1092,8 +1091,6 @@ webkit.org/b/156148 svg/text/text-vkern.svg [ Failure ]
 
 # Since r200320 resource-timing feature is a runtime flag.
 webkit.org/b/158617 fast/dom/Window/window-properties-performance-resource-timing.html [ Failure ]
-
-webkit.org/b/160024 platform/gtk/scrollbars/main-frame-scrollbar-horizontal-wheel-scroll.html [ Failure ]
 
 # Missing support for new emoji
 webkit.org/b/160120 editing/deleting/delete-emoji.html [ Skip ]
@@ -1867,6 +1864,8 @@ webkit.org/b/160137 svg/custom/non-scaling-stroke-update.svg [ ImageOnlyFailure 
 
 webkit.org/b/163532 plugins/js-from-destroy.html [ Failure Pass ]
 
+webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/168780 fast/forms/input-first-letter-edit.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure ]
@@ -1894,6 +1893,8 @@ webkit.org/b/168373 media/video-multiple-concurrent-playback.html [ Failure Cras
 webkit.org/b/168373 media/video-seek-past-end-paused.html [ Failure Pass ]
 
 webkit.org/b/172255 imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html [ Pass Failure ]
+
+webkit.org/b/174240 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Timeout ]
 
 webkit.org/b/174353 media/video-restricted-invisible-autoplay-not-allowed.html [ Crash Pass ]
 
@@ -2182,8 +2183,6 @@ webkit.org/b/158921 http/tests/security/video-cross-origin-caching.html [ Timeou
 
 webkit.org/b/158923 media/airplay-autoplay.html [ Timeout ]
 
-webkit.org/b/158924 media/media-fullscreen-return-to-inline.html [ Timeout ]
-
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cookie.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Timeout ]
@@ -2214,8 +2213,6 @@ webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.ht
 webkit.org/b/172816 media/media-source/media-source-paint-to-canvas.html [ Timeout ]
 
 webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Timeout Failure ]
-
-webkit.org/b/174240 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Timeout ]
 
 webkit.org/b/174241 media/video-inactive-playback.html [ Timeout ]
 
@@ -2844,7 +2841,6 @@ webkit.org/b/133803 editing/input/scroll-viewport-page-up-down.html [ Failure ]
 webkit.org/b/133803 editing/undo/undo-deleteWord.html [ Failure ]
 
 webkit.org/b/134976 media/media-controls-invalid-url.html [ Failure Timeout ]
-webkit.org/b/134976 media/video-fast-seek.html [ Failure ]
 
 webkit.org/b/134979 media/track/track-cue-mutable-text.html [ Failure ]
 webkit.org/b/134979 media/track/track-cue-nothing-to-render.html [ Failure ]
@@ -3116,9 +3112,7 @@ webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ 
 
 webkit.org/b/153709 http/tests/cache/disk-cache/disk-cache-disable.html [ Failure ]
 
-webkit.org/b/156438 imported/w3c/web-platform-tests/IndexedDB/keyorder.htm [ Failure ]
 webkit.org/b/156438 inspector/indexeddb/requestDatabaseNames.html [ Failure ]
-webkit.org/b/156438 storage/indexeddb/cursor-key-order.html [ Failure ]
 
 webkit.org/b/158928 svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml [ Failure ]
 webkit.org/b/158928 svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml [ Failure ]
@@ -3272,9 +3266,6 @@ webkit.org/b/168429 fast/text/simple-line-layout-simple-text-but-complex-font-pa
 webkit.org/b/168430 fast/inline/outline-corners-with-offset.html [ ImageOnlyFailure ]
 
 webkit.org/b/168431 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
-
-webkit.org/b/168415 imported/w3c/web-platform-tests/resource-timing/rt-cors.html [ Failure ]
-webkit.org/b/168415 imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html [ Failure ]
 
 webkit.org/b/168551 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 webkit.org/b/168551 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
@@ -3551,20 +3542,14 @@ webkit.org/b/160131 plugins/return-error-from-new-stream-doesnt-invoke-destroy-s
 webkit.org/b/160119 storage/indexeddb/index-cursor.html [ Timeout Pass ]
 webkit.org/b/160119 storage/indexeddb/objectstore-cursor.html [ Timeout Pass ]
 
-webkit.org/b/160119 svg/repaint/add-outline-property-on-root.html [ ImageOnlyFailure ]
-webkit.org/b/160119 svg/repaint/remove-outline-property-on-root.html [ ImageOnlyFailure ]
-
 webkit.org/b/160119 animations/negative-delay.html [ Pass Failure ]
 
 webkit.org/b/160119 css3/masking/mask-base64.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/160119 mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure ]
 
 webkit.org/b/160119 media/video-object-fit-change.html [ ImageOnlyFailure ]
 
 # Threaded compositor failures caused by one of r203496, r203497, or r203498
 webkit.org/b/163528 media/video-object-fit.html [ ImageOnlyFailure ]
-webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test
