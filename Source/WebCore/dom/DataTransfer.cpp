@@ -69,7 +69,7 @@ DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboar
 #endif
 {
 #if !ENABLE(DRAG_SUPPORT)
-    ASSERT_UNUSED(type, type != DragAndDropData && type != DragAndDropFiles);
+    ASSERT_UNUSED(type, type != Type::DragAndDropData && type != Type::DragAndDropFiles);
 #endif
 }
 
