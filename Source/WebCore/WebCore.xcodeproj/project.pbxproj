@@ -6792,6 +6792,9 @@
 		E48284081F44594C00863AC3 /* RenderTreeUpdaterFirstLetter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48284061F44594B00863AC3 /* RenderTreeUpdaterFirstLetter.cpp */; };
 		E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */; };
 		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E48E332C1F47037C00BAB0EF /* RenderTreeUpdaterFirstLetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E48284091F44595600863AC3 /* RenderTreeUpdaterFirstLetter.h */; };
+		E48E332D1F47038000BAB0EF /* RenderTreeUpdaterListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48E332A1F46C98000BAB0EF /* RenderTreeUpdaterListItem.cpp */; };
+		E48E332E1F47038000BAB0EF /* RenderTreeUpdaterListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E48E33281F46C97F00BAB0EF /* RenderTreeUpdaterListItem.h */; };
 		E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4946EAE156E64DD00D3297F /* StyleRuleImport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4946EAC156E64DD00D3297F /* StyleRuleImport.cpp */; };
 		E4946EAF156E64DD00D3297F /* StyleRuleImport.h in Headers */ = {isa = PBXBuildFile; fileRef = E4946EAD156E64DD00D3297F /* StyleRuleImport.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15405,6 +15408,8 @@
 		E48284091F44595600863AC3 /* RenderTreeUpdaterFirstLetter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterFirstLetter.h; sourceTree = "<group>"; };
 		E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayout.cpp; sourceTree = "<group>"; };
 		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
+		E48E33281F46C97F00BAB0EF /* RenderTreeUpdaterListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterListItem.h; sourceTree = "<group>"; };
+		E48E332A1F46C98000BAB0EF /* RenderTreeUpdaterListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterListItem.cpp; sourceTree = "<group>"; };
 		E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushThrottleState.h; sourceTree = "<group>"; };
 		E4946EAC156E64DD00D3297F /* StyleRuleImport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleRuleImport.cpp; sourceTree = "<group>"; };
 		E4946EAD156E64DD00D3297F /* StyleRuleImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleRuleImport.h; sourceTree = "<group>"; };
@@ -24917,6 +24922,8 @@
 				E46180281C8A06CD0026C02C /* RenderTreeUpdater.h */,
 				E48284061F44594B00863AC3 /* RenderTreeUpdaterFirstLetter.cpp */,
 				E48284091F44595600863AC3 /* RenderTreeUpdaterFirstLetter.h */,
+				E48E332A1F46C98000BAB0EF /* RenderTreeUpdaterListItem.cpp */,
+				E48E33281F46C97F00BAB0EF /* RenderTreeUpdaterListItem.h */,
 				E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */,
 				E401E0A31C3C0B8300F34D10 /* StyleChange.h */,
 				E4D58EB617B4ED8900CBDCA8 /* StyleFontSizeFunctions.cpp */,
@@ -27807,6 +27814,7 @@
 				1AE96A8D1D1A0DDD00B86768 /* JSApplePayPaymentMethodSelectedEvent.h in Headers */,
 				7C65231A1E00DBB500677F22 /* JSApplePayPaymentPass.h in Headers */,
 				7C6579F21E00856600E3A27A /* JSApplePayPaymentRequest.h in Headers */,
+				E48E332C1F47037C00BAB0EF /* RenderTreeUpdaterFirstLetter.h in Headers */,
 				1AE96A8F1D1A0DDD00B86768 /* JSApplePaySession.h in Headers */,
 				1AE96A911D1A0DDD00B86768 /* JSApplePayShippingContactSelectedEvent.h in Headers */,
 				7C6579F41E00856600E3A27A /* JSApplePayShippingMethod.h in Headers */,
@@ -29807,6 +29815,7 @@
 				BC22747B0E8366E200E7F975 /* SVGRenderStyleDefs.h in Headers */,
 				436708F212D9CA4B00044234 /* SVGRenderSupport.h in Headers */,
 				436708F412D9CA4B00044234 /* SVGRenderTreeAsText.h in Headers */,
+				E48E332E1F47038000BAB0EF /* RenderTreeUpdaterListItem.h in Headers */,
 				436708F612D9CA4B00044234 /* SVGResources.h in Headers */,
 				436708F812D9CA4B00044234 /* SVGResourcesCache.h in Headers */,
 				436708FA12D9CA4B00044234 /* SVGResourcesCycleSolver.h in Headers */,
@@ -31936,6 +31945,7 @@
 				E172AF8F1811BC3700FBADB9 /* JSDOMPromiseDeferred.cpp in Sources */,
 				0FF3B9281EE3B6DE00B84144 /* JSDOMQuad.cpp in Sources */,
 				0F94A3961EF1B10500FBAFFB /* JSDOMQuadCustom.cpp in Sources */,
+				E48E332D1F47038000BAB0EF /* RenderTreeUpdaterListItem.cpp in Sources */,
 				0FF3B92A1EE3B6DE00B84144 /* JSDOMQuadInit.cpp in Sources */,
 				0F4710BB1DB56BE8002DCEC3 /* JSDOMRect.cpp in Sources */,
 				0F4710BD1DB56BE8002DCEC3 /* JSDOMRectInit.cpp in Sources */,

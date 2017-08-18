@@ -43,6 +43,7 @@
 #include "RenderNamedFlowThread.h"
 #include "RenderQuote.h"
 #include "RenderTreeUpdaterFirstLetter.h"
+#include "RenderTreeUpdaterListItem.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
 #include <wtf/SystemTracing.h>
@@ -224,26 +225,15 @@ void RenderTreeUpdater::pushParent(Element& element, Style::Change changeType)
 {
     m_parentStack.append(Parent(element, changeType));
 
-    updateBeforeOrAfterPseudoElement(element, BEFORE);
+    updateBeforeDescendants(element);
 }
 
 void RenderTreeUpdater::popParent()
 {
     auto& parent = m_parentStack.last();
+    if (parent.element)
+        updateAfterDescendants(*parent.element, parent.styleChange);
 
-    if (parent.element) {
-        updateBeforeOrAfterPseudoElement(*parent.element, AFTER);
-
-        if (auto* renderer = parent.element->renderer()) {
-            if (is<RenderBlock>(*renderer))
-                FirstLetter::update(downcast<RenderBlock>(*renderer));
-            if (is<RenderListItem>(*renderer))
-                downcast<RenderListItem>(*renderer).updateMarkerRenderer();
-
-            if (parent.element->hasCustomStyleResolveCallbacks() && parent.styleChange == Style::Detach)
-                parent.element->didAttachRenderers();
-        }
-    }
     m_parentStack.removeLast();
 }
 
@@ -253,6 +243,29 @@ void RenderTreeUpdater::popParentsToDepth(unsigned depth)
 
     while (m_parentStack.size() > depth)
         popParent();
+}
+
+void RenderTreeUpdater::updateBeforeDescendants(Element& element)
+{
+    updateBeforeOrAfterPseudoElement(element, BEFORE);
+}
+
+void RenderTreeUpdater::updateAfterDescendants(Element& element, Style::Change styleChange)
+{
+    updateBeforeOrAfterPseudoElement(element, AFTER);
+
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return;
+
+    // These functions do render tree mutations that require descendant renderers.
+    if (is<RenderBlock>(*renderer))
+        FirstLetter::update(downcast<RenderBlock>(*renderer));
+    if (is<RenderListItem>(*renderer))
+        ListItem::updateMarker(downcast<RenderListItem>(*renderer));
+
+    if (element.hasCustomStyleResolveCallbacks() && styleChange == Style::Detach)
+        element.didAttachRenderers();
 }
 
 static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newStyle)
@@ -571,7 +584,7 @@ void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, Pseud
             updateQuotesUpTo(&child);
     }
     if (is<RenderListItem>(*pseudoRenderer))
-        downcast<RenderListItem>(*pseudoRenderer).updateMarkerRenderer();
+        ListItem::updateMarker(downcast<RenderListItem>(*pseudoRenderer));
 }
 
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType)
