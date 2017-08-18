@@ -41,7 +41,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             if (WI.RecordingContentView.supportsCanvasPathDebugging()) {
                 this._pathContext = null;
 
-                this._showPathButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-path", WI.UIString("Show Path"), WI.UIString("Hide Path"), "Images/PaintFlashing.svg", 13, 13);
+                this._showPathButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-path", WI.UIString("Show Path"), WI.UIString("Hide Path"), "Images/Path.svg", 16, 16);
                 this._showPathButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showPathButtonClicked, this);
                 this._showPathButtonNavigationItem.activated = !!WI.settings.showCanvasPath.value;
             }
