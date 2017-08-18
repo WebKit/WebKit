@@ -40,17 +40,15 @@
 
 namespace WebCore {
 
-typedef std::tuple<String, String> clientCertificate;
-
 static HashMap<String, ListHashSet<String>, ASCIICaseInsensitiveHash>& allowedHosts()
 {
     static NeverDestroyed<HashMap<String, ListHashSet<String>, ASCIICaseInsensitiveHash>> map;
     return map;
 }
 
-static HashMap<String, clientCertificate, ASCIICaseInsensitiveHash>& allowedClientHosts()
+static HashMap<String, ClientCertificate, ASCIICaseInsensitiveHash>& allowedClientHosts()
 {
-    static NeverDestroyed<HashMap<String, clientCertificate, ASCIICaseInsensitiveHash>> map;
+    static NeverDestroyed<HashMap<String, ClientCertificate, ASCIICaseInsensitiveHash>> map;
     return map;
 }
 
@@ -62,23 +60,17 @@ void allowsAnyHTTPSCertificateHosts(const String& host)
 
 void addAllowedClientCertificate(const String& host, const String& certificate, const String& key)
 {
-    clientCertificate clientInfo(certificate, key);
+    ClientCertificate clientInfo { certificate, key };
     allowedClientHosts().set(host, clientInfo);
 }
 
-void setSSLClientCertificate(ResourceHandle* handle)
+std::optional<ClientCertificate> getSSLClientCertificate(const String& host)
 {
-    String host = handle->firstRequest().url().host();
     auto it = allowedClientHosts().find(host);
     if (it == allowedClientHosts().end())
-        return;
+        return std::nullopt;
 
-    ResourceHandleInternal* d = handle->getInternal();
-    clientCertificate clientInfo = it->value;
-
-    d->m_curlHandle.setSslCert(std::get<0>(clientInfo).utf8().data());
-    d->m_curlHandle.setSslCertType("P12");
-    d->m_curlHandle.setSslKeyPassword(std::get<1>(clientInfo).utf8().data());
+    return it->value;
 }
 
 bool sslIgnoreHTTPSCertificate(const String& host, const ListHashSet<String>& certificates)
@@ -203,11 +195,10 @@ static int certVerifyCallback(int ok, X509_STORE_CTX* ctx)
 
     SSL* ssl = reinterpret_cast<SSL*>(X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx()));
     SSL_CTX* sslctx = SSL_get_SSL_CTX(ssl);
-    ResourceHandle* job = reinterpret_cast<ResourceHandle*>(SSL_CTX_get_app_data(sslctx));
-    String host = job->firstRequest().url().host();
-    ResourceHandleInternal* d = job->getInternal();
+    CurlHandle* handle = reinterpret_cast<CurlHandle*>(SSL_CTX_get_app_data(sslctx));
+    String host = handle->getEffectiveURL().host();
 
-    d->m_sslErrors = sslCertificateFlag(err);
+    handle->setSslErrors(sslCertificateFlag(err));
 
 #if PLATFORM(WIN)
     auto it = allowedHosts().find(host);
@@ -222,7 +213,7 @@ static int certVerifyCallback(int ok, X509_STORE_CTX* ctx)
     if (ok) {
         // if the host and the certificate are stored for the current handle that means is enabled,
         // so don't need to curl verifies the authenticity of the peer's certificate
-        d->m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerDisable);
+        handle->setSslVerifyPeer(CurlHandle::VerifyPeerDisable);
     }
     return ok;
 }
@@ -234,11 +225,9 @@ static CURLcode sslctxfun(CURL* curl, void* sslctx, void* parm)
     return CURLE_OK;
 }
 
-void setSSLVerifyOptions(ResourceHandle* handle)
+void setSSLVerifyOptions(CurlHandle& handle)
 {
-    ResourceHandleInternal* d = handle->getInternal();
-
-    d->m_curlHandle.setSslCtxCallbackFunction(sslctxfun, handle);
+    handle.setSslCtxCallbackFunction(sslctxfun, &handle);
 }
 
 }

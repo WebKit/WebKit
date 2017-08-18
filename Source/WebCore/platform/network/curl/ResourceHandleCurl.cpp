@@ -130,6 +130,7 @@ void ResourceHandleInternal::initialize()
     m_curlHandle.enableStdErrIfUsed();
 #endif
 
+    m_curlHandle.initialize();
     m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerEnable);
     m_curlHandle.setSslVerifyHost(CurlHandle::VerifyHostStrictNameCheck);
     m_curlHandle.setPrivateData(this);
@@ -141,12 +142,17 @@ void ResourceHandleInternal::initialize()
     m_curlHandle.enableShareHandle();
     m_curlHandle.enableTimeout();
     m_curlHandle.enableAllowedProtocols();
-    setSSLClientCertificate(m_handle);
+    auto certificate = getSSLClientCertificate(m_firstRequest.url().host());
+    if (certificate) {
+        m_curlHandle.setSslCert((*certificate).first.utf8().data());
+        m_curlHandle.setSslCertType("P12");
+        m_curlHandle.setSslKeyPassword((*certificate).second.utf8().data());
+    }
 
     if (CurlContext::singleton().shouldIgnoreSSLErrors())
         m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerDisable);
     else
-        setSSLVerifyOptions(m_handle);
+        setSSLVerifyOptions(m_curlHandle);
 
     m_curlHandle.enableCAInfoIfExists();
 
@@ -401,7 +407,7 @@ void ResourceHandleInternal::didFail()
         return;
     URL url = m_curlHandle.getEffectiveURL();
     if (client()) {
-        client()->didFail(m_handle, ResourceError(m_curlHandle, m_sslErrors));
+        client()->didFail(m_handle, ResourceError(CurlContext::errorDomain, m_curlHandle.errorCode(), m_curlHandle.getEffectiveURL(), m_curlHandle.errorDescription(), m_curlHandle.getSslErrors()));
         CurlCacheManager::getInstance().didFail(*m_handle);
     }
 }
@@ -990,7 +996,7 @@ void ResourceHandleInternal::dispatchSynchronousJob()
 
     if (client()) {
         if (ret != CURLE_OK)
-            client()->didFail(m_handle, ResourceError(m_curlHandle, m_sslErrors));
+            client()->didFail(m_handle, ResourceError(CurlContext::errorDomain, m_curlHandle.errorCode(), m_curlHandle.getEffectiveURL(), m_curlHandle.errorDescription(), m_curlHandle.getSslErrors()));
         else
             client()->didReceiveResponse(m_handle, ResourceResponse(m_response));
     }

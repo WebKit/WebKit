@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Apple Inc.  All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2017 NAVER Corp.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +26,11 @@
  */
 
 #include "config.h"
+#include "CurlDownload.h"
 
 #if USE(CURL)
 
-#include "CurlDownload.h"
-
 #include "CurlContext.h"
-
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "ResourceRequest.h"
@@ -59,17 +58,10 @@ void CurlDownload::init(CurlDownloadListener* listener, const URL& url)
 
     LockHolder locker(m_mutex);
 
-    m_curlHandle.enableShareHandle();
-
-    m_curlHandle.setUrl(url);
-    m_curlHandle.setPrivateData(this);
-    m_curlHandle.setHeaderCallbackFunction(headerCallback, this);
-    m_curlHandle.setWriteCallbackFunction(writeCallback, this);
-    m_curlHandle.enableFollowLocation();
-    m_curlHandle.enableHttpAuthentication(CURLAUTH_ANY);
-    m_curlHandle.enableCAInfoIfExists();
+    setupRequest();
 
     m_listener = listener;
+    m_url = url;
 }
 
 void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const ResourceRequest& request, const ResourceResponse&)
@@ -109,22 +101,28 @@ bool CurlDownload::cancel()
     return true;
 }
 
-String CurlDownload::getTempPath() const
-{
-    LockHolder locker(m_mutex);
-    return m_tempPath;
-}
-
-String CurlDownload::getUrl() const
-{
-    LockHolder locker(m_mutex);
-    return String(m_curlHandle.url());
-}
-
 ResourceResponse CurlDownload::getResponse() const
 {
     LockHolder locker(m_mutex);
-    return m_response;
+    ResourceResponse response(m_responseUrl, m_responseMIMEType, 0, m_responseTextEncodingName);
+    response.setHTTPHeaderField(m_httpHeaderFieldName, m_httpHeaderFieldValue);
+    return response;
+}
+
+void CurlDownload::setupRequest()
+{
+    LockHolder locker(m_mutex);
+
+    m_curlHandle.initialize();
+    m_curlHandle.enableShareHandle();
+
+    m_curlHandle.setUrl(m_url);
+    m_curlHandle.setPrivateData(this);
+    m_curlHandle.setHeaderCallbackFunction(headerCallback, this);
+    m_curlHandle.setWriteCallbackFunction(writeCallback, this);
+    m_curlHandle.enableFollowLocation();
+    m_curlHandle.enableHttpAuthentication(CURLAUTH_ANY);
+    m_curlHandle.enableCAInfoIfExists();
 }
 
 void CurlDownload::closeFile()
@@ -173,19 +171,21 @@ void CurlDownload::didReceiveHeader(const String& header)
 
         if (httpCode >= 200 && httpCode < 300) {
             URL url = m_curlHandle.getEffectiveURL();
-            callOnMainThread([this, url = url.isolatedCopy(), protectedThis = makeRef(*this)] {
-                m_response.setURL(url);
-                m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
-                m_response.setTextEncodingName(extractCharsetFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
+            callOnMainThread([protectedThis = makeRef(*this), url = url.isolatedCopy()] {
+                ResourceResponse localResponse = protectedThis->getResponse();
+                protectedThis->m_responseUrl = url;
+                protectedThis->m_responseMIMEType = extractMIMETypeFromMediaType(localResponse.httpHeaderField(HTTPHeaderName::ContentType));
+                protectedThis->m_responseTextEncodingName = extractCharsetFromMediaType(localResponse.httpHeaderField(HTTPHeaderName::ContentType));
 
-                didReceiveResponse();
+                protectedThis->didReceiveResponse();
             });
         }
     } else {
-        callOnMainThread([this, header = header.isolatedCopy(), protectedThis = makeRef(*this)] {
+        callOnMainThread([protectedThis = makeRef(*this), header = header.isolatedCopy()] {
             int splitPos = header.find(":");
             if (splitPos != -1)
-                m_response.setHTTPHeaderField(header.left(splitPos), header.substring(splitPos + 1).stripWhiteSpace());
+                protectedThis->m_httpHeaderFieldName = header.left(splitPos);
+                protectedThis->m_httpHeaderFieldValue = header.substring(splitPos + 1).stripWhiteSpace();
         });
     }
 }
@@ -194,8 +194,8 @@ void CurlDownload::didReceiveData(void* data, int size)
 {
     LockHolder locker(m_mutex);
 
-    callOnMainThread([this, size, protectedThis = makeRef(*this)] {
-        didReceiveDataOfLength(size);
+    callOnMainThread([protectedThis = makeRef(*this), size] {
+        protectedThis->didReceiveDataOfLength(size);
     });
 
     writeDataToFile(static_cast<const char*>(data), size);
@@ -258,30 +258,6 @@ size_t CurlDownload::headerCallback(char* ptr, size_t size, size_t nmemb, void* 
         download->didReceiveHeader(header);
 
     return totalSize;
-}
-
-void CurlDownload::downloadFinishedCallback(CurlDownload* download)
-{
-    if (download)
-        download->didFinish();
-}
-
-void CurlDownload::downloadFailedCallback(CurlDownload* download)
-{
-    if (download)
-        download->didFail();
-}
-
-void CurlDownload::receivedDataCallback(CurlDownload* download, int size)
-{
-    if (download)
-        download->didReceiveDataOfLength(size);
-}
-
-void CurlDownload::receivedResponseCallback(CurlDownload* download)
-{
-    if (download)
-        download->didReceiveResponse();
 }
 
 }

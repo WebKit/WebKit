@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class CurlHandle;
+
 typedef enum {
     SSL_CERTIFICATE_UNKNOWN_CA = (1 << 0), // The signing certificate authority is not known.
     SSL_CERTIFICATE_BAD_IDENTITY = (1 << 1), // The certificate does not match the expected identity of the site that it was retrieved from.
@@ -42,12 +44,13 @@ typedef enum {
     SSL_CERTIFICATE_GENERIC_ERROR = (1 << 6) // Some other error occurred validating the certificate
 } SSLCertificateFlags;
 
+typedef std::pair<String, String> ClientCertificate;
 
 void addAllowedClientCertificate(const String&, const String&, const String&);
 void allowsAnyHTTPSCertificateHosts(const String&);
 bool sslIgnoreHTTPSCertificate(const String&, const String&);
-void setSSLVerifyOptions(ResourceHandle*);
-void setSSLClientCertificate(ResourceHandle*);
+std::optional<ClientCertificate> getSSLClientCertificate(const String&);
+void setSSLVerifyOptions(CurlHandle&);
 
 }
 

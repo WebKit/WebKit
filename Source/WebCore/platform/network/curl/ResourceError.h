@@ -28,15 +28,10 @@
 #include "CurlContext.h"
 #include "ResourceErrorBase.h"
 
-#if PLATFORM(WIN)
-#include <windows.h>
-#include <winsock2.h>
-#endif
-
 namespace WebCore {
 
-class ResourceError : public ResourceErrorBase
-{
+class ResourceError : public ResourceErrorBase {
+    friend class ResourceErrorBase;
 public:
     ResourceError(Type type = Type::Null)
         : ResourceErrorBase(type)
@@ -48,18 +43,16 @@ public:
     {
     }
 
-    ResourceError(const CurlHandle& curl, unsigned sslErrors)
-        : ResourceErrorBase(CurlContext::errorDomain, curl.errorCode(), curl.getEffectiveURL(), curl.errorDescription(), Type::General)
-        , m_sslErrors { sslErrors }
+    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, unsigned sslErrors, Type type = Type::General)
+        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type)
+        , m_sslErrors(sslErrors)
     {
     }
 
     unsigned sslErrors() const { return m_sslErrors; }
-    void setSSLErrors(unsigned sslVerifyResult) { m_sslErrors = sslVerifyResult; }
     bool hasSSLConnectError() const { return errorCode() == CURLE_SSL_CONNECT_ERROR; }
 
 private:
-    friend class ResourceErrorBase;
     void doPlatformIsolatedCopy(const ResourceError&) { }
 
     unsigned m_sslErrors { 0 };

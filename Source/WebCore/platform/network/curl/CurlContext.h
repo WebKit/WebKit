@@ -221,6 +221,8 @@ public:
 
     CURL* handle() const { return m_handle; }
 
+    void initialize();
+
     CURLcode perform();
     CURLcode pause(int);
 
@@ -266,6 +268,8 @@ public:
     void setSslCert(const char*);
     void setSslCertType(const char*);
     void setSslKeyPassword(const char*);
+    void setSslErrors(unsigned);
+    unsigned getSslErrors();
 
     void enableCookieJarIfExists();
     void setCookieList(const char*);
@@ -304,6 +308,7 @@ private:
     CURL* m_handle { nullptr };
     char m_errorBuffer[CURL_ERROR_SIZE] { };
     CURLcode m_errorCode;
+    unsigned m_sslErrors { 0 };
 
     char* m_url { nullptr };
     void* m_privateData { nullptr };
