@@ -4269,11 +4269,17 @@ private:
     void compilePushWithScope()
     {
         LValue parentScope = lowCell(m_node->child1());
-        LValue object = lowJSValue(m_node->child2());
-
-        LValue result = vmCall(Int64, m_out.operation(operationPushWithScope), m_callFrame, parentScope, object);
-
-        setJSValue(result);
+        auto objectEdge = m_node->child2();
+        if (objectEdge.useKind() == ObjectUse) {
+            LValue object = lowNonNullObject(objectEdge);
+            LValue result = vmCall(Int64, m_out.operation(operationPushWithScopeObject), m_callFrame, parentScope, object);
+            setJSValue(result);
+        } else {
+            ASSERT(objectEdge.useKind() == UntypedUse);
+            LValue object = lowJSValue(m_node->child2());
+            LValue result = vmCall(Int64, m_out.operation(operationPushWithScope), m_callFrame, parentScope, object);
+            setJSValue(result);
+        }
     }
 
     void compileCreateActivation()

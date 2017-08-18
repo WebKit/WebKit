@@ -1129,15 +1129,27 @@ void SpeculativeJIT::compilePushWithScope(Node* node)
     SpeculateCellOperand currentScope(this, node->child1());
     GPRReg currentScopeGPR = currentScope.gpr();
 
-    JSValueOperand object(this, node->child2());
-    JSValueRegs objectRegs = object.jsValueRegs();
-
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
-    
-    flushRegisters();
-    callOperation(operationPushWithScope, resultGPR, currentScopeGPR, objectRegs);
-    m_jit.exceptionCheck();
+
+    auto objectEdge = node->child2();
+    if (objectEdge.useKind() == ObjectUse) {
+        SpeculateCellOperand object(this, objectEdge);
+        GPRReg objectGPR = object.gpr();
+        speculateObject(objectEdge, objectGPR);
+
+        flushRegisters();
+        callOperation(operationPushWithScopeObject, resultGPR, currentScopeGPR, objectGPR);
+        // No exception check here as we did not have to call toObject().
+    } else {
+        ASSERT(objectEdge.useKind() == UntypedUse);
+        JSValueOperand object(this, objectEdge);
+        JSValueRegs objectRegs = object.jsValueRegs();
+
+        flushRegisters();
+        callOperation(operationPushWithScope, resultGPR, currentScopeGPR, objectRegs);
+        m_jit.exceptionCheck();
+    }
     
     cellResult(resultGPR, node);
 }

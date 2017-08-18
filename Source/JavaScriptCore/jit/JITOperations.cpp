@@ -2010,6 +2010,14 @@ JSCell* JIT_OPERATION operationPushWithScope(ExecState* exec, JSCell* currentSco
     return JSWithScope::create(vm, exec->lexicalGlobalObject(), currentScope, object);
 }
 
+JSCell* JIT_OPERATION operationPushWithScopeObject(ExecState* exec, JSCell* currentScopeCell, JSObject* object)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSScope* currentScope = jsCast<JSScope*>(currentScopeCell);
+    return JSWithScope::create(vm, exec->lexicalGlobalObject(), currentScope, object);
+}
+
 EncodedJSValue JIT_OPERATION operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedProto)
 {
     VM& vm = exec->vm();

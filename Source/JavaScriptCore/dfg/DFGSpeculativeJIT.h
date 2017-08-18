@@ -1396,6 +1396,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2.gpr());
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(C_JITOperation_ECO operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(J_JITOperation_EJMic operation, JSValueRegs result, JSValueRegs arg, TrustedImmPtr mathIC)
     {
         m_jit.setupArgumentsWithExecState(arg.gpr(), mathIC);
@@ -1948,6 +1953,11 @@ public:
     JITCompiler::Call callOperation(C_JITOperation_ECJ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR());
+        return appendCallSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(C_JITOperation_ECO operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_JITOperation_EJMic operation, JSValueRegs result, JSValueRegs arg, TrustedImmPtr mathIC)

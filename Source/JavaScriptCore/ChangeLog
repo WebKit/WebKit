@@ -1,3 +1,24 @@
+2017-08-17  Robin Morisset  <rmorisset@apple.com>
+
+        Teach DFGFixupPhase.cpp that the current scope is always a cell
+        https://bugs.webkit.org/show_bug.cgi?id=175610
+
+        Reviewed by Keith Miller.
+
+        Also teach it that the argument to with can usually be speculated to be an object,
+        since toObject() is called on it.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePushWithScope):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePushWithScope):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2017-08-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: remove unused private struct from InspectorScriptProfilerAgent
