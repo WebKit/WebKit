@@ -1,3 +1,16 @@
+2017-08-17  Mathias Bynens  <mathias@qiwi.be>
+
+        Speedometer: Update to modern React/Redux version
+        https://bugs.webkit.org/show_bug.cgi?id=175669
+
+        Reviewed by Ryosuke Niwa.
+
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/README.md: Documented build steps.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/dist/*: Updated per build instructions.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/package-lock.json: Pinned dependencies to make builds deterministic.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/package.json: Fixed build command.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/public/index.html: Made title consistent.
+
 2017-08-17  Michael Saboff  <msaboff@apple.com>
 
         Add a Unicode test to RexBench that matches non-BMP characters
