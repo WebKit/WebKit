@@ -1,3 +1,17 @@
+2017-08-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] accessibility/heading-crash-after-hidden.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=173536
+
+        Reviewed by Brent Fulgham.
+
+        If the tree state is dirty, accessible objects are deleted while iterating over children
+        under AccessibilityNodeObject::textUnderElement when the style is updated. Make sure the
+        style is updated before this method is called.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::getAccessibilityObjectForChild):
+
 2017-08-17  Don Olmstead  <don.olmstead@sony.com>
 
         [PAL] Move SessionID into PAL

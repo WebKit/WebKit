@@ -40,6 +40,8 @@ void AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomicString&
 {
     // FIXME: This should be fleshed out to match the Mac version
 
+    m_object->updateBackingStore();
+
     // Not a real concept on Windows, but used heavily in WebKit accessibility testing.
     if (attributeName == "AXTitleUIElementAttribute") {
         if (!m_object->exposesTitleUIElement())

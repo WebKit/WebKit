@@ -1021,6 +1021,8 @@ HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, Accessibi
     if (!m_object)
         return E_FAIL;
 
+    m_object->updateBackingStore();
+
     if (vChild.vt != VT_I4)
         return E_INVALIDARG;
 
