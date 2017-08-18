@@ -800,9 +800,6 @@ http/tests/media/video-buffered.html [ WontFix ]
 ## --- Start unimplemented media tests ---
 webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 
-# WebKitDataCue is supported, not DataCue
-media/track/track-datacue.html [ Skip ]
-
 webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 ## --- End unimplemeted media tests ---
 

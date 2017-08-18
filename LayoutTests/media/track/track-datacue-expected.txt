@@ -2,7 +2,7 @@ Tests DataCue interface
 
 
 *** Test DataCue's TextTrackCue interface.
-EXPECTED (cue instanceof '[object TextTrackCueConstructor]') OK
+EXPECTED (cue instanceof 'function TextTrackCue() { [native code] }') OK
 EXPECTED (cue.track == 'null') OK
 EXPECTED (cue.id == '') OK
 EXPECTED (cue.startTime == '3') OK
@@ -10,7 +10,7 @@ EXPECTED (cue.endTime == '10') OK
 EXPECTED (cue.pauseOnExit == 'false') OK
 
 *** Test DataCue interface.
-EXPECTED (cue instanceof '[object DataCueConstructor]') OK
+EXPECTED (cue instanceof 'function DataCue() { [native code] }') OK
 EXPECTED (new Uint8Array(cue.data).length == '5') OK
 EXPECTED (new Uint8Array(cue.data)[0] == '4') OK
 EXPECTED (new Uint8Array(cue.data)[1] == '5') OK
@@ -29,12 +29,15 @@ RUN(new Uint8Array(cue.data)[0] = 8)
 EXPECTED ((new Uint8Array(cue.data))[0] == '7') OK
 
 *** Throw exception if data is not an ArrayBuffer.
-TEST(cue.data = null) THROWS('TypeError: Type error') OK
-TEST(cue.data = 'test') THROWS('TypeError: Type error') OK
-TEST(cue.data = [5]) THROWS('TypeError: Type error') OK
-TEST(badCue = new DataCue(1, 2, null)) THROWS('TypeError: Type error') OK
-TEST(badCue = new DataCue(1, 2, 'test')) THROWS('TypeError: Type error') OK
-TEST(badCue = new DataCue(1, 2, [5])) THROWS('TypeError: Type error') OK
+TEST(cue.data = null) THROWS('TypeError: The DataCue.data attribute must be an instance of ArrayBuffer') OK
+TEST(cue.data = 'test') THROWS('TypeError: The DataCue.data attribute must be an instance of ArrayBuffer') OK
+TEST(cue.data = [5]) THROWS('TypeError: The DataCue.data attribute must be an instance of ArrayBuffer') OK
+
+*** Constructor with value argument.
+EXPECTED (new DataCue(1, 2, null).value === 'null') OK
+EXPECTED (new DataCue(1, 2, 'test').value === 'test') OK
+EXPECTED (new DataCue(1, 2, [5]).value.length == '1') OK
+EXPECTED (new DataCue(1, 2, [5]).value[0] == '5') OK
 
 *** Test adding DataCue to track with kind = 'metadata'.
 EXPECTED (cue.track == '[object TextTrack]') OK

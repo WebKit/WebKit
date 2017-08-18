@@ -159,9 +159,6 @@ platform/ios/ios/fast/text/data-detectors/phone-disabled.html [ Skip ]
 platform/ios/ios/fast/text/data-detectors/phone.html [ Skip ]
 platform/ios/ios/touch [ Skip ]
 
-# WebKitDataCue is supported, not DataCue
-media/track/track-datacue.html
-
 # Codecs not supported
 media/media-can-play-ogg.html [ WontFix ]
 media/media-can-play-flac-audio.html  [ WontFix ]

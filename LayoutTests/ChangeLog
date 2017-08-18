@@ -1,3 +1,17 @@
+2017-08-18  Ms2ger  <Ms2ger@igalia.com>
+
+        Update track-datacue.html test to the current code.
+        https://bugs.webkit.org/show_bug.cgi?id=175624
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-datacue-expected.txt: rebaselined.
+        * media/track/track-datacue.html: updated for IDL, exception changes, addition of a new constructor.
+        * platform/gtk/TestExpectations: removed failure expectation.
+        * platform/ios/TestExpectations: enable.
+        * platform/mac/TestExpectations: enable.
+        * platform/win/TestExpectations: enable.
+
 2017-08-18  Ms2ger  <Ms2ger@gmail.com>
 
         [GTK] Remove some obsolete expected failures.

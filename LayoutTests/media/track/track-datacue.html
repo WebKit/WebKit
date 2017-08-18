@@ -41,13 +41,15 @@
                 testExpected("(new Uint8Array(cue.data))[0]", 7);
 
                 consoleWrite("<br>*** Throw exception if data is not an ArrayBuffer.");
-                var error = "'TypeError: Type error'";
+                var error = "'TypeError: The DataCue.data attribute must be an instance of ArrayBuffer'";
                 testException("cue.data = null", error);
                 testException("cue.data = 'test'", error);
                 testException("cue.data = [5]", error);
-                testException("badCue = new DataCue(1, 2, null)", error);
-                testException("badCue = new DataCue(1, 2, 'test')", error);
-                testException("badCue = new DataCue(1, 2, [5])", error);
+
+                consoleWrite("<br>*** Constructor with value argument.");
+                testExpected("new DataCue(1, 2, null).value", null, "===");
+                testExpected("new DataCue(1, 2, 'test').value", 'test', "===");
+                testArraysEqual("new DataCue(1, 2, [5]).value", [5]);
 
                 consoleWrite("<br>*** Test adding DataCue to track with kind = 'metadata'.");
                 var video = document.createElement("video");

@@ -1049,7 +1049,6 @@ media/track/track-cues-missed.html [ Skip ] # Timeout
 media/track/track-cues-pause-on-exit.html [ Skip ] # Timeout
 media/track/track-cues-seeking.html [ Skip ] # Timeout
 media/track/track-cues-sorted-before-dispatch.html [ Skip ] # Timeout
-media/track/track-datacue.html [ Skip ] # Timeout
 media/track/track-forced-subtitles-in-band.html [ Skip ] # Timeout
 media/track/track-in-band-style.html [ Skip ] # Timeout
 media/track/track-language-preference.html [ Skip ] # Timeout
