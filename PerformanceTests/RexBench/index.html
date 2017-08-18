@@ -140,6 +140,31 @@
             </div>
         </div>
 
+        <div class="unipoker test">
+            <h2 id="UniPokerMessage">UniPoker</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="UniPokerFirstIteration">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iteratons</label>
+                <span id="UniPokerAverageWorstCase">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="UniPokerSteadyState">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
         <div class="flight planner test">
             <h2 id="FlightPlannerMessage">Flight Planner</h2> 
             
@@ -198,6 +223,7 @@
     <script src="octane2_benchmark.js"></script>
     <script src="basic_benchmark.js"></script>
     <script src="offline_assembler_benchmark.js"></script>
+    <script src="unipoker_benchmark.js"></script>
     <script src="flightplan_benchmark.js"></script>
     <script src="flightplan_unicode_benchmark.js"></script>
     <script src="glue.js"></script>

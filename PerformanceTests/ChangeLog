@@ -1,3 +1,54 @@
+2017-08-17  Michael Saboff  <msaboff@apple.com>
+
+        Add a Unicode test to RexBench that matches non-BMP characters
+        https://bugs.webkit.org/show_bug.cgi?id=175697
+
+        Reviewed by JF Bastien.
+
+        Added a new sub test that simulates 5 card stud poker.  This test uses the Unicode playing
+        cards code points, U+1F0A1..U+1F0DE, as the card representation.  The scoring of hands is
+        done using three regular expressions, one to check for a flush, one to check for straights
+        and one to check for pairs, three of a kind and four of a kind.
+
+        * RexBench/UniPoker: Added.
+        * RexBench/UniPoker/benchmark.js: Added.
+        (UniPokerBenchmark):
+        (UniPokerBenchmark.prototype.setup.):
+        (UniPokerBenchmark.prototype.setup.Math.random):
+        (UniPokerBenchmark.prototype.setup):
+        (UniPokerBenchmark.prototype.runOnce):
+        (UniPokerBenchmark.prototype.validate):
+        * RexBench/UniPoker/expected.js: Added.
+        (PlayerExpectation):
+        (PlayerExpectation.prototype.validate):
+        * RexBench/UniPoker/poker.js: Added.
+        (CardDeck):
+        (CardDeck.prototype.newDeck):
+        (CardDeck.prototype.shuffle):
+        (CardDeck.prototype.dealOneCard):
+        (CardDeck.cardRank):
+        (CardDeck.cardName):
+        (Hand):
+        (Hand.prototype.clear):
+        (Hand.prototype.takeCard):
+        (Hand.prototype.score):
+        (Hand.prototype.get rank):
+        (Hand.prototype.toString):
+        (Player):
+        (Player.prototype.scoreHand):
+        (Player.prototype.wonHand):
+        (Player.prototype.get name):
+        (Player.prototype.get hand):
+        (Player.prototype.get wins):
+        (Player.prototype.get handTypeCounts):
+        (playHands):
+        * RexBench/about.html:
+        * RexBench/cli.js:
+        * RexBench/glue.js:
+        (driver.reportResult):
+        * RexBench/index.html:
+        * RexBench/unipoker_benchmark.js: Added.
+
 2017-08-16  Mathias Bynens  <mathias@qiwi.be>
 
         Speedometer: Update Angular 1 TodoMVC example to v1.6.5

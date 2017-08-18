@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,34 +24,45 @@
  */
 "use strict";
 
-const driver = new Driver(
-    isInBrowser ? document.getElementById("status") : null,
-    isInBrowser ? document.getElementById("trigger") : null,
-    function() {
-        driver.start(6)
-    },
-    isInBrowser ? document.getElementById("magic") : null,
-    isInBrowser ? document.getElementById("Geomean") : null,
-    "sampleBench");
+const UniPokerBenchmarkCode = String.raw`
+<script src="benchmark.js"></script>
+<script src="UniPoker/poker.js"></script>
+<script src="UniPoker/expected.js"></script>
+<script src="UniPoker/benchmark.js"></script>
+<script>
+"use strict";
+var results = [];
+var benchmark = new UniPokerBenchmark();
+var numIterations = 20;
+benchmark.runIterations(numIterations, results);
+reportResult(results);
+</script>`;
 
-function reportResult(...args) {
-    driver.reportResult(...args);
+
+let runUniPokerBenchmark = null;
+if (!isInBrowser) {
+    let sources = [
+        "benchmark.js"
+        , "UniPoker/poker.js"
+        , "UniPoker/expected.js"
+        , "UniPoker/benchmark.js"
+    ];
+
+    runUniPokerBenchmark = makeBenchmarkRunner(sources, "UniPokerBenchmark", 20);
 }
 
-{
-    const title = "RexBench 0.93";
-    if (isInBrowser) {
-        document.title = title;
-    } else {
-        print(title);
-    }
-}
+const UniPokerBenchmarkRunner = {
+    name: "UniPoker",
+    code: UniPokerBenchmarkCode,
+    run: runUniPokerBenchmark,
+    cells: {}
+};
 
-driver.addBenchmark(RegexDNABenchmarkRunner);
-driver.addBenchmark(Octane2RegExpBenchmarkRunner);
-driver.addBenchmark(BasicBenchmarkRunner);
-driver.addBenchmark(OfflineAssemblerBenchmarkRunner);
-driver.addBenchmark(UniPokerBenchmarkRunner);
-driver.addBenchmark(FlightPlannerBenchmarkRunner);
-driver.addBenchmark(FlightPlannerUnicodeBenchmarkRunner);
-driver.readyTrigger();
+if (isInBrowser) {
+    UniPokerBenchmarkRunner.cells = {
+        firstIteration: document.getElementById("UniPokerFirstIteration"),
+        averageWorstCase: document.getElementById("UniPokerAverageWorstCase"),
+        steadyState: document.getElementById("UniPokerSteadyState"),
+        message: document.getElementById("UniPokerMessage")
+    };
+}
