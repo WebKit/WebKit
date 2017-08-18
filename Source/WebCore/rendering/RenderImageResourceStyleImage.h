@@ -36,23 +36,21 @@ class RenderElement;
 class RenderImageResourceStyleImage final : public RenderImageResource {
 public:
     explicit RenderImageResourceStyleImage(StyleImage&);
-    virtual ~RenderImageResourceStyleImage();
 
 private:
-    void initialize(RenderElement*) override;
-    void shutdown() override;
+    void initialize(RenderElement&) final;
+    void shutdown() final;
 
-    RefPtr<Image> image(const IntSize& = { }) const override;
-    bool errorOccurred() const override { return m_styleImage->errorOccurred(); }
+    RefPtr<Image> image(const IntSize& = { }) const final;
+    bool errorOccurred() const final { return m_styleImage->errorOccurred(); }
 
-    void setContainerSizeForRenderer(const IntSize&) override;
-    bool imageHasRelativeWidth() const override { return m_styleImage->imageHasRelativeWidth(); }
-    bool imageHasRelativeHeight() const override { return m_styleImage->imageHasRelativeHeight(); }
+    void setContainerSizeForRenderer(const IntSize&) final;
 
-    LayoutSize imageSize(float multiplier) const override { return LayoutSize(m_styleImage->imageSize(m_renderer, multiplier)); }
-    LayoutSize intrinsicSize(float multiplier) const override { return LayoutSize(m_styleImage->imageSize(m_renderer, multiplier)); }
+    bool imageHasRelativeWidth() const final { return m_styleImage->imageHasRelativeWidth(); }
+    bool imageHasRelativeHeight() const final { return m_styleImage->imageHasRelativeHeight(); }
 
-    WrappedImagePtr imagePtr() const override { return m_styleImage->data(); }
+    WrappedImagePtr imagePtr() const final { return m_styleImage->data(); }
+    LayoutSize imageSize(float multiplier, CachedImage::SizeType) const final { return LayoutSize(m_styleImage->imageSize(renderer(), multiplier)); }
 
     Ref<StyleImage> m_styleImage;
 };

@@ -208,7 +208,7 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
 void RenderImage::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     if (!hasInitializedStyle())
-        imageResource().initialize(this);
+        imageResource().initialize(*this);
     RenderReplaced::styleWillChange(diff, newStyle);
 }
 

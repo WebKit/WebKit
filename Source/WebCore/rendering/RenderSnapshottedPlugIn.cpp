@@ -52,7 +52,7 @@ RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement& element
     : RenderEmbeddedObject(element, WTFMove(style))
     , m_snapshotResource(std::make_unique<RenderImageResource>())
 {
-    m_snapshotResource->initialize(this);
+    m_snapshotResource->initialize(*this);
 }
 
 RenderSnapshottedPlugIn::~RenderSnapshottedPlugIn()
