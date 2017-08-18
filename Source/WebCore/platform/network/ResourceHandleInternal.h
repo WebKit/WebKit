@@ -43,11 +43,7 @@
 #endif
 
 #if USE(CURL)
-#include "CurlContext.h"
-#include "CurlJobManager.h"
-#include "FormDataStreamCurl.h"
-#include "MultipartHandle.h"
-#include <wtf/Lock.h>
+#include "ResourceHandleCurlDelegate.h"
 #endif
 
 #if USE(SOUP)
@@ -87,10 +83,6 @@ public:
         , m_usesAsyncCallbacks(client && client->usesAsyncCallbacks())
 #if USE(CFURLCONNECTION)
         , m_currentRequest(request)
-#endif
-#if USE(CURL)
-        , m_handle { loader }
-        , m_formDataStream { loader }
 #endif
 #if USE(SOUP)
         , m_timeoutSource(RunLoop::main(), loader, &ResourceHandle::timeoutFired)
@@ -140,49 +132,8 @@ public:
     RetainPtr<CFURLStorageSessionRef> m_storageSession;
 #endif
 #if USE(CURL)
-    ResourceHandle* m_handle;
-    CurlHandle m_curlHandle;
-
+    RefPtr<ResourceHandleCurlDelegate> m_delegate;
     ResourceResponse m_response;
-    bool m_cancelled { false };
-    unsigned short m_authFailureCount { 0 };
-
-    FormDataStream m_formDataStream;
-    unsigned m_sslErrors { 0 };
-    Vector<char> m_postBytes;
-
-    std::unique_ptr<MultipartHandle> m_multipartHandle;
-    bool m_addedCacheValidationHeaders { false };
-    CurlJobTicket m_job { nullptr };
-
-    Vector<char> m_receivedBuffer;
-    Lock m_receivedBufferMutex;
-
-    void initialize();
-    void applyAuthentication();
-    void setupPOST();
-    void setupPUT();
-    void setupFormData(bool isPostRequest);
-
-    void didFinish();
-    void didFail();
-
-    size_t willPrepareSendData(char* ptr, size_t blockSize, size_t numberOfBlocks);
-    void didReceiveHeaderLine(const String& header);
-    void didReceiveAllHeaders(long httpCode, long long contentLength);
-    void didReceiveContentData();
-
-    void handleLocalReceiveResponse();
-
-    static size_t readCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
-    static size_t headerCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
-    static size_t writeCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
-
-    void dispatchSynchronousJob();
-    void handleDataURL();
-
-    void calculateWebTimingInformations();
-
 #endif
 
 #if USE(SOUP)

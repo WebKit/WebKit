@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Apple Inc.  All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2017 NAVER Corp.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,74 +28,30 @@
 #pragma once
 
 #include "CurlContext.h"
-
-#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
-#include <wtf/MessageQueue.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
-#include <wtf/Vector.h>
-
-#if OS(WINDOWS)
-#include <windows.h>
-#include <winsock2.h>
-#endif
-
 
 namespace WebCore {
 
-enum class CurlJobResult { Done, Error, Cancelled };
-using CurlJobTicket = void*;
-using CurlJobCallback = WTF::Function<void(CurlJobResult)>;
-using CurlJobTask = WTF::Function<void(CurlHandle&)>;
-
 class CurlJobList;
+using CurlJobTicket = void*;
 
-class CurlJob {
-    WTF_MAKE_NONCOPYABLE(CurlJob);
+class CurlJobClient {
 public:
-    CurlJob() { }
-    CurlJob(CurlHandle* curl, CurlJobCallback job)
-        : m_curl { curl }, m_job { WTFMove(job) } { }
-    CurlJob(CurlJob&& other)
-    {
-        m_curl = other.m_curl;
-        other.m_curl = nullptr;
-        m_job = WTFMove(other.m_job);
-    }
-    ~CurlJob() { }
+    virtual void retain() = 0;
+    virtual void release() = 0;
 
-    CurlJob& operator=(CurlJob&& other)
-    {
-        m_curl = other.m_curl;
-        other.m_curl = nullptr;
-        m_job = WTFMove(other.m_job);
-        return *this;
-    }
-
-    CurlHandle* curlHandle() const { return m_curl; }
-    CurlJobTicket ticket() const { return static_cast<CurlJobTicket>(m_curl->handle()); }
-
-    void finished() { invoke(CurlJobResult::Done); }
-    void error() { invoke(CurlJobResult::Error); }
-    void cancel() { invoke(CurlJobResult::Cancelled); }
-
-private:
-    CurlHandle* m_curl;
-    CurlJobCallback m_job;
-
-    void invoke(CurlJobResult);
+    virtual void setupRequest() = 0;
+    virtual void notifyFinish() = 0;
+    virtual void notifyFail() = 0;
 };
-
 
 class CurlJobManager {
     WTF_MAKE_NONCOPYABLE(CurlJobManager);
-    using Callback = CurlJobCallback;
-
 public:
-
     static CurlJobManager& singleton()
     {
         static CurlJobManager shared;
@@ -104,8 +61,9 @@ public:
     CurlJobManager() = default;
     ~CurlJobManager() { stopThread(); }
 
-    CurlJobTicket add(CurlHandle&, Callback);
-    bool cancel(CurlJobTicket);
+    CurlJobTicket add(CurlHandle&, CurlJobClient&);
+    void cancel(CurlJobTicket);
+
     void callOnJobThread(WTF::Function<void()>&&);
 
 private:
@@ -113,18 +71,18 @@ private:
     void stopThreadIfNoMoreJobRunning();
     void stopThread();
 
-    bool updateJobs(CurlJobList& jobs);
-    bool isActiveJob(CurlJobTicket job) const { return m_activeJobs.contains(job); }
+    void updateJobList(CurlJobList&);
 
     void workerThread();
 
     RefPtr<Thread> m_thread;
-    Vector<CurlJob> m_pendingJobs;
-    HashSet<CurlJobTicket> m_activeJobs;
-    Vector<CurlJobTicket> m_cancelledTickets;
-    MessageQueue<WTF::Function<void()>> m_taskQueue;
+    HashMap<CurlJobTicket, CurlJobClient*> m_pendingJobs;
+    HashSet<CurlJobTicket> m_cancelledTickets;
+    HashSet<CurlJobTicket> m_finishedTickets;
+    HashSet<CurlJobTicket> m_failedTickets;
+    Vector<WTF::Function<void()>> m_taskQueue;
     mutable Lock m_mutex;
-    bool m_runThread { };
+    bool m_runThread { false };
 };
 
 }

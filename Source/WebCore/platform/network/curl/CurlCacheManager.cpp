@@ -199,7 +199,7 @@ void CurlCacheManager::didReceiveResponse(ResourceHandle& job, ResourceResponse&
         return;
 
     ResourceHandleInternal* d = job.getInternal();
-    if (d->m_cancelled)
+    if (!d->m_delegate->hasHandle())
         return;
 
     const String& url = job.firstRequest().url().string();

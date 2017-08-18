@@ -44,7 +44,7 @@ public:
     virtual void didFail() { }
 };
 
-class CurlDownload : public ThreadSafeRefCounted<CurlDownload> {
+class CurlDownload : public ThreadSafeRefCounted<CurlDownload>, public CurlJobClient {
 public:
     CurlDownload();
     ~CurlDownload();
@@ -65,7 +65,12 @@ public:
     void setDestination(const String& destination) { m_destination = destination; }
 
 private:
-    void setupRequest();
+    void retain() override;
+    void release() override;
+
+    void setupRequest() override;
+    void notifyFinish() override;
+    void notifyFail() override;
 
     void closeFile();
     void moveFileToDestination();

@@ -1,3 +1,137 @@
+2017-08-18  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        [Curl] Improve multi-threaded networking
+        https://bugs.webkit.org/show_bug.cgi?id=175713
+
+        Reviewed by Alex Christensen.
+
+        * platform/Curl.cmake:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        (WebCore::ResourceHandleInternal::m_failureTimer): Deleted.
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::didReceiveResponse):
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::init):
+        (WebCore::CurlDownload::start):
+        (WebCore::CurlDownload::cancel):
+        (WebCore::CurlDownload::retain):
+        (WebCore::CurlDownload::release):
+        (WebCore::CurlDownload::setupRequest):
+        (WebCore::CurlDownload::notifyFinish):
+        (WebCore::CurlDownload::notifyFail):
+        * platform/network/curl/CurlDownload.h:
+        * platform/network/curl/CurlJobManager.cpp:
+        (WebCore::CurlJobList::isEmpty const):
+        (WebCore::CurlJobList::startJobs):
+        (WebCore::CurlJobList::finishJobs):
+        (WebCore::CurlJobList::notifyResult):
+        (WebCore::CurlJobManager::add):
+        (WebCore::CurlJobManager::cancel):
+        (WebCore::CurlJobManager::callOnJobThread):
+        (WebCore::CurlJobManager::startThreadIfNeeded):
+        (WebCore::CurlJobManager::updateJobList):
+        (WebCore::CurlJobManager::workerThread):
+        (WebCore::CurlJobList::append): Deleted.
+        (WebCore::CurlJobList::cancel): Deleted.
+        (WebCore::CurlJobList::complete): Deleted.
+        (WebCore::CurlJobList::withJob): Deleted.
+        (WebCore::CurlJobList::withCurlHandle): Deleted.
+        (WebCore::CurlJob::invoke): Deleted.
+        (WebCore::CurlJobManager::updateJobs): Deleted.
+        * platform/network/curl/CurlJobManager.h:
+        (WebCore::CurlJob::CurlJob): Deleted.
+        (WebCore::CurlJob::~CurlJob): Deleted.
+        (WebCore::CurlJob::operator=): Deleted.
+        (WebCore::CurlJob::curlHandle const): Deleted.
+        (WebCore::CurlJob::ticket const): Deleted.
+        (WebCore::CurlJob::finished): Deleted.
+        (WebCore::CurlJob::error): Deleted.
+        (WebCore::CurlJob::cancel): Deleted.
+        (WebCore::CurlJobManager::isActiveJob const): Deleted.
+        * platform/network/curl/MultipartHandle.cpp:
+        (WebCore::MultipartHandle::didReceiveData):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandleInternal::initialize): Deleted.
+        (WebCore::ResourceHandleInternal::applyAuthentication): Deleted.
+        (WebCore::getFormElementsCount): Deleted.
+        (WebCore::ResourceHandleInternal::setupPUT): Deleted.
+        (WebCore::ResourceHandleInternal::setupPOST): Deleted.
+        (WebCore::ResourceHandleInternal::setupFormData): Deleted.
+        (WebCore::ResourceHandleInternal::didFinish): Deleted.
+        (WebCore::ResourceHandleInternal::didFail): Deleted.
+        (WebCore::ResourceHandleInternal::calculateWebTimingInformations): Deleted.
+        (WebCore::ResourceHandleInternal::handleLocalReceiveResponse): Deleted.
+        (WebCore::isHttpInfo): Deleted.
+        (WebCore::isHttpRedirect): Deleted.
+        (WebCore::isHttpAuthentication): Deleted.
+        (WebCore::isHttpNotModified): Deleted.
+        (WebCore::isAppendableHeader): Deleted.
+        (WebCore::removeLeadingAndTrailingQuotes): Deleted.
+        (WebCore::getProtectionSpace): Deleted.
+        (WebCore::ResourceHandleInternal::willPrepareSendData): Deleted.
+        (WebCore::ResourceHandleInternal::didReceiveHeaderLine): Deleted.
+        (WebCore::ResourceHandleInternal::didReceiveAllHeaders): Deleted.
+        (WebCore::ResourceHandleInternal::didReceiveContentData): Deleted.
+        (WebCore::ResourceHandleInternal::readCallback): Deleted.
+        (WebCore::ResourceHandleInternal::headerCallback): Deleted.
+        (WebCore::ResourceHandleInternal::writeCallback): Deleted.
+        (WebCore::ResourceHandleInternal::dispatchSynchronousJob): Deleted.
+        (WebCore::ResourceHandleInternal::handleDataURL): Deleted.
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp: Added.
+        (WebCore::ResourceHandleCurlDelegate::ResourceHandleCurlDelegate):
+        (WebCore::ResourceHandleCurlDelegate::~ResourceHandleCurlDelegate):
+        (WebCore::ResourceHandleCurlDelegate::hasHandle const):
+        (WebCore::ResourceHandleCurlDelegate::releaseHandle):
+        (WebCore::ResourceHandleCurlDelegate::start):
+        (WebCore::ResourceHandleCurlDelegate::cancel):
+        (WebCore::ResourceHandleCurlDelegate::setDefersLoading):
+        (WebCore::ResourceHandleCurlDelegate::setAuthentication):
+        (WebCore::ResourceHandleCurlDelegate::dispatchSynchronousJob):
+        (WebCore::ResourceHandleCurlDelegate::retain):
+        (WebCore::ResourceHandleCurlDelegate::release):
+        (WebCore::ResourceHandleCurlDelegate::setupRequest):
+        (WebCore::ResourceHandleCurlDelegate::notifyFinish):
+        (WebCore::ResourceHandleCurlDelegate::notifyFail):
+        (WebCore::ResourceHandleCurlDelegate::response):
+        (WebCore::ResourceHandleCurlDelegate::setupAuthentication):
+        (WebCore::removeLeadingAndTrailingQuotes):
+        (WebCore::ResourceHandleCurlDelegate::getProtectionSpace):
+        (WebCore::isHttpInfo):
+        (WebCore::isHttpRedirect):
+        (WebCore::isHttpAuthentication):
+        (WebCore::isHttpNotModified):
+        (WebCore::isAppendableHeader):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveHeaderLine):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveAllHeaders):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveContentData):
+        (WebCore::ResourceHandleCurlDelegate::handleLocalReceiveResponse):
+        (WebCore::ResourceHandleCurlDelegate::prepareSendData):
+        (WebCore::ResourceHandleCurlDelegate::didFinish):
+        (WebCore::ResourceHandleCurlDelegate::didFail):
+        (WebCore::ResourceHandleCurlDelegate::handleDataURL):
+        (WebCore::ResourceHandleCurlDelegate::setupPOST):
+        (WebCore::ResourceHandleCurlDelegate::setupPUT):
+        (WebCore::ResourceHandleCurlDelegate::getFormElementsCount):
+        (WebCore::ResourceHandleCurlDelegate::setupFormData):
+        (WebCore::ResourceHandleCurlDelegate::applyAuthentication):
+        (WebCore::ResourceHandleCurlDelegate::setWebTimings):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveHeader):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveData):
+        (WebCore::ResourceHandleCurlDelegate::willSendData):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveHeaderCallback):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveDataCallback):
+        (WebCore::ResourceHandleCurlDelegate::willSendDataCallback):
+        * platform/network/curl/ResourceHandleCurlDelegate.h: Added.
+
 2017-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS 10 debug build fix.

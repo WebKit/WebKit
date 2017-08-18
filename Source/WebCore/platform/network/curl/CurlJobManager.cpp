@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Apple Inc.  All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2017 NAVER Corp.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +26,11 @@
  */
 
 #include "config.h"
-
-#if USE(CURL)
 #include "CurlJobManager.h"
 
+#if USE(CURL)
+
+#include "ResourceHandleCurlDelegate.h"
 #include <iterator>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
@@ -37,88 +39,69 @@ using namespace WebCore;
 
 namespace WebCore {
 
+enum class CurlJobResult { Done, Error, Cancelled };
+
 /*
  * CurlJobList is used only in background so that no need to manage mutex
  */
 class CurlJobList : public CurlMultiHandle {
-    using Predicate = WTF::Function<bool(const CurlJob&)>;
-    using Action = WTF::Function<void(CurlJob&)>;
-    using JobMap = HashMap<CurlJobTicket, CurlJob>;
-
 public:
-    void append(CurlJob& job)
+    bool isEmpty() const { return m_activeJobs.isEmpty(); }
+
+    void startJobs(HashMap<CurlJobTicket, CurlJobClient*>&& jobs)
     {
-        CurlHandle* curl = job.curlHandle();
-
-        CURLMcode retval = addHandle(curl->handle());
-            // @FIXME error logging
-        if (retval == CURLM_OK)
-            m_jobs.set(job.ticket(), WTFMove(job));
-    }
-
-    void cancel(CurlJobTicket ticket)
-    {
-        complete(ticket, [](auto&& job) { job.cancel(); });
-    }
-
-    void complete(CurlJobTicket ticket, Action action)
-    {
-        auto found = m_jobs.find(ticket);
-        if (found != m_jobs.end()) {
-            auto job = WTFMove(found->value);
-
-            removeHandle(job.curlHandle()->handle());
-            action(job);
-
-            m_jobs.remove(found);
+        auto localJobs = WTFMove(jobs);
+        for (auto& job : localJobs) {
+            job.value->setupRequest();
+            m_activeJobs.add(job.key, job.value);
+            addHandle(job.key);
         }
     }
 
-    bool isEmpty() const { return m_jobs.isEmpty(); }
-
-    bool withJob(CurlJobTicket ticket, WTF::Function<void(JobMap::iterator)> callback)
+    void finishJobs(HashSet<CurlJobTicket>&& tickets, CurlJobResult result)
     {
-        auto found = m_jobs.find(ticket);
-        if (found == m_jobs.end())
-            return false;
-        
-        callback(found);
-        return true;
-    }
-
-    bool withCurlHandle(CurlJobTicket ticket, WTF::Function<void(CurlHandle&)> callback)
-    {
-        return withJob(ticket, [&callback](JobMap::iterator it) {
-            callback(*it->value.curlHandle());
-        });
+        auto localTickets = WTFMove(tickets);
+        for (auto& ticket : localTickets) {
+            if (!m_activeJobs.contains(ticket))
+                continue;
+            removeHandle(ticket);
+            notifyResult(m_activeJobs.fastGet(ticket), result);
+            m_activeJobs.remove(ticket);
+        }
     }
 
 private:
-    JobMap m_jobs;
+    void notifyResult(CurlJobClient* client, CurlJobResult result)
+    {
+        switch (result) {
+        case CurlJobResult::Done:
+            client->notifyFinish();
+            break;
+        case CurlJobResult::Error:
+            client->notifyFail();
+            break;
+        case CurlJobResult::Cancelled:
+            break;
+        }
+
+        client->release();
+    }
+
+    HashMap<CurlJobTicket, CurlJobClient*> m_activeJobs;
 };
 
-void CurlJob::invoke(CurlJobResult result)
-{
-    callOnMainThread([job = WTFMove(m_job), result] {
-        job(result);
-    });
-}
-
-CurlJobTicket CurlJobManager::add(CurlHandle& curl, Callback callback)
+CurlJobTicket CurlJobManager::add(CurlHandle& curl, CurlJobClient& client)
 {
     ASSERT(isMainThread());
+
+    client.retain();
 
     CurlJobTicket ticket = static_cast<CurlJobTicket>(curl.handle());
 
     {
         LockHolder locker(m_mutex);
-
-        if (isActiveJob(ticket))
-            return ticket;
-
-
-        m_pendingJobs.append(CurlJob { &curl, WTFMove(callback) });
-        m_activeJobs.add(ticket);
+        m_cancelledTickets.remove(ticket);
+        m_pendingJobs.add(ticket, &client);
     }
 
     startThreadIfNeeded();
@@ -126,28 +109,18 @@ CurlJobTicket CurlJobManager::add(CurlHandle& curl, Callback callback)
     return ticket;
 }
 
-bool CurlJobManager::cancel(CurlJobTicket job)
+void CurlJobManager::cancel(CurlJobTicket job)
 {
     ASSERT(isMainThread());
 
-    if (m_runThread) {
-        LockHolder locker(m_mutex);
-
-        if (!isActiveJob(job))
-            return false;
-        
-        m_cancelledTickets.append(job);
-        m_activeJobs.remove(job);
-    }
-
-    return true;
+    LockHolder locker(m_mutex);
+    m_cancelledTickets.add(job);
 }
 
-void CurlJobManager::callOnJobThread(WTF::Function<void()>&& callback)
+void CurlJobManager::callOnJobThread(WTF::Function<void()>&& task)
 {
-    LockHolder locker { m_mutex };
-
-    m_taskQueue.append(std::make_unique<WTF::Function<void()>>(WTFMove(callback)));
+    LockHolder locker(m_mutex);
+    m_taskQueue.append(WTFMove(task));
 }
 
 void CurlJobManager::startThreadIfNeeded()
@@ -162,6 +135,7 @@ void CurlJobManager::startThreadIfNeeded()
         m_runThread = true;
         m_thread = Thread::create("curlThread", [this] {
             workerThread();
+            m_runThread = false;
         });
     }
 }
@@ -186,32 +160,29 @@ void CurlJobManager::stopThread()
     }
 }
 
-bool CurlJobManager::updateJobs(CurlJobList& jobs)
+void CurlJobManager::updateJobList(CurlJobList& jobs)
 {
     ASSERT(!isMainThread());
 
-    Vector<CurlJob> pendingJobs;
-    Vector<CurlJobTicket> cancelledTickets;
+    HashMap<CurlJobTicket, CurlJobClient*> pendingJobs;
+    HashSet<CurlJobTicket> cancelledTickets;
+    Vector<WTF::Function<void()>> taskQueue;
+
     {
         LockHolder locker(m_mutex);
-        if (!m_runThread)
-            return false;
 
         pendingJobs = WTFMove(m_pendingJobs);
         cancelledTickets = WTFMove(m_cancelledTickets);
+        taskQueue = WTFMove(m_taskQueue);
     }
 
-    for (auto& job : pendingJobs)
-        jobs.append(job);
+    jobs.startJobs(WTFMove(pendingJobs));
+    jobs.finishJobs(WTFMove(cancelledTickets), CurlJobResult::Cancelled);
+    jobs.finishJobs(WTFMove(m_finishedTickets), CurlJobResult::Done);
+    jobs.finishJobs(WTFMove(m_failedTickets), CurlJobResult::Error);
 
-    for (auto& ticket : cancelledTickets)
-        jobs.cancel(ticket);
-
-    for (auto& callback : m_taskQueue.takeAllMessages()) {
-        (*callback)();
-    }
-
-    return true;
+    for (auto& task : taskQueue)
+        task();
 }
 
 void CurlJobManager::workerThread()
@@ -220,7 +191,9 @@ void CurlJobManager::workerThread()
 
     CurlJobList jobs;
 
-    while (updateJobs(jobs)) {
+    while (m_runThread) {
+        updateJobList(jobs);
+
         // Retry 'select' if it was interrupted by a process signal.
         int rc = 0;
         do {
@@ -255,38 +228,16 @@ void CurlJobManager::workerThread()
             if (!msg)
                 break;
 
-            if (msg->msg == CURLMSG_DONE) {
-                auto ticket = static_cast<CurlJobTicket>(msg->easy_handle);
-                CURLcode result = msg->data.result;
-
-                {
-                    LockHolder locker(m_mutex);
-                    m_activeJobs.remove(ticket);
-                }
-
-                jobs.complete(ticket, [result](auto& job) {
-                    job.curlHandle()->setErrorCode(result);
-
-                    bool done = result == CURLE_OK;
-                    if (done)
-                        job.finished();
-                    else {
-                        URL url = job.curlHandle()->getEffectiveURL();
-#ifndef NDEBUG
-                        fprintf(stderr, "Curl ERROR for url='%s', error: '%s'\n", url.string().utf8().data(), job.curlHandle()->errorDescription().utf8().data());
-#endif
-                        job.error();
-                    }
-                });
-            } else
-                ASSERT_NOT_REACHED();
+            ASSERT(msg->msg == CURLMSG_DONE);
+            auto ticket = static_cast<CurlJobTicket>(msg->easy_handle);
+            if (msg->data.result == CURLE_OK)
+                m_finishedTickets.add(ticket);
+            else
+                m_failedTickets.add(ticket);
         }
 
-        if (jobs.isEmpty()) {
+        if (jobs.isEmpty())
             stopThreadIfNoMoreJobRunning();
-            if (!m_runThread)
-                break;
-        }
     }
 }
 

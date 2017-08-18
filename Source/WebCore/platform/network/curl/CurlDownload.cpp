@@ -58,8 +58,6 @@ void CurlDownload::init(CurlDownloadListener* listener, const URL& url)
 
     LockHolder locker(m_mutex);
 
-    setupRequest();
-
     m_listener = listener;
     m_url = url;
 }
@@ -78,26 +76,15 @@ void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const R
 
 bool CurlDownload::start()
 {
-    m_job = CurlJobManager::singleton().add(m_curlHandle, [this, protectedThis = makeRef(*this)](CurlJobResult result) mutable {
-        switch (result) {
-        case CurlJobResult::Done:
-            didFinish();
-            break;
-
-        case CurlJobResult::Error:
-            didFail();
-            break;
-
-        case CurlJobResult::Cancelled:
-            break;
-        }
-    });
-    return true;
+    m_job = CurlJobManager::singleton().add(m_curlHandle, *this);
+    return !!m_job;
 }
 
 bool CurlDownload::cancel()
 {
-    CurlJobManager::singleton().cancel(m_job);
+    CurlJobTicket job = m_job;
+    m_job = nullptr;
+    CurlJobManager::singleton().cancel(job);
     return true;
 }
 
@@ -107,6 +94,16 @@ ResourceResponse CurlDownload::getResponse() const
     ResourceResponse response(m_responseUrl, m_responseMIMEType, 0, m_responseTextEncodingName);
     response.setHTTPHeaderField(m_httpHeaderFieldName, m_httpHeaderFieldValue);
     return response;
+}
+
+void CurlDownload::retain()
+{
+    ref();
+}
+
+void CurlDownload::release()
+{
+    deref();
 }
 
 void CurlDownload::setupRequest()
@@ -123,6 +120,24 @@ void CurlDownload::setupRequest()
     m_curlHandle.enableFollowLocation();
     m_curlHandle.enableHttpAuthentication(CURLAUTH_ANY);
     m_curlHandle.enableCAInfoIfExists();
+}
+
+void CurlDownload::notifyFinish()
+{
+    callOnMainThread([protectedThis = makeRef(*this)] {
+        if (!protectedThis->m_job)
+            return;
+        protectedThis->didFinish();
+    });
+}
+
+void CurlDownload::notifyFail()
+{
+    callOnMainThread([protectedThis = makeRef(*this)] {
+        if (!protectedThis->m_job)
+            return;
+        protectedThis->didFail();
+    });
 }
 
 void CurlDownload::closeFile()

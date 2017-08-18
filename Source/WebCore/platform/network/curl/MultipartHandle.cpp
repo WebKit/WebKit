@@ -321,7 +321,7 @@ void MultipartHandle::didReceiveData(size_t length)
 {
     ResourceHandleInternal* d = m_resourceHandle->getInternal();
 
-    if (d->m_cancelled) {
+    if (!d->m_delegate->hasHandle()) {
         // Request has been canceled, so we'll go to the end state.
         m_state = End;
         return;
