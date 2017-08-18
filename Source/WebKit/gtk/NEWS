@@ -1,4 +1,19 @@
 ==================
+WebKitGTK+ 2.17.91
+==================
+
+What's new in WebKitGTK+ 2.17.91?
+
+  - Fix proxy HTTP authentication for HTTPS requests.
+  - Stop kinetic scrolling when a zero movement is reached.
+  - Fix UI process crash when selecting text.
+  - Fix UI process crash when loading a favicon.
+  - Properly handle WebDriver click command on option elements.
+  - Fix web process crash when resizing the window with accelerated compositing enabled.
+  - Fix crashes in 32 bit systems due to incorrect use of GVariant.
+  - Fix several crashes and rendering issues.
+
+==================
 WebKitGTK+ 2.17.90
 ==================
 
