@@ -111,6 +111,39 @@ using namespace WebKit;
 
 namespace IPC {
 
+static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
+{
+    SharedMemory::Handle handle;
+    uint64_t bufferSize = buffer ? buffer->size() : 0;
+    encoder << bufferSize;
+    if (!bufferSize)
+        return;
+
+    auto sharedMemoryBuffer = SharedMemory::allocate(buffer->size());
+    memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
+    sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    encoder << handle;
+}
+
+static bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
+{
+    uint64_t bufferSize = 0;
+    if (!decoder.decode(bufferSize))
+        return false;
+
+    if (!bufferSize)
+        return true;
+
+    SharedMemory::Handle handle;
+    if (!decoder.decode(handle))
+        return false;
+
+    auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
+
+    return true;
+}
+
 void ArgumentCoder<MonotonicTime>::encode(Encoder& encoder, const MonotonicTime& time)
 {
     encoder << time.secondsSinceEpoch().value();
@@ -278,6 +311,18 @@ void ArgumentCoder<CacheStorageConnection::Record>::encode(Encoder& encoder, con
 
     encoder << record.responseHeadersGuard;
     encoder << record.response;
+
+    WTF::switchOn(record.responseBody, [&](const Ref<SharedBuffer>& buffer) {
+        encoder << true;
+        encodeSharedBuffer(encoder, buffer.ptr());
+    }, [&](const Ref<FormData>& formData) {
+        encoder << false;
+        encoder << true;
+        formData->encode(encoder);
+    }, [&](const std::nullptr_t&) {
+        encoder << false;
+        encoder << false;
+    });
 }
 
 bool ArgumentCoder<CacheStorageConnection::Record>::decode(Decoder& decoder, CacheStorageConnection::Record& record)
@@ -310,6 +355,29 @@ bool ArgumentCoder<CacheStorageConnection::Record>::decode(Decoder& decoder, Cac
     if (!decoder.decode(response))
         return false;
 
+    WebCore::CacheStorageConnection::ResponseBody responseBody;
+    bool hasSharedBufferBody;
+    if (!decoder.decode(hasSharedBufferBody))
+        return false;
+
+    if (hasSharedBufferBody) {
+        RefPtr<SharedBuffer> buffer;
+        if (!decodeSharedBuffer(decoder, buffer))
+            return false;
+        if (buffer)
+            responseBody = buffer.releaseNonNull();
+    } else {
+        bool hasFormDataBody;
+        if (!decoder.decode(hasFormDataBody))
+            return false;
+        if (hasFormDataBody) {
+            auto formData = FormData::decode(decoder);
+            if (!formData)
+                return false;
+            responseBody = formData.releaseNonNull();
+        }
+    }
+
     record.identifier = identifier;
     record.requestHeadersGuard = requestHeadersGuard;
     record.request = WTFMove(request);
@@ -318,6 +386,7 @@ bool ArgumentCoder<CacheStorageConnection::Record>::decode(Decoder& decoder, Cac
 
     record.responseHeadersGuard = responseHeadersGuard;
     record.response = WTFMove(response);
+    record.responseBody = WTFMove(responseBody);
 
     return true;
 }
@@ -1548,36 +1617,6 @@ bool ArgumentCoder<Highlight>::decode(Decoder& decoder, Highlight& highlight)
         return false;
     if (!decoder.decode(highlight.quads))
         return false;
-    return true;
-}
-
-static void encodeSharedBuffer(Encoder& encoder, SharedBuffer* buffer)
-{
-    SharedMemory::Handle handle;
-    encoder << (buffer ? static_cast<uint64_t>(buffer->size()): 0);
-    if (buffer) {
-        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(buffer->size());
-        memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
-        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
-        encoder << handle;
-    }
-}
-
-static bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
-{
-    uint64_t bufferSize = 0;
-    if (!decoder.decode(bufferSize))
-        return false;
-
-    if (bufferSize) {
-        SharedMemory::Handle handle;
-        if (!decoder.decode(handle))
-            return false;
-
-        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
-        buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
-    }
-
     return true;
 }
 

@@ -295,7 +295,7 @@ static inline CacheStorageConnection::Record toConnectionRecord(const FetchReque
 
     return { 0,
         request.headers().guard(), WTFMove(cachedRequest), request.fetchOptions(), request.internalRequestReferrer(),
-        response.headers().guard(), WTFMove(cachedResponse)
+        response.headers().guard(), WTFMove(cachedResponse), response.consumeBody()
     };
 }
 
@@ -329,6 +329,7 @@ void Cache::updateRecords(Vector<CacheStorageConnection::Record>&& records)
 
             auto responseHeaders = FetchHeaders::create(record.responseHeadersGuard, HTTPHeaderMap { record.response.httpHeaderFields() });
             auto response = FetchResponse::create(*scriptExecutionContext(), std::nullopt, WTFMove(responseHeaders), WTFMove(record.response));
+            response->setBodyData(WTFMove(record.responseBody));
 
             newRecords.append(CacheStorageRecord { record.identifier, WTFMove(request), WTFMove(response) });
         }

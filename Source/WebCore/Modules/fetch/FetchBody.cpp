@@ -225,7 +225,7 @@ void FetchBody::loadingSucceeded()
         m_consumer.resolve(m_consumePromise.releaseNonNull());
 }
 
-RefPtr<FormData> FetchBody::bodyForInternalRequest(ScriptExecutionContext& context) const
+RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) const
 {
     if (isText())
         return FormData::create(UTF8Encoding().encode(textBody(), EntitiesForUnencodables));
@@ -247,6 +247,42 @@ RefPtr<FormData> FetchBody::bodyForInternalRequest(ScriptExecutionContext& conte
         return body;
     }
     ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+FetchBody::TakenData FetchBody::take()
+{
+    if (m_consumer.hasData()) {
+        auto buffer = m_consumer.takeData();
+        if (!buffer)
+            return nullptr;
+        return buffer.releaseNonNull();
+    }
+
+    if (isBlob()) {
+        auto body = FormData::create();
+        body->appendBlob(blobBody().url());
+        return WTFMove(body);
+    }
+
+    if (isFormData())
+        return formDataBody();
+
+    if (isText()) {
+        auto data = UTF8Encoding().encode(textBody(), EntitiesForUnencodables);
+        return SharedBuffer::create(data.data(), data.length());
+    }
+
+    if (isURLSearchParams()) {
+        auto data = UTF8Encoding().encode(urlSearchParamsBody().toString(), EntitiesForUnencodables);
+        return SharedBuffer::create(data.data(), data.length());
+    }
+
+    if (isArrayBuffer())
+        return SharedBuffer::create(reinterpret_cast<const char*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
+    if (isArrayBufferView())
+        return SharedBuffer::create(reinterpret_cast<const uint8_t*>(arrayBufferViewBody().baseAddress()), arrayBufferViewBody().byteLength());
+
     return nullptr;
 }
 

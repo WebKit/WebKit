@@ -30,6 +30,7 @@
 #include "FetchOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SharedBuffer.h"
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -59,7 +60,12 @@ public:
 
     WEBCORE_EXPORT static bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse&, const CacheQueryOptions&);
 
+    using ResponseBody = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
+    static ResponseBody isolatedResponseBody(const ResponseBody&);
+
     struct Record {
+        WEBCORE_EXPORT Record copy() const;
+
         uint64_t identifier;
 
         FetchHeaders::Guard requestHeadersGuard;
@@ -69,6 +75,7 @@ public:
 
         FetchHeaders::Guard responseHeadersGuard;
         ResourceResponse response;
+        ResponseBody responseBody;
     };
 
     struct CacheInfo {

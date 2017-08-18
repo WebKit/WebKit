@@ -258,6 +258,30 @@ void FetchResponse::consume(unsigned type, Ref<DeferredPromise>&& wrapper)
     }
 }
 
+FetchResponse::ResponseData FetchResponse::consumeBody()
+{
+    if (isBodyNull())
+        return nullptr;
+
+    ASSERT(!m_isDisturbed);
+    m_isDisturbed = true;
+
+    return body().take();
+}
+
+void FetchResponse::setBodyData(ResponseData&& data)
+{
+    WTF::switchOn(data, [this](Ref<FormData>& formData) {
+        if (isBodyNull())
+            setBody(FetchBody::loadingBody());
+        body().setAsFormData(WTFMove(formData));
+    }, [this](Ref<SharedBuffer>& buffer) {
+        if (isBodyNull())
+            setBody(FetchBody::loadingBody());
+        body().consumer().setData(WTFMove(buffer));
+    }, [this](std::nullptr_t&) { });
+}
+
 #if ENABLE(STREAMS_API)
 void FetchResponse::startConsumingStream(unsigned type)
 {

@@ -156,4 +156,31 @@ void CacheStorageConnection::putRecordsCompleted(uint64_t requestIdentifier, Vec
         callback(WTFMove(records), error);
 }
 
+CacheStorageConnection::ResponseBody CacheStorageConnection::isolatedResponseBody(const ResponseBody& body)
+{
+    return WTF::switchOn(body, [](const Ref<FormData>& formData) {
+        return formData->isolatedCopy();
+    }, [](const Ref<SharedBuffer>& buffer) {
+        return buffer->copy();
+    }, [](const std::nullptr_t&) {
+        return CacheStorageConnection::ResponseBody { };
+    });
+}
+
+static inline CacheStorageConnection::ResponseBody copyResponseBody(const CacheStorageConnection::ResponseBody& body)
+{
+    return WTF::switchOn(body, [](const Ref<FormData>& formData) {
+        return formData.copyRef();
+    }, [](const Ref<SharedBuffer>& buffer) {
+        return buffer.copyRef();
+    }, [](const std::nullptr_t&) {
+        return CacheStorageConnection::ResponseBody { };
+    });
+}
+
+CacheStorageConnection::Record CacheStorageConnection::Record::copy() const
+{
+    return Record { identifier, requestHeadersGuard, request, options, referrer, responseHeadersGuard, response, copyResponseBody(responseBody) };
+}
+
 } // namespace WebCore

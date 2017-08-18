@@ -1,6 +1,6 @@
 
 PASS Cache.put called with simple Request and Response 
-FAIL Cache.put called with Request and Response from fetch() assert_equals: Cache.put should store response body. expected "a simple text file\n" but got ""
+PASS Cache.put called with Request and Response from fetch() 
 PASS Cache.put with Request without a body 
 PASS Cache.put with Response without a body 
 PASS Cache.put with a Response containing an empty URL 
@@ -8,9 +8,9 @@ PASS Cache.put with an empty response body
 PASS Cache.put with synthetic 206 response 
 PASS Cache.put with HTTP 206 response 
 PASS Cache.put with HTTP 500 response 
-FAIL Cache.put called twice with matching Requests and different Responses assert_equals: Cache put should store new response body. expected "New body" but got ""
-FAIL Cache.put called twice with request URLs that differ only by a fragment assert_equals: Cache put should store new response body. expected "New body" but got ""
-FAIL Cache.put with a string request assert_equals: Cache.put should accept a string as request. expected "some body" but got ""
+FAIL Cache.put called twice with matching Requests and different Responses assert_equals: Cache put should store new response body. expected "New body" but got "Old body"
+FAIL Cache.put called twice with request URLs that differ only by a fragment assert_equals: Cache put should store new response body. expected "New body" but got "Old body"
+PASS Cache.put with a string request 
 PASS Cache.put with an invalid response 
 PASS Cache.put with a non-HTTP/HTTPS request 
 PASS Cache.put with a relative URL 
@@ -18,7 +18,7 @@ PASS Cache.put with a non-GET request
 PASS Cache.put with a null response 
 PASS Cache.put with a POST request 
 PASS Cache.put with a used response body 
-FAIL getReader() after Cache.put assert_throws: function "() => response.body.getReader()" did not throw
+PASS getReader() after Cache.put 
 PASS Cache.put with a VARY:* Response 
 PASS Cache.put with an embedded VARY:* Response 
 PASS Cache.put should store Response.redirect() correctly 

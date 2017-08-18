@@ -91,6 +91,9 @@ public:
     void cancel();
 #endif
 
+    using ResponseData = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
+    ResponseData consumeBody();
+    void setBodyData(ResponseData&&);
     bool isLoading() const { return !!m_bodyLoader; }
 
     const ResourceResponse& resourceResponse() const { return m_response; }

@@ -66,7 +66,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Navigator&, Document& document, co
         options.mode = FetchOptions::Mode::Cors;
         String mimeType;
         auto fetchBody = FetchBody::extract(document, WTFMove(body.value()), mimeType);
-        request.setHTTPBody(fetchBody.bodyForInternalRequest(document));
+        request.setHTTPBody(fetchBody.bodyAsFormData(document));
         if (!mimeType.isEmpty()) {
             request.setHTTPContentType(mimeType);
             if (isCrossOriginSafeRequestHeader(HTTPHeaderName::ContentType, mimeType))

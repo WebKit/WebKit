@@ -45,6 +45,8 @@ public:
     void append(const char* data, unsigned);
     void append(const unsigned char* data, unsigned);
 
+    void setData(Ref<SharedBuffer>&& data) { m_buffer = WTFMove(data); }
+
     RefPtr<SharedBuffer> takeData();
     RefPtr<JSC::ArrayBuffer> takeAsArrayBuffer();
     Ref<Blob> takeAsBlob();

@@ -134,7 +134,15 @@ void CacheStorageEngine::retrieveRecords(uint64_t cacheIdentifier, RecordsCallba
             callback(makeUnexpected(result.error()));
             return;
         }
-        callback(result.value().get().records);
+        // FIXME: Pass records by reference.
+        auto& records = result.value().get().records;
+
+        Vector<Record> copy;
+        copy.reserveInitialCapacity(records.size());
+        for (auto& record : result.value().get().records)
+            copy.uncheckedAppend(record.copy());
+
+        callback(WTFMove(copy));
     });
 }
 
@@ -194,7 +202,7 @@ void CacheStorageEngine::deleteMatchingRecords(uint64_t cacheIdentifier, WebCore
         Vector<Record> recordsToKeep;
         for (auto& record : currentRecords) {
             if (recordsToRemove.findMatching([&](auto item) { return item == record.identifier; }) == notFound)
-                recordsToKeep.append(record);
+                recordsToKeep.append(record.copy());
         }
         removeCacheRecords(cacheIdentifier, WTFMove(recordsToRemove), [this, cacheIdentifier, recordsToKeep = WTFMove(recordsToKeep), callback = WTFMove(callback)](RecordIdentifiersOrError&& result) mutable {
             if (!result.hasValue()) {

@@ -49,6 +49,7 @@ struct CrossThreadRecordData {
 
     FetchHeaders::Guard responseHeadersGuard;
     ResourceResponse::CrossThreadData response;
+    CacheStorageConnection::ResponseBody responseBody;
 };
 
 static CrossThreadRecordData toCrossThreadRecordData(const CacheStorageConnection::Record& record)
@@ -60,7 +61,8 @@ static CrossThreadRecordData toCrossThreadRecordData(const CacheStorageConnectio
         record.options.isolatedCopy(),
         record.referrer.isolatedCopy(),
         record.responseHeadersGuard,
-        record.response.crossThreadData()
+        record.response.crossThreadData(),
+        CacheStorageConnection::isolatedResponseBody(record.responseBody)
     };
 }
 
@@ -73,7 +75,8 @@ static CacheStorageConnection::Record fromCrossThreadRecordData(CrossThreadRecor
         WTFMove(data.options),
         WTFMove(data.referrer),
         data.responseHeadersGuard,
-        ResourceResponse::fromCrossThreadData(WTFMove(data.response))
+        ResourceResponse::fromCrossThreadData(WTFMove(data.response)),
+        WTFMove(data.responseBody)
     };
 }
 
