@@ -1,3 +1,16 @@
+2017-08-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Add WTFLogChannel level to allow runtime log filtering
+        https://bugs.webkit.org/show_bug.cgi?id=175731
+        <rdar://problem/33967234>
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/Logging.cpp: Added.
+        (TestWebKitAPI::LoggingTest::output):
+        (TestWebKitAPI::TEST_F):
+
 2017-08-18  Alexey Proskuryakov  <ap@apple.com>
 
         Add Dean Johnson to contributors.json for Bugzilla autocomplete.
