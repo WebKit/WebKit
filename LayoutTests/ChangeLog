@@ -1,5 +1,19 @@
 2017-08-18  Ms2ger  <Ms2ger@igalia.com>
 
+        [GTK] Layout Test media/video-controls-no-scripting.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=141835
+
+        Unreviewed test gardening.
+
+        The output appears to be consistent based on local testing.
+
+        Rebaseline video-controls-no-scripting.html.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/media/video-controls-no-scripting-expected.txt:
+
+2017-08-18  Ms2ger  <Ms2ger@igalia.com>
+
         Update track-datacue.html test to the current code.
         https://bugs.webkit.org/show_bug.cgi?id=175624
 
