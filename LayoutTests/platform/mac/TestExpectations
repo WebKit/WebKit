@@ -1617,3 +1617,6 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 webkit.org/b/175592 fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Pass Timeout ]
 
 webkit.org/b/175700 media/video-controls-rendering.html [ Pass Failure ]
+
+webkit.org/b/173010 [ Debug ] js/slow-stress/Int32Array-alloc-huge.html [ Pass Timout ]
+
