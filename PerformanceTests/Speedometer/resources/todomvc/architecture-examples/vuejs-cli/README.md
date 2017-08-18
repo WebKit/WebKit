@@ -1,18 +1,11 @@
-# vue-cli-todomvc
+# Speedometer 2.0: Vue.js TodoMVC example
 
-> Vue.js TodoMVC
+## Test locally
 
-## Build Setup
+1. `npm install`
+2. `npm run dev` runs the app in development mode
+3. Open <http://localhost:8080/> to view it in the browser.
 
-``` bash
-# install dependencies
-npm install
+## Build
 
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+1. `npm run build`
