@@ -184,7 +184,7 @@ void testProbeReadsArgumentRegisters()
         jit.move(CCallHelpers::TrustedImm32(testWord(3)), GPRInfo::argumentGPR3);
 #endif
 
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeWasCalled = true;
             CHECK_EQ(cpu.gpr(GPRInfo::argumentGPR0), testWord(0));
@@ -226,7 +226,7 @@ void testProbeWritesArgumentRegisters()
         jit.convertInt32ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT1);
 
         // Write expected values.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             cpu.gpr(GPRInfo::argumentGPR0) = testWord(0);
@@ -239,7 +239,7 @@ void testProbeWritesArgumentRegisters()
         });
 
         // Validate that expected values were written.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             CHECK_EQ(cpu.gpr(GPRInfo::argumentGPR0), testWord(0));
@@ -282,7 +282,7 @@ void testProbePreservesGPRS()
         jit.emitFunctionPrologue();
 
         // Write expected values into the registers (except for sp, fp, and pc).
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -298,14 +298,14 @@ void testProbePreservesGPRS()
         });
 
         // Invoke the probe to call a lot of functions and trash register values.
-        jit.probe([&] (ProbeContext*) {
+        jit.probe([&] (Probe::State*) {
             probeCallCount++;
             CHECK_EQ(testFunctionToTrashGPRs(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10);
             CHECK_EQ(testFunctionToTrashFPRs(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 10);
         });
 
         // Validate that the registers have the expected values.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -322,7 +322,7 @@ void testProbePreservesGPRS()
         });
 
         // Restore the original state.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -335,7 +335,7 @@ void testProbePreservesGPRS()
         });
 
         // Validate that the original state was restored.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -353,7 +353,7 @@ void testProbePreservesGPRS()
     CHECK_EQ(probeCallCount, 5);
 }
 
-void testProbeModifiesStackPointer(WTF::Function<void*(ProbeContext*)> computeModifiedStack)
+void testProbeModifiesStackPointer(WTF::Function<void*(Probe::State*)> computeModifiedStack)
 {
     unsigned probeCallCount = 0;
     CPUState originalState;
@@ -377,7 +377,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(ProbeContext*)> computeMo
 
         // Preserve original stack pointer and modify the sp, and
         // write expected values into other registers (except for fp, and pc).
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -401,7 +401,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(ProbeContext*)> computeMo
         });
 
         // Validate that the registers have the expected values.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -420,7 +420,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(ProbeContext*)> computeMo
         });
 
         // Restore the original state.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -435,7 +435,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(ProbeContext*)> computeMo
         });
 
         // Validate that the original state was restored.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -455,15 +455,15 @@ void testProbeModifiesStackPointer(WTF::Function<void*(ProbeContext*)> computeMo
     CHECK_EQ(probeCallCount, 4);
 }
 
-void testProbeModifiesStackPointerToInsideProbeContextOnStack()
+void testProbeModifiesStackPointerToInsideProbeStateOnStack()
 {
     size_t increment = sizeof(uintptr_t);
 #if CPU(ARM64)
     // The ARM64 probe uses ldp and stp which require 16 byte alignment.
     increment = 2 * sizeof(uintptr_t);
 #endif
-    for (size_t offset = 0; offset < sizeof(ProbeContext); offset += increment) {
-        testProbeModifiesStackPointer([=] (ProbeContext* context) -> void* {
+    for (size_t offset = 0; offset < sizeof(Probe::State); offset += increment) {
+        testProbeModifiesStackPointer([=] (Probe::State* context) -> void* {
             return reinterpret_cast<uint8_t*>(context) + offset;
         });
     }
@@ -477,7 +477,7 @@ void testProbeModifiesStackPointerToNBytesBelowSP()
     increment = 2 * sizeof(uintptr_t);
 #endif
     for (size_t offset = 0; offset < 1 * KB; offset += increment) {
-        testProbeModifiesStackPointer([=] (ProbeContext* context) -> void* {
+        testProbeModifiesStackPointer([=] (Probe::State* context) -> void* {
             return reinterpret_cast<uint8_t*>(context->cpu.sp()) - offset;
         });
     }
@@ -493,7 +493,7 @@ void testProbeModifiesProgramCounter()
 
     MacroAssemblerCodeRef continuation = compile([&] (CCallHelpers& jit) {
         // Validate that we reached the continuation.
-        jit.probe([&] (ProbeContext*) {
+        jit.probe([&] (Probe::State*) {
             probeCallCount++;
             continuationWasReached = true;
         });
@@ -506,7 +506,7 @@ void testProbeModifiesProgramCounter()
         jit.emitFunctionPrologue();
 
         // Write expected values into the registers.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             probeCallCount++;
             context->pc() = continuation.code().executableAddress();
         });
@@ -525,7 +525,7 @@ struct FillStackData {
     MacroAssembler::SPRegisterID flagsSPR;
 };
 
-static void fillStack(ProbeContext* context)
+static void fillStack(Probe::State* context)
 {
     auto& cpu = context->cpu;
 
@@ -539,7 +539,7 @@ static void fillStack(ProbeContext* context)
     CHECK_EQ(reinterpret_cast<void*>(context->initializeStackFunction), reinterpret_cast<void*>(fillStack));
     CHECK_EQ(cpu.sp(), newSP);
 
-    // Verify that the probe has put the ProbeContext out of harm's way.
+    // Verify that the probe has put the Probe::State out of harm's way.
     CHECK_EQ((reinterpret_cast<void*>(context + 1) <= cpu.sp()), true);
 
     // Verify the CPU state.
@@ -589,7 +589,7 @@ void testProbeModifiesStackWithCallback()
         jit.emitFunctionPrologue();
 
         // Write expected values into the registers.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
 
@@ -614,14 +614,14 @@ void testProbeModifiesStackWithCallback()
             context->initializeStackFunction = fillStack;
             context->initializeStackArg = &data;
 
-            // Ensure that we'll be writing over the regions of the stack where the ProbeContext is.
+            // Ensure that we'll be writing over the regions of the stack where the Probe::State is.
             originalSP = cpu.sp();
             newSP = reinterpret_cast<uintptr_t*>(context) - numberOfExtraEntriesToWrite;
             cpu.sp() = newSP;
         });
 
         // Validate that the registers and stack have the expected values.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
 
@@ -648,7 +648,7 @@ void testProbeModifiesStackWithCallback()
         });
 
         // Restore the original state.
-        jit.probe([&] (ProbeContext* context) {
+        jit.probe([&] (Probe::State* context) {
             auto& cpu = context->cpu;
             probeCallCount++;
             for (auto id = CCallHelpers::firstRegister(); id <= CCallHelpers::lastRegister(); id = nextID(id)) {
@@ -700,7 +700,7 @@ void run(const char* filter)
     RUN(testProbeReadsArgumentRegisters());
     RUN(testProbeWritesArgumentRegisters());
     RUN(testProbePreservesGPRS());
-    RUN(testProbeModifiesStackPointerToInsideProbeContextOnStack());
+    RUN(testProbeModifiesStackPointerToInsideProbeStateOnStack());
     RUN(testProbeModifiesStackPointerToNBytesBelowSP());
     RUN(testProbeModifiesProgramCounter());
     RUN(testProbeModifiesStackWithCallback());

@@ -223,7 +223,7 @@ struct Printer<MemWord<IntType>> : public Printer<Memory> {
     { }
 };
 
-void printCallback(ProbeContext*);
+void printCallback(Probe::State*);
 
 } // namespace Printer
 

@@ -171,7 +171,7 @@ void printMemory(PrintStream& out, Context& context)
         out.print("\n");
 }
 
-void printCallback(ProbeContext* probeContext)
+void printCallback(Probe::State* probeContext)
 {
     auto& out = WTF::dataFile();
     PrintRecordList& list = *reinterpret_cast<PrintRecordList*>(probeContext->arg);

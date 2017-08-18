@@ -35,15 +35,15 @@ namespace JSC {
 const double MacroAssembler::twoToThe32 = (double)0x100000000ull;
 
 #if ENABLE(MASM_PROBE)
-static void stdFunctionCallback(ProbeContext* context)
+static void stdFunctionCallback(Probe::State* state)
 {
-    auto func = static_cast<const std::function<void(ProbeContext*)>*>(context->arg);
-    (*func)(context);
+    auto func = static_cast<const std::function<void(Probe::State*)>*>(state->arg);
+    (*func)(state);
 }
     
-void MacroAssembler::probe(std::function<void(ProbeContext*)> func)
+void MacroAssembler::probe(std::function<void(Probe::State*)> func)
 {
-    probe(stdFunctionCallback, new std::function<void(ProbeContext*)>(func));
+    probe(stdFunctionCallback, new std::function<void(Probe::State*)>(func));
 }
 #endif // ENABLE(MASM_PROBE)
 
