@@ -1,3 +1,9 @@
+2017-08-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, update TestExpectations.
+
+        * platform/mac-highsierra/TestExpectations:
+
 2017-08-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r219697.

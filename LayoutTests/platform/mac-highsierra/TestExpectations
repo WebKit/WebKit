@@ -129,3 +129,10 @@ fast/text/system-font-japanese-synthetic-italic.html [ Pass ImageOnlyFailure ]
 # we should delete the test.
 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
 
+# <rdar://problem/33437597> Multiple imported/w3c/web-platform-tests/fetch are failing on High Sierra
+imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html [ Failure ]
+
+# <rdar://problem/33850189>
+http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
