@@ -1,3 +1,9 @@
+2017-08-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Add Dean Johnson to contributors.json for Bugzilla autocomplete.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-08-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Tools] Add script to download a GitHub release
