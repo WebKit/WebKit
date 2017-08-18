@@ -1,3 +1,20 @@
+2017-08-17  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: const in unreachable code decoded incorrectly, erroneously rejects binary as invalid
+        https://bugs.webkit.org/show_bug.cgi?id=175693
+        <rdar://problem/33952443>
+
+        Reviewed by Saam Barati.
+
+        Add a regression directory for WebAssembly tests.
+
+        * wasm.yaml:
+        * wasm/regress/175693.js: Added.
+        (else.else):
+        (instance.new.WebAssembly.Instance.new.WebAssembly.Module):
+        (catch):
+        * wasm/regress/175693.wasm: Added.
+
 2017-08-09  Caitlin Potter  <caitp@igalia.com>
 
         Early error on ANY operator before new.target

@@ -1,3 +1,22 @@
+2017-08-17  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: const in unreachable code decoded incorrectly, erroneously rejects binary as invalid
+        https://bugs.webkit.org/show_bug.cgi?id=175693
+        <rdar://problem/33952443>
+
+        Reviewed by Saam Barati.
+
+        64-bit constants in an unreachable context were being decoded as
+        32-bit constants. This is pretty benign because unreachable code
+        shouldn't occur often. The effect is that 64-bit constants which
+        can't be encoded as 32-bit constants would cause the binary to be
+        rejected.
+
+        At the same time, 32-bit integer constants should be decoded as signed.
+
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+
 2017-08-17  Jacobo Aragunde Pérez  <jaragunde@igalia.com>
 
         [WPE][GTK] Ensure proper casting of data in gvariants
