@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CompositionUnderline.h"
-#include "DataTransferAccessPolicy.h"
 #include "DictationAlternative.h"
 #include "DocumentMarker.h"
 #include "EditAction.h"
@@ -219,9 +218,7 @@ public:
 #if PLATFORM(IOS)
     WEBCORE_EXPORT void removeUnchangeableStyles();
 #endif
-    
-    bool dispatchCPPEvent(const AtomicString&, DataTransferAccessPolicy);
-    
+
     WEBCORE_EXPORT void applyStyle(StyleProperties*, EditAction = EditActionUnspecified);
     void applyStyle(RefPtr<EditingStyle>&&, EditAction);
     void applyParagraphStyle(StyleProperties*, EditAction = EditActionUnspecified);

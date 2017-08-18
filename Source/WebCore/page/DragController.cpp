@@ -220,19 +220,30 @@ DragOperation DragController::dragEntered(const DragData& dragData)
     return dragEnteredOrUpdated(dragData);
 }
 
+static Ref<DataTransfer> createDataTransferToUpdateDrag(const DragData& dragData, const Settings& settings, RefPtr<Document>&& documentUnderMouse)
+{
+    auto accessMode = DataTransfer::StoreMode::Protected;
+
+#if ENABLE(DASHBOARD_SUPPORT)
+    if (settings.usesDashboardBackwardCompatibilityMode() && (!documentUnderMouse || documentUnderMouse->securityOrigin().isLocal()))
+        accessMode = DataTransfer::StoreMode::Readonly;
+#else
+    UNUSED_PARAM(settings);
+    UNUSED_PARAM(documentUnderMouse);
+#endif
+
+    auto dataTransfer = DataTransfer::createForDrop(accessMode, dragData);
+    dataTransfer->setSourceOperation(dragData.draggingSourceOperationMask());
+
+    return dataTransfer;
+}
+
 void DragController::dragExited(const DragData& dragData)
 {
     if (RefPtr<FrameView> v = m_page.mainFrame().view()) {
-#if ENABLE(DASHBOARD_SUPPORT)
-        DataTransferAccessPolicy policy = (m_page.mainFrame().settings().usesDashboardBackwardCompatibilityMode() && (!m_documentUnderMouse || m_documentUnderMouse->securityOrigin().isLocal()))
-            ? DataTransferAccessPolicy::Readable : DataTransferAccessPolicy::TypesReadable;
-#else
-        DataTransferAccessPolicy policy = DataTransferAccessPolicy::TypesReadable;
-#endif
-        auto dataTransfer = DataTransfer::createForDrop(policy, dragData);
-        dataTransfer->setSourceOperation(dragData.draggingSourceOperationMask());
+        auto dataTransfer = createDataTransferToUpdateDrag(dragData, m_page.mainFrame().settings(), m_documentUnderMouse.copyRef());
         m_page.mainFrame().eventHandler().cancelDragAndDrop(createMouseEvent(dragData), dataTransfer);
-        dataTransfer->setAccessPolicy(DataTransferAccessPolicy::Numb); // Invalidate dataTransfer here for security.
+        dataTransfer->makeInvalidForSecurity();
     }
     mouseMovedIntoDocument(nullptr);
     if (m_fileInputElementUnderMouse)
@@ -273,10 +284,10 @@ bool DragController::performDragOperation(const DragData& dragData)
         bool preventedDefault = false;
         if (mainFrame->view()) {
             // Sending an event can result in the destruction of the view and part.
-            auto dataTransfer = DataTransfer::createForDrop(DataTransferAccessPolicy::Readable, dragData);
+            auto dataTransfer = DataTransfer::createForDrop(DataTransfer::StoreMode::Readonly, dragData);
             dataTransfer->setSourceOperation(dragData.draggingSourceOperationMask());
             preventedDefault = mainFrame->eventHandler().performDragAndDrop(createMouseEvent(dragData), dataTransfer);
-            dataTransfer->setAccessPolicy(DataTransferAccessPolicy::Numb); // Invalidate dataTransfer here for security.
+            dataTransfer->makeInvalidForSecurity();
         }
         if (preventedDefault) {
             clearDragCaret();
@@ -698,23 +709,16 @@ bool DragController::tryDHTMLDrag(const DragData& dragData, DragOperation& opera
     if (!viewProtector)
         return false;
 
-#if ENABLE(DASHBOARD_SUPPORT)
-    DataTransferAccessPolicy policy = (mainFrame->settings().usesDashboardBackwardCompatibilityMode() && m_documentUnderMouse->securityOrigin().isLocal()) ?
-        DataTransferAccessPolicy::Readable : DataTransferAccessPolicy::TypesReadable;
-#else
-    DataTransferAccessPolicy policy = DataTransferAccessPolicy::TypesReadable;
-#endif
-    auto dataTransfer = DataTransfer::createForDrop(policy, dragData);
-    DragOperation srcOpMask = dragData.draggingSourceOperationMask();
-    dataTransfer->setSourceOperation(srcOpMask);
+    auto dataTransfer = createDataTransferToUpdateDrag(dragData, mainFrame->settings(), m_documentUnderMouse.copyRef());
 
     PlatformMouseEvent event = createMouseEvent(dragData);
     if (!mainFrame->eventHandler().updateDragAndDrop(event, dataTransfer)) {
-        dataTransfer->setAccessPolicy(DataTransferAccessPolicy::Numb); // Invalidate dataTransfer here for security.
+        dataTransfer->makeInvalidForSecurity();
         return false;
     }
 
     operation = dataTransfer->destinationOperation();
+    DragOperation srcOpMask = dragData.draggingSourceOperationMask();
     if (dataTransfer->dropEffectIsUninitialized())
         operation = defaultOperationForDrag(srcOpMask);
     else if (!(srcOpMask & operation)) {
@@ -722,7 +726,7 @@ bool DragController::tryDHTMLDrag(const DragData& dragData, DragOperation& opera
         operation = DragOperationNone;
     }
 
-    dataTransfer->setAccessPolicy(DataTransferAccessPolicy::Numb); // Invalidate dataTransfer here for security.
+    dataTransfer->makeInvalidForSecurity();
     return true;
 }
 

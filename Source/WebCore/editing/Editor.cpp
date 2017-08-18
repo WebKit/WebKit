@@ -313,6 +313,46 @@ bool Editor::canEditRichly() const
     return m_frame.selection().selection().isContentRichlyEditable();
 }
 
+// Returns whether caller should continue with "the default processing", which is the same as
+// the event handler NOT setting the return value to false
+// https://w3c.github.io/clipboard-apis/#fire-a-clipboard-event
+static bool dispatchClipboardEvent(RefPtr<Element>&& target, const AtomicString& eventType)
+{
+    // FIXME: Move the target selection code here.
+    if (!target)
+        return true;
+
+    DataTransfer::StoreMode storeMode;
+    if (eventType == eventNames().pasteEvent)
+        storeMode = DataTransfer::StoreMode::Readonly;
+    else if (eventType == eventNames().copyEvent || eventType == eventNames().cutEvent)
+        storeMode = DataTransfer::StoreMode::ReadWrite;
+    else {
+        ASSERT(eventType == eventNames().beforecutEvent || eventType == eventNames().beforecopyEvent || eventType == eventNames().beforepasteEvent);
+        storeMode = DataTransfer::StoreMode::Invalid;
+    }
+
+    auto dataTransfer = DataTransfer::createForCopyAndPaste(storeMode);
+
+    ClipboardEvent::Init init;
+    init.bubbles = true;
+    init.cancelable = true;
+    init.clipboardData = dataTransfer.ptr();
+    auto event = ClipboardEvent::create(eventType, init, Event::IsTrusted::Yes);
+
+    target->dispatchEvent(event);
+    bool noDefaultProcessing = event->defaultPrevented();
+    if (noDefaultProcessing && storeMode == DataTransfer::StoreMode::ReadWrite) {
+        auto pasteboard = Pasteboard::createForCopyAndPaste();
+        pasteboard->clear();
+        pasteboard->writePasteboard(dataTransfer->pasteboard());
+    }
+
+    dataTransfer->makeInvalidForSecurity();
+
+    return !noDefaultProcessing;
+}
+
 // WinIE uses onbeforecut and onbeforepaste to enables the cut and paste menu items.  They
 // also send onbeforecopy, apparently for symmetry, but it doesn't affect the menu items.
 // We need to use onbeforecopy as a real menu enabler because we allow elements that are not
@@ -320,17 +360,22 @@ bool Editor::canEditRichly() const
 
 bool Editor::canDHTMLCut()
 {
-    return !m_frame.selection().selection().isInPasswordField() && !dispatchCPPEvent(eventNames().beforecutEvent, DataTransferAccessPolicy::Numb);
+    if (m_frame.selection().selection().isInPasswordField())
+        return false;
+
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().beforecutEvent);
 }
 
 bool Editor::canDHTMLCopy()
 {
-    return !m_frame.selection().selection().isInPasswordField() && !dispatchCPPEvent(eventNames().beforecopyEvent, DataTransferAccessPolicy::Numb);
+    if (m_frame.selection().selection().isInPasswordField())
+        return false;
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().beforecopyEvent);
 }
 
 bool Editor::canDHTMLPaste()
 {
-    return !dispatchCPPEvent(eventNames().beforepasteEvent, DataTransferAccessPolicy::Numb);
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().beforepasteEvent);
 }
 
 bool Editor::canCut() const
@@ -598,7 +643,7 @@ bool Editor::tryDHTMLCopy()
     if (m_frame.selection().selection().isInPasswordField())
         return false;
 
-    return !dispatchCPPEvent(eventNames().copyEvent, DataTransferAccessPolicy::Writable);
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().copyEvent);
 }
 
 bool Editor::tryDHTMLCut()
@@ -606,12 +651,12 @@ bool Editor::tryDHTMLCut()
     if (m_frame.selection().selection().isInPasswordField())
         return false;
     
-    return !dispatchCPPEvent(eventNames().cutEvent, DataTransferAccessPolicy::Writable);
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().cutEvent);
 }
 
 bool Editor::tryDHTMLPaste()
 {
-    return !dispatchCPPEvent(eventNames().pasteEvent, DataTransferAccessPolicy::Readable);
+    return !dispatchClipboardEvent(findEventTargetFromSelection(), eventNames().pasteEvent);
 }
 
 bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertAction action) const
@@ -773,35 +818,6 @@ void Editor::removeFormattingAndStyle()
 void Editor::clearLastEditCommand() 
 {
     m_lastEditCommand = nullptr;
-}
-
-// Returns whether caller should continue with "the default processing", which is the same as 
-// the event handler NOT setting the return value to false
-bool Editor::dispatchCPPEvent(const AtomicString& eventType, DataTransferAccessPolicy policy)
-{
-    Element* target = findEventTargetFromSelection();
-    if (!target)
-        return true;
-
-    auto dataTransfer = DataTransfer::createForCopyAndPaste(policy);
-
-    ClipboardEvent::Init init;
-    init.bubbles = true;
-    init.cancelable = true;
-    init.clipboardData = dataTransfer.ptr();
-    auto event = ClipboardEvent::create(eventType, init, Event::IsTrusted::Yes);
-    target->dispatchEvent(event);
-    bool noDefaultProcessing = event->defaultPrevented();
-    if (noDefaultProcessing && policy == DataTransferAccessPolicy::Writable) {
-        auto pasteboard = Pasteboard::createForCopyAndPaste();
-        pasteboard->clear();
-        pasteboard->writePasteboard(dataTransfer->pasteboard());
-    }
-
-    // invalidate dataTransfer here for security
-    dataTransfer->setAccessPolicy(DataTransferAccessPolicy::Numb);
-    
-    return !noDefaultProcessing;
 }
 
 Element* Editor::findEventTargetFrom(const VisibleSelection& selection) const

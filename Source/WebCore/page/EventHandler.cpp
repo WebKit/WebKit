@@ -3461,7 +3461,7 @@ void EventHandler::invalidateDataTransfer()
 {
     if (!dragState().dataTransfer)
         return;
-    dragState().dataTransfer->setAccessPolicy(DataTransferAccessPolicy::Numb);
+    dragState().dataTransfer->makeInvalidForSecurity();
     dragState().dataTransfer = nullptr;
 }
 
@@ -3679,14 +3679,14 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
                 return true;
             }
         } 
-        
+
         m_mouseDownMayStartDrag = dispatchDragSrcEvent(eventNames().dragstartEvent, m_mouseDown)
             && !m_frame.selection().selection().isInPasswordField();
-        
+
         // Invalidate dataTransfer here against anymore pasteboard writing for security. The drag
         // image can still be changed as we drag, but not the pasteboard data.
-        dragState().dataTransfer->setAccessPolicy(DataTransferAccessPolicy::ImageWritable);
-        
+        dragState().dataTransfer->makeDragImageWritable();
+
         if (m_mouseDownMayStartDrag) {
             // Gather values from DHTML element, if it set any.
             srcOp = dragState().dataTransfer->sourceOperation();

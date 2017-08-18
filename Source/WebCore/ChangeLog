@@ -1,3 +1,60 @@
+2017-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename DataTransferAccessPolicy to match spec and refactor related node
+        https://bugs.webkit.org/show_bug.cgi?id=175704
+
+        Reviewed by Wenson Hsieh.
+
+        Renamed DataTransferAccessPolicy to DataTransfer::StoreMode to match the drag data store mode concept
+        in the HTML5 specification:
+        https://html.spec.whatwg.org/multipage/dnd.html#drag-data-store-mode
+
+        DataTransfer in addition to those states can be disassociated from the drag data store when it becomes
+        no longer valid. We also support a special mode which allows only updating the drag image.
+        These two states, Invalid and DragImageWritable, are added in addition to the three states in the spec.
+
+        Also split DragAndDrop type of DataTransfer into DragAndDropData and DragAndDropFiles, and refactored
+        the related code.
+
+        No new tests since there should be no behavioral change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::DataTransfer): No longer takes forFileDrag boolean since it's folded into type.
+        (WebCore::DataTransfer::createForCopyAndPaste):
+        (WebCore::DataTransfer::~DataTransfer):
+        (WebCore::DataTransfer::setAccessPolicy): Deleted.
+        (WebCore::DataTransfer::canReadTypes const):
+        (WebCore::DataTransfer::canReadData const):
+        (WebCore::DataTransfer::canWriteData const):
+        (WebCore::DataTransfer::createForInputEvent):
+        (WebCore::DataTransfer::createForDrag):
+        (WebCore::DataTransfer::createForDrop):
+        (WebCore::DataTransfer::canSetDragImage const):
+        * dom/DataTransfer.h:
+        (WebCore::DataTransfer::makeInvalidForSecurity): Added.
+        (WebCore::DataTransfer::makeDragImageWritable): Added.
+        * dom/DataTransferAccessPolicy.h: Removed.
+        * editing/Editor.cpp:
+        (WebCore::dispatchClipboardEvent): Moved and renamed from dispatchCPPEvent. Now computes the store mode
+        inside the function to match the spec: https://w3c.github.io/clipboard-apis/#fire-a-clipboard-event
+        (WebCore::Editor::canDHTMLCut):
+        (WebCore::Editor::canDHTMLCopy):
+        (WebCore::Editor::canDHTMLPaste):
+        (WebCore::Editor::tryDHTMLCopy):
+        (WebCore::Editor::tryDHTMLCut):
+        (WebCore::Editor::tryDHTMLPaste):
+        (WebCore::Editor::dispatchCPPEvent): Deleted.
+        * editing/Editor.h:
+        * page/DragController.cpp:
+        (WebCore::createDataTransferToUpdateDrag): Extracted to share code.
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::performDragOperation):
+        (WebCore::DragController::tryDHTMLDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::invalidateDataTransfer):
+        (WebCore::EventHandler::handleDrag):
+
 2017-08-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Followup (r220289): RenderImageResourceStyleImage code clean up
