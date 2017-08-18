@@ -139,3 +139,6 @@ imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Skip ]
 
 # <rdar://problem/33731086>
 media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
+
+# <rdar://problem/33850189>
+http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]

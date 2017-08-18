@@ -1,5 +1,11 @@
 2017-08-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, land TestExpectations for rdar://problem/33850189.
+
+        * platform/mac-highsierra/TestExpectations:
+
+2017-08-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline js/dom/global-constructors-attributes.html for El Capitan WK2.
 
         Unreviewed test gardening.
