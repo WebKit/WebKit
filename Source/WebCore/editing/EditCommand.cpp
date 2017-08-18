@@ -56,7 +56,7 @@ String inputTypeNameForEditingAction(EditAction action)
     case EditActionUnderline:
         return ASCIILiteral("formatUnderline");
     case EditActionSetColor:
-        return ASCIILiteral("formatForeColor");
+        return ASCIILiteral("formatFontColor");
     case EditActionDeleteByDrag:
         return ASCIILiteral("deleteByDrag");
     case EditActionCut:

@@ -1,3 +1,15 @@
+2017-08-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Input Events] Rename inputType "formatForeColor" to "formatFontColor"
+        https://bugs.webkit.org/show_bug.cgi?id=175703
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaselines two LayoutTests that check for the "formatForeColor" inputType.
+
+        * fast/events/input-events-forecolor-data-expected.txt:
+        * fast/events/input-events-selection-forecolor-data.html:
+
 2017-08-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/video-controls-rendering.html as flaky.
