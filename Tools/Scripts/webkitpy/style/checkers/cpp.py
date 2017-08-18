@@ -1869,9 +1869,9 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
 
     # Don't try to do spacing checks for operator methods
     line = sub(r'operator(==|!=|<|<<|<=|>=|>>|>|\+=|-=|\*=|/=|%=|&=|\|=|^=|<<=|>>=|/)\(', 'operator\(', line)
-    # Don't try to do spacing checks for #include, #import, or #if statements at
+    # Don't try to do spacing checks for #include, #import, #if, or #elif statements at
     # minimum because it messes up checks for spacing around /
-    if match(r'\s*#\s*(?:include|import|if)', line):
+    if match(r'\s*#\s*(?:include|import|if|elif)', line):
         return
     if not is_objective_c_property and not is_objective_c_synthesize and search(r'[\w.]=[\w.]', line):
         error(line_number, 'whitespace/operators', 4,
