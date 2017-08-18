@@ -25,28 +25,41 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
-#include "SWServer.h"
-
-namespace PAL {
-class SessionID;
-}
+#include "Exception.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class ServiceWorkerJob;
+struct ExceptionData {
+    ExceptionCode code;
+    String message;
 
-class WEBCORE_EXPORT ServiceWorkerProvider {
-public:
-    virtual ~ServiceWorkerProvider() { }
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, ExceptionData&);
 
-    WEBCORE_EXPORT static ServiceWorkerProvider& singleton();
-    WEBCORE_EXPORT static void setSharedProvider(ServiceWorkerProvider&);
-
-    virtual SWServer::Connection& serviceWorkerConnectionForSession(const PAL::SessionID&) = 0;
+    Exception toException() const
+    {
+        return Exception { code, String { message } };
+    }
 };
 
-} // namespace WebCore
+template<class Encoder>
+void ExceptionData::encode(Encoder& encoder) const
+{
+    encoder.encodeEnum(code);
+    encoder << message;
+}
 
-#endif // ENABLE(SERVICE_WORKER)
+template<class Decoder>
+bool ExceptionData::decode(Decoder& decoder, ExceptionData& data)
+{
+    if (!decoder.decodeEnum(data.code))
+        return false;
+
+    if (!decoder.decode(data.message))
+        return false;
+
+    return true;
+}
+
+} // namespace WebCore

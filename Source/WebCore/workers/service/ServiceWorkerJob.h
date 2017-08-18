@@ -29,6 +29,7 @@
 
 #include "ServiceWorkerJobClient.h"
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
@@ -36,6 +37,8 @@ namespace WebCore {
 
 class DeferredPromise;
 class Exception;
+enum class ServiceWorkerJobType;
+struct ServiceWorkerJobData;
 struct ServiceWorkerRegistrationParameters;
 
 class ServiceWorkerJob : public ThreadSafeRefCounted<ServiceWorkerJob> {
@@ -45,11 +48,13 @@ public:
         return adoptRef(*new ServiceWorkerJob(client, WTFMove(promise), WTFMove(parameters)));
     }
 
-    ~ServiceWorkerJob();
+    WEBCORE_EXPORT ~ServiceWorkerJob();
 
-    WEBCORE_EXPORT void failedWithException(Exception&&);
+    WEBCORE_EXPORT void failedWithException(const Exception&);
 
     uint64_t identifier() const { return m_identifier; }
+
+    ServiceWorkerJobData data() const;
 
 private:
     ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerRegistrationParameters&&);
@@ -60,6 +65,10 @@ private:
 
     bool m_completed { false };
     uint64_t m_identifier;
+
+    ServiceWorkerJobType m_type;
+
+    Ref<RunLoop> m_runLoop { RunLoop::current() };
 
 #if !ASSERT_DISABLED
     ThreadIdentifier m_creationThread { currentThread() };

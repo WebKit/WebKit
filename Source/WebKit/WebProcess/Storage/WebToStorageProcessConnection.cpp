@@ -30,7 +30,10 @@
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebProcess.h"
+#include "WebSWServerConnection.h"
+#include "WebSWServerConnectionMessages.h"
 
+using namespace PAL;
 using namespace WebCore;
 
 namespace WebKit {
@@ -55,7 +58,15 @@ void WebToStorageProcessConnection::didReceiveMessage(IPC::Connection& connectio
         return;
     }
 #endif
-    
+
+#if ENABLE(SERVICE_WORKER)
+    if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
+        auto serviceWorkerConnection = m_serviceWorkerConnectionsByIdentifier.get(decoder.destinationID());
+        if (serviceWorkerConnection)
+            serviceWorkerConnection->didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
     ASSERT_NOT_REACHED();
 }
 
@@ -84,6 +95,20 @@ WebIDBConnectionToServer& WebToStorageProcessConnection::idbConnectionToServerFo
         result.iterator->value = WebIDBConnectionToServer::create(sessionID);
         ASSERT(!m_webIDBConnectionsByIdentifier.contains(result.iterator->value->identifier()));
         m_webIDBConnectionsByIdentifier.set(result.iterator->value->identifier(), result.iterator->value);
+    }
+
+    return *result.iterator->value;
+}
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+WebSWServerConnection& WebToStorageProcessConnection::serviceWorkerConnectionForSession(const SessionID& sessionID)
+{
+    auto result = m_serviceWorkerConnectionsBySession.add(sessionID, nullptr);
+    if (result.isNewEntry) {
+        result.iterator->value = WebSWServerConnection::create(sessionID);
+        ASSERT(!m_serviceWorkerConnectionsByIdentifier.contains(result.iterator->value->identifier()));
+        m_serviceWorkerConnectionsByIdentifier.set(result.iterator->value->identifier(), result.iterator->value);
     }
 
     return *result.iterator->value;

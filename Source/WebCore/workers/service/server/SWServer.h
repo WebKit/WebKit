@@ -27,24 +27,30 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "SWServer.h"
-
-namespace PAL {
-class SessionID;
-}
+#include "ServiceWorkerJob.h"
+#include <wtf/HashMap.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class ServiceWorkerJob;
+struct ExceptionData;
 
-class WEBCORE_EXPORT ServiceWorkerProvider {
+class SWServer {
 public:
-    virtual ~ServiceWorkerProvider() { }
+    class Connection : public ThreadSafeRefCounted<Connection> {
+    public:
+        virtual ~Connection() { }
+        void scheduleJob(ServiceWorkerJob&);
 
-    WEBCORE_EXPORT static ServiceWorkerProvider& singleton();
-    WEBCORE_EXPORT static void setSharedProvider(ServiceWorkerProvider&);
+    protected:
+        WEBCORE_EXPORT void jobRejected(uint64_t jobIdentifier, const ExceptionData&);
 
-    virtual SWServer::Connection& serviceWorkerConnectionForSession(const PAL::SessionID&) = 0;
+    private:
+        virtual void scheduleJob(const ServiceWorkerJobData&) = 0;
+
+        HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
+    };
+
 };
 
 } // namespace WebCore

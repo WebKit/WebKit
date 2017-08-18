@@ -28,11 +28,16 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "WebProcess.h"
+#include "WebSWServerConnection.h"
+#include "WebToStorageProcessConnection.h"
 #include <WebCore/Exception.h>
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/ServiceWorkerJob.h>
+#include <pal/SessionID.h>
 #include <wtf/text/WTFString.h>
 
+using namespace PAL;
 using namespace WebCore;
 
 namespace WebKit {
@@ -47,9 +52,10 @@ WebServiceWorkerProvider::WebServiceWorkerProvider()
 {
 }
 
-void WebServiceWorkerProvider::scheduleJob(ServiceWorkerJob& job)
+SWServer::Connection& WebServiceWorkerProvider::serviceWorkerConnectionForSession(const SessionID& sessionID)
 {
-    job.failedWithException(Exception { UnknownError, ASCIILiteral("serviceWorker job scheduling is not yet implemented") });
+    ASSERT(WebProcess::singleton().webToStorageProcessConnection());
+    return WebProcess::singleton().webToStorageProcessConnection()->serviceWorkerConnectionForSession(sessionID);
 }
 
 } // namespace WebKit

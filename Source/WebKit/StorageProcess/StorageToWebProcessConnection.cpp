@@ -30,7 +30,11 @@
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebIDBConnectionToClient.h"
 #include "WebIDBConnectionToClientMessages.h"
+#include "WebSWServerConnection.h"
+#include "WebSWServerConnectionMessages.h"
 #include <wtf/RunLoop.h>
+
+using namespace PAL;
 
 namespace WebKit {
 
@@ -67,6 +71,15 @@ void StorageToWebProcessConnection::didReceiveMessage(IPC::Connection& connectio
     }
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
+        auto iterator = m_webServiceWorkerConnections.find(decoder.destinationID());
+        if (iterator != m_webServiceWorkerConnections.end())
+            iterator->value->didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
+
     ASSERT_NOT_REACHED();
 }
 
@@ -83,11 +96,19 @@ void StorageToWebProcessConnection::didReceiveSyncMessage(IPC::Connection& conne
 void StorageToWebProcessConnection::didClose(IPC::Connection&)
 {
 #if ENABLE(INDEXED_DATABASE)
-    auto connections = m_webIDBConnections;
-    for (auto& connection : connections.values())
+    auto idbConnections = m_webIDBConnections;
+    for (auto& connection : idbConnections.values())
         connection->disconnectedFromWebProcess();
 
     m_webIDBConnections.clear();
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    auto serviceWorkerConnections = m_webServiceWorkerConnections;
+    for (auto& connection : serviceWorkerConnections.values())
+        connection->disconnectedFromWebProcess();
+
+    m_webServiceWorkerConnections.clear();
 #endif
 }
 
@@ -96,8 +117,6 @@ void StorageToWebProcessConnection::didReceiveInvalidMessage(IPC::Connection&, I
 
 }
 
-#if ENABLE(INDEXED_DATABASE)
-
 static uint64_t generateConnectionToServerIdentifier()
 {
     ASSERT(RunLoop::isMain());
@@ -105,7 +124,27 @@ static uint64_t generateConnectionToServerIdentifier()
     return ++identifier;
 }
 
-void StorageToWebProcessConnection::establishIDBConnectionToServer(PAL::SessionID sessionID, uint64_t& serverConnectionIdentifier)
+#if ENABLE(SERVICE_WORKER)
+void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessionID, uint64_t& serverConnectionIdentifier)
+{
+    serverConnectionIdentifier = generateConnectionToServerIdentifier();
+    LOG(ServiceWorker, "StorageToWebProcessConnection::establishSWServerConnection - %" PRIu64, serverConnectionIdentifier);
+    ASSERT(!m_webServiceWorkerConnections.contains(serverConnectionIdentifier));
+
+    m_webServiceWorkerConnections.set(serverConnectionIdentifier, WebSWServerConnection::create(m_connection.get(), serverConnectionIdentifier, sessionID));
+}
+
+void StorageToWebProcessConnection::removeSWServerConnection(uint64_t serverConnectionIdentifier)
+{
+    ASSERT(m_webServiceWorkerConnections.contains(serverConnectionIdentifier));
+
+    auto connection = m_webServiceWorkerConnections.take(serverConnectionIdentifier);
+    connection->disconnectedFromWebProcess();
+}
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+void StorageToWebProcessConnection::establishIDBConnectionToServer(SessionID sessionID, uint64_t& serverConnectionIdentifier)
 {
     serverConnectionIdentifier = generateConnectionToServerIdentifier();
     LOG(IndexedDB, "StorageToWebProcessConnection::establishIDBConnectionToServer - %" PRIu64, serverConnectionIdentifier);

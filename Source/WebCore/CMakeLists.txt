@@ -121,6 +121,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/websockets"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/workers/service"
+    "${WEBCORE_DIR}/workers/service/server"
     "${WEBCORE_DIR}/xml"
     "${WEBCORE_DIR}/xml/parser"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
@@ -2996,6 +2997,8 @@ set(WebCore_SOURCES
     workers/service/ServiceWorkerProvider.cpp
     workers/service/ServiceWorkerRegistration.cpp
     workers/service/ServiceWorkerRegistrationParameters.cpp
+
+    workers/service/server/SWServer.cpp
 
     xml/DOMParser.cpp
     xml/NativeXPathNSResolver.cpp

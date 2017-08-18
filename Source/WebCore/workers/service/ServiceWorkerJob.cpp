@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "JSDOMPromiseDeferred.h"
+#include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistrationParameters.h"
 
 namespace WebCore {
@@ -48,16 +49,21 @@ ServiceWorkerJob::~ServiceWorkerJob()
     ASSERT(currentThread() == m_creationThread);
 }
 
-void ServiceWorkerJob::failedWithException(Exception&& exception)
+void ServiceWorkerJob::failedWithException(const Exception& exception)
 {
     ASSERT(currentThread() == m_creationThread);
 
     ASSERT(!m_completed);
-    m_promise->reject(WTFMove(exception));
+    m_promise->reject(exception);
     m_completed = true;
 
     // Can cause this to be deleted.
     m_client->jobDidFinish(*this);
+}
+
+ServiceWorkerJobData ServiceWorkerJob::data() const
+{
+    return { m_identifier, m_type };
 }
 
 } // namespace WebCore

@@ -46,7 +46,6 @@ extern "C" {
     M(Fullscreen) \
     M(Gamepad) \
     M(IconDatabase) \
-    M(IDB) \
     M(IndexedDB) \
     M(IPC) \
     M(KeyHandling) \
@@ -65,6 +64,7 @@ extern "C" {
     M(Resize) \
     M(ResourceLoadStatistics) \
     M(Selection) \
+    M(ServiceWorker) \
     M(SessionState) \
     M(StorageAPI) \
     M(TextInput) \

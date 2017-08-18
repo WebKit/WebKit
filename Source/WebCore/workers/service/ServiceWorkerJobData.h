@@ -27,25 +27,35 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "SWServer.h"
-
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
-class ServiceWorkerJob;
+enum class ServiceWorkerJobType;
 
-class WEBCORE_EXPORT ServiceWorkerProvider {
-public:
-    virtual ~ServiceWorkerProvider() { }
+struct ServiceWorkerJobData {
+    uint64_t identifier;
+    ServiceWorkerJobType type;
 
-    WEBCORE_EXPORT static ServiceWorkerProvider& singleton();
-    WEBCORE_EXPORT static void setSharedProvider(ServiceWorkerProvider&);
-
-    virtual SWServer::Connection& serviceWorkerConnectionForSession(const PAL::SessionID&) = 0;
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, ServiceWorkerJobData&);
 };
+
+template<class Encoder>
+void ServiceWorkerJobData::encode(Encoder& encoder) const
+{
+    encoder << identifier;
+    encoder.encodeEnum(type);
+}
+
+template<class Decoder>
+bool ServiceWorkerJobData::decode(Decoder& decoder, ServiceWorkerJobData& jobData)
+{
+    if (!decoder.decode(jobData.identifier))
+        return false;
+    if (!decoder.decodeEnum(jobData.type))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 

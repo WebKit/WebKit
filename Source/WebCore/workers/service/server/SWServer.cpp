@@ -23,29 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SWServer.h"
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "SWServer.h"
-
-namespace PAL {
-class SessionID;
-}
+#include "ExceptionCode.h"
+#include "ExceptionData.h"
+#include "ServiceWorkerJobData.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class ServiceWorkerJob;
+void SWServer::Connection::scheduleJob(ServiceWorkerJob& job)
+{
+    auto addResult = m_scheduledJobs.add(job.identifier(), &job);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
-class WEBCORE_EXPORT ServiceWorkerProvider {
-public:
-    virtual ~ServiceWorkerProvider() { }
+    scheduleJob(job.data());
+}
 
-    WEBCORE_EXPORT static ServiceWorkerProvider& singleton();
-    WEBCORE_EXPORT static void setSharedProvider(ServiceWorkerProvider&);
+void SWServer::Connection::jobRejected(uint64_t jobIdentifier, const ExceptionData& exceptionData)
+{
+    auto job = m_scheduledJobs.take(jobIdentifier);
+    if (!job) {
+        LOG_ERROR("Job %" PRIu64 " rejected from server, but was not found", jobIdentifier);
+        return;
+    }
 
-    virtual SWServer::Connection& serviceWorkerConnectionForSession(const PAL::SessionID&) = 0;
-};
+    job->failedWithException(exceptionData.toException());
+}
 
 } // namespace WebCore
 

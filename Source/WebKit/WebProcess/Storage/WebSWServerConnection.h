@@ -27,21 +27,52 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "SecurityOriginData.h"
-#include "ServiceWorkerRegistrationOptions.h"
-#include "URL.h"
+#include "MessageReceiver.h"
+#include "MessageSender.h"
+#include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
 
 namespace WebCore {
+struct ExceptionData;
+}
 
-struct ServiceWorkerRegistrationParameters {
-    URL scriptURL;
-    URL clientCreationURL;
-    SecurityOriginData topOrigin;
-    URL scopeURL;
-    RegistrationOptions options;
-};
+namespace WebKit {
 
-} // namespace WebCore
+class WebSWServerConnection : public WebCore::SWServer::Connection, public IPC::MessageSender, public IPC::MessageReceiver {
+public:
+    static Ref<WebSWServerConnection> create(const PAL::SessionID& sessionID)
+    {
+        return adoptRef(*new WebSWServerConnection(sessionID));
+    }
+    static Ref<WebSWServerConnection> create(IPC::Connection& connection, uint64_t connectionIdentifier, const PAL::SessionID& sessionID)
+    {
+        return adoptRef(*new WebSWServerConnection(connection, connectionIdentifier, sessionID));
+    }
+
+    ~WebSWServerConnection() final;
+
+    uint64_t identifier() const { return m_identifier; }
+
+    void scheduleJob(const WebCore::ServiceWorkerJobData&) final;
+
+    void disconnectedFromWebProcess();
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
+private:
+    WebSWServerConnection(const PAL::SessionID&);
+    WebSWServerConnection(IPC::Connection&, uint64_t connectionIdentifier, const PAL::SessionID&);
+
+    void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);
+
+    IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
+    uint64_t messageSenderDestinationID() final { return m_identifier; }
+
+    PAL::SessionID m_sessionID;
+    uint64_t m_identifier;
+
+    Ref<IPC::Connection> m_connection;
+}; // class WebSWServerConnection
+
+} // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

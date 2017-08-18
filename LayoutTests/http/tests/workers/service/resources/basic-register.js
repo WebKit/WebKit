@@ -1,6 +1,6 @@
 function done()
 {
-    finishJSTest();
+    finishSWTest();
 }
 
 navigator.serviceWorker.register("resources/empty-worker.js", { })

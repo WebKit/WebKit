@@ -1,3 +1,58 @@
+2017-08-18  Brady Eidson  <beidson@apple.com>
+
+        Bounce ServiceWorker jobs to the Storage Process.
+        https://bugs.webkit.org/show_bug.cgi?id=175650
+
+        Reviewed by Andy Estes.
+
+        No new tests (Covered by both changes and consistencies in existing tests)
+
+        This lays the groundwork for the SW job queue being in the StorageProcess by actually
+        setting up some objects for IPC communication and actually sending things over the wire.
+
+        The main point of IPC is the WebCore abstract base class "SWServer::Connection"
+
+        A collection of them will soon be managed by the SWServer itself in the StorageProcess.
+
+        That object will be the stand-in for IPC on both the WebProcess and StorageProcess side.
+
+        Currently, any job that we try to schedule still immediately rejects (though now it does
+        so asynchronously instead of synchronously).
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * dom/ExceptionData.h: Copied from Source/WebCore/workers/service/ServiceWorkerProvider.h.
+        (WebCore::ExceptionData::toException const):
+        (WebCore::ExceptionData::encode const):
+        (WebCore::ExceptionData::decode):
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::scheduleJob):
+        * workers/service/ServiceWorkerContainer.h:
+
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::failedWithException):
+        (WebCore::ServiceWorkerJob::data const):
+        * workers/service/ServiceWorkerJob.h:
+
+        * workers/service/ServiceWorkerJobData.h: Copied from Source/WebCore/workers/service/ServiceWorkerProvider.h.
+        (WebCore::ServiceWorkerJobData::encode const):
+        (WebCore::ServiceWorkerJobData::decode):
+
+        * workers/service/ServiceWorkerJobType.h: Copied from Source/WebCore/workers/service/ServiceWorkerProvider.h.
+
+        * workers/service/ServiceWorkerProvider.h:
+
+        * workers/service/ServiceWorkerRegistrationParameters.h:
+
+        * workers/service/server/SWServer.cpp: Copied from Source/WebKit/WebProcess/Storage/WebServiceWorkerProvider.cpp.
+        (WebCore::SWServer::Connection::scheduleJob):
+        (WebCore::SWServer::Connection::jobRejected):
+        * workers/service/server/SWServer.h: Copied from Source/WebCore/workers/service/ServiceWorkerProvider.h.
+        (WebCore::SWServer::Connection::~Connection):
+
 2017-08-18  Chris Dumez  <cdumez@apple.com>
 
         [Beacon] Add support for quota limitation

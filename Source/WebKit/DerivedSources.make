@@ -158,6 +158,7 @@ MESSAGE_RECEIVERS = \
     WebPasteboardProxy \
     WebPaymentCoordinator \
     WebPaymentCoordinatorProxy \
+    WebSWServerConnection \
     PlaybackSessionManager \
     PlaybackSessionManagerProxy \
     WebProcess \

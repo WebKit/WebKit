@@ -27,24 +27,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "SWServer.h"
-
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 
-class ServiceWorkerJob;
-
-class WEBCORE_EXPORT ServiceWorkerProvider {
-public:
-    virtual ~ServiceWorkerProvider() { }
-
-    WEBCORE_EXPORT static ServiceWorkerProvider& singleton();
-    WEBCORE_EXPORT static void setSharedProvider(ServiceWorkerProvider&);
-
-    virtual SWServer::Connection& serviceWorkerConnectionForSession(const PAL::SessionID&) = 0;
+enum class ServiceWorkerJobType {
+    Register,
 };
 
 } // namespace WebCore

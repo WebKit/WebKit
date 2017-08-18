@@ -528,6 +528,7 @@ set(WebKit2_SOURCES
     WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp
 
+    WebProcess/Storage/WebSWServerConnection.cpp
     WebProcess/Storage/WebServiceWorkerProvider.cpp
     WebProcess/Storage/WebToStorageProcessConnection.cpp
 
@@ -667,6 +668,8 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/Plugins/PluginProcessConnection.messages.in
     WebProcess/Plugins/PluginProcessConnectionManager.messages.in
     WebProcess/Plugins/PluginProxy.messages.in
+
+    WebProcess/Storage/WebSWServerConnection.messages.in
 
     WebProcess/UserContent/WebUserContentController.messages.in
 

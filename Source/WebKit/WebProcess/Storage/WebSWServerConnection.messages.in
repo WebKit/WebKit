@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,13 +20,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> StorageToWebProcessConnection LegacyReceiver {
-#if ENABLE(INDEXED_DATABASE)
-    EstablishIDBConnectionToServer(PAL::SessionID sessionID) -> (uint64_t serverConnectionIdentifier)
-    RemoveIDBConnectionToServer(uint64_t serverConnectionIdentifier)
-#endif
 #if ENABLE(SERVICE_WORKER)
-    EstablishSWServerConnection(PAL::SessionID sessionID) -> (uint64_t serverConnectionIdentifier)
-    RemoveSWServerConnection(uint64_t serverConnectionIdentifier)
-#endif
+
+messages -> WebSWServerConnection {
+    # Messages targetting the Storage process
+    ScheduleStorageJob(struct WebCore::ServiceWorkerJobData jobData)
+
+    # Messages targetting the Web process.
+    # When possible, they can be implemented directly by WebCore::SWServer::Connection
+    JobRejected(uint64_t identifier, struct WebCore::ExceptionData exception)
 }
+
+#endif // ENABLE(SERVICE_WORKER)
