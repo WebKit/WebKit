@@ -1,3 +1,35 @@
+2017-08-18  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon] Add support for quota limitation
+        https://bugs.webkit.org/show_bug.cgi?id=175443
+        <rdar://problem/33729002>
+
+        Reviewed by Youenn Fablet.
+
+        WebLoaderStrategy now generates an identifier for ping loads and keep
+        the completion handler in a local HashMap. Once the ping load is done,
+        the network process sends an IPC message back to the WebContent process
+        so that WebLoaderStrategy can look up the completion handler for the
+        ping load and call it.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        (WebKit::NetworkConnectionToWebProcess::didFinishPingLoad):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::~PingLoad):
+        * NetworkProcess/PingLoad.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didFinishPingLoad):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::generatePingLoadIdentifier):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::didFinishPingLoad):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2017-08-18  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Add a WK2 implementation of CacheStorageConnection

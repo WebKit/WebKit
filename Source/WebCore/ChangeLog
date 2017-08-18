@@ -1,3 +1,26 @@
+2017-08-18  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon] Add support for quota limitation
+        https://bugs.webkit.org/show_bug.cgi?id=175443
+        <rdar://problem/33729002>
+
+        Reviewed by Youenn Fablet.
+
+        LoaderStrategy::startPingLoad() now takes a completion handler parameter, allowing CachedResource::load()
+        to know when a Beacon load is complete. This was needed in order for the fetch in-flight keepalive request
+        quota limit to work properly for beacon loads as well. We need to know when the beacon load completes in
+        order to know if the beacon is in-flight or not and only free up its allocated quota once it is no longer
+        in-flight.
+
+        No new tests, updated existing test.
+
+        * loader/LoaderStrategy.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::startPingLoad):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * platform/network/PingHandle.h:
+
 2017-08-18  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Add a WK2 implementation of CacheStorageConnection

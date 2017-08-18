@@ -135,6 +135,11 @@ void NetworkProcessConnection::didWriteBlobsToTemporaryFiles(uint64_t requestIde
         handler(filenames);
 }
 
+void NetworkProcessConnection::didFinishPingLoad(uint64_t pingLoadIdentifier)
+{
+    WebProcess::singleton().webLoaderStrategy().didFinishPingLoad(pingLoadIdentifier);
+}
+
 #if ENABLE(SHAREABLE_RESOURCE)
 void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle, PAL::SessionID sessionID)
 {

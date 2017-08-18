@@ -239,14 +239,24 @@ void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loa
 {
 #if USE(NETWORK_SESSION)
     // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingLoad(WTFMove(loadParameters), WTFMove(originalRequestHeaders));
+    new PingLoad(WTFMove(loadParameters), WTFMove(originalRequestHeaders), *this);
 #else
     UNUSED_PARAM(originalRequestHeaders);
     RefPtr<NetworkingContext> context = RemoteNetworkingContext::create(loadParameters.sessionID, loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingHandle(context.get(), loadParameters.request, loadParameters.allowStoredCredentials == AllowStoredCredentials, PingHandle::UsesAsyncCallbacks::Yes, loadParameters.shouldFollowRedirects);
+    new PingHandle(context.get(), loadParameters.request, loadParameters.allowStoredCredentials == AllowStoredCredentials, PingHandle::UsesAsyncCallbacks::Yes, loadParameters.shouldFollowRedirects, [this, protectedThis = makeRef(*this), identifier = loadParameters.identifier] {
+        didFinishPingLoad(identifier);
+    });
 #endif
+}
+
+void NetworkConnectionToWebProcess::didFinishPingLoad(uint64_t pingLoadIdentifier)
+{
+    if (!m_connection->isValid())
+        return;
+
+    m_connection->send(Messages::NetworkProcessConnection::DidFinishPingLoad(pingLoadIdentifier), 0);
 }
 
 void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier identifier)

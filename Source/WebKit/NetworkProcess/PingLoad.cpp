@@ -31,6 +31,7 @@
 #include "AuthenticationManager.h"
 #include "Logging.h"
 #include "NetworkCORSPreflightChecker.h"
+#include "NetworkConnectionToWebProcess.h"
 #include "SessionTracker.h"
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CrossOriginAccessControl.h>
@@ -42,9 +43,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
-PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, HTTPHeaderMap&& originalRequestHeaders)
+PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, HTTPHeaderMap&& originalRequestHeaders, Ref<NetworkConnectionToWebProcess>&& connection)
     : m_parameters(WTFMove(parameters))
     , m_originalRequestHeaders(WTFMove(originalRequestHeaders))
+    , m_connection(WTFMove(connection))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
     , m_isSameOriginRequest(securityOrigin().canRequest(m_parameters.request.url()))
 {
@@ -64,6 +66,8 @@ PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, HTTPHeaderMap&& o
 
 PingLoad::~PingLoad()
 {
+    m_connection->didFinishPingLoad(m_parameters.identifier);
+
     if (m_redirectHandler)
         m_redirectHandler({ });
 

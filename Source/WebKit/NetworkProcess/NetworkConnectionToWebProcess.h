@@ -61,6 +61,7 @@ public:
     IPC::Connection& connection() { return m_connection.get(); }
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
+    void didFinishPingLoad(uint64_t pingLoadIdentifier);
 
     bool captureExtraNetworkLoadMetricsEnabled() const { return m_captureExtraNetworkLoadMetricsEnabled; }
 

@@ -44,26 +44,26 @@ class SecurityOrigin;
 
 WebResourceLoadScheduler& webResourceLoadScheduler();
 
-class WebResourceLoadScheduler : public WebCore::LoaderStrategy {
+class WebResourceLoadScheduler final : public WebCore::LoaderStrategy {
     WTF_MAKE_NONCOPYABLE(WebResourceLoadScheduler); WTF_MAKE_FAST_ALLOCATED;
 public:
     WebResourceLoadScheduler();
 
-    RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame&, WebCore::CachedResource&, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
-    void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>&) override;
-    void remove(WebCore::ResourceLoader*) override;
-    void setDefersLoading(WebCore::ResourceLoader*, bool) override;
-    void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) override;
+    RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame&, WebCore::CachedResource&, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) final;
+    void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>&) final;
+    void remove(WebCore::ResourceLoader*) final;
+    void setDefersLoading(WebCore::ResourceLoader*, bool) final;
+    void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) final;
     
-    void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority = WebCore::ResourceLoadPriority::VeryLow) override;
-    void suspendPendingRequests() override;
-    void resumePendingRequests() override;
+    void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority = WebCore::ResourceLoadPriority::VeryLow) final;
+    void suspendPendingRequests() final;
+    void resumePendingRequests() final;
 
-    void createPingHandle(WebCore::NetworkingContext*, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap&, Ref<WebCore::SecurityOrigin>&& sourceOrigin, WebCore::ContentSecurityPolicy*, const WebCore::FetchOptions&) override;
+    void startPingLoad(WebCore::NetworkingContext*, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap&, Ref<WebCore::SecurityOrigin>&& sourceOrigin, WebCore::ContentSecurityPolicy*, const WebCore::FetchOptions&, WTF::Function<void()>&& completionHandler) final;
 
-    void storeDerivedDataToCache(const SHA1::Digest&, const String&, const String&, WebCore::SharedBuffer&) override { }
+    void storeDerivedDataToCache(const SHA1::Digest&, const String&, const String&, WebCore::SharedBuffer&) final { }
 
-    void setCaptureExtraNetworkLoadMetricsEnabled(bool) override { }
+    void setCaptureExtraNetworkLoadMetricsEnabled(bool) final { }
 
     bool isSerialLoadingEnabled() const { return m_isSerialLoadingEnabled; }
     void setSerialLoadingEnabled(bool b) { m_isSerialLoadingEnabled = b; }

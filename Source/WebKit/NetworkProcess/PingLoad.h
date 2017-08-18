@@ -39,10 +39,11 @@ class URL;
 namespace WebKit {
 
 class NetworkCORSPreflightChecker;
+class NetworkConnectionToWebProcess;
 
 class PingLoad final : private NetworkDataTaskClient {
 public:
-    PingLoad(NetworkResourceLoadParameters&&, WebCore::HTTPHeaderMap&& originalRequestHeaders);
+    PingLoad(NetworkResourceLoadParameters&&, WebCore::HTTPHeaderMap&& originalRequestHeaders, Ref<NetworkConnectionToWebProcess>&&);
     
 private:
     ~PingLoad();
@@ -70,6 +71,7 @@ private:
     
     NetworkResourceLoadParameters m_parameters;
     WebCore::HTTPHeaderMap m_originalRequestHeaders; // Needed for CORS checks.
+    Ref<NetworkConnectionToWebProcess> m_connection;
     RefPtr<NetworkDataTask> m_task;
     WebCore::Timer m_timeoutTimer;
     std::unique_ptr<NetworkCORSPreflightChecker> m_corsPreflightChecker;

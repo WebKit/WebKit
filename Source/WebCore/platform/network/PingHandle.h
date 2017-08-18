@@ -43,11 +43,12 @@ public:
         No,
     };
     
-    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, UsesAsyncCallbacks useAsyncCallbacks, bool shouldFollowRedirects)
+    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, UsesAsyncCallbacks useAsyncCallbacks, bool shouldFollowRedirects, WTF::Function<void()>&& completionHandler)
         : m_timeoutTimer(*this, &PingHandle::timeoutTimerFired)
         , m_shouldUseCredentialStorage(shouldUseCredentialStorage)
         , m_shouldFollowRedirects(shouldFollowRedirects)
         , m_usesAsyncCallbacks(useAsyncCallbacks)
+        , m_completionHandler(WTFMove(completionHandler))
     {
         m_handle = ResourceHandle::create(networkingContext, request, this, false, false);
 
@@ -79,6 +80,9 @@ private:
 
     virtual ~PingHandle()
     {
+        if (m_completionHandler)
+            m_completionHandler();
+
         if (m_handle) {
             ASSERT(m_handle->client() == this);
             m_handle->clearClient();
@@ -91,6 +95,7 @@ private:
     bool m_shouldUseCredentialStorage;
     bool m_shouldFollowRedirects;
     UsesAsyncCallbacks m_usesAsyncCallbacks;
+    WTF::Function<void()> m_completionHandler;
 };
 
 } // namespace WebCore

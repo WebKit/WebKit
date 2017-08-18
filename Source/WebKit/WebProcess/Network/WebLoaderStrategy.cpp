@@ -350,6 +350,10 @@ void WebLoaderStrategy::networkProcessCrashed()
         scheduleInternallyFailedLoad(*loader.value->resourceLoader());
 
     m_webResourceLoaders.clear();
+
+    auto pingLoadCompletionHandlers = WTFMove(m_pingLoadCompletionHandlers);
+    for (auto& pingLoadCompletionHandler : pingLoadCompletionHandlers.values())
+        pingLoadCompletionHandler();
 }
 
 void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, unsigned long resourceLoadIdentifier, const ResourceRequest& request, StoredCredentials storedCredentials, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
@@ -386,12 +390,21 @@ void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, un
     }
 }
 
-void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy* contentSecurityPolicy, const FetchOptions& options)
+static uint64_t generatePingLoadIdentifier()
+{
+    static uint64_t identifier = 0;
+    return ++identifier;
+}
+
+void WebLoaderStrategy::startPingLoad(NetworkingContext* networkingContext, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy* contentSecurityPolicy, const FetchOptions& options, WTF::Function<void()>&& completionHandler)
 {
     // It's possible that call to createPingHandle might be made during initial empty Document creation before a NetworkingContext exists.
     // It is not clear that we should send ping loads during that process anyways.
-    if (!networkingContext)
+    if (!networkingContext) {
+        if (completionHandler)
+            completionHandler();
         return;
+    }
 
     WebFrameNetworkingContext* webContext = static_cast<WebFrameNetworkingContext*>(networkingContext);
     WebFrameLoaderClient* webFrameLoaderClient = webContext->webFrameLoaderClient();
@@ -399,6 +412,7 @@ void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, R
     WebPage* webPage = webFrame ? webFrame->page() : nullptr;
     
     NetworkResourceLoadParameters loadParameters;
+    loadParameters.identifier = generatePingLoadIdentifier();
     loadParameters.request = request;
     loadParameters.sourceOrigin = WTFMove(sourceOrigin);
     loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
@@ -409,7 +423,16 @@ void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, R
     if (contentSecurityPolicy)
         loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
 
+    if (completionHandler)
+        m_pingLoadCompletionHandlers.add(loadParameters.identifier, WTFMove(completionHandler));
+
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing(WTFMove(loadParameters), originalRequestHeaders), 0);
+}
+
+void WebLoaderStrategy::didFinishPingLoad(uint64_t pingLoadIdentifier)
+{
+    if (auto completionHandler = m_pingLoadCompletionHandlers.take(pingLoadIdentifier))
+        completionHandler();
 }
 
 void WebLoaderStrategy::storeDerivedDataToCache(const SHA1::Digest& bodyHash, const String& type, const String& partition, WebCore::SharedBuffer& data)

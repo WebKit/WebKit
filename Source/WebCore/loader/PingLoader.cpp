@@ -203,7 +203,7 @@ void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeade
     InspectorInstrumentation::continueAfterPingLoader(frame, identifier, frame.loader().activeDocumentLoader(), request, ResourceResponse());
 
     auto* contentSecurityPolicy = document.shouldBypassMainWorldContentSecurityPolicy() ? nullptr : document.contentSecurityPolicy();
-    platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, WTFMove(originalRequestHeaders), document.securityOrigin(), contentSecurityPolicy, options);
+    platformStrategies()->loaderStrategy()->startPingLoad(frame.loader().networkingContext(), request, WTFMove(originalRequestHeaders), document.securityOrigin(), contentSecurityPolicy, options);
 }
 
 }

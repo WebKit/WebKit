@@ -268,14 +268,15 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         }
         // FIXME: We should not special-case Beacon here.
         if (shouldUsePingLoad(type())) {
-        ASSERT(m_origin);
+            ASSERT(m_origin);
             // Beacon is not exposed to workers so it is safe to rely on the document here.
             auto* document = cachedResourceLoader.document();
             auto* contentSecurityPolicy = document && !document->shouldBypassMainWorldContentSecurityPolicy() ? document->contentSecurityPolicy() : nullptr;
             ASSERT(m_originalRequestHeaders);
-            platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, *m_originalRequestHeaders, *m_origin, contentSecurityPolicy, m_options);
-            // FIXME: We currently do not get notified when ping loads finish so we treat them as finishing right away.
-            finishLoading(nullptr);
+            CachedResourceHandle<CachedResource> protectedThis(this);
+            platformStrategies()->loaderStrategy()->startPingLoad(frame.loader().networkingContext(), request, *m_originalRequestHeaders, *m_origin, contentSecurityPolicy, m_options, [this, protectedThis = WTFMove(protectedThis)] {
+                finishLoading(nullptr);
+            });
             return;
         }
     }
