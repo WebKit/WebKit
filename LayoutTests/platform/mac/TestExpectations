@@ -1307,7 +1307,7 @@ webkit.org/b/158649 [ ElCapitan+ ] fast/text/chinese-font-name-aliases-2.html [ 
 webkit.org/b/159003 [ Sierra+ ] fast/text/font-cursive-italic-cjk.html [ Skip ]
 webkit.org/b/159003 [ Yosemite ElCapitan ] fast/text/font-cursive-italic-cjk-2.html [ ImageOnlyFailure ]
 
-webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure ]
+webkit.org/b/158889 media/video-controls-show-on-kb-or-ax-event.html [ Pass Failure Timeout ]
 
 [ Sierra+ ] fast/css/appearance-apple-pay-button.html [ Pass ]
 
