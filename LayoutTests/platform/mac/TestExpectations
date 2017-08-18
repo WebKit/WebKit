@@ -1618,3 +1618,5 @@ webkit.org/b/170698 [ Release ] imported/w3c/web-platform-tests/IndexedDB/interl
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
 webkit.org/b/175592 fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Pass Timeout ]
+
+webkit.org/b/175700 media/video-controls-rendering.html [ Pass Failure ]
