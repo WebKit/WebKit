@@ -32,7 +32,6 @@
 #include "FetchRequest.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"
-#include "JSFetchResponse.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
 
@@ -103,15 +102,16 @@ Ref<FetchResponse> FetchResponse::cloneForJS()
     return clone;
 }
 
-void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, FetchPromise&& promise)
+void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback)
 {
     if (request.isBodyReadableStream()) {
-        promise.reject(TypeError, "ReadableStream uploading is not supported");
+        if (responseCallback)
+            responseCallback(Exception { NotSupportedError, "ReadableStream uploading is not supported" });
         return;
     }
     auto response = adoptRef(*new FetchResponse(context, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 
-    response->m_bodyLoader.emplace(response.get(), WTFMove(promise));
+    response->m_bodyLoader.emplace(response.get(), WTFMove(responseCallback));
     if (!response->m_bodyLoader->start(context, request))
         response->m_bodyLoader = std::nullopt;
 }
@@ -142,8 +142,8 @@ void FetchResponse::BodyLoader::didSucceed()
 void FetchResponse::BodyLoader::didFail(const ResourceError& error)
 {
     ASSERT(m_response.hasPendingActivity());
-    if (m_promise)
-        std::exchange(m_promise, std::nullopt)->reject(Exception { TypeError, String(error.localizedDescription()) });
+    if (auto responseCallback = WTFMove(m_responseCallback))
+        responseCallback(Exception { TypeError, String(error.localizedDescription()) });
 
 #if ENABLE(STREAMS_API)
     if (m_response.m_readableStreamSource) {
@@ -160,9 +160,9 @@ void FetchResponse::BodyLoader::didFail(const ResourceError& error)
     }
 }
 
-FetchResponse::BodyLoader::BodyLoader(FetchResponse& response, FetchPromise&& promise)
+FetchResponse::BodyLoader::BodyLoader(FetchResponse& response, NotificationCallback&& responseCallback)
     : m_response(response)
-    , m_promise(WTFMove(promise))
+    , m_responseCallback(WTFMove(responseCallback))
 {
     m_response.setPendingActivity(&m_response);
 }
@@ -174,15 +174,14 @@ FetchResponse::BodyLoader::~BodyLoader()
 
 void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resourceResponse)
 {
-    ASSERT(m_promise);
-
     m_response.m_response = ResourceResponseBase::filter(resourceResponse);
     m_response.m_shouldExposeBody = resourceResponse.tainting() != ResourceResponse::Tainting::Opaque;
 
     m_response.m_headers->filterAndFill(m_response.m_response.httpHeaderFields(), FetchHeaders::Guard::Response);
     m_response.updateContentType();
 
-    std::exchange(m_promise, std::nullopt)->resolve(m_response);
+    if (auto responseCallback = WTFMove(m_responseCallback))
+        responseCallback(m_response);
 }
 
 void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
@@ -220,7 +219,7 @@ bool FetchResponse::BodyLoader::start(ScriptExecutionContext& context, const Fet
 
 void FetchResponse::BodyLoader::stop()
 {
-    m_promise = std::nullopt;
+    m_responseCallback = { };
     if (m_loader)
         m_loader->stop();
 }

@@ -59,8 +59,8 @@ public:
 
     static Ref<FetchResponse> create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response) { return adoptRef(*new FetchResponse(context, WTFMove(body), WTFMove(headers), WTFMove(response))); }
 
-    using FetchPromise = DOMPromiseDeferred<IDLInterface<FetchResponse>>;
-    static void fetch(ScriptExecutionContext&, FetchRequest&, FetchPromise&&);
+    using NotificationCallback = WTF::Function<void(ExceptionOr<FetchResponse&>&&)>;
+    static void fetch(ScriptExecutionContext&, FetchRequest&, NotificationCallback&&);
 
     void consume(unsigned, Ref<DeferredPromise>&&);
 #if ENABLE(STREAMS_API)
@@ -98,8 +98,6 @@ public:
 private:
     FetchResponse(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
 
-    static void startFetching(ScriptExecutionContext&, const FetchRequest&, FetchPromise&&);
-
     void stop() final;
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
@@ -110,7 +108,7 @@ private:
 
     class BodyLoader final : public FetchLoaderClient {
     public:
-        BodyLoader(FetchResponse&, FetchPromise&&);
+        BodyLoader(FetchResponse&, NotificationCallback&&);
         ~BodyLoader();
 
         bool start(ScriptExecutionContext&, const FetchRequest&);
@@ -128,7 +126,7 @@ private:
         void didReceiveData(const char*, size_t) final;
 
         FetchResponse& m_response;
-        std::optional<FetchPromise> m_promise;
+        NotificationCallback m_responseCallback;
         std::unique_ptr<FetchLoader> m_loader;
     };
 
