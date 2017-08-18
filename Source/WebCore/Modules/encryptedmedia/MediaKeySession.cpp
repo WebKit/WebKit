@@ -38,21 +38,23 @@
 #include "MediaKeyMessageEvent.h"
 #include "MediaKeyMessageType.h"
 #include "MediaKeyStatusMap.h"
+#include "MediaKeys.h"
 #include "NotImplemented.h"
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
 
-Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
+Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context, MediaKeys& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
 {
-    auto session = adoptRef(*new MediaKeySession(context, sessionType, useDistinctiveIdentifier, WTFMove(implementation), WTFMove(instance)));
+    auto session = adoptRef(*new MediaKeySession(context, keys, sessionType, useDistinctiveIdentifier, WTFMove(implementation), WTFMove(instance)));
     session->suspendIfNeeded();
     return session;
 }
 
-MediaKeySession::MediaKeySession(ScriptExecutionContext& context, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
+MediaKeySession::MediaKeySession(ScriptExecutionContext& context, MediaKeys& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
     : ActiveDOMObject(&context)
+    , m_keys(&keys)
     , m_expiration(std::numeric_limits<double>::quiet_NaN())
     , m_keyStatuses(MediaKeyStatusMap::create(*this))
     , m_useDistinctiveIdentifier(useDistinctiveIdentifier)
@@ -88,6 +90,11 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext& context, MediaKeySessio
 MediaKeySession::~MediaKeySession()
 {
     m_keyStatuses->detachSession();
+}
+
+void MediaKeySession::detachKeys()
+{
+    m_keys = nullptr;
 }
 
 const String& MediaKeySession::sessionId() const
@@ -637,7 +644,11 @@ void MediaKeySession::updateKeyStatuses(CDMInstance::KeyStatusVector&& inputStat
     m_eventQueue.enqueueEvent(Event::create(eventNames().keystatuseschangeEvent, false, false));
 
     // 6. Queue a task to run the Attempt to Resume Playback If Necessary algorithm on each of the media element(s) whose mediaKeys attribute is the MediaKeys object that created the session.
-    // FIXME: Implement.
+    m_taskQueue.enqueueTask(
+        [this] () mutable {
+            if (m_keys)
+                m_keys->attemptToResumePlaybackOnClients();
+        });
 }
 
 void MediaKeySession::updateExpiration(double)

@@ -55,6 +55,10 @@
 #include "AudioSession.h"
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "CDMClient.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/StringPrintStream.h>
 #endif
@@ -130,6 +134,9 @@ class HTMLMediaElement
 #endif
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
     , private AudioSession::MutedStateObserver
+#endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    , private CDMClient
 #endif
 {
 public:
@@ -626,6 +633,11 @@ private:
     RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String& keyId) const override;
     bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) override;
     String mediaPlayerMediaKeysStorageDirectory() const override;
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    // CDMClient
+    void cdmClientAttemptToResumePlaybackIfNecessary() override;
 #endif
     
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

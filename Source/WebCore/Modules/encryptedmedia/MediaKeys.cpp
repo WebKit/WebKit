@@ -32,6 +32,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "CDM.h"
+#include "CDMClient.h"
 #include "CDMInstance.h"
 #include "MediaKeySession.h"
 #include "SharedBuffer.h"
@@ -47,7 +48,11 @@ MediaKeys::MediaKeys(bool useDistinctiveIdentifier, bool persistentStateAllowed,
 {
 }
 
-MediaKeys::~MediaKeys() = default;
+MediaKeys::~MediaKeys()
+{
+    for (auto& session : m_sessions)
+        session->detachKeys();
+}
 
 ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContext& context, MediaKeySessionType sessionType)
 {
@@ -66,7 +71,9 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContex
     // 3. Let session be a new MediaKeySession object, and initialize it as follows:
     // NOTE: Continued in MediaKeySession.
     // 4. Return session.
-    return MediaKeySession::create(context, sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), m_instance.copyRef());
+    auto session = MediaKeySession::create(context, *this, sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), m_instance.copyRef());
+    m_sessions.append(session.copyRef());
+    return WTFMove(session);
 }
 
 void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<DeferredPromise>&& promise)
@@ -107,6 +114,24 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     });
 
     // 6. Return promise.
+}
+
+void MediaKeys::attachCDMClient(CDMClient& client)
+{
+    ASSERT(!m_cdmClients.contains(&client));
+    m_cdmClients.append(&client);
+}
+
+void MediaKeys::detachCDMClient(CDMClient& client)
+{
+    ASSERT(m_cdmClients.contains(&client));
+    m_cdmClients.removeFirst(&client);
+}
+
+void MediaKeys::attemptToResumePlaybackOnClients()
+{
+    for (auto* cdmClient : m_cdmClients)
+        cdmClient->cdmClientAttemptToResumePlaybackIfNecessary();
 }
 
 } // namespace WebCore

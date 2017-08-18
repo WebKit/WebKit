@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class CDM;
+class CDMClient;
 class CDMInstance;
 class BufferSource;
 class MediaKeySession;
@@ -56,8 +57,11 @@ public:
     ~MediaKeys();
 
     ExceptionOr<Ref<MediaKeySession>> createSession(ScriptExecutionContext&, MediaKeySessionType);
-
     void setServerCertificate(const BufferSource&, Ref<DeferredPromise>&&);
+
+    void attachCDMClient(CDMClient&);
+    void detachCDMClient(CDMClient&);
+    void attemptToResumePlaybackOnClients();
 
 protected:
     MediaKeys(bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>&, Ref<CDM>&&, Ref<CDMInstance>&&);
@@ -67,6 +71,9 @@ protected:
     Vector<MediaKeySessionType> m_supportedSessionTypes;
     Ref<CDM> m_implementation;
     Ref<CDMInstance> m_instance;
+
+    Vector<Ref<MediaKeySession>> m_sessions;
+    Vector<CDMClient*> m_cdmClients;
     GenericTaskQueue<Timer> m_taskQueue;
 };
 

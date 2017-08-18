@@ -54,11 +54,13 @@ class SharedBuffer;
 
 class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static Ref<MediaKeySession> create(ScriptExecutionContext&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
+    static Ref<MediaKeySession> create(ScriptExecutionContext&, MediaKeys&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
     virtual ~MediaKeySession();
 
     using RefCounted<MediaKeySession>::ref;
     using RefCounted<MediaKeySession>::deref;
+
+    void detachKeys();
 
     const String& sessionId() const;
     double expiration() const;
@@ -76,7 +78,7 @@ public:
     const Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>>& statuses() const { return m_statuses; }
 
 private:
-    MediaKeySession(ScriptExecutionContext&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
+    MediaKeySession(ScriptExecutionContext&, MediaKeys&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
     void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
     void updateKeyStatuses(CDMInstance::KeyStatusVector&&);
     void updateExpiration(double);
@@ -94,6 +96,7 @@ private:
     bool canSuspendForDocumentSuspension() const override;
     void stop() override;
 
+    MediaKeys* m_keys;
     String m_sessionId;
     double m_expiration;
     ClosedPromise m_closedPromise;

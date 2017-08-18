@@ -2565,6 +2565,11 @@ void HTMLMediaElement::setMediaKeys(MediaKeys*, Ref<DeferredPromise>&&)
     notImplemented();
 }
 
+void HTMLMediaElement::cdmClientAttemptToResumePlaybackIfNecessary()
+{
+    notImplemented();
+}
+
 #endif // ENABLE(ENCRYPTED_MEDIA)
 
 void HTMLMediaElement::progressEventTimerFired()
