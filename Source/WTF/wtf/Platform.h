@@ -797,9 +797,12 @@
 /* FIXME: MIPS cannot enable the DFG until it has support for MacroAssembler::probe().
    https://bugs.webkit.org/show_bug.cgi?id=175447
 */
-/* FIXME: Windows cannot enable the DFG until it has support for MacroAssembler::probe().
-   https://bugs.webkit.org/show_bug.cgi?id=175449
+/* FIXME: Win64 cannot enable the DFG until it has support for MacroAssembler::probe().
+   https://bugs.webkit.org/show_bug.cgi?id=175724
 */
+#if CPU(X86) && OS(WINDOWS)
+#define ENABLE_DFG_JIT 1
+#endif
 #endif
 
 /* Concurrent JS only works on 64-bit platforms because it requires that

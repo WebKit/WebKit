@@ -691,7 +691,11 @@ void run(const char* filter)
     Deque<RefPtr<SharedTask<void()>>> tasks;
 
     auto shouldRun = [&] (const char* testName) -> bool {
+#if OS(UNIX)
         return !filter || !!strcasestr(testName, filter);
+#else
+        return !filter || !!strstr(testName, filter);
+#endif
     };
 
     RUN(testSimple());
@@ -765,3 +769,10 @@ int main(int argc, char** argv)
     run(filter);
     return 0;
 }
+
+#if OS(WINDOWS)
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, const char* argv[])
+{
+    return main(argc, const_cast<char**>(argv));
+}
+#endif
