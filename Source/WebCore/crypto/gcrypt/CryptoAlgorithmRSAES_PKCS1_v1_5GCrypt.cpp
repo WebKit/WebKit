@@ -30,7 +30,6 @@
 
 #include "CryptoKeyRSA.h"
 #include "GCryptUtilities.h"
-#include "NotImplemented.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -147,18 +146,6 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(Ref<CryptoKey>&& key, Vect
                     context.deref();
                 });
         });
-}
-
-ExceptionOr<void> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
-{
-    notImplemented();
-    return Exception { NotSupportedError };
-}
-
-ExceptionOr<void> CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&)
-{
-    notImplemented();
-    return Exception { NotSupportedError };
 }
 
 } // namespace WebCore

@@ -29,7 +29,6 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmAesCbcCfbParams.h"
-#include "CryptoAlgorithmAesCbcParamsDeprecated.h"
 #include "CryptoKeyAES.h"
 #include "ScriptExecutionContext.h"
 #include <CommonCrypto/CommonCrypto.h>
@@ -112,30 +111,6 @@ void CryptoAlgorithmAES_CBC::platformDecrypt(std::unique_ptr<CryptoAlgorithmPara
             context.deref();
         });
     });
-}
-
-ExceptionOr<void> CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcParamsDeprecated& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
-{
-    ASSERT(sizeof(parameters.iv) == kCCBlockSizeAES128);
-    auto result = transformAES_CBC(kCCEncrypt, parameters.iv.data(), key.key(), data.first, data.second);
-    if (result.hasException()) {
-        failureCallback();
-        return { };
-    }
-    callback(result.releaseReturnValue());
-    return { };
-}
-
-ExceptionOr<void> CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcParamsDeprecated& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
-{
-    ASSERT(sizeof(parameters.iv) == kCCBlockSizeAES128);
-    auto result = transformAES_CBC(kCCDecrypt, parameters.iv.data(), key.key(), data.first, data.second);
-    if (result.hasException()) {
-        failureCallback();
-        return { };
-    }
-    callback(result.releaseReturnValue());
-    return { };
 }
 
 } // namespace WebCore

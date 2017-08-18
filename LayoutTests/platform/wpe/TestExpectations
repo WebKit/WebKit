@@ -661,9 +661,6 @@ Bug(WPE) css3/zoom-coords.xhtml [ Failure ]
 webkit.org/b/133151 js/cached-window-properties.html [ Slow ]
 webkit.org/b/159754 workers/bomb.html [ Slow ]
 
-# We won't be supporting the deprecated interfaces.
-crypto/webkitSubtle [ Skip ]
-
 # These are failures that will be enabled once the relevant parts of implementation land.
 webkit.org/b/133122 crypto/subtle/aes-cfb-generate-export-key-jwk-length-128.html [ Skip ]
 webkit.org/b/133122 crypto/subtle/aes-cfb-generate-export-key-jwk-length-192.html [ Skip ]

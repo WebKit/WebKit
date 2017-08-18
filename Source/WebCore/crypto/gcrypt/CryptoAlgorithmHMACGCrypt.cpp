@@ -31,7 +31,6 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmHmacParamsDeprecated.h"
 #include "CryptoKeyHMAC.h"
 #include "ScriptExecutionContext.h"
 #include <pal/crypto/gcrypt/Handle.h>
@@ -84,11 +83,6 @@ static std::optional<Vector<uint8_t>> calculateSignature(int algorithm, const Ve
     return WTFMove(signature);
 }
 
-static std::optional<Vector<uint8_t>> calculateSignature(int algorithm, const Vector<uint8_t>& key, const CryptoOperationData& data)
-{
-    return calculateSignature(algorithm, key, data.first, data.second);
-}
-
 void CryptoAlgorithmHMAC::platformSign(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     context.ref();
@@ -139,39 +133,6 @@ void CryptoAlgorithmHMAC::platformVerify(Ref<CryptoKey>&& key, Vector<uint8_t>&&
             context.deref();
         });
     });
-}
-
-ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
-{
-    int algorithm = getGCryptDigestAlgorithm(parameters.hash);
-    if (algorithm == GCRY_MAC_NONE)
-        return Exception { NotSupportedError };
-
-    auto signature = calculateSignature(algorithm, key.key(), data);
-    if (signature)
-        callback(*signature);
-    else
-        failureCallback();
-    return { };
-}
-
-ExceptionOr<void> CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback)
-{
-    int algorithm = getGCryptDigestAlgorithm(parameters.hash);
-    if (algorithm == GCRY_MAC_NONE)
-        return Exception { NotSupportedError };
-
-    auto signature = calculateSignature(algorithm, key.key(), data);
-    if (!signature) {
-        failureCallback();
-        return { };
-    }
-
-    // Using a constant time comparison to prevent timing attacks.
-    bool result = signature.value().size() == expectedSignature.second && !constantTimeMemcmp(signature.value().data(), expectedSignature.first, signature.value().size());
-
-    callback(result);
-    return { };
 }
 
 }

@@ -372,7 +372,6 @@ set(WebCore_NON_SVG_IDL_FILES
     crypto/JsonWebKey.idl
     crypto/RsaOtherPrimesInfo.idl
     crypto/SubtleCrypto.idl
-    crypto/WebKitSubtleCrypto.idl
 
     crypto/keys/CryptoAesKeyAlgorithm.idl
     crypto/keys/CryptoEcKeyAlgorithm.idl
@@ -1186,9 +1185,6 @@ set(WebCore_SOURCES
     bindings/js/JSDeprecatedCSSOMValueCustom.cpp
     bindings/js/JSCallbackData.cpp
     bindings/js/JSCanvasRenderingContext2DCustom.cpp
-    bindings/js/JSCryptoAlgorithmDictionary.cpp
-    bindings/js/JSCryptoKeySerializationJWK.cpp
-    bindings/js/JSCryptoOperationData.cpp
     bindings/js/JSCustomElementInterface.cpp
     bindings/js/JSCustomElementRegistryCustom.cpp
     bindings/js/JSCustomEventCustom.cpp
@@ -1258,7 +1254,6 @@ set(WebCore_SOURCES
     bindings/js/JSWebGLRenderingContextCustom.cpp
     bindings/js/JSWebGPURenderPassAttachmentDescriptorCustom.cpp
     bindings/js/JSWebGPURenderingContextCustom.cpp
-    bindings/js/JSWebKitSubtleCryptoCustom.cpp
     bindings/js/JSWorkerGlobalScopeBase.cpp
     bindings/js/JSWorkerGlobalScopeCustom.cpp
     bindings/js/JSXMLDocumentCustom.cpp
@@ -1317,7 +1312,6 @@ set(WebCore_SOURCES
     crypto/CryptoAlgorithmRegistry.cpp
     crypto/CryptoKey.cpp
     crypto/SubtleCrypto.cpp
-    crypto/WebKitSubtleCrypto.cpp
 
     crypto/algorithms/CryptoAlgorithmAES_CBC.cpp
     crypto/algorithms/CryptoAlgorithmAES_CFB.cpp
@@ -1346,7 +1340,6 @@ set(WebCore_SOURCES
     crypto/keys/CryptoKeyHMAC.cpp
     crypto/keys/CryptoKeyRSA.cpp
     crypto/keys/CryptoKeyRaw.cpp
-    crypto/keys/CryptoKeySerializationRaw.cpp
 
     css/BasicShapeFunctions.cpp
     css/CSSAspectRatioValue.cpp

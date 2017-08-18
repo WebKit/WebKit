@@ -306,7 +306,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/crypto/JsonWebKey.idl \
     $(WebCore)/crypto/RsaOtherPrimesInfo.idl \
     $(WebCore)/crypto/SubtleCrypto.idl \
-    $(WebCore)/crypto/WebKitSubtleCrypto.idl \
     $(WebCore)/crypto/keys/CryptoAesKeyAlgorithm.idl \
     $(WebCore)/crypto/keys/CryptoEcKeyAlgorithm.idl \
     $(WebCore)/crypto/keys/CryptoHmacKeyAlgorithm.idl \

@@ -39,7 +39,6 @@ class ArrayBufferView;
 namespace WebCore {
 
 class SubtleCrypto;
-class WebKitSubtleCrypto;
 
 class Crypto : public ContextDestructionObserver, public RefCounted<Crypto> {
 public:
@@ -50,9 +49,6 @@ public:
 
 #if ENABLE(SUBTLE_CRYPTO)
     SubtleCrypto& subtle();
-
-    // Will be deprecated.
-    ExceptionOr<WebKitSubtleCrypto&> webkitSubtle();
 #endif
 
 private:
@@ -60,9 +56,6 @@ private:
 
 #if ENABLE(SUBTLE_CRYPTO)
     Ref<SubtleCrypto> m_subtle;
-
-    // Will be deprecated.
-    RefPtr<WebKitSubtleCrypto> m_webkitSubtle;
 #endif
 };
 

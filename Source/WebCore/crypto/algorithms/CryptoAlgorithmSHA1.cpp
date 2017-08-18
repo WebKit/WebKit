@@ -62,18 +62,6 @@ void CryptoAlgorithmSHA1::digest(Vector<uint8_t>&& message, VectorCallback&& cal
     });
 }
 
-ExceptionOr<void> CryptoAlgorithmSHA1::digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
-{
-    auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_1);
-    if (!digest) {
-        failureCallback();
-        return { };
-    }
-    digest->addBytes(data.first, data.second);
-    callback(digest->computeHash());
-    return { };
-}
-
 }
 
 #endif // ENABLE(SUBTLE_CRYPTO)

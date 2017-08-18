@@ -1,3 +1,149 @@
+2017-08-18  Sam Weinig  <sam@webkit.org>
+
+        Remove the deprecated WebKitSubtleCrypto interface
+        https://bugs.webkit.org/show_bug.cgi?id=164938
+        <rdar://problem/29894563>
+
+        Reviewed by Chris Dumez.
+
+        * crypto/webkitSubtle: Removed.
+        * crypto/webkitSubtle/aes-cbc-192-encrypt-decrypt-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-192-encrypt-decrypt.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-256-encrypt-decrypt-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-256-encrypt-decrypt.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-encrypt-decrypt-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-encrypt-decrypt-with-padding-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-encrypt-decrypt-with-padding.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-encrypt-decrypt.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-generate-key-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-generate-key.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-import-jwk-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-import-jwk.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-invalid-length-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-invalid-length.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-unwrap-failure-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-unwrap-failure.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-unwrap-rsa-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-unwrap-rsa.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-wrap-rsa-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-wrap-rsa-non-extractable-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-wrap-rsa-non-extractable.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-wrap-rsa.html: Removed.
+        * crypto/webkitSubtle/aes-cbc-wrong-key-class-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-cbc-wrong-key-class.html: Removed.
+        * crypto/webkitSubtle/aes-export-key-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-export-key.html: Removed.
+        * crypto/webkitSubtle/aes-kw-key-manipulation-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-kw-key-manipulation.html: Removed.
+        * crypto/webkitSubtle/aes-kw-wrap-unwrap-aes-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-kw-wrap-unwrap-aes.html: Removed.
+        * crypto/webkitSubtle/aes-postMessage-expected.txt: Removed.
+        * crypto/webkitSubtle/aes-postMessage.html: Removed.
+        * crypto/webkitSubtle/argument-conversion-expected.txt: Removed.
+        * crypto/webkitSubtle/argument-conversion.html: Removed.
+        * crypto/webkitSubtle/array-buffer-view-offset-expected.txt: Removed.
+        * crypto/webkitSubtle/array-buffer-view-offset.html: Removed.
+        * crypto/webkitSubtle/disallowed-in-worker-expected.txt: Removed.
+        * crypto/webkitSubtle/disallowed-in-worker.html: Removed.
+        * crypto/webkitSubtle/gc-2-expected.txt: Removed.
+        * crypto/webkitSubtle/gc-2.html: Removed.
+        * crypto/webkitSubtle/gc-3-expected.txt: Removed.
+        * crypto/webkitSubtle/gc-3.html: Removed.
+        * crypto/webkitSubtle/gc-expected.txt: Removed.
+        * crypto/webkitSubtle/gc.html: Removed.
+        * crypto/webkitSubtle/hmac-check-algorithm-expected.txt: Removed.
+        * crypto/webkitSubtle/hmac-check-algorithm.html: Removed.
+        * crypto/webkitSubtle/hmac-export-key-expected.txt: Removed.
+        * crypto/webkitSubtle/hmac-export-key.html: Removed.
+        * crypto/webkitSubtle/hmac-generate-key-expected.txt: Removed.
+        * crypto/webkitSubtle/hmac-generate-key.html: Removed.
+        * crypto/webkitSubtle/hmac-import-jwk-expected.txt: Removed.
+        * crypto/webkitSubtle/hmac-import-jwk.html: Removed.
+        * crypto/webkitSubtle/hmac-postMessage-expected.txt: Removed.
+        * crypto/webkitSubtle/hmac-postMessage.html: Removed.
+        * crypto/webkitSubtle/hmac-sign-verify-empty-key-expected.txt: Removed.
+        * crypto/webkitSubtle/hmac-sign-verify-empty-key.html: Removed.
+        * crypto/webkitSubtle/hmac-sign-verify-expected.txt: Removed.
+        * crypto/webkitSubtle/hmac-sign-verify.html: Removed.
+        * crypto/webkitSubtle/import-export-raw-key-leak-expected.txt: Removed.
+        * crypto/webkitSubtle/import-export-raw-key-leak.html: Removed.
+        * crypto/webkitSubtle/import-jwk-expected.txt: Removed.
+        * crypto/webkitSubtle/import-jwk.html: Removed.
+        * crypto/webkitSubtle/jwk-export-use-values-expected.txt: Removed.
+        * crypto/webkitSubtle/jwk-export-use-values.html: Removed.
+        * crypto/webkitSubtle/jwk-import-use-values-expected.txt: Removed.
+        * crypto/webkitSubtle/jwk-import-use-values.html: Removed.
+        * crypto/webkitSubtle/resources: Removed.
+        * crypto/webkitSubtle/resources/disallowed-in-worker.js: Removed.
+        * crypto/webkitSubtle/resources/rsa-indexeddb-non-exportable.js: Removed.
+        * crypto/webkitSubtle/resources/rsa-indexeddb.js: Removed.
+        * crypto/webkitSubtle/rsa-export-generated-keys-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-export-generated-keys.html: Removed.
+        * crypto/webkitSubtle/rsa-export-key-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-export-key.html: Removed.
+        * crypto/webkitSubtle/rsa-export-private-key-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-export-private-key.html: Removed.
+        * crypto/webkitSubtle/rsa-indexeddb-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-indexeddb-non-exportable-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-indexeddb-non-exportable-private-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-indexeddb-non-exportable-private.html: Removed.
+        * crypto/webkitSubtle/rsa-indexeddb-non-exportable.html: Removed.
+        * crypto/webkitSubtle/rsa-indexeddb-private-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-indexeddb-private.html: Removed.
+        * crypto/webkitSubtle/rsa-indexeddb.html: Removed.
+        * crypto/webkitSubtle/rsa-oaep-generate-non-extractable-key-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-oaep-generate-non-extractable-key.html: Removed.
+        * crypto/webkitSubtle/rsa-oaep-key-manipulation-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-oaep-key-manipulation.html: Removed.
+        * crypto/webkitSubtle/rsa-oaep-plaintext-length-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-oaep-plaintext-length.html: Removed.
+        * crypto/webkitSubtle/rsa-oaep-wrap-unwrap-aes-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-oaep-wrap-unwrap-aes.html: Removed.
+        * crypto/webkitSubtle/rsa-postMessage-expected.txt: Removed.
+        * crypto/webkitSubtle/rsa-postMessage.html: Removed.
+        * crypto/webkitSubtle/rsaes-pkcs1-v1_5-decrypt-expected.txt: Removed.
+        * crypto/webkitSubtle/rsaes-pkcs1-v1_5-decrypt.html: Removed.
+        * crypto/webkitSubtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes-expected.txt: Removed.
+        * crypto/webkitSubtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes.html: Removed.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key-expected.txt: Removed.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent-expected.txt: Removed.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html: Removed.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key.html: Removed.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk-expected.txt: Removed.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk-small-key-expected.txt: Removed.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk-small-key.html: Removed.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk.html: Removed.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-sign-verify-expected.txt: Removed.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-sign-verify.html: Removed.
+        * crypto/webkitSubtle/sha-1-expected.txt: Removed.
+        * crypto/webkitSubtle/sha-1.html: Removed.
+        * crypto/webkitSubtle/sha-224-expected.txt: Removed.
+        * crypto/webkitSubtle/sha-224.html: Removed.
+        * crypto/webkitSubtle/sha-256-expected.txt: Removed.
+        * crypto/webkitSubtle/sha-256.html: Removed.
+        * crypto/webkitSubtle/sha-384-expected.txt: Removed.
+        * crypto/webkitSubtle/sha-384.html: Removed.
+        * crypto/webkitSubtle/sha-512-expected.txt: Removed.
+        * crypto/webkitSubtle/sha-512.html: Removed.
+        * crypto/webkitSubtle/unimplemented-unwrap-crash-expected.txt: Removed.
+        * crypto/webkitSubtle/unimplemented-unwrap-crash.html: Removed.
+        * crypto/webkitSubtle/unwrapKey-check-usage-expected.txt: Removed.
+        * crypto/webkitSubtle/unwrapKey-check-usage.html: Removed.
+        * crypto/webkitSubtle/wrapKey-check-usage-expected.txt: Removed.
+        * crypto/webkitSubtle/wrapKey-check-usage.html: Removed.
+
+            Remove webkitSubtleCrypto tests.
+
+        * fast/dom/Window/property-access-on-cached-window-after-frame-removed-expected.txt:
+
+            Remove webkitSubtleCrypto deprecation warning that no longer happens.
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+            Remove webkitSubtle tests from expectations files.
+
 2017-08-18  Jonathan Bedard  <jbedard@apple.com>
 
         Marking canvas/webgl tests as failing

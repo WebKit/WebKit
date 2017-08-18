@@ -790,20 +790,6 @@ crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
 # libgcrypt-based implementation supports ecDH algorithm identifier for ECDH SPKI imports.
 crypto/subtle/ecdh-import-spki-key-ecdh-identifier.html [ Pass ]
 
-# These are legacy APIs that we don't support, apart from a few digest algorithms.
-webkit.org/b/133122 crypto/webkitSubtle [ Skip ]
-webkit.org/b/133319 crypto/webkitSubtle/sha-1.html [ Pass ]
-webkit.org/b/133319 crypto/webkitSubtle/sha-224.html [ Pass ]
-webkit.org/b/133319 crypto/webkitSubtle/sha-256.html [ Pass ]
-webkit.org/b/133319 crypto/webkitSubtle/sha-384.html [ Pass ]
-webkit.org/b/133319 crypto/webkitSubtle/sha-512.html [ Pass ]
-webkit.org/b/133320 crypto/webkitSubtle/hmac-check-algorithm.html [ Pass ]
-webkit.org/b/133320 crypto/webkitSubtle/hmac-export-key.html [ Pass ]
-webkit.org/b/133320 crypto/webkitSubtle/hmac-generate-key.html [ Pass ]
-webkit.org/b/133320 crypto/webkitSubtle/hmac-import-jwk.html [ Pass ]
-webkit.org/b/133320 crypto/webkitSubtle/hmac-sign-verify-empty-key.html [ Pass ]
-webkit.org/b/133320 crypto/webkitSubtle/hmac-sign-verify.html [ Pass ]
-
 # These are the imported web-platform-tests covering crypto sections we haven't implemented yet.
 imported/w3c/web-platform-tests/WebCryptoAPI/ [ Slow ]
 

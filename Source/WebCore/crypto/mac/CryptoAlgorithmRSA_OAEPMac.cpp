@@ -30,7 +30,6 @@
 
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmRsaOaepParams.h"
-#include "CryptoAlgorithmRsaOaepParamsDeprecated.h"
 #include "CryptoKeyRSA.h"
 #include "ScriptExecutionContext.h"
 
@@ -113,30 +112,6 @@ void CryptoAlgorithmRSA_OAEP::platformDecrypt(std::unique_ptr<CryptoAlgorithmPar
             context.deref();
         });
     });
-}
-
-ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
-{
-    ASSERT(parameters.hasLabel || parameters.label.isEmpty());
-    auto result = encryptRSA_OAEP(parameters.hash, parameters.label, key.platformKey(), key.keySizeInBits(), data.first, data.second);
-    if (result.hasException()) {
-        failureCallback();
-        return { };
-    }
-    callback(result.releaseReturnValue());
-    return { };
-}
-
-ExceptionOr<void> CryptoAlgorithmRSA_OAEP::platformDecrypt(const CryptoAlgorithmRsaOaepParamsDeprecated& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
-{
-    ASSERT(parameters.hasLabel || parameters.label.isEmpty());
-    auto result = decryptRSA_OAEP(parameters.hash, parameters.label, key.platformKey(), key.keySizeInBits(), data.first, data.second);
-    if (result.hasException()) {
-        failureCallback();
-        return { };
-    }
-    callback(result.releaseReturnValue());
-    return { };
 }
 
 } // namespace WebCore

@@ -1,3 +1,93 @@
+2017-08-18  Sam Weinig  <sam@webkit.org>
+
+        Remove the deprecated WebKitSubtleCrypto interface
+        https://bugs.webkit.org/show_bug.cgi?id=164938
+        <rdar://problem/29894563>
+
+        Reviewed by Chris Dumez.
+
+        Remove WebKitSubtleCrypto and all of its helper classes / functionality.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp: Removed.
+        * bindings/js/JSCryptoAlgorithmDictionary.h: Removed.
+        * bindings/js/JSCryptoKeySerializationJWK.cpp: Removed.
+        * bindings/js/JSCryptoKeySerializationJWK.h: Removed.
+        * bindings/js/JSCryptoOperationData.cpp: Removed.
+        * bindings/js/JSCryptoOperationData.h: Removed.
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp: Removed.
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::deriveKey): Deleted.
+        (WebCore::CryptoAlgorithm::encryptForWrapKey): Deleted.
+        (WebCore::CryptoAlgorithm::decryptForUnwrapKey): Deleted.
+        * crypto/CryptoAlgorithm.h:
+        * crypto/CryptoAlgorithmParametersDeprecated.h: Removed.
+        * crypto/CryptoKeySerialization.h: Removed.
+        * crypto/WebKitSubtleCrypto.cpp: Removed.
+        * crypto/WebKitSubtleCrypto.h: Removed.
+        * crypto/WebKitSubtleCrypto.idl: Removed.
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::keyAlgorithmMatches const): Deleted.
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::encryptForWrapKey): Deleted.
+        (WebCore::CryptoAlgorithmAES_KW::decryptForUnwrapKey): Deleted.
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::keyAlgorithmMatches const): Deleted.
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::keyAlgorithmMatches const): Deleted.
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::keyAlgorithmMatches const): Deleted.
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA1.h:
+        * crypto/algorithms/CryptoAlgorithmSHA224.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA224.h:
+        * crypto/algorithms/CryptoAlgorithmSHA256.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA256.h:
+        * crypto/algorithms/CryptoAlgorithmSHA384.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA384.h:
+        * crypto/algorithms/CryptoAlgorithmSHA512.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA512.h:
+        * crypto/gcrypt/CryptoAlgorithmAES_CBCGCrypt.cpp:
+        * crypto/gcrypt/CryptoAlgorithmAES_KWGCrypt.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::platformEncrypt): Deleted.
+        (WebCore::CryptoAlgorithmAES_KW::platformDecrypt): Deleted.
+        * crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp:
+        * crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp:
+        * crypto/gcrypt/CryptoAlgorithmRSASSA_PKCS1_v1_5GCrypt.cpp:
+        * crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp:
+        * crypto/keys/CryptoKeySerializationRaw.cpp: Removed.
+        * crypto/keys/CryptoKeySerializationRaw.h: Removed.
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        * crypto/mac/CryptoAlgorithmAES_KWMac.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::platformEncrypt): Deleted.
+        (WebCore::CryptoAlgorithmAES_KW::platformDecrypt): Deleted.
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        * crypto/mac/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp:
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        * crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp:
+        * crypto/parameters/CryptoAlgorithmAesCbcParamsDeprecated.h: Removed.
+        * crypto/parameters/CryptoAlgorithmAesKeyGenParamsDeprecated.h: Removed.
+        * crypto/parameters/CryptoAlgorithmHmacKeyParamsDeprecated.h: Removed.
+        * crypto/parameters/CryptoAlgorithmHmacParamsDeprecated.h: Removed.
+        * crypto/parameters/CryptoAlgorithmRsaKeyGenParamsDeprecated.h: Removed.
+        * crypto/parameters/CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h: Removed.
+        * crypto/parameters/CryptoAlgorithmRsaOaepParamsDeprecated.h: Removed.
+        * crypto/parameters/CryptoAlgorithmRsaSsaParamsDeprecated.h: Removed.
+        * features.json:
+        * page/Crypto.cpp:
+        * page/Crypto.h:
+        * page/Crypto.idl:
+
 2017-08-18  Tim Horton  <timothy_horton@apple.com>
 
         Remove classic mode screen scale clamping

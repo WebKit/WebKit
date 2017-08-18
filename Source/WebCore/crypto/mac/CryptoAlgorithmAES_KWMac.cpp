@@ -85,34 +85,6 @@ void CryptoAlgorithmAES_KW::platformUnwrapKey(Ref<CryptoKey>&& key, Vector<uint8
     callback(result.releaseReturnValue());
 }
 
-ExceptionOr<void> CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
-{
-    if (data.second % 8) {
-        // RFC 3394 uses 64-bit blocks as input.
-        // <rdar://problem/15949992> CommonCrypto doesn't detect incorrect data length, silently producing a bad cyphertext.
-        failureCallback();
-        return { };
-    }
-
-    auto result = wrapKeyAES_KW(key.key(), data.first, data.second);
-    if (result.hasException()) {
-        failureCallback();
-        return { };
-    }
-    callback(result.releaseReturnValue());
-    return { };
-}
-
-ExceptionOr<void> CryptoAlgorithmAES_KW::platformDecrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)
-{
-    auto result = unwrapKeyAES_KW(key.key(), data.first, data.second);
-    if (result.hasException()) {
-        failureCallback();
-        return { };
-    }
-    callback(result.releaseReturnValue());
-    return { };}
-
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)

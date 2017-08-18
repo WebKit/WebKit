@@ -42,13 +42,9 @@
 namespace WebCore {
 
 class CryptoAlgorithmParameters;
-class CryptoAlgorithmParametersDeprecated;
 class CryptoKey;
 class CryptoKeyData;
 class ScriptExecutionContext;
-
-// Data is mutable, so async operations should copy it first.
-using CryptoOperationData = std::pair<const uint8_t*, size_t>;
 
 using KeyData = Variant<Vector<uint8_t>, JsonWebKey>;
 using KeyOrKeyPair = Variant<RefPtr<CryptoKey>, CryptoKeyPair>;
@@ -81,21 +77,6 @@ public:
     virtual void wrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&);
     virtual void unwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&);
     virtual ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&);
-
-    // The following will be deprecated.
-    virtual ExceptionOr<void> encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback);
-    virtual ExceptionOr<void> decrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback);
-    virtual ExceptionOr<void> sign(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback);
-    virtual ExceptionOr<void> verify(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData& signature, const CryptoOperationData&, BoolCallback&&, VoidCallback&& failureCallback);
-    virtual ExceptionOr<void> digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback);
-    virtual ExceptionOr<void> generateKey(const CryptoAlgorithmParametersDeprecated&, bool extractable, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, VoidCallback&& failureCallback, ScriptExecutionContext&);
-    virtual ExceptionOr<void> deriveKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& baseKey, CryptoAlgorithm* derivedKeyType, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&& failureCallback);
-    virtual ExceptionOr<void> deriveBits(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& baseKey, size_t length, VectorCallback&&, VoidCallback&& failureCallback);
-    virtual ExceptionOr<void> importKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKeyData&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, VoidCallback&& failureCallback);
-
-    // These are only different from encrypt/decrypt because some algorithms may not expose encrypt/decrypt.
-    virtual ExceptionOr<void> encryptForWrapKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback);
-    virtual ExceptionOr<void> decryptForUnwrapKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback);
 };
 
 } // namespace WebCore

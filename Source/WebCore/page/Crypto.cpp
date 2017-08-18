@@ -31,14 +31,14 @@
 #include "config.h"
 #include "Crypto.h"
 
+#include "Document.h"
+#include "SubtleCrypto.h"
+#include <runtime/ArrayBufferView.h>
+#include <wtf/CryptographicallyRandomNumber.h>
+
 #if OS(DARWIN)
 #include "CommonCryptoUtilities.h"
 #endif
-#include "Document.h"
-#include "SubtleCrypto.h"
-#include "WebKitSubtleCrypto.h"
-#include <runtime/ArrayBufferView.h>
-#include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebCore {
 
@@ -74,19 +74,6 @@ ExceptionOr<void> Crypto::getRandomValues(ArrayBufferView& array)
 SubtleCrypto& Crypto::subtle()
 {
     return m_subtle;
-}
-
-ExceptionOr<WebKitSubtleCrypto&> Crypto::webkitSubtle()
-{
-    if (!isMainThread())
-        return Exception { NotSupportedError };
-
-    if (!m_webkitSubtle) {
-        m_webkitSubtle = WebKitSubtleCrypto::create(*downcast<Document>(scriptExecutionContext()));
-        scriptExecutionContext()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, ASCIILiteral("WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead."));
-    }
-
-    return *m_webkitSubtle;
 }
 
 #endif

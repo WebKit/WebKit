@@ -28,7 +28,6 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmHmacParamsDeprecated.h"
 #include "CryptoKeyHMAC.h"
 #include "ScriptExecutionContext.h"
 #include <CommonCrypto/CommonHMAC.h>
@@ -132,31 +131,6 @@ void CryptoAlgorithmHMAC::platformVerify(Ref<CryptoKey>&& key, Vector<uint8_t>&&
             context.deref();
         });
     });
-}
-
-ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&&)
-{
-    auto algorithm = commonCryptoHMACAlgorithm(parameters.hash);
-    if (!algorithm)
-        return Exception { NotSupportedError };
-    callback(calculateSignature(*algorithm, key.key(), data.first, data.second));
-    return { };
-}
-
-ExceptionOr<void> CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&&)
-{
-    auto algorithm = commonCryptoHMACAlgorithm(parameters.hash);
-    if (!algorithm)
-        return Exception { NotSupportedError };
-
-    auto signature = calculateSignature(*algorithm, key.key(), data.first, data.second);
-
-    // Using a constant time comparison to prevent timing attacks.
-    bool result = signature.size() == expectedSignature.second && !constantTimeMemcmp(signature.data(), expectedSignature.first, signature.size());
-
-    callback(result);
-
-    return { };
 }
 
 }
