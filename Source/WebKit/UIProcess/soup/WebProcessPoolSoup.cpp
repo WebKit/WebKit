@@ -61,14 +61,4 @@ void WebProcessPool::setNetworkProxySettings(const WebCore::SoupNetworkProxySett
         m_networkProcess->send(Messages::NetworkProcess::SetNetworkProxySettings(m_networkProxySettings), 0);
 }
 
-void WebProcessPool::setNTLMAuthenticationEnabled(bool enabled)
-{
-    if (m_ntlmAuthenticationEnabled == enabled)
-        return;
-
-    m_ntlmAuthenticationEnabled = enabled;
-    if (m_networkProcess)
-        m_networkProcess->send(Messages::NetworkProcess::SetNTLMAuthenticationEnabled(m_ntlmAuthenticationEnabled), 0);
-}
-
 }

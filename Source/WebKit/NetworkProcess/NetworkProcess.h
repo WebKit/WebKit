@@ -210,7 +210,6 @@ private:
     void setIgnoreTLSErrors(bool);
     void userPreferredLanguagesChanged(const Vector<String>&);
     void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
-    void setNTLMAuthenticationEnabled(bool);
 #endif
 
     // Platform Helpers

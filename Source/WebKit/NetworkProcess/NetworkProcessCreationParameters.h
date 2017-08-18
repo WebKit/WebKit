@@ -102,7 +102,6 @@ struct NetworkProcessCreationParameters {
     uint32_t cookiePersistentStorageType { 0 };
     HTTPCookieAcceptPolicy cookieAcceptPolicy { HTTPCookieAcceptPolicyAlways };
     bool ignoreTLSErrors { false };
-    bool ntlmAuthenticationEnabled { false };
     Vector<String> languages;
     WebCore::SoupNetworkProxySettings proxySettings;
 #endif

@@ -226,12 +226,8 @@ public:
     void stopMemorySampler();
 
 #if USE(SOUP)
-    void setIgnoreTLSErrors(bool);
-    bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
     void setInitialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy) { m_initialHTTPCookieAcceptPolicy = policy; }
     void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
-    void setNTLMAuthenticationEnabled(bool);
-    bool ntlmAuthenticationEnabled() const { return m_ntlmAuthenticationEnabled; }
 #endif
     void setEnhancedAccessibility(bool);
     
@@ -329,6 +325,11 @@ public:
 
     static void willStartUsingPrivateBrowsing();
     static void willStopUsingPrivateBrowsing();
+
+#if USE(SOUP)
+    void setIgnoreTLSErrors(bool);
+    bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
+#endif
 
     static void setInvalidMessageCallback(void (*)(WKStringRef));
     static void didReceiveInvalidMessage(const IPC::StringReference& messageReceiverName, const IPC::StringReference& messageName);
@@ -526,8 +527,6 @@ private:
 #if USE(SOUP)
     HTTPCookieAcceptPolicy m_initialHTTPCookieAcceptPolicy { HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain };
     WebCore::SoupNetworkProxySettings m_networkProxySettings;
-    bool m_ignoreTLSErrors { true };
-    bool m_ntlmAuthenticationEnabled { false };
 #endif
     HashSet<String, ASCIICaseInsensitiveHash> m_urlSchemesRegisteredForCustomProtocols;
 
@@ -555,6 +554,10 @@ private:
 
     HashMap<uint64_t, RefPtr<DictionaryCallback>> m_dictionaryCallbacks;
     HashMap<uint64_t, RefPtr<StatisticsRequest>> m_statisticsRequests;
+
+#if USE(SOUP)
+    bool m_ignoreTLSErrors { true };
+#endif
 
     bool m_memoryCacheDisabled;
     bool m_resourceLoadStatisticsEnabled { false };
