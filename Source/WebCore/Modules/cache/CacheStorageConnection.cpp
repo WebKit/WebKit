@@ -35,10 +35,14 @@ namespace WebCore {
 
 ExceptionOr<void> CacheStorageConnection::errorToException(Error error)
 {
-    if (error == Error::NotImplemented)
+    switch (error) {
+    case Error::None:
+        return { };
+    case Error::NotImplemented:
         return Exception { NotSupportedError, ASCIILiteral("Not implemented") };
-
-    return { };
+    default:
+        return Exception { NotSupportedError, ASCIILiteral("Internal error") };
+    }
 }
 
 bool CacheStorageConnection::queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse& cachedResponse, const CacheQueryOptions& options)

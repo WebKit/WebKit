@@ -1,15 +1,15 @@
 
-FAIL Cache.keys() called on an empty cache promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys with no matching entries promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys with URL promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys with Request promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys with new Request promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys with ignoreSearch option (request with no search parameters) promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys with ignoreSearch option (request with search parameters) promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys supports ignoreMethod promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys supports ignoreVary promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys with URL containing fragment promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys with string fragment "http" as query promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys without parameters promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.keys with a HEAD Request promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+PASS Cache.keys() called on an empty cache 
+PASS Cache.keys with no matching entries 
+PASS Cache.keys with URL 
+PASS Cache.keys with Request 
+PASS Cache.keys with new Request 
+PASS Cache.keys with ignoreSearch option (request with no search parameters) 
+PASS Cache.keys with ignoreSearch option (request with search parameters) 
+PASS Cache.keys supports ignoreMethod 
+FAIL Cache.keys supports ignoreVary assert_equals: Cache.keys should resolve with an empty array with a mismatched vary. expected 0 but got 1
+PASS Cache.keys with URL containing fragment 
+PASS Cache.keys with string fragment "http" as query 
+PASS Cache.keys without parameters 
+PASS Cache.keys with a HEAD Request 
 

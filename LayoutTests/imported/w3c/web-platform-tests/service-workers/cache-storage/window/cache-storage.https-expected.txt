@@ -1,12 +1,12 @@
 
-FAIL CacheStorage.open promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+PASS CacheStorage.open 
 FAIL CacheStorage.delete dooms, but does not delete immediately promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorage.open with an empty name promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+PASS CacheStorage.open with an empty name 
 PASS CacheStorage.open with no arguments 
-FAIL CacheStorage.has with existing cache promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+PASS CacheStorage.has with existing cache 
 PASS CacheStorage.has with nonexistent cache 
 FAIL CacheStorage.open with existing cache promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorage.delete with existing cache promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+PASS CacheStorage.delete with existing cache 
 PASS CacheStorage.delete with nonexistent cache 
-FAIL CacheStorage names are DOMStrings not USVStrings promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+PASS CacheStorage names are DOMStrings not USVStrings 
 

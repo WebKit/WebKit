@@ -27,6 +27,7 @@
 #include "NetworkConnectionToWebProcess.h"
 
 #include "BlobDataFileReferenceWithSandboxExtension.h"
+#include "CacheStorageEngineConnectionMessages.h"
 #include "DataReference.h"
 #include "NetworkBlobRegistry.h"
 #include "NetworkCache.h"
@@ -126,6 +127,11 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 #endif
 
+    if (decoder.messageReceiverName() == Messages::CacheStorageEngineConnection::messageReceiverName()) {
+        cacheStorageConnection().didReceiveMessage(connection, decoder);
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
@@ -137,6 +143,13 @@ NetworkRTCProvider& NetworkConnectionToWebProcess::rtcProvider()
     return *m_rtcProvider;
 }
 #endif
+
+CacheStorageEngineConnection& NetworkConnectionToWebProcess::cacheStorageConnection()
+{
+    if (!m_cacheStorageConnection)
+        m_cacheStorageConnection = CacheStorageEngineConnection::create(*this);
+    return *m_cacheStorageConnection;
+}
 
 void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& reply)
 {

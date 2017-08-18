@@ -25,31 +25,40 @@
 
 #pragma once
 
-#include "WebCacheStorageConnection.h"
-#include <WebCore/CacheStorageProvider.h>
+#include "ArgumentCoders.h"
+#include "CacheStorageEngine.h"
+#include <WebCore/CacheStorageConnection.h>
 #include <pal/SessionID.h>
-#include <wtf/HashMap.h>
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace IPC {
 class Connection;
 class Decoder;
-};
+}
 
 namespace WebKit {
 
-class WebCacheStorageProvider final : public WebCore::CacheStorageProvider {
+class NetworkConnectionToWebProcess;
+
+class CacheStorageEngineConnection : public RefCounted<CacheStorageEngineConnection> {
 public:
-    static Ref<WebCacheStorageProvider> create() { return adoptRef(*new WebCacheStorageProvider); }
+    static Ref<CacheStorageEngineConnection> create(NetworkConnectionToWebProcess& connection) { return adoptRef(*new CacheStorageEngineConnection(connection)); }
 
-    Ref<WebCore::CacheStorageConnection> createCacheStorageConnection(PAL::SessionID) final;
-
-    void process(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    WebCacheStorageProvider() = default;
+    explicit CacheStorageEngineConnection(NetworkConnectionToWebProcess&);
 
-    RefPtr<WebCacheStorageConnection> m_defaultConnection;
-    HashMap<uint64_t, Ref<WebCacheStorageConnection>> m_connections;
+    void open(PAL::SessionID, uint64_t openRequestIdentifier, const String& origin, const String& cacheName);
+    void remove(PAL::SessionID, uint64_t removeRequestIdentifier, uint64_t cacheIdentifier);
+    void caches(PAL::SessionID, uint64_t retrieveCachesIdentifier, const String& origin);
+
+    void records(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier);
+    void deleteMatchingRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&);
+    void putRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::CacheStorageConnection::Record>&&);
+
+    NetworkConnectionToWebProcess& m_connection;
 };
 
 }

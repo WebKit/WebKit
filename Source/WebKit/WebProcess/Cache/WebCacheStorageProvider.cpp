@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
@@ -23,33 +24,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebCacheStorageProvider.h"
 
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "WebCacheStorageConnection.h"
-#include <WebCore/CacheStorageProvider.h>
-#include <pal/SessionID.h>
-#include <wtf/HashMap.h>
-
-namespace IPC {
-class Connection;
-class Decoder;
-};
+#include "WebProcess.h"
 
 namespace WebKit {
 
-class WebCacheStorageProvider final : public WebCore::CacheStorageProvider {
-public:
-    static Ref<WebCacheStorageProvider> create() { return adoptRef(*new WebCacheStorageProvider); }
+Ref<WebCore::CacheStorageConnection> WebCacheStorageProvider::createCacheStorageConnection(PAL::SessionID sessionID)
+{
+    if (sessionID.isEphemeral()) {
+        return m_connections.ensure(sessionID.sessionID(), [=]() {
+            return WebCacheStorageConnection::create(*this, sessionID);
+        }).iterator->value.copyRef();
+    }
 
-    Ref<WebCore::CacheStorageConnection> createCacheStorageConnection(PAL::SessionID) final;
+    if (!m_defaultConnection) {
+        m_defaultConnection = WebCacheStorageConnection::create(*this, sessionID);
+        m_connections.set(sessionID.sessionID(), *m_defaultConnection);
+    }
+    return *m_defaultConnection;
+}
 
-    void process(IPC::Connection&, IPC::Decoder&);
-
-private:
-    WebCacheStorageProvider() = default;
-
-    RefPtr<WebCacheStorageConnection> m_defaultConnection;
-    HashMap<uint64_t, Ref<WebCacheStorageConnection>> m_connections;
-};
+void WebCacheStorageProvider::process(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    if (auto* cacheConnection = m_connections.get(decoder.destinationID()))
+        cacheConnection->didReceiveMessage(connection, decoder);
+}
 
 }

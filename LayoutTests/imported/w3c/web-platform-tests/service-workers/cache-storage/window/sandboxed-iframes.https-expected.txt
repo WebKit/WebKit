@@ -1,5 +1,5 @@
 
 
-FAIL Sandboxed iframe with allow-same-origin is allowed access assert_equals: Access should be allowed if sandbox has allow-same-origin expected "allowed" but got "denied"
-FAIL Sandboxed iframe without allow-same-origin is denied access assert_equals: Failure should be a SecurityError expected "SecurityError" but got "NotSupportedError"
+PASS Sandboxed iframe with allow-same-origin is allowed access 
+FAIL Sandboxed iframe without allow-same-origin is denied access assert_equals: Access should be denied if sandbox lacks allow-same-origin expected "denied" but got "allowed"
 

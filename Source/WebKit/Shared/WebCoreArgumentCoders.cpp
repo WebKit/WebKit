@@ -30,6 +30,7 @@
 #include "ShareableBitmap.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
+#include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/Credential.h>
@@ -39,6 +40,7 @@
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DragData.h>
 #include <WebCore/EventTrackingRegions.h>
+#include <WebCore/FetchOptions.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FilterOperation.h>
 #include <WebCore/FilterOperations.h>
@@ -147,6 +149,177 @@ void ArgumentCoder<AffineTransform>::encode(Encoder& encoder, const AffineTransf
 bool ArgumentCoder<AffineTransform>::decode(Decoder& decoder, AffineTransform& affineTransform)
 {
     return SimpleArgumentCoder<AffineTransform>::decode(decoder, affineTransform);
+}
+
+void ArgumentCoder<CacheQueryOptions>::encode(Encoder& encoder, const CacheQueryOptions& options)
+{
+    encoder << options.ignoreSearch;
+    encoder << options.ignoreMethod;
+    encoder << options.ignoreVary;
+    encoder << options.cacheName;
+}
+
+bool ArgumentCoder<CacheQueryOptions>::decode(Decoder& decoder, CacheQueryOptions& options)
+{
+    bool ignoreSearch;
+    if (!decoder.decode(ignoreSearch))
+        return false;
+    bool ignoreMethod;
+    if (!decoder.decode(ignoreMethod))
+        return false;
+    bool ignoreVary;
+    if (!decoder.decode(ignoreVary))
+        return false;
+    String cacheName;
+    if (!decoder.decode(cacheName))
+        return false;
+
+    options.ignoreSearch = ignoreSearch;
+    options.ignoreMethod = ignoreMethod;
+    options.ignoreVary = ignoreVary;
+    options.cacheName = WTFMove(cacheName);
+    return true;
+}
+
+void ArgumentCoder<FetchOptions>::encode(Encoder& encoder, const FetchOptions& options)
+{
+    encoder << options.type;
+    encoder << options.destination;
+    encoder << options.mode;
+    encoder << options.credentials;
+    encoder << options.cache;
+    encoder << options.redirect;
+    encoder << options.referrerPolicy;
+    encoder << options.integrity;
+    encoder << options.keepAlive;
+}
+
+bool ArgumentCoder<FetchOptions>::decode(Decoder& decoder, FetchOptions& options)
+{
+    FetchOptions::Type type;
+    if (!decoder.decode(type))
+        return false;
+
+    FetchOptions::Destination destination;
+    if (!decoder.decode(destination))
+        return false;
+
+    FetchOptions::Mode mode;
+    if (!decoder.decode(mode))
+        return false;
+
+    FetchOptions::Credentials credentials;
+    if (!decoder.decode(credentials))
+        return false;
+
+    FetchOptions::Cache cache;
+    if (!decoder.decode(cache))
+        return false;
+
+    FetchOptions::Redirect redirect;
+    if (!decoder.decode(redirect))
+        return false;
+
+    ReferrerPolicy referrerPolicy;
+    if (!decoder.decode(referrerPolicy))
+        return false;
+
+    String integrity;
+    if (!decoder.decode(integrity))
+        return false;
+
+    bool keepAlive;
+    if (!decoder.decode(keepAlive))
+        return false;
+
+    options.type = type;
+    options.destination = destination;
+    options.mode = mode;
+    options.credentials = credentials;
+    options.cache = cache;
+    options.redirect = redirect;
+    options.referrerPolicy = referrerPolicy;
+    options.integrity = WTFMove(integrity);
+    options.keepAlive = keepAlive;
+
+    return true;
+}
+
+void ArgumentCoder<CacheStorageConnection::CacheInfo>::encode(Encoder& encoder, const CacheStorageConnection::CacheInfo& info)
+{
+    encoder << info.identifier;
+    encoder << info.name;
+}
+
+bool ArgumentCoder<CacheStorageConnection::CacheInfo>::decode(Decoder& decoder, CacheStorageConnection::CacheInfo& record)
+{
+    uint64_t identifier;
+    if (!decoder.decode(identifier))
+        return false;
+
+    String name;
+    if (!decoder.decode(name))
+        return false;
+
+    record.identifier = identifier;
+    record.name = WTFMove(name);
+
+    return true;
+}
+
+void ArgumentCoder<CacheStorageConnection::Record>::encode(Encoder& encoder, const CacheStorageConnection::Record& record)
+{
+    encoder << record.identifier;
+
+    encoder << record.requestHeadersGuard;
+    encoder << record.request;
+    encoder << record.options;
+    encoder << record.referrer;
+
+    encoder << record.responseHeadersGuard;
+    encoder << record.response;
+}
+
+bool ArgumentCoder<CacheStorageConnection::Record>::decode(Decoder& decoder, CacheStorageConnection::Record& record)
+{
+    uint64_t identifier;
+    if (!decoder.decode(identifier))
+        return false;
+
+    FetchHeaders::Guard requestHeadersGuard;
+    if (!decoder.decode(requestHeadersGuard))
+        return false;
+
+    WebCore::ResourceRequest request;
+    if (!decoder.decode(request))
+        return false;
+
+    WebCore::FetchOptions options;
+    if (!decoder.decode(options))
+        return false;
+
+    String referrer;
+    if (!decoder.decode(referrer))
+        return false;
+
+    FetchHeaders::Guard responseHeadersGuard;
+    if (!decoder.decode(responseHeadersGuard))
+        return false;
+
+    WebCore::ResourceResponse response;
+    if (!decoder.decode(response))
+        return false;
+
+    record.identifier = identifier;
+    record.requestHeadersGuard = requestHeadersGuard;
+    record.request = WTFMove(request);
+    record.options = WTFMove(options);
+    record.referrer = WTFMove(referrer);
+
+    record.responseHeadersGuard = responseHeadersGuard;
+    record.response = WTFMove(response);
+
+    return true;
 }
 
 void ArgumentCoder<EventTrackingRegions>::encode(Encoder& encoder, const EventTrackingRegions& eventTrackingRegions)

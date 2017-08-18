@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BlockingResponseMap.h"
+#include "CacheStorageEngineConnection.h"
 #include "Connection.h"
 #include "DownloadID.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -121,7 +122,9 @@ private:
 #if USE(LIBWEBRTC)
     NetworkRTCProvider& rtcProvider();
 #endif
-    
+
+    CacheStorageEngineConnection& cacheStorageConnection();
+
     Ref<IPC::Connection> m_connection;
 
     HashMap<uint64_t, RefPtr<NetworkSocketStream>> m_networkSocketStreams;
@@ -133,6 +136,8 @@ private:
 #endif
 
     bool m_captureExtraNetworkLoadMetricsEnabled { false };
+
+    RefPtr<CacheStorageEngineConnection> m_cacheStorageConnection;
 };
 
 } // namespace WebKit

@@ -29,6 +29,9 @@
 #include "DataReference.h"
 #include "LibWebRTCNetwork.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "WebCacheStorageConnection.h"
+#include "WebCacheStorageConnectionMessages.h"
+#include "WebCacheStorageProvider.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebLoaderStrategy.h"
 #include "WebProcess.h"
@@ -85,6 +88,10 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
 #endif
+    if (decoder.messageReceiverName() == Messages::WebCacheStorageConnection::messageReceiverName()) {
+        WebProcess::singleton().cacheStorageProvider().process(connection, decoder);
+        return;
+    }
 
     didReceiveNetworkProcessConnectionMessage(connection, decoder);
 }

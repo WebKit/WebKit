@@ -45,6 +45,7 @@ public:
     enum class Error {
         None,
         NotImplemented,
+        Internal
     };
 
     static ExceptionOr<void> errorToException(Error);

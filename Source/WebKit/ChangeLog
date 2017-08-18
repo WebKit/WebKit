@@ -1,3 +1,109 @@
+2017-08-18  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Add a WK2 implementation of CacheStorageConnection
+        https://bugs.webkit.org/show_bug.cgi?id=175640
+
+        Reviewed by Alex Christensen & Chris Dumez.
+
+        Adding WebCacheStorageConnection as an implementation of CacheStorageConnection.
+        Making WebCacheStorageProvider instantiates such class.
+        One WebCacheStorageConnection is created for each session of a given WebProcess.
+
+        WebCacheStorageConnection is sending IPC calls to the network process.
+        Main implementation of the cache API is done in the network process by CacheStorageEngineConnection and CacheStorageEngine.
+        There is one WebCacheStorageConnection per session.
+        WebCacheStorageConnection is passing the session ID for each call to the network process to ensure the right cache storage engine is used.
+
+        CacheStorageEngineConnection mirrors WebCacheStorageConnection on the network process.
+        There is one CacheStorageEngine per session and CacheStorageEngineConnection will select the right CacheStorageEngine using the given session ID.
+
+        CacheStorageEngine is responsible of storing and matching cache API records.
+        Current implementation only keeps in memory the cached objects.
+
+        CacheStorageEngine is keeping (for each different origin) caches and records as a Vector as the order of insertion is important as per spec.
+        It also keeps a list of removed caches. These caches should remain functional until the last web page having access to these is gone.
+        The mechanism to fully remove these caches is not implemented yet.
+
+        Adding IPC encodings for WTF::Expected, CacheQueryOptions, FetchOptions, CacheStorageConnection Record and CacheInfo.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::generateCacheStorageConnectionIdentifier):
+        (WebKit::NetworkConnectionToWebProcess::createCacheStorageConnection):
+        (WebKit::NetworkConnectionToWebProcess::closeCacheStorageConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/cache/CacheStorageEngine.cpp: Added.
+        (WebKit::defaultCacheStorageEngine):
+        (WebKit::globalEngineMap):
+        (WebKit::CacheStorageEngine::from):
+        (WebKit::CacheStorageEngine::destroyEngine):
+        (WebKit::CacheStorageEngine::defaultEngine):
+        (WebKit::CacheStorageEngine::open):
+        (WebKit::CacheStorageEngine::remove):
+        (WebKit::CacheStorageEngine::retrieveCaches):
+        (WebKit::CacheStorageEngine::retrieveRecords):
+        (WebKit::CacheStorageEngine::putRecords):
+        (WebKit::CacheStorageEngine::deleteMatchingRecords):
+        (WebKit::CacheStorageEngine::writeCachesToDisk):
+        (WebKit::CacheStorageEngine::readCachesFromDisk):
+        (WebKit::CacheStorageEngine::readCache):
+        (WebKit::CacheStorageEngine::writeCacheRecords):
+        (WebKit::CacheStorageEngine::removeCacheRecords):
+        (WebKit::CacheStorageEngine::cache):
+        (WebKit::CacheStorageEngine::caches const):
+        (WebKit::CacheStorageEngine::records):
+        (WebKit::CacheStorageEngine::queryCache):
+        * NetworkProcess/cache/CacheStorageEngine.h: Added.
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp: Added.
+        (WebKit::CacheStorageEngineConnection::CacheStorageEngineConnection):
+        (WebKit::CacheStorageEngineConnection::open):
+        (WebKit::CacheStorageEngineConnection::remove):
+        (WebKit::CacheStorageEngineConnection::caches):
+        (WebKit::CacheStorageEngineConnection::records):
+        (WebKit::CacheStorageEngineConnection::deleteMatchingRecords):
+        (WebKit::CacheStorageEngineConnection::putRecords):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h: Added.
+        (WebKit::CacheStorageEngineConnection::create):
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in: Added.
+        * Platform/IPC/ArgumentCoders.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<CacheQueryOptions>::encode):
+        (IPC::ArgumentCoder<CacheQueryOptions>::decode):
+        (IPC::ArgumentCoder<FetchOptions>::encode):
+        (IPC::ArgumentCoder<FetchOptions>::decode):
+        (IPC::ArgumentCoder<CacheStorageConnection::CacheInfo>::encode):
+        (IPC::ArgumentCoder<CacheStorageConnection::CacheInfo>::decode):
+        (IPC::ArgumentCoder<CacheStorageConnection::Record>::encode):
+        (IPC::ArgumentCoder<CacheStorageConnection::Record>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp: Added.
+        (WebKit::WebCacheStorageConnection::WebCacheStorageConnection):
+        (WebKit::WebCacheStorageConnection::~WebCacheStorageConnection):
+        (WebKit::WebCacheStorageConnection::messageSenderConnection):
+        (WebKit::WebCacheStorageConnection::doOpen):
+        (WebKit::WebCacheStorageConnection::doRemove):
+        (WebKit::WebCacheStorageConnection::doRetrieveCaches):
+        (WebKit::WebCacheStorageConnection::doRetrieveRecords):
+        (WebKit::WebCacheStorageConnection::doBatchDeleteOperation):
+        (WebKit::WebCacheStorageConnection::doBatchPutOperation):
+        (WebKit::WebCacheStorageConnection::openCompleted):
+        (WebKit::WebCacheStorageConnection::removeCompleted):
+        (WebKit::WebCacheStorageConnection::updateCaches):
+        (WebKit::WebCacheStorageConnection::updateRecords):
+        (WebKit::WebCacheStorageConnection::deleteRecordsCompleted):
+        (WebKit::WebCacheStorageConnection::putRecordsCompleted):
+        * WebProcess/Cache/WebCacheStorageConnection.h: Added.
+        * WebProcess/Cache/WebCacheStorageConnection.messages.in: Added.
+        * WebProcess/Cache/WebCacheStorageProvider.cpp: Copied from Source/WebKit/WebProcess/Cache/WebCacheStorageProvider.h.
+        (WebKit::WebCacheStorageProvider::createCacheStorageConnection):
+        * WebProcess/Cache/WebCacheStorageProvider.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+
 2017-08-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r220854.
