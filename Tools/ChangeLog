@@ -1,3 +1,21 @@
+2017-08-18  Jonathan Bedard  <jbedard@apple.com>
+
+        Fix leak-checking for iOS Simulators
+        https://bugs.webkit.org/show_bug.cgi?id=175735
+
+        Reviewed by Darin Adler.
+
+        If the leak checking currently occurs in ServerProcess, we can’t check leaks on an iOS
+        Simulator (or device) because the process will have already been killed by the time we
+        check for leaks. Duplicate leak-checking code and share code waiting on a process to stop.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.stop): Move code waiting for the process to close to _wait_for_stop(...).
+        (ServerProcess._wait_for_stop): Share code shutting down a process between ServerProcess
+        and SimulatorProcess.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.stop): Before closing the process, check for leaks.
+
 2017-08-18  Eric Carlson  <eric.carlson@apple.com>
 
         Add WTFLogChannel level to allow runtime log filtering

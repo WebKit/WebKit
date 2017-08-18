@@ -348,10 +348,14 @@ class ServerProcess(object):
         if self.poll() is None:
             self._port.check_for_leaks(self.process_name(), self.pid())
 
-        now = time.time()
         if self._proc.stdin:
             self._proc.stdin.close()
             self._proc.stdin = None
+
+        return self._wait_for_stop(timeout_secs)
+
+    def _wait_for_stop(self, timeout_secs=3.0):
+        now = time.time()
         killed = False
         if timeout_secs:
             deadline = now + timeout_secs

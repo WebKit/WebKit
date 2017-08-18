@@ -116,6 +116,11 @@ class SimulatorProcess(ServerProcess):
         self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
 
     def stop(self, timeout_secs=3.0):
+        # Only bother to check for leaks or stderr if the process is still running.
+        if self.poll() is None:
+            self._port.check_for_leaks(self.process_name(), self.pid())
+
         if self._proc and self._proc.pid:
             self._target_host.executive.kill_process(self._proc.pid)
-        return super(SimulatorProcess, self).stop(timeout_secs)
+
+        return self._wait_for_stop(timeout_secs)
