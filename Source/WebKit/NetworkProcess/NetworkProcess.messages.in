@@ -31,7 +31,6 @@ messages -> NetworkProcess LegacyReceiver {
     SetIgnoreTLSErrors(bool ignoreTLSErrors)
     UserPreferredLanguagesChanged(Vector<String> languages)
     SetNetworkProxySettings(struct WebCore::SoupNetworkProxySettings settings)
-    SetNTLMAuthenticationEnabled(bool enabled)
 #endif
 
     ClearCachedCredentials()

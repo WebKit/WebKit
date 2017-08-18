@@ -132,7 +132,6 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
         userPreferredLanguagesChanged(parameters.languages);
 
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
-    setNTLMAuthenticationEnabled(parameters.ntlmAuthenticationEnabled);
 }
 
 void NetworkProcess::platformSetURLCacheSize(unsigned, uint64_t)
@@ -147,15 +146,6 @@ void NetworkProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
     SoupNetworkSession::allowSpecificHTTPSCertificateForHost(certificateInfo, host);
-}
-
-void NetworkProcess::setNTLMAuthenticationEnabled(bool enabled)
-{
-    SoupNetworkSession::setInitialNTLMAuthenticationEnabled(enabled);
-    NetworkStorageSession::forEach([enabled](const NetworkStorageSession& session) {
-        if (auto* soupSession = session.soupNetworkSession())
-            soupSession->setNTLMAuthenticationEnabled(enabled);
-    });
 }
 
 void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)

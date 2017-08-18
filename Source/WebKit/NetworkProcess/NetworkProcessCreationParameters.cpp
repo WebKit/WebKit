@@ -90,7 +90,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << cookiePersistentStorageType;
     encoder.encodeEnum(cookieAcceptPolicy);
     encoder << ignoreTLSErrors;
-    encoder << ntlmAuthenticationEnabled;
     encoder << languages;
     encoder << proxySettings;
 #endif
@@ -188,8 +187,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decodeEnum(result.cookieAcceptPolicy))
         return false;
     if (!decoder.decode(result.ignoreTLSErrors))
-        return false;
-    if (!decoder.decode(result.ntlmAuthenticationEnabled))
         return false;
     if (!decoder.decode(result.languages))
         return false;

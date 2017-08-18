@@ -46,7 +46,6 @@
 namespace WebCore {
 
 static bool gIgnoreTLSErrors;
-static bool gInitialNTLMAuthenticationEnabled;
 static CString gInitialAcceptLanguages;
 static SoupNetworkProxySettings gProxySettings;
 static GType gCustomProtocolRequestType;
@@ -146,9 +145,6 @@ SoupNetworkSession::SoupNetworkSession(SoupCookieJar* cookieJar)
 
     if (!gInitialAcceptLanguages.isNull())
         setAcceptLanguages(gInitialAcceptLanguages);
-
-    if (gInitialNTLMAuthenticationEnabled)
-        soup_session_add_feature_by_type(m_soupSession.get(), SOUP_TYPE_AUTH_NTLM);
 
 #if SOUP_CHECK_VERSION(2, 53, 92)
     if (soup_auth_negotiate_supported()) {
@@ -325,19 +321,6 @@ void SoupNetworkSession::checkTLSErrors(SoupRequest* soupRequest, SoupMessage* m
 void SoupNetworkSession::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
     clientCertificates().add(host, HostTLSCertificateSet()).iterator->value.add(certificateInfo.certificate());
-}
-
-void SoupNetworkSession::setInitialNTLMAuthenticationEnabled(bool enabled)
-{
-    gInitialNTLMAuthenticationEnabled = enabled;
-}
-
-void SoupNetworkSession::setNTLMAuthenticationEnabled(bool enabled)
-{
-    if (enabled)
-        soup_session_add_feature_by_type(m_soupSession.get(), SOUP_TYPE_AUTH_NTLM);
-    else
-        soup_session_remove_feature_by_type(m_soupSession.get(), SOUP_TYPE_AUTH_NTLM);
 }
 
 } // namespace WebCore
