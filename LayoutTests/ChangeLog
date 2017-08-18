@@ -1,5 +1,14 @@
 2017-08-18  Matt Lewis  <jlewis3@apple.com>
 
+        Marked imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html as flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=172044
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2017-08-18  Matt Lewis  <jlewis3@apple.com>
+
         Marked js/slow-stress/Int32Array-alloc-huge.html as flaky on mac.
         https://bugs.webkit.org/show_bug.cgi?id=173010
 

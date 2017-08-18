@@ -753,3 +753,5 @@ tiled-drawing/scrolling/non-fast-region/wheel-handler-in-region.html [ Skip ]
 
 webkit.org/b/175341 accessibility/mac/select-element-selection-with-optgroups.html [ Pass Failure ]
 
+webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html [ Pass Timeout ]
+
