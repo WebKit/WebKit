@@ -604,8 +604,6 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     }
 
     // one immediate cases
-    case I32Const:
-    case I64Const:
     case SetLocal:
     case GetLocal:
     case TeeLocal:
@@ -616,6 +614,18 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case Call: {
         uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for ", m_currentOpcode, " in unreachable context");
+        return { };
+    }
+
+    case I32Const: {
+        int32_t unused;
+        WASM_PARSER_FAIL_IF(!parseVarInt32(unused), "can't get immediate for ", m_currentOpcode, " in unreachable context");
+        return { };
+    }
+
+    case I64Const: {
+        int64_t unused;
+        WASM_PARSER_FAIL_IF(!parseVarInt64(unused), "can't get immediate for ", m_currentOpcode, " in unreachable context");
         return { };
     }
 
