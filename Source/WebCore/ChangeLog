@@ -1,3 +1,38 @@
+2017-08-17  Antti Koivisto  <antti@apple.com>
+
+        RenderListItem - Avoid render tree mutation during layout
+        https://bugs.webkit.org/show_bug.cgi?id=175666
+
+        Reviewed by Andreas Kling.
+
+        Mutations should be done by RenderTreeUpdater only.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateMarkerRenderer):
+
+            This is now called by RenderTreeUpdater only.
+            Remove code dealing with this being called at layout time.
+            Merged marker construction code from styleDidChange here and renamed for clarity.
+
+        (WebCore::RenderListItem::layout):
+        (WebCore::RenderListItem::computePreferredLogicalWidths):
+
+            Remove mutating calls.
+
+        (WebCore::RenderListItem::styleDidChange): Deleted.
+        (WebCore::RenderListItem::insertOrMoveMarkerRendererIfNeeded): Deleted.
+        * rendering/RenderListItem.h:
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingValue::adjustTextNodeSizes):
+
+            Call updateMarkerRenderer.
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::popParent):
+        (WebCore::RenderTreeUpdater::updateBeforeOrAfterPseudoElement):
+
+            Call updateMarkerRenderer.
+
 2017-08-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r220854.
