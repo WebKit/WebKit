@@ -1,3 +1,12 @@
+2017-08-18  Matt Lewis  <jlewis3@apple.com>
+
+        Marked fast/scrolling/arrow-key-scroll-in-rtl-document.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=173779
+
+        Unreviewed Test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-08-18  Sam Weinig  <sam@webkit.org>
 
         Remove the deprecated WebKitSubtleCrypto interface
