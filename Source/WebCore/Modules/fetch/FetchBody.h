@@ -64,8 +64,8 @@ public:
     using Init = Variant<RefPtr<Blob>, RefPtr<ArrayBufferView>, RefPtr<ArrayBuffer>, RefPtr<DOMFormData>, RefPtr<URLSearchParams>, String>;
     static FetchBody extract(ScriptExecutionContext&, Init&&, String&);
     static FetchBody loadingBody() { return { }; }
-    static FetchBody readableStreamBody();
 
+    void setAsReadableStream() { m_isReadableStream = true; }
     void loadingFailed();
     void loadingSucceeded();
 

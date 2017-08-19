@@ -81,8 +81,9 @@ void FetchResponse::initializeWith(FetchBody::Init&& body)
 
 void FetchResponse::setBodyAsReadableStream()
 {
-    ASSERT(isBodyNull());
-    setBody(FetchBody::readableStreamBody());
+    if (isBodyNull())
+        setBody(FetchBody::loadingBody());
+    body().setAsReadableStream();
     updateContentType();
 }
 
@@ -132,6 +133,8 @@ void FetchResponse::BodyLoader::didSucceed()
     if (m_response.m_readableStreamSource && !m_response.body().consumer().hasData())
         m_response.closeStream();
 #endif
+    if (auto consumeDataCallback = WTFMove(m_consumeDataCallback))
+        consumeDataCallback(m_response.body().consumer().takeData());
 
     if (m_loader->isStarted()) {
         Ref<FetchResponse> protector(m_response);
@@ -144,6 +147,9 @@ void FetchResponse::BodyLoader::didFail(const ResourceError& error)
     ASSERT(m_response.hasPendingActivity());
     if (auto responseCallback = WTFMove(m_responseCallback))
         responseCallback(Exception { TypeError, String(error.localizedDescription()) });
+
+    if (auto consumeDataCallback = WTFMove(m_consumeDataCallback))
+        consumeDataCallback(Exception { TypeError, String(error.localizedDescription()) });
 
 #if ENABLE(STREAMS_API)
     if (m_response.m_readableStreamSource) {
@@ -260,6 +266,8 @@ void FetchResponse::consume(unsigned type, Ref<DeferredPromise>&& wrapper)
 
 FetchResponse::ResponseData FetchResponse::consumeBody()
 {
+    ASSERT(!isLoading());
+
     if (isBodyNull())
         return nullptr;
 
@@ -267,6 +275,16 @@ FetchResponse::ResponseData FetchResponse::consumeBody()
     m_isDisturbed = true;
 
     return body().take();
+}
+
+void FetchResponse::consumeBodyWhenLoaded(ConsumeDataCallback&& callback)
+{
+    ASSERT(isLoading());
+
+    ASSERT(!m_isDisturbed);
+    m_isDisturbed = true;
+
+    m_bodyLoader->setConsumeDataCallback(WTFMove(callback));
 }
 
 void FetchResponse::setBodyData(ResponseData&& data)
@@ -316,7 +334,9 @@ void FetchResponse::consumeBodyAsStream()
 
     ASSERT(m_bodyLoader);
 
-    RefPtr<SharedBuffer> data = m_bodyLoader->startStreaming();
+    setBodyAsReadableStream();
+
+    auto data = m_bodyLoader->startStreaming();
     if (data) {
         if (!m_readableStreamSource->enqueue(data->tryCreateArrayBuffer())) {
             stop();

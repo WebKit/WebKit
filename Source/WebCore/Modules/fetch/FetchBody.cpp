@@ -74,13 +74,6 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, Stri
     return FetchBody(WTFMove(WTF::get<String>(value)));
 }
 
-FetchBody FetchBody::readableStreamBody()
-{
-    FetchBody body;
-    body.m_isReadableStream = true;
-    return body;
-}
-
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
     m_consumer.setType(FetchBodyConsumer::Type::ArrayBuffer);

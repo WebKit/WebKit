@@ -150,19 +150,8 @@ void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDef
         }
     }
 
-    if (response->isDisturbed()) {
-        promise.reject(Exception { TypeError, ASCIILiteral("Response is disturbed or locked") });
-        return;
-    }
-
     if (response->status() == 206) {
         promise.reject(Exception { TypeError, ASCIILiteral("Response is a 206 partial") });
-        return;
-    }
-
-    // FIXME: Add support for being loaded responses.
-    if (response->isLoading()) {
-        promise.reject(Exception { NotSupportedError, ASCIILiteral("Caching a loading Response is not yet supported") });
         return;
     }
 
@@ -172,7 +161,30 @@ void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDef
         return;
     }
 
-    batchPutOperation(*request, response.get(), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
+    if (response->isDisturbed()) {
+        promise.reject(Exception { TypeError, ASCIILiteral("Response is disturbed or locked") });
+        return;
+    }
+
+    if (response->isLoading()) {
+        setPendingActivity(this);
+        response->consumeBodyWhenLoaded([promise = WTFMove(promise), request = request.releaseNonNull(), response = WTFMove(response), this](ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
+            if (result.hasException())
+                promise.reject(result.releaseException());
+            else {
+                CacheStorageConnection::ResponseBody body;
+                if (auto buffer = result.releaseReturnValue())
+                    body = buffer.releaseNonNull();
+                batchPutOperation(request.get(), response.get(), WTFMove(body), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
+                    promise.settle(WTFMove(result));
+                });
+            }
+            unsetPendingActivity(this);
+        });
+        return;
+    }
+
+    batchPutOperation(*request, response.get(), response->consumeBody(), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
         promise.settle(WTFMove(result));
     });
 }
@@ -283,7 +295,7 @@ void Cache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&
     });
 }
 
-static inline CacheStorageConnection::Record toConnectionRecord(const FetchRequest& request, FetchResponse& response)
+static inline CacheStorageConnection::Record toConnectionRecord(const FetchRequest& request, FetchResponse& response, CacheStorageConnection::ResponseBody&& responseBody)
 {
     // FIXME: Add a setHTTPHeaderFields on ResourceResponseBase.
     ResourceResponse cachedResponse = response.resourceResponse();
@@ -295,14 +307,14 @@ static inline CacheStorageConnection::Record toConnectionRecord(const FetchReque
 
     return { 0,
         request.headers().guard(), WTFMove(cachedRequest), request.fetchOptions(), request.internalRequestReferrer(),
-        response.headers().guard(), WTFMove(cachedResponse), response.consumeBody()
+        response.headers().guard(), WTFMove(cachedResponse), WTFMove(responseBody)
     };
 }
 
-void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& response, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
+void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& response, CacheStorageConnection::ResponseBody&& responseBody, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
 {
     Vector<CacheStorageConnection::Record> records;
-    records.append(toConnectionRecord(request, response));
+    records.append(toConnectionRecord(request, response, WTFMove(responseBody)));
 
     setPendingActivity(this);
     m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, callback = WTFMove(callback)](Vector<uint64_t>&&, CacheStorageConnection::Error error) {

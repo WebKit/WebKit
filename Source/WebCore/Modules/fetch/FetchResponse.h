@@ -94,7 +94,11 @@ public:
     using ResponseData = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
     ResponseData consumeBody();
     void setBodyData(ResponseData&&);
+
     bool isLoading() const { return !!m_bodyLoader; }
+
+    using ConsumeDataCallback = WTF::Function<void(ExceptionOr<RefPtr<SharedBuffer>>&&)>;
+    void consumeBodyWhenLoaded(ConsumeDataCallback&&);
 
     const ResourceResponse& resourceResponse() const { return m_response; }
 
@@ -117,6 +121,8 @@ private:
         bool start(ScriptExecutionContext&, const FetchRequest&);
         void stop();
 
+        void setConsumeDataCallback(ConsumeDataCallback&& consumeDataCallback) { m_consumeDataCallback = WTFMove(consumeDataCallback); }
+
 #if ENABLE(STREAMS_API)
         RefPtr<SharedBuffer> startStreaming();
 #endif
@@ -130,6 +136,7 @@ private:
 
         FetchResponse& m_response;
         NotificationCallback m_responseCallback;
+        ConsumeDataCallback m_consumeDataCallback;
         std::unique_ptr<FetchLoader> m_loader;
     };
 
