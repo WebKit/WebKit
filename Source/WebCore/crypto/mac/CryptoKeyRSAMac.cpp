@@ -34,6 +34,9 @@
 #include "CryptoKeyPair.h"
 #include "CryptoKeyRSAComponents.h"
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <heap/HeapInlines.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -174,22 +177,41 @@ size_t CryptoKeyRSA::keySizeInBits() const
     return modulus.size() * 8;
 }
 
-std::unique_ptr<KeyAlgorithm> CryptoKeyRSA::buildAlgorithm() const
+auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
 {
-    String name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
+    // FIXME: Add a version of getPublicKeyComponents that returns Uint8Array, rather
+    // than Vector<uint8_t>, to avoid a copy of the data.
+
     Vector<uint8_t> modulus;
     Vector<uint8_t> publicExponent;
     CCCryptorStatus status = getPublicKeyComponents(m_platformKey, modulus, publicExponent);
     if (status) {
         WTFLogAlways("Couldn't get RSA key components, status %d", status);
         publicExponent.clear();
-        return std::make_unique<RsaKeyAlgorithm>(name, 0, WTFMove(publicExponent));
+
+        CryptoRsaKeyAlgorithm result;
+        result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
+        result.modulusLength = 0;
+        result.publicExponent = Uint8Array::create(0);
+        return result;
     }
 
     size_t modulusLength = modulus.size() * 8;
-    if (m_restrictedToSpecificHash)
-        return std::make_unique<RsaHashedKeyAlgorithm>(name, modulusLength, WTFMove(publicExponent), CryptoAlgorithmRegistry::singleton().name(m_hash));
-    return std::make_unique<RsaKeyAlgorithm>(name, modulusLength, WTFMove(publicExponent));
+
+    if (m_restrictedToSpecificHash) {
+        CryptoRsaHashedKeyAlgorithm result;
+        result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
+        result.modulusLength = modulusLength;
+        result.publicExponent = Uint8Array::create(publicExponent.data(), publicExponent.size());
+        result.hash.name = CryptoAlgorithmRegistry::singleton().name(m_hash);
+        return result;
+    }
+    
+    CryptoRsaKeyAlgorithm result;
+    result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
+    result.modulusLength = modulusLength;
+    result.publicExponent = Uint8Array::create(publicExponent.data(), publicExponent.size());
+    return result;
 }
 
 std::unique_ptr<CryptoKeyRSAComponents> CryptoKeyRSA::exportData() const

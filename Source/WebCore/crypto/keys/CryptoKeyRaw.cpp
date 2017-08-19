@@ -32,22 +32,17 @@
 
 namespace WebCore {
 
-CryptoKeyAlgorithm RawKeyAlgorithm::dictionary() const
-{
-    CryptoKeyAlgorithm result;
-    result.name = this->name();
-    return result;
-}
-
 CryptoKeyRaw::CryptoKeyRaw(CryptoAlgorithmIdentifier identifier, Vector<uint8_t>&& keyData, CryptoKeyUsageBitmap usages)
     : CryptoKey(identifier, CryptoKeyType::Secret, false, usages)
     , m_key(WTFMove(keyData))
 {
 }
 
-std::unique_ptr<KeyAlgorithm> CryptoKeyRaw::buildAlgorithm() const
+auto CryptoKeyRaw::algorithm() const -> KeyAlgorithm
 {
-    return std::make_unique<RawKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()));
+    CryptoKeyAlgorithm result;
+    result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
+    return result;
 }
 
 } // namespace WebCore

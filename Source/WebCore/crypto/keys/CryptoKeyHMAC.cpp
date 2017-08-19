@@ -37,15 +37,6 @@
 
 namespace WebCore {
 
-CryptoHmacKeyAlgorithm HmacKeyAlgorithm::dictionary() const
-{
-    CryptoHmacKeyAlgorithm result;
-    result.name = this->name();
-    result.hash.name = this->hash();
-    result.length = this->length();
-    return result;
-}
-
 static size_t getKeyLengthFromHash(CryptoAlgorithmIdentifier hash)
 {
     switch (hash) {
@@ -150,10 +141,13 @@ ExceptionOr<size_t> CryptoKeyHMAC::getKeyLength(const CryptoAlgorithmParameters&
     return Exception { TypeError };
 }
 
-std::unique_ptr<KeyAlgorithm> CryptoKeyHMAC::buildAlgorithm() const
+auto CryptoKeyHMAC::algorithm() const -> KeyAlgorithm
 {
-    return std::make_unique<HmacKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()),
-        CryptoAlgorithmRegistry::singleton().name(m_hash), m_key.size() * 8);
+    CryptoHmacKeyAlgorithm result;
+    result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
+    result.hash.name = CryptoAlgorithmRegistry::singleton().name(m_hash);
+    result.length = m_key.size() * 8;
+    return result;
 }
 
 } // namespace WebCore

@@ -39,24 +39,6 @@ class CryptoAlgorithmParameters;
 
 struct JsonWebKey;
 
-class AesKeyAlgorithm final : public KeyAlgorithm {
-public:
-    AesKeyAlgorithm(const String& name, size_t length)
-        : KeyAlgorithm(name)
-        , m_length(length)
-    {
-    }
-
-    KeyAlgorithmClass keyAlgorithmClass() const final { return KeyAlgorithmClass::AES; }
-
-    CryptoAesKeyAlgorithm dictionary() const;
-
-    size_t length() const { return m_length; }
-
-private:
-    size_t m_length;
-};
-
 class CryptoKeyAES final : public CryptoKey {
 public:
     static const int s_length128 = 128;
@@ -87,7 +69,7 @@ private:
     CryptoKeyAES(CryptoAlgorithmIdentifier, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsageBitmap);
     CryptoKeyAES(CryptoAlgorithmIdentifier, Vector<uint8_t>&& key, bool extractable, CryptoKeyUsageBitmap);
 
-    std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
+    KeyAlgorithm algorithm() const final;
 
     Vector<uint8_t> m_key;
 };
@@ -95,7 +77,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyAES, CryptoKeyClass::AES)
-
-SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(AesKeyAlgorithm, KeyAlgorithmClass::AES)
 
 #endif // ENABLE(SUBTLE_CRYPTO)

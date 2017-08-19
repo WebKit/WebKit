@@ -47,27 +47,9 @@ namespace WebCore {
 
 struct JsonWebKey;
 
-class EcKeyAlgorithm : public KeyAlgorithm {
-public:
-    EcKeyAlgorithm(const String& name, const String& curve)
-        : KeyAlgorithm(name)
-        , m_curve(curve)
-    {
-    }
-
-    KeyAlgorithmClass keyAlgorithmClass() const override { return KeyAlgorithmClass::EC; }
-
-    const String& namedCurve() const { return m_curve; }
-
-    CryptoEcKeyAlgorithm dictionary() const;
-
-private:
-    String m_curve;
-};
-
 class CryptoKeyEC final : public CryptoKey {
 public:
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=169231
+    // FIXME: Add support for Elliptic Curve P-521 (https://webkit.org/b/169231)
     enum class NamedCurve {
         P256,
         P384,
@@ -101,7 +83,7 @@ private:
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::EC; }
 
-    std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
+    KeyAlgorithm algorithm() const final;
 
     static std::optional<CryptoKeyPair> platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyEC> platformImportRaw(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
@@ -121,7 +103,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyEC, CryptoKeyClass::EC)
-
-SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(EcKeyAlgorithm, KeyAlgorithmClass::EC)
 
 #endif // ENABLE(SUBTLE_CRYPTO)

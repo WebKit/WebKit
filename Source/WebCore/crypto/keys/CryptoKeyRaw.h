@@ -31,18 +31,6 @@
 
 namespace WebCore {
 
-class RawKeyAlgorithm : public KeyAlgorithm {
-public:
-    RawKeyAlgorithm(const String& name)
-        : KeyAlgorithm(name)
-    {
-    }
-
-    KeyAlgorithmClass keyAlgorithmClass() const override { return KeyAlgorithmClass::Raw; }
-    
-    CryptoKeyAlgorithm dictionary() const;
-};
-
 class CryptoKeyRaw final : public CryptoKey {
 public:
     static Ref<CryptoKeyRaw> create(CryptoAlgorithmIdentifier identifier, Vector<uint8_t>&& keyData, CryptoKeyUsageBitmap usages)
@@ -57,7 +45,7 @@ private:
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::Raw; }
 
-    std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
+    KeyAlgorithm algorithm() const final;
 
     Vector<uint8_t> m_key;
 };
@@ -65,7 +53,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyRaw, CryptoKeyClass::Raw)
-
-SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(RawKeyAlgorithm, KeyAlgorithmClass::Raw)
 
 #endif // ENABLE(SUBTLE_CRYPTO)

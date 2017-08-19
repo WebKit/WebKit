@@ -33,6 +33,9 @@
 #include "CryptoKeyRSAComponents.h"
 #include "GCryptUtilities.h"
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <heap/HeapInlines.h>
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
 #include <pal/crypto/tasn1/Utilities.h>
@@ -619,15 +622,25 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
     return WTFMove(result.value());
 }
 
-std::unique_ptr<KeyAlgorithm> CryptoKeyRSA::buildAlgorithm() const
+auto CryptoKeyRSA::algorithm() const -> KeyAlgorithm
 {
-    String name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
-    size_t modulusLength = getRSAModulusLength(m_platformKey);
-    Vector<uint8_t> publicExponent = getRSAKeyParameter(m_platformKey, "e");
+    auto modulusLength = getRSAModulusLength(m_platformKey);
+    auto publicExponent = getRSAKeyParameter(m_platformKey, "e");
 
-    if (m_restrictedToSpecificHash)
-        return std::make_unique<RsaHashedKeyAlgorithm>(name, modulusLength, WTFMove(publicExponent), CryptoAlgorithmRegistry::singleton().name(m_hash));
-    return std::make_unique<RsaKeyAlgorithm>(name, modulusLength, WTFMove(publicExponent));
+    if (m_restrictedToSpecificHash) {
+        CryptoRsaHashedKeyAlgorithm result;
+        result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
+        result.modulusLength = modulusLength;
+        result.publicExponent = Uint8Array::create(publicExponent.data(), publicExponent.size());
+        result.hash.name = CryptoAlgorithmRegistry::singleton().name(m_hash);
+        return result;
+    }
+
+    CryptoRsaKeyAlgorithm result;
+    result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
+    result.modulusLength = modulusLength;
+    result.publicExponent = Uint8Array::create(publicExponent.data(), publicExponent.size());
+    return result;
 }
 
 std::unique_ptr<CryptoKeyRSAComponents> CryptoKeyRSA::exportData() const

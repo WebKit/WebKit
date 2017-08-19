@@ -35,29 +35,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmParameters;
-
 struct JsonWebKey;
-
-class HmacKeyAlgorithm final : public KeyAlgorithm {
-public:
-    HmacKeyAlgorithm(const String& name, const String& hash, size_t length)
-        : KeyAlgorithm(name)
-        , m_hash(hash)
-        , m_length(length)
-    {
-    }
-
-    KeyAlgorithmClass keyAlgorithmClass() const final { return KeyAlgorithmClass::HMAC; }
-
-    const String& hash() const { return m_hash; }
-    size_t length() const { return m_length; }
-
-    CryptoHmacKeyAlgorithm dictionary() const;
-
-private:
-    String m_hash;
-    size_t m_length;
-};
 
 class CryptoKeyHMAC final : public CryptoKey {
 public:
@@ -85,7 +63,7 @@ private:
     CryptoKeyHMAC(const Vector<uint8_t>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap);
     CryptoKeyHMAC(Vector<uint8_t>&& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsageBitmap);
 
-    std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
+    KeyAlgorithm algorithm() const final;
 
     CryptoAlgorithmIdentifier m_hash;
     Vector<uint8_t> m_key;
@@ -94,7 +72,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyHMAC, CryptoKeyClass::HMAC)
-
-SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(HmacKeyAlgorithm, KeyAlgorithmClass::HMAC)
 
 #endif // ENABLE(SUBTLE_CRYPTO)

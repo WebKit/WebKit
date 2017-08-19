@@ -51,45 +51,6 @@ class ScriptExecutionContext;
 struct CryptoKeyPair;
 struct JsonWebKey;
 
-class RsaKeyAlgorithm : public KeyAlgorithm {
-public:
-    RsaKeyAlgorithm(const String& name, size_t modulusLength, Vector<uint8_t>&& publicExponent)
-        : KeyAlgorithm(name)
-        , m_modulusLength(modulusLength)
-        , m_publicExponent(WTFMove(publicExponent))
-    {
-    }
-
-    KeyAlgorithmClass keyAlgorithmClass() const override { return KeyAlgorithmClass::RSA; }
-
-    size_t modulusLength() const { return m_modulusLength; }
-    const Vector<uint8_t>& publicExponent() const { return m_publicExponent; }
-
-    CryptoRsaKeyAlgorithm dictionary() const;
-
-private:
-    size_t m_modulusLength;
-    Vector<uint8_t> m_publicExponent;
-};
-
-class RsaHashedKeyAlgorithm final : public RsaKeyAlgorithm {
-public:
-    RsaHashedKeyAlgorithm(const String& name, size_t modulusLength, Vector<uint8_t>&& publicExponent, const String& hash)
-        : RsaKeyAlgorithm(name, modulusLength, WTFMove(publicExponent))
-        , m_hash(hash)
-    {
-    }
-
-    KeyAlgorithmClass keyAlgorithmClass() const final { return KeyAlgorithmClass::HRSA; }
-
-    const String& hash() const { return m_hash; }
-
-    CryptoRsaHashedKeyAlgorithm dictionary() const;
-
-private:
-    String m_hash;
-};
-
 class CryptoKeyRSA final : public CryptoKey {
 public:
     static Ref<CryptoKeyRSA> create(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmIdentifier hash, bool hasHash, CryptoKeyType type, PlatformRSAKey platformKey, bool extractable, CryptoKeyUsageBitmap usage)
@@ -124,7 +85,7 @@ private:
 
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::RSA; }
 
-    std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
+    KeyAlgorithm algorithm() const final;
 
     PlatformRSAKey m_platformKey;
 
@@ -135,9 +96,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyRSA, CryptoKeyClass::RSA)
-
-SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(RsaKeyAlgorithm, KeyAlgorithmClass::RSA)
-
-SPECIALIZE_TYPE_TRAITS_KEY_ALGORITHM(RsaHashedKeyAlgorithm, KeyAlgorithmClass::HRSA)
 
 #endif // ENABLE(SUBTLE_CRYPTO)

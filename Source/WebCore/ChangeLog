@@ -1,5 +1,64 @@
 2017-08-19  Sam Weinig  <sam@webkit.org>
 
+        [WebCrypto] Remove the KeyAlgorithm type hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=175750
+
+        Reviewed by Chris Dumez.
+
+        Removes the unnecessary indirection that existed to generate a
+        KeyAlgorithm dictionary (or rather, one of its derived dictionaries)
+        for a CryptoKey. We were calling the virtual buildAlgorithm(), which
+        return a std::unique_ptr<KeyAlgorithm>, which we then casted to the 
+        correct derived class and called dictionary() on. This can now be
+        simplified by making each CryptoKey derived class override a function
+        that returns the KeyAlgorithm variant.
+
+        * crypto/CryptoKey.cpp:
+        (WebCore::CryptoKey::algorithm const): Deleted.
+        * crypto/CryptoKey.h:
+        (WebCore::CryptoKey::extractable const):
+        (WebCore::KeyAlgorithm::~KeyAlgorithm): Deleted.
+        (WebCore::KeyAlgorithm::name const): Deleted.
+        (WebCore::KeyAlgorithm::KeyAlgorithm): Deleted.
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::algorithm const):
+        (WebCore::CryptoKeyRSA::buildAlgorithm const): Deleted.
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::algorithm const):
+        (WebCore::AesKeyAlgorithm::dictionary const): Deleted.
+        (WebCore::CryptoKeyAES::buildAlgorithm const): Deleted.
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyEC.cpp:
+        (WebCore::CryptoKeyEC::algorithm const):
+        (WebCore::EcKeyAlgorithm::dictionary const): Deleted.
+        (WebCore::CryptoKeyEC::buildAlgorithm const): Deleted.
+        * crypto/keys/CryptoKeyEC.h:
+        (WebCore::EcKeyAlgorithm::EcKeyAlgorithm): Deleted.
+        (WebCore::EcKeyAlgorithm::namedCurve const): Deleted.
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        (WebCore::CryptoKeyHMAC::algorithm const):
+        (WebCore::HmacKeyAlgorithm::dictionary const): Deleted.
+        (WebCore::CryptoKeyHMAC::buildAlgorithm const): Deleted.
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/keys/CryptoKeyRSA.cpp:
+        (WebCore::RsaKeyAlgorithm::dictionary const): Deleted.
+        (WebCore::RsaHashedKeyAlgorithm::dictionary const): Deleted.
+        * crypto/keys/CryptoKeyRSA.h:
+        (WebCore::RsaKeyAlgorithm::RsaKeyAlgorithm): Deleted.
+        (WebCore::RsaKeyAlgorithm::modulusLength const): Deleted.
+        (WebCore::RsaKeyAlgorithm::publicExponent const): Deleted.
+        * crypto/keys/CryptoKeyRaw.cpp:
+        (WebCore::CryptoKeyRaw::algorithm const):
+        (WebCore::RawKeyAlgorithm::dictionary const): Deleted.
+        (WebCore::CryptoKeyRaw::buildAlgorithm const): Deleted.
+        * crypto/keys/CryptoKeyRaw.h:
+        (WebCore::RawKeyAlgorithm::RawKeyAlgorithm): Deleted.
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::algorithm const):
+        (WebCore::CryptoKeyRSA::buildAlgorithm const): Deleted.
+
+2017-08-19  Sam Weinig  <sam@webkit.org>
+
         [Mac] Change uint8_t* to Vector<uint8_t> type in all crypto algorithm implementation
         https://bugs.webkit.org/show_bug.cgi?id=164939
 

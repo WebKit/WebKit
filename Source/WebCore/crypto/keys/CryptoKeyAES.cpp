@@ -37,14 +37,6 @@
 
 namespace WebCore {
 
-CryptoAesKeyAlgorithm AesKeyAlgorithm::dictionary() const
-{
-    CryptoAesKeyAlgorithm result;
-    result.name = this->name();
-    result.length = this->length();
-    return result;
-}
-
 static inline bool lengthIsValid(size_t length)
 {
     return (length == CryptoKeyAES::s_length128) || (length == CryptoKeyAES::s_length192) || (length == CryptoKeyAES::s_length256);
@@ -130,9 +122,12 @@ ExceptionOr<size_t> CryptoKeyAES::getKeyLength(const CryptoAlgorithmParameters& 
     return aesParameters.length;
 }
 
-std::unique_ptr<KeyAlgorithm> CryptoKeyAES::buildAlgorithm() const
+auto CryptoKeyAES::algorithm() const -> KeyAlgorithm
 {
-    return std::make_unique<AesKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()), m_key.size() * 8);
+    CryptoAesKeyAlgorithm result;
+    result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
+    result.length = m_key.size() * 8;
+    return result;
 }
 
 } // namespace WebCore
