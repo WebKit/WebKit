@@ -1,3 +1,9 @@
+2017-08-18  Devin Rousso  <webkit@devinrousso.com>
+
+        Unreviewed, change my email.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-08-18  Jonathan Bedard  <jbedard@apple.com>
 
         Fix leak-checking for iOS Simulators
