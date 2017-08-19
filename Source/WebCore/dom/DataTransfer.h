@@ -41,7 +41,7 @@ class Pasteboard;
 class DataTransfer : public RefCounted<DataTransfer> {
 public:
     // https://html.spec.whatwg.org/multipage/dnd.html#drag-data-store-mode
-    enum class StoreMode { Invalid, DragImageWritable, ReadWrite, Readonly, Protected };
+    enum class StoreMode { Invalid, ReadWrite, Readonly, Protected };
 
     static Ref<DataTransfer> createForCopyAndPaste(StoreMode);
     static Ref<DataTransfer> createForInputEvent(const String& plainText, const String& htmlText);
@@ -68,11 +68,6 @@ public:
     void setDragImage(Element*, int x, int y);
 
     void makeInvalidForSecurity() { m_storeMode = StoreMode::Invalid; }
-    void makeDragImageWritable()
-    {
-        ASSERT(m_storeMode != StoreMode::Invalid);
-        m_storeMode = StoreMode::DragImageWritable;
-    }
 
     bool canReadTypes() const;
     bool canReadData() const;
@@ -102,10 +97,6 @@ public:
 private:
     enum class Type { CopyAndPaste, DragAndDropData, DragAndDropFiles, InputEvent };
     DataTransfer(StoreMode, std::unique_ptr<Pasteboard>, Type = Type::CopyAndPaste);
-
-#if ENABLE(DRAG_SUPPORT)
-    bool canSetDragImage() const;
-#endif
 
     StoreMode m_storeMode;
     std::unique_ptr<Pasteboard> m_pasteboard;

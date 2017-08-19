@@ -3683,9 +3683,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         m_mouseDownMayStartDrag = dispatchDragSrcEvent(eventNames().dragstartEvent, m_mouseDown)
             && !m_frame.selection().selection().isInPasswordField();
 
-        // Invalidate dataTransfer here against anymore pasteboard writing for security. The drag
-        // image can still be changed as we drag, but not the pasteboard data.
-        dragState().dataTransfer->makeDragImageWritable();
+        dragState().dataTransfer->makeInvalidForSecurity();
 
         if (m_mouseDownMayStartDrag) {
             // Gather values from DHTML element, if it set any.

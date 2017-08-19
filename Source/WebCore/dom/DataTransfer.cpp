@@ -246,18 +246,9 @@ Ref<DataTransfer> DataTransfer::createForDrop(StoreMode accessMode, const DragDa
     return adoptRef(*new DataTransfer(accessMode, Pasteboard::createForDragAndDrop(dragData), type));
 }
 
-bool DataTransfer::canSetDragImage() const
-{
-    // Note that the spec doesn't actually allow drag image modification outside the dragstart
-    // event. This capability is maintained for backwards compatiblity for ports that have
-    // supported this in the past. On many ports, attempting to set a drag image outside the
-    // dragstart operation is a no-op anyway.
-    return m_forDrag && (m_storeMode == StoreMode::DragImageWritable || m_storeMode == StoreMode::ReadWrite);
-}
-
 void DataTransfer::setDragImage(Element* element, int x, int y)
 {
-    if (!canSetDragImage())
+    if (!m_forDrag || !canWriteData())
         return;
 
     CachedImage* image = nullptr;
