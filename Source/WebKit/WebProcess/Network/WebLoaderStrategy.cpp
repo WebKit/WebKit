@@ -353,7 +353,7 @@ void WebLoaderStrategy::networkProcessCrashed()
 
     auto pingLoadCompletionHandlers = WTFMove(m_pingLoadCompletionHandlers);
     for (auto& pingLoadCompletionHandler : pingLoadCompletionHandlers.values())
-        pingLoadCompletionHandler();
+        pingLoadCompletionHandler(internalError(URL()));
 }
 
 void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, unsigned long resourceLoadIdentifier, const ResourceRequest& request, StoredCredentials storedCredentials, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
@@ -396,13 +396,13 @@ static uint64_t generatePingLoadIdentifier()
     return ++identifier;
 }
 
-void WebLoaderStrategy::startPingLoad(NetworkingContext* networkingContext, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy* contentSecurityPolicy, const FetchOptions& options, WTF::Function<void()>&& completionHandler)
+void WebLoaderStrategy::startPingLoad(NetworkingContext* networkingContext, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy* contentSecurityPolicy, const FetchOptions& options, PingLoadCompletionHandler&& completionHandler)
 {
     // It's possible that call to createPingHandle might be made during initial empty Document creation before a NetworkingContext exists.
     // It is not clear that we should send ping loads during that process anyways.
     if (!networkingContext) {
         if (completionHandler)
-            completionHandler();
+            completionHandler(internalError(request.url()));
         return;
     }
 
@@ -429,10 +429,10 @@ void WebLoaderStrategy::startPingLoad(NetworkingContext* networkingContext, Reso
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing(WTFMove(loadParameters), originalRequestHeaders), 0);
 }
 
-void WebLoaderStrategy::didFinishPingLoad(uint64_t pingLoadIdentifier)
+void WebLoaderStrategy::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceError&& error)
 {
     if (auto completionHandler = m_pingLoadCompletionHandlers.take(pingLoadIdentifier))
-        completionHandler();
+        completionHandler(WTFMove(error));
 }
 
 void WebLoaderStrategy::storeDerivedDataToCache(const SHA1::Digest& bodyHash, const String& type, const String& partition, WebCore::SharedBuffer& data)

@@ -49,7 +49,7 @@
         var target = RESOURCES_DIR + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
 
         assert_true(navigator.sendBeacon(target, createPayload(expectedQuota)), "Beacon with a body at the Quota Limit should succeed.");
-        assert_false(navigator.sendBeacon(target, createPayload(1)), "Second beacon should not be sent because we reached the quota");
+        assert_false(navigator.sendBeacon("/", createPayload(1)), "Second beacon should not be sent because we reached the quota");
         return waitForBeacon(id).then(function() {
             assert_true(navigator.sendBeacon(target, createPayload(1)), "Allocated quota should be returned once the beacon is no longer in flight");
         });

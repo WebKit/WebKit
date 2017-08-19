@@ -274,8 +274,13 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
             auto* contentSecurityPolicy = document && !document->shouldBypassMainWorldContentSecurityPolicy() ? document->contentSecurityPolicy() : nullptr;
             ASSERT(m_originalRequestHeaders);
             CachedResourceHandle<CachedResource> protectedThis(this);
-            platformStrategies()->loaderStrategy()->startPingLoad(frame.loader().networkingContext(), request, *m_originalRequestHeaders, *m_origin, contentSecurityPolicy, m_options, [this, protectedThis = WTFMove(protectedThis)] {
-                finishLoading(nullptr);
+            platformStrategies()->loaderStrategy()->startPingLoad(frame.loader().networkingContext(), request, *m_originalRequestHeaders, *m_origin, contentSecurityPolicy, m_options, [this, protectedThis = WTFMove(protectedThis)] (const ResourceError& error) {
+                if (error.isNull())
+                    finishLoading(nullptr);
+                else {
+                    setResourceError(error);
+                    this->error(LoadError);
+                }
             });
             return;
         }

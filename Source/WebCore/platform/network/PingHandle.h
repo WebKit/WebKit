@@ -43,8 +43,9 @@ public:
         No,
     };
     
-    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, UsesAsyncCallbacks useAsyncCallbacks, bool shouldFollowRedirects, WTF::Function<void()>&& completionHandler)
-        : m_timeoutTimer(*this, &PingHandle::timeoutTimerFired)
+    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, UsesAsyncCallbacks useAsyncCallbacks, bool shouldFollowRedirects, WTF::Function<void(const ResourceError&)>&& completionHandler)
+        : m_currentRequest(request)
+        , m_timeoutTimer(*this, &PingHandle::timeoutTimerFired)
         , m_shouldUseCredentialStorage(shouldUseCredentialStorage)
         , m_shouldFollowRedirects(shouldFollowRedirects)
         , m_usesAsyncCallbacks(useAsyncCallbacks)
@@ -64,25 +65,31 @@ private:
     }
     void willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&&) final
     {
+        m_currentRequest = WTFMove(request);
         if (m_shouldFollowRedirects) {
-            handle->continueWillSendRequest(WTFMove(request));
+            handle->continueWillSendRequest(ResourceRequest { m_currentRequest });
             return;
         }
-        delete this;
+        pingLoadComplete(ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Not allowed to follow redirects"), ResourceError::Type::AccessControl });
     }
-    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) final { delete this; }
-    void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) final { delete this; };
-    void didFinishLoading(ResourceHandle*) final { delete this; }
-    void didFail(ResourceHandle*, const ResourceError&) final { delete this; }
+    void didReceiveResponse(ResourceHandle*, ResourceResponse&&) final { pingLoadComplete(); }
+    void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) final { pingLoadComplete(); }
+    void didFinishLoading(ResourceHandle*) final { pingLoadComplete(); }
+    void didFail(ResourceHandle*, const ResourceError& error) final { pingLoadComplete(error); }
     bool shouldUseCredentialStorage(ResourceHandle*) final { return m_shouldUseCredentialStorage; }
     bool usesAsyncCallbacks() final { return m_usesAsyncCallbacks == UsesAsyncCallbacks::Yes; }
-    void timeoutTimerFired() { delete this; }
+    void timeoutTimerFired() { pingLoadComplete(ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Load timed out"), ResourceError::Type::Timeout }); }
+
+    void pingLoadComplete(const ResourceError& error = { })
+    {
+        if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
+            completionHandler(error);
+        delete this;
+    }
 
     virtual ~PingHandle()
     {
-        if (m_completionHandler)
-            m_completionHandler();
-
+        ASSERT(!m_completionHandler);
         if (m_handle) {
             ASSERT(m_handle->client() == this);
             m_handle->clearClient();
@@ -91,11 +98,12 @@ private:
     }
 
     RefPtr<ResourceHandle> m_handle;
+    ResourceRequest m_currentRequest;
     Timer m_timeoutTimer;
     bool m_shouldUseCredentialStorage;
     bool m_shouldFollowRedirects;
     UsesAsyncCallbacks m_usesAsyncCallbacks;
-    WTF::Function<void()> m_completionHandler;
+    WTF::Function<void(const ResourceError&)> m_completionHandler;
 };
 
 } // namespace WebCore

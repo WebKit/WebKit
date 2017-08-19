@@ -296,9 +296,9 @@ ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::r
     return castCachedResourceTo<CachedRawResource>(requestResource(CachedResource::RawResource, WTFMove(request)));
 }
 
-ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestBeaconResource(CachedResourceRequest&& request)
+ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::requestBeaconResource(CachedResourceRequest&& request)
 {
-    return requestResource(CachedResource::Beacon, WTFMove(request));
+    return castCachedResourceTo<CachedRawResource>(requestResource(CachedResource::Beacon, WTFMove(request)));
 }
 
 ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::requestMainResource(CachedResourceRequest&& request)

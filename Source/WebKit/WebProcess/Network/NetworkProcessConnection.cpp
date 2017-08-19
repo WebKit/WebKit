@@ -135,9 +135,9 @@ void NetworkProcessConnection::didWriteBlobsToTemporaryFiles(uint64_t requestIde
         handler(filenames);
 }
 
-void NetworkProcessConnection::didFinishPingLoad(uint64_t pingLoadIdentifier)
+void NetworkProcessConnection::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceError&& error)
 {
-    WebProcess::singleton().webLoaderStrategy().didFinishPingLoad(pingLoadIdentifier);
+    WebProcess::singleton().webLoaderStrategy().didFinishPingLoad(pingLoadIdentifier, WTFMove(error));
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)

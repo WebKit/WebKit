@@ -25,18 +25,37 @@
 
 #pragma once
 
+#include "CachedRawResourceClient.h"
+#include "CachedResourceHandle.h"
 #include "ExceptionOr.h"
 #include "FetchBody.h"
+#include "Supplementable.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
+class CachedRawResource;
 class Document;
 class Navigator;
+class ResourceError;
 
-class NavigatorBeacon {
+class NavigatorBeacon final : public Supplement<Navigator>, private CachedRawResourceClient {
 public:
+    explicit NavigatorBeacon(Navigator&);
+    ~NavigatorBeacon();
     static ExceptionOr<bool> sendBeacon(Navigator&, Document&, const String& url, std::optional<FetchBody::Init>&&);
+
+private:
+    ExceptionOr<bool> sendBeacon(Document&, const String& url, std::optional<FetchBody::Init>&&);
+
+    static NavigatorBeacon* from(Navigator&);
+    static const char* supplementName();
+
+    void notifyFinished(CachedResource&) final;
+    void logError(const ResourceError&);
+
+    Navigator& m_navigator;
+    Vector<CachedResourceHandle<CachedRawResource>> m_inflightBeacons;
 };
 
 }

@@ -1,5 +1,43 @@
 2017-08-18  Chris Dumez  <cdumez@apple.com>
 
+        [Beacon] Improve error reporting
+        https://bugs.webkit.org/show_bug.cgi?id=175723
+
+        Reviewed by Darin Adler.
+
+        Have Ping loads such as beacons report errors via their completion handler.
+        The Beacon API is using this error to log a console message when beacon loads
+        fail, provided that the page is still alive.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        (WebKit::NetworkConnectionToWebProcess::didFinishPingLoad):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::~PingLoad):
+        (WebKit::PingLoad::didFinish):
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        (WebKit::PingLoad::didReceiveChallenge):
+        (WebKit::PingLoad::didReceiveResponseNetworkSession):
+        (WebKit::PingLoad::didCompleteWithError):
+        (WebKit::PingLoad::wasBlocked):
+        (WebKit::PingLoad::cannotShowURL):
+        (WebKit::PingLoad::timeoutTimerFired):
+        (WebKit::PingLoad::currentRequest const):
+        (WebKit::PingLoad::makeCrossOriginAccessRequestWithPreflight):
+        * NetworkProcess/PingLoad.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didFinishPingLoad):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::networkProcessCrashed):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::didFinishPingLoad):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
+2017-08-18  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION (r220601): Crash when closing google doc after switching the order of tabs in safari
         https://bugs.webkit.org/show_bug.cgi?id=175721
         <rdar://problem/33928369>

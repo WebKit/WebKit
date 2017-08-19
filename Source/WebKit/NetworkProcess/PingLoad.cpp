@@ -33,6 +33,7 @@
 #include "NetworkCORSPreflightChecker.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "SessionTracker.h"
+#include "WebErrors.h"
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
@@ -66,8 +67,6 @@ PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, HTTPHeaderMap&& o
 
 PingLoad::~PingLoad()
 {
-    m_connection->didFinishPingLoad(m_parameters.identifier);
-
     if (m_redirectHandler)
         m_redirectHandler({ });
 
@@ -76,6 +75,12 @@ PingLoad::~PingLoad()
         m_task->clearClient();
         m_task->cancel();
     }
+}
+
+void PingLoad::didFinish(const ResourceError& error)
+{
+    m_connection->didFinishPingLoad(m_parameters.identifier, error);
+    delete this;
 }
 
 void PingLoad::loadRequest(ResourceRequest&& request)
@@ -97,6 +102,8 @@ SecurityOrigin& PingLoad::securityOrigin() const
 
 void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
+    m_lastRedirectionRequest = request;
+
     RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection - shouldFollowRedirects? %d", m_parameters.shouldFollowRedirects);
     if (!m_parameters.shouldFollowRedirects) {
         completionHandler({ });
@@ -149,14 +156,14 @@ void PingLoad::didReceiveChallenge(const AuthenticationChallenge&, ChallengeComp
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
     completionHandler(AuthenticationChallengeDisposition::Cancel, { });
-    delete this;
+    didFinish(ResourceError { String(), 0, currentRequest().url(), ASCIILiteral("Failed HTTP authentication"), ResourceError::Type::AccessControl });
 }
 
 void PingLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponseNetworkSession - httpStatusCode: %d", response.httpStatusCode());
     completionHandler(PolicyAction::PolicyIgnore);
-    delete this;
+    didFinish();
 }
 
 void PingLoad::didReceiveData(Ref<SharedBuffer>&&)
@@ -171,7 +178,8 @@ void PingLoad::didCompleteWithError(const ResourceError& error, const NetworkLoa
         RELEASE_LOG_IF_ALLOWED("didComplete");
     else
         RELEASE_LOG_IF_ALLOWED("didCompleteWithError, error_code: %d", error.errorCode());
-    delete this;
+
+    didFinish(error);
 }
 
 void PingLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
@@ -181,19 +189,27 @@ void PingLoad::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedT
 void PingLoad::wasBlocked()
 {
     RELEASE_LOG_IF_ALLOWED("wasBlocked");
-    delete this;
+    didFinish(blockedError(currentRequest()));
 }
 
 void PingLoad::cannotShowURL()
 {
     RELEASE_LOG_IF_ALLOWED("cannotShowURL");
-    delete this;
+    didFinish(cannotShowURLError(currentRequest()));
 }
 
 void PingLoad::timeoutTimerFired()
 {
     RELEASE_LOG_IF_ALLOWED("timeoutTimerFired");
-    delete this;
+    didFinish(ResourceError { String(), 0, currentRequest().url(), ASCIILiteral("Load timed out"), ResourceError::Type::Timeout });
+}
+
+const ResourceRequest& PingLoad::currentRequest() const
+{
+    if (m_lastRedirectionRequest)
+        return *m_lastRedirectionRequest;
+
+    return m_parameters.request;
 }
 
 bool PingLoad::isAllowedRedirect(const URL& url) const
@@ -262,7 +278,7 @@ void PingLoad::makeCrossOriginAccessRequestWithPreflight(ResourceRequest&& reque
         if (result == NetworkCORSPreflightChecker::Result::Success)
             preflightSuccess(ResourceRequest { corsPreflightChecker->originalRequest() });
         else
-            delete this;
+            didFinish(ResourceError { String(), 0, corsPreflightChecker->originalRequest().url(), ASCIILiteral("CORS preflight failed"), ResourceError::Type::AccessControl });
     });
     m_corsPreflightChecker->startPreflight();
 }

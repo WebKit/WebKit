@@ -1,3 +1,33 @@
+2017-08-18  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon] Improve error reporting
+        https://bugs.webkit.org/show_bug.cgi?id=175723
+
+        Reviewed by Darin Adler.
+
+        Have Ping loads such as beacons report errors via their completion handler.
+        The Beacon API is using this error to log a console message when beacon loads
+        fail, provided that the page is still alive.
+
+        Test: http/wpt/beacon/beacon-async-error-logging.html
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::NavigatorBeacon):
+        (WebCore::NavigatorBeacon::~NavigatorBeacon):
+        (WebCore::NavigatorBeacon::from):
+        (WebCore::NavigatorBeacon::supplementName):
+        (WebCore::NavigatorBeacon::notifyFinished):
+        (WebCore::NavigatorBeacon::logError):
+        (WebCore::NavigatorBeacon::sendBeacon):
+        * Modules/beacon/NavigatorBeacon.h:
+        * loader/LoaderStrategy.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestBeaconResource):
+        * loader/cache/CachedResourceLoader.h:
+        * platform/network/PingHandle.h:
+
 2017-08-18  Sam Weinig  <sam@webkit.org>
 
         Remove the deprecated WebKitSubtleCrypto interface

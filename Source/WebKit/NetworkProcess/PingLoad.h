@@ -29,6 +29,7 @@
 
 #include "NetworkDataTask.h"
 #include "NetworkResourceLoadParameters.h"
+#include <WebCore/ResourceError.h>
 
 namespace WebCore {
 class ContentSecurityPolicy;
@@ -68,6 +69,9 @@ private:
     void preflightSuccess(WebCore::ResourceRequest&&);
 
     WebCore::SecurityOrigin& securityOrigin() const;
+
+    const WebCore::ResourceRequest& currentRequest() const;
+    void didFinish(const WebCore::ResourceError& = { });
     
     NetworkResourceLoadParameters m_parameters;
     WebCore::HTTPHeaderMap m_originalRequestHeaders; // Needed for CORS checks.
@@ -80,6 +84,7 @@ private:
     bool m_isSimpleRequest { true };
     RedirectCompletionHandler m_redirectHandler;
     mutable std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;
+    std::optional<WebCore::ResourceRequest> m_lastRedirectionRequest;
 };
 
 }

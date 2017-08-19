@@ -59,7 +59,7 @@ public:
     void suspendPendingRequests() final;
     void resumePendingRequests() final;
 
-    void startPingLoad(WebCore::NetworkingContext*, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap&, Ref<WebCore::SecurityOrigin>&& sourceOrigin, WebCore::ContentSecurityPolicy*, const WebCore::FetchOptions&, WTF::Function<void()>&& completionHandler) final;
+    void startPingLoad(WebCore::NetworkingContext*, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap&, Ref<WebCore::SecurityOrigin>&& sourceOrigin, WebCore::ContentSecurityPolicy*, const WebCore::FetchOptions&, PingLoadCompletionHandler&&) final;
 
     void storeDerivedDataToCache(const SHA1::Digest&, const String&, const String&, WebCore::SharedBuffer&) final { }
 

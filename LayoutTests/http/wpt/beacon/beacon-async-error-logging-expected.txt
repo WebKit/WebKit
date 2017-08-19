@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Beacon API cannot load http://invalid.localhost/. A server with the specified hostname could not be found.
+
+PASS Should log an error message in the console 
+

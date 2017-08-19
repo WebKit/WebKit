@@ -83,7 +83,7 @@ public:
     ResourceErrorOr<CachedResourceHandle<CachedFont>> requestFont(CachedResourceRequest&&, bool isSVG);
     ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestMedia(CachedResourceRequest&&);
     ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestIcon(CachedResourceRequest&&);
-    ResourceErrorOr<CachedResourceHandle<CachedResource>> requestBeaconResource(CachedResourceRequest&&);
+    ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestBeaconResource(CachedResourceRequest&&);
     ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestRawResource(CachedResourceRequest&&);
     ResourceErrorOr<CachedResourceHandle<CachedRawResource>> requestMainResource(CachedResourceRequest&&);
     ResourceErrorOr<CachedResourceHandle<CachedSVGDocument>> requestSVGDocument(CachedResourceRequest&&);

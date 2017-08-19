@@ -59,8 +59,8 @@ public:
     void suspendPendingRequests() final;
     void resumePendingRequests() final;
 
-    void startPingLoad(WebCore::NetworkingContext*, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap& originalRequestHeaders, Ref<WebCore::SecurityOrigin>&& sourceOrigin, WebCore::ContentSecurityPolicy*, const WebCore::FetchOptions&, WTF::Function<void()>&& completionHandler) final;
-    void didFinishPingLoad(uint64_t pingLoadIdentifier);
+    void startPingLoad(WebCore::NetworkingContext*, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap& originalRequestHeaders, Ref<WebCore::SecurityOrigin>&& sourceOrigin, WebCore::ContentSecurityPolicy*, const WebCore::FetchOptions&, PingLoadCompletionHandler&&) final;
+    void didFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError&&);
 
     void storeDerivedDataToCache(const SHA1::Digest& bodyHash, const String& type, const String& partition, WebCore::SharedBuffer&) final;
 
@@ -85,7 +85,7 @@ private:
     
     HashMap<unsigned long, RefPtr<WebResourceLoader>> m_webResourceLoaders;
     HashMap<unsigned long, WebURLSchemeTaskProxy*> m_urlSchemeTasks;
-    HashMap<unsigned long, WTF::Function<void()>> m_pingLoadCompletionHandlers;
+    HashMap<unsigned long, PingLoadCompletionHandler> m_pingLoadCompletionHandlers;
 };
 
 } // namespace WebKit

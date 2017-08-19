@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+    async_test(function(t) {
+        let invalidHost = "http://invalid.localhost";
+        assert_true(navigator.sendBeacon(invalidHost, 'test'), "sendBeacon should return true");
+        setTimeout(function() {
+            t.done();
+        }, 500);
+    }, "Should log an error message in the console");
+</script>
+</body>
+</html>

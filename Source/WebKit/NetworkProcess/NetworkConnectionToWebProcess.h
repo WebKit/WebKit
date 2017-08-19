@@ -38,6 +38,7 @@
 namespace WebCore {
 class BlobDataFileReference;
 class HTTPHeaderMap;
+class ResourceError;
 class ResourceRequest;
 }
 
@@ -61,7 +62,7 @@ public:
     IPC::Connection& connection() { return m_connection.get(); }
 
     void didCleanupResourceLoader(NetworkResourceLoader&);
-    void didFinishPingLoad(uint64_t pingLoadIdentifier);
+    void didFinishPingLoad(uint64_t pingLoadIdentifier, const WebCore::ResourceError&);
 
     bool captureExtraNetworkLoadMetricsEnabled() const { return m_captureExtraNetworkLoadMetricsEnabled; }
 
