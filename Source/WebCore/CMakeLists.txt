@@ -1334,11 +1334,10 @@ set(WebCore_SOURCES
     crypto/algorithms/CryptoAlgorithmSHA512.cpp
 
     crypto/keys/CryptoKeyAES.cpp
-    crypto/keys/CryptoKeyDataOctetSequence.cpp
-    crypto/keys/CryptoKeyDataRSAComponents.cpp
     crypto/keys/CryptoKeyEC.cpp
     crypto/keys/CryptoKeyHMAC.cpp
     crypto/keys/CryptoKeyRSA.cpp
+    crypto/keys/CryptoKeyRSAComponents.cpp
     crypto/keys/CryptoKeyRaw.cpp
 
     css/BasicShapeFunctions.cpp

@@ -1,3 +1,72 @@
+2017-08-18  Sam Weinig  <sam@webkit.org>
+
+        [WebCrypto] Get rid of CryptoKeyData class and all its subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=169806
+
+        Reviewed by Chris Dumez.
+
+        - Replaces the CryptoKeyData type hierarchy 
+
+            CryptoKeyData
+              - CryptoKeyDataOctetSequence
+              - CryptoKeyDataRSAComponents
+
+          with the renamed CryptoKeyRSAComponents.
+
+        - Removes pure virtual exportData function on CryptoKey, and all
+          the implementations except the one on CryptoKeyRSA, which now is
+          non-virtual, and returns a CryptoKeyRSAComponents. Update the one
+          external caller, SerializedScriptValue, to handle this.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/SerializedScriptValue.cpp:
+        * crypto/CryptoAlgorithm.h:
+        * crypto/CryptoKey.h:
+        * crypto/CryptoKeyData.h: Removed.
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::create):
+        (WebCore::CryptoKeyRSA::exportData const):
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::exportData const): Deleted.
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyDataOctetSequence.cpp: Removed.
+        * crypto/keys/CryptoKeyDataOctetSequence.h: Removed.
+        * crypto/keys/CryptoKeyDataRSAComponents.cpp: Removed.
+        * crypto/keys/CryptoKeyDataRSAComponents.h: Removed.
+        * crypto/keys/CryptoKeyEC.cpp:
+        (WebCore::CryptoKeyEC::exportData const): Deleted.
+        * crypto/keys/CryptoKeyEC.h:
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        (WebCore::CryptoKeyHMAC::exportData const): Deleted.
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/keys/CryptoKeyRSA.cpp:
+        (WebCore::CryptoKeyRSA::importJwk):
+        (WebCore::CryptoKeyRSA::exportJwk const):
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/keys/CryptoKeyRSAComponents.cpp: Copied from crypto/keys/CryptoKeyDataRSAComponents.cpp.
+        (WebCore::CryptoKeyRSAComponents::CryptoKeyRSAComponents):
+        (WebCore::CryptoKeyRSAComponents::~CryptoKeyRSAComponents):
+        (WebCore::CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents): Deleted.
+        (WebCore::CryptoKeyDataRSAComponents::~CryptoKeyDataRSAComponents): Deleted.
+        * crypto/keys/CryptoKeyRSAComponents.h: Copied from crypto/keys/CryptoKeyDataRSAComponents.h.
+        (WebCore::CryptoKeyRSAComponents::createPublic):
+        (WebCore::CryptoKeyRSAComponents::createPrivate):
+        (WebCore::CryptoKeyRSAComponents::createPrivateWithAdditionalData):
+        * crypto/keys/CryptoKeyRaw.cpp:
+        (WebCore::CryptoKeyRaw::exportData const): Deleted.
+        * crypto/keys/CryptoKeyRaw.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::getPrivateKeyComponents):
+        (WebCore::CryptoKeyRSA::create):
+        (WebCore::CryptoKeyRSA::exportData const):
+
 2017-08-18  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Add support for being loaded responses

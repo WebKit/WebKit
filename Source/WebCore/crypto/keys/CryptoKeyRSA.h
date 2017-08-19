@@ -44,7 +44,7 @@ typedef gcry_sexp* PlatformRSAKey;
 
 namespace WebCore {
 
-class CryptoKeyDataRSAComponents;
+class CryptoKeyRSAComponents;
 class PromiseWrapper;
 class ScriptExecutionContext;
 
@@ -96,7 +96,7 @@ public:
     {
         return adoptRef(*new CryptoKeyRSA(identifier, hash, hasHash, type, platformKey, extractable, usage));
     }
-    static RefPtr<CryptoKeyRSA> create(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyDataRSAComponents&, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyRSA> create(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyRSAComponents&, bool extractable, CryptoKeyUsageBitmap);
     virtual ~CryptoKeyRSA();
 
     bool isRestrictedToHash(CryptoAlgorithmIdentifier&) const;
@@ -115,6 +115,8 @@ public:
     ExceptionOr<Vector<uint8_t>> exportSpki() const;
     ExceptionOr<Vector<uint8_t>> exportPkcs8() const;
 
+    std::unique_ptr<CryptoKeyRSAComponents> exportData() const;
+
     CryptoAlgorithmIdentifier hashAlgorithmIdentifier() const { return m_hash; }
 
 private:
@@ -123,7 +125,6 @@ private:
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::RSA; }
 
     std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
-    std::unique_ptr<CryptoKeyData> exportData() const final;
 
     PlatformRSAKey m_platformKey;
 

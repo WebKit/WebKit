@@ -30,11 +30,10 @@
 #include "Blob.h"
 #include "BlobRegistry.h"
 #include "CryptoKeyAES.h"
-#include "CryptoKeyDataOctetSequence.h"
-#include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyEC.h"
 #include "CryptoKeyHMAC.h"
 #include "CryptoKeyRSA.h"
+#include "CryptoKeyRSAComponents.h"
 #include "CryptoKeyRaw.h"
 #include "File.h"
 #include "FileList.h"
@@ -1315,24 +1314,24 @@ private:
         }
     }
 
-    void write(CryptoKeyDataRSAComponents::Type type)
+    void write(CryptoKeyRSAComponents::Type type)
     {
         switch (type) {
-        case CryptoKeyDataRSAComponents::Type::Public:
+        case CryptoKeyRSAComponents::Type::Public:
             write(CryptoKeyAsymmetricTypeSubtag::Public);
             return;
-        case CryptoKeyDataRSAComponents::Type::Private:
+        case CryptoKeyRSAComponents::Type::Private:
             write(CryptoKeyAsymmetricTypeSubtag::Private);
             return;
         }
     }
 
-    void write(const CryptoKeyDataRSAComponents& key)
+    void write(const CryptoKeyRSAComponents& key)
     {
         write(key.type());
         write(key.modulus());
         write(key.exponent());
-        if (key.type() == CryptoKeyDataRSAComponents::Type::Public)
+        if (key.type() == CryptoKeyRSAComponents::Type::Public)
             return;
 
         write(key.privateExponent());
@@ -1427,7 +1426,7 @@ private:
             write(isRestrictedToHash);
             if (isRestrictedToHash)
                 write(hash);
-            write(downcast<CryptoKeyDataRSAComponents>(*key->exportData()));
+            write(*downcast<CryptoKeyRSA>(*key).exportData());
             break;
         }
     }
@@ -2293,7 +2292,7 @@ private:
             return false;
 
         if (type == CryptoKeyAsymmetricTypeSubtag::Public) {
-            auto keyData = CryptoKeyDataRSAComponents::createPublic(modulus, exponent);
+            auto keyData = CryptoKeyRSAComponents::createPublic(modulus, exponent);
             auto key = CryptoKeyRSA::create(algorithm, hash, isRestrictedToHash, *keyData, extractable, usages);
             result = WTFMove(key);
             return true;
@@ -2308,7 +2307,7 @@ private:
             return false;
 
         if (!primeCount) {
-            auto keyData = CryptoKeyDataRSAComponents::createPrivate(modulus, exponent, privateExponent);
+            auto keyData = CryptoKeyRSAComponents::createPrivate(modulus, exponent, privateExponent);
             auto key = CryptoKeyRSA::create(algorithm, hash, isRestrictedToHash, *keyData, extractable, usages);
             result = WTFMove(key);
             return true;
@@ -2317,9 +2316,9 @@ private:
         if (primeCount < 2)
             return false;
 
-        CryptoKeyDataRSAComponents::PrimeInfo firstPrimeInfo;
-        CryptoKeyDataRSAComponents::PrimeInfo secondPrimeInfo;
-        Vector<CryptoKeyDataRSAComponents::PrimeInfo> otherPrimeInfos(primeCount - 2);
+        CryptoKeyRSAComponents::PrimeInfo firstPrimeInfo;
+        CryptoKeyRSAComponents::PrimeInfo secondPrimeInfo;
+        Vector<CryptoKeyRSAComponents::PrimeInfo> otherPrimeInfos(primeCount - 2);
 
         if (!read(firstPrimeInfo.primeFactor))
             return false;
@@ -2340,7 +2339,7 @@ private:
                 return false;
         }
 
-        auto keyData = CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(modulus, exponent, privateExponent, firstPrimeInfo, secondPrimeInfo, otherPrimeInfos);
+        auto keyData = CryptoKeyRSAComponents::createPrivateWithAdditionalData(modulus, exponent, privateExponent, firstPrimeInfo, secondPrimeInfo, otherPrimeInfos);
         auto key = CryptoKeyRSA::create(algorithm, hash, isRestrictedToHash, *keyData, extractable, usages);
         result = WTFMove(key);
         return true;

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoKeyRSA.h"
 
-#include "CryptoKeyDataRSAComponents.h"
+#include "CryptoKeyRSAComponents.h"
 #include "JsonWebKey.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
@@ -78,7 +78,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
         return nullptr;
     if (keyData.d.isNull()) {
         // import public key
-        auto publicKeyComponents = CryptoKeyDataRSAComponents::createPublic(WTFMove(modulus), WTFMove(exponent));
+        auto publicKeyComponents = CryptoKeyRSAComponents::createPublic(WTFMove(modulus), WTFMove(exponent));
         // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
         return CryptoKeyRSA::create(algorithm, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, *publicKeyComponents, extractable, usages);
     }
@@ -88,15 +88,15 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
     if (!WTF::base64URLDecode(keyData.d, privateExponent))
         return nullptr;
     if (keyData.p.isNull() && keyData.q.isNull() && keyData.dp.isNull() && keyData.dp.isNull() && keyData.qi.isNull()) {
-        auto privateKeyComponents = CryptoKeyDataRSAComponents::createPrivate(WTFMove(modulus), WTFMove(exponent), WTFMove(privateExponent));
+        auto privateKeyComponents = CryptoKeyRSAComponents::createPrivate(WTFMove(modulus), WTFMove(exponent), WTFMove(privateExponent));
         // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
         return CryptoKeyRSA::create(algorithm, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
     }
 
     if (keyData.p.isNull() || keyData.q.isNull() || keyData.dp.isNull() || keyData.dq.isNull() || keyData.qi.isNull())
         return nullptr;
-    CryptoKeyDataRSAComponents::PrimeInfo firstPrimeInfo;
-    CryptoKeyDataRSAComponents::PrimeInfo secondPrimeInfo;
+    CryptoKeyRSAComponents::PrimeInfo firstPrimeInfo;
+    CryptoKeyRSAComponents::PrimeInfo secondPrimeInfo;
     if (!WTF::base64URLDecode(keyData.p, firstPrimeInfo.primeFactor))
         return nullptr;
     if (!WTF::base64URLDecode(keyData.dp, firstPrimeInfo.factorCRTExponent))
@@ -108,14 +108,14 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
     if (!WTF::base64URLDecode(keyData.qi, secondPrimeInfo.factorCRTCoefficient))
         return nullptr;
     if (!keyData.oth) {
-        auto privateKeyComponents = CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(WTFMove(modulus), WTFMove(exponent), WTFMove(privateExponent), WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), { });
+        auto privateKeyComponents = CryptoKeyRSAComponents::createPrivateWithAdditionalData(WTFMove(modulus), WTFMove(exponent), WTFMove(privateExponent), WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), { });
         // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
         return CryptoKeyRSA::create(algorithm, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
     }
 
-    Vector<CryptoKeyDataRSAComponents::PrimeInfo> otherPrimeInfos;
+    Vector<CryptoKeyRSAComponents::PrimeInfo> otherPrimeInfos;
     for (auto value : keyData.oth.value()) {
-        CryptoKeyDataRSAComponents::PrimeInfo info;
+        CryptoKeyRSAComponents::PrimeInfo info;
         if (!WTF::base64URLDecode(value.r, info.primeFactor))
             return nullptr;
         if (!WTF::base64URLDecode(value.d, info.factorCRTExponent))
@@ -125,7 +125,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
         otherPrimeInfos.append(info);
     }
 
-    auto privateKeyComponents = CryptoKeyDataRSAComponents::createPrivateWithAdditionalData(WTFMove(modulus), WTFMove(exponent), WTFMove(privateExponent), WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), WTFMove(otherPrimeInfos));
+    auto privateKeyComponents = CryptoKeyRSAComponents::createPrivateWithAdditionalData(WTFMove(modulus), WTFMove(exponent), WTFMove(privateExponent), WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), WTFMove(otherPrimeInfos));
     // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
     return CryptoKeyRSA::create(algorithm, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
 }
@@ -137,29 +137,29 @@ JsonWebKey CryptoKeyRSA::exportJwk() const
     result.key_ops = usages();
     result.ext = extractable();
 
-    auto keyData = exportData();
-    const auto& rsaKeyData = downcast<CryptoKeyDataRSAComponents>(*keyData);
+    auto rsaComponents = exportData();
+
     // public key
-    result.n = base64URLEncode(rsaKeyData.modulus());
-    result.e = base64URLEncode(rsaKeyData.exponent());
-    if (rsaKeyData.type() == CryptoKeyDataRSAComponents::Type::Public)
+    result.n = base64URLEncode(rsaComponents->modulus());
+    result.e = base64URLEncode(rsaComponents->exponent());
+    if (rsaComponents->type() == CryptoKeyRSAComponents::Type::Public)
         return result;
 
     // private key
-    result.d = base64URLEncode(rsaKeyData.privateExponent());
-    if (!rsaKeyData.hasAdditionalPrivateKeyParameters())
+    result.d = base64URLEncode(rsaComponents->privateExponent());
+    if (!rsaComponents->hasAdditionalPrivateKeyParameters())
         return result;
 
-    result.p = base64URLEncode(rsaKeyData.firstPrimeInfo().primeFactor);
-    result.q = base64URLEncode(rsaKeyData.secondPrimeInfo().primeFactor);
-    result.dp = base64URLEncode(rsaKeyData.firstPrimeInfo().factorCRTExponent);
-    result.dq = base64URLEncode(rsaKeyData.secondPrimeInfo().factorCRTExponent);
-    result.qi = base64URLEncode(rsaKeyData.secondPrimeInfo().factorCRTCoefficient);
-    if (rsaKeyData.otherPrimeInfos().isEmpty())
+    result.p = base64URLEncode(rsaComponents->firstPrimeInfo().primeFactor);
+    result.q = base64URLEncode(rsaComponents->secondPrimeInfo().primeFactor);
+    result.dp = base64URLEncode(rsaComponents->firstPrimeInfo().factorCRTExponent);
+    result.dq = base64URLEncode(rsaComponents->secondPrimeInfo().factorCRTExponent);
+    result.qi = base64URLEncode(rsaComponents->secondPrimeInfo().factorCRTCoefficient);
+    if (rsaComponents->otherPrimeInfos().isEmpty())
         return result;
 
     Vector<RsaOtherPrimesInfo> oth;
-    for (auto info : rsaKeyData.otherPrimeInfos()) {
+    for (auto info : rsaComponents->otherPrimeInfos()) {
         RsaOtherPrimesInfo otherInfo;
         otherInfo.r = base64URLEncode(info.primeFactor);
         otherInfo.d = base64URLEncode(info.factorCRTExponent);

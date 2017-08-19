@@ -24,31 +24,28 @@
  */
 
 #include "config.h"
-#include "CryptoKeyDataRSAComponents.h"
+#include "CryptoKeyRSAComponents.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent)
-    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
-    , m_type(Type::Public)
+CryptoKeyRSAComponents::CryptoKeyRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent)
+    : m_type(Type::Public)
     , m_modulus(modulus)
     , m_exponent(exponent)
 {
 }
 
-CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent)
-    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
-    , m_type(Type::Public)
+CryptoKeyRSAComponents::CryptoKeyRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent)
+    : m_type(Type::Public)
     , m_modulus(WTFMove(modulus))
     , m_exponent(WTFMove(exponent))
 {
 }
 
-CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent)
-    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
-    , m_type(Type::Private)
+CryptoKeyRSAComponents::CryptoKeyRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent)
+    : m_type(Type::Private)
     , m_modulus(modulus)
     , m_exponent(exponent)
     , m_privateExponent(privateExponent)
@@ -56,9 +53,8 @@ CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& mo
 {
 }
 
-CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent, Vector<uint8_t>&& privateExponent)
-    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
-    , m_type(Type::Private)
+CryptoKeyRSAComponents::CryptoKeyRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent, Vector<uint8_t>&& privateExponent)
+    : m_type(Type::Private)
     , m_modulus(WTFMove(modulus))
     , m_exponent(WTFMove(exponent))
     , m_privateExponent(WTFMove(privateExponent))
@@ -66,9 +62,8 @@ CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus
 {
 }
 
-CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos)
-    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
-    , m_type(Type::Private)
+CryptoKeyRSAComponents::CryptoKeyRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos)
+    : m_type(Type::Private)
     , m_modulus(modulus)
     , m_exponent(exponent)
     , m_privateExponent(privateExponent)
@@ -79,9 +74,8 @@ CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& mo
 {
 }
 
-CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent, Vector<uint8_t>&& privateExponent, PrimeInfo&& firstPrimeInfo, PrimeInfo&& secondPrimeInfo, Vector<PrimeInfo>&& otherPrimeInfos)
-    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
-    , m_type(Type::Private)
+CryptoKeyRSAComponents::CryptoKeyRSAComponents(Vector<uint8_t>&& modulus, Vector<uint8_t>&& exponent, Vector<uint8_t>&& privateExponent, PrimeInfo&& firstPrimeInfo, PrimeInfo&& secondPrimeInfo, Vector<PrimeInfo>&& otherPrimeInfos)
+    : m_type(Type::Private)
     , m_modulus(WTFMove(modulus))
     , m_exponent(WTFMove(exponent))
     , m_privateExponent(WTFMove(privateExponent))
@@ -92,7 +86,7 @@ CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(Vector<uint8_t>&& modulus
 {
 }
 
-CryptoKeyDataRSAComponents::~CryptoKeyDataRSAComponents()
+CryptoKeyRSAComponents::~CryptoKeyRSAComponents()
 {
 }
 

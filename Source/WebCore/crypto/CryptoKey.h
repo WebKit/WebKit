@@ -46,7 +46,6 @@
 namespace WebCore {
 
 class CryptoAlgorithmDescriptionBuilder;
-class CryptoKeyData;
 
 enum class CryptoKeyClass {
     AES,
@@ -105,8 +104,6 @@ public:
     CryptoKeyUsageBitmap usagesBitmap() const { return m_usages; }
     void setUsagesBitmap(CryptoKeyUsageBitmap usage) { m_usages = usage; };
     bool allows(CryptoKeyUsageBitmap usage) const { return usage == (m_usages & usage); }
-
-    virtual std::unique_ptr<CryptoKeyData> exportData() const = 0;
 
     static Vector<uint8_t> randomData(size_t);
 

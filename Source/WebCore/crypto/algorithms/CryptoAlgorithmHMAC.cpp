@@ -29,7 +29,6 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmHmacKeyParams.h"
-#include "CryptoKeyDataOctetSequence.h"
 #include "CryptoKeyHMAC.h"
 #include <wtf/Variant.h>
 

@@ -58,7 +58,6 @@ private:
     CryptoKeyClass keyClass() const final { return CryptoKeyClass::Raw; }
 
     std::unique_ptr<KeyAlgorithm> buildAlgorithm() const final;
-    std::unique_ptr<CryptoKeyData> exportData() const final;
 
     Vector<uint8_t> m_key;
 };

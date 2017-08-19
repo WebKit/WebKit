@@ -30,7 +30,6 @@
 
 #include "CryptoAlgorithmHmacKeyParams.h"
 #include "CryptoAlgorithmRegistry.h"
-#include "CryptoKeyDataOctetSequence.h"
 #include "ExceptionOr.h"
 #include "JsonWebKey.h"
 #include <wtf/text/Base64.h>
@@ -155,11 +154,6 @@ std::unique_ptr<KeyAlgorithm> CryptoKeyHMAC::buildAlgorithm() const
 {
     return std::make_unique<HmacKeyAlgorithm>(CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()),
         CryptoAlgorithmRegistry::singleton().name(m_hash), m_key.size() * 8);
-}
-
-std::unique_ptr<CryptoKeyData> CryptoKeyHMAC::exportData() const
-{
-    return std::make_unique<CryptoKeyDataOctetSequence>(m_key);
 }
 
 } // namespace WebCore

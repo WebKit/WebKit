@@ -29,7 +29,6 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmRegistry.h"
-#include "CryptoKeyData.h"
 #include "JsonWebKey.h"
 #include <wtf/text/Base64.h>
 
@@ -220,12 +219,6 @@ std::unique_ptr<KeyAlgorithm> CryptoKeyEC::buildAlgorithm() const
 
     ASSERT_NOT_REACHED();
     return nullptr;
-}
-
-std::unique_ptr<CryptoKeyData> CryptoKeyEC::exportData() const
-{
-    // A dummy implementation for now.
-    return std::make_unique<CryptoKeyData>(CryptoKeyData::Format::OctetSequence);
 }
 
 } // namespace WebCore

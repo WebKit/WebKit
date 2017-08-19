@@ -43,7 +43,6 @@ namespace WebCore {
 
 class CryptoAlgorithmParameters;
 class CryptoKey;
-class CryptoKeyData;
 class ScriptExecutionContext;
 
 using KeyData = Variant<Vector<uint8_t>, JsonWebKey>;
