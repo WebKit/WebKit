@@ -33,30 +33,26 @@
 
 namespace WebCore {
 
-// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
-// https://bugs.webkit.org/show_bug.cgi?id=164939
-static ExceptionOr<Vector<uint8_t>> wrapKeyAES_KW(const Vector<uint8_t>& key, const uint8_t* data, size_t dataLength)
+static ExceptionOr<Vector<uint8_t>> wrapKeyAES_KW(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    Vector<uint8_t> result(CCSymmetricWrappedSize(kCCWRAPAES, dataLength));
+    Vector<uint8_t> result(CCSymmetricWrappedSize(kCCWRAPAES, data.size()));
     size_t resultSize = result.size();
-    if (CCSymmetricKeyWrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, key.data(), key.size(), data, dataLength, result.data(), &resultSize))
+    if (CCSymmetricKeyWrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, key.data(), key.size(), data.data(), data.size(), result.data(), &resultSize))
         return Exception { OperationError };
 
     result.shrink(resultSize);
     return WTFMove(result);
 }
 
-// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
-// https://bugs.webkit.org/show_bug.cgi?id=164939
-static ExceptionOr<Vector<uint8_t>> unwrapKeyAES_KW(const Vector<uint8_t>& key, const uint8_t* data, size_t dataLength)
+static ExceptionOr<Vector<uint8_t>> unwrapKeyAES_KW(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    Vector<uint8_t> result(CCSymmetricUnwrappedSize(kCCWRAPAES, dataLength));
+    Vector<uint8_t> result(CCSymmetricUnwrappedSize(kCCWRAPAES, data.size()));
     size_t resultSize = result.size();
 
     if (resultSize % 8)
         return Exception { OperationError };
 
-    if (CCSymmetricKeyUnwrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, key.data(), key.size(), data, dataLength, result.data(), &resultSize))
+    if (CCSymmetricKeyUnwrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, key.data(), key.size(), data.data(), data.size(), result.data(), &resultSize))
         return Exception { OperationError };
 
     result.shrink(resultSize);
@@ -66,7 +62,7 @@ static ExceptionOr<Vector<uint8_t>> unwrapKeyAES_KW(const Vector<uint8_t>& key, 
 void CryptoAlgorithmAES_KW::platformWrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     auto& aesKey = downcast<CryptoKeyAES>(key.get());
-    auto result = wrapKeyAES_KW(aesKey.key(), data.data(), data.size());
+    auto result = wrapKeyAES_KW(aesKey.key(), data);
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
         return;
@@ -77,7 +73,7 @@ void CryptoAlgorithmAES_KW::platformWrapKey(Ref<CryptoKey>&& key, Vector<uint8_t
 void CryptoAlgorithmAES_KW::platformUnwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
     auto& aesKey = downcast<CryptoKeyAES>(key.get());
-    auto result = unwrapKeyAES_KW(aesKey.key(), data.data(), data.size());
+    auto result = unwrapKeyAES_KW(aesKey.key(), data);
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
         return;

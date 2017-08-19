@@ -1,3 +1,41 @@
+2017-08-19  Sam Weinig  <sam@webkit.org>
+
+        [Mac] Change uint8_t* to Vector<uint8_t> type in all crypto algorithm implementation
+        https://bugs.webkit.org/show_bug.cgi?id=164939
+
+        Reviewed by Chris Dumez.
+
+        Address FIXMEs, replacing uint8_t*/size_t parameters with Vector<uint8_t>&.
+
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::transformAES_CBC):
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmAES_KWMac.cpp:
+        (WebCore::wrapKeyAES_KW):
+        (WebCore::unwrapKeyAES_KW):
+        (WebCore::CryptoAlgorithmAES_KW::platformWrapKey):
+        (WebCore::CryptoAlgorithmAES_KW::platformUnwrapKey):
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::calculateSignature):
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+        * crypto/mac/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp:
+        (WebCore::encryptRSAES_PKCS1_v1_5):
+        (WebCore::decryptRSAES_PKCS1_v1_5):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::signRSASSA_PKCS1_v1_5):
+        (WebCore::verifyRSASSA_PKCS1_v1_5):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify):
+        * crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp:
+        (WebCore::encryptRSA_OAEP):
+        (WebCore::decryptRSA_OAEP):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt):
+
 2017-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Forbid setDragImage after dragstart

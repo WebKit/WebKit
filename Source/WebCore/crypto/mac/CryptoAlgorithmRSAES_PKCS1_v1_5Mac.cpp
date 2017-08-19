@@ -34,25 +34,21 @@
 
 namespace WebCore {
 
-// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
-// https://bugs.webkit.org/show_bug.cgi?id=164939
-static ExceptionOr<Vector<uint8_t>> encryptRSAES_PKCS1_v1_5(const PlatformRSAKey key, size_t keyLength, const uint8_t* data, size_t dataLength)
+static ExceptionOr<Vector<uint8_t>> encryptRSAES_PKCS1_v1_5(const PlatformRSAKey key, size_t keyLength, const Vector<uint8_t>& data)
 {
     Vector<uint8_t> cipherText(keyLength / 8); // Per Step 3.c of https://tools.ietf.org/html/rfc3447#section-7.2.1
     size_t cipherTextLength = cipherText.size();
-    if (CCRSACryptorEncrypt(key, ccPKCS1Padding, data, dataLength, cipherText.data(), &cipherTextLength, 0, 0, kCCDigestNone))
+    if (CCRSACryptorEncrypt(key, ccPKCS1Padding, data.data(), data.size(), cipherText.data(), &cipherTextLength, 0, 0, kCCDigestNone))
         return Exception { OperationError };
 
     return WTFMove(cipherText);
 }
 
-// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
-// https://bugs.webkit.org/show_bug.cgi?id=164939
-static ExceptionOr<Vector<uint8_t>> decryptRSAES_PKCS1_v1_5(const PlatformRSAKey key, size_t keyLength, const uint8_t* data, size_t dataLength)
+static ExceptionOr<Vector<uint8_t>> decryptRSAES_PKCS1_v1_5(const PlatformRSAKey key, size_t keyLength, const Vector<uint8_t>& data)
 {
     Vector<uint8_t> plainText(keyLength / 8); // Per Step 1 of https://tools.ietf.org/html/rfc3447#section-7.2.1
     size_t plainTextLength = plainText.size();
-    if (CCRSACryptorDecrypt(key, ccPKCS1Padding, data, dataLength, plainText.data(), &plainTextLength, 0, 0, kCCDigestNone))
+    if (CCRSACryptorDecrypt(key, ccPKCS1Padding, data.data(), data.size(), plainText.data(), &plainTextLength, 0, 0, kCCDigestNone))
         return Exception { OperationError };
 
     plainText.resize(plainTextLength);
@@ -64,7 +60,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(Ref<CryptoKey>&& key, Vect
     context.ref();
     workQueue.dispatch([key = WTFMove(key), plainText = WTFMove(plainText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
         auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
-        auto result = encryptRSAES_PKCS1_v1_5(rsaKey.platformKey(), rsaKey.keySizeInBits(), plainText.data(), plainText.size());
+        auto result = encryptRSAES_PKCS1_v1_5(rsaKey.platformKey(), rsaKey.keySizeInBits(), plainText);
         if (result.hasException()) {
             // We should only dereference callbacks after being back to the Document/Worker threads.
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
@@ -86,7 +82,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(Ref<CryptoKey>&& key, Vect
     context.ref();
     workQueue.dispatch([key = WTFMove(key), cipherText = WTFMove(cipherText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
         auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
-        auto result = decryptRSAES_PKCS1_v1_5(rsaKey.platformKey(), rsaKey.keySizeInBits(), cipherText.data(), cipherText.size());
+        auto result = decryptRSAES_PKCS1_v1_5(rsaKey.platformKey(), rsaKey.keySizeInBits(), cipherText);
         if (result.hasException()) {
             // We should only dereference callbacks after being back to the Document/Worker threads.
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {

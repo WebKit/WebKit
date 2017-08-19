@@ -53,9 +53,7 @@ static std::optional<CCHmacAlgorithm> commonCryptoHMACAlgorithm(CryptoAlgorithmI
     }
 }
 
-// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
-// https://bugs.webkit.org/show_bug.cgi?id=164939
-static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vector<uint8_t>& key, const uint8_t* data, size_t dataLength)
+static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     size_t digestLength;
     switch (algorithm) {
@@ -80,7 +78,7 @@ static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vecto
     }
 
     Vector<uint8_t> result(digestLength);
-    CCHmac(algorithm, key.data(), key.size(), data, dataLength, result.data());
+    CCHmac(algorithm, key.data(), key.size(), data.data(), data.size(), result.data());
     return result;
 }
 
@@ -98,7 +96,7 @@ void CryptoAlgorithmHMAC::platformSign(Ref<CryptoKey>&& key, Vector<uint8_t>&& d
             });
             return;
         }
-        auto result = calculateSignature(*algorithm, hmacKey.key(), data.data(), data.size());
+        auto result = calculateSignature(*algorithm, hmacKey.key(), data);
         // We should only dereference callbacks after being back to the Document/Worker threads.
         context.postTask([callback = WTFMove(callback), result = WTFMove(result), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
             callback(result);
@@ -122,7 +120,7 @@ void CryptoAlgorithmHMAC::platformVerify(Ref<CryptoKey>&& key, Vector<uint8_t>&&
             });
             return;
         }
-        auto expectedSignature = calculateSignature(*algorithm, hmacKey.key(), data.data(), data.size());
+        auto expectedSignature = calculateSignature(*algorithm, hmacKey.key(), data);
         // Using a constant time comparison to prevent timing attacks.
         bool result = signature.size() == expectedSignature.size() && !constantTimeMemcmp(expectedSignature.data(), signature.data(), expectedSignature.size());
         // We should only dereference callbacks after being back to the Document/Worker threads.

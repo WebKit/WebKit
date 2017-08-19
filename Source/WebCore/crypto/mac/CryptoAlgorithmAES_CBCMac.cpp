@@ -35,19 +35,17 @@
 
 namespace WebCore {
 
-// FIXME: We should change iv and data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
-// https://bugs.webkit.org/show_bug.cgi?id=164939
-static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, const uint8_t* iv, const Vector<uint8_t>& key, const uint8_t* data, size_t dataLength)
+static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     CCCryptorRef cryptor;
-    CCCryptorStatus status = CCCryptorCreate(operation, kCCAlgorithmAES, kCCOptionPKCS7Padding, key.data(), key.size(), iv, &cryptor);
+    CCCryptorStatus status = CCCryptorCreate(operation, kCCAlgorithmAES, kCCOptionPKCS7Padding, key.data(), key.size(), iv.data(), &cryptor);
     if (status)
         return Exception { OperationError };
 
-    Vector<uint8_t> result(CCCryptorGetOutputLength(cryptor, dataLength, true));
+    Vector<uint8_t> result(CCCryptorGetOutputLength(cryptor, data.size(), true));
 
     size_t bytesWritten;
-    status = CCCryptorUpdate(cryptor, data, dataLength, result.data(), result.size(), &bytesWritten);
+    status = CCCryptorUpdate(cryptor, data.data(), data.size(), result.data(), result.size(), &bytesWritten);
     if (status)
         return Exception { OperationError };
 
@@ -72,7 +70,7 @@ void CryptoAlgorithmAES_CBC::platformEncrypt(std::unique_ptr<CryptoAlgorithmPara
         auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters);
         auto& aesKey = downcast<CryptoKeyAES>(key.get());
         ASSERT(aesParameters.ivVector().size() == kCCBlockSizeAES128);
-        auto result = transformAES_CBC(kCCEncrypt, aesParameters.ivVector().data(), aesKey.key(), plainText.data(), plainText.size());
+        auto result = transformAES_CBC(kCCEncrypt, aesParameters.ivVector(), aesKey.key(), plainText);
         if (result.hasException()) {
             // We should only dereference callbacks after being back to the Document/Worker threads.
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
@@ -96,7 +94,7 @@ void CryptoAlgorithmAES_CBC::platformDecrypt(std::unique_ptr<CryptoAlgorithmPara
         auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters);
         auto& aesKey = downcast<CryptoKeyAES>(key.get());
         assert(aesParameters.ivVector().size() == kCCBlockSizeAES128);
-        auto result = transformAES_CBC(kCCDecrypt, aesParameters.ivVector().data(), aesKey.key(), cipherText.data(), cipherText.size());
+        auto result = transformAES_CBC(kCCDecrypt, aesParameters.ivVector(), aesKey.key(), cipherText);
         if (result.hasException()) {
             // We should only dereference callbacks after being back to the Document/Worker threads.
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {

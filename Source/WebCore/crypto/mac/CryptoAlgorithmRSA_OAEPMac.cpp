@@ -35,9 +35,7 @@
 
 namespace WebCore {
 
-// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
-// https://bugs.webkit.org/show_bug.cgi?id=164939
-static ExceptionOr<Vector<uint8_t>> encryptRSA_OAEP(CryptoAlgorithmIdentifier hash, const Vector<uint8_t>& label, const PlatformRSAKey key, size_t keyLength, const uint8_t* data, size_t dataLength)
+static ExceptionOr<Vector<uint8_t>> encryptRSA_OAEP(CryptoAlgorithmIdentifier hash, const Vector<uint8_t>& label, const PlatformRSAKey key, size_t keyLength, const Vector<uint8_t>& data)
 {
     CCDigestAlgorithm digestAlgorithm;
     if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
@@ -45,15 +43,13 @@ static ExceptionOr<Vector<uint8_t>> encryptRSA_OAEP(CryptoAlgorithmIdentifier ha
 
     Vector<uint8_t> cipherText(keyLength / 8); // Per Step 3.c of https://tools.ietf.org/html/rfc3447#section-7.1.1
     size_t cipherTextLength = cipherText.size();
-    if (CCRSACryptorEncrypt(key, ccOAEPPadding, data, dataLength, cipherText.data(), &cipherTextLength, label.data(), label.size(), digestAlgorithm))
+    if (CCRSACryptorEncrypt(key, ccOAEPPadding, data.data(), data.size(), cipherText.data(), &cipherTextLength, label.data(), label.size(), digestAlgorithm))
         return Exception { OperationError };
 
     return WTFMove(cipherText);
 }
 
-// FIXME: We should change data to Vector<uint8_t> type once WebKitSubtleCrypto is deprecated.
-// https://bugs.webkit.org/show_bug.cgi?id=164939
-static ExceptionOr<Vector<uint8_t>> decryptRSA_OAEP(CryptoAlgorithmIdentifier hash, const Vector<uint8_t>& label, const PlatformRSAKey key, size_t keyLength, const uint8_t* data, size_t dataLength)
+static ExceptionOr<Vector<uint8_t>> decryptRSA_OAEP(CryptoAlgorithmIdentifier hash, const Vector<uint8_t>& label, const PlatformRSAKey key, size_t keyLength, const Vector<uint8_t>& data)
 {
     CCDigestAlgorithm digestAlgorithm;
     if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
@@ -61,7 +57,7 @@ static ExceptionOr<Vector<uint8_t>> decryptRSA_OAEP(CryptoAlgorithmIdentifier ha
 
     Vector<uint8_t> plainText(keyLength / 8); // Per Step 1.b of https://tools.ietf.org/html/rfc3447#section-7.1.1
     size_t plainTextLength = plainText.size();
-    if (CCRSACryptorDecrypt(key, ccOAEPPadding, data, dataLength, plainText.data(), &plainTextLength, label.data(), label.size(), digestAlgorithm))
+    if (CCRSACryptorDecrypt(key, ccOAEPPadding, data.data(), data.size(), plainText.data(), &plainTextLength, label.data(), label.size(), digestAlgorithm))
         return Exception { OperationError };
 
     plainText.resize(plainTextLength);
@@ -74,7 +70,7 @@ void CryptoAlgorithmRSA_OAEP::platformEncrypt(std::unique_ptr<CryptoAlgorithmPar
     workQueue.dispatch([parameters = WTFMove(parameters), key = WTFMove(key), plainText = WTFMove(plainText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
         auto& rsaParameters = downcast<CryptoAlgorithmRsaOaepParams>(*parameters);
         auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
-        auto result = encryptRSA_OAEP(rsaKey.hashAlgorithmIdentifier(), rsaParameters.labelVector(), rsaKey.platformKey(), rsaKey.keySizeInBits(), plainText.data(), plainText.size());
+        auto result = encryptRSA_OAEP(rsaKey.hashAlgorithmIdentifier(), rsaParameters.labelVector(), rsaKey.platformKey(), rsaKey.keySizeInBits(), plainText);
         if (result.hasException()) {
             // We should only dereference callbacks after being back to the Document/Worker threads.
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
@@ -97,7 +93,7 @@ void CryptoAlgorithmRSA_OAEP::platformDecrypt(std::unique_ptr<CryptoAlgorithmPar
     workQueue.dispatch([parameters = WTFMove(parameters), key = WTFMove(key), cipherText = WTFMove(cipherText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
         auto& rsaParameters = downcast<CryptoAlgorithmRsaOaepParams>(*parameters);
         auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
-        auto result = decryptRSA_OAEP(rsaKey.hashAlgorithmIdentifier(), rsaParameters.labelVector(), rsaKey.platformKey(), rsaKey.keySizeInBits(), cipherText.data(), cipherText.size());
+        auto result = decryptRSA_OAEP(rsaKey.hashAlgorithmIdentifier(), rsaParameters.labelVector(), rsaKey.platformKey(), rsaKey.keySizeInBits(), cipherText);
         if (result.hasException()) {
             // We should only dereference callbacks after being back to the Document/Worker threads.
             context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
