@@ -1,3 +1,15 @@
+2017-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r219640): Speedometer no longer runs on Safari 7
+        https://bugs.webkit.org/show_bug.cgi?id=175749
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix the bug on browserbench.org.
+
+        * Speedometer/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._runTest):
+
 2017-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge r219640 into Speedometer 1.0.

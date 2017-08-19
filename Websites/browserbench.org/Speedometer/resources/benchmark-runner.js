@@ -126,18 +126,18 @@ BenchmarkRunner.prototype._runTest = function(suite, test, prepareReturnValue, c
     var contentWindow = self._frame.contentWindow;
     var contentDocument = self._frame.contentDocument;
 
-    self._writeMark(`${suite.name}.${test.name}-start`);
+    self._writeMark(suite.name + '.' + test.name + '-start');
     var startTime = now();
     test.run(prepareReturnValue, contentWindow, contentDocument);
     var endTime = now();
-    self._writeMark(`${suite.name}.${test.name}-sync-end`);
+    self._writeMark(suite.name + '.' + test.name + '-sync-end');
 
     var syncTime = endTime - startTime;
 
     var startTime = now();
     setTimeout(function () {
         var endTime = now();
-        self._writeMark(`${suite.name}.${test.name}-async-end`);
+        self._writeMark(suite.name + '.' + test.name + '-async-end');
         callback(syncTime, endTime - startTime);
     }, 0);
 }

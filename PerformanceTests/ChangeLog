@@ -1,3 +1,15 @@
+2017-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r219640): Speedometer no longer runs on Safari 7
+        https://bugs.webkit.org/show_bug.cgi?id=175749
+
+        Reviewed by Joseph Pecoraro.
+
+        Use regular string instead of template literal to make the script compatible with older versions of Safari.
+
+        * Speedometer/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._runTest):
+
 2017-08-17  Mathias Bynens  <mathias@qiwi.be>
 
         Speedometer: Update to modern Vue.js version
