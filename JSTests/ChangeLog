@@ -1,3 +1,12 @@
+2017-08-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip flaky JSC test microbenchmarks/generator-with-several-types.js.
+        https://bugs.webkit.org/show_bug.cgi?id=172543
+
+        Unreviewed test gardening.
+
+        * microbenchmarks/generator-with-several-types.js:
+
 2017-08-17  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: const in unreachable code decoded incorrectly, erroneously rejects binary as invalid
