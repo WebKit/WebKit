@@ -106,7 +106,7 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
         request.setHTTPReferrer(referrer);
     frame.loader().addExtraFieldsToSubresourceRequest(request);
 
-    startPingLoad(frame, request, WTFMove(originalRequestHeader), document, ShouldFollowRedirects::Yes);
+    startPingLoad(frame, request, WTFMove(originalRequestHeader), ShouldFollowRedirects::Yes);
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
@@ -145,7 +145,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
         }
     }
 
-    startPingLoad(frame, request, WTFMove(originalRequestHeader), document, ShouldFollowRedirects::Yes);
+    startPingLoad(frame, request, WTFMove(originalRequestHeader), ShouldFollowRedirects::Yes);
 }
 
 void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<FormData>&& report, ViolationReportType reportType)
@@ -184,10 +184,10 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 
-    startPingLoad(frame, request, WTFMove(originalRequestHeader), document, ShouldFollowRedirects::No);
+    startPingLoad(frame, request, WTFMove(originalRequestHeader), ShouldFollowRedirects::No);
 }
 
-void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeaderMap&& originalRequestHeaders, Document& document, ShouldFollowRedirects shouldFollowRedirects)
+void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects shouldFollowRedirects)
 {
     unsigned long identifier = frame.page()->progress().createUniqueIdentifier();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
@@ -202,8 +202,7 @@ void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeade
 
     InspectorInstrumentation::continueAfterPingLoader(frame, identifier, frame.loader().activeDocumentLoader(), request, ResourceResponse());
 
-    auto* contentSecurityPolicy = document.shouldBypassMainWorldContentSecurityPolicy() ? nullptr : document.contentSecurityPolicy();
-    platformStrategies()->loaderStrategy()->startPingLoad(frame.loader().networkingContext(), request, WTFMove(originalRequestHeaders), document.securityOrigin(), contentSecurityPolicy, options);
+    platformStrategies()->loaderStrategy()->startPingLoad(frame, request, WTFMove(originalRequestHeaders), options);
 }
 
 }

@@ -363,9 +363,9 @@ bool WebResourceLoadScheduler::HostInformation::limitRequests(ResourceLoadPriori
     return m_requestsLoading.size() >= (webResourceLoadScheduler().isSerialLoadingEnabled() ? 1 : m_maxRequestsInFlight);
 }
 
-void WebResourceLoadScheduler::startPingLoad(NetworkingContext* networkingContext, ResourceRequest& request, const HTTPHeaderMap&, Ref<SecurityOrigin>&&, WebCore::ContentSecurityPolicy*, const FetchOptions& options, PingLoadCompletionHandler&& completionHandler)
+void WebResourceLoadScheduler::startPingLoad(Frame& frame, ResourceRequest& request, const HTTPHeaderMap&, const FetchOptions& options, PingLoadCompletionHandler&& completionHandler)
 {
     // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingHandle(networkingContext, request, options.credentials != FetchOptions::Credentials::Omit, PingHandle::UsesAsyncCallbacks::No, options.redirect == FetchOptions::Redirect::Follow, WTFMove(completionHandler));
+    new PingHandle(frame.loader().networkingContext(), request, options.credentials != FetchOptions::Credentials::Omit, PingHandle::UsesAsyncCallbacks::No, options.redirect == FetchOptions::Redirect::Follow, WTFMove(completionHandler));
 }
 

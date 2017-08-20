@@ -268,13 +268,9 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         }
         // FIXME: We should not special-case Beacon here.
         if (shouldUsePingLoad(type())) {
-            ASSERT(m_origin);
-            // Beacon is not exposed to workers so it is safe to rely on the document here.
-            auto* document = cachedResourceLoader.document();
-            auto* contentSecurityPolicy = document && !document->shouldBypassMainWorldContentSecurityPolicy() ? document->contentSecurityPolicy() : nullptr;
             ASSERT(m_originalRequestHeaders);
             CachedResourceHandle<CachedResource> protectedThis(this);
-            platformStrategies()->loaderStrategy()->startPingLoad(frame.loader().networkingContext(), request, *m_originalRequestHeaders, *m_origin, contentSecurityPolicy, m_options, [this, protectedThis = WTFMove(protectedThis)] (const ResourceError& error) {
+            platformStrategies()->loaderStrategy()->startPingLoad(frame, request, *m_originalRequestHeaders, m_options, [this, protectedThis = WTFMove(protectedThis)] (const ResourceError& error) {
                 if (error.isNull())
                     finishLoading(nullptr);
                 else {

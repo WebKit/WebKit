@@ -65,7 +65,7 @@ public:
     virtual void resumePendingRequests() = 0;
 
     using PingLoadCompletionHandler = WTF::Function<void(const ResourceError&)>;
-    virtual void startPingLoad(NetworkingContext*, ResourceRequest&, const HTTPHeaderMap& originalRequestHeaders, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy*, const FetchOptions&, PingLoadCompletionHandler&& = { }) = 0;
+    virtual void startPingLoad(Frame&, ResourceRequest&, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions&, PingLoadCompletionHandler&& = { }) = 0;
 
     virtual void storeDerivedDataToCache(const SHA1::Digest& bodyKey, const String& type, const String& partition, WebCore::SharedBuffer&) = 0;
 

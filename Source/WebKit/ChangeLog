@@ -1,3 +1,14 @@
+2017-08-20  Chris Dumez  <cdumez@apple.com>
+
+        Simplify calls to LoaderStrategy::startPingLoad()
+        https://bugs.webkit.org/show_bug.cgi?id=175756
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2017-08-18  Chris Dumez  <cdumez@apple.com>
 
         [Beacon] Improve error reporting

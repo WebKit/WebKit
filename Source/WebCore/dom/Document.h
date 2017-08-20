@@ -576,7 +576,7 @@ public:
     void prepareForDestruction();
 
     // Override ScriptExecutionContext methods to do additional work
-    bool shouldBypassMainWorldContentSecurityPolicy() const final;
+    WEBCORE_EXPORT bool shouldBypassMainWorldContentSecurityPolicy() const final;
     void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) final;
     void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) final;
     void stopActiveDOMObjects() final;

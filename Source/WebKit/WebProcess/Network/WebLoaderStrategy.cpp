@@ -396,10 +396,11 @@ static uint64_t generatePingLoadIdentifier()
     return ++identifier;
 }
 
-void WebLoaderStrategy::startPingLoad(NetworkingContext* networkingContext, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, Ref<SecurityOrigin>&& sourceOrigin, ContentSecurityPolicy* contentSecurityPolicy, const FetchOptions& options, PingLoadCompletionHandler&& completionHandler)
+void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions& options, PingLoadCompletionHandler&& completionHandler)
 {
     // It's possible that call to createPingHandle might be made during initial empty Document creation before a NetworkingContext exists.
     // It is not clear that we should send ping loads during that process anyways.
+    auto* networkingContext = frame.loader().networkingContext();
     if (!networkingContext) {
         if (completionHandler)
             completionHandler(internalError(request.url()));
@@ -410,18 +411,27 @@ void WebLoaderStrategy::startPingLoad(NetworkingContext* networkingContext, Reso
     WebFrameLoaderClient* webFrameLoaderClient = webContext->webFrameLoaderClient();
     WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
     WebPage* webPage = webFrame ? webFrame->page() : nullptr;
+
+    auto* document = frame.document();
+    if (!document) {
+        if (completionHandler)
+            completionHandler(internalError(request.url()));
+        return;
+    }
     
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = generatePingLoadIdentifier();
     loadParameters.request = request;
-    loadParameters.sourceOrigin = WTFMove(sourceOrigin);
+    loadParameters.sourceOrigin = &document->securityOrigin();
     loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.allowStoredCredentials = options.credentials == FetchOptions::Credentials::Omit ? DoNotAllowStoredCredentials : AllowStoredCredentials;
     loadParameters.mode = options.mode;
     loadParameters.shouldFollowRedirects = options.redirect == FetchOptions::Redirect::Follow;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = networkingContext->shouldClearReferrerOnHTTPSToHTTPRedirect();
-    if (contentSecurityPolicy)
-        loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
+    if (!document->shouldBypassMainWorldContentSecurityPolicy()) {
+        if (auto * contentSecurityPolicy = document->contentSecurityPolicy())
+            loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
+    }
 
     if (completionHandler)
         m_pingLoadCompletionHandlers.add(loadParameters.identifier, WTFMove(completionHandler));
