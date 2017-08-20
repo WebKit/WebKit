@@ -1,9 +1,9 @@
 
-FAIL If details.id is missing, assign a identifier Can't find variable: PaymentRequest
-FAIL If details.id is missing, assign a unique identifier Can't find variable: PaymentRequest
-FAIL If the same id is provided, then use it Can't find variable: PaymentRequest
-FAIL Use ids even if they are strange Can't find variable: PaymentRequest
-FAIL Use provided request ID Can't find variable: PaymentRequest
+FAIL If details.id is missing, assign a identifier assert_true: must be some truthy value expected true got false
+FAIL If details.id is missing, assign a unique identifier assert_not_equals: UA generated ID must be unique got disallowed value ""
+FAIL If the same id is provided, then use it assert_equals: id must be test123 expected "test123" but got ""
+FAIL Use ids even if they are strange assert_equals: id must be provided value, even if very long and contain spaces expected "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" but got ""
+FAIL Use provided request ID assert_equals: expected "foo" but got ""
 FAIL If the length of the methodData sequence is zero, then throw a TypeError assert_throws: function "() => {
       new PaymentRequest([], {
         total: {
@@ -14,7 +14,7 @@ FAIL If the length of the methodData sequence is zero, then throw a TypeError as
           },
         },
       });
-    }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+    }" did not throw
 FAIL If the length of the paymentMethod.supportedMethods sequence is zero, then throw a TypeError assert_throws: function "() => {
       new PaymentRequest(
         [
@@ -32,9 +32,9 @@ FAIL If the length of the paymentMethod.supportedMethods sequence is zero, then 
           },
         }
       );
-    }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
-FAIL Method data must be JSON-serializable object (a list in this case) assert_false: shouldn't throw when using a list expected false got true
-FAIL Method data must be JSON-serializable object (an object in this case) Can't find variable: PaymentRequest
+    }" did not throw
+PASS Method data must be JSON-serializable object (a list in this case) 
+PASS Method data must be JSON-serializable object (an object in this case) 
 FAIL Rethrow any exceptions of JSON-serializing paymentMethod.data into a string assert_throws: function "() => {
       new PaymentRequest(
         [
@@ -53,7 +53,7 @@ FAIL Rethrow any exceptions of JSON-serializing paymentMethod.data into a string
           },
         }
       );
-    }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+    }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "-"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -71,7 +71,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "notdigits"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -89,7 +89,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "ALSONOTDIGITS"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -107,7 +107,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "10."), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -125,7 +125,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case ".99"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -143,7 +143,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "-10."), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -161,7 +161,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "-.99"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -179,7 +179,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "10-"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -197,7 +197,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "1-0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -215,7 +215,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "1.0.0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -233,7 +233,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "1/3"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -251,7 +251,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case ""), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -269,7 +269,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "null"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -287,7 +287,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case " 1.0  "), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -305,7 +305,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case " 1.0 "), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -323,7 +323,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "1.0 "), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -341,7 +341,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "USD$1.0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -359,7 +359,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "$1.0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -377,7 +377,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case " 1.0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -395,7 +395,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "-1"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -413,7 +413,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "-1.0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -431,7 +431,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "-1.00"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -449,7 +449,7 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If details.total.amount.value is not a valid decimal monetary value (in this case "-1000.000"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -467,10 +467,10 @@ FAIL If details.total.amount.value is not a valid decimal monetary value (in thi
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
-FAIL PaymentDetailsBase.0 can be 0 length assert_true: 0 can be zero length expected true got false
-FAIL PaymentDetailsBase.1 can be 0 length assert_true: 1 can be zero length expected true got false
-FAIL PaymentDetailsBase.2 can be 0 length assert_true: 2 can be zero length expected true got false
+      }" did not throw
+PASS PaymentDetailsBase.0 can be 0 length 
+PASS PaymentDetailsBase.1 can be 0 length 
+PASS PaymentDetailsBase.2 can be 0 length 
 FAIL If the first character of details.total.amount.value is U+002D HYPHEN-MINUS, then throw a TypeError assert_throws: function "() => {
       new PaymentRequest(
         [
@@ -488,7 +488,7 @@ FAIL If the first character of details.total.amount.value is U+002D HYPHEN-MINUS
           },
         }
       );
-    }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+    }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "-"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -515,7 +515,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "notdigits"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -542,7 +542,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "ALSONOTDIGITS"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -569,7 +569,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "10."), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -596,7 +596,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case ".99"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -623,7 +623,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "-10."), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -650,7 +650,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "-.99"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -677,7 +677,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "10-"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -704,7 +704,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "1-0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -731,7 +731,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "1.0.0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -758,7 +758,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "1/3"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -785,7 +785,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case ""), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -812,7 +812,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "null"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -839,7 +839,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case " 1.0  "), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -866,7 +866,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case " 1.0 "), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -893,7 +893,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "1.0 "), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -920,7 +920,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "USD$1.0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -947,7 +947,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "$1.0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -974,7 +974,7 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case " 1.0"), then throw a TypeError assert_throws: function "() => {
         new PaymentRequest(
           [
@@ -1001,9 +1001,9 @@ FAIL For each item in details.displayItems: if item.amount.value is not a valid 
             ],
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
-FAIL Negative values are allowed for displayItems.amount.value, irrespective of total amount assert_false: shouldn't throw when given a negative value expected false got true
-FAIL it handles high precision currency values without throwing assert_false: shouldn't throw when given absurd monetary values expected false got true
+      }" did not throw
+PASS Negative values are allowed for displayItems.amount.value, irrespective of total amount 
+PASS it handles high precision currency values without throwing 
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "-"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1015,7 +1015,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "notdigits"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1027,7 +1027,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "ALSONOTDIGITS"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1039,7 +1039,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "10."), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1051,7 +1051,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case ".99"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1063,7 +1063,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "-10."), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1075,7 +1075,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "-.99"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1087,7 +1087,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "10-"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1099,7 +1099,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "1-0"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1111,7 +1111,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "1.0.0"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1123,7 +1123,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "1/3"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1135,7 +1135,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case ""), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1147,7 +1147,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "null"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1159,7 +1159,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case " 1.0  "), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1171,7 +1171,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case " 1.0 "), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1183,7 +1183,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "1.0 "), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1195,7 +1195,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "USD$1.0"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1207,7 +1207,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "$1.0"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1219,7 +1219,7 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case " 1.0"), then throw a TypeError assert_throws: function "() => {
         const invalidAmount = Object.assign({}, defaultAmount, {
           value: amount,
@@ -1231,11 +1231,11 @@ FAIL For each option in details.shippingOptions: if option.amount.value is not a
           shippingOptions: [invalidShippingOption],
         });
         new PaymentRequest(defaultMethods, details);
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
-FAIL If there is no selected shipping option, then PaymentRequest.shippingOption remains null Can't find variable: PaymentRequest
-FAIL If there is a selected shipping option, then it becomes synchronously selected Can't find variable: PaymentRequest
-FAIL If there is a multiple selected shipping options, only the last is selected Can't find variable: PaymentRequest
-FAIL If there are any duplicate shipping option ids, then there are no shipping options Can't find variable: PaymentRequest
+      }" did not throw
+PASS If there is no selected shipping option, then PaymentRequest.shippingOption remains null 
+FAIL If there is a selected shipping option, then it becomes synchronously selected assert_equals: selected option must be PASS expected (string) "PASS" but got (object) null
+FAIL If there is a multiple selected shipping options, only the last is selected assert_equals: selected option must PASS expected (string) "PASS" but got (object) null
+PASS If there are any duplicate shipping option ids, then there are no shipping options 
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "-"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1264,7 +1264,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "notdigits"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1293,7 +1293,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "ALSONOTDIGITS"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1322,7 +1322,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "10."), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1351,7 +1351,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case ".99"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1380,7 +1380,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "-10."), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1409,7 +1409,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "-.99"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1438,7 +1438,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "10-"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1467,7 +1467,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "1-0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1496,7 +1496,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "1.0.0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1525,7 +1525,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "1/3"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1554,7 +1554,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case ""), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1583,7 +1583,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "null"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1612,7 +1612,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case " 1.0  "), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1641,7 +1641,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case " 1.0 "), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1670,7 +1670,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "1.0 "), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1699,7 +1699,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "USD$1.0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1728,7 +1728,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "$1.0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1757,7 +1757,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case " 1.0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1786,7 +1786,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "-1"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1815,7 +1815,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "-1.0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1844,7 +1844,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "-1.00"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1873,7 +1873,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If modifier.total.amount.value is not a valid decimal monetary value (in this case "-1000.000"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1902,7 +1902,7 @@ FAIL If modifier.total.amount.value is not a valid decimal monetary value (in th
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "-"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1940,7 +1940,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "notdigits"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -1978,7 +1978,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "ALSONOTDIGITS"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2016,7 +2016,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "10."), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2054,7 +2054,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case ".99"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2092,7 +2092,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "-10."), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2130,7 +2130,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "-.99"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2168,7 +2168,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "10-"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2206,7 +2206,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "1-0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2244,7 +2244,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "1.0.0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2282,7 +2282,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "1/3"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2320,7 +2320,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case ""), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2358,7 +2358,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "null"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2396,7 +2396,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case " 1.0  "), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2434,7 +2434,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case " 1.0 "), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2472,7 +2472,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "1.0 "), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2510,7 +2510,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "USD$1.0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2548,7 +2548,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "$1.0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2586,7 +2586,7 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
+      }" did not throw
 FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case " 1.0"), then throw a TypeError assert_throws: function "() => {
         const invalidModifier = {
           supportedMethods: ["basic-card"],
@@ -2624,9 +2624,9 @@ FAIL If amount.value of additionalDisplayItems is is not a valid decimal monetar
             },
           }
         );
-      }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
-FAIL Modifier data must be JSON-serializable object (a list in this case) assert_false: shouldn't throw when given a list expected false got true
-FAIL Modifier data must be JSON-serializable object (a object in this case) assert_false: shouldn't throw when given an object value expected false got true
+      }" did not throw
+PASS Modifier data must be JSON-serializable object (a list in this case) 
+PASS Modifier data must be JSON-serializable object (a object in this case) 
 FAIL Rethrow any exceptions of JSON-serializing modifier.data into a string assert_throws: function "() => {
       new PaymentRequest(
         [
@@ -2650,29 +2650,9 @@ FAIL Rethrow any exceptions of JSON-serializing modifier.data into a string asse
           ],
         }
       );
-    }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
-FAIL Shipping type should be valid assert_throws: function "() => {
-      new PaymentRequest(
-        [
-          {
-            supportedMethods: ["basic-card"],
-          },
-        ],
-        {
-          total: {
-            label: "",
-            amount: {
-              currency: "USD",
-              value: "1.00",
-            },
-          },
-        },
-        {
-          shippingType: "invalid",
-        }
-      );
-    }" threw object "ReferenceError: Can't find variable: PaymentRequest" ("ReferenceError") expected object "[object Object]" ("TypeError")
-FAIL PaymentRequest.shippingAddress must initially be null Can't find variable: PaymentRequest
-FAIL If options.requestShipping is not set, then request.shippingType attribute is null. Can't find variable: PaymentRequest
-FAIL If options.requestShipping is true, request.shippingType will be options.shippingType. Can't find variable: PaymentRequest
+    }" did not throw
+PASS Shipping type should be valid 
+PASS PaymentRequest.shippingAddress must initially be null 
+PASS If options.requestShipping is not set, then request.shippingType attribute is null. 
+FAIL If options.requestShipping is true, request.shippingType will be options.shippingType. assert_equals: must be shipping expected (string) "shipping" but got (object) null
 

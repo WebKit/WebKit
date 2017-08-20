@@ -1,5 +1,5 @@
 
-FAIL PaymentRequestUpdateEvent can be constructed in secure-context assert_true: Unexpected exception: Can't find variable: PaymentRequestUpdateEvent expected true got false
-FAIL PaymentRequestUpdateEvent can be constructed with an EventInitDict, even if not trusted Can't find variable: PaymentRequestUpdateEvent
-FAIL PaymentRequestUpdateEvent can be dispatched, even if not trusted Can't find variable: PaymentRequest
+PASS PaymentRequestUpdateEvent can be constructed in secure-context 
+PASS PaymentRequestUpdateEvent can be constructed with an EventInitDict, even if not trusted 
+PASS PaymentRequestUpdateEvent can be dispatched, even if not trusted 
 

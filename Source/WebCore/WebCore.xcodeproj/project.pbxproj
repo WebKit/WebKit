@@ -4359,12 +4359,63 @@
 		A1C1507A1E3F2B3E0032C98C /* PreviewConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C150781E3F2B3E0032C98C /* PreviewConverter.h */; };
 		A1C7FAA2133A5D3500D6732D /* JSXPathResultCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */; };
 		A1CC11641E493D0100EFA69C /* FileSystemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1CC11621E493D0100EFA69C /* FileSystemMac.mm */; };
+		A1CC56661F46147400A4555B /* JSPaymentAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC565F1F46146100A4555B /* JSPaymentAddress.cpp */; };
+		A1CC56671F46147A00A4555B /* JSPaymentAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56651F46146800A4555B /* JSPaymentAddress.h */; };
+		A1CC56681F46147D00A4555B /* JSPaymentComplete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC56601F46146200A4555B /* JSPaymentComplete.cpp */; };
+		A1CC56691F46148000A4555B /* JSPaymentComplete.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC564E1F46145200A4555B /* JSPaymentComplete.h */; };
+		A1CC566A1F46148200A4555B /* JSPaymentCurrencyAmount.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC565D1F46146000A4555B /* JSPaymentCurrencyAmount.cpp */; };
+		A1CC566B1F46148500A4555B /* JSPaymentCurrencyAmount.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56631F46146600A4555B /* JSPaymentCurrencyAmount.h */; };
+		A1CC566C1F46148700A4555B /* JSPaymentDetailsBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC56561F46145900A4555B /* JSPaymentDetailsBase.cpp */; };
+		A1CC566D1F46148A00A4555B /* JSPaymentDetailsBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56511F46145400A4555B /* JSPaymentDetailsBase.h */; };
+		A1CC566E1F46148C00A4555B /* JSPaymentDetailsInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC56551F46145800A4555B /* JSPaymentDetailsInit.cpp */; };
+		A1CC566F1F46148E00A4555B /* JSPaymentDetailsInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC565A1F46145D00A4555B /* JSPaymentDetailsInit.h */; };
+		A1CC56701F46149100A4555B /* JSPaymentDetailsModifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC56521F46145500A4555B /* JSPaymentDetailsModifier.cpp */; };
+		A1CC56711F46149300A4555B /* JSPaymentDetailsModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC565B1F46145E00A4555B /* JSPaymentDetailsModifier.h */; };
+		A1CC56721F46149500A4555B /* JSPaymentItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC56621F46146500A4555B /* JSPaymentItem.cpp */; };
+		A1CC56731F46149800A4555B /* JSPaymentItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC564F1F46145200A4555B /* JSPaymentItem.h */; };
+		A1CC56741F46149B00A4555B /* JSPaymentMethodData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC564D1F46145100A4555B /* JSPaymentMethodData.cpp */; };
+		A1CC56751F46149D00A4555B /* JSPaymentMethodData.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC564C1F46145000A4555B /* JSPaymentMethodData.h */; };
+		A1CC56761F4614A000A4555B /* JSPaymentOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC56531F46145600A4555B /* JSPaymentOptions.cpp */; };
+		A1CC56771F4614A200A4555B /* JSPaymentOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC565C1F46145F00A4555B /* JSPaymentOptions.h */; };
+		A1CC56781F4614A500A4555B /* JSPaymentRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC56541F46145700A4555B /* JSPaymentRequest.cpp */; };
+		A1CC56791F4614A700A4555B /* JSPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56571F46145A00A4555B /* JSPaymentRequest.h */; };
+		A1CC567A1F4614AA00A4555B /* JSPaymentResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC56581F46145B00A4555B /* JSPaymentResponse.cpp */; };
+		A1CC567B1F4614AD00A4555B /* JSPaymentResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56641F46146700A4555B /* JSPaymentResponse.h */; };
+		A1CC567C1F4614AF00A4555B /* JSPaymentShippingOption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC56611F46146400A4555B /* JSPaymentShippingOption.cpp */; };
+		A1CC567D1F4614B200A4555B /* JSPaymentShippingOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56591F46145C00A4555B /* JSPaymentShippingOption.h */; };
+		A1CC567E1F4614B400A4555B /* JSPaymentShippingType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1CC565E1F46146100A4555B /* JSPaymentShippingType.cpp */; };
+		A1CC567F1F4614B700A4555B /* JSPaymentShippingType.h in Headers */ = {isa = PBXBuildFile; fileRef = A1CC56501F46145300A4555B /* JSPaymentShippingType.h */; };
 		A1DE712D18612AC100734192 /* TouchEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1DE712B18612AC100734192 /* TouchEvents.cpp */; };
 		A1E1154413015C3D0054AC8C /* DistantLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */; };
 		A1E1154613015C4E0054AC8C /* PointLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154513015C4E0054AC8C /* PointLightSource.cpp */; };
 		A1E1154813015C5D0054AC8C /* SpotLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */; };
 		A1ED778C1BE3294000DC1791 /* Device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1ED778A1BE3293F00DC1791 /* Device.cpp */; };
 		A1ED778D1BE3294000DC1791 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ED778B1BE3294000DC1791 /* Device.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1F600441F4757A90077E83F /* PaymentRequestUpdateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F600411F4757A90077E83F /* PaymentRequestUpdateEvent.h */; };
+		A1F600451F4757A90077E83F /* PaymentRequestUpdateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1F600421F4757A90077E83F /* PaymentRequestUpdateEvent.cpp */; };
+		A1F600491F47594E0077E83F /* PaymentDetailsUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F600471F47594E0077E83F /* PaymentDetailsUpdate.h */; };
+		A1F6004D1F475A5E0077E83F /* PaymentRequestUpdateEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F6004B1F475A5E0077E83F /* PaymentRequestUpdateEventInit.h */; };
+		A1F600551F4765050077E83F /* JSPaymentDetailsUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1F6004F1F4764FD0077E83F /* JSPaymentDetailsUpdate.cpp */; };
+		A1F600561F4765050077E83F /* JSPaymentRequestUpdateEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F600501F4764FE0077E83F /* JSPaymentRequestUpdateEventInit.h */; };
+		A1F600571F4765050077E83F /* JSPaymentRequestUpdateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1F600511F4765000077E83F /* JSPaymentRequestUpdateEvent.cpp */; };
+		A1F600581F4765050077E83F /* JSPaymentRequestUpdateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F600521F4765010077E83F /* JSPaymentRequestUpdateEvent.h */; };
+		A1F600591F4765050077E83F /* JSPaymentRequestUpdateEventInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1F600531F4765020077E83F /* JSPaymentRequestUpdateEventInit.cpp */; };
+		A1F6005A1F4765050077E83F /* JSPaymentDetailsUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F600541F4765040077E83F /* JSPaymentDetailsUpdate.h */; };
+		A1F76B131F44C2450014C318 /* PaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B101F44C2450014C318 /* PaymentRequest.h */; };
+		A1F76B141F44C2450014C318 /* PaymentRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1F76B111F44C2450014C318 /* PaymentRequest.cpp */; };
+		A1F76B191F44C3900014C318 /* PaymentMethodData.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B161F44C3900014C318 /* PaymentMethodData.h */; };
+		A1F76B1F1F44C3FE0014C318 /* PaymentDetailsBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B1C1F44C3FE0014C318 /* PaymentDetailsBase.h */; };
+		A1F76B251F44C4910014C318 /* PaymentDetailsInit.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B221F44C4910014C318 /* PaymentDetailsInit.h */; };
+		A1F76B2B1F44C4EF0014C318 /* PaymentOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B281F44C4EF0014C318 /* PaymentOptions.h */; };
+		A1F76B311F44C55A0014C318 /* PaymentItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B2E1F44C55A0014C318 /* PaymentItem.h */; };
+		A1F76B371F44C60F0014C318 /* PaymentCurrencyAmount.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B341F44C60F0014C318 /* PaymentCurrencyAmount.h */; };
+		A1F76B3D1F44CF240014C318 /* PaymentResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B3A1F44CF240014C318 /* PaymentResponse.h */; };
+		A1F76B3E1F44CF240014C318 /* PaymentResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1F76B3B1F44CF240014C318 /* PaymentResponse.cpp */; };
+		A1F76B431F44CF7F0014C318 /* PaymentAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B401F44CF7F0014C318 /* PaymentAddress.h */; };
+		A1F76B491F44D07A0014C318 /* PaymentShippingType.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B461F44D07A0014C318 /* PaymentShippingType.h */; };
+		A1F76B4F1F44D2420014C318 /* PaymentDetailsModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B4C1F44D2420014C318 /* PaymentDetailsModifier.h */; };
+		A1F76B551F44D2C70014C318 /* PaymentShippingOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B521F44D2C70014C318 /* PaymentShippingOption.h */; };
+		A1F76B5B1F44D3B20014C318 /* PaymentComplete.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B581F44D3B20014C318 /* PaymentComplete.h */; };
 		A1F78D0C1C25424C00245446 /* ResourceResponseCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1F78D0B1C25422C00245446 /* ResourceResponseCocoa.mm */; };
 		A2B9217316C5CC420041DCD9 /* IntRectExtent.h in Headers */ = {isa = PBXBuildFile; fileRef = A2B9217216C5CC420041DCD9 /* IntRectExtent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A31C4E4D16E02AA6002F7957 /* OESTextureHalfFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A31C4E4C16E02AA6002F7957 /* OESTextureHalfFloat.cpp */; };
@@ -12618,12 +12669,79 @@
 		A1C150781E3F2B3E0032C98C /* PreviewConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewConverter.h; sourceTree = "<group>"; };
 		A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathResultCustom.cpp; sourceTree = "<group>"; };
 		A1CC11621E493D0100EFA69C /* FileSystemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSystemMac.mm; sourceTree = "<group>"; };
+		A1CC564C1F46145000A4555B /* JSPaymentMethodData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentMethodData.h; sourceTree = "<group>"; };
+		A1CC564D1F46145100A4555B /* JSPaymentMethodData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentMethodData.cpp; sourceTree = "<group>"; };
+		A1CC564E1F46145200A4555B /* JSPaymentComplete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentComplete.h; sourceTree = "<group>"; };
+		A1CC564F1F46145200A4555B /* JSPaymentItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentItem.h; sourceTree = "<group>"; };
+		A1CC56501F46145300A4555B /* JSPaymentShippingType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentShippingType.h; sourceTree = "<group>"; };
+		A1CC56511F46145400A4555B /* JSPaymentDetailsBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentDetailsBase.h; sourceTree = "<group>"; };
+		A1CC56521F46145500A4555B /* JSPaymentDetailsModifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentDetailsModifier.cpp; sourceTree = "<group>"; };
+		A1CC56531F46145600A4555B /* JSPaymentOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentOptions.cpp; sourceTree = "<group>"; };
+		A1CC56541F46145700A4555B /* JSPaymentRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentRequest.cpp; sourceTree = "<group>"; };
+		A1CC56551F46145800A4555B /* JSPaymentDetailsInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentDetailsInit.cpp; sourceTree = "<group>"; };
+		A1CC56561F46145900A4555B /* JSPaymentDetailsBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentDetailsBase.cpp; sourceTree = "<group>"; };
+		A1CC56571F46145A00A4555B /* JSPaymentRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentRequest.h; sourceTree = "<group>"; };
+		A1CC56581F46145B00A4555B /* JSPaymentResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentResponse.cpp; sourceTree = "<group>"; };
+		A1CC56591F46145C00A4555B /* JSPaymentShippingOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentShippingOption.h; sourceTree = "<group>"; };
+		A1CC565A1F46145D00A4555B /* JSPaymentDetailsInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentDetailsInit.h; sourceTree = "<group>"; };
+		A1CC565B1F46145E00A4555B /* JSPaymentDetailsModifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentDetailsModifier.h; sourceTree = "<group>"; };
+		A1CC565C1F46145F00A4555B /* JSPaymentOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentOptions.h; sourceTree = "<group>"; };
+		A1CC565D1F46146000A4555B /* JSPaymentCurrencyAmount.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentCurrencyAmount.cpp; sourceTree = "<group>"; };
+		A1CC565E1F46146100A4555B /* JSPaymentShippingType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentShippingType.cpp; sourceTree = "<group>"; };
+		A1CC565F1F46146100A4555B /* JSPaymentAddress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentAddress.cpp; sourceTree = "<group>"; };
+		A1CC56601F46146200A4555B /* JSPaymentComplete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentComplete.cpp; sourceTree = "<group>"; };
+		A1CC56611F46146400A4555B /* JSPaymentShippingOption.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentShippingOption.cpp; sourceTree = "<group>"; };
+		A1CC56621F46146500A4555B /* JSPaymentItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentItem.cpp; sourceTree = "<group>"; };
+		A1CC56631F46146600A4555B /* JSPaymentCurrencyAmount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentCurrencyAmount.h; sourceTree = "<group>"; };
+		A1CC56641F46146700A4555B /* JSPaymentResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentResponse.h; sourceTree = "<group>"; };
+		A1CC56651F46146800A4555B /* JSPaymentAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentAddress.h; sourceTree = "<group>"; };
 		A1DE712B18612AC100734192 /* TouchEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchEvents.cpp; sourceTree = "<group>"; };
 		A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DistantLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154513015C4E0054AC8C /* PointLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpotLightSource.cpp; sourceTree = "<group>"; };
 		A1ED778A1BE3293F00DC1791 /* Device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Device.cpp; sourceTree = "<group>"; };
 		A1ED778B1BE3294000DC1791 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		A1F600411F4757A90077E83F /* PaymentRequestUpdateEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentRequestUpdateEvent.h; sourceTree = "<group>"; };
+		A1F600421F4757A90077E83F /* PaymentRequestUpdateEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentRequestUpdateEvent.cpp; sourceTree = "<group>"; };
+		A1F600431F4757A90077E83F /* PaymentRequestUpdateEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentRequestUpdateEvent.idl; sourceTree = "<group>"; };
+		A1F600471F47594E0077E83F /* PaymentDetailsUpdate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentDetailsUpdate.h; sourceTree = "<group>"; };
+		A1F600481F47594E0077E83F /* PaymentDetailsUpdate.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentDetailsUpdate.idl; sourceTree = "<group>"; };
+		A1F6004B1F475A5E0077E83F /* PaymentRequestUpdateEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentRequestUpdateEventInit.h; sourceTree = "<group>"; };
+		A1F6004C1F475A5E0077E83F /* PaymentRequestUpdateEventInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentRequestUpdateEventInit.idl; sourceTree = "<group>"; };
+		A1F6004F1F4764FD0077E83F /* JSPaymentDetailsUpdate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentDetailsUpdate.cpp; sourceTree = "<group>"; };
+		A1F600501F4764FE0077E83F /* JSPaymentRequestUpdateEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentRequestUpdateEventInit.h; sourceTree = "<group>"; };
+		A1F600511F4765000077E83F /* JSPaymentRequestUpdateEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentRequestUpdateEvent.cpp; sourceTree = "<group>"; };
+		A1F600521F4765010077E83F /* JSPaymentRequestUpdateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentRequestUpdateEvent.h; sourceTree = "<group>"; };
+		A1F600531F4765020077E83F /* JSPaymentRequestUpdateEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPaymentRequestUpdateEventInit.cpp; sourceTree = "<group>"; };
+		A1F600541F4765040077E83F /* JSPaymentDetailsUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPaymentDetailsUpdate.h; sourceTree = "<group>"; };
+		A1F76B101F44C2450014C318 /* PaymentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentRequest.h; sourceTree = "<group>"; };
+		A1F76B111F44C2450014C318 /* PaymentRequest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentRequest.cpp; sourceTree = "<group>"; };
+		A1F76B121F44C2450014C318 /* PaymentRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentRequest.idl; sourceTree = "<group>"; };
+		A1F76B161F44C3900014C318 /* PaymentMethodData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentMethodData.h; sourceTree = "<group>"; };
+		A1F76B181F44C3900014C318 /* PaymentMethodData.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentMethodData.idl; sourceTree = "<group>"; };
+		A1F76B1C1F44C3FE0014C318 /* PaymentDetailsBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentDetailsBase.h; sourceTree = "<group>"; };
+		A1F76B1E1F44C3FE0014C318 /* PaymentDetailsBase.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentDetailsBase.idl; sourceTree = "<group>"; };
+		A1F76B221F44C4910014C318 /* PaymentDetailsInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentDetailsInit.h; sourceTree = "<group>"; };
+		A1F76B241F44C4910014C318 /* PaymentDetailsInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentDetailsInit.idl; sourceTree = "<group>"; };
+		A1F76B281F44C4EF0014C318 /* PaymentOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentOptions.h; sourceTree = "<group>"; };
+		A1F76B2A1F44C4EF0014C318 /* PaymentOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentOptions.idl; sourceTree = "<group>"; };
+		A1F76B2E1F44C55A0014C318 /* PaymentItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentItem.h; sourceTree = "<group>"; };
+		A1F76B301F44C55A0014C318 /* PaymentItem.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentItem.idl; sourceTree = "<group>"; };
+		A1F76B341F44C60F0014C318 /* PaymentCurrencyAmount.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentCurrencyAmount.h; sourceTree = "<group>"; };
+		A1F76B361F44C60F0014C318 /* PaymentCurrencyAmount.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentCurrencyAmount.idl; sourceTree = "<group>"; };
+		A1F76B3A1F44CF240014C318 /* PaymentResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentResponse.h; sourceTree = "<group>"; };
+		A1F76B3B1F44CF240014C318 /* PaymentResponse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentResponse.cpp; sourceTree = "<group>"; };
+		A1F76B3C1F44CF240014C318 /* PaymentResponse.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentResponse.idl; sourceTree = "<group>"; };
+		A1F76B401F44CF7F0014C318 /* PaymentAddress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentAddress.h; sourceTree = "<group>"; };
+		A1F76B421F44CF7F0014C318 /* PaymentAddress.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentAddress.idl; sourceTree = "<group>"; };
+		A1F76B461F44D07A0014C318 /* PaymentShippingType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentShippingType.h; sourceTree = "<group>"; };
+		A1F76B481F44D07A0014C318 /* PaymentShippingType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentShippingType.idl; sourceTree = "<group>"; };
+		A1F76B4C1F44D2420014C318 /* PaymentDetailsModifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentDetailsModifier.h; sourceTree = "<group>"; };
+		A1F76B4E1F44D2420014C318 /* PaymentDetailsModifier.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentDetailsModifier.idl; sourceTree = "<group>"; };
+		A1F76B521F44D2C70014C318 /* PaymentShippingOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentShippingOption.h; sourceTree = "<group>"; };
+		A1F76B541F44D2C70014C318 /* PaymentShippingOption.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentShippingOption.idl; sourceTree = "<group>"; };
+		A1F76B581F44D3B20014C318 /* PaymentComplete.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentComplete.h; sourceTree = "<group>"; };
+		A1F76B5A1F44D3B20014C318 /* PaymentComplete.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentComplete.idl; sourceTree = "<group>"; };
 		A1F78D0B1C25422C00245446 /* ResourceResponseCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceResponseCocoa.mm; sourceTree = "<group>"; };
 		A208E222A56A0C7575F2A72E /* RenderMathMLMenclose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLMenclose.h; sourceTree = "<group>"; };
 		A2B9217216C5CC420041DCD9 /* IntRectExtent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntRectExtent.h; sourceTree = "<group>"; };
@@ -16729,6 +16847,7 @@
 				07CFD99317D01405001C4FFC /* MediaStream */,
 				33503C9C10179A9A003B47E1 /* Notifications */,
 				1AC226020DB69EA70089B669 /* Offline */,
+				A1CC564A1F4613BB00A4555B /* PaymentRequest */,
 				A9D247F90D757E4100FDF959 /* Plugins */,
 				89F60B17157F6A020075E157 /* Quota */,
 				BC9854460CD3DA5F00069BC1 /* Ranges */,
@@ -20699,6 +20818,7 @@
 				07221B4617CEC32700848E51 /* mediastream */,
 				71D6AA391DA4EAF700B23969 /* modern-media-controls */,
 				333F703D0FB49C16008E12A6 /* notifications */,
+				A1F76B0E1F44C0CF0014C318 /* paymentrequest */,
 				072AE1DE183C0513000A5988 /* plugins */,
 				89F60B08157F68350075E157 /* quota */,
 				AA2A5AB716A485A400975A25 /* speech */,
@@ -21096,6 +21216,87 @@
 				A1763F3C1E205234001D58DE /* WebArchiveDumpSupport.mm */,
 			);
 			path = cocoa;
+			sourceTree = "<group>";
+		};
+		A1CC564A1F4613BB00A4555B /* PaymentRequest */ = {
+			isa = PBXGroup;
+			children = (
+				A1CC565F1F46146100A4555B /* JSPaymentAddress.cpp */,
+				A1CC56651F46146800A4555B /* JSPaymentAddress.h */,
+				A1CC56601F46146200A4555B /* JSPaymentComplete.cpp */,
+				A1CC564E1F46145200A4555B /* JSPaymentComplete.h */,
+				A1CC565D1F46146000A4555B /* JSPaymentCurrencyAmount.cpp */,
+				A1CC56631F46146600A4555B /* JSPaymentCurrencyAmount.h */,
+				A1CC56561F46145900A4555B /* JSPaymentDetailsBase.cpp */,
+				A1CC56511F46145400A4555B /* JSPaymentDetailsBase.h */,
+				A1CC56551F46145800A4555B /* JSPaymentDetailsInit.cpp */,
+				A1CC565A1F46145D00A4555B /* JSPaymentDetailsInit.h */,
+				A1CC56521F46145500A4555B /* JSPaymentDetailsModifier.cpp */,
+				A1CC565B1F46145E00A4555B /* JSPaymentDetailsModifier.h */,
+				A1F6004F1F4764FD0077E83F /* JSPaymentDetailsUpdate.cpp */,
+				A1F600541F4765040077E83F /* JSPaymentDetailsUpdate.h */,
+				A1CC56621F46146500A4555B /* JSPaymentItem.cpp */,
+				A1CC564F1F46145200A4555B /* JSPaymentItem.h */,
+				A1CC564D1F46145100A4555B /* JSPaymentMethodData.cpp */,
+				A1CC564C1F46145000A4555B /* JSPaymentMethodData.h */,
+				A1CC56531F46145600A4555B /* JSPaymentOptions.cpp */,
+				A1CC565C1F46145F00A4555B /* JSPaymentOptions.h */,
+				A1CC56541F46145700A4555B /* JSPaymentRequest.cpp */,
+				A1CC56571F46145A00A4555B /* JSPaymentRequest.h */,
+				A1F600511F4765000077E83F /* JSPaymentRequestUpdateEvent.cpp */,
+				A1F600521F4765010077E83F /* JSPaymentRequestUpdateEvent.h */,
+				A1F600531F4765020077E83F /* JSPaymentRequestUpdateEventInit.cpp */,
+				A1F600501F4764FE0077E83F /* JSPaymentRequestUpdateEventInit.h */,
+				A1CC56581F46145B00A4555B /* JSPaymentResponse.cpp */,
+				A1CC56641F46146700A4555B /* JSPaymentResponse.h */,
+				A1CC56611F46146400A4555B /* JSPaymentShippingOption.cpp */,
+				A1CC56591F46145C00A4555B /* JSPaymentShippingOption.h */,
+				A1CC565E1F46146100A4555B /* JSPaymentShippingType.cpp */,
+				A1CC56501F46145300A4555B /* JSPaymentShippingType.h */,
+			);
+			name = PaymentRequest;
+			sourceTree = "<group>";
+		};
+		A1F76B0E1F44C0CF0014C318 /* paymentrequest */ = {
+			isa = PBXGroup;
+			children = (
+				A1F76B401F44CF7F0014C318 /* PaymentAddress.h */,
+				A1F76B421F44CF7F0014C318 /* PaymentAddress.idl */,
+				A1F76B581F44D3B20014C318 /* PaymentComplete.h */,
+				A1F76B5A1F44D3B20014C318 /* PaymentComplete.idl */,
+				A1F76B341F44C60F0014C318 /* PaymentCurrencyAmount.h */,
+				A1F76B361F44C60F0014C318 /* PaymentCurrencyAmount.idl */,
+				A1F76B1C1F44C3FE0014C318 /* PaymentDetailsBase.h */,
+				A1F76B1E1F44C3FE0014C318 /* PaymentDetailsBase.idl */,
+				A1F76B221F44C4910014C318 /* PaymentDetailsInit.h */,
+				A1F76B241F44C4910014C318 /* PaymentDetailsInit.idl */,
+				A1F76B4C1F44D2420014C318 /* PaymentDetailsModifier.h */,
+				A1F76B4E1F44D2420014C318 /* PaymentDetailsModifier.idl */,
+				A1F600471F47594E0077E83F /* PaymentDetailsUpdate.h */,
+				A1F600481F47594E0077E83F /* PaymentDetailsUpdate.idl */,
+				A1F76B2E1F44C55A0014C318 /* PaymentItem.h */,
+				A1F76B301F44C55A0014C318 /* PaymentItem.idl */,
+				A1F76B161F44C3900014C318 /* PaymentMethodData.h */,
+				A1F76B181F44C3900014C318 /* PaymentMethodData.idl */,
+				A1F76B281F44C4EF0014C318 /* PaymentOptions.h */,
+				A1F76B2A1F44C4EF0014C318 /* PaymentOptions.idl */,
+				A1F76B111F44C2450014C318 /* PaymentRequest.cpp */,
+				A1F76B101F44C2450014C318 /* PaymentRequest.h */,
+				A1F76B121F44C2450014C318 /* PaymentRequest.idl */,
+				A1F600421F4757A90077E83F /* PaymentRequestUpdateEvent.cpp */,
+				A1F600411F4757A90077E83F /* PaymentRequestUpdateEvent.h */,
+				A1F600431F4757A90077E83F /* PaymentRequestUpdateEvent.idl */,
+				A1F6004B1F475A5E0077E83F /* PaymentRequestUpdateEventInit.h */,
+				A1F6004C1F475A5E0077E83F /* PaymentRequestUpdateEventInit.idl */,
+				A1F76B3B1F44CF240014C318 /* PaymentResponse.cpp */,
+				A1F76B3A1F44CF240014C318 /* PaymentResponse.h */,
+				A1F76B3C1F44CF240014C318 /* PaymentResponse.idl */,
+				A1F76B521F44D2C70014C318 /* PaymentShippingOption.h */,
+				A1F76B541F44D2C70014C318 /* PaymentShippingOption.idl */,
+				A1F76B461F44D07A0014C318 /* PaymentShippingType.h */,
+				A1F76B481F44D07A0014C318 /* PaymentShippingType.idl */,
+			);
+			path = paymentrequest;
 			sourceTree = "<group>";
 		};
 		A516E8B2136E04C00076C3C0 /* ios */ = {
@@ -27741,7 +27942,6 @@
 				1AE96A8D1D1A0DDD00B86768 /* JSApplePayPaymentMethodSelectedEvent.h in Headers */,
 				7C65231A1E00DBB500677F22 /* JSApplePayPaymentPass.h in Headers */,
 				7C6579F21E00856600E3A27A /* JSApplePayPaymentRequest.h in Headers */,
-				E48E332C1F47037C00BAB0EF /* RenderTreeUpdaterFirstLetter.h in Headers */,
 				1AE96A8F1D1A0DDD00B86768 /* JSApplePaySession.h in Headers */,
 				1AE96A911D1A0DDD00B86768 /* JSApplePayShippingContactSelectedEvent.h in Headers */,
 				7C6579F41E00856600E3A27A /* JSApplePayShippingMethod.h in Headers */,
@@ -28147,6 +28347,22 @@
 				FDA15EB212B03EE1003A583A /* JSPannerNode.h in Headers */,
 				57B5F7F11E5B8C5A00F34F90 /* JSPasswordCredential.h in Headers */,
 				77D50FF81ED4D9A000DA4C87 /* JSPasswordCredentialData.h in Headers */,
+				A1CC56671F46147A00A4555B /* JSPaymentAddress.h in Headers */,
+				A1CC56691F46148000A4555B /* JSPaymentComplete.h in Headers */,
+				A1CC566B1F46148500A4555B /* JSPaymentCurrencyAmount.h in Headers */,
+				A1CC566D1F46148A00A4555B /* JSPaymentDetailsBase.h in Headers */,
+				A1CC566F1F46148E00A4555B /* JSPaymentDetailsInit.h in Headers */,
+				A1CC56711F46149300A4555B /* JSPaymentDetailsModifier.h in Headers */,
+				A1F6005A1F4765050077E83F /* JSPaymentDetailsUpdate.h in Headers */,
+				A1CC56731F46149800A4555B /* JSPaymentItem.h in Headers */,
+				A1CC56751F46149D00A4555B /* JSPaymentMethodData.h in Headers */,
+				A1CC56771F4614A200A4555B /* JSPaymentOptions.h in Headers */,
+				A1CC56791F4614A700A4555B /* JSPaymentRequest.h in Headers */,
+				A1F600581F4765050077E83F /* JSPaymentRequestUpdateEvent.h in Headers */,
+				A1F600561F4765050077E83F /* JSPaymentRequestUpdateEventInit.h in Headers */,
+				A1CC567B1F4614AD00A4555B /* JSPaymentResponse.h in Headers */,
+				A1CC567D1F4614B200A4555B /* JSPaymentShippingOption.h in Headers */,
+				A1CC567F1F4614B700A4555B /* JSPaymentShippingType.h in Headers */,
 				57E657F01E71665400F941CA /* JSPbkdf2Params.h in Headers */,
 				8A9A587511E84C81008ACFD1 /* JSPerformance.h in Headers */,
 				CB38FD521CCF939400592A3F /* JSPerformanceEntry.h in Headers */,
@@ -28717,7 +28933,6 @@
 				709A01FE1E3D0BDD006B0D4C /* ModuleFetchFailureKind.h in Headers */,
 				F55B3DC61251F12D003EF269 /* MonthInputType.h in Headers */,
 				85031B460A44EFC700F992E0 /* MouseEvent.h in Headers */,
-				517A52F01F47535B00DCDC0A /* SWServer.h in Headers */,
 				83765F951DAC522F00C06537 /* MouseEventInit.h in Headers */,
 				935C476309AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h in Headers */,
 				85031B480A44EFC700F992E0 /* MouseRelatedEvent.h in Headers */,
@@ -28874,14 +29089,30 @@
 				A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */,
 				B22279710D00BF220071B782 /* PatternAttributes.h in Headers */,
 				1A8A643A1D19FC5300D0E00F /* Payment.h in Headers */,
+				A1F76B431F44CF7F0014C318 /* PaymentAddress.h in Headers */,
 				1AE96A881D1A0CEB00B86768 /* PaymentAuthorizationStatus.h in Headers */,
+				A1F76B5B1F44D3B20014C318 /* PaymentComplete.h in Headers */,
 				1A8A643B1D19FC5300D0E00F /* PaymentContact.h in Headers */,
 				1A58E86E1D19E42D00C0EA73 /* PaymentCoordinator.h in Headers */,
 				1A58E8661D19D4F000C0EA73 /* PaymentCoordinatorClient.h in Headers */,
+				A1F76B371F44C60F0014C318 /* PaymentCurrencyAmount.h in Headers */,
+				A1F76B1F1F44C3FE0014C318 /* PaymentDetailsBase.h in Headers */,
+				A1F76B251F44C4910014C318 /* PaymentDetailsInit.h in Headers */,
+				A1F76B4F1F44D2420014C318 /* PaymentDetailsModifier.h in Headers */,
+				A1F600491F47594E0077E83F /* PaymentDetailsUpdate.h in Headers */,
 				7CF930E71E01F9B400BAFFBE /* PaymentHeaders.h in Headers */,
+				A1F76B311F44C55A0014C318 /* PaymentItem.h in Headers */,
 				1AE96A891D1A0CEB00B86768 /* PaymentMerchantSession.h in Headers */,
 				1A8A643C1D19FC5300D0E00F /* PaymentMethod.h in Headers */,
+				A1F76B191F44C3900014C318 /* PaymentMethodData.h in Headers */,
+				A1F76B2B1F44C4EF0014C318 /* PaymentOptions.h in Headers */,
+				A1F76B131F44C2450014C318 /* PaymentRequest.h in Headers */,
+				A1F600441F4757A90077E83F /* PaymentRequestUpdateEvent.h in Headers */,
+				A1F6004D1F475A5E0077E83F /* PaymentRequestUpdateEventInit.h in Headers */,
 				1A8A64681D19FDFF00D0E00F /* PaymentRequestValidator.h in Headers */,
+				A1F76B3D1F44CF240014C318 /* PaymentResponse.h in Headers */,
+				A1F76B551F44D2C70014C318 /* PaymentShippingOption.h in Headers */,
+				A1F76B491F44D07A0014C318 /* PaymentShippingType.h in Headers */,
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,
 				5E2C43511BCEE2F60001E2BC /* PeerConnectionBackend.h in Headers */,
 				5EBB89391C77C39900C65D41 /* PeerMediaDescription.h in Headers */,
@@ -29174,6 +29405,8 @@
 				93F1998C08245E59001E9ABC /* RenderTreeAsText.h in Headers */,
 				5824ABAB1AE849C8009074B7 /* RenderTreePosition.h in Headers */,
 				E46180291C8A06CD0026C02C /* RenderTreeUpdater.h in Headers */,
+				E48E332C1F47037C00BAB0EF /* RenderTreeUpdaterFirstLetter.h in Headers */,
+				E48E332E1F47038000BAB0EF /* RenderTreeUpdaterListItem.h in Headers */,
 				E44614520CD68A3500FADA75 /* RenderVideo.h in Headers */,
 				BCEA4868097D93020094C9E4 /* RenderView.h in Headers */,
 				BE20507E18A458C20080647E /* RenderVTTCue.h in Headers */,
@@ -29741,7 +29974,6 @@
 				BC22747B0E8366E200E7F975 /* SVGRenderStyleDefs.h in Headers */,
 				436708F212D9CA4B00044234 /* SVGRenderSupport.h in Headers */,
 				436708F412D9CA4B00044234 /* SVGRenderTreeAsText.h in Headers */,
-				E48E332E1F47038000BAB0EF /* RenderTreeUpdaterListItem.h in Headers */,
 				436708F612D9CA4B00044234 /* SVGResources.h in Headers */,
 				436708F812D9CA4B00044234 /* SVGResourcesCache.h in Headers */,
 				436708FA12D9CA4B00044234 /* SVGResourcesCycleSolver.h in Headers */,
@@ -29792,6 +30024,7 @@
 				8485228B1190173C006EDC7F /* SVGVKernElement.h in Headers */,
 				B2227AF60D00BF220071B782 /* SVGZoomAndPan.h in Headers */,
 				B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */,
+				517A52F01F47535B00DCDC0A /* SWServer.h in Headers */,
 				E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */,
 				26FAE4CF1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h in Headers */,
 				0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */,
@@ -31823,7 +32056,6 @@
 				659DDC8209E198BA001BF3C6 /* JSDocument.cpp in Sources */,
 				1221E05D1C02B444006A1A00 /* JSDocumentAnimation.cpp in Sources */,
 				49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */,
-				517A52F11F4754E700DCDC0A /* SWServer.cpp in Sources */,
 				E3B7C0631DC34160001FB0B8 /* JSDocumentDOMJIT.cpp in Sources */,
 				1A494EDE0A123F4C00FDAFC1 /* JSDocumentFragment.cpp in Sources */,
 				7C33F3621B4A050400502CAF /* JSDocumentFragmentCustom.cpp in Sources */,
@@ -31866,7 +32098,6 @@
 				E172AF8F1811BC3700FBADB9 /* JSDOMPromiseDeferred.cpp in Sources */,
 				0FF3B9281EE3B6DE00B84144 /* JSDOMQuad.cpp in Sources */,
 				0F94A3961EF1B10500FBAFFB /* JSDOMQuadCustom.cpp in Sources */,
-				E48E332D1F47038000BAB0EF /* RenderTreeUpdaterListItem.cpp in Sources */,
 				0FF3B92A1EE3B6DE00B84144 /* JSDOMQuadInit.cpp in Sources */,
 				0F4710BB1DB56BE8002DCEC3 /* JSDOMRect.cpp in Sources */,
 				0F4710BD1DB56BE8002DCEC3 /* JSDOMRectInit.cpp in Sources */,
@@ -32133,6 +32364,22 @@
 				FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */,
 				57B5F7F01E5B8C5A00F34F90 /* JSPasswordCredential.cpp in Sources */,
 				77D50FF91ED4D9A400DA4C87 /* JSPasswordCredentialData.cpp in Sources */,
+				A1CC56661F46147400A4555B /* JSPaymentAddress.cpp in Sources */,
+				A1CC56681F46147D00A4555B /* JSPaymentComplete.cpp in Sources */,
+				A1CC566A1F46148200A4555B /* JSPaymentCurrencyAmount.cpp in Sources */,
+				A1CC566C1F46148700A4555B /* JSPaymentDetailsBase.cpp in Sources */,
+				A1CC566E1F46148C00A4555B /* JSPaymentDetailsInit.cpp in Sources */,
+				A1CC56701F46149100A4555B /* JSPaymentDetailsModifier.cpp in Sources */,
+				A1F600551F4765050077E83F /* JSPaymentDetailsUpdate.cpp in Sources */,
+				A1CC56721F46149500A4555B /* JSPaymentItem.cpp in Sources */,
+				A1CC56741F46149B00A4555B /* JSPaymentMethodData.cpp in Sources */,
+				A1CC56761F4614A000A4555B /* JSPaymentOptions.cpp in Sources */,
+				A1CC56781F4614A500A4555B /* JSPaymentRequest.cpp in Sources */,
+				A1F600571F4765050077E83F /* JSPaymentRequestUpdateEvent.cpp in Sources */,
+				A1F600591F4765050077E83F /* JSPaymentRequestUpdateEventInit.cpp in Sources */,
+				A1CC567A1F4614AA00A4555B /* JSPaymentResponse.cpp in Sources */,
+				A1CC567C1F4614AF00A4555B /* JSPaymentShippingOption.cpp in Sources */,
+				A1CC567E1F4614B400A4555B /* JSPaymentShippingType.cpp in Sources */,
 				57E657EF1E71665400F941CA /* JSPbkdf2Params.cpp in Sources */,
 				E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */,
 				CB38FD511CCF938900592A3F /* JSPerformanceEntry.cpp in Sources */,
@@ -32830,7 +33077,10 @@
 				1A58E86D1D19E42D00C0EA73 /* PaymentCoordinator.cpp in Sources */,
 				1ADA4A1C1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm in Sources */,
 				1A8A646E1D19FF8700D0E00F /* PaymentMethodCocoa.mm in Sources */,
+				A1F76B141F44C2450014C318 /* PaymentRequest.cpp in Sources */,
+				A1F600451F4757A90077E83F /* PaymentRequestUpdateEvent.cpp in Sources */,
 				1A8A64671D19FDFF00D0E00F /* PaymentRequestValidator.cpp in Sources */,
+				A1F76B3E1F44CF240014C318 /* PaymentResponse.cpp in Sources */,
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,
 				2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */,
 				41E408391DCB748900EFCE19 /* PeerConnectionBackend.cpp in Sources */,
@@ -33047,6 +33297,7 @@
 				5824ABAA1AE849C8009074B7 /* RenderTreePosition.cpp in Sources */,
 				E461802B1C8A06D90026C02C /* RenderTreeUpdater.cpp in Sources */,
 				E48284081F44594C00863AC3 /* RenderTreeUpdaterFirstLetter.cpp in Sources */,
+				E48E332D1F47038000BAB0EF /* RenderTreeUpdaterListItem.cpp in Sources */,
 				E44614510CD68A3500FADA75 /* RenderVideo.cpp in Sources */,
 				BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */,
 				BE20507D18A458BF0080647E /* RenderVTTCue.cpp in Sources */,
@@ -33525,6 +33776,7 @@
 				8485228A1190173C006EDC7F /* SVGVKernElement.cpp in Sources */,
 				B2227AF50D00BF220071B782 /* SVGZoomAndPan.cpp in Sources */,
 				B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */,
+				517A52F11F4754E700DCDC0A /* SWServer.cpp in Sources */,
 				E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */,
 				E180811616FCF9CB00B80D07 /* SynchronousLoaderClient.mm in Sources */,
 				442ABCD617D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp in Sources */,

@@ -1,3 +1,28 @@
+2017-08-19  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Add interface stubs
+        https://bugs.webkit.org/show_bug.cgi?id=175730
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/payment-request/allowpaymentrequest/active-document-cross-origin.https.sub-expected.txt:
+        * web-platform-tests/payment-request/allowpaymentrequest/active-document-same-origin.https-expected.txt:
+        * web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-same-origin-bc-containers.https-expected.txt:
+        * web-platform-tests/payment-request/allowpaymentrequest/basic.https-expected.txt:
+        * web-platform-tests/payment-request/allowpaymentrequest/no-attribute-same-origin-bc-containers.https-expected.txt:
+        * web-platform-tests/payment-request/historical.https-expected.txt:
+        * web-platform-tests/payment-request/interfaces.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-abort-method.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-constructor-crash.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-constructor.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-id.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-in-iframe-expected.txt:
+        * web-platform-tests/payment-request/payment-request-onshippingaddresschange-attribute.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-onshippingoptionchange-attribute.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-show-method.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-update-event-constructor.http-expected.txt:
+        * web-platform-tests/payment-request/payment-request-update-event-constructor.https-expected.txt:
+
 2017-08-18  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Add support for being loaded responses

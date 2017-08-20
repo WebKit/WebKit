@@ -1,42 +1,12 @@
 
-FAIL Don't crash if there is a abusive number of payment methods in the methodData sequence assert_true: failed smoke test: https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:81:23
-step@https://localhost:9443/resources/testharness.js:1409:30
-test@https://localhost:9443/resources/testharness.js:498:22
-global code@https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:77:5 expected true got false
-FAIL Don't crash if there is a abusive number of supported methods in one sequence assert_true: failed smoke test: https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:101:23
-step@https://localhost:9443/resources/testharness.js:1409:30
-test@https://localhost:9443/resources/testharness.js:498:22
-global code@https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:97:5 expected true got false
-FAIL Don't crash if the request id has an abusive length assert_true: failed smoke test: https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:123:23
-step@https://localhost:9443/resources/testharness.js:1409:30
-test@https://localhost:9443/resources/testharness.js:498:22
-global code@https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:119:5 expected true got false
-FAIL Don't crash if PaymentDetailsInit.total.label is an abusive length assert_true: failed smoke test: https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:147:23
-step@https://localhost:9443/resources/testharness.js:1409:30
-test@https://localhost:9443/resources/testharness.js:498:22
-global code@https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:143:5 expected true got false
-FAIL Don't crash if total.amount.value is an abusive length assert_true: failed smoke test: https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:168:23
-step@https://localhost:9443/resources/testharness.js:1409:30
-test@https://localhost:9443/resources/testharness.js:498:22
-global code@https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:164:5 expected true got false
-FAIL Don't crash if details.displayItems has an abusive number of items assert_true: failed smoke test: https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:191:25
-step@https://localhost:9443/resources/testharness.js:1409:30
-test@https://localhost:9443/resources/testharness.js:498:22
-global code@https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:186:7 expected true got false
-FAIL Don't crash if details.shippingOptions has an abusive number of items assert_true: failed smoke test: https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:191:25
-step@https://localhost:9443/resources/testharness.js:1409:30
-test@https://localhost:9443/resources/testharness.js:498:22
-global code@https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:186:7 expected true got false
-FAIL Don't crash if PaymentShippingOptions.label is an abusive length assert_true: failed smoke test: https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:214:23
-step@https://localhost:9443/resources/testharness.js:1409:30
-test@https://localhost:9443/resources/testharness.js:498:22
-global code@https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:208:5 expected true got false
-FAIL Don't crash if the PaymentShippingOptions.amount.value is an abusive length assert_true: failed smoke test: https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:234:23
-step@https://localhost:9443/resources/testharness.js:1409:30
-test@https://localhost:9443/resources/testharness.js:498:22
-global code@https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:228:5 expected true got false
-FAIL Don't crash if PaymentItem.label is an abusive length assert_true: failed smoke test: https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:254:23
-step@https://localhost:9443/resources/testharness.js:1409:30
-test@https://localhost:9443/resources/testharness.js:498:22
-global code@https://localhost:9443/payment-request/payment-request-constructor-crash.https.html:248:5 expected true got false
+PASS Don't crash if there is a abusive number of payment methods in the methodData sequence 
+PASS Don't crash if there is a abusive number of supported methods in one sequence 
+PASS Don't crash if the request id has an abusive length 
+PASS Don't crash if PaymentDetailsInit.total.label is an abusive length 
+PASS Don't crash if total.amount.value is an abusive length 
+PASS Don't crash if details.displayItems has an abusive number of items 
+PASS Don't crash if details.shippingOptions has an abusive number of items 
+PASS Don't crash if PaymentShippingOptions.label is an abusive length 
+PASS Don't crash if the PaymentShippingOptions.amount.value is an abusive length 
+PASS Don't crash if PaymentItem.label is an abusive length 
 

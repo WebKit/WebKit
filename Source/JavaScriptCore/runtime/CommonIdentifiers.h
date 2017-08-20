@@ -99,6 +99,10 @@
     macro(NumberFormat) \
     macro(Object) \
     macro(PasswordCredential) \
+    macro(PaymentAddress) \
+    macro(PaymentRequest) \
+    macro(PaymentRequestUpdateEvent) \
+    macro(PaymentResponse) \
     macro(PerformanceEntry) \
     macro(PerformanceEntryList) \
     macro(PerformanceMark) \

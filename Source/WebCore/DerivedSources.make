@@ -45,6 +45,7 @@ VPATH = \
     $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/mediastream \
     $(WebCore)/Modules/notifications \
+    $(WebCore)/Modules/paymentrequest \
     $(WebCore)/Modules/plugins \
     $(WebCore)/Modules/quota \
     $(WebCore)/Modules/speech \
@@ -227,6 +228,22 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/notifications/Notification.idl \
     $(WebCore)/Modules/notifications/NotificationPermission.idl \
     $(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentAddress.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentComplete.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentCurrencyAmount.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentDetailsBase.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentDetailsInit.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentDetailsModifier.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentDetailsUpdate.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentItem.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentMethodData.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentOptions.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentRequest.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentRequestUpdateEvent.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentRequestUpdateEventInit.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentResponse.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentShippingOption.idl \
+    $(WebCore)/Modules/paymentrequest/PaymentShippingType.idl \
     $(WebCore)/Modules/plugins/QuickTimePluginReplacement.idl \
     $(WebCore)/Modules/quota/DOMWindowQuota.idl \
     $(WebCore)/Modules/quota/NavigatorStorageQuota.idl \

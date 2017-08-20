@@ -205,8 +205,10 @@ namespace WebCore {
     macro(select) \
     macro(selectionchange) \
     macro(selectstart) \
-    macro(shippingmethodselected) \
+    macro(shippingaddresschange) \
     macro(shippingcontactselected) \
+    macro(shippingmethodselected) \
+    macro(shippingoptionchange) \
     macro(show) \
     macro(signalingstatechange) \
     macro(slotchange) \

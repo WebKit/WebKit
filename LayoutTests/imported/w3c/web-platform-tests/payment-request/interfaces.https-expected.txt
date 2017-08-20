@@ -1,61 +1,61 @@
 
-FAIL PaymentRequest interface: existence and properties of interface object assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface object length assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface object name assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: operation show() assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: operation abort() assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: operation canMakePayment() assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: attribute id assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: attribute shippingAddress assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: attribute shippingOption assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: attribute shippingType assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: attribute onshippingaddresschange assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: attribute onshippingoptionchange assert_own_property: self does not have own property "PaymentRequest" expected property "PaymentRequest" missing
-FAIL PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "show" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PaymentRequest"
-FAIL PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "abort" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PaymentRequest"
-FAIL PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "canMakePayment" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PaymentRequest"
-FAIL PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "id" with the proper type (3) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PaymentRequest"
-FAIL PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "shippingAddress" with the proper type (4) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PaymentRequest"
-FAIL PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "shippingOption" with the proper type (5) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PaymentRequest"
-FAIL PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "shippingType" with the proper type (6) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PaymentRequest"
-FAIL PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "onshippingaddresschange" with the proper type (7) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PaymentRequest"
-FAIL PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "onshippingoptionchange" with the proper type (8) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PaymentRequest"
-FAIL PaymentAddress interface: existence and properties of interface object assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface object length assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface object name assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute country assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute addressLine assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute region assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute city assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute dependentLocality assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute postalCode assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute sortingCode assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute languageCode assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute organization assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute recipient assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentAddress interface: attribute phone assert_own_property: self does not have own property "PaymentAddress" expected property "PaymentAddress" missing
-FAIL PaymentResponse interface: existence and properties of interface object assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface object length assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface object name assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: attribute requestId assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: attribute methodName assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: attribute details assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: attribute shippingAddress assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: attribute shippingOption assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: attribute payerName assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: attribute payerEmail assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: attribute payerPhone assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentResponse interface: operation complete(PaymentComplete) assert_own_property: self does not have own property "PaymentResponse" expected property "PaymentResponse" missing
-FAIL PaymentRequestUpdateEvent interface: existence and properties of interface object assert_own_property: self does not have own property "PaymentRequestUpdateEvent" expected property "PaymentRequestUpdateEvent" missing
-FAIL PaymentRequestUpdateEvent interface object length assert_own_property: self does not have own property "PaymentRequestUpdateEvent" expected property "PaymentRequestUpdateEvent" missing
-FAIL PaymentRequestUpdateEvent interface object name assert_own_property: self does not have own property "PaymentRequestUpdateEvent" expected property "PaymentRequestUpdateEvent" missing
-FAIL PaymentRequestUpdateEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PaymentRequestUpdateEvent" expected property "PaymentRequestUpdateEvent" missing
-FAIL PaymentRequestUpdateEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PaymentRequestUpdateEvent" expected property "PaymentRequestUpdateEvent" missing
-FAIL PaymentRequestUpdateEvent interface: operation updateWith([object Object]) assert_own_property: self does not have own property "PaymentRequestUpdateEvent" expected property "PaymentRequestUpdateEvent" missing
+PASS PaymentRequest interface: existence and properties of interface object 
+PASS PaymentRequest interface object length 
+PASS PaymentRequest interface object name 
+PASS PaymentRequest interface: existence and properties of interface prototype object 
+PASS PaymentRequest interface: existence and properties of interface prototype object's "constructor" property 
+PASS PaymentRequest interface: operation show() 
+PASS PaymentRequest interface: operation abort() 
+PASS PaymentRequest interface: operation canMakePayment() 
+PASS PaymentRequest interface: attribute id 
+PASS PaymentRequest interface: attribute shippingAddress 
+PASS PaymentRequest interface: attribute shippingOption 
+PASS PaymentRequest interface: attribute shippingType 
+PASS PaymentRequest interface: attribute onshippingaddresschange 
+PASS PaymentRequest interface: attribute onshippingoptionchange 
+PASS PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "show" with the proper type (0) 
+PASS PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "abort" with the proper type (1) 
+PASS PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "canMakePayment" with the proper type (2) 
+PASS PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "id" with the proper type (3) 
+PASS PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "shippingAddress" with the proper type (4) 
+PASS PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "shippingOption" with the proper type (5) 
+PASS PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "shippingType" with the proper type (6) 
+PASS PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "onshippingaddresschange" with the proper type (7) 
+PASS PaymentRequest interface: new PaymentRequest([{supportedMethods: ['foo']}], {total: {label: 'bar', amount: {currency: 'BAZ', value: '0'}}}) must inherit property "onshippingoptionchange" with the proper type (8) 
+PASS PaymentAddress interface: existence and properties of interface object 
+PASS PaymentAddress interface object length 
+PASS PaymentAddress interface object name 
+PASS PaymentAddress interface: existence and properties of interface prototype object 
+PASS PaymentAddress interface: existence and properties of interface prototype object's "constructor" property 
+PASS PaymentAddress interface: attribute country 
+PASS PaymentAddress interface: attribute addressLine 
+PASS PaymentAddress interface: attribute region 
+PASS PaymentAddress interface: attribute city 
+PASS PaymentAddress interface: attribute dependentLocality 
+PASS PaymentAddress interface: attribute postalCode 
+PASS PaymentAddress interface: attribute sortingCode 
+PASS PaymentAddress interface: attribute languageCode 
+PASS PaymentAddress interface: attribute organization 
+PASS PaymentAddress interface: attribute recipient 
+PASS PaymentAddress interface: attribute phone 
+PASS PaymentResponse interface: existence and properties of interface object 
+PASS PaymentResponse interface object length 
+PASS PaymentResponse interface object name 
+PASS PaymentResponse interface: existence and properties of interface prototype object 
+PASS PaymentResponse interface: existence and properties of interface prototype object's "constructor" property 
+PASS PaymentResponse interface: attribute requestId 
+PASS PaymentResponse interface: attribute methodName 
+PASS PaymentResponse interface: attribute details 
+PASS PaymentResponse interface: attribute shippingAddress 
+PASS PaymentResponse interface: attribute shippingOption 
+PASS PaymentResponse interface: attribute payerName 
+PASS PaymentResponse interface: attribute payerEmail 
+PASS PaymentResponse interface: attribute payerPhone 
+PASS PaymentResponse interface: operation complete(PaymentComplete) 
+PASS PaymentRequestUpdateEvent interface: existence and properties of interface object 
+PASS PaymentRequestUpdateEvent interface object length 
+PASS PaymentRequestUpdateEvent interface object name 
+PASS PaymentRequestUpdateEvent interface: existence and properties of interface prototype object 
+PASS PaymentRequestUpdateEvent interface: existence and properties of interface prototype object's "constructor" property 
+PASS PaymentRequestUpdateEvent interface: operation updateWith([object Object]) 
 

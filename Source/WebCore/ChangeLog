@@ -1,3 +1,60 @@
+2017-08-19  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Add interface stubs
+        https://bugs.webkit.org/show_bug.cgi?id=175730
+
+        Reviewed by Youenn Fablet.
+
+        * DerivedSources.make:
+        * Modules/paymentrequest/PaymentAddress.h: Added.
+        * Modules/paymentrequest/PaymentAddress.idl: Added.
+        * Modules/paymentrequest/PaymentComplete.h: Added.
+        * Modules/paymentrequest/PaymentComplete.idl: Added.
+        * Modules/paymentrequest/PaymentCurrencyAmount.h: Added.
+        * Modules/paymentrequest/PaymentCurrencyAmount.idl: Added.
+        * Modules/paymentrequest/PaymentDetailsBase.h: Added.
+        * Modules/paymentrequest/PaymentDetailsBase.idl: Added.
+        * Modules/paymentrequest/PaymentDetailsInit.h: Added.
+        * Modules/paymentrequest/PaymentDetailsInit.idl: Added.
+        * Modules/paymentrequest/PaymentDetailsModifier.h: Added.
+        * Modules/paymentrequest/PaymentDetailsModifier.idl: Added.
+        * Modules/paymentrequest/PaymentDetailsUpdate.h: Added.
+        * Modules/paymentrequest/PaymentDetailsUpdate.idl: Added.
+        * Modules/paymentrequest/PaymentItem.h: Added.
+        * Modules/paymentrequest/PaymentItem.idl: Added.
+        * Modules/paymentrequest/PaymentMethodData.h: Added.
+        * Modules/paymentrequest/PaymentMethodData.idl: Added.
+        * Modules/paymentrequest/PaymentOptions.h: Added.
+        * Modules/paymentrequest/PaymentOptions.idl: Added.
+        * Modules/paymentrequest/PaymentRequest.cpp: Added.
+        (WebCore::PaymentRequest::create):
+        (WebCore::PaymentRequest::PaymentRequest):
+        (WebCore::PaymentRequest::~PaymentRequest):
+        (WebCore::PaymentRequest::show):
+        (WebCore::PaymentRequest::abort):
+        (WebCore::PaymentRequest::canMakePayment):
+        * Modules/paymentrequest/PaymentRequest.h: Added.
+        * Modules/paymentrequest/PaymentRequest.idl: Added.
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.cpp: Added.
+        (WebCore::PaymentRequestUpdateEvent::~PaymentRequestUpdateEvent):
+        (WebCore::PaymentRequestUpdateEvent::updateWith):
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.h: Added.
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.idl: Added.
+        * Modules/paymentrequest/PaymentRequestUpdateEventInit.h: Added.
+        * Modules/paymentrequest/PaymentRequestUpdateEventInit.idl: Added.
+        * Modules/paymentrequest/PaymentResponse.cpp: Added.
+        (WebCore::PaymentResponse::complete):
+        * Modules/paymentrequest/PaymentResponse.h: Added.
+        * Modules/paymentrequest/PaymentResponse.idl: Added.
+        * Modules/paymentrequest/PaymentShippingOption.h: Added.
+        * Modules/paymentrequest/PaymentShippingOption.idl: Added.
+        * Modules/paymentrequest/PaymentShippingType.h: Added.
+        * Modules/paymentrequest/PaymentShippingType.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+
 2017-08-19  Sam Weinig  <sam@webkit.org>
 
         [WebCrypto] Remove the KeyAlgorithm type hierarchy

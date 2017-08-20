@@ -1,6 +1,6 @@
 
-FAIL iframe assert_equals: expected "Success" but got "Exception"
-FAIL frame assert_equals: expected "Success" but got "Exception"
-FAIL object assert_equals: expected "Success" but got "Exception"
-FAIL embed assert_equals: expected "Success" but got "Exception"
+PASS iframe 
+PASS frame 
+PASS object 
+PASS embed 
 
