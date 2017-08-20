@@ -41,8 +41,8 @@
 #include "RenderFullScreen.h"
 #include "RenderListItem.h"
 #include "RenderNamedFlowThread.h"
-#include "RenderQuote.h"
 #include "RenderTreeUpdaterFirstLetter.h"
+#include "RenderTreeUpdaterGeneratedContent.h"
 #include "RenderTreeUpdaterListItem.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
@@ -82,9 +82,13 @@ RenderTreeUpdater::Parent::Parent(Element& element, Style::Change styleChange)
 {
 }
 
-
 RenderTreeUpdater::RenderTreeUpdater(Document& document)
     : m_document(document)
+    , m_generatedContent(std::make_unique<GeneratedContent>(*this))
+{
+}
+
+RenderTreeUpdater::~RenderTreeUpdater()
 {
 }
 
@@ -129,11 +133,7 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
     for (auto* root : findRenderingRoots(*m_styleUpdate))
         updateRenderTree(*root);
 
-    if (m_document.renderView()->hasQuotesNeedingUpdate()) {
-        updateQuotesUpTo(nullptr);
-        m_previousUpdatedQuote = nullptr;
-        m_document.renderView()->setHasQuotesNeedingUpdate(false);
-    }
+    generatedContent().updateRemainingQuotes();
 
     m_styleUpdate = nullptr;
 }
@@ -247,12 +247,12 @@ void RenderTreeUpdater::popParentsToDepth(unsigned depth)
 
 void RenderTreeUpdater::updateBeforeDescendants(Element& element)
 {
-    updateBeforeOrAfterPseudoElement(element, BEFORE);
+    generatedContent().updateBeforePseudoElement(element);
 }
 
 void RenderTreeUpdater::updateAfterDescendants(Element& element, Style::Change styleChange)
 {
-    updateBeforeOrAfterPseudoElement(element, AFTER);
+    generatedContent().updateAfterPseudoElement(element);
 
     auto* renderer = element.renderer();
     if (!renderer)
@@ -347,7 +347,7 @@ static void registerElementForFlowThreadIfNeeded(Element& element, const RenderS
 {
     if (!element.shouldMoveToFlowThread(style))
         return;
-    FlowThreadController& flowThreadController = element.document().renderView()->flowThreadController();
+    FlowThreadController& flowThreadController = renderView().flowThreadController();
     flowThreadController.registerNamedFlowContentElement(element, flowThreadController.ensureRenderFlowThreadWithName(style.flowThread()));
 }
 #endif
@@ -518,75 +518,6 @@ void RenderTreeUpdater::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(
     }
 }
 
-static bool needsPseudoElement(Element& current, PseudoId pseudoId)
-{
-    if (!current.renderer() || !current.renderer()->canHaveGeneratedChildren())
-        return false;
-    if (current.isPseudoElement())
-        return false;
-    if (!pseudoElementRendererIsNeeded(current.renderer()->getCachedPseudoStyle(pseudoId)))
-        return false;
-    return true;
-}
-
-void RenderTreeUpdater::updateBeforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
-{
-    PseudoElement* pseudoElement = pseudoId == BEFORE ? current.beforePseudoElement() : current.afterPseudoElement();
-
-    if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
-        renderTreePosition().invalidateNextSibling(*renderer);
-
-    bool needsPseudoElement = WebCore::needsPseudoElement(current, pseudoId);
-    if (!needsPseudoElement) {
-        if (pseudoElement) {
-            if (pseudoId == BEFORE)
-                current.clearBeforePseudoElement();
-            else
-                current.clearAfterPseudoElement();
-        }
-        return;
-    }
-
-    RefPtr<PseudoElement> newPseudoElement;
-    if (!pseudoElement) {
-        newPseudoElement = PseudoElement::create(current, pseudoId);
-        pseudoElement = newPseudoElement.get();
-    }
-
-    auto newStyle = RenderStyle::clonePtr(*current.renderer()->getCachedPseudoStyle(pseudoId, &current.renderer()->style()));
-
-    auto elementUpdate = Style::TreeResolver::createAnimatedElementUpdate(WTFMove(newStyle), *pseudoElement, Style::NoChange);
-
-    if (elementUpdate.change == Style::NoChange)
-        return;
-
-    if (newPseudoElement) {
-        InspectorInstrumentation::pseudoElementCreated(m_document.page(), *newPseudoElement);
-        if (pseudoId == BEFORE)
-            current.setBeforePseudoElement(newPseudoElement.releaseNonNull());
-        else
-            current.setAfterPseudoElement(newPseudoElement.releaseNonNull());
-    }
-
-    updateElementRenderer(*pseudoElement, elementUpdate);
-
-    auto* pseudoRenderer = pseudoElement->renderer();
-    if (!pseudoRenderer)
-        return;
-
-    if (elementUpdate.change == Style::Detach)
-        pseudoElement->didAttachRenderers();
-    else
-        pseudoElement->didRecalcStyle(elementUpdate.change);
-
-    if (m_document.renderView()->hasQuotesNeedingUpdate()) {
-        for (auto& child : descendantsOfType<RenderQuote>(*pseudoRenderer))
-            updateQuotesUpTo(&child);
-    }
-    if (is<RenderListItem>(*pseudoRenderer))
-        ListItem::updateMarker(downcast<RenderListItem>(*pseudoRenderer));
-}
-
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType)
 {
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
@@ -642,20 +573,9 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
     text.setRenderer(nullptr);
 }
 
-void RenderTreeUpdater::updateQuotesUpTo(RenderQuote* lastQuote)
+RenderView& RenderTreeUpdater::renderView()
 {
-    auto quoteRenderers = descendantsOfType<RenderQuote>(*m_document.renderView());
-    auto it = m_previousUpdatedQuote ? ++quoteRenderers.at(*m_previousUpdatedQuote) : quoteRenderers.begin();
-    auto end = quoteRenderers.end();
-    for (; it != end; ++it) {
-        auto& quote = *it;
-        // Quote character depends on quote depth so we chain the updates.
-        quote.updateRenderer(m_previousUpdatedQuote);
-        m_previousUpdatedQuote = &quote;
-        if (&quote == lastQuote)
-            return;
-    }
-    ASSERT(!lastQuote);
+    return *m_document.renderView();
 }
 
 #if PLATFORM(IOS)

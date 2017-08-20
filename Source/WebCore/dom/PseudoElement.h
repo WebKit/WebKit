@@ -42,9 +42,6 @@ public:
     Element* hostElement() const { return m_hostElement; }
     void clearHostElement();
 
-    std::optional<ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
-    void didAttachRenderers() override;
-    void didRecalcStyle(Style::Change) override;
     bool rendererIsNeeded(const RenderStyle&) override;
 
     // As per http://dev.w3.org/csswg/css3-regions/#flow-into, pseudo-elements such as ::first-line, ::first-letter, ::before or ::after

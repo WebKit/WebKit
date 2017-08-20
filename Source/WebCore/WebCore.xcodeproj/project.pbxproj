@@ -6824,6 +6824,8 @@
 		E48E332C1F47037C00BAB0EF /* RenderTreeUpdaterFirstLetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E48284091F44595600863AC3 /* RenderTreeUpdaterFirstLetter.h */; };
 		E48E332D1F47038000BAB0EF /* RenderTreeUpdaterListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48E332A1F46C98000BAB0EF /* RenderTreeUpdaterListItem.cpp */; };
 		E48E332E1F47038000BAB0EF /* RenderTreeUpdaterListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E48E33281F46C97F00BAB0EF /* RenderTreeUpdaterListItem.h */; };
+		E48E33311F47437000BAB0EF /* RenderTreeUpdaterGeneratedContent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48E332F1F47436500BAB0EF /* RenderTreeUpdaterGeneratedContent.cpp */; };
+		E48E33321F47437300BAB0EF /* RenderTreeUpdaterGeneratedContent.h in Headers */ = {isa = PBXBuildFile; fileRef = E48E33301F47436700BAB0EF /* RenderTreeUpdaterGeneratedContent.h */; };
 		E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4946EAE156E64DD00D3297F /* StyleRuleImport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4946EAC156E64DD00D3297F /* StyleRuleImport.cpp */; };
 		E4946EAF156E64DD00D3297F /* StyleRuleImport.h in Headers */ = {isa = PBXBuildFile; fileRef = E4946EAD156E64DD00D3297F /* StyleRuleImport.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15483,6 +15485,8 @@
 		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
 		E48E33281F46C97F00BAB0EF /* RenderTreeUpdaterListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterListItem.h; sourceTree = "<group>"; };
 		E48E332A1F46C98000BAB0EF /* RenderTreeUpdaterListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterListItem.cpp; sourceTree = "<group>"; };
+		E48E332F1F47436500BAB0EF /* RenderTreeUpdaterGeneratedContent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterGeneratedContent.cpp; sourceTree = "<group>"; };
+		E48E33301F47436700BAB0EF /* RenderTreeUpdaterGeneratedContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterGeneratedContent.h; sourceTree = "<group>"; };
 		E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushThrottleState.h; sourceTree = "<group>"; };
 		E4946EAC156E64DD00D3297F /* StyleRuleImport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleRuleImport.cpp; sourceTree = "<group>"; };
 		E4946EAD156E64DD00D3297F /* StyleRuleImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleRuleImport.h; sourceTree = "<group>"; };
@@ -25063,6 +25067,8 @@
 				E46180281C8A06CD0026C02C /* RenderTreeUpdater.h */,
 				E48284061F44594B00863AC3 /* RenderTreeUpdaterFirstLetter.cpp */,
 				E48284091F44595600863AC3 /* RenderTreeUpdaterFirstLetter.h */,
+				E48E332F1F47436500BAB0EF /* RenderTreeUpdaterGeneratedContent.cpp */,
+				E48E33301F47436700BAB0EF /* RenderTreeUpdaterGeneratedContent.h */,
 				E48E332A1F46C98000BAB0EF /* RenderTreeUpdaterListItem.cpp */,
 				E48E33281F46C97F00BAB0EF /* RenderTreeUpdaterListItem.h */,
 				E401E0A51C3C0CF700F34D10 /* StyleChange.cpp */,
@@ -29620,6 +29626,7 @@
 				FD45A94F175D3F3E00C21EC8 /* Shape.h in Headers */,
 				FD45A95B175D41EE00C21EC8 /* ShapeInterval.h in Headers */,
 				FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */,
+				E48E33321F47437300BAB0EF /* RenderTreeUpdaterGeneratedContent.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
@@ -31268,6 +31275,7 @@
 				9BD4E91A1C462CFC005065BC /* CustomElementRegistry.cpp in Sources */,
 				62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */,
 				97BC6A201505F081001B74AC /* Database.cpp in Sources */,
+				E48E33311F47437000BAB0EF /* RenderTreeUpdaterGeneratedContent.cpp in Sources */,
 				97BC6A231505F081001B74AC /* DatabaseAuthorizer.cpp in Sources */,
 				97BC6A271505F081001B74AC /* DatabaseContext.cpp in Sources */,
 				FE456F181677D74E005EDDF9 /* DatabaseManager.cpp in Sources */,

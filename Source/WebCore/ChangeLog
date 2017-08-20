@@ -1,3 +1,55 @@
+2017-08-20  Antti Koivisto  <antti@apple.com>
+
+        Factor :before/:after render tree mutations into a RenderTreeUpdater helper class
+        https://bugs.webkit.org/show_bug.cgi?id=175752
+
+        Reviewed by Andreas Kling.
+
+        Move code that constructs generated content renderers out from PseudoElement.
+        Also refactor the related code from RenderTreeUpdater main class into
+        RenderTreeUpdater::GeneratedContent helper class.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::resolveCustomStyle): Deleted.
+
+            Not needed anymore.
+
+        (WebCore::PseudoElement::didAttachRenderers): Deleted.
+
+            Moves to createContentRenderers in GeneratedContent.
+
+        (WebCore::PseudoElement::didRecalcStyle): Deleted.
+
+            Moves to updateStyleForContentRenderers in GeneratedContent.
+
+        * dom/PseudoElement.h:
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::RenderTreeUpdater):
+        (WebCore::RenderTreeUpdater::~RenderTreeUpdater):
+        (WebCore::RenderTreeUpdater::commit):
+        (WebCore::RenderTreeUpdater::updateBeforeDescendants):
+        (WebCore::RenderTreeUpdater::updateAfterDescendants):
+        (WebCore::needsPseudoElement): Deleted.
+        (WebCore::RenderTreeUpdater::updateBeforeOrAfterPseudoElement): Deleted.
+        (WebCore::RenderTreeUpdater::updateQuotesUpTo): Deleted.
+
+            Quotes and other :before/:after support moves to GeneratedContent helpwe.
+
+        * style/RenderTreeUpdater.h:
+        (WebCore::RenderTreeUpdater::generatedContent):
+        * style/RenderTreeUpdaterGeneratedContent.cpp: Added.
+        (WebCore::RenderTreeUpdater::GeneratedContent::GeneratedContent):
+        (WebCore::RenderTreeUpdater::GeneratedContent::updateBeforePseudoElement):
+        (WebCore::RenderTreeUpdater::GeneratedContent::updateAfterPseudoElement):
+        (WebCore::RenderTreeUpdater::GeneratedContent::updateRemainingQuotes):
+        (WebCore::RenderTreeUpdater::GeneratedContent::updateQuotesUpTo):
+        (WebCore::createContentRenderers):
+        (WebCore::updateStyleForContentRenderers):
+        (WebCore::RenderTreeUpdater::GeneratedContent::updatePseudoElement):
+        (WebCore::RenderTreeUpdater::GeneratedContent::needsPseudoElement):
+        * style/RenderTreeUpdaterGeneratedContent.h: Added.
+
 2017-08-19  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Add interface stubs
