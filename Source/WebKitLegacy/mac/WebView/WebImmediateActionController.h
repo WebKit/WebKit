@@ -27,8 +27,8 @@
 
 #import "WebUIDelegatePrivate.h"
 #import <WebCore/HitTestResult.h>
-#import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <WebCore/TextIndicator.h>
+#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <wtf/RetainPtr.h>
 
 @class DDActionContext;

@@ -28,7 +28,7 @@
 
 #if PLATFORM(MAC)
 
-#include "NSScrollingMomentumCalculatorSPI.h"
+#include <pal/spi/mac/NSScrollingMomentumCalculatorSPI.h>
 
 namespace WebCore {
 

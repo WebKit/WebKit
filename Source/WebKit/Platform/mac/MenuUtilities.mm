@@ -29,12 +29,12 @@
 #if PLATFORM(MAC)
 
 #import "StringUtilities.h"
-#import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/LocalizedStrings.h>
 #import <objc/runtime.h>
+#import <pal/spi/mac/DataDetectorsSPI.h>
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-#import <WebCore/TUCallSPI.h>
+#import <pal/spi/mac/TUCallSPI.h>
 #endif
 
 namespace WebKit {

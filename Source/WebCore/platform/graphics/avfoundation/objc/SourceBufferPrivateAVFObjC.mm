@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #import "AVAssetTrackUtilities.h"
-#import "AVFoundationSPI.h"
 #import "AudioTrackPrivateMediaSourceAVFObjC.h"
 #import "CDMSessionAVContentKeySession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
@@ -50,6 +49,7 @@
 #import <QuartzCore/CALayer.h>
 #import <map>
 #import <objc/runtime.h>
+#import <pal/spi/mac/AVFoundationSPI.h>
 #import <runtime/TypedArrayInlines.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashCountedSet.h>

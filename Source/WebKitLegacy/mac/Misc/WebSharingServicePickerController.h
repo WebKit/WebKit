@@ -28,8 +28,8 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
-#import <WebCore/NSSharingServicePickerSPI.h>
-#import <WebCore/NSSharingServiceSPI.h>
+#import <pal/spi/mac/NSSharingServicePickerSPI.h>
+#import <pal/spi/mac/NSSharingServiceSPI.h>
 #endif
 
 @class WebSharingServicePickerController;

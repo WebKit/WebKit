@@ -107,8 +107,6 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MainFrame.h>
-#import <WebCore/NSSpellCheckerSPI.h>
-#import <WebCore/NSViewSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
@@ -132,6 +130,8 @@
 #import <dlfcn.h>
 #import <limits>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
+#import <pal/spi/mac/NSSpellCheckerSPI.h>
+#import <pal/spi/mac/NSViewSPI.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
@@ -145,8 +145,8 @@
 #import "WebNSPasteboardExtras.h"
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
-#import <WebCore/NSMenuSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <pal/spi/mac/NSMenuSPI.h>
 #endif
 
 #import <QuartzCore/QuartzCore.h>

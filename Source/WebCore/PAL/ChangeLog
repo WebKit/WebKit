@@ -1,3 +1,37 @@
+2017-08-21  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [PAL] Move spi/mac directory into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=175649
+
+        Reviewed by Myles C. Maxfield.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/mac/AVFoundationSPI.h: Renamed from Source/WebCore/platform/spi/mac/AVFoundationSPI.h.
+        * pal/spi/mac/DataDetectorsSPI.h: Renamed from Source/WebCore/platform/spi/mac/DataDetectorsSPI.h.
+        * pal/spi/mac/LookupSPI.h: Renamed from Source/WebCore/platform/spi/mac/LookupSPI.h.
+        * pal/spi/mac/MediaRemoteSPI.h: Renamed from Source/WebCore/platform/spi/mac/MediaRemoteSPI.h.
+        * pal/spi/mac/NSAccessibilitySPI.h: Renamed from Source/WebCore/platform/spi/mac/NSAccessibilitySPI.h.
+        * pal/spi/mac/NSApplicationSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSApplicationSPI.h.
+        * pal/spi/mac/NSEventSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSEventSPI.h.
+        * pal/spi/mac/NSFontSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSFontSPI.h.
+        * pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSImmediateActionGestureRecognizerSPI.h.
+        * pal/spi/mac/NSMenuSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSMenuSPI.h.
+        * pal/spi/mac/NSPasteboardSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSPasteboardSPI.h.
+        * pal/spi/mac/NSPopoverSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSPopoverSPI.h.
+        * pal/spi/mac/NSScrollerImpSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSScrollerImpSPI.h.
+        * pal/spi/mac/NSScrollingInputFilterSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSScrollingInputFilterSPI.h.
+        * pal/spi/mac/NSScrollingMomentumCalculatorSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSScrollingMomentumCalculatorSPI.h.
+        * pal/spi/mac/NSSharingServicePickerSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSSharingServicePickerSPI.h.
+        * pal/spi/mac/NSSharingServiceSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSSharingServiceSPI.h.
+        * pal/spi/mac/NSSpellCheckerSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSSpellCheckerSPI.h.
+        * pal/spi/mac/NSTextFinderSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSTextFinderSPI.h.
+        * pal/spi/mac/NSViewSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSViewSPI.h.
+        * pal/spi/mac/NSWindowSPI.h: Renamed from Source/WebCore/platform/spi/mac/NSWindowSPI.h.
+        * pal/spi/mac/PIPSPI.h: Renamed from Source/WebCore/platform/spi/mac/PIPSPI.h.
+        * pal/spi/mac/QTKitSPI.h: Renamed from Source/WebCore/platform/spi/mac/QTKitSPI.h.
+        * pal/spi/mac/QuickLookMacSPI.h: Renamed from Source/WebCore/platform/spi/mac/QuickLookMacSPI.h.
+        * pal/spi/mac/TUCallSPI.h: Renamed from Source/WebCore/platform/spi/mac/TUCallSPI.h.
+
 2017-08-17  Don Olmstead  <don.olmstead@sony.com>
 
         [PAL] Relocate SessionID to root

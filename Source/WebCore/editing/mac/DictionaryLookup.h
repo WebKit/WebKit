@@ -36,7 +36,7 @@ OBJC_CLASS PDFSelection;
 
 // This file is included in Internals.cpp, so we can't use ObjC outright.
 #if defined(__OBJC__)
-#include "NSImmediateActionGestureRecognizerSPI.h"
+#include <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #define PlatformAnimationController id<NSImmediateActionAnimationController>
 #else
 #define PlatformAnimationController void*

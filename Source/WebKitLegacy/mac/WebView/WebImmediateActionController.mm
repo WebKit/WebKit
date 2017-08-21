@@ -37,7 +37,6 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <WebCore/DataDetection.h>
-#import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
@@ -47,16 +46,17 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLConverter.h>
-#import <WebCore/LookupSPI.h>
-#import <WebCore/NSMenuSPI.h>
 #import <WebCore/Page.h>
-#import <WebCore/QuickLookMacSPI.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/TextIndicator.h>
 #import <objc/objc-class.h>
 #import <objc/objc.h>
+#import <pal/spi/mac/DataDetectorsSPI.h>
+#import <pal/spi/mac/LookupSPI.h>
+#import <pal/spi/mac/NSMenuSPI.h>
+#import <pal/spi/mac/QuickLookMacSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)

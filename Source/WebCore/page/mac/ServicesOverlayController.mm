@@ -30,7 +30,6 @@
 
 #import "Chrome.h"
 #import "ChromeClient.h"
-#import "DataDetectorsSPI.h"
 #import "Document.h"
 #import "Editor.h"
 #import "EventHandler.h"
@@ -49,6 +48,7 @@
 #import "PlatformCAAnimationCocoa.h"
 #import "Settings.h"
 #import <QuartzCore/QuartzCore.h>
+#import <pal/spi/mac/DataDetectorsSPI.h>
 #import <wtf/SoftLinking.h>
 
 const float highlightFadeAnimationDuration = 0.3;

@@ -24,10 +24,11 @@
  */
 
 #import "config.h"
+
 #import "PlatformUtilities.h"
 #import <Carbon/Carbon.h> // For GetCurrentEventTime
-#import <WebCore/NSMenuSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/AutodrainedPool.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>

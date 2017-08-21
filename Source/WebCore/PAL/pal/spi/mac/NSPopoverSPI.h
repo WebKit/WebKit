@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "NSImmediateActionGestureRecognizerSPI.h"
+#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 
 // FIXME: This header should include system headers when possible.
 

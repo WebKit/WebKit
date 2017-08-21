@@ -28,9 +28,9 @@
 
 #if PLATFORM(MAC)
 
-#import "NSPasteboardSPI.h"
 #import "PasteboardWriterData.h"
 #import "SharedBuffer.h"
+#import <pal/spi/mac/NSPasteboardSPI.h>
 
 namespace WebCore {
 

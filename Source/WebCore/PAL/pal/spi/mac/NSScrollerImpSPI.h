@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NSScrollerImpSPI_h
-#define NSScrollerImpSPI_h
+#pragma once
 
 #if USE(APPKIT)
 
@@ -34,7 +33,7 @@
 #import <AppKit/NSScrollerImp_Private.h>
 
 @interface NSScrollerImp ()
-@property(getter=isTracking) BOOL tracking;
+@property (getter=isTracking) BOOL tracking;
 @end
 
 @interface NSScrollerImpPair ()
@@ -55,30 +54,30 @@ typedef NSUInteger NSOverlayScrollerState;
 
 @interface NSScrollerImp : NSObject
 + (NSScrollerImp *)scrollerImpWithStyle:(NSScrollerStyle)newScrollerStyle controlSize:(NSControlSize)newControlSize horizontal:(BOOL)horizontal replacingScrollerImp:(id)previous;
-@property(retain) CALayer *layer;
+@property (retain) CALayer *layer;
 - (void)setNeedsDisplay:(BOOL)flag;
 @property NSScrollerKnobStyle knobStyle;
-@property(getter=isHorizontal) BOOL horizontal;
+@property (getter=isHorizontal) BOOL horizontal;
 @property NSSize boundsSize;
-@property(getter=isEnabled) BOOL enabled;
+@property (getter=isEnabled) BOOL enabled;
 @property double doubleValue;
 @property double presentationValue;
-@property(getter=shouldUsePresentationValue) BOOL usePresentationValue;
+@property (getter=shouldUsePresentationValue) BOOL usePresentationValue;
 @property CGFloat knobProportion;
 @property CGFloat uiStateTransitionProgress;
 @property CGFloat expansionTransitionProgress;
 @property CGFloat trackAlpha;
 @property CGFloat knobAlpha;
-@property(getter=isExpanded) BOOL expanded;
-@property(assign) id<NSScrollerImpDelegate> delegate;
-@property(readonly) CGFloat trackBoxWidth;
-@property(readonly) CGFloat trackWidth;
-@property(readonly) CGFloat trackSideInset;
-@property(readonly) CGFloat trackEndInset;
-@property(readonly) CGFloat knobEndInset;
-@property(readonly) CGFloat knobMinLength;
-@property(readonly) CGFloat knobOverlapEndInset;
-@property(readonly) CGFloat trackOverlapEndInset;
+@property (getter=isExpanded) BOOL expanded;
+@property (assign) id<NSScrollerImpDelegate> delegate;
+@property (readonly) CGFloat trackBoxWidth;
+@property (readonly) CGFloat trackWidth;
+@property (readonly) CGFloat trackSideInset;
+@property (readonly) CGFloat trackEndInset;
+@property (readonly) CGFloat knobEndInset;
+@property (readonly) CGFloat knobMinLength;
+@property (readonly) CGFloat knobOverlapEndInset;
+@property (readonly) CGFloat trackOverlapEndInset;
 @property NSUserInterfaceLayoutDirection userInterfaceLayoutDirection;
 - (NSRect)rectForPart:(NSScrollerPart)partCode;
 - (void)drawKnobSlotInRect:(NSRect)slotRect highlight:(BOOL)flag alpha:(CGFloat)alpha;
@@ -89,7 +88,7 @@ typedef NSUInteger NSOverlayScrollerState;
 @end
 
 @interface NSScrollerImp ()
-@property(getter=isTracking) BOOL tracking;
+@property (getter=isTracking) BOOL tracking;
 @end
 
 @protocol NSScrollerImpDelegate
@@ -111,9 +110,9 @@ typedef NSUInteger NSOverlayScrollerState;
 @protocol NSScrollerImpPairDelegate;
 
 @interface NSScrollerImpPair : NSObject
-@property(assign) id<NSScrollerImpPairDelegate> delegate;
-@property(retain) NSScrollerImp *verticalScrollerImp;
-@property(retain) NSScrollerImp *horizontalScrollerImp;
+@property (assign) id<NSScrollerImpPairDelegate> delegate;
+@property (retain) NSScrollerImp *verticalScrollerImp;
+@property (retain) NSScrollerImp *horizontalScrollerImp;
 @property NSScrollerStyle scrollerStyle;
 + (NSUserInterfaceLayoutDirection)scrollerLayoutDirection;
 - (void)flashScrollers;
@@ -151,5 +150,3 @@ typedef NSUInteger NSOverlayScrollerState;
 #endif
 
 #endif // USE(APPKIT)
-
-#endif // NSScrollerImpSPI_h

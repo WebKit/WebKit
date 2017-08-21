@@ -1,3 +1,27 @@
+2017-08-21  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [PAL] Move spi/mac directory into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=175649
+
+        Reviewed by Myles C. Maxfield.
+
+        * Platform/mac/MenuUtilities.mm:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        * Shared/mac/WebEventFactory.mm:
+        * Shared/mac/WebHitTestResultData.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/mac/ServicesController.mm:
+        * UIProcess/mac/TextCheckerMac.mm:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        * UIProcess/mac/WKImmediateActionController.h:
+        * UIProcess/mac/WKImmediateActionController.mm:
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm:
+        * UIProcess/mac/WKTextFinderClient.mm:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2017-08-21  Brady Eidson  <beidson@apple.com>
 
         Split the one SWServer::Connection into SWClientConnection and SWServer::Connection.

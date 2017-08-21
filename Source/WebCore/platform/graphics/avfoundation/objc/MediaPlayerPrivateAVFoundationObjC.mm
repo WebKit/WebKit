@@ -30,7 +30,6 @@
 
 #import "AVAssetTrackUtilities.h"
 #import "AVFoundationMIMETypeCache.h"
-#import "AVFoundationSPI.h"
 #import "AVTrackPrivateAVFObjCImpl.h"
 #import "AudioSourceProviderAVFObjC.h"
 #import "AudioTrackPrivateAVFObjC.h"
@@ -70,6 +69,7 @@
 #import <map>
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/spi/mac/AVFoundationSPI.h>
 #import <runtime/DataView.h>
 #import <runtime/JSCInlines.h>
 #import <runtime/TypedArrayInlines.h>

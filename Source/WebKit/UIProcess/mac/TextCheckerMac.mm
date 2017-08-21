@@ -29,8 +29,8 @@
 #if PLATFORM(MAC)
 
 #import "TextCheckerState.h"
-#import <WebCore/NSSpellCheckerSPI.h>
 #import <WebCore/NotImplemented.h>
+#import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringView.h>
 

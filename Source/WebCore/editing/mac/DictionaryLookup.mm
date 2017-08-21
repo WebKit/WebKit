@@ -35,8 +35,6 @@
 #import "FrameSelection.h"
 #import "HTMLConverter.h"
 #import "HitTestResult.h"
-#import "LookupSPI.h"
-#import "NSImmediateActionGestureRecognizerSPI.h"
 #import "Page.h"
 #import "Range.h"
 #import "RenderObject.h"
@@ -46,6 +44,8 @@
 #import "VisibleUnits.h"
 #import "WebCoreSystemInterface.h"
 #import <PDFKit/PDFKit.h>
+#import <pal/spi/mac/LookupSPI.h>
+#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 

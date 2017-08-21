@@ -47,7 +47,6 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalizedStrings.h"
 #import "MediaControlElements.h"
-#import "NSSharingServicePickerSPI.h"
 #import "Page.h"
 #import "PaintInfo.h"
 #import "PathUtilities.h"
@@ -75,6 +74,7 @@
 #import <math.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/NSColorSPI.h>
+#import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>

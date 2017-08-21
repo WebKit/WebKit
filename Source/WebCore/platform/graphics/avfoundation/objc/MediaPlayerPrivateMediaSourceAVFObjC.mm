@@ -30,7 +30,6 @@
 
 #import "AVAssetTrackUtilities.h"
 #import "AVFoundationMIMETypeCache.h"
-#import "AVFoundationSPI.h"
 #import "CDMSessionAVStreamSession.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "FileSystem.h"
@@ -50,6 +49,7 @@
 #import <AVFoundation/AVTime.h>
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
+#import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/Deque.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>

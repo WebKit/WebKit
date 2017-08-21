@@ -30,12 +30,11 @@
 
 #import "WebKitSystemInterface.h"
 #import <WebCore/KeyboardEvent.h>
-#import <WebCore/NSMenuSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WindowsKeyboardCodes.h>
+#import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/ASCIICType.h>
-
 
 using namespace WebCore;
 

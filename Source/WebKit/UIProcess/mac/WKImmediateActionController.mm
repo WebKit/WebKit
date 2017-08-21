@@ -35,15 +35,15 @@
 #import "WebPageProxyMessages.h"
 #import "WebProcessProxy.h"
 #import "WebViewImpl.h"
-#import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/GeometryUtilities.h>
-#import <WebCore/LookupSPI.h>
-#import <WebCore/NSMenuSPI.h>
-#import <WebCore/NSPopoverSPI.h>
-#import <WebCore/QuickLookMacSPI.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/URL.h>
+#import <pal/spi/mac/DataDetectorsSPI.h>
+#import <pal/spi/mac/LookupSPI.h>
+#import <pal/spi/mac/NSMenuSPI.h>
+#import <pal/spi/mac/NSPopoverSPI.h>
+#import <pal/spi/mac/QuickLookMacSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)

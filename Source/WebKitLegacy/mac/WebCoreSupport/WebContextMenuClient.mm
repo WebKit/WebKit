@@ -52,14 +52,14 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/ImageBuffer.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderBox.h>
 #import <WebCore/RenderObject.h>
-#import <WebCore/SharedBuffer.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/URL.h>
 #import <WebKitLegacy/DOMPrivate.h>
+#import <pal/spi/mac/NSSharingServicePickerSPI.h>
 
 using namespace WebCore;
 

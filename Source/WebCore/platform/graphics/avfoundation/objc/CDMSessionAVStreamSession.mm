@@ -28,7 +28,6 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
-#import "AVFoundationSPI.h"
 #import "CDMPrivateMediaSourceAVFObjC.h"
 #import "FileSystem.h"
 #import "LegacyCDM.h"
@@ -39,6 +38,7 @@
 #import <AVFoundation/AVError.h>
 #import <CoreMedia/CMBase.h>
 #import <objc/objc-runtime.h>
+#import <pal/spi/mac/AVFoundationSPI.h>
 #import <runtime/TypedArrayInlines.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>

@@ -44,9 +44,9 @@
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#import <WebCore/AVFoundationSPI.h>
 #import <WebCore/MediaPlaybackTargetContext.h>
 #import <objc/runtime.h>
+#import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)

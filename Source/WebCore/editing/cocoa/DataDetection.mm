@@ -30,7 +30,6 @@
 
 #import "Attr.h"
 #import "CSSStyleDeclaration.h"
-#import "DataDetectorsSPI.h"
 #import "Editing.h"
 #import "ElementAncestorIterator.h"
 #import "ElementTraversal.h"
@@ -50,6 +49,7 @@
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
 #import <pal/spi/ios/DataDetectorsUISPI.h>
+#import <pal/spi/mac/DataDetectorsSPI.h>
 #import <wtf/text/StringBuilder.h>
 
 #import "DataDetectorsCoreSoftLink.h"

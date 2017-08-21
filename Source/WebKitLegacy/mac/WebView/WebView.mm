@@ -166,7 +166,6 @@
 #import <WebCore/MainFrame.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryRelease.h>
-#import <WebCore/NSSpellCheckerSPI.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/Notification.h>
@@ -212,6 +211,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSTouchBarSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
+#import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <runtime/ArrayPrototype.h>
 #import <runtime/CatchScope.h>
 #import <runtime/DateInstance.h>
@@ -241,12 +241,12 @@
 #import "WebNSPasteboardExtras.h"
 #import "WebNSPrintOperationExtras.h"
 #import "WebPDFView.h"
-#import <WebCore/LookupSPI.h>
-#import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/WebVideoFullscreenController.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
+#import <pal/spi/mac/LookupSPI.h>
+#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #else
 #import "MemoryMeasure.h"
 #import "WebCaretChangeListener.h"

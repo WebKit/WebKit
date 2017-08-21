@@ -33,13 +33,13 @@
 #include "GraphicsLayer.h"
 #include "Logging.h"
 #include "NSScrollerImpDetails.h"
-#include "NSScrollerImpSPI.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollView.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarThemeMac.h"
 #include "WebCoreSystemInterface.h"
+#include <pal/spi/mac/NSScrollerImpSPI.h>
 #include <wtf/BlockObjCExceptions.h>
 #include <wtf/text/TextStream.h>
 

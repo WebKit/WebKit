@@ -28,13 +28,13 @@
 
 #import "KeyEventCocoa.h"
 #import "Logging.h"
-#import "NSMenuSPI.h"
 #import "PlatformScreen.h"
 #import "Scrollbar.h"
 #import "WebCoreSystemInterface.h"
 #import "WindowsKeyboardCodes.h"
 #import <HIToolbox/Events.h>
 #import <mach/mach_time.h>
+#import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/ASCIICType.h>
 
 namespace WebCore {

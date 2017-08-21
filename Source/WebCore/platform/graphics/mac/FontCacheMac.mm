@@ -37,10 +37,10 @@
 #import <pal/spi/cocoa/CoreTextSPI.h>
 
 #if PLATFORM(MAC)
-#import "NSFontSPI.h"
 #import "WebCoreNSStringExtras.h"
 #import "WebCoreSystemInterface.h"
 #import <AppKit/AppKit.h>
+#import <pal/spi/mac/NSFontSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>

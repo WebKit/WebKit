@@ -43,10 +43,10 @@
 #import "WebProcessProxy.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IntRect.h>
-#import <WebCore/NSMenuSPI.h>
-#import <WebCore/NSSharingServicePickerSPI.h>
-#import <WebCore/NSSharingServiceSPI.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/mac/NSMenuSPI.h>
+#import <pal/spi/mac/NSSharingServicePickerSPI.h>
+#import <pal/spi/mac/NSSharingServiceSPI.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;

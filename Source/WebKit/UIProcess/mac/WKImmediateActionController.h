@@ -30,7 +30,7 @@
 
 #import "WKImmediateActionTypes.h"
 #import "WebHitTestResultData.h"
-#import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
+#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebKit {

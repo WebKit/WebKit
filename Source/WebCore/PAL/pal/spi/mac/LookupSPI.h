@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "NSImmediateActionGestureRecognizerSPI.h"
 #import <objc/runtime.h>
+#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)

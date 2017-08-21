@@ -28,7 +28,6 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#import "AVFoundationSPI.h"
 #import "AudioTrackPrivateMediaStreamCocoa.h"
 #import "Clock.h"
 #import "GraphicsContextCG.h"
@@ -41,6 +40,7 @@
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
 #import <objc_runtime.h>
+#import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/Function.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>

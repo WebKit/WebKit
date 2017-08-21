@@ -30,8 +30,8 @@
 #import "WebViewInternal.h"
 #import <WebCore/FrameSelection.h>
 #import <WebCore/HTMLConverter.h>
-#import <WebCore/NSSharingServiceSPI.h>
 #import <WebCore/Range.h>
+#import <pal/spi/mac/NSSharingServiceSPI.h>
 
 using namespace WebCore;
 

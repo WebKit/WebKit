@@ -27,7 +27,7 @@
 
 #if USE(MEDIAREMOTE)
 
-#include "MediaRemoteSPI.h"
+#include <pal/spi/mac/MediaRemoteSPI.h>
 #include <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebCore, MediaRemote)

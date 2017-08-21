@@ -36,12 +36,12 @@
 #import "MediaTimeQTKit.h"
 #import "PlatformLayer.h"
 #import "PlatformTimeRanges.h"
-#import "QTKitSPI.h"
 #import "SecurityOrigin.h"
 #import "URL.h"
 #import "UTIUtilities.h"
 #import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
+#import <pal/spi/mac/QTKitSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>

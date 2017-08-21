@@ -32,8 +32,8 @@
 #import "Decoder.h"
 #import "Encoder.h"
 #import "WebCoreArgumentCoders.h"
-#import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/TextIndicator.h>
+#import <pal/spi/mac/DataDetectorsSPI.h>
 
 namespace WebKit {
 
