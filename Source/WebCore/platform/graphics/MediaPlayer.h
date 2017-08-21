@@ -71,6 +71,9 @@ namespace WebCore {
 
 class AudioSourceProvider;
 class AuthenticationChallenge;
+#if ENABLE(ENCRYPTED_MEDIA)
+class CDMInstance;
+#endif
 class MediaPlaybackTarget;
 #if ENABLE(MEDIA_SOURCE)
 class MediaSourcePrivateClient;
@@ -363,6 +366,11 @@ public:
     std::unique_ptr<CDMSession> createSession(const String& keySystem, CDMSessionClient*);
     void setCDMSession(CDMSession*);
     void keyAdded();
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    void cdmInstanceAttached(const CDMInstance&);
+    void cdmInstanceDetached(const CDMInstance&);
 #endif
 
     bool paused() const;

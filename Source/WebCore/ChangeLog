@@ -1,3 +1,58 @@
+2017-08-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Add basic implementation of HTMLMediaElement::setMediaKeys()
+        https://bugs.webkit.org/show_bug.cgi?id=175717
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add an initial and incomplete implementation of HTMLMediaElement::setMediaKeys(),
+        interleaved with the specification wording of how this operation should behave.
+        The implementation still doesn't cover cases of CDM instances being already
+        associated with a different HTMLMediaElement, of CDM instances that can't be
+        disassociated from the current HTMLMediaElement, and of failures during both
+        association and disassociation of MediaKeys with the HTMLMediaElement.
+
+        The HTMLMediaElement (as a CDMClient inheritor) has to be attached or detached
+        from the MediaKeys object as appropriate. This attachment allows MediaKeys to
+        initiate an attempt to resume playback whenever the key statuses of the
+        associated MediaKeys object are updated.
+
+        Upon association and disassociation with MediaKeys, the CDMInstance object of
+        that specific MediaKeys instance is attached to or detached from the MediaPlayer
+        instance. This allows the platform layer to gather information about the
+        CDMInstance that will be used for decryption of media content for this specific
+        media element.
+
+        Additionally, the detachment from both MediaKeys and MediaPlayer is done upon
+        HTMLMediaElement destruction.
+
+        Upon setting the MediaKeys object, a task is queued that launches the 'Attempt to
+        Resume Playback If Necessary' algorithm. A placeholder method is added that will
+        implement the algorithm in the future.
+
+        The HTMLMediaElement::mediaKeys() getter is also implemented, returning pointer
+        held in m_mediaKeys.
+
+        Covered to a degree by existing imported W3C tests, with a setMediaKeys()-oriented
+        test having WPE-specific baseline update.
+
+        * Modules/encryptedmedia/MediaKeys.h:
+        (WebCore::MediaKeys::cdmInstance const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::mediaKeys const):
+        (WebCore::HTMLMediaElement::setMediaKeys):
+        (WebCore::HTMLMediaElement::attemptToResumePlaybackIfNecessary):
+        (WebCore::HTMLMediaElement::contextDestroyed):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::cdmInstanceAttached):
+        (WebCore::MediaPlayer::cdmInstanceDetached):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::cdmInstanceAttached):
+        (WebCore::MediaPlayerPrivateInterface::cdmInstanceDetached):
+
 2017-08-20  Chris Dumez  <cdumez@apple.com>
 
         Simplify calls to LoaderStrategy::startPingLoad()

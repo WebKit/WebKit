@@ -584,6 +584,18 @@ void MediaPlayer::keyAdded()
 }
 #endif
     
+#if ENABLE(ENCRYPTED_MEDIA)
+void MediaPlayer::cdmInstanceAttached(const CDMInstance& instance)
+{
+    m_private->cdmInstanceAttached(instance);
+}
+
+void MediaPlayer::cdmInstanceDetached(const CDMInstance& instance)
+{
+    m_private->cdmInstanceDetached(instance);
+}
+#endif
+
 MediaTime MediaPlayer::duration() const
 {
     return m_private->durationMediaTime();

@@ -636,6 +636,8 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
+    void attemptToResumePlaybackIfNecessary();
+
     // CDMClient
     void cdmClientAttemptToResumePlaybackIfNecessary() override;
 #endif
@@ -1090,6 +1092,11 @@ private:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<WebKitMediaKeys> m_webKitMediaKeys;
+#endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    RefPtr<MediaKeys> m_mediaKeys;
+    bool m_attachingMediaKeys { false };
+    GenericTaskQueue<Timer> m_encryptedMediaQueue;
 #endif
 
     std::unique_ptr<MediaElementSession> m_mediaSession;
