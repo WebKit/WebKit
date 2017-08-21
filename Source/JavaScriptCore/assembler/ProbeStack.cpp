@@ -28,6 +28,8 @@
 
 #include <memory>
 
+#if ENABLE(MASM_PROBE)
+
 namespace JSC {
 namespace Probe {
 
@@ -108,3 +110,5 @@ Page* Stack::ensurePageFor(void* address)
 
 } // namespace Probe
 } // namespace JSC
+
+#endif // ENABLE(MASM_PROBE)

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ProbeContext.h"
 
+#if ENABLE(MASM_PROBE)
+
 namespace JSC {
 namespace Probe {
 
@@ -74,3 +76,5 @@ void* probeStateForContext(Context& context)
 
 } // namespace Probe
 } // namespace JSC
+
+#endif // ENABLE(MASM_PROBE)

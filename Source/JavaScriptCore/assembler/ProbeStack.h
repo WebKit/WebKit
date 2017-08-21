@@ -29,6 +29,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 
+#if ENABLE(MASM_PROBE)
+
 namespace JSC {
 
 struct ProbeContext;
@@ -191,3 +193,5 @@ private:
 
 } // namespace Probe
 } // namespace JSC
+
+#endif // ENABLE(MASM_PROBE)

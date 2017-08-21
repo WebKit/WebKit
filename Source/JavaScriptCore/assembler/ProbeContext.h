@@ -28,6 +28,8 @@
 #include "MacroAssembler.h"
 #include "ProbeStack.h"
 
+#if ENABLE(MASM_PROBE)
+
 namespace JSC {
 namespace Probe {
 
@@ -247,5 +249,6 @@ private:
 void executeProbe(State*);
 
 } // namespace Probe
-
 } // namespace JSC
+
+#endif // ENABLE(MASM_PROBE)

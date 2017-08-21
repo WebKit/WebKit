@@ -1,5 +1,20 @@
 2017-08-20  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: fix CLoop build.
+        https://bugs.webkit.org/show_bug.cgi?id=175688
+        <rdar://problem/33436870>
+
+        Not reviewed.
+
+        Make these files dependent on ENABLE(MASM_PROBE).
+
+        * assembler/ProbeContext.cpp:
+        * assembler/ProbeContext.h:
+        * assembler/ProbeStack.cpp:
+        * assembler/ProbeStack.h:
+
+2017-08-20  Mark Lam  <mark.lam@apple.com>
+
         Enhance MacroAssembler::probe() to allow the probe function to resize the stack frame and alter stack data in one pass.
         https://bugs.webkit.org/show_bug.cgi?id=175688
         <rdar://problem/33436870>
