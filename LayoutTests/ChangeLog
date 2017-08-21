@@ -1,3 +1,11 @@
+2017-08-21  Matt Lewis  <jlewis3@apple.com>
+
+        Fixed expectations.
+
+        Unreviewed test expectations.
+
+        * platform/mac/TestExpectations:
+
 2017-08-21  Ms2ger  <Ms2ger@gmail.com>
 
         Stop media/video-controls-toggling.html from timing out.
