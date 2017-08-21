@@ -47,7 +47,7 @@ class Commit(AbstractStep):
         ]
 
     def _commit_warning(self, error):
-        return ('There are %s local commits (and possibly changes in the working directory. '
+        return ('There are %s local commits (and possibly changes in the working directory). '
                 'Everything will be committed as a single commit. '
                 'To avoid this prompt, set "git config webkit-patch.commit-should-always-squash true".' % (
                 error.num_local_commits))
