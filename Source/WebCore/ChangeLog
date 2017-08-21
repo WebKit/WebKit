@@ -1,3 +1,18 @@
+2017-08-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] DRT should only allow any https certificate for localhost.
+        https://bugs.webkit.org/show_bug.cgi?id=175147
+
+        Reviewed by Brent Fulgham.
+
+        Disabling validation of certificate chains, breaks SSL on Windows. In order
+        for SSL tests to succeed on Windows, we should avoid disabling it.
+
+        No new tests, covered by existing tests.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+
 2017-08-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] HTMLMediaElement: basic implementations of 'Attempt to Decrypt', 'Attempt to Resume Playback If Necessary'

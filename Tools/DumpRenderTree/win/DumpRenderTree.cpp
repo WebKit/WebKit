@@ -1125,6 +1125,8 @@ static void runTest(const string& inputLine)
         return;
     }
 
+    String hostName = String(adoptCF(CFURLCopyHostName(url)).get());
+
     String fallbackPath = findFontFallback(pathOrURL.c_str());
 
     str = CFURLGetString(url);
@@ -1211,7 +1213,8 @@ static void runTest(const string& inputLine)
 
     request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 60);
     request->setHTTPMethod(methodBStr);
-    request->setAllowsAnyHTTPSCertificate();
+    if (hostName == "localhost" || hostName == "127.0.0.1")
+        request->setAllowsAnyHTTPSCertificate();
     frame->loadRequest(request.get());
 
     while (!done) {
