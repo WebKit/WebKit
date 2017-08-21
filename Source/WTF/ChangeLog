@@ -1,3 +1,19 @@
+2017-08-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Add WTFLogChannel level to allow runtime log filtering
+        https://bugs.webkit.org/show_bug.cgi?id=175731
+        <rdar://problem/33967234>
+
+        Reviewed by Jer Noble.
+        
+        Add WTFLog*, LOG, and RELEASE_LOG variants that take a "log level" parameter so code
+        can include logging statements that are only conditionally emitted.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/MemoryPressureHandler.cpp:
+        * wtf/RefCountedLeakCounter.cpp:
+
 2017-08-20  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix CLoop build.
