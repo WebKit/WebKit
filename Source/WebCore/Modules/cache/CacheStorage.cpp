@@ -28,6 +28,7 @@
 
 #include "CacheQueryOptions.h"
 #include "JSCache.h"
+#include "JSFetchResponse.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -46,9 +47,60 @@ String CacheStorage::origin() const
     return origin ? origin->toString() : String();
 }
 
-void CacheStorage::match(Cache::RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&& promise)
+static void doSequentialMatch(size_t index, Vector<Ref<Cache>>&& caches, Cache::RequestInfo&& info, CacheQueryOptions&& options, Cache::MatchCallback&& completionHandler)
 {
-    promise->reject(Exception { NotSupportedError, ASCIILiteral("Not implemented")});
+    if (index >= caches.size()) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    caches[index]->doMatch(WTFMove(info), WTFMove(options), [caches = WTFMove(caches), info, options, completionHandler = WTFMove(completionHandler), index](FetchResponse* value) mutable {
+        if (value) {
+            completionHandler(value);
+            return;
+        }
+        doSequentialMatch(++index, WTFMove(caches), WTFMove(info), WTFMove(options), WTFMove(completionHandler));
+    });
+}
+
+static inline void startSequentialMatch(Vector<Ref<Cache>>&& caches, Cache::RequestInfo&& info, CacheQueryOptions&& options, Cache::MatchCallback&& completionHandler)
+{
+    doSequentialMatch(0, WTFMove(caches), WTFMove(info), WTFMove(options), WTFMove(completionHandler));
+}
+
+static inline Vector<Ref<Cache>> copyCaches(const Vector<Ref<Cache>>& caches)
+{
+    Vector<Ref<Cache>> copy;
+    copy.reserveInitialCapacity(caches.size());
+    for (auto& cache : caches)
+        copy.uncheckedAppend(cache.copyRef());
+    return copy;
+}
+
+void CacheStorage::match(Cache::RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
+{
+    retrieveCaches([this, info = WTFMove(info), options = WTFMove(options), promise = WTFMove(promise)]() mutable {
+        if (!options.cacheName.isNull()) {
+            auto position = m_caches.findMatching([&](auto& item) { return item->name() == options.cacheName; });
+            if (position != notFound) {
+                m_caches[position]->match(WTFMove(info), WTFMove(options), WTFMove(promise));
+                return;
+            }
+            promise->resolve();
+            return;
+        }
+
+        setPendingActivity(this);
+        startSequentialMatch(copyCaches(m_caches), WTFMove(info), WTFMove(options), [this, promise = WTFMove(promise)](FetchResponse* result) mutable {
+            if (!m_isStopped) {
+                if (!result)
+                    promise->resolve();
+                else
+                    promise->resolve<IDLInterface<FetchResponse>>(*result);
+            }
+            unsetPendingActivity(this);
+        });
+    });
 }
 
 void CacheStorage::has(const String& name, DOMPromiseDeferred<IDLBoolean>&& promise)

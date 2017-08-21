@@ -1,16 +1,16 @@
 
 PASS Cache.matchAll with no matching entries 
-FAIL Cache.matchAll with URL assert_equals: Cache.matchAll should match by URL. : object[0] Attributes differ: status. expected 200 but got 0
-FAIL Cache.matchAll with Request assert_equals: Cache.matchAll should match by Request. : object[0] Attributes differ: status. expected 200 but got 0
-FAIL Cache.matchAll with new Request assert_equals: Cache.matchAll should match by Request. : object[0] Attributes differ: status. expected 200 but got 0
+PASS Cache.matchAll with URL 
+PASS Cache.matchAll with Request 
+PASS Cache.matchAll with new Request 
 PASS Cache.matchAll with HEAD 
-FAIL Cache.matchAll with ignoreSearch option (request with no search parameters) assert_equals: Cache.matchAll with ignoreSearch should ignore the search parameters of cached request. : object[0] Attributes differ: status. expected 200 but got 0
-FAIL Cache.matchAll with ignoreSearch option (request with search parameters) assert_equals: Cache.matchAll with ignoreSearch should ignore the search parameters of request. : object[0] Attributes differ: status. expected 200 but got 0
-FAIL Cache.matchAll supports ignoreMethod assert_equals: Cache.matchAll with ignoreMethod should ignore the method of request. : object[0] Attributes differ: status. expected 200 but got 0
-FAIL Cache.matchAll supports ignoreVary assert_equals: Cache.matchAll should resolve as undefined with a mismatched vary. expected 0 but got 1
-FAIL Cache.matchAll with URL containing fragment assert_equals: Cache.matchAll should ignore URL fragment. : object[0] Attributes differ: status. expected 200 but got 0
+PASS Cache.matchAll with ignoreSearch option (request with no search parameters) 
+PASS Cache.matchAll with ignoreSearch option (request with search parameters) 
+PASS Cache.matchAll supports ignoreMethod 
+PASS Cache.matchAll supports ignoreVary 
+PASS Cache.matchAll with URL containing fragment 
 PASS Cache.matchAll with string fragment "http" as query 
-FAIL Cache.matchAll without parameters assert_equals: Cache.matchAll without parameters should match all entries. : object[0] Attributes differ: status. expected 200 but got 0
-FAIL Cache.matchAll with responses containing "Vary" header assert_equals: Cache.matchAll should exclude matches if a vary header is missing in the query request, but is present in the cached request. : object[0] Attributes differ: status. expected 200 but got 0
-FAIL Cache.matchAll with multiple vary pairs assert_equals: Cache.matchAll should support multiple vary request/response pairs. expected 3 but got 1
+PASS Cache.matchAll without parameters 
+PASS Cache.matchAll with responses containing "Vary" header 
+PASS Cache.matchAll with multiple vary pairs 
 

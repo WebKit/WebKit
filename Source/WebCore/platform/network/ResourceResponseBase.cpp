@@ -281,6 +281,7 @@ void ResourceResponseBase::setHTTPStatusCode(int statusCode)
     lazyInit(CommonFieldsOnly);
 
     m_httpStatusCode = statusCode;
+    m_isNull = false;
 
     // FIXME: Should invalidate or update platform response if present.
 }

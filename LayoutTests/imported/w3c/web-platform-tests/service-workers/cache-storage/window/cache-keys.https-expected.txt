@@ -7,7 +7,7 @@ PASS Cache.keys with new Request
 PASS Cache.keys with ignoreSearch option (request with no search parameters) 
 PASS Cache.keys with ignoreSearch option (request with search parameters) 
 PASS Cache.keys supports ignoreMethod 
-FAIL Cache.keys supports ignoreVary assert_equals: Cache.keys should resolve with an empty array with a mismatched vary. expected 0 but got 1
+PASS Cache.keys supports ignoreVary 
 PASS Cache.keys with URL containing fragment 
 PASS Cache.keys with string fragment "http" as query 
 PASS Cache.keys without parameters 

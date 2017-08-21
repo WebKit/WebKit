@@ -1,3 +1,36 @@
+2017-08-21  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Add support for CacheStorage.match
+        https://bugs.webkit.org/show_bug.cgi?id=175747
+
+        Reviewed by Chris Dumez.
+
+        Covered by rebased tests.
+
+        Introducing Cache::doMatch so that CacheStorage can use it.
+        Make Cache::match use Cache::doMatch as well.
+
+        Implementing CacheStorage.match as per spec:
+        - If name is provided, query only the cache with the given name.
+        - Otherwise pick the first matching response in the caches.
+        The sequential asynchronous search is done in doSequentialMatch.
+
+        Making sure that response with a status code are returning false to isNull.
+        This allows passing more tests.
+
+        * Modules/cache/Cache.cpp:
+        (WebCore::Cache::match):
+        (WebCore::Cache::doMatch):
+        (WebCore::Cache::matchAll):
+        (WebCore::toConnectionRecord):
+        * Modules/cache/Cache.h:
+        * Modules/cache/CacheStorage.cpp:
+        (WebCore::doSequentialMatch):
+        (WebCore::copyCaches):
+        (WebCore::CacheStorage::match):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::setHTTPStatusCode):
+
 2017-08-21  Dean Jackson  <dino@apple.com>
 
         Persistent WebGL Warning "vertex WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported" in Safari 10.1.2

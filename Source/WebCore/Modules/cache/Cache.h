@@ -43,7 +43,9 @@ public:
     using KeysPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<FetchRequest>>>;
 
     void match(RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
-    void matchAll(std::optional<RequestInfo>&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
+
+    using MatchAllPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<FetchResponse>>>;
+    void matchAll(std::optional<RequestInfo>&&, CacheQueryOptions&&, MatchAllPromise&&);
     void add(RequestInfo&&, DOMPromiseDeferred<void>&&);
 
     void addAll(Vector<RequestInfo>&&, DOMPromiseDeferred<void>&&);
@@ -54,11 +56,11 @@ public:
     const String& name() const { return m_name; }
     uint64_t identifier() const { return m_identifier; }
 
+    using MatchCallback = WTF::Function<void(FetchResponse*)>;
+    void doMatch(RequestInfo&&, CacheQueryOptions&&, MatchCallback&&);
+
 private:
     Cache(ScriptExecutionContext&, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&&);
-
-    enum class MatchType { All, OnlyFirst };
-    void doMatch(std::optional<RequestInfo>&&, CacheQueryOptions&&, Ref<DeferredPromise>&&, MatchType);
 
     // ActiveDOMObject
     void stop() final;

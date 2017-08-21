@@ -1,22 +1,22 @@
 
 PASS Cache.match with no matching entries 
-FAIL Cache.match with URL assert_equals: Cache.match should match by URL. Attributes differ: status. expected 200 but got 0
-FAIL Cache.match with Request assert_equals: Cache.match should match by Request. Attributes differ: status. expected 200 but got 0
-FAIL Cache.match with multiple cache hits assert_equals: Cache.match should match the first cache. Attributes differ: status. expected 200 but got 0
-FAIL Cache.match with new Request assert_equals: Cache.match should match by Request. Attributes differ: status. expected 200 but got 0
+PASS Cache.match with URL 
+PASS Cache.match with Request 
+PASS Cache.match with multiple cache hits 
+PASS Cache.match with new Request 
 PASS Cache.match with HEAD 
-FAIL Cache.match with ignoreSearch option (request with no search parameters) assert_true: Cache.match with ignoreSearch should ignore the search parameters of cached request. expected true got false
-FAIL Cache.match with ignoreSearch option (request with search parameter) assert_true: Cache.match with ignoreSearch should ignore the search parameters of request. expected true got false
-FAIL Cache.match supports ignoreMethod assert_equals: Cache.match with ignoreMethod should ignore the method of request. Attributes differ: status. expected 200 but got 0
-FAIL Cache.match supports ignoreVary assert_equals: Cache.match should resolve as undefined with a mismatched vary. expected (undefined) undefined but got (object) object "[object Response]"
-FAIL Cache.match with URL containing fragment assert_equals: Cache.match should ignore URL fragment. Attributes differ: status. expected 200 but got 0
+PASS Cache.match with ignoreSearch option (request with no search parameters) 
+PASS Cache.match with ignoreSearch option (request with search parameter) 
+PASS Cache.match supports ignoreMethod 
+PASS Cache.match supports ignoreVary 
+PASS Cache.match with URL containing fragment 
 PASS Cache.match with string fragment "http" as query 
-FAIL Cache.match with responses containing "Vary" header assert_true: Cache.match should honor "Vary" header. expected true got false
+PASS Cache.match with responses containing "Vary" header 
 PASS Cache.match with Request and Response objects with different URLs 
 PASS Cache.match invoked multiple times for the same Request/Response 
 PASS Cache.match blob should be sliceable 
 PASS Cache.match with POST Request 
-FAIL Cache.match with a non-2xx Response assert_equals: Cache.match should return a Response object that has the same properties as a stored non-2xx response. Attributes differ: status. expected 404 but got 0
+PASS Cache.match with a non-2xx Response 
 PASS Cache.match with a network error Response 
 PASS Cache produces large Responses that can be cloned and read correctly. 
 

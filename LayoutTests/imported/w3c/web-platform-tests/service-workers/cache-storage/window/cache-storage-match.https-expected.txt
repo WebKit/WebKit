@@ -1,13 +1,13 @@
 
-FAIL CacheStorageMatch with no cache name provided promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorageMatch from one of many caches promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorageMatch from one of many caches by name promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorageMatch a string request promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorageMatch a HEAD request promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorageMatch with no cached entry promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorageMatch with no caches available but name provided promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorageMatch with empty cache name provided promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorageMatch supports ignoreSearch promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL Cache.match supports ignoreMethod promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
-FAIL CacheStorageMatch supports ignoreVary promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+PASS CacheStorageMatch with no cache name provided 
+PASS CacheStorageMatch from one of many caches 
+PASS CacheStorageMatch from one of many caches by name 
+PASS CacheStorageMatch a string request 
+PASS CacheStorageMatch a HEAD request 
+PASS CacheStorageMatch with no cached entry 
+PASS CacheStorageMatch with no caches available but name provided 
+PASS CacheStorageMatch with empty cache name provided 
+PASS CacheStorageMatch supports ignoreSearch 
+PASS Cache.match supports ignoreMethod 
+PASS CacheStorageMatch supports ignoreVary 
 

@@ -3,17 +3,17 @@ PASS Cache.put called with simple Request and Response
 PASS Cache.put called with Request and Response from fetch() 
 PASS Cache.put with Request without a body 
 PASS Cache.put with Response without a body 
-FAIL Cache.put with a Response containing an empty URL assert_equals: Cache.put should update the cache with new Request and Response. Attributes differ: status. expected 200 but got 0
-FAIL Cache.put with an empty response body assert_equals: Cache.put should store status. expected 200 but got 0
+PASS Cache.put with a Response containing an empty URL 
+PASS Cache.put with an empty response body 
 PASS Cache.put with synthetic 206 response 
 PASS Cache.put with HTTP 206 response 
 PASS Cache.put with HTTP 500 response 
-FAIL Cache.put called twice with matching Requests and different Responses assert_equals: Cache.put should replace existing response with new response. Attributes differ: status. expected 200 but got 0
-FAIL Cache.put called twice with request URLs that differ only by a fragment assert_equals: Cache.put should replace existing response with new response. Attributes differ: status. expected 200 but got 0
+FAIL Cache.put called twice with matching Requests and different Responses assert_equals: Cache put should store new response body. expected "New body" but got "Old body"
+FAIL Cache.put called twice with request URLs that differ only by a fragment assert_equals: Cache put should store new response body. expected "New body" but got "Old body"
 PASS Cache.put with a string request 
 PASS Cache.put with an invalid response 
 PASS Cache.put with a non-HTTP/HTTPS request 
-FAIL Cache.put with a relative URL assert_equals: Cache.put should accept a relative URL as the request. Attributes differ: status. expected 200 but got 0
+PASS Cache.put with a relative URL 
 PASS Cache.put with a non-GET request 
 PASS Cache.put with a null response 
 PASS Cache.put with a POST request 
@@ -21,5 +21,5 @@ PASS Cache.put with a used response body
 PASS getReader() after Cache.put 
 PASS Cache.put with a VARY:* Response 
 PASS Cache.put with an embedded VARY:* Response 
-FAIL Cache.put should store Response.redirect() correctly assert_equals: Redirect response is reproduced by the Cache API Attributes differ: status. expected 302 but got 0
+PASS Cache.put should store Response.redirect() correctly 
 

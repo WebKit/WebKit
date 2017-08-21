@@ -51,26 +51,47 @@ Cache::~Cache()
 
 void Cache::match(RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    doMatch(WTFMove(info), WTFMove(options), WTFMove(promise), MatchType::OnlyFirst);
+    doMatch(WTFMove(info), WTFMove(options), [promise = WTFMove(promise)](FetchResponse* result) mutable {
+        if (!result) {
+            promise->resolve();
+            return;
+        }
+        promise->resolve<IDLInterface<FetchResponse>>(*result);
+    });
 }
 
-void Cache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
+void Cache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCallback&& callback)
 {
-    doMatch(WTFMove(info), WTFMove(options), WTFMove(promise), MatchType::All);
+    RefPtr<FetchRequest> request;
+    if (WTF::holds_alternative<RefPtr<FetchRequest>>(info)) {
+        request = WTF::get<RefPtr<FetchRequest>>(info).releaseNonNull();
+        if (request->method() != "GET" && !options.ignoreMethod) {
+            callback(nullptr);
+            return;
+        }
+    } else {
+        if (UNLIKELY(!scriptExecutionContext()))
+            return;
+        request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { }).releaseReturnValue();
+    }
+
+    queryCache(request.releaseNonNull(), WTFMove(options), [callback = WTFMove(callback)](const Vector<CacheStorageRecord>& records) mutable {
+        if (records.isEmpty()) {
+            callback(nullptr);
+            return;
+        }
+        callback(records[0].response->cloneForJS().ptr());
+    });
 }
 
-void Cache::doMatch(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise, MatchType matchType)
+void Cache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, MatchAllPromise&& promise)
 {
     RefPtr<FetchRequest> request;
     if (info) {
         if (WTF::holds_alternative<RefPtr<FetchRequest>>(info.value())) {
             request = WTF::get<RefPtr<FetchRequest>>(info.value()).releaseNonNull();
             if (request->method() != "GET" && !options.ignoreMethod) {
-                if (matchType == MatchType::OnlyFirst) {
-                    promise->resolve();
-                    return;
-                }
-                promise->resolve<IDLSequence<IDLInterface<FetchResponse>>>(Vector<Ref<FetchResponse>> { });
+                promise.resolve({ });
                 return;
             }
         } else {
@@ -81,31 +102,21 @@ void Cache::doMatch(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
     }
 
     if (!request) {
-        ASSERT(matchType == MatchType::All);
-        retrieveRecords([this, promise = WTFMove(promise)]() {
+        retrieveRecords([this, promise = WTFMove(promise)]() mutable {
             Vector<Ref<FetchResponse>> responses;
             responses.reserveInitialCapacity(m_records.size());
             for (auto& record : m_records)
                 responses.uncheckedAppend(record.response->cloneForJS());
-            promise->resolve<IDLSequence<IDLInterface<FetchResponse>>>(responses);
+            promise.resolve(responses);
         });
         return;
     }
-    queryCache(request.releaseNonNull(), WTFMove(options), [matchType, promise = WTFMove(promise)](const Vector<CacheStorageRecord>& records) mutable {
-        if (matchType == MatchType::OnlyFirst) {
-            if (records.size()) {
-                promise->resolve<IDLInterface<FetchResponse>>(records[0].response->cloneForJS());
-                return;
-            }
-            promise->resolve();
-            return;
-        }
-
+    queryCache(request.releaseNonNull(), WTFMove(options), [promise = WTFMove(promise)](const Vector<CacheStorageRecord>& records) mutable {
         Vector<Ref<FetchResponse>> responses;
         responses.reserveInitialCapacity(records.size());
         for (auto& record : records)
             responses.uncheckedAppend(record.response->cloneForJS());
-        promise->resolve<IDLSequence<IDLInterface<FetchResponse>>>(responses);
+        promise.resolve(responses);
     });
 }
 
@@ -304,6 +315,9 @@ static inline CacheStorageConnection::Record toConnectionRecord(const FetchReque
 
     ResourceRequest cachedRequest = request.internalRequest();
     cachedRequest.setHTTPHeaderFields(request.headers().internalHeaders());
+
+    ASSERT(!cachedRequest.isNull());
+    ASSERT(!cachedResponse.isNull());
 
     return { 0,
         request.headers().guard(), WTFMove(cachedRequest), request.fetchOptions(), request.internalRequestReferrer(),
