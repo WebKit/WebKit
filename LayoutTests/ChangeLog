@@ -1,3 +1,14 @@
+2017-08-21  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaselined js/dom/global-constructors-attributes.html on macOS.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan-wk2/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-highsierra-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-highsierra/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2017-08-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip imported/w3c/web-platform-tests/payment-request/payment-request-constructor-crash.https.html.
