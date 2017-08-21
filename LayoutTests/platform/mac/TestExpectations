@@ -1620,3 +1620,5 @@ webkit.org/b/175700 media/video-controls-rendering.html [ Pass Failure ]
 
 webkit.org/b/173010 [ Debug ] js/slow-stress/Int32Array-alloc-huge.html [ Pass Timout ]
 
+webkit.org/b/173560 inspector/css/add-rule.html [ Pass Timeout ]
+
