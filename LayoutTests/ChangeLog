@@ -1,3 +1,12 @@
+2017-08-21  Matt Lewis  <jlewis3@apple.com>
+
+        Marked svg/animations/smil-leak-list-property-instances.svg as flaky on macOS WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=174218
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-08-21  Ms2ger  <Ms2ger@gmail.com>
 
         Re-enable tests based on media-fullscreen.js for GTK.
