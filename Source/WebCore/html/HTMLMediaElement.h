@@ -636,10 +636,11 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
+    void attemptToDecrypt();
     void attemptToResumePlaybackIfNecessary();
 
     // CDMClient
-    void cdmClientAttemptToResumePlaybackIfNecessary() override;
+    void cdmClientAttemptToResumePlaybackIfNecessary() final;
 #endif
     
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

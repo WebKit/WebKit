@@ -60,6 +60,7 @@ public:
     using RefCounted<MediaKeySession>::ref;
     using RefCounted<MediaKeySession>::deref;
 
+    bool isClosed() const { return m_closed; }
     void detachKeys();
 
     const String& sessionId() const;

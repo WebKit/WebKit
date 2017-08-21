@@ -239,6 +239,7 @@ public:
 #if ENABLE(ENCRYPTED_MEDIA)
     virtual void cdmInstanceAttached(const CDMInstance&) { }
     virtual void cdmInstanceDetached(const CDMInstance&) { }
+    virtual void attemptToDecryptWithInstance(const CDMInstance&) { }
 #endif
 
 #if ENABLE(VIDEO_TRACK)

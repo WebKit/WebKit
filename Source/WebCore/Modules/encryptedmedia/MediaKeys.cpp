@@ -134,6 +134,14 @@ void MediaKeys::attemptToResumePlaybackOnClients()
         cdmClient->cdmClientAttemptToResumePlaybackIfNecessary();
 }
 
+bool MediaKeys::hasOpenSessions() const
+{
+    return std::any_of(m_sessions.begin(), m_sessions.end(),
+        [](auto& session) {
+            return !session->isClosed();
+        });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ENCRYPTED_MEDIA)

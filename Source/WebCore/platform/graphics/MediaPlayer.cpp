@@ -594,6 +594,11 @@ void MediaPlayer::cdmInstanceDetached(const CDMInstance& instance)
 {
     m_private->cdmInstanceDetached(instance);
 }
+
+void MediaPlayer::attemptToDecryptWithInstance(const CDMInstance& instance)
+{
+    m_private->attemptToDecryptWithInstance(instance);
+}
 #endif
 
 MediaTime MediaPlayer::duration() const

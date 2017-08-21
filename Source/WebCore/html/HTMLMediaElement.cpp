@@ -2648,17 +2648,61 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys, Ref<DeferredPromise>&&
     // 6. Return promise.
 }
 
+void HTMLMediaElement::attemptToDecrypt()
+{
+    // https://w3c.github.io/encrypted-media/#attempt-to-decrypt
+    // W3C Editor's Draft 23 June 2017
+
+    // 1. Let the media element be the specified HTMLMediaElement object.
+    // 2. If the media element's encrypted block queue is empty, abort these steps.
+    // FIXME: ^
+
+    // 3. If the media element's mediaKeys attribute is not null, run the following steps:
+    if (m_mediaKeys) {
+        // 3.1. Let media keys be the MediaKeys object referenced by that attribute.
+        // 3.2. Let cdm be the CDM instance represented by media keys's cdm instance value.
+        auto& cdmInstance = m_mediaKeys->cdmInstance();
+
+        // 3.3. If cdm is no longer usable for any reason, run the following steps:
+        //   3.3.1. Run the media data is corrupted steps of the resource fetch algorithm.
+        //   3.3.2. Run the CDM Unavailable algorithm on media keys.
+        //   3.3.3. Abort these steps.
+        // FIXME: ^
+
+        // 3.4. If there is at least one MediaKeySession created by the media keys that is not closed, run the following steps:
+        if (m_mediaKeys->hasOpenSessions()) {
+            // Continued in MediaPlayer::attemptToDecryptWithInstance().
+            if (m_player)
+                m_player->attemptToDecryptWithInstance(cdmInstance);
+        }
+    }
+
+    // 4. Set the media element's decryption blocked waiting for key value to true.
+    // FIXME: ^
+}
+
 void HTMLMediaElement::attemptToResumePlaybackIfNecessary()
 {
     // https://w3c.github.io/encrypted-media/#resume-playback
     // W3C Editor's Draft 23 June 2017
 
-    notImplemented();
+    // 1. Let the media element be the specified HTMLMediaElement object.
+    // 2. If the media element's playback blocked waiting for key is false, abort these steps.
+    // FIXME: ^
+
+    // 3. Run the Attempt to Decrypt algorithm on the media element.
+    attemptToDecrypt();
+
+    // 4. If the user agent can advance the current playback position in the direction of playback:
+    //   4.1. Set the media element's decryption blocked waiting for key value to false.
+    //   4.2. Set the media element's playback blocked waiting for key value to false.
+    //   4.3. Set the media element's readyState value to HAVE_CURRENT_DATA, HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA as appropriate.
+    // FIXME: ^
 }
 
 void HTMLMediaElement::cdmClientAttemptToResumePlaybackIfNecessary()
 {
-    notImplemented();
+    attemptToResumePlaybackIfNecessary();
 }
 
 #endif // ENABLE(ENCRYPTED_MEDIA)

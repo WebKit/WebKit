@@ -1,3 +1,54 @@
+2017-08-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] HTMLMediaElement: basic implementations of 'Attempt to Decrypt', 'Attempt to Resume Playback If Necessary'
+        https://bugs.webkit.org/show_bug.cgi?id=175761
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add initial and incomplete implementations of the 'Attempt to Decrypt' and
+        'Attempt to Resume Playback If Necessary' algorithms.  The implementations
+        are interleaved with the specification text for clarity.
+
+        'Attempt to Decrypt' implementation doesn't yet address the encrypted block
+        queue or the 'decryption blocked waiting for key' flag since it's not yet
+        clear whether it would make more sense for this state to reside lower, in
+        the platform layer. The gist of the algorithm is to invoke the decryption
+        attempt through the MediaPlayer object, passing along the CDMInstance object
+        retrieved from the MediaKeys object that is associated with this media
+        element.
+
+        'Attempt to Resume Playback if Necessary' implementation similarly for now
+        omits the various state flag operations. The main task at this point is to
+        dispatch the 'Attempt to Decrypt' algorithm.
+
+        HTMLMediaElement::cdmClientAttemptToResumePlaybackIfNecessary() method now
+        invokes the attemptToResumePlaybackIfNecessary() method.
+
+        MediaKeys::hasOpenSessions() is introduced, returning true if any session
+        that was created through this MediaKeys instance is still open. This allows
+        the 'Attempt to Decrypt' algorithm to proceed with the decryption attempt
+        dispatch into the MediaPlayer hierarchy.
+
+        For that, the MediaPlayer::attemptToDecryptWithInstance() method is added,
+        which simply dispatches the mirror method on MediaPlayerPrivate interface.
+        This will enable the platform-layer implementations to use the passed-in
+        CDMInstance object for decryption purposes.
+
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::hasOpenSessions const):
+        * Modules/encryptedmedia/MediaKeys.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attemptToDecrypt):
+        (WebCore::HTMLMediaElement::attemptToResumePlaybackIfNecessary):
+        (WebCore::HTMLMediaElement::cdmClientAttemptToResumePlaybackIfNecessary):
+        * html/HTMLMediaElement.h: Mark cdmClientAttemptToResumePlaybackIfNecessary() as final.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::attemptToDecryptWithInstance):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::attemptToDecryptWithInstance):
+
 2017-08-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] Add basic implementation of HTMLMediaElement::setMediaKeys()
