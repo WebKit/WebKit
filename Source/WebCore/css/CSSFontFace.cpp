@@ -260,17 +260,8 @@ bool CSSFontFace::setUnicodeRange(CSSValue& unicodeRange)
         ranges.append({ range.from(), range.to() });
     }
 
-    if (ranges.size() == m_ranges.size()) {
-        bool same = true;
-        for (size_t i = 0; i < ranges.size(); ++i) {
-            if (ranges[i] != m_ranges[i]) {
-                same = false;
-                break;
-            }
-        }
-        if (same)
-            return true;
-    }
+    if (ranges == m_ranges)
+        return true;
 
     m_ranges = WTFMove(ranges);
 
