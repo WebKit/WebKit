@@ -47,7 +47,9 @@ static WTFLogChannel* testLogChannels[] = {
 };
 static const size_t logChannelCount = sizeof(testLogChannels) / sizeof(testLogChannels[0]);
 
-#define TEST_OUTPUT (!PLATFORM(COCOA) || (!PLATFORM(IOS) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200))
+// Define the following to enable all tests. Disabled by default because replacing stderr with a
+// non-blocking pipe fails on some of the bots.
+#define TEST_OUTPUT 0
 
 namespace TestWebKitAPI {
 
@@ -57,7 +59,7 @@ public:
     {
         WTF::initializeMainThread();
 
-        // Replace stderr with a nonblocking pipe that we can read from.
+        // Replace stderr with a non-blocking pipe that we can read from.
         pipe(m_descriptors);
         fcntl(m_descriptors[0], F_SETFL, fcntl(m_descriptors[0], F_GETFL, 0) | O_NONBLOCK);
         dup2(m_descriptors[1], STDERR_FILENO);
