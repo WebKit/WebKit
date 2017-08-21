@@ -44,7 +44,7 @@ struct PaymentMethodData;
 
 class PaymentRequest final : public RefCounted<PaymentRequest>, public ActiveDOMObject, public EventTargetWithInlineData {
 public:
-    static ExceptionOr<RefPtr<PaymentRequest>> create(Document&, Vector<PaymentMethodData>&&, PaymentDetailsInit&&, PaymentOptions&&);
+    static ExceptionOr<Ref<PaymentRequest>> create(Document&, Vector<PaymentMethodData>&&, PaymentDetailsInit&&, PaymentOptions&&);
     ~PaymentRequest();
 
     void show(DOMPromiseDeferred<IDLInterface<PaymentResponse>>&&);

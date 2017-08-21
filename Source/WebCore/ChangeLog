@@ -1,3 +1,14 @@
+2017-08-21  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Use ExistingExceptionError to propagate JS exceptions thrown during JSON stringification
+        https://bugs.webkit.org/show_bug.cgi?id=175776
+
+        Reviewed by Darin Adler.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::create):
+        * Modules/paymentrequest/PaymentRequest.h:
+
 2017-08-21  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [PAL] Move spi/mac directory into PAL

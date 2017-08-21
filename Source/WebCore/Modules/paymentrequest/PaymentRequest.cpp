@@ -159,7 +159,7 @@ static ExceptionOr<void> checkAndCanonicalizeTotal(PaymentCurrencyAmount& total)
 
 // Implements the PaymentRequest Constructor
 // https://www.w3.org/TR/payment-request/#constructor
-ExceptionOr<RefPtr<PaymentRequest>> PaymentRequest::create(Document& document, Vector<PaymentMethodData>&& methodData, PaymentDetailsInit&& details, PaymentOptions&& options)
+ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vector<PaymentMethodData>&& methodData, PaymentDetailsInit&& details, PaymentOptions&& options)
 {
     // FIXME: Check if this document is allowed to access the PaymentRequest API based on the allowpaymentrequest attribute.
 
@@ -179,7 +179,7 @@ ExceptionOr<RefPtr<PaymentRequest>> PaymentRequest::create(Document& document, V
             auto scope = DECLARE_THROW_SCOPE(document.execState()->vm());
             serializedData = JSONStringify(document.execState(), paymentMethod.data.get(), 0);
             if (scope.exception())
-                return nullptr;
+                return Exception { ExistingExceptionError };
         }
         serializedMethodData.add(paymentMethod.supportedMethods, WTFMove(serializedData));
     }
@@ -232,12 +232,12 @@ ExceptionOr<RefPtr<PaymentRequest>> PaymentRequest::create(Document& document, V
             auto scope = DECLARE_THROW_SCOPE(document.execState()->vm());
             serializedData = JSONStringify(document.execState(), modifier.data.get(), 0);
             if (scope.exception())
-                return nullptr;
+                return Exception { ExistingExceptionError };
         }
         serializedModifierData.uncheckedAppend(WTFMove(serializedData));
     }
 
-    return adoptRef(new PaymentRequest(document, WTFMove(options), WTFMove(details), WTFMove(serializedModifierData), WTFMove(serializedMethodData), WTFMove(selectedShippingOption)));
+    return adoptRef(*new PaymentRequest(document, WTFMove(options), WTFMove(details), WTFMove(serializedModifierData), WTFMove(serializedMethodData), WTFMove(selectedShippingOption)));
 }
 
 PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, PaymentDetailsInit&& details, Vector<String>&& serializedModifierData, HashMap<String, String>&& serializedMethodData, String&& selectedShippingOption)
