@@ -1,3 +1,24 @@
+2017-08-21  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement the PaymentRequest constructor
+        https://bugs.webkit.org/show_bug.cgi?id=175755
+
+        Reviewed by Darin Adler.
+
+        * Modules/paymentrequest/PaymentDetailsModifier.h: Changed total to an std::optional<PaymentItem>.
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::isWellFormedCurrencyCode): Implements the IsWellFormedCurrencyCode abstract operation from ECMA 402.
+        (WebCore::isValidDecimalMonetaryValue): Implements the "valid decimal monetary value" validity checker.
+        (WebCore::checkAndCanonicalizeAmount): Implements the "check and canonicalize amount" validity checker.
+        (WebCore::checkAndCanonicalizeTotal): Implements the "check and canonicalize total" validity checker.
+        (WebCore::PaymentRequest::create): Implements the PaymentRequest Constructor
+        (WebCore::PaymentRequest::PaymentRequest):
+        (WebCore::PaymentRequest::id const): Implements the PaymentRequest id attribute.
+        (WebCore::PaymentRequest::shippingType const): Implements the PaymentRequest shippingType attribute.
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentRequest.idl: Annotated PaymentRequest with ConstructorMayThrowException.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-08-21  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] DRT should only allow any https certificate for localhost.

@@ -1,4 +1,4 @@
 
 
-FAIL Test for PaymentRequest identifier usage assert_equals: Payment identifier is not reflected correctly in PaymentRequest.id expected "my_payment_id" but got ""
+PASS Test for PaymentRequest identifier usage 
 

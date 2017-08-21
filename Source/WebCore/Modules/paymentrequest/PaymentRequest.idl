@@ -28,6 +28,7 @@
     Conditional=PAYMENT_REQUEST,
     Constructor(sequence<PaymentMethodData> methodData, PaymentDetailsInit details, optional PaymentOptions options),
     ConstructorCallWith=Document,
+    ConstructorMayThrowException,
     EnabledBySetting=PaymentRequest,
     SecureContext
 ] interface PaymentRequest : EventTarget {
