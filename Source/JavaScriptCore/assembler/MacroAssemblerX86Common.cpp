@@ -28,6 +28,7 @@
 #if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
 #include "MacroAssembler.h"
 
+#include "ProbeContext.h"
 #include <wtf/InlineASM.h>
 
 namespace JSC {
@@ -101,6 +102,8 @@ extern "C" void ctiMasmProbeTrampoline();
 #define PROBE_SIZE (PROBE_CPU_XMM15_OFFSET + XMM_SIZE)
 #endif // CPU(X86_64)
 
+#define PROBE_EXECUTOR_OFFSET PROBE_SIZE // Stash the executeProbe function pointer at the end of the ProbeContext.
+
 // The outgoing record to be popped off the stack at the end consists of:
 // eflags, eax, ecx, ebp, eip.
 #define OUT_SIZE        (5 * PTR_SIZE)
@@ -159,6 +162,7 @@ COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm15) == PROBE_CPU_XM
 #endif // CPU(X86_64)
 
 COMPILE_ASSERT(sizeof(Probe::State) == PROBE_SIZE, ProbeState_size_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT((PROBE_EXECUTOR_OFFSET + PTR_SIZE) <= (PROBE_SIZE + OUT_SIZE), Must_have_room_after_ProbeContext_to_stash_the_probe_handler);
 
 #undef PROBE_OFFSETOF
 
@@ -176,10 +180,16 @@ asm (
     // this:
     //     esp[0 * ptrSize]: eflags
     //     esp[1 * ptrSize]: return address / saved eip
-    //     esp[2 * ptrSize]: probe handler function
-    //     esp[3 * ptrSize]: probe arg
-    //     esp[4 * ptrSize]: saved eax
-    //     esp[5 * ptrSize]: saved esp
+    //     esp[2 * ptrSize]: saved ebx
+    //     esp[3 * ptrSize]: saved edx
+    //     esp[4 * ptrSize]: saved ecx
+    //     esp[5 * ptrSize]: saved eax
+    //
+    // Incoming registers contain:
+    //     ecx: Probe::executeProbe
+    //     edx: probe function
+    //     ebx: probe arg
+    //     eax: scratch (was ctiMasmProbeTrampoline)
 
     "movl %esp, %eax" "\n"
     "subl $" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) ", %esp" "\n"
@@ -190,9 +200,9 @@ asm (
     "movl %ebp, " STRINGIZE_VALUE_OF(PROBE_CPU_EBP_OFFSET) "(%esp)" "\n"
     "movl %esp, %ebp" "\n" // Save the Probe::State*.
 
-    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_CPU_ECX_OFFSET) "(%ebp)" "\n"
-    "movl %edx, " STRINGIZE_VALUE_OF(PROBE_CPU_EDX_OFFSET) "(%ebp)" "\n"
-    "movl %ebx, " STRINGIZE_VALUE_OF(PROBE_CPU_EBX_OFFSET) "(%ebp)" "\n"
+    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_EXECUTOR_OFFSET) "(%ebp)" "\n"
+    "movl %edx, " STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%ebp)" "\n"
+    "movl %ebx, " STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "(%ebp)" "\n"
     "movl %esi, " STRINGIZE_VALUE_OF(PROBE_CPU_ESI_OFFSET) "(%ebp)" "\n"
     "movl %edi, " STRINGIZE_VALUE_OF(PROBE_CPU_EDI_OFFSET) "(%ebp)" "\n"
 
@@ -201,12 +211,16 @@ asm (
     "movl 1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
     "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_CPU_EIP_OFFSET) "(%ebp)" "\n"
     "movl 2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
-    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%ebp)" "\n"
+    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_CPU_EBX_OFFSET) "(%ebp)" "\n"
     "movl 3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
-    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "(%ebp)" "\n"
+    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_CPU_EDX_OFFSET) "(%ebp)" "\n"
     "movl 4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
-    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%ebp)" "\n"
+    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_CPU_ECX_OFFSET) "(%ebp)" "\n"
     "movl 5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%eax), %ecx" "\n"
+    "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%ebp)" "\n"
+
+    "movl %eax, %ecx" "\n"
+    "addl $" STRINGIZE_VALUE_OF(6 * PTR_SIZE) ", %ecx" "\n"
     "movl %ecx, " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%ebp)" "\n"
 
     "movq %xmm0, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_OFFSET) "(%ebp)" "\n"
@@ -218,15 +232,12 @@ asm (
     "movq %xmm6, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_OFFSET) "(%ebp)" "\n"
     "movq %xmm7, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_OFFSET) "(%ebp)" "\n"
 
-    "xorl %eax, %eax" "\n"
-    "movl %eax, " STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "(%ebp)" "\n"
-
     // Reserve stack space for the arg while maintaining the required stack
     // pointer 32 byte alignment:
     "subl $0x20, %esp" "\n"
     "movl %ebp, 0(%esp)" "\n" // the Probe::State* arg.
 
-    "call *" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%ebp)" "\n"
+    "call *" STRINGIZE_VALUE_OF(PROBE_EXECUTOR_OFFSET) "(%ebp)" "\n"
 
     // Make sure the Probe::State is entirely below the result stack pointer so
     // that register values are still preserved when we call the initializeStack
@@ -336,10 +347,16 @@ extern "C" __declspec(naked) void ctiMasmProbeTrampoline()
         // this:
         //     esp[0 * ptrSize]: eflags
         //     esp[1 * ptrSize]: return address / saved eip
-        //     esp[2 * ptrSize]: probe handler function
-        //     esp[3 * ptrSize]: probe arg
-        //     esp[4 * ptrSize]: saved eax
-        //     esp[5 * ptrSize]: saved esp
+        //     esp[2 * ptrSize]: saved ebx
+        //     esp[3 * ptrSize]: saved edx
+        //     esp[4 * ptrSize]: saved ecx
+        //     esp[5 * ptrSize]: saved eax
+        //
+        // Incoming registers contain:
+        //     ecx: Probe::executeProbe
+        //     edx: probe function
+        //     ebx: probe arg
+        //     eax: scratch (was ctiMasmProbeTrampoline)
 
         mov eax, esp
         sub esp, PROBE_SIZE + OUT_SIZE
@@ -350,9 +367,9 @@ extern "C" __declspec(naked) void ctiMasmProbeTrampoline()
         mov [PROBE_CPU_EBP_OFFSET + esp], ebp
         mov ebp, esp // Save the ProbeContext*.
 
-        mov [PROBE_CPU_ECX_OFFSET + ebp], ecx
-        mov [PROBE_CPU_EDX_OFFSET + ebp], edx
-        mov [PROBE_CPU_EBX_OFFSET + ebp], ebx
+        mov [PROBE_EXECUTOR_OFFSET + ebp], ecx
+        mov [PROBE_PROBE_FUNCTION_OFFSET + ebp], edx
+        mov [PROBE_ARG_OFFSET + ebp], ebx
         mov [PROBE_CPU_ESI_OFFSET + ebp], esi
         mov [PROBE_CPU_EDI_OFFSET + ebp], edi
 
@@ -361,12 +378,16 @@ extern "C" __declspec(naked) void ctiMasmProbeTrampoline()
         mov ecx, [1 * PTR_SIZE + eax]
         mov [PROBE_CPU_EIP_OFFSET + ebp], ecx
         mov ecx, [2 * PTR_SIZE + eax]
-        mov [PROBE_PROBE_FUNCTION_OFFSET + ebp], ecx
+        mov [PROBE_CPU_EBX_OFFSET + ebp], ecx
         mov ecx, [3 * PTR_SIZE + eax]
-        mov [PROBE_ARG_OFFSET + ebp], ecx
+        mov [PROBE_CPU_EDX_OFFSET + ebp], ecx
         mov ecx, [4 * PTR_SIZE + eax]
-        mov [PROBE_CPU_EAX_OFFSET + ebp], ecx
+        mov [PROBE_CPU_ECX_OFFSET + ebp], ecx
         mov ecx, [5 * PTR_SIZE + eax]
+        mov [PROBE_CPU_EAX_OFFSET + ebp], ecx
+
+        mov ecx, eax
+        add ecx, 6 * PTR_SIZE
         mov [PROBE_CPU_ESP_OFFSET + ebp], ecx
 
         movq qword ptr[PROBE_CPU_XMM0_OFFSET + ebp], xmm0
@@ -378,15 +399,12 @@ extern "C" __declspec(naked) void ctiMasmProbeTrampoline()
         movq qword ptr[PROBE_CPU_XMM6_OFFSET + ebp], xmm6
         movq qword ptr[PROBE_CPU_XMM7_OFFSET + ebp], xmm7
 
-        xor eax, eax
-        mov [PROBE_INIT_STACK_FUNCTION_OFFSET + ebp], eax
-
         // Reserve stack space for the arg while maintaining the required stack
         // pointer 32 byte alignment:
         sub esp, 0x20
         mov [0 + esp], ebp // the ProbeContext* arg.
 
-        call [PROBE_PROBE_FUNCTION_OFFSET + ebp]
+        call [PROBE_EXECUTOR_OFFSET + ebp]
 
         // Make sure the ProbeContext is entirely below the result stack pointer so
         // that register values are still preserved when we call the initializeStack
@@ -484,7 +502,7 @@ extern "C" __declspec(naked) void ctiMasmProbeTrampoline()
         ret
     }
 }
-#endif
+#endif // COMPILER(MSVC)
 
 #endif // CPU(X86)
 
@@ -498,14 +516,19 @@ asm (
     "pushfq" "\n"
 
     // MacroAssemblerX86Common::probe() has already generated code to store some values.
-    // Together with the rflags pushed above, the top of stack now looks like
-    // this:
-    //     esp[0 * ptrSize]: rflags
-    //     esp[1 * ptrSize]: return address / saved rip
-    //     esp[2 * ptrSize]: probe handler function
-    //     esp[3 * ptrSize]: probe arg
-    //     esp[4 * ptrSize]: saved rax
-    //     esp[5 * ptrSize]: saved rsp
+    // Together with the rflags pushed above, the top of stack now looks like this:
+    //     rsp[0 * ptrSize]: rflags
+    //     rsp[1 * ptrSize]: return address / saved rip
+    //     rsp[2 * ptrSize]: saved rbx
+    //     rsp[3 * ptrSize]: saved rdx
+    //     rsp[4 * ptrSize]: saved rcx
+    //     rsp[5 * ptrSize]: saved rax
+    //
+    // Incoming registers contain:
+    //     rcx: Probe::executeProbe
+    //     rdx: probe function
+    //     rbx: probe arg
+    //     rax: scratch (was ctiMasmProbeTrampoline)
 
     "movq %rsp, %rax" "\n"
     "subq $" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) ", %rsp" "\n"
@@ -517,9 +540,9 @@ asm (
     "movq %rbp, " STRINGIZE_VALUE_OF(PROBE_CPU_EBP_OFFSET) "(%rsp)" "\n"
     "movq %rsp, %rbp" "\n" // Save the Probe::State*.
 
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_ECX_OFFSET) "(%rbp)" "\n"
-    "movq %rdx, " STRINGIZE_VALUE_OF(PROBE_CPU_EDX_OFFSET) "(%rbp)" "\n"
-    "movq %rbx, " STRINGIZE_VALUE_OF(PROBE_CPU_EBX_OFFSET) "(%rbp)" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_EXECUTOR_OFFSET) "(%rbp)" "\n"
+    "movq %rdx, " STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%rbp)" "\n"
+    "movq %rbx, " STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "(%rbp)" "\n"
     "movq %rsi, " STRINGIZE_VALUE_OF(PROBE_CPU_ESI_OFFSET) "(%rbp)" "\n"
     "movq %rdi, " STRINGIZE_VALUE_OF(PROBE_CPU_EDI_OFFSET) "(%rbp)" "\n"
 
@@ -528,12 +551,16 @@ asm (
     "movq 1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
     "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EIP_OFFSET) "(%rbp)" "\n"
     "movq 2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%rbp)" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EBX_OFFSET) "(%rbp)" "\n"
     "movq 3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "(%rbp)" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EDX_OFFSET) "(%rbp)" "\n"
     "movq 4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%rbp)" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_ECX_OFFSET) "(%rbp)" "\n"
     "movq 5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rax), %rcx" "\n"
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%rbp)" "\n"
+
+    "movq %rax, %rcx" "\n"
+    "addq $" STRINGIZE_VALUE_OF(6 * PTR_SIZE) ", %rcx" "\n"
     "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rbp)" "\n"
 
     "movq %r8, " STRINGIZE_VALUE_OF(PROBE_CPU_R8_OFFSET) "(%rbp)" "\n"
@@ -562,11 +589,8 @@ asm (
     "movq %xmm14, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_OFFSET) "(%rbp)" "\n"
     "movq %xmm15, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM15_OFFSET) "(%rbp)" "\n"
 
-    "xorq %rax, %rax" "\n"
-    "movq %rax, " STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "(%rbp)" "\n"
-
     "movq %rbp, %rdi" "\n" // the Probe::State* arg.
-    "call *" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%rbp)" "\n"
+    "call *" STRINGIZE_VALUE_OF(PROBE_EXECUTOR_OFFSET) "(%rbp)" "\n"
 
     // Make sure the Probe::State is entirely below the result stack pointer so
     // that register values are still preserved when we call the initializeStack
@@ -731,13 +755,14 @@ extern "C" void ctiMasmProbeTrampoline()
 
 void MacroAssembler::probe(Probe::Function function, void* arg)
 {
-    push(RegisterID::esp);
-    push(RegisterID::eax);
-    move(TrustedImmPtr(arg), RegisterID::eax);
-    push(RegisterID::eax);
-    move(TrustedImmPtr(reinterpret_cast<void*>(function)), RegisterID::eax);
     push(RegisterID::eax);
     move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), RegisterID::eax);
+    push(RegisterID::ecx);
+    move(TrustedImmPtr(reinterpret_cast<void*>(Probe::executeProbe)), RegisterID::ecx);
+    push(RegisterID::edx);
+    move(TrustedImmPtr(reinterpret_cast<void*>(function)), RegisterID::edx);
+    push(RegisterID::ebx);
+    move(TrustedImmPtr(arg), RegisterID::ebx);
     call(RegisterID::eax);
 }
 #endif // ENABLE(MASM_PROBE)

@@ -33,9 +33,10 @@
 #include <inttypes.h>
 
 namespace JSC {
+
 namespace Printer {
 
-using CPUState = MacroAssembler::CPUState;
+using CPUState = Probe::CPUState;
 using RegisterID = MacroAssembler::RegisterID;
 using FPRegisterID = MacroAssembler::FPRegisterID;
 
@@ -171,13 +172,13 @@ void printMemory(PrintStream& out, Context& context)
         out.print("\n");
 }
 
-void printCallback(Probe::State* probeContext)
+void printCallback(Probe::Context& probeContext)
 {
     auto& out = WTF::dataFile();
-    PrintRecordList& list = *reinterpret_cast<PrintRecordList*>(probeContext->arg);
+    PrintRecordList& list = *reinterpret_cast<PrintRecordList*>(probeContext.arg);
     for (size_t i = 0; i < list.size(); i++) {
         auto& record = list[i];
-        Context context(*probeContext, record.data);
+        Context context(probeContext, record.data);
         record.printer(out, context);
     }
 }

@@ -28,6 +28,7 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "ProbeContext.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -35,15 +36,15 @@ namespace JSC {
 const double MacroAssembler::twoToThe32 = (double)0x100000000ull;
 
 #if ENABLE(MASM_PROBE)
-static void stdFunctionCallback(Probe::State* state)
+static void stdFunctionCallback(Probe::Context& context)
 {
-    auto func = static_cast<const std::function<void(Probe::State*)>*>(state->arg);
-    (*func)(state);
+    auto func = static_cast<const std::function<void(Probe::Context&)>*>(context.arg);
+    (*func)(context);
 }
     
-void MacroAssembler::probe(std::function<void(Probe::State*)> func)
+void MacroAssembler::probe(std::function<void(Probe::Context&)> func)
 {
-    probe(stdFunctionCallback, new std::function<void(Probe::State*)>(func));
+    probe(stdFunctionCallback, new std::function<void(Probe::Context&)>(func));
 }
 #endif // ENABLE(MASM_PROBE)
 

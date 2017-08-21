@@ -63,12 +63,21 @@ namespace JSC { typedef MacroAssemblerX86_64 MacroAssemblerBase; };
 
 namespace JSC {
 
+#if ENABLE(MASM_PROBE)
+namespace Probe {
+
+class Context;
+typedef void (*Function)(Context&);
+
+} // namespace Probe
+#endif // ENABLE(MASM_PROBE)
+
 namespace Printer {
 
 struct PrintRecord;
 typedef Vector<PrintRecord> PrintRecordList;
 
-}
+} // namespace Printer
 
 class MacroAssembler : public MacroAssemblerBase {
 public:
@@ -1825,8 +1834,6 @@ public:
     }
 
 #if ENABLE(MASM_PROBE)
-    struct CPUState;
-
     // This function emits code to preserve the CPUState (e.g. registers),
     // call a user supplied probe function, and restore the CPUState before
     // continuing with other JIT generated code.
@@ -1878,7 +1885,7 @@ public:
     // MacroAssembler.
     void probe(Probe::Function, void* arg);
 
-    JS_EXPORT_PRIVATE void probe(std::function<void(Probe::State*)>);
+    JS_EXPORT_PRIVATE void probe(std::function<void(Probe::Context&)>);
 
     // Let's you print from your JIT generated code.
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.
@@ -1888,173 +1895,6 @@ public:
     void print(Printer::PrintRecordList*);
 #endif // ENABLE(MASM_PROBE)
 };
-
-#if ENABLE(MASM_PROBE)
-struct MacroAssembler::CPUState {
-    static inline const char* gprName(RegisterID id) { return MacroAssembler::gprName(id); }
-    static inline const char* sprName(SPRegisterID id) { return MacroAssembler::sprName(id); }
-    static inline const char* fprName(FPRegisterID id) { return MacroAssembler::fprName(id); }
-    inline uintptr_t& gpr(RegisterID);
-    inline uintptr_t& spr(SPRegisterID);
-    inline double& fpr(FPRegisterID);
-
-    template<typename T, typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
-    T gpr(RegisterID) const;
-    template<typename T, typename std::enable_if<std::is_pointer<T>::value>::type* = nullptr>
-    T gpr(RegisterID) const;
-    template<typename T> T fpr(FPRegisterID) const;
-
-    void*& pc();
-    void*& fp();
-    void*& sp();
-    template<typename T> T pc() const;
-    template<typename T> T fp() const;
-    template<typename T> T sp() const;
-
-    uintptr_t gprs[MacroAssembler::numberOfRegisters()];
-    uintptr_t sprs[MacroAssembler::numberOfSPRegisters()];
-    double fprs[MacroAssembler::numberOfFPRegisters()];
-};
-
-inline uintptr_t& MacroAssembler::CPUState::gpr(RegisterID id)
-{
-    ASSERT(id >= MacroAssembler::firstRegister() && id <= MacroAssembler::lastRegister());
-    return gprs[id];
-}
-
-inline uintptr_t& MacroAssembler::CPUState::spr(SPRegisterID id)
-{
-    ASSERT(id >= MacroAssembler::firstSPRegister() && id <= MacroAssembler::lastSPRegister());
-    return sprs[id];
-}
-
-inline double& MacroAssembler::CPUState::fpr(FPRegisterID id)
-{
-    ASSERT(id >= MacroAssembler::firstFPRegister() && id <= MacroAssembler::lastFPRegister());
-    return fprs[id];
-}
-
-template<typename T, typename std::enable_if<std::is_integral<T>::value>::type*>
-T MacroAssembler::CPUState::gpr(RegisterID id) const
-{
-    CPUState* cpu = const_cast<CPUState*>(this);
-    return static_cast<T>(cpu->gpr(id));
-}
-
-template<typename T, typename std::enable_if<std::is_pointer<T>::value>::type*>
-T MacroAssembler::CPUState::gpr(RegisterID id) const
-{
-    CPUState* cpu = const_cast<CPUState*>(this);
-    return reinterpret_cast<T>(cpu->gpr(id));
-}
-
-template<typename T>
-T MacroAssembler::CPUState::fpr(FPRegisterID id) const
-{
-    CPUState* cpu = const_cast<CPUState*>(this);
-    return bitwise_cast<T>(cpu->fpr(id));
-}
-
-inline void*& MacroAssembler::CPUState::pc()
-{
-#if CPU(X86) || CPU(X86_64)
-    return *reinterpret_cast<void**>(&spr(X86Registers::eip));
-#elif CPU(ARM64)
-    return *reinterpret_cast<void**>(&spr(ARM64Registers::pc));
-#elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
-    return *reinterpret_cast<void**>(&gpr(ARMRegisters::pc));
-#elif CPU(MIPS)
-    RELEASE_ASSERT_NOT_REACHED();
-#else
-#error "Unsupported CPU"
-#endif
-}
-
-inline void*& MacroAssembler::CPUState::fp()
-{
-#if CPU(X86) || CPU(X86_64)
-    return *reinterpret_cast<void**>(&gpr(X86Registers::ebp));
-#elif CPU(ARM64)
-    return *reinterpret_cast<void**>(&gpr(ARM64Registers::fp));
-#elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
-    return *reinterpret_cast<void**>(&gpr(ARMRegisters::fp));
-#elif CPU(MIPS)
-    return *reinterpret_cast<void**>(&gpr(MIPSRegisters::fp));
-#else
-#error "Unsupported CPU"
-#endif
-}
-
-inline void*& MacroAssembler::CPUState::sp()
-{
-#if CPU(X86) || CPU(X86_64)
-    return *reinterpret_cast<void**>(&gpr(X86Registers::esp));
-#elif CPU(ARM64)
-    return *reinterpret_cast<void**>(&gpr(ARM64Registers::sp));
-#elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
-    return *reinterpret_cast<void**>(&gpr(ARMRegisters::sp));
-#elif CPU(MIPS)
-    return *reinterpret_cast<void**>(&gpr(MIPSRegisters::sp));
-#else
-#error "Unsupported CPU"
-#endif
-}
-
-template<typename T>
-T MacroAssembler::CPUState::pc() const
-{
-    CPUState* cpu = const_cast<CPUState*>(this);
-    return reinterpret_cast<T>(cpu->pc());
-}
-
-template<typename T>
-T MacroAssembler::CPUState::fp() const
-{
-    CPUState* cpu = const_cast<CPUState*>(this);
-    return reinterpret_cast<T>(cpu->fp());
-}
-
-template<typename T>
-T MacroAssembler::CPUState::sp() const
-{
-    CPUState* cpu = const_cast<CPUState*>(this);
-    return reinterpret_cast<T>(cpu->sp());
-}
-
-namespace Probe {
-
-struct State {
-    using CPUState = MacroAssembler::CPUState;
-    using RegisterID = MacroAssembler::RegisterID;
-    using SPRegisterID = MacroAssembler::SPRegisterID;
-    using FPRegisterID = MacroAssembler::FPRegisterID;
-
-    Function probeFunction;
-    void* arg;
-    Function initializeStackFunction;
-    void* initializeStackArg;
-    CPUState cpu;
-
-    // Convenience methods:
-    uintptr_t& gpr(RegisterID id) { return cpu.gpr(id); }
-    uintptr_t& spr(SPRegisterID id) { return cpu.spr(id); }
-    double& fpr(FPRegisterID id) { return cpu.fpr(id); }
-    const char* gprName(RegisterID id) { return cpu.gprName(id); }
-    const char* sprName(SPRegisterID id) { return cpu.sprName(id); }
-    const char* fprName(FPRegisterID id) { return cpu.fprName(id); }
-
-    void*& pc() { return cpu.pc(); }
-    void*& fp() { return cpu.fp(); }
-    void*& sp() { return cpu.sp(); }
-
-    template<typename T> T pc() { return cpu.pc<T>(); }
-    template<typename T> T fp() { return cpu.fp<T>(); }
-    template<typename T> T sp() { return cpu.sp<T>(); }
-};
-
-} // namespace Probe
-
-#endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
 

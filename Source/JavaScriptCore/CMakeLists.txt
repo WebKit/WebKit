@@ -76,6 +76,8 @@ set(JavaScriptCore_SOURCES
     assembler/MacroAssemblerPrinter.cpp
     assembler/MacroAssemblerX86Common.cpp
     assembler/Printer.cpp
+    assembler/ProbeContext.cpp
+    assembler/ProbeStack.cpp
 
     b3/air/AirAllocateRegistersAndStackByLinearScan.cpp
     b3/air/AirAllocateRegistersByGraphColoring.cpp

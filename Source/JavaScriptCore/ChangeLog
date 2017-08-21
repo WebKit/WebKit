@@ -1,3 +1,263 @@
+2017-08-20  Mark Lam  <mark.lam@apple.com>
+
+        Enhance MacroAssembler::probe() to allow the probe function to resize the stack frame and alter stack data in one pass.
+        https://bugs.webkit.org/show_bug.cgi?id=175688
+        <rdar://problem/33436870>
+
+        Reviewed by JF Bastien.
+
+        With this patch, the clients of the MacroAssembler::probe() can now change
+        stack values without having to worry about whether there is enough room in the
+        current stack frame for it or not.  This is done using the Probe::Context's stack
+        member like so:
+
+            jit.probe([] (Probe::Context& context) {
+                auto cpu = context.cpu;
+                auto stack = context.stack();
+                uintptr_t* currentSP = cpu.sp<uintptr_t*>();
+
+                // Get a value at the current stack pointer location.
+                auto value = stack.get<uintptr_t>(currentSP);
+
+                // Set a value above the current stack pointer (within current frame).
+                stack.set<uintptr_t>(currentSP + 10, value);
+
+                // Set a value below the current stack pointer (out of current frame).
+                stack.set<uintptr_t>(currentSP - 10, value);
+
+                // Set the new stack pointer.
+                cpu.sp() = currentSP - 20;
+            });
+
+        What happens behind the scene:
+
+        1. the generated JIT probe code will now call Probe::executeProbe(), and
+           Probe::executeProbe() will in turn call the client's probe function.
+
+           Probe::executeProbe() receives the Probe::State on the machine stack passed
+           to it by the probe trampoline.  Probe::executeProbe() will instantiate a
+           Probe::Context to be passed to the client's probe function.  The client will
+           no longer see the Probe::State directly.
+
+        2. The Probe::Context comes with a Probe::Stack which serves as a manager of
+           stack pages.  Currently, each page is 1K in size.
+           Probe::Context::stack() returns a reference to an instance of Probe::Stack.
+
+        3. Invoking get() of set() on Probe::Stack with an address will lead to the
+           following:
+
+           a. the address will be decoded to a baseAddress that points to the 1K page
+              that contains that address.
+
+           b. the Probe::Stack will check if it already has a cached 1K page for that baseAddress.
+              If so, go to step (f).  Else, continue with step (c).
+
+           c. the Probe::Stack will malloc a 1K mirror page, and memcpy the 1K stack page
+              for that specified baseAddress to this mirror page.
+
+           d. the mirror page will be added to the ProbeStack's m_pages HashMap,
+              keyed on the baseAddress.
+
+           e. the ProbeStack will also cache the last baseAddress and its corresponding
+              mirror page in use.  With memory accesses tending to be localized, this
+              will save us from having to look up the page in the HashMap.
+
+           f. get() will map the requested address to a physical address in the mirror
+              page, and return the value at that location.
+
+           g. set() will map the requested address to a physical address in the mirror
+              page, and set the value at that location in the mirror page.
+
+              set() will also set a dirty bit corresponding to the "cache line" that
+              was modified in the mirror page.
+
+        4. When the client's probe function returns, Probe::executeProbe() will check if
+           there are stack changes that need to be applied.  If stack changes are needed:
+
+           a. Probe::executeProbe() will adjust the stack pointer to ensure enough stack
+              space is available to flush the dirty stack pages.  It will also register a
+              flushStackDirtyPages callback function in the Probe::State.  Thereafter,
+              Probe::executeProbe() returns to the probe trampoline.
+
+           b. the probe trampoline adjusts the stack pointer, moves the Probe::State to
+              a safe place if needed, and then calls the flushStackDirtyPages callback
+              if needed.
+
+           c. the flushStackDirtyPages() callback iterates the Probe::Stack's m_pages
+              HashMap and flush all dirty "cache lines" to the machine stack.
+              Thereafter, flushStackDirtyPages() returns to the probe trampoline.
+
+           d. lastly, the probe trampoline will restore all register values and return
+              to the pc set in the Probe::State.
+
+        To make this patch work, I also had to do the following work:
+
+        5. Refactor MacroAssembler::CPUState into Probe::CPUState.
+           Mainly, this means moving the code over to ProbeContext.h.
+           I also added some convenience accessor methods for spr registers. 
+
+           Moved Probe::Context over to its own file ProbeContext.h/cpp.
+
+        6. Fix all probe trampolines to pass the address of Probe::executeProbe in
+           addition to the client's probe function and arg.
+
+           I also took this opportunity to optimize the generated JIT probe code to
+           minimize the amount of memory stores needed. 
+
+        7. Simplified the ARM64 probe trampoline.  The ARM64 probe only supports changing
+           either lr or pc (or neither), but not both at in the same probe invocation.
+           The ARM64 probe trampoline used to have to check for this invariant in the
+           assembly trampoline code.  With the introduction of Probe::executeProbe(),
+           we can now do it there and simplify the trampoline.
+
+        8. Fix a bug in the old  ARM64 probe trampoline for the case where the client
+           changes lr.  That code path never worked before, but has now been fixed.
+
+        9. Removed trustedImm32FromPtr() helper functions in MacroAssemblerARM and
+           MacroAssemblerARMv7.
+
+           We can now use move() with TrustedImmPtr, and it does the same thing but in a
+           more generic way.
+
+       10. ARMv7's move() emitter may encode a T1 move instruction, which happens to have
+           the same semantics as movs (according to the Thumb spec).  This means these
+           instructions may trash the APSR flags before we have a chance to preserve them.
+
+           This patch changes MacroAssemblerARMv7's probe() to preserve the APSR register
+           early on.  This entails adding support for the mrs instruction in the
+           ARMv7Assembler.
+
+       10. Change testmasm's testProbeModifiesStackValues() to now modify stack values
+           the easy way.
+
+           Also fixed testmasm tests which check flag registers to only compare the
+           portions that are modifiable by the client i.e. some masking is applied.
+
+        This patch has passed the testmasm tests on x86, x86_64, arm64, and armv7.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::mrs):
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssembler.cpp:
+        (JSC::stdFunctionCallback):
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::CPUState::gprName): Deleted.
+        (JSC::MacroAssembler::CPUState::sprName): Deleted.
+        (JSC::MacroAssembler::CPUState::fprName): Deleted.
+        (JSC::MacroAssembler::CPUState::gpr): Deleted.
+        (JSC::MacroAssembler::CPUState::spr): Deleted.
+        (JSC::MacroAssembler::CPUState::fpr): Deleted.
+        (JSC:: const): Deleted.
+        (JSC::MacroAssembler::CPUState::fpr const): Deleted.
+        (JSC::MacroAssembler::CPUState::pc): Deleted.
+        (JSC::MacroAssembler::CPUState::fp): Deleted.
+        (JSC::MacroAssembler::CPUState::sp): Deleted.
+        (JSC::MacroAssembler::CPUState::pc const): Deleted.
+        (JSC::MacroAssembler::CPUState::fp const): Deleted.
+        (JSC::MacroAssembler::CPUState::sp const): Deleted.
+        (JSC::Probe::State::gpr): Deleted.
+        (JSC::Probe::State::spr): Deleted.
+        (JSC::Probe::State::fpr): Deleted.
+        (JSC::Probe::State::gprName): Deleted.
+        (JSC::Probe::State::sprName): Deleted.
+        (JSC::Probe::State::fprName): Deleted.
+        (JSC::Probe::State::pc): Deleted.
+        (JSC::Probe::State::fp): Deleted.
+        (JSC::Probe::State::sp): Deleted.
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::trustedImm32FromPtr): Deleted.
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::MacroAssembler::probe):
+        (JSC::arm64ProbeError): Deleted.
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::armV7Condition):
+        (JSC::MacroAssemblerARMv7::trustedImm32FromPtr): Deleted.
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::Printer::printCallback):
+        * assembler/MacroAssemblerPrinter.h:
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::ctiMasmProbeTrampoline):
+        (JSC::MacroAssembler::probe):
+        * assembler/Printer.h:
+        (JSC::Printer::Context::Context):
+        * assembler/ProbeContext.cpp: Added.
+        (JSC::Probe::executeProbe):
+        (JSC::Probe::handleProbeStackInitialization):
+        (JSC::Probe::probeStateForContext):
+        * assembler/ProbeContext.h: Added.
+        (JSC::Probe::CPUState::gprName):
+        (JSC::Probe::CPUState::sprName):
+        (JSC::Probe::CPUState::fprName):
+        (JSC::Probe::CPUState::gpr):
+        (JSC::Probe::CPUState::spr):
+        (JSC::Probe::CPUState::fpr):
+        (JSC::Probe:: const):
+        (JSC::Probe::CPUState::fpr const):
+        (JSC::Probe::CPUState::pc):
+        (JSC::Probe::CPUState::fp):
+        (JSC::Probe::CPUState::sp):
+        (JSC::Probe::CPUState::pc const):
+        (JSC::Probe::CPUState::fp const):
+        (JSC::Probe::CPUState::sp const):
+        (JSC::Probe::Context::Context):
+        (JSC::Probe::Context::gpr):
+        (JSC::Probe::Context::spr):
+        (JSC::Probe::Context::fpr):
+        (JSC::Probe::Context::gprName):
+        (JSC::Probe::Context::sprName):
+        (JSC::Probe::Context::fprName):
+        (JSC::Probe::Context::pc):
+        (JSC::Probe::Context::fp):
+        (JSC::Probe::Context::sp):
+        (JSC::Probe::Context::stack):
+        (JSC::Probe::Context::hasWritesToFlush):
+        (JSC::Probe::Context::releaseStack):
+        * assembler/ProbeStack.cpp: Added.
+        (JSC::Probe::Page::Page):
+        (JSC::Probe::Page::flushWrites):
+        (JSC::Probe::Stack::Stack):
+        (JSC::Probe::Stack::hasWritesToFlush):
+        (JSC::Probe::Stack::flushWrites):
+        (JSC::Probe::Stack::ensurePageFor):
+        * assembler/ProbeStack.h: Added.
+        (JSC::Probe::Page::baseAddressFor):
+        (JSC::Probe::Page::chunkAddressFor):
+        (JSC::Probe::Page::baseAddress):
+        (JSC::Probe::Page::get):
+        (JSC::Probe::Page::set):
+        (JSC::Probe::Page::hasWritesToFlush const):
+        (JSC::Probe::Page::flushWritesIfNeeded):
+        (JSC::Probe::Page::dirtyBitFor):
+        (JSC::Probe::Page::physicalAddressFor):
+        (JSC::Probe::Stack::Stack):
+        (JSC::Probe::Stack::lowWatermark):
+        (JSC::Probe::Stack::get):
+        (JSC::Probe::Stack::set):
+        (JSC::Probe::Stack::newStackPointer const):
+        (JSC::Probe::Stack::setNewStackPointer):
+        (JSC::Probe::Stack::isValid):
+        (JSC::Probe::Stack::pageFor):
+        * assembler/testmasm.cpp:
+        (JSC::testProbeReadsArgumentRegisters):
+        (JSC::testProbeWritesArgumentRegisters):
+        (JSC::testProbePreservesGPRS):
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::testProbeModifiesStackPointerToInsideProbeStateOnStack):
+        (JSC::testProbeModifiesStackPointerToNBytesBelowSP):
+        (JSC::testProbeModifiesProgramCounter):
+        (JSC::testProbeModifiesStackValues):
+        (JSC::run):
+        (): Deleted.
+        (JSC::fillStack): Deleted.
+        (JSC::testProbeModifiesStackWithCallback): Deleted.
+
 2017-08-19  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Add interface stubs

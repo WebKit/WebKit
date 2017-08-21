@@ -43,13 +43,6 @@ namespace JSC {
 
 #if ENABLE(ASSEMBLER)
 
-#if ENABLE(MASM_PROBE)
-namespace Probe {
-struct State;
-typedef void (*Function)(struct State*);
-} // namespace Probe
-#endif
-    
 class AllowMacroScratchRegisterUsage;
 class DisallowMacroScratchRegisterUsage;
 class LinkBuffer;

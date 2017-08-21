@@ -30,6 +30,7 @@
 #if ENABLE(ASSEMBLER) && CPU(ARM_TRADITIONAL)
 #include "MacroAssembler.h"
 
+#include "ProbeContext.h"
 #include <wtf/InlineASM.h>
 
 #if OS(LINUX)
@@ -99,6 +100,8 @@ void MacroAssemblerARM::load32WithUnalignedHalfWords(BaseIndex address, Register
 #if ENABLE(MASM_PROBE)
 
 extern "C" void ctiMasmProbeTrampoline();
+
+using namespace ARMRegisters;
 
 #if COMPILER(GCC_OR_CLANG)
 
@@ -250,6 +253,31 @@ COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d31]) == PROBE_CPU_D31_OFFS
 COMPILE_ASSERT(sizeof(Probe::State) == PROBE_SIZE, ProbeState_size_matches_ctiMasmProbeTrampoline);
 #undef PROBE_OFFSETOF
 
+struct IncomingRecord {
+    uintptr_t lr;
+    uintptr_t ip;
+    uintptr_t r6;
+    uintptr_t r0;
+    uintptr_t r1;
+    uintptr_t r2;
+};
+
+#define IN_LR_OFFSET (0 * PTR_SIZE)
+#define IN_IP_OFFSET (1 * PTR_SIZE)
+#define IN_R6_OFFSET (2 * PTR_SIZE)
+#define IN_R0_OFFSET (3 * PTR_SIZE)
+#define IN_R1_OFFSET (4 * PTR_SIZE)
+#define IN_R2_OFFSET (5 * PTR_SIZE)
+#define IN_SIZE      (6 * PTR_SIZE)
+
+static_assert(IN_LR_OFFSET == offsetof(IncomingRecord, lr), "IN_LR_OFFSET is incorrect");
+static_assert(IN_IP_OFFSET == offsetof(IncomingRecord, ip), "IN_IP_OFFSET is incorrect");
+static_assert(IN_R6_OFFSET == offsetof(IncomingRecord, r6), "IN_R6_OFFSET is incorrect");
+static_assert(IN_R0_OFFSET == offsetof(IncomingRecord, r0), "IN_R0_OFFSET is incorrect");
+static_assert(IN_R1_OFFSET == offsetof(IncomingRecord, r1), "IN_R1_OFFSET is incorrect");
+static_assert(IN_R2_OFFSET == offsetof(IncomingRecord, r2), "IN_R2_OFFSET is incorrect");
+static_assert(IN_SIZE == sizeof(IncomingRecord), "IN_SIZE is incorrect");
+
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"
@@ -257,66 +285,72 @@ asm (
     INLINE_ARM_FUNCTION(ctiMasmProbeTrampoline) "\n"
     SYMBOL_STRING(ctiMasmProbeTrampoline) ":" "\n"
 
-    // MacroAssemblerARM::probe() has already generated code to store some values.
-    // The top of stack now looks like this:
-    //     esp[0 * ptrSize]: probe handler function
-    //     esp[1 * ptrSize]: probe arg
-    //     esp[2 * ptrSize]: saved r3 / S0
-    //     esp[3 * ptrSize]: saved ip
-    //     esp[4 * ptrSize]: saved lr
-    //     esp[5 * ptrSize]: saved sp
+    // MacroAssemblerARMv7::probe() has already generated code to store some values.
+    // The top of stack now contains the IncomingRecord.
+    //
+    // Incoming register values:
+    //     r0: probe function
+    //     r1: probe arg
+    //     r2: Probe::executeProbe
+    //     r6: scratch
+    //     ip: scratch, was ctiMasmProbeTrampoline
+    //     lr: return address
 
     "mov       ip, sp" "\n"
-    "mov       r3, sp" "\n"
-    "sub       r3, r3, #" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) "\n"
+    "mov       r6, sp" "\n"
+    "sub       r6, r6, #" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) "\n"
 
     // The ARM EABI specifies that the stack needs to be 16 byte aligned.
-    "bic       r3, r3, #0xf" "\n"
-    "mov       sp, r3" "\n" // Set the sp to protect the Probe::State from interrupts before we initialize it.
+    "bic       r6, r6, #0xf" "\n"
+    "mov       sp, r6" "\n" // Set the sp to protect the Probe::State from interrupts before we initialize it.
 
+    "str       r0, [sp, #" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "]" "\n"
+    "str       r1, [sp, #" STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "]" "\n"
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
-    "add       lr, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R0_OFFSET) "\n"
-    "stmia     lr, { r0-r11 }" "\n"
+
+    "add       r0, ip, #" STRINGIZE_VALUE_OF(IN_SIZE) "\n"
+    "str       r0, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
+
+    "add       lr, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R3_OFFSET) "\n"
+    "stmia     lr, { r3-r5 }" "\n"
+    "add       lr, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R7_OFFSET) "\n"
+    "stmia     lr, { r7-r11 }" "\n"
     "mrs       lr, APSR" "\n"
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_APSR_OFFSET) "]" "\n"
     "vmrs      lr, FPSCR" "\n"
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_FPSCR_OFFSET) "]" "\n"
 
-    "ldr       lr, [ip, #0 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "]" "\n"
-    "ldr       lr, [ip, #1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "]" "\n"
-    "ldr       lr, [ip, #2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R3_OFFSET) "]" "\n"
-    "ldr       lr, [ip, #3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_IP_OFFSET) "]" "\n"
-    "ldr       lr, [ip, #4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
-    "ldr       lr, [ip, #5 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
-
-    "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
+    "ldr       r4, [ip, #" STRINGIZE_VALUE_OF(IN_LR_OFFSET) "]" "\n"
+    "ldr       r5, [ip, #" STRINGIZE_VALUE_OF(IN_IP_OFFSET) "]" "\n"
+    "ldr       r6, [ip, #" STRINGIZE_VALUE_OF(IN_R6_OFFSET) "]" "\n"
+    "ldr       r7, [ip, #" STRINGIZE_VALUE_OF(IN_R0_OFFSET) "]" "\n"
+    "ldr       r8, [ip, #" STRINGIZE_VALUE_OF(IN_R1_OFFSET) "]" "\n"
+    "ldr       r9, [ip, #" STRINGIZE_VALUE_OF(IN_R2_OFFSET) "]" "\n"
+    "str       r4, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
+    "str       r5, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_IP_OFFSET) "]" "\n"
+    "str       r6, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R6_OFFSET) "]" "\n"
+    "str       r7, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R0_OFFSET) "]" "\n"
+    "str       r8, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R1_OFFSET) "]" "\n"
+    "str       r9, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_R2_OFFSET) "]" "\n"
 
     "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_D0_OFFSET) "\n"
     "vstmia.64 ip!, { d0-d15 }" "\n"
 #if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
     "vstmia.64 ip!, { d16-d31 }" "\n"
 #endif
-    "mov       fp, sp" "\n" // Save the Probe::State*.
 
-    // Initialize Probe::State::initializeStackFunction to zero.
-    "mov       r0, #0" "\n"
-    "str       r0, [fp, #" STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "]" "\n"
+    // r5 is a callee saved register. We'll use it for preserving the Probe::State*.
+    // https://stackoverflow.com/questions/261419/arm-to-c-calling-convention-registers-to-save#261496
+    "mov       r5, sp" "\n"
 
-    "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "]" "\n"
     "mov       r0, sp" "\n" // the Probe::State* arg.
-    "blx       ip" "\n"
+    "blx       r2" "\n" // Call Probe::executeProbe.
 
     // Make sure the Probe::State is entirely below the result stack pointer so
     // that register values are still preserved when we call the initializeStack
     // function.
-    "ldr       r1, [fp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n" // Result sp.
-    "add       r2, fp, #" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) "\n" // End of ProveContext + buffer.
+    "ldr       r1, [r5, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n" // Result sp.
+    "add       r2, r5, #" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) "\n" // End of ProveContext + buffer.
     "cmp       r1, r2" "\n"
     "bge     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeStateIsSafe) "\n"
 
@@ -328,32 +362,30 @@ asm (
     // Copy the Probe::State to the safe place.
     // Note: we have to copy from low address to higher address because we're moving the
     // Probe::State to a lower address.
-    "mov       r5, fp" "\n"
-    "mov       r6, r1" "\n"
-    "add       r7, fp, #" STRINGIZE_VALUE_OF(PROBE_SIZE) "\n"
+    "add       r7, r5, #" STRINGIZE_VALUE_OF(PROBE_SIZE) "\n"
 
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoop) ":" "\n"
     "ldr       r3, [r5], #4" "\n"
     "ldr       r4, [r5], #4" "\n"
-    "str       r3, [r6], #4" "\n"
-    "str       r4, [r6], #4" "\n"
+    "str       r3, [r1], #4" "\n"
+    "str       r4, [r1], #4" "\n"
     "cmp       r5, r7" "\n"
     "blt     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoop) "\n"
 
-    "mov       fp, r1" "\n"
+    "mov       r5, sp" "\n"
 
     // Call initializeStackFunction if present.
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeStateIsSafe) ":" "\n"
-    "ldr       r2, [fp, #" STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "]" "\n"
+    "ldr       r2, [r5, #" STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "]" "\n"
     "cmp       r2, #0" "\n"
     "beq     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) "\n"
 
-    "mov       r0, fp" "\n" // Set the Probe::State* arg.
+    "mov       r0, r5" "\n" // Set the Probe::State* arg.
     "blx       r2" "\n" // Call the initializeStackFunction (loaded into r2 above).
 
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) ":" "\n"
 
-    "mov       sp, fp" "\n"
+    "mov       sp, r5" "\n" // Ensure that sp points to the Probe::State*.
 
     // To enable probes to modify register state, we copy all registers
     // out of the Probe::State before returning.
@@ -399,17 +431,20 @@ asm (
 
 void MacroAssembler::probe(Probe::Function function, void* arg)
 {
-    push(RegisterID::sp);
-    push(RegisterID::lr);
-    push(RegisterID::ip);
-    push(RegisterID::S0);
-    // The following uses RegisterID::S0. So, they must come after we push S0 above.
-    push(trustedImm32FromPtr(arg));
-    push(trustedImm32FromPtr(function));
+    sub32(TrustedImm32(sizeof(IncomingRecord)), sp);
 
-    move(trustedImm32FromPtr(ctiMasmProbeTrampoline), RegisterID::S0);
-    m_assembler.blx(RegisterID::S0);
-
+    store32(lr, Address(sp, offsetof(IncomingRecord, lr)));
+    store32(ip, Address(sp, offsetof(IncomingRecord, ip)));
+    store32(r6, Address(sp, offsetof(IncomingRecord, r6))); // S0 == r6.
+    store32(r0, Address(sp, offsetof(IncomingRecord, r0)));
+    store32(r1, Address(sp, offsetof(IncomingRecord, r1)));
+    store32(r2, Address(sp, offsetof(IncomingRecord, r2)));
+    // The following uses RegisterID::S0. So, they must come after we preserve S0 above.
+    move(TrustedImmPtr(reinterpret_cast<void*>(function)), r0);
+    move(TrustedImmPtr(arg), r1);
+    move(TrustedImmPtr(reinterpret_cast<void*>(Probe::executeProbe)), r2);
+    move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), ip);
+    m_assembler.blx(ip);
 }
 #endif // ENABLE(MASM_PROBE)
 

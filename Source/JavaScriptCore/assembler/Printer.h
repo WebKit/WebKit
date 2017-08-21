@@ -32,7 +32,7 @@
 namespace JSC {
 
 namespace Probe {
-struct State;
+class Context;
 } // namespace Probe
 
 namespace Printer {
@@ -86,12 +86,12 @@ union Data {
 };
 
 struct Context {
-    Context(Probe::State& probeContext, Data& data)
+    Context(Probe::Context& probeContext, Data& data)
         : probeContext(probeContext)
         , data(data)
     { }
 
-    Probe::State& probeContext;
+    Probe::Context& probeContext;
     Data& data;
 };
 

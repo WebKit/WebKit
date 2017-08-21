@@ -2429,6 +2429,10 @@
 		FA3AB211C8494524AB390267 /* JSSourceCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F73926918DC64330AFCDF0D7 /* JSSourceCode.cpp */; };
 		FE0D4A061AB8DD0A002F54BF /* ExecutionTimeLimitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE0D4A041AB8DD0A002F54BF /* ExecutionTimeLimitTest.cpp */; };
 		FE0D4A091ABA2437002F54BF /* GlobalContextWithFinalizerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE0D4A071ABA2437002F54BF /* GlobalContextWithFinalizerTest.cpp */; };
+		FE10AAEB1F44D528009DEDC5 /* ProbeStack.h in Headers */ = {isa = PBXBuildFile; fileRef = FE10AAEA1F44D512009DEDC5 /* ProbeStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE10AAEC1F44D545009DEDC5 /* ProbeStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE10AAE91F44D510009DEDC5 /* ProbeStack.cpp */; };
+		FE10AAEE1F44D954009DEDC5 /* ProbeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FE10AAED1F44D946009DEDC5 /* ProbeContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE10AAF41F468396009DEDC5 /* ProbeContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE10AAF31F46826D009DEDC5 /* ProbeContext.cpp */; };
 		FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */; };
 		FE1220281BE7F5910039E6F2 /* JITAddGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1220251BE7F5640039E6F2 /* JITAddGenerator.cpp */; };
 		FE187A011BFBE55E0038BBCA /* JITMulGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1879FF1BFBC73C0038BBCA /* JITMulGenerator.cpp */; };
@@ -5105,6 +5109,10 @@
 		FE0D4A051AB8DD0A002F54BF /* ExecutionTimeLimitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExecutionTimeLimitTest.h; path = API/tests/ExecutionTimeLimitTest.h; sourceTree = "<group>"; };
 		FE0D4A071ABA2437002F54BF /* GlobalContextWithFinalizerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlobalContextWithFinalizerTest.cpp; path = API/tests/GlobalContextWithFinalizerTest.cpp; sourceTree = "<group>"; };
 		FE0D4A081ABA2437002F54BF /* GlobalContextWithFinalizerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalContextWithFinalizerTest.h; path = API/tests/GlobalContextWithFinalizerTest.h; sourceTree = "<group>"; };
+		FE10AAE91F44D510009DEDC5 /* ProbeStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProbeStack.cpp; sourceTree = "<group>"; };
+		FE10AAEA1F44D512009DEDC5 /* ProbeStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProbeStack.h; sourceTree = "<group>"; };
+		FE10AAED1F44D946009DEDC5 /* ProbeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProbeContext.h; sourceTree = "<group>"; };
+		FE10AAF31F46826D009DEDC5 /* ProbeContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProbeContext.cpp; sourceTree = "<group>"; };
 		FE1220251BE7F5640039E6F2 /* JITAddGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITAddGenerator.cpp; sourceTree = "<group>"; };
 		FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITAddGenerator.h; sourceTree = "<group>"; };
 		FE1879FF1BFBC73C0038BBCA /* JITMulGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITMulGenerator.cpp; sourceTree = "<group>"; };
@@ -7676,6 +7684,10 @@
 				86C568DF11A213EE0007F7F0 /* MIPSAssembler.h */,
 				FE63DD551EA9BC5D00103A69 /* Printer.cpp */,
 				FE63DD531EA9B60E00103A69 /* Printer.h */,
+				FE10AAF31F46826D009DEDC5 /* ProbeContext.cpp */,
+				FE10AAED1F44D946009DEDC5 /* ProbeContext.h */,
+				FE10AAE91F44D510009DEDC5 /* ProbeStack.cpp */,
+				FE10AAEA1F44D512009DEDC5 /* ProbeStack.h */,
 				FE533CA01F217C310016A1FE /* testmasm.cpp */,
 				9688CB140ED12B4E001D649F /* X86Assembler.h */,
 			);
@@ -8591,6 +8603,7 @@
 				0FBF158D19B7A53100695DD0 /* DFGBlockSetInlines.h in Headers */,
 				0FC3CD0019ADA410006AC72A /* DFGBlockWorklist.h in Headers */,
 				0F8364B7164B0C110053329A /* DFGBranchDirection.h in Headers */,
+				FE10AAEE1F44D954009DEDC5 /* ProbeContext.h in Headers */,
 				86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */,
 				0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */,
 				0FBDB9AD1AB0FBC6000B57E5 /* DFGCallCreateDirectArgumentsSlowPathGenerator.h in Headers */,
@@ -9631,6 +9644,7 @@
 				AD4937C81DDD0AAE0077C807 /* WebAssemblyModuleRecord.h in Headers */,
 				AD2FCC2D1DB838FD00B3E736 /* WebAssemblyPrototype.h in Headers */,
 				AD2FCBF91DB58DAD00B3E736 /* WebAssemblyRuntimeErrorConstructor.h in Headers */,
+				FE10AAEB1F44D528009DEDC5 /* ProbeStack.h in Headers */,
 				AD2FCC1E1DB59CB200B3E736 /* WebAssemblyRuntimeErrorConstructor.lut.h in Headers */,
 				AD2FCBFB1DB58DAD00B3E736 /* WebAssemblyRuntimeErrorPrototype.h in Headers */,
 				AD2FCC1F1DB59CB200B3E736 /* WebAssemblyRuntimeErrorPrototype.lut.h in Headers */,
@@ -10441,6 +10455,7 @@
 				0F69CC88193AC60A0045759E /* DFGFrozenValue.cpp in Sources */,
 				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,
 				0F2FCCF918A60070001A27F8 /* DFGGraphSafepoint.cpp in Sources */,
+				FE10AAF41F468396009DEDC5 /* ProbeContext.cpp in Sources */,
 				0FB17660196B8F9E0091052A /* DFGHeapLocation.cpp in Sources */,
 				0FC841681BA8C3210061837D /* DFGInferredTypeCheck.cpp in Sources */,
 				A704D90517A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp in Sources */,
@@ -10729,6 +10744,7 @@
 				147F39D6107EC37600427A48 /* JSCJSValue.cpp in Sources */,
 				1440FCE40A51E46B0005F061 /* JSClassRef.cpp in Sources */,
 				86E3C616167BABEE006D760A /* JSContext.mm in Sources */,
+				FE10AAEC1F44D545009DEDC5 /* ProbeStack.cpp in Sources */,
 				14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */,
 				A72028B61797601E0098028C /* JSCTestRunnerUtils.cpp in Sources */,
 				72AAF7CD1D0D31B3005E60BE /* JSCustomGetterSetterFunction.cpp in Sources */,

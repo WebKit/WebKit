@@ -27,6 +27,7 @@
 
 #include "MacroAssembler.h"
 #include "Printer.h"
+#include "ProbeContext.h"
 
 namespace JSC {
 
@@ -223,7 +224,7 @@ struct Printer<MemWord<IntType>> : public Printer<Memory> {
     { }
 };
 
-void printCallback(Probe::State*);
+void printCallback(Probe::Context&);
 
 } // namespace Printer
 

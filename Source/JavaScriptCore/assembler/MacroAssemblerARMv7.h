@@ -2106,23 +2106,6 @@ protected:
     {
         return static_cast<ARMv7Assembler::Condition>(cond);
     }
-    
-#if ENABLE(MASM_PROBE)
-    inline TrustedImm32 trustedImm32FromPtr(void* ptr)
-    {
-        return TrustedImm32(TrustedImmPtr(ptr));
-    }
-
-    inline TrustedImm32 trustedImm32FromPtr(Probe::Function function)
-    {
-        return TrustedImm32(TrustedImmPtr(reinterpret_cast<void*>(function)));
-    }
-
-    inline TrustedImm32 trustedImm32FromPtr(void (*function)())
-    {
-        return TrustedImm32(TrustedImmPtr(reinterpret_cast<void*>(function)));
-    }
-#endif // ENABLE(MASM_PROBE)
 
 private:
     friend class LinkBuffer;

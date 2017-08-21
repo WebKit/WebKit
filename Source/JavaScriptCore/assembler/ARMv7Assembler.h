@@ -735,6 +735,7 @@ private:
         OP_SDIV_T1      = 0xFB90,
         OP_UDIV_T1      = 0xFBB0,
 #endif
+        OP_MRS_T1       = 0xF3EF,
     } OpcodeID1;
 
     typedef enum {
@@ -1431,6 +1432,15 @@ public:
             m_formatter.oneWordOp10Reg3Reg3(OP_MVN_reg_T1, rm, rd);
         else
             mvn(rd, rm, ShiftTypeAndAmount());
+    }
+
+    ALWAYS_INLINE void mrs(RegisterID rd, SPRegisterID specReg)
+    {
+        ASSERT(specReg == ARMRegisters::apsr);
+        ASSERT(!BadReg(rd));
+        unsigned short specialRegisterBit = (specReg == ARMRegisters::apsr) ? 0 : (1 << 4);
+        OpcodeID1 mrsOp = static_cast<OpcodeID1>(OP_MRS_T1 | specialRegisterBit);
+        m_formatter.twoWordOp16FourFours(mrsOp, FourFours(0x8, rd, 0, 0));
     }
 
     ALWAYS_INLINE void neg(RegisterID rd, RegisterID rm)
