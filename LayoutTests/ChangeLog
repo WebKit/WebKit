@@ -1,3 +1,10 @@
+2017-08-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, land test updates for rdar://problem/34000704.
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2017-08-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, update TestExpectations.
