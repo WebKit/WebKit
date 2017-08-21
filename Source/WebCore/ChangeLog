@@ -1,3 +1,26 @@
+2017-08-21  Dean Jackson  <dino@apple.com>
+
+        Persistent WebGL Warning "vertex WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported" in Safari 10.1.2
+        https://bugs.webkit.org/show_bug.cgi?id=175783
+        <rdar://problem/33623867>
+
+        Reviewed by Alex Christensen.
+
+        The version of ANGLE we use inserts this line into each shader:
+        #extension GL_ARB_gpu_shader5 : enable
+        It causes our lower-level GLSL compiler to give a warning, which is
+        confusing to developers because they didn't write this code.
+
+        Until we upgrade our OpenGL support to version 4.1, we should remove
+        this error message from the log returned to the developer.
+        See https://bugs.webkit.org/show_bug.cgi?id=175785
+
+        Test: fast/canvas/webgl/no-info-log-for-simple-shaders.html
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::getUnmangledInfoLog): Search for and remove
+        this warning.
+
 2017-08-21  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Use ExistingExceptionError to propagate JS exceptions thrown during JSON stringification

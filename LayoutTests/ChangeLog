@@ -1,3 +1,14 @@
+2017-08-21  Dean Jackson  <dino@apple.com>
+
+        Persistent WebGL Warning "vertex WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported" in Safari 10.1.2
+        https://bugs.webkit.org/show_bug.cgi?id=175783
+        <rdar://problem/33623867>
+
+        Reviewed by Alex Christensen.
+
+        * fast/canvas/webgl/no-info-log-for-simple-shaders-expected.txt: Added.
+        * fast/canvas/webgl/no-info-log-for-simple-shaders.html: Added.
+
 2017-08-21  Matt Lewis  <jlewis3@apple.com>
 
         Marked svg/animations/smil-leak-list-property-instances.svg as flaky on macOS WK1.

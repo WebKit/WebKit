@@ -1563,14 +1563,20 @@ void GraphicsContext3D::getNonBuiltInActiveSymbolCount(Platform3DObject program,
 
 String GraphicsContext3D::getUnmangledInfoLog(Platform3DObject shaders[2], GC3Dsizei count, const String& log)
 {
-    LOG(WebGL, "Was: %s", log.utf8().data());
+    LOG(WebGL, "Original ShaderInfoLog:\n%s", log.utf8().data());
 
     JSC::Yarr::RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+", TextCaseSensitive);
 
     StringBuilder processedLog;
     
-    int startFrom = 0;
+    // ANGLE inserts a "#extension" line into the shader source that
+    // causes a warning in some compilers. There is no point showing
+    // this warning to the user since they didn't write the code that
+    // is causing it.
+    static const NeverDestroyed<String> angleWarning = ASCIILiteral { "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n" };
+    int startFrom = log.startsWith(angleWarning) ? angleWarning.get().length() : 0;
     int matchedLength = 0;
+
     do {
         int start = regExp.match(log, startFrom, &matchedLength);
         if (start == -1)
@@ -1587,7 +1593,7 @@ String GraphicsContext3D::getUnmangledInfoLog(Platform3DObject shaders[2], GC3Ds
 
     processedLog.append(log.substring(startFrom, log.length() - startFrom));
 
-    LOG(WebGL, "-->: %s", processedLog.toString().utf8().data());
+    LOG(WebGL, "Unmangled ShaderInfoLog:\n%s", processedLog.toString().utf8().data());
     return processedLog.toString();
 }
 
