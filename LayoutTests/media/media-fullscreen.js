@@ -46,6 +46,17 @@ function endfullscreen()
     setTimeout(openNextMovie, 10);
 }
 
+function fullscreenerror()
+{
+    var movie = movieInfo.movies[movieInfo.current];
+    if (movie.inline) {
+        failTest("Unexpected fullscreenerror event");
+    } else {
+        testExpected("mediaElement.webkitDisplayingFullscreen", false);
+        openNextMovie();
+    }
+}
+
 function canplaythrough()
 {
     var movie = movieInfo.movies[movieInfo.current];
@@ -126,5 +137,6 @@ function addEventListeners(elem)
     waitForEvent('webkitbeginfullscreen', beginfullscreen);
     waitForEvent('webkitendfullscreen', endfullscreen);
     waitForEvent('webkitfullscreenchange', fullscreenchange);
+    waitForEvent('webkitfullscreenerror', fullscreenerror);
 }
 
