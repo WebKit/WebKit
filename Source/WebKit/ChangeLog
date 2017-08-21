@@ -1,3 +1,47 @@
+2017-08-21  Brady Eidson  <beidson@apple.com>
+
+        Split the one SWServer::Connection into SWClientConnection and SWServer::Connection.
+        https://bugs.webkit.org/show_bug.cgi?id=175745
+
+        Reviewed by Andy Estes.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp: Renamed from Source/WebKit/WebProcess/Storage/WebSWServerConnection.cpp.
+        (WebKit::WebSWServerConnection::WebSWServerConnection):
+        (WebKit::WebSWServerConnection::~WebSWServerConnection):
+        (WebKit::WebSWServerConnection::disconnectedFromWebProcess):
+        (WebKit::WebSWServerConnection::rejectJobInClient):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h: Copied from Source/WebKit/WebProcess/Storage/WebSWServerConnection.h.
+        (WebKit::WebSWServerConnection::identifier const):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in: Copied from Source/WebKit/WebProcess/Storage/WebSWServerConnection.messages.in.
+
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::didReceiveMessage):
+        (WebKit::StorageToWebProcessConnection::didClose):
+        (WebKit::StorageToWebProcessConnection::establishSWServerConnection):
+        (WebKit::StorageToWebProcessConnection::removeSWServerConnection):
+        * StorageProcess/StorageToWebProcessConnection.h:
+
+        * WebProcess/Storage/WebSWClientConnection.cpp: Copied from Source/WebKit/WebProcess/Storage/WebServiceWorkerProvider.cpp.
+        (WebKit::WebSWClientConnection::WebSWClientConnection):
+        (WebKit::WebSWClientConnection::~WebSWClientConnection):
+        (WebKit::WebSWClientConnection::scheduleJobInServer):
+        * WebProcess/Storage/WebSWClientConnection.h: Renamed from Source/WebKit/WebProcess/Storage/WebSWServerConnection.h.
+        (WebKit::WebSWClientConnection::identifier const):
+        * WebProcess/Storage/WebSWClientConnection.messages.in: Renamed from Source/WebKit/WebProcess/Storage/WebSWServerConnection.messages.in.
+
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::serviceWorkerConnectionForSession):
+        * WebProcess/Storage/WebServiceWorkerProvider.h:
+
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::didReceiveMessage):
+        (WebKit::WebToStorageProcessConnection::serviceWorkerConnectionForSession):
+        * WebProcess/Storage/WebToStorageProcessConnection.h:
+
 2017-08-21  Charlie Turner  <cturner@igalia.com>
 
         MemoryCache::setCapacities assertion failure maxDeadBytes <= totalBytes

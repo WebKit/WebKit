@@ -1,3 +1,50 @@
+2017-08-21  Brady Eidson  <beidson@apple.com>
+
+        Split the one SWServer::Connection into SWClientConnection and SWServer::Connection.
+        https://bugs.webkit.org/show_bug.cgi?id=175745
+
+        Reviewed by Andy Estes.
+
+        No new tests (No behavior change).
+
+        Each of these has a much different environment that it lives in, so being the same object
+        hinders clean development.
+        
+        This split will also make it easier for the WebCore objects to directly handle WK2 messages.
+        
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * platform/Logging.h:
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::scheduleJob):
+        * workers/service/ServiceWorkerContainer.h:
+
+        * workers/service/ServiceWorkerProvider.h:
+
+        * workers/service/server/SWClientConnection.cpp: Copied from Source/WebCore/workers/service/server/SWServer.cpp.
+        (WebCore::SWClientConnection::SWClientConnection):
+        (WebCore::SWClientConnection::~SWClientConnection):
+        (WebCore::SWClientConnection::scheduleJob):
+        (WebCore::SWClientConnection::jobRejectedInServer):
+        * workers/service/server/SWClientConnection.h: Copied from Source/WebCore/workers/service/server/SWServer.h.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::Connection::Connection):
+        (WebCore::SWServer::Connection::~Connection):
+        (WebCore::SWServer::~SWServer):
+        (WebCore::SWServer::Connection::scheduleJobInServer):
+        (WebCore::SWServer::scheduleJob):
+        (WebCore::SWServer::registerConnection):
+        (WebCore::SWServer::unregisterConnection):
+        (WebCore::SWServer::Connection::scheduleJob): Deleted.
+        (WebCore::SWServer::Connection::jobRejected): Deleted.
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::Connection::server):
+        (WebCore::SWServer::Connection::~Connection): Deleted.
+
 2017-08-21  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Implement the PaymentRequest constructor

@@ -80,8 +80,8 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    if (!m_serverConnection)
-        m_serverConnection = &ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context->sessionID());
+    if (!m_swConnection)
+        m_swConnection = &ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(context->sessionID());
 
     if (relativeScriptURL.isEmpty()) {
         promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() cannot be called with an empty script URL") });
@@ -120,13 +120,13 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
 void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
 {
-    ASSERT(m_serverConnection);
+    ASSERT(m_swConnection);
 
     ServiceWorkerJob& rawJob = job.get();
     auto result = m_jobMap.add(rawJob.identifier(), WTFMove(job));
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    m_serverConnection->scheduleJob(rawJob);
+    m_swConnection->scheduleJob(rawJob);
 }
 
 void ServiceWorkerContainer::getRegistration(const String&, Ref<DeferredPromise>&& promise)

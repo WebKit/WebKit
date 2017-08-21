@@ -29,6 +29,7 @@
 
 #include "ServiceWorkerJob.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -37,20 +38,32 @@ struct ExceptionData;
 
 class SWServer {
 public:
-    class Connection : public ThreadSafeRefCounted<Connection> {
+    class Connection {
+    friend class SWServer;
     public:
-        virtual ~Connection() { }
-        void scheduleJob(ServiceWorkerJob&);
+        WEBCORE_EXPORT virtual ~Connection();
 
     protected:
-        WEBCORE_EXPORT void jobRejected(uint64_t jobIdentifier, const ExceptionData&);
+        WEBCORE_EXPORT Connection(SWServer&);
+        SWServer& server() { return m_server; }
+
+        WEBCORE_EXPORT void scheduleJobInServer(const ServiceWorkerJobData&);
 
     private:
-        virtual void scheduleJob(const ServiceWorkerJobData&) = 0;
+        virtual void rejectJobInClient(uint64_t jobIdentifier, const ExceptionData&) = 0;
 
-        HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
+        SWServer& m_server;
     };
 
+    WEBCORE_EXPORT ~SWServer();
+
+    WEBCORE_EXPORT void scheduleJob(Connection&, const ServiceWorkerJobData&);
+
+private:
+    void registerConnection(Connection&);
+    void unregisterConnection(Connection&);
+
+    HashSet<Connection*> m_connections;
 };
 
 } // namespace WebCore

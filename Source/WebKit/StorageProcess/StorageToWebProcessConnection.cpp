@@ -35,6 +35,7 @@
 #include <wtf/RunLoop.h>
 
 using namespace PAL;
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -73,8 +74,8 @@ void StorageToWebProcessConnection::didReceiveMessage(IPC::Connection& connectio
 
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
-        auto iterator = m_webServiceWorkerConnections.find(decoder.destinationID());
-        if (iterator != m_webServiceWorkerConnections.end())
+        auto iterator = m_swConnections.find(decoder.destinationID());
+        if (iterator != m_swConnections.end())
             iterator->value->didReceiveMessage(connection, decoder);
         return;
     }
@@ -104,11 +105,15 @@ void StorageToWebProcessConnection::didClose(IPC::Connection&)
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    auto serviceWorkerConnections = m_webServiceWorkerConnections;
-    for (auto& connection : serviceWorkerConnections.values())
+    Vector<std::unique_ptr<WebSWServerConnection>> connectionVector;
+    connectionVector.reserveInitialCapacity(m_swConnections.size());
+
+    for (auto& connection : m_swConnections.values())
+        connectionVector.uncheckedAppend(WTFMove(connection));
+    for (auto& connection : connectionVector)
         connection->disconnectedFromWebProcess();
 
-    m_webServiceWorkerConnections.clear();
+    m_swConnections.clear();
 #endif
 }
 
@@ -129,16 +134,22 @@ void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessio
 {
     serverConnectionIdentifier = generateConnectionToServerIdentifier();
     LOG(ServiceWorker, "StorageToWebProcessConnection::establishSWServerConnection - %" PRIu64, serverConnectionIdentifier);
-    ASSERT(!m_webServiceWorkerConnections.contains(serverConnectionIdentifier));
+    ASSERT(!m_swConnections.contains(serverConnectionIdentifier));
 
-    m_webServiceWorkerConnections.set(serverConnectionIdentifier, WebSWServerConnection::create(m_connection.get(), serverConnectionIdentifier, sessionID));
+    auto result = m_swServers.add(sessionID, nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = std::make_unique<SWServer>();
+
+    ASSERT(result.iterator->value);
+
+    m_swConnections.set(serverConnectionIdentifier, std::make_unique<WebSWServerConnection>(*result.iterator->value, m_connection.get(), serverConnectionIdentifier, sessionID));
 }
 
 void StorageToWebProcessConnection::removeSWServerConnection(uint64_t serverConnectionIdentifier)
 {
-    ASSERT(m_webServiceWorkerConnections.contains(serverConnectionIdentifier));
+    ASSERT(m_swConnections.contains(serverConnectionIdentifier));
 
-    auto connection = m_webServiceWorkerConnections.take(serverConnectionIdentifier);
+    auto connection = m_swConnections.take(serverConnectionIdentifier);
     connection->disconnectedFromWebProcess();
 }
 #endif

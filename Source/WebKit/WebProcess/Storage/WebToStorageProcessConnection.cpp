@@ -30,8 +30,8 @@
 #include "StorageToWebProcessConnectionMessages.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebProcess.h"
-#include "WebSWServerConnection.h"
-#include "WebSWServerConnectionMessages.h"
+#include "WebSWClientConnection.h"
+#include "WebSWClientConnectionMessages.h"
 
 using namespace PAL;
 using namespace WebCore;
@@ -60,8 +60,8 @@ void WebToStorageProcessConnection::didReceiveMessage(IPC::Connection& connectio
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
-        auto serviceWorkerConnection = m_serviceWorkerConnectionsByIdentifier.get(decoder.destinationID());
+    if (decoder.messageReceiverName() == Messages::WebSWClientConnection::messageReceiverName()) {
+        auto serviceWorkerConnection = m_swConnectionsByIdentifier.get(decoder.destinationID());
         if (serviceWorkerConnection)
             serviceWorkerConnection->didReceiveMessage(connection, decoder);
         return;
@@ -102,13 +102,13 @@ WebIDBConnectionToServer& WebToStorageProcessConnection::idbConnectionToServerFo
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-WebSWServerConnection& WebToStorageProcessConnection::serviceWorkerConnectionForSession(const SessionID& sessionID)
+WebSWClientConnection& WebToStorageProcessConnection::serviceWorkerConnectionForSession(const SessionID& sessionID)
 {
-    auto result = m_serviceWorkerConnectionsBySession.add(sessionID, nullptr);
+    auto result = m_swConnectionsBySession.add(sessionID, nullptr);
     if (result.isNewEntry) {
-        result.iterator->value = WebSWServerConnection::create(sessionID);
-        ASSERT(!m_serviceWorkerConnectionsByIdentifier.contains(result.iterator->value->identifier()));
-        m_serviceWorkerConnectionsByIdentifier.set(result.iterator->value->identifier(), result.iterator->value);
+        result.iterator->value = std::make_unique<WebSWClientConnection>(m_connection.get(), sessionID);
+        ASSERT(!m_swConnectionsByIdentifier.contains(result.iterator->value->identifier()));
+        m_swConnectionsByIdentifier.set(result.iterator->value->identifier(), result.iterator->value.get());
     }
 
     return *result.iterator->value;

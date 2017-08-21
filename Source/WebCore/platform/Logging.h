@@ -81,6 +81,7 @@ namespace WebCore {
     M(ResourceLoadStatistics) \
     M(Scrolling) \
     M(Services) \
+    M(ServiceWorker) \
     M(SpellingAndGrammar) \
     M(SQLDatabase) \
     M(StorageAPI) \

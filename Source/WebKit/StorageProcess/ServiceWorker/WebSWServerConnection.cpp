@@ -23,26 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebSWServerConnection.h"
 
 #if ENABLE(SERVICE_WORKER)
 
-#include <WebCore/ServiceWorkerProvider.h>
-#include <wtf/NeverDestroyed.h>
+#include "Logging.h"
+#include "StorageToWebProcessConnectionMessages.h"
+#include "WebProcess.h"
+#include "WebSWClientConnectionMessages.h"
+#include "WebSWServerConnectionMessages.h"
+#include "WebToStorageProcessConnection.h"
+#include <WebCore/ExceptionData.h>
+#include <WebCore/NotImplemented.h>
+#include <WebCore/ServiceWorkerJobData.h>
+#include <wtf/MainThread.h>
+
+using namespace PAL;
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebServiceWorkerProvider : public WebCore::ServiceWorkerProvider {
-public:
-    static WebServiceWorkerProvider& singleton();
+WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, uint64_t connectionIdentifier, const SessionID& sessionID)
+    : SWServer::Connection(server)
+    , m_sessionID(sessionID)
+    , m_identifier(connectionIdentifier)
+    , m_connection(connection)
+{
+}
 
-private:
-    friend NeverDestroyed<WebServiceWorkerProvider>;
-    WebServiceWorkerProvider();
+WebSWServerConnection::~WebSWServerConnection()
+{
+}
 
-    WebCore::SWClientConnection& serviceWorkerConnectionForSession(const PAL::SessionID&) final;
+void WebSWServerConnection::disconnectedFromWebProcess()
+{
+    notImplemented();
+}
 
-}; // class WebServiceWorkerProvider
+void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const ExceptionData& exceptionData)
+{
+    send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
+}
 
 } // namespace WebKit
 

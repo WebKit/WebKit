@@ -23,12 +23,8 @@
 #if ENABLE(SERVICE_WORKER)
 
 messages -> WebSWServerConnection {
-    # Messages targetting the Storage process
-    ScheduleStorageJob(struct WebCore::ServiceWorkerJobData jobData)
-
-    # Messages targetting the Web process.
-    # When possible, they can be implemented directly by WebCore::SWServer::Connection
-    JobRejected(uint64_t identifier, struct WebCore::ExceptionData exception)
+    # When possible, these messages can be implemented directly by WebCore::SWClientConnection
+    ScheduleJobInServer(struct WebCore::ServiceWorkerJobData jobData)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -1028,6 +1028,12 @@
 		5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 510CC7EB16138E7200D03ED3 /* NetworkProcessProxy.h */; };
 		517A52D81F43A9DA00DCDC0A /* WebSWServerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A52D71F43A9B600DCDC0A /* WebSWServerConnectionMessageReceiver.cpp */; };
 		517A52D91F43A9DA00DCDC0A /* WebSWServerConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A52D61F43A9B600DCDC0A /* WebSWServerConnectionMessages.h */; };
+		517A53041F4793C600DCDC0A /* WebSWClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A53031F4793B200DCDC0A /* WebSWClientConnection.cpp */; };
+		517A53051F4793C600DCDC0A /* WebSWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53021F4793B200DCDC0A /* WebSWClientConnection.h */; };
+		517A530A1F479E3600DCDC0A /* WebSWServerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A53091F479E3100DCDC0A /* WebSWServerConnection.cpp */; };
+		517A530B1F479E3600DCDC0A /* WebSWServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53071F479E3100DCDC0A /* WebSWServerConnection.h */; };
+		517A530F1F47A86200DCDC0A /* WebSWClientConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A530E1F47A84300DCDC0A /* WebSWClientConnectionMessageReceiver.cpp */; };
+		517A53101F47A86200DCDC0A /* WebSWClientConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A530D1F47A84300DCDC0A /* WebSWClientConnectionMessages.h */; };
 		517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */; };
 		517CF0E3163A486C00C2950D /* WebCacheStorageConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950D /* WebCacheStorageConnectionMessageReceiver.cpp */; };
 		517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */; };
@@ -1110,8 +1116,6 @@
 		51F060E11654318500F3281F /* WebRTCMonitorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3281F /* WebRTCMonitorMessageReceiver.cpp */; };
 		51F060E11654318500F3282C /* WebRTCResolverMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282C /* WebRTCResolverMessageReceiver.cpp */; };
 		51F060E11654318500F3282E /* NetworkRTCProviderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282E /* NetworkRTCProviderMessageReceiver.cpp */; };
-		51F645881F472E2E00B54DED /* WebSWServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645861F472E2600B54DED /* WebSWServerConnection.h */; };
-		51F645891F472E2E00B54DED /* WebSWServerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F645871F472E2600B54DED /* WebSWServerConnection.cpp */; };
 		51F7DC41180CC93600212CA3 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		51F7DC43180CC93600212CA3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		51F7DC44180CC93600212CA3 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
@@ -3307,6 +3311,14 @@
 		517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKApplicationCacheManager.h; sourceTree = "<group>"; };
 		517A52D61F43A9B600DCDC0A /* WebSWServerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnectionMessages.h; sourceTree = "<group>"; };
 		517A52D71F43A9B600DCDC0A /* WebSWServerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
+		517A53021F4793B200DCDC0A /* WebSWClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWClientConnection.h; sourceTree = "<group>"; };
+		517A53031F4793B200DCDC0A /* WebSWClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWClientConnection.cpp; sourceTree = "<group>"; };
+		517A53071F479E3100DCDC0A /* WebSWServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnection.h; sourceTree = "<group>"; };
+		517A53081F479E3100DCDC0A /* WebSWServerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWServerConnection.messages.in; sourceTree = "<group>"; };
+		517A53091F479E3100DCDC0A /* WebSWServerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerConnection.cpp; sourceTree = "<group>"; };
+		517A530C1F479E9700DCDC0A /* WebSWClientConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWClientConnection.messages.in; sourceTree = "<group>"; };
+		517A530D1F47A84300DCDC0A /* WebSWClientConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWClientConnectionMessages.h; sourceTree = "<group>"; };
+		517A530E1F47A84300DCDC0A /* WebSWClientConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWClientConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		517CF0E1163A486C00C2950D /* WebCacheStorageConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCacheStorageConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -3415,9 +3427,6 @@
 		51F060DD1654317500F3282C /* WebRTCResolverMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebRTCResolverMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DD1654317500F3282E /* NetworkRTCProviderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCProviderMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoaderMessages.h; sourceTree = "<group>"; };
-		51F645851F472E2600B54DED /* WebSWServerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWServerConnection.messages.in; sourceTree = "<group>"; };
-		51F645861F472E2600B54DED /* WebSWServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnection.h; sourceTree = "<group>"; };
-		51F645871F472E2600B54DED /* WebSWServerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerConnection.cpp; sourceTree = "<group>"; };
 		51F7DC4A180CC93600212CA3 /* com.apple.WebKit.Storage.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.Storage.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		51F886A31F2C214A00C193EF /* WKTestingSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKTestingSupport.cpp; sourceTree = "<group>"; };
 		51F886A41F2C214A00C193EF /* WKTestingSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTestingSupport.h; sourceTree = "<group>"; };
@@ -6075,9 +6084,9 @@
 			children = (
 				51BEB6291F3A5ACD005029B9 /* WebServiceWorkerProvider.cpp */,
 				51BEB62A1F3A5ACD005029B9 /* WebServiceWorkerProvider.h */,
-				51F645861F472E2600B54DED /* WebSWServerConnection.h */,
-				51F645871F472E2600B54DED /* WebSWServerConnection.cpp */,
-				51F645851F472E2600B54DED /* WebSWServerConnection.messages.in */,
+				517A53031F4793B200DCDC0A /* WebSWClientConnection.cpp */,
+				517A53021F4793B200DCDC0A /* WebSWClientConnection.h */,
+				517A530C1F479E9700DCDC0A /* WebSWClientConnection.messages.in */,
 				5118E9991F295259003EF9F5 /* WebToStorageProcessConnection.cpp */,
 				5118E99A1F295259003EF9F5 /* WebToStorageProcessConnection.h */,
 			);
@@ -6196,6 +6205,16 @@
 			name = mac;
 			sourceTree = "<group>";
 		};
+		517A53061F479E0F00DCDC0A /* ServiceWorker */ = {
+			isa = PBXGroup;
+			children = (
+				517A53091F479E3100DCDC0A /* WebSWServerConnection.cpp */,
+				517A53071F479E3100DCDC0A /* WebSWServerConnection.h */,
+				517A53081F479E3100DCDC0A /* WebSWServerConnection.messages.in */,
+			);
+			path = ServiceWorker;
+			sourceTree = "<group>";
+		};
 		517DD5BB180DA7C40081660B /* Storage */ = {
 			isa = PBXGroup;
 			children = (
@@ -6297,6 +6316,7 @@
 				51E351F9180F5CF600E53BE9 /* IndexedDB */,
 				E1FEF39B190F791C00731658 /* ios */,
 				517DD5C0180DB7AA0081660B /* mac */,
+				517A53061F479E0F00DCDC0A /* ServiceWorker */,
 				51E351FA180F5D0B00E53BE9 /* StorageProcess.cpp */,
 				51E351FB180F5D0B00E53BE9 /* StorageProcess.h */,
 				51E351FC180F5D0B00E53BE9 /* StorageProcess.messages.in */,
@@ -8010,10 +8030,12 @@
 				51F060DD1654317500F3281F /* WebRTCMonitorMessageReceiver.cpp */,
 				51F060DD1654317500F3282C /* WebRTCResolverMessageReceiver.cpp */,
 				51F060DD1654317500F3281C /* WebRTCSocketMessageReceiver.cpp */,
-				517A52D71F43A9B600DCDC0A /* WebSWServerConnectionMessageReceiver.cpp */,
-				517A52D61F43A9B600DCDC0A /* WebSWServerConnectionMessages.h */,
 				5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */,
 				5C0B17771E7C879C00E9123C /* WebSocketStreamMessages.h */,
+				517A530E1F47A84300DCDC0A /* WebSWClientConnectionMessageReceiver.cpp */,
+				517A530D1F47A84300DCDC0A /* WebSWClientConnectionMessages.h */,
+				517A52D71F43A9B600DCDC0A /* WebSWServerConnectionMessageReceiver.cpp */,
+				517A52D61F43A9B600DCDC0A /* WebSWServerConnectionMessages.h */,
 				1AAF08B519269E6D00B6390C /* WebUserContentControllerMessageReceiver.cpp */,
 				1AAF08B619269E6D00B6390C /* WebUserContentControllerMessages.h */,
 				7C361D76192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp */,
@@ -8355,7 +8377,6 @@
 				7C89D2981A6753B2003A5FDE /* APIPageConfiguration.h in Headers */,
 				1AC1336C18565C7A00F3EC05 /* APIPageHandle.h in Headers */,
 				1AFDD3151891B54000153970 /* APIPolicyClient.h in Headers */,
-				51F645881F472E2E00B54DED /* WebSWServerConnection.h in Headers */,
 				7CE4D2201A4914CA00C7F152 /* APIProcessPoolConfiguration.h in Headers */,
 				F634445612A885C8000612D8 /* APISecurityOrigin.h in Headers */,
 				1AFDE6621954E9B100C48FFA /* APISessionState.h in Headers */,
@@ -8904,13 +8925,16 @@
 				7C361D731927FA360036A59D /* WebScriptMessageHandler.h in Headers */,
 				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
 				51BEB62C1F3A5AD7005029B9 /* WebServiceWorkerProvider.h in Headers */,
-				517A52D91F43A9DA00DCDC0A /* WebSWServerConnectionMessages.h in Headers */,
 				1A4832D71A9CDF96008B4DFE /* WebsiteData.h in Headers */,
 				1A4832D11A9BDC2F008B4DFE /* WebsiteDataRecord.h in Headers */,
 				1A53C2AA1A325730004E8C70 /* WebsiteDataStore.h in Headers */,
 				511F7D411EB1BCF500E47B83 /* WebsiteDataStoreParameters.h in Headers */,
 				836034A01ACB34D600626549 /* WebSQLiteDatabaseTracker.h in Headers */,
 				1A52C0F81A38CDC70016160A /* WebStorageNamespaceProvider.h in Headers */,
+				517A53051F4793C600DCDC0A /* WebSWClientConnection.h in Headers */,
+				517A53101F47A86200DCDC0A /* WebSWClientConnectionMessages.h in Headers */,
+				517A530B1F479E3600DCDC0A /* WebSWServerConnection.h in Headers */,
+				517A52D91F43A9DA00DCDC0A /* WebSWServerConnectionMessages.h in Headers */,
 				BCC5715B115ADAEF001CCAF9 /* WebSystemInterface.h in Headers */,
 				5118E99C1F295266003EF9F5 /* WebToStorageProcessConnection.h in Headers */,
 				BCA0EF7F12331E78007D3CFB /* WebUndoStep.h in Headers */,
@@ -10537,7 +10561,6 @@
 				7C361D721927FA360036A59D /* WebScriptMessageHandler.cpp in Sources */,
 				D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */,
 				51BEB62B1F3A5AD7005029B9 /* WebServiceWorkerProvider.cpp in Sources */,
-				517A52D81F43A9DA00DCDC0A /* WebSWServerConnectionMessageReceiver.cpp in Sources */,
 				1A4832D61A9CDF96008B4DFE /* WebsiteData.cpp in Sources */,
 				1A4832D91A9D1FD2008B4DFE /* WebsiteDataRecord.cpp in Sources */,
 				1A53C2A91A32572B004E8C70 /* WebsiteDataStore.cpp in Sources */,
@@ -10548,6 +10571,10 @@
 				5C0B17791E7C882100E9123C /* WebSocketStreamMessageReceiver.cpp in Sources */,
 				8360349F1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp in Sources */,
 				1A52C0F71A38CDC70016160A /* WebStorageNamespaceProvider.cpp in Sources */,
+				517A53041F4793C600DCDC0A /* WebSWClientConnection.cpp in Sources */,
+				517A530F1F47A86200DCDC0A /* WebSWClientConnectionMessageReceiver.cpp in Sources */,
+				517A530A1F479E3600DCDC0A /* WebSWServerConnection.cpp in Sources */,
+				517A52D81F43A9DA00DCDC0A /* WebSWServerConnectionMessageReceiver.cpp in Sources */,
 				BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */,
 				5118E99B1F295266003EF9F5 /* WebToStorageProcessConnection.cpp in Sources */,
 				C0337DD8127A51B6008FF4F4 /* WebTouchEvent.cpp in Sources */,
@@ -10674,7 +10701,6 @@
 				2D3A65DA1A7C3A1F00CAC637 /* WKNavigationActionRef.cpp in Sources */,
 				370F34A21829BE1E009027C8 /* WKNavigationData.mm in Sources */,
 				BCF69FAA1176D1CB00471A52 /* WKNavigationDataRef.cpp in Sources */,
-				51F645891F472E2E00B54DED /* WebSWServerConnection.cpp in Sources */,
 				2D3A65E21A7C3A9300CAC637 /* WKNavigationRef.cpp in Sources */,
 				1A1B0EB518A424950038481A /* WKNavigationResponse.mm in Sources */,
 				2D3A65DE1A7C3A7D00CAC637 /* WKNavigationResponseRef.cpp in Sources */,

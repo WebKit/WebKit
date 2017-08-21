@@ -23,27 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SWClientConnection.h"
 
 #if ENABLE(SERVICE_WORKER)
 
-#include <WebCore/ServiceWorkerProvider.h>
-#include <wtf/NeverDestroyed.h>
+#include "ExceptionData.h"
+#include "ServiceWorkerJobData.h"
 
-namespace WebKit {
+namespace WebCore {
 
-class WebServiceWorkerProvider : public WebCore::ServiceWorkerProvider {
-public:
-    static WebServiceWorkerProvider& singleton();
+SWClientConnection::SWClientConnection()
+{
+}
 
-private:
-    friend NeverDestroyed<WebServiceWorkerProvider>;
-    WebServiceWorkerProvider();
+SWClientConnection::~SWClientConnection()
+{
+}
 
-    WebCore::SWClientConnection& serviceWorkerConnectionForSession(const PAL::SessionID&) final;
+void SWClientConnection::scheduleJob(ServiceWorkerJob& job)
+{
+    auto addResult = m_scheduledJobs.add(job.identifier(), &job);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
-}; // class WebServiceWorkerProvider
+    scheduleJobInServer(job.data());
+}
 
-} // namespace WebKit
+void SWClientConnection::jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData& exceptionData)
+{
+    auto job = m_scheduledJobs.take(jobIdentifier);
+    if (!job) {
+        LOG_ERROR("Job %" PRIu64 " rejected from server, but was not found", jobIdentifier);
+        return;
+    }
+
+    job->failedWithException(exceptionData.toException());
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

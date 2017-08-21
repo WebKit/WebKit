@@ -30,28 +30,51 @@
 
 #include "ExceptionCode.h"
 #include "ExceptionData.h"
+#include "Logging.h"
 #include "ServiceWorkerJobData.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-void SWServer::Connection::scheduleJob(ServiceWorkerJob& job)
+SWServer::Connection::Connection(SWServer& server)
+    : m_server(server)
 {
-    auto addResult = m_scheduledJobs.add(job.identifier(), &job);
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-
-    scheduleJob(job.data());
+    m_server.registerConnection(*this);
 }
 
-void SWServer::Connection::jobRejected(uint64_t jobIdentifier, const ExceptionData& exceptionData)
+SWServer::Connection::~Connection()
 {
-    auto job = m_scheduledJobs.take(jobIdentifier);
-    if (!job) {
-        LOG_ERROR("Job %" PRIu64 " rejected from server, but was not found", jobIdentifier);
-        return;
-    }
+    m_server.unregisterConnection(*this);
+}
 
-    job->failedWithException(exceptionData.toException());
+
+SWServer::~SWServer()
+{
+    RELEASE_ASSERT(m_connections.isEmpty());
+}
+
+void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
+{
+    LOG(ServiceWorker, "Scheduling ServiceWorker job %" PRIu64 " in server", jobData.identifier);
+    m_server.scheduleJob(*this, jobData);
+}
+
+void SWServer::scheduleJob(Connection& connection, const ServiceWorkerJobData& jobData)
+{
+    // FIXME: For now, all scheduled jobs immediately reject.
+    connection.rejectJobInClient(jobData.identifier, ExceptionData { UnknownError, ASCIILiteral("serviceWorker job scheduling is not yet implemented") });
+}
+
+void SWServer::registerConnection(Connection& connection)
+{
+    auto result = m_connections.add(&connection);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void SWServer::unregisterConnection(Connection& connection)
+{
+    ASSERT(!m_connections.contains(&connection));
+    m_connections.remove(&connection);
 }
 
 } // namespace WebCore

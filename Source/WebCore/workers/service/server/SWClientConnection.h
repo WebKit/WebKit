@@ -27,23 +27,30 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include <WebCore/ServiceWorkerProvider.h>
-#include <wtf/NeverDestroyed.h>
+#include "ServiceWorkerJob.h"
+#include <wtf/HashMap.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
-namespace WebKit {
+namespace WebCore {
 
-class WebServiceWorkerProvider : public WebCore::ServiceWorkerProvider {
+struct ExceptionData;
+
+class SWClientConnection : public ThreadSafeRefCounted<SWClientConnection> {
 public:
-    static WebServiceWorkerProvider& singleton();
+    WEBCORE_EXPORT SWClientConnection();
+    WEBCORE_EXPORT virtual ~SWClientConnection();
+
+    void scheduleJob(ServiceWorkerJob&);
+
+protected:
+    WEBCORE_EXPORT void jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData&);
 
 private:
-    friend NeverDestroyed<WebServiceWorkerProvider>;
-    WebServiceWorkerProvider();
+    virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;
 
-    WebCore::SWClientConnection& serviceWorkerConnectionForSession(const PAL::SessionID&) final;
+    HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
+};
 
-}; // class WebServiceWorkerProvider
-
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

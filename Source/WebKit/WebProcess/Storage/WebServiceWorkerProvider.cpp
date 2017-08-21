@@ -52,7 +52,7 @@ WebServiceWorkerProvider::WebServiceWorkerProvider()
 {
 }
 
-SWServer::Connection& WebServiceWorkerProvider::serviceWorkerConnectionForSession(const SessionID& sessionID)
+WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionForSession(const SessionID& sessionID)
 {
     ASSERT(WebProcess::singleton().webToStorageProcessConnection());
     return WebProcess::singleton().webToStorageProcessConnection()->serviceWorkerConnectionForSession(sessionID);

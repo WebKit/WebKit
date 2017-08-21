@@ -27,22 +27,42 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include <WebCore/ServiceWorkerProvider.h>
-#include <wtf/NeverDestroyed.h>
+#include "Connection.h"
+#include "MessageReceiver.h"
+#include "MessageSender.h"
+#include <WebCore/SWClientConnection.h>
+#include <pal/SessionID.h>
+
+namespace WebCore {
+struct ExceptionData;
+}
 
 namespace WebKit {
 
-class WebServiceWorkerProvider : public WebCore::ServiceWorkerProvider {
+class WebSWClientConnection : public WebCore::SWClientConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
-    static WebServiceWorkerProvider& singleton();
+    WebSWClientConnection(IPC::Connection&, const PAL::SessionID&);
+    WebSWClientConnection(const WebSWClientConnection&) = delete;
+    ~WebSWClientConnection() final;
+
+    uint64_t identifier() const { return m_identifier; }
+
+    void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
+
+    void disconnectedFromWebProcess();
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
-    friend NeverDestroyed<WebServiceWorkerProvider>;
-    WebServiceWorkerProvider();
+    void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);
 
-    WebCore::SWClientConnection& serviceWorkerConnectionForSession(const PAL::SessionID&) final;
+    IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
+    uint64_t messageSenderDestinationID() final { return m_identifier; }
 
-}; // class WebServiceWorkerProvider
+    PAL::SessionID m_sessionID;
+    uint64_t m_identifier;
+
+    Ref<IPC::Connection> m_connection;
+}; // class WebSWServerConnection
 
 } // namespace WebKit
 

@@ -24,63 +24,36 @@
  */
 
 #include "config.h"
-#include "WebSWServerConnection.h"
+#include "WebSWClientConnection.h"
 
 #if ENABLE(SERVICE_WORKER)
 
 #include "Logging.h"
 #include "StorageToWebProcessConnectionMessages.h"
-#include "WebProcess.h"
 #include "WebSWServerConnectionMessages.h"
-#include "WebToStorageProcessConnection.h"
-#include <WebCore/ExceptionData.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/ServiceWorkerJobData.h>
-#include <wtf/MainThread.h>
 
 using namespace PAL;
 using namespace WebCore;
 
 namespace WebKit {
 
-WebSWServerConnection::WebSWServerConnection(const SessionID& sessionID)
+WebSWClientConnection::WebSWClientConnection(IPC::Connection& connection, const SessionID& sessionID)
     : m_sessionID(sessionID)
-    , m_connection(WebProcess::singleton().webToStorageProcessConnection()->connection())
+    , m_connection(connection)
 {
     bool result = sendSync(Messages::StorageToWebProcessConnection::EstablishSWServerConnection(sessionID), Messages::StorageToWebProcessConnection::EstablishSWServerConnection::Reply(m_identifier));
 
     ASSERT_UNUSED(result, result);
 }
 
-WebSWServerConnection::WebSWServerConnection(IPC::Connection& connection, uint64_t connectionIdentifier, const SessionID& sessionID)
-    : m_sessionID(sessionID)
-    , m_identifier(connectionIdentifier)
-    , m_connection(connection)
+WebSWClientConnection::~WebSWClientConnection()
 {
 }
 
-WebSWServerConnection::~WebSWServerConnection()
+void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
-}
-
-void WebSWServerConnection::disconnectedFromWebProcess()
-{
-    notImplemented();
-}
-
-void WebSWServerConnection::scheduleJob(const ServiceWorkerJobData& jobData)
-{
-    LOG(ServiceWorker, "Scheduling ServiceWorker job %" PRIu64 " in storage process", jobData.identifier);
-    send(Messages::WebSWServerConnection::ScheduleStorageJob(jobData));
-}
-
-void WebSWServerConnection::scheduleStorageJob(const ServiceWorkerJobData& jobData)
-{
-    ASSERT(isMainThread());
-    LOG(ServiceWorker, "Received ServiceWorker job %" PRIu64 " in storage process", jobData.identifier);
-
-    // FIXME: For now, all scheduled jobs immediately reject.
-    send(Messages::WebSWServerConnection::JobRejected(jobData.identifier, ExceptionData { UnknownError, ASCIILiteral("serviceWorker job scheduling is not yet implemented") }));
+    send(Messages::WebSWServerConnection::ScheduleJobInServer(jobData));
 }
 
 } // namespace WebKit

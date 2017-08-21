@@ -40,29 +40,18 @@ namespace WebKit {
 
 class WebSWServerConnection : public WebCore::SWServer::Connection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
-    static Ref<WebSWServerConnection> create(const PAL::SessionID& sessionID)
-    {
-        return adoptRef(*new WebSWServerConnection(sessionID));
-    }
-    static Ref<WebSWServerConnection> create(IPC::Connection& connection, uint64_t connectionIdentifier, const PAL::SessionID& sessionID)
-    {
-        return adoptRef(*new WebSWServerConnection(connection, connectionIdentifier, sessionID));
-    }
-
+    WebSWServerConnection(WebCore::SWServer&, IPC::Connection&, uint64_t connectionIdentifier, const PAL::SessionID&);
+    WebSWServerConnection(const WebSWServerConnection&) = delete;
     ~WebSWServerConnection() final;
 
     uint64_t identifier() const { return m_identifier; }
-
-    void scheduleJob(const WebCore::ServiceWorkerJobData&) final;
 
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
-    WebSWServerConnection(const PAL::SessionID&);
-    WebSWServerConnection(IPC::Connection&, uint64_t connectionIdentifier, const PAL::SessionID&);
-
-    void scheduleStorageJob(const WebCore::ServiceWorkerJobData&);
+    // Implement SWServer::Connection
+    void rejectJobInClient(uint64_t jobIdentifier, const WebCore::ExceptionData&) final;
 
     IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
     uint64_t messageSenderDestinationID() final { return m_identifier; }

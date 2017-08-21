@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "DOMPromiseProxy.h"
 #include "EventTarget.h"
+#include "SWClientConnection.h"
 #include "SWServer.h"
 #include "ServiceWorkerJobClient.h"
 #include "ServiceWorkerRegistration.h"
@@ -82,7 +83,7 @@ private:
 
     NavigatorBase& m_navigator;
 
-    RefPtr<SWServer::Connection> m_serverConnection;
+    RefPtr<SWClientConnection> m_swConnection;
     HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_jobMap;
 
 #ifndef NDEBUG

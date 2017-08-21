@@ -29,6 +29,8 @@
 #include "Connection.h"
 #include "MessageSender.h"
 #include "WebIDBConnectionToServer.h"
+#include "WebSWClientConnection.h"
+#include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
 #include <wtf/RefCounted.h>
 
@@ -37,8 +39,6 @@ class SessionID;
 }
 
 namespace WebKit {
-
-class WebSWServerConnection;
 
 class WebToStorageProcessConnection : public RefCounted<WebToStorageProcessConnection>, public IPC::Connection::Client, public IPC::MessageSender {
 public:
@@ -54,7 +54,7 @@ public:
     WebIDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&);
 #endif
 #if ENABLE(SERVICE_WORKER)
-    WebSWServerConnection& serviceWorkerConnectionForSession(const PAL::SessionID&);
+    WebSWClientConnection& serviceWorkerConnectionForSession(const PAL::SessionID&);
 #endif
 
 private:
@@ -77,8 +77,8 @@ private:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    HashMap<PAL::SessionID, RefPtr<WebSWServerConnection>> m_serviceWorkerConnectionsBySession;
-    HashMap<uint64_t, RefPtr<WebSWServerConnection>> m_serviceWorkerConnectionsByIdentifier;
+    HashMap<PAL::SessionID, std::unique_ptr<WebSWClientConnection>> m_swConnectionsBySession;
+    HashMap<uint64_t, WebSWClientConnection*> m_swConnectionsByIdentifier;
 #endif
 };
 

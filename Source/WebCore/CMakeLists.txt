@@ -2991,6 +2991,7 @@ set(WebCore_SOURCES
     workers/service/ServiceWorkerRegistration.cpp
     workers/service/ServiceWorkerRegistrationParameters.cpp
 
+    workers/service/server/SWClientConnection.cpp
     workers/service/server/SWServer.cpp
 
     xml/DOMParser.cpp

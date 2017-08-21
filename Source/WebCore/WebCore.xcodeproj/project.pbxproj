@@ -2307,6 +2307,8 @@
 		51771DFF1BDB485000CAE8E4 /* MemoryObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */; };
 		517A52F01F47535B00DCDC0A /* SWServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A52EE1F47535900DCDC0A /* SWServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A52F11F4754E700DCDC0A /* SWServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A52EF1F47535900DCDC0A /* SWServer.cpp */; };
+		517A531C1F4B53B100DCDC0A /* SWClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A52FE1F478CCE00DCDC0A /* SWClientConnection.cpp */; };
+		517A531D1F4B53B100DCDC0A /* SWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A52FF1F478CCE00DCDC0A /* SWClientConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A63C31B74318700E7DCDC /* KeyedDecoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */; };
 		517A63C41B74318B00E7DCDC /* KeyedEncoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */; };
 		517A63C51B74318F00E7DCDC /* KeyedDecoderCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10101,6 +10103,8 @@
 		51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObjectStore.h; sourceTree = "<group>"; };
 		517A52EE1F47535900DCDC0A /* SWServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWServer.h; sourceTree = "<group>"; };
 		517A52EF1F47535900DCDC0A /* SWServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWServer.cpp; sourceTree = "<group>"; };
+		517A52FE1F478CCE00DCDC0A /* SWClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWClientConnection.cpp; sourceTree = "<group>"; };
+		517A52FF1F478CCE00DCDC0A /* SWClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWClientConnection.h; sourceTree = "<group>"; };
 		517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedDecoderCF.cpp; sourceTree = "<group>"; };
 		517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedDecoderCF.h; sourceTree = "<group>"; };
 		517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedEncoderCF.cpp; sourceTree = "<group>"; };
@@ -18687,6 +18691,8 @@
 		517A52EC1F47532D00DCDC0A /* server */ = {
 			isa = PBXGroup;
 			children = (
+				517A52FE1F478CCE00DCDC0A /* SWClientConnection.cpp */,
+				517A52FF1F478CCE00DCDC0A /* SWClientConnection.h */,
 				517A52EF1F47535900DCDC0A /* SWServer.cpp */,
 				517A52EE1F47535900DCDC0A /* SWServer.h */,
 			);
@@ -29412,6 +29418,7 @@
 				5824ABAB1AE849C8009074B7 /* RenderTreePosition.h in Headers */,
 				E46180291C8A06CD0026C02C /* RenderTreeUpdater.h in Headers */,
 				E48E332C1F47037C00BAB0EF /* RenderTreeUpdaterFirstLetter.h in Headers */,
+				E48E33321F47437300BAB0EF /* RenderTreeUpdaterGeneratedContent.h in Headers */,
 				E48E332E1F47038000BAB0EF /* RenderTreeUpdaterListItem.h in Headers */,
 				E44614520CD68A3500FADA75 /* RenderVideo.h in Headers */,
 				BCEA4868097D93020094C9E4 /* RenderView.h in Headers */,
@@ -29626,7 +29633,6 @@
 				FD45A94F175D3F3E00C21EC8 /* Shape.h in Headers */,
 				FD45A95B175D41EE00C21EC8 /* ShapeInterval.h in Headers */,
 				FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */,
-				E48E33321F47437300BAB0EF /* RenderTreeUpdaterGeneratedContent.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
@@ -30031,6 +30037,7 @@
 				8485228B1190173C006EDC7F /* SVGVKernElement.h in Headers */,
 				B2227AF60D00BF220071B782 /* SVGZoomAndPan.h in Headers */,
 				B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */,
+				517A531D1F4B53B100DCDC0A /* SWClientConnection.h in Headers */,
 				517A52F01F47535B00DCDC0A /* SWServer.h in Headers */,
 				E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */,
 				26FAE4CF1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h in Headers */,
@@ -31275,7 +31282,6 @@
 				9BD4E91A1C462CFC005065BC /* CustomElementRegistry.cpp in Sources */,
 				62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */,
 				97BC6A201505F081001B74AC /* Database.cpp in Sources */,
-				E48E33311F47437000BAB0EF /* RenderTreeUpdaterGeneratedContent.cpp in Sources */,
 				97BC6A231505F081001B74AC /* DatabaseAuthorizer.cpp in Sources */,
 				97BC6A271505F081001B74AC /* DatabaseContext.cpp in Sources */,
 				FE456F181677D74E005EDDF9 /* DatabaseManager.cpp in Sources */,
@@ -33305,6 +33311,7 @@
 				5824ABAA1AE849C8009074B7 /* RenderTreePosition.cpp in Sources */,
 				E461802B1C8A06D90026C02C /* RenderTreeUpdater.cpp in Sources */,
 				E48284081F44594C00863AC3 /* RenderTreeUpdaterFirstLetter.cpp in Sources */,
+				E48E33311F47437000BAB0EF /* RenderTreeUpdaterGeneratedContent.cpp in Sources */,
 				E48E332D1F47038000BAB0EF /* RenderTreeUpdaterListItem.cpp in Sources */,
 				E44614510CD68A3500FADA75 /* RenderVideo.cpp in Sources */,
 				BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */,
@@ -33784,6 +33791,7 @@
 				8485228A1190173C006EDC7F /* SVGVKernElement.cpp in Sources */,
 				B2227AF50D00BF220071B782 /* SVGZoomAndPan.cpp in Sources */,
 				B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */,
+				517A531C1F4B53B100DCDC0A /* SWClientConnection.cpp in Sources */,
 				517A52F11F4754E700DCDC0A /* SWServer.cpp in Sources */,
 				E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */,
 				E180811616FCF9CB00B80D07 /* SynchronousLoaderClient.mm in Sources */,

@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "MessageSender.h"
 
+#include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 
@@ -69,7 +70,8 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection(PAL::SessionID, uint64_t& serverConnectionIdentifier);
     void removeSWServerConnection(uint64_t serverConnectionIdentifier);
-    HashMap<uint64_t, RefPtr<WebSWServerConnection>> m_webServiceWorkerConnections;
+    HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
+    HashMap<uint64_t, std::unique_ptr<WebSWServerConnection>> m_swConnections;
 #endif
 
     Ref<IPC::Connection> m_connection;

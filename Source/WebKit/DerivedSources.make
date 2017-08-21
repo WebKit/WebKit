@@ -36,6 +36,7 @@ VPATH = \
     $(WebKit2)/Shared/mac \
     $(WebKit2)/StorageProcess \
     $(WebKit2)/StorageProcess/IndexedDB \
+    $(WebKit2)/StorageProcess/ServiceWorker \
     $(WebKit2)/StorageProcess/mac \
     $(WebKit2)/WebProcess/ApplePay \
     $(WebKit2)/WebProcess/ApplicationCache \
@@ -158,6 +159,7 @@ MESSAGE_RECEIVERS = \
     WebPasteboardProxy \
     WebPaymentCoordinator \
     WebPaymentCoordinatorProxy \
+    WebSWClientConnection \
     WebSWServerConnection \
     PlaybackSessionManager \
     PlaybackSessionManagerProxy \
