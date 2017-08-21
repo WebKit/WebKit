@@ -1,3 +1,15 @@
+2017-08-21  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Can't copy text from "View variable value" popover in Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=175758
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch.prototype._swatchElementClicked):
+        Change CodeMirror readOnly from "nocursor" to true. The former prevents the editor from
+        being focused during selection, therefore preventing the content from being copied.
+
 2017-08-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: create better icon for Canvas Path navigation item

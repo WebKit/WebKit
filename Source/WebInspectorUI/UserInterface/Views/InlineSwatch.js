@@ -179,7 +179,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
             this._valueEditor.codeMirror = WI.CodeMirrorEditor.create(this._valueEditor.element, {
                 mode: "css",
-                readOnly: "nocursor",
+                readOnly: true,
             });
             this._valueEditor.codeMirror.on("update", () => {
                 popover.update();
