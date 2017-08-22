@@ -3606,6 +3606,15 @@ void Document::removeAudioProducer(MediaProducer* audioProducer)
     updateIsPlayingMedia();
 }
 
+void Document::noteUserInteractionWithMediaElement()
+{
+    if (m_userHasInteractedWithMediaElement)
+        return;
+
+    m_userHasInteractedWithMediaElement = true;
+    updateIsPlayingMedia();
+}
+
 void Document::updateIsPlayingMedia(uint64_t sourceElementID)
 {
     MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
