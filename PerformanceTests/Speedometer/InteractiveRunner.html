@@ -71,6 +71,27 @@ function createUIForSuites(suites, onstep, onrun) {
     button.onclick = onrun;
     control.appendChild(button);
 
+    var button = document.createElement('button');
+    button.textContent = 'Select all';
+    button.onclick = function () {
+        for (var suiteIndex = 0; suiteIndex < suites.length; suiteIndex++) {
+            suites[suiteIndex].disabled = false;
+            checkboxes[suiteIndex].checked = true;
+        }
+    };
+    control.appendChild(button);
+
+    var button = document.createElement('button');
+    button.textContent = 'Unselect all';
+    button.onclick = function () {
+        for (var suiteIndex = 0; suiteIndex < suites.length; suiteIndex++) {
+            suites[suiteIndex].disabled = true;
+            checkboxes[suiteIndex].checked = false;
+        }
+
+    };
+    control.appendChild(button);
+
     return control;
 }
 
