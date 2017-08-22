@@ -1,3 +1,30 @@
+2017-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        DataInteractionTests.ExternalSourceAttributedStringToContentEditable hits a debug assertion
+        https://bugs.webkit.org/show_bug.cgi?id=175787
+        <rdar://problem/33996612>
+
+        Reviewed by Wenson Hsieh.
+
+        The variation axis values of San Francisco changed from the GX-style scale to the CSS-style
+        scale. Previously, we were normalizing the values we got from Core Text to fit the CSS scale;
+        however, this is no longer necessary since the font now does this itself.
+
+        The assertion was getting hit because the normalized values were huge and were overflowing
+        a single FontSelectionValue (and going negative). This patch adds handling for this
+        situation.
+
+        Test: DataInteractionTests.ExternalSourceBoldSystemAttributedStringToContentEditable
+
+        * platform/graphics/FontSelectionAlgorithm.h: Typedef the backing type for a FontSelectionValue.
+        (WebCore::FontSelectionValue::rawValue const):
+        (WebCore::FontSelectionValue::maximumValue):
+        (WebCore::FontSelectionValue::minimumValue):
+        (WebCore::FontSelectionValue::FontSelectionValue):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp: Opt-out of normalization for San Francisco.
+        (WebCore::variationCapabilitiesForFontDescriptor):
+        (WebCore::capabilitiesForFontDescriptor):
+
 2017-08-21  Chris Dumez  <cdumez@apple.com>
 
         [Beacon] Content extensions should be able to intercept Beacon / Ping redirects

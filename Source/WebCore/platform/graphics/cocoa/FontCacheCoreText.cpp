@@ -998,7 +998,12 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
             result.slope = extractVariationBounds(axis);
     }
 
-    if (FontType(font.get()).variationType == FontType::VariationType::TrueTypeGX) {
+    bool optOutFromGXNormalization = false;
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
+    optOutFromGXNormalization = CTFontDescriptorIsSystemUIFont(fontDescriptor);
+#endif
+
+    if (FontType(font.get()).variationType == FontType::VariationType::TrueTypeGX && !optOutFromGXNormalization) {
         if (result.weight)
             result.weight = {{ normalizeWeight(result.weight.value().minimum), normalizeWeight(result.weight.value().maximum) }};
         if (result.width)
@@ -1006,6 +1011,15 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
         if (result.slope)
             result.slope = {{ normalizeSlope(result.slope.value().minimum), normalizeSlope(result.slope.value().maximum) }};
     }
+
+    auto minimum = static_cast<float>(FontSelectionValue::minimumValue());
+    auto maximum = static_cast<float>(FontSelectionValue::maximumValue());
+    if (result.weight && (result.weight.value().minimum < minimum || result.weight.value().maximum > maximum))
+        result.weight = { };
+    if (result.width && (result.width.value().minimum < minimum || result.width.value().maximum > maximum))
+        result.width = { };
+    if (result.slope && (result.slope.value().minimum < minimum || result.slope.value().maximum > maximum))
+        result.slope = { };
 #else
     UNUSED_PARAM(fontDescriptor);
 #endif
@@ -1091,9 +1105,13 @@ FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef font
     }
 #endif
 
-    return {{ FontSelectionValue(variationCapabilities.weight.value().minimum), FontSelectionValue(variationCapabilities.weight.value().maximum) },
+    FontSelectionCapabilities result = {{ FontSelectionValue(variationCapabilities.weight.value().minimum), FontSelectionValue(variationCapabilities.weight.value().maximum) },
         { FontSelectionValue(variationCapabilities.width.value().minimum), FontSelectionValue(variationCapabilities.width.value().maximum) },
         { FontSelectionValue(variationCapabilities.slope.value().minimum), FontSelectionValue(variationCapabilities.slope.value().maximum) }};
+    ASSERT(result.weight.isValid());
+    ASSERT(result.width.isValid());
+    ASSERT(result.slope.isValid());
+    return result;
 }
 
 #if !SHOULD_USE_CORE_TEXT_FONT_LOOKUP

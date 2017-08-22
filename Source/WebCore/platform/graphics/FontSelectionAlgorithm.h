@@ -40,6 +40,8 @@ namespace WebCore {
 // the maximum representable value is 8191.75, and the minimum representable value is -8192.
 class FontSelectionValue {
 public:
+    typedef int16_t BackingType;
+
     FontSelectionValue() = default;
 
     // Explicit because it is lossy.
@@ -72,20 +74,20 @@ public:
     bool operator>(const FontSelectionValue other) const;
     bool operator>=(const FontSelectionValue other) const;
 
-    int16_t rawValue() const
+    BackingType rawValue() const
     {
         return m_backing;
     }
 
     static FontSelectionValue maximumValue()
     {
-        static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(std::numeric_limits<int16_t>::max(), RawTag::RawTag);
+        static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(std::numeric_limits<BackingType>::max(), RawTag::RawTag);
         return result.get();
     }
 
     static FontSelectionValue minimumValue()
     {
-        static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(std::numeric_limits<int16_t>::min(), RawTag::RawTag);
+        static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(std::numeric_limits<BackingType>::min(), RawTag::RawTag);
         return result.get();
     }
 
@@ -101,13 +103,13 @@ public:
 private:
     enum class RawTag { RawTag };
 
-    FontSelectionValue(int16_t rawValue, RawTag)
+    FontSelectionValue(BackingType rawValue, RawTag)
         : m_backing(rawValue)
     {
     }
 
     static constexpr int fractionalEntropy = 4;
-    int16_t m_backing { 0 };
+    BackingType m_backing { 0 };
 };
 
 inline FontSelectionValue FontSelectionValue::operator+(const FontSelectionValue other) const

@@ -685,7 +685,7 @@ TEST(DataInteractionTests, ExternalSourceHTMLToContentEditable)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!!editor.querySelector('h1')"].boolValue);
 }
 
-TEST(DataInteractionTests, DISABLED_ExternalSourceBoldSystemAttributedStringToContentEditable)
+TEST(DataInteractionTests, ExternalSourceBoldSystemAttributedStringToContentEditable)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
