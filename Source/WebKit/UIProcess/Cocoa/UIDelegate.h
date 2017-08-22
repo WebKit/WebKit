@@ -79,10 +79,10 @@ private:
 
     private:
         // API::UIClient
-        RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&) override;
-        void createNewPageAsync(WebKit::WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&, WTF::Function<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler) final;
+        RefPtr<WebPageProxy> createNewPage(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&) final;
+        void createNewPageAsync(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final;
         bool canCreateNewPageAsync() final;
-        RefPtr<WebKit::WebPageProxy> createNewPageCommon(WebKit::WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&, WTF::Function<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler);
+        RefPtr<WebPageProxy> createNewPageCommon(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler);
 
         void close(WebKit::WebPageProxy*) override;
         void fullscreenMayReturnToInline(WebKit::WebPageProxy*) override;
@@ -96,6 +96,7 @@ private:
         void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void (unsigned long long)>&& completionHandler) override;
         void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void (unsigned long long)>&& completionHandler) override;
 #if PLATFORM(MAC)
+        void showPage(WebPageProxy*) final;
         bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
 #endif
         bool decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&) override;
@@ -131,6 +132,7 @@ private:
     struct {
         bool webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures : 1;
         bool webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync : 1;
+        bool webViewShow : 1;
         bool webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler : 1;
