@@ -1,6 +1,8 @@
 /*jshint eqeqeq:false */
 'use strict';
 
+let uniqueID = 1;
+
 /**
  * Creates a new client side storage object and will create an empty
  * collection if no collection already exists.
@@ -99,7 +101,7 @@ class Store {
             }
         } else {
             // Generate an ID
-            updateData.id = new Date().getTime();
+            updateData.id = uniqueID++;
 
             todos.push(updateData);
             this.memoryStorage[this._dbName] = JSON.stringify(data);

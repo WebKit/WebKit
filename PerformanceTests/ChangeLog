@@ -1,3 +1,29 @@
+2017-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(R220043): Speedometer 2.0: Fix vanilla JS examples
+        https://bugs.webkit.org/show_bug.cgi?id=175815
+
+        Reviewed by Saam Barati.
+
+        Both vanilla ES2015 and Babel + WebPack test cases were failing to mark Todo items as completed since they were relying on
+        `new Date().getTime()` to generate an unique ID. That's not going to work if mulitple todo items are added within 1ms.
+
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.71bb1f671e4e65604d05.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.71bb1f671e4e65604d05.js.map: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.9debb1b0a94f14d0ebe9.js: Removed.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.9debb1b0a94f14d0ebe9.js.map: Removed.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.2102040c9a6e04cc046e.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.2102040c9a6e04cc046e.js.map: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.b16cc08e016d07886f5f.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.b16cc08e016d07886f5f.js.map: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/index.html:
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.71bb1f671e4e65604d05.css: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.71bb1f671e4e65604d05.css.map: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.b16cc08e016d07886f5f.css: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.b16cc08e016d07886f5f.css.map: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/store.js:
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/src/store.js:
+
 2017-08-22  JF Bastien  <jfbastien@apple.com>
 
         StitchMarker: threading, locking, and atomics benchmark
