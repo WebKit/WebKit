@@ -90,8 +90,8 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
 
 std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL&, const URL& url, IncludeSecureCookies)
 {
-    // FIXME: SOUP concept of secure cookies should be filtered here.
-    return cookiesForSession(session, url, false);
+    // FIXME(175850): SOUP concept of secure cookies should be filtered here.
+    return { cookiesForSession(session, url, false), false };
 }
 
 String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url)
