@@ -1,3 +1,7 @@
+list(APPEND WTF_HEADERS
+    cf/TypeCastsCF.h
+)
+
 list(APPEND WTF_SOURCES
     PlatformUserPreferredLanguagesWin.cpp
 
