@@ -504,7 +504,7 @@ public:
 
     PluginInfoProvider& pluginInfoProvider();
 
-    UserContentProvider& userContentProvider();
+    WEBCORE_EXPORT UserContentProvider& userContentProvider();
     WEBCORE_EXPORT void setUserContentProvider(Ref<UserContentProvider>&&);
 
     VisitedLinkStore& visitedLinkStore();

@@ -134,6 +134,12 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
     return finalActions;
 }
 
+void ContentExtensionsBackend::forEach(const WTF::Function<void(const String&, ContentExtension&)>& apply)
+{
+    for (auto& pair : m_contentExtensions)
+        apply(pair.key, pair.value);
+}
+
 StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const String& identifier) const
 {
     const auto& contentExtension = m_contentExtensions.get(identifier);
@@ -210,6 +216,41 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
         if (willBlockLoad)
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", url.string()));
     }
+    return { willBlockLoad, willBlockCookies, willMakeHTTPS };
+}
+
+BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForPingLoad(const URL& url, const URL& mainDocumentURL)
+{
+    if (m_contentExtensions.isEmpty())
+        return { };
+
+    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, ResourceType::Raw };
+    Vector<ContentExtensions::Action> actions = actionsForResourceLoad(resourceLoadInfo);
+
+    bool willBlockLoad = false;
+    bool willBlockCookies = false;
+    bool willMakeHTTPS = false;
+    for (const auto& action : actions) {
+        switch (action.type()) {
+        case ContentExtensions::ActionType::BlockLoad:
+            willBlockLoad = true;
+            break;
+        case ContentExtensions::ActionType::BlockCookies:
+            willBlockCookies = true;
+            break;
+        case ContentExtensions::ActionType::MakeHTTPS:
+            if ((url.protocolIs("http") || url.protocolIs("ws")) && (!url.port() || isDefaultPortForProtocol(url.port().value(), url.protocol())))
+                willMakeHTTPS = true;
+            break;
+        case ContentExtensions::ActionType::CSSDisplayNoneSelector:
+        case ContentExtensions::ActionType::CSSDisplayNoneStyleSheet:
+            break;
+        case ContentExtensions::ActionType::IgnorePreviousRules:
+        case ContentExtensions::ActionType::InvalidAction:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
     return { willBlockLoad, willBlockCookies, willMakeHTTPS };
 }
 

@@ -1,3 +1,30 @@
+2017-08-21  Chris Dumez  <cdumez@apple.com>
+
+        [Beacon] Content extensions should be able to intercept Beacon / Ping redirects
+        https://bugs.webkit.org/show_bug.cgi?id=175746
+        <rdar://problem/33946050>
+
+        Reviewed by Alex Christensen.
+
+        Update PingLoad to process content extension rules upon redirect. This allows content
+        extensions to block and upgrade to HTTPS beacon / ping loads.
+
+        Because ping loads can outlive the WebProcess, the content extensions rules are passed
+        to the NetworkProcess when starting the Ping load. The PingLoad can then consult those
+        rules upon redirect, on the NetworkProcess side.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        (WebKit::PingLoad::contentExtensionsBackend):
+        (WebKit::PingLoad::processContentExtensionRulesForLoad):
+        * NetworkProcess/PingLoad.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::startPingLoad):
+
 2017-08-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Unused variables in UserMediaProcessManager.cpp

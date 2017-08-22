@@ -29,6 +29,7 @@
 
 #include "NetworkDataTask.h"
 #include "NetworkResourceLoadParameters.h"
+#include <WebCore/ContentExtensionsBackend.h>
 #include <WebCore/ResourceError.h>
 
 namespace WebCore {
@@ -68,6 +69,11 @@ private:
     void makeCrossOriginAccessRequestWithPreflight(WebCore::ResourceRequest&&);
     void preflightSuccess(WebCore::ResourceRequest&&);
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    WebCore::ContentExtensions::ContentExtensionsBackend& contentExtensionsBackend();
+    bool processContentExtensionRulesForLoad(WebCore::ResourceRequest&);
+#endif
+
     WebCore::SecurityOrigin& securityOrigin() const;
 
     const WebCore::ResourceRequest& currentRequest() const;
@@ -84,6 +90,9 @@ private:
     bool m_isSimpleRequest { true };
     RedirectCompletionHandler m_redirectHandler;
     mutable std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;
+#if ENABLE(CONTENT_EXTENSIONS)
+    std::unique_ptr<WebCore::ContentExtensions::ContentExtensionsBackend> m_contentExtensionsBackend;
+#endif
     std::optional<WebCore::ResourceRequest> m_lastRedirectionRequest;
 };
 

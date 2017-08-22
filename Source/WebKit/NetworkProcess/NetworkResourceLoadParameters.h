@@ -28,6 +28,7 @@
 
 #include "NetworkLoadParameters.h"
 #include "SandboxExtension.h"
+#include "WebCompiledContentRuleListData.h"
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/ResourceHandle.h>
@@ -59,6 +60,11 @@ public:
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WebCore::FetchOptions::Mode mode;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    WebCore::URL mainDocumentURL;
+    Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleLists;
+#endif
 };
 
 } // namespace WebKit

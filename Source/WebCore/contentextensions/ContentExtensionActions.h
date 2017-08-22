@@ -51,7 +51,7 @@ struct BlockedStatus {
     bool madeHTTPS { false };
 };
 
-void applyBlockedStatusToRequest(const BlockedStatus&, ResourceRequest&);
+WEBCORE_EXPORT void applyBlockedStatusToRequest(const BlockedStatus&, ResourceRequest&);
 
 } // namespace ContentExtensions
 

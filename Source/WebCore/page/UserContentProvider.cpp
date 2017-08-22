@@ -116,6 +116,15 @@ Vector<ContentExtensions::Action> UserContentProvider::actionsForResourceLoad(co
 
     return userContentExtensionBackend().actionsForResourceLoad(resourceLoadInfo);
 }
+
+void UserContentProvider::forEachContentExtension(const WTF::Function<void(const String&, ContentExtensions::ContentExtension&)>& apply, DocumentLoader& initiatingDocumentLoader)
+{
+    if (!contentExtensionsEnabled(initiatingDocumentLoader))
+        return;
+
+    userContentExtensionBackend().forEach(apply);
+}
+
 #endif
 
 } // namespace WebCore

@@ -33,6 +33,7 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoadParameters.h"
 #include "SessionTracker.h"
+#include "WebCompiledContentRuleList.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebFrame.h"
@@ -61,6 +62,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SubresourceLoader.h>
+#include <WebCore/UserContentProvider.h>
 #include <pal/SessionID.h>
 #include <wtf/text/CString.h>
 
@@ -432,6 +434,18 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
         if (auto * contentSecurityPolicy = document->contentSecurityPolicy())
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    loadParameters.mainDocumentURL = document->topDocument().url();
+
+    if (auto* documentLoader = frame.loader().documentLoader()) {
+        if (auto* page = frame.page()) {
+            page->userContentProvider().forEachContentExtension([&loadParameters](const String& identifier, ContentExtensions::ContentExtension& contentExtension) {
+                loadParameters.contentRuleLists.append(std::make_pair(identifier, static_cast<const WebCompiledContentRuleList&>(contentExtension.compiledExtension()).data()));
+            }, *documentLoader);
+        }
+    }
+#endif
 
     if (completionHandler)
         m_pingLoadCompletionHandlers.add(loadParameters.identifier, WTFMove(completionHandler));

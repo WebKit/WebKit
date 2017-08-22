@@ -33,6 +33,7 @@
 #include "NetworkCORSPreflightChecker.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "SessionTracker.h"
+#include "WebCompiledContentRuleList.h"
 #include "WebErrors.h"
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CrossOriginAccessControl.h>
@@ -102,18 +103,30 @@ SecurityOrigin& PingLoad::securityOrigin() const
 
 void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
-    m_lastRedirectionRequest = request;
-
     RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection - shouldFollowRedirects? %d", m_parameters.shouldFollowRedirects);
     if (!m_parameters.shouldFollowRedirects) {
         completionHandler({ });
+        didFinish(ResourceError { String(), 0, currentRequest().url(), ASCIILiteral("Not allowed to follow redirects"), ResourceError::Type::AccessControl });
         return;
     }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (processContentExtensionRulesForLoad(request)) {
+        RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection - Redirect was blocked by content extensions");
+        m_lastRedirectionRequest = request;
+        completionHandler({ });
+        didFinish(ResourceError { String(), 0, currentRequest().url(), ASCIILiteral("Blocked by content extension"), ResourceError::Type::AccessControl });
+        return;
+    }
+#endif
+
+    m_lastRedirectionRequest = request;
 
     if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
         if (!contentSecurityPolicy->allowConnectToSource(request.url(), redirectResponse.isNull() ? ContentSecurityPolicy::RedirectResponseReceived::No : ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
             RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection - Redirect was blocked by CSP");
             completionHandler({ });
+            didFinish(ResourceError { String(), 0, currentRequest().url(), ASCIILiteral("Blocked by Content Security Policy"), ResourceError::Type::AccessControl });
             return;
         }
     }
@@ -295,6 +308,28 @@ void PingLoad::preflightSuccess(ResourceRequest&& request)
     else
         loadRequest(WTFMove(actualRequest));
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+
+ContentExtensions::ContentExtensionsBackend& PingLoad::contentExtensionsBackend()
+{
+    if (!m_contentExtensionsBackend) {
+        m_contentExtensionsBackend = std::make_unique<ContentExtensions::ContentExtensionsBackend>();
+        for (auto& pair : m_parameters.contentRuleLists)
+            m_contentExtensionsBackend->addContentExtension(pair.first, WebCompiledContentRuleList::create(WTFMove(pair.second)));
+    }
+    return *m_contentExtensionsBackend;
+}
+
+// Returns true if we should block the load.
+bool PingLoad::processContentExtensionRulesForLoad(ResourceRequest& request)
+{
+    auto status = contentExtensionsBackend().processContentExtensionRulesForPingLoad(request.url(), m_parameters.mainDocumentURL);
+    applyBlockedStatusToRequest(status, request);
+    return status.blockedLoad;
+}
+
+#endif // ENABLE(CONTENT_EXTENSIONS)
 
 } // namespace WebKit
 
