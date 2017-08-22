@@ -115,6 +115,7 @@ function installDependenciesWithApt {
         libgtk2.0-dev \
         libgtk-3-dev \
         libgstreamer1.0-dev \
+        libgstreamer-plugins-bad1.0-dev \
         libgstreamer-plugins-base1.0-dev \
         libgudev-1.0-dev \
         libhyphen-dev \
@@ -245,6 +246,7 @@ function installDependenciesWithPacman {
         grep \
         groff \
         gstreamer \
+        gst-plugins-bad \
         gst-plugins-base-libs \
         gzip \
         hyphen \
@@ -391,6 +393,7 @@ function installDependenciesWithDnf {
         gobject-introspection-devel \
         gperf \
         gstreamer1-devel \
+        gstreamer1-plugins-bad-free-devel \
         gstreamer1-plugins-base-devel \
         gtk-doc \
         gtk2-devel \

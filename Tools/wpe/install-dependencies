@@ -68,6 +68,9 @@ function installDependenciesWithApt {
         intltool \
         itstool \
         libgnutls28-dev \
+        libgstreamer1.0-dev \
+        libgstreamer-plugins-bad1.0-dev \
+        libgstreamer-plugins-base1.0-dev \
         libicu-dev \
         libjpeg-dev \
         $(aptIfElse libpng-dev libpng12-dev) \
@@ -143,6 +146,9 @@ function installDependenciesWithPacman {
         gperf \
         grep \
         groff \
+        gstreamer \
+        gst-plugins-bad \
+        gst-plugins-base-libs \
         gzip \
         icu \
         intltool \
@@ -224,6 +230,9 @@ function installDependenciesWithDnf {
         gcc-c++ \
         gnutls-devel \
         gperf \
+        gstreamer1-devel \
+        gstreamer1-plugins-bad-free-devel \
+        gstreamer1-plugins-base-devel \
         intltool \
         itstool \
         libicu-devel \
