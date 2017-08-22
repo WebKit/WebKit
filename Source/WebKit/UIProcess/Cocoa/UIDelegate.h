@@ -79,10 +79,11 @@ private:
 
     private:
         // API::UIClient
-        RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&) override;
-        void createNewPageAsync(WebKit::WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&, WTF::Function<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler) final;
+        RefPtr<WebPageProxy> createNewPage(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&) final;
+        void createNewPageAsync(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final;
         bool canCreateNewPageAsync() final;
-        RefPtr<WebKit::WebPageProxy> createNewPageCommon(WebKit::WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&, WTF::Function<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler);
+        void showPage(WebPageProxy*) final;
+        RefPtr<WebPageProxy> createNewPageCommon(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler);
 
         void close(WebKit::WebPageProxy*) override;
         void fullscreenMayReturnToInline(WebKit::WebPageProxy*) override;
@@ -131,6 +132,7 @@ private:
     struct {
         bool webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures : 1;
         bool webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync : 1;
+        bool showPage : 1;
         bool webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler : 1;

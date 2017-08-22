@@ -94,6 +94,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 
     m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures = [delegate respondsToSelector:@selector(webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:)];
     m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync = [delegate respondsToSelector:@selector(_webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:completionHandler:)];
+    m_delegateMethods.showPage = [delegate respondsToSelector:@selector(_showPage:)];
     m_delegateMethods.webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
@@ -248,6 +249,15 @@ void UIDelegate::UIClient::createNewPageAsync(WebPageProxy* page, API::FrameInfo
     ASSERT(delegate);
 
     createNewPageCommon(page, originatingFrameInfo, WTFMove(request), windowFeatures, WTFMove(navigationActionData), WTFMove(completionHandler));
+}
+
+void UIDelegate::UIClient::showPage(WebPageProxy*)
+{
+    if (!m_uiDelegate.m_delegateMethods.showPage)
+        return;
+    auto delegate = m_uiDelegate.m_delegate.get();
+    ASSERT(delegate);
+    [(id <WKUIDelegatePrivate>)delegate _showPage:m_uiDelegate.m_webView];
 }
 
 void UIDelegate::UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, const WebCore::SecurityOriginData& securityOriginData, Function<void ()>&& completionHandler)

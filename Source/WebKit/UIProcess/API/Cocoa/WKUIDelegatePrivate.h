@@ -61,6 +61,7 @@ struct UIEdgeInsets;
 
 - (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame;
 
+- (void)_showPage:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_webViewClose:(WKWebView *)webView;
 - (void)_webViewFullscreenMayReturnToInline:(WKWebView *)webView;
 - (void)_webViewDidEnterFullscreen:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.11), ios(8.3));
