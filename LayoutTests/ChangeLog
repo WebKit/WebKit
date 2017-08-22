@@ -1,3 +1,9 @@
+2017-08-22  Chris Dumez  <cdumez@apple.com>
+
+       Unreviewed, beacon/contentextensions is only expected to work on Sierra+.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-08-22  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: provide way for ShaderPrograms to be enabled/disabled
