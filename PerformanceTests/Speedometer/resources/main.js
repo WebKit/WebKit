@@ -165,7 +165,7 @@ function startBenchmark() {
                 break;
             case 'iterationCount':
                 var parsedValue = parseInt(value);
-                if (!isNaN(value))
+                if (!isNaN(parsedValue))
                     benchmarkClient.iterationCount = parsedValue;
                 else
                     console.error('Invalid iteration count: ' + value);

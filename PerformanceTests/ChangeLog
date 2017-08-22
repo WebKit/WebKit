@@ -1,5 +1,12 @@
 2017-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Commit the change meant to be included in the previous commit.
+
+        * Speedometer/resources/main.js:
+        (startBenchmark):
+
+2017-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Speedometer 2.0: Make it possible to change the iteration count via query string
         https://bugs.webkit.org/show_bug.cgi?id=175811
 
