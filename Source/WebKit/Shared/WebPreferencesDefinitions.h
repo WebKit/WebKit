@@ -290,6 +290,7 @@
     macro(ModernMediaControlsEnabled, modernMediaControlsEnabled, Bool, bool, DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED, "Modern Media Controls", "Use modern media controls look") \
     macro(ResourceTimingEnabled, resourceTimingEnabled, Bool, bool, DEFAULT_RESOURCE_TIMING_ENABLED, "Resource Timing", "Enable ResourceTiming API") \
     macro(UserTimingEnabled, userTimingEnabled, Bool, bool, true, "User Timing", "Enable UserTiming API") \
+    macro(BeaconAPIEnabled, beaconAPIEnabled, Bool, bool, true, "Beacon API", "Beacon API") \
     macro(LegacyEncryptedMediaAPIEnabled, legacyEncryptedMediaAPIEnabled, Bool, bool, DEFAULT_LEGACY_ENCRYPTED_MEDIA_API_ENABLED, "Enable Legacy EME API", "Enable legacy EME API") \
     macro(AllowMediaContentTypesRequiringHardwareSupportAsFallback, allowMediaContentTypesRequiringHardwareSupportAsFallback, Bool, bool, DEFAULT_ALLOW_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT_AS_FALLBACK, "Allow Media Content Types Requirining Hardware As Fallback", "Allow Media Content Types Requirining Hardware As Fallback") \
     macro(InspectorAdditionsEnabled, inspectorAdditionsEnabled, Bool, bool, false, "Web Inspector Additions", "Enable additional page APIs used by the Web Inspector frontend page") \
@@ -360,7 +361,6 @@
 //   wider testing).
 
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
-    macro(BeaconAPIEnabled, beaconAPIEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Beacon API", "Beacon API") \
     macro(ConstantPropertiesEnabled, constantPropertiesEnabled, Bool, bool, true, "Constant Properties", "Enable CSS constant() properties") \
     macro(DisplayContentsEnabled, displayContentsEnabled, Bool, bool, false, "CSS display: contents", "Enable CSS display: contents support") \
     macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \
