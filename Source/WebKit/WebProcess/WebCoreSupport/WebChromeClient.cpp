@@ -640,11 +640,6 @@ void WebChromeClient::unavailablePluginButtonClicked(Element& element, RenderEmb
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
-void WebChromeClient::scrollbarsModeDidChange() const
-{
-    notImplemented();
-}
-
 void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult, unsigned modifierFlags)
 {
     RefPtr<API::Object> userData;

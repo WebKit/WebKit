@@ -101,7 +101,6 @@ public:
     PlatformPageClient platformPageClient() const final;
     void contentsSizeChanged(WebCore::Frame&, const WebCore::IntSize&) const final;
 
-    void scrollbarsModeDidChange() const final { }
     void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags) final;
     bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
     void unavailablePluginButtonClicked(WebCore::Element&, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;

@@ -124,7 +124,6 @@ private:
     bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
     void unavailablePluginButtonClicked(WebCore::Element&, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
 
-    void scrollbarsModeDidChange() const final;
     void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags) final;
 
     void setToolTip(const String&, WebCore::TextDirection) final;

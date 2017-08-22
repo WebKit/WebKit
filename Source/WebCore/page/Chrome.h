@@ -81,7 +81,6 @@ public:
     IntRect rootViewToAccessibilityScreen(const IntRect&) const override;
 #endif
     PlatformPageClient platformPageClient() const override;
-    void scrollbarsModeDidChange() const override;
     void setCursor(const Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
 

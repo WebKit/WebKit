@@ -178,7 +178,6 @@ public:
 #endif    
 
     virtual PlatformPageClient platformPageClient() const = 0;
-    virtual void scrollbarsModeDidChange() const = 0;
 
 #if ENABLE(CURSOR_SUPPORT)
     virtual void setCursor(const Cursor&) = 0;

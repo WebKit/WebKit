@@ -122,7 +122,6 @@ class EmptyChromeClient : public ChromeClient {
     PlatformPageClient platformPageClient() const final { return 0; }
     void contentsSizeChanged(Frame&, const IntSize&) const final { }
 
-    void scrollbarsModeDidChange() const final { }
     void mouseDidMoveOverElement(const HitTestResult&, unsigned) final { }
 
     void setToolTip(const String&, TextDirection) final { }

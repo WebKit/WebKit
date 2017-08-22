@@ -110,7 +110,6 @@ private:
 
     void setStatusbarText(const String&) override;
 
-    void scrollbarsModeDidChange() const final { }
     bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
     void unavailablePluginButtonClicked(WebCore::Element&, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
     void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags) final;
