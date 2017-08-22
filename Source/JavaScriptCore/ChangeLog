@@ -1,5 +1,11 @@
 2017-08-22  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix windows build... maybe.
+
+        * CMakeLists.txt:
+
+2017-08-22  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, fix cloop build.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:

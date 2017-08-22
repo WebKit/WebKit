@@ -1162,7 +1162,9 @@ list(APPEND JavaScriptCore_HEADERS
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h
 )
 
-if (NOT WIN32)
+if (WIN32)
+  set(OFFLINE_ASM_BACKEND "X86, X86_64, C_LOOP")
+else ()
     if (WTF_CPU_X86)
         set(OFFLINE_ASM_BACKEND "X86")
     elseif (WTF_CPU_X86_64)
