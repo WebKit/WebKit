@@ -1,3 +1,17 @@
+2017-08-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win][Release] Crash when running testmasm executable.
+        https://bugs.webkit.org/show_bug.cgi?id=175772
+
+        Reviewed by Mark Lam.
+
+        We need to save and restore the modified registers in case one or more registers are callee saved
+        on the relevant platforms.
+
+        * assembler/testmasm.cpp:
+        (JSC::testProbeReadsArgumentRegisters):
+        (JSC::testProbeWritesArgumentRegisters):
+
 2017-08-21  Mark Lam  <mark.lam@apple.com>
 
         Change probe code to use static_assert instead of COMPILE_ASSERT.
