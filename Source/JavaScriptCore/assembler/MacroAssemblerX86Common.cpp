@@ -112,57 +112,57 @@ extern "C" void ctiMasmProbeTrampoline();
 // you need to change ctiMasmProbeTrampoline offsets above to match.
 #define PROBE_OFFSETOF(x) offsetof(struct Probe::State, x)
 #define PROBE_OFFSETOF_REG(x, reg) offsetof(struct Probe::State, x) + reg * sizeof((reinterpret_cast<Probe::State*>(0))->x[reg])
-COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeState_probeFunction_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(arg) == PROBE_ARG_OFFSET, ProbeState_arg_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(initializeStackFunction) == PROBE_INIT_STACK_FUNCTION_OFFSET, ProbeState_initializeStackFunction_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(initializeStackArg) == PROBE_INIT_STACK_ARG_OFFSET, ProbeState_initializeStackArg_offset_matches_ctiMasmProbeTrampoline);
+static_assert(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, "Probe::State::probeFunction's offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(arg) == PROBE_ARG_OFFSET, "Probe::State::arg's offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(initializeStackFunction) == PROBE_INIT_STACK_FUNCTION_OFFSET, "Probe::State::initializeStackFunction's offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(initializeStackArg) == PROBE_INIT_STACK_ARG_OFFSET, "Probe::State::initializeStackArg's offset matches ctiMasmProbeTrampoline");
 
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::eax) == PROBE_CPU_EAX_OFFSET, ProbeState_cpu_eax_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::ecx) == PROBE_CPU_ECX_OFFSET, ProbeState_cpu_ecx_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::edx) == PROBE_CPU_EDX_OFFSET, ProbeState_cpu_edx_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::ebx) == PROBE_CPU_EBX_OFFSET, ProbeState_cpu_ebx_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::esp) == PROBE_CPU_ESP_OFFSET, ProbeState_cpu_esp_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::ebp) == PROBE_CPU_EBP_OFFSET, ProbeState_cpu_ebp_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::esi) == PROBE_CPU_ESI_OFFSET, ProbeState_cpu_esi_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::edi) == PROBE_CPU_EDI_OFFSET, ProbeState_cpu_edi_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.sprs, X86Registers::eip) == PROBE_CPU_EIP_OFFSET, ProbeState_cpu_eip_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.sprs, X86Registers::eflags) == PROBE_CPU_EFLAGS_OFFSET, ProbeState_cpu_eflags_offset_matches_ctiMasmProbeTrampoline);
-
-#if CPU(X86_64)
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r8) == PROBE_CPU_R8_OFFSET, ProbeState_cpu_r8_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r9) == PROBE_CPU_R9_OFFSET, ProbeState_cpu_r9_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r10) == PROBE_CPU_R10_OFFSET, ProbeState_cpu_r10_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r11) == PROBE_CPU_R11_OFFSET, ProbeState_cpu_r11_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r12) == PROBE_CPU_R12_OFFSET, ProbeState_cpu_r12_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r13) == PROBE_CPU_R13_OFFSET, ProbeState_cpu_r13_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r14) == PROBE_CPU_R14_OFFSET, ProbeState_cpu_r14_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r15) == PROBE_CPU_R15_OFFSET, ProbeState_cpu_r15_offset_matches_ctiMasmProbeTrampoline);
-#endif // CPU(X86_64)
-
-COMPILE_ASSERT(!(PROBE_CPU_XMM0_OFFSET & 0x7), ProbeState_cpu_xmm0_offset_should_be_8_byte_aligned);
-
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm0) == PROBE_CPU_XMM0_OFFSET, ProbeState_cpu_xmm0_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm1) == PROBE_CPU_XMM1_OFFSET, ProbeState_cpu_xmm1_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm2) == PROBE_CPU_XMM2_OFFSET, ProbeState_cpu_xmm2_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm3) == PROBE_CPU_XMM3_OFFSET, ProbeState_cpu_xmm3_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm4) == PROBE_CPU_XMM4_OFFSET, ProbeState_cpu_xmm4_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm5) == PROBE_CPU_XMM5_OFFSET, ProbeState_cpu_xmm5_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm6) == PROBE_CPU_XMM6_OFFSET, ProbeState_cpu_xmm6_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm7) == PROBE_CPU_XMM7_OFFSET, ProbeState_cpu_xmm7_offset_matches_ctiMasmProbeTrampoline);
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::eax) == PROBE_CPU_EAX_OFFSET, "Probe::State::cpu.gprs[eax]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::ecx) == PROBE_CPU_ECX_OFFSET, "Probe::State::cpu.gprs[ecx]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::edx) == PROBE_CPU_EDX_OFFSET, "Probe::State::cpu.gprs[edx]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::ebx) == PROBE_CPU_EBX_OFFSET, "Probe::State::cpu.gprs[ebx]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::esp) == PROBE_CPU_ESP_OFFSET, "Probe::State::cpu.gprs[esp]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::ebp) == PROBE_CPU_EBP_OFFSET, "Probe::State::cpu.gprs[ebp]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::esi) == PROBE_CPU_ESI_OFFSET, "Probe::State::cpu.gprs[esi]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::edi) == PROBE_CPU_EDI_OFFSET, "Probe::State::cpu.gprs[edi]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.sprs, X86Registers::eip) == PROBE_CPU_EIP_OFFSET, "Probe::State::cpu.gprs[eip]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.sprs, X86Registers::eflags) == PROBE_CPU_EFLAGS_OFFSET, "Probe::State::cpu.sprs[eflags]'s offset matches ctiMasmProbeTrampoline");
 
 #if CPU(X86_64)
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm8) == PROBE_CPU_XMM8_OFFSET, ProbeState_cpu_xmm8_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm9) == PROBE_CPU_XMM9_OFFSET, ProbeState_cpu_xmm9_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm10) == PROBE_CPU_XMM10_OFFSET, ProbeState_cpu_xmm10_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm11) == PROBE_CPU_XMM11_OFFSET, ProbeState_cpu_xmm11_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm12) == PROBE_CPU_XMM12_OFFSET, ProbeState_cpu_xmm12_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm13) == PROBE_CPU_XMM13_OFFSET, ProbeState_cpu_xmm13_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm14) == PROBE_CPU_XMM14_OFFSET, ProbeState_cpu_xmm14_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm15) == PROBE_CPU_XMM15_OFFSET, ProbeState_cpu_xmm15_offset_matches_ctiMasmProbeTrampoline);
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r8) == PROBE_CPU_R8_OFFSET, "Probe::State::cpu.gprs[r8]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r9) == PROBE_CPU_R9_OFFSET, "Probe::State::cpu.gprs[r9]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r10) == PROBE_CPU_R10_OFFSET, "Probe::State::cpu.gprs[r10]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r11) == PROBE_CPU_R11_OFFSET, "Probe::State::cpu.gprs[r11]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r12) == PROBE_CPU_R12_OFFSET, "Probe::State::cpu.gprs[r12]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r13) == PROBE_CPU_R13_OFFSET, "Probe::State::cpu.gprs[r13]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r14) == PROBE_CPU_R14_OFFSET, "Probe::State::cpu.gprs[r14]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.gprs, X86Registers::r15) == PROBE_CPU_R15_OFFSET, "Probe::State::cpu.gprs[r15]'s offset matches ctiMasmProbeTrampoline");
 #endif // CPU(X86_64)
 
-COMPILE_ASSERT(sizeof(Probe::State) == PROBE_SIZE, ProbeState_size_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT((PROBE_EXECUTOR_OFFSET + PTR_SIZE) <= (PROBE_SIZE + OUT_SIZE), Must_have_room_after_ProbeContext_to_stash_the_probe_handler);
+static_assert(!(PROBE_CPU_XMM0_OFFSET & 0x7), "Probe::State::cpu.fprs[xmm0]'s offset should be 8 byte aligned");
+
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm0) == PROBE_CPU_XMM0_OFFSET, "Probe::State::cpu.fprs[xmm0]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm1) == PROBE_CPU_XMM1_OFFSET, "Probe::State::cpu.fprs[xmm1]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm2) == PROBE_CPU_XMM2_OFFSET, "Probe::State::cpu.fprs[xmm2]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm3) == PROBE_CPU_XMM3_OFFSET, "Probe::State::cpu.fprs[xmm3]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm4) == PROBE_CPU_XMM4_OFFSET, "Probe::State::cpu.fprs[xmm4]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm5) == PROBE_CPU_XMM5_OFFSET, "Probe::State::cpu.fprs[xmm5]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm6) == PROBE_CPU_XMM6_OFFSET, "Probe::State::cpu.fprs[xmm6]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm7) == PROBE_CPU_XMM7_OFFSET, "Probe::State::cpu.fprs[xmm7]'s offset matches ctiMasmProbeTrampoline");
+
+#if CPU(X86_64)
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm8) == PROBE_CPU_XMM8_OFFSET, "Probe::State::cpu.fprs[xmm8]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm9) == PROBE_CPU_XMM9_OFFSET, "Probe::State::cpu.fprs[xmm9]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm10) == PROBE_CPU_XMM10_OFFSET, "Probe::State::cpu.fprs[xmm10]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm11) == PROBE_CPU_XMM11_OFFSET, "Probe::State::cpu.fprs[xmm11]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm12) == PROBE_CPU_XMM12_OFFSET, "Probe::State::cpu.fprs[xmm12]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm13) == PROBE_CPU_XMM13_OFFSET, "Probe::State::cpu.fprs[xmm13]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm14) == PROBE_CPU_XMM14_OFFSET, "Probe::State::cpu.fprs[xmm14]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm15) == PROBE_CPU_XMM15_OFFSET, "Probe::State::cpu.fprs[xmm15]'s offset matches ctiMasmProbeTrampoline");
+#endif // CPU(X86_64)
+
+static_assert(sizeof(Probe::State) == PROBE_SIZE, "Probe::State::size's matches ctiMasmProbeTrampoline");
+static_assert((PROBE_EXECUTOR_OFFSET + PTR_SIZE) <= (PROBE_SIZE + OUT_SIZE), "Must have room after ProbeContext to stash the probe handler");
 
 #undef PROBE_OFFSETOF
 

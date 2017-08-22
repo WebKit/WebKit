@@ -121,72 +121,72 @@ using namespace ARMRegisters;
 // These ASSERTs remind you that if you change the layout of Probe::State,
 // you need to change ctiMasmProbeTrampoline offsets above to match.
 #define PROBE_OFFSETOF(x) offsetof(struct Probe::State, x)
-COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeState_probeFunction_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(arg) == PROBE_ARG_OFFSET, ProbeState_arg_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(initializeStackFunction) == PROBE_INIT_STACK_FUNCTION_OFFSET, ProbeState_initializeStackFunction_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(initializeStackArg) == PROBE_INIT_STACK_ARG_OFFSET, ProbeState_initializeStackArg_offset_matches_ctiMasmProbeTrampoline);
+static_assert(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, "Probe::State::probeFunction's offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(arg) == PROBE_ARG_OFFSET, "Probe::State::arg's offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(initializeStackFunction) == PROBE_INIT_STACK_FUNCTION_OFFSET, "Probe::State::initializeStackFunction's offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(initializeStackArg) == PROBE_INIT_STACK_ARG_OFFSET, "Probe::State::initializeStackArg's offset matches ctiMasmProbeTrampoline");
 
-COMPILE_ASSERT(!(PROBE_CPU_R0_OFFSET & 0x3), ProbeState_cpu_r0_offset_should_be_4_byte_aligned);
+static_assert(!(PROBE_CPU_R0_OFFSET & 0x3), "Probe::State::cpu.gprs[r0]'s offset should be 4 byte aligned");
 
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r0]) == PROBE_CPU_R0_OFFSET, ProbeState_cpu_r0_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r1]) == PROBE_CPU_R1_OFFSET, ProbeState_cpu_r1_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r2]) == PROBE_CPU_R2_OFFSET, ProbeState_cpu_r2_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r3]) == PROBE_CPU_R3_OFFSET, ProbeState_cpu_r3_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r4]) == PROBE_CPU_R4_OFFSET, ProbeState_cpu_r4_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r5]) == PROBE_CPU_R5_OFFSET, ProbeState_cpu_r5_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r6]) == PROBE_CPU_R6_OFFSET, ProbeState_cpu_r6_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r7]) == PROBE_CPU_R7_OFFSET, ProbeState_cpu_r7_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r8]) == PROBE_CPU_R8_OFFSET, ProbeState_cpu_r8_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r9]) == PROBE_CPU_R9_OFFSET, ProbeState_cpu_r9_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r10]) == PROBE_CPU_R10_OFFSET, ProbeState_cpu_r10_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r11]) == PROBE_CPU_R11_OFFSET, ProbeState_cpu_r11_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::ip]) == PROBE_CPU_IP_OFFSET, ProbeState_cpu_ip_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::sp]) == PROBE_CPU_SP_OFFSET, ProbeState_cpu_sp_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::lr]) == PROBE_CPU_LR_OFFSET, ProbeState_cpu_lr_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::pc]) == PROBE_CPU_PC_OFFSET, ProbeState_cpu_pc_offset_matches_ctiMasmProbeTrampoline);
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r0]) == PROBE_CPU_R0_OFFSET, "Probe::State::cpu.gprs[r0]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r1]) == PROBE_CPU_R1_OFFSET, "Probe::State::cpu.gprs[r1]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r2]) == PROBE_CPU_R2_OFFSET, "Probe::State::cpu.gprs[r2]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r3]) == PROBE_CPU_R3_OFFSET, "Probe::State::cpu.gprs[r3]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r4]) == PROBE_CPU_R4_OFFSET, "Probe::State::cpu.gprs[r4]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r5]) == PROBE_CPU_R5_OFFSET, "Probe::State::cpu.gprs[r5]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r6]) == PROBE_CPU_R6_OFFSET, "Probe::State::cpu.gprs[r6]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r7]) == PROBE_CPU_R7_OFFSET, "Probe::State::cpu.gprs[r7]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r8]) == PROBE_CPU_R8_OFFSET, "Probe::State::cpu.gprs[r8]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r9]) == PROBE_CPU_R9_OFFSET, "Probe::State::cpu.gprs[r9]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r10]) == PROBE_CPU_R10_OFFSET, "Probe::State::cpu.gprs[r10]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::r11]) == PROBE_CPU_R11_OFFSET, "Probe::State::cpu.gprs[r11]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::ip]) == PROBE_CPU_IP_OFFSET, "Probe::State::cpu.gprs[ip]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::sp]) == PROBE_CPU_SP_OFFSET, "Probe::State::cpu.gprs[sp]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::lr]) == PROBE_CPU_LR_OFFSET, "Probe::State::cpu.gprs[lr]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.gprs[ARMRegisters::pc]) == PROBE_CPU_PC_OFFSET, "Probe::State::cpu.gprs[pc]'s offset matches ctiMasmProbeTrampoline");
 
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.sprs[ARMRegisters::apsr]) == PROBE_CPU_APSR_OFFSET, ProbeState_cpu_apsr_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.sprs[ARMRegisters::fpscr]) == PROBE_CPU_FPSCR_OFFSET, ProbeState_cpu_fpscr_offset_matches_ctiMasmProbeTrampoline);
+static_assert(PROBE_OFFSETOF(cpu.sprs[ARMRegisters::apsr]) == PROBE_CPU_APSR_OFFSET, "Probe::State::cpu.sprs[apsr]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.sprs[ARMRegisters::fpscr]) == PROBE_CPU_FPSCR_OFFSET, "Probe::State::cpu.sprs[fpscr]'s offset matches ctiMasmProbeTrampoline");
 
-COMPILE_ASSERT(!(PROBE_CPU_D0_OFFSET & 0x7), ProbeState_cpu_d0_offset_should_be_8_byte_aligned);
+static_assert(!(PROBE_CPU_D0_OFFSET & 0x7), "Probe::State::cpu.fprs[d0]'s offset should be 8 byte aligned");
 
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d0]) == PROBE_CPU_D0_OFFSET, ProbeState_cpu_d0_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d1]) == PROBE_CPU_D1_OFFSET, ProbeState_cpu_d1_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d2]) == PROBE_CPU_D2_OFFSET, ProbeState_cpu_d2_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d3]) == PROBE_CPU_D3_OFFSET, ProbeState_cpu_d3_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d4]) == PROBE_CPU_D4_OFFSET, ProbeState_cpu_d4_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d5]) == PROBE_CPU_D5_OFFSET, ProbeState_cpu_d5_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d6]) == PROBE_CPU_D6_OFFSET, ProbeState_cpu_d6_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d7]) == PROBE_CPU_D7_OFFSET, ProbeState_cpu_d7_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d8]) == PROBE_CPU_D8_OFFSET, ProbeState_cpu_d8_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d9]) == PROBE_CPU_D9_OFFSET, ProbeState_cpu_d9_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d10]) == PROBE_CPU_D10_OFFSET, ProbeState_cpu_d10_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d11]) == PROBE_CPU_D11_OFFSET, ProbeState_cpu_d11_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d12]) == PROBE_CPU_D12_OFFSET, ProbeState_cpu_d12_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d13]) == PROBE_CPU_D13_OFFSET, ProbeState_cpu_d13_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d14]) == PROBE_CPU_D14_OFFSET, ProbeState_cpu_d14_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d15]) == PROBE_CPU_D15_OFFSET, ProbeState_cpu_d15_offset_matches_ctiMasmProbeTrampoline);
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d0]) == PROBE_CPU_D0_OFFSET, "Probe::State::cpu.fprs[d0]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d1]) == PROBE_CPU_D1_OFFSET, "Probe::State::cpu.fprs[d1]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d2]) == PROBE_CPU_D2_OFFSET, "Probe::State::cpu.fprs[d2]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d3]) == PROBE_CPU_D3_OFFSET, "Probe::State::cpu.fprs[d3]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d4]) == PROBE_CPU_D4_OFFSET, "Probe::State::cpu.fprs[d4]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d5]) == PROBE_CPU_D5_OFFSET, "Probe::State::cpu.fprs[d5]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d6]) == PROBE_CPU_D6_OFFSET, "Probe::State::cpu.fprs[d6]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d7]) == PROBE_CPU_D7_OFFSET, "Probe::State::cpu.fprs[d7]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d8]) == PROBE_CPU_D8_OFFSET, "Probe::State::cpu.fprs[d8]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d9]) == PROBE_CPU_D9_OFFSET, "Probe::State::cpu.fprs[d9]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d10]) == PROBE_CPU_D10_OFFSET, "Probe::State::cpu.fprs[d10]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d11]) == PROBE_CPU_D11_OFFSET, "Probe::State::cpu.fprs[d11]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d12]) == PROBE_CPU_D12_OFFSET, "Probe::State::cpu.fprs[d12]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d13]) == PROBE_CPU_D13_OFFSET, "Probe::State::cpu.fprs[d13]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d14]) == PROBE_CPU_D14_OFFSET, "Probe::State::cpu.fprs[d14]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d15]) == PROBE_CPU_D15_OFFSET, "Probe::State::cpu.fprs[d15]'s offset matches ctiMasmProbeTrampoline");
 
 #if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d16]) == PROBE_CPU_D16_OFFSET, ProbeState_cpu_d16_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d17]) == PROBE_CPU_D17_OFFSET, ProbeState_cpu_d17_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d18]) == PROBE_CPU_D18_OFFSET, ProbeState_cpu_d18_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d19]) == PROBE_CPU_D19_OFFSET, ProbeState_cpu_d19_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d20]) == PROBE_CPU_D20_OFFSET, ProbeState_cpu_d20_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d21]) == PROBE_CPU_D21_OFFSET, ProbeState_cpu_d21_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d22]) == PROBE_CPU_D22_OFFSET, ProbeState_cpu_d22_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d23]) == PROBE_CPU_D23_OFFSET, ProbeState_cpu_d23_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d24]) == PROBE_CPU_D24_OFFSET, ProbeState_cpu_d24_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d25]) == PROBE_CPU_D25_OFFSET, ProbeState_cpu_d25_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d26]) == PROBE_CPU_D26_OFFSET, ProbeState_cpu_d26_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d27]) == PROBE_CPU_D27_OFFSET, ProbeState_cpu_d27_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d28]) == PROBE_CPU_D28_OFFSET, ProbeState_cpu_d28_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d29]) == PROBE_CPU_D29_OFFSET, ProbeState_cpu_d29_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d30]) == PROBE_CPU_D30_OFFSET, ProbeState_cpu_d30_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d31]) == PROBE_CPU_D31_OFFSET, ProbeState_cpu_d31_offset_matches_ctiMasmProbeTrampoline);
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d16]) == PROBE_CPU_D16_OFFSET, "Probe::State::cpu.fprs[d16]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d17]) == PROBE_CPU_D17_OFFSET, "Probe::State::cpu.fprs[d17]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d18]) == PROBE_CPU_D18_OFFSET, "Probe::State::cpu.fprs[d18]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d19]) == PROBE_CPU_D19_OFFSET, "Probe::State::cpu.fprs[d19]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d20]) == PROBE_CPU_D20_OFFSET, "Probe::State::cpu.fprs[d20]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d21]) == PROBE_CPU_D21_OFFSET, "Probe::State::cpu.fprs[d21]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d22]) == PROBE_CPU_D22_OFFSET, "Probe::State::cpu.fprs[d22]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d23]) == PROBE_CPU_D23_OFFSET, "Probe::State::cpu.fprs[d23]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d24]) == PROBE_CPU_D24_OFFSET, "Probe::State::cpu.fprs[d24]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d25]) == PROBE_CPU_D25_OFFSET, "Probe::State::cpu.fprs[d25]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d26]) == PROBE_CPU_D26_OFFSET, "Probe::State::cpu.fprs[d26]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d27]) == PROBE_CPU_D27_OFFSET, "Probe::State::cpu.fprs[d27]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d28]) == PROBE_CPU_D28_OFFSET, "Probe::State::cpu.fprs[d28]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d29]) == PROBE_CPU_D29_OFFSET, "Probe::State::cpu.fprs[d29]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d30]) == PROBE_CPU_D30_OFFSET, "Probe::State::cpu.fprs[d30]'s offset matches ctiMasmProbeTrampoline");
+static_assert(PROBE_OFFSETOF(cpu.fprs[ARMRegisters::d31]) == PROBE_CPU_D31_OFFSET, "Probe::State::cpu.fprs[d31]'s offset matches ctiMasmProbeTrampoline");
 #endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
 
-COMPILE_ASSERT(sizeof(Probe::State) == PROBE_SIZE, ProbeState_size_matches_ctiMasmProbeTrampoline);
+static_assert(sizeof(Probe::State) == PROBE_SIZE, "Probe::State's size matches ctiMasmProbeTrampoline");
 #undef PROBE_OFFSETOF
 
 struct IncomingRecord {
