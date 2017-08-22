@@ -1,3 +1,9 @@
+2017-08-22  Keith Miller  <keith_miller@apple.com>
+
+        Unriviewed, fix windows build... for realz.
+
+        * CMakeLists.txt:
+
 2017-08-22  Saam Barati  <sbarati@apple.com>
 
         We are using valueProfileForBytecodeOffset when there may not be a value profile
