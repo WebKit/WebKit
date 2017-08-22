@@ -1,5 +1,19 @@
 2017-08-21  Keith Miller  <keith_miller@apple.com>
 
+        Make generate_offset_extractor.rb architectures argument more robust
+        https://bugs.webkit.org/show_bug.cgi?id=175809
+
+        Reviewed by Joseph Pecoraro.
+
+        It turns out that some of our builders pass their architectures as
+        space separated lists.  I decided to just make the splitting of
+        our list robust to any reasonable combination of spaces and
+        commas.
+
+        * offlineasm/generate_offset_extractor.rb:
+
+2017-08-21  Keith Miller  <keith_miller@apple.com>
+
         Only generate offline asm for the ARCHS (xcodebuild) or the current system (CMake)
         https://bugs.webkit.org/show_bug.cgi?id=175690
 
