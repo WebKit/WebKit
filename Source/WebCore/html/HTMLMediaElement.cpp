@@ -519,6 +519,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
     AudioSession::sharedSession().addMutedStateObserver(this);
 #endif
+
+    mediaSession().clientWillBeginAutoplaying();
 }
 
 HTMLMediaElement::~HTMLMediaElement()
@@ -595,6 +597,7 @@ HTMLMediaElement::~HTMLMediaElement()
     m_updatePlaybackControlsManagerQueue.close();
     m_playbackControlsManagerBehaviorRestrictionsQueue.close();
     m_resourceSelectionTaskQueue.close();
+    m_visibilityChangeTaskQueue.close();
 #if ENABLE(ENCRYPTED_MEDIA)
     m_encryptedMediaQueue.close();
 #endif
@@ -2332,11 +2335,12 @@ void HTMLMediaElement::mediaPlayerReadyStateChanged(MediaPlayer*)
 SuccessOr<MediaPlaybackDenialReason> HTMLMediaElement::canTransitionFromAutoplayToPlay() const
 {
     if (isAutoplaying()
-     && mediaSession().autoplayPermitted()
-     && paused()
-     && autoplay()
-     && !pausedForUserInteraction()
-     && !document().isSandboxed(SandboxAutomaticFeatures))
+        && mediaSession().autoplayPermitted()
+        && paused()
+        && autoplay()
+        && !pausedForUserInteraction()
+        && !document().isSandboxed(SandboxAutomaticFeatures)
+        && m_readyState == HAVE_ENOUGH_DATA)
         return mediaSession().playbackPermitted(*this);
 
     RELEASE_LOG(Media, "HTMLMediaElement::canTransitionFromAutoplayToPlay - page consent required");
@@ -7621,8 +7625,10 @@ bool HTMLMediaElement::isVideoTooSmallForInlinePlayback()
 
 void HTMLMediaElement::isVisibleInViewportChanged()
 {
-    updateShouldAutoplay();
-    scheduleUpdatePlaybackControlsManager();
+    m_visibilityChangeTaskQueue.enqueueTask([this] {
+        updateShouldAutoplay();
+        scheduleUpdatePlaybackControlsManager();
+    });
 }
 
 void HTMLMediaElement::updateShouldAutoplay()
