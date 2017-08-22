@@ -1,3 +1,9 @@
+2017-08-22  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, fix cloop build.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2017-08-22  Per Arne Vollan  <pvollan@apple.com>
 
         [Win][Release] Crash when running testmasm executable.
