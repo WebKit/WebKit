@@ -112,6 +112,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     SoupNetworkSession::clearOldSoupCache(WebCore::directoryName(m_diskCacheDirectory));
 
+#if ENABLE(NETWORK_CACHE)
     OptionSet<NetworkCache::Cache::Option> cacheOptions { NetworkCache::Cache::Option::RegisterNotify };
     if (parameters.shouldEnableNetworkCacheEfficacyLogging)
         cacheOptions |= NetworkCache::Cache::Option::EfficacyLogging;
@@ -121,6 +122,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 #endif
 
     m_cache = NetworkCache::Cache::open(m_diskCacheDirectory, cacheOptions);
+#endif
 
     if (!parameters.cookiePersistentStoragePath.isEmpty()) {
         supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
@@ -158,9 +160,14 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
 
 void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler)
 {
+#if ENABLE(NETWORK_CACHE)
     if (!m_cache)
         return;
     m_cache->clear(modifiedSince, WTFMove(completionHandler));
+#else
+    UNUSED_PARAM(modifiedSince);
+    UNUSED_PARAM(completionHandler);
+#endif
 }
 
 void NetworkProcess::platformTerminate()

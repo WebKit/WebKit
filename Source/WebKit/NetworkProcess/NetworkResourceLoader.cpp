@@ -86,7 +86,9 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     , m_connection(connection)
     , m_defersLoading(parameters.defersLoading)
     , m_bufferingTimer(*this, &NetworkResourceLoader::bufferingTimerFired)
+#if ENABLE(NETWORK_CACHE)
     , m_cache(sessionID().isEphemeral() ? nullptr : NetworkProcess::singleton().cache())
+#endif
 {
     ASSERT(RunLoop::isMain());
     // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.

@@ -431,11 +431,13 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
     });
 }
 
+#if ENABLE(NETWORK_CACHE)
 void NetworkConnectionToWebProcess::storeDerivedDataToCache(const WebKit::NetworkCache::DataKey& dataKey, const IPC::DataReference& data)
 {
     if (auto* cache = NetworkProcess::singleton().cache())
         cache->storeData(dataKey, data.data(), data.size());
 }
+#endif
 
 void NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 {

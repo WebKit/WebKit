@@ -461,9 +461,16 @@ void WebLoaderStrategy::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceE
 
 void WebLoaderStrategy::storeDerivedDataToCache(const SHA1::Digest& bodyHash, const String& type, const String& partition, WebCore::SharedBuffer& data)
 {
+#if ENABLE(NETWORK_CACHE)
     NetworkCache::DataKey key { partition, type, bodyHash };
     IPC::SharedBufferDataReference dataReference { &data };
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::StoreDerivedDataToCache(key, dataReference), 0);
+#else
+    UNUSED_PARAM(bodyHash);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(partition);
+    UNUSED_PARAM(data);
+#endif
 }
 
 void WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)

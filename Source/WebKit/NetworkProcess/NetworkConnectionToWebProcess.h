@@ -112,7 +112,9 @@ private:
     void unregisterBlobURL(const WebCore::URL&);
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, uint64_t requestIdentifier);
 
+#if ENABLE(NETWORK_CACHE)
     void storeDerivedDataToCache(const WebKit::NetworkCache::DataKey&, const IPC::DataReference&);
+#endif
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
 

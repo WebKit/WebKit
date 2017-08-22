@@ -49,7 +49,9 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     BlobSize(WebCore::URL url) -> (uint64_t resultSize)
     WriteBlobsToTemporaryFiles(Vector<String> blobURLs, uint64_t requestIdentifier)
 
+#if ENABLE(NETWORK_CACHE)
     StoreDerivedDataToCache(WebKit::NetworkCache::DataKey key, IPC::DataReference data)
+#endif
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
