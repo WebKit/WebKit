@@ -1,3 +1,12 @@
+2017-08-22  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, enable http/wpt/beacon/contentextensions on Mac WK2 only.
+
+        It seems content extensions are not supported by WKTR on iOS.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2017-08-22  Brent Fulgham  <bfulgham@apple.com> and Pranjal Jumde  <pjumde@apple.com>
 
         Disable access to secure cookies if an HTTPS site loads mixed content
