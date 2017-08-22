@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,11 +54,16 @@ inline NetworkStorageSession& storageSession(const Document& document)
     return context ? context->storageSession() : NetworkStorageSession::defaultStorageSession();
 }
 
-String cookies(const Document& document, const URL& url)
+String cookies(Document& document, const URL& url)
 {
     TraceScope scope(FetchCookiesStart, FetchCookiesEnd);
 
-    return platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document.firstPartyForCookies(), url);
+    auto includeSecureCookiesOrNot = (url.protocolIs("https") && !document.foundMixedContent()) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+    auto result = platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document.firstPartyForCookies(), url, includeSecureCookiesOrNot);
+    if (result.second)
+        document.setSecureCookiesAccessed();
+
+    return result.first;
 }
 
 void setCookies(Document& document, const URL& url, const String& cookieString)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPlatformStrategies_h
-#define WebPlatformStrategies_h
+#pragma once
 
 #include <WebCore/CookiesStrategy.h>
 #include <WebCore/LoaderStrategy.h>
@@ -48,7 +47,7 @@ private:
     WebCore::BlobRegistry* createBlobRegistry() override;
 
     // WebCore::CookiesStrategy
-    String cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) override;
+    std::pair<String, bool> cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies) override;
     void setCookiesFromDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, const String&) override;
     bool cookiesEnabled(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) override;
     String cookieRequestHeaderFieldValue(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) override;
@@ -88,4 +87,3 @@ private:
     long setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) override;
 };
 
-#endif // WebPlatformStrategies_h

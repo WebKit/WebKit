@@ -359,6 +359,7 @@ def headers_for_type(type):
         'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::HasInsecureContent': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::Highlight': ['<WebCore/InspectorOverlay.h>'],
+        'WebCore::IncludeSecureCookies': ['<WebCore/CookiesStrategy.h>'],
         'WebCore::KeyframeValueList': ['<WebCore/GraphicsLayer.h>'],
         'WebCore::KeypressCommand': ['<WebCore/KeyboardEvent.h>'],
         'WebCore::MediaConstraints': ['<WebCore/MediaConstraints.h>'],
@@ -390,7 +391,6 @@ def headers_for_type(type):
         'struct WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
         'std::chrono::system_clock::time_point': ['<chrono>'],
-        'WebKit::LayerHostingMode': ['"LayerTreeContext.h"'],
     }
 
     headers = []

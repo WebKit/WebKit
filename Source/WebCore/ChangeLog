@@ -1,3 +1,42 @@
+2017-08-22  Brent Fulgham  <bfulgham@apple.com> and Pranjal Jumde  <pjumde@apple.com>
+
+        Disable access to secure cookies if an HTTPS site loads mixed content
+        https://bugs.webkit.org/show_bug.cgi?id=157053
+        <rdar://problem/11290808>
+
+        Reviewed by Dan Bates.
+
+        Tests: http/tests/security/mixedContent/insecure-css-with-secure-cookies.html
+               http/tests/security/mixedContent/insecure-image-with-securecookie-block.html
+               http/tests/security/mixedContent/insecure-image-with-securecookie.html
+               http/tests/security/mixedContent/insecure-script-with-secure-cookies.html
+               http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies-block.html
+               http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies.html
+
+        * dom/SecurityContext.h: 
+        (WebCore::SecurityContext::secureCookiesAccessed): Added.
+        (WebCore::SecurityContext::setSecureCookiesAccessed): Added.
+        * loader/CookieJar.cpp:
+        (WebCore::cookies): Pass Document as non-const so we can call 'setSecureCookiesAccessed' if necessary.
+        * loader/CookieJar.h:
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::canRunInsecureContent): Updated checks to avoid running insecure content
+        if secure cookies were accessed. 
+        * platform/CookiesStrategy.h:
+        (WebCore::CookiesStrategy::cookiesForDOM): Pass new argument indicating whether secure cookies should be included in the response.
+        * platform/network/PlatformCookieJar.h:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (copyCookiesForURLWithFirstPartyURL): Revise to accept new 'IncludeSecureCookiesOrNot' argument.
+        (WebCore::cookiesForSession): Updated to accept new 'IncludeSecureCookiesOrNot' argument. Also determine if secure cookies were
+        included in the response, and return this to the caller.
+        (WebCore::cookieRequestHeaderFieldValue): Revise for new 'copyCookiesForURLWithFirstPartyURL' signature.
+        (WebCore::getRawCookies): Ditto.
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookiesForSession): Updated checks to keep track of secure cookies and filter out secure cookies if insecure content
+        was accessed.
+        (WebCore::cookiesForDOM): Update for new arguments and to return a pair.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+
 2017-08-22  Jer Noble  <jer.noble@apple.com>
 
         Autoplay Muted Videos Don't Play When Outside Viewport

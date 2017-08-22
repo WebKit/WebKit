@@ -1,3 +1,36 @@
+2017-08-22  Brent Fulgham  <bfulgham@apple.com> and Pranjal Jumde  <pjumde@apple.com>
+
+        Disable access to secure cookies if an HTTPS site loads mixed content
+        https://bugs.webkit.org/show_bug.cgi?id=157053
+        <rdar://problem/11290808>
+
+        Reviewed by Dan Bates.
+
+        * http/tests/security/mixedContent/insecure-css-with-secure-cookies-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-css-with-secure-cookies.html: Added.
+        * http/tests/security/mixedContent/insecure-executable-css-with-secure-cookies.html: Added.
+        * http/tests/security/mixedContent/insecure-executable-css-with-secure-cookies-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-image-with-securecookie-block-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-image-with-securecookie-block.html: Added.
+        * http/tests/security/mixedContent/insecure-image-with-securecookie-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-image-with-securecookie.html: Added.
+        * http/tests/security/mixedContent/insecure-script-with-secure-cookies-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-script-with-secure-cookies.html: Added.
+        * http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies-block-expected.txt: Added.
+        * http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies-block.html: Added.
+        * http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies-expected.txt: Added.
+        * http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-css-secure-cookies.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-executable-css-with-secure-cookies.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-image-secure-cookie-block.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-image-secure-cookie.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-insecure-script-secure-cookies.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-redirect-https-to-http-image-secure-cookie-block.html: Added.
+        * http/tests/security/mixedContent/resources/frame-with-redirect-https-to-http-image-secure-cookie.html: Added.
+        * http/tests/security/mixedContent/resources/insecure-executable.css: Added.
+        * http/tests/security/mixedContent/resources/insecure.css: Added.
+        * http/tests/security/resources/greenbox-hotspot5-4.cur: Added.
+
 2017-08-22  Jer Noble  <jer.noble@apple.com>
 
         Autoplay Muted Videos Don't Play When Outside Viewport

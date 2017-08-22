@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008, 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,14 @@ namespace WebCore {
 
 class URL;
 class NetworkStorageSession;
+
 struct Cookie;
+
+enum class IncludeSecureCookies;
 
 // FIXME: These should probably be NetworkStorageSession member functions.
 
-WEBCORE_EXPORT String cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&);
+WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies);
 WEBCORE_EXPORT void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String&);
 WEBCORE_EXPORT bool cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&);
 WEBCORE_EXPORT String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&);

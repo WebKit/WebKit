@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,7 +93,7 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin& securityOrigin, 
     if (!m_frame.document()->contentSecurityPolicy()->allowRunningOrDisplayingInsecureContent(url))
         return false;
 
-    bool allowed = !m_frame.document()->isStrictMixedContentMode() && m_frame.settings().allowRunningOfInsecureContent() && !m_frame.document()->geolocationAccessed();
+    bool allowed = !m_frame.document()->isStrictMixedContentMode() && m_frame.settings().allowRunningOfInsecureContent() && !m_frame.document()->geolocationAccessed() && !m_frame.document()->secureCookiesAccessed();
     logWarning(allowed, "run", url);
 
     if (allowed) {

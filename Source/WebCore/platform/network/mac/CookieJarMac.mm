@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import "config.h"
 #import "PlatformCookieJar.h"
 
+#import "CookiesStrategy.h"
 #import "NetworkStorageSession.h"
 #import "WebCoreSystemInterface.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -132,7 +133,7 @@ static NSArray *cookiesForURL(const NetworkStorageSession& session, const URL& f
 }
 
 enum IncludeHTTPOnlyOrNot { DoNotIncludeHTTPOnly, IncludeHTTPOnly };
-static String cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeHTTPOnlyOrNot includeHTTPOnly)
+static String cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeHTTPOnlyOrNot includeHTTPOnly, IncludeSecureCookies includeSecureCookies, bool& didAccessSecureCookies)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -148,6 +149,12 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
         if (!includeHTTPOnly && [cookie isHTTPOnly])
             continue;
 
+        if ([cookie isSecure]) {
+            didAccessSecureCookies = true;
+            if (includeSecureCookies == IncludeSecureCookies::No)
+                continue;
+        }
+
         if (!cookiesBuilder.isEmpty())
             cookiesBuilder.appendLiteral("; ");
 
@@ -161,14 +168,17 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
     return String();
 }
 
-String cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)
 {
-    return cookiesForSession(session, firstParty, url, DoNotIncludeHTTPOnly);
+    bool didAccessSecureCookies = false;
+    auto cookieString = cookiesForSession(session, firstParty, url, DoNotIncludeHTTPOnly, includeSecureCookies, didAccessSecureCookies);
+    return { cookieString, didAccessSecureCookies };
 }
 
 String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
-    return cookiesForSession(session, firstParty, url, IncludeHTTPOnly);
+    bool ignore = false;
+    return cookiesForSession(session, firstParty, url, IncludeHTTPOnly, IncludeSecureCookies::No, ignore);
 }
 
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& cookieStr)

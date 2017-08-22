@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,8 @@ class BlobDataFileReference;
 class HTTPHeaderMap;
 class ResourceError;
 class ResourceRequest;
+
+enum class IncludeSecureCookies;
 }
 
 namespace WebKit {
@@ -95,7 +97,7 @@ private:
     void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(PAL::SessionID, uint64_t mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    void cookiesForDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, String& result);
+    void cookiesForDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies, String& result, bool& secureCookiesAccessed);
     void setCookiesFromDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, const String&);
     void cookiesEnabled(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, bool& result);
     void cookieRequestHeaderFieldValue(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, String& result);

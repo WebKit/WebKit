@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,6 +84,8 @@ public:
     void setFoundMixedContent() { m_foundMixedContent = true; }
     bool geolocationAccessed() const { return m_geolocationAccessed; }
     void setGeolocationAccessed() { m_geolocationAccessed = true; }
+    bool secureCookiesAccessed() const { return m_secureCookiesAccessed; }
+    void setSecureCookiesAccessed() { m_secureCookiesAccessed = true; }
 
     bool isStrictMixedContentMode() const { return m_isStrictMixedContentMode; }
     void setStrictMixedContentMode(bool strictMixedContentMode) { m_isStrictMixedContentMode = strictMixedContentMode; }
@@ -111,6 +114,7 @@ private:
     bool m_haveInitializedSecurityOrigin { false };
     bool m_foundMixedContent { false };
     bool m_geolocationAccessed { false };
+    bool m_secureCookiesAccessed { false };
     bool m_isStrictMixedContentMode { false };
 };
 
