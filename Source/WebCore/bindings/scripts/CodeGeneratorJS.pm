@@ -4063,6 +4063,7 @@ sub GenerateImplementation
         my @settingsEnabledProperties = @settingsEnabledOperations;
         push(@settingsEnabledProperties, @settingsEnabledAttributes);
         if (scalar(@settingsEnabledProperties)) {
+            AddToImplIncludes("Document.h");
             AddToImplIncludes("Settings.h");
             push(@implContent, "    auto* context = jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext();\n");
             push(@implContent, "    ASSERT(!context || context->isDocument());\n");
