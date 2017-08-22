@@ -2490,18 +2490,18 @@ void CodeBlock::updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonAr
     numberOfLiveNonArgumentValueProfiles = 0;
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
     for (unsigned i = 0; i < totalNumberOfValueProfiles(); ++i) {
-        ValueProfile* profile = getFromAllValueProfiles(i);
-        unsigned numSamples = profile->totalNumberOfSamples();
+        ValueProfile& profile = getFromAllValueProfiles(i);
+        unsigned numSamples = profile.totalNumberOfSamples();
         if (numSamples > ValueProfile::numberOfBuckets)
             numSamples = ValueProfile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
         numberOfSamplesInProfiles += numSamples;
-        if (profile->m_bytecodeOffset < 0) {
-            profile->computeUpdatedPrediction(locker);
+        if (profile.m_bytecodeOffset < 0) {
+            profile.computeUpdatedPrediction(locker);
             continue;
         }
-        if (profile->numberOfSamples() || profile->m_prediction != SpecNone)
+        if (profile.numberOfSamples() || profile.m_prediction != SpecNone)
             numberOfLiveNonArgumentValueProfiles++;
-        profile->computeUpdatedPrediction(locker);
+        profile.computeUpdatedPrediction(locker);
     }
     
 #if ENABLE(DFG_JIT)
@@ -2609,17 +2609,17 @@ void CodeBlock::dumpValueProfiles()
 {
     dataLog("ValueProfile for ", *this, ":\n");
     for (unsigned i = 0; i < totalNumberOfValueProfiles(); ++i) {
-        ValueProfile* profile = getFromAllValueProfiles(i);
-        if (profile->m_bytecodeOffset < 0) {
-            ASSERT(profile->m_bytecodeOffset == -1);
+        ValueProfile& profile = getFromAllValueProfiles(i);
+        if (profile.m_bytecodeOffset < 0) {
+            ASSERT(profile.m_bytecodeOffset == -1);
             dataLogF("   arg = %u: ", i);
         } else
-            dataLogF("   bc = %d: ", profile->m_bytecodeOffset);
-        if (!profile->numberOfSamples() && profile->m_prediction == SpecNone) {
+            dataLogF("   bc = %d: ", profile.m_bytecodeOffset);
+        if (!profile.numberOfSamples() && profile.m_prediction == SpecNone) {
             dataLogF("<empty>\n");
             continue;
         }
-        profile->dump(WTF::dataFile());
+        profile.dump(WTF::dataFile());
         dataLogF("\n");
     }
     dataLog("RareCaseProfile for ", *this, ":\n");
@@ -2739,11 +2739,19 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
     return "";
 }
 
-ValueProfile* CodeBlock::valueProfileForBytecodeOffset(int bytecodeOffset)
+ValueProfile* CodeBlock::tryGetValueProfileForBytecodeOffset(int bytecodeOffset)
+{
+    return tryBinarySearch<ValueProfile, int>(
+        m_valueProfiles, m_valueProfiles.size(), bytecodeOffset,
+        getValueProfileBytecodeOffset<ValueProfile>);
+}
+
+ValueProfile& CodeBlock::valueProfileForBytecodeOffset(int bytecodeOffset)
 {
     OpcodeID opcodeID = Interpreter::getOpcodeID(instructions()[bytecodeOffset]);
     unsigned length = opcodeLength(opcodeID);
-    return instructions()[bytecodeOffset + length - 1].u.profile;
+    ASSERT(!!tryGetValueProfileForBytecodeOffset(bytecodeOffset));
+    return *instructions()[bytecodeOffset + length - 1].u.profile;
 }
 
 void CodeBlock::validate()
@@ -2767,6 +2775,14 @@ void CodeBlock::validate()
             beginValidationDidFail();
             dataLog("    Variable ", reg, " is expected to be dead.\n");
             dataLog("    Result: ", liveAtHead, "\n");
+            endValidationDidFail();
+        }
+    }
+
+    for (unsigned i = 0; i + 1 < numberOfValueProfiles(); ++i) {
+        if (valueProfile(i).m_bytecodeOffset > valueProfile(i + 1).m_bytecodeOffset) {
+            beginValidationDidFail();
+            dataLog("    Value profiles are not sorted.\n");
             endValidationDidFail();
         }
     }

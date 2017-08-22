@@ -968,10 +968,9 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(int src)
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
-inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
+inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile)
 {
     ASSERT(shouldEmitProfiling());
-    ASSERT(valueProfile);
 
     const RegisterID value = regT0;
 #if USE(JSVALUE32_64)
@@ -981,9 +980,9 @@ inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
     // We're in a simple configuration: only one bucket, so we can just do a direct
     // store.
 #if USE(JSVALUE64)
-    store64(value, valueProfile->m_buckets);
+    store64(value, valueProfile.m_buckets);
 #else
-    EncodedValueDescriptor* descriptor = bitwise_cast<EncodedValueDescriptor*>(valueProfile->m_buckets);
+    EncodedValueDescriptor* descriptor = bitwise_cast<EncodedValueDescriptor*>(valueProfile.m_buckets);
     store32(value, &descriptor->asBits.payload);
     store32(valueTag, &descriptor->asBits.tag);
 #endif
