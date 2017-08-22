@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,9 +70,9 @@ BlobRegistry* WebPlatformStrategies::createBlobRegistry()
     return new BlobRegistryImpl;
 }
 
-String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+std::pair<String, bool> WebPlatformStrategies::cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies includeSecureCookies) override
 {
-    return WebCore::cookiesForDOM(session, firstParty, url);
+    return WebCore::cookiesForDOM(session, firstParty, url, includeSecureCookies);
 }
 
 void WebPlatformStrategies::setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& cookieString)
