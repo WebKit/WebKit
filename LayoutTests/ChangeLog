@@ -1,5 +1,13 @@
 2017-08-22  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed test fix after r221017.
+
+        I forgot to check-in the expected result!
+
+        * http/tests/security/mixedContent/insecure-executable-css-with-secure-cookies-expected.txt: Added.
+
+2017-08-22  Brent Fulgham  <bfulgham@apple.com>
+
         Ensure media controls host exists before using it
         https://bugs.webkit.org/show_bug.cgi?id=175833
         <rdar://problem/34001219>
