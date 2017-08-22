@@ -1,3 +1,15 @@
+2017-08-21  Mark Lam  <mark.lam@apple.com>
+
+        [Follow up]: Add back the ability to disable MASM_PROBE from the build.
+        https://bugs.webkit.org/show_bug.cgi?id=175656
+        <rdar://problem/33933720>
+
+        Not reviewed.
+
+        Fixed a typo: should be "OS(WINDOWS)", not "OS(WINDOW)".
+
+        * wtf/Platform.h:
+
 2017-08-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] ARMv7 build fails to build MacroAssemblerARMv7.cpp.

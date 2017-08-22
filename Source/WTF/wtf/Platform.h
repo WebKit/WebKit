@@ -827,7 +827,7 @@
 #define ENABLE_MASM_PROBE 0
 #endif
 
-#if !ENABLE(JIT) || OS(WINDOW)
+#if !ENABLE(JIT) || OS(WINDOWS)
 #undef ENABLE_MASM_PROBE
 #define ENABLE_MASM_PROBE 0
 #endif
