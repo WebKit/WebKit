@@ -425,14 +425,13 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     loadParameters.identifier = generatePingLoadIdentifier();
     loadParameters.request = request;
     loadParameters.sourceOrigin = &document->securityOrigin();
-    ASSERT(loadParameters.request.httpHeaderField(HTTPHeaderName::Origin).isNull() || loadParameters.request.httpHeaderField(HTTPHeaderName::Origin) == loadParameters.sourceOrigin->toString());
     loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.allowStoredCredentials = options.credentials == FetchOptions::Credentials::Omit ? DoNotAllowStoredCredentials : AllowStoredCredentials;
     loadParameters.mode = options.mode;
     loadParameters.shouldFollowRedirects = options.redirect == FetchOptions::Redirect::Follow;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = networkingContext->shouldClearReferrerOnHTTPSToHTTPRedirect();
     if (!document->shouldBypassMainWorldContentSecurityPolicy()) {
-        if (auto* contentSecurityPolicy = document->contentSecurityPolicy())
+        if (auto * contentSecurityPolicy = document->contentSecurityPolicy())
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
 
