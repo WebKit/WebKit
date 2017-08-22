@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+static CacheStorageConnection::Record toConnectionRecord(const FetchRequest&, FetchResponse&, CacheStorageConnection::ResponseBody&&);
+
 Cache::Cache(ScriptExecutionContext& context, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&& connection)
     : ActiveDOMObject(&context)
     , m_name(WTFMove(name))
@@ -62,20 +64,17 @@ void Cache::match(RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredP
 
 void Cache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCallback&& callback)
 {
-    RefPtr<FetchRequest> request;
-    if (WTF::holds_alternative<RefPtr<FetchRequest>>(info)) {
-        request = WTF::get<RefPtr<FetchRequest>>(info).releaseNonNull();
-        if (request->method() != "GET" && !options.ignoreMethod) {
-            callback(nullptr);
-            return;
-        }
-    } else {
-        if (UNLIKELY(!scriptExecutionContext()))
-            return;
-        request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { }).releaseReturnValue();
-    }
+    if (UNLIKELY(!scriptExecutionContext()))
+        return;
 
-    queryCache(request.releaseNonNull(), WTFMove(options), [callback = WTFMove(callback)](const Vector<CacheStorageRecord>& records) mutable {
+    auto requestOrException = requestFromInfo(WTFMove(info), options.ignoreMethod);
+    if (requestOrException.hasException()) {
+        callback(nullptr);
+        return;
+    }
+    auto request = requestOrException.releaseReturnValue();
+
+    queryCache(request.get(), WTFMove(options), [callback = WTFMove(callback)](const Vector<CacheStorageRecord>& records) mutable {
         if (records.isEmpty()) {
             callback(nullptr);
             return;
@@ -86,19 +85,17 @@ void Cache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCallba
 
 void Cache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, MatchAllPromise&& promise)
 {
+    if (UNLIKELY(!scriptExecutionContext()))
+        return;
+
     RefPtr<FetchRequest> request;
     if (info) {
-        if (WTF::holds_alternative<RefPtr<FetchRequest>>(info.value())) {
-            request = WTF::get<RefPtr<FetchRequest>>(info.value()).releaseNonNull();
-            if (request->method() != "GET" && !options.ignoreMethod) {
-                promise.resolve({ });
-                return;
-            }
-        } else {
-            if (UNLIKELY(!scriptExecutionContext()))
-                return;
-            request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info.value()), { }).releaseReturnValue();
+        auto requestOrException = requestFromInfo(WTFMove(info.value()), options.ignoreMethod);
+        if (requestOrException.hasException()) {
+            promise.resolve({ });
+            return;
         }
+        request = requestOrException.releaseReturnValue();
     }
 
     if (!request) {
@@ -120,45 +117,175 @@ void Cache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& opti
     });
 }
 
-void Cache::add(RequestInfo&&, DOMPromiseDeferred<void>&& promise)
+void Cache::add(RequestInfo&& info, DOMPromiseDeferred<void>&& promise)
 {
-    promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented")});
+    addAll(Vector<RequestInfo> { WTFMove(info) }, WTFMove(promise));
 }
 
-void Cache::addAll(Vector<RequestInfo>&&, DOMPromiseDeferred<void>&& promise)
+static inline bool hasResponseVaryStarHeaderValue(const FetchResponse& response)
 {
-    promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented")});
+    auto varyValue = response.headers().internalHeaders().get(WebCore::HTTPHeaderName::Vary);
+    bool hasStar = false;
+    varyValue.split(',', false, [&](StringView view) {
+        if (!hasStar && stripLeadingAndTrailingHTTPSpaces(view.toStringWithoutCopying()) == "*")
+            hasStar = true;
+    });
+    return hasStar;
 }
 
-void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDeferred<void>&& promise)
+class FetchTasksHandler : public RefCounted<FetchTasksHandler> {
+public:
+    explicit FetchTasksHandler(Function<void(ExceptionOr<Vector<CacheStorageConnection::Record>>&&)>&& callback)
+        : m_callback(WTFMove(callback))
+    {
+    }
+
+    ~FetchTasksHandler()
+    {
+        if (m_callback)
+            m_callback(WTFMove(m_records));
+    }
+
+    const Vector<CacheStorageConnection::Record>& records() const { return m_records; }
+
+    size_t addRecord(CacheStorageConnection::Record&& record)
+    {
+        ASSERT(!isDone());
+        m_records.append(WTFMove(record));
+        return m_records.size() - 1;
+    }
+
+    void addResponseBody(size_t position, Ref<SharedBuffer>&& data)
+    {
+        ASSERT(!isDone());
+        m_records[position].responseBody = WTFMove(data);
+    }
+
+    bool isDone() const { return !m_callback; }
+
+    void error(Exception&& exception)
+    {
+        if (auto callback = WTFMove(m_callback))
+            callback(WTFMove(exception));
+    }
+
+private:
+    Vector<CacheStorageConnection::Record> m_records;
+    Function<void(ExceptionOr<Vector<CacheStorageConnection::Record>>&&)> m_callback;
+};
+
+ExceptionOr<Ref<FetchRequest>> Cache::requestFromInfo(RequestInfo&& info, bool ignoreMethod)
 {
     RefPtr<FetchRequest> request;
     if (WTF::holds_alternative<RefPtr<FetchRequest>>(info)) {
         request = WTF::get<RefPtr<FetchRequest>>(info).releaseNonNull();
-        if (request->method() != "GET") {
-            promise.reject(Exception { TypeError, ASCIILiteral("Request method is not GET") });
+        if (request->method() != "GET" && !ignoreMethod)
+            return Exception { TypeError, ASCIILiteral("Request method is not GET") };
+    } else
+        request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { }).releaseReturnValue();
+
+    if (!protocolIsInHTTPFamily(request->url()))
+        return Exception { TypeError, ASCIILiteral("Request url is not HTTP/HTTPS") };
+
+    return request.releaseNonNull();
+}
+
+void Cache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& promise)
+{
+    if (UNLIKELY(!scriptExecutionContext()))
+        return;
+
+    Vector<Ref<FetchRequest>> requests;
+    requests.reserveInitialCapacity(infos.size());
+    for (auto& info : infos) {
+        bool ignoreMethod = false;
+        auto requestOrException = requestFromInfo(WTFMove(info), ignoreMethod);
+        if (requestOrException.hasException()) {
+            promise.reject(requestOrException.releaseException());
             return;
         }
-    } else {
-        if (UNLIKELY(!scriptExecutionContext()))
-            return;
-        request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { }).releaseReturnValue();
+        requests.uncheckedAppend(requestOrException.releaseReturnValue());
     }
 
-    if (!protocolIsInHTTPFamily(request->url())) {
-        promise.reject(Exception { TypeError, ASCIILiteral("Request url is not HTTP/HTTPS") });
+    auto taskHandler = adoptRef(*new FetchTasksHandler([protectedThis = makeRef(*this), this, promise = WTFMove(promise)](ExceptionOr<Vector<CacheStorageConnection::Record>>&& result) mutable {
+        if (result.hasException()) {
+            promise.reject(result.releaseException());
+            return;
+        }
+        batchPutOperation(result.releaseReturnValue(), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
+            promise.settle(WTFMove(result));
+        });
+    }));
+
+    for (auto& request : requests) {
+        auto& requestReference = request.get();
+        FetchResponse::fetch(*scriptExecutionContext(), requestReference, [this, request = WTFMove(request), taskHandler = taskHandler.copyRef()](ExceptionOr<FetchResponse&>&& result) mutable {
+
+            if (taskHandler->isDone())
+                return;
+
+            if (result.hasException()) {
+                taskHandler->error(result.releaseException());
+                return;
+            }
+
+            auto& response = result.releaseReturnValue();
+
+            if (!response.ok()) {
+                taskHandler->error(Exception { TypeError, ASCIILiteral("Response is not OK") });
+                return;
+            }
+
+            if (hasResponseVaryStarHeaderValue(response)) {
+                taskHandler->error(Exception { TypeError, ASCIILiteral("Response has a '*' Vary header value") });
+                return;
+            }
+
+            if (response.status() == 206) {
+                taskHandler->error(Exception { TypeError, ASCIILiteral("Response is a 206 partial") });
+                return;
+            }
+
+            CacheQueryOptions options;
+            for (const auto& record : taskHandler->records()) {
+                if (CacheStorageConnection::queryCacheMatch(request->resourceRequest(), record.request, record.response, options)) {
+                    taskHandler->error(Exception { InvalidStateError, ASCIILiteral("addAll cannot store several matching requests")});
+                    return;
+                }
+            }
+            size_t recordPosition = taskHandler->addRecord(toConnectionRecord(request.get(), response, nullptr));
+
+            response.consumeBodyWhenLoaded([taskHandler = WTFMove(taskHandler), recordPosition](ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
+                if (taskHandler->isDone())
+                    return;
+
+                if (result.hasException()) {
+                    taskHandler->error(result.releaseException());
+                    return;
+                }
+                if (auto value = result.releaseReturnValue())
+                    taskHandler->addResponseBody(recordPosition, value.releaseNonNull());
+            });
+        });
+    }
+}
+
+void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDeferred<void>&& promise)
+{
+    if (UNLIKELY(!scriptExecutionContext()))
+        return;
+
+    bool ignoreMethod = false;
+    auto requestOrException = requestFromInfo(WTFMove(info), ignoreMethod);
+    if (requestOrException.hasException()) {
+        promise.reject(requestOrException.releaseException());
         return;
     }
+    auto request = requestOrException.releaseReturnValue();
 
-    // FIXME: This is inefficient, we should be able to split and trim whitespaces at the same time.
-    auto varyValue = response->headers().internalHeaders().get(WebCore::HTTPHeaderName::Vary);
-    Vector<String> varyHeaderNames;
-    varyValue.split(',', false, varyHeaderNames);
-    for (auto& name : varyHeaderNames) {
-        if (stripLeadingAndTrailingHTTPSpaces(name) == "*") {
-            promise.reject(Exception { TypeError, ASCIILiteral("Response has a '*' Vary header value") });
-            return;
-        }
+    if (hasResponseVaryStarHeaderValue(response.get())) {
+        promise.reject(Exception { TypeError, ASCIILiteral("Response has a '*' Vary header value") });
+        return;
     }
 
     if (response->status() == 206) {
@@ -179,7 +306,7 @@ void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDef
 
     if (response->isLoading()) {
         setPendingActivity(this);
-        response->consumeBodyWhenLoaded([promise = WTFMove(promise), request = request.releaseNonNull(), response = WTFMove(response), this](ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
+        response->consumeBodyWhenLoaded([promise = WTFMove(promise), request = WTFMove(request), response = WTFMove(response), this](ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
             if (result.hasException())
                 promise.reject(result.releaseException());
             else {
@@ -195,46 +322,40 @@ void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDef
         return;
     }
 
-    batchPutOperation(*request, response.get(), response->consumeBody(), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
+    batchPutOperation(request.get(), response.get(), response->consumeBody(), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
         promise.settle(WTFMove(result));
     });
 }
 
 void Cache::remove(RequestInfo&& info, CacheQueryOptions&& options, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    RefPtr<FetchRequest> request;
-    if (WTF::holds_alternative<RefPtr<FetchRequest>>(info)) {
-        request = WTF::get<RefPtr<FetchRequest>>(info).releaseNonNull();
-        if (request->method() != "GET" && !options.ignoreMethod) {
-            promise.resolve(false);
-            return;
-        }
-    } else {
-        if (UNLIKELY(!scriptExecutionContext()))
-            return;
-        request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info), { }).releaseReturnValue();
+    if (UNLIKELY(!scriptExecutionContext()))
+        return;
+
+    auto requestOrException = requestFromInfo(WTFMove(info), options.ignoreMethod);
+    if (requestOrException.hasException()) {
+        promise.resolve(false);
+        return;
     }
 
-    batchDeleteOperation(*request, WTFMove(options), [promise = WTFMove(promise)](ExceptionOr<bool>&& result) mutable {
+    batchDeleteOperation(requestOrException.releaseReturnValue(), WTFMove(options), [promise = WTFMove(promise)](ExceptionOr<bool>&& result) mutable {
         promise.settle(WTFMove(result));
     });
 }
 
 void Cache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, KeysPromise&& promise)
 {
+    if (UNLIKELY(!scriptExecutionContext()))
+        return;
+
     RefPtr<FetchRequest> request;
     if (info) {
-        if (WTF::holds_alternative<RefPtr<FetchRequest>>(info.value())) {
-            request = WTF::get<RefPtr<FetchRequest>>(info.value()).releaseNonNull();
-            if (request->method() != "GET" && !options.ignoreMethod) {
-                promise.resolve(Vector<Ref<FetchRequest>> { });
-                return;
-            }
-        } else {
-            if (UNLIKELY(!scriptExecutionContext()))
-                return;
-            request = FetchRequest::create(*scriptExecutionContext(), WTFMove(info.value()), { }).releaseReturnValue();
+        auto requestOrException = requestFromInfo(WTFMove(info.value()), options.ignoreMethod);
+        if (requestOrException.hasException()) {
+            promise.resolve(Vector<Ref<FetchRequest>> { });
+            return;
         }
+        request = requestOrException.releaseReturnValue();
     }
 
     if (!request) {
@@ -306,7 +427,7 @@ void Cache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&
     });
 }
 
-static inline CacheStorageConnection::Record toConnectionRecord(const FetchRequest& request, FetchResponse& response, CacheStorageConnection::ResponseBody&& responseBody)
+CacheStorageConnection::Record toConnectionRecord(const FetchRequest& request, FetchResponse& response, CacheStorageConnection::ResponseBody&& responseBody)
 {
     // FIXME: Add a setHTTPHeaderFields on ResourceResponseBase.
     ResourceResponse cachedResponse = response.resourceResponse();
@@ -330,6 +451,11 @@ void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& respon
     Vector<CacheStorageConnection::Record> records;
     records.append(toConnectionRecord(request, response, WTFMove(responseBody)));
 
+    batchPutOperation(WTFMove(records), WTFMove(callback));
+}
+
+void Cache::batchPutOperation(Vector<CacheStorageConnection::Record>&& records, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
+{
     setPendingActivity(this);
     m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, callback = WTFMove(callback)](Vector<uint64_t>&&, CacheStorageConnection::Error error) {
         if (!m_isStopped)

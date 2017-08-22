@@ -62,6 +62,8 @@ public:
 private:
     Cache(ScriptExecutionContext&, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&&);
 
+    ExceptionOr<Ref<FetchRequest>> requestFromInfo(RequestInfo&&, bool ignoreMethod);
+
     // ActiveDOMObject
     void stop() final;
     const char* activeDOMObjectName() const final;
@@ -72,6 +74,7 @@ private:
     void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, WTF::Function<void(const Vector<CacheStorageRecord>&)>&&);
     void batchDeleteOperation(const FetchRequest&, CacheQueryOptions&&, WTF::Function<void(ExceptionOr<bool>&&)>&&);
     void batchPutOperation(const FetchRequest&, FetchResponse&, CacheStorageConnection::ResponseBody&&, WTF::Function<void(ExceptionOr<void>&&)>&&);
+    void batchPutOperation(Vector<CacheStorageConnection::Record>&&, WTF::Function<void(ExceptionOr<void>&&)>&&);
 
     void updateRecords(Vector<CacheStorageConnection::Record>&&);
 

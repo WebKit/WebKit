@@ -1,11 +1,11 @@
 
 PASS CacheStorage.open 
-FAIL CacheStorage.delete dooms, but does not delete immediately promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+PASS CacheStorage.delete dooms, but does not delete immediately 
 PASS CacheStorage.open with an empty name 
 PASS CacheStorage.open with no arguments 
 PASS CacheStorage.has with existing cache 
 PASS CacheStorage.has with nonexistent cache 
-FAIL CacheStorage.open with existing cache promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+PASS CacheStorage.open with existing cache 
 PASS CacheStorage.delete with existing cache 
 PASS CacheStorage.delete with nonexistent cache 
 PASS CacheStorage names are DOMStrings not USVStrings 
