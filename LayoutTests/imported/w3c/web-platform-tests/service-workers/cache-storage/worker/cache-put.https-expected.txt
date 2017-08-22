@@ -8,8 +8,8 @@ PASS Cache.put with an empty response body
 PASS Cache.put with synthetic 206 response 
 PASS Cache.put with HTTP 206 response 
 PASS Cache.put with HTTP 500 response 
-FAIL Cache.put called twice with matching Requests and different Responses assert_equals: Cache put should store new response body. expected "New body" but got "Old body"
-FAIL Cache.put called twice with request URLs that differ only by a fragment assert_equals: Cache put should store new response body. expected "New body" but got "Old body"
+PASS Cache.put called twice with matching Requests and different Responses 
+PASS Cache.put called twice with request URLs that differ only by a fragment 
 PASS Cache.put with a string request 
 PASS Cache.put with an invalid response 
 PASS Cache.put with a non-HTTP/HTTPS request 

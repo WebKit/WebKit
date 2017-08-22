@@ -67,6 +67,7 @@ public:
         WEBCORE_EXPORT Record copy() const;
 
         uint64_t identifier;
+        uint64_t updateResponseCounter;
 
         FetchHeaders::Guard requestHeadersGuard;
         ResourceRequest request;

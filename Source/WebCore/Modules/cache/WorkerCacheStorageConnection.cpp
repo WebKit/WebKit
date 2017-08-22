@@ -40,6 +40,7 @@ namespace WebCore {
 
 struct CrossThreadRecordData {
     uint64_t identifier;
+    uint64_t updateResponseCounter;
 
     FetchHeaders::Guard requestHeadersGuard;
     ResourceRequest request;
@@ -56,6 +57,7 @@ static CrossThreadRecordData toCrossThreadRecordData(const CacheStorageConnectio
 {
     return CrossThreadRecordData {
         record.identifier,
+        record.updateResponseCounter,
         record.requestHeadersGuard,
         record.request.isolatedCopy(),
         record.options.isolatedCopy(),
@@ -70,6 +72,7 @@ static CacheStorageConnection::Record fromCrossThreadRecordData(CrossThreadRecor
 {
     return CacheStorageConnection::Record {
         data.identifier,
+        data.updateResponseCounter,
         data.requestHeadersGuard,
         WTFMove(data.request),
         WTFMove(data.options),

@@ -174,6 +174,8 @@ void CacheStorageEngine::putRecords(uint64_t cacheIdentifier, Vector<Record>&& r
                     recordIdentifiers.uncheckedAppend(identifier);
                     existingRecord.responseHeadersGuard = record.responseHeadersGuard;
                     existingRecord.response = WTFMove(record.response);
+                    existingRecord.responseBody = WTFMove(record.responseBody);
+                    ++existingRecord.updateResponseCounter;
                 }
             }
         }

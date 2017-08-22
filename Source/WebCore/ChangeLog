@@ -1,3 +1,29 @@
+2017-08-22  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Add support for overwriting responses with put on an existing record
+        https://bugs.webkit.org/show_bug.cgi?id=175825
+
+        Reviewed by Geoffrey Garen.
+
+        Tests: http/wpt/cache-storage/cache-put-keys.https.any.html
+               http/wpt/cache-storage/cache-put-keys.https.any.worker.html
+
+        Adding support for the new response update counter.
+        Overwriting local cached response with new retrieved response when the counter is different.
+        Adding support for passing this value from/to workers.
+
+        * Modules/cache/Cache.cpp:
+        (WebCore::Cache::queryCacheWithTargetStorage):
+        (WebCore::toConnectionRecord):
+        (WebCore::Cache::updateRecords):
+        * Modules/cache/CacheStorageConnection.cpp:
+        (WebCore::CacheStorageConnection::Record::copy const):
+        * Modules/cache/CacheStorageConnection.h:
+        * Modules/cache/CacheStorageRecord.h:
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::toCrossThreadRecordData):
+        (WebCore::fromCrossThreadRecordData):
+
 2017-08-22  Alex Christensen  <achristensen@webkit.org>
 
         Remove ChromeClient::hasOpenedPopup

@@ -411,7 +411,7 @@ Vector<CacheStorageRecord> Cache::queryCacheWithTargetStorage(const FetchRequest
     Vector<CacheStorageRecord> records;
     for (auto& record : targetStorage) {
         if (queryCacheMatch(request, record.request.get(), record.response->resourceResponse(), options))
-            records.append({ record.identifier, record.request.copyRef(), record.response.copyRef() });
+            records.append({ record.identifier, record.updateResponseCounter, record.request.copyRef(), record.response.copyRef() });
     }
     return records;
 }
@@ -440,7 +440,7 @@ CacheStorageConnection::Record toConnectionRecord(const FetchRequest& request, F
     ASSERT(!cachedRequest.isNull());
     ASSERT(!cachedResponse.isNull());
 
-    return { 0,
+    return { 0, 0,
         request.headers().guard(), WTFMove(cachedRequest), request.fetchOptions(), request.internalRequestReferrer(),
         response.headers().guard(), WTFMove(cachedResponse), WTFMove(responseBody)
     };
@@ -472,9 +472,18 @@ void Cache::updateRecords(Vector<CacheStorageConnection::Record>&& records)
 
     for (auto& record : records) {
         size_t index = m_records.findMatching([&](const auto& item) { return item.identifier == record.identifier; });
-        if (index != notFound)
-            newRecords.append(WTFMove(m_records[index]));
-        else {
+        if (index != notFound) {
+            auto& current = m_records[index];
+            if (current.updateResponseCounter != record.updateResponseCounter) {
+                auto responseHeaders = FetchHeaders::create(record.responseHeadersGuard, HTTPHeaderMap { record.response.httpHeaderFields() });
+                auto response = FetchResponse::create(*scriptExecutionContext(), std::nullopt, WTFMove(responseHeaders), WTFMove(record.response));
+                response->setBodyData(WTFMove(record.responseBody));
+
+                current.response = WTFMove(response);
+                current.updateResponseCounter = record.updateResponseCounter;
+            }
+            newRecords.append(WTFMove(current));
+        } else {
             auto requestHeaders = FetchHeaders::create(record.requestHeadersGuard, HTTPHeaderMap { record.request.httpHeaderFields() });
             FetchRequest::InternalRequest internalRequest = { WTFMove(record.request), WTFMove(record.options), WTFMove(record.referrer) };
             auto request = FetchRequest::create(*scriptExecutionContext(), std::nullopt, WTFMove(requestHeaders), WTFMove(internalRequest));
@@ -483,7 +492,7 @@ void Cache::updateRecords(Vector<CacheStorageConnection::Record>&& records)
             auto response = FetchResponse::create(*scriptExecutionContext(), std::nullopt, WTFMove(responseHeaders), WTFMove(record.response));
             response->setBodyData(WTFMove(record.responseBody));
 
-            newRecords.append(CacheStorageRecord { record.identifier, WTFMove(request), WTFMove(response) });
+            newRecords.append(CacheStorageRecord { record.identifier, record.updateResponseCounter, WTFMove(request), WTFMove(response) });
         }
     }
     m_records = WTFMove(newRecords);

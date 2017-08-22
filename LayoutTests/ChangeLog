@@ -1,3 +1,22 @@
+2017-08-22  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Add support for overwriting responses with put on an existing record
+        https://bugs.webkit.org/show_bug.cgi?id=175825
+
+        Reviewed by Geoffrey Garen.
+
+        Adding update counter for response
+        Skipping new test on WK1.
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * http/wpt/cache-storage/cache-put-keys.https.any-expected.txt: Added.
+        * http/wpt/cache-storage/cache-put-keys.https.any.html: Added.
+        * http/wpt/cache-storage/cache-put-keys.https.any.js: Added.
+        (cache_test):
+        * http/wpt/cache-storage/cache-put-keys.https.any.worker-expected.txt: Added.
+        * http/wpt/cache-storage/cache-put-keys.https.any.worker.html: Added.
+
 2017-08-22  Matt Lewis  <jlewis3@apple.com>
 
         Marked imported/w3c/web-platform-tests/fetch/http-cache/invalidate.html as flaky on macOS WK2.

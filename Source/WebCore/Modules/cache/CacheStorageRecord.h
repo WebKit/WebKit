@@ -32,6 +32,7 @@ namespace WebCore {
 
 struct CacheStorageRecord {
     uint64_t identifier;
+    uint64_t updateResponseCounter;
 
     Ref<FetchRequest> request;
     Ref<FetchResponse> response;

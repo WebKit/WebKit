@@ -311,6 +311,7 @@ void ArgumentCoder<CacheStorageConnection::Record>::encode(Encoder& encoder, con
 
     encoder << record.responseHeadersGuard;
     encoder << record.response;
+    encoder << record.updateResponseCounter;
 
     WTF::switchOn(record.responseBody, [&](const Ref<SharedBuffer>& buffer) {
         encoder << true;
@@ -355,6 +356,10 @@ bool ArgumentCoder<CacheStorageConnection::Record>::decode(Decoder& decoder, Cac
     if (!decoder.decode(response))
         return false;
 
+    uint64_t updateResponseCounter;
+    if (!decoder.decode(updateResponseCounter))
+        return false;
+
     WebCore::CacheStorageConnection::ResponseBody responseBody;
     bool hasSharedBufferBody;
     if (!decoder.decode(hasSharedBufferBody))
@@ -386,6 +391,7 @@ bool ArgumentCoder<CacheStorageConnection::Record>::decode(Decoder& decoder, Cac
 
     record.responseHeadersGuard = responseHeadersGuard;
     record.response = WTFMove(response);
+    record.updateResponseCounter = updateResponseCounter;
     record.responseBody = WTFMove(responseBody);
 
     return true;

@@ -180,7 +180,7 @@ static inline CacheStorageConnection::ResponseBody copyResponseBody(const CacheS
 
 CacheStorageConnection::Record CacheStorageConnection::Record::copy() const
 {
-    return Record { identifier, requestHeadersGuard, request, options, referrer, responseHeadersGuard, response, copyResponseBody(responseBody) };
+    return Record { identifier, updateResponseCounter, requestHeadersGuard, request, options, referrer, responseHeadersGuard, response, copyResponseBody(responseBody) };
 }
 
 } // namespace WebCore

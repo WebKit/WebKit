@@ -1,3 +1,20 @@
+2017-08-22  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Add support for overwriting responses with put on an existing record
+        https://bugs.webkit.org/show_bug.cgi?id=175825
+
+        Reviewed by Geoffrey Garen.
+
+        Add support for encoding/decoding the update counter.
+        Incrementing it when overwriting an existing response.
+        Storing the new body in addition to the new response.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorageEngine::putRecords):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<CacheStorageConnection::Record>::encode):
+        (IPC::ArgumentCoder<CacheStorageConnection::Record>::decode):
+
 2017-08-22  Alex Christensen  <achristensen@webkit.org>
 
         Remove ChromeClient::hasOpenedPopup
