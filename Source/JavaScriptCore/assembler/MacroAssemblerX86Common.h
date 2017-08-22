@@ -1163,6 +1163,11 @@ public:
         load32(address, dest);
     }
 
+    void load16Unaligned(ImplicitAddress address, RegisterID dest)
+    {
+        load16(address, dest);
+    }
+
     void load16Unaligned(BaseIndex address, RegisterID dest)
     {
         load16(address, dest);
@@ -1225,6 +1230,11 @@ public:
         m_assembler.movsbl_rr(src, dest);
     }
     
+    void load16(ImplicitAddress address, RegisterID dest)
+    {
+        m_assembler.movzwl_mr(address.offset, address.base, dest);
+    }
+
     void load16(BaseIndex address, RegisterID dest)
     {
         m_assembler.movzwl_mr(address.offset, address.base, address.index, address.scale, dest);

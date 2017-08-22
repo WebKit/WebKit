@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2010, 2013-2017 Apple Inc. All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -97,6 +97,7 @@ for name, classes in types.items():
             function += ("    auto characterClass = std::make_unique<CharacterClass>(_%sData, false);\n" % (name))
     else:
         function += ("    auto characterClass = std::make_unique<CharacterClass>();\n")
+    hasNonBMPCharacters = False
     for (min, max) in ranges:
         if (min == max):
             if (min > 127):
@@ -108,6 +109,9 @@ for name, classes in types.items():
             function += ("    characterClass->m_rangesUnicode.append(CharacterRange(0x%04x, 0x%04x));\n" % (min, max))
         else:
             function += ("    characterClass->m_ranges.append(CharacterRange(0x%02x, 0x%02x));\n" % (min, max))
+        if max >= 0x10000:
+            hasNonBMPCharacters = True
+    function += ("    characterClass->m_hasNonBMPCharacters = %s;\n" % ("true" if hasNonBMPCharacters else "false"))
     function += ("    return characterClass;\n")
     function += ("}\n\n")
     functions += function

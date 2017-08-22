@@ -1,3 +1,105 @@
+2017-08-22  Michael Saboff  <msaboff@apple.com>
+
+        Implement Unicode RegExp support in the YARR JIT
+        https://bugs.webkit.org/show_bug.cgi?id=174646
+
+        Reviewed by Filip Pizlo.
+
+        This support is only implemented for 64 bit platforms.  It wouldn't be too hard to add support
+        for 32 bit platforms with a reasonable number of spare registers.  This code slightly refactors
+        register usage to reduce the number of callee save registers used for non-Unicode expressions.
+        For Unicode expressions, there are several more registers used to store constants values for
+        processing surrogate pairs as well as discerning whether a character belongs to the Basic
+        Multilingual Plane (BMP) or one of the Supplemental Planes.
+
+        This implements JIT support for Unicode expressions very similar to how the interpreter works.
+        Just like in the interpreter, backtracking code uses more space on the stack to save positions.
+        Moved the BackTrackInfo* structs to YarrPattern as separate functions.  Added xxxIndex()
+        functions to each of these to simplify how the JIT code reads and writes the structure fields.
+
+        Given that reading surrogate pairs and transforming them into a single code point takes a
+        little processing, the code that implements reading a Unicode character is implemented as a
+        leaf function added to the end of the JIT'ed code.  The calling convention for
+        "tryReadUnicodeCharacterHelper()" is non-standard given that the rest of the code assumes
+        that argument values stay in argument registers for most of the generated code.
+        That helper takes the starting character address in one register, regUnicodeInputAndTrail,
+        and uses another dedicated temporary register, regUnicodeTemp.  The result is typically
+        returned in regT0.  If another return register is requested, we'll create an inline copy of
+        that function.
+
+        Added a new flag to CharacterClass to signify if a class has non-BMP characters.  This flag
+        is used in optimizeAlternative() where we swap the order of a fixed character class term with
+        a fixed character term that immediately follows it.  Since the non-BMP character class may
+        increment "index" when matching, that must be done first before trying to match a fixed
+        character term later in the string.
+
+        Given the usefulness of the LEA instruction on X86 to create a single pointer value from a
+        base with index and offset, which the YARR JIT uses heavily, I added a new macroAssembler
+        function, getEffectiveAddress64(), with an ARM64 implementation.  It just calls x86Lea64()
+        on X86-64.  Also added an ImplicitAddress version of load16Unaligned().
+
+        (JSC::MacroAssemblerARM64::load16Unaligned):
+        (JSC::MacroAssemblerARM64::getEffectiveAddress64):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load16Unaligned):
+        (JSC::MacroAssemblerX86Common::load16):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::getEffectiveAddress64):
+        * create_regex_tables:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        * yarr/YarrInterpreter.cpp:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::optimizeAlternative):
+        (JSC::Yarr::YarrGenerator::matchCharacterClass):
+        (JSC::Yarr::YarrGenerator::tryReadUnicodeCharImpl):
+        (JSC::Yarr::YarrGenerator::tryReadUnicodeChar):
+        (JSC::Yarr::YarrGenerator::readCharacter):
+        (JSC::Yarr::YarrGenerator::jumpIfCharNotEquals):
+        (JSC::Yarr::YarrGenerator::matchAssertionWordchar):
+        (JSC::Yarr::YarrGenerator::generateAssertionWordBoundary):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterNonGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassOnce):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassOnce):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::generate):
+        (JSC::Yarr::YarrGenerator::backtrack):
+        (JSC::Yarr::YarrGenerator::generateTryReadUnicodeCharacterHelper):
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+        * yarr/YarrJIT.h:
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::CharacterClassConstructor):
+        (JSC::Yarr::CharacterClassConstructor::reset):
+        (JSC::Yarr::CharacterClassConstructor::charClass):
+        (JSC::Yarr::CharacterClassConstructor::addSorted):
+        (JSC::Yarr::CharacterClassConstructor::addSortedRange):
+        (JSC::Yarr::CharacterClassConstructor::hasNonBMPCharacters):
+        (JSC::Yarr::YarrPatternConstructor::setupAlternativeOffsets):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::CharacterClass::CharacterClass):
+        (JSC::Yarr::BackTrackInfoPatternCharacter::beginIndex):
+        (JSC::Yarr::BackTrackInfoPatternCharacter::matchAmountIndex):
+        (JSC::Yarr::BackTrackInfoCharacterClass::beginIndex):
+        (JSC::Yarr::BackTrackInfoCharacterClass::matchAmountIndex):
+        (JSC::Yarr::BackTrackInfoBackReference::beginIndex):
+        (JSC::Yarr::BackTrackInfoBackReference::matchAmountIndex):
+        (JSC::Yarr::BackTrackInfoAlternative::offsetIndex):
+        (JSC::Yarr::BackTrackInfoParentheticalAssertion::beginIndex):
+        (JSC::Yarr::BackTrackInfoParenthesesOnce::beginIndex):
+        (JSC::Yarr::BackTrackInfoParenthesesTerminal::beginIndex):
+
 2017-08-22  Per Arne Vollan  <pvollan@apple.com>
 
         Implement 64-bit MacroAssembler::probe support for Windows.

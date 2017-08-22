@@ -364,6 +364,11 @@ public:
         m_assembler.leaq_mr(index.offset, index.base, index.index, index.scale, dest);
     }
 
+    void getEffectiveAddress64(BaseIndex address, RegisterID dest)
+    {
+        return x86Lea64(address, dest);
+    }
+
     void addPtrNoFlags(TrustedImm32 imm, RegisterID srcDest)
     {
         m_assembler.leaq_mr(imm.m_value, srcDest, srcDest);

@@ -124,6 +124,8 @@ shouldBeTrue('re2.test("\u{12345}")');
 // Check quantified matches
 shouldBeTrue('/\u{1d306}{2}/u.test("\u{1d306}\u{1d306}")');
 shouldBeTrue('/\uD834\uDF06{2}/u.test("\uD834\uDF06\uD834\uDF06")');
+shouldBe('"\u{10405}\u{10405}\u{10405}\u{10405}".match(/\u{10405}{3}/u)[0]', '"\u{10405}\u{10405}\u{10405}"');
+shouldBe('"\u{10402}\u{10405}\u{10405}\u{10405}".match(/\u{10405}{3}/u)[0]', '"\u{10405}\u{10405}\u{10405}"');
 shouldBe('"\u{10401}\u{10401}\u{10400}".match(/\u{10401}{1,3}/u)[0]', '"\u{10401}\u{10401}"');
 shouldBe('"\u{10401}\u{10429}".match(/\u{10401}{1,3}/iu)[0]', '"\u{10401}\u{10429}"');
 shouldBe('"\u{10401}\u{10429}\u{1042a}\u{10429}".match(/\u{10401}{1,}/iu)[0]', '"\u{10401}\u{10429}"');
@@ -154,6 +156,7 @@ shouldBe('"\u{10400}".match(/a*/ui)[0].length', '0');
 shouldBe('"\u{10400}".match(/\\d*/u)[0].length', '0');
 shouldBe('"123\u{10400}".match(/\\d*/u)[0]', '"123"');
 shouldBe('"12X3\u{10400}4".match(/\\d{0,1}/ug)', '["1", "2", "", "3", "", "4", ""]');
+shouldBe('"\u{10402}\u{10405}\u{10405}\u{10402}\u{10405}\u{10405}\u{10405}".match(/\u{10405}{3}/u)[0]', '"\u{10405}\u{10405}\u{10405}"');
 
 var re3 = new RegExp("(a\u{10410}*bc)|(a\u{10410}*b)", "u");
 var match3 = "a\u{10410}\u{10410}b".match(re3);
@@ -191,12 +194,38 @@ shouldBeTrue('/\\u{4}/.test("uuuu")');
 // Check that \- escape works in a character class for a unicode pattern
 shouldBe('"800-555-1212".match(/[0-9\\-]*/u)[0].length', '12');
 
+// Check that counted Unicode character classes work.
+var re7 = new RegExp("(?:[\u{1f0a1}\u{1f0b1}\u{1f0d1}\u{1f0c1}]{2,4})", "u");
+shouldBe('"\u{1f0a1}\u{1f0d1}\u{1f0b8}\u{1f0c9}\u{1f0da}".match(re7)[0]', '"\u{1f0a1}\u{1f0d1}"');
+shouldBe('"\u{1f0a1}\u{1f0d1}\u{1f0b1}\u{1f0c9}\u{1f0da}".match(re7)[0]', '"\u{1f0a1}\u{1f0d1}\u{1f0b1}"');
+shouldBe('"\u{1f0a1}\u{1f0d1}\u{1f0b1}\u{1f0c1}\u{1f0da}".match(re7)[0]', '"\u{1f0a1}\u{1f0d1}\u{1f0b1}\u{1f0c1}"');
+shouldBe('"\u{1f0a3}\u{1f0d1}\u{1f0b1}\u{1f0c1}\u{1f0da}".match(re7)[0]', '"\u{1f0d1}\u{1f0b1}\u{1f0c1}"');
+shouldBe('"\u{10311}\u{10310}\u{10311}".match(/[\u{10301}\u{10311}]*a|[\u{10310}\u{10311}]*./iu)[0]', '"\u{10311}\u{10310}\u{10311}"');
+shouldBe('"\u{10311}\u{10310}\u{10311}".match(/[\u{10301}\u{10311}]*?a|[\u{10310}\u{10311}]*?./iu)[0]', '"\u{10311}"');
+shouldBe('"\u{10311}\u{10310}\u{10311}".match(/[\u{10301}\u{10311}]+a|[\u{10310}\u{10311}]+./iu)[0]', '"\u{10311}\u{10310}\u{10311}"');
+shouldBe('"\u{10311}\u{10310}\u{10311}".match(/[\u{10301}\u{10311}]+?a|[\u{10310}\u{10311}]+?./iu)[0]', '"\u{10311}\u{10310}"');
+
+var re8 = new  RegExp("^([0-9a-z\.]{3,16})\\|\u{041d}\u{0410}\u{0427}\u{0410}\u{0422}\u{042c}", "ui");
+shouldBe('"C83|\u{041d}\u{0410}\u{0427}\u{0410}\u{0422}\u{042c}".match(re8)[0]', '"C83|\u{041d}\u{0410}\u{0427}\u{0410}\u{0422}\u{042c}"');
+shouldBe('"This.Is.16.Chars|\u{041d}\u{0410}\u{0427}\u{0410}\u{0422}\u{042c}".match(re8)[0]', '"This.Is.16.Chars|\u{041d}\u{0410}\u{0427}\u{0410}\u{0422}\u{042c}"');
+
+// Check that unicode characters work with ^ and $ for multiline patterns
+shouldBe('"Testing\\n\u{1234} 1 2 3".match(/^[\u{1000}-\u{100ff}] 1 2 3/um)[0]', '"\u{1234} 1 2 3"');
+shouldBe('"Testing\\n\u{100f0} 1 2 3".match(/^[\u{1000}-\u{100ff}] 1 2 3/um)[0]', '"\u{100f0} 1 2 3"');
+shouldBe('"g\\n\u{1234} 1 2 3".match(/g\\n^[\u{1000}-\u{100ff}] 1 2 3/um)[0]', '"g\\n\u{1234} 1 2 3"');
+shouldBe('"g\\n\u{100f0} 1 2 3".match(/g\\n^[\u{1000}-\u{100ff}] 1 2 3/um)[0]', '"g\\n\u{100f0} 1 2 3"');
+shouldBe('"Testing \u{1234}\\n1 2 3".match(/Testing [\u{1000}-\u{100ff}]$/um)[0]', '"Testing \u{1234}"');
+shouldBe('"Testing \u{100f0}\\n1 2 3".match(/Testing [\u{1000}-\u{100ff}]$/um)[0]', '"Testing \u{100f0}"');
+shouldBe('"Testing \u{1234}\\n1 2 3".match(/g [\u{1000}-\u{100ff}]$\\n1/um)[0]', '"g \u{1234}\\n1"');
+shouldBe('"Testing \u{100f0}\\n1 2 3".match(/g [\u{1000}-\u{100ff}]$\\n1/um)[0]', '"g \u{100f0}\\n1"');
+
 // Check that control letter escapes work with unicode flag
 shouldBe('"this is b\ba test".match(/is b\\cha test/u)[0].length', '11');
 
 // Check that invalid unicode patterns throw exceptions
 shouldBe('new RegExp("\\\\/", "u").source', '"\\\\/"');
 shouldThrow('r = new RegExp("\\\\u{110000}", "u")', '"SyntaxError: Invalid regular expression: invalid unicode {} escape"');
+shouldThrow('r = new RegExp("\u{10405}{2147483648}", "u")', '"SyntaxError: Invalid regular expression: pattern exceeds string length limits"');
 
 var invalidEscapeException = "SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern";
 var newRegExp;

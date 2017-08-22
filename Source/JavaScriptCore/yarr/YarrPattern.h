@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013-2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,11 +56,13 @@ public:
     // specified matches and ranges)
     CharacterClass()
         : m_table(0)
+        , m_hasNonBMPCharacters(false)
     {
     }
     CharacterClass(const char* table, bool inverted)
         : m_table(table)
         , m_tableInverted(inverted)
+        , m_hasNonBMPCharacters(false)
     {
     }
     Vector<UChar32> m_matches;
@@ -70,6 +72,7 @@ public:
 
     const char* m_table;
     bool m_tableInverted;
+    bool m_hasNonBMPCharacters;
 };
 
 enum QuantifierType {
@@ -492,5 +495,53 @@ private:
     CharacterClass* nonwordcharCached;
     CharacterClass* nonwordUnicodeIgnoreCasecharCached;
 };
+
+    struct BackTrackInfoPatternCharacter {
+        uintptr_t begin; // Only needed for unicode patterns
+        uintptr_t matchAmount;
+
+        static unsigned beginIndex() { return offsetof(BackTrackInfoPatternCharacter, begin) / sizeof(uintptr_t); }
+        static unsigned matchAmountIndex() { return offsetof(BackTrackInfoPatternCharacter, matchAmount) / sizeof(uintptr_t); }
+    };
+
+    struct BackTrackInfoCharacterClass {
+        uintptr_t begin; // Only needed for unicode patterns
+        uintptr_t matchAmount;
+
+        static unsigned beginIndex() { return offsetof(BackTrackInfoCharacterClass, begin) / sizeof(uintptr_t); }
+        static unsigned matchAmountIndex() { return offsetof(BackTrackInfoCharacterClass, matchAmount) / sizeof(uintptr_t); }
+    };
+
+    struct BackTrackInfoBackReference {
+        uintptr_t begin; // Not really needed for greedy quantifiers.
+        uintptr_t matchAmount; // Not really needed for fixed quantifiers.
+
+        unsigned beginIndex() { return offsetof(BackTrackInfoBackReference, begin) / sizeof(uintptr_t); }
+        unsigned matchAmountIndex() { return offsetof(BackTrackInfoBackReference, matchAmount) / sizeof(uintptr_t); }
+    };
+
+    struct BackTrackInfoAlternative {
+        uintptr_t offset;
+
+        static unsigned offsetIndex() { return offsetof(BackTrackInfoAlternative, offset) / sizeof(uintptr_t); }
+    };
+
+    struct BackTrackInfoParentheticalAssertion {
+        uintptr_t begin;
+
+        static unsigned beginIndex() { return offsetof(BackTrackInfoParentheticalAssertion, begin) / sizeof(uintptr_t); }
+    };
+
+    struct BackTrackInfoParenthesesOnce {
+        uintptr_t begin;
+
+        static unsigned beginIndex() { return offsetof(BackTrackInfoParenthesesOnce, begin) / sizeof(uintptr_t); }
+    };
+
+    struct BackTrackInfoParenthesesTerminal {
+        uintptr_t begin;
+
+        static unsigned beginIndex() { return offsetof(BackTrackInfoParenthesesTerminal, begin) / sizeof(uintptr_t); }
+    };
 
 } } // namespace JSC::Yarr

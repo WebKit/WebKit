@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001, 2004 Harri Porten (porten@kde.org)
- *  Copyright (c) 2007, 2008, 2016 Apple Inc. All rights reserved.
+ *  Copyright (c) 2007, 2008, 2016-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *  Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  *
@@ -281,7 +281,7 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
     }
 
 #if ENABLE(YARR_JIT)
-    if (!pattern.m_containsBackreferences && !pattern.containsUnsignedLengthPattern() && !unicode() && vm->canUseRegExpJIT()) {
+    if (!pattern.m_containsBackreferences && !pattern.containsUnsignedLengthPattern() && vm->canUseRegExpJIT()) {
         Yarr::jitCompile(pattern, charSize, vm, m_regExpJITCode);
         if (!m_regExpJITCode.isFallBack()) {
             m_state = JITCode;

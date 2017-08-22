@@ -1,3 +1,15 @@
+2017-08-22  Michael Saboff  <msaboff@apple.com>
+
+        Implement Unicode RegExp support in the YARR JIT
+        https://bugs.webkit.org/show_bug.cgi?id=174646
+
+        Reviewed by Filip Pizlo.
+
+        Updated tests.
+
+        * js/regexp-unicode-expected.txt:
+        * js/script-tests/regexp-unicode.js:
+
 2017-08-22  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r221017.

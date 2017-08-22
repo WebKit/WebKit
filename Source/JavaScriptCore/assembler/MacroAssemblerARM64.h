@@ -1176,6 +1176,11 @@ public:
         m_assembler.ldrh(dest, address.base, memoryTempRegister);
     }
     
+    void load16Unaligned(ImplicitAddress address, RegisterID dest)
+    {
+        load16(address, dest);
+    }
+
     void load16Unaligned(BaseIndex address, RegisterID dest)
     {
         load16(address, dest);
@@ -1533,6 +1538,13 @@ public:
     void store8(RegisterID src, RegisterID dest, PostIndex simm)
     {
         m_assembler.strb(src, dest, simm);
+    }
+
+    void getEffectiveAddress64(BaseIndex address, RegisterID dest)
+    {
+        m_assembler.add<64>(dest, address.base, address.index, ARM64Assembler::LSL, address.scale);
+        if (address.offset)
+            add64(TrustedImm32(address.offset), dest);
     }
 
     // Floating-point operations:
