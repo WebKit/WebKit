@@ -287,9 +287,10 @@ static String cookiesForSession(const NetworkStorageSession&, const URL&, const 
     return cookies;
 }
 
-String CookieJarCurlFileSystem::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+std::pair<String, bool> CookieJarCurlFileSystem::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies)
 {
-    return cookiesForSession(session, firstParty, url, false);
+    // FIXME: This should filter secure cookies out if the caller requests it.
+    return { cookiesForSession(session, firstParty, url, false), false };
 }
 
 String CookieJarCurlFileSystem::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
@@ -336,9 +337,9 @@ void CookieJarCurlFileSystem::deleteAllCookiesModifiedSince(const NetworkStorage
 
 // dispatcher functions
 
-String cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)
 {
-    return CurlContext::singleton().cookieJar().cookiesForDOM(session, firstParty, url);
+    return CurlContext::singleton().cookieJar().cookiesForDOM(session, firstParty, url, includeSecureCookies);
 }
 
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)

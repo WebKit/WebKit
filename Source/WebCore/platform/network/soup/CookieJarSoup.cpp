@@ -88,8 +88,9 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
     return String::fromUTF8(cookies.get());
 }
 
-String cookiesForDOM(const NetworkStorageSession& session, const URL&, const URL& url)
+std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL&, const URL& url, IncludeSecureCookies)
 {
+    // FIXME: SOUP concept of secure cookies should be filtered here.
     return cookiesForSession(session, url, false);
 }
 
