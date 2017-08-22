@@ -1,3 +1,20 @@
+2017-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speedometer 2.0: Make it possible to change the iteration count via query string
+        https://bugs.webkit.org/show_bug.cgi?id=175811
+
+        Reviewed by Saam Barati.
+
+        Added the support for specifying the iteration count by "iterationCount" query parameter, and replaced "ms"
+        query parameter by "unit=ms".
+
+        Finally, reduced the number of iterations from 20 to 10 to reduce the time needed to run the benchmark
+        since Speedometer 2.0 contains more than twice the number of libraries and frameworks than Speedometer 1.0.
+
+        * Speedometer/resources/main.js:
+        (window.benchmarkClient.didFinishLastIteration):
+        (startBenchmark):
+
 2017-08-22  Mathias Bynens  <mathias@qiwi.be>
 
         Speedometer: Add missing stylesheet to Angular example
