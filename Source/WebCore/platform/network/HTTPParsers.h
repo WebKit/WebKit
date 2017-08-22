@@ -112,6 +112,11 @@ inline String stripLeadingAndTrailingHTTPSpaces(const String& string)
     return string.stripWhiteSpace(isHTTPSpace);
 }
 
+inline StringView stripLeadingAndTrailingHTTPSpaces(StringView string)
+{
+    return string.stripLeadingAndTrailingMatchedCharacters(isHTTPSpace);
+}
+
 }
 
 #endif
