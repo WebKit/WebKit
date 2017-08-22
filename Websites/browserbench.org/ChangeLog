@@ -1,3 +1,48 @@
+2017-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge the latest version of Speedometer 2.0 to browserbench.org
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Speedometer2.0: Replaced with PerformanceTests/Speedometer.
+        * Speedometer2.0/resources/benchmark-runner.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/dist/inline.b342d102ba4a53bf2002.bundle.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/dist/main.779eb2f1ddbe23ac61c7.bundle.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/dist/polyfills.2d45a4c73c85e24fe474.bundle.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/dist/vendor.b4be818cb6d8028f9192.bundle.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/e2e: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/e2e/app.e2e-spec.ts: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/e2e/app.po.ts: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/e2e/tsconfig.e2e.json: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angularjs/node_modules/angular-resource/angular-resource.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/angularjs/node_modules/angular-route/angular-route.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/angularjs/node_modules/angular/angular.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/backbone/node_modules/jquery/dist/jquery.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/backbone/node_modules/todomvc-app-css/index.css:
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/app/instance-initializers: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/app/instance-initializers/global.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/config/environment.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/tests/.jshintrc: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/tests/helpers/module-for-acceptance.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/tests/helpers/start-app.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/react-redux/dist/static/css/main.d43d2909.css: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/react-redux/dist/static/js/main.946269ff.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/vuejs-cli/dist/static/css/app.677b45842d9f8b96e5b23c18969233b7.css: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/vuejs-cli/dist/static/js/app.b0e835874bc8949670d1.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/vuejs-cli/dist/static/js/manifest.84b2b4fceb74ab1f91f3.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/vuejs-cli/dist/static/js/vendor.a52517c5aa98e7fbea2e.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.73bcc5d3c1d07180f0e3.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.73bcc5d3c1d07180f0e3.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.112bf70a7f3deebf1f93.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.112bf70a7f3deebf1f93.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.efaa3e0e20077c8e7471.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.efaa3e0e20077c8e7471.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.73bcc5d3c1d07180f0e3.css: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.73bcc5d3c1d07180f0e3.css.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.efaa3e0e20077c8e7471.css: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.efaa3e0e20077c8e7471.css.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/vanillajs/js/store.js:
+
 2017-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r219640): Speedometer no longer runs on Safari 7
