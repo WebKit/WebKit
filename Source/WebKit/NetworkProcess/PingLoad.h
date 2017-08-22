@@ -71,7 +71,7 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::ContentExtensions::ContentExtensionsBackend& contentExtensionsBackend();
-    bool processContentExtensionRulesForLoad(WebCore::ResourceRequest&);
+    WebCore::ContentExtensions::BlockedStatus processContentExtensionRulesForLoad(WebCore::ResourceRequest&);
 #endif
 
     WebCore::SecurityOrigin& securityOrigin() const;

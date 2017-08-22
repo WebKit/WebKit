@@ -111,7 +111,7 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (processContentExtensionRulesForLoad(request)) {
+    if (processContentExtensionRulesForLoad(request).blockedLoad) {
         RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection - Redirect was blocked by content extensions");
         m_lastRedirectionRequest = request;
         completionHandler({ });
@@ -321,12 +321,11 @@ ContentExtensions::ContentExtensionsBackend& PingLoad::contentExtensionsBackend(
     return *m_contentExtensionsBackend;
 }
 
-// Returns true if we should block the load.
-bool PingLoad::processContentExtensionRulesForLoad(ResourceRequest& request)
+ContentExtensions::BlockedStatus PingLoad::processContentExtensionRulesForLoad(ResourceRequest& request)
 {
     auto status = contentExtensionsBackend().processContentExtensionRulesForPingLoad(request.url(), m_parameters.mainDocumentURL);
     applyBlockedStatusToRequest(status, request);
-    return status.blockedLoad;
+    return status;
 }
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
