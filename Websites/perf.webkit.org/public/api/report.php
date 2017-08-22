@@ -50,6 +50,6 @@ function main($post_data) {
     exit_with_success();
 }
 
-main($HTTP_RAW_POST_DATA);
+main(file_get_contents('php://input'));
 
 ?>

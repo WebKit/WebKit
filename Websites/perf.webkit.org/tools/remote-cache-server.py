@@ -37,6 +37,8 @@ def start_httpd(remote_server_config):
     httpd_pid_file = abspath_from_root(remote_server_config['httpdPID'])
     httpd_error_log_file = abspath_from_root(remote_server_config['httpdErrorLog'])
     httpd_mutex_dir = abspath_from_root(remote_server_config['httpdMutexDir'])
+    version_info = subprocess.check_output(['php', '-v'], stderr=subprocess.PIPE)
+    php_version = 'PHP5' if 'PHP 5' in version_info else 'PHP7'
 
     if not os.path.isdir(httpd_mutex_dir):
         os.makedirs(httpd_mutex_dir)
@@ -50,8 +52,8 @@ def start_httpd(remote_server_config):
         '-c', 'PidFile ' + httpd_pid_file,
         '-c', 'Mutex file:' + httpd_mutex_dir,
         '-c', 'DocumentRoot ' + doc_root,
-        '-c', 'ErrorLog ' + httpd_error_log_file])
-
+        '-c', 'ErrorLog ' + httpd_error_log_file,
+        '-D', php_version])
 
 def stop_httpd(remote_server_config):
     httpd_pid_file = abspath_from_root(remote_server_config['httpdPID'])

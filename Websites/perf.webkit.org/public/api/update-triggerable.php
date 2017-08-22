@@ -142,6 +142,6 @@ function validate_repository_groups($db, &$repository_groups)
     }
 }
 
-main($HTTP_RAW_POST_DATA);
+main(file_get_contents('php://input'));
 
 ?>

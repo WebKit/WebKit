@@ -95,7 +95,6 @@ function require_existence_of($array, $list_of_arguments, $prefix = '') {
 }
 
 function ensure_privileged_api_data() {
-    global $HTTP_RAW_POST_DATA;
 
     if (config('maintenanceMode'))
         exit_with_error('InMaintenanceMode');
@@ -103,10 +102,7 @@ function ensure_privileged_api_data() {
     if ($_SERVER['REQUEST_METHOD'] != 'POST')
         exit_with_error('InvalidRequestMethod');
 
-    if (!isset($HTTP_RAW_POST_DATA))
-        exit_with_error('InvalidRequestContent');
-
-    $data = json_decode($HTTP_RAW_POST_DATA, true);
+    $data = json_decode(file_get_contents('php://input'), true);
 
     if ($data === NULL)
         exit_with_error('InvalidRequestContent');

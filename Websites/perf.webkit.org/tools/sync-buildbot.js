@@ -32,7 +32,7 @@ function syncLoop(options)
 
     const makeTriggerable = function () {
         return new BuildbotTriggerable(buildbotConfig, global.RemoteAPI, buildbotRemote, serverConfig.slave, console)
-    }
+    };
 
     Manifest.fetch().then(() => {
         return makeTriggerable().updateTriggerable();

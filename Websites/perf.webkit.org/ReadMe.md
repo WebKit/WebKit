@@ -275,7 +275,7 @@ The test also reports `FrameRate` but this metric is measured only for the entir
                 "FrameRate": {
                     "current": [31, 24, 29]
                 }
-            }
+            },
             "tests": {
                 "webkit.org": {
                     "metrics": {
@@ -292,9 +292,9 @@ The test also reports `FrameRate` but this metric is measured only for the entir
                         }
                     },
                     "url": "https://www.w3.org/"
-                },
-            },
-        },
+                }
+            }
+        }
     }
 }]
 ```

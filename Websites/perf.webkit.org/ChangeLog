@@ -1,3 +1,29 @@
+2017-08-21  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Performance Dashboard should be compatible with PHP 7.
+        https://bugs.webkit.org/show_bug.cgi?id=175813
+
+        Reviewed by Ryosuke Niwa.
+
+        Use `file_get_contents('php://input')` instead of '$HTTP_RAW_POST_DATA'.
+        Update test harness script to load right php module in httpd.
+
+        * ReadMe.md: JSON example format fix.
+        * public/api/report-commits.php: Stop using '$HTTP_RAW_POST_DATA'.
+        * public/api/report.php: Stop using '$HTTP_RAW_POST_DATA'.
+        * public/api/update-triggerable.php: Stop using '$HTTP_RAW_POST_DATA'.
+        * public/include/json-header.php: Stop using '$HTTP_RAW_POST_DATA'.
+        * public/include/report-processor.php: Stop using '$HTTP_RAW_POST_DATA'.
+        * server-tests/resources/test-server.conf: Load php5 or php7 module conditionally.
+        * server-tests/resources/test-server.js: Pass PHP version info while launching httpd.
+        (TestServer.prototype._startApache):
+        * tools/remote-cache-server.py: Pass PHP version info while launching httpd.
+        (start_httpd):
+        * tools/remote-server-relay.conf: Load php5 or php7 module conditionally.
+        * tools/sync-buildbot.js:
+        (syncLoop.const.makeTriggerable):
+        (syncLoop):
+
 2017-08-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Number each section in ReadMe.md and add more clarifications

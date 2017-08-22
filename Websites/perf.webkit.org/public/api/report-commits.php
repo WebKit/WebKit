@@ -99,6 +99,6 @@ function insert_commit($db, $commit_info, $repository_id, $owner_commit_id)
     return $inserted_commit_id;
 }
 
-main($HTTP_RAW_POST_DATA);
+main(file_get_contents('php://input'));
 
 ?>
