@@ -120,6 +120,8 @@ list(APPEND WebKit2_SOURCES
     Shared/wpe/ProcessExecutablePathWPE.cpp
     Shared/wpe/WebEventFactory.cpp
 
+    StorageProcess/glib/StorageProcessMainGLib.cpp
+
     UIProcess/AcceleratedDrawingAreaProxy.cpp
     UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp
@@ -261,9 +263,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/soup/WebProcessSoup.cpp
 
     WebProcess/wpe/WebProcessMainWPE.cpp
-
-    # FIXME-GWSHARE:
-    StorageProcess/gtk/StorageProcessMainGtk.cpp
 )
 
 list(APPEND WebKit2_MESSAGES_IN_FILES
