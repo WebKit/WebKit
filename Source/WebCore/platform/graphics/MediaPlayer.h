@@ -121,6 +121,21 @@ struct MediaEngineSupportParameters {
     Vector<ContentType> contentTypesRequiringHardwareSupport;
 };
 
+struct PlatformVideoPlaybackQualityMetrics {
+    PlatformVideoPlaybackQualityMetrics(unsigned long totalVideoFrames, unsigned long droppedVideoFrames, unsigned long corruptedVideoFrames, double totalFrameDelay)
+        : totalVideoFrames(totalVideoFrames)
+        , droppedVideoFrames(droppedVideoFrames)
+        , corruptedVideoFrames(corruptedVideoFrames)
+        , totalFrameDelay(totalFrameDelay)
+    {
+    }
+
+    unsigned long totalVideoFrames;
+    unsigned long droppedVideoFrames;
+    unsigned long corruptedVideoFrames;
+    double totalFrameDelay;
+};
+
 extern const PlatformMedia NoPlatformMedia;
 
 class CDMSessionClient;
@@ -583,10 +598,7 @@ public:
     unsigned long long fileSize() const;
 
 #if ENABLE(MEDIA_SOURCE)
-    unsigned long totalVideoFrames();
-    unsigned long droppedVideoFrames();
-    unsigned long corruptedVideoFrames();
-    MediaTime totalFrameDelay();
+    std::optional<PlatformVideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 #endif
 
     bool shouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&);

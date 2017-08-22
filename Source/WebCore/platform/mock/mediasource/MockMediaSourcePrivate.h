@@ -55,10 +55,7 @@ public:
     void seekToTime(const MediaTime&);
     MediaTime seekToTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
 
-    unsigned long totalVideoFrames() const { return m_totalVideoFrames; }
-    unsigned long droppedVideoFrames() const  { return m_droppedVideoFrames; }
-    unsigned long corruptedVideoFrames() const { return m_corruptedVideoFrames; }
-    MediaTime totalFrameDelay() const { return m_totalFrameDelay; }
+    std::optional<PlatformVideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
     void incrementTotalVideoFrames() { ++m_totalVideoFrames; }
     void incrementDroppedFrames() { ++m_droppedVideoFrames; }

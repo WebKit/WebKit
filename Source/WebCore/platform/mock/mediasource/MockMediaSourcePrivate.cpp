@@ -183,6 +183,16 @@ MediaTime MockMediaSourcePrivate::seekToTime(const MediaTime& targetTime, const 
     return seekTime;
 }
 
+std::optional<PlatformVideoPlaybackQualityMetrics> MockMediaSourcePrivate::videoPlaybackQualityMetrics()
+{
+    return PlatformVideoPlaybackQualityMetrics(
+        m_totalVideoFrames,
+        m_droppedVideoFrames,
+        m_corruptedVideoFrames,
+        m_totalFrameDelay.toDouble()
+    );
+}
+
 };
 
 #endif
