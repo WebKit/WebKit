@@ -786,8 +786,8 @@
 #if (CPU(X86) || CPU(X86_64)) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD))
 #define ENABLE_DFG_JIT 1
 #endif
-/* Enable the DFG JIT on ARMv7.  Only tested on iOS and Qt/GTK+ Linux. */
-#if (CPU(ARM_THUMB2) || CPU(ARM64)) && (PLATFORM(IOS) || PLATFORM(WPE))
+/* Enable the DFG JIT on ARMv7.  Only tested on iOS and GTK+/WPE Linux. */
+#if (CPU(ARM_THUMB2) || CPU(ARM64)) && (PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(WPE))
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARM. */
@@ -828,11 +828,6 @@
 #endif
 
 #if !ENABLE(JIT) || OS(WINDOW)
-#undef ENABLE_MASM_PROBE
-#define ENABLE_MASM_PROBE 0
-#endif
-#if PLATFORM(GTK) && CPU(ARM_THUMB2)
-/* FIXME: https://bugs.webkit.org/show_bug.cgi?id=175514 */
 #undef ENABLE_MASM_PROBE
 #define ENABLE_MASM_PROBE 0
 #endif
