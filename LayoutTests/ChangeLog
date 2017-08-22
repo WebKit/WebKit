@@ -1,3 +1,15 @@
+2017-08-22  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement error checking for show(), abort(), and canMakePayment()
+        https://bugs.webkit.org/show_bug.cgi?id=175789
+
+        Reviewed by Brady Eidson.
+        
+        Stopped marking payment-request-abort-method.https.html and payment-request-show-method.https.html  as flaky.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2017-08-22  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, enable http/wpt/beacon/contentextensions on Mac WK2 only.

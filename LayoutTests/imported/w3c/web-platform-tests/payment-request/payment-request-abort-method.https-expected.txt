@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: Not implemented
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
 
-FAIL Throws if the promise [[state]] is not "interactive" assert_throws: function "function () { throw e }" threw object "NotSupportedError: Not implemented" that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
-FAIL Calling abort must not change the [[state]] until after "interactive" assert_throws: function "function () { throw e }" threw object "NotSupportedError: Not implemented" that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
-FAIL calling .abort() causes acceptPromise to reject and closes the request. assert_true: Unexpected promise rejection: Not implemented expected true got false
+PASS Throws if the promise [[state]] is not "interactive" 
+PASS Calling abort must not change the [[state]] until after "interactive" 
+FAIL calling .abort() causes acceptPromise to reject and closes the request. assert_throws: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException AbortError: property "code" is equal to 9, expected 20
 

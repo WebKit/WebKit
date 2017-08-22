@@ -1,8 +1,5 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: Not implemented
-CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: Not implemented
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
 
-Harness Error (FAIL), message = Not implemented
-
-FAIL Throws if the promise [[state]] is not "created" assert_throws: function "function () { throw e }" threw object "NotSupportedError: Not implemented" that is not a DOMException InvalidStateError: property "code" is equal to 9, expected 11
-FAIL If the user agent's "payment request is showing" boolean is true, then return a promise rejected with an "AbortError" DOMException. assert_throws: function "function () { throw e }" threw object "NotSupportedError: Not implemented" that is not a DOMException AbortError: property "code" is equal to 9, expected 20
+FAIL Throws if the promise [[state]] is not "created" assert_throws: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException AbortError: property "code" is equal to 9, expected 20
+FAIL If the user agent's "payment request is showing" boolean is true, then return a promise rejected with an "AbortError" DOMException. assert_throws: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException AbortError: property "code" is equal to 9, expected 20
 

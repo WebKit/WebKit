@@ -44,12 +44,16 @@ struct PaymentMethodData;
 
 class PaymentRequest final : public RefCounted<PaymentRequest>, public ActiveDOMObject, public EventTargetWithInlineData {
 public:
+    using ShowPromise = DOMPromiseDeferred<IDLInterface<PaymentResponse>>;
+    using AbortPromise = DOMPromiseDeferred<void>;
+    using CanMakePaymentPromise = DOMPromiseDeferred<IDLBoolean>;
+
     static ExceptionOr<Ref<PaymentRequest>> create(Document&, Vector<PaymentMethodData>&&, PaymentDetailsInit&&, PaymentOptions&&);
     ~PaymentRequest();
 
-    void show(DOMPromiseDeferred<IDLInterface<PaymentResponse>>&&);
-    void abort(DOMPromiseDeferred<void>&&);
-    void canMakePayment(DOMPromiseDeferred<IDLBoolean>&&);
+    void show(ShowPromise&&);
+    ExceptionOr<void> abort(AbortPromise&&);
+    void canMakePayment(CanMakePaymentPromise&&);
 
     const String& id() const;
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
@@ -60,7 +64,20 @@ public:
     using RefCounted<PaymentRequest>::deref;
 
 private:
-    PaymentRequest(Document&, PaymentOptions&&, PaymentDetailsInit&&, Vector<String>&& serializedModifierData, HashMap<String, String>&& serializedMethodData, String&& selectedShippingOption);
+    enum class State {
+        Created,
+        Interactive,
+        Closed,
+    };
+
+    struct Method {
+        String supportedMethods;
+        String serializedData;
+    };
+
+    PaymentRequest(Document&, PaymentOptions&&, PaymentDetailsInit&&, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption);
+
+    void finishShowing();
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "PaymentRequest"; }
@@ -76,9 +93,13 @@ private:
     PaymentOptions m_options;
     PaymentDetailsInit m_details;
     Vector<String> m_serializedModifierData;
-    HashMap<String, String> m_serializedMethodData;
+    Vector<Method> m_serializedMethodData;
     String m_shippingOption;
     RefPtr<PaymentAddress> m_shippingAddress;
+    State m_state { State::Created };
+    std::optional<ShowPromise> m_showPromise;
+    std::optional<AbortPromise> m_abortPromise;
+    std::optional<CanMakePaymentPromise> m_canMakePaymentPromise;
 };
 
 } // namespace WebCore

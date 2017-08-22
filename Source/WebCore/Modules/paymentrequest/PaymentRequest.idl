@@ -33,7 +33,7 @@
     SecureContext
 ] interface PaymentRequest : EventTarget {
     Promise<PaymentResponse> show();
-    Promise<void> abort();
+    [MayThrowException] Promise<void> abort();
     Promise<boolean> canMakePayment();
 
     readonly attribute DOMString id;

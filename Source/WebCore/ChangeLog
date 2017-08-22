@@ -1,3 +1,31 @@
+2017-08-22  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Implement error checking for show(), abort(), and canMakePayment()
+        https://bugs.webkit.org/show_bug.cgi?id=175789
+
+        Reviewed by Brady Eidson.
+
+        Implement many of the exceptions and promise rejections specified for PaymentRequest's
+        show(), abort(), and canMakePayment() methods. Also implement basic state tracking.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::create): Changed serializedMethodData from a
+        HashMap<String, String> to a Vector<PaymentRequest::Method>.
+        (WebCore::PaymentRequest::PaymentRequest):
+        (WebCore::PaymentRequest::show): Added promise rejection for invalid state, updated the
+        state to Interactive, stored the promise in m_showPromise, and dispatched finishShowing().
+        (WebCore::PaymentRequest::finishShowing): Added JSON parsing of payment method serialized
+        data and exception propagation. If there are no exceptions, rejected m_showPromise with
+        NotSupportedError since we don't yet support any payment methods.
+        (WebCore::PaymentRequest::abort): Added promise rejection for invalid state and stored the
+        promise in m_abortPromise. Dispatched a lambda to update the state to Closed, reject
+        m_showPromise, and resolve m_abortPromise.
+        (WebCore::PaymentRequest::canMakePayment): Added promise rejection for invalid state and
+        stored the promise in m_canMakePaymentPromise. Dispatched a lambda to resolve
+        m_canMakePaymentPromise with false since we don't yet support any payment methods.
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentRequest.idl: Annotated abort() with MayThrowException.
+
 2017-08-22  Brent Fulgham  <bfulgham@apple.com> and Pranjal Jumde  <pjumde@apple.com>
 
         Disable access to secure cookies if an HTTPS site loads mixed content

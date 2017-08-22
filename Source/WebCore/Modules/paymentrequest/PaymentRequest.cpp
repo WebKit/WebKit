@@ -34,9 +34,11 @@
 #include "PaymentDetailsInit.h"
 #include "PaymentMethodData.h"
 #include "PaymentOptions.h"
+#include "ScriptController.h"
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/ThrowScope.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/RunLoop.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {
@@ -169,7 +171,8 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
     if (methodData.isEmpty())
         return Exception { TypeError, ASCIILiteral("At least one payment method is required.") };
 
-    HashMap<String, String> serializedMethodData;
+    Vector<Method> serializedMethodData;
+    serializedMethodData.reserveInitialCapacity(methodData.size());
     for (auto& paymentMethod : methodData) {
         if (paymentMethod.supportedMethods.isEmpty())
             return Exception { TypeError, ASCIILiteral("supportedMethods must be specified.") };
@@ -181,7 +184,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
             if (scope.exception())
                 return Exception { ExistingExceptionError };
         }
-        serializedMethodData.add(paymentMethod.supportedMethods, WTFMove(serializedData));
+        serializedMethodData.uncheckedAppend({ paymentMethod.supportedMethods, WTFMove(serializedData) });
     }
 
     auto exception = checkAndCanonicalizeTotal(details.total.amount);
@@ -240,7 +243,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
     return adoptRef(*new PaymentRequest(document, WTFMove(options), WTFMove(details), WTFMove(serializedModifierData), WTFMove(serializedMethodData), WTFMove(selectedShippingOption)));
 }
 
-PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, PaymentDetailsInit&& details, Vector<String>&& serializedModifierData, HashMap<String, String>&& serializedMethodData, String&& selectedShippingOption)
+PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, PaymentDetailsInit&& details, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption)
     : ActiveDOMObject { &document }
     , m_options { WTFMove(options) }
     , m_details { WTFMove(details) }
@@ -255,21 +258,88 @@ PaymentRequest::~PaymentRequest()
 {
 }
 
-void PaymentRequest::show(DOMPromiseDeferred<IDLInterface<PaymentResponse>>&& promise)
+// https://www.w3.org/TR/payment-request/#show()-method
+void PaymentRequest::show(ShowPromise&& promise)
 {
-    promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented") });
+    // FIXME: Reject promise with SecurityError if show() was not triggered by a user gesture.
+    // Find a way to do this without breaking the payment-request web platform tests.
+
+    if (m_state != State::Created) {
+        promise.reject(Exception { InvalidStateError });
+        return;
+    }
+
+    // FIXME: Reject promise with AbortError if PaymentCoordinator already has an active session.
+
+    m_state = State::Interactive;
+    ASSERT(!m_showPromise);
+    m_showPromise = WTFMove(promise);
+
+    // The spec requires these steps to be run after returning `promise` to the caller.
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] {
+        finishShowing();
+    });
 }
 
-void PaymentRequest::abort(DOMPromiseDeferred<void>&& promise)
+void PaymentRequest::finishShowing()
 {
-    promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented") });
+    ASSERT(m_showPromise);
+
+    for (auto& paymentMethod : m_serializedMethodData) {
+        auto scope = DECLARE_THROW_SCOPE(scriptExecutionContext()->vm());
+        JSC::JSValue data = JSONParse(scriptExecutionContext()->execState(), paymentMethod.serializedData);
+        if (scope.exception()) {
+            m_showPromise->reject(Exception { ExistingExceptionError });
+            return;
+        }
+
+        // FIXME: If there is a payment handler that can support this payment method, allow it to
+        // convert the serialized data (propagating any exceptions that might be thrown) and add it
+        // to a list of handlers.
+        UNUSED(data);
+    }
+
+    // FIXME: If the list of handlers is non-empty, present the payment UI instead of rejecting.
+    m_showPromise->reject(Exception { NotSupportedError });
 }
 
-void PaymentRequest::canMakePayment(DOMPromiseDeferred<IDLBoolean>&& promise)
+// https://www.w3.org/TR/payment-request/#abort()-method
+ExceptionOr<void> PaymentRequest::abort(AbortPromise&& promise)
 {
-    promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented") });
+    if (m_state != State::Interactive)
+        return Exception { InvalidStateError };
+
+    ASSERT(m_showPromise);
+    ASSERT(!m_abortPromise);
+    m_abortPromise = WTFMove(promise);
+
+    // The spec requires these steps to be run after returning `promise` to the caller.
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] {
+        m_state = State::Closed;
+        m_showPromise->reject(Exception { AbortError });
+        m_abortPromise->resolve();
+    });
+
+    return { };
 }
-    
+
+// https://www.w3.org/TR/payment-request/#canmakepayment()-method
+void PaymentRequest::canMakePayment(CanMakePaymentPromise&& promise)
+{
+    if (m_state != State::Created) {
+        promise.reject(Exception { InvalidStateError });
+        return;
+    }
+
+    m_canMakePaymentPromise = WTFMove(promise);
+
+    // The spec requires these steps to be run after returning `promise` to the caller.
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] {
+        // FIXME: Resolve the promise with true if we can support any of the payment methods in m_serializedMethodData.
+        m_canMakePaymentPromise->resolve(false);
+    });
+}
+
 const String& PaymentRequest::id() const
 {
     return m_details.id;
