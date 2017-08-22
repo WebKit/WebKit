@@ -73,7 +73,7 @@ void SWServer::registerConnection(Connection& connection)
 
 void SWServer::unregisterConnection(Connection& connection)
 {
-    ASSERT(!m_connections.contains(&connection));
+    ASSERT(m_connections.contains(&connection));
     m_connections.remove(&connection);
 }
 
