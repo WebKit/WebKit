@@ -1,0 +1,807 @@
+#!/bin/sh
+#
+# Copyright © 2009-2013 Samy Al Bahra.
+# Copyright © 2011 Devon H. O'Dell <devon.odell@gmail.com>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+
+REQUIRE_HEADER="stdbool.h stddef.h stdint.h string.h"
+
+EXIT_SUCCESS=0
+EXIT_FAILURE=1
+WANT_PIC=yes
+
+P_PWD=`pwd`
+MAINTAINER='sbahra@repnop.org'
+VERSION=${VERSION:-'1.0.0'}
+VERSION_MAJOR='0'
+BUILD="$PWD/build/ck.build"
+PREFIX=${PREFIX:-"/usr/local"}
+LDNAME="libck.so"
+LDNAME_VERSION="libck.so.$VERSION"
+LDNAME_MAJOR="libck.so.$VERSION_MAJOR"
+
+OPTION_CHECKING=1
+
+export CFLAGS
+export PREFIX
+LC_ALL=C
+export LC_ALL
+
+if test -n "${BASH_VERSION+set}" && (set -o posix) >/dev/null 2>&1; then
+ 	set -o posix
+fi
+
+trap epilog 1 2 3 6
+
+epilog()
+{
+	rm -f .1.c .1
+}
+
+assert()
+{
+
+	if test "$#" -eq 2; then
+		fail=$2
+		print=true
+	elif test "$#" -eq 3; then
+		fail=$3
+		print=echo
+	else
+		echo "Usage: assert <test> <fail string> or assert <test> <success string> <fail string>" 1>&2
+		exit $EXIT_FAILURE
+	fi
+
+	if test -z "$1"; then
+		echo "failed  [$fail]"
+		exit $EXIT_FAILURE
+	else
+		${print} "success [$1]"
+	fi
+}
+
+get_git_sha()
+{
+    # return a short SHA for the current HEAD
+    GIT_SHA=""
+    GIT_MSG="success"
+    gitcmd=`which git`
+    if test -n "$gitcmd"; then
+	GIT_SHA=`git rev-parse --short HEAD  2>/dev/null`
+	if ! test -n "$GIT_SHA"; then
+	    GIT_MSG="not within a git repo"
+	fi
+    else
+	GIT_MSG="git not installed or executable"
+    fi
+}
+
+generate()
+{
+	sed -e "s#@PROFILE@#$PROFILE#g"				\
+	    -e "s#@VERSION@#$VERSION#g"				\
+	    -e "s#@VERSION_MAJOR@#$VERSION_MAJOR#g"		\
+	    -e "s#@CC@#$CC#g"					\
+ 	    -e "s#@CFLAGS@#$CFLAGS#g"				\
+ 	    -e "s#@HEADERS@#$HEADERS#g"				\
+	    -e "s#@LIBRARY@#$LIBRARY#g"				\
+	    -e "s#@PREFIX@#$PREFIX#g"				\
+	    -e "s#@CORES@#$CORES#g"				\
+	    -e "s#@ALL_LIBS@#$ALL_LIBS#g"			\
+	    -e "s#@INSTALL_LIBS@#$INSTALL_LIBS#g"		\
+	    -e "s#@LD@#$LD#g"					\
+	    -e "s#@LDFLAGS@#$LDFLAGS#g"				\
+	    -e "s#@PTHREAD_CFLAGS@#$PTHREAD_CFLAGS#g"		\
+	    -e "s#@MANDIR@#$MANDIR#g"				\
+	    -e "s#@GZIP@#$GZIP#g"				\
+	    -e "s#@GZIP_SUFFIX@#$GZIP_SUFFIX#g"			\
+	    -e "s#@POINTER_PACK_ENABLE@#$POINTER_PACK_ENABLE#g"	\
+	    -e "s#@DISABLE_DOUBLE@#$DISABLE_DOUBLE#g"		\
+	    -e "s#@RTM_ENABLE@#$RTM_ENABLE#g"			\
+	    -e "s#@LSE_ENABLE@#$LSE_ENABLE#g"			\
+	    -e "s#@VMA_BITS@#$VMA_BITS_R#g"			\
+	    -e "s#@VMA_BITS_VALUE@#$VMA_BITS_VALUE_R#g"		\
+	    -e "s#@MM@#$MM#g"					\
+	    -e "s#@BUILD_DIR@#$P_PWD#g"				\
+	    -e "s#@SRC_DIR@#$BUILD_DIR#g"			\
+	    -e "s#@LDNAME@#$LDNAME#g"				\
+	    -e "s#@LDNAME_MAJOR@#$LDNAME_MAJOR#g"		\
+	    -e "s#@LDNAME_VERSION@#$LDNAME_VERSION#g"		\
+	    -e "s#@PC_CFLAGS@#$PC_CFLAGS#g"			\
+	    -e "s#@GIT_SHA@#$GIT_SHA#g"			        \
+		$1 > $2
+}
+
+generate_stdout()
+{
+
+	echo
+	echo "           VERSION = $VERSION"
+	echo "           GIT_SHA = $GIT_SHA"
+	echo "         BUILD_DIR = $P_PWD"
+	echo "           SRC_DIR = $BUILD_DIR"
+	echo "            SYSTEM = $SYSTEM"
+	echo "           PROFILE = $PROFILE"
+	echo "                CC = $CC"
+	echo "          COMPILER = $COMPILER"
+	echo "            CFLAGS = $CFLAGS"
+	echo "    PTHREAD_CFLAGS = $PTHREAD_CFLAGS"
+	echo "                LD = $LD"
+	echo "            LDNAME = $LDNAME"
+	echo "    LDNAME_VERSION = $LDNAME_VERSION"
+	echo "      LDNAME_MAJOR = $LDNAME_MAJOR"
+	echo "           LDFLAGS = $LDFLAGS"
+	echo "              GZIP = $GZIP"
+	echo "             CORES = $CORES"
+	echo "      POINTER_PACK = $POINTER_PACK_ENABLE"
+	echo "          VMA_BITS = $VMA_BITS"
+	echo "      MEMORY_MODEL = $MM"
+	echo "               RTM = $RTM_ENABLE"
+	echo "               LSE = $LSE_ENABLE"
+	echo
+	echo "Headers will be installed in $HEADERS"
+	echo "Libraries will be installed in $LIBRARY"
+	echo "Documentation will be installed in $MANDIR"
+}
+
+for option; do
+	case "$option" in
+	*=?*)
+		optname=`echo $option|cut -c 3-`
+		value=`expr "$optname" : '[^=]*=\(.*\)'`
+		;;
+	*=)
+		value=
+		;;
+	*)
+		value=yes
+		;;
+	esac
+
+	case "$option" in
+	--help)
+		echo "Usage: $0 [OPTIONS]"
+		echo
+		echo "The following options may be used for cross-building."
+		echo "  --profile=N              Use custom build profile (use in conjunction with \$CC)"
+		echo
+		echo "The following options may be used to modify installation behavior."
+		echo "  --includedir=N           Headers directory (default is ${PREFIX}/include)"
+		echo "  --libdir=N               Libraries directory (default is ${PREFIX}/lib)"
+		echo "  --mandir=N               Manual pages directory (default is ${PREFIX}/man)"
+		echo "  --prefix=N               Installs library files in N (default is $PREFIX)"
+		echo
+		echo "The following options will affect generated code."
+		echo "  --enable-pointer-packing Assumes address encoding is subset of pointer range"
+		echo "  --enable-rtm             Enable restricted transactional memory (power, x86_64)"
+		echo "  --enable-lse             Enable large system extensions (arm64)"
+		echo "  --memory-model=N         Specify memory model (currently tso, pso or rmo)"
+		echo "  --vma-bits=N             Specify valid number of VMA bits"
+		echo "  --platform=N             Force the platform type, instead of relying on autodetection"
+		echo "  --use-cc-builtins        Use the compiler atomic bultin functions, instead of the CK implementation"
+		echo "  --disable-double         Don't generate any of the functions using the \"double\" type"
+		echo
+		echo "The following options affect regression testing."
+		echo "  --cores=N                Specify number of cores available on target machine"
+		echo
+		echo "The following environment variables may be used:"
+		echo "   CC       C compiler command"
+		echo "   CFLAGS   C compiler flags"
+		echo "   LDFLAGS  Linker flags"
+		echo "   GZIP     GZIP compression tool"
+		echo
+		echo "Report bugs to ${MAINTAINER}."
+		exit $EXIT_SUCCESS
+		;;
+	--memory-model=*)
+		case "$value" in
+		"tso")
+			MM="CK_MD_TSO"
+			;;
+		"rmo")
+			MM="CK_MD_RMO"
+			;;
+		"pso")
+			MM="CK_MD_PSO"
+			;;
+		*)
+			echo "./configure [--help]"
+			exit $EXIT_FAILURE
+			;;
+		esac
+		;;
+	--vma-bits=*)
+		VMA_BITS=$value
+		;;
+	--enable-pointer-packing)
+		POINTER_PACK_ENABLE="CK_MD_POINTER_PACK_ENABLE"
+		;;
+	--enable-rtm)
+		RTM_ENABLE_SET="CK_MD_RTM_ENABLE"
+		;;
+	--enable-lse)
+		LSE_ENABLE_SET="CK_MD_LSE_ENABLE"
+		;;
+	--cores=*)
+		CORES=$value
+		;;
+	--profile=*)
+		PROFILE=$value
+		;;
+	--prefix=*)
+		PREFIX=$value
+		;;
+	--includedir=*)
+		HEADERS=$value
+		;;
+	--libdir=*)
+		LIBRARY=$value
+		;;
+	--mandir=*)
+		MANDIR=$value
+		;;
+	--with-pic)
+		WANT_PIC=yes
+		;;
+	--without-pic)
+		WANT_PIC=no
+		;;
+	--disable-option-checking)
+		OPTION_CHECKING=0
+		;;
+	--use-cc-builtins)
+		USE_CC_BUILTINS=1
+		;;
+	--disable-double)
+		DISABLE_DOUBLE="CK_PR_DISABLE_DOUBLE"
+		;;
+	--platform=*)
+		PLATFORM=$value
+		;;
+	--build=*|--host=*|--target=*|--exec-prefix=*|--bindir=*|--sbindir=*|\
+	--sysconfdir=*|--datadir=*|--libexecdir=*|--localstatedir=*|\
+	--enable-static|\
+	--sharedstatedir=*|--infodir=*|--enable-shared|--disable-shared|\
+	--cache-file=*|--srcdir=*)
+		# ignore for compat with regular configure
+		;;
+	--*)
+		if test "$OPTION_CHECKING" -eq 1; then
+			echo "$0 [--help]"
+			echo "Unknown option $option"
+			exit $EXIT_FAILURE
+		fi
+		;;
+	*=*)
+		optname=`echo $option|cut -c 3-`
+		NAME=`expr "$optname" : '\([^=]*\)='`
+		eval "$NAME='$value'"
+		export $NAME
+		;;
+	*)
+		echo "$0 [--help]"
+		echo "Unknown option $option"
+		exit $EXIT_FAILURE
+		;;
+	esac
+done
+
+HEADERS=${HEADERS:-"${PREFIX}/include"}
+LIBRARY=${LIBRARY:-"${PREFIX}/lib"}
+MANDIR=${MANDIR:-"${PREFIX}/share/man"}
+GZIP=${GZIP:-"gzip -c"}
+POINTER_PACK_ENABLE=${POINTER_PACK_ENABLE:-"CK_MD_POINTER_PACK_DISABLE"}
+DISABLE_DOUBLE=${DISABLE_DOUBLE:-"CK_PR_ENABLE_DOUBLE"}
+RTM_ENABLE=${RTM_ENABLE_SET:-"CK_MD_RTM_DISABLE"}
+LSE_ENABLE=${LSE_ENABLE_SET:-"CK_MD_LSE_DISABLE"}
+VMA_BITS=${VMA_BITS:-"unknown"}
+
+DCORES=2
+printf "Detecting operating system......."
+SYSTEM=`uname -s 2> /dev/null`
+case "$SYSTEM" in
+	"SunOS")
+		SYSTEM=solaris
+		;;
+	"Linux"|"uClinux")
+		DCORES=`egrep '(^CPU[0-9]+|^processor.*:.*)' /proc/cpuinfo|wc -l`
+		SYSTEM=linux
+		;;
+	"FreeBSD"|"GNU/kFreeBSD")
+		DCORES=`sysctl -n hw.ncpu`
+		SYSTEM=freebsd
+		;;
+	"NetBSD")
+		DCORES=`sysctl -n hw.ncpu`
+		SYSTEM=netbsd
+		;;
+	"OpenBSD")
+		DCORES=`sysctl -n hw.ncpu`
+		SYSTEM=openbsd
+		;;
+	"DragonFly")
+		DCORES=`sysctl -n hw.ncpu`
+		SYSTEM=dragonflybsd
+		;;
+	"Darwin")
+		DCORES=`sysctl -n hw.ncpu`
+		SYSTEM=darwin
+		;;
+	MINGW32*|MSYS_NT*)
+		SYSTEM=mingw32
+		LDFLAGS="-mthreads $LDFLAGS"
+		;;
+  CYGWIN_NT*)
+    SYSTEM=cygwin
+    LDFLAGS="-mthreads $LDFLAGS"
+    ;;
+	*)
+		SYSTEM=
+		;;
+esac
+
+assert "$SYSTEM" "$SYSTEM" "unsupported"
+
+CORES=${CORES:-${DCORES}}
+printf "Detecting machine architecture..."
+if test "x$PLATFORM" = "x"; then
+	PLATFORM=`uname -m 2> /dev/null`
+fi
+
+case $PLATFORM in
+	"macppc"|"Power Macintosh"|"powerpc")
+		RTM_ENABLE="CK_MD_RTM_DISABLE"
+		LSE_ENABLE="CK_MD_LSE_DISABLE"
+		MM="${MM:-"CK_MD_RMO"}"
+		PLATFORM=ppc
+		ENVIRONMENT=32
+		LDFLAGS="-m32 $LDFLAGS"
+		;;
+	"sun4u"|"sun4v"|"sparc64")
+		RTM_ENABLE="CK_MD_RTM_DISABLE"
+		LSE_ENABLE="CK_MD_LSE_DISABLE"
+		MM="${MM:-"CK_MD_TSO"}"
+		PLATFORM=sparcv9
+		ENVIRONMENT=64
+		LDFLAGS="-m64 $LDFLAGS"
+		;;
+	i386|i486|i586|i686|i586_i686|pentium*|athlon*|k5|k6|k6_2|k6_3)
+		LSE_ENABLE="CK_MD_LSE_DISABLE"
+		MM="${MM:-"CK_MD_TSO"}"
+		case $SYSTEM in
+			darwin)
+				ENVIRONMENT=64
+				PLATFORM=x86_64
+				;;
+			freebsd)
+				PLATFORM=x86
+				ENVIRONMENT=32
+
+				# FreeBSD doesn't give us a nice way to determine the CPU
+				# class of the running system, reporting any 32-bit x86
+				# architecture as i386. 486 is its minimum supported CPU
+				# class and cmpxchg8b was implemented first in i586.
+				dmesg | grep -q "486-class"
+				if test "$?" -eq 0; then
+					assert "" "" "Must have an i586 class or higher CPU"
+				fi
+
+				# FreeBSD still generates code for 486-class CPUs as its
+				# default 32-bit target, but we need 586 at the least.
+				echo "$CFLAGS" | grep -q 'march='
+				if test "$?" -ne 0; then
+					# Needed for cmpxchg8b
+					CFLAGS="$CFLAGS -march=i586"
+				fi
+				;;
+			linux)
+				case $PLATFORM in
+					i386|i486)
+						assert "" "" "Must have an i586 class or higher CPU"
+						;;
+				esac
+
+				PLATFORM=x86
+				ENVIRONMENT=32
+				;;
+
+			*)
+				PLATFORM=x86
+				ENVIRONMENT=32
+				assert "$PLATFORM $ENVIRONMENT" "$PLATFORM $ENVIRONMENT" "unsupported"
+				;;
+		esac
+		;;
+	"amd64"|"x86_64")
+		LSE_ENABLE="CK_MD_LSE_DISABLE"
+		PLATFORM=x86_64
+		ENVIRONMENT=64
+		LDFLAGS="-m64 $LDFLAGS"
+		MM="${MM:-"CK_MD_TSO"}"
+		;;
+	"i86pc")
+		RTM_ENABLE="CK_MD_RTM_DISABLE"
+		LSE_ENABLE="CK_MD_LSE_DISABLE"
+		MM="${MM:-"CK_MD_TSO"}"
+		if test -z "$ISA"; then ISA=`isainfo -n 2> /dev/null || echo i386` ; fi
+		case "$ISA" in
+			"amd64")
+				RTM_ENABLE=${RTM_ENABLE_SET:-"CK_MD_RTM_DISABLE"}
+				PLATFORM=x86_64
+				ENVIRONMENT=64
+				;;
+			*)
+				PLATFORM=x86
+				ENVIRONMENT=32
+				assert "$PLATFORM $ENVIRONMENT" "$PLATFORM $ENVIRONMENT" "unsupported"
+				;;
+		esac
+		;;
+	"ppc64"|"ppc64le")
+		RTM_ENABLE="CK_MD_RTM_DISABLE"
+		LSE_ENABLE="CK_MD_LSE_DISABLE"
+		MM="${MM:-"CK_MD_RMO"}"
+		PLATFORM=ppc64
+		ENVIRONMENT=64
+		;;
+	arm|armv6l|armv7l)
+		if test "$PLATFORM" = "armv6l"; then
+			CFLAGS="$CFLAGS -march=armv6k";
+		elif test "$PLATFORM" = "armv7l"; then
+			CFLAGS="$CFLAGS -march=armv7-a";
+		fi
+		RTM_ENABLE="CK_MD_RTM_DISABLE"
+		LSE_ENABLE="CK_MD_LSE_DISABLE"
+		MM="${MM:-"CK_MD_RMO"}"
+		PLATFORM=arm
+		ENVIRONMENT=32
+		;;
+	"arm64"|"aarch64")
+		RTM_ENABLE="CK_MD_RTM_DISABLE"
+		MM="${MM:-"CK_MD_RMO"}"
+		PLATFORM=aarch64
+		ENVIRONMENT=64
+		;;
+	"s390x")
+		RTM_ENABLE="CK_MD_RTM_DISABLE"
+		LSE_ENABLE="CK_MD_LSE_DISABLE"
+		MM="${MM:-"CK_MD_RMO"}"
+		PLATFORM=s390x
+		ENVIRONMENT=64
+		;;
+	*)
+		RTM_ENABLE="CK_MD_RTM_DISABLE"
+		LSE_ENABLE="CK_MD_LSE_DISABLE"
+		PLATFORM=
+		MM="${MM:-"CK_MD_RMO"}"
+		;;
+esac
+
+assert "$PLATFORM" "$PLATFORM" "unsupported"
+
+if test "$VMA" = "unknown"; then
+	VMA_BITS_R="CK_MD_VMA_BITS_UNKNOWN"
+	VMA_BITS_VALUE_R=""
+	POINTER_PACK_ENABLE="CK_MD_POINTER_PACK_DISABLE"
+else
+	VMA_BITS_R="CK_MD_VMA_BITS"
+	VMA_BITS_VALUE_R="${VMA_BITS}ULL"
+fi
+
+if test "$USE_CC_BUILTINS"; then
+	CFLAGS="$CFLAGS -DCK_CC_BUILTINS"
+	PC_CFLAGS="-DCK_CC_BULITINS"
+fi
+
+# `which` on Solaris sucks
+pathsearch()
+{
+	what=$1
+	oldFS="$IFS"
+	IFS=":"
+	for d in $PATH ; do
+		if test -x "$d/$what" ; then
+			echo "$d/$what";
+			IFS="$oldFS"
+			return
+		fi
+	done
+	IFS="$oldFS"
+}
+
+printf "Finding dirname command.........."
+DIRNAME=`pathsearch "${DIRNAME:-dirname}"`
+if test -z "$DIRNAME" -o ! -x "$DIRNAME"; then
+	DIRNAME=`pathsearch "${DIRNAME:-dirname}"`
+	DIRNAME="$DIRNAME"
+else
+	echo "success [$DIRNAME]"
+fi
+
+if test -z "$DIRNAME"; then
+	echo "not found (out of source build unsupported)"
+else
+	printf "Determining build directory......"
+
+	BUILD_DIR=`$DIRNAME $0`
+	cd `$DIRNAME $0`
+	BUILD_DIR=`pwd`
+
+	echo "success [$BUILD_DIR]"
+fi
+
+printf "Finding gzip tool................"
+GZIP=`pathsearch "${GZIP:-gzip}"`
+if test -z "$GZIP" -o ! -x "$GZIP"; then
+	GZIP=`pathsearch "${GZIP:-gzip}"`
+	GZIP="$GZIP"
+fi
+
+if test -z "$GZIP"; then
+	echo "not found"
+	GZIP=cat
+	GZIP_SUFFIX=""
+else
+	echo "success [$GZIP]"
+	GZIP="$GZIP -c"
+	GZIP_SUFFIX=".gz"
+fi
+
+printf "Finding suitable compiler........"
+if test ! -x "${CC}"; then
+	CC=`pathsearch "${CC:-cc}"`
+	if test -z "$CC" -o ! -x "$CC"; then
+		CC=`pathsearch "${CC:-gcc}"`
+	fi
+fi
+assert "$CC" "not found"
+
+cat << EOF > .1.c
+#include <stdio.h>
+int main(void) {
+#if defined(_WIN32)
+#if defined(__MINGW64__)
+	puts("mingw64");
+	return (0);
+#elif defined(__MINGW32__) && (__MINGW32_MAJOR_VERSION >= 3)
+	puts("mingw32");
+	return (0);
+#else
+	return (1);
+#endif /* __MINGW32__ && __MINGW32_MAJOR_VERSION >= 3 */
+#elif defined(__clang__) && (__clang_major__ >= 3)
+	puts("clang");
+	return (0);
+#elif defined(__SUNPRO_C) && (__SUNPRO_C >= 0x5110)
+	puts("suncc");
+	return (0);
+#elif defined(__GNUC__) && (__GNUC__ >= 4)
+	puts("gcc");
+	return (0);
+#else
+	return (1);
+#endif
+}
+EOF
+
+$CC -o .1 .1.c
+COMPILER=`./.1 2> /dev/null`
+r=$?
+rm -f .1.c .1
+
+if test "$r" -ne 0; then
+	assert "" "update compiler"
+else
+	echo "success [$CC]"
+fi
+
+if test "$COMPILER" = "suncc"; then
+	LD=/bin/ld
+	LDFLAGS="-G -z text -h libck.so.$VERSION_MAJOR $LDFLAGS"
+	CFLAGS="-xO5 $CFLAGS"
+	PTHREAD_CFLAGS="-mt -lpthread"
+elif test "$COMPILER" = "gcc" || test "$COMPILER" = "clang" || test "$COMPILER" = "mingw32" || test "$COMPILER" = "mingw64"; then
+	LD=$CC
+	SONAME="$LDNAME_MAJOR"
+	if test "$SYSTEM" = "darwin"; then
+		CC_WL_OPT="-install_name"
+		LDNAME="libck.dylib"
+		LDNAME_VERSION="libck.$VERSION.dylib"
+		LDNAME_MAJOR="libck.$VERSION_MAJOR.dylib"
+		SONAME="$LIBRARY/$LDNAME_MAJOR"
+	else
+		CC_WL_OPT="-soname"
+	fi
+
+	LDFLAGS="-Wl,$CC_WL_OPT,$SONAME $LDFLAGS"
+	if test "$WANT_PIC" = "yes"; then
+		LDFLAGS="$LDFLAGS -shared -fPIC"
+		CFLAGS="$CFLAGS -fPIC"
+		ALL_LIBS="libck.so libck.a"
+		INSTALL_LIBS="install-so install-lib"
+	else
+		LDFLAGS="$LDFLAGS -fno-PIC"
+		CFLAGS="$CFLAGS -fno-PIC"
+		ALL_LIBS="libck.a"
+		INSTALL_LIBS="install-lib"
+	fi
+
+	CFLAGS="-D_XOPEN_SOURCE=600 -D_BSD_SOURCE -D_DEFAULT_SOURCE -std=gnu99 -pedantic -Wall -W -Wundef -Wendif-labels -Wshadow -Wpointer-arith -Wcast-align -Wcast-qual -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Winline -Wdisabled-optimization -fstrict-aliasing -O2 -pipe -Wno-parentheses $CFLAGS"
+	PTHREAD_CFLAGS="-pthread"
+	if test "$COMPILER" = "mingw64"; then
+		ENVIRONMENT=64
+		PLATFORM=x86_64
+	fi
+else
+	assert "" "unknown compiler"
+fi
+
+printf "Detecting VMA bits..............."
+VMA="unknown"
+if test "$VMA_BITS" = "unknown"; then
+	if test "$PLATFORM" = "x86" || test $PLATFORM = "x86_64"; then
+		case $SYSTEM in
+			darwin)
+				VMA=`sysctl -n machdep.cpu.address_bits.virtual`
+				;;
+			linux)
+				VMA=`awk '/address sizes/ {print $7;exit}' /proc/cpuinfo`
+				;;
+			*)
+				if test "$PLATFORM" = "x86"; then
+					VMA="32"
+				else
+					cat << EOF > .1.c
+					#include <stdio.h>
+
+					int main(int argc, char *argv[])
+					{
+						unsigned long ret = 0x80000000;
+
+						__asm __volatile("cpuid\n"
+								 : "+a" (ret));
+						if (ret >= 0x80000008) {
+								ret = 0x80000008;
+								__asm __volatile("cpuid\n"
+								 : "+a" (ret));
+								printf("%lu\n", (ret >> 8) & 0xff);
+						} else {
+								return (1);
+						}
+						return (0);
+					}
+EOF
+
+					$CC -o .1 .1.c 2>/dev/null
+					VMA=`./.1 2>/dev/null`
+					if test $? -ne 0; then
+						VMA="unknown"
+					fi
+					rm -f .1.c .1
+				fi
+		esac
+	fi
+
+	VMA_BITS=$VMA
+else
+	VMA=$VMA_BITS
+fi
+
+if test "$VMA" = "unknown"; then
+	echo "unknown"
+	VMA_BITS_R="CK_MD_VMA_BITS_UNKNOWN"
+	VMA_BITS_VALUE_R=""
+	POINTER_PACK_ENABLE="CK_MD_POINTER_PACK_DISABLE"
+else
+	echo "success [$VMA]"
+	VMA_BITS_R="CK_MD_VMA_BITS"
+	VMA_BITS_VALUE_R="${VMA_BITS}ULL"
+fi
+
+for i in $REQUIRE_HEADER; do
+	printf "Checking header file usability..."
+
+	cat << EOF > .1.c
+#include <$i>
+int main(void){return(0);}
+EOF
+	$CC -o .1 .1.c 2> /dev/null
+	hf_s=$?
+
+	rm -f .1 .1.c
+	if test $hf_s -eq 0; then
+		echo "success [$i]"
+	else
+		echo "failed  [$i]"
+		exit $EXIT_FAILURE
+	fi
+done
+
+printf "Detecting git SHA................"
+get_git_sha
+echo "$GIT_MSG [$GIT_SHA]"
+
+if test "$PROFILE"; then
+    printf "Using user-specified profile....."
+
+	if test -z "$CC"; then
+		echo "failed [specify compiler]"
+		exit $EXIT_FAILURE
+	fi
+
+	if test ! -f build/ck.build.$PROFILE; then
+		echo "failed [$PROFILE]"
+		exit $EXIT_FAILURE
+	fi
+
+	echo "success [$PROFILE]"
+	printf "Generating header files.........."
+	generate include/ck_md.h.in include/ck_md.h
+	echo "success"
+	printf "Generating build files..........."
+	generate src/Makefile.in src/Makefile
+	generate doc/Makefile.in doc/Makefile
+	generate build/ck.build.in build/ck.build
+	generate build/regressions.build.in build/regressions.build
+	generate build/ck.pc.in build/ck.pc
+	generate build/ck.spec.in build/ck.spec
+	generate Makefile.in Makefile
+	echo "success"
+	generate_stdout
+	exit $EXIT_SUCCESS
+fi
+
+# Platform will be used as a macro.
+PROFILE="${PROFILE:-$PLATFORM}"
+PLATFORM="__${PLATFORM}__"
+
+printf "Generating header files.........."
+generate include/ck_md.h.in include/ck_md.h
+echo "success"
+
+printf "Generating build files..........."
+
+mkdir -p $P_PWD/doc
+mkdir -p $P_PWD/build
+mkdir -p $P_PWD/include
+mkdir -p $P_PWD/src
+
+if test "$P_PWD" '!=' "$BUILD_DIR"; then
+	mkdir -p $P_PWD/regressions
+	cp $BUILD_DIR/regressions/Makefile.unsupported $P_PWD/regressions/Makefile &> /dev/null
+	cp $BUILD_DIR/build/ck.build.$PROFILE $P_PWD/build/ck.build.$PROFILE &> /dev/null
+	cp $BUILD_DIR/include/ck_md.h $P_PWD/include/ck_md.h &> /dev/null
+fi
+
+generate src/Makefile.in $P_PWD/src/Makefile
+generate doc/Makefile.in $P_PWD/doc/Makefile
+generate build/ck.build.in $P_PWD/build/ck.build
+generate build/regressions.build.in $P_PWD/build/regressions.build
+generate build/ck.pc.in $P_PWD/build/ck.pc
+generate build/ck.spec.in $P_PWD/build/ck.spec
+generate Makefile.in $P_PWD/Makefile
+touch src/*.c
+echo "success"
+generate_stdout

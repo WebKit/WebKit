@@ -1,0 +1,64 @@
+.PHONY: clean distribution
+
+include @BUILD_DIR@/build/ck.build
+
+TARGET_DIR=$(BUILD_DIR)/src
+SDIR=$(SRC_DIR)/src
+INCLUDE_DIR=$(SRC_DIR)/include
+
+OBJECTS=ck_barrier_centralized.o	\
+	ck_barrier_combining.o		\
+	ck_barrier_dissemination.o	\
+	ck_barrier_tournament.o		\
+	ck_barrier_mcs.o		\
+	ck_epoch.o			\
+	ck_ht.o				\
+	ck_hp.o				\
+	ck_hs.o				\
+	ck_rhs.o			\
+	ck_array.o
+
+all: $(ALL_LIBS)
+
+libck.so: $(OBJECTS)
+	$(LD) $(LDFLAGS) -o $(TARGET_DIR)/libck.so $(OBJECTS)
+
+libck.a: $(OBJECTS)
+	ar rcs $(TARGET_DIR)/libck.a $(OBJECTS)
+
+ck_array.o: $(INCLUDE_DIR)/ck_array.h $(SDIR)/ck_array.c
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_array.o $(SDIR)/ck_array.c
+
+ck_epoch.o: $(INCLUDE_DIR)/ck_epoch.h $(SDIR)/ck_epoch.c $(INCLUDE_DIR)/ck_stack.h
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_epoch.o $(SDIR)/ck_epoch.c
+
+ck_hs.o: $(INCLUDE_DIR)/ck_hs.h $(SDIR)/ck_hs.c
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_hs.o $(SDIR)/ck_hs.c
+
+ck_rhs.o: $(INCLUDE_DIR)/ck_rhs.h $(SDIR)/ck_rhs.c
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_rhs.o $(SDIR)/ck_rhs.c
+
+ck_ht.o: $(INCLUDE_DIR)/ck_ht.h $(SDIR)/ck_ht.c
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_ht.o $(SDIR)/ck_ht.c
+
+ck_hp.o: $(SDIR)/ck_hp.c $(INCLUDE_DIR)/ck_hp.h $(INCLUDE_DIR)/ck_stack.h
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_hp.o $(SDIR)/ck_hp.c
+
+ck_barrier_centralized.o: $(SDIR)/ck_barrier_centralized.c
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_barrier_centralized.o $(SDIR)/ck_barrier_centralized.c
+
+ck_barrier_combining.o: $(SDIR)/ck_barrier_combining.c
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_barrier_combining.o $(SDIR)/ck_barrier_combining.c
+
+ck_barrier_dissemination.o: $(SDIR)/ck_barrier_dissemination.c
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_barrier_dissemination.o $(SDIR)/ck_barrier_dissemination.c
+
+ck_barrier_tournament.o: $(SDIR)/ck_barrier_tournament.c
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_barrier_tournament.o $(SDIR)/ck_barrier_tournament.c
+
+ck_barrier_mcs.o: $(SDIR)/ck_barrier_mcs.c
+	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/ck_barrier_mcs.o $(SDIR)/ck_barrier_mcs.c
+
+clean:
+	rm -rf $(TARGET_DIR)/*.dSYM $(TARGET_DIR)/*~ $(TARGET_DIR)/*.o \
+		$(OBJECTS) $(TARGET_DIR)/libck.a $(TARGET_DIR)/libck.so
