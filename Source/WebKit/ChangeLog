@@ -1,3 +1,15 @@
+2017-08-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Unused variables in UserMediaProcessManager.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=175799
+
+        Reviewed by Alex Christensen.
+
+        The code which uses the "audioExtensionPath" and "videoExtensionPath" variables is guarded
+        with "#if ENABLE(SANDBOX_EXTENSIONS)”, so do the same for the variables themselves.
+
+        * UIProcess/UserMediaProcessManager.cpp: Add missing guards.
+
 2017-08-21  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [PAL] Move spi/mac directory into PAL

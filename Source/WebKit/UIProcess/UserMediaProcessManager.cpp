@@ -30,8 +30,10 @@
 
 namespace WebKit {
 
+#if ENABLE(SANDBOX_EXTENSIONS)
 static const char* const audioExtensionPath = "com.apple.webkit.microphone";
 static const char* const videoExtensionPath = "com.apple.webkit.camera";
+#endif
 
 class ProcessState {
 public:
