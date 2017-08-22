@@ -1,3 +1,14 @@
+2017-08-22  Per Arne Vollan  <pvollan@apple.com>
+
+        Implement 64-bit MacroAssembler::probe support for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=175724
+
+        Reviewed by Mark Lam.
+
+        Enable masm probe and DFG.
+
+        * wtf/Platform.h:
+
 2017-08-21  Mark Lam  <mark.lam@apple.com>
 
         [Follow up]: Add back the ability to disable MASM_PROBE from the build.

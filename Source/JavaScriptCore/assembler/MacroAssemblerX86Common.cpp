@@ -704,16 +704,6 @@ asm (
 #endif // COMPILER(GCC_OR_CLANG)
 #endif // CPU(X86_64)
 
-#if OS(WINDOWS) && CPU(X86_64)
-static bool booleanTrueForAvoidingNoReturnDeclaration() { return true; }
-
-extern "C" void ctiMasmProbeTrampoline()
-{
-    if (booleanTrueForAvoidingNoReturnDeclaration())
-        RELEASE_ASSERT_NOT_REACHED();
-}
-#endif // OS(WINDOWS)
-
 // What code is emitted for the probe?
 // ==================================
 // We want to keep the size of the emitted probe invocation code as compact as

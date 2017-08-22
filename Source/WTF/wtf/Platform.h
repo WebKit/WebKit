@@ -783,7 +783,7 @@
 
 #if !defined(ENABLE_DFG_JIT) && ENABLE(JIT)
 /* Enable the DFG JIT on X86 and X86_64. */
-#if (CPU(X86) || CPU(X86_64)) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD))
+#if (CPU(X86) || CPU(X86_64)) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD) || OS(WINDOWS))
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARMv7.  Only tested on iOS and GTK+/WPE Linux. */
@@ -797,12 +797,6 @@
 /* FIXME: MIPS cannot enable the DFG until it has support for MacroAssembler::probe().
    https://bugs.webkit.org/show_bug.cgi?id=175447
 */
-/* FIXME: Win64 cannot enable the DFG until it has support for MacroAssembler::probe().
-   https://bugs.webkit.org/show_bug.cgi?id=175724
-*/
-#if CPU(X86) && OS(WINDOWS)
-#define ENABLE_DFG_JIT 1
-#endif
 #endif
 
 /* Concurrent JS only works on 64-bit platforms because it requires that
@@ -827,7 +821,7 @@
 #define ENABLE_MASM_PROBE 0
 #endif
 
-#if !ENABLE(JIT) || OS(WINDOWS)
+#if !ENABLE(JIT)
 #undef ENABLE_MASM_PROBE
 #define ENABLE_MASM_PROBE 0
 #endif
