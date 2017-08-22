@@ -1614,6 +1614,7 @@ webkit.org/b/174682 media/modern-media-controls/scrubber-support/scrubber-suppor
 
 animations/trigger-computed-style.html [ Failure ]
 animations/trigger-container-scroll-boundaries.html [ Failure ]
+animations/trigger-container-scroll-simple.html [ Failure ]
 animations/trigger-parsing.html [ Failure ]
 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
 fast/canvas/webgl/getBufferSubData-webgl1.html [ Failure ]
