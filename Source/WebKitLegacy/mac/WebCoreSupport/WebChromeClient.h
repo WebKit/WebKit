@@ -198,7 +198,6 @@ private:
 
     bool selectItemWritingDirectionIsNatural() override;
     bool selectItemAlignmentFollowsMenuWritingDirection() override;
-    bool hasOpenedPopup() const final;
     RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient&) const override;
     RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const override;
 

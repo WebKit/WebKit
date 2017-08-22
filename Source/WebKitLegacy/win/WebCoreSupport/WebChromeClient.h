@@ -150,7 +150,6 @@ public:
 
     bool selectItemWritingDirectionIsNatural() final;
     bool selectItemAlignmentFollowsMenuWritingDirection() final;
-    bool hasOpenedPopup() const final;
     RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient&) const final;
     RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const final;
 

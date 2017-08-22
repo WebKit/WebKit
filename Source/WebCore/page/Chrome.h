@@ -167,7 +167,6 @@ public:
 
     bool selectItemWritingDirectionIsNatural();
     bool selectItemAlignmentFollowsMenuWritingDirection();
-    bool hasOpenedPopup() const;
     RefPtr<PopupMenu> createPopupMenu(PopupMenuClient&) const;
     RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const;
 

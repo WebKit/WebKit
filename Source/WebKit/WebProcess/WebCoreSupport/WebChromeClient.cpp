@@ -828,12 +828,6 @@ bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
     return true;
 }
 
-bool WebChromeClient::hasOpenedPopup() const
-{
-    notImplemented();
-    return false;
-}
-
 RefPtr<PopupMenu> WebChromeClient::createPopupMenu(PopupMenuClient& client) const
 {
     return WebPopupMenu::create(&m_page, &client);

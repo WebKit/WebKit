@@ -94,7 +94,6 @@ class EmptyChromeClient : public ChromeClient {
 
     bool selectItemWritingDirectionIsNatural() final { return false; }
     bool selectItemAlignmentFollowsMenuWritingDirection() final { return false; }
-    bool hasOpenedPopup() const final { return false; }
     RefPtr<PopupMenu> createPopupMenu(PopupMenuClient&) const final;
     RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const final;
 
