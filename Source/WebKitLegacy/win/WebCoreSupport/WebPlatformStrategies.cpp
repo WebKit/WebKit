@@ -70,7 +70,7 @@ BlobRegistry* WebPlatformStrategies::createBlobRegistry()
     return new BlobRegistryImpl;
 }
 
-std::pair<String, bool> WebPlatformStrategies::cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies includeSecureCookies) override
+std::pair<String, bool> WebPlatformStrategies::cookiesForDOM(const WebCore::NetworkStorageSession& session, const WebCore::URL& firstParty, const WebCore::URL& url, WebCore::IncludeSecureCookies includeSecureCookies)
 {
     return WebCore::cookiesForDOM(session, firstParty, url, includeSecureCookies);
 }

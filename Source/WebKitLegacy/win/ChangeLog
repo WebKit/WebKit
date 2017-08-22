@@ -2,6 +2,15 @@
 
         Unreviewed build fix after r221017.
 
+        Correct copy/paste error.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::cookiesForDOM):
+
+2017-08-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r221017.
+
         * WebCoreSupport/WebPlatformStrategies.cpp:
         (WebPlatformStrategies::cookiesForDOM): Update for new signature.
         * WebCoreSupport/WebPlatformStrategies.h:
