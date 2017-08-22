@@ -1162,7 +1162,7 @@ list(APPEND JavaScriptCore_HEADERS
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h
 )
 
-if ((${CMAKE_SYSTEM_NAME} STREQUAL "Linux"))
+if (NOT WIN32)
     if (WTF_CPU_X86)
         set(OFFLINE_ASM_BACKEND "X86")
     elseif (WTF_CPU_X86_64)

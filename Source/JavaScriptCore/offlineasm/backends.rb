@@ -72,6 +72,21 @@ BACKENDS.each {
     $allBackends[backend] = true
 }
 
+def canonicalizeBackendNames(backendNames)
+    newBackendNames = []
+    backendNames.each {
+        | backendName |
+        backendName = backendName.upcase
+        if backendName =~ /ARM.*/
+            backendName.sub!(/ARMV7(S?)(.*)/) { | _ | 'ARMv7' + $1.downcase + $2 }
+        end
+        backendName = "X86" if backendName == "I386"
+        newBackendNames << backendName
+        newBackendNames << "ARMv7" if backendName == "ARMv7s"
+    }
+    newBackendNames.uniq
+end
+
 def includeOnlyBackends(list)
     newValidBackends = {}
     list.each {

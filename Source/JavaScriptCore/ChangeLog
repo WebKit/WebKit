@@ -1,3 +1,18 @@
+2017-08-21  Keith Miller  <keith_miller@apple.com>
+
+        Only generate offline asm for the ARCHS (xcodebuild) or the current system (CMake)
+        https://bugs.webkit.org/show_bug.cgi?id=175690
+
+        Reviewed by Michael Saboff.
+
+        This should reduce some of the time we spend building offline asm
+        in our builds (except for linux since they already did this).
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * offlineasm/backends.rb:
+        * offlineasm/generate_offset_extractor.rb:
+
 2017-08-20  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix CLoop build.
