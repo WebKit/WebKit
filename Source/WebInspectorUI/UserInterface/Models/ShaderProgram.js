@@ -23,24 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ShaderProgram = class ShaderProgram extends WI.Object
+WI.ShaderProgram = class ShaderProgram
 {
     constructor(identifier, canvas)
     {
-        super();
-
         console.assert(identifier);
         console.assert(canvas instanceof WI.Canvas);
 
         this._identifier = identifier;
         this._canvas = canvas;
         this._uniqueDisplayNumber = canvas.nextShaderProgramDisplayNumber();
+        this._disabled = false;
     }
 
     // Public
 
     get identifier() { return this._identifier; }
     get canvas() { return this._canvas; }
+    get disabled() { return this._disabled; }
 
     get displayName()
     {
@@ -65,6 +65,18 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
     updateFragmentShader(source)
     {
         this._updateShader(CanvasAgent.ShaderType.Fragment, source);
+    }
+
+    toggleDisabled(callback)
+    {
+        CanvasAgent.setShaderProgramDisabled(this._identifier, !this._disabled, (error) => {
+            console.assert(!error, error);
+            if (error)
+                return;
+
+            this._disabled = !this._disabled;
+            callback();
+        });
     }
 
     // Private
@@ -92,9 +104,4 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
 WI.ShaderProgram.ShaderType = {
     Fragment: "shader-type-fragment",
     Vertex: "shader-type-vertex",
-};
-
-WI.ShaderProgram.Event = {
-    ProgramLinked: "shader-program-program-linked",
-    ShaderCompiled: "shader-program-shader-compiled",
 };

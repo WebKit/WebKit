@@ -1,3 +1,13 @@
+2017-08-22  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: provide way for ShaderPrograms to be enabled/disabled
+        https://bugs.webkit.org/show_bug.cgi?id=175400
+
+        Reviewed by Matt Baker.
+
+        * inspector/canvas/setShaderProgramDisabled-expected.txt: Added.
+        * inspector/canvas/setShaderProgramDisabled.html: Added.
+
 2017-08-22  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Add support for overwriting responses with put on an existing record

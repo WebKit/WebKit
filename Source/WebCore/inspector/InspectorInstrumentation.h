@@ -248,6 +248,7 @@ public:
 #if ENABLE(WEBGL)
     static void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);
     static void willDeleteProgram(WebGLRenderingContextBase&, WebGLProgram&);
+    static bool isShaderProgramDisabled(WebGLRenderingContextBase&, WebGLProgram&);
 #endif
 
     static void networkStateChanged(Page&);
@@ -417,6 +418,7 @@ private:
 #if ENABLE(WEBGL)
     static void didCreateProgramImpl(InstrumentingAgents&, WebGLRenderingContextBase&, WebGLProgram&);
     static void willDeleteProgramImpl(InstrumentingAgents&, WebGLProgram&);
+    static bool isShaderProgramDisabledImpl(InstrumentingAgents&, WebGLProgram&);
 #endif
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
@@ -1195,6 +1197,14 @@ inline void InspectorInstrumentation::willDeleteProgram(WebGLRenderingContextBas
 {
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(context.canvas().document()))
         willDeleteProgramImpl(*instrumentingAgents, program);
+}
+
+inline bool InspectorInstrumentation::isShaderProgramDisabled(WebGLRenderingContextBase& context, WebGLProgram& program)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(context.canvas().document()))
+        return isShaderProgramDisabledImpl(*instrumentingAgents, program);
+    return false;
 }
 #endif
 

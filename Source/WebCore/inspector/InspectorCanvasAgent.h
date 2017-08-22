@@ -77,6 +77,7 @@ public:
     void cancelRecording(ErrorString&, const String& canvasId) override;
     void requestShaderSource(ErrorString&, const String& programId, const String& shaderType, String*) override;
     void updateShader(ErrorString&, const String& programId, const String& shaderType, const String& source) override;
+    void setShaderProgramDisabled(ErrorString&, const String& programId, bool disabled) override;
 
     // InspectorInstrumentation
     void frameNavigated(Frame&);
@@ -89,6 +90,7 @@ public:
 #if ENABLE(WEBGL)
     void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);
     void willDeleteProgram(WebGLProgram&);
+    bool isShaderProgramDisabled(WebGLProgram&);
 #endif
 
     // CanvasObserver

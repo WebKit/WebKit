@@ -23,38 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralTreeElement
-{
-    constructor(shaderProgram)
-    {
-        console.assert(shaderProgram instanceof WI.ShaderProgram);
+.item.shader-program .status > img {
+    width: 18px;
+    margin-top: 2px;
+    content: url(../Images/Eye.svg);
+}
 
-        const subtitle = null;
-        super("shader-program", shaderProgram.displayName, subtitle, shaderProgram);
+.item.shader-program:not(:hover, .selected, .disabled) .status > img {
+    display: none;
+}
 
-        this._disabledImageElement = document.createElement("img");
-        this._disabledImageElement.title = WI.UIString("Disable Program");
-        this._disabledImageElement.addEventListener("click", this._disabledImageElementClicked.bind(this));
-        this.status = this._disabledImageElement;
-    }
+.tree-outline:matches(:focus, .force-focus) .item.shader-program.selected .status > img {
+    filter: invert();
+}
 
-    // Protected
-
-    selectOnMouseDown(event)
-    {
-        if (event.target.isSelfOrDescendant(this._statusElement))
-            return;
-
-        super.selectOnMouseDown(event);
-    }
-
-    // Private
-
-    _disabledImageElementClicked(event)
-    {
-        this.representedObject.toggleDisabled(() => {
-            this._listItemNode.classList.toggle("disabled", !!this.representedObject.disabled);
-            this._disabledImageElement.title = this.representedObject.disabled ? WI.UIString("Enable Program") : WI.UIString("Disable Program");
-        });
-    }
-};
+.item.shader-program.disabled > * {
+    opacity: 0.5;
+}

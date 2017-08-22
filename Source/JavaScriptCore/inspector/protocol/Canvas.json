@@ -139,6 +139,14 @@
                 { "name": "shaderType", "$ref": "ShaderType" },
                 { "name": "source", "type": "string" }
             ]
+        },
+        {
+            "name": "setShaderProgramDisabled",
+            "description": "Enable/disable the visibility of the given shader program.",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "disabled", "type": "boolean" }
+            ]
         }
     ],
     "events": [

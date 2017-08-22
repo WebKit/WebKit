@@ -2003,6 +2003,9 @@ void WebGLRenderingContextBase::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsiz
     if (!validateDrawArrays("drawArrays", mode, first, count, 0))
         return;
 
+    if (m_currentProgram && InspectorInstrumentation::isShaderProgramDisabled(*this, *m_currentProgram))
+        return;
+
     clearIfComposited();
 
     bool vertexAttrib0Simulated = false;
@@ -2025,6 +2028,9 @@ void WebGLRenderingContextBase::drawElements(GC3Denum mode, GC3Dsizei count, GC3
 {
     unsigned numElements = 0;
     if (!validateDrawElements("drawElements", mode, count, type, offset, numElements, 0))
+        return;
+
+    if (m_currentProgram && InspectorInstrumentation::isShaderProgramDisabled(*this, *m_currentProgram))
         return;
 
     clearIfComposited();

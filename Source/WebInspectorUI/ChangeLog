@@ -1,3 +1,32 @@
+2017-08-22  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: provide way for ShaderPrograms to be enabled/disabled
+        https://bugs.webkit.org/show_bug.cgi?id=175400
+
+        Reviewed by Matt Baker.
+
+        Adds a status element to ShaderProgramTreeElement that, when clicked, will toggle the
+        disabled state of the corresponding ShaderProgram. Disabled shader programs will not draw
+        anything to the context.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+
+        * UserInterface/Models/ShaderProgram.js:
+        (WI.ShaderProgram):
+        (WI.ShaderProgram.prototype.get disabled):
+        (WI.ShaderProgram.prototype.toggleDisabled):
+
+        * UserInterface/Views/ShaderProgramTreeElement.js:
+        (WI.ShaderProgramTreeElement):
+        (WI.ShaderProgramTreeElement.prototype.selectOnMouseDown):
+        (WI.ShaderProgramTreeElement.prototype._disabledImageElementClicked):
+        * UserInterface/Views/ShaderProgramTreeElement.css: Added.
+        (.item.shader-program .status > img):
+        (.item.shader-program:not(:hover, .selected, .disabled) .status > img):
+        (.tree-outline:matches(:focus, .force-focus) .item.shader-program.selected .status > img):
+        (.item.shader-program.disabled > *):
+
 2017-08-21  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Can't copy text from "View variable value" popover in Styles sidebar

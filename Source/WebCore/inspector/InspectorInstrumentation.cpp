@@ -1048,6 +1048,13 @@ void InspectorInstrumentation::willDeleteProgramImpl(InstrumentingAgents& instru
     if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
         canvasAgent->willDeleteProgram(program);
 }
+
+bool InspectorInstrumentation::isShaderProgramDisabledImpl(InstrumentingAgents& instrumentingAgents, WebGLProgram& program)
+{
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
+        return canvasAgent->isShaderProgramDisabled(program);
+    return false;
+}
 #endif
 
 #if ENABLE(RESOURCE_USAGE)
