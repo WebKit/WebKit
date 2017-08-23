@@ -327,6 +327,7 @@ namespace JSC { namespace DFG {
     macro(PhantomNewFunction, NodeResultJS | NodeMustGenerate) \
     macro(PhantomNewGeneratorFunction, NodeResultJS | NodeMustGenerate) \
     macro(PhantomNewAsyncFunction, NodeResultJS | NodeMustGenerate) \
+    macro(PhantomNewAsyncGeneratorFunction, NodeResultJS | NodeMustGenerate) \
     macro(PhantomCreateActivation, NodeResultJS | NodeMustGenerate) \
     macro(MaterializeCreateActivation, NodeResultJS | NodeHasVarArgs) \
     \
@@ -378,6 +379,8 @@ namespace JSC { namespace DFG {
     macro(NewFunction, NodeResultJS) \
     \
     macro(NewGeneratorFunction, NodeResultJS) \
+    \
+    macro(NewAsyncGeneratorFunction, NodeResultJS) \
     \
     macro(NewAsyncFunction, NodeResultJS) \
     \

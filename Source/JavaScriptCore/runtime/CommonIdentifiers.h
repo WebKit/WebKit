@@ -405,6 +405,7 @@
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
     macro(hasInstance) \
     macro(isConcatSpreadable) \
+    macro(asyncIterator) \
     macro(iterator) \
     macro(match) \
     macro(replace) \

@@ -109,6 +109,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case NewFunction:
     case NewGeneratorFunction:
     case NewAsyncFunction:
+    case NewAsyncGeneratorFunction:
     case NewStringObject:
     case ToNumber:
         result = ExitsForExceptions;

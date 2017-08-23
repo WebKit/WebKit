@@ -62,6 +62,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case MaterializeNewObject:
     case PhantomNewFunction:
     case PhantomNewGeneratorFunction:
+    case PhantomNewAsyncGeneratorFunction:
     case PhantomNewAsyncFunction:
     case PhantomCreateActivation:
     case MaterializeCreateActivation:
@@ -81,6 +82,7 @@ bool clobbersExitState(Graph& graph, Node* node)
 
     case NewFunction:
     case NewGeneratorFunction:
+    case NewAsyncGeneratorFunction:
     case NewAsyncFunction:
         // Like above, but with the JSFunction allocation caveat.
         return node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid();

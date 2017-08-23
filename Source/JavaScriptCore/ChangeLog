@@ -1,3 +1,218 @@
+2017-08-23  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        [ESNext] Async iteration - Implement Async Generator - runtime
+        https://bugs.webkit.org/show_bug.cgi?id=175240
+
+        Reviewed by Yusuke Suzuki.
+
+        Current implementation is draft version of Async Iteration. 
+        Link to spec https://tc39.github.io/proposal-async-iteration/
+       
+        To implement async generator added new states that show reason why async generator was suspended:
+        # yield - return promise with result
+        # await - wait until promise will be resolved and then continue
+       
+        The main difference between async function and async generator is that, 
+        async function returns promise but async generator returns
+        object with methods (next, throw and return) that return promise that 
+        can be resolved with pair of properties value and done.
+        Async generator functions are similar to generator functions, with the following differences:
+        # When called, async generator functions return an object, an async generator 
+        whose methods (next, throw, and return) return promises for { value, done }, 
+        instead of directly returning { value, done }. 
+        This automatically makes the returned async generator objects async iterators.
+        # await expressions and for-await-of statements are allowed.
+        # The behavior of yield* is modified to support 
+          delegation to sync and async iterables
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/AsyncFromSyncIteratorPrototype.js: Added.
+        (next.try):
+        (next):
+        (return.try):
+        (return):
+        (throw.try):
+        (throw):
+        (globalPrivate.createAsyncFromSyncIterator):
+        (globalPrivate.AsyncFromSyncIteratorConstructor):
+        * builtins/AsyncGeneratorPrototype.js: Added.
+        (globalPrivate.createAsyncGeneratorQueue):
+        (globalPrivate.asyncGeneratorQueueIsEmpty):
+        (globalPrivate.asyncGeneratorQueueCreateItem):
+        (globalPrivate.asyncGeneratorQueueEnqueue):
+        (globalPrivate.asyncGeneratorQueueDequeue):
+        (globalPrivate.asyncGeneratorQueueGetFirstValue):
+        (globalPrivate.asyncGeneratorDequeue):
+        (globalPrivate.isExecutionState):
+        (globalPrivate.isSuspendYieldState):
+        (globalPrivate.asyncGeneratorReject):
+        (globalPrivate.asyncGeneratorResolve):
+        (asyncGeneratorYieldAwaited):
+        (globalPrivate.asyncGeneratorYield):
+        (const.onRejected):
+        (globalPrivate.awaitValue):
+        (const.onFulfilled):
+        (globalPrivate.doAsyncGeneratorBodyCall):
+        (globalPrivate.asyncGeneratorResumeNext.):
+        (globalPrivate.asyncGeneratorResumeNext):
+        (globalPrivate.asyncGeneratorEnqueue):
+        (next):
+        (return):
+        (throw):
+        * builtins/AsyncIteratorPrototype.js: Added.
+        (symbolAsyncIteratorGetter):
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCreateAsyncGeneratorQueue):
+        (JSC::BytecodeGenerator::emitPutAsyncGeneratorFields):
+        (JSC::BytecodeGenerator::emitNewFunctionExpressionCommon):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitIteratorNextWithValue):
+        (JSC::BytecodeGenerator::emitIteratorClose):
+        (JSC::BytecodeGenerator::emitYieldPoint):
+        (JSC::BytecodeGenerator::emitYield):
+        (JSC::BytecodeGenerator::emitCallIterator):
+        (JSC::BytecodeGenerator::emitAwait):
+        (JSC::BytecodeGenerator::emitGetIterator):
+        (JSC::BytecodeGenerator::emitGetAsyncIterator):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        (JSC::YieldExprNode::emitBytecode):
+        (JSC::AwaitExprNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantomNewFunction):
+        (JSC::DFG::Node::convertToPhantomNewAsyncGeneratorFunction):
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::isFunctionAllocation):
+        (JSC::DFG::Node::isPhantomFunctionAllocation):
+        (JSC::DFG::Node::isPhantomAllocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunction):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitNewFuncCommon):
+        (JSC::JIT::emit_op_new_async_generator_func):
+        (JSC::JIT::emit_op_new_async_func):
+        (JSC::JIT::emitNewFuncExprCommon):
+        (JSC::JIT::emit_op_new_async_generator_func_exp):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionMetadata):
+        * runtime/AsyncFromSyncIteratorPrototype.cpp: Added.
+        (JSC::AsyncFromSyncIteratorPrototype::AsyncFromSyncIteratorPrototype):
+        (JSC::AsyncFromSyncIteratorPrototype::finishCreation):
+        (JSC::AsyncFromSyncIteratorPrototype::create):
+        * runtime/AsyncFromSyncIteratorPrototype.h: Added.
+        (JSC::AsyncFromSyncIteratorPrototype::createStructure):
+        * runtime/AsyncGeneratorFunctionConstructor.cpp: Added.
+        (JSC::AsyncGeneratorFunctionConstructor::AsyncGeneratorFunctionConstructor):
+        (JSC::AsyncGeneratorFunctionConstructor::finishCreation):
+        (JSC::callAsyncGeneratorFunctionConstructor):
+        (JSC::constructAsyncGeneratorFunctionConstructor):
+        (JSC::AsyncGeneratorFunctionConstructor::getCallData):
+        (JSC::AsyncGeneratorFunctionConstructor::getConstructData):
+        * runtime/AsyncGeneratorFunctionConstructor.h: Added.
+        (JSC::AsyncGeneratorFunctionConstructor::create):
+        (JSC::AsyncGeneratorFunctionConstructor::createStructure):
+        * runtime/AsyncGeneratorFunctionPrototype.cpp: Added.
+        (JSC::AsyncGeneratorFunctionPrototype::AsyncGeneratorFunctionPrototype):
+        (JSC::AsyncGeneratorFunctionPrototype::finishCreation):
+        * runtime/AsyncGeneratorFunctionPrototype.h: Added.
+        (JSC::AsyncGeneratorFunctionPrototype::create):
+        (JSC::AsyncGeneratorFunctionPrototype::createStructure):
+        * runtime/AsyncGeneratorPrototype.cpp: Added.
+        (JSC::AsyncGeneratorPrototype::finishCreation):
+        * runtime/AsyncGeneratorPrototype.h: Added.
+        (JSC::AsyncGeneratorPrototype::create):
+        (JSC::AsyncGeneratorPrototype::createStructure):
+        (JSC::AsyncGeneratorPrototype::AsyncGeneratorPrototype):
+        * runtime/AsyncIteratorPrototype.cpp: Added.
+        (JSC::AsyncIteratorPrototype::finishCreation):
+        * runtime/AsyncIteratorPrototype.h: Added.
+        (JSC::AsyncIteratorPrototype::create):
+        (JSC::AsyncIteratorPrototype::createStructure):
+        (JSC::AsyncIteratorPrototype::AsyncIteratorPrototype):
+        * runtime/CommonIdentifiers.h:
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+        * runtime/FunctionExecutable.h:
+        * runtime/JSAsyncGeneratorFunction.cpp: Added.
+        (JSC::JSAsyncGeneratorFunction::JSAsyncGeneratorFunction):
+        (JSC::JSAsyncGeneratorFunction::createImpl):
+        (JSC::JSAsyncGeneratorFunction::create):
+        (JSC::JSAsyncGeneratorFunction::createWithInvalidatedReallocationWatchpoint):
+        * runtime/JSAsyncGeneratorFunction.h: Added.
+        (JSC::JSAsyncGeneratorFunction::allocationSize):
+        (JSC::JSAsyncGeneratorFunction::createStructure):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::asyncIteratorPrototype const):
+        (JSC::JSGlobalObject::asyncGeneratorPrototype const):
+        (JSC::JSGlobalObject::asyncGeneratorFunctionPrototype const):
+        (JSC::JSGlobalObject::asyncGeneratorFunctionStructure const):
+        * runtime/Options.h:
+
 2017-08-22  Michael Saboff  <msaboff@apple.com>
 
         Implement Unicode RegExp support in the YARR JIT

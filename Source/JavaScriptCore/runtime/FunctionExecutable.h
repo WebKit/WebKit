@@ -125,6 +125,7 @@ public:
     bool isGetter() const { return parseMode() == SourceParseMode::GetterMode; }
     bool isSetter() const { return parseMode() == SourceParseMode::SetterMode; }
     bool isGenerator() const { return isGeneratorParseMode(parseMode()); }
+    bool isAsyncGenerator() const { return SourceParseModeSet(SourceParseMode::AsyncGeneratorWrapperFunctionMode, SourceParseMode::AsyncGeneratorBodyMode).contains(parseMode()); }
     bool isMethod() const { return parseMode() == SourceParseMode::MethodMode; }
     bool hasCallerAndArgumentsProperties() const
     {
@@ -138,7 +139,9 @@ public:
             SourceParseMode::NormalFunctionMode,
             SourceParseMode::GeneratorBodyMode,
             SourceParseMode::GeneratorWrapperFunctionMode,
-            SourceParseMode::GeneratorWrapperMethodMode
+            SourceParseMode::GeneratorWrapperMethodMode,
+            SourceParseMode::AsyncGeneratorWrapperFunctionMode,
+            SourceParseMode::AsyncGeneratorBodyMode
         ).contains(parseMode()) || isClass();
     }
     DerivedContextType derivedContextType() const { return m_unlinkedExecutable->derivedContextType(); }

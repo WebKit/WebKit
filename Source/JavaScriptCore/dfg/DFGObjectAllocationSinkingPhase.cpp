@@ -139,7 +139,7 @@ public:
     // once it is escaped if it still has pointers to it in order to
     // replace any use of those pointers by the corresponding
     // materialization
-    enum class Kind { Escaped, Object, Activation, Function, GeneratorFunction, AsyncFunction };
+    enum class Kind { Escaped, Object, Activation, Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction };
 
     explicit Allocation(Node* identifier = nullptr, Kind kind = Kind::Escaped)
         : m_identifier(identifier)
@@ -278,6 +278,9 @@ public:
             out.print("AsyncFunction");
             break;
 
+        case Kind::AsyncGeneratorFunction:
+            out.print("AsyncGeneratorFunction");
+            break;
         case Kind::Activation:
             out.print("Activation");
             break;
@@ -838,6 +841,7 @@ private:
 
         case NewFunction:
         case NewGeneratorFunction:
+        case NewAsyncGeneratorFunction:
         case NewAsyncFunction: {
             if (isStillValid(node->castOperand<FunctionExecutable*>()->singletonFunction())) {
                 m_heap.escape(node->child1().node());
@@ -848,6 +852,8 @@ private:
                 target = &m_heap.newAllocation(node, Allocation::Kind::GeneratorFunction);
             else if (node->op() == NewAsyncFunction)
                 target = &m_heap.newAllocation(node, Allocation::Kind::AsyncFunction);
+            else if (node->op() == NewAsyncGeneratorFunction)
+                target = &m_heap.newAllocation(node, Allocation::Kind::AsyncGeneratorFunction);
             else
                 target = &m_heap.newAllocation(node, Allocation::Kind::Function);
 
@@ -1478,15 +1484,27 @@ private:
                 OpInfo(m_graph.addStructureSet(allocation.structures())), OpInfo(data), 0, 0);
         }
 
+        case Allocation::Kind::AsyncGeneratorFunction:
         case Allocation::Kind::AsyncFunction:
         case Allocation::Kind::GeneratorFunction:
         case Allocation::Kind::Function: {
             FrozenValue* executable = allocation.identifier()->cellOperand();
             
-            NodeType nodeType =
-                allocation.kind() == Allocation::Kind::GeneratorFunction ? NewGeneratorFunction :
-                allocation.kind() == Allocation::Kind::AsyncFunction ? NewAsyncFunction : NewFunction;
-            
+            NodeType nodeType;
+            switch (allocation.kind()) {
+            case Allocation::Kind::GeneratorFunction:
+                nodeType = NewGeneratorFunction;
+                break;
+            case Allocation::Kind::AsyncGeneratorFunction:
+                nodeType = NewAsyncGeneratorFunction;
+                break;
+            case Allocation::Kind::AsyncFunction:
+                nodeType = NewAsyncFunction;
+                break;
+            default:
+                nodeType = NewFunction;
+            }
+
             return m_graph.addNode(
                 allocation.identifier()->prediction(), nodeType,
                 where->origin.withSemantic(
@@ -1862,7 +1880,9 @@ private:
                     case NewGeneratorFunction:
                         node->convertToPhantomNewGeneratorFunction();
                         break;
-
+                    case NewAsyncGeneratorFunction:
+                        node->convertToPhantomNewAsyncGeneratorFunction();
+                        break;
                     case NewAsyncFunction:
                         node->convertToPhantomNewAsyncFunction();
                         break;
@@ -2124,6 +2144,7 @@ private:
         
         case NewFunction:
         case NewGeneratorFunction:
+        case NewAsyncGeneratorFunction:
         case NewAsyncFunction: {
             Vector<PromotedHeapLocation> locations = m_locationsForAllocation.get(escapee);
             ASSERT(locations.size() == 2);

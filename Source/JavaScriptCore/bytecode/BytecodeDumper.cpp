@@ -1331,6 +1331,14 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
         break;
     }
+    case op_new_async_generator_func: {
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int f0 = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "new_async_generator_func");
+        out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
+        break;
+    }
     case op_new_func_exp: {
         int r0 = (++it)->u.operand;
         int r1 = (++it)->u.operand;
@@ -1352,6 +1360,14 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         int r1 = (++it)->u.operand;
         int f0 = (++it)->u.operand;
         printLocationAndOp(out, location, it, "new_async_func_exp");
+        out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
+        break;
+    }
+    case op_new_async_generator_func_exp: {
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int f0 = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "op_new_async_generator_func_exp");
         out.printf("%s, %s, f%d", registerName(r0).data(), registerName(r1).data(), f0);
         break;
     }

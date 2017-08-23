@@ -551,6 +551,8 @@ namespace JSC {
         void emit_op_new_generator_func_exp(Instruction*);
         void emit_op_new_async_func(Instruction*);
         void emit_op_new_async_func_exp(Instruction*);
+        void emit_op_new_async_generator_func(Instruction*);
+        void emit_op_new_async_generator_func_exp(Instruction*);
         void emit_op_new_object(Instruction*);
         void emit_op_new_regexp(Instruction*);
         void emit_op_not(Instruction*);

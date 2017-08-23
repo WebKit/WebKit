@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSFunction.h"
 
+#include "AsyncGeneratorPrototype.h"
 #include "BuiltinNames.h"
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
@@ -362,7 +363,9 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
                 // property does not have a constructor property whose value is the GeneratorFunction instance.
                 // https://tc39.github.io/ecma262/#sec-generatorfunction-instances-prototype
                 prototype = constructEmptyObject(exec, thisObject->globalObject(vm)->generatorPrototype());
-            } else {
+            } else if (thisObject->jsExecutable()->parseMode() == SourceParseMode::AsyncGeneratorWrapperFunctionMode)
+                prototype = constructEmptyObject(exec, thisObject->globalObject(vm)->asyncGeneratorPrototype());
+            else {
                 prototype = constructEmptyObject(exec);
                 prototype->putDirect(vm, vm.propertyNames->constructor, thisObject, DontEnum);
             }

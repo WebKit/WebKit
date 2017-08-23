@@ -103,6 +103,8 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_func);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_func_exp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_generator_func);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_generator_func_exp);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_async_generator_func);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_async_generator_func_exp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_async_func);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_new_async_func_exp);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_set_function_name);

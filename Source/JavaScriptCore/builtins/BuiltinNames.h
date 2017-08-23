@@ -121,6 +121,11 @@ namespace JSC {
     macro(generatorFrame) \
     macro(generatorValue) \
     macro(generatorThis) \
+    macro(syncIterator) \
+    macro(asyncGeneratorState) \
+    macro(asyncGeneratorSuspendReason) \
+    macro(asyncGeneratorQueue) \
+    macro(promiseCapability) \
     macro(generatorResumeMode) \
     macro(Collator) \
     macro(DateTimeFormat) \

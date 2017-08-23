@@ -437,23 +437,13 @@ public:
         unsigned parameterCount,
         SourceParseMode mode, bool isArrowFunctionBodyExpression)
     {
-        SourceParseMode bodySourceParseMode = mode;
-        if (mode == SourceParseMode::AsyncGeneratorBodyMode) {
-            ASSERT(Options::useAsyncIterator());
-            bodySourceParseMode = SourceParseMode::AsyncFunctionBodyMode;
-        } else if (mode == SourceParseMode::AsyncGeneratorWrapperFunctionMode) {
-            ASSERT(Options::useAsyncIterator());
-            bodySourceParseMode = SourceParseMode::ArrowFunctionMode;
-        } else if (mode == SourceParseMode::AsyncGeneratorWrapperMethodMode) {
-            ASSERT(Options::useAsyncIterator());
-            bodySourceParseMode = SourceParseMode::AsyncMethodMode;
-        }
+        ASSERT(Options::useAsyncIterator() || (mode != SourceParseMode::AsyncGeneratorBodyMode && mode != SourceParseMode::AsyncGeneratorWrapperFunctionMode && mode != SourceParseMode::AsyncGeneratorWrapperMethodMode));
 
         return new (m_parserArena) FunctionMetadataNode(
             m_parserArena, startLocation, endLocation, startColumn, endColumn, 
             functionKeywordStart, functionNameStart, parametersStart, 
             inStrictContext, constructorKind, superBinding,
-            parameterCount, bodySourceParseMode, isArrowFunctionBodyExpression);
+            parameterCount, mode, isArrowFunctionBodyExpression);
     }
 
     ExpressionNode* createArrowFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& functionInfo)

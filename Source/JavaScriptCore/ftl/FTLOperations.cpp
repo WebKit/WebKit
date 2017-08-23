@@ -34,6 +34,7 @@
 #include "FTLLazySlowPath.h"
 #include "InlineCallFrame.h"
 #include "JSAsyncFunction.h"
+#include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
 #include "JSFixedArray.h"
 #include "JSGeneratorFunction.h"
@@ -84,6 +85,7 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
     case PhantomNewFunction:
     case PhantomNewGeneratorFunction:
     case PhantomNewAsyncFunction:
+    case PhantomNewAsyncGeneratorFunction:
     case PhantomDirectArguments:
     case PhantomClonedArguments:
     case PhantomCreateRest:
@@ -158,6 +160,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
 
     case PhantomNewFunction:
     case PhantomNewGeneratorFunction:
+    case PhantomNewAsyncGeneratorFunction:
     case PhantomNewAsyncFunction: {
         // Figure out what the executable and activation are
         FunctionExecutable* executable = nullptr;
@@ -179,6 +182,8 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             return JSFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
         else if (materialization->type() == PhantomNewGeneratorFunction)
             return JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);    
+        else if (materialization->type() == PhantomNewAsyncGeneratorFunction)
+            return JSAsyncGeneratorFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
         ASSERT(materialization->type() == PhantomNewAsyncFunction);
         return JSAsyncFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
     }

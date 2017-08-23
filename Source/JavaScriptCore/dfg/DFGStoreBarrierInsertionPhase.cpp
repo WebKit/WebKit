@@ -326,6 +326,7 @@ private:
             case CreateClonedArguments:
             case NewFunction:
             case NewGeneratorFunction:
+            case NewAsyncGeneratorFunction:
             case NewAsyncFunction:
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:

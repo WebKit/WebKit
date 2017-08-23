@@ -536,6 +536,7 @@ private:
                 case PhantomNewFunction:
                 case PhantomNewGeneratorFunction:
                 case PhantomNewAsyncFunction:
+                case PhantomNewAsyncGeneratorFunction:
                 case PhantomCreateActivation:
                 case GetMyArgumentByVal:
                 case GetMyArgumentByValOutOfBounds:
@@ -679,6 +680,7 @@ private:
                 case PhantomNewFunction:
                 case PhantomNewGeneratorFunction:
                 case PhantomNewAsyncFunction:
+                case PhantomNewAsyncGeneratorFunction:
                 case PhantomCreateActivation:
                 case PhantomDirectArguments:
                 case PhantomCreateRest:

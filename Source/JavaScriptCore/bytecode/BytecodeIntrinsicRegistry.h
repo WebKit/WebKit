@@ -85,7 +85,14 @@ class Identifier;
     macro(GeneratorResumeModeReturn) \
     macro(GeneratorStateCompleted) \
     macro(GeneratorStateExecuting) \
-
+    macro(AsyncGeneratorStateCompleted) \
+    macro(AsyncGeneratorStateExecuting) \
+    macro(AsyncGeneratorStateAwaitingReturn) \
+    macro(AsyncGeneratorStateSuspendedStart) \
+    macro(AsyncGeneratorStateSuspendedYield) \
+    macro(AsyncGeneratorSuspendReasonYield) \
+    macro(AsyncGeneratorSuspendReasonAwait) \
+    macro(AsyncGeneratorSuspendReasonNone) \
 
 class BytecodeIntrinsicRegistry {
     WTF_MAKE_NONCOPYABLE(BytecodeIntrinsicRegistry);

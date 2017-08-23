@@ -5742,31 +5742,58 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             set(VirtualRegister(currentInstruction[1].u.operand), argument);
             NEXT_OPCODE(op_get_argument);
         }
-            
+        case op_new_async_generator_func:
         case op_new_func:
         case op_new_generator_func:
         case op_new_async_func: {
             FunctionExecutable* decl = m_inlineStackTop->m_profiledBlock->functionDecl(currentInstruction[3].u.operand);
             FrozenValue* frozen = m_graph.freezeStrong(decl);
-            NodeType op = (opcodeID == op_new_generator_func) ? NewGeneratorFunction :
-                (opcodeID == op_new_async_func) ? NewAsyncFunction : NewFunction;
+            NodeType op;
+            switch (opcodeID) {
+            case op_new_generator_func:
+                op = NewGeneratorFunction;
+                break;
+            case op_new_async_func:
+                op = NewAsyncFunction;
+                break;
+            case op_new_async_generator_func:
+                op = NewAsyncGeneratorFunction;
+                break;
+            default:
+                op = NewFunction;
+            }
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(op, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
             static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_generator_func), "The length of op_new_func should eqaual to one of op_new_generator_func");
             static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_async_func), "The length of op_new_func should eqaual to one of op_new_async_func");
+            static_assert(OPCODE_LENGTH(op_new_func) == OPCODE_LENGTH(op_new_async_generator_func), "The length of op_new_func should eqaual to one of op_new_async_generator_func");
             NEXT_OPCODE(op_new_func);
         }
 
         case op_new_func_exp:
         case op_new_generator_func_exp:
+        case op_new_async_generator_func_exp:
         case op_new_async_func_exp: {
             FunctionExecutable* expr = m_inlineStackTop->m_profiledBlock->functionExpr(currentInstruction[3].u.operand);
             FrozenValue* frozen = m_graph.freezeStrong(expr);
-            NodeType op = (opcodeID == op_new_generator_func_exp) ? NewGeneratorFunction :
-                (opcodeID == op_new_async_func_exp) ? NewAsyncFunction : NewFunction;
+            NodeType op;
+            switch (opcodeID) {
+            case op_new_generator_func_exp:
+                op = NewGeneratorFunction;
+                break;
+            case op_new_async_func_exp:
+                op = NewAsyncFunction;
+                break;
+            case op_new_async_generator_func_exp:
+                op = NewAsyncGeneratorFunction;
+                break;
+            default:
+                op = NewFunction;
+            }
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(op, OpInfo(frozen), get(VirtualRegister(currentInstruction[2].u.operand))));
     
             static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_generator_func_exp), "The length of op_new_func_exp should eqaual to one of op_new_generator_func_exp");
             static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_async_func_exp), "The length of op_new_func_exp should eqaual to one of op_new_async_func_exp");
+            static_assert(OPCODE_LENGTH(op_new_func_exp) == OPCODE_LENGTH(op_new_async_generator_func_exp), "The length of op_new_func_exp should eqaual to one of op_new_async_func_exp");
             NEXT_OPCODE(op_new_func_exp);
         }
 
