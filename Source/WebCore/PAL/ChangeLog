@@ -1,3 +1,25 @@
+2017-08-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Platform code should be able to safely log in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=175854
+        <rdar://problem/34022930>
+
+        Reviewed by Jer Noble.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/Logger.h: Added.
+        (PAL::Logger::create):
+        (PAL::Logger::error const):
+        (PAL::Logger::warning const):
+        (PAL::Logger::notice const):
+        (PAL::Logger::info const):
+        (PAL::Logger::debug const):
+        (PAL::Logger::willLog const):
+        (PAL::Logger::enabled const):
+        (PAL::Logger::setEnabled):
+        (PAL::Logger::Logger):
+        (PAL::Logger::log):
+
 2017-08-21  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [PAL] Move spi/mac directory into PAL

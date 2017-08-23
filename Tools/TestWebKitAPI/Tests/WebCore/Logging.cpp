@@ -25,11 +25,13 @@
 
 #include "config.h"
 #include "WTFStringUtilities.h"
+#include <pal/Logger.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 
 #define LOG_CHANNEL_PREFIX Test
 
+using namespace PAL;
 using namespace WTF;
 
 const char* logTestingSubsystem = "com.webkit.testing";
@@ -263,9 +265,34 @@ TEST_F(LoggingTest, RELEASE_LOG_WITH_LEVEL_IF)
     EXPECT_EQ(0u, output().length());
 
     enabled = false;
-    RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevelWarning, "or I shall taunt you a second time!");
+    RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevelWarning, "or I shall taunt you a second time! %i", 12);
     EXPECT_EQ(0u, output().length());
 }
+
+TEST_F(LoggingTest, Logger)
+{
+    Ref<Logger> logger = Logger::create(this);
+    EXPECT_TRUE(logger->enabled());
+
+    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelError);
+    logger->error(TestChannel1, "What, Ridden on a horse?");
+    EXPECT_TRUE(output().contains("horse?", false));
+
+    logger->warning(TestChannel1, "You're using coconuts!");
+    EXPECT_EQ(0u, output().length());
+    logger->notice(TestChannel1, "You're using coconuts!");
+    EXPECT_EQ(0u, output().length());
+    logger->info(TestChannel1, "You're using coconuts!");
+    EXPECT_EQ(0u, output().length());
+    logger->debug(TestChannel1, "You're using coconuts!");
+    EXPECT_EQ(0u, output().length());
+
+    logger->setEnabled(this, false);
+    EXPECT_FALSE(logger->enabled());
+    logger->error(TestChannel1, "You've got two empty halves of coconuts");
+    EXPECT_EQ(0u, output().length());
+}
+
 #endif
 
 } // namespace TestWebKitAPI
