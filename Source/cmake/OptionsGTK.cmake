@@ -54,6 +54,8 @@ find_package(OpenGLES2)
 
 WEBKIT_OPTION_BEGIN()
 
+include(GStreamerDefinitions)
+
 set(USE_CAIRO ON)
 set(USE_WOFF2 ON)
 set(USE_XDGMIME ON)
@@ -94,8 +96,6 @@ WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential 
 
 # Private options specific to the GTK+ port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
-WEBKIT_OPTION_DEFINE(USE_GSTREAMER_GL "Whether to enable support for GStreamer GL" PRIVATE ON)
-WEBKIT_OPTION_DEFINE(USE_GSTREAMER_MPEGTS "Whether to enable support for MPEG-TS" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_REDIRECTED_XCOMPOSITE_WINDOW "Whether to use a Redirected XComposite Window for accelerated compositing in X11." PRIVATE ON)
 
 # FIXME: Can we use cairo-glesv2 to avoid this conflict?
@@ -109,9 +109,6 @@ WEBKIT_OPTION_DEPEND(ENABLE_WEBGL ENABLE_OPENGL)
 WEBKIT_OPTION_DEPEND(ENABLE_SUBTLE_CRYPTO ENABLE_WEB_CRYPTO)
 WEBKIT_OPTION_DEPEND(USE_REDIRECTED_XCOMPOSITE_WINDOW ENABLE_OPENGL)
 WEBKIT_OPTION_DEPEND(USE_REDIRECTED_XCOMPOSITE_WINDOW ENABLE_X11_TARGET)
-WEBKIT_OPTION_DEPEND(USE_GSTREAMER_GL ENABLE_OPENGL)
-WEBKIT_OPTION_DEPEND(USE_GSTREAMER_GL ENABLE_VIDEO)
-WEBKIT_OPTION_DEPEND(USE_GSTREAMER_MPEGTS ENABLE_VIDEO)
 
 SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
 if (DEVELOPER_MODE)
@@ -144,8 +141,6 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_JIT PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SAMPLING_PROFILER PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SPELLCHECK PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_TOUCH_EVENTS PUBLIC ON)
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VIDEO PUBLIC ON)
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_AUDIO PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SYSTEM_MALLOC PUBLIC OFF)
 
@@ -171,8 +166,9 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SMOOTH_SCROLLING PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_USERSELECT_ALL PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_USER_MESSAGE_HANDLERS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SUBTLE_CRYPTO PRIVATE ON)
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VIDEO_TRACK PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBGL PRIVATE ON)
+
+include(GStreamerDefinitions)
 
 # Finalize the value for all options. Do not attempt to use an option before
 # this point, and do not attempt to change any option after this point.
@@ -325,53 +321,6 @@ if (ENABLE_SPELLCHECK)
     endif ()
 endif ()
 
-if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
-    set(GSTREAMER_COMPONENTS app pbutils)
-
-    if (ENABLE_VIDEO)
-        list(APPEND GSTREAMER_COMPONENTS video mpegts tag gl)
-    endif ()
-
-    if (ENABLE_WEB_AUDIO)
-        list(APPEND GSTREAMER_COMPONENTS audio fft)
-    endif ()
-
-    find_package(GStreamer 1.2.3 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
-
-    if (ENABLE_WEB_AUDIO)
-        if (NOT PC_GSTREAMER_AUDIO_FOUND OR NOT PC_GSTREAMER_FFT_FOUND)
-            message(FATAL_ERROR "WebAudio requires the audio and fft GStreamer libraries. Please check your gst-plugins-base installation.")
-        else ()
-            SET_AND_EXPOSE_TO_BUILD(USE_WEBAUDIO_GSTREAMER TRUE)
-        endif ()
-    endif ()
-
-    if (ENABLE_VIDEO)
-        if (NOT PC_GSTREAMER_APP_FOUND OR NOT PC_GSTREAMER_PBUTILS_FOUND OR NOT PC_GSTREAMER_TAG_FOUND OR NOT PC_GSTREAMER_VIDEO_FOUND)
-            message(FATAL_ERROR "Video playback requires the following GStreamer libraries: app, pbutils, tag, video. Please check your gst-plugins-base installation.")
-        endif ()
-    endif ()
-
-    if (USE_GSTREAMER_MPEGTS)
-        if (NOT PC_GSTREAMER_MPEGTS_FOUND)
-            message(FATAL_ERROR "GStreamer MPEG-TS is needed for USE_GSTREAMER_MPEGTS.")
-        endif ()
-    endif ()
-
-    if (USE_GSTREAMER_GL)
-        if (PC_GSTREAMER_VERSION VERSION_LESS "1.10")
-            set(USE_GSTREAMER_GL OFF)
-            message(STATUS "Disabling GSTREAMER_GL as the GStreamer version is older than 1.10.")
-        else ()
-            if (NOT PC_GSTREAMER_GL_FOUND)
-                message(FATAL_ERROR "GStreamerGL is needed for USE_GSTREAMER_GL.")
-            endif ()
-        endif ()
-    endif ()
-
-    SET_AND_EXPOSE_TO_BUILD(USE_GSTREAMER TRUE)
-endif ()
-
 if (ENABLE_QUARTZ_TARGET)
     if (NOT GTK3_SUPPORTS_QUARTZ)
         message(FATAL_ERROR "Recompile GTK+ with Quartz backend to use ENABLE_QUARTZ_TARGET")
@@ -474,3 +423,5 @@ macro(ADD_WHOLE_ARCHIVE_TO_LIBRARIES _list_name)
         set(${_list_name} "${${_list_name}_TMP}")
     endif ()
 endmacro()
+
+include(GStreamerChecks)
