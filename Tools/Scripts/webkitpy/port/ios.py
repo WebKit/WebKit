@@ -96,7 +96,7 @@ class IOSPort(DarwinPort):
             if split_name[os_index] == 'wk1' or split_name[os_index] == 'wk2' or split_name[os_index] == 'simulator' or split_name[os_index] == 'device':
                 os_index -= 1
         if split_name[os_index] != split_name[0]:
-            os_name = apple_additions().mac_os_name(split_name[os_index])
+            os_name = apple_additions().ios_os_name(split_name[os_index])
             if not os_name:
                 return None
             split_name[os_index] = os_name

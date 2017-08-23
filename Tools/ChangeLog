@@ -4,6 +4,17 @@
         https://bugs.webkit.org/show_bug.cgi?id=174800
         <rdar://problem/33498899>
 
+        Unreviewed follow-up fix for r221087.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort._apple_additions_path): Use iOS mapping instead of Mac mapping.
+
+2017-08-23  Jonathan Bedard  <jbedard@apple.com>
+
+        Access expectations path through apple_additions
+        https://bugs.webkit.org/show_bug.cgi?id=174800
+        <rdar://problem/33498899>
+
         Reviewed by David Kilzer.
 
         Follow-up fix. Mapping of operating system names was done incorrectly.
