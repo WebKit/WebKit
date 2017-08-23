@@ -3487,25 +3487,7 @@ webkit.org/b/160119 imported/blink/transforms/inline-transform-and-clipping-root
 webkit.org/b/160119 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay.html [ Timeout Pass ]
 webkit.org/b/160119 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress.html [ Timeout Crash Pass ]
 
-webkit.org/b/160119 media/broken-video.html [ Crash Pass ]
 webkit.org/b/160119 media/click-volume-bar-not-pausing.html [ Timeout Failure Pass ]
-webkit.org/b/160119 media/media-can-load-when-hidden.html [ Timeout Pass ]
-webkit.org/b/160119 media/media-captions-no-controls.html [ Timeout Pass ]
-webkit.org/b/160119 media/media-continues-playing-after-replace-source.html [ Timeout Pass ]
-webkit.org/b/160119 media/media-controller-drag-crash.html [ Timeout Pass ]
-webkit.org/b/160119 media/media-controller-time.html [ Timeout Pass ]
-webkit.org/b/160119 media/media-controller-time-constant.html [ Timeout Pass ]
-webkit.org/b/160119 media/media-controller-timeupdate.html [ Timeout Pass ]
-webkit.org/b/160119 media/media-controller-unpause.html [ Timeout Pass ]
-webkit.org/b/160119 media/video-playbackrate.html [ Crash Pass ]
-webkit.org/b/160119 media/video-poster.html [ Crash Pass ]
-webkit.org/b/160119 media/webkit-media-controls-display.html [ Crash Pass ]
-
-webkit.org/b/160119 media/track/audio/audio-track-mkv-vorbis-enabled.html [ Crash Pass ]
-
-webkit.org/b/160119 media/track/track-cues-seeking.html [ Timeout Pass ]
-webkit.org/b/160119 media/track/track-cues-sorted-before-dispatch.html [ Timeout Pass ]
-webkit.org/b/160119 media/track/track-delete-during-setup.html [ Timeout Pass ]
 
 # This one has its own bug because the crashes were preexisting; only the
 # timeout is caused by the switch to threaded compositor.
