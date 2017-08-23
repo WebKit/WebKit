@@ -58,3 +58,9 @@ add_dependencies(TestWebCore ${ForwardingHeadersForTestWebKitAPI_NAME})
 add_test(TestWebCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore/TestWebCore)
 set_tests_properties(TestWebCore PROPERTIES TIMEOUT 60)
 set_target_properties(TestWebCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore)
+
+if (COMPILER_IS_GCC_OR_CLANG)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebCore -Wno-sign-compare
+                                            -Wno-undef
+                                            -Wno-unused-parameter)
+endif ()
