@@ -1554,8 +1554,9 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
     case op_catch: {
         int r0 = (++it)->u.operand;
         int r1 = (++it)->u.operand;
+        void* pointer = getPointer(*(++it));
         printLocationAndOp(out, location, it, "catch");
-        out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
+        out.printf("%s, %s, %p", registerName(r0).data(), registerName(r1).data(), pointer);
         break;
     }
     case op_throw: {

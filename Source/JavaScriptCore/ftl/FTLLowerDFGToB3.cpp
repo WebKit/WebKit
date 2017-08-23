@@ -150,7 +150,7 @@ public:
         } else
             name = "jsBody";
         
-        m_graph.ensureDominators();
+        m_graph.ensureSSADominators();
 
         if (verboseCompilationEnabled())
             dataLog("Function ready, beginning lowering.\n");
@@ -266,8 +266,9 @@ public:
         }
         m_node = nullptr;
         m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
+        auto& arguments = m_graph.m_entrypointToArguments.find(m_graph.block(0))->value;
         for (unsigned i = codeBlock()->numParameters(); i--;) {
-            Node* node = m_graph.m_arguments[i];
+            Node* node = arguments[i];
             m_out.setOrigin(node);
             VirtualRegister operand = virtualRegisterForArgument(i);
             
@@ -443,7 +444,7 @@ private:
             DFG::BasicBlock* target = m_graph.block(blockIndex);
             if (!target)
                 continue;
-            if (m_graph.m_dominators->dominates(m_highBlock, target)) {
+            if (m_graph.m_ssaDominators->dominates(m_highBlock, target)) {
                 if (verboseCompilationEnabled())
                     dataLog("Block ", *target, " will bail also.\n");
                 target->cfaHasVisited = false;
@@ -14472,7 +14473,7 @@ private:
     {
         if (!value)
             return false;
-        if (!m_graph.m_dominators->dominates(value.block(), m_highBlock))
+        if (!m_graph.m_ssaDominators->dominates(value.block(), m_highBlock))
             return false;
         return true;
     }

@@ -1,3 +1,74 @@
+2017-08-23  Saam Barati  <sbarati@apple.com>
+
+        Support compiling catch in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=174590
+
+        Reviewed by Filip Pizlo.
+
+        This patch generalizes the BackwardsGraph fake root into a more generalizable
+        class called SingleRootGraph. SingleRootGraph exposes the general graph interface
+        used in Dominators and NaturalLoops. SingleRootGraph takes as input a graph with
+        the normal graph interface, but also allows the input graph to contain more than
+        one root. SingleRootGraph then exposes a single root, which it creates, that has
+        an outgoing edge to all the roots in the original graph.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BackwardsGraph.h:
+        (WTF::BackwardsGraph::dump const):
+        (WTF::BackwardsGraph::rootName): Deleted.
+        (WTF::BackwardsGraph::Node::Node): Deleted.
+        (WTF::BackwardsGraph::Node::root): Deleted.
+        (WTF::BackwardsGraph::Node::operator== const): Deleted.
+        (WTF::BackwardsGraph::Node::operator!= const): Deleted.
+        (WTF::BackwardsGraph::Node::operator bool const): Deleted.
+        (WTF::BackwardsGraph::Node::isRoot const): Deleted.
+        (WTF::BackwardsGraph::Node::node const): Deleted.
+        (): Deleted.
+        (WTF::BackwardsGraph::Set::Set): Deleted.
+        (WTF::BackwardsGraph::Set::add): Deleted.
+        (WTF::BackwardsGraph::Set::remove): Deleted.
+        (WTF::BackwardsGraph::Set::contains): Deleted.
+        (WTF::BackwardsGraph::Set::dump const): Deleted.
+        (WTF::BackwardsGraph::Map::Map): Deleted.
+        (WTF::BackwardsGraph::Map::clear): Deleted.
+        (WTF::BackwardsGraph::Map::size const): Deleted.
+        (WTF::BackwardsGraph::Map::operator[]): Deleted.
+        (WTF::BackwardsGraph::Map::operator[] const): Deleted.
+        * wtf/Dominators.h:
+        (WTF::Dominators::Dominators):
+        (WTF::Dominators::forAllBlocksInIteratedDominanceFrontierOf):
+        (WTF::Dominators::forAllBlocksInPrunedIteratedDominanceFrontierOf):
+        (WTF::Dominators::iteratedDominanceFrontierOf const):
+        (WTF::Dominators::forAllBlocksInIteratedDominanceFrontierOfImpl const):
+        * wtf/SingleRootGraph.h: Added.
+        (WTF::SingleRootGraphNode::rootName):
+        (WTF::SingleRootGraphNode::SingleRootGraphNode):
+        (WTF::SingleRootGraphNode::root):
+        (WTF::SingleRootGraphNode::operator== const):
+        (WTF::SingleRootGraphNode::operator!= const):
+        (WTF::SingleRootGraphNode::operator bool const):
+        (WTF::SingleRootGraphNode::isRoot const):
+        (WTF::SingleRootGraphNode::node const):
+        (WTF::SingleRootGraphSet::add):
+        (WTF::SingleRootGraphSet::remove):
+        (WTF::SingleRootGraphSet::contains):
+        (WTF::SingleRootGraphSet::dump const):
+        (WTF::SingleRootMap::SingleRootMap):
+        (WTF::SingleRootMap::clear):
+        (WTF::SingleRootMap::size const):
+        (WTF::SingleRootMap::operator[]):
+        (WTF::SingleRootMap::operator[] const):
+        (WTF::SingleRootGraph::SingleRootGraph):
+        (WTF::SingleRootGraph::root const):
+        (WTF::SingleRootGraph::newMap):
+        (WTF::SingleRootGraph::successors const):
+        (WTF::SingleRootGraph::predecessors const):
+        (WTF::SingleRootGraph::index const):
+        (WTF::SingleRootGraph::node const):
+        (WTF::SingleRootGraph::numNodes const):
+        (WTF::SingleRootGraph::dump const):
+        (WTF::SingleRootGraph::assertIsConsistent const):
+
 2017-08-23  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Enable persistent coder to encode FetchOptions

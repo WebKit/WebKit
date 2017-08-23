@@ -63,6 +63,7 @@ void JITCode::shrinkToFit()
     common.shrinkToFit();
     osrEntry.shrinkToFit();
     osrExit.shrinkToFit();
+    catchEntrypoints.shrinkToFit();
     speculationRecovery.shrinkToFit();
     minifiedDFG.prepareAndShrink();
     variableEventStream.shrinkToFit();

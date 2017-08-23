@@ -45,7 +45,6 @@
 #include "DFGJITCode.h"
 #include "DFGMayExit.h"
 #include "DFGNaturalLoops.h"
-#include "DFGPrePostNumbering.h"
 #include "DFGVariableAccessDataDump.h"
 #include "FullBytecodeLiveness.h"
 #include "FunctionExecutableDump.h"
@@ -73,7 +72,7 @@ Graph::Graph(VM& vm, Plan& plan)
     , m_plan(plan)
     , m_codeBlock(m_plan.codeBlock)
     , m_profiledBlock(m_codeBlock->alternative())
-    , m_cfg(std::make_unique<CFG>(*this))
+    , m_ssaCFG(std::make_unique<SSACFG>(*this))
     , m_nextMachineLocal(0)
     , m_fixpointState(BeforeFixpoint)
     , m_structureRegistrationState(HaveNotStartedRegistering)
@@ -409,9 +408,13 @@ bool Graph::terminalsAreValid()
     return true;
 }
 
+static BasicBlock* unboxLoopNode(const CPSCFG::Node& node) { return node.node(); }
+static BasicBlock* unboxLoopNode(BasicBlock* block) { return block; }
+
 void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* block, PhiNodeDumpMode phiNodeDumpMode, DumpContext* context)
 {
-    out.print(prefix, "Block ", *block, " (", inContext(block->at(0)->origin.semantic, context), "):", block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
+    out.print(prefix, "Block ", *block, " (", inContext(block->at(0)->origin.semantic, context), "):",
+        block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "", block->isCatchEntrypoint ? " (Catch Entrypoint)" : "", "\n");
     if (block->executionCount == block->executionCount)
         out.print(prefix, "  Execution count: ", block->executionCount, "\n");
     out.print(prefix, "  Predecessors:");
@@ -422,18 +425,26 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* bl
     if (block->terminal()) {
         for (BasicBlock* successor : block->successors()) {
             out.print(" ", *successor);
-            if (m_prePostNumbering)
-                out.print(" (", m_prePostNumbering->edgeKind(block, successor), ")");
         }
     } else
         out.print(" <invalid>");
     out.print("\n");
-    if (m_dominators && terminalsAreValid()) {
-        out.print(prefix, "  Dominated by: ", m_dominators->dominatorsOf(block), "\n");
-        out.print(prefix, "  Dominates: ", m_dominators->blocksDominatedBy(block), "\n");
-        out.print(prefix, "  Dominance Frontier: ", m_dominators->dominanceFrontierOf(block), "\n");
-        out.print(prefix, "  Iterated Dominance Frontier: ", m_dominators->iteratedDominanceFrontierOf(BlockList(1, block)), "\n");
+
+    auto printDominators = [&] (auto& dominators) {
+        out.print(prefix, "  Dominated by: ", dominators.dominatorsOf(block), "\n");
+        out.print(prefix, "  Dominates: ", dominators.blocksDominatedBy(block), "\n");
+        out.print(prefix, "  Dominance Frontier: ", dominators.dominanceFrontierOf(block), "\n");
+        out.print(prefix, "  Iterated Dominance Frontier: ",
+            dominators.iteratedDominanceFrontierOf(typename std::remove_reference<decltype(dominators)>::type::List { block }), "\n");
+    };
+
+    if (terminalsAreValid()) {
+        if (m_ssaDominators)
+            printDominators(*m_ssaDominators);
+        else if (m_cpsDominators)
+            printDominators(*m_cpsDominators);
     }
+
     if (m_backwardsDominators && terminalsAreValid()) {
         out.print(prefix, "  Backwards dominates by: ", m_backwardsDominators->dominatorsOf(block), "\n");
         out.print(prefix, "  Backwards dominates: ", m_backwardsDominators->blocksDominatedBy(block), "\n");
@@ -446,29 +457,33 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* bl
         }
         out.print("\n");
     }
-    if (m_prePostNumbering)
-        out.print(prefix, "  Pre/Post Numbering: ", m_prePostNumbering->preNumber(block), "/", m_prePostNumbering->postNumber(block), "\n");
-    if (m_naturalLoops) {
-        if (const NaturalLoop* loop = m_naturalLoops->headerOf(block)) {
+
+    auto printNaturalLoops = [&] (auto& naturalLoops) {
+        if (const auto* loop = naturalLoops->headerOf(block)) {
             out.print(prefix, "  Loop header, contains:");
             Vector<BlockIndex> sortedBlockList;
             for (unsigned i = 0; i < loop->size(); ++i)
-                sortedBlockList.append(loop->at(i)->index);
+                sortedBlockList.append(unboxLoopNode(loop->at(i))->index);
             std::sort(sortedBlockList.begin(), sortedBlockList.end());
             for (unsigned i = 0; i < sortedBlockList.size(); ++i)
                 out.print(" #", sortedBlockList[i]);
             out.print("\n");
         }
         
-        Vector<const NaturalLoop*> containingLoops =
-            m_naturalLoops->loopsOf(block);
+        auto containingLoops = naturalLoops->loopsOf(block);
         if (!containingLoops.isEmpty()) {
             out.print(prefix, "  Containing loop headers:");
             for (unsigned i = 0; i < containingLoops.size(); ++i)
-                out.print(" ", *containingLoops[i]->header());
+                out.print(" ", *unboxLoopNode(containingLoops[i]->header()));
             out.print("\n");
         }
-    }
+    };
+
+    if (m_ssaNaturalLoops)
+        printNaturalLoops(m_ssaNaturalLoops);
+    else if (m_cpsNaturalLoops)
+        printNaturalLoops(m_cpsNaturalLoops);
+
     if (!block->phis.isEmpty()) {
         out.print(prefix, "  Phi Nodes:");
         for (size_t i = 0; i < block->phis.size(); ++i) {
@@ -502,8 +517,10 @@ void Graph::dump(PrintStream& out, DumpContext* context)
     out.print("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
     if (m_form == SSA)
         out.print("  Argument formats: ", listDump(m_argumentFormats), "\n");
-    else
-        out.print("  Arguments: ", listDump(m_arguments), "\n");
+    else {
+        for (auto pair : m_entrypointToArguments)
+            out.print("  Arguments for block#", pair.key->index, ": ", listDump(pair.value), "\n");
+    }
     out.print("\n");
     
     Node* lastNode = nullptr;
@@ -640,8 +657,10 @@ void Graph::handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock* block
 void Graph::determineReachability()
 {
     Vector<BasicBlock*, 16> worklist;
-    worklist.append(block(0));
-    block(0)->isReachable = true;
+    for (BasicBlock* entrypoint : m_entrypoints) {
+        entrypoint->isReachable = true;
+        worklist.append(entrypoint);
+    }
     while (!worklist.isEmpty()) {
         BasicBlock* block = worklist.takeLast();
         for (unsigned i = block->numSuccessors(); i--;)
@@ -798,9 +817,10 @@ void Graph::killUnreachableBlocks()
 
 void Graph::invalidateCFG()
 {
-    m_dominators = nullptr;
-    m_naturalLoops = nullptr;
-    m_prePostNumbering = nullptr;
+    m_cpsDominators = nullptr;
+    m_ssaDominators = nullptr;
+    m_cpsNaturalLoops = nullptr;
+    m_ssaNaturalLoops = nullptr;
     m_controlEquivalenceAnalysis = nullptr;
     m_backwardsDominators = nullptr;
     m_backwardsCFG = nullptr;
@@ -850,11 +870,36 @@ BlockList Graph::blocksInPreOrder()
 {
     BlockList result;
     BlockWorklist worklist;
-    worklist.push(block(0));
+    for (BasicBlock* entrypoint : m_entrypoints)
+        worklist.push(entrypoint);
     while (BasicBlock* block = worklist.pop()) {
         result.append(block);
         for (unsigned i = block->numSuccessors(); i--;)
             worklist.push(block->successor(i));
+    }
+
+    if (validationEnabled()) {
+        // When iterating over pre order, we should see dominators
+        // before things they dominate.
+        auto validateResults = [&] (auto& dominators) {
+            for (unsigned i = 0; i < result.size(); ++i) {
+                BasicBlock* a = result[i];
+                if (!a)
+                    continue;
+                for (unsigned j = 0; j < result.size(); ++j) {
+                    BasicBlock* b = result[j];
+                    if (!b || a == b)
+                        continue;
+                    if (dominators.dominates(a, b))
+                        RELEASE_ASSERT(i < j);
+                }
+            }
+        };
+
+        if (m_form == SSA || m_isInSSAConversion)
+            validateResults(ensureSSADominators());
+        else
+            validateResults(ensureCPSDominators());
     }
     return result;
 }
@@ -863,7 +908,8 @@ BlockList Graph::blocksInPostOrder()
 {
     BlockList result;
     PostOrderBlockWorklist worklist;
-    worklist.push(block(0));
+    for (BasicBlock* entrypoint : m_entrypoints)
+        worklist.push(entrypoint);
     while (BlockWithOrder item = worklist.pop()) {
         switch (item.order) {
         case VisitOrder::Pre:
@@ -876,6 +922,31 @@ BlockList Graph::blocksInPostOrder()
             break;
         }
     }
+
+    if (validationEnabled()) {
+        auto validateResults = [&] (auto& dominators) {
+            // When iterating over reverse post order, we should see dominators
+            // before things they dominate.
+            for (unsigned i = 0; i < result.size(); ++i) {
+                BasicBlock* a = result[i];
+                if (!a)
+                    continue;
+                for (unsigned j = 0; j < result.size(); ++j) {
+                    BasicBlock* b = result[j];
+                    if (!b || a == b)
+                        continue;
+                    if (dominators.dominates(a, b))
+                        RELEASE_ASSERT(i > j);
+                }
+            }
+        };
+
+        if (m_form == SSA || m_isInSSAConversion)
+            validateResults(ensureSSADominators());
+        else
+            validateResults(ensureCPSDominators());
+    }
+
     return result;
 }
 
@@ -1472,30 +1543,44 @@ void Graph::logAssertionFailure(
     logDFGAssertionFailure(*this, toCString("While handling block ", pointerDump(block), "\n\n"), file, line, function, assertion);
 }
 
-Dominators& Graph::ensureDominators()
+CPSDominators& Graph::ensureCPSDominators()
 {
-    if (!m_dominators)
-        m_dominators = std::make_unique<Dominators>(*this);
-    return *m_dominators;
+    RELEASE_ASSERT(m_form != SSA && !m_isInSSAConversion);
+    if (!m_cpsDominators)
+        m_cpsDominators = std::make_unique<CPSDominators>(*this);
+    return *m_cpsDominators;
 }
 
-PrePostNumbering& Graph::ensurePrePostNumbering()
+SSADominators& Graph::ensureSSADominators()
 {
-    if (!m_prePostNumbering)
-        m_prePostNumbering = std::make_unique<PrePostNumbering>(*this);
-    return *m_prePostNumbering;
+    RELEASE_ASSERT(m_form == SSA || m_isInSSAConversion);
+    if (!m_ssaDominators)
+        m_ssaDominators = std::make_unique<SSADominators>(*this);
+    return *m_ssaDominators;
 }
 
-NaturalLoops& Graph::ensureNaturalLoops()
+CPSNaturalLoops& Graph::ensureCPSNaturalLoops()
 {
-    ensureDominators();
-    if (!m_naturalLoops)
-        m_naturalLoops = std::make_unique<NaturalLoops>(*this);
-    return *m_naturalLoops;
+    RELEASE_ASSERT(m_form != SSA && !m_isInSSAConversion);
+    ensureCPSDominators();
+    if (!m_cpsNaturalLoops)
+        m_cpsNaturalLoops = std::make_unique<CPSNaturalLoops>(*this);
+    return *m_cpsNaturalLoops;
+}
+
+SSANaturalLoops& Graph::ensureSSANaturalLoops()
+{
+    RELEASE_ASSERT(m_form == SSA);
+    ensureSSADominators();
+    if (!m_ssaNaturalLoops)
+        m_ssaNaturalLoops = std::make_unique<SSANaturalLoops>(*this);
+    return *m_ssaNaturalLoops;
 }
 
 BackwardsCFG& Graph::ensureBackwardsCFG()
 {
+    // We could easily relax this in the future to work over CPS, but today, it's only used in SSA.
+    RELEASE_ASSERT(m_form == SSA); 
     if (!m_backwardsCFG)
         m_backwardsCFG = std::make_unique<BackwardsCFG>(*this);
     return *m_backwardsCFG;
@@ -1503,6 +1588,7 @@ BackwardsCFG& Graph::ensureBackwardsCFG()
 
 BackwardsDominators& Graph::ensureBackwardsDominators()
 {
+    RELEASE_ASSERT(m_form == SSA);
     if (!m_backwardsDominators)
         m_backwardsDominators = std::make_unique<BackwardsDominators>(*this);
     return *m_backwardsDominators;
@@ -1510,6 +1596,7 @@ BackwardsDominators& Graph::ensureBackwardsDominators()
 
 ControlEquivalenceAnalysis& Graph::ensureControlEquivalenceAnalysis()
 {
+    RELEASE_ASSERT(m_form == SSA);
     if (!m_controlEquivalenceAnalysis)
         m_controlEquivalenceAnalysis = std::make_unique<ControlEquivalenceAnalysis>(*this);
     return *m_controlEquivalenceAnalysis;
@@ -1527,7 +1614,9 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                     if (!node->local().isArgument())
                         return nullptr;
                     int argument = node->local().toArgument();
-                    Node* argumentNode = m_arguments[argument];
+                    // FIXME: We should match SetArgument nodes at other entrypoints as well:
+                    // https://bugs.webkit.org/show_bug.cgi?id=175841
+                    Node* argumentNode = m_entrypointToArguments.find(block(0))->value[argument];
                     if (!argumentNode)
                         return nullptr;
                     if (node->variableAccessData() != argumentNode->variableAccessData())
@@ -1696,6 +1785,13 @@ bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
     });
 
     return allGood;
+}
+
+void Graph::clearCPSCFGData()
+{
+    m_cpsNaturalLoops = nullptr;
+    m_cpsDominators = nullptr;
+    m_cpsCFG = nullptr;
 }
 
 } } // namespace JSC::DFG

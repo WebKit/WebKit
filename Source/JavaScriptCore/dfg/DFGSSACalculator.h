@@ -175,10 +175,10 @@ public:
     template<typename PhiInsertionFunctor>
     void computePhis(const PhiInsertionFunctor& functor)
     {
-        DFG_ASSERT(m_graph, nullptr, m_graph.m_dominators);
+        DFG_ASSERT(m_graph, nullptr, m_graph.m_ssaDominators);
         
         for (Variable& variable : m_variables) {
-            m_graph.m_dominators->forAllBlocksInPrunedIteratedDominanceFrontierOf(
+            m_graph.m_ssaDominators->forAllBlocksInPrunedIteratedDominanceFrontierOf(
                 variable.m_blocksWithDefs,
                 [&] (BasicBlock* block) -> bool {
                     Node* phiNode = functor(&variable, block);

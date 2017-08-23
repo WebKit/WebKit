@@ -95,12 +95,12 @@ SSACalculator::Def* SSACalculator::newDef(Variable* variable, BasicBlock* block,
 
 SSACalculator::Def* SSACalculator::nonLocalReachingDef(BasicBlock* block, Variable* variable)
 {
-    return reachingDefAtTail(m_graph.m_dominators->idom(block), variable);
+    return reachingDefAtTail(m_graph.m_ssaDominators->idom(block), variable);
 }
 
 SSACalculator::Def* SSACalculator::reachingDefAtTail(BasicBlock* block, Variable* variable)
 {
-    for (; block; block = m_graph.m_dominators->idom(block)) {
+    for (; block; block = m_graph.m_ssaDominators->idom(block)) {
         if (Def* def = m_data[block].m_defs.get(variable))
             return def;
     }

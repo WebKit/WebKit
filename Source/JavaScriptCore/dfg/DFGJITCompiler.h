@@ -256,6 +256,7 @@ public:
     }
 
     void noticeOSREntry(BasicBlock&, JITCompiler::Label blockHead, LinkBuffer&);
+    void noticeCatchEntrypoint(BasicBlock&, JITCompiler::Label blockHead, LinkBuffer&, Vector<FlushFormat>&& argumentFormats);
     
     RefPtr<JITCode> jitCode() { return m_jitCode; }
     
@@ -283,6 +284,8 @@ private:
     void disassemble(LinkBuffer&);
 
     void appendExceptionHandlingOSRExit(ExitKind, unsigned eventStreamIndex, CodeOrigin, HandlerInfo* exceptionHandler, CallSiteIndex, MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList());
+
+    void makeCatchOSREntryBuffer();
 
     // The dataflow graph currently being generated.
     Graph& m_graph;

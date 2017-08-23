@@ -53,8 +53,10 @@ public:
             insertionSet.execute(block);
         }
 
-        treatRootBlock(m_graph.block(0), insertionSet);
-        insertionSet.execute(m_graph.block(0));
+        for (BasicBlock* entrypoint : m_graph.m_entrypoints) {
+            treatRootBlock(entrypoint, insertionSet);
+            insertionSet.execute(entrypoint);
+        }
 
         return true;
     }
@@ -67,7 +69,13 @@ public:
         {
             for (unsigned i = 0; i < block->size(); i++) {
                 Node* node = block->at(i);
-                bool isPrimordialSetArgument = node->op() == SetArgument && node->local().isArgument() && node == m_graph.m_arguments[node->local().toArgument()];
+                bool isPrimordialSetArgument = false;
+                if (node->op() == SetArgument && node->local().isArgument()) {
+                    auto iter = m_graph.m_entrypointToArguments.find(block);
+                    if (iter != m_graph.m_entrypointToArguments.end())
+                        isPrimordialSetArgument = node == iter->value[node->local().toArgument()];
+                }
+
                 if (node->op() == SetLocal || (node->op() == SetArgument && !isPrimordialSetArgument)) {
                     VirtualRegister operand = node->local();
                     VariableAccessData* flushAccessData = currentBlockAccessData.operand(operand);
@@ -128,12 +136,12 @@ public:
 
         for (unsigned i = 0; i < block->variablesAtTail.numberOfLocals(); i++) {
             VirtualRegister operand = virtualRegisterForLocal(i);
-            VariableAccessData* accessData;
             DFG_ASSERT(m_graph, nullptr, initialAccessNodes.operand(operand)->op() == Flush); // We should have inserted a Flush before any SetLocal/SetArgument for the local that we are analyzing now.
-            accessData = initialAccessData.operand(operand);
+            VariableAccessData* accessData = initialAccessData.operand(operand);
             DFG_ASSERT(m_graph, nullptr, accessData);
             insertionSet.insertNode(0, SpecNone, 
                 SetLocal, origin, OpInfo(accessData), Edge(undefined));
+            accessData->mergeShouldNeverUnbox(true); // We don't know if we can exit here.
         }
     }
 

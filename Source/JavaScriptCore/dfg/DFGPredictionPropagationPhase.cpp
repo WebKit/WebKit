@@ -995,6 +995,11 @@ private:
             break;
         }
 
+        case ExtractCatchLocal: {
+            setPrediction(m_currentNode->catchLocalPrediction());
+            break;
+        }
+
         case GetLocal:
         case SetLocal:
         case UInt32ToNumber:

@@ -391,7 +391,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGPhase.cpp
     dfg/DFGPhiChildren.cpp
     dfg/DFGPlan.cpp
-    dfg/DFGPrePostNumbering.cpp
     dfg/DFGPredictionInjectionPhase.cpp
     dfg/DFGPredictionPropagationPhase.cpp
     dfg/DFGPromotedHeapLocation.cpp

@@ -318,6 +318,7 @@ typedef char* (JIT_OPERATION *P_JITOperation_EStZP)(ExecState*, Structure*, int3
 typedef char* (JIT_OPERATION *P_JITOperation_EZZ)(ExecState*, int32_t, int32_t);
 typedef char* (JIT_OPERATION *P_JITOperation_EQZ)(ExecState*, int64_t, int32_t);
 typedef char* (JIT_OPERATION *P_JITOperation_EDZ)(ExecState*, double, int32_t);
+typedef char* (JIT_OPERATION *P_JITOperation_EUi)(ExecState*, uint32_t);
 typedef SlowPathReturnType (JIT_OPERATION *Sprt_JITOperation_ECli)(ExecState*, CallLinkInfo*);
 typedef StringImpl* (JIT_OPERATION *T_JITOperation_EJss)(ExecState*, JSString*);
 typedef JSString* (JIT_OPERATION *Jss_JITOperation_EZ)(ExecState*, int32_t);
@@ -400,6 +401,7 @@ void JIT_OPERATION operationThrow(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationDebug(ExecState*, int32_t) WTF_INTERNAL;
 #if ENABLE(DFG_JIT)
 SlowPathReturnType JIT_OPERATION operationOptimize(ExecState*, int32_t) WTF_INTERNAL;
+char* JIT_OPERATION operationTryOSREnterAtCatch(ExecState*, uint32_t) WTF_INTERNAL;
 #endif
 void JIT_OPERATION operationPutByIndex(ExecState*, EncodedJSValue, int32_t, EncodedJSValue);
 void JIT_OPERATION operationPutGetterById(ExecState*, JSCell*, UniquedStringImpl*, int32_t options, JSCell*) WTF_INTERNAL;

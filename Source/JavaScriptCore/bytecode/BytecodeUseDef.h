@@ -32,7 +32,7 @@ namespace JSC {
 template<typename Block, typename Functor, typename Instruction>
 void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instruction* instruction, const Functor& functor)
 {
-    if (opcodeID != op_enter && codeBlock->wasCompiledWithDebuggingOpcodes() && codeBlock->scopeRegister().isValid())
+    if (opcodeID != op_enter && (codeBlock->wasCompiledWithDebuggingOpcodes() || codeBlock->usesEval()) && codeBlock->scopeRegister().isValid())
         functor(codeBlock, instruction, opcodeID, codeBlock->scopeRegister().offset());
 
     switch (opcodeID) {

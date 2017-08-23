@@ -74,8 +74,8 @@ void link(State& state)
             Profiler::OriginStack(),
             toCString("Generated FTL JIT code for ", CodeBlockWithJITType(codeBlock, JITCode::FTLJIT), ", instruction count = ", graph.m_codeBlock->instructionCount(), ":\n"));
         
-        graph.ensureDominators();
-        graph.ensureNaturalLoops();
+        graph.ensureSSADominators();
+        graph.ensureSSANaturalLoops();
         
         const char* prefix = "    ";
         
