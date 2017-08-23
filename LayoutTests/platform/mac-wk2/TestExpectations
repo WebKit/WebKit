@@ -769,3 +769,5 @@ webkit.org/b/173672 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.
 
 webkit.org/b/173500 http/tests/loading/basic-auth-remove-credentials.html [ Pass Failure ]
 
+webkit.org/b/172829 [ Sierra Debug ] loader/stateobjects/replacestate-size.html [ Pass Timeout ]
+
