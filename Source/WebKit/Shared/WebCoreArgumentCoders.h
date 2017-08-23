@@ -97,7 +97,6 @@ struct DictationAlternative;
 struct DictionaryPopupInfo;
 struct EventTrackingRegions;
 struct ExceptionDetails;
-struct FetchOptions;
 struct FileChooserSettings;
 struct Length;
 struct GrammarDetail;
@@ -194,11 +193,6 @@ template<> struct ArgumentCoder<WTF::Seconds> {
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
     static void encode(Encoder&, const WebCore::AffineTransform&);
     static bool decode(Decoder&, WebCore::AffineTransform&);
-};
-
-template<> struct ArgumentCoder<WebCore::FetchOptions> {
-    static void encode(Encoder&, const WebCore::FetchOptions&);
-    static bool decode(Decoder&, WebCore::FetchOptions&);
 };
 
 template<> struct ArgumentCoder<WebCore::CacheQueryOptions> {
@@ -797,87 +791,6 @@ template<> struct EnumTraits<WebCore::CacheStorageConnection::Error> {
         WebCore::CacheStorageConnection::Error,
         WebCore::CacheStorageConnection::Error::None,
         WebCore::CacheStorageConnection::Error::NotImplemented
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FetchOptions::Type> {
-    using values = EnumValues<
-        WebCore::FetchOptions::Type,
-        WebCore::FetchOptions::Type::EmptyString,
-        WebCore::FetchOptions::Type::Audio,
-        WebCore::FetchOptions::Type::Font,
-        WebCore::FetchOptions::Type::Image,
-        WebCore::FetchOptions::Type::Script,
-        WebCore::FetchOptions::Type::Style,
-        WebCore::FetchOptions::Type::Track,
-        WebCore::FetchOptions::Type::Video
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FetchOptions::Destination> {
-    using values = EnumValues<
-        WebCore::FetchOptions::Destination,
-        WebCore::FetchOptions::Destination::EmptyString,
-        WebCore::FetchOptions::Destination::Document,
-        WebCore::FetchOptions::Destination::Sharedworker,
-        WebCore::FetchOptions::Destination::Subresource,
-        WebCore::FetchOptions::Destination::Unknown,
-        WebCore::FetchOptions::Destination::Worker
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FetchOptions::Mode> {
-    using values = EnumValues<
-        WebCore::FetchOptions::Mode,
-        WebCore::FetchOptions::Mode::Navigate,
-        WebCore::FetchOptions::Mode::SameOrigin,
-        WebCore::FetchOptions::Mode::NoCors,
-        WebCore::FetchOptions::Mode::Cors
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FetchOptions::Credentials> {
-    using values = EnumValues<
-        WebCore::FetchOptions::Credentials,
-        WebCore::FetchOptions::Credentials::Omit,
-        WebCore::FetchOptions::Credentials::SameOrigin,
-        WebCore::FetchOptions::Credentials::Include
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FetchOptions::Cache> {
-    using values = EnumValues<
-        WebCore::FetchOptions::Cache,
-        WebCore::FetchOptions::Cache::Default,
-        WebCore::FetchOptions::Cache::NoStore,
-        WebCore::FetchOptions::Cache::Reload,
-        WebCore::FetchOptions::Cache::NoCache,
-        WebCore::FetchOptions::Cache::ForceCache,
-        WebCore::FetchOptions::Cache::OnlyIfCached
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FetchOptions::Redirect> {
-    using values = EnumValues<
-        WebCore::FetchOptions::Redirect,
-        WebCore::FetchOptions::Redirect::Follow,
-        WebCore::FetchOptions::Redirect::Error,
-        WebCore::FetchOptions::Redirect::Manual
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ReferrerPolicy> {
-    using values = EnumValues<
-        WebCore::ReferrerPolicy,
-        WebCore::ReferrerPolicy::EmptyString,
-        WebCore::ReferrerPolicy::NoReferrer,
-        WebCore::ReferrerPolicy::NoReferrerWhenDowngrade,
-        WebCore::ReferrerPolicy::SameOrigin,
-        WebCore::ReferrerPolicy::Origin,
-        WebCore::ReferrerPolicy::StrictOrigin,
-        WebCore::ReferrerPolicy::OriginWhenCrossOrigin,
-        WebCore::ReferrerPolicy::StrictOriginWhenCrossOrigin,
-        WebCore::ReferrerPolicy::UnsafeUrl
     >;
 };
 

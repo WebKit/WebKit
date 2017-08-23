@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/SHA1.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentCoder.h>
@@ -44,6 +45,14 @@ public:
     WTF_EXPORT_PRIVATE void encodeChecksum();
     WTF_EXPORT_PRIVATE void encodeFixedLengthData(const uint8_t*, size_t);
 
+    template<typename E> auto encode(E value) -> std::enable_if_t<std::is_enum<E>::value>
+    {
+        static_assert(sizeof(E) <= sizeof(uint64_t), "Enum type must not be larger than 64 bits.");
+
+        ASSERT(isValidEnum<E>(static_cast<uint64_t>(value)));
+        encode(static_cast<uint64_t>(value));
+    }
+
     template<typename T> void encodeEnum(T t)
     {
         COMPILE_ASSERT(sizeof(T) <= sizeof(uint64_t), enum_type_must_not_be_larger_than_64_bits);
@@ -51,7 +60,7 @@ public:
         encode(static_cast<uint64_t>(t));
     }
 
-    template<typename T> void encode(const T& t)
+    template<typename T> auto encode(const T& t) -> std::enable_if_t<!std::is_enum<T>::value>
     {
         Coder<T>::encode(*this, t);
     }

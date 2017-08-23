@@ -32,6 +32,8 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class ReferrerPolicy {
@@ -44,6 +46,25 @@ enum class ReferrerPolicy {
     OriginWhenCrossOrigin,
     StrictOriginWhenCrossOrigin,
     UnsafeUrl
+};
+
+}
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ReferrerPolicy> {
+    using values = EnumValues<
+        WebCore::ReferrerPolicy,
+        WebCore::ReferrerPolicy::EmptyString,
+        WebCore::ReferrerPolicy::NoReferrer,
+        WebCore::ReferrerPolicy::NoReferrerWhenDowngrade,
+        WebCore::ReferrerPolicy::SameOrigin,
+        WebCore::ReferrerPolicy::Origin,
+        WebCore::ReferrerPolicy::StrictOrigin,
+        WebCore::ReferrerPolicy::OriginWhenCrossOrigin,
+        WebCore::ReferrerPolicy::StrictOriginWhenCrossOrigin,
+        WebCore::ReferrerPolicy::UnsafeUrl
+    >;
 };
 
 }

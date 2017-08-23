@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/SHA1.h>
 #include <wtf/persistence/PersistentCoder.h>
 
@@ -54,6 +55,18 @@ public:
     WTF_EXPORT_PRIVATE bool decode(float&);
     WTF_EXPORT_PRIVATE bool decode(double&);
 
+    template<typename E> auto decode(E& e) -> std::enable_if_t<std::is_enum<E>::value, bool>
+    {
+        uint64_t value;
+        if (!decode(value))
+            return false;
+        if (!isValidEnum<E>(value))
+            return false;
+
+        e = static_cast<E>(value);
+        return true;
+    }
+
     template<typename T> bool decodeEnum(T& result)
     {
         static_assert(sizeof(T) <= 8, "Enum type T must not be larger than 64 bits!");
@@ -66,7 +79,7 @@ public:
         return true;
     }
 
-    template<typename T> bool decode(T& t)
+    template<typename T> auto decode(T& t) -> std::enable_if_t<!std::is_enum<T>::value, bool>
     {
         return Coder<T>::decode(*this, t);
     }
