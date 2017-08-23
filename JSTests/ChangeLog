@@ -1,3 +1,14 @@
+2017-08-23  Robin Morisset  <rmorisset@apple.com>
+
+        Add a micro-benchmark for checking that accessing a variable within a 'with'
+        block does not automatically prevent type prediction.
+        https://bugs.webkit.org/show_bug.cgi?id=175738
+
+        Reviewed by Saam Barati.
+
+        * stress/with_and_arith.js: Added.
+        (with):
+
 2017-08-23  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ESNext] Async iteration - Implement Async Generator - runtime

@@ -4064,6 +4064,13 @@ void ByteCodeParser::clearCaches()
     m_constants.shrink(0);
 }
 
+static uint64_t makeDynamicVarOpInfo(unsigned identifierNumber, unsigned getPutInfo)
+{
+    static_assert(sizeof(identifierNumber) == 4,
+        "We cannot fit identifierNumber into the high bits of m_opInfo");
+    return static_cast<uint64_t>(identifierNumber) | (static_cast<uint64_t>(getPutInfo) << 32);
+}
+
 bool ByteCodeParser::parseBlock(unsigned limit)
 {
     bool shouldContinueParsing = true;
@@ -5361,8 +5368,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             }
 
             if (needsDynamicLookup(resolveType, op_get_from_scope)) {
+                uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, currentInstruction[4].u.operand);
+                SpeculatedType prediction = getPrediction();
                 set(VirtualRegister(dst),
-                    addToGraph(GetDynamicVar, OpInfo(identifierNumber), OpInfo(currentInstruction[4].u.operand), get(VirtualRegister(scope))));
+                    addToGraph(GetDynamicVar, OpInfo(opInfo1), OpInfo(prediction), get(VirtualRegister(scope))));
                 NEXT_OPCODE(op_get_from_scope);
             }
 
@@ -5533,7 +5542,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             if (needsDynamicLookup(resolveType, op_put_to_scope)) {
                 ASSERT(identifierNumber != UINT_MAX);
-                addToGraph(PutDynamicVar, OpInfo(identifierNumber), OpInfo(currentInstruction[4].u.operand), get(VirtualRegister(scope)), get(VirtualRegister(value)));
+                uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, currentInstruction[4].u.operand);
+                addToGraph(PutDynamicVar, OpInfo(opInfo1), OpInfo(), get(VirtualRegister(scope)), get(VirtualRegister(value)));
                 NEXT_OPCODE(op_put_to_scope);
             }
 

@@ -1,3 +1,22 @@
+2017-08-23  Robin Morisset  <rmorisset@apple.com>
+
+        Make GetDynamicVar propagate heap predictions instead of saying HeapTop
+        https://bugs.webkit.org/show_bug.cgi?id=175738
+
+        Reviewed by Saam Barati.
+
+        The heap prediction always end up in m_opInfo2. But GetDynamicVar was already storing getPutInfo in there.
+        So we move that one into m_opInfo. We can do this because it is 32-bit, and the already present identifierNumber
+        is also 32-bit, so we can pack both in m_opInfo (which is 64 bits).
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::makeDynamicVarOpInfo):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::getPutInfo):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+
 2017-08-23  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ESNext] Async iteration - Implement Async Generator - runtime

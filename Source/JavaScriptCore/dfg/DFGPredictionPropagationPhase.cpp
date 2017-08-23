@@ -720,13 +720,13 @@ private:
         case LoadFromJSMapBucket:
         case ToNumber:
         case GetArgument:
-        case CallDOMGetter: {
+        case CallDOMGetter:
+        case GetDynamicVar: {
             setPrediction(m_currentNode->getHeapPrediction());
             break;
         }
 
-        case ResolveScopeForHoistingFuncDeclInEval:
-        case GetDynamicVar: {
+        case ResolveScopeForHoistingFuncDeclInEval: {
             setPrediction(SpecBytecodeTop);
             break;
         }

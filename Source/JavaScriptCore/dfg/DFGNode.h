@@ -988,7 +988,7 @@ public:
     unsigned getPutInfo()
     {
         ASSERT(hasGetPutInfo());
-        return m_opInfo2.as<unsigned>();
+        return static_cast<unsigned>(m_opInfo.as<uint64_t>() >> 32);
     }
 
     bool hasAccessorAttributes()
@@ -1528,6 +1528,7 @@ public:
         case AtomicsStore:
         case AtomicsSub:
         case AtomicsXor:
+        case GetDynamicVar:
             return true;
         default:
             return false;
