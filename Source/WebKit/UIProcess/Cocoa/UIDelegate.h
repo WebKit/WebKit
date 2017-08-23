@@ -66,7 +66,7 @@ private:
 
     private:
         // API::ContextMenuClient
-        RetainPtr<NSMenu> menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *, const WebKit::WebHitTestResultData&, API::Object*) override;
+        RetainPtr<NSMenu> menuFromProposedMenu(WebPageProxy&, NSMenu *, const WebHitTestResultData&, API::Object*) override;
 
         UIDelegate& m_uiDelegate;
     };
@@ -84,47 +84,47 @@ private:
         bool canCreateNewPageAsync() final;
         RefPtr<WebPageProxy> createNewPageCommon(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler);
 
-        void close(WebKit::WebPageProxy*) override;
-        void fullscreenMayReturnToInline(WebKit::WebPageProxy*) override;
-        void didEnterFullscreen(WebKit::WebPageProxy*) override;
-        void didExitFullscreen(WebKit::WebPageProxy*) override;
-        void runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void ()>&& completionHandler) override;
-        void runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void (bool)>&& completionHandler) override;
-        void runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void (const WTF::String&)>&& completionHandler) override;
+        void close(WebPageProxy*) final;
+        void fullscreenMayReturnToInline(WebPageProxy*) final;
+        void didEnterFullscreen(WebPageProxy*) final;
+        void didExitFullscreen(WebPageProxy*) final;
+        void runJavaScriptAlert(WebPageProxy*, const WTF::String&, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void()>&& completionHandler) final;
+        void runJavaScriptConfirm(WebPageProxy*, const WTF::String&, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void(bool)>&& completionHandler) final;
+        void runJavaScriptPrompt(WebPageProxy*, const WTF::String&, const WTF::String&, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void(const WTF::String&)>&& completionHandler) final;
         bool canRunBeforeUnloadConfirmPanel() const final;
-        void runBeforeUnloadConfirmPanel(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void (bool)>&& completionHandler) final;
-        void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void (unsigned long long)>&& completionHandler) override;
-        void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void (unsigned long long)>&& completionHandler) override;
+        void runBeforeUnloadConfirmPanel(WebPageProxy*, const WTF::String&, WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void(bool)>&& completionHandler) final;
+        void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void(unsigned long long)>&& completionHandler) final;
+        void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void(unsigned long long)>&& completionHandler) final;
 #if PLATFORM(MAC)
         void showPage(WebPageProxy*) final;
-        void takeFocus(WebKit::WebPageProxy*, WKFocusDirection) final;
-        void focus(WebKit::WebPageProxy*) final;
-        void unfocus(WebKit::WebPageProxy*) final;
-        bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
+        void takeFocus(WebPageProxy*, WKFocusDirection) final;
+        void focus(WebPageProxy*) final;
+        void unfocus(WebPageProxy*) final;
+        bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
 #endif
-        bool decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&) override;
-        bool checkUserMediaPermissionForOrigin(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, WebKit::UserMediaPermissionCheckProxy&) override;
-        void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags) override;
-        void printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) override;
+        bool decidePolicyForUserMediaPermissionRequest(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&) final;
+        bool checkUserMediaPermissionForOrigin(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionCheckProxy&) final;
+        void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags) final;
+        void printFrame(WebPageProxy*, WebFrameProxy*) final;
 #if PLATFORM(IOS)
 #if HAVE(APP_LINKS)
-        bool shouldIncludeAppLinkActionsForElement(_WKActivatedElementInfo *) override;
+        bool shouldIncludeAppLinkActionsForElement(_WKActivatedElementInfo *) final;
 #endif
-        RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) override;
-        void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
-        UIViewController *presentingViewController() override;
+        RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) final;
+        void didNotHandleTapAsClick(const WebCore::IntPoint&) final;
+        UIViewController *presentingViewController() final;
 #endif // PLATFORM(IOS)
 
-        NSDictionary *dataDetectionContext() override;
+        NSDictionary *dataDetectionContext() final;
 
 #if ENABLE(POINTER_LOCK)
-        void requestPointerLock(WebKit::WebPageProxy*) override;
-        void didLosePointerLock(WebKit::WebPageProxy*) override;
+        void requestPointerLock(WebPageProxy*) final;
+        void didLosePointerLock(WebPageProxy*) final;
 #endif
         
-        void hasVideoInPictureInPictureDidChange(WebKit::WebPageProxy*, bool) override;
+        void hasVideoInPictureInPictureDidChange(WebPageProxy*, bool) final;
 
-        void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) override;
+        void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) final;
 
         UIDelegate& m_uiDelegate;
     };

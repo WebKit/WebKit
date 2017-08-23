@@ -96,10 +96,7 @@ public:
     virtual void unavailablePluginButtonClicked(WebKit::WebPageProxy*, WKPluginUnavailabilityReason, Dictionary*) { }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-    virtual bool implementsDidNotHandleKeyEvent() const { return false; }
     virtual void didNotHandleKeyEvent(WebKit::WebPageProxy*, const WebKit::NativeWebKeyboardEvent&) { }
-
-    virtual bool implementsDidNotHandleWheelEvent() const { return false; }
     virtual void didNotHandleWheelEvent(WebKit::WebPageProxy*, const WebKit::NativeWebWheelEvent&) { }
 
     virtual bool toolbarsAreVisible(WebKit::WebPageProxy*) { return true; }

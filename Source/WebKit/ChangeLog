@@ -1,5 +1,26 @@
 2017-08-23  Alex Christensen  <achristensen@webkit.org>
 
+        Clean up UIClients
+        https://bugs.webkit.org/show_bug.cgi?id=175906
+
+        Reviewed by Tim Horton.
+
+        There were some unnecessary checks to see if the client implements something,
+        when the default behavior is to do nothing if the client doesn't implement the callback.
+        Also, make some overrides finals and fix some spacing.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didNotHandleKeyEvent):
+        (API::UIClient::implementsDidNotHandleKeyEvent const): Deleted.
+        (API::UIClient::implementsDidNotHandleWheelEvent const): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent):
+
+2017-08-23  Alex Christensen  <achristensen@webkit.org>
+
         Add WKUIDelegatePrivate callbacks corresponding to WKPageUIClient's takeFocus, focus, and unfocus
         https://bugs.webkit.org/show_bug.cgi?id=175896
 

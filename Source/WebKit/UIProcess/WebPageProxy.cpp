@@ -4989,8 +4989,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
         // FIXME: Dispatch additional events to the didNotHandleWheelEvent client function.
         if (!handled) {
-            if (m_uiClient->implementsDidNotHandleWheelEvent())
-                m_uiClient->didNotHandleWheelEvent(this, oldestCoalescedEvent->last());
+            m_uiClient->didNotHandleWheelEvent(this, oldestCoalescedEvent->last());
             m_pageClient.wheelEventWasNotHandledByWebCore(oldestCoalescedEvent->last());
         }
 
@@ -5026,8 +5025,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         if (handled)
             break;
 
-        if (m_uiClient->implementsDidNotHandleKeyEvent())
-            m_uiClient->didNotHandleKeyEvent(this, event);
+        m_uiClient->didNotHandleKeyEvent(this, event);
         break;
     }
 #if ENABLE(MAC_GESTURE_EVENTS)
