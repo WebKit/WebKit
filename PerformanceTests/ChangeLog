@@ -1,5 +1,35 @@
 2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Speedometer 2.0: Async time is not always capturing layout time
+        https://bugs.webkit.org/show_bug.cgi?id=175871
+
+        Reviewed by Simon Fraser.
+
+        Speedometer harness was designed to capture the time browser engine spends relayouting and repainting the content
+        after DOM mutations this in its async time measurement, which is the time between each test case's code had finished
+        running and when a newly scheduled 0s timer is fired immediately afterwards.
+
+        It turns out that modern web browsers defer this reflow and repaint work until the next animation frame is requested.
+        This results in Speedometer harness measuring reflow and repaint cost only sometimes depending on when each test case
+        had finished running relative to the next frame request.
+
+        While such a behavior makes sense and might be desirable for a modern browser engine, we would like to capture it in
+        the async time for the purpose of Speedometer. Unfortunately, there isn't an interoperable API for browsers to report
+        the total layout and repaint time, and relying on 16ms-granularity requestAnimationFrame is too coarse for Speedometer.
+
+        This patch works around these limitations by manually forcing the layout in async time measurement by calling
+        getBoundingClientRect() in iframe's document. Since the height of the document depends on the number of todo items,
+        this should cause browser engines to do most if not all of the work needed to reflow the document at least for now.
+
+        Note that even new async time doesn't always capture painting time but there isn't a good cross-browser mechanism
+        to measure paint time in the granurality we need for Speedometer at the moment anyway. (Should such a mechanism exist,
+        that could be a huge timing attack surface so it's probably best that we don't have one.)
+
+        * Speedometer/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._runTest):
+
+2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Speedometer: Make React/Redux item order consistent
         https://bugs.webkit.org/show_bug.cgi?id=175818
 

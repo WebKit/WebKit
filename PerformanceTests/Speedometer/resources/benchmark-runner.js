@@ -136,9 +136,13 @@ BenchmarkRunner.prototype._runTest = function(suite, test, prepareReturnValue, c
 
     var startTime = now();
     setTimeout(function () {
+        // Some browsers don't immediately update the layout for paint.
+        // Force the layout here to ensure we're measuring the layout time.
+        var height = self._frame.contentDocument.body.getBoundingClientRect().height;
         var endTime = now();
+        self._frame.contentWindow._unusedHeightValue = height; // Prevent dead code elimination.
         self._writeMark(suite.name + '.' + test.name + '-async-end');
-        callback(syncTime, endTime - startTime);
+        callback(syncTime, endTime - startTime, height);
     }, 0);
 }
 
