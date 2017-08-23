@@ -149,7 +149,24 @@ window.benchmarkClient = {
     }
 }
 
+function enableOneSuite(suites, suiteToEnable)
+{
+    suiteToEnable = suiteToEnable.toLowerCase();
+    var found = false;
+    for (var i = 0; i < suites.length; i++) {
+        var currentSuite = suites[i];
+        if (currentSuite.name.toLowerCase() == suiteToEnable) {
+            currentSuite.disabled = false;
+            found = true;
+        } else
+            currentSuite.disabled = true;
+    }
+    return found;
+}
+
 function startBenchmark() {
+    var enabledSuites = Suites.filter(function (suite) { return !suite.disabled; });
+
     if (location.search.length > 1) {
         var parts = location.search.substring(1).split('&');
         for (var i = 0; i < parts.length; i++) {
@@ -170,16 +187,24 @@ function startBenchmark() {
                 else
                     console.error('Invalid iteration count: ' + value);
                 break;
+            case 'suite':
+                if (!enableOneSuite(Suites, value)) {
+                    alert('No tests to run');
+                    return false;
+                }
+                break;
             }
         }
     }
 
-    var enabledSuites = Suites.filter(function (suite) { return !suite.disabled });
+    var enabledSuites = Suites.filter(function (suite) { return !suite.disabled; });
     var totalSubtestCount = enabledSuites.reduce(function (testsCount, suite) { return testsCount + suite.tests.length; }, 0);
     benchmarkClient.testsCount = benchmarkClient.iterationCount * totalSubtestCount;
     benchmarkClient.suitesCount = enabledSuites.length;
     var runner = new BenchmarkRunner(Suites, benchmarkClient);
     runner.runMultipleIterations(benchmarkClient.iterationCount);
+
+    return true;
 }
 
 function computeScore(time) {
@@ -205,8 +230,8 @@ function showHome() {
 }
 
 function startTest() {
-    showSection('running');
-    startBenchmark();
+    if (startBenchmark())
+        showSection('running');
 }
 
 function showResultsSummary() {
