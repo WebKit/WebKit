@@ -56,7 +56,7 @@ private:
 
     void records(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier);
     void deleteMatchingRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&);
-    void putRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::CacheStorageConnection::Record>&&);
+    void putRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::DOMCache::Record>&&);
 
     NetworkConnectionToWebProcess& m_connection;
 };

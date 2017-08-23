@@ -27,58 +27,11 @@
 #include "config.h"
 #include "CacheStorageConnection.h"
 
-#include "CacheQueryOptions.h"
-#include "Exception.h"
-#include "HTTPParsers.h"
+using namespace WebCore::DOMCache;
 
 namespace WebCore {
 
-ExceptionOr<void> CacheStorageConnection::errorToException(Error error)
-{
-    switch (error) {
-    case Error::None:
-        return { };
-    case Error::NotImplemented:
-        return Exception { NotSupportedError, ASCIILiteral("Not implemented") };
-    default:
-        return Exception { NotSupportedError, ASCIILiteral("Internal error") };
-    }
-}
-
-bool CacheStorageConnection::queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse& cachedResponse, const CacheQueryOptions& options)
-{
-    ASSERT(options.ignoreMethod || request.httpMethod() == "GET");
-
-    URL requestURL = request.url();
-    URL cachedRequestURL = cachedRequest.url();
-
-    if (options.ignoreSearch) {
-        requestURL.setQuery({ });
-        cachedRequestURL.setQuery({ });
-    }
-    if (!equalIgnoringFragmentIdentifier(requestURL, cachedRequestURL))
-        return false;
-
-    if (options.ignoreVary)
-        return true;
-
-    String varyValue = cachedResponse.httpHeaderField(WebCore::HTTPHeaderName::Vary);
-    if (varyValue.isNull())
-        return true;
-
-    // FIXME: This is inefficient, we should be able to split and trim whitespaces at the same time.
-    Vector<String> varyHeaderNames;
-    varyValue.split(',', false, varyHeaderNames);
-    for (auto& name : varyHeaderNames) {
-        if (stripLeadingAndTrailingHTTPSpaces(name) == "*")
-            return false;
-        if (cachedRequest.httpHeaderField(name) != request.httpHeaderField(name))
-            return false;
-    }
-    return true;
-}
-
-void CacheStorageConnection::open(const String& origin, const String& cacheName, OpenRemoveCallback&& callback)
+void CacheStorageConnection::open(const String& origin, const String& cacheName, CacheIdentifierCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_openAndRemoveCachePendingRequests.add(requestIdentifier, WTFMove(callback));
@@ -86,7 +39,7 @@ void CacheStorageConnection::open(const String& origin, const String& cacheName,
     doOpen(requestIdentifier, origin, cacheName);
 }
 
-void CacheStorageConnection::remove(uint64_t cacheIdentifier, OpenRemoveCallback&& callback)
+void CacheStorageConnection::remove(uint64_t cacheIdentifier, CacheIdentifierCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_openAndRemoveCachePendingRequests.add(requestIdentifier, WTFMove(callback));
@@ -94,7 +47,7 @@ void CacheStorageConnection::remove(uint64_t cacheIdentifier, OpenRemoveCallback
     doRemove(requestIdentifier, cacheIdentifier);
 }
 
-void CacheStorageConnection::retrieveCaches(const String& origin, CachesCallback&& callback)
+void CacheStorageConnection::retrieveCaches(const String& origin, CacheInfosCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_retrieveCachesPendingRequests.add(requestIdentifier, WTFMove(callback));
@@ -110,7 +63,7 @@ void CacheStorageConnection::retrieveRecords(uint64_t cacheIdentifier, RecordsCa
     doRetrieveRecords(requestIdentifier, cacheIdentifier);
 }
 
-void CacheStorageConnection::batchDeleteOperation(uint64_t cacheIdentifier, const WebCore::ResourceRequest& request, WebCore::CacheQueryOptions&& options, BatchOperationCallback&& callback)
+void CacheStorageConnection::batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest& request, CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_batchDeleteAndPutPendingRequests.add(requestIdentifier, WTFMove(callback));
@@ -118,7 +71,7 @@ void CacheStorageConnection::batchDeleteOperation(uint64_t cacheIdentifier, cons
     doBatchDeleteOperation(requestIdentifier, cacheIdentifier, request, WTFMove(options));
 }
 
-void CacheStorageConnection::batchPutOperation(uint64_t cacheIdentifier, Vector<WebCore::CacheStorageConnection::Record>&& records, BatchOperationCallback&& callback)
+void CacheStorageConnection::batchPutOperation(uint64_t cacheIdentifier, Vector<Record>&& records, RecordIdentifiersCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_batchDeleteAndPutPendingRequests.add(requestIdentifier, WTFMove(callback));
@@ -126,61 +79,34 @@ void CacheStorageConnection::batchPutOperation(uint64_t cacheIdentifier, Vector<
     doBatchPutOperation(requestIdentifier, cacheIdentifier, WTFMove(records));
 }
 
-void CacheStorageConnection::openOrRemoveCompleted(uint64_t requestIdentifier, uint64_t cacheIdentifier, Error error)
+void CacheStorageConnection::openOrRemoveCompleted(uint64_t requestIdentifier, const CacheIdentifierOrError& result)
 {
     if (auto callback = m_openAndRemoveCachePendingRequests.take(requestIdentifier))
-        callback(cacheIdentifier, error);
+        callback(result);
 }
 
-void CacheStorageConnection::updateCaches(uint64_t requestIdentifier, Vector<CacheInfo>&& caches)
+void CacheStorageConnection::updateCaches(uint64_t requestIdentifier, CacheInfosOrError&& result)
 {
     if (auto callback = m_retrieveCachesPendingRequests.take(requestIdentifier))
-        callback(WTFMove(caches));
+        callback(WTFMove(result));
 }
 
-void CacheStorageConnection::updateRecords(uint64_t requestIdentifier, Vector<Record>&& records)
+void CacheStorageConnection::updateRecords(uint64_t requestIdentifier, RecordsOrError&& result)
 {
     if (auto callback = m_retrieveRecordsPendingRequests.take(requestIdentifier))
-        callback(WTFMove(records));
+        callback(WTFMove(result));
 }
 
-void CacheStorageConnection::deleteRecordsCompleted(uint64_t requestIdentifier, Vector<uint64_t>&& records, Error error)
+void CacheStorageConnection::deleteRecordsCompleted(uint64_t requestIdentifier, Expected<Vector<uint64_t>, Error>&& result)
 {
     if (auto callback = m_batchDeleteAndPutPendingRequests.take(requestIdentifier))
-        callback(WTFMove(records), error);
+        callback(WTFMove(result));
 }
 
-void CacheStorageConnection::putRecordsCompleted(uint64_t requestIdentifier, Vector<uint64_t>&& records, Error error)
+void CacheStorageConnection::putRecordsCompleted(uint64_t requestIdentifier, Expected<Vector<uint64_t>, Error>&& result)
 {
     if (auto callback = m_batchDeleteAndPutPendingRequests.take(requestIdentifier))
-        callback(WTFMove(records), error);
-}
-
-CacheStorageConnection::ResponseBody CacheStorageConnection::isolatedResponseBody(const ResponseBody& body)
-{
-    return WTF::switchOn(body, [](const Ref<FormData>& formData) {
-        return formData->isolatedCopy();
-    }, [](const Ref<SharedBuffer>& buffer) {
-        return buffer->copy();
-    }, [](const std::nullptr_t&) {
-        return CacheStorageConnection::ResponseBody { };
-    });
-}
-
-static inline CacheStorageConnection::ResponseBody copyResponseBody(const CacheStorageConnection::ResponseBody& body)
-{
-    return WTF::switchOn(body, [](const Ref<FormData>& formData) {
-        return formData.copyRef();
-    }, [](const Ref<SharedBuffer>& buffer) {
-        return buffer.copyRef();
-    }, [](const std::nullptr_t&) {
-        return CacheStorageConnection::ResponseBody { };
-    });
-}
-
-CacheStorageConnection::Record CacheStorageConnection::Record::copy() const
-{
-    return Record { identifier, updateResponseCounter, requestHeadersGuard, request, options, referrer, responseHeadersGuard, response, copyResponseBody(responseBody) };
+        callback(WTFMove(result));
 }
 
 } // namespace WebCore

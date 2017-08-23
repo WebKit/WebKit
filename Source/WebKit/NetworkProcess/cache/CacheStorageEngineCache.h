@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CacheStorage.h"
+#include <WebCore/DOMCache.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,7 +36,7 @@ namespace CacheStorage {
 struct Cache {
     uint64_t identifier { 0 };
     String name;
-    Vector<Record> records;
+    Vector<WebCore::DOMCache::Record> records;
     uint64_t nextRecordIdentifier { 0 };
 };
 

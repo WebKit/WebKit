@@ -29,8 +29,10 @@
 
 #include "NetworkConnectionToWebProcess.h"
 #include "WebCacheStorageConnectionMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/CacheQueryOptions.h>
 
+using namespace WebCore::DOMCache;
 using namespace WebKit::CacheStorage;
 
 namespace WebKit {
@@ -42,14 +44,14 @@ CacheStorageEngineConnection::CacheStorageEngineConnection(NetworkConnectionToWe
 
 void CacheStorageEngineConnection::open(PAL::SessionID sessionID, uint64_t requestIdentifier, const String& origin, const String& cacheName)
 {
-    Engine::from(sessionID).open(origin, cacheName, [protectedThis = makeRef(*this), this, sessionID, requestIdentifier](CacheIdentifierOrError&& result) {
+    Engine::from(sessionID).open(origin, cacheName, [protectedThis = makeRef(*this), this, sessionID, requestIdentifier](const CacheIdentifierOrError& result) {
         m_connection.connection().send(Messages::WebCacheStorageConnection::OpenCompleted(requestIdentifier, result), sessionID.sessionID());
     });
 }
 
 void CacheStorageEngineConnection::remove(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier)
 {
-    Engine::from(sessionID).remove(cacheIdentifier, [protectedThis = makeRef(*this), this, sessionID, requestIdentifier](CacheIdentifierOrError&& result) {
+    Engine::from(sessionID).remove(cacheIdentifier, [protectedThis = makeRef(*this), this, sessionID, requestIdentifier](const CacheIdentifierOrError& result) {
         m_connection.connection().send(Messages::WebCacheStorageConnection::RemoveCompleted(requestIdentifier, result), sessionID.sessionID());
     });
 }
@@ -75,7 +77,7 @@ void CacheStorageEngineConnection::deleteMatchingRecords(PAL::SessionID sessionI
     });
 }
 
-void CacheStorageEngineConnection::putRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::CacheStorageConnection::Record>&& records)
+void CacheStorageEngineConnection::putRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<Record>&& records)
 {
     Engine::from(sessionID).putRecords(cacheIdentifier, WTFMove(records), [protectedThis = makeRef(*this), this, sessionID, requestIdentifier](RecordIdentifiersOrError&& result) {
         m_connection.connection().send(Messages::WebCacheStorageConnection::PutRecordsCompleted(requestIdentifier, result), sessionID.sessionID());

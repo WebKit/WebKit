@@ -31,6 +31,8 @@
 #include "JSFetchResponse.h"
 #include "ScriptExecutionContext.h"
 
+using namespace WebCore::DOMCache;
+
 namespace WebCore {
 
 CacheStorage::CacheStorage(ScriptExecutionContext& context, Ref<CacheStorageConnection>&& connection)
@@ -117,8 +119,16 @@ void CacheStorage::retrieveCaches(WTF::Function<void()>&& callback)
         return;
 
     setPendingActivity(this);
-    m_connection->retrieveCaches(origin, [this, callback = WTFMove(callback)](Vector<CacheStorageConnection::CacheInfo>&& cachesInfo) {
+    m_connection->retrieveCaches(origin, [this, callback = WTFMove(callback)](CacheInfosOrError&& result) {
         if (!m_isStopped) {
+            // FIXME: We should probably propagate that error up to the promise based operation.
+            ASSERT(result.hasValue());
+            if (!result.hasValue()) {
+                callback();
+                return;
+            }
+            auto& cachesInfo = result.value();
+
             ASSERT(scriptExecutionContext());
             m_caches.removeAllMatching([&](auto& cache) {
                 return cachesInfo.findMatching([&](const auto& info) { return info.identifier == cache->identifier(); }) == notFound;
@@ -152,13 +162,13 @@ void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<Cach
         ASSERT(!origin.isNull());
 
         setPendingActivity(this);
-        m_connection->open(origin, name, [this, name, promise = WTFMove(promise)](uint64_t cacheIdentifier, CacheStorageConnection::Error error) mutable {
+        m_connection->open(origin, name, [this, name, promise = WTFMove(promise)](const CacheIdentifierOrError& result) mutable {
             if (!m_isStopped) {
-                auto result = CacheStorageConnection::errorToException(error);
-                if (result.hasException())
-                    promise.reject(result.releaseException());
+
+                if (!result.hasValue())
+                    promise.reject(DOMCache::errorToException(result.error()));
                 else {
-                    auto cache = Cache::create(*scriptExecutionContext(), String { name }, cacheIdentifier, m_connection.copyRef());
+                    auto cache = Cache::create(*scriptExecutionContext(), String { name }, result.value(), m_connection.copyRef());
                     promise.resolve(cache);
                     m_caches.append(WTFMove(cache));
                 }
@@ -181,11 +191,13 @@ void CacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&& p
         ASSERT(!origin.isNull());
 
         setPendingActivity(this);
-        m_connection->remove(m_caches[position]->identifier(), [this, name, promise = WTFMove(promise)](uint64_t cacheIdentifier, CacheStorageConnection::Error error) mutable {
-            UNUSED_PARAM(cacheIdentifier);
-            if (!m_isStopped)
-                promise.settle(CacheStorageConnection::exceptionOrResult(true, error));
-
+        m_connection->remove(m_caches[position]->identifier(), [this, name, promise = WTFMove(promise)](const CacheIdentifierOrError& result) mutable {
+            if (!m_isStopped) {
+                if (!result.hasValue())
+                    promise.reject(DOMCache::errorToException(result.error()));
+                else
+                    promise.resolve(true);
+            }
             unsetPendingActivity(this);
         });
         m_caches.remove(position);

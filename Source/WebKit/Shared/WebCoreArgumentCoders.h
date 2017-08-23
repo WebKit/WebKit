@@ -200,14 +200,14 @@ template<> struct ArgumentCoder<WebCore::CacheQueryOptions> {
     static bool decode(Decoder&, WebCore::CacheQueryOptions&);
 };
 
-template<> struct ArgumentCoder<WebCore::CacheStorageConnection::CacheInfo> {
-    static void encode(Encoder&, const WebCore::CacheStorageConnection::CacheInfo&);
-    static bool decode(Decoder&, WebCore::CacheStorageConnection::CacheInfo&);
+template<> struct ArgumentCoder<WebCore::DOMCache::CacheInfo> {
+    static void encode(Encoder&, const WebCore::DOMCache::CacheInfo&);
+    static bool decode(Decoder&, WebCore::DOMCache::CacheInfo&);
 };
 
-template<> struct ArgumentCoder<WebCore::CacheStorageConnection::Record> {
-    static void encode(Encoder&, const WebCore::CacheStorageConnection::Record&);
-    static bool decode(Decoder&, WebCore::CacheStorageConnection::Record&);
+template<> struct ArgumentCoder<WebCore::DOMCache::Record> {
+    static void encode(Encoder&, const WebCore::DOMCache::Record&);
+    static bool decode(Decoder&, WebCore::DOMCache::Record&);
 };
 
 template<> struct ArgumentCoder<WebCore::EventTrackingRegions> {
@@ -783,14 +783,6 @@ template<> struct EnumTraits<WebCore::MediaSelectionOption::Type> {
         WebCore::MediaSelectionOption::Type::Regular,
         WebCore::MediaSelectionOption::Type::LegibleOff,
         WebCore::MediaSelectionOption::Type::LegibleAuto
-    >;
-};
-
-template<> struct EnumTraits<WebCore::CacheStorageConnection::Error> {
-    using values = EnumValues<
-        WebCore::CacheStorageConnection::Error,
-        WebCore::CacheStorageConnection::Error::None,
-        WebCore::CacheStorageConnection::Error::NotImplemented
     >;
 };
 

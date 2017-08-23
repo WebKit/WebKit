@@ -21,11 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebCacheStorageConnection {
-    OpenCompleted(uint64_t requestIdentifier, WebKit::CacheStorage::CacheIdentifierOrError result);
-    RemoveCompleted(uint64_t requestIdentifier, WebKit::CacheStorage::CacheIdentifierOrError result);
-    UpdateCaches(uint64_t requestIdentifier, WebKit::CacheStorage::CacheInfosOrError result);
+    OpenCompleted(uint64_t requestIdentifier, WebCore::DOMCache::CacheIdentifierOrError result);
+    RemoveCompleted(uint64_t requestIdentifier, WebCore::DOMCache::CacheIdentifierOrError result);
+    UpdateCaches(uint64_t requestIdentifier, WebCore::DOMCache::CacheInfosOrError result);
 
-    UpdateRecords(uint64_t requestIdentifier, WebKit::CacheStorage::RecordsOrError result);
-    DeleteRecordsCompleted(uint64_t requestIdentifier, WebKit::CacheStorage::RecordIdentifiersOrError result);
-    PutRecordsCompleted(uint64_t requestIdentifier, WebKit::CacheStorage::RecordIdentifiersOrError result);
+    UpdateRecords(uint64_t requestIdentifier, WebCore::DOMCache::RecordsOrError result);
+    DeleteRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCache::RecordIdentifiersOrError result);
+    PutRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCache::RecordIdentifiersOrError result);
 }

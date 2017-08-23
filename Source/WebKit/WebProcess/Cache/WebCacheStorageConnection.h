@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CacheStorage.h"
 #include <WebCore/CacheStorageConnection.h>
 #include <wtf/HashMap.h>
 
@@ -59,15 +58,15 @@ private:
 
     void doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier) final;
     void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&) final;
-    void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<Record>&&) final;
+    void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::DOMCache::Record>&&) final;
 
-    void openCompleted(uint64_t requestIdentifier, CacheStorage::CacheIdentifierOrError&&);
-    void removeCompleted(uint64_t requestIdentifier, CacheStorage::CacheIdentifierOrError&&);
-    void updateCaches(uint64_t requestIdentifier, CacheStorage::CacheInfosOrError&&);
+    void openCompleted(uint64_t requestIdentifier, const WebCore::DOMCache::CacheIdentifierOrError&);
+    void removeCompleted(uint64_t requestIdentifier, const WebCore::DOMCache::CacheIdentifierOrError&);
+    void updateCaches(uint64_t requestIdentifier, WebCore::DOMCache::CacheInfosOrError&&);
 
-    void updateRecords(uint64_t requestIdentifier, CacheStorage::RecordsOrError&&);
-    void deleteRecordsCompleted(uint64_t requestIdentifier, CacheStorage::RecordIdentifiersOrError&&);
-    void putRecordsCompleted(uint64_t requestIdentifier, CacheStorage::RecordIdentifiersOrError&&);
+    void updateRecords(uint64_t requestIdentifier, WebCore::DOMCache::RecordsOrError&&);
+    void deleteRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCache::RecordIdentifiersOrError&&);
+    void putRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCache::RecordIdentifiersOrError&&);
 
     WebCacheStorageProvider& m_provider;
     PAL::SessionID m_sessionID;

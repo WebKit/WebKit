@@ -26,106 +26,52 @@
 
 #pragma once
 
-#include "FetchHeaders.h"
-#include "FetchOptions.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
-#include "SharedBuffer.h"
+#include "DOMCache.h"
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
-
-struct CacheQueryOptions;
 
 class CacheStorageConnection : public ThreadSafeRefCounted<CacheStorageConnection> {
 public:
     static Ref<CacheStorageConnection> create() { return adoptRef(*new CacheStorageConnection()); }
     virtual ~CacheStorageConnection() = default;
 
-    enum class Error {
-        None,
-        NotImplemented,
-        Internal
-    };
+    void open(const String& origin, const String& cacheName, DOMCache::CacheIdentifierCallback&&);
+    void remove(uint64_t cacheIdentifier, DOMCache::CacheIdentifierCallback&&);
+    void retrieveCaches(const String& origin, DOMCache::CacheInfosCallback&&);
 
-    static ExceptionOr<void> errorToException(Error);
-    template<typename T> static ExceptionOr<T> exceptionOrResult(T&& value, Error error)
-    {
-        auto result = errorToException(error);
-        if (result.hasException())
-            return result.releaseException();
-        return std::forward<T>(value);
-    }
-
-    WEBCORE_EXPORT static bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse&, const CacheQueryOptions&);
-
-    using ResponseBody = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
-    static ResponseBody isolatedResponseBody(const ResponseBody&);
-
-    struct Record {
-        WEBCORE_EXPORT Record copy() const;
-
-        uint64_t identifier;
-        uint64_t updateResponseCounter;
-
-        FetchHeaders::Guard requestHeadersGuard;
-        ResourceRequest request;
-        FetchOptions options;
-        String referrer;
-
-        FetchHeaders::Guard responseHeadersGuard;
-        ResourceResponse response;
-        ResponseBody responseBody;
-    };
-
-    struct CacheInfo {
-        uint64_t identifier;
-        String name;
-    };
-
-    using OpenRemoveCallback = WTF::Function<void(uint64_t, Error)>;
-    using CachesCallback = WTF::Function<void(Vector<CacheInfo>&&)>;
-    using RecordsCallback = WTF::Function<void(Vector<Record>&&)>;
-    using BatchOperationCallback = WTF::Function<void(Vector<uint64_t>&&, Error)>;
-
-    void open(const String& /* origin */, const String& /* cacheName */, OpenRemoveCallback&&);
-    void remove(uint64_t /* cacheIdentifier */, OpenRemoveCallback&&);
-    void retrieveCaches(const String& /* origin */, CachesCallback&&);
-
-    void retrieveRecords(uint64_t /* cacheIdentifier */, RecordsCallback&&);
-    void batchDeleteOperation(uint64_t /* cacheIdentifier */, const ResourceRequest&, CacheQueryOptions&&, BatchOperationCallback&&);
-    void batchPutOperation(uint64_t /* cacheIdentifier */, Vector<Record>&&, BatchOperationCallback&&);
+    void retrieveRecords(uint64_t cacheIdentifier, DOMCache::RecordsCallback&&);
+    void batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCache::RecordIdentifiersCallback&&);
+    void batchPutOperation(uint64_t cacheIdentifier, Vector<DOMCache::Record>&&, DOMCache::RecordIdentifiersCallback&&);
 
 protected:
     CacheStorageConnection() =  default;
 
-    void openCompleted(uint64_t identifier, uint64_t cacheIdentifier, Error error) { openOrRemoveCompleted(identifier, cacheIdentifier, error); }
-    void removeCompleted(uint64_t identifier, uint64_t cacheIdentifier, Error error) { openOrRemoveCompleted(identifier, cacheIdentifier, error); }
-    WEBCORE_EXPORT void updateCaches(uint64_t requestIdentifier, Vector<CacheInfo>&&);
+    void openCompleted(uint64_t identifier, const DOMCache::CacheIdentifierOrError& result) { openOrRemoveCompleted(identifier, result); }
+    void removeCompleted(uint64_t identifier, const DOMCache::CacheIdentifierOrError& result) { openOrRemoveCompleted(identifier, result); }
+    WEBCORE_EXPORT void updateCaches(uint64_t requestIdentifier, DOMCache::CacheInfosOrError&&);
 
-    WEBCORE_EXPORT void updateRecords(uint64_t requestIdentifier, Vector<Record>&&);
-    WEBCORE_EXPORT void deleteRecordsCompleted(uint64_t requestIdentifier, Vector<uint64_t>&&, Error);
-    WEBCORE_EXPORT void putRecordsCompleted(uint64_t requestIdentifier, Vector<uint64_t>&&, Error);
+    WEBCORE_EXPORT void updateRecords(uint64_t requestIdentifier, DOMCache::RecordsOrError&&);
+    WEBCORE_EXPORT void deleteRecordsCompleted(uint64_t requestIdentifier, DOMCache::RecordIdentifiersOrError&&);
+    WEBCORE_EXPORT void putRecordsCompleted(uint64_t requestIdentifier, DOMCache::RecordIdentifiersOrError&&);
 
 private:
-    virtual void doOpen(uint64_t requestIdentifier, const String& /* origin */, const String& /* cacheName */) { openCompleted(requestIdentifier, 0, Error::NotImplemented); }
-    virtual void doRemove(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */) { removeCompleted(requestIdentifier, 0, Error::NotImplemented); }
+    virtual void doOpen(uint64_t requestIdentifier, const String& /* origin */, const String& /* cacheName */) { openCompleted(requestIdentifier, makeUnexpected(DOMCache::Error::NotImplemented)); }
+    virtual void doRemove(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */) { removeCompleted(requestIdentifier, makeUnexpected(DOMCache::Error::NotImplemented)); }
     virtual void doRetrieveCaches(uint64_t requestIdentifier, const String& /* origin */) { updateCaches(requestIdentifier, { }); }
 
     virtual void doRetrieveRecords(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */) { updateRecords(requestIdentifier, { }); }
-    virtual void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */, const ResourceRequest&, CacheQueryOptions&&) { deleteRecordsCompleted(requestIdentifier, { }, Error::NotImplemented); }
-    virtual void doBatchPutOperation(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */, Vector<Record>&&) { putRecordsCompleted(requestIdentifier, { }, Error::NotImplemented); }
+    virtual void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */, const ResourceRequest&, CacheQueryOptions&&) { deleteRecordsCompleted(requestIdentifier, makeUnexpected(DOMCache::Error::NotImplemented)); }
+    virtual void doBatchPutOperation(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */, Vector<DOMCache::Record>&&) { putRecordsCompleted(requestIdentifier, makeUnexpected(DOMCache::Error::NotImplemented)); }
 
-    WEBCORE_EXPORT void openOrRemoveCompleted(uint64_t requestIdentifier, uint64_t cacheIdentifier, Error);
+    WEBCORE_EXPORT void openOrRemoveCompleted(uint64_t requestIdentifier, const DOMCache::CacheIdentifierOrError&);
 
-    HashMap<uint64_t, OpenRemoveCallback> m_openAndRemoveCachePendingRequests;
-    HashMap<uint64_t, CachesCallback> m_retrieveCachesPendingRequests;
-    HashMap<uint64_t, RecordsCallback> m_retrieveRecordsPendingRequests;
-    HashMap<uint64_t, BatchOperationCallback> m_batchDeleteAndPutPendingRequests;
+    HashMap<uint64_t, DOMCache::CacheIdentifierCallback> m_openAndRemoveCachePendingRequests;
+    HashMap<uint64_t, DOMCache::CacheInfosCallback> m_retrieveCachesPendingRequests;
+    HashMap<uint64_t, DOMCache::RecordsCallback> m_retrieveRecordsPendingRequests;
+    HashMap<uint64_t, DOMCache::RecordIdentifiersCallback> m_batchDeleteAndPutPendingRequests;
 
     uint64_t m_lastRequestIdentifier { 0 };
 };
-
 } // namespace WebCore
-

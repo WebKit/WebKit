@@ -32,6 +32,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHash.h>
 
+using namespace WebCore::DOMCache;
+
 namespace WebKit {
 
 namespace CacheStorage {
@@ -126,10 +128,10 @@ void Engine::retrieveCaches(const String& origin, CacheInfosCallback&& callback)
 
         auto& caches = cachesOrError.value().get();
 
-        Vector<WebCore::CacheStorageConnection::CacheInfo> cachesInfo;
+        Vector<CacheInfo> cachesInfo;
         cachesInfo.reserveInitialCapacity(caches.size());
         for (auto& cache : caches)
-            cachesInfo.uncheckedAppend(WebCore::CacheStorageConnection::CacheInfo { cache.identifier, cache.name});
+            cachesInfo.uncheckedAppend(CacheInfo { cache.identifier, cache.name});
 
         callback(WTFMove(cachesInfo));
     });
@@ -297,7 +299,7 @@ Vector<uint64_t> Engine::queryCache(const Vector<Record>& records, const WebCore
 
     Vector<uint64_t> results;
     for (const auto& record : records) {
-        if (WebCore::CacheStorageConnection::queryCacheMatch(request, record.request, record.response, options))
+        if (WebCore::DOMCache::queryCacheMatch(request, record.request, record.response, options))
             results.append(record.identifier);
     }
     return results;

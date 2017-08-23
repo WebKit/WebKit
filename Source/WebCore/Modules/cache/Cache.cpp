@@ -34,9 +34,11 @@
 #include "ScriptExecutionContext.h"
 #include "URL.h"
 
+using namespace WebCore::DOMCache;
+
 namespace WebCore {
 
-static CacheStorageConnection::Record toConnectionRecord(const FetchRequest&, FetchResponse&, CacheStorageConnection::ResponseBody&&);
+static Record toConnectionRecord(const FetchRequest&, FetchResponse&, ResponseBody&&);
 
 Cache::Cache(ScriptExecutionContext& context, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&& connection)
     : ActiveDOMObject(&context)
@@ -135,7 +137,7 @@ static inline bool hasResponseVaryStarHeaderValue(const FetchResponse& response)
 
 class FetchTasksHandler : public RefCounted<FetchTasksHandler> {
 public:
-    explicit FetchTasksHandler(Function<void(ExceptionOr<Vector<CacheStorageConnection::Record>>&&)>&& callback)
+    explicit FetchTasksHandler(Function<void(ExceptionOr<Vector<Record>>&&)>&& callback)
         : m_callback(WTFMove(callback))
     {
     }
@@ -146,9 +148,9 @@ public:
             m_callback(WTFMove(m_records));
     }
 
-    const Vector<CacheStorageConnection::Record>& records() const { return m_records; }
+    const Vector<Record>& records() const { return m_records; }
 
-    size_t addRecord(CacheStorageConnection::Record&& record)
+    size_t addRecord(Record&& record)
     {
         ASSERT(!isDone());
         m_records.append(WTFMove(record));
@@ -170,8 +172,8 @@ public:
     }
 
 private:
-    Vector<CacheStorageConnection::Record> m_records;
-    Function<void(ExceptionOr<Vector<CacheStorageConnection::Record>>&&)> m_callback;
+    Vector<Record> m_records;
+    Function<void(ExceptionOr<Vector<Record>>&&)> m_callback;
 };
 
 ExceptionOr<Ref<FetchRequest>> Cache::requestFromInfo(RequestInfo&& info, bool ignoreMethod)
@@ -207,7 +209,7 @@ void Cache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& promi
         requests.uncheckedAppend(requestOrException.releaseReturnValue());
     }
 
-    auto taskHandler = adoptRef(*new FetchTasksHandler([protectedThis = makeRef(*this), this, promise = WTFMove(promise)](ExceptionOr<Vector<CacheStorageConnection::Record>>&& result) mutable {
+    auto taskHandler = adoptRef(*new FetchTasksHandler([protectedThis = makeRef(*this), this, promise = WTFMove(promise)](ExceptionOr<Vector<Record>>&& result) mutable {
         if (result.hasException()) {
             promise.reject(result.releaseException());
             return;
@@ -248,7 +250,7 @@ void Cache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& promi
 
             CacheQueryOptions options;
             for (const auto& record : taskHandler->records()) {
-                if (CacheStorageConnection::queryCacheMatch(request->resourceRequest(), record.request, record.response, options)) {
+                if (DOMCache::queryCacheMatch(request->resourceRequest(), record.request, record.response, options)) {
                     taskHandler->error(Exception { InvalidStateError, ASCIILiteral("addAll cannot store several matching requests")});
                     return;
                 }
@@ -310,7 +312,7 @@ void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDef
             if (result.hasException())
                 promise.reject(result.releaseException());
             else {
-                CacheStorageConnection::ResponseBody body;
+                DOMCache::ResponseBody body;
                 if (auto buffer = result.releaseReturnValue())
                     body = buffer.releaseNonNull();
                 batchPutOperation(request.get(), response.get(), WTFMove(body), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
@@ -381,9 +383,12 @@ void Cache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options,
 void Cache::retrieveRecords(WTF::Function<void()>&& callback)
 {
     setPendingActivity(this);
-    m_connection->retrieveRecords(m_identifier, [this, callback = WTFMove(callback)](Vector<CacheStorageConnection::Record>&& records) {
+    m_connection->retrieveRecords(m_identifier, [this, callback = WTFMove(callback)](RecordsOrError&& result) {
         if (!m_isStopped) {
-            updateRecords(WTFMove(records));
+            // FIXME: We should probably propagate that error up to the promise based operation.
+            ASSERT(result.hasValue());
+            if (result.hasValue())
+                updateRecords(WTFMove(result.value()));
             callback();
         }
         unsetPendingActivity(this);
@@ -400,7 +405,7 @@ void Cache::queryCache(Ref<FetchRequest>&& request, CacheQueryOptions&& options,
 static inline bool queryCacheMatch(const FetchRequest& request, const FetchRequest& cachedRequest, const ResourceResponse& cachedResponse, const CacheQueryOptions& options)
 {
     // We need to pass the resource request with all correct headers hence why we call resourceRequest().
-    return CacheStorageConnection::queryCacheMatch(request.resourceRequest(), cachedRequest.resourceRequest(), cachedResponse, options);
+    return DOMCache::queryCacheMatch(request.resourceRequest(), cachedRequest.resourceRequest(), cachedResponse, options);
 }
 
 Vector<CacheStorageRecord> Cache::queryCacheWithTargetStorage(const FetchRequest& request, const CacheQueryOptions& options, const Vector<CacheStorageRecord>& targetStorage)
@@ -419,15 +424,18 @@ Vector<CacheStorageRecord> Cache::queryCacheWithTargetStorage(const FetchRequest
 void Cache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<bool>&&)>&& callback)
 {
     setPendingActivity(this);
-    m_connection->batchDeleteOperation(m_identifier, request.internalRequest(), WTFMove(options), [this, callback = WTFMove(callback)](Vector<uint64_t>&& records, CacheStorageConnection::Error error) {
-        if (!m_isStopped)
-            callback(CacheStorageConnection::exceptionOrResult(!records.isEmpty(), error));
-
+    m_connection->batchDeleteOperation(m_identifier, request.internalRequest(), WTFMove(options), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
+        if (!m_isStopped) {
+            if (!result.hasValue())
+                callback(DOMCache::errorToException(result.error()));
+            else
+                callback(!result.value().isEmpty());
+        }
         unsetPendingActivity(this);
     });
 }
 
-CacheStorageConnection::Record toConnectionRecord(const FetchRequest& request, FetchResponse& response, CacheStorageConnection::ResponseBody&& responseBody)
+Record toConnectionRecord(const FetchRequest& request, FetchResponse& response, DOMCache::ResponseBody&& responseBody)
 {
     // FIXME: Add a setHTTPHeaderFields on ResourceResponseBase.
     ResourceResponse cachedResponse = response.resourceResponse();
@@ -446,26 +454,29 @@ CacheStorageConnection::Record toConnectionRecord(const FetchRequest& request, F
     };
 }
 
-void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& response, CacheStorageConnection::ResponseBody&& responseBody, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
+void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& response, DOMCache::ResponseBody&& responseBody, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
 {
-    Vector<CacheStorageConnection::Record> records;
+    Vector<Record> records;
     records.append(toConnectionRecord(request, response, WTFMove(responseBody)));
 
     batchPutOperation(WTFMove(records), WTFMove(callback));
 }
 
-void Cache::batchPutOperation(Vector<CacheStorageConnection::Record>&& records, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
+void Cache::batchPutOperation(Vector<Record>&& records, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
 {
     setPendingActivity(this);
-    m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, callback = WTFMove(callback)](Vector<uint64_t>&&, CacheStorageConnection::Error error) {
-        if (!m_isStopped)
-            callback(CacheStorageConnection::errorToException(error));
-
+    m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
+        if (!m_isStopped) {
+            if (!result.hasValue())
+                callback(DOMCache::errorToException(result.error()));
+            else
+                callback({ });
+        }
         unsetPendingActivity(this);
     });
 }
 
-void Cache::updateRecords(Vector<CacheStorageConnection::Record>&& records)
+void Cache::updateRecords(Vector<Record>&& records)
 {
     ASSERT(scriptExecutionContext());
     Vector<CacheStorageRecord> newRecords;

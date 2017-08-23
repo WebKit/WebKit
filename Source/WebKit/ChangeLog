@@ -1,3 +1,42 @@
+2017-08-23  Youenn Fablet  <youenn@apple.com>
+
+        [Cache API] Unify WebCore and WebKit error handling
+        https://bugs.webkit.org/show_bug.cgi?id=175902
+
+        Reviewed by Alex Christensen.
+
+        Removing all callbacks and error definitions from WebKit
+        and reusing DOMCache ones instead.
+
+        * NetworkProcess/cache/CacheStorage.h: Removed.
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::caches const):
+        (WebKit::CacheStorage::Engine::queryCache):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::open):
+        (WebKit::CacheStorageEngineConnection::remove):
+        (WebKit::CacheStorageEngineConnection::putRecords):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DOMCache::CacheInfo>::encode):
+        (IPC::ArgumentCoder<DOMCache::CacheInfo>::decode):
+        (IPC::ArgumentCoder<DOMCache::Record>::encode):
+        (IPC::ArgumentCoder<DOMCache::Record>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::doBatchPutOperation):
+        (WebKit::WebCacheStorageConnection::openCompleted):
+        (WebKit::WebCacheStorageConnection::removeCompleted):
+        (WebKit::WebCacheStorageConnection::updateCaches):
+        (WebKit::WebCacheStorageConnection::updateRecords):
+        (WebKit::WebCacheStorageConnection::deleteRecordsCompleted):
+        (WebKit::WebCacheStorageConnection::putRecordsCompleted):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+        * WebProcess/Cache/WebCacheStorageConnection.messages.in:
+
 2017-08-23  Alex Christensen  <achristensen@webkit.org>
 
         Clean up UIClients

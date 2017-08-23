@@ -45,31 +45,31 @@ public:
     static Engine& from(PAL::SessionID);
     static void destroyEngine(PAL::SessionID);
 
-    void open(const String& origin, const String& cacheName, CacheIdentifierCallback&&);
-    void remove(uint64_t cacheIdentifier, CacheIdentifierCallback&&);
-    void retrieveCaches(const String& origin, CacheInfosCallback&&);
+    void open(const String& origin, const String& cacheName, WebCore::DOMCache::CacheIdentifierCallback&&);
+    void remove(uint64_t cacheIdentifier, WebCore::DOMCache::CacheIdentifierCallback&&);
+    void retrieveCaches(const String& origin, WebCore::DOMCache::CacheInfosCallback&&);
 
-    void retrieveRecords(uint64_t cacheIdentifier, RecordsCallback&&);
-    void putRecords(uint64_t cacheIdentifier, Vector<Record>&&, RecordIdentifiersCallback&&);
-    void deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, RecordIdentifiersCallback&&);
+    void retrieveRecords(uint64_t cacheIdentifier, WebCore::DOMCache::RecordsCallback&&);
+    void putRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCache::Record>&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
+    void deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
 
 private:
     static Engine& defaultEngine();
 
-    void writeCachesToDisk(CompletionCallback&&);
+    void writeCachesToDisk(WebCore::DOMCache::CompletionCallback&&);
 
-    using CachesOrError = Expected<std::reference_wrapper<Vector<Cache>>, Error>;
-    using CachesCallback = Function<void(CachesOrError&&)>;
-    void readCachesFromDisk(const String& origin, Function<void(CachesOrError&&)>&&);
+    using CachesOrError = Expected<std::reference_wrapper<Vector<Cache>>, WebCore::DOMCache::Error>;
+    using CachesCallback = WTF::Function<void(CachesOrError&&)>;
+    void readCachesFromDisk(const String& origin, CachesCallback&&);
 
-    using CacheOrError = Expected<std::reference_wrapper<Cache>, Error>;
-    using CacheCallback = Function<void(CacheOrError&&)>;
-
+    using CacheOrError = Expected<std::reference_wrapper<Cache>, WebCore::DOMCache::Error>;
+    using CacheCallback = WTF::Function<void(CacheOrError&&)>;
     void readCache(uint64_t cacheIdentifier, CacheCallback&&);
-    void writeCacheRecords(uint64_t cacheIdentifier, Vector<uint64_t>&&, RecordIdentifiersCallback&&);
-    void removeCacheRecords(uint64_t cacheIdentifier, Vector<uint64_t>&&, RecordIdentifiersCallback&&);
 
-    Vector<uint64_t> queryCache(const Vector<Record>&, const WebCore::ResourceRequest&, const WebCore::CacheQueryOptions&);
+    void writeCacheRecords(uint64_t cacheIdentifier, Vector<uint64_t>&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
+    void removeCacheRecords(uint64_t cacheIdentifier, Vector<uint64_t>&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
+
+    Vector<uint64_t> queryCache(const Vector<WebCore::DOMCache::Record>&, const WebCore::ResourceRequest&, const WebCore::CacheQueryOptions&);
 
     Cache* cache(uint64_t cacheIdentifier);
 

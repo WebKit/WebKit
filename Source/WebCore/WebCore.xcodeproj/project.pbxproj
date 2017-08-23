@@ -1792,6 +1792,8 @@
 		41F54F8E1C50C50C00338488 /* FetchRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F54F871C50C4F600338488 /* FetchRequest.cpp */; };
 		41FA303E1316C29C00C0BFC5 /* RenderMediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */; };
 		41FA303F1316C29C00C0BFC5 /* RenderMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */; };
+		41FABD2D1F4DFE4A006A6C97 /* DOMCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FABD2B1F4DFE42006A6C97 /* DOMCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41FABD2F1F4E02CB006A6C97 /* DOMCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FABD2E1F4E0251006A6C97 /* DOMCache.cpp */; };
 		41FB279C1F34DB8A00795487 /* DOMWindowCaches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FB278E1F34C28200795487 /* DOMWindowCaches.cpp */; };
 		41FB279D1F34DB8E00795487 /* WorkerGlobalScopeCaches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FB278F1F34C28200795487 /* WorkerGlobalScopeCaches.cpp */; };
 		43107BE218CC19DE00CC18E8 /* SelectorPseudoTypeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 43107BE118CC19DE00CC18E8 /* SelectorPseudoTypeMap.h */; };
@@ -9479,6 +9481,8 @@
 		41F54F891C50C4F600338488 /* FetchRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchRequest.idl; sourceTree = "<group>"; };
 		41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMediaControls.cpp; sourceTree = "<group>"; };
 		41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMediaControls.h; sourceTree = "<group>"; };
+		41FABD2B1F4DFE42006A6C97 /* DOMCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCache.h; sourceTree = "<group>"; };
+		41FABD2E1F4E0251006A6C97 /* DOMCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCache.cpp; sourceTree = "<group>"; };
 		41FB278C1F34C28200795487 /* DOMWindowCaches.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMWindowCaches.h; sourceTree = "<group>"; };
 		41FB278D1F34C28200795487 /* WorkerGlobalScopeCaches.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkerGlobalScopeCaches.h; sourceTree = "<group>"; };
 		41FB278E1F34C28200795487 /* DOMWindowCaches.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowCaches.cpp; sourceTree = "<group>"; };
@@ -17690,6 +17694,8 @@
 				41D129C91F3D0EE300D15E47 /* CacheStorageConnection.cpp */,
 				41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */,
 				41D129CA1F3D0EE300D15E47 /* CacheStorageRecord.h */,
+				41FABD2E1F4E0251006A6C97 /* DOMCache.cpp */,
+				41FABD2B1F4DFE42006A6C97 /* DOMCache.h */,
 				41FB278E1F34C28200795487 /* DOMWindowCaches.cpp */,
 				41FB278C1F34C28200795487 /* DOMWindowCaches.h */,
 				41380C2B1F343E2F00155FDA /* DOMWindowCaches.idl */,
@@ -27231,6 +27237,7 @@
 				A8185F3909765766005826D9 /* DocumentType.h in Headers */,
 				973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */,
 				1A8F6BC30DB55CDC001DB794 /* DOMApplicationCache.h in Headers */,
+				41FABD2D1F4DFE4A006A6C97 /* DOMCache.h in Headers */,
 				FC9A0F75164094CF003D6B8D /* DOMCSSNamespace.h in Headers */,
 				9B3A8872145632F9003AE8F5 /* DOMDOMSettableTokenList.h in Headers */,
 				7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */,
@@ -31263,6 +31270,7 @@
 				A8185F3A09765766005826D9 /* DocumentType.cpp in Sources */,
 				973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */,
 				1A8F6BC20DB55CDC001DB794 /* DOMApplicationCache.cpp in Sources */,
+				41FABD2F1F4E02CB006A6C97 /* DOMCache.cpp in Sources */,
 				FD677738195CAF3D0072E0D3 /* DOMCSSNamespace.cpp in Sources */,
 				7AABA25914BC613300AA9A11 /* DOMEditor.cpp in Sources */,
 				BC1BDF24156C1883001C1243 /* DOMError.cpp in Sources */,

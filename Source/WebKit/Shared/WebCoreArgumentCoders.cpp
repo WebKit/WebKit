@@ -214,13 +214,13 @@ bool ArgumentCoder<CacheQueryOptions>::decode(Decoder& decoder, CacheQueryOption
     return true;
 }
 
-void ArgumentCoder<CacheStorageConnection::CacheInfo>::encode(Encoder& encoder, const CacheStorageConnection::CacheInfo& info)
+void ArgumentCoder<DOMCache::CacheInfo>::encode(Encoder& encoder, const DOMCache::CacheInfo& info)
 {
     encoder << info.identifier;
     encoder << info.name;
 }
 
-bool ArgumentCoder<CacheStorageConnection::CacheInfo>::decode(Decoder& decoder, CacheStorageConnection::CacheInfo& record)
+bool ArgumentCoder<DOMCache::CacheInfo>::decode(Decoder& decoder, DOMCache::CacheInfo& record)
 {
     uint64_t identifier;
     if (!decoder.decode(identifier))
@@ -236,7 +236,7 @@ bool ArgumentCoder<CacheStorageConnection::CacheInfo>::decode(Decoder& decoder, 
     return true;
 }
 
-void ArgumentCoder<CacheStorageConnection::Record>::encode(Encoder& encoder, const CacheStorageConnection::Record& record)
+void ArgumentCoder<DOMCache::Record>::encode(Encoder& encoder, const DOMCache::Record& record)
 {
     encoder << record.identifier;
 
@@ -262,7 +262,7 @@ void ArgumentCoder<CacheStorageConnection::Record>::encode(Encoder& encoder, con
     });
 }
 
-bool ArgumentCoder<CacheStorageConnection::Record>::decode(Decoder& decoder, CacheStorageConnection::Record& record)
+bool ArgumentCoder<DOMCache::Record>::decode(Decoder& decoder, DOMCache::Record& record)
 {
     uint64_t identifier;
     if (!decoder.decode(identifier))
@@ -296,7 +296,7 @@ bool ArgumentCoder<CacheStorageConnection::Record>::decode(Decoder& decoder, Cac
     if (!decoder.decode(updateResponseCounter))
         return false;
 
-    WebCore::CacheStorageConnection::ResponseBody responseBody;
+    WebCore::DOMCache::ResponseBody responseBody;
     bool hasSharedBufferBody;
     if (!decoder.decode(hasSharedBufferBody))
         return false;
