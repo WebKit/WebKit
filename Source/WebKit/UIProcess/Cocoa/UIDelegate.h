@@ -97,6 +97,9 @@ private:
         void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void (unsigned long long)>&& completionHandler) override;
 #if PLATFORM(MAC)
         void showPage(WebPageProxy*) final;
+        void takeFocus(WebKit::WebPageProxy*, WKFocusDirection) final;
+        void focus(WebKit::WebPageProxy*) final;
+        void unfocus(WebKit::WebPageProxy*) final;
         bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
 #endif
         bool decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, WebKit::UserMediaPermissionRequestProxy&) override;
@@ -132,12 +135,15 @@ private:
     struct {
         bool webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures : 1;
         bool webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync : 1;
-        bool webViewShow : 1;
         bool webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler : 1;
         bool webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
 #if PLATFORM(MAC)
+        bool showWebView : 1;
+        bool focusWebView : 1;
+        bool unfocusWebView : 1;
+        bool webViewTakeFocus : 1;
         bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
 #endif
         bool webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler : 1;

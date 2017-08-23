@@ -1,3 +1,19 @@
+2017-08-23  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate callbacks corresponding to WKPageUIClient's takeFocus, focus, and unfocus
+        https://bugs.webkit.org/show_bug.cgi?id=175896
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UIDelegate.mm:
+        (-[UITestDelegate _showWebView:]):
+        (TEST):
+        (tabEvent):
+        (synthesizeTab):
+        (-[FocusDelegate _webView:takeFocus:]):
+        (-[FocusDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[UITestDelegate _webViewShow:]): Deleted.
+
 2017-08-23  Eric Carlson  <eric.carlson@apple.com>
 
         Platform code should be able to safely log in release builds

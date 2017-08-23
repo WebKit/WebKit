@@ -31,9 +31,11 @@
 
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import <Carbon/Carbon.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 @class UITestDelegate;
 
@@ -54,7 +56,7 @@ static bool done;
     return createdWebView.get();
 }
 
-- (void)_webViewShow:(WKWebView *)webView
+- (void)_showWebView:(WKWebView *)webView
 {
     webViewFromDelegateCallback = webView;
     done = true;
@@ -74,7 +76,7 @@ static bool done;
 
 @end
 
-TEST(WebKit2, ShowPage)
+TEST(WebKit2, ShowWebView)
 {
     delegate = adoptNS([[UITestDelegate alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -85,6 +87,53 @@ TEST(WebKit2, ShowPage)
     TestWebKitAPI::Util::run(&done);
     
     ASSERT_EQ(webViewFromDelegateCallback, createdWebView);
+}
+
+static NSEvent *tabEvent(NSWindow *window, NSEventType type, NSEventModifierFlags flags)
+{
+    return [NSEvent keyEventWithType:type location:NSMakePoint(5, 5) modifierFlags:flags timestamp:GetCurrentEventTime() windowNumber:[window windowNumber] context:[NSGraphicsContext currentContext] characters:@"\t" charactersIgnoringModifiers:@"\t" isARepeat:NO keyCode:0];
+}
+
+static void synthesizeTab(NSWindow *window, NSView *view, bool withShiftDown)
+{
+    [view keyDown:tabEvent(window, NSEventTypeKeyDown, withShiftDown ? NSEventModifierFlagShift : 0)];
+    [view keyUp:tabEvent(window, NSEventTypeKeyUp, withShiftDown ? NSEventModifierFlagShift : 0)];
+}
+
+static RetainPtr<NSWindow> window;
+static _WKFocusDirection takenDirection;
+
+@interface FocusDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation FocusDelegate
+
+- (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction
+{
+    takenDirection = direction;
+    done = true;
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    completionHandler();
+    synthesizeTab(window.get(), webView, true);
+}
+
+@end
+
+TEST(WebKit2, Focus)
+{
+    window = adoptNS([[NSWindow alloc] initWithContentRect:CGRectMake(0, 0, 800, 600) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [[window contentView] addSubview:webView.get()];
+    auto delegate = adoptNS([[FocusDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    NSString *html = @"<script>function loaded() { document.getElementById('in').focus(); alert('ready'); }</script>"
+    "<body onload='loaded()'><input type='text' id='in'></body>";
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    TestWebKitAPI::Util::run(&done);
+    ASSERT_EQ(takenDirection, WKFocusDirectionBackward);
 }
 
 #endif // PLATFORM(MAC)

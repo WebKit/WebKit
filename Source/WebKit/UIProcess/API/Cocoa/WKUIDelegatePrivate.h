@@ -45,6 +45,11 @@
 @class UITargetedDragPreview;
 @protocol UIDragSession;
 @protocol UIDropSession;
+#else
+typedef NS_ENUM(NSInteger, _WKFocusDirection) {
+    WKFocusDirectionBackward,
+    WKFocusDirectionForward,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
 @protocol WKUIDelegatePrivate <WKUIDelegate>
@@ -120,7 +125,10 @@ struct UIEdgeInsets;
 #endif
 - (void)_webView:(WKWebView *)webView didChangeSafeAreaShouldAffectObscuredInsets:(BOOL)safeAreaShouldAffectObscuredInsets WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #else
-- (void)_webViewShow:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_showWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_focusWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element WK_API_AVAILABLE(macosx(10.12));
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(10.12));
 #endif

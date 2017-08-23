@@ -100,7 +100,10 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
 
 #if PLATFORM(MAC)
-    m_delegateMethods.webViewShow = [delegate respondsToSelector:@selector(_webViewShow:)];
+    m_delegateMethods.showWebView = [delegate respondsToSelector:@selector(_showWebView:)];
+    m_delegateMethods.focusWebView = [delegate respondsToSelector:@selector(_focusWebView:)];
+    m_delegateMethods.unfocusWebView = [delegate respondsToSelector:@selector(_unfocusWebView:)];
+    m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
 #endif
 
@@ -372,16 +375,64 @@ void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, 
 }
 
 #if PLATFORM(MAC)
+static inline _WKFocusDirection toWKFocusDirection(WKFocusDirection direction)
+{
+    switch (direction) {
+    case kWKFocusDirectionBackward:
+        return WKFocusDirectionBackward;
+    case kWKFocusDirectionForward:
+        return WKFocusDirectionForward;
+    }
+    ASSERT_NOT_REACHED();
+    return WKFocusDirectionForward;
+}
+
+void UIDelegate::UIClient::takeFocus(WebKit::WebPageProxy*, WKFocusDirection direction)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewTakeFocus)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView takeFocus:toWKFocusDirection(direction)];
+}
+
+void UIDelegate::UIClient::focus(WebKit::WebPageProxy*)
+{
+    if (!m_uiDelegate.m_delegateMethods.focusWebView)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _focusWebView:m_uiDelegate.m_webView];
+}
+
+void UIDelegate::UIClient::unfocus(WebKit::WebPageProxy*)
+{
+    if (!m_uiDelegate.m_delegateMethods.unfocusWebView)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _unfocusWebView:m_uiDelegate.m_webView];
+}
+
 void UIDelegate::UIClient::showPage(WebPageProxy*)
 {
-    if (!m_uiDelegate.m_delegateMethods.webViewShow)
+    if (!m_uiDelegate.m_delegateMethods.showWebView)
         return;
 
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
         return;
     
-    [(id <WKUIDelegatePrivate>)delegate _webViewShow:m_uiDelegate.m_webView];
+    [(id <WKUIDelegatePrivate>)delegate _showWebView:m_uiDelegate.m_webView];
 }
 
 bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFrameProxy, const WebCore::SecurityOriginData& securityOriginData, API::OpenPanelParameters* openPanelParameters, WebOpenPanelResultListenerProxy* listener)
