@@ -1,3 +1,175 @@
+2017-08-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize Map iteration with intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=174355
+
+        Reviewed by Saam Barati.
+
+        This patch optimizes Map/Set iteration by taking the approach similar to Array iteration.
+        We create a simple iterator object instead of JSMapIterator and JSSetIterator. And we
+        directly handles Map/Set buckets in JS builtins. We carefully create mapIteratorNext and
+        setIteratorNext functions which should be inlined. This leads significant performance boost
+        when they are inlined in for-of iteration.
+
+        This patch changes how DFG and FTL handles MapBucket if the bucket is not found.
+        Previously, we use nullptr for that, and DFG and FTL specially handle this nullptr as bucket.
+        Instead, this patch introduces sentinel buckets. They are marked as deleted, and not linked
+        to any hash maps. And its key and value fields are filled with Undefined. By returning this
+        sentinel bucket instead of returning nullptr, we simplify DFG and FTL's LoadXXXFromMapBucket
+        code.
+
+        We still keep JSMapIterator and JSSetIterator because they are useful to serialize Map and Set
+        in WebCore. So they are not used in user observable JS. We change them from JS objects to JS cells.
+
+        Existing microbenchmarks shows performance improvements.
+
+        large-map-iteration                           164.1622+-4.1618     ^     56.6284+-1.5355        ^ definitely 2.8989x faster
+        set-for-of                                     15.4369+-1.0631     ^      9.2955+-0.5979        ^ definitely 1.6607x faster
+        map-for-each                                    7.5889+-0.5792     ^      6.3011+-0.4816        ^ definitely 1.2044x faster
+        map-for-of                                     32.3904+-1.3003     ^     12.6907+-0.6118        ^ definitely 2.5523x faster
+        map-rehash                                     13.9275+-0.9187     ^     11.5367+-0.6430        ^ definitely 1.2072x faster
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.createArrayIterator):
+        * builtins/BuiltinNames.h:
+        * builtins/MapIteratorPrototype.js: Copied from Source/JavaScriptCore/builtins/MapPrototype.js.
+        (globalPrivate.mapIteratorNext):
+        (next):
+        * builtins/MapPrototype.js:
+        (globalPrivate.createMapIterator):
+        (values):
+        (keys):
+        (entries):
+        (forEach):
+        * builtins/SetIteratorPrototype.js: Copied from Source/JavaScriptCore/builtins/MapPrototype.js.
+        (globalPrivate.setIteratorNext):
+        (next):
+        * builtins/SetPrototype.js:
+        (globalPrivate.createSetIterator):
+        (values):
+        (entries):
+        (forEach):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasBucketOwnerType):
+        (JSC::DFG::Node::bucketOwnerType):
+        (JSC::DFG::Node::OpInfoWrapper::as const):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetMapBucketHead):
+        (JSC::DFG::SpeculativeJIT::compileGetMapBucketNext):
+        (JSC::DFG::SpeculativeJIT::compileLoadKeyFromMapBucket):
+        (JSC::DFG::SpeculativeJIT::compileLoadValueFromMapBucket):
+        (JSC::DFG::SpeculativeJIT::compileCompareEqPtr): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCompareEqPtr):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCompareEqPtr):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucketHead):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucketNext):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoadValueFromMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoadKeyFromMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::setStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoadFromJSMapBucket): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsNonEmptyMapBucket): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::lowMapBucket): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::setMapBucket): Deleted.
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        (Inspector::cloneMapIteratorObject):
+        (Inspector::cloneSetIteratorObject):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBucket::createSentinel):
+        (JSC::HashMapBucket::offsetOfNext):
+        (JSC::HashMapBucket::offsetOfDeleted):
+        (JSC::HashMapImpl::offsetOfHead):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSMap.h:
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::clone): Deleted.
+        * runtime/JSMapIterator.h:
+        (JSC::JSMapIterator::iteratedValue const):
+        * runtime/JSSet.h:
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::clone): Deleted.
+        * runtime/JSSetIterator.h:
+        (JSC::JSSetIterator::iteratedValue const):
+        * runtime/MapConstructor.cpp:
+        (JSC::mapPrivateFuncMapBucketHead):
+        (JSC::mapPrivateFuncMapBucketNext):
+        (JSC::mapPrivateFuncMapBucketKey):
+        (JSC::mapPrivateFuncMapBucketValue):
+        * runtime/MapConstructor.h:
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation):
+        (JSC::MapIteratorPrototypeFuncNext): Deleted.
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        (JSC::mapProtoFuncValues): Deleted.
+        (JSC::mapProtoFuncEntries): Deleted.
+        (JSC::mapProtoFuncKeys): Deleted.
+        (JSC::privateFuncMapIterator): Deleted.
+        (JSC::privateFuncMapIteratorNext): Deleted.
+        * runtime/MapPrototype.h:
+        * runtime/SetConstructor.cpp:
+        (JSC::setPrivateFuncSetBucketHead):
+        (JSC::setPrivateFuncSetBucketNext):
+        (JSC::setPrivateFuncSetBucketKey):
+        * runtime/SetConstructor.h:
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototype::finishCreation):
+        (JSC::SetIteratorPrototypeFuncNext): Deleted.
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        (JSC::setProtoFuncSize):
+        (JSC::setProtoFuncValues): Deleted.
+        (JSC::setProtoFuncEntries): Deleted.
+        (JSC::privateFuncSetIterator): Deleted.
+        (JSC::privateFuncSetIteratorNext): Deleted.
+        * runtime/SetPrototype.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-08-23  David Kilzer  <ddkilzer@apple.com>
 
         Fix -Wcast-qual warnings in JavaScriptCore with new clang compiler

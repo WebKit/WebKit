@@ -70,9 +70,12 @@
 #include "JSInternalPromiseDeferred.h"
 #include "JSLock.h"
 #include "JSMap.h"
+#include "JSMapIterator.h"
 #include "JSPromiseDeferred.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSScriptFetcher.h"
+#include "JSSet.h"
+#include "JSSetIterator.h"
 #include "JSSourceCode.h"
 #include "JSTemplateRegistryKey.h"
 #include "JSWebAssembly.h"
@@ -275,6 +278,11 @@ VM::VM(VMType vmType, HeapType heapType)
     functionCodeBlockStructure.set(*this, FunctionCodeBlock::createStructure(*this, 0, jsNull()));
     hashMapBucketSetStructure.set(*this, HashMapBucket<HashMapBucketDataKey>::createStructure(*this, 0, jsNull()));
     hashMapBucketMapStructure.set(*this, HashMapBucket<HashMapBucketDataKeyValue>::createStructure(*this, 0, jsNull()));
+    setIteratorStructure.set(*this, JSSetIterator::createStructure(*this, 0, jsNull()));
+    mapIteratorStructure.set(*this, JSMapIterator::createStructure(*this, 0, jsNull()));
+
+    sentinelSetBucket.set(*this, JSSet::BucketType::createSentinel(*this));
+    sentinelMapBucket.set(*this, JSMap::BucketType::createSentinel(*this));
 
     nativeStdFunctionCellStructure.set(*this, NativeStdFunctionCell::createStructure(*this, 0, jsNull()));
     smallStrings.initializeCommonStrings(*this);

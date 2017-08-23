@@ -148,6 +148,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         // We should enable CSE of LazyJSConstant. It's a little annoying since LazyJSValue has
         // more bits than we currently have in PureValue.
         return;
+
+    case CompareEqPtr:
+        def(PureValue(node, node->cellOperand()->cell()));
+        return;
         
     case ArithIMul:
     case ArithMin:
@@ -158,7 +162,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetGlobalObject:
     case StringCharCodeAt:
     case CompareStrictEq:
-    case CompareEqPtr:
     case IsEmpty:
     case IsUndefined:
     case IsBoolean:
@@ -1551,16 +1554,33 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(MapBucketLoc, MiscFields, mapEdge, keyEdge), LazyNode(node));
         return;
     }
-    case LoadFromJSMapBucket: {
+    case GetMapBucketHead: {
         read(MiscFields);
-        Edge& bucketEdge = node->child1();
-        def(HeapLocation(JSMapGetLoc, MiscFields, bucketEdge), LazyNode(node));
+        Edge& mapEdge = node->child1();
+        def(HeapLocation(MapBucketHeadLoc, MiscFields, mapEdge), LazyNode(node));
         return;
     }
-    case IsNonEmptyMapBucket:
+    case GetMapBucketNext: {
         read(MiscFields);
-        def(HeapLocation(MapHasLoc, MiscFields, node->child1()), LazyNode(node));
+        LocationKind locationKind = MapBucketMapNextLoc;
+        if (node->bucketOwnerType() == BucketOwnerType::Set)
+            locationKind = MapBucketSetNextLoc;
+        Edge& bucketEdge = node->child1();
+        def(HeapLocation(locationKind, MiscFields, bucketEdge), LazyNode(node));
         return;
+    }
+    case LoadKeyFromMapBucket: {
+        read(MiscFields);
+        Edge& bucketEdge = node->child1();
+        def(HeapLocation(MapBucketKeyLoc, MiscFields, bucketEdge), LazyNode(node));
+        return;
+    }
+    case LoadValueFromMapBucket: {
+        read(MiscFields);
+        Edge& bucketEdge = node->child1();
+        def(HeapLocation(MapBucketValueLoc, MiscFields, bucketEdge), LazyNode(node));
+        return;
+    }
 
     case ToLowerCase:
         def(PureValue(node));

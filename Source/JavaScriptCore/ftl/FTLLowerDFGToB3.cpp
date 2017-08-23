@@ -971,11 +971,17 @@ private:
         case GetMapBucket:
             compileGetMapBucket();
             break;
-        case LoadFromJSMapBucket:
-            compileLoadFromJSMapBucket();
+        case GetMapBucketHead:
+            compileGetMapBucketHead();
             break;
-        case IsNonEmptyMapBucket:
-            compileIsNonEmptyMapBucket();
+        case GetMapBucketNext:
+            compileGetMapBucketNext();
+            break;
+        case LoadKeyFromMapBucket:
+            compileLoadKeyFromMapBucket();
+            break;
+        case LoadValueFromMapBucket:
+            compileLoadValueFromMapBucket();
             break;
         case IsObject:
             compileIsObject();
@@ -8236,38 +8242,85 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(notPresentInTable, continuation);
-        ValueFromBlock notPresentResult = m_out.anchor(m_out.constIntPtr(0));
+        ValueFromBlock notPresentResult;
+        if (m_node->child1().useKind() == MapObjectUse)
+            notPresentResult = m_out.anchor(weakPointer(vm().sentinelMapBucket.get()));
+        else if (m_node->child1().useKind() == SetObjectUse)
+            notPresentResult = m_out.anchor(weakPointer(vm().sentinelSetBucket.get()));
+        else
+            RELEASE_ASSERT_NOT_REACHED();
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        setMapBucket(m_out.phi(pointerType(), bucketResult, slowPathResult, notPresentResult));
+        setJSValue(m_out.phi(pointerType(), bucketResult, slowPathResult, notPresentResult));
     }
 
-    void compileLoadFromJSMapBucket()
+    void compileGetMapBucketHead()
     {
-        LValue mapBucket = lowMapBucket(m_node->child1());
+        LValue map;
+        if (m_node->child1().useKind() == MapObjectUse)
+            map = lowMapObject(m_node->child1());
+        else if (m_node->child1().useKind() == SetObjectUse)
+            map = lowSetObject(m_node->child1());
+        else
+            RELEASE_ASSERT_NOT_REACHED();
 
+        ASSERT(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead() == HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>::offsetOfHead());
+        setJSValue(m_out.loadPtr(map, m_heaps.HashMapImpl_head));
+    }
+
+    void compileGetMapBucketNext()
+    {
+        LBasicBlock loopStart = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
+        LBasicBlock noBucket = m_out.newBlock();
         LBasicBlock hasBucket = m_out.newBlock();
+        LBasicBlock nextBucket = m_out.newBlock();
 
-        ValueFromBlock noBucketResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined())));
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(loopStart);
 
-        m_out.branch(m_out.equal(mapBucket, m_out.constIntPtr(0)),
-            unsure(continuation), unsure(hasBucket));
+        ASSERT(HashMapBucket<HashMapBucketDataKey>::offsetOfNext() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext());
+        ASSERT(HashMapBucket<HashMapBucketDataKey>::offsetOfDeleted() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfDeleted());
+        LValue mapBucketPrev = lowCell(m_node->child1());
+        ValueFromBlock mapBucketStart = m_out.anchor(m_out.loadPtr(mapBucketPrev, m_heaps.HashMapBucket_next));
+        m_out.jump(loopStart);
 
-        LBasicBlock lastNext = m_out.appendTo(hasBucket, continuation);
-        ValueFromBlock bucketResult = m_out.anchor(m_out.load64(mapBucket, m_heaps.HashMapBucket_value));
+        m_out.appendTo(loopStart, noBucket);
+        LValue mapBucket = m_out.phi(pointerType(), mapBucketStart);
+        m_out.branch(m_out.isNull(mapBucket), unsure(noBucket), unsure(hasBucket));
+
+        m_out.appendTo(noBucket, hasBucket);
+        ValueFromBlock noBucketResult;
+        if (m_node->bucketOwnerType() == BucketOwnerType::Map)
+            noBucketResult = m_out.anchor(weakPointer(vm().sentinelMapBucket.get()));
+        else {
+            ASSERT(node->bucketOwnerType() == BucketOwnerType::Set);
+            noBucketResult = m_out.anchor(weakPointer(vm().sentinelSetBucket.get()));
+        }
         m_out.jump(continuation);
 
+        m_out.appendTo(hasBucket, nextBucket);
+        ValueFromBlock bucketResult = m_out.anchor(mapBucket);
+        m_out.branch(m_out.isZero32(m_out.load32(mapBucket, m_heaps.HashMapBucket_deleted)), unsure(continuation), unsure(nextBucket));
+
+        m_out.appendTo(nextBucket, continuation);
+        m_out.addIncomingToPhi(mapBucket, m_out.anchor(m_out.loadPtr(mapBucket, m_heaps.HashMapBucket_next)));
+        m_out.jump(loopStart);
+
         m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(Int64, noBucketResult, bucketResult));
+        setJSValue(m_out.phi(pointerType(), noBucketResult, bucketResult));
     }
 
-    void compileIsNonEmptyMapBucket()
+    void compileLoadValueFromMapBucket()
     {
-        LValue bucket = lowMapBucket(m_node->child1());
-        LValue result = m_out.notEqual(bucket, m_out.constIntPtr(0));
-        setBoolean(result);
+        LValue mapBucket = lowCell(m_node->child1());
+        setJSValue(m_out.load64(mapBucket, m_heaps.HashMapBucket_value));
+    }
+
+    void compileLoadKeyFromMapBucket()
+    {
+        LValue mapBucket = lowCell(m_node->child1());
+        setJSValue(m_out.load64(mapBucket, m_heaps.HashMapBucket_key));
     }
 
     void compileIsObjectOrNull()
@@ -12864,17 +12917,6 @@ private:
         return result;
     }
 
-    LValue lowMapBucket(Edge edge)
-    {
-        LoweredNodeValue value = m_mapBucketValues.get(edge.node());
-        if (isValid(value))
-            return value.value();
-        
-        LValue result = lowCell(edge);
-        setStorage(edge.node(), result);
-        return result;
-    }
-    
     LValue strictInt52ToInt32(Edge edge, LValue value)
     {
         LValue result = m_out.castToInt32(value);
@@ -14388,10 +14430,6 @@ private:
     {
         m_storageValues.set(node, LoweredNodeValue(value, m_highBlock));
     }
-    void setMapBucket(Node* node, LValue value)
-    {
-        m_mapBucketValues.set(node, LoweredNodeValue(value, m_highBlock));
-    }
     void setDouble(Node* node, LValue value)
     {
         m_doubleValues.set(node, LoweredNodeValue(value, m_highBlock));
@@ -14424,10 +14462,6 @@ private:
     void setStorage(LValue value)
     {
         setStorage(m_node, value);
-    }
-    void setMapBucket(LValue value)
-    {
-        setMapBucket(m_node, value);
     }
     void setDouble(LValue value)
     {
@@ -14618,7 +14652,6 @@ private:
     HashMap<Node*, LoweredNodeValue> m_jsValueValues;
     HashMap<Node*, LoweredNodeValue> m_booleanValues;
     HashMap<Node*, LoweredNodeValue> m_storageValues;
-    HashMap<Node*, LoweredNodeValue> m_mapBucketValues;
     HashMap<Node*, LoweredNodeValue> m_doubleValues;
     
     // This is a bit of a hack. It prevents B3 from having to do CSE on loading of arguments.

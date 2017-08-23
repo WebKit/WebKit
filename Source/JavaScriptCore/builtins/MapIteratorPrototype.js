@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+// We keep this function small very carefully to encourage inlining.
+@globalPrivate
+function mapIteratorNext(bucket, kind)
+{
+    "use strict";
+    var value;
 
-#include "JSObject.h"
-
-namespace JSC {
-
-class SetPrototype : public JSNonFinalObject {
-public:
-    typedef JSNonFinalObject Base;
-
-    static const unsigned StructureFlags = HasStaticPropertyTable | Base::StructureFlags;
-
-    static SetPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
-    {
-        SetPrototype* prototype = new (NotNull, allocateCell<SetPrototype>(vm.heap)) SetPrototype(vm, structure);
-        prototype->finishCreation(vm, globalObject);
-        return prototype;
+    bucket = @mapBucketNext(bucket);
+    this.@mapBucket = bucket;
+    var done = bucket === @sentinelMapBucket;
+    if (!done) {
+        var key = @mapBucketKey(bucket);
+        value = @mapBucketValue(bucket);
+        if (kind === @iterationKindKeyValue)
+            value = [ key, value ]
+        else if (kind === @iterationKindKey)
+            value = key;
     }
+    return { done, value };
+}
 
-    DECLARE_INFO;
+function next()
+{
+    "use strict";
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
+    if (this == null)
+        @throwTypeError("%MapIteratorPrototype%.next requires that |this| not be null or undefined");
 
-private:
-    SetPrototype(VM& vm, Structure* structure)
-        : Base(vm, structure)
-    {
-    }
-    void finishCreation(VM&, JSGlobalObject*);
-};
-
-} // namespace JSC
+    var bucket = this.@mapBucket;
+    if (bucket === @undefined)
+        @throwTypeError("%MapIteratorPrototype%.next requires that |this| be a Map Iterator instance");
+    return @mapIteratorNext.@call(this, bucket, this.@mapIteratorKind);
+}

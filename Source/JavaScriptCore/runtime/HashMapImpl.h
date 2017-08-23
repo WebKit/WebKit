@@ -97,6 +97,15 @@ public:
         return bucket;
     }
 
+    static HashMapBucket* createSentinel(VM& vm)
+    {
+        auto* bucket = create(vm);
+        bucket->setDeleted(true);
+        bucket->setKey(vm, jsUndefined());
+        bucket->setValue(vm, jsUndefined());
+        return bucket;
+    }
+
     HashMapBucket(VM& vm, Structure* structure)
         : Base(vm, structure)
     { }
@@ -150,6 +159,16 @@ public:
         return OBJECT_OFFSETOF(HashMapBucket, m_data) + OBJECT_OFFSETOF(Data, value);
     }
 
+    static ptrdiff_t offsetOfNext()
+    {
+        return OBJECT_OFFSETOF(HashMapBucket, m_next);
+    }
+
+    static ptrdiff_t offsetOfDeleted()
+    {
+        return OBJECT_OFFSETOF(HashMapBucket, m_deleted);
+    }
+
     template <typename T = Data>
     ALWAYS_INLINE static typename std::enable_if<std::is_same<T, HashMapBucketDataKeyValue>::value, JSValue>::type extractValue(const HashMapBucket& bucket)
     {
@@ -163,10 +182,10 @@ public:
     }
 
 private:
-    Data m_data;
     WriteBarrier<HashMapBucket> m_next;
     WriteBarrier<HashMapBucket> m_prev;
-    bool m_deleted { false };
+    uint32_t m_deleted { false };
+    Data m_data;
 };
 
 template <typename BucketType>
@@ -467,6 +486,11 @@ public:
     ALWAYS_INLINE size_t bufferSizeInBytes() const
     {
         return m_capacity * sizeof(HashMapBucketType*);
+    }
+
+    static ptrdiff_t offsetOfHead()
+    {
+        return OBJECT_OFFSETOF(HashMapImpl<HashMapBucketType>, m_head);
     }
 
     static ptrdiff_t offsetOfBuffer()

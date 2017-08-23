@@ -2299,7 +2299,7 @@ JSCell* JIT_OPERATION operationJSMapFindBucket(ExecState* exec, JSCell* map, Enc
     NativeCallFrameTracer tracer(&vm, exec);
     JSMap::BucketType** bucket = jsCast<JSMap*>(map)->findBucket(exec, normalizeMapKey(JSValue::decode(key)), hash);
     if (!bucket)
-        return nullptr;
+        return vm.sentinelMapBucket.get();
     return *bucket;
 }
 
@@ -2309,7 +2309,7 @@ JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState* exec, JSCell* map, Enc
     NativeCallFrameTracer tracer(&vm, exec);
     JSSet::BucketType** bucket = jsCast<JSSet*>(map)->findBucket(exec, normalizeMapKey(JSValue::decode(key)), hash);
     if (!bucket)
-        return nullptr;
+        return vm.sentinelSetBucket.get();
     return *bucket;
 }
 

@@ -113,8 +113,11 @@ namespace JSC { namespace FTL {
     macro(Structure_indexingTypeIncludingHistory, Structure::indexingTypeIncludingHistoryOffset()) \
     macro(HashMapImpl_capacity, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfCapacity()) \
     macro(HashMapImpl_buffer,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfBuffer()) \
+    macro(HashMapImpl_head,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead()) \
     macro(HashMapBucket_value, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfValue()) \
     macro(HashMapBucket_key, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey()) \
+    macro(HashMapBucket_next, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext()) \
+    macro(HashMapBucket_deleted, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfDeleted()) \
     macro(Symbol_symbolImpl, Symbol::offsetOfSymbolImpl()) \
     macro(JSFixedArray_size, JSFixedArray::offsetOfSize()) \
 

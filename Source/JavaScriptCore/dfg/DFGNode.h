@@ -243,6 +243,11 @@ struct CallDOMGetterData {
     unsigned identifierNumber { 0 };
 };
 
+enum class BucketOwnerType : uint32_t {
+    Map,
+    Set
+};
+
 // === Node ===
 //
 // Node represents a single operation in the data flow graph.
@@ -1515,7 +1520,8 @@ public:
         case StringReplace:
         case StringReplaceRegExp:
         case ToNumber:
-        case LoadFromJSMapBucket:
+        case LoadKeyFromMapBucket:
+        case LoadValueFromMapBucket:
         case CallDOMGetter:
         case CallDOM:
         case ParseInt:
@@ -2544,6 +2550,17 @@ public:
         return m_opInfo.as<unsigned>();
     }
 
+    bool hasBucketOwnerType()
+    {
+        return op() == GetMapBucketNext;
+    }
+
+    BucketOwnerType bucketOwnerType()
+    {
+        ASSERT(hasBucketOwnerType());
+        return m_opInfo.as<BucketOwnerType>();
+    }
+
     void dumpChildren(PrintStream& out)
     {
         if (!child1())
@@ -2652,14 +2669,14 @@ private:
             return static_cast<T>(u.constPointer);
         }
         template <typename T>
-        ALWAYS_INLINE auto as() const -> typename std::enable_if<std::is_integral<T>::value && sizeof(T) == 4, T>::type
+        ALWAYS_INLINE auto as() const -> typename std::enable_if<(std::is_integral<T>::value || std::is_enum<T>::value) && sizeof(T) == 4, T>::type
         {
-            return u.int32;
+            return static_cast<T>(u.int32);
         }
         template <typename T>
-        ALWAYS_INLINE auto as() const -> typename std::enable_if<std::is_integral<T>::value && sizeof(T) == 8, T>::type
+        ALWAYS_INLINE auto as() const -> typename std::enable_if<(std::is_integral<T>::value || std::is_enum<T>::value) && sizeof(T) == 8, T>::type
         {
-            return u.int64;
+            return static_cast<T>(u.int64);
         }
         ALWAYS_INLINE RegisteredStructure asRegisteredStructure() const
         {

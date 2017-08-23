@@ -2779,6 +2779,10 @@ public:
     void compileCallDOMGetter(Node*);
     void compileCallDOM(Node*);
     void compileCheckSubClass(Node*);
+    void compileGetMapBucketHead(Node*);
+    void compileGetMapBucketNext(Node*);
+    void compileLoadKeyFromMapBucket(Node*);
+    void compileLoadValueFromMapBucket(Node*);
     
 #if USE(JSVALUE32_64)
     template<typename BaseOperandType, typename PropertyOperandType, typename ValueOperandType, typename TagType>

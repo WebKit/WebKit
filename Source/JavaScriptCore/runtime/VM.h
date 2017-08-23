@@ -384,8 +384,12 @@ public:
     Strong<Structure> functionCodeBlockStructure;
     Strong<Structure> hashMapBucketSetStructure;
     Strong<Structure> hashMapBucketMapStructure;
+    Strong<Structure> setIteratorStructure;
+    Strong<Structure> mapIteratorStructure;
 
     Strong<JSCell> emptyPropertyNameEnumerator;
+    Strong<JSCell> sentinelSetBucket;
+    Strong<JSCell> sentinelMapBucket;
 
     std::unique_ptr<PromiseDeferredTimer> promiseDeferredTimer;
     

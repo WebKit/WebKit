@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2016-2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,6 +23,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@constructor
+@globalPrivate
+function createMapIterator(iteratedObject, kind)
+{
+    "use strict";
+
+    @assert(@isMap(iteratedObject));
+    this.@iteratedObject = iteratedObject;
+    this.@mapIteratorKind = kind;
+    this.@mapBucket = @mapBucketHead(iteratedObject);
+}
+
+function values()
+{
+    "use strict";
+
+    if (!@isMap(this))
+        @throwTypeError("Map.prototype.values requires that |this| be Map");
+
+    return new @createMapIterator(this, @iterationKindValue);
+}
+
+function keys()
+{
+    "use strict";
+
+    if (!@isMap(this))
+        @throwTypeError("Map.prototype.keys requires that |this| be Map");
+
+    return new @createMapIterator(this, @iterationKindKey);
+}
+
+function entries()
+{
+    "use strict";
+
+    if (!@isMap(this))
+        @throwTypeError("Map.prototype.entries requires that |this| be Map");
+
+    return new @createMapIterator(this, @iterationKindKeyValue);
+}
+
 function forEach(callback /*, thisArg */)
 {
     "use strict";
@@ -34,13 +76,12 @@ function forEach(callback /*, thisArg */)
         @throwTypeError("Map.prototype.forEach callback must be a function");
 
     var thisArg = @argument(1);
-    var iterator = @MapIterator(this);
+    var bucket = @mapBucketHead(this);
 
-    // To avoid object allocations for iterator result objects, we pass the placeholder to the special "next" function in order to fill the results.
-    var value = [ @undefined, @undefined ];
-    for (;;) {
-        if (@mapIteratorNext.@call(iterator, value))
+    do {
+        bucket = @mapBucketNext(bucket);
+        if (bucket === @sentinelMapBucket)
             break;
-        callback.@call(thisArg, value[1], value[0], this);
-    }
+        callback.@call(thisArg, @mapBucketValue(bucket), @mapBucketKey(bucket), this);
+    } while (true);
 }

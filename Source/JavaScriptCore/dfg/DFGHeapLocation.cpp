@@ -162,11 +162,20 @@ void printInternal(PrintStream& out, LocationKind kind)
     case MapBucketLoc:
         out.print("MapBucketLoc");
         return;
-    case JSMapGetLoc:
-        out.print("JSMapGetLoc");
+    case MapBucketHeadLoc:
+        out.print("MapBucketHeadLoc");
         return;
-    case MapHasLoc:
-        out.print("MapHasLoc");
+    case MapBucketKeyLoc:
+        out.print("MapBucketKeyLoc");
+        return;
+    case MapBucketValueLoc:
+        out.print("MapBucketValueLoc");
+        return;
+    case MapBucketMapNextLoc:
+        out.print("MapBucketMapNextLoc");
+        return;
+    case MapBucketSetNextLoc:
+        out.print("MapBucketSetNextLoc");
         return;
     case DOMStateLoc:
         out.print("DOMStateLoc");

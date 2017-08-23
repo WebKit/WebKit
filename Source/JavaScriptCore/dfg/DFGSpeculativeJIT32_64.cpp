@@ -692,6 +692,19 @@ void SpeculativeJIT::compileMiscStrictEq(Node* node)
     booleanResult(result.gpr(), node);
 }
 
+void SpeculativeJIT::compileCompareEqPtr(Node* node)
+{
+    JSValueOperand operand(this, node->child1());
+    GPRTemporary result(this);
+    JSValueRegs regs = operand.jsValueRegs();
+    GPRReg resultGPR = result.gpr();
+    m_jit.boxBooleanPayload(false, resultGPR);
+    JITCompiler::JumpList notEqual = m_jit.branchIfNotEqual(regs, node->cellOperand()->value());
+    m_jit.boxBooleanPayload(true, resultGPR);
+    notEqual.link(&m_jit);
+    blessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::emitCall(Node* node)
 {
     CallLinkInfo::CallType callType;
@@ -4902,38 +4915,21 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case LoadFromJSMapBucket: {
-        SpeculateCellOperand bucket(this, node->child1());
-        GPRTemporary resultPayload(this);
-        GPRTemporary resultTag(this);
-
-        GPRReg bucketGPR = bucket.gpr();
-        GPRReg resultPayloadGPR = resultPayload.gpr();
-        GPRReg resultTagGPR = resultTag.gpr();
-
-        auto notBucket = m_jit.branchTestPtr(MacroAssembler::Zero, bucketGPR);
-        m_jit.loadValue(MacroAssembler::Address(bucketGPR, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfValue()), JSValueRegs(resultTagGPR, resultPayloadGPR));
-        auto done = m_jit.jump();
-
-        notBucket.link(&m_jit);
-        m_jit.move(TrustedImm32(JSValue::UndefinedTag), resultTagGPR);
-        m_jit.move(TrustedImm32(0), resultPayloadGPR);
-        done.link(&m_jit);
-        jsValueResult(resultTagGPR, resultPayloadGPR, node);
+    case GetMapBucketHead:
+        compileGetMapBucketHead(node);
         break;
-    }
 
-    case IsNonEmptyMapBucket: {
-        SpeculateCellOperand bucket(this, node->child1());
-        GPRTemporary result(this);
-
-        GPRReg bucketGPR = bucket.gpr();
-        GPRReg resultGPR = result.gpr();
-
-        m_jit.comparePtr(MacroAssembler::NotEqual, bucketGPR, TrustedImm32(0), resultGPR);
-        booleanResult(resultGPR, node);
+    case GetMapBucketNext:
+        compileGetMapBucketNext(node);
         break;
-    }
+
+    case LoadKeyFromMapBucket:
+        compileLoadKeyFromMapBucket(node);
+        break;
+
+    case LoadValueFromMapBucket:
+        compileLoadValueFromMapBucket(node);
+        break;
 
     case Flush:
         break;

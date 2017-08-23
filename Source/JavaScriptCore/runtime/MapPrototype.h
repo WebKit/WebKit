@@ -57,7 +57,4 @@ private:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
-EncodedJSValue JSC_HOST_CALL privateFuncMapIterator(ExecState*);
-EncodedJSValue JSC_HOST_CALL privateFuncMapIteratorNext(ExecState*);
-
 } // namespace JSC

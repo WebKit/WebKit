@@ -147,12 +147,19 @@ namespace JSC {
     macro(predictFinalLengthFromArgumunts) \
     macro(print) \
     macro(regExpCreate) \
-    macro(SetIterator) \
-    macro(setIteratorNext) \
     macro(replaceUsingRegExp) \
     macro(replaceUsingStringSearch) \
-    macro(MapIterator) \
-    macro(mapIteratorNext) \
+    macro(mapBucket) \
+    macro(mapBucketHead) \
+    macro(mapBucketNext) \
+    macro(mapBucketKey) \
+    macro(mapBucketValue) \
+    macro(mapIteratorKind) \
+    macro(setBucket) \
+    macro(setBucketHead) \
+    macro(setBucketNext) \
+    macro(setBucketKey) \
+    macro(setIteratorKind) \
     macro(regExpBuiltinExec) \
     macro(regExpMatchFast) \
     macro(regExpProtoFlagsGetter) \

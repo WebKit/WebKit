@@ -1795,12 +1795,19 @@ private:
             fixEdge<Int32Use>(node->child3());
             break;
 
-        case LoadFromJSMapBucket:
-            fixEdge<KnownCellUse>(node->child1());
+        case GetMapBucketHead:
+            if (node->child1().useKind() == MapObjectUse)
+                fixEdge<MapObjectUse>(node->child1());
+            else if (node->child1().useKind() == SetObjectUse)
+                fixEdge<SetObjectUse>(node->child1());
+            else
+                RELEASE_ASSERT_NOT_REACHED();
             break;
 
-        case IsNonEmptyMapBucket:
-            fixEdge<KnownCellUse>(node->child1());
+        case GetMapBucketNext:
+        case LoadKeyFromMapBucket:
+        case LoadValueFromMapBucket:
+            fixEdge<CellUse>(node->child1());
             break;
 
         case MapHash: {

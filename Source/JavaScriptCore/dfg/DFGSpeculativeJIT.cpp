@@ -10008,19 +10008,6 @@ void SpeculativeJIT::compileRecordRegExpCachedResult(Node* node)
     noResult(node);
 }
 
-void SpeculativeJIT::compileCompareEqPtr(Node* node)
-{
-    JSValueOperand operand(this, node->child1());
-    GPRTemporary result(this);
-    JSValueRegs regs = operand.jsValueRegs();
-    GPRReg resultGPR = result.gpr();
-    m_jit.boxBooleanPayload(false, resultGPR);
-    JITCompiler::JumpList notEqual = m_jit.branchIfNotEqual(regs, node->cellOperand()->value());
-    m_jit.boxBooleanPayload(true, resultGPR);
-    notEqual.link(&m_jit);
-    blessedBooleanResult(resultGPR, node);
-}
-
 void SpeculativeJIT::compileDefineDataProperty(Node* node)
 {
 #if USE(JSVALUE64)
@@ -10193,6 +10180,82 @@ void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeG
 
     m_jit.store32(sizeGPR, MacroAssembler::Address(storageResultGPR, Butterfly::offsetOfPublicLength()));
     m_jit.store32(sizeGPR, MacroAssembler::Address(storageResultGPR, Butterfly::offsetOfVectorLength()));
+}
+
+void SpeculativeJIT::compileGetMapBucketHead(Node* node)
+{
+    SpeculateCellOperand map(this, node->child1());
+    GPRTemporary bucket(this);
+
+    GPRReg mapGPR = map.gpr();
+    GPRReg bucketGPR = bucket.gpr();
+
+    if (node->child1().useKind() == MapObjectUse)
+        speculateMapObject(node->child1(), mapGPR);
+    else if (node->child1().useKind() == SetObjectUse)
+        speculateSetObject(node->child1(), mapGPR);
+    else
+        RELEASE_ASSERT_NOT_REACHED();
+
+    ASSERT(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead() == HashMapImpl<HashMapBucket<HashMapBucketDataKeyValue>>::offsetOfHead());
+    m_jit.loadPtr(MacroAssembler::Address(mapGPR, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead()), bucketGPR);
+    cellResult(bucketGPR, node);
+}
+
+void SpeculativeJIT::compileGetMapBucketNext(Node* node)
+{
+    SpeculateCellOperand bucket(this, node->child1());
+    GPRTemporary result(this);
+
+    GPRReg bucketGPR = bucket.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    ASSERT(HashMapBucket<HashMapBucketDataKey>::offsetOfNext() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext());
+    ASSERT(HashMapBucket<HashMapBucketDataKey>::offsetOfDeleted() == HashMapBucket<HashMapBucketDataKeyValue>::offsetOfDeleted());
+    m_jit.loadPtr(MacroAssembler::Address(bucketGPR, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext()), resultGPR);
+
+    MacroAssembler::Label loop = m_jit.label();
+    auto notBucket = m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR);
+    auto done = m_jit.branchTest32(MacroAssembler::Zero, MacroAssembler::Address(resultGPR, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfDeleted()));
+    m_jit.loadPtr(MacroAssembler::Address(resultGPR, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfNext()), resultGPR);
+    m_jit.jump().linkTo(loop, &m_jit);
+
+    notBucket.link(&m_jit);
+    JSCell* sentinel = nullptr;
+    if (node->bucketOwnerType() == BucketOwnerType::Map)
+        sentinel = m_jit.vm()->sentinelMapBucket.get();
+    else {
+        ASSERT(node->bucketOwnerType() == BucketOwnerType::Set);
+        sentinel = m_jit.vm()->sentinelSetBucket.get();
+    }
+    m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), sentinel), resultGPR);
+    done.link(&m_jit);
+
+    cellResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileLoadKeyFromMapBucket(Node* node)
+{
+    SpeculateCellOperand bucket(this, node->child1());
+    JSValueRegsTemporary result(this);
+
+    GPRReg bucketGPR = bucket.gpr();
+    JSValueRegs resultRegs = result.regs();
+
+    m_jit.loadValue(MacroAssembler::Address(bucketGPR, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfKey()), resultRegs);
+    jsValueResult(resultRegs, node);
+}
+
+void SpeculativeJIT::compileLoadValueFromMapBucket(Node* node)
+{
+    SpeculateCellOperand bucket(this, node->child1());
+    JSValueRegsTemporary result(this);
+
+    GPRReg bucketGPR = bucket.gpr();
+    JSValueRegs resultRegs = result.regs();
+
+    m_jit.loadValue(MacroAssembler::Address(bucketGPR, HashMapBucket<HashMapBucketDataKeyValue>::offsetOfValue()), resultRegs);
+    jsValueResult(resultRegs, node);
 }
 
 } } // namespace JSC::DFG

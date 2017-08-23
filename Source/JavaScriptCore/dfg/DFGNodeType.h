@@ -431,8 +431,10 @@ namespace JSC { namespace DFG {
     /* Nodes for JSMap and JSSet */ \
     macro(MapHash, NodeResultInt32) \
     macro(GetMapBucket, NodeResultJS) \
-    macro(LoadFromJSMapBucket, NodeResultJS) \
-    macro(IsNonEmptyMapBucket, NodeResultBoolean) \
+    macro(GetMapBucketHead, NodeResultJS) \
+    macro(GetMapBucketNext, NodeResultJS) \
+    macro(LoadKeyFromMapBucket, NodeResultJS) \
+    macro(LoadValueFromMapBucket, NodeResultJS) \
     \
     macro(ToLowerCase, NodeResultJS) \
     /* Nodes for DOM JIT */\

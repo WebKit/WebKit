@@ -66,7 +66,7 @@ static const SpeculatedType SpecStringIdent        = 1ull << 21; // It's definit
 static const SpeculatedType SpecStringVar          = 1ull << 22; // It's definitely a JSString, and it's not an identifier.
 static const SpeculatedType SpecString             = SpecStringIdent | SpecStringVar; // It's definitely a JSString.
 static const SpeculatedType SpecSymbol             = 1ull << 23; // It's definitely a Symbol.
-static const SpeculatedType SpecCellOther          = 1ull << 24; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString or a Symbol. FIXME: This shouldn't be part of heap-top or bytecode-top. https://bugs.webkit.org/show_bug.cgi?id=133078
+static const SpeculatedType SpecCellOther          = 1ull << 24; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString or a Symbol.
 static const SpeculatedType SpecCell               = SpecObject | SpecString | SpecSymbol | SpecCellOther; // It's definitely a JSCell.
 static const SpeculatedType SpecBoolInt32          = 1ull << 25; // It's definitely an Int32 with value 0 or 1.
 static const SpeculatedType SpecNonBoolInt32       = 1ull << 26; // It's definitely an Int32 with value other than 0 or 1.

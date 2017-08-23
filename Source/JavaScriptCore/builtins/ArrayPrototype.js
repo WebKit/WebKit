@@ -28,6 +28,8 @@
 @globalPrivate
 function createArrayIterator(iteratedObject, kind, iterationFunction)
 {
+    "use strict";
+
     this.@iteratedObject = iteratedObject;
     this.@arrayIteratorKind = kind;
     this.@arrayIteratorNextIndex = 0;

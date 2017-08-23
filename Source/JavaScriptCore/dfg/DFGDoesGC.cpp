@@ -194,8 +194,10 @@ bool doesGC(Graph& graph, Node* node)
     case StringFromCharCode:
     case MapHash:
     case GetMapBucket:
-    case LoadFromJSMapBucket:
-    case IsNonEmptyMapBucket:
+    case GetMapBucketHead:
+    case GetMapBucketNext:
+    case LoadKeyFromMapBucket:
+    case LoadValueFromMapBucket:
     case Unreachable:
     case ExtractOSREntryLocal:
     case CheckTierUpInLoop:

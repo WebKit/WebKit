@@ -126,8 +126,6 @@ template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
     macro(JSPromise, promise, promise, JSPromise, Promise, object)
 
 #define FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(macro) \
-    macro(MapIterator, mapIterator, mapIterator, JSMapIterator, MapIterator, iterator) \
-    macro(SetIterator, setIterator, setIterator, JSSetIterator, SetIterator, iterator) \
     macro(StringIterator, stringIterator, stringIterator, JSStringIterator, StringIterator, iterator) \
 
 #define FOR_EACH_SIMPLE_BUILTIN_TYPE(macro) \

@@ -99,7 +99,6 @@
 #include "JSLexicalEnvironment.h"
 #include "JSLock.h"
 #include "JSMap.h"
-#include "JSMapIterator.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleLoader.h"
 #include "JSModuleNamespaceObject.h"
@@ -110,7 +109,6 @@
 #include "JSPromiseConstructor.h"
 #include "JSPromisePrototype.h"
 #include "JSSet.h"
-#include "JSSetIterator.h"
 #include "JSStringIterator.h"
 #include "JSTemplateRegistryKey.h"
 #include "JSTypedArrayConstructors.h"
@@ -752,6 +750,13 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSFunction* privateFuncIsArraySlow = JSFunction::create(vm, this, 0, String(), arrayConstructorPrivateFuncIsArraySlow);
     JSFunction* privateFuncConcatMemcpy = JSFunction::create(vm, this, 0, String(), arrayProtoPrivateFuncConcatMemcpy);
     JSFunction* privateFuncAppendMemcpy = JSFunction::create(vm, this, 0, String(), arrayProtoPrivateFuncAppendMemcpy);
+    JSFunction* privateFuncMapBucketHead = JSFunction::create(vm, this, 0, String(), mapPrivateFuncMapBucketHead, JSMapBucketHeadIntrinsic);
+    JSFunction* privateFuncMapBucketNext = JSFunction::create(vm, this, 0, String(), mapPrivateFuncMapBucketNext, JSMapBucketNextIntrinsic);
+    JSFunction* privateFuncMapBucketKey = JSFunction::create(vm, this, 0, String(), mapPrivateFuncMapBucketKey, JSMapBucketKeyIntrinsic);
+    JSFunction* privateFuncMapBucketValue = JSFunction::create(vm, this, 0, String(), mapPrivateFuncMapBucketValue, JSMapBucketValueIntrinsic);
+    JSFunction* privateFuncSetBucketHead = JSFunction::create(vm, this, 0, String(), setPrivateFuncSetBucketHead, JSSetBucketHeadIntrinsic);
+    JSFunction* privateFuncSetBucketNext = JSFunction::create(vm, this, 0, String(), setPrivateFuncSetBucketNext, JSSetBucketNextIntrinsic);
+    JSFunction* privateFuncSetBucketKey = JSFunction::create(vm, this, 0, String(), setPrivateFuncSetBucketKey, JSSetBucketKeyIntrinsic);
 
     JSObject* regExpProtoFlagsGetterObject = getGetterById(exec, m_regExpPrototype.get(), vm.propertyNames->flags);
     catchScope.assertNoException();
@@ -783,6 +788,12 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 
     JSObject* asyncFromSyncIteratorPrototype = AsyncFromSyncIteratorPrototype::create(vm, this, AsyncFromSyncIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
     AsyncFromSyncIteratorConstructorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, asyncFromSyncIteratorPrototype);
+
+    JSObject* mapIteratorPrototype = MapIteratorPrototype::create(vm, this, MapIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
+    createMapIteratorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, mapIteratorPrototype);
+
+    JSObject* setIteratorPrototype = SetIteratorPrototype::create(vm, this, SetIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
+    createSetIteratorPrivateFunction->putDirect(vm, vm.propertyNames->prototype, setIteratorPrototype);
 
     GlobalPropertyInfo staticGlobals[] = {
 #define INIT_PRIVATE_GLOBAL(name, code) GlobalPropertyInfo(vm.propertyNames->builtinNames().name ## PrivateName(), name ## PrivateFunction, DontEnum | DontDelete | ReadOnly),
@@ -818,15 +829,11 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->builtinNames().InternalPromisePrivateName(), internalPromiseConstructor, DontEnum | DontDelete | ReadOnly),
 
         GlobalPropertyInfo(vm.propertyNames->builtinNames().repeatCharacterPrivateName(), JSFunction::create(vm, this, 2, String(), stringProtoFuncRepeatCharacter), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->builtinNames().SetIteratorPrivateName(), JSFunction::create(vm, this, 1, String(), privateFuncSetIterator), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->builtinNames().setIteratorNextPrivateName(), JSFunction::create(vm, this, 0, String(), privateFuncSetIteratorNext), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().isArrayPrivateName(), arrayConstructor->getDirect(vm, vm.propertyNames->isArray), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().isArraySlowPrivateName(), privateFuncIsArraySlow, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().isArrayConstructorPrivateName(), privateFuncIsArrayConstructor, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().concatMemcpyPrivateName(), privateFuncConcatMemcpy, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().appendMemcpyPrivateName(), privateFuncAppendMemcpy, DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->builtinNames().MapIteratorPrivateName(), JSFunction::create(vm, this, 1, String(), privateFuncMapIterator), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->builtinNames().mapIteratorNextPrivateName(), JSFunction::create(vm, this, 0, String(), privateFuncMapIteratorNext), DontEnum | DontDelete | ReadOnly),
 
         GlobalPropertyInfo(vm.propertyNames->builtinNames().hostPromiseRejectionTrackerPrivateName(), JSFunction::create(vm, this, 2, String(), globalFuncHostPromiseRejectionTracker), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().InspectorInstrumentationPrivateName(), InspectorInstrumentationObject::create(vm, this, InspectorInstrumentationObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum | DontDelete | ReadOnly),
@@ -867,6 +874,15 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         // Function prototype helpers.
         GlobalPropertyInfo(vm.propertyNames->builtinNames().makeBoundFunctionPrivateName(), JSFunction::create(vm, this, 5, String(), makeBoundFunction), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().hasOwnLengthPropertyPrivateName(), JSFunction::create(vm, this, 1, String(), hasOwnLengthProperty), DontEnum | DontDelete | ReadOnly),
+
+        // Map and Set helpers.
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().mapBucketHeadPrivateName(), privateFuncMapBucketHead, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().mapBucketNextPrivateName(), privateFuncMapBucketNext, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().mapBucketKeyPrivateName(), privateFuncMapBucketKey, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().mapBucketValuePrivateName(), privateFuncMapBucketValue, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().setBucketHeadPrivateName(), privateFuncSetBucketHead, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().setBucketNextPrivateName(), privateFuncSetBucketNext, DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().setBucketKeyPrivateName(), privateFuncSetBucketKey, DontEnum | DontDelete | ReadOnly),
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
     
@@ -956,7 +972,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         }
 
         {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapIteratorPrototype.get(), m_vm.propertyNames->next);
+            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(mapIteratorPrototype, m_vm.propertyNames->next);
             m_mapIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_mapIteratorProtocolWatchpoint);
             m_mapIteratorPrototypeNextWatchpoint->install();
         }
@@ -967,7 +983,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         }
 
         {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setIteratorPrototype.get(), m_vm.propertyNames->next);
+            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(setIteratorPrototype, m_vm.propertyNames->next);
             m_setIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(vm, condition, m_setIteratorProtocolWatchpoint);
             m_setIteratorPrototypeNextWatchpoint->install();
         }

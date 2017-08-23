@@ -1048,16 +1048,28 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case LoadFromJSMapBucket:
+    case LoadKeyFromMapBucket:
+    case LoadValueFromMapBucket:
         forNode(node).makeHeapTop();
         break;
 
     case GetMapBucket:
-        forNode(node).setType(m_graph, SpecCellOther);
+    case GetMapBucketHead:
+        if (node->child1().useKind() == MapObjectUse)
+            forNode(node).set(m_graph, m_vm.hashMapBucketMapStructure.get());
+        else {
+            ASSERT(node->child1().useKind() == SetObjectUse);
+            forNode(node).set(m_graph, m_vm.hashMapBucketSetStructure.get());
+        }
         break;
 
-    case IsNonEmptyMapBucket:
-        forNode(node).setType(SpecBoolean);
+    case GetMapBucketNext:
+        if (node->bucketOwnerType() == BucketOwnerType::Map)
+            forNode(node).set(m_graph, m_vm.hashMapBucketMapStructure.get());
+        else {
+            ASSERT(node->bucketOwnerType() == BucketOwnerType::Set);
+            forNode(node).set(m_graph, m_vm.hashMapBucketSetStructure.get());
+        }
         break;
 
     case IsEmpty:

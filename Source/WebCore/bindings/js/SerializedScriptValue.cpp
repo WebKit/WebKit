@@ -1593,7 +1593,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 JSMap* inMap = jsCast<JSMap*>(inValue);
                 if (!startMap(inMap))
                     break;
-                JSMapIterator* iterator = JSMapIterator::create(vm, m_exec->lexicalGlobalObject()->mapIteratorStructure(), inMap, IterateKeyValue);
+                JSMapIterator* iterator = JSMapIterator::create(vm, vm.mapIteratorStructure.get(), inMap, IterateKeyValue);
                 m_gcBuffer.append(inMap);
                 m_gcBuffer.append(iterator);
                 mapIteratorStack.append(iterator);
@@ -1637,7 +1637,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 JSSet* inSet = jsCast<JSSet*>(inValue);
                 if (!startSet(inSet))
                     break;
-                JSSetIterator* iterator = JSSetIterator::create(vm, m_exec->lexicalGlobalObject()->setIteratorStructure(), inSet, IterateKey);
+                JSSetIterator* iterator = JSSetIterator::create(vm, vm.setIteratorStructure.get(), inSet, IterateKey);
                 m_gcBuffer.append(inSet);
                 m_gcBuffer.append(iterator);
                 setIteratorStack.append(iterator);

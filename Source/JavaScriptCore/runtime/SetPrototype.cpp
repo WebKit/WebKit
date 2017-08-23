@@ -32,7 +32,6 @@
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "JSSet.h"
-#include "JSSetIterator.h"
 #include "Lookup.h"
 
 #include "SetPrototype.lut.h"
@@ -44,6 +43,7 @@ const ClassInfo SetPrototype::s_info = { "Set", &Base::s_info, &setPrototypeTabl
 /* Source for SetIteratorPrototype.lut.h
 @begin setPrototypeTable
   forEach   JSBuiltin  DontEnum|Function 0
+  entries   JSBuiltin  DontEnum|Function 0
 @end
 */
 
@@ -51,8 +51,6 @@ static EncodedJSValue JSC_HOST_CALL setProtoFuncAdd(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncClear(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncDelete(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncHas(ExecState*);
-static EncodedJSValue JSC_HOST_CALL setProtoFuncValues(ExecState*);
-static EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(ExecState*);
 
 
 static EncodedJSValue JSC_HOST_CALL setProtoFuncSize(ExecState*);
@@ -69,9 +67,8 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, setProtoFuncHas, DontEnum, 1, JSSetHasIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().hasPrivateName(), setProtoFuncHas, DontEnum, 1, JSSetHasIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().addPrivateName(), setProtoFuncAdd, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().entriesPublicName(), setProtoFuncEntries, DontEnum, 0);
 
-    JSFunction* values = JSFunction::create(vm, globalObject, 0, vm.propertyNames->builtinNames().valuesPublicName().string(), setProtoFuncValues);
+    JSFunction* values = JSFunction::create(vm, setPrototypeValuesCodeGenerator(vm), globalObject);
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().valuesPublicName(), values, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().keysPublicName(), values, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, values, DontEnum);
@@ -136,49 +133,6 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncSize(CallFrame* callFrame)
     if (!set)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(jsNumber(set->size()));
-}
-    
-EncodedJSValue JSC_HOST_CALL setProtoFuncValues(CallFrame* callFrame)
-{
-    VM& vm = callFrame->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSSet* thisObj = jsDynamicCast<JSSet*>(vm, callFrame->thisValue());
-    if (!thisObj)
-        return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Set value iterator for a non-Set object.")));
-    return JSValue::encode(JSSetIterator::create(vm, callFrame->jsCallee()->globalObject()->setIteratorStructure(), thisObj, IterateValue));
-}
-
-EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(CallFrame* callFrame)
-{
-    VM& vm = callFrame->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSSet* thisObj = jsDynamicCast<JSSet*>(vm, callFrame->thisValue());
-    if (!thisObj)
-        return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Set entry iterator for a non-Set object.")));
-    return JSValue::encode(JSSetIterator::create(vm, callFrame->jsCallee()->globalObject()->setIteratorStructure(), thisObj, IterateKeyValue));
-}
-
-EncodedJSValue JSC_HOST_CALL privateFuncSetIterator(ExecState* exec)
-{
-
-    ASSERT(jsDynamicCast<JSSet*>(exec->vm(), exec->uncheckedArgument(0)));
-    JSSet* set = jsCast<JSSet*>(exec->uncheckedArgument(0));
-    return JSValue::encode(JSSetIterator::create(exec->vm(), exec->jsCallee()->globalObject()->setIteratorStructure(), set, IterateKey));
-}
-
-EncodedJSValue JSC_HOST_CALL privateFuncSetIteratorNext(ExecState* exec)
-{
-    ASSERT(jsDynamicCast<JSSetIterator*>(exec->vm(), exec->thisValue()));
-    JSSetIterator* iterator = jsCast<JSSetIterator*>(exec->thisValue());
-    JSValue result;
-    if (iterator->next(exec, result)) {
-        JSArray* resultArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
-        resultArray->putDirectIndex(exec, 0, result);
-        return JSValue::encode(jsBoolean(false));
-    }
-    return JSValue::encode(jsBoolean(true));
 }
 
 }

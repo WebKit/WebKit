@@ -23,6 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@constructor
+@globalPrivate
+function createSetIterator(iteratedObject, kind)
+{
+    "use strict";
+
+    @assert(@isSet(iteratedObject));
+    this.@iteratedObject = iteratedObject;
+    this.@setIteratorKind = kind;
+    this.@setBucket = @setBucketHead(iteratedObject);
+}
+
+function values()
+{
+    "use strict";
+
+    if (!@isSet(this))
+        @throwTypeError("Set.prototype.values requires that |this| be Set");
+
+    return new @createSetIterator(this, @iterationKindValue);
+}
+
+function entries()
+{
+    "use strict";
+
+    if (!@isSet(this))
+        @throwTypeError("Set.prototype.entries requires that |this| be Set");
+
+    return new @createSetIterator(this, @iterationKindKeyValue);
+}
+
 function forEach(callback /*, thisArg */)
 {
     "use strict";
@@ -34,13 +66,13 @@ function forEach(callback /*, thisArg */)
         @throwTypeError("Set.prototype.forEach callback must be a function");
 
     var thisArg = @argument(1);
-    var iterator = @SetIterator(this);
+    var bucket = @setBucketHead(this);
 
-    // To avoid object allocations for iterator result objects, we pass the placeholder to the special "next" function in order to fill the results.
-    var value = [ @undefined ];
-    for (;;) {
-        if (@setIteratorNext.@call(iterator, value))
+    do {
+        bucket = @setBucketNext(bucket);
+        if (bucket === @sentinelSetBucket)
             break;
-        callback.@call(thisArg, value[0], value[0], this);
-    }
+        var key = @setBucketKey(bucket);
+        callback.@call(thisArg, key, key, this);
+    } while (true);
 }

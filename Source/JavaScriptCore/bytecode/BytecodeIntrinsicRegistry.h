@@ -80,6 +80,8 @@ class Identifier;
     macro(promiseStatePending) \
     macro(promiseStateFulfilled) \
     macro(promiseStateRejected) \
+    macro(sentinelMapBucket) \
+    macro(sentinelSetBucket) \
     macro(GeneratorResumeModeNormal) \
     macro(GeneratorResumeModeThrow) \
     macro(GeneratorResumeModeReturn) \

@@ -383,8 +383,10 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case MapHash:
     case ToLowerCase:
     case GetMapBucket:
-    case LoadFromJSMapBucket:
-    case IsNonEmptyMapBucket:
+    case GetMapBucketHead:
+    case GetMapBucketNext:
+    case LoadKeyFromMapBucket:
+    case LoadValueFromMapBucket:
     case AtomicsAdd:
     case AtomicsAnd:
     case AtomicsCompareExchange:

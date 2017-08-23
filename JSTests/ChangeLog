@@ -1,3 +1,19 @@
+2017-08-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize Map iteration with intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=174355
+
+        Reviewed by Saam Barati.
+
+        * stress/map-iterator-result-should-have-expected-shape.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        * stress/set-iterator-result-should-have-expected-shape.js: Added.
+        (shouldBe):
+        (throw.new.Error.let.iterator.set Symbol):
+        (throw.new.Error.set add):
+        (let.iterator.set Symbol):
+
 2017-08-23  Robin Morisset  <rmorisset@apple.com>
 
         Add a micro-benchmark for checking that accessing a variable within a 'with'

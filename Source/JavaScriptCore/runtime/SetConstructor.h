@@ -60,4 +60,8 @@ private:
     static CallType getCallData(JSCell*, CallData&);
 };
 
+EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketHead(ExecState*);
+EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketNext(ExecState*);
+EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketKey(ExecState*);
+
 } // namespace JSC

@@ -30,13 +30,9 @@
 
 namespace JSC {
 
-class JSSetIterator;
-
 class JSSet final : public HashMapImpl<HashMapBucket<HashMapBucketDataKey>> {
     using Base = HashMapImpl<HashMapBucket<HashMapBucketDataKey>>;
 public:
-
-    friend class JSSetIterator;
 
     DECLARE_EXPORT_INFO;
 

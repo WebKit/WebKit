@@ -2868,7 +2868,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         Node* key = get(virtualRegisterForArgument(1, registerOffset));
         Node* hash = addToGraph(MapHash, key);
         Node* bucket = addToGraph(GetMapBucket, Edge(map, MapObjectUse), Edge(key), Edge(hash));
-        Node* result = addToGraph(LoadFromJSMapBucket, OpInfo(), OpInfo(prediction), bucket);
+        Node* result = addToGraph(LoadValueFromMapBucket, OpInfo(), OpInfo(prediction), bucket);
         set(VirtualRegister(resultOperand), result);
         return true;
     }
@@ -2884,7 +2884,60 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         Node* hash = addToGraph(MapHash, key);
         UseKind useKind = intrinsic == JSSetHasIntrinsic ? SetObjectUse : MapObjectUse;
         Node* bucket = addToGraph(GetMapBucket, OpInfo(0), Edge(mapOrSet, useKind), Edge(key), Edge(hash));
-        Node* result = addToGraph(IsNonEmptyMapBucket, bucket);
+        JSCell* sentinel = nullptr;
+        if (intrinsic == JSMapHasIntrinsic)
+            sentinel = m_vm->sentinelMapBucket.get();
+        else
+            sentinel = m_vm->sentinelSetBucket.get();
+
+        FrozenValue* frozenPointer = m_graph.freeze(sentinel);
+        Node* invertedResult = addToGraph(CompareEqPtr, OpInfo(frozenPointer), bucket);
+        Node* result = addToGraph(LogicalNot, invertedResult);
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
+    case JSSetBucketHeadIntrinsic:
+    case JSMapBucketHeadIntrinsic: {
+        ASSERT(argumentCountIncludingThis == 2);
+
+        insertChecks();
+        Node* map = get(virtualRegisterForArgument(1, registerOffset));
+        UseKind useKind = intrinsic == JSSetBucketHeadIntrinsic ? SetObjectUse : MapObjectUse;
+        Node* result = addToGraph(GetMapBucketHead, Edge(map, useKind));
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
+    case JSSetBucketNextIntrinsic:
+    case JSMapBucketNextIntrinsic: {
+        ASSERT(argumentCountIncludingThis == 2);
+
+        insertChecks();
+        Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
+        BucketOwnerType type = intrinsic == JSSetBucketNextIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
+        Node* result = addToGraph(GetMapBucketNext, OpInfo(type), bucket);
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
+    case JSSetBucketKeyIntrinsic:
+    case JSMapBucketKeyIntrinsic: {
+        ASSERT(argumentCountIncludingThis == 2);
+
+        insertChecks();
+        Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
+        Node* result = addToGraph(LoadKeyFromMapBucket, OpInfo(), OpInfo(prediction), bucket);
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
+    case JSMapBucketValueIntrinsic: {
+        ASSERT(argumentCountIncludingThis == 2);
+
+        insertChecks();
+        Node* bucket = get(virtualRegisterForArgument(1, registerOffset));
+        Node* result = addToGraph(LoadValueFromMapBucket, OpInfo(), OpInfo(prediction), bucket);
         set(VirtualRegister(resultOperand), result);
         return true;
     }

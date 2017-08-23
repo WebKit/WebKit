@@ -717,7 +717,8 @@ private:
         case GetGlobalLexicalVariable:
         case GetClosureVar:
         case GetFromArguments:
-        case LoadFromJSMapBucket:
+        case LoadKeyFromMapBucket:
+        case LoadValueFromMapBucket:
         case ToNumber:
         case GetArgument:
         case CallDOMGetter:
@@ -756,11 +757,11 @@ private:
         case MapHash:
             setPrediction(SpecInt32Only);
             break;
+
         case GetMapBucket:
+        case GetMapBucketHead:
+        case GetMapBucketNext:
             setPrediction(SpecCellOther);
-            break;
-        case IsNonEmptyMapBucket:
-            setPrediction(SpecBoolean);
             break;
 
         case GetRestLength:
