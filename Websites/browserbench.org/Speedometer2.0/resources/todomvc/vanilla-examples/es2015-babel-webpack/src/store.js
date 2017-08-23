@@ -2,6 +2,8 @@ import {remove} from './helpers'
 import * as localStorageMemory from './memory'
 export default Store
 
+var uniqueID = 1;
+
 /**
  * Creates a new client side storage object and will create an empty
  * collection if no collection already exists.
@@ -108,7 +110,7 @@ Store.prototype.save = function(updateData, callback, id) {
     callback.call(this, JSON.parse(localStorageMemory[this._dbName]).todos)
   } else {
     // Generate an ID
-    updateData.id = new Date().getTime()
+    updateData.id = uniqueID++;
 
     todos.push(updateData)
     localStorageMemory[this._dbName] = JSON.stringify(data)

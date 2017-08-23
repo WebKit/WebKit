@@ -1,5 +1,6 @@
 window.benchmarkClient = {
-    iterationCount: 20,
+    displayUnit: 'runs/min',
+    iterationCount: 10,
     testsCount: null,
     suitesCount: null,
     _timeValues: [],
@@ -30,8 +31,7 @@ window.benchmarkClient = {
     didFinishLastIteration: function () {
         document.getElementById('logo-link').onclick = null;
 
-        var displayUnit = location.search == '?ms' || location.hash == '#ms' ? 'ms' : 'runs/min';
-        var results = this._computeResults(this._timeValues, displayUnit);
+        var results = this._computeResults(this._timeValues, this.displayUnit);
 
         this._updateGaugeNeedle(results.mean);
         document.getElementById('result-number').textContent = results.formattedMean;
@@ -41,7 +41,7 @@ window.benchmarkClient = {
         this._populateDetailedResults(results.formattedValues);
         document.getElementById('results-with-statistics').textContent = results.formattedMeanAndDelta;
 
-        if (displayUnit == 'ms') {
+        if (this.displayUnit == 'ms') {
             document.getElementById('show-summary').style.display = 'none';
             showResultDetails();
         } else
@@ -150,6 +150,30 @@ window.benchmarkClient = {
 }
 
 function startBenchmark() {
+    if (location.search.length > 1) {
+        var parts = location.search.substring(1).split('&');
+        for (var i = 0; i < parts.length; i++) {
+            var keyValue = parts[i].split('=');
+            var key = keyValue[0];
+            var value = keyValue[1];
+            switch (key) {
+            case 'unit':
+                if (value == 'ms')
+                    benchmarkClient.displayUnit = 'ms';
+                else
+                    console.error('Invalid unit: ' + value);
+                break;
+            case 'iterationCount':
+                var parsedValue = parseInt(value);
+                if (!isNaN(parsedValue))
+                    benchmarkClient.iterationCount = parsedValue;
+                else
+                    console.error('Invalid iteration count: ' + value);
+                break;
+            }
+        }
+    }
+
     var enabledSuites = Suites.filter(function (suite) { return !suite.disabled });
     var totalSubtestCount = enabledSuites.reduce(function (testsCount, suite) { return testsCount + suite.tests.length; }, 0);
     benchmarkClient.testsCount = benchmarkClient.iterationCount * totalSubtestCount;

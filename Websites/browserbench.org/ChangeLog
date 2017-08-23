@@ -1,3 +1,25 @@
+2017-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge the latest version of Speedometer 2.0 to browserbench.org against at r221056.
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Speedometer2.0: Replaced with PerformanceTests/Speedometer.
+        * Speedometer2.0/resources/main.js:
+        (window.benchmarkClient.didFinishLastIteration):
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.9debb1b0a94f14d0ebe9.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.9debb1b0a94f14d0ebe9.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.a55034b424c795b1a9a8.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.a55034b424c795b1a9a8.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.bade2cb8992d8a68d0d7.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.bade2cb8992d8a68d0d7.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.9debb1b0a94f14d0ebe9.css: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.9debb1b0a94f14d0ebe9.css.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.bade2cb8992d8a68d0d7.css: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.bade2cb8992d8a68d0d7.css.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/store.js:
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015/src/store.js:
+
 2017-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge the latest version of Speedometer 2.0 to browserbench.org
