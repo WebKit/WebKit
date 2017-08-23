@@ -704,7 +704,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response)
     }
 #endif
 
-    frameLoader()->policyChecker().checkContentPolicy(m_response, [this](PolicyAction policy) {
+    frameLoader()->checkContentPolicy(m_response, [this](PolicyAction policy) {
         continueAfterContentPolicy(policy);
     });
 }

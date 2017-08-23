@@ -167,14 +167,6 @@ void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, const R
     });
 }
 
-void PolicyChecker::checkContentPolicy(const ResourceResponse& response, ContentPolicyDecisionFunction function)
-{
-    m_callback.set(WTFMove(function));
-    m_frame.loader().client().dispatchDecidePolicyForResponse(response, m_frame.loader().activeDocumentLoader()->request(), [this](PolicyAction action) {
-        continueAfterContentPolicy(action);
-    });
-}
-
 void PolicyChecker::cancelCheck()
 {
     m_frame.loader().client().cancelPolicyCheck();
@@ -249,12 +241,6 @@ void PolicyChecker::continueAfterNewWindowPolicy(PolicyAction policy)
     }
 
     callback.call(policy == PolicyUse);
-}
-
-void PolicyChecker::continueAfterContentPolicy(PolicyAction policy)
-{
-    PolicyCallback callback = WTFMove(m_callback);
-    callback.call(policy);
 }
 
 void PolicyChecker::handleUnimplementablePolicy(const ResourceError& error)
