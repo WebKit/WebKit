@@ -132,7 +132,7 @@ list(APPEND WebCore_SOURCES
 list(APPEND WebCorePlatformWPE_SOURCES
     editing/wpe/EditorWPE.cpp
 
-    page/wpe/EventHandlerWPE.cpp
+    platform/glib/EventHandlerGlib.cpp
 
     platform/graphics/egl/GLContextEGLWPE.cpp
 
