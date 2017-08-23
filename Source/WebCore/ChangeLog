@@ -1,3 +1,9 @@
+2017-08-23  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the WinCairo build after r221068
+
+        * platform/win/PlatformScreenWin.cpp:
+
 2017-08-23  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Enable persistent coder to encode FetchOptions

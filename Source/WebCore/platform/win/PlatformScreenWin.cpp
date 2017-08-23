@@ -30,11 +30,14 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "GraphicsContextCG.h"
 #include "HostWindow.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include <windows.h>
+
+#if USE(CG)
+#include "GraphicsContextCG.h"
+#endif
 
 namespace WebCore {
 
@@ -101,10 +104,12 @@ FloatRect screenAvailableRect(Widget* widget)
     return monitorInfo.rcWork;
 }
 
+#if USE(CG)
 CGColorSpaceRef screenColorSpace(Widget*)
 {
     return sRGBColorSpaceRef();
 }
+#endif
 
 bool screenSupportsExtendedColor(Widget*)
 {
