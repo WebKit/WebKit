@@ -1,3 +1,27 @@
+2017-08-23  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r221052): DumpRenderTree crashed in com.apple.JavaScriptCore: JSC::Yarr::YarrCodeBlock::execute + 137
+        https://bugs.webkit.org/show_bug.cgi?id=175903
+
+        Reviewed by Saam Barati.
+
+        In generateCharacterClassGreedy we were incrementing the "count" register before checking
+        for the end of the input string.  The at-end-of-input check is the final check before
+        knowing that the current character matched.  In this case, the end of input check
+        indicates that we ran out of prechecked characters and therefore should fail the match of
+        the current character.  The backtracking code uses the value in the "count" register as
+        the number of character that successfully matched, which shouldn't include the current
+        character.  Therefore we need to move the incrementing of "count" to after the
+        at end of input check.
+
+        Through code inspection of the expectations of other backtracking code, I determined that 
+        the non greedy character class matching code had a similar issue.  I fixed that as well
+        and added a new test case.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+
 2017-08-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Optimize Map iteration with intrinsic

@@ -1268,7 +1268,6 @@ class YarrGenerator : private MacroAssembler {
             matchDest.link(this);
         }
 
-        add32(TrustedImm32(1), countRegister);
         add32(TrustedImm32(1), index);
 #ifdef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs) {
@@ -1278,6 +1277,7 @@ class YarrGenerator : private MacroAssembler {
             isBMPChar.link(this);
         }
 #endif
+        add32(TrustedImm32(1), countRegister);
 
         if (term->quantityMaxCount != quantifyInfinite) {
             branch32(NotEqual, countRegister, Imm32(term->quantityMaxCount.unsafeGet())).linkTo(loop, this);
@@ -1374,15 +1374,16 @@ class YarrGenerator : private MacroAssembler {
             matchDest.link(this);
         }
 
-        add32(TrustedImm32(1), countRegister);
         add32(TrustedImm32(1), index);
 #ifdef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs) {
+            nonGreedyFailures.append(atEndOfInput());
             Jump isBMPChar = branch32(LessThan, character, supplementaryPlanesBase);
             add32(TrustedImm32(1), index);
             isBMPChar.link(this);
         }
 #endif
+        add32(TrustedImm32(1), countRegister);
 
         jump(op.m_reentry);
 

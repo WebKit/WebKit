@@ -119,6 +119,7 @@ PASS "𐐀".match(/\d*/u)[0].length is 0
 PASS "123𐐀".match(/\d*/u)[0] is "123"
 PASS "12X3𐐀4".match(/\d{0,1}/ug) is ["1", "2", "", "3", "", "4", ""]
 PASS "𐐂𐐅𐐅𐐂𐐅𐐅𐐅".match(/𐐅{3}/u)[0] is "𐐅𐐅𐐅"
+PASS "a𐐐𐐐b".match(/a(𐐐*?)bc|a(𐐐*?)b/ui)[0] is "a𐐐𐐐b"
 PASS match3[0] is "a𐐐𐐐b"
 PASS match3[1] is undefined.
 PASS match3[2] is "a𐐐𐐐b"
