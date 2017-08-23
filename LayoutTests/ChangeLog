@@ -1,3 +1,11 @@
+2017-08-23  Matt Lewis  <jlewis3@apple.com>
+
+        Removed flaky timeout expectation for inspector/codemirror/prettyprinting-css.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-08-22  Dean Jackson  <dino@apple.com>
 
         Default passive touch event listeners on the root
