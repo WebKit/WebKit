@@ -61,11 +61,15 @@ class MacPort(DarwinPort):
         if name == 'wk2':
             return None
         split_name = name.split('-')
-        if len(split_name) > 1 and split_name[1] != 'wk1' and split_name[1] != 'wk2':
-            os_name = apple_additions().mac_os_name(split_name[1])
+        os_index = -1
+        if split_name[-1] == 'wk1' or split_name[-1] == 'wk2':
+            os_index = -2
+        if split_name[os_index] != split_name[0]:
+            os_name = apple_additions().mac_os_name(split_name[os_index])
             if not os_name:
                 return None
-            name = split_name[0] + '-' + os_name + ('-' + '-'.join(split_name[2:])) if len(split_name) > 2 else ''
+            split_name[os_index] = os_name
+        name = '-'.join(split_name)
         return self._filesystem.join(apple_additions().layout_tests_path(), name)
 
     @memoized

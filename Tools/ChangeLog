@@ -4,6 +4,34 @@
         https://bugs.webkit.org/show_bug.cgi?id=174800
         <rdar://problem/33498899>
 
+        Reviewed by David Kilzer.
+
+        Follow-up fix. Mapping of operating system names was done incorrectly.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort._apple_additions_path): Correctly find the operating system to be replaced.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_layout_test_searchpath_with_apple_additions): Add test for operating
+        system name replacement.
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest.test_layout_test_searchpath_with_apple_additions): Add test for operating
+        system name replacement.
+        * Scripts/webkitpy/port/mac.py: Correctly find the operating system to be replaced.
+        (MacPort._apple_additions_path):
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_layout_test_searchpath_with_apple_additions): Add test for operating system
+        name replacement.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (bind_mock_apple_additions.MockAppleAdditions.ios_os_name): Change the passed name so that
+        operating system name replacement can be tested.
+        (bind_mock_apple_additions.MockAppleAdditions.mac_os_name): Ditto.
+
+2017-08-23  Jonathan Bedard  <jbedard@apple.com>
+
+        Access expectations path through apple_additions
+        https://bugs.webkit.org/show_bug.cgi?id=174800
+        <rdar://problem/33498899>
+
         Reviewed by Alexey Proskuryakov.
 
         When external test expectations are imported through additional-platform-directory, they will

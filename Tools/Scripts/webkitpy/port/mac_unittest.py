@@ -146,5 +146,7 @@ class MacTest(darwin_testcase.DarwinTest):
     def test_layout_test_searchpath_with_apple_additions(self):
         with port_testcase.bind_mock_apple_additions():
             search_path = self.make_port().default_baseline_search_path()
-        self.assertEqual(search_path[0], '/additional_testing_path/mac-lion-wk1')
+        self.assertEqual(search_path[0], '/additional_testing_path/mac-add-lion-wk1')
         self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-lion-wk1')
+        self.assertEqual(search_path[2], '/additional_testing_path/mac-add-lion')
+        self.assertEqual(search_path[3], '/mock-checkout/LayoutTests/platform/mac-lion')

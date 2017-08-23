@@ -87,11 +87,11 @@ def bind_mock_apple_additions():
 
         @staticmethod
         def ios_os_name(name):
-            return name
+            return 'add-{}'.format(name)
 
         @staticmethod
         def mac_os_name(name):
-            return name
+            return 'add-{}'.format(name)
 
     # apple_additions is a memoized function. Take advantage of this fact and manipulate the cache
     # to temporarily return a mocked result

@@ -91,11 +91,16 @@ class IOSPort(DarwinPort):
         if name == 'wk2':
             return None
         split_name = name.split('-')
-        if len(split_name) > 1 and split_name[1] != 'wk1' and split_name[1] != 'wk2' and split_name[1] != 'simulator' and split_name[1] != 'device':
-            os_name = apple_additions().ios_os_name(split_name[1])
+        os_index = -1
+        for i in xrange(2):
+            if split_name[os_index] == 'wk1' or split_name[os_index] == 'wk2' or split_name[os_index] == 'simulator' or split_name[os_index] == 'device':
+                os_index -= 1
+        if split_name[os_index] != split_name[0]:
+            os_name = apple_additions().mac_os_name(split_name[os_index])
             if not os_name:
                 return None
-            name = split_name[0] + '-' + os_name + ('-' + '-'.join(split_name[2:]) if len(split_name) > 2 else '')
+            split_name[os_index] = os_name
+        name = '-'.join(split_name)
         return self._filesystem.join(apple_additions().layout_tests_path(), name)
 
     @memoized
