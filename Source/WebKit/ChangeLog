@@ -1,3 +1,18 @@
+2017-08-23  Youenn Fablet  <youenn@apple.com>
+
+        CacheStorageEngine readCachesFromDisk callback should return the read Caches
+        https://bugs.webkit.org/show_bug.cgi?id=175882
+
+        Reviewed by Alex Christensen.
+
+        Callback of readCachesFromDisk takes now a Caches or error parameter.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorageEngine::open):
+        (WebKit::CacheStorageEngine::retrieveCaches):
+        (WebKit::CacheStorageEngine::readCachesFromDisk):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+
 2017-08-23  Chris Dumez  <cdumez@apple.com>
 
         Regression(r221059): NetworkDataTask::didReceiveResponse() should not use PolicyUse for HTTP/0.9

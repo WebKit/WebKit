@@ -64,15 +64,13 @@ CacheStorageEngine& CacheStorageEngine::defaultEngine()
 
 void CacheStorageEngine::open(const String& origin, const String& cacheName, CacheIdentifierCallback&& callback)
 {
-    readCachesFromDisk([this, origin, cacheName, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
-        if (error) {
-            callback(makeUnexpected(error.value()));
+    readCachesFromDisk(origin, [this, cacheName, callback = WTFMove(callback)](CachesOrError&& cachesOrError) mutable {
+        if (!cachesOrError.hasValue()) {
+            callback(makeUnexpected(cachesOrError.error()));
             return;
         }
 
-        auto& caches = m_caches.ensure(origin, [] {
-            return Vector<Cache>();
-        }).iterator->value;
+        auto& caches = cachesOrError.value().get();
 
         auto position = caches.findMatching([&](const auto& item) { return item.name == cacheName; });
         if (position == notFound) {
@@ -118,12 +116,20 @@ void CacheStorageEngine::remove(uint64_t cacheIdentifier, CacheIdentifierCallbac
 
 void CacheStorageEngine::retrieveCaches(const String& origin, CacheInfosCallback&& callback)
 {
-    readCachesFromDisk([this, origin, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
-        if (error) {
-            callback(makeUnexpected(error.value()));
+    readCachesFromDisk(origin, [this, callback = WTFMove(callback)](CachesOrError&& cachesOrError) mutable {
+        if (!cachesOrError.hasValue()) {
+            callback(makeUnexpected(cachesOrError.error()));
             return;
         }
-        callback(caches(origin));
+
+        auto& caches = cachesOrError.value().get();
+
+        Vector<WebCore::CacheStorageConnection::CacheInfo> cachesInfo;
+        cachesInfo.reserveInitialCapacity(caches.size());
+        for (auto& cache : caches)
+            cachesInfo.uncheckedAppend(WebCore::CacheStorageConnection::CacheInfo { cache.identifier, cache.name});
+
+        callback(WTFMove(cachesInfo));
     });
 }
 
@@ -230,10 +236,15 @@ void CacheStorageEngine::writeCachesToDisk(Function<void(std::optional<Error>&&)
     callback(std::nullopt);
 }
 
-void CacheStorageEngine::readCachesFromDisk(CompletionCallback&& callback)
+void CacheStorageEngine::readCachesFromDisk(const String& origin, CachesCallback&& callback)
 {
     // FIXME: Implement reading.
-    callback(std::nullopt);
+
+    auto& caches = m_caches.ensure(origin, [] {
+        return Vector<Cache>();
+    }).iterator->value;
+
+    callback(std::reference_wrapper<Vector<Cache>> { caches });
 }
 
 void CacheStorageEngine::readCache(uint64_t cacheIdentifier, CacheCallback&& callback)
@@ -275,20 +286,6 @@ CacheStorageEngine::Cache* CacheStorageEngine::cache(uint64_t cacheIdentifier)
             result = &m_removedCaches[position];
     }
     return result;
-}
-
-Vector<WebCore::CacheStorageConnection::CacheInfo> CacheStorageEngine::caches(const String& origin) const
-{
-    auto iterator = m_caches.find(origin);
-    if (iterator == m_caches.end())
-        return { };
-
-    Vector<WebCore::CacheStorageConnection::CacheInfo> cachesInfo;
-    cachesInfo.reserveInitialCapacity(iterator->value.size());
-    for (auto& cache : iterator->value)
-        cachesInfo.uncheckedAppend(WebCore::CacheStorageConnection::CacheInfo { cache.identifier, cache.name});
-
-    return cachesInfo;
 }
 
 Vector<uint64_t> CacheStorageEngine::queryCache(const Vector<Record>& records, const WebCore::ResourceRequest& request, const WebCore::CacheQueryOptions& options)

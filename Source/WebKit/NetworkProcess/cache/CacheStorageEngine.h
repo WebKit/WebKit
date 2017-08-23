@@ -79,9 +79,6 @@ public:
 private:
     static CacheStorageEngine& defaultEngine();
 
-    void writeCachesToDisk(CompletionCallback&&);
-    void readCachesFromDisk(CompletionCallback&&);
-
     struct Cache {
         uint64_t identifier;
         String name;
@@ -89,10 +86,14 @@ private:
         uint64_t nextRecordIdentifier { 0 };
     };
 
+    void writeCachesToDisk(CompletionCallback&&);
+
+    using CachesOrError = Expected<std::reference_wrapper<Vector<Cache>>, Error>;
+    using CachesCallback = Function<void(CachesOrError&&)>;
+    void readCachesFromDisk(const String& origin, Function<void(CachesOrError&&)>&&);
+
     using CacheOrError = Expected<std::reference_wrapper<Cache>, Error>;
     using CacheCallback = Function<void(CacheOrError&&)>;
-
-    Vector<WebCore::CacheStorageConnection::CacheInfo> caches(const String& origin) const;
 
     void readCache(uint64_t cacheIdentifier, CacheCallback&&);
     void writeCacheRecords(uint64_t cacheIdentifier, Vector<uint64_t>&&, RecordIdentifiersCallback&&);
