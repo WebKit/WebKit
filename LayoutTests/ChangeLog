@@ -1,5 +1,18 @@
 2017-08-22  Matt Lewis  <jlewis3@apple.com>
 
+        Unreviewed, rolling out r221033.
+
+        This revision caused assertion failures on all Open Source
+        Debug testers. See Radar for more information.
+
+        Reverted changeset:
+
+        "Ensure media controls host exists before using it"
+        https://bugs.webkit.org/show_bug.cgi?id=175833
+        http://trac.webkit.org/changeset/221033
+
+2017-08-22  Matt Lewis  <jlewis3@apple.com>
+
         Marked http/tests/loading/basic-auth-remove-credentials.html as falky on macOS.
         https://bugs.webkit.org/show_bug.cgi?id=173500
 

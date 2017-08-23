@@ -5967,8 +5967,6 @@ void HTMLMediaElement::updateTextTrackDisplay()
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     ensureMediaControlsShadowRoot();
     ASSERT(m_mediaControlsHost);
-    if (!m_mediaControlsHost)
-        m_mediaControlsHost = MediaControlsHost::create(this);
     m_mediaControlsHost->updateTextTrackContainer();
 #else
     if (!hasMediaControls() && !createMediaControls())
