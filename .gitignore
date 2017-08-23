@@ -5,6 +5,7 @@
 .DS_Store
 .directory
 build/
+!/PerformanceTests/Speedometer/**/build/
 /WebKitBuild/
 autoinstall.cache.d
 project.xcworkspace
