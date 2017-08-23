@@ -60,11 +60,14 @@
     <CreateItem Include="$(ConfigurationBuildDir)\build32\DerivedSources\ForwardingHeaders\WTF\**\*.*">
       <Output TaskParameter="Include" ItemName="IncFiles" />
     </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\build32\DerivedSources\WTF\**\*.h">
+      <Output TaskParameter="Include" ItemName="DerivedIncFiles" />
+    </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\*">
-       <Output TaskParameter="Include" ItemName="Bin32Files" />
+      <Output TaskParameter="Include" ItemName="Bin32Files" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\*">
-       <Output TaskParameter="Include" ItemName="Bin64Files" />
+      <Output TaskParameter="Include" ItemName="Bin64Files" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\WTF$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin32DLLFiles" />
@@ -86,6 +89,7 @@
     </CreateItem>
  
     <Copy SourceFiles="@(IncFiles)" DestinationFiles="@(IncFiles->'$(DSTROOT)\AppleInternal\include\private\wtf\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(DerivedIncFiles)" DestinationFiles="@(DerivedIncFiles->'$(DSTROOT)\AppleInternal\include\private\wtf\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Lib32Files)" DestinationFolder="$(AppleInternalLib32)" />
     <Copy SourceFiles="@(Lib64Files)" DestinationFolder="$(AppleInternalLib64)" />
     <Copy SourceFiles="@(Bin32DLLFiles)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS32)" />
