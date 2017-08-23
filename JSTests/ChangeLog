@@ -1,3 +1,13 @@
+2017-08-23  JF Bastien  <jfbastien@apple.com>
+
+        Fix printing in test
+
+        Unreviewed: fixing verbosity, shouldn't have been there.
+
+        * wasm/regress/175693.js:
+        (else.else):
+        (catch):
+
 2017-08-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip flaky JSC test microbenchmarks/generator-with-several-types.js.
