@@ -824,7 +824,7 @@ RefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
     if (!snapshot)
         return nullptr;
 
-    auto sharedSnapshot = ShareableBitmap::createShareable(snapshot->internalSize(), ShareableBitmap::SupportsAlpha);
+    auto sharedSnapshot = ShareableBitmap::createShareable(snapshot->internalSize(), { });
     if (!sharedSnapshot)
         return nullptr;
 

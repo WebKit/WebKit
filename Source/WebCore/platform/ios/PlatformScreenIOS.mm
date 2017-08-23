@@ -30,6 +30,7 @@
 #import "FloatRect.h"
 #import "FloatSize.h"
 #import "FrameView.h"
+#import "GraphicsContextCG.h"
 #import "HostWindow.h"
 #import "IntRect.h"
 #import "WAKWindow.h"
@@ -72,6 +73,11 @@ bool screenHasInvertedColors()
 bool screenSupportsExtendedColor(Widget*)
 {
     return MGGetBoolAnswer(kMGQHasExtendedColorDisplay);
+}
+
+CGColorSpaceRef screenColorSpace(Widget* widget)
+{
+    return screenSupportsExtendedColor(widget) ? extendedSRGBColorSpaceRef() : sRGBColorSpaceRef();
 }
 
 // These functions scale between screen and page coordinates because JavaScript/DOM operations

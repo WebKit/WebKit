@@ -930,9 +930,6 @@ inline SnapshotOptions snapshotOptionsFromImageOptions(WKImageOptions wkImageOpt
 
     if (wkImageOptions & kWKImageOptionsShareable)
         snapshotOptions |= SnapshotOptionsShareable;
-
-    if (wkImageOptions & kWKSnapshotOptionsExtendedColor)
-        snapshotOptions |= SnapshotOptionsExtendedColor;
     
     return snapshotOptions;
 }
@@ -955,6 +952,8 @@ inline SnapshotOptions toSnapshotOptions(WKSnapshotOptions wkSnapshotOptions)
         snapshotOptions |= SnapshotOptionsForceWhiteText;
     if (wkSnapshotOptions & kWKSnapshotOptionsPrinting)
         snapshotOptions |= SnapshotOptionsPrinting;
+    if (wkSnapshotOptions & kWKSnapshotOptionsExtendedColor)
+        snapshotOptions |= SnapshotOptionsUseScreenColorSpace;
 
     return snapshotOptions;
 }

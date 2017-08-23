@@ -212,8 +212,11 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
     ASSERT(!m_acceleratesDrawing);
     std::swap(m_frontBuffer, m_backBuffer);
 
-    if (!m_frontBuffer.bitmap)
-        m_frontBuffer.bitmap = ShareableBitmap::createShareable(expandedScaledSize, m_isOpaque ? ShareableBitmap::NoFlags : ShareableBitmap::SupportsAlpha);
+    if (!m_frontBuffer.bitmap) {
+        ShareableBitmap::Configuration bitmapConfiguration;
+        bitmapConfiguration.isOpaque = m_isOpaque;
+        m_frontBuffer.bitmap = ShareableBitmap::createShareable(expandedScaledSize, bitmapConfiguration);
+    }
 }
 
 bool RemoteLayerBackingStore::display()

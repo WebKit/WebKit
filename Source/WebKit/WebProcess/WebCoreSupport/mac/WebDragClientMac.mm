@@ -41,7 +41,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameDestructionObserver.h>
 #import <WebCore/FrameView.h>
-#import <WebCore/GraphicsContext.h>
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/NotImplemented.h>
@@ -67,12 +67,9 @@ namespace WebKit {
 
 static RefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSize& size, Frame& frame)
 {
-    ShareableBitmap::Flags flags = ShareableBitmap::SupportsAlpha;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    if (screenSupportsExtendedColor(frame.mainFrame().view()))
-        flags |= ShareableBitmap::SupportsExtendedColor;
-#endif
-    auto bitmap = ShareableBitmap::createShareable(size, flags);
+    ShareableBitmap::Configuration bitmapConfiguration;
+    bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(frame.mainFrame().view());
+    auto bitmap = ShareableBitmap::createShareable(size, bitmapConfiguration);
     if (!bitmap)
         return nullptr;
 
@@ -195,7 +192,9 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
 static RefPtr<ShareableBitmap> convertCGImageToBitmap(CGImageRef image, const IntSize& size, Frame& frame)
 {
-    auto bitmap = ShareableBitmap::createShareable(size, ShareableBitmap::SupportsAlpha | ShareableBitmap::SupportsExtendedColor);
+    ShareableBitmap::Configuration bitmapConfiguration;
+    bitmapConfiguration.colorSpace.cgColorSpace = screenColorSpace(frame.mainFrame().view());
+    auto bitmap = ShareableBitmap::createShareable(size, bitmapConfiguration);
     if (!bitmap)
         return nullptr;
 

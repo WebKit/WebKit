@@ -64,8 +64,8 @@ ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLoca
     if (!image)
         return;
 
-    // FIXME: figure out the rounding startegy for ShareableBitmap.
-    m_controlledImage = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
+    // FIXME: figure out the rounding strategy for ShareableBitmap.
+    m_controlledImage = ShareableBitmap::createShareable(IntSize(image->size()), { });
     m_controlledImage->createGraphicsContext()->drawImage(*image, IntPoint());
 #endif
 }

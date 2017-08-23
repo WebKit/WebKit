@@ -41,6 +41,10 @@ typedef struct _NSPoint NSPoint;
 OBJC_CLASS UIScreen;
 #endif
 
+#if USE(CG)
+typedef struct CGColorSpace *CGColorSpaceRef;
+#endif
+
 namespace WebCore {
 
 class FloatRect;
@@ -59,6 +63,10 @@ FloatRect screenRect(Widget*);
 FloatRect screenAvailableRect(Widget*);
 
 WEBCORE_EXPORT bool screenSupportsExtendedColor(Widget* = nullptr);
+
+#if USE(CG)
+WEBCORE_EXPORT CGColorSpaceRef screenColorSpace(Widget* = nullptr);
+#endif
 
 #if PLATFORM(MAC)
 

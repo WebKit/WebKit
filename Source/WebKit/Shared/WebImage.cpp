@@ -26,25 +26,24 @@
 #include "config.h"
 #include "WebImage.h"
 
-#include "ShareableBitmap.h"
-
 using namespace WebCore;
 
 namespace WebKit {
 
 RefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options)
 {
-    int sharableOptions = ShareableBitmap::SupportsAlpha;
-    
-    if (options & ImageOptionsExtendedColor)
-        sharableOptions |= ShareableBitmap::SupportsExtendedColor;
+    return WebImage::create(size, options, { });
+}
+
+RefPtr<WebImage> WebImage::create(const WebCore::IntSize& size, ImageOptions options, const ShareableBitmap::Configuration& bitmapConfiguration)
+{
     if (options & ImageOptionsShareable) {
-        auto bitmap = ShareableBitmap::createShareable(size, sharableOptions);
+        auto bitmap = ShareableBitmap::createShareable(size, bitmapConfiguration);
         if (!bitmap)
             return nullptr;
         return WebImage::create(bitmap.releaseNonNull());
     }
-    auto bitmap = ShareableBitmap::create(size, sharableOptions);
+    auto bitmap = ShareableBitmap::create(size, bitmapConfiguration);
     if (!bitmap)
         return nullptr;
     return WebImage::create(bitmap.releaseNonNull());

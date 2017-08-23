@@ -33,16 +33,8 @@
 using namespace WebCore;
 
 namespace WebKit {
-    
-static unsigned calculateBytesPerPixel(ShareableBitmap::Flags flags)
-{
-    if (flags & ShareableBitmap::SupportsExtendedColor)
-        return 8; // for extended color, we are using half-float representations
-    return 4;
-}
 
 ShareableBitmap::Handle::Handle()
-    : m_flags(0)
 {
 }
 
@@ -50,7 +42,7 @@ void ShareableBitmap::Handle::encode(IPC::Encoder& encoder) const
 {
     encoder << m_handle;
     encoder << m_size;
-    encoder << m_flags;
+    encoder << m_configuration;
 }
 
 bool ShareableBitmap::Handle::decode(IPC::Decoder& decoder, Handle& handle)
@@ -59,9 +51,8 @@ bool ShareableBitmap::Handle::decode(IPC::Decoder& decoder, Handle& handle)
         return false;
     if (!decoder.decode(handle.m_size))
         return false;
-    if (!decoder.decode(handle.m_flags))
+    if (!decoder.decode(handle.m_configuration))
         return false;
-    handle.m_bytesPerPixel = calculateBytesPerPixel(handle.m_flags);
     return true;
 }
 
@@ -69,14 +60,31 @@ void ShareableBitmap::Handle::clear()
 {
     m_handle.clear();
     m_size = IntSize();
-    m_flags = Flag::NoFlags;
-    m_bytesPerPixel = calculateBytesPerPixel(m_flags);
+    m_configuration = { };
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags)
+void ShareableBitmap::Configuration::encode(IPC::Encoder& encoder) const
 {
-    unsigned bytesPerPixel = calculateBytesPerPixel(flags);
-    auto numBytes = numBytesForSize(size, bytesPerPixel);
+    encoder << isOpaque;
+#if PLATFORM(COCOA)
+    encoder << colorSpace;
+#endif
+}
+
+bool ShareableBitmap::Configuration::decode(IPC::Decoder& decoder, Configuration& configuration)
+{
+    if (!decoder.decode(configuration.isOpaque))
+        return false;
+#if PLATFORM(COCOA)
+    if (!decoder.decode(configuration.colorSpace))
+        return false;
+#endif
+    return true;
+}
+
+RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configuration configuration)
+{
+    auto numBytes = numBytesForSize(size, calculateBytesPerPixel(configuration));
     if (numBytes.hasOverflowed())
         return nullptr;
 
@@ -84,13 +92,12 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags
     if (!tryFastMalloc(numBytes.unsafeGet()).getValue(data))
         return nullptr;
 
-    return adoptRef(new ShareableBitmap(size, flags, data));
+    return adoptRef(new ShareableBitmap(size, configuration, data));
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Flags flags)
+RefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Configuration configuration)
 {
-    unsigned bytesPerPixel = calculateBytesPerPixel(flags);
-    auto numBytes = numBytesForSize(size, bytesPerPixel);
+    auto numBytes = numBytesForSize(size, calculateBytesPerPixel(configuration));
     if (numBytes.hasOverflowed())
         return nullptr;
 
@@ -98,15 +105,14 @@ RefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Fl
     if (!sharedMemory)
         return nullptr;
 
-    return adoptRef(new ShareableBitmap(size, flags, sharedMemory));
+    return adoptRef(new ShareableBitmap(size, configuration, sharedMemory));
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags, RefPtr<SharedMemory> sharedMemory)
+RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configuration configuration, RefPtr<SharedMemory> sharedMemory)
 {
     ASSERT(sharedMemory);
 
-    unsigned bytesPerPixel = calculateBytesPerPixel(flags);
-    auto numBytes = numBytesForSize(size, bytesPerPixel);
+    auto numBytes = numBytesForSize(size, calculateBytesPerPixel(configuration));
     if (numBytes.hasOverflowed())
         return nullptr;
     if (sharedMemory->size() < numBytes.unsafeGet()) {
@@ -114,7 +120,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags
         return nullptr;
     }
     
-    return adoptRef(new ShareableBitmap(size, flags, sharedMemory));
+    return adoptRef(new ShareableBitmap(size, configuration, sharedMemory));
 }
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, SharedMemory::Protection protection)
@@ -124,7 +130,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, SharedMemo
     if (!sharedMemory)
         return nullptr;
 
-    return create(handle.m_size, handle.m_flags, WTFMove(sharedMemory));
+    return create(handle.m_size, handle.m_configuration, WTFMove(sharedMemory));
 }
 
 bool ShareableBitmap::createHandle(Handle& handle, SharedMemory::Protection protection) const
@@ -134,26 +140,23 @@ bool ShareableBitmap::createHandle(Handle& handle, SharedMemory::Protection prot
     if (!m_sharedMemory->createHandle(handle.m_handle, protection))
         return false;
     handle.m_size = m_size;
-    handle.m_flags = m_flags;
-    handle.m_bytesPerPixel = m_bytesPerPixel;
+    handle.m_configuration = m_configuration;
     return true;
 }
 
-ShareableBitmap::ShareableBitmap(const IntSize& size, Flags flags, void* data)
+ShareableBitmap::ShareableBitmap(const IntSize& size, Configuration configuration, void* data)
     : m_size(size)
-    , m_flags(flags)
+    , m_configuration(configuration)
     , m_data(data)
 {
-    m_bytesPerPixel = calculateBytesPerPixel(flags);
 }
 
-ShareableBitmap::ShareableBitmap(const IntSize& size, Flags flags, RefPtr<SharedMemory> sharedMemory)
+ShareableBitmap::ShareableBitmap(const IntSize& size, Configuration configuration, RefPtr<SharedMemory> sharedMemory)
     : m_size(size)
-    , m_flags(flags)
+    , m_configuration(configuration)
     , m_sharedMemory(sharedMemory)
-    , m_data(0)
+    , m_data(nullptr)
 {
-    m_bytesPerPixel = calculateBytesPerPixel(flags);
 }
 
 ShareableBitmap::~ShareableBitmap()
@@ -170,5 +173,12 @@ void* ShareableBitmap::data() const
     ASSERT(m_data);
     return m_data;
 }
+
+#if !USE(CG)
+unsigned ShareableBitmap::calculateBytesPerPixel(const Configuration&)
+{
+    return 4;
+}
+#endif
 
 } // namespace WebKit

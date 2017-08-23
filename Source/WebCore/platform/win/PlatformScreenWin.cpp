@@ -30,6 +30,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GraphicsContextCG.h"
 #include "HostWindow.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
@@ -98,6 +99,11 @@ FloatRect screenAvailableRect(Widget* widget)
 {
     MONITORINFOEX monitorInfo = monitorInfoForWidget(widget);
     return monitorInfo.rcWork;
+}
+
+CGColorSpaceRef screenColorSpace(Widget*)
+{
+    return sRGBColorSpaceRef();
 }
 
 bool screenSupportsExtendedColor(Widget*)

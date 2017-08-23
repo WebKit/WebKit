@@ -1,3 +1,122 @@
+2017-08-22  Tim Horton  <timothy_horton@apple.com>
+
+        _WKThumbnailView should use the screen color space instead of sRGB
+        https://bugs.webkit.org/show_bug.cgi?id=175858
+        <rdar://problem/33925559>
+
+        Reviewed by Dean Jackson.
+
+        Currently, _WKThumbnailView uses software snapshotting via
+        WebPage's takeSnapshot and friends, which always use sRGB.
+        However, it is immediately presented in display space, which
+        causes an expensive color conversion, which could have been avoided
+        if the snapshot was instead originally taken in display space.
+
+        To solve this, add:
+
+        - a mechanism allowing ShareableBitmap to be constructed with a
+          configuration, which can include a color space as well as the
+          existing flags (flipping SupportsAlpha to be IsOpaque instead
+          because most callers want alpha)
+
+        - a WebImage constructor allowing callers to pass a ShareableBitmap
+          configuration through
+
+        - a bit in SnapshotOptions for callers to indicate that they
+          want to snapshot in the display's color space (repurposed
+          from the ExtendedColor bit)
+
+        And then make use of that bit in _WKThumbnailView.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::snapshotOptionsFromImageOptions):
+        Remove this incorrect conversion (WKImageOptions doesn't include
+        kWKSnapshotOptionsExtendedColor).
+
+        (WebKit::toSnapshotOptions):
+        Plumb kWKSnapshotOptionsExtendedColor to WebKit::SnapshotOptions
+        as the "UseScreenColorSpace". Leave the SPI name intact because
+        it has clients, but the difference isn't so huge that it will be
+        a problem.
+
+        * Shared/ImageOptions.h:
+        (WebKit::snapshotOptionsToImageOptions):
+        Remove ImageOptionsExtendedColor, and rename
+        SnapshotOptionsExtendedColor to SnapshotOptionsUseScreenColorSpace.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Handle::Handle):
+        (WebKit::ShareableBitmap::Handle::encode const):
+        (WebKit::ShareableBitmap::Handle::decode):
+        (WebKit::ShareableBitmap::Handle::clear):
+        (WebKit::ShareableBitmap::Configuration::encode const):
+        (WebKit::ShareableBitmap::Configuration::decode):
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createShareable):
+        (WebKit::ShareableBitmap::createHandle const):
+        (WebKit::ShareableBitmap::ShareableBitmap):
+        (WebKit::ShareableBitmap::calculateBytesPerPixel):
+        (WebKit::calculateBytesPerPixel): Deleted.
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::numBytesForSize):
+        (WebKit::ShareableBitmap::sizeInBytes const):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::colorSpace):
+        (WebKit::bitmapInfo):
+        (WebKit::ShareableBitmap::calculateBytesPerPixel):
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::createCGImage const):
+        Remove ShareableBitmap's flags parameter, and replace it with
+        a configuration parameter. Configuration is a struct that currently
+        encompasses the newly-flipped IsOpaque bit and (on Cocoa platforms)
+        a platform colorspace object. Compute bytesPerPixel dynamically
+        based on the colorspace and whether it uses extended colors or not.
+
+        * Shared/WebImage.cpp:
+        (WebKit::WebImage::create):
+        * Shared/WebImage.h:
+        Pass ShareableBitmap::Configuration through to the ShareableBitmap
+        constructor, if provided.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView requestSnapshot]):
+        Make use of the new bit, and use the screen's color space.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::snapshotOptionsToBitmapConfiguration):
+        (WebKit::WebPage::snapshotAtSize):
+        (WebKit::WebPage::snapshotNode):
+        If the snapshot option to use the display color space is set,
+        fill in the colorSpace field in the ShareableBitmap::Configuration
+        with the screen's color space.
+
+        (WebKit::WebPage::drawRectToImage):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeImage):
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::snapshot):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::snapshot):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+        (WebKit::PluginProxy::updateBackingStore):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+        (WebKit::convertCGImageToBitmap):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createSelectionSnapshot const):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        Adopt ShareableBitmap::Configuration. Since IsOpaque
+        defaults to false, all callers who previously constructed
+        ShareableBitmap with SupportsAlpha now don't have to do anything.
+
 2017-08-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] WKWebView schedules nonstop layout after pressing cmb+b,i,u inside a contenteditable div

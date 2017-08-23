@@ -270,7 +270,7 @@ void PluginProxy::geometryDidChange()
 
     if (updateBackingStore()) {
         // Create a new plug-in backing store.
-        m_pluginBackingStore = ShareableBitmap::createShareable(m_backingStore->size(), ShareableBitmap::SupportsAlpha);
+        m_pluginBackingStore = ShareableBitmap::createShareable(m_backingStore->size(), { });
         if (!m_pluginBackingStore)
             return;
 
@@ -613,7 +613,7 @@ bool PluginProxy::updateBackingStore()
         m_backingStore = nullptr; // Give malloc a chance to recycle our backing store.
     }
 
-    m_backingStore = ShareableBitmap::create(backingStoreSize, ShareableBitmap::SupportsAlpha);
+    m_backingStore = ShareableBitmap::create(backingStoreSize, { });
     return !!m_backingStore;
 }
 

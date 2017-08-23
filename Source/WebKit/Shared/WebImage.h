@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "ImageOptions.h"
+#include "ShareableBitmap.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -35,13 +36,12 @@ class IntSize;
 
 namespace WebKit {
 
-class ShareableBitmap;
-
 // WebImage - An image type suitable for vending to an API.
 
 class WebImage : public API::ObjectImpl<API::Object::Type::Image> {
 public:
     static RefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions);
+    static RefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions, const ShareableBitmap::Configuration&);
     static Ref<WebImage> create(Ref<ShareableBitmap>&&);
     ~WebImage();
     

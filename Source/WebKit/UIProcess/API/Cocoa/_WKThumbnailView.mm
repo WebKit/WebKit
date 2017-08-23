@@ -92,7 +92,7 @@ using namespace WebKit;
 
     RetainPtr<_WKThumbnailView> thumbnailView = self;
     IntRect snapshotRect(IntPoint(), _webPageProxy->viewSize() - IntSize(0, _webPageProxy->topContentInset()));
-    SnapshotOptions options = SnapshotOptionsInViewCoordinates;
+    SnapshotOptions options = SnapshotOptionsInViewCoordinates | SnapshotOptionsUseScreenColorSpace;
     IntSize bitmapSize = snapshotRect.size();
     bitmapSize.scale(_scale * _webPageProxy->deviceScaleFactor());
 

@@ -134,6 +134,11 @@ NSScreen *screen(PlatformDisplayID displayID)
     return firstScreen();
 }
 
+CGColorSpaceRef screenColorSpace(Widget* widget)
+{
+    return screen(widget).colorSpace.CGColorSpace;
+}
+
 bool screenSupportsExtendedColor(Widget* widget)
 {
     if (!widget)
@@ -142,7 +147,7 @@ bool screenSupportsExtendedColor(Widget* widget)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
 #else
-    auto colorSpace = screen(widget).colorSpace.CGColorSpace;
+    auto colorSpace = screenColorSpace(widget);
     auto iccData = adoptCF(CGColorSpaceCopyICCProfile(colorSpace));
     auto profile = adoptCF(ColorSyncProfileCreate(iccData.get(), nullptr));
     return profile && ColorSyncProfileIsWideGamut(profile.get());
