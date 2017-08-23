@@ -1,3 +1,14 @@
+2017-08-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Relax keychain access to permit users to permanently allow client certificates
+        https://bugs.webkit.org/show_bug.cgi?id=175857
+        <rdar://problem/32293867>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-08-22  Chris Dumez  <cdumez@apple.com>
 
         Introduce a new CompletionHandler type and use it for NetworkDataTaskClient's completion handlers to help catch bugs
