@@ -30,8 +30,8 @@
 #include "NetworkProcessSupplement.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
-#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -54,7 +54,7 @@ enum class AuthenticationChallengeDisposition {
     Cancel,
     RejectProtectionSpace
 };
-typedef Function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)> ChallengeCompletionHandler;
+using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
 
 class AuthenticationManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
@@ -105,7 +105,7 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    bool tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const WebCore::CertificateInfo&, const ChallengeCompletionHandler&);
+    bool tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const WebCore::CertificateInfo&, ChallengeCompletionHandler&);
 
     uint64_t addChallengeToChallengeMap(Challenge&&);
     bool shouldCoalesceChallenge(uint64_t pageID, uint64_t challengeID, const WebCore::AuthenticationChallenge&) const;

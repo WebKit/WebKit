@@ -69,7 +69,7 @@ static NSArray *chain(const CertificateInfo& certificateInfo)
 }
 
 // FIXME: This function creates an identity from a certificate, which should not be needed. We should pass an identity over IPC (as we do on iOS).
-bool AuthenticationManager::tryUseCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const CertificateInfo& certificateInfo, const ChallengeCompletionHandler& completionHandler)
+bool AuthenticationManager::tryUseCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const CertificateInfo& certificateInfo, ChallengeCompletionHandler& completionHandler)
 {
     if (certificateInfo.isEmpty())
         return false;
