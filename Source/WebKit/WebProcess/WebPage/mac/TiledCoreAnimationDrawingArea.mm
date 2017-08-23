@@ -403,6 +403,12 @@ void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedLayoutMilestones()
     m_pendingNewlyReachedLayoutMilestones = 0;
 }
 
+void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callbackID)
+{
+    m_pendingCallbackIDs.append(callbackID);
+    scheduleCompositingLayerFlush();
+}
+
 bool TiledCoreAnimationDrawingArea::flushLayers()
 {
     ASSERT(!m_layerTreeStateIsFrozen);
@@ -411,6 +417,7 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         scaleViewToFitDocumentIfNeeded();
 
         m_webPage.layoutIfNeeded();
+        m_webPage.flushPendingEditorStateUpdate();
 
         updateIntrinsicContentSizeIfNeeded();
 
@@ -447,6 +454,11 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         // that WebCore makes to the relevant layers, so re-apply our changes after flushing.
         if (m_transientZoomScale != 1)
             applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
+
+        if (!m_pendingCallbackIDs.isEmpty()) {
+            m_webPage.send(Messages::DrawingAreaProxy::DispatchPresentationCallbacksAfterFlushingLayers(m_pendingCallbackIDs));
+            m_pendingCallbackIDs.clear();
+        }
 
         return returnValue;
     }

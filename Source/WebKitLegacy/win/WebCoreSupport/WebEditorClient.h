@@ -57,10 +57,10 @@ private:
 
     void respondToChangedContents() final;
     void respondToChangedSelection(WebCore::Frame*) final;
-    void didChangeSelectionAndUpdateLayout() final { }
     void updateEditorStateAfterLayoutIfEditabilityChanged() final { } 
     void canceledComposition() final;
     void discardedComposition(WebCore::Frame*) final;
+    void didUpdateComposition() final { }
 
     bool shouldDeleteRange(WebCore::Range*) final;
 

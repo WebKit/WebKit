@@ -1,3 +1,130 @@
+2017-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] EditorState updates should be rolled into the layer update lifecycle when possible
+        https://bugs.webkit.org/show_bug.cgi?id=175370
+        <rdar://problem/33799806>
+
+        Reviewed by Ryosuke Niwa.
+
+        See per-method comments for more detail. WebPage::didChangeSelection now schedules EditorState updates to be sent
+        during the next layer tree transaction rather than sending them synchronously. To ensure that iOS and Mac continue
+        to behave correctly w.r.t. EditorState updates, we immediately dispatch EditorStates in the following cases:
+        - After the composition changes, is confirmed, or is canceled.
+        - After an edit command is executed.
+        - After ending user-triggered selection changes.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::hasEditorState const):
+        (WebKit::RemoteLayerTreeTransaction::editorState const):
+        (WebKit::RemoteLayerTreeTransaction::setEditorState):
+
+        Attaches an optional EditorState to the RemoteLayerTreeTransaction. This EditorState is computed and sent over
+        when setting up the transaction in WebPage, if something previously scheduled an EditorState update.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode const):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+
+        Add coder support for sending over a layer tree transaction's EditorState.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _doAfterNextPresentationUpdate:]):
+
+        Add _doAfterNextPresentationUpdate to WKView (used in TestWebKitAPI -- refer to
+        WebKitAgnosticTest::waitForNextPresentationUpdate).
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers):
+        * UIProcess/DrawingAreaProxy.messages.in:
+
+        Add a new IPC messages, DispatchPresentationCallbacksAfterFlushingLayers, to invoke in-flight presentation
+        callbacks in the UI process following a layer flush in the web process.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers):
+
+        Run all pending _doAfterNextPresentationUpdate callbacks.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didApplyStyle):
+        (WebKit::WebEditorClient::respondToChangedContents):
+        (WebKit::WebEditorClient::didEndUserTriggeredSelectionChanges):
+        (WebKit::WebEditorClient::didUpdateComposition):
+
+        Forward editor client calls to the WebPage.
+
+        (WebKit::WebEditorClient::didChangeSelectionAndUpdateLayout): Deleted.
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState const):
+        (WebKit::WebPage::updateEditorStateAfterLayoutIfEditabilityChanged):
+        (WebKit::WebPage::willCommitLayerTree):
+        (WebKit::WebPage::didApplyStyle):
+
+        Allow style application to immediately trigger EditorState updates, if we're not currently ignoring selection
+        changes in the Editor.
+
+        (WebKit::WebPage::didChangeContents):
+
+        Allow applying top-level edit commands to immediately trigger EditorState updates, if we're not currently
+        ignoring selection changes in the Editor.
+
+        (WebKit::WebPage::didChangeSelection):
+        (WebKit::WebPage::didUpdateComposition):
+        (WebKit::WebPage::didEndUserTriggeredSelectionChanges):
+        (WebKit::WebPage::discardedComposition):
+        (WebKit::WebPage::canceledComposition):
+
+        When handling composition updates, always send an EditorState to the UI process. Unlike other cases, IME
+        requires immediate EditorState data, so we need to be explicit here in sending updates right away.
+
+        (WebKit::WebPage::sendEditorStateUpdate):
+        (WebKit::WebPage::sendPartialEditorStateAndSchedulePostLayoutUpdate):
+        (WebKit::WebPage::flushPendingEditorStateUpdate):
+
+        Helper methods to schedule an EditorState update to be sent upon the next layer tree update, or flush any
+        pending EditorState update that has been scheduled. The private, more aggressive variant of this is
+        sendEditorStateUpdate, which ignores whether or not there was already an EditorState update scheduled, and sends
+        one anyways (this still fulfills any EditorState update that was previously scheduled).
+
+        These helper methods are treated as no-ops when invoked while ignoring selection changes. This is to prevent
+        temporary selection state and editor commands during operations such as text indicator snapshotting from pushing
+        bogus information about transient editor states to the UI process.
+
+        (WebKit::WebPage::sendPostLayoutEditorStateIfNeeded): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+        (WebKit::WebPage::executeEditCommandWithCallback):
+        (WebKit::selectionIsInsideFixedPositionContainer):
+        (WebKit::WebPage::updateVisibleContentRects):
+
+        Fix a hack that was computing an EditorState to figure out whether the current selection starts or ends in a
+        fixed position container. Factors out relevant logic into a separate helper, and also schedules an EditorState
+        update instead of immediately computing it.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::addTransactionCallbackID):
+
+        Add support for registering and dispatching presentation callbacks that hook into the layer flush lifecycle,
+        using the tiled CA drawing area. These are used by Mac LayoutTests and API tests that need to wait until the
+        next flush before checking for state that depends on EditorState updates in the UI process.
+
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
+        Tell the WebPage to flush any pending EditorState updates.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformEditorState const):
+
 2017-08-22  Brent Fulgham  <bfulgham@apple.com>
 
         Relax keychain access to permit users to permanently allow client certificates

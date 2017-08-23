@@ -126,11 +126,12 @@ public:
         DoNotSetFocus = 1 << 4,
         DictationTriggered = 1 << 5,
         RevealSelection = 1 << 6,
+        IsUserTriggered = 1 << 7,
     };
     typedef unsigned SetSelectionOptions; // Union of values in SetSelectionOption and EUserTriggered
     static inline SetSelectionOptions defaultSetSelectionOptions(EUserTriggered userTriggered = NotUserTriggered)
     {
-        return CloseTyping | ClearTypingStyle | (userTriggered ? (RevealSelection | FireSelectEvent) : 0);
+        return CloseTyping | ClearTypingStyle | (userTriggered ? (RevealSelection | FireSelectEvent | IsUserTriggered) : 0);
     }
 
     WEBCORE_EXPORT explicit FrameSelection(Frame* = nullptr);

@@ -373,7 +373,6 @@ public:
     
     enum class IncludePostLayoutDataHint { No, Yes };
     EditorState editorState(IncludePostLayoutDataHint = IncludePostLayoutDataHint::Yes) const;
-    void sendPostLayoutEditorStateIfNeeded();
     void updateEditorStateAfterLayoutIfEditabilityChanged();
 
     String renderTreeExternalRepresentation() const;
@@ -663,8 +662,11 @@ public:
 
     void didApplyStyle();
     void didChangeSelection();
+    void didChangeContents();
     void discardedComposition();
     void canceledComposition();
+    void didUpdateComposition();
+    void didEndUserTriggeredSelectionChanges();
 
 #if PLATFORM(COCOA)
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
@@ -985,6 +987,9 @@ public:
 
     static PluginView* pluginViewForFrame(WebCore::Frame*);
 
+    void sendPartialEditorStateAndSchedulePostLayoutUpdate();
+    void flushPendingEditorStateUpdate();
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -998,6 +1003,7 @@ private:
     void platformInitialize();
     void platformDetach();
     void platformEditorState(WebCore::Frame&, EditorState& result, IncludePostLayoutDataHint) const;
+    void sendEditorStateUpdate();
 
     void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncWebPageMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
@@ -1479,6 +1485,7 @@ private:
 
     RefPtr<WebCore::Node> m_assistedNode;
     bool m_hasPendingBlurNotification { false };
+    bool m_hasPendingEditorStateUpdate { false };
     
 #if PLATFORM(IOS)
     RefPtr<WebCore::Range> m_currentWordRange;

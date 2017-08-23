@@ -558,6 +558,10 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
     encoder << m_isInStableState;
 
     encoder << m_callbackIDs;
+
+    encoder << hasEditorState();
+    if (m_editorState)
+        encoder << *m_editorState;
 }
 
 bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTransaction& result)
@@ -672,6 +676,17 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
 
     if (!decoder.decode(result.m_callbackIDs))
         return false;
+
+    bool hasEditorState;
+    if (!decoder.decode(hasEditorState))
+        return false;
+
+    if (hasEditorState) {
+        EditorState editorState;
+        if (!decoder.decode(editorState))
+            return false;
+        result.setEditorState(editorState);
+    }
 
     return true;
 }

@@ -31,16 +31,15 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
 TEST(WKWebView, ShouldHaveInputContextForEditableContent)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"editable-body" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
-    [webView _test_waitForDidFinishNavigation];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"editable-body"];
+    [webView waitForNextPresentationUpdate];
 
     EXPECT_NOT_NULL([webView inputContext]);
 }

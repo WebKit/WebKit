@@ -1749,12 +1749,30 @@ void Editor::confirmComposition(const String& text)
     setComposition(text, ConfirmComposition);
 }
 
+class SetCompositionScope {
+public:
+    SetCompositionScope(Frame& frame)
+        : m_frame(frame)
+        , m_typingGestureIndicator(frame)
+    {
+        m_frame->editor().setIgnoreSelectionChanges(true);
+    }
+
+    ~SetCompositionScope()
+    {
+        m_frame->editor().setIgnoreSelectionChanges(false);
+        if (auto* editorClient = m_frame->editor().client())
+            editorClient->didUpdateComposition();
+    }
+
+    Ref<Frame> m_frame;
+    UserTypingGestureIndicator m_typingGestureIndicator;
+};
+
 void Editor::setComposition(const String& text, SetCompositionMode mode)
 {
     ASSERT(mode == ConfirmComposition || mode == CancelComposition);
-    UserTypingGestureIndicator typingGestureIndicator(m_frame);
-
-    setIgnoreSelectionChanges(true);
+    SetCompositionScope setCompositionScope(m_frame);
 
     if (mode == CancelComposition)
         ASSERT(text == emptyString());
@@ -1764,10 +1782,8 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
 
-    if (m_frame.selection().isNone()) {
-        setIgnoreSelectionChanges(false);
+    if (m_frame.selection().isNone())
         return;
-    }
 
     // Always delete the current composition before inserting the finalized composition text if we're confirming our composition.
     // Our default behavior (if the beforeinput event is not prevented) is to insert the finalized composition text back in.
@@ -1784,17 +1800,11 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
         // An open typing command that disagrees about current selection would cause issues with typing later on.
         TypingCommand::closeTyping(&m_frame);
     }
-
-    setIgnoreSelectionChanges(false);
 }
 
 void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, unsigned selectionStart, unsigned selectionEnd)
 {
-    Ref<Frame> protection(m_frame);
-
-    UserTypingGestureIndicator typingGestureIndicator(m_frame);
-
-    setIgnoreSelectionChanges(true);
+    SetCompositionScope setCompositionScope(m_frame);
 
     // Updates styles before setting selection for composition to prevent
     // inserting the previous composition text into text nodes oddly.
@@ -1803,10 +1813,8 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
 
     selectComposition();
 
-    if (m_frame.selection().isNone()) {
-        setIgnoreSelectionChanges(false);
+    if (m_frame.selection().isNone())
         return;
-    }
 
     String originalText = selectedText();
     bool isStartingToRecomposeExistingRange = !text.isEmpty() && selectionStart < selectionEnd && !hasComposition();
@@ -1896,8 +1904,6 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             m_frame.selection().setSelectedRange(selectedRange.get(), DOWNSTREAM, false);
         }
     }
-
-    setIgnoreSelectionChanges(false);
 
 #if PLATFORM(IOS)        
     client()->stopDelayingAndCoalescingContentChangeNotifications();

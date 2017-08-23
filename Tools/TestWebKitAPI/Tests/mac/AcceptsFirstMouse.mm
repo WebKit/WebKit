@@ -50,6 +50,7 @@ void AcceptsFirstMouse::runTest(View view)
 {
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     [[window.get() contentView] addSubview:view];
+    waitForNextPresentationUpdate(view);
 
     CGFloat viewHeight = view.bounds.size.height;
 

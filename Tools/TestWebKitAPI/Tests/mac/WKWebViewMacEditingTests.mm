@@ -124,6 +124,7 @@ TEST(WKWebViewMacEditingTests, DoNotCrashWhenInterpretingKeyEventWhileDeallocati
         SlowInputWebView *webView = [[[SlowInputWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)] autorelease];
         [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<body contenteditable>Hello world</body>"]];
         [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+        [webView waitForNextPresentationUpdate];
         [webView removeFromSuperview];
         [webView typeCharacter:'a'];
 

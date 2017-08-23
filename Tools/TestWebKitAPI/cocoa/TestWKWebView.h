@@ -48,6 +48,7 @@
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
 - (void)waitForMessage:(NSString *)message;
 - (void)performAfterLoading:(dispatch_block_t)actions;
+- (void)waitForNextPresentationUpdate;
 @end
 
 #if PLATFORM(IOS)

@@ -106,6 +106,8 @@ public:
     virtual WebCore::MachSendRight createFence();
 #endif
 
+    virtual void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) { }
+
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy&);
 

@@ -125,7 +125,7 @@ void WebPage::platformDetach()
 
 void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
 {
-    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No || !result.isContentEditable) {
+    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No || !frame.view() || frame.view()->needsLayout() || !result.isContentEditable) {
         result.isMissingPostLayoutData = true;
         return;
     }

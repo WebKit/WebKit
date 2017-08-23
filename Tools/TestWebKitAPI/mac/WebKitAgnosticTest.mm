@@ -139,4 +139,23 @@ void WebKitAgnosticTest::waitForLoadToFinish()
     didFinishLoad = false;
 }
 
+void WebKitAgnosticTest::waitForNextPresentationUpdate(WebView *)
+{
+    // FIXME: This isn't currently required anywhere. Just dispatch to the next runloop for now.
+    __block bool done = false;
+    dispatch_async(dispatch_get_main_queue(), ^() {
+        done = true;
+    });
+    Util::run(&done);
+}
+
+void WebKitAgnosticTest::waitForNextPresentationUpdate(WKView *view)
+{
+    __block bool done = false;
+    [view _doAfterNextPresentationUpdate:^() {
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 } // namespace TestWebKitAPI

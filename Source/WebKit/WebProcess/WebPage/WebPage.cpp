@@ -856,7 +856,8 @@ EditorState WebPage::editorState(IncludePostLayoutDataHint shouldIncludePostLayo
     result.shouldIgnoreSelectionChanges = frame.editor().ignoreSelectionChanges();
 
 #if PLATFORM(COCOA)
-    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::Yes && result.isContentEditable) {
+    bool canIncludePostLayoutData = frame.view() && !frame.view()->needsLayout();
+    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::Yes && canIncludePostLayoutData && result.isContentEditable) {
         auto& postLayoutData = result.postLayoutData();
         if (!selection.isNone()) {
             Node* nodeToRemove;
@@ -938,7 +939,7 @@ void WebPage::updateEditorStateAfterLayoutIfEditabilityChanged()
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     EditorStateIsContentEditable editorStateIsContentEditable = frame.selection().selection().isContentEditable() ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
     if (m_lastEditorStateWasContentEditable != editorStateIsContentEditable)
-        send(Messages::WebPageProxy::EditorStateChanged(editorState()));
+        sendPartialEditorStateAndSchedulePostLayoutUpdate();
 }
 
 String WebPage::renderTreeExternalRepresentation() const
@@ -3437,6 +3438,11 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
 #if PLATFORM(MAC)
     layerTransaction.setScrollPosition(frameView->scrollPosition());
 #endif
+
+    if (m_hasPendingEditorStateUpdate) {
+        layerTransaction.setEditorState(editorState());
+        m_hasPendingEditorStateUpdate = false;
+    }
 }
 
 void WebPage::didFlushLayerTreeAtTime(MonotonicTime timestamp)
@@ -5049,6 +5055,16 @@ static bool needsPlainTextQuirk(bool needsQuirks, const URL& url)
 }
 #endif
 
+void WebPage::didApplyStyle()
+{
+    sendEditorStateUpdate();
+}
+
+void WebPage::didChangeContents()
+{
+    sendEditorStateUpdate();
+}
+
 void WebPage::didChangeSelection()
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
@@ -5062,14 +5078,6 @@ void WebPage::didChangeSelection()
     // end up with a range selection very briefly right before inserting the text.
     if (m_isSelectingTextWhileInsertingAsynchronously)
         return;
-
-    FrameView* view = frame.view();
-
-    // If there is a layout pending, we should avoid populating EditorState that require layout to be done or it will
-    // trigger a synchronous layout every time the selection changes. sendPostLayoutEditorStateIfNeeded() will be called
-    // to send the full editor state after layout is done if we send a partial editor state here.
-    auto editorState = this->editorState(view && view->needsLayout() ? IncludePostLayoutDataHint::No : IncludePostLayoutDataHint::Yes);
-    m_isEditorStateMissingPostLayoutData = editorState.isMissingPostLayoutData;
 
 #if PLATFORM(MAC)
     bool hasPreviouslyFocusedDueToUserInteraction = m_hasEverFocusedElementDueToUserInteractionSincePageTransition;
@@ -5096,15 +5104,11 @@ void WebPage::didChangeSelection()
     if (frame.editor().hasComposition() && !frame.editor().ignoreSelectionChanges() && !frame.selection().isNone()) {
         frame.editor().cancelComposition();
         discardedComposition();
-    } else
-        send(Messages::WebPageProxy::EditorStateChanged(editorState));
-#else
-    send(Messages::WebPageProxy::EditorStateChanged(editorState), pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        return;
+    }
 #endif
 
-#if PLATFORM(IOS)
-    m_drawingArea->scheduleCompositingLayerFlush();
-#endif
+    sendPartialEditorStateAndSchedulePostLayoutUpdate();
 }
 
 void WebPage::resetAssistedNodeForFrame(WebFrame* frame)
@@ -5169,24 +5173,28 @@ void WebPage::elementDidBlur(WebCore::Node* node)
     }
 }
 
-void WebPage::sendPostLayoutEditorStateIfNeeded()
+void WebPage::didUpdateComposition()
 {
-    if (!m_isEditorStateMissingPostLayoutData)
-        return;
+    sendEditorStateUpdate();
+}
 
-    send(Messages::WebPageProxy::EditorStateChanged(editorState(IncludePostLayoutDataHint::Yes)), pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_isEditorStateMissingPostLayoutData = false;
+void WebPage::didEndUserTriggeredSelectionChanges()
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame.editor().ignoreSelectionChanges())
+        sendEditorStateUpdate();
 }
 
 void WebPage::discardedComposition()
 {
     send(Messages::WebPageProxy::CompositionWasCanceled());
-    send(Messages::WebPageProxy::EditorStateChanged(editorState()));
+    sendEditorStateUpdate();
 }
 
 void WebPage::canceledComposition()
 {
     send(Messages::WebPageProxy::CompositionWasCanceled());
+    sendEditorStateUpdate();
 }
 
 void WebPage::setMinimumLayoutSize(const IntSize& minimumLayoutSize)
@@ -5602,6 +5610,54 @@ void WebPage::reportUsedFeatures()
 {
     Vector<String> namedFeatures;
     m_loaderClient->featuresUsedInPage(*this, namedFeatures);
+}
+
+void WebPage::sendEditorStateUpdate()
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (frame.editor().ignoreSelectionChanges())
+        return;
+
+    m_hasPendingEditorStateUpdate = false;
+
+    // If we immediately dispatch an EditorState update to the UI process, layout may not be up to date yet.
+    // If that is the case, just send what we have (i.e. don't include post-layout data) and wait until the
+    // next layer tree commit to compute and send the complete EditorState over.
+    auto state = editorState();
+    send(Messages::WebPageProxy::EditorStateChanged(state), pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+
+    if (state.isMissingPostLayoutData) {
+        m_hasPendingEditorStateUpdate = true;
+        m_drawingArea->scheduleCompositingLayerFlush();
+    }
+}
+
+void WebPage::sendPartialEditorStateAndSchedulePostLayoutUpdate()
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (frame.editor().ignoreSelectionChanges())
+        return;
+
+    send(Messages::WebPageProxy::EditorStateChanged(editorState(IncludePostLayoutDataHint::No)), pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+
+    if (m_hasPendingEditorStateUpdate)
+        return;
+
+    // Flag the next layer flush to compute and propagate an EditorState to the UI process.
+    m_hasPendingEditorStateUpdate = true;
+    m_drawingArea->scheduleCompositingLayerFlush();
+}
+
+void WebPage::flushPendingEditorStateUpdate()
+{
+    if (!m_hasPendingEditorStateUpdate)
+        return;
+
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (frame.editor().ignoreSelectionChanges())
+        return;
+
+    sendEditorStateUpdate();
 }
 
 void WebPage::updateWebsitePolicies(const WebsitePolicies& websitePolicies)

@@ -367,6 +367,11 @@ void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectio
         return;
 
     updateAndRevealSelection(intent);
+
+    if (options & IsUserTriggered) {
+        if (auto* client = m_frame->editor().client())
+            client->didEndUserTriggeredSelectionChanges();
+    }
 }
 
 static void updateSelectionByUpdatingLayoutOrStyle(Frame& frame)
@@ -406,9 +411,6 @@ void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& int
     }
 
     notifyAccessibilityForSelectionChange(intent);
-
-    if (auto* client = m_frame->editor().client())
-        client->didChangeSelectionAndUpdateLayout();
 }
 
 void FrameSelection::updateDataDetectorsForSelection()
@@ -1972,7 +1974,7 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
             return false;
     }
 
-    setSelection(newSelection, ClearTypingStyle | (closeTyping ? CloseTyping : 0));
+    setSelection(newSelection, ClearTypingStyle | (closeTyping ? CloseTyping : 0) | (userTriggered == UserTriggered ? IsUserTriggered : 0));
     return true;
 }
 

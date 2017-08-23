@@ -47,6 +47,69 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static ensurePresentationUpdate()
+    {
+        if (!this.isWebKit2()) {
+            testRunner.display();
+            return Promise.resolve();
+        }
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.doAfterPresentationUpdate(function() {
+                    uiController.uiScriptComplete('Done');
+                });`, resolve);
+        });
+    }
+
+    static activateAndWaitForInputSessionAt(x, y)
+    {
+        if (!this.isWebKit2() || !this.isIOS())
+            return this.activateAt(x, y);
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    uiController.didShowKeyboardCallback = function() {
+                        uiController.uiScriptComplete("Done");
+                    };
+                    uiController.singleTapAtPoint(${x}, ${y}, function() { });
+                })()`, resolve);
+        });
+    }
+
+    static getUICaretRect()
+    {
+        if (!this.isWebKit2() || !this.isIOS())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(function() {
+                uiController.doAfterNextStablePresentationUpdate(function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.textSelectionCaretRect));
+                });
+            })()`, jsonString => {
+                resolve(JSON.parse(jsonString));
+            });
+        });
+    }
+
+    static getUISelectionRects()
+    {
+        if (!this.isWebKit2() || !this.isIOS())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(function() {
+                uiController.doAfterNextStablePresentationUpdate(function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.selectionRangeViewRects));
+                });
+            })()`, jsonString => {
+                resolve(JSON.parse(jsonString));
+            });
+        });
+    }
+
     static wait(promise)
     {
         testRunner.waitUntilDone();

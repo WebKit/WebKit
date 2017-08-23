@@ -110,10 +110,11 @@ private:
 
     void respondToChangedContents() final;
     void respondToChangedSelection(WebCore::Frame*) final;
-    void didChangeSelectionAndUpdateLayout() final { }
+    void didEndUserTriggeredSelectionChanges() final { }
     void updateEditorStateAfterLayoutIfEditabilityChanged() final;
     void discardedComposition(WebCore::Frame*) final;
     void canceledComposition() final;
+    void didUpdateComposition() final { }
 
     void registerUndoStep(WebCore::UndoStep&) final;
     void registerRedoStep(WebCore::UndoStep&) final;

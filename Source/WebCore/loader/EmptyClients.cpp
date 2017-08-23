@@ -166,11 +166,12 @@ private:
     void didBeginEditing() final { }
     void respondToChangedContents() final { }
     void respondToChangedSelection(Frame*) final { }
-    void didChangeSelectionAndUpdateLayout() final { }
     void updateEditorStateAfterLayoutIfEditabilityChanged() final { }
     void discardedComposition(Frame*) final { }
     void canceledComposition() final { }
+    void didUpdateComposition() final { }
     void didEndEditing() final { }
+    void didEndUserTriggeredSelectionChanges() final { }
     void willWriteSelectionToPasteboard(Range*) final { }
     void didWriteSelectionToPasteboard() final { }
     void getClientPasteboardDataForRange(Range*, Vector<String>&, Vector<RefPtr<SharedBuffer>>&) final { }

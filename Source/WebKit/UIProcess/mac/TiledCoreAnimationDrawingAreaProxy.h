@@ -52,6 +52,7 @@ private:
 
     void waitForDidUpdateActivityState() override;
     void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) override;
+    void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) final;
 
     void willSendUpdateGeometry() override;
 
@@ -71,6 +72,8 @@ private:
 
     // The last minimum layout size we sent to the web process.
     WebCore::IntSize m_lastSentMinimumLayoutSize;
+
+    CallbackMap m_callbacks;
 };
 
 } // namespace WebKit

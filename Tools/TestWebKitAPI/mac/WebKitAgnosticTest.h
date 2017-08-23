@@ -46,6 +46,9 @@ public:
     void goBack(WebView *);
     void goBack(WKView *);
 
+    void waitForNextPresentationUpdate(WebView *);
+    void waitForNextPresentationUpdate(WKView *);
+
     void waitForLoadToFinish();
 
     NSRect viewFrame;

@@ -28,6 +28,7 @@
 
 #if !PLATFORM(IOS)
 
+#include "CallbackID.h"
 #include "DrawingArea.h"
 #include "LayerTreeContext.h"
 #include <WebCore/FloatRect.h>
@@ -100,6 +101,7 @@ private:
     void setColorSpace(const ColorSpaceData&) override;
     void addFence(const WebCore::MachSendRight&) override;
 
+    void addTransactionCallbackID(CallbackID) override;
     void setShouldScaleViewToFitDocument(bool) override;
 
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
@@ -160,6 +162,7 @@ private:
     WebCore::IntSize m_lastDocumentSizeForScaleToFit;
 
     WebCore::LayoutMilestones m_pendingNewlyReachedLayoutMilestones { 0 };
+    Vector<CallbackID> m_pendingCallbackIDs;
 };
 
 } // namespace WebKit

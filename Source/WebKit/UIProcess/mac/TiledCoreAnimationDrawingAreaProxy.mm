@@ -51,6 +51,7 @@ TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPagePr
 
 TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy()
 {
+    m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
@@ -197,10 +198,20 @@ void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, Float
 
 void TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&& callback)
 {
-    // This callback is primarily used for testing in RemoteLayerTreeDrawingArea. We could in theory wait for a CA commit here.
-    dispatch_async(dispatch_get_main_queue(), BlockPtr<void ()>::fromCallable([callback = WTFMove(callback)] {
-        callback(CallbackBase::Error::None);
-    }).get());
+    if (!m_webPageProxy.isValid()) {
+        callback(CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
+
+    m_webPageProxy.process().send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTFMove(callback), nullptr)), m_webPageProxy.pageID());
+}
+
+void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>& callbackIDs)
+{
+    for (auto& callbackID : callbackIDs) {
+        if (auto callback = m_callbacks.take<VoidCallback>(callbackID))
+            callback->performCallback();
+    }
 }
 
 } // namespace WebKit

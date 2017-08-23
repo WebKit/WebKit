@@ -274,6 +274,16 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     [contentController addScriptMessageHandler:handler name:@"onloadHandler"];
 }
 
+- (void)waitForNextPresentationUpdate
+{
+    __block bool done = false;
+    [self _doAfterNextPresentationUpdate:^() {
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
 @end
 
 #if PLATFORM(IOS)

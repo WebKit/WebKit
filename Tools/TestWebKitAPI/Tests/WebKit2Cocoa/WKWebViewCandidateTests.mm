@@ -121,6 +121,7 @@ static NSString *GetDocumentScrollTopJSExpression = @"document.body.scrollTop";
             [self typeCharacter:[string characterAtIndex:i]];
         });
         [self waitForMessage:inputMessage];
+        [self waitForNextPresentationUpdate];
     }
 }
 
@@ -130,6 +131,7 @@ static NSString *GetDocumentScrollTopJSExpression = @"document.body.scrollTop";
 
     [wkWebView loadTestPageNamed:testPageName];
     [wkWebView waitForMessage:@"focused"];
+    [wkWebView waitForNextPresentationUpdate];
     [wkWebView _forceRequestCandidates];
 
     return wkWebView;
@@ -142,13 +144,13 @@ TEST(WKWebViewCandidateTests, SoftSpaceReplacementAfterCandidateInsertionWithout
     CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
     [wkWebView insertCandidatesAndWaitForResponse:@"apple " range:NSMakeRange(0, 0)];
-    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"apple "]);
+    EXPECT_WK_STREQ("apple ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
 
     [wkWebView expectCandidateListVisibilityUpdates:0 whenPerformingActions:^()
     {
         [wkWebView typeString:@" " inputMessage:@"input"];
     }];
-    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"apple "]);
+    EXPECT_WK_STREQ("apple ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
     EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
 }
 
@@ -157,10 +159,10 @@ TEST(WKWebViewCandidateTests, InsertCharactersAfterCandidateInsertionWithSoftSpa
     CandidateTestWebView *wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
     [wkWebView insertCandidatesAndWaitForResponse:@"foo " range:NSMakeRange(0, 0)];
-    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"foo "]);
+    EXPECT_WK_STREQ("foo ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
 
     [wkWebView typeString:@"a" inputMessage:@"input"];
-    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"foo a"]);
+    EXPECT_WK_STREQ("foo a", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
 }
 
 TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
@@ -169,16 +171,16 @@ TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpa
 
     [wkWebView typeString:@"hel" inputMessage:@"input"];
     [wkWebView insertCandidatesAndWaitForResponse:@"hello " range:NSMakeRange(0, 3)];
-    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"hello "]);
+    EXPECT_WK_STREQ("hello ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
 
     [wkWebView expectCandidateListVisibilityUpdates:0 whenPerformingActions:^()
     {
         [wkWebView typeString:@" " inputMessage:@"input"];
-        EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"hello "]);
+        EXPECT_WK_STREQ("hello ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
         EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
 
         [wkWebView typeString:@" " inputMessage:@"input"];
-        EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"hello  "]);
+        EXPECT_WK_STREQ("hello  ", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
         EXPECT_EQ([[wkWebView stringByEvaluatingJavaScript:GetDocumentScrollTopJSExpression] doubleValue], 0);
     }];
 }
@@ -196,7 +198,7 @@ TEST(WKWebViewCandidateTests, ClickingInTextFieldDoesNotThrashCandidateVisibilit
         });
         [wkWebView waitForMessage:@"mousedown"];
     }];
-    EXPECT_TRUE([[wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression] isEqualToString:@"test"]);
+    EXPECT_WK_STREQ("test", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
 }
 
 TEST(WKWebViewCandidateTests, ShouldNotRequestCandidatesInPasswordField)

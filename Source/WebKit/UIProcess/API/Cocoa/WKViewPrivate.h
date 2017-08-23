@@ -137,6 +137,8 @@
 - (void)_addMediaPlaybackControlsView:(id)mediaPlaybackControlsView;
 - (void)_removeMediaPlaybackControlsView;
 
+- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+
 @end
 
 #endif // !TARGET_OS_IPHONE

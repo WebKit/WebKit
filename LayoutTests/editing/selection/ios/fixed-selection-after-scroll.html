@@ -2,6 +2,7 @@
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <head>
+    <script src="../../../resources/ui-helper.js"></script>
     <script src="../../../resources/js-test.js"></script>
     <style>
         body {
@@ -19,44 +20,22 @@
 
         #content {
             background-image: linear-gradient(blue, red);
-            height: 4000px;
+            height: 10000px;
         }
     </style>
     <script>
     jsTestIsAsync = true;
 
-    function toString(rect)
+    function selectTextAt(tapX, tapY)
     {
-        return `[${rect.left} ${rect.top} ; ${rect.width} ${rect.height}]`;
-    }
-
-    function selectFixedTextScript(tapX, tapY)
-    {
-        return `
-        (function() {
-            uiController.longPressAtPoint(${tapX}, ${tapY}, function() {
-                uiController.doAfterNextStablePresentationUpdate(function() {
-                    uiController.uiScriptComplete(JSON.stringify(uiController.selectionRangeViewRects));
-                });
-            });
-        })();`;
-    }
-
-    function simulateScrollingScript(distance)
-    {
-        return `(function() {
-            uiController.stableStateOverride = false;
-            uiController.immediateScrollToOffset(0, ${distance});
-            uiController.stableStateOverride = true;
-            uiController.doAfterNextStablePresentationUpdate(function() {
-                uiController.uiScriptComplete(JSON.stringify(uiController.selectionRangeViewRects));
-            });
-        })()`;
-    }
-
-    function toString(rect)
-    {
-        return `[${rect.left} ${rect.top} ; ${rect.width} ${rect.height}]`;
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    uiController.longPressAtPoint(${tapX}, ${tapY}, function() {
+                        uiController.uiScriptComplete("Done");
+                    });
+                })();`, resolve);
+        });
     }
 
     function run()
@@ -66,19 +45,26 @@
             return;
         }
 
-        testRunner.runUIScript(selectFixedTextScript(50, 50), initialSelectionRects => {
-            initialSelectionRects = JSON.parse(initialSelectionRects);
-            window.initialSelectionRects = initialSelectionRects;
-            debug(`After long pressing, the selection rects are: ${initialSelectionRects.map(toString)}`);
-            testRunner.runUIScript(simulateScrollingScript(1000), finalSelectionRects => {
-                finalSelectionRects = JSON.parse(finalSelectionRects);
-                window.finalSelectionRects = finalSelectionRects;
-                debug(`After scrolling 1000px down, the selection rects are: ${finalSelectionRects.map(toString)}`);
-                shouldBe("initialSelectionRects.length", "1");
-                shouldBe("finalSelectionRects.length", "1");
-                shouldBe("finalSelectionRects[0].top - initialSelectionRects[0].top", "1000");
-                finishJSTest();
-            });
+        selectTextAt(50, 50)
+        .then(() => UIHelper.getUISelectionRects())
+        .then((rects) => {
+            initialSelectionRects = rects;
+            shouldBe("initialSelectionRects.length", "1");
+            shouldBe("initialSelectionRects[0].left", "0");
+            shouldBe("initialSelectionRects[0].top", "0");
+            shouldBe("initialSelectionRects[0].width", "309");
+            shouldBe("initialSelectionRects[0].height", "114");
+            document.body.scrollTop += 5000;
+            return UIHelper.getUISelectionRects();
+        })
+        .then((rects) => {
+            finalSelectionRects = rects;
+            shouldBe("finalSelectionRects.length", "1");
+            shouldBe("finalSelectionRects[0].left", "0");
+            shouldBe("finalSelectionRects[0].top", "5000");
+            shouldBe("finalSelectionRects[0].width", "309");
+            shouldBe("finalSelectionRects[0].height", "114");
+            finishJSTest();
         });
     }
     </script>

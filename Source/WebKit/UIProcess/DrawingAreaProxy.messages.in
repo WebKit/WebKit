@@ -26,6 +26,7 @@ messages -> DrawingAreaProxy {
     EnterAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo)
     UpdateAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
+    DispatchPresentationCallbacksAfterFlushingLayers(Vector<WebKit::CallbackID> callbackIDs);
 
 #if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingAreaProxy.

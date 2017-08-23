@@ -2,6 +2,7 @@
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <head>
+    <script src="../../../resources/ui-helper.js"></script>
     <script src="../../../resources/js-test.js"></script>
     <style>
         body {
@@ -18,68 +19,43 @@
 
         div {
             background-image: linear-gradient(0deg, blue, red);
-            height: 4000px;
+            height: 10000px;
         }
     </style>
-    <script>
-    jsTestIsAsync = true;
-
-    function tapInInputScript(tapX, tapY)
-    {
-        return `(function() {
-            uiController.didShowKeyboardCallback = function() {
-                uiController.doAfterNextStablePresentationUpdate(function() {
-                    uiController.uiScriptComplete(JSON.stringify(uiController.textSelectionCaretRect));
-                });
-            };
-            uiController.singleTapAtPoint(${tapX}, ${tapY}, function() { });
-        })()`;
-    }
-
-    function simulateScrollingScript(distance)
-    {
-        return `(function() {
-            uiController.stableStateOverride = false;
-            uiController.immediateScrollToOffset(0, ${distance});
-            uiController.stableStateOverride = true;
-            uiController.doAfterNextStablePresentationUpdate(function() {
-                uiController.uiScriptComplete(JSON.stringify(uiController.textSelectionCaretRect));
-            });
-        })()`;
-    }
-
-    function toString(rect)
-    {
-        return `[${rect.left} ${rect.top} ; ${rect.width} ${rect.height}]`;
-    }
-
-    function run()
-    {
-        if (!window.testRunner || !testRunner.runUIScript) {
-            description("To manually test, tap this input field and scroll up. The text caret should not end up outside of the input.");
-            return;
-        }
-
-        testRunner.runUIScript(tapInInputScript(window.innerWidth / 2, 30), initialCaretRect => {
-            initialCaretRect = JSON.parse(initialCaretRect);
-            window.initialCaretRect = initialCaretRect;
-            debug(`The initial caret rect is: ${toString(initialCaretRect)}`);
-            testRunner.runUIScript(simulateScrollingScript(1000), finalCaretRect => {
-                finalCaretRect = JSON.parse(finalCaretRect);
-                window.finalCaretRect = finalCaretRect;
-                debug(`The caret rect after scrolling 1000px down is: ${toString(finalCaretRect)}`);
-                shouldBe("finalCaretRect.top", "initialCaretRect.top");
-                shouldBe("finalCaretRect.left", "initialCaretRect.left");
-                shouldBe("finalCaretRect.width", "initialCaretRect.width");
-                shouldBe("finalCaretRect.height", "initialCaretRect.height");
-                finishJSTest();
-            });
-        });
-    }
-    </script>
 </head>
-<body onload=run()>
-    <input></input>
+<body>
+<div>
+<input id="input"></input>
+</div>
 </body>
+<script>
+jsTestIsAsync = true;
 
+(() => {
+    if (!window.testRunner || !testRunner.runUIScript) {
+        description("To manually test, tap this input field and scroll up. The text caret should not end up outside of the input.");
+        return;
+    }
+
+    UIHelper.activateAndWaitForInputSessionAt(innerWidth / 2, 30)
+    .then(() => UIHelper.getUICaretRect())
+    .then((rect) => {
+        initialCaretRect = rect;
+        shouldBe("initialCaretRect.left", "6");
+        shouldBe("initialCaretRect.top", "21");
+        shouldBe("initialCaretRect.width", "3");
+        shouldBe("initialCaretRect.height", "15");
+        document.body.scrollTop += 5000;
+        return UIHelper.getUICaretRect();
+    })
+    .then((rect) => {
+        finalCaretRect = rect;
+        shouldBe("finalCaretRect.left", "6");
+        shouldBe("finalCaretRect.top", "21");
+        shouldBe("finalCaretRect.width", "3");
+        shouldBe("finalCaretRect.height", "15");
+        finishJSTest();
+    });
+})();
+</script>
 </html>

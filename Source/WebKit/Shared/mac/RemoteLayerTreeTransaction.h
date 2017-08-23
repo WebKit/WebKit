@@ -26,6 +26,7 @@
 #ifndef RemoteLayerTreeTransaction_h
 #define RemoteLayerTreeTransaction_h
 
+#include "EditorState.h"
 #include "GenericCallback.h"
 #include "PlatformCAAnimationRemote.h"
 #include "RemoteLayerBackingStore.h"
@@ -268,6 +269,10 @@ public:
 
     WebCore::LayoutMilestones newlyReachedLayoutMilestones() const { return m_newlyReachedLayoutMilestones; }
     void setNewlyReachedLayoutMilestones(WebCore::LayoutMilestones milestones) { m_newlyReachedLayoutMilestones = milestones; }
+
+    bool hasEditorState() const { return !!m_editorState; }
+    const EditorState& editorState() const { return m_editorState.value(); }
+    void setEditorState(const EditorState& editorState) { m_editorState = editorState; }
     
 private:
     WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;
@@ -304,6 +309,8 @@ private:
     bool m_viewportMetaTagWidthWasExplicit { false };
     bool m_viewportMetaTagCameFromImageDocument { false };
     bool m_isInStableState { false };
+
+    std::optional<EditorState> m_editorState { std::nullopt };
 };
 
 } // namespace WebKit

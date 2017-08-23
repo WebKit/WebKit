@@ -90,7 +90,7 @@ public:
     virtual void didBeginEditing() = 0;
     virtual void respondToChangedContents() = 0;
     virtual void respondToChangedSelection(Frame*) = 0;
-    virtual void didChangeSelectionAndUpdateLayout() = 0;
+    virtual void didEndUserTriggeredSelectionChanges() = 0;
     virtual void updateEditorStateAfterLayoutIfEditabilityChanged() = 0;
     virtual void didEndEditing() = 0;
     virtual void willWriteSelectionToPasteboard(Range*) = 0;
@@ -103,6 +103,7 @@ public:
     // This function is not called when a composition is closed per a request from an input method.
     virtual void discardedComposition(Frame*) = 0;
     virtual void canceledComposition() = 0;
+    virtual void didUpdateComposition() = 0;
 
     virtual void registerUndoStep(UndoStep&) = 0;
     virtual void registerRedoStep(UndoStep&) = 0;
