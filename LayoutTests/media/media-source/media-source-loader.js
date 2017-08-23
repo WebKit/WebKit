@@ -1,6 +1,7 @@
-function MediaSourceLoader(url)
+function MediaSourceLoader(url, prefix)
 {
     this._url = url;
+    this._prefix = prefix;
     setTimeout(this.loadManifest.bind(this));
 
     this.onload = null;
@@ -40,7 +41,8 @@ MediaSourceLoader.prototype = {
     loadMediaData: function()
     {
         var request = new XMLHttpRequest();
-        request.open('GET', this._manifest.url, true);
+        var url = (this._prefix ? this._prefix : '') + this._manifest.url
+        request.open('GET', url, true);
         request.responseType = 'arraybuffer';
         request.onload = this.loadMediaDataSucceeded.bind(this);
         request.onerror = this.loadMediaDataFailed.bind(this);
