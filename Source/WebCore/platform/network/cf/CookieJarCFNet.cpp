@@ -29,6 +29,7 @@
 #if USE(CFURLCONNECTION)
 
 #include "Cookie.h"
+#include "CookiesStrategy.h"
 #include "NetworkStorageSession.h"
 #include "NotImplemented.h"
 #include "URL.h"
@@ -36,7 +37,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/SoftLinking.h>
-#include <wtf/TypeCastsCF.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(WIN)
@@ -58,7 +59,7 @@ struct CFTypeTrait<ClassName##Ref> { \
 static inline CFTypeID typeID() { return ClassName##GetTypeID(); } \
 };
 
-DECLARE_CF_TYPE_TRAIT(CFHTTPCookieRef);
+DECLARE_CF_TYPE_TRAIT(CFHTTPCookie);
 
 #undef DECLARE_CF_TYPE_TRAIT
 } // namespace WTF

@@ -1,3 +1,14 @@
+2017-08-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Fix compile errors.
+        https://bugs.webkit.org/show_bug.cgi?id=175860
+
+        Reviewed by Brent Fulgham.
+
+        Add required header files. 
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+
 2017-08-22  Brent Fulgham  <bfulgham@apple.com>
 
         Correct SOUP builds after r221017 and r221050.
