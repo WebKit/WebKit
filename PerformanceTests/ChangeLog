@@ -3,6 +3,16 @@
         Speedometer 2.0: Add the capability to run a specific suite
         https://bugs.webkit.org/show_bug.cgi?id=175908
 
+        Address Joe's review comments.
+
+        * Speedometer/resources/main.js:
+        (startBenchmark):
+
+2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speedometer 2.0: Add the capability to run a specific suite
+        https://bugs.webkit.org/show_bug.cgi?id=175908
+
         Reviewed by Saam Barati.
 
         Added ?suite=X query parameter to specify a specific suite (e.g. React-TodoMVC) to run.

@@ -165,8 +165,6 @@ function enableOneSuite(suites, suiteToEnable)
 }
 
 function startBenchmark() {
-    var enabledSuites = Suites.filter(function (suite) { return !suite.disabled; });
-
     if (location.search.length > 1) {
         var parts = location.search.substring(1).split('&');
         for (var i = 0; i < parts.length; i++) {
@@ -189,7 +187,7 @@ function startBenchmark() {
                 break;
             case 'suite':
                 if (!enableOneSuite(Suites, value)) {
-                    alert('No tests to run');
+                    alert('Suite "' + value + '" does not exist. No tests to run.');
                     return false;
                 }
                 break;
