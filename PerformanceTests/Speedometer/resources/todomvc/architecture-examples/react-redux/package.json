@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && mv build dist",
+    "build": "rm -rf dist && react-scripts build && mv build dist",
     "test": "react-scripts test"
   },
   "homepage": "./"

@@ -1,3 +1,24 @@
+2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speedometer: Make React/Redux item order consistent
+        https://bugs.webkit.org/show_bug.cgi?id=175818
+
+        Reviewed by Joseph Pecoraro.
+
+        Based on the patch made by Mathias Bynens. Re-generated project files.
+
+        Also tweaked the instruction in package.json so that newly generated files in build/* replace dist/* instead of
+        being moved under dist/build/ by rm -rf'ing dist directory first.
+
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/dist/index.html:
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/dist/static/js/main.43a0948c.js: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/dist/static/js/main.43a0948c.js.map: Removed.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/dist/static/js/main.69cd9655.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/dist/static/js/main.69cd9655.js.map: Added.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/package.json:
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/src/reducers/todos.js: Forced new items to be appended rather than prepended.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/yarn.lock: Removed unnecessary file.
+
 2017-08-23  Mathias Bynens  <mathias@qiwi.be>
 
         Speedometer: Update to modern React version
