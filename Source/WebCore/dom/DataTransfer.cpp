@@ -123,12 +123,12 @@ void DataTransfer::clearData(const String& type)
         return;
 
     String normalizedType = normalizeType(type);
-    if (type.isNull())
+    if (normalizedType.isNull())
         m_pasteboard->clear();
     else
-        m_pasteboard->clear(type);
+        m_pasteboard->clear(normalizedType);
     if (m_itemList)
-        m_itemList->didClearStringData(type);
+        m_itemList->didClearStringData(normalizedType);
 }
 
 String DataTransfer::getData(const String& type) const

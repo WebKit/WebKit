@@ -19,6 +19,7 @@ function copy(event)
     shouldBeEqualToString('clipboardData.setData(" text/PLAIN ", "hello"); clipboardData.getData("text/plain")', 'hello');
     shouldBeEqualToString('clipboardData.setData("   tEXT/pLaIN", "world"); clipboardData.getData("text/plain")', 'world');
     shouldBeEqualToString('clipboardData.setData("text/plain; charset=utf-8", "hello"); clipboardData.getData("text/plain; charset=Shift_JIS")', 'hello');
+    shouldBeEqualToString('clipboardData.clearData("url"); clipboardData.getData("text/plain")', 'hello');
     document.getElementById('container').style.display = 'none';
     finishJSTest();
 }

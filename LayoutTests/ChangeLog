@@ -1,3 +1,15 @@
+2017-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Consolidate the code to normalize MIME type in DataTransfer
+        https://bugs.webkit.org/show_bug.cgi?id=175810
+
+        Rubber-stamped by Wenson Hsieh.
+
+        Address the forgotten review comment by Wenson.
+
+        * editing/pasteboard/datatransfer-getdata-plaintext-expected.txt:
+        * editing/pasteboard/datatransfer-getdata-plaintext.html:
+
 2017-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] WKWebView schedules nonstop layout after pressing cmb+b,i,u inside a contenteditable div
