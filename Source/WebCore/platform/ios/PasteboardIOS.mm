@@ -324,27 +324,20 @@ static String utiTypeFromCocoaType(NSString *type)
 
 static RetainPtr<NSString> cocoaTypeFromHTMLClipboardType(const String& type)
 {
-    String strippedType = type.stripWhiteSpace();
-
-    if (strippedType == "Text")
-        return (NSString *)kUTTypeText;
-    if (strippedType == "URL")
-        return (NSString *)kUTTypeURL;
-
     // Ignore any trailing charset - JS strings are Unicode, which encapsulates the charset issue.
-    if (strippedType.startsWith("text/plain"))
+    if (type == "text/plain")
         return (NSString *)kUTTypeText;
 
     // Special case because UTI doesn't work with Cocoa's URL type.
-    if (strippedType == "text/uri-list")
+    if (type == "text/uri-list")
         return (NSString *)kUTTypeURL;
 
     // Try UTI now.
-    if (NSString *utiType = utiTypeFromCocoaType(strippedType))
+    if (NSString *utiType = utiTypeFromCocoaType(type))
         return utiType;
 
     // No mapping, just pass the whole string though.
-    return (NSString *)strippedType;
+    return (NSString *)type;
 }
 
 void Pasteboard::clear(const String& type)

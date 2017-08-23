@@ -1,3 +1,37 @@
+2017-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Consolidate the code to normalize MIME type in DataTransfer
+        https://bugs.webkit.org/show_bug.cgi?id=175810
+
+        Reviewed by Wenson Hsieh.
+
+        Factored out the code to convert MIME type to lowercase after stripping whitespace,
+        and treat "text" as "text/plain" and "url" as "text/uri-list".
+
+        Specifications:
+        https://html.spec.whatwg.org/multipage/dnd.html#dom-datatransfer-getdata-2
+        https://html.spec.whatwg.org/multipage/dnd.html#dom-datatransfer-setdata-2
+        https://html.spec.whatwg.org/multipage/dnd.html#dom-datatransfer-cleardata-2
+
+        Stripping of whitespace only happens in WebKit/Blink but it's probably required for compatbility.
+        Spec bug: https://github.com/whatwg/html/issues/2946
+
+        Test: editing/pasteboard/datatransfer-getdata-plaintext.html
+
+        * dom/DataTransfer.cpp:
+        (WebCore::normalizeType):
+        (WebCore::DataTransfer::clearData):
+        (WebCore::DataTransfer::getData const):
+        (WebCore::DataTransfer::setData):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::selectionDataTypeFromHTMLClipboardType):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::cocoaTypeFromHTMLClipboardType):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::cocoaTypeFromHTMLClipboardType):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::clipboardTypeFromMIMEType):
+
 2017-08-22  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r221033.

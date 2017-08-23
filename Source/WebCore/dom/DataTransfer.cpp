@@ -101,11 +101,28 @@ bool DataTransfer::canWriteData() const
     return m_storeMode == StoreMode::ReadWrite;
 }
 
+static String normalizeType(const String& type)
+{
+    if (type.isNull())
+        return type;
+
+    String lowercaseType = type.stripWhiteSpace().convertToASCIILowercase();
+    if (lowercaseType == "text" || lowercaseType.startsWithIgnoringASCIICase("text/plain;"))
+        return "text/plain";
+    if (lowercaseType == "url" || lowercaseType.startsWithIgnoringASCIICase("text/uri-list;"))
+        return "text/uri-list";
+    if (lowercaseType.startsWithIgnoringASCIICase("text/html;"))
+        return "text/html";
+
+    return lowercaseType;
+}
+
 void DataTransfer::clearData(const String& type)
 {
     if (!canWriteData())
         return;
 
+    String normalizedType = normalizeType(type);
     if (type.isNull())
         m_pasteboard->clear();
     else
@@ -124,7 +141,7 @@ String DataTransfer::getData(const String& type) const
         return String();
 #endif
 
-    return m_pasteboard->readString(type);
+    return m_pasteboard->readString(normalizeType(type));
 }
 
 void DataTransfer::setData(const String& type, const String& data)
@@ -137,9 +154,10 @@ void DataTransfer::setData(const String& type, const String& data)
         return;
 #endif
 
-    m_pasteboard->writeString(type, data);
+    String normalizedType = normalizeType(type);
+    m_pasteboard->writeString(normalizedType, data);
     if (m_itemList)
-        m_itemList->didSetStringData(type);
+        m_itemList->didSetStringData(normalizedType);
 }
 
 DataTransferItemList& DataTransfer::items()

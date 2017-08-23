@@ -1,3 +1,15 @@
+2017-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Consolidate the code to normalize MIME type in DataTransfer
+        https://bugs.webkit.org/show_bug.cgi?id=175810
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test. Some test cases were failing on some platforms.
+
+        * editing/pasteboard/datatransfer-getdata-plaintext-expected.txt: Added.
+        * editing/pasteboard/datatransfer-getdata-plaintext.html: Added.
+
 2017-08-22  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r221033.

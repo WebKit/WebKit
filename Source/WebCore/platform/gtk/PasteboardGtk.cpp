@@ -102,23 +102,15 @@ const SelectionData& Pasteboard::selectionData() const
     return m_selectionData.get();
 }
 
-static ClipboardDataType selectionDataTypeFromHTMLClipboardType(const String& rawType)
+static ClipboardDataType selectionDataTypeFromHTMLClipboardType(const String& type)
 {
-    String type(rawType.stripWhiteSpace());
-
-    // Two special cases for IE compatibility
-    if (type == "Text" || type == "text")
-        return ClipboardDataTypeText;
-    if (type == "URL")
-        return ClipboardDataTypeURL;
-
     // From the Mac port: Ignore any trailing charset - JS strings are
     // Unicode, which encapsulates the charset issue.
-    if (type == "text/plain" || type.startsWith("text/plain;"))
+    if (type == "text/plain")
         return ClipboardDataTypeText;
-    if (type == "text/html" || type.startsWith("text/html;"))
+    if (type == "text/html")
         return ClipboardDataTypeMarkup;
-    if (type == "Files" || type == "text/uri-list" || type.startsWith("text/uri-list;"))
+    if (type == "Files" || type == "text/uri-list")
         return ClipboardDataTypeURIList;
 
     // Not a known type, so just default to using the text portion.
