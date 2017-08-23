@@ -1,3 +1,12 @@
+2017-08-23  Matt Lewis  <jlewis3@apple.com>
+
+        Marked imported/w3c/web-platform-tests/html/webappapis/timers/type-long-settimeout.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=173780
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-08-23  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ESNext] Async iteration - Implement Async Generator - runtime

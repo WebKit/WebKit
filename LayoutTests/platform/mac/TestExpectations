@@ -1622,3 +1622,5 @@ webkit.org/b/173010 [ Debug ] js/slow-stress/Int32Array-alloc-huge.html [ Pass T
 
 webkit.org/b/173560 inspector/css/add-rule.html [ Pass Timeout ]
 
+webkit.org/b/173780 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-settimeout.html [ Pass Failure ]
+
