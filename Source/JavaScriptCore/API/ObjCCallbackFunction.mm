@@ -500,7 +500,7 @@ static JSObjectRef objCCallbackFunctionCallAsConstructor(JSContextRef callerCont
         *exception = toRef(JSC::createTypeError(toJS(contextRef), ASCIILiteral("Objective-C blocks called as constructors must return an object.")));
         return nullptr;
     }
-    return (JSObjectRef)result;
+    return const_cast<JSObjectRef>(result);
 }
 
 const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjCCallbackFunction) };

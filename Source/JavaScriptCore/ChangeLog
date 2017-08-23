@@ -1,3 +1,20 @@
+2017-08-23  David Kilzer  <ddkilzer@apple.com>
+
+        Fix -Wcast-qual warnings in JavaScriptCore with new clang compiler
+        <https://webkit.org/b/175889>
+        <rdar://problem/33667497>
+
+        Reviewed by Mark Lam.
+
+        * API/ObjCCallbackFunction.mm:
+        (JSC::objCCallbackFunctionCallAsConstructor): Use
+        const_cast<JSObjectRef>() since JSValueRef is const while
+        JSObjectRef is not.
+        * API/tests/CurrentThisInsideBlockGetterTest.mm:
+        (+[JSValue valueWithConstructorDescriptor:inContext:]): Use
+        const_cast<void*>() since JSObjectMake() takes a void*, but
+        CFBridgingRetain() returns const void*.
+
 2017-08-23  Robin Morisset  <rmorisset@apple.com>
 
         Make GetDynamicVar propagate heap predictions instead of saying HeapTop
