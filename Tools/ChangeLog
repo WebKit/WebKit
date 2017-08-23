@@ -1,3 +1,37 @@
+2017-08-23  Jonathan Bedard  <jbedard@apple.com>
+
+        Access expectations path through apple_additions
+        https://bugs.webkit.org/show_bug.cgi?id=174800
+        <rdar://problem/33498899>
+
+        Reviewed by Alexey Proskuryakov.
+
+        When external test expectations are imported through additional-platform-directory, they will
+        over-write any WebKit expectations. Access some expectations from apple_additions to correct
+        these precedence issues.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort._apple_additions_path): Convert test expectation directory to a path
+        coming from apple_additions.
+        (IOSPort.default_baseline_search_path): Alternate between WebKit path and apple_additions
+        path for layout test expectations.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_layout_test_searchpath_with_apple_additions): Added to test layout-test search paths.
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest.test_layout_test_searchpath_with_apple_additions): Added to test layout-test search paths.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort._apple_additions_path): Convert test expectation directory to a path
+        coming from apple_additions.
+        (MacPort.default_baseline_search_path): Alternate between WebKit path and apple_additions
+        path for layout test expectations.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_layout_test_searchpath_with_apple_additions): Added to test layout-test search paths.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (bind_mock_apple_additions): Added to create mock apple_additions for a block.
+        (bind_mock_apple_additions.MockAppleAdditions): Contains apple_addition stubs for testing.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_baseline_search_path): Include apple_additions test expectation for Windows.
+
 2017-08-22  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. The WPE port should build TestWebKitAPI with the same

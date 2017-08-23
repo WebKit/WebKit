@@ -40,7 +40,7 @@ from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.system.executive import ScriptError, Executive
 from webkitpy.common.system.path import abspath_to_uri, cygpath
 from webkitpy.port.apple import ApplePort
-
+from webkitpy.port.config import apple_additions
 
 _log = logging.getLogger(__name__)
 
@@ -113,7 +113,10 @@ class WinPort(ApplePort):
             # Note we do not add 'wk2' here, even though it's included in _skipped_search_paths().
         # FIXME: Perhaps we should get this list from MacPort?
         fallback_names.append('mac')
-        return map(self._webkit_baseline_path, fallback_names)
+        result = map(self._webkit_baseline_path, fallback_names)
+        if apple_additions() and getattr(apple_additions(), "layout_tests_path", None):
+            result.insert(0, self._filesystem.join(apple_additions().layout_tests_path(), self.port_name))
+        return result
 
     def setup_environ_for_server(self, server_name=None):
         env = super(WinPort, self).setup_environ_for_server(server_name)

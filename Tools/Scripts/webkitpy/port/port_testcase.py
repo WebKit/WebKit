@@ -37,11 +37,14 @@ import sys
 import time
 import unittest
 
+from contextlib import contextmanager
+
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port.base import Port
+from webkitpy.port.config import apple_additions
 from webkitpy.port.image_diff import ImageDiffer
 from webkitpy.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.servers import http_server_base
@@ -71,6 +74,30 @@ class TestWebKitPort(Port):
 
     def _tests_for_disabled_features(self):
         return ["accessibility", ]
+
+
+@contextmanager
+def bind_mock_apple_additions():
+
+    class MockAppleAdditions(object):
+
+        @staticmethod
+        def layout_tests_path():
+            return '/additional_testing_path/'
+
+        @staticmethod
+        def ios_os_name(name):
+            return name
+
+        @staticmethod
+        def mac_os_name(name):
+            return name
+
+    # apple_additions is a memoized function. Take advantage of this fact and manipulate the cache
+    # to temporarily return a mocked result
+    apple_additions._results_cache[()] = MockAppleAdditions
+    yield
+    apple_additions._results_cache[()] = None
 
 
 class PortTestCase(unittest.TestCase):

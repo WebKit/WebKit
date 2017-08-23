@@ -26,12 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
-import unittest
-
-from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port import port_testcase
@@ -116,3 +111,9 @@ class WinPortTest(port_testcase.PortTestCase):
         port = self.make_port(port_name='win')
         port._get_crash_log('DumpRenderTree', 1234, '', '', 0,
             time_fn=fake_time_cb(), sleep_fn=lambda delay: None)
+
+    def test_layout_test_searchpath_with_apple_additions(self):
+        with port_testcase.bind_mock_apple_additions():
+            search_path = self.make_port().default_baseline_search_path()
+        self.assertEqual(search_path[0], '/additional_testing_path/win')
+        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/win-xp')

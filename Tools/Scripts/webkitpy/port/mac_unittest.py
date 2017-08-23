@@ -31,12 +31,10 @@ import time
 
 from webkitpy.port.mac import MacPort
 from webkitpy.port import darwin_testcase
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.port import port_testcase
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, MockProcess, ScriptError
-from webkitpy.common.system.systemhost_mock import MockSystemHost
-
+from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, ScriptError
 
 class MacTest(darwin_testcase.DarwinTest):
     os_name = 'mac'
@@ -144,3 +142,9 @@ class MacTest(darwin_testcase.DarwinTest):
         port._executive = MockExecutive2(run_command_fn=throwing_run_command)
         expected_stdout = "['xcrun', '--sdk', 'macosx', '-find', 'test']\n"
         OutputCapture().assert_outputs(self, port.xcrun_find, args=['test', 'falling'], expected_stdout=expected_stdout)
+
+    def test_layout_test_searchpath_with_apple_additions(self):
+        with port_testcase.bind_mock_apple_additions():
+            search_path = self.make_port().default_baseline_search_path()
+        self.assertEqual(search_path[0], '/additional_testing_path/mac-lion-wk1')
+        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-lion-wk1')

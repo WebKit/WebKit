@@ -24,6 +24,7 @@ import time
 
 from webkitpy.port.ios_simulator import IOSSimulatorPort
 from webkitpy.port import ios_testcase
+from webkitpy.port import port_testcase
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
@@ -87,3 +88,19 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
         port._executive = MockExecutive2(run_command_fn=throwing_run_command)
         expected_stdout = "['xcrun', '--sdk', 'iphonesimulator', '-find', 'test']\n"
         OutputCapture().assert_outputs(self, port.xcrun_find, args=['test', 'falling'], expected_stdout=expected_stdout)
+
+    def test_layout_test_searchpath_with_apple_additions(self):
+        with port_testcase.bind_mock_apple_additions():
+            search_path = self.make_port().default_baseline_search_path()
+        self.assertEqual(search_path[0], '/additional_testing_path/ios-simulator-8-wk1')
+        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/ios-simulator-8-wk1')
+        self.assertEqual(search_path[2], '/additional_testing_path/ios-simulator-8')
+        self.assertEqual(search_path[3], '/mock-checkout/LayoutTests/platform/ios-simulator-8')
+        self.assertEqual(search_path[4], '/additional_testing_path/ios-simulator-wk1')
+        self.assertEqual(search_path[5], '/mock-checkout/LayoutTests/platform/ios-simulator-wk1')
+        self.assertEqual(search_path[6], '/additional_testing_path/ios-simulator')
+        self.assertEqual(search_path[7], '/mock-checkout/LayoutTests/platform/ios-simulator')
+        self.assertEqual(search_path[8], '/additional_testing_path/ios-8')
+        self.assertEqual(search_path[9], '/mock-checkout/LayoutTests/platform/ios-8')
+        self.assertEqual(search_path[10], '/additional_testing_path/ios-wk1')
+        self.assertEqual(search_path[11], '/mock-checkout/LayoutTests/platform/ios-wk1')
