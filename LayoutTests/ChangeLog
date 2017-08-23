@@ -1,3 +1,23 @@
+2017-08-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Unskipping tests under fast/canvas/, adding
+        failure expectations for actual failures, and providing port-specific
+        baselines for tests that require them.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/canvas: Added.
+        * platform/wpe/fast/canvas/canvas-size-change-after-layout-expected.txt: Added.
+        * platform/wpe/fast/canvas/canvas-zoom-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl: Added.
+        * platform/wpe/fast/canvas/webgl/angle-instanced-arrays-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/angle-instanced-arrays-out-of-bounds-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/css-webkit-canvas-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/css-webkit-canvas-repaint-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/framebuffer-object-attachment-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/glsl-conformance-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/oes-texture-half-float-expected.txt: Added.
+        * platform/wpe/fast/canvas/webgl/webgl-draw-buffers-expected.txt: Added.
+
 2017-08-23  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Unreviewed test gardening
