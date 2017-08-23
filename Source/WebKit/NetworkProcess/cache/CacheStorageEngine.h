@@ -25,12 +25,8 @@
 
 #pragma once
 
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/CacheStorageConnection.h>
-#include <wtf/Forward.h>
+#include "CacheStorageEngineCache.h"
 #include <wtf/HashMap.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace IPC {
 class Connection;
@@ -42,31 +38,12 @@ class SessionID;
 
 namespace WebKit {
 
-class NetworkConnectionToWebProcess;
+namespace CacheStorage {
 
-class CacheStorageEngine {
+class Engine {
 public:
-    static CacheStorageEngine& from(PAL::SessionID);
+    static Engine& from(PAL::SessionID);
     static void destroyEngine(PAL::SessionID);
-
-    enum class Error {
-        Internal
-    };
-    using Record = WebCore::CacheStorageConnection::Record;
-
-    using CacheIdentifierOrError = Expected<uint64_t, Error>;
-    using CacheIdentifierCallback = Function<void(CacheIdentifierOrError&&)>;
-
-    using CacheInfosOrError = Expected<Vector<WebCore::CacheStorageConnection::CacheInfo>, Error>;
-    using CacheInfosCallback = Function<void(CacheInfosOrError&&)>;
-
-    using RecordsOrError = Expected<Vector<Record>, Error>;
-    using RecordsCallback = Function<void(RecordsOrError&&)>;
-
-    using RecordIdentifiersOrError = Expected<Vector<uint64_t>, Error>;
-    using RecordIdentifiersCallback = Function<void(RecordIdentifiersOrError&&)>;
-
-    using CompletionCallback = Function<void(std::optional<Error>&&)>;
 
     void open(const String& origin, const String& cacheName, CacheIdentifierCallback&&);
     void remove(uint64_t cacheIdentifier, CacheIdentifierCallback&&);
@@ -77,14 +54,7 @@ public:
     void deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, RecordIdentifiersCallback&&);
 
 private:
-    static CacheStorageEngine& defaultEngine();
-
-    struct Cache {
-        uint64_t identifier;
-        String name;
-        Vector<Record> records;
-        uint64_t nextRecordIdentifier { 0 };
-    };
+    static Engine& defaultEngine();
 
     void writeCachesToDisk(CompletionCallback&&);
 
@@ -108,13 +78,6 @@ private:
     uint64_t m_nextCacheIdentifier { 0 };
 };
 
-}
+} // namespace CacheStorage
 
-namespace WTF {
-template<> struct EnumTraits<WebKit::CacheStorageEngine::Error> {
-    using values = EnumValues<
-        WebKit::CacheStorageEngine::Error,
-        WebKit::CacheStorageEngine::Error::Internal
-    >;
-};
-}
+} // namespace WebKit

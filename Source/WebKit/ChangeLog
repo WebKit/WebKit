@@ -1,5 +1,54 @@
 2017-08-23  Youenn Fablet  <youenn@apple.com>
 
+        [CacheAPI] Introduce a WebKit::CacheStorage namespace
+        https://bugs.webkit.org/show_bug.cgi?id=175885
+
+        Reviewed by Alex Christensen.
+
+        Introducing WebKit::CacheStorage namespace.
+        Splitting CacheStorageEngine.h in three files.
+        Updating client code accordingly.
+
+        * NetworkProcess/cache/CacheStorage.h: Added.
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::globalEngineMap):
+        (WebKit::CacheStorage::Engine::from):
+        (WebKit::CacheStorage::Engine::destroyEngine):
+        (WebKit::CacheStorage::Engine::defaultEngine):
+        (WebKit::CacheStorage::Engine::open):
+        (WebKit::CacheStorage::Engine::remove):
+        (WebKit::CacheStorage::Engine::retrieveCaches):
+        (WebKit::CacheStorage::Engine::retrieveRecords):
+        (WebKit::CacheStorage::Engine::putRecords):
+        (WebKit::CacheStorage::Engine::deleteMatchingRecords):
+        (WebKit::CacheStorage::Engine::writeCachesToDisk):
+        (WebKit::CacheStorage::Engine::readCachesFromDisk):
+        (WebKit::CacheStorage::Engine::readCache):
+        (WebKit::CacheStorage::Engine::writeCacheRecords):
+        (WebKit::CacheStorage::Engine::removeCacheRecords):
+        (WebKit::CacheStorage::Engine::cache):
+        (WebKit::CacheStorage::Engine::caches const):
+        (WebKit::CacheStorage::Engine::queryCache):
+        * NetworkProcess/cache/CacheStorageEngineCache.h: Added.
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::open):
+        (WebKit::CacheStorageEngineConnection::remove):
+        (WebKit::CacheStorageEngineConnection::caches):
+        (WebKit::CacheStorageEngineConnection::records):
+        (WebKit::CacheStorageEngineConnection::deleteMatchingRecords):
+        (WebKit::CacheStorageEngineConnection::putRecords):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::openCompleted):
+        (WebKit::WebCacheStorageConnection::removeCompleted):
+        (WebKit::WebCacheStorageConnection::updateCaches):
+        (WebKit::WebCacheStorageConnection::updateRecords):
+        (WebKit::WebCacheStorageConnection::deleteRecordsCompleted):
+        (WebKit::WebCacheStorageConnection::putRecordsCompleted):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+
+2017-08-23  Youenn Fablet  <youenn@apple.com>
+
         [Cache API] Enable persistent coder to encode FetchOptions
         https://bugs.webkit.org/show_bug.cgi?id=175883
 

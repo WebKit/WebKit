@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "CacheStorageEngine.h"
+#include "CacheStorage.h"
 #include <WebCore/CacheStorageConnection.h>
 #include <wtf/HashMap.h>
 
 namespace IPC {
+class Connection;
 class Decoder;
 class Encoder;
 }
@@ -60,13 +61,13 @@ private:
     void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&) final;
     void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<Record>&&) final;
 
-    void openCompleted(uint64_t requestIdentifier, CacheStorageEngine::CacheIdentifierOrError&&);
-    void removeCompleted(uint64_t requestIdentifier, CacheStorageEngine::CacheIdentifierOrError&&);
-    void updateCaches(uint64_t requestIdentifier, CacheStorageEngine::CacheInfosOrError&&);
+    void openCompleted(uint64_t requestIdentifier, CacheStorage::CacheIdentifierOrError&&);
+    void removeCompleted(uint64_t requestIdentifier, CacheStorage::CacheIdentifierOrError&&);
+    void updateCaches(uint64_t requestIdentifier, CacheStorage::CacheInfosOrError&&);
 
-    void updateRecords(uint64_t requestIdentifier, CacheStorageEngine::RecordsOrError&&);
-    void deleteRecordsCompleted(uint64_t requestIdentifier, CacheStorageEngine::RecordIdentifiersOrError&&);
-    void putRecordsCompleted(uint64_t requestIdentifier, CacheStorageEngine::RecordIdentifiersOrError&&);
+    void updateRecords(uint64_t requestIdentifier, CacheStorage::RecordsOrError&&);
+    void deleteRecordsCompleted(uint64_t requestIdentifier, CacheStorage::RecordIdentifiersOrError&&);
+    void putRecordsCompleted(uint64_t requestIdentifier, CacheStorage::RecordIdentifiersOrError&&);
 
     WebCacheStorageProvider& m_provider;
     PAL::SessionID m_sessionID;

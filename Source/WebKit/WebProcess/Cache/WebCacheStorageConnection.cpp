@@ -34,6 +34,8 @@
 #include "WebProcess.h"
 #include <wtf/MainThread.h>
 
+using namespace WebKit::CacheStorage;
+
 namespace WebKit {
 
 WebCacheStorageConnection::WebCacheStorageConnection(WebCacheStorageProvider& provider, PAL::SessionID sessionID)
@@ -82,32 +84,32 @@ void WebCacheStorageConnection::doBatchPutOperation(uint64_t requestIdentifier, 
     connection().send(Messages::CacheStorageEngineConnection::PutRecords(m_sessionID, requestIdentifier, cacheIdentifier, records), 0);
 }
 
-void WebCacheStorageConnection::openCompleted(uint64_t requestIdentifier, CacheStorageEngine::CacheIdentifierOrError&& result)
+void WebCacheStorageConnection::openCompleted(uint64_t requestIdentifier, CacheIdentifierOrError&& result)
 {
     CacheStorageConnection::openCompleted(requestIdentifier, result.hasValue() ? result.value() : 0, !result.hasValue() ? Error::Internal : Error::None);
 }
 
-void WebCacheStorageConnection::removeCompleted(uint64_t requestIdentifier, CacheStorageEngine::CacheIdentifierOrError&& result)
+void WebCacheStorageConnection::removeCompleted(uint64_t requestIdentifier, CacheIdentifierOrError&& result)
 {
     CacheStorageConnection::removeCompleted(requestIdentifier, result.hasValue() ? result.value() : 0, !result.hasValue() ? Error::Internal : Error::None);
 }
 
-void WebCacheStorageConnection::updateCaches(uint64_t requestIdentifier, CacheStorageEngine::CacheInfosOrError&& result)
+void WebCacheStorageConnection::updateCaches(uint64_t requestIdentifier, CacheInfosOrError&& result)
 {
     CacheStorageConnection::updateCaches(requestIdentifier, result.hasValue() ? result.value() : Vector<CacheInfo>());
 }
 
-void WebCacheStorageConnection::updateRecords(uint64_t requestIdentifier, CacheStorageEngine::RecordsOrError&& result)
+void WebCacheStorageConnection::updateRecords(uint64_t requestIdentifier, RecordsOrError&& result)
 {
     CacheStorageConnection::updateRecords(requestIdentifier, result.hasValue() ? WTFMove(result.value()) : Vector<Record>());
 }
 
-void WebCacheStorageConnection::deleteRecordsCompleted(uint64_t requestIdentifier, CacheStorageEngine::RecordIdentifiersOrError&& result)
+void WebCacheStorageConnection::deleteRecordsCompleted(uint64_t requestIdentifier, RecordIdentifiersOrError&& result)
 {
     CacheStorageConnection::deleteRecordsCompleted(requestIdentifier, result.hasValue() ? result.value() : Vector<uint64_t>(), !result.hasValue() ? Error::Internal : Error::None);
 }
 
-void WebCacheStorageConnection::putRecordsCompleted(uint64_t requestIdentifier, CacheStorageEngine::RecordIdentifiersOrError&& result)
+void WebCacheStorageConnection::putRecordsCompleted(uint64_t requestIdentifier, RecordIdentifiersOrError&& result)
 {
     CacheStorageConnection::putRecordsCompleted(requestIdentifier, result.hasValue() ? result.value() : Vector<uint64_t>(), !result.hasValue() ? Error::Internal : Error::None);
 }
