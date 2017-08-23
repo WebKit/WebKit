@@ -55,6 +55,7 @@ private:
     void didWriteSelectionToPasteboard() final;
     void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
 
+    void didEndUserTriggeredSelectionChanges() final { }
     void respondToChangedContents() final;
     void respondToChangedSelection(WebCore::Frame*) final;
     void updateEditorStateAfterLayoutIfEditabilityChanged() final { } 
