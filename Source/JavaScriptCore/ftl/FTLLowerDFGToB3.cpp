@@ -8294,7 +8294,7 @@ private:
         if (m_node->bucketOwnerType() == BucketOwnerType::Map)
             noBucketResult = m_out.anchor(weakPointer(vm().sentinelMapBucket.get()));
         else {
-            ASSERT(node->bucketOwnerType() == BucketOwnerType::Set);
+            ASSERT(m_node->bucketOwnerType() == BucketOwnerType::Set);
             noBucketResult = m_out.anchor(weakPointer(vm().sentinelSetBucket.get()));
         }
         m_out.jump(continuation);
