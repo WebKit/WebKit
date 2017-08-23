@@ -1,3 +1,43 @@
+2017-08-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] WKWebView schedules nonstop layout after pressing cmb+b,i,u inside a contenteditable div
+        https://bugs.webkit.org/show_bug.cgi?id=175116
+        <rdar://problem/28279301>
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        WebCore support for WebPage::editorState refactoring. See WebKit ChangeLogs for more detail.
+
+        Tests: EditorStateTests.TypingAttributesBold
+               EditorStateTests.TypingAttributesItalic
+               EditorStateTests.TypingAttributesUnderline
+               EditorStateTests.TypingAttributesTextAlignmentAbsoluteAlignmentOptions
+               EditorStateTests.TypingAttributesTextAlignmentStartEnd
+               EditorStateTests.TypingAttributesTextAlignmentDirectionalText
+               EditorStateTests.TypingAttributesTextColor
+               EditorStateTests.TypingAttributesMixedStyles
+               EditorStateTests.TypingAttributesLinkColor
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::propertyAsColor const):
+        (WebCore::StyleProperties::propertyAsValueID const):
+
+        Introduces some helper functions in StyleProperties to convert CSS property values to Color or a CSSValueID.
+
+        * css/StyleProperties.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::hasStyle):
+
+        Pull out logic in selectionStartHasStyle that asks for a style TriState into EditingStyle::hasStyle. This is
+        because WebPage::editorState will now query for multiple styles at the selection start, but
+        selectionStartHasStyle currently recomputes styleAtSelectionStart every time it is called. To prevent extra work
+        from being done, we can just call selectionStartHasStyle once and use ask for EditingStyle::hasStyle on the
+        computed EditingStyle at selection start.
+
+        * editing/EditingStyle.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartHasStyle const):
+
 2017-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] EditorState updates should be rolled into the layer update lifecycle when possible

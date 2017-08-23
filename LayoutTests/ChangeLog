@@ -1,5 +1,21 @@
 2017-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS WK2] WKWebView schedules nonstop layout after pressing cmb+b,i,u inside a contenteditable div
+        https://bugs.webkit.org/show_bug.cgi?id=175116
+        <rdar://problem/28279301>
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        * platform/ios-wk2/editing/style/unbold-in-bold-expected.txt:
+        * platform/mac-wk2/editing/style/unbold-in-bold-expected.txt:
+
+        Rebaseline a WK2 LayoutTest expectations. This test currently expects an empty anonymous RenderBlock to be
+        inserted into the render tree, but this is only a result of us adding and removing a temporary <span> when
+        computing a RenderStyle in WebPage::editorState -- this patch removes these empty RenderBlocks, making these
+        expectations' RenderTrees consistent with WebKit1.
+
+2017-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [WK2] EditorState updates should be rolled into the layer update lifecycle when possible
         https://bugs.webkit.org/show_bug.cgi?id=175370
         <rdar://problem/33799806>

@@ -515,6 +515,7 @@ public:
     void resetAssistedNodeForFrame(WebFrame*);
 
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
+    void executeEditCommandWithCallback(const String&, const String& argument, CallbackID);
 
 #if PLATFORM(IOS)
     WebCore::FloatSize screenSize() const;
@@ -586,7 +587,6 @@ public:
 #endif
 
     void contentSizeCategoryDidChange(const String&);
-    void executeEditCommandWithCallback(const String&, CallbackID);
 
     Seconds eventThrottlingDelay() const;
 
