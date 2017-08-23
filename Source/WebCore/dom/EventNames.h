@@ -324,6 +324,7 @@ public:
     bool isWheelEventType(const AtomicString& eventType) const;
     bool isGestureEventType(const AtomicString& eventType) const;
     bool isTouchEventType(const AtomicString& eventType) const;
+    bool isTouchScrollBlockingEventType(const AtomicString& eventType) const;
 #if ENABLE(GAMEPAD)
     bool isGamepadEventType(const AtomicString& eventType) const;
 #endif
@@ -348,6 +349,12 @@ inline const EventNames& eventNames()
 inline bool EventNames::isGestureEventType(const AtomicString& eventType) const
 {
     return eventType == gesturestartEvent || eventType == gesturechangeEvent || eventType == gestureendEvent;
+}
+
+inline bool EventNames::isTouchScrollBlockingEventType(const AtomicString& eventType) const
+{
+    return eventType == touchstartEvent
+        || eventType == touchmoveEvent;
 }
 
 inline bool EventNames::isTouchEventType(const AtomicString& eventType) const

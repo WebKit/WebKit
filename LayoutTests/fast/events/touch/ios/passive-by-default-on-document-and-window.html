@@ -1,0 +1,97 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function getUIScript()
+{
+    return `
+    (function() {
+        uiController.dragFromPointToPoint(50, 250, 50, 30, 0.1, function() {
+            uiController.uiScriptComplete("Done");
+        });
+    })();`
+}
+
+function runTest()
+{
+    let output = "";
+    window.addEventListener("touchstart", function(event) {
+        event.preventDefault();
+        output += `touchstart on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    window.addEventListener("touchmove", function(event) {
+        event.preventDefault();
+        output += `touchmove on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    window.addEventListener("touchend", function(event) {
+        event.preventDefault();
+        output += `touchend on window - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    document.addEventListener("touchstart", function(event) {
+        event.preventDefault();
+        output += `touchstart on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    document.addEventListener("touchmove", function(event) {
+        event.preventDefault();
+        output += `touchmove on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    document.addEventListener("touchend", function(event) {
+        event.preventDefault();
+        output += `touchend on document - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    document.documentElement.addEventListener("touchstart", function(event) {
+        event.preventDefault();
+        output += `touchstart on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    document.documentElement.addEventListener("touchmove", function(event) {
+        event.preventDefault();
+        output += `touchmove on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    document.documentElement.addEventListener("touchend", function(event) {
+        event.preventDefault();
+        output += `touchend on documentElement - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    let body = document.querySelector("body");
+
+    body.addEventListener("touchstart", function(event) {
+        event.preventDefault();
+        output += `touchstart on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    body.addEventListener("touchmove", function(event) {
+        event.preventDefault();
+        output += `touchmove on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    body.addEventListener("touchend", function(event) {
+        event.preventDefault();
+        output += `touchend on body - cancelable: ${event.cancelable} defaultPrevented: ${event.defaultPrevented} <br>`;
+    }, false);
+
+    if (testRunner.runUIScript) {
+        testRunner.runUIScript(getUIScript(), function(result) {
+            output += result;
+            document.getElementById("output").innerHTML = output;
+            testRunner.notifyDone();
+        });
+    }
+}
+
+window.addEventListener('load', runTest, false);
+</script>
+<body style="height: 500vh">
+<div id=output>
+This test requires UIScriptController to run.
+</div>
+</body>

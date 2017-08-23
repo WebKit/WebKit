@@ -34,6 +34,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "EventNames.h"
+#include "HTMLBodyElement.h"
 #include "InspectorInstrumentation.h"
 #include "JSEventListener.h"
 #include "NoEventDispatchAssertion.h"
@@ -68,9 +69,20 @@ bool EventTarget::isMessagePort() const
 
 bool EventTarget::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
+    auto passive = options.passive;
+
+    if (!passive.has_value() && eventNames().isTouchScrollBlockingEventType(eventType)) {
+        if (toDOMWindow())
+            passive = true;
+        else if (auto* node = toNode()) {
+            if (node->isDocumentNode() || node->document().documentElement() == node || node->document().body() == node)
+                passive = true;
+        }
+    }
+
     bool listenerCreatedFromScript = listener->type() == EventListener::JSEventListenerType && !listener->wasCreatedFromMarkup();
 
-    if (!ensureEventTargetData().eventListenerMap.add(eventType, WTFMove(listener), { options.capture, options.passive, options.once }))
+    if (!ensureEventTargetData().eventListenerMap.add(eventType, WTFMove(listener), { options.capture, passive.value_or(false), options.once }))
         return false;
 
     if (listenerCreatedFromScript)

@@ -24,7 +24,7 @@
             window.addEventListener('touchstart', function(event) {
                 output += 'Received' + (event.cancelable ? ' cancelable' : '') + ' event ' + event.type + ' at ' + event.touches[0].clientX + ', ' + event.touches[0].clientY + '<br>';
                 event.preventDefault();
-            });
+            }, { passive: false });
 
             window.addEventListener('touchend', function(event) {
                 output += 'Received' + (event.cancelable ? ' cancelable' : '') + ' event ' + event.type + '<br>';
