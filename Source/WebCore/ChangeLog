@@ -1,3 +1,22 @@
+2017-08-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Race condition in StartWebThread causing crash
+        https://bugs.webkit.org/show_bug.cgi?id=175852
+
+        Reviewed by Mark Lam.
+
+        When starting web thread, the main thread waits for completion of web thread initialization
+        by using pthread_cond_t. However, the main thread may be woken up due to the existence of
+        the spurious wake up of pthread_cond_t.
+
+        Instead, we should use WTF::Lock and WTF::Condition. Since our StartWebThread already calls
+        WTF::initializeThreading, it is safe to use WTF::Lock and WTF::Condition. And our WTF::Condition
+        does not have the spurious wake up problem as described in Condition.h.
+
+        * platform/ios/wak/WebCoreThread.mm:
+        (RunWebThread):
+        (StartWebThread):
+
 2017-08-23  Brent Fulgham  <bfulgham@apple.com>
 
         Ensure media controls host exists before using it
