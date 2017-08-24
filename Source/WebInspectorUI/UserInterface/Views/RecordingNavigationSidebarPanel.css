@@ -29,6 +29,9 @@
 
 .sidebar > .panel.navigation.recording > .content > .tree-outline {
     min-height: 100%;
+}
+
+.sidebar > .panel.navigation.recording > .content > .tree-outline:not(:empty) {
     background: var(--transparent-stripe-background-gradient);
 }
 
