@@ -1,5 +1,11 @@
 2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix. Copy the missing statistics.js for Speedometer 2.0.
+
+        * resources/statistics.js: Copied from PerformanceTests/resources/statistics.js.
+
+2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Merge the latest version of Speedometer 2.0 to browserbench.org against at r221126.
 
         Rubber-stamped by Yusuke Suzuki.
