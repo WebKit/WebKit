@@ -1201,7 +1201,8 @@ namespace JSC {
         bool m_needsToUpdateArrowFunctionContext;
         DerivedContextType m_derivedContextType { DerivedContextType::None };
 
-        Vector<std::tuple<TryData*, int, int>> m_catchesToEmit;
+        using CatchEntry = std::tuple<TryData*, int, int>;
+        Vector<CatchEntry> m_catchesToEmit;
     };
 
 } // namespace JSC

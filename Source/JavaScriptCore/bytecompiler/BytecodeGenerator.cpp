@@ -4023,7 +4023,7 @@ void BytecodeGenerator::popTry(TryData* tryData, Label& end)
 
 void BytecodeGenerator::emitCatch(RegisterID* exceptionRegister, RegisterID* thrownValueRegister, TryData* data)
 {
-    m_catchesToEmit.append({ data, exceptionRegister->index(), thrownValueRegister->index() });
+    m_catchesToEmit.append(CatchEntry { data, exceptionRegister->index(), thrownValueRegister->index() });
 }
 
 void BytecodeGenerator::restoreScopeRegister(int lexicalScopeIndex)

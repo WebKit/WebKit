@@ -206,8 +206,8 @@ public:
         if (node.isRoot())
             return m_rootSuccessorList;
         List result;
-        for (typename Graph::Node node : m_graph.successors(node.node()))
-            result.append(node);
+        for (typename Graph::Node successor : m_graph.successors(node.node()))
+            result.append(successor);
         return result;
     }
 
@@ -224,8 +224,8 @@ public:
         }
 
         List result;
-        for (typename Graph::Node node : m_graph.predecessors(node.node()))
-            result.append(node);
+        for (typename Graph::Node predecessor : m_graph.predecessors(node.node()))
+            result.append(predecessor);
         return result;
     }
 
