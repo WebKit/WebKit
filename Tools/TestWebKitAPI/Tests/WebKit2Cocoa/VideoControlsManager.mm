@@ -225,8 +225,8 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLast
 
     TestWebKitAPI::Util::run(&secondVideoPaused);
 }
-
-TEST(VideoControlsManager, VideoControlsManagerMultipleVideosSwitchControlledVideoWhenScrolling)
+// FIXME: Re-enable this test once <webkit.org/b/175909> is resolved.
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosSwitchControlledVideoWhenScrolling)
 {
     RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
 
