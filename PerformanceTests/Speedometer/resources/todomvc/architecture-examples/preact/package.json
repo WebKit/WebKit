@@ -1,21 +1,14 @@
 {
-  "name": "preact-todomvc",
-  "version": "0.2.0",
-  "description": "TodoMVC done in Preact",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "dev": "webpack-dev-server",
     "start": "http-server build -p ${PORT:-8080}",
     "prestart": "npm run build",
     "build": "npm run -s build:rollup",
-    "build:webpack": "mkdirp build && ncp src/index.html build/index.html && webpack -p",
-    "build:rollup": "rm -rf build && mkdirp build/todomvc-common && ncp src/index.html build/index.html && rollup -c rollup.config.js && cp node_modules/todomvc-common/base.{js,css} build/todomvc-common/ && cp node_modules/todomvc-app-css/index.css build/todomvc.css && npm run postbuild",
-    "postbuild": "uglifyjs build/app.js --pure-funcs classCallCheck Object.defineProperty Object.freeze invariant warning -c unsafe,collapse_vars,evaluate,screw_ie8,loops,keep_fargs=false,pure_getters,unused,dead_code -m -o build/app.js -p relative --in-source-map build/app.js.map --source-map build/app.js.map",
-    "deploy": "gh-pages -d build"
+    "build:webpack": "mkdirp dist && ncp src/index.html dist/index.html && webpack -p",
+    "build:rollup": "rm -rf dist && mkdirp dist/todomvc-common && ncp src/index.html dist/index.html && rollup -c rollup.config.js && cp node_modules/todomvc-common/base.{js,css} dist/todomvc-common/ && cp node_modules/todomvc-app-css/index.css dist/todomvc.css && npm run postbuild",
+    "postbuild": "uglifyjs dist/app.js --pure-funcs classCallCheck Object.defineProperty Object.freeze invariant warning -c unsafe,collapse_vars,evaluate,screw_ie8,loops,keep_fargs=false,pure_getters,unused,dead_code -m -o dist/app.js -p relative --in-source-map dist/app.js.map --source-map dist/app.js.map"
   },
-  "keywords": [
-    "preact"
-  ],
   "author": "The TodoMVC authors",
   "license": "MIT",
   "devDependencies": {
@@ -30,7 +23,6 @@
     "babel-preset-stage-0": "^6.5.0",
     "css-loader": "^0.26.0",
     "extract-text-webpack-plugin": "^1.0.1",
-    "gh-pages": "^0.12.0",
     "http-server": "^0.9.0",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
@@ -44,8 +36,10 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
-    "preact": "^7.1.0",
-    "preact-router": "^2.3.2",
+    "classnames": "^2.2.5",
+    "linkstate": "^1.0.1",
+    "preact": "^8.2.1",
+    "preact-router": "^2.5.5",
     "todomvc-app-css": "^2.0.3",
     "todomvc-common": "^1.0.2"
   }

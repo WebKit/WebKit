@@ -1,3 +1,21 @@
+2017-08-23  Mathias Bynens  <mathias@qiwi.be>
+
+        Speedometer: Update to modern Preact version
+        https://bugs.webkit.org/show_bug.cgi?id=175763
+
+        Reviewed by Ryosuke Niwa.
+
+        * Speedometer/resources/todomvc/architecture-examples/preact/README.md: Documented build steps.
+        * Speedometer/resources/todomvc/architecture-examples/preact/dist/*: Renamed from build to dist so it can be checked in, and updated per build steps.
+        * Speedometer/resources/todomvc/architecture-examples/preact/package-lock.json: Locked dependencies to ensure builds are deterministic.
+        * Speedometer/resources/todomvc/architecture-examples/preact/package.json: Updated build commands and dependencies.
+        * Speedometer/resources/todomvc/architecture-examples/preact/rollup.config.js: Updated configuration.
+        * Speedometer/resources/todomvc/architecture-examples/preact/src/app/footer.js: Updated to modern Preact version.
+        * Speedometer/resources/todomvc/architecture-examples/preact/src/app/index.js: Updated to modern Preact version.
+        * Speedometer/resources/todomvc/architecture-examples/preact/src/app/util.js: Updated to modern Preact version.
+        * Speedometer/resources/todomvc/architecture-examples/preact/src/index.html: Made title consistent.
+        * Speedometer/resources/todomvc/architecture-examples/preact/webpack.config.babel.js: Updated configuration.
+
 2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Speedometer 2.0: Add the capability to run a specific suite

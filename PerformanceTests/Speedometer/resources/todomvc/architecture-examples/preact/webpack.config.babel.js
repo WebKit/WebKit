@@ -7,7 +7,7 @@ module.exports = {
         'todomvc-common': 'todomvc-common'
     },
     output: {
-        path: './build',
+        path: './dist',
         filename: '[name].js'
     },
     module: {
