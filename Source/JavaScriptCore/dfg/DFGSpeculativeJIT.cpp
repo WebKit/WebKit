@@ -1930,7 +1930,7 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
         }
     }
 
-    m_jit.jitCode()->finalizeCatchOSREntrypoints();
+    m_jit.jitCode()->finalizeOSREntrypoints();
 
     ASSERT(osrEntryIndex == m_osrEntryHeads.size());
     

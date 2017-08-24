@@ -238,6 +238,24 @@ std::optional<CodeOrigin> JITCode::findPC(CodeBlock*, void* pc)
     return std::nullopt;
 }
 
+void JITCode::finalizeOSREntrypoints()
+{
+    auto comparator = [] (const auto& a, const auto& b) {
+        return a.m_bytecodeIndex < b.m_bytecodeIndex;
+    };
+    std::sort(catchEntrypoints.begin(), catchEntrypoints.end(), comparator);
+    std::sort(osrEntry.begin(), osrEntry.end(), comparator);
+
+#if !ASSERT_DISABLED
+    auto verifyIsSorted = [&] (auto& osrVector) {
+        for (unsigned i = 0; i + 1 < osrVector.size(); ++i)
+            ASSERT(osrVector[i].m_bytecodeIndex <= osrVector[i + 1].m_bytecodeIndex);
+    };
+    verifyIsSorted(catchEntrypoints);
+    verifyIsSorted(osrEntry);
+#endif
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

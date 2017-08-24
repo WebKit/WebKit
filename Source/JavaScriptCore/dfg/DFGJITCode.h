@@ -77,19 +77,7 @@ public:
             [] (const CatchEntrypointData* item) { return item->m_bytecodeIndex; });
     }
 
-    void finalizeCatchOSREntrypoints()
-    {
-        std::sort(catchEntrypoints.begin(), catchEntrypoints.end(), [] (const CatchEntrypointData& a, const CatchEntrypointData& b) {
-            return a.m_bytecodeIndex < b.m_bytecodeIndex;
-        });
-#if !ASSERT_DISABLED
-        unsigned previousIndex = 0;
-        for (const CatchEntrypointData& entrypoint : catchEntrypoints) {
-            ASSERT(previousIndex < entrypoint.m_bytecodeIndex);
-            previousIndex = entrypoint.m_bytecodeIndex;
-        }
-#endif
-    }
+    void finalizeOSREntrypoints();
 
     void appendCatchEntrypoint(unsigned bytecodeIndex, unsigned machineCodeOffset, Vector<FlushFormat>&& argumentFormats)
     {
