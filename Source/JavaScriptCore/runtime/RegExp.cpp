@@ -59,6 +59,12 @@ RegExpFlags regExpFlags(const String& string)
             flags = static_cast<RegExpFlags>(flags | FlagMultiline);
             break;
 
+        case 's':
+            if (flags & FlagDotAll)
+                return InvalidFlags;
+            flags = static_cast<RegExpFlags>(flags | FlagDotAll);
+            break;
+            
         case 'u':
             if (flags & FlagUnicode)
                 return InvalidFlags;
@@ -104,10 +110,12 @@ void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, const String& 
             fputc('i', m_file);
         if (regExp->multiline())
             fputc('m', m_file);
-        if (regExp->sticky())
-            fputc('y', m_file);
+        if (regExp->dotAll())
+            fputc('s', m_file);
         if (regExp->unicode())
             fputc('u', m_file);
+        if (regExp->sticky())
+            fputc('y', m_file);
         fprintf(m_file, "\n");
     }
 

@@ -36,7 +36,7 @@ enum BuiltInCharacterClassID {
     DigitClassID,
     SpaceClassID,
     WordClassID,
-    NewlineClassID,
+    DotClassID,
 };
 
 // The Parser class should not be used directly - only via the Yarr::parse() method.
@@ -694,7 +694,7 @@ private:
 
             case '.':
                 consume();
-                m_delegate.atomBuiltInCharacterClass(NewlineClassID, true);
+                m_delegate.atomBuiltInCharacterClass(DotClassID, false);
                 lastTokenWasAnAtom = true;
                 break;
 

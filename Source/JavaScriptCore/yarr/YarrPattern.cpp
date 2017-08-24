@@ -373,8 +373,12 @@ public:
             else
                 m_alternative->m_terms.append(PatternTerm(m_pattern.wordcharCharacterClass(), invert));
             break;
-        case NewlineClassID:
-            m_alternative->m_terms.append(PatternTerm(m_pattern.newlineCharacterClass(), invert));
+        case DotClassID:
+            ASSERT(!invert);
+            if (m_pattern.dotAll())
+                m_alternative->m_terms.append(PatternTerm(m_pattern.anyCharacterClass(), false));
+            else
+                m_alternative->m_terms.append(PatternTerm(m_pattern.newlineCharacterClass(), true));
             break;
         }
     }
@@ -396,7 +400,7 @@ public:
 
     void atomCharacterClassBuiltIn(BuiltInCharacterClassID classID, bool invert)
     {
-        ASSERT(classID != NewlineClassID);
+        ASSERT(classID != DotClassID);
 
         switch (classID) {
         case DigitClassID:
@@ -849,6 +853,7 @@ public:
         if (alternatives.size() != 1)
             return;
 
+        CharacterClass* dotCharacterClass = m_pattern.dotAll() ? m_pattern.anyCharacterClass() : m_pattern.newlineCharacterClass();
         PatternAlternative* alternative = alternatives[0].get();
         Vector<PatternTerm>& terms = alternative->m_terms;
         if (terms.size() >= 3) {
@@ -863,7 +868,10 @@ public:
             }
             
             PatternTerm& firstNonAnchorTerm = terms[termIndex];
-            if ((firstNonAnchorTerm.type != PatternTerm::TypeCharacterClass) || (firstNonAnchorTerm.characterClass != m_pattern.newlineCharacterClass()) || !((firstNonAnchorTerm.quantityType == QuantifierGreedy) || (firstNonAnchorTerm.quantityType == QuantifierNonGreedy)))
+            if ((firstNonAnchorTerm.type != PatternTerm::TypeCharacterClass)
+                || (firstNonAnchorTerm.characterClass != dotCharacterClass)
+                || !((firstNonAnchorTerm.quantityType == QuantifierGreedy)
+                    || (firstNonAnchorTerm.quantityType == QuantifierNonGreedy)))
                 return;
             
             firstExpressionTerm = termIndex + 1;
@@ -875,7 +883,9 @@ public:
             }
             
             PatternTerm& lastNonAnchorTerm = terms[termIndex];
-            if ((lastNonAnchorTerm.type != PatternTerm::TypeCharacterClass) || (lastNonAnchorTerm.characterClass != m_pattern.newlineCharacterClass()) || (lastNonAnchorTerm.quantityType != QuantifierGreedy))
+            if ((lastNonAnchorTerm.type != PatternTerm::TypeCharacterClass)
+                || (lastNonAnchorTerm.characterClass != dotCharacterClass)
+                || (lastNonAnchorTerm.quantityType != QuantifierGreedy))
                 return;
 
             size_t endIndex = termIndex;
@@ -994,6 +1004,7 @@ YarrPattern::YarrPattern(const String& pattern, RegExpFlags flags, const char** 
     , m_flags(flags)
     , m_numSubpatterns(0)
     , m_maxBackReference(0)
+    , anycharCached(0)
     , newlineCached(0)
     , digitsCached(0)
     , spacesCached(0)
@@ -1089,7 +1100,9 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
         break;
     case TypeCharacterClass:
         out.print("character class ");
-        if (characterClass == thisPattern->newlineCharacterClass())
+        if (characterClass == thisPattern->anyCharacterClass())
+            out.print("<any character>");
+        else if (characterClass == thisPattern->newlineCharacterClass())
             out.print("<newline>");
         else if (characterClass == thisPattern->digitsCharacterClass())
             out.print("<digits>");
@@ -1282,6 +1295,15 @@ void YarrPattern::dumpPattern(PrintStream& out, const String& patternString)
     }
     out.print(":\n");
     m_body->dump(out, this);
+}
+
+std::unique_ptr<CharacterClass> anycharCreate()
+{
+    auto characterClass = std::make_unique<CharacterClass>();
+    characterClass->m_ranges.append(CharacterRange(0x00, 0x7f));
+    characterClass->m_rangesUnicode.append(CharacterRange(0x0080, 0x10ffff));
+    characterClass->m_hasNonBMPCharacters = true;
+    return characterClass;
 }
 
 } }

@@ -1,3 +1,65 @@
+2017-08-24  Michael Saboff  <msaboff@apple.com>
+
+        Add support for RegExp "dotAll" flag
+        https://bugs.webkit.org/show_bug.cgi?id=175924
+
+        Reviewed by Keith Miller.
+
+        The dotAll RegExp flag, 's', changes . to match any character including line terminators.
+        Added a the "dotAll" identifier as well as RegExp.prototype.dotAll getter.
+        Added a new any character CharacterClass that is used to match . terms in a dotAll flags
+        RegExp.  In the YARR pattern and parsing code, changed the NewlineClassID, which was only
+        used for '.' processing, to DotClassID.  The selection of which builtin character class
+        that DotClassID resolves to when generating the pattern is conditional on the dotAll flag.
+        This NewlineClassID to DotClassID refactoring includes the atomBuiltInCharacterClass() in
+        the WebCore content extensions code in the PatternParser class.
+
+        As an optimization, the Yarr JIT actually doesn't perform match checks against the builtin
+        any character CharacterClass, it merely reads the character.  There is another optimization
+        in our DotStart enclosure processing where a non-capturing regular expression in the form
+        of .*<expression.*, with options beginning ^ and/or trailing $, match the contained
+        expression and then look for the extents of the surrounding .*'s.  When used with the
+        dotAll flag, that processing alwys results with the beinning of the string and the end
+        of the string.  Therefore we short circuit the finding the beginning and end of the line
+        or string with dotAll patterns.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::regexpToSourceString):
+        * runtime/CommonIdentifiers.h:
+        * runtime/RegExp.cpp:
+        (JSC::regExpFlags):
+        (JSC::RegExpFunctionalTestCollector::outputOneTest):
+        * runtime/RegExp.h:
+        * runtime/RegExpKey.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        (JSC::flagsString):
+        (JSC::regExpProtoGetterDotAll):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchDotStarEnclosure):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::dotAll const):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::optimizeAlternative):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassOnce):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateDotStarEnclosure):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseTokens):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::atomBuiltInCharacterClass):
+        (JSC::Yarr::YarrPatternConstructor::atomCharacterClassBuiltIn):
+        (JSC::Yarr::YarrPatternConstructor::optimizeDotStarWrappedExpressions):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        (JSC::Yarr::PatternTerm::dump):
+        (JSC::Yarr::anycharCreate):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::reset):
+        (JSC::Yarr::YarrPattern::anyCharacterClass):
+        (JSC::Yarr::YarrPattern::dotAll const):
+
 2017-08-23  Filip Pizlo  <fpizlo@apple.com>
 
         Reduce Gigacage sizes

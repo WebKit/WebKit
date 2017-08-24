@@ -1169,15 +1169,18 @@ class YarrGenerator : private MacroAssembler {
 
         JumpList matchDest;
         readCharacter(m_checkedOffset - term->inputPosition, character);
-        matchCharacterClass(character, matchDest, term->characterClass);
+        // If we are matching the "any character" builtin class we only need to read the
+        // character and don't need to match as it will always succeed.
+        if (term->invert() || term->characterClass != m_pattern.anyCharacterClass()) {
+            matchCharacterClass(character, matchDest, term->characterClass);
 
-        if (term->invert())
-            op.m_jumps.append(matchDest);
-        else {
-            op.m_jumps.append(jump());
-            matchDest.link(this);
+            if (term->invert())
+                op.m_jumps.append(matchDest);
+            else {
+                op.m_jumps.append(jump());
+                matchDest.link(this);
+            }
         }
-
 #ifdef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs) {
             Jump isBMPChar = branch32(LessThan, character, supplementaryPlanesBase);
@@ -1215,13 +1218,17 @@ class YarrGenerator : private MacroAssembler {
         Label loop(this);
         JumpList matchDest;
         readCharacter(m_checkedOffset - term->inputPosition - term->quantityMaxCount, character, countRegister);
-        matchCharacterClass(character, matchDest, term->characterClass);
+        // If we are matching the "any character" builtin class we only need to read the
+        // character and don't need to match as it will always succeed.
+        if (term->invert() || term->characterClass != m_pattern.anyCharacterClass()) {
+            matchCharacterClass(character, matchDest, term->characterClass);
 
-        if (term->invert())
-            op.m_jumps.append(matchDest);
-        else {
-            op.m_jumps.append(jump());
-            matchDest.link(this);
+            if (term->invert())
+                op.m_jumps.append(matchDest);
+            else {
+                op.m_jumps.append(jump());
+                matchDest.link(this);
+            }
         }
 
         add32(TrustedImm32(1), countRegister);
@@ -1263,8 +1270,12 @@ class YarrGenerator : private MacroAssembler {
         } else {
             JumpList matchDest;
             readCharacter(m_checkedOffset - term->inputPosition, character);
-            matchCharacterClass(character, matchDest, term->characterClass);
-            failures.append(jump());
+            // If we are matching the "any character" builtin class we only need to read the
+            // character and don't need to match as it will always succeed.
+            if (term->characterClass != m_pattern.anyCharacterClass()) {
+                matchCharacterClass(character, matchDest, term->characterClass);
+                failures.append(jump());
+            }
             matchDest.link(this);
         }
 
@@ -1365,13 +1376,17 @@ class YarrGenerator : private MacroAssembler {
 
         JumpList matchDest;
         readCharacter(m_checkedOffset - term->inputPosition, character);
-        matchCharacterClass(character, matchDest, term->characterClass);
+        // If we are matching the "any character" builtin class we only need to read the
+        // character and don't need to match as it will always succeed.
+        if (term->invert() || term->characterClass != m_pattern.anyCharacterClass()) {
+            matchCharacterClass(character, matchDest, term->characterClass);
 
-        if (term->invert())
-            nonGreedyFailures.append(matchDest);
-        else {
-            nonGreedyFailures.append(jump());
-            matchDest.link(this);
+            if (term->invert())
+                nonGreedyFailures.append(matchDest);
+            else {
+                nonGreedyFailures.append(jump());
+                matchDest.link(this);
+            }
         }
 
         add32(TrustedImm32(1), index);
@@ -1406,6 +1421,13 @@ class YarrGenerator : private MacroAssembler {
         JumpList foundBeginningNewLine;
         JumpList saveStartIndex;
         JumpList foundEndingNewLine;
+
+        if (m_pattern.dotAll()) {
+            move(TrustedImm32(0), matchPos);
+            setMatchStart(matchPos);
+            move(length, index);
+            return;
+        }
 
         ASSERT(!m_pattern.m_body->m_hasFixedSize);
         getMatchStart(matchPos);

@@ -305,6 +305,8 @@ public:
 // (please to be calling newlineCharacterClass() et al on your
 // friendly neighborhood YarrPattern instance to get nicely
 // cached copies).
+
+std::unique_ptr<CharacterClass> anycharCreate();
 std::unique_ptr<CharacterClass> newlineCreate();
 std::unique_ptr<CharacterClass> digitsCreate();
 std::unique_ptr<CharacterClass> spacesCreate();
@@ -363,6 +365,7 @@ struct YarrPattern {
         m_hasCopiedParenSubexpressions = false;
         m_saveInitialStartValue = false;
 
+        anycharCached = 0;
         newlineCached = 0;
         digitsCached = 0;
         spacesCached = 0;
@@ -387,6 +390,14 @@ struct YarrPattern {
         return m_containsUnsignedLengthPattern;
     }
 
+    CharacterClass* anyCharacterClass()
+    {
+        if (!anycharCached) {
+            m_userCharacterClasses.append(anycharCreate());
+            anycharCached = m_userCharacterClasses.last().get();
+        }
+        return anycharCached;
+    }
     CharacterClass* newlineCharacterClass()
     {
         if (!newlineCached) {
@@ -468,6 +479,7 @@ struct YarrPattern {
     bool multiline() const { return m_flags & FlagMultiline; }
     bool sticky() const { return m_flags & FlagSticky; }
     bool unicode() const { return m_flags & FlagUnicode; }
+    bool dotAll() const { return m_flags & FlagDotAll; }
 
     bool m_containsBackreferences : 1;
     bool m_containsBOL : 1;
@@ -485,6 +497,7 @@ struct YarrPattern {
 private:
     const char* compile(const String& patternString, void* stackLimit);
 
+    CharacterClass* anycharCached;
     CharacterClass* newlineCached;
     CharacterClass* digitsCached;
     CharacterClass* spacesCached;

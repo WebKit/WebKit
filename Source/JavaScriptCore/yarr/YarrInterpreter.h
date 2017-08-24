@@ -371,6 +371,7 @@ public:
     bool multiline() const { return m_flags & FlagMultiline; }
     bool sticky() const { return m_flags & FlagSticky; }
     bool unicode() const { return m_flags & FlagUnicode; }
+    bool dotAll() const { return m_flags & FlagDotAll; }
 
     std::unique_ptr<ByteDisjunction> m_body;
     RegExpFlags m_flags;

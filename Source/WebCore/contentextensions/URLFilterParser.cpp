@@ -101,7 +101,7 @@ public:
         sinkFloatingTermIfNecessary();
         ASSERT(!m_floatingTerm.isValid());
 
-        if (builtInCharacterClassID == JSC::Yarr::NewlineClassID && inverted)
+        if (builtInCharacterClassID == JSC::Yarr::DotClassID && !inverted)
             m_floatingTerm = Term(Term::UniversalTransition);
         else
             fail(URLFilterParser::UnsupportedCharacterClass);

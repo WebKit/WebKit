@@ -1,3 +1,17 @@
+2017-08-24  Michael Saboff  <msaboff@apple.com>
+
+        Add support for RegExp "dotAll" flag
+        https://bugs.webkit.org/show_bug.cgi?id=175924
+
+        Reviewed by Keith Miller.
+
+        Changed due to refactoring NewlineClassID to DotClassID.
+
+        No new tests. No change in behavior.
+
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::PatternParser::atomBuiltInCharacterClass):
+
 2017-08-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, revert part of r221152 to fix internal builds.

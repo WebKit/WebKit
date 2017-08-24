@@ -56,6 +56,7 @@ public:
     bool sticky() const { return m_flags & FlagSticky; }
     bool globalOrSticky() const { return global() || sticky(); }
     bool unicode() const { return m_flags & FlagUnicode; }
+    bool dotAll() const { return m_flags & FlagDotAll; }
 
     const String& pattern() const { return m_patternString; }
 

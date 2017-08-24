@@ -221,6 +221,7 @@
     macro(displayName) \
     macro(document) \
     macro(done) \
+    macro(dotAll) \
     macro(enumerable) \
     macro(era) \
     macro(eval) \

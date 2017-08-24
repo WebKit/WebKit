@@ -39,7 +39,8 @@ enum RegExpFlags {
     FlagMultiline = 4,
     FlagSticky = 8,
     FlagUnicode = 16,
-    InvalidFlags = 32,
+    FlagDotAll = 32,
+    InvalidFlags = 64,
     DeletedValueFlags = -1
 };
 

@@ -252,7 +252,7 @@ const Identifier& BytecodeDumper<Block>::identifier(int index) const
 
 static CString regexpToSourceString(RegExp* regExp)
 {
-    char postfix[5] = { '/', 0, 0, 0, 0 };
+    char postfix[7] = { '/', 0, 0, 0, 0, 0, 0 };
     int index = 1;
     if (regExp->global())
         postfix[index++] = 'g';
@@ -260,10 +260,12 @@ static CString regexpToSourceString(RegExp* regExp)
         postfix[index++] = 'i';
     if (regExp->multiline())
         postfix[index] = 'm';
-    if (regExp->sticky())
-        postfix[index++] = 'y';
+    if (regExp->dotAll())
+        postfix[index++] = 's';
     if (regExp->unicode())
         postfix[index++] = 'u';
+    if (regExp->sticky())
+        postfix[index++] = 'y';
 
     return toCString("/", regExp->pattern().impl(), postfix);
 }

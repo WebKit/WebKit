@@ -1120,6 +1120,13 @@ public:
     bool matchDotStarEnclosure(ByteTerm& term, DisjunctionContext* context)
     {
         UNUSED_PARAM(term);
+
+        if (pattern->dotAll()) {
+            context->matchBegin = startOffset;
+            context->matchEnd = input.end();
+            return true;
+        }
+
         unsigned matchBegin = context->matchBegin;
 
         if (matchBegin > startOffset) {
