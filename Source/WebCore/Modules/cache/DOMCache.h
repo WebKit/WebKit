@@ -83,7 +83,7 @@ using CacheInfosCallback = WTF::Function<void(CacheInfosOrError&&)>;
 using RecordsOrError = Expected<Vector<Record>, Error>;
 using RecordsCallback = WTF::Function<void(RecordsOrError&&)>;
 
-using CompletionCallback = Function<void(std::optional<Error>&&)>;
+using CompletionCallback = WTF::Function<void(std::optional<Error>&&)>;
 
 } // namespace DOMCache
 
