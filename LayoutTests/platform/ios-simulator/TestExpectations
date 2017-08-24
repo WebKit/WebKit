@@ -9,9 +9,6 @@ fast/frames/sandboxed-iframe-close-top-noclose.html [ Failure ]
 fast/multicol/flexbox-rows.html [ Skip ]
 workers/wasm-mem-post-message.html [ Failure ]
 
-http/tests/preload/viewport [ Pass ]
-webkit.org/b/172518 http/tests/preload/viewport/meta-viewport-link-headers.php [ Pass Failure ]
-
 fast/forms/input-text-word-wrap.html [ Skip ]
 fast/forms/search-rtl.html [ Skip ]
 fast/forms/search-vertical-alignment.html [ Skip ]

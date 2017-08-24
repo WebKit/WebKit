@@ -2879,3 +2879,5 @@ fast/text/accessibility-bold-system-font-2.html [ Pass ]
 
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
+
+webkit.org/b/172518 http/tests/preload/viewport/meta-viewport-link-headers.php [ Pass Failure ]

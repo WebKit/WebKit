@@ -1,3 +1,16 @@
+2017-08-24  Jonathan Bedard  <jbedard@apple.com>
+
+        Move http/tests/preload/viewport/meta-viewport-link-headers.php back to iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=172518
+
+        Unreviewed test gardening.
+
+        This test is flakey on both iOS device and iOS simulator. http/tests/preload/viewport
+        should be marked as passing for iOS, but we should not re-mark it for iOS Simulator.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2017-08-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip editing/execCommand/forward-delete-read-write-canvas.html.
