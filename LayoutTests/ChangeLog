@@ -1,3 +1,9 @@
+2017-08-24  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations of several tests failing at r221132.
+
+        * platform/gtk/TestExpectations:
+
 2017-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DeleteSelectionCommand should be robust when starting and ending editable positions cannot be found
