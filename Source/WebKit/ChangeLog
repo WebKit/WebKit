@@ -1,3 +1,17 @@
+2017-08-24  Brady Eidson  <beidson@apple.com>
+
+        Remove duplicate WebCore::URL encoder/decoder
+        https://bugs.webkit.org/show_bug.cgi?id=175952
+
+        Reviewed by Chris Dumez.
+
+        Don't need the WebCoreArgumentCoder in WebKit since the URL class defines its own coders.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<URL>::encode): Deleted.
+        (IPC::ArgumentCoder<URL>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
 2017-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate callback corresponding to PageUIClient's didNotHandleWheelEvent

@@ -485,11 +485,6 @@ template<> struct ArgumentCoder<WebCore::TextCheckingResult> {
     static void encode(Encoder&, const WebCore::TextCheckingResult&);
     static bool decode(Decoder&, WebCore::TextCheckingResult&);
 };
-    
-template<> struct ArgumentCoder<WebCore::URL> {
-    static void encode(Encoder&, const WebCore::URL&);
-    static bool decode(Decoder&, WebCore::URL&);
-};
 
 template<> struct ArgumentCoder<WebCore::UserStyleSheet> {
     static void encode(Encoder&, const WebCore::UserStyleSheet&);

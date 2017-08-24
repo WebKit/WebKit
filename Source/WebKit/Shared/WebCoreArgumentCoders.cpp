@@ -1816,20 +1816,6 @@ bool ArgumentCoder<TextCheckingResult>::decode(Decoder& decoder, TextCheckingRes
     return true;
 }
 
-void ArgumentCoder<URL>::encode(Encoder& encoder, const URL& result)
-{
-    encoder << result.string();
-}
-    
-bool ArgumentCoder<URL>::decode(Decoder& decoder, URL& result)
-{
-    String urlAsString;
-    if (!decoder.decode(urlAsString))
-        return false;
-    result = URL(ParsedURLString, urlAsString);
-    return true;
-}
-
 void ArgumentCoder<UserStyleSheet>::encode(Encoder& encoder, const UserStyleSheet& userStyleSheet)
 {
     encoder << userStyleSheet.source();
