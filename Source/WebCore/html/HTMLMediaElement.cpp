@@ -146,6 +146,7 @@
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
+#include "MediaEncryptedEvent.h"
 #include "MediaKeys.h"
 #endif
 
@@ -2650,6 +2651,29 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys, Ref<DeferredPromise>&&
     });
 
     // 6. Return promise.
+}
+
+void HTMLMediaElement::mediaPlayerInitializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
+{
+    // https://w3c.github.io/encrypted-media/#initdata-encountered
+    // W3C Editor's Draft 23 June 2017
+
+    // 1. Let the media element be the specified HTMLMediaElement object.
+    // 2. Let initDataType be the empty string.
+    // 3. Let initData be null.
+    // 4. If the media data is CORS-same-origin and not mixed content, run the following steps:
+    //   4.1. Let initDataType be the string representing the Initialization Data Type of the Initialization Data.
+    //   4.2. Let initData be the Initialization Data.
+    // FIXME: ^
+
+    // 5. Queue a task to create an event named encrypted that does not bubble and is not cancellable using the
+    //    MediaEncryptedEvent interface with its type attribute set to encrypted and its isTrusted attribute
+    //    initialized to true, and dispatch it at the media element.
+    //    The event interface MediaEncryptedEvent has:
+    //      initDataType = initDataType
+    //      initData = initData
+    MediaEncryptedEventInit initializer { initDataType, WTFMove(initData) };
+    m_asyncEventQueue.enqueueEvent(MediaEncryptedEvent::create(eventNames().encryptedEvent, initializer, Event::IsTrusted::Yes));
 }
 
 void HTMLMediaElement::attemptToDecrypt()

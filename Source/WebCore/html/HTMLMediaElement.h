@@ -636,6 +636,8 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
+    void mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&) final;
+
     void attemptToDecrypt();
     void attemptToResumePlaybackIfNecessary();
 

@@ -1,3 +1,35 @@
+2017-08-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Implement HTMLMediaElement dispatch of the onencrypted event
+        https://bugs.webkit.org/show_bug.cgi?id=175927
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add the MediaPlayerClient::mediaPlayerInitializationDataEncountered()
+        method that the platform-layer media pipeline can invoke when it hits
+        encrypted content in the media data. The initialization data and its type
+        are passed by the caller, allowing the HTMLMediaElement override to
+        process it further.
+
+        This is done in the mediaPlayerInitializationDataEncountered() override
+        in the HTMLMediaElement class. Partially implementing the 'Initialization
+        Data Encountered' algorithm, the 'encrypted' event is dispatched, with the
+        MediaEncryptedEvent interface being leveraged to embed init data and init
+        data type information. CORS and mixed-content validation of the media data
+        is skipped for now.
+
+        MediaPlayer::initializationDataEncountered() method should be used to
+        dispatch the corresponding method on the client, passing on the given init
+        data and init data type values.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerInitializationDataEncountered):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::initializationDataEncountered):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerInitializationDataEncountered):
+
 2017-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DeleteSelectionCommand should be robust when starting and ending editable positions cannot be found

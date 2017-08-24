@@ -231,6 +231,10 @@ public:
     virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) { return false; }
     virtual String mediaPlayerMediaKeysStorageDirectory() const { return emptyString(); }
 #endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    virtual void mediaPlayerInitializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&) { }
+#endif
     
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*) { };
@@ -551,6 +555,10 @@ public:
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
     bool keyNeeded(Uint8Array* initData);
     String mediaKeysStorageDirectory() const;
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    void initializationDataEncountered(const String&, RefPtr<ArrayBuffer>&&);
 #endif
 
     String referrer() const;
