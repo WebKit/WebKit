@@ -358,6 +358,8 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
 #if ENABLE(CSS_REGIONS)
         if (element.shouldMoveToFlowThread(style))
             return RenderTreePosition::insertionPositionForFlowThread(renderTreePosition().parent().element(), element, style);
+#else
+        UNUSED_PARAM(style);
 #endif
         renderTreePosition().computeNextSibling(element);
         return renderTreePosition();

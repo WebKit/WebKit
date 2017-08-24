@@ -1,3 +1,53 @@
+2017-08-24  David Kilzer  <ddkilzer@apple.com>
+
+        Fix -Wcast-qual and -Wunused-lambda-capture warnings in WebCore with new clang compiler
+        <https://webkit.org/b/175910>
+        <rdar://problem/33667497>
+
+        Reviewed by Alex Christensen.
+
+        Fix -Wunused-lambda-capture warnings:
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::setBodyData): Remove unused lambda
+        capture of 'this'.
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::createRenderer): Add
+        UNUSED_PARAM(style) when ENABLE(CSS_REGIONS) is turned off.
+
+        Fix -Wcast-qual warnings:
+
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::create): Switch from C-style cast to
+        reinterpret_cast with const keyword.  This better matches the
+        argument types used in CCRSACryptorCreateFromData().
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::FFTFrame::doFFT): Switch from C-style cast to
+        reinterpret_cast with const keyword.  This better matches the
+        argument type used in vDSP_ctoz().
+        * platform/graphics/FontPlatformData.h: Only define
+        WebCore::toCTFont() and WebCore::toNSFont() when building for
+        Objective-C++.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        Switch from C-style cast to reinterpret_cast with const keyword.
+        This better matches the argument type used in
+        Uint8Array::setRange().
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CMTimebaseEffectiveRateChangedCallback): Use
+        const_cast to avoid warning.
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        (WebCore::signedPublicKeyAndChallengeString): Use const_cast to
+        avoid warning, and switch C-style cast to reinterpret_cast.
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::XSLTProcessor::transformToString):
+        - Use const_cast to avoid warning, and switch C-style cast to
+          reinterpret_cast.
+        - Switch C-style cast to reinterpret_cast and add const keyword.
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLParserContext::createMemoryParser): Use const_cast
+        to avoid warning, and switch C-style cast to reinterpret_cast.
+
 2017-08-22  Dave Hyatt  <hyatt@apple.com>
 
         [Repaint Outside Layout] Add a pref for repainting outside of layout

@@ -317,7 +317,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
 
     xmlChar* origMethod = sheet->method;
     if (!origMethod && mimeType == "text/html")
-        sheet->method = (xmlChar*)"html";
+        sheet->method = reinterpret_cast<xmlChar*>(const_cast<char*>("html"));
 
     bool success = false;
     bool shouldFreeSourceDoc = false;
@@ -361,7 +361,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
 
         if ((success = saveResultToString(resultDoc, sheet, resultString))) {
             mimeType = resultMIMEType(resultDoc, sheet);
-            resultEncoding = (char*)resultDoc->encoding;
+            resultEncoding = reinterpret_cast<const char*>(resultDoc->encoding);
         }
         xmlFreeDoc(resultDoc);
     }

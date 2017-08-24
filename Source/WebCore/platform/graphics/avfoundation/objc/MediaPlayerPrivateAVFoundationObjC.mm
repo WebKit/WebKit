@@ -1843,7 +1843,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         CString utf8EncodedKeyId = UTF8Encoding().encode(keyIDView, URLEncodedEntitiesForUnencodables);
 
         RefPtr<Uint8Array> initData = Uint8Array::create(utf8EncodedKeyId.length());
-        initData->setRange((JSC::Uint8Adaptor::Type*)utf8EncodedKeyId.data(), utf8EncodedKeyId.length(), 0);
+        initData->setRange(reinterpret_cast<const JSC::Uint8Adaptor::Type*>(utf8EncodedKeyId.data()), utf8EncodedKeyId.length(), 0);
 
         auto keyData = player()->cachedKeyForKeyId(keyID);
         if (keyData) {

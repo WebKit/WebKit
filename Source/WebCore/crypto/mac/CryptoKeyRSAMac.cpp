@@ -136,10 +136,10 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, 
     // See <rdar://problem/15452324>.
     CCCryptorStatus status = CCRSACryptorCreateFromData(
         keyData.type() == CryptoKeyRSAComponents::Type::Public ? ccRSAKeyPublic : ccRSAKeyPrivate,
-        (uint8_t*)keyData.modulus().data(), keyData.modulus().size(),
-        (uint8_t*)keyData.exponent().data(), keyData.exponent().size(),
-        (uint8_t*)keyData.firstPrimeInfo().primeFactor.data(), keyData.firstPrimeInfo().primeFactor.size(),
-        (uint8_t*)keyData.secondPrimeInfo().primeFactor.data(), keyData.secondPrimeInfo().primeFactor.size(),
+        reinterpret_cast<const uint8_t*>(keyData.modulus().data()), keyData.modulus().size(),
+        reinterpret_cast<const uint8_t*>(keyData.exponent().data()), keyData.exponent().size(),
+        reinterpret_cast<const uint8_t*>(keyData.firstPrimeInfo().primeFactor.data()), keyData.firstPrimeInfo().primeFactor.size(),
+        reinterpret_cast<const uint8_t*>(keyData.secondPrimeInfo().primeFactor.data()), keyData.secondPrimeInfo().primeFactor.size(),
         &cryptor);
 
     if (status) {

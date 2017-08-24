@@ -297,7 +297,7 @@ void FetchResponse::setBodyData(ResponseData&& data)
         if (isBodyNull())
             setBody(FetchBody::loadingBody());
         body().consumer().setData(WTFMove(buffer));
-    }, [this](std::nullptr_t&) { });
+    }, [](std::nullptr_t&) { });
 }
 
 #if ENABLE(STREAMS_API)
