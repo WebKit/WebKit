@@ -248,6 +248,8 @@ newBlockInsideInlineModelEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 
 deferredCSSParserEnabled initial=false
 
+repaintOutsideLayoutEnabled initial=false
+
 httpEquivEnabled initial=true
 
 # Some ports (e.g. iOS) might choose to display attachments inline, regardless of whether the response includes the

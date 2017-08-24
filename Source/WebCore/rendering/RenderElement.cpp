@@ -2187,7 +2187,9 @@ bool RenderElement::hasSelfPaintingLayer() const
 
 bool RenderElement::checkForRepaintDuringLayout() const
 {
-    return !document().view()->needsFullRepaint() && everHadLayout() && !hasSelfPaintingLayer();
+    if (document().view()->needsFullRepaint() || !everHadLayout() || hasSelfPaintingLayer())
+        return false;
+    return !settings().repaintOutsideLayoutEnabled();
 }
 
 RespectImageOrientationEnum RenderElement::shouldRespectImageOrientation() const
