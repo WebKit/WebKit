@@ -140,19 +140,24 @@ public:
         }
         return false;
     }
-    
+
+    // We allow people to "commit" more wasm memory than there is on the system since most of the time
+    // people don't actually write to most of that memory. There is some chance that this gets us
+    // JetSammed but that's possible anyway.
+    inline size_t memoryLimit() const { return ramSize() * 3; }
+
     // FIXME: Ideally, bmalloc would have this kind of mechanism. Then, we would just forward to that
     // mechanism here.
     MemoryResult::Kind tryAllocatePhysicalBytes(size_t bytes)
     {
         MemoryResult::Kind result = [&] {
             auto holder = holdLock(m_lock);
-            if (m_physicalBytes + bytes > ramSize())
+            if (m_physicalBytes + bytes > memoryLimit())
                 return MemoryResult::SyncGCAndRetry;
             
             m_physicalBytes += bytes;
             
-            if (m_physicalBytes >= ramSize() / 2)
+            if (m_physicalBytes >= memoryLimit() / 2)
                 return MemoryResult::SuccessAndAsyncGC;
             
             return MemoryResult::Success;
@@ -177,7 +182,7 @@ public:
     
     void dump(PrintStream& out) const
     {
-        out.print("memories =  ", m_memories.size(), "/", m_maxCount, ", bytes = ", m_physicalBytes, "/", ramSize());
+        out.print("virtual memories =  ", m_memories.size(), "/", m_maxCount, ", bytes = ", m_physicalBytes, "/", memoryLimit());
     }
     
 private:
