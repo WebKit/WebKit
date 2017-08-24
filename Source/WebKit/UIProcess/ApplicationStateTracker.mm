@@ -146,6 +146,12 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
         m_isInBackground = isBackgroundState([applicationStateMonitor mostElevatedApplicationStateForPID:applicationPID]);
         [applicationStateMonitor invalidate];
 
+        // Workaround for <rdar://problem/34028921>. If the host application is StoreKitUIService then it is also a ViewService
+        // and is always in the background. We need to treat StoreKitUIService as foreground for the purpose of process suspension
+        // or its ViewServices will get suspended.
+        if ([serviceViewController._hostApplicationBundleIdentifier isEqualToString:@"com.apple.ios.StoreKitUIService"])
+            m_isInBackground = false;
+
         m_didEnterBackgroundObserver = [notificationCenter addObserverForName:@"_UIViewServiceHostDidEnterBackgroundNotification" object:serviceViewController queue:nil usingBlock:[this](NSNotification *) {
             applicationDidEnterBackground();
         }];

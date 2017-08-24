@@ -397,6 +397,7 @@ typedef enum {
 
 @interface UIViewController (ViewService)
 - (pid_t)_hostProcessIdentifier;
+@property (readonly) NSString *_hostApplicationBundleIdentifier;
 @end
 
 @protocol UIViewControllerContextTransitioningEx <UIViewControllerContextTransitioning>
