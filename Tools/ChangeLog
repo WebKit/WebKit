@@ -1,3 +1,29 @@
+2017-08-24  Jonathan Bedard  <jbedard@apple.com>
+
+        Update configure-xcode-for-ios-development for iOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=173937
+        <rdar://problem/33038924>
+
+        Reviewed by Daniel Bates.
+
+        Xcode 9 has removed the following headers from the iOS 11 Simulator SDK:
+                /usr/include/crt_externs.h
+                /usr/include/mach/mach_types.defs
+                /usr/include/mach/machine/machine_types.defs
+                /usr/include/mach/std_types.defs
+                /usr/include/objc/objc-class.h
+                /usr/include/objc/objc-runtime.h
+                /usr/include/objc/Protocol.h
+                /usr/include/readline/history.h
+                /usr/include/readline/readline.h
+        To solve this problem, configure-xcode-for-ios-development copies these headers
+        from the active macOS SDK into the iOS Simulator SDK.
+
+        * Scripts/configure-xcode-for-ios-development:
+        (copyMissingHeadersFromSDKToSDKIfNeeded): Copy all missing header from one SDK
+        into another if those headers do not exist in the destination SDK.
+        (copyMissingHeadersToIPhoneOSSDKIfNeeded): Deleted.
+
 2017-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate callback corresponding to PageUIClient's didNotHandleWheelEvent
