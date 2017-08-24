@@ -7,8 +7,9 @@
         <script src=../video-test.js></script>
         <script>
             var stage = 0; 
+            var errorEventTimer = null;
 
-            function trackLoaded()
+            function loadedTrackTest()
             {
                 var testTrack = document.getElementById('testTrack');
                 switch (stage) {
@@ -21,19 +22,50 @@
                         testTrack.src = "captions-webvtt/captions-long.vtt";
                         break;
                     case 1:
-                        cues = testTrack.track.cues;
                         testExpected("cues.length", 100);
+                        testExpected("cues === testTrack.track.cues", true);
                         consoleWrite("<br>*** Changing back 'src' attribute...");
                         ++stage;
                         testTrack.src = "captions-webvtt/tc013-settings.vtt";
                         break;
                     case 2:
-                        cues = testTrack.track.cues;
+                        testExpected("cues === testTrack.track.cues", true);
                         testExpected("cues.length", 4);
-                        endTest();
+                        consoleWrite("<br>*** Setting 'src' to the same value...");
+                        ++stage;
+                        testTrack.src = "captions-webvtt/tc013-settings.vtt";
+                        // Let's ensure that 'load' event is not fired after that
+                        // - it should jump directly to the stage 4 instead of stage 3
+                        setTimeout(function() { ++stage; loadedTrackTest(); }, 100);
+                        break;
+                    case 3:
+                        failTest("'load' event should not be fired after setting the same URL");
+                        break;
+                    case 4:
+                        testExpected("cues === testTrack.track.cues", true);
+                        testExpected("cues.length", 4);
+                        consoleWrite("<br>*** Setting 'src' to an empty value...");
+                        ++stage;
+                        testTrack.src = ""; // this should fire 'error' event
+                        errorEventTimer = setTimeout(function() {
+                                failTest("'error' event didn't fire after setting an empty URL");
+                            }, 10000);
+                        break;
+                    case 5:
+                        failTest("'load' event should not be fired after setting an empty URL");
                         break;
                 }
             }
+
+            function trackLoadFailed()
+            {
+                clearTimeout(errorEventTimer);
+                testExpected("stage", 5);
+                testExpected(cues === testTrack.track.cues, true);
+                testExpected("cues.length", 0);
+                endTest();
+            }
+
 
             setCaptionDisplayMode('Automatic');
         </script>
@@ -41,7 +73,7 @@
     <body>
         <p>Tests Track 'src' changing handling</p>
         <video>
-            <track id="testTrack" src="captions-webvtt/tc013-settings.vtt" kind="captions" onload="trackLoaded()" default>
+            <track id="testTrack" src="captions-webvtt/tc013-settings.vtt" kind="captions" onload="loadedTrackTest()" onerror="trackLoadFailed()" default>
         </video>
     </body>
 </html>

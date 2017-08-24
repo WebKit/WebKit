@@ -106,6 +106,13 @@ void TextTrackCueList::remove(TextTrackCue& cue)
     ASSERT_SORTED(m_vector.begin(), m_vector.end());
 }
 
+void TextTrackCueList::clear()
+{
+    m_vector.clear();
+    if (m_activeCues)
+        m_activeCues->m_vector.clear();
+}
+
 void TextTrackCueList::updateCueIndex(TextTrackCue& cue)
 {
     auto cuePosition = m_vector.begin() + cueIndex(cue);

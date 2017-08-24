@@ -269,7 +269,7 @@ void TextTrack::removeAllCues()
     for (size_t i = 0; i < m_cues->length(); ++i)
         m_cues->item(i)->setTrack(nullptr);
     
-    m_cues = nullptr;
+    m_cues->clear();
 }
 
 TextTrackCueList* TextTrack::activeCues() const
