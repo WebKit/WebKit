@@ -1,5 +1,18 @@
 2017-08-24  Jonathan Bedard  <jbedard@apple.com>
 
+        Move imported/w3c/web-platform-tests/IndexedDB/large-nested-cloning.html expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=173487
+
+        Unreviewed test gardening.
+
+        imported/w3c/web-platform-tests/IndexedDB/large-nested-cloning.html is flakey on both
+        iOS Simulator and iOS Device.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
+2017-08-24  Jonathan Bedard  <jbedard@apple.com>
+
         Move http/tests/preload/viewport/meta-viewport-link-headers.php back to iOS.
         https://bugs.webkit.org/show_bug.cgi?id=172518
 
