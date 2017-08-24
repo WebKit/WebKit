@@ -460,7 +460,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_extensionStyleSheets(std::make_unique<ExtensionStyleSheets>(*this))
     , m_visitedLinkState(std::make_unique<VisitedLinkState>(*this))
     , m_markers(std::make_unique<DocumentMarkerController>(*this))
-    , m_styleRecalcTimer(*this, &Document::updateStyleIfNeeded)
+    , m_styleRecalcTimer([this] { updateStyleIfNeeded(); })
     , m_updateFocusAppearanceTimer(*this, &Document::updateFocusAppearanceTimerFired)
     , m_documentCreationTime(MonotonicTime::now())
     , m_scriptRunner(std::make_unique<ScriptRunner>(*this))
@@ -1887,20 +1887,21 @@ bool Document::needsStyleRecalc() const
     return false;
 }
 
-void Document::updateStyleIfNeeded()
+bool Document::updateStyleIfNeeded()
 {
     ASSERT(isMainThread());
     ASSERT(!view() || !view()->isPainting());
 
     if (!view() || view()->isInRenderTreeLayout())
-        return;
+        return false;
 
     styleScope().flushPendingUpdate();
 
     if (!needsStyleRecalc())
-        return;
+        return false;
 
     resolveStyle();
+    return true;
 }
 
 void Document::updateLayout()
