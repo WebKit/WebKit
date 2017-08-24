@@ -129,12 +129,9 @@ private:
     ShareableBitmap(const WebCore::IntSize&, Configuration, void*);
     ShareableBitmap(const WebCore::IntSize&, Configuration, RefPtr<SharedMemory>);
 
-#if USE(CAIRO)
-    static Checked<unsigned, RecordOverflow> numBytesForSize(const WebCore::IntSize&);
-    static Checked<unsigned, RecordOverflow> numBytesForSize(const WebCore::IntSize& size, unsigned bytesPerPixel) { return numBytesForSize(size); }
-#else
-    static Checked<unsigned, RecordOverflow> numBytesForSize(const WebCore::IntSize& size, unsigned bytesPerPixel) { return size.area<RecordOverflow>() * bytesPerPixel; }
-#endif
+    static Checked<unsigned, RecordOverflow> numBytesForSize(WebCore::IntSize, const ShareableBitmap::Configuration&);
+    static Checked<unsigned, RecordOverflow> calculateBytesPerRow(WebCore::IntSize, const Configuration&);
+    static unsigned calculateBytesPerPixel(const Configuration&);
 
 #if USE(CG)
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef) const;
@@ -147,13 +144,7 @@ private:
 #endif
 
     void* data() const;
-#if USE(CAIRO)
-    size_t sizeInBytes() const { return numBytesForSize(m_size).unsafeGet(); }
-#else
-    size_t sizeInBytes() const { return numBytesForSize(m_size, calculateBytesPerPixel(m_configuration)).unsafeGet(); }
-#endif
-
-    static unsigned calculateBytesPerPixel(const Configuration&);
+    size_t sizeInBytes() const { return numBytesForSize(m_size, m_configuration).unsafeGet(); }
 
     WebCore::IntSize m_size;
     Configuration m_configuration;

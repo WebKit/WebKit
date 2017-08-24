@@ -30,6 +30,7 @@
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/PlatformScreen.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include <wtf/RetainPtr.h>
 #include "CGUtilities.h"
 
@@ -74,6 +75,16 @@ static CGBitmapInfo bitmapInfo(const ShareableBitmap::Configuration& configurati
     return info;
 }
 
+Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration& configuration)
+{
+    unsigned bytesPerRow = calculateBytesPerPixel(configuration) * size.width();
+#if USE(IOSURFACE)
+    return IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, bytesPerRow);
+#else
+    return bytesPerRow;
+#endif
+}
+
 unsigned ShareableBitmap::calculateBytesPerPixel(const Configuration& configuration)
 {
     return wantsExtendedRange(configuration) ? 8 : 4;
@@ -84,7 +95,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     ref(); // Balanced by deref in releaseBitmapContextData.
 
     unsigned bytesPerPixel = calculateBytesPerPixel(m_configuration);
-    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), m_size.width(), m_size.height(), bytesPerPixel * 8 / 4, m_size.width() * bytesPerPixel, colorSpace(m_configuration), bitmapInfo(m_configuration), releaseBitmapContextData, this));
+    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), m_size.width(), m_size.height(), bytesPerPixel * 8 / 4, calculateBytesPerRow(m_size, m_configuration).unsafeGet(), colorSpace(m_configuration), bitmapInfo(m_configuration), releaseBitmapContextData, this));
     
     ASSERT(bitmapContext.get());
 
@@ -123,7 +134,7 @@ RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvi
 {
     ASSERT_ARG(dataProvider, dataProvider);
     unsigned bytesPerPixel = calculateBytesPerPixel(m_configuration);
-    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), bytesPerPixel * 8 / 4, bytesPerPixel * 8, m_size.width() * bytesPerPixel, colorSpace(m_configuration), bitmapInfo(m_configuration), dataProvider, 0, false, kCGRenderingIntentDefault));
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), bytesPerPixel * 8 / 4, bytesPerPixel * 8, calculateBytesPerRow(m_size, m_configuration).unsafeGet(), colorSpace(m_configuration), bitmapInfo(m_configuration), dataProvider, 0, false, kCGRenderingIntentDefault));
     return image;
 }
 

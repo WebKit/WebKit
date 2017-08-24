@@ -1,3 +1,42 @@
+2017-08-24  Tim Horton  <timothy_horton@apple.com>
+
+        _WKThumbnailView snapshots have to be copied by CA on first commit due to bad row alignment
+        https://bugs.webkit.org/show_bug.cgi?id=175898
+        <rdar://problem/34029673>
+
+        Reviewed by Sam Weinig.
+
+        In order to avoid copying, CGImages used as layer contents need to have certain
+        alignment requirements fulfilled. Align the row stride to the desired value.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createShareable):
+        (WebKit::ShareableBitmap::numBytesForSize):
+        (WebKit::ShareableBitmap::calculateBytesPerPixel): Deleted.
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::sizeInBytes const):
+        (WebKit::ShareableBitmap::numBytesForSize): Deleted.
+        Merge the interfaces of numBytesPerSize and sizeInBytes between the platforms.
+        numBytesForSize now makes use of the new calculateBytesPerRow, which is
+        implemented by each platform ShareableBitmap implementation to do the
+        requisite alignment for that platform.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::calculateBytesPerRow):
+        (WebKit::ShareableBitmap::calculateBytesPerPixel):
+        (WebKit::createSurfaceFromData):
+        (WebKit::ShareableBitmap::numBytesForSize): Deleted.
+        Implement calculateBytesPerRow (which used to be hidden inside of numBytesForSize)
+        and get rid of the now-duplicative numBytesForSize.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::calculateBytesPerRow):
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::createCGImage const):
+        Implement calculateBytesPerRow and make use of it when providing a row stride
+        to CoreGraphics.
+
 2017-08-24  Chris Dumez  <cdumez@apple.com>
 
         [iOS] ViewServices started by StoreKitUIService may get suspended unexpectedly
