@@ -1965,3 +1965,6 @@ webkit.org/b/174949 imported/w3c/IndexedDB-private-browsing/idbfactory_open12.ht
 webkit.org/b/175939 [ Debug ] editing/execCommand/forward-delete-read-write-canvas.html [ Skip ]
 
 webkit.org/b/173487 imported/w3c/web-platform-tests/IndexedDB/large-nested-cloning.html [ Pass Failure ]
+
+# <rdar://problem/32826391>
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Failure ]
