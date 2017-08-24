@@ -433,6 +433,7 @@ WI.contentLoaded = function()
         WI.ConsoleTabContentView,
         WI.DebuggerTabContentView,
         WI.ElementsTabContentView,
+        WI.LayersTabContentView,
         WI.NetworkTabContentView,
         WI.NewTabContentView,
         WI.RecordingTabContentView,

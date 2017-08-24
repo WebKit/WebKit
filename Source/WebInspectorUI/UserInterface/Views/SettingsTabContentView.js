@@ -241,6 +241,12 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         experimentalSettingsView.addSeparator();
 
+        if (window.LayerTreeAgent) {
+            experimentalSettingsView.addSetting(WI.UIString("Layers:"), WI.settings.experimentalEnableLayersTab, WI.UIString("Enable Layers Tab"));
+
+            experimentalSettingsView.addSeparator();
+        }
+
         let reloadInspectorButton = document.createElement("button");
         reloadInspectorButton.textContent = WI.UIString("Reload Web Inspector");
         reloadInspectorButton.addEventListener("click", () => { window.location.reload(); });
@@ -259,6 +265,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             listenForChange(WI.settings.experimentalShowCanvasContextsInResources);
 
         listenForChange(WI.settings.experimentalSpreadsheetStyleEditor);
+
+        if (window.LayerTreeAgent)
+            listenForChange(WI.settings.experimentalEnableLayersTab);
 
         this.addSettingsView(experimentalSettingsView);
     }
