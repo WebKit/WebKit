@@ -29,15 +29,24 @@
 #include "BExport.h"
 #include "BInline.h"
 #include "BPlatform.h"
+#include <cstddef>
 #include <inttypes.h>
 
-// The Gigacage is 64GB.
-#define GIGACAGE_MASK 0xfffffffffllu
-#define GIGACAGE_SIZE (GIGACAGE_MASK + 1)
+#define PRIMITIVE_GIGACAGE_SIZE 0x800000000llu
+#define JSVALUE_GIGACAGE_SIZE 0x400000000llu
+
+#define GIGACAGE_SIZE_TO_MASK(size) ((size) - 1)
+
+#define PRIMITIVE_GIGACAGE_MASK GIGACAGE_SIZE_TO_MASK(PRIMITIVE_GIGACAGE_SIZE)
+#define JSVALUE_GIGACAGE_MASK GIGACAGE_SIZE_TO_MASK(JSVALUE_GIGACAGE_SIZE)
 
 // FIXME: Consider making this 32GB, in case unsigned 32-bit indices find their way into indexed accesses.
 // https://bugs.webkit.org/show_bug.cgi?id=175062
-#define GIGACAGE_RUNWAY (16llu * 1024 * 1024 * 1024)
+#define PRIMITIVE_GIGACAGE_RUNWAY (16llu * 1024 * 1024 * 1024)
+
+// FIXME: Reconsider this.
+// https://bugs.webkit.org/show_bug.cgi?id=175921
+#define JSVALUE_GIGACAGE_RUNWAY 0
 
 #if BOS(DARWIN) && BCPU(X86_64)
 #define GIGACAGE_ENABLED 1
@@ -93,6 +102,45 @@ BINLINE void*& basePtr(Kind kind)
     return g_primitiveGigacageBasePtr;
 }
 
+BINLINE size_t size(Kind kind)
+{
+    switch (kind) {
+    case Primitive:
+        return static_cast<size_t>(PRIMITIVE_GIGACAGE_SIZE);
+    case JSValue:
+        return static_cast<size_t>(JSVALUE_GIGACAGE_SIZE);
+    }
+    BCRASH();
+    return 0;
+}
+
+BINLINE size_t alignment(Kind kind)
+{
+    return size(kind);
+}
+
+BINLINE size_t mask(Kind kind)
+{
+    return GIGACAGE_SIZE_TO_MASK(size(kind));
+}
+
+BINLINE size_t runway(Kind kind)
+{
+    switch (kind) {
+    case Primitive:
+        return static_cast<size_t>(PRIMITIVE_GIGACAGE_RUNWAY);
+    case JSValue:
+        return static_cast<size_t>(JSVALUE_GIGACAGE_RUNWAY);
+    }
+    BCRASH();
+    return 0;
+}
+
+BINLINE size_t totalSize(Kind kind)
+{
+    return size(kind) + runway(kind);
+}
+
 template<typename Func>
 void forEachKind(const Func& func)
 {
@@ -109,7 +157,7 @@ BINLINE T* caged(Kind kind, T* ptr)
         return ptr;
     return reinterpret_cast<T*>(
         reinterpret_cast<uintptr_t>(gigacageBasePtr) + (
-            reinterpret_cast<uintptr_t>(ptr) & static_cast<uintptr_t>(GIGACAGE_MASK)));
+            reinterpret_cast<uintptr_t>(ptr) & mask(kind)));
 }
 
 BINLINE bool isCaged(Kind kind, const void* ptr)

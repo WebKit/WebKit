@@ -76,13 +76,13 @@ void ensureGigacage()
                 [&] (Kind kind) {
                     // FIXME: Randomize where this goes.
                     // https://bugs.webkit.org/show_bug.cgi?id=175245
-                    basePtr(kind) = tryVMAllocate(GIGACAGE_SIZE, GIGACAGE_SIZE + GIGACAGE_RUNWAY);
+                    basePtr(kind) = tryVMAllocate(alignment(kind), totalSize(kind));
                     if (!basePtr(kind)) {
                         fprintf(stderr, "FATAL: Could not allocate %s gigacage.\n", name(kind));
                         BCRASH();
                     }
                     
-                    vmDeallocatePhysicalPages(basePtr(kind), GIGACAGE_SIZE + GIGACAGE_RUNWAY);
+                    vmDeallocatePhysicalPages(basePtr(kind), totalSize(kind));
                 });
         });
 #endif // GIGACAGE_ENABLED

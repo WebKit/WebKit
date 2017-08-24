@@ -1317,7 +1317,7 @@ public:
         if (!Gigacage::shouldBeEnabled())
             return;
         
-        andPtr(TrustedImmPtr(static_cast<size_t>(GIGACAGE_MASK)), storage);
+        andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
         addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
 #else
         UNUSED_PARAM(kind);
@@ -1336,7 +1336,7 @@ public:
         
         loadPtr(&Gigacage::basePtr(kind), scratch);
         Jump done = branchTestPtr(Zero, scratch);
-        andPtr(TrustedImmPtr(static_cast<size_t>(GIGACAGE_MASK)), storage);
+        andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
         addPtr(scratch, storage);
         done.link(this);
 #else

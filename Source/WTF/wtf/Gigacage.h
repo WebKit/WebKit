@@ -28,7 +28,6 @@
 #include <wtf/FastMalloc.h>
 
 #if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
-#define GIGACAGE_MASK 0
 #define GIGACAGE_ENABLED 0
 
 extern "C" {
@@ -71,6 +70,8 @@ ALWAYS_INLINE void*& basePtr(Kind)
 {
     return g_gigacageBasePtr;
 }
+
+ALWAYS_INLINE size_t mask(Kind) { return 0; }
 
 template<typename T>
 inline T* caged(Kind, T* ptr) { return ptr; }

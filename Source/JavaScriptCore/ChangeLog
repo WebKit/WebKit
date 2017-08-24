@@ -1,3 +1,23 @@
+2017-08-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Reduce Gigacage sizes
+        https://bugs.webkit.org/show_bug.cgi?id=175920
+
+        Reviewed by Mark Lam.
+
+        Teach all of the code generators to use the right gigacage masks.
+
+        Also teach Wasm that it has much less memory for signaling memories. With 32GB, we have room for 7 signaling memories. But if
+        we actually did that, then we'd have no memory left for anything else. So, this caps us at 4 signaling memories.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cage):
+        (JSC::AssemblyHelpers::cageConditionally):
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Options.h:
+
 2017-08-24  Saam Barati  <sbarati@apple.com>
 
         DFG::JITCode::osrEntry should get sorted since we perform a binary search on it

@@ -1,3 +1,29 @@
+2017-08-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Reduce Gigacage sizes
+        https://bugs.webkit.org/show_bug.cgi?id=175920
+
+        Reviewed by Mark Lam.
+
+        This introduces the ability to have different gigacage sizes for different gigacages, and uses it to reduce the size of both
+        gigacages, but to different extents: Primitive gets 32GB with a 16GB runway and JSValue gets 16GB.
+
+        This is a ~10% membuster progression on my Mac Pro.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        * bmalloc/Gigacage.h:
+        (Gigacage::size):
+        (Gigacage::alignment):
+        (Gigacage::mask):
+        (Gigacage::runway):
+        (Gigacage::totalSize):
+        (Gigacage::caged):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::gigacageSize):
+        * bmalloc/Heap.h:
+
 2017-08-08  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT should do caging

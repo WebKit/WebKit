@@ -60,7 +60,7 @@ Heap::Heap(HeapKind kind, std::lock_guard<StaticMutex>&)
 #if GIGACAGE_ENABLED
         if (usingGigacage()) {
             RELEASE_BASSERT(gigacageBasePtr());
-            m_largeFree.add(LargeRange(gigacageBasePtr(), GIGACAGE_SIZE, 0));
+            m_largeFree.add(LargeRange(gigacageBasePtr(), gigacageSize(), 0));
         }
 #endif
     }
@@ -76,6 +76,11 @@ bool Heap::usingGigacage()
 void* Heap::gigacageBasePtr()
 {
     return Gigacage::basePtr(gigacageKind(m_kind));
+}
+
+size_t Heap::gigacageSize()
+{
+    return Gigacage::size(gigacageKind(m_kind));
 }
 
 void Heap::initializeLineMetadata()

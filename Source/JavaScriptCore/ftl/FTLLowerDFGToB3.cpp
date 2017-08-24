@@ -11704,7 +11704,7 @@ private:
         }
         
         LValue basePtr = m_out.constIntPtr(Gigacage::basePtr(kind));
-        LValue mask = m_out.constIntPtr(GIGACAGE_MASK);
+        LValue mask = m_out.constIntPtr(Gigacage::mask(kind));
         
         LValue masked = m_out.bitAnd(ptr, mask);
         LValue result = m_out.add(masked, basePtr);

@@ -90,6 +90,7 @@ private:
     
     bool usingGigacage();
     void* gigacageBasePtr(); // May crash if !usingGigacage().
+    size_t gigacageSize();
     
     void initializeLineMetadata();
     void initializePageMetadata();
