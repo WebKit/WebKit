@@ -210,7 +210,7 @@ class Response(object):
         if self.request.method != "HEAD" or self.send_body_for_head_request:
             for item in self.iter_content():
                 response_size += self.writer.write_content(item)
-        self.logger.debug("Wrote content of size %d for %s" % (response_size, self.request.request_path))
+        self.logger.debug(" %s - Wrote content of size %d for %s" % (datetime.now(), response_size, self.request.request_path))
 
     def write(self):
         """Write the whole response"""
@@ -447,7 +447,7 @@ class ResponseWriter(object):
             return len(buffer)
         except socket.error:
             # This can happen if the socket got closed by the remote end
-            self.logger.debug("Got exception when writing response " + traceback.format_exc())
+            self.logger.debug(" %s - Got exception when writing response for %s: %s" % (datetime.now(), self._response.request.request_path, traceback.format_exc()))
             pass
 
     def write_content_file(self, data):
@@ -463,7 +463,7 @@ class ResponseWriter(object):
             try:
                 self._wfile.write(buf)
             except socket.error:
-                self.logger.debug("Got exception when writing response " + traceback.format_exc())
+                self.logger.debug(" %s - Got exception when writing response for %s: %s" % (datetime.now(), self._response.request.request_path, traceback.format_exc()))
                 break
         data.close()
         return written_size

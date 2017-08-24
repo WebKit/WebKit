@@ -1,4 +1,5 @@
 import BaseHTTPServer
+from datetime import datetime
 import errno
 import os
 import socket
@@ -229,7 +230,7 @@ class WebTestRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 response.write()
                 return
 
-            self.logger.debug("%s %s" % (request.method, request.request_path))
+            self.logger.debug(" %s - %s %s" % (datetime.now(), request.method, request.request_path))
             handler = self.server.router.get_handler(request)
 
             # If the handler we used for the request had a non-default base path
@@ -261,7 +262,8 @@ class WebTestRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                         err = []
                     err.append(traceback.format_exc())
                     response.set_error(500, "\n".join(err))
-            self.logger.debug("%i %s %s (%s) %i" % (response.status[0],
+            self.logger.debug(" %s - %i %s %s (%s) %i" % (datetime.now(),
+                                                    response.status[0],
                                                     request.method,
                                                     request.request_path,
                                                     request.headers.get('Referer'),

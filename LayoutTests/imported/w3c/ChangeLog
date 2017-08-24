@@ -1,3 +1,20 @@
+2017-08-24  Youenn Fablet  <youenn@apple.com>
+
+        WPT harness errors on leaks and iOS-sim EWS bots
+        https://bugs.webkit.org/show_bug.cgi?id=175269
+        <rdar://problem/33902404>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adding more logging to check whether the server is hanging or TCP connection is timing out.
+
+        * web-platform-tests/tools/wptserve/wptserve/response.py:
+        (Response.write_content):
+        (ResponseWriter.write):
+        (ResponseWriter.write_content_file):
+        * web-platform-tests/tools/wptserve/wptserve/server.py:
+        (WebTestRequestHandler.handle_one_request):
+
 2017-08-22  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Add support for overwriting responses with put on an existing record
