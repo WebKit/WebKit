@@ -3,7 +3,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND WebKit_INCLUDE_DIRECTORIES
         ${CAIRO_INCLUDE_DIRS}
         "${WEBKIT_LIBRARIES_DIR}/include"
-        "${WEBKIT_LIBRARIES_DIR}/include/sqlite"
         "${WEBCORE_DIR}/platform/graphics/cairo"
     )
     list(APPEND WebKit_SOURCES_Classes
@@ -26,7 +25,6 @@ else ()
         PRIVATE CoreGraphics${DEBUG_SUFFIX}
         PRIVATE CoreText${DEBUG_SUFFIX}
         PRIVATE QuartzCore${DEBUG_SUFFIX}
-        PRIVATE SQLite3${DEBUG_SUFFIX}
         PRIVATE WebKitSystemInterface${DEBUG_SUFFIX}
         PRIVATE libdispatch${DEBUG_SUFFIX}
         PRIVATE libicuin${DEBUG_SUFFIX}

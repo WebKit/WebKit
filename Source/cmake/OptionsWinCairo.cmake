@@ -5,6 +5,7 @@ include(OptionsWin)
 find_package(Cairo 1.14.4 REQUIRED)
 find_package(CURL 7.45.0 REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(Sqlite REQUIRED)
 
 SET_AND_EXPOSE_TO_BUILD(USE_CAIRO ON)
 

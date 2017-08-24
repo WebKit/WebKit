@@ -7,7 +7,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${FORWARDING_HEADERS_DIR}/JavaScriptCore"
     "${DirectX_INCLUDE_DIRS}"
     "${WEBKIT_LIBRARIES_DIR}/include"
-    "${WEBKIT_LIBRARIES_DIR}/include/SQLite"
     "${WEBKIT_LIBRARIES_DIR}/include/zlib"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/platform/cf"
@@ -41,7 +40,6 @@ list(APPEND WebCore_SOURCES
 list(APPEND WebCore_LIBRARIES
     ${DirectX_LIBRARIES}
     CFLite
-    SQLite3
     comctl32
     crypt32
     iphlpapi

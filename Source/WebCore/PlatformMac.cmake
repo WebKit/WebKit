@@ -23,8 +23,8 @@ find_library(QUARTZ_LIBRARY Quartz)
 find_library(QUARTZCORE_LIBRARY QuartzCore)
 find_library(SECURITY_LIBRARY Security)
 find_library(SYSTEMCONFIGURATION_LIBRARY SystemConfiguration)
-find_library(SQLITE3_LIBRARY sqlite3)
 find_library(XML2_LIBRARY XML2)
+find_package(Sqlite REQUIRED)
 find_package(ZLIB REQUIRED)
 
 list(APPEND WebCore_LIBRARIES
