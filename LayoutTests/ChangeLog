@@ -1,3 +1,28 @@
+2017-08-24  Ms2ger  <Ms2ger@igalia.com>
+
+        Remove some duplicated media track tests.
+        https://bugs.webkit.org/show_bug.cgi?id=175929
+
+        Reviewed by Sam Weinig.
+
+        All these tests have been submitted to web-platform-tests and are maintained
+        there. A copy of them exists in
+        imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/.
+        Most of the retained tests also exist in web-platform-tests, but in the
+        webvtt/ top-level directory, which is currently not imported.
+
+        * media/track/opera/interfaces/TextTrack/activeCues.html: Removed.
+        * media/track/opera/interfaces/TextTrackCue/onenter.html: Removed.
+        * media/track/opera/interfaces/TextTrackCue/onexit.html: Removed.
+        * media/track/opera/interfaces/TextTrackCueList/getter.html: Removed.
+        * media/track/opera/interfaces/TextTrackList/getter.html: Removed.
+        * media/track/opera/interfaces/TrackEvent/constructor.html: Removed.
+        * media/track/opera/interfaces/TrackEvent/createEvent.html: Removed.
+        * media/track/opera/track/track-element/src-clear-cues.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2017-08-24  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations of several tests failing at r221132.
