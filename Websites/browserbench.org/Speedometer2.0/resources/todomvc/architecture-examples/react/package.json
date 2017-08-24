@@ -1,13 +1,13 @@
 {
   "private": true,
   "scripts": {
-    "make": "babel --plugins transform-react-jsx js/app.jsx | uglifyjs -o build.min.js"
+    "build": "babel --plugins transform-react-jsx js/app.jsx | uglifyjs -o build.min.js"
   },
   "dependencies": {
     "classnames": "^2.2.5",
     "director": "^1.2.8",
-    "react": "^15.4.0",
-    "react-dom": "^15.4.0",
+    "react": "15.5.4",
+    "react-dom": "15.5.4",
     "todomvc-app-css": "^2.0.0",
     "todomvc-common": "^1.0.2"
   },
