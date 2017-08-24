@@ -1,5 +1,23 @@
 2017-08-24  Michael Saboff  <msaboff@apple.com>
 
+        Enable moving fixed character class terms after fixed character terms for BMP only character classes
+        https://bugs.webkit.org/show_bug.cgi?id=175958
+
+        Reviewed by Saam Barati.
+
+        Currently we don't perform the reordering optimiaztion of fixed character terms that
+        follow fixed character class terms for Unicode patterns.
+
+        This change allows that reordering when the character class contains only BMP
+        characters.
+
+        This fix is covered by existing tests.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::optimizeAlternative):
+
+2017-08-24  Michael Saboff  <msaboff@apple.com>
+
         Add support for RegExp "dotAll" flag
         https://bugs.webkit.org/show_bug.cgi?id=175924
 

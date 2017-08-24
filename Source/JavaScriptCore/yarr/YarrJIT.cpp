@@ -148,7 +148,7 @@ class YarrGenerator : private MacroAssembler {
 
     void optimizeAlternative(PatternAlternative* alternative)
     {
-        if (!alternative->m_terms.size() || m_decodeSurrogatePairs)
+        if (!alternative->m_terms.size())
             return;
 
         for (unsigned i = 0; i < alternative->m_terms.size() - 1; ++i) {
@@ -158,7 +158,7 @@ class YarrGenerator : private MacroAssembler {
             // We can move BMP only character classes after fixed character terms.
             if ((term.type == PatternTerm::TypeCharacterClass)
                 && (term.quantityType == QuantifierFixedCount)
-                && (!term.characterClass->m_hasNonBMPCharacters)
+                && (!m_decodeSurrogatePairs || !term.characterClass->m_hasNonBMPCharacters)
                 && (nextTerm.type == PatternTerm::TypePatternCharacter)
                 && (nextTerm.quantityType == QuantifierFixedCount)) {
                 PatternTerm termCopy = term;
