@@ -42,10 +42,12 @@ namespace WebCore {
 class FormState;
 
 using NavigationPolicyDecisionFunction = Function<void(const ResourceRequest&, FormState*, bool shouldContinue)>;
+using NewWindowPolicyDecisionFunction = Function<void(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, bool shouldContinue)>;
 
 class PolicyCallback {
 public:
     void set(const ResourceRequest&, FormState*, NavigationPolicyDecisionFunction&&);
+    void set(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, NewWindowPolicyDecisionFunction&&);
 
     const ResourceRequest& request() const { return m_request; }
     void clearRequest();
@@ -60,6 +62,7 @@ private:
     NavigationAction m_navigationAction;
 
     NavigationPolicyDecisionFunction m_navigationFunction;
+    NewWindowPolicyDecisionFunction m_newWindowFunction;
 };
 
 } // namespace WebCore

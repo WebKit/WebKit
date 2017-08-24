@@ -47,8 +47,6 @@ class NavigationAction;
 class ResourceError;
 class ResourceResponse;
 
-using NewWindowPolicyDecisionFunction = WTF::Function<void(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, bool shouldContinue)>;
-
 class PolicyChecker {
     WTF_MAKE_NONCOPYABLE(PolicyChecker);
     WTF_MAKE_FAST_ALLOCATED;
@@ -57,7 +55,7 @@ public:
 
     void checkNavigationPolicy(const ResourceRequest&, bool didReceiveRedirectResponse, DocumentLoader*, FormState*, NavigationPolicyDecisionFunction);
     void checkNavigationPolicy(const ResourceRequest&, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction);
-    void checkNewWindowPolicy(NavigationAction&&, const ResourceRequest&, FormState*, const String& frameName, NewWindowPolicyDecisionFunction);
+    void checkNewWindowPolicy(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, NewWindowPolicyDecisionFunction);
 
     // FIXME: These are different.  They could use better names.
     void cancelCheck();
@@ -86,6 +84,7 @@ public:
 
 private:
     void continueAfterNavigationPolicy(PolicyAction);
+    void continueAfterNewWindowPolicy(PolicyAction);
 
     void handleUnimplementablePolicy(const ResourceError&);
 
