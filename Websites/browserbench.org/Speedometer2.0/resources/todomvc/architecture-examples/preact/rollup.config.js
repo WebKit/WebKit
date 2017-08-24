@@ -4,7 +4,7 @@ import babel from 'rollup-plugin-babel';
 
 export default {
     entry: 'src/index.js',
-    dest: 'build/app.js',
+    dest: 'dist/app.js',
     format: 'iife',
     sourceMap: true,
     external: [],

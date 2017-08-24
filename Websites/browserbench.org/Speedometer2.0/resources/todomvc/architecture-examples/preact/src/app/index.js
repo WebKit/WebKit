@@ -1,4 +1,6 @@
 import { h, Component } from 'preact';
+import linkState from 'linkstate';
+
 import TodoModel from './model';
 import TodoFooter from './footer';
 import TodoItem from './item';
@@ -20,15 +22,15 @@ export default class App extends Component {
     }
 
     handleRoute() {
-        let nowShowing = String(location.hash||'').split('/').pop();
+        let nowShowing = String(location.hash || '').split('/').pop();
         if (!FILTERS[nowShowing]) {
             nowShowing = 'all';
         }
         this.setState({ nowShowing });
     }
 
-    handleNewTodoKeyDown = e => {
-        if (e.keyCode!==ENTER_KEY) return;
+    handleNewTodoKeyDown = (e) => {
+        if (e.keyCode !== ENTER_KEY) return;
         e.preventDefault();
 
         // let val = '';
@@ -74,7 +76,7 @@ export default class App extends Component {
         this.model.clearCompleted();
     };
 
-    render({ }, { nowShowing=ALL_TODOS, newTodo, editing }) {
+    render({ }, { nowShowing = ALL_TODOS, newTodo, editing }) {
         let { todos } = this.model,
             shownTodos = todos.filter( FILTERS[nowShowing] ),
             activeTodoCount = todos.reduce( (a, todo) => a + (todo.completed ? 0 : 1), 0),
@@ -89,7 +91,7 @@ export default class App extends Component {
                         placeholder="What needs to be done?"
                         value={newTodo}
                         onKeyDown={this.handleNewTodoKeyDown}
-                        onInput={this.linkState('newTodo')}
+                        onInput={linkState(this, 'newTodo')}
                         autoFocus={true}
                     />
                 </header>

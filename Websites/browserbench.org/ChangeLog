@@ -1,5 +1,20 @@
 2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Merge the latest version of Speedometer 2.0 to browserbench.org against at r221126.
+
+        Rubber-stamped by Yusuke Suzuki.
+
+        * Speedometer2.0: Replaced with PerformanceTests/Speedometer.
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/dist/app.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/dist/todomvc.css:
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/src/app/footer.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/src/app/index.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/src/app/item.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/src/app/util.js:
+        (export.uuid):
+
+2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Merge the latest version of Speedometer 2.0 to browserbench.org against at r221119.
 
         Rubber-stamped by Joseph Pecoraro.

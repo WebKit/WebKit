@@ -1,18 +1,15 @@
-# Preact TodoMVC
+# Speedometer 2.0: Preact TodoMVC example
 
-[**Demo**](https://preact-todomvc.surge.sh)
+## Test locally
 
-TodoMVC done in [Preact]. The app is 6kb of minified + gzipped JavaScript.
+1. `npm install`
+2. `npm start`
 
-This is an ES6 + Preact port of the [ES5 + React TodoMVC example](https://github.com/tastejs/todomvc/tree/gh-pages/examples/react).
+## Build
 
-[preact]: https://github.com/developit/preact
+1. `npm run build`
 
-## Building
-
-Run `npm install` followed by `npm run build` to build the project.
-
-## Speedometer instructions
+## Notes
 
 The compiled version of the application can be found in the `build` directory.
 This is what the benchmark runner uses when running the Preact TodoMVC as part
