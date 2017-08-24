@@ -136,6 +136,45 @@ TEST(WebKit2, Focus)
     ASSERT_EQ(takenDirection, WKFocusDirectionBackward);
 }
 
+static void synthesizeWheelEvents(NSView *view, int x, int y)
+{
+    RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(nullptr, kCGScrollEventUnitLine, 2, y, x));
+    NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
+    [view scrollWheel:event];
+    
+    // Wheel events get coalesced sometimes. Make more events until one is not handled.
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        synthesizeWheelEvents(view, x, y);
+    });
+}
+
+@interface WheelDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation WheelDelegate
+
+- (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event
+{
+    done = true;
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    completionHandler();
+    synthesizeWheelEvents(webView, 1, 1);
+}
+
+@end
+
+TEST(WebKit2, DidNotHandleWheelEvent)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    auto delegate = adoptNS([[WheelDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView loadHTMLString:@"<body onload='alert(\"ready\")' onwheel='()=>{}' style='overflow:hidden; height:10000vh;'></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    TestWebKitAPI::Util::run(&done);
+}
+
 #endif // PLATFORM(MAC)
 
 #endif // WK_API_ENABLED

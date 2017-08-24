@@ -30,6 +30,7 @@
 
 #import "APIFrameInfo.h"
 #import "CompletionHandlerCallChecker.h"
+#import "NativeWebWheelEvent.h"
 #import "NavigationActionData.h"
 #import "UserMediaPermissionCheckProxy.h"
 #import "UserMediaPermissionRequestProxy.h"
@@ -104,6 +105,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.focusWebView = [delegate respondsToSelector:@selector(_focusWebView:)];
     m_delegateMethods.unfocusWebView = [delegate respondsToSelector:@selector(_unfocusWebView:)];
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
+    m_delegateMethods.webViewDidNotHandleWheelEvent = [delegate respondsToSelector:@selector(_webView:didNotHandleWheelEvent:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
 #endif
 
@@ -421,6 +423,18 @@ void UIDelegate::UIClient::unfocus(WebKit::WebPageProxy*)
         return;
     
     [(id <WKUIDelegatePrivate>)delegate _unfocusWebView:m_uiDelegate.m_webView];
+}
+
+void UIDelegate::UIClient::didNotHandleWheelEvent(WebKit::WebPageProxy*, const WebKit::NativeWebWheelEvent& event)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewDidNotHandleWheelEvent)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView didNotHandleWheelEvent:event.nativeEvent()];
 }
 
 void UIDelegate::UIClient::showPage(WebPageProxy*)

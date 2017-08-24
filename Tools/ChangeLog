@@ -1,3 +1,17 @@
+2017-08-24  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate callback corresponding to PageUIClient's didNotHandleWheelEvent
+        https://bugs.webkit.org/show_bug.cgi?id=175957
+        <rdar://problem/29270035>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UIDelegate.mm:
+        (synthesizeWheelEvents):
+        (-[WheelDelegate _webView:didNotHandleWheelEvent:]):
+        (-[WheelDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2017-08-24  Tim Horton  <timothy_horton@apple.com>
 
         Layout size override changes during in-flight animated resize are dropped on the floor forever
