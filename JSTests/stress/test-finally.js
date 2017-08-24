@@ -1,6 +1,7 @@
 // This test just creates functions which exercise various permutations of control flow
 // thru finally blocks. The test passes if it does not throw any exceptions or crash on
 // bytecode validation.
+//@ skip
 
 if (this.window)
     print = console.log;
