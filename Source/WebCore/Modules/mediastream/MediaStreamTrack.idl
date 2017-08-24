@@ -23,7 +23,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME 169871: remove "new"
 enum MediaStreamTrackState { "live", "ended" };
 
 [

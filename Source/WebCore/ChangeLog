@@ -1,3 +1,10 @@
+2017-08-24  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed.
+
+        * Modules/mediastream/MediaStreamTrack.idl: Remove extraneous and confusing comment in IDL.
+        The 'new' enum was removed via r215198, so we can remove this specific FIXME.
+
 2017-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Stop using PolicyCallback for new window policies
