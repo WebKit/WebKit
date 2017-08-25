@@ -49,6 +49,10 @@
     macro(Error) \
     macro(EvalError) \
     macro(FederatedCredential) \
+    macro(FileSystem) \
+    macro(FileSystemDirectoryEntry) \
+    macro(FileSystemEntry) \
+    macro(FileSystemFileEntry) \
     macro(Function) \
     macro(Gamepad) \
     macro(GamepadButton) \

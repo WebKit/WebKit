@@ -35,6 +35,7 @@ VPATH = \
     $(WebCore)/Modules/credentials \
     $(WebCore)/Modules/encryptedmedia \
     $(WebCore)/Modules/encryptedmedia/legacy \
+    $(WebCore)/Modules/entriesapi \
     $(WebCore)/Modules/fetch \
     $(WebCore)/Modules/gamepad \
     $(WebCore)/Modules/geolocation \
@@ -133,6 +134,13 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.idl \
     $(WebCore)/Modules/encryptedmedia/legacy/WebKitMediaKeySession.idl \
     $(WebCore)/Modules/encryptedmedia/legacy/WebKitMediaKeys.idl \
+    $(WebCore)/Modules/entriesapi/DOMFileSystem.idl \
+    $(WebCore)/Modules/entriesapi/ErrorCallback.idl \
+    $(WebCore)/Modules/entriesapi/FileCallback.idl \
+    $(WebCore)/Modules/entriesapi/FileSystemDirectoryEntry.idl \
+    $(WebCore)/Modules/entriesapi/FileSystemEntry.idl \
+    $(WebCore)/Modules/entriesapi/FileSystemEntryCallback.idl \
+    $(WebCore)/Modules/entriesapi/FileSystemFileEntry.idl \
     $(WebCore)/Modules/fetch/DOMWindowFetch.idl \
     $(WebCore)/Modules/fetch/FetchBody.idl \
     $(WebCore)/Modules/fetch/FetchHeaders.idl \

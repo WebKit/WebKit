@@ -1,0 +1,69 @@
+Entries API IDL tests
+
+
+PASS ErrorCallback interface: existence and properties of interface object 
+PASS ErrorCallback interface: existence and properties of interface prototype object 
+PASS ErrorCallback interface: existence and properties of interface prototype object's "constructor" property 
+PASS ErrorCallback interface: operation handleEvent(DOMException) 
+PASS FileSystemEntry interface: existence and properties of interface object 
+PASS FileSystemEntry interface object length 
+PASS FileSystemEntry interface object name 
+PASS FileSystemEntry interface: existence and properties of interface prototype object 
+PASS FileSystemEntry interface: existence and properties of interface prototype object's "constructor" property 
+PASS FileSystemEntry interface: attribute isFile 
+PASS FileSystemEntry interface: attribute isDirectory 
+PASS FileSystemEntry interface: attribute name 
+PASS FileSystemEntry interface: attribute fullPath 
+PASS FileSystemEntry interface: attribute filesystem 
+FAIL FileSystemEntry interface: operation getParent(FileSystemEntryCallback,ErrorCallback) assert_own_property: interface prototype object missing non-static operation expected property "getParent" missing
+PASS FileSystemDirectoryEntry interface: existence and properties of interface object 
+PASS FileSystemDirectoryEntry interface object length 
+PASS FileSystemDirectoryEntry interface object name 
+PASS FileSystemDirectoryEntry interface: existence and properties of interface prototype object 
+PASS FileSystemDirectoryEntry interface: existence and properties of interface prototype object's "constructor" property 
+FAIL FileSystemDirectoryEntry interface: operation createReader() assert_own_property: interface prototype object missing non-static operation expected property "createReader" missing
+PASS FileSystemDirectoryEntry interface: operation getFile(USVString,FileSystemFlags,FileSystemEntryCallback,ErrorCallback) 
+PASS FileSystemDirectoryEntry interface: operation getDirectory(USVString,FileSystemFlags,FileSystemEntryCallback,ErrorCallback) 
+PASS FileSystemEntryCallback interface: existence and properties of interface object 
+PASS FileSystemEntryCallback interface: existence and properties of interface prototype object 
+PASS FileSystemEntryCallback interface: existence and properties of interface prototype object's "constructor" property 
+PASS FileSystemEntryCallback interface: operation handleEvent(FileSystemEntry) 
+FAIL FileSystemDirectoryReader interface: existence and properties of interface object assert_own_property: self does not have own property "FileSystemDirectoryReader" expected property "FileSystemDirectoryReader" missing
+FAIL FileSystemDirectoryReader interface object length assert_own_property: self does not have own property "FileSystemDirectoryReader" expected property "FileSystemDirectoryReader" missing
+FAIL FileSystemDirectoryReader interface object name assert_own_property: self does not have own property "FileSystemDirectoryReader" expected property "FileSystemDirectoryReader" missing
+FAIL FileSystemDirectoryReader interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FileSystemDirectoryReader" expected property "FileSystemDirectoryReader" missing
+FAIL FileSystemDirectoryReader interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FileSystemDirectoryReader" expected property "FileSystemDirectoryReader" missing
+FAIL FileSystemDirectoryReader interface: operation readEntries(FileSystemEntriesCallback,ErrorCallback) assert_own_property: self does not have own property "FileSystemDirectoryReader" expected property "FileSystemDirectoryReader" missing
+PASS FileSystemEntriesCallback interface: existence and properties of interface object 
+PASS FileSystemEntriesCallback interface: existence and properties of interface prototype object 
+PASS FileSystemEntriesCallback interface: existence and properties of interface prototype object's "constructor" property 
+PASS FileSystemEntriesCallback interface: operation handleEvent([object Object]) 
+PASS FileSystemFileEntry interface: existence and properties of interface object 
+PASS FileSystemFileEntry interface object length 
+PASS FileSystemFileEntry interface object name 
+PASS FileSystemFileEntry interface: existence and properties of interface prototype object 
+PASS FileSystemFileEntry interface: existence and properties of interface prototype object's "constructor" property 
+PASS FileSystemFileEntry interface: operation file(FileCallback,ErrorCallback) 
+PASS FileCallback interface: existence and properties of interface object 
+PASS FileCallback interface: existence and properties of interface prototype object 
+PASS FileCallback interface: existence and properties of interface prototype object's "constructor" property 
+PASS FileCallback interface: operation handleEvent(File) 
+PASS FileSystem interface: existence and properties of interface object 
+PASS FileSystem interface object length 
+PASS FileSystem interface object name 
+PASS FileSystem interface: existence and properties of interface prototype object 
+PASS FileSystem interface: existence and properties of interface prototype object's "constructor" property 
+PASS FileSystem interface: attribute name 
+PASS FileSystem interface: attribute root 
+PASS File interface: attribute webkitRelativePath 
+PASS File must be primary interface of new File(["myFileBits"], "myFileName") 
+PASS Stringification of new File(["myFileBits"], "myFileName") 
+PASS File interface: new File(["myFileBits"], "myFileName") must inherit property "webkitRelativePath" with the proper type (0) 
+PASS HTMLInputElement interface: attribute webkitdirectory 
+FAIL HTMLInputElement interface: attribute webkitEntries assert_true: The prototype object must have a property "webkitEntries" expected true got false
+PASS HTMLInputElement must be primary interface of file_input 
+PASS Stringification of file_input 
+PASS HTMLInputElement interface: file_input must inherit property "webkitdirectory" with the proper type (0) 
+FAIL HTMLInputElement interface: file_input must inherit property "webkitEntries" with the proper type (1) assert_inherits: property "webkitEntries" not found in prototype chain
+FAIL DataTransferItem interface: operation webkitGetAsEntry() assert_own_property: interface prototype object missing non-static operation expected property "webkitGetAsEntry" missing
+

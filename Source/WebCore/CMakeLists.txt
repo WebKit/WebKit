@@ -21,6 +21,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/credentials"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
     "${WEBCORE_DIR}/Modules/encryptedmedia/legacy"
+    "${WEBCORE_DIR}/Modules/entriesapi"
     "${WEBCORE_DIR}/Modules/fetch"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
@@ -152,6 +153,7 @@ set(WebCore_IDL_INCLUDES
     Modules/cache
     Modules/credentials
     Modules/encryptedmedia/legacy
+    Modules/entriesapi
     Modules/fetch
     Modules/geolocation
     Modules/indexeddb
@@ -197,6 +199,14 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/credentials/NavigatorCredentials.idl
     Modules/credentials/PasswordCredential.idl
     Modules/credentials/PasswordCredentialData.idl
+
+    Modules/entriesapi/DOMFileSystem.idl
+    Modules/entriesapi/ErrorCallback.idl
+    Modules/entriesapi/FileCallback.idl
+    Modules/entriesapi/FileSystemDirectoryEntry.idl
+    Modules/entriesapi/FileSystemEntry.idl
+    Modules/entriesapi/FileSystemEntryCallback.idl
+    Modules/entriesapi/FileSystemFileEntry.idl
 
     Modules/fetch/DOMWindowFetch.idl
     Modules/fetch/FetchBody.idl
@@ -908,6 +918,11 @@ set(WebCore_SOURCES
     Modules/credentials/FederatedCredential.cpp
     Modules/credentials/NavigatorCredentials.cpp
     Modules/credentials/PasswordCredential.cpp
+
+    Modules/entriesapi/DOMFileSystem.cpp
+    Modules/entriesapi/FileSystemDirectoryEntry.cpp
+    Modules/entriesapi/FileSystemEntry.cpp
+    Modules/entriesapi/FileSystemFileEntry.cpp
 
     Modules/fetch/DOMWindowFetch.cpp
     Modules/fetch/FetchBody.cpp

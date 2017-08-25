@@ -1,3 +1,58 @@
+2017-08-25  Chris Dumez  <cdumez@apple.com>
+
+        Land stubs for File and Directory Entries API interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=175993
+        <rdar://problem/34087477>
+
+        Reviewed by Ryosuke Niwa.
+
+        Land stubs for File and Directory Entries API interfaces:
+        - https://wicg.github.io/entries-api/#idl-index
+
+        Those will be needed to support drag and drop.
+
+        Test: http/wpt/entries-api/interfaces.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/entriesapi/DOMFileSystem.cpp: Added.
+        (WebCore::DOMFileSystem::DOMFileSystem):
+        (WebCore::DOMFileSystem::~DOMFileSystem):
+        * Modules/entriesapi/DOMFileSystem.h: Added.
+        (WebCore::DOMFileSystem::create):
+        (WebCore::DOMFileSystem::name const):
+        (WebCore::DOMFileSystem::root const):
+        * Modules/entriesapi/DOMFileSystem.idl: Added.
+        * Modules/entriesapi/ErrorCallback.h: Added.
+        * Modules/entriesapi/ErrorCallback.idl: Added.
+        * Modules/entriesapi/FileCallback.h: Added.
+        * Modules/entriesapi/FileCallback.idl: Added.
+        * Modules/entriesapi/FileSystemDirectoryEntry.cpp: Added.
+        (WebCore::FileSystemDirectoryEntry::FileSystemDirectoryEntry):
+        (WebCore::FileSystemDirectoryEntry::getFile):
+        (WebCore::FileSystemDirectoryEntry::getDirectory):
+        * Modules/entriesapi/FileSystemDirectoryEntry.h: Added.
+        * Modules/entriesapi/FileSystemDirectoryEntry.idl: Added.
+        * Modules/entriesapi/FileSystemEntry.cpp: Added.
+        (WebCore::FileSystemEntry::FileSystemEntry):
+        * Modules/entriesapi/FileSystemEntry.h: Added.
+        (WebCore::FileSystemEntry::~FileSystemEntry):
+        (WebCore::FileSystemEntry::isFile const):
+        (WebCore::FileSystemEntry::isDirectory const):
+        (WebCore::FileSystemEntry::name const):
+        (WebCore::FileSystemEntry::fullPath const):
+        (WebCore::FileSystemEntry::filesystem const):
+        * Modules/entriesapi/FileSystemEntry.idl: Added.
+        * Modules/entriesapi/FileSystemEntryCallback.h: Added.
+        * Modules/entriesapi/FileSystemEntryCallback.idl: Added.
+        * Modules/entriesapi/FileSystemFileEntry.cpp: Added.
+        (WebCore::FileSystemFileEntry::FileSystemFileEntry):
+        (WebCore::FileSystemFileEntry::file):
+        * Modules/entriesapi/FileSystemFileEntry.h: Added.
+        * Modules/entriesapi/FileSystemFileEntry.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-08-25  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r221017): Quip stuck in a perpetual loading loop
