@@ -120,7 +120,7 @@ void Engine::remove(uint64_t cacheIdentifier, CacheIdentifierCallback&& callback
 
 void Engine::retrieveCaches(const String& origin, CacheInfosCallback&& callback)
 {
-    readCachesFromDisk(origin, [this, callback = WTFMove(callback)](CachesOrError&& cachesOrError) mutable {
+    readCachesFromDisk(origin, [callback = WTFMove(callback)](CachesOrError&& cachesOrError) mutable {
         if (!cachesOrError.hasValue()) {
             callback(makeUnexpected(cachesOrError.error()));
             return;
@@ -189,7 +189,7 @@ void Engine::putRecords(uint64_t cacheIdentifier, Vector<Record>&& records, Reco
                 }
             }
         }
-        writeCacheRecords(cacheIdentifier, WTFMove(recordIdentifiers), [cacheIdentifier, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) mutable {
+        writeCacheRecords(cacheIdentifier, WTFMove(recordIdentifiers), [callback = WTFMove(callback)](RecordIdentifiersOrError&& result) mutable {
             callback(WTFMove(result));
         });
     });

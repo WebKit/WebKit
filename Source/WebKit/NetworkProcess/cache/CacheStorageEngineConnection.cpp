@@ -65,7 +65,7 @@ void CacheStorageEngineConnection::caches(PAL::SessionID sessionID, uint64_t req
 
 void CacheStorageEngineConnection::records(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier)
 {
-    Engine::from(sessionID).retrieveRecords(cacheIdentifier, [protectedThis = makeRef(*this), this, sessionID, cacheIdentifier, requestIdentifier](RecordsOrError&& result) {
+    Engine::from(sessionID).retrieveRecords(cacheIdentifier, [protectedThis = makeRef(*this), this, sessionID, requestIdentifier](RecordsOrError&& result) {
         m_connection.connection().send(Messages::WebCacheStorageConnection::UpdateRecords(requestIdentifier, result), sessionID.sessionID());
     });
 }

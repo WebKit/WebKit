@@ -1,3 +1,19 @@
+2017-08-25  David Kilzer  <ddkilzer@apple.com>
+
+        Fix -Wunused-lambda-capture warnings in WebKit with new clang compiler
+        <https://webkit.org/b/175911>
+        <rdar://problem/33667497>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::retrieveCaches): Remove unused
+        lambda capture for 'this'.
+        (WebKit::CacheStorage::Engine::putRecords): Remove unused
+        lambda capture for 'cacheIdentifier'.
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::records): Ditto.
+
 2017-08-25  Brian Burg  <bburg@apple.com>
 
         Web Automation: add capabilities to control ICE candidate filtering and insecure media capture
