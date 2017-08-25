@@ -27,6 +27,7 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include "FileMetadata.h"
 #include "ScopeGuard.h"
 #include <wtf/HexNumber.h>
 #include <wtf/text/CString.h>
@@ -348,6 +349,14 @@ void unlockAndCloseFile(PlatformFileHandle handle)
     ASSERT_UNUSED(unlocked, unlocked);
 #endif
     closeFile(handle);
+}
+
+bool fileIsDirectory(const String& path)
+{
+    FileMetadata metadata;
+    if (!getFileMetadata(path, metadata))
+        return false;
+    return metadata.type == FileMetadata::TypeDirectory;
 }
 
 } // namespace WebCore

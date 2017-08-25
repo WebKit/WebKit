@@ -1712,6 +1712,7 @@ bool ArgumentCoder<DictationAlternative>::decode(Decoder& decoder, DictationAlte
 
 void ArgumentCoder<FileChooserSettings>::encode(Encoder& encoder, const FileChooserSettings& settings)
 {
+    encoder << settings.allowsDirectories;
     encoder << settings.allowsMultipleFiles;
     encoder << settings.acceptMIMETypes;
     encoder << settings.acceptFileExtensions;
@@ -1723,6 +1724,8 @@ void ArgumentCoder<FileChooserSettings>::encode(Encoder& encoder, const FileChoo
 
 bool ArgumentCoder<FileChooserSettings>::decode(Decoder& decoder, FileChooserSettings& settings)
 {
+    if (!decoder.decode(settings.allowsDirectories))
+        return false;
     if (!decoder.decode(settings.allowsMultipleFiles))
         return false;
     if (!decoder.decode(settings.acceptMIMETypes))

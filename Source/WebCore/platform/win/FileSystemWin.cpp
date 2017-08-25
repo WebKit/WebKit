@@ -152,7 +152,7 @@ bool getFileMetadata(const String& path, FileMetadata& metadata)
     time_t modificationTime;
     getFileModificationTimeFromFindData(findData, modificationTime);
     metadata.modificationTime = modificationTime;
-
+    metadata.isHidden = findData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN;
     metadata.type = (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
 
     return true;

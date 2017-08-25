@@ -38,6 +38,11 @@ WKTypeID WKOpenPanelParametersGetTypeID()
     return toAPI(API::OpenPanelParameters::APIType);
 }
 
+bool WKOpenPanelParametersGetAllowsDirectories(WKOpenPanelParametersRef parametersRef)
+{
+    return toImpl(parametersRef)->allowDirectories();
+}
+
 bool WKOpenPanelParametersGetAllowsMultipleFiles(WKOpenPanelParametersRef parametersRef)
 {
     return toImpl(parametersRef)->allowMultipleFiles();

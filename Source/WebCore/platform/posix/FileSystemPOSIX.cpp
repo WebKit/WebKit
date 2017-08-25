@@ -249,9 +249,17 @@ bool getFileMetadata(const String& path, FileMetadata& metadata)
     if (stat(fsRep.data(), &fileInfo))
         return false;
 
+    String filename = pathGetFileName(path);
+
     metadata.modificationTime = fileInfo.st_mtime;
+    metadata.isHidden = !filename.isEmpty() && filename[0] == '.';
     metadata.length = fileInfo.st_size;
-    metadata.type = S_ISDIR(fileInfo.st_mode) ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
+    if (S_ISDIR(fileInfo.st_mode))
+        metadata.type = FileMetadata::TypeDirectory;
+    else if (S_ISLNK(fileInfo.st_mode))
+        metadata.type = FileMetadata::TypeSymbolicLink;
+    else
+        metadata.type = FileMetadata::TypeFile;
     return true;
 }
 

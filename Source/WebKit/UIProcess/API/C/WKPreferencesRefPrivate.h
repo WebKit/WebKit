@@ -207,6 +207,10 @@ WK_EXPORT bool WKPreferencesGetInlineMediaPlaybackRequiresPlaysInlineAttribute(W
 WK_EXPORT void WKPreferencesSetBeaconAPIEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetBeaconAPIEnabled(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetDirectoryUploadEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetDirectoryUploadEnabled(WKPreferencesRef);
+
 // Defaults to false on iOS, true elsewhere.
 WK_EXPORT void WKPreferencesSetMediaControlsScaleWithPageZoom(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetMediaControlsScaleWithPageZoom(WKPreferencesRef preferencesRef);

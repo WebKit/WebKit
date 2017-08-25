@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKOpenPanelParametersInternal.h"
+#pragma once
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#include <wtf/Function.h>
+#include <wtf/Ref.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/WorkQueue.h>
 
-@implementation WKOpenPanelParameters
+namespace WebCore {
 
-- (BOOL)allowsMultipleSelection
-{
-    return _openPanelParameters->allowMultipleFiles();
+struct FileChooserFileInfo;
+class FileList;
+
+class FileListCreator : public ThreadSafeRefCounted<FileListCreator> {
+public:
+    using CompletionHandler = WTF::Function<void(Ref<FileList>&&)>;
+
+    enum class ShouldResolveDirectories { No, Yes };
+    static Ref<FileListCreator> create(const Vector<FileChooserFileInfo>& paths, ShouldResolveDirectories shouldResolveDirectories, CompletionHandler&& completionHandler)
+    {
+        return adoptRef(*new FileListCreator(paths, shouldResolveDirectories, WTFMove(completionHandler)));
+    }
+
+    ~FileListCreator();
+
+    void cancel();
+
+private:
+    FileListCreator(const Vector<FileChooserFileInfo>& paths, ShouldResolveDirectories, CompletionHandler&&);
+
+    template<ShouldResolveDirectories shouldResolveDirectories>
+    static Ref<FileList> createFileList(const Vector<FileChooserFileInfo>&);
+
+    RefPtr<WorkQueue> m_workQueue;
+    CompletionHandler m_completionHander;
+};
+
 }
-
-- (BOOL)allowsDirectories
-{
-    return _openPanelParameters->allowDirectories();
-}
-
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_openPanelParameters;
-}
-
-@end
-
-#endif

@@ -1,3 +1,35 @@
+2017-08-24  Chris Dumez  <cdumez@apple.com>
+
+        [Directory Upload] Add basic support for input.webkitdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=175950
+        <rdar://problem/33951915>
+
+        Reviewed by Geoffrey Garen.
+
+        Add private API to toggle Directory Upload support.
+
+        Add new member to WKOpenPanelParameters to communicate to the
+        client that the file picker should allow selecting directories.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<FileChooserSettings>::encode):
+        (IPC::ArgumentCoder<FileChooserSettings>::decode):
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/APIOpenPanelParameters.h:
+        (API::OpenPanelParameters::allowDirectories const):
+        * UIProcess/API/C/WKOpenPanelParametersRef.cpp:
+        (WKOpenPanelParametersGetAllowsDirectories):
+        * UIProcess/API/C/WKOpenPanelParametersRef.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetDirectoryUploadEnabled):
+        (WKPreferencesGetDirectoryUploadEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.h:
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.mm:
+        (-[WKOpenPanelParameters allowsDirectories]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-08-24  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] UIProcess should provide the directory path where to store Cache Storage data

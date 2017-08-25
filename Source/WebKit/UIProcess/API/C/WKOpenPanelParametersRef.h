@@ -39,6 +39,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKOpenPanelParametersGetTypeID();
 
+WK_EXPORT bool WKOpenPanelParametersGetAllowsDirectories(WKOpenPanelParametersRef parameters);
 WK_EXPORT bool WKOpenPanelParametersGetAllowsMultipleFiles(WKOpenPanelParametersRef parameters);
 
 WK_EXPORT WKArrayRef WKOpenPanelParametersCopyAcceptedMIMETypes(WKOpenPanelParametersRef parameters);

@@ -1,3 +1,20 @@
+2017-08-24  Chris Dumez  <cdumez@apple.com>
+
+        [Directory Upload] Add basic support for input.webkitdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=175950
+        <rdar://problem/33951915>
+
+        Reviewed by Geoffrey Garen.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        Enable Directory Upload feature for testing, given that it is currently disabled by default.
+
+        (WTR::runOpenPanel):
+        Print additional text when directories are allowed to extend testing coverage.
+
 2017-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's handleAutoplayEvent

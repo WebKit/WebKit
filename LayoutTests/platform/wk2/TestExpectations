@@ -603,6 +603,7 @@ fast/forms/file/input-file-re-render.html
 fast/forms/file/input-file-write-files.html
 fast/forms/file/recover-file-input-in-unposted-form.html
 fast/forms/file/selected-files-from-history-state.html
+fast/forms/file/webkitdirectory-drag-folder.html
 fast/history/page-cache-createObjectURL.html
 fast/workers/worker-copy-shared-blob-url.html
 http/tests/local/blob/send-hybrid-blob.html

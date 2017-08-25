@@ -37,6 +37,13 @@
 
 namespace WebCore {
 
+Ref<File> File::createWithRelativePath(const String& path, const String& relativePath)
+{
+    auto file = File::create(path);
+    file->setRelativePath(relativePath);
+    return file;
+}
+
 File::File(const String& path)
     : Blob(uninitializedContructor)
     , m_path(path)

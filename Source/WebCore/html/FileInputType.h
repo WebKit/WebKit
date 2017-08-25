@@ -40,6 +40,7 @@ namespace WebCore {
 
 class DragData;
 class FileList;
+class FileListCreator;
 class Icon;
 
 class FileInputType final : public BaseClickableWithKeyInputType, private FileChooserClient, private FileIconLoaderClient {
@@ -84,15 +85,17 @@ private:
     // FileIconLoaderClient implementation.
     void iconLoaded(RefPtr<Icon>&&) final;
 
-    static Ref<FileList> createFileList(const Vector<FileChooserFileInfo>&);
     void requestIcon(const Vector<String>&);
 
     void applyFileChooserSettings(const FileChooserSettings&);
+
+    bool allowsDirectories() const;
 
     RefPtr<FileChooser> m_fileChooser;
     std::unique_ptr<FileIconLoader> m_fileIconLoader;
 
     Ref<FileList> m_fileList;
+    RefPtr<FileListCreator> m_fileListCreator;
     RefPtr<Icon> m_icon;
     String m_displayString;
 };

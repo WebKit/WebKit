@@ -552,6 +552,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setDownloadAttributeEnabled:(BOOL)flag;
 - (BOOL)downloadAttributeEnabled;
 
+- (void)setDirectoryUploadEnabled:(BOOL)flag;
+- (BOOL)directoryUploadEnabled;
+
 - (void)setCSSGridLayoutEnabled:(BOOL)flag;
 - (BOOL)isCSSGridLayoutEnabled;
 

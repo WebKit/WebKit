@@ -151,6 +151,8 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
 static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef resultListenerRef, const void*)
 {
     printf("OPEN FILE PANEL\n");
+    if (WKOpenPanelParametersGetAllowsDirectories(parameters))
+        printf("-> DIRECTORIES ARE ALLOWED\n");
     WKArrayRef fileURLs = TestController::singleton().openPanelFileURLs();
     if (!fileURLs || !WKArrayGetSize(fileURLs)) {
         WKOpenPanelResultListenerCancel(resultListenerRef);
@@ -722,6 +724,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetMediaPlaybackAllowsInline(preferences, true);
     WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute(preferences, false);
     WKPreferencesSetBeaconAPIEnabled(preferences, true);
+    WKPreferencesSetDirectoryUploadEnabled(preferences, true);
 
     WKCookieManagerDeleteAllCookies(WKContextGetCookieManager(m_context.get()));
 

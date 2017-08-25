@@ -957,6 +957,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setWebGPUEnabled:YES];
 
     [preferences setDownloadAttributeEnabled:YES];
+    [preferences setDirectoryUploadEnabled:YES];
 
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];

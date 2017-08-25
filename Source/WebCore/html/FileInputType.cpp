@@ -28,6 +28,7 @@
 #include "Event.h"
 #include "File.h"
 #include "FileList.h"
+#include "FileListCreator.h"
 #include "FileSystem.h"
 #include "FormController.h"
 #include "FormDataList.h"
@@ -38,7 +39,9 @@
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
 #include "RenderFileUploadControl.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include <wtf/TypeCasts.h>
 #include <wtf/text/StringBuilder.h>
@@ -97,6 +100,9 @@ FileInputType::FileInputType(HTMLInputElement& element)
 
 FileInputType::~FileInputType()
 {
+    if (m_fileListCreator)
+        m_fileListCreator->cancel();
+
     if (m_fileChooser)
         m_fileChooser->invalidate();
 
@@ -191,6 +197,7 @@ void FileInputType::handleDOMActivateEvent(Event& event)
     if (auto* chrome = this->chrome()) {
         FileChooserSettings settings;
         HTMLInputElement& input = element();
+        settings.allowsDirectories = allowsDirectories();
         settings.allowsMultipleFiles = input.hasAttributeWithoutSynchronization(multipleAttr);
         settings.acceptMIMETypes = input.acceptMIMETypes();
         settings.acceptFileExtensions = input.acceptFileExtensions();
@@ -252,15 +259,6 @@ void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
     m_fileList->clear();
     m_icon = nullptr;
     element().invalidateStyleForSubtree();
-}
-
-Ref<FileList> FileInputType::createFileList(const Vector<FileChooserFileInfo>& files)
-{
-    Vector<RefPtr<File>> fileObjects;
-    fileObjects.reserveInitialCapacity(files.size());
-    for (auto& info : files)
-        fileObjects.uncheckedAppend(File::createWithName(info.path, info.displayName));
-    return FileList::create(WTFMove(fileObjects));
 }
 
 bool FileInputType::isFileUpload() const
@@ -328,6 +326,13 @@ void FileInputType::applyFileChooserSettings(const FileChooserSettings& settings
     m_fileChooser = FileChooser::create(this, settings);
 }
 
+bool FileInputType::allowsDirectories() const
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().directoryUploadEnabled())
+        return false;
+    return element().hasAttributeWithoutSynchronization(webkitdirectoryAttr);
+}
+
 void FileInputType::setFiles(RefPtr<FileList>&& files)
 {
     setFiles(WTFMove(files), RequestIcon::Yes);
@@ -383,7 +388,15 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
     if (!displayString.isEmpty())
         m_displayString = displayString;
 
-    setFiles(createFileList(paths), icon ? RequestIcon::No : RequestIcon::Yes);
+    if (m_fileListCreator)
+        m_fileListCreator->cancel();
+
+    auto shouldResolveDirectories = allowsDirectories() ? FileListCreator::ShouldResolveDirectories::Yes : FileListCreator::ShouldResolveDirectories::No;
+    auto shouldRequestIcon = icon ? RequestIcon::Yes : RequestIcon::No;
+    m_fileListCreator = FileListCreator::create(paths, shouldResolveDirectories, [this, shouldRequestIcon](Ref<FileList>&& fileList) {
+        setFiles(WTFMove(fileList), shouldRequestIcon);
+        m_fileListCreator = nullptr;
+    });
 
     if (icon)
         iconLoaded(icon);

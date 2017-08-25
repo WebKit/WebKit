@@ -840,6 +840,16 @@ bool WKPreferencesGetBeaconAPIEnabled(WKPreferencesRef preferencesRef)
 #endif
 }
 
+void WKPreferencesSetDirectoryUploadEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setDirectoryUploadEnabled(flag);
+}
+
+bool WKPreferencesGetDirectoryUploadEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->directoryUploadEnabled();
+}
+
 void WKPreferencesSetMediaControlsScaleWithPageZoom(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setMediaControlsScaleWithPageZoom(flag);

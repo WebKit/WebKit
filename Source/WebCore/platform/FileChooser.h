@@ -52,17 +52,23 @@ struct FileChooserFileInfo {
     {
     }
 
+    FileChooserFileInfo isolatedCopy() const
+    {
+        return { path.isolatedCopy(), displayName.isolatedCopy() };
+    }
+
     const String path;
     const String displayName;
 };
 
 struct FileChooserSettings {
-    bool allowsMultipleFiles;
+    bool allowsDirectories { false };
+    bool allowsMultipleFiles { false };
     Vector<String> acceptMIMETypes;
     Vector<String> acceptFileExtensions;
     Vector<String> selectedFiles;
 #if ENABLE(MEDIA_CAPTURE)
-    MediaCaptureType mediaCaptureType;
+    MediaCaptureType mediaCaptureType { MediaCaptureTypeNone };
 #endif
 };
 

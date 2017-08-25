@@ -160,9 +160,16 @@ bool getFileMetadata(const String& path, FileMetadata& metadata)
     if (!getFileStat(path, &statResult))
         return false;
 
+    String filename = pathGetFileName(path);
+    metadata.isHidden = !filename.isEmpty() && filename[0] == '.';
     metadata.modificationTime = statResult.st_mtime;
     metadata.length = statResult.st_size;
-    metadata.type = S_ISDIR(statResult.st_mode) ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
+    if (S_ISDIR(statResult.st_mode))
+        metadata.type = FileMetadata::TypeDirectory;
+    else if (S_ISLNK(statResult.st_mode))
+        metadata.type = FileMetadata::TypeSymbolicLink;
+    else
+        metadata.type = FileMetadata::TypeFile;
     return true;
 }
 

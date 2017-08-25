@@ -1739,6 +1739,7 @@ set(WebCore_SOURCES
     html/DateTimeLocalInputType.cpp
     html/EmailInputType.cpp
     html/FTPDirectoryDocument.cpp
+    html/FileListCreator.cpp
     html/FileInputType.cpp
     html/FormAssociatedElement.cpp
     html/FormController.cpp

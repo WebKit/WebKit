@@ -375,6 +375,7 @@
     macro(WebAnimationsEnabled, webAnimationsEnabled, Bool, bool, false, "Web Animations", "Web Animations prototype") \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \
     macro(WebGPUEnabled, webGPUEnabled, Bool, bool, false, "WebGPU", "WebGPU prototype") \
+    macro(DirectoryUploadEnabled, directoryUploadEnabled, Bool, bool, false, "Directory Upload", "input.webkitdirectory") \
     macro(AsyncFrameScrollingEnabled, asyncFrameScrollingEnabled, Bool, bool, false, "Async Frame Scrolling", "Perform frame scrolling in a dedicated thread or process") \
     \
 

@@ -99,6 +99,7 @@ WEBCORE_EXPORT bool getFileSize(PlatformFileHandle, long long& result);
 WEBCORE_EXPORT bool getFileModificationTime(const String&, time_t& result);
 WEBCORE_EXPORT bool getFileCreationTime(const String&, time_t& result); // Not all platforms store file creation time.
 bool getFileMetadata(const String&, FileMetadata&);
+bool fileIsDirectory(const String&);
 WEBCORE_EXPORT String pathByAppendingComponent(const String& path, const String& component);
 String lastComponentOfPathIgnoringTrailingSlash(const String& path);
 WEBCORE_EXPORT bool makeAllDirectories(const String& path);

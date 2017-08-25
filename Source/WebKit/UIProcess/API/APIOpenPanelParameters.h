@@ -38,6 +38,7 @@ public:
     static Ref<OpenPanelParameters> create(const WebCore::FileChooserSettings&);
     ~OpenPanelParameters();
 
+    bool allowDirectories() const { return m_settings.allowsDirectories; }
     bool allowMultipleFiles() const { return m_settings.allowsMultipleFiles; }
     Ref<API::Array> acceptMIMETypes() const;
     Ref<API::Array> acceptFileExtensions() const;
