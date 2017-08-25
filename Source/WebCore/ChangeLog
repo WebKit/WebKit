@@ -1,5 +1,11 @@
 2017-08-24  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, add File and Directory Entries API to status page.
+
+        * features.json:
+
+2017-08-24  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, update status of Beacon API.
 
         It is now supported in Safari Technology Preview.
