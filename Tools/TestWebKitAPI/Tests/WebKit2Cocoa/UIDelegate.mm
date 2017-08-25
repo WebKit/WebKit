@@ -136,6 +136,11 @@ TEST(WebKit2, Focus)
     ASSERT_EQ(takenDirection, WKFocusDirectionBackward);
 }
 
+#define RELIABLE_DID_NOT_HANDLE_WHEEL_EVENT 0
+// FIXME: make wheel event handling more reliable.
+// https://bugs.webkit.org/show_bug.cgi?id=175967
+#if RELIABLE_DID_NOT_HANDLE_WHEEL_EVENT
+
 static void synthesizeWheelEvents(NSView *view, int x, int y)
 {
     RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(nullptr, kCGScrollEventUnitLine, 2, y, x));
@@ -174,6 +179,8 @@ TEST(WebKit2, DidNotHandleWheelEvent)
     [webView loadHTMLString:@"<body onload='alert(\"ready\")' onwheel='()=>{}' style='overflow:hidden; height:10000vh;'></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
     TestWebKitAPI::Util::run(&done);
 }
+
+#endif // RELIABLE_DID_NOT_HANDLE_WHEEL_EVENT
 
 #endif // PLATFORM(MAC)
 
