@@ -23,6 +23,7 @@
 #include "Chrome.h"
 
 #include "ChromeClient.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentType.h"
 #include "FileIconLoader.h"
@@ -395,10 +396,17 @@ void Chrome::setToolTip(const HitTestResult& result)
     m_client.setToolTip(toolTip, toolTipDirection);
 }
 
-void Chrome::print(Frame& frame)
+bool Chrome::print(Frame& frame)
 {
     // FIXME: This should have PageGroupLoadDeferrer, like runModal() or runJavaScriptAlert(), because it's no different from those.
+
+    if (frame.document()->isSandboxed(SandboxModals)) {
+        frame.document()->domWindow()->printErrorMessage("Use of window.print is not allowed in a sandboxed frame when the allow-modals flag is not set.");
+        return false;
+    }
+
     m_client.print(frame);
+    return true;
 }
 
 void Chrome::enableSuddenTermination()

@@ -53,6 +53,7 @@ enum SandboxFlag {
     SandboxPropagatesToAuxiliaryBrowsingContexts = 1 << 9,
     SandboxTopNavigationByUserActivation = 1 << 10,
     SandboxDocumentDomain       = 1 << 11,
+    SandboxModals               = 1 << 12,
     SandboxAll                  = -1 // Mask with all bits set to 1.
 };
 

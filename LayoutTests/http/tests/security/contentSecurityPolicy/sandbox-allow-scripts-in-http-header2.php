@@ -1,5 +1,5 @@
 <?php
-    header("Content-Security-Policy: sandbox allow-scripts");
+    header("Content-Security-Policy: sandbox allow-scripts allow-modals");
 ?>
 <!DOCTYPE html>
 <html>

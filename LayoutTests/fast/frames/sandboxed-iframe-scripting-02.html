@@ -23,7 +23,7 @@
     <script src="../../resources/js-test-post.js"></script>
 </head>
 <body>
-    <iframe sandbox="allow-same-origin allow-scripts"
+    <iframe sandbox="allow-same-origin allow-scripts allow-modals"
             src="data:text/html,<script>alert('PASS: Executed script in data URL');window.parent.postMessage({'pass': true}, '*');</script>">
     </iframe>
     <script>

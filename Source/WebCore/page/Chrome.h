@@ -144,7 +144,7 @@ public:
 
     void setToolTip(const HitTestResult&);
 
-    WEBCORE_EXPORT void print(Frame&);
+    WEBCORE_EXPORT bool print(Frame&);
 
     WEBCORE_EXPORT void enableSuddenTermination();
     WEBCORE_EXPORT void disableSuddenTermination();

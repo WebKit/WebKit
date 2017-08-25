@@ -1,3 +1,45 @@
+2017-07-25  Frederic Wang  <fwang@igalia.com>
+
+        Add flag allow-modals to iframe sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=171321
+
+        Reviewed by Brent Fulgham.
+
+        The allow-modals flag is added to tests trying to open modal dialogs in sandboxed frames, now
+        that the default behavior has changed. New tests are also added to verify that the dialogs
+        are allowed or blocked according to the value of the allow-modals flag.
+
+        * fast/events/popup-blocked-from-sandboxed-frame-via-window-open-named-sibling-frame.html: Add allow-modals.
+        * fast/events/popup-blocked-from-sandboxed-frame-via-window-open-named-sibling-frame2.html: Ditto.
+        * fast/forms/autofocus-in-sandbox-with-allow-scripts.html: Ditto.
+        * fast/frames/sandboxed-iframe-navigation-top-by-name-denied.html: Ditto.
+        * fast/frames/sandboxed-iframe-parsing-space-characters.html: Ditto.
+        * fast/frames/sandboxed-iframe-scripting-02.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/resources/sandboxed-eval.php: Ditto.
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header-control.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header2.php: Ditto.
+        * http/tests/security/drag-drop-same-unique-origin.html: Ditto.
+        * http/tests/security/no-indexeddb-from-sandbox.html: Ditto.
+        * http/tests/security/no-popup-from-sandbox-top.html: Ditto.
+        * http/tests/security/no-popup-from-sandbox.html: Ditto.
+        * http/tests/security/popup-allowed-by-sandbox-is-sandboxed-control.html: Ditto.
+        * http/tests/security/popup-allowed-by-sandbox-when-allowed.html: Ditto.
+        * http/tests/security/xss-DENIED-window-name-alert.html: Ditto.
+        * http/tests/security/sandboxed-iframe-ALLOWED-modals.html: Added. Verify that alert,
+        confirm, prompt and print dialogs are allowed when the allow-modals flag is set.
+        * http/tests/security/sandboxed-iframe-ALLOWED-modals-expected.txt: Added.
+        * http/tests/security/sandboxed-iframe-DENIED-modals.html: Added. Verify that alert,
+        confirm, prompt and print dialogs are denied when the allow-modals flag not set. The returned
+        values are also verified.
+        * http/tests/security/sandboxed-iframe-DENIED-modals-expected.txt: Added.
+        * http/tests/misc/iframe-beforeunload-dialog-allow-modals.html: Added. Verify that the
+        confirm dialog for beforeunload is displayed when allow-modals is set.
+        * http/tests/misc/iframe-beforeunload-dialog-allow-modals-expected.txt: Added.
+        * http/tests/misc/iframe-beforeunload-dialog-block-modals.html: Added. Verify that the
+        confirm dialog for beforeunload is not displayed when allow-modals is unset.
+        * http/tests/misc/iframe-beforeunload-dialog-block-modals-expected.txt: Added.
+
 2017-08-25  Jonathan Bedard  <jbedard@apple.com>
 
         Manage tests which require different device types better

@@ -1,5 +1,5 @@
 <?php
-header("Content-Security-Policy: sandbox allow-scripts");
+header("Content-Security-Policy: sandbox allow-scripts allow-modals");
 ?>
 <script>
 alert('PASS (1/2): Script can execute');

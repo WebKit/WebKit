@@ -1,3 +1,42 @@
+2017-07-25  Frederic Wang  <fwang@igalia.com>
+
+        Add flag allow-modals to iframe sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=171321
+
+        This patch implements the "allow-modals" value for the iframe sandbox attribute. It changes
+        the behavior for sandboxed document so that alert, confirm, prompt, print as well as dialogs
+        generated from a beforeunload event are blocked when allow-modals is not set, as defined in
+        the specification. For consistency, we do the same for document.execCommand('print', ...).
+        Users should use the allow-modals flag in order to explictly allow modal dialogs.
+
+        See https://html.spec.whatwg.org/multipage/origin.html#sandboxed-modals-flag
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/security/sandboxed-iframe-ALLOWED-modals.html
+               http/tests/security/sandboxed-iframe-DENIED-modals.html
+
+        * dom/SecurityContext.cpp: Implement parsing for allow-modals
+        (WebCore::SecurityContext::isSupportedSandboxPolicy):
+        (WebCore::SecurityContext::parseSandboxPolicy):
+        * dom/SecurityContext.h: Introduce flag for allow-modals
+        * loader/FrameLoader.cpp:
+        (WebCore::shouldAskForNavigationConfirmation): Prevent confirm dialog from beforeunload when
+        allow-modals is not set.
+        * page/Chrome.h: Change the signature of print, so it may return a failure when the
+        allow-modals flag is not set.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::print): Returns false and print a message error when the allow-modals flag
+        on the frame's document is not set. Otherwise, execute the command and returns true.
+        * editing/EditorCommand.cpp:
+        (WebCore::executePrint): Ensure that document.execCommand for 'print' returns false when the
+        allow-modals flag is not set.
+        * page/DOMWindow.cpp: Add early exit when alert, confirm or prompt when the allow-modals flag
+        for that document is not set. Note that print is handled in Chrome.cpp.
+        (WebCore::DOMWindow::alert): Add early exit.
+        (WebCore::DOMWindow::confirm): Add early exit with the return value indicated in the spec.
+        (WebCore::DOMWindow::prompt): Ditto.
+
 2017-08-25  Brady Eidson  <beidson@apple.com>
 
         Unreviewed, rolling out r221181.

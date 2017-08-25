@@ -12,7 +12,7 @@ if (window.testRunner) {
 </head>
 <body>
 <iframe name="A"></iframe>
-<iframe id="B" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+<iframe id="B" sandbox="allow-scripts allow-same-origin allow-popups allow-modals"></iframe>
 <script>
 document.getElementById("B").contentWindow.eval('alert(window.open("about:blank", "A") ? "FAIL" : "PASS");');
 </script>

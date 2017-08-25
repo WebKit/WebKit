@@ -22,7 +22,7 @@ function next() {
 }
 
 function testCharacter(possibleDelimiter, message) {
-    var policy = "allow-scripts" + possibleDelimiter + "allow-forms";
+    var policy = "allow-modals allow-scripts" + possibleDelimiter + "allow-forms";
     var iframe = document.createElement('iframe');
     iframe.sandbox = policy;
     iframe.src = "data:text/html,<script>alert('" + message + "');<\/script>";

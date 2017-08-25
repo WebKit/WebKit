@@ -3042,6 +3042,10 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
 
 static bool shouldAskForNavigationConfirmation(Document& document, const BeforeUnloadEvent& event)
 {
+    // Confirmation dialog should not be displayed when the allow-modals flag is not set.
+    if (document.isSandboxed(SandboxModals))
+        return false;
+
     bool userDidInteractWithPage = document.topDocument().userDidInteractWithPage();
     // Web pages can request we ask for confirmation before navigating by:
     // - Cancelling the BeforeUnloadEvent (modern way)
