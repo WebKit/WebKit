@@ -42,6 +42,18 @@
 
 2017-08-25  Jonathan Bedard  <jbedard@apple.com>
 
+        Moving iOS 11 test expectations
+        <rdar://problem/31587826>
+
+        Unreviewed test gardening.
+
+        These iOS 11 test expectations were for Simulator, but on-device
+        testing has the same failures.
+
+        * platform/ios-11/TestExpectations:
+
+2017-08-25  Jonathan Bedard  <jbedard@apple.com>
+
         Manage tests which require different device types better
         <https://bugs.webkit.org/show_bug.cgi?id=175987>
         <rdar://problem/34082632>
