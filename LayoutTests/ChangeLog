@@ -1,3 +1,19 @@
+2017-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Using the touchbar, both align left and align justify send a beforeinput event with the 'formatJustifyLeft' inputType.
+        https://bugs.webkit.org/show_bug.cgi?id=168669
+        <rdar://problem/30639155>
+
+        Reviewed by Beth Dakin.
+
+        Adds a new LayoutTest checking that the text alignment editor commands, "Align{Right|Center|Left|Justify}",
+        correctly propagate input events and beforeinput events of inputType "formatJustify{Right|Center|Left|Justify}",
+        and that these text alignment style changes can be prevented by calling preventDefault() on the dispatched
+        beforeinput event.
+
+        * fast/events/input-events-text-alignment-expected.txt: Added.
+        * fast/events/input-events-text-alignment.html: Added.
+
 2017-08-25  Brady Eidson  <beidson@apple.com>
 
         Introduce ServerWorkerRegistration task queues.

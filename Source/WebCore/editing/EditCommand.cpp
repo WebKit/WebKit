@@ -43,6 +43,7 @@ String inputTypeNameForEditingAction(EditAction action)
 {
     switch (action) {
     case EditActionJustify:
+        return ASCIILiteral("formatJustifyFull");
     case EditActionAlignLeft:
         return ASCIILiteral("formatJustifyLeft");
     case EditActionAlignRight:
