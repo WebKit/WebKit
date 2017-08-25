@@ -76,7 +76,7 @@ public:
     CDMInstanceClearKey();
     virtual ~CDMInstanceClearKey();
 
-    ImplementationType implementationType() const { return ImplementationType::ClearKey; }
+    ImplementationType implementationType() const final { return ImplementationType::ClearKey; }
 
     SuccessValue initializeWithConfiguration(const CDMKeySystemConfiguration&) override;
     SuccessValue setDistinctiveIdentifiersAllowed(bool) override;
