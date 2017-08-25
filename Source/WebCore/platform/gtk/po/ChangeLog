@@ -1,3 +1,12 @@
+2017-08-24  Piotr Drąg  <piotrdrag@gmail.com>
+
+        [l10n] Updated Polish translation of WebKitGTK+ for 2.18
+        https://bugs.webkit.org/show_bug.cgi?id=175720
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * pl.po:
+
 2017-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement JavaScript dialog methods of API::AutomationSessionClient
