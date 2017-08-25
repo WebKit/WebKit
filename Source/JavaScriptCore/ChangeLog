@@ -1,3 +1,10 @@
+2017-08-25  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Fix 32-bit after r221196
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+
 2017-08-25  Chris Dumez  <cdumez@apple.com>
 
         Land stubs for File and Directory Entries API interfaces
