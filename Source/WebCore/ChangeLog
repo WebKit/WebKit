@@ -1,3 +1,10 @@
+2017-08-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, add comment warning that some flags have been copied into Epiphany
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::internationalDomainNameTranscoder):
+
 2017-07-25  Frederic Wang  <fwang@igalia.com>
 
         Add flag allow-modals to iframe sandbox

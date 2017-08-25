@@ -2857,6 +2857,8 @@ const UIDNA& URLParser::internationalDomainNameTranscoder()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         UErrorCode error = U_ZERO_ERROR;
+        // Warning: Please contact a WebKitGTK+ developer if changing these flags.
+        // They should be synced with ephy_uri_decode() in ephy-uri-helpers.c.
         encoder = uidna_openUTS46(UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ | UIDNA_NONTRANSITIONAL_TO_UNICODE | UIDNA_NONTRANSITIONAL_TO_ASCII, &error);
         RELEASE_ASSERT(U_SUCCESS(error));
         RELEASE_ASSERT(encoder);
