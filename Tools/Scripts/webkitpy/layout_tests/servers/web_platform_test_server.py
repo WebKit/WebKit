@@ -92,7 +92,7 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         self._layout_root = port_obj.layout_tests_dir()
         self._doc_root = self._filesystem.join(self._layout_root, doc_root(port_obj))
 
-        self._resources_files_to_copy = ['testharness.css', 'testharnessreport.js']
+        self._resources_files_to_copy = []
 
         current_dir_path = self._filesystem.abspath(self._filesystem.split(__file__)[0])
         self._start_cmd = ["python", self._filesystem.join(current_dir_path, "web_platform_test_launcher.py"), self._servers_file]

@@ -2,6 +2,9 @@
  "ports":{"http":[8800, 8801],
           "https":[9443],
           "ws":[49001]},
+ "aliases": [
+          {"url-path": "/resources/testharnessreport.js", "local-dir":"../../../resources/"},
+          {"url-path": "/resources/testharness.css", "local-dir":"../../../resources/"}],
  "check_subdomains": false,
  "log_level":"debug",
  "bind_hostname": false,
