@@ -1,3 +1,79 @@
+2017-08-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebCrypto] Push WorkQueue dispatches for RSA algorithms into shared code
+        https://bugs.webkit.org/show_bug.cgi?id=175621
+
+        Reviewed by Darin Adler.
+
+        Push the WorkQueue dispatch code and other code duplicated between the
+        Mac and libgcrypt implementations of Web Crypto into the shared layer.
+        This patch focuses on the RSA-based algorithms.
+
+        The WorkQueue dispatch code is condensed into two static functions on
+        the CryptoAlgorithm class, the first variation handling VectorCallback
+        as the callback type and the other handling BoolCallback. The operation
+        is kept in a WTF::Function<> object that returns an ExceptionOr<> value
+        embedding either a Vector<uint8_t> object or a boolean value, as
+        appropriate for the callback type.
+
+        Functions with platform-specific implementations that are invoked from
+        these asynchronous dispatches are made static and return an ExceptionOr
+        value. CryptoAlgorithmParameters objects are passed through non-const
+        references because data getters could lazily construct the underlying
+        Vector objects. CryptoKey objects are passed through const references.
+        Implementations can then manually retrieve and further validate any key
+        or parameter data, as required for that specific implementation. Input
+        data is passed through const references to the original Vector objects.
+
+        No new tests -- no changes in behavior that's covered by existing tests.
+
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::dispatchOperationImpl):
+        (WebCore::CryptoAlgorithm::dispatchOperation):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::sign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::verify):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::encrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::decrypt):
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_PSS.cpp:
+        (WebCore::CryptoAlgorithmRSA_PSS::sign):
+        (WebCore::CryptoAlgorithmRSA_PSS::verify):
+        * crypto/algorithms/CryptoAlgorithmRSA_PSS.h:
+        * crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp:
+        (WebCore::gcryptEncrypt):
+        (WebCore::gcryptDecrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmRSASSA_PKCS1_v1_5GCrypt.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify):
+        * crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmRSA_PSSGCrypt.cpp:
+        (WebCore::CryptoAlgorithmRSA_PSS::platformSign):
+        (WebCore::CryptoAlgorithmRSA_PSS::platformVerify):
+        * crypto/mac/CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify):
+        * crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformEncrypt):
+        (WebCore::CryptoAlgorithmRSA_OAEP::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmRSA_PSSMac.cpp:
+        (WebCore::CryptoAlgorithmRSA_PSS::platformSign):
+        (WebCore::CryptoAlgorithmRSA_PSS::platformVerify):
+
 2017-08-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, add File and Directory Entries API to status page.

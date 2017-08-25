@@ -30,11 +30,10 @@
 
 #include "CryptoKeyRSA.h"
 #include "GCryptUtilities.h"
-#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, Vector<uint8_t>&& plainText)
+static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, const Vector<uint8_t>& plainText)
 {
     // Embed the plain-text data in a `data` s-expression using PKCS#1 padding.
     PAL::GCrypt::Handle<gcry_sexp_t> dataSexp;
@@ -64,7 +63,7 @@ static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, Vector<
     return mpiData(aSexp);
 }
 
-static std::optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, Vector<uint8_t>&& cipherText)
+static std::optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, const Vector<uint8_t>& cipherText)
 {
     // Embed the cipher-text data in an `enc-val` s-expression using PKCS#1 padding.
     PAL::GCrypt::Handle<gcry_sexp_t> encValSexp;
@@ -94,58 +93,20 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, Vector<
     return mpiData(valueSexp);
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKey& key, const Vector<uint8_t>& plainText)
 {
-    context.ref();
-    workQueue.dispatch(
-        [key = WTFMove(key), plainText = WTFMove(plainText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
-            auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
-
-            auto output = gcryptEncrypt(rsaKey.platformKey(), WTFMove(plainText));
-            if (!output) {
-                // We should only dereference callbacks after being back to the Document/Worker threads.
-                context.postTask(
-                    [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-                        exceptionCallback(OperationError);
-                        context.deref();
-                    });
-                return;
-            }
-
-            // We should only dereference callbacks after being back to the Document/Worker threads.
-            context.postTask(
-                [output = WTFMove(*output), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) mutable {
-                    callback(WTFMove(output));
-                    context.deref();
-                });
-        });
+    auto output = gcryptEncrypt(downcast<CryptoKeyRSA>(key).platformKey(), plainText);
+    if (!output)
+        return Exception { OperationError };
+    return WTFMove(*output);
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(const CryptoKey& key, const Vector<uint8_t>& cipherText)
 {
-    context.ref();
-    workQueue.dispatch(
-        [key = WTFMove(key), cipherText = WTFMove(cipherText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
-            auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
-
-            auto output = gcryptDecrypt(rsaKey.platformKey(), WTFMove(cipherText));
-            if (!output) {
-                // We should only dereference callbacks after being back to the Document/Worker threads.
-                context.postTask(
-                    [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-                        exceptionCallback(OperationError);
-                        context.deref();
-                    });
-                return;
-            }
-
-            // We should only dereference callbacks after being back to the Document/Worker threads.
-            context.postTask(
-                [output = WTFMove(*output), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) mutable {
-                    callback(WTFMove(output));
-                    context.deref();
-                });
-        });
+    auto output = gcryptDecrypt(downcast<CryptoKeyRSA>(key).platformKey(), cipherText);
+    if (!output)
+        return Exception { OperationError };
+    return WTFMove(*output);
 }
 
 } // namespace WebCore

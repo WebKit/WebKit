@@ -76,6 +76,9 @@ public:
     virtual void wrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&);
     virtual void unwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&);
     virtual ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&);
+
+    static void dispatchOperation(WorkQueue&, ScriptExecutionContext&, VectorCallback&&, ExceptionCallback&&, WTF::Function<ExceptionOr<Vector<uint8_t>>()>&&);
+    static void dispatchOperation(WorkQueue&, ScriptExecutionContext&, BoolCallback&&, ExceptionCallback&&, WTF::Function<ExceptionOr<bool>()>&&);
 };
 
 } // namespace WebCore

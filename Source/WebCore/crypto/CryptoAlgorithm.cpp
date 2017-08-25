@@ -28,6 +28,8 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "ScriptExecutionContext.h"
+
 namespace WebCore {
 
 void CryptoAlgorithm::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)
@@ -88,6 +90,42 @@ void CryptoAlgorithm::unwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallb
 ExceptionOr<size_t> CryptoAlgorithm::getKeyLength(const CryptoAlgorithmParameters&)
 {
     return Exception { NotSupportedError };
+}
+
+template<typename ResultCallbackType, typename OperationType>
+static void dispatchAlgorithmOperation(WorkQueue& workQueue, ScriptExecutionContext& context, ResultCallbackType&& callback, CryptoAlgorithm::ExceptionCallback&& exceptionCallback, OperationType&& operation)
+{
+    context.ref();
+    workQueue.dispatch(
+        [operation = WTFMove(operation), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+            auto result = operation();
+            if (result.hasException()) {
+                // We should only dereference callbacks after being back to the Document/Worker threads.
+                context.postTask(
+                    [ec = result.releaseException().code(), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+                        exceptionCallback(ec);
+                        context.deref();
+                    });
+                return;
+            }
+
+            // We should only dereference callbacks after being back to the Document/Worker threads.
+            context.postTask(
+                [result = result.releaseReturnValue(), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+                    callback(result);
+                    context.deref();
+                });
+        });
+}
+
+void CryptoAlgorithm::dispatchOperation(WorkQueue& workQueue, ScriptExecutionContext& context, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, WTF::Function<ExceptionOr<Vector<uint8_t>>()>&& operation)
+{
+    dispatchAlgorithmOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback), WTFMove(operation));
+}
+
+void CryptoAlgorithm::dispatchOperation(WorkQueue& workQueue, ScriptExecutionContext& context, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, WTF::Function<ExceptionOr<bool>()>&& operation)
+{
+    dispatchAlgorithmOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback), WTFMove(operation));
 }
 
 }
