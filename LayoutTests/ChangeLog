@@ -1,3 +1,9 @@
+2017-08-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, land TestExpectations for rdar://problem/33555052.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-08-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, land test updates for rdar://problem/34000704.

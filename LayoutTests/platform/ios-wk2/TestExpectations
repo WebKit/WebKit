@@ -1953,3 +1953,5 @@ webkit.org/b/17373 fast/forms/file/input-file-write-files-using-open-panel.html 
 webkit.org/b/173726 animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/171985 [ Release ] workers/bomb.html [ Pass Timeout ]
+
+webkit.org/b/174949 imported/w3c/IndexedDB-private-browsing/idbfactory_open12.html [ Skip ]
