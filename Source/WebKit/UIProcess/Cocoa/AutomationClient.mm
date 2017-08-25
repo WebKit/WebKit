@@ -34,6 +34,7 @@
 #import "_WKAutomationDelegate.h"
 #import "_WKAutomationSessionConfiguration.h"
 #import <JavaScriptCore/RemoteInspector.h>
+#import <JavaScriptCore/RemoteInspectorConstants.h>
 #import <wtf/text/WTFString.h>
 
 using namespace Inspector;
@@ -77,6 +78,16 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier)
 void AutomationClient::requestAutomationSessionWithCapabilities(NSString *sessionIdentifier, NSDictionary *forwardedCapabilities)
 {
     _WKAutomationSessionConfiguration *configuration = [_WKAutomationSessionConfiguration new];
+    if (NSNumber *value = forwardedCapabilities[WIRAllowInsecureMediaCaptureCapabilityKey]) {
+        if ([value isKindOfClass:[NSNumber class]])
+            configuration.allowsInsecureMediaCapture = value.boolValue;
+    }
+
+    if (NSNumber *value = forwardedCapabilities[WIRSuppressICECandidateFilteringCapabilityKey]) {
+        if ([value isKindOfClass:[NSNumber class]])
+            configuration.suppressesICECandidateFiltering = value.boolValue;
+    }
+
     // Force clients to create and register a session asynchronously. Otherwise,
     // RemoteInspector will try to acquire its lock to register the new session and
     // deadlock because it's already taken while handling XPC messages.
