@@ -67,6 +67,9 @@
 @interface UIImage () <UIItemProviderReading, UIItemProviderWriting>
 @end
 
+@interface UIItemProvider : NSItemProvider
+@end
+
 #endif
 
 #import <UIKit/UIKit.h>
@@ -90,9 +93,6 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     DataInteractionEntered = 3,
     DataInteractionPerforming = 4
 };
-
-@interface UIItemProvider : NSItemProvider
-@end
 
 @interface DataInteractionSimulator : NSObject<WKUIDelegatePrivate, _WKInputDelegate> {
 @private
