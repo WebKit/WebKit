@@ -106,6 +106,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.unfocusWebView = [delegate respondsToSelector:@selector(_unfocusWebView:)];
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
     m_delegateMethods.webViewDidNotHandleWheelEvent = [delegate respondsToSelector:@selector(_webView:didNotHandleWheelEvent:)];
+    m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
 #endif
 
@@ -381,12 +382,12 @@ static inline _WKFocusDirection toWKFocusDirection(WKFocusDirection direction)
 {
     switch (direction) {
     case kWKFocusDirectionBackward:
-        return WKFocusDirectionBackward;
+        return _WKFocusDirectionBackward;
     case kWKFocusDirectionForward:
-        return WKFocusDirectionForward;
+        return _WKFocusDirectionForward;
     }
     ASSERT_NOT_REACHED();
-    return WKFocusDirectionForward;
+    return _WKFocusDirectionForward;
 }
 
 void UIDelegate::UIClient::takeFocus(WebKit::WebPageProxy*, WKFocusDirection direction)
@@ -435,6 +436,43 @@ void UIDelegate::UIClient::didNotHandleWheelEvent(WebKit::WebPageProxy*, const W
         return;
     
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView didNotHandleWheelEvent:event.nativeEvent()];
+}
+
+static _WKAutoplayEventFlags toWKAutoplayEventFlags(OptionSet<WebCore::AutoplayEventFlags> flags)
+{
+    _WKAutoplayEventFlags wkFlags = _WKAutoplayEventFlagsNone;
+    if (flags.contains(WebCore::AutoplayEventFlags::HasAudio))
+        wkFlags |= _WKAutoplayEventFlagsHasAudio;
+    
+    return wkFlags;
+}
+
+static _WKAutoplayEvent toWKAutoplayEvent(WebCore::AutoplayEvent event)
+{
+    switch (event) {
+    case WebCore::AutoplayEvent::DidPreventMediaFromPlaying:
+        return _WKAutoplayEventDidPreventFromAutoplaying;
+    case WebCore::AutoplayEvent::DidPlayMediaPreventedFromPlaying:
+        return _WKAutoplayEventDidPlayMediaPreventedFromAutoplaying;
+    case WebCore::AutoplayEvent::DidAutoplayMediaPastThresholdWithoutUserInterference:
+        return _WKAutoplayEventDidAutoplayMediaPastThresholdWithoutUserInterference;
+    case WebCore::AutoplayEvent::UserDidInterfereWithPlayback:
+        return _WKAutoplayEventUserDidInterfereWithPlayback;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKAutoplayEventDidPlayMediaPreventedFromAutoplaying;
+}
+
+void UIDelegate::UIClient::handleAutoplayEvent(WebKit::WebPageProxy&, WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewHandleAutoplayEventWithFlags)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView handleAutoplayEvent:toWKAutoplayEvent(event) withFlags:toWKAutoplayEventFlags(flags)];
 }
 
 void UIDelegate::UIClient::showPage(WebPageProxy*)

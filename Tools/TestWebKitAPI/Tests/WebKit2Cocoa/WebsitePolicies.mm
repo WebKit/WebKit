@@ -29,6 +29,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -52,8 +53,8 @@ static bool doneCompiling;
 static bool receivedAlert;
 
 #if PLATFORM(MAC)
-static std::optional<WKAutoplayEvent> receivedAutoplayEvent;
-static std::optional<WKAutoplayEventFlags> receivedAutoplayEventFlags;
+static std::optional<_WKAutoplayEvent> receivedAutoplayEvent;
+static std::optional<_WKAutoplayEventFlags> receivedAutoplayEventFlags;
 #endif
 
 static size_t alertCount;
@@ -162,7 +163,7 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 }
 
-@interface AutoplayPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
+@interface AutoplayPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>
 @property (nonatomic, copy) _WKWebsiteAutoplayPolicy(^autoplayPolicyForURL)(NSURL *);
 @property (nonatomic, copy) _WKWebsiteAutoplayQuirk(^allowedAutoplayQuirksForURL)(NSURL *);
 @end
@@ -185,6 +186,14 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
         websitePolicies.autoplayPolicy = _autoplayPolicyForURL(navigationAction.request.URL);
     decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
 }
+
+#if PLATFORM(MAC)
+- (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags
+{
+    receivedAutoplayEventFlags = flags;
+    receivedAutoplayEvent = event;
+}
+#endif
 
 @end
 
@@ -283,12 +292,6 @@ TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
 }
 
 #if PLATFORM(MAC)
-static void handleAutoplayEvent(WKPageRef page, WKAutoplayEvent event, WKAutoplayEventFlags flags, const void* clientInfo)
-{
-    receivedAutoplayEventFlags = flags;
-    receivedAutoplayEvent = event;
-}
-
 static void runUntilReceivesAutoplayEvent(WKAutoplayEvent event)
 {
     while (!receivedAutoplayEvent || *receivedAutoplayEvent != event)
@@ -305,14 +308,8 @@ TEST(WebKit2, WebsitePoliciesPlayAfterPreventedAutoplay)
         return _WKWebsiteAutoplayPolicyDeny;
     }];
     [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
 
-    WKPageUIClientV9 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
-
-    uiClient.base.version = 9;
-    uiClient.handleAutoplayEvent = handleAutoplayEvent;
-
-    WKPageSetPageUIClient([webView _pageForTesting], &uiClient.base);
     NSPoint playButtonClickPoint = NSMakePoint(20, 256);
 
     receivedAutoplayEvent = std::nullopt;
@@ -379,14 +376,7 @@ TEST(WebKit2, WebsitePoliciesPlayingWithoutInterference)
         return _WKWebsiteAutoplayPolicyAllow;
     }];
     [webView setNavigationDelegate:delegate.get()];
-
-    WKPageUIClientV9 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
-
-    uiClient.base.version = 9;
-    uiClient.handleAutoplayEvent = handleAutoplayEvent;
-
-    WKPageSetPageUIClient([webView _pageForTesting], &uiClient.base);
+    [webView setUIDelegate:delegate.get()];
 
     receivedAutoplayEvent = std::nullopt;
     NSURLRequest *jsPlayRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"js-autoplay-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
@@ -405,14 +395,7 @@ TEST(WebKit2, WebsitePoliciesUserInterferenceWithPlaying)
         return _WKWebsiteAutoplayPolicyAllow;
     }];
     [webView setNavigationDelegate:delegate.get()];
-
-    WKPageUIClientV9 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
-
-    uiClient.base.version = 9;
-    uiClient.handleAutoplayEvent = handleAutoplayEvent;
-
-    WKPageSetPageUIClient([webView _pageForTesting], &uiClient.base);
+    [webView setUIDelegate:delegate.get()];
 
     receivedAutoplayEvent = std::nullopt;
     NSURLRequest *jsPlayRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"js-play-with-controls" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
@@ -540,13 +523,7 @@ TEST(WebKit2, WebsitePoliciesDuringRedirect)
         return _WKWebsiteAutoplayPolicyAllow;
     }];
     [webView setNavigationDelegate:delegate.get()];
-    
-    WKPageUIClientV9 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
-    uiClient.base.version = 9;
-    uiClient.handleAutoplayEvent = handleAutoplayEvent;
-    
-    WKPageSetPageUIClient([webView _pageForTesting], &uiClient.base);
+    [webView setUIDelegate:delegate.get()];
     
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///should-redirect"]]];
     [webView waitForMessage:@"autoplayed"];
@@ -556,17 +533,9 @@ TEST(WebKit2, WebsitePoliciesUpdates)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    WKPageUIClientV9 uiClient;
-    memset(&uiClient, 0, sizeof(uiClient));
-
-    uiClient.base.version = 9;
-    uiClient.handleAutoplayEvent = handleAutoplayEvent;
-
-    WKPageSetPageUIClient([webView _pageForTesting], &uiClient.base);
-
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
 
     NSURLRequest *requestWithAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 

@@ -133,7 +133,7 @@ TEST(WebKit2, Focus)
     "<body onload='loaded()'><input type='text' id='in'></body>";
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"http://example.com/"]];
     TestWebKitAPI::Util::run(&done);
-    ASSERT_EQ(takenDirection, WKFocusDirectionBackward);
+    ASSERT_EQ(takenDirection, _WKFocusDirectionBackward);
 }
 
 #define RELIABLE_DID_NOT_HANDLE_WHEEL_EVENT 0

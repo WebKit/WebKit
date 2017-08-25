@@ -47,8 +47,20 @@
 @protocol UIDropSession;
 #else
 typedef NS_ENUM(NSInteger, _WKFocusDirection) {
-    WKFocusDirectionBackward,
-    WKFocusDirectionForward,
+    _WKFocusDirectionBackward,
+    _WKFocusDirectionForward,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+
+typedef NS_ENUM(NSInteger, _WKAutoplayEvent) {
+    _WKAutoplayEventDidPreventFromAutoplaying,
+    _WKAutoplayEventDidPlayMediaPreventedFromAutoplaying,
+    _WKAutoplayEventDidAutoplayMediaPastThresholdWithoutUserInterference,
+    _WKAutoplayEventUserDidInterfereWithPlayback,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+
+typedef NS_OPTIONS(NSInteger, _WKAutoplayEventFlags) {
+    _WKAutoplayEventFlagsNone = 0,
+    _WKAutoplayEventFlagsHasAudio = 1 << 0,
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
@@ -130,6 +142,7 @@ struct UIEdgeInsets;
 - (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element WK_API_AVAILABLE(macosx(10.12));
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(10.12));
 #endif
