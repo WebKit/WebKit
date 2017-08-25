@@ -23,6 +23,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
 
+#include <gst/gst.h>
 #include <wtf/text/WTFString.h>
 
 #define WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID "58147ec8-0423-4659-92e6-f52c5ce8c3cc"
@@ -48,6 +49,8 @@ public:
         ASSERT_NOT_REACHED();
         return { };
     }
+
+    static GstElement* createDecryptor(const char* protectionSystem);
 };
 
 }
