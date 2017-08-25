@@ -1,3 +1,16 @@
+2017-08-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speedometer 2.0: Duplicate the current EmberJS test as EmberJS-Debug test
+        https://bugs.webkit.org/show_bug.cgi?id=175956
+
+        Reviewed by Saam Barati.
+
+        Made the copy of Ember.js directory at r216946 as emberjs-debug, and added a new test suite "EmberJS-Debug-TodoMVC". 
+
+        * Speedometer/resources/tests.js:
+        (Suites.push.prepare):
+        * Speedometer/resources/todomvc/architecture-examples/emberjs-debug: Copied from emberjs@r216946.
+
 2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Speedometer: Add missing stylesheet to Angular example
