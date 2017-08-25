@@ -51,6 +51,7 @@ public:
     HTTPCookieStore& httpCookieStore();
 
     static String defaultApplicationCacheDirectory();
+    static String defaultCacheStorageDirectory();
     static String defaultNetworkCacheDirectory();
     static String defaultMediaCacheDirectory();
 

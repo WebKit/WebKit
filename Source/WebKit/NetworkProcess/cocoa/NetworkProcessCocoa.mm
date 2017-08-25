@@ -73,6 +73,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.parentBundleDirectoryExtensionHandle);
 #endif
+    m_cacheStorageDirectory = parameters.cacheStorageDirectory;
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
@@ -104,6 +105,9 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     // One non-obvious constraint is that we need to use -setSharedURLCache: even in testing mode, to prevent creating a default one on disk later, when some other code touches the cache.
 
     ASSERT(!m_diskCacheIsDisabledForTesting || !parameters.nsURLCacheDiskCapacity);
+
+    if (!m_cacheStorageDirectory.isNull())
+        SandboxExtension::consumePermanently(parameters.cacheStorageDirectoryExtensionHandle);
 
     if (!m_diskCacheDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);

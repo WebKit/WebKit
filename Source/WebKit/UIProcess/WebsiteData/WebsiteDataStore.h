@@ -67,6 +67,7 @@ enum class ShouldClearFirst { No, Yes };
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver {
 public:
     struct Configuration {
+        String cacheStorageDirectory;
         String networkCacheDirectory;
         String applicationCacheDirectory;
         String applicationCacheFlatFileSubdirectoryName;

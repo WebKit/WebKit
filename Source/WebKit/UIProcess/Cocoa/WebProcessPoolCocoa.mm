@@ -452,6 +452,15 @@ String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
     return stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
 }
 
+String WebProcessPool::legacyPlatformDefaultCacheStorageDirectory()
+{
+    RetainPtr<NSString> cacheStoragePath = adoptNS((NSString *)WKCopyFoundationCacheDirectory());
+    if (!cacheStoragePath)
+        cacheStoragePath = @"~/Library/WebKit/CacheStorage";
+
+    return stringByResolvingSymlinksInPath([cacheStoragePath stringByStandardizingPath]);
+}
+
 String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 {
     RetainPtr<NSString> cachePath = adoptNS((NSString *)WKCopyFoundationCacheDirectory());

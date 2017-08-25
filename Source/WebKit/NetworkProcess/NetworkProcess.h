@@ -134,6 +134,7 @@ public:
 #endif
 
     Seconds loadThrottleLatency() const { return m_loadThrottleLatency; }
+    const String& cacheStorageDirectory() const { return m_cacheStorageDirectory; }
 
 private:
     NetworkProcess();
@@ -223,6 +224,7 @@ private:
     // Connections to WebProcesses.
     Vector<RefPtr<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
+    String m_cacheStorageDirectory;
     String m_diskCacheDirectory;
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;

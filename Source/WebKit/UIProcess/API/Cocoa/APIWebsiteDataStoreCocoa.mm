@@ -52,6 +52,11 @@ String WebsiteDataStore::defaultApplicationCacheDirectory()
     return cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache");
 }
 
+String WebsiteDataStore::defaultCacheStorageDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("CacheStorage");
+}
+
 String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
     return cacheDirectoryFileSystemRepresentation("NetworkCache");
