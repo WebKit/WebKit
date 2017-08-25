@@ -1,5 +1,24 @@
 2017-08-25  Daniel Bates  <dabates@apple.com>
 
+        Demarcate code added due to lack of NSDMI for aggregates
+        https://bugs.webkit.org/show_bug.cgi?id=175990
+
+        Reviewed by Andy Estes.
+
+        * html/canvas/CanvasStyle.h:
+        * platform/mediastream/IceCandidate.h:
+        (WebCore::IceCandidate::IceCandidate):
+        * platform/text/StringWithDirection.h: Replace const String& and String&& constructor
+        overloads with a single user-defined constructor that takes a String by value to handle
+        both cases.
+        (WebCore::StringWithDirection::StringWithDirection):
+        (WebCore::truncateFromEnd):
+        * style/StyleUpdate.h:
+        (WebCore::Style::ElementUpdate::ElementUpdate):
+        (WebCore::Style::TextUpdate::TextUpdate):
+
+2017-08-25  Daniel Bates  <dabates@apple.com>
+
         InlineTextBox::paintDocumentMarker() does not need to special case painting of grammar and
         dictation alternatives
         https://bugs.webkit.org/show_bug.cgi?id=175966

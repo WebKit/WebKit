@@ -150,6 +150,12 @@
 #define WTF_COMPILER_SUPPORTS_EABI 1
 #endif
 
+/* Non-static data member initializer (NSDMI) for aggregates */
+
+#if defined(__cpp_aggregate_nsdmi) && __cpp_aggregate_nsdmi >= 201304
+#define WTF_COMPILER_SUPPORTS_NSDMI_FOR_AGGREGATES 1
+#endif
+
 /* RELAXED_CONSTEXPR */
 
 #if defined(__cpp_constexpr) && __cpp_constexpr >= 201304

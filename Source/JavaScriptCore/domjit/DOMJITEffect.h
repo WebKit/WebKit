@@ -29,60 +29,60 @@
 
 namespace JSC { namespace DOMJIT {
 
-class Effect {
-public:
-    HeapRange reads { HeapRange::top() };
-    HeapRange writes { HeapRange::top() };
-    HeapRange def { HeapRange::top() };
-
+struct Effect {
+#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
     constexpr Effect() = default;
     constexpr Effect(HeapRange reads, HeapRange writes)
-        : reads(reads)
-        , writes(writes)
+        : reads { reads }
+        , writes { writes }
     {
     }
-
     constexpr Effect(HeapRange reads, HeapRange writes, HeapRange def)
-        : reads(reads)
-        , writes(writes)
-        , def(def)
+        : reads { reads }
+        , writes { writes }
+        , def { def }
     {
     }
+#endif
 
     constexpr static Effect forWrite(HeapRange writeRange)
     {
-        return Effect(HeapRange::none(), writeRange);
+        return { HeapRange::none(), writeRange };
     }
 
     constexpr static Effect forRead(HeapRange readRange)
     {
-        return Effect(readRange, HeapRange::none());
+        return { readRange, HeapRange::none() };
     }
 
     constexpr static Effect forReadWrite(HeapRange readRange, HeapRange writeRange)
     {
-        return Effect(readRange, writeRange);
+        return { readRange, writeRange };
     }
 
     constexpr static Effect forPure()
     {
-        return Effect(HeapRange::none(), HeapRange::none(), HeapRange::none());
+        return { HeapRange::none(), HeapRange::none(), HeapRange::none() };
     }
 
     constexpr static Effect forDef(HeapRange def)
     {
-        return Effect(def, HeapRange::none(), def);
+        return { def, HeapRange::none(), def };
     }
 
     constexpr static Effect forDef(HeapRange def, HeapRange readRange, HeapRange writeRange)
     {
-        return Effect(readRange, writeRange, def);
+        return { readRange, writeRange, def };
     }
 
     constexpr bool mustGenerate() const
     {
         return !!writes;
     }
+
+    HeapRange reads { HeapRange::top() };
+    HeapRange writes { HeapRange::top() };
+    HeapRange def { HeapRange::top() };
 };
 
 } }

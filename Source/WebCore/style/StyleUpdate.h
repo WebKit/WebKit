@@ -43,23 +43,29 @@ class Text;
 namespace Style {
 
 struct ElementUpdate {
+#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
     ElementUpdate() = default;
     ElementUpdate(std::unique_ptr<RenderStyle> style, Change change, bool recompositeLayer)
-        : style(WTFMove(style))
-        , change(change)
-        , recompositeLayer(recompositeLayer)
-    { }
+        : style { WTFMove(style) }
+        , change { change }
+        , recompositeLayer { recompositeLayer }
+    {
+    }
+#endif
     std::unique_ptr<RenderStyle> style;
     Change change { NoChange };
     bool recompositeLayer { false };
 };
 
 struct TextUpdate {
+#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
     TextUpdate() = default;
     TextUpdate(unsigned offset, unsigned length)
-        : offset(offset)
-        , length(length)
-    { }
+        : offset { offset }
+        , length { length }
+    {
+    }
+#endif
 
     unsigned offset { 0 };
     unsigned length { std::numeric_limits<unsigned>::max() };

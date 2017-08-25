@@ -1,3 +1,28 @@
+2017-08-25  Daniel Bates  <dabates@apple.com>
+
+        Demarcate code added due to lack of NSDMI for aggregates
+        https://bugs.webkit.org/show_bug.cgi?id=175990
+
+        Reviewed by Andy Estes.
+
+        * domjit/DOMJITEffect.h:
+        (JSC::DOMJIT::Effect::Effect):
+        (JSC::DOMJIT::Effect::forWrite):
+        (JSC::DOMJIT::Effect::forRead):
+        (JSC::DOMJIT::Effect::forReadWrite):
+        (JSC::DOMJIT::Effect::forPure):
+        (JSC::DOMJIT::Effect::forDef):
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::Entry::Entry):
+        (JSC::HasOwnPropertyCache::Entry::operator=): Deleted.
+        * wasm/WasmFormat.h: Modernize some of the code while I am here. Also
+        make some comments read well.
+        (JSC::Wasm::CallableFunction::CallableFunction):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::WebAssemblyFunction):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+
 2017-08-25  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Fix 32-bit after r221196

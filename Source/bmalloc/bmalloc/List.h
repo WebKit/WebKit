@@ -30,12 +30,14 @@ namespace bmalloc {
 
 template<typename T>
 struct ListNode {
+#if !BCOMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
     ListNode() = default;
     ListNode(ListNode<T>* prev, ListNode<T>* next)
-        : prev(prev)
-        , next(next)
+        : prev { prev }
+        , next { next }
     {
     }
+#endif
 
     ListNode<T>* prev { nullptr };
     ListNode<T>* next { nullptr };
@@ -46,11 +48,13 @@ class List {
     static_assert(std::is_trivially_destructible<T>::value, "List must have a trivial destructor.");
 
     struct iterator {
+#if !BCOMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
         iterator() = default;
         iterator(ListNode<T>* node)
             : m_node(node)
         {
         }
+#endif
 
         T* operator*() { return static_cast<T*>(m_node); }
         T* operator->() { return static_cast<T*>(m_node); }
@@ -63,7 +67,7 @@ class List {
             return *this;
         }
         
-        ListNode<T>* m_node { };
+        ListNode<T>* m_node { nullptr };
     };
 
 public:

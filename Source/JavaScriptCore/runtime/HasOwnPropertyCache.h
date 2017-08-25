@@ -42,23 +42,19 @@ public:
         static ptrdiff_t offsetOfImpl() { return OBJECT_OFFSETOF(Entry, impl); }
         static ptrdiff_t offsetOfResult() { return OBJECT_OFFSETOF(Entry, result); }
 
+#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
         Entry() = default;
-
         Entry(RefPtr<UniquedStringImpl>&& impl, StructureID structureID, bool result)
-            : impl(WTFMove(impl))
-            , structureID(structureID)
-            , result(result)
-        { }
-
-        Entry& operator=(Entry&& other)
+            : impl { WTFMove(impl) }
+            , structureID { structureID }
+            , result { result }
         {
-            impl = WTFMove(other.impl);
-            structureID = other.structureID;
-            result = other.result;
-            return *this;
         }
 
-        RefPtr<UniquedStringImpl> impl { };
+        Entry& operator=(Entry&& other) = default;
+#endif
+
+        RefPtr<UniquedStringImpl> impl;
         StructureID structureID { 0 };
         bool result { false };
     };

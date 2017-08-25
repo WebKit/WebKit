@@ -190,9 +190,9 @@ Structure* WebAssemblyFunction::createStructure(VM& vm, JSGlobalObject* globalOb
 }
 
 WebAssemblyFunction::WebAssemblyFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::Callee& jsEntrypoint, Wasm::WasmEntrypointLoadLocation wasmEntrypoint, Wasm::SignatureIndex signatureIndex)
-    : Base(vm, globalObject, structure)
-    , m_jsEntrypoint(jsEntrypoint.entrypoint())
-    , m_wasmFunction(Wasm::CallableFunction(signatureIndex, wasmEntrypoint))
+    : Base { vm, globalObject, structure }
+    , m_jsEntrypoint { jsEntrypoint.entrypoint() }
+    , m_wasmFunction { signatureIndex, wasmEntrypoint }
 { }
 
 } // namespace JSC
