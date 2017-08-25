@@ -465,23 +465,21 @@ Vector<UChar> String::charactersWithNullTermination() const
     return result;
 }
 
-String String::format(const char *format, ...)
+static String createWithFormatAndArguments(const char *format, va_list args)
 {
-    va_list args;
-    va_start(args, format);
-
-#if USE(CF) && !OS(WINDOWS)
-    if (strstr(format, "%@")) {
-        RetainPtr<CFStringRef> cfFormat = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, format, kCFStringEncodingUTF8));
+    va_list argsCopy;
+    va_copy(argsCopy, args);
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
 #endif
+
+#if USE(CF) && !OS(WINDOWS)
+    if (strstr(format, "%@")) {
+        RetainPtr<CFStringRef> cfFormat = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, format, kCFStringEncodingUTF8));
+
         RetainPtr<CFStringRef> result = adoptCF(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
 
         va_end(args);
         return result.get();
@@ -505,14 +503,31 @@ String String::format(const char *format, ...)
     Vector<char, 256> buffer;
     unsigned len = result;
     buffer.grow(len + 1);
-    
-    va_start(args, format);
-    // Now do the formatting again, guaranteed to fit.
-    vsnprintf(buffer.data(), buffer.size(), format, args);
 
+    // Now do the formatting again, guaranteed to fit.
+    vsnprintf(buffer.data(), buffer.size(), format, argsCopy);
+    va_end(argsCopy);
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
+    return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), len);
+}
+
+String String::formatWithArguments(const char *format, va_list args)
+{
+    return createWithFormatAndArguments(format, args);
+}
+
+String String::format(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    String result = createWithFormatAndArguments(format, args);
     va_end(args);
     
-    return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), len);
+    return result;
 }
 
 String String::number(int number)

@@ -1,3 +1,16 @@
+2017-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Add String::format variant that takes va_args
+        https://bugs.webkit.org/show_bug.cgi?id=175988
+
+        Reviewed by Jer Noble.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::createWithFormatAndArguments): Created with the guts of String::format.
+        (WTF::String::formatWithArguments): New, call createWithFormatAndArguments.
+        (WTF::String::format): Move logic to createWithFormatAndArguments, use it.
+        * wtf/text/WTFString.h:
+
 2017-08-25  Saam Barati  <sbarati@apple.com>
 
         Support compiling catch in the DFG

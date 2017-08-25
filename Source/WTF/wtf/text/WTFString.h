@@ -25,6 +25,7 @@
 // This file would be called String.h, but that conflicts with <string.h>
 // on systems without case-sensitive file systems.
 
+#include <stdarg.h>
 #include <wtf/Function.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/IntegerToStringConversion.h>
@@ -353,6 +354,7 @@ public:
     WTF_EXPORT_STRING_API String foldCase() const;
 
     WTF_EXPORT_STRING_API static String format(const char *, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+    WTF_EXPORT_STRING_API static String formatWithArguments(const char *, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
 
     // Returns an uninitialized string. The characters needs to be written
     // into the buffer returned in data before the returned string is used.
