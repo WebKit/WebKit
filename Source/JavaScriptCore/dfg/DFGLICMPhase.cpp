@@ -47,8 +47,6 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-using NaturalLoop = SSANaturalLoop;
-
 struct LoopData {
     LoopData()
         : preHeader(nullptr)
@@ -76,8 +74,8 @@ public:
     {
         DFG_ASSERT(m_graph, nullptr, m_graph.m_form == SSA);
         
-        m_graph.ensureSSADominators();
-        m_graph.ensureSSANaturalLoops();
+        m_graph.ensureDominators();
+        m_graph.ensureNaturalLoops();
         m_graph.ensureControlEquivalenceAnalysis();
 
         if (verbose) {
@@ -85,7 +83,7 @@ public:
             m_graph.dump();
         }
         
-        m_data.resize(m_graph.m_ssaNaturalLoops->numLoops());
+        m_data.resize(m_graph.m_naturalLoops->numLoops());
         
         // Figure out the set of things each loop writes to, not including blocks that
         // belong to inner loops. We fix this later.
@@ -100,7 +98,7 @@ public:
             if (!block->cfaHasVisited)
                 continue;
             
-            const NaturalLoop* loop = m_graph.m_ssaNaturalLoops->innerMostLoopOf(block);
+            const NaturalLoop* loop = m_graph.m_naturalLoops->innerMostLoopOf(block);
             if (!loop)
                 continue;
             LoopData& data = m_data[loop->index()];
@@ -118,14 +116,14 @@ public:
         // For each loop:
         // - Identify its pre-header.
         // - Make sure its outer loops know what it clobbers.
-        for (unsigned loopIndex = m_graph.m_ssaNaturalLoops->numLoops(); loopIndex--;) {
-            const NaturalLoop& loop = m_graph.m_ssaNaturalLoops->loop(loopIndex);
+        for (unsigned loopIndex = m_graph.m_naturalLoops->numLoops(); loopIndex--;) {
+            const NaturalLoop& loop = m_graph.m_naturalLoops->loop(loopIndex);
             LoopData& data = m_data[loop.index()];
             
             for (
-                const NaturalLoop* outerLoop = m_graph.m_ssaNaturalLoops->innerMostOuterLoop(loop);
+                const NaturalLoop* outerLoop = m_graph.m_naturalLoops->innerMostOuterLoop(loop);
                 outerLoop;
-                outerLoop = m_graph.m_ssaNaturalLoops->innerMostOuterLoop(*outerLoop))
+                outerLoop = m_graph.m_naturalLoops->innerMostOuterLoop(*outerLoop))
                 m_data[outerLoop->index()].writes.addAll(data.writes);
             
             BasicBlock* header = loop.header();
@@ -139,7 +137,7 @@ public:
             
             for (unsigned i = header->predecessors.size(); i--;) {
                 BasicBlock* predecessor = header->predecessors[i];
-                if (m_graph.m_ssaDominators->dominates(header, predecessor))
+                if (m_graph.m_dominators->dominates(header, predecessor))
                     continue;
 
                 preHeader = predecessor;
@@ -193,7 +191,7 @@ public:
         Vector<const NaturalLoop*> loopStack;
         bool changed = false;
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
-            const NaturalLoop* loop = m_graph.m_ssaNaturalLoops->innerMostLoopOf(block);
+            const NaturalLoop* loop = m_graph.m_naturalLoops->innerMostLoopOf(block);
             if (!loop)
                 continue;
             
@@ -201,7 +199,7 @@ public:
             for (
                 const NaturalLoop* current = loop;
                 current;
-                current = m_graph.m_ssaNaturalLoops->innerMostOuterLoop(*current))
+                current = m_graph.m_naturalLoops->innerMostOuterLoop(*current))
                 loopStack.append(current);
             
             // Remember: the loop stack has the inner-most loop at index 0, so if we want
@@ -320,7 +318,7 @@ private:
         // because most loops are small and most blocks belong to few loops.
         for (unsigned bodyIndex = loop->size(); bodyIndex--;) {
             BasicBlock* subBlock = loop->at(bodyIndex);
-            const NaturalLoop* subLoop = m_graph.m_ssaNaturalLoops->headerOf(subBlock);
+            const NaturalLoop* subLoop = m_graph.m_naturalLoops->headerOf(subBlock);
             if (!subLoop)
                 continue;
             BasicBlock* subPreHeader = m_data[subLoop->index()].preHeader;

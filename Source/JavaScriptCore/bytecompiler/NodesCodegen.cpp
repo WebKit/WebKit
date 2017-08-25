@@ -3408,9 +3408,6 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     Label& tryHandlerLabel = m_catchBlock ? *catchLabel : *finallyViaThrowLabel;
     HandlerType tryHandlerType = m_catchBlock ? HandlerType::Catch : HandlerType::Finally;
     TryData* tryData = generator.pushTry(tryStartLabel.get(), tryHandlerLabel, tryHandlerType);
-    TryData* finallyTryData = nullptr;
-    if (!m_catchBlock && m_finallyBlock)
-        finallyTryData = tryData;
 
     generator.emitNode(dst, m_tryBlock);
 
@@ -3427,13 +3424,14 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitLabel(*catchLabel);
         RefPtr<RegisterID> thrownValueRegister = generator.newTemporary();
         RegisterID* unused = generator.newTemporary();
-        generator.emitCatch(unused, thrownValueRegister.get(), tryData);
+        generator.emitCatch(unused, thrownValueRegister.get());
         generator.restoreScopeRegister();
 
+        TryData* tryData = nullptr;
         if (m_finallyBlock) {
             // If the catch block throws an exception and we have a finally block, then the finally
             // block should "catch" that exception.
-            finallyTryData = generator.pushTry(*catchLabel, *finallyViaThrowLabel, HandlerType::Finally);
+            tryData = generator.pushTry(*catchLabel, *finallyViaThrowLabel, HandlerType::Finally);
         }
 
         if (m_catchPattern) {
@@ -3454,7 +3452,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         if (m_finallyBlock) {
             generator.emitSetCompletionType(CompletionType::Normal);
             generator.emitJump(*finallyLabel);
-            generator.popTry(finallyTryData, *finallyViaThrowLabel);
+            generator.popTry(tryData, *finallyViaThrowLabel);
         }
 
         generator.emitLabel(*catchEndLabel);
@@ -3467,7 +3465,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         // Entry to the finally block for CompletionType::Throw.
         generator.emitLabel(*finallyViaThrowLabel);
         RegisterID* unused = generator.newTemporary();
-        generator.emitCatch(generator.completionValueRegister(), unused, finallyTryData);
+        generator.emitCatch(generator.completionValueRegister(), unused);
         generator.emitSetCompletionType(CompletionType::Throw);
 
         // Entry to the finally block for CompletionTypes other than Throw.

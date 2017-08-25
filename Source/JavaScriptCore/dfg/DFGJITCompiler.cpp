@@ -367,8 +367,6 @@ static void emitStackOverflowCheck(JITCompiler& jit, MacroAssembler::JumpList& s
 
 void JITCompiler::compile()
 {
-    makeCatchOSREntryBuffer();
-
     setStartOfCode();
     compileEntry();
     m_speculative = std::make_unique<SpeculativeJIT>(*this);
@@ -428,8 +426,6 @@ void JITCompiler::compile()
 
 void JITCompiler::compileFunction()
 {
-    makeCatchOSREntryBuffer();
-
     setStartOfCode();
     compileEntry();
 
@@ -555,23 +551,14 @@ void* JITCompiler::addressOfDoubleConstant(Node* node)
 }
 #endif
 
-void JITCompiler::noticeCatchEntrypoint(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer, Vector<FlushFormat>&& argumentFormats)
-{
-    RELEASE_ASSERT(basicBlock.isCatchEntrypoint);
-    RELEASE_ASSERT(basicBlock.intersectionOfCFAHasVisited); // An entrypoint is reachable by definition.
-    m_jitCode->appendCatchEntrypoint(basicBlock.bytecodeBegin, linkBuffer.offsetOf(blockHead), WTFMove(argumentFormats));
-}
-
 void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
 {
-    RELEASE_ASSERT(!basicBlock.isCatchEntrypoint);
-
     // OSR entry is not allowed into blocks deemed unreachable by control flow analysis.
     if (!basicBlock.intersectionOfCFAHasVisited)
         return;
-
+        
     OSREntryData* entry = m_jitCode->appendOSREntryData(basicBlock.bytecodeBegin, linkBuffer.offsetOf(blockHead));
-
+    
     entry->m_expectedValues = basicBlock.intersectionOfPastValuesAtHead;
         
     // Fix the expected values: in our protocol, a dead variable will have an expected
@@ -681,14 +668,6 @@ void JITCompiler::setEndOfCode()
     if (LIKELY(!m_disassembler))
         return;
     m_disassembler->setEndOfCode(labelIgnoringWatchpoints());
-}
-
-void JITCompiler::makeCatchOSREntryBuffer()
-{
-    if (m_graph.m_maxLocalsForCatchOSREntry) {
-        uint32_t numberOfLiveLocals = std::max(*m_graph.m_maxLocalsForCatchOSREntry, 1u); // Make sure we always allocate a non-null catchOSREntryBuffer.
-        m_jitCode->catchOSREntryBuffer = vm()->scratchBufferForSize(sizeof(JSValue) * numberOfLiveLocals);
-    }
 }
 
 } } // namespace JSC::DFG

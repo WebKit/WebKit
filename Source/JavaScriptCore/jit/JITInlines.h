@@ -463,13 +463,6 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EJJMic oper
     return call;
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(P_JITOperation_EUi operation, uint32_t arg1)
-{
-    setupArgumentsWithExecState(TrustedImm32(arg1));
-    updateTopCallFrame();
-    return appendCall(operation);
-}
-
 #if USE(JSVALUE64)
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(Z_JITOperation_EJZZ operation, GPRReg arg1, int32_t arg2, int32_t arg3)
 {

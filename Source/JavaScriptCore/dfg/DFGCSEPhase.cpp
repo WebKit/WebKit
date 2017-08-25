@@ -598,7 +598,7 @@ public:
         ASSERT(m_graph.m_form == SSA);
         
         m_graph.initializeNodeOwners();
-        m_graph.ensureSSADominators();
+        m_graph.ensureDominators();
         
         m_preOrder = m_graph.blocksInPreOrder();
         
@@ -690,7 +690,7 @@ public:
         
         for (unsigned i = result.iterator->value.size(); i--;) {
             Node* candidate = result.iterator->value[i];
-            if (m_graph.m_ssaDominators->dominates(candidate->owner, m_block)) {
+            if (m_graph.m_dominators->dominates(candidate->owner, m_block)) {
                 m_node->replaceWith(candidate);
                 m_changed = true;
                 return;
@@ -779,7 +779,7 @@ public:
             // We require strict domination because this would only see things in our own block if
             // they came *after* our position in the block. Clearly, while our block dominates
             // itself, the things in the block after us don't dominate us.
-            if (m_graph.m_ssaDominators->strictlyDominates(block, m_block)) {
+            if (m_graph.m_dominators->strictlyDominates(block, m_block)) {
                 if (verbose)
                     dataLog("        It strictly dominates.\n");
                 DFG_ASSERT(m_graph, m_node, data.didVisit);
@@ -856,7 +856,7 @@ public:
                 if (!result.isNewEntry) {
                     for (unsigned i = result.iterator->value.size(); i--;) {
                         Node* candidate = result.iterator->value[i];
-                        if (m_graph.m_ssaDominators->dominates(candidate->owner, m_block)) {
+                        if (m_graph.m_dominators->dominates(candidate->owner, m_block)) {
                             ASSERT(candidate);
                             match->replaceWith(candidate);
                             match.setNode(candidate);

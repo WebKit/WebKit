@@ -83,13 +83,10 @@ public:
         // NB. This code is not written for performance, since it is not intended to run
         // in release builds.
 
-        VALIDATE((m_graph.block(0)), m_graph.isEntrypoint(m_graph.block(0)));
-
-        // Validate that all local variables at the head of all entrypoints are dead.
-        for (BasicBlock* entrypoint : m_graph.m_entrypoints) {
-            for (unsigned i = 0; i < entrypoint->variablesAtHead.numberOfLocals(); ++i)
-                V_EQUAL((virtualRegisterForLocal(i), entrypoint), static_cast<Node*>(nullptr), entrypoint->variablesAtHead.local(i));
-        }
+        // Validate that all local variables at the head of the root block are dead.
+        BasicBlock* root = m_graph.block(0);
+        for (unsigned i = 0; i < root->variablesAtHead.numberOfLocals(); ++i)
+            V_EQUAL((virtualRegisterForLocal(i), root), static_cast<Node*>(0), root->variablesAtHead.local(i));
         
         // Validate ref counts and uses.
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {

@@ -1974,9 +1974,6 @@ _llint_op_catch:
     storeq t3, [cfr, t2, 8]
 
     traceExecution()
-
-    callOpcodeSlowPath(_llint_slow_path_profile_catch)
-
     dispatch(constexpr op_catch_length)
 
 

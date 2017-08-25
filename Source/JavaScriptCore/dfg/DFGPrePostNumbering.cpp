@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "DFGPrePostNumbering.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGCFG.h"
+#include "DFGBlockMapInlines.h"
+#include "DFGBlockWorklist.h"
 #include "DFGGraph.h"
-#include <wtf/Dominators.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
 
 namespace JSC { namespace DFG {
 
-class Dominators : public WTF::Dominators<CFG> {
-    WTF_MAKE_NONCOPYABLE(Dominators);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    Dominators(Graph& graph)
-        : WTF::Dominators<CFG>(*graph.m_cfg)
-    {
+PrePostNumbering::PrePostNumbering(Graph& graph)
+{
+    m_map = BlockMap<Numbering>(graph);
+    
+    PostOrderBlockWorklist worklist;
+    worklist.push(graph.block(0));
+    unsigned nextPreNumber = 0;
+    unsigned nextPostNumber = 0;
+    while (BlockWithOrder item = worklist.pop()) {
+        switch (item.order) {
+        case VisitOrder::Pre:
+            m_map[item.node].m_preNumber = nextPreNumber++;
+            worklist.pushPost(item.node);
+            for (BasicBlock* successor : item.node->successors())
+                worklist.push(successor);
+            break;
+        case VisitOrder::Post:
+            m_map[item.node].m_postNumber = nextPostNumber++;
+            break;
+        }
     }
-};
+}
+
+PrePostNumbering::~PrePostNumbering() { }
 
 } } // namespace JSC::DFG
 
+namespace WTF {
+
+using namespace JSC::DFG;
+
+void printInternal(PrintStream& out, EdgeKind kind)
+{
+    switch (kind) {
+    case ForwardEdge:
+        out.print("ForwardEdge");
+        return;
+    case CrossEdge:
+        out.print("CrossEdge");
+        return;
+    case BackEdge:
+        out.print("BackEdge");
+        return;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
+
 #endif // ENABLE(DFG_JIT)
+

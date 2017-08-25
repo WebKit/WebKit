@@ -39,15 +39,10 @@ namespace JSC { namespace DFG {
 
 void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
 {
-    if (!exitKindMayJettison(exit.m_kind)) {
-        // FIXME: We may want to notice that we're frequently exiting
-        // at an op_catch that we didn't compile an entrypoint for, and
-        // then trigger a reoptimization of this CodeBlock:
-        // https://bugs.webkit.org/show_bug.cgi?id=175842
-        return;
-    }
-
     jit.add32(AssemblyHelpers::TrustedImm32(1), AssemblyHelpers::AbsoluteAddress(&exit.m_count));
+
+    if (!exitKindMayJettison(exit.m_kind))
+        return;
     
     jit.move(AssemblyHelpers::TrustedImmPtr(jit.codeBlock()), GPRInfo::regT0);
     

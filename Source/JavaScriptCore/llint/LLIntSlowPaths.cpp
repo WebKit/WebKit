@@ -1661,18 +1661,6 @@ LLINT_SLOW_PATH_DECL(slow_path_log_shadow_chicken_tail)
     LLINT_END();
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_profile_catch)
-{
-    LLINT_BEGIN();
-
-    ValueProfileAndOperandBuffer* buffer = static_cast<ValueProfileAndOperandBuffer*>(pc[3].u.pointer);
-    buffer->forEach([&] (ValueProfileAndOperand& profile) {
-        profile.m_profile.m_buckets[0] = JSValue::encode(exec->uncheckedR(profile.m_operand).jsValue());
-    });
-
-    LLINT_END();
-}
-
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* protoFrame)
 {
     ExecState* exec = vm->topCallFrame;

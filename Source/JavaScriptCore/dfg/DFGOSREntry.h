@@ -26,7 +26,6 @@
 #pragma once
 
 #include "DFGAbstractValue.h"
-#include "DFGFlushFormat.h"
 #include "Operands.h"
 #include <wtf/BitVector.h>
 
@@ -70,20 +69,9 @@ inline unsigned getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)
     return osrEntryData->m_bytecodeIndex;
 }
 
-struct CatchEntrypointData {
-    unsigned m_bytecodeIndex;
-    unsigned m_machineCodeOffset;
-    // We use this when doing OSR entry at catch. We prove the arguments
-    // are of the expected type before entering at a catch block.
-    Vector<FlushFormat> m_argumentFormats;
-};
-
 // Returns a pointer to a data buffer that the OSR entry thunk will recognize and
 // parse. If this returns null, it means 
 void* prepareOSREntry(ExecState*, CodeBlock*, unsigned bytecodeIndex);
-
-// If null is returned, we can't OSR enter. If it's not null, it's the PC to jump to.
-void* prepareCatchOSREntry(ExecState*, CodeBlock*, unsigned bytecodeIndex);
 #else
 inline void* prepareOSREntry(ExecState*, CodeBlock*, unsigned) { return 0; }
 #endif

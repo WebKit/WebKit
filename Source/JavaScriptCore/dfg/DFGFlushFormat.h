@@ -35,7 +35,7 @@
 
 namespace JSC { namespace DFG {
 
-enum FlushFormat : uint8_t {
+enum FlushFormat {
     DeadFlush,
     FlushedInt32,
     FlushedInt52,

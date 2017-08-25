@@ -76,7 +76,7 @@ public:
             m_graph.dump();
         }
 
-        m_graph.ensureSSADominators();
+        m_graph.ensureDominators();
         
         SSACalculator ssaCalculator(m_graph);
         InsertionSet insertionSet(m_graph);

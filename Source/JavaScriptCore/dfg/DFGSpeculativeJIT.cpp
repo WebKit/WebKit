@@ -1707,13 +1707,6 @@ void SpeculativeJIT::compileCurrentBlock()
         return;
     }
 
-    if (m_block->isCatchEntrypoint) {
-        m_jit.addPtr(CCallHelpers::TrustedImm32(m_jit.graph().stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister,  CCallHelpers::stackPointerRegister);
-        m_jit.emitSaveCalleeSaves();
-        m_jit.emitMaterializeTagCheckRegisters();
-        m_jit.emitPutToCallFrameHeader(m_jit.codeBlock(), CallFrameSlot::codeBlock);
-    }
-
     m_stream->appendAndLog(VariableEvent::reset());
     
     m_jit.jitAssertHasValidCallFrame();
@@ -1808,9 +1801,8 @@ void SpeculativeJIT::checkArgumentTypes()
     ASSERT(!m_currentNode);
     m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
 
-    auto& arguments = m_jit.graph().m_entrypointToArguments.find(m_jit.graph().block(0))->value;
     for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
-        Node* node = arguments[i];
+        Node* node = m_jit.graph().m_arguments[i];
         if (!node) {
             // The argument is dead. We don't do any checks for such arguments.
             continue;
@@ -1894,11 +1886,12 @@ void SpeculativeJIT::createOSREntries()
         BasicBlock* block = m_jit.graph().block(blockIndex);
         if (!block)
             continue;
-        if (block->isOSRTarget || block->isCatchEntrypoint) {
-            // Currently we don't have OSR entry trampolines. We could add them
-            // here if need be.
-            m_osrEntryHeads.append(m_jit.blockHeads()[blockIndex]);
-        }
+        if (!block->isOSRTarget)
+            continue;
+        
+        // Currently we don't have OSR entry trampolines. We could add them
+        // here if need be.
+        m_osrEntryHeads.append(m_jit.blockHeads()[blockIndex]);
     }
 }
 
@@ -1909,29 +1902,10 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
         BasicBlock* block = m_jit.graph().block(blockIndex);
         if (!block)
             continue;
-        if (!block->isOSRTarget && !block->isCatchEntrypoint)
+        if (!block->isOSRTarget)
             continue;
-        if (block->isCatchEntrypoint) {
-            auto& argumentsVector = m_jit.graph().m_entrypointToArguments.find(block)->value;
-            Vector<FlushFormat> argumentFormats;
-            argumentFormats.reserveInitialCapacity(argumentsVector.size());
-            for (Node* setArgument : argumentsVector) {
-                if (setArgument) {
-                    FlushFormat flushFormat = setArgument->variableAccessData()->flushFormat();
-                    ASSERT(flushFormat == FlushedInt32 || flushFormat == FlushedCell || flushFormat == FlushedBoolean || flushFormat == FlushedJSValue);
-                    argumentFormats.uncheckedAppend(flushFormat);
-                } else
-                    argumentFormats.uncheckedAppend(DeadFlush);
-            }
-            m_jit.noticeCatchEntrypoint(*block, m_osrEntryHeads[osrEntryIndex++], linkBuffer, WTFMove(argumentFormats));
-        } else {
-            ASSERT(block->isOSRTarget);
-            m_jit.noticeOSREntry(*block, m_osrEntryHeads[osrEntryIndex++], linkBuffer);
-        }
+        m_jit.noticeOSREntry(*block, m_osrEntryHeads[osrEntryIndex++], linkBuffer);
     }
-
-    m_jit.jitCode()->finalizeOSREntrypoints();
-
     ASSERT(osrEntryIndex == m_osrEntryHeads.size());
     
     if (verboseCompilationEnabled()) {

@@ -394,6 +394,8 @@
 		0F3BD1B71B896A0700598AA6 /* DFGInsertionSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3BD1B61B896A0700598AA6 /* DFGInsertionSet.cpp */; };
 		0F3C1F1A1B868E7900ABB08B /* DFGClobbersExitState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3C1F181B868E7900ABB08B /* DFGClobbersExitState.cpp */; };
 		0F3C1F1B1B868E7900ABB08B /* DFGClobbersExitState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3C1F191B868E7900ABB08B /* DFGClobbersExitState.h */; };
+		0F3E01AA19D353A500F61B7F /* DFGPrePostNumbering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3E01A819D353A500F61B7F /* DFGPrePostNumbering.cpp */; };
+		0F3E01AB19D353A500F61B7F /* DFGPrePostNumbering.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3E01A919D353A500F61B7F /* DFGPrePostNumbering.h */; };
 		0F40E4A71C497F7400A577FA /* AirOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183321C45F35C0072450B /* AirOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F40E4A81C497F7400A577FA /* AirOpcodeGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183341C45F3B60072450B /* AirOpcodeGenerated.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F40E4A91C497F7400A577FA /* AirOpcodeUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183351C45F3B60072450B /* AirOpcodeUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3002,6 +3004,8 @@
 		0F3BD1B61B896A0700598AA6 /* DFGInsertionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGInsertionSet.cpp; path = dfg/DFGInsertionSet.cpp; sourceTree = "<group>"; };
 		0F3C1F181B868E7900ABB08B /* DFGClobbersExitState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGClobbersExitState.cpp; path = dfg/DFGClobbersExitState.cpp; sourceTree = "<group>"; };
 		0F3C1F191B868E7900ABB08B /* DFGClobbersExitState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGClobbersExitState.h; path = dfg/DFGClobbersExitState.h; sourceTree = "<group>"; };
+		0F3E01A819D353A500F61B7F /* DFGPrePostNumbering.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGPrePostNumbering.cpp; path = dfg/DFGPrePostNumbering.cpp; sourceTree = "<group>"; };
+		0F3E01A919D353A500F61B7F /* DFGPrePostNumbering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPrePostNumbering.h; path = dfg/DFGPrePostNumbering.h; sourceTree = "<group>"; };
 		0F426A451460CBAB00131F8F /* ValueRecovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRecovery.h; sourceTree = "<group>"; };
 		0F426A461460CBAB00131F8F /* VirtualRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualRegister.h; sourceTree = "<group>"; };
 		0F426A4A1460CD6B00131F8F /* DataFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataFormat.h; sourceTree = "<group>"; };
@@ -7539,6 +7543,8 @@
 				0FBE0F6E16C1DB010082C5E8 /* DFGPredictionInjectionPhase.h */,
 				0FFFC95114EF909500C72532 /* DFGPredictionPropagationPhase.cpp */,
 				0FFFC95214EF909500C72532 /* DFGPredictionPropagationPhase.h */,
+				0F3E01A819D353A500F61B7F /* DFGPrePostNumbering.cpp */,
+				0F3E01A919D353A500F61B7F /* DFGPrePostNumbering.h */,
 				0F2B9CE019D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.cpp */,
 				0F2B9CE119D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.h */,
 				0FFC92151B94FB3E0071DD66 /* DFGPropertyTypeKey.h */,
@@ -8755,6 +8761,7 @@
 				DC00039319D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h in Headers */,
 				0FBE0F7516C1DB0B0082C5E8 /* DFGPredictionInjectionPhase.h in Headers */,
 				0FFFC95E14EF90B700C72532 /* DFGPredictionPropagationPhase.h in Headers */,
+				0F3E01AB19D353A500F61B7F /* DFGPrePostNumbering.h in Headers */,
 				0F2B9CED19D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.h in Headers */,
 				0FFC92161B94FB3E0071DD66 /* DFGPropertyTypeKey.h in Headers */,
 				0FB17663196B8F9E0091052A /* DFGPureValue.h in Headers */,
@@ -10551,6 +10558,7 @@
 				A78A977A179738B8009DF744 /* DFGPlan.cpp in Sources */,
 				0FBE0F7416C1DB090082C5E8 /* DFGPredictionInjectionPhase.cpp in Sources */,
 				0FFFC95D14EF90B300C72532 /* DFGPredictionPropagationPhase.cpp in Sources */,
+				0F3E01AA19D353A500F61B7F /* DFGPrePostNumbering.cpp in Sources */,
 				0F2B9CEC19D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.cpp in Sources */,
 				0FB17662196B8F9E0091052A /* DFGPureValue.cpp in Sources */,
 				0F3A1BF91A9ECB7D000DE01A /* DFGPutStackSinkingPhase.cpp in Sources */,

@@ -143,7 +143,7 @@
             { "name" : "op_push_with_scope", "length" : 4 },
             { "name" : "op_create_lexical_environment", "length" : 5 },
             { "name" : "op_get_parent_scope", "length" : 3 },
-            { "name" : "op_catch", "length" : 4 },
+            { "name" : "op_catch", "length" : 3 },
             { "name" : "op_throw", "length" : 2 },
             { "name" : "op_throw_static_error", "length" : 3 },
             { "name" : "op_debug", "length" : 3 },

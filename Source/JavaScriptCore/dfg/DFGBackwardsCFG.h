@@ -32,12 +32,12 @@
 
 namespace JSC { namespace DFG {
 
-class BackwardsCFG : public BackwardsGraph<SSACFG> {
+class BackwardsCFG : public BackwardsGraph<CFG> {
     WTF_MAKE_NONCOPYABLE(BackwardsCFG);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     BackwardsCFG(Graph& graph)
-        : BackwardsGraph<SSACFG>(selectCFG<SSACFG>(graph))
+        : BackwardsGraph<CFG>(*graph.m_cfg)
     {
     }
 };

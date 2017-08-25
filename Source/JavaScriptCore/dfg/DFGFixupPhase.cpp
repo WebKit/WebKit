@@ -2008,7 +2008,6 @@ private:
         case CheckTraps:
         case Unreachable:
         case ExtractOSREntryLocal:
-        case ExtractCatchLocal:
         case LoopHint:
         case MovHint:
         case ZombieHint:
@@ -3204,7 +3203,6 @@ private:
                         if (edge->hasDoubleResult())
                             break;
             
-                        ASSERT(indexForChecks != UINT_MAX);
                         if (edge->isNumberConstant()) {
                             result = m_insertionSet.insertNode(
                                 indexForChecks, SpecBytecodeDouble, DoubleConstant, originForChecks,
@@ -3235,7 +3233,6 @@ private:
                         if (edge->hasInt52Result())
                             break;
             
-                        ASSERT(indexForChecks != UINT_MAX);
                         if (edge->isAnyIntConstant()) {
                             result = m_insertionSet.insertNode(
                                 indexForChecks, SpecAnyInt, Int52Constant, originForChecks,
@@ -3262,7 +3259,6 @@ private:
                         if (!edge->hasDoubleResult() && !edge->hasInt52Result())
                             break;
             
-                        ASSERT(indexForChecks != UINT_MAX);
                         if (edge->hasDoubleResult()) {
                             result = m_insertionSet.insertNode(
                                 indexForChecks, SpecBytecodeDouble, ValueRep, originForChecks,
@@ -3304,7 +3300,6 @@ private:
                             break;
                         }
 
-                        ASSERT(indexForChecks != UINT_MAX);
                         m_insertionSet.insertNode(
                             indexForChecks, SpecNone, Check, originForChecks, edge);
 

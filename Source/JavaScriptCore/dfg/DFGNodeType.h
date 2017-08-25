@@ -92,7 +92,6 @@ namespace JSC { namespace DFG {
     /* Special node for OSR entry into the FTL. Indicates that we're loading a local */\
     /* variable from the scratch buffer. */\
     macro(ExtractOSREntryLocal, NodeResultJS) \
-    macro(ExtractCatchLocal, NodeResultJS) \
     \
     /* Tier-up checks from the DFG to the FTL. */\
     macro(CheckTierUpInLoop, NodeMustGenerate) \

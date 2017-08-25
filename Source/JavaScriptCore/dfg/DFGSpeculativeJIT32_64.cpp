@@ -5634,23 +5634,6 @@ void SpeculativeJIT::compile(Node* node)
         unreachable(node);
         break;
 
-    case ExtractCatchLocal: {
-        GPRTemporary temp(this);
-        GPRTemporary tag(this);
-        GPRTemporary payload(this);
-
-        GPRReg tempGPR = temp.gpr();
-        GPRReg tagGPR = tag.gpr();
-        GPRReg payloadGPR = payload.gpr();
-
-        JSValue* ptr = &reinterpret_cast<JSValue*>(m_jit.jitCode()->catchOSREntryBuffer->dataBuffer())[node->catchOSREntryIndex()];
-        m_jit.move(CCallHelpers::TrustedImmPtr(ptr), tempGPR);
-        m_jit.load32(CCallHelpers::Address(tempGPR, TagOffset), tagGPR);
-        m_jit.load32(CCallHelpers::Address(tempGPR, PayloadOffset), payloadGPR);
-        jsValueResult(tagGPR, payloadGPR, node);
-        break;
-    }
-
     case LastNodeType:
     case Phi:
     case Upsilon:

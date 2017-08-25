@@ -50,8 +50,6 @@ static FunctionWhitelist& ensureGlobalFTLWhitelist()
     return ftlWhitelist;
 }
 
-using NaturalLoop = CPSNaturalLoop;
-
 class TierUpCheckInjectionPhase : public Phase {
 public:
     TierUpCheckInjectionPhase(Graph& graph)
@@ -83,8 +81,8 @@ public:
         if (!Options::useOSREntryToFTL())
             level = FTL::CanCompile;
         
-        m_graph.ensureCPSNaturalLoops();
-        CPSNaturalLoops& naturalLoops = *m_graph.m_cpsNaturalLoops;
+        m_graph.ensureNaturalLoops();
+        NaturalLoops& naturalLoops = *m_graph.m_naturalLoops;
         HashMap<const NaturalLoop*, unsigned> naturalLoopToLoopHint = buildNaturalLoopToLoopHintMap(naturalLoops);
 
         HashMap<unsigned, LoopHintDescriptor> tierUpHierarchy;
@@ -184,7 +182,7 @@ private:
         return true;
     }
 
-    HashMap<const NaturalLoop*, unsigned> buildNaturalLoopToLoopHintMap(const CPSNaturalLoops& naturalLoops)
+    HashMap<const NaturalLoop*, unsigned> buildNaturalLoopToLoopHintMap(const NaturalLoops& naturalLoops)
     {
         HashMap<const NaturalLoop*, unsigned> naturalLoopsToLoopHint;
 

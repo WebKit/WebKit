@@ -69,20 +69,6 @@ public:
             osrEntry, osrEntry.size(), bytecodeIndex,
             getOSREntryDataBytecodeIndex);
     }
-
-    CatchEntrypointData* catchOSREntryDataForBytecodeIndex(unsigned bytecodeIndex)
-    {
-        return tryBinarySearch<CatchEntrypointData, unsigned>(
-            catchEntrypoints, catchEntrypoints.size(), bytecodeIndex,
-            [] (const CatchEntrypointData* item) { return item->m_bytecodeIndex; });
-    }
-
-    void finalizeOSREntrypoints();
-
-    void appendCatchEntrypoint(unsigned bytecodeIndex, unsigned machineCodeOffset, Vector<FlushFormat>&& argumentFormats)
-    {
-        catchEntrypoints.append(CatchEntrypointData { bytecodeIndex, machineCodeOffset, WTFMove(argumentFormats) });
-    }
     
     unsigned appendOSRExit(const OSRExit& exit)
     {
@@ -146,13 +132,10 @@ private:
 public:
     CommonData common;
     Vector<DFG::OSREntryData> osrEntry;
-    Vector<CatchEntrypointData> catchEntrypoints;
     SegmentedVector<DFG::OSRExit, 8> osrExit;
     Vector<DFG::SpeculationRecovery> speculationRecovery;
     DFG::VariableEventStream variableEventStream;
     DFG::MinifiedGraph minifiedDFG;
-    ScratchBuffer* catchOSREntryBuffer;
-
 #if ENABLE(FTL_JIT)
     uint8_t neverExecutedEntry { 1 };
 

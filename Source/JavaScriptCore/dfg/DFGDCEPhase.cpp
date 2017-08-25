@@ -53,8 +53,7 @@ public:
         for (BasicBlock* block : m_graph.blocksInPreOrder())
             fixupBlock(block);
         
-        for (auto& argumentsVector : m_graph.m_entrypointToArguments.values())
-            cleanVariables(argumentsVector);
+        cleanVariables(m_graph.m_arguments);
 
         // Just do a basic Phantom/Check clean-up.
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {

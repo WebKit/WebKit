@@ -31,7 +31,6 @@
 #include "DFGBlockMapInlines.h"
 #include "DFGBlockSet.h"
 #include "DFGGraph.h"
-#include <wtf/SingleRootGraph.h>
 
 namespace JSC { namespace DFG {
 
@@ -49,19 +48,7 @@ public:
     {
     }
 
-    Node root()
-    {
-        ASSERT(m_graph.m_form == SSA || m_graph.m_isInSSAConversion);
-        return m_graph.block(0);
-    }
-
-    List roots()
-    {
-        List result;
-        for (BasicBlock* root : m_graph.m_entrypoints)
-            result.append(root);
-        return result;
-    }
+    Node root() { return m_graph.block(0); }
 
     template<typename T>
     Map<T> newMap() { return BlockMap<T>(m_graph); }
@@ -83,31 +70,6 @@ public:
 private:
     Graph& m_graph;
 };
-
-class CPSCFG : public SingleRootGraph<CFG> {
-public:
-    CPSCFG(Graph& graph)
-        : SingleRootGraph<CFG>(*graph.m_ssaCFG)
-    {
-        ASSERT(graph.m_entrypoints.size());
-    }
-};
-
-using SSACFG = CFG;
-
-template <typename T, typename = typename std::enable_if<std::is_same<T, CPSCFG>::value>::type>
-CPSCFG& selectCFG(Graph& graph)
-{
-    RELEASE_ASSERT(graph.m_cpsCFG);
-    return *graph.m_cpsCFG;
-}
-
-template <typename T, typename = typename std::enable_if<std::is_same<T, SSACFG>::value>::type>
-SSACFG& selectCFG(Graph& graph)
-{
-    RELEASE_ASSERT(graph.m_ssaCFG);
-    return *graph.m_ssaCFG;
-}
 
 } } // namespace JSC::DFG
 

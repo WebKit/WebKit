@@ -5998,16 +5998,6 @@ void SpeculativeJIT::compile(Node* node)
         compileCheckSubClass(node);
         break;
 
-    case ExtractCatchLocal: {
-        JSValue* ptr = &reinterpret_cast<JSValue*>(m_jit.jitCode()->catchOSREntryBuffer->dataBuffer())[node->catchOSREntryIndex()];
-        GPRTemporary temp(this);
-        GPRReg tempGPR = temp.gpr();
-        m_jit.move(CCallHelpers::TrustedImmPtr(ptr), tempGPR);
-        m_jit.load64(CCallHelpers::Address(tempGPR), tempGPR);
-        jsValueResult(tempGPR, node);
-        break;
-    }
-
 #if ENABLE(FTL_JIT)        
     case CheckTierUpInLoop: {
         MacroAssembler::Jump callTierUp = m_jit.branchAdd32(
@@ -6096,7 +6086,6 @@ void SpeculativeJIT::compile(Node* node)
         });
         break;
     }
-
 #else // ENABLE(FTL_JIT)
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:

@@ -34,19 +34,17 @@
 
 namespace JSC { namespace DFG {
 
-template <typename CFGKind>
-class NaturalLoops : public WTF::NaturalLoops<CFGKind> {
+typedef WTF::NaturalLoop<CFG> NaturalLoop;
+
+class NaturalLoops : public WTF::NaturalLoops<CFG> {
     WTF_MAKE_NONCOPYABLE(NaturalLoops);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     NaturalLoops(Graph& graph)
-        : WTF::NaturalLoops<CFGKind>(selectCFG<CFGKind>(graph), ensureDominatorsForCFG<CFGKind>(graph), validationEnabled())
+        : WTF::NaturalLoops<CFG>(*graph.m_cfg, graph.ensureDominators(), validationEnabled())
     {
     }
 };
-
-using SSANaturalLoop = WTF::NaturalLoop<SSACFG>;
-using CPSNaturalLoop = WTF::NaturalLoop<CPSCFG>;
 
 } } // namespace JSC::DFG
 

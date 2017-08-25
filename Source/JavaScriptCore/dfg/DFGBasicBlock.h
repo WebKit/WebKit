@@ -82,9 +82,17 @@ struct BasicBlock : RefCounted<BasicBlock> {
         size_t i = size();
         while (i--) {
             Node* node = at(i);
-            if (node->isTerminal())
-                return NodeAndIndex(node, i);
             switch (node->op()) {
+            case Jump:
+            case Branch:
+            case Switch:
+            case Return:
+            case TailCall:
+            case DirectTailCall:
+            case TailCallVarargs:
+            case TailCallForwardVarargs:
+            case Unreachable:
+                return NodeAndIndex(node, i);
             // The bitter end can contain Phantoms and the like. There will probably only be one or two nodes after the terminal. They are all no-ops and will not have any checked children.
             case Check: // This is here because it's our universal no-op.
             case Phantom:
@@ -177,7 +185,6 @@ struct BasicBlock : RefCounted<BasicBlock> {
     BlockIndex index;
     
     bool isOSRTarget;
-    bool isCatchEntrypoint;
     bool cfaHasVisited;
     bool cfaShouldRevisit;
     bool cfaFoundConstants;

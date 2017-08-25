@@ -45,10 +45,6 @@
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
 
-namespace WTF {
-template <typename T> class SingleRootGraph;
-}
-
 namespace JSC {
 
 class CodeBlock;
@@ -59,20 +55,13 @@ namespace DFG {
 class BackwardsCFG;
 class BackwardsDominators;
 class CFG;
-class CPSCFG;
 class ControlEquivalenceAnalysis;
-template <typename T> class Dominators;
-template <typename T> class NaturalLoops;
+class Dominators;
 class FlowIndexing;
+class NaturalLoops;
+class PrePostNumbering;
+
 template<typename> class FlowMap;
-
-using ArgumentsVector = Vector<Node*, 8>;
-
-using SSACFG = CFG;
-using CPSDominators = Dominators<CPSCFG>;
-using SSADominators = Dominators<SSACFG>;
-using CPSNaturalLoops = NaturalLoops<CPSCFG>;
-using SSANaturalLoops = NaturalLoops<SSACFG>;
 
 #define DFG_NODE_DO_TO_CHILDREN(graph, node, thingToDo) do {            \
         Node* _node = (node);                                           \
@@ -912,49 +901,27 @@ public:
 
     bool hasDebuggerEnabled() const { return m_hasDebuggerEnabled; }
 
-    CPSDominators& ensureCPSDominators();
-    SSADominators& ensureSSADominators();
-    CPSNaturalLoops& ensureCPSNaturalLoops();
-    SSANaturalLoops& ensureSSANaturalLoops();
+    Dominators& ensureDominators();
+    PrePostNumbering& ensurePrePostNumbering();
+    NaturalLoops& ensureNaturalLoops();
     BackwardsCFG& ensureBackwardsCFG();
     BackwardsDominators& ensureBackwardsDominators();
     ControlEquivalenceAnalysis& ensureControlEquivalenceAnalysis();
 
-    // These functions only makes sense to call after bytecode parsing
+    // This function only makes sense to call after bytecode parsing
     // because it queries the m_hasExceptionHandlers boolean whose value
     // is only fully determined after bytcode parsing.
-    bool willCatchExceptionInMachineFrame(CodeOrigin codeOrigin)
-    {
-        CodeOrigin ignored;
-        HandlerInfo* ignored2;
-        return willCatchExceptionInMachineFrame(codeOrigin, ignored, ignored2);
-    }
     bool willCatchExceptionInMachineFrame(CodeOrigin, CodeOrigin& opCatchOriginOut, HandlerInfo*& catchHandlerOut);
     
     bool needsScopeRegister() const { return m_hasDebuggerEnabled || m_codeBlock->usesEval(); }
     bool needsFlushedThis() const { return m_codeBlock->usesEval(); }
-
-    void clearCPSCFGData();
-
-    bool isEntrypoint(BasicBlock* block) const
-    {
-        if (m_entrypoints.size() <= 4) {
-            bool result = m_entrypoints.contains(block);
-            ASSERT(result == m_entrypointToArguments.contains(block));
-            return result;
-        }
-        bool result = m_entrypointToArguments.contains(block);
-        ASSERT(result == m_entrypoints.contains(block));
-        return result;
-    }
 
     VM& m_vm;
     Plan& m_plan;
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;
     
-    Vector<RefPtr<BasicBlock>, 8> m_blocks;
-    Vector<BasicBlock*, 1> m_entrypoints;
+    Vector< RefPtr<BasicBlock> , 8> m_blocks;
     Vector<Edge, 16> m_varArgChildren;
 
     HashMap<EncodedJSValue, FrozenValue*, EncodedJSValueHash, EncodedJSValueHashTraits> m_frozenValueMap;
@@ -989,11 +956,11 @@ public:
     //
     // If we DCE the ArithAdd and we remove the int check on x, then this won't do the side
     // effects.
-    HashMap<BasicBlock*, ArgumentsVector> m_entrypointToArguments;
+    Vector<Node*, 8> m_arguments;
     
     // In CPS, this is meaningless. In SSA, this is the argument speculation that we've locked in.
     Vector<FlushFormat> m_argumentFormats;
-
+    
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     SegmentedVector<ArgumentPosition, 8> m_argumentPositions;
     Bag<Transition> m_transitions;
@@ -1015,12 +982,10 @@ public:
     HashSet<std::pair<JSObject*, PropertyOffset>> m_safeToLoad;
     HashMap<PropertyTypeKey, InferredType::Descriptor> m_inferredTypes;
     Vector<Ref<Snippet>> m_domJITSnippets;
-    std::unique_ptr<CPSDominators> m_cpsDominators;
-    std::unique_ptr<SSADominators> m_ssaDominators;
-    std::unique_ptr<CPSNaturalLoops> m_cpsNaturalLoops;
-    std::unique_ptr<SSANaturalLoops> m_ssaNaturalLoops;
-    std::unique_ptr<SSACFG> m_ssaCFG;
-    std::unique_ptr<CPSCFG> m_cpsCFG;
+    std::unique_ptr<Dominators> m_dominators;
+    std::unique_ptr<PrePostNumbering> m_prePostNumbering;
+    std::unique_ptr<NaturalLoops> m_naturalLoops;
+    std::unique_ptr<CFG> m_cfg;
     std::unique_ptr<BackwardsCFG> m_backwardsCFG;
     std::unique_ptr<BackwardsDominators> m_backwardsDominators;
     std::unique_ptr<ControlEquivalenceAnalysis> m_controlEquivalenceAnalysis;
@@ -1044,8 +1009,6 @@ public:
     RefCountState m_refCountState;
     bool m_hasDebuggerEnabled;
     bool m_hasExceptionHandlers { false };
-    bool m_isInSSAConversion { false };
-    std::optional<uint32_t> m_maxLocalsForCatchOSREntry;
     std::unique_ptr<FlowIndexing> m_indexingCache;
     std::unique_ptr<FlowMap<AbstractValue>> m_abstractValuesCache;
 

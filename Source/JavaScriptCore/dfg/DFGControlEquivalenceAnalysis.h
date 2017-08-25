@@ -37,7 +37,7 @@ class ControlEquivalenceAnalysis {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ControlEquivalenceAnalysis(Graph& graph)
-        : m_dominators(graph.ensureSSADominators())
+        : m_dominators(graph.ensureDominators())
         , m_backwardsDominators(graph.ensureBackwardsDominators())
     {
     }
@@ -75,7 +75,7 @@ public:
     }
 
 private:
-    SSADominators& m_dominators;
+    Dominators& m_dominators;
     BackwardsDominators& m_backwardsDominators;
 };
 

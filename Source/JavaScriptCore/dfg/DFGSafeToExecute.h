@@ -326,7 +326,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case NewTypedArray:
     case Unreachable:
     case ExtractOSREntryLocal:
-    case ExtractCatchLocal:
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:
     case CheckTierUpAndOSREnter:
