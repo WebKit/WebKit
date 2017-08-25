@@ -27,32 +27,80 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SecurityOriginData.h"
+#include "ServiceWorkerJobType.h"
+#include "ServiceWorkerRegistrationKey.h"
+#include "ServiceWorkerRegistrationOptions.h"
+#include "URL.h"
+
 namespace WebCore {
 
-enum class ServiceWorkerJobType;
-
 struct ServiceWorkerJobData {
-    uint64_t identifier;
+public:
+    explicit ServiceWorkerJobData(uint64_t connectionIdentifier);
+    ServiceWorkerJobData(const ServiceWorkerJobData&);
+    ServiceWorkerJobData() = default;
+
+    uint64_t jobIdentifier() const { return m_jobIdentifier; }
+    uint64_t connectionIdentifier() const { return m_connectionIdentifier; }
+
+    URL scriptURL;
+    URL clientCreationURL;
+    SecurityOriginData topOrigin;
+    URL scopeURL;
     ServiceWorkerJobType type;
+
+    std::unique_ptr<RegistrationOptions> registrationOptions;
+
+    ServiceWorkerRegistrationKey registrationKey() const;
+    ServiceWorkerJobData isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, ServiceWorkerJobData&);
+
+private:
+    uint64_t m_jobIdentifier { 0 };
+    uint64_t m_connectionIdentifier { 0 };
 };
 
 template<class Encoder>
 void ServiceWorkerJobData::encode(Encoder& encoder) const
 {
-    encoder << identifier;
+    encoder << m_jobIdentifier << m_connectionIdentifier << scriptURL << clientCreationURL << topOrigin << scopeURL;
     encoder.encodeEnum(type);
+    switch (type) {
+    case ServiceWorkerJobType::Register:
+        RELEASE_ASSERT(registrationOptions);
+        encoder << *registrationOptions;
+        break;
+    }
 }
 
 template<class Decoder>
 bool ServiceWorkerJobData::decode(Decoder& decoder, ServiceWorkerJobData& jobData)
 {
-    if (!decoder.decode(jobData.identifier))
+    if (!decoder.decode(jobData.m_jobIdentifier))
+        return false;
+    if (!decoder.decode(jobData.m_connectionIdentifier))
+        return false;
+    if (!decoder.decode(jobData.scriptURL))
+        return false;
+    if (!decoder.decode(jobData.clientCreationURL))
+        return false;
+    if (!decoder.decode(jobData.topOrigin))
+        return false;
+    if (!decoder.decode(jobData.scopeURL))
         return false;
     if (!decoder.decodeEnum(jobData.type))
         return false;
+
+    switch (jobData.type) {
+    case ServiceWorkerJobType::Register:
+        jobData.registrationOptions = std::make_unique<RegistrationOptions>();
+        if (!decoder.decode(*jobData.registrationOptions))
+            return false;
+        break;
+    }
 
     return true;
 }

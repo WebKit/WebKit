@@ -24,40 +24,54 @@
  */
 
 #include "config.h"
-#include "ServiceWorkerJob.h"
+#include "ServiceWorkerJobData.h"
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "JSDOMPromiseDeferred.h"
-#include "ServiceWorkerJobData.h"
-
 namespace WebCore {
 
-static std::atomic<uint64_t> currentIdentifier;
+static std::atomic<uint64_t> currentJobIdentifier;
 
-ServiceWorkerJob::ServiceWorkerJob(ServiceWorkerJobClient& client, Ref<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
-    : m_client(client)
-    , m_jobData(WTFMove(jobData))
-    , m_promise(WTFMove(promise))
-    , m_identifier(++currentIdentifier)
+ServiceWorkerJobData::ServiceWorkerJobData(uint64_t connectionIdentifier)
+    : m_jobIdentifier(++currentJobIdentifier)
+    , m_connectionIdentifier(connectionIdentifier)
 {
 }
 
-ServiceWorkerJob::~ServiceWorkerJob()
+ServiceWorkerJobData::ServiceWorkerJobData(const ServiceWorkerJobData& other)
 {
-    ASSERT(currentThread() == m_creationThread);
+    m_jobIdentifier = other.m_jobIdentifier;
+    m_connectionIdentifier = other.m_connectionIdentifier;
+    scriptURL = other.scriptURL;
+    clientCreationURL = other.clientCreationURL;
+    topOrigin = other.topOrigin;
+    scopeURL = other.scopeURL;
+    type = other.type;
+
+    if (other.registrationOptions)
+        registrationOptions = std::make_unique<RegistrationOptions>(*other.registrationOptions);
 }
 
-void ServiceWorkerJob::failedWithException(const Exception& exception)
+ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
 {
-    ASSERT(currentThread() == m_creationThread);
+    return { clientCreationURL, topOrigin };
+}
 
-    ASSERT(!m_completed);
-    m_promise->reject(exception);
-    m_completed = true;
+ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
+{
+    ServiceWorkerJobData result;
+    result.m_jobIdentifier = m_jobIdentifier;
+    result.m_connectionIdentifier = m_connectionIdentifier;
+    result.type = type;
 
-    // Can cause this to be deleted.
-    m_client->jobDidFinish(*this);
+    result.scriptURL = scriptURL.isolatedCopy();
+    result.clientCreationURL = clientCreationURL.isolatedCopy();
+    result.topOrigin = topOrigin.isolatedCopy();
+    result.scopeURL = scopeURL.isolatedCopy();
+
+    if (registrationOptions)
+        result.registrationOptions = std::make_unique<RegistrationOptions>(registrationOptions->isolatedCopy());
+    return result;
 }
 
 } // namespace WebCore

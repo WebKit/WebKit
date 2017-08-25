@@ -1545,6 +1545,7 @@ set(WebCore_SOURCES
     dom/EventNames.cpp
     dom/EventPath.cpp
     dom/EventTarget.cpp
+    dom/ExceptionData.cpp
     dom/ExtensionStyleSheets.cpp
     dom/FocusEvent.cpp
     dom/GenericEventQueue.cpp
@@ -2990,12 +2991,15 @@ set(WebCore_SOURCES
     workers/service/ServiceWorkerContainer.cpp
     workers/service/ServiceWorkerGlobalScope.cpp
     workers/service/ServiceWorkerJob.cpp
+    workers/service/ServiceWorkerJobData.cpp
     workers/service/ServiceWorkerProvider.cpp
     workers/service/ServiceWorkerRegistration.cpp
-    workers/service/ServiceWorkerRegistrationParameters.cpp
+    workers/service/ServiceWorkerRegistrationKey.cpp
+    workers/service/ServiceWorkerRegistrationOptions.cpp
 
     workers/service/server/SWClientConnection.cpp
     workers/service/server/SWServer.cpp
+    workers/service/server/SWServerRegistration.cpp
 
     xml/DOMParser.cpp
     xml/NativeXPathNSResolver.cpp

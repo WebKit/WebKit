@@ -1,3 +1,105 @@
+2017-08-25  Brady Eidson  <beidson@apple.com>
+
+        Introduce ServerWorkerRegistration task queues.
+        https://bugs.webkit.org/show_bug.cgi?id=175851
+
+        Reviewed by Andy Estes.
+
+        Test: http/tests/workers/service/registration-task-queue-scheduling-1.html
+
+        This change introduces:
+        - A task thread/queue owned by each SWServer object.
+        - The SWServerRegistration object, which is the in-server representation of a
+          service worker registration scope.
+        - A registration job queue per SWServerRegistration object which actually runs the
+          jobs as tasks on the owning SWServer's thread.
+
+        With that infrastructure in place, it moves the "register" job to something that is
+        scheduled and rejected asynchronously, as opposed to synchronously rejected.
+
+        The test verifies that two different registration scopes (localhost and 127.0.0.1) 
+        can both spam the SWServer with registration requests, but neither of their queues
+        starve the other.
+
+        The rest of this change is a lot of support and plumbing for making the above happen.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * dom/ExceptionData.cpp:
+        (WebCore::ExceptionData::isolatedCopy const):
+        * dom/ExceptionData.h:
+        
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::connectionIdentifier):
+        * workers/service/ServiceWorkerContainer.h:
+        
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::ServiceWorkerJob):
+        (WebCore::ServiceWorkerJob::data const): Deleted.
+        * workers/service/ServiceWorkerJob.h:
+        (WebCore::ServiceWorkerJob::create):
+        (WebCore::ServiceWorkerJob::data const):
+        (WebCore::ServiceWorkerJob::createRegisterJob): Deleted.
+        
+        * workers/service/ServiceWorkerJobClient.h:
+        
+        * workers/service/ServiceWorkerJobData.cpp:
+        (WebCore::ServiceWorkerJobData::ServiceWorkerJobData):
+        (WebCore::ServiceWorkerJobData::registrationKey const):
+        (WebCore::ServiceWorkerJobData::isolatedCopy const):
+        * workers/service/ServiceWorkerJobData.h:
+        (WebCore::ServiceWorkerJobData::jobIdentifier const):
+        (WebCore::ServiceWorkerJobData::connectionIdentifier const):
+        (WebCore::ServiceWorkerJobData::encode const):
+        (WebCore::ServiceWorkerJobData::decode):
+
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        (WebCore::ServiceWorkerRegistrationKey::emptyKey):
+        (WebCore::ServiceWorkerRegistrationKey::hash const):
+        (WebCore::ServiceWorkerRegistrationKey::operator== const):
+        * workers/service/ServiceWorkerRegistrationKey.h:
+        (WTF::ServiceWorkerRegistrationKeyHash::hash):
+        (WTF::ServiceWorkerRegistrationKeyHash::equal):
+        (WTF::HashTraits<WebCore::ServiceWorkerRegistrationKey>::emptyValue):
+        (WTF::HashTraits<WebCore::ServiceWorkerRegistrationKey>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::ServiceWorkerRegistrationKey>::isDeletedValue):
+
+        * workers/service/ServiceWorkerRegistrationOptions.cpp:
+        (WebCore::RegistrationOptions::isolatedCopy const):
+        * workers/service/ServiceWorkerRegistrationOptions.h:
+        (WebCore::RegistrationOptions::encode const):
+        (WebCore::RegistrationOptions::decode):
+
+        * workers/service/server/SWClientConnection.h:
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::Connection::Connection):
+        (WebCore::SWServer::~SWServer):
+        (WebCore::SWServer::Connection::scheduleJobInServer):
+        (WebCore::SWServer::SWServer):
+        (WebCore::SWServer::scheduleJob):
+        (WebCore::SWServer::rejectJob):
+        (WebCore::SWServer::taskThreadEntryPoint):
+        (WebCore::SWServer::postTask):
+        (WebCore::SWServer::postTaskReply):
+        (WebCore::SWServer::handleTaskRepliesOnMainThread):
+        (WebCore::SWServer::registerConnection):
+        (WebCore::SWServer::unregisterConnection):
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::Connection::identifier const):
+
+        * workers/service/server/SWServerRegistration.cpp: Added.
+        (WebCore::SWServerRegistration::SWServerRegistration):
+        (WebCore::SWServerRegistration::~SWServerRegistration):
+        (WebCore::SWServerRegistration::enqueueJob):
+        (WebCore::SWServerRegistration::startNextJob):
+        (WebCore::SWServerRegistration::performCurrentJob):
+        (WebCore::SWServerRegistration::rejectCurrentJob):
+        (WebCore::SWServerRegistration::finishCurrentJob):
+        * workers/service/server/SWServerRegistration.h:
+
 2017-08-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, add comment warning that some flags have been copied into Epiphany

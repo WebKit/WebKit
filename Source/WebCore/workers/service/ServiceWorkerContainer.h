@@ -71,6 +71,7 @@ public:
 private:
     void scheduleJob(Ref<ServiceWorkerJob>&&);
     void jobDidFinish(ServiceWorkerJob&) final;
+    uint64_t connectionIdentifier() final;
 
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;

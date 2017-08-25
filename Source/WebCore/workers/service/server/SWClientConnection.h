@@ -42,6 +42,8 @@ public:
 
     void scheduleJob(ServiceWorkerJob&);
 
+    virtual uint64_t identifier() const = 0;
+
 protected:
     WEBCORE_EXPORT void jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData&);
 

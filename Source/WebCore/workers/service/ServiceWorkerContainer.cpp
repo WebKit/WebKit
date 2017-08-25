@@ -34,8 +34,8 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerJob.h"
+#include "ServiceWorkerJobData.h"
 #include "ServiceWorkerProvider.h"
-#include "ServiceWorkerRegistrationParameters.h"
 #include "URL.h"
 #include <wtf/RunLoop.h>
 
@@ -88,20 +88,21 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    ServiceWorkerRegistrationParameters parameters;
-    parameters.scriptURL = context->completeURL(relativeScriptURL);
-    if (!parameters.scriptURL.isValid()) {
+    ServiceWorkerJobData jobData(m_swConnection->identifier());
+
+    jobData.scriptURL = context->completeURL(relativeScriptURL);
+    if (!jobData.scriptURL.isValid()) {
         promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a valid relative script URL") });
         return;
     }
 
     // FIXME: The spec disallows scripts outside of HTTP(S), but we'll likely support app custom URL schemes in WebKit.
-    if (!parameters.scriptURL.protocolIsInHTTPFamily()) {
+    if (!jobData.scriptURL.protocolIsInHTTPFamily()) {
         promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS") });
         return;
     }
 
-    String path = parameters.scriptURL.path();
+    String path = jobData.scriptURL.path();
     if (path.containsIgnoringASCIICase("%2f") || path.containsIgnoringASCIICase("%5c")) {
         promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a script URL whose path does not contain '%%2f' or '%%5c'") });
         return;
@@ -109,13 +110,14 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
     String scope = options.scope.isEmpty() ? ASCIILiteral("./") : options.scope;
     if (!scope.isEmpty())
-        parameters.scopeURL = context->completeURL(scope);
+        jobData.scopeURL = context->completeURL(scope);
 
-    parameters.clientCreationURL = context->url();
-    parameters.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
-    parameters.options = options;
+    jobData.clientCreationURL = context->url();
+    jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
+    jobData.type = ServiceWorkerJobType::Register;
+    jobData.registrationOptions = std::make_unique<RegistrationOptions>(options);
 
-    scheduleJob(ServiceWorkerJob::createRegisterJob(*this, WTFMove(promise), WTFMove(parameters)));
+    scheduleJob(ServiceWorkerJob::create(*this, WTFMove(promise), WTFMove(jobData)));
 }
 
 void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
@@ -147,6 +149,12 @@ void ServiceWorkerContainer::jobDidFinish(ServiceWorkerJob& job)
 {
     auto taken = m_jobMap.take(job.identifier());
     ASSERT_UNUSED(taken, taken.get() == &job);
+}
+
+uint64_t ServiceWorkerContainer::connectionIdentifier()
+{
+    ASSERT(m_swConnection);
+    return m_swConnection->identifier();
 }
 
 const char* ServiceWorkerContainer::activeDOMObjectName() const

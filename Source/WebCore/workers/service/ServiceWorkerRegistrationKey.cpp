@@ -23,24 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ServiceWorkerRegistrationKey.h"
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "SecurityOriginData.h"
-#include "ServiceWorkerRegistrationOptions.h"
-#include "URL.h"
-#include <pal/SessionID.h>
+#include "URLHash.h"
 
 namespace WebCore {
 
-struct ServiceWorkerRegistrationParameters {
-    URL scriptURL;
-    URL clientCreationURL;
-    SecurityOriginData topOrigin;
-    URL scopeURL;
-    RegistrationOptions options;
-};
+ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::emptyKey()
+{
+    return { };
+}
+
+unsigned ServiceWorkerRegistrationKey::hash() const
+{
+    unsigned hashes[2];
+    hashes[0] = URLHash::hash(clientCreationURL);
+    hashes[1] = SecurityOriginDataHash::hash(topOrigin);
+
+    return StringHasher::hashMemory(hashes, sizeof(hashes));
+}
+
+bool ServiceWorkerRegistrationKey::operator==(const ServiceWorkerRegistrationKey& other) const
+{
+    return clientCreationURL == other.clientCreationURL && topOrigin == other.topOrigin;
+}
 
 } // namespace WebCore
 

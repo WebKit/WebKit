@@ -27,13 +27,20 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SWServerRegistration.h"
 #include "ServiceWorkerJob.h"
+#include "ServiceWorkerRegistrationKey.h"
+#include <wtf/CrossThreadQueue.h>
+#include <wtf/CrossThreadTask.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
+class SWServerRegistration;
 struct ExceptionData;
 
 class SWServer {
@@ -43,8 +50,10 @@ public:
     public:
         WEBCORE_EXPORT virtual ~Connection();
 
+        uint64_t identifier() const { return m_identifier; };
+
     protected:
-        WEBCORE_EXPORT Connection(SWServer&);
+        WEBCORE_EXPORT Connection(SWServer&, uint64_t identifier);
         SWServer& server() { return m_server; }
 
         WEBCORE_EXPORT void scheduleJobInServer(const ServiceWorkerJobData&);
@@ -53,17 +62,36 @@ public:
         virtual void rejectJobInClient(uint64_t jobIdentifier, const ExceptionData&) = 0;
 
         SWServer& m_server;
+        uint64_t m_identifier;
     };
 
+    WEBCORE_EXPORT SWServer();
     WEBCORE_EXPORT ~SWServer();
 
-    WEBCORE_EXPORT void scheduleJob(Connection&, const ServiceWorkerJobData&);
+    void scheduleJob(const ServiceWorkerJobData&);
+    void rejectJob(const ServiceWorkerJobData&, const ExceptionData&);
+
+    void postTask(CrossThreadTask&&);
+    void postTaskReply(CrossThreadTask&&);
 
 private:
     void registerConnection(Connection&);
     void unregisterConnection(Connection&);
 
-    HashSet<Connection*> m_connections;
+    void taskThreadEntryPoint();
+    void handleTaskRepliesOnMainThread();
+
+    HashMap<uint64_t, Connection*> m_connections;
+    HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;
+
+    RefPtr<Thread> m_taskThread;
+    Lock m_taskThreadLock;
+
+    CrossThreadQueue<CrossThreadTask> m_taskQueue;
+    CrossThreadQueue<CrossThreadTask> m_taskReplyQueue;
+
+    Lock m_mainThreadReplyLock;
+    bool m_mainThreadReplyScheduled { false };
 };
 
 } // namespace WebCore

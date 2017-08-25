@@ -36,6 +36,7 @@ public:
     virtual ~ServiceWorkerJobClient() { };
 
     virtual void jobDidFinish(ServiceWorkerJob&) = 0;
+    virtual uint64_t connectionIdentifier() = 0;
 
     virtual void ref() = 0;
     virtual void deref() = 0;

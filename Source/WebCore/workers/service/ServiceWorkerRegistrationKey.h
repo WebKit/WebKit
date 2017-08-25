@@ -23,48 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebSWServerConnection.h"
+#pragma once
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "Logging.h"
-#include "StorageToWebProcessConnectionMessages.h"
-#include "WebProcess.h"
-#include "WebSWClientConnectionMessages.h"
-#include "WebSWServerConnectionMessages.h"
-#include "WebToStorageProcessConnection.h"
-#include <WebCore/ExceptionData.h>
-#include <WebCore/NotImplemented.h>
-#include <WebCore/ServiceWorkerJobData.h>
-#include <wtf/MainThread.h>
+#include "SecurityOriginData.h"
+#include "URL.h"
 
-using namespace PAL;
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
+struct ServiceWorkerRegistrationKey {
+    URL clientCreationURL;
+    SecurityOriginData topOrigin;
 
-WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, uint64_t connectionIdentifier, const SessionID& sessionID)
-    : SWServer::Connection(server, connectionIdentifier)
-    , m_sessionID(sessionID)
-    , m_connection(connection)
-{
-}
+    static ServiceWorkerRegistrationKey emptyKey();
+    unsigned hash() const;
 
-WebSWServerConnection::~WebSWServerConnection()
-{
-}
+    bool operator==(const ServiceWorkerRegistrationKey&) const;
+};
 
-void WebSWServerConnection::disconnectedFromWebProcess()
-{
-    notImplemented();
-}
+} // namespace WebCore
 
-void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const ExceptionData& exceptionData)
-{
-    send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
-}
+namespace WTF {
 
-} // namespace WebKit
+struct ServiceWorkerRegistrationKeyHash {
+    static unsigned hash(const WebCore::ServiceWorkerRegistrationKey& key) { return key.hash(); }
+    static bool equal(const WebCore::ServiceWorkerRegistrationKey& a, const WebCore::ServiceWorkerRegistrationKey& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
+template<> struct HashTraits<WebCore::ServiceWorkerRegistrationKey> : GenericHashTraits<WebCore::ServiceWorkerRegistrationKey> {
+    static WebCore::ServiceWorkerRegistrationKey emptyValue() { return WebCore::ServiceWorkerRegistrationKey::emptyKey(); }
+
+    static void constructDeletedValue(WebCore::ServiceWorkerRegistrationKey& slot) { slot.clientCreationURL = WebCore::URL(HashTableDeletedValue); }
+    static bool isDeletedValue(const WebCore::ServiceWorkerRegistrationKey& slot) { return slot.clientCreationURL.isHashTableDeletedValue(); }
+};
+
+template<> struct DefaultHash<WebCore::ServiceWorkerRegistrationKey> {
+    typedef ServiceWorkerRegistrationKeyHash Hash;
+};
+
+} // namespace WTF
 
 #endif // ENABLE(SERVICE_WORKER)

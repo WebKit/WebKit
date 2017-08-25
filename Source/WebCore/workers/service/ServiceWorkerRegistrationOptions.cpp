@@ -24,11 +24,21 @@
  */
 
 #include "config.h"
-#include "ServiceWorkerRegistrationParameters.h"
+#include "ServiceWorkerRegistrationOptions.h"
 
 #if ENABLE(SERVICE_WORKER)
 
 namespace WebCore {
+
+RegistrationOptions RegistrationOptions::isolatedCopy() const
+{
+    RegistrationOptions result;
+    result.scope = scope.isolatedCopy();
+    result.type = type;
+    result.updateViaCache = updateViaCache;
+
+    return result;
+}
 
 } // namespace WebCore
 

@@ -44,8 +44,6 @@ public:
     WebSWServerConnection(const WebSWServerConnection&) = delete;
     ~WebSWServerConnection() final;
 
-    uint64_t identifier() const { return m_identifier; }
-
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -54,10 +52,9 @@ private:
     void rejectJobInClient(uint64_t jobIdentifier, const WebCore::ExceptionData&) final;
 
     IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
-    uint64_t messageSenderDestinationID() final { return m_identifier; }
+    uint64_t messageSenderDestinationID() final { return identifier(); }
 
     PAL::SessionID m_sessionID;
-    uint64_t m_identifier;
 
     Ref<IPC::Connection> m_connection;
 }; // class WebSWServerConnection

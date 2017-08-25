@@ -31,13 +31,15 @@
 #include "ExceptionCode.h"
 #include "ExceptionData.h"
 #include "Logging.h"
+#include "SWServerRegistration.h"
 #include "ServiceWorkerJobData.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-SWServer::Connection::Connection(SWServer& server)
+SWServer::Connection::Connection(SWServer& server, uint64_t identifier)
     : m_server(server)
+    , m_identifier(identifier)
 {
     m_server.registerConnection(*this);
 }
@@ -47,34 +49,108 @@ SWServer::Connection::~Connection()
     m_server.unregisterConnection(*this);
 }
 
-
 SWServer::~SWServer()
 {
     RELEASE_ASSERT(m_connections.isEmpty());
+    RELEASE_ASSERT(m_registrations.isEmpty());
+
+    // For a SWServer to be cleanly shut down its thread must have finished and gone away.
+    // At this stage in development of the feature that actually never happens.
+    // But once it does start happening, this ASSERT will catch us doing it wrong.
+    Locker<Lock> locker(m_taskThreadLock);
+    ASSERT(!m_taskThread);
 }
 
 void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
-    LOG(ServiceWorker, "Scheduling ServiceWorker job %" PRIu64 " in server", jobData.identifier);
-    m_server.scheduleJob(*this, jobData);
+    LOG(ServiceWorker, "Scheduling ServiceWorker job %" PRIu64 "-%" PRIu64 " in server", jobData.connectionIdentifier(), jobData.jobIdentifier());
+    ASSERT(identifier() == jobData.connectionIdentifier());
+
+    m_server.scheduleJob(jobData);
 }
 
-void SWServer::scheduleJob(Connection& connection, const ServiceWorkerJobData& jobData)
+SWServer::SWServer()
 {
-    // FIXME: For now, all scheduled jobs immediately reject.
-    connection.rejectJobInClient(jobData.identifier, ExceptionData { UnknownError, ASCIILiteral("serviceWorker job scheduling is not yet implemented") });
+    m_taskThread = Thread::create(ASCIILiteral("ServiceWorker Task Thread"), [this] {
+        taskThreadEntryPoint();
+    });
+}
+
+void SWServer::scheduleJob(const ServiceWorkerJobData& jobData)
+{
+    ASSERT(m_connections.contains(jobData.connectionIdentifier()));
+
+    auto result = m_registrations.add(jobData.registrationKey(), nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = std::make_unique<SWServerRegistration>(*this);
+
+    ASSERT(result.iterator->value);
+
+    result.iterator->value->enqueueJob(jobData);
+}
+
+void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionData& exceptionData)
+{
+    LOG(ServiceWorker, "Rejected ServiceWorker job %" PRIu64 "-%" PRIu64 " in server", jobData.connectionIdentifier(), jobData.jobIdentifier());
+    auto* connection = m_connections.get(jobData.connectionIdentifier());
+    if (!connection)
+        return;
+
+    connection->rejectJobInClient(jobData.jobIdentifier(), exceptionData);
+}
+
+void SWServer::taskThreadEntryPoint()
+{
+    ASSERT(!isMainThread());
+
+    while (!m_taskQueue.isKilled())
+        m_taskQueue.waitForMessage().performTask();
+
+    Locker<Lock> locker(m_taskThreadLock);
+    m_taskThread = nullptr;
+}
+
+void SWServer::postTask(CrossThreadTask&& task)
+{
+    m_taskQueue.append(WTFMove(task));
+}
+
+void SWServer::postTaskReply(CrossThreadTask&& task)
+{
+    m_taskReplyQueue.append(WTFMove(task));
+
+    Locker<Lock> locker(m_mainThreadReplyLock);
+    if (m_mainThreadReplyScheduled)
+        return;
+
+    m_mainThreadReplyScheduled = true;
+    callOnMainThread([this] {
+        handleTaskRepliesOnMainThread();
+    });
+}
+
+void SWServer::handleTaskRepliesOnMainThread()
+{
+    {
+        Locker<Lock> locker(m_mainThreadReplyLock);
+        m_mainThreadReplyScheduled = false;
+    }
+
+    while (auto task = m_taskReplyQueue.tryGetMessage())
+        task->performTask();
 }
 
 void SWServer::registerConnection(Connection& connection)
 {
-    auto result = m_connections.add(&connection);
-    ASSERT_UNUSED(result, result.isNewEntry);
+    auto result = m_connections.add(connection.identifier(), nullptr);
+    ASSERT(result.isNewEntry);
+    result.iterator->value = &connection;
 }
 
 void SWServer::unregisterConnection(Connection& connection)
 {
-    ASSERT(m_connections.contains(&connection));
-    m_connections.remove(&connection);
+    ASSERT(m_connections.get(connection.identifier()) == &connection);
+    m_connections.remove(connection.identifier());
 }
 
 } // namespace WebCore

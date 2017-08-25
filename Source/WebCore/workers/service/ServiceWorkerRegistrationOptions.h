@@ -38,7 +38,33 @@ struct RegistrationOptions {
     String scope;
     WorkerType type;
     ServiceWorkerUpdateViaCache updateViaCache;
+
+    RegistrationOptions isolatedCopy() const;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, RegistrationOptions&);
 };
+
+template<class Encoder>
+void RegistrationOptions::encode(Encoder& encoder) const
+{
+    encoder << scope;
+    encoder.encodeEnum(type);
+    encoder.encodeEnum(updateViaCache);
+}
+
+template<class Decoder>
+bool RegistrationOptions::decode(Decoder& decoder, RegistrationOptions& options)
+{
+    if (!decoder.decode(options.scope))
+        return false;
+    if (!decoder.decodeEnum(options.type))
+        return false;
+    if (!decoder.decodeEnum(options.updateViaCache))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 

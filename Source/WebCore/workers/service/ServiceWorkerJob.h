@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ServiceWorkerJobClient.h"
+#include "ServiceWorkerJobData.h"
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -38,14 +39,12 @@ namespace WebCore {
 class DeferredPromise;
 class Exception;
 enum class ServiceWorkerJobType;
-struct ServiceWorkerJobData;
-struct ServiceWorkerRegistrationParameters;
 
 class ServiceWorkerJob : public ThreadSafeRefCounted<ServiceWorkerJob> {
 public:
-    static Ref<ServiceWorkerJob> createRegisterJob(ServiceWorkerJobClient& client, Ref<DeferredPromise>&& promise, ServiceWorkerRegistrationParameters&& parameters)
+    static Ref<ServiceWorkerJob> create(ServiceWorkerJobClient& client, Ref<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
     {
-        return adoptRef(*new ServiceWorkerJob(client, WTFMove(promise), WTFMove(parameters)));
+        return adoptRef(*new ServiceWorkerJob(client, WTFMove(promise), WTFMove(jobData)));
     }
 
     WEBCORE_EXPORT ~ServiceWorkerJob();
@@ -54,19 +53,17 @@ public:
 
     uint64_t identifier() const { return m_identifier; }
 
-    ServiceWorkerJobData data() const;
+    ServiceWorkerJobData data() const { return m_jobData; }
 
 private:
-    ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerRegistrationParameters&&);
+    ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);
 
     Ref<ServiceWorkerJobClient> m_client;
-    std::unique_ptr<ServiceWorkerRegistrationParameters> m_registrationParameters;
+    ServiceWorkerJobData m_jobData;
     Ref<DeferredPromise> m_promise;
 
     bool m_completed { false };
     uint64_t m_identifier;
-
-    ServiceWorkerJobType m_type;
 
     Ref<RunLoop> m_runLoop { RunLoop::current() };
 

@@ -23,48 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebSWServerConnection.h"
+#pragma once
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "Logging.h"
-#include "StorageToWebProcessConnectionMessages.h"
-#include "WebProcess.h"
-#include "WebSWClientConnectionMessages.h"
-#include "WebSWServerConnectionMessages.h"
-#include "WebToStorageProcessConnection.h"
-#include <WebCore/ExceptionData.h>
-#include <WebCore/NotImplemented.h>
-#include <WebCore/ServiceWorkerJobData.h>
-#include <wtf/MainThread.h>
+#include "ServiceWorkerJobData.h"
+#include "Timer.h"
+#include <wtf/Deque.h>
 
-using namespace PAL;
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
+class SWServer;
+struct ExceptionData;
 
-WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, uint64_t connectionIdentifier, const SessionID& sessionID)
-    : SWServer::Connection(server, connectionIdentifier)
-    , m_sessionID(sessionID)
-    , m_connection(connection)
-{
-}
+class SWServerRegistration {
+public:
+    explicit SWServerRegistration(SWServer&);
+    SWServerRegistration(const SWServerRegistration&) = delete;
+    ~SWServerRegistration();
 
-WebSWServerConnection::~WebSWServerConnection()
-{
-}
+    void enqueueJob(const ServiceWorkerJobData&);
 
-void WebSWServerConnection::disconnectedFromWebProcess()
-{
-    notImplemented();
-}
+private:
+    void jobTimerFired();
+    void performCurrentJob();
+    void rejectCurrentJob(const ExceptionData&);
 
-void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const ExceptionData& exceptionData)
-{
-    send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
-}
+    void startNextJob();
+    void finishCurrentJob();
 
-} // namespace WebKit
+    Deque<ServiceWorkerJobData> m_jobQueue;
+    std::unique_ptr<ServiceWorkerJobData> m_currentJob;
+
+    Timer m_jobTimer;
+    SWServer& m_server;
+};
+
+} // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

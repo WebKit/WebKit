@@ -24,47 +24,17 @@
  */
 
 #include "config.h"
-#include "WebSWServerConnection.h"
+#include "ExceptionData.h"
 
-#if ENABLE(SERVICE_WORKER)
+namespace WebCore {
 
-#include "Logging.h"
-#include "StorageToWebProcessConnectionMessages.h"
-#include "WebProcess.h"
-#include "WebSWClientConnectionMessages.h"
-#include "WebSWServerConnectionMessages.h"
-#include "WebToStorageProcessConnection.h"
-#include <WebCore/ExceptionData.h>
-#include <WebCore/NotImplemented.h>
-#include <WebCore/ServiceWorkerJobData.h>
-#include <wtf/MainThread.h>
-
-using namespace PAL;
-using namespace WebCore;
-
-namespace WebKit {
-
-WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, uint64_t connectionIdentifier, const SessionID& sessionID)
-    : SWServer::Connection(server, connectionIdentifier)
-    , m_sessionID(sessionID)
-    , m_connection(connection)
+ExceptionData ExceptionData::isolatedCopy() const
 {
+    ExceptionData result;
+    result.code = code;
+    result.message = message.isolatedCopy();
+
+    return result;
 }
 
-WebSWServerConnection::~WebSWServerConnection()
-{
-}
-
-void WebSWServerConnection::disconnectedFromWebProcess()
-{
-    notImplemented();
-}
-
-void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const ExceptionData& exceptionData)
-{
-    send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
-}
-
-} // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)
+} // namespace WebCore
