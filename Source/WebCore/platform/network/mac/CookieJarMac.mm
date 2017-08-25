@@ -178,7 +178,8 @@ std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, cons
 String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     bool ignore = false;
-    return cookiesForSession(session, firstParty, url, IncludeHTTPOnly, IncludeSecureCookies::No, ignore);
+    auto includeSecureCookies = url.protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+    return cookiesForSession(session, firstParty, url, IncludeHTTPOnly, includeSecureCookies, ignore);
 }
 
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& cookieStr)
