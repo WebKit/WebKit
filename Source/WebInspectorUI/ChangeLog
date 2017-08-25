@@ -1,3 +1,25 @@
+2017-08-24  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: add filter for draw actions in Recordings
+        https://bugs.webkit.org/show_bug.cgi?id=175448
+        <rdar://problem/34040764>
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+        (WI.RecordingNavigationSidebarPanel.prototype.initialLayout):
+        (WI.RecordingNavigationSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        Add button to filter visual actions.
+        Drive-by fix: ensure that frame folders are still visible when filtering.
+
+        * UserInterface/Images/Paint.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/PaintFlashing.svg.
+        * UserInterface/Images/gtk/Paint.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/gtk/PaintFlashing.svg.
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        Rename PaintFlashing.svg to Paint.svg.
+
 2017-08-24  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Create experimental Layers tab

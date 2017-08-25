@@ -140,6 +140,27 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
 
         const element = null;
         this.addSubview(new WI.NavigationBar(element, [importNavigationItem, exportNavigationItem]));
+
+        let filterFunction = (treeElement) => {
+            if (!(treeElement instanceof WI.RecordingActionTreeElement))
+                return false;
+
+            return treeElement.representedObject.isVisual;
+        };
+
+        const activatedByDefault = false;
+        const defaultToolTip = WI.UIString("Only show visual actions");
+        const activatedToolTip = WI.UIString("Show all actions");
+        this.filterBar.addFilterBarButton("recording-show-visual-only", filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, "Images/Paint.svg", 15, 15);
+    }
+
+    matchTreeElementAgainstCustomFilters(treeElement)
+    {
+        // Keep recording frame tree elements.
+        if (treeElement instanceof WI.FolderTreeElement)
+            return true;
+
+        return super.matchTreeElementAgainstCustomFilters(treeElement);
     }
 
     // Private
