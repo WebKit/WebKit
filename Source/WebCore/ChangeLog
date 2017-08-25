@@ -1,3 +1,16 @@
+2017-08-25  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed, rolling out r221181.
+
+        Broke builds that use CryptoAlgorithmRSA_PSSMac.cpp
+
+        Reverted changeset:
+
+        "[WebCrypto] Push WorkQueue dispatches for RSA algorithms into
+        shared code"
+        https://bugs.webkit.org/show_bug.cgi?id=175621
+        http://trac.webkit.org/changeset/221181
+
 2017-08-25  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [EME][ClearKey] Fixed warning in CDM compilation
