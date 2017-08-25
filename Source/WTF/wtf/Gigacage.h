@@ -29,6 +29,8 @@
 
 #if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
 #define GIGACAGE_ENABLED 0
+#define PRIMITIVE_GIGACAGE_MASK 0
+#define JSVALUE_GIGACAGE_MASK 0
 
 extern "C" {
 extern WTF_EXPORTDATA void* g_gigacageBasePtr;
