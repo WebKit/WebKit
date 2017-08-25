@@ -14,8 +14,7 @@
     {
         "name": "Beacon API",
         "status": {
-            "status": "In Development",
-            "enabled-by-default": false
+            "status": "Supported In Preview"
         },
         "url": "https://www.w3.org/TR/beacon/",
         "webkit-url": "https://webkit.org/b/147885",
