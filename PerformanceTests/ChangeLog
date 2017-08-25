@@ -1,3 +1,18 @@
+2017-08-25  Mathias Bynens  <mathias@qiwi.be>
+
+        Speedometer: Restructure Ember example
+        https://bugs.webkit.org/show_bug.cgi?id=175926
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch removes an unused stylesheet from the output, and gets rid of the unneeded intermediate `source` folder.
+
+        * Speedometer/resources/tests.js: Update path to Ember benchmark.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/source/*: Moved to `../`.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/app/index.html: Removed stylesheet reference.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/app/styles/.gitkeep: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/dist/*: Regenerated per build instructions.
+
 2017-08-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Speedometer 2.0: Duplicate the current EmberJS test as EmberJS-Debug test

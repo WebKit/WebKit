@@ -166,7 +166,7 @@ Suites.push({
 
 Suites.push({
     name: 'EmberJS-TodoMVC',
-    url: 'todomvc/architecture-examples/emberjs/index.html',
+    url: 'todomvc/architecture-examples/emberjs/dist/index.html',
     prepare: function (runner, contentWindow, contentDocument) {
         return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();

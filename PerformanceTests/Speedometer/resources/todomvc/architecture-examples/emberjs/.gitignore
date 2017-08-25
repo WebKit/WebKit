@@ -2,6 +2,7 @@
 
 # compiled output
 # /dist
+/dist/assets/.gitkeep
 /tmp
 
 # dependencies
