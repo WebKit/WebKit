@@ -28,6 +28,7 @@
 #if ENABLE(DATA_INTERACTION)
 
 #import "TestWKWebView.h"
+#import <UIKit/NSItemProvider+UIKitAdditions.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <UIKit/NSString+UIItemProvider.h>
@@ -89,6 +90,9 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     DataInteractionEntered = 3,
     DataInteractionPerforming = 4
 };
+
+@interface UIItemProvider : NSItemProvider
+@end
 
 @interface DataInteractionSimulator : NSObject<WKUIDelegatePrivate, _WKInputDelegate> {
 @private

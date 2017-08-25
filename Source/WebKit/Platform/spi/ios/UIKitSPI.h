@@ -102,6 +102,10 @@
 
 #else
 
+#if ENABLE(DRAG_SUPPORT)
+#import <UIKit/NSItemProvider+UIKitAdditions.h>
+#endif
+
 #if HAVE(LINK_PREVIEW)
 typedef NS_ENUM(NSInteger, UIPreviewItemType) {
     UIPreviewItemTypeNone,
@@ -878,7 +882,6 @@ typedef enum {
 #if ENABLE(DRAG_SUPPORT)
 
 @interface UIItemProvider : NSItemProvider
-@property (nonatomic) CGSize preferredPresentationSize;
 @end
 
 WTF_EXTERN_C_BEGIN
@@ -916,6 +919,10 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 
 @interface UITextEffectsWindow : UIAutoRotatingWindow
 + (UITextEffectsWindow *)sharedTextEffectsWindow;
+@end
+
+@interface UIURLDragPreviewView : UIView
++ (instancetype)viewWithTitle:(NSString *)title URL:(NSURL *)url;
 @end
 
 #endif

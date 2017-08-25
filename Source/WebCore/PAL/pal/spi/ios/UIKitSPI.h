@@ -47,6 +47,10 @@
 
 #import <UIKit/UIKit.h>
 
+#if ENABLE(DRAG_SUPPORT)
+#import <UIKit/NSItemProvider+UIKitAdditions.h>
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
@@ -95,7 +99,6 @@ NS_ASSUME_NONNULL_END
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIItemProvider : NSItemProvider
-@property (nonatomic) CGSize preferredPresentationSize;
 @end
 
 #define UIItemProviderRepresentationOptionsVisibilityAll NSItemProviderRepresentationVisibilityAll

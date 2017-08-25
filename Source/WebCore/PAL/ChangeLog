@@ -1,3 +1,14 @@
+2017-08-25  Jonathan Bedard  <jbedard@apple.com>
+
+        Fix build breakage with Public iOS 11 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=175960
+        <rdar://problem/34069264>
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/spi/ios/UIKitSPI.h: Use NSItemProvider definition of preferredPresentationSize
+        instead of re-declaring it.
+
 2017-08-23  Eric Carlson  <eric.carlson@apple.com>
 
         Platform code should be able to safely log in release builds
