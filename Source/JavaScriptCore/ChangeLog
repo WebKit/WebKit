@@ -1,3 +1,21 @@
+2017-08-24  Brian Burg  <bburg@apple.com>
+
+        Web Automation: use automation session configurations to propagate per-session settings
+        https://bugs.webkit.org/show_bug.cgi?id=175562
+        <rdar://problem/30853362>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a Cocoa-specific code path to forward capabilities when requesting
+        a new session from the remote inspector (i.e., automation) client.
+
+        If other ports want to use this, then we can convert Cocoa types to WebKit types later.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspectorConstants.h:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::receivedAutomationSessionRequestMessage):
+
 2017-08-25  Saam Barati  <sbarati@apple.com>
 
         DFG::JITCode::osrEntry should get sorted since we perform a binary search on it

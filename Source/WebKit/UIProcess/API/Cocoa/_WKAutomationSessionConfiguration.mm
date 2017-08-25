@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#import "config.h"
+#import "_WKAutomationSessionConfiguration.h"
 
 #if WK_API_ENABLED
 
-#if ENABLE(REMOTE_INSPECTOR)
+@implementation _WKAutomationSessionConfiguration
 
-#import "APIAutomationClient.h"
-#import "WeakObjCPtr.h"
-#import <JavaScriptCore/RemoteInspector.h>
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
 
-@class WKProcessPool;
+    _allowsInsecureMediaCapture = YES;
+    _suppressesICECandidateFiltering = NO;
 
-@protocol _WKAutomationDelegate;
+    return self;
+}
 
-namespace WebKit {
+- (id)copyWithZone:(NSZone *)zone
+{
+    _WKAutomationSessionConfiguration *configuration = [(_WKAutomationSessionConfiguration *)[[self class] allocWithZone:zone] init];
 
-class AutomationClient final : public API::AutomationClient, Inspector::RemoteInspector::Client {
-public:
-    explicit AutomationClient(WKProcessPool *, id <_WKAutomationDelegate>);
-    virtual ~AutomationClient();
+    configuration.allowsInsecureMediaCapture = self.allowsInsecureMediaCapture;
+    configuration.suppressesICECandidateFiltering = self.suppressesICECandidateFiltering;
 
-private:
-    // API::AutomationClient
-    bool allowsRemoteAutomation(WebProcessPool*) override { return remoteAutomationAllowed(); }
-    void didRequestAutomationSession(WebKit::WebProcessPool*, const String& sessionIdentifier) override;
+    return configuration;
+}
 
-    void requestAutomationSessionWithCapabilities(NSString *sessionIdentifier, NSDictionary *forwardedCapabilities) override;
-
-    // RemoteInspector::Client
-    bool remoteAutomationAllowed() const override;
-    void requestAutomationSession(const String& sessionIdentifier) override;
-
-    WKProcessPool *m_processPool;
-    WeakObjCPtr<id <_WKAutomationDelegate>> m_delegate;
-
-    struct {
-        bool allowsRemoteAutomation : 1;
-        bool requestAutomationSession : 1;
-    } m_delegateMethods;
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(REMOTE_INSPECTOR)
+@end
 
 #endif // WK_API_ENABLED

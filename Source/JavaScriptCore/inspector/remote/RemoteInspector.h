@@ -76,6 +76,9 @@ public:
         virtual String browserName() const { return { }; }
         virtual String browserVersion() const { return { }; }
         virtual void requestAutomationSession(const String& sessionIdentifier) = 0;
+#if PLATFORM(COCOA)
+        virtual void requestAutomationSessionWithCapabilities(NSString *sessionIdentifier, NSDictionary *forwardedCapabilities) = 0;
+#endif
     };
 
     static void startDisabled();

@@ -1449,6 +1449,8 @@
 		9955A6F51C7986E000EB6A93 /* AutomationBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F11C79866400EB6A93 /* AutomationBackendDispatchers.h */; };
 		9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6F21C79866400EB6A93 /* AutomationProtocolObjects.cpp */; };
 		9955A6F71C7986E500EB6A93 /* AutomationProtocolObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */; };
+		99788ACB1F421DDA00C08000 /* _WKAutomationSessionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 99788AC91F421DCA00C08000 /* _WKAutomationSessionConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99788ACC1F421DE200C08000 /* _WKAutomationSessionConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99788ACA1F421DCA00C08000 /* _WKAutomationSessionConfiguration.mm */; };
 		99B750F21F33ED5B00C1CFB5 /* ElementAttribute.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657341F323CBF00944F9C /* ElementAttribute.js */; };
 		99B750F31F33ED5B00C1CFB5 /* ElementDisplayed.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657331F323CBF00944F9C /* ElementDisplayed.js */; };
 		99B750F41F33ED5B00C1CFB5 /* FindNodes.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657311F323CBF00944F9C /* FindNodes.js */; };
@@ -3795,6 +3797,8 @@
 		9955A6F11C79866400EB6A93 /* AutomationBackendDispatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationBackendDispatchers.h; sourceTree = "<group>"; };
 		9955A6F21C79866400EB6A93 /* AutomationProtocolObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutomationProtocolObjects.cpp; sourceTree = "<group>"; };
 		9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomationProtocolObjects.h; sourceTree = "<group>"; };
+		99788AC91F421DCA00C08000 /* _WKAutomationSessionConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationSessionConfiguration.h; sourceTree = "<group>"; };
+		99788ACA1F421DCA00C08000 /* _WKAutomationSessionConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAutomationSessionConfiguration.mm; sourceTree = "<group>"; };
 		99C3AE231DAD8E3400AF5C16 /* WebAutomationSessionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionMac.mm; sourceTree = "<group>"; };
 		99C3AE261DAD948500AF5C16 /* WebAutomationSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionCocoa.mm; sourceTree = "<group>"; };
 		99C3AE2C1DADA6A700AF5C16 /* WebAutomationSessionMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutomationSessionMacros.h; sourceTree = "<group>"; };
@@ -5629,6 +5633,8 @@
 				99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */,
 				990D28A71C6404B000986977 /* _WKAutomationSession.h */,
 				990D28AD1C65190400986977 /* _WKAutomationSession.mm */,
+				99788AC91F421DCA00C08000 /* _WKAutomationSessionConfiguration.h */,
+				99788ACA1F421DCA00C08000 /* _WKAutomationSessionConfiguration.mm */,
 				990D28A81C6404B000986977 /* _WKAutomationSessionDelegate.h */,
 				990D28AF1C65203900986977 /* _WKAutomationSessionInternal.h */,
 				1A5704F61BE01FF400874AF1 /* _WKContextMenuElementInfo.h */,
@@ -8265,6 +8271,7 @@
 				379A873618BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h in Headers */,
 				99E714C51C124A0400665B3A /* _WKAutomationDelegate.h in Headers */,
 				990D28AB1C6420C600986977 /* _WKAutomationSession.h in Headers */,
+				99788ACB1F421DDA00C08000 /* _WKAutomationSessionConfiguration.h in Headers */,
 				990D28AC1C6420CF00986977 /* _WKAutomationSessionDelegate.h in Headers */,
 				990D28B11C65208D00986977 /* _WKAutomationSessionInternal.h in Headers */,
 				1A5704F81BE01FF400874AF1 /* _WKContextMenuElementInfo.h in Headers */,
@@ -9890,6 +9897,7 @@
 			files = (
 				37A5E01318BBF937000A081E /* _WKActivatedElementInfo.mm in Sources */,
 				990D28B21C65209400986977 /* _WKAutomationSession.mm in Sources */,
+				99788ACC1F421DE200C08000 /* _WKAutomationSessionConfiguration.mm in Sources */,
 				1A5704F71BE01FF400874AF1 /* _WKContextMenuElementInfo.mm in Sources */,
 				A1A4FE5B18DCE9FA00B5EA8A /* _WKDownload.mm in Sources */,
 				379A873918BBFE0F00588AF2 /* _WKElementAction.mm in Sources */,

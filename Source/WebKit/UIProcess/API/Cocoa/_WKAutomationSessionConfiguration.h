@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#if ENABLE(REMOTE_INSPECTOR)
+#import <Foundation/Foundation.h>
 
-#import "APIAutomationClient.h"
-#import "WeakObjCPtr.h"
-#import <JavaScriptCore/RemoteInspector.h>
+NS_ASSUME_NONNULL_BEGIN
 
-@class WKProcessPool;
+WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA))
+@interface _WKAutomationSessionConfiguration : NSObject <NSCopying>
 
-@protocol _WKAutomationDelegate;
+@property (nonatomic) BOOL allowsInsecureMediaCapture;
+@property (nonatomic) BOOL suppressesICECandidateFiltering;
 
-namespace WebKit {
+@end
 
-class AutomationClient final : public API::AutomationClient, Inspector::RemoteInspector::Client {
-public:
-    explicit AutomationClient(WKProcessPool *, id <_WKAutomationDelegate>);
-    virtual ~AutomationClient();
-
-private:
-    // API::AutomationClient
-    bool allowsRemoteAutomation(WebProcessPool*) override { return remoteAutomationAllowed(); }
-    void didRequestAutomationSession(WebKit::WebProcessPool*, const String& sessionIdentifier) override;
-
-    void requestAutomationSessionWithCapabilities(NSString *sessionIdentifier, NSDictionary *forwardedCapabilities) override;
-
-    // RemoteInspector::Client
-    bool remoteAutomationAllowed() const override;
-    void requestAutomationSession(const String& sessionIdentifier) override;
-
-    WKProcessPool *m_processPool;
-    WeakObjCPtr<id <_WKAutomationDelegate>> m_delegate;
-
-    struct {
-        bool allowsRemoteAutomation : 1;
-        bool requestAutomationSession : 1;
-    } m_delegateMethods;
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(REMOTE_INSPECTOR)
+NS_ASSUME_NONNULL_END
 
 #endif // WK_API_ENABLED

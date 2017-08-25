@@ -678,13 +678,16 @@ void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *user
     NSString *suggestedSessionIdentifier = userInfo[WIRSessionIdentifierKey];
     BAIL_IF_UNEXPECTED_TYPE(suggestedSessionIdentifier, [NSString class]);
 
+    NSDictionary *forwardedCapabilities = userInfo[WIRSessionCapabilitiesKey];
+    BAIL_IF_UNEXPECTED_TYPE_ALLOWING_NIL(forwardedCapabilities, [NSDictionary class]);
+
     if (!m_client)
         return;
 
     if (!m_clientCapabilities || !m_clientCapabilities->remoteAutomationAllowed)
         return;
 
-    m_client->requestAutomationSession(suggestedSessionIdentifier);
+    m_client->requestAutomationSessionWithCapabilities(suggestedSessionIdentifier, forwardedCapabilities);
 }
 
 } // namespace Inspector

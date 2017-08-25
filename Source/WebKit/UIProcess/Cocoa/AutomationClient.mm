@@ -32,6 +32,7 @@
 
 #import "WKProcessPool.h"
 #import "_WKAutomationDelegate.h"
+#import "_WKAutomationSessionConfiguration.h"
 #import <JavaScriptCore/RemoteInspector.h>
 #import <wtf/text/WTFString.h>
 
@@ -44,7 +45,7 @@ AutomationClient::AutomationClient(WKProcessPool *processPool, id <_WKAutomation
     , m_delegate(delegate)
 {
     m_delegateMethods.allowsRemoteAutomation = [delegate respondsToSelector:@selector(_processPoolAllowsRemoteAutomation:)];
-    m_delegateMethods.requestAutomationSession = [delegate respondsToSelector:@selector(_processPool:didRequestAutomationSessionWithIdentifier:)];
+    m_delegateMethods.requestAutomationSession = [delegate respondsToSelector:@selector(_processPool:didRequestAutomationSessionWithIdentifier:configuration:)];
 
     RemoteInspector::singleton().setClient(this);
 }
@@ -69,14 +70,19 @@ bool AutomationClient::remoteAutomationAllowed() const
 
 void AutomationClient::requestAutomationSession(const String& sessionIdentifier)
 {
+    NSString *retainedIdentifier = sessionIdentifier;
+    requestAutomationSessionWithCapabilities(retainedIdentifier, nil);
+}
+
+void AutomationClient::requestAutomationSessionWithCapabilities(NSString *sessionIdentifier, NSDictionary *forwardedCapabilities)
+{
+    _WKAutomationSessionConfiguration *configuration = [_WKAutomationSessionConfiguration new];
     // Force clients to create and register a session asynchronously. Otherwise,
     // RemoteInspector will try to acquire its lock to register the new session and
     // deadlock because it's already taken while handling XPC messages.
-
-    NSString *retainedIdentifier = sessionIdentifier;
     dispatch_async(dispatch_get_main_queue(), ^{
         if (m_delegateMethods.requestAutomationSession)
-            [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:retainedIdentifier];
+            [m_delegate.get() _processPool:m_processPool didRequestAutomationSessionWithIdentifier:sessionIdentifier configuration:configuration];
     });
 }
 

@@ -84,6 +84,7 @@
 
 #define WIRAutomationTargetIsPairedKey             @"WIRAutomationTargetIsPairedKey"
 #define WIRSessionIdentifierKey                    @"WIRSessionIdentifierKey"
+#define WIRSessionCapabilitiesKey                  @"WIRSessionCapabilitiesKey"
 #define WIRAutomationSessionRequestMessage         @"WIRAutomationSessionRequestMessage"
 
 // These definitions are shared with a Simulator webinspectord and

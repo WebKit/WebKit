@@ -28,11 +28,12 @@
 #if WK_API_ENABLED
 
 @class WKProcessPool;
+@class _WKAutomationSessionConfiguration;
 
 @protocol _WKAutomationDelegate <NSObject>
 @optional
 - (BOOL)_processPoolAllowsRemoteAutomation:(WKProcessPool *)processPool;
-- (void)_processPool:(WKProcessPool *)processPool didRequestAutomationSessionWithIdentifier:(NSString *)identifier;
+- (void)_processPool:(WKProcessPool *)processPool didRequestAutomationSessionWithIdentifier:(NSString *)identifier configuration:(_WKAutomationSessionConfiguration *)configuration;
 @end
 
 #endif // WK_API_ENABLED

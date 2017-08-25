@@ -1,3 +1,49 @@
+2017-08-24  Brian Burg  <bburg@apple.com>
+
+        Web Automation: use automation session configurations to propagate per-session settings
+        https://bugs.webkit.org/show_bug.cgi?id=175562
+        <rdar://problem/30853362>
+
+        Reviewed by Joseph Pecoraro.
+
+        Some WebDriver capabilities need WebKit support in order to be implemented correctly.
+        There is currently no easy way to forward WebDriver capability keys and values to WebKit
+        at session creation time. This is unfortunate, as it would be best to implement many of
+        them via existing mechanisms (i.e., WKPreferences properties) that need to be set up
+        before any windows are opened in the session.
+
+        This patch adds WebKit-side plumbing to forward named capabilities from a remote
+        WebDriver client to the _WKAutomationSession and its delegate in WebKit2 UIProcess.
+        These capabilities are exposed via API in ways that abstract away details of how the
+        capabilities are represented in RWI wire protocol messages.
+
+        In the Cocoa API, these capabilities are exposed via a session configuration object
+        that's similar to WKWebView's WKWebViewConfiguration. A session's configuration is copied
+        and used at initialization and cannot be modified after the session is created.
+        Code in the Cocoa subclass of API::AutomationClient translates between RWI protocol
+        capability names and property values on the _WKAutomationSessionConfiguration it
+        uses to request a new session.
+
+        Later patches will hook up the two properties present in the configuration in this patch.
+        Most of this patch is just generic plumbing without doing any capability-specific work.
+
+        * UIProcess/API/Cocoa/_WKAutomationDelegate.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        (-[_WKAutomationSession init]):
+        (-[_WKAutomationSession initWithConfiguration:]):
+        (-[_WKAutomationSession configuration]):
+        * UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKAutomationDelegate.h.
+        * UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.mm: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKAutomationSession.h.
+        (-[_WKAutomationSessionConfiguration init]):
+        (-[_WKAutomationSessionConfiguration description]):
+        * UIProcess/Cocoa/AutomationClient.h:
+        * UIProcess/Cocoa/AutomationClient.mm:
+        (WebKit::AutomationClient::AutomationClient):
+        (WebKit::AutomationClient::requestAutomationSession):
+        (WebKit::AutomationClient::requestAutomationSessionWithCapabilities):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-08-25  Brady Eidson  <beidson@apple.com>
 
         Introduce ServerWorkerRegistration task queues.
