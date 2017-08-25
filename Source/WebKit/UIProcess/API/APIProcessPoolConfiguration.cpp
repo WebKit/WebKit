@@ -81,7 +81,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataSto
 ProcessPoolConfiguration::ProcessPoolConfiguration()
     : m_applicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory())
     , m_applicationCacheFlatFileSubdirectoryName("Files")
-#if PLATFORM(COCA)
+#if PLATFORM(COCOA)
     , m_cacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory())
 #endif
     , m_diskCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory())
