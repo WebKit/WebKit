@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,8 @@ namespace WTF {
 template<typename Graph>
 class Dominators {
 public:
+    using List = typename Graph::List;
+
     Dominators(Graph& graph, bool selfCheck = false)
         : m_graph(graph)
         , m_data(graph.template newMap<BlockData>())
@@ -47,8 +49,6 @@ public:
         LengauerTarjan lengauerTarjan(m_graph);
         lengauerTarjan.compute();
 
-        m_data = m_graph.template newMap<BlockData>();
-    
         // From here we want to build a spanning tree with both upward and downward links and we want
         // to do a search over this tree to compute pre and post numbers that can be used for dominance
         // tests.
@@ -240,7 +240,7 @@ public:
     }
     
     template<typename Functor>
-    void forAllBlocksInIteratedDominanceFrontierOf(const typename Graph::List& from, const Functor& functor)
+    void forAllBlocksInIteratedDominanceFrontierOf(const List& from, const Functor& functor)
     {
         forAllBlocksInPrunedIteratedDominanceFrontierOf(
             from,
@@ -255,7 +255,7 @@ public:
     // Useful for computing pruned SSA form.
     template<typename Functor>
     void forAllBlocksInPrunedIteratedDominanceFrontierOf(
-        const typename Graph::List& from, const Functor& functor)
+        const List& from, const Functor& functor)
     {
         typename Graph::Set set;
         forAllBlocksInIteratedDominanceFrontierOfImpl(
@@ -267,7 +267,7 @@ public:
             });
     }
     
-    typename Graph::Set iteratedDominanceFrontierOf(const typename Graph::List& from) const
+    typename Graph::Set iteratedDominanceFrontierOf(const List& from) const
     {
         typename Graph::Set result;
         forAllBlocksInIteratedDominanceFrontierOfImpl(
@@ -712,9 +712,9 @@ private:
     
     template<typename Functor>
     void forAllBlocksInIteratedDominanceFrontierOfImpl(
-        const typename Graph::List& from, const Functor& functor) const
+        const List& from, const Functor& functor) const
     {
-        typename Graph::List worklist = from;
+        List worklist = from;
         while (!worklist.isEmpty()) {
             typename Graph::Node block = worklist.takeLast();
             forAllBlocksInDominanceFrontierOfImpl(

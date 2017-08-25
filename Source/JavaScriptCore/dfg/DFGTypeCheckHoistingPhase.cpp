@@ -134,10 +134,11 @@ public:
                     if (!iter->value.m_structure && !iter->value.m_arrayModeIsValid)
                         break;
 
-                    // Currently we should only be doing this hoisting for SetArguments at the prologue.
-                    ASSERT(!blockIndex);
+                    // Currently we should only be doing this hoisting for SetArguments at an entrypoint.
+                    ASSERT(m_graph.isEntrypoint(block));
 
                     NodeOrigin origin = node->origin;
+                    RELEASE_ASSERT(origin.exitOK);
                     
                     Node* getLocal = insertionSet.insertNode(
                         indexInBlock + 1, variable->prediction(), GetLocal, origin,

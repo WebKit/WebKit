@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGBasicBlockInlines.h"
+#include "DFGBlockSet.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
@@ -46,109 +47,186 @@ public:
 
     bool run()
     {
-        if (!m_graph.m_hasExceptionHandlers)
-            return true;
-
         DFG_ASSERT(m_graph, nullptr, m_graph.m_form == LoadStore);
 
-        m_currentBlockLiveness.resize(m_graph.block(0)->variablesAtTail.numberOfLocals());
+        if (!m_graph.m_hasExceptionHandlers)
+            return false;
 
         InsertionSet insertionSet(m_graph);
-        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-            handleBlock(block, insertionSet);
-            insertionSet.execute(block);
+        if (m_graph.m_hasExceptionHandlers) {
+            for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+                handleBlockForTryCatch(block, insertionSet);
+                insertionSet.execute(block);
+            }
         }
 
         return true;
     }
 
-    bool willCatchException(CodeOrigin origin)
+    bool isValidFlushLocation(BasicBlock* startingBlock, unsigned index, VirtualRegister operand)
     {
-        unsigned bytecodeIndexToCheck = origin.bytecodeIndex;
-        m_currentBlockLiveness.clearAll();
+        // This code is not meant to be fast. We just use it for assertions. If we got liveness wrong,
+        // this function would return false for a Flush that we insert.
+        Vector<BasicBlock*, 4> worklist;
+        BlockSet seen;
 
-        while (1) {
-            InlineCallFrame* inlineCallFrame = origin.inlineCallFrame;
-            CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
-            if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeIndexToCheck)) {
-                unsigned catchBytecodeIndex = handler->target;
-                m_graph.forAllLocalsLiveInBytecode(CodeOrigin(catchBytecodeIndex, inlineCallFrame), [&] (VirtualRegister operand) {
-                    m_currentBlockLiveness[operand.toLocal()] = true;
-                });
+        auto addPredecessors = [&] (BasicBlock* block) {
+            for (BasicBlock* block : block->predecessors) {
+                bool isNewEntry = seen.add(block);
+                if (isNewEntry)
+                    worklist.append(block);
+            }
+        };
+
+        auto flushIsDefinitelyInvalid = [&] (BasicBlock* block, unsigned index) {
+            bool allGood = false;
+            for (unsigned i = index; i--; ) {
+                if (block->at(i)->accessesStack(m_graph) && block->at(i)->local() == operand) {
+                    allGood = true;
+                    break;
+                }
+            }
+
+            if (allGood)
+                return false;
+
+            if (block->predecessors.isEmpty()) {
+                // This is a root block. We proved we reached here, therefore we can't Flush, as
+                // it'll make this local live at the start of a root block, which is invalid IR.
                 return true;
             }
 
-            if (!inlineCallFrame)
-                return false;
+            addPredecessors(block);
+            return false;
+        };
 
-            bytecodeIndexToCheck = inlineCallFrame->directCaller.bytecodeIndex;
-            origin = inlineCallFrame->directCaller;
+        if (flushIsDefinitelyInvalid(startingBlock, index))
+            return false;
+
+        while (!worklist.isEmpty()) {
+            BasicBlock* block = worklist.takeLast();
+            if (flushIsDefinitelyInvalid(block, block->size()))
+                return false;
         }
+        return true;
     }
 
-    void handleBlock(BasicBlock* block, InsertionSet& insertionSet)
+
+    void handleBlockForTryCatch(BasicBlock* block, InsertionSet& insertionSet)
     {
-        // Because precise jump targets ensures that the start of a "try" block is its
-        // own basic block, we will never have two "try" statements in the same DFG
-        // basic block. Therefore, checking the first node in the block is sufficient 
-        // to checking if we're in a try block.
-        if (!willCatchException(block->at(0)->origin.semantic))
-            return;
+        HandlerInfo* currentExceptionHandler = nullptr;
+        FastBitVector liveAtCatchHead;
+        liveAtCatchHead.resize(m_graph.block(0)->variablesAtTail.numberOfLocals());
+
+        HandlerInfo* cachedHandlerResult;
+        CodeOrigin cachedCodeOrigin;
+        auto catchHandler = [&] (CodeOrigin origin) -> HandlerInfo* {
+            ASSERT(origin);
+            if (origin == cachedCodeOrigin)
+                return cachedHandlerResult;
+
+            unsigned bytecodeIndexToCheck = origin.bytecodeIndex;
+
+            cachedCodeOrigin = origin;
+
+            while (1) {
+                InlineCallFrame* inlineCallFrame = origin.inlineCallFrame;
+                CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
+                if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeIndexToCheck)) {
+                    liveAtCatchHead.clearAll();
+
+                    unsigned catchBytecodeIndex = handler->target;
+                    m_graph.forAllLocalsLiveInBytecode(CodeOrigin(catchBytecodeIndex, inlineCallFrame), [&] (VirtualRegister operand) {
+                        liveAtCatchHead[operand.toLocal()] = true;
+                    });
+
+                    cachedHandlerResult = handler;
+                    break;
+                }
+
+                if (!inlineCallFrame) {
+                    cachedHandlerResult = nullptr;
+                    break;
+                }
+
+                bytecodeIndexToCheck = inlineCallFrame->directCaller.bytecodeIndex;
+                origin = inlineCallFrame->directCaller;
+            }
+
+            return cachedHandlerResult;
+        };
 
         Operands<VariableAccessData*> currentBlockAccessData(block->variablesAtTail.numberOfArguments(), block->variablesAtTail.numberOfLocals(), nullptr);
         HashSet<InlineCallFrame*> seenInlineCallFrames;
 
-        {
-            for (unsigned i = 0; i < block->size(); i++) {
-                Node* node = block->at(i);
-                bool isPrimordialSetArgument = node->op() == SetArgument && node->local().isArgument() && node == m_graph.m_arguments[node->local().toArgument()];
-                InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame;
-                if (inlineCallFrame)
-                    seenInlineCallFrames.add(inlineCallFrame);
-
-                if (node->op() == SetLocal || (node->op() == SetArgument && !isPrimordialSetArgument)) {
-                    VirtualRegister operand = node->local();
-
-                    int stackOffset = inlineCallFrame ? inlineCallFrame->stackOffset : 0;
-                    if ((operand.isLocal() && m_currentBlockLiveness[operand.toLocal()])
-                        || (operand.offset() == stackOffset + CallFrame::thisArgumentOffset())) {
-
-                        VariableAccessData* variableAccessData = currentBlockAccessData.operand(operand);
-                        if (!variableAccessData)
-                            variableAccessData = newVariableAccessData(operand);
-
-                        insertionSet.insertNode(i, SpecNone, 
-                            Flush, node->origin, OpInfo(variableAccessData));
-                    }
-                }
-
-                if (node->accessesStack(m_graph))
-                    currentBlockAccessData.operand(node->local()) = node->variableAccessData();
-            }
-        }
-
-        // Insert Flush for everything at the end of the block.
-        {
-            NodeOrigin origin = block->at(block->size() - 1)->origin;
-            auto preserveLivenessAtEndOfBlock = [&] (VirtualRegister operand, bool alwaysInsert) {
-                if ((operand.isLocal() && m_currentBlockLiveness[operand.toLocal()]) 
+        auto flushEverything = [&] (NodeOrigin origin, unsigned index) {
+            RELEASE_ASSERT(currentExceptionHandler);
+            auto flush = [&] (VirtualRegister operand, bool alwaysInsert) {
+                if ((operand.isLocal() && liveAtCatchHead[operand.toLocal()]) 
                     || operand.isArgument()
                     || alwaysInsert) {
+
+                    ASSERT(isValidFlushLocation(block, index, operand));
+
                     VariableAccessData* accessData = currentBlockAccessData.operand(operand);
                     if (!accessData)
                         accessData = newVariableAccessData(operand);
 
                     currentBlockAccessData.operand(operand) = accessData;
 
-                    insertionSet.insertNode(block->size(), SpecNone, 
+                    insertionSet.insertNode(index, SpecNone, 
                         Flush, origin, OpInfo(accessData));
                 }
             };
+
             for (unsigned local = 0; local < block->variablesAtTail.numberOfLocals(); local++)
-                preserveLivenessAtEndOfBlock(virtualRegisterForLocal(local), false);
+                flush(virtualRegisterForLocal(local), false);
             for (InlineCallFrame* inlineCallFrame : seenInlineCallFrames)
-                preserveLivenessAtEndOfBlock(VirtualRegister(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset()), true);
-            preserveLivenessAtEndOfBlock(VirtualRegister(CallFrame::thisArgumentOffset()), true);
+                flush(VirtualRegister(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset()), true);
+            flush(VirtualRegister(CallFrame::thisArgumentOffset()), true);
+
+            seenInlineCallFrames.clear();
+        };
+
+        for (unsigned nodeIndex = 0; nodeIndex < block->size(); nodeIndex++) {
+            Node* node = block->at(nodeIndex);
+
+            {
+                HandlerInfo* newHandler = catchHandler(node->origin.semantic);
+                if (newHandler != currentExceptionHandler && currentExceptionHandler)
+                    flushEverything(node->origin, nodeIndex);
+                currentExceptionHandler = newHandler;
+            }
+
+            if (currentExceptionHandler && (node->op() == SetLocal || node->op() == SetArgument)) {
+                InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame;
+                if (inlineCallFrame)
+                    seenInlineCallFrames.add(inlineCallFrame);
+                VirtualRegister operand = node->local();
+
+                int stackOffset = inlineCallFrame ? inlineCallFrame->stackOffset : 0;
+                if ((operand.isLocal() && liveAtCatchHead[operand.toLocal()])
+                    || operand.isArgument()
+                    || (operand.offset() == stackOffset + CallFrame::thisArgumentOffset())) {
+
+                    ASSERT(isValidFlushLocation(block, nodeIndex, operand));
+
+                    VariableAccessData* variableAccessData = currentBlockAccessData.operand(operand);
+                    if (!variableAccessData)
+                        variableAccessData = newVariableAccessData(operand);
+
+                    insertionSet.insertNode(nodeIndex, SpecNone, 
+                        Flush, node->origin, OpInfo(variableAccessData));
+                }
+            }
+
+            if (node->accessesStack(m_graph))
+                currentBlockAccessData.operand(node->local()) = node->variableAccessData();
+        }
+
+        if (currentExceptionHandler) {
+            NodeOrigin origin = block->at(block->size() - 1)->origin;
+            flushEverything(origin, block->size());
         }
     }
 
@@ -159,8 +237,6 @@ public:
         m_graph.m_variableAccessData.append(VariableAccessData(operand));
         return &m_graph.m_variableAccessData.last();
     }
-
-    FastBitVector m_currentBlockLiveness;
 };
 
 bool performLiveCatchVariablePreservationPhase(Graph& graph)

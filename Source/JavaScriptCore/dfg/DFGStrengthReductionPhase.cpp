@@ -268,18 +268,27 @@ private:
             
         case Flush: {
             ASSERT(m_graph.m_form != SSA);
+
+            if (m_graph.willCatchExceptionInMachineFrame(m_node->origin.semantic)) {
+                // FIXME: We should be able to relax this:
+                // https://bugs.webkit.org/show_bug.cgi?id=150824
+                break;
+            }
             
             Node* setLocal = nullptr;
             VirtualRegister local = m_node->local();
             
             for (unsigned i = m_nodeIndex; i--;) {
                 Node* node = m_block->at(i);
+
                 if (node->op() == SetLocal && node->local() == local) {
                     setLocal = node;
                     break;
                 }
+
                 if (accessesOverlap(m_graph, node, AbstractHeap(Stack, local)))
                     break;
+
             }
             
             if (!setLocal)

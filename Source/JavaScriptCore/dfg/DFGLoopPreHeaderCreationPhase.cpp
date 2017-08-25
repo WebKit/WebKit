@@ -41,6 +41,8 @@ namespace JSC { namespace DFG {
 
 BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, BasicBlock* block)
 {
+    ASSERT_WITH_MESSAGE(!graph.isEntrypoint(block), "An entrypoint should not be in a loop");
+
     // FIXME: If we run this utility on SSA IR, then we may end up with a bizarre arrangement of
     // Upsilons and Phis, like:
     //
@@ -69,7 +71,8 @@ BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, Basic
     // Instead, we use the max of the frequencies of the loop body's non-loop predecessors.
     float frequency = 0;
     for (BasicBlock* predecessor : block->predecessors) {
-        if (graph.m_dominators->dominates(block, predecessor))
+        ASSERT(graph.m_form != SSA);
+        if (graph.m_cpsDominators->dominates(block, predecessor))
             continue;
         frequency = std::max(frequency, predecessor->executionCount);
     }
@@ -103,7 +106,7 @@ BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, Basic
     
     for (unsigned predecessorIndex = 0; predecessorIndex < block->predecessors.size(); predecessorIndex++) {
         BasicBlock* predecessor = block->predecessors[predecessorIndex];
-        if (graph.m_dominators->dominates(block, predecessor))
+        if (graph.m_cpsDominators->dominates(block, predecessor))
             continue;
         block->predecessors[predecessorIndex--] = block->predecessors.last();
         block->predecessors.removeLast();
@@ -130,16 +133,16 @@ public:
     
     bool run()
     {
-        m_graph.ensureDominators();
-        m_graph.ensureNaturalLoops();
+        m_graph.ensureCPSDominators();
+        m_graph.ensureCPSNaturalLoops();
         
-        for (unsigned loopIndex = m_graph.m_naturalLoops->numLoops(); loopIndex--;) {
-            const NaturalLoop& loop = m_graph.m_naturalLoops->loop(loopIndex);
-            BasicBlock* existingPreHeader = 0;
+        for (unsigned loopIndex = m_graph.m_cpsNaturalLoops->numLoops(); loopIndex--;) {
+            const CPSNaturalLoop& loop = m_graph.m_cpsNaturalLoops->loop(loopIndex);
+            BasicBlock* existingPreHeader = nullptr;
             bool needsNewPreHeader = false;
-            for (unsigned predecessorIndex = loop.header()->predecessors.size(); predecessorIndex--;) {
-                BasicBlock* predecessor = loop.header()->predecessors[predecessorIndex];
-                if (m_graph.m_dominators->dominates(loop.header(), predecessor))
+            for (unsigned predecessorIndex = loop.header().node()->predecessors.size(); predecessorIndex--;) {
+                BasicBlock* predecessor = loop.header().node()->predecessors[predecessorIndex];
+                if (m_graph.m_cpsDominators->dominates(loop.header().node(), predecessor))
                     continue;
                 if (!existingPreHeader) {
                     existingPreHeader = predecessor;
@@ -165,14 +168,14 @@ public:
             // A pre-header is most useful if it's possible to exit from its terminal. Hence
             // if the terminal of the existing pre-header doesn't allow for exit, but the first
             // origin of the loop header does, then we should create a new pre-header.
-            if (!needsNewPreHeader && loop.header()->at(0)->origin.exitOK
+            if (!needsNewPreHeader && loop.header().node()->at(0)->origin.exitOK
                 && !existingPreHeader->terminal()->origin.exitOK)
                 needsNewPreHeader = true;
             
             if (!needsNewPreHeader)
                 continue;
             
-            createPreHeader(m_graph, m_insertionSet, loop.header());
+            createPreHeader(m_graph, m_insertionSet, loop.header().node());
         }
         
         return m_insertionSet.execute();

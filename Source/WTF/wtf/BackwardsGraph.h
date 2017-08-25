@@ -29,6 +29,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/SingleRootGraph.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -38,133 +39,9 @@ class BackwardsGraph {
     WTF_MAKE_NONCOPYABLE(BackwardsGraph);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // We use "#end" to refer to the synthetic root we have created.
-    static const char* rootName() { return "#end"; };
-
-    class Node {
-    public:
-        Node(typename Graph::Node node = typename Graph::Node())
-            : m_node(node)
-        {
-        }
-
-        static Node root()
-        {
-            Node result;
-            result.m_node = 0;
-            result.m_isRoot = true;
-            return result;
-        }
-
-        bool operator==(const Node& other) const
-        {
-            return m_node == other.m_node
-                && m_isRoot == other.m_isRoot;
-        }
-
-        bool operator!=(const Node& other) const
-        {
-            return !(*this == other);
-        }
-
-        explicit operator bool() const { return *this != Node(); }
-
-        bool isRoot() const
-        {
-            return m_isRoot;
-        }
-
-        typename Graph::Node node() const { return m_node; }
-
-    private:
-        typename Graph::Node m_node;
-        bool m_isRoot { false };
-    };
-
-    class Set {
-    public:
-        Set()
-        {
-        }
-        
-        bool add(const Node& node)
-        {
-            if (node.isRoot())
-                return checkAndSet(m_hasRoot, true);
-            return m_set.add(node.node());
-        }
-
-        bool remove(const Node& node)
-        {
-            if (node.isRoot())
-                return checkAndSet(m_hasRoot, false);
-            return m_set.remove(node.node());
-        }
-
-        bool contains(const Node& node)
-        {
-            if (node.isRoot())
-                return m_hasRoot;
-            return m_set.contains(node.node());
-        }
-
-        void dump(PrintStream& out) const
-        {
-            if (m_hasRoot)
-                out.print(rootName(), " ");
-            out.print(m_set);
-        }
-        
-    private:
-        typename Graph::Set m_set;
-        bool m_hasRoot { false };
-    };
-
-    template<typename T>
-    class Map {
-    public:
-        Map(Graph& graph)
-            : m_map(graph.template newMap<T>())
-        {
-        }
-
-        void clear()
-        {
-            m_map.clear();
-            m_root = T();
-        }
-
-        size_t size() const { return m_map.size() + 1; }
-
-        T& operator[](size_t index)
-        {
-            if (!index)
-                return m_root;
-            return m_map[index - 1];
-        }
-
-        const T& operator[](size_t index) const
-        {
-            return (*const_cast<Map*>(this))[index];
-        }
-
-        T& operator[](const Node& node)
-        {
-            if (node.isRoot())
-                return m_root;
-            return m_map[node.node()];
-        }
-
-        const T& operator[](const Node& node) const
-        {
-            return (*const_cast<Map*>(this))[node];
-        }
-        
-    private:
-        typename Graph::template Map<T> m_map;
-        T m_root;
-    };
-
+    using Node = SingleRootGraphNode<Graph>;
+    using Set = SingleRootGraphSet<Graph>;
+    template <typename T> using Map = SingleRootMap<T, Graph>;
     typedef Vector<Node, 4> List;
 
     BackwardsGraph(Graph& graph)
@@ -255,7 +132,7 @@ public:
         if (!node)
             out.print("<null>");
         else if (node.isRoot())
-            out.print(rootName());
+            out.print(Node::rootName());
         else
             out.print(m_graph.dump(node.node()));
         return out.toCString();

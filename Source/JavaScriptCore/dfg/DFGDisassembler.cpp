@@ -95,8 +95,8 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
     dumpHeader(out, linkBuffer);
     append(result, out, previousOrigin);
     
-    m_graph.ensureDominators();
-    m_graph.ensureNaturalLoops();
+    m_graph.ensureCPSDominators();
+    m_graph.ensureCPSNaturalLoops();
     
     const char* prefix = "    ";
     const char* disassemblyPrefix = "        ";

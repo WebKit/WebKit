@@ -1,3 +1,137 @@
+2017-08-25  Saam Barati  <sbarati@apple.com>
+
+        Support compiling catch in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=174590
+        <rdar://problem/34047845>
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/delta-blue-try-catch.js: Added.
+        (exception):
+        (value):
+        (OrderedCollection):
+        (OrderedCollection.prototype.add):
+        (OrderedCollection.prototype.at):
+        (OrderedCollection.prototype.size):
+        (OrderedCollection.prototype.removeFirst):
+        (OrderedCollection.prototype.remove):
+        (Strength):
+        (Strength.stronger):
+        (Strength.weaker):
+        (Strength.weakestOf):
+        (Strength.strongest):
+        (Strength.prototype.nextWeaker):
+        (Constraint):
+        (Constraint.prototype.addConstraint):
+        (Constraint.prototype.satisfy):
+        (Constraint.prototype.destroyConstraint):
+        (Constraint.prototype.isInput):
+        (UnaryConstraint):
+        (UnaryConstraint.prototype.addToGraph):
+        (UnaryConstraint.prototype.chooseMethod):
+        (UnaryConstraint.prototype.isSatisfied):
+        (UnaryConstraint.prototype.markInputs):
+        (UnaryConstraint.prototype.output):
+        (UnaryConstraint.prototype.recalculate):
+        (UnaryConstraint.prototype.markUnsatisfied):
+        (UnaryConstraint.prototype.inputsKnown):
+        (UnaryConstraint.prototype.removeFromGraph):
+        (StayConstraint):
+        (StayConstraint.prototype.execute):
+        (EditConstraint.prototype.isInput):
+        (EditConstraint.prototype.execute):
+        (BinaryConstraint):
+        (BinaryConstraint.prototype.chooseMethod):
+        (BinaryConstraint.prototype.addToGraph):
+        (BinaryConstraint.prototype.isSatisfied):
+        (BinaryConstraint.prototype.markInputs):
+        (BinaryConstraint.prototype.input):
+        (BinaryConstraint.prototype.output):
+        (BinaryConstraint.prototype.recalculate):
+        (BinaryConstraint.prototype.markUnsatisfied):
+        (BinaryConstraint.prototype.inputsKnown):
+        (BinaryConstraint.prototype.removeFromGraph):
+        (ScaleConstraint):
+        (ScaleConstraint.prototype.addToGraph):
+        (ScaleConstraint.prototype.removeFromGraph):
+        (ScaleConstraint.prototype.markInputs):
+        (ScaleConstraint.prototype.execute):
+        (ScaleConstraint.prototype.recalculate):
+        (EqualityConstraint):
+        (EqualityConstraint.prototype.execute):
+        (Variable):
+        (Variable.prototype.addConstraint):
+        (Variable.prototype.removeConstraint):
+        (Planner):
+        (Planner.prototype.incrementalAdd):
+        (Planner.prototype.incrementalRemove):
+        (Planner.prototype.newMark):
+        (Planner.prototype.makePlan):
+        (Planner.prototype.extractPlanFromConstraints):
+        (Planner.prototype.addPropagate):
+        (Planner.prototype.removePropagateFrom):
+        (Planner.prototype.addConstraintsConsumingTo):
+        (Plan):
+        (Plan.prototype.addConstraint):
+        (Plan.prototype.size):
+        (Plan.prototype.constraintAt):
+        (Plan.prototype.execute):
+        (chainTest):
+        (projectionTest):
+        (change):
+        (deltaBlue):
+        * microbenchmarks/fake-iterators-that-throw-when-finished.js: Added.
+        (assert):
+        (Numbers):
+        (Numbers.prototype.next):
+        (return.Transpose):
+        (return.Transpose.prototype.next):
+        (transpose):
+        (verifyEven):
+        (verifyString):
+        (foo):
+        (runIterators):
+        * microbenchmarks/try-catch-word-count.js: Added.
+        (let.assert):
+        (EOF):
+        (let.texts):
+        (let.o.apply):
+        (foo):
+        (bar):
+        (f):
+        (run):
+        (test1):
+        (test2):
+        (test3):
+        (fn):
+        (A):
+        (B):
+        (A.prototype.getValue):
+        (B.prototype.getParentValue):
+        (strlen):
+        (sum.0):
+        (test):
+        (result.test.o):
+        (set add.set add):
+        (set forEach):
+        (stringHash):
+        (set if):
+        (testFunction):
+        (set delete.set has.set add):
+        * stress/catch-set-argument-speculation-failure.js: Added.
+        (o):
+        (e):
+        (e2):
+        (escape):
+        (baz):
+        (noInline.run):
+        (noInline):
+        * stress/osr-enter-to-catch-with-set-local-type-check-failure.js: Added.
+        (foo):
+        (e):
+        (baz):
+        (bar):
+
 2017-08-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r221119, r221124, and r221143.

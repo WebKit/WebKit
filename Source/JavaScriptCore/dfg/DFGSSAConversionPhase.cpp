@@ -54,7 +54,8 @@ public:
         RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
         
         m_graph.clearReplacements();
-        m_graph.ensureDominators();
+        m_graph.clearCPSCFGData();
+        m_graph.ensureSSADominators();
         
         if (verbose) {
             dataLog("Graph before SSA transformation:\n");
@@ -110,7 +111,7 @@ public:
         }
         
         // Decide where Phis are to be inserted. This creates the Phi's but doesn't insert them
-        // yet. We will later know where to insert them because SSACalculator is such a bro.
+        // yet. We will later know where to insert based on where SSACalculator tells us to.
         m_calculator.computePhis(
             [&] (SSACalculator::Variable* ssaVariable, BasicBlock* block) -> Node* {
                 VariableAccessData* variable = m_variableForSSAIndex[ssaVariable->index()];
@@ -381,18 +382,22 @@ public:
             block->valuesAtHead.clear();
             block->ssa = std::make_unique<BasicBlock::SSAData>(block);
         }
-        
-        m_graph.m_argumentFormats.resize(m_graph.m_arguments.size());
-        for (unsigned i = m_graph.m_arguments.size(); i--;) {
+
+        // FIXME: Support multiple entrypoints in DFG SSA:
+        // https://bugs.webkit.org/show_bug.cgi?id=175396
+        RELEASE_ASSERT(m_graph.m_entrypoints.size() == 1);
+        auto& arguments = m_graph.m_entrypointToArguments.find(m_graph.block(0))->value;
+        m_graph.m_argumentFormats.resize(arguments.size());
+        for (unsigned i = arguments.size(); i--;) {
             FlushFormat format = FlushedJSValue;
 
-            Node* node = m_argumentMapping.get(m_graph.m_arguments[i]);
+            Node* node = m_argumentMapping.get(arguments[i]);
             
             RELEASE_ASSERT(node);
             format = node->stackAccessData()->format;
             
             m_graph.m_argumentFormats[i] = format;
-            m_graph.m_arguments[i] = node; // Record the load that loads the arguments for the benefit of exit profiling.
+            arguments[i] = node; // Record the load that loads the arguments for the benefit of exit profiling.
         }
         
         m_graph.m_form = SSA;
@@ -416,7 +421,12 @@ private:
 
 bool performSSAConversion(Graph& graph)
 {
-    return runPhase<SSAConversionPhase>(graph);
+    RELEASE_ASSERT(!graph.m_isInSSAConversion);
+    graph.m_isInSSAConversion = true;
+    bool result = runPhase<SSAConversionPhase>(graph);
+    RELEASE_ASSERT(graph.m_isInSSAConversion);
+    graph.m_isInSSAConversion = false;
+    return result;
 }
 
 } } // namespace JSC::DFG

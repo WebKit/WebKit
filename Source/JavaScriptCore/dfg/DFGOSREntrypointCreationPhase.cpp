@@ -30,6 +30,7 @@
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGBlockInsertionSet.h"
+#include "DFGCFG.h"
 #include "DFGGraph.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
 #include "DFGPhase.h"
@@ -54,7 +55,7 @@ public:
         RELEASE_ASSERT(bytecodeIndex != UINT_MAX);
         
         // Needed by createPreHeader().
-        m_graph.ensureDominators();
+        m_graph.ensureCPSDominators();
         
         CodeBlock* baseline = m_graph.m_profiledBlock;
         
@@ -112,16 +113,17 @@ public:
         // type checks to here.
         origin = target->at(0)->origin;
         
+        ArgumentsVector newArguments = m_graph.m_entrypointToArguments.find(m_graph.block(0))->value;
         for (int argument = 0; argument < baseline->numParameters(); ++argument) {
             Node* oldNode = target->variablesAtHead.argument(argument);
             if (!oldNode) {
                 // Just for sanity, always have a SetArgument even if it's not needed.
-                oldNode = m_graph.m_arguments[argument];
+                oldNode = newArguments[argument];
             }
             Node* node = newRoot->appendNode(
                 m_graph, SpecNone, SetArgument, origin,
                 OpInfo(oldNode->variableAccessData()));
-            m_graph.m_arguments[argument] = node;
+            newArguments[argument] = node;
         }
 
         for (int local = 0; local < baseline->m_numCalleeLocals; ++local) {
@@ -139,8 +141,17 @@ public:
             OpInfo(createPreHeader(m_graph, insertionSet, target)));
         
         insertionSet.execute();
+
+        RELEASE_ASSERT(m_graph.m_entrypoints.size() == 1);
+        m_graph.m_entrypoints[0] = newRoot;
+        m_graph.m_entrypointToArguments.clear();
+        m_graph.m_entrypointToArguments.add(newRoot, newArguments);
+
+        m_graph.m_cpsCFG = std::make_unique<CPSCFG>(m_graph);
+
         m_graph.resetReachability();
         m_graph.killUnreachableBlocks();
+
         return true;
     }
 };

@@ -366,9 +366,8 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     // If we're doing validation, then run some analyses, to give them an opportunity
     // to self-validate. Now is as good a time as any to do this.
     if (validationEnabled()) {
-        dfg.ensureDominators();
-        dfg.ensureNaturalLoops();
-        dfg.ensurePrePostNumbering();
+        dfg.ensureCPSDominators();
+        dfg.ensureCPSNaturalLoops();
     }
 
     switch (mode) {

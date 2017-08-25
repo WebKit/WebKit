@@ -93,54 +93,61 @@ static void setLiveValues(Vector<NodeAbstractValuePair>& values, const Vector<No
 
 void InPlaceAbstractState::initialize()
 {
-    BasicBlock* root = m_graph.block(0);
-    root->cfaShouldRevisit = true;
-    root->cfaHasVisited = false;
-    root->cfaFoundConstants = false;
-    root->cfaStructureClobberStateAtHead = StructuresAreWatched;
-    root->cfaStructureClobberStateAtTail = StructuresAreWatched;
-    for (size_t i = 0; i < root->valuesAtHead.numberOfArguments(); ++i) {
-        root->valuesAtTail.argument(i).clear();
+    for (BasicBlock* entrypoint : m_graph.m_entrypoints) {
+        entrypoint->cfaShouldRevisit = true;
+        entrypoint->cfaHasVisited = false;
+        entrypoint->cfaFoundConstants = false;
+        entrypoint->cfaStructureClobberStateAtHead = StructuresAreWatched;
+        entrypoint->cfaStructureClobberStateAtTail = StructuresAreWatched;
 
-        FlushFormat format;
-        if (m_graph.m_form == SSA)
-            format = m_graph.m_argumentFormats[i];
-        else {
-            Node* node = m_graph.m_arguments[i];
-            if (!node)
-                format = FlushedJSValue;
-            else {
-                ASSERT(node->op() == SetArgument);
-                format = node->variableAccessData()->flushFormat();
+        for (size_t i = 0; i < entrypoint->valuesAtHead.numberOfArguments(); ++i) {
+            entrypoint->valuesAtTail.argument(i).clear();
+
+            FlushFormat format;
+            if (m_graph.m_form == SSA) {
+                // FIXME: When supporting multiple entrypoints in the FTL, we need to change
+                // what we do here: https://bugs.webkit.org/show_bug.cgi?id=175396
+                format = m_graph.m_argumentFormats[i];
+            } else {
+                Node* node = m_graph.m_entrypointToArguments.find(entrypoint)->value[i];
+                if (!node)
+                    format = FlushedJSValue;
+                else {
+                    ASSERT(node->op() == SetArgument);
+                    format = node->variableAccessData()->flushFormat();
+                }
+            }
+            
+            switch (format) {
+            case FlushedInt32:
+                entrypoint->valuesAtHead.argument(i).setType(SpecInt32Only);
+                break;
+            case FlushedBoolean:
+                entrypoint->valuesAtHead.argument(i).setType(SpecBoolean);
+                break;
+            case FlushedCell:
+                entrypoint->valuesAtHead.argument(i).setType(m_graph, SpecCell);
+                break;
+            case FlushedJSValue:
+                entrypoint->valuesAtHead.argument(i).makeBytecodeTop();
+                break;
+            default:
+                DFG_CRASH(m_graph, nullptr, "Bad flush format for argument");
+                break;
             }
         }
-        
-        switch (format) {
-        case FlushedInt32:
-            root->valuesAtHead.argument(i).setType(SpecInt32Only);
-            break;
-        case FlushedBoolean:
-            root->valuesAtHead.argument(i).setType(SpecBoolean);
-            break;
-        case FlushedCell:
-            root->valuesAtHead.argument(i).setType(m_graph, SpecCell);
-            break;
-        case FlushedJSValue:
-            root->valuesAtHead.argument(i).makeBytecodeTop();
-            break;
-        default:
-            DFG_CRASH(m_graph, nullptr, "Bad flush format for argument");
-            break;
+        for (size_t i = 0; i < entrypoint->valuesAtHead.numberOfLocals(); ++i) {
+            entrypoint->valuesAtHead.local(i).clear();
+            entrypoint->valuesAtTail.local(i).clear();
         }
     }
-    for (size_t i = 0; i < root->valuesAtHead.numberOfLocals(); ++i) {
-        root->valuesAtHead.local(i).clear();
-        root->valuesAtTail.local(i).clear();
-    }
-    for (BlockIndex blockIndex = 1 ; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-        BasicBlock* block = m_graph.block(blockIndex);
-        if (!block)
+
+    for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+        if (m_graph.isEntrypoint(block)) {
+            // We bootstrapped the entrypoints above.
             continue;
+        }
+
         ASSERT(block->isReachable);
         block->cfaShouldRevisit = false;
         block->cfaHasVisited = false;
@@ -364,7 +371,7 @@ inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
             changed |= merge(basicBlock, data->cases[i].target.block);
         return changed;
     }
-        
+
     case Return:
     case TailCall:
     case DirectTailCall:

@@ -127,7 +127,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         ASSERT(!node->origin.semantic.inlineCallFrame);
         read(AbstractHeap(Stack, graph.m_codeBlock->scopeRegister()));
     }
-        
     
     switch (node->op()) {
     case JSConstant:
@@ -141,6 +140,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case Phantom:
     case Check:
     case ExtractOSREntryLocal:
+    case ExtractCatchLocal:
     case CheckStructureImmediate:
         return;
         

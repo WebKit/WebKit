@@ -154,6 +154,18 @@ ParserError BytecodeGenerator::generate()
         emitUnreachable();
     }
 
+    for (auto& tuple : m_catchesToEmit) {
+        Ref<Label> realCatchTarget = newEmittedLabel();
+        emitOpcode(op_catch);
+        instructions().append(std::get<1>(tuple));
+        instructions().append(std::get<2>(tuple));
+        instructions().append(0);
+
+        TryData* tryData = std::get<0>(tuple);
+        emitJump(tryData->target.get());
+        tryData->target = WTFMove(realCatchTarget);
+    }
+
     m_staticPropertyAnalyzer.kill();
 
     for (auto& range : m_tryRanges) {
@@ -714,7 +726,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
         RefPtr<RegisterID> thrownValue = newTemporary();
         RegisterID* unused = newTemporary();
-        emitCatch(unused, thrownValue.get());
+        emitCatch(unused, thrownValue.get(), tryFormalParametersData);
 
         // return promiseCapability.@reject(thrownValue)
         RefPtr<RegisterID> reject = emitGetById(newTemporary(), promiseCapabilityRegister(), m_vm->propertyNames->builtinNames().rejectPrivateName());
@@ -4009,11 +4021,9 @@ void BytecodeGenerator::popTry(TryData* tryData, Label& end)
     m_tryContextStack.removeLast();
 }
 
-void BytecodeGenerator::emitCatch(RegisterID* exceptionRegister, RegisterID* thrownValueRegister)
+void BytecodeGenerator::emitCatch(RegisterID* exceptionRegister, RegisterID* thrownValueRegister, TryData* data)
 {
-    emitOpcode(op_catch);
-    instructions().append(exceptionRegister->index());
-    instructions().append(thrownValueRegister->index());
+    m_catchesToEmit.append(CatchEntry { data, exceptionRegister->index(), thrownValueRegister->index() });
 }
 
 void BytecodeGenerator::restoreScopeRegister(int lexicalScopeIndex)
@@ -4345,7 +4355,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             RefPtr<RegisterID> finallyExceptionRegister = newTemporary();
             RegisterID* unused = newTemporary();
 
-            emitCatch(completionValueRegister(), unused);
+            emitCatch(completionValueRegister(), unused, tryData);
             emitSetCompletionType(CompletionType::Throw);
             emitMove(finallyExceptionRegister.get(), completionValueRegister());
             emitJump(finallyBodyLabel.get());
@@ -4385,7 +4395,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
                 emitLabel(catchLabel.get());
                 RefPtr<RegisterID> exceptionRegister = newTemporary();
                 RegisterID* unused = newTemporary();
-                emitCatch(exceptionRegister.get(), unused);
+                emitCatch(exceptionRegister.get(), unused, returnCallTryData);
                 // Since this is a synthesized catch block and we're guaranteed to never need
                 // to resolve any symbols from the scope, we can skip restoring the scope
                 // register here.

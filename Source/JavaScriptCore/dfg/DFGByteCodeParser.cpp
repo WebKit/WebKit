@@ -37,6 +37,7 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractHeap.h"
 #include "DFGArrayMode.h"
+#include "DFGCFG.h"
 #include "DFGCapabilities.h"
 #include "DFGClobberize.h"
 #include "DFGClobbersExitState.h"
@@ -401,14 +402,14 @@ private:
         // We can't exit anymore because our OSR exit state has changed.
         m_exitOK = false;
 
-        DelayedSetLocal delayed(currentCodeOrigin(), operand, value);
+        DelayedSetLocal delayed(currentCodeOrigin(), operand, value, setMode);
         
         if (setMode == NormalSet) {
             m_setLocalQueue.append(delayed);
-            return 0;
+            return nullptr;
         }
         
-        return delayed.execute(this, setMode);
+        return delayed.execute(this);
     }
     
     void processSetLocalQueue()
@@ -642,6 +643,7 @@ private:
             flushDirect(inlineStackEntry->remapOperand(virtualRegisterForArgument(argument)));
         if (!inlineStackEntry->m_inlineCallFrame && m_graph.needsFlushedThis())
             flushDirect(virtualRegisterForArgument(0));
+
         if (m_graph.needsScopeRegister())
             flushDirect(m_codeBlock->scopeRegister());
     }
@@ -1131,7 +1133,7 @@ private:
         // Potential block linking targets. Must be sorted by bytecodeBegin, and
         // cannot have two blocks that have the same bytecodeBegin.
         Vector<BasicBlock*> m_blockLinkingTargets;
-        
+
         // If the callsite's basic block was split into two, then this will be
         // the head of the callsite block. It needs its successors linked to the
         // m_unlinkedBlocks, but not the other way around: there's no way for
@@ -1200,21 +1202,23 @@ private:
         CodeOrigin m_origin;
         VirtualRegister m_operand;
         Node* m_value;
+        SetMode m_setMode;
         
         DelayedSetLocal() { }
-        DelayedSetLocal(const CodeOrigin& origin, VirtualRegister operand, Node* value)
+        DelayedSetLocal(const CodeOrigin& origin, VirtualRegister operand, Node* value, SetMode setMode)
             : m_origin(origin)
             , m_operand(operand)
             , m_value(value)
+            , m_setMode(setMode)
         {
             RELEASE_ASSERT(operand.isValid());
         }
         
-        Node* execute(ByteCodeParser* parser, SetMode setMode = NormalSet)
+        Node* execute(ByteCodeParser* parser)
         {
             if (m_operand.isArgument())
-                return parser->setArgument(m_origin, m_operand, m_value, setMode);
-            return parser->setLocal(m_origin, m_operand, m_value, setMode);
+                return parser->setArgument(m_origin, m_operand, m_value, m_setMode);
+            return parser->setLocal(m_origin, m_operand, m_value, m_setMode);
         }
     };
     
@@ -4135,7 +4139,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     // us to track if a use of an argument may use the actual argument passed, as
     // opposed to using a value we set explicitly.
     if (m_currentBlock == m_graph.block(0) && !inlineCallFrame()) {
-        m_graph.m_arguments.resize(m_numArguments);
+        auto addResult = m_graph.m_entrypointToArguments.add(m_currentBlock, ArgumentsVector());
+        RELEASE_ASSERT(addResult.isNewEntry);
+        ArgumentsVector& entrypointArguments = addResult.iterator->value;
+        entrypointArguments.resize(m_numArguments);
+
         // We will emit SetArgument nodes. They don't exit, but we're at the top of an op_enter so
         // exitOK = true.
         m_exitOK = true;
@@ -4148,7 +4156,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
             
             Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
-            m_graph.m_arguments[argument] = setArgument;
+            entrypointArguments[argument] = setArgument;
             m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
         }
     }
@@ -5218,10 +5226,126 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(Unreachable);
             LAST_OPCODE(op_throw_static_error);
 
-        case op_catch:
+        case op_catch: {
             m_graph.m_hasExceptionHandlers = true;
+
+            if (inlineCallFrame()) {
+                // We can't do OSR entry into an inlined frame.
+                NEXT_OPCODE(op_catch);
+            }
+
+            if (isFTL(m_graph.m_plan.mode)) {
+                // FIXME: Support catch in the FTL.
+                // https://bugs.webkit.org/show_bug.cgi?id=175396
+                NEXT_OPCODE(op_catch);
+            }
+
+            RELEASE_ASSERT(!m_currentBlock->size());
+
+            ValueProfileAndOperandBuffer* buffer = static_cast<ValueProfileAndOperandBuffer*>(currentInstruction[3].u.pointer);
+
+            if (!buffer) {
+                NEXT_OPCODE(op_catch); // This catch has yet to execute. Note: this load can be racy with the main thread.
+            }
+
+            // We're now committed to compiling this as an entrypoint.
+            m_currentBlock->isCatchEntrypoint = true;
+            m_graph.m_entrypoints.append(m_currentBlock);
+
+            Vector<SpeculatedType> argumentPredictions(m_numArguments);
+            Vector<SpeculatedType> localPredictions;
+            HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> seenArguments;
+
+            {
+                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+
+                buffer->forEach([&] (ValueProfileAndOperand& profile) {
+                    VirtualRegister operand(profile.m_operand);
+                    SpeculatedType prediction = profile.m_profile.computeUpdatedPrediction(locker);
+                    if (operand.isLocal())
+                        localPredictions.append(prediction);
+                    else {
+                        RELEASE_ASSERT(operand.isArgument());
+                        RELEASE_ASSERT(static_cast<uint32_t>(operand.toArgument()) < argumentPredictions.size());
+                        if (validationEnabled())
+                            seenArguments.add(operand.toArgument());
+                        argumentPredictions[operand.toArgument()] = prediction;
+                    }
+                });
+
+                if (validationEnabled()) {
+                    for (unsigned argument = 0; argument < m_numArguments; ++argument)
+                        RELEASE_ASSERT(seenArguments.contains(argument));
+                }
+            }
+
+            Vector<std::pair<VirtualRegister, Node*>> localsToSet;
+            localsToSet.reserveInitialCapacity(buffer->m_size); // Note: This will reserve more than the number of locals we see below because the buffer includes arguments.
+
+            // We're not allowed to exit here since we would not properly recover values.
+            // We first need to bootstrap the catch entrypoint state.
+            m_exitOK = false; 
+
+            unsigned numberOfLocals = 0;
+            buffer->forEach([&] (ValueProfileAndOperand& profile) {
+                VirtualRegister operand(profile.m_operand);
+                if (operand.isArgument())
+                    return;
+                ASSERT(operand.isLocal());
+                Node* value = addToGraph(ExtractCatchLocal, OpInfo(numberOfLocals), OpInfo(localPredictions[numberOfLocals]));
+                ++numberOfLocals;
+                addToGraph(MovHint, OpInfo(profile.m_operand), value);
+                localsToSet.uncheckedAppend(std::make_pair(operand, value));
+            });
+
+            if (!m_graph.m_maxLocalsForCatchOSREntry)
+                m_graph.m_maxLocalsForCatchOSREntry = 0;
+            m_graph.m_maxLocalsForCatchOSREntry = std::max(numberOfLocals, *m_graph.m_maxLocalsForCatchOSREntry);
+
+            // We could not exit before this point in the program because we would not know how to do value
+            // recovery for live locals. The above IR sets up the necessary state so we can recover values
+            // during OSR exit. 
+            //
+            // The nodes that follow here all exit to the following bytecode instruction, not
+            // the op_catch. Exiting to op_catch is reserved for when an exception is thrown.
+            // The SetArgument nodes that follow below may exit because we may hoist type checks
+            // to them. The SetLocal nodes that follow below may exit because we may choose
+            // a flush format that speculates on the type of the local.
+            m_exitOK = true; 
+            addToGraph(ExitOK);
+
+            {
+                auto addResult = m_graph.m_entrypointToArguments.add(m_currentBlock, ArgumentsVector());
+                RELEASE_ASSERT(addResult.isNewEntry);
+                ArgumentsVector& entrypointArguments = addResult.iterator->value;
+                entrypointArguments.resize(m_numArguments);
+
+                unsigned exitBytecodeIndex = m_currentIndex + OPCODE_LENGTH(op_catch);
+
+                for (unsigned argument = 0; argument < argumentPredictions.size(); ++argument) {
+                    VariableAccessData* variable = newVariableAccessData(virtualRegisterForArgument(argument));
+                    variable->predict(argumentPredictions[argument]);
+
+                    variable->mergeStructureCheckHoistingFailed(
+                        m_inlineStackTop->m_exitProfile.hasExitSite(exitBytecodeIndex, BadCache));
+                    variable->mergeCheckArrayHoistingFailed(
+                        m_inlineStackTop->m_exitProfile.hasExitSite(exitBytecodeIndex, BadIndexingType));
+
+                    Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
+                    setArgument->origin.forExit.bytecodeIndex = exitBytecodeIndex;
+                    m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
+                    entrypointArguments[argument] = setArgument;
+                }
+            }
+
+            for (const std::pair<VirtualRegister, Node*>& pair : localsToSet) {
+                DelayedSetLocal delayed { currentCodeOrigin(), pair.first, pair.second, ImmediateNakedSet };
+                m_setLocalQueue.append(delayed);
+            }
+
             NEXT_OPCODE(op_catch);
-            
+        }
+
         case op_call:
             handleCall(currentInstruction, Call, CallMode::Regular);
             ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleCall, which may have inlined the callee, trashed m_currentInstruction");
@@ -6246,8 +6370,10 @@ void ByteCodeParser::parseCodeBlock()
                     m_inlineStackTop->m_unlinkedBlocks.append(UnlinkedBlock(block.ptr()));
                     m_inlineStackTop->m_blockLinkingTargets.append(block.ptr());
                     // The first block is definitely an OSR target.
-                    if (!m_graph.numBlocks())
+                    if (!m_graph.numBlocks()) {
                         block->isOSRTarget = true;
+                        m_graph.m_entrypoints.append(block.ptr());
+                    }
                     m_graph.appendBlock(WTFMove(block));
                     prepareToParseBlock();
                 }
@@ -6304,10 +6430,12 @@ bool ByteCodeParser::parse()
         m_codeBlock->numParameters(), InlineCallFrame::Call);
     
     parseCodeBlock();
-
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
+
     m_graph.determineReachability();
     m_graph.killUnreachableBlocks();
+
+    m_graph.m_cpsCFG = std::make_unique<CPSCFG>(m_graph);
     
     for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
         BasicBlock* block = m_graph.block(blockIndex);
@@ -6318,7 +6446,7 @@ bool ByteCodeParser::parse()
         ASSERT(block->variablesAtTail.numberOfLocals() == m_graph.block(0)->variablesAtHead.numberOfLocals());
         ASSERT(block->variablesAtTail.numberOfArguments() == m_graph.block(0)->variablesAtHead.numberOfArguments());
     }
-    
+
     m_graph.m_localVars = m_numLocals;
     m_graph.m_parameterSlots = m_parameterSlots;
 

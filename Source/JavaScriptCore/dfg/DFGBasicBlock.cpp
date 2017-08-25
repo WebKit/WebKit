@@ -37,6 +37,7 @@ BasicBlock::BasicBlock(
     : bytecodeBegin(bytecodeBegin)
     , index(NoBlock)
     , isOSRTarget(false)
+    , isCatchEntrypoint(false)
     , cfaHasVisited(false)
     , cfaShouldRevisit(false)
     , cfaFoundConstants(false)

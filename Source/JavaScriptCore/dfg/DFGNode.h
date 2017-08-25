@@ -1292,7 +1292,7 @@ public:
         return op() == Branch;
     }
     
-    bool isSwitch()
+    bool isSwitch() const
     {
         return op() == Switch;
     }
@@ -1387,6 +1387,7 @@ public:
             RELEASE_ASSERT(index == switchData()->cases.size());
             return switchData()->fallThrough.block;
         }
+
         switch (index) {
         case 0:
             if (isJump())
@@ -1557,6 +1558,18 @@ public:
     {
         ASSERT(op() == IdentityWithProfile);
         return m_opInfo.as<SpeculatedType>();
+    }
+
+    uint32_t catchOSREntryIndex() const
+    {
+        ASSERT(op() == ExtractCatchLocal);
+        return m_opInfo.as<uint32_t>();
+    }
+
+    SpeculatedType catchLocalPrediction()
+    {
+        ASSERT(op() == ExtractCatchLocal);
+        return m_opInfo2.as<SpeculatedType>();
     }
     
     bool hasCellOperand()
@@ -1957,7 +1970,7 @@ public:
     {
         return m_virtualRegister.isValid();
     }
-    
+
     VirtualRegister virtualRegister()
     {
         ASSERT(hasResult());

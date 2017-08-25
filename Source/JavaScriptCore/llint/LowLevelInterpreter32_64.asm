@@ -1997,7 +1997,10 @@ _llint_op_catch:
     storei t1, TagOffset[cfr, t2, 8]
 
     traceExecution()  # This needs to be here because we don't want to clobber t0, t1, t2, t3 above.
-    dispatch(3)
+
+    callOpcodeSlowPath(_llint_slow_path_profile_catch)
+
+    dispatch(constexpr op_catch_length)
 
 _llint_op_end:
     traceExecution()

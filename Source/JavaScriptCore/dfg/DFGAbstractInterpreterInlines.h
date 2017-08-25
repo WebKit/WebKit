@@ -208,6 +208,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
+    case ExtractCatchLocal:
     case ExtractOSREntryLocal: {
         forNode(node).makeBytecodeTop();
         break;
@@ -1851,7 +1852,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // FIXME: Do sparse conditional things.
         break;
     }
-            
+
     case Return:
         m_state.setIsValid(false);
         break;

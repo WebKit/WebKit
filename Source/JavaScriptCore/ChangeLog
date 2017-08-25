@@ -1,3 +1,270 @@
+2017-08-25  Saam Barati  <sbarati@apple.com>
+
+        Support compiling catch in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=174590
+        <rdar://problem/34047845>
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements OSR entry into op_catch in the DFG. We will support OSR entry
+        into the FTL in a followup: https://bugs.webkit.org/show_bug.cgi?id=175396
+        
+        To implement catch in the DFG, this patch introduces the concept of multiple
+        entrypoints into CPS/LoadStore DFG IR. A lot of this patch is stringing this concept
+        through the DFG. Many phases used to assume that Graph::block(0) is the only root, and this
+        patch contains many straight forward changes generalizing the code to handle more than
+        one entrypoint.
+        
+        A main building block of this is moving to two CFG types: SSACFG and CPSCFG. SSACFG
+        is the same CFG we used to have. CPSCFG is a new type that introduces a fake root
+        that has an outgoing edge to all the entrypoints. This allows our existing graph algorithms
+        to Just Work over CPSCFG. For example, there is now the concept of SSADominators vs CPSDominators,
+        and SSANaturalLoops vs CPSNaturalLoops.
+        
+        The way we compile the catch entrypoint is by bootstrapping the state
+        of the program by loading all live bytecode locals from a buffer. The OSR
+        entry code will store all live values into that buffer before jumping to
+        the entrypoint. The OSR entry code is also responsible for performing type
+        proofs of the arguments before doing an OSR entry. If there is a type
+        mismatch, it's not legal to OSR enter into the DFG compilation. Currently,
+        each catch entrypoint knows the argument type proofs it must perform to enter
+        into the DFG. Currently, all entrypoints' arguments flush format are unified
+        via ArgumentPosition, but this is just an implementation detail. The code is
+        written more generally to assume that each entrypoint may perform its own distinct
+        proof.
+        
+        op_catch now performs value profiling for all live bytecode locals in the
+        LLInt and baseline JIT. This information is then fed into the DFG via the
+        ExtractCatchLocal node in the prediction propagation phase.
+        
+        This patch also changes how we generate op_catch in bytecode. All op_catches
+        are now split out at the end of the program in bytecode. This ensures that
+        no op_catch is inside a try block. This is needed to ensure correctness in
+        the DFGLiveCatchVariablePreservationPhase. That phase only inserts flushes
+        before SetLocals inside a try block. If an op_catch were in a try block, this
+        would cause the phase to insert a Flush before one of the state bootstrapping
+        SetLocals, which would generate invalid IR. Moving op_catch to be generated on
+        its own at the end of a bytecode stream seemed like the most elegant solution since
+        it better represents that we treat op_catch as an entrypoint. This is true
+        both in the DFG and in the baseline and LLInt: we don't reach an op_catch
+        via normal control flow. Because op_catch cannot throw, this will not break
+        any previous semantics of op_catch. Logically, it'd be valid to split try
+        blocks around any non-throwing bytecode operation.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffset):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::validate):
+        * bytecode/CodeBlock.h:
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::ValueProfile):
+        (JSC::ValueProfileAndOperandBuffer::ValueProfileAndOperandBuffer):
+        (JSC::ValueProfileAndOperandBuffer::~ValueProfileAndOperandBuffer):
+        (JSC::ValueProfileAndOperandBuffer::forEach):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCatch):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsCFG.h:
+        (JSC::DFG::BackwardsCFG::BackwardsCFG):
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::findTerminal const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setDirect):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::DelayedSetLocal::DelayedSetLocal):
+        (JSC::DFG::ByteCodeParser::DelayedSetLocal::execute):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCFG.h:
+        (JSC::DFG::CFG::root):
+        (JSC::DFG::CFG::roots):
+        (JSC::DFG::CPSCFG::CPSCFG):
+        (JSC::DFG::selectCFG):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::specialCaseArguments):
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGControlEquivalenceAnalysis.h:
+        (JSC::DFG::ControlEquivalenceAnalysis::ControlEquivalenceAnalysis):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::createDumpList):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGDominators.h:
+        (JSC::DFG::Dominators::Dominators):
+        (JSC::DFG::ensureDominatorsForCFG):
+        * dfg/DFGEdgeDominates.h:
+        (JSC::DFG::EdgeDominates::EdgeDominates):
+        (JSC::DFG::EdgeDominates::operator()):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupChecksInBlock):
+        * dfg/DFGFlushFormat.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::unboxLoopNode):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::determineReachability):
+        (JSC::DFG::Graph::invalidateCFG):
+        (JSC::DFG::Graph::blocksInPreOrder):
+        (JSC::DFG::Graph::blocksInPostOrder):
+        (JSC::DFG::Graph::ensureCPSDominators):
+        (JSC::DFG::Graph::ensureSSADominators):
+        (JSC::DFG::Graph::ensureCPSNaturalLoops):
+        (JSC::DFG::Graph::ensureSSANaturalLoops):
+        (JSC::DFG::Graph::ensureBackwardsCFG):
+        (JSC::DFG::Graph::ensureBackwardsDominators):
+        (JSC::DFG::Graph::ensureControlEquivalenceAnalysis):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        (JSC::DFG::Graph::clearCPSCFGData):
+        (JSC::DFG::Graph::ensureDominators): Deleted.
+        (JSC::DFG::Graph::ensurePrePostNumbering): Deleted.
+        (JSC::DFG::Graph::ensureNaturalLoops): Deleted.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::willCatchExceptionInMachineFrame):
+        (JSC::DFG::Graph::isEntrypoint const):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        (JSC::DFG::InPlaceAbstractState::mergeToSuccessors):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::shrinkToFit):
+        * dfg/DFGJITCode.h:
+        (JSC::DFG::JITCode::catchOSREntryDataForBytecodeIndex):
+        (JSC::DFG::JITCode::finalizeCatchOSREntrypoints):
+        (JSC::DFG::JITCode::appendCatchEntrypoint):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::noticeCatchEntrypoint):
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        (JSC::DFG::JITCompiler::makeCatchOSREntryBuffer):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::LiveCatchVariablePreservationPhase::run):
+        (JSC::DFG::LiveCatchVariablePreservationPhase::isValidFlushLocation):
+        (JSC::DFG::LiveCatchVariablePreservationPhase::handleBlockForTryCatch):
+        (JSC::DFG::LiveCatchVariablePreservationPhase::newVariableAccessData):
+        (JSC::DFG::LiveCatchVariablePreservationPhase::willCatchException): Deleted.
+        (JSC::DFG::LiveCatchVariablePreservationPhase::handleBlock): Deleted.
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::createPreHeader):
+        (JSC::DFG::LoopPreHeaderCreationPhase::run):
+        * dfg/DFGMaximalFlushInsertionPhase.cpp:
+        (JSC::DFG::MaximalFlushInsertionPhase::run):
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRegularBlock):
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRootBlock):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNaturalLoops.h:
+        (JSC::DFG::NaturalLoops::NaturalLoops):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isSwitch const):
+        (JSC::DFG::Node::successor):
+        (JSC::DFG::Node::catchOSREntryIndex const):
+        (JSC::DFG::Node::catchLocalPrediction):
+        (JSC::DFG::Node::isSwitch): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareCatchOSREntry):
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPrePostNumbering.cpp:
+        (JSC::DFG::PrePostNumbering::PrePostNumbering): Deleted.
+        (JSC::DFG::PrePostNumbering::~PrePostNumbering): Deleted.
+        (WTF::printInternal): Deleted.
+        * dfg/DFGPrePostNumbering.h:
+        (): Deleted.
+        (JSC::DFG::PrePostNumbering::preNumber const): Deleted.
+        (JSC::DFG::PrePostNumbering::postNumber const): Deleted.
+        (JSC::DFG::PrePostNumbering::isStrictAncestorOf const): Deleted.
+        (JSC::DFG::PrePostNumbering::isAncestorOf const): Deleted.
+        (JSC::DFG::PrePostNumbering::isStrictDescendantOf const): Deleted.
+        (JSC::DFG::PrePostNumbering::isDescendantOf const): Deleted.
+        (JSC::DFG::PrePostNumbering::edgeKind const): Deleted.
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGSSACalculator.cpp:
+        (JSC::DFG::SSACalculator::nonLocalReachingDef):
+        (JSC::DFG::SSACalculator::reachingDefAtTail):
+        * dfg/DFGSSACalculator.h:
+        (JSC::DFG::SSACalculator::computePhis):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        (JSC::DFG::performSSAConversion):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::createOSREntries):
+        (JSC::DFG::SpeculativeJIT::linkOSREntries):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStaticExecutionCountEstimationPhase.cpp:
+        (JSC::DFG::StaticExecutionCountEstimationPhase::run):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        (JSC::DFG::TierUpCheckInjectionPhase::buildNaturalLoopToLoopHintMap):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::safelyInvalidateAfterTermination):
+        (JSC::FTL::DFG::LowerDFGToB3::isValid):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2017-08-25  Keith Miller  <keith_miller@apple.com>
 
         Explore increasing max JSString::m_length to UINT_MAX.

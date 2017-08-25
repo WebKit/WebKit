@@ -40,11 +40,12 @@ public:
         , m_block(block)
         , m_result(true)
     {
+        ASSERT(graph.m_form == SSA);
     }
     
     void operator()(Node*, Edge edge)
     {
-        bool result = m_graph.m_dominators->dominates(edge.node()->owner, m_block);
+        bool result = m_graph.m_ssaDominators->dominates(edge.node()->owner, m_block);
         if (verbose) {
             dataLog(
                 "Checking if ", edge, " in ", *edge.node()->owner,
