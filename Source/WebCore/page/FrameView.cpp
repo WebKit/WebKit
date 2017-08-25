@@ -4575,16 +4575,6 @@ void FrameView::paintOverhangAreas(GraphicsContext& context, const IntRect& hori
     ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
 }
 
-static void appendRenderedChildren(FrameView& view, Deque<Ref<FrameView>, 16>& deque)
-{
-    for (Frame* frame = view.frame().tree().firstRenderedChild(); frame; frame = frame->tree().nextRenderedSibling()) {
-        if (frame->view())
-            deque.append(*frame->view());
-    }
-}
-
-// FIXME: Change the one remaining caller of this to use appendRenderedChildren above instead,
-// and then remove FrameViewList and renderedChildFrameViews.
 FrameView::FrameViewList FrameView::renderedChildFrameViews() const
 {
     FrameViewList childViews;
@@ -4598,50 +4588,32 @@ FrameView::FrameViewList FrameView::renderedChildFrameViews() const
 
 void FrameView::updateLayoutAndStyleIfNeededRecursive()
 {
-    // The number "4" here is empirically determined as the number of passes needed to
-    // make sure we don't need more style recalculation or layout; we have not seen a
-    // case where we need more than 3 passes, so 4 is a bit more than needed in any
-    // normal case. But it's not clear that anything prevents an indefinite number of
-    // passes from being needed. So it would be better to instead have a firm guarantee
-    // of the number of times this needs to be done, or come up with a way to do this
-    // in one pass without a loop.
-    const unsigned maxUpdatePasses = 4;
+    // We have to crawl our entire tree looking for any FrameViews that need
+    // layout and make sure they are up to date.
+    // Mac actually tests for intersection with the dirty region and tries not to
+    // update layout for frames that are outside the dirty region.  Not only does this seem
+    // pointless (since those frames will have set a zero timer to layout anyway), but
+    // it is also incorrect, since if two frames overlap, the first could be excluded from the dirty
+    // region but then become included later by the second frame adding rects to the dirty region
+    // when it lays out.
 
     AnimationUpdateBlock animationUpdateBlock(&frame().animation());
 
-    auto updateOnce = [this] {
-        auto updateOneFrame = [] (FrameView& view) {
-            bool didWork = view.frame().document()->updateStyleIfNeeded();
-            if (view.needsLayout()) {
-                view.layout();
-                didWork = true;
-            }
-            return didWork;
-        };
+    frame().document()->updateStyleIfNeeded();
 
-        bool didWork = false;
+    if (needsLayout())
+        layout();
 
-        // Use a copy of the child frame list because it can change while updating.
-        Deque<Ref<FrameView>, 16> views;
-        views.append(*this);
-        while (!views.isEmpty()) {
-            auto view = views.takeFirst();
-            if (updateOneFrame(view.get()))
-                didWork = true;
-            appendRenderedChildren(view.get(), views);
-        }
+    // Grab a copy of the child views, as the list may be mutated by the following updateLayoutAndStyleIfNeededRecursive
+    // calls, as they can potentially re-enter a layout of the parent frame view.
+    for (auto& frameView : renderedChildFrameViews())
+        frameView->updateLayoutAndStyleIfNeededRecursive();
 
-        return didWork;
-    };
+    // A child frame may have dirtied us during its layout.
+    frame().document()->updateStyleIfNeeded();
+    if (needsLayout())
+        layout();
 
-    for (unsigned i = 0; i < maxUpdatePasses; ++i) {
-        if (!updateOnce())
-            break;
-    }
-
-    // FIXME: Unclear why it's appropriate to skip this assertion for non-main frames.
-    // The need for this may be obsolete and a leftover from when this fucntion was
-    // implemented by recursively calling itself.
     ASSERT(!frame().isMainFrame() || !needsStyleRecalcOrLayout());
 }
 

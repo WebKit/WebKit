@@ -544,7 +544,7 @@ public:
 
     enum class ResolveStyleType { Normal, Rebuild };
     void resolveStyle(ResolveStyleType = ResolveStyleType::Normal);
-    WEBCORE_EXPORT bool updateStyleIfNeeded();
+    WEBCORE_EXPORT void updateStyleIfNeeded();
     bool needsStyleRecalc() const;
     unsigned lastStyleUpdateSizeForTesting() const { return m_lastStyleUpdateSizeForTesting; }
 
