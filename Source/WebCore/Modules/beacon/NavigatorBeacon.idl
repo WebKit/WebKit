@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Should support ReadableStream too.
-typedef (Blob or BufferSource or DOMFormData or URLSearchParams or USVString) BodyInit;
+typedef (Blob or BufferSource or DOMFormData or URLSearchParams or ReadableStream or USVString) BodyInit;
 
 [
     EnabledBySetting=BeaconAPI,

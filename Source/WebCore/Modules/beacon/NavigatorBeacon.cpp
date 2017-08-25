@@ -29,7 +29,6 @@
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
-#include "FetchBody.h"
 #include "Frame.h"
 #include "HTTPParsers.h"
 #include "Navigator.h"
@@ -130,6 +129,10 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
         options.mode = FetchOptions::Mode::Cors;
         String mimeType;
         auto fetchBody = FetchBody::extract(document, WTFMove(body.value()), mimeType);
+
+        if (fetchBody.isReadableStream())
+            return Exception { TypeError, ASCIILiteral("Beacons cannot send ReadableStream body") };
+
         request.setHTTPBody(fetchBody.bodyAsFormData(document));
         if (!mimeType.isEmpty()) {
             request.setHTTPContentType(mimeType);

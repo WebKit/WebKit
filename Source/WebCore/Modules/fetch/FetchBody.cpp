@@ -42,36 +42,33 @@ namespace WebCore {
 
 FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, String& contentType)
 {
-    if (WTF::holds_alternative<RefPtr<Blob>>(value)) {
-        Ref<const Blob> blob = WTF::get<RefPtr<Blob>>(value).releaseNonNull();
+    return WTF::switchOn(value, [&](RefPtr<Blob>& value) mutable {
+        Ref<const Blob> blob = value.releaseNonNull();
         contentType = blob->type();
         return FetchBody(WTFMove(blob));
-    }
-    if (WTF::holds_alternative<RefPtr<DOMFormData>>(value)) {
-        Ref<DOMFormData> domFormData = WTF::get<RefPtr<DOMFormData>>(value).releaseNonNull();
+    }, [&](RefPtr<DOMFormData>& value) mutable {
+        Ref<DOMFormData> domFormData = value.releaseNonNull();
         auto formData = FormData::createMultiPart(domFormData.get(), domFormData->encoding(), &static_cast<Document&>(context));
         contentType = makeString("multipart/form-data; boundary=", formData->boundary().data());
         return FetchBody(WTFMove(formData));
-    }
-
-    if (WTF::holds_alternative<RefPtr<URLSearchParams>>(value)) {
-        Ref<const URLSearchParams> params = WTF::get<RefPtr<URLSearchParams>>(value).releaseNonNull();
+    }, [&](RefPtr<URLSearchParams>& value) mutable {
+        Ref<const URLSearchParams> params = value.releaseNonNull();
         contentType = HTTPHeaderValues::formURLEncodedContentType();
         return FetchBody(WTFMove(params));
-    }
-
-    if (WTF::holds_alternative<RefPtr<ArrayBuffer>>(value)) {
-        Ref<const ArrayBuffer> buffer = WTF::get<RefPtr<ArrayBuffer>>(value).releaseNonNull();
+    }, [&](RefPtr<ArrayBuffer>& value) mutable {
+        Ref<const ArrayBuffer> buffer = value.releaseNonNull();
         return FetchBody(WTFMove(buffer));
-    }
-    if (WTF::holds_alternative<RefPtr<ArrayBufferView>>(value)) {
-        Ref<const ArrayBufferView> buffer = WTF::get<RefPtr<ArrayBufferView>>(value).releaseNonNull();
+    }, [&](RefPtr<ArrayBufferView>& value) mutable {
+        Ref<const ArrayBufferView> buffer = value.releaseNonNull();
         return FetchBody(WTFMove(buffer));
-    }
-
-    ASSERT(WTF::holds_alternative<String>(value));
-    contentType = HTTPHeaderValues::textPlainContentType();
-    return FetchBody(WTFMove(WTF::get<String>(value)));
+    }, [&](RefPtr<ReadableStream>&) mutable {
+        FetchBody body;
+        body.m_isReadableStream = true;
+        return body;
+    }, [&](String& value) {
+        contentType = HTTPHeaderValues::textPlainContentType();
+        return FetchBody(WTFMove(value));
+    });
 }
 
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)

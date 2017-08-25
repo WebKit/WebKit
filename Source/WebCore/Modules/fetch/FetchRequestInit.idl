@@ -25,8 +25,7 @@
 
 typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) HeadersInit;
 
-// FIXME: Should include ReadableStream
-typedef (Blob or BufferSource or DOMFormData or URLSearchParams or USVString) BodyInit;
+typedef (Blob or BufferSource or DOMFormData or URLSearchParams or ReadableStream or USVString) BodyInit;
 
 dictionary FetchRequestInit {
     ByteString method;

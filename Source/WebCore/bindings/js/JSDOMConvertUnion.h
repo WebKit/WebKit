@@ -29,6 +29,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConvertBase.h"
 #include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNull.h"
 #include <runtime/IteratorOperations.h>
 #include <wtf/Variant.h>
@@ -198,9 +199,8 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                 using Type = typename WTF::RemoveCVAndReference<decltype(type)>::type::type;
                 using ImplementationType = typename Type::ImplementationType;
                 using RawType = typename Type::RawType;
-                using WrapperType = typename JSDOMWrapperConverterTraits<RawType>::WrapperClass;
 
-                auto castedValue = WrapperType::toWrapped(vm, value);
+                auto castedValue = JSToWrappedOverloader<RawType>::toWrapped(state, value);
                 if (!castedValue)
                     return;
                 

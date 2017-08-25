@@ -1,3 +1,35 @@
+2017-08-25  Youenn Fablet  <youenn@apple.com>
+
+        Add support for ReadableStream storage in FetchBody
+        https://bugs.webkit.org/show_bug.cgi?id=175866
+
+        Reviewed by Sam Weinig.
+
+        Test: http/wpt/beacon/beacon-readablestream.html
+
+        Add support for IDLInterface<ReadableStream>, in particular to handle union conversions.
+        Adding a ReadableStream that guards JSReadableStream from being collected.
+        With this object, FetchBody will be able to store and manipulate ReadableStream.
+
+        Ensure conversion of BodyInit union with ReadableStream is working by adding support for beacon rejection in case of request body streams. 
+
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+        * Modules/beacon/NavigatorBeacon.idl:
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract):
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchRequestInit.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMConvertInterface.h:
+        (WebCore::JSToWrappedOverloader::toWrapped):
+        (WebCore::Converter<IDLInterface<T>>::convert):
+        * bindings/js/JSDOMConvertUnion.h:
+        * bindings/js/ReadableStream.h: Added.
+        (WebCore::JSReadableStreamWrapperConverter::toWrapped):
+
 2017-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Using the touchbar, both align left and align justify send a beforeinput event with the 'formatJustifyLeft' inputType.

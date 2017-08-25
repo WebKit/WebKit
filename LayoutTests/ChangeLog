@@ -1,3 +1,13 @@
+2017-08-25  Youenn Fablet  <youenn@apple.com>
+
+        Add support for ReadableStream storage in FetchBody
+        https://bugs.webkit.org/show_bug.cgi?id=175866
+
+        Reviewed by Sam Weinig.
+
+        * http/wpt/beacon/beacon-readablestream-expected.txt: Added.
+        * http/wpt/beacon/beacon-readablestream.html: Added.
+
 2017-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Using the touchbar, both align left and align justify send a beforeinput event with the 'formatJustifyLeft' inputType.
