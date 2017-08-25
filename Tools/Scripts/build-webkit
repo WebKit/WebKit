@@ -219,7 +219,7 @@ if (isAppleCocoaWebKit()) {
     push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
 
 } elsif (isWinCairo()) {
-    (system("perl Tools/Scripts/update-webkit-wincairo-libs") == 0) or die;
+    (system("python Tools/Scripts/update-webkit-wincairo-libs.py") == 0) or die;
 } elsif (isAppleWinWebKit()) {
     # Copy WebKitSupportLibrary to the correct location in WebKitLibraries so it can be found.
     # Will fail if WebKitSupportLibrary.zip is not in source root.

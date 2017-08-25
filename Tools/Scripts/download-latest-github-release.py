@@ -42,14 +42,20 @@ if so, download is skipped; otherwise any existing version is overwritten.
 '''
 
 
-def parse_args():
+class Status:
+    DOWNLOADED = 0
+    UP_TO_DATE = 1
+    COULD_NOT_FIND = 2
+
+
+def parse_args(argv):
     parser = argparse.ArgumentParser(description=DESCRIPTION, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('repo', help='GitHub repository slug (e.g., "org/repo")')
     parser.add_argument('filename', help='filename of release binary to download (e.g., "foo.exe", "bar.zip")')
     parser.add_argument('-o', '--output-dir', default='.', help='output directory (defaults to working directory)')
     parser.add_argument('-e', '--endpoint', default=PUBLIC_GITHUB_API_ENDPOINT, help='GitHub API endpoint (defaults to api.github.com)')
     parser.add_argument('-t', '--token', default=None, help='GitHub API OAuth token (for private repos/endpoints)')
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def find_latest_release(args):
@@ -92,22 +98,22 @@ def save_version_info(version_info_path, version_info):
         json.dump(version_info, file)
 
 
-def main():
-    args = parse_args()
+def main(argv):
+    args = parse_args(argv)
 
     print 'Seeking latest release of {} from {}...'.format(args.filename, args.repo)
     release_url, version_info = find_latest_release(args)
 
     if not release_url:
         print 'No release found!'
-        sys.exit(1)
+        return Status.COULD_NOT_FIND
 
     binary_path = os.path.join(args.output_dir, args.filename)
     version_info_path = binary_path + '.version'
 
     if has_latest_release(version_info_path, version_info):
         print 'Already up-to-date!'
-        sys.exit(0)
+        return Status.UP_TO_DATE
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
@@ -117,6 +123,11 @@ def main():
     save_version_info(version_info_path, version_info)
     print 'Done!'
 
+    return Status.DOWNLOADED
+
 
 if __name__ == '__main__':
-    main()
+    result = main(sys.argv[1:])
+
+    if result == Status.COULD_NOT_FIND:
+        sys.exit(1)

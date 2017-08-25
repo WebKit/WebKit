@@ -1,7 +1,6 @@
-#!/usr/bin/perl -w
-
-# Copyright (C) 2012 Brent Fulgham <bfulgham@webkit.org>.  All rights reserved.
-# Copyright (C) 2011 Carl Lobo.  All rights reserved.
+#! /usr/bin/env python
+#
+# Copyright (C) 2017 Sony Interactive Entertainment Inc.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -12,9 +11,6 @@
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution.
-# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-#     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -27,15 +23,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Updates a development environment to the new WinCairoRequirements.
+import importlib
+import sys
+import zipfile
 
-use strict;
-use warnings;
-use FindBin;
+download = importlib.import_module('download-latest-github-release')
 
-my $file = "WinCairoRequirements";
-my $zipFile = "$file.zip";
-my $winCairoLibsURL = "https://github.com/fujii/WinCairoRequirements/releases/download/v0.1.0/$zipFile";
-my $command = "$FindBin::Bin/update-webkit-dependency";
+repo = 'WebKitForWindows/WinCairoRequirements'
+file = 'WinCairoRequirements.zip'
+output = 'WebKitLibraries/win'
 
-system("perl", $command, $winCairoLibsURL, ".") == 0 or die;
+result = download.main([repo, file])
+
+# Only unzip if required
+if result == download.Status.DOWNLOADED:
+    print 'Extracting release to {}...'.format(output)
+    zip = zipfile.ZipFile(file, 'r')
+    zip.extractall(output)
+    zip.close()
+elif result == download.Status.COULD_NOT_FIND:
+    sys.exit(1)
