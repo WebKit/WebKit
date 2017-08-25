@@ -1,3 +1,17 @@
+2017-08-25  Ms2ger  <Ms2ger@gmail.com>
+
+        Import track-element/cloneNode.html from web-platform-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=175984
+
+        Reviewed by Youenn Fablet.
+
+        We already had an older copy in LayoutTests/media/track/opera/track/;
+        remove that in favour of the new and maintained copy.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2017-08-25  Antti Koivisto  <antti@apple.com>
 
         Mark bunch of disk cache tests non-flaky on release

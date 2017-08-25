@@ -186,7 +186,7 @@
     "web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-max-value.htm": "skip", 
     "web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-negative-time.htm": "skip", 
     "web-platform-tests/html/semantics/embedded-content/media-elements/synchronising-multiple-media-elements/media-controllers/task-source.html": "skip", 
-    "web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cloneNode.html": "skip", 
+    "web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element": "import", 
     "web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors": "skip", 
     "web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base.html": "skip", 
     "web-platform-tests/html/semantics/embedded-content/the-area-element/area_nohref.xhtml": "skip", 
