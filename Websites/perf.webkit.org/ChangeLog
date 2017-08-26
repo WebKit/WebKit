@@ -1,3 +1,10 @@
+2017-08-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Creating trying a test group no longer updates the page.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.createWithCustomConfiguration): Added the missing ignoreCache=true.
+
 2017-08-21  Dewei Zhu  <dewei_zhu@apple.com>
 
         Performance Dashboard should be compatible with PHP 7.
