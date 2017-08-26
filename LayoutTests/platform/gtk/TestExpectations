@@ -3369,10 +3369,6 @@ webkit.org/b/175586 imported/w3c/web-platform-tests/XMLHttpRequest/send-network-
 
 webkit.org/b/175931 fast/canvas/webgl/no-info-log-for-simple-shaders.html [ Failure ]
 
-webkit.org/b/175932 http/tests/media/hls/video-cookie.html [ Failure ]
-webkit.org/b/175932 http/tests/security/mixedContent/insecure-image-with-securecookie-block.html [ Failure ]
-webkit.org/b/175932 http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies-block.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,18 @@
+2017-08-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Update cookie jar implementation to filter out secure cookies
+        https://bugs.webkit.org/show_bug.cgi?id=175850
+
+        Reviewed by Brent Fulgham.
+
+        Filter out secure cookies when indicated.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::cookiesForSession):
+        (WebCore::cookiesForDOM):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::getRawCookies):
+
 2017-08-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [EME][GStreamer] Connect CDM to GStreamer
