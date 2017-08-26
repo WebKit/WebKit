@@ -42,7 +42,7 @@ public:
 
     virtual ~CDMFactoryClearKey();
 
-    std::unique_ptr<CDMPrivate> createCDM() override;
+    std::unique_ptr<CDMPrivate> createCDM(const String&) override;
     bool supportsKeySystem(const String&) override;
 
 private:
@@ -89,6 +89,8 @@ public:
     void closeSession(const String&, CloseSessionCallback) override;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback) override;
     void storeRecordOfKeyUsage(const String&) override;
+
+    const String& keySystem() const final;
 };
 
 } // namespace WebCore

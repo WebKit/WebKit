@@ -120,6 +120,15 @@ public:
 #endif
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    void cdmInstanceAttached(const CDMInstance&) override;
+    void cdmInstanceDetached(const CDMInstance&) override;
+    void dispatchDecryptionKey(GstBuffer*);
+    void handleProtectionEvent(GstEvent*);
+    void attemptToDecryptWithLocalInstance();
+    void attemptToDecryptWithInstance(const CDMInstance&) override;
+#endif
+
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
     static MediaPlayer::SupportsType extendedSupportsType(const MediaEngineSupportParameters&, MediaPlayer::SupportsType);
 
@@ -219,6 +228,14 @@ protected:
 #endif
 
     ImageOrientation m_videoSourceOrientation;
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    Lock m_protectionMutex;
+    Condition m_protectionCondition;
+    RefPtr<const CDMInstance> m_cdmInstance;
+    HashSet<uint32_t> m_handledProtectionEvents;
+    bool m_needToResendCredentials { false };
+#endif
 };
 
 }

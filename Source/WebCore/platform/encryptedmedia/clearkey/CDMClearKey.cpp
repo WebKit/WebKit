@@ -47,8 +47,13 @@ CDMFactoryClearKey& CDMFactoryClearKey::singleton()
 CDMFactoryClearKey::CDMFactoryClearKey() = default;
 CDMFactoryClearKey::~CDMFactoryClearKey() = default;
 
-std::unique_ptr<CDMPrivate> CDMFactoryClearKey::createCDM()
+std::unique_ptr<CDMPrivate> CDMFactoryClearKey::createCDM(const String& keySystem)
 {
+#ifdef NDEBUG
+    UNUSED_PARAM(keySystem);
+#else
+    ASSERT(supportsKeySystem(keySystem));
+#endif
     return std::unique_ptr<CDMPrivate>(new CDMPrivateClearKey);
 }
 
@@ -206,6 +211,13 @@ void CDMInstanceClearKey::removeSessionData(const String&, LicenseType, RemoveSe
 
 void CDMInstanceClearKey::storeRecordOfKeyUsage(const String&)
 {
+}
+
+const String& CDMInstanceClearKey::keySystem() const
+{
+    static const String s_keySystem("org.w3.clearkey");
+
+    return s_keySystem;
 }
 
 } // namespace WebCore

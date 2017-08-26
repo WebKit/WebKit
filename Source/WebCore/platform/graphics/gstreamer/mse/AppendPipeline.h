@@ -50,6 +50,9 @@ public:
 
     void handleNeedContextSyncMessage(GstMessage*);
     void handleApplicationMessage(GstMessage*);
+#if ENABLE(ENCRYPTED_MEDIA)
+    void handleElementMessage(GstMessage*);
+#endif
 
     gint id();
     AppendState appendState() { return m_appendState; }

@@ -78,7 +78,7 @@ public:
 
 private:
     MockCDMFactory();
-    std::unique_ptr<CDMPrivate> createCDM() final;
+    std::unique_ptr<CDMPrivate> createCDM(const String&) final;
     bool supportsKeySystem(const String&) final;
 
     MediaKeysRequirement m_distinctiveIdentifiersRequirement { MediaKeysRequirement::Optional };
@@ -139,6 +139,8 @@ private:
     void closeSession(const String&, CloseSessionCallback) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback) final;
     void storeRecordOfKeyUsage(const String&) final;
+
+    const String& keySystem() const final;
 
     WeakPtr<MockCDM> m_cdm;
     bool m_distinctiveIdentifiersAllowed { true };

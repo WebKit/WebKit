@@ -96,7 +96,7 @@ void MockCDMFactory::setSupportedDataTypes(Vector<String>&& types)
         m_supportedDataTypes.append(type);
 }
 
-std::unique_ptr<CDMPrivate> MockCDMFactory::createCDM()
+std::unique_ptr<CDMPrivate> MockCDMFactory::createCDM(const String&)
 {
     return std::make_unique<MockCDM>(m_weakPtrFactory.createWeakPtr());
 }
@@ -375,6 +375,13 @@ void MockCDMInstance::removeSessionData(const String& id, LicenseType, RemoveSes
 void MockCDMInstance::storeRecordOfKeyUsage(const String&)
 {
     // FIXME: This should be implemented along with the support for persistent-usage-record sessions.
+}
+
+const String& MockCDMInstance::keySystem() const
+{
+    static const String s_keySystem("org.webkit.mock");
+
+    return s_keySystem;
 }
 
 }

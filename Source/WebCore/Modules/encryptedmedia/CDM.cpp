@@ -64,7 +64,7 @@ CDM::CDM(Document& document, const String& keySystem)
     ASSERT(supportsKeySystem(keySystem));
     for (auto* factory : CDMFactory::registeredFactories()) {
         if (factory->supportsKeySystem(keySystem)) {
-            m_private = factory->createCDM();
+            m_private = factory->createCDM(keySystem);
             break;
         }
     }

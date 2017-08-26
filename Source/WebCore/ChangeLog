@@ -1,3 +1,67 @@
+2017-08-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME][GStreamer] Connect CDM to GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=175983
+
+        Reviewed by Žan Doberšek.
+
+        This is still a version that will need some changes for some other
+        use cases but it should be enough to begin with some passes in the
+        tests and some basic use cases.
+
+        We use the attach CDMInstance interface in the private player to
+        get the instance in time for the initializationDataEncountered
+        event, which is handled when the demuxer reports synchronously the
+        events even before configuring the decryptors. We wait there in
+        case we don't have the CDMInstance attached (which contains info
+        about the key system now) and when we get it we report it back to
+        the demuxer and continue sending the event.
+
+        We also handled the events when handled by the decryptors but for
+        now this will remain a FIXME. The events handled by the
+        AppendPipeline will end up here too for now.
+
+        The CDM instance is created with the key system because some CDMs
+        can handle more than one, not ClearKey yet but others in the
+        (near) future.
+
+        MockCDMFactory is adapted to the changes as expected.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::CDM):
+        * platform/encryptedmedia/CDMFactory.h:
+        * platform/encryptedmedia/CDMInstance.h:
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMFactoryClearKey::createCDM):
+        (WebCore::CDMInstanceClearKey::keySystem const):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::extractEventsAndSystemsFromMessage):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceAttached):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceDetached):
+        (WebCore::MediaPlayerPrivateGStreamerBase::attemptToDecryptWithInstance):
+        (WebCore::MediaPlayerPrivateGStreamerBase::attemptToDecryptWithLocalInstance):
+        (WebCore::MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleProtectionEvent):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::appendPipelineElementMessageCallback):
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::~AppendPipeline):
+        (WebCore::AppendPipeline::handleNeedContextSyncMessage):
+        (WebCore::AppendPipeline::handleElementMessage):
+        (WebCore::AppendPipeline::handleAppsrcNeedDataReceived):
+        (WebCore::AppendPipeline::appsinkNewSample):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMFactory::createCDM):
+        (WebCore::MockCDMInstance::keySystem const):
+        * testing/MockCDMFactory.h:
+
 2017-08-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebCrypto] Push WorkQueue dispatches for RSA algorithms into shared code
