@@ -27,24 +27,11 @@
 #include "JSWeakMap.h"
 
 #include "JSCInlines.h"
-#include "WeakMapData.h"
+#include "WeakMapBase.h"
 
 namespace JSC {
 
 const ClassInfo JSWeakMap::s_info = { "WeakMap", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWeakMap) };
-
-void JSWeakMap::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    m_weakMapData.set(vm, this, WeakMapData::create(vm));
-}
-
-void JSWeakMap::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    Base::visitChildren(cell, visitor);
-    JSWeakMap* thisObj = jsCast<JSWeakMap*>(cell);
-    visitor.append(thisObj->m_weakMapData);
-}
 
 String JSWeakMap::toStringName(const JSObject*, ExecState*)
 {

@@ -58,7 +58,7 @@
 #include "SetIteratorPrototype.h"
 #include "SourceCode.h"
 #include "TypedArrayInlines.h"
-#include "WeakMapData.h"
+#include "WeakMapBase.h"
 
 using namespace JSC;
 
@@ -429,7 +429,7 @@ JSValue JSInjectedScriptHost::weakMapSize(ExecState* exec)
     if (!weakMap)
         return jsUndefined();
 
-    return jsNumber(weakMap->weakMapData()->size());
+    return jsNumber(weakMap->size());
 }
 
 JSValue JSInjectedScriptHost::weakMapEntries(ExecState* exec)
@@ -454,7 +454,7 @@ JSValue JSInjectedScriptHost::weakMapEntries(ExecState* exec)
 
     JSArray* array = constructEmptyArray(exec, nullptr);
     RETURN_IF_EXCEPTION(scope, JSValue());
-    for (auto it = weakMap->weakMapData()->begin(); it != weakMap->weakMapData()->end(); ++it) {
+    for (auto it = weakMap->begin(); it != weakMap->end(); ++it) {
         JSObject* entry = constructEmptyObject(exec);
         entry->putDirect(exec->vm(), Identifier::fromString(exec, "key"), it->key);
         entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), it->value.get());
@@ -478,7 +478,7 @@ JSValue JSInjectedScriptHost::weakSetSize(ExecState* exec)
     if (!weakSet)
         return jsUndefined();
 
-    return jsNumber(weakSet->weakMapData()->size());
+    return jsNumber(weakSet->size());
 }
 
 JSValue JSInjectedScriptHost::weakSetEntries(ExecState* exec)
@@ -503,7 +503,7 @@ JSValue JSInjectedScriptHost::weakSetEntries(ExecState* exec)
 
     JSArray* array = constructEmptyArray(exec, nullptr);
     RETURN_IF_EXCEPTION(scope, JSValue());
-    for (auto it = weakSet->weakMapData()->begin(); it != weakSet->weakMapData()->end(); ++it) {
+    for (auto it = weakSet->begin(); it != weakSet->end(); ++it) {
         JSObject* entry = constructEmptyObject(exec);
         entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), it->key);
         array->putDirectIndex(exec, fetched++, entry);
