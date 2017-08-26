@@ -148,7 +148,7 @@ extern "C" {
 #endif
 
 typedef enum { WTFLogChannelOff, WTFLogChannelOn, WTFLogChannelOnWithAccumulation } WTFLogChannelState;
-typedef enum { WTFLogLevelError, WTFLogLevelWarning, WTFLogLevelNotice, WTFLogLevelInfo, WTFLogLevelDebug } WTFLogLevel;
+typedef enum { WTFLogLevelAlways, WTFLogLevelError, WTFLogLevelWarning, WTFLogLevelNotice, WTFLogLevelInfo, WTFLogLevelDebug } WTFLogLevel;
 
 typedef struct {
     WTFLogChannelState state;

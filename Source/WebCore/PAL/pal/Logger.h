@@ -42,7 +42,23 @@ public:
     }
 
     template<typename... Arguments>
-    inline void error(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const
+    inline void logAlways(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const WTF_ATTRIBUTE_PRINTF(3, 0)
+    {
+#if RELEASE_LOG_DISABLED
+        // "Standard" WebCore logging goes to stderr, which is captured in layout test output and can generally be a problem
+        //  on some systems, so don't allow it.
+        UNUSED_PARAM(channel);
+        UNUSED_PARAM(format);
+#else
+        if (!willLog(channel, WTFLogLevelAlways))
+            return;
+
+        log(channel, format, arguments...);
+#endif
+    }
+
+    template<typename... Arguments>
+    inline void error(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const WTF_ATTRIBUTE_PRINTF(3, 0)
     {
         if (!willLog(channel, WTFLogLevelError))
             return;
@@ -51,7 +67,7 @@ public:
     }
 
     template<typename... Arguments>
-    inline void warning(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const
+    inline void warning(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const WTF_ATTRIBUTE_PRINTF(3, 0)
     {
         if (!willLog(channel, WTFLogLevelWarning))
             return;
@@ -60,7 +76,7 @@ public:
     }
 
     template<typename... Arguments>
-    inline void notice(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const
+    inline void notice(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const WTF_ATTRIBUTE_PRINTF(3, 0)
     {
         if (!willLog(channel, WTFLogLevelNotice))
             return;
@@ -69,7 +85,7 @@ public:
     }
 
     template<typename... Arguments>
-    inline void info(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const
+    inline void info(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const WTF_ATTRIBUTE_PRINTF(3, 0)
     {
         if (!willLog(channel, WTFLogLevelInfo))
             return;
@@ -78,7 +94,7 @@ public:
     }
 
     template<typename... Arguments>
-    inline void debug(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const
+    inline void debug(WTFLogChannel& channel, const char* format, const Arguments&... arguments) const WTF_ATTRIBUTE_PRINTF(3, 0)
     {
         if (!willLog(channel, WTFLogLevelDebug))
             return;
@@ -88,7 +104,13 @@ public:
 
     inline bool willLog(WTFLogChannel& channel, WTFLogLevel level) const
     {
-        return m_enabled && channel.level >= level && channel.state != WTFLogChannelOff;
+        if (level != WTFLogLevelAlways && level > channel.level)
+            return false;
+
+        if (channel.level != WTFLogLevelAlways && channel.state == WTFLogChannelOff)
+            return false;
+
+        return m_enabled;
     }
 
     bool enabled() const { return m_enabled; }
@@ -107,20 +129,19 @@ private:
         va_list arguments;
         va_start(arguments, format);
 
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
+        String string = String::formatWithArguments(format, arguments);
+#if COMPILER(GCC_OR_CLANG)
+#pragma GCC diagnostic pop
 #endif
 
 #if RELEASE_LOG_DISABLED
-        WTFLog(&channel, format, arguments);
+        WTFLog(&channel, "%s", string.utf8().data());
 #else
-        String string = String::format(format, arguments);
         os_log(channel.osLogChannel, "%{public}s", string.utf8().data());
-#endif
-
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
 #endif
 
         va_end(arguments);

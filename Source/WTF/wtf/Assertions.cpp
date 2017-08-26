@@ -413,7 +413,6 @@ static WTFLoggingAccumulator& loggingAccumulator()
 void WTFSetLogChannelLevel(WTFLogChannel* channel, WTFLogLevel level)
 {
     channel->level = level;
-    WTFLog(channel, "Channel \"%s\" level set to %i", channel->name, level);
 }
 
 bool WTFWillLogWithLevel(WTFLogChannel* channel, WTFLogLevel level)
@@ -423,10 +422,10 @@ bool WTFWillLogWithLevel(WTFLogChannel* channel, WTFLogLevel level)
 
 void WTFLogWithLevel(WTFLogChannel* channel, WTFLogLevel level, const char* format, ...)
 {
-    if (channel->level < level)
+    if (level != WTFLogLevelAlways && level > channel->level)
         return;
 
-    if (channel->state == WTFLogChannelOff)
+    if (channel->level != WTFLogLevelAlways && channel->state == WTFLogChannelOff)
         return;
 
     va_list args;
