@@ -86,11 +86,11 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
 {
     GUniquePtr<SoupURI> uri = url.createSoupURI();
     GSList* cookies = soup_cookie_jar_get_cookie_list(session.cookieStorage(), uri.get(), forHTTPHeader);
-    GSList* item = cookies;
     bool didAccessSecureCookies = false;
 
     // libsoup should omit secure cookies itself if the protocol is not https.
     if (url.protocolIs("https")) {
+        GSList* item = cookies;
         while (item) {
             auto cookie = static_cast<SoupCookie*>(item->data);
             if (soup_cookie_get_secure(cookie)) {
