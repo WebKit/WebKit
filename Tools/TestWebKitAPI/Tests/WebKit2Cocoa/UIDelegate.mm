@@ -100,7 +100,6 @@ static void synthesizeTab(NSWindow *window, NSView *view, bool withShiftDown)
     [view keyUp:tabEvent(window, NSEventTypeKeyUp, withShiftDown ? NSEventModifierFlagShift : 0)];
 }
 
-static RetainPtr<NSWindow> window;
 static _WKFocusDirection takenDirection;
 
 @interface FocusDelegate : NSObject <WKUIDelegatePrivate>
@@ -117,16 +116,14 @@ static _WKFocusDirection takenDirection;
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
     completionHandler();
-    synthesizeTab(window.get(), webView, true);
+    synthesizeTab([webView window], webView, true);
 }
 
 @end
 
 TEST(WebKit2, Focus)
 {
-    window = adoptNS([[NSWindow alloc] initWithContentRect:CGRectMake(0, 0, 800, 600) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
-    [[window contentView] addSubview:webView.get()];
     auto delegate = adoptNS([[FocusDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     NSString *html = @"<script>function loaded() { document.getElementById('in').focus(); alert('ready'); }</script>"
@@ -134,6 +131,41 @@ TEST(WebKit2, Focus)
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"http://example.com/"]];
     TestWebKitAPI::Util::run(&done);
     ASSERT_EQ(takenDirection, _WKFocusDirectionBackward);
+}
+
+@interface SaveDataToFileDelegate : NSObject <WKUIDelegatePrivate, WKNavigationDelegate>
+@end
+
+@implementation SaveDataToFileDelegate
+
+- (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url
+{
+    NSURL *pdfURL = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"];
+    EXPECT_TRUE([data isEqualToData:[NSData dataWithContentsOfURL:pdfURL]]);
+    EXPECT_STREQ([suggestedFilename UTF8String], "test.pdf");
+    EXPECT_STREQ([mimeType UTF8String], "application/pdf");
+    EXPECT_STREQ([[url absoluteString] UTF8String], [[pdfURL absoluteString] UTF8String]);
+    done = true;
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    NSPoint location = NSMakePoint(490, 70); // Location of button to download the pdf.
+    [(TestWKWebView *)webView mouseDownAtPoint:location simulatePressure:NO];
+    [(TestWKWebView *)webView mouseUpAtPoint:location];
+}
+
+@end
+
+TEST(WebKit2, SaveDataToFile)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    auto delegate = adoptNS([[SaveDataToFileDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView setNavigationDelegate:delegate.get()];
+    NSURL *pdfURL = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadRequest:[NSURLRequest requestWithURL:pdfURL]];
+    TestWebKitAPI::Util::run(&done);
 }
 
 #define RELIABLE_DID_NOT_HANDLE_WHEEL_EVENT 0

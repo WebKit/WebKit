@@ -6113,18 +6113,18 @@ void WebPageProxy::updateBackingStoreDiscardableState()
     m_drawingArea->setBackingStoreIsDiscardable(isDiscardable);
 }
 
-void WebPageProxy::saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, API::Data* data)
+void WebPageProxy::saveDataToFileInDownloadsFolder(String&& suggestedFilename, String&& mimeType, URL&& originatingURLString, API::Data& data)
 {
     m_uiClient->saveDataToFileInDownloadsFolder(this, suggestedFilename, mimeType, originatingURLString, data);
 }
 
-void WebPageProxy::savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference& dataReference)
+void WebPageProxy::savePDFToFileInDownloadsFolder(String&& suggestedFilename, URL&& originatingURL, const IPC::DataReference& dataReference)
 {
     if (!suggestedFilename.endsWith(".pdf", false))
         return;
 
-    saveDataToFileInDownloadsFolder(suggestedFilename, "application/pdf", originatingURLString,
-        API::Data::create(dataReference.data(), dataReference.size()).ptr());
+    saveDataToFileInDownloadsFolder(WTFMove(suggestedFilename), ASCIILiteral("application/pdf"), WTFMove(originatingURL),
+        API::Data::create(dataReference.data(), dataReference.size()).get());
 }
 
 void WebPageProxy::setMinimumLayoutSize(const IntSize& minimumLayoutSize)

@@ -392,16 +392,16 @@ String WebFrame::name() const
     return m_coreFrame->tree().uniqueName();
 }
 
-String WebFrame::url() const
+URL WebFrame::url() const
 {
     if (!m_coreFrame)
-        return String();
+        return { };
 
-    DocumentLoader* documentLoader = m_coreFrame->loader().documentLoader();
+    auto* documentLoader = m_coreFrame->loader().documentLoader();
     if (!documentLoader)
-        return String();
+        return { };
 
-    return documentLoader->url().string();
+    return documentLoader->url();
 }
 
 CertificateInfo WebFrame::certificateInfo() const

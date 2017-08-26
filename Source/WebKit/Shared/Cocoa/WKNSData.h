@@ -30,10 +30,14 @@
 #import "APIData.h"
 #import "WKObject.h"
 
+namespace API {
+
 inline NSData *wrapper(API::Data& data)
 {
     ASSERT([data.wrapper() isKindOfClass:[NSData self]]);
     return (NSData *)data.wrapper();
+}
+
 }
 
 @interface WKNSData : NSData <WKObject>

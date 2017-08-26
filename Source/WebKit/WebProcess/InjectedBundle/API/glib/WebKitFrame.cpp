@@ -85,7 +85,7 @@ const gchar* webkit_frame_get_uri(WebKitFrame* frame)
     g_return_val_if_fail(WEBKIT_IS_FRAME(frame), 0);
 
     if (frame->priv->uri.isNull())
-        frame->priv->uri = frame->priv->webFrame->url().utf8();
+        frame->priv->uri = frame->priv->webFrame->url().string().utf8();
 
     return frame->priv->uri.data();
 }

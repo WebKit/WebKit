@@ -98,7 +98,7 @@ public:
     // WKBundleFrame API and SPI functions
     bool isMainFrame() const;
     String name() const;
-    String url() const;
+    WebCore::URL url() const;
     WebCore::CertificateInfo certificateInfo() const;
     String innerText() const;
     bool isFrameSet() const;

@@ -871,7 +871,7 @@ public:
     NSDictionary *dataDetectionContext() const { return m_dataDetectionContext.get(); }
 #endif
 
-    void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size);
+    void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const WebCore::URL& originatingURL, const uint8_t* data, unsigned long size);
 #if PLATFORM(COCOA)
     void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID);
 #endif

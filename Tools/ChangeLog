@@ -1,3 +1,17 @@
+2017-08-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's saveDataToFileInDownloadsFolder
+        https://bugs.webkit.org/show_bug.cgi?id=176000
+        <rdar://problem/29270035>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UIDelegate.mm:
+        (-[FocusDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+        (-[SaveDataToFileDelegate _webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:]):
+        (-[SaveDataToFileDelegate webView:didFinishNavigation:]):
+
 2017-08-25  Youenn Fablet  <youenn@apple.com>
 
         WPT server should not need to copy test harness files

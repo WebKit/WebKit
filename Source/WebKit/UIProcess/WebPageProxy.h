@@ -950,8 +950,8 @@ public:
     void handleAlternativeTextUIResult(const String& result);
 #endif
 
-    void saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, API::Data*);
-    void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference&);
+    void saveDataToFileInDownloadsFolder(String&& suggestedFilename, String&& mimeType, WebCore::URL&& originatingURL, API::Data&);
+    void savePDFToFileInDownloadsFolder(String&& suggestedFilename, WebCore::URL&& originatingURL, const IPC::DataReference&);
 #if PLATFORM(COCOA)
     void savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID);
     void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const IPC::DataReference&, const String& pdfUUID);

@@ -4562,9 +4562,9 @@ void WebPage::didFinishPrintOperation(const WebCore::ResourceError& error, Callb
 }
 #endif
 
-void WebPage::savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size)
+void WebPage::savePDFToFileInDownloadsFolder(const String& suggestedFilename, const URL& originatingURL, const uint8_t* data, unsigned long size)
 {
-    send(Messages::WebPageProxy::SavePDFToFileInDownloadsFolder(suggestedFilename, originatingURLString, IPC::DataReference(data, size)));
+    send(Messages::WebPageProxy::SavePDFToFileInDownloadsFolder(suggestedFilename, originatingURL, IPC::DataReference(data, size)));
 }
 
 #if PLATFORM(COCOA)

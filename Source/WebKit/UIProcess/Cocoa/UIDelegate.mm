@@ -35,6 +35,7 @@
 #import "UserMediaPermissionCheckProxy.h"
 #import "UserMediaPermissionRequestProxy.h"
 #import "WKFrameInfoInternal.h"
+#import "WKNSData.h"
 #import "WKNavigationActionInternal.h"
 #import "WKOpenPanelParametersInternal.h"
 #import "WKSecurityOriginInternal.h"
@@ -107,9 +108,9 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
     m_delegateMethods.webViewDidNotHandleWheelEvent = [delegate respondsToSelector:@selector(_webView:didNotHandleWheelEvent:)];
     m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
+    m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL = [delegate respondsToSelector:@selector(_webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
 #endif
-
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
     m_delegateMethods.webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded = [delegate respondsToSelector:@selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:)];
     m_delegateMethods.webViewPrintFrame = [delegate respondsToSelector:@selector(_webView:printFrame:)];
@@ -486,7 +487,19 @@ void UIDelegate::UIClient::showPage(WebPageProxy*)
     
     [(id <WKUIDelegatePrivate>)delegate _showWebView:m_uiDelegate.m_webView];
 }
+    
+void UIDelegate::UIClient::saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String& suggestedFilename, const WTF::String& mimeType, const WebCore::URL& originatingURL, API::Data& data)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
 
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView saveDataToFile:wrapper(data) suggestedFilename:suggestedFilename mimeType:mimeType originatingURL:originatingURL];
+}
+    
 bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFrameProxy, const WebCore::SecurityOriginData& securityOriginData, API::OpenPanelParameters* openPanelParameters, WebOpenPanelResultListenerProxy* listener)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler)

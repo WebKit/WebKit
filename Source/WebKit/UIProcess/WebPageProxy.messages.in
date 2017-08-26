@@ -404,7 +404,7 @@ messages -> WebPageProxy {
     SaveRecentSearches(String name, Vector<WebCore::RecentSearch> searchItems)
     LoadRecentSearches(String name) -> (Vector<WebCore::RecentSearch> result)
 
-    SavePDFToFileInDownloadsFolder(String suggestedFilename, String originatingURLString, IPC::DataReference data)
+    SavePDFToFileInDownloadsFolder(String suggestedFilename, WebCore::URL originatingURL, IPC::DataReference data)
 
 #if PLATFORM(COCOA)
     SavePDFToTemporaryFolderAndOpenWithNativeApplication(String suggestedFilename, String originatingURLString, IPC::DataReference data, String pdfUUID)
