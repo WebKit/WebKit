@@ -1,8 +1,8 @@
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI")
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WTF")
 
-# This is necessary because it is possible to build TestWebKitAPI with WebKit2
-# disabled and this triggers the inclusion of the WebKit2 headers.
+# This is necessary because it is possible to build TestWebKitAPI with WebKit
+# disabled and this triggers the inclusion of the WebKit headers.
 add_definitions(-DBUILDING_WEBKIT2__)
 
 add_custom_target(TestWebKitAPI-forwarding-headers
