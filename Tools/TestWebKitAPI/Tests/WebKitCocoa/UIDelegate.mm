@@ -133,6 +133,11 @@ TEST(WebKit2, Focus)
     ASSERT_EQ(takenDirection, _WKFocusDirectionBackward);
 }
 
+#define MOUSE_EVENT_CAUSES_DOWNLOAD 0
+// FIXME: At least on El Capitan, sending a mouse event does not cause the PDFPlugin to think the download button has been clicked.
+// This test works on High Sierra, but it should be investigated on older platforms.
+#if MOUSE_EVENT_CAUSES_DOWNLOAD
+
 @interface SaveDataToFileDelegate : NSObject <WKUIDelegatePrivate, WKNavigationDelegate>
 @end
 
@@ -167,6 +172,8 @@ TEST(WebKit2, SaveDataToFile)
     [webView loadRequest:[NSURLRequest requestWithURL:pdfURL]];
     TestWebKitAPI::Util::run(&done);
 }
+
+#endif // MOUSE_EVENT_CAUSES_DOWNLOAD
 
 #define RELIABLE_DID_NOT_HANDLE_WHEEL_EVENT 0
 // FIXME: make wheel event handling more reliable.

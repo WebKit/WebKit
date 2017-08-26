@@ -1,5 +1,13 @@
 2017-08-25  Alex Christensen  <achristensen@webkit.org>
 
+        Disable saveDataToFile API test.
+        https://bugs.webkit.org/show_bug.cgi?id=176000
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        The test was only working on High Sierra.  It needs investigation on older operating systems.
+
+2017-08-25  Alex Christensen  <achristensen@webkit.org>
+
         Rename TestWebKitAPI/Tests/WebKit2* to WebKit* following Source directory rename.
 
         Rubber-stamped by Brady Eidson.
