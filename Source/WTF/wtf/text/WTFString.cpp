@@ -465,6 +465,7 @@ Vector<UChar> String::charactersWithNullTermination() const
     return result;
 }
 
+WTF_ATTRIBUTE_PRINTF(1, 0)
 static String createWithFormatAndArguments(const char *format, va_list args)
 {
     va_list argsCopy;

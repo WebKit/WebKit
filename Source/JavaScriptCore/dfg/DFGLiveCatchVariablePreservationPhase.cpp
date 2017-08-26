@@ -71,10 +71,10 @@ public:
         BlockSet seen;
 
         auto addPredecessors = [&] (BasicBlock* block) {
-            for (BasicBlock* block : block->predecessors) {
-                bool isNewEntry = seen.add(block);
+            for (BasicBlock* predecessor : block->predecessors) {
+                bool isNewEntry = seen.add(predecessor);
                 if (isNewEntry)
-                    worklist.append(block);
+                    worklist.append(predecessor);
             }
         };
 

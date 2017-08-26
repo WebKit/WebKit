@@ -1,3 +1,11 @@
+2017-08-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, suppress warnings in GTK port
+
+        Add printf format attribute.
+
+        * wtf/text/WTFString.cpp:
+
 2017-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         Add Logger::logAlways
