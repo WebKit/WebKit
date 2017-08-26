@@ -59,8 +59,6 @@ public:
     void checkNavigationPolicy(const ResourceRequest&, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction);
     void checkNewWindowPolicy(NavigationAction&&, const ResourceRequest&, FormState*, const String& frameName, NewWindowPolicyDecisionFunction);
 
-    // FIXME: These are different.  They could use better names.
-    void cancelCheck();
     void stopCheck();
 
     void cannotShowMIMEType(const ResourceResponse&);

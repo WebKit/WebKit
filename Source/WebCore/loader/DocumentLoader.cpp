@@ -1538,7 +1538,7 @@ void DocumentLoader::cancelPolicyCheckIfNeeded()
     RELEASE_ASSERT(frameLoader());
 
     if (m_waitingForContentPolicy || m_waitingForNavigationPolicy) {
-        frameLoader()->policyChecker().cancelCheck();
+        frameLoader()->policyChecker().stopCheck();
         m_waitingForContentPolicy = false;
         m_waitingForNavigationPolicy = false;
     }
