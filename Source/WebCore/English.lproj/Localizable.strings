@@ -28,9 +28,6 @@
 /* Text track contains closed captions */
 "%@ CC" = "%@ CC";
 
-/* visible name of the database process. The argument is the application name. */
-"%@ Database Storage" = "%@ Database Storage";
-
 /* Text track contains simplified (3rd grade level) subtitles */
 "%@ Easy Reader" = "%@ Easy Reader";
 
@@ -42,6 +39,9 @@
 
 /* Text track contains subtitles for the deaf and hard of hearing */
 "%@ SDH" = "%@ SDH";
+
+/* visible name of the storage process. The argument is the application name. */
+"%@ Storage" = "%@ Storage";
 
 /* Visible name of the web process. The argument is the application name. */
 "%@ Web Content" = "%@ Web Content";
@@ -81,6 +81,9 @@
 
 /* Menu item title for KEYGEN pop-up menu */
 "2048 (High Grade)" = "2048 (High Grade)";
+
+/* window title for a standalone image (uses multiplication symbol, not x) */
+"<filename> %d×%d pixels" = "<filename> %d×%d pixels";
 
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
@@ -256,6 +259,9 @@
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
 
+/* The requested file doesn't exist */
+"File does not exist" = "File does not exist";
+
 /* Validation message for required form control elements that have no value */
 "Fill out this field" = "Fill out this field";
 
@@ -337,6 +343,9 @@
 /* Media controller status message when watching a live broadcast */
 "Live Broadcast" = "Live Broadcast";
 
+/* Load request cancelled */
+"Load request cancelled" = "Load request cancelled";
+
 /* Media controller status message when the media is loading */
 "Loading…" = "Loading…";
 
@@ -351,6 +360,9 @@
 
 /* Look Up context menu item with selected word */
 "Look Up “%s”" = "Look Up “%s”";
+
+/* Look Up context menu item with selected word */
+"Look Up “<selection>”" = "Look Up “<selection>”";
 
 /* WKErrorContentRuleListStoreLookupFailed description */
 "Looking up a WKContentRuleList failed" = "Looking up a WKContentRuleList failed";
@@ -751,6 +763,9 @@
 /* Description of WebCrypto master keys in Keychain */
 "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB" = "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB";
 
+/* The download was cancelled by the user */
+"User cancelled the download" = "User cancelled the download";
+
 /* Validation message for input form controls with value lower than allowed minimum */
 "Value must be greater than or equal to %@" = "Value must be greater than or equal to %@";
 
@@ -898,7 +913,7 @@
 /* accessibility label for fast reverse button */
 "fast reverse" = "fast reverse";
 
-/* An ARIA accessibility group containing a scrollable list of articles. */
+/* accessibility role description for a group containing a scrollable list of articles. */
 "feed" = "feed";
 
 /* accessibility role description for a figure element. */
@@ -1069,6 +1084,12 @@
 /* HTTP result code string */
 "proxy authentication required" = "proxy authentication required";
 
+/* Validation message for input form controls with value higher than allowed maximum */
+"range overflow" = "range overflow";
+
+/* Validation message for input form controls with value lower than allowed minimum */
+"range underflow" = "range underflow";
+
 /* HTTP result code string */
 "redirected" = "redirected";
 
@@ -1099,6 +1120,9 @@
 /* accessibility label for return to real time button */
 "return to realtime" = "return to realtime";
 
+/* accessibility role description for a horizontal rule [<hr>] */
+"rule" = "rule";
+
 /* An ARIA accessibility group that contains a search feature of a website. */
 "search" = "search";
 
@@ -1116,9 +1140,6 @@
 
 /* Verb stating the action that will occur when a radio button is clicked, as used by accessibility */
 "select" = "select";
-
-/* accessibility role description for a horizontal rule [<hr>] */
-"rule" = "rule";
 
 /* HTTP result code string */
 "server error" = "server error";

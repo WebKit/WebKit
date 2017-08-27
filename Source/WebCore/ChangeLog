@@ -1,3 +1,12 @@
+2017-08-26  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r220105): Storage service appears in macOS Activity Monitor as “localized string not found”
+        https://bugs.webkit.org/show_bug.cgi?id=176007
+
+        Reviewed by Tim Horton.
+
+        * English.lproj/Localizable.strings: Updated using update-webkit-localizable-strings.
+
 2017-08-26  Alex Christensen  <achristensen@webkit.org>
 
         Remove PolicyChecker::cancelCheck
