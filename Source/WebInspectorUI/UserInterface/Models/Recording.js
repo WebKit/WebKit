@@ -44,6 +44,8 @@ WI.Recording = class Recording
                 let prototype = null;
                 if (this._type === WI.Recording.Type.Canvas2D)
                     prototype = CanvasRenderingContext2D.prototype;
+                else if (this._type === WI.Recording.Type.CanvasWebGL)
+                    prototype = WebGLRenderingContext.prototype;
 
                 if (prototype) {
                     let validName = action.name in prototype;
@@ -72,6 +74,9 @@ WI.Recording = class Recording
         switch (payload.type) {
         case RecordingAgent.Type.Canvas2D:
             type = WI.Recording.Type.Canvas2D;
+            break;
+        case RecordingAgent.Type.CanvasWebGL:
+            type = WI.Recording.Type.CanvasWebGL;
             break;
         default:
             type = String(payload.type);
@@ -165,9 +170,28 @@ WI.Recording = class Recording
                 case WI.Recording.Swizzle.Path2D:
                     this._swizzle[index][type] = new Path2D(data);
                     break;
+                // FIXME: <https://webkit.org/b/176009> Web Inspector: send data for WebGL objects during a recording instead of a placeholder string
+                case WI.Recording.Swizzle.ArrayBufferView:
+                case WI.Recording.Swizzle.BufferDataSource:
+                case WI.Recording.Swizzle.Float32List:
+                case WI.Recording.Swizzle.Int32List:
+                case WI.Recording.Swizzle.WebGLBuffer:
+                case WI.Recording.Swizzle.WebGLFramebuffer:
+                case WI.Recording.Swizzle.WebGLProgram:
+                case WI.Recording.Swizzle.WebGLRenderbuffer:
+                case WI.Recording.Swizzle.WebGLShader:
+                case WI.Recording.Swizzle.WebGLTexture:
+                case WI.Recording.Swizzle.WebGLUniformLocation:
                 case WI.Recording.Swizzle.String:
                     if (typeof data === "string")
                         this._swizzle[index][type] = data;
+                    break;
+                case WI.Recording.Swizzle.TexImageSource:
+                    if (typeof data === "string") {
+                        this._swizzle[index][type] = new Image;
+                        this._swizzle[index][type].src = data;
+                    } else if (Array.isArray(data))
+                        this._swizzle[index][type] = new ImageData(new Uint8ClampedArray(data[0]), parseInt(data[1]), parseInt(data[2]));
                     break;
                 }
             } catch (e) {
@@ -203,15 +227,28 @@ WI.Recording = class Recording
 
 WI.Recording.Type = {
     Canvas2D: "canvas-2d",
+    CanvasWebGL: "canvas-webgl",
 };
 
 WI.Recording.Swizzle = {
     Array: "Array",
+    ArrayBufferView: "ArrayBufferView",
+    BufferDataSource: "BufferDataSource",
     CanvasStyle: "CanvasStyle",
     Element: "Element",
+    Float32List: "Float32List",
     Image: "Image",
     ImageData: "ImageData",
+    Int32List: "Int32List",
     Path2D: "Path2D",
     String: "String",
+    TexImageSource: "TexImageSource",
+    WebGLBuffer: "WebGLBuffer",
+    WebGLFramebuffer: "WebGLFramebuffer",
+    WebGLProgram: "WebGLProgram",
+    WebGLRenderbuffer: "WebGLRenderbuffer",
+    WebGLShader: "WebGLShader",
+    WebGLTexture: "WebGLTexture",
+    WebGLUniformLocation: "WebGLUniformLocation",
     Invalid: Symbol("invalid"),
 };

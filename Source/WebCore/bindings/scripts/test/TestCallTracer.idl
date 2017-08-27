@@ -39,5 +39,8 @@ typedef (boolean or float or DOMString) VariantType;
     void testOperationWithArguments(boolean a, float b, DOMString c);
     void testOperationWithNullableArgument(Node? nodeNullableArg);
     void testOperationWithVariantArgument(VariantType variantArg);
+    void testOperationWithNullableVariantArgument(VariantType? variantNullableArg);
+    void testOperationWithOptionalVariantArgument(optional VariantType variantOptionalArg);
+    void testOperationWithDefaultVariantArgument(optional VariantType variantDefaultArg = "");
 };
 

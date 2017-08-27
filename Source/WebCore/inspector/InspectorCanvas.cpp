@@ -88,6 +88,7 @@ void InspectorCanvas::resetRecordingData()
     m_initialState = nullptr;
     m_frames = nullptr;
     m_currentActions = nullptr;
+    m_actionNeedingSnapshot = nullptr;
     m_serializedDuplicateData = nullptr;
     m_indexedDuplicateData.clear();
     m_bufferLimit = 100 * 1024 * 1024;
@@ -100,6 +101,13 @@ void InspectorCanvas::resetRecordingData()
 bool InspectorCanvas::hasRecordingData() const
 {
     return m_initialState && m_frames;
+}
+
+static bool shouldSnapshotWebGLAction(const String& name)
+{
+    return name == "clear"
+        || name == "drawArrays"
+        || name == "drawElements";
 }
 
 void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasActionVariant>&& parameters)
@@ -121,9 +129,28 @@ void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasAction
         m_frames->addItem(WTFMove(frame));
     }
 
+    appendActionSnapshotIfNeeded();
+
     auto action = buildAction(name, WTFMove(parameters));
     m_bufferUsed += action->memoryCost();
-    m_currentActions->addItem(WTFMove(action));
+    m_currentActions->addItem(action);
+
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContext>(m_canvas.renderingContext()) && shouldSnapshotWebGLAction(name))
+        m_actionNeedingSnapshot = action;
+#endif
+}
+
+RefPtr<Inspector::Protocol::Recording::InitialState>&& InspectorCanvas::releaseInitialState()
+{
+    return WTFMove(m_initialState);
+}
+
+RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>>&& InspectorCanvas::releaseFrames()
+{
+    appendActionSnapshotIfNeeded();
+
+    return WTFMove(m_frames);
 }
 
 RefPtr<Inspector::Protocol::Array<InspectorValue>>&& InspectorCanvas::releaseData()
@@ -223,6 +250,36 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(I
         canvas->setMemoryCost(memoryCost);
 
     return canvas;
+}
+
+void InspectorCanvas::appendActionSnapshotIfNeeded()
+{
+    if (!m_actionNeedingSnapshot)
+        return;
+
+    m_actionNeedingSnapshot->addItem(indexForData(getCanvasContentAsDataURL()));
+    m_actionNeedingSnapshot = nullptr;
+}
+
+String InspectorCanvas::getCanvasContentAsDataURL()
+{
+#if ENABLE(WEBGL)
+    CanvasRenderingContext* canvasRenderingContext = m_canvas.renderingContext();
+    if (is<WebGLRenderingContextBase>(canvasRenderingContext))
+        downcast<WebGLRenderingContextBase>(canvasRenderingContext)->setPreventBufferClearForInspector(true);
+#endif
+
+    ExceptionOr<UncachedString> result = m_canvas.toDataURL(ASCIILiteral("image/png"));
+
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContextBase>(canvasRenderingContext))
+        downcast<WebGLRenderingContextBase>(canvasRenderingContext)->setPreventBufferClearForInspector(false);
+#endif
+
+    if (result.hasException())
+        return String();
+
+    return result.releaseReturnValue().string;
 }
 
 int InspectorCanvas::indexForData(DuplicateDataVariant data)
@@ -331,7 +388,7 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
 
     auto parameters = Inspector::Protocol::Array<InspectorValue>::create();
 
-    const CanvasRenderingContext* canvasRenderingContext = canvas().renderingContext();
+    CanvasRenderingContext* canvasRenderingContext = canvas().renderingContext();
     if (is<CanvasRenderingContext2D>(canvasRenderingContext)) {
         const CanvasRenderingContext2D* context2d = downcast<CanvasRenderingContext2D>(canvasRenderingContext);
         const CanvasRenderingContext2D::State& state = context2d->state();
@@ -385,17 +442,29 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
         setPath->addItem(indexForData(buildStringFromPath(context2d->getPath()->path())));
         attributes->setArray(ASCIILiteral("setPath"), WTFMove(setPath));
     }
-
-    // <https://webkit.org/b/174483> Web Inspector: Record actions performed on WebGLRenderingContext
+#if ENABLE(WEBGL)
+    else if (is<WebGLRenderingContextBase>(canvasRenderingContext)) {
+        WebGLRenderingContextBase* contextWebGLBase = downcast<WebGLRenderingContextBase>(canvasRenderingContext);
+        if (std::optional<WebGLContextAttributes> attributes = contextWebGLBase->getContextAttributes()) {
+            RefPtr<InspectorObject> contextAttributes = InspectorObject::create();
+            contextAttributes->setBoolean(ASCIILiteral("alpha"), attributes->alpha);
+            contextAttributes->setBoolean(ASCIILiteral("depth"), attributes->depth);
+            contextAttributes->setBoolean(ASCIILiteral("stencil"), attributes->stencil);
+            contextAttributes->setBoolean(ASCIILiteral("antialias"), attributes->antialias);
+            contextAttributes->setBoolean(ASCIILiteral("premultipliedAlpha"), attributes->premultipliedAlpha);
+            contextAttributes->setBoolean(ASCIILiteral("preserveDrawingBuffer"), attributes->preserveDrawingBuffer);
+            contextAttributes->setBoolean(ASCIILiteral("failIfMajorPerformanceCaveat"), attributes->failIfMajorPerformanceCaveat);
+            parameters->addItem(WTFMove(contextAttributes));
+        }
+    }
+#endif
 
     initialState->setAttributes(WTFMove(attributes));
 
     if (parameters->length())
         initialState->setParameters(WTFMove(parameters));
 
-    ExceptionOr<UncachedString> result = canvas().toDataURL(ASCIILiteral("image/png"));
-    if (!result.hasException())
-        initialState->setContent(result.releaseReturnValue().string);
+    initialState->setContent(getCanvasContentAsDataURL());
 
     return initialState;
 }
@@ -433,27 +502,39 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
                 parametersData->addItem(indexForData(String("element")));
             },
             [&] (HTMLImageElement* value) { parametersData->addItem(indexForData(value)); },
-            [&] (ImageData* value) {
-                if (value)
-                    parametersData->addItem(indexForData(value));
-            },
+            [&] (ImageData* value) { parametersData->addItem(indexForData(value)); },
+#if ENABLE(WEBGL)
+            // FIXME: <https://webkit.org/b/176009> Web Inspector: send data for WebGL objects during a recording instead of a placeholder string
+            [&] (const WebGLBuffer*) { parametersData->addItem(indexForData(String("WebGLBuffer"))); },
+            [&] (const WebGLFramebuffer*) { parametersData->addItem(indexForData(String("WebGLFramebuffer"))); },
+            [&] (const WebGLProgram*) { parametersData->addItem(indexForData(String("WebGLProgram"))); },
+            [&] (const WebGLRenderbuffer*) { parametersData->addItem(indexForData(String("WebGLRenderbuffer"))); },
+            [&] (const WebGLShader*) { parametersData->addItem(indexForData(String("WebGLShader"))); },
+            [&] (const WebGLTexture*) { parametersData->addItem(indexForData(String("WebGLTexture"))); },
+            [&] (const WebGLUniformLocation*) { parametersData->addItem(indexForData(String("WebGLUniformLocation"))); },
+#endif
+            [&] (const RefPtr<ArrayBuffer>&) { parametersData->addItem(indexForData("BufferDataSource")); },
+            [&] (const RefPtr<ArrayBufferView>&) { parametersData->addItem(indexForData("BufferDataSource")); },
             [&] (const RefPtr<CanvasGradient>& value) { parametersData->addItem(indexForData(value.get())); },
             [&] (const RefPtr<CanvasPattern>& value) { parametersData->addItem(indexForData(value.get())); },
+            [&] (const RefPtr<Float32Array>&) { parametersData->addItem(indexForData("Float32List")); },
             [&] (RefPtr<HTMLCanvasElement>& value) { parametersData->addItem(indexForData(value.get())); },
             [&] (const RefPtr<HTMLImageElement>& value) { parametersData->addItem(indexForData(value.get())); },
 #if ENABLE(VIDEO)
             [&] (RefPtr<HTMLVideoElement>& value) { parametersData->addItem(indexForData(value.get())); },
 #endif
+            [&] (const RefPtr<ImageData>& value) { parametersData->addItem(indexForData(value.get())); },
+            [&] (const RefPtr<Int32Array>&) { parametersData->addItem(indexForData("Int32List")); },
             [&] (const Vector<float>& value) { parametersData->addItem(buildArrayForVector(value)); },
+            [&] (const Vector<int>&) { parametersData->addItem(indexForData("Int32List")); },
             [&] (const String& value) { parametersData->addItem(indexForData(value)); },
             [&] (double value) { parametersData->addItem(value); },
             [&] (float value) { parametersData->addItem(value); },
-            [&] (int value) { parametersData->addItem(value); },
-            [&] (bool value) { parametersData->addItem(value); },
-            [&] (const std::optional<float>& value) {
-                if (value)
-                    parametersData->addItem(value.value());
-            }
+            [&] (int64_t value) { parametersData->addItem(static_cast<double>(value)); },
+            [&] (uint32_t value) { parametersData->addItem(static_cast<double>(value)); },
+            [&] (int32_t value) { parametersData->addItem(value); },
+            [&] (uint8_t value) { parametersData->addItem(static_cast<int>(value)); },
+            [&] (bool value) { parametersData->addItem(value); }
         );
     }
     action->addItem(WTFMove(parametersData));

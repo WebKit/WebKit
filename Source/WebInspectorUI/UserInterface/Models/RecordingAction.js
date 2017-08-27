@@ -25,15 +25,17 @@
 
 WI.RecordingAction = class RecordingAction
 {
-    constructor(name, parameters, trace)
+    constructor(name, parameters, trace, snapshot)
     {
         this._payloadName = name;
         this._payloadParameters = parameters;
         this._payloadTrace = trace;
+        this._payloadSnapshot = snapshot || -1;
 
         this._name = "";
         this._parameters = [];
         this._trace = [];
+        this._snapshot = "";
 
         this._valid = true;
 
@@ -45,7 +47,7 @@ WI.RecordingAction = class RecordingAction
 
     // Static
 
-    // Payload format: [name, parameters, trace]
+    // Payload format: [name, parameters, trace, [snapshot]]
     static fromPayload(payload)
     {
         if (!Array.isArray(payload))
@@ -59,6 +61,9 @@ WI.RecordingAction = class RecordingAction
 
         if (!Array.isArray(payload[2]))
             payload[2] = [];
+
+        if (payload.length >= 4 && isNaN(payload[3]))
+            payload[3] = -1;
 
         return new WI.RecordingAction(...payload);
     }
@@ -77,6 +82,7 @@ WI.RecordingAction = class RecordingAction
     get name() { return this._name; }
     get parameters() { return this._parameters; }
     get trace() { return this._trace; }
+    get snapshot() { return this._snapshot; }
 
     get valid() { return this._valid; }
     set valid(valid) { this._valid = !!valid; }
@@ -115,6 +121,9 @@ WI.RecordingAction = class RecordingAction
             } catch { }
         }
 
+        if (this._payloadSnapshot >= 0)
+            this._snapshot = recording.swizzle(this._payloadSnapshot, WI.Recording.Swizzle.String);
+
         this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
         this._isGetter = !this._isFunction && !this._parameters.length;
 
@@ -149,7 +158,10 @@ WI.RecordingAction = class RecordingAction
 
     toJSON()
     {
-        return [this._payloadName, this._payloadParameters, this._payloadTrace];
+        let json = [this._payloadName, this._payloadParameters, this._payloadTrace];
+        if (this._payloadSnapshot >= 0)
+            json.push(this._payloadSnapshot);
+        return json;
     }
 };
 
@@ -179,7 +191,26 @@ WI.RecordingAction = class RecordingAction
 //     }
 
 {
-    let {CanvasStyle, Element, Image, ImageData, Path2D, String} = WI.Recording.Swizzle;
+    let {
+        ArrayBufferView,
+        BufferDataSource,
+        CanvasStyle,
+        Element,
+        Float32List,
+        Image,
+        ImageData,
+        Int32List,
+        Path2D,
+        String,
+        TexImageSource,
+        WebGLBuffer,
+        WebGLFramebuffer,
+        WebGLProgram,
+        WebGLRenderbuffer,
+        WebGLShader,
+        WebGLTexture,
+        WebGLUniformLocation,
+    } = WI.Recording.Swizzle;
 
     WI.RecordingAction._parameterSwizzleTypeForTypeAtIndex = {
         [WI.Recording.Type.Canvas2D]: {
@@ -292,6 +323,207 @@ WI.RecordingAction = class RecordingAction
                 7: {0: ImageData},
             },
         },
+        [WI.Recording.Type.CanvasWebGL]: {
+            "attachShader": {
+                1: {0: WebGLProgram},
+                2: {0: WebGLProgram, 1: WebGLShader},
+            },
+            "bindAttribLocation": {
+                1: {0: WebGLProgram},
+                2: {0: WebGLProgram},
+                3: {0: WebGLProgram, 2: String},
+            },
+            "bindBuffer": {
+                2: {1: WebGLBuffer},
+            },
+            "bindFramebuffer": {
+                2: {1: WebGLFramebuffer},
+            },
+            "bindRenderbuffer": {
+                2: {1: WebGLRenderbuffer},
+            },
+            "bindTexture": {
+                2: {1: WebGLTexture},
+            },
+            "bufferData": {
+                3: {1: BufferDataSource},
+            },
+            "bufferSubData": {
+                3: {2: BufferDataSource},
+            },
+            "compileShader": {
+                1: {0: WebGLShader},
+            },
+            "compressedTexImage2D": {
+                7: {6: ArrayBufferView},
+            },
+            "compressedTexSubImage2D": {
+                8: {7: ArrayBufferView},
+            },
+            "deleteBuffer": {
+                1: {0: WebGLBuffer},
+            },
+            "deleteFramebuffer": {
+                1: {0: WebGLFramebuffer},
+            },
+            "deleteProgram": {
+                1: {0: WebGLProgram},
+            },
+            "deleteRenderbuffer": {
+                1: {0: WebGLRenderbuffer},
+            },
+            "deleteShader": {
+                1: {0: WebGLShader},
+            },
+            "deleteTexture": {
+                1: {0: WebGLTexture},
+            },
+            "detachShader": {
+                1: {0: WebGLProgram},
+                2: {0: WebGLProgram, 1: WebGLShader},
+            },
+            "framebufferRenderbuffer": {
+                4: {3: WebGLRenderbuffer},
+            },
+            "framebufferTexture2D": {
+                5: {4: WebGLTexture},
+            },
+            "getActiveAttrib": {
+                2: {0: WebGLProgram},
+            },
+            "getActiveUniform": {
+                2: {0: WebGLProgram},
+            },
+            "getAttachedShaders": {
+                1: {0: WebGLProgram},
+            },
+            "getAttribLocation": {
+                2: {0: WebGLProgram, 1: String},
+            },
+            "getExtension": {
+                1: {0: String},
+            },
+            "getProgramInfoLog": {
+                1: {0: WebGLProgram},
+            },
+            "getProgramParameter": {
+                2: {0: WebGLProgram},
+            },
+            "getShaderInfoLog": {
+                1: {0: WebGLShader},
+            },
+            "getShaderParameter": {
+                2: {0: WebGLShader},
+            },
+            "getShaderSource": {
+                1: {0: WebGLShader},
+            },
+            "getUniform": {
+                1: {0: WebGLProgram},
+                2: {0: WebGLProgram, 1: WebGLUniformLocation},
+            },
+            "getUniformLocation": {
+                2: {0: WebGLProgram, 1: String},
+            },
+            "isBuffer": {
+                1: {0: WebGLBuffer},
+            },
+            "isFramebuffer": {
+                1: {0: WebGLFramebuffer},
+            },
+            "isProgram": {
+                1: {0: WebGLProgram},
+            },
+            "isRenderbuffer": {
+                1: {0: WebGLRenderbuffer},
+            },
+            "isShader": {
+                1: {0: WebGLShader},
+            },
+            "isTexture": {
+                1: {0: WebGLTexture},
+            },
+            "linkProgram": {
+                1: {0: WebGLProgram},
+            },
+            "readPixels": {
+                7: {6: ArrayBufferView},
+            },
+            "shaderSource": {
+                2: {0: WebGLShader, 1: String},
+            },
+            "texImage2D": {
+                6: {5: TexImageSource},
+                9: {8: ArrayBufferView},
+            },
+            "texSubImage2D": {
+                7: {6: TexImageSource},
+                9: {8: ArrayBufferView},
+            },
+            "uniform1f": {
+                2: {0: WebGLUniformLocation},
+            },
+            "uniform1fv": {
+                2: {0: WebGLUniformLocation, 1: Float32List},
+            },
+            "uniform1i": {
+                2: {0: WebGLUniformLocation},
+            },
+            "uniform1iv": {
+                2: {0: WebGLUniformLocation, 1: Int32List},
+            },
+            "uniform2f": {
+                3: {0: WebGLUniformLocation},
+            },
+            "uniform2fv": {
+                2: {0: WebGLUniformLocation, 1: Float32List},
+            },
+            "uniform2i": {
+                3: {0: WebGLUniformLocation},
+            },
+            "uniform2iv": {
+                2: {0: WebGLUniformLocation, 1: Int32List},
+            },
+            "uniform3f": {
+                4: {0: WebGLUniformLocation},
+            },
+            "uniform3fv": {
+                2: {0: WebGLUniformLocation, 1: Float32List},
+            },
+            "uniform3i": {
+                4: {0: WebGLUniformLocation},
+            },
+            "uniform3iv": {
+                2: {0: WebGLUniformLocation, 1: Int32List},
+            },
+            "uniform4f": {
+                5: {0: WebGLUniformLocation},
+            },
+            "uniform4fv": {
+                2: {0: WebGLUniformLocation, 1: Float32List},
+            },
+            "uniform4i": {
+                5: {0: WebGLUniformLocation},
+            },
+            "uniform4iv": {
+                2: {0: WebGLUniformLocation, 1: Int32List},
+            },
+            "uniformMatrix2fv": {
+                3: {0: WebGLUniformLocation, 2: Float32List},
+            },
+            "uniformMatrix3fv": {
+                3: {0: WebGLUniformLocation, 2: Float32List},
+            },
+            "uniformMatrix4fv": {
+                3: {0: WebGLUniformLocation, 2: Float32List},
+            },
+            "useProgram": {
+                1: {0: WebGLProgram},
+            },
+            "validateProgram": {
+                1: {0: WebGLProgram},
+            },
+        },
     };
 }
 
@@ -356,6 +588,146 @@ WI.RecordingAction._functionNames = {
         "webkitGetImageDataHD",
         "webkitPutImageDataHD",
     ]),
+    [WI.Recording.Type.CanvasWebGL]: new Set([
+        "activeTexture",
+        "attachShader",
+        "bindAttribLocation",
+        "bindBuffer",
+        "bindFramebuffer",
+        "bindRenderbuffer",
+        "bindTexture",
+        "blendColor",
+        "blendEquation",
+        "blendEquationSeparate",
+        "blendFunc",
+        "blendFuncSeparate",
+        "bufferData",
+        "bufferData",
+        "bufferSubData",
+        "checkFramebufferStatus",
+        "clear",
+        "clearColor",
+        "clearDepth",
+        "clearStencil",
+        "colorMask",
+        "compileShader",
+        "compressedTexImage2D",
+        "compressedTexSubImage2D",
+        "copyTexImage2D",
+        "copyTexSubImage2D",
+        "createBuffer",
+        "createFramebuffer",
+        "createProgram",
+        "createRenderbuffer",
+        "createShader",
+        "createTexture",
+        "cullFace",
+        "deleteBuffer",
+        "deleteFramebuffer",
+        "deleteProgram",
+        "deleteRenderbuffer",
+        "deleteShader",
+        "deleteTexture",
+        "depthFunc",
+        "depthMask",
+        "depthRange",
+        "detachShader",
+        "disable",
+        "disableVertexAttribArray",
+        "drawArrays",
+        "drawElements",
+        "enable",
+        "enableVertexAttribArray",
+        "finish",
+        "flush",
+        "framebufferRenderbuffer",
+        "framebufferTexture2D",
+        "frontFace",
+        "generateMipmap",
+        "getActiveAttrib",
+        "getActiveUniform",
+        "getAttachedShaders",
+        "getAttribLocation",
+        "getBufferParameter",
+        "getContextAttributes",
+        "getError",
+        "getExtension",
+        "getFramebufferAttachmentParameter",
+        "getParameter",
+        "getProgramInfoLog",
+        "getProgramParameter",
+        "getRenderbufferParameter",
+        "getShaderInfoLog",
+        "getShaderParameter",
+        "getShaderPrecisionFormat",
+        "getShaderSource",
+        "getSupportedExtensions",
+        "getTexParameter",
+        "getUniform",
+        "getUniformLocation",
+        "getVertexAttrib",
+        "getVertexAttribOffset",
+        "hint",
+        "isBuffer",
+        "isContextLost",
+        "isEnabled",
+        "isFramebuffer",
+        "isProgram",
+        "isRenderbuffer",
+        "isShader",
+        "isTexture",
+        "lineWidth",
+        "linkProgram",
+        "pixelStorei",
+        "polygonOffset",
+        "readPixels",
+        "releaseShaderCompiler",
+        "renderbufferStorage",
+        "sampleCoverage",
+        "scissor",
+        "shaderSource",
+        "stencilFunc",
+        "stencilFuncSeparate",
+        "stencilMask",
+        "stencilMaskSeparate",
+        "stencilOp",
+        "stencilOpSeparate",
+        "texImage2D",
+        "texParameterf",
+        "texParameteri",
+        "texSubImage2D",
+        "uniform1f",
+        "uniform1fv",
+        "uniform1i",
+        "uniform1iv",
+        "uniform2f",
+        "uniform2fv",
+        "uniform2i",
+        "uniform2iv",
+        "uniform3f",
+        "uniform3fv",
+        "uniform3i",
+        "uniform3iv",
+        "uniform4f",
+        "uniform4fv",
+        "uniform4i",
+        "uniform4iv",
+        "uniformMatrix2fv",
+        "uniformMatrix3fv",
+        "uniformMatrix4fv",
+        "useProgram",
+        "validateProgram",
+        "vertexAttrib1f",
+        "vertexAttrib1fv",
+        "vertexAttrib2f",
+        "vertexAttrib2fv",
+        "vertexAttrib3f",
+        "vertexAttrib3fv",
+        "vertexAttrib4f",
+        "vertexAttrib4fv",
+        "vertexAttribPointer",
+        "viewport",
+    ]),
 };
 
 WI.RecordingAction._visualNames = {
@@ -372,6 +744,11 @@ WI.RecordingAction._visualNames = {
         "strokeRect",
         "strokeText",
         "webkitPutImageDataHD",
+    ]),
+    [WI.Recording.Type.CanvasWebGL]: new Set([
+        "clear",
+        "drawArrays",
+        "drawElements",
     ]),
 };
 

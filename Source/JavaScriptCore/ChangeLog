@@ -1,3 +1,15 @@
+2017-08-27  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Record actions performed on WebGLRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=174483
+        <rdar://problem/34040722>
+
+        Reviewed by Matt Baker.
+
+        * inspector/protocol/Recording.json:
+        * inspector/scripts/codegen/generator.py:
+        Add type and mapping for WebGL: "canvas-webgl" => CanvasWebGL
+
 2017-08-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, suppress warnings in GTK port

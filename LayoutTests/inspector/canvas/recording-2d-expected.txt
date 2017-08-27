@@ -121,7 +121,7 @@ Test that CanvasManager is able to record actions made to 2D canvas contexts.
       14,
       12,
       48,
-      10
+      13
     ],
     [
       10,
@@ -129,7 +129,7 @@ Test that CanvasManager is able to record actions made to 2D canvas contexts.
       77,
       28
     ],
-    "f",
+    "executeFrameFunction",
     [
       17,
       12,
@@ -141,7 +141,7 @@ Test that CanvasManager is able to record actions made to 2D canvas contexts.
       19,
       12,
       403,
-      6
+      25
     ],
     "global code",
     [
@@ -2404,7 +2404,7 @@ Test that CanvasManager is able to record actions made to 2D canvas contexts.
       14,
       12,
       48,
-      10
+      13
     ],
     [
       10,
@@ -2412,7 +2412,7 @@ Test that CanvasManager is able to record actions made to 2D canvas contexts.
       77,
       28
     ],
-    "f",
+    "executeFrameFunction",
     [
       17,
       12,
@@ -2424,7 +2424,7 @@ Test that CanvasManager is able to record actions made to 2D canvas contexts.
       19,
       12,
       403,
-      6
+      25
     ],
     "global code",
     [
@@ -3823,7 +3823,7 @@ Test that CanvasManager is able to record actions made to 2D canvas contexts.
       14,
       12,
       48,
-      10
+      13
     ],
     [
       10,
@@ -3831,7 +3831,7 @@ Test that CanvasManager is able to record actions made to 2D canvas contexts.
       77,
       28
     ],
-    "f",
+    "executeFrameFunction",
     [
       17,
       12,
@@ -3843,7 +3843,7 @@ Test that CanvasManager is able to record actions made to 2D canvas contexts.
       19,
       12,
       403,
-      6
+      25
     ],
     "global code",
     [

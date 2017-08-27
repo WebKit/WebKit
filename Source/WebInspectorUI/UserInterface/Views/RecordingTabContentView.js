@@ -131,7 +131,7 @@ WI.RecordingTabContentView = class RecordingTabContentView extends WI.ContentBro
     {
         this._scrubberNavigationItem.value = index;
 
-        options.onCompleteCallback = (context) => {
+        options.actionCompletedCallback = (context) => {
             for (let detailsSidebarPanel of this.detailsSidebarPanels) {
                 if (detailsSidebarPanel.updateActionIndex)
                     detailsSidebarPanel.updateActionIndex(index, context, options);

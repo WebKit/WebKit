@@ -37,7 +37,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._previewImageElement = null;
         this._errorElement = null;
 
-        if (representedObject.contextType === WI.Canvas.ContextType.Canvas2D) {
+        if (representedObject.contextType === WI.Canvas.ContextType.Canvas2D || representedObject.contextType === WI.Canvas.ContextType.WebGL) {
             const toolTip = WI.UIString("Request recording of actions. Shift-click to record a single frame.");
             const altToolTip = WI.UIString("Cancel recording");
             this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("canvas-record", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);

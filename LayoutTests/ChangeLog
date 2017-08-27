@@ -1,3 +1,23 @@
+2017-08-27  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Record actions performed on WebGLRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=174483
+        <rdar://problem/34040722>
+
+        Reviewed by Matt Baker.
+
+        * inspector/canvas/recording-webgl-expected.txt: Added.
+        * inspector/canvas/recording-webgl.html: Added.
+
+        * inspector/canvas/recording-webgl-snapshots-expected.txt: Added.
+        * inspector/canvas/recording-webgl-snapshots.html: Added.
+        Created separate test for checking that snapshots differ so that each test doesn't interfere
+        with the results of the other tests.
+
+        * inspector/canvas/recording-2d-expected.html:
+        * inspector/canvas/recording-2d.html:
+        Drive by: change naming to match inspector/canvas/recording-webgl.html.
+
 2017-08-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed gardening, mark a test as still failing

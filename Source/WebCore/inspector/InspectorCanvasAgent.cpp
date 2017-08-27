@@ -471,11 +471,15 @@ void InspectorCanvasAgent::didFinishRecordingCanvasFrame(HTMLCanvasElement& canv
     if (forceDispatch)
         inspectorCanvas->markCurrentFrameIncomplete();
 
-    // <https://webkit.org/b/174483> Web Inspector: Record actions performed on WebGLRenderingContext
+    // FIXME: <https://webkit.org/b/176008> Web Inspector: Record actions performed on WebGL2RenderingContext
 
     Inspector::Protocol::Recording::Type type;
     if (is<CanvasRenderingContext2D>(canvasRenderingContext))
         type = Inspector::Protocol::Recording::Type::Canvas2D;
+#if ENABLE(WEBGL)
+    else if (is<WebGLRenderingContext>(canvasRenderingContext))
+        type = Inspector::Protocol::Recording::Type::CanvasWebGL;
+#endif
     else {
         ASSERT_NOT_REACHED();
         type = Inspector::Protocol::Recording::Type::Canvas2D;

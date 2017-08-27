@@ -43,9 +43,9 @@ function load() {
     runTest();
 }
 
-function ignoreException(f){
+function ignoreException(func){
     try {
-        f();
+        func();
     } catch (e) { }
 }
 
@@ -395,12 +395,12 @@ function performActions() {
         },
     ];
     let index = 0;
-    function f() {
+    function executeFrameFunction() {
         frames[index++]();
         if (index < frames.length)
-            timeoutID = setTimeout(f, 0);
+            timeoutID = setTimeout(executeFrameFunction, 0);
     };
-    f();
+    executeFrameFunction();
 }
 
 function performNaNActions() {

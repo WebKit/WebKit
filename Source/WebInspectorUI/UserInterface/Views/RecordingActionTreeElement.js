@@ -91,7 +91,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
                 parameterElement.classList.add("parameter");
 
                 let swizzleType = recordingAction.parameterSwizzleTypeForTypeAtIndex(recordingType, i);
-                if (swizzleType && typeof parameter !== "string") {
+                if (swizzleType && swizzleType !== WI.Recording.Swizzle.String) {
                     parameterElement.classList.add("swizzled");
                     if (parameter === WI.Recording.Swizzle.Invalid) {
                         parameterElement.classList.add("missing");

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/shaderProgram-utilities.js"></script>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec3 position;
+    void main(void) {
+        gl_Position = vec4(position, 1.0);
+    }
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+</script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+let vertexBuffer = null;
+let indexBuffer = null;
+let position = null;
+
+function load() {
+    createProgram("webgl");
+    linkProgram("vertex-shader", "fragment-shader");
+    context.useProgram(program);
+
+    vertexBuffer = context.createBuffer();
+    context.bindBuffer(context.ARRAY_BUFFER, vertexBuffer);
+
+    indexBuffer = context.createBuffer();
+    context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+    position = context.getUniformLocation(program, "position");
+    context.vertexAttribPointer(position, 3, context.FLOAT, false, 0, 0); 
+    context.enableVertexAttribArray(position);
+
+    document.body.appendChild(context.canvas);
+
+    runTest();
+}
+
+function performActions() {
+    context.useProgram(program);
+
+    function clearContext() {
+        context.clearColor(0.0, 0.0, 0.0, 1.0);
+        context.clear(context.COLOR_BUFFER_BIT);
+    }
+
+    function drawArrays() {
+        let vertexes = [
+            -0.5,  0.5,  0.0,
+            -0.5, -0.5,  0.0,
+             0.5, -0.5,  0.0,
+        ];
+        context.bufferData(context.ARRAY_BUFFER, new Float32Array(vertexes), context.STATIC_DRAW);
+
+        context.drawArrays(context.TRIANGLES, 0, 3);
+    }
+
+    function drawElements() {
+        let vertexes = [
+             0.5,  0.5,  0.0,
+            -0.5, -0.5,  0.0,
+             0.5, -0.5,  0.0,
+        ];
+        context.bufferData(context.ARRAY_BUFFER, new Float32Array(vertexes), context.STATIC_DRAW);
+
+        let indexes = [0, 1, 2];
+        context.bufferData(context.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexes), context.STATIC_DRAW);
+
+        context.drawElements(context.TRIANGLES, indexes.length, context.UNSIGNED_SHORT, 0);
+    }
+
+    clearContext();
+    drawArrays();
+    clearContext();
+    drawElements();
+    clearContext();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingWebGL");
+
+    function sanitizeURL(url) {
+        return url.replace(/^.*?LayoutTests\//, "");
+    }
+
+    suite.addTestCase({
+        name: "Canvas.recordingWebGL.snapshots",
+        description: "Check that the snapshot taken after each visual action is different.",
+        test(resolve, reject) {
+            let canvases = WI.canvasManager.canvases.filter((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
+            InspectorTest.assert(canvases.length === 1, "There should only be one WebGL canvas.");
+            if (canvases.length !== 1) {
+                reject("Missing WebGL canvas.");
+                return;
+            }
+
+            WI.canvasManager.awaitEvent(WI.CanvasManager.Event.RecordingFinished)
+            .then((event) => {
+                let json = event.data.recording.toJSON();
+                json.data = json.data.map((item) => {
+                    if (typeof item !== "string")
+                        return item;
+
+                    return sanitizeURL(item);
+                });
+                InspectorTest.log(JSON.stringify(json, null, 2));
+            })
+            .then(resolve, reject);
+
+            const singleFrame = true;
+            CanvasAgent.requestRecording(canvases[0].identifier, singleFrame, (error) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+
+                InspectorTest.evaluateInPage(`performActions()`);
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager is able to record actions made to WebGL canvas contexts.</p>
+</body>
+</html>

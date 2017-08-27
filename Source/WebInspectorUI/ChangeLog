@@ -1,3 +1,44 @@
+2017-08-27  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Record actions performed on WebGLRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=174483
+        <rdar://problem/34040722>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording):
+        (WI.Recording.fromPayload):
+        (WI.Recording.prototype.swizzle):
+        Add swizzle types for WebGL parameters.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.fromPayload):
+        (WI.RecordingAction.prototype.get snapshot):
+        (WI.RecordingAction.prototype.swizzle):
+        (WI.RecordingAction.prototype.toJSON):
+        Include an optional fourth parameter `snapshot` that will be sent for visual actions when
+        recording WebGL canvas contexts.
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        (WI.RecordingContentView.prototype.get navigationItems):
+        (WI.RecordingContentView.prototype.updateActionIndex):
+        (WI.RecordingContentView.prototype.shown):
+        (WI.RecordingContentView.prototype._generateContentCanvasWebGL):
+        * UserInterface/Views/RecordingContentView.css:
+        (.content-view:not(.tab).recording :matches(img, canvas)):
+        (.content-view:not(.tab).recording canvas): Deleted.
+        Instead of regenerating the canvas context in the WebInspector frontend, just display the
+        snapshot image for the last visual action.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._generateDOM):
+
 2017-08-24  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: add filter for draw actions in Recordings

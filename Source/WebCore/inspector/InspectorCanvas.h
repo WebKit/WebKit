@@ -60,8 +60,8 @@ public:
     bool hasRecordingData() const;
     void recordAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
 
-    RefPtr<Inspector::Protocol::Recording::InitialState>&& releaseInitialState() { return WTFMove(m_initialState); }
-    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>>&& releaseFrames() { return WTFMove(m_frames); }
+    RefPtr<Inspector::Protocol::Recording::InitialState>&& releaseInitialState();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>>&& releaseFrames();
     RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>>&& releaseData();
 
     void markNewFrame();
@@ -79,6 +79,8 @@ public:
 
 private:
     InspectorCanvas(HTMLCanvasElement&, const String& cssCanvasName);
+    void appendActionSnapshotIfNeeded();
+    String getCanvasContentAsDataURL();
 
     typedef Variant<
         CanvasGradient*,
@@ -107,6 +109,7 @@ private:
     RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;
     RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Recording::Frame>> m_frames;
     RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> m_currentActions;
+    RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> m_actionNeedingSnapshot;
     RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> m_serializedDuplicateData;
     Vector<DuplicateDataVariant> m_indexedDuplicateData;
     size_t m_bufferLimit { 100 * 1024 * 1024 };
