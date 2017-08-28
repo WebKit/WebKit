@@ -1,3 +1,12 @@
+2017-08-28  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Add PlatformWin cmake for Webkit
+        https://bugs.webkit.org/show_bug.cgi?id=176027
+
+        Reviewed by Brent Fulgham.
+
+        * PlatformWin.cmake: Added.
+
 2017-08-28  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Upstream CFNetwork-related WebKitSystemInterface functions
