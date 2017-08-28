@@ -650,7 +650,7 @@ void WebAutomationSessionProxy::takeScreenshot(uint64_t pageID, uint64_t callbac
         return;
     }
 
-    WebCore::IntRect snapshotRect = WebCore::IntRect(WebCore::IntPoint(0, 0), frameView->contentsSize());
+    WebCore::IntRect snapshotRect = frameView->visibleContentRect();
     if (snapshotRect.isEmpty()) {
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, String()), 0);
         return;

@@ -1,5 +1,21 @@
 2017-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Automation: takeScreenshot should use the visible content rect not the document rect
+        https://bugs.webkit.org/show_bug.cgi?id=175665
+
+        Reviewed by Brian Burg.
+
+        According to the spec, we should get the toplevel browsing context document rectangle and take a screenshot of
+        it using the current viewport width and height. We are currently using the document size.
+
+        19. Screen Capture.
+        https://w3c.github.io/webdriver/webdriver-spec.html#dfn-draw-a-bounding-box-from-the-framebuffer
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::takeScreenshot): Use FrameView::visibleContentRect().
+
+2017-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] ASSERTION FAILED: !isOpen() in WebKit::IconDatabase::~IconDatabase()
         https://bugs.webkit.org/show_bug.cgi?id=175719
 
