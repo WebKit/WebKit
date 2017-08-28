@@ -40,6 +40,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/RefCounter.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -406,7 +407,10 @@ private:
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #endif
 
-    unsigned m_pagesMarkingLayersAsVolatile { 0 };
+    enum PageMarkingLayersAsVolatileCounterType { };
+    using PageMarkingLayersAsVolatileCounter = RefCounter<PageMarkingLayersAsVolatileCounterType>;
+    std::unique_ptr<PageMarkingLayersAsVolatileCounter> m_pageMarkingLayersAsVolatileCounter;
+
     bool m_suppressMemoryPressureHandler { false };
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;

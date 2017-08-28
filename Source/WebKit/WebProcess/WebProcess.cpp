@@ -1365,7 +1365,7 @@ void WebProcess::cancelPrepareToSuspend()
 
     // If we've already finished cleaning up and sent ProcessReadyToSuspend, we
     // shouldn't send DidCancelProcessSuspension; the UI process strictly expects one or the other.
-    if (!m_pagesMarkingLayersAsVolatile)
+    if (!m_pageMarkingLayersAsVolatileCounter)
         return;
 
     cancelMarkAllLayersVolatile();
@@ -1377,28 +1377,27 @@ void WebProcess::cancelPrepareToSuspend()
 void WebProcess::markAllLayersVolatile(WTF::Function<void()>&& completionHandler)
 {
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile()", this);
-    m_pagesMarkingLayersAsVolatile = m_pageMap.size();
-    if (!m_pagesMarkingLayersAsVolatile) {
+    ASSERT(!m_pageMarkingLayersAsVolatileCounter);
+    m_pageMarkingLayersAsVolatileCounter = std::make_unique<PageMarkingLayersAsVolatileCounter>([this, completionHandler = WTFMove(completionHandler)] (RefCounterEvent) {
+        if (m_pageMarkingLayersAsVolatileCounter->value())
+            return;
+
         completionHandler();
-        return;
-    }
-    for (auto& page : m_pageMap.values()) {
-        page->markLayersVolatile([this, completionHandler = WTFMove(completionHandler)] {
-            ASSERT(m_pagesMarkingLayersAsVolatile);
-            if (!--m_pagesMarkingLayersAsVolatile)
-                completionHandler();
-        });
-    }
+        m_pageMarkingLayersAsVolatileCounter = nullptr;
+    });
+    auto token = m_pageMarkingLayersAsVolatileCounter->count();
+    for (auto& page : m_pageMap.values())
+        page->markLayersVolatile([token] { });
 }
 
 void WebProcess::cancelMarkAllLayersVolatile()
 {
-    if (!m_pagesMarkingLayersAsVolatile)
+    if (!m_pageMarkingLayersAsVolatileCounter)
         return;
 
+    m_pageMarkingLayersAsVolatileCounter = nullptr;
     for (auto& page : m_pageMap.values())
         page->cancelMarkLayersVolatile();
-    m_pagesMarkingLayersAsVolatile = 0;
 }
 
 void WebProcess::setAllLayerTreeStatesFrozen(bool frozen)
