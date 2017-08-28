@@ -828,7 +828,7 @@ void WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
     m_handle->sendData(frameData.data(), frameData.size(), WTFMove(completionHandler));
 }
 
-ResourceRequest WebSocketChannel::clientHandshakeRequest() const
+ResourceRequest WebSocketChannel::clientHandshakeRequest()
 {
     return m_handshake->clientHandshakeRequest();
 }

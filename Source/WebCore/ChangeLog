@@ -1,3 +1,58 @@
+2017-08-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Disable access to secure cookies if an HTTPS site loads mixed content (Part 2: Header Requests)
+        https://bugs.webkit.org/show_bug.cgi?id=175992
+        <rdar://problem/34086613>
+
+        Reviewed by Daniel Bates.
+
+        The original work in Bug 157053 did not properly handle the case of websockets. This patch completes
+        the changes to secure cookie handling to make sure websockets are also protected.
+
+        Tests: http/tests/websocket/tests/hybi/secure-cookie-insecure-connection.pl
+               http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::clientHandshakeRequest): Remove 'const' declaration so we can work with
+        a mutable Document object. This allows us to mark the Document as having accessed secure cookies.
+        (WebCore::WebSocketChannel::clientHandshakeRequest const): Deleted.
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeMessage): Ditto.
+        (WebCore::WebSocketHandshake::clientHandshakeRequest): Ditto.
+        (WebCore::WebSocketHandshake::clientHandshakeMessage const): Deleted.
+        (WebCore::WebSocketHandshake::clientHandshakeRequest const): Deleted.
+        * Modules/websockets/WebSocketHandshake.h:
+        * loader/CookieJar.cpp:
+        (WebCore::cookies): Small naming cleanup.
+        (WebCore::cookieRequestHeaderFieldValue): Pass a flag indicating whether secure cookies should be
+        included in the result or not. Set the document flag indicating secure cookies were accessed (if
+        they were), and return the resulting cookie string.
+        * loader/CookieJar.h:
+        * platform/CookiesStrategy.h:
+        * platform/network/CacheValidation.cpp:
+        (WebCore::headerValueForVary): Revise to pass a flag indicating whether secure cookies should be included
+        or not.
+        * platform/network/PlatformCookieJar.h:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::doesContainSecureCookies): Added helper method.
+        (WebCore::cookiesForDOM): Revise to use new helper function.
+        (WebCore::cookieRequestHeaderFieldValue): Revise to accept a flag indicating if secure cookies should
+        be included in the result. Return a pair consisting of the cookie string, and a flag indicating whether
+        secure cookies were accessed or not.
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::CookieJarCurlFileSystem::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        * platform/network/curl/CookieJarCurl.h:
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookiesForSession): Ditto.
+        (WebCore::cookiesForDOM): Update for new 'cookiesForSession' signature.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::cookieRequestHeaderFieldValue): Revise to accept a flag indicating if secure cookies should
+        be included in the result. Return a pair consisting of the cookie string, and a flag indicating whether
+        secure cookies were accessed or not.
+
 2017-08-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [WPE] Rename EventHandlerGlib to EventHandlerGLib

@@ -133,15 +133,16 @@ static NSArray *cookiesForURL(const NetworkStorageSession& session, const URL& f
 }
 
 enum IncludeHTTPOnlyOrNot { DoNotIncludeHTTPOnly, IncludeHTTPOnly };
-static String cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeHTTPOnlyOrNot includeHTTPOnly, IncludeSecureCookies includeSecureCookies, bool& didAccessSecureCookies)
+static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeHTTPOnlyOrNot includeHTTPOnly, IncludeSecureCookies includeSecureCookies)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSArray *cookies = cookiesForURL(session, firstParty, url);
     if (![cookies count])
-        return String(); // Return a null string, not an empty one that StringBuilder would create below.
+        return { String(), false }; // Return a null string, not an empty one that StringBuilder would create below.
 
     StringBuilder cookiesBuilder;
+    bool didAccessSecureCookies = false;
     for (NSHTTPCookie *cookie in cookies) {
         if (![[cookie name] length])
             continue;
@@ -162,24 +163,20 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
         cookiesBuilder.append('=');
         cookiesBuilder.append([cookie value]);
     }
-    return cookiesBuilder.toString();
+    return { cookiesBuilder.toString(), didAccessSecureCookies };
 
     END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
+    return { String(), false };
 }
 
 std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)
 {
-    bool didAccessSecureCookies = false;
-    auto cookieString = cookiesForSession(session, firstParty, url, DoNotIncludeHTTPOnly, includeSecureCookies, didAccessSecureCookies);
-    return { cookieString, didAccessSecureCookies };
+    return cookiesForSession(session, firstParty, url, DoNotIncludeHTTPOnly, includeSecureCookies);
 }
 
-String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)
 {
-    bool ignore = false;
-    auto includeSecureCookies = url.protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-    return cookiesForSession(session, firstParty, url, IncludeHTTPOnly, includeSecureCookies, ignore);
+    return cookiesForSession(session, firstParty, url, IncludeHTTPOnly, includeSecureCookies);
 }
 
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& cookieStr)

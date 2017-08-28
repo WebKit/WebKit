@@ -31,6 +31,7 @@
 #include "NetworkProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <WebCore/CookiesStrategy.h>
 #include <WebCore/URL.h>
 #include <dlfcn.h>
 #include <pal/SessionID.h>
@@ -55,9 +56,12 @@ namespace WebKit {
 
 static CFDictionaryRef webKitCookieStorageCopyRequestHeaderFieldsForURL(CFHTTPCookieStorageRef inCookieStorage, CFURLRef inRequestURL)
 {
+    IncludeSecureCookies includeSecureCookies = URL(inRequestURL).protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+
     String cookies;
+    bool secureCookiesAccessed = false;
     URL firstPartyForCookiesURL;
-    if (!WebProcess::singleton().networkConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(PAL::SessionID::defaultSessionID(), firstPartyForCookiesURL, inRequestURL), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookies), 0))
+    if (!WebProcess::singleton().networkConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(PAL::SessionID::defaultSessionID(), firstPartyForCookiesURL, inRequestURL, includeSecureCookies), Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue::Reply(cookies, secureCookiesAccessed), 0))
         return 0;
 
     if (cookies.isNull())

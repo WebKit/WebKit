@@ -97,10 +97,10 @@ private:
     void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(PAL::SessionID, uint64_t mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    void cookiesForDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies, String& result, bool& secureCookiesAccessed);
+    void cookiesForDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies, String& cookieString, bool& secureCookiesAccessed);
     void setCookiesFromDOM(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, const String&);
     void cookiesEnabled(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, bool& result);
-    void cookieRequestHeaderFieldValue(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, String& result);
+    void cookieRequestHeaderFieldValue(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, WebCore::IncludeSecureCookies, String& cookieString, bool& secureCookiesAccessed);
     void getRawCookies(PAL::SessionID, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&);
     void deleteCookie(PAL::SessionID, const WebCore::URL&, const String& cookieName);
 

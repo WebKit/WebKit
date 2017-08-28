@@ -58,8 +58,8 @@ String cookies(Document& document, const URL& url)
 {
     TraceScope scope(FetchCookiesStart, FetchCookiesEnd);
 
-    auto includeSecureCookiesOrNot = (url.protocolIs("https") && !document.foundMixedContent()) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-    auto result = platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document.firstPartyForCookies(), url, includeSecureCookiesOrNot);
+    auto includeSecureCookies = (url.protocolIs("https") && !document.foundMixedContent()) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+    auto result = platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document.firstPartyForCookies(), url, includeSecureCookies);
     if (result.second)
         document.setSecureCookiesAccessed();
 
@@ -76,9 +76,14 @@ bool cookiesEnabled(const Document& document)
     return platformStrategies()->cookiesStrategy()->cookiesEnabled(storageSession(document), document.firstPartyForCookies(), document.cookieURL());
 }
 
-String cookieRequestHeaderFieldValue(const Document& document, const URL& url)
+String cookieRequestHeaderFieldValue(Document& document, const URL& url)
 {
-    return platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(storageSession(document), document.firstPartyForCookies(), url);
+    auto includeSecureCookies = (url.protocolIs("https") && !document.foundMixedContent()) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+    auto result = platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(storageSession(document), document.firstPartyForCookies(), url, includeSecureCookies);
+    if (result.second)
+        document.setSecureCookiesAccessed();
+
+    return result.first;
 }
 
 bool getRawCookies(const Document& document, const URL& url, Vector<Cookie>& cookies)

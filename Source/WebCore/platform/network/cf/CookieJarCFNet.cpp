@@ -168,34 +168,39 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
     CFHTTPCookieStorageSetCookies(session.cookieStorage().get(), filterCookies(unfilteredCookies.get()).get(), urlCF.get(), firstPartyForCookiesCF.get());
 }
 
+static bool containsSecureCookies(CFArrayRef cookies)
+{
+    CFIndex cookieCount = CFArrayGetCount(cookies);
+    while (cookieCount--) {
+        if (CFHTTPCookieIsSecure(checked_cf_cast<CFHTTPCookieRef>(CFArrayGetValueAtIndex(cookies, cookieCount))))
+            return true;
+    }
+
+    return false;
+}
+
 std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)
 {
     RetainPtr<CFArrayRef> cookiesCF = copyCookiesForURLWithFirstPartyURL(session, firstParty, url, includeSecureCookies);
 
     auto filteredCookies = filterCookies(cookiesCF.get());
 
-    bool didAccessSecureCookies = false;
-
-    CFIndex cookieCount = CFArrayGetCount(filteredCookies.get());
-    while (cookieCount--) {
-        if (CFHTTPCookieIsSecure(checked_cf_cast<CFHTTPCookieRef>(CFArrayGetValueAtIndex(filteredCookies.get(), cookieCount)))) {
-            didAccessSecureCookies = true;
-            break;
-        }
-    }
+    bool didAccessSecureCookies = containsSecureCookies(filteredCookies.get());
 
     RetainPtr<CFDictionaryRef> headerCF = adoptCF(CFHTTPCookieCopyRequestHeaderFields(kCFAllocatorDefault, filteredCookies.get()));
     String cookieString = checked_cf_cast<CFStringRef>(CFDictionaryGetValue(headerCF.get(), s_cookieCF));
     return { cookieString, didAccessSecureCookies };
 }
 
-String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies)
 {
-    auto includeSecureCookies = url.protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-
     RetainPtr<CFArrayRef> cookiesCF = copyCookiesForURLWithFirstPartyURL(session, firstParty, url, includeSecureCookies);
+
+    bool didAccessSecureCookies = containsSecureCookies(cookiesCF.get());
+
     RetainPtr<CFDictionaryRef> headerCF = adoptCF(CFHTTPCookieCopyRequestHeaderFields(kCFAllocatorDefault, cookiesCF.get()));
-    return checked_cf_cast<CFStringRef>(CFDictionaryGetValue(headerCF.get(), s_cookieCF));
+    String cookieString = checked_cf_cast<CFStringRef>(CFDictionaryGetValue(headerCF.get(), s_cookieCF));
+    return { cookieString, didAccessSecureCookies };
 }
 
 bool cookiesEnabled(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& /*url*/)

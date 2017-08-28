@@ -323,9 +323,9 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(PAL::Sessi
     loader->convertToDownload(downloadID, request, response);
 }
 
-void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies, String& result, bool& secureCookiesAccessed)
+void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies, String& cookieString, bool& secureCookiesAccessed)
 {
-    std::tie(result, secureCookiesAccessed) = WebCore::cookiesForDOM(storageSession(sessionID), firstParty, url, includeSecureCookies);
+    std::tie(cookieString, secureCookiesAccessed) = WebCore::cookiesForDOM(storageSession(sessionID), firstParty, url, includeSecureCookies);
 }
 
 void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, const URL& firstParty, const URL& url, const String& cookieString)
@@ -338,9 +338,9 @@ void NetworkConnectionToWebProcess::cookiesEnabled(PAL::SessionID sessionID, con
     result = WebCore::cookiesEnabled(storageSession(sessionID), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const URL& url, String& result)
+void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const URL& url, IncludeSecureCookies includeSecureCookies, String& cookieString, bool& secureCookiesAccessed)
 {
-    result = WebCore::cookieRequestHeaderFieldValue(storageSession(sessionID), firstParty, url);
+    std::tie(cookieString, secureCookiesAccessed) = WebCore::cookieRequestHeaderFieldValue(storageSession(sessionID), firstParty, url, includeSecureCookies);
 }
 
 void NetworkConnectionToWebProcess::getRawCookies(PAL::SessionID sessionID, const URL& firstParty, const URL& url, Vector<Cookie>& result)

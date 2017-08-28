@@ -45,7 +45,7 @@ enum class IncludeSecureCookies;
 WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies);
 WEBCORE_EXPORT void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String&);
 WEBCORE_EXPORT bool cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&);
-WEBCORE_EXPORT String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&);
+WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, IncludeSecureCookies);
 WEBCORE_EXPORT bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&);
 WEBCORE_EXPORT void deleteCookie(const NetworkStorageSession&, const URL&, const String&);
 WEBCORE_EXPORT void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames);

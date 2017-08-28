@@ -42,7 +42,7 @@ WEBCORE_EXPORT String cookies(Document&, const URL&);
 WEBCORE_EXPORT void setCookies(Document&, const URL&, const String& cookieString);
 
 WEBCORE_EXPORT bool cookiesEnabled(const Document&);
-WEBCORE_EXPORT String cookieRequestHeaderFieldValue(const Document&, const URL&);
+WEBCORE_EXPORT String cookieRequestHeaderFieldValue(Document&, const URL&);
 WEBCORE_EXPORT bool getRawCookies(const Document&, const URL&, Vector<Cookie>&);
 WEBCORE_EXPORT void deleteCookie(const Document&, const URL&, const String& cookieName);
 

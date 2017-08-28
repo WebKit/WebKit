@@ -179,7 +179,7 @@ String WebSocketHandshake::clientLocation() const
     return builder.toString();
 }
 
-CString WebSocketHandshake::clientHandshakeMessage() const
+CString WebSocketHandshake::clientHandshakeMessage()
 {
     // Keep the following consistent with clientHandshakeRequest().
     StringBuilder builder;
@@ -233,7 +233,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     return builder.toString().utf8();
 }
 
-ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
+ResourceRequest WebSocketHandshake::clientHandshakeRequest()
 {
     // Keep the following consistent with clientHandshakeMessage().
     ResourceRequest request(m_url);

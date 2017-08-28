@@ -62,8 +62,8 @@ public:
     String clientOrigin() const;
     String clientLocation() const;
 
-    CString clientHandshakeMessage() const;
-    ResourceRequest clientHandshakeRequest() const;
+    CString clientHandshakeMessage();
+    ResourceRequest clientHandshakeRequest();
 
     void reset();
     void clearDocument();

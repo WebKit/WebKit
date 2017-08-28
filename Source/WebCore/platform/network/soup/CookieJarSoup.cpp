@@ -118,10 +118,10 @@ std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, cons
     return cookiesForSession(session, url, false, includeSecureCookies);
 }
 
-String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url)
+std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url, IncludeSecureCookies includeSecureCookies)
 {
     // Secure cookies will still only be included if url's protocol is https.
-    return cookiesForSession(session, url, true, IncludeSecureCookies::Yes).first;
+    return cookiesForSession(session, url, true, includeSecureCookies);
 }
 
 bool cookiesEnabled(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& /*url*/)

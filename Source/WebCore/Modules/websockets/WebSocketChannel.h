@@ -116,7 +116,7 @@ public:
     void didFail(int errorCode) override;
 
     unsigned identifier() const { return m_identifier; }
-    ResourceRequest clientHandshakeRequest() const;
+    ResourceRequest clientHandshakeRequest();
     const ResourceResponse& serverHandshakeResponse() const;
     WebSocketHandshake::Mode handshakeMode() const;
 
