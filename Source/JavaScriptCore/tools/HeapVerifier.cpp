@@ -331,9 +331,9 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
         if (UNLIKELY(codeBlock)) {
             bool success = true;
             for (unsigned i = 0; i < codeBlock->totalNumberOfValueProfiles(); ++i) {
-                ValueProfile* valueProfile = codeBlock->getFromAllValueProfiles(i);
+                ValueProfile& valueProfile = codeBlock->getFromAllValueProfiles(i);
                 for (unsigned i = 0; i < ValueProfile::totalNumberOfBuckets; ++i) {
-                    JSValue value = JSValue::decode(valueProfile->m_buckets[i]);
+                    JSValue value = JSValue::decode(valueProfile.m_buckets[i]);
                     if (!value)
                         continue;
                     if (!value.isCell())

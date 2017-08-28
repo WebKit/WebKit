@@ -1,3 +1,48 @@
+2017-08-22  Saam Barati  <sbarati@apple.com>
+
+        We are using valueProfileForBytecodeOffset when there may not be a value profile
+        https://bugs.webkit.org/show_bug.cgi?id=175812
+
+        Reviewed by Michael Saboff.
+
+        This patch uses the type system to aid the code around CodeBlock's ValueProfile
+        accessor methods. valueProfileForBytecodeOffset used to return ValueProfile*,
+        so there were callers of this that thought it could return nullptr when there
+        was no such ValueProfile. This was not the case, it always returned a non-null
+        pointer. This patch changes valueProfileForBytecodeOffset to return ValueProfile&
+        and adds a new tryGetValueProfileForBytecodeOffset method that returns ValueProfile*
+        and does the right thing if there is no such ValueProfile.
+        
+        This patch also changes the other ValueProfile accessors on CodeBlock to
+        return ValueProfile& instead of ValueProfile*. Some callers handled the null
+        case unnecessarily, and using the type system to specify the result can't be
+        null removes these useless branches.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::dumpValueProfiles):
+        (JSC::CodeBlock::tryGetValueProfileForBytecodeOffset):
+        (JSC::CodeBlock::valueProfileForBytecodeOffset):
+        (JSC::CodeBlock::validate):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfileForArgument):
+        (JSC::CodeBlock::valueProfile):
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeOffset):
+        (JSC::CodeBlock::getFromAllValueProfiles):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitValueProfilingSite):
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::BytecodeSequence):
+        * tools/HeapVerifier.cpp:
+        (JSC::HeapVerifier::validateJSCell):
+
 2017-08-17  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: const in unreachable code decoded incorrectly, erroneously rejects binary as invalid

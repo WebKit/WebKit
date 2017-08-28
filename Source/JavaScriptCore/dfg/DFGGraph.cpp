@@ -1532,7 +1532,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                         return nullptr;
                     if (node->variableAccessData() != argumentNode->variableAccessData())
                         return nullptr;
-                    return profiledBlock->valueProfileForArgument(argument);
+                    return &profiledBlock->valueProfileForArgument(argument);
                 }();
                 if (result)
                     return result;
@@ -1546,7 +1546,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
             }
 
             if (node->hasHeapPrediction())
-                return profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+                return &profiledBlock->valueProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
 
             if (profiledBlock->hasBaselineJITProfiling()) {
                 if (ArithProfile* result = profiledBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex))

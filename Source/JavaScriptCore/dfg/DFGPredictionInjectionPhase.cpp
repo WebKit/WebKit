@@ -52,12 +52,9 @@ public:
             ConcurrentJSLocker locker(profiledBlock()->m_lock);
             
             for (size_t arg = 0; arg < static_cast<size_t>(codeBlock()->numParameters()); ++arg) {
-                ValueProfile* profile = profiledBlock()->valueProfileForArgument(arg);
-                if (!profile)
-                    continue;
-            
+                ValueProfile& profile = profiledBlock()->valueProfileForArgument(arg);
                 m_graph.m_arguments[arg]->variableAccessData()->predict(
-                    profile->computeUpdatedPrediction(locker));
+                    profile.computeUpdatedPrediction(locker));
             }
         }
         

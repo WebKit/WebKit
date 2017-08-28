@@ -1907,8 +1907,8 @@ bool ByteCodeParser::handleInlining(
                         // calls.
                         if (codeBlock && argument < static_cast<unsigned>(codeBlock->numParameters())) {
                             ConcurrentJSLocker locker(codeBlock->m_lock);
-                            if (ValueProfile* profile = codeBlock->valueProfileForArgument(argument))
-                                variable->predict(profile->computeUpdatedPrediction(locker));
+                            ValueProfile& profile = codeBlock->valueProfileForArgument(argument);
+                            variable->predict(profile.computeUpdatedPrediction(locker));
                         }
                         
                         Node* setArgument = addToGraph(SetArgument, OpInfo(variable));

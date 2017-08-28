@@ -401,19 +401,20 @@ public:
         ASSERT(m_argumentValueProfiles.size() == static_cast<unsigned>(m_numParameters));
         return m_argumentValueProfiles.size();
     }
-    ValueProfile* valueProfileForArgument(unsigned argumentIndex)
+    ValueProfile& valueProfileForArgument(unsigned argumentIndex)
     {
-        ValueProfile* result = &m_argumentValueProfiles[argumentIndex];
-        ASSERT(result->m_bytecodeOffset == -1);
+        ValueProfile& result = m_argumentValueProfiles[argumentIndex];
+        ASSERT(result.m_bytecodeOffset == -1);
         return result;
     }
 
     unsigned numberOfValueProfiles() { return m_valueProfiles.size(); }
-    ValueProfile* valueProfile(int index) { return &m_valueProfiles[index]; }
-    ValueProfile* valueProfileForBytecodeOffset(int bytecodeOffset);
+    ValueProfile& valueProfile(int index) { return m_valueProfiles[index]; }
+    ValueProfile& valueProfileForBytecodeOffset(int bytecodeOffset);
+    ValueProfile* tryGetValueProfileForBytecodeOffset(int bytecodeOffset);
     SpeculatedType valueProfilePredictionForBytecodeOffset(const ConcurrentJSLocker& locker, int bytecodeOffset)
     {
-        if (ValueProfile* valueProfile = valueProfileForBytecodeOffset(bytecodeOffset))
+        if (ValueProfile* valueProfile = tryGetValueProfileForBytecodeOffset(bytecodeOffset))
             return valueProfile->computeUpdatedPrediction(locker);
         return SpecNone;
     }
@@ -422,7 +423,7 @@ public:
     {
         return numberOfArgumentValueProfiles() + numberOfValueProfiles();
     }
-    ValueProfile* getFromAllValueProfiles(unsigned index)
+    ValueProfile& getFromAllValueProfiles(unsigned index)
     {
         if (index < numberOfArgumentValueProfiles())
             return valueProfileForArgument(index);

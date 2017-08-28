@@ -334,7 +334,7 @@ namespace JSC {
 
         // This assumes that the value to profile is in regT0 and that regT3 is available for
         // scratch.
-        void emitValueProfilingSite(ValueProfile*);
+        void emitValueProfilingSite(ValueProfile&);
         void emitValueProfilingSite(unsigned bytecodeOffset);
         void emitValueProfilingSite();
         void emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID indexingType, ArrayProfile*);
