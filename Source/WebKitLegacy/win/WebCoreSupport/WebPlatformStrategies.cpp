@@ -85,9 +85,9 @@ bool WebPlatformStrategies::cookiesEnabled(const NetworkStorageSession& session,
     return WebCore::cookiesEnabled(session, firstParty, url);
 }
 
-String WebPlatformStrategies::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+std::pair<String, bool> WebPlatformStrategies::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, WebCore::IncludeSecureCookies includeSecureCookies)
 {
-    return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url);
+    return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url, includeSecureCookies);
 }
 
 String WebPlatformStrategies::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const URL& url)

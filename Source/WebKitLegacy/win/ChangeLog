@@ -1,3 +1,11 @@
+2017-08-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r221275.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue): Correct return type and arguments
+        to match new API.
+
 2017-08-28  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] The test http/tests/misc/policy-delegate-called-twice.html is crashing.
