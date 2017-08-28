@@ -81,12 +81,12 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
 
     TextPainter textPainter(paintInfo.context());
     textPainter.setFont(style.fontCascade());
-    textPainter.setTextPaintStyle(computeTextPaintStyle(flow.frame(), style, paintInfo));
+    textPainter.setStyle(computeTextPaintStyle(flow.frame(), style, paintInfo));
 
     std::unique_ptr<ShadowData> debugShadow = nullptr;
     if (flow.settings().simpleLineLayoutDebugBordersEnabled()) {
         debugShadow = std::make_unique<ShadowData>(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, Color(0, 255, 0, 200));
-        textPainter.addTextShadow(debugShadow.get(), nullptr);
+        textPainter.setShadow(debugShadow.get());
     }
 
     std::optional<TextDecorationPainter> textDecorationPainter;
@@ -120,7 +120,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         TextRun textRun(run.hasHyphen() ? textWithHyphen : run.text(), 0, run.expansion(), run.expansionBehavior());
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin = FloatPoint(rect.x() + paintOffset.x(), roundToDevicePixel(run.baselinePosition() + paintOffset.y(), deviceScaleFactor));
-        textPainter.paintText(textRun, textRun.length(), rect, textOrigin);
+        textPainter.paint(textRun, textRun.length(), rect, textOrigin);
         if (textDecorationPainter) {
             textDecorationPainter->setWidth(rect.width());
             textDecorationPainter->paintTextDecoration(textRun, textOrigin, rect.location() + paintOffset);

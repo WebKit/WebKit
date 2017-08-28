@@ -1,3 +1,42 @@
+2017-08-21  Daniel Bates  <dabates@apple.com>
+
+        Cleanup TextPainter
+        https://bugs.webkit.org/show_bug.cgi?id=175782
+
+        Reviewed by Myles C. Maxfield.
+
+        Remove redundant mention of "text" in the name of TextPainter member functions, add separate
+        setters for selection and non-selection shadows, and do some other minor cleanups.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Update code for renamed functions.
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow): Ditto.
+        * rendering/TextPainter.cpp: Include ShadowData.h.
+        (WebCore::ShadowApplier::ShadowApplier): Use C++11 brace-initialization syntax.
+        (WebCore::ShadowApplier::isLastShadowIteration): Moved from TextPainter.h.
+        (WebCore::ShadowApplier::shadowIsCompletelyCoveredByText): Ditto.
+        (WebCore::TextPainter::paintTextOrEmphasisMarks): Renamed; formerly named drawTextOrEmphasisMarks.
+        (WebCore::TextPainter::paintTextWithShadows): Update code for renamed functions.
+        (WebCore::TextPainter::paintRange): Renamed; formerly named paintTextInRange.
+        (WebCore::TextPainter::paint): Renamed; formerly named paintText.
+        (WebCore::TextPainter::drawTextOrEmphasisMarks): Renamed to paintTextOrEmphasisMarks() to match
+        the naming convention of all the other paint functions in this class.
+        (WebCore::TextPainter::paintTextInRange): Renamed to paintRange.
+        (WebCore::TextPainter::paintText): Renamed to paint.
+        * rendering/TextPainter.h: Forward declare ShadowData.
+        (WebCore::TextPainter::setStyle): Renamed; formerly named setTextPaintStyle.
+        (WebCore::TextPainter::setSelectionStyle): Renamed; formerly named setSelectionPaintStyle.
+        (WebCore::TextPainter::setShadow): Added.
+        (WebCore::TextPainter::setSelectionShadow): Added.
+        (WebCore::TextPainter::setEmphasisMark): Renamed; formerly named addEmphasis. 
+        (WebCore::TextPainter::setTextPaintStyle): Renamed to setStyle.
+        (WebCore::TextPainter::setSelectionPaintStyle): Renamed to setSelectionStyle.
+        (WebCore::TextPainter::addEmphasis): Renamed to setEmphasisMark.
+        (WebCore::TextPainter::addTextShadow): Split functionality into setShadow and setSelectionShadow.
+        (WebCore::ShadowApplier::isLastShadowIteration): Moved to TextPainter.cpp.
+        (WebCore::ShadowApplier::shadowIsCompletelyCoveredByText): Ditto.
+
 2017-08-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE][GSTREAMER_GL] Overriden virtual function not marked “override” in MediaPlayerPrivateGStreamerBase.h
