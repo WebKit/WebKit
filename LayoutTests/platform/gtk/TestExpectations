@@ -920,8 +920,6 @@ webkit.org/b/141699 fast/attachment/attachment-disabled-rendering.html [ Failure
 webkit.org/b/141699 fast/attachment/attachment-rendering.html [ Failure ]
 webkit.org/b/141699 fast/attachment/attachment-respects-css-size.html [ ImageOnlyFailure ]
 
-webkit.org/b/141705 media/video-fullscreeen-only-controls.html [ Failure ]
-
 webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure ]
 webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
 

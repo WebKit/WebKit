@@ -1,3 +1,15 @@
+2017-08-18  Ms2ger  <Ms2ger@gmail.com>
+
+        [GTK] Show controls if a video element isn't allowed to play inline.
+        https://bugs.webkit.org/show_bug.cgi?id=141705
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Test: covered by media/video-fullscreeen-only-controls.html [sic].
+
+        * Modules/mediacontrols/mediaControlsGtk.js:
+        (ControllerGtk.prototype.shouldHaveControls):
+
 2017-08-17  Antti Koivisto  <antti@apple.com>
 
         RenderListItem - Avoid render tree mutation during layout
