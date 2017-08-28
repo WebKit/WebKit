@@ -135,11 +135,12 @@ unsigned CommandResult::httpStatusCode() const
     case ErrorCode::InvalidElementState:
     case ErrorCode::InvalidSelector:
     case ErrorCode::NoSuchAlert:
-    case ErrorCode::NoSuchElement:
     case ErrorCode::NoSuchFrame:
     case ErrorCode::NoSuchWindow:
     case ErrorCode::StaleElementReference:
         return 400;
+    case ErrorCode::NoSuchCookie:
+    case ErrorCode::NoSuchElement:
     case ErrorCode::InvalidSessionID:
     case ErrorCode::UnknownCommand:
         return 404;
@@ -181,6 +182,8 @@ String CommandResult::errorString() const
         return ASCIILiteral("javascript error");
     case ErrorCode::NoSuchAlert:
         return ASCIILiteral("no such alert");
+    case ErrorCode::NoSuchCookie:
+        return ASCIILiteral("no such cookie");
     case ErrorCode::NoSuchElement:
         return ASCIILiteral("no such element");
     case ErrorCode::NoSuchFrame:
