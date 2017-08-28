@@ -1,3 +1,12 @@
+2017-08-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        New baseline for insecure-audio-video-in-main-frame.html should apply to all ports
+
+        The global baseline was never updated because the test has been failing on macOS.
+
+        * http/tests/security/mixedContent/insecure-audio-video-in-main-frame-expected.txt:
+        * platform/gtk/http/tests/security/mixedContent/insecure-audio-video-in-main-frame-expected.txt: Removed.
+
 2017-08-28  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Rebaseline insecure-audio-video-in-main-frame.html.
