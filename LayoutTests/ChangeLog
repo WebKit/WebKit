@@ -1,5 +1,14 @@
 2017-08-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed GTK/WPE test gardening
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/compositing/iframes/compositing-for-scrollable-iframe-expected.txt: Added.
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+
+2017-08-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         New baseline for insecure-audio-video-in-main-frame.html should apply to all ports
 
         The global baseline was never updated because the test has been failing on macOS.

@@ -243,7 +243,8 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-con
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Failure ]
+# Crash in bug #176019
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html [ Failure ]
@@ -1311,6 +1312,8 @@ webkit.org/b/175874 imported/w3c/web-platform-tests/service-workers/cache-storag
 webkit.org/b/175875 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-storage-match.https.html [ Crash ]
 webkit.org/b/175875 imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html [ Crash ]
 
+webkit.org/b/175575 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1856,7 +1859,8 @@ webkit.org/b/171599 animations/trigger-container-scroll-empty.html [ Pass Failur
 
 webkit.org/b/171600 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 
-webkit.org/b/171844 compositing/visibility/visibility-simple-video-layer.html [ Pass ImageOnlyFailure Timeout ]
+# Crash is bug #175574
+webkit.org/b/171844 compositing/visibility/visibility-simple-video-layer.html [ Pass ImageOnlyFailure Timeout Crash ]
 
 webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Timeout Pass ]
 
@@ -3265,7 +3269,8 @@ webkit.org/b/170335 canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
 webkit.org/b/171598 accessibility/gtk/menu-list-unfocused-notifications.html [ Failure ]
 
 webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure ]
-webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Failure ]
+# Crash is bug #176020
+webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Failure Crash ]
 webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure ]
 webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Failure ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
@@ -3365,6 +3370,13 @@ webkit.org/b/175586 imported/w3c/web-platform-tests/XMLHttpRequest/send-network-
 webkit.org/b/175931 fast/canvas/webgl/no-info-log-for-simple-shaders.html [ Failure ]
 
 webkit.org/b/175932 http/tests/media/hls/video-cookie.html [ Failure ]
+
+webkit.org/b/176021 fast/events/overflow-viewport-renderer-deleted.html [ Missing ]
+
+webkit.org/b/176024 fast/forms/file/webkitdirectory-open-panel.html [ Failure ]
+
+webkit.org/b/176025 inspector/canvas/recording-webgl-snapshots.html [ Failure ]
+webkit.org/b/176025 inspector/canvas/recording-webgl.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
