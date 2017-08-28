@@ -280,6 +280,8 @@ webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Pass Failure ]
 # testRunner.setUseDeferredFrameLoading is not implemented.
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
 
+webkit.org/b/172544 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler.html [ Pass Failure ]
+
 webkit.org/b/136554 tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html [ Pass Failure ]
 webkit.org/b/139901 tiled-drawing/scrolling/frames/frameset-frame-scrollability.html [ Pass Failure ]
 
