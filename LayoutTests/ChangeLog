@@ -1,3 +1,22 @@
+2017-08-21  Ms2ger  <Ms2ger@gmail.com>
+
+        Stop media/video-controls-toggling.html from timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=116266
+
+        Reviewed by Dean Jackson.
+
+        Use getComputedStyle to check the display property. Element::style only
+        contains properties set in the style attribute, but the display property
+        is set through CSS using the 'hidden' class.
+
+        * media/video-controls-toggling-expected.txt:
+        * media/video-controls-toggling.html:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/media/video-controls-toggling-expected.txt:
+          Copied from LayoutTests/media/video-controls-toggling-expected.txt.
+          I'm not sure where the console message comes from, but it seems to
+          be in the GTK-specific code.
+
 2017-08-21  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Rebaseline tests with list item markers.

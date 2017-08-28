@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 122: TypeError: undefined is not an object (evaluating 'this.captionMenu.style')
 Tests that showing / hiding video controls uses the display:none property
 
 

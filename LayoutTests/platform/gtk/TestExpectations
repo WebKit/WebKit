@@ -2134,9 +2134,6 @@ webkit.org/b/143990 media/track/track-disabled.html [ Timeout Pass ]
 
 webkit.org/b/130971 media/track/track-remove-track.html [ Timeout ]
 
-# After webkit.org/b/123097 we flag these tests that also fail in mac
-webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
-
 webkit.org/b/145053 http/tests/xmlhttprequest/origin-exact-matching.html [ Timeout Pass ]
 
 webkit.org/b/145168 media/track/track-cue-inline-assertion-crash.html [ Timeout Pass ]

@@ -40,7 +40,7 @@
 
             consoleWrite("");
             consoleWrite("** Test that controls are shown when controls attribute is present **");
-            testExpected("panel.style['display']", 'none', "!=");
+            testExpected("getComputedStyle(panel).display", 'none', "!=");
 
             if (window.eventSender) {
                 consoleWrite("");
@@ -53,14 +53,14 @@
 
         function continueTest()
         {
-            if (panel.style['display'] != 'none') {
+            if (getComputedStyle(panel).display != 'none') {
                 setTimeout(continueTest, fadeoutTime);
                 return;
             }
 
             consoleWrite("");
             consoleWrite("** The controls should have the display property set to none");
-            testExpected("panel.style['display']", 'none', "==");
+            testExpected("getComputedStyle(panel).display", 'none', "==");
 
             consoleWrite("");
             consoleWrite("** Remove controls attribute**");
@@ -72,7 +72,7 @@
 
             consoleWrite("");
             consoleWrite("** Video controls should not be shown **");
-            testExpected("panel.style['display']", 'none', "==");
+            testExpected("getComputedStyle(panel).display", 'none', "==");
 
             consoleWrite("");
 
@@ -82,7 +82,7 @@
     </script>
 </head>
 <body onload="init()">
-    Tests that showing / hiding video controls uses the sets the display:none property<br>
+    Tests that showing / hiding video controls uses the display:none property<br>
     <video onplay="test()" controls></video>
 </body>
 </html>
