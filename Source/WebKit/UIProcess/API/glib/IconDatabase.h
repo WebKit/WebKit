@@ -33,6 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,9 +50,7 @@ public:
     virtual void didImportIconURLForPageURL(const String&) { }
     virtual void didImportIconDataForPageURL(const String&) { }
     virtual void didChangeIconForPageURL(const String&) { }
-    virtual void didRemoveAllIcons() { }
     virtual void didFinishURLImport() { }
-    virtual void didClose() { }
 };
 
 class IconDatabase {
@@ -172,6 +171,65 @@ private:
         int m_retainCount { 0 };
     };
 
+    class MainThreadNotifier {
+    public:
+        MainThreadNotifier()
+            : m_timer(RunLoop::main(), this, &MainThreadNotifier::timerFired)
+        {
+            m_timer.setPriority(RunLoopSourcePriority::MainThreadDispatcherTimer);
+        }
+
+        void setActive(bool active)
+        {
+            m_isActive.store(active);
+        }
+
+        void notify(Function<void()>&& notification)
+        {
+            if (!m_isActive.load())
+                return;
+
+            {
+                LockHolder locker(m_notificationQueueLock);
+                m_notificationQueue.append(WTFMove(notification));
+            }
+
+            if (!m_timer.isActive())
+                m_timer.startOneShot(0_s);
+        }
+
+        void stop()
+        {
+            setActive(false);
+            m_timer.stop();
+            LockHolder locker(m_notificationQueueLock);
+            m_notificationQueue.clear();
+        }
+
+    private:
+        void timerFired()
+        {
+            Deque<Function<void()>> notificationQueue;
+            {
+                LockHolder locker(m_notificationQueueLock);
+                notificationQueue = WTFMove(m_notificationQueue);
+            }
+
+            if (!m_isActive.load())
+                return;
+
+            while (!notificationQueue.isEmpty()) {
+                auto function = notificationQueue.takeFirst();
+                function();
+            }
+        }
+
+        Deque<Function<void()>> m_notificationQueue;
+        Lock m_notificationQueueLock;
+        Atomic<bool> m_isActive;
+        RunLoop::Timer<MainThreadNotifier> m_timer;
+    };
+
 // *** Main Thread Only ***
 public:
     IconDatabase();
@@ -287,9 +345,6 @@ private:
     void performRetainIconForPageURL(const String&, int retainCount);
     void performReleaseIconForPageURL(const String&, int releaseCount);
 
-    bool isOpenBesidesMainThreadCallbacks() const;
-    void checkClosedAfterMainThreadCallback();
-
     bool m_initialPruningComplete { false };
 
     void setIconURLForPageURLInSQLDatabase(const String&, const String&);
@@ -306,9 +361,7 @@ private:
     // Methods to dispatch client callbacks on the main thread
     void dispatchDidImportIconURLForPageURLOnMainThread(const String&);
     void dispatchDidImportIconDataForPageURLOnMainThread(const String&);
-    void dispatchDidRemoveAllIconsOnMainThread();
     void dispatchDidFinishURLImportOnMainThread();
-    std::atomic<uint32_t> m_mainThreadCallbackCount;
 
     // The client is set by the main thread before the thread starts, and from then on is only used by the sync thread
     std::unique_ptr<IconDatabaseClient> m_client;
@@ -329,6 +382,8 @@ private:
     std::unique_ptr<WebCore::SQLiteStatement> m_updateIconDataStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_setIconInfoStatement;
     std::unique_ptr<WebCore::SQLiteStatement> m_setIconDataStatement;
+
+    MainThreadNotifier m_mainThreadNotifier;
 };
 
 } // namespace WebKit
