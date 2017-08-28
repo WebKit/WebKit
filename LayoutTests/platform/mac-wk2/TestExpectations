@@ -771,3 +771,5 @@ webkit.org/b/173500 http/tests/loading/basic-auth-remove-credentials.html [ Pass
 
 webkit.org/b/172829 [ Sierra Debug ] loader/stateobjects/replacestate-size.html [ Pass Timeout ]
 
+webkit.org/b/175781 svg/in-html/by-reference.html [ Pass Failure ]
+
