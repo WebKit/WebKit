@@ -1,3 +1,21 @@
+2017-08-28  Ms2ger  <Ms2ger@igalia.com>
+
+        Fix document-create-touch.html.
+        https://bugs.webkit.org/show_bug.cgi?id=172813
+
+        Reviewed by Michael Catanzaro.
+
+        The document.createTouch() call is supposed to throw an exception (as
+        defined by WebIDL). It has been doing this since r203941, but this
+        wasn't noticed because the entire fast/events/touch folder is skipped
+        on mac, ios and win.
+
+        * fast/events/touch/document-create-touch-expected.txt:
+        * fast/events/touch/document-create-touch.html:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/events/touch/document-create-touch-expected.txt: Removed.
+        * platform/wpe/TestExpectations:
+
 2017-08-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html after r221209.

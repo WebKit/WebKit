@@ -3324,8 +3324,6 @@ webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-layer.html [ 
 
 webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Failure ]
 
-webkit.org/b/172813 fast/events/touch/document-create-touch.html [ Failure ]
-
 webkit.org/b/172814 media/restricted-audio-playback-with-multiple-settimeouts.html [ Failure ]
 
 webkit.org/b/173410 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
