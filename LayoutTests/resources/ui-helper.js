@@ -110,6 +110,15 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static replaceTextAtRange(text, location, length) {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.replaceTextAtRange("${text}", ${location}, ${length});
+                uiController.uiScriptComplete('Done');
+            })()`, resolve);
+        });
+    }
+
     static wait(promise)
     {
         testRunner.waitUntilDone();

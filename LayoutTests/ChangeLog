@@ -1,3 +1,31 @@
+2017-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Picking an emoji via the emoji dialog (Ctrl+Cmd+Space) fires inconsistent beforeinput events.
+        https://bugs.webkit.org/show_bug.cgi?id=170955
+        <rdar://problem/31697653>
+
+        Reviewed by Ryosuke Niwa.
+
+        Augments two existing layout tests to check for additional cases of inserting text with replacement ranges.
+        Also enables this test for WebKit1 on Mac. Both these tests are currently enabled only for WebKit2, and also only
+        check the case where we're replacing an existing non-empty range of text.
+
+        * fast/events/before-input-prevent-insert-replacement-expected.txt:
+        * fast/events/before-input-prevent-insert-replacement.html:
+        * fast/events/input-event-insert-replacement-expected.txt:
+        * fast/events/input-event-insert-replacement.html:
+
+        Tests for cases of replacing existing text ranges, and inserting text at a position.
+
+        * platform/mac-wk1/TestExpectations:
+        * resources/ui-helper.js:
+
+        Add a new UIHelper function to insert text at a given replacement range. This codepath is taken when selecting
+        an emoji using the emoji picker menu on Mac, and also when selecting a dead key option after holding down on a
+        vowel key.
+
+        (window.UIHelper.replaceTextAtRange):
+
 2017-08-27  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Record actions performed on WebGLRenderingContext

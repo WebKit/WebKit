@@ -75,7 +75,7 @@ void UIScriptController::doAfterVisibleContentRectUpdate(JSValueRef callback)
     doAsyncTask(callback);
 }
 
-void UIScriptController::insertText(JSStringRef text, int location, int length)
+void UIScriptController::replaceTextAtRange(JSStringRef text, int location, int length)
 {
 #if WK_API_ENABLED
     if (location == -1)

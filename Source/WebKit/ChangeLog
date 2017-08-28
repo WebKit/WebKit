@@ -1,5 +1,21 @@
 2017-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Picking an emoji via the emoji dialog (Ctrl+Cmd+Space) fires inconsistent beforeinput events.
+        https://bugs.webkit.org/show_bug.cgi?id=170955
+        <rdar://problem/31697653>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, we insert text with TextEventInputAutocompletion as the text event input type if any text range to
+        replace was specified by the platform. Instead, limit this only to when the text replacement range is not empty.
+        This more closely matches the intention of the spec, which states that the "insertReplacementText" inputType
+        should be used when "[replacing] existing text by means of a spell checker, auto-correct or similar".
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertTextAsync):
+
+2017-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS WK2] Web process crashes after changing selection to the end of the document when speaking a selection
         https://bugs.webkit.org/show_bug.cgi?id=176011
         <rdar://problem/32614095>

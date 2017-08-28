@@ -151,7 +151,7 @@ public:
     JSObjectRef textSelectionCaretRect() const;
     JSObjectRef inputViewBounds() const;
 
-    void insertText(JSStringRef, int location, int length);
+    void replaceTextAtRange(JSStringRef, int location, int length);
     void removeAllDynamicDictionaries();
     
     JSRetainPtr<JSStringRef> scrollingTreeAsText() const;

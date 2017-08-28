@@ -461,7 +461,7 @@ void UIScriptController::overridePreference(JSStringRef, JSStringRef)
 {
 }
 
-void UIScriptController::insertText(JSStringRef, int, int)
+void UIScriptController::replaceTextAtRange(JSStringRef, int, int)
 {
 }
 

@@ -1,3 +1,17 @@
+2017-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Picking an emoji via the emoji dialog (Ctrl+Cmd+Space) fires inconsistent beforeinput events.
+        https://bugs.webkit.org/show_bug.cgi?id=170955
+        <rdar://problem/31697653>
+
+        Reviewed by Ryosuke Niwa.
+
+        Tweak -insertText: to pass TextEventInputAutocompletion to Editor::insertText when inserting text, if existing
+        text is being replaced.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView insertText:]):
+
 2017-08-24  Chris Dumez  <cdumez@apple.com>
 
         [Directory Upload] Add basic support for input.webkitdirectory

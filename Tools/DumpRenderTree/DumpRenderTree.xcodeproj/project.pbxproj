@@ -284,6 +284,7 @@
 		2D403F19150871F9005358D2 /* LayoutTestHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LayoutTestHelper; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA2E3A31E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeSpellChecker.h; path = mac/DumpRenderTreeSpellChecker.h; sourceTree = "<group>"; };
 		2DA2E3A41E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreeSpellChecker.mm; path = mac/DumpRenderTreeSpellChecker.mm; sourceTree = "<group>"; };
+		2EDE0DAA1F5131DE00D5F8DF /* AppKitTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppKitTestSPI.h; path = mac/AppKitTestSPI.h; sourceTree = "<group>"; };
 		31117B3A15D9A56A00163BC8 /* MockWebNotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockWebNotificationProvider.h; path = mac/MockWebNotificationProvider.h; sourceTree = "<group>"; };
 		31117B3B15D9A56A00163BC8 /* MockWebNotificationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MockWebNotificationProvider.mm; path = mac/MockWebNotificationProvider.mm; sourceTree = "<group>"; };
 		31268EBA1EF06A95001963E2 /* UIKitTestSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIKitTestSPI.h; path = ../TestRunnerShared/spi/UIKitTestSPI.h; sourceTree = "<group>"; };
@@ -545,6 +546,7 @@
 		0F6A0E001D6E0F8A00F1C9A8 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				2EDE0DAA1F5131DE00D5F8DF /* AppKitTestSPI.h */,
 				0F18E70E1D6BACB60027E547 /* UIScriptControllerMac.mm */,
 			);
 			name = mac;
@@ -603,10 +605,10 @@
 				BCA18B6E0C9B08DB00114369 /* NavigationController.m */,
 				BCA18B2F0C9B01B400114369 /* ObjCController.h */,
 				BCA18B300C9B01B400114369 /* ObjCController.m */,
-				F4D423601DD5046900678290 /* TextInputController.h */,
 				BC0131D80C9772010087317D /* TestRunner.cpp */,
 				BC0131D90C9772010087317D /* TestRunner.h */,
 				BCA18B220C9B014B00114369 /* TestRunnerMac.mm */,
+				F4D423601DD5046900678290 /* TextInputController.h */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1061,7 +1063,6 @@
 			files = (
 				A134E53618905EFF00901D06 /* AccessibilityCommonMac.mm in Sources */,
 				BCD08B3A0E1057EF00A7D0C1 /* AccessibilityController.cpp in Sources */,
-				2DA2E3A51E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm in Sources */,
 				AA5A15EF16E15CD000F7C561 /* AccessibilityControllerIOS.mm in Sources */,
 				BCD08B710E1059D200A7D0C1 /* AccessibilityControllerMac.mm in Sources */,
 				80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */,
@@ -1080,6 +1081,7 @@
 				BCA18B7B0C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm in Sources */,
 				A8D79CEB0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m in Sources */,
 				A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.mm in Sources */,
+				2DA2E3A51E1BA54100A3BBD0 /* DumpRenderTreeSpellChecker.mm in Sources */,
 				A8B91ADC0CF3B32F008F91FF /* DumpRenderTreeWindow.mm in Sources */,
 				BCA18B620C9B08C200114369 /* EditingDelegate.mm in Sources */,
 				BCA18B700C9B08DB00114369 /* EventSendingController.mm in Sources */,
@@ -1087,6 +1089,7 @@
 				BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */,
 				BCA18B230C9B014B00114369 /* GCControllerMac.mm in Sources */,
 				5185F6B210714E07007AA393 /* HistoryDelegate.mm in Sources */,
+				312943F91E71F2B4001EE2CC /* IOSLayoutTestCommunication.cpp in Sources */,
 				2CE88FA217124D8C00734FC0 /* JavaScriptThreading.cpp in Sources */,
 				0F18E7061D6BA0230027E547 /* JSUIScriptController.cpp in Sources */,
 				0F18E7131D6BC43A0027E547 /* JSWrapper.cpp in Sources */,
@@ -1098,22 +1101,21 @@
 				BCA18B800C9B08F100114369 /* ObjCPluginFunction.m in Sources */,
 				8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */,
 				BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */,
-				F4D423611DD5048200678290 /* TextInputControllerIOS.m in Sources */,
 				A1158D59189274360088C17B /* PixelDumpSupportIOS.mm in Sources */,
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
 				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
 				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
+				7CBBC3231DDFCF9A00786B9D /* TestOptions.mm in Sources */,
 				BC0131DA0C9772010087317D /* TestRunner.cpp in Sources */,
 				BCA18B240C9B014B00114369 /* TestRunnerMac.mm in Sources */,
+				F4D423611DD5048200678290 /* TextInputControllerIOS.m in Sources */,
 				BCA18B490C9B02C400114369 /* TextInputControllerMac.m in Sources */,
 				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
 				0F18E6EC1D6B9C070027E547 /* UIScriptContext.cpp in Sources */,
 				0F18E6ED1D6B9C070027E547 /* UIScriptController.cpp in Sources */,
 				0F18E70D1D6BAC8C0027E547 /* UIScriptControllerIOS.mm in Sources */,
-				7CBBC3231DDFCF9A00786B9D /* TestOptions.mm in Sources */,
 				0F18E70F1D6BACB60027E547 /* UIScriptControllerMac.mm in Sources */,
 				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
-				312943F91E71F2B4001EE2CC /* IOSLayoutTestCommunication.cpp in Sources */,
 				BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

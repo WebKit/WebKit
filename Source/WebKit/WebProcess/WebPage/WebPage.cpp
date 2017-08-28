@@ -4843,11 +4843,10 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
 
     bool replacesText = false;
     if (replacementEditingRange.location != notFound) {
-        RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange, static_cast<EditingRangeIsRelativeTo>(editingRangeIsRelativeTo));
-        if (replacementRange) {
+        if (auto replacementRange = rangeFromEditingRange(frame, replacementEditingRange, static_cast<EditingRangeIsRelativeTo>(editingRangeIsRelativeTo))) {
             SetForScope<bool> isSelectingTextWhileInsertingAsynchronously(m_isSelectingTextWhileInsertingAsynchronously, suppressSelectionUpdate);
             frame.selection().setSelection(VisibleSelection(*replacementRange, SEL_DEFAULT_AFFINITY));
-            replacesText = true;
+            replacesText = replacementEditingRange.length;
         }
     }
     

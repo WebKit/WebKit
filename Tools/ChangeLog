@@ -1,5 +1,37 @@
 2017-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Picking an emoji via the emoji dialog (Ctrl+Cmd+Space) fires inconsistent beforeinput events.
+        https://bugs.webkit.org/show_bug.cgi?id=170955
+        <rdar://problem/31697653>
+
+        Reviewed by Ryosuke Niwa.
+
+        Replace UIScriptController.insertText with UIScriptController.replaceTextAtRange, and implement
+        replaceTextAtRange in WebKit1. See corresponding layout tests (input-event-insert-replacement.html and
+        before-input-prevent-insert-replacement.html) for more detail.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/AppKitTestSPI.h: Added.
+
+        Introduce an SPI header for private AppKit headers needed to support DumpRenderTree.
+
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::replaceTextAtRange):
+        (WTR::UIScriptController::insertText): Deleted.
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::replaceTextAtRange):
+        (WTR::UIScriptController::insertText): Deleted.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::replaceTextAtRange):
+        (WTR::UIScriptController::insertText): Deleted.
+
+        Replace UIScriptController.insertText with UIScriptController.replaceTextAtRange, which better describes the
+        behavior of this function.
+
+2017-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS WK2] Web process crashes after changing selection to the end of the document when speaking a selection
         https://bugs.webkit.org/show_bug.cgi?id=176011
         <rdar://problem/32614095>

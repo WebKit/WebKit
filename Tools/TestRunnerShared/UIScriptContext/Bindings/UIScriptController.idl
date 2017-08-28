@@ -226,7 +226,7 @@ interface UIScriptController {
     readonly attribute object textSelectionCaretRect; // An object with 'left', 'top', 'width', 'height' properties.
     readonly attribute object inputViewBounds;
 
-    void insertText(DOMString text, long location, long length);
+    void replaceTextAtRange(DOMString text, long location, long length);
     void removeAllDynamicDictionaries();
 
     readonly attribute DOMString scrollingTreeAsText;
