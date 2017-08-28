@@ -99,7 +99,7 @@ list(APPEND WebKit2_SOURCES
 
     Shared/unix/ChildProcessMain.cpp
 
-    StorageProcess/gtk/StorageProcessMainGtk.cpp
+    StorageProcess/glib/StorageProcessMainGLib.cpp
 
     UIProcess/AcceleratedDrawingAreaProxy.cpp
     UIProcess/BackingStore.cpp
