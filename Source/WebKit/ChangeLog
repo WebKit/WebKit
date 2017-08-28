@@ -1,5 +1,47 @@
 2017-08-28  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221153. rdar://problem/34113728
+
+    2017-08-24  Tim Horton  <timothy_horton@apple.com>
+
+            Layout size override changes during in-flight animated resize are dropped on the floor forever
+            https://bugs.webkit.org/show_bug.cgi?id=175916
+            <rdar://problem/33887295>
+
+            Reviewed by Beth Dakin.
+
+            Layout size override changes that come in during an animated resize
+            are currently stored, but not sent in a separate message, because
+            they're sent as part of the resize. However, if a layout size override
+            change happens after the animated resize message was already sent, but
+            before the animated resize is ended, that change will be stored, but
+            not sent in the animated resize message (because it's too late), and
+            then subsequent calls with the same size will early-return, because
+            we're testing against the stored size, not the size we last actually
+            sent to the Web Content process.
+
+            Instead, store the last-sent size, so that subsequent layout size override
+            changes with the same size won't bail, and if it differs from the active
+            state after the animated resize completes, send an out-of-band update.
+
+            All of the above also applies to device orientation, which follows
+            exactly the same pattern.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _initializeWithConfiguration:]):
+            (-[WKWebView _dispatchSetMinimumLayoutSize:]):
+            (-[WKWebView _dispatchSetMaximumUnobscuredSize:]):
+            (-[WKWebView _dispatchSetDeviceOrientation:]):
+            (-[WKWebView _frameOrBoundsChanged]):
+            (-[WKWebView _windowDidRotate:]):
+            (-[WKWebView _didRelaunchProcess]):
+            (-[WKWebView _setMinimumLayoutSizeOverride:]):
+            (-[WKWebView _setInterfaceOrientationOverride:]):
+            (-[WKWebView _setMaximumUnobscuredSizeOverride:]):
+            (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+
+2017-08-28  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221138. rdar://problem/34113574
 
     2017-08-24  Chris Dumez  <cdumez@apple.com>

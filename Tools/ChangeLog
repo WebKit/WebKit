@@ -1,3 +1,20 @@
+2017-08-28  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r221153. rdar://problem/34113728
+
+    2017-08-24  Tim Horton  <timothy_horton@apple.com>
+
+            Layout size override changes during in-flight animated resize are dropped on the floor forever
+            https://bugs.webkit.org/show_bug.cgi?id=175916
+            <rdar://problem/33887295>
+
+            Reviewed by Beth Dakin.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm:
+            (TEST):
+            Add a test ensuring that override layout size changes
+            during an animated resize actually take effect.
+
 2017-08-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Cherry-pick r220722. rdar://problem/33890577
