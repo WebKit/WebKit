@@ -11,6 +11,7 @@
             description("Test adding and removing tracks.");
 
             var stream1;
+            var streamCopy;
             var stream2;
             var audioTrack;
             var videoTrack;
@@ -37,24 +38,6 @@
                 testFailed("\"addtrack\" or \"removetrack\" events should not fire as a result of local addTrack() or removeTrack() operations.");
             }
 
-            function shouldFireActive() {
-                debug("<br>Stream2 is active.");
-                shouldBe('stream2.active', 'true');
-                finishJSTest();
-            }
-
-            function shouldFireInActive() {
-                debug("<br>Stream2 is inactive.");
-                shouldBe('stream2.active', 'false');
-
-                debug("<br>*** add non-ended track");
-                shouldNotBe('audioTrack.readyState', '"ended"');
-                tryAddTrack(stream2, audioTrack);
-
-                debug("<br>*** active attribute is still false (until event is fired)");
-                shouldBe('stream2.active', 'false');
-            }
-
             function gotStream2(s) {
                 stream2 = s;
 
@@ -69,8 +52,10 @@
                 stream1.onaddtrack = shouldNotFire;
                 stream1.onremovetrack = shouldNotFire;
 
-                stream2.onactive = shouldFireActive;
-                stream2.oninactive = shouldFireInActive;
+                setTimeout(() => {
+                    shouldBe('stream2.active', 'false');
+                    finishJSTest();
+                }, 1000);
 
                 audioTrack = stream1.getAudioTracks()[0];
                 videoTrack = stream1.getVideoTracks()[0];
@@ -125,12 +110,17 @@
                 shouldBe('stream2.getAudioTracks().length', '0');
                 shouldBe('stream2.getVideoTracks().length', '0');
 
-                debug("<br>*** active attribute is still true (until event is fired)");
-                shouldBe('stream2.active', 'true');
+                shouldBe('stream2.active', 'false');
             }
 
             function gotStream1(s) {
                 stream1 = s;
+
+                streamCopy = new MediaStream();
+                shouldBe('streamCopy.active', 'false');
+                streamCopy.addTrack(stream1.getVideoTracks()[0]);
+                shouldBe('streamCopy.active', 'true');
+
                 getUserMedia("allow", {audio:true, video:true}, gotStream2);
             }
 

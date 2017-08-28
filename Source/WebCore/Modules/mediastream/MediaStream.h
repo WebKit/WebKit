@@ -159,7 +159,7 @@ private:
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 
-    void scheduleActiveStateChange();
+    void updateActiveState();
     void activityEventTimerFired();
     void setIsActive(bool);
     void statusDidChange();
@@ -169,9 +169,6 @@ private:
     Ref<MediaStreamPrivate> m_private;
 
     HashMap<String, RefPtr<MediaStreamTrack>> m_trackSet;
-
-    Timer m_activityEventTimer;
-    Vector<Ref<Event>> m_scheduledActivityEvents;
 
     Vector<Observer*> m_observers;
     std::unique_ptr<PlatformMediaSession> m_mediaSession;

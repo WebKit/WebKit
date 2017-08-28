@@ -1,3 +1,26 @@
+2017-08-28  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC MediaStream created without tracks does not update active state after tracks are added
+        https://bugs.webkit.org/show_bug.cgi?id=175434
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        Removing active/inactive events.
+        active attribute is still kept and is updated synchronously on every track change.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::activeStatusChanged):
+        (WebCore::MediaStream::internalAddTrack):
+        (WebCore::MediaStream::updateActiveState):
+        (WebCore::MediaStream::hasPendingActivity const):
+        (WebCore::MediaStream::scheduleActiveStateChange): Deleted.
+        (WebCore::MediaStream::activityEventTimerFired): Deleted.
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+
 2017-08-28  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Upstream CFNetwork-related WebKitSystemInterface functions

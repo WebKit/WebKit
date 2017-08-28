@@ -50,10 +50,5 @@
 
     attribute EventHandler onaddtrack;
     attribute EventHandler onremovetrack;
-
-    // FIXME 169871: legacy or remove?
-    attribute EventHandler onactive;
-    // FIXME 169871: legacy or remove?
-    attribute EventHandler oninactive;
 };
 
