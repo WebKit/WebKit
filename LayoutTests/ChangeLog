@@ -1,5 +1,18 @@
 2017-08-28  Ms2ger  <Ms2ger@igalia.com>
 
+        [GTK] Rebaseline insecure-audio-video-in-main-frame.html.
+        https://bugs.webkit.org/show_bug.cgi?id=142482
+
+        Unreviewed test gardening.
+
+        The test is failing due to a different console message. It seems better
+        to add a platform-specific baseline so we can catch actual failures.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/security/mixedContent/insecure-audio-video-in-main-frame-expected.txt: Added.
+
+2017-08-28  Ms2ger  <Ms2ger@igalia.com>
+
         [GTK] Enable userAgentShadowDOM tests.
         https://bugs.webkit.org/show_bug.cgi?id=176015
 
