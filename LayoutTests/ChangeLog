@@ -1,3 +1,9 @@
+2017-08-28  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed test gardening. <rdar://problem/34051745>
+
+        * platform/ios-11/TestExpectations:
+
 2017-08-28  Youenn Fablet  <youenn@apple.com>
 
         WebRTC MediaStream created without tracks does not update active state after tracks are added
