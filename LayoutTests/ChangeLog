@@ -1,3 +1,11 @@
+2017-08-28  Per Arne Vollan  <pvollan@apple.com>
+
+        Before r220970, these ssl tests were failing. Now they are timing out.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-08-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler.html as flaky.
