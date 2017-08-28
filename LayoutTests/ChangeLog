@@ -1,3 +1,11 @@
+2017-08-28  Matt Lewis  <jlewis3@apple.com>
+
+        Fixed expectations for http/tests/loading/basic-auth-remove-credentials.html by removing double expectations
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-08-28  Ms2ger  <Ms2ger@igalia.com>
 
         Fix document-create-touch.html.
