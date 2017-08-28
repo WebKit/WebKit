@@ -12,8 +12,8 @@ layer at (0,0) size 800x174
         RenderListItem {LI} at (40,0) size 744x17
           RenderBlock {UL} at (0,0) size 744x17
             RenderListItem {LI} at (40,0) size 704x17
-              RenderListMarker at (-57,0) size 7x17: bullet
               RenderListMarker at (-17,0) size 7x17: white bullet
+              RenderListMarker at (-57,0) size 7x17: bullet
               RenderText {#text} at (0,0) size 251x17
                 text run at (0,0) width 251: "Both bullets should be on the same line."
 layer at (8,8) size 80x80
