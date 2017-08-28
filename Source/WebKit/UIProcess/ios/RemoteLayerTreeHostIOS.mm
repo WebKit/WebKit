@@ -221,9 +221,13 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
         view = adoptNS([[WKShapeView alloc] init]);
         break;
     case PlatformCALayer::LayerTypeScrollingLayer:
-        if (!m_isDebugLayerTreeHost)
-            view = adoptNS([[UIScrollView alloc] init]);
-        else // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
+        if (!m_isDebugLayerTreeHost) {
+            auto scrollView = adoptNS([[UIScrollView alloc] init]);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+            [scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+#endif
+            view = scrollView;
+        } else // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
             view = adoptNS([[UIView alloc] init]);
         break;
     default:
