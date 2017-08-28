@@ -1,3 +1,19 @@
+2017-08-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove some unused DataGrid code
+        https://bugs.webkit.org/show_bug.cgi?id=176029
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype.get copyTextDelimiter):
+        (WI.DataGrid.prototype.set copyTextDelimiter):
+        (WI.DataGrid.prototype.resizerDragging):
+        (WI.DataGrid.prototype.columnWidthsMap): Deleted.
+        (WI.DataGrid.prototype.applyColumnWidthsMap): Deleted.
+        (WI.DataGrid.prototype.get resizeMethod): Deleted.
+        (WI.DataGrid.prototype.set resizeMethod): Deleted.
+
 2017-08-27  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Record actions performed on WebGLRenderingContext

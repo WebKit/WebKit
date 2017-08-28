@@ -230,6 +230,9 @@ WI.DataGrid = class DataGrid extends WI.View
     get columnChooserEnabled() { return this._columnChooserEnabled; }
     set columnChooserEnabled(x) { this._columnChooserEnabled = x; }
 
+    get copyTextDelimiter() { return this._copyTextDelimiter; }
+    set copyTextDelimiter(x) { this._copyTextDelimiter = x; }
+
     get refreshCallback()
     {
         return this._refreshCallback;
@@ -889,28 +892,6 @@ WI.DataGrid = class DataGrid extends WI.View
 
         this._cachedScrollTop = NaN;
         this._cachedScrollableOffsetHeight = NaN;
-    }
-
-    columnWidthsMap()
-    {
-        var result = {};
-        for (var [identifier, column] of this.columns) {
-            var width = this._headerTableColumnGroupElement.children[column["ordinal"]].style.width;
-            result[identifier] = parseFloat(width);
-        }
-        return result;
-    }
-
-    applyColumnWidthsMap(columnWidthsMap)
-    {
-        for (var [identifier, column] of this.columns) {
-            var width = (columnWidthsMap[identifier] || 0) + "%";
-            var ordinal = column["ordinal"];
-            this._headerTableColumnGroupElement.children[ordinal].style.width = width;
-            this._dataTableColumnGroupElement.children[ordinal].style.width = width;
-        }
-
-        this.needsLayout();
     }
 
     _isColumnVisible(columnIdentifier)
@@ -1718,8 +1699,6 @@ WI.DataGrid = class DataGrid extends WI.View
         return (data instanceof Node ? data.textContent : data) || "";
     }
 
-    set copyTextDelimiter(value) { this._copyTextDelimiter = value; }
-
     _copyTextForDataGridNode(node)
     {
         let fields = node.dataGrid.orderedColumns.map((identifier) => this.textForDataGridNodeColumn(node, identifier));
@@ -1778,18 +1757,6 @@ WI.DataGrid = class DataGrid extends WI.View
         return gridNode && gridNode.selectable && gridNode.copyable;
     }
 
-    get resizeMethod()
-    {
-        if (!this._resizeMethod)
-            return WI.DataGrid.ResizeMethod.Nearest;
-        return this._resizeMethod;
-    }
-
-    set resizeMethod(method)
-    {
-        this._resizeMethod = method;
-    }
-
     resizerDragStarted(resizer)
     {
         if (!resizer[WI.DataGrid.NextColumnOrdinalSymbol])
@@ -1823,14 +1790,6 @@ WI.DataGrid = class DataGrid extends WI.View
         let leadingEdgeOfPreviousColumn = 0;
         for (let i = 0; i < leftColumnIndex; ++i)
             leadingEdgeOfPreviousColumn += firstRowCells[i].offsetWidth;
-
-        // Differences for other resize methods
-        if (this.resizeMethod === WI.DataGrid.ResizeMethod.Last) {
-            rightColumnIndex = this.resizers.length;
-        } else if (this.resizeMethod === WI.DataGrid.ResizeMethod.First) {
-            leadingEdgeOfPreviousColumn += firstRowCells[leftColumnIndex].offsetWidth - firstRowCells[0].offsetWidth;
-            leftColumnIndex = 0;
-        }
 
         let trailingEdgeOfNextColumn = leadingEdgeOfPreviousColumn + firstRowCells[leftColumnIndex].offsetWidth + firstRowCells[rightColumnIndex].offsetWidth;
 
@@ -1946,12 +1905,6 @@ WI.DataGrid.Event = {
     CollapsedNode: "datagrid-collapsed-node",
     FilterDidChange: "datagrid-filter-did-change",
     NodeWasFiltered: "datagrid-node-was-filtered"
-};
-
-WI.DataGrid.ResizeMethod = {
-    Nearest: "nearest",
-    First: "first",
-    Last: "last"
 };
 
 WI.DataGrid.SortOrder = {
