@@ -1,3 +1,14 @@
+2017-08-21  Charlie Turner  <cturner@igalia.com>
+
+        MemoryCache::setCapacities assertion failure maxDeadBytes <= totalBytes
+        https://bugs.webkit.org/show_bug.cgi?id=175571
+
+        Reviewed by Antti Koivisto.
+
+        * Shared/CacheModel.cpp:
+        (WebKit::calculateMemoryCacheSizes): Ensure cacheTotalCapacity is
+        set to a reasonable value even in low-memory environments.
+
 2017-08-18  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r220601): Crash when closing google doc after switching the order of tabs in safari
