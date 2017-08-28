@@ -60,7 +60,8 @@
                 "InvalidParameter",
                 "InvalidSelector",
                 "ElementNotInteractable",
-                "ElementNotSelectable"
+                "ElementNotSelectable",
+                "ScreenshotError"
             ]
         },
         {
@@ -377,9 +378,12 @@
         },
         {
             "name": "takeScreenshot",
-            "description": "Take a screenshot of the current page in a browsing context.",
+            "description": "Take a screenshot of the current page or given element in a browsing context.",
             "parameters": [
-                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to take a screenshot of." }
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to take a screenshot of." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame that contains the element. The main frame is used if this parameter is empty string or excluded." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "optional": true, "description": "The handle of the element to take a screenshot of. The browsing context document element is used if this parameter is excluded." },
+                { "name": "scrollIntoViewIfNeeded", "type": "boolean", "optional": true, "description": "If the element should be scrolled into view before taking the screenshot." }
             ],
             "returns": [
                 { "name": "data", "type": "string", "description": "Base64-encoded image data (PNG)." }

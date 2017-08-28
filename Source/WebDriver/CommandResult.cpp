@@ -108,6 +108,8 @@ CommandResult::CommandResult(RefPtr<InspectorValue>&& result, std::optional<Erro
             m_errorCode = ErrorCode::NoSuchAlert;
         else if (errorName == "ElementNotSelectable")
             m_errorCode = ErrorCode::ElementNotSelectable;
+        else if (errorName == "ScreenshotError")
+            m_errorCode = ErrorCode::UnableToCaptureScreen;
 
         break;
     }
@@ -149,6 +151,7 @@ unsigned CommandResult::httpStatusCode() const
         return 408;
     case ErrorCode::JavascriptError:
     case ErrorCode::SessionNotCreated:
+    case ErrorCode::UnableToCaptureScreen:
     case ErrorCode::UnexpectedAlertOpen:
     case ErrorCode::UnknownError:
     case ErrorCode::UnsupportedOperation:
@@ -198,6 +201,8 @@ String CommandResult::errorString() const
         return ASCIILiteral("stale element reference");
     case ErrorCode::Timeout:
         return ASCIILiteral("timeout");
+    case ErrorCode::UnableToCaptureScreen:
+        return ASCIILiteral("unable to capture screen");
     case ErrorCode::UnexpectedAlertOpen:
         return ASCIILiteral("unexpected alert open");
     case ErrorCode::UnknownCommand:

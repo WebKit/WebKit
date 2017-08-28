@@ -1,5 +1,30 @@
 2017-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: implement screen capture commands
+        https://bugs.webkit.org/show_bug.cgi?id=174615
+
+        Reviewed by Brian Burg.
+
+        Implement takeScreenshot and takeElementScreenshot commands.
+
+        19. Screen Capture.
+        https://w3c.github.io/webdriver/webdriver-spec.html#screen-capture
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::CommandResult): Handle ScreenshotError protocol error.
+        (WebDriver::CommandResult::httpStatusCode const): Add UnableToCaptureScreen.
+        (WebDriver::CommandResult::errorString const): Ditto.
+        * CommandResult.h:
+        * Session.cpp:
+        (WebDriver::Session::takeScreenshot):
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::takeScreenshot):
+        (WebDriver::WebDriverService::takeElementScreenshot):
+        * WebDriverService.h:
+
+2017-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: implement cookies commands
         https://bugs.webkit.org/show_bug.cgi?id=174613
 

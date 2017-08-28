@@ -309,11 +309,5 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     } while (*p);
 }
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&)
-{
-    // FIXME: Implement this, possibly moving it to a WebAutomationSessionCairo.cpp file.
-    return std::nullopt;
-}
-
 } // namespace WebKit
 

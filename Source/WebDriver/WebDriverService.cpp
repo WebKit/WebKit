@@ -158,6 +158,10 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Get, "/session/$sessionId/alert/text", &WebDriverService::getAlertText },
     { HTTPMethod::Post, "/session/$sessionId/alert/text", &WebDriverService::sendAlertText },
 
+    { HTTPMethod::Get, "/session/$sessionId/screenshot", &WebDriverService::takeScreenshot },
+    { HTTPMethod::Get, "/session/$sessionId/element/$elementId/screenshot", &WebDriverService::takeElementScreenshot },
+
+
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/displayed", &WebDriverService::isElementDisplayed },
 };
 
@@ -1504,6 +1508,47 @@ void WebDriverService::sendAlertText(RefPtr<InspectorObject>&& parameters, Funct
             return;
         }
         session->sendAlertText(text, WTFMove(completionHandler));
+    });
+}
+
+void WebDriverService::takeScreenshot(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §19.1 Take Screenshot.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#take-screenshot
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->takeScreenshot(std::nullopt, std::nullopt, WTFMove(completionHandler));
+    });
+}
+
+void WebDriverService::takeElementScreenshot(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §19.2 Take Element Screenshot.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#take-element-screenshot
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
+    if (!elementID)
+        return;
+
+    bool scrollIntoView = true;
+    parameters->getBoolean(ASCIILiteral("scroll"), scrollIntoView);
+
+    session->waitForNavigationToComplete([session, elementID, scrollIntoView, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->takeScreenshot(elementID.value(), scrollIntoView, WTFMove(completionHandler));
     });
 }
 
