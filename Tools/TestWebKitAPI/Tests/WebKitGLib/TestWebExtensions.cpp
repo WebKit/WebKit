@@ -148,7 +148,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
         "top.foo = 'Foo';\n"
         "document.getElementById('console').innerHTML = top.foo;\n"
         "window.open = function () { alert('Main World'); }\n"
-        "document.open(1, 2, 3);";
+        "window.open();";
     test->runJavaScriptAndWaitUntilFinished(mainWorldScript, 0);
     g_assert_cmpstr(scriptDialogResult.get(), ==, "Main World");
 
@@ -160,7 +160,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     static const char* isolatedWorldScript =
         "document.getElementById('console').innerHTML = top.foo;\n"
         "window.open = function () { alert('Isolated World'); }\n"
-        "document.open(1, 2, 3);";
+        "window.open();";
     GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
     GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
         "/org/webkit/gtk/WebExtensionTest" , "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
