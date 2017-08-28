@@ -1,3 +1,45 @@
+2017-08-18  Antti Koivisto  <antti@apple.com>
+
+        Factor render tree mutation code from RenderListItem to RenderTreeUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=175718
+
+        Reviewed by Andreas Kling.
+
+        We already stopped doing layout time mutations. We can now move the code out too.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderListItem.cpp:
+        (WebCore::isHTMLListElement):
+        (WebCore::getParentOfFirstLineBox): Deleted.
+        (WebCore::firstNonMarkerChild): Deleted.
+        (WebCore::RenderListItem::updateMarkerRenderer): Deleted.
+
+            Moved to RenderTreeUpdater::ListItem.
+
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::willBeDestroyed):
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingValue::adjustTextNodeSizes):
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::pushParent):
+        (WebCore::RenderTreeUpdater::popParent):
+        (WebCore::RenderTreeUpdater::updateBeforeDescendants):
+        (WebCore::RenderTreeUpdater::updateAfterDescendants):
+
+            Factor pre/post update into functions.
+
+        (WebCore::RenderTreeUpdater::updateBeforeOrAfterPseudoElement):
+        * style/RenderTreeUpdater.h:
+        * style/RenderTreeUpdaterListItem.cpp: Added.
+
+            Mutation functions move here.
+
+        (WebCore::getParentOfFirstLineBox):
+        (WebCore::firstNonMarkerChild):
+        (WebCore::RenderTreeUpdater::ListItem::updateMarker):
+        * style/RenderTreeUpdaterListItem.h: Added.
+
 2017-08-18  Ms2ger  <Ms2ger@gmail.com>
 
         [GTK] Show controls if a video element isn't allowed to play inline.

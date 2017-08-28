@@ -52,6 +52,7 @@ public:
     static void tearDownRenderer(Text&);
 
     class FirstLetter;
+    class ListItem;
 
 private:
     void updateRenderTree(ContainerNode& root);
@@ -59,6 +60,8 @@ private:
     void updateElementRenderer(Element&, const Style::ElementUpdate&);
     void createRenderer(Element&, RenderStyle&&);
     void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node&);
+    void updateBeforeDescendants(Element&);
+    void updateAfterDescendants(Element&, Style::Change);
     void updateBeforeOrAfterPseudoElement(Element&, PseudoId);
 
     struct Parent {
