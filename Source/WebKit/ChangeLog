@@ -1,3 +1,18 @@
+2017-08-28  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix incorrect enum in atBoundaryOfGranularity call
+        https://bugs.webkit.org/show_bug.cgi?id=176004
+
+        Reviewed by Wenson Hsieh and Enrica Casucci
+
+        Enum that was being used was incorrect, as that case in not covered in called function.
+        Resulted in a no-op. Should now have correct behavior around line boundaries.
+        
+        Not possible to add tests for selections with velocity. Will attempt to add this behavior later.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeAtWordBoundaryForPosition):
+
 2017-08-28  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Add PlatformWin cmake for Webkit

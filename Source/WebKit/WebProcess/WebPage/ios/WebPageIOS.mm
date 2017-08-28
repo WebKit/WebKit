@@ -1246,10 +1246,10 @@ static RefPtr<Range> rangeAtWordBoundaryForPosition(Frame* frame, const VisibleP
 
     // If this is where the extent was initially, then iterate in the other direction in the document until we hit the next word.
     while (extent.isNotNull()
-           && !atBoundaryOfGranularity(extent, WordGranularity, sameDirection)
-           && extent != base
-           && !atBoundaryOfGranularity(extent, LineBoundary, sameDirection)
-           && !atBoundaryOfGranularity(extent, LineBoundary, oppositeDirection)) {
+        && !atBoundaryOfGranularity(extent, WordGranularity, sameDirection)
+        && extent != base
+        && !atBoundaryOfGranularity(extent, LineGranularity, sameDirection)
+        && !atBoundaryOfGranularity(extent, LineGranularity, oppositeDirection)) {
         extent = baseIsStart ? extent.next() : extent.previous();
     }
 
