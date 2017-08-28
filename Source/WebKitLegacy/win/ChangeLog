@@ -1,3 +1,19 @@
+2017-08-28  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] The test http/tests/misc/policy-delegate-called-twice.html is crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=176031
+
+        Reviewed by Brent Fulgham.
+
+        When the function in the FramePolicyFunction parameter is called, it has already been moved
+        to an internal member by the setUpPolicyListener method, and is no longer valid. Invoke the
+        function by using the stored member instead.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2017-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, try to fix the Windows build after r221064
