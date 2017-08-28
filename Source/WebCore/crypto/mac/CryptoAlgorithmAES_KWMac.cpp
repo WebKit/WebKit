@@ -59,26 +59,14 @@ static ExceptionOr<Vector<uint8_t>> unwrapKeyAES_KW(const Vector<uint8_t>& key, 
     return WTFMove(result);
 }
 
-void CryptoAlgorithmAES_KW::platformWrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformWrapKey(const CryptoKey& key, const Vector<uint8_t>& data)
 {
-    auto& aesKey = downcast<CryptoKeyAES>(key.get());
-    auto result = wrapKeyAES_KW(aesKey.key(), data);
-    if (result.hasException()) {
-        exceptionCallback(result.releaseException().code());
-        return;
-    }
-    callback(result.releaseReturnValue());
+    return wrapKeyAES_KW(downcast<CryptoKeyAES>(key).key(), data);
 }
 
-void CryptoAlgorithmAES_KW::platformUnwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformUnwrapKey(const CryptoKey& key, const Vector<uint8_t>& data)
 {
-    auto& aesKey = downcast<CryptoKeyAES>(key.get());
-    auto result = unwrapKeyAES_KW(aesKey.key(), data);
-    if (result.hasException()) {
-        exceptionCallback(result.releaseException().code());
-        return;
-    }
-    callback(result.releaseReturnValue());
+    return unwrapKeyAES_KW(downcast<CryptoKeyAES>(key).key(), data);
 }
 
 } // namespace WebCore

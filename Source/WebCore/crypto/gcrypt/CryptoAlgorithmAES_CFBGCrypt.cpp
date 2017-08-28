@@ -28,18 +28,16 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "NotImplemented.h"
-
 namespace WebCore {
 
-void CryptoAlgorithmAES_CFB::platformEncrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CFB::platformEncrypt(CryptoAlgorithmParameters&, const CryptoKey&, const Vector<uint8_t>&)
 {
-    notImplemented();
+    return Exception { NotSupportedError };
 }
 
-void CryptoAlgorithmAES_CFB::platformDecrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CFB::platformDecrypt(CryptoAlgorithmParameters&, const CryptoKey&, const Vector<uint8_t>&)
 {
-    notImplemented();
+    return Exception { NotSupportedError };
 }
 
 } // namespace WebCore

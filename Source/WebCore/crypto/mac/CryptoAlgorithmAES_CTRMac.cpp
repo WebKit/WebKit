@@ -30,7 +30,6 @@
 
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoKeyAES.h"
-#include "ScriptExecutionContext.h"
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {
@@ -139,52 +138,20 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, cons
     return WTFMove(head);
 }
 
-void CryptoAlgorithmAES_CTR::platformEncrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformEncrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& plainText)
 {
-    context.ref();
-    workQueue.dispatch([parameters = WTFMove(parameters), key = WTFMove(key), plainText = WTFMove(plainText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
-        auto& aesParameters = downcast<CryptoAlgorithmAesCtrParams>(*parameters);
-        auto& aesKey = downcast<CryptoKeyAES>(key.get());
-        ASSERT(aesParameters.counterVector().size() == kCCBlockSizeAES128);
-        auto result = transformAES_CTR(kCCEncrypt, aesParameters.counterVector(), aesParameters.length, aesKey.key(), plainText);
-        if (result.hasException()) {
-            // We should only dereference callbacks after being back to the Document/Worker threads.
-            context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
-                exceptionCallback(ec);
-                context.deref();
-            });
-            return;
-        }
-        // We should only dereference callbacks after being back to the Document/Worker threads.
-        context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue(), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-            callback(result);
-            context.deref();
-        });
-    });
+    auto& aesParameters = downcast<CryptoAlgorithmAesCtrParams>(parameters);
+    auto& aesKey = downcast<CryptoKeyAES>(key);
+    ASSERT(aesParameters.counterVector().size() == kCCBlockSizeAES128);
+    return transformAES_CTR(kCCEncrypt, aesParameters.counterVector(), aesParameters.length, aesKey.key(), plainText);
 }
 
-void CryptoAlgorithmAES_CTR::platformDecrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformDecrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& cipherText)
 {
-    context.ref();
-    workQueue.dispatch([parameters = WTFMove(parameters), key = WTFMove(key), cipherText = WTFMove(cipherText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
-        auto& aesParameters = downcast<CryptoAlgorithmAesCtrParams>(*parameters);
-        auto& aesKey = downcast<CryptoKeyAES>(key.get());
-        assert(aesParameters.counterVector().size() == kCCBlockSizeAES128);
-        auto result = transformAES_CTR(kCCDecrypt, aesParameters.counterVector(), aesParameters.length, aesKey.key(), cipherText);
-        if (result.hasException()) {
-            // We should only dereference callbacks after being back to the Document/Worker threads.
-            context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
-                exceptionCallback(ec);
-                context.deref();
-            });
-            return;
-        }
-        // We should only dereference callbacks after being back to the Document/Worker threads.
-        context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue(), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-            callback(result);
-            context.deref();
-        });
-    });
+    auto& aesParameters = downcast<CryptoAlgorithmAesCtrParams>(parameters);
+    auto& aesKey = downcast<CryptoKeyAES>(key);
+    ASSERT(aesParameters.counterVector().size() == kCCBlockSizeAES128);
+    return transformAES_CTR(kCCDecrypt, aesParameters.counterVector(), aesParameters.length, aesKey.key(), cipherText);
 }
 
 } // namespace WebCore

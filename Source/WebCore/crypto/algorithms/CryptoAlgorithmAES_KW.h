@@ -50,8 +50,8 @@ private:
     void unwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&) final;
     ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&) final;
 
-    void platformWrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&);
-    void platformUnwrapKey(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&);
+    static ExceptionOr<Vector<uint8_t>> platformWrapKey(const CryptoKey&, const Vector<uint8_t>&);
+    static ExceptionOr<Vector<uint8_t>> platformUnwrapKey(const CryptoKey&, const Vector<uint8_t>&);
 };
 
 } // namespace WebCore

@@ -1,3 +1,78 @@
+2017-08-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebCrypto] Push WorkQueue dispatches for AES algorithms into shared code
+        https://bugs.webkit.org/show_bug.cgi?id=175539
+
+        Reviewed by Sam Weinig.
+
+        Push the WorkQueue dispatch code and other code duplicated between the
+        Mac and libgcrypt implementations of Web Crypto into the shared layer.
+        This patch focuses on the AES-based algorithms.
+
+        Functions with platform-specific implementations that are invoked from
+        these asynchronous dispatches are made static and return an ExceptionOr
+        value. CryptoAlgorithmParameters objects are passed through non-const
+        references because data getters could lazily construct the underlying
+        Vector objects. CryptoKey objects are passed through const references.
+        Implementations can then manually retrieve and further validate any key
+        or parameter data, as required for that specific implementation. Input
+        data is passed through const references to the original Vector objects.
+
+        No new tests -- no changes in behavior that's covered by existing tests.
+
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::encrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::decrypt):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CFB.cpp:
+        (WebCore::CryptoAlgorithmAES_CFB::encrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::decrypt):
+        * crypto/algorithms/CryptoAlgorithmAES_CFB.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CTR.cpp:
+        (WebCore::CryptoAlgorithmAES_CTR::encrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::decrypt):
+        * crypto/algorithms/CryptoAlgorithmAES_CTR.h:
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.cpp:
+        (WebCore::CryptoAlgorithmAES_GCM::encrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::decrypt):
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::wrapKey):
+        (WebCore::CryptoAlgorithmAES_KW::unwrapKey):
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/gcrypt/CryptoAlgorithmAES_CBCGCrypt.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmAES_CFBGCrypt.cpp:
+        (WebCore::CryptoAlgorithmAES_CFB::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmAES_CTRGCrypt.cpp:
+        (WebCore::CryptoAlgorithmAES_CTR::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmAES_GCMGCrypt.cpp:
+        (WebCore::gcryptEncrypt):
+        (WebCore::gcryptDecrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformDecrypt):
+        * crypto/gcrypt/CryptoAlgorithmAES_KWGCrypt.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::platformWrapKey):
+        (WebCore::CryptoAlgorithmAES_KW::platformUnwrapKey):
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmAES_CFBMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CFB::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CFB::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmAES_CTRMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CTR::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmAES_GCMMac.cpp:
+        (WebCore::CryptoAlgorithmAES_GCM::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmAES_KWMac.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::platformWrapKey):
+        (WebCore::CryptoAlgorithmAES_KW::platformUnwrapKey):
+
 2017-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Web process crashes after changing selection to the end of the document when speaking a selection

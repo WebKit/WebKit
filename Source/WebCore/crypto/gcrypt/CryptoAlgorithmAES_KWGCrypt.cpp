@@ -115,28 +115,20 @@ static std::optional<Vector<uint8_t>> gcryptUnwrapKey(const Vector<uint8_t>& key
     return output;
 }
 
-void CryptoAlgorithmAES_KW::platformWrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformWrapKey(const CryptoKey& key, const Vector<uint8_t>& data)
 {
-    auto& aesKey = downcast<CryptoKeyAES>(key.get());
-    auto output = gcryptWrapKey(aesKey.key(), data);
-    if (!output) {
-        exceptionCallback(OperationError);
-        return;
-    }
-
-    callback(*output);
+    auto output = gcryptWrapKey(downcast<CryptoKeyAES>(key).key(), data);
+    if (!output)
+        return Exception { OperationError };
+    return WTFMove(*output);
 }
 
-void CryptoAlgorithmAES_KW::platformUnwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformUnwrapKey(const CryptoKey& key, const Vector<uint8_t>& data)
 {
-    auto& aesKey = downcast<CryptoKeyAES>(key.get());
-    auto output = gcryptUnwrapKey(aesKey.key(), data);
-    if (!output) {
-        exceptionCallback(OperationError);
-        return;
-    }
-
-    callback(*output);
+    auto output = gcryptUnwrapKey(downcast<CryptoKeyAES>(key).key(), data);
+    if (!output)
+        return Exception { OperationError };
+    return WTFMove(*output);
 }
 
 } // namespace WebCore

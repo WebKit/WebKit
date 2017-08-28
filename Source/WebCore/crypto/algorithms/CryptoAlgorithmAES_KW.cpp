@@ -154,12 +154,25 @@ void CryptoAlgorithmAES_KW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data
         exceptionCallback(OperationError);
         return;
     }
-    platformWrapKey(WTFMove(key), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback));
+
+    auto result = platformWrapKey(key, WTFMove(data));
+    if (result.hasException()) {
+        exceptionCallback(result.releaseException().code());
+        return;
+    }
+
+    callback(result.releaseReturnValue());
 }
 
 void CryptoAlgorithmAES_KW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    platformUnwrapKey(WTFMove(key), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback));
+    auto result = platformUnwrapKey(key, WTFMove(data));
+    if (result.hasException()) {
+        exceptionCallback(result.releaseException().code());
+        return;
+    }
+
+    callback(result.releaseReturnValue());
 }
 
 ExceptionOr<size_t> CryptoAlgorithmAES_KW::getKeyLength(const CryptoAlgorithmParameters& parameters)

@@ -31,7 +31,6 @@
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmAesGcmParams.h"
 #include "CryptoKeyAES.h"
-#include "ScriptExecutionContext.h"
 #include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {
@@ -73,50 +72,18 @@ static ExceptionOr<Vector<uint8_t>> decyptAES_GCM(const Vector<uint8_t>& iv, con
     return WTFMove(plainText);
 }
 
-void CryptoAlgorithmAES_GCM::platformEncrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformEncrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& plainText)
 {
-    context.ref();
-    workQueue.dispatch([parameters = WTFMove(parameters), key = WTFMove(key), plainText = WTFMove(plainText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
-        auto& aesParameters = downcast<CryptoAlgorithmAesGcmParams>(*parameters);
-        auto& aesKey = downcast<CryptoKeyAES>(key.get());
-        auto result = encryptAES_GCM(aesParameters.ivVector(), aesKey.key(), plainText, aesParameters.additionalDataVector(), *(aesParameters.tagLength) / 8);
-        if (result.hasException()) {
-            // We should only dereference callbacks after being back to the Document/Worker threads.
-            context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
-                exceptionCallback(ec);
-                context.deref();
-            });
-            return;
-        }
-        // We should only dereference callbacks after being back to the Document/Worker threads.
-        context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue(), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-            callback(result);
-            context.deref();
-        });
-    });
+    auto& aesParameters = downcast<CryptoAlgorithmAesGcmParams>(parameters);
+    auto& aesKey = downcast<CryptoKeyAES>(key);
+    return encryptAES_GCM(aesParameters.ivVector(), aesKey.key(), plainText, aesParameters.additionalDataVector(), aesParameters.tagLength.value_or(0) / 8);
 }
 
-void CryptoAlgorithmAES_GCM::platformDecrypt(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformDecrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& cipherText)
 {
-    context.ref();
-    workQueue.dispatch([parameters = WTFMove(parameters), key = WTFMove(key), cipherText = WTFMove(cipherText), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
-        auto& aesParameters = downcast<CryptoAlgorithmAesGcmParams>(*parameters);
-        auto& aesKey = downcast<CryptoKeyAES>(key.get());
-        auto result = decyptAES_GCM(aesParameters.ivVector(), aesKey.key(), cipherText, aesParameters.additionalDataVector(), *(aesParameters.tagLength) / 8);
-        if (result.hasException()) {
-            // We should only dereference callbacks after being back to the Document/Worker threads.
-            context.postTask([exceptionCallback = WTFMove(exceptionCallback), ec = result.releaseException().code(), callback = WTFMove(callback)](ScriptExecutionContext& context) {
-                exceptionCallback(ec);
-                context.deref();
-            });
-            return;
-        }
-        // We should only dereference callbacks after being back to the Document/Worker threads.
-        context.postTask([callback = WTFMove(callback), result = result.releaseReturnValue(), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-            callback(result);
-            context.deref();
-        });
-    });
+    auto& aesParameters = downcast<CryptoAlgorithmAesGcmParams>(parameters);
+    auto& aesKey = downcast<CryptoKeyAES>(key);
+    return decyptAES_GCM(aesParameters.ivVector(), aesKey.key(), cipherText, aesParameters.additionalDataVector(), aesParameters.tagLength.value_or(0) / 8);
 }
 
 } // namespace WebCore
