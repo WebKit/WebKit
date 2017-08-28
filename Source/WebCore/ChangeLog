@@ -1,3 +1,60 @@
+2017-08-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Followup (r220289): RenderImageResourceStyleImage code clean up
+        https://bugs.webkit.org/show_bug.cgi?id=175444
+
+        Reviewed by Darin Adler.
+
+        RenderImageResourceStyleImage may be created with a StyleImage of type
+        StyleGeneratedImage. It may also be associated with a CachedImage which 
+        is loaded through a source URL. In this case, adding and removing m_renderer
+        as a client of the CachedImage will be done through 
+        RenderImageResource::setCachedImage().
+
+        RenderImageResource::setCachedImage() is already called from 
+        ImageLoader::updateRenderer() when the CachedImage finishes loading. This
+        call adds m_renderer to the clients of the CachedImage. 
+        RenderImageResource::setCachedImage() will also be called from 
+        RenderImageResourceStyleImage::shutdown() via RenderImageResource::shutdown()
+        to remove m_renderer from the clients of CachedImage by passing a null pointer.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::styleWillChange):
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::initialize):
+        (WebCore::RenderImageResource::shutdown):
+        (WebCore::RenderImageResource::setCachedImage):
+        (WebCore::RenderImageResource::resetAnimation):
+        (WebCore::RenderImageResource::image const):
+        (WebCore::RenderImageResource::setContainerSizeForRenderer):
+        (WebCore::RenderImageResource::imageSize const):
+        (WebCore::RenderImageResource::~RenderImageResource): Deleted.
+        (WebCore::RenderImageResource::errorOccurred const): Deleted.
+        (WebCore::RenderImageResource::imageHasRelativeWidth const): Deleted.
+        (WebCore::RenderImageResource::imageHasRelativeHeight const): Deleted.
+        (WebCore::RenderImageResource::intrinsicSize const): Deleted.
+        (WebCore::RenderImageResource::getImageSize const): Deleted.
+        * rendering/RenderImageResource.h:
+        (WebCore::RenderImageResource::initialize):
+        (WebCore::RenderImageResource::renderer const):
+        (WebCore::RenderImageResource::errorOccurred const):
+        (WebCore::RenderImageResource::imageHasRelativeWidth const):
+        (WebCore::RenderImageResource::imageHasRelativeHeight const):
+        (WebCore::RenderImageResource::imageSize const):
+        (WebCore::RenderImageResource::intrinsicSize const):
+        (WebCore::RenderImageResource::imagePtr const):
+        * rendering/RenderImageResourceStyleImage.cpp:
+        (WebCore::RenderImageResourceStyleImage::initialize):
+        (WebCore::RenderImageResourceStyleImage::shutdown):
+        (WebCore::RenderImageResourceStyleImage::image const):
+        (WebCore::RenderImageResourceStyleImage::setContainerSizeForRenderer):
+        (WebCore::RenderImageResourceStyleImage::~RenderImageResourceStyleImage): Deleted.
+        * rendering/RenderImageResourceStyleImage.h:
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::RenderSnapshottedPlugIn):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::RenderSVGImage):
+
 2017-08-18  Antti Koivisto  <antti@apple.com>
 
         Factor render tree mutation code from RenderListItem to RenderTreeUpdater

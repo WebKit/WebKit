@@ -49,7 +49,7 @@ RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
     , m_needsTransformUpdate(true)
     , m_imageResource(std::make_unique<RenderImageResource>())
 {
-    imageResource().initialize(this);
+    imageResource().initialize(*this);
 }
 
 RenderSVGImage::~RenderSVGImage()
