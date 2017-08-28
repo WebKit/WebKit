@@ -75,13 +75,6 @@ void InitWebCoreSystemInterface(void)
 #if !PLATFORM(IOS)
         INIT(SetDragImage);
 #endif
-        INIT(CreatePrivateStorageSession);
-        INIT(CopyRequestWithStorageSession);
-        INIT(GetHTTPCookieAcceptPolicy);
-        INIT(HTTPCookies);
-        INIT(SetHTTPCookiesForURL);
-        INIT(DeleteAllHTTPCookies);
-        INIT(DeleteHTTPCookie);
 
 #if !PLATFORM(IOS)
         INIT(SetMetadataURL);

@@ -177,7 +177,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 #endif
 
     if (d->m_storageSession)
-        nsRequest = [wkCopyRequestWithStorageSession(d->m_storageSession.get(), nsRequest) autorelease];
+        nsRequest = [copyRequestWithStorageSession(d->m_storageSession.get(), nsRequest) autorelease];
 
     ASSERT([NSURLConnection instancesRespondToSelector:@selector(_initWithRequest:delegate:usesCache:maxContentLength:startImmediately:connectionProperties:)]);
 

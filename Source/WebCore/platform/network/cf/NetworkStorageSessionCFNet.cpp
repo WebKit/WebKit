@@ -90,7 +90,7 @@ void NetworkStorageSession::switchToNewTestingSession()
 
     RetainPtr<CFURLStorageSessionRef> session;
 #if PLATFORM(COCOA)
-    session = adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get()));
+    session = adoptCF(createPrivateStorageSession(sessionName.createCFString().get()));
 #else
     session = adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultStorageSession().platformSession()));
 #endif
@@ -126,7 +126,7 @@ void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String
     RetainPtr<CFURLStorageSessionRef> storageSession;
     if (sessionID.isEphemeral()) {
 #if PLATFORM(COCOA)
-        storageSession = adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get()));
+        storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get()));
 #else
         storageSession = adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession()));
 #endif

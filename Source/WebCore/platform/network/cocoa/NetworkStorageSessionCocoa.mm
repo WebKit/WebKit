@@ -99,4 +99,38 @@ CookieStorageObserver& NetworkStorageSession::cookieStorageObserver() const
     return *m_cookieStorageObserver;
 }
 
+CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier)
+{
+    const void* sessionPropertyKeys[] = { _kCFURLStorageSessionIsPrivate };
+    const void* sessionPropertyValues[] = { kCFBooleanTrue };
+    auto sessionProperties = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, sessionPropertyKeys, sessionPropertyValues, sizeof(sessionPropertyKeys) / sizeof(*sessionPropertyKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto storageSession = adoptCF(_CFURLStorageSessionCreate(kCFAllocatorDefault, identifier, sessionProperties.get()));
+
+    if (!storageSession)
+        return nullptr;
+
+    // The private storage session should have the same properties as the default storage session,
+    // with the exception that it should be in-memory only storage.
+
+    // FIXME 9199649: If any of the storages do not exist, do no use the storage session.
+    // This could occur if there is an issue figuring out where to place a storage on disk (e.g. the
+    // sandbox does not allow CFNetwork access).
+
+    auto cache = adoptCF(_CFURLStorageSessionCopyCache(kCFAllocatorDefault, storageSession.get()));
+    if (!cache)
+        return nullptr;
+
+    CFURLCacheSetDiskCapacity(cache.get(), 0); // Setting disk cache size should not be necessary once <rdar://problem/12656814> is fixed.
+    CFURLCacheSetMemoryCapacity(cache.get(), [[NSURLCache sharedURLCache] memoryCapacity]);
+
+    auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
+    if (!cookieStorage)
+        return nullptr;
+
+    // FIXME: Use _CFHTTPCookieStorageGetDefault when USE(CFNETWORK) is defined in WebKit for consistency.
+    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy]);
+
+    return storageSession.leakRef();
+}
+
 } // namespace WebCore

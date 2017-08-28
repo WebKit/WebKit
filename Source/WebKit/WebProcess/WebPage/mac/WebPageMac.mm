@@ -684,7 +684,7 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::URL& url)
     [request setValue:(NSString*)userAgent(url) forHTTPHeaderField:@"User-Agent"];
     NSCachedURLResponse *cachedResponse;
     if (CFURLStorageSessionRef storageSession = corePage()->mainFrame().loader().networkingContext()->storageSession().platformSession())
-        cachedResponse = WKCachedResponseForRequest(storageSession, request);
+        cachedResponse = cachedResponseForRequest(storageSession, request);
     else
         cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
     [request release];
@@ -698,7 +698,7 @@ static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const URL& ur
     [request setValue:(NSString *)webPage->userAgent(url) forHTTPHeaderField:@"User-Agent"];
 
     if (CFURLStorageSessionRef storageSession = webPage->corePage()->mainFrame().loader().networkingContext()->storageSession().platformSession())
-        return WKCachedResponseForRequest(storageSession, request.get());
+        return cachedResponseForRequest(storageSession, request.get());
 
     return [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];
 }

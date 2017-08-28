@@ -153,4 +153,8 @@ private:
 #endif
 };
 
+#if PLATFORM(COCOA)
+WEBCORE_EXPORT CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier);
+#endif
+
 }

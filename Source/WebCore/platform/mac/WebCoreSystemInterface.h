@@ -214,15 +214,6 @@ extern void (*wkSetLayerContentsScale)(CALayer *);
 #endif
 
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
-extern CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
-extern NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
-
-typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
-extern unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
-extern NSArray *(*wkHTTPCookies)(CFHTTPCookieStorageRef);
-extern void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
-extern void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
-extern void (*wkDeleteAllHTTPCookies)(CFHTTPCookieStorageRef);
 
 #if !PLATFORM(IOS)
 extern void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);

@@ -29,6 +29,7 @@
 #include "ResourceRequestBase.h"
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS NSCachedURLResponse;
 OBJC_CLASS NSURLRequest;
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
@@ -134,5 +135,10 @@ inline bool ResourceRequest::resourcePrioritiesEnabled()
     return false;
 #endif
 }
+
+#if PLATFORM(COCOA)
+NSURLRequest *copyRequestWithStorageSession(CFURLStorageSessionRef, NSURLRequest *);
+WEBCORE_EXPORT NSCachedURLResponse *cachedResponseForRequest(CFURLStorageSessionRef, NSURLRequest *);
+#endif
 
 } // namespace WebCore

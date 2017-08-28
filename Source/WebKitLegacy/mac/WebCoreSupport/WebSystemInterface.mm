@@ -105,13 +105,6 @@ void InitWebCoreSystemInterface(void)
     INIT(CreateAXUIElementRef);
     INIT(UnregisterUniqueIdForElement);
 #endif
-    INIT(CreatePrivateStorageSession);
-    INIT(CopyRequestWithStorageSession);
-    INIT(GetHTTPCookieAcceptPolicy);
-    INIT(HTTPCookies);
-    INIT(SetHTTPCookiesForURL);
-    INIT(DeleteAllHTTPCookies);
-    INIT(DeleteHTTPCookie);
 
 #if !PLATFORM(IOS)
     INIT(SetMetadataURL);

@@ -39,14 +39,6 @@ WEBCORE_EXPORT CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, C
 WEBCORE_EXPORT void (*wkSetLayerContentsScale)(CALayer *);
 WEBCORE_EXPORT CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
 
-WEBCORE_EXPORT CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
-WEBCORE_EXPORT NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
-WEBCORE_EXPORT unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
-WEBCORE_EXPORT NSArray *(*wkHTTPCookies)(CFHTTPCookieStorageRef);
-WEBCORE_EXPORT void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
-WEBCORE_EXPORT void (*wkDeleteAllHTTPCookies)(CFHTTPCookieStorageRef);
-WEBCORE_EXPORT void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
-
 WEBCORE_EXPORT void(*wkDestroyRenderingResources)(void);
 
 WEBCORE_EXPORT bool (*wkCaptionAppearanceHasUserPreferences)(void);

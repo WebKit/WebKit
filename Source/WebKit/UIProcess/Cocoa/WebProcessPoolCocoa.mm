@@ -44,6 +44,7 @@
 #import "WindowServerConnection.h"
 #import <WebCore/Color.h>
 #import <WebCore/FileSystem.h>
+#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -576,7 +577,7 @@ static CFURLStorageSessionRef privateBrowsingSession()
     dispatch_once(&once, ^{
         NSString *identifier = [NSString stringWithFormat:@"%@.PrivateBrowsing", [[NSBundle mainBundle] bundleIdentifier]];
 
-        session = WKCreatePrivateStorageSession((CFStringRef)identifier);
+        session = createPrivateStorageSession((CFStringRef)identifier);
     });
 
     return session;

@@ -3555,7 +3555,7 @@ static inline IMP getMethod(id o, SEL s)
         return nil;
 
     if (CFURLStorageSessionRef storageSession = _private->page->mainFrame().loader().networkingContext()->storageSession().platformSession())
-        cachedResponse = WKCachedResponseForRequest(storageSession, request.get());
+        cachedResponse = cachedResponseForRequest(storageSession, request.get());
     else
         cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];
 

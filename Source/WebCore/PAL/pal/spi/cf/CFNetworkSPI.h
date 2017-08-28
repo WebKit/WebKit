@@ -115,6 +115,8 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 
 @interface NSHTTPCookie ()
 - (CFHTTPCookieRef)_CFHTTPCookie;
++ (CFArrayRef __nullable)_ns2cfCookies:(NSArray * __nullable)nsCookies CF_RETURNS_RETAINED;
+- (CFHTTPCookieRef __nullable)_GetInternalCFHTTPCookie;
 @end
 
 @interface NSURLSessionConfiguration ()
@@ -171,6 +173,7 @@ CFURLCacheRef CFURLCacheCopySharedURLCache();
 void CFURLCacheSetMemoryCapacity(CFURLCacheRef, CFIndex memoryCapacity);
 CFIndex CFURLCacheMemoryCapacity(CFURLCacheRef);
 void CFURLCacheSetDiskCapacity(CFURLCacheRef, CFIndex);
+CFCachedURLResponseRef CFURLCacheCopyResponseForRequest(CFURLCacheRef, CFURLRequestRef);
 
 #if PLATFORM(COCOA)
 Boolean _CFNetworkIsKnownHSTSHostWithSession(CFURLRef, CFURLStorageSessionRef);
@@ -192,6 +195,7 @@ extern CFStringRef const kCFHTTPCookieLocalFileDomain;
 extern const CFStringRef kCFHTTPVersion1_1;
 extern const CFStringRef kCFURLRequestAllowAllPOSTCaching;
 extern const CFStringRef _kCFURLConnectionPropertyShouldSniff;
+extern const CFStringRef _kCFURLStorageSessionIsPrivate;
 
 CFHTTPCookieStorageRef _CFHTTPCookieStorageGetDefault(CFAllocatorRef);
 CFHTTPCookieStorageRef CFHTTPCookieStorageCreateFromFile(CFAllocatorRef, CFURLRef, CFHTTPCookieStorageRef);
@@ -228,6 +232,10 @@ CFURLRef CFURLRequestGetURL(CFURLRequestRef);
 CFURLResponseRef CFURLResponseCreate(CFAllocatorRef, CFURLRef, CFStringRef mimeType, SInt64 expectedContentLength, CFStringRef textEncodingName, CFURLCacheStoragePolicy);
 void CFURLResponseSetExpectedContentLength(CFURLResponseRef, SInt64 length);
 CFURLResponseRef CFURLResponseCreateWithHTTPResponse(CFAllocatorRef, CFURLRef, CFHTTPMessageRef, CFURLCacheStoragePolicy);
+CFArrayRef CFHTTPCookieStorageCopyCookies(CFHTTPCookieStorageRef);
+void CFHTTPCookieStorageSetCookies(CFHTTPCookieStorageRef, CFArrayRef cookies, CFURLRef, CFURLRef mainDocumentURL);
+void CFHTTPCookieStorageDeleteCookie(CFHTTPCookieStorageRef, CFHTTPCookieRef);
+CFMutableURLRequestRef CFURLRequestCreateMutableCopy(CFAllocatorRef, CFURLRequestRef);
 
 #endif // !PLATFORM(WIN)
 

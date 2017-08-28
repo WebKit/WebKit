@@ -93,14 +93,6 @@ CFTypeRef (*wkCreateAXTextMarker)(const void *bytes, size_t len);
 BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t length);
 AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
-CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
-NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
-unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
-NSArray *(*wkHTTPCookies)(CFHTTPCookieStorageRef);
-void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
-void (*wkDeleteAllHTTPCookies)(CFHTTPCookieStorageRef);
-void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
-
 void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
 
 #if !PLATFORM(IOS)

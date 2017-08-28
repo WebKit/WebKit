@@ -260,10 +260,33 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 {
     updatePlatformRequest();
-    m_nsRequest = adoptNS(wkCopyRequestWithStorageSession(storageSession, m_nsRequest.get()));
+    m_nsRequest = adoptNS(copyRequestWithStorageSession(storageSession, m_nsRequest.get()));
 }
 
 #endif // USE(CFURLCONNECTION)
+
+NSURLRequest *copyRequestWithStorageSession(CFURLStorageSessionRef storageSession, NSURLRequest *request)
+{
+    if (!storageSession || !request)
+        return [request copy];
+
+    auto cfRequest = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, [request _CFURLRequest]));
+    _CFURLRequestSetStorageSession(cfRequest.get(), storageSession);
+    return [[NSURLRequest alloc] _initWithCFURLRequest:cfRequest.get()];
+}
+
+NSCachedURLResponse *cachedResponseForRequest(CFURLStorageSessionRef storageSession, NSURLRequest *request)
+{
+    if (!storageSession)
+        return [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
+
+    auto cache = adoptCF(_CFURLStorageSessionCopyCache(kCFAllocatorDefault, storageSession));
+    auto cachedResponse = adoptCF(CFURLCacheCopyResponseForRequest(cache.get(), [request _CFURLRequest]));
+    if (!cachedResponse)
+        return nil;
+
+    return [[[NSCachedURLResponse alloc] _initWithCFCachedURLResponse:cachedResponse.get()] autorelease];
+}
 
 } // namespace WebCore
 
