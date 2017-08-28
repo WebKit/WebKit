@@ -1727,13 +1727,6 @@ RefPtr<Range> AXObjectCache::rangeForNodeContents(Node* node)
     return WTFMove(range);
 }
     
-static VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& position, int32_t offset)
-{
-    RefPtr<ContainerNode> root;
-    unsigned startIndex = indexForVisiblePosition(position, root);
-    return visiblePositionForIndex(startIndex + offset, root.get());
-}
-    
 RefPtr<Range> AXObjectCache::rangeMatchesTextNearRange(RefPtr<Range> originalRange, const String& matchText)
 {
     if (!originalRange)
