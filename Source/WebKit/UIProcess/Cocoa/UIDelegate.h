@@ -103,6 +103,7 @@ private:
         void didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent&) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
+        void didExceedBackgroundResourceLimitWhileInForeground(WebPageProxy&, WKResourceLimit) final;
         void saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String&, const WTF::String&, const WebCore::URL&, API::Data&) final;
 #endif
         bool decidePolicyForUserMediaPermissionRequest(WebPageProxy&, WebFrameProxy&, API::SecurityOrigin&, API::SecurityOrigin&, UserMediaPermissionRequestProxy&) final;
@@ -149,6 +150,7 @@ private:
         bool webViewTakeFocus : 1;
         bool webViewDidNotHandleWheelEvent : 1;
         bool webViewHandleAutoplayEventWithFlags : 1;
+        bool webViewDidExceedBackgroundResourceLimitWhileInForeground : 1;
         bool webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL : 1;
         bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
 #endif

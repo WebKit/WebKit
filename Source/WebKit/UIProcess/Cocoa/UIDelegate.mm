@@ -108,6 +108,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
     m_delegateMethods.webViewDidNotHandleWheelEvent = [delegate respondsToSelector:@selector(_webView:didNotHandleWheelEvent:)];
     m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
+    m_delegateMethods.webViewDidExceedBackgroundResourceLimitWhileInForeground = [delegate respondsToSelector:@selector(_webView:didExceedBackgroundResourceLimitWhileInForeground:)];
     m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL = [delegate respondsToSelector:@selector(_webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
 #endif
@@ -425,6 +426,30 @@ void UIDelegate::UIClient::unfocus(WebKit::WebPageProxy*)
         return;
     
     [(id <WKUIDelegatePrivate>)delegate _unfocusWebView:m_uiDelegate.m_webView];
+}
+
+static _WKResourceLimit toWKResourceLimit(WKResourceLimit limit)
+{
+    switch (limit) {
+    case kWKResourceLimitMemory:
+        return _WKResourceLimitMemory;
+    case kWKResourceLimitCPU:
+        return _WKResourceLimitCPU;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKResourceLimitMemory;
+}
+
+void UIDelegate::UIClient::didExceedBackgroundResourceLimitWhileInForeground(WebKit::WebPageProxy&, WKResourceLimit limit)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewDidExceedBackgroundResourceLimitWhileInForeground)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate.m_webView didExceedBackgroundResourceLimitWhileInForeground:toWKResourceLimit(limit)];
 }
 
 void UIDelegate::UIClient::didNotHandleWheelEvent(WebKit::WebPageProxy*, const WebKit::NativeWebWheelEvent& event)

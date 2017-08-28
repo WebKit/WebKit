@@ -59,6 +59,11 @@ typedef NS_ENUM(NSInteger, _WKAutoplayEvent) {
     _WKAutoplayEventUserDidInterfereWithPlayback,
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
+typedef NS_ENUM(NSInteger, _WKResourceLimit) {
+    _WKResourceLimitMemory,
+    _WKResourceLimitCPU,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+
 typedef NS_OPTIONS(NSInteger, _WKAutoplayEventFlags) {
     _WKAutoplayEventFlagsNone = 0,
     _WKAutoplayEventFlagsHasAudio = 1 << 0,
@@ -145,6 +150,7 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_webView:(WKWebView *)webView didExceedBackgroundResourceLimitWhileInForeground:(_WKResourceLimit)limit WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element WK_API_AVAILABLE(macosx(10.12));
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(10.12));
 #endif
