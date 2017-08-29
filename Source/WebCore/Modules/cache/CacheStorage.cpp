@@ -138,10 +138,6 @@ void CacheStorage::retrieveCaches(WTF::Function<void()>&& callback)
                     m_caches.append(Cache::create(*scriptExecutionContext(), WTFMove(info.name), info.identifier, m_connection.copyRef()));
             }
 
-            std::sort(m_caches.begin(), m_caches.end(), [&](auto& a, auto& b) {
-                return a->identifier() < b->identifier();
-            });
-
             callback();
         }
         unsetPendingActivity(this);

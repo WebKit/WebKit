@@ -1,5 +1,17 @@
 2017-08-29  Youenn Fablet  <youenn@apple.com>
 
+        CacheStorage does not need to sort its caches
+        https://bugs.webkit.org/show_bug.cgi?id=176059
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing tests.
+
+        * Modules/cache/CacheStorage.cpp:
+        (WebCore::CacheStorage::retrieveCaches):
+
+2017-08-29  Youenn Fablet  <youenn@apple.com>
+
         Setting the cache storage engine root path according the session WebsiteDataStore
         https://bugs.webkit.org/show_bug.cgi?id=176055
 
