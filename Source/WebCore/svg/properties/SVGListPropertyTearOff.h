@@ -66,7 +66,7 @@ public:
         ASSERT(m_values->size() == m_wrappers->size());
         ASSERT_WITH_SECURITY_IMPLICATION(itemIndex < m_wrappers->size());
 
-        RefPtr<ListItemTearOff>& item = m_wrappers->at(itemIndex);
+        RefPtr<ListItemTearOff> item = m_wrappers->at(itemIndex);
         item->detachWrapper();
         m_wrappers->remove(itemIndex);
         m_values->remove(itemIndex);
@@ -141,7 +141,7 @@ protected:
         unsigned size = m_wrappers->size();
         ASSERT(size == m_values->size());
         for (unsigned i = 0; i < size; ++i) {
-            ListItemTearOff* item = m_wrappers->at(i).get();
+            ListItemTearOff* item = m_wrappers->at(i);
             if (!item)
                 continue;
             item->setAnimatedProperty(m_animatedProperty.ptr());

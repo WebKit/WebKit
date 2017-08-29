@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+ description("This test checks that adding an animation to a SVG element does not leak the whole SVGDocument.")
+
+ function addRect()
+ {
+     var elem = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+     elem.setAttribute("id", "rect");
+     elem.setAttribute("x", 50);
+     elem.setAttribute("y", 50);
+     elem.setAttribute("width", 50);
+     elem.setAttribute("height", 50);
+     elem.setAttribute("fill", "blue");
+
+     document.getElementById("rootSVG").appendChild(elem);
+ }
+
+ function applyTransform()
+ {
+     var svgroot = document.getElementById("rootSVG");
+     var transformList = document.getElementById("rect").transform.baseVal;
+     var rotate = svgroot.createSVGTransform();
+     rotate.setRotate(15,0,0);
+     transformList.appendItem(rotate);
+ }
+
+ function removeRect()
+ {
+     document.getElementById("rootSVG").removeChild(document.getElementById("rect"));
+ }
+
+ function test()
+ {
+     if (!window.internals || !window.GCController) {
+         testFailed("This test requires internals and GCController");
+         return;
+     }
+
+     testRunner.dumpAsText();
+
+     // One gc() call is not enough and causes flakiness in some platforms.
+     gc();
+     gc();
+     var originalLiveElements = internals.numberOfLiveNodes();
+
+     addRect();
+     applyTransform();
+     removeRect();
+
+     // One gc() call is not enough and causes flakiness in some platforms.
+     gc();
+     gc();
+     var delta = internals.numberOfLiveNodes() - originalLiveElements;
+     shouldBeZero(delta.toString());
+     var successfullyParsed = true;
+ }
+</script>
+<body onload="test()">
+    <svg id="rootSVG" width="300" height="300" xmlns="http://www.w3.org/2000/svg" version="1.1"></svg>
+</body>
