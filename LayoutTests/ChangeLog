@@ -1,3 +1,11 @@
+2017-08-29  Per Arne Vollan  <pvollan@apple.com>
+
+        Rebaseline editing/style/5065910.html after r220706.
+
+        Unreviewed test gardening.
+
+        * platform/win/editing/style/5065910-expected.txt:
+
 2017-08-29  Matt Lewis  <jlewis3@apple.com>
 
         Rebaselined http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl for ios-11.
