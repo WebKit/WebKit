@@ -1178,6 +1178,7 @@ editing/pasteboard/emacs-ctrl-k-y-001.html [ Failure ]
 editing/pasteboard/emacs-cntl-y-001.html [ Failure ]
 # Assertion failure in replaySavedEvents
 webkit.org/b/21796 editing/pasteboard/drop-text-events.html [ Skip ]
+editing/pasteboard/paste-empty-startcontainer.html [ Skip ]
 
 http/tests/images/hidpi-srcset-copy.html [ Skip ]
 
