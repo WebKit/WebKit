@@ -1,5 +1,14 @@
 2017-08-28  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build fix #2 after r221275.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue): Correct return type and arguments
+        to match new API.
+        * WebCoreSupport/WebPlatformStrategies.h: Update signatures.
+
+2017-08-28  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed build fix after r221275.
 
         * WebCoreSupport/WebPlatformStrategies.cpp:

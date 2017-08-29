@@ -90,10 +90,10 @@ std::pair<String, bool> WebPlatformStrategies::cookieRequestHeaderFieldValue(con
     return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url, includeSecureCookies);
 }
 
-String WebPlatformStrategies::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const URL& url)
+std::pair<String, bool> WebPlatformStrategies::cookieRequestHeaderFieldValue(PAL::SessionID sessionID, const URL& firstParty, const URL& url, WebCore::IncludeSecureCookies includeSecureCookies)
 {
     auto& session = sessionID.isEphemeral() ? WebFrameNetworkingContext::ensurePrivateBrowsingSession() : NetworkStorageSession::defaultStorageSession();
-    return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url);
+    return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url, includeSecureCookies);
 }
 
 bool WebPlatformStrategies::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL& url, Vector<Cookie>& rawCookies)
