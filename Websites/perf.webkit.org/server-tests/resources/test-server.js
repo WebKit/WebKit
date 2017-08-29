@@ -215,6 +215,7 @@ class TestServer {
 
         childProcess.execFileSync('kill', ['-TERM', pid]);
 
+        this._pidWaitStart = Date.now();
         return new Promise(this._waitForPid.bind(this, false));
     }
 

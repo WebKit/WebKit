@@ -6,6 +6,22 @@ class CommitLogFetcher {
         $this->db = $db;
     }
 
+    static function find_commit_id_by_revision($db, $repository_id, $revision)
+    {
+        if (!ctype_alnum($revision))
+            return NULL;
+        $commit_rows = $db->query_and_fetch_all('SELECT commit_id FROM commits WHERE commit_repository = $1 AND commit_revision = $2', array($repository_id, $revision));
+        if ($commit_rows)
+            return $commit_rows[0]['commit_id'];
+
+        $commit_rows = $db->query_and_fetch_all('SELECT commit_id FROM commits WHERE commit_repository = $1 AND commit_revision LIKE $2 LIMIT 2', array($repository_id, Database::escape_for_like($revision) . '%'));
+        if (!$commit_rows)
+            return NULL;
+        if (count($commit_rows) > 1)
+            return -1; // There are more than one matches.
+        return $commit_rows[0]['commit_id'];
+    }
+
     function fetch_for_tasks($task_id_list, $task_by_id)
     {
         $commit_rows = $this->db->query_and_fetch_all('SELECT task_commits.*, commits.*, committers.*

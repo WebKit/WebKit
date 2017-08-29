@@ -1,6 +1,7 @@
 <?php
 
 require_once('../include/json-header.php');
+require_once('../include/commit-log-fetcher.php');
 require_once('../include/repository-group-finder.php');
 
 function main()
@@ -184,9 +185,10 @@ function commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list
             $revision = array_get($data, 'revision');
             if (!$revision)
                 exit_with_error('InvalidRevision', array('repository' => $repository_id, 'data' => $data));
-            $commit = $db->select_first_row('commits', 'commit',
-                array('repository' => intval($repository_id), 'revision' => $revision));
-            if (!$commit)
+            $commit_id = CommitLogFetcher::find_commit_id_by_revision($db, $repository_id, $revision);
+            if ($commit_id < 0)
+                exit_with_error('AmbigiousRevision', array('repository' => $repository_id, 'revision' => $revision));
+            if (!$commit_id)
                 exit_with_error('RevisionNotFound', array('repository' => $repository_id, 'revision' => $revision));
 
             $patch_file_id = array_get($data, 'patch');
@@ -196,7 +198,7 @@ function commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list
                 array_push($repository_with_patch, $repository_id);
             }
 
-            array_push($commit_set, array('commit' => $commit['commit_id'], 'patch_file' => $patch_file_id));
+            array_push($commit_set, array('commit' => $commit_id, 'patch_file' => $patch_file_id));
             array_push($repository_list, $repository_id);
         }
 

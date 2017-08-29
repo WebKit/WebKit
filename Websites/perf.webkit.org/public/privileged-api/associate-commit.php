@@ -1,6 +1,7 @@
 <?php
 
 require_once('../include/json-header.php');
+require_once('../include/commit-log-fetcher.php');
 
 function main() {
     $data = ensure_privileged_api_data_and_token();
@@ -29,17 +30,14 @@ function main() {
         require_format('Kind', $kind, '/^(cause|fix)$/');
 
         $commit_info = array('repository' => $repository_id, 'revision' => $revision);
-        $commit_rows = $db->query_and_fetch_all('SELECT commit_id FROM commits WHERE commit_repository = $1 AND commit_revision LIKE $2 LIMIT 2',
-            array($repository_id, '%' . Database::escape_for_like($revision) . '%'));
-        if (count($commit_rows) > 1) {
+        $commit_id = CommitLogFetcher::find_commit_id_by_revision($db, $repository_id, $revision);
+        if ($commit_id < 0) {
             $db->rollback_transaction();
             exit_with_error('AmbiguousRevision', $commit_info);            
-        } else if (!$commit_rows) {
+        } else if (!$commit_id) {
             $db->rollback_transaction();
             exit_with_error('CommitNotFound', $commit_info);
         }
-
-        $commit_id = $commit_rows[0]['commit_id'];
 
         $association = array('task' => $analysis_task_id, 'commit' => $commit_id, 'is_fix' => Database::to_database_boolean($kind == 'fix'));
         $commit_id = $db->update_or_insert_row('task_commits', 'taskcommit',

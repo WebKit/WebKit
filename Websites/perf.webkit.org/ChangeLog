@@ -1,3 +1,24 @@
+2017-08-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make it possible to specify A/B testing revision with a partial hash
+        https://bugs.webkit.org/show_bug.cgi?id=176047
+
+        Rubber-stamped by Chris Dumez.
+
+        Added the support for specifying a partial hash in A/B testing instead of the full hash.
+
+        * public/include/commit-log-fetcher.php:
+        (CommitLogFetcher::find_commit_id_by_revision): Extracted from associate-commit.php.
+        * public/privileged-api/associate-commit.php:
+        (main): 
+        * public/privileged-api/create-test-group.php:
+        (main): Use find_commit_id_by_revision here to support scheduling an A/B testing with a partial hash.
+        * server-tests/privileged-api-create-test-group-tests.js:
+        (createAnalysisTask): Make it possible to customize revision string in some test cases.
+        * server-tests/resources/test-server.js:
+        (TestServer.prototype._stopApache): Fixed the bug that cleanup step always fails whenever the test file
+        runs more than 8s.
+
 2017-08-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. Creating trying a test group no longer updates the page.
