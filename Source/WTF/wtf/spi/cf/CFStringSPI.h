@@ -30,6 +30,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <CoreFoundation/CFPriv.h>
+#import <CoreFoundation/CFStringDefaultEncoding.h>
 
 #else
 
@@ -49,6 +50,7 @@ typedef CF_ENUM(CFIndex, CFStringCharacterClusterType)
 extern "C" {
 
 CFRange CFStringGetRangeOfCharacterClusterAtIndex(CFStringRef, CFIndex charIndex, CFStringCharacterClusterType);
+void _CFStringGetUserDefaultEncoding(UInt32* scriptValue, UInt32* regionValue);
 
 }
 

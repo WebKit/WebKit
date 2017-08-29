@@ -50,7 +50,6 @@ void InitWebCoreSystemInterface(void)
         INIT(DrawMediaSliderTrack);
         INIT(DrawMediaUIPart);
 #endif
-        INIT(GetWebDefaultCFStringEncoding);
         INIT(CGContextIsPDFContext);
 #if !PLATFORM(IOS)
         INIT(GetWheelEventDeltas);

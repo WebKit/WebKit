@@ -1,5 +1,17 @@
 2017-08-28  Andy Estes  <aestes@apple.com>
 
+        [Cocoa] Upstream WKGetWebDefaultCFStringEncoding()
+        https://bugs.webkit.org/show_bug.cgi?id=176039
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences _systemCFStringEncoding]):
+
+2017-08-28  Andy Estes  <aestes@apple.com>
+
         [Cocoa] Upstream CFNetwork-related WebKitSystemInterface functions
         https://bugs.webkit.org/show_bug.cgi?id=176032
 

@@ -129,7 +129,6 @@ typedef enum {
 extern bool (*wkCGContextDrawsWithCorrectShadowOffsets)(CGContextRef);
 #endif
 extern CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
-extern CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
 #if !PLATFORM(IOS)
 extern void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 extern void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int);

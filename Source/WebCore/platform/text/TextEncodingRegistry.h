@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextEncodingRegistry_h
-#define TextEncodingRegistry_h
+#pragma once
 
 #include <memory>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-    class TextCodec;
-    class TextEncoding;
+class TextCodec;
+class TextEncoding;
 
-    // Use TextResourceDecoder::decode to decode resources, since it handles BOMs.
-    // Use TextEncoding::encode to encode, since it takes care of normalization.
-    std::unique_ptr<TextCodec> newTextCodec(const TextEncoding&);
+// Use TextResourceDecoder::decode to decode resources, since it handles BOMs.
+// Use TextEncoding::encode to encode, since it takes care of normalization.
+std::unique_ptr<TextCodec> newTextCodec(const TextEncoding&);
 
-    // Only TextEncoding should use the following functions directly.
-    const char* atomicCanonicalTextEncodingName(const char* alias);
-    template <typename CharacterType>
-    const char* atomicCanonicalTextEncodingName(const CharacterType*, size_t);
-    const char* atomicCanonicalTextEncodingName(const String&);
-    bool noExtendedTextEncodingNameUsed();
-    bool isJapaneseEncoding(const char* canonicalEncodingName);
-    bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName);
-    bool isReplacementEncoding(const char* alias);
-    bool isReplacementEncoding(const String& alias);
+// Only TextEncoding should use the following functions directly.
+const char* atomicCanonicalTextEncodingName(const char* alias);
+template <typename CharacterType>
+const char* atomicCanonicalTextEncodingName(const CharacterType*, size_t);
+const char* atomicCanonicalTextEncodingName(const String&);
+bool noExtendedTextEncodingNameUsed();
+bool isJapaneseEncoding(const char* canonicalEncodingName);
+bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName);
+bool isReplacementEncoding(const char* alias);
+bool isReplacementEncoding(const String& alias);
 
-    WEBCORE_EXPORT String defaultTextEncodingNameForSystemLanguage();
+WEBCORE_EXPORT String defaultTextEncodingNameForSystemLanguage();
+#if PLATFORM(COCOA)
+WEBCORE_EXPORT CFStringEncoding webDefaultCFStringEncoding();
+#endif
 
 #ifndef NDEBUG
-    void dumpTextEncodingNameMap();
+void dumpTextEncodingNameMap();
 #endif
-}
 
-#endif // TextEncodingRegistry_h
+} // namespace WebCore

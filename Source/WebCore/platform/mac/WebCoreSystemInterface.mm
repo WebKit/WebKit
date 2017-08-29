@@ -33,7 +33,6 @@
 void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
 bool (*wkCGContextDrawsWithCorrectShadowOffsets)(CGContextRef);
 CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
-CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
 void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int);
 bool (*wkDrawFocusRingAtTime)(CGContextRef, NSTimeInterval);

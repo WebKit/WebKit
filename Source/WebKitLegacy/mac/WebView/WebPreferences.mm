@@ -1835,7 +1835,7 @@ public:
 
 + (CFStringEncoding)_systemCFStringEncoding
 {
-    return WKGetWebDefaultCFStringEncoding();
+    return webDefaultCFStringEncoding();
 }
 
 + (void)_setInitialDefaultTextEncodingToSystemEncoding

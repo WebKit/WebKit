@@ -37,7 +37,6 @@ WEBCORE_EXPORT void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, 
 WEBCORE_EXPORT void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 WEBCORE_EXPORT CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
 WEBCORE_EXPORT void (*wkSetLayerContentsScale)(CALayer *);
-WEBCORE_EXPORT CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
 
 WEBCORE_EXPORT void(*wkDestroyRenderingResources)(void);
 

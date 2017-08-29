@@ -55,9 +55,6 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawCellFocusRingWithFrameAtTime);
     INIT(DrawMediaUIPart);
     INIT(DrawMediaSliderTrack);
-#endif
-    INIT(GetWebDefaultCFStringEncoding);
-#if !PLATFORM(IOS)
     INIT(GetWheelEventDeltas);
     INIT(GetNSEventKeyChar);
     INIT(HitTestMediaUIPart);

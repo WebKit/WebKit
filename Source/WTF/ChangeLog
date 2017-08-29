@@ -1,3 +1,12 @@
+2017-08-28  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Upstream WKGetWebDefaultCFStringEncoding()
+        https://bugs.webkit.org/show_bug.cgi?id=176039
+
+        Reviewed by Alex Christensen.
+
+        * wtf/spi/cf/CFStringSPI.h:
+
 2017-08-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, suppress warnings in GTK port

@@ -4408,6 +4408,8 @@
 		A1E1154813015C5D0054AC8C /* SpotLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */; };
 		A1ED778C1BE3294000DC1791 /* Device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1ED778A1BE3293F00DC1791 /* Device.cpp */; };
 		A1ED778D1BE3294000DC1791 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ED778B1BE3294000DC1791 /* Device.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1F55DC11F54D2D600EDB75F /* TextEncodingRegistryIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1F55DBF1F54D2D600EDB75F /* TextEncodingRegistryIOS.mm */; };
+		A1F55DC61F54D3F000EDB75F /* TextEncodingRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1F55DC41F54D3F000EDB75F /* TextEncodingRegistryMac.mm */; };
 		A1F600441F4757A90077E83F /* PaymentRequestUpdateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F600411F4757A90077E83F /* PaymentRequestUpdateEvent.h */; };
 		A1F600451F4757A90077E83F /* PaymentRequestUpdateEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1F600421F4757A90077E83F /* PaymentRequestUpdateEvent.cpp */; };
 		A1F600491F47594E0077E83F /* PaymentDetailsUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F600471F47594E0077E83F /* PaymentDetailsUpdate.h */; };
@@ -12739,6 +12741,8 @@
 		A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpotLightSource.cpp; sourceTree = "<group>"; };
 		A1ED778A1BE3293F00DC1791 /* Device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Device.cpp; sourceTree = "<group>"; };
 		A1ED778B1BE3294000DC1791 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		A1F55DBF1F54D2D600EDB75F /* TextEncodingRegistryIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextEncodingRegistryIOS.mm; sourceTree = "<group>"; };
+		A1F55DC41F54D3F000EDB75F /* TextEncodingRegistryMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextEncodingRegistryMac.mm; sourceTree = "<group>"; };
 		A1F600411F4757A90077E83F /* PaymentRequestUpdateEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentRequestUpdateEvent.h; sourceTree = "<group>"; };
 		A1F600421F4757A90077E83F /* PaymentRequestUpdateEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentRequestUpdateEvent.cpp; sourceTree = "<group>"; };
 		A1F600431F4757A90077E83F /* PaymentRequestUpdateEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentRequestUpdateEvent.idl; sourceTree = "<group>"; };
@@ -21360,6 +21364,7 @@
 			children = (
 				A516E8B4136E04DB0076C3C0 /* LocalizedDateCache.h */,
 				A516E8B5136E04DB0076C3C0 /* LocalizedDateCache.mm */,
+				A1F55DBF1F54D2D600EDB75F /* TextEncodingRegistryIOS.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -23657,6 +23662,7 @@
 				B2AFFC8C0D00A5DF0030074D /* TextBoundaries.mm */,
 				B2AFFC8E0D00A5DF0030074D /* TextCodecMac.cpp */,
 				B2AFFC8F0D00A5DF0030074D /* TextCodecMac.h */,
+				A1F55DC41F54D3F000EDB75F /* TextEncodingRegistryMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -33886,6 +33892,8 @@
 				B2C3DA460D006C1D00EF6F26 /* TextEncoding.cpp in Sources */,
 				C105DA620F3AA68F001DD44F /* TextEncodingDetectorICU.cpp in Sources */,
 				B2C3DA480D006C1D00EF6F26 /* TextEncodingRegistry.cpp in Sources */,
+				A1F55DC11F54D2D600EDB75F /* TextEncodingRegistryIOS.mm in Sources */,
+				A1F55DC61F54D3F000EDB75F /* TextEncodingRegistryMac.mm in Sources */,
 				933A142E0B7D188600A53FFD /* TextEvent.cpp in Sources */,
 				F55B3DD71251F12D003EF269 /* TextFieldInputType.cpp in Sources */,
 				2D4F96F51A1ECC240098BF88 /* TextIndicator.cpp in Sources */,
