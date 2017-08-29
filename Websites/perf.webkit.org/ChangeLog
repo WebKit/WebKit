@@ -1,5 +1,11 @@
 2017-08-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix. OS X "revision" can have a space.
+
+        * public/include/commit-log-fetcher.php:
+
+2017-08-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make it possible to specify A/B testing revision with a partial hash
         https://bugs.webkit.org/show_bug.cgi?id=176047
 
