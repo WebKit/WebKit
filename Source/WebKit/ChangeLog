@@ -1,3 +1,43 @@
+2017-08-29  Youenn Fablet  <youenn@apple.com>
+
+        Setting the cache storage engine root path according the session WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=176055
+
+        Reviewed by Alex Christensen.
+
+        Adding disk read/write capacities to CacheStorage engine.
+        This is used to store per-origin cache names in a file.
+        Making Engine a thread safe refcounted object so that it does read/write in a background thread.
+
+        Setting the root path of the engine to the directory set for the session in use according the WebsiteDataStore.
+        For each WebsiteDataStore, a path and a sandbox extension is passed to the network process if persistency of the cache storage is wanted.
+        Ephemeral sessions will set the path of the engine to null so that no read/write access is performed.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::cacheStorageDirectory const):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::from):
+        (WebKit::CacheStorage::Engine::defaultEngine):
+        (WebKit::CacheStorage::Engine::Engine):
+        (WebKit::CacheStorage::Engine::writeFile):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        (WebKit::CacheStorage::Engine::create):
+        (WebKit::CacheStorage::Engine::shouldPersist const):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+
 2017-08-29  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for dataTransferItem.webkitGetAsEntry()

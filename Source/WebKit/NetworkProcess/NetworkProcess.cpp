@@ -237,7 +237,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     // FIXME: instead of handling this here, a message should be sent later (scales to multiple sessions)
     if (parameters.privateBrowsingEnabled)
-        RemoteNetworkingContext::ensurePrivateBrowsingSession({PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }});
+        RemoteNetworkingContext::ensurePrivateBrowsingSession({PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }, { }, { }});
 
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
@@ -701,6 +701,21 @@ void NetworkProcess::prefetchDNS(const String& hostname)
     WebCore::prefetchDNS(hostname);
 }
 
+String NetworkProcess::cacheStorageDirectory(PAL::SessionID sessionID) const
+{
+    if (sessionID.isEphemeral())
+        return { };
+
+    if (sessionID == PAL::SessionID::defaultSessionID())
+        return m_cacheStorageDirectory;
+
+    auto* session = NetworkStorageSession::storageSession(sessionID);
+    if (!session)
+        return { };
+
+    return session->cacheStorageDirectory();
+}
+
 #if !PLATFORM(COCOA)
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {
@@ -717,6 +732,7 @@ void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameter
 void NetworkProcess::syncAllCookies()
 {
 }
+
 #endif
 
 } // namespace WebKit

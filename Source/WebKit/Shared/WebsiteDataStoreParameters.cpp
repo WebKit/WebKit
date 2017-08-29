@@ -40,6 +40,8 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
     encoder << uiProcessCookieStorageIdentifier;
     encoder << cookieStoragePathExtensionHandle;
     encoder << pendingCookies;
+    encoder << cacheStorageDirectory;
+    encoder << cacheStorageDirectoryExtensionHandle;
 }
 
 bool WebsiteDataStoreParameters::decode(IPC::Decoder& decoder, WebsiteDataStoreParameters& parameters)
@@ -54,6 +56,12 @@ bool WebsiteDataStoreParameters::decode(IPC::Decoder& decoder, WebsiteDataStoreP
         return false;
 
     if (!decoder.decode(parameters.pendingCookies))
+        return false;
+
+    if (!decoder.decode(parameters.cacheStorageDirectory))
+        return false;
+
+    if (!decoder.decode(parameters.cacheStorageDirectoryExtensionHandle))
         return false;
 
     return true;

@@ -134,7 +134,7 @@ public:
 #endif
 
     Seconds loadThrottleLatency() const { return m_loadThrottleLatency; }
-    const String& cacheStorageDirectory() const { return m_cacheStorageDirectory; }
+    String cacheStorageDirectory(PAL::SessionID) const;
 
 private:
     NetworkProcess();

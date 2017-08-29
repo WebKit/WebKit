@@ -129,6 +129,11 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
     for (const auto& cookie : parameters.pendingCookies)
         session->setCookie(cookie);
 
+    if (!parameters.cacheStorageDirectory.isNull()) {
+        SandboxExtension::consumePermanently(parameters.cacheStorageDirectoryExtensionHandle);
+        session->setCacheStorageDirectory(WTFMove(parameters.cacheStorageDirectory));
+    }
+
 #if USE(NETWORK_SESSION)
     auto networkSession = NetworkSession::create(parameters.sessionID, NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>());
     SessionTracker::setSession(parameters.sessionID, WTFMove(networkSession));

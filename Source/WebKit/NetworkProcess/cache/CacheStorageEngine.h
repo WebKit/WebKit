@@ -26,7 +26,10 @@
 #pragma once
 
 #include "CacheStorageEngineCache.h"
+#include "NetworkCacheData.h"
 #include <wtf/HashMap.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WorkQueue.h>
 
 namespace IPC {
 class Connection;
@@ -40,10 +43,13 @@ namespace WebKit {
 
 namespace CacheStorage {
 
-class Engine {
+class Engine : public ThreadSafeRefCounted<Engine> {
 public:
     static Engine& from(PAL::SessionID);
     static void destroyEngine(PAL::SessionID);
+    static Ref<Engine> create(String&& rootPath) { return adoptRef(*new Engine(WTFMove(rootPath))); }
+
+    bool shouldPersist() const { return !!m_ioQueue;}
 
     void open(const String& origin, const String& cacheName, WebCore::DOMCache::CacheIdentifierCallback&&);
     void remove(uint64_t cacheIdentifier, WebCore::DOMCache::CacheIdentifierCallback&&);
@@ -53,8 +59,13 @@ public:
     void putRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCache::Record>&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
     void deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
 
+    void writeFile(const String& filename, NetworkCache::Data&&, WebCore::DOMCache::CompletionCallback&&);
+    void readFile(const String& filename, WTF::Function<void(const NetworkCache::Data&, int error)>&&);
+    void removeFile(const String& filename);
+
 private:
     static Engine& defaultEngine();
+    explicit Engine(String&& rootPath);
 
     void writeCachesToDisk(WebCore::DOMCache::CompletionCallback&&);
 
@@ -76,6 +87,8 @@ private:
     HashMap<String, Vector<Cache>> m_caches;
     Vector<Cache> m_removedCaches;
     uint64_t m_nextCacheIdentifier { 0 };
+    String m_rootPath;
+    RefPtr<WorkQueue> m_ioQueue;
 };
 
 } // namespace CacheStorage

@@ -30,6 +30,7 @@
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
 #import "NetworkSessionCocoa.h"
+#import "RemoteNetworkingContext.h"
 #import "SandboxExtension.h"
 #import "SessionTracker.h"
 #import <WebCore/NetworkStorageSession.h>
@@ -73,7 +74,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.parentBundleDirectoryExtensionHandle);
 #endif
-    m_cacheStorageDirectory = parameters.cacheStorageDirectory;
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
@@ -106,8 +106,10 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     ASSERT(!m_diskCacheIsDisabledForTesting || !parameters.nsURLCacheDiskCapacity);
 
-    if (!m_cacheStorageDirectory.isNull())
+    if (!parameters.cacheStorageDirectory.isNull()) {
+        m_cacheStorageDirectory = parameters.cacheStorageDirectory;
         SandboxExtension::consumePermanently(parameters.cacheStorageDirectoryExtensionHandle);
+    }
 
     if (!m_diskCacheDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);

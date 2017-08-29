@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CacheStorageEngine.h"
 
+#include "NetworkCacheIOChannel.h"
+#include "NetworkProcess.h"
 #include <WebCore/CacheQueryOptions.h>
 #include <pal/SessionID.h>
 #include <wtf/MainThread.h>
@@ -33,25 +35,25 @@
 #include <wtf/text/StringHash.h>
 
 using namespace WebCore::DOMCache;
+using namespace WebKit::NetworkCache;
 
 namespace WebKit {
 
 namespace CacheStorage {
 
-static HashMap<PAL::SessionID, std::unique_ptr<Engine>>& globalEngineMap()
+static HashMap<PAL::SessionID, RefPtr<Engine>>& globalEngineMap()
 {
-    static NeverDestroyed<HashMap<PAL::SessionID, std::unique_ptr<Engine>>> map;
+    static NeverDestroyed<HashMap<PAL::SessionID, RefPtr<Engine>>> map;
+
     return map;
 }
 
 Engine& Engine::from(PAL::SessionID sessionID)
 {
-    if (sessionID == PAL::SessionID::defaultSessionID())
-        return defaultEngine();
-
-    return *globalEngineMap().ensure(sessionID, [] {
-        return std::make_unique<Engine>();
-    }).iterator->value;
+    auto addResult = globalEngineMap().add(sessionID, nullptr);
+    if (addResult.isNewEntry)
+        addResult.iterator->value = Engine::create(NetworkProcess::singleton().cacheStorageDirectory(sessionID));
+    return *addResult.iterator->value;
 }
 
 void Engine::destroyEngine(PAL::SessionID sessionID)
@@ -62,8 +64,16 @@ void Engine::destroyEngine(PAL::SessionID sessionID)
 
 Engine& Engine::defaultEngine()
 {
-    static NeverDestroyed<std::unique_ptr<Engine>> defaultEngine = { std::make_unique<Engine>() };
-    return *defaultEngine.get();
+    auto sessionID = PAL::SessionID::defaultSessionID();
+    static NeverDestroyed<Ref<Engine>> defaultEngine = { Engine::create(NetworkProcess::singleton().cacheStorageDirectory(sessionID)) };
+    return defaultEngine.get();
+}
+
+Engine::Engine(String&& rootPath)
+    : m_rootPath(WTFMove(rootPath))
+{
+    if (!m_rootPath.isNull())
+        m_ioQueue = WorkQueue::create("com.apple.WebKit.CacheStorageEngine.serialBackground", WorkQueue::Type::Serial, WorkQueue::QOS::Background);
 }
 
 void Engine::open(const String& origin, const String& cacheName, CacheIdentifierCallback&& callback)
@@ -305,7 +315,62 @@ Vector<uint64_t> Engine::queryCache(const Vector<Record>& records, const WebCore
     return results;
 }
 
+void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCore::DOMCache::CompletionCallback&& callback)
+{
+    if (!shouldPersist()) {
+        callback(std::nullopt);
+        return;
+    }
+
+    m_ioQueue->dispatch([this, protectedThis = makeRef(*this), callback = WTFMove(callback), data = WTFMove(data), filename = filename.isolatedCopy()] () mutable {
+        auto channel = IOChannel::open(filename, IOChannel::Type::Create);
+        channel->write(0, data, m_ioQueue.get(), [callback = WTFMove(callback)](int error) mutable {
+            RunLoop::main().dispatch([callback = WTFMove(callback), error]() mutable {
+                if (error) {
+                    // FIXME: Use specific filesystem error.
+                    callback(Error::Internal);
+                    return;
+                }
+                callback(std::nullopt);
+            });
+        });
+    });
+}
+
+void Engine::readFile(const String& filename, WTF::Function<void(const NetworkCache::Data&, int error)>&& callback)
+{
+    if (!shouldPersist()) {
+        callback(Data { }, 0);
+        return;
+    }
+
+    m_ioQueue->dispatch([this, protectedThis = makeRef(*this), callback = WTFMove(callback), filename = filename.isolatedCopy()]() mutable {
+        auto channel = IOChannel::open(filename, IOChannel::Type::Read);
+        if (channel->fileDescriptor() < 0) {
+            RunLoop::main().dispatch([callback = WTFMove(callback)]() mutable {
+                callback(Data { }, 0);
+            });
+            return;
+        }
+
+        channel->read(0, std::numeric_limits<size_t>::max(), m_ioQueue.get(), [callback = WTFMove(callback)](const Data& data, int error) mutable {
+            RunLoop::main().dispatch([callback = WTFMove(callback), data, error]() mutable {
+                callback(data, error);
+            });
+        });
+    });
+}
+
+void Engine::removeFile(const String& filename)
+{
+    if (!shouldPersist())
+        return;
+
+    m_ioQueue->dispatch([filename = filename.isolatedCopy()]() mutable {
+        WebCore::deleteFile(filename);
+    });
+}
+
 } // namespace CacheStorage
 
 } // namespace WebKit
-
