@@ -1,3 +1,11 @@
+2017-08-29  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaselined http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl for ios-11.
+
+        Unreviewed test gardening.
+
+        * http/tests/websocket/tests/hybi/secure-cookie-secure-connection-expected.txt:
+
 2017-08-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Optimize View.prototype.removeSubview
