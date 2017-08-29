@@ -100,6 +100,12 @@ void WorkQueue::platformInvalidate()
 
 void WorkQueue::dispatch(Function<void()>&& function)
 {
+    // FIXME: During layout tests, this method is sometimes called with a nullptr function parameter.
+    // This is tracked in <http://webkit.org/b/176072>.
+    ASSERT(function);
+    if (!function)
+        return;
+
     MutexLocker locker(m_functionQueueLock);
     ref();
     m_functionQueue.append(WTFMove(function));

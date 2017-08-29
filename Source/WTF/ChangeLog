@@ -1,3 +1,15 @@
+2017-08-29  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Crash under WorkQueue::performWorkOnRegisteredWorkThread in layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=176064
+
+        Reviewed by Saam Barati.
+
+        The crash log indicates that the function pointer is null in this case.
+
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::WorkQueue::dispatch):
+
 2017-08-28  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Upstream WKGetWebDefaultCFStringEncoding()
