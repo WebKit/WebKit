@@ -775,3 +775,7 @@ webkit.org/b/172829 [ Sierra Debug ] loader/stateobjects/replacestate-size.html 
 
 webkit.org/b/175781 svg/in-html/by-reference.html [ Pass Failure ]
 
+webkit.org/b/176054 [ Sierra ElCapitan ] media/video-controls-in-media-document.html [ Pass Failure ]
+
+webkit.org/b/176054 [ Sierra ElCapitan ] media/video-controls-no-display-with-text-track.html [ Pass Failure ]
+
