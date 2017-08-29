@@ -7800,7 +7800,7 @@ private:
     
     void compileThrow()
     {
-        terminate(Uncountable);
+        terminate(ThrowException);
     }
     
     void compileInvalidationPoint()
