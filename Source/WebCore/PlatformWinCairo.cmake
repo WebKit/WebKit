@@ -46,8 +46,6 @@ list(APPEND WebCore_LIBRARIES
     libcurl_imp
     libjpeg
     libpng
-    libxml2
-    libxslt
     rpcrt4
     shlwapi
     usp10

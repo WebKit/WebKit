@@ -4,8 +4,13 @@ include(OptionsWin)
 
 find_package(Cairo 1.14.4 REQUIRED)
 find_package(CURL 7.45.0 REQUIRED)
+find_package(LibXml2 2.8.0 REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(Sqlite REQUIRED)
+
+if (ENABLE_XSLT)
+    find_package(LibXslt 1.1.7 REQUIRED)
+endif ()
 
 SET_AND_EXPOSE_TO_BUILD(USE_CAIRO ON)
 
