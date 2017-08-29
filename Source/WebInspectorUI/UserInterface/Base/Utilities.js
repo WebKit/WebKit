@@ -31,7 +31,7 @@ var zeroWidthSpace = "\u200b";
 
 Object.defineProperty(Object, "shallowCopy",
 {
-    value: function(object)
+    value(object)
     {
         // Make a new object and copy all the key/values. The values are not copied.
         var copy = {};
@@ -44,7 +44,7 @@ Object.defineProperty(Object, "shallowCopy",
 
 Object.defineProperty(Object, "shallowEqual",
 {
-    value: function(a, b)
+    value(a, b)
     {
         // Checks if two objects have the same top-level properties.
 
@@ -102,7 +102,7 @@ Object.defineProperty(Object, "shallowMerge",
 
 Object.defineProperty(Object.prototype, "valueForCaseInsensitiveKey",
 {
-    value: function(key)
+    value(key)
     {
         if (this.hasOwnProperty(key))
             return this[key];
@@ -119,7 +119,7 @@ Object.defineProperty(Object.prototype, "valueForCaseInsensitiveKey",
 
 Object.defineProperty(Map, "fromObject",
 {
-    value: function(object)
+    value(object)
     {
         let map = new Map;
         for (let key in object)
@@ -130,7 +130,7 @@ Object.defineProperty(Map, "fromObject",
 
 Object.defineProperty(Map.prototype, "take",
 {
-    value: function(key)
+    value(key)
     {
         var deletedValue = this.get(key);
         this.delete(key);
@@ -140,7 +140,7 @@ Object.defineProperty(Map.prototype, "take",
 
 Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithClass",
 {
-    value: function(className)
+    value(className)
     {
         for (var node = this; node && node !== this.ownerDocument; node = node.parentNode)
             if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains(className))
@@ -151,7 +151,7 @@ Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithClass",
 
 Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithNodeNameInArray",
 {
-    value: function(nameArray)
+    value(nameArray)
     {
         var lowerCaseNameArray = nameArray.map(function(name) { return name.toLowerCase(); });
         for (var node = this; node && node !== this.ownerDocument; node = node.parentNode) {
@@ -167,7 +167,7 @@ Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithNodeNameInArray",
 
 Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithNodeName",
 {
-    value: function(nodeName)
+    value(nodeName)
     {
         return this.enclosingNodeOrSelfWithNodeNameInArray([nodeName]);
     }
@@ -175,7 +175,7 @@ Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithNodeName",
 
 Object.defineProperty(Node.prototype, "isAncestor",
 {
-    value: function(node)
+    value(node)
     {
         if (!node)
             return false;
@@ -193,7 +193,7 @@ Object.defineProperty(Node.prototype, "isAncestor",
 
 Object.defineProperty(Node.prototype, "isDescendant",
 {
-    value: function(descendant)
+    value(descendant)
     {
         return !!descendant && descendant.isAncestor(this);
     }
@@ -202,7 +202,7 @@ Object.defineProperty(Node.prototype, "isDescendant",
 
 Object.defineProperty(Node.prototype, "isSelfOrAncestor",
 {
-    value: function(node)
+    value(node)
     {
         return !!node && (node === this || this.isAncestor(node));
     }
@@ -211,7 +211,7 @@ Object.defineProperty(Node.prototype, "isSelfOrAncestor",
 
 Object.defineProperty(Node.prototype, "isSelfOrDescendant",
 {
-    value: function(node)
+    value(node)
     {
         return !!node && (node === this || this.isDescendant(node));
     }
@@ -219,7 +219,7 @@ Object.defineProperty(Node.prototype, "isSelfOrDescendant",
 
 Object.defineProperty(Node.prototype, "traverseNextNode",
 {
-    value: function(stayWithin)
+    value(stayWithin)
     {
         var node = this.firstChild;
         if (node)
@@ -244,7 +244,7 @@ Object.defineProperty(Node.prototype, "traverseNextNode",
 
 Object.defineProperty(Node.prototype, "traversePreviousNode",
 {
-    value: function(stayWithin)
+    value(stayWithin)
     {
        if (stayWithin && this === stayWithin)
             return null;
@@ -260,7 +260,7 @@ Object.defineProperty(Node.prototype, "traversePreviousNode",
 
 Object.defineProperty(Node.prototype, "rangeOfWord",
 {
-    value: function(offset, stopCharacters, stayWithinNode, direction)
+    value(offset, stopCharacters, stayWithinNode, direction)
     {
         var startNode;
         var startOffset = 0;
@@ -351,7 +351,7 @@ Object.defineProperty(Node.prototype, "rangeOfWord",
 
 Object.defineProperty(Element.prototype, "realOffsetWidth",
 {
-    get: function()
+    get()
     {
         return this.getBoundingClientRect().width;
     }
@@ -359,7 +359,7 @@ Object.defineProperty(Element.prototype, "realOffsetWidth",
 
 Object.defineProperty(Element.prototype, "realOffsetHeight",
 {
-    get: function()
+    get()
     {
         return this.getBoundingClientRect().height;
     }
@@ -367,7 +367,7 @@ Object.defineProperty(Element.prototype, "realOffsetHeight",
 
 Object.defineProperty(Element.prototype, "totalOffsetLeft",
 {
-    get: function()
+    get()
     {
         return this.getBoundingClientRect().left;
     }
@@ -375,7 +375,7 @@ Object.defineProperty(Element.prototype, "totalOffsetLeft",
 
 Object.defineProperty(Element.prototype, "totalOffsetRight",
 {
-    get: function()
+    get()
     {
         return this.getBoundingClientRect().right;
     }
@@ -383,7 +383,7 @@ Object.defineProperty(Element.prototype, "totalOffsetRight",
 
 Object.defineProperty(Element.prototype, "totalOffsetTop",
 {
-    get: function()
+    get()
     {
         return this.getBoundingClientRect().top;
     }
@@ -391,7 +391,7 @@ Object.defineProperty(Element.prototype, "totalOffsetTop",
 
 Object.defineProperty(Element.prototype, "removeChildren",
 {
-    value: function()
+    value()
     {
         // This has been tested to be the fastest removal method.
         if (this.firstChild)
@@ -401,7 +401,7 @@ Object.defineProperty(Element.prototype, "removeChildren",
 
 Object.defineProperty(Element.prototype, "isInsertionCaretInside",
 {
-    value: function()
+    value()
     {
         var selection = window.getSelection();
         if (!selection.rangeCount || !selection.isCollapsed)
@@ -413,7 +413,7 @@ Object.defineProperty(Element.prototype, "isInsertionCaretInside",
 
 Object.defineProperty(Element.prototype, "removeMatchingStyleClasses",
 {
-    value: function(classNameRegex)
+    value(classNameRegex)
     {
         var regex = new RegExp("(^|\\s+)" + classNameRegex + "($|\\s+)");
         if (regex.test(this.className))
@@ -423,7 +423,7 @@ Object.defineProperty(Element.prototype, "removeMatchingStyleClasses",
 
 Object.defineProperty(Element.prototype, "createChild",
 {
-    value: function(elementName, className)
+    value(elementName, className)
     {
         var element = this.ownerDocument.createElement(elementName);
         if (className)
@@ -435,7 +435,7 @@ Object.defineProperty(Element.prototype, "createChild",
 
 Object.defineProperty(Element.prototype, "isScrolledToBottom",
 {
-    value: function()
+    value()
     {
         // This code works only for 0-width border
         return this.scrollTop + this.clientHeight === this.scrollHeight;
@@ -444,7 +444,7 @@ Object.defineProperty(Element.prototype, "isScrolledToBottom",
 
 Object.defineProperty(Element.prototype, "recalculateStyles",
 {
-    value: function()
+    value()
     {
         this.ownerDocument.defaultView.getComputedStyle(this);
     }
@@ -457,7 +457,7 @@ Object.defineProperty(DocumentFragment.prototype, "createChild",
 
 Object.defineProperty(Array, "shallowEqual",
 {
-    value: function(a, b)
+    value(a, b)
     {
         if (!Array.isArray(a) || !Array.isArray(b))
             return false;
@@ -484,7 +484,7 @@ Object.defineProperty(Array, "shallowEqual",
 
 Object.defineProperty(Array.prototype, "lastValue",
 {
-    get: function()
+    get()
     {
         if (!this.length)
             return undefined;
@@ -518,7 +518,7 @@ Object.defineProperty(Array.prototype, "removeAll",
 
 Object.defineProperty(Array.prototype, "toggleIncludes",
 {
-    value: function(value, force)
+    value(value, force)
     {
         let exists = this.includes(value);
         if (exists === !!force)
@@ -533,7 +533,7 @@ Object.defineProperty(Array.prototype, "toggleIncludes",
 
 Object.defineProperty(Array.prototype, "insertAtIndex",
 {
-    value: function(value, index)
+    value(value, index)
     {
         this.splice(index, 0, value);
     }
@@ -541,7 +541,7 @@ Object.defineProperty(Array.prototype, "insertAtIndex",
 
 Object.defineProperty(Array.prototype, "keySet",
 {
-    value: function()
+    value()
     {
         let keys = Object.create(null);
         for (var i = 0; i < this.length; ++i)
@@ -552,7 +552,7 @@ Object.defineProperty(Array.prototype, "keySet",
 
 Object.defineProperty(Array.prototype, "partition",
 {
-    value: function(callback)
+    value(callback)
     {
         let positive = [];
         let negative = [];
@@ -569,7 +569,7 @@ Object.defineProperty(Array.prototype, "partition",
 
 Object.defineProperty(String.prototype, "isLowerCase",
 {
-    value: function()
+    value()
     {
         return String(this) === this.toLowerCase();
     }
@@ -577,7 +577,7 @@ Object.defineProperty(String.prototype, "isLowerCase",
 
 Object.defineProperty(String.prototype, "isUpperCase",
 {
-    value: function()
+    value()
     {
         return String(this) === this.toUpperCase();
     }
@@ -585,7 +585,7 @@ Object.defineProperty(String.prototype, "isUpperCase",
 
 Object.defineProperty(String.prototype, "trimMiddle",
 {
-    value: function(maxLength)
+    value(maxLength)
     {
         if (this.length <= maxLength)
             return this;
@@ -597,7 +597,7 @@ Object.defineProperty(String.prototype, "trimMiddle",
 
 Object.defineProperty(String.prototype, "trimEnd",
 {
-    value: function(maxLength)
+    value(maxLength)
     {
         if (this.length <= maxLength)
             return this;
@@ -607,7 +607,7 @@ Object.defineProperty(String.prototype, "trimEnd",
 
 Object.defineProperty(String.prototype, "truncate",
 {
-    value: function(maxLength)
+    value(maxLength)
     {
         "use strict";
 
@@ -625,7 +625,7 @@ Object.defineProperty(String.prototype, "truncate",
 
 Object.defineProperty(String.prototype, "collapseWhitespace",
 {
-    value: function()
+    value()
     {
         return this.replace(/[\s\xA0]+/g, " ");
     }
@@ -633,7 +633,7 @@ Object.defineProperty(String.prototype, "collapseWhitespace",
 
 Object.defineProperty(String.prototype, "removeWhitespace",
 {
-    value: function()
+    value()
     {
         return this.replace(/[\s\xA0]+/g, "");
     }
@@ -641,7 +641,7 @@ Object.defineProperty(String.prototype, "removeWhitespace",
 
 Object.defineProperty(String.prototype, "escapeCharacters",
 {
-    value: function(chars)
+    value(chars)
     {
         var foundChar = false;
         for (var i = 0; i < chars.length; ++i) {
@@ -667,7 +667,7 @@ Object.defineProperty(String.prototype, "escapeCharacters",
 
 Object.defineProperty(String.prototype, "escapeForRegExp",
 {
-    value: function()
+    value()
     {
         return this.escapeCharacters("^[]{}()\\.$*+?|");
     }
@@ -675,7 +675,7 @@ Object.defineProperty(String.prototype, "escapeForRegExp",
 
 Object.defineProperty(String.prototype, "capitalize",
 {
-    value: function()
+    value()
     {
         return this.charAt(0).toUpperCase() + this.slice(1);
     }
@@ -691,7 +691,7 @@ Object.defineProperty(String.prototype, "extendedLocaleCompare",
 
 Object.defineProperty(String, "tokenizeFormatString",
 {
-    value: function(format)
+    value(format)
     {
         var tokens = [];
         var substitutionIndex = 0;
@@ -761,7 +761,7 @@ Object.defineProperty(String, "tokenizeFormatString",
 
 Object.defineProperty(String.prototype, "hash",
 {
-    get: function()
+    get()
     {
         // Matches the wtf/Hasher.h (SuperFastHash) algorithm.
 
@@ -834,7 +834,7 @@ Object.defineProperty(String, "standardFormatters",
 
 Object.defineProperty(String, "format",
 {
-    value: function(format, substitutions, formatters, initialValue, append)
+    value(format, substitutions, formatters, initialValue, append)
     {
         if (!format || !substitutions || !substitutions.length)
             return {formattedResult: append(initialValue, format), unusedSubstitutions: substitutions};
@@ -904,7 +904,7 @@ Object.defineProperty(String, "format",
 
 Object.defineProperty(String.prototype, "format",
 {
-    value: function()
+    value()
     {
         return String.format(this, arguments, String.standardFormatters, "", function(a, b) { return a + b; }).formattedResult;
     }
@@ -912,7 +912,7 @@ Object.defineProperty(String.prototype, "format",
 
 Object.defineProperty(String.prototype, "insertWordBreakCharacters",
 {
-    value: function()
+    value()
     {
         // Add zero width spaces after characters that are good to break after.
         // Otherwise a string with no spaces will not break and overflow its container.
@@ -923,7 +923,7 @@ Object.defineProperty(String.prototype, "insertWordBreakCharacters",
 
 Object.defineProperty(String.prototype, "removeWordBreakCharacters",
 {
-    value: function()
+    value()
     {
         // Undoes what insertWordBreakCharacters did.
         return this.replace(/\u200b/g, "");
@@ -932,7 +932,7 @@ Object.defineProperty(String.prototype, "removeWordBreakCharacters",
 
 Object.defineProperty(String.prototype, "getMatchingIndexes",
 {
-    value: function(needle)
+    value(needle)
     {
         var indexesOfNeedle = [];
         var index = this.indexOf(needle);
@@ -948,7 +948,7 @@ Object.defineProperty(String.prototype, "getMatchingIndexes",
 
 Object.defineProperty(String.prototype, "levenshteinDistance",
 {
-    value: function(s)
+    value(s)
     {
         var m = this.length;
         var n = s.length;
@@ -981,7 +981,7 @@ Object.defineProperty(String.prototype, "levenshteinDistance",
 
 Object.defineProperty(String.prototype, "toCamelCase",
 {
-    value: function()
+    value()
     {
         return this.toLowerCase().replace(/[^\w]+(\w)/g, (match, group) => group.toUpperCase());
     }
@@ -989,7 +989,7 @@ Object.defineProperty(String.prototype, "toCamelCase",
 
 Object.defineProperty(String.prototype, "hasMatchingEscapedQuotes",
 {
-    value: function()
+    value()
     {
         return /^\"(?:[^\"\\]|\\.)*\"$/.test(this) || /^\'(?:[^\'\\]|\\.)*\'$/.test(this);
     }
@@ -997,7 +997,7 @@ Object.defineProperty(String.prototype, "hasMatchingEscapedQuotes",
 
 Object.defineProperty(Math, "roundTo",
 {
-    value: function(num, step)
+    value(num, step)
     {
         return Math.round(num / step) * step;
     }
@@ -1005,7 +1005,7 @@ Object.defineProperty(Math, "roundTo",
 
 Object.defineProperty(Number, "constrain",
 {
-    value: function(num, min, max)
+    value(num, min, max)
     {
         if (isNaN(num) || max < min)
             return min;
@@ -1020,7 +1020,7 @@ Object.defineProperty(Number, "constrain",
 
 Object.defineProperty(Number, "percentageString",
 {
-    value: function(fraction, precision = 1)
+    value(fraction, precision = 1)
     {
         return fraction.toLocaleString(undefined, {minimumFractionDigits: precision, style: "percent"});
     }
@@ -1028,7 +1028,7 @@ Object.defineProperty(Number, "percentageString",
 
 Object.defineProperty(Number, "secondsToMillisecondsString",
 {
-    value: function(seconds, higherResolution)
+    value(seconds, higherResolution)
     {
         let ms = seconds * 1000;
 
@@ -1040,7 +1040,7 @@ Object.defineProperty(Number, "secondsToMillisecondsString",
 
 Object.defineProperty(Number, "secondsToString",
 {
-    value: function(seconds, higherResolution)
+    value(seconds, higherResolution)
     {
         let ms = seconds * 1000;
         if (!ms)
@@ -1083,7 +1083,7 @@ Object.defineProperty(Number, "secondsToString",
 
 Object.defineProperty(Number, "bytesToString",
 {
-    value: function(bytes, higherResolution)
+    value(bytes, higherResolution)
     {
         if (higherResolution === undefined)
             higherResolution = true;
@@ -1114,7 +1114,7 @@ Object.defineProperty(Number, "bytesToString",
 
 Object.defineProperty(Number, "abbreviate",
 {
-    value: function(num)
+    value(num)
     {
         if (num < 1000)
             return num.toLocaleString();
@@ -1161,7 +1161,7 @@ Object.defineProperty(Number.prototype, "maxDecimals",
 
 Object.defineProperty(Uint32Array, "isLittleEndian",
 {
-    value: function()
+    value()
     {
         if ("_isLittleEndian" in this)
             return this._isLittleEndian;
@@ -1290,7 +1290,7 @@ Object.defineProperty(Array.prototype, "lowerBound",
     // than the specimen object. If there's no such element (i.e. all
     // elements are smaller than the specimen) returns array.length.
     // The function works for sorted array.
-    value: function(object, comparator)
+    value(object, comparator)
     {
         function defaultComparator(a, b)
         {
@@ -1316,7 +1316,7 @@ Object.defineProperty(Array.prototype, "upperBound",
     // than the specimen object. If there's no such element (i.e. all
     // elements are smaller than the specimen) returns array.length.
     // The function works for sorted array.
-    value: function(object, comparator)
+    value(object, comparator)
     {
         function defaultComparator(a, b)
         {
@@ -1338,7 +1338,7 @@ Object.defineProperty(Array.prototype, "upperBound",
 
 Object.defineProperty(Array.prototype, "binaryIndexOf",
 {
-    value: function(value, comparator)
+    value(value, comparator)
     {
         var index = this.lowerBound(value, comparator);
         return index < this.length && comparator(value, this[index]) === 0 ? index : -1;
@@ -1358,7 +1358,7 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
 
     Object.defineProperty(Object.prototype, "soon",
     {
-        get: function()
+        get()
         {
             if (!this[debounceSoonProxySymbol])
                 this[debounceSoonProxySymbol] = this.debounce(0);
@@ -1368,7 +1368,7 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
 
     Object.defineProperty(Object.prototype, "debounce",
     {
-        value: function(delay)
+        value(delay)
         {
             console.assert(delay >= 0);
 
@@ -1395,7 +1395,7 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
 
     Object.defineProperty(Function.prototype, "cancelDebounce",
     {
-        value: function()
+        value()
         {
             if (!this[debounceTimeoutSymbol])
                 return;
@@ -1410,7 +1410,7 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
 
     Object.defineProperty(Object.prototype, "onNextFrame",
     {
-        get: function()
+        get()
         {
             if (!this[requestAnimationFrameProxySymbol]) {
                 this[requestAnimationFrameProxySymbol] = new Proxy(this, {
