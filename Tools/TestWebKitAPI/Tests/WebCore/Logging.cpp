@@ -267,9 +267,8 @@ TEST_F(LoggingTest, Logger)
     EXPECT_TRUE(logger->enabled());
 
     WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelError);
-    logger->error(TestChannel1, "%s %s", "What,", "ridden on a horse?");
-    EXPECT_TRUE(output().contains("What, ridden on a horse?", false));
-
+    logger->error(TestChannel1, "You're using coconuts!");
+    EXPECT_TRUE(output().contains("You're using coconuts!", false));
     logger->warning(TestChannel1, "You're using coconuts!");
     EXPECT_EQ(0u, output().length());
     logger->notice(TestChannel1, "You're using coconuts!");
@@ -279,6 +278,15 @@ TEST_F(LoggingTest, Logger)
     logger->debug(TestChannel1, "You're using coconuts!");
     EXPECT_EQ(0u, output().length());
 
+    logger->error(TestChannel1, Logger::MethodAndPointer("LoggingTest::Logger", this) , ": test output");
+    EXPECT_TRUE(output().contains("LoggingTest::Logger(", false));
+
+    logger->error(TestChannel1, "What is ", 1, " + " , 12.5F, "?");
+    EXPECT_TRUE(output().contains("What is 1 + 12.5?", false));
+
+    logger->error(TestChannel1, "What, ", "ridden on a horse?");
+    EXPECT_TRUE(output().contains("What, ridden on a horse?", false));
+
     logger->setEnabled(this, false);
     EXPECT_FALSE(logger->enabled());
     logger->error(TestChannel1, "You've got two empty halves of coconuts");
@@ -286,11 +294,11 @@ TEST_F(LoggingTest, Logger)
 
     logger->setEnabled(this, true);
     EXPECT_TRUE(logger->enabled());
-    logger->error(TestChannel1, "%s %s", "You've got two empty halves of", "coconuts!");
-    EXPECT_TRUE(output().contains("You've got two empty halves of coconuts!", false));
+    logger->error(TestChannel1, "You've got ", 2, " empty halves of ", "coconuts!");
+    EXPECT_TRUE(output().contains("You've got 2 empty halves of coconuts!", false));
 
     WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelError);
-    logger->logAlways(TestChannel1, "%s", "I shall taunt you a second time!");
+    logger->logAlways(TestChannel1, "I shall taunt you a second time!");
     EXPECT_TRUE(output().contains("I shall taunt you a second time!", false));
 
     logger->setEnabled(this, false);

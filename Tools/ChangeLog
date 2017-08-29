@@ -1,3 +1,13 @@
+2017-08-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Logger should use makeString instead of String::format
+        https://bugs.webkit.org/show_bug.cgi?id=176035
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebCore/Logging.cpp:
+        (TestWebKitAPI::TEST_F): Update test.
+
 2017-08-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GStreamer] The glvideoflip GStreamer element isn't available. Video mirroring and rotation functionalities are thus disabled.

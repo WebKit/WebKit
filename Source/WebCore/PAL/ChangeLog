@@ -1,3 +1,22 @@
+2017-08-28  Eric Carlson  <eric.carlson@apple.com>
+
+        Logger should use makeString instead of String::format
+        https://bugs.webkit.org/show_bug.cgi?id=176035
+
+        Reviewed by Jer Noble.
+
+        * pal/Logger.h:
+        (PAL::LogArgument::toString):
+        (PAL::Logger::logAlways):
+        (PAL::Logger::error):
+        (PAL::Logger::warning):
+        (PAL::Logger::notice):
+        (PAL::Logger::info):
+        (PAL::Logger::debug):
+        (PAL::Logger::MethodAndPointer::MethodAndPointer):
+        (PAL::Logger::log):
+        (PAL::LogArgument<Logger::MethodAndPointer>::toString):
+
 2017-08-28  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Upstream CFNetwork-related WebKitSystemInterface functions
