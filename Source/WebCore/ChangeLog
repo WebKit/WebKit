@@ -1,5 +1,52 @@
 2017-08-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WebCrypto] Push WorkQueue dispatches for HKDF, HMAC, PBKDF2 algorithms into shared code
+        https://bugs.webkit.org/show_bug.cgi?id=175620
+
+        Reviewed by Jiewen Tan.
+
+        Push the WorkQueue dispatch code and other code duplicated between the
+        Mac and libgcrypt implementations of Web Crypto into the shared layer.
+        This patch focuses on the HKDF, HMAC and PBKDF2 algorithms.
+
+        Functions with platform-specific implementations that are invoked from
+        these asynchronous dispatches are made static and return an ExceptionOr
+        value. CryptoAlgorithmParameters objects are passed through non-const
+        references because data getters could lazily construct the underlying
+        Vector objects. CryptoKey objects are passed through const references.
+        Implementations can then manually retrieve and further validate any key
+        or parameter data, as required for that specific implementation. Input
+        data is passed through const references to the original Vector objects.
+
+        No new tests -- no changes in behavior that's covered by existing tests.
+
+        * crypto/algorithms/CryptoAlgorithmHKDF.cpp:
+        (WebCore::CryptoAlgorithmHKDF::deriveBits):
+        * crypto/algorithms/CryptoAlgorithmHKDF.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmPBKDF2.cpp:
+        (WebCore::CryptoAlgorithmPBKDF2::deriveBits):
+        * crypto/algorithms/CryptoAlgorithmPBKDF2.h:
+        * crypto/gcrypt/CryptoAlgorithmHKDFGCrypt.cpp:
+        (WebCore::CryptoAlgorithmHKDF::platformDeriveBits):
+        * crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp:
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+        * crypto/gcrypt/CryptoAlgorithmPBKDF2GCrypt.cpp:
+        (WebCore::CryptoAlgorithmPBKDF2::platformDeriveBits):
+        * crypto/mac/CryptoAlgorithmHKDFMac.cpp:
+        (WebCore::CryptoAlgorithmHKDF::platformDeriveBits):
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+        * crypto/mac/CryptoAlgorithmPBKDF2Mac.cpp:
+        (WebCore::CryptoAlgorithmPBKDF2::platformDeriveBits):
+
+2017-08-29  Zan Dobersek  <zdobersek@igalia.com>
+
         [WebCrypto] Push WorkQueue dispatches for EC algorithms into shared code
         https://bugs.webkit.org/show_bug.cgi?id=175619
 

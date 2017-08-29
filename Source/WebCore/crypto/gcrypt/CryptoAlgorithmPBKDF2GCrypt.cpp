@@ -33,7 +33,6 @@
 #include "CryptoAlgorithmPbkdf2Params.h"
 #include "CryptoKeyRaw.h"
 #include "GCryptUtilities.h"
-#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -58,32 +57,15 @@ static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& ke
     return result;
 }
 
-void CryptoAlgorithmPBKDF2::platformDeriveBits(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(CryptoAlgorithmParameters& parameters, const CryptoKey& key, size_t length)
 {
-    context.ref();
-    workQueue.dispatch(
-        [parameters = WTFMove(parameters), key = WTFMove(key), length, callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
-            auto& pbkdf2Parameters = downcast<CryptoAlgorithmPbkdf2Params>(*parameters);
-            auto& rawKey = downcast<CryptoKeyRaw>(key.get());
+    auto& pbkdf2Parameters = downcast<CryptoAlgorithmPbkdf2Params>(parameters);
+    auto& rawKey = downcast<CryptoKeyRaw>(key);
 
-            auto output = gcryptDeriveBits(rawKey.key(), pbkdf2Parameters.saltVector(), pbkdf2Parameters.hashIdentifier, pbkdf2Parameters.iterations, length);
-            if (!output) {
-                // We should only dereference callbacks after being back to the Document/Worker threads.
-                context.postTask(
-                    [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-                        exceptionCallback(OperationError);
-                        context.deref();
-                    });
-                return;
-            }
-
-            // We should only dereference callbacks after being back to the Document/Worker threads.
-            context.postTask(
-                [output = WTFMove(*output), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-                    callback(output);
-                    context.deref();
-                });
-        });
+    auto output = gcryptDeriveBits(rawKey.key(), pbkdf2Parameters.saltVector(), pbkdf2Parameters.hashIdentifier, pbkdf2Parameters.iterations, length);
+    if (!output)
+        return Exception { OperationError };
+    return WTFMove(*output);
 }
 
 } // namespace WebCore

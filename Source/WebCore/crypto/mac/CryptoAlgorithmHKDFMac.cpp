@@ -31,35 +31,22 @@
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmHkdfParams.h"
 #include "CryptoKeyRaw.h"
-#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-void CryptoAlgorithmHKDF::platformDeriveBits(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& baseKey, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(CryptoAlgorithmParameters& parameters, const CryptoKey& key, size_t length)
 {
-    context.ref();
-    workQueue.dispatch([parameters = WTFMove(parameters), baseKey = WTFMove(baseKey), length, callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
-        auto& hkdfParameters = downcast<CryptoAlgorithmHkdfParams>(*parameters);
-        auto& rawKey = downcast<CryptoKeyRaw>(baseKey.get());
+    auto& hkdfParameters = downcast<CryptoAlgorithmHkdfParams>(parameters);
+    auto& rawKey = downcast<CryptoKeyRaw>(key);
 
-        Vector<uint8_t> result(length / 8);
-        CCDigestAlgorithm digestAlgorithm;
-        getCommonCryptoDigestAlgorithm(hkdfParameters.hashIdentifier, digestAlgorithm);
-        // <rdar://problem/32439455> Currently, when rawKey is null, CCKeyDerivationHMac will bail out.
-        if (CCKeyDerivationHMac(kCCKDFAlgorithmHKDF, digestAlgorithm, 0, rawKey.key().data(), rawKey.key().size(), 0, 0, hkdfParameters.infoVector().data(), hkdfParameters.infoVector().size(), 0, 0, hkdfParameters.saltVector().data(), hkdfParameters.saltVector().size(), result.data(), result.size())) {
-            // We should only dereference callbacks after being back to the Document/Worker threads.
-            context.postTask([exceptionCallback = WTFMove(exceptionCallback), callback = WTFMove(callback)](ScriptExecutionContext& context) {
-                exceptionCallback(OperationError);
-                context.deref();
-            });
-            return;
-        }
-        // We should only dereference callbacks after being back to the Document/Worker threads.
-        context.postTask([callback = WTFMove(callback), result = WTFMove(result), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-            callback(result);
-            context.deref();
-        });
-    });
+    Vector<uint8_t> result(length / 8);
+    CCDigestAlgorithm digestAlgorithm;
+    getCommonCryptoDigestAlgorithm(hkdfParameters.hashIdentifier, digestAlgorithm);
+
+    // <rdar://problem/32439455> Currently, when rawKey is null, CCKeyDerivationHMac will bail out.
+    if (CCKeyDerivationHMac(kCCKDFAlgorithmHKDF, digestAlgorithm, 0, rawKey.key().data(), rawKey.key().size(), 0, 0, hkdfParameters.infoVector().data(), hkdfParameters.infoVector().size(), 0, 0, hkdfParameters.saltVector().data(), hkdfParameters.saltVector().size(), result.data(), result.size()))
+        return Exception { OperationError };
+    return WTFMove(result);
 }
 
 }

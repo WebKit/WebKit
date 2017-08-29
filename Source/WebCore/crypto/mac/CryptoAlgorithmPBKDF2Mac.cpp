@@ -30,7 +30,6 @@
 
 #include "CryptoAlgorithmPbkdf2Params.h"
 #include "CryptoKeyRaw.h"
-#include "ScriptExecutionContext.h"
 #include <CommonCrypto/CommonKeyDerivation.h>
 
 namespace WebCore {
@@ -54,29 +53,16 @@ static CCPseudoRandomAlgorithm commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifi
     }
 }
 
-void CryptoAlgorithmPBKDF2::platformDeriveBits(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& baseKey, size_t length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(CryptoAlgorithmParameters& parameters, const CryptoKey& key, size_t length)
 {
-    context.ref();
-    workQueue.dispatch([parameters = WTFMove(parameters), baseKey = WTFMove(baseKey), length, callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
-        auto& pbkdf2Parameters = downcast<CryptoAlgorithmPbkdf2Params>(*parameters);
-        auto& rawKey = downcast<CryptoKeyRaw>(baseKey.get());
+    auto& pbkdf2Parameters = downcast<CryptoAlgorithmPbkdf2Params>(parameters);
+    auto& rawKey = downcast<CryptoKeyRaw>(key);
 
-        Vector<uint8_t> result(length / 8);
-        // <rdar://problem/32439955> Currently, CCKeyDerivationPBKDF bails out when an empty password/salt is provided.
-        if (CCKeyDerivationPBKDF(kCCPBKDF2, reinterpret_cast<const char *>(rawKey.key().data()), rawKey.key().size(), pbkdf2Parameters.saltVector().data(), pbkdf2Parameters.saltVector().size(), commonCryptoHMACAlgorithm(pbkdf2Parameters.hashIdentifier), pbkdf2Parameters.iterations, result.data(), length / 8)) {
-            // We should only dereference callbacks after being back to the Document/Worker threads.
-            context.postTask([exceptionCallback = WTFMove(exceptionCallback), callback = WTFMove(callback)](ScriptExecutionContext& context) {
-                exceptionCallback(OperationError);
-                context.deref();
-            });
-            return;
-        }
-        // We should only dereference callbacks after being back to the Document/Worker threads.
-        context.postTask([callback = WTFMove(callback), result = WTFMove(result), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
-            callback(result);
-            context.deref();
-        });
-    });
+    Vector<uint8_t> result(length / 8);
+    // <rdar://problem/32439955> Currently, CCKeyDerivationPBKDF bails out when an empty password/salt is provided.
+    if (CCKeyDerivationPBKDF(kCCPBKDF2, reinterpret_cast<const char *>(rawKey.key().data()), rawKey.key().size(), pbkdf2Parameters.saltVector().data(), pbkdf2Parameters.saltVector().size(), commonCryptoHMACAlgorithm(pbkdf2Parameters.hashIdentifier), pbkdf2Parameters.iterations, result.data(), length / 8))
+        return Exception { OperationError };
+    return WTFMove(result);
 }
 
 }
