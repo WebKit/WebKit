@@ -26,15 +26,20 @@
 #include "config.h"
 #include "FileSystemFileEntry.h"
 
+#include "DOMException.h"
+#include "ErrorCallback.h"
+
 namespace WebCore {
 
-FileSystemFileEntry::FileSystemFileEntry(DOMFileSystem& filesystem)
-    : FileSystemEntry(filesystem)
+FileSystemFileEntry::FileSystemFileEntry(DOMFileSystem& filesystem, const String& virtualPath)
+    : FileSystemEntry(filesystem, virtualPath)
 {
 }
 
-void FileSystemFileEntry::file(RefPtr<FileCallback>&&, RefPtr<ErrorCallback>&&)
+void FileSystemFileEntry::file(ScriptExecutionContext& context, RefPtr<FileCallback>&&, RefPtr<ErrorCallback>&& errorCallback)
 {
+    if (errorCallback)
+        errorCallback->scheduleCallback(context, DOMException::create(NotSupportedError));
 }
 
 } // namespace WebCore

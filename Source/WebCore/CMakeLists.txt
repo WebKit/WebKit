@@ -204,6 +204,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/entriesapi/ErrorCallback.idl
     Modules/entriesapi/FileCallback.idl
     Modules/entriesapi/FileSystemDirectoryEntry.idl
+    Modules/entriesapi/FileSystemDirectoryReader.idl
+    Modules/entriesapi/FileSystemEntriesCallback.idl
     Modules/entriesapi/FileSystemEntry.idl
     Modules/entriesapi/FileSystemEntryCallback.idl
     Modules/entriesapi/FileSystemFileEntry.idl
@@ -919,8 +921,11 @@ set(WebCore_SOURCES
     Modules/credentials/NavigatorCredentials.cpp
     Modules/credentials/PasswordCredential.cpp
 
+    Modules/entriesapi/ErrorCallback.cpp
     Modules/entriesapi/DOMFileSystem.cpp
     Modules/entriesapi/FileSystemDirectoryEntry.cpp
+    Modules/entriesapi/FileSystemDirectoryReader.cpp
+    Modules/entriesapi/FileSystemEntriesCallback.cpp
     Modules/entriesapi/FileSystemEntry.cpp
     Modules/entriesapi/FileSystemFileEntry.cpp
 
@@ -1230,6 +1235,7 @@ set(WebCore_SOURCES
     bindings/js/JSEventCustom.cpp
     bindings/js/JSEventListener.cpp
     bindings/js/JSEventTargetCustom.cpp
+    bindings/js/JSFileSystemEntryCustom.cpp
     bindings/js/JSHTMLCollectionCustom.cpp
     bindings/js/JSHTMLDocumentCustom.cpp
     bindings/js/JSHTMLElementCustom.cpp

@@ -1,3 +1,110 @@
+2017-08-29  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for dataTransferItem.webkitGetAsEntry()
+        https://bugs.webkit.org/show_bug.cgi?id=176038
+        <rdar://problem/34121095>
+
+        Reviewed by Wenson Hsieh.
+
+        Add initial support for dataTransferItem.webkitGetAsEntry() as per:
+        - https://wicg.github.io/entries-api/#html-data
+
+        The method works as expected and returns a FileSystemEntry. The entry
+        can be either a file or a directory. All of the attributes exposed on
+        the FileSystemEntry return correct values.
+
+        What remains to be implemented for this new API to actually be useful:
+        - directory.getFile() / directory.getDirectory()
+        - file.file()
+        - entry.getParent()
+        - directoryReader.readEntries()
+
+        Test: editing/pasteboard/datatransfer-items-drop-getAsEntry.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Add new files to projects.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::DOMFileSystem):
+        * Modules/entriesapi/DOMFileSystem.h:
+        (WebCore::DOMFileSystem::create):
+        DOMFileSystem factory now takes a name parameter. This name is a UUID, as suggested in
+        the specification and implemented by Firefox.
+
+        * Modules/entriesapi/ErrorCallback.cpp: Added.
+        * Modules/entriesapi/ErrorCallback.h:
+        Add scheduleCallback() convenience method as we often need to call this callback
+        asynchronously.
+
+        * Modules/entriesapi/FileSystemDirectoryEntry.cpp:
+        (WebCore::FileSystemDirectoryEntry::FileSystemDirectoryEntry):
+        (WebCore::FileSystemDirectoryEntry::createReader):
+        (WebCore::FileSystemDirectoryEntry::getFile):
+        (WebCore::FileSystemDirectoryEntry::getDirectory):
+        * Modules/entriesapi/FileSystemDirectoryEntry.h:
+        - Add implementation for createReader().
+        - Update getFile() / getDirectory() to call the error callback for now as they are
+          unimplemented.
+        - Have the factory take the virtual path of the entry so that it can be
+          exposed via the fullPath attribute in IDL.
+
+        * Modules/entriesapi/FileSystemDirectoryEntry.idl:
+        Expose createReader() now that we have stubs for FileSystemDirectoryReader.
+
+        * Modules/entriesapi/FileSystemDirectoryReader.cpp: Added.
+        * Modules/entriesapi/FileSystemDirectoryReader.h: Added.
+        * Modules/entriesapi/FileSystemDirectoryReader.idl: Added.
+        * Modules/entriesapi/FileSystemEntriesCallback.cpp: Added.
+        * Modules/entriesapi/FileSystemEntriesCallback.h: Added.
+        * Modules/entriesapi/FileSystemEntriesCallback.idl: Added.
+        Land stubs for FileSystemDirectoryReader and its FileSystemEntriesCallback.
+
+        * Modules/entriesapi/FileSystemEntry.cpp:
+        (WebCore::FileSystemEntry::FileSystemEntry):
+        * Modules/entriesapi/FileSystemEntry.h:
+        (WebCore::FileSystemEntry::virtualPath const):
+        * Modules/entriesapi/FileSystemEntry.idl:
+        Update constructor to take a virtual path, which is exposed via fullPath
+        attribute in IDL.
+
+        * Modules/entriesapi/FileSystemFileEntry.cpp:
+        (WebCore::FileSystemFileEntry::FileSystemFileEntry):
+        (WebCore::FileSystemFileEntry::file):
+        * Modules/entriesapi/FileSystemFileEntry.h:
+        (isType):
+        * Modules/entriesapi/FileSystemFileEntry.idl:
+        - Update file() to call the error callback for now as they are
+          unimplemented.
+        - Have the factory take the virtual path of the entry so that it can be
+          exposed via the fullPath attribute in IDL.
+
+        * bindings/js/JSFileSystemEntryCustom.cpp: Added.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        Add custom implementation of FileSystemEntry's toJS() function. This is
+        needed because FileSystemEntry has 2 subclasses and we need to type check
+        at runtime to construct the right wrapper.
+
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::getAsEntry const):
+        * dom/DataTransferItem.h:
+        * dom/DataTransferItem.idl:
+        Add initial implementation for getAsEntry(), currently exposed as
+        webkitGetAsEntry().
+
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::ensureItems const):
+        Construct a DataTransferItem if the file is a directory now that we
+        support getAsEntry().
+
+        * fileapi/File.cpp:
+        (WebCore::File::isDirectory const):
+        * fileapi/File.h:
+        Add convenience method to query if a File is a directory.
+
 2017-08-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebCrypto] Push WorkQueue dispatches for HKDF, HMAC, PBKDF2 algorithms into shared code

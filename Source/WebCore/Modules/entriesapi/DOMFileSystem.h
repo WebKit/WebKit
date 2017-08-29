@@ -32,12 +32,13 @@
 namespace WebCore {
 
 class FileSystemDirectoryEntry;
+class FileSystemEntry;
 
 class DOMFileSystem : public ScriptWrappable, public RefCounted<DOMFileSystem> {
 public:
-    static Ref<DOMFileSystem> create()
+    static Ref<DOMFileSystem> create(const String& name)
     {
-        return adoptRef(*new DOMFileSystem);
+        return adoptRef(*new DOMFileSystem(name));
     }
 
     ~DOMFileSystem();
@@ -46,7 +47,7 @@ public:
     FileSystemDirectoryEntry& root() const { return m_root; }
 
 private:
-    DOMFileSystem();
+    explicit DOMFileSystem(const String& name);
 
     String m_name;
     Ref<FileSystemDirectoryEntry> m_root;

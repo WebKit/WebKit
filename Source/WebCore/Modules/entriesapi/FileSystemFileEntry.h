@@ -31,20 +31,25 @@ namespace WebCore {
 
 class ErrorCallback;
 class FileCallback;
+class ScriptExecutionContext;
 
 class FileSystemFileEntry final : public FileSystemEntry {
 public:
-    static Ref<FileSystemFileEntry> create(DOMFileSystem& filesystem)
+    static Ref<FileSystemFileEntry> create(DOMFileSystem& filesystem, const String& virtualPath)
     {
-        return adoptRef(*new FileSystemFileEntry(filesystem));
+        return adoptRef(*new FileSystemFileEntry(filesystem, virtualPath));
     }
 
-    void file(RefPtr<FileCallback>&&, RefPtr<ErrorCallback>&& = nullptr);
+    void file(ScriptExecutionContext&, RefPtr<FileCallback>&&, RefPtr<ErrorCallback>&& = nullptr);
 
 private:
     bool isFile() const final { return true; }
 
-    explicit FileSystemFileEntry(DOMFileSystem&);
+    FileSystemFileEntry(DOMFileSystem&, const String& virtualPath);
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FileSystemFileEntry)
+    static bool isType(const WebCore::FileSystemEntry& entry) { return entry.isFile(); }
+SPECIALIZE_TYPE_TRAITS_END()

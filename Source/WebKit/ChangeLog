@@ -1,3 +1,16 @@
+2017-08-29  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for dataTransferItem.webkitGetAsEntry()
+        https://bugs.webkit.org/show_bug.cgi?id=176038
+        <rdar://problem/34121095>
+
+        Reviewed by Wenson Hsieh.
+
+        Make dataTransfer.items an experimental feature so that it can be easily
+        turned on from the Develop menu, for testing convenience.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2017-08-29  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream WKSetMetadataURL() from WebKitSystemInterface

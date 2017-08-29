@@ -32,10 +32,15 @@
 #include "config.h"
 #include "DataTransferItem.h"
 
+#include "DOMFileSystem.h"
 #include "DataTransferItemList.h"
 #include "File.h"
+#include "FileSystem.h"
+#include "FileSystemDirectoryEntry.h"
+#include "FileSystemFileEntry.h"
 #include "ScriptExecutionContext.h"
 #include "StringCallback.h"
+#include <wtf/UUID.h>
 
 namespace WebCore {
 
@@ -99,6 +104,21 @@ RefPtr<File> DataTransferItem::getAsFile() const
     if (!m_list || !m_list->dataTransfer().canReadData())
         return nullptr;
     return m_file.copyRef();
+}
+
+RefPtr<FileSystemEntry> DataTransferItem::getAsEntry() const
+{
+    auto file = getAsFile();
+    if (!file)
+        return nullptr;
+
+    if (!m_fileSystem)
+        m_fileSystem = DOMFileSystem::create(createCanonicalUUIDString());
+
+    String virtualPath = "/" + file->name();
+    if (file->isDirectory())
+        return FileSystemDirectoryEntry::create(*m_fileSystem, virtualPath);
+    return FileSystemFileEntry::create(*m_fileSystem, virtualPath);
 }
 
 } // namespace WebCore

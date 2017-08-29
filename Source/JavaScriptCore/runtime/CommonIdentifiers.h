@@ -51,6 +51,7 @@
     macro(FederatedCredential) \
     macro(FileSystem) \
     macro(FileSystemDirectoryEntry) \
+    macro(FileSystemDirectoryReader) \
     macro(FileSystemEntry) \
     macro(FileSystemFileEntry) \
     macro(Function) \

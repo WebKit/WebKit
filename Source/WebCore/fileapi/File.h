@@ -81,6 +81,8 @@ public:
     static bool shouldReplaceFile(const String& path);
 #endif
 
+    bool isDirectory() const;
+
 private:
     WEBCORE_EXPORT explicit File(const String& path);
     File(const String& path, const String& nameOverride);
@@ -98,6 +100,7 @@ private:
     String m_name;
 
     std::optional<int64_t> m_overrideLastModifiedDate;
+    mutable std::optional<bool> m_isDirectory;
 };
 
 } // namespace WebCore

@@ -31,26 +31,26 @@
 
 namespace WebCore {
 
-class DOMFileSystem;
+class ErrorCallback;
+class FileSystemDirectoryEntry;
+class FileSystemEntriesCallback;
+class ScriptExecutionContext;
 
-class FileSystemEntry : public ScriptWrappable, public RefCounted<FileSystemEntry> {
+class FileSystemDirectoryReader : public ScriptWrappable, public RefCounted<FileSystemDirectoryReader> {
 public:
-    virtual ~FileSystemEntry() { }
+    static Ref<FileSystemDirectoryReader> create(FileSystemDirectoryEntry& directory)
+    {
+        return adoptRef(*new FileSystemDirectoryReader(directory));
+    }
 
-    virtual bool isFile() const { return false; }
-    virtual bool isDirectory() const { return false; }
+    ~FileSystemDirectoryReader();
 
-    const String& name() const { return m_name; }
-    const String& virtualPath() const { return m_virtualPath; }
-    DOMFileSystem& filesystem() const { return m_filesystem; }
-
-protected:
-    FileSystemEntry(DOMFileSystem&, const String& virtualPath);
+    void readEntries(ScriptExecutionContext&, Ref<FileSystemEntriesCallback>&&, RefPtr<ErrorCallback>&&);
 
 private:
-    DOMFileSystem& m_filesystem;
-    String m_name;
-    String m_virtualPath;
+    explicit FileSystemDirectoryReader(FileSystemDirectoryEntry&);
+
+    Ref<FileSystemDirectoryEntry> m_directory;
 };
 
-} // namespace WebCore
+}

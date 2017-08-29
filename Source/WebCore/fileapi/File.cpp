@@ -127,4 +127,11 @@ String File::contentTypeForFile(const String& path)
     return type;
 }
 
+bool File::isDirectory() const
+{
+    if (!m_isDirectory)
+        m_isDirectory = fileIsDirectory(m_path);
+    return *m_isDirectory;
+}
+
 } // namespace WebCore

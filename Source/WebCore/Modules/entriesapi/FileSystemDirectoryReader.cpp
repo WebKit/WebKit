@@ -23,34 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "FileSystemDirectoryReader.h"
 
-#include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "DOMException.h"
+#include "ErrorCallback.h"
+#include "FileSystemDirectoryEntry.h"
+#include "FileSystemEntriesCallback.h"
 
 namespace WebCore {
 
-class DOMFileSystem;
+FileSystemDirectoryReader::FileSystemDirectoryReader(FileSystemDirectoryEntry& directory)
+    : m_directory(directory)
+{
+}
 
-class FileSystemEntry : public ScriptWrappable, public RefCounted<FileSystemEntry> {
-public:
-    virtual ~FileSystemEntry() { }
+FileSystemDirectoryReader::~FileSystemDirectoryReader()
+{
+}
 
-    virtual bool isFile() const { return false; }
-    virtual bool isDirectory() const { return false; }
-
-    const String& name() const { return m_name; }
-    const String& virtualPath() const { return m_virtualPath; }
-    DOMFileSystem& filesystem() const { return m_filesystem; }
-
-protected:
-    FileSystemEntry(DOMFileSystem&, const String& virtualPath);
-
-private:
-    DOMFileSystem& m_filesystem;
-    String m_name;
-    String m_virtualPath;
-};
+void FileSystemDirectoryReader::readEntries(ScriptExecutionContext& context, Ref<FileSystemEntriesCallback>&&, RefPtr<ErrorCallback>&& errorCallback)
+{
+    if (errorCallback)
+        errorCallback->scheduleCallback(context, DOMException::create(NotSupportedError));
+}
 
 } // namespace WebCore

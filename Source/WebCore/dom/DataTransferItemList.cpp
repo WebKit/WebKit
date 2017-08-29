@@ -134,7 +134,7 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
     for (unsigned i = 0, length = files.length(); i < length; ++i) {
         File& file = *files.item(i);
         String type = File::contentTypeForFile(file.path()).convertToASCIILowercase();
-        if (isSupportedType(type))
+        if (isSupportedType(type) || file.isDirectory())
             items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(), type, file));
     }
 

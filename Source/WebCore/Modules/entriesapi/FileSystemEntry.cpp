@@ -26,10 +26,14 @@
 #include "config.h"
 #include "FileSystemEntry.h"
 
+#include "FileSystem.h"
+
 namespace WebCore {
 
-FileSystemEntry::FileSystemEntry(DOMFileSystem& filesystem)
+FileSystemEntry::FileSystemEntry(DOMFileSystem& filesystem, const String& virtualPath)
     : m_filesystem(filesystem)
+    , m_name(pathGetFileName(virtualPath))
+    , m_virtualPath(virtualPath)
 {
 }
 

@@ -23,34 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "FileSystemEntriesCallback.h"
 
-#include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "FileSystemEntry.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-class DOMFileSystem;
+static Vector<Ref<FileSystemEntry>> copyVector(const Vector<Ref<FileSystemEntry>>& entries)
+{
+    Vector<Ref<FileSystemEntry>> entriesCopy;
+    entriesCopy.reserveInitialCapacity(entries.size());
+    for (auto& entry : entries)
+        entriesCopy.uncheckedAppend(entry.copyRef());
+    return entriesCopy;
+}
 
-class FileSystemEntry : public ScriptWrappable, public RefCounted<FileSystemEntry> {
-public:
-    virtual ~FileSystemEntry() { }
+void FileSystemEntriesCallback::scheduleCallback(ScriptExecutionContext& context, const Vector<Ref<FileSystemEntry>>& entries)
+{
+    context.postTask([protectedThis = makeRef(*this), entries = copyVector(entries)] (ScriptExecutionContext&) {
+        protectedThis->handleEvent(entries);
+    });
+}
 
-    virtual bool isFile() const { return false; }
-    virtual bool isDirectory() const { return false; }
-
-    const String& name() const { return m_name; }
-    const String& virtualPath() const { return m_virtualPath; }
-    DOMFileSystem& filesystem() const { return m_filesystem; }
-
-protected:
-    FileSystemEntry(DOMFileSystem&, const String& virtualPath);
-
-private:
-    DOMFileSystem& m_filesystem;
-    String m_name;
-    String m_virtualPath;
-};
-
-} // namespace WebCore
+}

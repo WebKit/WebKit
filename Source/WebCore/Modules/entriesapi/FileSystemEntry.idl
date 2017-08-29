@@ -24,12 +24,13 @@
  */
 
 [
+    CustomToJSObject,
     EnabledAtRuntime=DirectoryUpload,
 ] interface FileSystemEntry {
     readonly attribute boolean isFile;
     readonly attribute boolean isDirectory;
     readonly attribute USVString name;
-    readonly attribute USVString fullPath;
+    [ImplementedAs=virtualPath] readonly attribute USVString fullPath;
     readonly attribute DOMFileSystem filesystem;
 
     // void getParent(optional FileSystemEntryCallback successCallback, optional ErrorCallback errorCallback);

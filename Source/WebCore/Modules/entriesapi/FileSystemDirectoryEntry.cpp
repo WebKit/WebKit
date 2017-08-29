@@ -26,20 +26,32 @@
 #include "config.h"
 #include "FileSystemDirectoryEntry.h"
 
+#include "DOMException.h"
+#include "ErrorCallback.h"
+#include "FileSystemDirectoryReader.h"
+
 namespace WebCore {
 
-FileSystemDirectoryEntry::FileSystemDirectoryEntry(DOMFileSystem& filesystem)
-    : FileSystemEntry(filesystem)
+FileSystemDirectoryEntry::FileSystemDirectoryEntry(DOMFileSystem& filesystem, const String& virtualPath)
+    : FileSystemEntry(filesystem, virtualPath)
 {
 }
 
-void FileSystemDirectoryEntry::getFile(const String&, const Flags&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&)
+Ref<FileSystemDirectoryReader> FileSystemDirectoryEntry::createReader()
 {
+    return FileSystemDirectoryReader::create(*this);
 }
 
-void FileSystemDirectoryEntry::getDirectory(const String&, const Flags&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&)
+void FileSystemDirectoryEntry::getFile(ScriptExecutionContext& context, const String&, const Flags&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&& errorCallback)
 {
+    if (errorCallback)
+        errorCallback->scheduleCallback(context, DOMException::create(NotSupportedError));
+}
 
+void FileSystemDirectoryEntry::getDirectory(ScriptExecutionContext& context, const String&, const Flags&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&& errorCallback)
+{
+    if (errorCallback)
+        errorCallback->scheduleCallback(context, DOMException::create(NotSupportedError));
 }
 
 } // namespace WebCore

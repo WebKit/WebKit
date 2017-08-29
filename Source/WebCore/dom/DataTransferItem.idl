@@ -38,5 +38,8 @@
 
     [CallWith=ScriptExecutionContext] void getAsString(StringCallback? callback);
     File getAsFile();
+
+    // https://wicg.github.io/entries-api/#html-data
+    [ImplementedAs=getAsEntry] FileSystemEntry? webkitGetAsEntry();
 };
 

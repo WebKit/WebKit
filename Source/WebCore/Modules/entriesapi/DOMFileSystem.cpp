@@ -30,8 +30,9 @@
 
 namespace WebCore {
 
-DOMFileSystem::DOMFileSystem()
-    : m_root(FileSystemDirectoryEntry::create(*this))
+DOMFileSystem::DOMFileSystem(const String& name)
+    : m_name(name)
+    , m_root(FileSystemDirectoryEntry::create(*this, ASCIILiteral("/")))
 {
 }
 

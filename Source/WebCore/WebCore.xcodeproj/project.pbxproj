@@ -3407,6 +3407,9 @@
 		830030F51B7D33B500ED3AAC /* GenericCachedHTMLCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 830030F31B7D33A600ED3AAC /* GenericCachedHTMLCollection.cpp */; };
 		830030F61B7D33B500ED3AAC /* GenericCachedHTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 830030F41B7D33A600ED3AAC /* GenericCachedHTMLCollection.h */; };
 		830030F81B7D3B7800ED3AAC /* CachedHTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 830030F71B7D398800ED3AAC /* CachedHTMLCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		830335011F549057004DF707 /* FileSystemDirectoryReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 830334FB1F549052004DF707 /* FileSystemDirectoryReader.cpp */; };
+		830335021F549057004DF707 /* FileSystemDirectoryReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 830334FC1F549052004DF707 /* FileSystemDirectoryReader.h */; };
+		830335031F54905A004DF707 /* FileSystemEntriesCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 830334FE1F549052004DF707 /* FileSystemEntriesCallback.h */; };
 		830519951BB0F11000F3772E /* HTMLTimeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 830519921BB0F0E700F3772E /* HTMLTimeElement.cpp */; };
 		830519961BB0F11000F3772E /* HTMLTimeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 830519931BB0F0E700F3772E /* HTMLTimeElement.h */; };
 		8306EFF11B8BCEA50031D032 /* NativeNodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8306EFF01B8BCE7C0031D032 /* NativeNodeFilter.cpp */; };
@@ -3435,9 +3438,14 @@
 		835657C71ECAB10700CDE72D /* JSDOMMatrixInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 835657C61ECAB0E800CDE72D /* JSDOMMatrixInit.cpp */; };
 		8358CB6F1C53277200E0C2D8 /* JSXMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83F570AE1C53268E007FD6CB /* JSXMLDocument.cpp */; };
 		8358CB701C53277500E0C2D8 /* JSXMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F570AD1C53268E007FD6CB /* JSXMLDocument.h */; };
+		835B68101F548BE10071F7F6 /* JSFileSystemEntryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 835B680E1F548BDE0071F7F6 /* JSFileSystemEntryCustom.cpp */; };
 		835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D363619FF6193004C93AB /* StyleBuilderCustom.h */; };
 		835D54C41F4DE53800E60671 /* FileListCreator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 835D54C11F4DE53400E60671 /* FileListCreator.cpp */; };
 		835D54C51F4DE53800E60671 /* FileListCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D54C21F4DE53400E60671 /* FileListCreator.h */; };
+		836589DD1F54A76600DC31F4 /* JSFileSystemDirectoryReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836589DB1F54A76200DC31F4 /* JSFileSystemDirectoryReader.cpp */; };
+		836589DE1F54A76900DC31F4 /* JSFileSystemDirectoryReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 836589D91F54A76200DC31F4 /* JSFileSystemDirectoryReader.h */; };
+		836589DF1F54A76C00DC31F4 /* JSFileSystemEntriesCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836589DA1F54A76200DC31F4 /* JSFileSystemEntriesCallback.cpp */; };
+		836589E01F54A76E00DC31F4 /* JSFileSystemEntriesCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 836589D81F54A76200DC31F4 /* JSFileSystemEntriesCallback.h */; };
 		8367587E1C56E99B008A1087 /* JSHTMLDataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834B86A91C56E93E00F3F0E3 /* JSHTMLDataElement.cpp */; };
 		8367587F1C56E99B008A1087 /* JSHTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A81C56E93E00F3F0E3 /* JSHTMLDataElement.h */; };
 		836ACEC21ECA62C8004BD012 /* DOMMatrixReadOnly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836ACEBF1ECA62B0004BD012 /* DOMMatrixReadOnly.cpp */; };
@@ -3465,6 +3473,7 @@
 		837056901F50915C00D93425 /* JSFileSystemEntryCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 837056891F50915000D93425 /* JSFileSystemEntryCallback.h */; };
 		8371AC3B1F509BE400FBF284 /* ErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 8371AC391F509BDD00FBF284 /* ErrorCallback.h */; };
 		8372DB311A6780A800C697C5 /* DiagnosticLoggingResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 8372DB301A6780A800C697C5 /* DiagnosticLoggingResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		837609CA1F54CC18000C122D /* ErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 837609C81F54CC13000C122D /* ErrorCallback.cpp */; };
 		83765F951DAC522F00C06537 /* MouseEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83765F941DAC521800C06537 /* MouseEventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		837A80131E1E127300026B9F /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 837A80111E1E127300026B9F /* Localizable.stringsdict */; };
 		837B7D201DC3F55000D051FC /* ValidationBubbleIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */; };
@@ -3477,6 +3486,7 @@
 		838EF53C1DC14A7C008F0C39 /* JSIDBTransactionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 838EF53A1DC14A75008F0C39 /* JSIDBTransactionMode.h */; };
 		838F86DA1F509E7400E8CFC5 /* FileCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 838F86D81F509E6C00E8CFC5 /* FileCallback.h */; };
 		838F86DB1F509E7B00E8CFC5 /* FileSystemEntryCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 838F86D71F509E6C00E8CFC5 /* FileSystemEntryCallback.h */; };
+		839680B41F54C6AD00752690 /* FileSystemEntriesCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839680B21F54C6A800752690 /* FileSystemEntriesCallback.cpp */; };
 		8399470B1F50B63E00E9D86B /* DOMFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839947091F50B63800E9D86B /* DOMFileSystem.cpp */; };
 		8399470C1F50B63E00E9D86B /* DOMFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 839947071F50B63800E9D86B /* DOMFileSystem.h */; };
 		8399470F1F50B6FA00E9D86B /* JSDOMFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8399470D1F50B6F300E9D86B /* JSDOMFileSystem.cpp */; };
@@ -11558,6 +11568,11 @@
 		830030F31B7D33A600ED3AAC /* GenericCachedHTMLCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenericCachedHTMLCollection.cpp; sourceTree = "<group>"; };
 		830030F41B7D33A600ED3AAC /* GenericCachedHTMLCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericCachedHTMLCollection.h; sourceTree = "<group>"; };
 		830030F71B7D398800ED3AAC /* CachedHTMLCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedHTMLCollection.h; sourceTree = "<group>"; };
+		830334FB1F549052004DF707 /* FileSystemDirectoryReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemDirectoryReader.cpp; sourceTree = "<group>"; };
+		830334FC1F549052004DF707 /* FileSystemDirectoryReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemDirectoryReader.h; sourceTree = "<group>"; };
+		830334FD1F549052004DF707 /* FileSystemEntriesCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileSystemEntriesCallback.idl; sourceTree = "<group>"; };
+		830334FE1F549052004DF707 /* FileSystemEntriesCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemEntriesCallback.h; sourceTree = "<group>"; };
+		830334FF1F549052004DF707 /* FileSystemDirectoryReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileSystemDirectoryReader.idl; sourceTree = "<group>"; };
 		830519921BB0F0E700F3772E /* HTMLTimeElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTimeElement.cpp; sourceTree = "<group>"; };
 		830519931BB0F0E700F3772E /* HTMLTimeElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTimeElement.h; sourceTree = "<group>"; };
 		830519941BB0F0E700F3772E /* HTMLTimeElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLTimeElement.idl; sourceTree = "<group>"; };
@@ -11592,10 +11607,15 @@
 		8350C3E81DA59B6200356446 /* ScrollToOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScrollToOptions.idl; sourceTree = "<group>"; };
 		83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFamily.h; sourceTree = "<group>"; };
 		835657C61ECAB0E800CDE72D /* JSDOMMatrixInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMatrixInit.cpp; sourceTree = "<group>"; };
+		835B680E1F548BDE0071F7F6 /* JSFileSystemEntryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemEntryCustom.cpp; sourceTree = "<group>"; };
 		835D363619FF6193004C93AB /* StyleBuilderCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderCustom.h; sourceTree = "<group>"; };
 		835D54C11F4DE53400E60671 /* FileListCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileListCreator.cpp; sourceTree = "<group>"; };
 		835D54C21F4DE53400E60671 /* FileListCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileListCreator.h; sourceTree = "<group>"; };
 		835F8B261D2D90BA00E408EC /* Slotable.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Slotable.idl; sourceTree = "<group>"; };
+		836589D81F54A76200DC31F4 /* JSFileSystemEntriesCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileSystemEntriesCallback.h; sourceTree = "<group>"; };
+		836589D91F54A76200DC31F4 /* JSFileSystemDirectoryReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileSystemDirectoryReader.h; sourceTree = "<group>"; };
+		836589DA1F54A76200DC31F4 /* JSFileSystemEntriesCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemEntriesCallback.cpp; sourceTree = "<group>"; };
+		836589DB1F54A76200DC31F4 /* JSFileSystemDirectoryReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemDirectoryReader.cpp; sourceTree = "<group>"; };
 		8369E58F1AFDD0300087DF68 /* NonDocumentTypeChildNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NonDocumentTypeChildNode.idl; sourceTree = "<group>"; };
 		836ACEBF1ECA62B0004BD012 /* DOMMatrixReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMMatrixReadOnly.cpp; sourceTree = "<group>"; };
 		836ACEC01ECA62B0004BD012 /* DOMMatrixReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMatrixReadOnly.h; sourceTree = "<group>"; };
@@ -11630,6 +11650,7 @@
 		8371AC381F509BDD00FBF284 /* FileCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileCallback.idl; sourceTree = "<group>"; };
 		8371AC391F509BDD00FBF284 /* ErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorCallback.h; sourceTree = "<group>"; };
 		8372DB301A6780A800C697C5 /* DiagnosticLoggingResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticLoggingResultType.h; sourceTree = "<group>"; };
+		837609C81F54CC13000C122D /* ErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorCallback.cpp; sourceTree = "<group>"; };
 		83765F931DAC521800C06537 /* MouseEventInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MouseEventInit.idl; sourceTree = "<group>"; };
 		83765F941DAC521800C06537 /* MouseEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseEventInit.h; sourceTree = "<group>"; };
 		837A80121E1E127300026B9F /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = English; path = English.lproj/Localizable.stringsdict; sourceTree = SOURCE_ROOT; };
@@ -11645,6 +11666,7 @@
 		838EF53A1DC14A75008F0C39 /* JSIDBTransactionMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBTransactionMode.h; sourceTree = "<group>"; };
 		838F86D71F509E6C00E8CFC5 /* FileSystemEntryCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemEntryCallback.h; sourceTree = "<group>"; };
 		838F86D81F509E6C00E8CFC5 /* FileCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCallback.h; sourceTree = "<group>"; };
+		839680B21F54C6A800752690 /* FileSystemEntriesCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemEntriesCallback.cpp; sourceTree = "<group>"; };
 		839947071F50B63800E9D86B /* DOMFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFileSystem.h; sourceTree = "<group>"; };
 		839947081F50B63800E9D86B /* DOMFileSystem.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMFileSystem.idl; sourceTree = "<group>"; };
 		839947091F50B63800E9D86B /* DOMFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMFileSystem.cpp; sourceTree = "<group>"; };
@@ -19883,6 +19905,7 @@
 				E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */,
 				BC60901E0E91B8EC000C68B5 /* JSEventTargetCustom.cpp */,
 				46B63F6B1C6E8CDF002E914B /* JSEventTargetCustom.h */,
+				835B680E1F548BDE0071F7F6 /* JSFileSystemEntryCustom.cpp */,
 				BCCBAD3A0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp */,
 				BC51580A0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp */,
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,
@@ -20061,6 +20084,7 @@
 				839947091F50B63800E9D86B /* DOMFileSystem.cpp */,
 				839947071F50B63800E9D86B /* DOMFileSystem.h */,
 				839947081F50B63800E9D86B /* DOMFileSystem.idl */,
+				837609C81F54CC13000C122D /* ErrorCallback.cpp */,
 				8371AC391F509BDD00FBF284 /* ErrorCallback.h */,
 				8371AC371F509BDD00FBF284 /* ErrorCallback.idl */,
 				838F86D81F509E6C00E8CFC5 /* FileCallback.h */,
@@ -20068,6 +20092,12 @@
 				83FB336B1F508A4E00986E54 /* FileSystemDirectoryEntry.cpp */,
 				83FB336D1F508A4E00986E54 /* FileSystemDirectoryEntry.h */,
 				83FB336A1F508A4E00986E54 /* FileSystemDirectoryEntry.idl */,
+				830334FB1F549052004DF707 /* FileSystemDirectoryReader.cpp */,
+				830334FC1F549052004DF707 /* FileSystemDirectoryReader.h */,
+				830334FF1F549052004DF707 /* FileSystemDirectoryReader.idl */,
+				839680B21F54C6A800752690 /* FileSystemEntriesCallback.cpp */,
+				830334FE1F549052004DF707 /* FileSystemEntriesCallback.h */,
+				830334FD1F549052004DF707 /* FileSystemEntriesCallback.idl */,
 				83FB336E1F508A4E00986E54 /* FileSystemEntry.cpp */,
 				83FB336F1F508A4E00986E54 /* FileSystemEntry.h */,
 				83FB33681F508A4E00986E54 /* FileSystemEntry.idl */,
@@ -20091,6 +20121,10 @@
 				8370568B1F50915000D93425 /* JSFileCallback.h */,
 				833B9E2B1F508D8000E0E428 /* JSFileSystemDirectoryEntry.cpp */,
 				833B9E2F1F508D8000E0E428 /* JSFileSystemDirectoryEntry.h */,
+				836589DB1F54A76200DC31F4 /* JSFileSystemDirectoryReader.cpp */,
+				836589D91F54A76200DC31F4 /* JSFileSystemDirectoryReader.h */,
+				836589DA1F54A76200DC31F4 /* JSFileSystemEntriesCallback.cpp */,
+				836589D81F54A76200DC31F4 /* JSFileSystemEntriesCallback.h */,
 				833B9E2E1F508D8000E0E428 /* JSFileSystemEntry.cpp */,
 				833B9E2A1F508D8000E0E428 /* JSFileSystemEntry.h */,
 				8370568A1F50915000D93425 /* JSFileSystemEntryCallback.cpp */,
@@ -27545,6 +27579,8 @@
 				2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */,
 				514B3F730C722047000530DF /* FileSystem.h in Headers */,
 				83FB33711F508A5400986E54 /* FileSystemDirectoryEntry.h in Headers */,
+				830335021F549057004DF707 /* FileSystemDirectoryReader.h in Headers */,
+				830335031F54905A004DF707 /* FileSystemEntriesCallback.h in Headers */,
 				83FB33731F508A5800986E54 /* FileSystemEntry.h in Headers */,
 				838F86DB1F509E7B00E8CFC5 /* FileSystemEntryCallback.h in Headers */,
 				83FB33751F508A5B00986E54 /* FileSystemFileEntry.h in Headers */,
@@ -28237,6 +28273,8 @@
 				2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */,
 				898785F5122E1EAC003AABDA /* JSFileReaderSync.h in Headers */,
 				833B9E321F508D8500E0E428 /* JSFileSystemDirectoryEntry.h in Headers */,
+				836589DE1F54A76900DC31F4 /* JSFileSystemDirectoryReader.h in Headers */,
+				836589E01F54A76E00DC31F4 /* JSFileSystemEntriesCallback.h in Headers */,
 				833B9E341F508D8500E0E428 /* JSFileSystemEntry.h in Headers */,
 				837056901F50915C00D93425 /* JSFileSystemEntryCallback.h in Headers */,
 				833B9E361F508D8500E0E428 /* JSFileSystemFileEntry.h in Headers */,
@@ -31485,6 +31523,7 @@
 				F52AD5E41534245F0059FBE6 /* EmptyClients.cpp in Sources */,
 				515BE18F1D54F5FB00DD7C68 /* EmptyGamepadProvider.cpp in Sources */,
 				FD31609212B026F700C1A359 /* EqualPowerPanner.cpp in Sources */,
+				837609CA1F54CC18000C122D /* ErrorCallback.cpp in Sources */,
 				2ECF7AE110162B5800427DE7 /* ErrorEvent.cpp in Sources */,
 				85031B410A44EFC700F992E0 /* Event.cpp in Sources */,
 				4138D3361244054800323D33 /* EventContext.cpp in Sources */,
@@ -31557,6 +31596,8 @@
 				5160306C0CC4362300C8AC25 /* FileSystemCF.cpp in Sources */,
 				514B3F760C722055000530DF /* FileSystemCocoa.mm in Sources */,
 				83FB33701F508A5400986E54 /* FileSystemDirectoryEntry.cpp in Sources */,
+				830335011F549057004DF707 /* FileSystemDirectoryReader.cpp in Sources */,
+				839680B41F54C6AD00752690 /* FileSystemEntriesCallback.cpp in Sources */,
 				83FB33721F508A5800986E54 /* FileSystemEntry.cpp in Sources */,
 				83FB33741F508A5B00986E54 /* FileSystemFileEntry.cpp in Sources */,
 				26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */,
@@ -32230,8 +32271,11 @@
 				2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */,
 				898785F4122E1EAC003AABDA /* JSFileReaderSync.cpp in Sources */,
 				833B9E311F508D8500E0E428 /* JSFileSystemDirectoryEntry.cpp in Sources */,
+				836589DD1F54A76600DC31F4 /* JSFileSystemDirectoryReader.cpp in Sources */,
+				836589DF1F54A76C00DC31F4 /* JSFileSystemEntriesCallback.cpp in Sources */,
 				833B9E331F508D8500E0E428 /* JSFileSystemEntry.cpp in Sources */,
 				8370568F1F50915900D93425 /* JSFileSystemEntryCallback.cpp in Sources */,
+				835B68101F548BE10071F7F6 /* JSFileSystemEntryCustom.cpp in Sources */,
 				833B9E351F508D8500E0E428 /* JSFileSystemFileEntry.cpp in Sources */,
 				B6D9D27C14EAC0860090D75E /* JSFocusEvent.cpp in Sources */,
 				C28083401C6DC275001451B6 /* JSFontFace.cpp in Sources */,

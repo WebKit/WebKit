@@ -277,7 +277,6 @@
     macro(LargeImageAsyncDecodingEnabled, largeImageAsyncDecodingEnabled, Bool, bool, true, "", "") \
     macro(AnimatedImageAsyncDecodingEnabled, animatedImageAsyncDecodingEnabled, Bool, bool, true, "", "") \
     macro(CustomElementsEnabled, customElementsEnabled, Bool, bool, true, "", "") \
-    macro(DataTransferItemsEnabled, dataTransferItemsEnabled, Bool, bool, false, "Data Transfer Items", "Enables DataTransferItem in the clipboard API") \
     macro(EncryptedMediaAPIEnabled, encryptedMediaAPIEnabled, Bool, bool, false, "", "") \
     macro(MediaPreloadingEnabled, mediaPreloadingEnabled, Bool, bool, false, "", "") \
     macro(IntersectionObserverEnabled, intersectionObserverEnabled, Bool, bool, false, "Intersection Observer", "Enable Intersection Observer support") \
@@ -376,6 +375,7 @@
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \
     macro(WebGPUEnabled, webGPUEnabled, Bool, bool, false, "WebGPU", "WebGPU prototype") \
     macro(DirectoryUploadEnabled, directoryUploadEnabled, Bool, bool, false, "Directory Upload", "input.webkitdirectory") \
+    macro(DataTransferItemsEnabled, dataTransferItemsEnabled, Bool, bool, false, "Data Transfer Items", "Enables DataTransferItem in the clipboard API") \
     macro(AsyncFrameScrollingEnabled, asyncFrameScrollingEnabled, Bool, bool, false, "Async Frame Scrolling", "Perform frame scrolling in a dedicated thread or process") \
     \
 

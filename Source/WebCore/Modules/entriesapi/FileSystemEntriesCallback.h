@@ -25,32 +25,24 @@
 
 #pragma once
 
-#include "ScriptWrappable.h"
+#include "ActiveDOMCallback.h"
+#include "CallbackResult.h"
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class DOMFileSystem;
+class FileSystemEntry;
 
-class FileSystemEntry : public ScriptWrappable, public RefCounted<FileSystemEntry> {
+class FileSystemEntriesCallback : public RefCounted<FileSystemEntriesCallback>, public ActiveDOMCallback {
 public:
-    virtual ~FileSystemEntry() { }
+    using ActiveDOMCallback::ActiveDOMCallback;
 
-    virtual bool isFile() const { return false; }
-    virtual bool isDirectory() const { return false; }
+    virtual CallbackResult<void> handleEvent(const Vector<Ref<FileSystemEntry>>&) = 0;
 
-    const String& name() const { return m_name; }
-    const String& virtualPath() const { return m_virtualPath; }
-    DOMFileSystem& filesystem() const { return m_filesystem; }
-
-protected:
-    FileSystemEntry(DOMFileSystem&, const String& virtualPath);
-
-private:
-    DOMFileSystem& m_filesystem;
-    String m_name;
-    String m_virtualPath;
+    // Helper to post callback task.
+    void scheduleCallback(ScriptExecutionContext&, const Vector<Ref<FileSystemEntry>>&);
 };
 
 } // namespace WebCore

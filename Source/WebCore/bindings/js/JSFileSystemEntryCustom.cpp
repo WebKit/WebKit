@@ -23,34 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSFileSystemEntry.h"
 
-#include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "FileSystemDirectoryEntry.h"
+#include "FileSystemFileEntry.h"
+#include "JSDOMBinding.h"
+#include "JSFileSystemDirectoryEntry.h"
+#include "JSFileSystemFileEntry.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
-class DOMFileSystem;
+JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<FileSystemEntry>&& entry)
+{
+    if (is<FileSystemDirectoryEntry>(entry))
+        return createWrapper<FileSystemDirectoryEntry>(globalObject, WTFMove(entry));
+    return createWrapper<FileSystemFileEntry>(globalObject, WTFMove(entry));
+}
 
-class FileSystemEntry : public ScriptWrappable, public RefCounted<FileSystemEntry> {
-public:
-    virtual ~FileSystemEntry() { }
-
-    virtual bool isFile() const { return false; }
-    virtual bool isDirectory() const { return false; }
-
-    const String& name() const { return m_name; }
-    const String& virtualPath() const { return m_virtualPath; }
-    DOMFileSystem& filesystem() const { return m_filesystem; }
-
-protected:
-    FileSystemEntry(DOMFileSystem&, const String& virtualPath);
-
-private:
-    DOMFileSystem& m_filesystem;
-    String m_name;
-    String m_virtualPath;
-};
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, FileSystemEntry& entry)
+{
+    return wrap(state, globalObject, entry);
+}
 
 } // namespace WebCore

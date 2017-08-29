@@ -30,27 +30,35 @@
 namespace WebCore {
 
 class ErrorCallback;
+class FileSystemDirectoryReader;
 class FileSystemEntryCallback;
+class ScriptExecutionContext;
 
 class FileSystemDirectoryEntry final : public FileSystemEntry {
 public:
-    static Ref<FileSystemDirectoryEntry> create(DOMFileSystem& filesystem)
+    static Ref<FileSystemDirectoryEntry> create(DOMFileSystem& filesystem, const String& virtualPath)
     {
-        return adoptRef(*new FileSystemDirectoryEntry(filesystem));
+        return adoptRef(*new FileSystemDirectoryEntry(filesystem, virtualPath));
     }
+
+    Ref<FileSystemDirectoryReader> createReader();
 
     struct Flags {
         bool create { false };
         bool exclusive { false };
     };
 
-    void getFile(const String& path, const Flags& options, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
-    void getDirectory(const String& path, const Flags& options, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
+    void getFile(ScriptExecutionContext&, const String& path, const Flags& options, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
+    void getDirectory(ScriptExecutionContext&, const String& path, const Flags& options, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
 
 private:
     bool isDirectory() const final { return true; }
 
-    explicit FileSystemDirectoryEntry(DOMFileSystem&);
+    FileSystemDirectoryEntry(DOMFileSystem&, const String& virtualPath);
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FileSystemDirectoryEntry)
+    static bool isType(const WebCore::FileSystemEntry& entry) { return entry.isDirectory(); }
+SPECIALIZE_TYPE_TRAITS_END()

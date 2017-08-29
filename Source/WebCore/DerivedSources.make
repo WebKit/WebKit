@@ -138,6 +138,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/entriesapi/ErrorCallback.idl \
     $(WebCore)/Modules/entriesapi/FileCallback.idl \
     $(WebCore)/Modules/entriesapi/FileSystemDirectoryEntry.idl \
+    $(WebCore)/Modules/entriesapi/FileSystemDirectoryReader.idl \
+    $(WebCore)/Modules/entriesapi/FileSystemEntriesCallback.idl \
     $(WebCore)/Modules/entriesapi/FileSystemEntry.idl \
     $(WebCore)/Modules/entriesapi/FileSystemEntryCallback.idl \
     $(WebCore)/Modules/entriesapi/FileSystemFileEntry.idl \

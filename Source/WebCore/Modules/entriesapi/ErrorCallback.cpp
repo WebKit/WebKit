@@ -23,34 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ErrorCallback.h"
 
-#include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "DOMException.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-class DOMFileSystem;
+void ErrorCallback::scheduleCallback(ScriptExecutionContext& context, Ref<DOMException>&& exception)
+{
+    context.postTask([protectedThis = makeRef(*this), exception = WTFMove(exception)] (ScriptExecutionContext&) {
+        protectedThis->handleEvent(exception);
+    });
+}
 
-class FileSystemEntry : public ScriptWrappable, public RefCounted<FileSystemEntry> {
-public:
-    virtual ~FileSystemEntry() { }
-
-    virtual bool isFile() const { return false; }
-    virtual bool isDirectory() const { return false; }
-
-    const String& name() const { return m_name; }
-    const String& virtualPath() const { return m_virtualPath; }
-    DOMFileSystem& filesystem() const { return m_filesystem; }
-
-protected:
-    FileSystemEntry(DOMFileSystem&, const String& virtualPath);
-
-private:
-    DOMFileSystem& m_filesystem;
-    String m_name;
-    String m_virtualPath;
-};
-
-} // namespace WebCore
+}

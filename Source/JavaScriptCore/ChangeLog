@@ -1,3 +1,15 @@
+2017-08-29  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for dataTransferItem.webkitGetAsEntry()
+        https://bugs.webkit.org/show_bug.cgi?id=176038
+        <rdar://problem/34121095>
+
+        Reviewed by Wenson Hsieh.
+
+        Add CommonIdentifier needed by [EnabledAtRuntime].
+
+        * runtime/CommonIdentifiers.h:
+
 2017-08-27  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Record actions performed on WebGLRenderingContext
