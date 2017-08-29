@@ -1,3 +1,12 @@
+2017-08-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl.
+
+        Unreviewed test gardening.
+
+        * http/tests/websocket/tests/hybi/secure-cookie-secure-connection-expected.txt:
+        * platform/mac-highsierra/http/tests/websocket/tests/hybi/secure-cookie-secure-connection-expected.txt: Copied from LayoutTests/http/tests/websocket/tests/hybi/secure-cookie-secure-connection-expected.txt.
+
 2017-08-28  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed test gardening. <rdar://problem/34051745>

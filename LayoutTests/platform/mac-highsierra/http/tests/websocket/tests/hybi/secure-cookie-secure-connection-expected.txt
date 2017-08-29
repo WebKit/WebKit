@@ -8,7 +8,7 @@ See pywebsocket Bug 150 for details.
 
 WebSocket open
 WebSocket closed
-PASS cookie is "WK-websocket-test-secure=1; WK-websocket-test=1"
+FAIL cookie should be WK-websocket-test-secure=1; WK-websocket-test=1. Was WK-websocket-test=1.
 PASS successfullyParsed is true
 
 TEST COMPLETE
