@@ -779,3 +779,5 @@ webkit.org/b/176054 [ Sierra ElCapitan ] media/video-controls-in-media-document.
 
 webkit.org/b/176054 [ Sierra ElCapitan ] media/video-controls-no-display-with-text-track.html [ Pass Failure ]
 
+webkit.org/b/169238 fast/events/mouse-cursor-no-mousemove.html [ Pass Failure ]
+
