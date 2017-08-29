@@ -30,6 +30,7 @@
 
 #import "WebCoreNSURLExtras.h"
 #import "WebCoreSystemInterface.h"
+#import <pal/spi/mac/MetadataSPI.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -48,7 +49,7 @@ bool deleteEmptyDirectory(const String& path)
     return !rmdir(fileSystemRepresentation(path).data());
 }
 
-void setMetadataURL(const String& path, const String& metadataURLString)
+void setMetadataURL(const String& path, const String& metadataURLString, const String& referrer)
 {
     String urlString;
     if (NSURL *url = URLWithUserTypedString(urlString, nil))
@@ -56,9 +57,18 @@ void setMetadataURL(const String& path, const String& metadataURLString)
     else
         urlString = metadataURLString;
 
-    // Call WKSetMetadataURL on a background queue because it can take some time.
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [path = path.isolatedCopy(), urlString = urlString.isolatedCopy()] {
-        wkSetMetadataURL(urlString, nil, [NSString stringWithUTF8String:[path fileSystemRepresentation]]);
+    // Call Metadata API on a background queue because it can take some time.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [path = path.isolatedCopy(), urlString = urlString.isolatedCopy(), referrer = referrer.isolatedCopy()] {
+        auto item = adoptCF(MDItemCreate(kCFAllocatorDefault, path.createCFString().get()));
+        if (!item)
+            return;
+
+        auto whereFromAttribute = adoptNS([[NSMutableArray alloc] initWithObjects:urlString, nil]);
+        if (!referrer.isNull())
+            [whereFromAttribute addObject:referrer];
+
+        MDItemSetAttribute(item.get(), kMDItemWhereFroms, whereFromAttribute.get());
+        MDItemSetAttribute(item.get(), kMDItemDownloadedDate, @[ [NSDate date] ]);
     });
 }
 

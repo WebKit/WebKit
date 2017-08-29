@@ -92,8 +92,6 @@ CFTypeRef (*wkCreateAXTextMarker)(const void *bytes, size_t len);
 BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t length);
 AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
-void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
-
 #if !PLATFORM(IOS)
 CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
 CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);

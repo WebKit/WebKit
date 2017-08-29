@@ -104,7 +104,6 @@ void InitWebCoreSystemInterface(void)
 #endif
 
 #if !PLATFORM(IOS)
-    INIT(SetMetadataURL);
     INIT(NSElasticDeltaForTimeDelta);
     INIT(NSElasticDeltaForReboundDelta);
     INIT(NSReboundDeltaForElasticDelta);

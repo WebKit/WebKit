@@ -76,7 +76,6 @@ void InitWebCoreSystemInterface(void)
 #endif
 
 #if !PLATFORM(IOS)
-        INIT(SetMetadataURL);
         INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
         INIT(CopyDefaultSearchProviderDisplayName);
         INIT(Cursor);

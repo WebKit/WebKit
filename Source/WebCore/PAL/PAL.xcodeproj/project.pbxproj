@@ -97,6 +97,7 @@
 		1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0521E31C44100725F18 /* CryptoDigest.h */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
 		1C09D0581E31C57E00725F18 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
+		A1F55DCF1F5528EC00EDB75F /* MetadataSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */; };
 		A30D41211F0DD0EA00B71954 /* KillRing.h in Headers */ = {isa = PBXBuildFile; fileRef = A30D411E1F0DD0EA00B71954 /* KillRing.h */; };
 		A30D41221F0DD0EA00B71954 /* KillRingNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D411F1F0DD0EA00B71954 /* KillRingNone.cpp */; };
 		A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A30D41241F0DD12D00B71954 /* KillRingMac.mm */; };
@@ -208,6 +209,7 @@
 		1C09D0631E31EC3100725F18 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1C67CEA11E32EDA800F80F2E /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		1C67CEA21E32EE2600F80F2E /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MetadataSPI.h; path = spi/mac/MetadataSPI.h; sourceTree = "<group>"; };
 		A30D411E1F0DD0EA00B71954 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KillRing.h; path = text/KillRing.h; sourceTree = "<group>"; };
 		A30D411F1F0DD0EA00B71954 /* KillRingNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KillRingNone.cpp; path = text/KillRingNone.cpp; sourceTree = "<group>"; };
 		A30D41241F0DD12D00B71954 /* KillRingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KillRingMac.mm; path = text/mac/KillRingMac.mm; sourceTree = "<group>"; };
@@ -331,6 +333,7 @@
 				0C7785711F45130F00F4EBB6 /* DataDetectorsSPI.h */,
 				0C7785721F45130F00F4EBB6 /* LookupSPI.h */,
 				0C7785731F45130F00F4EBB6 /* MediaRemoteSPI.h */,
+				A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */,
 				0C7785741F45130F00F4EBB6 /* NSAccessibilitySPI.h */,
 				0C7785751F45130F00F4EBB6 /* NSApplicationSPI.h */,
 				0C7785761F45130F00F4EBB6 /* NSEventSPI.h */,
@@ -511,6 +514,7 @@
 				0C2DA1481F3BEB4900DBC317 /* MachVMSPI.h in Headers */,
 				0C5AF91D1F43A4C7002EAC02 /* MediaPlayerSPI.h in Headers */,
 				0C77858C1F45130F00F4EBB6 /* MediaRemoteSPI.h in Headers */,
+				A1F55DCF1F5528EC00EDB75F /* MetadataSPI.h in Headers */,
 				0C5AF91E1F43A4C7002EAC02 /* MobileGestaltSPI.h in Headers */,
 				0C2DA1491F3BEB4900DBC317 /* NEFilterSourceSPI.h in Headers */,
 				0C77858D1F45130F00F4EBB6 /* NSAccessibilitySPI.h in Headers */,

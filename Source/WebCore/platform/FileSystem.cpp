@@ -256,7 +256,7 @@ bool filesHaveSameVolume(const String& fileA, const String& fileB)
 
 #if !PLATFORM(MAC)
 
-void setMetadataURL(const String&, const String&)
+void setMetadataURL(const String&, const String&, const String&)
 {
 }
 

@@ -215,7 +215,6 @@ extern void (*wkSetLayerContentsScale)(CALayer *);
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 
 #if !PLATFORM(IOS)
-extern void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
 extern CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
 extern CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 extern CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);

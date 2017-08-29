@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,9 +30,10 @@
 
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
-#import <wtf/Assertions.h>
+#import <WebCore/FileSystem.h>
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
+#import <wtf/Assertions.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
 #if PLATFORM(IOS)
@@ -43,57 +44,11 @@
 
 #if !PLATFORM(IOS)
 
-typedef struct MetaDataInfo
-{
-    CFStringRef URLString;
-    CFStringRef referrer;
-    CFStringRef path;
-} MetaDataInfo;
-
-static void *setMetaData(void* context)
-{
-    MetaDataInfo *info = (MetaDataInfo *)context;
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    WKSetMetadataURL((NSString *)info->URLString, (NSString *)info->referrer, (NSString *)info->path);
-
-    if (info->URLString)
-        CFRelease(info->URLString);
-    if (info->referrer)
-        CFRelease(info->referrer);
-    if (info->path)
-        CFRelease(info->path);
-
-    free(info);
-    [pool drain];
-
-    return 0;
-}
-
 - (void)_webkit_setMetadataURL:(NSString *)URLString referrer:(NSString *)referrer atPath:(NSString *)path
 {
     ASSERT(URLString);
     ASSERT(path);
-
-    NSURL *URL = [NSURL _webkit_URLWithUserTypedString:URLString];
-    if (URL)
-        URLString = [[URL _web_URLByRemovingUserInfo] _web_userVisibleString];
- 
-    // Spawn a background thread for WKSetMetadataURL because this function will not return until mds has
-    // journaled the data we're're trying to set. Depending on what other I/O is going on, it can take some
-    // time. 
-    pthread_t tid;
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-
-    MetaDataInfo *info = static_cast<MetaDataInfo *>(malloc(sizeof(MetaDataInfo)));
-    
-    info->URLString = URLString ? CFStringCreateCopy(0, (CFStringRef)URLString) : 0;
-    info->referrer = referrer ? CFStringCreateCopy(0, (CFStringRef)referrer) : 0;
-    info->path = path ? CFStringCreateCopy(0, (CFStringRef)path) : 0;
-
-    pthread_create(&tid, &attr, setMetaData, info);
-    pthread_attr_destroy(&attr);
+    WebCore::setMetadataURL(path, URLString, referrer);
 }
 
 #endif // !PLATFORM(IOS)
