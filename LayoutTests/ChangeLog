@@ -1,3 +1,11 @@
+2017-08-29  Per Arne Vollan  <pvollan@apple.com>
+
+        Rebaseline css2.1/t0805-c5520-brdr-b-01-e.html after r220858.
+
+        Unreviewed test gardening.
+
+        * platform/win/css2.1/t0805-c5520-brdr-b-01-e-expected.txt:
+
 2017-08-29  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Remove some obsolete expectations.
