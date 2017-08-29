@@ -83,7 +83,12 @@ public:
             while (m_lowerQueue.dequeue(lower)) {
                 m_upperQueue.enqueue(toUpper(lower));
                 EXPECT_TRUE(lower == textItem(m_produceCount++));
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+#if PLATFORM(WIN)
+                auto sleepAmount = std::chrono::milliseconds(20);
+#else
+                auto sleepAmount = std::chrono::milliseconds(10);
+#endif
+                std::this_thread::sleep_for(sleepAmount);
             }
             m_produceCloseSemaphore.signal();
         });
