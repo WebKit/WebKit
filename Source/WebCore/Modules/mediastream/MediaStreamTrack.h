@@ -78,7 +78,7 @@ public:
 
     bool ended() const;
 
-    Ref<MediaStreamTrack> clone();
+    virtual RefPtr<MediaStreamTrack> clone();
 
     enum class StopMode { Silently, PostEvent };
     void stopTrack(StopMode = StopMode::Silently);
@@ -139,6 +139,8 @@ public:
 protected:
     MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
 
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+
 private:
     explicit MediaStreamTrack(MediaStreamTrack&);
 
@@ -155,7 +157,6 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     EventTargetInterface eventTargetInterface() const final { return MediaStreamTrackEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     // MediaStreamTrackPrivate::Observer
     void trackStarted(MediaStreamTrackPrivate&) final;

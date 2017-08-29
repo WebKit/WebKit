@@ -1,3 +1,14 @@
+2017-08-29  Youenn Fablet  <youenn@apple.com>
+
+        CanvasCaptureMediaStreamTrack clone is not a CanvasCaptureMediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=176036
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediacapturefromelement/CanvasCaptureMediaStream-clone-track-expected.txt:
+        * fast/mediastream/captureStream/canvas2d.html:
+        * fast/mediastream/captureStream/canvas2d-expected.txt:
+
 2017-08-29  Per Arne Vollan  <pvollan@apple.com>
 
         Skip editing/pasteboard/paste-empty-startcontainer.html on Windows.

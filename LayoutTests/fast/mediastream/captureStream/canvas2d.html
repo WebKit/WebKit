@@ -53,6 +53,18 @@ promise_test((test) => {
 
     return promise;
 }, "captureStream with 2d context drawing");
+
+promise_test((test) => {
+    var stream = canvas1.captureStream().clone();
+    if (window.internals)
+        assert_true(internals.pageMediaState().toLowerCase().indexOf("capture") == -1, "media state should not contain any camera capture");
+    promise = checkCanvas(canvas1, stream);
+
+    printLine();
+
+
+    return promise;
+}, "captureStream cloning");
         </script>
     </head>
 </html>

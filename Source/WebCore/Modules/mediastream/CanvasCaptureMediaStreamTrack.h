@@ -44,12 +44,15 @@ public:
     HTMLCanvasElement& canvas() { return m_canvas.get(); }
     void requestFrame() { m_source->requestFrame(); }
 
+    RefPtr<MediaStreamTrack> clone() final;
+
 private:
     class Source final : public RealtimeMediaSource, private CanvasObserver {
     public:
         static Ref<Source> create(HTMLCanvasElement&, std::optional<double>&& frameRequestRate);
         
         void requestFrame() { m_shouldEmitFrame = true; }
+        std::optional<double> frameRequestRate() const { return m_frameRequestRate; }
 
     private:
         Source(HTMLCanvasElement&, std::optional<double>&&);
@@ -81,7 +84,7 @@ private:
     CanvasCaptureMediaStreamTrack(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, Ref<Source>&&);
 
     bool isCanvas() const final { return true; }
-    
+
     Ref<HTMLCanvasElement> m_canvas;
     Ref<Source> m_source;
 };

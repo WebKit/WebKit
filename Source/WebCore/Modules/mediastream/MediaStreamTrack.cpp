@@ -117,8 +117,11 @@ bool MediaStreamTrack::ended() const
     return m_ended || m_private->ended();
 }
 
-Ref<MediaStreamTrack> MediaStreamTrack::clone()
+RefPtr<MediaStreamTrack> MediaStreamTrack::clone()
 {
+    if (!scriptExecutionContext())
+        return nullptr;
+
     return MediaStreamTrack::create(*scriptExecutionContext(), m_private->clone());
 }
 

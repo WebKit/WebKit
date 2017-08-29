@@ -163,6 +163,14 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
     videoSampleAvailable(*sample);
 }
 
+RefPtr<MediaStreamTrack> CanvasCaptureMediaStreamTrack::clone()
+{
+    if (!scriptExecutionContext())
+        return nullptr;
+
+    return CanvasCaptureMediaStreamTrack::create(*scriptExecutionContext(), m_canvas.copyRef(), m_source->frameRequestRate());
+}
+
 }
 
 #endif // ENABLE(MEDIA_STREAM)
