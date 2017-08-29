@@ -1,3 +1,13 @@
+2017-08-29  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaselined js/dom/global-constructors-attributes.html after r221258.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan-wk2/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2017-08-29  Per Arne Vollan  <pvollan@apple.com>
 
         Rebaseline editing/style/5065910.html after r220706.

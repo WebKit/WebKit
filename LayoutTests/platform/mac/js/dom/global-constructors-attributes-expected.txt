@@ -28,6 +28,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').hasOwnProperty
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnimationTimeline').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').value is ApplePayError
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ApplePayError').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'ApplePaySession').value is ApplePaySession
 PASS Object.getOwnPropertyDescriptor(global, 'ApplePaySession').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ApplePaySession').hasOwnProperty('set') is false
@@ -523,6 +528,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'FileSystemDirectoryEntry').hasOwnP
 PASS Object.getOwnPropertyDescriptor(global, 'FileSystemDirectoryEntry').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'FileSystemDirectoryEntry').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'FileSystemDirectoryEntry').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'FileSystemDirectoryReader').value is FileSystemDirectoryReader
+PASS Object.getOwnPropertyDescriptor(global, 'FileSystemDirectoryReader').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'FileSystemDirectoryReader').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'FileSystemDirectoryReader').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'FileSystemDirectoryReader').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'FileSystemEntry').value is FileSystemEntry
 PASS Object.getOwnPropertyDescriptor(global, 'FileSystemEntry').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'FileSystemEntry').hasOwnProperty('set') is false
