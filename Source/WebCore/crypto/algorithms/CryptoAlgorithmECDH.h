@@ -46,8 +46,7 @@ private:
     void importKey(CryptoKeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
 
-    using Callback = Function<void(std::optional<Vector<uint8_t>>&&, size_t)>;
-    void platformDeriveBits(Ref<CryptoKey>&& baseKey, Ref<CryptoKey>&& publicKey, size_t length, Callback&&, ScriptExecutionContext&, WorkQueue&);
+    static std::optional<Vector<uint8_t>> platformDeriveBits(const CryptoKey&, const CryptoKey&);
 };
 
 } // namespace WebCore

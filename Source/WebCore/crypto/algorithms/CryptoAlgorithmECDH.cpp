@@ -31,6 +31,7 @@
 #include "CryptoAlgorithmEcKeyParams.h"
 #include "CryptoAlgorithmEcdhKeyDeriveParams.h"
 #include "CryptoKeyEC.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -112,7 +113,19 @@ void CryptoAlgorithmECDH::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&
         (*derivedKey).shrink(length / 8);
         callback(WTFMove(*derivedKey));
     };
-    platformDeriveBits(WTFMove(baseKey), ecParameters.publicKey.releaseNonNull(), length, WTFMove(unifiedCallback), context, workQueue);
+
+    // This is a special case that can't use dispatchOperation() because it bundles
+    // the result validation and callback dispatch into unifiedCallback.
+    context.ref();
+    workQueue.dispatch(
+        [baseKey = WTFMove(baseKey), publicKey = ecParameters.publicKey.releaseNonNull(), length, unifiedCallback = WTFMove(unifiedCallback), &context]() mutable {
+            auto derivedKey = platformDeriveBits(baseKey, publicKey);
+            context.postTask(
+                [derivedKey = WTFMove(derivedKey), length, unifiedCallback = WTFMove(unifiedCallback)](ScriptExecutionContext& context) mutable {
+                    unifiedCallback(WTFMove(derivedKey), length);
+                    context.deref();
+                });
+        });
 }
 
 void CryptoAlgorithmECDH::importKey(CryptoKeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)

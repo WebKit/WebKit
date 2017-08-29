@@ -1,3 +1,41 @@
+2017-08-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebCrypto] Push WorkQueue dispatches for EC algorithms into shared code
+        https://bugs.webkit.org/show_bug.cgi?id=175619
+
+        Reviewed by Jiewen Tan.
+
+        Push the WorkQueue dispatch code duplicated between the Mac and libgcrypt
+        implementations of Web Crypto into the shared layer. This patch focuses on
+        the EC-based algorithms.
+
+        Functions with platform-specific implementations that are invoked from
+        these asynchronous dispatches are made static and return an ExceptionOr or
+        std::optional value. CryptoKey and CryptoAlgorithmParameters objects are
+        passed to those through const references. Input data is passed through
+        const references to the original Vector objects.
+
+        No new tests -- no changes in behavior that's covered by existing tests.
+
+        * crypto/algorithms/CryptoAlgorithmECDH.cpp:
+        (WebCore::CryptoAlgorithmECDH::deriveBits):
+        * crypto/algorithms/CryptoAlgorithmECDH.h:
+        * crypto/algorithms/CryptoAlgorithmECDSA.cpp:
+        (WebCore::CryptoAlgorithmECDSA::sign):
+        (WebCore::CryptoAlgorithmECDSA::verify):
+        * crypto/algorithms/CryptoAlgorithmECDSA.h:
+        * crypto/gcrypt/CryptoAlgorithmECDHGCrypt.cpp:
+        (WebCore::CryptoAlgorithmECDH::platformDeriveBits):
+        * crypto/gcrypt/CryptoAlgorithmECDSAGCrypt.cpp:
+        (WebCore::CryptoAlgorithmECDSA::platformSign):
+        (WebCore::CryptoAlgorithmECDSA::platformVerify):
+        * crypto/keys/CryptoKeyEC.h:
+        * crypto/mac/CryptoAlgorithmECDHMac.cpp:
+        (WebCore::CryptoAlgorithmECDH::platformDeriveBits):
+        * crypto/mac/CryptoAlgorithmECDSAMac.cpp:
+        (WebCore::CryptoAlgorithmECDSA::platformSign):
+        (WebCore::CryptoAlgorithmECDSA::platformVerify):
+
 2017-08-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [SVG] Leak in SVGAnimatedListPropertyTearOff

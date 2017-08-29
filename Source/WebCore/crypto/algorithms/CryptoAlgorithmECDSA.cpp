@@ -54,7 +54,11 @@ void CryptoAlgorithmECDSA::sign(std::unique_ptr<CryptoAlgorithmParameters>&& par
         exceptionCallback(InvalidAccessError);
         return;
     }
-    platformSign(WTFMove(parameters), WTFMove(key), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
+
+    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+        [parameters = WTFMove(parameters), key = WTFMove(key), data = WTFMove(data)] {
+            return platformSign(*parameters, key, data);
+        });
 }
 
 void CryptoAlgorithmECDSA::verify(std::unique_ptr<CryptoAlgorithmParameters>&& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& signature, Vector<uint8_t>&& data, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
@@ -63,7 +67,11 @@ void CryptoAlgorithmECDSA::verify(std::unique_ptr<CryptoAlgorithmParameters>&& p
         exceptionCallback(InvalidAccessError);
         return;
     }
-    platformVerify(WTFMove(parameters), WTFMove(key), WTFMove(signature), WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), context, workQueue);
+
+    dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
+        [parameters = WTFMove(parameters), key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data)] {
+            return platformVerify(*parameters, key, signature, data);
+        });
 }
 
 void CryptoAlgorithmECDSA::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&)

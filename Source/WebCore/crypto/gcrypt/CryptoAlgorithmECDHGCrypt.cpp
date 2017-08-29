@@ -31,7 +31,6 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoKeyEC.h"
-#include "ScriptExecutionContext.h"
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
 
@@ -116,21 +115,9 @@ static std::optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry
     return output;
 }
 
-void CryptoAlgorithmECDH::platformDeriveBits(Ref<CryptoKey>&& baseKey, Ref<CryptoKey>&& publicKey, size_t length, Callback&& callback, ScriptExecutionContext& context, WorkQueue& workQueue)
+std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKey& baseKey, const CryptoKey& publicKey)
 {
-    context.ref();
-    workQueue.dispatch(
-        [baseKey = WTFMove(baseKey), publicKey = WTFMove(publicKey), length, callback = WTFMove(callback), &context]() mutable {
-            auto& ecBaseKey = downcast<CryptoKeyEC>(baseKey.get());
-            auto& ecPublicKey = downcast<CryptoKeyEC>(publicKey.get());
-
-            auto output = gcryptDerive(ecBaseKey.platformKey(), ecPublicKey.platformKey());
-            context.postTask(
-                [output = WTFMove(output), length, callback = WTFMove(callback)](ScriptExecutionContext& context) mutable {
-                    callback(WTFMove(output), length);
-                    context.deref();
-                });
-        });
+    return gcryptDerive(downcast<CryptoKeyEC>(baseKey).platformKey(), downcast<CryptoKeyEC>(publicKey).platformKey());
 }
 
 } // namespace WebCore
