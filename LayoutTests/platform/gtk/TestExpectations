@@ -1154,10 +1154,6 @@ fast/text/font-weight-download-2.html [ Failure ]
 fast/files/filereader-zip-bundle-using-open-panel.html [ Skip ]
 http/tests/local/fileapi/upload-zip-bundle-as-blob-using-open-panel.html [ Skip ]
 
-# RAF throttling requires REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR.
-fast/animation/request-animation-frame-throttling-detached-iframe.html [ Failure ]
-fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure ]
-
 # WebGPU is not enabled on GTK+.
 fast/canvas/webgpu [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
@@ -2299,7 +2295,6 @@ webkit.org/b/157179 fast/events/drag-and-drop.html [ Failure Timeout ]
 webkit.org/b/157179 fast/events/drag-and-drop-subframe-dataTransfer.html [ Failure Timeout ]
 webkit.org/b/42194 fast/events/drag-and-drop-link.html [ Failure ]
 webkit.org/b/157179 fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Failure ]
-webkit.org/b/157179 fast/events/drag-parent-node.html [ Failure ]
 webkit.org/b/157179 fast/events/drag-selects-image.html [ Failure ]
 webkit.org/b/157179 fast/events/draggable-div-customdata.html [ Failure ]
 webkit.org/b/157179 fast/events/draggable-div-nodata.html [ Failure ]
@@ -2371,10 +2366,8 @@ webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
 
 # Unexplained failures
 Bug(GTK) fast/css/disabled-author-styles.html [ Failure ]
-Bug(GTK) fast/events/keydown-leftright-keys.html [ Failure ]
 Bug(GTK) fast/events/keydown-numpad-keys.html [ Failure ]
 Bug(GTK) fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
-Bug(GTK) fast/events/selectionchange-iframe.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-cyrillic.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-greek.html [ Failure ]
 Bug(GTK) fast/forms/mailto/formenctype-attribute-button-html.html [ Failure ]

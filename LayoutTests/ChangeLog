@@ -1,3 +1,18 @@
+2017-08-29  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Remove some obsolete expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=176051
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+          - fast/animation/request-animation-frame-throttling-detached-iframe.html: passing since r215259.
+          - fast/animation/request-animation-frame-throttling-lowPowerMode.html: passing since r215259.
+          - fast/events/drag-parent-node.html: passing since r217670-r217679.
+          - fast/events/keydown-leftright-keys.html: passing since r210504.
+          - fast/events/selectionchange-iframe.html: passing since r205908-r205913.
+
+
 2017-08-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [SVG] Leak in SVGAnimatedListPropertyTearOff
