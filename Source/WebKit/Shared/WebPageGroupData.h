@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageGroupData_h
-#define WebPageGroupData_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -37,7 +36,8 @@ namespace WebKit {
 
 struct WebPageGroupData {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebPageGroupData&);
+    static std::optional<WebPageGroupData> decode(IPC::Decoder&);
+    using ModernDecoder = std::true_type;
 
     String identifier;
     uint64_t pageGroupID;
@@ -48,6 +48,3 @@ struct WebPageGroupData {
 };
 
 } // namespace WebKit
-
-
-#endif // WebPageGroupData_h

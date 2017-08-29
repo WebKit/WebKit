@@ -133,10 +133,22 @@ struct TupleCoder {
         TupleCoder<index - 1, Elements...>::encode(encoder, tuple);
     }
 
+    template<typename U = typename std::remove_reference<typename std::tuple_element<sizeof...(Elements) - index, std::tuple<Elements...>>::type>::type, std::enable_if_t<!UsesModernDecoder<U>::value>* = nullptr>
     static bool decode(Decoder& decoder, std::tuple<Elements...>& tuple)
     {
         if (!decoder.decode(std::get<sizeof...(Elements) - index>(tuple)))
             return false;
+        return TupleCoder<index - 1, Elements...>::decode(decoder, tuple);
+    }
+    
+    template<typename U = typename std::remove_reference<typename std::tuple_element<sizeof...(Elements) - index, std::tuple<Elements...>>::type>::type, std::enable_if_t<UsesModernDecoder<U>::value>* = nullptr>
+    static bool decode(Decoder& decoder, std::tuple<Elements...>& tuple)
+    {
+        std::optional<U> optional;
+        decoder >> optional;
+        if (!optional)
+            return false;
+        std::get<sizeof...(Elements) - index>(tuple) = WTFMove(*optional);
         return TupleCoder<index - 1, Elements...>::decode(decoder, tuple);
     }
 };

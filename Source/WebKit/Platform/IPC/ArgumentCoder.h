@@ -23,26 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ArgumentCoder_h
-#define ArgumentCoder_h
+#pragma once
+
+#include <wtf/Optional.h>
 
 namespace IPC {
 
 class Decoder;
 class Encoder;
     
+template <typename... T> using IsUsingModernDecoder = void;
+template <typename T, typename = void> struct UsesModernDecoder : std::false_type { };
+template <typename T> struct UsesModernDecoder<T, IsUsingModernDecoder<typename T::ModernDecoder>> : std::true_type { };
+
 template<typename T> struct ArgumentCoder {
     static void encode(Encoder& encoder, const T& t)
     {
         t.encode(encoder);
     }
 
-    static bool decode(Decoder& decoder, T& t)
+    template<typename U = T, std::enable_if_t<!UsesModernDecoder<U>::value>* = nullptr>
+    static bool decode(Decoder& decoder, U& u)
     {
-        return T::decode(decoder, t);
+        return U::decode(decoder, u);
+    }
+
+    template<typename U = T, std::enable_if_t<UsesModernDecoder<U>::value>* = nullptr>
+    static std::optional<U> decode(Decoder& decoder)
+    {
+        return U::decode(decoder);
     }
 };
 
 }
-
-#endif // ArgumentCoder_h

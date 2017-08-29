@@ -52,11 +52,12 @@ void PageGroupHandle::encode(IPC::Encoder& encoder) const
 
 bool PageGroupHandle::decode(IPC::Decoder& decoder, RefPtr<Object>& result)
 {
-    WebKit::WebPageGroupData webPageGroupData;
-    if (!decoder.decode(webPageGroupData))
+    std::optional<WebKit::WebPageGroupData> webPageGroupData;
+    decoder >> webPageGroupData;
+    if (!webPageGroupData)
         return false;
 
-    result = create(WTFMove(webPageGroupData));
+    result = create(WTFMove(*webPageGroupData));
     return true;
 }
 

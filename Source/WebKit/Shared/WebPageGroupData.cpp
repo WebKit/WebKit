@@ -39,19 +39,24 @@ void WebPageGroupData::encode(IPC::Encoder& encoder) const
     encoder << userContentControllerIdentifier;
 }
 
-bool WebPageGroupData::decode(IPC::Decoder& decoder, WebPageGroupData& data)
+std::optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
 {
-    if (!decoder.decode(data.identifier))
-        return false;
-    if (!decoder.decode(data.pageGroupID))
-        return false;
-    if (!decoder.decode(data.visibleToInjectedBundle))
-        return false;
-    if (!decoder.decode(data.visibleToHistoryClient))
-        return false;
-    if (!decoder.decode(data.userContentControllerIdentifier))
-        return false;
-    return true;
+    String id;
+    if (!decoder.decode(id))
+        return std::nullopt;
+    uint64_t pageGroupID;
+    if (!decoder.decode(pageGroupID))
+        return std::nullopt;
+    bool visibleToInjectedBundle;
+    if (!decoder.decode(visibleToInjectedBundle))
+        return std::nullopt;
+    bool visibleToHistoryClient;
+    if (!decoder.decode(visibleToHistoryClient))
+        return std::nullopt;
+    uint64_t userContentControllerIdentifier;
+    if (!decoder.decode(userContentControllerIdentifier))
+        return std::nullopt;
+    return { { id, pageGroupID, visibleToInjectedBundle, visibleToHistoryClient, userContentControllerIdentifier } };
 }
 
 } // namespace WebKit

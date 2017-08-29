@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/OptionSet.h>
+#include <wtf/Optional.h>
 
 namespace WebKit {
 
@@ -48,7 +49,8 @@ struct WebsitePolicies {
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, WebsitePolicies&);
+    template<class Decoder> static std::optional<WebsitePolicies> decode(Decoder&);
+    using ModernDecoder = std::true_type;
 };
 
 template<class Encoder> void WebsitePolicies::encode(Encoder& encoder) const
@@ -58,15 +60,21 @@ template<class Encoder> void WebsitePolicies::encode(Encoder& encoder) const
     encoder << allowedAutoplayQuirks;
 }
 
-template<class Decoder> bool WebsitePolicies::decode(Decoder& decoder, WebsitePolicies& result)
+template<class Decoder> std::optional<WebsitePolicies> WebsitePolicies::decode(Decoder& decoder)
 {
-    if (!decoder.decode(result.contentBlockersEnabled))
-        return false;
-    if (!decoder.decodeEnum(result.autoplayPolicy))
-        return false;
-    if (!decoder.decode(result.allowedAutoplayQuirks))
-        return false;
-    return true;
+    bool contentBlockersEnabled;
+    if (!decoder.decode(contentBlockersEnabled))
+        return std::nullopt;
+    
+    WebsiteAutoplayPolicy autoplayPolicy;
+    if (!decoder.decodeEnum(autoplayPolicy))
+        return std::nullopt;
+
+    OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
+    if (!decoder.decode(allowedAutoplayQuirks))
+        return std::nullopt;
+
+    return { { contentBlockersEnabled, allowedAutoplayQuirks, autoplayPolicy } };
 }
 
 } // namespace WebKit

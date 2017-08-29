@@ -108,156 +108,160 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationParameters& parameters)
+std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
 {
+    WebPageCreationParameters parameters;
     if (!decoder.decode(parameters.viewSize))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.activityState))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.store))
-        return false;
+        return std::nullopt;
     if (!decoder.decodeEnum(parameters.drawingAreaType))
-        return false;
-    if (!decoder.decode(parameters.pageGroupData))
-        return false;
+        return std::nullopt;
+    std::optional<WebPageGroupData> pageGroupData;
+    decoder >> pageGroupData;
+    if (!pageGroupData)
+        return std::nullopt;
+    parameters.pageGroupData = WTFMove(*pageGroupData);
     if (!decoder.decode(parameters.drawsBackground))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.isEditable))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.underlayColor))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.useFixedLayout))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.fixedLayoutSize))
-        return false;
+        return std::nullopt;
     if (!decoder.decodeEnum(parameters.paginationMode))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.paginationBehavesLikeColumns))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.pageLength))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.gapBetweenPages))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.paginationLineGridEnabled))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.userAgent))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.itemStates))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.sessionID))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.highestUsedBackForwardItemID))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.userContentControllerID))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.visitedLinkTableID))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.websiteDataStoreID))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.canRunBeforeUnloadConfirmPanel))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.canRunModal))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.deviceScaleFactor))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.viewScaleFactor))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.topContentInset))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.mediaVolume))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.muted))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.mayStartMediaWhenInWindow))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.minimumLayoutSize))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.autoSizingShouldExpandToViewHeight))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.viewportSizeForCSSViewportUnits))
-        return false;
+        return std::nullopt;
     if (!decoder.decodeEnum(parameters.scrollPinningBehavior))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.scrollbarOverlayStyle))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.backgroundExtendsBeyondPage))
-        return false;
+        return std::nullopt;
     if (!decoder.decodeEnum(parameters.layerHostingMode))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.mimeTypesWithCustomContentProviders))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.controlledByAutomation))
-        return false;
+        return std::nullopt;
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (!decoder.decode(parameters.allowsRemoteInspection))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.remoteInspectionNameOverride))
-        return false;
+        return std::nullopt;
 #endif
 
 #if PLATFORM(MAC)
     if (!decoder.decode(parameters.colorSpace))
-        return false;
+        return std::nullopt;
 #endif
 
 #if PLATFORM(IOS)
     if (!decoder.decode(parameters.screenSize))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.availableScreenSize))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.textAutosizingWidth))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.ignoresViewportScaleLimits))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.allowsBlockSelection))
-        return false;
+        return std::nullopt;
 #endif
 
 #if PLATFORM(COCOA)
     if (!decoder.decode(parameters.smartInsertDeleteEnabled))
-        return false;
+        return std::nullopt;
 #endif
 
     if (!decoder.decode(parameters.appleMailPaginationQuirkEnabled))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(parameters.shouldScaleViewToFitDocument))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decodeEnum(parameters.userInterfaceLayoutDirection))
-        return false;
+        return std::nullopt;
     if (!decoder.decodeEnum(parameters.observedLayoutMilestones))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(parameters.overrideContentSecurityPolicy))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(parameters.cpuLimit))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(parameters.urlSchemeHandlers))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(parameters.iceCandidateFilteringEnabled))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(parameters.enumeratingAllNetworkInterfacesEnabled))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(parameters.userContentWorlds))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.userScripts))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.userStyleSheets))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(parameters.messageHandlers))
-        return false;
+        return std::nullopt;
 #if ENABLE(CONTENT_EXTENSIONS)
     if (!decoder.decode(parameters.contentRuleLists))
-        return false;
+        return std::nullopt;
 #endif
-    return true;
+    return WTFMove(parameters);
 }
 
 } // namespace WebKit

@@ -1,3 +1,31 @@
+2017-08-29  Alex Christensen  <achristensen@webkit.org>
+
+        Begin transition to modern IPC decoding
+        https://bugs.webkit.org/show_bug.cgi?id=176043
+
+        Reviewed by JF Bastien.
+
+        Right now, if a class is decoded from IPC we must have a default constructor.
+        This prevents us from having Ref or C++ references in such types, which is cluttering up our code.
+        This is because IPC::decode makes a default-constructed object, fills it, and returns a bool indicating success.
+        Making IPC::decode instead return a std::optional makes it so we do not need to call an empty constructor.
+        This could also enable us to add IPC::Decoder::operator>> and other fun things!
+        I also modernized two arbitrary classes, WebsitePolicies and WebPageGroupData with more to come.
+        There's no good way to update the actual generated IPC code until each class has been transitioned.
+
+        * Platform/IPC/ArgumentCoder.h:
+        (IPC::ArgumentCoder::decode):
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::decode):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::decode):
+        * Shared/WebPageGroupData.h:
+        * Shared/WebsitePolicies.h:
+        (WebKit::WebsitePolicies::decode):
+
 2017-08-29  Youenn Fablet  <youenn@apple.com>
 
         Setting the cache storage engine root path according the session WebsiteDataStore

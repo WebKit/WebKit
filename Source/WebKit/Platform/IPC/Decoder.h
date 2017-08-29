@@ -123,10 +123,17 @@ public:
         return bufferIsLargeEnoughToContain(alignof(T), numElements * sizeof(T));
     }
 
-    template<typename T>
-    auto decode(T& t) -> std::enable_if_t<!std::is_enum<T>::value, bool>
+    template<typename T, std::enable_if_t<!std::is_enum<T>::value && !UsesModernDecoder<T>::value>* = nullptr>
+    bool decode(T& t)
     {
         return ArgumentCoder<T>::decode(*this, t);
+    }
+
+    template<typename T, std::enable_if_t<UsesModernDecoder<T>::value>* = nullptr>
+    Decoder& operator>>(std::optional<T>& t)
+    {
+        t = ArgumentCoder<T>::decode(*this);
+        return *this;
     }
 
     bool removeAttachment(Attachment&);
