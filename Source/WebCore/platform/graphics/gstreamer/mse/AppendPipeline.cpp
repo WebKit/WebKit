@@ -1091,7 +1091,7 @@ void AppendPipeline::dispatchPendingDecryptionStructure()
 {
     ASSERT(m_decryptor);
     ASSERT(m_pendingDecryptionStructure);
-    ASSERT(m_appendState == KeyNegotiation);
+    ASSERT(m_appendState == AppendState::KeyNegotiation);
     GST_TRACE("dispatching key to append pipeline %p", this);
 
     // Release the m_pendingDecryptionStructure object since

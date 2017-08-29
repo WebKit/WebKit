@@ -1,3 +1,12 @@
+2017-08-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE debug build fix.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::dispatchPendingDecryptionStructure):
+        AppendState is an enum class, enum values have to be accessed
+        using scope resolution.
+
 2017-08-28  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Upstream WKGetWebDefaultCFStringEncoding()
