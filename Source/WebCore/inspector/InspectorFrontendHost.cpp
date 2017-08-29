@@ -384,7 +384,7 @@ void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem
     ASSERT(m_frontendPage);
 
     auto& state = *execStateFromPage(debuggerWorld(), m_frontendPage);
-    auto value = state.lexicalGlobalObject()->get(&state, JSC::Identifier::fromString(&state.vm(), "InspectorFrontendHost"));
+    auto value = state.lexicalGlobalObject()->get(&state, JSC::Identifier::fromString(&state.vm(), "InspectorFrontendAPI"));
     ASSERT(value);
     ASSERT(value.isObject());
     auto* frontendAPIObject = asObject(value);
