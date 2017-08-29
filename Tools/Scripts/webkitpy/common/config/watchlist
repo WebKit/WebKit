@@ -396,6 +396,7 @@
         "webkitperl": [ "dbates@webkit.org" ],
         "webkitpy": [ "glenn@skynav.com" ],
         "WebCryptoAPI": [ "jiewen_tan@apple.com" ],
+        "WebRTC": [ "eric.carlson@apple.com" ],
     },
     "MESSAGE_RULES": {
         "GtkWebKit2PublicAPI": [ "Thanks for the patch. If this patch contains new public API "

@@ -1,3 +1,9 @@
+2017-08-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed, update my watchlist filters.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2017-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. REGRESSION(r221219): Fix unit tests using resources from WebKit directory.
