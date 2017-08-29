@@ -211,4 +211,24 @@
     <branch repo="github.com" module="Igalia/dyz" tag="0880252bac243add39ea54c0797ceb167d775ce9"/>
   </autotools>
 
+  <meson id="graphene">
+    <branch repo="github.com"
+            module="ebassi/graphene.git"
+            tag="1.6.0"/>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </meson>
+
+  <distutils id="meson" python3="1">
+    <branch repo="github-tarball"
+            version="0.42.0"
+            module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
+            checkoutdir="meson-${version}"
+            hash="sha256:a74c7387a3dd8171e931bcd948355f7f9529368eae72c3c22a9beef6c2e73498"/>
+    <dependencies>
+      <dep package="ninja"/>
+    </dependencies>
+  </distutils>
+
 </moduleset>

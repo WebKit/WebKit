@@ -147,6 +147,15 @@
             hash="sha256:455eb90c09ed1b71f95f3ebfe1c904c206727e0eeb34fc94e5aaf944663a820c"/>
   </autotools>
 
+  <meson id="graphene">
+    <branch repo="github.com"
+            module="ebassi/graphene.git"
+            tag="1.6.0"/>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </meson>
+
   <autotools id="librsvg" autogen-sh="configure"
              autogenargs="--disable-introspection --enable-pixbuf-loader --disable-gtk-theme">
     <if condition-set="macos">
@@ -508,5 +517,16 @@
             repo="freedesktop.org"
             hash="sha256:74da2798728e79c3aedfffa268d8fe811c3766ca3708309c0dc45502be137da1"/>
   </autotools>
+
+  <distutils id="meson" python3="1">
+    <branch repo="github-tarball"
+            version="0.42.0"
+            module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
+            checkoutdir="meson-${version}"
+            hash="sha256:a74c7387a3dd8171e931bcd948355f7f9529368eae72c3c22a9beef6c2e73498"/>
+    <dependencies>
+      <dep package="ninja"/>
+    </dependencies>
+  </distutils>
 
 </moduleset>

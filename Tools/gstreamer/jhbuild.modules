@@ -83,6 +83,7 @@
 
   <autotools id="gst-plugins-bad" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc --disable-introspection">
     <dependencies>
+      <dep package="graphene"/>
       <dep package="gst-plugins-base"/>
       <dep package="openh264"/>
     </dependencies>
