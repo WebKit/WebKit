@@ -128,17 +128,29 @@ function test()
         name: "Array.prototype.remove",
         test() {
             let arr1 = [1, 2, 3, 1];
-            arr1.remove(1, true);
-            // Note: Array.prototype.remove starts searching from the end of the array.
-            InspectorTest.expectShallowEqual(arr1, [1, 2, 3], "remove with onlyFirst equal to true should only remove the first matching value.");
+            arr1.remove(1);
+            InspectorTest.expectShallowEqual(arr1, [2, 3, 1], "remove should only remove the first matching value.");
 
-            let arr2 = [1, 2, 3, 1];
-            arr2.remove(1, false);
-            InspectorTest.expectShallowEqual(arr2, [2, 3], "remove with onlyFirst equal to false should remove all matching values.");
+            let arr2 = ["1", "2", 3, 1];
+            arr2.remove("1");
+            arr2.remove(2);
+            InspectorTest.expectShallowEqual(arr2, ["2", 3, 1], "remove should only remove values that strictly match.");
 
-            let arr3 = [1, 2, 3, 1];
-            arr3.remove(1);
-            InspectorTest.expectShallowEqual(arr3, [2, 3], "remove with onlyFirst unspecified should remove all matching values.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Array.prototype.removeAll",
+        test() {
+            let arr1 = [1, 2, 3, 1];
+            arr1.removeAll(1);
+            InspectorTest.expectShallowEqual(arr1, [2, 3], "removeAll should remove all matching values.");
+
+            let arr2 = ["1", "2", 3, 1];
+            arr2.removeAll("1");
+            arr2.removeAll(2);
+            InspectorTest.expectShallowEqual(arr2, ["2", 3, 1], "removeAll should only remove values that strictly match.");
 
             return true;
         }

@@ -385,8 +385,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         console.assert(contentView.parentContainer === this);
 
         let tombstoneContentViewContainers = this._tombstoneContentViewContainersForContentView(contentView);
-        const onlyFirst = false;
-        tombstoneContentViewContainers.remove(this, onlyFirst);
+        tombstoneContentViewContainers.removeAll(this);
 
         for (let entry of this._backForwardList) {
             if (entry.contentView !== contentView)
@@ -403,8 +402,7 @@ WI.ContentViewContainer = class ContentViewContainer extends WI.View
         // There may be other back/forward entries that need a reference.
         if (isTombstone) {
             let tombstoneContentViewContainers = this._tombstoneContentViewContainersForContentView(contentView);
-            const onlyFirst = true;
-            tombstoneContentViewContainers.remove(this, onlyFirst);
+            tombstoneContentViewContainers.remove(this);
             return;
         }
 

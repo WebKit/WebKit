@@ -872,9 +872,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             action.type = WI.BreakpointAction.Type.Evaluate;
         }
 
-        const onlyFirst = true;
         for (let invalidAction of invalidActions)
-            options.actions.remove(invalidAction, onlyFirst);
+            options.actions.remove(invalidAction);
 
         return options;
     }

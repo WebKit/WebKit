@@ -50,9 +50,12 @@ PASS: lastValue of a nonempty array should be the last value.
 PASS: lastValue of an empty array should be undefined.
 
 -- Running test case: Array.prototype.remove
-PASS: remove with onlyFirst equal to true should only remove the first matching value.
-PASS: remove with onlyFirst equal to false should remove all matching values.
-PASS: remove with onlyFirst unspecified should remove all matching values.
+PASS: remove should only remove the first matching value.
+PASS: remove should only remove values that strictly match.
+
+-- Running test case: Array.prototype.removeAll
+PASS: removeAll should remove all matching values.
+PASS: removeAll should only remove values that strictly match.
 
 -- Running test case: Array.prototype.toggleIncludes
 PASS: toggleIncludes of an existing item with force true should have no effect.

@@ -494,14 +494,24 @@ Object.defineProperty(Array.prototype, "lastValue",
 
 Object.defineProperty(Array.prototype, "remove",
 {
-    value: function(value, onlyFirst)
+    value(value)
     {
-        for (var i = this.length - 1; i >= 0; --i) {
+        for (let i = 0; i < this.length; ++i) {
             if (this[i] === value) {
                 this.splice(i, 1);
-                if (onlyFirst)
-                    return;
+                return;
             }
+        }
+    }
+});
+
+Object.defineProperty(Array.prototype, "removeAll",
+{
+    value(value)
+    {
+        for (let i = this.length - 1; i >= 0; --i) {
+            if (this[i] === value)
+                this.splice(i, 1);
         }
     }
 });

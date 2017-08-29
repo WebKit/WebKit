@@ -120,12 +120,13 @@ WI.View = class View extends WI.Object
         console.assert(view instanceof WI.View);
         console.assert(view.element.parentNode === this._element, "Subview DOM element must be a child of the parent view element.");
 
-        if (!this._subviews.includes(view)) {
+        let index = this._subviews.lastIndexOf(view);
+        if (index === -1) {
             console.assert(false, "Cannot remove view which isn't a subview.", view);
             return;
         }
 
-        this._subviews.remove(view, true);
+        this._subviews.splice(index, 1);
         this._element.removeChild(view.element);
 
         view.didMoveToParent(null);

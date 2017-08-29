@@ -1,3 +1,26 @@
+2017-08-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Optimize View.prototype.removeSubview
+        https://bugs.webkit.org/show_bug.cgi?id=176041
+
+        Reviewed by Matt Baker.
+
+        Look up a subview in an array only once, not twice.
+
+        * UserInterface/Base/Utilities.js:
+        (Array.prototype.removeAll):
+        (Array.prototype.remove):
+        Split Array.propotype.remove(value, onlyFirst) into Array.propotype.removeAll(value) and
+        Array.propotype.remove(value).
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype._debuggerBreakpointOptions):
+        * UserInterface/Views/ContentViewContainer.js:
+        (WI.ContentViewContainer.prototype._clearTombstonesForContentView):
+        (WI.ContentViewContainer.prototype._disassociateFromContentView):
+        * UserInterface/Views/View.js:
+        (WI.View.prototype.removeSubview):
+
 2017-08-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove some unused DataGrid code
