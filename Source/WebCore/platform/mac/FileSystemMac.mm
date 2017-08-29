@@ -52,7 +52,7 @@ bool deleteEmptyDirectory(const String& path)
 void setMetadataURL(const String& path, const String& metadataURLString, const String& referrer)
 {
     String urlString;
-    if (NSURL *url = URLWithUserTypedString(urlString, nil))
+    if (NSURL *url = URLWithUserTypedString(metadataURLString, nil))
         urlString = userVisibleString(URLByRemovingUserInfo(url));
     else
         urlString = metadataURLString;

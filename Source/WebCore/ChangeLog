@@ -1,3 +1,21 @@
+2017-08-29  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r215290): "Where From" metadata is empty when dragging an image out of Safari
+        https://bugs.webkit.org/show_bug.cgi?id=176068
+
+        Reviewed by Wenson Hsieh.
+
+        If you drag an image out of Safari, drop it on the Desktop, and open "Get Info", there is a
+        "Where from:" field under "More Info" that should list the image's URL. After r215290, this
+        field is blank due to a mixup with the string passed to URLWithUserTypedString().
+
+        Fix this by passing metadataURLString to URLWithUserTypedString() instead of urlString.
+
+        Not possible to reliably test this since WebKit adds metadata on a global concurrent queue.
+
+        * platform/mac/FileSystemMac.mm:
+        (WebCore::setMetadataURL):
+
 2017-08-29  Youenn Fablet  <youenn@apple.com>
 
         CacheStorage does not need to sort its caches
