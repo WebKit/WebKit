@@ -1,3 +1,14 @@
+2017-08-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Avoid using autogen for JHBuild modules, trying to fix the EWS
+
+        Unreviewed build fix.
+
+        This also makes the JHBuild process faster, because there are less
+        modules which will trigger slow, ancient Perl and M4 based tooling.
+
+        * wpe/jhbuild.modules:
+
 2017-08-29  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use find_package for libxml2 and libxstl

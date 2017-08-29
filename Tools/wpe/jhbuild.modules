@@ -69,7 +69,8 @@
     </branch>
   </autotools>
 
-  <autotools id="glib-networking">
+  <autotools id="glib-networking"
+             autogen-sh="configure">
     <dependencies>
       <dep package="glib"/>
     </dependencies>
@@ -79,6 +80,7 @@
   </autotools>
 
   <autotools id="libsoup"
+             autogen-sh="configure"
              autogenargs="--without-gnome --disable-introspection">
     <dependencies>
       <dep package="glib-networking"/>
@@ -141,7 +143,9 @@
             hash="sha256:3dfed13b8060eadabf0a4945c7045b7793cc7e3e910e748a8bb0f0dc3e794904"/>
   </autotools>
 
-  <autotools id="cairo" autogenargs="--enable-egl=yes --enable-glesv2">
+  <autotools id="cairo"
+             autogen-sh="configure"
+             autogenargs="--enable-egl=yes --enable-glesv2">
     <dependencies>
       <dep package="glib"/>
       <dep package="fontconfig"/>
@@ -154,13 +158,16 @@
     </branch>
   </autotools>
 
-  <autotools id="xkbcommon">
+  <autotools id="xkbcommon"
+             autogen-sh="configure">
     <branch module="download/libxkbcommon-0.5.0.tar.xz" version="0.5.0"
             repo="xkbcommon.org"
             hash="sha1:7127993bfb69e13cdff25fb8b3c8f26ce6be5bfa"/>
   </autotools>
 
-  <autotools id="wayland" autogenargs="--disable-documentation">
+  <autotools id="wayland"
+             autogen-sh="configure"
+             autogenargs="--disable-documentation">
     <branch module="releases/wayland-1.9.0.tar.xz" version="1.9.0"
             repo="wayland.freedesktop.org"
             hash="sha256:9c8770720aa0034479735f58a4dc4ca9b172ecfede28f5134312e135b7301efa"/>
