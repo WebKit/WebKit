@@ -65,6 +65,11 @@ void WebSWServerConnection::rejectJobInClient(uint64_t jobIdentifier, const Exce
     send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
 }
 
+void WebSWServerConnection::resolveJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData)
+{
+    send(Messages::WebSWClientConnection::JobResolvedInServer(jobIdentifier, registrationData));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

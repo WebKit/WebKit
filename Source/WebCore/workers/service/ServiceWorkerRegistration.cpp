@@ -30,6 +30,13 @@
 
 namespace WebCore {
 
+ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& context, const ServiceWorkerRegistrationData& registrationData)
+    : ActiveDOMObject(&context)
+    , m_registrationData(registrationData)
+{
+    suspendIfNeeded();
+}
+
 ServiceWorker* ServiceWorkerRegistration::installing()
 {
     return nullptr;

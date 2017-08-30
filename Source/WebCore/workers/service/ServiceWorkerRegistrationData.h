@@ -27,55 +27,38 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ActiveDOMObject.h"
-#include "EventTarget.h"
-#include "JSDOMPromiseDeferred.h"
-#include "ServiceWorkerRegistrationData.h"
+#include "ServiceWorkerRegistrationKey.h"
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class ServiceWorker;
+struct ServiceWorkerRegistrationData {
+    ServiceWorkerRegistrationKey key;
+    uint64_t identifier;
 
-class ServiceWorkerRegistration final : public EventTargetWithInlineData, public ActiveDOMObject {
-public:
-    enum class UpdateViaCache {
-        Imports,
-        All,
-        None,
-    };
+    ServiceWorkerRegistrationData isolatedCopy() const;
 
-    static Ref<ServiceWorkerRegistration> create(ScriptExecutionContext& context, const ServiceWorkerRegistrationData& data)
-    {
-        return adoptRef(*new ServiceWorkerRegistration(context, data));
-    }
-
-    virtual ~ServiceWorkerRegistration() = default;
-
-    ServiceWorker* installing();
-    ServiceWorker* waiting();
-    ServiceWorker* active();
-
-    const String& scope() const;
-    UpdateViaCache updateViaCache() const;
-
-    void update(Ref<DeferredPromise>&&);
-    void unregister(Ref<DeferredPromise>&&);
-
-private:
-    ServiceWorkerRegistration(ScriptExecutionContext&, const ServiceWorkerRegistrationData&);
-
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-
-    const char* activeDOMObjectName() const { return "ServiceWorkerRegistration"; }
-    bool canSuspendForDocumentSuspension() const { return false; }
-
-    ServiceWorkerRegistrationData m_registrationData;
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, ServiceWorkerRegistrationData&);
 };
 
-} // namespace WebCore
+
+template<class Encoder>
+void ServiceWorkerRegistrationData::encode(Encoder& encoder) const
+{
+    encoder << key << identifier;
+}
+
+template<class Decoder>
+bool ServiceWorkerRegistrationData::decode(Decoder& decoder, ServiceWorkerRegistrationData& data)
+{
+    if (!decoder.decode(data.key))
+        return false;
+    if (!decoder.decodeEnum(data.identifier))
+        return false;
+
+    return true;
+}
+
+} // namespace WTF
 
 #endif // ENABLE(SERVICE_WORKER)

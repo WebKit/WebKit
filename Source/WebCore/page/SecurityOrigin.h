@@ -234,6 +234,8 @@ private:
     bool m_isPotentiallyTrustworthy { false };
 };
 
+bool shouldTreatAsPotentiallyTrustworthy(const URL&);
+
 // Returns true if the Origin header values serialized from these two origins would be the same.
 bool originsMatch(const SecurityOrigin&, const SecurityOrigin&);
 bool originsMatch(const SecurityOrigin*, const SecurityOrigin*);

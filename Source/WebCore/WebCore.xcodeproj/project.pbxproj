@@ -2301,6 +2301,10 @@
 		517A53251F4B905500DCDC0A /* ServiceWorkerJobData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A53241F4B904A00DCDC0A /* ServiceWorkerJobData.cpp */; };
 		517A53281F4B90B900DCDC0A /* ServiceWorkerRegistrationKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A53271F4B90B200DCDC0A /* ServiceWorkerRegistrationKey.cpp */; };
 		517A53291F4B90B900DCDC0A /* ServiceWorkerRegistrationKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53261F4B90B200DCDC0A /* ServiceWorkerRegistrationKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517A53451F50C17F00DCDC0A /* SWServerWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A53431F50C16100DCDC0A /* SWServerWorker.cpp */; };
+		517A53461F50C17F00DCDC0A /* SWServerWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53421F50C16100DCDC0A /* SWServerWorker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517A534E1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A534B1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.cpp */; };
+		517A534F1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A534C1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A63C31B74318700E7DCDC /* KeyedDecoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */; };
 		517A63C41B74318B00E7DCDC /* KeyedEncoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */; };
 		517A63C51B74318F00E7DCDC /* KeyedDecoderCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10122,6 +10126,10 @@
 		517A53241F4B904A00DCDC0A /* ServiceWorkerJobData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerJobData.cpp; sourceTree = "<group>"; };
 		517A53261F4B90B200DCDC0A /* ServiceWorkerRegistrationKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistrationKey.h; sourceTree = "<group>"; };
 		517A53271F4B90B200DCDC0A /* ServiceWorkerRegistrationKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerRegistrationKey.cpp; sourceTree = "<group>"; };
+		517A53421F50C16100DCDC0A /* SWServerWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWServerWorker.h; sourceTree = "<group>"; };
+		517A53431F50C16100DCDC0A /* SWServerWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWServerWorker.cpp; sourceTree = "<group>"; };
+		517A534B1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerRegistrationData.cpp; sourceTree = "<group>"; };
+		517A534C1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerRegistrationData.h; sourceTree = "<group>"; };
 		517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedDecoderCF.cpp; sourceTree = "<group>"; };
 		517A63C01B74317E00E7DCDC /* KeyedDecoderCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedDecoderCF.h; sourceTree = "<group>"; };
 		517A63C11B74317E00E7DCDC /* KeyedEncoderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyedEncoderCF.cpp; sourceTree = "<group>"; };
@@ -18758,6 +18766,8 @@
 				517A52EE1F47535900DCDC0A /* SWServer.h */,
 				51F645951F4A686100B54DED /* SWServerRegistration.cpp */,
 				51F645941F4A684F00B54DED /* SWServerRegistration.h */,
+				517A53431F50C16100DCDC0A /* SWServerWorker.cpp */,
+				517A53421F50C16100DCDC0A /* SWServerWorker.h */,
 			);
 			path = server;
 			sourceTree = "<group>";
@@ -18863,6 +18873,8 @@
 				51F1754D1F3EBC0C00C74950 /* ServiceWorkerRegistration.cpp */,
 				51F1754C1F3EBC0C00C74950 /* ServiceWorkerRegistration.h */,
 				51F1754B1F3EBC0C00C74950 /* ServiceWorkerRegistration.idl */,
+				517A534B1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.cpp */,
+				517A534C1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.h */,
 				517A53271F4B90B200DCDC0A /* ServiceWorkerRegistrationKey.cpp */,
 				517A53261F4B90B200DCDC0A /* ServiceWorkerRegistrationKey.h */,
 				51F645A01F4BF51600B54DED /* ServiceWorkerRegistrationOptions.cpp */,
@@ -29709,6 +29721,7 @@
 				51F6456A1F4539C000B54DED /* ServiceWorkerJobType.h in Headers */,
 				51F175661F3EBC8300C74950 /* ServiceWorkerProvider.h in Headers */,
 				51F175681F3EBC8300C74950 /* ServiceWorkerRegistration.h in Headers */,
+				517A534F1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.h in Headers */,
 				517A53291F4B90B900DCDC0A /* ServiceWorkerRegistrationKey.h in Headers */,
 				51F175691F3EBC8300C74950 /* ServiceWorkerRegistrationOptions.h in Headers */,
 				51F1756C1F3EBC8300C74950 /* ServiceWorkerUpdateViaCache.h in Headers */,
@@ -30130,6 +30143,7 @@
 				517A531D1F4B53B100DCDC0A /* SWClientConnection.h in Headers */,
 				517A52F01F47535B00DCDC0A /* SWServer.h in Headers */,
 				51F645971F4A686F00B54DED /* SWServerRegistration.h in Headers */,
+				517A53461F50C17F00DCDC0A /* SWServerWorker.h in Headers */,
 				E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */,
 				26FAE4CF1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.h in Headers */,
 				0F03C0741884695E00A5F8CA /* SystemMemory.h in Headers */,
@@ -33600,6 +33614,7 @@
 				517A53251F4B905500DCDC0A /* ServiceWorkerJobData.cpp in Sources */,
 				51F175651F3EBC8300C74950 /* ServiceWorkerProvider.cpp in Sources */,
 				51F175671F3EBC8300C74950 /* ServiceWorkerRegistration.cpp in Sources */,
+				517A534E1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.cpp in Sources */,
 				517A53281F4B90B900DCDC0A /* ServiceWorkerRegistrationKey.cpp in Sources */,
 				51F645A21F4BF53C00B54DED /* ServiceWorkerRegistrationOptions.cpp in Sources */,
 				93309E0F099E64920056E581 /* SetNodeAttributeCommand.cpp in Sources */,
@@ -33907,6 +33922,7 @@
 				517A531C1F4B53B100DCDC0A /* SWClientConnection.cpp in Sources */,
 				517A52F11F4754E700DCDC0A /* SWServer.cpp in Sources */,
 				51F645961F4A686F00B54DED /* SWServerRegistration.cpp in Sources */,
+				517A53451F50C17F00DCDC0A /* SWServerWorker.cpp in Sources */,
 				E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */,
 				E180811616FCF9CB00B80D07 /* SynchronousLoaderClient.mm in Sources */,
 				442ABCD617D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp in Sources */,

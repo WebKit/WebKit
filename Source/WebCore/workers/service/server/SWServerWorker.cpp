@@ -23,58 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SWServerWorker.h"
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ActiveDOMObject.h"
-#include "EventTarget.h"
-#include "JSDOMPromiseDeferred.h"
-#include "ServiceWorkerRegistrationData.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class ServiceWorker;
+SWServerWorker::SWServerWorker(const URL& url)
+    : m_scriptURL(url)
+{
+    ASSERT(!isMainThread());
+}
 
-class ServiceWorkerRegistration final : public EventTargetWithInlineData, public ActiveDOMObject {
-public:
-    enum class UpdateViaCache {
-        Imports,
-        All,
-        None,
-    };
-
-    static Ref<ServiceWorkerRegistration> create(ScriptExecutionContext& context, const ServiceWorkerRegistrationData& data)
-    {
-        return adoptRef(*new ServiceWorkerRegistration(context, data));
-    }
-
-    virtual ~ServiceWorkerRegistration() = default;
-
-    ServiceWorker* installing();
-    ServiceWorker* waiting();
-    ServiceWorker* active();
-
-    const String& scope() const;
-    UpdateViaCache updateViaCache() const;
-
-    void update(Ref<DeferredPromise>&&);
-    void unregister(Ref<DeferredPromise>&&);
-
-private:
-    ServiceWorkerRegistration(ScriptExecutionContext&, const ServiceWorkerRegistrationData&);
-
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-
-    const char* activeDOMObjectName() const { return "ServiceWorkerRegistration"; }
-    bool canSuspendForDocumentSuspension() const { return false; }
-
-    ServiceWorkerRegistrationData m_registrationData;
-};
+SWServerWorker::~SWServerWorker()
+{
+    ASSERT(!isMainThread());
+}
 
 } // namespace WebCore
 

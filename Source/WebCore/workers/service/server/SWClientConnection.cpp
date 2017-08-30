@@ -43,7 +43,7 @@ SWClientConnection::~SWClientConnection()
 
 void SWClientConnection::scheduleJob(ServiceWorkerJob& job)
 {
-    auto addResult = m_scheduledJobs.add(job.identifier(), &job);
+    auto addResult = m_scheduledJobs.add(job.data().identifier(), &job);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     scheduleJobInServer(job.data());
@@ -58,6 +58,17 @@ void SWClientConnection::jobRejectedInServer(uint64_t jobIdentifier, const Excep
     }
 
     job->failedWithException(exceptionData.toException());
+}
+
+void SWClientConnection::jobResolvedInServer(uint64_t jobIdentifier, const ServiceWorkerRegistrationData& registrationData)
+{
+    auto job = m_scheduledJobs.take(jobIdentifier);
+    if (!job) {
+        LOG_ERROR("Job %" PRIu64 " resolved in server, but was not found", jobIdentifier);
+        return;
+    }
+
+    job->resolvedWithRegistration(registrationData);
 }
 
 } // namespace WebCore

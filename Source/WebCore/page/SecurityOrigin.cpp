@@ -123,7 +123,7 @@ static bool isLoopbackIPAddress(const URL& url)
 }
 
 // https://w3c.github.io/webappsec-secure-contexts/#is-origin-trustworthy (Editor's Draft, 17 November 2016)
-static bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
+bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
 {
     if (!url.isValid())
         return false;

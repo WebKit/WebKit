@@ -1,3 +1,15 @@
+2017-08-30  Brady Eidson  <beidson@apple.com>
+
+        Implement all of "Register" right up until where the script is fetched.
+        https://bugs.webkit.org/show_bug.cgi?id=176082
+
+        Reviewed by Andy Estes.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::resolveJobInClient):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
 2017-08-30  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream Accessibility-related WebKitSystemInterface functions

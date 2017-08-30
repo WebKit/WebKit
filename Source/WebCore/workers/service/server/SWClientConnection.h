@@ -34,6 +34,7 @@
 namespace WebCore {
 
 struct ExceptionData;
+struct ServiceWorkerRegistrationData;
 
 class SWClientConnection : public ThreadSafeRefCounted<SWClientConnection> {
 public:
@@ -46,6 +47,7 @@ public:
 
 protected:
     WEBCORE_EXPORT void jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData&);
+    WEBCORE_EXPORT void jobResolvedInServer(uint64_t jobIdentifier, const ServiceWorkerRegistrationData&);
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;

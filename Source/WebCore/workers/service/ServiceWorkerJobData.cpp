@@ -47,9 +47,7 @@ ServiceWorkerJobData::ServiceWorkerJobData(const ServiceWorkerJobData& other)
     topOrigin = other.topOrigin;
     scopeURL = other.scopeURL;
     type = other.type;
-
-    if (other.registrationOptions)
-        registrationOptions = std::make_unique<RegistrationOptions>(*other.registrationOptions);
+    registrationOptions = other.registrationOptions;
 }
 
 ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
@@ -68,9 +66,8 @@ ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
     result.clientCreationURL = clientCreationURL.isolatedCopy();
     result.topOrigin = topOrigin.isolatedCopy();
     result.scopeURL = scopeURL.isolatedCopy();
+    result.registrationOptions = registrationOptions.isolatedCopy();
 
-    if (registrationOptions)
-        result.registrationOptions = std::make_unique<RegistrationOptions>(registrationOptions->isolatedCopy());
     return result;
 }
 

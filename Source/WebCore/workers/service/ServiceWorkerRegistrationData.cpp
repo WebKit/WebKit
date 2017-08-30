@@ -24,41 +24,20 @@
  */
 
 #include "config.h"
-#include "ServiceWorkerRegistrationKey.h"
+#include "ServiceWorkerRegistrationData.h"
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "URLHash.h"
-
 namespace WebCore {
 
-ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::emptyKey()
+ServiceWorkerRegistrationData ServiceWorkerRegistrationData::isolatedCopy() const
 {
-    return { };
-}
-
-unsigned ServiceWorkerRegistrationKey::hash() const
-{
-    unsigned hashes[2];
-    hashes[0] = URLHash::hash(clientCreationURL);
-    hashes[1] = SecurityOriginDataHash::hash(topOrigin);
-
-    return StringHasher::hashMemory(hashes, sizeof(hashes));
-}
-
-bool ServiceWorkerRegistrationKey::operator==(const ServiceWorkerRegistrationKey& other) const
-{
-    return clientCreationURL == other.clientCreationURL && topOrigin == other.topOrigin;
-}
-
-ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() const
-{
-    ServiceWorkerRegistrationKey result;
-    result.clientCreationURL = clientCreationURL.isolatedCopy();
-    result.topOrigin = topOrigin.isolatedCopy();
+    ServiceWorkerRegistrationData result;
+    result.key = key.isolatedCopy();
+    result.identifier = identifier;
     return result;
 }
 
-} // namespace WebCore
+} // namespace WTF
 
 #endif // ENABLE(SERVICE_WORKER)

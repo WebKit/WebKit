@@ -50,6 +50,7 @@ public:
 private:
     // Implement SWServer::Connection
     void rejectJobInClient(uint64_t jobIdentifier, const WebCore::ExceptionData&) final;
+    void resolveJobInClient(uint64_t jobIdentifier, const WebCore::ServiceWorkerRegistrationData&) final;
 
     IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
     uint64_t messageSenderDestinationID() final { return identifier(); }

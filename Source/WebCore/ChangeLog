@@ -1,3 +1,104 @@
+2017-08-30  Brady Eidson  <beidson@apple.com>
+
+        Implement all of "Register" right up until where the script is fetched.
+        https://bugs.webkit.org/show_bug.cgi?id=176082
+
+        Reviewed by Andy Estes.
+
+        Test: http/tests/workers/service/basic-register-exceptions.html
+
+        This patch implements every detail of the "Register" and "Update" algorithms right up to
+        where we would actually fetch the service worker script file.
+
+        It also includes miscellaneous refactoring and cleanup along the way.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldTreatAsPotentiallyTrustworthy): Expose in the header for other files to use.
+        * page/SecurityOrigin.h:
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration): Add some more exception cases from the spec.
+        (WebCore::ServiceWorkerContainer::scheduleJob): Use the correct job identifier.
+        (WebCore::ServiceWorkerContainer::jobFailedWithException):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::jobDidFinish):
+        * workers/service/ServiceWorkerContainer.h:
+
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::ServiceWorkerJob):
+        (WebCore::ServiceWorkerJob::failedWithException): Call through to the client to handle the failure.
+        (WebCore::ServiceWorkerJob::resolvedWithRegistration): Call through to the client to handle success.
+        * workers/service/ServiceWorkerJob.h:
+        (WebCore::ServiceWorkerJob::promise):
+        (WebCore::ServiceWorkerJob::identifier const): Deleted. Rely on the identifier from the JobData.
+
+        * workers/service/ServiceWorkerJobClient.h:
+
+        * workers/service/ServiceWorkerJobData.cpp:
+        (WebCore::ServiceWorkerJobData::ServiceWorkerJobData):
+        (WebCore::ServiceWorkerJobData::isolatedCopy const):
+        * workers/service/ServiceWorkerJobData.h:
+        (WebCore::ServiceWorkerJobData::identifier const):
+        (WebCore::ServiceWorkerJobData::encode const):
+        (WebCore::ServiceWorkerJobData::decode):
+        (WebCore::ServiceWorkerJobData::jobIdentifier const): Deleted.
+
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::ServiceWorkerRegistration): Make this class an ActiveDOMObject
+          both because it *is* an active DOM object and because we need to get at the ScriptExecutionContext.
+        * workers/service/ServiceWorkerRegistration.h:
+
+        Add a class to encapsulate everything about a registration for encode/decode/crossthread:
+        * workers/service/ServiceWorkerRegistrationData.cpp:
+        (WebCore::ServiceWorkerRegistrationData::isolatedCopy const):
+        * workers/service/ServiceWorkerRegistrationData.h: 
+        (WebCore::ServiceWorkerRegistrationData::encode const):
+        (WebCore::ServiceWorkerRegistrationData::decode):
+
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        (WebCore::ServiceWorkerRegistrationKey::isolatedCopy const):
+        * workers/service/ServiceWorkerRegistrationKey.h:
+        (WebCore::ServiceWorkerRegistrationKey::encode const):
+        (WebCore::ServiceWorkerRegistrationKey::decode):
+
+        * workers/service/server/SWClientConnection.cpp:
+        (WebCore::SWClientConnection::scheduleJob):
+        (WebCore::SWClientConnection::jobResolvedInServer):
+        * workers/service/server/SWClientConnection.h:
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::~SWServer):
+        (WebCore::SWServer::Connection::scheduleJobInServer):
+        (WebCore::SWServer::scheduleJob):
+        (WebCore::SWServer::rejectJob):
+        (WebCore::SWServer::resolveJob):
+        * workers/service/server/SWServer.h:
+
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::SWServerRegistration):
+        (WebCore::SWServerRegistration::startNextJob):
+        (WebCore::SWServerRegistration::isEmpty):
+        (WebCore::SWServerRegistration::getNewestWorker): Implement "Get Newest Worker" algorithm.
+        (WebCore::SWServerRegistration::runRegisterJob): Implement the rest of the "Register" algorithm.
+        (WebCore::SWServerRegistration::runUpdateJob): Implement every part of "Update" up to where we would fetch.
+        (WebCore::SWServerRegistration::rejectWithExceptionOnMainThread):
+        (WebCore::SWServerRegistration::resolveWithRegistrationOnMainThread):
+        (WebCore::SWServerRegistration::resolveCurrentJob):
+        (WebCore::SWServerRegistration::data const):
+        (WebCore::SWServerRegistration::performCurrentJob): Deleted.
+        * workers/service/server/SWServerRegistration.h:
+        (WebCore::SWServerRegistration::identifier const):
+
+        Add a stub class to represent "active service workers" in the SWServer:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::SWServerWorker):
+        (WebCore::SWServerWorker::~SWServerWorker):
+        * workers/service/server/SWServerWorker.h: 
+        (WebCore::SWServerWorker::scriptURL const):
+
 2017-08-30  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][WinCairo] Use find_package for libpng and libjpeg

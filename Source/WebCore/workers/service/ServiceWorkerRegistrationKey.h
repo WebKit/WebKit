@@ -40,7 +40,29 @@ struct ServiceWorkerRegistrationKey {
     unsigned hash() const;
 
     bool operator==(const ServiceWorkerRegistrationKey&) const;
+
+    ServiceWorkerRegistrationKey isolatedCopy() const;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, ServiceWorkerRegistrationKey&);
 };
+
+template<class Encoder>
+void ServiceWorkerRegistrationKey::encode(Encoder& encoder) const
+{
+    encoder << clientCreationURL << topOrigin;
+}
+
+template<class Decoder>
+bool ServiceWorkerRegistrationKey::decode(Decoder& decoder, ServiceWorkerRegistrationKey& key)
+{
+    if (!decoder.decode(key.clientCreationURL))
+        return false;
+    if (!decoder.decode(key.topOrigin))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 

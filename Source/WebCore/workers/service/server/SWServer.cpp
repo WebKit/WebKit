@@ -54,6 +54,9 @@ SWServer::~SWServer()
     RELEASE_ASSERT(m_connections.isEmpty());
     RELEASE_ASSERT(m_registrations.isEmpty());
 
+    ASSERT(m_taskQueue.isEmpty());
+    ASSERT(m_taskReplyQueue.isEmpty());
+
     // For a SWServer to be cleanly shut down its thread must have finished and gone away.
     // At this stage in development of the feature that actually never happens.
     // But once it does start happening, this ASSERT will catch us doing it wrong.
@@ -63,7 +66,7 @@ SWServer::~SWServer()
 
 void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
-    LOG(ServiceWorker, "Scheduling ServiceWorker job %" PRIu64 "-%" PRIu64 " in server", jobData.connectionIdentifier(), jobData.jobIdentifier());
+    LOG(ServiceWorker, "Scheduling ServiceWorker job %" PRIu64 "-%" PRIu64 " in server", jobData.connectionIdentifier(), jobData.identifier());
     ASSERT(identifier() == jobData.connectionIdentifier());
 
     m_server.scheduleJob(jobData);
@@ -82,7 +85,7 @@ void SWServer::scheduleJob(const ServiceWorkerJobData& jobData)
 
     auto result = m_registrations.add(jobData.registrationKey(), nullptr);
     if (result.isNewEntry)
-        result.iterator->value = std::make_unique<SWServerRegistration>(*this);
+        result.iterator->value = std::make_unique<SWServerRegistration>(*this, jobData.registrationKey());
 
     ASSERT(result.iterator->value);
 
@@ -91,12 +94,22 @@ void SWServer::scheduleJob(const ServiceWorkerJobData& jobData)
 
 void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionData& exceptionData)
 {
-    LOG(ServiceWorker, "Rejected ServiceWorker job %" PRIu64 "-%" PRIu64 " in server", jobData.connectionIdentifier(), jobData.jobIdentifier());
+    LOG(ServiceWorker, "Rejected ServiceWorker job %" PRIu64 "-%" PRIu64 " in server", jobData.connectionIdentifier(), jobData.identifier());
     auto* connection = m_connections.get(jobData.connectionIdentifier());
     if (!connection)
         return;
 
-    connection->rejectJobInClient(jobData.jobIdentifier(), exceptionData);
+    connection->rejectJobInClient(jobData.identifier(), exceptionData);
+}
+
+void SWServer::resolveJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationData& registrationData)
+{
+    LOG(ServiceWorker, "Resolved ServiceWorker job %" PRIu64 "-%" PRIu64 " in server with registration %" PRIu64, jobData.connectionIdentifier(), jobData.identifier(), registrationData.identifier);
+    auto* connection = m_connections.get(jobData.connectionIdentifier());
+    if (!connection)
+        return;
+
+    connection->resolveJobInClient(jobData.identifier(), registrationData);
 }
 
 void SWServer::taskThreadEntryPoint()

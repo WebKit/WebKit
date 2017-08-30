@@ -3019,12 +3019,14 @@ set(WebCore_SOURCES
     workers/service/ServiceWorkerJobData.cpp
     workers/service/ServiceWorkerProvider.cpp
     workers/service/ServiceWorkerRegistration.cpp
+    workers/service/ServiceWorkerRegistrationData.cpp
     workers/service/ServiceWorkerRegistrationKey.cpp
     workers/service/ServiceWorkerRegistrationOptions.cpp
 
     workers/service/server/SWClientConnection.cpp
     workers/service/server/SWServer.cpp
     workers/service/server/SWServerRegistration.cpp
+    workers/service/server/SWServerWorker.cpp
 
     xml/DOMParser.cpp
     xml/NativeXPathNSResolver.cpp

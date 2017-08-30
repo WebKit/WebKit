@@ -41,7 +41,7 @@ public:
     ServiceWorkerJobData(const ServiceWorkerJobData&);
     ServiceWorkerJobData() = default;
 
-    uint64_t jobIdentifier() const { return m_jobIdentifier; }
+    uint64_t identifier() const { return m_jobIdentifier; }
     uint64_t connectionIdentifier() const { return m_connectionIdentifier; }
 
     URL scriptURL;
@@ -50,7 +50,7 @@ public:
     URL scopeURL;
     ServiceWorkerJobType type;
 
-    std::unique_ptr<RegistrationOptions> registrationOptions;
+    RegistrationOptions registrationOptions;
 
     ServiceWorkerRegistrationKey registrationKey() const;
     ServiceWorkerJobData isolatedCopy() const;
@@ -70,8 +70,7 @@ void ServiceWorkerJobData::encode(Encoder& encoder) const
     encoder.encodeEnum(type);
     switch (type) {
     case ServiceWorkerJobType::Register:
-        RELEASE_ASSERT(registrationOptions);
-        encoder << *registrationOptions;
+        encoder << registrationOptions;
         break;
     }
 }
@@ -96,8 +95,7 @@ bool ServiceWorkerJobData::decode(Decoder& decoder, ServiceWorkerJobData& jobDat
 
     switch (jobData.type) {
     case ServiceWorkerJobType::Register:
-        jobData.registrationOptions = std::make_unique<RegistrationOptions>();
-        if (!decoder.decode(*jobData.registrationOptions))
+        if (!decoder.decode(jobData.registrationOptions))
             return false;
         break;
     }

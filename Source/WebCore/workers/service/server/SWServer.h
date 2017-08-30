@@ -42,6 +42,7 @@ namespace WebCore {
 
 class SWServerRegistration;
 struct ExceptionData;
+struct ServiceWorkerRegistrationData;
 
 class SWServer {
 public:
@@ -60,6 +61,7 @@ public:
 
     private:
         virtual void rejectJobInClient(uint64_t jobIdentifier, const ExceptionData&) = 0;
+        virtual void resolveJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData&) = 0;
 
         SWServer& m_server;
         uint64_t m_identifier;
@@ -70,7 +72,7 @@ public:
 
     void scheduleJob(const ServiceWorkerJobData&);
     void rejectJob(const ServiceWorkerJobData&, const ExceptionData&);
-
+    void resolveJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&);
     void postTask(CrossThreadTask&&);
     void postTaskReply(CrossThreadTask&&);
 

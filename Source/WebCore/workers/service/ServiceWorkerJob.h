@@ -39,6 +39,7 @@ namespace WebCore {
 class DeferredPromise;
 class Exception;
 enum class ServiceWorkerJobType;
+struct ServiceWorkerRegistrationData;
 
 class ServiceWorkerJob : public ThreadSafeRefCounted<ServiceWorkerJob> {
 public:
@@ -49,11 +50,11 @@ public:
 
     WEBCORE_EXPORT ~ServiceWorkerJob();
 
-    WEBCORE_EXPORT void failedWithException(const Exception&);
-
-    uint64_t identifier() const { return m_identifier; }
+    void failedWithException(const Exception&);
+    void resolvedWithRegistration(const ServiceWorkerRegistrationData&);
 
     ServiceWorkerJobData data() const { return m_jobData; }
+    DeferredPromise& promise() { return m_promise.get(); }
 
 private:
     ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);
@@ -63,7 +64,6 @@ private:
     Ref<DeferredPromise> m_promise;
 
     bool m_completed { false };
-    uint64_t m_identifier;
 
     Ref<RunLoop> m_runLoop { RunLoop::current() };
 
