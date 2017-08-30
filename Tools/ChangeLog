@@ -1,3 +1,536 @@
+2017-08-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Initial reference implementation scaffolding for ArrayLang
+        https://bugs.webkit.org/show_bug.cgi?id=175925
+
+        Reviewed by Myles Maxfield.
+        
+        This introduces a very rough scaffolding for an AST walk interpreter and type checker for an
+        experimental shader language we are calling ArrayLang for now.
+        
+        The idea is to have a strong core type system that includes generics and memory-safe pointers
+        and array references. Everything has deterministic semantics right up to the limit of what is
+        portably possible.
+        
+        This language will support generics. This will be valid:
+        
+        protocol Addable { Addable operator+(Addable, Addable); }
+        T add<T:Addable>(T a, T b) { return a + b; }
+        
+        This language will support pointers and array references. This will be valid:
+        
+        thread int^ foo() { int x; return \x; }
+        
+        Each variable behaves as if it was declared "static", with one copy per type instantiation.
+        Functions cannot recurse and there is no stack.
+        
+        Currently, this just tests that the following function can be parsed, checked, and called:
+        
+        int foo(int x) { return x + 1; }
+
+        * ArrayLangRI: Added.
+        * ArrayLangRI/ALSyntaxError.js: Added.
+        (ALSyntaxError):
+        * ArrayLangRI/ALTypeError.js: Added.
+        (ALTypeError):
+        * ArrayLangRI/AddressSpace.js: Added.
+        (isAddressSpace):
+        (validateAddressSpace):
+        * ArrayLangRI/All.js: Added.
+        * ArrayLangRI/ArrayRefType.js: Added.
+        (ArrayRefType.prototype.unifyImpl):
+        (ArrayRefType.prototype.toString):
+        (ArrayRefType):
+        * ArrayLangRI/ArrayType.js: Added.
+        (ArrayType):
+        (ArrayType.prototype.get origin):
+        (ArrayType.prototype.get elementType):
+        (ArrayType.prototype.get numElements):
+        (ArrayType.prototype.get isPrimitive):
+        (ArrayType.prototype.toString):
+        (ArrayType.prototype.get size):
+        (ArrayType.prototype.unifyImpl):
+        * ArrayLangRI/Assignment.js: Added.
+        (Assignment):
+        (Assignment.prototype.get lhs):
+        (Assignment.prototype.get rhs):
+        (Assignment.prototype.toString):
+        * ArrayLangRI/Block.js: Added.
+        (Block):
+        (Block.prototype.get origin):
+        (Block.prototype.add):
+        (Block.prototype.get statements):
+        (Block.prototype.toString):
+        * ArrayLangRI/CallAssignment.js: Added.
+        (CallAssignment):
+        (CallAssignment.prototype.get name):
+        (CallAssignment.prototype.get lhs):
+        (CallAssignment.prototype.get rhs):
+        (CallAssignment.prototype.toString):
+        * ArrayLangRI/CallExpression.js: Added.
+        (CallExpression):
+        (CallExpression.prototype.get name):
+        (CallExpression.prototype.get typeArguments):
+        (CallExpression.prototype.get argumentList):
+        (CallExpression.prototype.toString):
+        * ArrayLangRI/CallFunction.js: Added.
+        (callFunctionByRef):
+        (callFunction):
+        * ArrayLangRI/Check.js: Added.
+        (check):
+        * ArrayLangRI/Checker.js: Added.
+        (Checker):
+        (Checker.prototype.visitProgram):
+        (Checker.prototype.visitProtocolDecl.NoticeTypeVariable.prototype.visitTypeRef):
+        (Checker.prototype.visitProtocolDecl.NoticeTypeVariable.prototype.visitVariableRef):
+        (Checker.prototype.visitProtocolDecl.NoticeTypeVariable):
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * ArrayLangRI/CommaExpression.js: Added.
+        (CommaExpression):
+        (CommaExpression.prototype.get list):
+        (CommaExpression.prototype.toString):
+        * ArrayLangRI/ConstexprTypeParameter.js: Added.
+        (ConstexprTypeParameter):
+        (ConstexprTypeParameter.prototype.get name):
+        (ConstexprTypeParameter.prototype.get type):
+        (ConstexprTypeParameter.prototype.get isConstexpr):
+        (ConstexprTypeParameter.prototype.get isUnifiable):
+        (ConstexprTypeParameter.prototype.typeVariableUnify):
+        (ConstexprTypeParameter.prototype.unifyImpl):
+        (ConstexprTypeParameter.prototype.verifyAsArgument):
+        (ConstexprTypeParameter.prototype.verifyAsParameter):
+        (ConstexprTypeParameter.prototype.toString):
+        * ArrayLangRI/EBuffer.js: Added.
+        (EBuffer):
+        (EBuffer.get index):
+        * ArrayLangRI/EBufferBuilder.js: Added.
+        (EBufferBuilder):
+        (EBufferBuilder.prototype._createEPtr):
+        (EBufferBuilder.prototype.visitFuncParameter):
+        * ArrayLangRI/EFloat.js: Added.
+        (EFloat):
+        (EFloat.prototype.get value):
+        (EFloat.prototype.add):
+        (EFloat.prototype.toString):
+        * ArrayLangRI/EInt.js: Added.
+        (EInt):
+        (EInt.prototype.get value):
+        (EInt.prototype.add):
+        (EInt.prototype.toString):
+        * ArrayLangRI/EPtr.js: Added.
+        (EPtr):
+        (EPtr.box):
+        (EPtr.prototype.get buffer):
+        (EPtr.prototype.get offset):
+        (EPtr.prototype.loadValue):
+        (EPtr.prototype.copyFrom):
+        (EPtr.prototype.toString):
+        * ArrayLangRI/EValue.js: Added.
+        (EValue):
+        (EValue.prototype.get type):
+        * ArrayLangRI/EvaluationCommon.js: Added.
+        * ArrayLangRI/Evaluator.js: Added.
+        (Evaluator):
+        (Evaluator.prototype.visitFunctionBody):
+        (Evaluator.prototype.visitFunctionLikeBlock):
+        (Evaluator.prototype.visitReturn):
+        (Evaluator.prototype.visitCommaExpression):
+        (Evaluator.prototype.visitVariableRef):
+        (Evaluator.prototype.visitIntLiteral):
+        (Evaluator.prototype.visitCallExpression):
+        * ArrayLangRI/Expression.js: Added.
+        (Expression):
+        (Expression.prototype.get origin):
+        * ArrayLangRI/Field.js: Added.
+        (Field):
+        (Field.prototype.get origin):
+        (Field.prototype.get name):
+        (Field.prototype.get type):
+        (Field.prototype.toString):
+        * ArrayLangRI/Func.js: Added.
+        (Func):
+        (Func.prototype.get name):
+        (Func.prototype.get returnType):
+        (Func.prototype.get typeParameters):
+        (Func.prototype.get parameters):
+        (Func.prototype.get parameterTypes):
+        (Func.prototype.get kind):
+        (Func.prototype.toString):
+        * ArrayLangRI/FuncDef.js: Added.
+        (FuncDef):
+        (FuncDef.prototype.get origin):
+        (FuncDef.prototype.toString):
+        * ArrayLangRI/FuncInstantiator.js: Added.
+        (FuncInstantiator):
+        (FuncInstantiator.prototype.getUnique):
+        * ArrayLangRI/FuncParameter.js: Added.
+        (FuncParameter):
+        (FuncParameter.prototype.get origin):
+        (FuncParameter.prototype.get name):
+        (FuncParameter.prototype.get type):
+        (FuncParameter.prototype.toString):
+        * ArrayLangRI/FuncSignature.js: Added.
+        * ArrayLangRI/FunctionLikeBlock.js: Added.
+        (FunctionLikeBlock):
+        (FunctionLikeBlock.prototype.get origin):
+        (FunctionLikeBlock.prototype.get argumentList):
+        (FunctionLikeBlock.prototype.get parameters):
+        (FunctionLikeBlock.prototype.get body):
+        (FunctionLikeBlock.prototype.toString):
+        * ArrayLangRI/Inline.js: Added.
+        (inline):
+        (_inlineFunction):
+        (resolveInlinedFunction):
+        * ArrayLangRI/Inliner.js: Added.
+        (Inliner):
+        (Inliner.prototype.visitCallExpression):
+        * ArrayLangRI/InstantiateImmediates.js: Added.
+        (InstantiateImmediates.prototype.visitTypeRef):
+        (InstantiateImmediates.prototype.visitReferenceType):
+        (InstantiateImmediates.prototype.visitStructType):
+        (InstantiateImmediates.prototype.visitNativeType):
+        (InstantiateImmediates.prototype.visitTypeVariable):
+        (InstantiateImmediates):
+        * ArrayLangRI/IntLiteral.js: Added.
+        (IntLiteral):
+        (IntLiteral.prototype.get value):
+        (IntLiteral.prototype.get isConstexpr):
+        (IntLiteral.prototype.toString):
+        * ArrayLangRI/Intrinsics.js: Added.
+        (Intrinsics):
+        (Intrinsics.prototype.add):
+        * ArrayLangRI/Lexer.js: Added.
+        (Lexer):
+        (Lexer.prototype.get lineNumber):
+        (Lexer.prototype.get origin):
+        (Lexer.prototype.get originString):
+        (Lexer.prototype.lineNumberForIndex):
+        (Lexer.prototype.get state):
+        (Lexer.prototype.set state):
+        (Lexer.prototype.next):
+        * ArrayLangRI/LexerToken.js: Added.
+        (LexerToken):
+        (LexerToken.prototype.get kind):
+        (LexerToken.prototype.get text):
+        (LexerToken.prototype.get origin):
+        (LexerToken.prototype.get index):
+        (LexerToken.prototype.get lineNumber):
+        (LexerToken.prototype.get originString):
+        (LexerToken.prototype.toString):
+        * ArrayLangRI/NameContext.js: Added.
+        (isWildcardKind):
+        (NameContext):
+        (NameContext.prototype.mapFor):
+        (NameContext.prototype.add):
+        (NameContext.get currentStatement):
+        (NameContext.get intrinsics):
+        (NameContext.set program):
+        (NameContext.get program):
+        (NameContext.prototype.get let):
+        * ArrayLangRI/NameResolver.js: Added.
+        (NameResolver):
+        (NameResolver.prototype.visitProgram):
+        (NameResolver.prototype._visitTypeParametersAndBuildNameContext):
+        (NameResolver.prototype.visitFunc):
+        (NameResolver.prototype.visitFuncDef):
+        (NameResolver.prototype.visitBlock):
+        (NameResolver.prototype.visitProtocolDecl):
+        (NameResolver.prototype.visitTypeDef):
+        (NameResolver.prototype.visitStructType):
+        (NameResolver.prototype._resolveTypeArguments):
+        (NameResolver.prototype.visitTypeRef):
+        (NameResolver.prototype.visitReferenceType):
+        (NameResolver.prototype.visitVariableRef):
+        (NameResolver.prototype.visitReturn):
+        (NameResolver.prototype.visitCallExpression):
+        * ArrayLangRI/NativeFunc.js: Added.
+        (NativeFunc):
+        (NativeFunc.prototype.get origin):
+        (NativeFunc.prototype.get isNative):
+        (NativeFunc.prototype.toString):
+        * ArrayLangRI/NativeType.js: Added.
+        (NativeType):
+        (NativeType.prototype.get origin):
+        (NativeType.prototype.get name):
+        (NativeType.prototype.get isPrimitive):
+        (NativeType.prototype.get typeParameters):
+        (NativeType.prototype.get isNative):
+        (NativeType.prototype.instantiate):
+        (NativeType.prototype.toString):
+        * ArrayLangRI/NativeTypeInstance.js: Added.
+        (NativeTypeInstance):
+        (NativeTypeInstance.prototype.get type):
+        (NativeTypeInstance.prototype.get typeArguments):
+        (NativeTypeInstance.prototype.get isPrimitive):
+        (NativeTypeInstance.prototype.get isNative):
+        (NativeTypeInstance.prototype.unifyImpl):
+        (NativeTypeInstance.prototype.toString):
+        * ArrayLangRI/Node.js: Added.
+        (Node.prototype.visit):
+        (Node.unify):
+        (Node.prototype.unifyImpl):
+        (Node.prototype.typeVariableUnify):
+        (Node.prototype.get unifyNode):
+        (Node.prototype.get isUnifiable):
+        (Node.prototype.get isNative):
+        (Node.prototype.equals):
+        (Node.prototype.substitute):
+        (Node.prototype.substituteToUnification):
+        (Node):
+        * ArrayLangRI/NullType.js: Added.
+        (NullType):
+        * ArrayLangRI/Parse.js: Added.
+        (genericConsume):
+        (consume):
+        (genericTest):
+        (test):
+        (tryConsumeKind):
+        (parseProtocolRef):
+        (consumeEndOfTypeArgs):
+        (parseTypeParameters):
+        (parseTerm):
+        (parseConstexpr):
+        (parseTypeArguments):
+        (parseType.getAddressSpace):
+        (parseType):
+        (parseTypeDef):
+        (parseNative):
+        (genericParseLeft):
+        (parseLeftOperatorCall):
+        (parsePossibleSuffix):
+        (parsePossiblePrefix):
+        (parsePossibleProduct):
+        (parsePossibleSum):
+        (parsePossibleShift):
+        (parsePossibleRelationalInequality):
+        (parsePossibleRelationalEquality):
+        (parsePossibleBitwiseXor):
+        (parsePossibleBitwiseOr):
+        (parseLeftLogicalExpression):
+        (parsePossibleLogicalOr):
+        (parsePossibleTernaryConditional):
+        (parsePossibleAssignment):
+        (parseAssignment):
+        (parseEffectfulExpression):
+        (genericParseCommaExpression):
+        (parseCommaExpression):
+        (parseExpression):
+        (parseEffectfulStatement):
+        (parseReturn):
+        (parseVariableDecls):
+        (parseStatement):
+        (parseBlock):
+        (parseParameter):
+        (parseFuncName):
+        (parseFuncDef):
+        (parse):
+        * ArrayLangRI/Prepare.js: Added.
+        (prepare):
+        * ArrayLangRI/Program.js: Added.
+        (Program):
+        (Program.prototype.get topLevelStatements):
+        (Program.prototype.get functions):
+        (Program.prototype.get types):
+        (Program.prototype.get funcInstantiator):
+        (Program.prototype.add):
+        (Program.prototype.resolveFuncOverload):
+        (Program.prototype.get nameContext):
+        (Program.prototype.toString):
+        * ArrayLangRI/Protocol.js: Added.
+        (Protocol):
+        (Protocol.prototype.get origin):
+        (Protocol.prototype.get name):
+        (Protocol.prototype.get kind):
+        (Protocol.prototype.toString):
+        * ArrayLangRI/ProtocolDecl.js: Added.
+        (ProtocolDecl):
+        (ProtocolDecl.prototype.addSignature):
+        (ProtocolDecl.prototype.get signatures):
+        (ProtocolDecl.prototype.signaturesByName):
+        (ProtocolDecl.prototype.get typeVariable):
+        (ProtocolDecl.prototype.signaturesByNameWithTypeVariable):
+        (ProtocolDecl.prototype.inherits):
+        (ProtocolDecl.prototype.hasHeir):
+        (ProtocolDecl.prototype.toString):
+        * ArrayLangRI/ProtocolRef.js: Added.
+        (ProtocolRef):
+        (ProtocolRef.prototype.inherits):
+        (ProtocolRef.prototype.hasHeir):
+        * ArrayLangRI/PtrType.js: Added.
+        (PtrType.prototype.unifyImpl):
+        (PtrType.prototype.toString):
+        (PtrType):
+        * ArrayLangRI/ReferenceType.js: Added.
+        (ReferenceType):
+        (ReferenceType.prototype.get origin):
+        (ReferenceType.prototype.get addressSpace):
+        (ReferenceType.prototype.get elementType):
+        (ReferenceType.prototype.get isPrimitive):
+        (ReferenceType.prototype.get size):
+        * ArrayLangRI/ResolveNames.js: Added.
+        (resolveNames):
+        * ArrayLangRI/ResolveOverloadImpl.js: Added.
+        (resolveOverloadImpl):
+        * ArrayLangRI/ResolveTypeDefs.js: Added.
+        (resolveTypeDefs):
+        * ArrayLangRI/Return.js: Added.
+        (Return):
+        (Return.prototype.get origin):
+        (Return.prototype.get value):
+        (Return.prototype.toString):
+        * ArrayLangRI/ReturnException.js: Added.
+        (ReturnException):
+        (ReturnException.prototype.get value):
+        * ArrayLangRI/Rewriter.js: Added.
+        (Rewriter):
+        (Rewriter.prototype._map):
+        (Rewriter.prototype._getMapping):
+        (Rewriter.prototype.visitFunc):
+        (Rewriter.prototype.visitFuncParameter):
+        (Rewriter.prototype.visitBlock):
+        (Rewriter.prototype.visitCommaExpression):
+        (Rewriter.prototype.visitProtocolRef):
+        (Rewriter.prototype.visitTypeRef):
+        (Rewriter.prototype.visitTypeVariable):
+        (Rewriter.prototype.visitConstexprTypeParameter):
+        (Rewriter.prototype.visitField):
+        (Rewriter.prototype.visitReferenceType):
+        (Rewriter.visitPtrType):
+        (Rewriter.prototype.visitArrayRefType):
+        (Rewriter.prototype.visitArrayType):
+        (Rewriter.prototype.visitAssignment):
+        (Rewriter.prototype.visitVariableRef):
+        (Rewriter.prototype.visitReturn):
+        (Rewriter.prototype.visitIntLiteral):
+        (Rewriter.prototype.visitCallExpression):
+        (Rewriter.prototype.visitFunctionLikeBlock):
+        * ArrayLangRI/StandardLibrary.js: Added.
+        * ArrayLangRI/StructType.js: Added.
+        (StructType):
+        (StructType.prototype.add):
+        (StructType.prototype.get name):
+        (StructType.prototype.get typeParameters):
+        (StructType.prototype.get fieldNames):
+        (StructType.prototype.fieldByName):
+        (StructType.prototype.get fields):
+        (StructType.prototype.get fieldMap):
+        (StructType.prototype.get isPrimitive):
+        (StructType.prototype.instantiate):
+        (StructType.prototype.toString):
+        * ArrayLangRI/Substitution.js: Added.
+        (Substitution):
+        (Substitution.mapping):
+        (Substitution.prototype.visitTypeRef):
+        (Substitution.prototype.visitVariableRef):
+        * ArrayLangRI/SuffixCallAssignment.js: Added.
+        (SuffixCallAssignment):
+        (SuffixCallAssignment.prototype.get name):
+        (SuffixCallAssignment.prototype.get lhs):
+        (SuffixCallAssignment.prototype.toString):
+        * ArrayLangRI/Test.js: Added.
+        (load):
+        * ArrayLangRI/Type.js: Added.
+        (Type.prototype.get typeParameters):
+        (Type.prototype.get kind):
+        (Type.prototype.inherits):
+        (Type.prototype.get instantiatedType):
+        (Type):
+        * ArrayLangRI/TypeDef.js: Added.
+        (TypeDef):
+        (TypeDef.prototype.get origin):
+        (TypeDef.prototype.get name):
+        (TypeDef.prototype.get typeParameters):
+        (TypeDef.prototype.get type):
+        * ArrayLangRI/TypeDefResolver.js: Added.
+        (TypeDefResolver):
+        (TypeDefResolver.prototype.visitTypeRef):
+        * ArrayLangRI/TypeOrVariableRef.js: Added.
+        (TypeOrVariableRef):
+        (TypeOrVariableRef.prototype.get origin):
+        (TypeOrVariableRef.prototype.get name):
+        (TypeOrVariableRef.prototype.toString):
+        * ArrayLangRI/TypeRef.js: Added.
+        (TypeRef):
+        (TypeRef.wrap):
+        (TypeRef.prototype.get origin):
+        (TypeRef.prototype.get name):
+        (TypeRef.prototype.get typeArguments):
+        (TypeRef.prototype.get isPrimitive):
+        (TypeRef.prototype.get instantiatedType):
+        (TypeRef.prototype.get unifyNode):
+        (TypeRef.prototype.populateDefaultValue):
+        (TypeRef.prototype.get size):
+        (TypeRef.prototype.setTypeAndArguments):
+        (TypeRef.prototype.unifyImpl):
+        (TypeRef.prototype.toString):
+        * ArrayLangRI/TypeVariable.js: Added.
+        (TypeVariable):
+        (TypeVariable.prototype.get name):
+        (TypeVariable.prototype.get protocol):
+        (TypeVariable.prototype.get isPrimitive):
+        (TypeVariable.prototype.get isUnifiable):
+        (TypeVariable.prototype.inherits):
+        (TypeVariable.prototype.typeVariableUnify):
+        (TypeVariable.prototype.unifyImpl):
+        (TypeVariable.prototype.verifyAsArgument):
+        (TypeVariable.prototype.verifyAsParameter):
+        (TypeVariable.prototype.toString):
+        * ArrayLangRI/UnificationContext.js: Added.
+        (UnificationContext):
+        (UnificationContext.prototype.union):
+        (UnificationContext.prototype.find):
+        (UnificationContext.prototype.get nodes):
+        (UnificationContext.prototype.verify):
+        (UnificationContext.prototype.isUnunified):
+        * ArrayLangRI/Value.js: Added.
+        (Value.prototype.get kind):
+        (Value.prototype.get isConstexpr):
+        (Value):
+        * ArrayLangRI/VariableDecl.js: Added.
+        (VariableDecl):
+        (VariableDecl.prototype.get origin):
+        (VariableDecl.prototype.get name):
+        (VariableDecl.prototype.get type):
+        (VariableDecl.prototype.get initializer):
+        (VariableDecl.prototype.toString):
+        * ArrayLangRI/VariableRef.js: Added.
+        (VariableRef):
+        (VariableRef.prototype.get name):
+        (VariableRef.prototype.get isConstexpr):
+        (VariableRef.prototype.get unifyNode):
+        (VariableRef.prototype.toString):
+        * ArrayLangRI/VisitingSet.js: Added.
+        (VisitingSet):
+        (VisitingSet.prototype.doVisit):
+        * ArrayLangRI/Visitor.js: Added.
+        (Visitor.prototype.visitProgram):
+        (Visitor.prototype.visitFunc):
+        (Visitor.prototype.visitFuncParameter):
+        (Visitor.prototype.visitFuncDef):
+        (Visitor.prototype.visitNativeFunc):
+        (Visitor.prototype.visitBlock):
+        (Visitor.prototype.visitCommaExpression):
+        (Visitor.prototype.visitProtocolRef):
+        (Visitor.prototype.visitProtocolDecl):
+        (Visitor.prototype.visitTypeRef):
+        (Visitor.prototype.visitNativeType):
+        (Visitor.prototype.visitTypeDef):
+        (Visitor.prototype.visitStructType):
+        (Visitor.prototype.visitTypeVariable):
+        (Visitor.prototype.visitConstexprTypeParameter):
+        (Visitor.prototype.visitField):
+        (Visitor.prototype.visitElementalType):
+        (Visitor.prototype.visitPtrType):
+        (Visitor.prototype.visitArrayRefType):
+        (Visitor.prototype.visitArrayType):
+        (Visitor.prototype.visitAssignment):
+        (Visitor.prototype.visitVariableRef):
+        (Visitor.prototype.visitReturn):
+        (Visitor.prototype.visitIntLiteral):
+        (Visitor.prototype.visitCallExpression):
+        (Visitor.prototype.visitFunctionLikeBlock):
+        (Visitor):
+
 2017-08-30  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Win][JSCOnly] Support running JSC tests for win-cairo from windows command prompt
