@@ -1624,7 +1624,7 @@ webkit.org/b/132271 media/media-controller-playbackrate.html [ Timeout Pass Cras
 webkit.org/b/132271 media/media-controller-time-clamp.html [ Timeout Pass ]
 webkit.org/b/132271 media/track/add-and-remove-track.html [ Timeout Pass ]
 webkit.org/b/132271 media/controls-without-preload.html [ Failure Timeout Pass ]
-webkit.org/b/145251 media/controls-right-click-on-timebar.html [ Timeout Pass Failure ]
+webkit.org/b/145251 media/controls-right-click-on-timebar.html [ Timeout Pass Failure Crash ]
 
 #JS slow stress
 webkit.org/b/132266 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Timeout Pass ]
@@ -1898,6 +1898,10 @@ webkit.org/b/174353 media/video-restricted-invisible-autoplay-not-allowed.html [
 webkit.org/b/174354 imported/w3c/IndexedDB-private-browsing/idbfactory_open.html [ Crash Pass ]
 
 webkit.org/b/175933 media/audio-controls-timeline-in-media-document.html [ Pass Failure ]
+
+webkit.org/b/176105 http/tests/security/video-cross-origin-accessfailure.html [ Pass Failure ]
+
+webkit.org/b/176110 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
