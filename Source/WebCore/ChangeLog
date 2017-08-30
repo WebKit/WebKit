@@ -1,3 +1,14 @@
+2017-08-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r220278): Web Inspector: ContextMenu items are not getting triggered
+        https://bugs.webkit.org/show_bug.cgi?id=176034
+
+        Reviewed by Devin Rousso.
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::showContextMenu):
+        Responses go through InspectorFrontendAPI not InspectorFrontendHost.
+
 2017-08-26  Alex Christensen  <achristensen@webkit.org>
 
         Remove PolicyChecker::cancelCheck
