@@ -100,6 +100,11 @@ private:
     void elementSubmit(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void executeScript(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void executeAsyncScript(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getAllCookies(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void getNamedCookie(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void addCookie(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void deleteCookie(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void deleteAllCookies(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void dismissAlert(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void acceptAlert(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void getAlertText(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);

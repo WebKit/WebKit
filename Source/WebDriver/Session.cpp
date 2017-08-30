@@ -1712,6 +1712,213 @@ void Session::performKeyboardInteractions(Vector<KeyboardInteraction>&& interact
     });
 }
 
+static std::optional<Session::Cookie> parseAutomationCookie(const InspectorObject& cookieObject)
+{
+    Session::Cookie cookie;
+    if (!cookieObject.getString(ASCIILiteral("name"), cookie.name))
+        return std::nullopt;
+    if (!cookieObject.getString(ASCIILiteral("value"), cookie.value))
+        return std::nullopt;
+
+    String path;
+    if (cookieObject.getString(ASCIILiteral("path"), path))
+        cookie.path = path;
+    String domain;
+    if (cookieObject.getString(ASCIILiteral("domain"), domain))
+        cookie.domain = domain;
+    bool secure;
+    if (cookieObject.getBoolean(ASCIILiteral("secure"), secure))
+        cookie.secure = secure;
+    bool httpOnly;
+    if (cookieObject.getBoolean(ASCIILiteral("httpOnly"), httpOnly))
+        cookie.httpOnly = httpOnly;
+    bool session = false;
+    cookieObject.getBoolean(ASCIILiteral("session"), session);
+    if (!session) {
+        double expiry;
+        if (cookieObject.getDouble(ASCIILiteral("expires"), expiry))
+            cookie.expiry = expiry;
+    }
+
+    return cookie;
+}
+
+static RefPtr<InspectorObject> builtAutomationCookie(const Session::Cookie& cookie)
+{
+    RefPtr<InspectorObject> cookieObject = InspectorObject::create();
+    cookieObject->setString(ASCIILiteral("name"), cookie.name);
+    cookieObject->setString(ASCIILiteral("value"), cookie.value);
+    cookieObject->setString(ASCIILiteral("path"), cookie.path.value_or("/"));
+    cookieObject->setString(ASCIILiteral("domain"), cookie.domain.value_or(emptyString()));
+    cookieObject->setBoolean(ASCIILiteral("secure"), cookie.secure.value_or(false));
+    cookieObject->setBoolean(ASCIILiteral("httpOnly"), cookie.httpOnly.value_or(false));
+    cookieObject->setBoolean(ASCIILiteral("session"), !cookie.expiry);
+    cookieObject->setDouble(ASCIILiteral("expires"), cookie.expiry.value_or(0));
+    return cookieObject;
+}
+
+static RefPtr<InspectorObject> serializeCookie(const Session::Cookie& cookie)
+{
+    RefPtr<InspectorObject> cookieObject = InspectorObject::create();
+    cookieObject->setString(ASCIILiteral("name"), cookie.name);
+    cookieObject->setString(ASCIILiteral("value"), cookie.value);
+    if (cookie.path)
+        cookieObject->setString(ASCIILiteral("path"), cookie.path.value());
+    if (cookie.domain)
+        cookieObject->setString(ASCIILiteral("domain"), cookie.domain.value());
+    if (cookie.secure)
+        cookieObject->setBoolean(ASCIILiteral("secure"), cookie.secure.value());
+    if (cookie.httpOnly)
+        cookieObject->setBoolean(ASCIILiteral("httpOnly"), cookie.httpOnly.value());
+    if (cookie.expiry)
+        cookieObject->setInteger(ASCIILiteral("expiry"), cookie.expiry.value());
+    return cookieObject;
+}
+
+void Session::getAllCookies(Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+
+        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
+        m_host->sendCommandToBackend(ASCIILiteral("getAllCookies"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+            if (response.isError || !response.responseObject) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+            RefPtr<InspectorArray> cookiesArray;
+            if (!response.responseObject->getArray(ASCIILiteral("cookies"), cookiesArray)) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                return;
+            }
+            RefPtr<InspectorArray> cookies = InspectorArray::create();
+            for (unsigned i = 0; i < cookiesArray->length(); ++i) {
+                RefPtr<InspectorValue> cookieValue = cookiesArray->get(i);
+                RefPtr<InspectorObject> cookieObject;
+                if (!cookieValue->asObject(cookieObject)) {
+                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                    return;
+                }
+
+                auto cookie = parseAutomationCookie(*cookieObject);
+                if (!cookie) {
+                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                    return;
+                }
+                cookies->pushObject(serializeCookie(cookie.value()));
+            }
+            completionHandler(CommandResult::success(WTFMove(cookies)));
+        });
+    });
+}
+
+void Session::getNamedCookie(const String& name, Function<void (CommandResult&&)>&& completionHandler)
+{
+    getAllCookies([this, name, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        RefPtr<InspectorArray> cookiesArray;
+        result.result()->asArray(cookiesArray);
+        for (unsigned i = 0; i < cookiesArray->length(); ++i) {
+            RefPtr<InspectorValue> cookieValue = cookiesArray->get(i);
+            RefPtr<InspectorObject> cookieObject;
+            cookieValue->asObject(cookieObject);
+            String cookieName;
+            cookieObject->getString(ASCIILiteral("name"), cookieName);
+            if (cookieName == name) {
+                completionHandler(CommandResult::success(WTFMove(cookieObject)));
+                return;
+            }
+        }
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchCookie));
+    });
+}
+
+void Session::addCookie(const Cookie& cookie, Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, cookie = builtAutomationCookie(cookie), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
+        parameters->setObject(ASCIILiteral("cookie"), WTFMove(cookie));
+        m_host->sendCommandToBackend(ASCIILiteral("addSingleCookie"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+            if (response.isError) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+            completionHandler(CommandResult::success());
+        });
+    });
+}
+
+void Session::deleteCookie(const String& name, Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, name, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
+        parameters->setString(ASCIILiteral("cookieName"), name);
+        m_host->sendCommandToBackend(ASCIILiteral("deleteSingleCookie"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+            if (response.isError) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+            completionHandler(CommandResult::success());
+        });
+    });
+}
+
+void Session::deleteAllCookies(Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
+        m_host->sendCommandToBackend(ASCIILiteral("deleteAllCookies"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+            if (response.isError) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+            completionHandler(CommandResult::success());
+        });
+    });
+}
+
 void Session::dismissAlert(Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {

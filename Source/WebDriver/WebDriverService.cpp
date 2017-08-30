@@ -147,6 +147,12 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Post, "/session/$sessionId/execute/sync", &WebDriverService::executeScript },
     { HTTPMethod::Post, "/session/$sessionId/execute/async", &WebDriverService::executeAsyncScript },
 
+    { HTTPMethod::Get, "/session/$sessionId/cookie", &WebDriverService::getAllCookies },
+    { HTTPMethod::Get, "/session/$sessionId/cookie/$name", &WebDriverService::getNamedCookie },
+    { HTTPMethod::Post, "/session/$sessionId/cookie", &WebDriverService::addCookie },
+    { HTTPMethod::Delete, "/session/$sessionId/cookie/$name", &WebDriverService::deleteCookie },
+    { HTTPMethod::Delete, "/session/$sessionId/cookie", &WebDriverService::deleteAllCookies },
+
     { HTTPMethod::Post, "/session/$sessionId/alert/dismiss", &WebDriverService::dismissAlert },
     { HTTPMethod::Post, "/session/$sessionId/alert/accept", &WebDriverService::acceptAlert },
     { HTTPMethod::Get, "/session/$sessionId/alert/text", &WebDriverService::getAlertText },
@@ -1271,6 +1277,159 @@ void WebDriverService::executeAsyncScript(RefPtr<InspectorObject>&& parameters, 
             return;
         }
         session->executeScript(script, WTFMove(arguments), Session::ExecuteScriptMode::Async, WTFMove(completionHandler));
+    });
+}
+
+void WebDriverService::getAllCookies(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §16.1 Get All Cookies.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#get-all-cookies
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->getAllCookies(WTFMove(completionHandler));
+    });
+}
+
+void WebDriverService::getNamedCookie(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §16.2 Get Named Cookie.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#get-named-cookie
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    String name;
+    if (!parameters->getString(ASCIILiteral("name"), name)) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        return;
+    }
+
+    session->waitForNavigationToComplete([session, name = WTFMove(name), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->getNamedCookie(name, WTFMove(completionHandler));
+    });
+}
+
+static std::optional<Session::Cookie> deserializeCookie(InspectorObject& cookieObject)
+{
+    Session::Cookie cookie;
+    if (!cookieObject.getString(ASCIILiteral("name"), cookie.name) || cookie.name.isEmpty())
+        return std::nullopt;
+    if (!cookieObject.getString(ASCIILiteral("value"), cookie.value) || cookie.value.isEmpty())
+        return std::nullopt;
+
+    RefPtr<InspectorValue> value;
+    if (cookieObject.getValue(ASCIILiteral("path"), value)) {
+        String path;
+        if (!value->asString(path))
+            return std::nullopt;
+        cookie.path = path;
+    }
+    if (cookieObject.getValue(ASCIILiteral("domain"), value)) {
+        String domain;
+        if (!value->asString(domain))
+            return std::nullopt;
+        cookie.domain = domain;
+    }
+    if (cookieObject.getValue(ASCIILiteral("secure"), value)) {
+        bool secure;
+        if (!value->asBoolean(secure))
+            return std::nullopt;
+        cookie.secure = secure;
+    }
+    if (cookieObject.getValue(ASCIILiteral("httpOnly"), value)) {
+        bool httpOnly;
+        if (!value->asBoolean(httpOnly))
+            return std::nullopt;
+        cookie.httpOnly = httpOnly;
+    }
+    if (cookieObject.getValue(ASCIILiteral("expiry"), value)) {
+        int expiry;
+        if (!value->asInteger(expiry) || expiry < 0 || expiry > INT_MAX)
+            return std::nullopt;
+
+        cookie.expiry = static_cast<unsigned>(expiry);
+    }
+
+    return cookie;
+}
+
+void WebDriverService::addCookie(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §16.3 Add Cookie.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#add-cookie
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    RefPtr<InspectorObject> cookieObject;
+    if (!parameters->getObject(ASCIILiteral("cookie"), cookieObject)) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        return;
+    }
+
+    auto cookie = deserializeCookie(*cookieObject);
+    if (!cookie) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        return;
+    }
+
+    session->waitForNavigationToComplete([session, cookie = WTFMove(cookie), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->addCookie(cookie.value(), WTFMove(completionHandler));
+    });
+}
+
+void WebDriverService::deleteCookie(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §16.4 Delete Cookie.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#delete-cookie
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    String name;
+    if (!parameters->getString(ASCIILiteral("name"), name)) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        return;
+    }
+
+    session->waitForNavigationToComplete([session, name = WTFMove(name), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->deleteCookie(name, WTFMove(completionHandler));
+    });
+}
+
+void WebDriverService::deleteAllCookies(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §16.5 Delete All Cookies.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#delete-all-cookies
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->deleteAllCookies(WTFMove(completionHandler));
     });
 }
 

@@ -49,6 +49,7 @@ public:
         InvalidSessionID,
         JavascriptError,
         NoSuchAlert,
+        NoSuchCookie,
         NoSuchElement,
         NoSuchFrame,
         NoSuchWindow,
