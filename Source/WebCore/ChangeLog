@@ -1,3 +1,14 @@
+2017-08-23  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Geoclue2 based backend should provide the right desktop ID
+        https://bugs.webkit.org/show_bug.cgi?id=129879
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/geoclue/GeolocationProviderGeoclue.cpp:
+        (GeolocationProviderGeoclue::createGeoclueClientProxyCallback): Try first obtaining the application
+        identifier using GApplication first, keeping a fallback to the value returned by g_get_prgname().
+
 2017-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DeleteSelectionCommand should be robust when starting and ending editable positions cannot be found

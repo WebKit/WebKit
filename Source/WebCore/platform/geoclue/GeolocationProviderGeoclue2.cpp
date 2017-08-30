@@ -137,10 +137,16 @@ void GeolocationProviderGeoclue::createGeoclueClientProxyCallback(GObject*, GAsy
 
     // Geoclue2 requires the client to provide a desktop ID for security
     // reasons, which should identify the application requesting the location.
-    // FIXME: We provide the program name as the desktop ID for now but, in an ideal world,
-    // we should provide a proper "application ID" (normally the name of a .desktop file).
-    // https://bugs.webkit.org/show_bug.cgi?id=129879
-    geoclue_client_set_desktop_id(provider->m_clientProxy.get(), g_get_prgname());
+    // We use the application ID configured for the default GApplication, and
+    // also fallback to our old behavior of using g_get_prgname().
+    const char* appId = nullptr;
+    GApplication* defaultApp = g_application_get_default();
+    if (defaultApp)
+        appId = g_application_get_application_id(defaultApp);
+    if (!appId)
+        appId = g_get_prgname();
+
+    geoclue_client_set_desktop_id(provider->m_clientProxy.get(), appId);
 
     provider->startGeoclueClient();
 }
