@@ -1,5 +1,21 @@
 2017-08-30  Tomas Popela  <tpopela@redhat.com>
 
+        [GTK] Avoid building fontconfig documentation in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=176097
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Disable building fontconfig documentation in jhbuild as it needs the
+        docbook-utils-pdf package installed which depends on quite a few
+        packages (on Fedora it's 226 packages (mostly textlive) with installed
+        size of 274 MB). The documentation is not needed at all in jhbuild, so
+        disable it to save some bandwidth and disc space.
+
+        * gtk/install-dependencies: Pass --disable-docs to fontconfig.
+        * gtk/jhbuild.modules: Don't install docbook-utils-pdf on Fedora.
+
+2017-08-30  Tomas Popela  <tpopela@redhat.com>
+
         Unreviewed, remove trailing space
 
         * gtk/jhbuildrc:

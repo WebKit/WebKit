@@ -237,7 +237,7 @@
   </autotools>
 
   <autotools id="fontconfig"
-             autogenargs="--enable-libxml2"
+             autogenargs="--enable-libxml2 --disable-docs"
              supports-non-srcdir-builds="no">
     <if condition-set="macos">
       <autogenargs value="--with-add-fonts=/System/Library/Fonts,/Library/Fonts,~/Library/Fonts"/>

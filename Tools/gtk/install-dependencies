@@ -465,7 +465,6 @@ function installDependenciesWithDnf {
     packages="$packages \
         expat-devel \
         docbook-utils \
-        docbook-utils-pdf \
         git \
         gobject-introspection \
         gnutls-devel \
