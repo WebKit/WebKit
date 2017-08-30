@@ -355,6 +355,11 @@ void FrameLoader::setDefersLoading(bool defers)
     }
 }
 
+void FrameLoader::checkContentPolicy(const ResourceResponse& response, ContentPolicyDecisionFunction&& function)
+{
+    client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), WTFMove(function));
+}
+
 void FrameLoader::changeLocation(FrameLoadRequest&& request)
 {
     urlSelected(WTFMove(request), nullptr);

@@ -56,7 +56,6 @@ public:
     void checkNavigationPolicy(const ResourceRequest&, bool didReceiveRedirectResponse, DocumentLoader*, FormState*, NavigationPolicyDecisionFunction);
     void checkNavigationPolicy(const ResourceRequest&, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction);
     void checkNewWindowPolicy(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, NewWindowPolicyDecisionFunction);
-    void checkContentPolicy(const ResourceResponse&, ContentPolicyDecisionFunction);
 
     // FIXME: These are different.  They could use better names.
     void cancelCheck();
@@ -86,7 +85,6 @@ public:
 private:
     void continueAfterNavigationPolicy(PolicyAction);
     void continueAfterNewWindowPolicy(PolicyAction);
-    void continueAfterContentPolicy(PolicyAction);
 
     void handleUnimplementablePolicy(const ResourceError&);
 
