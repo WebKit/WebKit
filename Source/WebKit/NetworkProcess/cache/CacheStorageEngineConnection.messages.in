@@ -25,6 +25,8 @@ messages -> CacheStorageEngineConnection {
     Remove(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier);
     Caches(PAL::SessionID sessionID, uint64_t requestIdentifier, String origin);
 
+    ClearMemoryRepresentation(PAL::SessionID sessionID, String origin);
+
     Records(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier);
     DeleteMatchingRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options);
     PutRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::DOMCache::Record> record);

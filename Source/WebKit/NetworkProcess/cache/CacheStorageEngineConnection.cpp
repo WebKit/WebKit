@@ -63,6 +63,11 @@ void CacheStorageEngineConnection::caches(PAL::SessionID sessionID, uint64_t req
     });
 }
 
+void CacheStorageEngineConnection::clearMemoryRepresentation(PAL::SessionID sessionID, const String& origin)
+{
+    Engine::from(sessionID).clearMemoryRepresentation(origin);
+}
+
 void CacheStorageEngineConnection::records(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier)
 {
     Engine::from(sessionID).retrieveRecords(cacheIdentifier, [protectedThis = makeRef(*this), this, sessionID, requestIdentifier](RecordsOrError&& result) {

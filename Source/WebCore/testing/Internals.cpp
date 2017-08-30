@@ -39,6 +39,8 @@
 #include "CSSMediaRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
+#include "CacheStorageConnection.h"
+#include "CacheStorageProvider.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
@@ -4134,6 +4136,21 @@ String Internals::audioSessionCategory() const
     }
 #endif
     return emptyString();
+}
+
+void Internals::clearCacheStorageMemoryRepresentation()
+{
+    auto* document = contextDocument();
+    if (!document)
+        return;
+
+    if (!m_cacheStorageConnection) {
+        if (auto* page = contextDocument()->page())
+            m_cacheStorageConnection = page->cacheStorageProvider().createCacheStorageConnection(page->sessionID());
+        if (!m_cacheStorageConnection)
+            return;
+    }
+    m_cacheStorageConnection->clearMemoryRepresentation(document->securityOrigin().toString(), [](std::optional<DOMCache::Error>&&) { });
 }
 
 } // namespace WebCore

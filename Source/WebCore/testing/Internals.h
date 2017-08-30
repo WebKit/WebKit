@@ -43,6 +43,7 @@
 namespace WebCore {
 
 class AudioContext;
+class CacheStorageConnection;
 class DOMRect;
 class DOMRectList;
 class DOMURL;
@@ -598,6 +599,8 @@ public:
 
     String audioSessionCategory() const;
 
+    void clearCacheStorageMemoryRepresentation();
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
@@ -618,6 +621,7 @@ private:
 #endif
 
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;
+    RefPtr<CacheStorageConnection> m_cacheStorageConnection;
 };
 
 } // namespace WebCore

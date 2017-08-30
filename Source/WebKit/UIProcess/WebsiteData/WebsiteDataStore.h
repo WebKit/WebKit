@@ -69,6 +69,7 @@ class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessL
 public:
     struct Configuration {
         String cacheStorageDirectory;
+        String cacheStorageSubdirectoryName;
         String networkCacheDirectory;
         String applicationCacheDirectory;
         String applicationCacheFlatFileSubdirectoryName;

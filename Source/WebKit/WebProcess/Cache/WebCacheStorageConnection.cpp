@@ -86,6 +86,12 @@ void WebCacheStorageConnection::doBatchPutOperation(uint64_t requestIdentifier, 
     connection().send(Messages::CacheStorageEngineConnection::PutRecords(m_sessionID, requestIdentifier, cacheIdentifier, records), 0);
 }
 
+void WebCacheStorageConnection::clearMemoryRepresentation(const String& origin, CompletionCallback&& callback)
+{
+    connection().send(Messages::CacheStorageEngineConnection::ClearMemoryRepresentation(m_sessionID, origin), 0);
+    callback(std::nullopt);
+}
+
 void WebCacheStorageConnection::openCompleted(uint64_t requestIdentifier, const CacheIdentifierOrError& result)
 {
     CacheStorageConnection::openCompleted(requestIdentifier, result);

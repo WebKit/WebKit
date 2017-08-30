@@ -40,6 +40,8 @@ namespace DOMCache {
 
 enum class Error {
     NotImplemented,
+    ReadDisk,
+    WriteDisk,
     Internal
 };
 
@@ -94,6 +96,8 @@ template<> struct EnumTraits<WebCore::DOMCache::Error> {
     using values = EnumValues<
         WebCore::DOMCache::Error,
         WebCore::DOMCache::Error::NotImplemented,
+        WebCore::DOMCache::Error::ReadDisk,
+        WebCore::DOMCache::Error::WriteDisk,
         WebCore::DOMCache::Error::Internal
     >;
 };

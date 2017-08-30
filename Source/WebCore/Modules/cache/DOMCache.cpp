@@ -40,6 +40,10 @@ Exception errorToException(Error error)
     switch (error) {
     case Error::NotImplemented:
         return Exception { NotSupportedError, ASCIILiteral("Not implemented") };
+    case Error::ReadDisk:
+        return Exception { TypeError, ASCIILiteral("Failed reading data from the file system") };
+    case Error::WriteDisk:
+        return Exception { TypeError, ASCIILiteral("Failed writing data to the file system") };
     default:
         return Exception { TypeError, ASCIILiteral("Internal error") };
     }

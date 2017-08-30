@@ -45,6 +45,9 @@ public:
     void batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCache::RecordIdentifiersCallback&&);
     void batchPutOperation(uint64_t cacheIdentifier, Vector<DOMCache::Record>&&, DOMCache::RecordIdentifiersCallback&&);
 
+    // Used only for testing purposes.
+    virtual void clearMemoryRepresentation(const String& /* origin */, DOMCache::CompletionCallback&& callback) { callback(DOMCache::Error::NotImplemented); }
+
 protected:
     CacheStorageConnection() =  default;
 

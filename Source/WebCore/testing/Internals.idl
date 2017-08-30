@@ -544,5 +544,7 @@ enum EventThrottlingBehavior {
     [Conditional=MEDIA_STREAM] void removeMediaStreamTrack(MediaStream stream, MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] void simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack track);
 
+    void clearCacheStorageMemoryRepresentation();
+
     DOMString audioSessionCategory();
 };

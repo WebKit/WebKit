@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CacheStorageEngineCache.h"
+#include "CacheStorageEngineCaches.h"
 #include "NetworkCacheData.h"
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -63,13 +63,19 @@ public:
     void readFile(const String& filename, WTF::Function<void(const NetworkCache::Data&, int error)>&&);
     void removeFile(const String& filename);
 
+    const String& rootPath() const { return m_rootPath; }
+    const NetworkCache::Salt& salt() const { return m_salt.value(); }
+    uint64_t nextCacheIdentifier() { return ++m_nextCacheIdentifier; }
+
+    void clearMemoryRepresentation(const String& origin);
+
 private:
     static Engine& defaultEngine();
     explicit Engine(String&& rootPath);
 
-    void writeCachesToDisk(WebCore::DOMCache::CompletionCallback&&);
+    void initialize(Function<void(std::optional<WebCore::DOMCache::Error>&&)>&&);
 
-    using CachesOrError = Expected<std::reference_wrapper<Vector<Cache>>, WebCore::DOMCache::Error>;
+    using CachesOrError = Expected<std::reference_wrapper<Caches>, WebCore::DOMCache::Error>;
     using CachesCallback = WTF::Function<void(CachesOrError&&)>;
     void readCachesFromDisk(const String& origin, CachesCallback&&);
 
@@ -84,11 +90,12 @@ private:
 
     Cache* cache(uint64_t cacheIdentifier);
 
-    HashMap<String, Vector<Cache>> m_caches;
+    HashMap<String, Ref<Caches>> m_caches;
     Vector<Cache> m_removedCaches;
     uint64_t m_nextCacheIdentifier { 0 };
     String m_rootPath;
     RefPtr<WorkQueue> m_ioQueue;
+    std::optional<NetworkCache::Salt> m_salt;
 };
 
 } // namespace CacheStorage

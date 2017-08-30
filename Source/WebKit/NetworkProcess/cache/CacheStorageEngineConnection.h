@@ -54,6 +54,8 @@ private:
     void remove(PAL::SessionID, uint64_t removeRequestIdentifier, uint64_t cacheIdentifier);
     void caches(PAL::SessionID, uint64_t retrieveCachesIdentifier, const String& origin);
 
+    void clearMemoryRepresentation(PAL::SessionID, const String& origin);
+
     void records(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier);
     void deleteMatchingRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&);
     void putRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::DOMCache::Record>&&);

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script>
+function doTest()
+{
+    if (window.location.hash === "#check") {
+        self.caches.keys().then(keys => {
+            window.parent.postMessage(keys.length === 1 && keys[0] === "testCacheName", "*");
+        });
+        return;
+    }
+
+    self.caches.open("testCacheName").then(() => {
+        window.parent.postMessage("ready", "*");
+    });
+}
+doTest();
+    </script>
+</body>
+</html>
+

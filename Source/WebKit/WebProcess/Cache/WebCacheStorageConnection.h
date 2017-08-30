@@ -60,6 +60,8 @@ private:
     void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&) final;
     void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::DOMCache::Record>&&) final;
 
+    void clearMemoryRepresentation(const String& origin, WebCore::DOMCache::CompletionCallback&&) final;
+
     void openCompleted(uint64_t requestIdentifier, const WebCore::DOMCache::CacheIdentifierOrError&);
     void removeCompleted(uint64_t requestIdentifier, const WebCore::DOMCache::CacheIdentifierOrError&);
     void updateCaches(uint64_t requestIdentifier, WebCore::DOMCache::CacheInfosOrError&&);
