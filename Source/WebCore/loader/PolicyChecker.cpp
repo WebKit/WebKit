@@ -153,7 +153,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
     m_delegateIsDecidingNavigationPolicy = false;
 }
 
-void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, const ResourceRequest& request, FormState* formState, const String& frameName, NewWindowPolicyDecisionFunction function)
+void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, const ResourceRequest& request, FormState* formState, const String& frameName, NewWindowPolicyDecisionFunction function)
 {
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxPopups))
         return continueAfterNavigationPolicy(PolicyIgnore);
@@ -161,9 +161,19 @@ void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, const R
     if (!DOMWindow::allowPopUp(m_frame))
         return continueAfterNavigationPolicy(PolicyIgnore);
 
-    m_callback.set(request, formState, frameName, action, WTFMove(function));
-    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(action, request, formState, frameName, [this](PolicyAction action) {
-        continueAfterNewWindowPolicy(action);
+    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState, frameName, [frame = makeRef(m_frame), request, formState = makeRefPtr(formState), frameName, navigationAction, function = WTFMove(function)](PolicyAction policyAction) {
+        switch (policyAction) {
+        case PolicyDownload:
+            frame->loader().client().startDownload(request);
+            FALLTHROUGH;
+        case PolicyIgnore:
+            function({ }, nullptr, { }, { }, false);
+            return;
+        case PolicyUse:
+            function(request, formState.get(), frameName, navigationAction, true);
+            return;
+        }
+        ASSERT_NOT_REACHED();
     });
 }
 
@@ -222,25 +232,6 @@ void PolicyChecker::continueAfterNavigationPolicy(PolicyAction policy)
     }
 
     callback.call(shouldContinue);
-}
-
-void PolicyChecker::continueAfterNewWindowPolicy(PolicyAction policy)
-{
-    PolicyCallback callback = WTFMove(m_callback);
-
-    switch (policy) {
-        case PolicyIgnore:
-            callback.clearRequest();
-            break;
-        case PolicyDownload:
-            m_frame.loader().client().startDownload(callback.request());
-            callback.clearRequest();
-            break;
-        case PolicyUse:
-            break;
-    }
-
-    callback.call(policy == PolicyUse);
 }
 
 void PolicyChecker::handleUnimplementablePolicy(const ResourceError& error)
