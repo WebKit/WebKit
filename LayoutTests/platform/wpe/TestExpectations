@@ -314,6 +314,9 @@ Bug(WPE) fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-perc
 # These are Mac specific for now.
 fast/url/user-visible [ Skip ]
 
+# This test relies on Mac-specific quirks
+media/document-level-media-user-gesture-quirk.html [ Skip ]
+
 Bug(WPE) fast/viewport/ios [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-handheldfriendly.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-mobileoptimized-2.html [ Failure ]
