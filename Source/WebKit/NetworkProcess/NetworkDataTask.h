@@ -36,7 +36,7 @@
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Timer.h>
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -54,9 +54,9 @@ class NetworkSession;
 class PendingDownload;
 enum class AuthenticationChallengeDisposition;
 
-typedef Function<void(const WebCore::ResourceRequest&)> RedirectCompletionHandler;
-typedef Function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)> ChallengeCompletionHandler;
-typedef Function<void(WebCore::PolicyAction)> ResponseCompletionHandler;
+using RedirectCompletionHandler = CompletionHandler<void(const WebCore::ResourceRequest&)>;
+using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
+using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>;
 
 class NetworkDataTaskClient {
 public:

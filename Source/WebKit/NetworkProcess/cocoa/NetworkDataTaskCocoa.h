@@ -73,7 +73,7 @@ public:
 private:
     NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ContentSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
 
-    bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, const ChallengeCompletionHandler&);
+    bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
 
     RefPtr<SandboxExtension> m_sandboxExtension;
     RetainPtr<NSURLSessionDataTask> m_task;

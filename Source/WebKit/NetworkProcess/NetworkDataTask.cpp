@@ -103,6 +103,7 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCo
         auto url = response.url();
         std::optional<uint16_t> port = url.port();
         if (port && !isDefaultPortForProtocol(port.value(), url.protocol())) {
+            completionHandler({ });
             cancel();
             m_client->didCompleteWithError({ String(), 0, url, "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9." });
             return;

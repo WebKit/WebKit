@@ -1,3 +1,17 @@
+2017-08-22  Chris Dumez  <cdumez@apple.com>
+
+        Introduce a new CompletionHandler type and use it for NetworkDataTaskClient's completion handlers to help catch bugs
+        https://bugs.webkit.org/show_bug.cgi?id=175832
+
+        Reviewed by Alex Christensen.
+
+        Introduce a new CompletionHandler type which wraps a WTF::Function and ensures via assertions
+        that the function is always called once and only once.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CompletionHandler.h: Added.
+        (WTF::CompletionHandler<Out):
+
 2017-08-20  Sam Weinig  <sam@webkit.org>
 
         StringView could use a function to strip leading/trailing characters without allocation
