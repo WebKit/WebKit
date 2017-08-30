@@ -77,7 +77,7 @@ class NameContext {
             return;
         }
         if (this._map.has(thing.name))
-            throw new ALTypeError(thing.origin.originString, "Duplicate name: " + thing.name);
+            throw new WTypeError(thing.origin.originString, "Duplicate name: " + thing.name);
         this._map.set(thing.name, thing);
     }
     

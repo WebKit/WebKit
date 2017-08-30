@@ -64,10 +64,10 @@ class Checker extends Visitor {
                 parameterType.visit(noticeTypeVariable);
             for (let typeParameter of signature.typeParameters) {
                 if (!set.has(typeParameter))
-                    throw ALTypeError(typeParameter.origin.originString, "Type parameter to protocol signature not inferrable from value parameters");
+                    throw WTypeError(typeParameter.origin.originString, "Type parameter to protocol signature not inferrable from value parameters");
             }
             if (!set.has(node.typeVariable))
-                throw new ALTypeError(signature.origin.originString, "Protocol's type variable not mentioned in signature");
+                throw new WTypeError(signature.origin.originString, "Protocol's type variable not mentioned in signature");
         }
     }
     
@@ -78,10 +78,10 @@ class Checker extends Visitor {
             let result = node.typeArguments[i].visit(this);
             if (argumentIsType) {
                 if (!typeArguments[i].inherits(typeArguments[i]))
-                    throw new ALTypeError(origin.originString, "Type argument does not inherit protocol");
+                    throw new WTypeError(origin.originString, "Type argument does not inherit protocol");
             } else {
                 if (!result.equals(typeParameters[i].type))
-                    throw new ALTypeError(origin.originString, "Wrong type for constexpr");
+                    throw new WTypeError(origin.originString, "Wrong type for constexpr");
             }
         }
     }
@@ -101,13 +101,13 @@ class Checker extends Visitor {
             return;
         
         if (!node.elementType.withRecursivelyInstantiatedImmediates.isPrimitive)
-            throw new ALTypeError(node.origin.originString, "Illegal pointer to non-primitive type");
+            throw new WTypeError(node.origin.originString, "Illegal pointer to non-primitive type");
     }
     
     visitArrayType(node)
     {
         if (!node.numElements.isConstexpr)
-            throw new ALTypeError(node.origin.originString, "Array length must be constexpr");
+            throw new WTypeError(node.origin.originString, "Array length must be constexpr");
     }
     
     visitAssignment(node)
@@ -116,7 +116,7 @@ class Checker extends Visitor {
         let lhsType = node.lhs.visit(this);
         let rhsType = node.rhs.visit(this);
         if (!lhsType.equals(rhsType))
-            throw new ALTypeError(node.origin.originString, "Type mismatch in assignment: " + lhsType + " versus " + rhsType);
+            throw new WTypeError(node.origin.originString, "Type mismatch in assignment: " + lhsType + " versus " + rhsType);
         return lhsType;
     }
     
@@ -132,12 +132,12 @@ class Checker extends Visitor {
             if (!resultType)
                 throw new Error("Null result type from " + node.value);
             if (!node.func.returnType.equals(resultType))
-                throw new ALTypeError(node.origin.originString, "Trying to return " + resultType + " in a function that returns " + func.returnType);
+                throw new WTypeError(node.origin.originString, "Trying to return " + resultType + " in a function that returns " + func.returnType);
             return;
         }
         
         if (!func.returnType.equals(this._program.intrinsics.void))
-            throw new ALTypeError(node.origin.originString, "Non-void function must return a value");
+            throw new WTypeError(node.origin.originString, "Non-void function must return a value");
     }
     
     visitIntLiteral(node)
@@ -183,7 +183,7 @@ class Checker extends Visitor {
                 node.name, node.typeArguments, argumentTypes);
         }
         if (!overload)
-            throw new ALTypeError(node.origin.originString, "Did not find function for call");
+            throw new WTypeError(node.origin.originString, "Did not find function for call");
         node.func = overload.func;
         node.actualTypeArguments = overload.typeArguments.map(TypeRef.wrap);
         let result = overload.func.returnType.substituteToUnification(

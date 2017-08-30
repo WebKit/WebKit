@@ -71,7 +71,7 @@ class Intrinsics {
     {
         let intrinsic = this._map.get(thing.toString());
         if (!intrinsic)
-            throw new ALTypeError(thing.origin.originString, "Unrecognized intrinsic: " + thing);
+            throw new WTypeError(thing.origin.originString, "Unrecognized intrinsic: " + thing);
         intrinsic(thing);
     }
 }

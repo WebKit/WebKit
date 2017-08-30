@@ -24,30 +24,21 @@
  */
 "use strict";
 
-class TypeDefResolver extends Visitor {
-    constructor()
+class VisitingSet {
+    constructor(...items)
     {
-        super();
-        this._visiting = new VisitingSet();
+        this._set = new Set(items);
     }
     
-    visitTypeRef(node)
+    doVisit(item, callback)
     {
-        this._visiting.doVisit(node, () => {
-            super.visitTypeRef(node);
-            if (node.type instanceof TypeDef) {
-                let unificationContext = new UnificationContext(node.type.typeParameters);
-                if (node.typeArguments.length != node.type.typeParameters.length)
-                    throw new Error("argument/parameter mismatch (should have been caught earlier)");
-                for (let i = 0; i < node.typeArguments.length; ++i)
-                    node.typeArguments[i].unify(unificationContext, node.type.typeParameters[i]);
-                if (!unificationContext.verify())
-                    throw new ALTypeError(node.origin.originString, "Type reference to a type definition violates protocol constraints");
-                
-                let newType = node.type.type.substituteToUnification(node.type.typeParameters, unificationContext);
-                newType.visit(this);
-                node.setTypeAndArguments(newType, []);
-            }
-        });
+        if (this._set.has(item))
+            throw new WTypeError(item.origin.originString, "Recursive " + item.kind);
+        this._set.add(item);
+        try {
+            return callback();
+        } finally {
+            this._set.delete(item);
+        }
     }
 }

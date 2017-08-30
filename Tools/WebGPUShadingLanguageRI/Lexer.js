@@ -138,7 +138,7 @@ class Lexer {
     
     fail(error)
     {
-        throw new ALSyntaxError(this.originString, error);
+        throw new WSyntaxError(this.originString, error);
     }
     
     backtrackingScope(callback)
@@ -147,7 +147,7 @@ class Lexer {
         try {
             return callback();
         } catch (e) {
-            if (e instanceof ALSyntaxError) {
+            if (e instanceof WSyntaxError) {
                 this.state = state;
                 return null;
             }

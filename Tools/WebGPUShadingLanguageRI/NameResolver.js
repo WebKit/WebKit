@@ -129,7 +129,7 @@ class NameResolver extends Visitor {
             if (typeArgument instanceof TypeOrVariableRef) {
                 let thing = this._nameContext.get(NotFunc, typeArgument.name);
                 if (!thing)
-                    new ALTypeError(typeArgument.origin.originString, "Could not find type or variable named " + typeArgument.name);
+                    new WTypeError(typeArgument.origin.originString, "Could not find type or variable named " + typeArgument.name);
                 if (thing instanceof Value) {
                     typeArgument[i] = new VariableRef(typeArgument.origin, typeArgument.name);
                 } else
@@ -138,7 +138,7 @@ class NameResolver extends Visitor {
             
             if (typeArgument[i] instanceof Value
                 && !typeArgument[i].isConstexpr)
-                throw new ALTypeError(typeArgument[i].origin.originString, "Expected constexpr");
+                throw new WTypeError(typeArgument[i].origin.originString, "Expected constexpr");
         }
     }
     
@@ -148,21 +148,21 @@ class NameResolver extends Visitor {
         
         let type = this._nameContext.get(Type, node.name);
         if (!type)
-            throw new ALTypeError(node.origin.originString, "Could not find type named " + node.name);
+            throw new WTypeError(node.origin.originString, "Could not find type named " + node.name);
         if (!this._nameContext.isDefined(type))
-            throw new ALTypeError(node.origin.originString, "Illegal forward use of type named " + node.name);
+            throw new WTypeError(node.origin.originString, "Illegal forward use of type named " + node.name);
         node.type = type;
         
         if (type.typeParameters.length != node.typeArguments.length)
-            throw new ALTypeError(node.origin.originString, "Wrong number of type arguments");
+            throw new WTypeError(node.origin.originString, "Wrong number of type arguments");
         for (let i = 0; i < type.typeParameters.length; ++i) {
             let parameterIsType = type.typeParameters[i] instanceof TypeVariable;
             let argumentIsType = node.typeArguments[i] instanceof Type;
             node.typeArguments[i].visit(this);
             if (parameterIsType && !argumentIsType)
-                throw new ALTypeError(node.origin.originString, "Expected type, but got value at argument #" + i);
+                throw new WTypeError(node.origin.originString, "Expected type, but got value at argument #" + i);
             if (!parameterIsType && argumentIsType)
-                throw new ALTypeError(node.origin.originString, "Expected value, but got type at argument #" + i);
+                throw new WTypeError(node.origin.originString, "Expected value, but got type at argument #" + i);
         }
 
         super.visitTypeRef(node);
@@ -179,7 +179,7 @@ class NameResolver extends Visitor {
     {
         let result = this._nameContext.get(Value, node.name);
         if (!result)
-            throw new ALTypeError(node.origin.originString, "Could not find variable named " + node.name);
+            throw new WTypeError(node.origin.originString, "Could not find variable named " + node.name);
         node.variable = result;
     }
     

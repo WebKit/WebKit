@@ -24,15 +24,26 @@
  */
 "use strict";
 
-// NOTE: The next line is line 28, and we rely on this in Prepare.js.
-const standardLibrary = `
-// This is the ArrayLang standard library. Implementations of all of these things are in
-// Intrinsics.js.
+// This allows you to pass structs and arrays in-place, but it's a more annoying API.
+function callFunctionByRef(program, name, typeArguments, argumentList)
+{
+    let argumentTypes = argumentList.map(argument => {
+        let result = argument.type.elementType;
+        if (!result)
+            throw new Error("Argument has no element type: " + argument);
+        return result;
+    });
+    let func = resolveInlinedFunction(program, name, typeArguments, argumentTypes);
+    if (!func)
+        throw new WTypeError("<callFunction>", "Cannot resolve function call " + name + "<" + typeArguments + ">(" + argumentList + ")");
+    for (let i = 0; i < func.parameters.length; ++i)
+        func.parameters[i].ePtr.copyFrom(argumentList[i]);
+    return new Evaluator(program).visitFunctionBody(func.body);
+}
 
-// Need to bootstrap void first.
-native primitive type void;
-native primitive type int32;
-type int = int32;
-
-native int operator+(int, int);
-`;
+function callFunction(program, name, typeArguments, argumentList)
+{
+    return callFunctionByRef(
+        program, name, typeArguments,
+        argumentList.map(argument => EPtr.box(argument))).loadValue();
+}

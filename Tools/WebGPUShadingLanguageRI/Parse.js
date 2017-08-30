@@ -29,8 +29,8 @@ function parse(program, origin, lineNumberOffset, text)
     let lexer = new Lexer(origin, lineNumberOffset, text);
     
     // The hardest part of dealing with C-like languages is parsing variable declaration statements.
-    // Let's consider if this happens in ArrayLang. Here are the valid statements in ArrayLang that
-    // begin with an identifier, if we assume that any expression can be a standalone statement.
+    // Let's consider if this happens in WSL. Here are the valid statements in WSL that being with an
+    // identifier, if we assume that any expression can be a standalone statement.
     //
     //     x;
     //     x <binop> y;

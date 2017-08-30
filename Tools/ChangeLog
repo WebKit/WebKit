@@ -1,3 +1,127 @@
+2017-08-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename ArrayLang to WebGPU Shading Language, or WSL for short, pronounced "whistle"
+        https://bugs.webkit.org/show_bug.cgi?id=176117
+
+        Reviewed by Myles Maxfield.
+        
+        Renamed ArrayLangRI to WebGPUShadingLanguageRI.
+        
+        Renamed ALSyntaxError/ALTypeError to WSyntaxError/WTypeError.
+        
+        Renamed all references to "ArrayLang" in the code to "WSL".
+
+        * ArrayLangRI: Removed.
+        * ArrayLangRI/ALSyntaxError.js: Removed.
+        * ArrayLangRI/ALTypeError.js: Removed.
+        * ArrayLangRI/AddressSpace.js: Removed.
+        * ArrayLangRI/All.js: Removed.
+        * ArrayLangRI/ArrayRefType.js: Removed.
+        * ArrayLangRI/ArrayType.js: Removed.
+        * ArrayLangRI/Assignment.js: Removed.
+        * ArrayLangRI/Block.js: Removed.
+        * ArrayLangRI/CallAssignment.js: Removed.
+        * ArrayLangRI/CallExpression.js: Removed.
+        * ArrayLangRI/CallFunction.js: Removed.
+        * ArrayLangRI/Check.js: Removed.
+        * ArrayLangRI/Checker.js: Removed.
+        * ArrayLangRI/CommaExpression.js: Removed.
+        * ArrayLangRI/ConstexprTypeParameter.js: Removed.
+        * ArrayLangRI/EBuffer.js: Removed.
+        * ArrayLangRI/EBufferBuilder.js: Removed.
+        * ArrayLangRI/EFloat.js: Removed.
+        * ArrayLangRI/EInt.js: Removed.
+        * ArrayLangRI/EPtr.js: Removed.
+        * ArrayLangRI/EValue.js: Removed.
+        * ArrayLangRI/EvaluationCommon.js: Removed.
+        * ArrayLangRI/Evaluator.js: Removed.
+        * ArrayLangRI/Expression.js: Removed.
+        * ArrayLangRI/Field.js: Removed.
+        * ArrayLangRI/Func.js: Removed.
+        * ArrayLangRI/FuncDef.js: Removed.
+        * ArrayLangRI/FuncInstantiator.js: Removed.
+        * ArrayLangRI/FuncParameter.js: Removed.
+        * ArrayLangRI/FunctionLikeBlock.js: Removed.
+        * ArrayLangRI/Inline.js: Removed.
+        * ArrayLangRI/Inliner.js: Removed.
+        * ArrayLangRI/InstantiateImmediates.js: Removed.
+        * ArrayLangRI/IntLiteral.js: Removed.
+        * ArrayLangRI/Intrinsics.js: Removed.
+        * ArrayLangRI/Lexer.js: Removed.
+        * ArrayLangRI/LexerToken.js: Removed.
+        * ArrayLangRI/NameContext.js: Removed.
+        * ArrayLangRI/NameResolver.js: Removed.
+        * ArrayLangRI/NativeFunc.js: Removed.
+        * ArrayLangRI/NativeType.js: Removed.
+        * ArrayLangRI/NativeTypeInstance.js: Removed.
+        * ArrayLangRI/Node.js: Removed.
+        * ArrayLangRI/NullType.js: Removed.
+        * ArrayLangRI/Parse.js: Removed.
+        * ArrayLangRI/Prepare.js: Removed.
+        * ArrayLangRI/Program.js: Removed.
+        * ArrayLangRI/Protocol.js: Removed.
+        * ArrayLangRI/ProtocolDecl.js: Removed.
+        * ArrayLangRI/ProtocolRef.js: Removed.
+        * ArrayLangRI/PtrType.js: Removed.
+        * ArrayLangRI/ReferenceType.js: Removed.
+        * ArrayLangRI/ResolveNames.js: Removed.
+        * ArrayLangRI/ResolveOverloadImpl.js: Removed.
+        * ArrayLangRI/ResolveTypeDefs.js: Removed.
+        * ArrayLangRI/Return.js: Removed.
+        * ArrayLangRI/ReturnException.js: Removed.
+        * ArrayLangRI/Rewriter.js: Removed.
+        * ArrayLangRI/StandardLibrary.js: Removed.
+        * ArrayLangRI/StructType.js: Removed.
+        * ArrayLangRI/Substitution.js: Removed.
+        * ArrayLangRI/SuffixCallAssignment.js: Removed.
+        * ArrayLangRI/Test.js: Removed.
+        * ArrayLangRI/Type.js: Removed.
+        * ArrayLangRI/TypeDef.js: Removed.
+        * ArrayLangRI/TypeDefResolver.js: Removed.
+        * ArrayLangRI/TypeOrVariableRef.js: Removed.
+        * ArrayLangRI/TypeRef.js: Removed.
+        * ArrayLangRI/TypeVariable.js: Removed.
+        * ArrayLangRI/UnificationContext.js: Removed.
+        * ArrayLangRI/Value.js: Removed.
+        * ArrayLangRI/VariableDecl.js: Removed.
+        * ArrayLangRI/VariableRef.js: Removed.
+        * ArrayLangRI/VisitingSet.js: Removed.
+        * ArrayLangRI/Visitor.js: Removed.
+        * WebGPUShadingLanguageRI: Copied from Tools/ArrayLangRI.
+        * WebGPUShadingLanguageRI/ALSyntaxError.js: Removed.
+        * WebGPUShadingLanguageRI/ALTypeError.js: Removed.
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        (callFunctionByRef):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics.prototype.add):
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer):
+        * WebGPUShadingLanguageRI/NameContext.js:
+        (NameContext.prototype.add):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype._resolveTypeArguments):
+        (NameResolver.prototype.visitTypeRef):
+        (NameResolver.prototype.visitVariableRef):
+        * WebGPUShadingLanguageRI/Parse.js:
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/StructType.js:
+        (StructType.prototype.add):
+        (StructType.prototype.instantiate):
+        * WebGPUShadingLanguageRI/TypeDefResolver.js:
+        (TypeDefResolver.prototype.visitTypeRef):
+        (TypeDefResolver):
+        * WebGPUShadingLanguageRI/VisitingSet.js:
+        (VisitingSet.prototype.doVisit):
+        (VisitingSet):
+        * WebGPUShadingLanguageRI/WSyntaxError.js: Copied from Tools/ArrayLangRI/ALSyntaxError.js.
+        (ALSyntaxError): Deleted.
+        * WebGPUShadingLanguageRI/WTypeError.js: Copied from Tools/ArrayLangRI/ALTypeError.js.
+        (ALTypeError): Deleted.
+
 2017-08-30  Eric Carlson  <eric.carlson@apple.com>
 
         Add Logger observer and helper class

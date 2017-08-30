@@ -24,21 +24,12 @@
  */
 "use strict";
 
-class VisitingSet {
-    constructor(...items)
+class WSyntaxError extends Error {
+    constructor(originString, message)
     {
-        this._set = new Set(items);
-    }
-    
-    doVisit(item, callback)
-    {
-        if (this._set.has(item))
-            throw new ALTypeError(item.origin.originString, "Recursive " + item.kind);
-        this._set.add(item);
-        try {
-            return callback();
-        } finally {
-            this._set.delete(item);
-        }
+        super("Syntax error at " + originString + ": " + message);
+        this.originString = originString;
+        this.syntaxErrorMessage = message;
     }
 }
+

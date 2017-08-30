@@ -37,7 +37,7 @@ class StructType extends Type {
     add(field)
     {
         if (this._fields.has(field.name))
-            throw new ALTypeError(field.origin.originString, "Duplicate field name: " + field.name);
+            throw new WTypeError(field.origin.originString, "Duplicate field name: " + field.name);
         this._fields.set(field.name, field);
     }
     
@@ -59,7 +59,7 @@ class StructType extends Type {
     instantiate(typeArguments)
     {
         if (typeArguments.length != this.typeParameters.length)
-            throw new ALTypeError(origin.originString, "Wrong number of type arguments to instantiation");
+            throw new WTypeError(origin.originString, "Wrong number of type arguments to instantiation");
         
         let substitution = Substitution.mapping(this.typeParameters, typeArguments);
         let instantiateImmediates = new InstantiateImmediates();

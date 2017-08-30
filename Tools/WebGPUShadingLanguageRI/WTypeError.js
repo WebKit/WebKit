@@ -24,7 +24,7 @@
  */
 "use strict";
 
-class ALTypeError extends Error {
+class WTypeError extends Error {
     constructor(originString, message)
     {
         super("Type error at " + originString + ": " + message);

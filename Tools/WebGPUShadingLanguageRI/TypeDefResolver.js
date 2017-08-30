@@ -24,12 +24,30 @@
  */
 "use strict";
 
-class ALSyntaxError extends Error {
-    constructor(originString, message)
+class TypeDefResolver extends Visitor {
+    constructor()
     {
-        super("Syntax error at " + originString + ": " + message);
-        this.originString = originString;
-        this.syntaxErrorMessage = message;
+        super();
+        this._visiting = new VisitingSet();
+    }
+    
+    visitTypeRef(node)
+    {
+        this._visiting.doVisit(node, () => {
+            super.visitTypeRef(node);
+            if (node.type instanceof TypeDef) {
+                let unificationContext = new UnificationContext(node.type.typeParameters);
+                if (node.typeArguments.length != node.type.typeParameters.length)
+                    throw new Error("argument/parameter mismatch (should have been caught earlier)");
+                for (let i = 0; i < node.typeArguments.length; ++i)
+                    node.typeArguments[i].unify(unificationContext, node.type.typeParameters[i]);
+                if (!unificationContext.verify())
+                    throw new WTypeError(node.origin.originString, "Type reference to a type definition violates protocol constraints");
+                
+                let newType = node.type.type.substituteToUnification(node.type.typeParameters, unificationContext);
+                newType.visit(this);
+                node.setTypeAndArguments(newType, []);
+            }
+        });
     }
 }
-

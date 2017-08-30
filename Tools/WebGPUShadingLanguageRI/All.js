@@ -33,8 +33,6 @@ load("Rewriter.js");
 load("Visitor.js");
 load("EValue.js");
 
-load("ALSyntaxError.js");
-load("ALTypeError.js");
 load("AddressSpace.js");
 load("ArrayRefType.js");
 load("ArrayType.js");
@@ -98,3 +96,5 @@ load("UnificationContext.js");
 load("VariableDecl.js");
 load("VariableRef.js");
 load("VisitingSet.js");
+load("WSyntaxError.js");
+load("WTypeError.js");
