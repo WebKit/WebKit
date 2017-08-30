@@ -1,7 +1,5 @@
 
 PASS Create Request with keep alive values 
 PASS Clone Request with keep alive values 
-FAIL Request with keep alive and ReadableStream body assert_throws: function "() => {
-            new Request("", {keepalive: true, body: new ReadableStream(), method: "POST"});
-          }" did not throw
+PASS Request with keep alive and ReadableStream body 
 

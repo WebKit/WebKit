@@ -217,6 +217,9 @@ ExceptionOr<void> FetchRequest::setBody(FetchBody::Init&& body)
 
     ASSERT(scriptExecutionContext());
     extractBody(*scriptExecutionContext(), WTFMove(body));
+
+    if (m_internalRequest.options.keepAlive && hasReadableStreamBody())
+        return Exception { TypeError, ASCIILiteral("Request cannot have a ReadableStream body and keepalive set to true") };
     return { };
 }
 
@@ -229,6 +232,9 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
         m_body = WTFMove(request.m_body);
         request.setDisturbed();
     }
+
+    if (m_internalRequest.options.keepAlive && hasReadableStreamBody())
+        return Exception { TypeError, ASCIILiteral("Request cannot have a ReadableStream body and keepalive set to true") };
     return { };
 }
 

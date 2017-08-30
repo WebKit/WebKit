@@ -1,3 +1,15 @@
+2017-08-29  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Request should throw when keep alive is true and body is a ReadableStream
+        https://bugs.webkit.org/show_bug.cgi?id=176083
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased test.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::setBody):
+
 2017-08-29  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use find_package for zlib

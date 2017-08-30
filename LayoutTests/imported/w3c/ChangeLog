@@ -1,5 +1,14 @@
 2017-08-29  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Request should throw when keep alive is true and body is a ReadableStream
+        https://bugs.webkit.org/show_bug.cgi?id=176083
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/request/request-keepalive-expected.txt:
+
+2017-08-29  Youenn Fablet  <youenn@apple.com>
+
         Add support for FetchRequest.body
         https://bugs.webkit.org/show_bug.cgi?id=176066
 
