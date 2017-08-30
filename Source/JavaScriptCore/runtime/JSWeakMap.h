@@ -26,14 +26,13 @@
 #pragma once
 
 #include "JSObject.h"
+#include "WeakMapBase.h"
 
 namespace JSC {
 
-class WeakMapData;
-
-class JSWeakMap : public JSNonFinalObject {
+class JSWeakMap final : public WeakMapBase {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = WeakMapBase;
 
     DECLARE_EXPORT_INFO;
 
@@ -54,26 +53,13 @@ public:
         return create(exec->vm(), structure);
     }
 
-    WeakMapData* weakMapData() { return m_weakMapData.get(); }
-
-    JSValue get(CallFrame*, JSObject*);
-    bool has(CallFrame*, JSObject*);
-    bool remove(CallFrame*, JSObject*);
-
-    void set(CallFrame*, JSObject*, JSValue);
-    void clear(CallFrame*);
-
 private:
     JSWeakMap(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
     }
 
-    void finishCreation(VM&);
-    static void visitChildren(JSCell*, SlotVisitor&);
     static String toStringName(const JSObject*, ExecState*);
-
-    WriteBarrier<WeakMapData> m_weakMapData;
 };
 
 } // namespace JSC

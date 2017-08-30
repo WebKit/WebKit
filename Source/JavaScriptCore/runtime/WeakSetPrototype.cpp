@@ -28,7 +28,7 @@
 
 #include "JSCInlines.h"
 #include "JSWeakSet.h"
-#include "WeakMapData.h"
+#include "WeakMapBase.h"
 
 namespace JSC {
 
@@ -51,7 +51,7 @@ void WeakSetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "WeakSet"), DontEnum | ReadOnly);
 }
 
-static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)
+static JSWeakSet* getWeakSet(CallFrame* callFrame, JSValue value)
 {
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -62,7 +62,7 @@ static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)
     }
 
     if (JSWeakSet* weakSet = jsDynamicCast<JSWeakSet*>(vm, value))
-        return weakSet->weakMapData();
+        return weakSet;
 
     throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakSet function on a non-WeakSet object"));
     return nullptr;
@@ -70,20 +70,20 @@ static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakSetDelete(CallFrame* callFrame)
 {
-    WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
-    if (!map)
+    auto* set = getWeakSet(callFrame, callFrame->thisValue());
+    if (!set)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
-    return JSValue::encode(jsBoolean(key.isObject() && map->remove(asObject(key))));
+    return JSValue::encode(jsBoolean(key.isObject() && set->remove(asObject(key))));
 }
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakSetHas(CallFrame* callFrame)
 {
-    WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
-    if (!map)
+    auto* set = getWeakSet(callFrame, callFrame->thisValue());
+    if (!set)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
-    return JSValue::encode(jsBoolean(key.isObject() && map->contains(asObject(key))));
+    return JSValue::encode(jsBoolean(key.isObject() && set->contains(asObject(key))));
 }
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(CallFrame* callFrame)
@@ -91,14 +91,14 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(CallFrame* callFrame)
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
-    ASSERT(!!scope.exception() == !map);
-    if (!map)
+    auto* set = getWeakSet(callFrame, callFrame->thisValue());
+    ASSERT(!!scope.exception() == !set);
+    if (!set)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
         return JSValue::encode(throwTypeError(callFrame, scope, WTF::ASCIILiteral("Attempted to add a non-object key to a WeakSet")));
-    map->set(vm, asObject(key), jsUndefined());
+    set->set(vm, asObject(key), jsUndefined());
     return JSValue::encode(callFrame->thisValue());
 }
 

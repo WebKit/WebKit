@@ -1,3 +1,77 @@
+2017-08-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Merge WeakMapData into JSWeakMap and JSWeakSet
+        https://bugs.webkit.org/show_bug.cgi?id=143919
+
+        Reviewed by Darin Adler.
+
+        This patch changes WeakMapData from JSCell to JSDestructibleObject,
+        renaming it to WeakMapBase, and JSWeakMap and JSWeakSet simply inherit
+        it instead of separately allocating WeakMapData. This reduces memory
+        consumption and allocation times.
+
+        Also this patch a bit optimizes sizeof(DeadKeyCleaner) by dropping m_target
+        field. Since this class is always embedded in WeakMapBase, we can calculate
+        WeakMapBase address from the address of DeadKeyCleaner.
+
+        This patch does not include the optimization changing WeakMapData to Set
+        for JSWeakSet.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::weakMapSize):
+        (Inspector::JSInjectedScriptHost::weakMapEntries):
+        (Inspector::JSInjectedScriptHost::weakSetSize):
+        (Inspector::JSInjectedScriptHost::weakSetEntries):
+        * runtime/JSWeakMap.cpp:
+        (JSC::JSWeakMap::finishCreation): Deleted.
+        (JSC::JSWeakMap::visitChildren): Deleted.
+        * runtime/JSWeakMap.h:
+        (JSC::JSWeakMap::createStructure): Deleted.
+        (JSC::JSWeakMap::create): Deleted.
+        (JSC::JSWeakMap::weakMapData): Deleted.
+        (JSC::JSWeakMap::JSWeakMap): Deleted.
+        * runtime/JSWeakSet.cpp:
+        (JSC::JSWeakSet::finishCreation): Deleted.
+        (JSC::JSWeakSet::visitChildren): Deleted.
+        * runtime/JSWeakSet.h:
+        (JSC::JSWeakSet::createStructure): Deleted.
+        (JSC::JSWeakSet::create): Deleted.
+        (JSC::JSWeakSet::weakMapData): Deleted.
+        (JSC::JSWeakSet::JSWeakSet): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/WeakMapBase.cpp: Renamed from Source/JavaScriptCore/runtime/WeakMapData.cpp.
+        (JSC::WeakMapBase::WeakMapBase):
+        (JSC::WeakMapBase::destroy):
+        (JSC::WeakMapBase::estimatedSize):
+        (JSC::WeakMapBase::visitChildren):
+        (JSC::WeakMapBase::set):
+        (JSC::WeakMapBase::get):
+        (JSC::WeakMapBase::remove):
+        (JSC::WeakMapBase::contains):
+        (JSC::WeakMapBase::clear):
+        (JSC::WeakMapBase::DeadKeyCleaner::target):
+        (JSC::WeakMapBase::DeadKeyCleaner::visitWeakReferences):
+        (JSC::WeakMapBase::DeadKeyCleaner::finalizeUnconditionally):
+        * runtime/WeakMapBase.h: Renamed from Source/JavaScriptCore/runtime/WeakMapData.h.
+        (JSC::WeakMapBase::size const):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::getWeakMap):
+        (JSC::protoFuncWeakMapDelete):
+        (JSC::protoFuncWeakMapGet):
+        (JSC::protoFuncWeakMapHas):
+        (JSC::protoFuncWeakMapSet):
+        (JSC::getWeakMapData): Deleted.
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::getWeakSet):
+        (JSC::protoFuncWeakSetDelete):
+        (JSC::protoFuncWeakSetHas):
+        (JSC::protoFuncWeakSetAdd):
+        (JSC::getWeakMapData): Deleted.
+
 2017-08-22  Saam Barati  <sbarati@apple.com>
 
         We are using valueProfileForBytecodeOffset when there may not be a value profile

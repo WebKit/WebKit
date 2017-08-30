@@ -111,7 +111,6 @@
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
-#include "WeakMapData.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ReadWriteLock.h>
@@ -260,7 +259,6 @@ VM::VM(VMType vmType, HeapType heapType)
     unlinkedFunctionCodeBlockStructure.set(*this, UnlinkedFunctionCodeBlock::createStructure(*this, 0, jsNull()));
     unlinkedModuleProgramCodeBlockStructure.set(*this, UnlinkedModuleProgramCodeBlock::createStructure(*this, 0, jsNull()));
     propertyTableStructure.set(*this, PropertyTable::createStructure(*this, 0, jsNull()));
-    weakMapDataStructure.set(*this, WeakMapData::createStructure(*this, 0, jsNull()));
     inferredValueStructure.set(*this, InferredValue::createStructure(*this, 0, jsNull()));
     inferredTypeStructure.set(*this, InferredType::createStructure(*this, 0, jsNull()));
     inferredTypeTableStructure.set(*this, InferredTypeTable::createStructure(*this, 0, jsNull()));

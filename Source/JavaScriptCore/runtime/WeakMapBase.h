@@ -25,31 +25,16 @@
 
 #pragma once
 
-#include "JSCell.h"
+#include "JSDestructibleObject.h"
 #include "Structure.h"
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC {
 
-class WeakMapData final : public JSCell {
+class WeakMapBase : public JSDestructibleObject {
 public:
-    typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-
-    static WeakMapData* create(VM& vm)
-    {
-        WeakMapData* weakMapData = new (NotNull, allocateCell<WeakMapData>(vm.heap)) WeakMapData(vm);
-        weakMapData->finishCreation(vm);
-        return weakMapData;
-    }
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
-    }
-
-    static const bool needsDestruction = true;
+    using Base = JSDestructibleObject;
 
     void set(VM&, JSObject*, JSValue);
     JSValue get(JSObject*);
@@ -59,30 +44,27 @@ public:
 
     DECLARE_INFO;
 
-    typedef HashMap<JSObject*, WriteBarrier<Unknown>> MapType;
+    using MapType = HashMap<JSObject*, WriteBarrier<Unknown>>;
     MapType::const_iterator begin() const { return m_map.begin(); }
     MapType::const_iterator end() const { return m_map.end(); }
 
-    int size() const { return m_map.size(); }
+    unsigned size() const { return m_map.size(); }
 
-private:
-    WeakMapData(VM&);
-    static void destroy(JSCell*);
     static size_t estimatedSize(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
-    void finishCreation(VM&);
+
+protected:
+    WeakMapBase(VM&, Structure*);
+    static void destroy(JSCell*);
 
     class DeadKeyCleaner : public UnconditionalFinalizer, public WeakReferenceHarvester {
     public:
-        DeadKeyCleaner(WeakMapData* target)
-            : m_target(target)
-        {
-        }
+        WeakMapBase* target();
+
     private:
         void visitWeakReferences(SlotVisitor&) override;
         void finalizeUnconditionally() override;
         unsigned m_liveKeyCount;
-        WeakMapData* m_target;
     };
     DeadKeyCleaner m_deadKeyCleaner;
     MapType m_map;

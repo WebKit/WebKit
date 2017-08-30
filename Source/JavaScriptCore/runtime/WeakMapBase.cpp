@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WeakMapData.h"
+#include "WeakMapBase.h"
 
 #include "ExceptionHelpers.h"
 #include "JSCInlines.h"
@@ -33,34 +33,29 @@
 
 namespace JSC {
 
-const ClassInfo WeakMapData::s_info = { "WeakMapData", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(WeakMapData) };
+const ClassInfo WeakMapBase::s_info = { "WeakMapBase", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakMapBase) };
 
-WeakMapData::WeakMapData(VM& vm)
-    : Base(vm, vm.weakMapDataStructure.get())
-    , m_deadKeyCleaner(this)
+WeakMapBase::WeakMapBase(VM& vm, Structure* structure)
+    : Base(vm, structure)
 {
+    ASSERT(m_deadKeyCleaner.target() == this);
 }
 
-void WeakMapData::finishCreation(VM& vm)
+void WeakMapBase::destroy(JSCell* cell)
 {
-    Base::finishCreation(vm);
+    static_cast<WeakMapBase*>(cell)->~WeakMapBase();
 }
 
-void WeakMapData::destroy(JSCell* cell)
+size_t WeakMapBase::estimatedSize(JSCell* cell)
 {
-    static_cast<WeakMapData*>(cell)->~WeakMapData();
-}
-
-size_t WeakMapData::estimatedSize(JSCell* cell)
-{
-    WeakMapData* thisObj = jsCast<WeakMapData*>(cell);
+    auto* thisObj = jsCast<WeakMapBase*>(cell);
     return Base::estimatedSize(cell) + (thisObj->m_map.capacity() * (sizeof(JSObject*) + sizeof(WriteBarrier<Unknown>)));
 }
 
-void WeakMapData::visitChildren(JSCell* cell, SlotVisitor& visitor)
+void WeakMapBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Base::visitChildren(cell, visitor);
-    WeakMapData* thisObj = jsCast<WeakMapData*>(cell);
+    auto* thisObj = jsCast<WeakMapBase*>(cell);
     visitor.addUnconditionalFinalizer(&thisObj->m_deadKeyCleaner);
     visitor.addWeakReferenceHarvester(&thisObj->m_deadKeyCleaner);
 
@@ -70,14 +65,14 @@ void WeakMapData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.reportExtraMemoryVisited(thisObj->m_map.capacity() * (sizeof(JSObject*) + sizeof(WriteBarrier<Unknown>)));
 }
 
-void WeakMapData::set(VM& vm, JSObject* key, JSValue value)
+void WeakMapBase::set(VM& vm, JSObject* key, JSValue value)
 {
     // Here we force the write barrier on the key.
     auto result = m_map.add(WriteBarrier<JSObject>(vm, this, key).get(), WriteBarrier<Unknown>());
     result.iterator->value.set(vm, this, value);
 }
 
-JSValue WeakMapData::get(JSObject* key)
+JSValue WeakMapBase::get(JSObject* key)
 {
     auto iter = m_map.find(key);
     if (iter == m_map.end())
@@ -85,62 +80,64 @@ JSValue WeakMapData::get(JSObject* key)
     return iter->value.get();
 }
 
-bool WeakMapData::remove(JSObject* key)
+bool WeakMapBase::remove(JSObject* key)
 {
-    auto iter = m_map.find(key);
-    if (iter == m_map.end())
-        return false;
-
-    m_map.remove(iter);
-    return true;
+    return m_map.remove(key);
 }
 
-bool WeakMapData::contains(JSObject* key)
+bool WeakMapBase::contains(JSObject* key)
 {
     return m_map.contains(key);
 }
 
-void WeakMapData::clear()
+void WeakMapBase::clear()
 {
     m_map.clear();
 }
 
-void WeakMapData::DeadKeyCleaner::visitWeakReferences(SlotVisitor& visitor)
+inline WeakMapBase* WeakMapBase::DeadKeyCleaner::target()
 {
+    return bitwise_cast<WeakMapBase*>(bitwise_cast<char*>(this) - OBJECT_OFFSETOF(WeakMapBase, m_deadKeyCleaner));
+}
+
+void WeakMapBase::DeadKeyCleaner::visitWeakReferences(SlotVisitor& visitor)
+{
+    WeakMapBase* map = target();
     m_liveKeyCount = 0;
-    for (auto& pair : m_target->m_map) {
+    for (auto& pair : map->m_map) {
         if (!Heap::isMarked(pair.key))
             continue;
         m_liveKeyCount++;
         visitor.append(pair.value);
     }
-    RELEASE_ASSERT(m_liveKeyCount <= m_target->m_map.size());
+    ASSERT(m_liveKeyCount <= map->m_map.size());
 }
 
-void WeakMapData::DeadKeyCleaner::finalizeUnconditionally()
+void WeakMapBase::DeadKeyCleaner::finalizeUnconditionally()
 {
-    if (m_liveKeyCount > m_target->m_map.size() / 2) {
-        RELEASE_ASSERT(m_liveKeyCount <= m_target->m_map.size());
-        int deadCount = m_target->m_map.size() - m_liveKeyCount;
+    WeakMapBase* map = target();
+    if (m_liveKeyCount > map->m_map.size() / 2) {
+        RELEASE_ASSERT(m_liveKeyCount <= map->m_map.size());
+        int deadCount = map->m_map.size() - m_liveKeyCount;
         if (!deadCount)
             return;
         Vector<JSObject*> deadEntries;
         deadEntries.reserveCapacity(deadCount);
-        for (auto& pair : m_target->m_map) {
+        for (auto& pair : map->m_map) {
             if (Heap::isMarked(pair.key))
                 continue;
             deadEntries.uncheckedAppend(pair.key);
         }
         for (auto& deadEntry : deadEntries)
-            m_target->m_map.remove(deadEntry);
+            map->m_map.remove(deadEntry);
     } else {
         MapType newMap;
-        for (auto& pair : m_target->m_map) {
+        for (auto& pair : map->m_map) {
             if (!Heap::isMarked(pair.key))
                 continue;
             newMap.add(pair.key, pair.value);
         }
-        m_target->m_map.swap(newMap);
+        map->m_map.swap(newMap);
     }
 }
 

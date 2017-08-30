@@ -927,8 +927,8 @@ set(JavaScriptCore_SOURCES
     runtime/VMTraps.cpp
     runtime/VarOffset.cpp
     runtime/Watchdog.cpp
+    runtime/WeakMapBase.cpp
     runtime/WeakMapConstructor.cpp
-    runtime/WeakMapData.cpp
     runtime/WeakMapPrototype.cpp
     runtime/WeakSetConstructor.cpp
     runtime/WeakSetPrototype.cpp

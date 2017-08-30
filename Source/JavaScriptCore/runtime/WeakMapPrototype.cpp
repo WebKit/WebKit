@@ -28,7 +28,7 @@
 
 #include "JSCInlines.h"
 #include "JSWeakMap.h"
-#include "WeakMapData.h"
+#include "WeakMapBase.h"
 
 namespace JSC {
 
@@ -53,7 +53,7 @@ void WeakMapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "WeakMap"), DontEnum | ReadOnly);
 }
 
-static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)
+static JSWeakMap* getWeakMap(CallFrame* callFrame, JSValue value)
 {
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -64,7 +64,7 @@ static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)
     }
 
     if (JSWeakMap* weakMap = jsDynamicCast<JSWeakMap*>(vm, value))
-        return weakMap->weakMapData();
+        return weakMap;
 
     throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakMap function on a non-WeakMap object"));
     return nullptr;
@@ -72,7 +72,7 @@ static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakMapDelete(CallFrame* callFrame)
 {
-    WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
+    auto* map = getWeakMap(callFrame, callFrame->thisValue());
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
@@ -81,7 +81,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapDelete(CallFrame* callFrame)
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakMapGet(CallFrame* callFrame)
 {
-    WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
+    auto* map = getWeakMap(callFrame, callFrame->thisValue());
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
@@ -92,7 +92,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapGet(CallFrame* callFrame)
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakMapHas(CallFrame* callFrame)
 {
-    WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
+    auto* map = getWeakMap(callFrame, callFrame->thisValue());
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);
@@ -104,7 +104,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapSet(CallFrame* callFrame)
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
+    auto* map = getWeakMap(callFrame, callFrame->thisValue());
     ASSERT(!!scope.exception() == !map);
     if (!map)
         return JSValue::encode(jsUndefined());

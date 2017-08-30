@@ -368,7 +368,6 @@ public:
     Strong<Structure> unlinkedFunctionCodeBlockStructure;
     Strong<Structure> unlinkedModuleProgramCodeBlockStructure;
     Strong<Structure> propertyTableStructure;
-    Strong<Structure> weakMapDataStructure;
     Strong<Structure> inferredValueStructure;
     Strong<Structure> inferredTypeStructure;
     Strong<Structure> inferredTypeTableStructure;
