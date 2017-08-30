@@ -86,7 +86,6 @@ public:
     void didImportIconURLForPageURL(const String&) override { }
     void didImportIconDataForPageURL(const String&) override { }
     void didChangeIconForPageURL(const String&) override { }
-    void didRemoveAllIcons() override { }
     void didFinishURLImport() override { }
 };
 
@@ -210,6 +209,8 @@ bool IconDatabase::open(const String& directory, const String& filename)
         return false;
     }
 
+    m_mainThreadNotifier.setActive(true);
+
     m_databaseDirectory = directory.isolatedCopy();
 
     // Formulate the full path for the database file
@@ -232,6 +233,8 @@ void IconDatabase::close()
 {
     ASSERT_NOT_SYNC_THREAD();
 
+    m_mainThreadNotifier.stop();
+
     if (m_syncThreadRunning) {
         // Set the flag to tell the sync thread to wrap it up
         m_threadTerminationRequested = true;
@@ -248,11 +251,6 @@ void IconDatabase::close()
     m_removeIconsRequested = false;
 
     m_syncDB.close();
-
-    // If there are still main thread callbacks in flight then the database might not actually be closed yet.
-    // But if it is closed, notify the client now.
-    if (!isOpen() && m_client)
-        m_client->didClose();
 
     m_client = nullptr;
 }
@@ -734,7 +732,6 @@ void IconDatabase::checkIntegrityBeforeOpening()
 
 IconDatabase::IconDatabase()
     : m_syncTimer(RunLoop::main(), this, &IconDatabase::syncTimerFired)
-    , m_mainThreadCallbackCount(0)
     , m_client(defaultClient())
 {
     LOG(IconDatabase, "Creating IconDatabase %p", this);
@@ -779,11 +776,6 @@ void IconDatabase::syncTimerFired()
 // ******************
 
 bool IconDatabase::isOpen() const
-{
-    return isOpenBesidesMainThreadCallbacks() || m_mainThreadCallbackCount;
-}
-
-bool IconDatabase::isOpenBesidesMainThreadCallbacks() const
 {
     LockHolder locker(m_syncLock);
     return m_syncThreadRunning || m_syncDB.isOpen();
@@ -1619,9 +1611,6 @@ void IconDatabase::removeAllIconsOnThread()
     m_syncDB.clearAllTables();
     m_syncDB.runVacuumCommand();
     createDatabaseTables(m_syncDB);
-
-    LOG(IconDatabase, "Dispatching notification that we removed all icons");
-    dispatchDidRemoveAllIconsOnMainThread();
 }
 
 void IconDatabase::deleteAllPreparedStatements()
@@ -1932,68 +1921,33 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
     }
 }
 
-void IconDatabase::checkClosedAfterMainThreadCallback()
-{
-    ASSERT_NOT_SYNC_THREAD();
-
-    // If there are still callbacks in flight from the sync thread we cannot possibly be closed.
-    if (--m_mainThreadCallbackCount)
-        return;
-
-    // Even if there's no more pending callbacks the database might otherwise still be open.
-    if (isOpenBesidesMainThreadCallbacks())
-        return;
-
-    // This database is now actually closed! But first notify the client.
-    if (m_client)
-        m_client->didClose();
-}
-
 void IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread(const String& pageURL)
 {
     ASSERT_ICON_SYNC_THREAD();
-    ++m_mainThreadCallbackCount;
 
-    callOnMainThread([this, pageURL = pageURL.isolatedCopy()] {
+    m_mainThreadNotifier.notify([this, pageURL = pageURL.isolatedCopy()] {
         if (m_client)
             m_client->didImportIconURLForPageURL(pageURL);
-        checkClosedAfterMainThreadCallback();
     });
 }
 
 void IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread(const String& pageURL)
 {
     ASSERT_ICON_SYNC_THREAD();
-    ++m_mainThreadCallbackCount;
 
-    callOnMainThread([this, pageURL = pageURL.isolatedCopy()] {
+    m_mainThreadNotifier.notify([this, pageURL = pageURL.isolatedCopy()] {
         if (m_client)
             m_client->didImportIconDataForPageURL(pageURL);
-        checkClosedAfterMainThreadCallback();
-    });
-}
-
-void IconDatabase::dispatchDidRemoveAllIconsOnMainThread()
-{
-    ASSERT_ICON_SYNC_THREAD();
-    ++m_mainThreadCallbackCount;
-
-    callOnMainThread([this] {
-        if (m_client)
-            m_client->didRemoveAllIcons();
-        checkClosedAfterMainThreadCallback();
     });
 }
 
 void IconDatabase::dispatchDidFinishURLImportOnMainThread()
 {
     ASSERT_ICON_SYNC_THREAD();
-    ++m_mainThreadCallbackCount;
 
-    callOnMainThread([this] {
+    m_mainThreadNotifier.notify([this] {
         if (m_client)
             m_client->didFinishURLImport();
-        checkClosedAfterMainThreadCallback();
     });
 }
 

@@ -1,3 +1,45 @@
+2017-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] ASSERTION FAILED: !isOpen() in WebKit::IconDatabase::~IconDatabase()
+        https://bugs.webkit.org/show_bug.cgi?id=175719
+
+        Reviewed by Michael Catanzaro.
+
+        This is happening always when running /webkit2/WebKitFaviconDatabase/favicon-database-test in debug builds. The
+        last step we do is removing all icons, then the test finishes, which destroys the WebKitFaviconDatabase object
+        that closes the icon database on dispose. The problem is that removing all icons schedules a main thread
+        notification and IconDatabase is not considered closed until all main thread callbacks have been dispatched. This
+        is never going to happen in the test, because the main loop is no longer running at that point. I don't think
+        it's worth it to consider the database open while main thread callbacks are pending, they are just notifications
+        and the client is no longer insterested on them afer closing the database. I think it's bettter and simpler to
+        simply cancel the pending callbacks on database close. That ensures that isOpen() after close() is always
+        false. This patch adds a helper private class to schedule notifications to the main thread that can be cancelled
+        on database close. It also removes the didClose() notification because it was unused and because it's pointless
+        now that we know the database is closed after close().
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::open): Mark the main thread notifier as active.
+        (WebKit::IconDatabase::close): Mark the main thread notifier as not active.
+        (WebKit::IconDatabase::IconDatabase): Remove m_mainThreadCallbackCount initialization.
+        (WebKit::IconDatabase::isOpen const): Do what isOpenBesidesMainThreadCallbacks() used to do.
+        (WebKit::IconDatabase::removeAllIconsOnThread): Remove the notification because it's currently unused.
+        (WebKit::IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread): Use MainThreadNotifier.
+        (WebKit::IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread): Ditto.
+        (WebKit::IconDatabase::dispatchDidFinishURLImportOnMainThread): Ditto.
+        (WebKit::IconDatabase::isOpenBesidesMainThreadCallbacks const): Deleted.
+        (WebKit::IconDatabase::checkClosedAfterMainThreadCallback): Deleted.
+        (WebKit::IconDatabase::dispatchDidRemoveAllIconsOnMainThread): Deleted.
+        * UIProcess/API/glib/IconDatabase.h:
+        (WebKit::IconDatabaseClient::didChangeIconForPageURL):
+        (WebKit::IconDatabaseClient::didFinishURLImport):
+        (WebKit::IconDatabase::MainThreadNotifier::MainThreadNotifier):
+        (WebKit::IconDatabase::MainThreadNotifier::setActive):
+        (WebKit::IconDatabase::MainThreadNotifier::notify):
+        (WebKit::IconDatabase::MainThreadNotifier::stop):
+        (WebKit::IconDatabase::MainThreadNotifier::timerFired):
+        (WebKit::IconDatabaseClient::didRemoveAllIcons): Deleted.
+        (WebKit::IconDatabaseClient::didClose): Deleted.
+
 2017-08-23  Chris Dumez  <cdumez@apple.com>
 
         Regression(r221059): NetworkDataTask::didReceiveResponse() should not use PolicyUse for HTTP/0.9
