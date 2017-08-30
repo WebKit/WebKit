@@ -79,7 +79,8 @@
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
 
-  <autotools id="cairo">
+  <autotools id="cairo"
+             autogen-sh="configure">
     <if condition-set="linux">
       <autogenargs value="--enable-gl=yes --enable-egl=yes --enable-glx=yes"/>
     </if>
@@ -206,7 +207,8 @@
     </branch>
   </autotools>
 
-  <autotools id="glib-networking">
+  <autotools id="glib-networking"
+             autogen-sh="configure">
     <if condition-set="macos">
       <autogenargs value="--with-ca-certificates='/usr/local/etc/openssl/cert.pem' --without-pkcs11"/>
     </if>
@@ -220,6 +222,7 @@
   </autotools>
 
   <autotools id="libsoup"
+             autogen-sh="configure"
              autogenargs="--disable-introspection">
     <if condition-set="macos">
       <autogenargs value="--disable-tls-check"/>
@@ -282,7 +285,8 @@
             hash="sha256:75ac1f63e845f895dec8d72d4645ef5f362e32c921cc78987f2f19c2ce212a24"/>
   </autotools>
 
-  <autotools id="at-spi2-core" 
+  <autotools id="at-spi2-core"
+             autogen-sh="configure"
              autogenargs="--disable-introspection">
     <branch module="pub/GNOME/sources/at-spi2-core/2.25/at-spi2-core-2.25.4.tar.xz" version="2.25.4"
             repo="ftp.gnome.org"
@@ -293,7 +297,8 @@
     </dependencies>
   </autotools>
 
-  <autotools id="at-spi2-atk">
+  <autotools id="at-spi2-atk"
+             autogen-sh="configure">
     <branch module="pub/GNOME/sources/at-spi2-atk/2.25/at-spi2-atk-2.25.3.tar.xz" version="2.25.3"
             repo="ftp.gnome.org"
             hash="sha256:b7aab1a4ee7182083fcfafb595b7b3fe4df34aa2230c775050fe6015b01f84e1">
@@ -326,7 +331,9 @@
     </branch>
   </autotools>
 
-  <autotools id="wayland" autogenargs="--disable-documentation">
+  <autotools id="wayland"
+             autogen-sh="configure"
+             autogenargs="--disable-documentation">
     <pkg-config>wayland-server.pc</pkg-config>
     <branch module="releases/wayland-1.12.0.tar.xz"
             version="1.12.0"
@@ -334,14 +341,17 @@
             hash="sha256:d6b4135cba0188abcb7275513c72dede751d6194f6edc5b82183a3ba8b821ab1"/>
   </autotools>
 
-  <autotools id="wayland-protocols">
+  <autotools id="wayland-protocols"
+             autogen-sh="configure">
     <branch module="releases/wayland-protocols-1.7.tar.xz"
             version="1.7"
 	    repo="wayland.freedesktop.org"
 	    hash="sha256:635f2a937d318f1fecb97b54074ca211486e38af943868dd0fa82ea38d091c1f"/>
   </autotools>
 
-  <autotools id="weston" autogenargs="--enable-x11-compositor --disable-rpi-compositor --disable-fbdev-compositor --disable-setuid-install --disable-ivi-shell --disable-weston-launch --with-cairo=gl">
+  <autotools id="weston"
+             autogen-sh="configure"
+             autogenargs="--enable-x11-compositor --disable-rpi-compositor --disable-fbdev-compositor --disable-setuid-install --disable-ivi-shell --disable-weston-launch --with-cairo=gl">
     <pkg-config>weston.pc</pkg-config>
     <dependencies>
       <dep package="wayland"/>
@@ -379,8 +389,9 @@
   </autotools>
 
   <autotools id="mesa"
-    autogen-template="%(srcdir)s/%(autogen-sh)s --prefix %(prefix)s/softGL %(autogenargs)s"
-    autogenargs="--disable-dri3 --enable-dri --enable-glx --enable-egl --with-egl-platforms=x11,wayland --with-dri-drivers=swrast --with-gallium-drivers=swrast">
+             autogen-sh="configure"
+             autogen-template="%(srcdir)s/%(autogen-sh)s --prefix %(prefix)s/softGL %(autogenargs)s"
+             autogenargs="--disable-dri3 --enable-dri --enable-glx --enable-egl --with-egl-platforms=x11,wayland --with-dri-drivers=swrast --with-gallium-drivers=swrast">
     <!--- WARNING: At jhbuildrc, when we define the path to the Gallium llvmpipe software rasterizer (needed by XvfbDriver),
           we assume that the directory is named "Mesa". So, don't change the checkoutdir name even if you update the version.  -->
     <branch checkoutdir="Mesa"
@@ -408,7 +419,8 @@
     <branch repo="github.com" module="Igalia/openwebrtc-gst-plugins.git" checkoutdir="gst-plugins-openwebrtc" tag="9b2199ea970369dbf1d9ca2f8e61c95f21db2b6e"/>
    </autotools>
 
-  <autotools id="libnice" supports-non-srcdir-builds="no">
+   <autotools id="libnice"
+              supports-non-srcdir-builds="no">
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
@@ -429,13 +441,15 @@
   </autotools>
 
   <autotools id="llvm"
+             autogen-sh="configure"
              autogenargs="--enable-optimized --disable-terminfo --disable-zlib --enable-targets=host --disable-backtraces --disable-crash-overrides --disable-expensive-checks --disable-debug-runtime --disable-assertions --enable-shared --enable-bindings=none">
     <branch repo="llvm.org"
             module="/releases/3.7.0/llvm-3.7.0.src.tar.xz" version="3.7.0" checkoutdir="llvm-3.7.0"
             hash="sha256:ab45895f9dcdad1e140a3a79fd709f64b05ad7364e308c0e582c5b02e9cc3153"/>
   </autotools>
 
-  <autotools id="gsettings-desktop-schemas" autogen-sh="configure">
+  <autotools id="gsettings-desktop-schemas"
+             autogen-sh="configure">
     <dependencies>
       <dep package="glib"/>
     </dependencies>
@@ -446,6 +460,7 @@
   </autotools>
 
   <autotools id="shared-mime-info"
+             autogen-sh="configure"
              autogenargs="--disable-default-make-check">
     <dependencies>
       <dep package="libxml2"/>
@@ -469,7 +484,8 @@
     </branch>
   </autotools>
 
-  <autotools id="libgpg-error" autogen-sh="configure">
+  <autotools id="libgpg-error"
+             autogen-sh="configure">
     <branch module="libgpg-error/libgpg-error-1.27.tar.bz2"
             version="1.27"
             repo="gnupg.org"
@@ -477,7 +493,8 @@
     </branch>
   </autotools>
 
-  <autotools id="libgcrypt" autogen-sh="configure">
+  <autotools id="libgcrypt"
+             autogen-sh="configure">
     <branch module="libgcrypt/libgcrypt-1.7.6.tar.bz2"
             version="1.7.6"
             repo="gnupg.org"
@@ -510,7 +527,9 @@
 
   <!-- libinput is only included because the version of libinput shipped with Debian Jessie
     os too old for building Weston. This may be removed after Debian Strech is released -->
-  <autotools id="libinput" autogen-sh="configure"  autogenargs="--disable-libwacom --disable-tests --disable-documentation">
+  <autotools id="libinput"
+             autogen-sh="configure"
+             autogenargs="--disable-libwacom --disable-tests --disable-documentation">
     <pkg-config>libinput.pc</pkg-config>
     <branch module="software/libinput/libinput-1.6.3.tar.xz"
             version="1.6.3"
