@@ -1,3 +1,22 @@
+2017-08-28  Ms2ger  <Ms2ger@gmail.com>
+
+        Ensure that the alert function is called in TestWebExtensions.
+        https://bugs.webkit.org/show_bug.cgi?id=175880
+
+        Reviewed by Carlos Garcia Campos.
+
+        The test relied on a bug in the HTMLDocument JavaScript bindings: when calling
+        document.open() with three arguments, it would call any function set as the
+        "open" property on the window object, rather than just the real Window::open()
+        method. This bug was fixed by the removal of custom bindings for HTMLDocument
+        in r218437. As a result, the test no longer called alert(), which caused it to
+        fail.
+
+        Instead, call the window.open() function directly.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (testWebExtensionIsolatedWorld):
+
 2017-08-20  Sam Weinig  <sam@webkit.org>
 
         StringView could use a function to strip leading/trailing characters without allocation
