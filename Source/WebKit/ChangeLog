@@ -1,3 +1,20 @@
+2017-08-30  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r221068): Graphics corruption when dragging images on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=176132
+        <rdar://problem/34142983>
+
+        Reviewed by Dean Jackson.
+
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::encode):
+        Color space encoding was entirely disabled on iOS, so after r221068,
+        ShareableBitmap would make different decisions about image format
+        on both sides of the wire.
+
+        Enable color space encoding on iOS (decoding is already implemented)
+        by moving some ifdefs around.
+
 2017-08-30  Youenn Fablet  <youenn@apple.com>
 
         [Cache API] Support cache names persistency
