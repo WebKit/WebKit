@@ -1,3 +1,16 @@
+2017-08-29  Devin Rousso  <webkit@devinrousso.com>
+
+        CallTracingCallback should ignore `readonly attribute`
+        https://bugs.webkit.org/show_bug.cgi?id=176070
+
+        Reviewed by Matt Baker.
+
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-2d.html:
+        * inspector/canvas/recording-webgl-expected.txt:
+        * inspector/canvas/recording-webgl.html:
+        Remove calls to existing readonly attributes.
+
 2017-08-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Assertion failure when opening a file with a missing tag closing bracket

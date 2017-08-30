@@ -112,9 +112,6 @@ function performActions() {
             context.bufferSubData(1, 2, float32Array);
         },
         () => {
-            context.canvas;
-        },
-        () => {
             context.checkFramebufferStatus(1);
         },
         () => {
@@ -209,12 +206,6 @@ function performActions() {
         },
         () => {
             context.drawElements(1, 2, 3, 4);
-        },
-        () => {
-            context.drawingBufferHeight;
-        },
-        () => {
-            context.drawingBufferWidth;
         },
         () => {
             context.enable(1);

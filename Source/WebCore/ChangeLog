@@ -1,3 +1,22 @@
+2017-08-29  Devin Rousso  <webkit@devinrousso.com>
+
+        CallTracingCallback should ignore `readonly attribute`
+        https://bugs.webkit.org/show_bug.cgi?id=176070
+
+        Reviewed by Matt Baker.
+
+        Update existing tests to remove calls to existing readonly attributes.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeGetterBodyDefinition):
+        If the attribute is marked `readonly` do not add logic for the `CallTracingCallback`.
+
+        * bindings/scripts/test/TestCallTracer.idl:
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::JSTestCallTracerConstructor::initializeProperties):
+        (WebCore::jsTestCallTracerTestReadonlyAttributeGetter):
+        (WebCore::jsTestCallTracerTestReadonlyAttribute):
+
 2017-08-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Assertion failure when opening a file with a missing tag closing bracket

@@ -4692,10 +4692,12 @@ sub GenerateAttributeGetterBodyDefinition
         my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "${functionName}(" . join(", ", @arguments) . ")", "*thisObject.globalObject()");
         push(@$outputArray, "    auto& impl = thisObject.wrapped();\n") unless $attribute->isStatic or $attribute->isMapLike;
 
-        my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
-        if ($callTracingCallback) {
-            my @callTracerArguments = ();
-            GenerateCallTracer($outputArray, $callTracingCallback, $attribute->name, \@callTracerArguments, "    ");
+        if (!IsReadonly($attribute)) {
+            my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
+            if ($callTracingCallback) {
+                my @callTracerArguments = ();
+                GenerateCallTracer($outputArray, $callTracingCallback, $attribute->name, \@callTracerArguments, "    ");
+            }
         }
 
         push(@$outputArray, "    JSValue result = ${toJSExpression};\n");

@@ -66,6 +66,7 @@ JSC::EncodedJSValue jsTestCallTracerTestAttributeSpecified(JSC::ExecState*, JSC:
 bool setJSTestCallTracerTestAttributeSpecified(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestCallTracerTestAttributeWithVariant(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestCallTracerTestAttributeWithVariant(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestCallTracerTestReadonlyAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestCallTracerPrototype : public JSC::JSNonFinalObject {
 public:
@@ -94,6 +95,15 @@ private:
 
 using JSTestCallTracerConstructor = JSDOMConstructorNotConstructable<JSTestCallTracer>;
 
+/* Hash table for constructor */
+
+static const HashTableValue JSTestCallTracerConstructorTableValues[] =
+{
+    { "testConstValue", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(false) } },
+};
+
+static_assert(TestCallTracer::testConstValue == false, "testConstValue in TestCallTracer does not match value from IDL");
+
 template<> JSValue JSTestCallTracerConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -105,6 +115,7 @@ template<> void JSTestCallTracerConstructor::initializeProperties(VM& vm, JSDOMG
     putDirect(vm, vm.propertyNames->prototype, JSTestCallTracer::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestCallTracer"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
+    reifyStaticProperties(vm, JSTestCallTracer::info(), JSTestCallTracerConstructorTableValues, *this);
 }
 
 template<> const ClassInfo JSTestCallTracerConstructor::s_info = { "TestCallTracer", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracerConstructor) };
@@ -117,6 +128,7 @@ static const HashTableValue JSTestCallTracerPrototypeTableValues[] =
     { "testAttributeInterface", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCallTracerTestAttributeInterface), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCallTracerTestAttributeInterface) } },
     { "testAttributeSpecified", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCallTracerTestAttributeSpecified), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCallTracerTestAttributeSpecified) } },
     { "testAttributeWithVariant", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCallTracerTestAttributeWithVariant), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCallTracerTestAttributeWithVariant) } },
+    { "testReadonlyAttribute", ReadOnly | CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCallTracerTestReadonlyAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "testOperationInterface", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCallTracerPrototypeFunctionTestOperationInterface), (intptr_t) (0) } },
     { "testOperationSpecified", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCallTracerPrototypeFunctionTestOperationSpecified), (intptr_t) (0) } },
     { "testOperationWithArguments", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCallTracerPrototypeFunctionTestOperationWithArguments), (intptr_t) (3) } },
@@ -125,6 +137,7 @@ static const HashTableValue JSTestCallTracerPrototypeTableValues[] =
     { "testOperationWithNullableVariantArgument", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCallTracerPrototypeFunctionTestOperationWithNullableVariantArgument), (intptr_t) (1) } },
     { "testOperationWithOptionalVariantArgument", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCallTracerPrototypeFunctionTestOperationWithOptionalVariantArgument), (intptr_t) (0) } },
     { "testOperationWithDefaultVariantArgument", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestCallTracerPrototypeFunctionTestOperationWithDefaultVariantArgument), (intptr_t) (0) } },
+    { "testConstValue", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(false) } },
 };
 
 const ClassInfo JSTestCallTracerPrototype::s_info = { "TestCallTracerPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracerPrototype) };
@@ -312,6 +325,20 @@ static inline bool setJSTestCallTracerTestAttributeWithVariantSetter(ExecState& 
 bool setJSTestCallTracerTestAttributeWithVariant(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestCallTracer>::set<setJSTestCallTracerTestAttributeWithVariantSetter>(*state, thisValue, encodedValue, "testAttributeWithVariant");
+}
+
+static inline JSValue jsTestCallTracerTestReadonlyAttributeGetter(ExecState& state, JSTestCallTracer& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLBoolean>(impl.testReadonlyAttribute());
+    return result;
+}
+
+EncodedJSValue jsTestCallTracerTestReadonlyAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestCallTracer>::get<jsTestCallTracerTestReadonlyAttributeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "testReadonlyAttribute");
 }
 
 static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperationInterfaceBody(JSC::ExecState* state, typename IDLOperation<JSTestCallTracer>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

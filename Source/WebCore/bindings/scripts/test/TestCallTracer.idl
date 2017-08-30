@@ -32,6 +32,9 @@ typedef (boolean or float or DOMString) VariantType;
     [CallTracingCallback=testCallTracerAttribute] attribute boolean testAttributeSpecified;
 
     attribute VariantType testAttributeWithVariant;
+    readonly attribute boolean testReadonlyAttribute;
+
+    const boolean testConstValue = false;
 
     void testOperationInterface();
     [CallTracingCallback=testCallTracerOperation] void testOperationSpecified();
