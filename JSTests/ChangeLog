@@ -1,3 +1,9 @@
+2017-08-30  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Make test stop printing.
+
+        * microbenchmarks/fake-iterators-that-throw-when-finished.js:
+
 2017-08-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221327.

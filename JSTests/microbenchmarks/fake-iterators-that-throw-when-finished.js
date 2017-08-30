@@ -73,6 +73,6 @@ function runIterators() {
     let start = Date.now();
     for (let i = 0; i < 5000; ++i)
         runIterators();
-    if (true)
+    if (false)
         print(Date.now() - start);
 }
