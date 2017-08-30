@@ -108,7 +108,7 @@ void WorkerGlobalScope::removeAllEventListeners()
 
 bool WorkerGlobalScope::isSecureContext() const
 {
-    return securityOrigin() && securityOrigin()->isPotentionallyTrustworthy();
+    return securityOrigin() && securityOrigin()->isPotentiallyTrustworthy();
 }
 
 void WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)

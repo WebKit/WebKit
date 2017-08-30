@@ -1,3 +1,25 @@
+2017-08-29  Brady Eidson  <beidson@apple.com>
+
+        Rename "potentionally trustworthy" to "potentially trustworthy"
+        https://bugs.webkit.org/show_bug.cgi?id=176081
+
+        Reviewed by Daniel Bates.
+
+        The Secure Context spec refers to this as "potentially trustworthy"
+        
+        It's possible that this was done potentionally, but we should follow the spec to alleviate confusion.
+
+        * dom/Document.cpp:
+        (WebCore::Document::isSecureContext const):
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldTreatAsPotentiallyTrustworthy):
+        (WebCore::shouldTreatAsPotentionallyTrustworthy): Deleted.
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::isPotentiallyTrustworthy const):
+        (WebCore::SecurityOrigin::isPotentionallyTrustworthy const): Deleted.
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::isSecureContext const):
+
 2017-08-29  Youenn Fablet  <youenn@apple.com>
 
         Add support for FetchRequest.body

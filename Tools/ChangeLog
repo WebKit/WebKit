@@ -1,3 +1,13 @@
+2017-08-29  Brady Eidson  <beidson@apple.com>
+
+        Rename "potentionally trustworthy" to "potentially trustworthy"
+        https://bugs.webkit.org/show_bug.cgi?id=176081
+
+        Reviewed by Daniel Bates.
+
+        * TestWebKitAPI/Tests/WebCore/SecurityOrigin.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-08-29  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Win][JSCOnly] Fix call for updating wincairo-libs in build-jsc

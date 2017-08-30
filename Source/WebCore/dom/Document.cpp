@@ -5444,10 +5444,10 @@ bool Document::isSecureContext() const
 {
     if (!m_frame)
         return true;
-    if (!securityOrigin().isPotentionallyTrustworthy())
+    if (!securityOrigin().isPotentiallyTrustworthy())
         return false;
     for (Frame* frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
-        if (!frame->document()->securityOrigin().isPotentionallyTrustworthy())
+        if (!frame->document()->securityOrigin().isPotentiallyTrustworthy())
             return false;
     }
     return true;
