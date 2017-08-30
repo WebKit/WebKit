@@ -1,3 +1,21 @@
+2017-08-26  Alex Christensen  <achristensen@webkit.org>
+
+        Remove PolicyChecker::cancelCheck
+        https://bugs.webkit.org/show_bug.cgi?id=176002
+
+        Reviewed by Darin Adler.
+
+        cancelCheck is conceptually equivalent to not calling a completion handler.
+        stopCheck is conceptually equivalent to calling a completion handler with PolicyIgnore just before cleaning up everything,
+        which is semantically cleaner and necessary when I replace the last use of PolicyCallback with a CompletionHandler.
+        Before this change, we were probably causing some loading objects to hang right before deleting them, and this cleans them up better.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::cancelPolicyCheckIfNeeded):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::cancelCheck): Deleted.
+        * loader/PolicyChecker.h:
+
 2017-08-25  Daniel Bates  <dabates@apple.com>
 
         InlineTextBox::paintDocumentMarker() does not need to special case painting of grammar and

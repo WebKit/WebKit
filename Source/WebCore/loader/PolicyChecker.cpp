@@ -177,12 +177,6 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, co
     });
 }
 
-void PolicyChecker::cancelCheck()
-{
-    m_frame.loader().client().cancelPolicyCheck();
-    m_callback = { };
-}
-
 void PolicyChecker::stopCheck()
 {
     m_frame.loader().client().cancelPolicyCheck();
