@@ -129,77 +129,77 @@
 /* Begin PBXFileReference section */
 		0708AC321F4C874A001F788F /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 		0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportMacros.h; sourceTree = "<group>"; };
-		0C2DA0671F33CA8400DBC317 /* CFLocaleSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFLocaleSPI.h; path = spi/cf/CFLocaleSPI.h; sourceTree = "<group>"; };
-		0C2DA0681F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFNetworkConnectionCacheSPI.h; path = spi/cf/CFNetworkConnectionCacheSPI.h; sourceTree = "<group>"; };
-		0C2DA0691F33CA8400DBC317 /* CFNetworkSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFNetworkSPI.h; path = spi/cf/CFNetworkSPI.h; sourceTree = "<group>"; };
-		0C2DA06A1F33CA8400DBC317 /* CFUtilitiesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFUtilitiesSPI.h; path = spi/cf/CFUtilitiesSPI.h; sourceTree = "<group>"; };
-		0C2DA06B1F33CA8400DBC317 /* CoreAudioSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreAudioSPI.h; path = spi/cf/CoreAudioSPI.h; sourceTree = "<group>"; };
-		0C2DA06C1F33CA8400DBC317 /* CoreMediaSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreMediaSPI.h; path = spi/cf/CoreMediaSPI.h; sourceTree = "<group>"; };
-		0C2DA11C1F3BE9E000DBC317 /* CoreGraphicsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreGraphicsSPI.h; path = spi/cg/CoreGraphicsSPI.h; sourceTree = "<group>"; };
-		0C2DA11D1F3BE9E000DBC317 /* ImageIOSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageIOSPI.h; path = spi/cg/ImageIOSPI.h; sourceTree = "<group>"; };
-		0C2DA1221F3BEB4900DBC317 /* AVKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVKitSPI.h; path = spi/cocoa/AVKitSPI.h; sourceTree = "<group>"; };
-		0C2DA1231F3BEB4900DBC317 /* CFNSURLConnectionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFNSURLConnectionSPI.h; path = spi/cocoa/CFNSURLConnectionSPI.h; sourceTree = "<group>"; };
-		0C2DA1241F3BEB4900DBC317 /* CoreTextSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreTextSPI.h; path = spi/cocoa/CoreTextSPI.h; sourceTree = "<group>"; };
-		0C2DA1251F3BEB4900DBC317 /* DataDetectorsCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataDetectorsCoreSPI.h; path = spi/cocoa/DataDetectorsCoreSPI.h; sourceTree = "<group>"; };
-		0C2DA1261F3BEB4900DBC317 /* IOPMLibSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOPMLibSPI.h; path = spi/cocoa/IOPMLibSPI.h; sourceTree = "<group>"; };
-		0C2DA1271F3BEB4900DBC317 /* IOPSLibSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOPSLibSPI.h; path = spi/cocoa/IOPSLibSPI.h; sourceTree = "<group>"; };
-		0C2DA1281F3BEB4900DBC317 /* IOReturnSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOReturnSPI.h; path = spi/cocoa/IOReturnSPI.h; sourceTree = "<group>"; };
-		0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOSurfaceSPI.h; path = spi/cocoa/IOSurfaceSPI.h; sourceTree = "<group>"; };
-		0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOTypesSPI.h; path = spi/cocoa/IOTypesSPI.h; sourceTree = "<group>"; };
-		0C2DA12B1F3BEB4900DBC317 /* LinkPresentationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinkPresentationSPI.h; path = spi/cocoa/LinkPresentationSPI.h; sourceTree = "<group>"; };
-		0C2DA12C1F3BEB4900DBC317 /* MachVMSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MachVMSPI.h; path = spi/cocoa/MachVMSPI.h; sourceTree = "<group>"; };
-		0C2DA12D1F3BEB4900DBC317 /* NEFilterSourceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NEFilterSourceSPI.h; path = spi/cocoa/NEFilterSourceSPI.h; sourceTree = "<group>"; };
-		0C2DA12E1F3BEB4900DBC317 /* NSAttributedStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSAttributedStringSPI.h; path = spi/cocoa/NSAttributedStringSPI.h; sourceTree = "<group>"; };
-		0C2DA12F1F3BEB4900DBC317 /* NSButtonCellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSButtonCellSPI.h; path = spi/cocoa/NSButtonCellSPI.h; sourceTree = "<group>"; };
-		0C2DA1301F3BEB4900DBC317 /* NSCalendarDateSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSCalendarDateSPI.h; path = spi/cocoa/NSCalendarDateSPI.h; sourceTree = "<group>"; };
-		0C2DA1311F3BEB4900DBC317 /* NSColorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSColorSPI.h; path = spi/cocoa/NSColorSPI.h; sourceTree = "<group>"; };
-		0C2DA1321F3BEB4900DBC317 /* NSExtensionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSExtensionSPI.h; path = spi/cocoa/NSExtensionSPI.h; sourceTree = "<group>"; };
-		0C2DA1331F3BEB4900DBC317 /* NSFileManagerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSFileManagerSPI.h; path = spi/cocoa/NSFileManagerSPI.h; sourceTree = "<group>"; };
-		0C2DA1341F3BEB4900DBC317 /* NSStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSStringSPI.h; path = spi/cocoa/NSStringSPI.h; sourceTree = "<group>"; };
-		0C2DA1351F3BEB4900DBC317 /* NSTouchBarSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSTouchBarSPI.h; path = spi/cocoa/NSTouchBarSPI.h; sourceTree = "<group>"; };
-		0C2DA1361F3BEB4900DBC317 /* NSURLConnectionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSURLConnectionSPI.h; path = spi/cocoa/NSURLConnectionSPI.h; sourceTree = "<group>"; };
-		0C2DA1371F3BEB4900DBC317 /* NSURLDownloadSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSURLDownloadSPI.h; path = spi/cocoa/NSURLDownloadSPI.h; sourceTree = "<group>"; };
-		0C2DA1381F3BEB4900DBC317 /* NSURLFileTypeMappingsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSURLFileTypeMappingsSPI.h; path = spi/cocoa/NSURLFileTypeMappingsSPI.h; sourceTree = "<group>"; };
-		0C2DA1391F3BEB4900DBC317 /* PassKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PassKitSPI.h; path = spi/cocoa/PassKitSPI.h; sourceTree = "<group>"; };
-		0C2DA13A1F3BEB4900DBC317 /* pthreadSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pthreadSPI.h; path = spi/cocoa/pthreadSPI.h; sourceTree = "<group>"; };
-		0C2DA13B1F3BEB4900DBC317 /* QuartzCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuartzCoreSPI.h; path = spi/cocoa/QuartzCoreSPI.h; sourceTree = "<group>"; };
-		0C2DA13C1F3BEB4900DBC317 /* ServersSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServersSPI.h; path = spi/cocoa/ServersSPI.h; sourceTree = "<group>"; };
-		0C2DA13D1F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFilterEvaluatorSPI.h; path = spi/cocoa/WebFilterEvaluatorSPI.h; sourceTree = "<group>"; };
-		0C5AF90F1F43A4C7002EAC02 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreUISPI.h; path = spi/ios/CoreUISPI.h; sourceTree = "<group>"; };
-		0C5AF9101F43A4C7002EAC02 /* DataDetectorsUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataDetectorsUISPI.h; path = spi/ios/DataDetectorsUISPI.h; sourceTree = "<group>"; };
-		0C5AF9111F43A4C7002EAC02 /* GraphicsServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphicsServicesSPI.h; path = spi/ios/GraphicsServicesSPI.h; sourceTree = "<group>"; };
-		0C5AF9121F43A4C7002EAC02 /* LaunchServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LaunchServicesSPI.h; path = spi/ios/LaunchServicesSPI.h; sourceTree = "<group>"; };
-		0C5AF9131F43A4C7002EAC02 /* MediaPlayerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaPlayerSPI.h; path = spi/ios/MediaPlayerSPI.h; sourceTree = "<group>"; };
-		0C5AF9141F43A4C7002EAC02 /* MobileGestaltSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MobileGestaltSPI.h; path = spi/ios/MobileGestaltSPI.h; sourceTree = "<group>"; };
-		0C5AF9151F43A4C7002EAC02 /* OpenGLESSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenGLESSPI.h; path = spi/ios/OpenGLESSPI.h; sourceTree = "<group>"; };
-		0C5AF9161F43A4C7002EAC02 /* QuickLookSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickLookSPI.h; path = spi/ios/QuickLookSPI.h; sourceTree = "<group>"; };
-		0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLite3SPI.h; path = spi/ios/SQLite3SPI.h; sourceTree = "<group>"; };
-		0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIKitSPI.h; path = spi/ios/UIKitSPI.h; sourceTree = "<group>"; };
-		0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVFoundationSPI.h; path = spi/mac/AVFoundationSPI.h; sourceTree = "<group>"; };
-		0C7785711F45130F00F4EBB6 /* DataDetectorsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataDetectorsSPI.h; path = spi/mac/DataDetectorsSPI.h; sourceTree = "<group>"; };
-		0C7785721F45130F00F4EBB6 /* LookupSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LookupSPI.h; path = spi/mac/LookupSPI.h; sourceTree = "<group>"; };
-		0C7785731F45130F00F4EBB6 /* MediaRemoteSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaRemoteSPI.h; path = spi/mac/MediaRemoteSPI.h; sourceTree = "<group>"; };
-		0C7785741F45130F00F4EBB6 /* NSAccessibilitySPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSAccessibilitySPI.h; path = spi/mac/NSAccessibilitySPI.h; sourceTree = "<group>"; };
-		0C7785751F45130F00F4EBB6 /* NSApplicationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSApplicationSPI.h; path = spi/mac/NSApplicationSPI.h; sourceTree = "<group>"; };
-		0C7785761F45130F00F4EBB6 /* NSEventSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSEventSPI.h; path = spi/mac/NSEventSPI.h; sourceTree = "<group>"; };
-		0C7785771F45130F00F4EBB6 /* NSFontSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSFontSPI.h; path = spi/mac/NSFontSPI.h; sourceTree = "<group>"; };
-		0C7785781F45130F00F4EBB6 /* NSImmediateActionGestureRecognizerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSImmediateActionGestureRecognizerSPI.h; path = spi/mac/NSImmediateActionGestureRecognizerSPI.h; sourceTree = "<group>"; };
-		0C7785791F45130F00F4EBB6 /* NSMenuSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSMenuSPI.h; path = spi/mac/NSMenuSPI.h; sourceTree = "<group>"; };
-		0C77857A1F45130F00F4EBB6 /* NSPasteboardSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSPasteboardSPI.h; path = spi/mac/NSPasteboardSPI.h; sourceTree = "<group>"; };
-		0C77857B1F45130F00F4EBB6 /* NSPopoverSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSPopoverSPI.h; path = spi/mac/NSPopoverSPI.h; sourceTree = "<group>"; };
-		0C77857C1F45130F00F4EBB6 /* NSScrollerImpSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSScrollerImpSPI.h; path = spi/mac/NSScrollerImpSPI.h; sourceTree = "<group>"; };
-		0C77857D1F45130F00F4EBB6 /* NSScrollingInputFilterSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSScrollingInputFilterSPI.h; path = spi/mac/NSScrollingInputFilterSPI.h; sourceTree = "<group>"; };
-		0C77857E1F45130F00F4EBB6 /* NSScrollingMomentumCalculatorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSScrollingMomentumCalculatorSPI.h; path = spi/mac/NSScrollingMomentumCalculatorSPI.h; sourceTree = "<group>"; };
-		0C77857F1F45130F00F4EBB6 /* NSSharingServicePickerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSSharingServicePickerSPI.h; path = spi/mac/NSSharingServicePickerSPI.h; sourceTree = "<group>"; };
-		0C7785801F45130F00F4EBB6 /* NSSharingServiceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSSharingServiceSPI.h; path = spi/mac/NSSharingServiceSPI.h; sourceTree = "<group>"; };
-		0C7785811F45130F00F4EBB6 /* NSSpellCheckerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSSpellCheckerSPI.h; path = spi/mac/NSSpellCheckerSPI.h; sourceTree = "<group>"; };
-		0C7785821F45130F00F4EBB6 /* NSTextFinderSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSTextFinderSPI.h; path = spi/mac/NSTextFinderSPI.h; sourceTree = "<group>"; };
-		0C7785831F45130F00F4EBB6 /* NSViewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSViewSPI.h; path = spi/mac/NSViewSPI.h; sourceTree = "<group>"; };
-		0C7785841F45130F00F4EBB6 /* NSWindowSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSWindowSPI.h; path = spi/mac/NSWindowSPI.h; sourceTree = "<group>"; };
-		0C7785851F45130F00F4EBB6 /* PIPSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PIPSPI.h; path = spi/mac/PIPSPI.h; sourceTree = "<group>"; };
-		0C7785861F45130F00F4EBB6 /* QTKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QTKitSPI.h; path = spi/mac/QTKitSPI.h; sourceTree = "<group>"; };
-		0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickLookMacSPI.h; path = spi/mac/QuickLookMacSPI.h; sourceTree = "<group>"; };
-		0C7785881F45130F00F4EBB6 /* TUCallSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TUCallSPI.h; path = spi/mac/TUCallSPI.h; sourceTree = "<group>"; };
+		0C2DA0671F33CA8400DBC317 /* CFLocaleSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFLocaleSPI.h; sourceTree = "<group>"; };
+		0C2DA0681F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNetworkConnectionCacheSPI.h; sourceTree = "<group>"; };
+		0C2DA0691F33CA8400DBC317 /* CFNetworkSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNetworkSPI.h; sourceTree = "<group>"; };
+		0C2DA06A1F33CA8400DBC317 /* CFUtilitiesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFUtilitiesSPI.h; sourceTree = "<group>"; };
+		0C2DA06B1F33CA8400DBC317 /* CoreAudioSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudioSPI.h; sourceTree = "<group>"; };
+		0C2DA06C1F33CA8400DBC317 /* CoreMediaSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaSPI.h; sourceTree = "<group>"; };
+		0C2DA11C1F3BE9E000DBC317 /* CoreGraphicsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreGraphicsSPI.h; sourceTree = "<group>"; };
+		0C2DA11D1F3BE9E000DBC317 /* ImageIOSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageIOSPI.h; sourceTree = "<group>"; };
+		0C2DA1221F3BEB4900DBC317 /* AVKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVKitSPI.h; sourceTree = "<group>"; };
+		0C2DA1231F3BEB4900DBC317 /* CFNSURLConnectionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNSURLConnectionSPI.h; sourceTree = "<group>"; };
+		0C2DA1241F3BEB4900DBC317 /* CoreTextSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreTextSPI.h; sourceTree = "<group>"; };
+		0C2DA1251F3BEB4900DBC317 /* DataDetectorsCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSPI.h; sourceTree = "<group>"; };
+		0C2DA1261F3BEB4900DBC317 /* IOPMLibSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOPMLibSPI.h; sourceTree = "<group>"; };
+		0C2DA1271F3BEB4900DBC317 /* IOPSLibSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOPSLibSPI.h; sourceTree = "<group>"; };
+		0C2DA1281F3BEB4900DBC317 /* IOReturnSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOReturnSPI.h; sourceTree = "<group>"; };
+		0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfaceSPI.h; sourceTree = "<group>"; };
+		0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOTypesSPI.h; sourceTree = "<group>"; };
+		0C2DA12B1F3BEB4900DBC317 /* LinkPresentationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkPresentationSPI.h; sourceTree = "<group>"; };
+		0C2DA12C1F3BEB4900DBC317 /* MachVMSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachVMSPI.h; sourceTree = "<group>"; };
+		0C2DA12D1F3BEB4900DBC317 /* NEFilterSourceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEFilterSourceSPI.h; sourceTree = "<group>"; };
+		0C2DA12E1F3BEB4900DBC317 /* NSAttributedStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringSPI.h; sourceTree = "<group>"; };
+		0C2DA12F1F3BEB4900DBC317 /* NSButtonCellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSButtonCellSPI.h; sourceTree = "<group>"; };
+		0C2DA1301F3BEB4900DBC317 /* NSCalendarDateSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSCalendarDateSPI.h; sourceTree = "<group>"; };
+		0C2DA1311F3BEB4900DBC317 /* NSColorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorSPI.h; sourceTree = "<group>"; };
+		0C2DA1321F3BEB4900DBC317 /* NSExtensionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSExtensionSPI.h; sourceTree = "<group>"; };
+		0C2DA1331F3BEB4900DBC317 /* NSFileManagerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSFileManagerSPI.h; sourceTree = "<group>"; };
+		0C2DA1341F3BEB4900DBC317 /* NSStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringSPI.h; sourceTree = "<group>"; };
+		0C2DA1351F3BEB4900DBC317 /* NSTouchBarSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTouchBarSPI.h; sourceTree = "<group>"; };
+		0C2DA1361F3BEB4900DBC317 /* NSURLConnectionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLConnectionSPI.h; sourceTree = "<group>"; };
+		0C2DA1371F3BEB4900DBC317 /* NSURLDownloadSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLDownloadSPI.h; sourceTree = "<group>"; };
+		0C2DA1381F3BEB4900DBC317 /* NSURLFileTypeMappingsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLFileTypeMappingsSPI.h; sourceTree = "<group>"; };
+		0C2DA1391F3BEB4900DBC317 /* PassKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassKitSPI.h; sourceTree = "<group>"; };
+		0C2DA13A1F3BEB4900DBC317 /* pthreadSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pthreadSPI.h; sourceTree = "<group>"; };
+		0C2DA13B1F3BEB4900DBC317 /* QuartzCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuartzCoreSPI.h; sourceTree = "<group>"; };
+		0C2DA13C1F3BEB4900DBC317 /* ServersSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServersSPI.h; sourceTree = "<group>"; };
+		0C2DA13D1F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFilterEvaluatorSPI.h; sourceTree = "<group>"; };
+		0C5AF90F1F43A4C7002EAC02 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreUISPI.h; sourceTree = "<group>"; };
+		0C5AF9101F43A4C7002EAC02 /* DataDetectorsUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsUISPI.h; sourceTree = "<group>"; };
+		0C5AF9111F43A4C7002EAC02 /* GraphicsServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsServicesSPI.h; sourceTree = "<group>"; };
+		0C5AF9121F43A4C7002EAC02 /* LaunchServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LaunchServicesSPI.h; sourceTree = "<group>"; };
+		0C5AF9131F43A4C7002EAC02 /* MediaPlayerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerSPI.h; sourceTree = "<group>"; };
+		0C5AF9141F43A4C7002EAC02 /* MobileGestaltSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileGestaltSPI.h; sourceTree = "<group>"; };
+		0C5AF9151F43A4C7002EAC02 /* OpenGLESSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLESSPI.h; sourceTree = "<group>"; };
+		0C5AF9161F43A4C7002EAC02 /* QuickLookSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSPI.h; sourceTree = "<group>"; };
+		0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLite3SPI.h; sourceTree = "<group>"; };
+		0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
+		0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationSPI.h; sourceTree = "<group>"; };
+		0C7785711F45130F00F4EBB6 /* DataDetectorsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsSPI.h; sourceTree = "<group>"; };
+		0C7785721F45130F00F4EBB6 /* LookupSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LookupSPI.h; sourceTree = "<group>"; };
+		0C7785731F45130F00F4EBB6 /* MediaRemoteSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRemoteSPI.h; sourceTree = "<group>"; };
+		0C7785741F45130F00F4EBB6 /* NSAccessibilitySPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAccessibilitySPI.h; sourceTree = "<group>"; };
+		0C7785751F45130F00F4EBB6 /* NSApplicationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSApplicationSPI.h; sourceTree = "<group>"; };
+		0C7785761F45130F00F4EBB6 /* NSEventSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSEventSPI.h; sourceTree = "<group>"; };
+		0C7785771F45130F00F4EBB6 /* NSFontSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSFontSPI.h; sourceTree = "<group>"; };
+		0C7785781F45130F00F4EBB6 /* NSImmediateActionGestureRecognizerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSImmediateActionGestureRecognizerSPI.h; sourceTree = "<group>"; };
+		0C7785791F45130F00F4EBB6 /* NSMenuSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSMenuSPI.h; sourceTree = "<group>"; };
+		0C77857A1F45130F00F4EBB6 /* NSPasteboardSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPasteboardSPI.h; sourceTree = "<group>"; };
+		0C77857B1F45130F00F4EBB6 /* NSPopoverSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPopoverSPI.h; sourceTree = "<group>"; };
+		0C77857C1F45130F00F4EBB6 /* NSScrollerImpSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScrollerImpSPI.h; sourceTree = "<group>"; };
+		0C77857D1F45130F00F4EBB6 /* NSScrollingInputFilterSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScrollingInputFilterSPI.h; sourceTree = "<group>"; };
+		0C77857E1F45130F00F4EBB6 /* NSScrollingMomentumCalculatorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScrollingMomentumCalculatorSPI.h; sourceTree = "<group>"; };
+		0C77857F1F45130F00F4EBB6 /* NSSharingServicePickerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSSharingServicePickerSPI.h; sourceTree = "<group>"; };
+		0C7785801F45130F00F4EBB6 /* NSSharingServiceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSSharingServiceSPI.h; sourceTree = "<group>"; };
+		0C7785811F45130F00F4EBB6 /* NSSpellCheckerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSSpellCheckerSPI.h; sourceTree = "<group>"; };
+		0C7785821F45130F00F4EBB6 /* NSTextFinderSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTextFinderSPI.h; sourceTree = "<group>"; };
+		0C7785831F45130F00F4EBB6 /* NSViewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSViewSPI.h; sourceTree = "<group>"; };
+		0C7785841F45130F00F4EBB6 /* NSWindowSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSWindowSPI.h; sourceTree = "<group>"; };
+		0C7785851F45130F00F4EBB6 /* PIPSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PIPSPI.h; sourceTree = "<group>"; };
+		0C7785861F45130F00F4EBB6 /* QTKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QTKitSPI.h; sourceTree = "<group>"; };
+		0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookMacSPI.h; sourceTree = "<group>"; };
+		0C7785881F45130F00F4EBB6 /* TUCallSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUCallSPI.h; sourceTree = "<group>"; };
 		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C09D0521E31C44100725F18 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoDigest.h; sourceTree = "<group>"; };
 		1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoDigestCommonCrypto.cpp; path = commoncrypto/CryptoDigestCommonCrypto.cpp; sourceTree = "<group>"; };
@@ -209,21 +209,21 @@
 		1C09D0631E31EC3100725F18 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1C67CEA11E32EDA800F80F2E /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		1C67CEA21E32EE2600F80F2E /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
-		A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MetadataSPI.h; path = spi/mac/MetadataSPI.h; sourceTree = "<group>"; };
-		A30D411E1F0DD0EA00B71954 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KillRing.h; path = text/KillRing.h; sourceTree = "<group>"; };
-		A30D411F1F0DD0EA00B71954 /* KillRingNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KillRingNone.cpp; path = text/KillRingNone.cpp; sourceTree = "<group>"; };
-		A30D41241F0DD12D00B71954 /* KillRingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KillRingMac.mm; path = text/mac/KillRingMac.mm; sourceTree = "<group>"; };
-		A3788E971F05B6CE00679425 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sound.h; path = system/Sound.h; sourceTree = "<group>"; };
-		A3788E9B1F05B78200679425 /* SoundNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoundNone.cpp; path = system/SoundNone.cpp; sourceTree = "<group>"; };
-		A3788E9D1F05B78E00679425 /* SoundMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SoundMac.mm; path = system/mac/SoundMac.mm; sourceTree = "<group>"; };
-		A3AB6E511F3D1DC5009C14B1 /* SleepDisabler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SleepDisabler.cpp; path = system/SleepDisabler.cpp; sourceTree = "<group>"; };
-		A3AB6E531F3D1DDB009C14B1 /* SleepDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SleepDisabler.h; path = system/SleepDisabler.h; sourceTree = "<group>"; };
-		A3AB6E541F3D1DDB009C14B1 /* SystemSleepListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SystemSleepListener.cpp; path = system/SystemSleepListener.cpp; sourceTree = "<group>"; };
-		A3AB6E551F3D1DDB009C14B1 /* SystemSleepListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SystemSleepListener.h; path = system/SystemSleepListener.h; sourceTree = "<group>"; };
-		A3AB6E5E1F3D1E39009C14B1 /* SleepDisablerCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SleepDisablerCocoa.cpp; path = system/cocoa/SleepDisablerCocoa.cpp; sourceTree = "<group>"; };
-		A3AB6E5F1F3D1E39009C14B1 /* SleepDisablerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SleepDisablerCocoa.h; path = system/cocoa/SleepDisablerCocoa.h; sourceTree = "<group>"; };
-		A3AB6E621F3D217F009C14B1 /* SystemSleepListenerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SystemSleepListenerMac.h; path = system/mac/SystemSleepListenerMac.h; sourceTree = "<group>"; };
-		A3AB6E631F3D217F009C14B1 /* SystemSleepListenerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemSleepListenerMac.mm; path = system/mac/SystemSleepListenerMac.mm; sourceTree = "<group>"; };
+		A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetadataSPI.h; sourceTree = "<group>"; };
+		A30D411E1F0DD0EA00B71954 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KillRing.h; sourceTree = "<group>"; };
+		A30D411F1F0DD0EA00B71954 /* KillRingNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KillRingNone.cpp; sourceTree = "<group>"; };
+		A30D41241F0DD12D00B71954 /* KillRingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KillRingMac.mm; sourceTree = "<group>"; };
+		A3788E971F05B6CE00679425 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
+		A3788E9B1F05B78200679425 /* SoundNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoundNone.cpp; sourceTree = "<group>"; };
+		A3788E9D1F05B78E00679425 /* SoundMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SoundMac.mm; sourceTree = "<group>"; };
+		A3AB6E511F3D1DC5009C14B1 /* SleepDisabler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SleepDisabler.cpp; sourceTree = "<group>"; };
+		A3AB6E531F3D1DDB009C14B1 /* SleepDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SleepDisabler.h; sourceTree = "<group>"; };
+		A3AB6E541F3D1DDB009C14B1 /* SystemSleepListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemSleepListener.cpp; sourceTree = "<group>"; };
+		A3AB6E551F3D1DDB009C14B1 /* SystemSleepListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSleepListener.h; sourceTree = "<group>"; };
+		A3AB6E5E1F3D1E39009C14B1 /* SleepDisablerCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SleepDisablerCocoa.cpp; sourceTree = "<group>"; };
+		A3AB6E5F1F3D1E39009C14B1 /* SleepDisablerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SleepDisablerCocoa.h; sourceTree = "<group>"; };
+		A3AB6E621F3D217F009C14B1 /* SystemSleepListenerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSleepListenerMac.h; sourceTree = "<group>"; };
+		A3AB6E631F3D217F009C14B1 /* SystemSleepListenerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemSleepListenerMac.mm; sourceTree = "<group>"; };
 		A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionID.cpp; sourceTree = "<group>"; };
 		A3C66CDB1F462D6A009E6EE9 /* SessionID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionID.h; sourceTree = "<group>"; };
 		C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyPALHeaders.xcconfig; sourceTree = "<group>"; };
@@ -249,7 +249,7 @@
 				0C5AF90D1F43A4A4002EAC02 /* ios */,
 				0C77856E1F4512E900F4EBB6 /* mac */,
 			);
-			name = spi;
+			path = spi;
 			sourceTree = "<group>";
 		};
 		0C2DA0661F33CA3A00DBC317 /* cf */ = {
@@ -262,7 +262,7 @@
 				0C2DA06B1F33CA8400DBC317 /* CoreAudioSPI.h */,
 				0C2DA06C1F33CA8400DBC317 /* CoreMediaSPI.h */,
 			);
-			name = cf;
+			path = cf;
 			sourceTree = "<group>";
 		};
 		0C2DA11B1F3BE9D200DBC317 /* cg */ = {
@@ -271,7 +271,7 @@
 				0C2DA11C1F3BE9E000DBC317 /* CoreGraphicsSPI.h */,
 				0C2DA11D1F3BE9E000DBC317 /* ImageIOSPI.h */,
 			);
-			name = cg;
+			path = cg;
 			sourceTree = "<group>";
 		};
 		0C2DA1201F3BE9E700DBC317 /* cocoa */ = {
@@ -306,7 +306,7 @@
 				0C2DA13C1F3BEB4900DBC317 /* ServersSPI.h */,
 				0C2DA13D1F3BEB4900DBC317 /* WebFilterEvaluatorSPI.h */,
 			);
-			name = cocoa;
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		0C5AF90D1F43A4A4002EAC02 /* ios */ = {
@@ -323,7 +323,7 @@
 				0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */,
 				0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */,
 			);
-			name = ios;
+			path = ios;
 			sourceTree = "<group>";
 		};
 		0C77856E1F4512E900F4EBB6 /* mac */ = {
@@ -356,7 +356,7 @@
 				0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */,
 				0C7785881F45130F00F4EBB6 /* TUCallSPI.h */,
 			);
-			name = mac;
+			path = mac;
 			sourceTree = "<group>";
 		};
 		1C09D0341E31C32800725F18 = {
@@ -429,7 +429,7 @@
 				A30D411E1F0DD0EA00B71954 /* KillRing.h */,
 				A30D411F1F0DD0EA00B71954 /* KillRingNone.cpp */,
 			);
-			name = text;
+			path = text;
 			sourceTree = "<group>";
 		};
 		A30D41231F0DD10500B71954 /* mac */ = {
@@ -437,7 +437,7 @@
 			children = (
 				A30D41241F0DD12D00B71954 /* KillRingMac.mm */,
 			);
-			name = mac;
+			path = mac;
 			sourceTree = "<group>";
 		};
 		A3788E9F1F05B7CE00679425 /* system */ = {
@@ -452,7 +452,7 @@
 				A3AB6E541F3D1DDB009C14B1 /* SystemSleepListener.cpp */,
 				A3AB6E551F3D1DDB009C14B1 /* SystemSleepListener.h */,
 			);
-			name = system;
+			path = system;
 			sourceTree = "<group>";
 		};
 		A3788EA01F05B7E200679425 /* mac */ = {
@@ -462,7 +462,7 @@
 				A3AB6E621F3D217F009C14B1 /* SystemSleepListenerMac.h */,
 				A3AB6E631F3D217F009C14B1 /* SystemSleepListenerMac.mm */,
 			);
-			name = mac;
+			path = mac;
 			sourceTree = "<group>";
 		};
 		A3AB6E5D1F3D1E28009C14B1 /* cocoa */ = {
@@ -471,7 +471,7 @@
 				A3AB6E5E1F3D1E39009C14B1 /* SleepDisablerCocoa.cpp */,
 				A3AB6E5F1F3D1E39009C14B1 /* SleepDisablerCocoa.h */,
 			);
-			name = cocoa;
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

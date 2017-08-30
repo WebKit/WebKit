@@ -1,5 +1,14 @@
 2017-08-29  Andy Estes  <aestes@apple.com>
 
+        [Xcode] Fix up file and group paths in PAL.xcodeproj
+        https://bugs.webkit.org/show_bug.cgi?id=176073
+
+        Reviewed by Alex Christensen.
+
+        * PAL.xcodeproj/project.pbxproj:
+
+2017-08-29  Andy Estes  <aestes@apple.com>
+
         [Mac] Upstream WKSetMetadataURL() from WebKitSystemInterface
         https://bugs.webkit.org/show_bug.cgi?id=176046
 
