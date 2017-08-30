@@ -90,8 +90,6 @@ const char* exitKindToString(ExitKind kind)
         return "ExceptionCheck";
     case GenericUnwind:
         return "GenericUnwind";
-    case ThrowException:
-        return "ThrowException";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return "Unknown";
@@ -102,7 +100,6 @@ bool exitKindMayJettison(ExitKind kind)
     switch (kind) {
     case ExceptionCheck:
     case GenericUnwind:
-    case ThrowException:
         return false;
     default:
         return true;
