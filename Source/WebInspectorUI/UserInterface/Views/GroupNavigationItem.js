@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.navigation-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
+WI.GroupNavigationItem = class GroupNavigationItem extends WI.NavigationItem
+{
+    constructor(navigationItems)
+    {
+        console.assert(Array.isArray(navigationItems));
 
-    border-bottom: 1px solid var(--border-color);
+        super();
 
-    height: var(--navigation-bar-height);
+        this._navigationItems = navigationItems;
 
-    white-space: nowrap;
-    overflow: hidden;
+        for (let item of this._navigationItems) {
+            console.assert(item instanceof WI.NavigationItem);
+            this.element.appendChild(item.element);
+        }
+    }
 
-    outline: none;
-}
+    // Public
 
-.navigation-bar .item {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
+    get navigationItems() { return this._navigationItems; }
 
-    height: auto;
-    outline: none;
-}
+    get minimumWidth()
+    {
+        return this._navigationItems.reduce((total, item) => total + item.minimumWidth, 0);
+    }
 
-.navigation-bar .item.force-hidden {
-    display: none;
+    // Protected
+
+    updateLayout(expandOnly)
+    {
+        super.updateLayout(expandOnly);
+
+        for (let item of this._navigationItems)
+            item.updateLayout(expandOnly);
+    }
+
+    didAttach(navigationBar)
+    {
+        super.didAttach(navigationBar);
+
+        for (let item of this._navigationItems)
+            item.didAttach(navigationBar);
+    }
+
+    didDetach()
+    {
+        for (let item of this._navigationItems)
+            item.didDetach();
+
+        super.didDetach();
+    }
 }

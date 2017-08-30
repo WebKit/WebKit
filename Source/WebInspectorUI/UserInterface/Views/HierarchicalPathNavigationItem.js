@@ -100,6 +100,8 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
 
     updateLayout(expandOnly)
     {
+        super.updateLayout(expandOnly);
+
         var navigationBar = this.parentNavigationBar;
         if (!navigationBar)
             return;

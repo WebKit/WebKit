@@ -141,6 +141,7 @@ WI.NetworkGridContentView = class NetworkGridContentView extends WI.ContentView
         }
 
         this._clearNetworkItemsNavigationItem = new WI.ButtonNavigationItem("clear-network-items", WI.UIString("Clear Network Items (%s)").format(WI.clearKeyboardShortcut.displayName), "Images/NavigationItemClear.svg", 16, 16);
+        this._clearNetworkItemsNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._clearNetworkItemsNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => this.reset());
 
         this._pendingRecords = [];

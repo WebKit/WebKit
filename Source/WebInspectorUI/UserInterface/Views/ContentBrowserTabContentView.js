@@ -56,6 +56,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             this._showNavigationSidebarItem = new WI.ActivateButtonNavigationItem("toggle-navigation-sidebar", showToolTip, hideToolTip, image, 16, 16);
             this._showNavigationSidebarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.toggleNavigationSidebar, WI);
             this._showNavigationSidebarItem.activated = !WI.navigationSidebar.collapsed;
+            this._showNavigationSidebarItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
 
             this._contentBrowser.navigationBar.insertNavigationItem(this._showNavigationSidebarItem, 0);
             this._contentBrowser.navigationBar.insertNavigationItem(new WI.DividerNavigationItem, 1);
@@ -72,6 +73,7 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
             this._showDetailsSidebarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI.toggleDetailsSidebar, WI);
             this._showDetailsSidebarItem.activated = !WI.detailsSidebar.collapsed;
             this._showDetailsSidebarItem.enabled = false;
+            this._showDetailsSidebarItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
 
             this._contentBrowser.navigationBar.addNavigationItem(new WI.DividerNavigationItem);
             this._contentBrowser.navigationBar.addNavigationItem(this._showDetailsSidebarItem);

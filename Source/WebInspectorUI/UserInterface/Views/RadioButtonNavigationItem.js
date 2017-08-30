@@ -62,6 +62,8 @@ WI.RadioButtonNavigationItem = class RadioButtonNavigationItem extends WI.Button
 
     updateLayout(expandOnly)
     {
+        super.updateLayout(expandOnly);
+
         if (expandOnly)
             return;
 

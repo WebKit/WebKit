@@ -50,6 +50,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         let toolTip = WI.UIString("Start recording (%s)\nCreate new recording (%s)").format(this._toggleRecordingShortcut.displayName, this._toggleNewRecordingShortcut.displayName);
         let altToolTip = WI.UIString("Stop recording (%s)").format(this._toggleRecordingShortcut.displayName);
         this._recordButton = new WI.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
+        this._recordButton.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._recordButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._recordButtonClicked, this);
 
         this.contentBrowser.navigationBar.insertNavigationItem(this._recordButton, 0);
@@ -58,9 +59,10 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             let timelinesNavigationItem = new WI.RadioButtonNavigationItem(WI.TimelineOverview.ViewMode.Timelines, WI.UIString("Events"));
             let renderingFramesNavigationItem = new WI.RadioButtonNavigationItem(WI.TimelineOverview.ViewMode.RenderingFrames, WI.UIString("Frames"));
 
-            this.contentBrowser.navigationBar.insertNavigationItem(timelinesNavigationItem, 1);
-            this.contentBrowser.navigationBar.insertNavigationItem(renderingFramesNavigationItem, 2);
+            let viewModeGroup = new WI.GroupNavigationItem([timelinesNavigationItem, renderingFramesNavigationItem]);
+            viewModeGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
 
+            this.contentBrowser.navigationBar.insertNavigationItem(viewModeGroup, 1);
             this.contentBrowser.navigationBar.addEventListener(WI.NavigationBar.Event.NavigationItemSelected, this._viewModeSelected, this);
         }
 

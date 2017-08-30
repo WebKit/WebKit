@@ -69,7 +69,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (navigationItem.parentNavigationBar)
             navigationItem.parentNavigationBar.removeNavigationItem(navigationItem);
 
-        navigationItem._parentNavigationBar = this;
+        navigationItem.didAttach(this);
 
         console.assert(index >= 0 && index <= this._navigationItems.length);
         index = Math.max(0, Math.min(index, this._navigationItems.length));
@@ -106,7 +106,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (navigationItem._parentNavigationBar !== this)
             return null;
 
-        navigationItem._parentNavigationBar = null;
+        navigationItem.didDetach();
 
         if (this._selectedNavigationItem === navigationItem)
             this.selectedNavigationItem = null;
@@ -174,7 +174,28 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
     findNavigationItem(identifier)
     {
-        return this._navigationItems.find((item) => item.identifier === identifier) || null;
+        function matchingSelfOrChild(item) {
+            if (item.identifier === identifier)
+                return item;
+
+            if (item instanceof WI.GroupNavigationItem) {
+                for (let childItem of item.navigationItems) {
+                    let result = matchingSelfOrChild(childItem);
+                    if (result)
+                        return result;
+                }
+            }
+
+            return null;
+        }
+
+        for (let item of this._navigationItems) {
+            let result = matchingSelfOrChild(item);
+            if (result)
+                return result;
+        }
+
+        return null;
     }
 
     needsLayout()
@@ -194,18 +215,28 @@ WI.NavigationBar = class NavigationBar extends WI.View
         // Remove the collapsed style class to test if the items can fit at full width.
         this.element.classList.remove(WI.NavigationBar.CollapsedStyleClassName);
 
-        // Tell each navigation item to update to full width if needed.
-        for (let navigationItem of this._navigationItems)
-            navigationItem.updateLayout(true);
-
-        let totalItemWidth = 0;
-        for (let navigationItem of this._navigationItems) {
-            // Skip flexible space items since they can take up no space at the minimum width.
-            if (navigationItem instanceof WI.FlexibleSpaceNavigationItem)
-                continue;
-
-            totalItemWidth += navigationItem.element.realOffsetWidth;
+        function forceItemHidden(item, hidden) {
+            item[WI.NavigationBar.ForceHiddenSymbol] = hidden;
+            item.element.classList.toggle("force-hidden", hidden);
         }
+
+        function isDivider(item) {
+            return item instanceof WI.DividerNavigationItem;
+        }
+
+        // Tell each navigation item to update to full width if needed.
+        for (let item of this._navigationItems) {
+            forceItemHidden(item, false);
+            item.updateLayout(true);
+        }
+
+        let visibleNavigationItems = this._visibleNavigationItems;
+
+        function calculateVisibleItemWidth() {
+            return visibleNavigationItems.reduce((total, item) => total + item.width, 0);
+        }
+
+        let totalItemWidth = calculateVisibleItemWidth();
 
         const barWidth = this.element.realOffsetWidth;
 
@@ -214,8 +245,38 @@ WI.NavigationBar = class NavigationBar extends WI.View
             this.element.classList.add(WI.NavigationBar.CollapsedStyleClassName);
 
         // Give each navigation item the opportunity to collapse further.
-        for (let navigationItem of this._navigationItems)
-            navigationItem.updateLayout(false);
+        for (let item of visibleNavigationItems)
+            item.updateLayout(false);
+
+        totalItemWidth = calculateVisibleItemWidth();
+        if (totalItemWidth <= barWidth)
+            return;
+
+        // Hide visible items, starting with the lowest priority item, until the
+        // bar fits the available width.
+        visibleNavigationItems.sort((a, b) => a.visibilityPriority - b.visibilityPriority);
+
+        while (totalItemWidth > barWidth && visibleNavigationItems.length) {
+            let navigationItem = visibleNavigationItems.shift();
+            totalItemWidth -= navigationItem.width;
+            forceItemHidden(navigationItem, true);
+        }
+
+        visibleNavigationItems = this._visibleNavigationItems;
+
+        // Hide leading, trailing, and consecutive dividers.
+        let previousItem = null;
+        for (let item of visibleNavigationItems) {
+            if (isDivider(item) && (!previousItem || isDivider(previousItem))) {
+                forceItemHidden(item);
+                continue;
+            }
+
+            previousItem = item;
+        }
+
+        if (isDivider(previousItem))
+            forceItemHidden(previousItem);
     }
 
     // Private
@@ -369,14 +430,7 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (!wasCollapsed)
             this.element.classList.add(WI.NavigationBar.CollapsedStyleClassName);
 
-        let totalItemWidth = 0;
-        for (let item of this._navigationItems) {
-            // Skip flexible space items since they can take up no space at the minimum width.
-            if (item instanceof WI.FlexibleSpaceNavigationItem)
-                continue;
-
-            totalItemWidth += item.minimumWidth;
-        }
+        let totalItemWidth = this._visibleNavigationItems.reduce((total, item) => item.minimumWidth, 0);
 
         // Remove the collapsed style class if we were not collapsed before.
         if (!wasCollapsed)
@@ -384,7 +438,21 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
         return totalItemWidth;
     }
+
+    get _visibleNavigationItems()
+    {
+        return this._navigationItems.filter((item) => {
+            if (item instanceof WI.FlexibleSpaceNavigationItem)
+                return false;
+            if (item.hidden || item[WI.NavigationBar.ForceHiddenSymbol])
+                return false;
+            return true;
+        });
+    }
 };
+
+WI.NavigationBar.CachedWidthSymbol = Symbol("cached-width");
+WI.NavigationBar.ForceHiddenSymbol = Symbol("force-hidden");
 
 WI.NavigationBar.CollapsedStyleClassName = "collapsed";
 

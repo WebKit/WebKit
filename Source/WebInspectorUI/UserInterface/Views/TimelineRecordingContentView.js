@@ -57,6 +57,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this.addSubview(this._timelineContentBrowser);
 
         this._clearTimelineNavigationItem = new WI.ButtonNavigationItem("clear-timeline", WI.UIString("Clear Timeline (%s)").format(WI.clearKeyboardShortcut.displayName), "Images/NavigationItemClear.svg", 16, 16);
+        this._clearTimelineNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._clearTimelineNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._clearTimeline, this);
 
         this._overviewTimelineView = new WI.OverviewTimelineView(recording);

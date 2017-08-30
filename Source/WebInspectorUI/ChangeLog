@@ -1,3 +1,103 @@
+2017-08-29  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Critical content browser toolbar buttons are hidden at narrow widths
+        https://bugs.webkit.org/show_bug.cgi?id=175999
+
+        Reviewed by Devin Rousso.
+
+        This patch adds a VisibilityPriority concept to NavigationItems. If a
+        NavigationBar cannot fit all of its items in the available space, items
+        are hidden to make room, starting with the lowest priority item. Consecutive
+        dividers are then collapsed, as well as leading and trailing dividers.
+
+        * UserInterface/Main.html:
+        New file.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        * UserInterface/Views/ConsoleDrawer.js:
+        (WI.ConsoleDrawer):
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser):
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WI.ContentBrowserTabContentView):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        Set `High` and `Low` priorities, and group the back/forward buttons.
+
+        * UserInterface/Views/GroupNavigationItem.js: Added.
+        (WI.GroupNavigationItem):
+        (WI.GroupNavigationItem.prototype.get navigationItems):
+        (WI.GroupNavigationItem.prototype.get minimumWidth):
+        (WI.GroupNavigationItem.prototype.updateLayout):
+        (WI.GroupNavigationItem.prototype.didAttach):
+        (WI.GroupNavigationItem.prototype.didDetach):
+        NavigationItem groups. Grouped items are shown/hidden together.
+
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WI.HierarchicalPathNavigationItem.prototype.updateLayout):
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView):
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        (WI.IndexedDatabaseObjectStoreContentView):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        Set `High` and `Low` priorities.
+
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar .item.force-hidden):
+        New hidden class, which must be tracked separately from ".hidden".
+        The former is an implementation detail of NavigationBar, while the
+        latter is set by the client.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar.prototype.insertNavigationItem):
+        (WI.NavigationBar.prototype.removeNavigationItem):
+        (WI.NavigationBar.prototype.findNavigationItem.matchingSelfOrChild):
+        (WI.NavigationBar.prototype.findNavigationItem):
+        (WI.NavigationBar.prototype.layout.forceItemHidden):
+        (WI.NavigationBar.prototype.layout.isDivider):
+        (WI.NavigationBar.prototype.layout.calculateVisibleItemWidth):
+        (WI.NavigationBar.prototype.layout):
+        (WI.NavigationBar.prototype._calculateMinimumWidth):
+        (WI.NavigationBar.prototype.get _visibleNavigationItems):
+        (WI.NavigationBar):
+
+        * UserInterface/Views/NavigationItem.js:
+        Add support for visibility priority, an integer value that determines the
+        order in which items are hidden when the NavigationBar becomes too narrow
+        to fit all of items child items. NavigationIte3m defines constants for
+        Low, Normal (the default), and High priority.
+
+        (WI.NavigationItem):
+        (WI.NavigationItem.prototype.get minimumWidth):
+        (WI.NavigationItem.prototype.get width):
+        (WI.NavigationItem.prototype.get visibilityPriority):
+        (WI.NavigationItem.prototype.set visibilityPriority):
+        (WI.NavigationItem.prototype.updateLayout):
+        (WI.NavigationItem.prototype.didAttach):
+        (WI.NavigationItem.prototype.didDetach):
+        Encapsulate the setting of the parent NavigationBar. Needed so that
+        GroupNavigationItem can forward this action to its children.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WI.NetworkGridContentView):
+        * UserInterface/Views/RadioButtonNavigationItem.js:
+        (WI.RadioButtonNavigationItem.prototype.updateLayout):
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        * UserInterface/Views/ScriptContentView.js:
+        (WI.ScriptContentView):
+        * UserInterface/Views/TextContentView.js:
+        (WI.TextContentView):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView):
+        Set `High` and `Low` priorities, and group Timeline view mode buttons.
+
 2017-08-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r220235): Web Inspector: Global search should not happen incrementally

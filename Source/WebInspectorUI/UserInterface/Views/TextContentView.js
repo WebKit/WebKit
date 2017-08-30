@@ -46,16 +46,19 @@ WI.TextContentView = class TextContentView extends WI.ContentView
         this._prettyPrintButtonNavigationItem = new WI.ActivateButtonNavigationItem("pretty-print", toolTip, activatedToolTip, "Images/NavigationItemCurleyBraces.svg", 13, 13);
         this._prettyPrintButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrettyPrint, this);
         this._prettyPrintButtonNavigationItem.enabled = this._textEditor.canBeFormatted();
+        this._prettyPrintButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         var toolTipTypes = WI.UIString("Show type information");
         var activatedToolTipTypes = WI.UIString("Hide type information");
         this._showTypesButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-types", toolTipTypes, activatedToolTipTypes, "Images/NavigationItemTypes.svg", 13, 14);
         this._showTypesButtonNavigationItem.enabled = false;
+        this._showTypesButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         let toolTipCodeCoverage = WI.UIString("Fade unexecuted code");
         let activatedToolTipCodeCoverage = WI.UIString("Do not fade unexecuted code");
         this._codeCoverageButtonNavigationItem = new WI.ActivateButtonNavigationItem("code-coverage", toolTipCodeCoverage, activatedToolTipCodeCoverage, "Images/NavigationItemCodeCoverage.svg", 13, 14);
         this._codeCoverageButtonNavigationItem.enabled = false;
+        this._codeCoverageButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
     }
 
     // Public

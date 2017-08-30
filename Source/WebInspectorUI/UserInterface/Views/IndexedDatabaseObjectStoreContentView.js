@@ -81,6 +81,7 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
         this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
 
         this._clearButtonNavigationItem = new WI.ButtonNavigationItem("indexed-database-object-store-clear", WI.UIString("Clear object store"), "Images/NavigationItemTrash.svg", 15, 15);
+        this._clearButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._clearButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._clearButtonClicked, this);
     }
 

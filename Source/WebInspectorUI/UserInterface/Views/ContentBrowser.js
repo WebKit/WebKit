@@ -57,12 +57,13 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
             this._backNavigationItem = new WI.ButtonNavigationItem("back", WI.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), backButtonImage, 8, 13);
             this._backNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, goBack);
             this._backNavigationItem.enabled = false;
-            this._navigationBar.addNavigationItem(this._backNavigationItem);
 
             this._forwardNavigationItem = new WI.ButtonNavigationItem("forward", WI.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), forwardButtonImage, 8, 13);
             this._forwardNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, goForward);
             this._forwardNavigationItem.enabled = false;
-            this._navigationBar.addNavigationItem(this._forwardNavigationItem);
+
+            let navigationButtonsGroup = new WI.GroupNavigationItem([this._backNavigationItem, this._forwardNavigationItem]);
+            this._navigationBar.addNavigationItem(navigationButtonsGroup);
 
             this._navigationBar.addNavigationItem(new WI.DividerNavigationItem);
         }
