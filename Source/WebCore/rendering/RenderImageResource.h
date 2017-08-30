@@ -51,7 +51,7 @@ public:
     virtual RefPtr<Image> image(const IntSize& size = { }) const;
     virtual bool errorOccurred() const { return m_cachedImage && m_cachedImage->errorOccurred(); }
 
-    virtual void setContainerSizeForRenderer(const IntSize&);
+    virtual void setContainerContext(const IntSize&, const URL&);
 
     virtual bool imageHasRelativeWidth() const { return m_cachedImage && m_cachedImage->imageHasRelativeWidth(); }
     virtual bool imageHasRelativeHeight() const { return m_cachedImage && m_cachedImage->imageHasRelativeHeight(); }

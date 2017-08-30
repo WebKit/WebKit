@@ -53,7 +53,7 @@ void CSSImageSetValue::fillImageSet()
     size_t i = 0;
     while (i < length) {
         CSSValue* imageValue = item(i);
-        String imageURL = downcast<CSSImageValue>(*imageValue).url();
+        URL imageURL = downcast<CSSImageValue>(*imageValue).url();
 
         ++i;
         ASSERT_WITH_SECURITY_IMPLICATION(i < length);

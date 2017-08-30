@@ -94,12 +94,12 @@ RefPtr<Image> RenderImageResource::image(const IntSize&) const
     return &Image::nullImage();
 }
 
-void RenderImageResource::setContainerSizeForRenderer(const IntSize& imageContainerSize)
+void RenderImageResource::setContainerContext(const IntSize& imageContainerSize, const URL& imageURL)
 {
     if (!m_cachedImage)
         return;
     ASSERT(m_renderer);
-    m_cachedImage->setContainerSizeForRenderer(m_renderer, imageContainerSize, m_renderer->style().effectiveZoom());
+    m_cachedImage->setContainerContextForClient(*m_renderer, imageContainerSize, m_renderer->style().effectiveZoom(), imageURL);
 }
 
 LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeType type) const

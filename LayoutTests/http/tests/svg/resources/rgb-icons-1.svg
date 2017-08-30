@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 32 96">
+   <view id="red-icon-view" viewBox="0 0 32 32"/>
+   <view id="green-icon-view" viewBox="0 32 32 32"/>
+   <view id="blue-icon-view" viewBox="0 64 32 32"/>
+
+   <rect fill="red" x="0" y="0" width="32" height="32"/>
+   <rect fill="green" x="0" y="32" width="32" height="32"/>
+   <rect fill="blue" x="0" y="64" width="32" height="32"/>
+</svg>

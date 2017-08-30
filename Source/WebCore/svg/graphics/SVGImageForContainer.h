@@ -36,16 +36,14 @@ namespace WebCore {
 
 class SVGImageForContainer final : public Image {
 public:
-    static Ref<SVGImageForContainer> create(SVGImage* image, const FloatSize& containerSize, float zoom)
+    static Ref<SVGImageForContainer> create(SVGImage* image, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL)
     {
-        return adoptRef(*new SVGImageForContainer(image, containerSize, zoom));
+        return adoptRef(*new SVGImageForContainer(image, containerSize, containerZoom, initialFragmentURL));
     }
 
     bool isSVGImage() const final { return true; }
 
     FloatSize size() const final;
-
-    void setURL(const URL& url) { m_image->setURL(url); }
 
     bool usesContainerSize() const final { return m_image->usesContainerSize(); }
     bool hasRelativeWidth() const final { return m_image->hasRelativeWidth(); }
@@ -65,10 +63,11 @@ public:
     NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) final;
 
 private:
-    SVGImageForContainer(SVGImage* image, const FloatSize& containerSize, float zoom)
+    SVGImageForContainer(SVGImage* image, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL)
         : m_image(image)
         , m_containerSize(containerSize)
-        , m_zoom(zoom)
+        , m_containerZoom(containerZoom)
+        , m_initialFragmentURL(initialFragmentURL)
     {
     }
 
@@ -76,7 +75,8 @@ private:
 
     SVGImage* m_image;
     const FloatSize m_containerSize;
-    const float m_zoom;
+    const float m_containerZoom;
+    const URL m_initialFragmentURL;
 };
 
 } // namespace WebCore

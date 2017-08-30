@@ -42,18 +42,13 @@ class SVGImageForContainer;
 
 class SVGImage final : public Image {
 public:
-    static Ref<SVGImage> create(ImageObserver& observer, const URL& url)
-    {
-        return adoptRef(*new SVGImage(observer, url));
-    }
+    static Ref<SVGImage> create(ImageObserver& observer) { return adoptRef(*new SVGImage(observer)); }
 
     RenderBox* embeddedContentBox() const;
     FrameView* frameView() const;
 
     bool isSVGImage() const final { return true; }
     FloatSize size() const final { return m_intrinsicSize; }
-
-    void setURL(const URL& url) { m_url = url; }
 
     bool hasSingleSecurityOrigin() const final;
 
@@ -94,12 +89,10 @@ private:
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
 
-    void dump(WTF::TextStream&) const final;
-
-    SVGImage(ImageObserver&, const URL&);
+    explicit SVGImage(ImageObserver&);
     ImageDrawResult draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) final;
-    ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize, float, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode);
-    void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float zoom, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing,
+    ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode);
+    void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing,
         CompositeOperator, const FloatRect&, BlendMode);
 
     SVGSVGElement* rootElement() const;
@@ -107,7 +100,6 @@ private:
     std::unique_ptr<SVGImageChromeClient> m_chromeClient;
     std::unique_ptr<Page> m_page;
     FloatSize m_intrinsicSize;
-    URL m_url;
 };
 
 bool isInSVGImage(const Element*);

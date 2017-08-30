@@ -49,16 +49,15 @@ void SVGImageCache::removeClientFromCache(const CachedImageClient* client)
     m_imageForContainerMap.remove(client);
 }
 
-void SVGImageCache::setContainerSizeForRenderer(const CachedImageClient* client, const LayoutSize& containerSize, float containerZoom)
+void SVGImageCache::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL)
 {
-    ASSERT(client);
     ASSERT(!containerSize.isEmpty());
     ASSERT(containerZoom);
 
     FloatSize containerSizeWithoutZoom(containerSize);
     containerSizeWithoutZoom.scale(1 / containerZoom);
 
-    m_imageForContainerMap.set(client, SVGImageForContainer::create(m_svgImage, containerSizeWithoutZoom, containerZoom));
+    m_imageForContainerMap.set(&client, SVGImageForContainer::create(m_svgImage, containerSizeWithoutZoom, containerZoom, imageURL));
 }
 
 Image* SVGImageCache::findImageForRenderer(const RenderObject* renderer) const
