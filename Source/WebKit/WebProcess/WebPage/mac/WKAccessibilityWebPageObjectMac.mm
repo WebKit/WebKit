@@ -45,6 +45,7 @@
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
 using namespace WebCore;
@@ -54,7 +55,7 @@ using namespace WebKit;
 
 - (void)dealloc
 {
-    WKUnregisterUniqueIdForElement(self);
+    NSAccessibilityUnregisterUniqueIdForUIElement(self);
     [m_parent release];
     [super dealloc];
 }

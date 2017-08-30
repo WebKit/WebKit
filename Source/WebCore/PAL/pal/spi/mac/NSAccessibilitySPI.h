@@ -34,9 +34,26 @@
 @interface NSAccessibilityRemoteUIElement : NSObject
 
 + (void)setRemoteUIApp:(BOOL)flag;
++ (NSData *)remoteTokenForLocalUIElement:(id)localUIElement;
++ (void)registerRemoteUIProcessIdentifier:(pid_t)pid;
++ (void)unregisterRemoteUIProcessIdentifier:(pid_t)pid;
+
+- (id)initWithRemoteToken:(NSData *)remoteToken;
+- (pid_t)processIdentifier;
+- (void)accessibilitySetPresenterProcessIdentifier:(pid_t)presenterPID;
+
+@property (retain) id windowUIElement;
+@property (retain) id topLevelUIElement;
 
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+WTF_EXTERN_C_BEGIN
+
+void NSAccessibilityHandleFocusChanged();
+void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
+
+WTF_EXTERN_C_END
 
 #endif // USE(APPKIT)

@@ -91,6 +91,7 @@
 #import <pal/spi/cocoa/NSTouchBarSPI.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
+#import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
@@ -3282,7 +3283,7 @@ void WebViewImpl::setIgnoresMouseDraggedEvents(bool ignoresMouseDraggedEvents)
 
 void WebViewImpl::setAccessibilityWebProcessToken(NSData *data)
 {
-    m_remoteAccessibilityChild = WKAXRemoteElementForToken(data);
+    m_remoteAccessibilityChild = data.length ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:data]) : nil;
     updateRemoteAccessibilityRegistration(true);
 }
 
@@ -3295,18 +3296,23 @@ void WebViewImpl::updateRemoteAccessibilityRegistration(bool registerProcess)
     if (registerProcess)
         pid = m_page->process().processIdentifier();
     else if (!registerProcess) {
-        pid = WKAXRemoteProcessIdentifier(m_remoteAccessibilityChild.get());
+        pid = [m_remoteAccessibilityChild processIdentifier];
         m_remoteAccessibilityChild = nil;
     }
-    if (pid)
-        WKAXRegisterRemoteProcess(registerProcess, pid);
+    if (!pid)
+        return;
+
+    if (registerProcess)
+        [NSAccessibilityRemoteUIElement registerRemoteUIProcessIdentifier:pid];
+    else
+        [NSAccessibilityRemoteUIElement unregisterRemoteUIProcessIdentifier:pid];
 }
 
 void WebViewImpl::accessibilityRegisterUIProcessTokens()
 {
     // Initialize remote accessibility when the window connection has been established.
-    NSData *remoteElementToken = WKAXRemoteTokenForElement(m_view.getAutoreleased());
-    NSData *remoteWindowToken = WKAXRemoteTokenForElement([m_view window]);
+    NSData *remoteElementToken = [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:m_view.getAutoreleased()];
+    NSData *remoteWindowToken = [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:[m_view window]];
     IPC::DataReference elementToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
     IPC::DataReference windowToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteWindowToken bytes]), [remoteWindowToken length]);
     m_page->registerUIProcessAccessibilityTokens(elementToken, windowToken);

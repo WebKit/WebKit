@@ -78,6 +78,8 @@
 #import "WebCoreFrameView.h"
 #import "WebCoreObjCExtras.h"
 #import "WebCoreSystemInterface.h"
+#import <pal/spi/mac/HIServicesSPI.h>
+#import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #if ENABLE(TREE_DEBUGGING) || ENABLE(METER_ELEMENT)
 #import <wtf/text/StringBuilder.h>
@@ -404,11 +406,13 @@ using namespace HTMLNames;
 #define NSAccessibilityHighestEditableAncestorAttribute @"AXHighestEditableAncestor"
 #endif
 
+extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
+
 @implementation WebAccessibilityObjectWrapper
 
 - (void)unregisterUniqueIdForUIElement
 {
-    wkUnregisterUniqueIdForElement(self);
+    NSAccessibilityUnregisterUniqueIdForUIElement(self);
 }
 
 - (void)detach
@@ -434,35 +438,35 @@ using namespace HTMLNames;
 
 static inline BOOL AXObjectIsTextMarker(id obj)
 {
-    return obj != nil && CFGetTypeID(obj) == wkGetAXTextMarkerTypeID();
+    return obj != nil && CFGetTypeID(obj) == AXTextMarkerGetTypeID();
 }
 
 static inline BOOL AXObjectIsTextMarkerRange(id obj)
 {
-    return obj != nil && CFGetTypeID(obj) == wkGetAXTextMarkerRangeTypeID();
+    return obj != nil && CFGetTypeID(obj) == AXTextMarkerRangeGetTypeID();
 }
 
 static id AXTextMarkerRange(id startMarker, id endMarker)
 {
     ASSERT(startMarker != nil);
     ASSERT(endMarker != nil);
-    ASSERT(CFGetTypeID(startMarker) == wkGetAXTextMarkerTypeID());
-    ASSERT(CFGetTypeID(endMarker) == wkGetAXTextMarkerTypeID());
-    return CFBridgingRelease(wkCreateAXTextMarkerRange((CFTypeRef)startMarker, (CFTypeRef)endMarker));
+    ASSERT(CFGetTypeID(startMarker) == AXTextMarkerGetTypeID());
+    ASSERT(CFGetTypeID(endMarker) == AXTextMarkerGetTypeID());
+    return CFBridgingRelease(AXTextMarkerRangeCreate(kCFAllocatorDefault, (AXTextMarkerRef)startMarker, (AXTextMarkerRef)endMarker));
 }
 
 static id AXTextMarkerRangeStart(id range)
 {
     ASSERT(range != nil);
-    ASSERT(CFGetTypeID(range) == wkGetAXTextMarkerRangeTypeID());
-    return CFBridgingRelease(wkCopyAXTextMarkerRangeStart(range));
+    ASSERT(CFGetTypeID(range) == AXTextMarkerRangeGetTypeID());
+    return CFBridgingRelease(AXTextMarkerRangeCopyStartMarker((AXTextMarkerRangeRef)range));
 }
 
 static id AXTextMarkerRangeEnd(id range)
 {
     ASSERT(range != nil);
-    ASSERT(CFGetTypeID(range) == wkGetAXTextMarkerRangeTypeID());
-    return CFBridgingRelease(wkCopyAXTextMarkerRangeEnd(range));
+    ASSERT(CFGetTypeID(range) == AXTextMarkerRangeGetTypeID());
+    return CFBridgingRelease(AXTextMarkerRangeCopyEndMarker((AXTextMarkerRangeRef)range));
 }
 
 #pragma mark Other helpers
@@ -531,13 +535,31 @@ static AccessibilitySelectTextCriteria accessibilitySelectTextCriteriaForCriteri
 
 #pragma mark Text Marker helpers
 
+static BOOL getBytesFromAXTextMarker(CFTypeRef textMarker, void* bytes, size_t length)
+{
+    if (!textMarker)
+        return NO;
+
+    AXTextMarkerRef ref = (AXTextMarkerRef)textMarker;
+    ASSERT(CFGetTypeID(ref) == AXTextMarkerGetTypeID());
+    if (CFGetTypeID(ref) != AXTextMarkerGetTypeID())
+        return NO;
+
+    CFIndex expectedLength = length;
+    if (AXTextMarkerGetLength(ref) != expectedLength)
+        return NO;
+
+    memcpy(bytes, AXTextMarkerGetBytePtr(ref), length);
+    return YES;
+}
+
 static bool isTextMarkerIgnored(id textMarker)
 {
     if (!textMarker)
         return false;
     
     TextMarkerData textMarkerData;
-    if (!wkGetBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
+    if (!getBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
         return false;
     
     return textMarkerData.ignored;
@@ -554,7 +576,7 @@ static AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cach
         return nullptr;
     
     TextMarkerData textMarkerData;
-    if (!wkGetBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
+    if (!getBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
         return nullptr;
     return cache->accessibilityObjectForTextMarkerData(textMarkerData);
 }
@@ -586,7 +608,7 @@ static id startOrEndTextmarkerForRange(AXObjectCache* cache, RefPtr<Range> range
     if (!textMarkerData.axID)
         return nil;
     
-    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
+    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
 }
 
 static id nextTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOffset& characterOffset)
@@ -598,7 +620,7 @@ static id nextTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOffset
     cache->textMarkerDataForNextCharacterOffset(textMarkerData, characterOffset);
     if (!textMarkerData.axID)
         return nil;
-    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
+    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
 }
 
 static id previousTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOffset& characterOffset)
@@ -610,7 +632,7 @@ static id previousTextMarkerForCharacterOffset(AXObjectCache* cache, CharacterOf
     cache->textMarkerDataForPreviousCharacterOffset(textMarkerData, characterOffset);
     if (!textMarkerData.axID)
         return nil;
-    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
+    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
 }
 
 - (id)nextTextMarkerForCharacterOffset:(CharacterOffset&)characterOffset
@@ -638,7 +660,7 @@ static id textMarkerForCharacterOffset(AXObjectCache* cache, const CharacterOffs
     if (!textMarkerData.axID && !textMarkerData.ignored)
         return nil;
     
-    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
+    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
 }
 
 - (RefPtr<Range>)rangeForTextMarkerRange:(id)textMarkerRange
@@ -667,7 +689,7 @@ static CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, CFType
         return CharacterOffset();
     
     TextMarkerData textMarkerData;
-    if (!wkGetBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
+    if (!getBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
         return CharacterOffset();
     
     return cache->characterOffsetForTextMarkerData(textMarkerData);
@@ -686,7 +708,7 @@ static id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePositi
     if (!textMarkerData)
         return nil;
 
-    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData.value(), sizeof(textMarkerData.value())));
+    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData.value(), sizeof(textMarkerData.value())));
 }
 
 - (id)textMarkerForVisiblePosition:(const VisiblePosition &)visiblePos
@@ -704,7 +726,7 @@ static id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePositi
     if (!textMarkerData)
         return nil;
 
-    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData.value(), sizeof(textMarkerData.value())));
+    return CFBridgingRelease(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData.value(), sizeof(textMarkerData.value())));
 }
 
 static VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, CFTypeRef textMarker)
@@ -714,7 +736,7 @@ static VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, CFType
     if (!textMarker)
         return VisiblePosition();
     TextMarkerData textMarkerData;
-    if (!wkGetBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
+    if (!getBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
         return VisiblePosition();
     
     return cache->visiblePositionForTextMarkerData(textMarkerData);
@@ -982,7 +1004,7 @@ static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, N
         if (!cache)
             return;
         
-        AXUIElementRef axElement = wkCreateAXUIElementRef(object->wrapper());
+        AXUIElementRef axElement = NSAccessibilityCreateAXUIElementRef(object->wrapper());
         if (axElement) {
             [attrString addAttribute:attribute value:(id)axElement range:range];
             CFRelease(axElement);

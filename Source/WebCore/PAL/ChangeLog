@@ -1,5 +1,16 @@
 2017-08-30  Andy Estes  <aestes@apple.com>
 
+        [Mac] Upstream Accessibility-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176093
+
+        Reviewed by Eric Carlson.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/mac/HIServicesSPI.h: Added.
+        * pal/spi/mac/NSAccessibilitySPI.h:
+
+2017-08-30  Andy Estes  <aestes@apple.com>
+
         [Mac] Upstream Carbon-related WebKitSystemInterface functions
         https://bugs.webkit.org/show_bug.cgi?id=176087
 

@@ -83,16 +83,6 @@ void InitWebCoreSystemInterface(void)
         INIT(WindowSetAlpha);
         INIT(SpeechSynthesisGetVoiceIdentifiers);
         INIT(SpeechSynthesisGetDefaultVoiceIdentifierForLocale);
-        INIT(GetAXTextMarkerTypeID);
-        INIT(GetAXTextMarkerRangeTypeID);
-        INIT(CreateAXTextMarker);
-        INIT(GetBytesFromAXTextMarker);
-        INIT(CreateAXTextMarkerRange);
-        INIT(CopyAXTextMarkerRangeStart);
-        INIT(CopyAXTextMarkerRangeEnd);
-        INIT(AccessibilityHandleFocusChanged);
-        INIT(CreateAXUIElementRef);
-        INIT(UnregisterUniqueIdForElement);
         INIT(NSElasticDeltaForTimeDelta);
         INIT(NSElasticDeltaForReboundDelta);
         INIT(NSReboundDeltaForElasticDelta);

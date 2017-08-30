@@ -33,6 +33,7 @@
 #import "RenderObject.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import "WebCoreSystemInterface.h"
+#import <pal/spi/mac/NSAccessibilitySPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <HIServices/AccessibilityPriv.h>
@@ -509,7 +510,7 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* a
 
 void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)
 {
-    wkAccessibilityHandleFocusChanged();
+    NSAccessibilityHandleFocusChanged();
     // AXFocusChanged is a test specific notification name and not something a real AT will be listening for
     if (UNLIKELY(axShouldRepostNotificationsForTests))
         [rootWebArea()->wrapper() accessibilityPostedNotification:@"AXFocusChanged" userInfo:nil];

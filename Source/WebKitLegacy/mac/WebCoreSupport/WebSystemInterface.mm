@@ -91,16 +91,6 @@ void InitWebCoreSystemInterface(void)
     INIT(Cursor);
     INIT(SpeechSynthesisGetVoiceIdentifiers);
     INIT(SpeechSynthesisGetDefaultVoiceIdentifierForLocale);
-    INIT(GetAXTextMarkerTypeID);
-    INIT(GetAXTextMarkerRangeTypeID);
-    INIT(CreateAXTextMarker);
-    INIT(GetBytesFromAXTextMarker);
-    INIT(CreateAXTextMarkerRange);
-    INIT(CopyAXTextMarkerRangeStart);
-    INIT(CopyAXTextMarkerRangeEnd);
-    INIT(AccessibilityHandleFocusChanged);
-    INIT(CreateAXUIElementRef);
-    INIT(UnregisterUniqueIdForElement);
 #endif
 
 #if !PLATFORM(IOS)

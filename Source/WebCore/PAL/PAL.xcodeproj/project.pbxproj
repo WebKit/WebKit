@@ -100,6 +100,7 @@
 		A10265871F56746100B4C844 /* FoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10265861F56746100B4C844 /* FoundationSPI.h */; };
 		A10265891F56747A00B4C844 /* HIToolboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10265881F56747A00B4C844 /* HIToolboxSPI.h */; };
 		A102658B1F56748C00B4C844 /* QuickDrawSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A102658A1F56748C00B4C844 /* QuickDrawSPI.h */; };
+		A102658E1F567E9D00B4C844 /* HIServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A102658D1F567E9D00B4C844 /* HIServicesSPI.h */; };
 		A1F55DCF1F5528EC00EDB75F /* MetadataSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */; };
 		A30D41211F0DD0EA00B71954 /* KillRing.h in Headers */ = {isa = PBXBuildFile; fileRef = A30D411E1F0DD0EA00B71954 /* KillRing.h */; };
 		A30D41221F0DD0EA00B71954 /* KillRingNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D411F1F0DD0EA00B71954 /* KillRingNone.cpp */; };
@@ -215,6 +216,7 @@
 		A10265861F56746100B4C844 /* FoundationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoundationSPI.h; sourceTree = "<group>"; };
 		A10265881F56747A00B4C844 /* HIToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIToolboxSPI.h; sourceTree = "<group>"; };
 		A102658A1F56748C00B4C844 /* QuickDrawSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickDrawSPI.h; sourceTree = "<group>"; };
+		A102658D1F567E9D00B4C844 /* HIServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HIServicesSPI.h; sourceTree = "<group>"; };
 		A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetadataSPI.h; sourceTree = "<group>"; };
 		A30D411E1F0DD0EA00B71954 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KillRing.h; sourceTree = "<group>"; };
 		A30D411F1F0DD0EA00B71954 /* KillRingNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KillRingNone.cpp; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 			children = (
 				0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */,
 				0C7785711F45130F00F4EBB6 /* DataDetectorsSPI.h */,
+				A102658D1F567E9D00B4C844 /* HIServicesSPI.h */,
 				A10265881F56747A00B4C844 /* HIToolboxSPI.h */,
 				0C7785721F45130F00F4EBB6 /* LookupSPI.h */,
 				0C7785731F45130F00F4EBB6 /* MediaRemoteSPI.h */,
@@ -510,6 +513,7 @@
 				0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */,
 				A10265871F56746100B4C844 /* FoundationSPI.h in Headers */,
 				0C5AF91B1F43A4C7002EAC02 /* GraphicsServicesSPI.h in Headers */,
+				A102658E1F567E9D00B4C844 /* HIServicesSPI.h in Headers */,
 				A10265891F56747A00B4C844 /* HIToolboxSPI.h in Headers */,
 				0C2DA11F1F3BE9E000DBC317 /* ImageIOSPI.h in Headers */,
 				0C2DA1421F3BEB4900DBC317 /* IOPMLibSPI.h in Headers */,

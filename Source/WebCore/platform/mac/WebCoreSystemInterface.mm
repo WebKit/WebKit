@@ -81,16 +81,6 @@ NSCursor *(*wkCursor)(const char*);
 NSArray *(*wkSpeechSynthesisGetVoiceIdentifiers)(void);
 NSString *(*wkSpeechSynthesisGetDefaultVoiceIdentifierForLocale)(NSLocale *);
 
-void (*wkUnregisterUniqueIdForElement)(id element);
-void (*wkAccessibilityHandleFocusChanged)(void);
-CFTypeID (*wkGetAXTextMarkerTypeID)(void);
-CFTypeID (*wkGetAXTextMarkerRangeTypeID)(void);
-CFTypeRef (*wkCreateAXTextMarkerRange)(CFTypeRef start, CFTypeRef end);
-CFTypeRef (*wkCopyAXTextMarkerRangeStart)(CFTypeRef range);
-CFTypeRef (*wkCopyAXTextMarkerRangeEnd)(CFTypeRef range);
-CFTypeRef (*wkCreateAXTextMarker)(const void *bytes, size_t len);
-BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t length);
-AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
 #if !PLATFORM(IOS)
 CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);

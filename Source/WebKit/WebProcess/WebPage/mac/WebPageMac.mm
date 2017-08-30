@@ -91,6 +91,7 @@
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WindowsKeyboardCodes.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <wtf/SetForScope.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -108,11 +109,14 @@ void WebPage::platformInitialize()
 
     // Get the pid for the starting process.
     pid_t pid = WebCore::presentingApplicationPID();
-    WKAXInitializeElementWithPresenterPid(mockAccessibilityElement, pid);
+    // FIXME: WKAccessibilityWebPageObject doesn't respond to -accessibilitySetPresenterProcessIdentifier:.
+    // Either it needs to or this call should be removed.
+    if ([mockAccessibilityElement respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
+        [(id)mockAccessibilityElement accessibilitySetPresenterProcessIdentifier:pid];
     [mockAccessibilityElement setWebPage:this];
-    
+
     // send data back over
-    NSData* remoteToken = (NSData *)WKAXRemoteTokenForElement(mockAccessibilityElement); 
+    NSData* remoteToken = [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:mockAccessibilityElement];
     IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
     send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
     m_mockAccessibilityElement = mockAccessibilityElement;
@@ -618,13 +622,14 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
 
 void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
 {
-    NSData* elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
-    NSData* windowTokenData = [NSData dataWithBytes:windowToken.data() length:windowToken.size()];
-    id remoteElement = WKAXRemoteElementForToken(elementTokenData);
-    id remoteWindow = WKAXRemoteElementForToken(windowTokenData);
-    WKAXSetWindowForRemoteElement(remoteWindow, remoteElement);
-    
-    [accessibilityRemoteObject() setRemoteParent:remoteElement];
+    NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
+    NSData *windowTokenData = [NSData dataWithBytes:windowToken.data() length:windowToken.size()];
+    auto remoteElement = elementTokenData.length ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData]) : nil;
+    auto remoteWindow = windowTokenData.length ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:windowTokenData]) : nil;
+    [remoteElement setWindowUIElement:remoteWindow.get()];
+    [remoteElement setTopLevelUIElement:remoteWindow.get()];
+
+    [accessibilityRemoteObject() setRemoteParent:remoteElement.get()];
 }
 
 void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& result)
