@@ -1,3 +1,21 @@
+2017-08-25  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Completely garbled display in Transifex in accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=174632
+
+        Reviewed by Michael Catanzaro.
+
+        Remove the copy constructor from PlatformContextCairo::State. This is because it will be used by WTF::Vector
+        to copy the instances around when allocating new memory, but it doesn't copy the m_imageMaskInformation
+        attribute, so it will be lost when the Vector reallocates its contents. When this happens, renderings that use
+        GraphicsContext::clipToImageBuffer() fail to render properly.
+
+        Covered by existent tests.
+
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::State::State):
+        (WebCore::PlatformContextCairo::save):
+
 2017-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Stop using PolicyCallback for new window policies
