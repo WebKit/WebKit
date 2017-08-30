@@ -1,3 +1,11 @@
+2017-08-30  Per Arne Vollan  <pvollan@apple.com>
+
+        The test imported/w3c/web-platform-tests/encoding/api-basics.html is slow on Windows.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-08-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebCrypto] Add layout tests covering EC P-521
