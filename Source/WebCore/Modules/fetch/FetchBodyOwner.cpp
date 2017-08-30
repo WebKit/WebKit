@@ -288,4 +288,15 @@ void FetchBodyOwner::BlobLoader::didFail(const ResourceError&)
         owner.blobLoadingFailed();
 }
 
+ReadableStream* FetchBodyOwner::readableStream(JSC::ExecState& state)
+{
+    if (isBodyNull())
+        return nullptr;
+
+    if (!m_body->hasReadableStream())
+        m_body->setReadableStream(ReadableStream::create(state, m_readableStreamSource));
+
+    return m_body->readableStream();
+}
+
 } // namespace WebCore

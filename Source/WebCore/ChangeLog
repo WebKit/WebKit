@@ -1,3 +1,48 @@
+2017-08-29  Youenn Fablet  <youenn@apple.com>
+
+        Add support for FetchRequest.body
+        https://bugs.webkit.org/show_bug.cgi?id=176066
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing tests.
+
+        Adding support for body attribute getter for FetchRequest.
+        To do so, FetchRequest will need to create a ReadableStream.
+        Adding support for DOM based creation of ReadableStream and conversion to JS values.
+        Small refactoring to make names more consistent.
+
+        * CMakeLists.txt:
+        * Modules/beacon/NavigatorBeacon.cpp:
+        (WebCore::NavigatorBeacon::sendBeacon):
+        * Modules/cache/Cache.cpp:
+        (WebCore::Cache::put):
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract):
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::hasReadableStream const):
+        (WebCore::FetchBody::readableStream):
+        (WebCore::FetchBody::setReadableStream):
+        (WebCore::FetchBody::FetchBody):
+        (WebCore::FetchBody::isReadableStream const): Deleted.
+        (WebCore::FetchBody::setAsReadableStream): Deleted.
+        * Modules/fetch/FetchBody.idl:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::readableStream):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::hasReadableStreamBody const):
+        (WebCore::FetchBodyOwner::isReadableStreamBody const): Deleted.
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::setBody):
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::setBodyAsReadableStream):
+        (WebCore::FetchResponse::fetch):
+        * Modules/fetch/FetchResponse.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ReadableStream.h:
+        (WebCore::JSConverter<IDLInterface<ReadableStream>>::convert):
+
 2017-08-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use reifying system for "name" property of builtin JSFunction

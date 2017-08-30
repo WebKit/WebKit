@@ -61,10 +61,8 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, Stri
     }, [&](RefPtr<ArrayBufferView>& value) mutable {
         Ref<const ArrayBufferView> buffer = value.releaseNonNull();
         return FetchBody(WTFMove(buffer));
-    }, [&](RefPtr<ReadableStream>&) mutable {
-        FetchBody body;
-        body.m_isReadableStream = true;
-        return body;
+    }, [&](RefPtr<ReadableStream>& stream) mutable {
+        return FetchBody(stream.releaseNonNull());
     }, [&](String& value) {
         contentType = HTTPHeaderValues::textPlainContentType();
         return FetchBody(WTFMove(value));

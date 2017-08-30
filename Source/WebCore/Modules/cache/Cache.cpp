@@ -296,7 +296,7 @@ void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDef
     }
 
     // FIXME: Add support for ReadableStream.
-    if (response->isReadableStreamBody()) {
+    if (response->hasReadableStreamBody()) {
         promise.reject(Exception { NotSupportedError, ASCIILiteral("Caching a Response with data stored in a ReadableStream is not yet supported") });
         return;
     }

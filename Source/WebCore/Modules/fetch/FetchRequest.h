@@ -85,7 +85,6 @@ public:
     const ResourceRequest& internalRequest() const { return m_internalRequest.request; }
     const String& internalRequestReferrer() const { return m_internalRequest.referrer; }
     const URL& url() const { return m_internalRequest.request.url(); }
-    bool isBodyReadableStream() const { return !isBodyNull() && body().isReadableStream(); }
 
     ResourceRequest resourceRequest() const;
 

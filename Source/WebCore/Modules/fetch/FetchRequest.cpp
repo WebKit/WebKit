@@ -225,6 +225,7 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
     if (!request.isBodyNull()) {
         if (!methodCanHaveBody(m_internalRequest))
             return Exception { TypeError };
+        // FIXME: If body has a readable stream, we should pipe it to this new body stream.
         m_body = WTFMove(request.m_body);
         request.setDisturbed();
     }

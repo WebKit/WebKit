@@ -33,7 +33,7 @@
     NoInterfaceObject
 ] interface FetchBody {
     // FIMXE: Add missing body attribute.
-    // readonly attribute ReadableStream? body;
+    [ImplementedAs=readableStream, CallWith=ScriptState] readonly attribute ReadableStream? body;
     readonly attribute boolean bodyUsed;
     [NewObject] Promise<ArrayBuffer> arrayBuffer();
     [NewObject] Promise<Blob> blob();

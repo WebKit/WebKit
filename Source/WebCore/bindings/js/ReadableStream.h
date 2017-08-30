@@ -32,9 +32,13 @@
 
 namespace WebCore {
 
+class ReadableStreamSource;
+
 class ReadableStream final : public DOMGuarded<JSReadableStream> {
 public:
     static Ref<ReadableStream> create(JSDOMGlobalObject& globalObject, JSReadableStream& readableStream) { return adoptRef(*new ReadableStream(globalObject, readableStream)); }
+
+    static Ref<ReadableStream> create(JSC::ExecState&, RefPtr<ReadableStreamSource>&&);
 
     JSReadableStream* readableStream() { return guarded(); }
 
@@ -62,6 +66,18 @@ template<> struct JSDOMWrapperConverterTraits<ReadableStream> {
     using WrapperClass = JSReadableStreamWrapperConverter;
     using ToWrappedReturnType = RefPtr<ReadableStream>;
     static constexpr bool needsState = true;
+};
+
+template<> struct JSConverter<IDLInterface<ReadableStream>> {
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(ReadableStream* value)
+    {
+        if (!value)
+            return JSC::jsNull();
+        return value->readableStream();
+    }
 };
 
 }

@@ -57,7 +57,8 @@ public:
 
     bool isActive() const { return !!m_blobLoader; }
 
-    bool isReadableStreamBody() const { return m_body && m_body->isReadableStream(); }
+    ReadableStream* readableStream(JSC::ExecState&);
+    virtual bool hasReadableStreamBody() const { return m_body && m_body->hasReadableStream(); }
 
 protected:
     const FetchBody& body() const { return *m_body; }

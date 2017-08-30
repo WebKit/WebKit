@@ -83,7 +83,7 @@ void FetchResponse::setBodyAsReadableStream()
 {
     if (isBodyNull())
         setBody(FetchBody::loadingBody());
-    body().setAsReadableStream();
+    m_isReadableStream = true;
     updateContentType();
 }
 
@@ -105,7 +105,7 @@ Ref<FetchResponse> FetchResponse::cloneForJS()
 
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback)
 {
-    if (request.isBodyReadableStream()) {
+    if (request.hasReadableStreamBody()) {
         if (responseCallback)
             responseCallback(Exception { NotSupportedError, "ReadableStream uploading is not supported" });
         return;

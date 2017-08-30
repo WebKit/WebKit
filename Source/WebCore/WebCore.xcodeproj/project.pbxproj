@@ -1762,6 +1762,7 @@
 		41ABE67C1D0580E0006D862D /* CrossOriginPreflightChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41ABE6791D0580D5006D862D /* CrossOriginPreflightChecker.cpp */; };
 		41AD753A1CEF6BD100A31486 /* FetchOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 41AD75391CEF6BCE00A31486 /* FetchOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41B2A6261EF1BF6D002B9D7A /* WebAudioSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B2A6251EF1BF60002B9D7A /* WebAudioSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41B459EF1F55EBD10000F6FD /* ReadableStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41B459ED1F55EBC70000F6FD /* ReadableStream.cpp */; };
 		41BF700C0FE86F49005E8DEC /* MessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */; };
 		41BF70100FE86F61005E8DEC /* PlatformMessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF700E0FE86F61005E8DEC /* PlatformMessagePortChannel.h */; };
@@ -9485,6 +9486,7 @@
 		41AD75391CEF6BCE00A31486 /* FetchOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchOptions.h; sourceTree = "<group>"; };
 		41B2A6251EF1BF60002B9D7A /* WebAudioSourceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAudioSourceProvider.h; sourceTree = "<group>"; };
 		41B459DA1F4CADB90000F6FD /* ReadableStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadableStream.h; sourceTree = "<group>"; };
+		41B459ED1F55EBC70000F6FD /* ReadableStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStream.cpp; sourceTree = "<group>"; };
 		41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessagePortChannel.h; sourceTree = "<group>"; };
 		41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformMessagePortChannel.cpp; path = default/PlatformMessagePortChannel.cpp; sourceTree = "<group>"; };
 		41BF700E0FE86F61005E8DEC /* PlatformMessagePortChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformMessagePortChannel.h; path = default/PlatformMessagePortChannel.h; sourceTree = "<group>"; };
@@ -23877,6 +23879,7 @@
 				E1C36D320EB0A094007410BC /* JSWorkerGlobalScopeBase.cpp */,
 				E1C36D330EB0A094007410BC /* JSWorkerGlobalScopeBase.h */,
 				709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */,
+				41B459ED1F55EBC70000F6FD /* ReadableStream.cpp */,
 				41B459DA1F4CADB90000F6FD /* ReadableStream.h */,
 				418C395E1C8F0AAB0051C8A3 /* ReadableStreamDefaultController.cpp */,
 				418C395F1C8F0AAB0051C8A3 /* ReadableStreamDefaultController.h */,
@@ -33293,6 +33296,7 @@
 				93F19AB908245E59001E9ABC /* Range.cpp in Sources */,
 				F55B3DCD1251F12D003EF269 /* RangeInputType.cpp in Sources */,
 				6E84E9E017668BEE00815B68 /* RasterShape.cpp in Sources */,
+				41B459EF1F55EBD10000F6FD /* ReadableStream.cpp in Sources */,
 				418C39611C8F0AB10051C8A3 /* ReadableStreamDefaultController.cpp in Sources */,
 				FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */,
 				41103AAE1E39791000769F03 /* RealtimeIncomingAudioSource.cpp in Sources */,
