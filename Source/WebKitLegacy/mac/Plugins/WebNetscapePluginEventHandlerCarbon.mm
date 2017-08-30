@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,8 @@
 #import "WebNetscapePluginView.h"
 #import "WebKitLogging.h"
 #import "WebKitSystemInterface.h"
+#import <pal/spi/mac/HIToolboxSPI.h>
+#import <pal/spi/mac/NSEventSPI.h>
 
 // Send null events 50 times a second when active, so plug-ins like Flash get high frame rates.
 #define NullEventIntervalActive         0.02
@@ -85,7 +87,7 @@ static EventModifiers modifiersForEvent(NSEvent *event)
 
 static void getCarbonEvent(EventRecord *carbonEvent, NSEvent *cocoaEvent)
 {
-    if (WKConvertNSEventToCarbonEvent(carbonEvent, cocoaEvent))
+    if ([cocoaEvent _eventRef] && ConvertEventRefToEventRecord((EventRef)[cocoaEvent _eventRef], carbonEvent))
         return;
     
     NSPoint where = [[cocoaEvent window] convertBaseToScreen:[cocoaEvent locationInWindow]];
@@ -210,7 +212,7 @@ void WebNetscapePluginEventHandlerCarbon::mouseMoved(NSEvent* theEvent)
 void WebNetscapePluginEventHandlerCarbon::keyDown(NSEvent *theEvent)
 {
     m_suspendKeyUpEvents = true;
-    WKSendKeyEventToTSM(theEvent);
+    TSMProcessRawKeyEvent((EventRef)[theEvent _eventRef]);
 }
 
 void WebNetscapePluginEventHandlerCarbon::syntheticKeyDownWithCommandModifier(int keyCode, char character)
@@ -238,7 +240,7 @@ static UInt32 keyMessageForEvent(NSEvent *event)
     
 void WebNetscapePluginEventHandlerCarbon::keyUp(NSEvent* theEvent)
 {
-    WKSendKeyEventToTSM(theEvent);
+    TSMProcessRawKeyEvent((EventRef)[theEvent _eventRef]);
     
     // TSM won't send keyUp events so we have to send them ourselves.
     // Only send keyUp events after we receive the TSM callback because this is what plug-in expect from OS 9.

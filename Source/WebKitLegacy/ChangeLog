@@ -1,3 +1,12 @@
+2017-08-30  Andy Estes  <aestes@apple.com>
+
+        [Mac] Upstream Carbon-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176087
+
+        Reviewed by Alex Christensen.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2017-08-29  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use find_package for zlib

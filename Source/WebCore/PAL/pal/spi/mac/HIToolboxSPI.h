@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/Platform.h>
-
-#if PLATFORM(MAC)
+#pragma once
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <AppKit/NSWindow_Private.h>
+#include <HIToolbox/HIToolboxPriv.h>
 
 #else
 
-#import <AppKit/NSWindow.h>
-
-@interface NSWindow ()
-
-- (id)_newFirstResponderAfterResigning;
-
-@end
-
-enum {
-    _NSCarbonWindowMask = 1 << 25,
-};
+#define kTSMInputSourcePropertyScriptCode CFSTR("TSMInputSourcePropertyScriptCode")
 
 #endif
 
-#endif // PLATFORM(MAC)
+typedef struct __TSMInputSource* TSMInputSourceRef;
+typedef CFStringRef TSMInputSourcePropertyTag;
+
+WTF_EXTERN_C_BEGIN
+
+OSStatus _SyncWindowWithCGAfterMove(WindowRef);
+CGWindowID GetNativeWindowFromWindowRef(WindowRef);
+OSStatus TSMProcessRawKeyEvent(EventRef);
+EventRef GetCurrentEvent();
+CFTypeRef TSMGetInputSourceProperty(TSMInputSourceRef, TSMInputSourcePropertyTag);
+
+WTF_EXTERN_C_END

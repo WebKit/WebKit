@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,7 @@
 #import <mach/mach_vm.h>
 #import <mach/vm_statistics.h>
 #import <objc/runtime.h>
+#import <pal/spi/mac/HIToolboxSPI.h>
 #import <sysexits.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
@@ -96,7 +97,7 @@ static bool windowCoversAnyScreen(WindowRef window)
 
 static CGWindowID cgWindowID(WindowRef window)
 {
-    return reinterpret_cast<CGWindowID>(WKGetNativeWindowFromWindowRef(window));
+    return reinterpret_cast<CGWindowID>(GetNativeWindowFromWindowRef(window));
 }
 
 #endif

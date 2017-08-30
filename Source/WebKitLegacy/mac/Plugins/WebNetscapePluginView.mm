@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 
 #import "WebNetscapePluginView.h"
 
-#import "QuickDrawCompatibility.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebFrameInternal.h"
@@ -75,6 +74,7 @@
 #import <WebKitLegacy/DOMPrivate.h>
 #import <WebKitLegacy/WebUIDelegate.h>
 #import <objc/runtime.h>
+#import <pal/spi/mac/QuickDrawSPI.h>
 #import <runtime/InitializeThreading.h>
 #import <runtime/JSLock.h>
 #import <wtf/Assertions.h>
@@ -915,7 +915,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     CGrafPtr port = GetWindowPort(windowRef);
     ::Rect bounds;
     GetPortBounds(port, &bounds);
-    WKCallDrawingNotification(port, &bounds);
+    CallDrawingNotifications(port, &bounds, kBitsProc);
 #endif /* NP_NO_QUICKDRAW */
 }
 

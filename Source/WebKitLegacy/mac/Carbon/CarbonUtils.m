@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "CarbonUtils.h"
 #import <WebKitSystemInterface.h>
+#import <pal/spi/cocoa/FoundationSPI.h>
 
 extern CGImageRef _NSCreateImageRef( unsigned char *const bitmapData[5], int pixelsWide, int pixelsHigh, int bitsPerSample, int samplesPerPixel, int bitsPerPixel, int bytesPerRow, BOOL isPlanar, BOOL hasAlpha, NSString *colorSpaceName, CGColorSpaceRef customColorSpace, id sourceObj);
 
@@ -40,6 +41,14 @@ static unsigned numPools;
 static EventLoopRef poolLoop;
 
 void                    HIWebViewRegisterClass( void );
+
+static unsigned getNSAutoreleasePoolCount(void)
+{
+    void* v = NSPushAutoreleasePool(0);
+    uintptr_t numPools = (uintptr_t)v;
+    NSPopAutoreleasePool(v);
+    return numPools;
+}
 
 void
 WebInitForCarbon()
@@ -56,7 +65,7 @@ WebInitForCarbon()
         NSApplicationLoad();
                 
         sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
-        numPools = WKGetNSAutoreleasePoolCount();
+        numPools = getNSAutoreleasePoolCount();
         
         poolLoop = GetCurrentEventLoop ();
 
@@ -82,12 +91,12 @@ PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void 
         CFStringRef mode = CFRunLoopCopyCurrentMode( (CFRunLoopRef)GetCFRunLoopFromEventLoop( GetCurrentEventLoop() ));
         EventLoopRef thisLoop = GetCurrentEventLoop ();
         if ( CFEqual( mode, kCFRunLoopDefaultMode ) && thisLoop == poolLoop) {
-            unsigned currentNumPools = WKGetNSAutoreleasePoolCount()-1;            
+            unsigned currentNumPools = getNSAutoreleasePoolCount()-1;            
             if (currentNumPools == numPools){
                 [sPool drain];
                 
                 sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
-                numPools = WKGetNSAutoreleasePoolCount();
+                numPools = getNSAutoreleasePoolCount();
             }
         }
         CFRelease( mode );

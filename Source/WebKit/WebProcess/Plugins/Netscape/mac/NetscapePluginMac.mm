@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebKitSystemInterface.h>
 #import <objc/runtime.h>
+#import <pal/spi/mac/HIToolboxSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringView.h>
 
@@ -988,6 +989,21 @@ static bool convertStringToKeyCodes(StringView string, ScriptCode scriptCode, Ve
 }
 #endif
 
+#ifndef NP_NO_CARBON
+static ScriptCode scriptCodeFromCurrentKeyboardInputSource()
+{
+    ScriptCode scriptCode = smRoman;
+    auto inputSource = adoptCF(TISCopyCurrentKeyboardInputSource());
+
+    CFTypeRef scriptCodeNumber = TSMGetInputSourceProperty((TSMInputSourceRef)inputSource.get(), kTSMInputSourcePropertyScriptCode);
+    ASSERT(CFGetTypeID(scriptCodeNumber) == CFNumberGetTypeID());
+    if (scriptCodeNumber)
+        CFNumberGetValue((CFNumberRef)scriptCodeNumber, kCFNumberSInt16Type, &scriptCode);
+
+    return scriptCode;
+}
+#endif
+
 void NetscapePlugin::sendComplexTextInput(const String& textInput)
 {
     if (!m_pluginWantsLegacyCocoaTextInput) {
@@ -1011,7 +1027,7 @@ void NetscapePlugin::sendComplexTextInput(const String& textInput)
     }
 #ifndef NP_NO_CARBON
     case NPEventModelCarbon: {
-        ScriptCode scriptCode = WKGetScriptCodeFromCurrentKeyboardInputSource();
+        ScriptCode scriptCode = scriptCodeFromCurrentKeyboardInputSource();
         Vector<UInt8> keyCodes;
 
         if (!convertStringToKeyCodes(textInput, scriptCode, keyCodes))

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +33,19 @@
 
 #else
 
+NS_ASSUME_NONNULL_BEGIN
+
 enum {
     NSEventSwipeTrackingConsumeMouseEvents = 0x1 << 2
 };
+
+@interface NSEvent ()
+- (nullable NSEvent *)_initWithCGEvent:(nullable CGEventRef)cgEvent eventRef:(nullable void*)eventRef;
+- (nullable void*)_eventRef NS_RETURNS_INNER_POINTER;
+- (NSEvent *)_eventRelativeToWindow:(NSWindow *)window;
+@end
+
+NS_ASSUME_NONNULL_END
 
 #endif
 

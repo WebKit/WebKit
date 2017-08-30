@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,8 @@
 
 #import "WebKitSystemInterface.h"
 #import "WebNetscapePluginView.h"
+#import <pal/spi/mac/HIToolboxSPI.h>
+#import <pal/spi/mac/NSEventSPI.h>
 #import <wtf/Vector.h>
 
 WebNetscapePluginEventHandlerCocoa::WebNetscapePluginEventHandlerCocoa(WebNetscapePluginView* pluginView)
@@ -128,7 +130,7 @@ void WebNetscapePluginEventHandlerCocoa::keyDown(NSEvent *event)
 #ifndef __LP64__
     // If the plug-in did not handle the event, pass it on to the Input Manager.
     if (retval)
-        WKSendKeyEventToTSM(event);
+        TSMProcessRawKeyEvent((EventRef)[event _eventRef]);
 #else
     UNUSED_PARAM(retval);
 #endif

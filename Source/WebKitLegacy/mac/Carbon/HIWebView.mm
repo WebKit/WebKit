@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,11 @@
 
 #import "CarbonWindowAdapter.h"
 #import "HIViewAdapter.h"
-#import "QuickDrawCompatibility.h"
 #import "WebHTMLViewInternal.h"
 #import "WebKit.h"
 #import <WebKitSystemInterface.h>
+#import <pal/spi/mac/NSEventSPI.h>
+#import <pal/spi/mac/QuickDrawSPI.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
 @interface NSWindow (AppKitSecretsHIWebViewKnows)
@@ -306,9 +307,12 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
         GrafPtr port;
         Rect portRect;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         GetPort( &port );
         GetPortBounds( port, &portRect );
         CreateCGContextForPort( port, &inContext );
+#pragma clang diagnostic push
         SyncCGContextOriginWithPort( inContext, port );
         CGContextTranslateCTM( inContext, 0, (portRect.bottom - portRect.top) );
         CGContextScaleCTM( inContext, 1, -1 );
@@ -436,6 +440,64 @@ GetWindowRef( HIWebView* inView )
        return GetControlOwner( inView->fViewRef );
 }
 
+static NSEvent *
+CreateNSEventAdoptingCGEvent( CGEventRef cgEvent, EventRef eventRef )
+{
+    NSEvent *result = [[NSEvent alloc] _initWithCGEvent:cgEvent eventRef:eventRef];
+    CFRelease(cgEvent);
+    return result;
+}
+
+static Boolean
+CopyEventCGEvent( EventRef event, CGEventRef* cgEvent )
+{
+    if ((*cgEvent = CopyEventCGEvent(event)))
+        return true;
+    
+    // This event might not have been created directly from a CGS event, and might not
+    // have a CGEventRef associated with it. In that case, try using the event most
+    // recently dispatched by the event dispatcher, which is likely to be the original
+    // user-input event containing a CGEventRef.
+    event = GetCurrentEvent();
+    if (event && (*cgEvent = CopyEventCGEvent(event)))
+        return true;
+    return false;
+}
+
+static NSEvent *
+CreateNSEventWithCarbonClickEvent( EventRef inEvent, WindowRef windowRef )
+{
+    EventRef newEvent;
+    Point where;
+    OSStatus err;
+    UInt32 modifiers;
+    Rect windRect;
+    
+    CGEventRef cgEvent = NULL;
+    if (!CopyEventCGEvent(inEvent, &cgEvent))
+        return nil;
+    
+    // We need to make the event be a kEventMouseDown event, or the webkit might trip up when
+    // we click on a Netscape plugin. It calls ConvertEventRefToEventRecord, assuming
+    // that mouseDown was passed an event with a real mouse down eventRef. We just need a
+    // minimal one here.
+    
+    err = CreateEvent(NULL, kEventClassMouse, kEventMouseDown, GetEventTime(inEvent), 0, &newEvent);
+    if (err != noErr)
+        return nil;
+    
+    GetEventParameter(inEvent, kEventParamWindowMouseLocation, typeQDPoint, NULL, sizeof(Point), NULL, &where);
+    GetWindowBounds(windowRef, kWindowStructureRgn, &windRect);
+    where.h += windRect.left;
+    where.v += windRect.top;
+    
+    GetEventParameter(inEvent, kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &modifiers);
+    SetEventParameter(newEvent, kEventParamMouseLocation, typeQDPoint, sizeof(Point), &where);
+    SetEventParameter(newEvent, kEventParamKeyModifiers, typeUInt32, sizeof(UInt32), &modifiers);
+    
+    return CreateNSEventAdoptingCGEvent(cgEvent, newEvent);
+}
+
 //----------------------------------------------------------------------------------
 // Click
 //----------------------------------------------------------------------------------
@@ -443,7 +505,7 @@ GetWindowRef( HIWebView* inView )
 static OSStatus
 Click(HIWebView* inView, EventRef inEvent)
 {
-    NSEvent *kitEvent = WKCreateNSEventWithCarbonClickEvent(inEvent, GetWindowRef(inView));
+    NSEvent *kitEvent = CreateNSEventWithCarbonClickEvent(inEvent, GetWindowRef(inView));
 
     if (!inView->fIsComposited)
         StartUpdateObserver(inView);
@@ -458,6 +520,16 @@ Click(HIWebView* inView, EventRef inEvent)
     return noErr;
 }
 
+static NSEvent *
+CreateNSEventWithCarbonEvent( EventRef inEvent )
+{
+    NSEvent *event = [NSEvent eventWithEventRef:inEvent];
+    if (!event)
+        event = [NSEvent eventWithEventRef:GetCurrentEvent()];
+
+    return [event retain];
+}
+
 //----------------------------------------------------------------------------------
 // MouseUp
 //----------------------------------------------------------------------------------
@@ -465,13 +537,30 @@ Click(HIWebView* inView, EventRef inEvent)
 static OSStatus
 MouseUp( HIWebView* inView, EventRef inEvent )
 {
-	NSEvent* kitEvent = WKCreateNSEventWithCarbonEvent(inEvent);
+    NSEvent* kitEvent = CreateNSEventWithCarbonEvent(inEvent);
 
     [inView->fKitWindow sendEvent:kitEvent];
-	
+
     [kitEvent release];
-    
+
 	return noErr;
+}
+
+static NSEvent *
+CreateNSEventWithCarbonMouseMoveEvent( EventRef inEvent, NSWindow *window )
+{
+    NSEvent* kitEvent = [NSEvent eventWithEventRef:inEvent];
+
+    // FIXME: Works around bug 3585644. Can remove it once that bug is fixed.
+    // We preflight here and don't do any work when the window is already correct
+    // because _eventRelativeToWindow will malfunction if the event's window method
+    // has been hijacked by the bug workaround used by Contribute. It's fine to just
+    // leave the event alone if the window is already correct.
+
+    if ([kitEvent window] != window)
+        kitEvent = [kitEvent _eventRelativeToWindow:window];
+
+    return [kitEvent retain];
 }
 
 //----------------------------------------------------------------------------------
@@ -481,7 +570,7 @@ MouseUp( HIWebView* inView, EventRef inEvent )
 static OSStatus
 MouseMoved( HIWebView* inView, EventRef inEvent )
 {
-    NSEvent *kitEvent = WKCreateNSEventWithCarbonMouseMoveEvent(inEvent, inView->fKitWindow);
+    NSEvent *kitEvent = CreateNSEventWithCarbonMouseMoveEvent(inEvent, inView->fKitWindow);
     [inView->fKitWindow sendEvent:kitEvent];
 	[kitEvent release];
 
@@ -495,12 +584,12 @@ MouseMoved( HIWebView* inView, EventRef inEvent )
 static OSStatus
 MouseDragged( HIWebView* inView, EventRef inEvent )
 {
-	NSEvent* kitEvent = WKCreateNSEventWithCarbonEvent(inEvent);
+    NSEvent* kitEvent = CreateNSEventWithCarbonEvent(inEvent);
 
     [inView->fKitWindow sendEvent:kitEvent];
 
-	[kitEvent release];
-	
+    [kitEvent release];
+
 	return noErr;
 }
 
@@ -511,12 +600,12 @@ MouseDragged( HIWebView* inView, EventRef inEvent )
 static OSStatus
 MouseWheelMoved( HIWebView* inView, EventRef inEvent )
 {
-	NSEvent* kitEvent = WKCreateNSEventWithCarbonEvent(inEvent);
+    NSEvent* kitEvent = CreateNSEventWithCarbonEvent(inEvent);
 
     [inView->fKitWindow sendEvent:kitEvent];
 
-	[kitEvent release];
-	
+    [kitEvent release];
+
 	return noErr;
 }
 
@@ -684,7 +773,7 @@ WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData
 					NSResponder* responder = [kitWindow firstResponder];
 					if ( responder != kitWindow )
 					{
-                        kitEvent = WKCreateNSEventWithCarbonEvent(inEvent);
+                        kitEvent = CreateNSEventWithCarbonEvent(inEvent);
 						
 						[kitWindow sendEvent:kitEvent];
 						[kitEvent release];
@@ -1265,7 +1354,7 @@ HIWebViewEventHandler(
 
 		case kEventClassKeyboard:
 			{
-				NSEvent* kitEvent = WKCreateNSEventWithCarbonEvent(inEvent);
+                NSEvent* kitEvent = CreateNSEventWithCarbonEvent(inEvent);
 				[view->fKitWindow sendSuperEvent:kitEvent];
 				[kitEvent release];
 				result = noErr;

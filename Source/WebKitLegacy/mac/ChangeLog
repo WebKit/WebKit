@@ -1,3 +1,44 @@
+2017-08-30  Andy Estes  <aestes@apple.com>
+
+        [Mac] Upstream Carbon-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176087
+
+        Reviewed by Alex Christensen.
+
+        * Carbon/CarbonUtils.m:
+        (getNSAutoreleasePoolCount):
+        (WebInitForCarbon):
+        (PoolCleaner):
+        * Carbon/CarbonWindowAdapter.mm:
+        (+[CarbonWindowAdapter frameViewClassForStyleMask:]):
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+        (-[CarbonWindowAdapter _oldPlaceWindow:]):
+        (-[CarbonWindowAdapter _windowMovedToRect:]):
+        * Carbon/HIViewAdapter.m:
+        * Carbon/HIWebView.mm:
+        (Draw):
+        (CreateNSEventAdoptingCGEvent):
+        (CopyEventCGEvent):
+        (CreateNSEventWithCarbonClickEvent):
+        (Click):
+        (CreateNSEventWithCarbonEvent):
+        (MouseUp):
+        (CreateNSEventWithCarbonMouseMoveEvent):
+        (MouseMoved):
+        (MouseDragged):
+        (MouseWheelMoved):
+        (WindowHandler):
+        (HIWebViewEventHandler):
+        * Misc/QuickDrawCompatibility.h: Removed.
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        (getCarbonEvent):
+        (WebNetscapePluginEventHandlerCarbon::keyDown):
+        (WebNetscapePluginEventHandlerCarbon::keyUp):
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::keyDown):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView tellQuickTimeToChill]):
+
 2017-08-29  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream WKSetMetadataURL() from WebKitSystemInterface

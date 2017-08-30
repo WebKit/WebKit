@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,6 +73,8 @@
 #import <assert.h>
 
 #import <WebCore/WebCoreObjCExtras.h>
+#import <pal/spi/mac/HIToolboxSPI.h>
+#import <pal/spi/mac/NSWindowSPI.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
@@ -80,6 +82,9 @@
 #import "WebKitLogging.h"
 #import "WebNSObjectExtras.h"
 #import "WebTypesInternal.h"
+
+extern const OSType NSAppKitPropertyCreator;
+extern const OSType NSCarbonWindowPropertyTag;
 
 @interface NSWindow(HIWebFrameView)
 - (id)_initContent:(const NSRect *)contentRect styleMask:(unsigned int)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag contentView:aView;
@@ -111,7 +116,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 + (Class)frameViewClassForStyleMask:(unsigned int)style {
 
     // There's only one appropriate window style, and only one appropriate window frame class.
-    assert(style & WKCarbonWindowMask());
+    assert(style & _NSCarbonWindowMask);
     return [CarbonWindowFrame class];
 
 }
@@ -156,7 +161,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 	_carbon = inCarbon;
 
     // Find out the window's CoreGraphics window reference.
-    nativeWindow = WKGetNativeWindowFromWindowRef(inWindowRef);
+    nativeWindow = (void*)GetNativeWindowFromWindowRef(inWindowRef);
 
     // Find out the window's Carbon window attributes.
     GetWindowAttributes(inWindowRef, &windowAttributes);
@@ -175,7 +180,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 #pragma clang diagnostic pop
 
     // Figure out the window's style mask.
-    styleMask = WKCarbonWindowMask();
+    styleMask = _NSCarbonWindowMask;
     if (windowAttributes & kWindowCloseBoxAttribute)
         styleMask |= NSWindowStyleMaskClosable;
     if (windowAttributes & kWindowResizableAttribute)
@@ -242,7 +247,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     // Put a pointer to this Cocoa NSWindow in a Carbon window property tag.
     // Right now, this is just used by NSViewCarbonControl.  M.P. Notice - 10/9/00
     windowAsProperty = self;
-    osStatus = SetWindowProperty(_windowRef, WKCarbonWindowPropertyCreator(), WKCarbonWindowPropertyTag(), sizeof(NSWindow *), &windowAsProperty);
+    osStatus = SetWindowProperty(_windowRef, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), &windowAsProperty);
     if (osStatus!=noErr) {
         [self release];
         return nil;
@@ -554,7 +559,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Tell Carbon to update its various regions.
     // Despite its name, this function should be called early and often, even if the window isn't visible yet.  2702648.  M.P. Notice - 7/24/01
-    osStatus = WKSyncWindowWithCGAfterMove(_windowRef);
+    osStatus = _SyncWindowWithCGAfterMove(_windowRef);
     if (osStatus!=noErr) NSLog(@"A Carbon window's bounds couldn't be synchronized (%i).", (int)osStatus);
 
 }
@@ -614,7 +619,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Let Carbon know that the window has been moved, unless this method is being called "early."
     if (_wFlags.visible) {
-        osStatus = WKSyncWindowWithCGAfterMove(_windowRef);
+        osStatus = _SyncWindowWithCGAfterMove(_windowRef);
         if (osStatus!=noErr) NSLog(@"A Carbon window's bounds couldn't be synchronized (%i).", (int)osStatus);
     }
 
