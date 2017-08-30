@@ -30,6 +30,7 @@
 #define StringBuffer_h
 
 #include <wtf/Assertions.h>
+#include <wtf/text/StringMalloc.h>
 #include <limits>
 #include <unicode/utypes.h>
 
@@ -41,13 +42,13 @@ class StringBuffer {
 public:
     explicit StringBuffer(unsigned length)
         : m_length(length)
-        , m_data(m_length ? static_cast<CharType*>(fastMalloc((Checked<size_t>(m_length) * sizeof(CharType)).unsafeGet())) : nullptr)
+        , m_data(m_length ? static_cast<CharType*>(stringMalloc((Checked<size_t>(m_length) * sizeof(CharType)).unsafeGet())) : nullptr)
     {
     }
 
     ~StringBuffer()
     {
-        fastFree(m_data);
+        stringFree(m_data);
     }
 
     void shrink(unsigned newLength)
@@ -61,7 +62,7 @@ public:
         if (newLength > m_length) {
             if (newLength > std::numeric_limits<unsigned>::max() / sizeof(UChar))
                 CRASH();
-            m_data = static_cast<UChar*>(fastRealloc(m_data, newLength * sizeof(UChar)));
+            m_data = static_cast<UChar*>(stringRealloc(m_data, newLength * sizeof(UChar)));
         }
         m_length = newLength;
     }

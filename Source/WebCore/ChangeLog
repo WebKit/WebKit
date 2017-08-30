@@ -1,3 +1,15 @@
+2017-08-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Strings need to be in some kind of gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=174924
+
+        Reviewed by Oliver Hunt.
+
+        No new tests because no new behavior.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::normalizeSpaces):
+
 2017-08-30  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream Accessibility-related WebKitSystemInterface functions

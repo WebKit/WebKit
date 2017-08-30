@@ -1,3 +1,20 @@
+2017-08-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Strings need to be in some kind of gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=174924
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRopeToAtomicString const):
+        (JSC::JSRopeString::resolveRope const):
+        * runtime/JSString.h:
+        (JSC::JSString::create):
+        (JSC::JSString::createHasOtherOwner):
+        * runtime/JSStringBuilder.h:
+        * runtime/VM.h:
+        (JSC::VM::gigacageAuxiliarySpace):
+
 2017-08-30  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         [ESNext] Async iteration - Implement async iteration statement: for-await-of

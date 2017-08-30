@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0F0F526B1F421FF8004A452C /* StringMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0F52691F421FF8004A452C /* StringMalloc.cpp */; };
 		0F30BA901E78708E002CA847 /* GlobalVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30BA8A1E78708E002CA847 /* GlobalVersion.cpp */; };
 		0F43D8F11DB5ADDC00108FB6 /* AutomaticThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F43D8EF1DB5ADDC00108FB6 /* AutomaticThread.cpp */; };
 		0F5BF1761F23D49A0029D91D /* Gigacage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5BF1741F23D49A0029D91D /* Gigacage.cpp */; };
@@ -163,6 +164,8 @@
 
 /* Begin PBXFileReference section */
 		0F0D85B317234CB100338210 /* NoLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoLock.h; sourceTree = "<group>"; };
+		0F0F52691F421FF8004A452C /* StringMalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StringMalloc.cpp; sourceTree = "<group>"; };
+		0F0F526A1F421FF8004A452C /* StringMalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringMalloc.h; sourceTree = "<group>"; };
 		0F0FCDDD1DD167F900CCAB53 /* LockAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockAlgorithm.h; sourceTree = "<group>"; };
 		0F2AC5601E89F70C0001EE3F /* Range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; };
 		0F2AC5621E8A01490001EE3F /* IndexKeyType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexKeyType.h; sourceTree = "<group>"; };
@@ -176,6 +179,7 @@
 		0F30BA8E1E78708E002CA847 /* LoggingHashSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingHashSet.h; sourceTree = "<group>"; };
 		0F30BA8F1E78708E002CA847 /* LoggingHashTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingHashTraits.h; sourceTree = "<group>"; };
 		0F31DD701F1308BC0072EB4A /* LockAlgorithmInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LockAlgorithmInlines.h; sourceTree = "<group>"; };
+		0F348C7D1F47AA9D003CFEF2 /* StringVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringVector.h; sourceTree = "<group>"; };
 		0F3501631BB258C800F0A2A3 /* WeakRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakRandom.h; sourceTree = "<group>"; };
 		0F43D8EF1DB5ADDC00108FB6 /* AutomaticThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutomaticThread.cpp; sourceTree = "<group>"; };
 		0F43D8F01DB5ADDC00108FB6 /* AutomaticThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutomaticThread.h; sourceTree = "<group>"; };
@@ -1088,7 +1092,10 @@
 				A8A47327151A825B004123FF /* StringHash.h */,
 				A8A47328151A825B004123FF /* StringImpl.cpp */,
 				A8A47329151A825B004123FF /* StringImpl.h */,
+				0F0F52691F421FF8004A452C /* StringMalloc.cpp */,
+				0F0F526A1F421FF8004A452C /* StringMalloc.h */,
 				A8A4732A151A825B004123FF /* StringOperators.h */,
+				0F348C7D1F47AA9D003CFEF2 /* StringVector.h */,
 				93F1993D19D7958D00C2390B /* StringView.cpp */,
 				1A6EB1DF187D0BD30030126F /* StringView.h */,
 				F72BBDB107FA424886178B9E /* SymbolImpl.cpp */,
@@ -1335,6 +1342,7 @@
 				515F794E1CFC9F4A00CCED93 /* CrossThreadCopier.cpp in Sources */,
 				A8A4739A151A825B004123FF /* CryptographicallyRandomNumber.cpp in Sources */,
 				E15556F518A0CC18006F48FB /* CryptographicUtilities.cpp in Sources */,
+				0F0F526B1F421FF8004A452C /* StringMalloc.cpp in Sources */,
 				A8A47439151A825B004123FF /* CString.cpp in Sources */,
 				A8A4739C151A825B004123FF /* CurrentTime.cpp in Sources */,
 				A8A4739E151A825B004123FF /* DataLog.cpp in Sources */,

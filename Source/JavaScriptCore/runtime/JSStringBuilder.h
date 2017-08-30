@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #include "ExceptionHelpers.h"
 #include "JSString.h"
-#include <wtf/Vector.h>
+#include <wtf/text/StringVector.h>
 
 namespace JSC {
 
@@ -113,8 +113,8 @@ private:
         m_is8Bit = false;
     }
 
-    Vector<LChar, 64, UnsafeVectorOverflow> buffer8;
-    Vector<UChar, 64, UnsafeVectorOverflow> buffer16;
+    StringVector<LChar, 64, UnsafeVectorOverflow> buffer8;
+    StringVector<UChar, 64, UnsafeVectorOverflow> buffer16;
     bool m_okay;
     bool m_is8Bit;
 };

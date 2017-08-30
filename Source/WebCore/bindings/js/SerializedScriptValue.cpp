@@ -1950,7 +1950,7 @@ private:
         str = String(reinterpret_cast<const UChar*>(ptr), length);
         ptr += length * sizeof(UChar);
 #else
-        Vector<UChar> buffer;
+        StringVector<UChar> buffer;
         buffer.reserveCapacity(length);
         for (unsigned i = 0; i < length; i++) {
             uint16_t ch;

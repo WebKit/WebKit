@@ -129,6 +129,22 @@ public:
 template<typename T, typename U> inline bool operator==(const FastAllocator<T>&, const FastAllocator<U>&) { return true; }
 template<typename T, typename U> inline bool operator!=(const FastAllocator<T>&, const FastAllocator<U>&) { return false; }
 
+struct FastMalloc {
+    static void* malloc(size_t size) { return fastMalloc(size); }
+    
+    static void* tryMalloc(size_t size)
+    {
+        auto result = tryFastMalloc(size);
+        void* realResult;
+        if (result.getValue(realResult))
+            return realResult;
+        return nullptr;
+    }
+    
+    static void* realloc(void* p, size_t size) { return fastRealloc(p, size); }
+    
+    static void free(void* p) { fastFree(p); }
+};
 
 } // namespace WTF
 
@@ -136,6 +152,8 @@ template<typename T, typename U> inline bool operator!=(const FastAllocator<T>&,
 using WTF::fastSetMaxSingleAllocationSize;
 #endif
 
+using WTF::FastAllocator;
+using WTF::FastMalloc;
 using WTF::isFastMallocEnabled;
 using WTF::fastCalloc;
 using WTF::fastFree;
@@ -151,7 +169,6 @@ using WTF::tryFastMalloc;
 using WTF::tryFastZeroedMalloc;
 using WTF::fastAlignedMalloc;
 using WTF::fastAlignedFree;
-using WTF::FastAllocator;
 
 #if COMPILER(GCC_OR_CLANG) && OS(DARWIN)
 #define WTF_PRIVATE_INLINE __private_extern__ inline __attribute__((always_inline))

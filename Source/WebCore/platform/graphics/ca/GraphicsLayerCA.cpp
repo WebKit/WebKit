@@ -2698,7 +2698,7 @@ GraphicsLayerCA::CloneID GraphicsLayerCA::ReplicaState::cloneID() const
     const size_t bitsPerUChar = sizeof(UChar) * 8;
     size_t vectorSize = (depth + bitsPerUChar - 1) / bitsPerUChar;
     
-    Vector<UChar> result(vectorSize);
+    StringVector<UChar> result(vectorSize);
     result.fill(0);
 
     // Create a string from the bit sequence which we can use to identify the clone.
