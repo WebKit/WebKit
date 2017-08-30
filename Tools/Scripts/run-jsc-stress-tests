@@ -108,6 +108,7 @@ $tarball = false
 $tarFileName = "payload.tar.gz"
 $copyVM = false
 $testRunnerType = nil
+$testWriter = "default"
 $remoteUser = nil
 $remoteHost = nil
 $remotePort = nil
@@ -142,6 +143,10 @@ def usage
     puts "--shell-runner              Uses the shell-based test runner instead of the default make-based runner."
     puts "                            In general the shell runner is slower than the make runner."
     puts "--make-runner               Uses the faster make-based runner."
+    puts "--ruby-runner               Uses the ruby runner for machines without unix shell or make."
+    puts "--test-writer [writer]      Specifies the test script format."
+    puts "                            default is to use shell scripts to run the tests"
+    puts "                            \"ruby\" to use ruby scripts for systems without a unix shell."
     puts "--remote                    Specify a remote host on which to run tests from command line argument."
     puts "--remote-config-file        Specify a remote host on which to run tests from JSON file."
     puts "--child-processes    (-c)   Specify the number of child processes."
@@ -171,6 +176,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--os', GetoptLong::REQUIRED_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
                ['--make-runner', GetoptLong::NO_ARGUMENT],
+               ['--ruby-runner', GetoptLong::NO_ARGUMENT],
+               ['--test-writer', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote-config-file', GetoptLong::REQUIRED_ARGUMENT],
                ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
@@ -210,6 +217,10 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $testRunnerType = :shell
     when '--make-runner'
         $testRunnerType = :make
+    when '--ruby-runner'
+        $testRunnerType = :ruby
+    when '--test-writer'
+        $testWriter = arg
     when '--remote'
         $copyVM = true
         $tarball = true
@@ -423,6 +434,12 @@ if !$testRunnerType
     end
 end
 
+if $testWriter
+    if /[^-a-zA-Z0-9_]/.match($testWriter)
+        raise "Invalid test writer #{$testWriter} given"
+    end
+end
+
 $numFailures = 0
 $numPasses = 0
 
@@ -434,7 +451,7 @@ NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100
 B3O1_OPTIONS = ["--defaultB3OptLevel=1"]
 FTL_OPTIONS = ["--useFTLJIT=true"]
 
-require_relative "webkitruby/jsc-stress-test-writer-default"
+require_relative "webkitruby/jsc-stress-test-writer-#{$testWriter}"
 
 def shouldCollectContinuously?
     $buildType == "release" or $forceCollectContinuously
@@ -1626,6 +1643,8 @@ def prepareTestRunner
         prepareMakeTestRunner
     when :shell
         prepareShellTestRunner
+    when :ruby
+        prepareRubyTestRunner
     else
         raise "Unknown test runner type: #{$testRunnerType.to_s}"
     end

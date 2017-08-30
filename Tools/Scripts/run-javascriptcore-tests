@@ -52,6 +52,8 @@ my $jsDriverArgs;
 my $childProcesses;
 my $shellRunner;
 my $makeRunner;
+my $rubyRunner;
+my $testWriter;
 my $memoryLimited;
 
 my $buildJSC = 1;
@@ -200,6 +202,11 @@ Usage: $programName [options] [options to pass to build system]
   --shell-runner                Uses the shell-based test runner instead of the default make-based runner.
                                 In general the shell runner is slower than the make runner.
   --make-runner                 Uses the faster make-based runner.
+  --ruby-runner                 Uses the ruby runner for machines without unix shell or make.
+ 
+  --test-writer [writer]        Specifies the test script format."
+                                default is to use shell scripts to run the tests"
+                                \"ruby\" to use ruby scripts for systems without a unix shell.
 
   --memory-limited              Indicate that we are targeting the test for a memory limited device.
                                 Skip tests tagged with //\@skip if \$memoryLimited
@@ -247,6 +254,8 @@ GetOptions(
     'child-processes=s' => \$childProcesses,
     'shell-runner' => \$shellRunner,
     'make-runner' => \$makeRunner,
+    'ruby-runner' => \$rubyRunner,
+    'test-writer=s' => \$testWriter,
     'memory-limited' => \$memoryLimited,
     'filter=s' => \$filter,
     'help' => \$showHelp,
@@ -467,6 +476,15 @@ sub runJSCStressTests
 
     if ($makeRunner) {
         push(@jscStressDriverCmd, "--make-runner");
+    }
+
+    if ($rubyRunner) {
+        push(@jscStressDriverCmd, "--ruby-runner");
+    }
+
+    if ($testWriter) {
+        push(@jscStressDriverCmd, "--test-writer");
+        push(@jscStressDriverCmd, $testWriter);
     }
 
     if ($memoryLimited) {

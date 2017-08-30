@@ -1,3 +1,15 @@
+2017-08-30  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win][JSCOnly] Support running JSC tests for win-cairo from windows command prompt
+        https://bugs.webkit.org/show_bug.cgi?id=174985
+
+        Reviewed by Keith Miller.
+
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-jsc-stress-tests:
+        * Scripts/webkitruby/jsc-stress-test-writer-default.rb:
+        * Scripts/webkitruby/jsc-stress-test-writer-ruby.rb: Added.
+
 2017-08-30  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Do not use autogen whenever possible in JHBuild modules

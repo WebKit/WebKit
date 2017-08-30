@@ -344,12 +344,24 @@ def prepareMakeTestRunner
     }
 end
 
+def prepareRubyTestRunner
+    File.open($runnerDir + "runscript", "w") {
+        | outp |
+        $runlist.each {
+            | plan |
+            outp.puts "print `sh test_script_#{plan.index} 2>&1`"
+        }
+    }
+end
+
 def testRunnerCommand
     case $testRunnerType
     when :shell
         command = "sh runscript"
     when :make
         command = "make -j #{$numChildProcesses.to_s} -s -f Makefile"
+    when :ruby
+        command = "ruby runscript"
     else
         raise "Unknown test runner type: #{$testRunnerType.to_s}"
     end
