@@ -1,3 +1,28 @@
+2017-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r221064): [GTK] Editor not correctly working after r221064
+        https://bugs.webkit.org/show_bug.cgi?id=176052
+
+        Reviewed by Michael Catanzaro.
+
+        Since r221064 we are not always notified about typing attributes when editor state changes. didChangeSelection
+        no longer includes the typing attributes in EditorStateChange message, it's scheduled to be sent after the
+        compositing layer have been flushed, but that part is not implemented for GTK+ port.
+
+        Fixes test /webkit2/WebKitWebView/editor-state/typing-attributes.
+
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::updateBackingStoreState): Call WebPage::flushPendingEditorStateUpdate() after
+        the layout.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::layerFlushTimerFired): Call WebPage::flushPendingEditorStateUpdate() after
+        the display sync.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display): Call WebPage::flushPendingEditorStateUpdate() after the layout.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformEditorState const): Also return early, setting isMissingPostLayoutData to true, when
+        there's no frame view, the view needs a layout or the result is not for editable content.
+
 2017-08-29  Brent Fulgham  <bfulgham@apple.com>
 
         ResourceLoadStatistics logic does not understand custom WebsiteData stores

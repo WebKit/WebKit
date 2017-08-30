@@ -1,3 +1,15 @@
+2017-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r221064): [GTK] Editor not correctly working after r221064
+        https://bugs.webkit.org/show_bug.cgi?id=176052
+
+        Reviewed by Michael Catanzaro.
+
+        Run the test inside a window to ensure display updates happen.
+
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebViewEditor.cpp:
+        (testWebViewEditorEditorStateTypingAttributes):
+
 2017-08-29  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Use find_package for zlib

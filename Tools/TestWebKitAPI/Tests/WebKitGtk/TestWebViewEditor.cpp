@@ -293,6 +293,7 @@ static void testWebViewEditorEditorStateTypingAttributes(EditorTest* test, gcons
         "<b><i>boldanditalic </i></b>"
         "</body></html>";
 
+    test->showInWindowAndWaitUntilMapped();
     test->loadHtml(typingAttributesHTML, nullptr);
     test->waitUntilLoadFinished();
     test->setEditable(true);

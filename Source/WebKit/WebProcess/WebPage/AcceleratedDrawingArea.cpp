@@ -246,6 +246,7 @@ void AcceleratedDrawingArea::updateBackingStoreState(uint64_t stateID, bool resp
         m_webPage.setDeviceScaleFactor(deviceScaleFactor);
         m_webPage.setSize(size);
         m_webPage.layoutIfNeeded();
+        m_webPage.flushPendingEditorStateUpdate();
         m_webPage.scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
 
         if (m_layerTreeHost)
