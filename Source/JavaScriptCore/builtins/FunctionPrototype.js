@@ -42,7 +42,7 @@ function apply(thisValue, argumentValues)
     return this.@apply(thisValue, argumentValues);
 }
 
-// FIXME: this should have a different name: https://bugs.webkit.org/show_bug.cgi?id=151363
+@overriddenName="[Symbol.hasInstance]"
 function symbolHasInstance(value)
 {
     "use strict";

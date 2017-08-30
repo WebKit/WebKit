@@ -70,6 +70,7 @@ function close()
     @readableStreamDefaultControllerClose(this);
 }
 
+@getter
 function desiredSize()
 {
     "use strict";

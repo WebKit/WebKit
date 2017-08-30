@@ -31,12 +31,16 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
     JSGlobalObject* globalObject = thisObject.globalObject();
     GetterSetter* accessor = GetterSetter::create(vm, globalObject);
     if (value.accessorGetter()) {
-        String getterName = tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
-        if (!getterName)
-            return;
-        accessor->setGetter(vm, globalObject, value.attributes() & Builtin
-            ? JSFunction::createBuiltinFunction(vm, value.builtinAccessorGetterGenerator()(vm), globalObject, getterName)
-            : JSFunction::create(vm, globalObject, 0, getterName, value.accessorGetter()));
+        JSFunction* function = nullptr;
+        if (value.attributes() & Builtin)
+            function = JSFunction::create(vm, value.builtinAccessorGetterGenerator()(vm), globalObject);
+        else {
+            String getterName = tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
+            if (!getterName)
+                return;
+            function = JSFunction::create(vm, globalObject, 0, getterName, value.accessorGetter());
+        }
+        accessor->setGetter(vm, globalObject, function);
     }
     thisObject.putDirectNonIndexAccessor(vm, propertyName, accessor, attributesForStructure(value.attributes()));
 }

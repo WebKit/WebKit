@@ -123,10 +123,11 @@ extern const JSC::ConstructAbility s_%(codeName)sConstructAbility;""" % function
         for function in self.model().all_functions():
             function_args = {
                 'funcName': function.function_name,
+                'overriddenName': function.overridden_name,
                 'codeName': BuiltinsGenerator.mangledNameForFunction(function) + 'Code',
             }
 
-            lines.append("    macro(%(codeName)s, %(funcName)s, s_%(codeName)sLength) \\" % function_args)
+            lines.append("    macro(%(codeName)s, %(funcName)s, %(overriddenName)s, s_%(codeName)sLength) \\" % function_args)
         return '\n'.join(lines)
 
     def generate_section_for_code_name_macro(self):

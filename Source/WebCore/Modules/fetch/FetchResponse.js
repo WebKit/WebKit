@@ -59,6 +59,7 @@ function initializeFetchResponse(body, init)
     return this;
 }
 
+@getter
 function bodyUsed()
 {
    if (!(this instanceof @Response))
@@ -70,6 +71,7 @@ function bodyUsed()
     return @Response.prototype.@isDisturbed.@call(this);
 }
 
+@getter
 function body()
 {
     if (!(this instanceof @Response))

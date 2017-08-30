@@ -90,6 +90,9 @@ class BuiltinsCombinedImplementationGenerator(BuiltinsGenerator):
                 ("JavaScriptCore", "runtime/VM.h"),
             ),
             (["JavaScriptCore", "WebCore"],
+                ("JavaScriptCore", "runtime/IdentifierInlines.h"),
+            ),
+            (["JavaScriptCore", "WebCore"],
                 ("JavaScriptCore", "runtime/Intrinsic.h"),
             ),
         ]

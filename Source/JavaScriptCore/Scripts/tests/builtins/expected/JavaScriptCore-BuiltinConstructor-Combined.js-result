@@ -52,8 +52,8 @@ extern const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility;
     macro(from, builtinConstructorFrom, 1) \
 
 #define JSC_FOREACH_BUILTIN_CODE(macro) \
-    macro(builtinConstructorOfCode, of, s_builtinConstructorOfCodeLength) \
-    macro(builtinConstructorFromCode, from, s_builtinConstructorFromCodeLength) \
+    macro(builtinConstructorOfCode, of, static_cast<const char*>(nullptr), s_builtinConstructorOfCodeLength) \
+    macro(builtinConstructorFromCode, from, static_cast<const char*>(nullptr), s_builtinConstructorFromCodeLength) \
 
 #define JSC_FOREACH_BUILTIN_FUNCTION_NAME(macro) \
     macro(from) \
@@ -61,7 +61,7 @@ extern const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility;
 
 #define JSC_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(macro) \
 
-#define DECLARE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
+#define DECLARE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \
     JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
 
 JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
@@ -105,6 +105,7 @@ JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 #include "BuiltinExecutables.h"
 #include "HeapInlines.h"
+#include "IdentifierInlines.h"
 #include "Intrinsic.h"
 #include "JSCellInlines.h"
 #include "UnlinkedFunctionExecutable.h"
@@ -186,7 +187,7 @@ const char* s_builtinConstructorFromCode =
 ;
 
 
-#define DEFINE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
+#define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
     return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source(), std::nullopt, s_##codeName##Intrinsic); }

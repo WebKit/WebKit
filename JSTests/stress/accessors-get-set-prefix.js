@@ -14,8 +14,15 @@ function tryGetOwnPropertyDescriptorGetName(obj, property, expectedName)
 }
 
 tryGetOwnPropertyDescriptorGetName(Array, Symbol.species, "get [Symbol.species]");
+tryGetOwnPropertyDescriptorGetName(Map, Symbol.species, "get [Symbol.species]");
+tryGetOwnPropertyDescriptorGetName(Set, Symbol.species, "get [Symbol.species]");
+tryGetOwnPropertyDescriptorGetName(RegExp, Symbol.species, "get [Symbol.species]");
+tryGetOwnPropertyDescriptorGetName(Promise, Symbol.species, "get [Symbol.species]");
 tryGetOwnPropertyDescriptorGetName(Map.prototype, "size", "get size");
 tryGetOwnPropertyDescriptorGetName(Set.prototype, "size", "get size");
+tryGetOwnPropertyDescriptorGetName(RegExp.prototype, "flags", "get flags");
+tryGetOwnPropertyDescriptorGetName(RegExp.prototype, "sticky", "get sticky");
+tryGetOwnPropertyDescriptorGetName(RegExp.prototype, "source", "get source");
 
 if (Object.__lookupGetter__("__proto__").name !== "get __proto__")
     throw "Expected Object __proto__ getter to be named \"get __proto\"";

@@ -36,7 +36,7 @@ namespace JSC {
 
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
-#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, length) , m_##name##Source(makeSource(StringImpl::createFromLiteral(s_##name, length), { }))
+#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overrideName, length) , m_##name##Source(makeSource(StringImpl::createFromLiteral(s_##name, length), { }))
     JSC_FOREACH_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
 #undef EXPOSE_BUILTIN_STRINGS
 {
@@ -114,11 +114,15 @@ void BuiltinExecutables::finalize(Handle<Unknown>, void* context)
     static_cast<Weak<UnlinkedFunctionExecutable>*>(context)->clear();
 }
 
-#define DEFINE_BUILTIN_EXECUTABLES(name, functionName, length) \
+#define DEFINE_BUILTIN_EXECUTABLES(name, functionName, overrideName, length) \
 UnlinkedFunctionExecutable* BuiltinExecutables::name##Executable() \
 {\
-    if (!m_##name##Executable)\
-        m_##name##Executable = Weak<UnlinkedFunctionExecutable>(createBuiltinExecutable(m_##name##Source, m_vm.propertyNames->builtinNames().functionName##PublicName(), s_##name##ConstructAbility), this, &m_##name##Executable);\
+    if (!m_##name##Executable) {\
+        Identifier executableName = m_vm.propertyNames->builtinNames().functionName##PublicName();\
+        if (overrideName)\
+            executableName = Identifier::fromString(&m_vm, overrideName);\
+        m_##name##Executable = Weak<UnlinkedFunctionExecutable>(createBuiltinExecutable(m_##name##Source, executableName, s_##name##ConstructAbility), this, &m_##name##Executable);\
+    }\
     return m_##name##Executable.get();\
 }
 JSC_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_EXECUTABLES)
