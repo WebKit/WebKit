@@ -1,3 +1,47 @@
+2017-08-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r210287) On drop, event.dataTransfer.getData("text") returns an empty string when dragging an image
+        https://bugs.webkit.org/show_bug.cgi?id=170637
+        <rdar://problem/31347248>
+
+        Reviewed by Ryosuke Niwa.
+
+        In r210287, the behavior of DragData::containsFiles was changed to return true if NSFilesPromisePboardType is
+        present in the pasteboard. This means that we will consider images dragged from web content, for which we add
+        the NSFilesPromisePboardType UTI, as containing files on the pasteboard; this, in turn, means we'll initialize
+        the DataTransfer upon drop with m_forFileDrag set to true. Due to early returns in getData() and setData() to
+        deny data access when dropping a dragged file, this means the page won't ever get access to the URL in the
+        pasteboard due to the presence of the NSFilesPromisePboardType UTI.
+
+        To fix this, we replace the early m_forFileDrag returns in getData and setData, instead early returning the null
+        string if there are any file URLs present on the pasteboard (determined via readFilenames() retrieving a non-
+        empty result).
+
+        Test: editing/pasteboard/drag-drop-href-as-text-data.html
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::DataTransfer):
+        (WebCore::DataTransfer::getData const):
+        (WebCore::DataTransfer::setData):
+
+        Rather than bail upon forFileDrag() (formerly, m_forFileDrag) being true, bail if there are any file URLs
+        present on the pasteboard. It seems like this was the intention of the early return in the first place, to
+        prevent the page from being able to ask for a real file URL when dragging a file.
+
+        (WebCore::DataTransfer::files const):
+        (WebCore::DataTransfer::setDragImage):
+        (WebCore::DataTransfer::setDropEffect):
+        (WebCore::DataTransfer::setEffectAllowed):
+
+        Swap m_forDrag and m_forFileDrag with forDrag() and forFileDrag(), respectively.
+
+        * dom/DataTransfer.h:
+        (WebCore::DataTransfer::forDrag const):
+        (WebCore::DataTransfer::forFileDrag const):
+
+        Instead of caching two bools to represent state (m_forDrag and m_forFileDrag), just remember the DataTransfer's
+        m_type and turn the flags into const helpers that check for the value of m_type.
+
 2017-08-29  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Request should throw when keep alive is true and body is a ReadableStream

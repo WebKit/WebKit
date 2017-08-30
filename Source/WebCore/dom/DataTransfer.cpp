@@ -61,8 +61,7 @@ DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboar
     : m_storeMode(mode)
     , m_pasteboard(WTFMove(pasteboard))
 #if ENABLE(DRAG_SUPPORT)
-    , m_forDrag(type == Type::DragAndDropData || type == Type::DragAndDropFiles)
-    , m_forFileDrag(type == Type::DragAndDropFiles)
+    , m_type(type)
     , m_dropEffect(ASCIILiteral("uninitialized"))
     , m_effectAllowed(ASCIILiteral("uninitialized"))
     , m_shouldUpdateDragImage(false)
@@ -137,8 +136,8 @@ String DataTransfer::getData(const String& type) const
         return String();
 
 #if ENABLE(DRAG_SUPPORT)
-    if (m_forFileDrag)
-        return String();
+    if (forFileDrag() && m_pasteboard->readFilenames().size())
+        return { };
 #endif
 
     return m_pasteboard->readString(normalizeType(type));
@@ -150,7 +149,7 @@ void DataTransfer::setData(const String& type, const String& data)
         return;
 
 #if ENABLE(DRAG_SUPPORT)
-    if (m_forFileDrag)
+    if (forFileDrag() && m_pasteboard->readFilenames().size())
         return;
 #endif
 
@@ -187,7 +186,7 @@ FileList& DataTransfer::files() const
     }
 
 #if ENABLE(DRAG_SUPPORT)
-    if (m_forDrag && !m_forFileDrag) {
+    if (forDrag() && !forFileDrag()) {
         ASSERT(m_fileList->isEmpty());
         return *m_fileList;
     }
@@ -266,7 +265,7 @@ Ref<DataTransfer> DataTransfer::createForDrop(StoreMode accessMode, const DragDa
 
 void DataTransfer::setDragImage(Element* element, int x, int y)
 {
-    if (!m_forDrag || !canWriteData())
+    if (!forDrag() || !canWriteData())
         return;
 
     CachedImage* image = nullptr;
@@ -422,7 +421,7 @@ String DataTransfer::dropEffect() const
 
 void DataTransfer::setDropEffect(const String& effect)
 {
-    if (!m_forDrag)
+    if (!forDrag())
         return;
 
     if (effect != "none" && effect != "copy" && effect != "link" && effect != "move")
@@ -443,7 +442,7 @@ String DataTransfer::effectAllowed() const
 
 void DataTransfer::setEffectAllowed(const String& effect)
 {
-    if (!m_forDrag)
+    if (!forDrag())
         return;
 
     // Ignore any attempts to set it to an unknown value.

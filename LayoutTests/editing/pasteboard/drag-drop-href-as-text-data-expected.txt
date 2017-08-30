@@ -1,0 +1,5 @@
+
+text: "https://www.webkit.org/"
+url: "https://www.webkit.org/"
+text/plain: "https://www.webkit.org/"
+text/uri-list: "https://www.webkit.org/"

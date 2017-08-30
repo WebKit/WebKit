@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+#source {
+    width: 300px;
+    height: 300px;
+}
+#target {
+    border: 1px blue dashed;
+    font-family: monospace;
+    overflow: scroll;
+    white-space: nowrap;
+    width: 100%;
+    height: 300px;
+}
+</style>
+
+<a id="link" href="https://www.webkit.org/"><img id="source" src="../resources/abe.png"></img></a>
+<div id="target"></div>
+
+<script>
+function append(text) {
+    let div = document.createElement("div");
+    div.textContent = text;
+    target.appendChild(div);
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+target.addEventListener("dragenter", event => event.preventDefault());
+target.addEventListener("dragover", event => event.preventDefault());
+target.addEventListener("drop", event => {
+    for (let type of ["text", "url", "text/plain", "text/uri-list"])
+        append(`${type}: "${event.dataTransfer.getData(type)}"`);
+    event.preventDefault();
+});
+
+if (window.eventSender) {
+    let x = source.offsetLeft + source.offsetWidth / 2;
+    let y = source.offsetTop + source.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(x, y + 300);
+    eventSender.mouseUp();
+}
+</script>
+</html>
