@@ -43,8 +43,6 @@ list(APPEND WebCore_LIBRARIES
     crypt32
     iphlpapi
     libcurl_imp
-    libjpeg
-    libpng
     rpcrt4
     shlwapi
     usp10
