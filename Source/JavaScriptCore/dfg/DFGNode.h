@@ -682,6 +682,15 @@ public:
         ASSERT(m_op == ArithAbs && child1().useKind() == Int32Use);
         m_op = ArithNegate;
     }
+
+    void convertToCompareEqPtr(FrozenValue* cell, Edge node)
+    {
+        ASSERT(m_op == CompareStrictEq);
+        setOpAndDefaultFlags(CompareEqPtr);
+        children.setChild1(node);
+        children.setChild2(Edge());
+        m_opInfo = cell;
+    }
     
     void convertToDirectCall(FrozenValue*);
 

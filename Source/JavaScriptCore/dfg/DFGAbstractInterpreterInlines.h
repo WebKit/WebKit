@@ -1499,6 +1499,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
+
+        if (node->isBinaryUseKind(UntypedUse)) {
+            // FIXME: Revisit this condition when introducing BigInt to JSC.
+            auto isNonStringCellConstant = [] (JSValue value) {
+                return value && value.isCell() && !value.isString();
+            };
+
+            if (isNonStringCellConstant(left) || isNonStringCellConstant(right)) {
+                m_state.setFoundConstants(true);
+                forNode(node).setType(SpecBoolean);
+                break;
+            }
+        }
         
         SpeculatedType leftLUB = leastUpperBoundOfStrictlyEquivalentSpeculations(forNode(leftNode).m_type);
         SpeculatedType rightLUB = leastUpperBoundOfStrictlyEquivalentSpeculations(forNode(rightNode).m_type);

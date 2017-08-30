@@ -139,6 +139,28 @@ private:
                 // See: https://bugs.webkit.org/show_bug.cgi?id=174844
                 break;
             }
+
+            case CompareStrictEq: {
+                if (node->isBinaryUseKind(UntypedUse)) {
+                    JSValue child1Constant = m_state.forNode(node->child1().node()).value();
+                    JSValue child2Constant = m_state.forNode(node->child2().node()).value();
+
+                    // FIXME: Revisit this condition when introducing BigInt to JSC.
+                    auto isNonStringCellConstant = [] (JSValue value) {
+                        return value && value.isCell() && !value.isString();
+                    };
+
+                    if (isNonStringCellConstant(child1Constant)) {
+                        node->convertToCompareEqPtr(m_graph.freezeStrong(child1Constant.asCell()), node->child2());
+                        changed = true;
+                    } else if (isNonStringCellConstant(child2Constant)) {
+                        node->convertToCompareEqPtr(m_graph.freezeStrong(child2Constant.asCell()), node->child1());
+                        changed = true;
+                    }
+                }
+                break;
+            }
+
                 
             case CheckStructure:
             case ArrayifyToStructure: {
