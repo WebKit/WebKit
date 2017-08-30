@@ -1,3 +1,32 @@
+2017-08-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use table based approach for JSON.stringify's Quote
+        https://bugs.webkit.org/show_bug.cgi?id=176044
+
+        Reviewed by Darin Adler.
+
+        We change escape operation of JSON Quote from branch-based to table-based.
+        This patch partially adopts SpiderMonkey's change to StringBuilderJSON.cpp
+        to optimize this escaping operation. We separate changes from StringBuilder.cpp
+        to apply MPL to StringBuilderJSON.cpp file. Since WebKit already adopts MPL in
+        some files (like, DateMath.h), it is acceptable.
+
+        Kraken json-stringify-tinderbox shows 7.2% improvement.
+
+                                           baseline                  patched
+
+        json-stringify-tinderbox        40.429+-0.771      ^      37.693+-0.862         ^ definitely 1.0726x faster
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/StringBuilder.cpp:
+        (WTF::appendQuotedJSONStringInternalSlow): Deleted.
+        (WTF::appendQuotedJSONStringInternal): Deleted.
+        (WTF::StringBuilder::appendQuotedJSONString): Deleted.
+        * wtf/text/StringBuilderJSON.cpp: Added.
+        (WTF::appendQuotedJSONStringInternal):
+        (WTF::StringBuilder::appendQuotedJSONString):
+
 2017-08-29  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Crash under WorkQueue::performWorkOnRegisteredWorkThread in layout tests.

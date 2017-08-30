@@ -284,6 +284,7 @@ set(WTF_SOURCES
     text/Base64.cpp
     text/CString.cpp
     text/StringBuilder.cpp
+    text/StringBuilderJSON.cpp
     text/StringImpl.cpp
     text/StringView.cpp
     text/SymbolImpl.cpp
