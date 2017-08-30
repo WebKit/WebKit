@@ -1,3 +1,40 @@
+2017-08-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [SVG] Leak in SVGAnimatedListPropertyTearOff
+        https://bugs.webkit.org/show_bug.cgi?id=172545
+
+        Reviewed by Darin Adler.
+
+        SVGAnimatedListPropertyTearOff maintains a vector m_wrappers with references to
+        SVGPropertyTraits<PropertyType>::ListItemTearOff. Apart from that SVGPropertyTearOff has a
+        reference to SVGAnimatedProperty.
+
+        When SVGListProperty::getItemValuesAndWrappers() is called, it creates a
+        SVGPropertyTraits<PropertyType>::ListItemTearOff pointing to the same SVGAnimatedProperty (a
+        SVGAnimatedListPropertyTearOff) which stores the m_wrappers vector where the ListItemTearOff
+        is going to be added to. This effectively creates a reference cycle between the
+        SVGAnimatedListPropertyTearOff and all the ListItemTearOff it stores in m_wrappers.
+
+        In order to effectively break the cycle without freeing too many wrappers we should take two
+        measures:
+        1) Break the reference cycle by storing raw pointers in the m_wrappers Vector
+        2) Remove the ListItemTearOff which is being deleted (it notifies the animated property by
+        calling propertyWillBeDeleted) from the m_wrappers Vector.
+
+        This is a re-land of r219334 which caused early releases of custom data attribute objects
+        added to SVG elements (wkb.ug/175023).
+
+        Tests: svg/animations/animation-leak-list-property-instances.html
+               svg/dom/SVGAnimatedListPropertyTearOff-crash-2.html
+               svg/dom/SVGAnimatedListPropertyTearOff-crash.html
+               svg/dom/SVGAnimatedListPropertyTearOff-leak.html
+
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        * svg/properties/SVGListProperty.h:
+        (WebCore::SVGListProperty::getItemValuesAndWrappers):
+        * svg/properties/SVGListPropertyTearOff.h:
+        (WebCore::SVGListPropertyTearOff::removeItemFromList):
+
 2017-08-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r220278): Web Inspector: ContextMenu items are not getting triggered

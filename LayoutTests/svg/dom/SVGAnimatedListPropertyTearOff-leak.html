@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<style>
+ body {
+     overflow: hidden;
+ }
+ #svg {
+     width: 100%;
+     height: 100%;
+ }
+ #current-transform {
+     height: 30px;
+ }
+ #is-same-instance {
+     width: 30px;
+     height: 30px;
+     background-color: green;
+ }
+</style>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<body onload="runTest()">
+<div id="current-transform">translate(0, 0)</div>
+<div id="is-same-instance"></div>
+<div id="svg-container">
+    <svg id="svg" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <g transform="translate(0, 0)">
+            <rect width="100" height="100" fill="green"></rect>
+        </g>
+    </svg>
+</div>
+</body>
+
+<script src="../../resources/js-test-pre.js"></script>
+
+<script>
+ description("This test checks that custom data attributes are not lost due GC while still referenced.");
+
+ let iterations = 0;
+ let currentScaling = 1
+ const gElement = document.getElementById('svg').firstElementChild
+ const transform = document.getElementById('current-transform')
+
+ if (window.testRunner) {
+     testRunner.dumpAsText();
+     testRunner.waitUntilDone();
+ }
+
+ function checkCache() {
+     let cache = gElement["data-transform-cache"];
+     shouldBeCloseTo(cache.matrix.a.toString(), 0.5, 0.000000001);
+     shouldBe(cache.matrix.b.toString(), "0");
+     shouldBe(cache.matrix.c.toString(), "0");
+     shouldBeCloseTo(cache.matrix.d.toString(), 0.5, 0.000000001);
+     shouldBe(cache.matrix.e.toString(), "0");
+     shouldBe(cache.matrix.f.toString(), "0");
+ }
+
+ function runTest() {
+     currentScaling -= 0.1;
+     const matrix = {
+         elements: [currentScaling, 0, 0, currentScaling, 0, 0]
+     }
+     setMatrix(gElement, matrix);
+     transform.innerHTML = matrix.elements.toString();
+
+     if (++iterations < 5) {
+         gc();
+         gc();
+         runTest();
+     } else {
+         checkCache();
+         if (window.testRunner)
+             testRunner.notifyDone();
+     }
+ }
+
+ function setMatrix(element, matrix) {
+     const elements = matrix.elements;
+     let cache = element["data-transform-cache"];
+     if (!cache) {
+         cache = element.transform.baseVal.getItem(0);
+         const m = element.transform.baseVal.getItem(0).matrix;
+         m.a = elements[0];
+         m.b = elements[1];
+         m.c = elements[2];
+         m.d = elements[3];
+         m.e = elements[4];
+         m.f = elements[5];
+         element["data-transform-cache"] = cache
+     } else {
+         const m = cache.matrix;
+         shouldBe
+         if (cache !== element.transform.baseVal.getItem(0)) {
+             console.log("FAIL: " + cache + " should be " + element.transform.baseVal.getItem(0) + " but is not.");
+             document.getElementById('is-same-instance').style.backgroundColor = 'red';
+         }
+         m.a = elements[0];
+         m.b = elements[1];
+         m.c = elements[2];
+         m.d = elements[3];
+         m.e = elements[4];
+         m.f = elements[5];
+     }
+ }
+</script>
+<script src="../../resources/js-test-post.js"></script>

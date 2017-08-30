@@ -1,3 +1,23 @@
+2017-08-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [SVG] Leak in SVGAnimatedListPropertyTearOff
+        https://bugs.webkit.org/show_bug.cgi?id=172545
+
+        Reviewed by Darin Adler.
+
+        The list of new added tests includes the one for the original bug, a new test for the
+        regression and a couple of tests imported from Blink which verify that
+        SVGAnimatedListPropertyTearOff does not crash after the context element goes out of scope.
+
+        * svg/animations/animation-leak-list-property-instances-expected.txt: Added.
+        * svg/animations/animation-leak-list-property-instances.html: Added.
+        * svg/dom/SVGAnimatedListPropertyTearOff-crash-2-expected.txt: Added. Imported from Blink.
+        * svg/dom/SVGAnimatedListPropertyTearOff-crash-2.html: Added. Imported from Blink.
+        * svg/dom/SVGAnimatedListPropertyTearOff-crash-expected.txt: Added. Imported from Blink.
+        * svg/dom/SVGAnimatedListPropertyTearOff-crash.html: Added. Imported from Blink.
+        * svg/dom/SVGAnimatedListPropertyTearOff-leak-expected.txt: Added.
+        * svg/dom/SVGAnimatedListPropertyTearOff-leak.html: Added.
+
 2017-08-24  Kirill Ovchinnikov  <kirill.ovchinn@gmail.com>
 
         HTMLTrackElement behavior violates the standard
