@@ -30,21 +30,13 @@
 
 namespace WebKit {
 
-static uint64_t generateIdentifier()
-{
-    static uint64_t identifier;
-
-    return ++identifier;
-}
-
 Ref<WebScriptMessageHandler> WebScriptMessageHandler::create(std::unique_ptr<Client> client, const String& name, API::UserContentWorld& world)
 {
     return adoptRef(*new WebScriptMessageHandler(WTFMove(client), name, world));
 }
 
 WebScriptMessageHandler::WebScriptMessageHandler(std::unique_ptr<Client> client, const String& name, API::UserContentWorld& world)
-    : m_identifier(generateIdentifier())
-    , m_client(WTFMove(client))
+    : m_client(WTFMove(client))
     , m_name(name)
     , m_world(world)
 {

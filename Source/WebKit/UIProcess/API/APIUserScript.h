@@ -29,10 +29,11 @@
 #include "APIObject.h"
 #include "APIUserContentWorld.h"
 #include <WebCore/UserScript.h>
+#include <wtf/Identified.h>
 
 namespace API {
 
-class UserScript final : public ObjectImpl<Object::Type::UserScript> {
+class UserScript final : public ObjectImpl<Object::Type::UserScript>, public Identified<UserScript> {
 public:
     static WebCore::URL generateUniqueURL();
 
@@ -43,15 +44,12 @@ public:
 
     UserScript(WebCore::UserScript, API::UserContentWorld&);
 
-    uint64_t identifier() const { return m_identifier; }
-
     const WebCore::UserScript& userScript() const { return m_userScript; }
     
     UserContentWorld& userContentWorld() { return m_world; }
     const UserContentWorld& userContentWorld() const { return m_world; }
     
 private:
-    uint64_t m_identifier;
     WebCore::UserScript m_userScript;
     Ref<UserContentWorld> m_world;
 };

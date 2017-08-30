@@ -40,13 +40,6 @@ namespace WebKit {
 
 static const int visitedLinkTableMaxLoad = 2;
 
-static uint64_t generateIdentifier()
-{
-    static uint64_t identifier;
-
-    return ++identifier;
-}
-
 Ref<VisitedLinkStore> VisitedLinkStore::create()
 {
     return adoptRef(*new VisitedLinkStore);
@@ -55,14 +48,13 @@ Ref<VisitedLinkStore> VisitedLinkStore::create()
 VisitedLinkStore::~VisitedLinkStore()
 {
     for (WebProcessProxy* process : m_processes) {
-        process->removeMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), m_identifier);
+        process->removeMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), identifier());
         process->didDestroyVisitedLinkStore(*this);
     }
 }
 
 VisitedLinkStore::VisitedLinkStore()
-    : m_identifier(generateIdentifier())
-    , m_keyCount(0)
+    : m_keyCount(0)
     , m_tableSize(0)
     , m_pendingVisitedLinksTimer(RunLoop::main(), this, &VisitedLinkStore::pendingVisitedLinksTimerFired)
 {
@@ -75,7 +67,7 @@ void VisitedLinkStore::addProcess(WebProcessProxy& process)
     if (!m_processes.add(&process).isNewEntry)
         return;
 
-    process.addMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), m_identifier, *this);
+    process.addMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), identifier(), *this);
 
     if (!m_keyCount)
         return;
@@ -90,7 +82,7 @@ void VisitedLinkStore::removeProcess(WebProcessProxy& process)
     ASSERT(m_processes.contains(&process));
 
     m_processes.remove(&process);
-    process.removeMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), m_identifier);
+    process.removeMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), identifier());
 }
 
 void VisitedLinkStore::addVisitedLinkHash(LinkHash linkHash)
@@ -111,7 +103,7 @@ void VisitedLinkStore::removeAll()
 
     for (WebProcessProxy* process : m_processes) {
         ASSERT(process->processPool().processes().contains(process));
-        process->send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), m_identifier);
+        process->send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), identifier());
     }
 }
 
@@ -194,9 +186,9 @@ void VisitedLinkStore::pendingVisitedLinksTimerFired()
         ASSERT(process->processPool().processes().contains(process));
 
         if (addedVisitedLinks.size() > 20)
-            process->send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), m_identifier);
+            process->send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), identifier());
         else
-            process->send(Messages::VisitedLinkTableController::VisitedLinkStateChanged(addedVisitedLinks), m_identifier);
+            process->send(Messages::VisitedLinkTableController::VisitedLinkStateChanged(addedVisitedLinks), identifier());
     }
 }
 
@@ -253,7 +245,7 @@ void VisitedLinkStore::sendTable(WebProcessProxy& process)
     if (!m_table.sharedMemory()->createHandle(handle, SharedMemory::Protection::ReadOnly))
         return;
 
-    process.send(Messages::VisitedLinkTableController::SetVisitedLinkTable(handle), m_identifier);
+    process.send(Messages::VisitedLinkTableController::SetVisitedLinkTable(handle), identifier());
 }
 
 } // namespace WebKit

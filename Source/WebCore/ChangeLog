@@ -1,3 +1,50 @@
+2017-08-30  Brady Eidson  <beidson@apple.com>
+
+        Add "Identified" base class to replace a whole bunch of custom identifier generators.
+        https://bugs.webkit.org/show_bug.cgi?id=176120
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change).
+
+        Instead of repeating the common pattern of a class with an integer identifier keeping its
+        own static counter of the next identifier and generating it for each instance, this
+        uses a common template in WTF that does that automatically.
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::connectionPendingCloseFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::confirmDidCloseFromServer):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didFireVersionChangeEvent):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didFinishHandlingVersionChange):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::createVersionChangeTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::establishTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didAbortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didCommitTransaction):
+        (WebCore::IDBServer::nextDatabaseConnectionIdentifier): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::identifier const): Deleted.
+
+        * workers/service/ServiceWorkerJobData.cpp:
+        (WebCore::ServiceWorkerJobData::ServiceWorkerJobData):
+        (WebCore::ServiceWorkerJobData::isolatedCopy const):
+        * workers/service/ServiceWorkerJobData.h:
+        (WebCore::ServiceWorkerJobData::encode const):
+        (WebCore::ServiceWorkerJobData::decode):
+        (WebCore::ServiceWorkerJobData::identifier const): Deleted.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::Connection::Connection):
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::Connection::identifier const): Deleted.
+
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::SWServerRegistration):
+        (WebCore::SWServerRegistration::data const):
+        * workers/service/server/SWServerRegistration.h:
+        (WebCore::SWServerRegistration::identifier const): Deleted.
+
 2017-08-30  Youenn Fablet  <youenn@apple.com>
 
         Remove FetchRequest::InternalRequest

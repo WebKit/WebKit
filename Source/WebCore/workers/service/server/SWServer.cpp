@@ -38,8 +38,8 @@
 namespace WebCore {
 
 SWServer::Connection::Connection(SWServer& server, uint64_t identifier)
-    : m_server(server)
-    , m_identifier(identifier)
+    : Identified(identifier)
+    , m_server(server)
 {
     m_server.registerConnection(*this);
 }

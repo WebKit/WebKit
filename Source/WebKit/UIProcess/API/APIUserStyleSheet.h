@@ -29,10 +29,11 @@
 #include "APIObject.h"
 #include "APIUserContentWorld.h"
 #include <WebCore/UserStyleSheet.h>
+#include <wtf/Identified.h>
 
 namespace API {
 
-class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet> {
+class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet>, public Identified<UserStyleSheet> {
 public:
     static WebCore::URL generateUniqueURL();
 
@@ -43,15 +44,12 @@ public:
 
     UserStyleSheet(WebCore::UserStyleSheet, API::UserContentWorld&);
 
-    uint64_t identifier() const { return m_identifier; }
-
     const WebCore::UserStyleSheet& userStyleSheet() const { return m_userStyleSheet; }
 
     UserContentWorld& userContentWorld() { return m_world; }
     const UserContentWorld& userContentWorld() const { return m_world; }
 
 private:
-    uint64_t m_identifier;
     WebCore::UserStyleSheet m_userStyleSheet;
     Ref<UserContentWorld> m_world;
 };

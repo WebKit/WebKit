@@ -30,24 +30,15 @@
 
 namespace WebCore {
 
-static std::atomic<uint64_t> currentJobIdentifier;
-
-ServiceWorkerJobData::ServiceWorkerJobData(uint64_t connectionIdentifier)
-    : m_jobIdentifier(++currentJobIdentifier)
+ServiceWorkerJobData::ServiceWorkerJobData(uint64_t jobIdentifier, uint64_t connectionIdentifier)
+    : ThreadSafeIdentified(jobIdentifier)
     , m_connectionIdentifier(connectionIdentifier)
 {
 }
 
-ServiceWorkerJobData::ServiceWorkerJobData(const ServiceWorkerJobData& other)
+ServiceWorkerJobData::ServiceWorkerJobData(uint64_t connectionIdentifier)
+    : m_connectionIdentifier(connectionIdentifier)
 {
-    m_jobIdentifier = other.m_jobIdentifier;
-    m_connectionIdentifier = other.m_connectionIdentifier;
-    scriptURL = other.scriptURL;
-    clientCreationURL = other.clientCreationURL;
-    topOrigin = other.topOrigin;
-    scopeURL = other.scopeURL;
-    type = other.type;
-    registrationOptions = other.registrationOptions;
 }
 
 ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
@@ -57,9 +48,7 @@ ServiceWorkerRegistrationKey ServiceWorkerJobData::registrationKey() const
 
 ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
 {
-    ServiceWorkerJobData result;
-    result.m_jobIdentifier = m_jobIdentifier;
-    result.m_connectionIdentifier = m_connectionIdentifier;
+    ServiceWorkerJobData result { identifier(), m_connectionIdentifier };
     result.type = type;
 
     result.scriptURL = scriptURL.isolatedCopy();

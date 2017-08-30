@@ -30,13 +30,6 @@
 
 namespace API {
 
-static uint64_t generateIdentifier()
-{
-    static uint64_t identifier;
-
-    return ++identifier;
-}
-
 WebCore::URL UserScript::generateUniqueURL()
 {
     static uint64_t identifier;
@@ -48,8 +41,7 @@ WebCore::URL UserScript::generateUniqueURL()
 }
 
 UserScript::UserScript(WebCore::UserScript userScript, API::UserContentWorld& world)
-    : m_identifier(generateIdentifier())
-    , m_userScript(userScript)
+    : m_userScript(userScript)
     , m_world(world)
 {
 }

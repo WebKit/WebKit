@@ -31,6 +31,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Identified.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
@@ -58,7 +59,7 @@ class WebScriptMessageHandler;
 struct FrameInfoData;
 struct WebPageCreationParameters;
 
-class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, private IPC::MessageReceiver {
+class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, private IPC::MessageReceiver, public Identified<WebUserContentControllerProxy> {
 public:
     static Ref<WebUserContentControllerProxy> create()
     { 
@@ -66,8 +67,6 @@ public:
     } 
     explicit WebUserContentControllerProxy();
     ~WebUserContentControllerProxy();
-
-    uint64_t identifier() const { return m_identifier; }
 
     void addProcess(WebProcessProxy&, WebPageCreationParameters&);
     void removeProcess(WebProcessProxy&);
@@ -108,7 +107,6 @@ private:
     void removeUserContentWorldUses(HashCountedSet<RefPtr<API::UserContentWorld>>&);
     bool shouldSendRemoveUserContentWorldsMessage(API::UserContentWorld&, unsigned numberOfUsesToRemove);
 
-    uint64_t m_identifier;
     HashSet<WebProcessProxy*> m_processes;    
     Ref<API::Array> m_userScripts;
     Ref<API::Array> m_userStyleSheets;

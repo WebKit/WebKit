@@ -31,6 +31,7 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
+#include <wtf/Identified.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ class SWServer;
 class SWServerWorker;
 struct ExceptionData;
 
-class SWServerRegistration {
+class SWServerRegistration : public ThreadSafeIdentified<SWServerRegistration> {
 public:
     explicit SWServerRegistration(SWServer&, const ServiceWorkerRegistrationKey&);
     SWServerRegistration(const SWServerRegistration&) = delete;
@@ -46,7 +47,6 @@ public:
 
     void enqueueJob(const ServiceWorkerJobData&);
 
-    uint64_t identifier() const { return m_identifier; }
     ServiceWorkerRegistrationData data() const;
 
 private:
@@ -76,7 +76,6 @@ private:
 
     Timer m_jobTimer;
     SWServer& m_server;
-    uint64_t m_identifier;
     ServiceWorkerRegistrationKey m_registrationKey;
 };
 

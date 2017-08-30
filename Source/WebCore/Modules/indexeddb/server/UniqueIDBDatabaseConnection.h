@@ -29,6 +29,7 @@
 
 #include "UniqueIDBDatabaseTransaction.h"
 #include <wtf/HashMap.h>
+#include <wtf/Identified.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -44,13 +45,12 @@ class ServerOpenDBRequest;
 class UniqueIDBDatabase;
 class UniqueIDBDatabaseTransaction;
 
-class UniqueIDBDatabaseConnection : public RefCounted<UniqueIDBDatabaseConnection> {
+class UniqueIDBDatabaseConnection : public RefCounted<UniqueIDBDatabaseConnection>, public Identified<UniqueIDBDatabaseConnection> {
 public:
     static Ref<UniqueIDBDatabaseConnection> create(UniqueIDBDatabase&, ServerOpenDBRequest&);
 
     ~UniqueIDBDatabaseConnection();
 
-    uint64_t identifier() const { return m_identifier; }
     const IDBResourceIdentifier& openRequestIdentifier() { return m_openRequestIdentifier; }
     UniqueIDBDatabase& database() { return m_database; }
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
@@ -86,7 +86,6 @@ public:
 private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, ServerOpenDBRequest&);
 
-    uint64_t m_identifier { 0 };
     UniqueIDBDatabase& m_database;
     IDBConnectionToClient& m_connectionToClient;
     IDBResourceIdentifier m_openRequestIdentifier;

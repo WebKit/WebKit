@@ -309,6 +309,7 @@
 		515F794C1CFC9F4A00CCED93 /* CrossThreadCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadCopier.h; sourceTree = "<group>"; };
 		515F794D1CFC9F4A00CCED93 /* CrossThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadTask.h; sourceTree = "<group>"; };
 		515F79551CFD3A6900CCED93 /* CrossThreadQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadQueue.h; sourceTree = "<group>"; };
+		517A53571F5734B700DCDC0A /* Identified.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Identified.h; sourceTree = "<group>"; };
 		5182C22C1F2BC7E60059BA7C /* InstanceCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstanceCounted.h; sourceTree = "<group>"; };
 		51F175241F3D486000C74950 /* PersistentCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentCoder.h; sourceTree = "<group>"; };
 		51F175251F3D486000C74950 /* PersistentCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentCoders.h; sourceTree = "<group>"; };
@@ -833,6 +834,7 @@
 				A8A472B9151A825A004123FF /* HashTable.h */,
 				A8A472BA151A825A004123FF /* HashTraits.h */,
 				A8A472BB151A825A004123FF /* HexNumber.h */,
+				517A53571F5734B700DCDC0A /* Identified.h */,
 				FE8925AF1D00DAEC0046907E /* Indenter.h */,
 				9C67C542589348E285B49699 /* IndexedContainerIterator.h */,
 				0F2AC5621E8A01490001EE3F /* IndexKeyType.h */,

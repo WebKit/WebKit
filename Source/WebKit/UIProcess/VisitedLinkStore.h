@@ -34,6 +34,7 @@
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 
@@ -42,14 +43,12 @@ namespace WebKit {
 class WebPageProxy;
 class WebProcessProxy;
     
-class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, private IPC::MessageReceiver, public WebProcessLifetimeObserver {
+class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, private IPC::MessageReceiver, public WebProcessLifetimeObserver, public Identified<VisitedLinkStore>  {
 public:
     static Ref<VisitedLinkStore> create();
 
     explicit VisitedLinkStore();
     virtual ~VisitedLinkStore();
-
-    uint64_t identifier() const { return m_identifier; }
 
     void addProcess(WebProcessProxy&);
     void removeProcess(WebProcessProxy&);
@@ -73,8 +72,6 @@ private:
     void sendTable(WebProcessProxy&);
 
     HashSet<WebProcessProxy*> m_processes;
-
-    uint64_t m_identifier;
 
     unsigned m_keyCount;
     unsigned m_tableSize;

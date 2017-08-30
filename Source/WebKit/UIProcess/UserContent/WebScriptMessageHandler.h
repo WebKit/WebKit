@@ -27,6 +27,7 @@
 #define WebScriptMessageHandler_h
 
 #include "WebUserContentControllerDataTypes.h"
+#include <wtf/Identified.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -46,7 +47,7 @@ class WebPageProxy;
 class WebFrameProxy;
 struct FrameInfoData;
 
-class WebScriptMessageHandler : public RefCounted<WebScriptMessageHandler> {
+class WebScriptMessageHandler : public RefCounted<WebScriptMessageHandler>, public Identified<WebScriptMessageHandler>  {
 public:
     class Client {
     public:
@@ -57,7 +58,6 @@ public:
     static Ref<WebScriptMessageHandler> create(std::unique_ptr<Client>, const String& name, API::UserContentWorld&);
     virtual ~WebScriptMessageHandler();
 
-    uint64_t identifier() const { return m_identifier; }
     String name() const { return m_name; }
 
     const API::UserContentWorld& userContentWorld() const { return m_world; }
@@ -67,8 +67,6 @@ public:
 
 private:
     WebScriptMessageHandler(std::unique_ptr<Client>, const String&, API::UserContentWorld&);
-    
-    uint64_t m_identifier;
 
     std::unique_ptr<Client> m_client;
     String m_name;

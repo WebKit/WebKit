@@ -1,5 +1,74 @@
 2017-08-30  Brady Eidson  <beidson@apple.com>
 
+        Add "Identified" base class to replace a whole bunch of custom identifier generators.
+        https://bugs.webkit.org/show_bug.cgi?id=176120
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/APIUserScript.cpp:
+        (API::UserScript::UserScript):
+        (API::generateIdentifier): Deleted.
+        * UIProcess/API/APIUserScript.h:
+
+        * UIProcess/API/APIUserStyleSheet.cpp:
+        (API::UserStyleSheet::UserStyleSheet):
+        (API::generateIdentifier): Deleted.
+        * UIProcess/API/APIUserStyleSheet.h:
+
+        * UIProcess/UserContent/WebScriptMessageHandler.cpp:
+        (WebKit::WebScriptMessageHandler::WebScriptMessageHandler):
+        (WebKit::generateIdentifier): Deleted.
+        * UIProcess/UserContent/WebScriptMessageHandler.h:
+        (WebKit::WebScriptMessageHandler::identifier const): Deleted.
+
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::WebUserContentControllerProxy):
+        (WebKit::WebUserContentControllerProxy::~WebUserContentControllerProxy):
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::removeProcess):
+        (WebKit::WebUserContentControllerProxy::addUserContentWorldUse):
+        (WebKit::WebUserContentControllerProxy::removeUserContentWorldUses):
+        (WebKit::WebUserContentControllerProxy::addUserScript):
+        (WebKit::WebUserContentControllerProxy::removeUserScript):
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        (WebKit::WebUserContentControllerProxy::addUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+        (WebKit::WebUserContentControllerProxy::addUserScriptMessageHandler):
+        (WebKit::WebUserContentControllerProxy::removeUserMessageHandlerForName):
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+        (WebKit::WebUserContentControllerProxy::addContentRuleList):
+        (WebKit::WebUserContentControllerProxy::removeContentRuleList):
+        (WebKit::WebUserContentControllerProxy::removeAllContentRuleLists):
+        (WebKit::generateIdentifier): Deleted.
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        (WebKit::WebUserContentControllerProxy::identifier const): Deleted.
+
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::~VisitedLinkStore):
+        (WebKit::VisitedLinkStore::VisitedLinkStore):
+        (WebKit::VisitedLinkStore::addProcess):
+        (WebKit::VisitedLinkStore::removeProcess):
+        (WebKit::VisitedLinkStore::removeAll):
+        (WebKit::VisitedLinkStore::pendingVisitedLinksTimerFired):
+        (WebKit::VisitedLinkStore::sendTable):
+        (WebKit::generateIdentifier): Deleted.
+        * UIProcess/VisitedLinkStore.h:
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::generateIdentifier): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::identifier const): Deleted.
+
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::WebSocketStream):
+        (WebKit::WebSocketStream::~WebSocketStream):
+        (WebKit::WebSocketStream::messageSenderDestinationID):
+        * WebProcess/Network/WebSocketStream.h:
+
+2017-08-30  Brady Eidson  <beidson@apple.com>
+
         Implement all of "Register" right up until where the script is fetched.
         https://bugs.webkit.org/show_bug.cgi?id=176082
 

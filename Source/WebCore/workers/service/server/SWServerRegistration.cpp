@@ -37,12 +37,9 @@
 
 namespace WebCore {
 
-static std::atomic<uint64_t> currentIdentifier;
-
 SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorkerRegistrationKey& key)
     : m_jobTimer(*this, &SWServerRegistration::startNextJob)
     , m_server(server)
-    , m_identifier(++currentIdentifier)
     , m_registrationKey(key)
 {
 }
@@ -203,7 +200,7 @@ void SWServerRegistration::finishCurrentJob()
 
 ServiceWorkerRegistrationData SWServerRegistration::data() const
 {
-    return { m_registrationKey, m_identifier };
+    return { m_registrationKey, identifier() };
 }
 
 

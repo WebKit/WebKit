@@ -54,13 +54,6 @@
 
 namespace WebKit {
 
-static uint64_t generateIdentifier()
-{
-    static uint64_t identifier;
-
-    return ++identifier;
-}
-
 Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 {
     return adoptRef(*new WebsiteDataStore(PAL::SessionID::generateEphemeralSessionID()));
@@ -72,8 +65,7 @@ Ref<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration, PAL:
 }
 
 WebsiteDataStore::WebsiteDataStore(Configuration configuration, PAL::SessionID sessionID)
-    : m_identifier(generateIdentifier())
-    , m_sessionID(sessionID)
+    : m_sessionID(sessionID)
     , m_configuration(WTFMove(configuration))
     , m_storageManager(StorageManager::create(m_configuration.localStorageDirectory))
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
@@ -82,8 +74,7 @@ WebsiteDataStore::WebsiteDataStore(Configuration configuration, PAL::SessionID s
 }
 
 WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
-    : m_identifier(generateIdentifier())
-    , m_sessionID(sessionID)
+    : m_sessionID(sessionID)
     , m_configuration()
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {

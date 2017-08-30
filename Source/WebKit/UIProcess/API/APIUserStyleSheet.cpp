@@ -30,13 +30,6 @@
 
 namespace API {
 
-static uint64_t generateIdentifier()
-{
-    static uint64_t identifier;
-
-    return ++identifier;
-}
-
 WebCore::URL UserStyleSheet::generateUniqueURL()
 {
     static uint64_t identifier;
@@ -48,8 +41,7 @@ WebCore::URL UserStyleSheet::generateUniqueURL()
 }
 
 UserStyleSheet::UserStyleSheet(WebCore::UserStyleSheet userStyleSheet, API::UserContentWorld& world)
-    : m_identifier(generateIdentifier())
-    , m_userStyleSheet(userStyleSheet)
+    : m_userStyleSheet(userStyleSheet)
     , m_world(world)
 {
 }

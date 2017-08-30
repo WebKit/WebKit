@@ -41,8 +41,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static uint64_t nextAvailableIdentifier = 1;
-
 static HashMap<uint64_t, WebSocketStream*>& globalWebSocketStreamMap()
 {
     static NeverDestroyed<HashMap<uint64_t, WebSocketStream*>> globalMap;
@@ -72,19 +70,18 @@ Ref<WebSocketStream> WebSocketStream::create(const URL& url, SocketStreamHandleC
 
 WebSocketStream::WebSocketStream(const WebCore::URL& url, WebCore::SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& cachePartition)
     : SocketStreamHandle(url, client)
-    , m_identifier(nextAvailableIdentifier++)
     , m_client(client)
 {
-    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::CreateSocketStream(url, sessionID, cachePartition, m_identifier), 0);
+    WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::CreateSocketStream(url, sessionID, cachePartition, identifier()), 0);
 
-    ASSERT(!globalWebSocketStreamMap().contains(m_identifier));
-    globalWebSocketStreamMap().set(m_identifier, this);
+    ASSERT(!globalWebSocketStreamMap().contains(identifier()));
+    globalWebSocketStreamMap().set(identifier(), this);
 }
 
 WebSocketStream::~WebSocketStream()
 {
-    ASSERT(globalWebSocketStreamMap().contains(m_identifier));
-    globalWebSocketStreamMap().remove(m_identifier);
+    ASSERT(globalWebSocketStreamMap().contains(identifier()));
+    globalWebSocketStreamMap().remove(identifier());
 }
 
 IPC::Connection* WebSocketStream::messageSenderConnection()
@@ -94,7 +91,7 @@ IPC::Connection* WebSocketStream::messageSenderConnection()
 
 uint64_t WebSocketStream::messageSenderDestinationID()
 {
-    return m_identifier;
+    return identifier();
 }
 
 void WebSocketStream::platformSend(const char* data, size_t length, Function<void(bool)>&& completionHandler)
