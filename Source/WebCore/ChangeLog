@@ -1,3 +1,28 @@
+2017-08-25  Daniel Bates  <dabates@apple.com>
+
+        InlineTextBox::paintDocumentMarker() does not need to special case painting of grammar and
+        dictation alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=175966
+
+        Reviewed by Tim Horton.
+
+        Remove code that forced computing the marker rect for grammar and dictation alternative
+        regardless of whether the marker spans the entire width of the line box. InlineTextBox::paintDocumentMarker()
+        has performance optimizations to avoid computing the marker rect if it spans the entire line box.
+        Prior to r190363 we had to opt out of these optimizations for grammar and dictation alternative
+        markers so that we could store their computed marker rect. In r190363 we removed the logic in
+        InlineTextBox::paintDocumentMarker() to store the computed marker rect and hence no longer
+        needed to opt out of the optimization for these marker types, but inadvertently left in the
+        conditional code that opts them out.
+
+        No functionality changed. So no new tests.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarker): Remove unnecessary argument grammar and
+        code that special cased handling of grammar an dictation alternative markers.
+        (WebCore::InlineTextBox::paintDocumentMarkers): Update as necessary.
+        * rendering/InlineTextBox.h:
+
 2017-08-25  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Completely garbled display in Transifex in accelerated compositing mode
