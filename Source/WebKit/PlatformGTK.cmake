@@ -191,6 +191,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp
     UIProcess/API/gtk/WebKitWebViewGtk.cpp
 
+    UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
+
     UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
 
     UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp

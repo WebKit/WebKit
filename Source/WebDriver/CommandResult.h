@@ -57,6 +57,7 @@ public:
         SessionNotCreated,
         StaleElementReference,
         Timeout,
+        UnableToCaptureScreen,
         UnexpectedAlertOpen,
         UnknownCommand,
         UnknownError,

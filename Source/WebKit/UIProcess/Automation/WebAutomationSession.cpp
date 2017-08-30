@@ -1351,16 +1351,23 @@ void WebAutomationSession::performKeyboardInteractions(ErrorString& errorString,
 #endif // PLATFORM(COCOA)
 }
 
-void WebAutomationSession::takeScreenshot(ErrorString& errorString, const String& handle, Ref<TakeScreenshotCallback>&& callback)
+void WebAutomationSession::takeScreenshot(ErrorString& errorString, const String& handle, const String* optionalFrameHandle, const String* optionalNodeHandle, const bool* optionalScrollIntoViewIfNeeded, Ref<TakeScreenshotCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
+    std::optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
+    if (!frameID)
+        FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
+
+    bool scrollIntoViewIfNeeded = optionalScrollIntoViewIfNeeded ? *optionalScrollIntoViewIfNeeded : false;
+    String nodeHandle = optionalNodeHandle ? *optionalNodeHandle : emptyString();
+
     uint64_t callbackID = m_nextScreenshotCallbackID++;
     m_screenshotCallbacks.set(callbackID, WTFMove(callback));
 
-    page->process().send(Messages::WebAutomationSessionProxy::TakeScreenshot(page->pageID(), callbackID), 0);
+    page->process().send(Messages::WebAutomationSessionProxy::TakeScreenshot(page->pageID(), frameID.value(), nodeHandle, scrollIntoViewIfNeeded, callbackID), 0);
 }
 
 void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const ShareableBitmap::Handle& imageDataHandle, const String& errorType)
@@ -1389,7 +1396,7 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const Shareabl
 void WebAutomationSession::platformSimulateMouseInteraction(WebKit::WebPageProxy&, const WebCore::IntPoint&, Inspector::Protocol::Automation::MouseInteraction, Inspector::Protocol::Automation::MouseButton, WebEvent::Modifiers)
 {
 }
-#endif // !PLATFORM(MAC)
+#endif // !PLATFORM(MAC) && !PLATFORM(GTK)
 
 #if !PLATFORM(COCOA) && !PLATFORM(GTK)
 void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy&, Inspector::Protocol::Automation::KeyboardInteractionType, Inspector::Protocol::Automation::VirtualKey)
@@ -1399,11 +1406,13 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy&, Inspector::P
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy&, const String&)
 {
 }
+#endif // !PLATFORM(COCOA) && !PLATFORM(GTK)
 
+#if !PLATFORM(COCOA) && !USE(CAIRO)
 std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&)
 {
-    return String();
+    return std::nullopt;
 }
-#endif // !PLATFORM(COCOA)
+#endif // !PLATFORM(COCOA) && !USE(CAIRO)
 
 } // namespace WebKit

@@ -109,6 +109,8 @@ private:
     void acceptAlert(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void getAlertText(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
     void sendAlertText(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void takeScreenshot(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
+    void takeElementScreenshot(RefPtr<Inspector::InspectorObject>&&, Function<void (CommandResult&&)>&&);
 
     static Capabilities platformCapabilities();
     RefPtr<Inspector::InspectorObject> processCapabilities(const Inspector::InspectorObject&, Function<void (CommandResult&&)>&) const;

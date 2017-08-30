@@ -197,6 +197,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/wpe/WebKitWebViewWPE.cpp
     UIProcess/API/wpe/WPEView.cpp
 
+    UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
+
     UIProcess/Launcher/wpe/ProcessLauncherWPE.cpp
 
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp

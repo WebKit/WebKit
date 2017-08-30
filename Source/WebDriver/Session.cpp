@@ -1997,4 +1997,39 @@ void Session::sendAlertText(const String& text, Function<void (CommandResult&&)>
     });
 }
 
+void Session::takeScreenshot(std::optional<String> elementID, std::optional<bool> scrollIntoView, Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    handleUserPrompts([this, elementID, scrollIntoView, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        RefPtr<InspectorObject> parameters = InspectorObject::create();
+        parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
+        if (m_currentBrowsingContext)
+            parameters->setString(ASCIILiteral("frameHandle"), m_currentBrowsingContext.value());
+        if (elementID)
+            parameters->setString(ASCIILiteral("nodeHandle"), elementID.value());
+        if (scrollIntoView.value_or(false))
+            parameters->setBoolean(ASCIILiteral("scrollIntoViewIfNeeded"), true);
+        m_host->sendCommandToBackend(ASCIILiteral("takeScreenshot"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+            if (response.isError || !response.responseObject) {
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
+                return;
+            }
+            String data;
+            if (!response.responseObject->getString(ASCIILiteral("data"), data)) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+                return;
+            }
+            completionHandler(CommandResult::success(InspectorValue::create(data)));
+        });
+    });
+}
+
 } // namespace WebDriver

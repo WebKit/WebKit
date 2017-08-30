@@ -113,6 +113,7 @@ public:
     void acceptAlert(Function<void (CommandResult&&)>&&);
     void getAlertText(Function<void (CommandResult&&)>&&);
     void sendAlertText(const String&, Function<void (CommandResult&&)>&&);
+    void takeScreenshot(std::optional<String> elementID, std::optional<bool> scrollIntoView, Function<void (CommandResult&&)>&&);
 
 private:
     Session(std::unique_ptr<SessionHost>&&);
