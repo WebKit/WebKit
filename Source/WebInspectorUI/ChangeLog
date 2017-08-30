@@ -1,3 +1,17 @@
+2017-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r220235): Web Inspector: Global search should not happen incrementally
+        https://bugs.webkit.org/show_bug.cgi?id=176063
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        * UserInterface/Views/SearchBar.js:
+        (WI.SearchBar):
+        (WI.SearchBar.prototype._handleKeydownEvent):
+        Remove delegate and simplify setting incremental.
+
 2017-08-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Convert all methods in Utilities.js to ECMAScript 2015 shorthand syntax

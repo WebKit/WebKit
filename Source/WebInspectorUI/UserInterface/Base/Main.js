@@ -397,7 +397,8 @@ WI.contentLoaded = function()
     this._dashboardContainer = new WI.DashboardContainerView;
     this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
 
-    this._searchToolbarItem = new WI.SearchBar("inspector-search", WI.UIString("Search"), true);
+    const incremental = false;
+    this._searchToolbarItem = new WI.SearchBar("inspector-search", WI.UIString("Search"), incremental);
     this._searchToolbarItem.addEventListener(WI.SearchBar.Event.TextChanged, this._searchTextDidChange, this);
 
     this.toolbar.addToolbarItem(this._closeToolbarButton, WI.Toolbar.Section.Control);
