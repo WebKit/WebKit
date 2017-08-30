@@ -1,3 +1,12 @@
+2017-08-30  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaseline js/dom/global-constructors-attributes.html for High Sierra after r221302.
+
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-highsierra-wk2/js/dom/global-constructors-attributes-expected.txt: Copied from LayoutTests/platform/mac-highsierra-wk1/js/dom/global-constructors-attributes-expected.txt.
+
 2017-08-30  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed GTK test gardening.
