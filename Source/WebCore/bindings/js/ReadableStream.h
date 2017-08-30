@@ -68,16 +68,9 @@ template<> struct JSDOMWrapperConverterTraits<ReadableStream> {
     static constexpr bool needsState = true;
 };
 
-template<> struct JSConverter<IDLInterface<ReadableStream>> {
-    static constexpr bool needsState = false;
-    static constexpr bool needsGlobalObject = false;
-
-    static JSC::JSValue convert(ReadableStream* value)
-    {
-        if (!value)
-            return JSC::jsNull();
-        return value->readableStream();
-    }
-};
+inline JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, ReadableStream* stream)
+{
+    return stream ? stream->readableStream() : JSC::jsUndefined();
+}
 
 }

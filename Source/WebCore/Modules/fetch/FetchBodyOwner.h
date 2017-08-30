@@ -57,7 +57,7 @@ public:
 
     bool isActive() const { return !!m_blobLoader; }
 
-    ReadableStream* readableStream(JSC::ExecState&);
+    RefPtr<ReadableStream> readableStream(JSC::ExecState&);
     virtual bool hasReadableStreamBody() const { return m_body && m_body->hasReadableStream(); }
 
 protected:
