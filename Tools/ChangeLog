@@ -1,3 +1,12 @@
+2017-08-29  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win][JSCOnly] Fix call for updating wincairo-libs in build-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=176080
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/build-jsc:
+
 2017-08-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Avoid using autogen for JHBuild modules, trying to fix the EWS

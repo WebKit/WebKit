@@ -116,7 +116,7 @@ if (isAppleWinWebKit()) {
 }
 
 if (isJSCOnly() && isWindows()) {
-    (system("perl Tools/Scripts/update-webkit-wincairo-libs") == 0) or die;
+    (system("python Tools/Scripts/update-webkit-wincairo-libs.py") == 0) or die;
 }
 
 checkRequiredSystemConfig();
