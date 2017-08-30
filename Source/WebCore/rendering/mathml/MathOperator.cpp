@@ -637,6 +637,10 @@ void MathOperator::paintVerticalGlyphAssembly(const RenderStyle& style, PaintInf
 
     ASSERT(topOrRight.font);
     ASSERT(bottomOrLeft.font);
+    if (!topOrRight.font || !bottomOrLeft.font) {
+        LOG_ERROR("MathML: no font can be found for Unicode code point.");
+        return;
+    }
 
     // We are positioning the glyphs so that the edge of the tight glyph bounds line up exactly with the edges of our paint box.
     LayoutPoint operatorTopLeft = paintOffset;
@@ -674,6 +678,10 @@ void MathOperator::paintHorizontalGlyphAssembly(const RenderStyle& style, PaintI
 
     ASSERT(bottomOrLeft.font);
     ASSERT(topOrRight.font);
+    if (!topOrRight.font || !bottomOrLeft.font) {
+        LOG_ERROR("MathML: no font can be found for Unicode code point.");
+        return;
+    }
 
     // We are positioning the glyphs so that the edge of the tight glyph bounds line up exactly with the edges of our paint box.
     LayoutPoint operatorTopLeft = paintOffset;
