@@ -36,7 +36,6 @@
 // https://bugs.webkit.org/show_bug.cgi?id=174972
 void* g_primitiveGigacageBasePtr;
 void* g_jsValueGigacageBasePtr;
-void* g_stringGigacageBasePtr;
 
 using namespace bmalloc;
 

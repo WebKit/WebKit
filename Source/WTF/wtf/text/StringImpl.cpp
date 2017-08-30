@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2009, 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -28,11 +28,9 @@
 #include "AtomicString.h"
 #include "StringBuffer.h"
 #include "StringHash.h"
-#include <wtf/Gigacage.h>
 #include <wtf/ProcessID.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringMalloc.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/SymbolImpl.h>
 #include <wtf/text/SymbolRegistry.h>
@@ -131,7 +129,7 @@ StringImpl::~StringImpl()
     if (ownership == BufferOwned) {
         // We use m_data8, but since it is a union with m_data16 this works either way.
         ASSERT(m_data8);
-        stringFree(const_cast<LChar*>(m_data8));
+        fastFree(const_cast<LChar*>(m_data8));
         return;
     }
 
@@ -143,7 +141,7 @@ StringImpl::~StringImpl()
 void StringImpl::destroy(StringImpl* stringImpl)
 {
     stringImpl->~StringImpl();
-    stringFree(stringImpl);
+    fastFree(stringImpl);
 }
 
 Ref<StringImpl> StringImpl::createFromLiteral(const char* characters, unsigned length)
@@ -194,7 +192,7 @@ inline Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsigned 
     // heap allocation from this call.
     if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharType)))
         CRASH();
-    StringImpl* string = static_cast<StringImpl*>(stringMalloc(allocationSize<CharType>(length)));
+    StringImpl* string = static_cast<StringImpl*>(fastMalloc(allocationSize<CharType>(length)));
 
     data = string->tailPointer<CharType>();
     return constructInternal<CharType>(string, length);
@@ -221,12 +219,12 @@ inline Ref<StringImpl> StringImpl::reallocateInternal(Ref<StringImpl>&& original
         return *empty();
     }
 
-    // Same as createUninitialized() except here we use stringRealloc.
+    // Same as createUninitialized() except here we use fastRealloc.
     if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(CharType)))
         CRASH();
 
     originalString->~StringImpl();
-    auto* string = static_cast<StringImpl*>(stringRealloc(&originalString.leakRef(), allocationSize<CharType>(length)));
+    auto* string = static_cast<StringImpl*>(fastRealloc(&originalString.leakRef(), allocationSize<CharType>(length)));
 
     data = string->tailPointer<CharType>();
     return constructInternal<CharType>(string, length);
@@ -2177,16 +2175,6 @@ bool equalIgnoringNullity(const UChar* a, size_t aLength, StringImpl* b)
         return true;
     }
     return !memcmp(a, b->characters16(), b->length() * sizeof(UChar));
-}
-
-void StringImpl::releaseAssertCaged() const
-{
-    if (isStatic())
-        return;
-    RELEASE_ASSERT(!GIGACAGE_ENABLED || Gigacage::isCaged(Gigacage::String, this));
-    if (bufferOwnership() != BufferOwned)
-        return;
-    RELEASE_ASSERT(!GIGACAGE_ENABLED || Gigacage::isCaged(Gigacage::String, m_data8));
 }
 
 } // namespace WTF

@@ -40,7 +40,11 @@ namespace Gigacage {
 
 void* tryMalloc(Kind, size_t size)
 {
-    return FastMalloc::tryMalloc(size);
+    auto result = tryFastMalloc(size);
+    void* realResult;
+    if (result.getValue(realResult))
+        return realResult;
+    return nullptr;
 }
 
 void* tryAllocateVirtualPages(Kind, size_t size)

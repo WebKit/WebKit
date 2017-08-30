@@ -37,7 +37,7 @@ template<typename T> class RefPtr;
 template<typename T> class StringBuffer;
 
 template<typename... T> class Variant;
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc> class Vector;
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> class Vector;
 
 class AtomicString;
 class AtomicStringImpl;

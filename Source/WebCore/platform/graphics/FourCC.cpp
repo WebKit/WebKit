@@ -42,7 +42,7 @@ std::optional<FourCC> FourCC::fromString(const String& stringValue)
 
 String FourCC::toString() const
 {
-    StringVector<LChar, 4> data = {
+    Vector<LChar, 4> data = {
         LChar(value >> 24),
         LChar((value >> 16) & 0xFF),
         LChar((value >> 8) & 0xFF),

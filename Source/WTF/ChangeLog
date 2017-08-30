@@ -1,3 +1,15 @@
+2017-08-30  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r221384.
+
+        This patch caused multiple 32-bit JSC test failures.
+
+        Reverted changeset:
+
+        "Strings need to be in some kind of gigacage"
+        https://bugs.webkit.org/show_bug.cgi?id=174924
+        http://trac.webkit.org/changeset/221384
+
 2017-08-30  Brady Eidson  <beidson@apple.com>
 
         Add "Identified" base class to replace a whole bunch of custom identifier generators.

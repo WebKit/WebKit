@@ -35,8 +35,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/StringCommon.h>
-#include <wtf/text/StringMalloc.h>
-#include <wtf/text/StringVector.h>
 
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
@@ -180,7 +178,7 @@ protected:
 };
 
 class StringImpl : private StringImplShape {
-    WTF_MAKE_NONCOPYABLE(StringImpl); WTF_MAKE_STRING_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(StringImpl); WTF_MAKE_FAST_ALLOCATED;
     friend struct WTF::CStringTranslator;
     template<typename CharacterType> friend struct WTF::HashAndCharactersTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;
@@ -195,7 +193,7 @@ class StringImpl : private StringImplShape {
     friend class PrivateSymbolImpl;
     friend class RegisteredSymbolImpl;
     
-public:
+private:
     enum BufferOwnership {
         BufferInternal,
         BufferOwned,
@@ -203,6 +201,7 @@ public:
     };
 
     // The bottom 6 bits in the hash are flags.
+public:
     static constexpr const unsigned s_flagCount = 6;
 private:
     static constexpr const unsigned s_flagMask = (1u << s_flagCount) - 1;
@@ -338,7 +337,7 @@ public:
         auto* ownerRep = ((rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep);
 
         // We allocate a buffer that contains both the StringImpl struct as well as the pointer to the owner string.
-        auto* stringImpl = static_cast<StringImpl*>(stringMalloc(allocationSize<StringImpl*>(1)));
+        auto* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(1)));
         if (rep.is8Bit())
             return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data8 + offset, length, *ownerRep));
         return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data16 + offset, length, *ownerRep));
@@ -373,8 +372,8 @@ public:
             output = nullptr;
             return nullptr;
         }
-        StringImpl* resultImpl = static_cast<StringImpl*>(tryStringMalloc(allocationSize<T>(length)));
-        if (!resultImpl) {
+        StringImpl* resultImpl;
+        if (!tryFastMalloc(allocationSize<T>(length)).getValue(resultImpl)) {
             output = nullptr;
             return nullptr;
         }
@@ -396,8 +395,8 @@ public:
     static unsigned maskStringKind() { return s_hashMaskStringKind; }
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
-    template<typename CharType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-    static Ref<StringImpl> adopt(StringVector<CharType, inlineCapacity, OverflowHandler, minCapacity>&& vector)
+    template<typename CharType, size_t inlineCapacity, typename OverflowHandler>
+    static Ref<StringImpl> adopt(Vector<CharType, inlineCapacity, OverflowHandler>&& vector)
     {
         if (size_t size = vector.size()) {
             ASSERT(vector.data());
@@ -758,16 +757,6 @@ public:
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
 
-    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
-    
-    void assertCaged() const
-    {
-        if (!ASSERT_DISABLED)
-            releaseAssertCaged();
-    }
-    
-    WTF_EXPORT_PRIVATE void releaseAssertCaged() const;
-
 protected:
     ~StringImpl();
 
@@ -857,6 +846,7 @@ private:
     enum class CaseConvertType { Upper, Lower };
     template<CaseConvertType type, typename CharacterType> static Ref<StringImpl> convertASCIICase(StringImpl&, const CharacterType*, unsigned);
 
+    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
     template <class UCharPredicate> Ref<StringImpl> stripMatchedCharacters(UCharPredicate);
     template <typename CharType, class UCharPredicate> Ref<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
     template <typename CharType> static Ref<StringImpl> constructInternal(StringImpl*, unsigned);
@@ -891,7 +881,7 @@ static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl), "");
 #if !ASSERT_DISABLED
 // StringImpls created from StaticStringImpl will ASSERT
 // in the generic ValueCheck<T>::checkConsistency
-// as they are not allocated by stringMalloc.
+// as they are not allocated by fastMalloc.
 // We don't currently have any way to detect that case
 // so we ignore the consistency check for all StringImpl*.
 template<> struct
