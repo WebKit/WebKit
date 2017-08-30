@@ -1,5 +1,41 @@
 2017-08-30  Youenn Fablet  <youenn@apple.com>
 
+        Remove FetchRequest::InternalRequest
+        https://bugs.webkit.org/show_bug.cgi?id=176085
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        Removing InternalRequest struct and passing/defining fields directly.
+
+        * Modules/cache/Cache.cpp:
+        (WebCore::Cache::updateRecords):
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::computeReferrer):
+        (WebCore::buildOptions):
+        (WebCore::methodCanHaveBody):
+        (WebCore::FetchRequest::initializeOptions):
+        (WebCore::FetchRequest::initializeWith):
+        (WebCore::FetchRequest::setBody):
+        (WebCore::FetchRequest::create):
+        (WebCore::FetchRequest::referrer const):
+        (WebCore::FetchRequest::urlString const):
+        (WebCore::FetchRequest::resourceRequest const):
+        (WebCore::FetchRequest::clone):
+        (WebCore::setReferrer): Deleted.
+        * Modules/fetch/FetchRequest.h:
+        (WebCore::FetchRequest::FetchRequest):
+        (WebCore::FetchRequest::cache const):
+        (WebCore::FetchRequest::credentials const):
+        (WebCore::FetchRequest::destination const):
+        (WebCore::FetchRequest::mode const):
+        (WebCore::FetchRequest::redirect const):
+        (WebCore::FetchRequest::referrerPolicy const):
+        (WebCore::FetchRequest::type const):
+
+2017-08-30  Youenn Fablet  <youenn@apple.com>
+
         Add support for FetchRequest.body
         https://bugs.webkit.org/show_bug.cgi?id=176066
         <rdar://problem/34148373>

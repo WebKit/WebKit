@@ -496,8 +496,7 @@ void Cache::updateRecords(Vector<Record>&& records)
             newRecords.append(WTFMove(current));
         } else {
             auto requestHeaders = FetchHeaders::create(record.requestHeadersGuard, HTTPHeaderMap { record.request.httpHeaderFields() });
-            FetchRequest::InternalRequest internalRequest = { WTFMove(record.request), WTFMove(record.options), WTFMove(record.referrer) };
-            auto request = FetchRequest::create(*scriptExecutionContext(), std::nullopt, WTFMove(requestHeaders), WTFMove(internalRequest));
+            auto request = FetchRequest::create(*scriptExecutionContext(), std::nullopt, WTFMove(requestHeaders),  WTFMove(record.request), WTFMove(record.options), WTFMove(record.referrer));
 
             auto responseHeaders = FetchHeaders::create(record.responseHeadersGuard, HTTPHeaderMap { record.response.httpHeaderFields() });
             auto response = FetchResponse::create(*scriptExecutionContext(), std::nullopt, WTFMove(responseHeaders), WTFMove(record.response));
