@@ -76,7 +76,6 @@ function close()
     @readableByteStreamControllerClose(this);
 }
 
-@getter
 function byobRequest()
 {
     "use strict";
@@ -95,7 +94,6 @@ function byobRequest()
     return this.@byobRequest;
 }
 
-@getter
 function desiredSize()
 {
     "use strict";

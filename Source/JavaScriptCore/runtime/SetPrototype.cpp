@@ -68,7 +68,7 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().hasPrivateName(), setProtoFuncHas, DontEnum, 1, JSSetHasIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().addPrivateName(), setProtoFuncAdd, DontEnum, 1);
 
-    JSFunction* values = JSFunction::create(vm, setPrototypeValuesCodeGenerator(vm), globalObject);
+    JSFunction* values = JSFunction::createBuiltinFunction(vm, setPrototypeValuesCodeGenerator(vm), globalObject);
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().valuesPublicName(), values, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().keysPublicName(), values, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, values, DontEnum);

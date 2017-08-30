@@ -57,7 +57,6 @@ function respondWithNewView(view)
     return @readableByteStreamControllerRespondWithNewView(this.@associatedReadableByteStreamController, view);
 }
 
-@getter
 function view()
 {
     "use strict";

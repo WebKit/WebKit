@@ -41,7 +41,7 @@ void AsyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     ASSERT(inherits(vm, info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSFunction* asyncIteratorPrototypeFunction = JSFunction::create(vm, asyncIteratorPrototypeSymbolAsyncIteratorGetterCodeGenerator(vm), globalObject);
+    JSFunction* asyncIteratorPrototypeFunction = JSFunction::createBuiltinFunction(vm, asyncIteratorPrototypeSymbolAsyncIteratorGetterCodeGenerator(vm), globalObject, "[Symbol.asyncIterator]");
     putDirectWithoutTransition(vm, vm.propertyNames->asyncIteratorSymbol, asyncIteratorPrototypeFunction, DontEnum);
 }
 

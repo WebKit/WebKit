@@ -55,14 +55,14 @@ extern const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAb
 #define JSC_BUILTIN_BUILTIN_PROMISE_FULFILLPROMISE 1
 
 #define JSC_FOREACH_BUILTIN.PROMISE_BUILTIN_CODE(macro) \
-    macro(builtinPromiseRejectPromiseCode, rejectPromise, static_cast<const char*>(nullptr), s_builtinPromiseRejectPromiseCodeLength) \
-    macro(builtinPromiseFulfillPromiseCode, fulfillPromise, static_cast<const char*>(nullptr), s_builtinPromiseFulfillPromiseCodeLength) \
+    macro(builtinPromiseRejectPromiseCode, rejectPromise, s_builtinPromiseRejectPromiseCodeLength) \
+    macro(builtinPromiseFulfillPromiseCode, fulfillPromise, s_builtinPromiseFulfillPromiseCodeLength) \
 
 #define JSC_FOREACH_BUILTIN.PROMISE_BUILTIN_FUNCTION_NAME(macro) \
     macro(fulfillPromise) \
     macro(rejectPromise) \
 
-#define DECLARE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \
+#define DECLARE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
     JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
 
 JSC_FOREACH_BUILTIN.PROMISE_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
@@ -107,7 +107,6 @@ JSC_FOREACH_BUILTIN.PROMISE_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 #include "BuiltinExecutables.h"
 #include "HeapInlines.h"
-#include "IdentifierInlines.h"
 #include "Intrinsic.h"
 #include "JSCellInlines.h"
 #include "VM.h"
@@ -149,7 +148,7 @@ const char* s_builtinPromiseFulfillPromiseCode =
 ;
 
 
-#define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \
+#define DEFINE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
     return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source(), std::nullopt, s_##codeName##Intrinsic); }

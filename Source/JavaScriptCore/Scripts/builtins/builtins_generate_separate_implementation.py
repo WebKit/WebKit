@@ -102,9 +102,6 @@ class BuiltinsSeparateImplementationGenerator(BuiltinsGenerator):
                 ("WebCore", "bindings/js/WebCoreJSClientData.h"),
             ),
             (["JavaScriptCore", "WebCore"],
-                ("JavaScriptCore", "runtime/IdentifierInlines.h"),
-            ),
-            (["JavaScriptCore", "WebCore"],
                 ("JavaScriptCore", "runtime/Intrinsic.h"),
             ),
         ]

@@ -102,6 +102,20 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length
     putDirect(vm, vm.propertyNames->length, jsNumber(length), ReadOnly | DontEnum);
 }
 
+JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject)
+{
+    JSFunction* function = create(vm, executable, globalObject);
+    function->putDirect(vm, vm.propertyNames->name, jsString(&vm, executable->name().string()), ReadOnly | DontEnum);
+    return function;
+}
+
+JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject, const String& name)
+{
+    JSFunction* function = create(vm, executable, globalObject);
+    function->putDirect(vm, vm.propertyNames->name, jsString(&vm, name), ReadOnly | DontEnum);
+    return function;
+}
+
 FunctionRareData* JSFunction::allocateRareData(VM& vm)
 {
     ASSERT(!m_rareData);
@@ -406,7 +420,7 @@ void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, 
         } else {
             if (thisObject->isBuiltinFunction() && !thisObject->hasReifiedLength())
                 propertyNames.add(vm.propertyNames->length);
-            if ((thisObject->isBuiltinFunction() || thisObject->inherits(vm, JSBoundFunction::info())) && !thisObject->hasReifiedName())
+            if (thisObject->inherits(vm, JSBoundFunction::info()) && !thisObject->hasReifiedName())
                 propertyNames.add(vm.propertyNames->name);
         }
     }
@@ -712,9 +726,7 @@ JSFunction::LazyPropertyType JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, Exec
     if (hasReifiedName())
         return LazyPropertyType::IsLazyProperty;
 
-    if (isBuiltinFunction())
-        reifyName(vm, exec);
-    else if (this->inherits(vm, JSBoundFunction::info())) {
+    if (this->inherits(vm, JSBoundFunction::info())) {
         FunctionRareData* rareData = this->rareData(vm);
         String name = makeString("bound ", static_cast<NativeExecutable*>(m_executable.get())->name());
         unsigned initialAttributes = DontEnum | ReadOnly;

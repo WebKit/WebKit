@@ -79,7 +79,6 @@ function hasObservableSideEffectsForRegExpMatch(regexp) {
     return !@isRegExpObject(regexp);
 }
 
-@overriddenName="[Symbol.match]"
 function match(strArg)
 {
     "use strict";
@@ -131,7 +130,6 @@ function match(strArg)
     }
 }
 
-@overriddenName="[Symbol.replace]"
 function replace(strArg, replace)
 {
     "use strict";
@@ -299,7 +297,6 @@ function replace(strArg, replace)
 }
 
 // 21.2.5.9 RegExp.prototype[@@search] (string)
-@overriddenName="[Symbol.search]"
 function search(strArg)
 {
     "use strict";
@@ -383,7 +380,6 @@ function hasObservableSideEffectsForRegExpSplit(regexp) {
 }
 
 // ES 21.2.5.11 RegExp.prototype[@@split](string, limit)
-@overriddenName="[Symbol.split]"
 function split(string, limit)
 {
     "use strict";
