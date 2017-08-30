@@ -1,3 +1,9 @@
+2017-08-30  Tomas Popela  <tpopela@redhat.com>
+
+        Unreviewed, remove trailing space
+
+        * gtk/jhbuildrc:
+
 2017-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r221064): [GTK] Editor not correctly working after r221064

@@ -20,7 +20,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild") )
 import jhbuildrc_common
-jhbuildrc_common.init(globals(), "gtk") 
+jhbuildrc_common.init(globals(), "gtk")
 
 __gtk_tools_directory = os.path.abspath(os.path.dirname(__file__))
 sys.path = [__gtk_tools_directory] + sys.path
