@@ -1,3 +1,9 @@
+2017-08-30  Matt Lewis  <jlewis3@apple.com>
+
+        Creation of missing expectation folders and rebaseline for js/dom/global-constructors-attributes-expected.txt after r221302.
+
+        * platform/mac-sierra-wk2/js/dom/global-constructors-attributes-expected.txt: Added.
+
 2017-08-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The SVG fragment identifier is not respected if it is a part of an HTTP URL
