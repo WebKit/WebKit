@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -319,9 +319,10 @@ void NetworkProcess::didGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t 
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void NetworkProcess::updateCookiePartitioningForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd,  bool shouldClearFirst)
+void NetworkProcess::updateCookiePartitioningForTopPrivatelyOwnedDomains(PAL::SessionID sessionID, const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd,  bool shouldClearFirst)
 {
-    NetworkStorageSession::defaultStorageSession().setShouldPartitionCookiesForHosts(domainsToRemove, domainsToAdd, shouldClearFirst);
+    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        networkStorageSession->setShouldPartitionCookiesForHosts(domainsToRemove, domainsToAdd, shouldClearFirst);
 }
 #endif
 

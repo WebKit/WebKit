@@ -1,3 +1,14 @@
+2017-08-29  Brent Fulgham  <bfulgham@apple.com>
+
+        ResourceLoadStatistics logic does not understand custom WebsiteData stores
+        https://bugs.webkit.org/show_bug.cgi?id=176037
+        <rdar://problem/33338238>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST): Update for ResourceLoadStatistics directories.
+
 2017-08-29  Brady Eidson  <beidson@apple.com>
 
         Rename "potentionally trustworthy" to "potentially trustworthy"

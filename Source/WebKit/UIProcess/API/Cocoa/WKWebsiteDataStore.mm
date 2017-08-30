@@ -189,6 +189,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         config.indexedDBDatabaseDirectory = configuration._indexedDBDatabaseDirectory.path;
     if (configuration._cookieStorageFile)
         config.cookieStorageFile = configuration._cookieStorageFile.path;
+    if (configuration._resourceLoadStatisticsDirectory)
+        config.resourceLoadStatisticsDirectory = configuration._resourceLoadStatisticsDirectory.path;
 
     API::Object::constructInWrapper<API::WebsiteDataStore>(self, config, PAL::SessionID::generatePersistentSessionID());
 

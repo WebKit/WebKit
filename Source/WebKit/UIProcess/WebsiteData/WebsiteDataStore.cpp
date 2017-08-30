@@ -1126,7 +1126,7 @@ void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<Webs
 void WebsiteDataStore::updateCookiePartitioningForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst shouldClearFirst)
 {
     for (auto& processPool : processPools())
-        processPool->sendToNetworkingProcess(Messages::NetworkProcess::UpdateCookiePartitioningForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, shouldClearFirst == ShouldClearFirst::Yes));
+        processPool->sendToNetworkingProcess(Messages::NetworkProcess::UpdateCookiePartitioningForTopPrivatelyOwnedDomains(m_sessionID, domainsToRemove, domainsToAdd, shouldClearFirst == ShouldClearFirst::Yes));
 }
 #endif
 

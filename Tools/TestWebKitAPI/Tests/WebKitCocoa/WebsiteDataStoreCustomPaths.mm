@@ -78,32 +78,39 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     NSURL *idbPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *localStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/LocalStorage/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *cookieStorageFile = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/CookieStorage/Cookie.File" stringByExpandingTildeInPath] isDirectory:NO];
+    NSURL *resourceLoadStatisticsPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/ResourceLoadStatistics/" stringByExpandingTildeInPath] isDirectory:YES];
 
     NSURL *defaultSQLPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/WebSQL/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *defaultIDBPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *defaultLocalStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/LocalStorage/" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *defaultResourceLoadStatisticsPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics/" stringByExpandingTildeInPath] isDirectory:YES];
 
     [[NSFileManager defaultManager] removeItemAtURL:sqlPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:idbPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:localStoragePath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:cookieStorageFile error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:resourceLoadStatisticsPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:defaultSQLPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:defaultIDBPath error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:defaultLocalStoragePath error:nil];
+    [[NSFileManager defaultManager] removeItemAtURL:defaultResourceLoadStatisticsPath error:nil];
 
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:sqlPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStoragePath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:cookieStorageFile.path]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:resourceLoadStatisticsPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultSQLPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultIDBPath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultLocalStoragePath.path]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsPath.path]);
 
     RetainPtr<_WKWebsiteDataStoreConfiguration> websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     websiteDataStoreConfiguration.get()._webSQLDatabaseDirectory = sqlPath;
     websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbPath;
     websiteDataStoreConfiguration.get()._webStorageDirectory = localStoragePath;
     websiteDataStoreConfiguration.get()._cookieStorageFile = cookieStorageFile;
+    websiteDataStoreConfiguration.get()._resourceLoadStatisticsDirectory = resourceLoadStatisticsPath;
 
     configuration.get().websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease];
 

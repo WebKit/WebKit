@@ -1,3 +1,25 @@
+2017-08-29  Brent Fulgham  <bfulgham@apple.com>
+
+        ResourceLoadStatistics logic does not understand custom WebsiteData stores
+        https://bugs.webkit.org/show_bug.cgi?id=176037
+        <rdar://problem/33338238>
+
+        Reviewed by Alex Christensen.
+
+        The NetworkProcess::updateCookiePartitioningForTopPrivatelyOwnedDomains always notifies the default website
+        data store about observations it has made. This should be revised so that WebKit clients that register
+        custom data stores through the WKWebsiteDataStores API can be assured that observations made in one session
+        do not manipulate data from another session.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updateCookiePartitioningForTopPrivatelyOwnedDomains): Use the passed sessionID to locate
+        the correct NetworkStorageSession to notify about the new partitioning data.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in: Accept new argument.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updateCookiePartitioningForTopPrivatelyOwnedDomains): Include the WebsiteDataStore's
+        session ID in the message to update cookie partition data.
+
 2017-08-29  Alex Christensen  <achristensen@webkit.org>
 
         Automatically determine if a class has a modern decoder
