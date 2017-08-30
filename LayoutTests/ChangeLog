@@ -1,3 +1,13 @@
+2017-08-24  Kirill Ovchinnikov  <kirill.ovchinn@gmail.com>
+
+        HTMLTrackElement behavior violates the standard
+        https://bugs.webkit.org/show_bug.cgi?id=175888
+
+        Reviewed by Eric Carlson.
+
+        * media/track/text-track-src-change-expected.txt:
+        * media/track/text-track-src-change.html:
+
 2017-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         DeleteSelectionCommand should be robust when starting and ending editable positions cannot be found

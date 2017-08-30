@@ -1,3 +1,23 @@
+2017-08-24  Kirill Ovchinnikov  <kirill.ovchinn@gmail.com>
+
+        HTMLTrackElement behavior violates the standard
+        https://bugs.webkit.org/show_bug.cgi?id=175888
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/text-track-src-change.html: added asserts
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::parseAttribute):
+        (WebCore::HTMLTrackElement::loadTimerFired):
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::scheduleLoad):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::removeAllCues):
+        * html/track/TextTrackCueList.cpp:
+        (WebCore::TextTrackCueList::removeAll):
+        * html/track/TextTrackCueList.h:
+
 2017-08-23  Adrian Perez de Castro  <aperez@igalia.com>
 
         Geoclue2 based backend should provide the right desktop ID

@@ -48,6 +48,9 @@ void LoadableTextTrack::scheduleLoad(const URL& url)
     if (url == m_url)
         return;
 
+    // When src attribute is changed we need to flush all collected track data
+    removeAllCues();
+
     // 4.8.10.12.3 Sourcing out-of-band text tracks (continued)
 
     // 2. Let URL be the track URL of the track element.

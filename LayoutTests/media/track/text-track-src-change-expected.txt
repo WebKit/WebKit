@@ -7,8 +7,19 @@ EXPECTED (cues.length == '4') OK
 
 *** Changing 'src' attribute...
 EXPECTED (cues.length == '100') OK
+EXPECTED (cues === testTrack.track.cues == 'true') OK
 
 *** Changing back 'src' attribute...
+EXPECTED (cues === testTrack.track.cues == 'true') OK
 EXPECTED (cues.length == '4') OK
+
+*** Setting 'src' to the same value...
+EXPECTED (cues === testTrack.track.cues == 'true') OK
+EXPECTED (cues.length == '4') OK
+
+*** Setting 'src' to an empty value...
+EXPECTED (stage == '5') OK
+EXPECTED (true == 'true') OK
+EXPECTED (cues.length == '0') OK
 END OF TEST
 

@@ -100,10 +100,7 @@ void HTMLTrackElement::removedFrom(ContainerNode& insertionPoint)
 void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == srcAttr) {
-        if (!value.isEmpty())
-            scheduleLoad();
-        else if (m_track)
-            m_track->removeAllCues();
+        scheduleLoad();
 
     // 4.8.10.12.3 Sourcing out-of-band text tracks
     // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
@@ -186,8 +183,10 @@ void HTMLTrackElement::scheduleLoad()
 
 void HTMLTrackElement::loadTimerFired()
 {
-    if (!hasAttributeWithoutSynchronization(srcAttr))
+    if (!hasAttributeWithoutSynchronization(srcAttr)) {
+        track().removeAllCues();
         return;
+    }
 
     // 6. Set the text track readiness state to loading.
     setReadyState(HTMLTrackElement::LOADING);
@@ -195,16 +194,15 @@ void HTMLTrackElement::loadTimerFired()
     // 7. Let URL be the track URL of the track element.
     URL url = getNonEmptyURLAttribute(srcAttr);
 
+    // ... if URL is the empty string, then queue a task to first change the text track readiness state
+    // to failed to load and then fire an event named error at the track element.
     // 8. If the track element's parent is a media element then let CORS mode be the state of the parent media
     // element's crossorigin content attribute. Otherwise, let CORS mode be No CORS.
-    if (!canLoadURL(url)) {
+    if (url.isEmpty() || !canLoadURL(url)) {
+        track().removeAllCues();
         didCompleteLoad(HTMLTrackElement::Failure);
         return;
     }
-
-    // When src attribute is changed we need to flush all collected track data
-    if (m_track)
-        m_track->removeAllCues();
 
     track().scheduleLoad(url);
 }
