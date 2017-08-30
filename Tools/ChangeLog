@@ -1,3 +1,17 @@
+2017-08-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Add Logger observer and helper class
+        https://bugs.webkit.org/show_bug.cgi?id=176106
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebCore/Logging.cpp:
+        (TestWebKitAPI::LoggingTest::LoggingTest):
+        (TestWebKitAPI::LoggingTest::Logger::create):
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::LogObserver::log):
+        (TestWebKitAPI::LogObserver::channel const):
+
 2017-08-29  Filip Pizlo  <fpizlo@apple.com>
 
         Initial reference implementation scaffolding for ArrayLang

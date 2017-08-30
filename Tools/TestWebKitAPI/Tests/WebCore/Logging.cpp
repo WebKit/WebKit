@@ -55,8 +55,13 @@ static const size_t logChannelCount = sizeof(testLogChannels) / sizeof(testLogCh
 
 namespace TestWebKitAPI {
 
-class LoggingTest : public testing::Test {
+class LoggingTest : public testing::Test, public LogHelper {
 public:
+    LoggingTest()
+        : m_logger { Logger::create(this) }
+    {
+    }
+
     void SetUp() final
     {
         WTF::initializeMainThread();
@@ -94,7 +99,13 @@ public:
         return result.toString();
     }
 
+    const Logger& logger() const final { return m_logger.get(); }
+    const char* className() const final { return "LoggingTest"; }
+    WTFLogChannel& logChannel() const final { return TestChannel1; }
+
 private:
+
+    Ref<Logger> m_logger;
     int m_descriptors[2];
     FILE* m_stderr;
 };
@@ -267,6 +278,7 @@ TEST_F(LoggingTest, Logger)
     EXPECT_TRUE(logger->enabled());
 
     WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelError);
+    EXPECT_TRUE(logger->willLog(TestChannel1, WTFLogLevelError));
     logger->error(TestChannel1, "You're using coconuts!");
     EXPECT_TRUE(output().contains("You're using coconuts!", false));
     logger->warning(TestChannel1, "You're using coconuts!");
@@ -302,10 +314,107 @@ TEST_F(LoggingTest, Logger)
     EXPECT_TRUE(output().contains("I shall taunt you a second time!", false));
 
     logger->setEnabled(this, false);
+    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevelError));
+    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevelWarning));
+    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevelNotice));
+    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevelInfo));
+    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevelDebug));
     EXPECT_FALSE(logger->enabled());
     logger->logAlways(TestChannel1, "You've got two empty halves of coconuts");
     EXPECT_EQ(0u, output().length());
+
+    logger->setEnabled(this, true);
+    AtomicString string1("AtomicString", AtomicString::ConstructFromLiteral);
+    const AtomicString string2("const AtomicString", AtomicString::ConstructFromLiteral);
+    logger->logAlways(TestChannel1, string1, " and ", string2);
+    EXPECT_TRUE(output().contains("AtomicString and const AtomicString", false));
+
+    String string3("String");
+    const String string4("const String");
+    logger->logAlways(TestChannel1, string3, " and ", string4);
+    EXPECT_TRUE(output().contains("String and const String", false));
 }
+
+TEST_F(LoggingTest, LogHelper)
+{
+    EXPECT_TRUE(logger().enabled());
+
+    StringBuilder builder;
+    builder.appendLiteral("LoggingTest::TestBody(0x");
+    appendUnsigned64AsHex(reinterpret_cast<uintptr_t>(this), builder);
+    builder.appendLiteral(")");
+    String signature = builder.toString();
+
+    ALWAYS_LOG();
+    EXPECT_TRUE(this->output().contains(signature, false));
+
+    ALWAYS_LOG("Welcome back", " my friends", " to the show", " that never ends");
+    String result = this->output();
+    EXPECT_TRUE(result.contains(signature, false));
+    EXPECT_TRUE(result.contains("to the show that never", false));
+
+    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelWarning);
+    EXPECT_TRUE(willLog(WTFLogLevelWarning));
+
+    ERROR_LOG("We're so glad you could attend");
+    EXPECT_TRUE(output().contains("We're so glad you could attend", false));
+
+    WARNING_LOG("Come inside! ", "Come inside!");
+    EXPECT_TRUE(output().contains("Come inside! Come inside!", false));
+
+    NOTICE_LOG("There behind a glass is a real blade of grass");
+    EXPECT_EQ(0u, output().length());
+
+    INFO_LOG("be careful as you pass.");
+    EXPECT_EQ(0u, output().length());
+
+    DEBUG_LOG("Move along! Move along!");
+    EXPECT_EQ(0u, output().length());
+}
+
+class LogObserver : public Logger::Observer {
+public:
+    LogObserver() = default;
+
+    String log()
+    {
+        String log = m_logBuffer.toString();
+        m_logBuffer.clear();
+
+        return log;
+    }
+
+    WTFLogChannel channel() const { return m_lastChannel; }
+
+private:
+    void didLogMessage(const WTFLogChannel& channel, const String& logMessage) final
+    {
+        m_logBuffer.append(logMessage);
+        m_lastChannel = channel;
+    }
+
+    StringBuilder m_logBuffer;
+    WTFLogChannel m_lastChannel;
+};
+
+TEST_F(LoggingTest, LogObserver)
+{
+    LogObserver observer;
+
+    EXPECT_TRUE(logger().enabled());
+
+    logger().addObserver(observer);
+    ALWAYS_LOG("testing 1, 2, 3");
+    EXPECT_TRUE(this->output().contains("testing 1, 2, 3", false));
+    EXPECT_TRUE(observer.log().contains("testing 1, 2, 3", false));
+    EXPECT_STREQ(observer.channel().name, logChannel().name);
+
+    logger().removeObserver(observer);
+    ALWAYS_LOG("testing ", 1, ", ", 2, ", 3");
+    EXPECT_TRUE(this->output().contains("testing 1, 2, 3", false));
+    EXPECT_EQ(0u, observer.log().length());
+}
+
 #endif
 
 } // namespace TestWebKitAPI

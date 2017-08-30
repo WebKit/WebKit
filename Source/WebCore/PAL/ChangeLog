@@ -1,3 +1,29 @@
+2017-08-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Add Logger observer and helper class
+        https://bugs.webkit.org/show_bug.cgi?id=176106
+
+        Reviewed by Andy Estes.
+
+        * pal/Logger.h:
+        (PAL::LogArgument::toString): Add new variants.
+        (PAL::Logger::Observer::~Observer):
+        (PAL::Logger::logAlways const): Constify.
+        (PAL::Logger::error const): Ditto.
+        (PAL::Logger::warning const): Ditto.
+        (PAL::Logger::notice const): Ditto.
+        (PAL::Logger::info const): Ditto.
+        (PAL::Logger::debug const): Ditto.
+        (PAL::Logger::willLog const): Ditto.
+        (PAL::Logger::MethodAndPointer::MethodAndPointer): Add class name, make object pointer const.
+        (PAL::Logger::addObserver): New.
+        (PAL::Logger::removeObserver): New.
+        (PAL::Logger::Logger):
+        (PAL::Logger::log):
+        (PAL::Logger::observers):
+        (PAL::LogHelper::willLog const):
+        (PAL::LogArgument<Logger::MethodAndPointer>::toString):
+
 2017-08-30  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream Accessibility-related WebKitSystemInterface functions
