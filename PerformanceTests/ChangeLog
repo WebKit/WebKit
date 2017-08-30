@@ -1,3 +1,17 @@
+2017-08-30  Shiyu Zhang  <shiyu.zhang@intel.com>
+
+        Speedometer 2.0: jQuery test fails occasionally
+        https://bugs.webkit.org/show_bug.cgi?id=176017
+
+        Reviewed by Ryosuke Niwa.
+
+        Create a dummy node to notify that app is ready for jQuery suite. It prevents Speedometer injecting items before app.js is loaded.
+
+        * Speedometer/resources/tests.js:
+        (Suites.push.prepare):
+        * Speedometer/resources/todomvc/architecture-examples/jquery/js/app.js:
+        (jQuery.App.init):
+
 2017-08-25  Mathias Bynens  <mathias@qiwi.be>
 
         Speedometer: Restructure Ember example
