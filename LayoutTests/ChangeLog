@@ -1,3 +1,13 @@
+2017-08-30  Antti Koivisto  <antti@apple.com>
+
+        RenderMultiColumnFlowThread - Avoid render tree mutation during layout
+        https://bugs.webkit.org/show_bug.cgi?id=176026
+        <rdar://problem/33402891>
+
+        Reviewed by Zalan Bujtas.
+
+        * imported/blink/fast/pagination/first-letter-inherit-all-crash-expected.txt:
+
 2017-08-30  Matt Lewis  <jlewis3@apple.com>
 
         Creation of missing expectation folders and rebaseline for js/dom/global-constructors-attributes-expected.txt after r221302.

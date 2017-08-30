@@ -456,8 +456,13 @@ bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCou
     // The following types are not supposed to create multicol context.
     if (isFileUploadControl() || isTextControl() || isListBox())
         return false;
+    if (isRenderSVGBlock() || isRenderMathMLBlock() || isRubyRun())
+        return false;
 
     if (!firstChild())
+        return false;
+
+    if (style().styleType() != NOPSEUDO)
         return false;
 
     // If overflow-y is set to paged-x or paged-y on the body or html element, we'll handle the paginating in the RenderView instead.
@@ -4012,17 +4017,12 @@ bool RenderBlockFlow::requiresColumns(int desiredColumnCount) const
 
 void RenderBlockFlow::setComputedColumnCountAndWidth(int count, LayoutUnit width)
 {
-    bool destroyColumns = !requiresColumns(count);
-    if (destroyColumns) {
-        if (multiColumnFlowThread())
-            destroyMultiColumnFlowThread();
-    } else {
-        if (!multiColumnFlowThread())
-            createMultiColumnFlowThread();
-        multiColumnFlowThread()->setColumnCountAndWidth(count, width);
-        multiColumnFlowThread()->setProgressionIsInline(style().hasInlineColumnAxis());
-        multiColumnFlowThread()->setProgressionIsReversed(style().columnProgression() == ReverseColumnProgression);
-    }
+    ASSERT(!!multiColumnFlowThread() == requiresColumns(count));
+    if (!multiColumnFlowThread())
+        return;
+    multiColumnFlowThread()->setColumnCountAndWidth(count, width);
+    multiColumnFlowThread()->setProgressionIsInline(style().hasInlineColumnAxis());
+    multiColumnFlowThread()->setProgressionIsReversed(style().columnProgression() == ReverseColumnProgression);
 }
 
 void RenderBlockFlow::updateColumnProgressionFromStyle(RenderStyle& style)

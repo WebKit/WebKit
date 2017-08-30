@@ -117,6 +117,18 @@ static ListHashSet<ContainerNode*> findRenderingRoots(const Style::Update& updat
     return renderingRoots;
 }
 
+static void updateMultiColumnFlowThread(RenderBlockFlow& flow)
+{
+    bool needsFlowThread = flow.requiresColumns(flow.style().columnCount());
+    if (!needsFlowThread) {
+        if (flow.multiColumnFlowThread())
+            flow.destroyMultiColumnFlowThread();
+        return;
+    }
+    if (!flow.multiColumnFlowThread())
+        flow.createMultiColumnFlowThread();
+}
+
 void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
 {
     ASSERT(&m_document == &styleUpdate->document());
@@ -134,6 +146,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
         updateRenderTree(*root);
 
     generatedContent().updateRemainingQuotes();
+
+    updateMultiColumnFlowThread(renderView());
 
     m_styleUpdate = nullptr;
 }
@@ -263,6 +277,8 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, Style::Change s
         FirstLetter::update(downcast<RenderBlock>(*renderer));
     if (is<RenderListItem>(*renderer))
         ListItem::updateMarker(downcast<RenderListItem>(*renderer));
+    if (is<RenderBlockFlow>(*renderer))
+        updateMultiColumnFlowThread(downcast<RenderBlockFlow>(*renderer));
 
     if (element.hasCustomStyleResolveCallbacks() && styleChange == Style::Detach)
         element.didAttachRenderers();

@@ -283,7 +283,8 @@ public:
     RenderMultiColumnFlowThread* multiColumnFlowThread() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_multiColumnFlowThread : nullptr; }
     void setMultiColumnFlowThread(RenderMultiColumnFlowThread*);
     bool willCreateColumns(std::optional<unsigned> desiredColumnCount = std::nullopt) const;
-    
+    virtual bool requiresColumns(int) const;
+
     bool containsFloats() const override { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
     bool containsFloat(RenderBox&) const;
 
@@ -469,8 +470,7 @@ protected:
     void addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const;
     
     virtual void computeColumnCountAndWidth();
-    virtual bool requiresColumns(int) const;
-    
+
     virtual void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) {};
     
 protected:
