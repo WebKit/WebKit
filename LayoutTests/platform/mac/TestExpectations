@@ -1614,3 +1614,22 @@ webkit.org/b/173560 inspector/css/add-rule.html [ Pass Timeout ]
 
 webkit.org/b/173780 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-settimeout.html [ Pass Failure ]
 
+# Missing support for 521-bit elliptic curves.
+crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p521.html
+crypto/subtle/ec-import-spki-key-export-spki-key-p521.html
+crypto/subtle/ecdh-generate-export-jwk-key-p521.html
+crypto/subtle/ecdh-generate-export-key-pkcs8-p521.html
+crypto/subtle/ecdh-generate-export-key-raw-p521.html
+crypto/subtle/ecdh-generate-export-key-spki-p521.html
+crypto/subtle/ecdh-generate-key-p521.html
+crypto/subtle/ecdh-import-jwk-private-key-p521.html
+crypto/subtle/ecdh-import-jwk-public-key-p521.html
+crypto/subtle/ecdh-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html
+crypto/subtle/ecdh-import-pkcs8-key-p521.html
+crypto/subtle/ecdh-import-raw-key-p521.html
+crypto/subtle/ecdh-import-spki-key-p521.html
+crypto/subtle/ecdsa-generate-key-sign-verify-p521.html
+crypto/subtle/ecdsa-import-jwk-public-key-alg-521.html
+crypto/subtle/ecdsa-import-key-sign-p521.html
+crypto/subtle/ecdsa-import-key-verify-p521.html
+crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html

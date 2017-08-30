@@ -40,9 +40,23 @@ var jwkPublicKeyP384 = {
     x: "H9zo2G4WwHFSUqdN7jaChKg5fdmBxRLMP-_xWbcGDd4GzQBZBS72qKU_W-NLMoh_",
     y: "-VBlr88R42IGLDBvzFeUvH1cjPOlIxWgnfa6NzhKcYZQXFi9vFq4sdJX5cQfnc6H",
 };
+var jwkPrivateKeyP521 = {
+    kty: "EC",
+    crv: "P-521",
+    x: "AS3DmGl2O2u7YZbWpvIs7ab1tbAeQ_8PiYeB5Z7wgUulyVu4UHx15WU2SSKfqYvA8acaeiyK9zJ8gmXLZaKtwbFT",
+    y: "AEZSN9F_AQY_2Hk_DJhoVStuno4av3HkVaNcBAfPj-oodz9vcNSnxHfvO2C6NqszPnrJArY-xXmHfNDAYm7PARcR",
+    d: "AW4mYMpythEq-e7zcVH4c_kEV5q2Qnlg854I9rKTkudG_35NqHixOh8Y1GhMsXzHhlpa-QMPo34Zd5OcT9XkTB-s",
+};
+var jwkPublicKeyP521 = {
+    kty: "EC",
+    crv: "P-521",
+    x: "AS3DmGl2O2u7YZbWpvIs7ab1tbAeQ_8PiYeB5Z7wgUulyVu4UHx15WU2SSKfqYvA8acaeiyK9zJ8gmXLZaKtwbFT",
+    y: "AEZSN9F_AQY_2Hk_DJhoVStuno4av3HkVaNcBAfPj-oodz9vcNSnxHfvO2C6NqszPnrJArY-xXmHfNDAYm7PARcR",
+};
 
 var P256 = { curveName: "P-256" };
 var P384 = { curveName: "P-384" };
+var P521 = { curveName: "P-521" };
 
 crypto.subtle.importKey("jwk", jwkPrivateKeyP256, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveBits"]).then(function(result) {
     P256.privateKey = result;
@@ -87,6 +101,25 @@ crypto.subtle.importKey("jwk", jwkPrivateKeyP256, { name: "ECDH", namedCurve: "P
         ]).then(function(result) {
             testPassed("Bit derivations for EC P-384 with minimum and maximum lengths succeeded");
             return shouldReject('deriveBits(P384, 384 + 8)');
+        });
+    }).then(function(result) {
+        return crypto.subtle.importKey("jwk", jwkPrivateKeyP521, { name: "ECDH", namedCurve: "P-521" }, extractable, ["deriveBits"]).then(function(result) {
+            P521.privateKey = result;
+            return crypto.subtle.importKey("jwk", jwkPublicKeyP521, { name: "ECDH", namedCurve: "P-521" }, extractable, [ ]);
+        }).then(function(result) {
+            P521.publicKey = result;
+
+            // P-521
+            return Promise.all([
+                deriveBits(P521, 0, 528),
+                deriveBits(P521, 8, 8),
+                deriveBits(P521, 528, 528),
+            ]).then(function(result) {
+                testPassed("Bit derivations for EC P-521 with minimum and maximum lengths succeeded");
+                return shouldReject('deriveBits(P521, 528 + 8)');
+            });
+        }, function(result) {
+            debug("Bit derivations for EC P-521 skipped, likely due to missing P-521 supprot.");
         });
     });
 }).then(finishJSTest, finishJSTest);

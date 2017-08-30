@@ -1,4 +1,4 @@
-Test importing P-256 and P-384 SPKI ECDH keys that are using the ecDH algorithm identifier
+Test importing P-256, P-384 and P-521 SPKI ECDH keys that are using the ecDH algorithm identifier
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -17,6 +17,8 @@ PASS publicKey.extractable is true
 PASS publicKey.algorithm.name is 'ECDH'
 PASS publicKey.algorithm.namedCurve is 'P-384'
 PASS publicKey.usages is [ ]
+Importing a P-521 key that uses the ecDH algorithm identifier ...
+Importing EC P-521 key failed, likely due to missing P-521 support.
 PASS successfullyParsed is true
 
 TEST COMPLETE
