@@ -96,7 +96,6 @@ else ()
         libexslt${DEBUG_SUFFIX}
         libicuin${DEBUG_SUFFIX}
         libicuuc${DEBUG_SUFFIX}
-        zdll${DEBUG_SUFFIX}
     )
 endif ()
 

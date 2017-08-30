@@ -3,7 +3,6 @@ add_definitions(-DQUARTZCORE_DLL -DDISABLE_COREIMAGE -DDISABLE_FRONTEND -DDISABL
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBKIT_LIBRARIES_DIR}/include"
-    "${WEBKIT_LIBRARIES_DIR}/include/zlib"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/platform/graphics/avfoundation"
     "${WEBCORE_DIR}/platform/graphics/avfoundation/cf"

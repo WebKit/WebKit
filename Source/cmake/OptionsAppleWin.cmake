@@ -9,6 +9,8 @@ set(USE_ICU_UNICODE 1)
 set(LIBXML2_LIBRARIES libxml2${DEBUG_SUFFIX})
 set(LIBXSLT_LIBRARIES libxslt${DEBUG_SUFFIX})
 set(SQLITE_LIBRARIES SQLite3${DEBUG_SUFFIX})
+set(ZLIB_INCLUDE_DIRS "${WEBKIT_LIBRARIES_DIR}/include/zlib")
+set(ZLIB_LIBRARIES zdll${DEBUG_SUFFIX})
 
 # Uncomment the following line to try the Direct2D backend.
 # set(USE_DIRECT2D 1)
