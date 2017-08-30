@@ -37,7 +37,6 @@ namespace WebKit {
 struct WebPageGroupData {
     void encode(IPC::Encoder&) const;
     static std::optional<WebPageGroupData> decode(IPC::Decoder&);
-    using ModernDecoder = std::true_type;
 
     String identifier;
     uint64_t pageGroupID;

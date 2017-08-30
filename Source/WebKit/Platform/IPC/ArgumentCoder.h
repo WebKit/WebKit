@@ -31,10 +31,16 @@ namespace IPC {
 
 class Decoder;
 class Encoder;
-    
-template <typename... T> using IsUsingModernDecoder = void;
-template <typename T, typename = void> struct UsesModernDecoder : std::false_type { };
-template <typename T> struct UsesModernDecoder<T, IsUsingModernDecoder<typename T::ModernDecoder>> : std::true_type { };
+
+template<typename U>
+class UsesModernDecoder {
+private:
+    template<typename T, T> struct Helper;
+    template<typename T> static uint8_t check(Helper<std::optional<U> (*)(Decoder&), &T::decode>*);
+    template<typename T> static uint16_t check(...);
+public:
+    static constexpr bool value = sizeof(check<U>(0)) == sizeof(uint8_t);
+};
 
 template<typename T> struct ArgumentCoder {
     static void encode(Encoder& encoder, const T& t)

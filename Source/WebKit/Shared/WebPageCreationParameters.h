@@ -60,7 +60,6 @@ namespace WebKit {
 struct WebPageCreationParameters {
     void encode(IPC::Encoder&) const;
     static std::optional<WebPageCreationParameters> decode(IPC::Decoder&);
-    using ModernDecoder = std::true_type;
 
     WebCore::IntSize viewSize;
 

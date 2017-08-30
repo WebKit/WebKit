@@ -50,7 +50,6 @@ struct WebsitePolicies {
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<WebsitePolicies> decode(Decoder&);
-    using ModernDecoder = std::true_type;
 };
 
 template<class Encoder> void WebsitePolicies::encode(Encoder& encoder) const

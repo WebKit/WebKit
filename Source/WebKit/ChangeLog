@@ -1,5 +1,21 @@
 2017-08-29  Alex Christensen  <achristensen@webkit.org>
 
+        Automatically determine if a class has a modern decoder
+        https://bugs.webkit.org/show_bug.cgi?id=176084
+
+        Reviewed by Sam Weinig.
+
+        Instead of determining if ModernDecoder is defined in the class,
+        just check the signature of the decode member function.
+
+        * Platform/IPC/ArgumentCoder.h:
+        (): Deleted.
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPageGroupData.h:
+        * Shared/WebsitePolicies.h:
+
+2017-08-29  Alex Christensen  <achristensen@webkit.org>
+
         Begin transition to modern IPC decoding
         https://bugs.webkit.org/show_bug.cgi?id=176043
 
