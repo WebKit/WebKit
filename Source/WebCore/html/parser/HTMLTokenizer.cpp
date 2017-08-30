@@ -159,7 +159,7 @@ bool HTMLTokenizer::commitToPartialEndTag(SegmentedString& source, UChar charact
 {
     ASSERT(source.currentCharacter() == character);
     appendToTemporaryBuffer(character);
-    source.advancePastNonNewline();
+    source.advance();
 
     if (haveBufferedCharacterToken()) {
         // Emit the buffered character token.
