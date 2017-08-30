@@ -4308,16 +4308,15 @@ bool BytecodeGenerator::emitReadOnlyExceptionIfNeeded(const Variable& variable)
 
 void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const std::function<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
 {
+    bool isForAwait = forLoopNode ? forLoopNode->isForAwait() : false;
+    ASSERT(!isForAwait || (isForAwait && isAsyncFunctionParseMode(parseMode())));
+
     CompletionRecordScope completionRecordScope(*this);
 
     RefPtr<RegisterID> subject = newTemporary();
     emitNode(subject.get(), subjectNode);
-    RefPtr<RegisterID> iterator = emitGetById(newTemporary(), subject.get(), propertyNames().iteratorSymbol);
-    {
-        CallArguments args(*this, nullptr);
-        emitMove(args.thisRegister(), subject.get());
-        emitCall(iterator.get(), iterator.get(), NoExpectedFunction, args, node->divot(), node->divotStart(), node->divotEnd(), DebuggableCall::No);
-    }
+
+    RefPtr<RegisterID> iterator = isForAwait ? emitGetAsyncIterator(subject.get(), node) : emitGetIterator(subject.get(), node);
 
     Ref<Label> loopDone = newLabel();
     Ref<Label> tryStartLabel = newLabel();
@@ -4378,6 +4377,10 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             CallArguments returnArguments(*this, nullptr);
             emitMove(returnArguments.thisRegister(), iterator.get());
             emitCall(value.get(), returnMethod.get(), NoExpectedFunction, returnArguments, node->divot(), node->divotStart(), node->divotEnd(), DebuggableCall::No);
+
+            if (isForAwait)
+                emitAwait(value.get());
+
             emitJumpIfTrue(emitIsObject(newTemporary(), value.get()), finallyDone.get());
             emitThrowTypeError(ASCIILiteral("Iterator result interface is not an object."));
 
@@ -4419,7 +4422,8 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         }
 
         {
-            emitIteratorNext(value.get(), iterator.get(), node);
+            emitIteratorNext(value.get(), iterator.get(), node, isForAwait ? EmitAwait::Yes : EmitAwait::No);
+
             emitJumpIfTrue(emitGetById(newTemporary(), value.get(), propertyNames().done), loopDone.get());
             emitGetById(value.get(), value.get(), propertyNames().value);
             emitJump(loopStart.get());
@@ -4431,7 +4435,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         popFinallyControlFlowScope();
         if (breakLabelIsBound) {
             // IteratorClose sequence for break-ed control flow.
-            emitIteratorClose(iterator.get(), node);
+            emitIteratorClose(iterator.get(), node, isForAwait ? EmitAwait::Yes : EmitAwait::No);
         }
     }
     emitLabel(loopDone.get());
@@ -4583,13 +4587,16 @@ RegisterID* BytecodeGenerator::emitIsEmpty(RegisterID* dst, RegisterID* src)
     return dst;
 }
     
-RegisterID* BytecodeGenerator::emitIteratorNext(RegisterID* dst, RegisterID* iterator, const ThrowableExpressionData* node)
+RegisterID* BytecodeGenerator::emitIteratorNext(RegisterID* dst, RegisterID* iterator, const ThrowableExpressionData* node, EmitAwait doEmitAwait)
 {
     {
         RefPtr<RegisterID> next = emitGetById(newTemporary(), iterator, propertyNames().next);
         CallArguments nextArguments(*this, nullptr);
         emitMove(nextArguments.thisRegister(), iterator);
         emitCall(dst, next.get(), NoExpectedFunction, nextArguments, node->divot(), node->divotStart(), node->divotEnd(), DebuggableCall::No);
+
+        if (doEmitAwait == EmitAwait::Yes)
+            emitAwait(dst);
     }
     {
         Ref<Label> typeIsObject = newLabel();

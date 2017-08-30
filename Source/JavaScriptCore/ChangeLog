@@ -1,3 +1,32 @@
+2017-08-30  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        [ESNext] Async iteration - Implement async iteration statement: for-await-of
+        https://bugs.webkit.org/show_bug.cgi?id=166698
+
+        Reviewed by Yusuke Suzuki.
+
+        Implementation of the for-await-of statement.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::emitIteratorNext):
+        * bytecompiler/BytecodeGenerator.h:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createForOfLoop):
+        * parser/NodeConstructors.h:
+        (JSC::ForOfNode::ForOfNode):
+        * parser/Nodes.h:
+        (JSC::ForOfNode::isForAwait const):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseForStatement):
+        * parser/Parser.h:
+        (JSC::Scope::setSourceParseMode):
+        (JSC::Scope::setIsFunction):
+        (JSC::Scope::setIsAsyncGeneratorFunction):
+        (JSC::Scope::setIsAsyncGeneratorFunctionBody):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createForOfLoop):
+
 2017-08-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r221317.

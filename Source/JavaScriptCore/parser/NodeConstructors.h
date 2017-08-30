@@ -1040,8 +1040,9 @@ namespace JSC {
     {
     }
     
-    inline ForOfNode::ForOfNode(const JSTokenLocation& location, ExpressionNode* lexpr, ExpressionNode* expr, StatementNode* statement, VariableEnvironment& lexicalVariables)
+    inline ForOfNode::ForOfNode(bool isForAwait, const JSTokenLocation& location, ExpressionNode* lexpr, ExpressionNode* expr, StatementNode* statement, VariableEnvironment& lexicalVariables)
         : EnumerationNode(location, lexpr, expr, statement, lexicalVariables)
+        , m_isForAwait(isForAwait)
     {
     }
     

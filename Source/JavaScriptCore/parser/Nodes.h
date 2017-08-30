@@ -1523,11 +1523,14 @@ namespace JSC {
     
     class ForOfNode : public EnumerationNode {
     public:
-        ForOfNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&);
+        ForOfNode(bool, const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&);
         bool isForOfNode() const override { return true; }
+        bool isForAwait() const { return m_isForAwait; }
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        const bool m_isForAwait;
     };
 
     class ContinueNode : public StatementNode, public ThrowableExpressionData {

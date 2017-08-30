@@ -1267,10 +1267,17 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     ASSERT(match(FOR));
     JSTokenLocation location(tokenLocation());
     int startLine = tokenLine();
+    bool isAwaitFor = false;
     next();
 
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth++;
+
+    if (Options::useAsyncIterator() && match(AWAIT)) {
+        semanticFailIfFalse(currentScope()->isAsyncFunction(), "for-await-of can't be used only in async function or async generator.");
+        isAwaitFor = true;
+        next();
+    }
 
     handleProductionOrFail(OPENPAREN, "(", "start", "for-loop header");
     int nonLHSCount = m_parserState.nonLHSCount;
@@ -1341,11 +1348,15 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         // Handle for-in with var declaration
         JSTextPosition inLocation = tokenStartPosition();
         bool isOfEnumeration = false;
-        if (!consume(INTOKEN)) {
+        if (!match(INTOKEN)) {
             failIfFalse(match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of, "Expected either 'in' or 'of' in enumeration syntax");
             isOfEnumeration = true;
             next();
+        } else {
+            failIfFalse(!isAwaitFor, "Expected 'of' in for-await syntax");
+            next();
         }
+
         bool hasAnyAssignments = !!forInInitializer;
         if (hasAnyAssignments) {
             if (isOfEnumeration)
@@ -1370,8 +1381,9 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         gatherLexicalVariablesIfNecessary();
         TreeStatement result;
         if (isOfEnumeration)
-            result = context.createForOfLoop(location, forInTarget, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
+            result = context.createForOfLoop(isAwaitFor, location, forInTarget, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
         else {
+            ASSERT(!isAwaitFor);
             if (isVarDeclaraton && forInInitializer)
                 result = context.createForInLoop(location, decls, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
             else
@@ -1403,6 +1415,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     
     if (match(SEMICOLON)) {
     standardForLoop:
+        failIfFalse(!isAwaitFor, "Unexpected a ';' in for-await-of header");
         // Standard for loop
         if (decls)
             recordPauseLocation(context.breakpointLocation(decls));
@@ -1440,11 +1453,15 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
 enumerationLoop:
     failIfFalse(nonLHSCount == m_parserState.nonLHSCount, "Expected a reference on the left hand side of an enumeration statement");
     bool isOfEnumeration = false;
-    if (!consume(INTOKEN)) {
+    if (!match(INTOKEN)) {
         failIfFalse(match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of, "Expected either 'in' or 'of' in enumeration syntax");
         isOfEnumeration = true;
         next();
+    } else {
+        failIfFalse(!isAwaitFor, "Expected 'of' in for-await syntax");
+        next();
     }
+
     TreeExpression expr = parseExpression(context);
     failIfFalse(expr, "Cannot parse subject for-", isOfEnumeration ? "of" : "in", " statement");
     recordPauseLocation(context.breakpointLocation(expr));
@@ -1462,17 +1479,21 @@ enumerationLoop:
     if (pattern) {
         ASSERT(!decls);
         if (isOfEnumeration)
-            result = context.createForOfLoop(location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
-        else 
+            result = context.createForOfLoop(isAwaitFor, location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
+        else {
+            ASSERT(!isAwaitFor);
             result = context.createForInLoop(location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
+        }
 
         popLexicalScopeIfNecessary();
         return result;
     }
     if (isOfEnumeration)
-        result = context.createForOfLoop(location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
-    else
+        result = context.createForOfLoop(isAwaitFor, location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
+    else {
+        ASSERT(!isAwaitFor);
         result = context.createForInLoop(location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
+    }
     popLexicalScopeIfNecessary();
     return result;
 }
