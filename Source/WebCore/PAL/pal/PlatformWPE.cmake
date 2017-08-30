@@ -1,9 +1,9 @@
 list(APPEND PAL_SOURCES
     crypto/gcrypt/CryptoDigestGCrypt.cpp
 
-    system/SoundNone.cpp
+    system/Sound.cpp
 
-    text/KillRingNone.cpp
+    text/KillRing.cpp
 )
 
 if (ENABLE_SUBTLE_CRYPTO)

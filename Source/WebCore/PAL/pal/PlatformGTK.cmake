@@ -3,7 +3,7 @@ list(APPEND PAL_SOURCES
 
     system/gtk/SoundGtk.cpp
 
-    text/KillRingNone.cpp
+    text/KillRing.cpp
 )
 
 if (ENABLE_SUBTLE_CRYPTO)

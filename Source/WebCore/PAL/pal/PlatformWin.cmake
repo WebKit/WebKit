@@ -3,7 +3,7 @@ list(APPEND PAL_SOURCES
 
     system/win/SoundWin.cpp
 
-    text/KillRingNone.cpp
+    text/KillRing.cpp
 )
 
 list(APPEND PAL_INCLUDE_DIRECTORIES
