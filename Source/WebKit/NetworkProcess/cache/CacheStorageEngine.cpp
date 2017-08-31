@@ -108,12 +108,7 @@ void Engine::remove(uint64_t cacheIdentifier, CacheIdentifierCallback&& callback
         }
     }
     if (!cachesToModify) {
-        auto position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier == cacheIdentifier; });
-        if (position == notFound) {
-            callback(makeUnexpected(Error::Internal));
-            return;
-        }
-        callback(cacheIdentifier);
+        callback(makeUnexpected(Error::Internal));
         return;
     }
 
@@ -322,11 +317,6 @@ Cache* Engine::cache(uint64_t cacheIdentifier)
     for (auto& caches : m_caches.values()) {
         if ((result = caches->find(cacheIdentifier)))
             break;
-    }
-    if (!result) {
-        auto position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier == cacheIdentifier; });
-        if (position != notFound)
-            result = &m_removedCaches[position];
     }
     return result;
 }

@@ -91,7 +91,6 @@ private:
     Cache* cache(uint64_t cacheIdentifier);
 
     HashMap<String, Ref<Caches>> m_caches;
-    Vector<Cache> m_removedCaches;
     uint64_t m_nextCacheIdentifier { 0 };
     String m_rootPath;
     RefPtr<WorkQueue> m_ioQueue;
