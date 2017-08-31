@@ -44,6 +44,7 @@ load("Check.js");
 load("Checker.js");
 load("CommaExpression.js");
 load("ConstexprTypeParameter.js");
+load("DereferenceExpression.js");
 load("EBuffer.js");
 load("EBufferBuilder.js");
 load("EPtr.js");

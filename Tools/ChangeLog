@@ -1,5 +1,48 @@
 2017-08-31  Filip Pizlo  <fpizlo@apple.com>
 
+        WSL should support dereference (^)
+        https://bugs.webkit.org/show_bug.cgi?id=176192
+
+        Reviewed by Myles Maxfield.
+        
+        This implements DereferenceExpression.
+        
+        It also renames Evaluator.prototype.visitFunctionBody, because that name confusingly implies
+        that there is a class named FunctionBody. It's now called runBody.
+        
+        I made the check to see if a type is a pointer type be the isPtr method, so that we can have
+        other pointer types that are implemented via something other than PtrType. We might want it if
+        for example we wanted a pointer type that is generic over address space.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        (callFunction):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/DereferenceExpression.js: Added.
+        (DereferenceExpression):
+        (DereferenceExpression.prototype.get ptr):
+        (DereferenceExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitFunctionLikeBlock):
+        (Evaluator.prototype._dereference):
+        (Evaluator.prototype.visitDereferenceExpression):
+        (Evaluator.prototype.visitFunctionBody): Deleted.
+        * WebGPUShadingLanguageRI/PtrType.js:
+        (PtrType.prototype.get isPtr):
+        (PtrType.prototype.populateDefaultValue):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitAssignment):
+        (Rewriter.prototype.visitDereferenceExpression):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_simpleDereference):
+        * WebGPUShadingLanguageRI/Type.js:
+        (Type.prototype.get isPtr):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitDereferenceExpression):
+
+2017-08-31  Filip Pizlo  <fpizlo@apple.com>
+
         There should only be one callFunction API in WSL
         https://bugs.webkit.org/show_bug.cgi?id=176189
 

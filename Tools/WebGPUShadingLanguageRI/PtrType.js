@@ -25,6 +25,13 @@
 "use strict";
 
 class PtrType extends ReferenceType {
+    get isPtr() { return true; }
+    
+    populateDefaultValue(buffer, offset)
+    {
+        buffer.set(offset, null);
+    }
+    
     unifyImpl(unificationContext, other)
     {
         if (!(other instanceof PtrType))

@@ -24,16 +24,17 @@
  */
 "use strict";
 
-// This allows you to pass structs and arrays in-place, but it's a more annoying API.
-function callFunction(program, name, typeArguments, argumentList)
-{
-    let argumentTypes = argumentList.map(argument => argument.type);
-    let func = resolveInlinedFunction(program, name, typeArguments, argumentTypes);
-    if (!func)
-        throw new WTypeError("<callFunction>", "Cannot resolve function call " + name + "<" + typeArguments + ">(" + argumentList + ")");
-    for (let i = 0; i < func.parameters.length; ++i)
-        func.parameters[i].ePtr.copyFrom(argumentList[i].ePtr, argumentTypes[i].size);
-    let result = new Evaluator(program).runBody(func.body);
-    return new TypedValue(func.returnType, result);
+class DereferenceExpression extends Expression {
+    constructor(origin, ptr)
+    {
+        super(origin);
+        this._ptr = ptr;
+    }
+    
+    get ptr() { return this._ptr; }
+    
+    toString()
+    {
+        return "^(" + this.ptr + ")";
+    }
 }
-

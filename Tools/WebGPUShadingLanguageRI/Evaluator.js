@@ -32,7 +32,7 @@ class Evaluator extends Visitor {
         this._program = program;
     }
     
-    visitFunctionBody(block)
+    runBody(block)
     {
         try {
             block.visit(this);
@@ -55,7 +55,7 @@ class Evaluator extends Visitor {
                 node.argumentList[i].visit(this),
                 node.parameters[i].type.size);
         }
-        return this.visitFunctionBody(node.body);
+        return this.runBody(node.body);
     }
     
     visitReturn(node)
@@ -77,6 +77,19 @@ class Evaluator extends Visitor {
         let result = node.lhs.visit(this);
         result.copyFrom(node.rhs.visit(this), node.type.size);
         return result;
+    }
+    
+    _dereference(ptr, type)
+    {
+        let size = type.size;
+        let result = new EPtr(new EBuffer(size), 0);
+        result.copyFrom(ptr.loadValue(), size);
+        return result;
+    }
+    
+    visitDereferenceExpression(node)
+    {
+        return this._dereference(node.ptr.visit(this), node.type);
     }
     
     visitCommaExpression(node)

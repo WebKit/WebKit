@@ -111,6 +111,18 @@ function TEST_simpleDefault()
     checkInt(program, callFunction(program, "foo", [], []), 0);
 }
 
+function TEST_simpleDereference()
+{
+    let program = doPrep(`
+        int foo(device int^ p)
+        {
+            return ^p;
+        }`);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 13);
+    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
+}
+
 let before = preciseTime();
 
 let filter = /.*/; // run everything by default

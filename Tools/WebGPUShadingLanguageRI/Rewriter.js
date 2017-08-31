@@ -139,7 +139,14 @@ class Rewriter {
     visitAssignment(node)
     {
         let result = new Assignment(node.origin, node.lhs.visit(this), node.rhs.visit(this));
-        result.type = node.type.visit(this);
+        result.type = node.type ? node.type.visit(this) : null;
+        return result;
+    }
+    
+    visitDereferenceExpression(node)
+    {
+        let result = new DereferenceExpression(node.origin, node.ptr.visit(this));
+        result.type = node.type ? node.type.visit(this) : null;
         return result;
     }
     

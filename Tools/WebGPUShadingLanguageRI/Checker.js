@@ -132,6 +132,15 @@ class Checker extends Visitor {
         return lhsType;
     }
     
+    visitDereferenceExpression(node)
+    {
+        let type = node.ptr.visit(this).unifyNode;
+        if (!type.isPtr)
+            throw new WTypeError(node.origin.originString, "Type passed to dereference is not a pointer: " + type);
+        node.type = type.elementType;
+        return node.type;
+    }
+    
     visitVariableRef(node)
     {
         return node.variable.type;

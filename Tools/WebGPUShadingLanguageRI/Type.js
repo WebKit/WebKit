@@ -27,6 +27,7 @@
 class Type extends Node {
     get typeParameters() { return []; }
     get kind() { return Type; }
+    get isPtr() { return false; }
     
     inherits(protocol)
     {

@@ -153,6 +153,11 @@ class Visitor {
         node.rhs.visit(this);
     }
     
+    visitDereferenceExpression(node)
+    {
+        node.ptr.visit(this);
+    }
+    
     visitVariableRef(node)
     {
     }
