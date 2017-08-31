@@ -105,7 +105,7 @@ void FetchBody::text(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 void FetchBody::consumeOnceLoadingFinished(FetchBodyConsumer::Type type, Ref<DeferredPromise>&& promise, const String& contentType)
 {
     m_consumer.setType(type);
-    m_consumePromise = WTFMove(promise);
+    m_consumer.setConsumePromise(WTFMove(promise));
     if (type == FetchBodyConsumer::Type::Blob)
         m_consumer.setContentType(Blob::normalizedContentType(extractMIMETypeFromMediaType(contentType)));
 }
@@ -194,23 +194,19 @@ void FetchBody::consumeText(Ref<DeferredPromise>&& promise, const String& text)
 
 void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    m_consumePromise = WTFMove(promise);
+    m_consumer.setConsumePromise(WTFMove(promise));
     owner.loadBlob(blobBody(), &m_consumer);
     m_data = nullptr;
 }
 
 void FetchBody::loadingFailed()
 {
-    if (m_consumePromise) {
-        m_consumePromise->reject();
-        m_consumePromise = nullptr;
-    }
+    m_consumer.loadingFailed();
 }
 
 void FetchBody::loadingSucceeded()
 {
-    if (m_consumePromise)
-        m_consumer.resolve(m_consumePromise.releaseNonNull());
+    m_consumer.loadingSucceeded();
 }
 
 RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) const
@@ -276,7 +272,6 @@ FetchBody::TakenData FetchBody::take()
 
 FetchBody FetchBody::clone() const
 {
-    ASSERT(!m_consumePromise);
     FetchBody clone(m_consumer);
 
     if (isArrayBuffer())

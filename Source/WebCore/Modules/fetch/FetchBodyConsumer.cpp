@@ -148,4 +148,30 @@ String FetchBodyConsumer::takeAsText()
     return text;
 }
 
+void FetchBodyConsumer::setConsumePromise(Ref<DeferredPromise>&& promise)
+{
+    ASSERT(!m_consumePromise);
+    m_consumePromise = WTFMove(promise);
+}
+
+void FetchBodyConsumer::loadingFailed()
+{
+    if (m_consumePromise) {
+        m_consumePromise->reject();
+        m_consumePromise = nullptr;
+    }
+}
+
+void FetchBodyConsumer::loadingSucceeded()
+{
+    if (m_consumePromise)
+        resolve(m_consumePromise.releaseNonNull());
+}
+
+void FetchBodyConsumer::clean()
+{
+    m_buffer = nullptr;
+    m_consumePromise = nullptr;
+}
+
 } // namespace WebCore

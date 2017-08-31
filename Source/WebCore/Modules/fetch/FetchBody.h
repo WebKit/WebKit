@@ -78,7 +78,7 @@ public:
     FetchBodyConsumer& consumer() { return m_consumer; }
 
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&, const String&);
-    void cleanConsumePromise() { m_consumePromise = nullptr; }
+    void cleanConsumer() { m_consumer.clean(); }
 
     FetchBody clone() const;
     ReadableStream* readableStream() { return m_readableStream.get(); }
@@ -119,7 +119,6 @@ private:
     Data m_data { nullptr };
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };
-    RefPtr<DeferredPromise> m_consumePromise;
     RefPtr<ReadableStream> m_readableStream;
 };
 

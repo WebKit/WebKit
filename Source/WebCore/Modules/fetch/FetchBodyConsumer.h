@@ -55,17 +55,23 @@ public:
     void setContentType(const String& contentType) { m_contentType = contentType; }
     void setType(Type type) { m_type = type; }
 
-    void clean() { m_buffer = nullptr; }
+    void clean();
 
     void resolve(Ref<DeferredPromise>&&);
     void resolveWithData(Ref<DeferredPromise>&&, const unsigned char*, unsigned);
 
     bool hasData() const { return !!m_buffer; }
 
+    void loadingFailed();
+    void loadingSucceeded();
+
+    void setConsumePromise(Ref<DeferredPromise>&&);
+
 private:
     Type m_type;
     String m_contentType;
     RefPtr<SharedBuffer> m_buffer;
+    RefPtr<DeferredPromise> m_consumePromise;
 };
 
 } // namespace WebCore

@@ -48,7 +48,7 @@ FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, std::optional<Fe
 void FetchBodyOwner::stop()
 {
     if (m_body)
-        m_body->cleanConsumePromise();
+        m_body->cleanConsumer();
 
     if (m_blobLoader) {
         bool isUniqueReference = hasOneRef();
