@@ -1,3 +1,12 @@
+2017-08-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip two slow JSC tests after r221422.
+
+        Unreviewed test gardening.
+
+        * stress/regexp-prototype-match-on-too-long-rope.js:
+        * stress/regexp-prototype-test-on-too-long-rope.js:
+
 2017-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, skipping slow tests.
