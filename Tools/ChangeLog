@@ -1,3 +1,20 @@
+2017-08-31  David Quesada  <david_quesada@apple.com>
+
+        WKNavigationDelegatePrivate client redirect SPI needs to be able to detect redirects scheduled before the document finishes loading
+        https://bugs.webkit.org/show_bug.cgi?id=176128
+        rdar://problem/34068476
+
+        Reviewed by Brady Eidson.
+
+        Removed API test for the deleted WKNavigationDelegatePrivate method,
+        and added two new tests for the two new methods.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (-[ClientRedirectNavigationDelegate _webView:willPerformClientRedirectToURL:delay:]):
+        (-[ClientRedirectNavigationDelegate _webViewDidCancelClientRedirect:]):
+        (-[ClientRedirectNavigationDelegate webView:didFinishNavigation:]):
+        (TEST):
+
 2017-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         WSL should handle variable assignments and variable declarations

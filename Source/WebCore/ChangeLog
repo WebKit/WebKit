@@ -1,3 +1,21 @@
+2017-08-31  David Quesada  <david_quesada@apple.com>
+
+        WKNavigationDelegatePrivate client redirect SPI needs to be able to detect redirects scheduled before the document finishes loading
+        https://bugs.webkit.org/show_bug.cgi?id=176128
+        rdar://problem/34068476
+
+        Reviewed by Brady Eidson.
+
+        Removed FrameLoaderClient::dispatchDidPerformClientRedirect() since no client cares about this event anymore.
+        Also removed FrameLoader::performClientRedirect() since it wouldn't do anything but call changeLocation().
+
+        No new tests - no change in functionality.
+
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/NavigationScheduler.cpp:
+
 2017-08-31  Chris Dumez  <cdumez@apple.com>
 
         getFileMetadata() does not work as expected for symbolic links
