@@ -128,19 +128,19 @@ TEST(WebKit2, InputMethodFilterUnicodeSequence)
     ASSERT_EQ(21, events.size());
     ASSERT_EQ(String("sendSimpleKeyEvent type=press keycode=ffe3"), events[0]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=press keycode=ffe1"), events[1]);
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=85"), events[2]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=55"), events[2]);
     ASSERT_EQ(String("setPreedit text='u' cursorOffset=1"), events[3]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=55"), events[4]);
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=48"), events[5]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=30"), events[5]);
     ASSERT_EQ(String("setPreedit text='u0' cursorOffset=2"), events[6]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=30"), events[7]);
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=48"), events[8]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=30"), events[8]);
     ASSERT_EQ(String("setPreedit text='u00' cursorOffset=3"), events[9]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=30"), events[10]);
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=70"), events[11]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=46"), events[11]);
     ASSERT_EQ(String("setPreedit text='u00F' cursorOffset=4"), events[12]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=46"), events[13]);
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=52"), events[14]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=34"), events[14]);
     ASSERT_EQ(String("setPreedit text='u00F4' cursorOffset=5"), events[15]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=34"), events[16]);
     ASSERT_EQ(String("confirmComposition 'ô'"), events[17]);
@@ -158,12 +158,10 @@ TEST(WebKit2, InputMethodFilterComposeKey)
     inputMethodFilter.sendPressAndReleaseKeyEventPairToFilter(GDK_KEY_o);
 
     const Vector<String>& events = inputMethodFilter.events();
-    ASSERT_EQ(5, events.size());
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=39"), events[0]);
-    ASSERT_EQ(String("setPreedit text='' cursorOffset=0"), events[1]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=27"), events[2]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=press keycode=6f text='ó'"), events[3]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=6f"), events[4]);
+    ASSERT_EQ(3, events.size());
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=6f"), events[0]);
+    ASSERT_EQ(String("confirmComposition 'ó'"), events[1]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=6f"), events[2]);
 }
 
 typedef void (*GetPreeditStringCallback) (GtkIMContext*, gchar**, PangoAttrList**, int*);
@@ -191,10 +189,10 @@ TEST(WebKit2, InputMethodFilterContextEventsWithoutKeyEvents)
 
     const Vector<String>& events = inputMethodFilter.events();
     ASSERT_EQ(6, events.size());
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=16777215 (faked)"), events[0]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=ffffff (faked)"), events[0]);
     ASSERT_EQ(String("setPreedit text='preedit of doom, bringer of cheese' cursorOffset=3"), events[1]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffffff (faked)"), events[2]);
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=16777215 (faked)"), events[3]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=ffffff (faked)"), events[3]);
     ASSERT_EQ(String("confirmComposition 'commit text'"), events[4]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffffff (faked)"), events[5]);
 }
@@ -204,15 +202,6 @@ typedef void (*ResetCallback) (GtkIMContext*);
 static void temporaryResetOverride(GtkIMContext*)
 {
     gSawContextReset = true;
-}
-
-static void verifyCanceledComposition(const Vector<String>& events)
-{
-    ASSERT_EQ(3, events.size());
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=39"), events[0]);
-    ASSERT_EQ(String("setPreedit text='' cursorOffset=0"), events[1]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=27"), events[2]);
-    ASSERT(gSawContextReset);
 }
 
 TEST(WebKit2, InputMethodFilterContextFocusOutDuringOngoingComposition)
@@ -229,8 +218,7 @@ TEST(WebKit2, InputMethodFilterContextFocusOutDuringOngoingComposition)
     inputMethodFilter.sendPressAndReleaseKeyEventPairToFilter(GDK_KEY_Multi_key);
     inputMethodFilter.sendPressAndReleaseKeyEventPairToFilter(GDK_KEY_apostrophe);
     inputMethodFilter.notifyFocusedOut();
-
-    verifyCanceledComposition(inputMethodFilter.events());
+    ASSERT_TRUE(gSawContextReset);
 
     contextClass->reset = previousCallback;
 }
@@ -249,8 +237,7 @@ TEST(WebKit2, InputMethodFilterContextMouseClickDuringOngoingComposition)
     inputMethodFilter.sendPressAndReleaseKeyEventPairToFilter(GDK_KEY_Multi_key);
     inputMethodFilter.sendPressAndReleaseKeyEventPairToFilter(GDK_KEY_apostrophe);
     inputMethodFilter.notifyMouseButtonPress();
-
-    verifyCanceledComposition(inputMethodFilter.events());
+    ASSERT_TRUE(gSawContextReset);
 
     contextClass->reset = previousCallback;
 }
