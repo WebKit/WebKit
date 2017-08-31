@@ -25,23 +25,15 @@
 "use strict";
 
 // This allows you to pass structs and arrays in-place, but it's a more annoying API.
-function callFunctionByRef(program, name, typeArguments, argumentList)
+function callFunction(program, name, typeArguments, argumentList)
 {
     let argumentTypes = argumentList.map(argument => argument.type);
     let func = resolveInlinedFunction(program, name, typeArguments, argumentTypes);
     if (!func)
         throw new WTypeError("<callFunction>", "Cannot resolve function call " + name + "<" + typeArguments + ">(" + argumentList + ")");
     for (let i = 0; i < func.parameters.length; ++i)
-        func.parameters[i].ePtr.copyFrom(argumentList[i].value, argumentTypes[i].size);
+        func.parameters[i].ePtr.copyFrom(argumentList[i].ePtr, argumentTypes[i].size);
     let result = new Evaluator(program).visitFunctionBody(func.body);
     return new TypedValue(func.returnType, result);
 }
 
-// This uses the simplified TypedValue object for wrapping values like integers and doubles.
-function callFunction(program, name, typeArguments, argumentList)
-{
-    let result = callFunctionByRef(
-        program, name, typeArguments,
-        argumentList.map(argument => new TypedValue(argument.type, EPtr.box(argument.value))));
-    return new TypedValue(result.type, result.value.loadValue());
-}

@@ -25,14 +25,24 @@
 "use strict";
 
 class TypedValue {
-    constructor(type, value)
+    constructor(type, ePtr)
     {
-        this.type = type;
-        this.value = value;
+        this._type = type;
+        this._ePtr = ePtr;
     }
+    
+    get type() { return this._type; }
+    get ePtr() { return this._ePtr; }
+    
+    static box(type, value)
+    {
+        return new TypedValue(type, EPtr.box(value));
+    }
+    
+    get value() { return this.ePtr.loadValue(); }
     
     toString()
     {
-        return this.type + "(" + this.value + ")";
+        return this.type + "(" + this.ePtr + ")";
     }
 }

@@ -33,7 +33,7 @@ function doPrep(code)
 
 function makeInt(program, value)
 {
-    return new TypedValue(program.intrinsics.int32, value);
+    return TypedValue.box(program.intrinsics.int32, value);
 }
 
 function checkInt(program, result, expected)

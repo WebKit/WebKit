@@ -1,5 +1,29 @@
 2017-08-31  Filip Pizlo  <fpizlo@apple.com>
 
+        There should only be one callFunction API in WSL
+        https://bugs.webkit.org/show_bug.cgi?id=176189
+
+        Reviewed by Saam Barati.
+        
+        This removes the need for callFunctionByRef, which was weird. It's now the case the TypedValue
+        is always a tuple of type and ePtr, and TypedValue has a super simple API for boxing and
+        unboxing single-cell values like ints.
+
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        (callFunction):
+        (callFunctionByRef): Deleted.
+        * WebGPUShadingLanguageRI/Test.js:
+        (makeInt):
+        * WebGPUShadingLanguageRI/TypedValue.js:
+        (TypedValue):
+        (TypedValue.prototype.get type):
+        (TypedValue.prototype.get ePtr):
+        (TypedValue.box):
+        (TypedValue.prototype.get value):
+        (TypedValue.prototype.toString):
+
+2017-08-31  Filip Pizlo  <fpizlo@apple.com>
+
         WSL EPtr does not need to carry around the type
         https://bugs.webkit.org/show_bug.cgi?id=176188
 
