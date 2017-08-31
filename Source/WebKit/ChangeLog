@@ -1,3 +1,24 @@
+2017-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Fix whitespace and formatting
+        https://bugs.webkit.org/show_bug.cgi?id=176134
+
+        Reviewed by Sam Weinig.
+
+        Bring the file formatting into compliance with WebKit Coding Style.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration _webStorageDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setWebStorageDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _indexedDBDatabaseDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setIndexedDBDatabaseDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _webSQLDatabaseDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setWebSQLDatabaseDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _cookieStorageFile]):
+        (-[_WKWebsiteDataStoreConfiguration _setCookieStorageFile:]):
+        (-[_WKWebsiteDataStoreConfiguration _resourceLoadStatisticsDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setResourceLoadStatisticsDirectory:]):
+
 2017-08-30  Youenn Fablet  <youenn@apple.com>
 
         Remove the list of removed caches from CacheStorageEngine
