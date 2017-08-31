@@ -128,7 +128,7 @@ bool bytesEqual(const Data& a, const Data& b)
     return !memcmp(a.data(), b.data(), a.size());
 }
 
-Salt makeSalt()
+static Salt makeSalt()
 {
     Salt salt;
     static_assert(salt.size() == 8, "Salt size");

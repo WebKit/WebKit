@@ -1,3 +1,27 @@
+2017-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Do not create a salt if the CacheStorage engine should not persist
+        https://bugs.webkit.org/show_bug.cgi?id=176138
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::~Engine): Ensuring that Caches will not try using the engine if it goes away.
+        (WebKit::CacheStorage::Engine::initialize): Removing making a salt if engine data is not persistent.
+        * NetworkProcess/cache/CacheStorageEngine.h: Check persistency according the root path. If it is null, caches should not try to do persistency.
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::cachesRootPath):
+        (WebKit::CacheStorage::Caches::initialize):
+        (WebKit::CacheStorage::Caches::detach):
+        (WebKit::CacheStorage::Caches::readCachesFromDisk):
+        (WebKit::CacheStorage::Caches::writeCachesToDisk):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        (WebKit::CacheStorage::Caches::shouldPersist const):
+        * NetworkProcess/cache/NetworkCacheData.cpp: Making makeSalt private again.
+        (WebKit::NetworkCache::makeSalt):
+        * NetworkProcess/cache/NetworkCacheData.h:
+
+
 2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Several InputMethodFilter tests are failing and crashing

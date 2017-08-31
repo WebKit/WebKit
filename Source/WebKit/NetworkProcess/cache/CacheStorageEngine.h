@@ -45,6 +45,8 @@ namespace CacheStorage {
 
 class Engine : public ThreadSafeRefCounted<Engine> {
 public:
+    ~Engine();
+
     static Engine& from(PAL::SessionID);
     static void destroyEngine(PAL::SessionID);
     static Ref<Engine> create(String&& rootPath) { return adoptRef(*new Engine(WTFMove(rootPath))); }

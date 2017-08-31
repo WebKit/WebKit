@@ -51,13 +51,15 @@ public:
     Vector<WebCore::DOMCache::CacheInfo> cacheInfos() const;
 
     void clearMemoryRepresentation();
-    void detach() { m_engine = nullptr; }
+    void detach();
 
 private:
     Caches(Engine&, const String& rootPath);
 
     void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCache::Error>&&)>&&);
     void writeCachesToDisk(WebCore::DOMCache::CompletionCallback&&);
+
+    bool shouldPersist() const { return !m_rootPath.isNull(); }
 
     bool m_isInitialized { false };
     Engine* m_engine { nullptr };

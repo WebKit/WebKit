@@ -48,6 +48,12 @@ static HashMap<PAL::SessionID, RefPtr<Engine>>& globalEngineMap()
     return map;
 }
 
+Engine::~Engine()
+{
+    for (auto& caches : m_caches.values())
+        caches->detach();
+}
+
 Engine& Engine::from(PAL::SessionID sessionID)
 {
     auto addResult = globalEngineMap().add(sessionID, nullptr);
@@ -238,7 +244,6 @@ void Engine::initialize(Function<void(std::optional<Error>&&)>&& callback)
     }
 
     if (!shouldPersist()) {
-        m_salt = makeSalt();
         callback(std::nullopt);
         return;
     }

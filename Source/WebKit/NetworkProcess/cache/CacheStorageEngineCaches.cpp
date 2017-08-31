@@ -38,6 +38,9 @@ namespace CacheStorage {
 
 static inline String cachesRootPath(Engine& engine, const String& origin)
 {
+    if (!engine.shouldPersist())
+        return { };
+
     Key key(engine.rootPath(), { }, { }, origin, engine.salt());
     return WebCore::pathByAppendingComponent(engine.rootPath(), key.partitionHashAsString());
 }
@@ -55,7 +58,7 @@ Caches::Caches(Engine& engine, const String& origin)
 
 void Caches::initialize(WebCore::DOMCache::CompletionCallback&& callback)
 {
-    if (m_isInitialized || !m_engine || !m_engine->shouldPersist()) {
+    if (m_isInitialized || m_rootPath.isNull()) {
         callback(std::nullopt);
         return;
     }
@@ -88,6 +91,12 @@ void Caches::initialize(WebCore::DOMCache::CompletionCallback&& callback)
         for (auto& callback : pendingCallbacks)
             callback(std::nullopt);
     });
+}
+
+void Caches::detach()
+{
+    m_engine = nullptr;
+    m_rootPath = { };
 }
 
 Cache* Caches::find(const String& name)
@@ -176,7 +185,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
     ASSERT(!m_isInitialized);
     ASSERT(m_caches.isEmpty());
 
-    if (!m_engine->shouldPersist()) {
+    if (!shouldPersist()) {
         callback(Vector<Cache> { });
         return;
     }
@@ -209,7 +218,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
 
 void Caches::writeCachesToDisk(CompletionCallback&& callback)
 {
-    if (!m_engine->shouldPersist()) {
+    if (!shouldPersist()) {
         callback(std::nullopt);
         return;
     }

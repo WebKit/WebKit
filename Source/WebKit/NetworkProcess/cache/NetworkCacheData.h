@@ -105,7 +105,6 @@ Data mapFile(const char* path);
 
 using Salt = std::array<uint8_t, 8>;
 
-Salt makeSalt();
 std::optional<Salt> readOrMakeSalt(const String& path);
 SHA1::Digest computeSHA1(const Data&, const Salt&);
 
