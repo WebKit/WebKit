@@ -1,3 +1,22 @@
+2017-08-30  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220296. rdar://problem/34177414
+
+    2017-08-04  Tim Horton  <timothy_horton@apple.com>
+
+            Add an API test for r220286
+            https://bugs.webkit.org/show_bug.cgi?id=175206
+
+            Reviewed by Simon Fraser.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/AnimatedResize.mm:
+            (-[AnimatedResizeWebView _webView:didChangeSafeAreaShouldAffectObscuredInsets:]):
+            (createAnimatedResizeWebView):
+            (TEST):
+            Add a test to ensure that we don't call
+            _webView:didChangeSafeAreaShouldAffectObscuredInsets: during an
+            animated resize.
+
 2017-08-28  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221153. rdar://problem/34113728
