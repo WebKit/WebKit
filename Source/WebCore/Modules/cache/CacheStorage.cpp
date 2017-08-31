@@ -119,7 +119,7 @@ void CacheStorage::retrieveCaches(WTF::Function<void()>&& callback)
         return;
 
     setPendingActivity(this);
-    m_connection->retrieveCaches(origin, [this, callback = WTFMove(callback)](CacheInfosOrError&& result) {
+    m_connection->retrieveCaches(origin, m_updateCounter, [this, callback = WTFMove(callback)](CacheInfosOrError&& result) {
         if (!m_isStopped) {
             // FIXME: We should probably propagate that error up to the promise based operation.
             ASSERT(result.hasValue());
@@ -127,17 +127,23 @@ void CacheStorage::retrieveCaches(WTF::Function<void()>&& callback)
                 callback();
                 return;
             }
+
             auto& cachesInfo = result.value();
 
-            ASSERT(scriptExecutionContext());
-            m_caches.removeAllMatching([&](auto& cache) {
-                return cachesInfo.findMatching([&](const auto& info) { return info.identifier == cache->identifier(); }) == notFound;
-            });
-            for (auto& info : cachesInfo) {
-                if (m_caches.findMatching([&](const auto& cache) { return info.identifier == cache->identifier(); }) == notFound)
-                    m_caches.append(Cache::create(*scriptExecutionContext(), WTFMove(info.name), info.identifier, m_connection.copyRef()));
-            }
+            if (m_updateCounter != cachesInfo.updateCounter) {
+                m_updateCounter = cachesInfo.updateCounter;
 
+                ASSERT(scriptExecutionContext());
+
+                Vector<Ref<Cache>> caches;
+                caches.reserveInitialCapacity(cachesInfo.infos.size());
+                for (auto& info : cachesInfo.infos) {
+                    auto position = m_caches.findMatching([&](const auto& cache) { return info.identifier == cache->identifier(); });
+                    caches.uncheckedAppend(position != notFound ? m_caches[position].copyRef() : Cache::create(*scriptExecutionContext(), WTFMove(info.name), info.identifier, m_connection.copyRef()));
+                }
+                m_caches = WTFMove(caches);
+
+            }
             callback();
         }
         unsetPendingActivity(this);

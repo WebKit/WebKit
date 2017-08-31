@@ -1,3 +1,32 @@
+2017-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Update CacheStorage caches only if it is updated
+        https://bugs.webkit.org/show_bug.cgi?id=176135
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing tests.
+
+        When retrieving caches from the engine, CacheStorage gets an update counter.
+        When this counter is different from the previous received one, CacheStorage will update its cache list.
+        Otherwise it will skip this update step.
+
+        * Modules/cache/CacheStorage.cpp:
+        (WebCore::CacheStorage::retrieveCaches):
+        * Modules/cache/CacheStorage.h:
+        * Modules/cache/CacheStorageConnection.cpp:
+        (WebCore::CacheStorageConnection::retrieveCaches):
+        * Modules/cache/CacheStorageConnection.h:
+        (WebCore::CacheStorageConnection::doRetrieveCaches):
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::CacheInfos::isolatedCopy):
+        * Modules/cache/DOMCache.h:
+        (WebCore::DOMCache::CacheInfos::encode const):
+        (WebCore::DOMCache::CacheInfos::decode):
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::WorkerCacheStorageConnection::doRetrieveCaches):
+        * Modules/cache/WorkerCacheStorageConnection.h:
+
 2017-08-31  Eric Carlson  <eric.carlson@apple.com>
 
         Switch HTMLMediaElement to release logging

@@ -52,7 +52,7 @@ private:
 
     void open(PAL::SessionID, uint64_t openRequestIdentifier, const String& origin, const String& cacheName);
     void remove(PAL::SessionID, uint64_t removeRequestIdentifier, uint64_t cacheIdentifier);
-    void caches(PAL::SessionID, uint64_t retrieveCachesIdentifier, const String& origin);
+    void caches(PAL::SessionID, uint64_t retrieveCachesIdentifier, const String& origin, uint64_t updateCounter);
 
     void clearMemoryRepresentation(PAL::SessionID, const String& origin);
 

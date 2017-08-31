@@ -56,6 +56,7 @@ private:
     String origin() const;
 
     Vector<Ref<Cache>> m_caches;
+    uint64_t m_updateCounter { 0 };
     Ref<CacheStorageConnection> m_connection;
     bool m_isStopped { false };
 };

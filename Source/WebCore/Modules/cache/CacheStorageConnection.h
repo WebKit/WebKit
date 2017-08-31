@@ -39,7 +39,7 @@ public:
 
     void open(const String& origin, const String& cacheName, DOMCache::CacheIdentifierCallback&&);
     void remove(uint64_t cacheIdentifier, DOMCache::CacheIdentifierCallback&&);
-    void retrieveCaches(const String& origin, DOMCache::CacheInfosCallback&&);
+    void retrieveCaches(const String& origin, uint64_t updateCounter, DOMCache::CacheInfosCallback&&);
 
     void retrieveRecords(uint64_t cacheIdentifier, DOMCache::RecordsCallback&&);
     void batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCache::RecordIdentifiersCallback&&);
@@ -62,7 +62,7 @@ protected:
 private:
     virtual void doOpen(uint64_t requestIdentifier, const String& /* origin */, const String& /* cacheName */) { openCompleted(requestIdentifier, makeUnexpected(DOMCache::Error::NotImplemented)); }
     virtual void doRemove(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */) { removeCompleted(requestIdentifier, makeUnexpected(DOMCache::Error::NotImplemented)); }
-    virtual void doRetrieveCaches(uint64_t requestIdentifier, const String& /* origin */) { updateCaches(requestIdentifier, { }); }
+    virtual void doRetrieveCaches(uint64_t requestIdentifier, const String& /* origin */, uint64_t /* updateCounter */) { updateCaches(requestIdentifier, { }); }
 
     virtual void doRetrieveRecords(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */) { updateRecords(requestIdentifier, { }); }
     virtual void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t /* cacheIdentifier */, const ResourceRequest&, CacheQueryOptions&&) { deleteRecordsCompleted(requestIdentifier, makeUnexpected(DOMCache::Error::NotImplemented)); }

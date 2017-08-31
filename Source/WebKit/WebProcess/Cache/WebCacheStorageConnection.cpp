@@ -66,9 +66,9 @@ void WebCacheStorageConnection::doRemove(uint64_t requestIdentifier, uint64_t ca
     connection().send(Messages::CacheStorageEngineConnection::Remove(m_sessionID, requestIdentifier, cacheIdentifier), 0);
 }
 
-void WebCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, const String& origin)
+void WebCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, const String& origin, uint64_t updateCounter)
 {
-    connection().send(Messages::CacheStorageEngineConnection::Caches(m_sessionID, requestIdentifier, origin), 0);
+    connection().send(Messages::CacheStorageEngineConnection::Caches(m_sessionID, requestIdentifier, origin, updateCounter), 0);
 }
 
 void WebCacheStorageConnection::doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier)

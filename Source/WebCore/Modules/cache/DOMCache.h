@@ -73,19 +73,43 @@ struct CacheInfo {
     String name;
 };
 
+struct CacheInfos {
+    CacheInfos isolatedCopy();
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, CacheInfos&);
+
+    Vector<CacheInfo> infos;
+    uint64_t updateCounter;
+};
+
 using CacheIdentifierOrError = Expected<uint64_t, Error>;
 using CacheIdentifierCallback = WTF::Function<void(const CacheIdentifierOrError&)>;
 
 using RecordIdentifiersOrError = Expected<Vector<uint64_t>, Error>;
 using RecordIdentifiersCallback = WTF::Function<void(RecordIdentifiersOrError&&)>;
 
-using CacheInfosOrError = Expected<Vector<WebCore::DOMCache::CacheInfo>, Error>;
+
+using CacheInfosOrError = Expected<CacheInfos, Error>;
 using CacheInfosCallback = WTF::Function<void(CacheInfosOrError&&)>;
 
 using RecordsOrError = Expected<Vector<Record>, Error>;
 using RecordsCallback = WTF::Function<void(RecordsOrError&&)>;
 
 using CompletionCallback = WTF::Function<void(std::optional<Error>&&)>;
+
+template<class Encoder> inline void CacheInfos::encode(Encoder& encoder) const
+{
+    encoder << infos;
+    encoder << updateCounter;
+}
+
+template<class Decoder> inline bool CacheInfos::decode(Decoder& decoder, CacheInfos& cacheInfos)
+{
+    if (!decoder.decode(cacheInfos.infos))
+        return false;
+    return decoder.decode(cacheInfos.updateCounter);
+}
 
 } // namespace DOMCache
 

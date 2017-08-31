@@ -56,9 +56,9 @@ void CacheStorageEngineConnection::remove(PAL::SessionID sessionID, uint64_t req
     });
 }
 
-void CacheStorageEngineConnection::caches(PAL::SessionID sessionID, uint64_t requestIdentifier, const String& origin)
+void CacheStorageEngineConnection::caches(PAL::SessionID sessionID, uint64_t requestIdentifier, const String& origin, uint64_t updateCounter)
 {
-    Engine::from(sessionID).retrieveCaches(origin, [protectedThis = makeRef(*this), this, sessionID, origin, requestIdentifier](CacheInfosOrError&& result) {
+    Engine::from(sessionID).retrieveCaches(origin, updateCounter, [protectedThis = makeRef(*this), this, sessionID, origin, requestIdentifier](CacheInfosOrError&& result) {
         m_connection.connection().send(Messages::WebCacheStorageConnection::UpdateCaches(requestIdentifier, result), sessionID.sessionID());
     });
 }

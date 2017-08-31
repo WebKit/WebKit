@@ -127,15 +127,15 @@ void Engine::remove(uint64_t cacheIdentifier, CacheIdentifierCallback&& callback
     });
 }
 
-void Engine::retrieveCaches(const String& origin, CacheInfosCallback&& callback)
+void Engine::retrieveCaches(const String& origin, uint64_t updateCounter, CacheInfosCallback&& callback)
 {
-    readCachesFromDisk(origin, [callback = WTFMove(callback)](CachesOrError&& cachesOrError) mutable {
+    readCachesFromDisk(origin, [updateCounter, callback = WTFMove(callback)](CachesOrError&& cachesOrError) mutable {
         if (!cachesOrError.hasValue()) {
             callback(makeUnexpected(cachesOrError.error()));
             return;
         }
 
-        callback(cachesOrError.value().get().cacheInfos());
+        callback(cachesOrError.value().get().cacheInfos(updateCounter));
     });
 }
 

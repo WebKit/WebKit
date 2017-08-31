@@ -55,7 +55,7 @@ public:
 
     void open(const String& origin, const String& cacheName, WebCore::DOMCache::CacheIdentifierCallback&&);
     void remove(uint64_t cacheIdentifier, WebCore::DOMCache::CacheIdentifierCallback&&);
-    void retrieveCaches(const String& origin, WebCore::DOMCache::CacheInfosCallback&&);
+    void retrieveCaches(const String& origin, uint64_t updateCounter, WebCore::DOMCache::CacheInfosCallback&&);
 
     void retrieveRecords(uint64_t cacheIdentifier, WebCore::DOMCache::RecordsCallback&&);
     void putRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCache::Record>&&, WebCore::DOMCache::RecordIdentifiersCallback&&);

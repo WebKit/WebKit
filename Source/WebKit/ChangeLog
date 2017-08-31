@@ -1,5 +1,36 @@
 2017-08-31  Youenn Fablet  <youenn@apple.com>
 
+        Update CacheStorage caches only if it is updated
+        https://bugs.webkit.org/show_bug.cgi?id=176135
+
+        Reviewed by Alex Christensen.
+
+        For each change to CacheStorageEngineCaches list of cache, CacheStorageEngineCaches increments a counter.
+        When sending the list of caches, CacheStorageEngineCaches will compare its counter with the one provided.
+        If they sare the same, CacheStorageEngineCaches will return nothing.
+        Otherwise it returns the whole list of caches.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::retrieveCaches):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::initialize):
+        (WebKit::CacheStorage::Caches::open):
+        (WebKit::CacheStorage::Caches::remove):
+        (WebKit::CacheStorage::Caches::clearMemoryRepresentation):
+        (WebKit::CacheStorage::Caches::cacheInfos const):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        (WebKit::CacheStorage::Caches::updateCounter const):
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::caches):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::doRetrieveCaches):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+
+2017-08-31  Youenn Fablet  <youenn@apple.com>
+
         Introduce CacheStorageEngineCache to handle cache records
         https://bugs.webkit.org/show_bug.cgi?id=176137
 

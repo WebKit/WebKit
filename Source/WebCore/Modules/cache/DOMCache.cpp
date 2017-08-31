@@ -109,6 +109,15 @@ Record Record::copy() const
     return Record { identifier, updateResponseCounter, requestHeadersGuard, request, options, referrer, responseHeadersGuard, response, copyResponseBody(responseBody) };
 }
 
+CacheInfos CacheInfos::isolatedCopy()
+{
+    Vector<CacheInfo> isolatedCaches;
+    isolatedCaches.reserveInitialCapacity(infos.size());
+    for (const auto& info : infos)
+        isolatedCaches.uncheckedAppend(CacheInfo { info.identifier, info.name.isolatedCopy() });
+    return { WTFMove(isolatedCaches), updateCounter };
+}
+
 } // namespace DOMCache
 
 } // namespace WebCore

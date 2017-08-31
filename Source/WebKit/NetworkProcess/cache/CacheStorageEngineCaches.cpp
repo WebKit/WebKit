@@ -75,6 +75,8 @@ void Caches::initialize(WebCore::DOMCache::CompletionCallback&& callback)
     }
     m_storage = storage.releaseNonNull();
     readCachesFromDisk([this, callback = WTFMove(callback)](Expected<Vector<Cache>, Error>&& result) {
+        makeDirty();
+
         if (!result.hasValue()) {
             callback(result.error());
 
@@ -99,7 +101,7 @@ void Caches::detach()
     m_rootPath = { };
 }
 
-Cache* Caches::find(const String& name)
+const Cache* Caches::find(const String& name) const
 {
     auto position = m_caches.findMatching([&](const auto& item) { return item.name() == name; });
     return (position != notFound) ? &m_caches[position] : nullptr;
@@ -118,6 +120,8 @@ Cache* Caches::find(uint64_t identifier)
 void Caches::open(String&& name, CacheIdentifierCallback&& callback)
 {
     ASSERT(m_engine);
+
+    makeDirty();
 
     uint64_t cacheIdentifier = m_engine->nextCacheIdentifier();
     m_caches.append(Cache { cacheIdentifier, WTFMove(name) });
@@ -142,9 +146,12 @@ void Caches::remove(uint64_t identifier, CompletionCallback&& callback)
         return;
     }
 
+    makeDirty();
+
     auto cache = WTFMove(m_caches[position]);
     m_caches.remove(position);
     m_removedCaches.append(WTFMove(cache));
+    ++m_updateCounter;
 
     writeCachesToDisk(WTFMove(callback));
 }
@@ -242,18 +249,27 @@ void Caches::writeCachesToDisk(CompletionCallback&& callback)
 
 void Caches::clearMemoryRepresentation()
 {
+    makeDirty();
     m_caches.clear();
     m_isInitialized = false;
     m_storage = nullptr;
 }
 
-Vector<CacheInfo> Caches::cacheInfos() const
+bool Caches::isDirty(uint64_t updateCounter) const
+{
+    ASSERT(m_updateCounter >= updateCounter);
+    return m_updateCounter != updateCounter;
+}
+
+CacheInfos Caches::cacheInfos(uint64_t updateCounter) const
 {
     Vector<CacheInfo> cacheInfos;
-    cacheInfos.reserveInitialCapacity(m_caches.size());
-    for (auto& cache : m_caches)
-        cacheInfos.uncheckedAppend(CacheInfo { cache.identifier(), cache.name() });
-    return cacheInfos;
+    if (isDirty(updateCounter)) {
+        cacheInfos.reserveInitialCapacity(m_caches.size());
+        for (auto& cache : m_caches)
+            cacheInfos.uncheckedAppend(CacheInfo { cache.identifier(), cache.name() });
+    }
+    return { WTFMove(cacheInfos), m_updateCounter };
 }
 
 } // namespace CacheStorage

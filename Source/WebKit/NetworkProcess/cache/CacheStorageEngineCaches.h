@@ -39,19 +39,17 @@ public:
     static Ref<Caches> create(Engine& engine, const String& origin) { return adoptRef(*new Caches { engine, origin }); }
 
     void initialize(WebCore::DOMCache::CompletionCallback&&);
-
-    bool isInitialized() const { return m_isInitialized; }
-
-    Cache* find(const String& name);
-    Cache* find(uint64_t identifier);
-
     void open(String&& name, WebCore::DOMCache::CacheIdentifierCallback&&);
     void remove(uint64_t identifier, WebCore::DOMCache::CompletionCallback&&);
-
-    Vector<WebCore::DOMCache::CacheInfo> cacheInfos() const;
-
     void clearMemoryRepresentation();
+
     void detach();
+
+    bool isInitialized() const { return m_isInitialized; }
+    WebCore::DOMCache::CacheInfos cacheInfos(uint64_t updateCounter) const;
+
+    const Cache* find(const String& name) const;
+    Cache* find(uint64_t identifier);
 
 private:
     Caches(Engine&, const String& rootPath);
@@ -61,8 +59,12 @@ private:
 
     bool shouldPersist() const { return !m_rootPath.isNull(); }
 
+    void makeDirty() { ++m_updateCounter; }
+    bool isDirty(uint64_t updateCounter) const;
+
     bool m_isInitialized { false };
     Engine* m_engine { nullptr };
+    uint64_t m_updateCounter { 0 };
     String m_rootPath;
     Vector<Cache> m_caches;
     Vector<Cache> m_removedCaches;

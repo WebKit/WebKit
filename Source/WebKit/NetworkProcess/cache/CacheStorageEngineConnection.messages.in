@@ -23,7 +23,7 @@
 messages -> CacheStorageEngineConnection {
     Open(PAL::SessionID sessionID, uint64_t requestIdentifier, String origin, String cacheName);
     Remove(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier);
-    Caches(PAL::SessionID sessionID, uint64_t requestIdentifier, String origin);
+    Caches(PAL::SessionID sessionID, uint64_t requestIdentifier, String origin, uint64_t updateCounter);
 
     ClearMemoryRepresentation(PAL::SessionID sessionID, String origin);
 
