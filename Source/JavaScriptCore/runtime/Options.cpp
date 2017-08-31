@@ -461,6 +461,8 @@ static void recomputeDependentOptions()
     // be to have this option enabled, and have platforms that don't support
     // it just silently use a single mapping.
     Options::useSeparatedWXHeap() = true;
+#else
+    Options::useSeparatedWXHeap() = false;
 #endif
 
     if (Options::alwaysUseShadowChicken())

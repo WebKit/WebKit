@@ -1,3 +1,17 @@
+2017-08-31  Saam Barati  <sbarati@apple.com>
+
+        useSeparatedWXHeap should never be true when not on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=176190
+
+        Reviewed by JF Bastien.
+
+        If you set useSeparatedWXHeap to true on X86_64, and launch the jsc shell,
+        the process insta-crashes. Let's silently ignore that option and set it
+        to false when not on iOS.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2017-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         Fix debug crashes.
