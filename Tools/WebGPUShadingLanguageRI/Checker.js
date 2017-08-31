@@ -128,6 +128,7 @@ class Checker extends Visitor {
         let rhsType = node.rhs.visit(this);
         if (!lhsType.equals(rhsType))
             throw new WTypeError(node.origin.originString, "Type mismatch in assignment: " + lhsType + " versus " + rhsType);
+        node.type = lhsType;
         return lhsType;
     }
     

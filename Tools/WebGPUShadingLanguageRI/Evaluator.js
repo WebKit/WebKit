@@ -50,8 +50,11 @@ class Evaluator extends Visitor {
     
     visitFunctionLikeBlock(node)
     {
-        for (let i = 0; i < node.argumentList.length; ++i)
-            node.parameters[i].ePtr.copyFrom(node.argumentList[i].visit(this));
+        for (let i = 0; i < node.argumentList.length; ++i) {
+            node.parameters[i].ePtr.copyFrom(
+                node.argumentList[i].visit(this),
+                node.parameters[i].type.size);
+        }
         return this.visitFunctionBody(node.body);
     }
     
@@ -62,15 +65,17 @@ class Evaluator extends Visitor {
     
     visitVariableDecl(node)
     {
+        if (!node.ePtr.buffer)
+            throw new Error("eptr without buffer in " + node);
         node.type.populateDefaultValue(node.ePtr.buffer, node.ePtr.offset);
         if (node.initializer)
-            node.ePtr.copyFrom(node.initializer.visit(this));
+            node.ePtr.copyFrom(node.initializer.visit(this), node.type.size);
     }
     
     visitAssignment(node)
     {
         let result = node.lhs.visit(this);
-        result.copyFrom(node.rhs.visit(this));
+        result.copyFrom(node.rhs.visit(this), node.type.size);
         return result;
     }
     
@@ -89,7 +94,7 @@ class Evaluator extends Visitor {
     
     visitIntLiteral(node)
     {
-        return EPtr.box(this._program.intrinsics.int32, node.value);
+        return EPtr.box(node.value);
     }
     
     visitCallExpression(node)

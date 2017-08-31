@@ -61,6 +61,9 @@ class StructType extends Type {
         if (typeArguments.length != this.typeParameters.length)
             throw new WTypeError(origin.originString, "Wrong number of type arguments to instantiation");
         
+        if (!typeArguments.length)
+            return this;
+        
         let substitution = Substitution.mapping(this.typeParameters, typeArguments);
         let instantiateImmediates = new InstantiateImmediates();
         let result = new StructType(this.origin, this.name, []);

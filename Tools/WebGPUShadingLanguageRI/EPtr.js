@@ -24,12 +24,9 @@
  */
 "use strict";
 
-class EPtr extends EValue {
-    constructor(type, buffer, offset)
+class EPtr {
+    constructor(buffer, offset)
     {
-        super(type);
-        if (!(type.unifyNode instanceof PtrType))
-            throw new Error("Cannot create EPtr with non-ptr type: " + type);
         this._buffer = buffer;
         this._offset = offset;
     }
@@ -39,13 +36,11 @@ class EPtr extends EValue {
     // function is here to help.
     //
     // In a real execution environment, uses of this manifest as SSA temporaries.
-    static box(type, value)
+    static box(value)
     {
-        if (!type || !value)
-            throw new Error("Need both type and value");
         let buffer = new EBuffer(1);
         buffer.set(0, value);
-        return new EPtr(new PtrType(null, "thread", type), buffer, 0);
+        return new EPtr(buffer, 0);
     }
     
     get buffer() { return this._buffer; }
@@ -56,12 +51,9 @@ class EPtr extends EValue {
         return this.buffer.get(this.offset);
     }
     
-    copyFrom(other)
+    copyFrom(other, size)
     {
-        let elementType = this.type.elementType;
-        if (!elementType)
-            throw new Error("No element type: " + this);
-        for (let i = elementType.size; i--;)
+        for (let i = size; i--;)
             this.buffer.set(i, other.buffer.get(i));
     }
     
@@ -69,7 +61,7 @@ class EPtr extends EValue {
     {
         if (!this.buffer)
             return "null";
-        return this.type + "B" + this.buffer.index + ":" + this.offset;
+        return "B" + this.buffer.index + ":" + this.offset;
     }
 }
 

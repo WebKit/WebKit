@@ -138,7 +138,9 @@ class Rewriter {
     
     visitAssignment(node)
     {
-        return new Assignment(node.origin, node.lhs.visit(this), node.rhs.visit(this));
+        let result = new Assignment(node.origin, node.lhs.visit(this), node.rhs.visit(this));
+        result.type = node.type.visit(this);
+        return result;
     }
     
     visitVariableRef(node)

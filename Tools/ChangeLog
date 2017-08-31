@@ -1,5 +1,47 @@
 2017-08-31  Filip Pizlo  <fpizlo@apple.com>
 
+        WSL EPtr does not need to carry around the type
+        https://bugs.webkit.org/show_bug.cgi?id=176188
+
+        Reviewed by Saam Barati.
+        
+        To validate that the interpreter is modeling a statically typed execution environment, it's
+        really best if values don't know their types at all. A pointer is just a pointer (i.e a buffer
+        and offset in our world), and it's the job of the AST node that uses it to figure out what its
+        type should be.
+        
+        I think this makes the code simpler overall.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        (callFunctionByRef):
+        (callFunction):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/EBufferBuilder.js:
+        (EBufferBuilder.prototype._createEPtr):
+        * WebGPUShadingLanguageRI/EPtr.js:
+        (EPtr):
+        (EPtr.box):
+        (EPtr.prototype.copyFrom):
+        (EPtr.prototype.toString):
+        * WebGPUShadingLanguageRI/EValue.js: Removed.
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitFunctionLikeBlock):
+        (Evaluator.prototype.visitVariableDecl):
+        (Evaluator.prototype.visitAssignment):
+        (Evaluator.prototype.visitIntLiteral):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitAssignment):
+        * WebGPUShadingLanguageRI/StructType.js:
+        (StructType.prototype.instantiate):
+        * WebGPUShadingLanguageRI/Test.js:
+        (checkInt):
+
+2017-08-31  Filip Pizlo  <fpizlo@apple.com>
+
         WSL doesn't need to wrap primitives like ints and floats in specialized classes like EInt and EFloat
         https://bugs.webkit.org/show_bug.cgi?id=176184
 

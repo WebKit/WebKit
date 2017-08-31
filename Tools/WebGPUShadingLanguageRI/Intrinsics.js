@@ -62,7 +62,7 @@ class Intrinsics {
             "native int operator+<>(int,int)",
             (func) => {
                 func.implementation =
-                    ([left, right]) => EPtr.box(this.int32, (left.loadValue() + right.loadValue()) | 0);
+                    ([left, right]) => EPtr.box((left.loadValue() + right.loadValue()) | 0);
             });
     }
     

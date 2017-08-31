@@ -31,7 +31,6 @@ load("Value.js");
 load("Expression.js");
 load("Rewriter.js");
 load("Visitor.js");
-load("EValue.js");
 
 load("AddressSpace.js");
 load("ArrayRefType.js");

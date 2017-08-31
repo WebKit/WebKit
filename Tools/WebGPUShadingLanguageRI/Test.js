@@ -38,7 +38,7 @@ function makeInt(program, value)
 
 function checkInt(program, result, expected)
 {
-    if (result.type != program.intrinsics.int32)
+    if (!result.type.equals(program.intrinsics.int32))
         throw new Error("Wrong result type; result: " + result);
     if (result.value != expected)
         throw new Error("Wrong result: " + result + " (expected " + expected + ")");

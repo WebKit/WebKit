@@ -36,7 +36,7 @@ class EBufferBuilder extends Visitor {
         type = type.instantiatedType;
         let buffer = new EBuffer(type.size);
         type.populateDefaultValue(buffer, 0);
-        return new EPtr(new PtrType(null, "thread", type), buffer, 0);
+        return new EPtr(buffer, 0);
     }
     
     _createEPtrForNode(node)
