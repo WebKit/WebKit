@@ -1,3 +1,48 @@
+2017-08-31  Antti Koivisto  <antti@apple.com>
+
+        Remove newBlockInsideInlineModel and anonymous inline block
+        https://bugs.webkit.org/show_bug.cgi?id=176181
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+        * fast/block/inside-inlines/crash-on-first-line-change.html:
+
+            Don't set newBlockInsideInlineModel.
+
+        * fast/block/inside-inlines/new-model: Removed.
+        * fast/block/inside-inlines/new-model/basic-float-intrusion-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/basic-float-intrusion.html: Removed.
+        * fast/block/inside-inlines/new-model/block-width-check-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/block-width-check.html: Removed.
+        * fast/block/inside-inlines/new-model/breaking-behavior-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/breaking-behavior.html: Removed.
+        * fast/block/inside-inlines/new-model/empty-block-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/empty-block.html: Removed.
+        * fast/block/inside-inlines/new-model/margin-collapse: Removed.
+        * fast/block/inside-inlines/new-model/margin-collapse/001-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/margin-collapse/001.html: Removed.
+        * fast/block/inside-inlines/new-model/margin-collapse/002-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/margin-collapse/002.html: Removed.
+        * fast/block/inside-inlines/new-model/margin-collapse/003-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/margin-collapse/003.html: Removed.
+        * fast/block/inside-inlines/new-model/margin-collapse/004-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/margin-collapse/004.html: Removed.
+        * fast/block/inside-inlines/new-model/margins-pushing-below-float-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/margins-pushing-below-float.html: Removed.
+        * fast/block/inside-inlines/new-model/paint-order-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/paint-order.html: Removed.
+        * fast/block/inside-inlines/new-model/self-collapsing-test-expected.html: Removed.
+        * fast/block/inside-inlines/new-model/self-collapsing-test.html: Removed.
+
+            These are reftests comparing newBlockInsideInlineModel and the current model and don't have value anymore.
+
+        * fast/block/inside-inlines/opacity-on-inline.html:
+
+            Don't set newBlockInsideInlineModel.
+            Marked this as failing since it only worked with newBlockInsideInlineModel enabled.
+            The test passes in Firefox and fails in Chrome.
+
 2017-08-31  Youenn Fablet  <youenn@apple.com>
 
         Add support for Request body stream cloning

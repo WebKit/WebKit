@@ -1,3 +1,70 @@
+2017-08-31  Antti Koivisto  <antti@apple.com>
+
+        Remove newBlockInsideInlineModel and anonymous inline block
+        https://bugs.webkit.org/show_bug.cgi?id=176181
+
+        Reviewed by Zalan Bujtas.
+
+        Anonymous inline block exists to support newBlockInsideInlineModel which was planned as the replacement for continuations.
+        It has never been enabled and it is time to remove it.
+
+        * page/Settings.in:
+        * rendering/InlineElementBox.cpp:
+        (WebCore::InlineElementBox::paint):
+        (WebCore::InlineElementBox::nodeAtPoint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::InlineFlowBox::anonymousInlineBlock const): Deleted.
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (WebCore::InlineFlowBox::hasAnonymousInlineBlock const): Deleted.
+        (WebCore::InlineFlowBox::setHasAnonymousInlineBlock): Deleted.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lineHeight const):
+        (WebCore::RenderBlock::baselinePosition const):
+        (WebCore::RenderBlock::renderName const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats):
+        (WebCore::RenderBlockFlow::childrenPreventSelfCollapsing const):
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths const):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::updateLogicalInlinePositions):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloats):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::layoutLineBoxes):
+        (WebCore::RenderBlockFlow::determineStartPosition):
+        (WebCore::RenderBlockFlow::matchedEndLine):
+        (WebCore::RenderBlockFlow::marginCollapseLinesFromStart): Deleted.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent const):
+        (WebCore::RenderBox::createsNewFormattingContext const):
+        (WebCore::RenderBox::avoidsFloats const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isAnonymousInlineBlock const): Deleted.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAnonymousBlock const):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        (WebCore::RootInlineBox::ascentAndDescentForBox const):
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::BreakingContext):
+        (WebCore::BreakingContext::handleReplaced):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::nextLineBreak):
+        * rendering/line/LineBreaker.h:
+        * rendering/line/LineLayoutState.h:
+        (WebCore::LineLayoutState::marginInfo):
+        (WebCore::LineLayoutState::prevFloatBottomFromAnonymousInlineBlock): Deleted.
+        (WebCore::LineLayoutState::maxFloatBottomFromAnonymousInlineBlock): Deleted.
+
 2017-08-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221445.

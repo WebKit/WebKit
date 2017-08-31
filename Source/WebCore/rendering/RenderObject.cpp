@@ -1595,11 +1595,6 @@ bool RenderObject::isComposited() const
     return hasLayer() && downcast<RenderLayerModelObject>(*this).layer()->isComposited();
 }
 
-bool RenderObject::isAnonymousInlineBlock() const
-{
-    return isAnonymous() && style().display() == INLINE_BLOCK && style().styleType() == NOPSEUDO && isRenderBlockFlow() && !isRubyRun() && !isRubyBase() && !isRuby(parent());
-}
-
 bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter hitTestFilter)
 {
     bool inside = false;

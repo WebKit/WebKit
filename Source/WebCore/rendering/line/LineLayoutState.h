@@ -152,8 +152,6 @@ public:
     }
 
     RenderBlockFlow::MarginInfo& marginInfo() { return m_marginInfo; }
-    LayoutUnit& prevFloatBottomFromAnonymousInlineBlock() { return m_prevFloatBottomFromAnonymousInlineBlock; }
-    LayoutUnit& maxFloatBottomFromAnonymousInlineBlock() { return m_maxFloatBottomFromAnonymousInlineBlock; }
 
     FloatList& floatList() { return m_floatList; }
 
@@ -172,8 +170,6 @@ private:
     LayoutUnit& m_repaintLogicalBottom;
 
     RenderBlockFlow::MarginInfo m_marginInfo;
-    LayoutUnit m_prevFloatBottomFromAnonymousInlineBlock;
-    LayoutUnit m_maxFloatBottomFromAnonymousInlineBlock;
 
     bool m_endLineMatched : 1;
     bool m_checkForFloatsFromLastLine : 1;

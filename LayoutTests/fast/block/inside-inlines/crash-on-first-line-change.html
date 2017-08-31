@@ -17,9 +17,6 @@ div {
 PASS if no crash.
 <div class=container><span><div id=foo></div></div></div>
 <script>
-if (window.internals)
-    internals.settings.setNewBlockInsideInlineModelEnabled(true)
-
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();  

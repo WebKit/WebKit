@@ -326,10 +326,9 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
     if (!beforeChild && isAfterContent(lastChild()))
         beforeChild = lastChild();
     
-    bool useNewBlockInsideInlineModel = settings().newBlockInsideInlineModelEnabled();
     bool childInline = newChildIsInline(*newChild, *this);
     // This code is for the old block-inside-inline model that uses continuations.
-    if (!useNewBlockInsideInlineModel && !childInline && !newChild->isFloatingOrOutOfFlowPositioned()) {
+    if (!childInline && !newChild->isFloatingOrOutOfFlowPositioned()) {
         // We are placing a block inside an inline. We have to perform a split of this
         // inline into continuations.  This involves creating an anonymous block box to hold
         // |newChild|.  We then make that block box a continuation of this inline.  We take all of
@@ -350,67 +349,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         return;
     }
     
-    if (!useNewBlockInsideInlineModel) {
-        RenderBoxModelObject::addChild(newChild, beforeChild);
-        newChild->setNeedsLayoutAndPrefWidthsRecalc();
-        return;
-    }
-
-    // This code is for the new block-inside-inline model that uses anonymous inline blocks.
-    // If the requested beforeChild is not one of our children, then this is most likely because
-    // there is an anonymous inline-block box within this object that contains the beforeChild.
-    // Insert the child into the anonymous inline-block box instead of here.
-    // A second possibility is that the beforeChild is an anonymous block inside the anonymous inline block.
-    // This can happen if inlines are inserted in between two of the anonymous inline block's block-level
-    // children after it has been created.
-    if (beforeChild && beforeChild->parent() != this) {
-        ASSERT(beforeChild->parent());
-        ASSERT(beforeChild->parent()->isAnonymousInlineBlock() || beforeChild->parent()->isAnonymousBlock());
-        if (beforeChild->parent()->isAnonymousInlineBlock()) {
-            if (!childInline || (childInline && beforeChild->parent()->firstChild() != beforeChild))
-                beforeChild->parent()->addChild(newChild, beforeChild);
-            else
-                addChild(newChild, beforeChild->parent());
-        } else if (beforeChild->parent()->isAnonymousBlock()) {
-            ASSERT(!beforeChild->parent()->parent() || beforeChild->parent()->parent()->isAnonymousInlineBlock());
-            ASSERT(childInline);
-            if (childInline || (!childInline && beforeChild->parent()->firstChild() != beforeChild))
-                beforeChild->parent()->addChild(newChild, beforeChild);
-            else
-                addChild(newChild, beforeChild->parent());
-        }
-        return;
-    }
-
-    if (!childInline) {
-        // We are placing a block inside an inline. We have to place the block inside an anonymous inline-block.
-        // This inline-block can house a sequence of contiguous block-level children, and they will all sit on the
-        // same "line" together. We try to reuse an existing inline-block if possible.
-        if (beforeChild) {
-            if (beforeChild->previousSibling() && beforeChild->previousSibling()->isAnonymousInlineBlock()) {
-                downcast<RenderBlockFlow>(beforeChild->previousSibling())->addChild(newChild);
-                return;
-            }
-        } else {
-            if (lastChild() && lastChild()->isAnonymousInlineBlock()) {
-                downcast<RenderBlockFlow>(lastChild())->addChild(newChild);
-                return;
-            }
-        }
- 
-        if (!newChild->isFloatingOrOutOfFlowPositioned()) {
-            // There was no suitable existing anonymous inline-block. Create a new one.
-            RenderBlockFlow* anonymousInlineBlock = new RenderBlockFlow(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), INLINE_BLOCK));
-            anonymousInlineBlock->initializeStyle();
-    
-            RenderBoxModelObject::addChild(anonymousInlineBlock, beforeChild);
-            anonymousInlineBlock->addChild(newChild);
-            return;
-        }
-    }
-
     RenderBoxModelObject::addChild(newChild, beforeChild);
-
     newChild->setNeedsLayoutAndPrefWidthsRecalc();
 }
 

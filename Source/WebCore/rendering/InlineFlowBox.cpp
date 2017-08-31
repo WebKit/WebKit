@@ -69,17 +69,6 @@ void InlineFlowBox::setHasBadChildList()
 
 #endif
 
-RenderBlockFlow* InlineFlowBox::anonymousInlineBlock() const
-{
-    if (!m_hasAnonymousInlineBlock || !firstChild())
-        return nullptr;
-    if (is<InlineFlowBox>(*firstChild()))
-        return downcast<InlineFlowBox>(*firstChild()).anonymousInlineBlock();
-    if (firstChild()->renderer().isAnonymousInlineBlock())
-        return &downcast<RenderBlockFlow>(firstChild()->renderer());
-    return nullptr;
-}
-
 LayoutUnit InlineFlowBox::getFlowSpacingLogicalWidth()
 {
     LayoutUnit totalWidth = marginBorderPaddingLogicalLeft() + marginBorderPaddingLogicalRight();
@@ -123,12 +112,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
     } else if (is<InlineFlowBox>(*child)) {
         if (downcast<InlineFlowBox>(*child).hasTextDescendants())
             setHasTextDescendantsOnAncestors(this);
-        if (downcast<InlineFlowBox>(*child).hasAnonymousInlineBlock())
-            setHasAnonymousInlineBlock(true);
     }
-    if (child->renderer().isAnonymousInlineBlock())
-        setHasAnonymousInlineBlock(true);
-
     if (descendantsHaveSameLineHeightAndBaseline() && !child->renderer().isOutOfFlowPositioned()) {
         const RenderStyle& parentStyle = lineStyle();
         const RenderStyle& childStyle = child->lineStyle();
@@ -663,11 +647,6 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
             LayoutUnit posAdjust = maxAscent - child->baselinePosition(baselineType);
             child->setLogicalTop(child->logicalTop() + top + posAdjust);
         }
-        
-        if (child->renderer().isAnonymousInlineBlock()) {
-            const auto& box = downcast<RenderBox>(child->renderer());
-            child->setLogicalTop(box.logicalTop());
-        }
 
         LayoutUnit newLogicalTop = child->logicalTop();
         LayoutUnit newLogicalTopIncludingMargins = newLogicalTop;
@@ -685,7 +664,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
                     : boxObject.borderRight() + boxObject.paddingRight();
             }
             newLogicalTopIncludingMargins = newLogicalTop;
-        } else if (!child->renderer().isBR() && !child->renderer().isAnonymousInlineBlock()) {
+        } else if (!child->renderer().isBR()) {
             const auto& box = downcast<RenderBox>(child->renderer());
             newLogicalTopIncludingMargins = newLogicalTop;
             LayoutUnit overSideMargin = child->isHorizontal() ? box.marginTop() : box.marginRight();
@@ -744,7 +723,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
     }
 
     if (isRootBox) {
-        if (!hasAnonymousInlineBlock() && (strictMode || hasTextChildren() || (descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants()))) {
+        if (strictMode || hasTextChildren() || (descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
             if (!setLineTop) {
                 setLineTop = true;
                 lineTop = logicalTop();
@@ -1064,8 +1043,7 @@ void InlineFlowBox::setOverflowFromLogicalRects(const LayoutRect& logicalLayoutO
 
 bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)
 {
-    // As long as we don't have an anonymous inline block on our line, we restrict our hit testing only to the foreground phase.
-    if (!hasAnonymousInlineBlock() && hitTestAction != HitTestForeground)
+    if (hitTestAction != HitTestForeground)
         return false;
 
     LayoutRect overflowRect(visualOverflowRect(lineTop, lineBottom));
@@ -1159,8 +1137,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
 void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    // As long as we don't have an anonymous inline block on our line, we restrict our painting only to a few phases.
-    if (!hasAnonymousInlineBlock() && (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines && paintInfo.phase != PaintPhaseTextClip && paintInfo.phase != PaintPhaseMask))
+    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines && paintInfo.phase != PaintPhaseTextClip && paintInfo.phase != PaintPhaseMask)
         return;
 
     LayoutRect overflowRect(visualOverflowRect(lineTop, lineBottom));
@@ -1204,14 +1181,11 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                 } else if (!inlineFlow.isInlineElementContinuation())
                     paintInfo.outlineObjects->add(&inlineFlow);
             }
-        } else if (paintInfo.phase == PaintPhaseMask) {
-            if (!hasAnonymousInlineBlock())
-                paintMask(paintInfo, paintOffset);
-            return;
-        } else {
+        } else if (paintInfo.phase == PaintPhaseMask)
+            paintMask(paintInfo, paintOffset);
+        else {
             // Paint our background, border and box-shadow.
-            if (!hasAnonymousInlineBlock())
-                paintBoxDecorations(paintInfo, paintOffset);
+            paintBoxDecorations(paintInfo, paintOffset);
         }
     }
 

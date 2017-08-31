@@ -244,8 +244,6 @@ appleMailPaginationQuirkEnabled initial=false
 
 attachmentElementEnabled initial=true, conditional=ATTACHMENT_ELEMENT
 
-newBlockInsideInlineModelEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
-
 deferredCSSParserEnabled initial=false
 
 repaintOutsideLayoutEnabled initial=false
