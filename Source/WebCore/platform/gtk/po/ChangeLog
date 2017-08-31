@@ -1,3 +1,12 @@
+2017-08-30  Rafael Fontenelle  <rafaelff@gnome.org>
+
+        [l10n] [pt_BR] Updated Brazilian Portuguese translation
+        https://bugs.webkit.org/show_bug.cgi?id=176107
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * pt_BR.po:
+
 2017-08-24  Piotr Drąg  <piotrdrag@gmail.com>
 
         [l10n] Updated Polish translation of WebKitGTK+ for 2.18
