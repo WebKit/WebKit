@@ -38,7 +38,6 @@
 #include "MediaElementSession.h"
 #include "MediaProducer.h"
 #include "VisibilityChangeClient.h"
-#include <pal/LoggerHelper.h>
 #include <wtf/Function.h>
 #include <wtf/WeakPtr.h>
 
@@ -65,7 +64,6 @@
 #endif
 
 namespace PAL {
-class Logger;
 class SleepDisabler;
 }
 
@@ -139,9 +137,6 @@ class HTMLMediaElement
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
     , private CDMClient
-#endif
-#if !RELEASE_LOG_DISABLED
-    , private PAL::LoggerHelper
 #endif
 {
 public:
@@ -894,14 +889,6 @@ private:
     void handleSeekToPlaybackPosition(double);
     void seekToPlaybackPositionEndedTimerFired();
 
-#if !RELEASE_LOG_DISABLED
-    const PAL::Logger& logger() const final { return *m_logger.get(); }
-    const char* className() const final { return "HTMLMediaElement"; }
-    WTFLogChannel& logChannel() const final;
-#endif
-
-    bool willLog(WTFLogLevel) const;
-
     WeakPtrFactory<HTMLMediaElement> m_weakFactory;
     Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
@@ -1118,10 +1105,6 @@ private:
 
     std::unique_ptr<MediaElementSession> m_mediaSession;
     size_t m_reportedExtraMemoryCost { 0 };
-
-#if !RELEASE_LOG_DISABLED
-    RefPtr<PAL::Logger> m_logger;
-#endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     friend class MediaControlsHost;

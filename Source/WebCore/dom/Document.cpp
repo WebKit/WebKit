@@ -204,7 +204,6 @@
 #include <ctime>
 #include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptCallStack.h>
-#include <pal/Logger.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
@@ -288,7 +287,7 @@
 #include "WebGPURenderingContext.h"
 #endif
 
-using namespace PAL;
+
 using namespace WTF;
 using namespace Unicode;
 
@@ -4865,10 +4864,6 @@ void Document::storageBlockingStateDidChange()
 
 void Document::privateBrowsingStateDidChange() 
 {
-    m_sessionID = SessionID::emptySessionID();
-    if (m_logger)
-        m_logger->setEnabled(this, sessionID().isAlwaysOnLoggingAllowed());
-
     for (auto* element : m_privateBrowsingStateChangedElements)
         element->privateBrowsingStateDidChange();
 }
@@ -7258,16 +7253,6 @@ void Document::setVlinkColor(const String& value)
 {
     if (auto* bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(vlinkAttr, value);
-}
-
-Logger& Document::logger() const
-{
-    if (!m_logger) {
-        m_logger = Logger::create(this);
-        m_logger->setEnabled(this, sessionID().isAlwaysOnLoggingAllowed());
-    }
-
-    return *m_logger;
 }
 
 } // namespace WebCore

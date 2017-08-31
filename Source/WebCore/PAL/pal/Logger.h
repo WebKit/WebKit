@@ -63,7 +63,7 @@ public:
     }
 
     template<typename... Arguments>
-    inline void logAlways(WTFLogChannel& channel, UNUSED_FUNCTION const Arguments&... arguments) const
+    inline void logAlways(WTFLogChannel& channel, const Arguments&... arguments) const
     {
 #if RELEASE_LOG_DISABLED
         // "Standard" WebCore logging goes to stderr, which is captured in layout test output and can generally be a problem
@@ -200,6 +200,25 @@ private:
 
     const void* m_owner;
     bool m_enabled { true };
+};
+
+class LogHelper {
+public:
+    virtual ~LogHelper() = default;
+
+    virtual const Logger& logger() const = 0;
+    virtual const char* className() const = 0;
+    virtual WTFLogChannel& logChannel() const = 0;
+
+    inline bool willLog(WTFLogLevel level) const { return logger().willLog(logChannel(), level); }
+
+#define ALWAYS_LOG(...)     logger().logAlways(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
+#define ERROR_LOG(...)      logger().error(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
+#define WARNING_LOG(...)    logger().warning(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
+#define NOTICE_LOG(...)     logger().notice(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
+#define INFO_LOG(...)       logger().info(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
+#define DEBUG_LOG(...)      logger().debug(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
+
 };
 
 template <>

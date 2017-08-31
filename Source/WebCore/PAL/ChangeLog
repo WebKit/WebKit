@@ -1,3 +1,15 @@
+2017-08-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r221445.
+
+        This change broke Sierra Release builds.
+
+        Reverted changeset:
+
+        "Switch HTMLMediaElement to release logging"
+        https://bugs.webkit.org/show_bug.cgi?id=176065
+        http://trac.webkit.org/changeset/221445
+
 2017-08-30  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [PAL] Fix "None" suffix in PAL
