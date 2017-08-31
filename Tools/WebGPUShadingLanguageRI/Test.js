@@ -49,8 +49,22 @@ function TEST_simpleGeneric() {
 
 let before = preciseTime();
 
+let filter = /.*/; // run everything by default
+if (this["arguments"]) {
+    for (let i = 0; i < arguments.length; i++) {
+        switch (arguments[0]) {
+        case "--filter":
+            filter = new RegExp(arguments[++i]);
+            break;
+        default:
+            throw new Error("Unknown argument: ", arguments[i]);
+        }
+    }
+}
+
+
 for (let s in this) {
-    if (s.startsWith("TEST_")) {
+    if (s.startsWith("TEST_") && s.match(filter)) {
         print(s + "...");
         this[s]();
         print("    OK!");

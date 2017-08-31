@@ -1,3 +1,15 @@
+2017-08-31  Keith Miller  <keith_miller@apple.com>
+
+        Add a filter argument to WSL test suite.
+        https://bugs.webkit.org/show_bug.cgi?id=176176
+
+        Reviewed by Filip Pizlo.
+
+        * WebGPUShadingLanguageRI/Test.js:
+        (this.string_appeared_here.i.switch):
+        (let.s.in.this.s.startsWith.string_appeared_here.s.match):
+        (let.s.in.this.s.startsWith): Deleted.
+
 2017-08-30  Filip Pizlo  <fpizlo@apple.com>
 
         WSL should be able to run a program that uses generics
