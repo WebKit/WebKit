@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Consuming Request body after getting a ReadableStream</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+
+function createRequestWithDisturbedReadableStream(callback) {
+    var request = new Request("", {body: "{\"key\": \"value\"}", method: "POST"});
+    var reader = request.body.getReader();
+    reader.read();
+    return callback(request);
+}
+
+promise_test(function(test) {
+    return createRequestWithDisturbedReadableStream(function(request) {
+        return promise_rejects(test, new TypeError(), request.blob());
+    });
+}, "Getting blob after reading the Request body");
+
+promise_test(function(test) {
+    return createRequestWithDisturbedReadableStream(function(request) {
+        return promise_rejects(test, new TypeError(), request.text());
+    });
+}, "Getting text after reading the Request body");
+
+promise_test(function(test) {
+    return createRequestWithDisturbedReadableStream(function(request) {
+        return promise_rejects(test, new TypeError(), request.json());
+    });
+}, "Getting json after reading the Request body");
+
+promise_test(function(test) {
+    return createRequestWithDisturbedReadableStream(function(request) {
+        return promise_rejects(test, new TypeError(), request.arrayBuffer());
+    });
+}, "Getting arrayBuffer after reading the Request body");
+
+    </script>
+  </body>
+</html>

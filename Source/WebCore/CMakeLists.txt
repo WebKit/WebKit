@@ -936,11 +936,11 @@ set(WebCore_SOURCES
     Modules/fetch/FetchBody.cpp
     Modules/fetch/FetchBodyConsumer.cpp
     Modules/fetch/FetchBodyOwner.cpp
+    Modules/fetch/FetchBodySource.cpp
     Modules/fetch/FetchHeaders.cpp
     Modules/fetch/FetchLoader.cpp
     Modules/fetch/FetchRequest.cpp
     Modules/fetch/FetchResponse.cpp
-    Modules/fetch/FetchResponseSource.cpp
     Modules/fetch/WorkerGlobalScopeFetch.cpp
 
     Modules/geolocation/Coordinates.cpp

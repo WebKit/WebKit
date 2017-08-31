@@ -1,0 +1,6 @@
+
+FAIL Getting blob after reading the Request body assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Getting text after reading the Request body assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Getting json after reading the Request body assert_throws: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected object "TypeError" ("TypeError")
+FAIL Getting arrayBuffer after reading the Request body assert_unreached: Should have rejected: undefined Reached unreachable code
+

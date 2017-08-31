@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Canon Inc.
+ * Copyright (C) 2017 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -10,9 +11,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Canon Inc. nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY CANON INC. AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -38,11 +36,11 @@ class ArrayBuffer;
 
 namespace WebCore {
 
-class FetchResponse;
+class FetchBodyOwner;
 
-class FetchResponseSource final : public ReadableStreamSource {
+class FetchBodySource final : public ReadableStreamSource {
 public:
-    FetchResponseSource(FetchResponse&);
+    FetchBodySource(FetchBodyOwner&);
 
     bool enqueue(RefPtr<JSC::ArrayBuffer>&& chunk) { return controller().enqueue(WTFMove(chunk)); }
     void close();
@@ -60,7 +58,7 @@ private:
     void setActive() final;
     void setInactive() final;
 
-    FetchResponse& m_response;
+    FetchBodyOwner& m_bodyOwner;
     bool m_isCancelling { false };
 };
 

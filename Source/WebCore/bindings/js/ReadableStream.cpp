@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ReadableStream.h"
 
+#include "JSDOMConvertSequences.h"
 #include "JSReadableStreamSource.h"
 #include "WebCoreJSClientData.h"
 
@@ -51,6 +52,29 @@ Ref<ReadableStream> ReadableStream::create(JSC::ExecState& execState, RefPtr<Rea
     auto newReadableStream = jsDynamicDowncast<JSReadableStream*>(vm, JSC::construct(&execState, constructor, constructType, constructData, args));
 
     return create(globalObject, *newReadableStream);
+}
+
+std::pair<Ref<ReadableStream>, Ref<ReadableStream>> ReadableStream::tee()
+{
+    auto& state = *m_globalObject->globalExec();
+    JSVMClientData* clientData = static_cast<JSVMClientData*>(state.vm().clientData);
+    const Identifier& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamTeePrivateName();
+
+    auto readableStreamTee = m_globalObject->get(&state, privateName);
+    ASSERT(readableStreamTee.isFunction());
+
+    CallData callData;
+    CallType callType = getCallData(readableStreamTee, callData);
+    ASSERT(callType != JSC::CallType::None);
+    MarkedArgumentBuffer arguments;
+    arguments.append(readableStream());
+    arguments.append(JSC::jsBoolean(true));
+    JSValue returnedValue = JSC::call(&state, readableStreamTee, callType, callData, JSC::jsUndefined(), arguments);
+
+    auto results = Detail::SequenceConverter<IDLInterface<ReadableStream>>::convert(state, returnedValue);
+
+    ASSERT(results.size() == 2);
+    return std::make_pair(results[0].releaseNonNull(), results[1].releaseNonNull());
 }
 
 }

@@ -324,14 +324,12 @@ void FetchResponse::consumeBodyAsStream()
 {
     ASSERT(m_shouldExposeBody);
     ASSERT(m_readableStreamSource);
-    m_isDisturbed = true;
     if (!isLoading()) {
-        body().consumeAsStream(*this, *m_readableStreamSource);
-        if (!m_readableStreamSource->isPulling())
-            m_readableStreamSource = nullptr;
+        FetchBodyOwner::consumeBodyAsStream();
         return;
     }
 
+    m_isDisturbed = true;
     ASSERT(m_bodyLoader);
 
     setBodyAsReadableStream();
@@ -373,16 +371,12 @@ void FetchResponse::feedStream()
     closeStream();
 }
 
-ReadableStreamSource* FetchResponse::createReadableStreamSource()
+RefPtr<ReadableStream> FetchResponse::createReadableStream(JSC::ExecState& state)
 {
-    ASSERT(!m_readableStreamSource);
-    ASSERT(!m_isDisturbed);
-
-    if (isBodyNull() || !m_shouldExposeBody)
+    if (!m_shouldExposeBody)
         return nullptr;
 
-    m_readableStreamSource = adoptRef(*new FetchResponseSource(*this));
-    return m_readableStreamSource.get();
+    return FetchBodyOwner::readableStream(state);
 }
 
 RefPtr<SharedBuffer> FetchResponse::BodyLoader::startStreaming()

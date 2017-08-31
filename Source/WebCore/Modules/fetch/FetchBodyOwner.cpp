@@ -100,7 +100,7 @@ void FetchBodyOwner::blob(Ref<DeferredPromise>&& promise)
     m_body->blob(*this, WTFMove(promise), m_contentType);
 }
 
-void FetchBodyOwner::cloneBody(const FetchBodyOwner& owner)
+void FetchBodyOwner::cloneBody(FetchBodyOwner& owner)
 {
     m_contentType = owner.m_contentType;
     if (owner.isBodyNull())
@@ -200,7 +200,6 @@ void FetchBodyOwner::text(Ref<DeferredPromise>&& promise)
 void FetchBodyOwner::loadBlob(const Blob& blob, FetchBodyConsumer* consumer)
 {
     // Can only be called once for a body instance.
-    ASSERT(isDisturbed());
     ASSERT(!m_blobLoader);
     ASSERT(!isBodyNull());
 
@@ -293,10 +292,21 @@ RefPtr<ReadableStream> FetchBodyOwner::readableStream(JSC::ExecState& state)
     if (isBodyNull())
         return nullptr;
 
-    if (!m_body->hasReadableStream())
+    if (!m_body->hasReadableStream()) {
+        ASSERT(!m_readableStreamSource);
+        m_readableStreamSource = adoptRef(*new FetchBodySource(*this));
         m_body->setReadableStream(ReadableStream::create(state, m_readableStreamSource));
-
+    }
     return m_body->readableStream();
+}
+
+void FetchBodyOwner::consumeBodyAsStream()
+{
+    ASSERT(m_readableStreamSource);
+
+    body().consumeAsStream(*this, *m_readableStreamSource);
+    if (!m_readableStreamSource->isPulling())
+        m_readableStreamSource = nullptr;
 }
 
 } // namespace WebCore

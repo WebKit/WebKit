@@ -1676,7 +1676,7 @@
 		4129DF851BB5B80700322A16 /* JSReadableStreamPrivateConstructors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4129DF831BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.cpp */; };
 		4129DF861BB5B80C00322A16 /* JSReadableStreamPrivateConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		413015D91C7B571400091C6E /* FetchResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 413015D51C7B570400091C6E /* FetchResponse.cpp */; };
-		413015D91C7B571400091C6F /* FetchResponseSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 413015D51C7B570400091C6F /* FetchResponseSource.cpp */; };
+		413015D91C7B571400091C6F /* FetchBodySource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 413015D51C7B570400091C6F /* FetchBodySource.cpp */; };
 		41380C261F3436A600155FDA /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41380C201F34368A00155FDA /* Cache.cpp */; };
 		41380C271F3436AC00155FDA /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 41380C251F34369A00155FDA /* Cache.h */; };
 		41380C281F3436AC00155FDA /* CacheStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41380C211F34368D00155FDA /* CacheStorage.cpp */; };
@@ -9382,9 +9382,9 @@
 		4129DF831BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamPrivateConstructors.cpp; sourceTree = "<group>"; };
 		4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamPrivateConstructors.h; sourceTree = "<group>"; };
 		413015D51C7B570400091C6E /* FetchResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchResponse.cpp; sourceTree = "<group>"; };
-		413015D51C7B570400091C6F /* FetchResponseSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchResponseSource.cpp; sourceTree = "<group>"; };
+		413015D51C7B570400091C6F /* FetchBodySource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FetchBodySource.cpp; sourceTree = "<group>"; };
 		413015D61C7B570400091C6E /* FetchResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchResponse.h; sourceTree = "<group>"; };
-		413015D61C7B570400091C6F /* FetchResponseSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchResponseSource.h; sourceTree = "<group>"; };
+		413015D61C7B570400091C6F /* FetchBodySource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchBodySource.h; sourceTree = "<group>"; };
 		413015D71C7B570400091C6E /* FetchResponse.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchResponse.idl; sourceTree = "<group>"; };
 		413015D81C7B570400091C6E /* FetchResponse.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FetchResponse.js; sourceTree = "<group>"; };
 		41380C201F34368A00155FDA /* Cache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Cache.cpp; path = Modules/cache/Cache.cpp; sourceTree = SOURCE_ROOT; };
@@ -18031,6 +18031,8 @@
 				41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */,
 				4147E2B31C89912600A7E715 /* FetchBodyOwner.cpp */,
 				4147E2B21C88337F00A7E715 /* FetchBodyOwner.h */,
+				413015D51C7B570400091C6F /* FetchBodySource.cpp */,
+				413015D61C7B570400091C6F /* FetchBodySource.h */,
 				41F54F821C50C4F600338488 /* FetchHeaders.cpp */,
 				41F54F831C50C4F600338488 /* FetchHeaders.h */,
 				41F54F841C50C4F600338488 /* FetchHeaders.idl */,
@@ -18057,8 +18059,6 @@
 				413015D61C7B570400091C6E /* FetchResponse.h */,
 				413015D71C7B570400091C6E /* FetchResponse.idl */,
 				413015D81C7B570400091C6E /* FetchResponse.js */,
-				413015D51C7B570400091C6F /* FetchResponseSource.cpp */,
-				413015D61C7B570400091C6F /* FetchResponseSource.h */,
 				418C39571C8DD6960051C8A3 /* WorkerGlobalScopeFetch.cpp */,
 				418C39581C8DD6960051C8A3 /* WorkerGlobalScopeFetch.h */,
 				418C39591C8DD6960051C8A3 /* WorkerGlobalScopeFetch.idl */,
@@ -31590,11 +31590,11 @@
 				41F54F8B1C50C50300338488 /* FetchBody.cpp in Sources */,
 				41CF8BE71D46226700707DC9 /* FetchBodyConsumer.cpp in Sources */,
 				4147E2B81C89912F00A7E715 /* FetchBodyOwner.cpp in Sources */,
+				413015D91C7B571400091C6F /* FetchBodySource.cpp in Sources */,
 				41F54F8D1C50C50800338488 /* FetchHeaders.cpp in Sources */,
 				4147E2B71C89912C00A7E715 /* FetchLoader.cpp in Sources */,
 				41F54F8E1C50C50C00338488 /* FetchRequest.cpp in Sources */,
 				413015D91C7B571400091C6E /* FetchResponse.cpp in Sources */,
-				413015D91C7B571400091C6F /* FetchResponseSource.cpp in Sources */,
 				84730D8A1248F0B300D3A9C9 /* FETile.cpp in Sources */,
 				84730D8C1248F0B300D3A9C9 /* FETurbulence.cpp in Sources */,
 				FD31609412B026F700C1A359 /* FFTConvolver.cpp in Sources */,
@@ -31837,7 +31837,6 @@
 				A871DE250A152AC800B12A68 /* HTMLHeadElement.cpp in Sources */,
 				A8EA7CAE0A192B9C00A8EF5F /* HTMLHeadingElement.cpp in Sources */,
 				A8EA7CB30A192B9C00A8EF5F /* HTMLHRElement.cpp in Sources */,
-				E41FA9B91F5758FF0033858A /* RenderTreeUpdaterMultiColumn.cpp in Sources */,
 				A871DE260A152AC800B12A68 /* HTMLHtmlElement.cpp in Sources */,
 				A871DE240A152AC800B12A68 /* HTMLIFrameElement.cpp in Sources */,
 				A8EA7D310A19385500A8EF5F /* HTMLImageElement.cpp in Sources */,
@@ -33444,6 +33443,7 @@
 				E48284081F44594C00863AC3 /* RenderTreeUpdaterFirstLetter.cpp in Sources */,
 				E48E33311F47437000BAB0EF /* RenderTreeUpdaterGeneratedContent.cpp in Sources */,
 				E48E332D1F47038000BAB0EF /* RenderTreeUpdaterListItem.cpp in Sources */,
+				E41FA9B91F5758FF0033858A /* RenderTreeUpdaterMultiColumn.cpp in Sources */,
 				E44614510CD68A3500FADA75 /* RenderVideo.cpp in Sources */,
 				BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */,
 				BE20507D18A458BF0080647E /* RenderVTTCue.cpp in Sources */,

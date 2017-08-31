@@ -1,0 +1,9 @@
+
+FAIL Read empty text request's body as readableStream assert_array_equals: Retrieve and verify stream lengths differ, expected 0 got 16
+FAIL Read empty blob request's body as readableStream assert_array_equals: Retrieve and verify stream lengths differ, expected 0 got 16
+FAIL Read blob request's body as readableStream assert_array_equals: Retrieve and verify stream lengths differ, expected 24 got 16
+FAIL Read text request's body as readableStream assert_array_equals: Retrieve and verify stream lengths differ, expected 24 got 16
+FAIL Read URLSearchParams request's body as readableStream assert_array_equals: Retrieve and verify stream lengths differ, expected 10 got 16
+FAIL Read array buffer request's body as readableStream assert_array_equals: Retrieve and verify stream lengths differ, expected 24 got 16
+FAIL Read form data request's body as readableStream assert_array_equals: Retrieve and verify stream lengths differ, expected 10 got 16
+

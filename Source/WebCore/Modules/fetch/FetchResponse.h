@@ -85,10 +85,10 @@ public:
     Ref<FetchResponse> cloneForJS();
 
 #if ENABLE(STREAMS_API)
-    ReadableStreamSource* createReadableStreamSource();
-    void consumeBodyAsStream();
-    void feedStream();
-    void cancel();
+    RefPtr<ReadableStream> createReadableStream(JSC::ExecState&);
+    void consumeBodyAsStream() final;
+    void feedStream() final;
+    void cancel() final;
 #endif
 
     using ResponseData = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;

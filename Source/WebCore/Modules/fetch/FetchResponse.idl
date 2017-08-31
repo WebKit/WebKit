@@ -83,7 +83,7 @@ dictionary FetchResponseInit {
     [PrivateIdentifier] boolean isLoading();
     [MayThrowException, PrivateIdentifier] void setStatus(unsigned short status, DOMString statusText);
     [PrivateIdentifier] void initializeWith(BodyInit body);
-    [NewObject, PrivateIdentifier] ReadableStreamSource createReadableStreamSource();
+    [CallWith=ScriptState, NewObject, PrivateIdentifier] ReadableStream? createReadableStream();
     [PrivateIdentifier] boolean isDisturbed();
     [PrivateIdentifier] void setBodyAsReadableStream();
 };

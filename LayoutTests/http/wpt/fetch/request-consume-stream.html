@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Request consume</title>
+    <meta name="help" href="https://fetch.spec.whatwg.org/#request">
+    <meta name="help" href="https://fetch.spec.whatwg.org/#body-mixin">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/fetch/api/resources/utils.js"></script>
+  </head>
+  <body>
+    <script>
+function createRequestWithBody(body)
+{
+    return new Request("", {body: "{\"key\": \"value\"}", method: "POST"});
+}
+
+promise_test(function(test) {
+    var body = "";
+    var request = createRequestWithBody("");
+    return validateStreamFromString(request.body.getReader(), "");
+}, "Read empty text request's body as readableStream");
+
+promise_test(function(test) {
+    var request = createRequestWithBody(new Blob([], { "type" : "text/plain" }));
+    return validateStreamFromString(request.body.getReader(), "");
+}, "Read empty blob request's body as readableStream");
+
+var formData = new FormData();
+formData.append("name", "value");
+var textData = JSON.stringify("This is request's body");
+var blob = new Blob([textData], { "type" : "text/plain" });
+var urlSearchParamsData = "name=value";
+var urlSearchParams = new URLSearchParams(urlSearchParamsData);
+
+promise_test(function(test) {
+    var request = createRequestWithBody(blob);
+    return validateStreamFromString(request.body.getReader(), textData);
+}, "Read blob request's body as readableStream");
+
+promise_test(function(test) {
+    var request = createRequestWithBody(textData);
+    return validateStreamFromString(request.body.getReader(), textData);
+}, "Read text request's body as readableStream");
+
+promise_test(function(test) {
+    var request = createRequestWithBody(urlSearchParams);
+    return validateStreamFromString(request.body.getReader(), urlSearchParamsData);
+}, "Read URLSearchParams request's body as readableStream");
+
+promise_test(function(test) {
+    var arrayBuffer = new ArrayBuffer(textData.length);
+    var int8Array = new Int8Array(arrayBuffer);
+    for (var cptr = 0; cptr < textData.length; cptr++)
+        int8Array[cptr] = textData.charCodeAt(cptr);
+
+    return validateStreamFromString(createRequestWithBody(arrayBuffer).body.getReader(), textData);
+}, "Read array buffer request's body as readableStream");
+
+promise_test(function(test) {
+    var request = createRequestWithBody(formData);
+    return validateStreamFromString(request.body.getReader(), "name=value");
+}, "Read form data request's body as readableStream");
+    </script>
+  </body>
+</html>

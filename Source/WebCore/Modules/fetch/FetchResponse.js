@@ -77,15 +77,13 @@ function body()
     if (!(this instanceof @Response))
         throw @makeGetterTypeError("Response", "body");
 
-    if (!this.@body) {
+    if (this.@body === @undefined) {
         if (@Response.prototype.@isDisturbed.@call(this)) {
             this.@body = new @ReadableStream();
             // Get reader to lock it.
             new @ReadableStreamDefaultReader(this.@body);
-        } else {
-            var source = @Response.prototype.@createReadableStreamSource.@call(this);
-            this.@body = source ? new @ReadableStream(source) : null;
-        }
+        } else
+            this.@body = @Response.prototype.@createReadableStream.@call(this);
     }
     return this.@body;
 }
@@ -101,11 +99,8 @@ function clone()
     var cloned = @Response.prototype.@cloneForJS.@call(this);
 
     // Let's create @body if response body is loading to provide data to both clones.
-    if (@Response.prototype.@isLoading.@call(this) && !this.@body) {
-        var source = @Response.prototype.@createReadableStreamSource.@call(this);
-        @assert(!!source);
-        this.@body = new @ReadableStream(source);
-    }
+    if (@Response.prototype.@isLoading.@call(this) && this.@body === @undefined)
+        this.@body = @Response.prototype.@createReadableStream.@call(this);
 
     if (this.@body) {
         var teedReadableStreams = @readableStreamTee(this.@body, true);

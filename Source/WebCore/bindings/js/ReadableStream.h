@@ -40,6 +40,8 @@ public:
 
     static Ref<ReadableStream> create(JSC::ExecState&, RefPtr<ReadableStreamSource>&&);
 
+    std::pair<Ref<ReadableStream>, Ref<ReadableStream>> tee();
+
     JSReadableStream* readableStream() { return guarded(); }
 
 protected:

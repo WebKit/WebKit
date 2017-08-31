@@ -31,8 +31,8 @@
 
 #include "Document.h"
 #include "FetchBodyOwner.h"
+#include "FetchBodySource.h"
 #include "FetchHeaders.h"
-#include "FetchResponseSource.h"
 #include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"
 #include "ReadableStreamSource.h"
@@ -137,11 +137,12 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         promise->reject();
         return;
     }
+
     m_consumer.resolve(WTFMove(promise));
 }
 
 #if ENABLE(STREAMS_API)
-void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& source)
+void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 {
     bool closeStream = false;
     if (isArrayBuffer()) {
@@ -270,7 +271,7 @@ FetchBody::TakenData FetchBody::take()
     return nullptr;
 }
 
-FetchBody FetchBody::clone() const
+FetchBody FetchBody::clone()
 {
     FetchBody clone(m_consumer);
 
@@ -286,6 +287,12 @@ FetchBody FetchBody::clone() const
         clone.m_data = textBody();
     else if (isURLSearchParams())
         clone.m_data = urlSearchParamsBody();
+
+    if (m_readableStream) {
+        auto clones = m_readableStream->tee();
+        m_readableStream = WTFMove(clones.first);
+        clone.m_readableStream = WTFMove(clones.second);
+    }
     return clone;
 }
 

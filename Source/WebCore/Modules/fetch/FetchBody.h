@@ -39,7 +39,7 @@
 namespace WebCore {
 
 class FetchBodyOwner;
-class FetchResponseSource;
+class FetchBodySource;
 class ScriptExecutionContext;
 
 class FetchBody {
@@ -51,7 +51,7 @@ public:
     void formData(FetchBodyOwner&, Ref<DeferredPromise>&& promise) { promise.get().reject(NotSupportedError); }
 
 #if ENABLE(STREAMS_API)
-    void consumeAsStream(FetchBodyOwner&, FetchResponseSource&);
+    void consumeAsStream(FetchBodyOwner&, FetchBodySource&);
 #endif
 
     bool isBlob() const { return WTF::holds_alternative<Ref<const Blob>>(m_data); }
@@ -80,7 +80,7 @@ public:
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&, const String&);
     void cleanConsumer() { m_consumer.clean(); }
 
-    FetchBody clone() const;
+    FetchBody clone();
     ReadableStream* readableStream() { return m_readableStream.get(); }
     void setReadableStream(Ref<ReadableStream>&& stream)
     {

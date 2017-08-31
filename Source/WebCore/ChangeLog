@@ -1,3 +1,55 @@
+2017-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Add support for Request body stream cloning
+        https://bugs.webkit.org/show_bug.cgi?id=176148
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/wpt/fetch/request-clone.html
+               http/wpt/fetch/request-consume-stream.html
+               http/wpt/fetch/request-stream-disturbed-1.html
+               http/wpt/fetch/request-stream-disturbed-2.html
+               http/wpt/fetch/request-stream-disturbed-3.html
+
+        Adding support for ReadableStream teeing for cloning fetch bodies.
+        Adding support for pushing request body data to its ReadableStream.
+        Renamed FetchResponseSource to FetchBodySource for that purpose.
+
+        Tests extracting body from a ReadableStream through JS API pass.
+        Tests extracting data stored in a ReadableStream to resolve fetch body promises are failing.
+        There is no support yet, this will be added as a follow-up.
+
+        * CMakeLists.txt:
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::consume):
+        (WebCore::FetchBody::consumeAsStream):
+        (WebCore::FetchBody::clone):
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBodyConsumer.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::cloneBody):
+        (WebCore::FetchBodyOwner::loadBlob):
+        (WebCore::FetchBodyOwner::readableStream):
+        (WebCore::FetchBodyOwner::consumeBodyAsStream):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::feedStream):
+        (WebCore::FetchBodyOwner::cancel):
+        * Modules/fetch/FetchBodySource.cpp: Renamed from Source/WebCore/Modules/fetch/FetchResponseSource.cpp.
+        * Modules/fetch/FetchBodySource.h: Renamed from Source/WebCore/Modules/fetch/FetchResponseSource.h.
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::consumeBodyAsStream):
+        (WebCore::FetchResponse::createReadableStream):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/FetchResponse.js:
+        (getter.body):
+        (clone):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ReadableStream.cpp:
+        (WebCore::ReadableStream::tee):
+        * bindings/js/ReadableStream.h:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2017-08-31  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::crossThreadCopy() in more places

@@ -1,0 +1,6 @@
+
+PASS Getting blob after getting the Request body - not disturbed, not locked 
+FAIL Getting text after getting the Request body - not disturbed, not locked assert_true: expected true got false
+FAIL Getting json after getting the Request body - not disturbed, not locked promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Getting arrayBuffer after getting the Request body - not disturbed, not locked assert_true: expected true got false
+

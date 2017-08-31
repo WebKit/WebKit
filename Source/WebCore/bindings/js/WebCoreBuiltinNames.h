@@ -47,7 +47,7 @@ namespace WebCore {
     macro(consumeChunk) \
     macro(controlledReadableStream) \
     macro(controller) \
-    macro(createReadableStreamSource) \
+    macro(createReadableStream) \
     macro(disturbed) \
     macro(failureKind) \
     macro(fetchRequest) \

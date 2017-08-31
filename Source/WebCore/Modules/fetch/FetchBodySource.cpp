@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Canon Inc.
+ * Copyright (C) 2017 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -10,9 +11,6 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Canon Inc. nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY CANON INC. AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -27,7 +25,7 @@
  */
 
 #include "config.h"
-#include "FetchResponseSource.h"
+#include "FetchBodySource.h"
 
 #if ENABLE(STREAMS_API)
 
@@ -35,48 +33,48 @@
 
 namespace WebCore {
 
-FetchResponseSource::FetchResponseSource(FetchResponse& response)
-    : m_response(response)
+FetchBodySource::FetchBodySource(FetchBodyOwner& bodyOwner)
+    : m_bodyOwner(bodyOwner)
 {
 }
 
-bool FetchResponseSource::isReadableStreamLocked() const
+bool FetchBodySource::isReadableStreamLocked() const
 {
     return controller().isControlledReadableStreamLocked();
 }
 
-void FetchResponseSource::setActive()
+void FetchBodySource::setActive()
 {
-    m_response.setPendingActivity(&m_response);
+    m_bodyOwner.setPendingActivity(&m_bodyOwner);
 }
 
-void FetchResponseSource::setInactive()
+void FetchBodySource::setInactive()
 {
-    m_response.unsetPendingActivity(&m_response);
+    m_bodyOwner.unsetPendingActivity(&m_bodyOwner);
 }
 
-void FetchResponseSource::doStart()
+void FetchBodySource::doStart()
 {
-    m_response.consumeBodyAsStream();
+    m_bodyOwner.consumeBodyAsStream();
 }
 
-void FetchResponseSource::doPull()
+void FetchBodySource::doPull()
 {
-    m_response.feedStream();
+    m_bodyOwner.feedStream();
 }
 
-void FetchResponseSource::doCancel()
+void FetchBodySource::doCancel()
 {
     m_isCancelling = true;
-    m_response.cancel();
+    m_bodyOwner.cancel();
 }
 
-void FetchResponseSource::close()
+void FetchBodySource::close()
 {
     controller().close();
     clean();
 }
-void FetchResponseSource::error(const String& value)
+void FetchBodySource::error(const String& value)
 {
     controller().error(value);
     clean();
