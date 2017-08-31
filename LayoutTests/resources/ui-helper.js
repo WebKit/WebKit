@@ -2,7 +2,7 @@
 window.UIHelper = class UIHelper {
     static isIOS()
     {
-        return navigator.userAgent.includes('iPhone');
+        return navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad');
     }
 
     static isWebKit2()
