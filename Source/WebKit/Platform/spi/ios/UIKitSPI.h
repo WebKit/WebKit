@@ -507,7 +507,6 @@ typedef NS_ENUM(NSInteger, UIWKSelectionTouch) {
 typedef NS_ENUM(NSInteger, UIWKSelectionFlags) {
     UIWKNone = 0,
     UIWKWordIsNearTap = 1,
-    UIWKIsBlockSelection = 2,
     UIWKPhraseBoundaryChanged = 4,
 };
 

@@ -2462,8 +2462,6 @@ static inline UIWKSelectionFlags toUIWKSelectionFlags(SelectionFlags flags)
     NSInteger uiFlags = UIWKNone;
     if (flags & WordIsNearTap)
         uiFlags |= UIWKWordIsNearTap;
-    if (flags & IsBlockSelection)
-        uiFlags |= UIWKIsBlockSelection;
     if (flags & PhraseBoundaryChanged)
         uiFlags |= UIWKPhraseBoundaryChanged;
 

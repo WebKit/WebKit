@@ -73,8 +73,7 @@ enum class SheetAction {
 enum SelectionFlags {
     None = 0,
     WordIsNearTap = 1 << 0,
-    IsBlockSelection = 1 << 1,
-    PhraseBoundaryChanged = 1 << 2,
+    PhraseBoundaryChanged = 1 << 1,
 };
 
 enum class SelectionHandlePosition {
