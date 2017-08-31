@@ -239,7 +239,7 @@ bool getFileModificationTime(const String& path, time_t& result)
     return true;
 }
 
-bool getFileMetadata(const String& path, FileMetadata& metadata)
+bool getFileMetadata(const String& path, FileMetadata& metadata, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
     CString fsRep = fileSystemRepresentation(path);
 
@@ -247,8 +247,14 @@ bool getFileMetadata(const String& path, FileMetadata& metadata)
         return false;
 
     struct stat fileInfo;
-    if (stat(fsRep.data(), &fileInfo))
-        return false;
+
+    if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes) {
+        if (stat(fsRep.data(), &fileInfo))
+            return false;
+    } else {
+        if (lstat(fsRep.data(), &fileInfo))
+            return false;
+    }
 
     String filename = pathGetFileName(path);
 
@@ -262,6 +268,19 @@ bool getFileMetadata(const String& path, FileMetadata& metadata)
     else
         metadata.type = FileMetadata::TypeFile;
     return true;
+}
+
+bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
+{
+    CString targetPathFSRep = fileSystemRepresentation(targetPath);
+    if (!targetPathFSRep.data() || targetPathFSRep.data()[0] == '\0')
+        return false;
+
+    CString symbolicLinkPathFSRep = fileSystemRepresentation(symbolicLinkPath);
+    if (!symbolicLinkPathFSRep.data() || symbolicLinkPathFSRep.data()[0] == '\0')
+        return false;
+
+    return !symlink(targetPathFSRep.data(), symbolicLinkPathFSRep.data());
 }
 
 String pathByAppendingComponent(const String& path, const String& component)

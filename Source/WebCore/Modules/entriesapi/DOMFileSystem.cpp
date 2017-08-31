@@ -46,7 +46,7 @@ struct ListedChild {
 static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& fullPath)
 {
     ASSERT(!isMainThread());
-    if (!fileIsDirectory(fullPath))
+    if (!fileIsDirectory(fullPath, ShouldFollowSymbolicLinks::No))
         return Exception { NotFoundError, "Path no longer exists or is no longer a directory" };
 
     auto childPaths = listDirectory(fullPath, "*");
@@ -54,7 +54,7 @@ static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& 
     listedChildren.reserveInitialCapacity(childPaths.size());
     for (auto& childPath : childPaths) {
         FileMetadata metadata;
-        if (!getFileMetadata(childPath, metadata))
+        if (!getFileMetadata(childPath, metadata, ShouldFollowSymbolicLinks::No))
             continue;
         listedChildren.uncheckedAppend(ListedChild { pathGetFileName(childPath), metadata.type });
     }

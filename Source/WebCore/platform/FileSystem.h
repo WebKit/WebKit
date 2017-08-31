@@ -88,6 +88,8 @@ enum FileLockMode {
     LockNonBlocking = 4
 };
 
+enum class ShouldFollowSymbolicLinks { No, Yes };
+
 struct FileMetadata;
 
 WEBCORE_EXPORT bool fileExists(const String&);
@@ -98,8 +100,8 @@ WEBCORE_EXPORT bool getFileSize(const String&, long long& result);
 WEBCORE_EXPORT bool getFileSize(PlatformFileHandle, long long& result);
 WEBCORE_EXPORT bool getFileModificationTime(const String&, time_t& result);
 WEBCORE_EXPORT bool getFileCreationTime(const String&, time_t& result); // Not all platforms store file creation time.
-bool getFileMetadata(const String&, FileMetadata&);
-bool fileIsDirectory(const String&);
+WEBCORE_EXPORT bool getFileMetadata(const String&, FileMetadata&, ShouldFollowSymbolicLinks);
+bool fileIsDirectory(const String&, ShouldFollowSymbolicLinks);
 WEBCORE_EXPORT String pathByAppendingComponent(const String& path, const String& component);
 String pathByAppendingComponents(const String& path, const Vector<String>& components);
 String lastComponentOfPathIgnoringTrailingSlash(const String& path);
@@ -109,6 +111,7 @@ WEBCORE_EXPORT String pathGetFileName(const String&);
 WEBCORE_EXPORT String directoryName(const String&);
 WEBCORE_EXPORT bool getVolumeFreeSpace(const String&, uint64_t&);
 WEBCORE_EXPORT std::optional<int32_t> getFileDeviceId(const CString&);
+WEBCORE_EXPORT bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
 
 WEBCORE_EXPORT void setMetadataURL(const String& path, const String& urlString, const String& referrer = { });
 

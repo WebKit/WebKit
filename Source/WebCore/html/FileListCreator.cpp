@@ -43,7 +43,7 @@ static void appendDirectoryFiles(const String& directory, const String& relative
 {
     for (auto& childPath : listDirectory(directory, "*")) {
         FileMetadata metadata;
-        if (!getFileMetadata(childPath, metadata))
+        if (!getFileMetadata(childPath, metadata, ShouldFollowSymbolicLinks::No))
             continue;
 
         if (metadata.isHidden)
@@ -80,7 +80,7 @@ Ref<FileList> FileListCreator::createFileList(const Vector<FileChooserFileInfo>&
 {
     Vector<RefPtr<File>> fileObjects;
     for (auto& info : paths) {
-        if (shouldResolveDirectories == ShouldResolveDirectories::Yes && fileIsDirectory(info.path))
+        if (shouldResolveDirectories == ShouldResolveDirectories::Yes && fileIsDirectory(info.path, ShouldFollowSymbolicLinks::No))
             appendDirectoryFiles(info.path, pathGetFileName(info.path), fileObjects);
         else
             fileObjects.append(File::createWithName(info.path, info.displayName));

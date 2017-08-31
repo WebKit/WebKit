@@ -123,6 +123,15 @@ static bool getFileStat(const String& path, GStatBuf* statBuffer)
     return g_stat(filename.get(), statBuffer) != -1;
 }
 
+static bool getFileLStat(const String& path, GStatBuf* statBuffer)
+{
+    GUniquePtr<gchar> filename = unescapedFilename(path);
+    if (!filename)
+        return false;
+
+    return g_lstat(filename.get(), statBuffer) != -1;
+}
+
 bool getFileSize(const String& path, long long& resultSize)
 {
     GStatBuf statResult;
@@ -155,11 +164,17 @@ bool getFileModificationTime(const String& path, time_t& modifiedTime)
     return true;
 }
 
-bool getFileMetadata(const String& path, FileMetadata& metadata)
+bool getFileMetadata(const String& path, FileMetadata& metadata, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
     GStatBuf statResult;
-    if (!getFileStat(path, &statResult))
-        return false;
+
+    if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes) {
+        if (!getFileStat(path, &statResult))
+            return false;
+    } else {
+        if (!getFileLStat(path, &statResult))
+            return false;
+    }
 
     String filename = pathGetFileName(path);
     metadata.isHidden = !filename.isEmpty() && filename[0] == '.';
@@ -201,6 +216,19 @@ bool makeAllDirectories(const String& path)
 String homeDirectoryPath()
 {
     return stringFromFileSystemRepresentation(g_get_home_dir());
+}
+
+bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
+{
+    CString targetPathFSRep = fileSystemRepresentation(targetPath);
+    if (!targetPathFSRep.data() || targetPathFSRep.data()[0] == '\0')
+        return false;
+
+    CString symbolicLinkPathFSRep = fileSystemRepresentation(symbolicLinkPath);
+    if (!symbolicLinkPathFSRep.data() || symbolicLinkPathFSRep.data()[0] == '\0')
+        return false;
+
+    return !symlink(targetPathFSRep.data(), symbolicLinkPathFSRep.data());
 }
 
 String pathGetFileName(const String& pathName)

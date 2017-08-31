@@ -80,7 +80,7 @@ void BlobDataFileReference::generateReplacementFile()
     m_replacementShouldBeGenerated = false;
     if (!m_replacementPath.isNull()) {
         FileMetadata metadata;
-        if (getFileMetadata(m_replacementPath, metadata))
+        if (getFileMetadata(m_replacementPath, metadata, ShouldFollowSymbolicLinks::Yes))
             m_size = metadata.length;
     }
 

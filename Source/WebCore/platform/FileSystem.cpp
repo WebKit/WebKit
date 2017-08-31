@@ -351,10 +351,10 @@ void unlockAndCloseFile(PlatformFileHandle handle)
     closeFile(handle);
 }
 
-bool fileIsDirectory(const String& path)
+bool fileIsDirectory(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
     FileMetadata metadata;
-    if (!getFileMetadata(path, metadata))
+    if (!getFileMetadata(path, metadata, shouldFollowSymbolicLinks))
         return false;
     return metadata.type == FileMetadata::TypeDirectory;
 }

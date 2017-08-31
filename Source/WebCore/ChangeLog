@@ -1,3 +1,57 @@
+2017-08-31  Chris Dumez  <cdumez@apple.com>
+
+        getFileMetadata() does not work as expected for symbolic links
+        https://bugs.webkit.org/show_bug.cgi?id=176143
+
+        Reviewed by Andreas Kling.
+
+        getFileMetadata() does not work as expected for symbolic links:
+        On POSIX, getFileMetadata() always followed symlinks, which meant that FileMetadata.type could
+        never be TypeSymbolicLink. On Windows, the function properly did not follow symlinks but failed to set
+        FileMetadata.type to TypeSymbolicLink when the file was a symbolic link.
+
+        This patch adds a new ShouldFollowSymbolicLinks parameter to getFileMetadata() so that
+        the call site can decide the behavior it wants. If getFileMetadata() is called on a
+        symbolic link with ShouldFollowSymbolicLinks::No as parameter, FileMetadata.type is now
+        properly set to TypeSymbolicLink.
+
+        No new tests, covered by new API test.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::listDirectoryWithMetadata):
+        It is important we do not follow symlinks here since the code wants to discard them
+        and does so by checking FileMetadata.type.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/File.cpp:
+        (WebCore::File::isDirectory const):
+
+        * html/FileListCreator.cpp:
+        (WebCore::appendDirectoryFiles):
+        (WebCore::FileListCreator::createFileList):
+        It is important we do not follow symlinks here since the code wants to discard them
+        and does so by checking FileMetadata.type.
+
+        * platform/FileSystem.cpp:
+        (WebCore::fileIsDirectory):
+        * platform/FileSystem.h:
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::getFileLStat):
+        (WebCore::getFileMetadata):
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::getFileMetadata):
+        (WebCore::createSymbolicLink):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::getFinalPathName):
+        (WebCore::getFileMetadata):
+        (WebCore::createSymbolicLink):
+        - Add new createSymbolicLink() function for testing purposes.
+        - On Posix, call lstat() instead of stat if ShouldFollowSymbolicLinks::No.
+        - On Windows, since FindFirstFileW() does not follow symlinks, resolve
+          final path using GetFinalPathNameByHandleW() if ShouldFollowSymbolicLinks::Yes.
+        - On Windows, properly set FileMetadata.type to TypeSymbolicLink if the file
+          is a symbolic link.
+
 2017-08-31  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r221226): [SOUP] libsoup-CRITICAL **: soup_cookies_to_cookie_header: assertion 'cookies != NULL' failed

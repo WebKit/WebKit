@@ -96,7 +96,7 @@ void BlobDataFileReference::startTrackingModifications()
 
     // FIXME: Some platforms provide better ways to listen for file system object changes, consider using these.
     FileMetadata metadata;
-    if (!getFileMetadata(m_path, metadata))
+    if (!getFileMetadata(m_path, metadata, ShouldFollowSymbolicLinks::Yes))
         return;
 
     m_expectedModificationTime = metadata.modificationTime;

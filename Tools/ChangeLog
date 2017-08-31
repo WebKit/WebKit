@@ -1,3 +1,15 @@
+2017-08-31  Chris Dumez  <cdumez@apple.com>
+
+        getFileMetadata() does not work as expected for symbolic links
+        https://bugs.webkit.org/show_bug.cgi?id=176143
+
+        Reviewed by Andreas Kling.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebCore/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-08-31  Filip Pizlo  <fpizlo@apple.com>
 
         WSL parser should pass the token as the origin to the AST

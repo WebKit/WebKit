@@ -141,11 +141,38 @@ bool getFileCreationTime(const String& path, time_t& time)
     return true;
 }
 
-bool getFileMetadata(const String& path, FileMetadata& metadata)
+static String getFinalPathName(const String& path)
+{
+    auto handle = openFile(path, OpenForRead);
+    if (!isHandleValid(handle))
+        return String();
+
+    StringVector<UChar> buffer(MAX_PATH);
+    if (::GetFinalPathNameByHandleW(handle, buffer.data(), buffer.size(), VOLUME_NAME_NT) >= MAX_PATH) {
+        closeFile(handle);
+        return String();
+    }
+    closeFile(handle);
+
+    buffer.shrink(wcslen(buffer.data()));
+    return String::adopt(WTFMove(buffer));
+}
+
+bool getFileMetadata(const String& path, FileMetadata& metadata, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
         return false;
+
+    bool isSymbolicLink = findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT && findData.dwReserved0 == IO_REPARSE_TAG_SYMLINK;
+    if (isSymbolicLink && shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes) {
+        String targetPath = getFinalPathName(path);
+        if (targetPath.isNull())
+            return false;
+        if (!getFindData(targetPath, findData))
+            return false;
+        isSymbolicLink = false;
+    }
 
     if (!getFileSizeFromFindData(findData, metadata.length))
         return false;
@@ -154,9 +181,19 @@ bool getFileMetadata(const String& path, FileMetadata& metadata)
     getFileModificationTimeFromFindData(findData, modificationTime);
     metadata.modificationTime = modificationTime;
     metadata.isHidden = findData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN;
-    metadata.type = (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? FileMetadata::TypeDirectory : FileMetadata::TypeFile;
+    if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+        metadata.type = FileMetadata::TypeDirectory;
+    else if (isSymbolicLink)
+        metadata.type = FileMetadata::TypeSymbolicLink;
+    else
+        metadata.type = FileMetadata::TypeFile;
 
     return true;
+}
+
+bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
+{
+    return !::CreateSymbolicLinkW(symbolicLinkPath.charactersWithNullTermination().data(), targetPath.charactersWithNullTermination().data(), 0);
 }
 
 bool fileExists(const String& path)
