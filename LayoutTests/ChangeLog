@@ -1,3 +1,14 @@
+2017-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Take into account removed caches in Caches::remove assertion
+        https://bugs.webkit.org/show_bug.cgi?id=176164
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/cache-storage/cache-remove-twice-expected.txt: Added.
+        * http/wpt/cache-storage/cache-remove-twice.html: Added.
+        * http/wpt/cache-storage/resources/cache-remove-twice-iframe.html: Added.
+
 2017-08-31  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, remove crash expectation for hopefully-fixed test

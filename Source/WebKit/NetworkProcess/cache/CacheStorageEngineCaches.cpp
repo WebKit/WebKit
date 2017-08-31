@@ -136,7 +136,11 @@ void Caches::remove(uint64_t identifier, CompletionCallback&& callback)
 
     auto position = m_caches.findMatching([&](const auto& item) { return item.identifier == identifier; });
 
-    ASSERT(position != notFound);
+    if (position == notFound) {
+        ASSERT(m_removedCaches.findMatching([&](const auto& item) { return item.identifier == identifier; }) != notFound);
+        callback(std::nullopt);
+        return;
+    }
 
     auto cache = WTFMove(m_caches[position]);
     m_caches.remove(position);
