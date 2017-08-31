@@ -107,6 +107,9 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
         }
     }
 
+    if (!cookies)
+        return { { }, false };
+
     GUniquePtr<char> cookieHeader(soup_cookies_to_cookie_header(cookies));
     soup_cookies_free(cookies);
 
