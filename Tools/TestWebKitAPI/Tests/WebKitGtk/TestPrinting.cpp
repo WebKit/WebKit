@@ -365,32 +365,6 @@ public:
         g_main_loop_quit(m_mainLoop);
     }
 
-    void sendKeyEvent(unsigned gdkKeyValue, GdkEventType type, unsigned modifiers)
-    {
-        GdkEvent* event = gdk_event_new(type);
-        event->key.keyval = gdkKeyValue;
-        event->key.state = modifiers;
-        event->key.window = gtk_widget_get_window(GTK_WIDGET(m_webView));
-        event->key.time = GDK_CURRENT_TIME;
-        g_object_ref(event->key.window);
-        gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_display_get_default())));
-
-        GUniqueOutPtr<GdkKeymapKey> keys;
-        gint nKeys;
-        if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeyValue, &keys.outPtr(), &nKeys))
-            event->key.hardware_keycode = keys.get()[0].keycode;
-
-        gtk_main_do_event(event);
-
-        gdk_event_free(event);
-    }
-
-    void sendKeyPressAndReleaseEvent(unsigned gdkKeyValue, unsigned modifiers = 0)
-    {
-        sendKeyEvent(gdkKeyValue, GDK_KEY_PRESS, modifiers);
-        sendKeyEvent(gdkKeyValue, GDK_KEY_RELEASE, modifiers);
-    }
-
     void createWebKitPrintOperation()
     {
         m_printOperation = adoptGRef(webkit_print_operation_new(m_webView));
@@ -410,23 +384,23 @@ public:
     void startPrinting()
     {
         // To start printing it is enough to press the Return key
-        sendKeyPressAndReleaseEvent(GDK_KEY_Return);
+        keyStroke(GDK_KEY_Return);
     }
 
     void jumpToFirstPrinter()
     {
         // Initially the GtkNotebook has focus, so we just need to press the Tab
         // key to jump to the first printer
-        sendKeyPressAndReleaseEvent(GDK_KEY_Tab);
+        keyStroke(GDK_KEY_Tab);
     }
 
     void jumpToCustomWidget()
     {
         // Jump back to the GtkNotebook
-        sendKeyPressAndReleaseEvent(GDK_KEY_Tab, GDK_SHIFT_MASK);
+        keyStroke(GDK_KEY_Tab, GDK_SHIFT_MASK);
         // Custom widget is on the third tab
-        sendKeyPressAndReleaseEvent(GDK_KEY_Right);
-        sendKeyPressAndReleaseEvent(GDK_KEY_Right);
+        keyStroke(GDK_KEY_Right);
+        keyStroke(GDK_KEY_Right);
     }
 
     void openDialogMoveThroughItAndWaitUntilClosed()
