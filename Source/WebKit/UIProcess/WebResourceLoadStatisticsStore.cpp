@@ -188,9 +188,9 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
     
     setDataRecordsBeingRemoved(true);
 
-    RunLoop::main().dispatch([prevalentResourceDomains = CrossThreadCopier<Vector<String>>::copy(prevalentResourceDomains), this, protectedThis = makeRef(*this)] () mutable {
+    RunLoop::main().dispatch([prevalentResourceDomains = crossThreadCopy(prevalentResourceDomains), this, protectedThis = makeRef(*this)] () mutable {
         WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(prevalentResourceDomains), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
-            m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(domainsWithDeletedWebsiteData)] () mutable {
+            m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis), topDomains = crossThreadCopy(domainsWithDeletedWebsiteData)] () mutable {
                 for (auto& prevalentResourceDomain : topDomains) {
                     auto& statistic = ensureResourceStatisticsForPrimaryDomain(prevalentResourceDomain);
                     ++statistic.dataRecordsRemoved;
@@ -250,7 +250,7 @@ void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
         // FIXME: This method being a static call on WebProcessProxy is wrong.
         // It should be on the data store that this object belongs to.
         WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
-            m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(topPrivatelyControlledDomainsWithWebsiteData)] () mutable {
+            m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis), topDomains = crossThreadCopy(topPrivatelyControlledDomainsWithWebsiteData)] () mutable {
                 for (auto& topPrivatelyControlledDomain : topDomains) {
                     auto& statistic = ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
                     statistic.grandfathered = true;
@@ -463,7 +463,7 @@ void WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdateForDomains(
 {
     // Helper function used by testing system. Should only be called from the main thread.
     ASSERT(RunLoop::isMain());
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd), shouldClearFirst] {
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), domainsToRemove = crossThreadCopy(domainsToRemove), domainsToAdd = crossThreadCopy(domainsToAdd), shouldClearFirst] {
         updateCookiePartitioningForDomains(domainsToRemove, domainsToAdd, shouldClearFirst);
     });
 }
@@ -661,7 +661,7 @@ void WebResourceLoadStatisticsStore::updateCookiePartitioning()
     if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
         return;
 
-    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd)] () {
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), domainsToRemove = crossThreadCopy(domainsToRemove), domainsToAdd = crossThreadCopy(domainsToAdd)] () {
         m_updateCookiePartitioningForDomainsHandler(domainsToRemove, domainsToAdd, ShouldClearFirst::No);
     });
 }
@@ -672,7 +672,7 @@ void WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains(const Ve
     if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
         return;
 
-    RunLoop::main().dispatch([this, shouldClearFirst, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd)] () {
+    RunLoop::main().dispatch([this, shouldClearFirst, protectedThis = makeRef(*this), domainsToRemove = crossThreadCopy(domainsToRemove), domainsToAdd = crossThreadCopy(domainsToAdd)] () {
         m_updateCookiePartitioningForDomainsHandler(domainsToRemove, domainsToAdd, shouldClearFirst);
     });
 

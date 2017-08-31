@@ -75,8 +75,8 @@ void IDBValue::setAsIsolatedCopy(const IDBValue& other)
     ASSERT(m_blobURLs.isEmpty() && m_blobFilePaths.isEmpty());
 
     m_data = other.m_data;
-    m_blobURLs = CrossThreadCopier<Vector<String>>::copy(other.m_blobURLs);
-    m_blobFilePaths = CrossThreadCopier<Vector<String>>::copy(other.m_blobFilePaths);
+    m_blobURLs = crossThreadCopy(other.m_blobURLs);
+    m_blobFilePaths = crossThreadCopy(other.m_blobFilePaths);
 }
 
 IDBValue IDBValue::isolatedCopy() const

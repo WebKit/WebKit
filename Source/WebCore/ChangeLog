@@ -1,3 +1,15 @@
+2017-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::crossThreadCopy() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=176169
+
+        Reviewed by Andreas Kling.
+
+        Use WTF::crossThreadCopy() in more places to make code more concise.
+
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::setAsIsolatedCopy):
+
 2017-08-31  Jer Noble  <jer.noble@apple.com>
 
         MSE-to-Canvas painting can become "stuck" during heavy workloads
