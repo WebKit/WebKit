@@ -1,3 +1,15 @@
+2017-08-31  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix error in protocol revving
+        https://bugs.webkit.org/show_bug.cgi?id=176191
+
+        Protocol definition was mastered out of later iOS submissions, causing them to not build.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:]):
+
 2017-08-31  Youenn Fablet  <youenn@apple.com>
 
         Update CacheStorage caches only if it is updated

@@ -2552,12 +2552,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     return _textSelectionAssistant != nil;
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state
 {
     [self changeSelectionWithGestureAt:point withGesture:gestureType withState:state withFlags:UIWKNone];
 }
-#endif
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state withFlags:(UIWKSelectionFlags)flags
 {
