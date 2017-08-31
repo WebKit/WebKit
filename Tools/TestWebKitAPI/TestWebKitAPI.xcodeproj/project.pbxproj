@@ -234,6 +234,7 @@
 		5C9E59411D3EB5AC00E3C62E /* ApplicationCache.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */; };
 		5C9E59421D3EB5AC00E3C62E /* ApplicationCache.db-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E593F1D3EB1DE00E3C62E /* ApplicationCache.db-shm */; };
 		5C9E59431D3EB5AC00E3C62E /* ApplicationCache.db-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E59401D3EB1DE00E3C62E /* ApplicationCache.db-wal */; };
+		5CB18BA81F5645E300EE23C4 /* ClickAutoFillButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */; };
 		5CB40B4E1F4B98D3007DC7B9 /* UIDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */; };
 		5CE354D91E70DA5C00BEFE3B /* WKContentExtensionStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */; };
 		5E4B1D2E1D404C6100053621 /* WKScrollViewDelegateCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B1D2C1D404C6100053621 /* WKScrollViewDelegateCrash.mm */; };
@@ -1312,6 +1313,7 @@
 		5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = ApplicationCache.db; sourceTree = "<group>"; };
 		5C9E593F1D3EB1DE00E3C62E /* ApplicationCache.db-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ApplicationCache.db-shm"; sourceTree = "<group>"; };
 		5C9E59401D3EB1DE00E3C62E /* ApplicationCache.db-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ApplicationCache.db-wal"; sourceTree = "<group>"; };
+		5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClickAutoFillButton.mm; sourceTree = "<group>"; };
 		5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIDelegate.mm; sourceTree = "<group>"; };
 		5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentExtensionStore.mm; sourceTree = "<group>"; };
 		5E4B1D2C1D404C6100053621 /* WKScrollViewDelegateCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKScrollViewDelegateCrash.mm; path = ../ios/WKScrollViewDelegateCrash.mm; sourceTree = "<group>"; };
@@ -1897,6 +1899,7 @@
 				37A709AC1E3EA7E800CA5969 /* BundleRangeHandleProtocol.h */,
 				1C2B817E1C891E4200A5529F /* CancelFontSubresource.mm */,
 				1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */,
+				5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */,
 				1AAD19F51C7CE20300831E47 /* Coding.mm */,
 				7C3DB8E21D12129B00AE8CC3 /* CommandBackForward.mm */,
 				A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */,
@@ -3435,6 +3438,7 @@
 				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
 				37A709AF1E3EA97E00CA5969 /* BundleRangeHandlePlugIn.mm in Sources */,
 				1C2B81831C891F0900A5529F /* CancelFontSubresourcePlugIn.mm in Sources */,
+				5CB18BA81F5645E300EE23C4 /* ClickAutoFillButton.mm in Sources */,
 				A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */,
 				A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */,
 				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,

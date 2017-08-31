@@ -149,6 +149,7 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_webView:(WKWebView *)webView didClickAutoFillButtonWithUserInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView didExceedBackgroundResourceLimitWhileInForeground:(_WKResourceLimit)limit WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element WK_API_AVAILABLE(macosx(10.12));

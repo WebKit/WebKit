@@ -108,6 +108,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
     m_delegateMethods.webViewDidNotHandleWheelEvent = [delegate respondsToSelector:@selector(_webView:didNotHandleWheelEvent:)];
     m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
+    m_delegateMethods.webViewDidClickAutoFillButtonWithUserInfo = [delegate respondsToSelector:@selector(_webView:didClickAutoFillButtonWithUserInfo:)];
     m_delegateMethods.webViewDidExceedBackgroundResourceLimitWhileInForeground = [delegate respondsToSelector:@selector(_webView:didExceedBackgroundResourceLimitWhileInForeground:)];
     m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL = [delegate respondsToSelector:@selector(_webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
@@ -489,6 +490,18 @@ static _WKAutoplayEvent toWKAutoplayEvent(WebCore::AutoplayEvent event)
     return _WKAutoplayEventDidPlayMediaPreventedFromAutoplaying;
 }
 
+void UIDelegate::UIClient::didClickAutoFillButton(WebPageProxy&, API::Object* userInfo)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewDidClickAutoFillButtonWithUserInfo)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView didClickAutoFillButtonWithUserInfo:userInfo ?static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
+}
+    
 void UIDelegate::UIClient::handleAutoplayEvent(WebKit::WebPageProxy&, WebCore::AutoplayEvent event, OptionSet<WebCore::AutoplayEventFlags> flags)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewHandleAutoplayEventWithFlags)

@@ -1,3 +1,20 @@
+2017-08-30  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's didClickAutoFillButton
+        https://bugs.webkit.org/show_bug.cgi?id=176139
+        <rdar://problem/29270035>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ClickAutoFillButton.mm: Added.
+        (didClickAutoFillButton):
+        (-[ClickAutoFillButton webProcessPlugIn:didCreateBrowserContextController:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[AutoFillDelegate _webView:didClickAutoFillButtonWithUserInfo:]):
+        (-[AutoFillDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Several InputMethodFilter tests are failing and crashing
