@@ -30,6 +30,7 @@
 #define WTF_MediaTime_h
 
 #include <wtf/FastMalloc.h>
+#include <wtf/text/WTFString.h>
 
 #include <cmath>
 #include <limits>
@@ -108,6 +109,7 @@ public:
     const uint32_t& timeScale() const { return m_timeScale; }
 
     void dump(PrintStream& out) const;
+    String toString() const;
 
     // Make the following casts errors:
     operator double() const = delete;
@@ -166,5 +168,19 @@ bool MediaTime::decode(Decoder& decoder, MediaTime& time)
 
 using WTF::MediaTime;
 using WTF::abs;
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WTF::MediaTime> {
+    static String toString(const WTF::MediaTime& time)
+    {
+        return time.toString();
+    }
+};
+}
 
 #endif

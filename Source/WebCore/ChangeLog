@@ -1,3 +1,22 @@
+2017-08-31  Eric Carlson  <eric.carlson@apple.com>
+
+        Switch HTMLMediaElement to release logging
+        https://bugs.webkit.org/show_bug.cgi?id=176065
+
+        Reviewed by Jer Noble.
+
+        * dom/Document.cpp:
+        (WebCore::Document::privateBrowsingStateDidChange): Disable the logger when private browsing
+        mode is enabled.
+        (WebCore::Document::logger const):
+        * dom/Document.h:
+
+        Convert debug-only logging to configurable release logging.
+        * html/HTMLMediaElement.cpp:
+        (PAL::LogArgument<WebCore::URL>::toString): Logger template for URL that returns the url as a
+        String when only when the LOG_DISABLED build flag is not defined. Returns "[url]" when it is.
+        * html/HTMLMediaElement.h:
+
 2017-08-31  David Quesada  <david_quesada@apple.com>
 
         WKNavigationDelegatePrivate client redirect SPI needs to be able to detect redirects scheduled before the document finishes loading
