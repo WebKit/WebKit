@@ -1,3 +1,75 @@
+2017-08-30  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should be able to run a program that uses generics
+        https://bugs.webkit.org/show_bug.cgi?id=176152
+
+        Reviewed by Keith Miller.
+        
+        This fixes the WSL parser and type checker to the point that we can:
+        
+        - Parse a function call!
+        - Type check a generic function call with an inferred type parameter.
+        - Instantiate a generic function.
+        - Inline a function call.
+        - Evaluate an inlined function call.
+        
+        This also changes the test suite so that it's a little nicer to add new tests. Functions whose
+        names start with "TEST_" are tests.
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/EBufferBuilder.js:
+        (EBufferBuilder.prototype.visitFuncParameter):
+        (EBufferBuilder):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitFunctionLikeBlock):
+        * WebGPUShadingLanguageRI/FuncDef.js:
+        (FuncDef.prototype.toString):
+        (FuncDef):
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.getUnique):
+        (FuncInstantiator):
+        * WebGPUShadingLanguageRI/Inliner.js:
+        (Inliner.prototype.visitCallExpression):
+        (Inliner):
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer):
+        * WebGPUShadingLanguageRI/NameContext.js:
+        (NameContext):
+        (NameContext.prototype.add):
+        (NameContext.prototype.get let):
+        (NameContext.prototype.defineAll):
+        (NameContext.get intrinsics): Deleted.
+        (NameContext.set program): Deleted.
+        (NameContext.get program): Deleted.
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitProgram):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseTerm):
+        (parsePossibleSuffix):
+        (genericParseCommaExpression):
+        (parseReturn):
+        * WebGPUShadingLanguageRI/Program.js:
+        (Program.prototype.resolveFuncOverload):
+        * WebGPUShadingLanguageRI/ProtocolDecl.js:
+        (ProtocolDecl.prototype.inherits):
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js:
+        (resolveOverloadImpl):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitFuncParameter):
+        (Rewriter.prototype.visitCallExpression):
+        (Rewriter.prototype._map): Deleted.
+        * WebGPUShadingLanguageRI/Test.js:
+        (checkInt):
+        (TEST_add1):
+        (TEST_simpleGeneric):
+        (let.s.in.this.s.startsWith):
+        (load): Deleted.
+        * WebGPUShadingLanguageRI/TypeVariable.js:
+        (TypeVariable.prototype.typeVariableUnify):
+        * WebGPUShadingLanguageRI/UnificationContext.js:
+        (UnificationContext.prototype.union):
+
 2017-08-30  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's didClickAutoFillButton

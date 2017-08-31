@@ -43,6 +43,7 @@ class NameResolver extends Visitor {
         let nameContext = new NameContext(this._nameContext);
         nameContext.program = node;
         nameContext.recognizeIntrinsics();
+        nameContext.handleDefining();
         node.intrinsics = nameContext.intrinsics;
         for (let statement of node.topLevelStatements)
             nameContext.add(statement);

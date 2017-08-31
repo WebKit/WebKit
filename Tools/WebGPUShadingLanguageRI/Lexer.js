@@ -154,4 +154,19 @@ class Lexer {
             throw e;
         }
     }
+    
+    testScope(callback)
+    {
+        let state = this.state;
+        try {
+            callback();
+            return true;
+        } catch (e) {
+            if (e instanceof WSyntaxError)
+                return false;
+            throw e;
+        } finally {
+            this.state = state;
+        }
+    }
 }

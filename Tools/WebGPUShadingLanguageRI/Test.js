@@ -26,12 +26,37 @@
 
 load("All.js");
 
+function checkInt(result, expected)
 {
-    let program = prepare("<test>", 0, "int foo(int x) { return x + 1; }");
-    let result = callFunction(program, "foo", [], [new EInt(program.intrinsics.int32, 42)]);
     if (!(result instanceof EInt))
         throw new Error("Wrong result type; result: " + result);
-    if (result.value != 43)
-        throw new Error("Wrong result: " + result);
+    if (result.value != expected)
+        throw new Error("Wrong result: " + result + " (expected " + expected + ")");
 }
 
+function TEST_add1() {
+    let program = prepare("<test>", 0, "int foo(int x) { return x + 1; }");
+    checkInt(callFunction(program, "foo", [], [new EInt(program.intrinsics.int32, 42)]), 43);
+}
+
+function TEST_simpleGeneric() {
+    let program = prepare(
+        "<test>", 0,
+        `T id<T>(T x) { return x; }
+         int foo(int x) { return id(x) + 1; }`);
+    checkInt(callFunction(program, "foo", [], [new EInt(program.intrinsics.int32, 42)]), 43);
+}
+
+let before = preciseTime();
+
+for (let s in this) {
+    if (s.startsWith("TEST_")) {
+        print(s + "...");
+        this[s]();
+        print("    OK!");
+    }
+}
+
+let after = preciseTime();
+
+print("That took " + (after - before) * 1000 + " ms.");

@@ -51,8 +51,8 @@ class Evaluator extends Visitor {
     visitFunctionLikeBlock(node)
     {
         for (let i = 0; i < node.argumentList.length; ++i)
-            node.parameters[i].lValue.value = node.argumentList[i].visit(this);
-        return visitFunctionBody(node.block);
+            node.parameters[i].ePtr.copyFrom(node.argumentList[i].visit(this));
+        return this.visitFunctionBody(node.body);
     }
     
     visitReturn(node)

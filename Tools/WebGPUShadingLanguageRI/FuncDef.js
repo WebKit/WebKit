@@ -36,7 +36,7 @@ class FuncDef extends Func {
     
     toString()
     {
-        return super.toString() + " { " + this.body + " }";
+        return super.toString() + " " + this.body;
     }
 }
 

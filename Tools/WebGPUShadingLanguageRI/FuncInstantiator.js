@@ -37,8 +37,8 @@ class FuncInstantiator {
             return func;
         
         let instances = this._instances.get(func);
-        if (!functions)
-            this._functions.set(func, functions = []);
+        if (!instances)
+            this._instances.set(func, instances = []);
         
         for (let instance of instances) {
             let ok = true;
@@ -62,7 +62,7 @@ class FuncInstantiator {
             func.body.visit(substitution));
         let instance = {func: resultingFunc, typeArguments};
         instances.push(instance);
-        return func;
+        return resultingFunc;
     }
 }
 

@@ -165,6 +165,7 @@ class Checker extends Visitor {
         });
         
         let overload = null;
+        let failures = [];
         for (let typeParameter of this._currentStatement.typeParameters) {
             if (!(typeParameter instanceof TypeVariable))
                 continue;
@@ -175,15 +176,25 @@ class Checker extends Visitor {
             if (!signatures)
                 continue;
             overload = resolveOverloadImpl(signatures, node.typeArguments, argumentTypes);
-            if (overload)
+            if (overload.func)
                 break;
+            failures.push(...overload.failures);
+            overload = null;
         }
         if (!overload) {
             overload = this._program.resolveFuncOverload(
                 node.name, node.typeArguments, argumentTypes);
+            if (!overload.func) {
+                failures.push(...overload.failures);
+                let message = "Did not find function for call";
+                if (failures.length) {
+                    let stringifyFailure =
+                        failure => failure.func + " did not match because: " + failure.reason;
+                    message += ", but considered:\n" + failures.map(stringifyFailure).join("\n")
+                }
+                throw new WTypeError(node.origin.originString, message);
+            }
         }
-        if (!overload)
-            throw new WTypeError(node.origin.originString, "Did not find function for call");
         node.func = overload.func;
         node.actualTypeArguments = overload.typeArguments.map(TypeRef.wrap);
         let result = overload.func.returnType.substituteToUnification(

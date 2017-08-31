@@ -30,7 +30,7 @@ class Rewriter {
         this._mapping = new Map();
     }
     
-    _map(oldItem, newItem)
+    _mapNode(oldItem, newItem)
     {
         this._mapping.set(oldItem, newItem);
         return newItem;
@@ -54,8 +54,8 @@ class Rewriter {
     
     visitFuncParameter(node)
     {
-        let result = new FuncParameter(node.name, node.type.visit(this));
-        this._map(node, result);
+        let result = new FuncParameter(node.origin, node.name, node.type.visit(this));
+        this._mapNode(node, result);
         result.lValue = node.lValue;
         return result;
     }
@@ -151,12 +151,13 @@ class Rewriter {
         let result = new CallExpression(
             node.origin, node.name,
             node.typeArguments.map(typeArgument => typeArgument.visit(this)),
-            node.argumentlist.map(argument => argument.visit(this)));
+            node.argumentList.map(argument => argument.visit(this)));
         let actualTypeArguments = node.actualTypeArguments;
         if (actualTypeArguments) {
             result.actualTypeArguments =
                 actualTypeArguments.map(actualTypeArgument => actualTypeArgument.visit(this));
         }
+        result.func = node.func;
         return result;
     }
     

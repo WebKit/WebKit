@@ -68,7 +68,7 @@ class ProtocolDecl extends Protocol {
             if (!signatures)
                 return false;
             let overload = resolveOverloadImpl(signatures, [], otherSignature.parameterTypes);
-            if (!overload)
+            if (!overload.func)
                 return false;
             let substitutedReturnType =
                 overload.func.returnType.substituteToUnification(

@@ -41,6 +41,8 @@ class EBufferBuilder extends Visitor {
     
     visitFuncParameter(node)
     {
+        if (!node.type)
+            throw new Error("Func parameter has no type: " + node);
         node.ePtr = this._createEPtr(node.type);
     }
 }

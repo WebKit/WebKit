@@ -35,7 +35,7 @@ class Inliner extends Rewriter {
     visitCallExpression(node)
     {
         if (node.func.isNative)
-            return node;
+            return super.visitCallExpression(node);
         return this._visiting.doVisit(node.func, () => {
             let func = this._program.funcInstantiator.getUnique(node.func, node.actualTypeArguments);
             _inlineFunction(this._program, func, this._visiting);

@@ -36,7 +36,8 @@ class NameContext {
     {
         this._funcMap = new Map();
         this._map = new Map();
-        this._defined = new Set();
+        this._set = new Set();
+        this._defined = null;
         this._currentStatement = null;
         this._delegate = delegate;
         this._intrinsics = null;
@@ -70,6 +71,7 @@ class NameContext {
         }
         
         if (thing.kind == Func) {
+            this._set.add(thing);
             let array = this._funcMap.get(thing.name);
             if (!array)
                 this._funcMap.set(thing.name, array = []);
@@ -78,6 +80,7 @@ class NameContext {
         }
         if (this._map.has(thing.name))
             throw new WTypeError(thing.origin.originString, "Duplicate name: " + thing.name);
+        this._set.add(thing);
         this._map.set(thing.name, thing);
     }
     
@@ -100,10 +103,18 @@ class NameContext {
         return null;
     }
     
+    handleDefining()
+    {
+        this._defined = new Set();
+    }
+    
     isDefined(thing)
     {
-        return this._defined.has(thing)
-            || (this._delegate && this._delegate.isDefined(thing));
+        if (this._set.has(thing)) {
+            return !this._defined
+                || this._defined.has(thing);
+        }
+        return this._delegate && this._delegate.isDefined(thing);
     }
     
     define(thing)
@@ -113,8 +124,7 @@ class NameContext {
     
     defineAll()
     {
-        for (let thing of this)
-            this.define(thing);
+        this._defined = null;
     }
     
     doStatement(statement, callback)

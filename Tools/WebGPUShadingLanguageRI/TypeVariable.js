@@ -60,7 +60,7 @@ class TypeVariable extends Type {
         if (realThis != this)
             return realThis.unify(unificationContext, other);
         
-        unificationContext.unify(this, other);
+        unificationContext.union(this, other);
         return true;
     }
     

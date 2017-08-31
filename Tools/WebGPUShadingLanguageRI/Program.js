@@ -58,7 +58,7 @@ class Program extends Node {
     {
         let functions = this.functions.get(name);
         if (!functions)
-            return null;
+            return {failures: []};
         
         return resolveOverloadImpl(functions, typeArguments, argumentTypes);
     }

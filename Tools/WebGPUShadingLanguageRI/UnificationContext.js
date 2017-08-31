@@ -33,20 +33,21 @@ class UnificationContext {
     
     union(a, b)
     {
-        a = find(a);
-        b = find(b);
+        a = this.find(a);
+        b = this.find(b);
         if (a == b)
             return;
         
-        if (!b.isUnifiable)
+        if (!a.isUnifiable) {
             [a, b] = [b, a];
-        if (!a.isUnifiable)
-            throw new Error("Cannot unify non-unifiable things " + a + " and " + b);
+            if (!a.isUnifiable)
+                throw new Error("Cannot unify non-unifiable things " + a + " and " + b);
+        }
         
         // Make sure that type parameters don't end up being roots.
         if (a.isUnifiable && b.isUnifiable && this._typeParameters.has(b))
             [a, b] = [b, a];
-
+        
         this._nextMap.set(a, b);
     }
     

@@ -177,9 +177,15 @@ function parse(program, origin, lineNumberOffset, text)
                 lexer.fail("Integer literal is not 32-bit integer");
             return new IntLiteral(token.origin, intVersion);
         }
+        if (token = tryConsumeKind("doubleLiteral")) {
+            token = consumeKind("doubleLiteral");
+            return new DoubleLiteral(token.origin, +token.text);
+        }
         // FIXME: Need support for float literals and probably other literals too.
-        token = consumeKind("doubleLiteral");
-        return new DoubleLiteral(token.origin, +token.text);
+        consume("(");
+        let result = parseExpression();
+        consume(")");
+        return result;
     }
     
     function parseConstexpr()
@@ -336,42 +342,46 @@ function parse(program, origin, lineNumberOffset, text)
                 break;
         }
         consume(")");
-        return new CallExpression(name.origin, name, typeArguments, argumentList);
+        return new CallExpression(name.origin, name.text, typeArguments, argumentList);
     }
     
     function parsePossibleSuffix()
     {
-        let simpleCase = lexer.backtrackingScope(() => {
-            let left = parseTerm();
-            let token;
-            while (token = tryConsume("++", "--", ".", "->", "[")) {
-                switch (token.text) {
-                case "++":
-                case "--":
-                    left = new SuffixCallAssignment(token.origin, "operator" + token.text, left);
-                    break;
-                case ".":
-                case "->":
-                    if (token.text == "->")
-                        left = new DereferenceExpression(token.origin, left);
-                    left = new DotExpression(token.origin, left, consumeKind("identifier"));
-                    break;
-                case "[": {
-                    let index = parseExpression();
-                    consume("]");
-                    left = new IndexExpression(token.origin, left, index);
-                    break;
-                }
-                default:
-                    throw new Error("Bad token: " + token);
-                }
-            }
-            return left;
+        // First check if this is a call expression.
+        let isCallExpression = lexer.testScope(() => {
+            consumeKind("identifier");
+            parseTypeArguments();
+            consume("(");
         });
-        if (simpleCase)
-            return simpleCase;
         
-        return parseCallExpression();
+        if (isCallExpression)
+            return parseCallExpression();
+        
+        let left = parseTerm();
+        let token;
+        while (token = tryConsume("++", "--", ".", "->", "[")) {
+            switch (token.text) {
+            case "++":
+            case "--":
+                left = new SuffixCallAssignment(token.origin, "operator" + token.text, left);
+                break;
+            case ".":
+            case "->":
+                if (token.text == "->")
+                    left = new DereferenceExpression(token.origin, left);
+                left = new DotExpression(token.origin, left, consumeKind("identifier"));
+                break;
+            case "[": {
+                let index = parseExpression();
+                consume("]");
+                left = new IndexExpression(token.origin, left, index);
+                break;
+            }
+            default:
+                throw new Error("Bad token: " + token);
+            }
+        }
+        return left;
     }
     
     function parsePossiblePrefix()
@@ -497,15 +507,16 @@ function parse(program, origin, lineNumberOffset, text)
             lexer.fail("Unexpected end of file");
         origin = origin.origin;
         for (;;) {
-            let effectfulExpression = lexer.backtrackingScope(parseEffectfulExpression);
+            let effectfulExpression = lexer.backtrackingScope(() => {
+                parseEffectfulExpression();
+                consume(",");
+            });
             if (!effectfulExpression) {
                 let final = finalExpressionParser();
                 list.push(final);
                 break;
             }
             list.push(effectfulExpression);
-            if (!tryConsume(","))
-                break;
         }
         return new CommaExpression(origin, list);
     }
@@ -530,7 +541,9 @@ function parse(program, origin, lineNumberOffset, text)
     function parseReturn()
     {
         let origin = consume("return").origin;
-        return new Return(origin, parseExpression());
+        let expression = parseExpression();
+        consume(";");
+        return new Return(origin, expression);
     }
     
     function parseVariableDecls()
