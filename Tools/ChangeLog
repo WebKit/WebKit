@@ -1,3 +1,38 @@
+2017-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL parser should pass the token as the origin to the AST
+        https://bugs.webkit.org/show_bug.cgi?id=176177
+
+        Reviewed by Keith Miller.
+        
+        Parse.js was sometimes passing token.origin as the origin, but that's just the filename
+        component of the origin. This fixes the problem and adds a test. The test previously failed
+        because instead of reporting the origin of the type error as "<test>:1", it reported undefined.
+
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseProtocolRef):
+        (consumeEndOfTypeArgs):
+        (parseTypeParameters):
+        (parseTerm):
+        (parseTypeArguments):
+        (parseType):
+        (parseTypeDef):
+        (parseNative):
+        (parseLeftOperatorCall):
+        (parsePossibleSuffix):
+        (parsePossiblePrefix):
+        (parsePossibleRelationalEquality):
+        (parseLeftLogicalExpression):
+        (parsePossibleTernaryConditional):
+        (parsePossibleAssignment):
+        (genericParseCommaExpression):
+        (parseReturn):
+        (parseVariableDecls):
+        (parseBlock):
+        * WebGPUShadingLanguageRI/Test.js:
+        (checkFail):
+        (TEST_nameResolutionFailure):
+
 2017-08-31  Keith Miller  <keith_miller@apple.com>
 
         Add a filter argument to WSL test suite.

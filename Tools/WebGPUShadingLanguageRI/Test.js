@@ -26,6 +26,11 @@
 
 load("All.js");
 
+function doPrep(code)
+{
+    return prepare("<test>", 0, code);
+}
+
 function checkInt(result, expected)
 {
     if (!(result instanceof EInt))
@@ -34,17 +39,37 @@ function checkInt(result, expected)
         throw new Error("Wrong result: " + result + " (expected " + expected + ")");
 }
 
+function checkFail(callback, predicate)
+{
+    try {
+        callback();
+        throw new Error("Did not throw exception");
+    } catch (e) {
+        if (predicate(e)) {
+            print("    Caught: " + e);
+            return;
+        }
+        throw e;
+    }
+}
+
 function TEST_add1() {
-    let program = prepare("<test>", 0, "int foo(int x) { return x + 1; }");
+    let program = doPrep("int foo(int x) { return x + 1; }");
     checkInt(callFunction(program, "foo", [], [new EInt(program.intrinsics.int32, 42)]), 43);
 }
 
 function TEST_simpleGeneric() {
-    let program = prepare(
-        "<test>", 0,
+    let program = doPrep(
         `T id<T>(T x) { return x; }
          int foo(int x) { return id(x) + 1; }`);
     checkInt(callFunction(program, "foo", [], [new EInt(program.intrinsics.int32, 42)]), 43);
+}
+
+function TEST_nameResolutionFailure()
+{
+    checkFail(
+        () => doPrep("int foo(int x) { return x + y; }"),
+        (e) => e instanceof WTypeError && e.message.indexOf("<test>:1") != -1);
 }
 
 let before = preciseTime();
