@@ -39,8 +39,9 @@
 
 static bool didLayout;
 static bool didEndAnimatedResize;
+static bool didChangeSafeAreaShouldAffectObscuredInsets;
 
-@interface AnimatedResizeWebView : WKWebView
+@interface AnimatedResizeWebView : WKWebView <WKUIDelegate>
 
 @end
 
@@ -53,9 +54,14 @@ static bool didEndAnimatedResize;
     didEndAnimatedResize = true;
 }
 
+- (void)_webView:(WKWebView *)webView didChangeSafeAreaShouldAffectObscuredInsets:(BOOL)safeAreaShouldAffectObscuredInsets
+{
+    didChangeSafeAreaShouldAffectObscuredInsets = true;
+}
+
 @end
 
-static RetainPtr<WKWebView> createAnimatedResizeWebView()
+static RetainPtr<AnimatedResizeWebView> createAnimatedResizeWebView()
 {
     RetainPtr<_WKProcessPoolConfiguration> processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
@@ -64,10 +70,7 @@ static RetainPtr<WKWebView> createAnimatedResizeWebView()
     RetainPtr<WKWebViewConfiguration> webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
 
-    RetainPtr<WKWebView> webView = adoptNS([[AnimatedResizeWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
+    RetainPtr<AnimatedResizeWebView> webView = adoptNS([[AnimatedResizeWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
     return webView;
 }
@@ -85,6 +88,8 @@ static RetainPtr<TestNavigationDelegate> createFirstVisuallyNonEmptyWatchingNavi
 TEST(WebKit2, DISABLED_ResizeWithHiddenContentDoesNotHang)
 {
     auto webView = createAnimatedResizeWebView();
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+
     auto navigationDelegate = createFirstVisuallyNonEmptyWatchingNavigationDelegate();
     [webView setNavigationDelegate:navigationDelegate.get()];
     RetainPtr<UIWindow> window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
@@ -107,6 +112,8 @@ TEST(WebKit2, DISABLED_ResizeWithHiddenContentDoesNotHang)
 TEST(WebKit2, AnimatedResizeDoesNotHang)
 {
     auto webView = createAnimatedResizeWebView();
+    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+
     auto navigationDelegate = createFirstVisuallyNonEmptyWatchingNavigationDelegate();
     [webView setNavigationDelegate:navigationDelegate.get()];
     RetainPtr<UIWindow> window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
@@ -162,6 +169,53 @@ TEST(WebKit2, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
         didReadLayoutSize = true;
     }];
     TestWebKitAPI::Util::run(&didReadLayoutSize);
+}
+
+TEST(WebKit2, AnimatedResizeBlocksViewportFitChanges)
+{
+    auto webView = createAnimatedResizeWebView();
+    [webView setUIDelegate:webView.get()];
+
+    // We need to have something loaded before beginning the animated
+    // resize, or it will bail.
+    [webView loadHTMLString:@"<head></head>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr<UIWindow> window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [window addSubview:webView.get()];
+    [window setHidden:NO];
+
+    [webView _beginAnimatedResizeWithUpdates:^ {
+        [webView setFrame:CGRectMake(0, 0, [webView frame].size.width + 100, 400)];
+    }];
+
+    // Load a page that will change the state of viewport-fit,
+    // in the middle of the resize.
+    [webView loadHTMLString:@"<head><meta name='viewport' content='viewport-fit=cover' /></head>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    didChangeSafeAreaShouldAffectObscuredInsets = false;
+
+    // Wait for a commit to come in /after/ loading the viewport-fit=cover
+    // page, and ensure that we didn't call the UIDelegate callback,
+    // because we're still in the resize. Then, end the resize.
+    [webView _doAfterNextPresentationUpdate:^ {
+        EXPECT_FALSE(didChangeSafeAreaShouldAffectObscuredInsets);
+        [webView _endAnimatedResize];
+    }];
+
+    TestWebKitAPI::Util::run(&didEndAnimatedResize);
+    didEndAnimatedResize = false;
+
+    // Wait for one more commit so that we see the viewport-fit state
+    // change actually take place (post-resize), and ensure that it does.
+    __block bool didGetCommitAfterEndAnimatedResize = false;
+    [webView _doAfterNextPresentationUpdate:^ {
+        didGetCommitAfterEndAnimatedResize = true;
+    }];
+    TestWebKitAPI::Util::run(&didGetCommitAfterEndAnimatedResize);
+
+    EXPECT_TRUE(didChangeSafeAreaShouldAffectObscuredInsets);
 }
 
 #endif
