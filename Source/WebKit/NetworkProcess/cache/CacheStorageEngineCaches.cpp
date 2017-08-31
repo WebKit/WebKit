@@ -101,17 +101,17 @@ void Caches::detach()
 
 Cache* Caches::find(const String& name)
 {
-    auto position = m_caches.findMatching([&](const auto& item) { return item.name == name; });
+    auto position = m_caches.findMatching([&](const auto& item) { return item.name() == name; });
     return (position != notFound) ? &m_caches[position] : nullptr;
 }
 
 Cache* Caches::find(uint64_t identifier)
 {
-    auto position = m_caches.findMatching([&](const auto& item) { return item.identifier == identifier; });
+    auto position = m_caches.findMatching([&](const auto& item) { return item.identifier() == identifier; });
     if (position != notFound)
         return &m_caches[position];
 
-    position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier == identifier; });
+    position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == identifier; });
     return (position != notFound) ? &m_removedCaches[position] : nullptr;
 }
 
@@ -120,7 +120,7 @@ void Caches::open(String&& name, CacheIdentifierCallback&& callback)
     ASSERT(m_engine);
 
     uint64_t cacheIdentifier = m_engine->nextCacheIdentifier();
-    m_caches.append(Cache { cacheIdentifier, WTFMove(name), { }, 0 });
+    m_caches.append(Cache { cacheIdentifier, WTFMove(name) });
     writeCachesToDisk([callback = WTFMove(callback), cacheIdentifier](std::optional<Error>&& error) mutable {
         if (error) {
             callback(makeUnexpected(error.value()));
@@ -134,10 +134,10 @@ void Caches::remove(uint64_t identifier, CompletionCallback&& callback)
 {
     ASSERT(m_engine);
 
-    auto position = m_caches.findMatching([&](const auto& item) { return item.identifier == identifier; });
+    auto position = m_caches.findMatching([&](const auto& item) { return item.identifier() == identifier; });
 
     if (position == notFound) {
-        ASSERT(m_removedCaches.findMatching([&](const auto& item) { return item.identifier == identifier; }) != notFound);
+        ASSERT(m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == identifier; }) != notFound);
         callback(std::nullopt);
         return;
     }
@@ -156,7 +156,7 @@ static inline Data encodeCacheNames(const Vector<Cache>& caches)
     uint64_t size = caches.size();
     encoder << size;
     for (auto& cache : caches)
-        encoder << cache.name;
+        encoder << cache.name();
 
     return Data { encoder.buffer(), encoder.bufferSize() };
 }
@@ -214,7 +214,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
         Vector<Cache> caches;
         caches.reserveInitialCapacity(result.value().size());
         for (auto& name : result.value())
-            caches.uncheckedAppend(Cache { m_engine->nextCacheIdentifier(), WTFMove(name), { }, 0 });
+            caches.uncheckedAppend(Cache { m_engine->nextCacheIdentifier(), WTFMove(name) });
 
         callback(WTFMove(caches));
     });
@@ -252,7 +252,7 @@ Vector<CacheInfo> Caches::cacheInfos() const
     Vector<CacheInfo> cacheInfos;
     cacheInfos.reserveInitialCapacity(m_caches.size());
     for (auto& cache : m_caches)
-        cacheInfos.uncheckedAppend(CacheInfo { cache.identifier, cache.name });
+        cacheInfos.uncheckedAppend(CacheInfo { cache.identifier(), cache.name() });
     return cacheInfos;
 }
 

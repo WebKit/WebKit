@@ -85,11 +85,6 @@ private:
     using CacheCallback = WTF::Function<void(CacheOrError&&)>;
     void readCache(uint64_t cacheIdentifier, CacheCallback&&);
 
-    void writeCacheRecords(uint64_t cacheIdentifier, Vector<uint64_t>&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
-    void removeCacheRecords(uint64_t cacheIdentifier, Vector<uint64_t>&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
-
-    Vector<uint64_t> queryCache(const Vector<WebCore::DOMCache::Record>&, const WebCore::ResourceRequest&, const WebCore::CacheQueryOptions&);
-
     Cache* cache(uint64_t cacheIdentifier);
 
     HashMap<String, Ref<Caches>> m_caches;

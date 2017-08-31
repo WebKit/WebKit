@@ -33,11 +33,30 @@ namespace WebKit {
 
 namespace CacheStorage {
 
-struct Cache {
-    uint64_t identifier { 0 };
-    String name;
-    Vector<WebCore::DOMCache::Record> records;
-    uint64_t nextRecordIdentifier { 0 };
+class Cache {
+public:
+    Cache(uint64_t identifier, String&& name);
+
+    uint64_t identifier() const { return m_identifier; }
+    const String& name() const { return m_name; }
+
+    Vector<WebCore::DOMCache::Record> records() const;
+    WebCore::DOMCache::CacheInfo info() const { return { m_identifier, m_name }; }
+
+    void put(Vector<WebCore::DOMCache::Record>&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
+    void remove(WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
+
+private:
+    Vector<uint64_t> queryCache(const WebCore::ResourceRequest&, const WebCore::CacheQueryOptions&);
+
+    void writeRecordsList(WebCore::DOMCache::CompletionCallback&&);
+    void writeRecordToDisk(WebCore::DOMCache::Record&);
+    void removeRecordFromDisk(WebCore::DOMCache::Record&);
+
+    uint64_t m_identifier { 0 };
+    String m_name;
+    Vector<WebCore::DOMCache::Record> m_records;
+    uint64_t m_nextRecordIdentifier { 0 };
 };
 
 } // namespace CacheStorage

@@ -1,3 +1,40 @@
+2017-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Introduce CacheStorageEngineCache to handle cache records
+        https://bugs.webkit.org/show_bug.cgi?id=176137
+
+        Reviewed by Alex Christensen.
+
+        CacheStorageEngineCache is the equivalent of WebCore Cache.
+        It contains a list of records that it needs to manage (add, update, remove).
+        Moving the logic of this management from CacheStorageEngine to this new class so as to ease future development.
+
+        * CMakeLists.txt:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::open):
+        (WebKit::CacheStorage::Engine::remove):
+        (WebKit::CacheStorage::Engine::retrieveRecords):
+        (WebKit::CacheStorage::Engine::putRecords):
+        (WebKit::CacheStorage::Engine::deleteMatchingRecords):
+        (WebKit::CacheStorage::Engine::cache):
+        (WebKit::CacheStorage::Engine::writeCacheRecords): Deleted.
+        (WebKit::CacheStorage::Engine::removeCacheRecords): Deleted.
+        (WebKit::CacheStorage::Engine::queryCache): Deleted.
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp: Added.
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        (WebKit::CacheStorage::Cache::identifier const):
+        (WebKit::CacheStorage::Cache::name const):
+        (WebKit::CacheStorage::Cache::info const):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::find):
+        (WebKit::CacheStorage::Caches::open):
+        (WebKit::CacheStorage::Caches::remove):
+        (WebKit::CacheStorage::encodeCacheNames):
+        (WebKit::CacheStorage::Caches::readCachesFromDisk):
+        (WebKit::CacheStorage::Caches::cacheInfos const):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-08-31  David Quesada  <david_quesada@apple.com>
 
         WKNavigationDelegatePrivate client redirect SPI needs to be able to detect redirects scheduled before the document finishes loading

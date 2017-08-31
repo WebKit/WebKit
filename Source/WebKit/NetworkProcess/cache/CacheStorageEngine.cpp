@@ -93,7 +93,7 @@ void Engine::open(const String& origin, const String& cacheName, CacheIdentifier
         Caches& caches = cachesOrError.value();
 
         if (auto* cache = caches.find(cacheName)) {
-            callback(cache->identifier);
+            callback(cache->identifier());
             return;
         }
 
@@ -146,93 +146,32 @@ void Engine::retrieveRecords(uint64_t cacheIdentifier, RecordsCallback&& callbac
             callback(makeUnexpected(result.error()));
             return;
         }
-        // FIXME: Pass records by reference.
-        auto& records = result.value().get().records;
 
-        Vector<Record> copy;
-        copy.reserveInitialCapacity(records.size());
-        for (auto& record : records)
-            copy.uncheckedAppend(record.copy());
-
-        callback(WTFMove(copy));
+        callback(result.value().get().records());
     });
 }
 
 void Engine::putRecords(uint64_t cacheIdentifier, Vector<Record>&& records, RecordIdentifiersCallback&& callback)
 {
-    readCache(cacheIdentifier, [this, cacheIdentifier, records = WTFMove(records), callback = WTFMove(callback)](CacheOrError&& result) mutable {
+    readCache(cacheIdentifier, [this, records = WTFMove(records), callback = WTFMove(callback)](CacheOrError&& result) mutable {
         if (!result.hasValue()) {
             callback(makeUnexpected(result.error()));
             return;
         }
 
-        Cache& cache = result.value();
-
-        WebCore::CacheQueryOptions options;
-        Vector<uint64_t> recordIdentifiers;
-        recordIdentifiers.reserveInitialCapacity(records.size());
-        for (auto& record : records) {
-            auto matchingRecords = Engine::queryCache(cache.records, record.request, options);
-            if (matchingRecords.isEmpty()) {
-                record.identifier = ++cache.nextRecordIdentifier;
-                recordIdentifiers.uncheckedAppend(record.identifier);
-                cache.records.append(WTFMove(record));
-            } else {
-                auto identifier = matchingRecords[0];
-                auto position = cache.records.findMatching([&](const auto& item) { return item.identifier == identifier; });
-                ASSERT(position != notFound);
-                if (position != notFound) {
-                    auto& existingRecord = cache.records[position];
-                    recordIdentifiers.uncheckedAppend(identifier);
-                    existingRecord.responseHeadersGuard = record.responseHeadersGuard;
-                    existingRecord.response = WTFMove(record.response);
-                    existingRecord.responseBody = WTFMove(record.responseBody);
-                    ++existingRecord.updateResponseCounter;
-                }
-            }
-        }
-        writeCacheRecords(cacheIdentifier, WTFMove(recordIdentifiers), [callback = WTFMove(callback)](RecordIdentifiersOrError&& result) mutable {
-            callback(WTFMove(result));
-        });
+        result.value().get().put(WTFMove(records), WTFMove(callback));
     });
 }
 
 void Engine::deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
 {
-    readCache(cacheIdentifier, [this, cacheIdentifier, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](CacheOrError&& result) mutable {
+    readCache(cacheIdentifier, [this, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](CacheOrError&& result) mutable {
         if (!result.hasValue()) {
             callback(makeUnexpected(result.error()));
             return;
         }
 
-        auto& currentRecords = result.value().get().records;
-
-        auto recordsToRemove = queryCache(currentRecords, request, options);
-        if (recordsToRemove.isEmpty()) {
-            callback({ });
-            return;
-        }
-
-        Vector<Record> recordsToKeep;
-        for (auto& record : currentRecords) {
-            if (recordsToRemove.findMatching([&](auto item) { return item == record.identifier; }) == notFound)
-                recordsToKeep.append(record.copy());
-        }
-        removeCacheRecords(cacheIdentifier, WTFMove(recordsToRemove), [this, cacheIdentifier, recordsToKeep = WTFMove(recordsToKeep), callback = WTFMove(callback)](RecordIdentifiersOrError&& result) mutable {
-            if (!result.hasValue()) {
-                callback(makeUnexpected(result.error()));
-                return;
-            }
-
-            auto* writtenCache = cache(cacheIdentifier);
-            if (!writtenCache) {
-                callback(makeUnexpected(Error::Internal));
-                return;
-            }
-            writtenCache->records = WTFMove(recordsToKeep);
-
-            callback(WTFMove(result.value()));
-        });
+        result.value().get().remove(WTFMove(request), WTFMove(options), WTFMove(callback));
     });
 }
 
@@ -304,18 +243,6 @@ void Engine::readCache(uint64_t cacheIdentifier, CacheCallback&& callback)
     callback(std::reference_wrapper<Cache> { *cache });
 }
 
-void Engine::writeCacheRecords(uint64_t cacheIdentifier, Vector<uint64_t>&& recordsIdentifiers, RecordIdentifiersCallback&& callback)
-{
-    // FIXME: Implement writing.
-    callback(WTFMove(recordsIdentifiers));
-}
-
-void Engine::removeCacheRecords(uint64_t cacheIdentifier, Vector<uint64_t>&& recordsIdentifiers, RecordIdentifiersCallback&& callback)
-{
-    // FIXME: Implement writing.
-    callback(WTFMove(recordsIdentifiers));
-}
-
 Cache* Engine::cache(uint64_t cacheIdentifier)
 {
     Cache* result = nullptr;
@@ -324,19 +251,6 @@ Cache* Engine::cache(uint64_t cacheIdentifier)
             break;
     }
     return result;
-}
-
-Vector<uint64_t> Engine::queryCache(const Vector<Record>& records, const WebCore::ResourceRequest& request, const WebCore::CacheQueryOptions& options)
-{
-    if (!options.ignoreMethod && request.httpMethod() != "GET")
-        return { };
-
-    Vector<uint64_t> results;
-    for (const auto& record : records) {
-        if (WebCore::DOMCache::queryCacheMatch(request, record.request, record.response, options))
-            results.append(record.identifier);
-    }
-    return results;
 }
 
 void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCore::DOMCache::CompletionCallback&& callback)

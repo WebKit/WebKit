@@ -899,6 +899,7 @@
 		41897ED81F415D8A0016FA42 /* CacheStorageEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 41897ED21F415D850016FA42 /* CacheStorageEngine.h */; };
 		41897ED91F415D8A0016FA42 /* CacheStorageEngineConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41897ED31F415D850016FA42 /* CacheStorageEngineConnection.cpp */; };
 		41897EDA1F415D8A0016FA42 /* CacheStorageEngineConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 41897ED41F415D850016FA42 /* CacheStorageEngineConnection.h */; };
+		41C8581A1F5136CA0065E085 /* CacheStorageEngineCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41C858191F510DEE0065E085 /* CacheStorageEngineCache.cpp */; };
 		41D129DA1F3D101800D15E47 /* WebCacheStorageProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */; };
 		41DC45961E3D6E2200B11F51 /* NetworkRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */; };
 		41DC45971E3D6E2200B11F51 /* NetworkRTCProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41DC45951E3D6E1E00B11F51 /* NetworkRTCProvider.cpp */; };
@@ -3175,6 +3176,7 @@
 		41897ED51F415D850016FA42 /* CacheStorageEngineConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CacheStorageEngineConnection.messages.in; sourceTree = "<group>"; };
 		41897ED61F415D860016FA42 /* CacheStorageEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngine.cpp; sourceTree = "<group>"; };
 		41AC86811E042E5300303074 /* WebRTCResolver.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; name = WebRTCResolver.messages.in; path = Network/webrtc/WebRTCResolver.messages.in; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = "<none>"; };
+		41C858191F510DEE0065E085 /* CacheStorageEngineCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineCache.cpp; sourceTree = "<group>"; };
 		41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageProvider.h; sourceTree = "<group>"; };
 		41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCProvider.h; path = NetworkProcess/webrtc/NetworkRTCProvider.h; sourceTree = "<group>"; };
 		41DC45951E3D6E1E00B11F51 /* NetworkRTCProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkRTCProvider.cpp; path = NetworkProcess/webrtc/NetworkRTCProvider.cpp; sourceTree = "<group>"; };
@@ -8203,6 +8205,7 @@
 			children = (
 				41897ED61F415D860016FA42 /* CacheStorageEngine.cpp */,
 				41897ED21F415D850016FA42 /* CacheStorageEngine.h */,
+				41C858191F510DEE0065E085 /* CacheStorageEngineCache.cpp */,
 				41FABD281F4DDFDC006A6C97 /* CacheStorageEngineCache.h */,
 				4135FBCF1F4FB7F20074C47B /* CacheStorageEngineCaches.cpp */,
 				4135FBD01F4FB7F20074C47B /* CacheStorageEngineCaches.h */,
@@ -9996,6 +9999,7 @@
 				E170876B16D6CA6900F99226 /* BlobRegistryProxy.cpp in Sources */,
 				BCF18638167D071E00A1A85A /* CacheModel.cpp in Sources */,
 				41897ED71F415D8A0016FA42 /* CacheStorageEngine.cpp in Sources */,
+				41C8581A1F5136CA0065E085 /* CacheStorageEngineCache.cpp in Sources */,
 				4135FBD11F4FB8090074C47B /* CacheStorageEngineCaches.cpp in Sources */,
 				41897ED91F415D8A0016FA42 /* CacheStorageEngineConnection.cpp in Sources */,
 				517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */,
