@@ -288,6 +288,7 @@ struct WKAutoCorrectionData {
 - (BOOL)becomeFirstResponderForWebView;
 - (BOOL)resignFirstResponderForWebView;
 - (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender;
+- (id)targetForActionForWebView:(SEL)action withSender:(id)sender;
 
 #define DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW(_action) \
     - (void)_action ## ForWebView:(id)sender;

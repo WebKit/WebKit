@@ -1,3 +1,22 @@
+2017-08-30  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] REGRESSION (r218144) -[WKContentView targetForAction:withSender:] returns the content view for actions implemented only by the WKWebView, causing a crash
+        https://bugs.webkit.org/show_bug.cgi?id=176077
+        <rdar://problem/34145200>
+
+        Reviewed by Sam Weinig.
+
+        Test: TestWebKitAPI/Tests/WebKitCocoa/WKContentViewTargetForAction.mm
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView targetForAction:withSender:]): Override and forward WKContentView actions to
+          -[WKContentView targetForActionForWebView:withSender:].
+        * UIProcess/ios/WKContentViewInteraction.h: Declare -targetForActionForWebView:withSender:.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView targetForAction:withSender:]): Forward to the WKWebView.
+        (-[WKContentView targetForActionForWebView:withSender:]): Call super’s
+          -targetForAction:withSender:.
+
 2017-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         Fix whitespace and formatting

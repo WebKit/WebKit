@@ -1,3 +1,17 @@
+2017-08-30  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] REGRESSION (r218144) -[WKContentView targetForAction:withSender:] returns the content view for actions implemented only by the WKWebView, causing a crash
+        https://bugs.webkit.org/show_bug.cgi?id=176077
+        <rdar://problem/34145200>
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewTargetForAction.mm: Added.
+        (-[TestWKContentViewTargetForActionView testAction:]):
+        (TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2017-08-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] install-dependencies script should install CUPS headers

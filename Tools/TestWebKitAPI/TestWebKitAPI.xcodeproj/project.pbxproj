@@ -114,6 +114,7 @@
 		33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33DC890E1419539300747EF7 /* simple-iframe.html */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
 		33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */; };
+		370CE22A1F57343400E7410B /* WKContentViewTargetForAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 370CE2291F57343400E7410B /* WKContentViewTargetForAction.mm */; };
 		374B7A601DF36EEE00ACCB6C /* BundleEditingDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 374B7A5E1DF36EEE00ACCB6C /* BundleEditingDelegate.mm */; };
 		374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 374B7A5F1DF36EEE00ACCB6C /* BundleEditingDelegatePlugIn.mm */; };
 		375E0E171D66674400EFEC2C /* WKNSNumber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 375E0E151D66674400EFEC2C /* WKNSNumber.mm */; };
@@ -1144,6 +1145,7 @@
 		33DC8910141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadCanceledNoServerRedirectCallback.cpp; sourceTree = "<group>"; };
 		33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadCanceledNoServerRedirectCallback_Bundle.cpp; sourceTree = "<group>"; };
 		33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mouse-move-listener.html"; sourceTree = "<group>"; };
+		370CE2291F57343400E7410B /* WKContentViewTargetForAction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentViewTargetForAction.mm; sourceTree = "<group>"; };
 		3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageFromDOMRange.mm; sourceTree = "<group>"; };
 		374B7A5E1DF36EEE00ACCB6C /* BundleEditingDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleEditingDelegate.mm; sourceTree = "<group>"; };
 		374B7A5F1DF36EEE00ACCB6C /* BundleEditingDelegatePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleEditingDelegatePlugIn.mm; sourceTree = "<group>"; };
@@ -1971,6 +1973,7 @@
 				1F83571A1D3FFB0E00E3967B /* WKBackForwardList.mm */,
 				5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */,
 				2D838B1E1EEF3A5B009B980E /* WKContentViewEditingActions.mm */,
+				370CE2291F57343400E7410B /* WKContentViewTargetForAction.mm */,
 				51D124971E763AF8002B2820 /* WKHTTPCookieStore.mm */,
 				375E0E151D66674400EFEC2C /* WKNSNumber.mm */,
 				37B47E2E1D64E7CA005F4EFF /* WKObject.mm */,
@@ -2610,10 +2613,10 @@
 				C07E6CAD13FD67650038B22B /* mac */,
 				C08587F913FEC39B001EF4E5 /* TestWebKitAPI */,
 				440A1D3614A01000008A66F2 /* WebCore */,
-				CDC8E4981BC728AE00594FEC /* WebKitLegacy */,
 				BC9096411255616000083756 /* WebKit */,
 				1ABC3DEC1899BE55004F0626 /* WebKit Cocoa */,
 				BC3C4C6F14575B1D0025FB62 /* WebKit Objective-C */,
+				CDC8E4981BC728AE00594FEC /* WebKitLegacy */,
 				BC9096461255618900083756 /* WTF */,
 			);
 			path = Tests;
@@ -3375,6 +3378,7 @@
 				7C54A4BE1AA11CCA00380F78 /* WKBundleFileHandle.cpp in Sources */,
 				5CE354D91E70DA5C00BEFE3B /* WKContentExtensionStore.mm in Sources */,
 				2D838B1F1EEF3A5C009B980E /* WKContentViewEditingActions.mm in Sources */,
+				370CE22A1F57343400E7410B /* WKContentViewTargetForAction.mm in Sources */,
 				51D124981E763B02002B2820 /* WKHTTPCookieStore.mm in Sources */,
 				7CCE7F1D1A411AE600447C4C /* WKImageCreateCGImageCrash.cpp in Sources */,
 				375E0E171D66674400EFEC2C /* WKNSNumber.mm in Sources */,

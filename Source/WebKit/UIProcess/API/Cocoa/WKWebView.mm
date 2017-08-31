@@ -1253,6 +1253,19 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return [super canPerformAction:action withSender:sender];
 }
 
+- (id)targetForAction:(SEL)action withSender:(id)sender
+{
+    #define FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW(_action) \
+        if (action == @selector(_action:) && self.usesStandardContentView) \
+            return [_contentView targetForActionForWebView:action withSender:sender];
+
+    FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW)
+
+    #undef FORWARD_TARGETFORACTION_TO_WKCONTENTVIEW
+
+    return [super targetForAction:action withSender:sender];
+}
+
 static inline CGFloat floorToDevicePixel(CGFloat input, float deviceScaleFactor)
 {
     return CGFloor(input * deviceScaleFactor) / deviceScaleFactor;

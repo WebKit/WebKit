@@ -2165,6 +2165,16 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
     return [super canPerformAction:action withSender:sender];
 }
 
+- (id)targetForAction:(SEL)action withSender:(id)sender
+{
+    return [_webView targetForAction:action withSender:sender];
+}
+
+- (id)targetForActionForWebView:(SEL)action withSender:(id)sender
+{
+    return [super targetForAction:action withSender:sender];
+}
+
 - (void)_resetShowingTextStyle:(NSNotification *)notification
 {
     _showingTextStyleOptions = NO;
