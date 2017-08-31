@@ -205,7 +205,7 @@ public:
     String takeRemainingWhitespace()
     {
         ASSERT(!isEmpty());
-        Vector<LChar, 8> whitespace;
+        StringVector<LChar, 8> whitespace;
         do {
             UChar character = m_text[0];
             if (isHTMLSpace(character))

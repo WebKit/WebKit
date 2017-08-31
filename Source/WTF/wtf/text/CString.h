@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,14 @@
 #include <wtf/HashTraits.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/StringMalloc.h>
 
 namespace WTF {
 
 // CStringBuffer is the ref-counted storage class for the characters in a CString.
 // The data is implicitly allocated 1 character longer than length(), as it is zero-terminated.
 class CStringBuffer : public RefCounted<CStringBuffer> {
+    WTF_MAKE_STRING_ALLOCATED;
 public:
     const char* data() { return mutableData(); }
     size_t length() const { return m_length; }

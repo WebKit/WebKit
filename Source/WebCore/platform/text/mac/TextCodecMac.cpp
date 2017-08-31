@@ -201,7 +201,7 @@ String TextCodecMac::decode(const char* bytes, size_t length, bool flush, bool s
     if (!m_converterTEC && createTECConverter() != noErr)
         return String();
     
-    Vector<UChar> result;
+    StringVector<UChar> result;
 
     const unsigned char* sourcePointer = reinterpret_cast<const unsigned char*>(bytes);
     int sourceLength = length;

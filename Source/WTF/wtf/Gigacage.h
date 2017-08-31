@@ -40,7 +40,8 @@ namespace Gigacage {
 
 enum Kind {
     Primitive,
-    JSValue
+    JSValue,
+    String
 };
 
 inline void ensureGigacage() { }
@@ -63,6 +64,8 @@ ALWAYS_INLINE const char* name(Kind kind)
         return "Primitive";
     case JSValue:
         return "JSValue";
+    case String:
+        return "String";
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

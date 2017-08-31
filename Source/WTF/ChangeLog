@@ -1,3 +1,160 @@
+2017-08-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Strings need to be in some kind of gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=174924
+
+        Reviewed by Oliver Hunt.
+        
+        This makes all strings allocations come from the string gigacage. Because we expect string allocation
+        to be a hot path, I created specialized allocation paths for the string gigacage. These paths are
+        accessible via <wtf/text/StringMalloc.h>. However, those paths are equivalent to saying
+        Gigacage::malloc and friends with the Gigacage::String kind.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Deque.h:
+        * wtf/FastMalloc.cpp:
+        (WTF::fastFree):
+        * wtf/FastMalloc.h:
+        (WTF::FastMalloc::malloc):
+        (WTF::FastMalloc::tryMalloc):
+        (WTF::FastMalloc::realloc):
+        (WTF::FastMalloc::free):
+        * wtf/Forward.h:
+        * wtf/Gigacage.cpp:
+        (Gigacage::tryMalloc):
+        * wtf/Gigacage.h:
+        (Gigacage::name):
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBufferBase::reallocateBuffer):
+        (WTF::VectorBufferBase::deallocateBuffer):
+        (WTF::Malloc>::Vector):
+        (WTF::=):
+        (WTF::Malloc>::contains const):
+        (WTF::Malloc>::findMatching const):
+        (WTF::Malloc>::find const):
+        (WTF::Malloc>::reverseFind const):
+        (WTF::Malloc>::appendIfNotContains):
+        (WTF::Malloc>::fill):
+        (WTF::Malloc>::appendRange):
+        (WTF::Malloc>::expandCapacity):
+        (WTF::Malloc>::tryExpandCapacity):
+        (WTF::Malloc>::resize):
+        (WTF::Malloc>::resizeToFit):
+        (WTF::Malloc>::shrink):
+        (WTF::Malloc>::grow):
+        (WTF::Malloc>::asanSetInitialBufferSizeTo):
+        (WTF::Malloc>::asanSetBufferSizeToFullCapacity):
+        (WTF::Malloc>::asanBufferSizeWillChangeTo):
+        (WTF::Malloc>::reserveCapacity):
+        (WTF::Malloc>::tryReserveCapacity):
+        (WTF::Malloc>::reserveInitialCapacity):
+        (WTF::Malloc>::shrinkCapacity):
+        (WTF::Malloc>::append):
+        (WTF::Malloc>::tryAppend):
+        (WTF::Malloc>::constructAndAppend):
+        (WTF::Malloc>::tryConstructAndAppend):
+        (WTF::Malloc>::appendSlowCase):
+        (WTF::Malloc>::constructAndAppendSlowCase):
+        (WTF::Malloc>::tryConstructAndAppendSlowCase):
+        (WTF::Malloc>::uncheckedAppend):
+        (WTF::Malloc>::appendVector):
+        (WTF::Malloc>::insert):
+        (WTF::Malloc>::insertVector):
+        (WTF::Malloc>::remove):
+        (WTF::Malloc>::removeFirst):
+        (WTF::Malloc>::removeFirstMatching):
+        (WTF::Malloc>::removeAll):
+        (WTF::Malloc>::removeAllMatching):
+        (WTF::Malloc>::reverse):
+        (WTF::Malloc>::map const):
+        (WTF::Malloc>::releaseBuffer):
+        (WTF::Malloc>::checkConsistency):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::removeRepeatedElements):
+        (WTF::minCapacity>::Vector): Deleted.
+        (WTF::minCapacity>::contains const): Deleted.
+        (WTF::minCapacity>::findMatching const): Deleted.
+        (WTF::minCapacity>::find const): Deleted.
+        (WTF::minCapacity>::reverseFind const): Deleted.
+        (WTF::minCapacity>::appendIfNotContains): Deleted.
+        (WTF::minCapacity>::fill): Deleted.
+        (WTF::minCapacity>::appendRange): Deleted.
+        (WTF::minCapacity>::expandCapacity): Deleted.
+        (WTF::minCapacity>::tryExpandCapacity): Deleted.
+        (WTF::minCapacity>::resize): Deleted.
+        (WTF::minCapacity>::resizeToFit): Deleted.
+        (WTF::minCapacity>::shrink): Deleted.
+        (WTF::minCapacity>::grow): Deleted.
+        (WTF::minCapacity>::asanSetInitialBufferSizeTo): Deleted.
+        (WTF::minCapacity>::asanSetBufferSizeToFullCapacity): Deleted.
+        (WTF::minCapacity>::asanBufferSizeWillChangeTo): Deleted.
+        (WTF::minCapacity>::reserveCapacity): Deleted.
+        (WTF::minCapacity>::tryReserveCapacity): Deleted.
+        (WTF::minCapacity>::reserveInitialCapacity): Deleted.
+        (WTF::minCapacity>::shrinkCapacity): Deleted.
+        (WTF::minCapacity>::append): Deleted.
+        (WTF::minCapacity>::tryAppend): Deleted.
+        (WTF::minCapacity>::constructAndAppend): Deleted.
+        (WTF::minCapacity>::tryConstructAndAppend): Deleted.
+        (WTF::minCapacity>::appendSlowCase): Deleted.
+        (WTF::minCapacity>::constructAndAppendSlowCase): Deleted.
+        (WTF::minCapacity>::tryConstructAndAppendSlowCase): Deleted.
+        (WTF::minCapacity>::uncheckedAppend): Deleted.
+        (WTF::minCapacity>::appendVector): Deleted.
+        (WTF::minCapacity>::insert): Deleted.
+        (WTF::minCapacity>::insertVector): Deleted.
+        (WTF::minCapacity>::remove): Deleted.
+        (WTF::minCapacity>::removeFirst): Deleted.
+        (WTF::minCapacity>::removeFirstMatching): Deleted.
+        (WTF::minCapacity>::removeAll): Deleted.
+        (WTF::minCapacity>::removeAllMatching): Deleted.
+        (WTF::minCapacity>::reverse): Deleted.
+        (WTF::minCapacity>::map const): Deleted.
+        (WTF::minCapacity>::releaseBuffer): Deleted.
+        (WTF::minCapacity>::checkConsistency): Deleted.
+        * wtf/text/AtomicStringImpl.h:
+        * wtf/text/CString.cpp:
+        (WTF::CStringBuffer::createUninitialized):
+        * wtf/text/CString.h:
+        * wtf/text/StringBuffer.h:
+        (WTF::StringBuffer::StringBuffer):
+        (WTF::StringBuffer::~StringBuffer):
+        (WTF::StringBuffer::resize):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::destroy):
+        (WTF::StringImpl::createUninitializedInternalNonEmpty):
+        (WTF::StringImpl::reallocateInternal):
+        (WTF::StringImpl::releaseAssertCaged const):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::createSubstringSharingImpl):
+        (WTF::StringImpl::tryCreateUninitialized):
+        (WTF::StringImpl::adopt):
+        (WTF::StringImpl::bufferOwnership const):
+        (WTF::StringImpl::assertCaged const):
+        * wtf/text/StringMalloc.cpp: Added.
+        (WTF::tryStringMalloc):
+        (WTF::stringMalloc):
+        (WTF::stringRealloc):
+        (WTF::stringFree):
+        * wtf/text/StringMalloc.h: Added.
+        (WTF::StringMalloc::malloc):
+        (WTF::StringMalloc::tryMalloc):
+        (WTF::StringMalloc::realloc):
+        (WTF::StringMalloc::free):
+        * wtf/text/StringVector.h: Added.
+        * wtf/text/SymbolImpl.h:
+        * wtf/text/UniquedStringImpl.h:
+        * wtf/text/WTFString.h:
+        (WTF::String::adopt):
+        (WTF::String::assertCaged const):
+        (WTF::String::releaseAssertCaged const):
+
 2017-08-30  Chris Dumez  <cdumez@apple.com>
 
         Implement FileSystemDirectoryReader.readEntries()

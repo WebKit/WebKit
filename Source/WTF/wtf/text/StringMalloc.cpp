@@ -23,67 +23,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "StringMalloc.h"
 
-#include "BAssert.h"
-#include "BInline.h"
-#include "Gigacage.h"
+#include <wtf/DataLog.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Gigacage.h>
+#include <wtf/RawPointer.h>
 
-namespace bmalloc {
+#if !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
+#include <bmalloc/bmalloc.h>
+#endif
 
-enum class HeapKind {
-    Primary,
-    PrimitiveGigacage,
-    JSValueGigacage,
-    StringGigacage
-};
+namespace WTF {
 
-static constexpr unsigned numHeaps = 4;
-
-BINLINE bool isGigacage(HeapKind heapKind)
+#if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
+void* tryStringMalloc(size_t size)
 {
-    switch (heapKind) {
-    case HeapKind::Primary:
-        return false;
-    case HeapKind::PrimitiveGigacage:
-    case HeapKind::JSValueGigacage:
-    case HeapKind::StringGigacage:
-        return true;
-    }
-    BCRASH();
-    return false;
+    return FastMalloc::tryMalloc(size);
 }
 
-BINLINE Gigacage::Kind gigacageKind(HeapKind kind)
+void* stringMalloc(size_t size)
 {
-    switch (kind) {
-    case HeapKind::Primary:
-        BCRASH();
-        return Gigacage::Primitive;
-    case HeapKind::PrimitiveGigacage:
-        return Gigacage::Primitive;
-    case HeapKind::JSValueGigacage:
-        return Gigacage::JSValue;
-    case HeapKind::StringGigacage:
-        return Gigacage::String;
-    }
-    BCRASH();
-    return Gigacage::Primitive;
+    return fastMalloc(size);
 }
 
-BINLINE HeapKind heapKind(Gigacage::Kind kind)
+void* stringRealloc(void* p, size_t size)
 {
-    switch (kind) {
-    case Gigacage::Primitive:
-        return HeapKind::PrimitiveGigacage;
-    case Gigacage::JSValue:
-        return HeapKind::JSValueGigacage;
-    case Gigacage::String:
-        return HeapKind::StringGigacage;
-    }
-    BCRASH();
-    return HeapKind::Primary;
+    return fastRealloc(p, size);
 }
 
-} // namespace bmalloc
+void stringFree(void* p)
+{
+    return fastFree(p);
+}
+#else
+void* tryStringMalloc(size_t size)
+{
+    return bmalloc::api::tryMalloc(size, bmalloc::HeapKind::StringGigacage);
+}
+
+void* stringMalloc(size_t size)
+{
+    return bmalloc::api::malloc(size, bmalloc::HeapKind::StringGigacage);
+}
+
+void* stringRealloc(void* p, size_t size)
+{
+    return bmalloc::api::realloc(p, size, bmalloc::HeapKind::StringGigacage);
+}
+
+void stringFree(void* p)
+{
+    if (!p)
+        return;
+    if (UNLIKELY(!Gigacage::isCaged(Gigacage::String, p))) {
+        dataLog("Trying to free string that is not caged: ", RawPointer(p), "\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    bmalloc::api::free(p, bmalloc::HeapKind::StringGigacage);
+}
+#endif
+
+} // namespace WTF
 

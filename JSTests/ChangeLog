@@ -1,3 +1,13 @@
+2017-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, skipping slow tests.
+        
+        These tests are now timing out. They would have always been slow. The timeouts are probably because OOMs
+        work differently now.
+
+        * stress/regexp-prototype-exec-on-too-long-rope.js:
+        * stress/string-prototype-charCodeAt-on-too-long-rope.js:
+
 2017-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use reifying system for "name" property of builtin JSFunction

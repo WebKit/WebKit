@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include <string.h>
 #include <wtf/Hasher.h>
+#include <wtf/text/StringMalloc.h>
 
 namespace WTF {
 
@@ -38,7 +39,7 @@ Ref<CStringBuffer> CStringBuffer::createUninitialized(size_t length)
 
     // The +1 is for the terminating null character.
     size_t size = sizeof(CStringBuffer) + length + 1;
-    CStringBuffer* stringBuffer = static_cast<CStringBuffer*>(fastMalloc(size));
+    CStringBuffer* stringBuffer = static_cast<CStringBuffer*>(stringMalloc(size));
     return adoptRef(*new (NotNull, stringBuffer) CStringBuffer(length));
 }
 

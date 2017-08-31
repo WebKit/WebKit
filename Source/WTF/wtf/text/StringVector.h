@@ -25,65 +25,13 @@
 
 #pragma once
 
-#include "BAssert.h"
-#include "BInline.h"
-#include "Gigacage.h"
+#include <wtf/Vector.h>
+#include <wtf/text/StringMalloc.h>
 
-namespace bmalloc {
+namespace WTF {
 
-enum class HeapKind {
-    Primary,
-    PrimitiveGigacage,
-    JSValueGigacage,
-    StringGigacage
-};
+template<typename T, size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16> using StringVector = Vector<T, inlineCapacity, OverflowHandler, minCapacity, StringMalloc>;
 
-static constexpr unsigned numHeaps = 4;
+} // namespace WTF
 
-BINLINE bool isGigacage(HeapKind heapKind)
-{
-    switch (heapKind) {
-    case HeapKind::Primary:
-        return false;
-    case HeapKind::PrimitiveGigacage:
-    case HeapKind::JSValueGigacage:
-    case HeapKind::StringGigacage:
-        return true;
-    }
-    BCRASH();
-    return false;
-}
-
-BINLINE Gigacage::Kind gigacageKind(HeapKind kind)
-{
-    switch (kind) {
-    case HeapKind::Primary:
-        BCRASH();
-        return Gigacage::Primitive;
-    case HeapKind::PrimitiveGigacage:
-        return Gigacage::Primitive;
-    case HeapKind::JSValueGigacage:
-        return Gigacage::JSValue;
-    case HeapKind::StringGigacage:
-        return Gigacage::String;
-    }
-    BCRASH();
-    return Gigacage::Primitive;
-}
-
-BINLINE HeapKind heapKind(Gigacage::Kind kind)
-{
-    switch (kind) {
-    case Gigacage::Primitive:
-        return HeapKind::PrimitiveGigacage;
-    case Gigacage::JSValue:
-        return HeapKind::JSValueGigacage;
-    case Gigacage::String:
-        return HeapKind::StringGigacage;
-    }
-    BCRASH();
-    return HeapKind::Primary;
-}
-
-} // namespace bmalloc
-
+using WTF::StringVector;

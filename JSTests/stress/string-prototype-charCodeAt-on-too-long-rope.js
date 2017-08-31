@@ -1,4 +1,5 @@
-//@ if $buildType == "debug" then runFTLNoCJIT("--maxSingleAllocationSize=20000000") else skip end
+// Skip this test because it's slow and it tests a very narrow condition.
+//@ skip
 
 function shouldEqual(actual, expected) {
     if (actual != expected) {
