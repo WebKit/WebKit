@@ -2820,6 +2820,7 @@ set(WebCore_SOURCES
     style/RenderTreeUpdaterFirstLetter.cpp
     style/RenderTreeUpdaterGeneratedContent.cpp
     style/RenderTreeUpdaterListItem.cpp
+    style/RenderTreeUpdaterMultiColumn.cpp
     style/StyleChange.cpp
     style/StyleFontSizeFunctions.cpp
     style/StyleInvalidator.cpp

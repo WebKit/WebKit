@@ -392,9 +392,6 @@ public:
     void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
     void removeChild(RenderObject&) override;
 
-    void createMultiColumnFlowThread();
-    void destroyMultiColumnFlowThread();
-
     void updateColumnProgressionFromStyle(RenderStyle&);
     void updateStylesForColumnChildren();
 

@@ -56,6 +56,7 @@ public:
 
 private:
     class GeneratedContent;
+    class MultiColumn;
 
     void updateRenderTree(ContainerNode& root);
     void updateTextRenderer(Text&, const Style::TextUpdate*);

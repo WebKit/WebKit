@@ -143,23 +143,6 @@ RenderBlockFlow::~RenderBlockFlow()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderBlockFlow::createMultiColumnFlowThread()
-{
-    RenderMultiColumnFlowThread* flowThread = new RenderMultiColumnFlowThread(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
-    flowThread->initializeStyle();
-    setChildrenInline(false); // Do this to avoid wrapping inline children that are just going to move into the flow thread.
-    deleteLines();
-    RenderBlock::addChild(flowThread);
-    flowThread->populate(); // Called after the flow thread is inserted so that we are reachable by the flow thread.
-    setMultiColumnFlowThread(flowThread);
-}
-
-void RenderBlockFlow::destroyMultiColumnFlowThread()
-{
-    multiColumnFlowThread()->evacuateAndDestroy();
-    ASSERT(!multiColumnFlowThread());
-}
-
 void RenderBlockFlow::insertedIntoTree()
 {
     RenderBlock::insertedIntoTree();

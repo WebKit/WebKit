@@ -1,3 +1,27 @@
+2017-08-30  Antti Koivisto  <antti@apple.com>
+
+        Factor RenderMultiColumnFlowThread construction and destruction into RenderTreeUpdater helper
+        https://bugs.webkit.org/show_bug.cgi?id=176130
+
+        Reviewed by Zalan Bujtas.
+
+        Move mutation code out of the render tree.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::createMultiColumnFlowThread): Deleted.
+        (WebCore::RenderBlockFlow::destroyMultiColumnFlowThread): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::commit):
+        (WebCore::RenderTreeUpdater::updateAfterDescendants):
+        (WebCore::updateMultiColumnFlowThread): Deleted.
+        * style/RenderTreeUpdater.h:
+        * style/RenderTreeUpdaterMultiColumn.cpp: Added.
+        (WebCore::RenderTreeUpdater::MultiColumn::update):
+        (WebCore::RenderTreeUpdater::MultiColumn::createFlowThread):
+        * style/RenderTreeUpdaterMultiColumn.h: Added.
+
 2017-08-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Previous elements with lang= can affect fonts selected for subsequent elements
