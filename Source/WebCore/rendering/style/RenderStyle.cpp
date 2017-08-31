@@ -74,14 +74,14 @@ struct SameSizeAsRenderStyle {
     } m_inheritedFlags;
 
     struct NonInheritedFlags {
-        uint64_t m_flags;
+        uint64_t m_bitfields;
     } m_nonInheritedFlags;
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     bool deletionCheck;
 #endif
 };
 
-COMPILE_ASSERT(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), RenderStyle_should_stay_small);
+static_assert(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), "RenderStyle should stay small");
 
 RenderStyle& RenderStyle::defaultStyle()
 {
@@ -162,6 +162,32 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_inheritedFlags.insideLink = NotInsideLink;
     m_inheritedFlags.insideDefaultButton = false;
     m_inheritedFlags.writingMode = initialWritingMode();
+
+    m_nonInheritedFlags.effectiveDisplay = initialDisplay();
+    m_nonInheritedFlags.originalDisplay = initialDisplay();
+    m_nonInheritedFlags.overflowX = initialOverflowX();
+    m_nonInheritedFlags.overflowY = initialOverflowY();
+    m_nonInheritedFlags.verticalAlign = initialVerticalAlign();
+    m_nonInheritedFlags.clear = initialClear();
+    m_nonInheritedFlags.position = initialPosition();
+    m_nonInheritedFlags.unicodeBidi = initialUnicodeBidi();
+    m_nonInheritedFlags.floating = initialFloating();
+    m_nonInheritedFlags.tableLayout = initialTableLayout();
+    m_nonInheritedFlags.hasExplicitlySetDirection = false;
+    m_nonInheritedFlags.hasExplicitlySetWritingMode = false;
+    m_nonInheritedFlags.hasExplicitlySetTextAlign = false;
+    m_nonInheritedFlags.hasViewportUnits = false;
+    m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
+    m_nonInheritedFlags.isUnique = false;
+    m_nonInheritedFlags.emptyState = false;
+    m_nonInheritedFlags.firstChildState = false;
+    m_nonInheritedFlags.lastChildState = false;
+    m_nonInheritedFlags.affectedByHover = false;
+    m_nonInheritedFlags.affectedByActive = false;
+    m_nonInheritedFlags.affectedByDrag = false;
+    m_nonInheritedFlags.isLink = false;
+    m_nonInheritedFlags.styleType = NOPSEUDO;
+    m_nonInheritedFlags.pseudoBits = NOPSEUDO;
 
     static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
     static_assert((sizeof(NonInheritedFlags) <= 8), "NonInheritedFlags does not grow");
@@ -417,8 +443,8 @@ unsigned RenderStyle::hashForTextAutosizing() const
     hash ^= WTF::FloatHash<float>::hash(m_inheritedData->verticalBorderSpacing);
     hash ^= m_inheritedFlags.boxDirection;
     hash ^= m_inheritedFlags.rtlOrdering;
-    hash ^= m_nonInheritedFlags.position();
-    hash ^= m_nonInheritedFlags.floating();
+    hash ^= m_nonInheritedFlags.position;
+    hash ^= m_nonInheritedFlags.floating;
     hash ^= m_rareNonInheritedData->textOverflow;
     hash ^= m_rareInheritedData->textSecurity;
     return hash;
@@ -441,8 +467,8 @@ bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
         && m_inheritedData->verticalBorderSpacing == other.m_inheritedData->verticalBorderSpacing
         && m_inheritedFlags.boxDirection == other.m_inheritedFlags.boxDirection
         && m_inheritedFlags.rtlOrdering == other.m_inheritedFlags.rtlOrdering
-        && m_nonInheritedFlags.position() == other.m_nonInheritedFlags.position()
-        && m_nonInheritedFlags.floating() == other.m_nonInheritedFlags.floating()
+        && m_nonInheritedFlags.position == other.m_nonInheritedFlags.position
+        && m_nonInheritedFlags.floating == other.m_nonInheritedFlags.floating
         && m_rareNonInheritedData->textOverflow == other.m_rareNonInheritedData->textOverflow;
 }
 
@@ -520,7 +546,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
         || m_boxData->maxHeight() != other.m_boxData->maxHeight())
         return true;
 
-    if (m_boxData->verticalAlign() != other.m_boxData->verticalAlign() || m_nonInheritedFlags.verticalAlign() != other.m_nonInheritedFlags.verticalAlign())
+    if (m_boxData->verticalAlign() != other.m_boxData->verticalAlign() || m_nonInheritedFlags.verticalAlign != other.m_nonInheritedFlags.verticalAlign)
         return true;
 
     if (m_boxData->boxSizing() != other.m_boxData->boxSizing())
@@ -663,17 +689,17 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
         || m_inheritedData->verticalBorderSpacing != other.m_inheritedData->verticalBorderSpacing
         || m_inheritedFlags.boxDirection != other.m_inheritedFlags.boxDirection
         || m_inheritedFlags.rtlOrdering != other.m_inheritedFlags.rtlOrdering
-        || m_nonInheritedFlags.position() != other.m_nonInheritedFlags.position()
-        || m_nonInheritedFlags.floating() != other.m_nonInheritedFlags.floating()
-        || m_nonInheritedFlags.originalDisplay() != other.m_nonInheritedFlags.originalDisplay())
+        || m_nonInheritedFlags.position != other.m_nonInheritedFlags.position
+        || m_nonInheritedFlags.floating != other.m_nonInheritedFlags.floating
+        || m_nonInheritedFlags.originalDisplay != other.m_nonInheritedFlags.originalDisplay)
         return true;
 
 
-    if ((m_nonInheritedFlags.effectiveDisplay()) >= TABLE) {
+    if (m_nonInheritedFlags.effectiveDisplay >= TABLE) {
         if (m_inheritedFlags.borderCollapse != other.m_inheritedFlags.borderCollapse
             || m_inheritedFlags.emptyCells != other.m_inheritedFlags.emptyCells
             || m_inheritedFlags.captionSide != other.m_inheritedFlags.captionSide
-            || m_nonInheritedFlags.tableLayout() != other.m_nonInheritedFlags.tableLayout())
+            || m_nonInheritedFlags.tableLayout != other.m_nonInheritedFlags.tableLayout)
             return true;
 
         // In the collapsing border model, 'hidden' suppresses other borders, while 'none'
@@ -690,7 +716,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
             return true;
     }
 
-    if (m_nonInheritedFlags.effectiveDisplay() == LIST_ITEM) {
+    if (m_nonInheritedFlags.effectiveDisplay == LIST_ITEM) {
         if (m_inheritedFlags.listStyleType != other.m_inheritedFlags.listStyleType
             || m_inheritedFlags.listStylePosition != other.m_inheritedFlags.listStylePosition)
             return true;
@@ -700,8 +726,8 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
         || m_inheritedFlags.textTransform != other.m_inheritedFlags.textTransform
         || m_inheritedFlags.direction != other.m_inheritedFlags.direction
         || m_inheritedFlags.whiteSpace != other.m_inheritedFlags.whiteSpace
-        || m_nonInheritedFlags.clear() != other.m_nonInheritedFlags.clear()
-        || m_nonInheritedFlags.unicodeBidi() != other.m_nonInheritedFlags.unicodeBidi())
+        || m_nonInheritedFlags.clear != other.m_nonInheritedFlags.clear
+        || m_nonInheritedFlags.unicodeBidi != other.m_nonInheritedFlags.unicodeBidi)
         return true;
 
     // Check block flow direction.
@@ -719,8 +745,8 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
         return true;
 
     // Overflow returns a layout hint.
-    if (m_nonInheritedFlags.overflowX() != other.m_nonInheritedFlags.overflowX()
-        || m_nonInheritedFlags.overflowY() != other.m_nonInheritedFlags.overflowY())
+    if (m_nonInheritedFlags.overflowX != other.m_nonInheritedFlags.overflowX
+        || m_nonInheritedFlags.overflowY != other.m_nonInheritedFlags.overflowY)
         return true;
 
     // If our border widths change, then we need to layout.  Other changes to borders
