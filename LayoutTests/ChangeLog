@@ -1,3 +1,13 @@
+2017-08-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Mark test media/event-queue-crash as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=176174
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2017-08-31  Jonathan Bedard  <jbedard@apple.com>
 
         iOS should include both iPad and iPhone when running layout tests

@@ -1900,6 +1900,8 @@ webkit.org/b/176105 http/tests/security/video-cross-origin-accessfailure.html [ 
 
 webkit.org/b/176110 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.html [ Pass Failure ]
 
+webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

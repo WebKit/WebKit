@@ -836,3 +836,5 @@ webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Timeout Failure 
 
 webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
 webkit.org/b/175380 scrollbars/scrollbar-iframe-click-does-not-blur-content.html [ ImageOnlyFailure ]
+
+webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
