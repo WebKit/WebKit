@@ -1,3 +1,16 @@
+2017-08-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] install-dependencies script should install CUPS headers
+        https://bugs.webkit.org/show_bug.cgi?id=176129
+
+        Reviewed by Michael Catanzaro.
+        
+        When building GTK+ on the JHBuild, it will enable the CUPS print
+        backend if the CUPS headers are installed. Having a print backend
+        on GTK+ is needed for the print-related API tests.
+
+        * gtk/install-dependencies:
+
 2017-08-30  Filip Pizlo  <fpizlo@apple.com>
 
         Rename ArrayLang to WebGPU Shading Language, or WSL for short, pronounced "whistle"

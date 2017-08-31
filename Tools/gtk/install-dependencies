@@ -175,6 +175,7 @@ function installDependenciesWithApt {
         gsettings-desktop-schemas-dev \
         icon-naming-utils \
         libcroco3-dev \
+        libcups2-dev \
         libdrm-dev \
         libegl1-mesa-dev \
         libepoxy-dev \
@@ -331,6 +332,7 @@ function installDependenciesWithPacman {
         gsettings-desktop-schemas \
         icon-naming-utils \
         libcroco \
+        libcups \
         libdrm \
         libepoxy \
         libevdev \
@@ -463,11 +465,12 @@ function installDependenciesWithDnf {
 
     # These are dependencies necessary for building the jhbuild.
     packages="$packages \
-        expat-devel \
+        cups-devel \
         docbook-utils \
+        expat-devel \
         git \
-        gobject-introspection \
         gnutls-devel \
+        gobject-introspection \
         gsettings-desktop-schemas-devel \
         icon-naming-utils \
         itstool \
