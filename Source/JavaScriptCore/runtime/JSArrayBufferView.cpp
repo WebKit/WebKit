@@ -77,7 +77,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
         m_mode = FastTypedArray;
 
         if (mode == ZeroFill) {
-            uint64_t* asWords = static_cast<uint64_t*>(m_vector.get());
+            uint64_t* asWords = static_cast<uint64_t*>(m_vector.getMayBeNull());
             for (unsigned i = size / sizeof(uint64_t); i--;)
                 asWords[i] = 0;
         }
