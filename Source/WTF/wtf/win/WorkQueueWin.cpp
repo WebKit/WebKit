@@ -37,10 +37,11 @@ DWORD WorkQueue::workThreadCallback(void* context)
 
     WorkQueue* queue = static_cast<WorkQueue*>(context);
 
-    if (!queue->tryRegisterAsWorkThread())
-        return 0;
+    if (queue->tryRegisterAsWorkThread())
+        queue->performWorkOnRegisteredWorkThread();
 
-    queue->performWorkOnRegisteredWorkThread();
+    queue->deref();
+
     return 0;
 }
 
@@ -56,10 +57,8 @@ void WorkQueue::performWorkOnRegisteredWorkThread()
 
         // Allow more work to be scheduled while we're not using the queue directly.
         m_functionQueueLock.unlock();
-        for (auto& function : functionQueue) {
+        for (auto& function : functionQueue)
             function();
-            deref();
-        }
         m_functionQueueLock.lock();
     }
 
@@ -100,14 +99,7 @@ void WorkQueue::platformInvalidate()
 
 void WorkQueue::dispatch(Function<void()>&& function)
 {
-    // FIXME: During layout tests, this method is sometimes called with a nullptr function parameter.
-    // This is tracked in <http://webkit.org/b/176072>.
-    ASSERT(function);
-    if (!function)
-        return;
-
     MutexLocker locker(m_functionQueueLock);
-    ref();
     m_functionQueue.append(WTFMove(function));
 
     // Spawn a work thread to perform the work we just added. As an optimization, we avoid
@@ -116,8 +108,10 @@ void WorkQueue::dispatch(Function<void()>&& function)
     // hasn't registered itself yet, m_isWorkThreadRegistered will be false and we'll end up
     // spawning a second work thread here. But work thread registration process will ensure that
     // only one thread actually ends up performing work.)
-    if (!m_isWorkThreadRegistered)
+    if (!m_isWorkThreadRegistered) {
+        ref();
         ::QueueUserWorkItem(workThreadCallback, this, WT_EXECUTEDEFAULT);
+    }
 }
 
 struct TimerContext : public ThreadSafeRefCounted<TimerContext> {

@@ -1,3 +1,24 @@
+2017-08-31  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Crash under WorkQueue::performWorkOnRegisteredWorkThread in layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=176163
+
+        Reviewed by Alex Christensen.
+
+        My previous attempt at fixing this crash in <http://trac.webkit.org/changeset/221323>
+        was incorrect, since it is still crashing on the bot(s). The current theory of why this
+        is failing is that the WorkQueue object deletes itself in the middle of the
+        performWorkOnRegisteredWorkThread method when calling deref(). There is no need to
+        increase the reference count of the work queue for each function we want to call on the
+        work thread. It is sufficient to increase it for every work thread we start, and then
+        dereference it when the thread ends. We should also not attempt to access members after
+        the deref() call, which can potentially be unsafe.
+ 
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::WorkQueue::workThreadCallback):
+        (WTF::WorkQueue::performWorkOnRegisteredWorkThread):
+        (WTF::WorkQueue::dispatch):
+
 2017-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Strings need to be in some kind of gigacage
