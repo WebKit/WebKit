@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
+#include "Exception.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -36,11 +38,11 @@ class FileSystemDirectoryEntry;
 class FileSystemEntriesCallback;
 class ScriptExecutionContext;
 
-class FileSystemDirectoryReader : public ScriptWrappable, public RefCounted<FileSystemDirectoryReader> {
+class FileSystemDirectoryReader final : public ScriptWrappable, public ActiveDOMObject, public RefCounted<FileSystemDirectoryReader> {
 public:
-    static Ref<FileSystemDirectoryReader> create(FileSystemDirectoryEntry& directory)
+    static Ref<FileSystemDirectoryReader> create(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory)
     {
-        return adoptRef(*new FileSystemDirectoryReader(directory));
+        return adoptRef(*new FileSystemDirectoryReader(context, directory));
     }
 
     ~FileSystemDirectoryReader();
@@ -48,9 +50,15 @@ public:
     void readEntries(ScriptExecutionContext&, Ref<FileSystemEntriesCallback>&&, RefPtr<ErrorCallback>&&);
 
 private:
-    explicit FileSystemDirectoryReader(FileSystemDirectoryEntry&);
+    FileSystemDirectoryReader(ScriptExecutionContext&, FileSystemDirectoryEntry&);
+
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
 
     Ref<FileSystemDirectoryEntry> m_directory;
+    std::optional<Exception> m_error;
+    bool m_isReading { false };
+    bool m_isDone { false };
 };
 
 }

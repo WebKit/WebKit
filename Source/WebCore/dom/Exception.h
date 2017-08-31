@@ -39,6 +39,11 @@ public:
     const String& message() const { return m_message; }
     String&& releaseMessage() { return WTFMove(m_message); }
 
+    Exception isolatedCopy() const
+    {
+        return Exception { m_code, m_message.isolatedCopy() };
+    }
+
 private:
     ExceptionCode m_code;
     String m_message;

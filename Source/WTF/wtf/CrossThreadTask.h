@@ -50,12 +50,6 @@ protected:
     Function<void ()> m_taskFunction;
 };
 
-template <typename T>
-T crossThreadCopy(const T& t)
-{
-    return CrossThreadCopier<T>::copy(t);
-}
-
 template <typename F, typename ArgsTuple, size_t... ArgsIndex>
 void callFunctionForCrossThreadTaskImpl(F function, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
 {

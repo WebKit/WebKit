@@ -26,18 +26,131 @@
 #include "config.h"
 #include "DOMFileSystem.h"
 
+#include "File.h"
+#include "FileMetadata.h"
+#include "FileSystem.h"
 #include "FileSystemDirectoryEntry.h"
+#include "FileSystemFileEntry.h"
+#include <wtf/CrossThreadCopier.h>
+#include <wtf/UUID.h>
 
 namespace WebCore {
 
-DOMFileSystem::DOMFileSystem(const String& name)
-    : m_name(name)
-    , m_root(FileSystemDirectoryEntry::create(*this, ASCIILiteral("/")))
+struct ListedChild {
+    String filename;
+    FileMetadata::Type type;
+
+    ListedChild isolatedCopy() const { return { filename.isolatedCopy(), type }; }
+};
+
+static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& fullPath)
 {
+    ASSERT(!isMainThread());
+    if (!fileIsDirectory(fullPath))
+        return Exception { NotFoundError, "Path no longer exists or is no longer a directory" };
+
+    auto childPaths = listDirectory(fullPath, "*");
+    Vector<ListedChild> listedChildren;
+    listedChildren.reserveInitialCapacity(childPaths.size());
+    for (auto& childPath : childPaths) {
+        FileMetadata metadata;
+        if (!getFileMetadata(childPath, metadata))
+            continue;
+        listedChildren.uncheckedAppend(ListedChild { pathGetFileName(childPath), metadata.type });
+    }
+    return WTFMove(listedChildren);
+}
+
+static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(DOMFileSystem& fileSystem, ExceptionOr<Vector<ListedChild>>&& listedChildren, const String& parentVirtualPath)
+{
+    ASSERT(isMainThread());
+    if (listedChildren.hasException())
+        return listedChildren.releaseException();
+
+    Vector<Ref<FileSystemEntry>> entries;
+    entries.reserveInitialCapacity(listedChildren.returnValue().size());
+    for (auto& child : listedChildren.returnValue()) {
+        String virtualPath = parentVirtualPath + "/" + child.filename;
+        switch (child.type) {
+        case FileMetadata::TypeFile:
+            entries.uncheckedAppend(FileSystemFileEntry::create(fileSystem, virtualPath));
+            break;
+        case FileMetadata::TypeDirectory:
+            entries.uncheckedAppend(FileSystemDirectoryEntry::create(fileSystem, virtualPath));
+            break;
+        default:
+            break;
+        }
+    }
+    return WTFMove(entries);
+}
+
+DOMFileSystem::DOMFileSystem(Ref<File>&& file)
+    : m_name(createCanonicalUUIDString())
+    , m_file(WTFMove(file))
+    , m_rootPath(directoryName(m_file->path()))
+    , m_workQueue(WorkQueue::create("DOMFileSystem work queue"))
+{
+    ASSERT(!m_rootPath.endsWith('/'));
 }
 
 DOMFileSystem::~DOMFileSystem()
 {
+}
+
+Ref<FileSystemDirectoryEntry> DOMFileSystem::root()
+{
+    return FileSystemDirectoryEntry::create(*this, ASCIILiteral("/"));
+}
+
+Ref<FileSystemEntry> DOMFileSystem::fileAsEntry()
+{
+    if (m_file->isDirectory())
+        return FileSystemDirectoryEntry::create(*this, "/" + m_file->name());
+    return FileSystemFileEntry::create(*this, "/" + m_file->name());
+}
+
+// https://wicg.github.io/entries-api/#evaluate-a-path
+String DOMFileSystem::evaluatePath(const String& virtualPath)
+{
+    ASSERT(virtualPath[0] == '/');
+    auto components = virtualPath.split('/');
+
+    Vector<String> resolvedComponents;
+    resolvedComponents.reserveInitialCapacity(components.size());
+    for (auto& component : components) {
+        if (component == ".")
+            continue;
+        if (component == "..") {
+            if (!resolvedComponents.isEmpty())
+                resolvedComponents.removeLast();
+            continue;
+        }
+        resolvedComponents.uncheckedAppend(component);
+    }
+
+    return pathByAppendingComponents(m_rootPath, resolvedComponents);
+}
+
+void DOMFileSystem::listDirectory(FileSystemDirectoryEntry& directory, DirectoryListingCallback&& completionHandler)
+{
+    ASSERT(&directory.filesystem() == this);
+
+    String directoryVirtualPath = directory.virtualPath();
+    auto fullPath = evaluatePath(directoryVirtualPath);
+    if (fullPath == m_rootPath) {
+        Vector<Ref<FileSystemEntry>> children;
+        children.append(fileAsEntry());
+        completionHandler(WTFMove(children));
+        return;
+    }
+
+    m_workQueue->dispatch([this, completionHandler = WTFMove(completionHandler), fullPath = fullPath.isolatedCopy(), directoryVirtualPath = directoryVirtualPath.isolatedCopy()]() mutable {
+        auto listedChildren = listDirectoryWithMetadata(fullPath);
+        callOnMainThread([this, completionHandler = WTFMove(completionHandler), listedChildren = crossThreadCopy(listedChildren), directoryVirtualPath = directoryVirtualPath.isolatedCopy()]() mutable {
+            completionHandler(toFileSystemEntries(*this, WTFMove(listedChildren), directoryVirtualPath));
+        });
+    });
 }
 
 } // namespace WebCore

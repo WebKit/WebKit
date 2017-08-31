@@ -41,7 +41,7 @@ public:
         return adoptRef(*new FileSystemDirectoryEntry(filesystem, virtualPath));
     }
 
-    Ref<FileSystemDirectoryReader> createReader();
+    Ref<FileSystemDirectoryReader> createReader(ScriptExecutionContext&);
 
     struct Flags {
         bool create { false };

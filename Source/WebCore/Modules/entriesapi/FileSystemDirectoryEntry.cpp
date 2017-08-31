@@ -37,9 +37,9 @@ FileSystemDirectoryEntry::FileSystemDirectoryEntry(DOMFileSystem& filesystem, co
 {
 }
 
-Ref<FileSystemDirectoryReader> FileSystemDirectoryEntry::createReader()
+Ref<FileSystemDirectoryReader> FileSystemDirectoryEntry::createReader(ScriptExecutionContext& context)
 {
-    return FileSystemDirectoryReader::create(*this);
+    return FileSystemDirectoryReader::create(context, *this);
 }
 
 void FileSystemDirectoryEntry::getFile(ScriptExecutionContext& context, const String&, const Flags&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&& errorCallback)

@@ -65,7 +65,7 @@ FileListCreator::FileListCreator(const Vector<FileChooserFileInfo>& paths, Shoul
         // Resolve directories on a background thread to avoid blocking the main thread.
         m_completionHander = WTFMove(completionHandler);
         m_workQueue = WorkQueue::create("FileListCreator Work Queue");
-        m_workQueue->dispatch([this, protectedThis = makeRef(*this), paths = CrossThreadCopier<Vector<FileChooserFileInfo>>::copy(paths)]() mutable {
+        m_workQueue->dispatch([this, protectedThis = makeRef(*this), paths = crossThreadCopy(paths)]() mutable {
             auto fileList = createFileList<ShouldResolveDirectories::Yes>(paths);
             callOnMainThread([this, protectedThis = WTFMove(protectedThis), fileList = WTFMove(fileList)]() mutable {
                 if (auto completionHander = WTFMove(m_completionHander))

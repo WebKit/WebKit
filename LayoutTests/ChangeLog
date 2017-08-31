@@ -1,3 +1,25 @@
+2017-08-30  Chris Dumez  <cdumez@apple.com>
+
+        Implement FileSystemDirectoryReader.readEntries()
+        https://bugs.webkit.org/show_bug.cgi?id=176091
+        <rdar://problem/34168015>
+
+        Reviewed by Andreas Kling.
+
+        Add layout test coverage.
+
+        * editing/editing.js:
+        (moveMouseToCenterOfElement):
+        (dragFilesOntoElement):
+        * editing/pasteboard/datatransfer-items-drop-directoryReader-error-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-drop-directoryReader-error.html: Added.
+        * editing/pasteboard/datatransfer-items-drop-directoryReader-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-drop-directoryReader-root-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-drop-directoryReader-root.html: Added.
+        * editing/pasteboard/datatransfer-items-drop-directoryReader.html: Added.
+        * editing/pasteboard/datatransfer-items-drop-getAsEntry.html:
+        * platform/wk2/TestExpectations:
+
 2017-08-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Previous elements with lang= can affect fonts selected for subsequent elements

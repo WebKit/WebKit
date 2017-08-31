@@ -40,6 +40,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -268,6 +269,17 @@ String pathByAppendingComponent(const String& path, const String& component)
     if (path.endsWith('/'))
         return path + component;
     return path + "/" + component;
+}
+
+String pathByAppendingComponents(const String& path, const Vector<String>& components)
+{
+    StringBuilder builder;
+    builder.append(path);
+    for (auto& component : components) {
+        builder.append('/');
+        builder.append(component);
+    }
+    return builder.toString();
 }
 
 bool makeAllDirectories(const String& path)

@@ -25,7 +25,6 @@
 
 [
     EnabledAtRuntime=DirectoryUpload,
-    ImplementationLacksVTable,
 ] interface FileSystemDirectoryReader {
     [CallWith=ScriptExecutionContext] void readEntries(FileSystemEntriesCallback successCallback, optional ErrorCallback? errorCallback);
 };

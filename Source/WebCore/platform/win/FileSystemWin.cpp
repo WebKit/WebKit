@@ -41,6 +41,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -199,6 +200,14 @@ String pathByAppendingComponent(const String& path, const String& component)
     buffer.shrink(wcslen(buffer.data()));
 
     return String::adopt(WTFMove(buffer));
+}
+
+String pathByAppendingComponents(const String& path, const Vector<String>& components)
+{
+    String result = path;
+    for (auto& component : components)
+        result = pathByAppendingComponent(result, component);
+    return result;
 }
 
 #if !USE(CF)

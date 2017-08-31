@@ -1,3 +1,18 @@
+2017-08-30  Chris Dumez  <cdumez@apple.com>
+
+        Implement FileSystemDirectoryReader.readEntries()
+        https://bugs.webkit.org/show_bug.cgi?id=176091
+        <rdar://problem/34168015>
+
+        Reviewed by Andreas Kling.
+
+        * wtf/CrossThreadCopier.h:
+        (WTF::crossThreadCopy):
+        * wtf/CrossThreadTask.h:
+        Move crossThreadCopy() from CrossThreadTask.h to CrossThreadCopier.h and
+        add "using WTF::crossThreadCopy" statement to make it more easily usable
+        from WebCore.
+
 2017-08-30  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r221384.

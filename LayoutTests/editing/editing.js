@@ -399,6 +399,26 @@ function moveSelectionBackwardByLineBoundaryCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function moveMouseToCenterOfElement(element) {
+    if (!window.eventSender)
+        return;
+
+    const centerX = element.offsetLeft + element.offsetWidth / 2;
+    const centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+}
+
+function dragFilesOntoElement(element, files) {
+    if (!window.eventSender)
+        return;
+
+    eventSender.beginDragWithFiles(files);
+    moveMouseToCenterOfElement(element);
+    eventSender.mouseUp();
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function doubleClick(x, y) {
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();

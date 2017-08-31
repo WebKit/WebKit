@@ -2,27 +2,13 @@
 <html>
 <head>
 <script src="../../resources/js-test.js"></script>
+<script src="../editing.js"></script>
 </head>
 <body>
 <div id="dropzone" style="width: 200px; height: 200px; background-color: grey;"></div>
 <script>
 description("Basic test coverage for dataTransferItem.webkitGetAsEntry()");
 jsTestIsAsync = true;
-
-function moveMouseToCenterOfElement(element) {
-    var centerX = element.offsetLeft + element.offsetWidth / 2;
-    var centerY = element.offsetTop + element.offsetHeight / 2;
-    eventSender.mouseMoveTo(centerX, centerY);
-}
-
-function dragFilesOntoElement(element, files) {
-    if (!window.eventSender)
-        return;
-
-    eventSender.beginDragWithFiles(files);
-    moveMouseToCenterOfElement(element);
-    eventSender.mouseUp();
-}
 
 var dropzone = document.getElementById('dropzone');
 dropzone.ondrop = function(e) {

@@ -25,32 +25,45 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class File;
 class FileSystemDirectoryEntry;
 class FileSystemEntry;
 
 class DOMFileSystem : public ScriptWrappable, public RefCounted<DOMFileSystem> {
 public:
-    static Ref<DOMFileSystem> create(const String& name)
+    static Ref<FileSystemEntry> createEntryForFile(Ref<File>&& file)
     {
-        return adoptRef(*new DOMFileSystem(name));
+        auto fileSystem = adoptRef(*new DOMFileSystem(WTFMove(file)));
+        return fileSystem->fileAsEntry();
     }
 
     ~DOMFileSystem();
 
     const String& name() const { return m_name; }
-    FileSystemDirectoryEntry& root() const { return m_root; }
+    Ref<FileSystemDirectoryEntry> root();
+
+    using DirectoryListingCallback = WTF::Function<void(ExceptionOr<Vector<Ref<FileSystemEntry>>>&&)>;
+    void listDirectory(FileSystemDirectoryEntry&, DirectoryListingCallback&&);
 
 private:
-    explicit DOMFileSystem(const String& name);
+    explicit DOMFileSystem(Ref<File>&&);
+
+    String evaluatePath(const String& virtualPath);
+    Ref<FileSystemEntry> fileAsEntry();
 
     String m_name;
-    Ref<FileSystemDirectoryEntry> m_root;
+    Ref<File> m_file;
+    String m_rootPath;
+    Ref<WorkQueue> m_workQueue;
+
 };
 
 } // namespace WebCore

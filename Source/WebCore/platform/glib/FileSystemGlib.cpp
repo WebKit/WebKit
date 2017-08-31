@@ -35,6 +35,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -178,6 +179,17 @@ String pathByAppendingComponent(const String& path, const String& component)
     if (path.endsWith(G_DIR_SEPARATOR_S))
         return path + component;
     return path + G_DIR_SEPARATOR_S + component;
+}
+
+String pathByAppendingComponents(const String& path, const Vector<String>& components)
+{
+    StringBuilder builder;
+    builder.append(path);
+    for (auto& component : components) {
+        builder.append(G_DIR_SEPARATOR_S);
+        builder.append(component);
+    }
+    return builder.toString();
 }
 
 bool makeAllDirectories(const String& path)

@@ -29,5 +29,5 @@
     InterfaceName=FileSystem,
 ] interface DOMFileSystem {
     readonly attribute USVString name;
-    readonly attribute FileSystemDirectoryEntry root;
+    [CachedAttribute] readonly attribute FileSystemDirectoryEntry root;
 };

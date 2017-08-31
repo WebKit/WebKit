@@ -72,7 +72,6 @@ private:
     WeakPtr<DataTransferItemList> m_list;
     const String m_type;
     RefPtr<File> m_file;
-    mutable RefPtr<DOMFileSystem> m_fileSystem;
 };
 
 }

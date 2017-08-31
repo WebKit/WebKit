@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FileSystemEntry.h"
 
+#include "DOMFileSystem.h"
 #include "FileSystem.h"
 
 namespace WebCore {
@@ -36,5 +37,15 @@ FileSystemEntry::FileSystemEntry(DOMFileSystem& filesystem, const String& virtua
     , m_virtualPath(virtualPath)
 {
 }
+
+FileSystemEntry::~FileSystemEntry()
+{
+}
+
+DOMFileSystem& FileSystemEntry::filesystem() const
+{
+    return m_filesystem.get();
+}
+
 
 } // namespace WebCore

@@ -139,9 +139,15 @@ template<typename T> struct CrossThreadCopierBase<false, false, HashSet<T> > {
         return destination;
     }
 };
+
+template<typename T> T crossThreadCopy(const T& source)
+{
+    return CrossThreadCopier<T>::copy(source);
+}
     
 } // namespace WTF
 
 using WTF::CrossThreadCopierBaseHelper;
 using WTF::CrossThreadCopierBase;
 using WTF::CrossThreadCopier;
+using WTF::crossThreadCopy;

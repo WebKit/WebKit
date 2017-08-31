@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include "Exception.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/Expected.h>
 
 namespace WebCore {
@@ -179,4 +180,16 @@ inline ExceptionOr<void> isolatedCopy(ExceptionOr<void>&& value)
     return { };
 }
 
+}
+
+namespace WTF {
+template<typename T> struct CrossThreadCopierBase<false, false, WebCore::ExceptionOr<T> > {
+    typedef WebCore::ExceptionOr<T> Type;
+    static Type copy(const Type& source)
+    {
+        if (source.hasException())
+            return crossThreadCopy(source.exception());
+        return crossThreadCopy(source.returnValue());
+    }
+};
 }

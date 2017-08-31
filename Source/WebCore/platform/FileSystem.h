@@ -101,6 +101,7 @@ WEBCORE_EXPORT bool getFileCreationTime(const String&, time_t& result); // Not a
 bool getFileMetadata(const String&, FileMetadata&);
 bool fileIsDirectory(const String&);
 WEBCORE_EXPORT String pathByAppendingComponent(const String& path, const String& component);
+String pathByAppendingComponents(const String& path, const Vector<String>& components);
 String lastComponentOfPathIgnoringTrailingSlash(const String& path);
 WEBCORE_EXPORT bool makeAllDirectories(const String& path);
 String homeDirectoryPath();

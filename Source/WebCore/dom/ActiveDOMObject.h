@@ -29,6 +29,7 @@
 #include "ContextDestructionObserver.h"
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -81,6 +82,31 @@ public:
         ASSERT(m_pendingActivityCount > 0);
         --m_pendingActivityCount;
         thisObject->deref();
+    }
+
+    template<class T>
+    class PendingActivity : public RefCounted<PendingActivity<T>> {
+    public:
+        explicit PendingActivity(T& thisObject)
+            : m_thisObject(thisObject)
+        {
+            ++(m_thisObject->m_pendingActivityCount);
+        }
+
+        ~PendingActivity()
+        {
+            ASSERT(m_thisObject->m_pendingActivityCount > 0);
+            --(m_thisObject->m_pendingActivityCount);
+        }
+
+    private:
+        Ref<T> m_thisObject;
+    };
+
+    template<class T> Ref<PendingActivity<T>> makePendingActivity(T& thisObject)
+    {
+        ASSERT(&thisObject == this);
+        return adoptRef(*new PendingActivity<T>(thisObject));
     }
 
 protected:

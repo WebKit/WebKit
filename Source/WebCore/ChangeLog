@@ -1,3 +1,102 @@
+2017-08-30  Chris Dumez  <cdumez@apple.com>
+
+        Implement FileSystemDirectoryReader.readEntries()
+        https://bugs.webkit.org/show_bug.cgi?id=176091
+        <rdar://problem/34168015>
+
+        Reviewed by Andreas Kling.
+
+        Tests: editing/pasteboard/datatransfer-items-drop-directoryReader-error.html
+               editing/pasteboard/datatransfer-items-drop-directoryReader-root.html
+               editing/pasteboard/datatransfer-items-drop-directoryReader.html
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::ListedChild::isolatedCopy const):
+        (WebCore::listDirectoryWithMetadata):
+        (WebCore::toFileSystemEntries):
+        (WebCore::DOMFileSystem::DOMFileSystem):
+        (WebCore::DOMFileSystem::root):
+        (WebCore::DOMFileSystem::fileAsEntry):
+        (WebCore::DOMFileSystem::evaluatePath):
+        (WebCore::DOMFileSystem::listDirectory):
+        * Modules/entriesapi/DOMFileSystem.h:
+        (WebCore::DOMFileSystem::createEntryForFile):
+        * Modules/entriesapi/DOMFileSystem.idl:
+        - Implement directory listing operation for supporting
+          FileSystemDirectoryReader::readEntries().
+        - Implement evaluatePath() operation as per:
+          - https://wicg.github.io/entries-api/#evaluate-a-path
+        - DOMFileSystem should no longer hold a strong reference to
+          the root entry and FileSystemEntry now holds a strong
+          reference to the DOMFileSystem and this would create a
+          cycle.
+
+        * Modules/entriesapi/FileSystemDirectoryEntry.cpp:
+        (WebCore::FileSystemDirectoryEntry::createReader):
+        * Modules/entriesapi/FileSystemDirectoryEntry.h:
+        * Modules/entriesapi/FileSystemDirectoryEntry.idl:
+        Have createReader() take a ScriptExecutionContext, which is needed
+        to construct a FileSystemDirectoryReader, now that FileSystemDirectoryReader
+        is an ActiveDOMObject.
+
+        * Modules/entriesapi/FileSystemDirectoryReader.cpp:
+        (WebCore::FileSystemDirectoryReader::FileSystemDirectoryReader):
+        (WebCore::FileSystemDirectoryReader::activeDOMObjectName const):
+        (WebCore::FileSystemDirectoryReader::canSuspendForDocumentSuspension const):
+        (WebCore::FileSystemDirectoryReader::readEntries):
+        * Modules/entriesapi/FileSystemDirectoryReader.h:
+        * Modules/entriesapi/FileSystemDirectoryReader.idl:
+        Provide implementation for FileSystemDirectoryReader.readEntries() as per:
+        - https://wicg.github.io/entries-api/#dom-filesystemdirectoryreader-readentries
+        For the actual directory listing operation, we ask the DOMFileSystem, which is
+        where all filesystem operations should live.
+        Also made the FileSystemDirectoryReader an ActiveDOMObject to keep it and its
+        wrapper alive while a file system operation is pending.
+
+        * Modules/entriesapi/FileSystemEntry.cpp:
+        (WebCore::FileSystemEntry::~FileSystemEntry):
+        (WebCore::FileSystemEntry::filesystem const):
+        * Modules/entriesapi/FileSystemEntry.h:
+        Make FileSystemEntry keep a strong reference to its DOMFileSystem object.
+        Previously, the DOMFileSystem was kept alive by the DataTransferItem but
+        this was unsafe because FileSystemEntry may outlive the DataTransferItem.
+
+        * dom/ActiveDOMObject.h:
+        (WebCore::ActiveDOMObject::PendingActivity::PendingActivity):
+        (WebCore::ActiveDOMObject::PendingActivity::~PendingActivity):
+        (WebCore::ActiveDOMObject::makePendingActivity):
+        Add PendingActivity / makePendingActivity() as a less error-prone
+        replacement for setPendingActivity() / unsetPendingActivity().
+
+        * dom/DOMException.cpp:
+        (WebCore::DOMException::create):
+        * dom/DOMException.h:
+        Add factory to construct a DOMException from an Exception.
+
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::getAsEntry const):
+        * dom/DataTransferItem.h:
+
+        * dom/Exception.h:
+        (WebCore::Exception::isolatedCopy const):
+        * dom/ExceptionOr.h:
+        Make ExceptionOr<> / Exception work with CrossThreadCopier for convenience.
+
+        * html/FileListCreator.cpp:
+        (WebCore::FileListCreator::FileListCreator):
+        Use crossThreadCopy() instead of longer form.
+
+        * platform/FileSystem.h:
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::pathByAppendingComponents):
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::pathByAppendingComponents):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::pathByAppendingComponents):
+        Add pathByAppendingComponents() utility function, which is similar to
+        pathByAppendingComponent() but supports appending multiple components
+        in an efficient fashion.
+
 2017-08-30  Antti Koivisto  <antti@apple.com>
 
         Factor RenderMultiColumnFlowThread construction and destruction into RenderTreeUpdater helper

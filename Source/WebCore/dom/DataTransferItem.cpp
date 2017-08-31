@@ -40,7 +40,6 @@
 #include "FileSystemFileEntry.h"
 #include "ScriptExecutionContext.h"
 #include "StringCallback.h"
-#include <wtf/UUID.h>
 
 namespace WebCore {
 
@@ -112,13 +111,7 @@ RefPtr<FileSystemEntry> DataTransferItem::getAsEntry() const
     if (!file)
         return nullptr;
 
-    if (!m_fileSystem)
-        m_fileSystem = DOMFileSystem::create(createCanonicalUUIDString());
-
-    String virtualPath = "/" + file->name();
-    if (file->isDirectory())
-        return FileSystemDirectoryEntry::create(*m_fileSystem, virtualPath);
-    return FileSystemFileEntry::create(*m_fileSystem, virtualPath);
+    return DOMFileSystem::createEntryForFile(*file);
 }
 
 } // namespace WebCore
