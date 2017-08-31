@@ -60,7 +60,7 @@ function newPromiseCapability(constructor)
         @reject: @undefined
     };
 
-    function executor(resolve, reject)
+    function @executor(resolve, reject)
     {
         if (promiseCapability.@resolve !== @undefined)
             @throwTypeError("resolve function is already set");
@@ -71,7 +71,7 @@ function newPromiseCapability(constructor)
         promiseCapability.@reject = reject;
     }
 
-    var promise = new constructor(executor);
+    var promise = new constructor(@executor);
 
     if (typeof promiseCapability.@resolve !== "function")
         @throwTypeError("executor did not take a resolve function");
@@ -141,7 +141,7 @@ function createResolvingFunctions(promise)
 
     var alreadyResolved = false;
 
-    var resolve = function (resolution) {
+    function @resolve(resolution) {
         if (alreadyResolved)
             return @undefined;
         alreadyResolved = true;
@@ -165,20 +165,17 @@ function createResolvingFunctions(promise)
         @enqueueJob(@promiseResolveThenableJob, [promise, resolution, then]);
 
         return @undefined;
-    };
+    }
 
-    var reject = function (reason) {
+    function @reject(reason) {
         if (alreadyResolved)
             return @undefined;
         alreadyResolved = true;
 
         return @rejectPromise(promise, reason);
-    };
+    }
 
-    return {
-        @resolve: resolve,
-        @reject: reject
-    };
+    return { @resolve, @reject };
 }
 
 @globalPrivate

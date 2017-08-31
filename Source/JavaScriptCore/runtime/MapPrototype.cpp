@@ -71,7 +71,7 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getPrivateName(), mapProtoFuncGet, DontEnum, 1, JSMapGetIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().setPrivateName(), mapProtoFuncSet, DontEnum, 2);
 
-    JSFunction* entries = JSFunction::createBuiltinFunction(vm, mapPrototypeEntriesCodeGenerator(vm), globalObject);
+    JSFunction* entries = JSFunction::create(vm, mapPrototypeEntriesCodeGenerator(vm), globalObject);
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPublicName(), entries, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, entries, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Map"), DontEnum | ReadOnly);

@@ -57,9 +57,9 @@ function isDictionary(object)
     return object == null || typeof object === "object";
 }
 
-// FIXME: this needs to have it's name changed to "get [Symbol.species]".
-// see: https://bugs.webkit.org/show_bug.cgi?id=151363
 @globalPrivate
+@getter
+@overriddenName="get [Symbol.species]"
 function speciesGetter()
 {
     return this;

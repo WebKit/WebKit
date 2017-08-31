@@ -41,8 +41,7 @@ void IteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(vm, info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSFunction* iteratorPrototypeFunction = JSFunction::createBuiltinFunction(vm, iteratorPrototypeSymbolIteratorGetterCodeGenerator(vm), globalObject, "[Symbol.iterator]");
-    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, iteratorPrototypeFunction, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->iteratorSymbol, iteratorPrototypeSymbolIteratorGetterCodeGenerator, DontEnum);
 }
 
 } // namespace JSC

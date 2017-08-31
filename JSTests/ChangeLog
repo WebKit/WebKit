@@ -1,3 +1,20 @@
+2017-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use reifying system for "name" property of builtin JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=175260
+
+        Reviewed by Saam Barati.
+
+        * stress/accessors-get-set-prefix.js:
+        * stress/builtin-function-name.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (shouldBe.JSON.stringify.Object.getOwnPropertyDescriptor):
+        (shouldBe.JSON.stringify.Object.getOwnPropertyNames.Array.prototype.filter.sort):
+        * stress/private-name-as-anonymous-builtin.js: Added.
+        (shouldBe):
+        (NotPromise):
+
 2017-08-30  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Make test stop printing.

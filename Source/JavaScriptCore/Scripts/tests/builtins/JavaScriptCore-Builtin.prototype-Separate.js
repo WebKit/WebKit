@@ -76,3 +76,83 @@ function forEach(callback /*, thisArg */)
             callback.@call(thisArg, array[i], i, array);
     }
 }
+
+@overriddenName="[Symbol.match]"
+function match(strArg)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("RegExp.prototype.@@match requires that |this| be an Object");
+
+    let regexp = this;
+
+    // Check for observable side effects and call the fast path if there aren't any.
+    if (!@hasObservableSideEffectsForRegExpMatch(regexp))
+        return @regExpMatchFast.@call(regexp, strArg);
+
+    let str = @toString(strArg);
+
+    if (!regexp.global)
+        return @regExpExec(regexp, str);
+    
+    let unicode = regexp.unicode;
+    regexp.lastIndex = 0;
+    let resultList = [];
+
+    // FIXME: It would be great to implement a solution similar to what we do in
+    // RegExpObject::matchGlobal(). It's not clear if this is possible, since this loop has
+    // effects. https://bugs.webkit.org/show_bug.cgi?id=158145
+    const maximumReasonableMatchSize = 100000000;
+
+    while (true) {
+        let result = @regExpExec(regexp, str);
+        
+        if (result === null) {
+            if (resultList.length === 0)
+                return null;
+            return resultList;
+        }
+
+        if (resultList.length > maximumReasonableMatchSize)
+            @throwOutOfMemoryError();
+
+        if (!@isObject(result))
+            @throwTypeError("RegExp.prototype.@@match call to RegExp.exec didn't return null or an object");
+
+        let resultString = @toString(result[0]);
+
+        if (!resultString.length)
+            regexp.lastIndex = @advanceStringIndex(str, regexp.lastIndex, unicode);
+
+        resultList.@push(resultString);
+    }
+}
+
+@intrinsic=RegExpTestIntrinsic
+function test(strArg)
+{
+    "use strict";
+
+    let regexp = this;
+
+    // Check for observable side effects and call the fast path if there aren't any.
+    if (@isRegExpObject(regexp) && @tryGetById(regexp, "exec") === @regExpBuiltinExec)
+        return @regExpTestFast.@call(regexp, strArg);
+
+    // 1. Let R be the this value.
+    // 2. If Type(R) is not Object, throw a TypeError exception.
+    if (!@isObject(regexp))
+        @throwTypeError("RegExp.prototype.test requires that |this| be an Object");
+
+    // 3. Let string be ? ToString(S).
+    let str = @toString(strArg);
+
+    // 4. Let match be ? RegExpExec(R, string).
+    let match = @regExpExec(regexp, str);
+
+    // 5. If match is not null, return true; else return false.
+    if (match !== null)
+        return true;
+    return false;
+}

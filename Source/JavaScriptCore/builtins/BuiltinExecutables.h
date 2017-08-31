@@ -42,7 +42,7 @@ class BuiltinExecutables final: private WeakHandleOwner {
 public:
     explicit BuiltinExecutables(VM&);
 
-#define EXPOSE_BUILTIN_EXECUTABLES(name, functionName, length) \
+#define EXPOSE_BUILTIN_EXECUTABLES(name, functionName, overriddenName, length) \
 UnlinkedFunctionExecutable* name##Executable(); \
 const SourceCode& name##Source() { return m_##name##Source; }
     
@@ -59,7 +59,7 @@ private:
 
     UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode&, const Identifier&, ConstructAbility);
 
-#define DECLARE_BUILTIN_SOURCE_MEMBERS(name, functionName, length)\
+#define DECLARE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length)\
     SourceCode m_##name##Source; \
     Weak<UnlinkedFunctionExecutable> m_##name##Executable;
     JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_SOURCE_MEMBERS)

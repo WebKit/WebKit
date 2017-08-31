@@ -65,7 +65,7 @@ void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* g
     *callFunction = putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->builtinNames().callPublicName(), functionPrototypeCallCodeGenerator(vm), DontEnum);
     putDirectBuiltinFunctionWithoutTransition(vm, globalObject, vm.propertyNames->bind, functionPrototypeBindCodeGenerator(vm), DontEnum);
 
-    *hasInstanceSymbolFunction = JSFunction::createBuiltinFunction(vm, functionPrototypeSymbolHasInstanceCodeGenerator(vm), globalObject, ASCIILiteral("[Symbol.hasInstance]"));
+    *hasInstanceSymbolFunction = JSFunction::create(vm, functionPrototypeSymbolHasInstanceCodeGenerator(vm), globalObject);
     putDirectWithoutTransition(vm, vm.propertyNames->hasInstanceSymbol, *hasInstanceSymbolFunction, DontDelete | ReadOnly | DontEnum);
 }
     

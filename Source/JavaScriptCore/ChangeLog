@@ -1,3 +1,113 @@
+2017-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use reifying system for "name" property of builtin JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=175260
+
+        Reviewed by Saam Barati.
+
+        Currently builtin JSFunction uses direct property for "name", which is different
+        from usual JSFunction. Usual JSFunction uses reifying system for "name". We would like
+        to apply this reifying mechanism to builtin JSFunction to simplify code and drop
+        JSFunction::createBuiltinFunction.
+
+        We would like to store the "correct" name in FunctionExecutable. For example,
+        we would like to store the name like "get [Symbol.species]" to FunctionExecutable
+        instead of specifying name when creating JSFunction. To do so, we add a new
+        annotations, @getter and @overriddenName. When @getter is specified, the name of
+        the function becomes "get xxx". And when @overriddenName="xxx" is specified,
+        the name of the function becomes "xxx".
+
+        We also treat @xxx as anonymous builtin functions that cannot be achieved in
+        the current JS without privilege.
+
+        * Scripts/builtins/builtins_generate_combined_header.py:
+        (generate_section_for_code_table_macro):
+        * Scripts/builtins/builtins_generate_combined_implementation.py:
+        (BuiltinsCombinedImplementationGenerator.generate_secondary_header_includes):
+        * Scripts/builtins/builtins_generate_separate_header.py:
+        (generate_section_for_code_table_macro):
+        * Scripts/builtins/builtins_generate_separate_implementation.py:
+        (BuiltinsSeparateImplementationGenerator.generate_secondary_header_includes):
+        * Scripts/builtins/builtins_model.py:
+        (BuiltinFunction.__init__):
+        (BuiltinFunction.fromString):
+        * Scripts/builtins/builtins_templates.py:
+        * Scripts/tests/builtins/JavaScriptCore-Builtin.prototype-Combined.js:
+        (overriddenName.string_appeared_here.match):
+        (intrinsic.RegExpTestIntrinsic.test):
+        * Scripts/tests/builtins/JavaScriptCore-Builtin.prototype-Separate.js:
+        (overriddenName.string_appeared_here.match):
+        (intrinsic.RegExpTestIntrinsic.test):
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-result:
+        * Scripts/tests/builtins/expected/WebCore-AnotherGuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+        * builtins/AsyncIteratorPrototype.js:
+        (symbolAsyncIteratorGetter): Deleted.
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::BuiltinExecutables):
+        * builtins/BuiltinExecutables.h:
+        * builtins/BuiltinNames.h:
+        * builtins/FunctionPrototype.js:
+        (symbolHasInstance): Deleted.
+        * builtins/GlobalOperations.js:
+        (globalPrivate.speciesGetter): Deleted.
+        * builtins/IteratorPrototype.js:
+        (symbolIteratorGetter): Deleted.
+        * builtins/PromiseConstructor.js:
+        (all.newResolveElement.return.resolve):
+        (all.newResolveElement):
+        (all):
+        * builtins/PromiseOperations.js:
+        (globalPrivate.newPromiseCapability.executor):
+        (globalPrivate.newPromiseCapability):
+        (globalPrivate.createResolvingFunctions.resolve):
+        (globalPrivate.createResolvingFunctions.reject):
+        (globalPrivate.createResolvingFunctions):
+        * builtins/RegExpPrototype.js:
+        (match): Deleted.
+        (replace): Deleted.
+        (search): Deleted.
+        (split): Deleted.
+        * jsc.cpp:
+        (functionCreateBuiltin):
+        * runtime/AsyncIteratorPrototype.cpp:
+        (JSC::AsyncIteratorPrototype::finishCreation):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        * runtime/IteratorPrototype.cpp:
+        (JSC::IteratorPrototype::finishCreation):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::reifyLazyBoundNameIfNeeded):
+        (JSC::JSFunction::createBuiltinFunction): Deleted.
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectBuiltinFunction):
+        (JSC::JSObject::putDirectBuiltinFunctionWithoutTransition):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/Lookup.cpp:
+        (JSC::reifyStaticAccessor):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+
 2017-08-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221327.

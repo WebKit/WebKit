@@ -216,6 +216,7 @@ function tee()
     return @readableStreamTee(this, false);
 }
 
+@getter
 function locked()
 {
     "use strict";

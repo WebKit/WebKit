@@ -1,3 +1,37 @@
+2017-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use reifying system for "name" property of builtin JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=175260
+
+        Reviewed by Saam Barati.
+
+        Test: js/dom/builtin-getter-name.html
+
+        Use @getter for JSBuiltin getters.
+
+        * Modules/fetch/FetchResponse.js:
+        (bodyUsed): Deleted.
+        (body): Deleted.
+        * Modules/streams/ReadableByteStreamController.js:
+        (byobRequest): Deleted.
+        (desiredSize): Deleted.
+        * Modules/streams/ReadableStream.js:
+        (locked): Deleted.
+        * Modules/streams/ReadableStreamBYOBReader.js:
+        (closed): Deleted.
+        * Modules/streams/ReadableStreamBYOBRequest.js:
+        (view): Deleted.
+        * Modules/streams/ReadableStreamDefaultController.js:
+        (desiredSize): Deleted.
+        * Modules/streams/ReadableStreamDefaultReader.js:
+        (closed): Deleted.
+        * Modules/streams/WritableStream.js:
+        (closed): Deleted.
+        (ready): Deleted.
+        (state): Deleted.
+        * bindings/js/JSDOMBuiltinConstructor.h:
+        (WebCore::JSDOMBuiltinConstructor<JSClass>::finishCreation):
+
 2017-08-30  Chris Dumez  <cdumez@apple.com>
 
         Implement FileSystemDirectoryReader.readEntries()

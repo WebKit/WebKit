@@ -42,11 +42,13 @@ _FRAMEWORK_CONFIG_MAP = {
     },
 }
 
-functionHeadRegExp = re.compile(r"(?:@[\w|=]+\s*\n)*function\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
+functionHeadRegExp = re.compile(r"(?:@[\w|=\[\] \"\.]+\s*\n)*function\s+\w+\s*\(.*?\)", re.MULTILINE | re.DOTALL)
 functionGlobalPrivateRegExp = re.compile(r".*^@globalPrivate", re.MULTILINE | re.DOTALL)
 functionIntrinsicRegExp = re.compile(r".*^@intrinsic=(\w+)", re.MULTILINE | re.DOTALL)
 functionIsConstructorRegExp = re.compile(r".*^@constructor", re.MULTILINE | re.DOTALL)
+functionIsGetterRegExp = re.compile(r".*^@getter", re.MULTILINE | re.DOTALL)
 functionNameRegExp = re.compile(r"function\s+(\w+)\s*\(", re.MULTILINE | re.DOTALL)
+functionOverriddenNameRegExp = re.compile(r".*^@overriddenName=(\".+\")$", re.MULTILINE | re.DOTALL)
 functionParameterFinder = re.compile(r"^function\s+(?:\w+)\s*\(((?:\s*\w+)?\s*(?:\s*,\s*\w+)*)?\s*\)", re.MULTILINE | re.DOTALL)
 
 multilineCommentRegExp = re.compile(r"\/\*.*?\*\/", re.MULTILINE | re.DOTALL)
@@ -97,13 +99,14 @@ class BuiltinObject:
 
 
 class BuiltinFunction:
-    def __init__(self, function_name, function_source, parameters, is_constructor, is_global_private, intrinsic):
+    def __init__(self, function_name, function_source, parameters, is_constructor, is_global_private, intrinsic, overridden_name):
         self.function_name = function_name
         self.function_source = function_source
         self.parameters = parameters
         self.is_constructor = is_constructor
         self.is_global_private = is_global_private
         self.intrinsic = intrinsic
+        self.overridden_name = overridden_name
         self.object = None  # Set by the owning BuiltinObject
 
     @staticmethod
@@ -116,6 +119,12 @@ class BuiltinFunction:
             intrinsic = intrinsicMatch.group(1)
             function_source = functionIntrinsicRegExp.sub("", function_source)
 
+        overridden_name = None
+        overriddenNameMatch = functionOverriddenNameRegExp.search(function_source)
+        if overriddenNameMatch:
+            overridden_name = overriddenNameMatch.group(1)
+            function_source = functionOverriddenNameRegExp.sub("", function_source)
+
         if os.getenv("CONFIGURATION", "Debug").startswith("Debug"):
             function_source = lineWithOnlySingleLineCommentRegExp.sub("", function_source)
             function_source = lineWithTrailingSingleLineCommentRegExp.sub("\n", function_source)
@@ -123,12 +132,19 @@ class BuiltinFunction:
 
         function_name = functionNameRegExp.findall(function_source)[0]
         is_constructor = functionIsConstructorRegExp.match(function_source) != None
+        is_getter = functionIsGetterRegExp.match(function_source) != None
         is_global_private = functionGlobalPrivateRegExp.match(function_source) != None
         parameters = [s.strip() for s in functionParameterFinder.findall(function_source)[0].split(',')]
         if len(parameters[0]) == 0:
             parameters = []
 
-        return BuiltinFunction(function_name, function_source, parameters, is_constructor, is_global_private, intrinsic)
+        if is_getter and not overridden_name:
+            overridden_name = "\"get %s\"" % (function_name)
+
+        if not overridden_name:
+            overridden_name = "static_cast<const char*>(nullptr)"
+
+        return BuiltinFunction(function_name, function_source, parameters, is_constructor, is_global_private, intrinsic, overridden_name)
 
     def __str__(self):
         interface = "%s(%s)" % (self.function_name, ', '.join(self.parameters))

@@ -66,6 +66,7 @@ function releaseLock()
     @readableStreamReaderGenericRelease(this);
 }
 
+@getter
 function closed()
 {
     "use strict";

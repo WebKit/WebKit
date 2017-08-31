@@ -91,6 +91,17 @@ JSFunction::JSFunction(VM& vm, JSGlobalObject* globalObject, Structure* structur
 {
 }
 
+
+void JSFunction::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(vm, info()));
+    if (isBuiltinFunction() && jsExecutable()->name().isPrivateName()) {
+        // This is anonymous builtin function.
+        rareData(vm)->setHasReifiedName();
+    }
+}
+
 void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length, const String& name)
 {
     Base::finishCreation(vm);
@@ -100,20 +111,6 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length
     if (!name.isNull())
         putDirect(vm, vm.propertyNames->name, jsString(&vm, name), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(length), ReadOnly | DontEnum);
-}
-
-JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject)
-{
-    JSFunction* function = create(vm, executable, globalObject);
-    function->putDirect(vm, vm.propertyNames->name, jsString(&vm, executable->name().string()), ReadOnly | DontEnum);
-    return function;
-}
-
-JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject, const String& name)
-{
-    JSFunction* function = create(vm, executable, globalObject);
-    function->putDirect(vm, vm.propertyNames->name, jsString(&vm, name), ReadOnly | DontEnum);
-    return function;
 }
 
 FunctionRareData* JSFunction::allocateRareData(VM& vm)
@@ -420,7 +417,7 @@ void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, 
         } else {
             if (thisObject->isBuiltinFunction() && !thisObject->hasReifiedLength())
                 propertyNames.add(vm.propertyNames->length);
-            if (thisObject->inherits(vm, JSBoundFunction::info()) && !thisObject->hasReifiedName())
+            if ((thisObject->isBuiltinFunction() || thisObject->inherits(vm, JSBoundFunction::info())) && !thisObject->hasReifiedName())
                 propertyNames.add(vm.propertyNames->name);
         }
     }
@@ -726,7 +723,9 @@ JSFunction::LazyPropertyType JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, Exec
     if (hasReifiedName())
         return LazyPropertyType::IsLazyProperty;
 
-    if (this->inherits(vm, JSBoundFunction::info())) {
+    if (isBuiltinFunction())
+        reifyName(vm, exec);
+    else if (this->inherits(vm, JSBoundFunction::info())) {
         FunctionRareData* rareData = this->rareData(vm);
         String name = makeString("bound ", static_cast<NativeExecutable*>(m_executable.get())->name());
         unsigned initialAttributes = DontEnum | ReadOnly;

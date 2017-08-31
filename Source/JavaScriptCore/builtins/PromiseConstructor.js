@@ -39,7 +39,7 @@ function all(iterable)
     function newResolveElement(index)
     {
         var alreadyCalled = false;
-        return function (argument)
+        return function @resolve(argument)
         {
             if (alreadyCalled)
                 return @undefined;

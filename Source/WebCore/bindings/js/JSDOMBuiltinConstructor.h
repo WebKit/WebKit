@@ -72,7 +72,7 @@ template<typename JSClass> inline void JSDOMBuiltinConstructor<JSClass>::finishC
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    setInitializeFunction(vm, *JSC::JSFunction::createBuiltinFunction(vm, initializeExecutable(vm), &globalObject));
+    setInitializeFunction(vm, *JSC::JSFunction::create(vm, initializeExecutable(vm), &globalObject));
     initializeProperties(vm, globalObject);
 }
 
