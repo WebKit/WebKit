@@ -39,13 +39,13 @@ class EPtr extends EValue {
     // function is here to help.
     //
     // In a real execution environment, uses of this manifest as SSA temporaries.
-    static box(value)
+    static box(type, value)
     {
-        if (!value.type)
-            throw new Error("Value has no type: " + value);
+        if (!type || !value)
+            throw new Error("Need both type and value");
         let buffer = new EBuffer(1);
         buffer.set(0, value);
-        return new EPtr(new PtrType(null, "thread", value.type), buffer, 0);
+        return new EPtr(new PtrType(null, "thread", type), buffer, 0);
     }
     
     get buffer() { return this._buffer; }

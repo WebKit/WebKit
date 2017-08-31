@@ -89,7 +89,7 @@ class Evaluator extends Visitor {
     
     visitIntLiteral(node)
     {
-        return EPtr.box(new EInt(this._program.intrinsics.int32, node.value));
+        return EPtr.box(this._program.intrinsics.int32, node.value);
     }
     
     visitCallExpression(node)

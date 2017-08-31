@@ -47,7 +47,7 @@ class Intrinsics {
             (type) => {
                 this.int32 = type;
                 type.size = 1;
-                type.populateDefaultValue = (buffer, offset) => buffer.set(offset, new EInt(type, 0));
+                type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
             });
 
         this._map.set(
@@ -55,15 +55,14 @@ class Intrinsics {
             (type) => {
                 this.double = type;
                 type.size = 1;
-                type.populateDefaultValue =
-                    (buffer, offset) => buffer.set(offset, new EFloat(type, 0));
+                type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
             });
         
         this._map.set(
             "native int operator+<>(int,int)",
             (func) => {
                 func.implementation =
-                    ([left, right]) => EPtr.box(left.loadValue().add(right.loadValue()));
+                    ([left, right]) => EPtr.box(this.int32, (left.loadValue() + right.loadValue()) | 0);
             });
     }
     

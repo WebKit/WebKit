@@ -41,9 +41,11 @@ function callFunctionByRef(program, name, typeArguments, argumentList)
     return new Evaluator(program).visitFunctionBody(func.body);
 }
 
+// This uses the simplified TypedValue object for wrapping values like integers and doubles.
 function callFunction(program, name, typeArguments, argumentList)
 {
-    return callFunctionByRef(
+    let result = callFunctionByRef(
         program, name, typeArguments,
-        argumentList.map(argument => EPtr.box(argument))).loadValue();
+        argumentList.map(argument => EPtr.box(argument.type, argument.value)));
+    return new TypedValue(result.type.elementType, result.loadValue());
 }

@@ -24,23 +24,15 @@
  */
 "use strict";
 
-class EInt extends EValue {
+class TypedValue {
     constructor(type, value)
     {
-        super(type);
-        this._value = value;
-    }
-    
-    get value() { return this._value; }
-    
-    add(other)
-    {
-        return new EInt(this.type, (this.value + other.value) | 0);
+        this.type = type;
+        this.value = value;
     }
     
     toString()
     {
-        return "" + this.value;
+        return this.type + "(" + this.value + ")";
     }
 }
-

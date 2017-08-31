@@ -1,3 +1,42 @@
+2017-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL doesn't need to wrap primitives like ints and floats in specialized classes like EInt and EFloat
+        https://bugs.webkit.org/show_bug.cgi?id=176184
+
+        Reviewed by Saam Barati.
+        
+        The only use for EInt and EFloat was that users of the interpreter want to be able to reason
+        about values that know their type. But for the actual interpreter, it makes most sense for
+        EBuffer to hold values directly - for example, ints in the case of values of type int. Then,
+        all of the logic of doing math on those things can be implemented in Intrinsics.js.
+        
+        So, this removes EInt and EFloat but introduces a new TypedValue class that is used only on the
+        boundary of the interpreter. You can either use the interpreter by speaking its internal
+        language (EPtr to an EBuffer that has the values) or by using the simple API (which uses
+        TypedValue as a trade-off between power and convenience).
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        (callFunction):
+        * WebGPUShadingLanguageRI/EFloat.js: Removed.
+        * WebGPUShadingLanguageRI/EInt.js: Removed.
+        * WebGPUShadingLanguageRI/EPtr.js:
+        (EPtr.box):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitIntLiteral):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/Test.js:
+        (makeInt):
+        (checkInt):
+        (TEST_add1):
+        (TEST_simpleGeneric):
+        (TEST_simpleAssignment):
+        (TEST_simpleDefault):
+        * WebGPUShadingLanguageRI/TypedValue.js: Added.
+        (TypedValue):
+        (TypedValue.prototype.toString):
+
 2017-08-31  David Quesada  <david_quesada@apple.com>
 
         WKNavigationDelegatePrivate client redirect SPI needs to be able to detect redirects scheduled before the document finishes loading

@@ -33,12 +33,12 @@ function doPrep(code)
 
 function makeInt(program, value)
 {
-    return new EInt(program.intrinsics.int32, value);
+    return new TypedValue(program.intrinsics.int32, value);
 }
 
-function checkInt(result, expected)
+function checkInt(program, result, expected)
 {
-    if (!(result instanceof EInt))
+    if (result.type != program.intrinsics.int32)
         throw new Error("Wrong result type; result: " + result);
     if (result.value != expected)
         throw new Error("Wrong result: " + result + " (expected " + expected + ")");
@@ -60,14 +60,14 @@ function checkFail(callback, predicate)
 
 function TEST_add1() {
     let program = doPrep("int foo(int x) { return x + 1; }");
-    checkInt(callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
 }
 
 function TEST_simpleGeneric() {
     let program = doPrep(`
         T id<T>(T x) { return x; }
         int foo(int x) { return id(x) + 1; }`);
-    checkInt(callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
 }
 
 function TEST_nameResolutionFailure()
@@ -85,7 +85,7 @@ function TEST_simpleVariable()
             int result = p;
             return result;
         }`);
-    checkInt(callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
 }
 
 function TEST_simpleAssignment()
@@ -97,7 +97,7 @@ function TEST_simpleAssignment()
             result = p;
             return result;
         }`);
-    checkInt(callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
 }
 
 function TEST_simpleDefault()
@@ -108,7 +108,7 @@ function TEST_simpleDefault()
             int result;
             return result;
         }`);
-    checkInt(callFunction(program, "foo", [], []), 0);
+    checkInt(program, callFunction(program, "foo", [], []), 0);
 }
 
 let before = preciseTime();
