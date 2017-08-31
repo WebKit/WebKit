@@ -41,7 +41,7 @@ SharedArrayBufferContents::SharedArrayBufferContents(void* data, ArrayBufferDest
 
 SharedArrayBufferContents::~SharedArrayBufferContents()
 {
-    m_destructor(m_data);
+    m_destructor(m_data.getMayBeNull());
 }
 
 ArrayBufferContents::ArrayBufferContents()
@@ -81,7 +81,7 @@ void ArrayBufferContents::clear()
 
 void ArrayBufferContents::destroy()
 {
-    m_destructor(m_data);
+    m_destructor(m_data.getMayBeNull());
 }
 
 void ArrayBufferContents::reset()
@@ -113,7 +113,7 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
     }
     
     if (policy == ZeroInitialize)
-        memset(m_data, 0, size);
+        memset(m_data.get(), 0, size);
 
     m_sizeInBytes = numElements * elementByteSize;
     m_destructor = [] (void* p) { Gigacage::free(Gigacage::Primitive, p); };
@@ -121,7 +121,7 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
 
 void ArrayBufferContents::makeShared()
 {
-    m_shared = adoptRef(new SharedArrayBufferContents(m_data, WTFMove(m_destructor)));
+    m_shared = adoptRef(new SharedArrayBufferContents(m_data.getMayBeNull(), WTFMove(m_destructor)));
     m_destructor = [] (void*) { };
 }
 
@@ -141,7 +141,7 @@ void ArrayBufferContents::copyTo(ArrayBufferContents& other)
     other.tryAllocate(m_sizeInBytes, sizeof(char), ArrayBufferContents::DontInitialize);
     if (!other.m_data)
         return;
-    memcpy(other.m_data, m_data, m_sizeInBytes);
+    memcpy(other.m_data.get(), m_data.get(), m_sizeInBytes);
     other.m_sizeInBytes = m_sizeInBytes;
 }
 
@@ -198,7 +198,7 @@ Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLengt
 // - WebAssembly. Wasm should allocate from the cage.
 Ref<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, unsigned byteLength, ArrayBufferDestructorFunction&& destructor)
 {
-    if (data && byteLength && !Gigacage::isCaged(Gigacage::Primitive, data))
+    if (data && !Gigacage::isCaged(Gigacage::Primitive, data))
         Gigacage::disablePrimitiveGigacage();
     
     ArrayBufferContents contents(const_cast<void*>(data), byteLength, WTFMove(destructor));
@@ -322,7 +322,7 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
     Ref<ArrayBuffer> protect(*this);
 
     if (!m_contents.m_data) {
-        result.m_data = 0;
+        result.m_data = nullptr;
         return false;
     }
     

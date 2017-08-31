@@ -88,4 +88,51 @@ private:
     AuxiliaryBarrier<CagedPtr<kind, T>> m_barrier;
 };
 
+template<Gigacage::Kind passedKind>
+class CagedBarrierPtr<passedKind, void> {
+public:
+    static constexpr Gigacage::Kind kind = passedKind;
+    typedef void Type;
+    
+    CagedBarrierPtr() { }
+    
+    template<typename U>
+    CagedBarrierPtr(VM& vm, JSCell* cell, U&& value)
+    {
+        m_barrier.set(vm, cell, std::forward<U>(value));
+    }
+    
+    void clear() { m_barrier.clear(); }
+    
+    template<typename U>
+    void set(VM& vm, JSCell* cell, U&& value)
+    {
+        m_barrier.set(vm, cell, std::forward<U>(value));
+    }
+    
+    void* get() const { return m_barrier.get().get(); }
+    void* getMayBeNull() const { return m_barrier.get().getMayBeNull(); }
+    
+    bool operator==(const CagedBarrierPtr& other) const
+    {
+        return getMayBeNull() == other.getMayBeNull();
+    }
+    
+    bool operator!=(const CagedBarrierPtr& other) const
+    {
+        return !(*this == other);
+    }
+    
+    explicit operator bool() const
+    {
+        return *this != CagedBarrierPtr();
+    }
+    
+    template<typename U>
+    void setWithoutBarrier(U&& value) { m_barrier.setWithoutBarrier(std::forward<U>(value)); }
+    
+private:
+    AuxiliaryBarrier<CagedPtr<kind, void>> m_barrier;
+};
+
 } // namespace JSC

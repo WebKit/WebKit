@@ -77,7 +77,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
         m_mode = FastTypedArray;
 
         if (mode == ZeroFill) {
-            uint64_t* asWords = static_cast<uint64_t*>(m_vector);
+            uint64_t* asWords = static_cast<uint64_t*>(m_vector.get());
             for (unsigned i = size / sizeof(uint64_t); i--;)
                 asWords[i] = 0;
         }
@@ -94,7 +94,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     if (!m_vector)
         return;
     if (mode == ZeroFill)
-        memset(m_vector, 0, size);
+        memset(m_vector.get(), 0, size);
     
     vm.heap.reportExtraMemoryAllocated(static_cast<size_t>(length) * elementSize);
     

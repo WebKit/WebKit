@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +72,7 @@ public:
     {
         if (isNeutered())
             return 0;
-        return m_baseAddress;
+        return m_baseAddress.getMayBeNull();
     }
 
     void* data() const { return baseAddress(); }
@@ -147,9 +147,7 @@ protected:
     }
 
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
-    // FIXME: This should be CagedPtr<>.
-    // https://bugs.webkit.org/show_bug.cgi?id=175515
-    void* m_baseAddress;
+    CagedPtr<Gigacage::Primitive, void> m_baseAddress;
 
     unsigned m_byteOffset : 31;
     bool m_isNeuterable : 1;

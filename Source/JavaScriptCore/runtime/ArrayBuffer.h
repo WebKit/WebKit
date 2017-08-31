@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "ArrayBufferSharingMode.h"
 #include "GCIncomingRefCounted.h"
 #include "Weak.h"
+#include <wtf/CagedPtr.h>
 #include <wtf/Function.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -47,12 +48,10 @@ public:
     SharedArrayBufferContents(void* data, ArrayBufferDestructorFunction&&);
     ~SharedArrayBufferContents();
     
-    void* data() const { return m_data; }
+    void* data() const { return m_data.getMayBeNull(); }
     
 private:
-    // FIXME: This should be CagedPtr<>.
-    // https://bugs.webkit.org/show_bug.cgi?id=175515
-    void* m_data;
+    CagedPtr<Gigacage::Primitive, void> m_data;
     ArrayBufferDestructorFunction m_destructor;
 };
 
@@ -70,7 +69,7 @@ public:
     
     explicit operator bool() { return !!m_data; }
     
-    void* data() const { return m_data; }
+    void* data() const { return m_data.getMayBeNull(); }
     unsigned sizeInBytes() const { return m_sizeInBytes; }
     
     bool isShared() const { return m_shared; }
@@ -97,9 +96,7 @@ private:
 
     ArrayBufferDestructorFunction m_destructor;
     RefPtr<SharedArrayBufferContents> m_shared;
-    // FIXME: This should be CagedPtr<>.
-    // https://bugs.webkit.org/show_bug.cgi?id=175515
-    void* m_data;
+    CagedPtr<Gigacage::Primitive, void> m_data;
     unsigned m_sizeInBytes;
 };
 
@@ -185,12 +182,12 @@ int ArrayBuffer::clampValue(int x, int left, int right)
 
 void* ArrayBuffer::data()
 {
-    return m_contents.m_data;
+    return m_contents.m_data.getMayBeNull();
 }
 
 const void* ArrayBuffer::data() const
 {
-    return m_contents.m_data;
+    return m_contents.m_data.getMayBeNull();
 }
 
 unsigned ArrayBuffer::byteLength() const

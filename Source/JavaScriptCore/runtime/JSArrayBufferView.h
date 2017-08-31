@@ -133,16 +133,14 @@ protected:
         bool operator!() const { return !m_structure; }
         
         Structure* structure() const { return m_structure; }
-        void* vector() const { return m_vector; }
+        void* vector() const { return m_vector.getMayBeNull(); }
         uint32_t length() const { return m_length; }
         TypedArrayMode mode() const { return m_mode; }
         Butterfly* butterfly() const { return m_butterfly; }
         
     private:
         Structure* m_structure;
-        // FIXME: This should be CagedPtr<>.
-        // https://bugs.webkit.org/show_bug.cgi?id=175515
-        void* m_vector;
+        CagedPtr<Gigacage::Primitive, void> m_vector;
         uint32_t m_length;
         TypedArrayMode m_mode;
         Butterfly* m_butterfly;
@@ -169,7 +167,7 @@ public:
     bool isNeutered() { return hasArrayBuffer() && !vector(); }
     void neuter();
     
-    void* vector() const { return m_vector.get(); }
+    void* vector() const { return m_vector.getMayBeNull(); }
     
     unsigned byteOffset();
     unsigned length() const { return m_length; }
@@ -192,9 +190,7 @@ protected:
 
     static String toStringName(const JSObject*, ExecState*);
 
-    // FIXME: This should be CagedBarrierPtr<>.
-    // https://bugs.webkit.org/show_bug.cgi?id=175515
-    AuxiliaryBarrier<void*> m_vector;
+    CagedBarrierPtr<Gigacage::Primitive, void> m_vector;
     uint32_t m_length;
     TypedArrayMode m_mode;
 };

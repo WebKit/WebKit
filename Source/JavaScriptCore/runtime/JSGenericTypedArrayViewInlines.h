@@ -517,7 +517,7 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     
     switch (thisObject->m_mode) {
     case FastTypedArray: {
-        if (void* vector = thisObject->m_vector.get())
+        if (void* vector = thisObject->m_vector.getMayBeNull())
             visitor.markAuxiliary(vector);
         break;
     }

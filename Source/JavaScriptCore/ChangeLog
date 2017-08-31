@@ -1,3 +1,39 @@
+2017-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        All of the different ArrayBuffer::data's should be CagedPtr<>
+        https://bugs.webkit.org/show_bug.cgi?id=175515
+
+        Reviewed by Michael Saboff.
+        
+        This straightforwardly implements what the title says.
+
+        * runtime/ArrayBuffer.cpp:
+        (JSC::SharedArrayBufferContents::~SharedArrayBufferContents):
+        (JSC::ArrayBufferContents::destroy):
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBufferContents::makeShared):
+        (JSC::ArrayBufferContents::copyTo):
+        (JSC::ArrayBuffer::createFromBytes):
+        (JSC::ArrayBuffer::transferTo):
+        * runtime/ArrayBuffer.h:
+        (JSC::SharedArrayBufferContents::data const):
+        (JSC::ArrayBufferContents::data const):
+        (JSC::ArrayBuffer::data):
+        (JSC::ArrayBuffer::data const):
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::baseAddress const):
+        * runtime/CagedBarrierPtr.h: Added a specialization so that CagedBarrierPtr<Gigacage::Foo, void> is valid.
+        * runtime/DataView.h:
+        (JSC::DataView::get):
+        (JSC::DataView::set):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::ConstructionContext::vector const):
+        (JSC::JSArrayBufferView::vector const):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+
 2017-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Strings need to be in some kind of gigacage
