@@ -140,6 +140,13 @@ class Visitor {
         node.numElements.visit(this);
     }
     
+    visitVariableDecl(node)
+    {
+        node.type.visit(this);
+        if (node.initializer)
+            node.initializer.visit(this);
+    }
+    
     visitAssignment(node)
     {
         node.lhs.visit(this);

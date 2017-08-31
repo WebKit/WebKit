@@ -1,3 +1,36 @@
+2017-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should handle variable assignments and variable declarations
+        https://bugs.webkit.org/show_bug.cgi?id=176180
+
+        Reviewed by Saam Barati.
+        
+        Just fills in VariableDecl and Assignment logic so that we can test variables.
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/EBufferBuilder.js:
+        (EBufferBuilder.prototype._createEPtrForNode):
+        (EBufferBuilder.prototype.visitFuncParameter):
+        (EBufferBuilder.prototype.visitVariableDecl):
+        (EBufferBuilder):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitVariableDecl):
+        (Evaluator.prototype.visitAssignment):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitVariableDecl):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitFuncParameter):
+        (Rewriter.prototype.visitVariableDecl):
+        * WebGPUShadingLanguageRI/Test.js:
+        (makeInt):
+        (TEST_add1):
+        (TEST_simpleGeneric):
+        (TEST_simpleAssignment):
+        (TEST_simpleDefault):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitVariableDecl):
+
 2017-08-31  Chris Dumez  <cdumez@apple.com>
 
         getFileMetadata() does not work as expected for symbolic links

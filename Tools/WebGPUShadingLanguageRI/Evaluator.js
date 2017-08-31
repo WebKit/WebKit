@@ -60,6 +60,20 @@ class Evaluator extends Visitor {
         throw new ReturnException(node.value ? node.value.visit(this) : null);
     }
     
+    visitVariableDecl(node)
+    {
+        node.type.populateDefaultValue(node.ePtr.buffer, node.ePtr.offset);
+        if (node.initializer)
+            node.ePtr.copyFrom(node.initializer.visit(this));
+    }
+    
+    visitAssignment(node)
+    {
+        let result = node.lhs.visit(this);
+        result.copyFrom(node.rhs.visit(this));
+        return result;
+    }
+    
     visitCommaExpression(node)
     {
         let result;

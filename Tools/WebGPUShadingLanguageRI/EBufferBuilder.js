@@ -39,11 +39,21 @@ class EBufferBuilder extends Visitor {
         return new EPtr(new PtrType(null, "thread", type), buffer, 0);
     }
     
-    visitFuncParameter(node)
+    _createEPtrForNode(node)
     {
         if (!node.type)
-            throw new Error("Func parameter has no type: " + node);
+            throw new Error("node has no type: " + node);
         node.ePtr = this._createEPtr(node.type);
+    }
+    
+    visitFuncParameter(node)
+    {
+        this._createEPtrForNode(node);
+    }
+    
+    visitVariableDecl(node)
+    {
+        this._createEPtrForNode(node);
     }
 }
 

@@ -110,6 +110,17 @@ class Checker extends Visitor {
             throw new WTypeError(node.origin.originString, "Array length must be constexpr");
     }
     
+    visitVariableDecl(node)
+    {
+        node.type.visit(this);
+        if (node.initializer) {
+            let lhsType = node.type;
+            let rhsType = node.initializer.visit(this);
+            if (!lhsType.equals(rhsType))
+                throw new WTypeError(node.origin.originString, "Type mismatch in variable initialization: " + lhsType + " versus " + rhsType);
+        }
+    }
+    
     visitAssignment(node)
     {
         // FIXME: We need to check that the lhs is assignable.

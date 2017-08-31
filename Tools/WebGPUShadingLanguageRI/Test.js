@@ -31,6 +31,11 @@ function doPrep(code)
     return prepare("<test>", 0, code);
 }
 
+function makeInt(program, value)
+{
+    return new EInt(program.intrinsics.int32, value);
+}
+
 function checkInt(result, expected)
 {
     if (!(result instanceof EInt))
@@ -55,14 +60,14 @@ function checkFail(callback, predicate)
 
 function TEST_add1() {
     let program = doPrep("int foo(int x) { return x + 1; }");
-    checkInt(callFunction(program, "foo", [], [new EInt(program.intrinsics.int32, 42)]), 43);
+    checkInt(callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
 }
 
 function TEST_simpleGeneric() {
-    let program = doPrep(
-        `T id<T>(T x) { return x; }
-         int foo(int x) { return id(x) + 1; }`);
-    checkInt(callFunction(program, "foo", [], [new EInt(program.intrinsics.int32, 42)]), 43);
+    let program = doPrep(`
+        T id<T>(T x) { return x; }
+        int foo(int x) { return id(x) + 1; }`);
+    checkInt(callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
 }
 
 function TEST_nameResolutionFailure()
@@ -70,6 +75,40 @@ function TEST_nameResolutionFailure()
     checkFail(
         () => doPrep("int foo(int x) { return x + y; }"),
         (e) => e instanceof WTypeError && e.message.indexOf("<test>:1") != -1);
+}
+
+function TEST_simpleVariable()
+{
+    let program = doPrep(`
+        int foo(int p)
+        {
+            int result = p;
+            return result;
+        }`);
+    checkInt(callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
+}
+
+function TEST_simpleAssignment()
+{
+    let program = doPrep(`
+        int foo(int p)
+        {
+            int result;
+            result = p;
+            return result;
+        }`);
+    checkInt(callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
+}
+
+function TEST_simpleDefault()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            int result;
+            return result;
+        }`);
+    checkInt(callFunction(program, "foo", [], []), 0);
 }
 
 let before = preciseTime();

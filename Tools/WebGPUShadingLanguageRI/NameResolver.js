@@ -176,6 +176,14 @@ class NameResolver extends Visitor {
         node.elementType.visit(new NameResolver(nameContext));
     }
     
+    visitVariableDecl(node)
+    {
+        this._nameContext.add(node);
+        node.type.visit(this);
+        if (node.initializer)
+            node.initializer.visit(this);
+    }
+    
     visitVariableRef(node)
     {
         let result = this._nameContext.get(Value, node.name);

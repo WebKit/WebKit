@@ -56,7 +56,18 @@ class Rewriter {
     {
         let result = new FuncParameter(node.origin, node.name, node.type.visit(this));
         this._mapNode(node, result);
-        result.lValue = node.lValue;
+        result.ePtr = node.ePtr;
+        return result;
+    }
+    
+    visitVariableDecl(node)
+    {
+        let result = new VariableDecl(
+            node.origin, node.name,
+            node.type.visit(this),
+            node.initializer ? node.initializer.visit(this) : null);
+        this._mapNode(node, result);
+        result.ePtr = node.ePtr;
         return result;
     }
     
