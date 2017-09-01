@@ -40,6 +40,11 @@ class Visitor {
             parameter.visit(this);
     }
     
+    visitProtocolFuncDecl(node)
+    {
+        this.visitFunc(node);
+    }
+    
     visitFuncParameter(node)
     {
         node.type.visit(this);

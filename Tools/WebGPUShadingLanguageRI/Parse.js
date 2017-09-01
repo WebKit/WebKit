@@ -636,6 +636,15 @@ function parse(program, origin, lineNumberOffset, text)
         return consumeKind("identifier").text;
     }
     
+    function parseProtocolFuncDecl()
+    {
+        let returnType = parseType();
+        let name = parseFuncName();
+        let typeParameters = parseTypeParameters();
+        let parameters = parseParameters();
+        return new ProtocolFuncDecl(returnType.origin, name, returnType, typeParameters, parameters);
+    }
+    
     function parseFuncDef()
     {
         let returnType = parseType();
@@ -644,6 +653,21 @@ function parse(program, origin, lineNumberOffset, text)
         let parameters = parseParameters();
         let body = parseBlock();
         return new FuncDef(returnType.origin, name, returnType, typeParameters, parameters, body);
+    }
+    
+    function parseProtocolDecl()
+    {
+        let origin = consume("protocol");
+        let name = consumeKind("identifier").text;
+        // FIXME: Support protocol inclusion
+        // https://bugs.webkit.org/show_bug.cgi?id=176238
+        consume("{");
+        let result = new ProtocolDecl(origin, name);
+        while (!tryConsume("}")) {
+            result.add(parseProtocolFuncDecl());
+            consume(";");
+        }
+        return result;
     }
     
     for (;;) {

@@ -27,12 +27,9 @@
 class FuncDef extends Func {
     constructor(origin, name, returnType, typeParameters, parameters, body)
     {
-        super(name, returnType, typeParameters, parameters);
-        this._origin = origin;
+        super(origin, name, returnType, typeParameters, parameters);
         this.body = body;
     }
-    
-    get origin() { return this._origin; }
     
     toString()
     {

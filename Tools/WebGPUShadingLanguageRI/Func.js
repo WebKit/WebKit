@@ -25,15 +25,17 @@
 "use strict";
 
 class Func extends Node {
-    constructor(name, returnType, typeParameters, parameters)
+    constructor(origin, name, returnType, typeParameters, parameters)
     {
         super();
+        this._origin = origin;
         this._name = name;
         this._returnType = returnType;
         this._typeParameters = typeParameters;
         this._parameters = parameters;
     }
     
+    get origin() { return this._origin; }
     get name() { return this._name; }
     get returnType() { return this._returnType; }
     get typeParameters() { return this._typeParameters; }

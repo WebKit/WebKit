@@ -1,3 +1,83 @@
+2017-09-01  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should be be able to call a function declared in a protocol from a generic function
+        https://bugs.webkit.org/show_bug.cgi?id=176242
+
+        Reviewed by Myles Maxfield.
+        
+        It turns out that we need to know when a function is resolved to a protocol signature, so we
+        need to have a type for this. This introduces ProtocolFuncDecl.
+        
+        Also, this introduces parsing of protocol decls.
+        
+        When instantiating a function, we need to rewrite its CallExpressions if they were previously
+        resolved to a PrtococolFuncDecl instead of a FuncDef or NativeFunc. In that case, we need to
+        rerun the resolution on the program. That resolution is guaranteed to succeed if the type
+        system works correctly.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression.prototype.resolve):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/EBufferBuilder.js:
+        (EBufferBuilder.prototype._createEPtr):
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func):
+        (Func.prototype.get origin):
+        * WebGPUShadingLanguageRI/FuncDef.js:
+        (FuncDef):
+        (FuncDef.prototype.get origin): Deleted.
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator):
+        (FuncInstantiator.prototype.getUnique.InstantiationSubstitution.prototype.visitCallExpression):
+        (FuncInstantiator.prototype.getUnique.InstantiationSubstitution):
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        (NativeFunc):
+        (NativeFunc.prototype.get origin): Deleted.
+        * WebGPUShadingLanguageRI/NativeFuncInstance.js:
+        (NativeFuncInstance):
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.substitute):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseProtocolFuncDecl):
+        (parseProtocolDecl):
+        (parse):
+        * WebGPUShadingLanguageRI/Program.js:
+        (Program):
+        (Program.prototype.get protocols):
+        (Program.prototype.add):
+        * WebGPUShadingLanguageRI/ProtocolDecl.js:
+        (ProtocolDecl.prototype.add):
+        (ProtocolDecl.prototype.hasHeir):
+        (ProtocolDecl.prototype.addSignature): Deleted.
+        * WebGPUShadingLanguageRI/ProtocolFuncDecl.js: Added.
+        (ProtocolFuncDecl):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitStructType):
+        (Rewriter.prototype.visitTypeVariable):
+        (Rewriter.prototype.visitProtocolFuncDecl):
+        (Rewriter.prototype.visitCallExpression):
+        * WebGPUShadingLanguageRI/StructType.js:
+        (StructType.prototype.instantiate):
+        * WebGPUShadingLanguageRI/Substitution.js:
+        (Substitution):
+        (Substitution.mapping): Deleted.
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_simpleGeneric):
+        (TEST_simpleAssignment):
+        (TEST_simpleDefault):
+        (TEST_simpleDereference):
+        (TEST_dereferenceStore):
+        (TEST_simpleMakePtr):
+        (TEST_threadArrayLoad):
+        (TEST_deviceArrayLoad):
+        (TEST_threadArrayStore):
+        (TEST_deviceArrayStore):
+        (TEST_simpleProtocol):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolFuncDecl):
+
 2017-09-01  Eric Carlson  <eric.carlson@apple.com>
 
         Switch HTMLMediaElement to release logging

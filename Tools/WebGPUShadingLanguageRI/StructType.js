@@ -64,7 +64,7 @@ class StructType extends Type {
         if (!typeArguments.length)
             return this;
         
-        let substitution = Substitution.mapping(this.typeParameters, typeArguments);
+        let substitution = new Substitution(this.typeParameters, typeArguments);
         let instantiateImmediates = new InstantiateImmediates();
         let result = new StructType(this.origin, this.name, []);
         for (let field of this.fields)

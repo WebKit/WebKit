@@ -27,11 +27,9 @@
 class NativeFunc extends Func {
     constructor(origin, name, returnType, typeParameters, parameters)
     {
-        super(name, returnType, typeParameters, parameters);
-        this._origin = origin;
+        super(origin, name, returnType, typeParameters, parameters);
     }
     
-    get origin() { return this._origin; }
     get isNative() { return true; }
 
     toString()

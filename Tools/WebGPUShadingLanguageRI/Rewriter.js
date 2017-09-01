@@ -57,8 +57,22 @@ class Rewriter {
     visitNativeType(node) { return node; }
     visitTypeDef(node) { return node; }
     visitStructType(node) { return node; }
-    visitTypeVariable(node) { return node; }
     visitConstexprTypeParameter(node) { return node; }
+
+    // This is almost wrong. We instantiate Func in Substitution in ProtocolDecl. Then, we end up
+    // not rewriting type variables. I think that just works because not rewriting them there is OK.
+    visitTypeVariable(node) { return node; }
+
+    visitProtocolFuncDecl(node)
+    {
+        let result = new ProtocolFuncDecl(
+            node.origin, node.name,
+            node.returnType.visit(this),
+            node.typeParameters.map(parameter => parameter.visit(this)),
+            node.parameters.map(parameter => parameter.visit(this)));
+        result.protocolDecl = node.protocolDecl;
+        return result;
+    }
     
     visitNativeTypeInstance(node)
     {
@@ -192,6 +206,9 @@ class Rewriter {
             result.actualTypeArguments =
                 actualTypeArguments.map(actualTypeArgument => actualTypeArgument.visit(this));
         }
+        let argumentTypes = node.argumentTypes;
+        if (argumentTypes)
+            result.argumentTypes = argumentTypes.map(argumentType => argumentType.visit(this));
         result.func = node.func;
         result.nativeFuncInstance = node.nativeFuncInstance;
         return result;

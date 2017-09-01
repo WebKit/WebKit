@@ -77,6 +77,7 @@ load("Prepare.js");
 load("Program.js");
 load("Protocol.js");
 load("ProtocolDecl.js");
+load("ProtocolFuncDecl.js");
 load("ProtocolRef.js");
 load("PtrType.js");
 load("ResolveNames.js");

@@ -24,18 +24,5 @@
  */
 "use strict";
 
-class NativeFuncInstance extends Func {
-    constructor(func, returnType, parameters)
-    {
-        super(func.origin, func.name, returnType, [], parameters);
-    }
-    
-    get func() { return this._func; }
-    get isNative() { return true; }
-
-    toString()
-    {
-        return "native " + super.toString();
-    }
-}
+class ProtocolFuncDecl extends Func { }
 

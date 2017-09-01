@@ -66,7 +66,8 @@ function TEST_add1() {
 function TEST_simpleGeneric() {
     let program = doPrep(`
         T id<T>(T x) { return x; }
-        int foo(int x) { return id(x) + 1; }`);
+        int foo(int x) { return id(x) + 1; }
+    `);
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
 }
 
@@ -84,7 +85,8 @@ function TEST_simpleVariable()
         {
             int result = p;
             return result;
-        }`);
+        }
+    `);
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
 }
 
@@ -96,7 +98,8 @@ function TEST_simpleAssignment()
             int result;
             result = p;
             return result;
-        }`);
+        }
+    `);
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
 }
 
@@ -107,7 +110,8 @@ function TEST_simpleDefault()
         {
             int result;
             return result;
-        }`);
+        }
+    `);
     checkInt(program, callFunction(program, "foo", [], []), 0);
 }
 
@@ -117,7 +121,8 @@ function TEST_simpleDereference()
         int foo(device int^ p)
         {
             return ^p;
-        }`);
+        }
+    `);
     let buffer = new EBuffer(1);
     buffer.set(0, 13);
     checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
@@ -129,7 +134,8 @@ function TEST_dereferenceStore()
         void foo(device int^ p)
         {
             ^p = 52;
-        }`);
+        }
+    `);
     let buffer = new EBuffer(1);
     buffer.set(0, 13);
     callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]);
@@ -144,7 +150,8 @@ function TEST_simpleMakePtr()
         {
             int x = 42;
             return \\x;
-        }`);
+        }
+    `);
     let result = callFunction(program, "foo", [], []);
     if (!result.type.isPtr)
         throw new Error("Return type is not a pointer: " + result.type);
@@ -163,7 +170,8 @@ function TEST_threadArrayLoad()
         int foo(thread int[] array)
         {
             return array[0u];
-        }`);
+        }
+    `);
     let buffer = new EBuffer(1);
     buffer.set(0, 89);
     let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(null, "thread", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
@@ -176,7 +184,8 @@ function TEST_deviceArrayLoad()
         int foo(device int[] array)
         {
             return array[0u];
-        }`);
+        }
+    `);
     let buffer = new EBuffer(1);
     buffer.set(0, 89);
     let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(null, "device", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
@@ -189,7 +198,8 @@ function TEST_threadArrayStore()
         void foo(thread int[] array, int value)
         {
             array[0u] = value;
-        }`);
+        }
+    `);
     let buffer = new EBuffer(1);
     buffer.set(0, 15);
     let arrayRef = TypedValue.box(
@@ -209,7 +219,8 @@ function TEST_deviceArrayStore()
         void foo(device int[] array, int value)
         {
             array[0u] = value;
-        }`);
+        }
+    `);
     let buffer = new EBuffer(1);
     buffer.set(0, 15);
     let arrayRef = TypedValue.box(
@@ -221,6 +232,24 @@ function TEST_deviceArrayStore()
     callFunction(program, "foo", [], [arrayRef, makeInt(program, -111)]);
     if (buffer.get(0) != -111)
         throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
+}
+
+function TEST_simpleProtocol()
+{
+    let program = doPrep(`
+        protocol Addable {
+            Addable operator+(Addable, Addable);
+        }
+        T add<T:Addable>(T a, T b)
+        {
+            return a + b;
+        }
+        int foo(int x)
+        {
+            return add(x, 73);
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 45)]), 45 + 73);
 }
 
 let before = preciseTime();

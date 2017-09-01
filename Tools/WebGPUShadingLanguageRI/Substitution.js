@@ -25,20 +25,14 @@
 "use strict";
 
 class Substitution extends Rewriter {
-    constructor(map)
+    constructor(parameters, argumentList)
     {
         super();
-        this._map = map;
-    }
-    
-    static mapping(parameters, argumentList)
-    {
         if (parameters.length != argumentList.length)
             throw new Error("Parameters and arguments are mismatched");
-        let map = new Map();
+        this._map = new Map();
         for (let i = 0; i < parameters.length; ++i)
-            map.set(parameters[i], argumentList[i]);
-        return new Substitution(map);
+            this._map.set(parameters[i], argumentList[i]);
     }
     
     visitTypeRef(node)

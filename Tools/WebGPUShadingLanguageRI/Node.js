@@ -72,7 +72,7 @@ class Node {
     
     substitute(parameters, argumentList)
     {
-        return this.visit(Substitution.mapping(parameters, argumentList));
+        return this.visit(new Substitution(parameters, argumentList));
     }
     
     substituteToUnification(parameters, unificationContext)

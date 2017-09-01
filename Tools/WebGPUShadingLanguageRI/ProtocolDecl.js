@@ -34,8 +34,12 @@ class ProtocolDecl extends Protocol {
         this.isPrimitive = false;
     }
     
-    addSignature(signature)
+    add(signature)
     {
+        if (!(signature instanceof ProtocolFuncDecl))
+            throw new Error("Signature isn't a ProtocolFuncDecl but a " + signature.constructor.name);
+        
+        signature.protocolDecl = this;
         this._signatures.push(signature);
         let overloads = this._signatureMap.get(signature.name);
         if (!overloads)
@@ -82,9 +86,10 @@ class ProtocolDecl extends Protocol {
     
     hasHeir(type)
     {
-        let substitution = Substitution.mapping([this._typeVariable], [type]);
-        for (let signature of this._signatures) {
-            let signature = signature.visit(substitution);
+        let substitution = new Substitution([this._typeVariable], [type]);
+        let signatures = this.signatures;
+        for (let signature of signatures) {
+            signature = signature.visit(substitution);
             let overload = this.program.resolveFuncOverload(signature.name, [], signature.parameterTypes);
             if (!overload)
                 return false;

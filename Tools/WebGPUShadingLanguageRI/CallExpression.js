@@ -38,6 +38,17 @@ class CallExpression extends Expression {
     get typeArguments() { return this._typeArguments; }
     get argumentList() { return this._argumentList; }
     
+    resolve(overload)
+    {
+        this.func = overload.func;
+        this.actualTypeArguments = overload.typeArguments;
+        let result = overload.func.returnType.substituteToUnification(
+            overload.func.typeParameters, overload.unificationContext);
+        if (!result)
+            throw new Error("Null return type");
+        return result;
+    }
+    
     toString()
     {
         return this.name + "<" + this.typeArguments + ">(" + this.argumentList + ")";

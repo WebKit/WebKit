@@ -31,12 +31,14 @@ class Program extends Node {
         this._topLevelStatements = [];
         this._functions = new Map();
         this._types = new Map();
-        this._funcInstantiator = new FuncInstantiator();
+        this._protocols = new Map();
+        this._funcInstantiator = new FuncInstantiator(this);
     }
     
     get topLevelStatements() { return this._topLevelStatements; }
     get functions() { return this._functions; }
     get types() { return this._types; }
+    get protocols() { return this._protocols; }
     get funcInstantiator() { return this._funcInstantiator; }
     
     add(statement)
@@ -49,6 +51,8 @@ class Program extends Node {
             array.push(statement);
         } else if (statement instanceof Type)
             this._types.set(statement.name, statement);
+        else if (statement instanceof Protocol)
+            this._protocols.set(statement.add, statement);
         else
             throw new Error("Statement is not a function or type: " + statement);
         this._topLevelStatements.push(statement);

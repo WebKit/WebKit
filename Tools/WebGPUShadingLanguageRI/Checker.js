@@ -204,6 +204,7 @@ class Checker extends Visitor {
                 throw new Error("visitor returned null for " + argument);
             return newArgument;
         });
+        node.argumentTypes = argumentTypes;
         
         let overload = null;
         let failures = [];
@@ -213,7 +214,7 @@ class Checker extends Visitor {
             if (!typeParameter.protocol)
                 continue;
             let signatures =
-                typeParameter.protocol.signaturesByNameWithTypeVariable(node.name, typeParameter);
+                typeParameter.protocol.protocolDecl.signaturesByNameWithTypeVariable(node.name, typeParameter);
             if (!signatures)
                 continue;
             overload = resolveOverloadImpl(signatures, node.typeArguments, argumentTypes);
@@ -236,13 +237,7 @@ class Checker extends Visitor {
                 throw new WTypeError(node.origin.originString, message);
             }
         }
-        node.func = overload.func;
-        node.actualTypeArguments = overload.typeArguments;
-        let result = overload.func.returnType.substituteToUnification(
-            overload.func.typeParameters, overload.unificationContext);
-        if (!result)
-            throw new Error("Null result from CallExpression");
-        return result;
+        return node.resolve(overload);
     }
 }
 

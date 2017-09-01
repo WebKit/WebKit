@@ -25,12 +25,14 @@
 "use strict";
 
 class FuncInstantiator {
-    constructor()
+    constructor(program)
     {
+        this._program = program;
         this._instances = new Map();
     }
     
-    // Returns a Func object that uniquely identifies a particular system of type arguments.
+    // Returns a Func object that uniquely identifies a particular system of type arguments. You must
+    // intantiate things with concrete types, because this code casually assumes this.
     getUnique(func, typeArguments)
     {
         if (!func.typeParameters.length)
@@ -53,7 +55,26 @@ class FuncInstantiator {
             return instance.func;
         }
         
-        let substitution = Substitution.mapping(func.typeParameters, typeArguments);
+        let thisInstantiator = this;
+        class InstantiationSubstitution extends Substitution {
+            visitCallExpression(node)
+            {
+                let result = super.visitCallExpression(node);
+                
+                // We may have to re-resolve the function call, if it was a call to a protocol
+                // signature.
+                if (result.func instanceof ProtocolFuncDecl) {
+                    let overload = thisInstantiator._program.resolveFuncOverload(node.name, node.typeArguments, node.argumentTypes);
+                    if (!overload.func)
+                        throw new Error("Could not resolve protocol signature function call during instantiation: " + result.func + (overload.failures.length ? "; tried:\n" + overload.failures.join("\n") : ""));
+                    result.resolve(overload);
+                }
+                
+                return result;
+            }
+        }
+        
+        let substitution = new InstantiationSubstitution(func.typeParameters, typeArguments);
         
         class Instantiate {
             visitFuncDef(func)
