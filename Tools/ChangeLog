@@ -1,3 +1,16 @@
+2017-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's toolbarsAreVisible
+        https://bugs.webkit.org/show_bug.cgi?id=176246
+        <rdar://problem/29270035>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[ToolbarDelegate _webView:getToolbarsAreVisibleWithCompletionHandler:]):
+        (-[ToolbarDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2017-09-01  Eric Carlson  <eric.carlson@apple.com>
 
         Switch HTMLMediaElement to release logging

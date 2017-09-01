@@ -51,7 +51,7 @@ messages -> WebPageProxy {
     FrameSetLargestFrameChanged(uint64_t frameID)
     SetRenderTreeSize(uint64_t treeSize)
     SetToolbarsAreVisible(bool toolbarsAreVisible)
-    GetToolbarsAreVisible() -> (bool toolbarsAreVisible)
+    GetToolbarsAreVisible() -> (bool toolbarsAreVisible) Delayed
     SetMenuBarIsVisible(bool menuBarIsVisible);
     GetMenuBarIsVisible() -> (bool menuBarIsVisible);
     SetStatusBarIsVisible(bool statusBarIsVisible)

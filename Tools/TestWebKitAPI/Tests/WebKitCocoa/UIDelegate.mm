@@ -122,6 +122,41 @@ TEST(WebKit2, ShowWebView)
     ASSERT_EQ(webViewFromDelegateCallback, createdWebView);
 }
 
+bool firstToolbarDone;
+
+@interface ToolbarDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation ToolbarDelegate
+
+- (void)_webView:(WKWebView *)webView getToolbarsAreVisibleWithCompletionHandler:(void(^)(BOOL))completionHandler
+{
+    completionHandler(firstToolbarDone);
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    if (firstToolbarDone) {
+        EXPECT_STREQ(message.UTF8String, "visible:true");
+        done = true;
+    } else {
+        EXPECT_STREQ(message.UTF8String, "visible:false");
+        firstToolbarDone = true;
+    }
+    completionHandler();
+}
+
+@end
+
+TEST(WebKit2, ToolbarVisible)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:[[[WKWebViewConfiguration alloc] init] autorelease]]);
+    auto delegate = adoptNS([[ToolbarDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<script>alert('visible:' + window.toolbar.visible);alert('visible:' + window.toolbar.visible)</script>"];
+    TestWebKitAPI::Util::run(&done);
+}
+
 static bool readyForClick;
 
 @interface AutoFillDelegate : NSObject <WKUIDelegatePrivate>

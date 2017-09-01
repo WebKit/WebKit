@@ -4066,9 +4066,11 @@ void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
     m_uiClient->setToolbarsAreVisible(this, toolbarsAreVisible);
 }
 
-void WebPageProxy::getToolbarsAreVisible(bool& toolbarsAreVisible)
+void WebPageProxy::getToolbarsAreVisible(Ref<Messages::WebPageProxy::GetToolbarsAreVisible::DelayedReply>&& reply)
 {
-    toolbarsAreVisible = m_uiClient->toolbarsAreVisible(this);
+    m_uiClient->toolbarsAreVisible(*this, [reply = WTFMove(reply)](bool visible) {
+        reply->send(visible);
+    });
 }
 
 void WebPageProxy::setMenuBarIsVisible(bool menuBarIsVisible)

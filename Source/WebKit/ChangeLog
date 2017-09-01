@@ -1,5 +1,27 @@
 2017-09-01  Alex Christensen  <achristensen@webkit.org>
 
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's toolbarsAreVisible
+        https://bugs.webkit.org/show_bug.cgi?id=176246
+        <rdar://problem/29270035>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::toolbarsAreVisible):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::toolbarsAreVisible):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getToolbarsAreVisible):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+2017-09-01  Alex Christensen  <achristensen@webkit.org>
+
         Make PageClientImplCocoa a proper superclass of PageClientImpls for Mac and iOS
         https://bugs.webkit.org/show_bug.cgi?id=176239
 

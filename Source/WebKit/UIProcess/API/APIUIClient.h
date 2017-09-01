@@ -99,7 +99,7 @@ public:
     virtual void didNotHandleKeyEvent(WebKit::WebPageProxy*, const WebKit::NativeWebKeyboardEvent&) { }
     virtual void didNotHandleWheelEvent(WebKit::WebPageProxy*, const WebKit::NativeWebWheelEvent&) { }
 
-    virtual bool toolbarsAreVisible(WebKit::WebPageProxy*) { return true; }
+    virtual void toolbarsAreVisible(WebKit::WebPageProxy&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
     virtual void setToolbarsAreVisible(WebKit::WebPageProxy*, bool) { }
     virtual bool menuBarIsVisible(WebKit::WebPageProxy*) { return true; }
     virtual void setMenuBarIsVisible(WebKit::WebPageProxy*, bool) { }
