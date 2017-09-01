@@ -1,3 +1,27 @@
+2017-08-31  Saam Barati  <sbarati@apple.com>
+
+        Graph::methodOfGettingAValueProfileFor compares NodeOrigin instead of the semantic CodeOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=176206
+
+        Reviewed by Keith Miller.
+
+        Mark fixed the main issue in Graph::methodOfGettingAValueProfileFor in r208560
+        when he fixed it from overwriting invalid parts of the ArithProfile when the
+        currentNode and the operandNode are from the same bytecode. However, the
+        mechanism used to determine same bytecode was comparing NodeOrigin. That's
+        slightly wrong. We need to compare semantic origin, since two NodeOrigins can
+        have the same semantic origin, but differ only in exitOK. For example,
+        in the below IR, the DoubleRep and the Phi have the same semantic
+        origin, but different NodeOrigins.
+
+        43 Phi(JS|PureInt, NonBoolInt32|NonIntAsdouble, W:SideState, bc#63, ExitInvalid)
+        58 ExitOK(MustGen, W:SideState, bc#63)
+        51 DoubleRep(Check:Number:Kill:@43, Double|PureInt, BytecodeDouble, Exits, bc#63)
+        54 ArithNegate(DoubleRep:Kill:@51<Double>, Double|UseAsOther|MayHaveDoubleResult, AnyIntAsDouble|NonIntAsdouble, NotSet, Exits, bc#63)
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+
 2017-08-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make USE_CF conditional within Windows

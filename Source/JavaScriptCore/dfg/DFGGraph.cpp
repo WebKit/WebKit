@@ -1606,7 +1606,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
 {
     for (Node* node = operandNode; node;) {
         // currentNode is null when we're doing speculation checks for checkArgumentTypes().
-        if (!currentNode || node->origin != currentNode->origin) {
+        if (!currentNode || node->origin.semantic != currentNode->origin.semantic) {
             CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
 
             if (node->accessesStack(*this)) {

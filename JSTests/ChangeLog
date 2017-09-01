@@ -1,3 +1,15 @@
+2017-08-31  Saam Barati  <sbarati@apple.com>
+
+        Graph::methodOfGettingAValueProfileFor compares NodeOrigin instead of the semantic CodeOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=176206
+
+        Reviewed by Keith Miller.
+
+        * stress/compare-semantic-origin-op-negate-method-of-getting-a-value-profile.js: Added.
+        (a):
+        (b):
+        (foo):
+
 2017-08-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip two slow JSC tests after r221422.
