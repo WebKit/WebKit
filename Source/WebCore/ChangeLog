@@ -1,3 +1,51 @@
+2017-09-01  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Add support for consuming a Request ReadableStream body
+        https://bugs.webkit.org/show_bug.cgi?id=176182
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/wpt/fetch/request-stream-empty.html
+               http/wpt/fetch/request-stream-error.html
+
+        Adding a ReadableStreamSink which allows to pipe all ReadableStream data back to C++ code.
+        This sink only takes BufferSource as the only user is Fetch which has this restriction.
+        This sink is tied to the readableStreamPipeTo builtin internal function that reads all data from the ReadableStream
+        and send it to the sink.
+
+        Adding a ReadableStreamToSharedBufferSink specialization to get the data as a SharedBuffer.
+
+        Use that class in FetchBodyConsumer to get the data back from the ReadableStream and transform it according
+        the desired body type (text, JSON, ArrayBuffer).
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::consume):
+        (WebCore::FetchBody::loadingSucceeded):
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::resolveWithTypeAndData):
+        (WebCore::FetchBodyConsumer::clean):
+        (WebCore::FetchBodyConsumer::resolveWithData):
+        (WebCore::FetchBodyConsumer::resolve):
+        * Modules/fetch/FetchBodyConsumer.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::finishConsumingStream):
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamPipeTo):
+        * Modules/streams/ReadableStreamSink.cpp: Added.
+        (WebCore::ReadableStreamToSharedBufferSink::ReadableStreamToSharedBufferSink):
+        (WebCore::ReadableStreamToSharedBufferSink::pipeFrom):
+        (WebCore::ReadableStreamToSharedBufferSink::enqueue):
+        (WebCore::ReadableStreamToSharedBufferSink::close):
+        (WebCore::ReadableStreamToSharedBufferSink::error):
+        * Modules/streams/ReadableStreamSink.h: Added.
+        * Modules/streams/ReadableStreamSink.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ReadableStream.cpp:
+        (WebCore::ReadableStream::pipeTo):
+        * bindings/js/ReadableStream.h:
+
 2017-09-01  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Wrong getComputedStyle behavior for pseudo-elements for layout-dependent properties.

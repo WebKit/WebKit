@@ -1,6 +1,6 @@
 
-FAIL Getting blob after getting a locked Request body assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Getting text after getting a locked Request body assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Getting json after getting a locked Request body assert_throws: function "function () { throw e }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected object "TypeError" ("TypeError")
-FAIL Getting arrayBuffer after getting a locked Request body assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Getting blob after getting a locked Request body 
+PASS Getting text after getting a locked Request body 
+PASS Getting json after getting a locked Request body 
+PASS Getting arrayBuffer after getting a locked Request body 
 

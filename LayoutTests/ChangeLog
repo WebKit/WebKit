@@ -1,3 +1,18 @@
+2017-09-01  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Add support for consuming a Request ReadableStream body
+        https://bugs.webkit.org/show_bug.cgi?id=176182
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/fetch/request-stream-disturbed-1-expected.txt:
+        * http/wpt/fetch/request-stream-disturbed-2-expected.txt:
+        * http/wpt/fetch/request-stream-disturbed-3-expected.txt:
+        * http/wpt/fetch/request-stream-empty-expected.txt: Added.
+        * http/wpt/fetch/request-stream-empty.html: Added.
+        * http/wpt/fetch/request-stream-error-expected.txt: Added.
+        * http/wpt/fetch/request-stream-error.html: Added.
+
 2017-09-01  Per Arne Vollan  <pvollan@apple.com>
 
         http/tests/misc/slow-loading-animated-image.html is flaky on iOS simulator and Windows.

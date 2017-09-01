@@ -317,7 +317,7 @@ void FetchResponse::consumeChunk(Ref<JSC::Uint8Array>&& chunk)
 
 void FetchResponse::finishConsumingStream(Ref<DeferredPromise>&& promise)
 {
-    m_consumer.resolve(WTFMove(promise));
+    m_consumer.resolve(WTFMove(promise), nullptr);
 }
 
 void FetchResponse::consumeBodyAsStream()

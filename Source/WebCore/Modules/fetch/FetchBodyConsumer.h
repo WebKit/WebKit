@@ -28,12 +28,16 @@
 
 #pragma once
 
+#include "FetchBodySource.h"
 #include "JSDOMPromiseDeferred.h"
+#include "ReadableStreamSink.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
 
 class Blob;
+class FetchBodySource;
+class ReadableStream;
 
 class FetchBodyConsumer {
 public:
@@ -57,7 +61,7 @@ public:
 
     void clean();
 
-    void resolve(Ref<DeferredPromise>&&);
+    void resolve(Ref<DeferredPromise>&&, ReadableStream*);
     void resolveWithData(Ref<DeferredPromise>&&, const unsigned char*, unsigned);
 
     bool hasData() const { return !!m_buffer; }
@@ -66,12 +70,15 @@ public:
     void loadingSucceeded();
 
     void setConsumePromise(Ref<DeferredPromise>&&);
+    void setSource(Ref<FetchBodySource>&&);
 
 private:
     Type m_type;
     String m_contentType;
     RefPtr<SharedBuffer> m_buffer;
     RefPtr<DeferredPromise> m_consumePromise;
+    RefPtr<ReadableStreamToSharedBufferSink> m_sink;
+    RefPtr<FetchBodySource> m_source;
 };
 
 } // namespace WebCore

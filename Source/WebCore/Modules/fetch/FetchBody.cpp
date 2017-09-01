@@ -138,7 +138,7 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         return;
     }
 
-    m_consumer.resolve(WTFMove(promise));
+    m_consumer.resolve(WTFMove(promise), m_readableStream.get());
 }
 
 #if ENABLE(STREAMS_API)

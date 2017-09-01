@@ -27,6 +27,7 @@
 #include "ReadableStream.h"
 
 #include "JSDOMConvertSequences.h"
+#include "JSReadableStreamSink.h"
 #include "JSReadableStreamSource.h"
 #include "WebCoreJSClientData.h"
 
@@ -52,6 +53,24 @@ Ref<ReadableStream> ReadableStream::create(JSC::ExecState& execState, RefPtr<Rea
     auto newReadableStream = jsDynamicDowncast<JSReadableStream*>(vm, JSC::construct(&execState, constructor, constructType, constructData, args));
 
     return create(globalObject, *newReadableStream);
+}
+
+void ReadableStream::pipeTo(ReadableStreamSink& sink)
+{
+    auto& state = *m_globalObject->globalExec();
+    JSVMClientData* clientData = static_cast<JSVMClientData*>(state.vm().clientData);
+    const Identifier& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamPipeToPrivateName();
+
+    auto readableStreamPipeTo = m_globalObject->get(&state, privateName);
+    ASSERT(readableStreamPipeTo.isFunction());
+
+    CallData callData;
+    CallType callType = getCallData(readableStreamPipeTo, callData);
+    ASSERT(callType != JSC::CallType::None);
+    MarkedArgumentBuffer arguments;
+    arguments.append(readableStream());
+    arguments.append(toJS(&state, m_globalObject.get(), sink));
+    JSC::call(&state, readableStreamPipeTo, callType, callData, JSC::jsUndefined(), arguments);
 }
 
 std::pair<Ref<ReadableStream>, Ref<ReadableStream>> ReadableStream::tee()

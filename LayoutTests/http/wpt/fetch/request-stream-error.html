@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Consuming Request body with non BufferSource ReadableStream chunks</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+promise_test(test => {
+    var stream = new ReadableStream({start: controller => {
+        controller.enqueue("This is not a buffer");
+        controller.close();
+    }});
+    var request = new Request("", {body: stream, method: "POST"});
+    return promise_rejects(test, new TypeError, request.text());
+}, "Request body should only contain BufferSource chunks");
+    </script>
+  </body>
+</html>

@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class ReadableStreamSink;
 class ReadableStreamSource;
 
 class ReadableStream final : public DOMGuarded<JSReadableStream> {
@@ -41,6 +42,8 @@ public:
     static Ref<ReadableStream> create(JSC::ExecState&, RefPtr<ReadableStreamSource>&&);
 
     std::pair<Ref<ReadableStream>, Ref<ReadableStream>> tee();
+
+    void pipeTo(ReadableStreamSink&);
 
     JSReadableStream* readableStream() { return guarded(); }
 
