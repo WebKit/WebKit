@@ -1,5 +1,17 @@
 2017-09-01  Filip Pizlo  <fpizlo@apple.com>
 
+        WSL should have more tests of type checking failures
+        https://bugs.webkit.org/show_bug.cgi?id=176244
+
+        Reviewed by Myles Maxfield.
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_typeMismatchReturn):
+
+2017-09-01  Filip Pizlo  <fpizlo@apple.com>
+
         WSL should be be able to call a function declared in a protocol from a generic function
         https://bugs.webkit.org/show_bug.cgi?id=176242
 

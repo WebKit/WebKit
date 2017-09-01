@@ -252,6 +252,68 @@ function TEST_simpleProtocol()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 45)]), 45 + 73);
 }
 
+function TEST_typeMismatchReturn()
+{
+    checkFail(
+        () => doPrep(`
+            int foo()
+            {
+                return 0u;
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_typeMismatchVariableDecl()
+{
+    checkFail(
+        () => doPrep(`
+            void foo(uint x)
+            {
+                int y = x;
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_typeMismatchAssignment()
+{
+    checkFail(
+        () => doPrep(`
+            void foo(uint x)
+            {
+                int y;
+                y = x;
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_typeMismatchReturnParam()
+{
+    checkFail(
+        () => doPrep(`
+            int foo(uint x)
+            {
+                return x;
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_badAdd()
+{
+    checkFail(
+        () => doPrep(`
+            void bar<T>(T) { }
+            void foo(int x, uint y)
+            {
+                bar(x + y);
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("native int32 operator+<>(int32,int32)") != -1);
+}
+
 let before = preciseTime();
 
 let filter = /.*/; // run everything by default

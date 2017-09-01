@@ -165,11 +165,11 @@ class Checker extends Visitor {
             if (!resultType)
                 throw new Error("Null result type from " + node.value);
             if (!node.func.returnType.equals(resultType))
-                throw new WTypeError(node.origin.originString, "Trying to return " + resultType + " in a function that returns " + func.returnType);
+                throw new WTypeError(node.origin.originString, "Trying to return " + resultType + " in a function that returns " + node.func.returnType);
             return;
         }
         
-        if (!func.returnType.equals(this._program.intrinsics.void))
+        if (!node.func.returnType.equals(this._program.intrinsics.void))
             throw new WTypeError(node.origin.originString, "Non-void function must return a value");
     }
     
