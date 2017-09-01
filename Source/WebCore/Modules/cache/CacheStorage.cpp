@@ -27,7 +27,7 @@
 #include "CacheStorage.h"
 
 #include "CacheQueryOptions.h"
-#include "JSCache.h"
+#include "JSDOMCache.h"
 #include "JSFetchResponse.h"
 #include "ScriptExecutionContext.h"
 
@@ -49,7 +49,7 @@ String CacheStorage::origin() const
     return origin ? origin->toString() : String();
 }
 
-static void doSequentialMatch(size_t index, Vector<Ref<Cache>>&& caches, Cache::RequestInfo&& info, CacheQueryOptions&& options, Cache::MatchCallback&& completionHandler)
+static void doSequentialMatch(size_t index, Vector<Ref<DOMCache>>&& caches, DOMCache::RequestInfo&& info, CacheQueryOptions&& options, DOMCache::MatchCallback&& completionHandler)
 {
     if (index >= caches.size()) {
         completionHandler(nullptr);
@@ -69,21 +69,21 @@ static void doSequentialMatch(size_t index, Vector<Ref<Cache>>&& caches, Cache::
     });
 }
 
-static inline void startSequentialMatch(Vector<Ref<Cache>>&& caches, Cache::RequestInfo&& info, CacheQueryOptions&& options, Cache::MatchCallback&& completionHandler)
+static inline void startSequentialMatch(Vector<Ref<DOMCache>>&& caches, DOMCache::RequestInfo&& info, CacheQueryOptions&& options, DOMCache::MatchCallback&& completionHandler)
 {
     doSequentialMatch(0, WTFMove(caches), WTFMove(info), WTFMove(options), WTFMove(completionHandler));
 }
 
-static inline Vector<Ref<Cache>> copyCaches(const Vector<Ref<Cache>>& caches)
+static inline Vector<Ref<DOMCache>> copyCaches(const Vector<Ref<DOMCache>>& caches)
 {
-    Vector<Ref<Cache>> copy;
+    Vector<Ref<DOMCache>> copy;
     copy.reserveInitialCapacity(caches.size());
     for (auto& cache : caches)
         copy.uncheckedAppend(cache.copyRef());
     return copy;
 }
 
-void CacheStorage::match(Cache::RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
+void CacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
 {
     retrieveCaches([this, info = WTFMove(info), options = WTFMove(options), promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
@@ -150,11 +150,11 @@ void CacheStorage::retrieveCaches(WTF::Function<void(std::optional<Exception>&&)
 
                 ASSERT(scriptExecutionContext());
 
-                Vector<Ref<Cache>> caches;
+                Vector<Ref<DOMCache>> caches;
                 caches.reserveInitialCapacity(cachesInfo.infos.size());
                 for (auto& info : cachesInfo.infos) {
                     auto position = m_caches.findMatching([&](const auto& cache) { return info.identifier == cache->identifier(); });
-                    caches.uncheckedAppend(position != notFound ? m_caches[position].copyRef() : Cache::create(*scriptExecutionContext(), WTFMove(info.name), info.identifier, m_connection.copyRef()));
+                    caches.uncheckedAppend(position != notFound ? m_caches[position].copyRef() : DOMCache::create(*scriptExecutionContext(), WTFMove(info.name), info.identifier, m_connection.copyRef()));
                 }
                 m_caches = WTFMove(caches);
 
@@ -165,7 +165,7 @@ void CacheStorage::retrieveCaches(WTF::Function<void(std::optional<Exception>&&)
     });
 }
 
-void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<Cache>>&& promise)
+void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&& promise)
 {
     retrieveCaches([this, name, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
@@ -176,7 +176,7 @@ void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<Cach
         auto position = m_caches.findMatching([&](auto& item) { return item->name() == name; });
         if (position != notFound) {
             auto& cache = m_caches[position];
-            promise.resolve(Cache::create(*scriptExecutionContext(), String { cache->name() }, cache->identifier(), m_connection.copyRef()));
+            promise.resolve(DOMCache::create(*scriptExecutionContext(), String { cache->name() }, cache->identifier(), m_connection.copyRef()));
             return;
         }
 
@@ -189,7 +189,7 @@ void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<Cach
                 if (!result.hasValue())
                     promise.reject(DOMCacheEngine::errorToException(result.error()));
                 else {
-                    auto cache = Cache::create(*scriptExecutionContext(), String { name }, result.value(), m_connection.copyRef());
+                    auto cache = DOMCache::create(*scriptExecutionContext(), String { name }, result.value(), m_connection.copyRef());
                     promise.resolve(cache);
                     m_caches.append(WTFMove(cache));
                 }

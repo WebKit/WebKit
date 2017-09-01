@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Cache.h"
 #include "CacheStorageConnection.h"
+#include "DOMCache.h"
 #include "FetchRequest.h"
 #include <wtf/Forward.h>
 
@@ -38,9 +38,9 @@ public:
 
     using KeysPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
 
-    void match(Cache::RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
+    void match(DOMCache::RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
     void has(const String&, DOMPromiseDeferred<IDLBoolean>&&);
-    void open(const String&, DOMPromiseDeferred<IDLInterface<Cache>>&&);
+    void open(const String&, DOMPromiseDeferred<IDLInterface<DOMCache>>&&);
     void remove(const String&, DOMPromiseDeferred<IDLBoolean>&&);
     void keys(KeysPromise&&);
 
@@ -55,7 +55,7 @@ private:
     void retrieveCaches(WTF::Function<void(std::optional<Exception>&&)>&&);
     String origin() const;
 
-    Vector<Ref<Cache>> m_caches;
+    Vector<Ref<DOMCache>> m_caches;
     uint64_t m_updateCounter { 0 };
     Ref<CacheStorageConnection> m_connection;
     bool m_isStopped { false };

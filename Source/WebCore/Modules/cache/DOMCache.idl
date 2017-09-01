@@ -29,7 +29,8 @@ typedef (FetchRequest or USVString) RequestInfo;
     SecureContext,
     Exposed=(Window,Worker),
     EnabledAtRuntime=CacheAPI,
-] interface Cache {
+    InterfaceName=Cache,
+] interface DOMCache {
     [NewObject] Promise<any> match(RequestInfo request, optional CacheQueryOptions options);
     [NewObject] Promise<sequence<FetchResponse>> matchAll(optional RequestInfo request, optional CacheQueryOptions options);
     [NewObject] Promise<void> add(RequestInfo request);

@@ -1,3 +1,71 @@
+2017-09-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile error, 'Cache' is not declared.
+        https://bugs.webkit.org/show_bug.cgi?id=176062
+
+        Reviewed by Youenn Fablet.
+
+        Rename Cache to DOMCache.
+
+        No new tests, covered by existing tests. 
+
+        * DerivedSources.make:
+        * Modules/cache/Cache.cpp: Removed.
+        * Modules/cache/Cache.h: Removed.
+        * Modules/cache/Cache.idl: Removed.
+        * Modules/cache/CacheStorage.cpp:
+        (WebCore::doSequentialMatch):
+        (WebCore::startSequentialMatch):
+        (WebCore::copyCaches):
+        (WebCore::CacheStorage::match):
+        (WebCore::CacheStorage::retrieveCaches):
+        (WebCore::CacheStorage::open):
+        * Modules/cache/CacheStorage.h:
+        * Modules/cache/DOMCache.cpp: Copied from Source/WebCore/Modules/cache/Cache.cpp.
+        (WebCore::DOMCache::DOMCache):
+        (WebCore::DOMCache::~DOMCache):
+        (WebCore::DOMCache::match):
+        (WebCore::DOMCache::doMatch):
+        (WebCore::DOMCache::matchAll):
+        (WebCore::DOMCache::add):
+        (WebCore::DOMCache::requestFromInfo):
+        (WebCore::DOMCache::addAll):
+        (WebCore::DOMCache::put):
+        (WebCore::DOMCache::remove):
+        (WebCore::DOMCache::keys):
+        (WebCore::DOMCache::retrieveRecords):
+        (WebCore::DOMCache::queryCache):
+        (WebCore::DOMCache::queryCacheWithTargetStorage):
+        (WebCore::DOMCache::batchDeleteOperation):
+        (WebCore::DOMCache::batchPutOperation):
+        (WebCore::DOMCache::updateRecords):
+        (WebCore::DOMCache::stop):
+        (WebCore::DOMCache::activeDOMObjectName const):
+        (WebCore::DOMCache::canSuspendForDocumentSuspension const):
+        (WebCore::Cache::Cache): Deleted.
+        (WebCore::Cache::~Cache): Deleted.
+        (WebCore::Cache::match): Deleted.
+        (WebCore::Cache::doMatch): Deleted.
+        (WebCore::Cache::matchAll): Deleted.
+        (WebCore::Cache::add): Deleted.
+        (WebCore::Cache::requestFromInfo): Deleted.
+        (WebCore::Cache::addAll): Deleted.
+        (WebCore::Cache::put): Deleted.
+        (WebCore::Cache::remove): Deleted.
+        (WebCore::Cache::keys): Deleted.
+        (WebCore::Cache::retrieveRecords): Deleted.
+        (WebCore::Cache::queryCache): Deleted.
+        (WebCore::Cache::queryCacheWithTargetStorage): Deleted.
+        (WebCore::Cache::batchDeleteOperation): Deleted.
+        (WebCore::Cache::batchPutOperation): Deleted.
+        (WebCore::Cache::updateRecords): Deleted.
+        (WebCore::Cache::stop): Deleted.
+        (WebCore::Cache::activeDOMObjectName const): Deleted.
+        (WebCore::Cache::canSuspendForDocumentSuspension const): Deleted.
+        * Modules/cache/DOMCache.h: Copied from Source/WebCore/Modules/cache/Cache.h.
+        * Modules/cache/DOMCache.idl: Copied from Source/WebCore/Modules/cache/Cache.idl.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-09-01  Brady Eidson  <beidson@apple.com>
 
         Move ServiceWorkerJob from FetchLoader to ThreadableLoader.

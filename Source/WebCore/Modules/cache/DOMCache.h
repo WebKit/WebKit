@@ -33,10 +33,10 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class Cache final : public RefCounted<Cache>, public ActiveDOMObject {
+class DOMCache final : public RefCounted<DOMCache>, public ActiveDOMObject {
 public:
-    static Ref<Cache> create(ScriptExecutionContext& context, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&& connection) { return adoptRef(*new Cache(context, WTFMove(name), identifier, WTFMove(connection))); }
-    ~Cache();
+    static Ref<DOMCache> create(ScriptExecutionContext& context, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&& connection) { return adoptRef(*new DOMCache(context, WTFMove(name), identifier, WTFMove(connection))); }
+    ~DOMCache();
 
     using RequestInfo = FetchRequest::Info;
 
@@ -60,7 +60,7 @@ public:
     void doMatch(RequestInfo&&, CacheQueryOptions&&, MatchCallback&&);
 
 private:
-    Cache(ScriptExecutionContext&, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&&);
+    DOMCache(ScriptExecutionContext&, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&&);
 
     ExceptionOr<Ref<FetchRequest>> requestFromInfo(RequestInfo&&, bool ignoreMethod);
 

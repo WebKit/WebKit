@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Cache.h"
+#include "DOMCache.h"
 
 #include "CacheQueryOptions.h"
 #include "FetchResponse.h"
@@ -40,7 +40,7 @@ namespace WebCore {
 
 static Record toConnectionRecord(const FetchRequest&, FetchResponse&, ResponseBody&&);
 
-Cache::Cache(ScriptExecutionContext& context, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&& connection)
+DOMCache::DOMCache(ScriptExecutionContext& context, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&& connection)
     : ActiveDOMObject(&context)
     , m_name(WTFMove(name))
     , m_identifier(identifier)
@@ -49,11 +49,11 @@ Cache::Cache(ScriptExecutionContext& context, String&& name, uint64_t identifier
     suspendIfNeeded();
 }
 
-Cache::~Cache()
+DOMCache::~DOMCache()
 {
 }
 
-void Cache::match(RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
+void DOMCache::match(RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
 {
     doMatch(WTFMove(info), WTFMove(options), [promise = WTFMove(promise)](ExceptionOr<FetchResponse*>&& result) mutable {
         if (result.hasException()) {
@@ -68,7 +68,7 @@ void Cache::match(RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredP
     });
 }
 
-void Cache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCallback&& callback)
+void DOMCache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCallback&& callback)
 {
     if (UNLIKELY(!scriptExecutionContext()))
         return;
@@ -93,7 +93,7 @@ void Cache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCallba
     });
 }
 
-void Cache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, MatchAllPromise&& promise)
+void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, MatchAllPromise&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
         return;
@@ -136,7 +136,7 @@ void Cache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& opti
     });
 }
 
-void Cache::add(RequestInfo&& info, DOMPromiseDeferred<void>&& promise)
+void DOMCache::add(RequestInfo&& info, DOMPromiseDeferred<void>&& promise)
 {
     addAll(Vector<RequestInfo> { WTFMove(info) }, WTFMove(promise));
 }
@@ -193,7 +193,7 @@ private:
     Function<void(ExceptionOr<Vector<Record>>&&)> m_callback;
 };
 
-ExceptionOr<Ref<FetchRequest>> Cache::requestFromInfo(RequestInfo&& info, bool ignoreMethod)
+ExceptionOr<Ref<FetchRequest>> DOMCache::requestFromInfo(RequestInfo&& info, bool ignoreMethod)
 {
     RefPtr<FetchRequest> request;
     if (WTF::holds_alternative<RefPtr<FetchRequest>>(info)) {
@@ -209,7 +209,7 @@ ExceptionOr<Ref<FetchRequest>> Cache::requestFromInfo(RequestInfo&& info, bool i
     return request.releaseNonNull();
 }
 
-void Cache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& promise)
+void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
         return;
@@ -289,7 +289,7 @@ void Cache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& promi
     }
 }
 
-void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDeferred<void>&& promise)
+void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDeferred<void>&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
         return;
@@ -346,7 +346,7 @@ void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDef
     });
 }
 
-void Cache::remove(RequestInfo&& info, CacheQueryOptions&& options, DOMPromiseDeferred<IDLBoolean>&& promise)
+void DOMCache::remove(RequestInfo&& info, CacheQueryOptions&& options, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
         return;
@@ -362,7 +362,7 @@ void Cache::remove(RequestInfo&& info, CacheQueryOptions&& options, DOMPromiseDe
     });
 }
 
-void Cache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, KeysPromise&& promise)
+void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options, KeysPromise&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
         return;
@@ -407,7 +407,7 @@ void Cache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options,
     });
 }
 
-void Cache::retrieveRecords(WTF::Function<void(std::optional<Exception>&&)>&& callback)
+void DOMCache::retrieveRecords(WTF::Function<void(std::optional<Exception>&&)>&& callback)
 {
     setPendingActivity(this);
     m_connection->retrieveRecords(m_identifier, [this, callback = WTFMove(callback)](RecordsOrError&& result) {
@@ -425,7 +425,7 @@ void Cache::retrieveRecords(WTF::Function<void(std::optional<Exception>&&)>&& ca
     });
 }
 
-void Cache::queryCache(Ref<FetchRequest>&& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<Vector<CacheStorageRecord>>&&)>&& callback)
+void DOMCache::queryCache(Ref<FetchRequest>&& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<Vector<CacheStorageRecord>>&&)>&& callback)
 {
     retrieveRecords([this, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](std::optional<Exception>&& exception) mutable {
         if (exception) {
@@ -442,7 +442,7 @@ static inline bool queryCacheMatch(const FetchRequest& request, const FetchReque
     return DOMCacheEngine::queryCacheMatch(request.resourceRequest(), cachedRequest.resourceRequest(), cachedResponse, options);
 }
 
-Vector<CacheStorageRecord> Cache::queryCacheWithTargetStorage(const FetchRequest& request, const CacheQueryOptions& options, const Vector<CacheStorageRecord>& targetStorage)
+Vector<CacheStorageRecord> DOMCache::queryCacheWithTargetStorage(const FetchRequest& request, const CacheQueryOptions& options, const Vector<CacheStorageRecord>& targetStorage)
 {
     if (!options.ignoreMethod && request.method() != "GET")
         return { };
@@ -455,7 +455,7 @@ Vector<CacheStorageRecord> Cache::queryCacheWithTargetStorage(const FetchRequest
     return records;
 }
 
-void Cache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<bool>&&)>&& callback)
+void DOMCache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<bool>&&)>&& callback)
 {
     setPendingActivity(this);
     m_connection->batchDeleteOperation(m_identifier, request.internalRequest(), WTFMove(options), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
@@ -488,7 +488,7 @@ Record toConnectionRecord(const FetchRequest& request, FetchResponse& response, 
     };
 }
 
-void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& response, DOMCacheEngine::ResponseBody&& responseBody, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
+void DOMCache::batchPutOperation(const FetchRequest& request, FetchResponse& response, DOMCacheEngine::ResponseBody&& responseBody, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
 {
     Vector<Record> records;
     records.append(toConnectionRecord(request, response, WTFMove(responseBody)));
@@ -496,7 +496,7 @@ void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& respon
     batchPutOperation(WTFMove(records), WTFMove(callback));
 }
 
-void Cache::batchPutOperation(Vector<Record>&& records, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
+void DOMCache::batchPutOperation(Vector<Record>&& records, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
 {
     setPendingActivity(this);
     m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
@@ -510,7 +510,7 @@ void Cache::batchPutOperation(Vector<Record>&& records, WTF::Function<void(Excep
     });
 }
 
-void Cache::updateRecords(Vector<Record>&& records)
+void DOMCache::updateRecords(Vector<Record>&& records)
 {
     ASSERT(scriptExecutionContext());
     Vector<CacheStorageRecord> newRecords;
@@ -542,17 +542,17 @@ void Cache::updateRecords(Vector<Record>&& records)
     m_records = WTFMove(newRecords);
 }
 
-void Cache::stop()
+void DOMCache::stop()
 {
     m_isStopped = true;
 }
 
-const char* Cache::activeDOMObjectName() const
+const char* DOMCache::activeDOMObjectName() const
 {
     return "Cache";
 }
 
-bool Cache::canSuspendForDocumentSuspension() const
+bool DOMCache::canSuspendForDocumentSuspension() const
 {
     return m_records.isEmpty() && !hasPendingActivity();
 }

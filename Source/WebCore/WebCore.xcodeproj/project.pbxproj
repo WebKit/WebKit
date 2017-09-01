@@ -1677,8 +1677,8 @@
 		4129DF861BB5B80C00322A16 /* JSReadableStreamPrivateConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		413015D91C7B571400091C6E /* FetchResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 413015D51C7B570400091C6E /* FetchResponse.cpp */; };
 		413015D91C7B571400091C6F /* FetchBodySource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 413015D51C7B570400091C6F /* FetchBodySource.cpp */; };
-		41380C261F3436A600155FDA /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41380C201F34368A00155FDA /* Cache.cpp */; };
-		41380C271F3436AC00155FDA /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 41380C251F34369A00155FDA /* Cache.h */; };
+		41380C261F3436A600155FDA /* DOMCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41380C201F34368A00155FDA /* DOMCache.cpp */; };
+		41380C271F3436AC00155FDA /* DOMCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 41380C251F34369A00155FDA /* DOMCache.h */; };
 		41380C281F3436AC00155FDA /* CacheStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41380C211F34368D00155FDA /* CacheStorage.cpp */; };
 		41380C291F3436AC00155FDA /* CacheStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 41380C221F34369000155FDA /* CacheStorage.h */; };
 		4138D3351244054800323D33 /* EventContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4138D3331244054800323D33 /* EventContext.h */; };
@@ -3319,11 +3319,11 @@
 		7CE191701F2ABE7100272F78 /* JSFetchReferrerPolicy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE191671F2AB70100272F78 /* JSFetchReferrerPolicy.cpp */; };
 		7CE191711F2ABE7100272F78 /* JSFetchReferrerPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191681F2AB70300272F78 /* JSFetchReferrerPolicy.h */; };
 		7CE191721F2ABE7100272F78 /* JSFetchRequestCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE1916E1F2AB70D00272F78 /* JSFetchRequestCache.cpp */; };
-		7CE191721F2ABE7100272F79 /* JSCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE1916E1F2AB70D00272F79 /* JSCache.cpp */; };
+		7CE191721F2ABE7100272F79 /* JSDOMCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE1916E1F2AB70D00272F79 /* JSDOMCache.cpp */; };
 		7CE191721F2ABE7100272F7A /* JSCacheStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE1916E1F2AB70D00272F7A /* JSCacheStorage.cpp */; };
 		7CE191721F2ABE7100272F7B /* JSCacheQueryOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE1916E1F2AB70D00272F7B /* JSCacheQueryOptions.cpp */; };
 		7CE191731F2ABE7100272F78 /* JSFetchRequestCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191641F2AB6FB00272F78 /* JSFetchRequestCache.h */; };
-		7CE191731F2ABE7100272F79 /* JSCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191641F2AB6FB00272F79 /* JSCache.h */; };
+		7CE191731F2ABE7100272F79 /* JSDOMCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191641F2AB6FB00272F79 /* JSDOMCache.h */; };
 		7CE191731F2ABE7100272F7A /* JSCacheStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191641F2AB6FB00272F7A /* JSCacheStorage.h */; };
 		7CE191741F2ABE7100272F78 /* JSFetchRequestCredentials.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE1916B1F2AB70800272F78 /* JSFetchRequestCredentials.cpp */; };
 		7CE191751F2ABE7100272F78 /* JSFetchRequestCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191661F2AB6FF00272F78 /* JSFetchRequestCredentials.h */; };
@@ -9394,12 +9394,12 @@
 		413015D61C7B570400091C6F /* FetchBodySource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchBodySource.h; sourceTree = "<group>"; };
 		413015D71C7B570400091C6E /* FetchResponse.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchResponse.idl; sourceTree = "<group>"; };
 		413015D81C7B570400091C6E /* FetchResponse.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FetchResponse.js; sourceTree = "<group>"; };
-		41380C201F34368A00155FDA /* Cache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Cache.cpp; path = Modules/cache/Cache.cpp; sourceTree = SOURCE_ROOT; };
+		41380C201F34368A00155FDA /* DOMCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DOMCache.cpp; path = Modules/cache/DOMCache.cpp; sourceTree = SOURCE_ROOT; };
 		41380C211F34368D00155FDA /* CacheStorage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CacheStorage.cpp; path = Modules/cache/CacheStorage.cpp; sourceTree = SOURCE_ROOT; };
 		41380C221F34369000155FDA /* CacheStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CacheStorage.h; path = Modules/cache/CacheStorage.h; sourceTree = SOURCE_ROOT; };
-		41380C231F34369400155FDA /* Cache.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = Cache.idl; path = Modules/cache/Cache.idl; sourceTree = SOURCE_ROOT; };
+		41380C231F34369400155FDA /* DOMCache.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = DOMCache.idl; path = Modules/cache/DOMCache.idl; sourceTree = SOURCE_ROOT; };
 		41380C241F34369700155FDA /* CacheStorage.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = CacheStorage.idl; path = Modules/cache/CacheStorage.idl; sourceTree = SOURCE_ROOT; };
-		41380C251F34369A00155FDA /* Cache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Cache.h; path = Modules/cache/Cache.h; sourceTree = SOURCE_ROOT; };
+		41380C251F34369A00155FDA /* DOMCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DOMCache.h; path = Modules/cache/DOMCache.h; sourceTree = SOURCE_ROOT; };
 		41380C2A1F343E2F00155FDA /* WorkerGlobalScopeCaches.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = WorkerGlobalScopeCaches.idl; path = Modules/cache/WorkerGlobalScopeCaches.idl; sourceTree = SOURCE_ROOT; };
 		41380C2B1F343E2F00155FDA /* DOMWindowCaches.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = DOMWindowCaches.idl; path = Modules/cache/DOMWindowCaches.idl; sourceTree = SOURCE_ROOT; };
 		4138D3331244054800323D33 /* EventContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventContext.h; sourceTree = "<group>"; };
@@ -11479,7 +11479,7 @@
 		7CE1915D1F2A9B4F00272F78 /* FetchRequestRedirect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchRequestRedirect.h; sourceTree = "<group>"; };
 		7CE1915F1F2A9B4F00272F78 /* FetchRequestRedirect.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FetchRequestRedirect.idl; sourceTree = "<group>"; };
 		7CE191641F2AB6FB00272F78 /* JSFetchRequestCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFetchRequestCache.h; sourceTree = "<group>"; };
-		7CE191641F2AB6FB00272F79 /* JSCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCache.h; sourceTree = "<group>"; };
+		7CE191641F2AB6FB00272F79 /* JSDOMCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSDOMCache.h; sourceTree = "<group>"; };
 		7CE191641F2AB6FB00272F7A /* JSCacheStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCacheStorage.h; sourceTree = "<group>"; };
 		7CE191651F2AB6FD00272F78 /* JSFetchRequestMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchRequestMode.cpp; sourceTree = "<group>"; };
 		7CE191661F2AB6FF00272F78 /* JSFetchRequestCredentials.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFetchRequestCredentials.h; sourceTree = "<group>"; };
@@ -11491,7 +11491,7 @@
 		7CE1916C1F2AB70A00272F78 /* JSFetchRequestMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFetchRequestMode.h; sourceTree = "<group>"; };
 		7CE1916D1F2AB70C00272F78 /* JSFetchRequestInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchRequestInit.cpp; sourceTree = "<group>"; };
 		7CE1916E1F2AB70D00272F78 /* JSFetchRequestCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchRequestCache.cpp; sourceTree = "<group>"; };
-		7CE1916E1F2AB70D00272F79 /* JSCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCache.cpp; sourceTree = "<group>"; };
+		7CE1916E1F2AB70D00272F79 /* JSDOMCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMCache.cpp; sourceTree = "<group>"; };
 		7CE1916E1F2AB70D00272F7A /* JSCacheStorage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCacheStorage.cpp; sourceTree = "<group>"; };
 		7CE1916E1F2AB70D00272F7B /* JSCacheQueryOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCacheQueryOptions.cpp; sourceTree = "<group>"; };
 		7CE1916F1F2AB70F00272F78 /* JSFetchRequestRedirect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchRequestRedirect.cpp; sourceTree = "<group>"; };
@@ -17807,9 +17807,6 @@
 		41380C1E1F34366000155FDA /* cache */ = {
 			isa = PBXGroup;
 			children = (
-				41380C201F34368A00155FDA /* Cache.cpp */,
-				41380C251F34369A00155FDA /* Cache.h */,
-				41380C231F34369400155FDA /* Cache.idl */,
 				41FB279B1F34CEF000795487 /* CacheQueryOptions.h */,
 				41FB27991F34CE9C00795487 /* CacheQueryOptions.idl */,
 				41380C211F34368D00155FDA /* CacheStorage.cpp */,
@@ -17818,6 +17815,9 @@
 				41D129C91F3D0EE300D15E47 /* CacheStorageConnection.cpp */,
 				41D129CC1F3D0EE300D15E47 /* CacheStorageConnection.h */,
 				41D129CA1F3D0EE300D15E47 /* CacheStorageRecord.h */,
+				41380C201F34368A00155FDA /* DOMCache.cpp */,
+				41380C251F34369A00155FDA /* DOMCache.h */,
+				41380C231F34369400155FDA /* DOMCache.idl */,
 				41FABD2E1F4E0251006A6C97 /* DOMCacheEngine.cpp */,
 				41FABD2B1F4DFE42006A6C97 /* DOMCacheEngine.h */,
 				41FB278E1F34C28200795487 /* DOMWindowCaches.cpp */,
@@ -18081,11 +18081,11 @@
 		41FB27881F34461B00795488 /* CacheAPI */ = {
 			isa = PBXGroup;
 			children = (
-				7CE1916E1F2AB70D00272F79 /* JSCache.cpp */,
-				7CE191641F2AB6FB00272F79 /* JSCache.h */,
 				7CE1916E1F2AB70D00272F7B /* JSCacheQueryOptions.cpp */,
 				7CE1916E1F2AB70D00272F7A /* JSCacheStorage.cpp */,
 				7CE191641F2AB6FB00272F7A /* JSCacheStorage.h */,
+				7CE1916E1F2AB70D00272F79 /* JSDOMCache.cpp */,
+				7CE191641F2AB6FB00272F79 /* JSDOMCache.h */,
 			);
 			name = CacheAPI;
 			sourceTree = "<group>";
@@ -26987,7 +26987,6 @@
 				1A569CFC0D7E2B82007C3983 /* c_runtime.h in Headers */,
 				1A569CFE0D7E2B82007C3983 /* c_utility.h in Headers */,
 				07C046C41E42508B007201E7 /* CAAudioStreamDescription.h in Headers */,
-				41380C271F3436AC00155FDA /* Cache.h in Headers */,
 				BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */,
 				BC64B4CC0CB4295D005F2B62 /* CachedFont.h in Headers */,
 				1AEF4E67170E160300AB2799 /* CachedFontClient.h in Headers */,
@@ -27442,6 +27441,7 @@
 				A8185F3909765766005826D9 /* DocumentType.h in Headers */,
 				973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */,
 				1A8F6BC30DB55CDC001DB794 /* DOMApplicationCache.h in Headers */,
+				41380C271F3436AC00155FDA /* DOMCache.h in Headers */,
 				41FABD2D1F4DFE4A006A6C97 /* DOMCacheEngine.h in Headers */,
 				FC9A0F75164094CF003D6B8D /* DOMCSSNamespace.h in Headers */,
 				9B3A8872145632F9003AE8F5 /* DOMDOMSettableTokenList.h in Headers */,
@@ -28117,7 +28117,6 @@
 				7C77C3DC1DEF86D700A50BFA /* JSBlobLineEndings.h in Headers */,
 				7C77C3D51DEF178E00A50BFA /* JSBlobPropertyBag.h in Headers */,
 				14DCF3B31B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.h in Headers */,
-				7CE191731F2ABE7100272F79 /* JSCache.h in Headers */,
 				7CE191731F2ABE7100272F7A /* JSCacheStorage.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
 				07277E4D17D018CC0015534E /* JSCanvasCaptureMediaStreamTrack.h in Headers */,
@@ -28198,6 +28197,7 @@
 				93B70D6409EB0C7C009D8468 /* JSDOMBinding.h in Headers */,
 				416E6FE81BBD12DF000A3F65 /* JSDOMBindingInternalsBuiltins.h in Headers */,
 				7C45C9D41E3FCBDF00AAB558 /* JSDOMBindingSecurity.h in Headers */,
+				7CE191731F2ABE7100272F79 /* JSDOMCache.h in Headers */,
 				7C8139AA1ED6604B00CE26E8 /* JSDOMCastedThisErrorBehavior.h in Headers */,
 				413C2C341BC29A8F0075204C /* JSDOMConstructor.h in Headers */,
 				930841341CDDB15500B0958C /* JSDOMConvert.h in Headers */,
@@ -31125,7 +31125,6 @@
 				1A569CFB0D7E2B82007C3983 /* c_runtime.cpp in Sources */,
 				1A569CFD0D7E2B82007C3983 /* c_utility.cpp in Sources */,
 				07C046C31E42508B007201E7 /* CAAudioStreamDescription.cpp in Sources */,
-				41380C261F3436A600155FDA /* Cache.cpp in Sources */,
 				BCB16C190979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */,
 				BC64B4CB0CB4295D005F2B62 /* CachedFont.cpp in Sources */,
 				51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */,
@@ -31503,6 +31502,7 @@
 				A8185F3A09765766005826D9 /* DocumentType.cpp in Sources */,
 				973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */,
 				1A8F6BC20DB55CDC001DB794 /* DOMApplicationCache.cpp in Sources */,
+				41380C261F3436A600155FDA /* DOMCache.cpp in Sources */,
 				41FABD2F1F4E02CB006A6C97 /* DOMCacheEngine.cpp in Sources */,
 				FD677738195CAF3D0072E0D3 /* DOMCSSNamespace.cpp in Sources */,
 				7AABA25914BC613300AA9A11 /* DOMEditor.cpp in Sources */,
@@ -32133,7 +32133,6 @@
 				7C77C3DB1DEF86D700A50BFA /* JSBlobLineEndings.cpp in Sources */,
 				7C77C3D41DEF178E00A50BFA /* JSBlobPropertyBag.cpp in Sources */,
 				14DCF3B21B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.cpp in Sources */,
-				7CE191721F2ABE7100272F79 /* JSCache.cpp in Sources */,
 				7CE191721F2ABE7100272F7B /* JSCacheQueryOptions.cpp in Sources */,
 				7CE191721F2ABE7100272F7A /* JSCacheStorage.cpp in Sources */,
 				1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */,
@@ -32221,6 +32220,7 @@
 				1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */,
 				7C45C9CF1E3EFDF700AAB558 /* JSDOMBindingSecurity.cpp in Sources */,
 				7CC01D0A1E4A7B0400E529CC /* JSDOMBuiltinConstructorBase.cpp in Sources */,
+				7CE191721F2ABE7100272F79 /* JSDOMCache.cpp in Sources */,
 				7CC01D0B1E4A7B0400E529CC /* JSDOMConstructorBase.cpp in Sources */,
 				7CC01D0C1E4A7B0400E529CC /* JSDOMConstructorWithDocument.cpp in Sources */,
 				7C8E34B21E4A33B00054CE23 /* JSDOMConvertDate.cpp in Sources */,
