@@ -44,10 +44,6 @@
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
 
-#if PLATFORM(COCOA)
-#include <CoreGraphics/CGSNotifier.h>
-#endif
-
 #else
 
 struct CGFontHMetrics {
@@ -178,6 +174,10 @@ struct CGFocusRingStyle {
 };
 typedef struct CGFocusRingStyle CGFocusRingStyle;
 
+#endif // PLATFORM(COCOA)
+
+#if PLATFORM(MAC)
+
 typedef CF_ENUM(uint32_t, CGSNotificationType) {
     kCGSFirstConnectionNotification = 900,
     kCGSFirstSessionNotification = 1500,
@@ -188,7 +188,7 @@ static const CGSNotificationType kCGSConnectionWindowModificationsStopped = (CGS
 static const CGSNotificationType kCGSessionConsoleConnect = kCGSFirstSessionNotification;
 static const CGSNotificationType kCGSessionConsoleDisconnect = (CGSNotificationType)(kCGSessionConsoleConnect + 1);
 
-#endif // PLATFORM(COCOA)
+#endif // PLATFORM(MAC)
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
@@ -204,7 +204,9 @@ typedef struct CF_BRIDGED_TYPE(id) CGStyle* CGStyleRef;
 
 typedef void* CGSNotificationArg;
 typedef void* CGSNotificationData;
+#endif
 
+#if PLATFORM(MAC)
 typedef void (*CGSNotifyConnectionProcPtr)(CGSNotificationType, void* data, uint32_t data_length, void* arg, CGSConnectionID);
 typedef void (*CGSNotifyProcPtr)(CGSNotificationType, void* data, uint32_t data_length, void* arg);
 #endif
@@ -266,8 +268,6 @@ CGColorSpaceRef CGContextCopyDeviceColorSpace(CGContextRef);
 CGError CGSNewRegionWithRect(const CGRect*, CGRegionRef*);
 CGError CGSPackagesEnableConnectionOcclusionNotifications(CGSConnectionID, bool flag, bool* outCurrentVisibilityState);
 CGError CGSPackagesEnableConnectionWindowModificationNotifications(CGSConnectionID, bool flag, bool* outConnectionIsCurrentlyIdle);
-CGError CGSRegisterConnectionNotifyProc(CGSConnectionID, CGSNotifyConnectionProcPtr, CGSNotificationType, void* arg);
-CGError CGSRegisterNotifyProc(CGSNotifyProcPtr, CGSNotificationType, void* arg);
 CGError CGSReleaseRegion(const CGRegionRef CF_RELEASES_ARGUMENT);
 CGError CGSReleaseRegionEnumerator(const CGSRegionEnumeratorObj);
 CGError CGSSetWindowAlpha(CGSConnectionID, CGSWindowID, float alpha);
@@ -291,7 +291,8 @@ CFArrayRef CGSHWCaptureWindowList(CGSConnectionID, CGSWindowIDList windowList, C
 CGError CGSSetConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CFTypeRef value);
 CGError CGSCopyConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFStringRef key, CFTypeRef *value);
 CGError CGSGetScreenRectForWindow(CGSConnectionID, CGSWindowID, CGRect *);
-
+CGError CGSRegisterConnectionNotifyProc(CGSConnectionID, CGSNotifyConnectionProcPtr, CGSNotificationType, void* arg);
+CGError CGSRegisterNotifyProc(CGSNotifyProcPtr, CGSNotificationType, void* arg);
 bool ColorSyncProfileIsWideGamut(ColorSyncProfileRef);
 #endif
 

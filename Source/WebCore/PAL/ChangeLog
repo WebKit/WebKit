@@ -1,5 +1,11 @@
 2017-09-01  Andy Estes  <aestes@apple.com>
 
+        Try again to fix the Internal iOS Simulator build after r221485.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
+2017-09-01  Andy Estes  <aestes@apple.com>
+
         Try to fix the Internal iOS Simulator build after r221485.
 
         * pal/spi/cg/CoreGraphicsSPI.h:
