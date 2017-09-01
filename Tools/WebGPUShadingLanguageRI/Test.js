@@ -183,6 +183,46 @@ function TEST_deviceArrayLoad()
     checkInt(program, result, 89);
 }
 
+function TEST_threadArrayStore()
+{
+    let program = doPrep(`
+        void foo(thread int[] array, int value)
+        {
+            array[0u] = value;
+        }`);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 15);
+    let arrayRef = TypedValue.box(
+        new ArrayRefType(null, "thread", program.intrinsics.int32),
+        new EArrayRef(new EPtr(buffer, 0), 1));
+    callFunction(program, "foo", [], [arrayRef, makeInt(program, 65)]);
+    if (buffer.get(0) != 65)
+        throw new Error("Bad value stored into buffer (expected 65): " + buffer.get(0));
+    callFunction(program, "foo", [], [arrayRef, makeInt(program, -111)]);
+    if (buffer.get(0) != -111)
+        throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
+}
+
+function TEST_deviceArrayStore()
+{
+    let program = doPrep(`
+        void foo(device int[] array, int value)
+        {
+            array[0u] = value;
+        }`);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 15);
+    let arrayRef = TypedValue.box(
+        new ArrayRefType(null, "device", program.intrinsics.int32),
+        new EArrayRef(new EPtr(buffer, 0), 1));
+    callFunction(program, "foo", [], [arrayRef, makeInt(program, 65)]);
+    if (buffer.get(0) != 65)
+        throw new Error("Bad value stored into buffer (expected 65): " + buffer.get(0));
+    callFunction(program, "foo", [], [arrayRef, makeInt(program, -111)]);
+    if (buffer.get(0) != -111)
+        throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
+}
+
 let before = preciseTime();
 
 let filter = /.*/; // run everything by default

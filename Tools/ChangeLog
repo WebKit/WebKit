@@ -1,3 +1,18 @@
+2017-09-01  Filip Pizlo  <fpizlo@apple.com>
+
+        [WSL] Add tests for storing to arrays
+        https://bugs.webkit.org/show_bug.cgi?id=176237
+
+        Reviewed by Myles Maxfield.
+        
+        Storing to arrays works now.
+
+        * WebGPUShadingLanguageRI/ArrayType.js:
+        (ArrayType):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_threadArrayStore):
+        (TEST_deviceArrayStore):
+
 2017-09-01  Alex Christensen  <achristensen@webkit.org>
 
         Replace WKUIDelegatePrivate's isPlayingMediaDidChange with KVO _isPlayingAudio on WKWebView

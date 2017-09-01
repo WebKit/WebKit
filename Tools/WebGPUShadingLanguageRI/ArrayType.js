@@ -27,6 +27,7 @@
 class ArrayType extends Type {
     constructor(origin, elementType, numElements)
     {
+        super();
         this._origin = origin;
         this._elementType = elementType;
         this._numElements = numElements;
