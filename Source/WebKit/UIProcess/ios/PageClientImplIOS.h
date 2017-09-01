@@ -27,17 +27,16 @@
 
 #if PLATFORM(IOS)
 
-#import "PageClient.h"
+#import "PageClientImplCocoa.h"
 #import "WebFullScreenManagerProxy.h"
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS WKContentView;
-OBJC_CLASS WKWebView;
 OBJC_CLASS WKEditorUndoTargetObjC;
 
 namespace WebKit {
     
-class PageClientImpl : public PageClient
+class PageClientImpl : public PageClientImplCocoa
 #if ENABLE(FULLSCREEN_API)
     , public WebFullScreenManagerProxyClient
 #endif
@@ -194,8 +193,6 @@ private:
     void derefView() override;
 
     void didRestoreScrollPosition() override;
-    void isPlayingAudioWillChange() final;
-    void isPlayingAudioDidChange() final;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
@@ -214,7 +211,6 @@ private:
 #endif
 
     WKContentView *m_contentView;
-    WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
 };
 } // namespace WebKit

@@ -113,8 +113,8 @@ using namespace WebKit;
 namespace WebKit {
 
 PageClientImpl::PageClientImpl(WKContentView *contentView, WKWebView *webView)
-    : m_contentView(contentView)
-    , m_webView(webView)
+    : PageClientImplCocoa(webView)
+    , m_contentView(contentView)
     , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
 {
 }

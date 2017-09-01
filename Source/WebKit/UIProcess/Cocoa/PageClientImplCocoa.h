@@ -23,25 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PageClientImplCocoa.h"
+#pragma once
 
-#import "WKWebViewPrivate.h"
+#include "PageClient.h"
+
+@class WKWebView;
 
 namespace WebKit {
 
-void PageClientImplCocoa::isPlayingAudioWillChange()
-{
-#if WK_API_ENABLED
-    [m_webView willChangeValueForKey:NSStringFromSelector(@selector(_isPlayingAudio))];
-#endif
-}
+class PageClientImplCocoa : public PageClient {
+public:
+    PageClientImplCocoa(WKWebView *webView)
+        : m_webView(webView) { }
+    void isPlayingAudioWillChange() final;
+    void isPlayingAudioDidChange() final;
+protected:
+    WKWebView *m_webView;
+};
 
-void PageClientImplCocoa::isPlayingAudioDidChange()
-{
-#if WK_API_ENABLED
-    [m_webView didChangeValueForKey:NSStringFromSelector(@selector(_isPlayingAudio))];
-#endif
-}
-    
 }

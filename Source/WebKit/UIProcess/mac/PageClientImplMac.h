@@ -28,13 +28,12 @@
 #if PLATFORM(MAC)
 
 #include "CorrectionPanel.h"
-#include "PageClient.h"
+#include "PageClientImplCocoa.h"
 #include "WebFullScreenManagerProxy.h"
 #include <wtf/RetainPtr.h>
 
 @class WKEditorUndoTargetObjC;
 @class WKView;
-@class WKWebView;
 
 namespace WebCore {
 class AlternativeTextUIController;
@@ -44,7 +43,7 @@ namespace WebKit {
 
 class WebViewImpl;
 
-class PageClientImpl final : public PageClient
+class PageClientImpl final : public PageClientImplCocoa
 #if ENABLE(FULLSCREEN_API)
     , public WebFullScreenManagerProxyClient
 #endif
@@ -89,8 +88,6 @@ private:
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
     void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
-    void isPlayingAudioWillChange() final;
-    void isPlayingAudioDidChange() final;
 
     void registerEditCommand(Ref<WebEditCommandProxy>&&, WebPageProxy::UndoOrRedo) override;
     void clearAllEditCommands() override;
@@ -120,7 +117,7 @@ private:
     virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
 #endif
 
-    CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *layer) const override;
+    CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const override;
 
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 
@@ -234,7 +231,6 @@ private:
 #endif
 
     NSView *m_view;
-    WKWebView *m_webView;
     WebViewImpl* m_impl { nullptr };
 #if USE(AUTOCORRECTION_PANEL)
     CorrectionPanel m_correctionPanel;

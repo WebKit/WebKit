@@ -39,7 +39,7 @@
 #import "NativeWebMouseEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "PageClient.h"
-#import "PageClientImpl.h"
+#import "PageClientImplMac.h"
 #import "PasteboardTypes.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"

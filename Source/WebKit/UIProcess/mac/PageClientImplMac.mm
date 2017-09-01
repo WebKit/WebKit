@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "PageClientImpl.h"
+#import "PageClientImplMac.h"
 
 #if PLATFORM(MAC)
 
@@ -97,8 +97,8 @@ using namespace WebKit;
 namespace WebKit {
 
 PageClientImpl::PageClientImpl(NSView* view, WKWebView *webView)
-    : m_view(view)
-    , m_webView(webView)
+    : PageClientImplCocoa(webView)
+    , m_view(view)
 #if USE(DICTATION_ALTERNATIVES)
     , m_alternativeTextUIController(std::make_unique<AlternativeTextUIController>())
 #endif
@@ -177,7 +177,7 @@ void PageClientImpl::makeFirstResponder()
     if (m_shouldSuppressFirstResponderChanges)
         return;
 
-     [[m_view window] makeFirstResponder:m_view];
+    [[m_view window] makeFirstResponder:m_view];
 }
     
 bool PageClientImpl::isViewVisible()
@@ -400,7 +400,7 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 {
     return toUserSpace(rect, [m_view window]);
 }
-   
+
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
 {
 #pragma clang diagnostic push

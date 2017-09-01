@@ -29,7 +29,7 @@
 #if USE(APPKIT)
 
 #import "NativeWebMouseEvent.h"
-#import "PageClientImpl.h"
+#import "PageClientImplMac.h"
 #import "PlatformPopupMenuData.h"
 #import "StringUtilities.h"
 #import "WebPopupItem.h"

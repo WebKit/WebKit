@@ -37,7 +37,7 @@
 #import "MenuUtilities.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
-#import "PageClientImpl.h"
+#import "PageClientImplMac.h"
 #import "PluginComplexTextInputState.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"

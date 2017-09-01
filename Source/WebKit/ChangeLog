@@ -1,5 +1,33 @@
 2017-09-01  Alex Christensen  <achristensen@webkit.org>
 
+        Make PageClientImplCocoa a proper superclass of PageClientImpls for Mac and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=176239
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/PageClientImplCocoa.h: Added.
+        (WebKit::PageClientImplCocoa::PageClientImplCocoa):
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::isPlayingAudioWillChange):
+        (WebKit::PageClientImplCocoa::isPlayingAudioDidChange):
+        (WebKit::PageClientImpl::isPlayingAudioWillChange): Deleted.
+        (WebKit::PageClientImpl::isPlayingAudioDidChange): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        * UIProcess/mac/PageClientImpl.h: Removed.
+        * UIProcess/mac/PageClientImpl.mm: Removed.
+        * UIProcess/mac/PageClientImplMac.h: Copied from Source/WebKit/UIProcess/mac/PageClientImpl.h.
+        * UIProcess/mac/PageClientImplMac.mm: Copied from Source/WebKit/UIProcess/mac/PageClientImpl.mm.
+        (WebKit::PageClientImpl::PageClientImpl):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2017-09-01  Alex Christensen  <achristensen@webkit.org>
+
         Replace WKUIDelegatePrivate's isPlayingMediaDidChange with KVO _isPlayingAudio on WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=176212
 
