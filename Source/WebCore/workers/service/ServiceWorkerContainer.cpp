@@ -215,7 +215,7 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
 void ServiceWorkerContainer::jobDidFinish(ServiceWorkerJob& job)
 {
     auto taken = m_jobMap.take(job.data().identifier());
-    ASSERT_UNUSED(taken, taken.get() == &job);
+    ASSERT_UNUSED(taken, !taken || taken.get() == &job);
 }
 
 uint64_t ServiceWorkerContainer::connectionIdentifier()

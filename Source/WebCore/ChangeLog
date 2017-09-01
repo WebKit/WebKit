@@ -1,3 +1,14 @@
+2017-09-01  Brady Eidson  <beidson@apple.com>
+
+        ASSERTION FAILED: taken.get() == &job in WebCore::ServiceWorkerContainer::jobDidFinish(WebCore::ServiceWorkerJob &).
+        https://bugs.webkit.org/show_bug.cgi?id=176234
+
+        Rubberstamped by Tim Horton, reluctantly.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::jobDidFinish): It's valid for the job to be missing after navigations, which is
+          why this was hitting downstream tests.
+
 2017-09-01  Youenn Fablet  <youenn@apple.com>
 
         Do not Reject CacheStorage promises when updating the persistent filesystem data fails
