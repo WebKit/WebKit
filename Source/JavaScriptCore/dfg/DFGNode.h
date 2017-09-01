@@ -1318,6 +1318,8 @@ public:
         case TailCallVarargs:
         case TailCallForwardVarargs:
         case Unreachable:
+        case Throw:
+        case ThrowStaticError:
             return true;
         default:
             return false;
@@ -1342,8 +1344,6 @@ public:
         switch (op()) {
         case ForceOSRExit:
         case CheckBadCell:
-        case Throw:
-        case ThrowStaticError:
             return true;
         default:
             return false;
@@ -2581,6 +2581,12 @@ public:
     {
         ASSERT(hasBucketOwnerType());
         return m_opInfo.as<BucketOwnerType>();
+    }
+
+    uint32_t errorType()
+    {
+        ASSERT(op() == ThrowStaticError);
+        return m_opInfo.as<uint32_t>();
     }
 
     void dumpChildren(PrintStream& out)

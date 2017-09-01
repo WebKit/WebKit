@@ -63,6 +63,7 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_identity_with_profile:
     case op_profile_type:
     case op_throw:
+    case op_throw_static_error:
     case op_end:
     case op_ret:
     case op_jtrue:
@@ -71,8 +72,7 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_jneq_null:
     case op_dec:
     case op_inc:
-    case op_log_shadow_chicken_prologue:
-    case op_throw_static_error: {
+    case op_log_shadow_chicken_prologue: {
         ASSERT(opcodeLengths[opcodeID] > 1);
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;

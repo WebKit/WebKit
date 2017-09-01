@@ -1,5 +1,55 @@
 2017-08-31  Saam Barati  <sbarati@apple.com>
 
+        Throwing an exception in the DFG/FTL should not cause a jettison
+        https://bugs.webkit.org/show_bug.cgi?id=176060
+        <rdar://problem/34143348>
+
+        Reviewed by Keith Miller.
+
+        Throwing an exception is not something that should be a jettison-able
+        OSR exit. We used to count Throw/ThrowStaticError towards our OSR exit
+        counts which could cause a CodeBlock to jettison and recompile. This
+        was dumb. Throwing an exception is not a reason to jettison and
+        recompile in the way that a speculation failure is. This patch
+        treats Throw/ThrowStaticError as true terminals in DFG IR.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::mergeToSuccessors):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isTerminal):
+        (JSC::DFG::Node::isPseudoTerminal):
+        (JSC::DFG::Node::errorType):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileThrow):
+        (JSC::DFG::SpeculativeJIT::compileThrowStaticError):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileThrow):
+        (JSC::FTL::DFG::LowerDFGToB3::compileThrowStaticError):
+        * jit/JITOperations.h:
+
+2017-08-31  Saam Barati  <sbarati@apple.com>
+
         Graph::methodOfGettingAValueProfileFor compares NodeOrigin instead of the semantic CodeOrigin
         https://bugs.webkit.org/show_bug.cgi?id=176206
 

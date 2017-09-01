@@ -962,6 +962,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(V_JITOperation_EJssUi operation, GPRReg arg1, uint32_t arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImm32(arg2));
+        return appendCall(operation);
+    }
     JITCompiler::Call callOperation(P_JITOperation_EO operation, GPRReg result, GPRReg object)
     {
         m_jit.setupArgumentsWithExecState(object);
@@ -1378,6 +1383,16 @@ public:
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
+    }
+
+    JITCompiler::Call callOperation(V_JITOperation_EJ operation, JSValueRegs arg1)
+    {
+#if USE(JSVALUE64)
+        m_jit.setupArgumentsWithExecState(arg1.gpr());
+#else
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR());
+#endif
+        return appendCall(operation);
     }
 
 #if USE(JSVALUE64)
@@ -2388,12 +2403,6 @@ public:
         return appendCall(operation);
     }
 
-    JITCompiler::Call callOperation(V_JITOperation_EJ operation, JSValueRegs arg1)
-    {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR());
-        return appendCall(operation);
-    }
-
     JITCompiler::Call callOperation(V_JITOperation_EJPP operation, JSValueRegs arg1, GPRReg arg2, void* pointer)
     {
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), arg2, TrustedImmPtr(pointer));
@@ -2915,6 +2924,8 @@ public:
     void compileDefineDataProperty(Node*);
     void compileDefineAccessorProperty(Node*);
     void compileToLowerCase(Node*);
+    void compileThrow(Node*);
+    void compileThrowStaticError(Node*);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

@@ -1870,6 +1870,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         m_state.setIsValid(false);
         break;
 
+    case Throw:
+    case ThrowStaticError:
     case TailCall:
     case DirectTailCall:
     case TailCallVarargs:
@@ -1878,11 +1880,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         m_state.setIsValid(false);
         break;
         
-    case Throw:
-    case ThrowStaticError:
-        m_state.setIsValid(false);
-        break;
-            
     case ToPrimitive: {
         JSValue childConst = forNode(node->child1()).value();
         if (childConst && childConst.isNumber()) {

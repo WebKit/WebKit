@@ -5216,15 +5216,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_throw:
             addToGraph(Throw, get(VirtualRegister(currentInstruction[1].u.operand)));
             flushForTerminal();
-            addToGraph(Unreachable);
             LAST_OPCODE(op_throw);
             
-        case op_throw_static_error:
-            addToGraph(ThrowStaticError);
-            addToGraph(Phantom, get(VirtualRegister(currentInstruction[1].u.operand))); // Keep argument live.
+        case op_throw_static_error: {
+            uint32_t errorType = currentInstruction[2].u.unsignedValue;
+            addToGraph(ThrowStaticError, OpInfo(errorType), get(VirtualRegister(currentInstruction[1].u.operand)));
             flushForTerminal();
-            addToGraph(Unreachable);
             LAST_OPCODE(op_throw_static_error);
+        }
 
         case op_catch: {
             m_graph.m_hasExceptionHandlers = true;

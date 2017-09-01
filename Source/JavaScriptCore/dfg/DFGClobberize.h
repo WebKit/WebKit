@@ -426,7 +426,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case Jump:
     case Branch:
     case Switch:
-    case Throw:
     case ForceOSRExit:
     case CheckBadCell:
     case Return:
@@ -648,6 +647,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(Heap);
         return;
 
+    case Throw:
+    case ThrowStaticError:
     case TailCall:
     case DirectTailCall:
     case TailCallVarargs:
@@ -1529,10 +1530,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             RELEASE_ASSERT_NOT_REACHED();
             return;
         }
-        
-    case ThrowStaticError:
-        write(SideState);
-        return;
         
     case CountExecution:
         read(InternalState);

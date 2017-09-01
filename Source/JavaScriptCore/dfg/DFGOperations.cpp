@@ -2313,6 +2313,23 @@ JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState* exec, JSCell* map, Enc
     return *bucket;
 }
 
+void JIT_OPERATION operationThrowDFG(ExecState* exec, EncodedJSValue valueToThrow)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    scope.throwException(exec, JSValue::decode(valueToThrow));
+}
+
+void JIT_OPERATION operationThrowStaticError(ExecState* exec, JSString* message, uint32_t errorType)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    String errorMessage = message->value(exec);
+    scope.throwException(exec, createError(exec, static_cast<ErrorType>(errorType), errorMessage));
+}
+
 extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, OSRExitBase* exit)
 {
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't

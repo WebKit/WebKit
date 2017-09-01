@@ -385,10 +385,6 @@ namespace JSC { namespace DFG {
     \
     macro(NewAsyncFunction, NodeResultJS) \
     \
-    /* These aren't terminals but always exit */ \
-    macro(Throw, NodeMustGenerate) \
-    macro(ThrowStaticError, NodeMustGenerate) \
-    \
     /* Block terminals. */\
     macro(Jump, NodeMustGenerate) \
     macro(Branch, NodeMustGenerate) \
@@ -399,6 +395,8 @@ namespace JSC { namespace DFG {
     macro(TailCallVarargs, NodeMustGenerate) \
     macro(TailCallForwardVarargs, NodeMustGenerate) \
     macro(Unreachable, NodeMustGenerate) \
+    macro(Throw, NodeMustGenerate) \
+    macro(ThrowStaticError, NodeMustGenerate) \
     \
     /* Count execution. */\
     macro(CountExecution, NodeMustGenerate) \

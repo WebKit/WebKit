@@ -1948,6 +1948,10 @@ private:
             break;
         }
 
+        case ThrowStaticError:
+            fixEdge<StringUse>(node->child1());
+            break;
+
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:
@@ -2000,7 +2004,6 @@ private:
         case DirectTailCall:
         case TailCallVarargs:
         case Throw:
-        case ThrowStaticError:
         case CountExecution:
         case ForceOSRExit:
         case CheckBadCell:

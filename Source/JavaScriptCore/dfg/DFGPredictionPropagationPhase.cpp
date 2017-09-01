@@ -1106,11 +1106,12 @@ private:
         case PutClosureVar:
         case PutToArguments:
         case Return:
+        case Throw:
+        case ThrowStaticError:
         case TailCall:
         case DirectTailCall:
         case TailCallVarargs:
         case TailCallForwardVarargs:
-        case Throw:
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect:
@@ -1128,7 +1129,6 @@ private:
         case Switch:
         case ProfileType:
         case ProfileControlFlow:
-        case ThrowStaticError:
         case ForceOSRExit:
         case SetArgument:
         case SetFunctionName:
