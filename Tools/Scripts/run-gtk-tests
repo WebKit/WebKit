@@ -258,14 +258,6 @@ class TestRunner:
                 return False
         return True
 
-    def _get_child_pid_from_test_output(self, output):
-        if not output:
-            return -1
-        match = re.search(r'\(pid=(?P<child_pid>[0-9]+)\)', output)
-        if not match:
-            return -1
-        return int(match.group('child_pid'))
-
     def _kill_process(self, pid):
         try:
             os.kill(pid, SIGKILL)
@@ -273,83 +265,119 @@ class TestRunner:
             # Process already died.
             pass
 
-    def _run_test_command(self, command, timeout=-1):
-        def alarm_handler(signum, frame):
+    @staticmethod
+    def _start_timeout(timeout):
+        if timeout <= 0:
+            return
+
+        def _alarm_handler(signum, frame):
             raise TestTimeout
 
-        child_pid = [-1]
-        def parse_line(line, child_pid = child_pid):
-            if child_pid[0] == -1:
-                child_pid[0] = self._get_child_pid_from_test_output(line)
+        signal(SIGALRM, _alarm_handler)
+        alarm(timeout)
 
-            sys.stdout.write(line)
+    @staticmethod
+    def _stop_timeout(timeout):
+        if timeout <= 0:
+            return
 
-        def waitpid(pid):
-            while True:
-                try:
-                    return os.waitpid(pid, 0)
-                except (OSError, IOError) as e:
-                    if e.errno == errno.EINTR:
-                        continue
-                    raise
+        alarm(0)
 
-        def return_code_from_exit_status(status):
-            if os.WIFSIGNALED(status):
-                return -os.WTERMSIG(status)
-            elif os.WIFEXITED(status):
-                return os.WEXITSTATUS(status)
-            else:
+    def _waitpid(self, pid):
+        while True:
+            try:
+                dummy, status = os.waitpid(pid, 0)
+                if os.WIFSIGNALED(status):
+                    return -os.WTERMSIG(status)
+                if os.WIFEXITED(status):
+                    return os.WEXITSTATUS(status)
+
                 # Should never happen
                 raise RuntimeError("Unknown child exit status!")
+            except (OSError, IOError) as e:
+                if e.errno == errno.EINTR:
+                    continue
+                if e.errno == errno.ECHILD:
+                    # This happens if SIGCLD is set to be ignored or waiting
+                    # for child processes has otherwise been disabled for our
+                    # process.  This child is dead, we can't get the status.
+                    return 0
+                raise
+
+    def _run_test_glib(self, test_program):
+        command = ['gtester', '-k']
+        if self._options.verbose:
+            command.append('--verbose')
+        for test_case in self._test_cases_to_skip(test_program):
+            command.extend(['-s', test_case])
+        command.append(test_program)
+
+        timeout = self._options.timeout
+        test = os.path.join(os.path.basename(os.path.dirname(test_program)), os.path.basename(test_program))
+        if test in TestRunner.SLOW:
+            timeout *= 5
+
+        test_context = { "child-pid" : -1, "did-timeout" : False, "current_test" : None }
+        def parse_line(line, test_context = test_context):
+            if not line:
+                return
+
+            match = re.search(r'\(pid=(?P<child_pid>[0-9]+)\)', line)
+            if match:
+                test_context["child-pid"] = int(match.group('child_pid'))
+                sys.stdout.write(line)
+                return
+
+            def set_test_result(test, result):
+                if result == "FAIL":
+                    if test_context["did-timeout"] and result == "FAIL":
+                        test_context[test] = "TIMEOUT"
+                    else:
+                        test_context[test] = result
+                test_context["did-timeout"] = False
+                test_context["current_test"] = None
+                self._stop_timeout(timeout)
+                self._start_timeout(timeout)
+
+            normalized_line = line.strip().replace(' ', '')
+            if not normalized_line:
+                return
+
+            if normalized_line[0] == '/':
+                test, result = normalized_line.split(':', 1)
+                if result in ["OK", "FAIL"]:
+                    set_test_result(test, result)
+                else:
+                    test_context["current_test"] = test
+            elif normalized_line in ["OK", "FAIL"]:
+                set_test_result(test_context["current_test"], normalized_line)
+
+            sys.stdout.write(line)
 
         pid, fd = os.forkpty()
         if pid == 0:
             os.execvpe(command[0], command, self._test_env)
             sys.exit(0)
 
-        if timeout > 0:
-            signal(SIGALRM, alarm_handler)
-            alarm(timeout)
+        self._start_timeout(timeout)
 
-        try:
-            common.parse_output_lines(fd, parse_line)
-            if timeout > 0:
-                alarm(0)
-        except TestTimeout:
-            self._kill_process(pid)
-            if child_pid[0] > 0:
-                self._kill_process(child_pid[0])
-            raise
+        while (True):
+            try:
+                common.parse_output_lines(fd, parse_line)
+                break
+            except TestTimeout:
+                assert test_context["child-pid"] > 0
+                self._kill_process(test_context["child-pid"])
+                test_context["child-pid"] = -1
+                test_context["did-timeout"] = True
 
-        try:
-            dummy, status = waitpid(pid)
-        except OSError as e:
-            if e.errno != errno.ECHILD:
-                raise
-            # This happens if SIGCLD is set to be ignored or waiting
-            # for child processes has otherwise been disabled for our
-            # process.  This child is dead, we can't get the status.
-            status = 0
+        self._stop_timeout(timeout)
+        del test_context["child-pid"]
+        del test_context["did-timeout"]
+        del test_context["current_test"]
 
-        return return_code_from_exit_status(status)
-
-    def _run_test_glib(self, test_program):
-        tester_command = ['gtester', '-k']
-        if self._options.verbose:
-            tester_command.append('--verbose')
-        for test_case in self._test_cases_to_skip(test_program):
-            tester_command.extend(['-s', test_case])
-        tester_command.append(test_program)
-        # This timeout is supposed to be per test case, but in the case of GLib tests it affects all the tests cases of
-        # the same test program. Some test programs like TestLoaderClient, that have a lot of test cases, often time out
-        # in the bots because the timeout is not enough to run all the tests cases. So, we use a longer timeout for GLib
-        # tests (timeout * 2).
-        timeout = self._options.timeout * 2
-        test = os.path.join(os.path.basename(os.path.dirname(test_program)), os.path.basename(test_program))
-        if test in TestRunner.SLOW:
-            timeout *= 5
-
-        return self._run_test_command(tester_command, timeout)
+        self._waitpid(pid)
+        return test_context
 
     def _get_tests_from_google_test_suite(self, test_program):
         try:
@@ -374,23 +402,41 @@ class TestRunner:
         return tests
 
     def _run_google_test(self, test_program, subtest):
-        test_command = [test_program, '--gtest_filter=%s' % (subtest)]
+        command = [test_program, '--gtest_filter=%s' % (subtest)]
         timeout = self._options.timeout
         if subtest in TestRunner.SLOW:
             timeout *= 5
 
-        status = self._run_test_command(test_command, timeout)
+        pid, fd = os.forkpty()
+        if pid == 0:
+            os.execvpe(command[0], command, self._test_env)
+            sys.exit(0)
+
+        self._start_timeout(timeout)
+        try:
+            common.parse_output_lines(fd, sys.stdout.write)
+            status = self._waitpid(pid)
+        except TestTimeout:
+            self._kill_process(pid)
+            return { subtest : "TIMEOUT" }
+
+        self._stop_timeout(timeout)
+
         if status == -SIGSEGV:
             sys.stdout.write("**CRASH** %s\n" % subtest)
             sys.stdout.flush()
-        return status
+            return { subtest : "CRASH" }
+
+        if status != 0:
+            return { subtest : "FAIL" }
+
+        return { }
 
     def _run_google_test_suite(self, test_program):
-        retcode = 0
+        result = { }
         for subtest in self._get_tests_from_google_test_suite(test_program):
-            if self._run_google_test(test_program, subtest):
-                retcode = 1
-        return retcode
+            result.update(self._run_google_test(test_program, subtest))
+        return result
 
     def _run_test(self, test_program):
         basedir = os.path.basename(os.path.dirname(test_program))
@@ -415,47 +461,44 @@ class TestRunner:
         # some tests might be skipped while setting up the test environment.
         self._tests = [test for test in self._tests if self._should_run_test_program(test)]
 
-        crashed_tests = []
-        failed_tests = []
-        timed_out_tests = []
+        crashed_tests = {}
+        failed_tests = {}
+        timed_out_tests = {}
         try:
             for test in self._tests:
-                exit_status_code = 0
-                try:
-                    exit_status_code = self._run_test(test)
-                except TestTimeout:
-                    sys.stdout.write("TEST: %s: TIMEOUT\n" % test)
-                    sys.stdout.flush()
-                    timed_out_tests.append(test)
-
-                if exit_status_code == -SIGSEGV:
-                    sys.stdout.write("TEST: %s: CRASHED\n" % test)
-                    sys.stdout.flush()
-                    crashed_tests.append(test)
-                elif exit_status_code != 0:
-                    failed_tests.append(test)
+                results = self._run_test(test)
+                for test_case, result in results.iteritems():
+                    if result == "FAIL":
+                        failed_tests.setdefault(test, []).append(test_case)
+                    elif result == "TIMEOUT":
+                        timed_out_tests.setdefault(test, []).append(test_case)
+                    elif result == "CRASH":
+                        crashed_tests.setdefault(test, []).append(test_case)
         finally:
             self._tear_down_testing_environment()
 
         if failed_tests:
-            names = [test.replace(self._test_programs_base_dir(), '', 1) for test in failed_tests]
-            sys.stdout.write("Tests failed (%d): %s\n" % (len(names), ", ".join(names)))
+            sys.stdout.write("\nUnexpected failures (%d)\n" % (sum(len(value) for value in failed_tests.itervalues())))
+            for test in failed_tests:
+                sys.stdout.write("    %s\n" % (test.replace(self._test_programs_base_dir(), '', 1)))
+                for test_case in failed_tests[test]:
+                    sys.stdout.write("        %s\n" % (test_case))
             sys.stdout.flush()
 
         if crashed_tests:
-            names = [test.replace(self._test_programs_base_dir(), '', 1) for test in crashed_tests]
-            sys.stdout.write("Tests that crashed (%d): %s\n" % (len(names), ", ".join(names)))
+            sys.stdout.write("\nUnexpected crashes (%d)\n" % (sum(len(value) for value in crashed_tests.itervalues())))
+            for test in crashed_tests:
+                sys.stdout.write("    %s\n" % (test.replace(self._test_programs_base_dir(), '', 1)))
+                for test_case in crashed_tests[test]:
+                    sys.stdout.write("        %s\n" % (test_case))
             sys.stdout.flush()
 
         if timed_out_tests:
-            names = [test.replace(self._test_programs_base_dir(), '', 1) for test in timed_out_tests]
-            sys.stdout.write("Tests that timed out (%d): %s\n" % (len(names), ", ".join(names)))
-            sys.stdout.flush()
-
-        if self._skipped_tests and self._options.skipped_action == 'skip':
-            sys.stdout.write("Tests skipped (%d):\n%s\n" %
-                             (len(self._skipped_tests),
-                              "\n".join([str(skipped) for skipped in self._skipped_tests])))
+            sys.stdout.write("\nUnexpected timeouts (%d)\n" % (sum(len(value) for value in timed_out_tests.itervalues())))
+            for test in timed_out_tests:
+                sys.stdout.write("    %s\n" % (test.replace(self._test_programs_base_dir(), '', 1)))
+                for test_case in timed_out_tests[test]:
+                    sys.stdout.write("        %s\n" % (test_case))
             sys.stdout.flush()
 
         return len(failed_tests) + len(timed_out_tests)
