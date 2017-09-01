@@ -1,3 +1,17 @@
+2017-09-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] FTL allocation for async Function is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=176214
+
+        Reviewed by Saam Barati.
+
+        In FTL, allocating async function / async generator function was incorrectly using
+        JSFunction logic. While it is not observable right now since sizeof(JSFunction) == sizeof(JSAsyncFunction),
+        but it is a bug.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+
 2017-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Fix "name" and "length" of Proxy revoke function
