@@ -239,7 +239,6 @@ shouldBe('refTest(result.data, expected.data)', 'true');
 ctx.clearRect(0,0,300,150);
 debug('');
 
-
 debug('Various tests of invalid values.');
 matrix.a = 1;
 matrix.b = 0;
@@ -250,9 +249,6 @@ matrix.f = 0;
 pathA = new Path2D();
 pathB = new Path2D();
 shouldThrow('pathA.addPath(matrix, pathB)');
-shouldThrow('pathA.addPath(pathB, ctx.canvas)');
-shouldThrow('pathA.addPath(pathB, null)');
-shouldThrow('pathA.addPath(pathB, undefined)');
 shouldThrow('pathA.addPath(pathB, 0)');
 shouldThrow('pathA.addPath(pathB, "0")');
 

@@ -427,6 +427,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSSupportsRule.idl
     css/CSSUnknownRule.idl
     css/DOMMatrix.idl
+    css/DOMMatrix2DInit.idl
     css/DOMMatrixInit.idl
     css/DOMMatrixReadOnly.idl
     css/DeprecatedCSSOMCounter.idl

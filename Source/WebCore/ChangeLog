@@ -1,3 +1,47 @@
+2017-08-31  Sam Weinig  <sam@webkit.org>
+
+        Implement DOMMatrix2DInit for setTransform()/addPath()
+        https://bugs.webkit.org/show_bug.cgi?id=176048
+
+        Reviewed by Simon Fraser.
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+
+            Add new files.
+
+        * bindings/js/CallTracerTypes.h:
+        * inspector/InspectorCanvas.cpp:
+        
+            Swap out DOMMatrixInit for DOMMatrix2DInit in canvas tracing infrastructure.
+
+        * css/DOMMatrix2DInit.h: Added.
+        * css/DOMMatrix2DInit.idl: Added.
+        * css/DOMMatrixInit.h:
+        * css/DOMMatrixInit.idl:
+        Split DOMMatrixInit in two, with the 2D bits going into DOMMatrix2DInit.
+        
+        * css/DOMMatrixReadOnly.cpp:
+        * css/DOMMatrixReadOnly.h:
+        
+            Add a validateAndFixup overload for DOMMatrix2DInit.
+        
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasRenderingContext2D.h:
+
+            Swap out DOMMatrixInit for DOMMatrix2DInit in setTransform. This
+            should have no observable difference, since we ignored the 3D prior.
+
+        * html/canvas/DOMPath.cpp:
+        * html/canvas/DOMPath.h:
+        * html/canvas/DOMPath.idl:
+
+            Update DOMPath (actually called Path2D) to take an optional DOMMatrix2DInit
+            rather than an SVGMatrix. Passing an SVGMatrix is still valid, as it conforms
+            as a DOMMatrix2DInit dictionary (having the necessary properties), so the
+            risk of compatibility issues is minimal.
+
 2017-08-31  Brady Eidson  <beidson@apple.com>
 
         Add (entirely incorrect) fetching of ServiceWorker scripts.

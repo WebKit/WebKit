@@ -33,4 +33,9 @@ PASS DOMMatrixReadOnly multiply number of required arguments
 PASS DOMMatrix multiplySelf number of required arguments 
 PASS DOMMatrix preMultiplySelf number of required arguments 
 PASS CSSMatrix must be nuked 
+PASS DOMMatrixImmutable must be nuked 
+PASS ClientRect must be nuked 
+PASS ClientRectList must be nuked 
+FAIL WebKitPoint must be nuked assert_false: expected false got true
+PASS MSCSSMatrix must be nuked 
 

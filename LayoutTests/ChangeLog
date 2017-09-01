@@ -1,3 +1,15 @@
+2017-08-31  Sam Weinig  <sam@webkit.org>
+
+        Implement DOMMatrix2DInit for setTransform()/addPath()
+        https://bugs.webkit.org/show_bug.cgi?id=176048
+
+        Reviewed by Simon Fraser.
+
+        * fast/canvas/canvas-path-addPath-expected.txt:
+        * fast/canvas/canvas-path-addPath.html:
+        Update test / results now that the transform is for the path is an optional dictionary.
+        Mostly this means we throw a little less.
+
 2017-08-31  Brady Eidson  <beidson@apple.com>
 
         Add (entirely incorrect) fetching of ServiceWorker scripts.

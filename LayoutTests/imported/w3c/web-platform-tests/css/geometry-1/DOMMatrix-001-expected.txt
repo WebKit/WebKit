@@ -16,10 +16,13 @@ PASS new DOMMatrix((float64Array) 6 elements
 PASS new DOMMatrix(sequence) 16 elements 
 PASS new DOMMatrix(sequence) 6 elements 
 PASS new DOMMatrix("scale(2) translateX(5px) translateY(5px)") 
-FAIL new DOMMatrix("scale(2 2) translateX(5) translateY(5)") The string did not match the expected pattern.
-FAIL new DOMMatrix("scale(2, 2), translateX(5)  ,translateY(5)") The string did not match the expected pattern.
+PASS new DOMMatrix("scale(2, 2) translateX(5px) translateY(5px)") 
+PASS new DOMMatrix("scale(2)translateX(5px)translateY(5px)") 
+PASS new DOMMatrix("scale(2) translateX(calc(2 * 2.5px)) translateY(5px)") 
+PASS new DOMMatrix("scale(2) translateX(5px) translateY(5px) rotate(5deg) rotate(-5deg)") 
 PASS new DOMMatrix("translateX    (5px)") 
-FAIL new DOMMatrix("scale(2)translateX(5px)") assert_throws: function "function () { new self[constr](string); }" did not throw
+PASS new DOMMatrix("scale(2 2) translateX(5) translateY(5)") 
+PASS new DOMMatrix("scale(2, 2), translateX(5)  ,translateY(5)") 
 PASS new DOMMatrix("translateX(5em)") 
 PASS new DOMMatrix("translateX(5ex)") 
 PASS new DOMMatrix("translateX(5ch)") 
@@ -29,6 +32,10 @@ FAIL new DOMMatrix("translateX(5vh)") assert_throws: function "function () { new
 FAIL new DOMMatrix("translateX(5vmin)") assert_throws: function "function () { new self[constr](string); }" did not throw
 FAIL new DOMMatrix("translateX(5vmax)") assert_throws: function "function () { new self[constr](string); }" did not throw
 PASS new DOMMatrix("translateX(5%)") 
+PASS new DOMMatrix("rotate(5)") 
+PASS new DOMMatrix("rotate(5, 5, 5)") 
+PASS new DOMMatrix("rotate(5, 5px, 5px)") 
+PASS new DOMMatrix("rotate(5deg, 5px, 5px)") 
 PASS new DOMMatrix(" ") 
 PASS new DOMMatrix("/**/") 
 PASS new DOMMatrix("\0") 
@@ -64,10 +71,13 @@ PASS new DOMMatrixReadOnly((float64Array) 6 elements
 PASS new DOMMatrixReadOnly(sequence) 16 elements 
 PASS new DOMMatrixReadOnly(sequence) 6 elements 
 PASS new DOMMatrixReadOnly("scale(2) translateX(5px) translateY(5px)") 
-FAIL new DOMMatrixReadOnly("scale(2 2) translateX(5) translateY(5)") The string did not match the expected pattern.
-FAIL new DOMMatrixReadOnly("scale(2, 2), translateX(5)  ,translateY(5)") The string did not match the expected pattern.
+PASS new DOMMatrixReadOnly("scale(2, 2) translateX(5px) translateY(5px)") 
+PASS new DOMMatrixReadOnly("scale(2)translateX(5px)translateY(5px)") 
+PASS new DOMMatrixReadOnly("scale(2) translateX(calc(2 * 2.5px)) translateY(5px)") 
+PASS new DOMMatrixReadOnly("scale(2) translateX(5px) translateY(5px) rotate(5deg) rotate(-5deg)") 
 PASS new DOMMatrixReadOnly("translateX    (5px)") 
-FAIL new DOMMatrixReadOnly("scale(2)translateX(5px)") assert_throws: function "function () { new self[constr](string); }" did not throw
+PASS new DOMMatrixReadOnly("scale(2 2) translateX(5) translateY(5)") 
+PASS new DOMMatrixReadOnly("scale(2, 2), translateX(5)  ,translateY(5)") 
 PASS new DOMMatrixReadOnly("translateX(5em)") 
 PASS new DOMMatrixReadOnly("translateX(5ex)") 
 PASS new DOMMatrixReadOnly("translateX(5ch)") 
@@ -77,6 +87,10 @@ FAIL new DOMMatrixReadOnly("translateX(5vh)") assert_throws: function "function 
 FAIL new DOMMatrixReadOnly("translateX(5vmin)") assert_throws: function "function () { new self[constr](string); }" did not throw
 FAIL new DOMMatrixReadOnly("translateX(5vmax)") assert_throws: function "function () { new self[constr](string); }" did not throw
 PASS new DOMMatrixReadOnly("translateX(5%)") 
+PASS new DOMMatrixReadOnly("rotate(5)") 
+PASS new DOMMatrixReadOnly("rotate(5, 5, 5)") 
+PASS new DOMMatrixReadOnly("rotate(5, 5px, 5px)") 
+PASS new DOMMatrixReadOnly("rotate(5deg, 5px, 5px)") 
 PASS new DOMMatrixReadOnly(" ") 
 PASS new DOMMatrixReadOnly("/**/") 
 PASS new DOMMatrixReadOnly("\0") 

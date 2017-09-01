@@ -71,8 +71,20 @@
 });
 
 // Renamed interfaces
-// https://github.com/w3c/fxtf-drafts/commit/9031c94c8536cec7f7007c18d7be037a793e5ed5
-test(() => {
-  assert_false('CSSMatrix' in self);
-}, 'CSSMatrix must be nuked');
+[
+  // https://github.com/w3c/fxtf-drafts/commit/9031c94c8536cec7f7007c18d7be037a793e5ed5
+  'CSSMatrix',
+  // https://github.com/w3c/csswg-drafts/commit/8d01810fe403bc935c24ee5a29101cac9b958c8c
+  'DOMMatrixImmutable',
+  // https://github.com/w3c/csswg-drafts/commit/6e05c3ee01528daba6dc0776f342beae577cefa9
+  'ClientRect',
+  'ClientRectList',
+  // Non-standard
+  'WebKitPoint',
+  'MSCSSMatrix',
+].forEach(interf => {
+  test(() => {
+    assert_false(interf in self);
+  }, `${interf} must be nuked`);
+});
 </script>

@@ -28,20 +28,33 @@
 #pragma once
 
 #include "CanvasPath.h"
-#include "SVGMatrix.h"
 #include "SVGPathUtilities.h"
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+struct DOMMatrix2DInit;
 
 class WEBCORE_EXPORT DOMPath final : public RefCounted<DOMPath>, public CanvasPath {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~DOMPath();
 
-    static Ref<DOMPath> create() { return adoptRef(*new DOMPath); }
-    static Ref<DOMPath> create(const Path& path) { return adoptRef(*new DOMPath(path)); }
-    static Ref<DOMPath> create(const DOMPath& path) { return create(path.path()); }
+    static Ref<DOMPath> create()
+    {
+        return adoptRef(*new DOMPath);
+    }
+
+    static Ref<DOMPath> create(const Path& path)
+    {
+        return adoptRef(*new DOMPath(path));
+    }
+
+    static Ref<DOMPath> create(const DOMPath& path)
+    {
+        return create(path.path());
+    }
 
     static Ref<DOMPath> create(const String& pathData)
     {
@@ -50,22 +63,16 @@ public:
         return create(path);
     }
 
-    void addPath(const DOMPath* path) { addPath(path, AffineTransform()); }
-    void addPath(const DOMPath* path, SVGMatrix& matrix) { addPath(path, matrix.propertyReference()); }
-    void addPath(const DOMPath* path, const AffineTransform& transform)
-    {
-        if (!path || !transform.isInvertible())
-            return;
-        m_path.addPath(path->path(), transform);
-    }
+    ExceptionOr<void> addPath(DOMPath&, DOMMatrix2DInit&&);
 
     const Path& path() const { return m_path; }
 
 private:
-    DOMPath() { }
+    DOMPath() = default;
     DOMPath(const Path& path)
         : CanvasPath(path)
-    { }
+    {
+    }
 };
 
 } // namespace WebCore

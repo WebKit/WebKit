@@ -28,10 +28,24 @@
 #include "config.h"
 #include "DOMPath.h"
 
+#include "AffineTransform.h"
+#include "DOMMatrix2DInit.h"
+#include "DOMMatrixReadOnly.h"
+
 namespace WebCore {
 
 DOMPath::~DOMPath()
 {
+}
+
+ExceptionOr<void> DOMPath::addPath(DOMPath& path, DOMMatrix2DInit&& matrixInit)
+{
+    auto checkValid = DOMMatrixReadOnly::validateAndFixup(matrixInit);
+    if (checkValid.hasException())
+        return checkValid.releaseException();
+
+    m_path.addPath(path.path(), { matrixInit.a.value_or(1), matrixInit.b.value_or(0), matrixInit.c.value_or(0), matrixInit.d.value_or(1), matrixInit.e.value_or(0), matrixInit.f.value_or(0) });
+    return { };
 }
 
 }

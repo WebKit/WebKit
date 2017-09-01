@@ -55,7 +55,7 @@ class HTMLVideoElement;
 class ImageData;
 class TextMetrics;
 
-struct DOMMatrixInit;
+struct DOMMatrix2DInit;
 
 #if ENABLE(VIDEO)
 using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<HTMLCanvasElement>>;
@@ -119,7 +119,7 @@ public:
 
     Ref<DOMMatrix> getTransform() const;
     void setTransform(float m11, float m12, float m21, float m22, float dx, float dy);
-    ExceptionOr<void> setTransform(DOMMatrixInit&&);
+    ExceptionOr<void> setTransform(DOMMatrix2DInit&&);
     void resetTransform();
 
     void setStrokeColor(const String& color, std::optional<float> alpha = std::nullopt);

@@ -33,10 +33,7 @@
     ExportMacro=WEBCORE_EXPORT,
     InterfaceName=Path2D,
 ] interface DOMPath {
-    // FIXME: This should be:
-    // void addPath(DOMPath path, optional SVGMatrix transform);
-    void addPath(DOMPath? path);
-    void addPath(DOMPath? path, SVGMatrix transform);
+    [MayThrowException] void addPath(DOMPath path, optional DOMMatrix2DInit transform);
 };
 
 DOMPath implements CanvasPath;

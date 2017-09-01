@@ -485,7 +485,7 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
                 String imageSmoothingQuality = CanvasRenderingContext2D::stringForImageSmoothingQuality(value);
                 parametersData->addItem(indexForData(imageSmoothingQuality));
             },
-            [&] (const DOMMatrixInit& value) {
+            [&] (const DOMMatrix2DInit& value) {
                 RefPtr<Inspector::Protocol::Array<double>> array = Inspector::Protocol::Array<double>::create();
                 array->addItem(value.a.value_or(1));
                 array->addItem(value.b.value_or(0));

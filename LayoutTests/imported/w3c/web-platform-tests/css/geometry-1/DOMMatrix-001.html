@@ -97,8 +97,10 @@
             });
 
             ['scale(2) translateX(5px) translateY(5px)',
-             'scale(2 2) translateX(5) translateY(5)',
-             'scale(2, 2), translateX(5)  ,translateY(5)',
+             'scale(2, 2) translateX(5px) translateY(5px)',
+             'scale(2)translateX(5px)translateY(5px)',
+             'scale(2) translateX(calc(2 * 2.5px)) translateY(5px)',
+             'scale(2) translateX(5px) translateY(5px) rotate(5deg) rotate(-5deg)',
             ].forEach(function(string) {
                 test(function() {
                     checkDOMMatrix(new self[constr](string), scaleTranslate2D);
@@ -106,7 +108,8 @@
             });
 
             ['translateX    (5px)',
-             'scale(2)translateX(5px)',
+             'scale(2 2) translateX(5) translateY(5)',
+             'scale(2, 2), translateX(5)  ,translateY(5)',
              'translateX(5em)',
              'translateX(5ex)',
              'translateX(5ch)',
@@ -116,6 +119,10 @@
              'translateX(5vmin)',
              'translateX(5vmax)',
              'translateX(5%)',
+             'rotate(5)',
+             'rotate(5, 5, 5)',
+             'rotate(5, 5px, 5px)',
+             'rotate(5deg, 5px, 5px)',
              ' ',
              '/**/',
              '\0',

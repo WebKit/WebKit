@@ -75,6 +75,7 @@ public:
     static ExceptionOr<Ref<DOMMatrixReadOnly>> fromFloat32Array(Ref<Float32Array>&&);
     static ExceptionOr<Ref<DOMMatrixReadOnly>> fromFloat64Array(Ref<Float64Array>&&);
 
+    static ExceptionOr<void> validateAndFixup(DOMMatrix2DInit&);
     static ExceptionOr<void> validateAndFixup(DOMMatrixInit&);
 
     double a() const { return m_matrix.a(); }

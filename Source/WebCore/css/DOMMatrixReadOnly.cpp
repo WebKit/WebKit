@@ -59,8 +59,9 @@ inline Ref<DOMMatrix> DOMMatrixReadOnly::cloneAsDOMMatrix() const
 }
 
 // https://drafts.fxtf.org/geometry/#matrix-validate-and-fixup
-ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrixInit& init)
+ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrix2DInit& init)
 {
+    // FIXME: Should be using SameValueZero rather than c-equality.
     if (init.a && init.m11 && init.a.value() != init.m11.value())
         return Exception { TypeError, ASCIILiteral("init.a and init.m11 do not match") };
     if (init.b && init.m12 && init.b.value() != init.m12.value())
@@ -73,6 +74,28 @@ ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrixInit& init)
         return Exception { TypeError, ASCIILiteral("init.e and init.m41 do not match") };
     if (init.f && init.m42 && init.f.value() != init.m42.value())
         return Exception { TypeError, ASCIILiteral("init.f and init.m42 do not match") };
+
+    if (!init.m11)
+        init.m11 = init.a.value_or(1);
+    if (!init.m12)
+        init.m12 = init.b.value_or(0);
+    if (!init.m21)
+        init.m21 = init.c.value_or(0);
+    if (!init.m22)
+        init.m22 = init.d.value_or(1);
+    if (!init.m41)
+        init.m41 = init.e.value_or(0);
+    if (!init.m42)
+        init.m42 = init.f.value_or(0);
+
+    return { };
+}
+
+ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrixInit& init)
+{
+    auto validate2D = validateAndFixup(static_cast<DOMMatrix2DInit&>(init));
+    if (validate2D.hasException())
+        return validate2D.releaseException();
 
     if (init.is2D && init.is2D.value()) {
         if (init.m13)
@@ -96,19 +119,6 @@ ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrixInit& init)
         if (init.m44 != 1)
             return Exception { TypeError, ASCIILiteral("m44 should be 1 for a 2D matrix") };
     }
-
-    if (!init.m11)
-        init.m11 = init.a.value_or(1);
-    if (!init.m12)
-        init.m12 = init.b.value_or(0);
-    if (!init.m21)
-        init.m21 = init.c.value_or(0);
-    if (!init.m22)
-        init.m22 = init.d.value_or(1);
-    if (!init.m41)
-        init.m41 = init.e.value_or(0);
-    if (!init.m42)
-        init.m42 = init.f.value_or(0);
 
     if (!init.is2D) {
         if (init.m13 || init.m14 || init.m23 || init.m24 || init.m31 || init.m32 || init.m34 || init.m43 || init.m33 != 1 || init.m44 != 1)

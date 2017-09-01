@@ -3287,6 +3287,9 @@
 		7CB5CA3F1E525C7100FAEF13 /* MediaQueryExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5CA3D1E525C6C00FAEF13 /* MediaQueryExpression.cpp */; };
 		7CB5CA401E525C7300FAEF13 /* MediaQueryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CB5CA3E1E525C6C00FAEF13 /* MediaQueryExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CBA5BA71F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBA5BA61F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp */; };
+		7CBBBCC71F560581005EFAAC /* DOMMatrix2DInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBBCC61F560568005EFAAC /* DOMMatrix2DInit.h */; };
+		7CBBBCCA1F5617C5005EFAAC /* JSDOMMatrix2DInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBBBCC91F5617C0005EFAAC /* JSDOMMatrix2DInit.h */; };
+		7CBBBCCB1F56180D005EFAAC /* JSDOMMatrix2DInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBBBCC81F5617C0005EFAAC /* JSDOMMatrix2DInit.cpp */; };
 		7CC01D0A1E4A7B0400E529CC /* JSDOMBuiltinConstructorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0CEF2E1E4A5832008DEB80 /* JSDOMBuiltinConstructorBase.cpp */; };
 		7CC01D0B1E4A7B0400E529CC /* JSDOMConstructorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0CEF2F1E4A58AD008DEB80 /* JSDOMConstructorBase.cpp */; };
 		7CC01D0C1E4A7B0400E529CC /* JSDOMConstructorWithDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C0CEF301E4A58F1008DEB80 /* JSDOMConstructorWithDocument.cpp */; };
@@ -11441,6 +11444,10 @@
 		7CB5CA3D1E525C6C00FAEF13 /* MediaQueryExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryExpression.cpp; sourceTree = "<group>"; };
 		7CB5CA3E1E525C6C00FAEF13 /* MediaQueryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryExpression.h; sourceTree = "<group>"; };
 		7CBA5BA61F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertWebGL.cpp; sourceTree = "<group>"; };
+		7CBBBCC41F560567005EFAAC /* DOMMatrix2DInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMMatrix2DInit.idl; sourceTree = "<group>"; };
+		7CBBBCC61F560568005EFAAC /* DOMMatrix2DInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMatrix2DInit.h; sourceTree = "<group>"; };
+		7CBBBCC81F5617C0005EFAAC /* JSDOMMatrix2DInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMMatrix2DInit.cpp; path = JSDOMMatrix2DInit.cpp; sourceTree = "<group>"; };
+		7CBBBCC91F5617C0005EFAAC /* JSDOMMatrix2DInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSDOMMatrix2DInit.h; path = JSDOMMatrix2DInit.h; sourceTree = "<group>"; };
 		7CC2DDF81EC9415A0027B774 /* NotificationPermission.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationPermission.h; sourceTree = "<group>"; };
 		7CC2DDFA1EC9415A0027B774 /* NotificationPermission.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NotificationPermission.idl; sourceTree = "<group>"; };
 		7CC2DDFE1EC95A440027B774 /* JSNotificationPermission.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotificationPermission.cpp; sourceTree = "<group>"; };
@@ -22318,6 +22325,8 @@
 				FC9E0E4B16419C1E00392BE3 /* JSDOMCSSNamespace.h */,
 				836ACECD1ECAAB04004BD012 /* JSDOMMatrix.cpp */,
 				836ACECE1ECAAB04004BD012 /* JSDOMMatrix.h */,
+				7CBBBCC81F5617C0005EFAAC /* JSDOMMatrix2DInit.cpp */,
+				7CBBBCC91F5617C0005EFAAC /* JSDOMMatrix2DInit.h */,
 				835657C61ECAB0E800CDE72D /* JSDOMMatrixInit.cpp */,
 				836ACECF1ECAAB04004BD012 /* JSDOMMatrixInit.h */,
 				836ACED01ECAAB04004BD012 /* JSDOMMatrixReadOnly.cpp */,
@@ -25437,6 +25446,8 @@
 				836ACEC41ECA6654004BD012 /* DOMMatrix.cpp */,
 				836ACEC51ECA6654004BD012 /* DOMMatrix.h */,
 				836ACEC61ECA6654004BD012 /* DOMMatrix.idl */,
+				7CBBBCC61F560568005EFAAC /* DOMMatrix2DInit.h */,
+				7CBBBCC41F560567005EFAAC /* DOMMatrix2DInit.idl */,
 				836ACEC71ECA6654004BD012 /* DOMMatrixInit.h */,
 				836ACEC81ECA6654004BD012 /* DOMMatrixInit.idl */,
 				836ACEBF1ECA62B0004BD012 /* DOMMatrixReadOnly.cpp */,
@@ -27395,6 +27406,7 @@
 				267725FF1A5B3AD9003C24DD /* DFANode.h in Headers */,
 				CD19A2681A13E700008D650E /* DiagnosticLoggingClient.h in Headers */,
 				46FCB6181A70820E00C5A21E /* DiagnosticLoggingKeys.h in Headers */,
+				7CBBBCCA1F5617C5005EFAAC /* JSDOMMatrix2DInit.h in Headers */,
 				8372DB311A6780A800C697C5 /* DiagnosticLoggingResultType.h in Headers */,
 				CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */,
 				CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */,
@@ -30534,6 +30546,7 @@
 				2E4346530F546A8200B0F1BA /* WorkerRunLoop.h in Headers */,
 				A57FD71C1DB9423E006AE24B /* WorkerRuntimeAgent.h in Headers */,
 				E1A643F20EC0972500779668 /* WorkerScriptController.h in Headers */,
+				7CBBBCC71F560581005EFAAC /* DOMMatrix2DInit.h in Headers */,
 				A54A0C661DB805360017A90B /* WorkerScriptDebugServer.h in Headers */,
 				A7D6B3490F61104500B79FD1 /* WorkerScriptLoader.h in Headers */,
 				2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */,
@@ -31146,6 +31159,7 @@
 				49484FCD102CF23C00187DD3 /* CanvasStyle.cpp in Sources */,
 				072CA86116CB4DC3008AE131 /* CaptionUserPreferences.cpp in Sources */,
 				079D086C162F21F900DB8658 /* CaptionUserPreferencesMediaAF.cpp in Sources */,
+				7CBBBCCB1F56180D005EFAAC /* JSDOMMatrix2DInit.cpp in Sources */,
 				07B7116E1D899E63009F0FFB /* CaptureDeviceManager.cpp in Sources */,
 				CDC734141977896C0046BFC5 /* CARingBuffer.cpp in Sources */,
 				6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */,

@@ -369,6 +369,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/CSSSupportsRule.idl \
     $(WebCore)/css/CSSUnknownRule.idl \
     $(WebCore)/css/DOMMatrix.idl \
+    $(WebCore)/css/DOMMatrix2DInit.idl \
     $(WebCore)/css/DOMMatrixInit.idl \
     $(WebCore)/css/DOMMatrixReadOnly.idl \
     $(WebCore)/css/DeprecatedCSSOMCounter.idl \

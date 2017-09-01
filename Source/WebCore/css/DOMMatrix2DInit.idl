@@ -23,24 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "DOMMatrix2DInit.h"
-
-namespace WebCore {
-
-struct DOMMatrixInit : DOMMatrix2DInit {
-    double m13 { 0 };
-    double m14 { 0 };
-    double m23 { 0 };
-    double m24 { 0 };
-    double m31 { 0 };
-    double m32 { 0 };
-    double m33 { 1 };
-    double m34 { 0 };
-    double m43 { 0 };
-    double m44 { 1 };
-    std::optional<bool> is2D;
+dictionary DOMMatrix2DInit {
+    unrestricted double a;
+    unrestricted double b;
+    unrestricted double c;
+    unrestricted double d;
+    unrestricted double e;
+    unrestricted double f;
+    unrestricted double m11;
+    unrestricted double m12;
+    unrestricted double m21;
+    unrestricted double m22;
+    unrestricted double m41;
+    unrestricted double m42;
 };
-
-} // namespace WebCore

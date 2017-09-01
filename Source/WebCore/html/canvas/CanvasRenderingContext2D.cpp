@@ -41,7 +41,7 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "DOMMatrix.h"
-#include "DOMMatrixInit.h"
+#include "DOMMatrix2DInit.h"
 #include "DOMPath.h"
 #include "DisplayListRecorder.h"
 #include "DisplayListReplayer.h"
@@ -815,14 +815,13 @@ void CanvasRenderingContext2D::setTransform(float m11, float m12, float m21, flo
     transform(m11, m12, m21, m22, dx, dy);
 }
 
-ExceptionOr<void> CanvasRenderingContext2D::setTransform(DOMMatrixInit&& matrixInit)
+ExceptionOr<void> CanvasRenderingContext2D::setTransform(DOMMatrix2DInit&& matrixInit)
 {
     auto checkValid = DOMMatrixReadOnly::validateAndFixup(matrixInit);
     if (checkValid.hasException())
         return checkValid.releaseException();
 
     setTransform(matrixInit.a.value_or(1), matrixInit.b.value_or(0), matrixInit.c.value_or(0), matrixInit.d.value_or(1), matrixInit.e.value_or(0), matrixInit.f.value_or(0));
-
     return { };
 }
 

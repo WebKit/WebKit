@@ -1,3 +1,26 @@
+2017-08-31  Sam Weinig  <sam@webkit.org>
+
+        Implement DOMMatrix2DInit for setTransform()/addPath()
+        https://bugs.webkit.org/show_bug.cgi?id=176048
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/geometry-1/DOMMatrix-001.html:
+        * web-platform-tests/css/geometry-1/DOMMatrix-css-string.worker.js:
+        (string_appeared_here.forEach.constr.test):
+        * web-platform-tests/css/geometry-1/DOMMatrixInit-validate-fixup-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/DOMMatrixInit-validate-fixup.html: Added.
+        * web-platform-tests/css/geometry-1/historical.html:
+        * web-platform-tests/css/geometry-1/interfaces-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/interfaces.html: Added.
+        * web-platform-tests/css/geometry-1/interfaces.worker-expected.txt: Added.
+        * web-platform-tests/css/geometry-1/interfaces.worker.html: Added.
+        * web-platform-tests/css/geometry-1/interfaces.worker.js: Added.
+        * web-platform-tests/css/geometry-1/structured-serialization.html:
+        * web-platform-tests/css/geometry-1/w3c-import.log:
+
+            Pull latest web-platform-tests/css/geometry-1/ and rebase the results.
+
 2017-08-29  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Request should throw when keep alive is true and body is a ReadableStream

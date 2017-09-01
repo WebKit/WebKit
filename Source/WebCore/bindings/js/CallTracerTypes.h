@@ -28,7 +28,7 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
-#include "DOMMatrixInit.h"
+#include "DOMMatrix2DInit.h"
 #include "DOMPath.h"
 #include "Element.h"
 #include "HTMLCanvasElement.h"
@@ -59,7 +59,7 @@ namespace WebCore {
 typedef Variant<
     CanvasRenderingContext2D::ImageSmoothingQuality,
     CanvasRenderingContext2D::WindingRule,
-    DOMMatrixInit,
+    DOMMatrix2DInit,
     DOMPath*,
     Element*,
     HTMLImageElement*,

@@ -111,16 +111,36 @@ function defineThrowingGetters(object, attrs) {
     case "DOMMatrix":
       promise_test(t => {
         const object = new self[constr]([1, -0, Infinity, NaN, 5, 6]);
+        object.m13 = -0;
+        object.m14 = -0;
+        object.m23 = -0;
+        object.m24 = -0;
+        object.m31 = -0;
+        object.m32 = -0;
+        object.m34 = -0;
+        object.m43 = -0;
+        assert_true(object.is2D, 'is2D after setting m13 etc to -0');
         return clone(object).then(other => {
           for (let attr of attrs) {
-            assert_equals(other[attr], object[attr], attr);
+            if (attr === 'm13' ||
+                attr === 'm14' ||
+                attr === 'm23' ||
+                attr === 'm24' ||
+                attr === 'm31' ||
+                attr === 'm32' ||
+                attr === 'm34' ||
+                attr === 'm43') {
+              assert_equals(other[attr], 0, attr);
+            } else {
+              assert_equals(other[attr], object[attr], attr);
+            }
           }
           t.done();
         });
       }, `${prefix} non-initial values (2d)`);
 
       promise_test(t => {
-        const object = new self[constr]([11, 12, 13, 14,
+        const object = new self[constr]([11, -0, Infinity, NaN,
                                          21, 22, 23, 24,
                                          31, 32, 33, 34,
                                          41, 42, 43, 44]);
