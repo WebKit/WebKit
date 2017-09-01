@@ -24,19 +24,12 @@
  */
 "use strict";
 
-class PtrType extends ReferenceType {
-    get isPtr() { return true; }
-    
-    unifyImpl(unificationContext, other)
+class WTrapError extends Error {
+    constructor(originString, message)
     {
-        if (!(other instanceof PtrType))
-            return false;
-        return this.elementType.unify(unificationContext, other.elementType);
-    }
-    
-    toString()
-    {
-        return this.addressSpace + " " + this.elementType + "^";
+        super("Trap at " + originString + ": " + message);
+        this.originString = originString;
+        this.syntaxErrorMessage = message;
     }
 }
 

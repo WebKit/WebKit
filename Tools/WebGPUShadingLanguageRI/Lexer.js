@@ -105,6 +105,9 @@ class Lexer {
         if (/^[^\d\W]\w*/.test(relevantText))
             return result("identifier");
 
+        if (/^[0-9]+u/.test(relevantText))
+            return result("uintLiteral");
+
         if (/^[0-9]+/.test(relevantText))
             return result("intLiteral");
 
@@ -112,7 +115,7 @@ class Lexer {
         if (/^([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)/.test(relevantText))
             return result("doubleLiteral");
         
-        if (/^(struct|protocol|type|if|else|enum|continue|break|switch|case|default|for|while|do|return|sizeof|constant|device|threadgroup|thread|operator|null)/.test(relevantText))
+        if (/^(struct|protocol|typedef|if|else|enum|continue|break|switch|case|default|for|while|do|return|sizeof|constant|device|threadgroup|thread|operator|null)/.test(relevantText))
             return result("keyword");
         
         if (/^([{}()\[\]?:=+*\/,.%!~^&|<>\\;-]|->|=>|<=|==|!=|\+=|-=|\*=|\/=|%=|^=|\|=|&=)/.test(relevantText))

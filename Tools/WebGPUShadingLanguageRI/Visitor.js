@@ -56,6 +56,12 @@ class Visitor {
         this.visitFunc(node);
     }
     
+    visitNativeFuncInstance(node)
+    {
+        node.func.visit(this);
+        this.visitFunc(node);
+    }
+    
     visitBlock(node)
     {
         for (let statement of node.statements)
@@ -107,6 +113,8 @@ class Visitor {
     
     visitTypeVariable(node)
     {
+        if (node.protocol)
+            node.protocol.visit(this);
     }
     
     visitConstexprTypeParameter(node)
@@ -124,14 +132,19 @@ class Visitor {
         node.elementType.visit(this);
     }
     
-    visitPtrType(node)
+    visitReferenceType(node)
     {
         this.visitElementalType(node);
     }
     
+    visitPtrType(node)
+    {
+        this.visitReferenceType(node);
+    }
+    
     visitArrayRefType(node)
     {
-        this.visitElementalType(node);
+        this.visitReferenceType(node);
     }
     
     visitArrayType(node)
@@ -174,6 +187,10 @@ class Visitor {
     }
     
     visitIntLiteral(node)
+    {
+    }
+    
+    visitUintLiteral(node)
     {
     }
     

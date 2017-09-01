@@ -27,12 +27,21 @@
 // NOTE: The next line is line 28, and we rely on this in Prepare.js.
 const standardLibrary = `
 // This is the WSL standard library. Implementations of all of these things are in
-// Intrinsics.js.
+// Intrinsics.js. The only thing that gets defined before we get here is the primitive
+// protocol.
 
 // Need to bootstrap void first.
-native primitive type void;
-native primitive type int32;
-type int = int32;
+native primitive typedef void;
+
+native primitive typedef int32;
+native primitive typedef uint32;
+typedef int = int32;
+typedef uint = uint32;
 
 native int operator+(int, int);
+
+native thread T^ operator\\[]<T>(thread T[], uint);
+native threadgroup T^ operator\\[]<T:primitive>(threadgroup T[], uint);
+native device T^ operator\\[]<T:primitive>(device T[], uint);
+native constant T^ operator\\[]<T:primitive>(constant T[], uint);
 `;

@@ -137,7 +137,7 @@ class NameContext {
     
     recognizeIntrinsics()
     {
-        this._intrinsics = new Intrinsics();
+        this._intrinsics = new Intrinsics(this);
     }
     
     get intrinsics()

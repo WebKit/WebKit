@@ -24,19 +24,19 @@
  */
 "use strict";
 
-class PtrType extends ReferenceType {
-    get isPtr() { return true; }
-    
-    unifyImpl(unificationContext, other)
+class EArrayRef {
+    constructor(ptr, length)
     {
-        if (!(other instanceof PtrType))
-            return false;
-        return this.elementType.unify(unificationContext, other.elementType);
+        this._ptr = ptr;
+        this._length = length;
     }
+    
+    get ptr() { return this._ptr; }
+    get length() { return this._length; }
     
     toString()
     {
-        return this.addressSpace + " " + this.elementType + "^";
+        return "A:<" + this.ptr + ", " + this.length + ">";
     }
 }
 

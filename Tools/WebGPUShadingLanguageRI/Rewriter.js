@@ -24,6 +24,9 @@
  */
 "use strict";
 
+// FIXME: This should have sensible behavior when it encounters definitions that it cannot handle. Right
+// now we are hackishly preventing this by wrapping things in TypeRef. That's probably wrong.
+// https://bugs.webkit.org/show_bug.cgi?id=176208
 class Rewriter {
     constructor()
     {
@@ -42,14 +45,6 @@ class Rewriter {
         if (result)
             return result;
         return oldItem;
-    }
-    
-    visitFunc(node)
-    {
-        return new Func(
-            node.name, node.returnType.visit(this),
-            node.typeParameters.map(typeParameter => typeParameter.visit(this)),
-            node.parameters.map(parameter => parameter.visit(this)));
     }
     
     visitFuncParameter(node)
@@ -97,18 +92,10 @@ class Rewriter {
     visitTypeRef(node)
     {
         let result = new TypeRef(node.origin, node.name, node.typeArguments.map(typeArgument => typeArgument.visit(this)));
+        // We should probably visit this type.
+        // https://bugs.webkit.org/show_bug.cgi?id=176208
         result.type = node.type;
         return result;
-    }
-    
-    visitTypeVariable(node)
-    {
-        return node;
-    }
-    
-    visitConstexprTypeParameter(node)
-    {
-        return new ConstexprTypeParameter(node.origin, node.name, node.type.visit(this));
     }
     
     visitField(node)
@@ -167,6 +154,11 @@ class Rewriter {
     }
     
     visitIntLiteral(node)
+    {
+        return node;
+    }
+
+    visitUintLiteral(node)
     {
         return node;
     }

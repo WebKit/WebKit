@@ -25,8 +25,12 @@
 "use strict";
 
 class Intrinsics {
-    constructor()
+    constructor(nameContext)
     {
+        this.primitive = new ProtocolDecl(null, "primitive");
+        this.primitive.isPrimitive = true;
+        nameContext.add(this.primitive);
+        
         this._map = new Map();
 
         // NOTE: Intrinsic resolution happens before type name resolution, so the strings we use here
@@ -36,7 +40,7 @@ class Intrinsics {
         
         this._map.set(
             "native primitive type void<>",
-            (type) => {
+            type => {
                 this.void = type;
                 type.size = 0;
                 type.populateDefaultValue = () => { };
@@ -44,15 +48,23 @@ class Intrinsics {
 
         this._map.set(
             "native primitive type int32<>",
-            (type) => {
+            type => {
                 this.int32 = type;
                 type.size = 1;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
             });
 
         this._map.set(
+            "native primitive type uint32<>",
+            type => {
+                this.uint32 = type;
+                type.size = 1;
+                type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
+            });
+
+        this._map.set(
             "native primitive type double<>",
-            (type) => {
+            type => {
                 this.double = type;
                 type.size = 1;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
@@ -60,10 +72,33 @@ class Intrinsics {
         
         this._map.set(
             "native int operator+<>(int,int)",
-            (func) => {
-                func.implementation =
-                    ([left, right]) => EPtr.box((left.loadValue() + right.loadValue()) | 0);
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() + right.loadValue()) | 0);
             });
+        
+        let arrayElementPtr = func => {
+            func.implementation = ([ref, index], node) => {
+                ref = ref.loadValue();
+                index = index.loadValue();
+                if (index > ref.length)
+                    throw new WTrapError(node.origin.originString, "Array index " + index + " is out of bounds of " + ref);
+                return EPtr.box(ref.ptr.plus(index * node.actualTypeArguments[0].size));
+            };
+        };
+        
+        this._map.set(
+            "native thread T^ operator\\[]<T>(thread T[],uint)",
+            arrayElementPtr);
+        this._map.set(
+            "native threadgroup T^ operator\\[]<T:primitive>(threadgroup T[],uint)",
+            arrayElementPtr);
+        this._map.set(
+            "native device T^ operator\\[]<T:primitive>(device T[],uint)",
+            arrayElementPtr);
+        this._map.set(
+            "native constant T^ operator\\[]<T:primitive>(constant T[],uint)",
+            arrayElementPtr);
     }
     
     add(thing)

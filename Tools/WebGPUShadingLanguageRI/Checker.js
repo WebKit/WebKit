@@ -100,8 +100,8 @@ class Checker extends Visitor {
         if (node.addressSpace == "thread")
             return;
         
-        if (!node.elementType.withRecursivelyInstantiatedImmediates.isPrimitive)
-            throw new WTypeError(node.origin.originString, "Illegal pointer to non-primitive type");
+        if (!node.elementType.instantiatedType.isPrimitive)
+            throw new WTypeError(node.origin.originString, "Illegal pointer to non-primitive type: " + node.elementType);
     }
     
     visitArrayType(node)
@@ -129,7 +129,7 @@ class Checker extends Visitor {
         let rhsType = node.rhs.visit(this);
         if (!lhsType.equals(rhsType))
             throw new WTypeError(node.origin.originString, "Type mismatch in assignment: " + lhsType + " versus " + rhsType);
-        node.type = lhsType;
+        node.type = TypeRef.wrap(lhsType);
         return lhsType;
     }
     
@@ -138,7 +138,7 @@ class Checker extends Visitor {
         let type = node.ptr.visit(this).unifyNode;
         if (!type.isPtr)
             throw new WTypeError(node.origin.originString, "Type passed to dereference is not a pointer: " + type);
-        node.type = type.elementType;
+        node.type = TypeRef.wrap(type.elementType);
         node.addressSpace = type.addressSpace;
         return node.type;
     }
@@ -175,7 +175,15 @@ class Checker extends Visitor {
     
     visitIntLiteral(node)
     {
+        // FIXME: This should return some kind of type variable that defaults to int but is happy to
+        // unify with uint.
+        // https://bugs.webkit.org/show_bug.cgi?id=176209
         return this._program.intrinsics.int32;
+    }
+    
+    visitUintLiteral(node)
+    {
+        return this._program.intrinsics.uint32;
     }
     
     visitCommaExpression(node)

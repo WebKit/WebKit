@@ -40,5 +40,10 @@ class ReferenceType extends Type {
     get isPrimitive() { return false; }
 
     get size() { return 1; }
+
+    populateDefaultValue(buffer, offset)
+    {
+        buffer.set(offset, null);
+    }
 }
 

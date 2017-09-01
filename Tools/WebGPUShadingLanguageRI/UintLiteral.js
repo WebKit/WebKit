@@ -24,19 +24,19 @@
  */
 "use strict";
 
-class PtrType extends ReferenceType {
-    get isPtr() { return true; }
-    
-    unifyImpl(unificationContext, other)
+class UintLiteral extends Expression {
+    constructor(origin, value)
     {
-        if (!(other instanceof PtrType))
-            return false;
-        return this.elementType.unify(unificationContext, other.elementType);
+        super(origin);
+        this._value = value;
     }
+    
+    get value() { return this._value; }
+    get isConstexpr() { return true; }
     
     toString()
     {
-        return this.addressSpace + " " + this.elementType + "^";
+        return "" + this._value + "u";
     }
 }
 

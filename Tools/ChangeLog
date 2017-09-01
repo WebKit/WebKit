@@ -1,3 +1,96 @@
+2017-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should support loading from arrays
+        https://bugs.webkit.org/show_bug.cgi?id=176207
+
+        Reviewed by Saam Barati.
+        
+        Getting a test that loads from arrays to work required doing a lot of things:
+        
+        - a[i] now parses to ^(operator\[](a, i)).
+        - added operator\[] for four array reference types.
+        - to make thread|threadgroup|device T[] work, you need T:primitive.
+        - so this adds the magical primitive protocol.
+        
+        This required a little bit of rejuggling in the name resolver and type checker. The main thing
+        is that to prevent the rewriter from copying the types referenced by some function, you need to
+        make sure that when you add a reference to a type, you wrap it in a TypeRef. This doesn't
+        completely feel right, but I'm sure we'll figure out the balance eventually. See bug 176208.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/EArrayRef.js: Added.
+        (EArrayRef):
+        (EArrayRef.prototype.get ptr):
+        (EArrayRef.prototype.get length):
+        (EArrayRef.prototype.toString):
+        * WebGPUShadingLanguageRI/EPtr.js:
+        (EPtr.prototype.plus):
+        (EPtr.prototype.toString):
+        (EPtr):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitUintLiteral):
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.getUnique.Instantiate.prototype.visitNativeFunc):
+        (FuncInstantiator.prototype.getUnique.Instantiate):
+        (FuncInstantiator.prototype.getUnique):
+        (FuncInstantiator):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer.prototype.next):
+        (Lexer):
+        * WebGPUShadingLanguageRI/NameContext.js:
+        (NameContext.prototype.recognizeIntrinsics):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitProtocolRef):
+        * WebGPUShadingLanguageRI/NativeFuncInstance.js:
+        (NativeFuncInstance.prototype.get isNative):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseTerm):
+        (parseTypeDef):
+        (parseNative):
+        (parsePossibleSuffix):
+        (parse):
+        * WebGPUShadingLanguageRI/ProtocolDecl.js:
+        (ProtocolDecl):
+        * WebGPUShadingLanguageRI/ProtocolRef.js:
+        (ProtocolRef.prototype.get isPrimitive):
+        (ProtocolRef):
+        * WebGPUShadingLanguageRI/PtrType.js:
+        (PtrType.prototype.populateDefaultValue): Deleted.
+        * WebGPUShadingLanguageRI/ReferenceType.js:
+        (ReferenceType.prototype.populateDefaultValue):
+        (ReferenceType):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitUintLiteral):
+        (Rewriter.prototype.visitFunc): Deleted.
+        (Rewriter.prototype.visitTypeVariable): Deleted.
+        (Rewriter.prototype.visitConstexprTypeParameter): Deleted.
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_threadArrayLoad):
+        (TEST_deviceArrayLoad):
+        * WebGPUShadingLanguageRI/TypeRef.js:
+        (TypeRef.prototype.get instantiatedType):
+        * WebGPUShadingLanguageRI/TypeVariable.js:
+        (TypeVariable.prototype.toString):
+        (TypeVariable):
+        * WebGPUShadingLanguageRI/UintLiteral.js: Added.
+        (UintLiteral):
+        (UintLiteral.prototype.get value):
+        (UintLiteral.prototype.get isConstexpr):
+        (UintLiteral.prototype.toString):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitNativeFuncInstance):
+        (Visitor.prototype.visitTypeVariable):
+        (Visitor.prototype.visitPtrType):
+        (Visitor.prototype.visitArrayRefType):
+        (Visitor.prototype.visitUintLiteral):
+        * WebGPUShadingLanguageRI/WTrapError.js: Added.
+        (WTrapError):
+
 2017-08-31  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's isPlayingAudioDidChange

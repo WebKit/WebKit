@@ -46,6 +46,11 @@ class EPtr {
     get buffer() { return this._buffer; }
     get offset() { return this._offset; }
     
+    plus(offset)
+    {
+        return new EPtr(this.buffer, this.offset + offset);
+    }
+    
     loadValue()
     {
         return this.buffer.get(this.offset);
@@ -59,8 +64,6 @@ class EPtr {
     
     toString()
     {
-        if (!this.buffer)
-            return "null";
         return "B" + this.buffer.index + ":" + this.offset;
     }
 }

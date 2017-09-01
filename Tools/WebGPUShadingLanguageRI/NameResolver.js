@@ -100,6 +100,14 @@ class NameResolver extends Visitor {
             signature.visit(checker);
     }
     
+    visitProtocolRef(node)
+    {
+        let result = this._nameContext.get(Protocol, node.name);
+        if (!result)
+            throw new WTypeError(node.origin.originString, "Could not find protocol named " + node.name);
+        node.protocolDecl = result;
+    }
+    
     visitTypeDef(node)
     {
         let nameContext = new NameContext(this._nameContext);

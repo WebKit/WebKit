@@ -31,6 +31,7 @@ class ProtocolDecl extends Protocol {
         this._signatures = [];
         this._signatureMap = new Map();
         this._typeVariable = new TypeVariable(origin, name, null);
+        this.isPrimitive = false;
     }
     
     addSignature(signature)

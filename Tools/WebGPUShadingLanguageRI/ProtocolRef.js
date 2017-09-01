@@ -40,4 +40,9 @@ class ProtocolRef extends Protocol {
     {
         return this.protocolDecl.hasHeir(type);
     }
+    
+    get isPrimitive()
+    {
+        return this.protocolDecl.isPrimitive;
+    }
 }

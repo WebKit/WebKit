@@ -177,6 +177,12 @@ function parse(program, origin, lineNumberOffset, text)
                 lexer.fail("Integer literal is not 32-bit integer");
             return new IntLiteral(token, intVersion);
         }
+        if (token = tryConsumeKind("uintLiteral")) {
+            let uintVersion = token.text >>> 0;
+            if (uintVersion + "u" !== token.text)
+                lexer.fail("Integer literal is not 32-bit unsigned integer");
+            return new UintLiteral(token, uintVersion);
+        }
         if (token = tryConsumeKind("doubleLiteral")) {
             token = consumeKind("doubleLiteral");
             return new DoubleLiteral(token, +token.text);
@@ -280,7 +286,7 @@ function parse(program, origin, lineNumberOffset, text)
     
     function parseTypeDef()
     {
-        let origin = consume("type");
+        let origin = consume("typedef");
         let name = consumeKind("identifier").text;
         let typeParameters = parseTypeParameters();
         consume("=");
@@ -293,10 +299,10 @@ function parse(program, origin, lineNumberOffset, text)
     {
         let origin = consume("native");
         let isType = lexer.backtrackingScope(() => {
-            if (tryConsume("type"))
+            if (tryConsume("typedef"))
                 return "normal";
             consume("primitive");
-            consume("type");
+            consume("typedef");
             return "primitive";
         });
         if (isType) {
@@ -374,7 +380,9 @@ function parse(program, origin, lineNumberOffset, text)
             case "[": {
                 let index = parseExpression();
                 consume("]");
-                left = new IndexExpression(token, left, index);
+                left = new DereferenceExpression(
+                    token,
+                    new CallExpression(token, "operator\\[]", [], [left, index]));
                 break;
             }
             default:
@@ -644,7 +652,7 @@ function parse(program, origin, lineNumberOffset, text)
             return;
         if (token.text == ";")
             lexer.next();
-        else if (token.text == "type")
+        else if (token.text == "typedef")
             program.add(parseTypeDef());
         else if (token.text == "native")
             program.add(parseNative());

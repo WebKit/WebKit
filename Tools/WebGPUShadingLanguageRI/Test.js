@@ -157,6 +157,32 @@ function TEST_simpleMakePtr()
         throw new Error("Expected 42 but got: " + value);
 }
 
+function TEST_threadArrayLoad()
+{
+    let program = doPrep(`
+        int foo(thread int[] array)
+        {
+            return array[0u];
+        }`);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 89);
+    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(null, "thread", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
+    checkInt(program, result, 89);
+}
+
+function TEST_deviceArrayLoad()
+{
+    let program = doPrep(`
+        int foo(device int[] array)
+        {
+            return array[0u];
+        }`);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 89);
+    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(null, "device", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
+    checkInt(program, result, 89);
+}
+
 let before = preciseTime();
 
 let filter = /.*/; // run everything by default

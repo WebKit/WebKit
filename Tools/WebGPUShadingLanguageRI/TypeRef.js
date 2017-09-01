@@ -48,6 +48,8 @@ class TypeRef extends Type {
     get instantiatedType()
     {
         let type = this.type.unifyNode;
+        if (!this.typeArguments.length)
+            return type;
         if (!type.instantiate)
             throw new Error("type does not support instantiation: " + type + " (" + type.constructor.name + ")");
         return type.instantiate(this.typeArguments);

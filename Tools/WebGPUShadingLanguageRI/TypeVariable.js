@@ -93,7 +93,7 @@ class TypeVariable extends Type {
     
     toString()
     {
-        return this.name;
+        return this.name + (this.protocol ? ":" + this.protocol.name : "");
     }
 }
 

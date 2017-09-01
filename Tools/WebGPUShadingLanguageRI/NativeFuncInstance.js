@@ -32,6 +32,7 @@ class NativeFuncInstance extends Func {
     }
     
     get func() { return this._func; }
+    get isNative() { return true; }
 
     toString()
     {
