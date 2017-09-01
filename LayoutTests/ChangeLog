@@ -1,3 +1,12 @@
+2017-09-01  Matt Lewis  <jlewis3@apple.com>
+
+        Skipped multiple webgl tests.
+        <rdar://problem/34209038>
+
+        Unreviewed test gardening.
+
+        * platform/ios-11/TestExpectations:
+
 2017-09-01  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Add support for consuming a Request ReadableStream body

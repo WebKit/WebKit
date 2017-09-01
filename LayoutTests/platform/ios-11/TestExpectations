@@ -153,3 +153,7 @@ webrtc/video-mute.html [ Failure ]
 webrtc/video-replace-track.html [ Failure ]
 webrtc/video-rotation.html [ Failure ]
 
+# <rdar://problem/34209038>
+webgl/1.0.2/conformance/ogles/GL/log/log_001_to_008.html [ Skip ]
+webgl/1.0.2/conformance/ogles/GL/log2/log2_001_to_008.html [ Skip ]
+
