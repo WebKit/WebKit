@@ -1,5 +1,18 @@
 2017-09-01  Ms2ger  <Ms2ger@igalia.com>
 
+        [GTK] Mark audio-mpeg-supported.html as passing.
+        https://bugs.webkit.org/show_bug.cgi?id=131535
+
+        Unreviewed test gardening.
+
+        The last time it intermittently timed out was on r194436.
+        (It also timed out between r200951 and r201016, but that was consistent
+        and unrelated.)
+
+        * platform/gtk/TestExpectations:
+
+2017-09-01  Ms2ger  <Ms2ger@igalia.com>
+
         Mark media-ended.html as passing.
         https://bugs.webkit.org/show_bug.cgi?id=131534
 
