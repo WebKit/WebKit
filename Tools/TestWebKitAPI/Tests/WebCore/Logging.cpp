@@ -52,7 +52,7 @@ static const size_t logChannelCount = sizeof(testLogChannels) / sizeof(testLogCh
 
 // Define the following to enable all tests. Disabled by default because replacing stderr with a
 // non-blocking pipe fails on some of the bots.
-#define TEST_OUTPUT 1
+#define TEST_OUTPUT 0
 
 namespace TestWebKitAPI {
 
