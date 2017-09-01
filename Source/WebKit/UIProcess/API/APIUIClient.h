@@ -146,7 +146,7 @@ public:
 
     virtual void pinnedStateDidChange(WebKit::WebPageProxy&) { }
 
-    virtual void isPlayingAudioDidChange(WebKit::WebPageProxy&) { }
+    virtual void isPlayingMediaDidChange(WebKit::WebPageProxy&, bool) { }
     virtual void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags) { }
     virtual void handleAutoplayEvent(WebKit::WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) { }
 

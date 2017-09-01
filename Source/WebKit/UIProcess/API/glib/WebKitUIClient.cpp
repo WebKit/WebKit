@@ -217,7 +217,7 @@ private:
         webkitWebViewRunAsModal(m_webView);
     }
 
-    void isPlayingAudioDidChange(WebPageProxy&) override
+    void isPlayingMediaDidChange(WebPageProxy&, bool) final
     {
         webkitWebViewIsPlayingAudioChanged(m_webView);
     }

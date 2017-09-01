@@ -1,5 +1,26 @@
 2017-08-31  Alex Christensen  <achristensen@webkit.org>
 
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's isPlayingAudioDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=176203
+        <rdar://problem/29270035>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::isPlayingMediaDidChange):
+        (API::UIClient::isPlayingAudioDidChange): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::isPlayingMediaDidChange):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+
+2017-08-31  Alex Christensen  <achristensen@webkit.org>
+
         Add ObjC SPI corresponding to WKPageLoaderClient's webGLLoadPolicy and resolveWebGLLoadPolicy
         https://bugs.webkit.org/show_bug.cgi?id=175779
         <rdar://problem/22367975>

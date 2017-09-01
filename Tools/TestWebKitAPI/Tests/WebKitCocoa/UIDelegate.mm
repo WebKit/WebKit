@@ -33,8 +33,9 @@
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <Carbon/Carbon.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
@@ -88,6 +89,29 @@ TEST(WebKit2, ShowWebView)
     TestWebKitAPI::Util::run(&done);
     
     ASSERT_EQ(webViewFromDelegateCallback, createdWebView);
+}
+
+@interface MediaDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation MediaDelegate
+
+- (void)_webView:(WKWebView *)webView isPlayingMediaDidChange:(BOOL)playingMedia
+{
+    ASSERT_TRUE(playingMedia);
+    done = true;
+}
+
+@end
+
+TEST(WebKit2, WKWebViewIsPlayingMedia)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:[[[WKWebViewConfiguration alloc] init] autorelease]]);
+    auto delegate = adoptNS([[MediaDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"file-with-video"];
+    [webView evaluateJavaScript:@"playVideo()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&done);
 }
 
 static bool readyForClick;

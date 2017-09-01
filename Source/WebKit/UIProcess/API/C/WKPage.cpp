@@ -2059,7 +2059,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.pinnedStateDidChange(toAPI(&page), m_client.base.clientInfo);
         }
 
-        void isPlayingAudioDidChange(WebPageProxy& page) final
+        void isPlayingMediaDidChange(WebPageProxy& page, bool) final
         {
             if (!m_client.isPlayingAudioDidChange)
                 return;
