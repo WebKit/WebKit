@@ -1,3 +1,13 @@
+2017-09-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Switch HTMLMediaElement to release logging
+        https://bugs.webkit.org/show_bug.cgi?id=176065
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebCore/Logging.cpp:
+        (TestWebKitAPI::LogObserver::level const):
+
 2017-09-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         download-latest-github-release.py should have friendlier output for non-404 errors

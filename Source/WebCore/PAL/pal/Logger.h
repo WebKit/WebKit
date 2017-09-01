@@ -54,7 +54,7 @@ public:
     class Observer {
     public:
         virtual ~Observer() { }
-        virtual void didLogMessage(const WTFLogChannel&, const String&) = 0;
+        virtual void didLogMessage(const WTFLogChannel&, WTFLogLevel, const String&) = 0;
     };
 
     static Ref<Logger> create(const void* owner)
@@ -63,7 +63,7 @@ public:
     }
 
     template<typename... Arguments>
-    inline void logAlways(WTFLogChannel& channel, const Arguments&... arguments) const
+    inline void logAlways(WTFLogChannel& channel, UNUSED_FUNCTION const Arguments&... arguments) const
     {
 #if RELEASE_LOG_DISABLED
         // "Standard" WebCore logging goes to stderr, which is captured in layout test output and can generally be a problem
@@ -73,7 +73,7 @@ public:
         if (!willLog(channel, WTFLogLevelAlways))
             return;
 
-        log(channel, arguments...);
+        log(channel, WTFLogLevelAlways, arguments...);
 #endif
     }
 
@@ -83,7 +83,7 @@ public:
         if (!willLog(channel, WTFLogLevelError))
             return;
 
-        log(channel, arguments...);
+        log(channel, WTFLogLevelError, arguments...);
     }
 
     template<typename... Arguments>
@@ -92,7 +92,7 @@ public:
         if (!willLog(channel, WTFLogLevelWarning))
             return;
 
-        log(channel, arguments...);
+        log(channel, WTFLogLevelWarning, arguments...);
     }
 
     template<typename... Arguments>
@@ -101,7 +101,7 @@ public:
         if (!willLog(channel, WTFLogLevelNotice))
             return;
 
-        log(channel, arguments...);
+        log(channel, WTFLogLevelNotice, arguments...);
     }
 
     template<typename... Arguments>
@@ -110,7 +110,7 @@ public:
         if (!willLog(channel, WTFLogLevelInfo))
             return;
 
-        log(channel, arguments...);
+        log(channel, WTFLogLevelInfo, arguments...);
     }
 
     template<typename... Arguments>
@@ -119,7 +119,7 @@ public:
         if (!willLog(channel, WTFLogLevelDebug))
             return;
 
-        log(channel, arguments...);
+        log(channel, WTFLogLevelDebug, arguments...);
     }
 
     inline bool willLog(const WTFLogChannel& channel, WTFLogLevel level) const
@@ -178,7 +178,7 @@ private:
     }
 
     template<typename... Argument>
-    static inline void log(WTFLogChannel& channel, const Argument&... arguments)
+    static inline void log(WTFLogChannel& channel, WTFLogLevel level, const Argument&... arguments)
     {
         String logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
 
@@ -189,7 +189,7 @@ private:
 #endif
 
         for (Observer& observer : observers())
-            observer.didLogMessage(channel, logMessage);
+            observer.didLogMessage(channel, level, logMessage);
     }
 
     static Vector<std::reference_wrapper<Observer>>& observers()
@@ -200,25 +200,6 @@ private:
 
     const void* m_owner;
     bool m_enabled { true };
-};
-
-class LogHelper {
-public:
-    virtual ~LogHelper() = default;
-
-    virtual const Logger& logger() const = 0;
-    virtual const char* className() const = 0;
-    virtual WTFLogChannel& logChannel() const = 0;
-
-    inline bool willLog(WTFLogLevel level) const { return logger().willLog(logChannel(), level); }
-
-#define ALWAYS_LOG(...)     logger().logAlways(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
-#define ERROR_LOG(...)      logger().error(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
-#define WARNING_LOG(...)    logger().warning(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
-#define NOTICE_LOG(...)     logger().notice(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
-#define INFO_LOG(...)       logger().info(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
-#define DEBUG_LOG(...)      logger().debug(logChannel(), Logger::MethodAndPointer(className(), __func__, this), ##__VA_ARGS__)
-
 };
 
 template <>

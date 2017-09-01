@@ -34,6 +34,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WTF {
 
@@ -549,6 +550,22 @@ void MediaTime::dump(PrintStream& out) const
     if (!hasDoubleValue())
         out.print(m_timeValue, "/", m_timeScale, " = ");
     out.print(toDouble(), "}");
+}
+
+String MediaTime::toString() const
+{
+    StringBuilder builder;
+
+    builder.append("{");
+    if (!hasDoubleValue()) {
+        builder.append(String::number(m_timeValue));
+        builder.append("/");
+        builder.append(String::number(m_timeScale));
+        builder.append(" = ");
+    }
+    builder.append(String::number(toDouble()));
+    builder.append("}");
+    return builder.toString();
 }
 
 MediaTime abs(const MediaTime& rhs)

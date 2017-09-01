@@ -1,3 +1,16 @@
+2017-09-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Switch HTMLMediaElement to release logging
+        https://bugs.webkit.org/show_bug.cgi?id=176065
+
+        Reviewed by Jer Noble.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::dump const): Use toString.
+        (WTF::MediaTime::toString const): New.
+        * wtf/MediaTime.h:
+        (PAL::LogArgument<WTF::MediaTime>::toString): Logger template.
+
 2017-08-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make USE_CF conditional within Windows
