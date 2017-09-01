@@ -1,3 +1,42 @@
+2017-09-01  Brady Eidson  <beidson@apple.com>
+
+        Move ServiceWorkerJob from FetchLoader to ThreadableLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=176231
+
+        Reviewed by Youenn Fablet.
+
+        No new tests (No behavior change).
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Re-indent these headers. Yuck!
+        * loader/ThreadableLoader.h:
+        (WebCore::ThreadableLoader::ref):
+        (WebCore::ThreadableLoader::deref):
+        (WebCore::ThreadableLoader::ThreadableLoader):
+        (WebCore::ThreadableLoader::~ThreadableLoader):
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didSendData):
+        (WebCore::ThreadableLoaderClient::didReceiveResponse):
+        (WebCore::ThreadableLoaderClient::didReceiveData):
+        (WebCore::ThreadableLoaderClient::didFinishLoading):
+        (WebCore::ThreadableLoaderClient::didFail):
+        (WebCore::ThreadableLoaderClient::didFinishTiming):
+        (WebCore::ThreadableLoaderClient::ThreadableLoaderClient):
+        (WebCore::ThreadableLoaderClient::~ThreadableLoaderClient):
+
+        Move from FetchLoaderClient to ThreadableLoaderClient:
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::fetchScriptWithContext):
+        (WebCore::ServiceWorkerJob::didReceiveResponse):
+        (WebCore::ServiceWorkerJob::didReceiveData):
+        (WebCore::ServiceWorkerJob::didFinishLoading):
+        (WebCore::ServiceWorkerJob::didFail):
+        (WebCore::ServiceWorkerJob::didSucceed): Deleted.
+        * workers/service/ServiceWorkerJob.h:
+
+        * workers/service/server/SWClientConnection.cpp: Add a now-required include.
+
 2017-09-01  Eric Carlson  <eric.carlson@apple.com>
 
         Switch HTMLMediaElement to release logging
