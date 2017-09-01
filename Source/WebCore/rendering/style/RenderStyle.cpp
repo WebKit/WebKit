@@ -81,7 +81,7 @@ struct SameSizeAsRenderStyle {
 #endif
 };
 
-static_assert(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), "RenderStyle should stay small");
+static_assert(sizeof(RenderStyle) <= sizeof(SameSizeAsRenderStyle), "RenderStyle should stay small");
 
 RenderStyle& RenderStyle::defaultStyle()
 {
