@@ -1,3 +1,15 @@
+2017-08-31  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC SPI corresponding to WKPageLoaderClient's webGLLoadPolicy and resolveWebGLLoadPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=175779
+        <rdar://problem/22367975>
+
+        Reviewed by Tim Horton.
+
+        Covered by new API tests.
+
+        * loader/FrameLoaderClient.h:
+
 2017-08-31  Andreas Kling  <akling@apple.com>
 
         Element focus appearance update should be either immediate or a post-layout task

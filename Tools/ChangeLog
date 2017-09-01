@@ -1,3 +1,22 @@
+2017-08-31  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC SPI corresponding to WKPageLoaderClient's webGLLoadPolicy and resolveWebGLLoadPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=175779
+        <rdar://problem/22367975>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebGLPolicy.mm: Added.
+        (-[WebGLTestDelegate webView:startURLSchemeTask:]):
+        (-[WebGLTestDelegate webView:stopURLSchemeTask:]):
+        (-[WebGLTestDelegate _webView:webGLLoadPolicyForURL:decisionHandler:]):
+        (-[WebGLTestDelegate _webView:resolveWebGLLoadPolicyForURL:decisionHandler:]):
+        (-[WebGLTestDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (urlsEqual):
+        (runTest):
+        (TEST):
+
 2017-08-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make USE_CF conditional within Windows

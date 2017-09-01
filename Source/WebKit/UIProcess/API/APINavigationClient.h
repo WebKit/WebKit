@@ -113,6 +113,11 @@ public:
     }
 #endif
 
+#if ENABLE(WEBGL)
+    virtual void webGLLoadPolicy(WebKit::WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const { completionHandler(WebCore::WebGLLoadPolicy::WebGLAllowCreation); }
+    virtual void resolveWebGLLoadPolicy(WebKit::WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const { completionHandler(WebCore::WebGLLoadPolicy::WebGLAllowCreation); }
+#endif
+
     virtual void didBeginNavigationGesture(WebKit::WebPageProxy&) { }
     virtual void willEndNavigationGesture(WebKit::WebPageProxy&, bool willNavigate, WebKit::WebBackForwardListItem&) { }
     virtual void didEndNavigationGesture(WebKit::WebPageProxy&, bool willNavigate, WebKit::WebBackForwardListItem&) { }

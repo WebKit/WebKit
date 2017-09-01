@@ -1517,7 +1517,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
 
 #if ENABLE(WEBGL)
 
-WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const String& url) const
+WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const URL& url) const
 {
     if (auto* webPage = m_frame->page())
         return webPage->webGLPolicyForURL(m_frame, url);
@@ -1525,7 +1525,7 @@ WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const String& u
     return WebGLAllowCreation;
 }
 
-WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const String& url) const
+WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const URL& url) const
 {
     if (auto* webPage = m_frame->page())
         return webPage->resolveWebGLPolicyForURL(m_frame, url);

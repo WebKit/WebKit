@@ -173,6 +173,10 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidFinishLoadForQuickLookDocumentInMainFrame = [delegate respondsToSelector:@selector(_webView:didFinishLoadForQuickLookDocumentInMainFrame:)];
     m_navigationDelegateMethods.webViewDidRequestPasswordForQuickLookDocument = [delegate respondsToSelector:@selector(_webViewDidRequestPasswordForQuickLookDocument:)];
 #endif
+#if ENABLE(WEBGL)
+    m_navigationDelegateMethods.webViewWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:webGLLoadPolicyForURL:decisionHandler:)];
+    m_navigationDelegateMethods.webViewResolveWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:resolveWebGLLoadPolicyForURL:decisionHandler:)];
+#endif
 }
 
 RetainPtr<id <WKHistoryDelegatePrivate> > NavigationState::historyDelegate()
@@ -283,6 +287,51 @@ NavigationState::NavigationClient::NavigationClient(NavigationState& navigationS
 
 NavigationState::NavigationClient::~NavigationClient()
 {
+}
+
+inline WebCore::WebGLLoadPolicy toWebCoreWebGLLoadPolicy(_WKWebGLLoadPolicy policy)
+{
+    switch (policy) {
+    case _WKWebGLLoadPolicyAllowCreation:
+        return WebCore::WebGLAllowCreation;
+    case _WKWebGLLoadPolicyBlockCreation:
+        return WebCore::WebGLBlockCreation;
+    case _WKWebGLLoadPolicyPendingCreation:
+        return WebCore::WebGLPendingCreation;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return WebCore::WebGLAllowCreation;
+}
+
+void NavigationState::NavigationClient::webGLLoadPolicy(WebPageProxy&, const WebCore::URL& url, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewWebGLLoadPolicyForURL)
+        completionHandler(WebGLAllowCreation);
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    Ref<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(_webView:webGLLoadPolicyForURL:decisionHandler:));
+    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView webGLLoadPolicyForURL:(NSURL *)url decisionHandler:BlockPtr<void(_WKWebGLLoadPolicy)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](_WKWebGLLoadPolicy policy) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(toWebCoreWebGLLoadPolicy(policy));
+    }).get()];
+}
+
+void NavigationState::NavigationClient::resolveWebGLLoadPolicy(WebPageProxy&, const WebCore::URL& url, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewResolveWebGLLoadPolicyForURL)
+        completionHandler(WebGLAllowCreation);
+    
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    Ref<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(_webView:resolveWebGLLoadPolicyForURL:decisionHandler:));
+    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView resolveWebGLLoadPolicyForURL:(NSURL *)url decisionHandler:BlockPtr<void(_WKWebGLLoadPolicy)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](_WKWebGLLoadPolicy policy) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(toWebCoreWebGLLoadPolicy(policy));
+    }).get()];
 }
 
 static void tryAppLink(RefPtr<API::NavigationAction>&& navigationAction, const String& currentMainFrameURL, WTF::Function<void(bool)>&& completionHandler)

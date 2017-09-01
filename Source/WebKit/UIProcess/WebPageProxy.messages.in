@@ -34,8 +34,8 @@ messages -> WebPageProxy {
     UnavailablePluginButtonClicked(uint32_t pluginUnavailabilityReason, String mimeType, String pluginURLString, String pluginspageAttributeURLString, String frameURLString, String pageURLString)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(WEBGL)
-    WebGLPolicyForURL(String url) -> (uint32_t loadPolicy)
-    ResolveWebGLPolicyForURL(String url) -> (uint32_t loadPolicy)
+    WebGLPolicyForURL(WebCore::URL url) -> (uint32_t loadPolicy) Delayed
+    ResolveWebGLPolicyForURL(WebCore::URL url) -> (uint32_t loadPolicy) Delayed
 #endif // ENABLE(WEBGL)
     DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
     DidReceiveEvent(uint32_t type, bool handled)

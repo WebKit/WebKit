@@ -116,6 +116,11 @@ private:
         void didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData&) override;
 #endif
 
+#if ENABLE(WEBGL)
+        void webGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
+        void resolveWebGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
+#endif
+
         void decidePolicyForNavigationAction(WebPageProxy&, Ref<API::NavigationAction>&&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
         void decidePolicyForNavigationResponse(WebPageProxy&, API::NavigationResponse&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
 
@@ -200,6 +205,11 @@ private:
         bool webViewDidStartLoadForQuickLookDocumentInMainFrame : 1;
         bool webViewDidFinishLoadForQuickLookDocumentInMainFrame : 1;
         bool webViewDidRequestPasswordForQuickLookDocument : 1;
+#endif
+
+#if ENABLE(WEBGL)
+        bool webViewWebGLLoadPolicyForURL : 1;
+        bool webViewResolveWebGLLoadPolicyForURL : 1;
 #endif
     } m_navigationDelegateMethods;
 

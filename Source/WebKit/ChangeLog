@@ -1,3 +1,41 @@
+2017-08-31  Alex Christensen  <achristensen@webkit.org>
+
+        Add ObjC SPI corresponding to WKPageLoaderClient's webGLLoadPolicy and resolveWebGLLoadPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=175779
+        <rdar://problem/22367975>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::webGLLoadPolicy const):
+        (API::NavigationClient::resolveWebGLLoadPolicy const):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::toWebCoreWebGLLoadPolicy):
+        (WebKit::NavigationState::NavigationClient::webGLLoadPolicy const):
+        (WebKit::NavigationState::NavigationClient::resolveWebGLLoadPolicy const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::webGLPolicyForURL):
+        (WebKit::WebPageProxy::resolveWebGLPolicyForURL):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::webGLPolicyForURL const):
+        (WebKit::WebFrameLoaderClient::resolveWebGLPolicyForURL const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::webGLPolicyForURL):
+        (WebKit::WebPage::resolveWebGLPolicyForURL):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::webGLPolicyForURL):
+        (WebKit::WebPage::resolveWebGLPolicyForURL):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::webGLPolicyForURL):
+        (WebKit::WebPage::resolveWebGLPolicyForURL):
+
 2017-08-31  Brady Eidson  <beidson@apple.com>
 
         Add (entirely incorrect) fetching of ServiceWorker scripts.

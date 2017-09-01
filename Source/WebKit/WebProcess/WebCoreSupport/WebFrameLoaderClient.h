@@ -204,8 +204,8 @@ private:
     void redirectDataToPlugin(WebCore::Widget&) final;
     
 #if ENABLE(WEBGL)
-    WebCore::WebGLLoadPolicy webGLPolicyForURL(const String&) const final;
-    WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(const String&) const final;
+    WebCore::WebGLLoadPolicy webGLPolicyForURL(const WebCore::URL&) const final;
+    WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(const WebCore::URL&) const final;
 #endif // ENABLE(WEBGL)
 
     RefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement&, const WebCore::URL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) final;

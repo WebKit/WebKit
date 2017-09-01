@@ -2146,12 +2146,12 @@ static bool shouldBlockWebGL()
 #endif
 }
 
-WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const String&) const
+WebCore::WebGLLoadPolicy WebFrameLoaderClient::webGLPolicyForURL(const URL&) const
 {
     return shouldBlockWebGL() ? WebGLBlockCreation : WebGLAllowCreation;
 }
 
-WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const String&) const
+WebCore::WebGLLoadPolicy WebFrameLoaderClient::resolveWebGLPolicyForURL(const URL&) const
 {
     return shouldBlockWebGL() ? WebGLBlockCreation : WebGLAllowCreation;
 }
