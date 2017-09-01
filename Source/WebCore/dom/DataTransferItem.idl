@@ -40,6 +40,6 @@
     File getAsFile();
 
     // https://wicg.github.io/entries-api/#html-data
-    [ImplementedAs=getAsEntry] FileSystemEntry? webkitGetAsEntry();
+    [CallWith=ScriptExecutionContext, ImplementedAs=getAsEntry] FileSystemEntry? webkitGetAsEntry();
 };
 

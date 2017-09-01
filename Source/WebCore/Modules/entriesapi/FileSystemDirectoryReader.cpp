@@ -31,6 +31,7 @@
 #include "ErrorCallback.h"
 #include "FileSystemDirectoryEntry.h"
 #include "FileSystemEntriesCallback.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -78,9 +79,9 @@ void FileSystemDirectoryReader::readEntries(ScriptExecutionContext& context, Ref
 
     m_isReading = true;
     auto pendingActivity = makePendingActivity(*this);
-    callOnMainThread([this, successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
+    callOnMainThread([this, context = makeRef(context), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)]() mutable {
         m_isReading = false;
-        m_directory->filesystem().listDirectory(m_directory, [this, successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)](ExceptionOr<Vector<Ref<FileSystemEntry>>>&& result) {
+        m_directory->filesystem().listDirectory(context, m_directory, [this, successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), pendingActivity = WTFMove(pendingActivity)](ExceptionOr<Vector<Ref<FileSystemEntry>>>&& result) {
             if (result.hasException()) {
                 m_error = result.releaseException();
                 if (errorCallback)

@@ -36,28 +36,32 @@ namespace WebCore {
 class File;
 class FileSystemDirectoryEntry;
 class FileSystemEntry;
+class ScriptExecutionContext;
 
 class DOMFileSystem : public ScriptWrappable, public RefCounted<DOMFileSystem> {
 public:
-    static Ref<FileSystemEntry> createEntryForFile(Ref<File>&& file)
+    static Ref<FileSystemEntry> createEntryForFile(ScriptExecutionContext& context, Ref<File>&& file)
     {
         auto fileSystem = adoptRef(*new DOMFileSystem(WTFMove(file)));
-        return fileSystem->fileAsEntry();
+        return fileSystem->fileAsEntry(context);
     }
 
     ~DOMFileSystem();
 
     const String& name() const { return m_name; }
-    Ref<FileSystemDirectoryEntry> root();
+    Ref<FileSystemDirectoryEntry> root(ScriptExecutionContext&);
 
     using DirectoryListingCallback = WTF::Function<void(ExceptionOr<Vector<Ref<FileSystemEntry>>>&&)>;
-    void listDirectory(FileSystemDirectoryEntry&, DirectoryListingCallback&&);
+    void listDirectory(ScriptExecutionContext&, FileSystemDirectoryEntry&, DirectoryListingCallback&&);
+
+    using GetParentCallback = WTF::Function<void(ExceptionOr<Ref<FileSystemDirectoryEntry>>&&)>;
+    void getParent(ScriptExecutionContext&, FileSystemEntry&, GetParentCallback&&);
 
 private:
     explicit DOMFileSystem(Ref<File>&&);
 
     String evaluatePath(const String& virtualPath);
-    Ref<FileSystemEntry> fileAsEntry();
+    Ref<FileSystemEntry> fileAsEntry(ScriptExecutionContext&);
 
     String m_name;
     Ref<File> m_file;

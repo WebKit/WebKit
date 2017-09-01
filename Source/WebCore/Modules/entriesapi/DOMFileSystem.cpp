@@ -31,8 +31,10 @@
 #include "FileSystem.h"
 #include "FileSystemDirectoryEntry.h"
 #include "FileSystemFileEntry.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/UUID.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -61,7 +63,7 @@ static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& 
     return WTFMove(listedChildren);
 }
 
-static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(DOMFileSystem& fileSystem, ExceptionOr<Vector<ListedChild>>&& listedChildren, const String& parentVirtualPath)
+static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecutionContext& context, DOMFileSystem& fileSystem, ExceptionOr<Vector<ListedChild>>&& listedChildren, const String& parentVirtualPath)
 {
     ASSERT(isMainThread());
     if (listedChildren.hasException())
@@ -73,16 +75,21 @@ static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(DOMFileSyst
         String virtualPath = parentVirtualPath + "/" + child.filename;
         switch (child.type) {
         case FileMetadata::TypeFile:
-            entries.uncheckedAppend(FileSystemFileEntry::create(fileSystem, virtualPath));
+            entries.uncheckedAppend(FileSystemFileEntry::create(context, fileSystem, virtualPath));
             break;
         case FileMetadata::TypeDirectory:
-            entries.uncheckedAppend(FileSystemDirectoryEntry::create(fileSystem, virtualPath));
+            entries.uncheckedAppend(FileSystemDirectoryEntry::create(context, fileSystem, virtualPath));
             break;
         default:
             break;
         }
     }
     return WTFMove(entries);
+}
+
+static bool isAbsoluteVirtualPath(const String& virtualPath)
+{
+    return !virtualPath.isEmpty() && virtualPath[0] == '/';
 }
 
 DOMFileSystem::DOMFileSystem(Ref<File>&& file)
@@ -98,16 +105,48 @@ DOMFileSystem::~DOMFileSystem()
 {
 }
 
-Ref<FileSystemDirectoryEntry> DOMFileSystem::root()
+Ref<FileSystemDirectoryEntry> DOMFileSystem::root(ScriptExecutionContext& context)
 {
-    return FileSystemDirectoryEntry::create(*this, ASCIILiteral("/"));
+    return FileSystemDirectoryEntry::create(context, *this, ASCIILiteral("/"));
 }
 
-Ref<FileSystemEntry> DOMFileSystem::fileAsEntry()
+Ref<FileSystemEntry> DOMFileSystem::fileAsEntry(ScriptExecutionContext& context)
 {
     if (m_file->isDirectory())
-        return FileSystemDirectoryEntry::create(*this, "/" + m_file->name());
-    return FileSystemFileEntry::create(*this, "/" + m_file->name());
+        return FileSystemDirectoryEntry::create(context, *this, "/" + m_file->name());
+    return FileSystemFileEntry::create(context, *this, "/" + m_file->name());
+}
+
+// https://wicg.github.io/entries-api/#resolve-a-relative-path
+static String resolveRelativePath(const String& virtualPath, const String& relativePath)
+{
+    ASSERT(virtualPath[0] == '/');
+    if (isAbsoluteVirtualPath(relativePath))
+        return relativePath;
+
+    auto virtualPathSegments = virtualPath.split('/');
+    auto relativePathSegments = relativePath.split('/');
+    for (auto& segment : relativePathSegments) {
+        ASSERT(!segment.isEmpty());
+        if (segment == ".")
+            continue;
+        if (segment == "..") {
+            if (!virtualPathSegments.isEmpty())
+                virtualPathSegments.removeLast();
+            continue;
+        }
+        virtualPathSegments.append(segment);
+    }
+
+    if (virtualPathSegments.isEmpty())
+        return ASCIILiteral("/");
+
+    StringBuilder builder;
+    for (auto& segment : virtualPathSegments) {
+        builder.append('/');
+        builder.append(segment);
+    }
+    return builder.toString();
 }
 
 // https://wicg.github.io/entries-api/#evaluate-a-path
@@ -132,7 +171,7 @@ String DOMFileSystem::evaluatePath(const String& virtualPath)
     return pathByAppendingComponents(m_rootPath, resolvedComponents);
 }
 
-void DOMFileSystem::listDirectory(FileSystemDirectoryEntry& directory, DirectoryListingCallback&& completionHandler)
+void DOMFileSystem::listDirectory(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory, DirectoryListingCallback&& completionHandler)
 {
     ASSERT(&directory.filesystem() == this);
 
@@ -140,15 +179,33 @@ void DOMFileSystem::listDirectory(FileSystemDirectoryEntry& directory, Directory
     auto fullPath = evaluatePath(directoryVirtualPath);
     if (fullPath == m_rootPath) {
         Vector<Ref<FileSystemEntry>> children;
-        children.append(fileAsEntry());
+        children.append(fileAsEntry(context));
         completionHandler(WTFMove(children));
         return;
     }
 
-    m_workQueue->dispatch([this, completionHandler = WTFMove(completionHandler), fullPath = fullPath.isolatedCopy(), directoryVirtualPath = directoryVirtualPath.isolatedCopy()]() mutable {
+    m_workQueue->dispatch([this, context = makeRef(context), completionHandler = WTFMove(completionHandler), fullPath = fullPath.isolatedCopy(), directoryVirtualPath = directoryVirtualPath.isolatedCopy()]() mutable {
         auto listedChildren = listDirectoryWithMetadata(fullPath);
-        callOnMainThread([this, completionHandler = WTFMove(completionHandler), listedChildren = crossThreadCopy(listedChildren), directoryVirtualPath = directoryVirtualPath.isolatedCopy()]() mutable {
-            completionHandler(toFileSystemEntries(*this, WTFMove(listedChildren), directoryVirtualPath));
+        callOnMainThread([this, context = WTFMove(context), completionHandler = WTFMove(completionHandler), listedChildren = crossThreadCopy(listedChildren), directoryVirtualPath = directoryVirtualPath.isolatedCopy()]() mutable {
+            completionHandler(toFileSystemEntries(context, *this, WTFMove(listedChildren), directoryVirtualPath));
+        });
+    });
+}
+
+void DOMFileSystem::getParent(ScriptExecutionContext& context, FileSystemEntry& entry, GetParentCallback&& completionCallback)
+{
+    String virtualPath = resolveRelativePath(entry.virtualPath(), ASCIILiteral(".."));
+    ASSERT(virtualPath[0] == '/');
+    String fullPath = evaluatePath(virtualPath);
+    m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
+        if (!fileIsDirectory(fullPath, ShouldFollowSymbolicLinks::No)) {
+            callOnMainThread([completionCallback = WTFMove(completionCallback)] {
+                completionCallback(Exception { NotFoundError, "Path no longer exists or is no longer a directory" });
+            });
+            return;
+        }
+        callOnMainThread([this, context = WTFMove(context), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)] {
+            completionCallback(FileSystemDirectoryEntry::create(context, *this, virtualPath));
         });
     });
 }

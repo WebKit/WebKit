@@ -105,13 +105,13 @@ RefPtr<File> DataTransferItem::getAsFile() const
     return m_file.copyRef();
 }
 
-RefPtr<FileSystemEntry> DataTransferItem::getAsEntry() const
+RefPtr<FileSystemEntry> DataTransferItem::getAsEntry(ScriptExecutionContext& context) const
 {
     auto file = getAsFile();
     if (!file)
         return nullptr;
 
-    return DOMFileSystem::createEntryForFile(*file);
+    return DOMFileSystem::createEntryForFile(context, *file);
 }
 
 } // namespace WebCore

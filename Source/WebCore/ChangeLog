@@ -1,3 +1,74 @@
+2017-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Implement FileSystemEntry.getParent()
+        https://bugs.webkit.org/show_bug.cgi?id=176165
+        <rdar://problem/34187743>
+
+        Reviewed by Andreas Kling.
+
+        Implement FileSystemEntry.getParent():
+        - https://wicg.github.io/entries-api/#dom-filesystementry-getparent
+
+        Tests: editing/pasteboard/datatransfer-items-drop-getParent-root.html
+               editing/pasteboard/datatransfer-items-drop-getParent.html
+               editing/pasteboard/datatransfer-items-drop-getParent2.html
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::toFileSystemEntries):
+        Take a ScriptExecutionContext now that FileSystemEntry is an ActiveDOMObject.
+
+        (WebCore::isAbsoluteVirtualPath):
+        Add utility function to determine if a virtual path is absolute:
+        - https://wicg.github.io/entries-api/#absolute-path
+
+        (WebCore::DOMFileSystem::root):
+        Take a ScriptExecutionContext now that FileSystemEntry is an ActiveDOMObject.
+
+        (WebCore::DOMFileSystem::fileAsEntry):
+        Take a ScriptExecutionContext now that FileSystemEntry is an ActiveDOMObject.
+
+        (WebCore::resolveRelativePath):
+        Add implementation for:
+        - https://wicg.github.io/entries-api/#resolve-a-relative-path
+
+        (WebCore::DOMFileSystem::listDirectory):
+        Take a ScriptExecutionContext now that FileSystemEntry is an ActiveDOMObject.
+
+        (WebCore::DOMFileSystem::getParent):
+        Add implementation of getParent() as per:
+        - https://wicg.github.io/entries-api/#dom-filesystementry-getparent
+
+        * Modules/entriesapi/DOMFileSystem.h:
+        (WebCore::DOMFileSystem::createEntryForFile):
+        * Modules/entriesapi/DOMFileSystem.idl:
+        * Modules/entriesapi/FileSystemDirectoryEntry.cpp:
+        (WebCore::FileSystemDirectoryEntry::FileSystemDirectoryEntry):
+        * Modules/entriesapi/FileSystemDirectoryEntry.h:
+        * Modules/entriesapi/FileSystemDirectoryReader.cpp:
+        (WebCore::FileSystemDirectoryReader::readEntries):
+        Take a ScriptExecutionContext now that FileSystemEntry is an ActiveDOMObject.
+
+        * Modules/entriesapi/FileSystemEntry.cpp:
+        (WebCore::FileSystemEntry::FileSystemEntry):
+        (WebCore::FileSystemEntry::activeDOMObjectName const):
+        (WebCore::FileSystemEntry::canSuspendForDocumentSuspension const):
+        (WebCore::FileSystemEntry::getParent):
+        * Modules/entriesapi/FileSystemEntry.h:
+        * Modules/entriesapi/FileSystemEntry.idl:
+        - Add implementation of FileSystemEntry.getParent() which relies on
+          DOMFileSystem::getParent()
+        - Make FileSystemEntry an ActiveDOMObject as getParent() is an asynchronous
+          operation which causes delayed JS execution.
+
+        * Modules/entriesapi/FileSystemFileEntry.cpp:
+        (WebCore::FileSystemFileEntry::FileSystemFileEntry):
+        * Modules/entriesapi/FileSystemFileEntry.h:
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::getAsEntry const):
+        * dom/DataTransferItem.h:
+        * dom/DataTransferItem.idl:
+        Take a ScriptExecutionContext now that FileSystemEntry is an ActiveDOMObject.
+
 2017-09-01  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         Ensure RenderStyle and SameSizeAsRenderStyle have the same size

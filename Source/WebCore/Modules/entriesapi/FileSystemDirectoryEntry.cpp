@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-FileSystemDirectoryEntry::FileSystemDirectoryEntry(DOMFileSystem& filesystem, const String& virtualPath)
-    : FileSystemEntry(filesystem, virtualPath)
+FileSystemDirectoryEntry::FileSystemDirectoryEntry(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
+    : FileSystemEntry(context, filesystem, virtualPath)
 {
 }
 

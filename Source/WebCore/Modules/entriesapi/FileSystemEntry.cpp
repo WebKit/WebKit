@@ -26,16 +26,23 @@
 #include "config.h"
 #include "FileSystemEntry.h"
 
+#include "DOMException.h"
 #include "DOMFileSystem.h"
+#include "ErrorCallback.h"
 #include "FileSystem.h"
+#include "FileSystemDirectoryEntry.h"
+#include "FileSystemEntryCallback.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-FileSystemEntry::FileSystemEntry(DOMFileSystem& filesystem, const String& virtualPath)
-    : m_filesystem(filesystem)
+FileSystemEntry::FileSystemEntry(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
+    : ActiveDOMObject(&context)
+    , m_filesystem(filesystem)
     , m_name(pathGetFileName(virtualPath))
     , m_virtualPath(virtualPath)
 {
+    suspendIfNeeded();
 }
 
 FileSystemEntry::~FileSystemEntry()
@@ -45,6 +52,32 @@ FileSystemEntry::~FileSystemEntry()
 DOMFileSystem& FileSystemEntry::filesystem() const
 {
     return m_filesystem.get();
+}
+
+const char* FileSystemEntry::activeDOMObjectName() const
+{
+    return "FileSystemEntry";
+}
+
+bool FileSystemEntry::canSuspendForDocumentSuspension() const
+{
+    return !hasPendingActivity();
+}
+
+void FileSystemEntry::getParent(ScriptExecutionContext& context, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
+{
+    if (!successCallback && !errorCallback)
+        return;
+
+    filesystem().getParent(context, *this, [pendingActivity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) {
+        if (result.hasException()) {
+            if (errorCallback)
+                errorCallback->handleEvent(DOMException::create(result.releaseException()));
+            return;
+        }
+        if (successCallback)
+            successCallback->handleEvent(result.releaseReturnValue());
+    });
 }
 
 

@@ -1,3 +1,25 @@
+2017-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Implement FileSystemEntry.getParent()
+        https://bugs.webkit.org/show_bug.cgi?id=176165
+        <rdar://problem/34187743>
+
+        Reviewed by Andreas Kling.
+
+        * editing/pasteboard/datatransfer-items-drop-getParent-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-drop-getParent-root-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-drop-getParent-root.html: Added.
+        * editing/pasteboard/datatransfer-items-drop-getParent.html: Added.
+        * editing/pasteboard/datatransfer-items-drop-getParent2-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-drop-getParent2.html: Added.
+        Add layout test coverage for FileSystemEntry.getParent().
+
+        * http/wpt/entries-api/interfaces-expected.txt:
+        Rebaseline test now that one more check is passing.
+
+        * platform/wk2/TestExpectations:
+        Skip new tests on WK2 since they rely on beginDragWithFiles.
+
 2017-09-01  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Mark audio-mpeg-supported.html as passing.
