@@ -90,16 +90,7 @@ void Engine::open(const String& origin, const String& cacheName, CacheIdentifier
             return;
         }
 
-        Caches& caches = cachesOrError.value();
-
-        if (auto* cache = caches.find(cacheName)) {
-            callback(cache->identifier());
-            return;
-        }
-
-        caches.open(String { cacheName }, [callback = WTFMove(callback)](const CacheIdentifierOrError& result) mutable {
-            callback(result);
-        });
+        cachesOrError.value().get().open(cacheName, WTFMove(callback));
     });
 }
 
@@ -118,13 +109,7 @@ void Engine::remove(uint64_t cacheIdentifier, CacheIdentifierCallback&& callback
         return;
     }
 
-    cachesToModify->remove(cacheIdentifier, [cacheIdentifier, callback = WTFMove(callback)](std::optional<Error>&& error) {
-        if (error) {
-            callback(makeUnexpected(error.value()));
-            return;
-        }
-        callback(cacheIdentifier);
-    });
+    cachesToModify->remove(cacheIdentifier, WTFMove(callback));
 }
 
 void Engine::retrieveCaches(const String& origin, uint64_t updateCounter, CacheInfosCallback&& callback)

@@ -165,6 +165,14 @@ void CacheStorage::retrieveCaches(WTF::Function<void(std::optional<Exception>&&)
     });
 }
 
+static void logConsolePersistencyError(ScriptExecutionContext* context, const String& cacheName)
+{
+    if (!context)
+        return;
+
+    context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("There was an error making ", cacheName, " persistent on the filesystem"));
+}
+
 void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&& promise)
 {
     retrieveCaches([this, name, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
@@ -189,7 +197,10 @@ void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<DOMC
                 if (!result.hasValue())
                     promise.reject(DOMCacheEngine::errorToException(result.error()));
                 else {
-                    auto cache = DOMCache::create(*scriptExecutionContext(), String { name }, result.value(), m_connection.copyRef());
+                    if (result.value().hadStorageError)
+                        logConsolePersistencyError(scriptExecutionContext(), name);
+
+                    auto cache = DOMCache::create(*scriptExecutionContext(), String { name }, result.value().identifier, m_connection.copyRef());
                     promise.resolve(cache);
                     m_caches.append(WTFMove(cache));
                 }
@@ -221,8 +232,11 @@ void CacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&& p
             if (!m_isStopped) {
                 if (!result.hasValue())
                     promise.reject(DOMCacheEngine::errorToException(result.error()));
-                else
+                else {
+                    if (result.value().hadStorageError)
+                        logConsolePersistencyError(scriptExecutionContext(), name);
                     promise.resolve(true);
+                }
             }
             unsetPendingActivity(this);
         });

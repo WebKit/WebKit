@@ -117,24 +117,25 @@ Cache* Caches::find(uint64_t identifier)
     return (position != notFound) ? &m_removedCaches[position] : nullptr;
 }
 
-void Caches::open(String&& name, CacheIdentifierCallback&& callback)
+void Caches::open(const String& name, CacheIdentifierCallback&& callback)
 {
     ASSERT(m_engine);
+
+    if (auto* cache = find(name)) {
+        callback(CacheIdentifierOperationResult { cache->identifier(), false });
+        return;
+    }
 
     makeDirty();
 
     uint64_t cacheIdentifier = m_engine->nextCacheIdentifier();
-    m_caches.append(Cache { cacheIdentifier, WTFMove(name) });
+    m_caches.append(Cache { cacheIdentifier, String { name } });
     writeCachesToDisk([callback = WTFMove(callback), cacheIdentifier](std::optional<Error>&& error) mutable {
-        if (error) {
-            callback(makeUnexpected(error.value()));
-            return;
-        }
-        callback(cacheIdentifier);
+        callback(CacheIdentifierOperationResult { cacheIdentifier, !!error });
     });
 }
 
-void Caches::remove(uint64_t identifier, CompletionCallback&& callback)
+void Caches::remove(uint64_t identifier, CacheIdentifierCallback&& callback)
 {
     ASSERT(m_engine);
 
@@ -142,7 +143,7 @@ void Caches::remove(uint64_t identifier, CompletionCallback&& callback)
 
     if (position == notFound) {
         ASSERT(m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == identifier; }) != notFound);
-        callback(std::nullopt);
+        callback(CacheIdentifierOperationResult { identifier, false });
         return;
     }
 
@@ -151,9 +152,10 @@ void Caches::remove(uint64_t identifier, CompletionCallback&& callback)
     auto cache = WTFMove(m_caches[position]);
     m_caches.remove(position);
     m_removedCaches.append(WTFMove(cache));
-    ++m_updateCounter;
 
-    writeCachesToDisk(WTFMove(callback));
+    writeCachesToDisk([callback = WTFMove(callback), identifier](std::optional<Error>&& error) mutable {
+        callback(CacheIdentifierOperationResult { identifier, !!error });
+    });
 }
 
 static inline Data encodeCacheNames(const Vector<Cache>& caches)

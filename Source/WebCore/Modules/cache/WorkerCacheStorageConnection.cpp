@@ -133,7 +133,7 @@ void WorkerCacheStorageConnection::doRemove(uint64_t requestIdentifier, uint64_t
         ASSERT(m_mainThreadConnection);
 
         m_mainThreadConnection->remove(cacheIdentifier, [this, protectedThis = WTFMove(protectedThis), requestIdentifier, cacheIdentifier](const CacheIdentifierOrError& result) mutable {
-            ASSERT(!result.hasValue() || result.value() == cacheIdentifier);
+            ASSERT(!result.hasValue() || result.value().identifier == cacheIdentifier);
             m_proxy.postTaskForModeToWorkerGlobalScope([this, protectedThis = WTFMove(protectedThis), requestIdentifier, result](ScriptExecutionContext& context) mutable {
                 ASSERT_UNUSED(context, context.isWorkerGlobalScope());
                 removeCompleted(requestIdentifier, result);

@@ -39,8 +39,8 @@ public:
     static Ref<Caches> create(Engine& engine, const String& origin) { return adoptRef(*new Caches { engine, origin }); }
 
     void initialize(WebCore::DOMCacheEngine::CompletionCallback&&);
-    void open(String&& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
-    void remove(uint64_t identifier, WebCore::DOMCacheEngine::CompletionCallback&&);
+    void open(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void remove(uint64_t identifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void clearMemoryRepresentation();
 
     void detach();

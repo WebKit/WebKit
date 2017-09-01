@@ -1,5 +1,25 @@
 2017-09-01  Youenn Fablet  <youenn@apple.com>
 
+        Do not Reject CacheStorage promises when updating the persistent filesystem data fails
+        https://bugs.webkit.org/show_bug.cgi?id=176241
+
+        Reviewed by Alex Christensen.
+
+        Open/Remove caches may succeed in updating the memory representation but the write-to-disk operation may fail.
+        In that case, the corresponding promise is now resolved since the web page can still proceeed.
+
+        There is no way to test that currently as this would require a write disk failure to be triggered.
+
+        * Modules/cache/CacheStorage.cpp:
+        (WebCore::logConsolePersistencyError):
+        (WebCore::CacheStorage::open):
+        (WebCore::CacheStorage::remove):
+        * Modules/cache/DOMCacheEngine.h:
+        (WebCore::DOMCacheEngine::CacheIdentifierOperationResult::encode const):
+        (WebCore::DOMCacheEngine::CacheIdentifierOperationResult::decode):
+
+2017-09-01  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Add support for consuming a Request ReadableStream body
         https://bugs.webkit.org/show_bug.cgi?id=176182
 

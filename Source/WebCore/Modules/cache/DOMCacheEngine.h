@@ -83,7 +83,16 @@ struct CacheInfos {
     uint64_t updateCounter;
 };
 
-using CacheIdentifierOrError = Expected<uint64_t, Error>;
+struct CacheIdentifierOperationResult {
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, CacheIdentifierOperationResult&);
+
+    uint64_t identifier { 0 };
+    // True in case storing cache list on the filesystem failed.
+    bool hadStorageError { false };
+};
+
+using CacheIdentifierOrError = Expected<CacheIdentifierOperationResult, Error>;
 using CacheIdentifierCallback = WTF::Function<void(const CacheIdentifierOrError&)>;
 
 using RecordIdentifiersOrError = Expected<Vector<uint64_t>, Error>;
@@ -109,6 +118,20 @@ template<class Decoder> inline bool CacheInfos::decode(Decoder& decoder, CacheIn
     if (!decoder.decode(cacheInfos.infos))
         return false;
     return decoder.decode(cacheInfos.updateCounter);
+}
+
+template<class Encoder> inline void CacheIdentifierOperationResult::encode(Encoder& encoder) const
+{
+    encoder << identifier;
+    encoder << hadStorageError;
+}
+
+template<class Decoder> inline bool CacheIdentifierOperationResult::decode(Decoder& decoder, CacheIdentifierOperationResult& result)
+{
+    if (!decoder.decode(result.identifier))
+        return false;
+
+    return decoder.decode(result.hadStorageError);
 }
 
 } // namespace DOMCacheEngine

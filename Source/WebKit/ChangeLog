@@ -1,3 +1,22 @@
+2017-09-01  Youenn Fablet  <youenn@apple.com>
+
+        Do not Reject CacheStorage promises when updating the persistent filesystem data fails
+        https://bugs.webkit.org/show_bug.cgi?id=176241
+
+        Reviewed by Alex Christensen.
+
+        Open/Remove caches may succeed in the memory representation but the write-to-disk operation may fail.
+        In that case, the callback does not return an error but a value containing the cache identifier.
+        The value will also contain a boolean flag set to true to notify the client that persistent storage failed this time.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::open):
+        (WebKit::CacheStorage::Engine::remove):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::open):
+        (WebKit::CacheStorage::Caches::remove):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+
 2017-09-01  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's toolbarsAreVisible
