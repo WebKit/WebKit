@@ -1,3 +1,63 @@
+2017-08-31  Brady Eidson  <beidson@apple.com>
+
+        Add (entirely incorrect) fetching of ServiceWorker scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=176179
+
+        Reviewed by Andy Estes.
+
+        No new tests (Covered by changes to existing tests).
+
+        When the Storage process is running the "Update" algorithm and a ServiceWorker script file needs to be fetched, this patch:
+          - Messages back to the WebContent process that started the register/update job
+          - Executes a FetchLoad in that script context for the script
+          - Sends the results back to the Storage process
+
+        We don't do anything with the results yet.
+
+        Soon.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::startScriptFetchForJob):
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+        * workers/service/ServiceWorkerContainer.h:
+
+        * workers/service/ServiceWorkerFetchResult.h: Copied from Source/WebCore/workers/service/server/SWClientConnection.h.
+        (WebCore::ServiceWorkerFetchResult::encode const):
+        (WebCore::ServiceWorkerFetchResult::decode):
+
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::startScriptFetch):
+        (WebCore::ServiceWorkerJob::fetchScriptWithContext):
+        (WebCore::ServiceWorkerJob::didReceiveResponse):
+        (WebCore::ServiceWorkerJob::didReceiveData):
+        (WebCore::ServiceWorkerJob::didSucceed):
+        (WebCore::ServiceWorkerJob::didFail):
+        * workers/service/ServiceWorkerJob.h:
+
+        * workers/service/ServiceWorkerJobClient.h:
+
+        * workers/service/server/SWClientConnection.cpp:
+        (WebCore::SWClientConnection::finishedFetchingScript):
+        (WebCore::SWClientConnection::failedFetchingScript):
+        (WebCore::SWClientConnection::startScriptFetchForServer):
+        * workers/service/server/SWClientConnection.h:
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::Connection::finishFetchingScriptInServer):
+        (WebCore::SWServer::startScriptFetch):
+        (WebCore::SWServer::scriptFetchFinished):
+        * workers/service/server/SWServer.h:
+
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::scriptFetchFinished):
+        (WebCore::SWServerRegistration::runUpdateJob):
+        (WebCore::SWServerRegistration::startScriptFetchFromMainThread):
+        (WebCore::SWServerRegistration::startScriptFetchForCurrentJob):
+        * workers/service/server/SWServerRegistration.h:
+
 2017-08-31  Daniel Bates  <dabates@apple.com>
 
         Make RenderStyle's non-inherited flags more human friendly

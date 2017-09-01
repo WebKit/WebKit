@@ -32,6 +32,7 @@
 #include "SWServer.h"
 #include "SWServerWorker.h"
 #include "SecurityOrigin.h"
+#include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "WorkerType.h"
 
@@ -61,6 +62,22 @@ void SWServerRegistration::enqueueJob(const ServiceWorkerJobData& jobData)
 
     if (!m_jobTimer.isActive())
         m_jobTimer.startOneShot(0_s);
+}
+
+void SWServerRegistration::scriptFetchFinished(const ServiceWorkerFetchResult& result)
+{
+    ASSERT(m_currentJob && m_currentJob->identifier() == result.jobIdentifier);
+
+    // FIXME: We fetched the script contents but don't do anything with them yet.
+    // These errors are for testing the current state of the feature.
+
+    String message;
+    if (result.scriptError.isNull())
+        message = makeString("Script URL ", m_currentJob->scriptURL.string(), " fetched with ", String::number(result.scriptData.size()), " bytes, but we're not using the result yet");
+    else
+        message = makeString("Script URL ", m_currentJob->scriptURL.string(), " fetch resulted in error: ", result.scriptError.localizedDescription());
+
+    rejectCurrentJob(ExceptionData { UnknownError, message });
 }
 
 void SWServerRegistration::startNextJob()
@@ -149,9 +166,7 @@ void SWServerRegistration::runUpdateJob(const ServiceWorkerJobData& job)
     if (newestWorker && !equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()))
         return rejectWithExceptionOnMainThread(ExceptionData { TypeError, ASCIILiteral("Cannot update a service worker with a requested script URL whose newest worker has a different script URL") });
 
-    // FIXME: At this point we are ready to actually fetch the script for the worker in the registering context.
-    // For now we're still hard coding the same rejection we have so far.
-    rejectWithExceptionOnMainThread(ExceptionData { UnknownError, ASCIILiteral("serviceWorker job scheduling is not yet implemented") });
+    startScriptFetchFromMainThread();
 }
 
 void SWServerRegistration::rejectWithExceptionOnMainThread(const ExceptionData& exception)
@@ -164,6 +179,12 @@ void SWServerRegistration::resolveWithRegistrationOnMainThread()
 {
     ASSERT(!isMainThread());
     m_server.postTaskReply(createCrossThreadTask(*this, &SWServerRegistration::resolveCurrentJob, data()));
+}
+
+void SWServerRegistration::startScriptFetchFromMainThread()
+{
+    ASSERT(!isMainThread());
+    m_server.postTaskReply(createCrossThreadTask(*this, &SWServerRegistration::startScriptFetchForCurrentJob));
 }
 
 void SWServerRegistration::rejectCurrentJob(const ExceptionData& exceptionData)
@@ -184,6 +205,14 @@ void SWServerRegistration::resolveCurrentJob(const ServiceWorkerRegistrationData
     m_server.resolveJob(*m_currentJob, data);
 
     finishCurrentJob();
+}
+
+void SWServerRegistration::startScriptFetchForCurrentJob()
+{
+    ASSERT(isMainThread());
+    ASSERT(m_currentJob);
+
+    m_server.startScriptFetch(*m_currentJob);
 }
 
 void SWServerRegistration::finishCurrentJob()

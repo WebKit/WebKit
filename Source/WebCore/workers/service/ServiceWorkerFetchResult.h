@@ -27,40 +27,45 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ServiceWorkerJob.h"
-#include <wtf/HashMap.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include "ResourceError.h"
+#include "ServiceWorkerRegistrationKey.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class ResourceError;
-class SharedBuffer;
-struct ExceptionData;
-struct ServiceWorkerFetchResult;
-struct ServiceWorkerRegistrationData;
+struct ServiceWorkerFetchResult {
+    uint64_t jobIdentifier;
+    uint64_t connectionIdentifier;
+    ServiceWorkerRegistrationKey registrationKey;
+    Vector<uint8_t> scriptData;
+    ResourceError scriptError;
 
-class SWClientConnection : public ThreadSafeRefCounted<SWClientConnection> {
-public:
-    WEBCORE_EXPORT SWClientConnection();
-    WEBCORE_EXPORT virtual ~SWClientConnection();
-
-    void scheduleJob(ServiceWorkerJob&);
-    void finishedFetchingScript(ServiceWorkerJob&, SharedBuffer&);
-    void failedFetchingScript(ServiceWorkerJob&, const ResourceError&);
-
-    virtual uint64_t identifier() const = 0;
-
-protected:
-    WEBCORE_EXPORT void jobRejectedInServer(uint64_t jobIdentifier, const ExceptionData&);
-    WEBCORE_EXPORT void jobResolvedInServer(uint64_t jobIdentifier, const ServiceWorkerRegistrationData&);
-    WEBCORE_EXPORT void startScriptFetchForServer(uint64_t jobIdentifier);
-
-private:
-    virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;
-    virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
-
-    HashMap<uint64_t, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, ServiceWorkerFetchResult&);
 };
+
+template<class Encoder>
+void ServiceWorkerFetchResult::encode(Encoder& encoder) const
+{
+    encoder << jobIdentifier << connectionIdentifier << registrationKey << scriptData << scriptError;
+}
+
+template<class Decoder>
+bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult& result)
+{
+    if (!decoder.decode(result.jobIdentifier))
+        return false;
+    if (!decoder.decode(result.connectionIdentifier))
+        return false;
+    if (!decoder.decode(result.registrationKey))
+        return false;
+    if (!decoder.decode(result.scriptData))
+        return false;
+    if (!decoder.decode(result.scriptError))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore
 

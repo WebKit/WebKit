@@ -28,7 +28,12 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FetchHeaders.h"
+#include "FetchLoader.h"
+#include "FetchRequest.h"
 #include "JSDOMPromiseDeferred.h"
+#include "ResourceError.h"
+#include "ResourceResponse.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
 
@@ -62,6 +67,80 @@ void ServiceWorkerJob::resolvedWithRegistration(const ServiceWorkerRegistrationD
 
     m_completed = true;
     m_client->jobResolvedWithRegistration(*this, data);
+}
+
+void ServiceWorkerJob::startScriptFetch()
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(!m_completed);
+
+    m_client->startScriptFetchForJob(*this);
+}
+
+void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context)
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(!m_completed);
+
+    m_fetchLoader = std::make_unique<FetchLoader>(*this, nullptr);
+
+    // FIXME: This Fetch request is set up incorrectly and without proper care.
+    // The ServiceWorkers spec specifics many details to apply here.
+
+    auto fetchHeaders = FetchHeaders::create();
+    auto referrer = m_jobData.clientCreationURL.string();
+    auto fetchRequest = FetchRequest::create(context, std::nullopt, WTFMove(fetchHeaders), { m_jobData.scriptURL }, { }, WTFMove(referrer));
+
+    m_fetchLoader->start(context, fetchRequest);
+}
+
+void ServiceWorkerJob::didReceiveResponse(const ResourceResponse& response)
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(!m_completed);
+    ASSERT(m_fetchLoader);
+    ASSERT(!m_scriptData);
+
+    m_lastResponse = response;
+
+    if (response.httpStatusCode() < 200 || response.httpStatusCode() > 399) {
+        auto message = makeString(ASCIILiteral("ServiceWorker script network fetch failed with HTTP status code "), String::number(response.httpStatusCode()));
+        didFail({ errorDomainWebKitInternal, 0, m_lastResponse.url(), message });
+    }
+}
+
+void ServiceWorkerJob::didReceiveData(const char* data, size_t size)
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(!m_completed);
+    ASSERT(m_fetchLoader);
+
+    if (!m_scriptData)
+        m_scriptData = SharedBuffer::create();
+
+    m_scriptData->get().append(data, size);
+}
+
+void ServiceWorkerJob::didSucceed()
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(!m_completed);
+    ASSERT(m_fetchLoader);
+
+    if (!m_scriptData)
+        m_scriptData = SharedBuffer::create();
+    m_client->jobFinishedLoadingScript(*this, WTFMove(*m_scriptData));
+    m_fetchLoader = nullptr;
+}
+
+void ServiceWorkerJob::didFail(const ResourceError& error)
+{
+    ASSERT(currentThread() == m_creationThread);
+    ASSERT(!m_completed);
+    ASSERT(m_fetchLoader);
+
+    m_client->jobFailedLoadingScript(*this, error);
+    m_fetchLoader = nullptr;
 }
 
 } // namespace WebCore

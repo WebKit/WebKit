@@ -48,6 +48,7 @@ public:
     uint64_t identifier() const final { return m_identifier; }
 
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
+    void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
 
     void disconnectedFromWebProcess();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

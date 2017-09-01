@@ -27,6 +27,9 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FetchLoader.h"
+#include "FetchLoaderClient.h"
+#include "ResourceResponse.h"
 #include "ServiceWorkerJobClient.h"
 #include "ServiceWorkerJobData.h"
 #include <wtf/RefPtr.h>
@@ -38,10 +41,11 @@ namespace WebCore {
 
 class DeferredPromise;
 class Exception;
+class ScriptExecutionContext;
 enum class ServiceWorkerJobType;
 struct ServiceWorkerRegistrationData;
 
-class ServiceWorkerJob : public ThreadSafeRefCounted<ServiceWorkerJob> {
+class ServiceWorkerJob : public ThreadSafeRefCounted<ServiceWorkerJob>, public FetchLoaderClient {
 public:
     static Ref<ServiceWorkerJob> create(ServiceWorkerJobClient& client, Ref<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
     {
@@ -52,12 +56,21 @@ public:
 
     void failedWithException(const Exception&);
     void resolvedWithRegistration(const ServiceWorkerRegistrationData&);
+    void startScriptFetch();
 
     ServiceWorkerJobData data() const { return m_jobData; }
     DeferredPromise& promise() { return m_promise.get(); }
 
+    void fetchScriptWithContext(ScriptExecutionContext&);
+
 private:
     ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);
+
+    // FetchLoaderClient
+    void didReceiveResponse(const ResourceResponse&) final;
+    void didReceiveData(const char*, size_t) final;
+    void didSucceed() final;
+    void didFail(const ResourceError&) final;
 
     Ref<ServiceWorkerJobClient> m_client;
     ServiceWorkerJobData m_jobData;
@@ -66,6 +79,9 @@ private:
     bool m_completed { false };
 
     Ref<RunLoop> m_runLoop { RunLoop::current() };
+    std::unique_ptr<FetchLoader> m_fetchLoader;
+    ResourceResponse m_lastResponse;
+    std::optional<Ref<SharedBuffer>> m_scriptData;
 
 #if !ASSERT_DISABLED
     ThreadIdentifier m_creationThread { currentThread() };

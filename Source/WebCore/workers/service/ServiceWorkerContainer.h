@@ -73,6 +73,10 @@ private:
 
     void jobFailedWithException(ServiceWorkerJob&, const Exception&) final;
     void jobResolvedWithRegistration(ServiceWorkerJob&, const ServiceWorkerRegistrationData&) final;
+    void startScriptFetchForJob(ServiceWorkerJob&) final;
+    void jobFinishedLoadingScript(ServiceWorkerJob&, Ref<SharedBuffer>&&) final;
+    void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&) final;
+
     void jobDidFinish(ServiceWorkerJob&);
 
     uint64_t connectionIdentifier() final;

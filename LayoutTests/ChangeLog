@@ -1,3 +1,14 @@
+2017-08-31  Brady Eidson  <beidson@apple.com>
+
+        Add (entirely incorrect) fetching of ServiceWorker scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=176179
+
+        Reviewed by Andy Estes.
+
+        * http/tests/workers/service/basic-register-expected.txt:
+        * http/tests/workers/service/resources/basic-register.js:
+        * http/tests/workers/service/resources/registration-task-queue-scheduling-1.js:
+
 2017-08-31  Antti Koivisto  <antti@apple.com>
 
         Remove newBlockInsideInlineModel and anonymous inline block
