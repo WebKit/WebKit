@@ -1,3 +1,10 @@
+2017-09-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE build fix after r221439.
+
+        * html/canvas/WebGL2RenderingContext.cpp: Add the HeapInlines.h
+        header include in order to properly inline a Heap::vm() call.
+
 2017-09-01  Chris Dumez  <cdumez@apple.com>
 
         Implement FileSystemEntry.getParent()
