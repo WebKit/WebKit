@@ -28,5 +28,6 @@ class NullType extends Type {
     // FIXME: This will have to behave like a type variable for the purposes of unification, so that
     // it can be unified with any pointer type. Then, we can do a verification at the end to see if
     // we got unified with a pointer type.
+    // https://bugs.webkit.org/show_bug.cgi?id=176235
 }
 

@@ -96,6 +96,13 @@ class Visitor {
             typeParameter.visit(this);
     }
     
+    visitNativeTypeInstance(node)
+    {
+        node.type.visit(node);
+        for (let typeArgument of node.typeArguments)
+            typeArgument.visit(this);
+    }
+    
     visitTypeDef(node)
     {
         for (let typeParameter of node.typeParameters)

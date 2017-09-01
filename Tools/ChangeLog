@@ -1,3 +1,37 @@
+2017-09-01  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL Rewriter should be an identity on things that aren't inside function bodies
+        https://bugs.webkit.org/show_bug.cgi?id=176208
+
+        Reviewed by Myles Maxfield.
+        
+        Previously, if the Rewriter encountered a FunctionDef, StructType, NativeType, etc., then it
+        would either crash or try to rewrite them. That's unfortunate because we use the Rewriter to
+        rewrite struct and function bodies. If a function calls another function, then rewriting the
+        caller should not mean also rewriting the callee. Previously we "fixed" this by religiously
+        wrapping references to types with TypeDef and doing other such hacks. But that's subtly wrong.
+        It only worked because Rewriter wasn't rewriting TypeRef.type. I think that Rewriter has to
+        rewrite that in the long run because it may refer to another TypeRef, and it may be an
+        instantiation that is using types that themselves need to be rewritten.
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/NullType.js:
+        (NullType):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitFuncDef):
+        (Rewriter.prototype.visitNativeFunc):
+        (Rewriter.prototype.visitNativeFuncInstance):
+        (Rewriter.prototype.visitNativeType):
+        (Rewriter.prototype.visitTypeDef):
+        (Rewriter.prototype.visitStructType):
+        (Rewriter.prototype.visitTypeVariable):
+        (Rewriter.prototype.visitConstexprTypeParameter):
+        (Rewriter.prototype.visitNativeTypeInstance):
+        (Rewriter.prototype.visitTypeRef):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitNativeTypeInstance):
+
 2017-09-01  Alex Christensen  <achristensen@webkit.org>
 
         Disable ObjC WebGL policy SPI on iOS

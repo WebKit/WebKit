@@ -129,7 +129,7 @@ class Checker extends Visitor {
         let rhsType = node.rhs.visit(this);
         if (!lhsType.equals(rhsType))
             throw new WTypeError(node.origin.originString, "Type mismatch in assignment: " + lhsType + " versus " + rhsType);
-        node.type = TypeRef.wrap(lhsType);
+        node.type = lhsType;
         return lhsType;
     }
     
@@ -138,7 +138,7 @@ class Checker extends Visitor {
         let type = node.ptr.visit(this).unifyNode;
         if (!type.isPtr)
             throw new WTypeError(node.origin.originString, "Type passed to dereference is not a pointer: " + type);
-        node.type = TypeRef.wrap(type.elementType);
+        node.type = type.elementType;
         node.addressSpace = type.addressSpace;
         return node.type;
     }
@@ -237,7 +237,7 @@ class Checker extends Visitor {
             }
         }
         node.func = overload.func;
-        node.actualTypeArguments = overload.typeArguments.map(TypeRef.wrap);
+        node.actualTypeArguments = overload.typeArguments;
         let result = overload.func.returnType.substituteToUnification(
             overload.func.typeParameters, overload.unificationContext);
         if (!result)

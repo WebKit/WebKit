@@ -47,6 +47,26 @@ class Rewriter {
         return oldItem;
     }
     
+    // We return identity for anything that is not inside a function/struct body. When processing
+    // function bodies, we only recurse into them and never out of them - for example if there is a
+    // function call to another function then we don't rewrite the other function. This is how we stop
+    // that.
+    visitFuncDef(node) { return node; }
+    visitNativeFunc(node) { return node; }
+    visitNativeFuncInstance(node) { return node; }
+    visitNativeType(node) { return node; }
+    visitTypeDef(node) { return node; }
+    visitStructType(node) { return node; }
+    visitTypeVariable(node) { return node; }
+    visitConstexprTypeParameter(node) { return node; }
+    
+    visitNativeTypeInstance(node)
+    {
+        return new NativeTypeInstance(
+            node.type.visit(this),
+            node.typeArguments.map(argument => argument.visit(this)));
+    }
+    
     visitFuncParameter(node)
     {
         let result = new FuncParameter(node.origin, node.name, node.type.visit(this));
@@ -92,9 +112,7 @@ class Rewriter {
     visitTypeRef(node)
     {
         let result = new TypeRef(node.origin, node.name, node.typeArguments.map(typeArgument => typeArgument.visit(this)));
-        // We should probably visit this type.
-        // https://bugs.webkit.org/show_bug.cgi?id=176208
-        result.type = node.type;
+        result.type = node.type ? node.type.visit(this) : null;
         return result;
     }
     
