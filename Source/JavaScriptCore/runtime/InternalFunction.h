@@ -52,7 +52,8 @@ public:
 protected:
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*);
 
-    JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name);
+    enum class NameVisibility { Visible, Anonymous };
+    JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name, NameVisibility = NameVisibility::Visible);
 
     JS_EXPORT_PRIVATE static Structure* createSubclassStructureSlow(ExecState*, JSValue newTarget, Structure*);
 

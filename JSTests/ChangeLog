@@ -1,3 +1,12 @@
+2017-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Fix "name" and "length" of Proxy revoke function
+        https://bugs.webkit.org/show_bug.cgi?id=176155
+
+        Reviewed by Mark Lam.
+
+        * test262.yaml:
+
 2017-08-31  Saam Barati  <sbarati@apple.com>
 
         Graph::methodOfGettingAValueProfileFor compares NodeOrigin instead of the semantic CodeOrigin

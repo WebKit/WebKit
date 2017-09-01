@@ -41,14 +41,15 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure)
     RELEASE_ASSERT(!isLargeAllocation());
 }
 
-void InternalFunction::finishCreation(VM& vm, const String& name)
+void InternalFunction::finishCreation(VM& vm, const String& name, NameVisibility nameVisibility)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     ASSERT(methodTable()->getCallData != InternalFunction::info()->methodTable.getCallData);
     JSString* nameString = jsString(&vm, name);
     m_originalName.set(vm, this, nameString);
-    putDirect(vm, vm.propertyNames->name, nameString, ReadOnly | DontEnum);
+    if (nameVisibility == NameVisibility::Visible)
+        putDirect(vm, vm.propertyNames->name, nameString, ReadOnly | DontEnum);
 }
 
 void InternalFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)

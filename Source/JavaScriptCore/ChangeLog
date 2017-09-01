@@ -1,3 +1,20 @@
+2017-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Fix "name" and "length" of Proxy revoke function
+        https://bugs.webkit.org/show_bug.cgi?id=176155
+
+        Reviewed by Mark Lam.
+
+        ProxyRevoke's length should be configurable. And it does not have
+        its own name. We add NameVisibility enum to InternalFunction to
+        control visibility of the name.
+
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        * runtime/InternalFunction.h:
+        * runtime/ProxyRevoke.cpp:
+        (JSC::ProxyRevoke::finishCreation):
+
 2017-08-31  Saam Barati  <sbarati@apple.com>
 
         Throwing an exception in the DFG/FTL should not cause a jettison

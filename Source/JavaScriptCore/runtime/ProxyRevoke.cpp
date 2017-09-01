@@ -49,10 +49,10 @@ ProxyRevoke::ProxyRevoke(VM& vm, Structure* structure)
 
 void ProxyRevoke::finishCreation(VM& vm, const char* name, ProxyObject* proxy)
 {
-    Base::finishCreation(vm, String(name));
+    Base::finishCreation(vm, String(name), NameVisibility::Anonymous);
     m_proxy.set(vm, this, proxy);
 
-    putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL performProxyRevoke(ExecState* exec)
