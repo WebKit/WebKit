@@ -74,14 +74,14 @@ struct SameSizeAsRenderStyle {
     } m_inheritedFlags;
 
     struct NonInheritedFlags {
-        uint64_t m_bitfields;
+        unsigned m_bitfields[2];
     } m_nonInheritedFlags;
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     bool deletionCheck;
 #endif
 };
 
-static_assert(sizeof(RenderStyle) <= sizeof(SameSizeAsRenderStyle), "RenderStyle should stay small");
+static_assert(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), "RenderStyle should stay small");
 
 RenderStyle& RenderStyle::defaultStyle()
 {

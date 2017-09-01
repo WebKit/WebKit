@@ -1,3 +1,16 @@
+2017-09-01  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        Ensure RenderStyle and SameSizeAsRenderStyle have the same size
+        https://bugs.webkit.org/show_bug.cgi?id=176210
+
+        Reviewed by Daniel Bates.
+
+        SameSizeAsRenderStyle::m_nonInheritedFlags requires a 64 bit alignment,
+        which currently produces an extra 32 bit padding with 32 bit build.
+
+        * rendering/style/RenderStyle.cpp:
+        Make m_nonInheritedFlags 32 bit aligned and restore the size check.
+
 2017-09-01  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Compile error, 'Cache' is not declared.
