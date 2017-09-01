@@ -74,6 +74,7 @@
 #import <WebKitLegacy/DOMPrivate.h>
 #import <WebKitLegacy/WebUIDelegate.h>
 #import <objc/runtime.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/QuickDrawSPI.h>
 #import <runtime/InitializeThreading.h>
 #import <runtime/JSLock.h>
@@ -193,7 +194,7 @@ typedef struct {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
-    WKSendUserChangeNotifications();
+    sendUserChangeNotifications();
 }
 
 // MARK: EVENTS
@@ -379,10 +380,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             qdPortState->clipRegion = clipRegion;
 
             CGContextRef currentContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-            if (currentContext && WKCGContextIsBitmapContext(currentContext)) {
-                // We use WKCGContextIsBitmapContext here, because if we just called CGBitmapContextGetData
-                // on any context, we'd log to the console every time. But even if WKCGContextIsBitmapContext
-                // returns true, it still might not be a context we need to create a GWorld for; for example
+            if (currentContext && CGContextGetType(currentContext) == kCGContextTypeBitmap) {
+                // We check for kCGContextTypeBitmap here, because if we just called CGBitmapContextGetData
+                // on any context, we'd log to the console every time. But even if currentContext is a
+                // kCGContextTypeBitmap, it still might not be a context we need to create a GWorld for; for example
                 // transparency layers will return true, but return 0 for CGBitmapContextGetData.
                 void* offscreenData = CGBitmapContextGetData(currentContext);
                 if (offscreenData) {

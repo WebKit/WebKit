@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "ScrollView.h"
 #include "WebCoreSystemInterface.h"
 #include <Carbon/Carbon.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <pal/spi/mac/NSScrollerImpSPI.h>
 #include <wtf/BlockObjCExceptions.h>
 #include <wtf/HashMap.h>
@@ -573,7 +574,7 @@ static RetainPtr<CGColorRef> linenBackgroundColor()
     if (!cgImage)
         return nullptr;
 
-    RetainPtr<CGPatternRef> pattern = adoptCF(wkCGPatternCreateWithImageAndTransform(cgImage, CGAffineTransformIdentity, wkPatternTilingNoDistortion));
+    RetainPtr<CGPatternRef> pattern = adoptCF(CGPatternCreateWithImage2(cgImage, CGAffineTransformIdentity, kCGPatternTilingNoDistortion));
     RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreatePattern(0));
 
     const CGFloat alpha = 1.0;

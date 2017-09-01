@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #import "WebKitSystemInterface.h"
 #import "WebProcessPool.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 
 namespace WebKit {
 
@@ -39,16 +40,6 @@ void WindowServerConnection::applicationWindowModificationsStopped(bool stopped)
         return;
     m_applicationWindowModificationsHaveStopped = stopped;
     windowServerConnectionStateChanged();
-}
-
-void WindowServerConnection::applicationWindowModificationsStarted(uint32_t, void*, uint32_t, void*, uint32_t)
-{
-    WindowServerConnection::singleton().applicationWindowModificationsStopped(false);
-}
-
-void WindowServerConnection::applicationWindowModificationsStopped(uint32_t, void*, uint32_t, void*, uint32_t)
-{
-    WindowServerConnection::singleton().applicationWindowModificationsStopped(true);
 }
 
 void WindowServerConnection::windowServerConnectionStateChanged()
@@ -65,23 +56,48 @@ WindowServerConnection& WindowServerConnection::singleton()
     return windowServerConnection;
 }
 
+#if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
+static bool registerOcclusionNotificationHandler(CGSNotificationType type, CGSNotifyConnectionProcPtr handler)
+{
+    CGSConnectionID mainConnection = CGSMainConnectionID();
+    static bool notificationsEnabled;
+    if (!notificationsEnabled) {
+        if (CGSPackagesEnableConnectionOcclusionNotifications(mainConnection, true, nullptr) != kCGErrorSuccess)
+            return false;
+        if (CGSPackagesEnableConnectionWindowModificationNotifications(mainConnection, true, nullptr) != kCGErrorSuccess)
+            return false;
+        notificationsEnabled = true;
+    }
+
+    return CGSRegisterConnectionNotifyProc(mainConnection, handler, type, nullptr) == kCGErrorSuccess;
+}
+#endif
+
 WindowServerConnection::WindowServerConnection()
     : m_applicationWindowModificationsHaveStopped(false)
 {
 #if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
     struct OcclusionNotificationHandler {
-        WKOcclusionNotificationType notificationType;
-        WKOcclusionNotificationHandler handler;
+        CGSNotificationType notificationType;
+        CGSNotifyConnectionProcPtr handler;
         const char* name;
     };
 
+    static auto windowModificationsStarted = [](CGSNotificationType, void*, uint32_t, void*, CGSConnectionID) {
+        WindowServerConnection::singleton().applicationWindowModificationsStopped(false);
+    };
+
+    static auto windowModificationsStopped = [](CGSNotificationType, void*, uint32_t, void*, CGSConnectionID) {
+        WindowServerConnection::singleton().applicationWindowModificationsStopped(true);
+    };
+
     static const OcclusionNotificationHandler occlusionNotificationHandlers[] = {
-        { WKOcclusionNotificationTypeApplicationWindowModificationsStarted, applicationWindowModificationsStarted, "Application Window Modifications Started" },
-        { WKOcclusionNotificationTypeApplicationWindowModificationsStopped, applicationWindowModificationsStopped, "Application Window Modifications Stopped" },
+        { kCGSConnectionWindowModificationsStarted, windowModificationsStarted, "Application Window Modifications Started" },
+        { kCGSConnectionWindowModificationsStopped, windowModificationsStopped, "Application Window Modifications Stopped" },
     };
 
     for (const auto& occlusionNotificationHandler : occlusionNotificationHandlers) {
-        bool result = WKRegisterOcclusionNotificationHandler(occlusionNotificationHandler.notificationType, occlusionNotificationHandler.handler);
+        bool result = registerOcclusionNotificationHandler(occlusionNotificationHandler.notificationType, occlusionNotificationHandler.handler);
         UNUSED_PARAM(result);
         ASSERT_WITH_MESSAGE(result, "Registration of \"%s\" notification handler failed.\n", occlusionNotificationHandler.name);
     }

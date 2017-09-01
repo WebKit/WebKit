@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -445,6 +445,7 @@ public:
 #if PLATFORM(MAC)
     void drawFocusRing(const Path&, double timeOffset, bool& needsRedraw);
     void drawFocusRing(const Vector<FloatRect>&, double timeOffset, bool& needsRedraw);
+    static CGColorRef focusRingColor();
 #endif
 
     void setLineCap(LineCap);

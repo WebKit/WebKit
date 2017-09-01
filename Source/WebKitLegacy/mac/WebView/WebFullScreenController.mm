@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -249,6 +249,16 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     _isEnteringFullScreen = true;
 }
 
+static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
+{
+    CGSWindowID windowNumber = (CGSWindowID)window.windowNumber;
+    CGSRegionObj shape;
+    CGRect cgClipRect = NSRectToCGRect(clipRect);
+    CGSNewRegionWithRect(&cgClipRect, &shape);
+    CGSSetWindowClipShape(CGSMainConnectionID(), windowNumber, shape);
+    CGSReleaseRegion(shape);
+}
+
 - (void)finishedEnterFullScreenAnimation:(bool)completed
 {
     if (!_isEnteringFullScreen)
@@ -263,7 +273,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
         
         NSRect windowBounds = [[self window] frame];
         windowBounds.origin = NSZeroPoint;
-        WKWindowSetClipRect([self window], windowBounds);
+        setClipRectForWindow(self.window, windowBounds);
         
         NSWindow *webWindow = [_webViewPlaceholder.get() window];
         // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
@@ -353,7 +363,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     
     NSRect windowBounds = [[self window] frame];
     windowBounds.origin = NSZeroPoint;
-    WKWindowSetClipRect([self window], windowBounds);
+    setClipRectForWindow(self.window, windowBounds);
     
     [[self window] orderOut:self];
     [[self window] setFrame:NSZeroRect display:YES];
@@ -484,13 +494,13 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     [_scaleAnimation.get() setCurrentProgress:0];
     [_scaleAnimation.get() startAnimation];
     
-    // WKWindowSetClipRect takes window coordinates, so convert from screen coordinates here:
+    // setClipRectForWindow takes window coordinates, so convert from screen coordinates here:
     NSRect finalBounds = _finalFrame;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     finalBounds.origin = [[self window] convertScreenToBase:finalBounds.origin];
 #pragma clang diagnostic pop
-    WKWindowSetClipRect([self window], finalBounds);
+    setClipRectForWindow(self.window, finalBounds);
     
     [[self window] makeKeyAndOrderFront:self];
     
@@ -556,13 +566,13 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     
     [_backgroundWindow.get() orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
     
-    // WKWindowSetClipRect takes window coordinates, so convert from screen coordinates here:
+    // setClipRectForWindow takes window coordinates, so convert from screen coordinates here:
     NSRect finalBounds = _finalFrame;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     finalBounds.origin = [[self window] convertScreenToBase:finalBounds.origin];
 #pragma clang diagnostic pop
-    WKWindowSetClipRect([self window], finalBounds);
+    setClipRectForWindow(self.window, finalBounds);
     
     [[self window] setAutodisplay:YES];
     [[self window] displayIfNeeded];

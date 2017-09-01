@@ -46,6 +46,7 @@
 #import <mach/mach_vm.h>
 #import <mach/vm_statistics.h>
 #import <objc/runtime.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <sysexits.h>
@@ -531,7 +532,10 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
 
     // FIXME: It would be better to proxy SetCursor calls over to the UI process instead of
     // allowing plug-ins to change the mouse cursor at any time.
-    WKEnableSettingCursorWhenInBackground();
+    // FIXME: SetsCursorInBackground connection property is deprecated in favor of kCGSSetsCursorInBackgroundTagBit window tag bit.
+    // <rdar://problem/7752422> asks for an API to set cursor from background processes.
+    CGSConnectionID cid = CGSMainConnectionID();
+    CGSSetConnectionProperty(cid, cid, CFSTR("SetsCursorInBackground"), (CFTypeRef)kCFBooleanTrue);
 
     RetainPtr<CFURLRef> pluginURL = adoptCF(CFURLCreateWithFileSystemPath(0, m_pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
     if (!pluginURL)

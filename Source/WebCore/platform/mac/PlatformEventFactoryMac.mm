@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -676,7 +676,7 @@ static int typeForEvent(NSEvent *event)
 {
     return static_cast<int>([NSMenu menuTypeForEvent:event]);
 }
-    
+
 void getWheelEventDeltas(NSEvent *event, float& deltaX, float& deltaY, BOOL& continuous)
 {
     ASSERT(event);

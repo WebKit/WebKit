@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,8 @@
 #import "WebCoreSystemInterface.h"
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/StringBuilder.h>
@@ -669,6 +671,80 @@ Vector<String> Pasteboard::readFilenames()
 }
 
 #if ENABLE(DRAG_SUPPORT)
+static void flipImageSpec(CoreDragImageSpec* imageSpec)
+{
+    unsigned char* tempRow = (unsigned char*)fastMalloc(imageSpec->bytesPerRow);
+    int planes = imageSpec->isPlanar ? imageSpec->samplesPerPixel : 1;
+
+    for (int p = 0; p < planes; ++p) {
+        unsigned char* topRow = (unsigned char*)imageSpec->data[p];
+        unsigned char* botRow = topRow + (imageSpec->pixelsHigh - 1) * imageSpec->bytesPerRow;
+        for (int i = 0; i < imageSpec->pixelsHigh / 2; ++i, topRow += imageSpec->bytesPerRow, botRow -= imageSpec->bytesPerRow) {
+            bcopy(topRow, tempRow, imageSpec->bytesPerRow);
+            bcopy(botRow, topRow, imageSpec->bytesPerRow);
+            bcopy(tempRow, botRow, imageSpec->bytesPerRow);
+        }
+    }
+
+    fastFree(tempRow);
+}
+
+static void setDragImageImpl(NSImage *image, NSPoint offset)
+{
+    bool flipImage;
+    NSSize imageSize = image.size;
+    CGRect imageRect = CGRectMake(0, 0, imageSize.width, imageSize.height);
+    NSImageRep *imageRep = [image bestRepresentationForRect:NSRectFromCGRect(imageRect) context:nil hints:nil];
+    RetainPtr<NSBitmapImageRep> bitmapImage;
+    if (!imageRep || ![imageRep isKindOfClass:[NSBitmapImageRep class]] || !NSEqualSizes(imageRep.size, imageSize)) {
+        [image lockFocus];
+        bitmapImage = adoptNS([[NSBitmapImageRep alloc] initWithFocusedViewRect:*(NSRect*)&imageRect]);
+        [image unlockFocus];
+        
+        // we may have to flip the bits we just read if the image was flipped since it means the cache was also
+        // and CoreDragSetImage can't take a transform for rendering.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        flipImage = image.isFlipped;
+#pragma clang diagnostic pop
+    } else {
+        flipImage = false;
+        bitmapImage = (NSBitmapImageRep *)imageRep;
+    }
+    ASSERT(bitmapImage);
+
+    CoreDragImageSpec imageSpec;
+    imageSpec.version = kCoreDragImageSpecVersionOne;
+    imageSpec.pixelsWide = [bitmapImage pixelsWide];
+    imageSpec.pixelsHigh = [bitmapImage pixelsHigh];
+    imageSpec.bitsPerSample = [bitmapImage bitsPerSample];
+    imageSpec.samplesPerPixel = [bitmapImage samplesPerPixel];
+    imageSpec.bitsPerPixel = [bitmapImage bitsPerPixel];
+    imageSpec.bytesPerRow = [bitmapImage bytesPerRow];
+    imageSpec.isPlanar = [bitmapImage isPlanar];
+    imageSpec.hasAlpha = [bitmapImage hasAlpha];
+    [bitmapImage getBitmapDataPlanes:(unsigned char**)imageSpec.data];
+
+    // if image was flipped, we have an upside down bitmap since the cache is rendered flipped
+    if (flipImage)
+        flipImageSpec(&imageSpec);
+
+    CGSRegionObj imageShape;
+    OSStatus error = CGSNewRegionWithRect(&imageRect, &imageShape);
+    ASSERT(error == kCGErrorSuccess);
+    if (error != kCGErrorSuccess)
+        return;
+
+    // make sure image has integer offset
+    CGPoint imageOffset = { -offset.x, -(imageSize.height - offset.y) };
+    imageOffset.x = floor(imageOffset.x + 0.5);
+    imageOffset.y = floor(imageOffset.y + 0.5);
+
+    error = CoreDragSetImage(CoreDragGetCurrentDrag(), imageOffset, &imageSpec, imageShape, 1.0);
+    CGSReleaseRegion(imageShape);
+    ASSERT(error == kCGErrorSuccess);
+}
+
 void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
 {
     // Don't allow setting the drag image if someone kept a pasteboard and is trying to set the image too late.
@@ -677,7 +753,7 @@ void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
 
     // Dashboard wants to be able to set the drag image during dragging, but Cocoa does not allow this.
     // Instead we must drop down to the CoreGraphics API.
-    wkSetDragImage(image.get().get(), location);
+    setDragImageImpl(image.get().get(), location);
 
     // Hack: We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
     // up the stack from us because the CoreFoundation drag manager does not use the run loop by itself.

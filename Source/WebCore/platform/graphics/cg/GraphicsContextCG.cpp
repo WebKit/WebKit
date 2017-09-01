@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -987,7 +987,7 @@ void GraphicsContext::clipOut(const FloatRect& rect)
     // has certain transforms that aren't just a translation or a scale. And due to <rdar://problem/14634453>
     // we cannot use it in for a printing context either.
     const AffineTransform& ctm = getCTM();
-    bool canUseCGRectInfinite = !wkCGContextIsPDFContext(platformContext()) && (!isAcceleratedContext() || (!ctm.b() && !ctm.c()));
+    bool canUseCGRectInfinite = CGContextGetType(platformContext()) != kCGContextTypePDF && (!isAcceleratedContext() || (!ctm.b() && !ctm.c()));
     CGRect rects[2] = { canUseCGRectInfinite ? CGRectInfinite : CGContextGetClipBoundingBox(platformContext()), rect };
     CGContextBeginPath(platformContext());
     CGContextAddRects(platformContext(), rects, 2);
@@ -1085,7 +1085,7 @@ bool GraphicsContext::supportsTransparencyLayers()
 
 static void applyShadowOffsetWorkaroundIfNeeded(const GraphicsContext& context, CGFloat& xOffset, CGFloat& yOffset)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(WIN)
     UNUSED_PARAM(context);
     UNUSED_PARAM(xOffset);
     UNUSED_PARAM(yOffset);
@@ -1093,7 +1093,7 @@ static void applyShadowOffsetWorkaroundIfNeeded(const GraphicsContext& context, 
     if (context.isAcceleratedContext())
         return;
 
-    if (wkCGContextDrawsWithCorrectShadowOffsets(context.platformContext()))
+    if (CGContextDrawsWithCorrectShadowOffsets(context.platformContext()))
         return;
 
     // Work around <rdar://problem/5539388> by ensuring that the offsets will get truncated

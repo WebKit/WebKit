@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitLegacy/DOMPrivate.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
@@ -73,7 +74,7 @@ using namespace WebCore;
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
-    WKSendUserChangeNotifications();
+    WebKit::sendUserChangeNotifications();
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -898,6 +899,23 @@ bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t
     password = [[credential password] UTF8String];
     
     return true;
+}
+
+void sendUserChangeNotifications()
+{
+    auto consoleConnectionChangeNotifyProc = [](CGSNotificationType type, CGSNotificationData, CGSByteCount, CGSNotificationArg) {
+        NSString *notificationName = nil;
+        if (type == kCGSessionConsoleConnect)
+            notificationName = LoginWindowDidSwitchToUserNotification;
+        else if (type == kCGSessionConsoleDisconnect)
+            notificationName = LoginWindowDidSwitchFromUserNotification;
+        else
+            ASSERT_NOT_REACHED();
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:nil];
+    };
+
+    CGSRegisterNotifyProc(consoleConnectionChangeNotifyProc, kCGSessionConsoleConnect, nullptr);
+    CGSRegisterNotifyProc(consoleConnectionChangeNotifyProc, kCGSessionConsoleDisconnect, nullptr);
 }
 
 } // namespace WebKit

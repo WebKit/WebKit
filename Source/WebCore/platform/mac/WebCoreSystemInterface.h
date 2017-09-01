@@ -1,5 +1,5 @@
 /*
- * Copyright 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebCoreSystemInterface_h
-#define WebCoreSystemInterface_h
+#pragma once
 
 #include <objc/objc.h>
 
@@ -126,14 +125,7 @@ typedef enum {
     wkPatternTilingConstantSpacing
 } wkPatternTiling;
 #if !PLATFORM(IOS)
-extern bool (*wkCGContextDrawsWithCorrectShadowOffsets)(CGContextRef);
-#endif
-extern CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
-#if !PLATFORM(IOS)
 extern void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
-extern void (*wkDrawFocusRing)(CGContextRef, CGColorRef, int);
-extern bool (*wkDrawFocusRingAtTime)(CGContextRef, NSTimeInterval time);
-extern bool (*wkDrawCellFocusRingWithFrameAtTime)(NSCell *cell, NSRect cellFrame, NSView *controlView, NSTimeInterval time);
 extern void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float timeLoaded, float currentTime,
     float duration, unsigned state);
 extern void (*wkDrawMediaUIPart)(int part, CGContextRef context, CGRect rect, unsigned state);
@@ -156,9 +148,6 @@ typedef enum {
 } wkMediaUIControlType;
 extern NSControl *(*wkCreateMediaUIControl)(int);
 
-extern void (*wkWindowSetAlpha)(NSWindow *, float);
-extern void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
-
 extern unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
 extern void (*wkQTMovieDisableComponent)(uint32_t[5]);
 extern float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
@@ -172,9 +161,7 @@ extern NSArray *(*wkQTGetSitesInMediaDownloadCache)();
 extern void (*wkQTClearMediaDownloadCacheForSite)(NSString *site);
 extern void (*wkQTClearMediaDownloadCache)();
 extern void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
-extern void (*wkSetDragImage)(NSImage*, NSPoint offset);
 #endif
-extern bool (*wkCGContextIsPDFContext)(CGContextRef);
 extern void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 extern void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 extern CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
@@ -225,5 +212,3 @@ extern NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
 extern bool (*wkQueryDecoderAvailability)(void);
 
 }
-
-#endif

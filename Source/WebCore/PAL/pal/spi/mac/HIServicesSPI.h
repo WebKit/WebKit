@@ -28,21 +28,45 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <HIServices/AXTextMarker.h>
+#include <HIServices/CoreDrag.h>
+
+#else
+
+enum {
+    kCoreDragImageSpecVersionOne = 1,
+};
+
+struct CoreDragImageSpec {
+    UInt32 version;
+    SInt32 pixelsWide;
+    SInt32 pixelsHigh;
+    SInt32 bitsPerSample;
+    SInt32 samplesPerPixel;
+    SInt32 bitsPerPixel;
+    SInt32 bytesPerRow;
+    Boolean isPlanar;
+    Boolean hasAlpha;
+    const UInt8* data[5];
+};
 
 #endif
 
-typedef const struct __AXTextMarker *AXTextMarkerRef;
-typedef const struct __AXTextMarkerRange *AXTextMarkerRangeRef;
+typedef const struct __AXTextMarker* AXTextMarkerRef;
+typedef const struct __AXTextMarkerRange* AXTextMarkerRangeRef;
+typedef struct CoreDragImageSpec CoreDragImageSpec;
+typedef struct OpaqueCoreDrag* CoreDragRef;
 
 WTF_EXTERN_C_BEGIN
 
-CFTypeID AXTextMarkerGetTypeID();
-CFTypeID AXTextMarkerRangeGetTypeID();
-AXTextMarkerRef AXTextMarkerCreate(CFAllocatorRef, const UInt8* bytes, CFIndex length);
-CFIndex AXTextMarkerGetLength(AXTextMarkerRef);
-const UInt8* AXTextMarkerGetBytePtr(AXTextMarkerRef);
 AXTextMarkerRangeRef AXTextMarkerRangeCreate(CFAllocatorRef, AXTextMarkerRef startMarker, AXTextMarkerRef endMarker);
+AXTextMarkerRef AXTextMarkerCreate(CFAllocatorRef, const UInt8* bytes, CFIndex length);
 AXTextMarkerRef AXTextMarkerRangeCopyStartMarker(AXTextMarkerRangeRef);
 AXTextMarkerRef AXTextMarkerRangeCopyEndMarker(AXTextMarkerRangeRef);
+CFIndex AXTextMarkerGetLength(AXTextMarkerRef);
+CFTypeID AXTextMarkerGetTypeID();
+CFTypeID AXTextMarkerRangeGetTypeID();
+CoreDragRef CoreDragGetCurrentDrag();
+OSStatus CoreDragSetImage(CoreDragRef, CGPoint imageOffset, CoreDragImageSpec*, CGSRegionObj imageShape, float overallAlpha);
+const UInt8* AXTextMarkerGetBytePtr(AXTextMarkerRef);
 
 WTF_EXTERN_C_END

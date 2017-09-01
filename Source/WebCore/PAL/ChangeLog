@@ -1,3 +1,15 @@
+2017-09-01  Andy Estes  <aestes@apple.com>
+
+        [CG] Upstream CoreGraphics-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176200
+
+        Reviewed by Tim Horton.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        * pal/spi/mac/HIServicesSPI.h:
+        * pal/spi/mac/NSGraphicsSPI.h: Copied from Source/WebCore/PAL/pal/spi/mac/HIServicesSPI.h.
+
 2017-08-31  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream AppKit-related WebKitSystemInterface functions

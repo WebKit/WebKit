@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,21 +37,11 @@ void InitWebCoreSystemInterface(void)
     
     dispatch_once(&initOnce, ^{
         INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
-        INIT(CGPatternCreateWithImageAndTransform);
-#if !PLATFORM(IOS)
-        INIT(CGContextDrawsWithCorrectShadowOffsets);
-#endif
         INIT(CopyCONNECTProxyResponse);
 #if !PLATFORM(IOS)
         INIT(DrawBezeledTextArea);
-        INIT(DrawFocusRing);
-        INIT(DrawFocusRingAtTime);
-        INIT(DrawCellFocusRingWithFrameAtTime);
         INIT(DrawMediaSliderTrack);
         INIT(DrawMediaUIPart);
-#endif
-        INIT(CGContextIsPDFContext);
-#if !PLATFORM(IOS)
         INIT(GetNSEventKeyChar);
         INIT(HitTestMediaUIPart);
         INIT(MeasureMediaUIPart);
@@ -70,16 +60,11 @@ void InitWebCoreSystemInterface(void)
 #endif
         INIT(SetCONNECTProxyAuthorizationForStream);
         INIT(SetCONNECTProxyForStream);
-#if !PLATFORM(IOS)
-        INIT(SetDragImage);
-#endif
 
 #if !PLATFORM(IOS)
         INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
         INIT(CopyDefaultSearchProviderDisplayName);
         INIT(Cursor);
-        INIT(WindowSetScaledFrame);
-        INIT(WindowSetAlpha);
         INIT(SpeechSynthesisGetVoiceIdentifiers);
         INIT(SpeechSynthesisGetDefaultVoiceIdentifierForLocale);
         INIT(NSElasticDeltaForTimeDelta);

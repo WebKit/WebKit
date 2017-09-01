@@ -1,3 +1,20 @@
+2017-09-01  Andy Estes  <aestes@apple.com>
+
+        [CG] Upstream CoreGraphics-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176200
+
+        Reviewed by Tim Horton.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess):
+        * UIProcess/mac/WindowServerConnection.h:
+        * UIProcess/mac/WindowServerConnection.mm:
+        (WebKit::registerOcclusionNotificationHandler):
+        (WebKit::WindowServerConnection::WindowServerConnection):
+        (WebKit::WindowServerConnection::applicationWindowModificationsStarted): Deleted.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2017-09-01  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Compile error, 'Cache' is not declared.

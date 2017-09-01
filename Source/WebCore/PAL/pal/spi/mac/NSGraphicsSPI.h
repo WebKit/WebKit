@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,35 @@
 
 #pragma once
 
-namespace WebKit {
+#if PLATFORM(MAC)
 
-class WindowServerConnection {
-public:
-    static WindowServerConnection& singleton();
+#import <AppKit/AppKit.h>
 
-    bool applicationWindowModificationsHaveStopped() const { return m_applicationWindowModificationsHaveStopped; }
+#if USE(APPLE_INTERNAL_SDK)
 
-private:
-    WindowServerConnection();
+#import <AppKit/NSGraphicsContextPrivate.h>
+#import <AppKit/NSGraphics_Private.h>
 
-#if HAVE(WINDOW_SERVER_OCCLUSION_NOTIFICATIONS)
-    void windowServerConnectionStateChanged();
+#else
 
-    void applicationWindowModificationsStopped(bool stopped);
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+
+@interface NSCGSContext : NSGraphicsContext {
+    CGContextRef _cgsContext;
+}
+@end
+
+@interface NSWindowGraphicsContext : NSCGSContext {
+    CGSWindowID _cgsWindowID;
+}
+@end
+
 #endif
 
-    bool m_applicationWindowModificationsHaveStopped;
-};
+WTF_EXTERN_C_BEGIN
 
-} // namespace WebKit
+BOOL NSInitializeCGFocusRingStyleForTime(NSFocusRingPlacement, CGFocusRingStyle*, NSTimeInterval);
+
+WTF_EXTERN_C_END
+
+#endif // PLATFORM(MAC)

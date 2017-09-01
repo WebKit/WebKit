@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -137,20 +137,73 @@ static inline CGFloat CGFloatMin(CGFloat a, CGFloat b) { return isnan(a) ? b : (
 
 typedef struct CGFontCache CGFontCache;
 
-#if PLATFORM(MAC)
-typedef uint32_t CGSConnectionID;
-typedef uint32_t CGSWindowID;
-typedef uint32_t CGSWindowCount;
-typedef CGSWindowID *CGSWindowIDList;
+#if PLATFORM(COCOA)
 
 enum {
     kCGSWindowCaptureNominalResolution = 0x0200,
     kCGSCaptureIgnoreGlobalClipShape = 0x0800,
 };
 typedef uint32_t CGSWindowCaptureOptions;
-#endif
+
+typedef CF_ENUM (int32_t, CGStyleDrawOrdering) {
+    kCGStyleDrawOrderingStyleOnly = 0,
+    kCGStyleDrawOrderingBelow = 1,
+    kCGStyleDrawOrderingAbove = 2,
+};
+
+typedef CF_ENUM (int32_t, CGFocusRingOrdering) {
+    kCGFocusRingOrderingNone = kCGStyleDrawOrderingStyleOnly,
+    kCGFocusRingOrderingBelow = kCGStyleDrawOrderingBelow,
+    kCGFocusRingOrderingAbove = kCGStyleDrawOrderingAbove,
+};
+
+typedef CF_ENUM (int32_t, CGFocusRingTint) {
+    kCGFocusRingTintBlue = 0,
+    kCGFocusRingTintGraphite = 1,
+};
+
+struct CGFocusRingStyle {
+    unsigned int version;
+    CGFocusRingTint tint;
+    CGFocusRingOrdering ordering;
+    CGFloat alpha;
+    CGFloat radius;
+    CGFloat threshold;
+    CGRect bounds;
+    int accumulate;
+};
+typedef struct CGFocusRingStyle CGFocusRingStyle;
+
+typedef CF_ENUM(uint32_t, CGSNotificationType) {
+    kCGSFirstConnectionNotification = 900,
+    kCGSFirstSessionNotification = 1500,
+};
+
+static const CGSNotificationType kCGSConnectionWindowModificationsStarted = (CGSNotificationType)(kCGSFirstConnectionNotification + 6);
+static const CGSNotificationType kCGSConnectionWindowModificationsStopped = (CGSNotificationType)(kCGSFirstConnectionNotification + 7);
+static const CGSNotificationType kCGSessionConsoleConnect = kCGSFirstSessionNotification;
+static const CGSNotificationType kCGSessionConsoleDisconnect = (CGSNotificationType)(kCGSessionConsoleConnect + 1);
+
+#endif // PLATFORM(COCOA)
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#if PLATFORM(COCOA)
+typedef uint32_t CGSByteCount;
+typedef uint32_t CGSConnectionID;
+typedef uint32_t CGSWindowCount;
+typedef uint32_t CGSWindowID;
+
+typedef CGSWindowID* CGSWindowIDList;
+typedef struct CF_BRIDGED_TYPE(id) CGSRegionObject* CGSRegionObj;
+typedef struct CF_BRIDGED_TYPE(id) CGStyle* CGStyleRef;
+
+typedef void* CGSNotificationArg;
+typedef void* CGSNotificationData;
+
+typedef void (*CGSNotifyConnectionProcPtr)(CGSNotificationType, void* data, uint32_t data_length, void* arg, CGSConnectionID);
+typedef void (*CGSNotifyProcPtr)(CGSNotificationType, void* data, uint32_t data_length, void* arg);
+#endif
 
 WTF_EXTERN_C_BEGIN
 
@@ -186,6 +239,8 @@ CGDataProviderRef CGPDFDocumentGetDataProvider(CGPDFDocumentRef);
 
 CGFontAntialiasingStyle CGContextGetFontAntialiasingStyle(CGContextRef);
 void CGContextSetFontAntialiasingStyle(CGContextRef, CGFontAntialiasingStyle);
+bool CGContextDrawsWithCorrectShadowOffsets(CGContextRef);
+CGPatternRef CGPatternCreateWithImage2(CGImageRef, CGAffineTransform, CGPatternTiling);
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || PLATFORM(IOS)
 bool CGColorSpaceUsesExtendedRange(CGColorSpaceRef);
@@ -203,10 +258,21 @@ CGColorSpaceRef CGIOSurfaceContextGetColorSpace(CGContextRef);
 #endif
 
 #if PLATFORM(COCOA)
-CGSRegionEnumeratorObj CGSRegionEnumerator(CGRegionRef);
-CGRect* CGSNextRect(const CGSRegionEnumeratorObj);
-CGError CGSReleaseRegionEnumerator(const CGSRegionEnumeratorObj);
 CGColorSpaceRef CGContextCopyDeviceColorSpace(CGContextRef);
+CGError CGSNewRegionWithRect(const CGRect*, CGRegionRef*);
+CGError CGSPackagesEnableConnectionOcclusionNotifications(CGSConnectionID, bool flag, bool* outCurrentVisibilityState);
+CGError CGSPackagesEnableConnectionWindowModificationNotifications(CGSConnectionID, bool flag, bool* outConnectionIsCurrentlyIdle);
+CGError CGSRegisterConnectionNotifyProc(CGSConnectionID, CGSNotifyConnectionProcPtr, CGSNotificationType, void* arg);
+CGError CGSRegisterNotifyProc(CGSNotifyProcPtr, CGSNotificationType, void* arg);
+CGError CGSReleaseRegion(const CGRegionRef CF_RELEASES_ARGUMENT);
+CGError CGSReleaseRegionEnumerator(const CGSRegionEnumeratorObj);
+CGError CGSSetWindowAlpha(CGSConnectionID, CGSWindowID, float alpha);
+CGError CGSSetWindowClipShape(CGSConnectionID, CGSWindowID, CGRegionRef shape);
+CGError CGSSetWindowWarp(CGSConnectionID, CGSWindowID, int w, int h, const float* mesh);
+CGRect* CGSNextRect(const CGSRegionEnumeratorObj);
+CGSRegionEnumeratorObj CGSRegionEnumerator(CGRegionRef);
+CGStyleRef CGStyleCreateFocusRingWithColor(const CGFocusRingStyle*, CGColorRef);
+void CGContextSetStyle(CGContextRef, CGStyleRef);
 #endif
 
 #if PLATFORM(WIN)

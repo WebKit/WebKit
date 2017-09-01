@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,8 @@
 
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
-
 #include <CoreGraphics/CoreGraphics.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MainThread.h>
 
 #if PLATFORM(COCOA)
@@ -74,7 +74,7 @@ CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTran
     // If we're repeating in both directions, we can use image-backed patterns
     // instead of custom patterns, and avoid tiling-edge pixel cracks.
     if (m_repeatX && m_repeatY)
-        return wkCGPatternCreateWithImageAndTransform(tileImage().nativeImage().get(), patternTransform, wkPatternTilingConstantSpacing);
+        return CGPatternCreateWithImage2(tileImage().nativeImage().get(), patternTransform, kCGPatternTilingConstantSpacing);
 
     // If FLT_MAX should also be used for xStep or yStep, nothing is rendered. Using fractions of FLT_MAX also
     // result in nothing being rendered.

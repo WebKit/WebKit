@@ -36,6 +36,7 @@
 #import "WebCoreSystemInterface.h"
 #import <Carbon/Carbon.h>
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
+#import <pal/spi/mac/NSGraphicsSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
@@ -349,9 +350,32 @@ static NSButtonCell *sharedCheckboxCell(const ControlStates& states, const IntSi
     return checkboxCell;
 }
 
+static bool drawCellFocusRingWithFrameAtTime(NSCell *cell, NSRect cellFrame, NSView *controlView, NSTimeInterval timeOffset)
+{
+    CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextSaveGState(cgContext);
+
+    CGFocusRingStyle focusRingStyle;
+    bool needsRepaint = NSInitializeCGFocusRingStyleForTime(NSFocusRingOnly, &focusRingStyle, timeOffset);
+    // We want to respect the CGContext clipping and also not overpaint any
+    // existing focus ring. The way to do this is set accumulate to
+    // -1. According to CoreGraphics, the reasoning for this behavior has been
+    // lost in time.
+    focusRingStyle.accumulate = -1;
+    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, GraphicsContext::focusRingColor()));
+    CGContextSetStyle(cgContext, style.get());
+
+    CGContextBeginTransparencyLayerWithRect(cgContext, NSRectToCGRect(cellFrame), nullptr);
+    [cell drawFocusRingMaskWithFrame:cellFrame inView:controlView];
+    CGContextEndTransparencyLayer(cgContext);
+    CGContextRestoreGState(cgContext);
+
+    return needsRepaint;
+}
+
 static bool drawCellFocusRing(NSCell *cell, NSRect cellFrame, NSView *controlView)
 {
-    wkDrawCellFocusRingWithFrameAtTime(cell, cellFrame, controlView, std::numeric_limits<double>::max());
+    drawCellFocusRingWithFrameAtTime(cell, cellFrame, controlView, std::numeric_limits<double>::max());
     return false;
 }
 

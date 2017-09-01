@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +29,13 @@
 #import "GraphicsContextCG.h"
 #import "GraphicsContextPlatformPrivateCG.h"
 #import "IntRect.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/mac/NSGraphicsSPI.h>
+#import <wtf/StdLibExtras.h>
+
 #if USE(APPKIT)
 #import <AppKit/AppKit.h>
 #endif
-#import <wtf/StdLibExtras.h>
 
 #if PLATFORM(IOS)
 #import "Color.h"
@@ -43,7 +46,6 @@
 #if !PLATFORM(IOS)
 #import "LocalCurrentGraphicsContext.h"
 #endif
-#import "WebCoreSystemInterface.h"
 
 @class NSColor;
 
@@ -57,11 +59,48 @@ namespace WebCore {
 // exceptions for those.
 
 #if !PLATFORM(IOS)
+CGColorRef GraphicsContext::focusRingColor()
+{
+    static CGColorRef color;
+    if (!color) {
+        CGFloat colorComponents[] = { 0.5, 0.75, 1.0, 1.0 };
+        auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        color = CGColorCreate(colorSpace.get(), colorComponents);
+    }
+
+    return color;
+}
+
+static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset)
+{
+    CGFocusRingStyle focusRingStyle;
+    BOOL needsRepaint = NSInitializeCGFocusRingStyleForTime(NSFocusRingOnly, &focusRingStyle, timeOffset);
+
+    // We want to respect the CGContext clipping and also not overpaint any
+    // existing focus ring. The way to do this is set accumulate to
+    // -1. According to CoreGraphics, the reasoning for this behavior has been
+    // lost in time.
+    focusRingStyle.accumulate = -1;
+    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, GraphicsContext::focusRingColor()));
+
+    CGContextSaveGState(context);
+    CGContextSetStyle(context, style.get());
+    CGContextFillPath(context);
+    CGContextRestoreGState(context);
+
+    return needsRepaint;
+}
+
+static void drawFocusRing(CGContextRef context)
+{
+    drawFocusRingAtTime(context, std::numeric_limits<double>::max());
+}
+
 static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath)
 {
     CGContextBeginPath(context);
     CGContextAddPath(context, focusRingPath);
-    wkDrawFocusRing(context, nullptr, 0);
+    drawFocusRing(context);
 }
 
 static bool drawFocusRingToContextAtTime(CGContextRef context, CGPathRef focusRingPath, double timeOffset)
@@ -69,7 +108,7 @@ static bool drawFocusRingToContextAtTime(CGContextRef context, CGPathRef focusRi
     UNUSED_PARAM(timeOffset);
     CGContextBeginPath(context);
     CGContextAddPath(context, focusRingPath);
-    return wkDrawFocusRingAtTime(context, std::numeric_limits<double>::max());
+    return drawFocusRingAtTime(context, std::numeric_limits<double>::max());
 }
 #endif // !PLATFORM(IOS)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010, 2011, 2012, 2014, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * Copyright (C) 2008, Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc
@@ -184,7 +184,7 @@ SubsamplingLevel ImageSource::subsamplingLevelForScaleFactor(GraphicsContext& co
 {
 #if USE(CG)
     // Never use subsampled images for drawing into PDF contexts.
-    if (wkCGContextIsPDFContext(context.platformContext()))
+    if (CGContextGetType(context.platformContext()) == kCGContextTypePDF)
         return SubsamplingLevel::Default;
 
     float scale = std::min(float(1), std::max(scaleFactor.width(), scaleFactor.height()));

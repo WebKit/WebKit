@@ -104,6 +104,7 @@
 		A10826F11F573BCA004772AC /* NSResponderSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10826F01F573BCA004772AC /* NSResponderSPI.h */; };
 		A10826F91F576292004772AC /* WebPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = A10826F71F576292004772AC /* WebPanel.h */; };
 		A10826FA1F576292004772AC /* WebPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10826F81F576292004772AC /* WebPanel.mm */; };
+		A10826FE1F58A433004772AC /* NSGraphicsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10826FD1F58A433004772AC /* NSGraphicsSPI.h */; };
 		A1F55DCF1F5528EC00EDB75F /* MetadataSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */; };
 		A30D41211F0DD0EA00B71954 /* KillRing.h in Headers */ = {isa = PBXBuildFile; fileRef = A30D411E1F0DD0EA00B71954 /* KillRing.h */; };
 		A30D41221F0DD0EA00B71954 /* KillRing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D411F1F0DD0EA00B71954 /* KillRing.cpp */; };
@@ -223,6 +224,7 @@
 		A10826F01F573BCA004772AC /* NSResponderSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSResponderSPI.h; sourceTree = "<group>"; };
 		A10826F71F576292004772AC /* WebPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPanel.h; sourceTree = "<group>"; };
 		A10826F81F576292004772AC /* WebPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPanel.mm; sourceTree = "<group>"; };
+		A10826FD1F58A433004772AC /* NSGraphicsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSGraphicsSPI.h; sourceTree = "<group>"; };
 		A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetadataSPI.h; sourceTree = "<group>"; };
 		A30D411E1F0DD0EA00B71954 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KillRing.h; sourceTree = "<group>"; };
 		A30D411F1F0DD0EA00B71954 /* KillRing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KillRing.cpp; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 				0C7785751F45130F00F4EBB6 /* NSApplicationSPI.h */,
 				0C7785761F45130F00F4EBB6 /* NSEventSPI.h */,
 				0C7785771F45130F00F4EBB6 /* NSFontSPI.h */,
+				A10826FD1F58A433004772AC /* NSGraphicsSPI.h */,
 				0C7785781F45130F00F4EBB6 /* NSImmediateActionGestureRecognizerSPI.h */,
 				0C7785791F45130F00F4EBB6 /* NSMenuSPI.h */,
 				0C77857A1F45130F00F4EBB6 /* NSPasteboardSPI.h */,
@@ -551,6 +554,7 @@
 				0C2DA14E1F3BEB4900DBC317 /* NSExtensionSPI.h in Headers */,
 				0C2DA14F1F3BEB4900DBC317 /* NSFileManagerSPI.h in Headers */,
 				0C7785901F45130F00F4EBB6 /* NSFontSPI.h in Headers */,
+				A10826FE1F58A433004772AC /* NSGraphicsSPI.h in Headers */,
 				0C7785911F45130F00F4EBB6 /* NSImmediateActionGestureRecognizerSPI.h in Headers */,
 				0C7785921F45130F00F4EBB6 /* NSMenuSPI.h in Headers */,
 				0C7785931F45130F00F4EBB6 /* NSPasteboardSPI.h in Headers */,

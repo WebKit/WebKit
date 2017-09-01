@@ -1,5 +1,5 @@
 /*
- * Copyright 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,8 @@
 #import "WebCoreSystemInterface.h"
 
 WEBCORE_EXPORT void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
-WEBCORE_EXPORT CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
 WEBCORE_EXPORT void (*wkClearGlyphVector)(void* glyphs);
 WEBCORE_EXPORT OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
-WEBCORE_EXPORT bool (*wkCGContextIsPDFContext)(CGContextRef);
 WEBCORE_EXPORT id (*wkCreateNSURLConnectionDelegateProxy)(void);
 WEBCORE_EXPORT void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 WEBCORE_EXPORT void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);

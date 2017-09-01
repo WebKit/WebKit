@@ -36,6 +36,7 @@
 #import "WebKit.h"
 #import <WebKitSystemInterface.h>
 #import <pal/spi/mac/NSEventSPI.h>
+#import <pal/spi/mac/NSGraphicsSPI.h>
 #import <pal/spi/mac/QuickDrawSPI.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
@@ -81,6 +82,21 @@ extern "C" void HIWebViewRegisterClass();
 - (int)tag 
 {
     return 0;
+}
+
+@end
+
+@interface NSWindowGraphicsContext (HIWebView)
+- (void)_web_setGraphicsPort:(CGContextRef)context;
+@end
+
+@implementation NSWindowGraphicsContext (HIWebView)
+
+- (void)_web_setGraphicsPort:(CGContextRef)context
+{
+    CGContextRetain(context);
+    CGContextRelease(_cgsContext);
+    _cgsContext = context;
 }
 
 @end
@@ -290,6 +306,22 @@ GetBehaviors()
 	return kControlSupportsDataAccess | kControlSupportsGetRegion | kControlGetsFocusOnClick;
 }
 
+static CGContextRef overrideCGContext(NSWindow *window, CGContextRef context)
+{
+    NSWindowGraphicsContext *graphicsContext = (NSWindowGraphicsContext *)window.graphicsContext;
+    CGContextRef savedContext = (CGContextRef)graphicsContext.graphicsPort;
+    CGContextRetain(savedContext);
+    [graphicsContext _web_setGraphicsPort:context];
+    return savedContext;
+}
+
+static void restoreCGContext(NSWindow *window, CGContextRef savedContext)
+{
+    NSWindowGraphicsContext *graphicsContext = (NSWindowGraphicsContext *)window.graphicsContext;
+    [graphicsContext _web_setGraphicsPort:savedContext];
+    CGContextRelease(savedContext);
+}
+
 //----------------------------------------------------------------------------------
 // Draw
 //----------------------------------------------------------------------------------
@@ -321,7 +353,7 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
 
 	HIViewGetBounds( inView->fViewRef, &bounds );
 
-    CGContextRef savedContext = WKNSWindowOverrideCGContext(inView->fKitWindow, inContext);
+    CGContextRef savedContext = overrideCGContext(inView->fKitWindow, inContext);
     [NSGraphicsContext setCurrentContext:[inView->fKitWindow graphicsContext]];
 
 	GetRegionBounds( limitRgn, &drawRect );
@@ -351,7 +383,7 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
     else
         [inView->fWebView displayRect:*(NSRect*)&hiRect];
 
-    WKNSWindowRestoreCGContext(inView->fKitWindow, savedContext);
+    restoreCGContext(inView->fKitWindow, savedContext);
 
     if ( !inView->fIsComposited )
     {

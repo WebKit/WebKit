@@ -1,3 +1,44 @@
+2017-09-01  Andy Estes  <aestes@apple.com>
+
+        [CG] Upstream CoreGraphics-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176200
+
+        Reviewed by Tim Horton.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::subsamplingLevelForScaleFactor):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::applyShadowOffsetWorkaroundIfNeeded):
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::Pattern::createPlatformPattern const):
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::GraphicsContext::focusRingColor):
+        (WebCore::drawFocusRingAtTime):
+        (WebCore::drawFocusRing):
+        (WebCore::drawFocusRingToContext):
+        (WebCore::drawFocusRingToContextAtTime):
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::flipImageSpec):
+        (WebCore::setDragImageImpl):
+        (WebCore::Pasteboard::setDragImage):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::linenBackgroundColor):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::drawCellFocusRingWithFrameAtTime):
+        (WebCore::drawCellFocusRing):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/mac/WebWindowAnimation.mm:
+        (flipRect):
+        (mainWindowServerConnectionID):
+        (setScaledFrameForWindow):
+        (-[WebWindowScaleAnimation setCurrentProgress:]):
+        (-[WebWindowFadeAnimation setCurrentProgress:]):
+
 2017-09-01  Youenn Fablet  <youenn@apple.com>
 
         Reject promises in case of internal CacheStorage engine errors.
