@@ -2370,7 +2370,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
     }
 }
 
-Element* ComputedStyleExtractor::styledElement()
+Element* ComputedStyleExtractor::styledElement() const
 {
     if (!m_element)
         return nullptr;
@@ -2380,6 +2380,17 @@ Element* ComputedStyleExtractor::styledElement()
     if (m_pseudoElementSpecifier == AFTER && (pseudoElement = m_element->afterPseudoElement()))
         return pseudoElement;
     return m_element.get();
+}
+
+
+RenderElement* ComputedStyleExtractor::styledRenderer() const
+{
+    auto* element = styledElement();
+    if (!element)
+        return nullptr;
+    if (m_pseudoElementSpecifier != NOPSEUDO && element == m_element.get())
+        return nullptr;
+    return element->renderer();
 }
 
 static bool isImplicitlyInheritedGridOrFlexProperty(CSSPropertyID propertyID)
@@ -2659,7 +2670,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
 
     std::unique_ptr<RenderStyle> ownedStyle;
     const RenderStyle* style = nullptr;
-    RenderObject* renderer = nullptr;
+    RenderElement* renderer = nullptr;
     bool forceFullLayout = false;
     if (updateLayout) {
         Document& document = m_element->document();
@@ -2668,7 +2679,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             // Style update may change styledElement() to PseudoElement or back.
             styledElement = this->styledElement();
         }
-        renderer = styledElement->renderer();
+        renderer = styledRenderer();
 
         if (propertyID == CSSPropertyDisplay && !renderer && is<SVGElement>(*styledElement) && !downcast<SVGElement>(*styledElement).isValid())
             return nullptr;
@@ -2688,7 +2699,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
 
     if (!updateLayout || forceFullLayout) {
         style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle);
-        renderer = styledElement->renderer();
+        renderer = styledRenderer();
     }
 
     if (!style)
