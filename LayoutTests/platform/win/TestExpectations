@@ -4055,3 +4055,6 @@ imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.html [ Slow ]
 # No service worker implementation for WK1
 http/tests/workers/service [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
+
+# This test is flaky on Windows.
+webkit.org/b/157916 http/tests/misc/slow-loading-animated-image.html [ Pass ImageOnlyFailure ]
