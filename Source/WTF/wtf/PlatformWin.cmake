@@ -7,11 +7,6 @@ list(APPEND WTF_SOURCES
 
     text/win/TextBreakIteratorInternalICUWin.cpp
 
-    text/cf/AtomicStringImplCF.cpp
-    text/cf/StringCF.cpp
-    text/cf/StringImplCF.cpp
-    text/cf/StringViewCF.cpp
-
     win/CPUTimeWin.cpp
     win/MainThreadWin.cpp
     win/MemoryFootprintWin.cpp
@@ -24,14 +19,15 @@ list(APPEND WTF_HEADERS
     "${DERIVED_SOURCES_WTF_DIR}/AVFoundationHeaderDetection.h"
 )
 
-if (${WTF_PLATFORM_WIN_CAIRO})
-    list(APPEND WTF_LIBRARIES
-        cflite
+if (USE_CF)
+    list(APPEND WTF_SOURCES
+        text/cf/AtomicStringImplCF.cpp
+        text/cf/StringCF.cpp
+        text/cf/StringImplCF.cpp
+        text/cf/StringViewCF.cpp
     )
-else ()
-    list(APPEND WTF_LIBRARIES
-        CoreFoundation${DEBUG_SUFFIX}
-    )
+
+    list(APPEND WTF_LIBRARIES ${COREFOUNDATION_LIBRARY})
 endif ()
 
 add_custom_command(

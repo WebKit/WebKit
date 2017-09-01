@@ -30,6 +30,10 @@
 
 #pragma once
 
+#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H && defined(BUILDING_WITH_CMAKE)
+#include "cmakeconfig.h"
+#endif
+
 #define WIN32_LEAN_AND_MEAN        // Exclude rarely-used stuff from Windows headers
 
 // Needed for limit defines, like INTMAX_MAX, which is used by the std C++ library

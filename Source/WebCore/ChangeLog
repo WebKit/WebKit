@@ -1,3 +1,16 @@
+2017-08-31  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make USE_CF conditional within Windows
+        https://bugs.webkit.org/show_bug.cgi?id=176173
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        * PlatformWin.cmake:
+        * WebCorePrefix.h:
+        * testing/js/WebCoreTestSupportPrefix.h:
+
 2017-08-31  Sam Weinig  <sam@webkit.org>
 
         Implement DOMMatrix2DInit for setTransform()/addPath()

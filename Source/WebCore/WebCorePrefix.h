@@ -92,7 +92,9 @@
 #include <sys/resource.h>
 #endif
 
+#if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
+#endif
 
 #if OS(WINDOWS)
 #ifndef CF_IMPLICIT_BRIDGING_ENABLED
@@ -103,7 +105,9 @@
 #define CF_IMPLICIT_BRIDGING_DISABLED
 #endif
 
+#if USE(CF)
 #include <CoreFoundation/CFBase.h>
+#endif
 
 #ifndef CF_ENUM
 #define CF_ENUM(_type, _name) _type _name; enum
@@ -120,7 +124,6 @@
 #endif
 
 #if PLATFORM(WIN_CAIRO)
-#include <ConditionalMacros.h>
 #include <windows.h>
 #else
 

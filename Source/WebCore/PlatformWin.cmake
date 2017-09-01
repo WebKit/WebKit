@@ -28,8 +28,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${FORWARDING_HEADERS_DIR}/WTF"
     "${WEBCORE_DIR}/accessibility/win"
     "${WEBCORE_DIR}/page/win"
-    "${WEBCORE_DIR}/platform/cf"
-    "${WEBCORE_DIR}/platform/cf/win"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
@@ -50,8 +48,6 @@ list(APPEND WebCore_SOURCES
 
     html/HTMLSelectElementWin.cpp
 
-    loader/archive/cf/LegacyWebArchive.cpp
-
     page/win/DragControllerWin.cpp
     page/win/EventHandlerWin.cpp
     page/win/FrameWin.cpp
@@ -61,15 +57,6 @@ list(APPEND WebCore_SOURCES
     platform/StaticPasteboard.cpp
 
     platform/audio/PlatformMediaSessionManager.cpp
-
-    platform/cf/CFURLExtras.cpp
-    platform/cf/FileSystemCF.cpp
-    platform/cf/KeyedDecoderCF.cpp
-    platform/cf/KeyedEncoderCF.cpp
-    platform/cf/SharedBufferCF.cpp
-    platform/cf/URLCF.cpp
-
-    platform/cf/win/CertificateCFWin.cpp
 
     platform/graphics/GraphicsContext3DPrivate.cpp
 
@@ -109,8 +96,6 @@ list(APPEND WebCore_SOURCES
     platform/network/win/NetworkStateNotifierWin.cpp
 
     platform/text/LocaleNone.cpp
-
-    platform/text/cf/HyphenationCF.cpp
 
     platform/win/BString.cpp
     platform/win/BitmapInfo.cpp
@@ -201,8 +186,6 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     css/parser
 
-    history/cf
-
     html/forms
     html/parser
     html/shadow
@@ -213,7 +196,6 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     loader/cache
     loader/icon
 
-    loader/archive/cf
 
     page/animation
     page/csp
@@ -222,15 +204,12 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     platform/animation
     platform/audio
-    platform/cf
     platform/graphics
     platform/mock
     platform/network
     platform/sql
     platform/text
     platform/win
-
-    platform/cf/win
 
     platform/graphics/filters
     platform/graphics/opengl
@@ -254,6 +233,38 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     svg/graphics/filters
 )
+
+if (USE_CF)
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/cf"
+        "${WEBCORE_DIR}/platform/cf/win"
+    )
+
+    list(APPEND WebCore_SOURCES
+        loader/archive/cf/LegacyWebArchive.cpp
+
+        platform/cf/CFURLExtras.cpp
+        platform/cf/FileSystemCF.cpp
+        platform/cf/KeyedDecoderCF.cpp
+        platform/cf/KeyedEncoderCF.cpp
+        platform/cf/SharedBufferCF.cpp
+        platform/cf/URLCF.cpp
+
+        platform/cf/win/CertificateCFWin.cpp
+
+        platform/text/cf/HyphenationCF.cpp
+    )
+
+    list(APPEND WebCore_FORWARDING_HEADERS_DIRECTORIES
+        history/cf
+
+        loader/archive/cf
+
+        platform/cf
+
+        platform/cf/win
+    )
+endif ()
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 4)
     list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/makesafeseh.obj)

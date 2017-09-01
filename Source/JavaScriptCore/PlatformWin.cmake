@@ -1,19 +1,23 @@
 list(APPEND JavaScriptCore_SOURCES
     API/JSStringRefBSTR.cpp
-    API/JSStringRefCF.cpp
 )
 
 list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}/../include/private
 )
 
-if (WTF_PLATFORM_WIN_CAIRO)
-    list(APPEND JavaScriptCore_LIBRARIES
-        CFLite
+if (USE_CF)
+    list(APPEND JavaScriptCore_SOURCES
+        API/JSStringRefCF.cpp
     )
-else ()
+
     list(APPEND JavaScriptCore_LIBRARIES
-        CoreFoundation${DEBUG_SUFFIX}
+        ${COREFOUNDATION_LIBRARY}
+    )
+endif ()
+
+if (NOT WTF_PLATFORM_WIN_CAIRO)
+    list(APPEND JavaScriptCore_LIBRARIES
         ${ICU_LIBRARIES}
         winmm
     )

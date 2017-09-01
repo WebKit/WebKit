@@ -622,10 +622,6 @@
 
 #endif /* PLATFORM(IOS) */
 
-#if PLATFORM(WIN) && !USE(WINGDI)
-#define USE_CF 1
-#endif
-
 #if PLATFORM(WIN) && !USE(WINGDI) && !PLATFORM(WIN_CAIRO)
 #define USE_CFURLCONNECTION 1
 #endif

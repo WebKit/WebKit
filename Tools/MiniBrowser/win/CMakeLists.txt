@@ -30,13 +30,9 @@ set(MiniBrowser_LIBRARIES
     shlwapi
 )
 
-if (WTF_PLATFORM_WIN_CAIRO)
+if (USE_CF)
     list(APPEND MiniBrowser_LIBRARIES
-        CFLite
-    )
-else ()
-    list(APPEND MiniBrowser_LIBRARIES
-        CoreFoundation
+        ${COREFOUNDATION_LIBRARY}
     )
 endif ()
 
